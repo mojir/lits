@@ -51,12 +51,6 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
 
   'comp': {
     evaluate: (fns, sourceCodeInfo): CompFunction => {
-      if (fns.length > 1) {
-        const last = fns[fns.length - 1]
-        if (Array.isArray(last))
-          // eslint-disable-next-line ts/no-unsafe-assignment
-          fns = [...fns.slice(0, -1), ...last]
-      }
       return {
         [FUNCTION_SYMBOL]: true,
         sourceCodeInfo,

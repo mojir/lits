@@ -1,11 +1,9 @@
 import type { SpecialExpressionNode } from '..'
 import type { GetUndefinedSymbols, UndefinedSymbols } from '../../getUndefinedSymbols'
-import { LitsError } from '../../errors'
 import type { ContextStack } from '../../evaluator/ContextStack'
 import type { Context, EvaluateAstNode } from '../../evaluator/interface'
 import type { Any, Arr } from '../../interface'
 import type { AstNode, BindingNode, CommonSpecialExpressionNode } from '../../parser/interface'
-import type { SourceCodeInfo } from '../../tokenizer/token'
 import { getTokenDebugData } from '../../tokenizer/token'
 import { asNonUndefined } from '../../typeGuards'
 import { asAstNode } from '../../typeGuards/astNode'
@@ -35,12 +33,8 @@ function addToContext(
   context: Context,
   contextStack: ContextStack,
   evaluateAstNode: EvaluateAstNode,
-  sourceCodeInfo?: SourceCodeInfo,
 ) {
   for (const binding of bindings) {
-    if (context[binding.n])
-      throw new LitsError(`Variable already defined: ${binding.n}.`, sourceCodeInfo)
-
     context[binding.n] = { value: evaluateAstNode(binding.v, contextStack) }
   }
 }
@@ -88,8 +82,6 @@ function evaluateLoop(
         bindingIndices[bindingIndex - 1] = asNonUndefined(bindingIndices[bindingIndex - 1], sourceCodeInfo) + 1
         break
       }
-      if (context[binding.n])
-        throw new LitsError(`Variable already defined: ${binding.n}.`, sourceCodeInfo)
 
       context[binding.n] = {
         value: asAny(seq[index], sourceCodeInfo),
@@ -102,7 +94,6 @@ function evaluateLoop(
               context,
               newContextStack,
               evaluateAstNode,
-              sourceCodeInfo,
             )
             break
           case '&when':

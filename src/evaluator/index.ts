@@ -51,6 +51,7 @@ export function evaluateAstNode(node: AstNode, contextStack: ContextStack): Any 
       return evaluateNormalExpression(node, contextStack)
     case AstNodeType.SpecialExpression:
       return evaluateSpecialExpression(node, contextStack)
+    /* v8 ignore next 2 */
     default:
       throw new LitsError(`${node.t}-node cannot be evaluated`, getTokenDebugData(node.token)?.sourceCodeInfo)
   }

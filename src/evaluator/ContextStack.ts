@@ -1,17 +1,16 @@
-import type { BuiltinFunction, ExtraData, NativeJsFunction, SymbolNode } from '../parser/interface'
-import type { SpecialExpressionName } from '../builtin'
 import { builtin, normalExpressionKeys, specialExpressionKeys } from '../builtin'
-import { toAny } from '../utils'
-import type { Any } from '../interface'
-import { UndefinedSymbolError } from '../errors'
-import type { ContextParams, LazyValue } from '../Lits/Lits'
-import { FUNCTION_SYMBOL } from '../utils/symbols'
 import { FunctionType } from '../constants/constants'
+import { UndefinedSymbolError } from '../errors'
+import type { Any } from '../interface'
+import type { ContextParams, LazyValue } from '../Lits/Lits'
+import type { BuiltinFunction, ExtraData, NativeJsFunction, SymbolNode } from '../parser/interface'
+import { getTokenDebugData } from '../tokenizer/token'
 import { asNonUndefined } from '../typeGuards'
 import { isBuiltinFunction } from '../typeGuards/litsFunction'
-import { getTokenDebugData } from '../tokenizer/token'
-import { isContextEntry } from './interface'
+import { toAny } from '../utils'
+import { FUNCTION_SYMBOL } from '../utils/symbols'
 import type { Context, LookUpResult } from './interface'
+import { isContextEntry } from './interface'
 
 export type ContextStack = ContextStackImpl
 
@@ -66,10 +65,7 @@ export class ContextStackImpl {
   }
 
   public addValue(name: string, value: Any) {
-    const currentContext = this.contexts[0]
-    if (!currentContext) {
-      throw new Error('No context to add value to')
-    }
+    const currentContext = this.contexts[0]!
     if (currentContext[name]) {
       throw new Error(`Cannot redefine value "${name}"`)
     }
@@ -80,16 +76,6 @@ export class ContextStackImpl {
       throw new Error(`Cannot shadow builtin function "${name}"`)
     }
     currentContext[name] = { value: toAny(value) }
-  }
-
-  public clone(): ContextStack {
-    // eslint-disable-next-line ts/no-unsafe-argument
-    return new ContextStackImpl(JSON.parse(JSON.stringify({
-      contexts: this.contexts,
-      values: this.values,
-      lazyValues: this.lazyValues,
-      nativeJsFunctions: this.nativeJsFunctions,
-    })))
   }
 
   public getValue(name: string): unknown {
@@ -139,9 +125,6 @@ export class ContextStackImpl {
       }
       return builtinFunction
     }
-
-    if (builtin.specialExpressions[value as SpecialExpressionName])
-      return 'specialExpression'
 
     const nativeJsFunction = this.nativeJsFunctions?.[value]
     if (nativeJsFunction) {

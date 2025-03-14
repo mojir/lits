@@ -1,8 +1,7 @@
 import type { TokenStream } from '../tokenizer/tokenize'
 import { minifyTokenStream } from '../tokenizer/minifyTokenStream'
 import { AlgebraicParser } from './AlgebraicParser'
-import type { Ast, AstNode, ParseState } from './interface'
-import { parsePolishToken } from './PolishTokenParsers'
+import type { Ast, ParseState } from './interface'
 
 export function parse(tokenStream: TokenStream): Ast {
   tokenStream = minifyTokenStream(tokenStream, { removeWhiteSpace: true })
@@ -13,15 +12,10 @@ export function parse(tokenStream: TokenStream): Ast {
 
   const parseState: ParseState = {
     position: 0,
-    parseToken,
   }
 
   const algebraicParser = new AlgebraicParser(tokenStream, parseState)
   ast.b = algebraicParser.parse()
 
   return ast
-}
-
-function parseToken(tokenStream: TokenStream, parseState: ParseState): AstNode {
-  return parsePolishToken(tokenStream, parseState)
 }

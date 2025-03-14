@@ -121,6 +121,7 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     description: 'Remainder of dividing `dividend` and `divisor`.',
     examples: ['5 % 3', '5.2 % 3.1', '-5 % 3', '%(5, -3)', '%(-5, -3)'],
     algebraic: true,
+    aliases: ['rem'],
   },
   'quot': {
     title: 'quot',

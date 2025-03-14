@@ -1,3 +1,4 @@
+/* v8 ignore next 1000 */
 export { AstNodeType, FunctionType } from './constants/constants'
 export {
   isBuiltinFunction,

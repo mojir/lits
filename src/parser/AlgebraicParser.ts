@@ -158,7 +158,7 @@ function fromBinaryOperatorToAstNode(operator: OperatorToken | SymbolToken<'+'>,
         p: [left, right],
         token: getTokenDebugData(token) && token,
       }
-    /* v8 ignore next 8 */
+    /* v8 ignore next 9 */
     case ';':
     case ':=':
     case ',':
@@ -916,7 +916,11 @@ export class AlgebraicParser {
     const forLoopBindings: LoopBindingNode[] = []
 
     while (!this.isAtEnd() && !isSymbolToken(this.peek(), 'do')) {
-      forLoopBindings.push(this.parseForLoopBinding())
+      const loopBinding = this.parseForLoopBinding()
+      if (forLoopBindings.some(b => b.b.n === loopBinding.b.n)) {
+        throw new LitsError('Duplicate binding', getTokenDebugData(loopBinding.b.token)?.sourceCodeInfo)
+      }
+      forLoopBindings.push(loopBinding)
     }
 
     assertSymbolToken(this.peek(), 'do')
@@ -953,13 +957,6 @@ export class AlgebraicParser {
 
     const bindingNode = this.parseBinding()
 
-    // if (isSymbolToken(this.peek(), 'do') || isReservedSymbolToken(this.peek(), 'each')) {
-    //   return {
-    //     b: bindingNode,
-    //     m: [],
-    //   }
-    // }
-
     const modifiers: Array<'&let' | '&when' | '&while'> = []
     let token = this.peek()
 
@@ -986,6 +983,9 @@ export class AlgebraicParser {
       letBindings = []
       while (isSymbolToken(token, 'let')) {
         const letNode = this.parseLet(token, true)
+        if (letBindings.some(b => b.n === letNode.bs[0]!.n)) {
+          throw new LitsError('Duplicate binding', getTokenDebugData(letNode.bs[0]!.token)?.sourceCodeInfo)
+        }
         letBindings.push(letNode.bs[0]!)
         token = this.peek()
         if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this.peek(), 'each') && !isOperatorToken(token, ',')) {

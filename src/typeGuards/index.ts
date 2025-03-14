@@ -11,7 +11,7 @@ export function assertNumberOfParams(count: Count, node: GenericNode): void {
   assertCount({
     count,
     length: node.p.length,
-    name: node.n ?? 'expression',
+    name: node.n,
     sourceCodeInfo: getTokenDebugData(node.token)?.sourceCodeInfo,
   })
 }

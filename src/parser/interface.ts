@@ -10,7 +10,6 @@ import type { FUNCTION_SYMBOL, REGEXP_SYMBOL } from '../utils/symbols'
 
 export interface ParseState {
   position: number
-  parseToken: ParseToken
 }
 export interface EvaluatedFunctionArguments {
   mandatoryArguments: string[]

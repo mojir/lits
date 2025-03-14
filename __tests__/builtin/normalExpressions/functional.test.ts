@@ -2,7 +2,7 @@
 import { afterEach, beforeEach, describe, expect, it, vitest } from 'vitest'
 import { Lits } from '../../../src/Lits/Lits'
 
-describe('functional functions', () => {
+describe('functional functions.', () => {
   for (const lits of [new Lits(), new Lits({ debug: true })]) {
     let oldLog: () => void
     let logSpy: (...args: unknown[]) => void
@@ -16,8 +16,8 @@ describe('functional functions', () => {
     afterEach(() => {
       console.log = oldLog
     })
-    describe('apply', () => {
-      it('samples', () => {
+    describe('apply.', () => {
+      it('samples.', () => {
         expect(lits.run('apply(+, [1, 2, 3, 4])')).toBe(10)
         expect(lits.run('+ apply [1, 2, 3, 4]')).toBe(10)
         expect(lits.run('apply(+, 1, 2, [3, 4])')).toBe(10)
@@ -27,8 +27,8 @@ describe('functional functions', () => {
       })
     })
 
-    describe('identity', () => {
-      it('samples', () => {
+    describe('identity.', () => {
+      it('samples.', () => {
         expect(lits.run('identity("Albert")')).toBe('Albert')
         expect(lits.run('identity("")')).toBe('')
         expect(lits.run('identity(null)')).toBe(null)
@@ -41,8 +41,8 @@ describe('functional functions', () => {
       })
     })
 
-    describe('partial', () => {
-      it('samples', () => {
+    describe('partial.', () => {
+      it('samples.', () => {
         expect(lits.run('partial(+, 1)(2)')).toBe(3)
         expect(lits.run('partial(partial(+, 1), 2)(2)')).toBe(5)
         expect(() => lits.run('partial(true)()')).toThrow()
@@ -50,8 +50,8 @@ describe('functional functions', () => {
       })
     })
 
-    describe('comp', () => {
-      it('samples', () => {
+    describe('comp.', () => {
+      it('samples.', () => {
         expect(lits.run('let negative-quotient := comp(-, /); negative-quotient(9, 3)')).toBe(-3)
         expect(
           lits.run(`
@@ -79,16 +79,16 @@ let foo := comp(!, odd?);
       })
     })
 
-    describe('constanty', () => {
-      it('samples', () => {
+    describe('constanty.', () => {
+      it('samples.', () => {
         expect(lits.run('constantly(10)(12, null, "x")')).toBe(10)
         expect(() => lits.run('constanty()')).toThrow()
         expect(() => lits.run('constanty(10, 20)')).toThrow()
       })
     })
 
-    describe('juxt', () => {
-      it('samples', () => {
+    describe('juxt.', () => {
+      it('samples.', () => {
         expect(lits.run('juxt(+, *, min, max)(3, 4, 6)')).toEqual([13, 72, 3, 6])
         expect(lits.run('juxt("a", "b")({ a := 1, b := 2, c := 3, d := 4})')).toEqual([1, 2])
         expect(lits.run('apply(juxt(+, *, min, max), range(1, 5))')).toEqual([10, 24, 1, 4])
@@ -96,8 +96,8 @@ let foo := comp(!, odd?);
       })
     })
 
-    describe('complement', () => {
-      it('samples', () => {
+    describe('complement.', () => {
+      it('samples.', () => {
         expect(lits.run('complement(>)(4, 6)')).toBe(true)
         expect(lits.run('complement(=)(3, 3)')).toBe(false)
         expect(() => lits.run('complement()')).toThrow()
@@ -105,8 +105,8 @@ let foo := comp(!, odd?);
       })
     })
 
-    describe('every-pred', () => {
-      it('samples', () => {
+    describe('every-pred.', () => {
+      it('samples.', () => {
         expect(lits.run('every-pred(string?, -> count($1) > 3)("Albert")')).toBe(true)
         expect(lits.run('every-pred(string?, -> count($1) > 3)("Albert", "Mojir")')).toBe(true)
         expect(lits.run('every-pred(string?, -> count($1) > 3)("Albert", "L", "Mojir")')).toBe(false)
@@ -115,8 +115,8 @@ let foo := comp(!, odd?);
       })
     })
 
-    describe('some-pred', () => {
-      it('samples', () => {
+    describe('some-pred.', () => {
+      it('samples.', () => {
         expect(lits.run('some-pred(string?, -> count($1) > 3)("Albert", "M")')).toBe(true)
         expect(lits.run('some-pred(string?, -> count($1) > 3)("A", "M")')).toBe(true)
         expect(lits.run('some-pred(string?, -> count($1) > 3)([10, 20], [20, 10])')).toBe(false)
@@ -125,8 +125,8 @@ let foo := comp(!, odd?);
       })
     })
 
-    describe('fnull', () => {
-      it('samples', () => {
+    describe('fnull.', () => {
+      it('samples.', () => {
         expect(lits.run('fnull(+, 1, 2)(0, 0)')).toBe(0)
         expect(lits.run('fnull(+, 1, 2)(null, 0)')).toBe(1)
         expect(lits.run('fnull(+, 1, 2)(0, null)')).toBe(2)

@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, test } from 'vitest'
 import { testTypeGuars } from '../../__tests__/testUtils'
 import { AstNodeType } from '../constants/constants'
 import type { AstNode, NormalExpressionNode } from '../parser/interface'
@@ -8,6 +8,7 @@ import {
   assertNonUndefined,
   assertNumberOfParams,
   assertUnknownRecord,
+  canBeOperator,
   isUnknownRecord,
 } from '.'
 
@@ -28,6 +29,11 @@ function toNormalExpressionNode(arr: number[]): NormalExpressionNode {
 }
 
 describe('typeGuards index file', () => {
+  test('canBeOperator', () => {
+    expect(canBeOperator({ odd: true })).toBe(false)
+    expect(canBeOperator({ max: 1 })).toBe(false)
+  })
+
   it('asNotUndefined', () => {
     expect(() => asNonUndefined(undefined)).toThrow()
     expect(asNonUndefined(null)).toBe(null)

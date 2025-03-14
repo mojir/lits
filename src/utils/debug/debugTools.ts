@@ -1,6 +1,6 @@
 import { astNodeTypeName, isAstNodeType, isFunctionType } from '../../constants/constants'
 import type { AstNode, LitsFunction } from '../../parser/interface'
-import { type Token, isTokenType } from '../../tokenizer/token'
+import { isUnknownRecord } from '../../typeGuards'
 import { FUNCTION_SYMBOL } from '../symbols'
 
 function isLitsFunction(func: unknown): func is LitsFunction {
@@ -8,14 +8,6 @@ function isLitsFunction(func: unknown): func is LitsFunction {
     return false
 
   return !!func[FUNCTION_SYMBOL] && isFunctionType(func.t)
-}
-
-function isUnknownRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null
-}
-
-function isToken(value: unknown): value is Token {
-  return Array.isArray(value) && value.length >= 1 && value.length <= 3 && typeof value[0] === 'string' && isTokenType(value[0])
 }
 
 function isAstNode(value: unknown): value is AstNode {
@@ -26,9 +18,6 @@ export function valueToString(value: unknown): string {
   if (isLitsFunction(value))
     // eslint-disable-next-line ts/no-unsafe-member-access
     return `<function ${(value as any).name || '\u03BB'}>`
-
-  if (isToken(value))
-    return `${value[0]}-token${value[1] ? `"${value[1]}"` : ''}`
 
   if (isAstNode(value))
     return `${astNodeTypeName.get(value.t)}-node`

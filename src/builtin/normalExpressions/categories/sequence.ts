@@ -825,10 +825,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       const seqsArr = isStringSeq
         ? seqs.map((seq) => {
             assertString(seq, sourceCodeInfo)
-            if (typeof seq === 'string')
-              return seq.split('')
-
-            return seq
+            return seq.split('')
           })
         : seqs.map((seq) => {
             assertArray(seq, sourceCodeInfo)

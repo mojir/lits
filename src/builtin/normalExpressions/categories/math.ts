@@ -103,6 +103,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       return dividend - divisor * quotient
     },
     paramCount: 2,
+    aliases: ['rem'],
   },
 
   '√': {

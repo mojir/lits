@@ -146,6 +146,8 @@ describe('assert functions', () => {
       it('samples', () => {
         expect(() => lits.run('assert-throws(-> identity("X")) "Should throw")')).toThrow()
         expect(() => lits.run('assert-throws(-> throw("X"))')).not.toThrow()
+        expect(() => lits.run('assert-throws(-> throw("X"), "I knew it")')).not.toThrow()
+        expect(() => lits.run('assert-throws(-> throw("X"), 10)')).toThrow()
       })
     })
 
