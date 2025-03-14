@@ -1,6 +1,6 @@
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
-import type { CommonSpecialExpressionNode } from '../../parser/interface'
+import type { CommonSpecialExpressionNode } from '../../parser/types'
 import type { BuiltinSpecialExpression } from '../interface'
 
 export interface DoNode extends CommonSpecialExpressionNode<'do'> {}

@@ -11,7 +11,7 @@ import { assertArray } from '../../../typeGuards/array'
 import { asAny, asColl, assertAny, assertColl, assertObj, isColl, isObj, isSeq } from '../../../typeGuards/lits'
 import { assertNumber, isNumber } from '../../../typeGuards/number'
 import { asString, asStringOrNumber, assertString, assertStringOrNumber, isString, isStringOrNumber } from '../../../typeGuards/string'
-import type { LitsFunction } from '../../../parser/interface'
+import type { LitsFunction } from '../../../parser/types'
 
 interface CollMeta {
   coll: Coll

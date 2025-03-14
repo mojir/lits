@@ -1,7 +1,7 @@
 import { describe, expect, it, test } from 'vitest'
 import { testTypeGuars } from '../../__tests__/testUtils'
 import { AstNodeType } from '../constants/constants'
-import type { AstNode, NormalExpressionNode } from '../parser/interface'
+import type { AstNode, NormalExpressionNode } from '../parser/types'
 import {
   asNonUndefined,
   asUnknownRecord,

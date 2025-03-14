@@ -12,9 +12,9 @@ export {
   asNativeJsFunction,
   assertNativeJsFunction,
 } from './typeGuards/litsFunction'
-export { type LitsFunction, type NativeJsFunction, type ExtraData } from './parser/interface'
+export { type LitsFunction, type NativeJsFunction, type ExtraData } from './parser/types'
 export type { Context } from './evaluator/interface'
-export type { Ast } from './parser/interface'
+export type { Ast } from './parser/types'
 export type { SourceCodeInfo } from './tokenizer/token'
 export type { Token } from './tokenizer/token'
 export { normalExpressionKeys, specialExpressionKeys } from './builtin'

@@ -1,17 +1,18 @@
 import { astNodeTypeName, isAstNodeType, isFunctionType } from '../../constants/constants'
-import type { AstNode, LitsFunction } from '../../parser/interface'
-import { isUnknownRecord } from '../../typeGuards'
+import type { AstNode, LitsFunction } from '../../parser/types'
 import { FUNCTION_SYMBOL } from '../symbols'
 
 function isLitsFunction(func: unknown): func is LitsFunction {
-  if (!isUnknownRecord(func))
+  if (func === null || typeof func !== 'object')
     return false
 
-  return !!func[FUNCTION_SYMBOL] && isFunctionType(func.t)
+  return FUNCTION_SYMBOL in func && 't' in func && isFunctionType(func.t)
 }
 
 function isAstNode(value: unknown): value is AstNode {
-  return isUnknownRecord(value) && isAstNodeType(value.t)
+  if (value === null || typeof value !== 'object')
+    return false
+  return 't' in value && isAstNodeType(value.t)
 }
 
 export function valueToString(value: unknown): string {

@@ -3,7 +3,7 @@ import type { DoNode } from '../builtin/specialExpressions/do'
 import { AstNodeType } from '../constants/constants'
 import { evaluateAstNode } from '../evaluator'
 import type { ContextStack } from '../evaluator/ContextStack'
-import type { Ast, AstNode } from '../parser/interface'
+import type { Ast, AstNode } from '../parser/types'
 import { getTokenDebugData } from '../tokenizer/token'
 import { asNonUndefined } from '../typeGuards'
 

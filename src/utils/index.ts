@@ -1,5 +1,5 @@
 import type { Any, Coll, Obj } from '../interface'
-import type { NativeJsFunction } from '../parser/interface'
+import type { NativeJsFunction } from '../parser/types'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { asAny, isColl, isObj, isRegularExpression } from '../typeGuards/lits'
 import { isNumber } from '../typeGuards/number'

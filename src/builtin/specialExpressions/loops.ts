@@ -3,7 +3,7 @@ import type { GetUndefinedSymbols, UndefinedSymbols } from '../../getUndefinedSy
 import type { ContextStack } from '../../evaluator/ContextStack'
 import type { Context, EvaluateAstNode } from '../../evaluator/interface'
 import type { Any, Arr } from '../../interface'
-import type { AstNode, BindingNode, CommonSpecialExpressionNode } from '../../parser/interface'
+import type { AstNode, BindingNode, CommonSpecialExpressionNode } from '../../parser/types'
 import { getTokenDebugData } from '../../tokenizer/token'
 import { asNonUndefined } from '../../typeGuards'
 import { asAstNode } from '../../typeGuards/astNode'

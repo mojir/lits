@@ -1,4 +1,4 @@
-import type { RegularExpression } from '../../../parser/interface'
+import type { RegularExpression } from '../../../parser/types'
 import { assertRegularExpression, assertStringOrRegularExpression, isRegularExpression } from '../../../typeGuards/lits'
 import { assertString, isString } from '../../../typeGuards/string'
 import { REGEXP_SYMBOL } from '../../../utils/symbols'

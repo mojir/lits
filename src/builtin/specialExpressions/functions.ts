@@ -9,7 +9,7 @@ import type {
   EvaluatedFunctionOverload,
   LitsFunction,
   SymbolNode,
-} from '../../parser/interface'
+} from '../../parser/types'
 import { getTokenDebugData } from '../../tokenizer/token'
 import { FUNCTION_SYMBOL } from '../../utils/symbols'
 import type { Builtin, BuiltinSpecialExpression } from '../interface'

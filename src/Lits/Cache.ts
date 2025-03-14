@@ -1,4 +1,4 @@
-import type { Ast } from '../parser/interface'
+import type { Ast } from '../parser/types'
 import { toNonNegativeInteger } from '../utils'
 import { valueToString } from '../utils/debug/debugTools'
 

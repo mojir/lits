@@ -15,7 +15,7 @@ import type {
   PartialFunction,
   SomePredFunction,
   UserDefinedFunction,
-} from '../parser/interface'
+} from '../parser/types'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { toAny } from '../utils'
 import { valueToString } from '../utils/debug/debugTools'

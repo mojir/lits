@@ -1,4 +1,4 @@
-import type { LitsFunction, RegularExpression } from './parser/interface'
+import type { LitsFunction, RegularExpression } from './parser/types'
 
 export type Arr = unknown[]
 export type Seq = string | Arr

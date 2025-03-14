@@ -10,7 +10,7 @@ import type {
   NumberNode,
   StringNode,
   SymbolNode,
-} from '../parser/interface'
+} from '../parser/types'
 import type { Token } from '../tokenizer/token'
 import {
   asAstNode,

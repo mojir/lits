@@ -17,7 +17,7 @@ import { LitsError } from '../errors'
 import type { TokenStream } from '../tokenizer/tokenize'
 import { type SymbolicBinaryOperator, isBinaryOperator, isFunctionOperator } from '../tokenizer/operators'
 import type { OperatorToken, ReservedSymbolToken, SymbolToken, Token, TokenType } from '../tokenizer/token'
-import { asLBraceToken, asLBracketToken, asSymbolToken, assertOperatorToken, assertRBraceToken, assertRBracketToken, assertRParenToken, assertReservedSymbolToken, assertSymbolToken, getTokenDebugData, hasTokenDebugData, isA_BinaryOperatorToken, isLBraceToken, isLBracketToken, isLParenToken, isOperatorToken, isRBraceToken, isRBracketToken, isRParenToken, isReservedSymbolToken, isSymbolToken } from '../tokenizer/token'
+import { asLBraceToken, asLBracketToken, asSymbolToken, assertOperatorToken, assertRBraceToken, assertRBracketToken, assertRParenToken, assertReservedSymbolToken, assertSymbolToken, getTokenDebugData, hasTokenDebugData, isA_BinaryOperatorToken, isBasePrefixedNumberToken, isLBraceToken, isLBracketToken, isLParenToken, isNumberToken, isOperatorToken, isRBraceToken, isRBracketToken, isRParenToken, isReservedSymbolToken, isSymbolToken } from '../tokenizer/token'
 import { assertNumberOfParams } from '../typeGuards'
 import { asSymbolNode } from '../typeGuards/astNode'
 import type { QqNode } from '../builtin/specialExpressions/qq'
@@ -26,8 +26,8 @@ import type { DeclaredNode } from '../builtin/specialExpressions/declared'
 import type { OrNode } from '../builtin/specialExpressions/or'
 import type { RecurNode } from '../builtin/specialExpressions/recur'
 import type { ThrowNode } from '../builtin/specialExpressions/throw'
-import type { AstNode, BindingNode, NormalExpressionNodeWithName, ParseState, StringNode, SymbolNode } from './interface'
-import { parseNumber, parseRegexpShorthand, parseReservedSymbol, parseString, parseSymbol } from './commonTokenParsers'
+import { isNumberReservedSymbol, numberReservedSymbolRecord } from '../tokenizer/reservedNames'
+import type { AstNode, BindingNode, NormalExpressionNode, NormalExpressionNodeWithName, NumberNode, ParseState, ReservedSymbolNode, StringNode, SymbolNode } from './types'
 
 const exponentiationPrecedence = 10
 const binaryFunctionalOperatorPrecedence = 1
@@ -171,7 +171,7 @@ function fromBinaryOperatorToAstNode(operator: OperatorToken | SymbolToken<'+'>,
   }
 }
 
-export class AlgebraicParser {
+export class Parser {
   constructor(
     private readonly tokenStream: TokenStream,
     private parseState: ParseState,
@@ -404,9 +404,9 @@ export class AlgebraicParser {
     switch (tokenType) {
       case 'Number':
       case 'BasePrefixedNumber':
-        return parseNumber(this.tokenStream, this.parseState)
+        return this.parseNumber()
       case 'String':
-        return parseString(this.tokenStream, this.parseState)
+        return this.parseString()
       case 'Symbol': {
         const positionBefore = this.parseState.position
         const lamdaFunction = this.parseLambdaFunction()
@@ -414,12 +414,12 @@ export class AlgebraicParser {
           return lamdaFunction
         }
         this.parseState.position = positionBefore
-        return parseSymbol(this.tokenStream, this.parseState)
+        return this.parseSymbol()
       }
       case 'ReservedSymbol':
-        return parseReservedSymbol(this.tokenStream, this.parseState)
+        return this.parseReservedSymbol()
       case 'RegexpShorthand':
-        return parseRegexpShorthand(this.tokenStream, this.parseState)
+        return this.parseRegexpShorthand()
 
       default:
         throw new LitsError(`Unknown token type: ${tokenType}`, getTokenDebugData(token)?.sourceCodeInfo)
@@ -686,9 +686,9 @@ export class AlgebraicParser {
     let arity = 0
     let percent1: 'NOT_SET' | 'WITH_1' | 'NAKED' = 'NOT_SET' // referring to argument bindings. % = NAKED, %1, %2, %3, etc = WITH_1
     for (let pos = startPos; pos <= endPos; pos += 1) {
-      const tkn = this.tokenStream.tokens[pos]!
-      if (isSymbolToken(tkn)) {
-        const match = placeholderRegexp.exec(tkn[1])
+      const token = this.tokenStream.tokens[pos]!
+      if (isSymbolToken(token)) {
+        const match = placeholderRegexp.exec(token[1])
         if (match) {
           const number = match[1] ?? '1'
           if (number === '1') {
@@ -740,7 +740,7 @@ export class AlgebraicParser {
   private parseLet(token: SymbolToken, optionalSemicolon = false): LetNode {
     this.advance()
 
-    const letSymbol = parseSymbol(this.tokenStream, this.parseState)
+    const letSymbol = this.parseSymbol()
 
     assertOperatorToken(this.peek(), ':=')
     this.advance()
@@ -797,7 +797,7 @@ export class AlgebraicParser {
       assertSymbolToken(token, 'let')
       this.advance()
 
-      const symbol = parseSymbol(this.tokenStream, this.parseState)
+      const symbol = this.parseSymbol()
       assertOperatorToken(this.peek(), ':=')
       this.advance()
       const value = this.parseExpression()
@@ -871,7 +871,7 @@ export class AlgebraicParser {
     let errorSymbol: SymbolNode | undefined
     if (isLParenToken(this.peek())) {
       this.advance()
-      errorSymbol = parseSymbol(this.tokenStream, this.parseState)
+      errorSymbol = this.parseSymbol()
       assertRParenToken(this.peek())
       this.advance()
     }
@@ -1237,7 +1237,7 @@ export class AlgebraicParser {
 
   parseFunction(token: ReservedSymbolToken<'function'>): FunctionNode {
     this.advance()
-    const symbol = parseSymbol(this.tokenStream, this.parseState)
+    const symbol = this.parseSymbol()
     const { functionArguments, arity } = this.parseFunctionArguments()
 
     const body: AstNode[] = []
@@ -1294,7 +1294,7 @@ export class AlgebraicParser {
     this.advance()
     if (isSymbolToken(this.peek(), 'let')) {
       this.advance()
-      const symbol = parseSymbol(this.tokenStream, this.parseState)
+      const symbol = this.parseSymbol()
 
       assertOperatorToken(this.peek(), ':=')
       this.advance()
@@ -1311,7 +1311,7 @@ export class AlgebraicParser {
     }
     else if (isReservedSymbolToken(this.peek(), 'function')) {
       this.advance()
-      const symbol = parseSymbol(this.tokenStream, this.parseState)
+      const symbol = this.parseSymbol()
 
       const { functionArguments, arity } = this.parseFunctionArguments()
 
@@ -1344,5 +1344,183 @@ export class AlgebraicParser {
     else {
       throw new LitsError('Expected let or function', getTokenDebugData(this.peek())?.sourceCodeInfo)
     }
+  }
+
+  private parseSymbol(): SymbolNode {
+    const token = this.peek()
+    this.advance()
+    if (!isSymbolToken(token)) {
+      throw new LitsError(`Expected symbol token, got ${token[0]}`, getTokenDebugData(token)?.sourceCodeInfo)
+    }
+    if (token[1][0] !== '\'') {
+      return {
+        t: AstNodeType.Symbol,
+        v: token[1],
+        p: [],
+        n: undefined,
+        token: getTokenDebugData(token) && token,
+      }
+    }
+    else {
+      const value = token[1].substring(1, token[1].length - 1)
+        .replace(
+          /(\\{2})|(\\')|\\(.)/g,
+          (
+            _,
+            backslash: string,
+            singleQuote: string,
+            normalChar: string,
+          ) => {
+            if (backslash) {
+              return '\\'
+            }
+            if (singleQuote) {
+              return '\''
+            }
+            return `\\${normalChar}`
+          },
+        )
+      return {
+        t: AstNodeType.Symbol,
+        v: value,
+        p: [],
+        n: undefined,
+        token: getTokenDebugData(token) && token,
+      }
+    }
+  }
+
+  private parseReservedSymbol(): ReservedSymbolNode | NumberNode {
+    const token = this.peek()
+    this.advance()
+
+    if (!isReservedSymbolToken(token)) {
+      throw new LitsError(`Expected symbol token, got ${token[0]}`, getTokenDebugData(token)?.sourceCodeInfo)
+    }
+
+    if (isReservedSymbolToken(token)) {
+      const symbol = token[1]
+      if (isNumberReservedSymbol(symbol)) {
+        return {
+          t: AstNodeType.Number,
+          v: numberReservedSymbolRecord[symbol],
+          p: [],
+          n: undefined,
+          token: getTokenDebugData(token) && token,
+        }
+      }
+    }
+    return {
+      t: AstNodeType.ReservedSymbol,
+      v: token[1],
+      p: [],
+      n: undefined,
+      token: getTokenDebugData(token) && token,
+    } satisfies ReservedSymbolNode
+  }
+
+  private parseNumber(): NumberNode {
+    const token = this.peek()
+    this.advance()
+    if (!isBasePrefixedNumberToken(token) && !isNumberToken(token)) {
+      throw new LitsError(`Expected number token, got ${token}`, getTokenDebugData(token)?.sourceCodeInfo)
+    }
+
+    const value = token[1]
+    const negative = value[0] === '-'
+    const numberString = (negative ? value.substring(1) : value).replace(/_/g, '')
+    return {
+      t: AstNodeType.Number,
+      v: negative ? -Number(numberString) : Number(numberString),
+      p: [],
+      n: undefined,
+      token: getTokenDebugData(token) && token,
+    }
+  }
+
+  private parseString(): StringNode {
+    const token = this.peek()
+    this.advance()
+    const value = token[1].substring(1, token[1].length - 1)
+      .replace(
+        /(\\{2})|(\\")|(\\n)|(\\t)|(\\r)|(\\b)|(\\f)|\\(.)/g,
+        (
+          _,
+          backslash: string,
+          doubleQuote: string,
+          newline: string,
+          tab: string,
+          carriageReturn: string,
+          backspace: string,
+          formFeed: string,
+          normalChar: string,
+        ) => {
+          // If it's a double escape (\\x), return \x
+          if (backslash) {
+            return '\\'
+          }
+          // If it's a special character (\n, \t, \r, \b, \f), return the special character
+          else if (newline) {
+            return '\n'
+          }
+          else if (tab) {
+            return '\t'
+          }
+          else if (carriageReturn) {
+            return '\r'
+          }
+          else if (backspace) {
+            return '\b'
+          }
+          else if (formFeed) {
+            return '\f'
+          }
+          else if (doubleQuote) {
+            return '"'
+          }
+          return normalChar
+        },
+      )
+
+    return {
+      t: AstNodeType.String,
+      v: value,
+      p: [],
+      n: undefined,
+      token: getTokenDebugData(token) && token,
+    }
+  }
+
+  private parseRegexpShorthand(): NormalExpressionNodeWithName {
+    const token = this.peek()
+    this.advance()
+
+    const endStringPosition = token[1].lastIndexOf('"')
+    const regexpString = token[1].substring(2, endStringPosition)
+    const optionsString = token[1].substring(endStringPosition + 1)
+    const stringNode: StringNode = {
+      t: AstNodeType.String,
+      v: regexpString,
+      p: [],
+      n: undefined,
+      token: getTokenDebugData(token) && token,
+    }
+
+    const optionsNode: StringNode = {
+      t: AstNodeType.String,
+      v: optionsString,
+      p: [],
+      n: undefined,
+      token: getTokenDebugData(token) && token,
+    }
+
+    const node: NormalExpressionNode = {
+      t: AstNodeType.NormalExpression,
+      n: 'regexp',
+      p: [stringNode, optionsNode],
+      token: getTokenDebugData(token) && token,
+    }
+
+    return node
   }
 }

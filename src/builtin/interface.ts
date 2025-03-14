@@ -9,7 +9,7 @@ import type {
   ParseExpression,
   ParseToken,
   ParseTokensUntilClosingBracket,
-} from '../parser/interface'
+} from '../parser/types'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import type { BuiltinSpecialExpressions, SpecialExpressionNode } from '.'
 

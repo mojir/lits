@@ -1,5 +1,5 @@
 import { RecurSignal } from '../../errors'
-import type { CommonSpecialExpressionNode } from '../../parser/interface'
+import type { CommonSpecialExpressionNode } from '../../parser/types'
 import type { BuiltinSpecialExpression } from '../interface'
 
 export interface RecurNode extends CommonSpecialExpressionNode<'recur'> {}

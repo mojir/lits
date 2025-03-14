@@ -733,10 +733,42 @@ var Playground = (function (exports) {
         return UndefinedSymbolError;
     }(LitsError));
 
+    var FUNCTION_SYMBOL = '^^fn^^';
+    var REGEXP_SYMBOL = '^^re^^';
+
+    function isLitsFunction$1(func) {
+        if (func === null || typeof func !== 'object')
+            return false;
+        return FUNCTION_SYMBOL in func && 't' in func && isFunctionType(func.t);
+    }
+    function isAstNode$1(value) {
+        if (value === null || typeof value !== 'object')
+            return false;
+        return 't' in value && isAstNodeType(value.t);
+    }
+    function valueToString(value) {
+        if (isLitsFunction$1(value))
+            // eslint-disable-next-line ts/no-unsafe-member-access
+            return "<function ".concat(value.name || '\u03BB', ">");
+        if (isAstNode$1(value))
+            return "".concat(astNodeTypeName.get(value.t), "-node");
+        if (value === null)
+            return 'null';
+        if (typeof value === 'object' && value instanceof RegExp)
+            return "".concat(value);
+        if (typeof value === 'object' && value instanceof Error)
+            return value.toString();
+        return JSON.stringify(value);
+    }
+
     function getSourceCodeInfo(anyValue, sourceCodeInfo) {
         var _a;
         // eslint-disable-next-line ts/no-unsafe-return, ts/no-unsafe-member-access
         return (_a = anyValue === null || anyValue === void 0 ? void 0 : anyValue.sourceCodeInfo) !== null && _a !== void 0 ? _a : sourceCodeInfo;
+    }
+
+    function getAssertionError(typeName, value, sourceCodeInfo) {
+        return new LitsError("Expected ".concat(typeName, ", got ").concat(valueToString(value), "."), getSourceCodeInfo(value, sourceCodeInfo));
     }
 
     var binaryOperators = [
@@ -809,24 +841,6 @@ var Playground = (function (exports) {
         return symbolicOperatorSet.has(operator);
     }
 
-    var tokenTypes = [
-        'LBrace',
-        'LBracket',
-        'RBrace',
-        'RBracket',
-        'LParen',
-        'RParen',
-        'BasePrefixedNumber',
-        'MultiLineComment',
-        'Number',
-        'Operator',
-        'RegexpShorthand',
-        'ReservedSymbol',
-        'SingleLineComment',
-        'String',
-        'Symbol',
-        'Whitespace',
-    ];
     function isTokenDebugData(tokenDebugData) {
         return (typeof tokenDebugData === 'object'
             && tokenDebugData !== null
@@ -844,21 +858,6 @@ var Playground = (function (exports) {
             throw new Error("Token already has debug data: ".concat(token));
         }
         token.push(debugData);
-    }
-    function isTokenType(type) {
-        return typeof type === 'string' && tokenTypes.includes(type);
-    }
-    function isToken$1(token) {
-        return !!token;
-    }
-    function assertToken(token) {
-        if (!isToken$1(token)) {
-            throw new LitsError("Expected token, got ".concat(token), undefined);
-        }
-    }
-    function asToken(token) {
-        assertToken(token);
-        return token;
     }
     function isSymbolToken(token, symbolName) {
         if ((token === null || token === void 0 ? void 0 : token[0]) !== 'Symbol') {
@@ -975,30 +974,6 @@ var Playground = (function (exports) {
             throwUnexpectedToken('RBrace', undefined, token);
         }
     }
-    function isStringToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'String';
-    }
-    function assertStringToken(token) {
-        if (!isStringToken(token)) {
-            throwUnexpectedToken('String', undefined, token);
-        }
-    }
-    function asStringToken(token) {
-        assertStringToken(token);
-        return token;
-    }
-    function isRegexpShorthandToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'RegexpShorthand';
-    }
-    function assertRegexpShorthandToken(token) {
-        if (!isRegexpShorthandToken(token)) {
-            throwUnexpectedToken('RegexpShorthand', undefined, token);
-        }
-    }
-    function asRegexpShorthandToken(token) {
-        assertRegexpShorthandToken(token);
-        return token;
-    }
     function isA_BinaryOperatorToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'Operator' && isBinaryOperator(token[1]);
     }
@@ -1010,51 +985,13 @@ var Playground = (function (exports) {
         throw new LitsError("Unexpected token: ".concat(actualOutput, ", expected ").concat(expected).concat(expectedValue ? " '".concat(expectedValue, "'") : ''), getSourceCodeInfo(actual));
     }
 
-    var FUNCTION_SYMBOL = '^^fn^^';
-    var REGEXP_SYMBOL = '^^re^^';
-
-    function isLitsFunction$1(func) {
-        if (!isUnknownRecord$1(func))
-            return false;
-        return !!func[FUNCTION_SYMBOL] && isFunctionType(func.t);
-    }
-    function isUnknownRecord$1(value) {
-        return typeof value === 'object' && value !== null;
-    }
-    function isToken(value) {
-        return Array.isArray(value) && value.length >= 1 && value.length <= 3 && typeof value[0] === 'string' && isTokenType(value[0]);
-    }
-    function isAstNode$1(value) {
-        return isUnknownRecord$1(value) && isAstNodeType(value.t);
-    }
-    function valueToString(value) {
-        if (isLitsFunction$1(value))
-            // eslint-disable-next-line ts/no-unsafe-member-access
-            return "<function ".concat(value.name || '\u03BB', ">");
-        if (isToken(value))
-            return "".concat(value[0], "-token").concat(value[1] ? "\"".concat(value[1], "\"") : '');
-        if (isAstNode$1(value))
-            return "".concat(astNodeTypeName.get(value.t), "-node");
-        if (value === null)
-            return 'null';
-        if (typeof value === 'object' && value instanceof RegExp)
-            return "".concat(value);
-        if (typeof value === 'object' && value instanceof Error)
-            return value.toString();
-        return JSON.stringify(value);
-    }
-
-    function getAssertionError(typeName, value, sourceCodeInfo) {
-        return new LitsError("Expected ".concat(typeName, ", got ").concat(valueToString(value), "."), getSourceCodeInfo(value, sourceCodeInfo));
-    }
-
     function assertNumberOfParams(count, node) {
-        var _a, _b;
+        var _a;
         assertCount({
             count: count,
             length: node.p.length,
-            name: (_a = node.n) !== null && _a !== void 0 ? _a : 'expression',
-            sourceCodeInfo: (_b = getTokenDebugData(node.token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo,
+            name: node.n,
+            sourceCodeInfo: (_a = getTokenDebugData(node.token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo,
         });
     }
     function isNonUndefined(value) {
@@ -2802,9 +2739,7 @@ var Playground = (function (exports) {
                 var seqsArr = isStringSeq
                     ? seqs.map(function (seq) {
                         assertString(seq, sourceCodeInfo);
-                        if (typeof seq === 'string')
-                            return seq.split('');
-                        return seq;
+                        return seq.split('');
                     })
                     : seqs.map(function (seq) {
                         assertArray(seq, sourceCodeInfo);
@@ -2976,6 +2911,7 @@ var Playground = (function (exports) {
                 return dividend - divisor * quotient;
             },
             paramCount: 2,
+            aliases: ['rem'],
         },
         '√': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3449,7 +3385,10 @@ var Playground = (function (exports) {
         'assert=': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
-                message = typeof message === 'string' && message ? " \"".concat(message, "\"") : '';
+                if (message !== undefined) {
+                    assertString(message, sourceCodeInfo);
+                }
+                message !== null && message !== void 0 ? message : (message = '');
                 if (!deepEqual(asAny(first, sourceCodeInfo), asAny(second, sourceCodeInfo), sourceCodeInfo)) {
                     throw new AssertionError("Expected ".concat(JSON.stringify(first, null, 2), " to deep equal ").concat(JSON.stringify(second, null, 2), ".").concat(message), sourceCodeInfo);
                 }
@@ -3460,7 +3399,10 @@ var Playground = (function (exports) {
         'assert!=': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
-                message = typeof message === 'string' && message ? " \"".concat(message, "\"") : '';
+                if (message !== undefined) {
+                    assertString(message, sourceCodeInfo);
+                }
+                message !== null && message !== void 0 ? message : (message = '');
                 if (deepEqual(asAny(first, sourceCodeInfo), asAny(second, sourceCodeInfo), sourceCodeInfo)) {
                     throw new AssertionError("Expected ".concat(JSON.stringify(first), " not to deep equal ").concat(JSON.stringify(second), ".").concat(message), sourceCodeInfo);
                 }
@@ -3473,7 +3415,10 @@ var Playground = (function (exports) {
                 var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
                 assertStringOrNumber(first, sourceCodeInfo);
                 assertStringOrNumber(second, sourceCodeInfo);
-                message = typeof message === 'string' && message ? " \"".concat(message, "\"") : '';
+                if (message !== undefined) {
+                    assertString(message, sourceCodeInfo);
+                }
+                message !== null && message !== void 0 ? message : (message = '');
                 if (compare(first, second, sourceCodeInfo) <= 0)
                     throw new AssertionError("Expected ".concat(first, " to be grater than ").concat(second, ".").concat(message), sourceCodeInfo);
                 return null;
@@ -3485,7 +3430,10 @@ var Playground = (function (exports) {
                 var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
                 assertStringOrNumber(first, sourceCodeInfo);
                 assertStringOrNumber(second, sourceCodeInfo);
-                message = typeof message === 'string' && message ? " \"".concat(message, "\"") : '';
+                if (message !== undefined) {
+                    assertString(message, sourceCodeInfo);
+                }
+                message !== null && message !== void 0 ? message : (message = '');
                 if (compare(first, second, sourceCodeInfo) < 0)
                     throw new AssertionError("Expected ".concat(first, " to be grater than or equal to ").concat(second, ".").concat(message), sourceCodeInfo);
                 return null;
@@ -3497,7 +3445,10 @@ var Playground = (function (exports) {
                 var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
                 assertStringOrNumber(first, sourceCodeInfo);
                 assertStringOrNumber(second, sourceCodeInfo);
-                message = typeof message === 'string' && message ? " \"".concat(message, "\"") : '';
+                if (message !== undefined) {
+                    assertString(message, sourceCodeInfo);
+                }
+                message !== null && message !== void 0 ? message : (message = '');
                 if (compare(first, second, sourceCodeInfo) >= 0)
                     throw new AssertionError("Expected ".concat(first, " to be less than ").concat(second, ".").concat(message), sourceCodeInfo);
                 return null;
@@ -3509,7 +3460,10 @@ var Playground = (function (exports) {
                 var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
                 assertStringOrNumber(first, sourceCodeInfo);
                 assertStringOrNumber(second, sourceCodeInfo);
-                message = typeof message === 'string' && message ? " \"".concat(message, "\"") : '';
+                if (message !== undefined) {
+                    assertString(message, sourceCodeInfo);
+                }
+                message !== null && message !== void 0 ? message : (message = '');
                 if (compare(first, second, sourceCodeInfo) > 0)
                     throw new AssertionError("Expected ".concat(first, " to be less than or equal to ").concat(second, ".").concat(message), sourceCodeInfo);
                 return null;
@@ -3519,7 +3473,10 @@ var Playground = (function (exports) {
         'assert-true': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), first = _b[0], message = _b[1];
-                message = typeof message === 'string' && message ? " \"".concat(message, "\"") : '';
+                if (message !== undefined) {
+                    assertString(message, sourceCodeInfo);
+                }
+                message !== null && message !== void 0 ? message : (message = '');
                 if (first !== true)
                     throw new AssertionError("Expected ".concat(first, " to be true.").concat(message), sourceCodeInfo);
                 return null;
@@ -3529,7 +3486,10 @@ var Playground = (function (exports) {
         'assert-false': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), first = _b[0], message = _b[1];
-                message = typeof message === 'string' && message ? " \"".concat(message, "\"") : '';
+                if (message !== undefined) {
+                    assertString(message, sourceCodeInfo);
+                }
+                message !== null && message !== void 0 ? message : (message = '');
                 if (first !== false)
                     throw new AssertionError("Expected ".concat(first, " to be false.").concat(message), sourceCodeInfo);
                 return null;
@@ -3539,7 +3499,10 @@ var Playground = (function (exports) {
         'assert-truthy': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), first = _b[0], message = _b[1];
-                message = typeof message === 'string' && message ? " \"".concat(message, "\"") : '';
+                if (message !== undefined) {
+                    assertString(message, sourceCodeInfo);
+                }
+                message !== null && message !== void 0 ? message : (message = '');
                 if (!first)
                     throw new AssertionError("Expected ".concat(first, " to be truthy.").concat(message), sourceCodeInfo);
                 return null;
@@ -3549,7 +3512,10 @@ var Playground = (function (exports) {
         'assert-falsy': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), first = _b[0], message = _b[1];
-                message = typeof message === 'string' && message ? " \"".concat(message, "\"") : '';
+                if (message !== undefined) {
+                    assertString(message, sourceCodeInfo);
+                }
+                message !== null && message !== void 0 ? message : (message = '');
                 if (first)
                     throw new AssertionError("Expected ".concat(first, " to be falsy.").concat(message), sourceCodeInfo);
                 return null;
@@ -3559,7 +3525,10 @@ var Playground = (function (exports) {
         'assert-null': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), first = _b[0], message = _b[1];
-                message = typeof message === 'string' && message ? " \"".concat(message, "\"") : '';
+                if (message !== undefined) {
+                    assertString(message, sourceCodeInfo);
+                }
+                message !== null && message !== void 0 ? message : (message = '');
                 if (first !== null)
                     throw new AssertionError("Expected ".concat(first, " to be null.").concat(message), sourceCodeInfo);
                 return null;
@@ -3570,7 +3539,10 @@ var Playground = (function (exports) {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 2), func = _c[0], message = _c[1];
                 var executeFunction = _b.executeFunction;
-                message = typeof message === 'string' && message ? " \"".concat(message, "\"") : '';
+                if (message !== undefined) {
+                    assertString(message, sourceCodeInfo);
+                }
+                message !== null && message !== void 0 ? message : (message = '');
                 assertLitsFunction(func, sourceCodeInfo);
                 try {
                     executeFunction(func, [], contextStack, sourceCodeInfo);
@@ -3586,7 +3558,10 @@ var Playground = (function (exports) {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 3), func = _c[0], throwMessage = _c[1], message = _c[2];
                 var executeFunction = _b.executeFunction;
-                message = typeof message === 'string' && message ? " \"".concat(message, "\"") : '';
+                if (message !== undefined) {
+                    assertString(message, sourceCodeInfo);
+                }
+                message !== null && message !== void 0 ? message : (message = '');
                 assertString(throwMessage, sourceCodeInfo);
                 assertLitsFunction(func, sourceCodeInfo);
                 try {
@@ -3607,7 +3582,10 @@ var Playground = (function (exports) {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 2), func = _c[0], message = _c[1];
                 var executeFunction = _b.executeFunction;
-                message = typeof message === 'string' && message ? " \"".concat(message, "\"") : '';
+                if (message !== undefined) {
+                    assertString(message, sourceCodeInfo);
+                }
+                message !== null && message !== void 0 ? message : (message = '');
                 assertLitsFunction(func, sourceCodeInfo);
                 try {
                     executeFunction(func, [], contextStack, sourceCodeInfo);
@@ -4304,12 +4282,6 @@ var Playground = (function (exports) {
         'comp': {
             evaluate: function (fns, sourceCodeInfo) {
                 var _a;
-                if (fns.length > 1) {
-                    var last = fns[fns.length - 1];
-                    if (Array.isArray(last))
-                        // eslint-disable-next-line ts/no-unsafe-assignment
-                        fns = __spreadArray(__spreadArray([], __read(fns.slice(0, -1)), false), __read(last), false);
-                }
                 return _a = {},
                     _a[FUNCTION_SYMBOL] = true,
                     _a.sourceCodeInfo = sourceCodeInfo,
@@ -4965,13 +4937,11 @@ var Playground = (function (exports) {
         },
     };
 
-    function addToContext(bindings, context, contextStack, evaluateAstNode, sourceCodeInfo) {
+    function addToContext(bindings, context, contextStack, evaluateAstNode) {
         var e_1, _a;
         try {
             for (var bindings_1 = __values(bindings), bindings_1_1 = bindings_1.next(); !bindings_1_1.done; bindings_1_1 = bindings_1.next()) {
                 var binding = bindings_1_1.value;
-                if (context[binding.n])
-                    throw new LitsError("Variable already defined: ".concat(binding.n, "."), sourceCodeInfo);
                 context[binding.n] = { value: evaluateAstNode(binding.v, contextStack) };
             }
         }
@@ -5015,8 +4985,6 @@ var Playground = (function (exports) {
                     bindingIndices[bindingIndex - 1] = asNonUndefined(bindingIndices[bindingIndex - 1], sourceCodeInfo) + 1;
                     break;
                 }
-                if (context[binding.n])
-                    throw new LitsError("Variable already defined: ".concat(binding.n, "."), sourceCodeInfo);
                 context[binding.n] = {
                     value: asAny(seq[index], sourceCodeInfo),
                 };
@@ -5025,7 +4993,7 @@ var Playground = (function (exports) {
                         var modifier = modifiers_1_1.value;
                         switch (modifier) {
                             case '&let':
-                                addToContext(asNonUndefined(letBindings, sourceCodeInfo), context, newContextStack, evaluateAstNode, sourceCodeInfo);
+                                addToContext(asNonUndefined(letBindings, sourceCodeInfo), context, newContextStack, evaluateAstNode);
                                 break;
                             case '&when':
                                 if (!evaluateAstNode(asAstNode(whenNode, sourceCodeInfo), newContextStack)) {
@@ -5471,6 +5439,7 @@ var Playground = (function (exports) {
                 return evaluateNormalExpression(node, contextStack);
             case AstNodeType.SpecialExpression:
                 return evaluateSpecialExpression(node, contextStack);
+            /* v8 ignore next 2 */
             default:
                 throw new LitsError("".concat(node.t, "-node cannot be evaluated"), (_a = getTokenDebugData(node.token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
         }
@@ -5678,9 +5647,6 @@ var Playground = (function (exports) {
         };
         ContextStackImpl.prototype.addValue = function (name, value) {
             var currentContext = this.contexts[0];
-            if (!currentContext) {
-                throw new Error('No context to add value to');
-            }
             if (currentContext[name]) {
                 throw new Error("Cannot redefine value \"".concat(name, "\""));
             }
@@ -5691,15 +5657,6 @@ var Playground = (function (exports) {
                 throw new Error("Cannot shadow builtin function \"".concat(name, "\""));
             }
             currentContext[name] = { value: toAny(value) };
-        };
-        ContextStackImpl.prototype.clone = function () {
-            // eslint-disable-next-line ts/no-unsafe-argument
-            return new ContextStackImpl(JSON.parse(JSON.stringify({
-                contexts: this.contexts,
-                values: this.values,
-                lazyValues: this.lazyValues,
-                nativeJsFunctions: this.nativeJsFunctions,
-            })));
         };
         ContextStackImpl.prototype.getValue = function (name) {
             var e_1, _a;
@@ -5768,8 +5725,6 @@ var Playground = (function (exports) {
                     _b);
                 return builtinFunction;
             }
-            if (builtin.specialExpressions[value])
-                return 'specialExpression';
             var nativeJsFunction = (_f = this.nativeJsFunctions) === null || _f === void 0 ? void 0 : _f[value];
             if (nativeJsFunction) {
                 return {
@@ -5822,1349 +5777,6 @@ var Playground = (function (exports) {
                 }, {}),
         });
         return contextStack.create({});
-    }
-
-    function minifyTokenStream(tokenStream, _a) {
-        var removeWhiteSpace = _a.removeWhiteSpace;
-        var tokens = tokenStream.tokens
-            .filter(function (token) {
-            if (isA_CommentToken(token)
-                || isMultiLineCommentToken(token)
-                || (removeWhiteSpace && isWhitespaceToken(token))) {
-                return false;
-            }
-            return true;
-        });
-        return __assign(__assign({}, tokenStream), { tokens: tokens });
-    }
-
-    function parseSymbol(tokenStream, parseState) {
-        var _a;
-        var tkn = asToken(tokenStream.tokens[parseState.position++]);
-        if (!isSymbolToken(tkn)) {
-            throw new LitsError("Expected symbol token, got ".concat(tkn[0]), (_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-        }
-        if (tkn[1][0] !== '\'') {
-            return {
-                t: AstNodeType.Symbol,
-                v: tkn[1],
-                p: [],
-                n: undefined,
-                token: getTokenDebugData(tkn) && tkn,
-            };
-        }
-        else {
-            var value = tkn[1].substring(1, tkn[1].length - 1)
-                .replace(/(\\{2})|(\\')|\\(.)/g, function (_, backslash, singleQuote, normalChar) {
-                if (backslash) {
-                    return '\\';
-                }
-                if (singleQuote) {
-                    return '\'';
-                }
-                return "\\".concat(normalChar);
-            });
-            return {
-                t: AstNodeType.Symbol,
-                v: value,
-                p: [],
-                n: undefined,
-                token: getTokenDebugData(tkn) && tkn,
-            };
-        }
-    }
-    function parseReservedSymbol(tokenStream, parseState) {
-        var _a;
-        var tkn = asToken(tokenStream.tokens[parseState.position++]);
-        if (!isReservedSymbolToken(tkn)) {
-            throw new LitsError("Expected symbol token, got ".concat(tkn[0]), (_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-        }
-        if (isReservedSymbolToken(tkn)) {
-            var symbol = tkn[1];
-            if (isNumberReservedSymbol(symbol)) {
-                return {
-                    t: AstNodeType.Number,
-                    v: numberReservedSymbolRecord[symbol],
-                    p: [],
-                    n: undefined,
-                    token: getTokenDebugData(tkn) && tkn,
-                };
-            }
-        }
-        return {
-            t: AstNodeType.ReservedSymbol,
-            v: tkn[1],
-            p: [],
-            n: undefined,
-            token: getTokenDebugData(tkn) && tkn,
-        };
-    }
-    function parseNumber(tokenStream, parseState) {
-        var _a;
-        var tkn = tokenStream.tokens[parseState.position++];
-        if (!isBasePrefixedNumberToken(tkn) && !isNumberToken(tkn)) {
-            throw new LitsError("Expected number token, got ".concat(tkn), (_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-        }
-        var value = tkn[1];
-        var negative = value[0] === '-';
-        var numberString = (negative ? value.substring(1) : value).replace(/_/g, '');
-        return {
-            t: AstNodeType.Number,
-            v: negative ? -Number(numberString) : Number(numberString),
-            p: [],
-            n: undefined,
-            token: getTokenDebugData(tkn) && tkn,
-        };
-    }
-    function parseString(tokenStream, parseState) {
-        var tkn = asStringToken(tokenStream.tokens[parseState.position++]);
-        var value = tkn[1].substring(1, tkn[1].length - 1)
-            .replace(/(\\{2})|(\\")|(\\n)|(\\t)|(\\r)|(\\b)|(\\f)|\\(.)/g, function (_, backslash, doubleQuote, newline, tab, carriageReturn, backspace, formFeed, normalChar) {
-            // If it's a double escape (\\x), return \x
-            if (backslash) {
-                return '\\';
-            }
-            // If it's a special character (\n, \t, \r, \b, \f), return the special character
-            else if (newline) {
-                return '\n';
-            }
-            else if (tab) {
-                return '\t';
-            }
-            else if (carriageReturn) {
-                return '\r';
-            }
-            else if (backspace) {
-                return '\b';
-            }
-            else if (formFeed) {
-                return '\f';
-            }
-            else if (doubleQuote) {
-                return '"';
-            }
-            return normalChar;
-        });
-        return {
-            t: AstNodeType.String,
-            v: value,
-            p: [],
-            n: undefined,
-            token: getTokenDebugData(tkn) && tkn,
-        };
-    }
-    function parseRegexpShorthand(tokenStream, parseState) {
-        var tkn = asRegexpShorthandToken(tokenStream.tokens[parseState.position++]);
-        var endStringPosition = tkn[1].lastIndexOf('"');
-        var regexpString = tkn[1].substring(2, endStringPosition);
-        var optionsString = tkn[1].substring(endStringPosition + 1);
-        var stringNode = {
-            t: AstNodeType.String,
-            v: regexpString,
-            p: [],
-            n: undefined,
-            token: getTokenDebugData(tkn) && tkn,
-        };
-        var optionsNode = {
-            t: AstNodeType.String,
-            v: optionsString,
-            p: [],
-            n: undefined,
-            token: getTokenDebugData(tkn) && tkn,
-        };
-        var node = {
-            t: AstNodeType.NormalExpression,
-            n: 'regexp',
-            p: [stringNode, optionsNode],
-            token: getTokenDebugData(tkn) && tkn,
-        };
-        return node;
-    }
-
-    var exponentiationPrecedence = 10;
-    var binaryFunctionalOperatorPrecedence = 1;
-    var placeholderRegexp = /^\$([1-9]\d?)?$/;
-    function getPrecedence(operatorSign) {
-        switch (operatorSign) {
-            case '**': // exponentiation
-                return exponentiationPrecedence;
-            case '*': // multiplication
-            case '/': // division
-            case '%': // remainder
-                return 9;
-            case '+': // addition
-            case '-': // subtraction
-                return 8;
-            case '<<': // left shift
-            case '>>': // signed right shift
-            case '>>>': // unsigned right shift
-                return 7;
-            case '++': // string concatenation
-                return 6;
-            case '<': // less than
-            case '<=': // less than or equal
-            case '≤': // less than or equal
-            case '>': // greater than
-            case '>=': // greater than or equal
-            case '≥': // greater than or equal
-                return 5;
-            case '=': // equal
-            case '!=': // not equal
-            case '≠': // not equal
-                return 4;
-            case '&': // bitwise AND
-            case '^': // bitwise XOR
-            case '|': // bitwise OR
-                return 3;
-            case '&&': // logical AND
-            case '||': // logical OR
-            case '??': // nullish coalescing
-                return 2;
-            // leave room for binaryFunctionalOperatorPrecedence = 1
-            default:
-                throw new Error("Unknown binary operator: ".concat(operatorSign));
-        }
-    }
-    function createNamedNormalExpressionNode(name, params, token) {
-        var node = {
-            t: AstNodeType.NormalExpression,
-            n: name,
-            p: params,
-            token: getTokenDebugData(token) && token,
-        };
-        var builtinExpression = builtin.normalExpressions[node.n];
-        if (builtinExpression) {
-            assertNumberOfParams(builtinExpression.paramCount, node);
-        }
-        return node;
-    }
-    function fromSymbolToStringNode(symbol) {
-        return {
-            t: AstNodeType.String,
-            v: symbol.v,
-            token: getTokenDebugData(symbol.token) && symbol.token,
-            p: [],
-            n: undefined,
-        };
-    }
-    function createAccessorNode(left, right, token) {
-        // Unnamed normal expression
-        return {
-            t: AstNodeType.NormalExpression,
-            p: [left, right],
-            n: undefined,
-            token: getTokenDebugData(token) && token,
-        };
-    }
-    function fromBinaryOperatorToAstNode(operator, left, right, token) {
-        var _a, _b, _c;
-        var operatorName = operator[1];
-        switch (operatorName) {
-            case '.':
-                return createAccessorNode(left, fromSymbolToStringNode(asSymbolNode(right, (_a = getTokenDebugData(token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)), token);
-            case '**': // exponentiation
-            case '*':
-            case '/':
-            case '%':
-            case '+':
-            case '-':
-            case '<<':
-            case '>>':
-            case '>>>':
-            case '++':
-            case '<':
-            case '<=':
-            case '≤':
-            case '>':
-            case '>=':
-            case '≥':
-            case '=':
-            case '!=':
-            case '≠':
-            case '&':
-            case '^':
-            case '|':
-                return createNamedNormalExpressionNode(operatorName, [left, right], token);
-            case '&&':
-            case '||':
-            case '??':
-                return {
-                    t: AstNodeType.SpecialExpression,
-                    n: operatorName,
-                    p: [left, right],
-                    token: getTokenDebugData(token) && token,
-                };
-            /* v8 ignore next 8 */
-            case ';':
-            case ':=':
-            case ',':
-            case '->':
-            case '...':
-                throw new LitsError("Unknown binary operator: ".concat(operatorName), (_b = getTokenDebugData(token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
-            default:
-                throw new LitsError("Unknown binary operator: ".concat(operatorName), (_c = getTokenDebugData(token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
-        }
-    }
-    var AlgebraicParser = /** @class */ (function () {
-        function AlgebraicParser(tokenStream, parseState) {
-            this.tokenStream = tokenStream;
-            this.parseState = parseState;
-        }
-        AlgebraicParser.prototype.peek = function () {
-            return this.tokenStream.tokens[this.parseState.position];
-        };
-        AlgebraicParser.prototype.peekAhead = function (count) {
-            return this.tokenStream.tokens[this.parseState.position + count];
-        };
-        AlgebraicParser.prototype.advance = function () {
-            this.parseState.position += 1;
-        };
-        AlgebraicParser.prototype.parse = function () {
-            var _a;
-            var nodes = [];
-            while (!this.isAtEnd()) {
-                nodes.push(this.parseExpression(0, true));
-                if (isOperatorToken(this.peek(), ';')) {
-                    this.advance();
-                }
-                else {
-                    if (!this.isAtEnd()) {
-                        throw new LitsError('Expected ;', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-                    }
-                }
-            }
-            return nodes;
-        };
-        AlgebraicParser.prototype.parseExpression = function (precedence, moduleScope) {
-            var _a, _b;
-            if (precedence === void 0) { precedence = 0; }
-            if (moduleScope === void 0) { moduleScope = false; }
-            var firstToken = this.peek();
-            var left;
-            if (isSymbolToken(firstToken)) {
-                switch (firstToken[1]) {
-                    case 'let':
-                        return this.parseLet(firstToken);
-                    case 'if':
-                    case 'unless':
-                        left = this.parseIfOrUnless(firstToken);
-                        break;
-                    case 'cond':
-                        left = this.parseCond(firstToken);
-                        break;
-                    case 'switch':
-                        left = this.parseSwitch(firstToken);
-                        break;
-                    case 'for':
-                    case 'doseq':
-                        left = this.parseForOrDoseq(firstToken);
-                        break;
-                    case 'do':
-                        left = this.parseDo(firstToken);
-                        break;
-                    case 'loop':
-                        left = this.parseLoop(firstToken);
-                        break;
-                    case 'try':
-                        left = this.parseTry(firstToken);
-                        break;
-                }
-            }
-            else if (isReservedSymbolToken(firstToken, 'function')) {
-                return this.parseFunction(firstToken);
-            }
-            else if (isReservedSymbolToken(firstToken, 'export')) {
-                if (!moduleScope) {
-                    throw new LitsError('export is only allowed in module scope', (_a = getTokenDebugData(firstToken)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-                }
-                return this.parseExport(firstToken);
-            }
-            left || (left = this.parseOperand());
-            var operator = this.peek();
-            while (!this.isAtExpressionEnd()) {
-                if (isA_BinaryOperatorToken(operator)) {
-                    var name_1 = operator[1];
-                    var newPrecedece = getPrecedence(name_1);
-                    if (newPrecedece <= precedence
-                        // ** (exponentiation) is right associative
-                        && !(newPrecedece === exponentiationPrecedence && precedence === exponentiationPrecedence)) {
-                        break;
-                    }
-                    this.advance();
-                    var right = this.parseExpression(newPrecedece);
-                    var token = hasTokenDebugData(operator) ? operator : undefined;
-                    left = fromBinaryOperatorToAstNode(operator, left, right, token);
-                }
-                else if (isSymbolToken(operator)) {
-                    if (!isFunctionOperator(operator[1])) {
-                        break;
-                    }
-                    var newPrecedece = binaryFunctionalOperatorPrecedence;
-                    if (newPrecedece <= precedence) {
-                        break;
-                    }
-                    this.advance();
-                    var right = this.parseExpression(newPrecedece);
-                    var token = hasTokenDebugData(operator) ? operator : undefined;
-                    left = createNamedNormalExpressionNode(operator[1], [left, right], token);
-                }
-                else {
-                    break;
-                }
-                operator = this.peek();
-            }
-            if (!left) {
-                throw new LitsError('Expected operand', (_b = getTokenDebugData(this.peek())) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
-            }
-            return left;
-        };
-        AlgebraicParser.prototype.parseOperand = function () {
-            var _a, _b;
-            var operand = this.parseOperandPart();
-            var token = this.peek();
-            while (isOperatorToken(token, '.') || isLBracketToken(token) || isLParenToken(token)) {
-                if (token[1] === '.') {
-                    this.advance();
-                    var symbolToken = this.peek();
-                    if (!isSymbolToken(symbolToken)) {
-                        throw new LitsError('Expected symbol', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-                    }
-                    var stringNode = {
-                        t: AstNodeType.String,
-                        v: symbolToken[1],
-                        token: getTokenDebugData(symbolToken) && symbolToken,
-                        p: [],
-                        n: undefined,
-                    };
-                    operand = createAccessorNode(operand, stringNode, token);
-                    this.advance();
-                    token = this.peek();
-                }
-                else if (isLBracketToken(token)) {
-                    this.advance();
-                    var expression = this.parseExpression();
-                    if (!isRBracketToken(this.peek())) {
-                        throw new LitsError('Expected closing bracket', (_b = getTokenDebugData(this.peek())) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
-                    }
-                    operand = createAccessorNode(operand, expression, token);
-                    this.advance();
-                    token = this.peek();
-                }
-                else if (isLParenToken(token)) {
-                    operand = this.parseFunctionCall(operand);
-                    token = this.peek();
-                }
-            }
-            return operand;
-        };
-        AlgebraicParser.prototype.parseOperandPart = function () {
-            var _a, _b;
-            var token = this.peek();
-            // Parentheses
-            if (isLParenToken(token)) {
-                var positionBefore = this.parseState.position;
-                var lamdaFunction = this.parseLambdaFunction();
-                if (lamdaFunction) {
-                    return lamdaFunction;
-                }
-                this.parseState.position = positionBefore;
-                this.advance();
-                var expression = this.parseExpression();
-                if (!isRParenToken(this.peek())) {
-                    throw new Error('Expected closing parenthesis');
-                }
-                this.advance();
-                return expression;
-            }
-            // Unary operators
-            else if (isOperatorToken(token)) {
-                var operatorName = token[1];
-                if (isBinaryOperator(operatorName)) {
-                    this.advance();
-                    return {
-                        t: AstNodeType.Symbol,
-                        v: operatorName,
-                        token: getTokenDebugData(token) && token,
-                        p: [],
-                        n: undefined,
-                    };
-                }
-                if (operatorName === '->') {
-                    return this.parseShorthandLamdaFunction();
-                }
-                else {
-                    throw new LitsError("Illegal operator: ".concat(operatorName), (_a = getTokenDebugData(token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-                }
-            }
-            // Object litteral, e.g. {a=1, b=2}
-            if (isLBraceToken(token)) {
-                return this.parseObject();
-            }
-            // Array litteral, e.g. [1, 2]
-            if (isLBracketToken(token)) {
-                return this.parseArray();
-            }
-            var tokenType = token[0];
-            switch (tokenType) {
-                case 'Number':
-                case 'BasePrefixedNumber':
-                    return parseNumber(this.tokenStream, this.parseState);
-                case 'String':
-                    return parseString(this.tokenStream, this.parseState);
-                case 'Symbol': {
-                    var positionBefore = this.parseState.position;
-                    var lamdaFunction = this.parseLambdaFunction();
-                    if (lamdaFunction) {
-                        return lamdaFunction;
-                    }
-                    this.parseState.position = positionBefore;
-                    return parseSymbol(this.tokenStream, this.parseState);
-                }
-                case 'ReservedSymbol':
-                    return parseReservedSymbol(this.tokenStream, this.parseState);
-                case 'RegexpShorthand':
-                    return parseRegexpShorthand(this.tokenStream, this.parseState);
-                default:
-                    throw new LitsError("Unknown token type: ".concat(tokenType), (_b = getTokenDebugData(token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
-            }
-        };
-        AlgebraicParser.prototype.parseObject = function () {
-            var _a, _b, _c;
-            var firstToken = asLBraceToken(this.peek());
-            this.advance();
-            var params = [];
-            while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
-                var key = this.parseOperand();
-                if (key === null) {
-                    throw new LitsError('Expected key', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-                }
-                if (key.t !== AstNodeType.Symbol && key.t !== AstNodeType.String) {
-                    throw new LitsError('Expected key to be a symbol or a string', (_b = getTokenDebugData(this.peek())) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
-                }
-                params.push({
-                    t: AstNodeType.String,
-                    v: key.v,
-                    token: getTokenDebugData(key.token) && key.token,
-                    p: [],
-                    n: undefined,
-                });
-                assertOperatorToken(this.peek(), ':=');
-                this.advance();
-                params.push(this.parseExpression());
-                var nextToken = this.peek();
-                if (!isOperatorToken(nextToken, ',') && !isRBraceToken(nextToken)) {
-                    throw new LitsError('Expected comma or closing brace', (_c = getTokenDebugData(this.peek())) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
-                }
-                if (isOperatorToken(nextToken, ',')) {
-                    this.advance();
-                }
-            }
-            assertRBraceToken(this.peek());
-            this.advance();
-            return {
-                t: AstNodeType.NormalExpression,
-                n: 'object',
-                p: params,
-                token: getTokenDebugData(firstToken) && firstToken,
-            };
-        };
-        AlgebraicParser.prototype.parseArray = function () {
-            var _a;
-            var firstToken = asLBracketToken(this.peek());
-            this.advance();
-            var params = [];
-            while (!this.isAtEnd() && !isRBracketToken(this.peek())) {
-                params.push(this.parseExpression());
-                var nextToken = this.peek();
-                if (!isOperatorToken(nextToken, ',') && !isRBracketToken(nextToken)) {
-                    throw new LitsError('Expected comma or closing parenthesis', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-                }
-                if (isOperatorToken(nextToken, ',')) {
-                    this.advance();
-                }
-            }
-            assertRBracketToken(this.peek());
-            this.advance();
-            return {
-                t: AstNodeType.NormalExpression,
-                n: 'array',
-                p: params,
-                token: getTokenDebugData(firstToken) && firstToken,
-            };
-        };
-        AlgebraicParser.prototype.parseFunctionCall = function (symbol) {
-            var _a, _b;
-            var isNamedFunction = symbol.t === AstNodeType.Symbol;
-            this.advance();
-            var params = [];
-            while (!this.isAtEnd() && !isRParenToken(this.peek())) {
-                params.push(this.parseExpression());
-                var nextToken = this.peek();
-                if (!isOperatorToken(nextToken, ',') && !isRParenToken(nextToken)) {
-                    throw new LitsError('Expected comma or closing parenthesis', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-                }
-                if (isOperatorToken(nextToken, ',')) {
-                    this.advance();
-                }
-            }
-            if (!isRParenToken(this.peek())) {
-                throw new LitsError('Expected closing parenthesis', (_b = getTokenDebugData(this.peek())) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
-            }
-            this.advance();
-            if (isNamedFunction) {
-                if (specialExpressionKeys.includes(symbol.v)) {
-                    var name_2 = symbol.v;
-                    switch (name_2) {
-                        case '??':
-                        case '&&':
-                        case 'defined?':
-                        case '||':
-                        case 'recur':
-                        case 'throw': {
-                            var node = {
-                                t: AstNodeType.SpecialExpression,
-                                n: name_2,
-                                p: params,
-                                token: getTokenDebugData(symbol.token) && symbol.token,
-                            };
-                            assertNumberOfParams(builtin.specialExpressions[node.n].paramCount, node);
-                            return node;
-                        }
-                        case 'fn':
-                        case 'def':
-                        case 'defn':
-                            throw new Error("Special expression ".concat(name_2, " is not available in algebraic notation"));
-                        default:
-                            throw new Error("Unknown special expression: ".concat(name_2));
-                    }
-                }
-                return createNamedNormalExpressionNode(symbol.v, params, symbol.token);
-            }
-            else {
-                return {
-                    t: AstNodeType.NormalExpression,
-                    n: undefined,
-                    p: __spreadArray([symbol], __read(params), false),
-                    token: getTokenDebugData(symbol.token) && symbol.token,
-                };
-            }
-        };
-        AlgebraicParser.prototype.parseLambdaFunction = function () {
-            var firstToken = this.peek();
-            if (isLParenToken(firstToken)
-                && isSymbolToken(this.peekAhead(1))
-                && isOperatorToken(this.peekAhead(2), '->')) {
-                return null;
-            }
-            try {
-                var _a = this.parseFunctionArguments(), functionArguments = _a.functionArguments, arity = _a.arity;
-                if (!isOperatorToken(this.peek(), '->')) {
-                    return null;
-                }
-                this.advance();
-                var body = this.parseExpression();
-                return {
-                    t: AstNodeType.SpecialExpression,
-                    n: 'fn',
-                    p: [],
-                    o: [{
-                            as: functionArguments,
-                            b: [body],
-                            a: arity,
-                        }],
-                    token: getTokenDebugData(firstToken) && firstToken,
-                };
-            }
-            catch (_b) {
-                return null;
-            }
-        };
-        AlgebraicParser.prototype.parseFunctionArguments = function () {
-            var _a, _b, _c, _d, _e;
-            var firstToken = this.peek();
-            if (isSymbolToken(firstToken)) {
-                this.advance();
-                return {
-                    functionArguments: {
-                        m: [firstToken[1]],
-                        b: [],
-                        r: undefined,
-                    },
-                    arity: 1,
-                };
-            }
-            this.advance();
-            var rest = false;
-            var args = [];
-            var restArg;
-            while (!this.isAtEnd() && !isRParenToken(this.peek()) && !isSymbolToken(this.peek(), 'let')) {
-                if (isOperatorToken(this.peek(), '...')) {
-                    if (rest) {
-                        throw new LitsError('Multiple spread operators in lambda function', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-                    }
-                    this.advance();
-                    rest = true;
-                }
-                var symbolToken = this.peek();
-                if (!isSymbolToken(symbolToken)) {
-                    throw new LitsError('Expected symbol', (_b = getTokenDebugData(this.peek())) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
-                }
-                if (rest) {
-                    restArg = symbolToken[1];
-                }
-                else {
-                    args.push(symbolToken[1]);
-                }
-                this.advance();
-                if (!isOperatorToken(this.peek(), ',') && !isRParenToken(this.peek()) && !isSymbolToken(this.peek(), 'let')) {
-                    throw new LitsError('Expected comma or closing parenthesis', (_c = getTokenDebugData(this.peek())) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
-                }
-                if (isOperatorToken(this.peek(), ',')) {
-                    this.advance();
-                }
-            }
-            var arity = restArg !== undefined ? { min: args.length } : args.length;
-            // let bindings, to be able to pass on values in the context down to the body
-            // This is needed since lits is dynamically scoped
-            // E.g.
-            // x => y => x + y // would not work, x is not available in the second lambda
-            // x => (y, let x = x) => x + y // would work, x is available in the second lambda
-            var bindingNodess = [];
-            var token = this.peek();
-            while (isSymbolToken(token, 'let')) {
-                var letNode = this.parseLet(token, true);
-                bindingNodess.push(letNode.bs[0]);
-                if (!isOperatorToken(this.peek(), ',') && !isRParenToken(this.peek())) {
-                    throw new LitsError('Expected comma or closing parenthesis', (_d = getTokenDebugData(this.peek())) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
-                }
-                if (isOperatorToken(this.peek(), ',')) {
-                    this.advance();
-                }
-                token = this.peek();
-            }
-            if (!isRParenToken(this.peek())) {
-                throw new LitsError('Expected closing parenthesis', (_e = getTokenDebugData(this.peek())) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo);
-            }
-            var functionArguments = {
-                m: args,
-                r: restArg,
-                b: bindingNodess,
-            };
-            this.advance();
-            return {
-                functionArguments: functionArguments,
-                arity: arity,
-            };
-        };
-        AlgebraicParser.prototype.parseShorthandLamdaFunction = function () {
-            var _a, _b, _c;
-            var firstToken = this.peek();
-            this.advance();
-            var startPos = this.parseState.position;
-            var exprNode = this.parseExpression();
-            var endPos = this.parseState.position - 1;
-            var arity = 0;
-            var percent1 = 'NOT_SET'; // referring to argument bindings. % = NAKED, %1, %2, %3, etc = WITH_1
-            for (var pos = startPos; pos <= endPos; pos += 1) {
-                var tkn = this.tokenStream.tokens[pos];
-                if (isSymbolToken(tkn)) {
-                    var match = placeholderRegexp.exec(tkn[1]);
-                    if (match) {
-                        var number = (_a = match[1]) !== null && _a !== void 0 ? _a : '1';
-                        if (number === '1') {
-                            var mixedPercent1 = (!match[1] && percent1 === 'WITH_1') || (match[1] && percent1 === 'NAKED');
-                            if (mixedPercent1)
-                                throw new LitsError('Please make up your mind, either use $ or $1', (_b = getTokenDebugData(firstToken)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
-                            percent1 = match[1] ? 'WITH_1' : 'NAKED';
-                        }
-                        arity = Math.max(arity, Number(number));
-                        if (arity > 20)
-                            throw new LitsError('Can\'t specify more than 20 arguments', (_c = getTokenDebugData(firstToken)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
-                    }
-                }
-            }
-            var mandatoryArguments = [];
-            for (var i = 1; i <= arity; i += 1) {
-                if (i === 1 && percent1 === 'NAKED')
-                    mandatoryArguments.push('$');
-                else
-                    mandatoryArguments.push("$".concat(i));
-            }
-            var args = {
-                b: [],
-                m: mandatoryArguments,
-            };
-            var node = {
-                t: AstNodeType.SpecialExpression,
-                n: 'fn',
-                p: [],
-                o: [
-                    {
-                        as: args,
-                        b: [exprNode],
-                        a: args.m.length,
-                    },
-                ],
-                token: getTokenDebugData(firstToken) && firstToken,
-            };
-            return node;
-        };
-        AlgebraicParser.prototype.parseLet = function (token, optionalSemicolon) {
-            if (optionalSemicolon === void 0) { optionalSemicolon = false; }
-            this.advance();
-            var letSymbol = parseSymbol(this.tokenStream, this.parseState);
-            assertOperatorToken(this.peek(), ':=');
-            this.advance();
-            var value = this.parseExpression();
-            if (!optionalSemicolon) {
-                assertOperatorToken(this.peek(), ';');
-            }
-            return {
-                t: AstNodeType.SpecialExpression,
-                n: 'let',
-                p: [],
-                bs: [{
-                        t: AstNodeType.Binding,
-                        n: letSymbol.v,
-                        v: value,
-                        p: [],
-                        token: getTokenDebugData(token) && token,
-                    }],
-                token: getTokenDebugData(letSymbol.token) && letSymbol.token,
-            };
-        };
-        AlgebraicParser.prototype.parseDo = function (token) {
-            var _a;
-            this.advance();
-            var expressions = [];
-            while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
-                expressions.push(this.parseExpression());
-                if (isOperatorToken(this.peek(), ';')) {
-                    this.advance();
-                }
-                else if (!isReservedSymbolToken(this.peek(), 'end')) {
-                    throw new LitsError('Expected ;', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-                }
-            }
-            assertReservedSymbolToken(this.peek(), 'end');
-            this.advance();
-            return {
-                t: AstNodeType.SpecialExpression,
-                n: 'do',
-                p: expressions,
-                token: getTokenDebugData(token) && token,
-            };
-        };
-        AlgebraicParser.prototype.parseLoop = function (firstToken) {
-            var _a, _b;
-            this.advance();
-            var bindingNodes = [];
-            var token = this.peek();
-            while (!this.isAtEnd() && !isSymbolToken(token, 'do')) {
-                assertSymbolToken(token, 'let');
-                this.advance();
-                var symbol = parseSymbol(this.tokenStream, this.parseState);
-                assertOperatorToken(this.peek(), ':=');
-                this.advance();
-                var value = this.parseExpression();
-                bindingNodes.push({
-                    t: AstNodeType.Binding,
-                    n: symbol.v,
-                    v: value,
-                    p: [],
-                    token: getTokenDebugData(symbol.token) && symbol.token,
-                });
-                if (isOperatorToken(this.peek(), ',')) {
-                    this.advance();
-                }
-                token = this.peek();
-            }
-            if (bindingNodes.length === 0) {
-                throw new LitsError('Expected binding', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-            }
-            assertSymbolToken(token, 'do');
-            this.advance();
-            var params = [];
-            while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
-                params.push(this.parseExpression());
-                if (isOperatorToken(this.peek(), ';')) {
-                    this.advance();
-                }
-                else if (!isReservedSymbolToken(this.peek(), 'end')) {
-                    throw new LitsError('Expected ;', (_b = getTokenDebugData(this.peek())) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
-                }
-            }
-            assertReservedSymbolToken(this.peek(), 'end');
-            this.advance();
-            return {
-                t: AstNodeType.SpecialExpression,
-                n: 'loop',
-                p: params,
-                bs: bindingNodes,
-                token: getTokenDebugData(firstToken) && firstToken,
-            };
-        };
-        AlgebraicParser.prototype.parseTry = function (token) {
-            var _a, _b;
-            this.advance();
-            var tryExpressions = [];
-            while (!this.isAtEnd() && !isSymbolToken(this.peek(), 'catch')) {
-                tryExpressions.push(this.parseExpression());
-                if (isOperatorToken(this.peek(), ';')) {
-                    this.advance();
-                }
-                else if (!isSymbolToken(this.peek(), 'catch')) {
-                    throw new LitsError('Expected ;', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-                }
-            }
-            var tryExpression = tryExpressions.length === 1
-                ? tryExpressions[0]
-                : {
-                    t: AstNodeType.SpecialExpression,
-                    n: 'do',
-                    p: tryExpressions,
-                    token: getTokenDebugData(token) && token,
-                };
-            assertSymbolToken(this.peek(), 'catch');
-            this.advance();
-            var errorSymbol;
-            if (isLParenToken(this.peek())) {
-                this.advance();
-                errorSymbol = parseSymbol(this.tokenStream, this.parseState);
-                assertRParenToken(this.peek());
-                this.advance();
-            }
-            var catchExpressions = [];
-            while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
-                catchExpressions.push(this.parseExpression());
-                if (isOperatorToken(this.peek(), ';')) {
-                    this.advance();
-                }
-                else if (!isReservedSymbolToken(this.peek(), 'end')) {
-                    throw new LitsError('Expected ;', (_b = getTokenDebugData(this.peek())) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
-                }
-            }
-            assertReservedSymbolToken(this.peek(), 'end');
-            this.advance();
-            var catchExpression = catchExpressions.length === 1
-                ? catchExpressions[0]
-                : {
-                    t: AstNodeType.SpecialExpression,
-                    n: 'do',
-                    p: catchExpressions,
-                    token: getTokenDebugData(token) && token,
-                };
-            return {
-                t: AstNodeType.SpecialExpression,
-                n: 'try',
-                p: [tryExpression],
-                ce: catchExpression,
-                e: errorSymbol,
-                token: getTokenDebugData(token) && token,
-            };
-        };
-        AlgebraicParser.prototype.parseForOrDoseq = function (firstToken) {
-            var _a;
-            var isDoseq = firstToken[1] === 'doseq';
-            this.advance();
-            var forLoopBindings = [];
-            while (!this.isAtEnd() && !isSymbolToken(this.peek(), 'do')) {
-                forLoopBindings.push(this.parseForLoopBinding());
-            }
-            assertSymbolToken(this.peek(), 'do');
-            this.advance();
-            var expressions = [];
-            while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
-                expressions.push(this.parseExpression());
-                if (isOperatorToken(this.peek(), ';')) {
-                    this.advance();
-                }
-                else if (!isReservedSymbolToken(this.peek(), 'end')) {
-                    throw new LitsError('Expected ;', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-                }
-            }
-            assertReservedSymbolToken(this.peek(), 'end');
-            this.advance();
-            return {
-                t: AstNodeType.SpecialExpression,
-                n: isDoseq ? 'doseq' : 'for',
-                p: expressions,
-                token: getTokenDebugData(firstToken) && firstToken,
-                l: forLoopBindings,
-            };
-        };
-        AlgebraicParser.prototype.parseForLoopBinding = function () {
-            var _a, _b, _c, _d, _e, _f, _g;
-            assertReservedSymbolToken(this.peek(), 'each');
-            this.advance();
-            var bindingNode = this.parseBinding();
-            // if (isSymbolToken(this.peek(), 'do') || isReservedSymbolToken(this.peek(), 'each')) {
-            //   return {
-            //     b: bindingNode,
-            //     m: [],
-            //   }
-            // }
-            var modifiers = [];
-            var token = this.peek();
-            if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this.peek(), 'each') && !isOperatorToken(token, ',')) {
-                throw new LitsError('Expected do, each or comma', (_a = getTokenDebugData(token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-            }
-            if (isOperatorToken(token, ',')) {
-                this.advance();
-                token = this.peek();
-            }
-            if (!isSymbolToken(token, 'let')
-                && !isReservedSymbolToken(token, 'when')
-                && !isReservedSymbolToken(token, 'while')
-                && !isSymbolToken(token, 'do')
-                && !isReservedSymbolToken(token, 'each')) {
-                throw new LitsError('Expected symbol each, do, let, when or while', (_b = getTokenDebugData(token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
-            }
-            var letBindings;
-            if (token[1] === 'let') {
-                modifiers.push('&let');
-                letBindings = [];
-                while (isSymbolToken(token, 'let')) {
-                    var letNode = this.parseLet(token, true);
-                    letBindings.push(letNode.bs[0]);
-                    token = this.peek();
-                    if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this.peek(), 'each') && !isOperatorToken(token, ',')) {
-                        throw new LitsError('Expected do, each or comma', (_c = getTokenDebugData(token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
-                    }
-                    if (isOperatorToken(token, ',')) {
-                        this.advance();
-                    }
-                    token = this.peek();
-                }
-            }
-            var whenNode;
-            var whileNode;
-            while (isReservedSymbolToken(token, 'when')
-                || isReservedSymbolToken(token, 'while')) {
-                this.advance();
-                if (token[1] === 'when') {
-                    if (modifiers.includes('&when')) {
-                        throw new LitsError('Multiple when modifiers in for loop', (_d = getTokenDebugData(token)) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
-                    }
-                    modifiers.push('&when');
-                    whenNode = this.parseExpression();
-                }
-                else {
-                    if (modifiers.includes('&while')) {
-                        throw new LitsError('Multiple while modifiers in for loop', (_e = getTokenDebugData(token)) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo);
-                    }
-                    modifiers.push('&while');
-                    whileNode = this.parseExpression();
-                }
-                token = this.peek();
-                if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this.peek(), 'each') && !isOperatorToken(token, ',')) {
-                    throw new LitsError('Expected do or comma', (_f = getTokenDebugData(token)) === null || _f === void 0 ? void 0 : _f.sourceCodeInfo);
-                }
-                if (isOperatorToken(token, ',')) {
-                    this.advance();
-                }
-                token = this.peek();
-            }
-            if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this.peek(), 'each')) {
-                throw new LitsError('Expected do or each', (_g = getTokenDebugData(token)) === null || _g === void 0 ? void 0 : _g.sourceCodeInfo);
-            }
-            return {
-                b: bindingNode,
-                m: modifiers,
-                l: letBindings,
-                wn: whenNode,
-                we: whileNode,
-            };
-        };
-        AlgebraicParser.prototype.parseBinding = function () {
-            var firstToken = asSymbolToken(this.peek());
-            var name = firstToken[1];
-            this.advance();
-            assertReservedSymbolToken(this.peek(), 'in');
-            this.advance();
-            var value = this.parseExpression();
-            var node = {
-                t: AstNodeType.Binding,
-                n: name,
-                v: value,
-                p: [],
-                token: getTokenDebugData(firstToken) && firstToken,
-            };
-            return node;
-        };
-        AlgebraicParser.prototype.parseIfOrUnless = function (token) {
-            var _a, _b;
-            var isUnless = token[1] === 'unless';
-            this.advance();
-            var condition = this.parseExpression();
-            assertReservedSymbolToken(this.peek(), 'then');
-            this.advance();
-            var thenExpressions = [];
-            while (!this.isAtEnd()
-                && !isReservedSymbolToken(this.peek(), 'else')
-                && !isReservedSymbolToken(this.peek(), 'end')) {
-                thenExpressions.push(this.parseExpression());
-                if (isOperatorToken(this.peek(), ';')) {
-                    this.advance();
-                }
-                else if (!isReservedSymbolToken(this.peek(), 'else') && !isReservedSymbolToken(this.peek(), 'end')) {
-                    throw new LitsError('Expected ;', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-                }
-            }
-            var thenExpression = thenExpressions.length === 1
-                ? thenExpressions[0]
-                : {
-                    t: AstNodeType.SpecialExpression,
-                    n: 'do',
-                    p: thenExpressions,
-                    token: getTokenDebugData(token) && token,
-                };
-            var elseExpression;
-            if (isReservedSymbolToken(this.peek(), 'else')) {
-                this.advance();
-                var elseExpressions = [];
-                while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
-                    elseExpressions.push(this.parseExpression());
-                    if (isOperatorToken(this.peek(), ';')) {
-                        this.advance();
-                    }
-                    else if (!isReservedSymbolToken(this.peek(), 'end')) {
-                        throw new LitsError('Expected ;', (_b = getTokenDebugData(this.peek())) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
-                    }
-                }
-                elseExpression = elseExpressions.length === 1
-                    ? elseExpressions[0]
-                    : {
-                        t: AstNodeType.SpecialExpression,
-                        n: 'do',
-                        p: elseExpressions,
-                        token: getTokenDebugData(token) && token,
-                    };
-            }
-            assertReservedSymbolToken(this.peek(), 'end');
-            this.advance();
-            var params = [condition, thenExpression];
-            if (elseExpression) {
-                params.push(elseExpression);
-            }
-            return {
-                t: AstNodeType.SpecialExpression,
-                n: isUnless ? 'unless' : 'if',
-                p: params,
-                token: getTokenDebugData(token) && token,
-            };
-        };
-        AlgebraicParser.prototype.parseCond = function (token) {
-            var _a;
-            this.advance();
-            var params = [];
-            while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
-                assertReservedSymbolToken(this.peek(), 'case');
-                this.advance();
-                params.push(this.parseExpression());
-                assertReservedSymbolToken(this.peek(), 'then');
-                this.advance();
-                var expressions = [];
-                while (!this.isAtEnd()
-                    && !isReservedSymbolToken(this.peek(), 'case')
-                    && !isReservedSymbolToken(this.peek(), 'end')) {
-                    expressions.push(this.parseExpression());
-                    if (isOperatorToken(this.peek(), ';')) {
-                        this.advance();
-                    }
-                    else if (!isReservedSymbolToken(this.peek(), 'case') && !isReservedSymbolToken(this.peek(), 'end')) {
-                        throw new LitsError('Expected ;', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-                    }
-                }
-                params.push(expressions.length === 1
-                    ? expressions[0]
-                    : {
-                        t: AstNodeType.SpecialExpression,
-                        n: 'do',
-                        p: expressions,
-                        token: getTokenDebugData(token) && token,
-                    });
-                if (isReservedSymbolToken(this.peek(), 'end')) {
-                    break;
-                }
-                assertReservedSymbolToken(this.peek(), 'case');
-            }
-            assertReservedSymbolToken(this.peek(), 'end');
-            this.advance();
-            return {
-                t: AstNodeType.SpecialExpression,
-                n: 'cond',
-                p: params,
-                token: getTokenDebugData(token) && token,
-            };
-        };
-        AlgebraicParser.prototype.parseSwitch = function (token) {
-            var _a;
-            this.advance();
-            var params = [this.parseExpression()];
-            while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
-                assertReservedSymbolToken(this.peek(), 'case');
-                this.advance();
-                params.push(this.parseExpression());
-                assertReservedSymbolToken(this.peek(), 'then');
-                this.advance();
-                var expressions = [];
-                while (!this.isAtEnd()
-                    && !isReservedSymbolToken(this.peek(), 'case')
-                    && !isReservedSymbolToken(this.peek(), 'end')) {
-                    expressions.push(this.parseExpression());
-                    if (isOperatorToken(this.peek(), ';')) {
-                        this.advance();
-                    }
-                    else if (!isReservedSymbolToken(this.peek(), 'case') && !isReservedSymbolToken(this.peek(), 'end')) {
-                        throw new LitsError('Expected ;', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-                    }
-                }
-                params.push(expressions.length === 1
-                    ? expressions[0]
-                    : {
-                        t: AstNodeType.SpecialExpression,
-                        n: 'do',
-                        p: expressions,
-                        token: getTokenDebugData(token) && token,
-                    });
-                if (isReservedSymbolToken(this.peek(), 'end')) {
-                    break;
-                }
-                assertReservedSymbolToken(this.peek(), 'case');
-            }
-            assertReservedSymbolToken(this.peek(), 'end');
-            this.advance();
-            return {
-                t: AstNodeType.SpecialExpression,
-                n: 'switch',
-                p: params,
-                token: getTokenDebugData(token) && token,
-            };
-        };
-        AlgebraicParser.prototype.parseFunction = function (token) {
-            var _a;
-            this.advance();
-            var symbol = parseSymbol(this.tokenStream, this.parseState);
-            var _b = this.parseFunctionArguments(), functionArguments = _b.functionArguments, arity = _b.arity;
-            var body = [];
-            while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
-                body.push(this.parseExpression());
-                if (isOperatorToken(this.peek(), ';')) {
-                    this.advance();
-                }
-                else if (!isReservedSymbolToken(this.peek(), 'end')) {
-                    throw new LitsError('Expected ;', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-                }
-            }
-            assertReservedSymbolToken(this.peek(), 'end');
-            this.advance();
-            assertOperatorToken(this.peek(), ';');
-            return {
-                t: AstNodeType.SpecialExpression,
-                n: 'function',
-                f: symbol,
-                p: [],
-                o: [{
-                        as: functionArguments,
-                        b: body,
-                        a: arity,
-                    }],
-                token: getTokenDebugData(token) && token,
-            };
-        };
-        AlgebraicParser.prototype.isAtEnd = function () {
-            return this.parseState.position >= this.tokenStream.tokens.length;
-        };
-        AlgebraicParser.prototype.isAtExpressionEnd = function () {
-            if (this.isAtEnd()) {
-                return true;
-            }
-            var token = this.peek();
-            if (isOperatorToken(token)) {
-                return [';', ','].includes(token[1]);
-            }
-            if (isSymbolToken(token)) {
-                return ['catch'].includes(token[1]);
-            }
-            if (isReservedSymbolToken(token)) {
-                return ['else', 'when', 'while', 'then', 'end', 'case'].includes(token[1]);
-            }
-            return false;
-        };
-        AlgebraicParser.prototype.parseExport = function (token) {
-            var _a, _b;
-            this.advance();
-            if (isSymbolToken(this.peek(), 'let')) {
-                this.advance();
-                var symbol = parseSymbol(this.tokenStream, this.parseState);
-                assertOperatorToken(this.peek(), ':=');
-                this.advance();
-                var value = this.parseExpression();
-                assertOperatorToken(this.peek(), ';');
-                return {
-                    t: AstNodeType.SpecialExpression,
-                    n: 'def',
-                    p: [symbol, value],
-                    token: getTokenDebugData(symbol.token) && symbol.token,
-                };
-            }
-            else if (isReservedSymbolToken(this.peek(), 'function')) {
-                this.advance();
-                var symbol = parseSymbol(this.tokenStream, this.parseState);
-                var _c = this.parseFunctionArguments(), functionArguments = _c.functionArguments, arity = _c.arity;
-                var body = [];
-                while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
-                    body.push(this.parseExpression());
-                    if (isOperatorToken(this.peek(), ';')) {
-                        this.advance();
-                    }
-                    else if (!isReservedSymbolToken(this.peek(), 'end')) {
-                        throw new LitsError('Expected ;', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-                    }
-                }
-                assertReservedSymbolToken(this.peek(), 'end');
-                this.advance();
-                return {
-                    t: AstNodeType.SpecialExpression,
-                    n: 'defn',
-                    f: symbol,
-                    p: [],
-                    o: [{
-                            as: functionArguments,
-                            b: body,
-                            a: arity,
-                        }],
-                    token: getTokenDebugData(token) && token,
-                };
-            }
-            else {
-                throw new LitsError('Expected let or function', (_b = getTokenDebugData(this.peek())) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
-            }
-        };
-        return AlgebraicParser;
-    }());
-
-    function parsePolishToken(_tokenStream, _parseState) {
-        throw new Error('Should not be called');
-    }
-
-    function parse$1(tokenStream) {
-        tokenStream = minifyTokenStream(tokenStream, { removeWhiteSpace: true });
-        var ast = {
-            b: [],
-            hasDebugData: tokenStream.hasDebugData,
-        };
-        var parseState = {
-            position: 0,
-            parseToken: parseToken,
-        };
-        var algebraicParser = new AlgebraicParser(tokenStream, parseState);
-        ast.b = algebraicParser.parse();
-        return ast;
-    }
-    function parseToken(tokenStream, parseState) {
-        return parsePolishToken();
     }
 
     var illegalSymbolCharacters = [
@@ -7568,6 +6180,20 @@ var Playground = (function (exports) {
         return null;
     }
 
+    function minifyTokenStream(tokenStream, _a) {
+        var removeWhiteSpace = _a.removeWhiteSpace;
+        var tokens = tokenStream.tokens
+            .filter(function (token) {
+            if (isA_CommentToken(token)
+                || isMultiLineCommentToken(token)
+                || (removeWhiteSpace && isWhitespaceToken(token))) {
+                return false;
+            }
+            return true;
+        });
+        return __assign(__assign({}, tokenStream), { tokens: tokens });
+    }
+
     function transformSymbolTokens(tokenStram, transformer) {
         return __assign(__assign({}, tokenStram), { tokens: tokenStram.tokens.map(function (token) { return isSymbolToken(token)
                 ? [token[0], transformer(token[1])]
@@ -7579,6 +6205,1326 @@ var Playground = (function (exports) {
             return "".concat(acc).concat(token[1]);
         }, '');
     }
+
+    var exponentiationPrecedence = 10;
+    var binaryFunctionalOperatorPrecedence = 1;
+    var placeholderRegexp = /^\$([1-9]\d?)?$/;
+    function getPrecedence(operatorSign) {
+        switch (operatorSign) {
+            case '**': // exponentiation
+                return exponentiationPrecedence;
+            case '*': // multiplication
+            case '/': // division
+            case '%': // remainder
+                return 9;
+            case '+': // addition
+            case '-': // subtraction
+                return 8;
+            case '<<': // left shift
+            case '>>': // signed right shift
+            case '>>>': // unsigned right shift
+                return 7;
+            case '++': // string concatenation
+                return 6;
+            case '<': // less than
+            case '<=': // less than or equal
+            case '≤': // less than or equal
+            case '>': // greater than
+            case '>=': // greater than or equal
+            case '≥': // greater than or equal
+                return 5;
+            case '=': // equal
+            case '!=': // not equal
+            case '≠': // not equal
+                return 4;
+            case '&': // bitwise AND
+            case '^': // bitwise XOR
+            case '|': // bitwise OR
+                return 3;
+            case '&&': // logical AND
+            case '||': // logical OR
+            case '??': // nullish coalescing
+                return 2;
+            // leave room for binaryFunctionalOperatorPrecedence = 1
+            default:
+                throw new Error("Unknown binary operator: ".concat(operatorSign));
+        }
+    }
+    function createNamedNormalExpressionNode(name, params, token) {
+        var node = {
+            t: AstNodeType.NormalExpression,
+            n: name,
+            p: params,
+            token: getTokenDebugData(token) && token,
+        };
+        var builtinExpression = builtin.normalExpressions[node.n];
+        if (builtinExpression) {
+            assertNumberOfParams(builtinExpression.paramCount, node);
+        }
+        return node;
+    }
+    function fromSymbolToStringNode(symbol) {
+        return {
+            t: AstNodeType.String,
+            v: symbol.v,
+            token: getTokenDebugData(symbol.token) && symbol.token,
+            p: [],
+            n: undefined,
+        };
+    }
+    function createAccessorNode(left, right, token) {
+        // Unnamed normal expression
+        return {
+            t: AstNodeType.NormalExpression,
+            p: [left, right],
+            n: undefined,
+            token: getTokenDebugData(token) && token,
+        };
+    }
+    function fromBinaryOperatorToAstNode(operator, left, right, token) {
+        var _a, _b, _c;
+        var operatorName = operator[1];
+        switch (operatorName) {
+            case '.':
+                return createAccessorNode(left, fromSymbolToStringNode(asSymbolNode(right, (_a = getTokenDebugData(token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)), token);
+            case '**': // exponentiation
+            case '*':
+            case '/':
+            case '%':
+            case '+':
+            case '-':
+            case '<<':
+            case '>>':
+            case '>>>':
+            case '++':
+            case '<':
+            case '<=':
+            case '≤':
+            case '>':
+            case '>=':
+            case '≥':
+            case '=':
+            case '!=':
+            case '≠':
+            case '&':
+            case '^':
+            case '|':
+                return createNamedNormalExpressionNode(operatorName, [left, right], token);
+            case '&&':
+            case '||':
+            case '??':
+                return {
+                    t: AstNodeType.SpecialExpression,
+                    n: operatorName,
+                    p: [left, right],
+                    token: getTokenDebugData(token) && token,
+                };
+            /* v8 ignore next 9 */
+            case ';':
+            case ':=':
+            case ',':
+            case '->':
+            case '...':
+                throw new LitsError("Unknown binary operator: ".concat(operatorName), (_b = getTokenDebugData(token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+            default:
+                throw new LitsError("Unknown binary operator: ".concat(operatorName), (_c = getTokenDebugData(token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
+        }
+    }
+    var Parser = /** @class */ (function () {
+        function Parser(tokenStream, parseState) {
+            this.tokenStream = tokenStream;
+            this.parseState = parseState;
+        }
+        Parser.prototype.peek = function () {
+            return this.tokenStream.tokens[this.parseState.position];
+        };
+        Parser.prototype.peekAhead = function (count) {
+            return this.tokenStream.tokens[this.parseState.position + count];
+        };
+        Parser.prototype.advance = function () {
+            this.parseState.position += 1;
+        };
+        Parser.prototype.parse = function () {
+            var _a;
+            var nodes = [];
+            while (!this.isAtEnd()) {
+                nodes.push(this.parseExpression(0, true));
+                if (isOperatorToken(this.peek(), ';')) {
+                    this.advance();
+                }
+                else {
+                    if (!this.isAtEnd()) {
+                        throw new LitsError('Expected ;', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+                    }
+                }
+            }
+            return nodes;
+        };
+        Parser.prototype.parseExpression = function (precedence, moduleScope) {
+            var _a, _b;
+            if (precedence === void 0) { precedence = 0; }
+            if (moduleScope === void 0) { moduleScope = false; }
+            var firstToken = this.peek();
+            var left;
+            if (isSymbolToken(firstToken)) {
+                switch (firstToken[1]) {
+                    case 'let':
+                        return this.parseLet(firstToken);
+                    case 'if':
+                    case 'unless':
+                        left = this.parseIfOrUnless(firstToken);
+                        break;
+                    case 'cond':
+                        left = this.parseCond(firstToken);
+                        break;
+                    case 'switch':
+                        left = this.parseSwitch(firstToken);
+                        break;
+                    case 'for':
+                    case 'doseq':
+                        left = this.parseForOrDoseq(firstToken);
+                        break;
+                    case 'do':
+                        left = this.parseDo(firstToken);
+                        break;
+                    case 'loop':
+                        left = this.parseLoop(firstToken);
+                        break;
+                    case 'try':
+                        left = this.parseTry(firstToken);
+                        break;
+                }
+            }
+            else if (isReservedSymbolToken(firstToken, 'function')) {
+                return this.parseFunction(firstToken);
+            }
+            else if (isReservedSymbolToken(firstToken, 'export')) {
+                if (!moduleScope) {
+                    throw new LitsError('export is only allowed in module scope', (_a = getTokenDebugData(firstToken)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+                }
+                return this.parseExport(firstToken);
+            }
+            left || (left = this.parseOperand());
+            var operator = this.peek();
+            while (!this.isAtExpressionEnd()) {
+                if (isA_BinaryOperatorToken(operator)) {
+                    var name_1 = operator[1];
+                    var newPrecedece = getPrecedence(name_1);
+                    if (newPrecedece <= precedence
+                        // ** (exponentiation) is right associative
+                        && !(newPrecedece === exponentiationPrecedence && precedence === exponentiationPrecedence)) {
+                        break;
+                    }
+                    this.advance();
+                    var right = this.parseExpression(newPrecedece);
+                    var token = hasTokenDebugData(operator) ? operator : undefined;
+                    left = fromBinaryOperatorToAstNode(operator, left, right, token);
+                }
+                else if (isSymbolToken(operator)) {
+                    if (!isFunctionOperator(operator[1])) {
+                        break;
+                    }
+                    var newPrecedece = binaryFunctionalOperatorPrecedence;
+                    if (newPrecedece <= precedence) {
+                        break;
+                    }
+                    this.advance();
+                    var right = this.parseExpression(newPrecedece);
+                    var token = hasTokenDebugData(operator) ? operator : undefined;
+                    left = createNamedNormalExpressionNode(operator[1], [left, right], token);
+                }
+                else {
+                    break;
+                }
+                operator = this.peek();
+            }
+            if (!left) {
+                throw new LitsError('Expected operand', (_b = getTokenDebugData(this.peek())) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+            }
+            return left;
+        };
+        Parser.prototype.parseOperand = function () {
+            var _a, _b;
+            var operand = this.parseOperandPart();
+            var token = this.peek();
+            while (isOperatorToken(token, '.') || isLBracketToken(token) || isLParenToken(token)) {
+                if (token[1] === '.') {
+                    this.advance();
+                    var symbolToken = this.peek();
+                    if (!isSymbolToken(symbolToken)) {
+                        throw new LitsError('Expected symbol', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+                    }
+                    var stringNode = {
+                        t: AstNodeType.String,
+                        v: symbolToken[1],
+                        token: getTokenDebugData(symbolToken) && symbolToken,
+                        p: [],
+                        n: undefined,
+                    };
+                    operand = createAccessorNode(operand, stringNode, token);
+                    this.advance();
+                    token = this.peek();
+                }
+                else if (isLBracketToken(token)) {
+                    this.advance();
+                    var expression = this.parseExpression();
+                    if (!isRBracketToken(this.peek())) {
+                        throw new LitsError('Expected closing bracket', (_b = getTokenDebugData(this.peek())) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+                    }
+                    operand = createAccessorNode(operand, expression, token);
+                    this.advance();
+                    token = this.peek();
+                }
+                else if (isLParenToken(token)) {
+                    operand = this.parseFunctionCall(operand);
+                    token = this.peek();
+                }
+            }
+            return operand;
+        };
+        Parser.prototype.parseOperandPart = function () {
+            var _a, _b;
+            var token = this.peek();
+            // Parentheses
+            if (isLParenToken(token)) {
+                var positionBefore = this.parseState.position;
+                var lamdaFunction = this.parseLambdaFunction();
+                if (lamdaFunction) {
+                    return lamdaFunction;
+                }
+                this.parseState.position = positionBefore;
+                this.advance();
+                var expression = this.parseExpression();
+                if (!isRParenToken(this.peek())) {
+                    throw new Error('Expected closing parenthesis');
+                }
+                this.advance();
+                return expression;
+            }
+            // Unary operators
+            else if (isOperatorToken(token)) {
+                var operatorName = token[1];
+                if (isBinaryOperator(operatorName)) {
+                    this.advance();
+                    return {
+                        t: AstNodeType.Symbol,
+                        v: operatorName,
+                        token: getTokenDebugData(token) && token,
+                        p: [],
+                        n: undefined,
+                    };
+                }
+                if (operatorName === '->') {
+                    return this.parseShorthandLamdaFunction();
+                }
+                else {
+                    throw new LitsError("Illegal operator: ".concat(operatorName), (_a = getTokenDebugData(token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+                }
+            }
+            // Object litteral, e.g. {a=1, b=2}
+            if (isLBraceToken(token)) {
+                return this.parseObject();
+            }
+            // Array litteral, e.g. [1, 2]
+            if (isLBracketToken(token)) {
+                return this.parseArray();
+            }
+            var tokenType = token[0];
+            switch (tokenType) {
+                case 'Number':
+                case 'BasePrefixedNumber':
+                    return this.parseNumber();
+                case 'String':
+                    return this.parseString();
+                case 'Symbol': {
+                    var positionBefore = this.parseState.position;
+                    var lamdaFunction = this.parseLambdaFunction();
+                    if (lamdaFunction) {
+                        return lamdaFunction;
+                    }
+                    this.parseState.position = positionBefore;
+                    return this.parseSymbol();
+                }
+                case 'ReservedSymbol':
+                    return this.parseReservedSymbol();
+                case 'RegexpShorthand':
+                    return this.parseRegexpShorthand();
+                default:
+                    throw new LitsError("Unknown token type: ".concat(tokenType), (_b = getTokenDebugData(token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+            }
+        };
+        Parser.prototype.parseObject = function () {
+            var _a, _b, _c;
+            var firstToken = asLBraceToken(this.peek());
+            this.advance();
+            var params = [];
+            while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
+                var key = this.parseOperand();
+                if (key === null) {
+                    throw new LitsError('Expected key', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+                }
+                if (key.t !== AstNodeType.Symbol && key.t !== AstNodeType.String) {
+                    throw new LitsError('Expected key to be a symbol or a string', (_b = getTokenDebugData(this.peek())) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+                }
+                params.push({
+                    t: AstNodeType.String,
+                    v: key.v,
+                    token: getTokenDebugData(key.token) && key.token,
+                    p: [],
+                    n: undefined,
+                });
+                assertOperatorToken(this.peek(), ':=');
+                this.advance();
+                params.push(this.parseExpression());
+                var nextToken = this.peek();
+                if (!isOperatorToken(nextToken, ',') && !isRBraceToken(nextToken)) {
+                    throw new LitsError('Expected comma or closing brace', (_c = getTokenDebugData(this.peek())) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
+                }
+                if (isOperatorToken(nextToken, ',')) {
+                    this.advance();
+                }
+            }
+            assertRBraceToken(this.peek());
+            this.advance();
+            return {
+                t: AstNodeType.NormalExpression,
+                n: 'object',
+                p: params,
+                token: getTokenDebugData(firstToken) && firstToken,
+            };
+        };
+        Parser.prototype.parseArray = function () {
+            var _a;
+            var firstToken = asLBracketToken(this.peek());
+            this.advance();
+            var params = [];
+            while (!this.isAtEnd() && !isRBracketToken(this.peek())) {
+                params.push(this.parseExpression());
+                var nextToken = this.peek();
+                if (!isOperatorToken(nextToken, ',') && !isRBracketToken(nextToken)) {
+                    throw new LitsError('Expected comma or closing parenthesis', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+                }
+                if (isOperatorToken(nextToken, ',')) {
+                    this.advance();
+                }
+            }
+            assertRBracketToken(this.peek());
+            this.advance();
+            return {
+                t: AstNodeType.NormalExpression,
+                n: 'array',
+                p: params,
+                token: getTokenDebugData(firstToken) && firstToken,
+            };
+        };
+        Parser.prototype.parseFunctionCall = function (symbol) {
+            var _a, _b;
+            var isNamedFunction = symbol.t === AstNodeType.Symbol;
+            this.advance();
+            var params = [];
+            while (!this.isAtEnd() && !isRParenToken(this.peek())) {
+                params.push(this.parseExpression());
+                var nextToken = this.peek();
+                if (!isOperatorToken(nextToken, ',') && !isRParenToken(nextToken)) {
+                    throw new LitsError('Expected comma or closing parenthesis', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+                }
+                if (isOperatorToken(nextToken, ',')) {
+                    this.advance();
+                }
+            }
+            if (!isRParenToken(this.peek())) {
+                throw new LitsError('Expected closing parenthesis', (_b = getTokenDebugData(this.peek())) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+            }
+            this.advance();
+            if (isNamedFunction) {
+                if (specialExpressionKeys.includes(symbol.v)) {
+                    var name_2 = symbol.v;
+                    switch (name_2) {
+                        case '??':
+                        case '&&':
+                        case 'defined?':
+                        case '||':
+                        case 'recur':
+                        case 'throw': {
+                            var node = {
+                                t: AstNodeType.SpecialExpression,
+                                n: name_2,
+                                p: params,
+                                token: getTokenDebugData(symbol.token) && symbol.token,
+                            };
+                            assertNumberOfParams(builtin.specialExpressions[node.n].paramCount, node);
+                            return node;
+                        }
+                        case 'fn':
+                        case 'def':
+                        case 'defn':
+                            throw new Error("Special expression ".concat(name_2, " is not available in algebraic notation"));
+                        default:
+                            throw new Error("Unknown special expression: ".concat(name_2));
+                    }
+                }
+                return createNamedNormalExpressionNode(symbol.v, params, symbol.token);
+            }
+            else {
+                return {
+                    t: AstNodeType.NormalExpression,
+                    n: undefined,
+                    p: __spreadArray([symbol], __read(params), false),
+                    token: getTokenDebugData(symbol.token) && symbol.token,
+                };
+            }
+        };
+        Parser.prototype.parseLambdaFunction = function () {
+            var firstToken = this.peek();
+            if (isLParenToken(firstToken)
+                && isSymbolToken(this.peekAhead(1))
+                && isOperatorToken(this.peekAhead(2), '->')) {
+                return null;
+            }
+            try {
+                var _a = this.parseFunctionArguments(), functionArguments = _a.functionArguments, arity = _a.arity;
+                if (!isOperatorToken(this.peek(), '->')) {
+                    return null;
+                }
+                this.advance();
+                var body = this.parseExpression();
+                return {
+                    t: AstNodeType.SpecialExpression,
+                    n: 'fn',
+                    p: [],
+                    o: [{
+                            as: functionArguments,
+                            b: [body],
+                            a: arity,
+                        }],
+                    token: getTokenDebugData(firstToken) && firstToken,
+                };
+            }
+            catch (_b) {
+                return null;
+            }
+        };
+        Parser.prototype.parseFunctionArguments = function () {
+            var _a, _b, _c, _d, _e;
+            var firstToken = this.peek();
+            if (isSymbolToken(firstToken)) {
+                this.advance();
+                return {
+                    functionArguments: {
+                        m: [firstToken[1]],
+                        b: [],
+                        r: undefined,
+                    },
+                    arity: 1,
+                };
+            }
+            this.advance();
+            var rest = false;
+            var args = [];
+            var restArg;
+            while (!this.isAtEnd() && !isRParenToken(this.peek()) && !isSymbolToken(this.peek(), 'let')) {
+                if (isOperatorToken(this.peek(), '...')) {
+                    if (rest) {
+                        throw new LitsError('Multiple spread operators in lambda function', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+                    }
+                    this.advance();
+                    rest = true;
+                }
+                var symbolToken = this.peek();
+                if (!isSymbolToken(symbolToken)) {
+                    throw new LitsError('Expected symbol', (_b = getTokenDebugData(this.peek())) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+                }
+                if (rest) {
+                    restArg = symbolToken[1];
+                }
+                else {
+                    args.push(symbolToken[1]);
+                }
+                this.advance();
+                if (!isOperatorToken(this.peek(), ',') && !isRParenToken(this.peek()) && !isSymbolToken(this.peek(), 'let')) {
+                    throw new LitsError('Expected comma or closing parenthesis', (_c = getTokenDebugData(this.peek())) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
+                }
+                if (isOperatorToken(this.peek(), ',')) {
+                    this.advance();
+                }
+            }
+            var arity = restArg !== undefined ? { min: args.length } : args.length;
+            // let bindings, to be able to pass on values in the context down to the body
+            // This is needed since lits is dynamically scoped
+            // E.g.
+            // x => y => x + y // would not work, x is not available in the second lambda
+            // x => (y, let x = x) => x + y // would work, x is available in the second lambda
+            var bindingNodess = [];
+            var token = this.peek();
+            while (isSymbolToken(token, 'let')) {
+                var letNode = this.parseLet(token, true);
+                bindingNodess.push(letNode.bs[0]);
+                if (!isOperatorToken(this.peek(), ',') && !isRParenToken(this.peek())) {
+                    throw new LitsError('Expected comma or closing parenthesis', (_d = getTokenDebugData(this.peek())) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
+                }
+                if (isOperatorToken(this.peek(), ',')) {
+                    this.advance();
+                }
+                token = this.peek();
+            }
+            if (!isRParenToken(this.peek())) {
+                throw new LitsError('Expected closing parenthesis', (_e = getTokenDebugData(this.peek())) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo);
+            }
+            var functionArguments = {
+                m: args,
+                r: restArg,
+                b: bindingNodess,
+            };
+            this.advance();
+            return {
+                functionArguments: functionArguments,
+                arity: arity,
+            };
+        };
+        Parser.prototype.parseShorthandLamdaFunction = function () {
+            var _a, _b, _c;
+            var firstToken = this.peek();
+            this.advance();
+            var startPos = this.parseState.position;
+            var exprNode = this.parseExpression();
+            var endPos = this.parseState.position - 1;
+            var arity = 0;
+            var percent1 = 'NOT_SET'; // referring to argument bindings. % = NAKED, %1, %2, %3, etc = WITH_1
+            for (var pos = startPos; pos <= endPos; pos += 1) {
+                var token = this.tokenStream.tokens[pos];
+                if (isSymbolToken(token)) {
+                    var match = placeholderRegexp.exec(token[1]);
+                    if (match) {
+                        var number = (_a = match[1]) !== null && _a !== void 0 ? _a : '1';
+                        if (number === '1') {
+                            var mixedPercent1 = (!match[1] && percent1 === 'WITH_1') || (match[1] && percent1 === 'NAKED');
+                            if (mixedPercent1)
+                                throw new LitsError('Please make up your mind, either use $ or $1', (_b = getTokenDebugData(firstToken)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+                            percent1 = match[1] ? 'WITH_1' : 'NAKED';
+                        }
+                        arity = Math.max(arity, Number(number));
+                        if (arity > 20)
+                            throw new LitsError('Can\'t specify more than 20 arguments', (_c = getTokenDebugData(firstToken)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
+                    }
+                }
+            }
+            var mandatoryArguments = [];
+            for (var i = 1; i <= arity; i += 1) {
+                if (i === 1 && percent1 === 'NAKED')
+                    mandatoryArguments.push('$');
+                else
+                    mandatoryArguments.push("$".concat(i));
+            }
+            var args = {
+                b: [],
+                m: mandatoryArguments,
+            };
+            var node = {
+                t: AstNodeType.SpecialExpression,
+                n: 'fn',
+                p: [],
+                o: [
+                    {
+                        as: args,
+                        b: [exprNode],
+                        a: args.m.length,
+                    },
+                ],
+                token: getTokenDebugData(firstToken) && firstToken,
+            };
+            return node;
+        };
+        Parser.prototype.parseLet = function (token, optionalSemicolon) {
+            if (optionalSemicolon === void 0) { optionalSemicolon = false; }
+            this.advance();
+            var letSymbol = this.parseSymbol();
+            assertOperatorToken(this.peek(), ':=');
+            this.advance();
+            var value = this.parseExpression();
+            if (!optionalSemicolon) {
+                assertOperatorToken(this.peek(), ';');
+            }
+            return {
+                t: AstNodeType.SpecialExpression,
+                n: 'let',
+                p: [],
+                bs: [{
+                        t: AstNodeType.Binding,
+                        n: letSymbol.v,
+                        v: value,
+                        p: [],
+                        token: getTokenDebugData(token) && token,
+                    }],
+                token: getTokenDebugData(letSymbol.token) && letSymbol.token,
+            };
+        };
+        Parser.prototype.parseDo = function (token) {
+            var _a;
+            this.advance();
+            var expressions = [];
+            while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
+                expressions.push(this.parseExpression());
+                if (isOperatorToken(this.peek(), ';')) {
+                    this.advance();
+                }
+                else if (!isReservedSymbolToken(this.peek(), 'end')) {
+                    throw new LitsError('Expected ;', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+                }
+            }
+            assertReservedSymbolToken(this.peek(), 'end');
+            this.advance();
+            return {
+                t: AstNodeType.SpecialExpression,
+                n: 'do',
+                p: expressions,
+                token: getTokenDebugData(token) && token,
+            };
+        };
+        Parser.prototype.parseLoop = function (firstToken) {
+            var _a, _b;
+            this.advance();
+            var bindingNodes = [];
+            var token = this.peek();
+            while (!this.isAtEnd() && !isSymbolToken(token, 'do')) {
+                assertSymbolToken(token, 'let');
+                this.advance();
+                var symbol = this.parseSymbol();
+                assertOperatorToken(this.peek(), ':=');
+                this.advance();
+                var value = this.parseExpression();
+                bindingNodes.push({
+                    t: AstNodeType.Binding,
+                    n: symbol.v,
+                    v: value,
+                    p: [],
+                    token: getTokenDebugData(symbol.token) && symbol.token,
+                });
+                if (isOperatorToken(this.peek(), ',')) {
+                    this.advance();
+                }
+                token = this.peek();
+            }
+            if (bindingNodes.length === 0) {
+                throw new LitsError('Expected binding', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+            }
+            assertSymbolToken(token, 'do');
+            this.advance();
+            var params = [];
+            while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
+                params.push(this.parseExpression());
+                if (isOperatorToken(this.peek(), ';')) {
+                    this.advance();
+                }
+                else if (!isReservedSymbolToken(this.peek(), 'end')) {
+                    throw new LitsError('Expected ;', (_b = getTokenDebugData(this.peek())) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+                }
+            }
+            assertReservedSymbolToken(this.peek(), 'end');
+            this.advance();
+            return {
+                t: AstNodeType.SpecialExpression,
+                n: 'loop',
+                p: params,
+                bs: bindingNodes,
+                token: getTokenDebugData(firstToken) && firstToken,
+            };
+        };
+        Parser.prototype.parseTry = function (token) {
+            var _a, _b;
+            this.advance();
+            var tryExpressions = [];
+            while (!this.isAtEnd() && !isSymbolToken(this.peek(), 'catch')) {
+                tryExpressions.push(this.parseExpression());
+                if (isOperatorToken(this.peek(), ';')) {
+                    this.advance();
+                }
+                else if (!isSymbolToken(this.peek(), 'catch')) {
+                    throw new LitsError('Expected ;', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+                }
+            }
+            var tryExpression = tryExpressions.length === 1
+                ? tryExpressions[0]
+                : {
+                    t: AstNodeType.SpecialExpression,
+                    n: 'do',
+                    p: tryExpressions,
+                    token: getTokenDebugData(token) && token,
+                };
+            assertSymbolToken(this.peek(), 'catch');
+            this.advance();
+            var errorSymbol;
+            if (isLParenToken(this.peek())) {
+                this.advance();
+                errorSymbol = this.parseSymbol();
+                assertRParenToken(this.peek());
+                this.advance();
+            }
+            var catchExpressions = [];
+            while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
+                catchExpressions.push(this.parseExpression());
+                if (isOperatorToken(this.peek(), ';')) {
+                    this.advance();
+                }
+                else if (!isReservedSymbolToken(this.peek(), 'end')) {
+                    throw new LitsError('Expected ;', (_b = getTokenDebugData(this.peek())) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+                }
+            }
+            assertReservedSymbolToken(this.peek(), 'end');
+            this.advance();
+            var catchExpression = catchExpressions.length === 1
+                ? catchExpressions[0]
+                : {
+                    t: AstNodeType.SpecialExpression,
+                    n: 'do',
+                    p: catchExpressions,
+                    token: getTokenDebugData(token) && token,
+                };
+            return {
+                t: AstNodeType.SpecialExpression,
+                n: 'try',
+                p: [tryExpression],
+                ce: catchExpression,
+                e: errorSymbol,
+                token: getTokenDebugData(token) && token,
+            };
+        };
+        Parser.prototype.parseForOrDoseq = function (firstToken) {
+            var _a, _b;
+            var isDoseq = firstToken[1] === 'doseq';
+            this.advance();
+            var forLoopBindings = [];
+            var _loop_1 = function () {
+                var loopBinding = this_1.parseForLoopBinding();
+                if (forLoopBindings.some(function (b) { return b.b.n === loopBinding.b.n; })) {
+                    throw new LitsError('Duplicate binding', (_a = getTokenDebugData(loopBinding.b.token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+                }
+                forLoopBindings.push(loopBinding);
+            };
+            var this_1 = this;
+            while (!this.isAtEnd() && !isSymbolToken(this.peek(), 'do')) {
+                _loop_1();
+            }
+            assertSymbolToken(this.peek(), 'do');
+            this.advance();
+            var expressions = [];
+            while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
+                expressions.push(this.parseExpression());
+                if (isOperatorToken(this.peek(), ';')) {
+                    this.advance();
+                }
+                else if (!isReservedSymbolToken(this.peek(), 'end')) {
+                    throw new LitsError('Expected ;', (_b = getTokenDebugData(this.peek())) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+                }
+            }
+            assertReservedSymbolToken(this.peek(), 'end');
+            this.advance();
+            return {
+                t: AstNodeType.SpecialExpression,
+                n: isDoseq ? 'doseq' : 'for',
+                p: expressions,
+                token: getTokenDebugData(firstToken) && firstToken,
+                l: forLoopBindings,
+            };
+        };
+        Parser.prototype.parseForLoopBinding = function () {
+            var _a, _b, _c, _d, _e, _f, _g, _h;
+            assertReservedSymbolToken(this.peek(), 'each');
+            this.advance();
+            var bindingNode = this.parseBinding();
+            var modifiers = [];
+            var token = this.peek();
+            if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this.peek(), 'each') && !isOperatorToken(token, ',')) {
+                throw new LitsError('Expected do, each or comma', (_a = getTokenDebugData(token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+            }
+            if (isOperatorToken(token, ',')) {
+                this.advance();
+                token = this.peek();
+            }
+            if (!isSymbolToken(token, 'let')
+                && !isReservedSymbolToken(token, 'when')
+                && !isReservedSymbolToken(token, 'while')
+                && !isSymbolToken(token, 'do')
+                && !isReservedSymbolToken(token, 'each')) {
+                throw new LitsError('Expected symbol each, do, let, when or while', (_b = getTokenDebugData(token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+            }
+            var letBindings;
+            if (token[1] === 'let') {
+                modifiers.push('&let');
+                letBindings = [];
+                var _loop_2 = function () {
+                    var letNode = this_2.parseLet(token, true);
+                    if (letBindings.some(function (b) { return b.n === letNode.bs[0].n; })) {
+                        throw new LitsError('Duplicate binding', (_c = getTokenDebugData(letNode.bs[0].token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
+                    }
+                    letBindings.push(letNode.bs[0]);
+                    token = this_2.peek();
+                    if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this_2.peek(), 'each') && !isOperatorToken(token, ',')) {
+                        throw new LitsError('Expected do, each or comma', (_d = getTokenDebugData(token)) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
+                    }
+                    if (isOperatorToken(token, ',')) {
+                        this_2.advance();
+                    }
+                    token = this_2.peek();
+                };
+                var this_2 = this;
+                while (isSymbolToken(token, 'let')) {
+                    _loop_2();
+                }
+            }
+            var whenNode;
+            var whileNode;
+            while (isReservedSymbolToken(token, 'when')
+                || isReservedSymbolToken(token, 'while')) {
+                this.advance();
+                if (token[1] === 'when') {
+                    if (modifiers.includes('&when')) {
+                        throw new LitsError('Multiple when modifiers in for loop', (_e = getTokenDebugData(token)) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo);
+                    }
+                    modifiers.push('&when');
+                    whenNode = this.parseExpression();
+                }
+                else {
+                    if (modifiers.includes('&while')) {
+                        throw new LitsError('Multiple while modifiers in for loop', (_f = getTokenDebugData(token)) === null || _f === void 0 ? void 0 : _f.sourceCodeInfo);
+                    }
+                    modifiers.push('&while');
+                    whileNode = this.parseExpression();
+                }
+                token = this.peek();
+                if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this.peek(), 'each') && !isOperatorToken(token, ',')) {
+                    throw new LitsError('Expected do or comma', (_g = getTokenDebugData(token)) === null || _g === void 0 ? void 0 : _g.sourceCodeInfo);
+                }
+                if (isOperatorToken(token, ',')) {
+                    this.advance();
+                }
+                token = this.peek();
+            }
+            if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this.peek(), 'each')) {
+                throw new LitsError('Expected do or each', (_h = getTokenDebugData(token)) === null || _h === void 0 ? void 0 : _h.sourceCodeInfo);
+            }
+            return {
+                b: bindingNode,
+                m: modifiers,
+                l: letBindings,
+                wn: whenNode,
+                we: whileNode,
+            };
+        };
+        Parser.prototype.parseBinding = function () {
+            var firstToken = asSymbolToken(this.peek());
+            var name = firstToken[1];
+            this.advance();
+            assertReservedSymbolToken(this.peek(), 'in');
+            this.advance();
+            var value = this.parseExpression();
+            var node = {
+                t: AstNodeType.Binding,
+                n: name,
+                v: value,
+                p: [],
+                token: getTokenDebugData(firstToken) && firstToken,
+            };
+            return node;
+        };
+        Parser.prototype.parseIfOrUnless = function (token) {
+            var _a, _b;
+            var isUnless = token[1] === 'unless';
+            this.advance();
+            var condition = this.parseExpression();
+            assertReservedSymbolToken(this.peek(), 'then');
+            this.advance();
+            var thenExpressions = [];
+            while (!this.isAtEnd()
+                && !isReservedSymbolToken(this.peek(), 'else')
+                && !isReservedSymbolToken(this.peek(), 'end')) {
+                thenExpressions.push(this.parseExpression());
+                if (isOperatorToken(this.peek(), ';')) {
+                    this.advance();
+                }
+                else if (!isReservedSymbolToken(this.peek(), 'else') && !isReservedSymbolToken(this.peek(), 'end')) {
+                    throw new LitsError('Expected ;', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+                }
+            }
+            var thenExpression = thenExpressions.length === 1
+                ? thenExpressions[0]
+                : {
+                    t: AstNodeType.SpecialExpression,
+                    n: 'do',
+                    p: thenExpressions,
+                    token: getTokenDebugData(token) && token,
+                };
+            var elseExpression;
+            if (isReservedSymbolToken(this.peek(), 'else')) {
+                this.advance();
+                var elseExpressions = [];
+                while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
+                    elseExpressions.push(this.parseExpression());
+                    if (isOperatorToken(this.peek(), ';')) {
+                        this.advance();
+                    }
+                    else if (!isReservedSymbolToken(this.peek(), 'end')) {
+                        throw new LitsError('Expected ;', (_b = getTokenDebugData(this.peek())) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+                    }
+                }
+                elseExpression = elseExpressions.length === 1
+                    ? elseExpressions[0]
+                    : {
+                        t: AstNodeType.SpecialExpression,
+                        n: 'do',
+                        p: elseExpressions,
+                        token: getTokenDebugData(token) && token,
+                    };
+            }
+            assertReservedSymbolToken(this.peek(), 'end');
+            this.advance();
+            var params = [condition, thenExpression];
+            if (elseExpression) {
+                params.push(elseExpression);
+            }
+            return {
+                t: AstNodeType.SpecialExpression,
+                n: isUnless ? 'unless' : 'if',
+                p: params,
+                token: getTokenDebugData(token) && token,
+            };
+        };
+        Parser.prototype.parseCond = function (token) {
+            var _a;
+            this.advance();
+            var params = [];
+            while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
+                assertReservedSymbolToken(this.peek(), 'case');
+                this.advance();
+                params.push(this.parseExpression());
+                assertReservedSymbolToken(this.peek(), 'then');
+                this.advance();
+                var expressions = [];
+                while (!this.isAtEnd()
+                    && !isReservedSymbolToken(this.peek(), 'case')
+                    && !isReservedSymbolToken(this.peek(), 'end')) {
+                    expressions.push(this.parseExpression());
+                    if (isOperatorToken(this.peek(), ';')) {
+                        this.advance();
+                    }
+                    else if (!isReservedSymbolToken(this.peek(), 'case') && !isReservedSymbolToken(this.peek(), 'end')) {
+                        throw new LitsError('Expected ;', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+                    }
+                }
+                params.push(expressions.length === 1
+                    ? expressions[0]
+                    : {
+                        t: AstNodeType.SpecialExpression,
+                        n: 'do',
+                        p: expressions,
+                        token: getTokenDebugData(token) && token,
+                    });
+                if (isReservedSymbolToken(this.peek(), 'end')) {
+                    break;
+                }
+                assertReservedSymbolToken(this.peek(), 'case');
+            }
+            assertReservedSymbolToken(this.peek(), 'end');
+            this.advance();
+            return {
+                t: AstNodeType.SpecialExpression,
+                n: 'cond',
+                p: params,
+                token: getTokenDebugData(token) && token,
+            };
+        };
+        Parser.prototype.parseSwitch = function (token) {
+            var _a;
+            this.advance();
+            var params = [this.parseExpression()];
+            while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
+                assertReservedSymbolToken(this.peek(), 'case');
+                this.advance();
+                params.push(this.parseExpression());
+                assertReservedSymbolToken(this.peek(), 'then');
+                this.advance();
+                var expressions = [];
+                while (!this.isAtEnd()
+                    && !isReservedSymbolToken(this.peek(), 'case')
+                    && !isReservedSymbolToken(this.peek(), 'end')) {
+                    expressions.push(this.parseExpression());
+                    if (isOperatorToken(this.peek(), ';')) {
+                        this.advance();
+                    }
+                    else if (!isReservedSymbolToken(this.peek(), 'case') && !isReservedSymbolToken(this.peek(), 'end')) {
+                        throw new LitsError('Expected ;', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+                    }
+                }
+                params.push(expressions.length === 1
+                    ? expressions[0]
+                    : {
+                        t: AstNodeType.SpecialExpression,
+                        n: 'do',
+                        p: expressions,
+                        token: getTokenDebugData(token) && token,
+                    });
+                if (isReservedSymbolToken(this.peek(), 'end')) {
+                    break;
+                }
+                assertReservedSymbolToken(this.peek(), 'case');
+            }
+            assertReservedSymbolToken(this.peek(), 'end');
+            this.advance();
+            return {
+                t: AstNodeType.SpecialExpression,
+                n: 'switch',
+                p: params,
+                token: getTokenDebugData(token) && token,
+            };
+        };
+        Parser.prototype.parseFunction = function (token) {
+            var _a;
+            this.advance();
+            var symbol = this.parseSymbol();
+            var _b = this.parseFunctionArguments(), functionArguments = _b.functionArguments, arity = _b.arity;
+            var body = [];
+            while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
+                body.push(this.parseExpression());
+                if (isOperatorToken(this.peek(), ';')) {
+                    this.advance();
+                }
+                else if (!isReservedSymbolToken(this.peek(), 'end')) {
+                    throw new LitsError('Expected ;', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+                }
+            }
+            assertReservedSymbolToken(this.peek(), 'end');
+            this.advance();
+            assertOperatorToken(this.peek(), ';');
+            return {
+                t: AstNodeType.SpecialExpression,
+                n: 'function',
+                f: symbol,
+                p: [],
+                o: [{
+                        as: functionArguments,
+                        b: body,
+                        a: arity,
+                    }],
+                token: getTokenDebugData(token) && token,
+            };
+        };
+        Parser.prototype.isAtEnd = function () {
+            return this.parseState.position >= this.tokenStream.tokens.length;
+        };
+        Parser.prototype.isAtExpressionEnd = function () {
+            if (this.isAtEnd()) {
+                return true;
+            }
+            var token = this.peek();
+            if (isOperatorToken(token)) {
+                return [';', ','].includes(token[1]);
+            }
+            if (isSymbolToken(token)) {
+                return ['catch'].includes(token[1]);
+            }
+            if (isReservedSymbolToken(token)) {
+                return ['else', 'when', 'while', 'then', 'end', 'case'].includes(token[1]);
+            }
+            return false;
+        };
+        Parser.prototype.parseExport = function (token) {
+            var _a, _b;
+            this.advance();
+            if (isSymbolToken(this.peek(), 'let')) {
+                this.advance();
+                var symbol = this.parseSymbol();
+                assertOperatorToken(this.peek(), ':=');
+                this.advance();
+                var value = this.parseExpression();
+                assertOperatorToken(this.peek(), ';');
+                return {
+                    t: AstNodeType.SpecialExpression,
+                    n: 'def',
+                    p: [symbol, value],
+                    token: getTokenDebugData(symbol.token) && symbol.token,
+                };
+            }
+            else if (isReservedSymbolToken(this.peek(), 'function')) {
+                this.advance();
+                var symbol = this.parseSymbol();
+                var _c = this.parseFunctionArguments(), functionArguments = _c.functionArguments, arity = _c.arity;
+                var body = [];
+                while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
+                    body.push(this.parseExpression());
+                    if (isOperatorToken(this.peek(), ';')) {
+                        this.advance();
+                    }
+                    else if (!isReservedSymbolToken(this.peek(), 'end')) {
+                        throw new LitsError('Expected ;', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+                    }
+                }
+                assertReservedSymbolToken(this.peek(), 'end');
+                this.advance();
+                return {
+                    t: AstNodeType.SpecialExpression,
+                    n: 'defn',
+                    f: symbol,
+                    p: [],
+                    o: [{
+                            as: functionArguments,
+                            b: body,
+                            a: arity,
+                        }],
+                    token: getTokenDebugData(token) && token,
+                };
+            }
+            else {
+                throw new LitsError('Expected let or function', (_b = getTokenDebugData(this.peek())) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+            }
+        };
+        Parser.prototype.parseSymbol = function () {
+            var _a;
+            var token = this.peek();
+            this.advance();
+            if (!isSymbolToken(token)) {
+                throw new LitsError("Expected symbol token, got ".concat(token[0]), (_a = getTokenDebugData(token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+            }
+            if (token[1][0] !== '\'') {
+                return {
+                    t: AstNodeType.Symbol,
+                    v: token[1],
+                    p: [],
+                    n: undefined,
+                    token: getTokenDebugData(token) && token,
+                };
+            }
+            else {
+                var value = token[1].substring(1, token[1].length - 1)
+                    .replace(/(\\{2})|(\\')|\\(.)/g, function (_, backslash, singleQuote, normalChar) {
+                    if (backslash) {
+                        return '\\';
+                    }
+                    if (singleQuote) {
+                        return '\'';
+                    }
+                    return "\\".concat(normalChar);
+                });
+                return {
+                    t: AstNodeType.Symbol,
+                    v: value,
+                    p: [],
+                    n: undefined,
+                    token: getTokenDebugData(token) && token,
+                };
+            }
+        };
+        Parser.prototype.parseReservedSymbol = function () {
+            var _a;
+            var token = this.peek();
+            this.advance();
+            if (!isReservedSymbolToken(token)) {
+                throw new LitsError("Expected symbol token, got ".concat(token[0]), (_a = getTokenDebugData(token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+            }
+            if (isReservedSymbolToken(token)) {
+                var symbol = token[1];
+                if (isNumberReservedSymbol(symbol)) {
+                    return {
+                        t: AstNodeType.Number,
+                        v: numberReservedSymbolRecord[symbol],
+                        p: [],
+                        n: undefined,
+                        token: getTokenDebugData(token) && token,
+                    };
+                }
+            }
+            return {
+                t: AstNodeType.ReservedSymbol,
+                v: token[1],
+                p: [],
+                n: undefined,
+                token: getTokenDebugData(token) && token,
+            };
+        };
+        Parser.prototype.parseNumber = function () {
+            var _a;
+            var token = this.peek();
+            this.advance();
+            if (!isBasePrefixedNumberToken(token) && !isNumberToken(token)) {
+                throw new LitsError("Expected number token, got ".concat(token), (_a = getTokenDebugData(token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+            }
+            var value = token[1];
+            var negative = value[0] === '-';
+            var numberString = (negative ? value.substring(1) : value).replace(/_/g, '');
+            return {
+                t: AstNodeType.Number,
+                v: negative ? -Number(numberString) : Number(numberString),
+                p: [],
+                n: undefined,
+                token: getTokenDebugData(token) && token,
+            };
+        };
+        Parser.prototype.parseString = function () {
+            var token = this.peek();
+            this.advance();
+            var value = token[1].substring(1, token[1].length - 1)
+                .replace(/(\\{2})|(\\")|(\\n)|(\\t)|(\\r)|(\\b)|(\\f)|\\(.)/g, function (_, backslash, doubleQuote, newline, tab, carriageReturn, backspace, formFeed, normalChar) {
+                // If it's a double escape (\\x), return \x
+                if (backslash) {
+                    return '\\';
+                }
+                // If it's a special character (\n, \t, \r, \b, \f), return the special character
+                else if (newline) {
+                    return '\n';
+                }
+                else if (tab) {
+                    return '\t';
+                }
+                else if (carriageReturn) {
+                    return '\r';
+                }
+                else if (backspace) {
+                    return '\b';
+                }
+                else if (formFeed) {
+                    return '\f';
+                }
+                else if (doubleQuote) {
+                    return '"';
+                }
+                return normalChar;
+            });
+            return {
+                t: AstNodeType.String,
+                v: value,
+                p: [],
+                n: undefined,
+                token: getTokenDebugData(token) && token,
+            };
+        };
+        Parser.prototype.parseRegexpShorthand = function () {
+            var token = this.peek();
+            this.advance();
+            var endStringPosition = token[1].lastIndexOf('"');
+            var regexpString = token[1].substring(2, endStringPosition);
+            var optionsString = token[1].substring(endStringPosition + 1);
+            var stringNode = {
+                t: AstNodeType.String,
+                v: regexpString,
+                p: [],
+                n: undefined,
+                token: getTokenDebugData(token) && token,
+            };
+            var optionsNode = {
+                t: AstNodeType.String,
+                v: optionsString,
+                p: [],
+                n: undefined,
+                token: getTokenDebugData(token) && token,
+            };
+            var node = {
+                t: AstNodeType.NormalExpression,
+                n: 'regexp',
+                p: [stringNode, optionsNode],
+                token: getTokenDebugData(token) && token,
+            };
+            return node;
+        };
+        return Parser;
+    }());
 
     var Cache = /** @class */ (function () {
         function Cache(maxSize) {
@@ -7700,7 +7646,16 @@ var Playground = (function (exports) {
             return tokenizeParams.minify ? minifyTokenStream(tokenStream, { removeWhiteSpace: false }) : tokenStream;
         };
         Lits.prototype.parse = function (tokenStream) {
-            return parse$1(tokenStream);
+            tokenStream = minifyTokenStream(tokenStream, { removeWhiteSpace: true });
+            var ast = {
+                b: [],
+                hasDebugData: tokenStream.hasDebugData,
+            };
+            var parseState = {
+                position: 0,
+            };
+            ast.b = new Parser(tokenStream, parseState).parse();
+            return ast;
         };
         Lits.prototype.evaluate = function (ast, params) {
             var contextStack = createContextStack(params);

@@ -6,7 +6,7 @@ import type {
   NumberNode,
   ReservedSymbolNode,
   StringNode,
-} from '../parser/interface'
+} from '../parser/types'
 import type { SpecialExpressionNode } from '../builtin'
 import { builtin } from '../builtin'
 import { toAny } from '../utils'

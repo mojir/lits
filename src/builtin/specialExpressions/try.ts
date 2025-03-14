@@ -1,6 +1,6 @@
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
-import type { AstNode, CommonSpecialExpressionNode, SymbolNode } from '../../parser/interface'
+import type { AstNode, CommonSpecialExpressionNode, SymbolNode } from '../../parser/types'
 import { getTokenDebugData } from '../../tokenizer/token'
 import { asAny } from '../../typeGuards/lits'
 import { joinSets } from '../../utils'

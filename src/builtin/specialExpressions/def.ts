@@ -1,4 +1,4 @@
-import type { CommonSpecialExpressionNode, SymbolNode } from '../../parser/interface'
+import type { CommonSpecialExpressionNode, SymbolNode } from '../../parser/types'
 import { getTokenDebugData } from '../../tokenizer/token'
 import { asAstNode, asSymbolNode } from '../../typeGuards/astNode'
 import type { BuiltinSpecialExpression } from '../interface'

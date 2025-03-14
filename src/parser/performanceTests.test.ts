@@ -11,7 +11,7 @@ describe.skip('performance comparison', () => {
     '2 + 3 * 4',
     '5 ** 2 - 3 / 2',
     '[1, 2, 3][1]',
-    '((x, y) => x + y)(2, 3)',
+    ['((x, y) -> x + y)(2, 3)', '((x, y) => x + y)(2, 3)'],
     '2 ** (3 + 1) - 5 / (1 + 1)',
     '2 ** (3 * 2) + 4 / (2 - 1) - 5 % 3',
     '((2 + 3) * 4 / 2 - 1) ** 2 % 5 + 6 - 7 * 8 / 9', // more than 20 times slower than eval
@@ -28,7 +28,7 @@ describe.skip('performance comparison', () => {
 
     for (const expression of expressions) {
       const report: ReportEntry = {
-        expression,
+        expression: Array.isArray(expression) ? expression[0]! : expression,
         eval: 0,
         lits: 0,
       }
@@ -36,14 +36,14 @@ describe.skip('performance comparison', () => {
 
       let startTime = performance.now()
       for (let i = 0; i < iterations; i++) {
-        lits.run(expression)
+        lits.run(Array.isArray(expression) ? expression[0]! : expression)
       }
       report.lits = (performance.now() - startTime) * 1000 / iterations
 
       startTime = performance.now()
       for (let i = 0; i < iterations; i++) {
         // eslint-disable-next-line no-eval
-        eval(expression)
+        eval(Array.isArray(expression) ? expression[1]! : expression)
       }
       report.eval = (performance.now() - startTime) * 1000 / iterations
     }
@@ -59,7 +59,7 @@ describe.skip('performance comparison', () => {
     }
     const entries: ReportEntry[] = []
     const expressionsWithTokenStreams = expressions.map((expression) => {
-      const tokenStream = lits.tokenize(expression)
+      const tokenStream = lits.tokenize(Array.isArray(expression) ? expression[0]! : expression)
 
       return {
         expression,
@@ -69,7 +69,7 @@ describe.skip('performance comparison', () => {
 
     for (const expression of expressionsWithTokenStreams) {
       const report: ReportEntry = {
-        expression: expression.expression,
+        expression: Array.isArray(expression.expression) ? expression.expression[0]! : expression.expression,
         eval: 0,
         lits: 0,
       }
@@ -85,7 +85,7 @@ describe.skip('performance comparison', () => {
       startTime = performance.now()
       for (let i = 0; i < iterations; i++) {
         // eslint-disable-next-line no-eval
-        eval(expression.expression)
+        eval(Array.isArray(expression.expression) ? expression.expression[1]! : expression.expression)
       }
       report.eval = (performance.now() - startTime) * 1000 / iterations
     }
@@ -101,7 +101,7 @@ describe.skip('performance comparison', () => {
     }
     const entries: ReportEntry[] = []
     const expressionsWithAsts = expressions.map((expression) => {
-      const tokenStream = lits.tokenize(expression)
+      const tokenStream = lits.tokenize(Array.isArray(expression) ? expression[0]! : expression)
       const ast = lits.parse(tokenStream)
 
       return {
@@ -112,7 +112,7 @@ describe.skip('performance comparison', () => {
 
     for (const expression of expressionsWithAsts) {
       const report: ReportEntry = {
-        expression: expression.expression,
+        expression: Array.isArray(expression.expression) ? expression.expression[0]! : expression.expression,
         eval: 0,
         lits: 0,
       }
@@ -127,7 +127,7 @@ describe.skip('performance comparison', () => {
       startTime = performance.now()
       for (let i = 0; i < iterations; i++) {
         // eslint-disable-next-line no-eval
-        eval(expression.expression)
+        eval(Array.isArray(expression.expression) ? expression.expression[1]! : expression.expression)
       }
       report.eval = (performance.now() - startTime) * 1000 / iterations
     }

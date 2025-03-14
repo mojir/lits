@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { RegularExpression, SymbolNode } from '../src/parser/interface'
+import type { RegularExpression, SymbolNode } from '../src/parser/types'
 import { cloneColl, collHasKey, createNativeJsFunction, deepEqual, toNonNegativeInteger } from '../src/utils'
 import { FUNCTION_SYMBOL, REGEXP_SYMBOL } from '../src/utils/symbols'
 import { valueToString } from '../src/utils/debug/debugTools'

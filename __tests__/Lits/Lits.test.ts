@@ -6,7 +6,7 @@ import { Lits } from '../../src/Lits/Lits'
 import { AstNodeType } from '../../src/constants/constants'
 import { assertLitsFunction } from '../../src/typeGuards/litsFunction'
 import { FUNCTION_SYMBOL } from '../../src/utils/symbols'
-import type { Ast } from '../../src/parser/interface'
+import type { Ast } from '../../src/parser/types'
 
 describe('tEST', () => {
   let lits: Lits

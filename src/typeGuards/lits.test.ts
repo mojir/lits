@@ -2,7 +2,7 @@ import { describe, it } from 'vitest'
 import { testTypeGuars } from '../../__tests__/testUtils'
 import { AstNodeType } from '../constants/constants'
 import type { Seq } from '../interface'
-import type { AstNode, RegularExpression } from '../parser/interface'
+import type { AstNode, RegularExpression } from '../parser/types'
 import { FUNCTION_SYMBOL, REGEXP_SYMBOL } from '../utils/symbols'
 import {
   asAny,

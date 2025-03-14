@@ -1,5 +1,5 @@
 import type { Any } from '../../interface'
-import type { CommonSpecialExpressionNode } from '../../parser/interface'
+import type { CommonSpecialExpressionNode } from '../../parser/types'
 import { getTokenDebugData } from '../../tokenizer/token'
 import { isSymbolNode } from '../../typeGuards/astNode'
 import { assertAny } from '../../typeGuards/lits'

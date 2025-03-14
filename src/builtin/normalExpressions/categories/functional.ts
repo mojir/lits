@@ -9,7 +9,7 @@ import type {
   JuxtFunction,
   PartialFunction,
   SomePredFunction,
-} from '../../../parser/interface'
+} from '../../../parser/types'
 import { toAny } from '../../../utils'
 import { assertLitsFunction } from '../../../typeGuards/litsFunction'
 import { FUNCTION_SYMBOL } from '../../../utils/symbols'

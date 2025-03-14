@@ -5,7 +5,7 @@ import type {
   NormalExpressionNode,
   NormalExpressionNodeWithName,
   SymbolNode,
-} from '../parser/interface'
+} from '../parser/types'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { getAssertionError } from '../utils/getAssertionError'
 

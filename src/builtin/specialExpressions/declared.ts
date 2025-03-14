@@ -1,4 +1,4 @@
-import type { CommonSpecialExpressionNode, SymbolNode } from '../../parser/interface'
+import type { CommonSpecialExpressionNode, SymbolNode } from '../../parser/types'
 import type { BuiltinSpecialExpression } from '../interface'
 
 export interface DeclaredNode extends CommonSpecialExpressionNode<'defined?'> {}

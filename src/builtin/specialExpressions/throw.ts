@@ -1,5 +1,5 @@
 import { UserDefinedError } from '../../errors'
-import type { CommonSpecialExpressionNode } from '../../parser/interface'
+import type { CommonSpecialExpressionNode } from '../../parser/types'
 import { getTokenDebugData } from '../../tokenizer/token'
 import { asString } from '../../typeGuards/string'
 import type { BuiltinSpecialExpression } from '../interface'

@@ -1,7 +1,7 @@
 import { describe, it } from 'vitest'
 import { testTypeGuars } from '../../__tests__/testUtils'
 import { FunctionType } from '../constants/constants'
-import type { LitsFunction } from '../parser/interface'
+import type { LitsFunction } from '../parser/types'
 import { createNativeJsFunction } from '../utils'
 import { FUNCTION_SYMBOL } from '../utils/symbols'
 

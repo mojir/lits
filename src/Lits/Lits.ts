@@ -3,14 +3,14 @@ import { evaluate } from '../evaluator'
 import { createContextStack } from '../evaluator/ContextStack'
 import type { Context } from '../evaluator/interface'
 import type { Any, Obj } from '../interface'
-import { parse } from '../parser'
-import type { Ast, LitsFunction } from '../parser/interface'
+import type { Ast, LitsFunction, ParseState } from '../parser/types'
 import { tokenize } from '../tokenizer/tokenize'
 import type { TokenStream } from '../tokenizer/tokenize'
 import { minifyTokenStream } from '../tokenizer/minifyTokenStream'
 import { transformSymbolTokens } from '../transformer'
 import { untokenize } from '../untokenizer'
 import { builtin } from '../builtin'
+import { Parser } from '../parser/Parser'
 import { Cache } from './Cache'
 
 export interface LitsRuntimeInfo {
@@ -102,7 +102,19 @@ export class Lits {
   }
 
   public parse(tokenStream: TokenStream): Ast {
-    return parse(tokenStream)
+    tokenStream = minifyTokenStream(tokenStream, { removeWhiteSpace: true })
+    const ast: Ast = {
+      b: [],
+      hasDebugData: tokenStream.hasDebugData,
+    }
+
+    const parseState: ParseState = {
+      position: 0,
+    }
+
+    ast.b = new Parser(tokenStream, parseState).parse()
+
+    return ast
   }
 
   public evaluate(ast: Ast, params: ContextParams): Any {

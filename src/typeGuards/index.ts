@@ -1,7 +1,7 @@
 import type { Count } from '../builtin/interface'
 import { LitsError } from '../errors'
 import type { UnknownRecord } from '../interface'
-import type { GenericNode } from '../parser/interface'
+import type { GenericNode } from '../parser/types'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { getTokenDebugData } from '../tokenizer/token'
 import { valueToString } from '../utils/debug/debugTools'

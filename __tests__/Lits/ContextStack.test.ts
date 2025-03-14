@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { ContextStackImpl, createContextStack } from '../../src/evaluator/ContextStack'
-import type { SymbolNode } from '../../src/parser/interface'
+import type { SymbolNode } from '../../src/parser/types'
 import { AstNodeType } from '../../src/constants/constants'
 
 function createNameNode(name: string): SymbolNode {

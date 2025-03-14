@@ -1,6 +1,6 @@
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
-import type { BindingNode, CommonSpecialExpressionNode } from '../../parser/interface'
+import type { BindingNode, CommonSpecialExpressionNode } from '../../parser/types'
 import { joinSets } from '../../utils'
 import type { BuiltinSpecialExpression } from '../interface'
 

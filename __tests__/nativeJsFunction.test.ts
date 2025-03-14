@@ -1,7 +1,7 @@
 import { describe, expect, it, vitest } from 'vitest'
 import { type JsFunction, Lits } from '../src/Lits/Lits'
 import { LitsError } from '../src/errors'
-import type { NativeJsFunction } from '../src/parser/interface'
+import type { NativeJsFunction } from '../src/parser/types'
 import { FUNCTION_SYMBOL } from '../src/utils/symbols'
 import { FunctionType } from '../src/constants/constants'
 

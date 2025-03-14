@@ -1,5 +1,5 @@
 import type { Any } from '../../interface'
-import type { CommonSpecialExpressionNode } from '../../parser/interface'
+import type { CommonSpecialExpressionNode } from '../../parser/types'
 import { arrayToPairs } from '../../utils'
 import type { BuiltinSpecialExpression } from '../interface'
 
