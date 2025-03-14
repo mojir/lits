@@ -1,4 +1,4 @@
-import type { SpecialExpressionName, SpecialExpressionNode } from '../builtin'
+import type { SpecialExpressionName } from '../builtin'
 import { builtin, specialExpressionKeys } from '../builtin'
 import type { CondNode } from '../builtin/specialExpressions/cond'
 import type { DefNode } from '../builtin/specialExpressions/def'
@@ -20,8 +20,14 @@ import type { OperatorToken, ReservedSymbolToken, SymbolToken, Token, TokenType 
 import { asLBraceToken, asLBracketToken, asSymbolToken, assertOperatorToken, assertRBraceToken, assertRBracketToken, assertRParenToken, assertReservedSymbolToken, assertSymbolToken, getTokenDebugData, hasTokenDebugData, isA_BinaryOperatorToken, isLBraceToken, isLBracketToken, isLParenToken, isOperatorToken, isRBraceToken, isRBracketToken, isRParenToken, isReservedSymbolToken, isSymbolToken } from '../tokenizer/token'
 import { assertNumberOfParams } from '../typeGuards'
 import { asSymbolNode } from '../typeGuards/astNode'
-import { parseNumber, parseRegexpShorthand, parseReservedSymbol, parseString, parseSymbol } from './commonTokenParsers'
+import type { QqNode } from '../builtin/specialExpressions/qq'
+import type { AndNode } from '../builtin/specialExpressions/and'
+import type { DeclaredNode } from '../builtin/specialExpressions/declared'
+import type { OrNode } from '../builtin/specialExpressions/or'
+import type { RecurNode } from '../builtin/specialExpressions/recur'
+import type { ThrowNode } from '../builtin/specialExpressions/throw'
 import type { AstNode, BindingNode, NormalExpressionNodeWithName, ParseState, StringNode, SymbolNode } from './interface'
+import { parseNumber, parseRegexpShorthand, parseReservedSymbol, parseString, parseSymbol } from './commonTokenParsers'
 
 const exponentiationPrecedence = 10
 const binaryFunctionalOperatorPrecedence = 1
@@ -521,7 +527,7 @@ export class AlgebraicParser {
           case '||':
           case 'recur':
           case 'throw': {
-            const node: SpecialExpressionNode = {
+            const node: QqNode | AndNode | DeclaredNode | OrNode | RecurNode | ThrowNode = {
               t: AstNodeType.SpecialExpression,
               n: name,
               p: params,

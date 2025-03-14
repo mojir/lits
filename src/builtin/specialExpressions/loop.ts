@@ -1,12 +1,11 @@
-import { joinAnalyzeResults } from '../../analyze/utils'
-import { AstNodeType } from '../../constants/constants'
 import { LitsError, RecurSignal } from '../../errors'
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
 import type { BindingNode, CommonSpecialExpressionNode } from '../../parser/interface'
-import { assertRParenToken, getTokenDebugData } from '../../tokenizer/token'
+import { getTokenDebugData } from '../../tokenizer/token'
 import { asNonUndefined } from '../../typeGuards'
 import { asAny } from '../../typeGuards/lits'
+import { joinSets } from '../../utils'
 import { valueToString } from '../../utils/debug/debugTools'
 import type { BuiltinSpecialExpression } from '../interface'
 
@@ -15,21 +14,6 @@ export interface LoopNode extends CommonSpecialExpressionNode<'loop'> {
 }
 
 export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
-  polishParse: (tokenStream, parseState, firstToken, { parseTokensUntilClosingBracket, parseBindings }) => {
-    const bindings = parseBindings(tokenStream, parseState)
-
-    const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-    assertRParenToken(tokenStream.tokens[parseState.position++])
-
-    const node: LoopNode = {
-      t: AstNodeType.SpecialExpression,
-      n: 'loop',
-      p: params,
-      bs: bindings,
-      token: getTokenDebugData(firstToken) && firstToken,
-    }
-    return node
-  },
   paramCount: {},
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const sourceCodeInfo = getTokenDebugData(node.token)?.sourceCodeInfo
@@ -64,7 +48,7 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
       return result
     }
   },
-  findUnresolvedSymbols: (node, contextStack, { findUnresolvedSymbols, builtin }) => {
+  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => {
     const newContext = node.bs
       .map(binding => binding.n)
       .reduce((context: Context, name) => {
@@ -73,8 +57,8 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
       }, {})
 
     const bindingValueNodes = node.bs.map(binding => binding.v)
-    const bindingsResult = findUnresolvedSymbols(bindingValueNodes, contextStack, builtin)
-    const paramsResult = findUnresolvedSymbols(node.p, contextStack.create(newContext), builtin)
-    return joinAnalyzeResults(bindingsResult, paramsResult)
+    const bindingsResult = getUndefinedSymbols(bindingValueNodes, contextStack, builtin)
+    const paramsResult = getUndefinedSymbols(node.p, contextStack.create(newContext), builtin)
+    return joinSets(bindingsResult, paramsResult)
   },
 }

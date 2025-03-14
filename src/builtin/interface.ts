@@ -1,4 +1,4 @@
-import type { FindUnresolvedSymbols, UnresolvedSymbols } from '../analyze'
+import type { GetUndefinedSymbols, UndefinedSymbols } from '../getUndefinedSymbols'
 import type { ContextStack } from '../evaluator/ContextStack'
 import type { EvaluateAstNode, ExecuteFunction } from '../evaluator/interface'
 import type { Any, Arr } from '../interface'
@@ -7,13 +7,10 @@ import type {
   ParseBinding,
   ParseBindings,
   ParseExpression,
-  ParseState,
   ParseToken,
   ParseTokensUntilClosingBracket,
 } from '../parser/interface'
-import type { TokenStream } from '../tokenizer/tokenize'
-import type { SourceCodeInfo, Token } from '../tokenizer/token'
-
+import type { SourceCodeInfo } from '../tokenizer/token'
 import type { BuiltinSpecialExpressions, SpecialExpressionNode } from '.'
 
 export type Count = number | { min?: number, max?: number, even?: true, odd?: true }
@@ -47,14 +44,13 @@ interface EvaluateHelpers {
   builtin: Builtin
 }
 export interface BuiltinSpecialExpression<T, N extends SpecialExpressionNode> {
-  polishParse: (tokenStream: TokenStream, parseState: ParseState, firstToken: Token, parsers: ParserHelpers) => N
   evaluate: (node: N, contextStack: ContextStack, helpers: EvaluateHelpers) => T
   paramCount: Count
-  findUnresolvedSymbols: (
+  getUndefinedSymbols: (
     node: N,
     contextStack: ContextStack,
-    params: { findUnresolvedSymbols: FindUnresolvedSymbols, builtin: Builtin, evaluateAstNode: EvaluateAstNode },
-  ) => UnresolvedSymbols
+    params: { getUndefinedSymbols: GetUndefinedSymbols, builtin: Builtin, evaluateAstNode: EvaluateAstNode },
+  ) => UndefinedSymbols
 }
 
 export interface Builtin {

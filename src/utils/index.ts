@@ -116,3 +116,15 @@ export function arrayToPairs<T>(arr: T[]): T[][] {
 
   return pairs
 }
+
+export function joinSets<T>(...results: Set<T>[]): Set<T> {
+  const result = new Set<T>()
+  for (const symbols of results)
+    symbols.forEach(symbol => result.add(symbol))
+
+  return result
+}
+
+export function addToSet<T>(target: Set<T>, source: Set<T>): void {
+  source.forEach(symbol => target.add(symbol))
+}

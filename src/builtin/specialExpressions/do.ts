@@ -2,12 +2,10 @@ import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
 import type { CommonSpecialExpressionNode } from '../../parser/interface'
 import type { BuiltinSpecialExpression } from '../interface'
-import { getCommonPolishSpecialExpressionParser } from './commonParser'
 
 export interface DoNode extends CommonSpecialExpressionNode<'do'> {}
 
 export const doSpecialExpression: BuiltinSpecialExpression<Any, DoNode> = {
-  polishParse: getCommonPolishSpecialExpressionParser('do'),
   paramCount: {},
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const newContext: Context = {}
@@ -19,7 +17,7 @@ export const doSpecialExpression: BuiltinSpecialExpression<Any, DoNode> = {
 
     return result
   },
-  findUnresolvedSymbols: (node, contextStack, { findUnresolvedSymbols, builtin }) => {
-    return findUnresolvedSymbols(node.p, contextStack.create({}), builtin)
+  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => {
+    return getUndefinedSymbols(node.p, contextStack.create({}), builtin)
   },
 }

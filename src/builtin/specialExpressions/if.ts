@@ -3,12 +3,10 @@ import type { CommonSpecialExpressionNode } from '../../parser/interface'
 import { getTokenDebugData } from '../../tokenizer/token'
 import { asAstNode } from '../../typeGuards/astNode'
 import type { BuiltinSpecialExpression } from '../interface'
-import { getCommonPolishSpecialExpressionParser } from './commonParser'
 
 export interface IfNode extends CommonSpecialExpressionNode<'if'> {}
 
 export const ifSpecialExpression: BuiltinSpecialExpression<Any, IfNode> = {
-  polishParse: getCommonPolishSpecialExpressionParser('if'),
   paramCount: { min: 2, max: 3 },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const sourceCodeInfo = getTokenDebugData(node.token)?.sourceCodeInfo
@@ -24,5 +22,5 @@ export const ifSpecialExpression: BuiltinSpecialExpression<Any, IfNode> = {
         return null
     }
   },
-  findUnresolvedSymbols: (node, contextStack, { findUnresolvedSymbols, builtin }) => findUnresolvedSymbols(node.p, contextStack, builtin),
+  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => getUndefinedSymbols(node.p, contextStack, builtin),
 }

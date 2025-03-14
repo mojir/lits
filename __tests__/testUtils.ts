@@ -1,12 +1,7 @@
 import { expect } from 'vitest'
-import type { Context, LitsFunction, LitsParams } from '../src'
-import { Lits } from '../src'
-import type { Analysis } from '../src/analyze'
-import type { LitsError } from '../src/errors'
+import type { Context } from '../src'
 import { ContextStackImpl } from '../src/evaluator/ContextStack'
 import type { Obj } from '../src/interface'
-import { isUnknownRecord } from '../src/typeGuards'
-import { isLitsFunction } from '../src/typeGuards/litsFunction'
 import { isRegularExpression } from '../src/typeGuards/lits'
 
 export interface TypeGuardTestData {
@@ -116,58 +111,6 @@ export function regexpEquals(udr: unknown, r: RegExp): boolean {
   const sortedUdrFlags = udr.f.split('').sort().join('')
   const sortedRFlags = r.flags.split('').sort().join('')
   return udr.s === r.source && sortedRFlags === sortedUdrFlags
-}
-
-export function getUndefinedSymbolNames(result: Analysis): Set<string> {
-  const names = [...result.unresolvedSymbols].map(entry => entry.symbol)
-  return new Set<string>(names)
-}
-
-export function getLitsVariants() {
-  const variants = [new Lits(), new Lits({ debug: true })]
-  return {
-    run(program: string, LitsParams?: LitsParams): unknown {
-      const [result1, result2] = variants.map((l) => {
-        try {
-          return l.run(program, LitsParams)
-        }
-        catch (error) {
-          return { _error_: error }
-        }
-      })
-
-      if (isUnknownRecord(result1) && result1._error_ instanceof Error) {
-        expect(isUnknownRecord(result2)).toBe(true)
-        expect((result2 as Record<string, unknown>)._error_).toBeInstanceOf(Error)
-        expect(((result2 as Record<string, unknown>)._error_ as LitsError).name).toBe(
-          (result1._error_ as LitsError).name,
-        )
-        throw result1._error_
-      }
-
-      if (isLitsFunction(result1)) {
-        expect(isLitsFunction(result2)).toBe(true)
-        expect((result2 as LitsFunction).t).toBe(result1.t)
-        return result1
-      }
-      if (result1 instanceof Error) {
-        expect(result2).toBeInstanceOf(Error)
-        expect((result2 as LitsError).name).toBe(result1.name)
-        return result1
-      }
-      expect(result1).toStrictEqual(result2)
-      return result1
-    },
-    analyze(program: string): Analysis {
-      const results = variants.map(l => l.analyze(program))
-      const result1 = results[0] as Analysis
-      const result2 = results[1] as Analysis
-      const us1 = getUndefinedSymbolNames(result1)
-      const us2 = getUndefinedSymbolNames(result2)
-      expect(us1).toStrictEqual(us2)
-      return result1
-    },
-  }
 }
 
 export function createContextStackWithGlobalContext(context: Context) {

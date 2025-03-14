@@ -3,12 +3,10 @@ import type { CommonSpecialExpressionNode } from '../../parser/interface'
 import { getTokenDebugData } from '../../tokenizer/token'
 import { asString } from '../../typeGuards/string'
 import type { BuiltinSpecialExpression } from '../interface'
-import { getCommonPolishSpecialExpressionParser } from './commonParser'
 
 export interface ThrowNode extends CommonSpecialExpressionNode<'throw'> {}
 
 export const throwSpecialExpression: BuiltinSpecialExpression<null, ThrowNode> = {
-  polishParse: getCommonPolishSpecialExpressionParser('throw'),
   paramCount: 1,
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const message = asString(evaluateAstNode(node.p[0]!, contextStack), getTokenDebugData(node.token)?.sourceCodeInfo, {
@@ -16,5 +14,5 @@ export const throwSpecialExpression: BuiltinSpecialExpression<null, ThrowNode> =
     })
     throw new UserDefinedError(message, getTokenDebugData(node.token)?.sourceCodeInfo)
   },
-  findUnresolvedSymbols: (node, contextStack, { findUnresolvedSymbols, builtin }) => findUnresolvedSymbols(node.p, contextStack, builtin),
+  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => getUndefinedSymbols(node.p, contextStack, builtin),
 }

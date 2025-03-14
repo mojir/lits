@@ -1,21 +1,38 @@
 import type { Builtin } from './interface'
 import { normalExpressions } from './normalExpressions'
+import type { AndNode } from './specialExpressions/and'
 import { andSpecialExpression } from './specialExpressions/and'
+import type { CondNode } from './specialExpressions/cond'
 import { condSpecialExpression } from './specialExpressions/cond'
+import type { SwitchNode } from './specialExpressions/switch'
 import { switchSpecialExpression } from './specialExpressions/switch'
+import type { DeclaredNode } from './specialExpressions/declared'
 import { declaredSpecialExpression } from './specialExpressions/declared'
+import type { DefNode } from './specialExpressions/def'
 import { defSpecialExpression } from './specialExpressions/def'
+import type { DoNode } from './specialExpressions/do'
 import { doSpecialExpression } from './specialExpressions/do'
+import type { DefnNode, FnNode, FunctionNode } from './specialExpressions/functions'
 import { defnSpecialExpression, fnSpecialExpression, functionSpecialExpression } from './specialExpressions/functions'
+import type { IfNode } from './specialExpressions/if'
 import { ifSpecialExpression } from './specialExpressions/if'
+import type { UnlessNode } from './specialExpressions/unless'
 import { unlessSpecialExpression } from './specialExpressions/unless'
+import type { LetNode } from './specialExpressions/let'
 import { letSpecialExpression } from './specialExpressions/let'
+import type { LoopNode } from './specialExpressions/loop'
 import { loopSpecialExpression } from './specialExpressions/loop'
+import type { DoSeqNode, ForNode } from './specialExpressions/loops'
 import { doseqSpecialExpression, forSpecialExpression } from './specialExpressions/loops'
+import type { OrNode } from './specialExpressions/or'
 import { orSpecialExpression } from './specialExpressions/or'
+import type { QqNode } from './specialExpressions/qq'
 import { qqSpecialExpression } from './specialExpressions/qq'
+import type { RecurNode } from './specialExpressions/recur'
 import { recurSpecialExpression } from './specialExpressions/recur'
+import type { ThrowNode } from './specialExpressions/throw'
 import { throwSpecialExpression } from './specialExpressions/throw'
+import type { TryNode } from './specialExpressions/try'
 import { trySpecialExpression } from './specialExpressions/try'
 
 const specialExpressions = {
@@ -59,14 +76,27 @@ export type CommonSpecialExpressionName = keyof Pick<
 export type BuiltinSpecialExpressions = typeof specialExpressions
 export type BuiltinSpecialExpression = typeof specialExpressions[SpecialExpressionName]
 export type BuiltinCommonSpecialExpression = typeof specialExpressions[CommonSpecialExpressionName]
-export type GenericCommonSpecialExpressionNode<T extends CommonSpecialExpressionName> = ReturnType<typeof specialExpressions[T]['polishParse']>
-export type SpecialExpressionNode = ReturnType<typeof specialExpressions[SpecialExpressionName]['polishParse']>
-
-Object.keys(specialExpressions).forEach((key) => {
-  /* v8 ignore next 2 */
-  if (normalExpressions[key])
-    throw new Error(`Expression ${key} is defined as both a normal expression and a special expression`)
-})
+export type SpecialExpressionNode =
+  | AndNode
+  | CondNode
+  | SwitchNode
+  | DefNode
+  | DefnNode
+  | FunctionNode
+  | DoNode
+  | DoSeqNode
+  | ForNode
+  | FnNode
+  | IfNode
+  | UnlessNode
+  | LetNode
+  | LoopNode
+  | OrNode
+  | RecurNode
+  | ThrowNode
+  | TryNode
+  | DeclaredNode
+  | QqNode
 
 export const builtin: Builtin = {
   normalExpressions,

@@ -1,13 +1,9 @@
-import { joinAnalyzeResults } from '../../analyze/utils'
-import { AstNodeType } from '../../constants/constants'
-import { LitsError } from '../../errors'
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
 import type { AstNode, CommonSpecialExpressionNode, SymbolNode } from '../../parser/interface'
-import { assertLParenToken, assertRParenToken, getTokenDebugData } from '../../tokenizer/token'
-import { assertSymbolNode } from '../../typeGuards/astNode'
+import { getTokenDebugData } from '../../tokenizer/token'
 import { asAny } from '../../typeGuards/lits'
-import { getSourceCodeInfo } from '../../utils/debug/getSourceCodeInfo'
+import { joinSets } from '../../utils'
 import type { BuiltinSpecialExpression } from '../interface'
 
 export interface TryNode extends CommonSpecialExpressionNode<'try'> {
@@ -16,40 +12,6 @@ export interface TryNode extends CommonSpecialExpressionNode<'try'> {
 }
 
 export const trySpecialExpression: BuiltinSpecialExpression<Any, TryNode> = {
-  polishParse: (tokenStream, parseState, firstToken, { parseToken }) => {
-    const tryExpression = parseToken(tokenStream, parseState)
-
-    assertLParenToken(tokenStream.tokens[parseState.position++])
-
-    const catchNode = parseToken(tokenStream, parseState)
-    assertSymbolNode(catchNode, getTokenDebugData(catchNode.token)?.sourceCodeInfo)
-    if (catchNode.v !== 'catch') {
-      throw new LitsError(
-        `Expected 'catch', got '${catchNode.v}'.`,
-        getSourceCodeInfo(catchNode, getTokenDebugData(catchNode.token)?.sourceCodeInfo),
-      )
-    }
-
-    const error = parseToken(tokenStream, parseState)
-    assertSymbolNode(error, getTokenDebugData(error.token)?.sourceCodeInfo)
-
-    const catchExpression = parseToken(tokenStream, parseState)
-
-    assertRParenToken(tokenStream.tokens[parseState.position++])
-
-    assertRParenToken(tokenStream.tokens[parseState.position++])
-
-    const node: TryNode = {
-      t: AstNodeType.SpecialExpression,
-      n: 'try',
-      p: [tryExpression],
-      ce: catchExpression,
-      e: error,
-      token: getTokenDebugData(firstToken) && firstToken,
-    }
-
-    return node
-  },
   paramCount: 1,
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const { p: tryExpressions, ce: catchExpression, e: errorNode } = node
@@ -65,15 +27,15 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any, TryNode> = {
       return evaluateAstNode(catchExpression, contextStack.create(newContext))
     }
   },
-  findUnresolvedSymbols: (node, contextStack, { findUnresolvedSymbols, builtin }) => {
+  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => {
     const { p: tryExpressions, ce: catchExpression, e: errorNode } = node
-    const tryResult = findUnresolvedSymbols(tryExpressions, contextStack, builtin)
+    const tryResult = getUndefinedSymbols(tryExpressions, contextStack, builtin)
     const newContext: Context = errorNode
       ? {
           [errorNode.v]: { value: true },
         }
       : {}
-    const catchResult = findUnresolvedSymbols([catchExpression], contextStack.create(newContext), builtin)
-    return joinAnalyzeResults(tryResult, catchResult)
+    const catchResult = getUndefinedSymbols([catchExpression], contextStack.create(newContext), builtin)
+    return joinSets(tryResult, catchResult)
   },
 }

@@ -1,18 +1,16 @@
 import type { SpecialExpressionNode } from '..'
-import type { FindUnresolvedSymbols, UnresolvedSymbol, UnresolvedSymbols } from '../../analyze'
-import { AstNodeType } from '../../constants/constants'
+import type { GetUndefinedSymbols, UndefinedSymbols } from '../../getUndefinedSymbols'
 import { LitsError } from '../../errors'
 import type { ContextStack } from '../../evaluator/ContextStack'
 import type { Context, EvaluateAstNode } from '../../evaluator/interface'
 import type { Any, Arr } from '../../interface'
-import type { AstNode, BindingNode, CommonSpecialExpressionNode, ParseState } from '../../parser/interface'
-import { asToken, assertLBracketToken, assertRParenToken, getTokenDebugData, isRBracketToken } from '../../tokenizer/token'
-import type { TokenStream } from '../../tokenizer/tokenize'
+import type { AstNode, BindingNode, CommonSpecialExpressionNode } from '../../parser/interface'
 import type { SourceCodeInfo } from '../../tokenizer/token'
+import { getTokenDebugData } from '../../tokenizer/token'
 import { asNonUndefined } from '../../typeGuards'
 import { asAstNode } from '../../typeGuards/astNode'
 import { asAny, asColl, isSeq } from '../../typeGuards/lits'
-import type { Builtin, BuiltinSpecialExpression, ParserHelpers } from '../interface'
+import type { Builtin, BuiltinSpecialExpression } from '../interface'
 
 export interface ForNode extends CommonSpecialExpressionNode<'for'> {
   l: LoopBindingNode[]
@@ -32,21 +30,6 @@ export interface LoopBindingNode {
   we?: AstNode // While Node
 }
 
-function parseLoopBinding(
-  tokenStream: TokenStream,
-  parseState: ParseState,
-  { parseBinding }: ParserHelpers,
-): LoopBindingNode {
-  const bindingNode = parseBinding(tokenStream, parseState)
-
-  const loopBinding: LoopBindingNode = {
-    b: bindingNode,
-    m: [],
-  }
-
-  return loopBinding
-}
-
 function addToContext(
   bindings: BindingNode[],
   context: Context,
@@ -62,23 +45,6 @@ function addToContext(
   }
 }
 
-function parseLoopBindings(
-  tokenStream: TokenStream,
-  parseState: ParseState,
-  parsers: ParserHelpers,
-): LoopBindingNode[] {
-  assertLBracketToken(tokenStream.tokens[parseState.position++])
-
-  const loopBindings: LoopBindingNode[] = []
-
-  let tkn = asToken(tokenStream.tokens[parseState.position])
-  while (!isRBracketToken(tkn)) {
-    loopBindings.push(parseLoopBinding(tokenStream, parseState, parsers))
-    tkn = asToken(tokenStream.tokens[parseState.position])
-  }
-  parseState.position += 1
-  return loopBindings
-}
 function evaluateLoop(
   returnResult: boolean,
   node: SpecialExpressionNode,
@@ -171,88 +137,54 @@ function evaluateLoop(
 function analyze(
   node: LoopNode,
   contextStack: ContextStack,
-  findUnresolvedSymbols: FindUnresolvedSymbols,
+  getUndefinedSymbols: GetUndefinedSymbols,
   builtin: Builtin,
-): UnresolvedSymbols {
-  const result = new Set<UnresolvedSymbol>()
+): UndefinedSymbols {
+  const result = new Set<string>()
   const newContext: Context = {}
   const { l: loopBindings } = node
   loopBindings.forEach((loopBinding) => {
     const { b: binding, l: letBindings, wn: whenNode, we: whileNode } = loopBinding
-    findUnresolvedSymbols([binding.v], contextStack.create(newContext), builtin).forEach(symbol =>
+    getUndefinedSymbols([binding.v], contextStack.create(newContext), builtin).forEach(symbol =>
       result.add(symbol),
     )
     newContext[binding.n] = { value: true }
     if (letBindings) {
       letBindings.forEach((letBinding) => {
-        findUnresolvedSymbols([letBinding.v], contextStack.create(newContext), builtin).forEach(symbol =>
+        getUndefinedSymbols([letBinding.v], contextStack.create(newContext), builtin).forEach(symbol =>
           result.add(symbol),
         )
         newContext[letBinding.n] = { value: true }
       })
     }
     if (whenNode) {
-      findUnresolvedSymbols([whenNode], contextStack.create(newContext), builtin).forEach(symbol =>
+      getUndefinedSymbols([whenNode], contextStack.create(newContext), builtin).forEach(symbol =>
         result.add(symbol),
       )
     }
     if (whileNode) {
-      findUnresolvedSymbols([whileNode], contextStack.create(newContext), builtin).forEach(symbol =>
+      getUndefinedSymbols([whileNode], contextStack.create(newContext), builtin).forEach(symbol =>
         result.add(symbol),
       )
     }
   })
-  findUnresolvedSymbols(node.p, contextStack.create(newContext), builtin).forEach(symbol =>
+  getUndefinedSymbols(node.p, contextStack.create(newContext), builtin).forEach(symbol =>
     result.add(symbol),
   )
   return result
 }
 
 export const forSpecialExpression: BuiltinSpecialExpression<Any, ForNode> = {
-  polishParse: (tokenStream, parseState, firstToken, parsers) => {
-    const { parseTokensUntilClosingBracket } = parsers
-    const loopBindings = parseLoopBindings(tokenStream, parseState, parsers)
-
-    const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-    assertRParenToken(tokenStream.tokens[parseState.position++])
-
-    const node: ForNode = {
-      n: 'for',
-      t: AstNodeType.SpecialExpression,
-      l: loopBindings,
-      p: params,
-      token: getTokenDebugData(firstToken) && firstToken,
-    }
-
-    return node
-  },
   paramCount: 1,
   evaluate: (node, contextStack, helpers) => evaluateLoop(true, node, contextStack, helpers.evaluateAstNode),
-  findUnresolvedSymbols: (node, contextStack, { findUnresolvedSymbols, builtin }) => analyze(node, contextStack, findUnresolvedSymbols, builtin),
+  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => analyze(node, contextStack, getUndefinedSymbols, builtin),
 }
 
 export const doseqSpecialExpression: BuiltinSpecialExpression<null, DoSeqNode> = {
-  polishParse: (tokenStream, parseState, firstToken, parsers) => {
-    const { parseTokensUntilClosingBracket } = parsers
-    const loopBindings = parseLoopBindings(tokenStream, parseState, parsers)
-
-    const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-    assertRParenToken(tokenStream.tokens[parseState.position++])
-
-    const node: DoSeqNode = {
-      n: 'doseq',
-      t: AstNodeType.SpecialExpression,
-      l: loopBindings,
-      p: params,
-      token: getTokenDebugData(firstToken) && firstToken,
-    }
-
-    return node
-  },
   paramCount: 1,
   evaluate: (node, contextStack, helpers) => {
     evaluateLoop(false, node, contextStack, helpers.evaluateAstNode)
     return null
   },
-  findUnresolvedSymbols: (node, contextStack, { findUnresolvedSymbols, builtin }) => analyze(node, contextStack, findUnresolvedSymbols, builtin),
+  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => analyze(node, contextStack, getUndefinedSymbols, builtin),
 }

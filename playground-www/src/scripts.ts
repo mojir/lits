@@ -723,8 +723,8 @@ export function analyze() {
   const litsParams = getLitsParamsFromContext()
   const hijacker = hijackConsole()
   try {
-    const result = getLits('debug').analyze(code, litsParams)
-    const unresolvedSymbols = [...new Set([...result.unresolvedSymbols].map(s => s.symbol))].join(', ')
+    const result = getLits('debug').getUndefinedSymbols(code, litsParams)
+    const unresolvedSymbols = [...result].join(', ')
     const unresolvedSymbolsOutput = `Unresolved symbols: ${unresolvedSymbols || '-'}`
 
     appendOutput(`${unresolvedSymbolsOutput}`, 'analyze')

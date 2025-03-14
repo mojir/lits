@@ -1,5 +1,4 @@
-import type { Analysis } from '../analyze'
-import { analyze } from '../analyze'
+import { getUndefinedSymbols } from '../getUndefinedSymbols'
 import { evaluate } from '../evaluator'
 import { createContextStack } from '../evaluator/ContextStack'
 import type { Context } from '../evaluator/interface'
@@ -9,8 +8,9 @@ import type { Ast, LitsFunction } from '../parser/interface'
 import { tokenize } from '../tokenizer/tokenize'
 import type { TokenStream, TokenizeParams } from '../tokenizer/tokenize'
 import { minifyTokenStream } from '../tokenizer/minifyTokenStream'
-import { transformTokens } from '../transformer'
+import { transformSymbolTokens } from '../transformer'
 import { untokenize } from '../untokenizer'
+import { builtin } from '../builtin'
 import { Cache } from './Cache'
 
 export interface LitsRuntimeInfo {
@@ -82,10 +82,11 @@ export class Lits {
     return contextStack.globalContext
   }
 
-  public analyze(program: string, params: LitsParams = {}): Analysis {
+  public getUndefinedSymbols(program: string, params: LitsParams = {}): Set<string> {
     const ast = this.generateAst(program, params)
+    const contextStack = createContextStack(params)
 
-    return analyze(ast, params)
+    return getUndefinedSymbols(ast, contextStack, builtin)
   }
 
   public tokenize(program: string, tokenizeParams: Pick<TokenizeParams, 'filePath'> & { minify?: boolean } = {}): TokenStream {
@@ -103,8 +104,8 @@ export class Lits {
     return evaluate(ast, contextStack)
   }
 
-  public transform(tokenStream: TokenStream, transformer: (name: string) => string): TokenStream {
-    return transformTokens(tokenStream, transformer)
+  public transformSymbols(tokenStream: TokenStream, transformer: (symbol: string) => string): TokenStream {
+    return transformSymbolTokens(tokenStream, transformer)
   }
 
   public untokenize(tokenStream: TokenStream): string {

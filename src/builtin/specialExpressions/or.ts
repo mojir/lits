@@ -1,12 +1,10 @@
 import type { Any } from '../../interface'
 import type { CommonSpecialExpressionNode } from '../../parser/interface'
 import type { BuiltinSpecialExpression } from '../interface'
-import { getCommonPolishSpecialExpressionParser } from './commonParser'
 
 export interface OrNode extends CommonSpecialExpressionNode<'||'> {}
 
 export const orSpecialExpression: BuiltinSpecialExpression<Any, OrNode> = {
-  polishParse: getCommonPolishSpecialExpressionParser('||'),
   paramCount: {},
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     let value: Any = false
@@ -19,5 +17,5 @@ export const orSpecialExpression: BuiltinSpecialExpression<Any, OrNode> = {
 
     return value
   },
-  findUnresolvedSymbols: (node, contextStack, { findUnresolvedSymbols, builtin }) => findUnresolvedSymbols(node.p, contextStack, builtin),
+  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => getUndefinedSymbols(node.p, contextStack, builtin),
 }

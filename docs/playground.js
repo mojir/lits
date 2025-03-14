@@ -927,11 +927,6 @@ var Playground = (function (exports) {
     function isLParenToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'LParen';
     }
-    function assertLParenToken(token) {
-        if (!isLParenToken(token)) {
-            throwUnexpectedToken('LParen', undefined, token);
-        }
-    }
     function isRParenToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'RParen';
     }
@@ -1546,6 +1541,31 @@ var Playground = (function (exports) {
         for (var i = 0; i < arr.length; i += 2)
             pairs.push([arr[i], arr[i + 1]]);
         return pairs;
+    }
+    function joinSets() {
+        var e_1, _a;
+        var results = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            results[_i] = arguments[_i];
+        }
+        var result = new Set();
+        try {
+            for (var results_1 = __values(results), results_1_1 = results_1.next(); !results_1_1.done; results_1_1 = results_1.next()) {
+                var symbols = results_1_1.value;
+                symbols.forEach(function (symbol) { return result.add(symbol); });
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (results_1_1 && !results_1_1.done && (_a = results_1.return)) _a.call(results_1);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        return result;
+    }
+    function addToSet(target, source) {
+        source.forEach(function (symbol) { return target.add(symbol); });
     }
 
     // isArray not needed, use Array.isArary
@@ -4403,18 +4423,6 @@ var Playground = (function (exports) {
     var normalExpressions = __assign(__assign({}, expressions), aliases);
 
     var andSpecialExpression = {
-        polishParse: function (tokenStream, parseState, firstToken, _a) {
-            var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
-            var params = parseTokensUntilClosingBracket(tokenStream, parseState);
-            assertRParenToken(tokenStream.tokens[parseState.position++]);
-            var node = {
-                t: AstNodeType.SpecialExpression,
-                n: '&&',
-                p: params,
-                token: getTokenDebugData(firstToken) && firstToken,
-            };
-            return node;
-        },
         paramCount: {},
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
@@ -4437,28 +4445,13 @@ var Playground = (function (exports) {
             }
             return value;
         },
-        findUnresolvedSymbols: function (node, contextStack, _a) {
-            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
-            return findUnresolvedSymbols(node.p, contextStack, builtin);
+        getUndefinedSymbols: function (node, contextStack, _a) {
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin;
+            return getUndefinedSymbols(node.p, contextStack, builtin);
         },
     };
 
-    function getCommonPolishSpecialExpressionParser(name) {
-        return function (tokenStream, parseState, firstToken, _a) {
-            var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
-            var params = parseTokensUntilClosingBracket(tokenStream, parseState);
-            assertRParenToken(tokenStream.tokens[parseState.position++]);
-            return {
-                t: AstNodeType.SpecialExpression,
-                n: name,
-                p: params,
-                token: getTokenDebugData(firstToken) && firstToken,
-            };
-        };
-    }
-
     var condSpecialExpression = {
-        polishParse: getCommonPolishSpecialExpressionParser('cond'),
         paramCount: { even: true },
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
@@ -4481,14 +4474,13 @@ var Playground = (function (exports) {
             }
             return null;
         },
-        findUnresolvedSymbols: function (node, contextStack, _a) {
-            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
-            return findUnresolvedSymbols(node.p, contextStack, builtin);
+        getUndefinedSymbols: function (node, contextStack, _a) {
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin;
+            return getUndefinedSymbols(node.p, contextStack, builtin);
         },
     };
 
     var switchSpecialExpression = {
-        polishParse: getCommonPolishSpecialExpressionParser('switch'),
         paramCount: { odd: true },
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
@@ -4512,22 +4504,21 @@ var Playground = (function (exports) {
             }
             return null;
         },
-        findUnresolvedSymbols: function (node, contextStack, _a) {
-            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
-            return findUnresolvedSymbols(node.p, contextStack, builtin);
+        getUndefinedSymbols: function (node, contextStack, _a) {
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin;
+            return getUndefinedSymbols(node.p, contextStack, builtin);
         },
     };
 
     var declaredSpecialExpression = {
-        polishParse: getCommonPolishSpecialExpressionParser('defined?'),
         paramCount: 1,
         evaluate: function (node, contextStack) {
             var lookUpResult = contextStack.lookUp(node.p[0]);
             return lookUpResult !== null;
         },
-        findUnresolvedSymbols: function (node, contextStack, _a) {
-            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
-            return findUnresolvedSymbols(node.p, contextStack, builtin);
+        getUndefinedSymbols: function (node, contextStack, _a) {
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin;
+            return getUndefinedSymbols(node.p, contextStack, builtin);
         },
     };
 
@@ -4631,20 +4622,6 @@ var Playground = (function (exports) {
     }
 
     var defSpecialExpression = {
-        polishParse: function (tokenStream, parseState, firstToken, _a) {
-            var _b;
-            var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
-            var params = parseTokensUntilClosingBracket(tokenStream, parseState);
-            assertRParenToken(tokenStream.tokens[parseState.position++]);
-            var node = {
-                t: AstNodeType.SpecialExpression,
-                n: 'def',
-                p: params,
-                token: getTokenDebugData(firstToken) && firstToken,
-            };
-            assertSymbolNode(node.p[0], (_b = getTokenDebugData(node.token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
-            return node;
-        },
         paramCount: 2,
         evaluate: function (node, contextStack, _a) {
             var _b;
@@ -4655,12 +4632,12 @@ var Playground = (function (exports) {
             contextStack.exportValue(name, evaluateAstNode(node.p[1], contextStack));
             return null;
         },
-        findUnresolvedSymbols: function (node, contextStack, _a) {
+        getUndefinedSymbols: function (node, contextStack, _a) {
             var _b;
-            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin;
             var sourceCodeInfo = (_b = getTokenDebugData(node.token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo;
             var subNode = asAstNode(node.p[1]);
-            var result = findUnresolvedSymbols([subNode], contextStack, builtin);
+            var result = getUndefinedSymbols([subNode], contextStack, builtin);
             var name = asSymbolNode(node.p[0]).v;
             assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo);
             contextStack.exportValue(name, true);
@@ -4669,7 +4646,6 @@ var Playground = (function (exports) {
     };
 
     var doSpecialExpression = {
-        polishParse: getCommonPolishSpecialExpressionParser('do'),
         paramCount: {},
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
@@ -4692,56 +4668,13 @@ var Playground = (function (exports) {
             }
             return result;
         },
-        findUnresolvedSymbols: function (node, contextStack, _a) {
-            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
-            return findUnresolvedSymbols(node.p, contextStack.create({}), builtin);
+        getUndefinedSymbols: function (node, contextStack, _a) {
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin;
+            return getUndefinedSymbols(node.p, contextStack.create({}), builtin);
         },
     };
 
-    function joinAnalyzeResults() {
-        var e_1, _a;
-        var results = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            results[_i] = arguments[_i];
-        }
-        var result = new Set();
-        try {
-            for (var results_1 = __values(results), results_1_1 = results_1.next(); !results_1_1.done; results_1_1 = results_1.next()) {
-                var symbols = results_1_1.value;
-                symbols.forEach(function (symbol) { return result.add(symbol); });
-            }
-        }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
-        finally {
-            try {
-                if (results_1_1 && !results_1_1.done && (_a = results_1.return)) _a.call(results_1);
-            }
-            finally { if (e_1) throw e_1.error; }
-        }
-        return result;
-    }
-    function addAnalyzeResults(target, source) {
-        source.forEach(function (symbol) { return target.add(symbol); });
-    }
-
     var functionSpecialExpression = {
-        polishParse: function (tokenStream, parseState, firstToken, parsers) {
-            var _a;
-            var parseToken = parsers.parseToken;
-            var functionName = parseToken(tokenStream, parseState);
-            assertSymbolNode(functionName, (_a = getTokenDebugData(functionName.token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-            var functionOverloades = parseFunctionOverloades(tokenStream, parseState, parsers);
-            assertRParenToken(tokenStream.tokens[parseState.position++]);
-            var node = {
-                t: AstNodeType.SpecialExpression,
-                n: 'function',
-                f: functionName,
-                p: [],
-                o: functionOverloades,
-                token: getTokenDebugData(firstToken) && firstToken,
-            };
-            return node;
-        },
         paramCount: {},
         evaluate: function (node, contextStack, _a) {
             var _b;
@@ -4760,32 +4693,15 @@ var Playground = (function (exports) {
             contextStack.addValue(name, litsFunction);
             return null;
         },
-        findUnresolvedSymbols: function (node, contextStack, _a) {
+        getUndefinedSymbols: function (node, contextStack, _a) {
             var _b;
-            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin;
             contextStack.exportValue(node.f.v, true);
             var newContext = (_b = {}, _b[node.f.v] = { value: true }, _b);
-            return addOverloadsUnresolvedSymbols(node.o, contextStack, findUnresolvedSymbols, builtin, newContext);
+            return addOverloadsUnresolvedSymbols(node.o, contextStack, getUndefinedSymbols, builtin, newContext);
         },
     };
     var defnSpecialExpression = {
-        polishParse: function (tokenStream, parseState, firstToken, parsers) {
-            var _a;
-            var parseToken = parsers.parseToken;
-            var functionName = parseToken(tokenStream, parseState);
-            assertSymbolNode(functionName, (_a = getTokenDebugData(functionName.token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-            var functionOverloades = parseFunctionOverloades(tokenStream, parseState, parsers);
-            assertRParenToken(tokenStream.tokens[parseState.position++]);
-            var node = {
-                t: AstNodeType.SpecialExpression,
-                n: 'defn',
-                f: functionName,
-                p: [],
-                o: functionOverloades,
-                token: getTokenDebugData(firstToken) && firstToken,
-            };
-            return node;
-        },
         paramCount: {},
         evaluate: function (node, contextStack, _a) {
             var _b;
@@ -4804,27 +4720,15 @@ var Playground = (function (exports) {
             contextStack.exportValue(name, litsFunction);
             return null;
         },
-        findUnresolvedSymbols: function (node, contextStack, _a) {
+        getUndefinedSymbols: function (node, contextStack, _a) {
             var _b;
-            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin;
             contextStack.exportValue(node.f.v, true);
             var newContext = (_b = {}, _b[node.f.v] = { value: true }, _b);
-            return addOverloadsUnresolvedSymbols(node.o, contextStack, findUnresolvedSymbols, builtin, newContext);
+            return addOverloadsUnresolvedSymbols(node.o, contextStack, getUndefinedSymbols, builtin, newContext);
         },
     };
     var fnSpecialExpression = {
-        polishParse: function (tokenStream, parseState, firstToken, parsers) {
-            var functionOverloades = parseFunctionOverloades(tokenStream, parseState, parsers);
-            assertRParenToken(tokenStream.tokens[parseState.position++]);
-            var node = {
-                t: AstNodeType.SpecialExpression,
-                n: 'fn',
-                p: [],
-                o: functionOverloades,
-                token: getTokenDebugData(firstToken) && firstToken,
-            };
-            return node;
-        },
         paramCount: {},
         evaluate: function (node, contextStack, _a) {
             var _b;
@@ -4840,9 +4744,9 @@ var Playground = (function (exports) {
                 _b);
             return litsFunction;
         },
-        findUnresolvedSymbols: function (node, contextStack, _a) {
-            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
-            return addOverloadsUnresolvedSymbols(node.o, contextStack, findUnresolvedSymbols, builtin);
+        getUndefinedSymbols: function (node, contextStack, _a) {
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin;
+            return addOverloadsUnresolvedSymbols(node.o, contextStack, getUndefinedSymbols, builtin);
         },
     };
     function evaluateFunctionOverloades(node, contextStack, evaluateAstNode) {
@@ -4888,15 +4792,15 @@ var Playground = (function (exports) {
         }
         return evaluatedFunctionOverloades;
     }
-    function addOverloadsUnresolvedSymbols(overloads, contextStack, findUnresolvedSymbols, builtin, functionNameContext) {
+    function addOverloadsUnresolvedSymbols(overloads, contextStack, getUndefinedSymbols, builtin, functionNameContext) {
         var e_3, _a;
         var result = new Set();
         var contextStackWithFunctionName = functionNameContext ? contextStack.create(functionNameContext) : contextStack;
         var _loop_1 = function (overload) {
             var newContext = {};
             overload.as.b.forEach(function (binding) {
-                var bindingResult = findUnresolvedSymbols([binding.v], contextStack, builtin);
-                addAnalyzeResults(result, bindingResult);
+                var bindingResult = getUndefinedSymbols([binding.v], contextStack, builtin);
+                addToSet(result, bindingResult);
                 newContext[binding.n] = { value: true };
             });
             overload.as.m.forEach(function (arg) {
@@ -4905,8 +4809,8 @@ var Playground = (function (exports) {
             if (typeof overload.as.r === 'string')
                 newContext[overload.as.r] = { value: true };
             var newContextStack = contextStackWithFunctionName.create(newContext);
-            var overloadResult = findUnresolvedSymbols(overload.b, newContextStack, builtin);
-            addAnalyzeResults(result, overloadResult);
+            var overloadResult = getUndefinedSymbols(overload.b, newContextStack, builtin);
+            addToSet(result, overloadResult);
         };
         try {
             for (var overloads_1 = __values(overloads), overloads_1_1 = overloads_1.next(); !overloads_1_1.done; overloads_1_1 = overloads_1.next()) {
@@ -4923,133 +4827,8 @@ var Playground = (function (exports) {
         }
         return result;
     }
-    function arityOk(overloadedFunctions, arity) {
-        if (typeof arity === 'number') {
-            return overloadedFunctions.every(function (fun) {
-                if (typeof fun.a === 'number')
-                    return fun.a !== arity;
-                return fun.a.min > arity;
-            });
-        }
-        return overloadedFunctions.every(function (fun) {
-            if (typeof fun.a === 'number')
-                return fun.a < arity.min;
-            return false;
-        });
-    }
-    function parseFunctionBody(tokenStream, parseState, _a) {
-        var _b;
-        var parseToken = _a.parseToken;
-        var tkn = asToken(tokenStream.tokens[parseState.position]);
-        var body = [];
-        while (!isRParenToken(tkn)) {
-            body.push(parseToken(tokenStream, parseState));
-            tkn = asToken(tokenStream.tokens[parseState.position]);
-        }
-        if (body.length === 0)
-            throw new LitsError('Missing body in function', (_b = getTokenDebugData(tkn)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
-        return body;
-    }
-    function parseFunctionOverloades(tokenStream, parseState, parsers) {
-        var _a, _b, _c;
-        var tkn = asToken(tokenStream.tokens[parseState.position]);
-        if (isLParenToken(tkn)) {
-            var functionOverloades = [];
-            while (!isRParenToken(tkn)) {
-                parseState.position++;
-                tkn = asLBracketToken(tokenStream.tokens[parseState.position]);
-                var functionArguments = parseFunctionArguments(tokenStream, parseState, parsers);
-                var arity = functionArguments.r ? { min: functionArguments.m.length } : functionArguments.m.length;
-                if (!arityOk(functionOverloades, arity))
-                    throw new LitsError('All overloaded functions must have different arity', (_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-                var functionBody = parseFunctionBody(tokenStream, parseState, parsers);
-                functionOverloades.push({
-                    as: functionArguments,
-                    b: functionBody,
-                    a: arity,
-                });
-                tkn = asToken(tokenStream.tokens[++parseState.position]);
-                if (!isRParenToken(tkn) && !isLParenToken(tkn))
-                    throw new LitsError("Expected ( or ) token, got ".concat(valueToString(tkn), "."), (_b = getTokenDebugData(tkn)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
-            }
-            return functionOverloades;
-        }
-        else if (isLBracketToken(tkn)) {
-            var functionArguments = parseFunctionArguments(tokenStream, parseState, parsers);
-            var arity = functionArguments.r ? { min: functionArguments.m.length } : functionArguments.m.length;
-            var functionBody = parseFunctionBody(tokenStream, parseState, parsers);
-            return [
-                {
-                    as: functionArguments,
-                    b: functionBody,
-                    a: arity,
-                },
-            ];
-        }
-        else {
-            throw new LitsError("Expected [ or ( token, got ".concat(valueToString(tkn)), (_c = getTokenDebugData(tkn)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
-        }
-    }
-    function parseFunctionArguments(tokenStream, parseState, parsers) {
-        var _a, _b, _c, _d, _e;
-        var parseArgument = parsers.parseArgument, parseBindings = parsers.parseBindings;
-        var bindings = [];
-        var restArgument;
-        var mandatoryArguments = [];
-        var state = 'mandatory';
-        var tkn = asToken(tokenStream.tokens[++parseState.position]);
-        // let tkn = asToken(tokenStream.tokens[parseState.position])
-        while (!isRBracketToken(tkn)) {
-            if (state === 'let') {
-                bindings = parseBindings(tokenStream, parseState);
-                break;
-            }
-            else {
-                var node = parseArgument(tokenStream, parseState);
-                tkn = asToken(tokenStream.tokens[parseState.position]);
-                if (node.t === AstNodeType.Modifier) {
-                    switch (node.v) {
-                        case '&rest':
-                            if (state === 'rest')
-                                throw new LitsError('& can only appear once', (_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-                            state = 'rest';
-                            break;
-                        case '&let':
-                            if (state === 'rest' && !restArgument)
-                                throw new LitsError('No rest argument was specified', (_b = getTokenDebugData(tkn)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
-                            state = 'let';
-                            break;
-                        default:
-                            throw new LitsError("Illegal modifier: ".concat(node.v), (_c = getTokenDebugData(tkn)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
-                    }
-                }
-                else {
-                    switch (state) {
-                        case 'mandatory':
-                            mandatoryArguments.push(node.n);
-                            break;
-                        case 'rest':
-                            if (restArgument !== undefined)
-                                throw new LitsError('Can only specify one rest argument', (_d = getTokenDebugData(tkn)) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
-                            restArgument = node.n;
-                            break;
-                    }
-                }
-            }
-        }
-        parseState.position += 1;
-        if (state === 'rest' && restArgument === undefined)
-            throw new LitsError('Missing rest argument name', (_e = getTokenDebugData(tkn)) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo);
-        var args = {
-            m: mandatoryArguments,
-            r: restArgument,
-            b: bindings,
-        };
-        return args;
-    }
 
     var ifSpecialExpression = {
-        polishParse: getCommonPolishSpecialExpressionParser('if'),
         paramCount: { min: 2, max: 3 },
         evaluate: function (node, contextStack, _a) {
             var _b;
@@ -5066,14 +4845,13 @@ var Playground = (function (exports) {
                     return null;
             }
         },
-        findUnresolvedSymbols: function (node, contextStack, _a) {
-            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
-            return findUnresolvedSymbols(node.p, contextStack, builtin);
+        getUndefinedSymbols: function (node, contextStack, _a) {
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin;
+            return getUndefinedSymbols(node.p, contextStack, builtin);
         },
     };
 
     var unlessSpecialExpression = {
-        polishParse: getCommonPolishSpecialExpressionParser('unless'),
         paramCount: { min: 2, max: 3 },
         evaluate: function (node, contextStack, _a) {
             var _b;
@@ -5090,27 +4868,13 @@ var Playground = (function (exports) {
                     return null;
             }
         },
-        findUnresolvedSymbols: function (node, contextStack, _a) {
-            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
-            return findUnresolvedSymbols(node.p, contextStack, builtin);
+        getUndefinedSymbols: function (node, contextStack, _a) {
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin;
+            return getUndefinedSymbols(node.p, contextStack, builtin);
         },
     };
 
     var letSpecialExpression = {
-        polishParse: function (tokenStream, parseState, firstToken, _a) {
-            var parseBindings = _a.parseBindings;
-            var bindings = parseBindings(tokenStream, parseState);
-            // const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-            assertRParenToken(tokenStream.tokens[parseState.position++]);
-            var node = {
-                t: AstNodeType.SpecialExpression,
-                n: 'let',
-                p: [],
-                bs: bindings,
-                token: getTokenDebugData(firstToken) && firstToken,
-            };
-            return node;
-        },
         paramCount: 0,
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
@@ -5132,8 +4896,8 @@ var Playground = (function (exports) {
             }
             return null;
         },
-        findUnresolvedSymbols: function (node, contextStack, _a) {
-            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
+        getUndefinedSymbols: function (node, contextStack, _a) {
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin;
             var newContext = node.bs
                 .map(function (binding) { return binding.n; })
                 .reduce(function (context, name) {
@@ -5142,30 +4906,16 @@ var Playground = (function (exports) {
             }, {});
             var bindingResults = node.bs.map(function (bindingNode) {
                 var valueNode = bindingNode.v;
-                var bindingsResult = findUnresolvedSymbols([valueNode], contextStack, builtin);
+                var bindingsResult = getUndefinedSymbols([valueNode], contextStack, builtin);
                 contextStack.addValue(bindingNode.n, { value: true });
                 return bindingsResult;
             });
-            var paramsResult = findUnresolvedSymbols(node.p, contextStack.create(newContext), builtin);
-            return joinAnalyzeResults.apply(void 0, __spreadArray(__spreadArray([], __read(bindingResults), false), [paramsResult], false));
+            var paramsResult = getUndefinedSymbols(node.p, contextStack.create(newContext), builtin);
+            return joinSets.apply(void 0, __spreadArray(__spreadArray([], __read(bindingResults), false), [paramsResult], false));
         },
     };
 
     var loopSpecialExpression = {
-        polishParse: function (tokenStream, parseState, firstToken, _a) {
-            var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket, parseBindings = _a.parseBindings;
-            var bindings = parseBindings(tokenStream, parseState);
-            var params = parseTokensUntilClosingBracket(tokenStream, parseState);
-            assertRParenToken(tokenStream.tokens[parseState.position++]);
-            var node = {
-                t: AstNodeType.SpecialExpression,
-                n: 'loop',
-                p: params,
-                bs: bindings,
-                token: getTokenDebugData(firstToken) && firstToken,
-            };
-            return node;
-        },
         paramCount: {},
         evaluate: function (node, contextStack, _a) {
             var _b;
@@ -5215,8 +4965,8 @@ var Playground = (function (exports) {
                     return state_1.value;
             }
         },
-        findUnresolvedSymbols: function (node, contextStack, _a) {
-            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
+        getUndefinedSymbols: function (node, contextStack, _a) {
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin;
             var newContext = node.bs
                 .map(function (binding) { return binding.n; })
                 .reduce(function (context, name) {
@@ -5224,21 +4974,12 @@ var Playground = (function (exports) {
                 return context;
             }, {});
             var bindingValueNodes = node.bs.map(function (binding) { return binding.v; });
-            var bindingsResult = findUnresolvedSymbols(bindingValueNodes, contextStack, builtin);
-            var paramsResult = findUnresolvedSymbols(node.p, contextStack.create(newContext), builtin);
-            return joinAnalyzeResults(bindingsResult, paramsResult);
+            var bindingsResult = getUndefinedSymbols(bindingValueNodes, contextStack, builtin);
+            var paramsResult = getUndefinedSymbols(node.p, contextStack.create(newContext), builtin);
+            return joinSets(bindingsResult, paramsResult);
         },
     };
 
-    function parseLoopBinding(tokenStream, parseState, _a) {
-        var parseBinding = _a.parseBinding;
-        var bindingNode = parseBinding(tokenStream, parseState);
-        var loopBinding = {
-            b: bindingNode,
-            m: [],
-        };
-        return loopBinding;
-    }
     function addToContext(bindings, context, contextStack, evaluateAstNode, sourceCodeInfo) {
         var e_1, _a;
         try {
@@ -5256,17 +4997,6 @@ var Playground = (function (exports) {
             }
             finally { if (e_1) throw e_1.error; }
         }
-    }
-    function parseLoopBindings(tokenStream, parseState, parsers) {
-        assertLBracketToken(tokenStream.tokens[parseState.position++]);
-        var loopBindings = [];
-        var tkn = asToken(tokenStream.tokens[parseState.position]);
-        while (!isRBracketToken(tkn)) {
-            loopBindings.push(parseLoopBinding(tokenStream, parseState, parsers));
-            tkn = asToken(tokenStream.tokens[parseState.position]);
-        }
-        parseState.position += 1;
-        return loopBindings;
     }
     function evaluateLoop(returnResult, node, contextStack, evaluateAstNode) {
         var e_2, _a;
@@ -5347,90 +5077,61 @@ var Playground = (function (exports) {
         }
         return returnResult ? result : null;
     }
-    function analyze$2(node, contextStack, findUnresolvedSymbols, builtin) {
+    function analyze$1(node, contextStack, getUndefinedSymbols, builtin) {
         var result = new Set();
         var newContext = {};
         var loopBindings = node.l;
         loopBindings.forEach(function (loopBinding) {
             var binding = loopBinding.b, letBindings = loopBinding.l, whenNode = loopBinding.wn, whileNode = loopBinding.we;
-            findUnresolvedSymbols([binding.v], contextStack.create(newContext), builtin).forEach(function (symbol) {
+            getUndefinedSymbols([binding.v], contextStack.create(newContext), builtin).forEach(function (symbol) {
                 return result.add(symbol);
             });
             newContext[binding.n] = { value: true };
             if (letBindings) {
                 letBindings.forEach(function (letBinding) {
-                    findUnresolvedSymbols([letBinding.v], contextStack.create(newContext), builtin).forEach(function (symbol) {
+                    getUndefinedSymbols([letBinding.v], contextStack.create(newContext), builtin).forEach(function (symbol) {
                         return result.add(symbol);
                     });
                     newContext[letBinding.n] = { value: true };
                 });
             }
             if (whenNode) {
-                findUnresolvedSymbols([whenNode], contextStack.create(newContext), builtin).forEach(function (symbol) {
+                getUndefinedSymbols([whenNode], contextStack.create(newContext), builtin).forEach(function (symbol) {
                     return result.add(symbol);
                 });
             }
             if (whileNode) {
-                findUnresolvedSymbols([whileNode], contextStack.create(newContext), builtin).forEach(function (symbol) {
+                getUndefinedSymbols([whileNode], contextStack.create(newContext), builtin).forEach(function (symbol) {
                     return result.add(symbol);
                 });
             }
         });
-        findUnresolvedSymbols(node.p, contextStack.create(newContext), builtin).forEach(function (symbol) {
+        getUndefinedSymbols(node.p, contextStack.create(newContext), builtin).forEach(function (symbol) {
             return result.add(symbol);
         });
         return result;
     }
     var forSpecialExpression = {
-        polishParse: function (tokenStream, parseState, firstToken, parsers) {
-            var parseTokensUntilClosingBracket = parsers.parseTokensUntilClosingBracket;
-            var loopBindings = parseLoopBindings(tokenStream, parseState, parsers);
-            var params = parseTokensUntilClosingBracket(tokenStream, parseState);
-            assertRParenToken(tokenStream.tokens[parseState.position++]);
-            var node = {
-                n: 'for',
-                t: AstNodeType.SpecialExpression,
-                l: loopBindings,
-                p: params,
-                token: getTokenDebugData(firstToken) && firstToken,
-            };
-            return node;
-        },
         paramCount: 1,
         evaluate: function (node, contextStack, helpers) { return evaluateLoop(true, node, contextStack, helpers.evaluateAstNode); },
-        findUnresolvedSymbols: function (node, contextStack, _a) {
-            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
-            return analyze$2(node, contextStack, findUnresolvedSymbols, builtin);
+        getUndefinedSymbols: function (node, contextStack, _a) {
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin;
+            return analyze$1(node, contextStack, getUndefinedSymbols, builtin);
         },
     };
     var doseqSpecialExpression = {
-        polishParse: function (tokenStream, parseState, firstToken, parsers) {
-            var parseTokensUntilClosingBracket = parsers.parseTokensUntilClosingBracket;
-            var loopBindings = parseLoopBindings(tokenStream, parseState, parsers);
-            var params = parseTokensUntilClosingBracket(tokenStream, parseState);
-            assertRParenToken(tokenStream.tokens[parseState.position++]);
-            var node = {
-                n: 'doseq',
-                t: AstNodeType.SpecialExpression,
-                l: loopBindings,
-                p: params,
-                token: getTokenDebugData(firstToken) && firstToken,
-            };
-            return node;
-        },
         paramCount: 1,
         evaluate: function (node, contextStack, helpers) {
             evaluateLoop(false, node, contextStack, helpers.evaluateAstNode);
             return null;
         },
-        findUnresolvedSymbols: function (node, contextStack, _a) {
-            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
-            return analyze$2(node, contextStack, findUnresolvedSymbols, builtin);
+        getUndefinedSymbols: function (node, contextStack, _a) {
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin;
+            return analyze$1(node, contextStack, getUndefinedSymbols, builtin);
         },
     };
 
     var orSpecialExpression = {
-        polishParse: getCommonPolishSpecialExpressionParser('||'),
         paramCount: {},
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
@@ -5453,14 +5154,13 @@ var Playground = (function (exports) {
             }
             return value;
         },
-        findUnresolvedSymbols: function (node, contextStack, _a) {
-            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
-            return findUnresolvedSymbols(node.p, contextStack, builtin);
+        getUndefinedSymbols: function (node, contextStack, _a) {
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin;
+            return getUndefinedSymbols(node.p, contextStack, builtin);
         },
     };
 
     var qqSpecialExpression = {
-        polishParse: getCommonPolishSpecialExpressionParser('??'),
         paramCount: { min: 1, max: 2 },
         evaluate: function (node, contextStack, _a) {
             var _b;
@@ -5474,39 +5174,26 @@ var Playground = (function (exports) {
             var firstResult = evaluateAstNode(firstNode, contextStack);
             return firstResult !== null && firstResult !== void 0 ? firstResult : (secondNode ? evaluateAstNode(secondNode, contextStack) : null);
         },
-        findUnresolvedSymbols: function (node, contextStack, _a) {
-            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
-            return findUnresolvedSymbols(node.p, contextStack, builtin);
+        getUndefinedSymbols: function (node, contextStack, _a) {
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin;
+            return getUndefinedSymbols(node.p, contextStack, builtin);
         },
     };
 
     var recurSpecialExpression = {
-        polishParse: function (tokenStream, parseState, firstToken, _a) {
-            var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
-            var params = parseTokensUntilClosingBracket(tokenStream, parseState);
-            assertRParenToken(tokenStream.tokens[parseState.position++]);
-            var node = {
-                t: AstNodeType.SpecialExpression,
-                n: 'recur',
-                p: params,
-                token: getTokenDebugData(firstToken) && firstToken,
-            };
-            return node;
-        },
         paramCount: {},
         evaluate: function (node, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode;
             var params = node.p.map(function (paramNode) { return evaluateAstNode(paramNode, contextStack); });
             throw new RecurSignal(params);
         },
-        findUnresolvedSymbols: function (node, contextStack, _a) {
-            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
-            return findUnresolvedSymbols(node.p, contextStack, builtin);
+        getUndefinedSymbols: function (node, contextStack, _a) {
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin;
+            return getUndefinedSymbols(node.p, contextStack, builtin);
         },
     };
 
     var throwSpecialExpression = {
-        polishParse: getCommonPolishSpecialExpressionParser('throw'),
         paramCount: 1,
         evaluate: function (node, contextStack, _a) {
             var _b, _c;
@@ -5516,38 +5203,13 @@ var Playground = (function (exports) {
             });
             throw new UserDefinedError(message, (_c = getTokenDebugData(node.token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
         },
-        findUnresolvedSymbols: function (node, contextStack, _a) {
-            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
-            return findUnresolvedSymbols(node.p, contextStack, builtin);
+        getUndefinedSymbols: function (node, contextStack, _a) {
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin;
+            return getUndefinedSymbols(node.p, contextStack, builtin);
         },
     };
 
     var trySpecialExpression = {
-        polishParse: function (tokenStream, parseState, firstToken, _a) {
-            var _b, _c, _d;
-            var parseToken = _a.parseToken;
-            var tryExpression = parseToken(tokenStream, parseState);
-            assertLParenToken(tokenStream.tokens[parseState.position++]);
-            var catchNode = parseToken(tokenStream, parseState);
-            assertSymbolNode(catchNode, (_b = getTokenDebugData(catchNode.token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
-            if (catchNode.v !== 'catch') {
-                throw new LitsError("Expected 'catch', got '".concat(catchNode.v, "'."), getSourceCodeInfo(catchNode, (_c = getTokenDebugData(catchNode.token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo));
-            }
-            var error = parseToken(tokenStream, parseState);
-            assertSymbolNode(error, (_d = getTokenDebugData(error.token)) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
-            var catchExpression = parseToken(tokenStream, parseState);
-            assertRParenToken(tokenStream.tokens[parseState.position++]);
-            assertRParenToken(tokenStream.tokens[parseState.position++]);
-            var node = {
-                t: AstNodeType.SpecialExpression,
-                n: 'try',
-                p: [tryExpression],
-                ce: catchExpression,
-                e: error,
-                token: getTokenDebugData(firstToken) && firstToken,
-            };
-            return node;
-        },
         paramCount: 1,
         evaluate: function (node, contextStack, _a) {
             var _b;
@@ -5565,17 +5227,17 @@ var Playground = (function (exports) {
                 return evaluateAstNode(catchExpression, contextStack.create(newContext));
             }
         },
-        findUnresolvedSymbols: function (node, contextStack, _a) {
+        getUndefinedSymbols: function (node, contextStack, _a) {
             var _b;
-            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin;
             var tryExpressions = node.p, catchExpression = node.ce, errorNode = node.e;
-            var tryResult = findUnresolvedSymbols(tryExpressions, contextStack, builtin);
+            var tryResult = getUndefinedSymbols(tryExpressions, contextStack, builtin);
             var newContext = errorNode
                 ? (_b = {},
                     _b[errorNode.v] = { value: true },
                     _b) : {};
-            var catchResult = findUnresolvedSymbols([catchExpression], contextStack.create(newContext), builtin);
-            return joinAnalyzeResults(tryResult, catchResult);
+            var catchResult = getUndefinedSymbols([catchExpression], contextStack.create(newContext), builtin);
+            return joinSets(tryResult, catchResult);
         },
     };
 
@@ -5601,202 +5263,12 @@ var Playground = (function (exports) {
         'defined?': declaredSpecialExpression,
         '??': qqSpecialExpression,
     };
-    Object.keys(specialExpressions).forEach(function (key) {
-        /* v8 ignore next 2 */
-        if (normalExpressions[key])
-            throw new Error("Expression ".concat(key, " is defined as both a normal expression and a special expression"));
-    });
     var builtin = {
         normalExpressions: normalExpressions,
         specialExpressions: specialExpressions,
     };
     var normalExpressionKeys = Object.keys(normalExpressions);
     var specialExpressionKeys = Object.keys(specialExpressions);
-
-    function isContextEntry(value) {
-        return isUnknownRecord(value) && value.value !== undefined;
-    }
-
-    var ContextStackImpl = /** @class */ (function () {
-        function ContextStackImpl(_a) {
-            var contexts = _a.contexts, hostValues = _a.values, lazyHostValues = _a.lazyValues, nativeJsFunctions = _a.nativeJsFunctions;
-            this.globalContext = asNonUndefined(contexts[0]);
-            this.contexts = contexts;
-            this.values = hostValues;
-            this.lazyValues = lazyHostValues;
-            this.nativeJsFunctions = nativeJsFunctions;
-        }
-        ContextStackImpl.prototype.create = function (context, extraData) {
-            var globalContext = this.globalContext;
-            var contextStack = new ContextStackImpl({
-                contexts: __spreadArray([context], __read(this.contexts), false),
-                values: this.values,
-                lazyValues: extraData ? __assign(__assign({}, this.lazyValues), extraData) : this.lazyValues,
-                nativeJsFunctions: this.nativeJsFunctions,
-            });
-            contextStack.globalContext = globalContext;
-            return contextStack;
-        };
-        ContextStackImpl.prototype.exportValue = function (name, value) {
-            if (this.globalContext[name]) {
-                throw new Error("Cannot redefine exported value \"".concat(name, "\""));
-            }
-            if (specialExpressionKeys.includes(name)) {
-                throw new Error("Cannot shadow special expression \"".concat(name, "\""));
-            }
-            if (normalExpressionKeys.includes(name)) {
-                throw new Error("Cannot shadow builtin function \"".concat(name, "\""));
-            }
-            this.addValue(name, value);
-            this.globalContext[name] = { value: value };
-        };
-        ContextStackImpl.prototype.addValue = function (name, value) {
-            var currentContext = this.contexts[0];
-            if (!currentContext) {
-                throw new Error('No context to add value to');
-            }
-            if (currentContext[name]) {
-                throw new Error("Cannot redefine value \"".concat(name, "\""));
-            }
-            if (specialExpressionKeys.includes(name)) {
-                throw new Error("Cannot shadow special expression \"".concat(name, "\""));
-            }
-            if (normalExpressionKeys.includes(name)) {
-                throw new Error("Cannot shadow builtin function \"".concat(name, "\""));
-            }
-            currentContext[name] = { value: toAny(value) };
-        };
-        ContextStackImpl.prototype.clone = function () {
-            // eslint-disable-next-line ts/no-unsafe-argument
-            return new ContextStackImpl(JSON.parse(JSON.stringify({
-                contexts: this.contexts,
-                values: this.values,
-                lazyValues: this.lazyValues,
-                nativeJsFunctions: this.nativeJsFunctions,
-            })));
-        };
-        ContextStackImpl.prototype.getValue = function (name) {
-            var e_1, _a;
-            var _b, _c, _d;
-            try {
-                for (var _e = __values(this.contexts), _f = _e.next(); !_f.done; _f = _e.next()) {
-                    var context = _f.value;
-                    var contextEntry = context[name];
-                    if (contextEntry)
-                        return contextEntry.value;
-                }
-            }
-            catch (e_1_1) { e_1 = { error: e_1_1 }; }
-            finally {
-                try {
-                    if (_f && !_f.done && (_a = _e.return)) _a.call(_e);
-                }
-                finally { if (e_1) throw e_1.error; }
-            }
-            var lazyHostValue = (_b = this.lazyValues) === null || _b === void 0 ? void 0 : _b[name];
-            if (lazyHostValue)
-                return lazyHostValue.read();
-            var nativeJsFunction = (_c = this.nativeJsFunctions) === null || _c === void 0 ? void 0 : _c[name];
-            if (nativeJsFunction)
-                return nativeJsFunction;
-            return (_d = this.values) === null || _d === void 0 ? void 0 : _d[name];
-        };
-        ContextStackImpl.prototype.lookUp = function (node) {
-            var e_2, _a, _b;
-            var _c, _d, _e, _f;
-            var value = node.v;
-            var sourceCodeInfo = (_c = getTokenDebugData(node.token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo;
-            try {
-                for (var _g = __values(this.contexts), _h = _g.next(); !_h.done; _h = _g.next()) {
-                    var context = _h.value;
-                    var contextEntry = context[value];
-                    if (contextEntry)
-                        return contextEntry;
-                }
-            }
-            catch (e_2_1) { e_2 = { error: e_2_1 }; }
-            finally {
-                try {
-                    if (_h && !_h.done && (_a = _g.return)) _a.call(_g);
-                }
-                finally { if (e_2) throw e_2.error; }
-            }
-            var lazyHostValue = (_d = this.lazyValues) === null || _d === void 0 ? void 0 : _d[value];
-            if (lazyHostValue !== undefined) {
-                return {
-                    value: toAny(lazyHostValue.read()),
-                };
-            }
-            var hostValue = (_e = this.values) === null || _e === void 0 ? void 0 : _e[value];
-            if (hostValue !== undefined) {
-                return {
-                    value: toAny(hostValue),
-                };
-            }
-            if (builtin.normalExpressions[value]) {
-                var builtinFunction = (_b = {},
-                    _b[FUNCTION_SYMBOL] = true,
-                    _b.sourceCodeInfo = sourceCodeInfo,
-                    _b.t = FunctionType.Builtin,
-                    _b.n = value,
-                    _b);
-                return builtinFunction;
-            }
-            if (builtin.specialExpressions[value])
-                return 'specialExpression';
-            var nativeJsFunction = (_f = this.nativeJsFunctions) === null || _f === void 0 ? void 0 : _f[value];
-            if (nativeJsFunction) {
-                return {
-                    value: nativeJsFunction,
-                };
-            }
-            return null;
-        };
-        ContextStackImpl.prototype.evaluateName = function (node) {
-            var _a;
-            var lookUpResult = this.lookUp(node);
-            if (isContextEntry(lookUpResult))
-                return lookUpResult.value;
-            else if (isBuiltinFunction(lookUpResult))
-                return lookUpResult;
-            throw new UndefinedSymbolError(node.v, (_a = getTokenDebugData(node.token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-        };
-        return ContextStackImpl;
-    }());
-    function createContextStack(params) {
-        var _a;
-        if (params === void 0) { params = {}; }
-        var globalContext = (_a = params.globalContext) !== null && _a !== void 0 ? _a : {};
-        // Contexts are checked from left to right
-        var contexts = params.contexts ? __spreadArray([globalContext], __read(params.contexts), false) : [globalContext];
-        var contextStack = new ContextStackImpl({
-            contexts: contexts,
-            values: params.values,
-            lazyValues: params.lazyValues,
-            nativeJsFunctions: params.jsFunctions
-                && Object.entries(params.jsFunctions).reduce(function (acc, _a) {
-                    var _b;
-                    var _c = __read(_a, 2), name = _c[0], jsFunction = _c[1];
-                    if (specialExpressionKeys.includes(name)) {
-                        console.warn("Cannot shadow special expression \"".concat(name, "\", ignoring."));
-                        return acc;
-                    }
-                    if (normalExpressionKeys.includes(name)) {
-                        console.warn("Cannot shadow builtin function \"".concat(name, "\", ignoring."));
-                        return acc;
-                    }
-                    acc[name] = (_b = {
-                            t: FunctionType.NativeJsFunction,
-                            f: jsFunction,
-                            n: name
-                        },
-                        _b[FUNCTION_SYMBOL] = true,
-                        _b);
-                    return acc;
-                }, {}),
-        });
-        return contextStack.create({});
-    }
 
     var _a;
     function findOverloadFunction(overloads, nbrOfParams, sourceCodeInfo) {
@@ -6104,8 +5576,9 @@ var Playground = (function (exports) {
         return toAny(param[fn]);
     }
 
-    var findUnresolvedSymbols = function (ast, contextStack, builtin) {
+    var getUndefinedSymbols = function (ast, contextStack, builtin) {
         var e_1, _a;
+        var _b;
         var astNodes = Array.isArray(ast)
             ? ast
             : [{
@@ -6118,8 +5591,7 @@ var Playground = (function (exports) {
         try {
             for (var astNodes_1 = __values(astNodes), astNodes_1_1 = astNodes_1.next(); !astNodes_1_1.done; astNodes_1_1 = astNodes_1.next()) {
                 var subNode = astNodes_1_1.value;
-                findUnresolvedSymbolsInAstNode(subNode, contextStack, builtin)
-                    .forEach(function (symbol) { return unresolvedSymbols.add(symbol); });
+                (_b = findUnresolvedSymbolsInAstNode(subNode, contextStack, builtin)) === null || _b === void 0 ? void 0 : _b.forEach(function (symbol) { return unresolvedSymbols.add(symbol); });
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -6133,62 +5605,238 @@ var Playground = (function (exports) {
     };
     function findUnresolvedSymbolsInAstNode(astNode, contextStack, builtin) {
         var e_2, _a;
-        var _b;
-        var emptySet = new Set();
+        var _b, _c;
         switch (astNode.t) {
             case AstNodeType.Symbol: {
                 var lookUpResult = contextStack.lookUp(astNode);
                 if (lookUpResult === null)
-                    return new Set([{ symbol: astNode.v, token: astNode.token }]);
-                return emptySet;
+                    return new Set([astNode.v]);
+                return null;
             }
             case AstNodeType.String:
             case AstNodeType.Number:
             case AstNodeType.Modifier:
             case AstNodeType.ReservedSymbol:
             case AstNodeType.Comment:
-                return emptySet;
+                return null;
             case AstNodeType.NormalExpression: {
                 var unresolvedSymbols_1 = new Set();
                 var name_1 = astNode.n, debug = astNode.token;
                 if (typeof name_1 === 'string') {
                     var lookUpResult = contextStack.lookUp({ t: AstNodeType.Symbol, v: name_1, token: debug, p: [], n: undefined });
                     if (lookUpResult === null)
-                        unresolvedSymbols_1.add({ symbol: name_1, token: astNode.token });
+                        unresolvedSymbols_1.add(name_1);
                 }
                 try {
-                    for (var _c = __values(astNode.p), _d = _c.next(); !_d.done; _d = _c.next()) {
-                        var subNode = _d.value;
-                        var innerUnresolvedSymbols = findUnresolvedSymbolsInAstNode(subNode, contextStack, builtin);
-                        innerUnresolvedSymbols.forEach(function (symbol) { return unresolvedSymbols_1.add(symbol); });
+                    for (var _d = __values(astNode.p), _e = _d.next(); !_e.done; _e = _d.next()) {
+                        var subNode = _e.value;
+                        (_b = findUnresolvedSymbolsInAstNode(subNode, contextStack, builtin)) === null || _b === void 0 ? void 0 : _b.forEach(function (symbol) { return unresolvedSymbols_1.add(symbol); });
                     }
                 }
                 catch (e_2_1) { e_2 = { error: e_2_1 }; }
                 finally {
                     try {
-                        if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
+                        if (_e && !_e.done && (_a = _d.return)) _a.call(_d);
                     }
                     finally { if (e_2) throw e_2.error; }
                 }
                 return unresolvedSymbols_1;
             }
             case AstNodeType.SpecialExpression: {
-                var specialExpression = asNonUndefined(builtin.specialExpressions[astNode.n], (_b = getTokenDebugData(astNode.token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+                var specialExpression = asNonUndefined(builtin.specialExpressions[astNode.n], (_c = getTokenDebugData(astNode.token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
                 // eslint-disable-next-line ts/no-unsafe-argument
-                var unresolvedSymbols = specialExpression.findUnresolvedSymbols(astNode, contextStack, {
-                    findUnresolvedSymbols: findUnresolvedSymbols,
+                return specialExpression.getUndefinedSymbols(astNode, contextStack, {
+                    getUndefinedSymbols: getUndefinedSymbols,
                     builtin: builtin,
                     evaluateAstNode: evaluateAstNode,
                 });
-                return unresolvedSymbols;
             }
         }
     }
 
-    function analyze$1(ast, params) {
-        return {
-            unresolvedSymbols: findUnresolvedSymbols(ast, createContextStack(params), builtin),
+    function isContextEntry(value) {
+        return isUnknownRecord(value) && value.value !== undefined;
+    }
+
+    var ContextStackImpl = /** @class */ (function () {
+        function ContextStackImpl(_a) {
+            var contexts = _a.contexts, hostValues = _a.values, lazyHostValues = _a.lazyValues, nativeJsFunctions = _a.nativeJsFunctions;
+            this.globalContext = asNonUndefined(contexts[0]);
+            this.contexts = contexts;
+            this.values = hostValues;
+            this.lazyValues = lazyHostValues;
+            this.nativeJsFunctions = nativeJsFunctions;
+        }
+        ContextStackImpl.prototype.create = function (context, extraData) {
+            var globalContext = this.globalContext;
+            var contextStack = new ContextStackImpl({
+                contexts: __spreadArray([context], __read(this.contexts), false),
+                values: this.values,
+                lazyValues: extraData ? __assign(__assign({}, this.lazyValues), extraData) : this.lazyValues,
+                nativeJsFunctions: this.nativeJsFunctions,
+            });
+            contextStack.globalContext = globalContext;
+            return contextStack;
         };
+        ContextStackImpl.prototype.exportValue = function (name, value) {
+            if (this.globalContext[name]) {
+                throw new Error("Cannot redefine exported value \"".concat(name, "\""));
+            }
+            if (specialExpressionKeys.includes(name)) {
+                throw new Error("Cannot shadow special expression \"".concat(name, "\""));
+            }
+            if (normalExpressionKeys.includes(name)) {
+                throw new Error("Cannot shadow builtin function \"".concat(name, "\""));
+            }
+            this.addValue(name, value);
+            this.globalContext[name] = { value: value };
+        };
+        ContextStackImpl.prototype.addValue = function (name, value) {
+            var currentContext = this.contexts[0];
+            if (!currentContext) {
+                throw new Error('No context to add value to');
+            }
+            if (currentContext[name]) {
+                throw new Error("Cannot redefine value \"".concat(name, "\""));
+            }
+            if (specialExpressionKeys.includes(name)) {
+                throw new Error("Cannot shadow special expression \"".concat(name, "\""));
+            }
+            if (normalExpressionKeys.includes(name)) {
+                throw new Error("Cannot shadow builtin function \"".concat(name, "\""));
+            }
+            currentContext[name] = { value: toAny(value) };
+        };
+        ContextStackImpl.prototype.clone = function () {
+            // eslint-disable-next-line ts/no-unsafe-argument
+            return new ContextStackImpl(JSON.parse(JSON.stringify({
+                contexts: this.contexts,
+                values: this.values,
+                lazyValues: this.lazyValues,
+                nativeJsFunctions: this.nativeJsFunctions,
+            })));
+        };
+        ContextStackImpl.prototype.getValue = function (name) {
+            var e_1, _a;
+            var _b, _c, _d;
+            try {
+                for (var _e = __values(this.contexts), _f = _e.next(); !_f.done; _f = _e.next()) {
+                    var context = _f.value;
+                    var contextEntry = context[name];
+                    if (contextEntry)
+                        return contextEntry.value;
+                }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (_f && !_f.done && (_a = _e.return)) _a.call(_e);
+                }
+                finally { if (e_1) throw e_1.error; }
+            }
+            var lazyHostValue = (_b = this.lazyValues) === null || _b === void 0 ? void 0 : _b[name];
+            if (lazyHostValue)
+                return lazyHostValue.read();
+            var nativeJsFunction = (_c = this.nativeJsFunctions) === null || _c === void 0 ? void 0 : _c[name];
+            if (nativeJsFunction)
+                return nativeJsFunction;
+            return (_d = this.values) === null || _d === void 0 ? void 0 : _d[name];
+        };
+        ContextStackImpl.prototype.lookUp = function (node) {
+            var e_2, _a, _b;
+            var _c, _d, _e, _f;
+            var value = node.v;
+            var sourceCodeInfo = (_c = getTokenDebugData(node.token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo;
+            try {
+                for (var _g = __values(this.contexts), _h = _g.next(); !_h.done; _h = _g.next()) {
+                    var context = _h.value;
+                    var contextEntry = context[value];
+                    if (contextEntry)
+                        return contextEntry;
+                }
+            }
+            catch (e_2_1) { e_2 = { error: e_2_1 }; }
+            finally {
+                try {
+                    if (_h && !_h.done && (_a = _g.return)) _a.call(_g);
+                }
+                finally { if (e_2) throw e_2.error; }
+            }
+            var lazyHostValue = (_d = this.lazyValues) === null || _d === void 0 ? void 0 : _d[value];
+            if (lazyHostValue !== undefined) {
+                return {
+                    value: toAny(lazyHostValue.read()),
+                };
+            }
+            var hostValue = (_e = this.values) === null || _e === void 0 ? void 0 : _e[value];
+            if (hostValue !== undefined) {
+                return {
+                    value: toAny(hostValue),
+                };
+            }
+            if (builtin.normalExpressions[value]) {
+                var builtinFunction = (_b = {},
+                    _b[FUNCTION_SYMBOL] = true,
+                    _b.sourceCodeInfo = sourceCodeInfo,
+                    _b.t = FunctionType.Builtin,
+                    _b.n = value,
+                    _b);
+                return builtinFunction;
+            }
+            if (builtin.specialExpressions[value])
+                return 'specialExpression';
+            var nativeJsFunction = (_f = this.nativeJsFunctions) === null || _f === void 0 ? void 0 : _f[value];
+            if (nativeJsFunction) {
+                return {
+                    value: nativeJsFunction,
+                };
+            }
+            return null;
+        };
+        ContextStackImpl.prototype.evaluateName = function (node) {
+            var _a;
+            var lookUpResult = this.lookUp(node);
+            if (isContextEntry(lookUpResult))
+                return lookUpResult.value;
+            else if (isBuiltinFunction(lookUpResult))
+                return lookUpResult;
+            throw new UndefinedSymbolError(node.v, (_a = getTokenDebugData(node.token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+        };
+        return ContextStackImpl;
+    }());
+    function createContextStack(params) {
+        var _a;
+        if (params === void 0) { params = {}; }
+        var globalContext = (_a = params.globalContext) !== null && _a !== void 0 ? _a : {};
+        // Contexts are checked from left to right
+        var contexts = params.contexts ? __spreadArray([globalContext], __read(params.contexts), false) : [globalContext];
+        var contextStack = new ContextStackImpl({
+            contexts: contexts,
+            values: params.values,
+            lazyValues: params.lazyValues,
+            nativeJsFunctions: params.jsFunctions
+                && Object.entries(params.jsFunctions).reduce(function (acc, _a) {
+                    var _b;
+                    var _c = __read(_a, 2), name = _c[0], jsFunction = _c[1];
+                    if (specialExpressionKeys.includes(name)) {
+                        console.warn("Cannot shadow special expression \"".concat(name, "\", ignoring."));
+                        return acc;
+                    }
+                    if (normalExpressionKeys.includes(name)) {
+                        console.warn("Cannot shadow builtin function \"".concat(name, "\", ignoring."));
+                        return acc;
+                    }
+                    acc[name] = (_b = {
+                            t: FunctionType.NativeJsFunction,
+                            f: jsFunction,
+                            n: name
+                        },
+                        _b[FUNCTION_SYMBOL] = true,
+                        _b);
+                    return acc;
+                }, {}),
+        });
+        return contextStack.create({});
     }
 
     function minifyTokenStream(tokenStream, _a) {
@@ -7936,7 +7584,7 @@ var Playground = (function (exports) {
         return null;
     }
 
-    function transformTokens(tokenStram, transformer) {
+    function transformSymbolTokens(tokenStram, transformer) {
         return __assign(__assign({}, tokenStram), { tokens: tokenStram.tokens.map(function (token) { return isSymbolToken(token)
                 ? [token[0], transformer(token[1])]
                 : token; }) });
@@ -8055,10 +7703,11 @@ var Playground = (function (exports) {
             evaluate(ast, contextStack);
             return contextStack.globalContext;
         };
-        Lits.prototype.analyze = function (program, params) {
+        Lits.prototype.getUndefinedSymbols = function (program, params) {
             if (params === void 0) { params = {}; }
             var ast = this.generateAst(program, params);
-            return analyze$1(ast, params);
+            var contextStack = createContextStack(params);
+            return getUndefinedSymbols(ast, contextStack, builtin);
         };
         Lits.prototype.tokenize = function (program, tokenizeParams) {
             if (tokenizeParams === void 0) { tokenizeParams = {}; }
@@ -8073,8 +7722,8 @@ var Playground = (function (exports) {
             var contextStack = createContextStack(params);
             return evaluate(ast, contextStack);
         };
-        Lits.prototype.transform = function (tokenStream, transformer) {
-            return transformTokens(tokenStream, transformer);
+        Lits.prototype.transformSymbols = function (tokenStream, transformer) {
+            return transformSymbolTokens(tokenStream, transformer);
         };
         Lits.prototype.untokenize = function (tokenStream) {
             return untokenize(tokenStream);
@@ -14953,8 +14602,8 @@ var Playground = (function (exports) {
         var litsParams = getLitsParamsFromContext();
         var hijacker = hijackConsole();
         try {
-            var result = getLits('debug').analyze(code, litsParams);
-            var unresolvedSymbols = __spreadArray([], __read(new Set(__spreadArray([], __read(result.unresolvedSymbols), false).map(function (s) { return s.symbol; }))), false).join(', ');
+            var result = getLits('debug').getUndefinedSymbols(code, litsParams);
+            var unresolvedSymbols = __spreadArray([], __read(result), false).join(', ');
             var unresolvedSymbolsOutput = "Unresolved symbols: ".concat(unresolvedSymbols || '-');
             appendOutput("".concat(unresolvedSymbolsOutput), 'analyze');
         }
