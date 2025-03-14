@@ -3,7 +3,7 @@ import type { RegularExpression, SymbolNode } from '../src/parser/interface'
 import { cloneColl, collHasKey, createNativeJsFunction, deepEqual, toNonNegativeInteger } from '../src/utils'
 import { FUNCTION_SYMBOL, REGEXP_SYMBOL } from '../src/utils/symbols'
 import { valueToString } from '../src/utils/debug/debugTools'
-import { AstNodeType, FunctionType } from '../src'
+import { AstNodeType, FunctionType } from '../src/constants/constants'
 
 describe('utils', () => {
   it('createNativeJsFunction', () => {

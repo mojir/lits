@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { afterEach, beforeEach, describe, expect, it, vitest } from 'vitest'
-import { Lits } from '../../../src'
+import { Lits } from '../../../src/Lits/Lits'
 
 describe('misc functions', () => {
   let oldLog: () => void

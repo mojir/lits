@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { Lits } from '../../../src'
+import { Lits } from '../../../src/Lits/Lits'
 
 describe('string functions', () => {
   for (const lits of [new Lits({}), new Lits({ debug: true })]) {

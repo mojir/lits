@@ -1,12 +1,8 @@
 import { LitsError } from '../errors'
+import type { FilePathParams } from '../Lits/Lits'
 import { tokenizers } from './tokenizers'
 import type { SourceCodeInfo, Token, TokenDebugData, TokenDescriptor } from './token'
 import { addTokenDebugData } from './token'
-
-export interface TokenizeParams {
-  debug: boolean
-  filePath?: string
-}
 
 export interface TokenStream {
   tokens: Token[]
@@ -14,12 +10,11 @@ export interface TokenStream {
   filePath?: string
 }
 
-export function tokenize(input: string, params: TokenizeParams): TokenStream {
-  const debug = !!params.debug
+export function tokenize(input: string, debug: boolean, filePath: FilePathParams['filePath']): TokenStream {
   let position = 0
   const tokenStream: TokenStream = {
     tokens: [],
-    filePath: params.filePath,
+    filePath,
     hasDebugData: debug,
   }
 
@@ -28,7 +23,7 @@ export function tokenize(input: string, params: TokenizeParams): TokenStream {
 
     const debugData: TokenDebugData | undefined = debug
       ? {
-          sourceCodeInfo: createSourceCodeInfo(input, position, params.filePath),
+          sourceCodeInfo: createSourceCodeInfo(input, position, filePath),
         }
       : undefined
 

@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { describe, it } from 'vitest'
-import { Lits } from '..'
+import { Lits } from '../Lits/Lits'
 
 const lits = new Lits({ debug: false })
 

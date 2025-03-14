@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { AstNodeType } from '../../src'
 import { ContextStackImpl } from '../../src/evaluator/ContextStack'
 import type { SymbolNode } from '../../src/parser/interface'
+import { AstNodeType } from '../../src/constants/constants'
 
 function createNameNode(name: string): SymbolNode {
   return {

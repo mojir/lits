@@ -1,4 +1,3 @@
-import type { LitsFunction } from '../../..'
 import type { ContextStack } from '../../../evaluator/ContextStack'
 import type { ExecuteFunction } from '../../../evaluator/interface'
 import type { Any, Arr, Coll, Obj } from '../../../interface'
@@ -12,6 +11,7 @@ import { assertArray } from '../../../typeGuards/array'
 import { asAny, asColl, assertAny, assertColl, assertObj, isColl, isObj, isSeq } from '../../../typeGuards/lits'
 import { assertNumber, isNumber } from '../../../typeGuards/number'
 import { asString, asStringOrNumber, assertString, assertStringOrNumber, isString, isStringOrNumber } from '../../../typeGuards/string'
+import type { LitsFunction } from '../../../parser/interface'
 
 interface CollMeta {
   coll: Coll

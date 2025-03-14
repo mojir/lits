@@ -1,9 +1,8 @@
 /* eslint-disable no-console */
 import { stringifyValue } from '../../common/utils'
 import type { Example } from '../../reference/examples'
-import { Lits, type LitsParams } from '../../src'
 import type { UnknownRecord } from '../../src/interface'
-import type { JsFunction } from '../../src/Lits/Lits'
+import { type ContextParams, type JsFunction, Lits } from '../../src/Lits/Lits'
 import { asUnknownRecord } from '../../src/typeGuards'
 import { Search } from './Search'
 import {
@@ -833,7 +832,7 @@ export function focusLitsCode() {
   elements.litsTextArea.focus()
 }
 
-function getLitsParamsFromContext(): LitsParams {
+function getLitsParamsFromContext(): ContextParams {
   const contextString = getState('context')
   try {
     const parsedContext

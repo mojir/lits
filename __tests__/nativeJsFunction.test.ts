@@ -1,9 +1,9 @@
 import { describe, expect, it, vitest } from 'vitest'
-import { FunctionType, Lits } from '../src'
-import type { JsFunction } from '../src/Lits/Lits'
+import { type JsFunction, Lits } from '../src/Lits/Lits'
 import { LitsError } from '../src/errors'
 import type { NativeJsFunction } from '../src/parser/interface'
 import { FUNCTION_SYMBOL } from '../src/utils/symbols'
+import { FunctionType } from '../src/constants/constants'
 
 const jsFunctions: Record<string, JsFunction> = {
   tripple: {

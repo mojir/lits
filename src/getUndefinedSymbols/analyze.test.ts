@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { Lits } from '..'
+import { Lits } from '../Lits/Lits'
 
 describe('analyze', () => {
   const lits = new Lits()

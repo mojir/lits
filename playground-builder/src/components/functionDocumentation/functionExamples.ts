@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { Lits } from '../../../../src'
+import { Lits } from '../../../../src/Lits/Lits'
 import { styles } from '../../styles/index'
 import type { Reference } from '../../../../reference'
 import { formatLitsExpression } from '../../formatter/rules'

@@ -6,7 +6,7 @@ import type { Any, Obj } from '../interface'
 import { parse } from '../parser'
 import type { Ast, LitsFunction } from '../parser/interface'
 import { tokenize } from '../tokenizer/tokenize'
-import type { TokenStream, TokenizeParams } from '../tokenizer/tokenize'
+import type { TokenStream } from '../tokenizer/tokenize'
 import { minifyTokenStream } from '../tokenizer/minifyTokenStream'
 import { transformSymbolTokens } from '../transformer'
 import { untokenize } from '../untokenizer'
@@ -28,12 +28,19 @@ export interface JsFunction {
   fn: (...args: any[]) => unknown
 }
 
-export interface LitsParams {
+export interface ContextParams {
   globalContext?: Context
   contexts?: Context[]
   values?: Record<string, unknown>
   lazyValues?: Record<string, LazyValue>
   jsFunctions?: Record<string, JsFunction>
+}
+
+export interface MinifyParams {
+  minify?: boolean
+}
+
+export interface FilePathParams {
   filePath?: string
 }
 
@@ -70,28 +77,27 @@ export class Lits {
     }
   }
 
-  public run(program: string, params: LitsParams = {}): unknown {
+  public run(program: string, params: ContextParams & FilePathParams = {}): unknown {
     const ast = this.generateAst(program, params)
     return this.evaluate(ast, params)
   }
 
-  public context(program: string, params: LitsParams = {}): Context {
+  public context(program: string, params: ContextParams & FilePathParams = {}): Context {
     const contextStack = createContextStack(params)
     const ast = this.generateAst(program, params)
     evaluate(ast, contextStack)
     return contextStack.globalContext
   }
 
-  public getUndefinedSymbols(program: string, params: LitsParams = {}): Set<string> {
-    const ast = this.generateAst(program, params)
+  public getUndefinedSymbols(programOrAst: string | Ast, params: ContextParams = {}): Set<string> {
+    const ast = typeof programOrAst === 'string' ? this.generateAst(programOrAst, params) : programOrAst
     const contextStack = createContextStack(params)
-
     return getUndefinedSymbols(ast, contextStack, builtin)
   }
 
-  public tokenize(program: string, tokenizeParams: Pick<TokenizeParams, 'filePath'> & { minify?: boolean } = {}): TokenStream {
+  public tokenize(program: string, tokenizeParams: FilePathParams & MinifyParams = {}): TokenStream {
     const debug = this.debug
-    const tokenStream = tokenize(program, { ...tokenizeParams, debug })
+    const tokenStream = tokenize(program, debug, tokenizeParams.filePath)
     return tokenizeParams.minify ? minifyTokenStream(tokenStream, { removeWhiteSpace: false }) : tokenStream
   }
 
@@ -99,7 +105,7 @@ export class Lits {
     return parse(tokenStream)
   }
 
-  public evaluate(ast: Ast, params: LitsParams): Any {
+  public evaluate(ast: Ast, params: ContextParams): Any {
     const contextStack = createContextStack(params)
     return evaluate(ast, contextStack)
   }
@@ -112,7 +118,7 @@ export class Lits {
     return untokenize(tokenStream)
   }
 
-  public apply(fn: LitsFunction, fnParams: unknown[], params: LitsParams = {}): Any {
+  public apply(fn: LitsFunction, fnParams: unknown[], params: ContextParams = {}): Any {
     const fnName = 'FN_2eb7b316_471c_5bfa_90cb_d3dfd9164a59'
     const program = this.generateApplyFunctionCall(fnName, fnParams)
 
@@ -140,7 +146,7 @@ export class Lits {
     return `${fnName}(${paramsString})`
   }
 
-  private generateAst(program: string, params: LitsParams): Ast {
+  private generateAst(program: string, params: ContextParams & FilePathParams): Ast {
     if (this.astCache) {
       const cachedAst = this.astCache.get(program)
       if (cachedAst)

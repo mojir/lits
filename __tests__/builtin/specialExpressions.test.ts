@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import type { Mock } from 'vitest'
 import { afterEach, beforeEach, describe, expect, it, vitest } from 'vitest'
-import { Lits } from '../../src'
+import { Lits } from '../../src/Lits/Lits'
 import { UserDefinedError } from '../../src/errors'
 
 const lits = new Lits()

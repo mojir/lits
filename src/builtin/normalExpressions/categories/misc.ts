@@ -4,7 +4,7 @@ import type { BuiltinNormalExpressions } from '../../interface'
 import { asAny, assertAny } from '../../../typeGuards/lits'
 import { assertNumber } from '../../../typeGuards/number'
 import { asStringOrNumber, assertString, assertStringOrNumber } from '../../../typeGuards/string'
-import type { SourceCodeInfo } from '../../..'
+import type { SourceCodeInfo } from '../../../tokenizer/token'
 
 function isEqual([first, ...rest]: unknown[], sourceCodeInfo: SourceCodeInfo | undefined) {
   const firstAny = asAny(first, sourceCodeInfo)

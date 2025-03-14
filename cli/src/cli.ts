@@ -4,12 +4,6 @@
 
 import fs from 'node:fs'
 import { version } from '../../package.json'
-import type { Context } from '../../src'
-import {
-  Lits,
-  normalExpressionKeys,
-  specialExpressionKeys,
-} from '../../src'
 import { runTest } from '../../src/testFramework'
 import type { Reference } from '../../reference'
 import { apiReference, isFunctionReference } from '../../reference'
@@ -17,6 +11,9 @@ import { asAny } from '../../src/typeGuards/lits'
 import type { UnknownRecord } from '../../src/interface'
 import { stringifyValue } from '../../common/utils'
 import { polishSymbolCharacterClass, polishSymbolFirstCharacterClass } from '../../src/symbolPatterns'
+import type { Context } from '../../src/evaluator/interface'
+import { Lits } from '../../src/Lits/Lits'
+import { normalExpressionKeys, specialExpressionKeys } from '../../src/builtin'
 import { ColorEnum, createColorizer } from './colorizer'
 import { getCliFunctionSignature } from './cliDocumentation/getCliFunctionSignature'
 import { getCliDocumentation } from './cliDocumentation/getCliDocumentation'

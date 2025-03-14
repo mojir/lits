@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { Lits } from '..'
 import { builtin } from '../builtin'
 import { createContextStack } from '../evaluator/ContextStack'
+import { Lits } from '../Lits/Lits'
 import { getUndefinedSymbols } from '.'
 
 describe('analyze', () => {

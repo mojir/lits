@@ -1,12 +1,12 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import type { Ast } from '../../src'
-import { Lits } from '../../src'
 import { UndefinedSymbolError } from '../../src/errors'
 import { Cache } from '../../src/Lits/Cache'
 import type { LazyValue } from '../../src/Lits/Lits'
+import { Lits } from '../../src/Lits/Lits'
 import { AstNodeType } from '../../src/constants/constants'
 import { assertLitsFunction } from '../../src/typeGuards/litsFunction'
 import { FUNCTION_SYMBOL } from '../../src/utils/symbols'
+import type { Ast } from '../../src/parser/interface'
 
 describe('tEST', () => {
   let lits: Lits

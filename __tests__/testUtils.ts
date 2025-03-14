@@ -1,8 +1,8 @@
 import { expect } from 'vitest'
-import type { Context } from '../src'
 import { ContextStackImpl } from '../src/evaluator/ContextStack'
 import type { Obj } from '../src/interface'
 import { isRegularExpression } from '../src/typeGuards/lits'
+import type { Context } from '../src/evaluator/interface'
 
 export interface TypeGuardTestData {
   valid: unknown[]

@@ -2,7 +2,7 @@
 
 import { stringifyValue } from '../../../common/utils'
 import type { Reference } from '../../../reference'
-import { Lits } from '../../../src'
+import { Lits } from '../../../src/Lits/Lits'
 import type { Colorizer } from '../colorizer'
 import { getLitsFormatter } from '../cliFormatterRules'
 

@@ -7,7 +7,7 @@ import { normalExpressionKeys, specialExpressionKeys } from '../src/builtin'
 import { canBeOperator, isUnknownRecord } from '../src/typeGuards'
 import { normalExpressions } from '../src/builtin/normalExpressions'
 import { isReservedSymbol } from '../src/tokenizer/reservedNames'
-import { Lits } from '../src'
+import { Lits } from '../src/Lits/Lits'
 
 function getLinkName(name: string): string {
   name = name.replace(/≠/g, '-ne')

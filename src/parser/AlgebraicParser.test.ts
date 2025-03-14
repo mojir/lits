@@ -1,5 +1,5 @@
 import { describe, expect, it, test } from 'vitest'
-import { Lits } from '..'
+import { Lits } from '../Lits/Lits'
 
 const lits = new Lits()
 

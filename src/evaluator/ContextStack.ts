@@ -4,7 +4,7 @@ import { builtin, normalExpressionKeys, specialExpressionKeys } from '../builtin
 import { toAny } from '../utils'
 import type { Any } from '../interface'
 import { UndefinedSymbolError } from '../errors'
-import type { LazyValue, LitsParams } from '../Lits/Lits'
+import type { ContextParams, LazyValue } from '../Lits/Lits'
 import { FUNCTION_SYMBOL } from '../utils/symbols'
 import { FunctionType } from '../constants/constants'
 import { asNonUndefined } from '../typeGuards'
@@ -165,7 +165,7 @@ export class ContextStackImpl {
   }
 }
 
-export function createContextStack(params: LitsParams = {}): ContextStack {
+export function createContextStack(params: ContextParams = {}): ContextStack {
   const globalContext = params.globalContext ?? {}
   // Contexts are checked from left to right
   const contexts = params.contexts ? [globalContext, ...params.contexts] : [globalContext]
