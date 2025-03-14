@@ -1,4 +1,4 @@
-import type { TokenStream } from '../tokenizer/interface'
+import type { TokenStream } from '../tokenizer/tokenize'
 
 export function untokenize(tokenStream: TokenStream): string {
   return tokenStream.tokens.reduce((acc: string, token) => {

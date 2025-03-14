@@ -1,4 +1,4 @@
-import type { SourceCodeInfo } from '../../tokenizer/interface'
+import type { SourceCodeInfo } from '../../tokenizer/token'
 
 export function getCodeMarker(sourceCodeInfo: SourceCodeInfo): string {
   if (!sourceCodeInfo.position || !sourceCodeInfo.code)

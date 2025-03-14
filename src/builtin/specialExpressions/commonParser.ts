@@ -1,8 +1,7 @@
 import type { CommonSpecialExpressionName, GenericCommonSpecialExpressionNode } from '..'
 import { AstNodeType } from '../../constants/constants'
 import type { Any } from '../../interface'
-import { assertRParenToken } from '../../tokenizer/tokens'
-import { getTokenDebugData } from '../../tokenizer/utils'
+import { assertRParenToken, getTokenDebugData } from '../../tokenizer/token'
 import type { BuiltinSpecialExpression } from '../interface'
 
 export function getCommonPolishSpecialExpressionParser<T extends CommonSpecialExpressionName>(name: T): BuiltinSpecialExpression<Any, GenericCommonSpecialExpressionNode<T>>['polishParse'] {

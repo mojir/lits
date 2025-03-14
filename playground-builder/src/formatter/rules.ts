@@ -2,7 +2,7 @@ import { styles } from '../styles'
 import type { TextFormatter } from '../../../common/createFormatter'
 import { polishSymbolCharacterClass, polishSymbolFirstCharacterClass } from '../../../src/symbolPatterns'
 import { Lits } from '../../../src/Lits/Lits'
-import type { Token } from '../../../src/tokenizer/tokens'
+import type { Token } from '../../../src/tokenizer/token'
 
 export type FormatterRule = (text: string, index: number, formatter: TextFormatter) => {
   count: number

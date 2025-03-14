@@ -1,6 +1,6 @@
 import { getAssertionError } from '../utils/getAssertionError'
 import type { BuiltinFunction, LitsFunction, NativeJsFunction, UserDefinedFunction } from '../parser/interface'
-import type { SourceCodeInfo } from '../tokenizer/interface'
+import type { SourceCodeInfo } from '../tokenizer/token'
 import { FUNCTION_SYMBOL } from '../utils/symbols'
 import { FunctionType } from '../constants/constants'
 import { isUnknownRecord } from '.'

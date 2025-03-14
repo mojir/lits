@@ -1,8 +1,7 @@
 import { AstNodeType } from '../../constants/constants'
 import type { Any } from '../../interface'
 import type { CommonSpecialExpressionNode } from '../../parser/interface'
-import { assertRParenToken } from '../../tokenizer/tokens'
-import { getTokenDebugData } from '../../tokenizer/utils'
+import { assertRParenToken, getTokenDebugData } from '../../tokenizer/token'
 import type { BuiltinSpecialExpression } from '../interface'
 
 export interface AndNode extends CommonSpecialExpressionNode<'&&'> {}

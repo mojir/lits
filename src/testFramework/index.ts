@@ -3,7 +3,7 @@ import path from 'node:path'
 import { LitsError } from '../errors'
 import type { Context } from '../evaluator/interface'
 import { Lits } from '../Lits/Lits'
-import type { SourceCodeInfo } from '../tokenizer/interface'
+import type { SourceCodeInfo } from '../tokenizer/token'
 import { getCodeMarker } from '../utils/debug/getCodeMarker'
 
 interface TestChunk {

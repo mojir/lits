@@ -1,8 +1,7 @@
 import { AstNodeType } from '../../constants/constants'
 import { RecurSignal } from '../../errors'
 import type { CommonSpecialExpressionNode } from '../../parser/interface'
-import { assertRParenToken } from '../../tokenizer/tokens'
-import { getTokenDebugData } from '../../tokenizer/utils'
+import { assertRParenToken, getTokenDebugData } from '../../tokenizer/token'
 import type { BuiltinSpecialExpression } from '../interface'
 
 export interface RecurNode extends CommonSpecialExpressionNode<'recur'> {}

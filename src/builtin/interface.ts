@@ -11,8 +11,8 @@ import type {
   ParseToken,
   ParseTokensUntilClosingBracket,
 } from '../parser/interface'
-import type { SourceCodeInfo, TokenStream } from '../tokenizer/interface'
-import type { Token } from '../tokenizer/tokens'
+import type { TokenStream } from '../tokenizer/tokenize'
+import type { SourceCodeInfo, Token } from '../tokenizer/token'
 
 import type { BuiltinSpecialExpressions, SpecialExpressionNode } from '.'
 

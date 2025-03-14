@@ -16,7 +16,7 @@ import type {
   SomePredFunction,
   UserDefinedFunction,
 } from '../parser/interface'
-import type { SourceCodeInfo } from '../tokenizer/interface'
+import type { SourceCodeInfo } from '../tokenizer/token'
 import { toAny } from '../utils'
 import { valueToString } from '../utils/debug/debugTools'
 import { FunctionType } from '../constants/constants'

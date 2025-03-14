@@ -1,7 +1,6 @@
 import { AstNodeType } from '../../constants/constants'
 import type { CommonSpecialExpressionNode, SymbolNode } from '../../parser/interface'
-import { assertRParenToken } from '../../tokenizer/tokens'
-import { getTokenDebugData } from '../../tokenizer/utils'
+import { assertRParenToken, getTokenDebugData } from '../../tokenizer/token'
 import { asAstNode, asSymbolNode, assertSymbolNode } from '../../typeGuards/astNode'
 import type { BuiltinSpecialExpression } from '../interface'
 import { assertNameNotDefined } from '../utils'

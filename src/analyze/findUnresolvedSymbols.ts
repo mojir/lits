@@ -4,7 +4,7 @@ import type { ContextStack } from '../evaluator/ContextStack'
 import type { AstNode } from '../parser/interface'
 import { asNonUndefined } from '../typeGuards'
 import { evaluateAstNode } from '../evaluator'
-import { getTokenDebugData } from '../tokenizer/utils'
+import { getTokenDebugData } from '../tokenizer/token'
 import type { DoNode } from '../builtin/specialExpressions/do'
 import type { FindUnresolvedSymbols, UnresolvedSymbol, UnresolvedSymbols } from '.'
 

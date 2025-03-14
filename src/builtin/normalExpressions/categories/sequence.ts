@@ -1,5 +1,5 @@
 import type { Any, Arr, Obj, Seq } from '../../../interface'
-import type { SourceCodeInfo } from '../../../tokenizer/interface'
+import type { SourceCodeInfo } from '../../../tokenizer/token'
 import { asArray, assertArray, assertCharArray } from '../../../typeGuards/array'
 import { asAny, asSeq, assertAny, assertSeq } from '../../../typeGuards/lits'
 import { assertLitsFunction } from '../../../typeGuards/litsFunction'

@@ -1,4 +1,4 @@
-import type { TokenStream } from '../tokenizer/interface'
+import type { TokenStream } from '../tokenizer/tokenize'
 import { minifyTokenStream } from '../tokenizer/minifyTokenStream'
 import { AlgebraicParser } from './AlgebraicParser'
 import type { Ast, AstNode, ParseState } from './interface'

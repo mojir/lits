@@ -1,4 +1,4 @@
-import type { SourceCodeInfo } from '../tokenizer/interface'
+import type { SourceCodeInfo } from '../tokenizer/token'
 import { getAssertionError } from '../utils/getAssertionError'
 
 // isArray not needed, use Array.isArary

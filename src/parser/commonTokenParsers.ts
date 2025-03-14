@@ -1,9 +1,8 @@
 import { AstNodeType } from '../constants/constants'
 import { LitsError } from '../errors'
 import { isNumberReservedSymbol, numberReservedSymbolRecord } from '../tokenizer/reservedNames'
-import { asRegexpShorthandToken, asStringToken, asToken, isBasePrefixedNumberToken, isNumberToken, isReservedSymbolToken, isSymbolToken } from '../tokenizer/tokens'
-import type { TokenStream } from '../tokenizer/interface'
-import { getTokenDebugData } from '../tokenizer/utils'
+import { asRegexpShorthandToken, asStringToken, asToken, getTokenDebugData, isBasePrefixedNumberToken, isNumberToken, isReservedSymbolToken, isSymbolToken } from '../tokenizer/token'
+import type { TokenStream } from '../tokenizer/tokenize'
 import type {
   NormalExpressionNode,
   NormalExpressionNodeWithName,

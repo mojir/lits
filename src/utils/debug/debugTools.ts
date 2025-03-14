@@ -1,6 +1,6 @@
 import { astNodeTypeName, isAstNodeType, isFunctionType } from '../../constants/constants'
 import type { AstNode, LitsFunction } from '../../parser/interface'
-import { type Token, isTokenType } from '../../tokenizer/tokens'
+import { type Token, isTokenType } from '../../tokenizer/token'
 import { FUNCTION_SYMBOL } from '../symbols'
 
 function isLitsFunction(func: unknown): func is LitsFunction {

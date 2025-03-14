@@ -1,7 +1,7 @@
 import { LitsError } from '../errors'
 import type { ContextStack } from '../evaluator/ContextStack'
 import type { AstNode, BindingNode } from '../parser/interface'
-import type { SourceCodeInfo } from '../tokenizer/interface'
+import type { SourceCodeInfo } from '../tokenizer/token'
 import { isReservedSymbol } from '../tokenizer/reservedNames'
 import type { Builtin } from './interface'
 import type { SpecialExpressionName } from '.'

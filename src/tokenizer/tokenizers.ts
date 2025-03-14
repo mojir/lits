@@ -1,9 +1,10 @@
 import { LitsError } from '../errors'
-import type { TokenDescriptor, Tokenizer } from './interface'
 import { isSymbolicOperator } from './operators'
-import type { BasePrefixedNumberToken, LBraceToken, LBracketToken, LParenToken, MultiLineCommentToken, NumberToken, OperatorToken, RBraceToken, RBracketToken, RParenToken, RegexpShorthandToken, ReservedSymbolToken, SingleLineCommentToken, StringToken, SymbolToken, Token, WhitespaceToken } from './tokens'
+import type { BasePrefixedNumberToken, LBraceToken, LBracketToken, LParenToken, MultiLineCommentToken, NumberToken, OperatorToken, RBraceToken, RBracketToken, RParenToken, RegexpShorthandToken, ReservedSymbolToken, SingleLineCommentToken, StringToken, SymbolToken, Token, TokenDescriptor, WhitespaceToken } from './token'
 import type { AlgebraicReservedSymbol, ValidReservedSymbol } from './reservedNames'
 import { algebraicReservedSymbolRecord } from './reservedNames'
+
+export type Tokenizer<T extends Token> = (input: string, position: number) => TokenDescriptor<T>
 
 const illegalSymbolCharacters = [
   '(',

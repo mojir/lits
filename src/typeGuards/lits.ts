@@ -1,6 +1,6 @@
 import type { Any, Coll, Obj, Seq } from '../interface'
 import type { RegularExpression } from '../parser/interface'
-import type { SourceCodeInfo } from '../tokenizer/interface'
+import type { SourceCodeInfo } from '../tokenizer/token'
 import { getAssertionError } from '../utils/getAssertionError'
 import { REGEXP_SYMBOL } from '../utils/symbols'
 import { isLitsFunction } from './litsFunction'

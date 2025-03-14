@@ -1,4 +1,4 @@
-import type { TokenStream } from '../tokenizer/interface'
+import type { TokenStream } from '../tokenizer/tokenize'
 import type {
   AstNode,
   ParseState,

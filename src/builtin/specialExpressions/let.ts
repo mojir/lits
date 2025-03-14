@@ -3,8 +3,7 @@ import { AstNodeType } from '../../constants/constants'
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
 import type { BindingNode, CommonSpecialExpressionNode } from '../../parser/interface'
-import { assertRParenToken } from '../../tokenizer/tokens'
-import { getTokenDebugData } from '../../tokenizer/utils'
+import { assertRParenToken, getTokenDebugData } from '../../tokenizer/token'
 import type { BuiltinSpecialExpression } from '../interface'
 
 export interface LetNode extends CommonSpecialExpressionNode<'let'> {

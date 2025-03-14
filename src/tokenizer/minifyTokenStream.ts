@@ -1,5 +1,5 @@
-import type { TokenStream } from './interface'
-import { isA_CommentToken, isMultiLineCommentToken, isWhitespaceToken } from './tokens'
+import type { TokenStream } from './tokenize'
+import { isA_CommentToken, isMultiLineCommentToken, isWhitespaceToken } from './token'
 
 export function minifyTokenStream(tokenStream: TokenStream, { removeWhiteSpace }: { removeWhiteSpace: boolean }): TokenStream {
   const tokens = tokenStream.tokens

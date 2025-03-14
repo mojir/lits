@@ -1,6 +1,4 @@
 import { LitsError } from '../errors'
-import type { OperatorToken, Token } from './tokens'
-import { throwUnexpectedToken } from './utils'
 
 const binaryOperators = [
   '**', // exponentiation
@@ -108,17 +106,4 @@ export function assertSymbolicOperator(operator: string): asserts operator is Sy
 export function asSymbolicOperator(operator: string): SymbolicOperator {
   assertSymbolicOperator(operator)
   return operator
-}
-
-export function isA_BinaryOperatorToken(token: Token | undefined): token is OperatorToken<SymbolicBinaryOperator> {
-  return token?.[0] === 'Operator' && isBinaryOperator(token[1])
-}
-export function assertA_BinaryOperatorToken(token: Token | undefined): asserts token is OperatorToken<SymbolicBinaryOperator> {
-  if (!isA_BinaryOperatorToken(token)) {
-    throwUnexpectedToken('Operator', undefined, token)
-  }
-}
-export function asA_BinaryOperatorToken(token: Token | undefined): OperatorToken<SymbolicBinaryOperator> {
-  assertA_BinaryOperatorToken(token)
-  return token
 }

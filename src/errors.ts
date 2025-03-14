@@ -1,6 +1,6 @@
 import { getCodeMarker } from '../src/utils/debug/getCodeMarker'
 import type { Arr } from './interface'
-import type { SourceCodeInfo } from './tokenizer/interface'
+import type { SourceCodeInfo } from './tokenizer/token'
 
 function getLitsErrorMessage(message: string, sourceCodeInfo?: SourceCodeInfo) {
   const filePathLine = sourceCodeInfo?.filePath ? `\n${sourceCodeInfo.filePath}` : ''

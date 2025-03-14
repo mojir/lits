@@ -1,6 +1,6 @@
 import { LitsError } from '../../../errors'
 import type { Arr } from '../../../interface'
-import type { SourceCodeInfo } from '../../../tokenizer/interface'
+import type { SourceCodeInfo } from '../../../tokenizer/token'
 import { asNonUndefined } from '../../../typeGuards'
 import { assertArray } from '../../../typeGuards/array'
 import { assertStringOrRegularExpression, isObj } from '../../../typeGuards/lits'

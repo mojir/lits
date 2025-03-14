@@ -1,5 +1,5 @@
-import type { TokenStream } from '../tokenizer/interface'
-import { isSymbolToken } from '../tokenizer/tokens'
+import type { TokenStream } from '../tokenizer/tokenize'
+import { isSymbolToken } from '../tokenizer/token'
 
 export function transformTokens(tokenStram: TokenStream, transformer: (name: string) => string): TokenStream {
   return {

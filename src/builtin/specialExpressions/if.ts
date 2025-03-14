@@ -1,6 +1,6 @@
 import type { Any } from '../../interface'
 import type { CommonSpecialExpressionNode } from '../../parser/interface'
-import { getTokenDebugData } from '../../tokenizer/utils'
+import { getTokenDebugData } from '../../tokenizer/token'
 import { asAstNode } from '../../typeGuards/astNode'
 import type { BuiltinSpecialExpression } from '../interface'
 import { getCommonPolishSpecialExpressionParser } from './commonParser'

@@ -1,10 +1,7 @@
 import { LitsError } from '../errors'
+import { getSourceCodeInfo } from '../utils/debug/getSourceCodeInfo'
 import type { ValidReservedSymbol } from './reservedNames'
-import type { SymbolicOperator } from './operators'
-import type { TokenDebugData } from './utils'
-import { throwUnexpectedToken } from './utils'
-// import type { PolishOnlyToken } from './polish/polishTokens'
-// import { polishOnlyTokenTypes } from './polish/polishTokens'
+import { type SymbolicBinaryOperator, type SymbolicOperator, isBinaryOperator } from './operators'
 
 export const tokenTypes = [
   'LBrace',
@@ -67,6 +64,45 @@ export type Token =
   | StringToken
   | SymbolToken
   | WhitespaceToken
+
+export type TokenDescriptor<T extends Token> = [length: number, token?: T]
+
+export interface SourceCodeInfo {
+  position?: {
+    line: number
+    column: number
+  }
+  code?: string
+  filePath?: string
+}
+
+export type TokenDebugData = {
+  sourceCodeInfo: SourceCodeInfo
+}
+
+function isTokenDebugData(tokenDebugData: unknown): tokenDebugData is TokenDebugData {
+  return (
+    typeof tokenDebugData === 'object'
+    && tokenDebugData !== null
+    && 'sourceCodeInfo' in tokenDebugData
+  )
+}
+
+export function getTokenDebugData(token?: Token): TokenDebugData | undefined {
+  const debugData = token?.at(-1)
+  return isTokenDebugData(debugData) ? debugData : undefined
+}
+
+export function hasTokenDebugData(token?: Token): boolean {
+  return isTokenDebugData(token?.at(-1))
+}
+
+export function addTokenDebugData(token: Token, debugData: TokenDebugData): void {
+  if (isTokenDebugData(token.at(-1))) {
+    throw new Error(`Token already has debug data: ${token}`)
+  }
+  ;(token as unknown[]).push(debugData)
+}
 
 export function isTokenType(type: string): type is TokenType {
   return typeof type === 'string' && tokenTypes.includes(type as TokenType)
@@ -313,4 +349,25 @@ export function assertRegexpShorthandToken(token?: Token): asserts token is Rege
 export function asRegexpShorthandToken(token?: Token): RegexpShorthandToken {
   assertRegexpShorthandToken(token)
   return token
+}
+
+export function isA_BinaryOperatorToken(token: Token | undefined): token is OperatorToken<SymbolicBinaryOperator> {
+  return token?.[0] === 'Operator' && isBinaryOperator(token[1])
+}
+export function assertA_BinaryOperatorToken(token: Token | undefined): asserts token is OperatorToken<SymbolicBinaryOperator> {
+  if (!isA_BinaryOperatorToken(token)) {
+    throwUnexpectedToken('Operator', undefined, token)
+  }
+}
+export function asA_BinaryOperatorToken(token: Token | undefined): OperatorToken<SymbolicBinaryOperator> {
+  assertA_BinaryOperatorToken(token)
+  return token
+}
+
+function throwUnexpectedToken(expected: TokenType, expectedValue: string | undefined, actual?: Token): never {
+  if (actual === undefined) {
+    throw new LitsError(`Unexpected end of input, expected ${expected}${expectedValue ? ` '${expectedValue}'` : ''}`, undefined)
+  }
+  const actualOutput = `${actual[0]}${actual[1] ? ` '${actual[1]}'` : ''}`
+  throw new LitsError(`Unexpected token: ${actualOutput}, expected ${expected}${expectedValue ? ` '${expectedValue}'` : ''}`, getSourceCodeInfo(actual))
 }

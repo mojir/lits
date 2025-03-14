@@ -6,7 +6,7 @@ import type {
   NormalExpressionNodeWithName,
   SymbolNode,
 } from '../parser/interface'
-import type { SourceCodeInfo } from '../tokenizer/interface'
+import type { SourceCodeInfo } from '../tokenizer/token'
 import { getAssertionError } from '../utils/getAssertionError'
 
 export function isAstNode(value: unknown): value is AstNode {

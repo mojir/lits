@@ -4,9 +4,9 @@ import type { Arity } from '../builtin/utils'
 import type { AstNodeType, FunctionType } from '../constants/constants'
 import type { Context } from '../evaluator/interface'
 import type { Any, Arr } from '../interface'
-import type { SourceCodeInfo, TokenStream } from '../tokenizer/interface'
+import type { TokenStream } from '../tokenizer/tokenize'
+import type { ModifierName, SourceCodeInfo, Token } from '../tokenizer/token'
 import type { FUNCTION_SYMBOL, REGEXP_SYMBOL } from '../utils/symbols'
-import type { ModifierName, Token } from '../tokenizer/tokens'
 
 export interface ParseState {
   position: number

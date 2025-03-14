@@ -1,6 +1,6 @@
 import type { Any, Arr } from '../interface'
 import type { AstNode, BuiltinFunction } from '../parser/interface'
-import type { SourceCodeInfo } from '../tokenizer/interface'
+import type { SourceCodeInfo } from '../tokenizer/token'
 import { isUnknownRecord } from '../typeGuards'
 import type { ContextStack } from './ContextStack'
 

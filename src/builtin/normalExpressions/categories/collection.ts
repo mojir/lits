@@ -2,7 +2,7 @@ import type { LitsFunction } from '../../..'
 import type { ContextStack } from '../../../evaluator/ContextStack'
 import type { ExecuteFunction } from '../../../evaluator/interface'
 import type { Any, Arr, Coll, Obj } from '../../../interface'
-import type { SourceCodeInfo } from '../../../tokenizer/interface'
+import type { SourceCodeInfo } from '../../../tokenizer/token'
 import { cloneColl, collHasKey, deepEqual, toAny, toNonNegativeInteger } from '../../../utils'
 
 import { assertLitsFunction } from '../../../typeGuards/litsFunction'

@@ -11,7 +11,7 @@ import type {
   StringNode,
   SymbolNode,
 } from '../parser/interface'
-import type { Token } from '../tokenizer/tokens'
+import type { Token } from '../tokenizer/token'
 import {
   asAstNode,
   asExpressionNode,

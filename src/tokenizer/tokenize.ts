@@ -1,9 +1,18 @@
 import { LitsError } from '../errors'
 import { tokenizers } from './tokenizers'
-import type { SourceCodeInfo, TokenDescriptor, TokenStream, TokenizeParams } from './interface'
-import type { Token } from './tokens'
-import type { TokenDebugData } from './utils'
-import { addTokenDebugData } from './utils'
+import type { SourceCodeInfo, Token, TokenDebugData, TokenDescriptor } from './token'
+import { addTokenDebugData } from './token'
+
+export interface TokenizeParams {
+  debug: boolean
+  filePath?: string
+}
+
+export interface TokenStream {
+  tokens: Token[]
+  hasDebugData: boolean
+  filePath?: string
+}
 
 export function tokenize(input: string, params: TokenizeParams): TokenStream {
   const debug = !!params.debug

@@ -739,34 +739,76 @@ var Playground = (function (exports) {
         return (_a = anyValue === null || anyValue === void 0 ? void 0 : anyValue.sourceCodeInfo) !== null && _a !== void 0 ? _a : sourceCodeInfo;
     }
 
-    function isTokenDebugData(tokenDebugData) {
-        return (typeof tokenDebugData === 'object'
-            && tokenDebugData !== null
-            && 'sourceCodeInfo' in tokenDebugData);
+    var binaryOperators = [
+        '**', // exponentiation
+        '*', // multiplication
+        '/', // division
+        '%', // remainder
+        '+', // addition
+        '-', // subtraction
+        '<<', // left shift
+        '>>', // signed right shift
+        '>>>', // unsigned right shift
+        '++', // string concatenation
+        '<', // less than
+        '<=', // less than or equal
+        '≤', // less than or equal
+        '>', // greater than
+        '>=', // greater than or equal
+        '≥', // greater than or equal
+        '=', // equal
+        '!=', // not equal
+        '≠', // not equal
+        '&', // bitwise AND
+        '^', // bitwise XOR
+        '|', // bitwise OR
+        '&&', // logical AND
+        '||', // logical OR
+        '??', // nullish coalescing
+    ];
+    var otherOperators = [
+        '->', // lambda
+        '...', // rest
+        '.', // property accessor
+        ',', // item separator
+        ':=', // property assignment
+        ';', // statement terminator
+    ];
+    var symbolicOperators = __spreadArray(__spreadArray([], __read(binaryOperators), false), __read(otherOperators), false);
+    var nonFunctionOperators = [
+        '??',
+        '&&',
+        '||',
+        'comment',
+        'cond',
+        'def',
+        'defined?',
+        'defn',
+        'do',
+        'doseq',
+        'fn',
+        'if',
+        'let',
+        'loop',
+        'recur',
+        'throw',
+        'try',
+        'unless',
+        'while',
+    ];
+    var nonFunctionOperatorSet = new Set(nonFunctionOperators);
+    function isFunctionOperator(operator) {
+        return !nonFunctionOperatorSet.has(operator);
     }
-    function getTokenDebugData(token) {
-        var debugData = token === null || token === void 0 ? void 0 : token.at(-1);
-        return isTokenDebugData(debugData) ? debugData : undefined;
+    var binaryOperatorSet = new Set(binaryOperators);
+    function isBinaryOperator(operator) {
+        return binaryOperatorSet.has(operator);
     }
-    function hasTokenDebugData(token) {
-        return isTokenDebugData(token === null || token === void 0 ? void 0 : token.at(-1));
-    }
-    function addTokenDebugData(token, debugData) {
-        if (isTokenDebugData(token.at(-1))) {
-            throw new Error("Token already has debug data: ".concat(token));
-        }
-        token.push(debugData);
-    }
-    function throwUnexpectedToken(expected, expectedValue, actual) {
-        if (actual === undefined) {
-            throw new LitsError("Unexpected end of input, expected ".concat(expected).concat(expectedValue ? " '".concat(expectedValue, "'") : ''), undefined);
-        }
-        var actualOutput = "".concat(actual[0]).concat(actual[1] ? " '".concat(actual[1], "'") : '');
-        throw new LitsError("Unexpected token: ".concat(actualOutput, ", expected ").concat(expected).concat(expectedValue ? " '".concat(expectedValue, "'") : ''), getSourceCodeInfo(actual));
+    var symbolicOperatorSet = new Set(symbolicOperators);
+    function isSymbolicOperator(operator) {
+        return symbolicOperatorSet.has(operator);
     }
 
-    // import type { PolishOnlyToken } from './polish/polishTokens'
-    // import { polishOnlyTokenTypes } from './polish/polishTokens'
     var tokenTypes = [
         'LBrace',
         'LBracket',
@@ -785,6 +827,24 @@ var Playground = (function (exports) {
         'Symbol',
         'Whitespace',
     ];
+    function isTokenDebugData(tokenDebugData) {
+        return (typeof tokenDebugData === 'object'
+            && tokenDebugData !== null
+            && 'sourceCodeInfo' in tokenDebugData);
+    }
+    function getTokenDebugData(token) {
+        var debugData = token === null || token === void 0 ? void 0 : token.at(-1);
+        return isTokenDebugData(debugData) ? debugData : undefined;
+    }
+    function hasTokenDebugData(token) {
+        return isTokenDebugData(token === null || token === void 0 ? void 0 : token.at(-1));
+    }
+    function addTokenDebugData(token, debugData) {
+        if (isTokenDebugData(token.at(-1))) {
+            throw new Error("Token already has debug data: ".concat(token));
+        }
+        token.push(debugData);
+    }
     function isTokenType(type) {
         return typeof type === 'string' && tokenTypes.includes(type);
     }
@@ -943,6 +1003,16 @@ var Playground = (function (exports) {
     function asRegexpShorthandToken(token) {
         assertRegexpShorthandToken(token);
         return token;
+    }
+    function isA_BinaryOperatorToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'Operator' && isBinaryOperator(token[1]);
+    }
+    function throwUnexpectedToken(expected, expectedValue, actual) {
+        if (actual === undefined) {
+            throw new LitsError("Unexpected end of input, expected ".concat(expected).concat(expectedValue ? " '".concat(expectedValue, "'") : ''), undefined);
+        }
+        var actualOutput = "".concat(actual[0]).concat(actual[1] ? " '".concat(actual[1], "'") : '');
+        throw new LitsError("Unexpected token: ".concat(actualOutput, ", expected ").concat(expected).concat(expectedValue ? " '".concat(expectedValue, "'") : ''), getSourceCodeInfo(actual));
     }
 
     var FUNCTION_SYMBOL = '^^fn^^';
@@ -6133,79 +6203,6 @@ var Playground = (function (exports) {
             return true;
         });
         return __assign(__assign({}, tokenStream), { tokens: tokens });
-    }
-
-    var binaryOperators = [
-        '**', // exponentiation
-        '*', // multiplication
-        '/', // division
-        '%', // remainder
-        '+', // addition
-        '-', // subtraction
-        '<<', // left shift
-        '>>', // signed right shift
-        '>>>', // unsigned right shift
-        '++', // string concatenation
-        '<', // less than
-        '<=', // less than or equal
-        '≤', // less than or equal
-        '>', // greater than
-        '>=', // greater than or equal
-        '≥', // greater than or equal
-        '=', // equal
-        '!=', // not equal
-        '≠', // not equal
-        '&', // bitwise AND
-        '^', // bitwise XOR
-        '|', // bitwise OR
-        '&&', // logical AND
-        '||', // logical OR
-        '??', // nullish coalescing
-    ];
-    var otherOperators = [
-        '->', // lambda
-        '...', // rest
-        '.', // property accessor
-        ',', // item separator
-        ':=', // property assignment
-        ';', // statement terminator
-    ];
-    var symbolicOperators = __spreadArray(__spreadArray([], __read(binaryOperators), false), __read(otherOperators), false);
-    var nonFunctionOperators = [
-        '??',
-        '&&',
-        '||',
-        'comment',
-        'cond',
-        'def',
-        'defined?',
-        'defn',
-        'do',
-        'doseq',
-        'fn',
-        'if',
-        'let',
-        'loop',
-        'recur',
-        'throw',
-        'try',
-        'unless',
-        'while',
-    ];
-    var nonFunctionOperatorSet = new Set(nonFunctionOperators);
-    function isFunctionOperator(operator) {
-        return !nonFunctionOperatorSet.has(operator);
-    }
-    var binaryOperatorSet = new Set(binaryOperators);
-    function isBinaryOperator(operator) {
-        return binaryOperatorSet.has(operator);
-    }
-    var symbolicOperatorSet = new Set(symbolicOperators);
-    function isSymbolicOperator(operator) {
-        return symbolicOperatorSet.has(operator);
-    }
-    function isA_BinaryOperatorToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'Operator' && isBinaryOperator(token[1]);
     }
 
     function parseSymbol(tokenStream, parseState) {
