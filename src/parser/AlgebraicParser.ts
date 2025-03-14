@@ -14,11 +14,10 @@ import type { UnlessNode } from '../builtin/specialExpressions/unless'
 import type { Arity, FunctionArguments } from '../builtin/utils'
 import { AstNodeType } from '../constants/constants'
 import { LitsError } from '../errors'
-import type { A_OperatorToken, A_ReservedSymbolToken, A_SymbolToken, AlgebraicTokenType, SymbolicBinaryOperator } from '../tokenizer/algebraic/algebraicTokens'
-import { asA_SymbolToken, assertA_OperatorToken, assertA_ReservedSymbolToken, assertA_SymbolToken, isA_BinaryOperatorToken, isA_OperatorToken, isA_ReservedSymbolToken, isA_SymbolToken, isBinaryOperator, isFunctionOperator } from '../tokenizer/algebraic/algebraicTokens'
-import { asLBraceToken, asLBracketToken, assertRBraceToken, assertRBracketToken, assertRParenToken, isLBraceToken, isLBracketToken, isLParenToken, isRBraceToken, isRBracketToken, isRParenToken } from '../tokenizer/common/commonTokens'
 import type { TokenStream } from '../tokenizer/interface'
-import type { Token } from '../tokenizer/tokens'
+import { type SymbolicBinaryOperator, isA_BinaryOperatorToken, isBinaryOperator, isFunctionOperator } from '../tokenizer/operators'
+import type { A_OperatorToken, A_ReservedSymbolToken, A_SymbolToken, Token, TokenType } from '../tokenizer/tokens'
+import { asA_SymbolToken, asLBraceToken, asLBracketToken, assertA_OperatorToken, assertA_ReservedSymbolToken, assertA_SymbolToken, assertRBraceToken, assertRBracketToken, assertRParenToken, isA_OperatorToken, isA_ReservedSymbolToken, isA_SymbolToken, isLBraceToken, isLBracketToken, isLParenToken, isRBraceToken, isRBracketToken, isRParenToken } from '../tokenizer/tokens'
 import { getTokenDebugData, hasTokenDebugData } from '../tokenizer/utils'
 import { assertNumberOfParams } from '../typeGuards'
 import { asSymbolNode } from '../typeGuards/astNode'
@@ -383,7 +382,7 @@ export class AlgebraicParser {
     }
 
     const tokenType = token[0] as Exclude<
-      AlgebraicTokenType,
+      TokenType,
       | 'A_Operator' // Handled above
       | 'LParen' // Handled above
       | 'LBrace' // Handled above

@@ -9,7 +9,6 @@ import type {
 } from '../parser/interface'
 import type { SpecialExpressionNode } from '../builtin'
 import { builtin } from '../builtin'
-import { polishReservedNamesRecord } from '../tokenizer/polish/polishReservedNames'
 import { toAny } from '../utils'
 import type { Any, Arr, Obj } from '../interface'
 import type { SourceCodeInfo } from '../tokenizer/interface'
@@ -23,6 +22,8 @@ import { asNonUndefined } from '../typeGuards'
 import { asAny, assertSeq, isObj } from '../typeGuards/lits'
 import { assertString } from '../typeGuards/string'
 import { getTokenDebugData } from '../tokenizer/utils'
+import type { AlgebraicReservedSymbol } from '../tokenizer/reservedNames'
+import { algebraicReservedSymbolRecord } from '../tokenizer/reservedNames'
 import type { ContextStack } from './ContextStack'
 import { functionExecutors } from './functionExecutors'
 
@@ -64,7 +65,9 @@ function evaluateString(node: StringNode): string {
 }
 
 function evaluateReservedName(node: ReservedSymbolNode): Any {
-  return asNonUndefined(polishReservedNamesRecord[node.v], getTokenDebugData(node.token)?.sourceCodeInfo).value
+  const reservedName = node.v as AlgebraicReservedSymbol
+  const value = algebraicReservedSymbolRecord[reservedName]
+  return asNonUndefined(value, getTokenDebugData(node.token)?.sourceCodeInfo)
 }
 
 function evaluateNormalExpression(node: NormalExpressionNode, contextStack: ContextStack): Any {

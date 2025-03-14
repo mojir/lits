@@ -1,11 +1,8 @@
 import { AstNodeType } from '../constants/constants'
 import { LitsError } from '../errors'
-import { isNumberReservedSymbol, numberReservedSymbolRecord } from '../tokenizer/algebraic/algebraicReservedNames'
-import { isA_BasePrefixedNumberToken, isA_NumberToken, isA_ReservedSymbolToken, isA_SymbolToken } from '../tokenizer/algebraic/algebraicTokens'
-import { asRegexpShorthandToken, asStringToken } from '../tokenizer/common/commonTokens'
+import { isNumberReservedSymbol, numberReservedSymbolRecord } from '../tokenizer/reservedNames'
+import { asRegexpShorthandToken, asStringToken, asToken, isA_BasePrefixedNumberToken, isA_NumberToken, isA_ReservedSymbolToken, isA_SymbolToken } from '../tokenizer/tokens'
 import type { TokenStream } from '../tokenizer/interface'
-import { isP_NumberToken, isP_ReservedSymbolToken, isP_SymbolToken } from '../tokenizer/polish/polishTokens'
-import { asToken } from '../tokenizer/tokens'
 import { getTokenDebugData } from '../tokenizer/utils'
 import type {
   NormalExpressionNode,
@@ -19,7 +16,7 @@ import type {
 
 export function parseSymbol(tokenStream: TokenStream, parseState: ParseState): SymbolNode {
   const tkn = asToken(tokenStream.tokens[parseState.position++])
-  if (!isA_SymbolToken(tkn) && !isP_SymbolToken(tkn)) {
+  if (!isA_SymbolToken(tkn)) {
     throw new LitsError(`Expected symbol token, got ${tkn[0]}`, getTokenDebugData(tkn)?.sourceCodeInfo)
   }
   if (tkn[1][0] !== '\'') {
@@ -63,7 +60,7 @@ export function parseSymbol(tokenStream: TokenStream, parseState: ParseState): S
 export function parseReservedSymbol(tokenStream: TokenStream, parseState: ParseState): ReservedSymbolNode | NumberNode {
   const tkn = asToken(tokenStream.tokens[parseState.position++])
 
-  if (!isA_ReservedSymbolToken(tkn) && !isP_ReservedSymbolToken(tkn)) {
+  if (!isA_ReservedSymbolToken(tkn)) {
     throw new LitsError(`Expected symbol token, got ${tkn[0]}`, getTokenDebugData(tkn)?.sourceCodeInfo)
   }
 
@@ -85,12 +82,12 @@ export function parseReservedSymbol(tokenStream: TokenStream, parseState: ParseS
     p: [],
     n: undefined,
     token: getTokenDebugData(tkn) && tkn,
-  }
+  } satisfies ReservedSymbolNode
 }
 
 export function parseNumber(tokenStream: TokenStream, parseState: ParseState): NumberNode {
   const tkn = tokenStream.tokens[parseState.position++]
-  if (!isP_NumberToken(tkn) && !isA_BasePrefixedNumberToken(tkn) && !isA_NumberToken(tkn)) {
+  if (!isA_BasePrefixedNumberToken(tkn) && !isA_NumberToken(tkn)) {
     throw new LitsError(`Expected number token, got ${tkn}`, getTokenDebugData(tkn)?.sourceCodeInfo)
   }
 

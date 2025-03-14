@@ -1,7 +1,7 @@
 import type { CommonSpecialExpressionName, GenericCommonSpecialExpressionNode } from '..'
 import { AstNodeType } from '../../constants/constants'
 import type { Any } from '../../interface'
-import { assertRParenToken } from '../../tokenizer/common/commonTokens'
+import { assertRParenToken } from '../../tokenizer/tokens'
 import { getTokenDebugData } from '../../tokenizer/utils'
 import type { BuiltinSpecialExpression } from '../interface'
 

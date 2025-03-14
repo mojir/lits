@@ -14,12 +14,10 @@ export type Tokenizer<T extends Token> = (input: string, position: number) => To
 export interface TokenStream {
   tokens: Token[]
   hasDebugData: boolean
-  polish: boolean
   filePath?: string
 }
 
 export interface TokenizeParams {
   debug: boolean
-  polish: boolean
   filePath?: string
 }

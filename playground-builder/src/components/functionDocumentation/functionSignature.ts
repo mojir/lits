@@ -1,5 +1,5 @@
 import type { FunctionReference } from '../../../../reference'
-import { isSymbolicOperator } from '../../../../src/tokenizer/algebraic/algebraicTokens'
+import { isSymbolicOperator } from '../../../../src/tokenizer/operators'
 import type { StyleOverride } from '../../formatter/rules'
 import { formatLitsExpression } from '../../formatter/rules'
 import { styles } from '../../styles'

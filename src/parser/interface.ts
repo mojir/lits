@@ -4,11 +4,9 @@ import type { Arity } from '../builtin/utils'
 import type { AstNodeType, FunctionType } from '../constants/constants'
 import type { Context } from '../evaluator/interface'
 import type { Any, Arr } from '../interface'
-import type { PolishReservedName } from '../tokenizer/polish/polishReservedNames'
 import type { SourceCodeInfo, TokenStream } from '../tokenizer/interface'
 import type { FUNCTION_SYMBOL, REGEXP_SYMBOL } from '../utils/symbols'
-import type { Token } from '../tokenizer/tokens'
-import type { ModifierName } from '../tokenizer/polish/polishTokens'
+import type { ModifierName, Token } from '../tokenizer/tokens'
 
 export interface ParseState {
   position: number
@@ -153,7 +151,7 @@ export interface ModifierNode extends GenericNode {
 }
 export interface ReservedSymbolNode extends GenericNode {
   t: AstNodeType.ReservedSymbol // type
-  v: PolishReservedName // reservedName
+  v: string
 }
 
 interface CommonNormalExpressionNode extends GenericNode {

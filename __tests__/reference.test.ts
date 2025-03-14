@@ -6,7 +6,7 @@ import { apiReference, isFunctionReference, normalExpressionReference } from '..
 import { normalExpressionKeys, specialExpressionKeys } from '../src/builtin'
 import { canBeOperator, isUnknownRecord } from '../src/typeGuards'
 import { normalExpressions } from '../src/builtin/normalExpressions'
-import { isReservedSymbol } from '../src/tokenizer/algebraic/algebraicReservedNames'
+import { isReservedSymbol } from '../src/tokenizer/reservedNames'
 import { Lits } from '../src'
 
 function getLinkName(name: string): string {

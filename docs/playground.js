@@ -765,7 +765,9 @@ var Playground = (function (exports) {
         throw new LitsError("Unexpected token: ".concat(actualOutput, ", expected ").concat(expected).concat(expectedValue ? " '".concat(expectedValue, "'") : ''), getSourceCodeInfo(actual));
     }
 
-    var commonTokenTypes = [
+    // import type { PolishOnlyToken } from './polish/polishTokens'
+    // import { polishOnlyTokenTypes } from './polish/polishTokens'
+    var tokenTypes = [
         'LBrace',
         'LBracket',
         'LParen',
@@ -774,7 +776,94 @@ var Playground = (function (exports) {
         'RParen',
         'String',
         'RegexpShorthand',
+        'A_Whitespace',
+        'A_Operator',
+        'A_Symbol',
+        'A_ReservedSymbol',
+        'A_SingleLineComment',
+        'A_MultiLineComment',
+        'A_Number',
+        'A_BasePrefixedNumber',
     ];
+    function isTokenType(type) {
+        return typeof type === 'string' && tokenTypes.includes(type);
+    }
+    function isToken$1(token) {
+        return !!token;
+    }
+    function assertToken(token) {
+        if (!isToken$1(token)) {
+            throw new LitsError("Expected token, got ".concat(token), undefined);
+        }
+    }
+    function asToken(token) {
+        assertToken(token);
+        return token;
+    }
+    function isA_SymbolToken(token, symbolName) {
+        if ((token === null || token === void 0 ? void 0 : token[0]) !== 'A_Symbol') {
+            return false;
+        }
+        if (symbolName && token[1] !== symbolName) {
+            return false;
+        }
+        return true;
+    }
+    function assertA_SymbolToken(token, symbolName) {
+        if (!isA_SymbolToken(token, symbolName)) {
+            throwUnexpectedToken('A_Symbol', undefined, token);
+        }
+    }
+    function asA_SymbolToken(token, symbolName) {
+        assertA_SymbolToken(token, symbolName);
+        return token;
+    }
+    function isA_ReservedSymbolToken(token, symbolName) {
+        if ((token === null || token === void 0 ? void 0 : token[0]) !== 'A_ReservedSymbol') {
+            return false;
+        }
+        if (symbolName && token[1] !== symbolName) {
+            return false;
+        }
+        return true;
+    }
+    function assertA_ReservedSymbolToken(token, symbolName) {
+        if (!isA_ReservedSymbolToken(token, symbolName)) {
+            throwUnexpectedToken('A_ReservedSymbol', symbolName, token);
+        }
+    }
+    function isA_CommentToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'A_SingleLineComment';
+    }
+    function isA_MultiLineCommentToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'A_MultiLineComment';
+    }
+    function isA_OperatorToken(token, operatorName) {
+        if ((token === null || token === void 0 ? void 0 : token[0]) !== 'A_Operator') {
+            return false;
+        }
+        if (operatorName && token[1] !== operatorName) {
+            return false;
+        }
+        return true;
+    }
+    function assertA_OperatorToken(token, operatorName) {
+        if (!isA_OperatorToken(token, operatorName)) {
+            if (operatorName) {
+                throw new LitsError("Unexpected token: ".concat(token, ", expected operator ").concat(operatorName), undefined);
+            }
+            throwUnexpectedToken('A_Operator', operatorName, token);
+        }
+    }
+    function isA_WhitespaceToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'A_Whitespace';
+    }
+    function isA_NumberToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'A_Number';
+    }
+    function isA_BasePrefixedNumberToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'A_BasePrefixedNumber';
+    }
     function isLParenToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'LParen';
     }
@@ -782,10 +871,6 @@ var Playground = (function (exports) {
         if (!isLParenToken(token)) {
             throwUnexpectedToken('LParen', undefined, token);
         }
-    }
-    function asLParenToken(token) {
-        assertLParenToken(token);
-        return token;
     }
     function isRParenToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'RParen';
@@ -857,253 +942,6 @@ var Playground = (function (exports) {
     }
     function asRegexpShorthandToken(token) {
         assertRegexpShorthandToken(token);
-        return token;
-    }
-
-    var algebraicOnlyTokenTypes = [
-        'A_Whitespace',
-        'A_Operator',
-        'A_Symbol',
-        'A_ReservedSymbol',
-        'A_SingleLineComment',
-        'A_MultiLineComment',
-        'A_Number',
-        'A_BasePrefixedNumber',
-    ];
-    __spreadArray(__spreadArray([], __read(commonTokenTypes), false), __read(algebraicOnlyTokenTypes), false);
-    var binaryOperators = [
-        '**', // exponentiation
-        '*', // multiplication
-        '/', // division
-        '%', // remainder
-        '+', // addition
-        '-', // subtraction
-        '<<', // left shift
-        '>>', // signed right shift
-        '>>>', // unsigned right shift
-        '++', // string concatenation
-        '<', // less than
-        '<=', // less than or equal
-        '≤', // less than or equal
-        '>', // greater than
-        '>=', // greater than or equal
-        '≥', // greater than or equal
-        '=', // equal
-        '!=', // not equal
-        '≠', // not equal
-        '&', // bitwise AND
-        '^', // bitwise XOR
-        '|', // bitwise OR
-        '&&', // logical AND
-        '||', // logical OR
-        '??', // nullish coalescing
-    ];
-    var otherOperators = [
-        '->', // lambda
-        '...', // rest
-        '.', // property accessor
-        ',', // item separator
-        ':=', // property assignment
-        ';', // statement terminator
-    ];
-    var symbolicOperators = __spreadArray(__spreadArray([], __read(binaryOperators), false), __read(otherOperators), false);
-    var nonFunctionOperators = [
-        '??',
-        '&&',
-        '||',
-        'comment',
-        'cond',
-        'def',
-        'defined?',
-        'defn',
-        'do',
-        'doseq',
-        'fn',
-        'if',
-        'let',
-        'loop',
-        'recur',
-        'throw',
-        'try',
-        'unless',
-        'while',
-    ];
-    var nonFunctionOperatorSet = new Set(nonFunctionOperators);
-    function isFunctionOperator(operator) {
-        return !nonFunctionOperatorSet.has(operator);
-    }
-    var binaryOperatorSet = new Set(binaryOperators);
-    function isBinaryOperator(operator) {
-        return binaryOperatorSet.has(operator);
-    }
-    var symbolicOperatorSet = new Set(symbolicOperators);
-    function isSymbolicOperator(operator) {
-        return symbolicOperatorSet.has(operator);
-    }
-    function isA_SymbolToken(token, symbolName) {
-        if ((token === null || token === void 0 ? void 0 : token[0]) !== 'A_Symbol') {
-            return false;
-        }
-        if (symbolName && token[1] !== symbolName) {
-            return false;
-        }
-        return true;
-    }
-    function assertA_SymbolToken(token, symbolName) {
-        if (!isA_SymbolToken(token, symbolName)) {
-            throwUnexpectedToken('A_Symbol', undefined, token);
-        }
-    }
-    function asA_SymbolToken(token, symbolName) {
-        assertA_SymbolToken(token, symbolName);
-        return token;
-    }
-    function isA_BinaryOperatorToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'A_Operator' && isBinaryOperator(token[1]);
-    }
-    function isA_ReservedSymbolToken(token, symbolName) {
-        if ((token === null || token === void 0 ? void 0 : token[0]) !== 'A_ReservedSymbol') {
-            return false;
-        }
-        if (symbolName && token[1] !== symbolName) {
-            return false;
-        }
-        return true;
-    }
-    function assertA_ReservedSymbolToken(token, symbolName) {
-        if (!isA_ReservedSymbolToken(token, symbolName)) {
-            throwUnexpectedToken('A_ReservedSymbol', symbolName, token);
-        }
-    }
-    function isA_CommentToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'A_SingleLineComment';
-    }
-    function isA_MultiLineCommentToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'A_MultiLineComment';
-    }
-    function isA_OperatorToken(token, operatorName) {
-        if ((token === null || token === void 0 ? void 0 : token[0]) !== 'A_Operator') {
-            return false;
-        }
-        if (operatorName && token[1] !== operatorName) {
-            return false;
-        }
-        return true;
-    }
-    function assertA_OperatorToken(token, operatorName) {
-        if (!isA_OperatorToken(token, operatorName)) {
-            if (operatorName) {
-                throw new LitsError("Unexpected token: ".concat(token, ", expected operator ").concat(operatorName), undefined);
-            }
-            throwUnexpectedToken('A_Operator', operatorName, token);
-        }
-    }
-    function isA_WhitespaceToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'A_Whitespace';
-    }
-    function isA_NumberToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'A_Number';
-    }
-    function isA_BasePrefixedNumberToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'A_BasePrefixedNumber';
-    }
-
-    var modifierNames = ['&rest', '&let', '&when', '&while'];
-    var polishOnlyTokenTypes = [
-        'P_FnShorthand',
-        'P_Modifier',
-        'P_StringShorthand',
-        'P_Symbol',
-        'P_ReservedSymbol',
-        'P_CollectionAccessor',
-        'P_Comment',
-        'P_Whitespace',
-        'P_Number',
-    ];
-    __spreadArray(__spreadArray([], __read(commonTokenTypes), false), __read(polishOnlyTokenTypes), false);
-    function isP_StringShorthandToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'P_StringShorthand';
-    }
-    function assertP_StringShorthandToken(token) {
-        if (!isP_StringShorthandToken(token)) {
-            throwUnexpectedToken('P_StringShorthand', undefined, token);
-        }
-    }
-    function asP_StringShorthandToken(token) {
-        assertP_StringShorthandToken(token);
-        return token;
-    }
-    function isP_SymbolToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'P_Symbol';
-    }
-    function assertP_SymbolToken(token) {
-        if (!isP_SymbolToken(token)) {
-            throwUnexpectedToken('P_Symbol', undefined, token);
-        }
-    }
-    function asP_SymbolToken(token) {
-        assertP_SymbolToken(token);
-        return token;
-    }
-    function isP_ReservedSymbolToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'P_ReservedSymbol';
-    }
-    function isP_ModifierToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'P_Modifier';
-    }
-    function isP_FnShorthandToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'P_FnShorthand';
-    }
-    function isP_CollectionAccessorToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'P_CollectionAccessor';
-    }
-    function assertP_CollectionAccessorToken(token) {
-        if (!isP_CollectionAccessorToken(token)) {
-            throwUnexpectedToken('P_CollectionAccessor', undefined, token);
-        }
-    }
-    function asP_CollectionAccessorToken(token) {
-        assertP_CollectionAccessorToken(token);
-        return token;
-    }
-    function isP_CommentToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'P_Comment';
-    }
-    function assertP_CommentToken(token) {
-        if (!isP_CommentToken(token)) {
-            throwUnexpectedToken('P_Comment', undefined, token);
-        }
-    }
-    function asP_CommentToken(token) {
-        assertP_CommentToken(token);
-        return token;
-    }
-    function isP_WhitespaceToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'P_Whitespace';
-    }
-    function isP_NumberToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'P_Number';
-    }
-    function assertP_NumberToken(token) {
-        if (!isP_NumberToken(token)) {
-            throwUnexpectedToken('P_Number', undefined, token);
-        }
-    }
-
-    var tokenTypes = __spreadArray(__spreadArray(__spreadArray([], __read(commonTokenTypes), false), __read(algebraicOnlyTokenTypes), false), __read(polishOnlyTokenTypes), false);
-    function isTokenType(type) {
-        return typeof type === 'string' && tokenTypes.includes(type);
-    }
-    function isToken$1(token) {
-        return !!token;
-    }
-    function assertToken(token) {
-        if (!isToken$1(token)) {
-            throw new LitsError("Expected token, got ".concat(token), undefined);
-        }
-    }
-    function asToken(token) {
-        assertToken(token);
         return token;
     }
 
@@ -4656,20 +4494,58 @@ var Playground = (function (exports) {
             return false;
         return value.t === AstNodeType.NormalExpression && typeof value.n === 'string';
     }
-    function isExpressionNode(value) {
-        if (!isAstNode(value))
-            return false;
-        return (value.t === AstNodeType.NormalExpression
-            || value.t === AstNodeType.SpecialExpression
-            || value.t === AstNodeType.Number
-            || value.t === AstNodeType.String);
-    }
 
-    var polishReservedNamesRecord = {
-        true: { value: true },
-        false: { value: false },
-        null: { value: null },
+    var nonNumberReservedSymbolRecord = {
+        true: true,
+        false: false,
+        null: null,
+        then: null,
+        else: null,
+        end: null,
+        case: null,
+        each: null,
+        in: null,
+        when: null,
+        while: null,
+        function: null,
+        export: null,
     };
+    var phi = (1 + Math.sqrt(5)) / 2;
+    var numberReservedSymbolRecord = {
+        'E': Math.E,
+        '-E': -Math.E,
+        'ε': Math.E,
+        '-ε': -Math.E,
+        'PI': Math.PI,
+        '-PI': -Math.PI,
+        'π': Math.PI,
+        '-π': -Math.PI,
+        'PHI': phi,
+        '-PHI': -phi,
+        'φ': phi,
+        '-φ': -phi,
+        'POSITIVE_INFINITY': Number.POSITIVE_INFINITY,
+        '∞': Number.POSITIVE_INFINITY,
+        'NEGATIVE_INFINITY': Number.NEGATIVE_INFINITY,
+        '-∞': Number.NEGATIVE_INFINITY,
+        'MAX_SAFE_INTEGER': Number.MAX_SAFE_INTEGER,
+        'MIN_SAFE_INTEGER': Number.MIN_SAFE_INTEGER,
+        'MAX_VALUE': Number.MAX_VALUE,
+        'MIN_VALUE': Number.MIN_VALUE,
+        'DELTA': Number.EPSILON, // TODO use DELTA instead of DELTA δ
+        '-DELTA': -Number.EPSILON,
+        'δ': Number.EPSILON, // TODO use DELTA instead of DELTA δ
+        '-δ': -Number.EPSILON,
+        'NaN': Number.NaN,
+    };
+    var algebraicReservedSymbolRecord = __assign(__assign({}, nonNumberReservedSymbolRecord), numberReservedSymbolRecord);
+    var validReservedSymbolRecord = __assign(__assign({}, nonNumberReservedSymbolRecord), numberReservedSymbolRecord);
+    function isReservedSymbol(symbol) {
+        return symbol in validReservedSymbolRecord;
+    }
+    function isNumberReservedSymbol(symbol) {
+        return symbol in numberReservedSymbolRecord;
+    }
 
     function assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo) {
         if (typeof name !== 'string')
@@ -4678,8 +4554,7 @@ var Playground = (function (exports) {
             throw new LitsError("Cannot define variable ".concat(name, ", it's a special expression."), sourceCodeInfo);
         if (builtin.normalExpressions[name])
             throw new LitsError("Cannot define variable ".concat(name, ", it's a builtin function."), sourceCodeInfo);
-        // eslint-disable-next-line ts/no-unsafe-member-access
-        if (polishReservedNamesRecord[name])
+        if (isReservedSymbol(name))
             throw new LitsError("Cannot define variable ".concat(name, ", it's a reserved name."), sourceCodeInfo);
         if (contextStack.globalContext[name])
             throw new LitsError("Name already defined \"".concat(name, "\"."), sourceCodeInfo);
@@ -5286,48 +5161,12 @@ var Playground = (function (exports) {
     };
 
     function parseLoopBinding(tokenStream, parseState, _a) {
-        var _b, _c, _d, _e, _f;
-        var parseBinding = _a.parseBinding, parseBindings = _a.parseBindings, parseToken = _a.parseToken;
+        var parseBinding = _a.parseBinding;
         var bindingNode = parseBinding(tokenStream, parseState);
         var loopBinding = {
             b: bindingNode,
             m: [],
         };
-        var tkn = asToken(tokenStream.tokens[parseState.position]);
-        while (isP_ModifierToken(tkn)) {
-            var modifier = tkn[1];
-            switch (modifier) {
-                case '&let':
-                    if (loopBinding.l) {
-                        throw new LitsError('Only one &let modifier allowed', (_b = getTokenDebugData(tkn)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
-                    }
-                    parseState.position += 1;
-                    loopBinding.l = parseBindings(tokenStream, parseState);
-                    loopBinding.m.push('&let');
-                    break;
-                case '&when':
-                    if (loopBinding.wn) {
-                        throw new LitsError('Only one &when modifier allowed', (_c = getTokenDebugData(tkn)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
-                    }
-                    parseState.position += 1;
-                    loopBinding.wn = parseToken(tokenStream, parseState);
-                    loopBinding.m.push('&when');
-                    break;
-                case '&while':
-                    if (loopBinding.we) {
-                        throw new LitsError('Only one &while modifier allowed', (_d = getTokenDebugData(tkn)) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
-                    }
-                    parseState.position += 1;
-                    loopBinding.we = parseToken(tokenStream, parseState);
-                    loopBinding.m.push('&while');
-                    break;
-                case '&rest':
-                    throw new LitsError("Illegal modifier: ".concat(modifier), (_e = getTokenDebugData(tkn)) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo);
-                default:
-                    throw new LitsError("Illegal modifier: ".concat(modifier), (_f = getTokenDebugData(tkn)) === null || _f === void 0 ? void 0 : _f.sourceCodeInfo);
-            }
-            tkn = asToken(tokenStream.tokens[parseState.position]);
-        }
         return loopBinding;
     }
     function addToContext(bindings, context, contextStack, evaluateAstNode, sourceCodeInfo) {
@@ -6117,7 +5956,9 @@ var Playground = (function (exports) {
     }
     function evaluateReservedName(node) {
         var _a;
-        return asNonUndefined(polishReservedNamesRecord[node.v], (_a = getTokenDebugData(node.token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo).value;
+        var reservedName = node.v;
+        var value = algebraicReservedSymbolRecord[reservedName];
+        return asNonUndefined(value, (_a = getTokenDebugData(node.token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
     }
     function evaluateNormalExpression(node, contextStack) {
         var _a;
@@ -6284,11 +6125,9 @@ var Playground = (function (exports) {
         var removeWhiteSpace = _a.removeWhiteSpace;
         var tokens = tokenStream.tokens
             .filter(function (token) {
-            if (isP_CommentToken(token)
-                || isA_CommentToken(token)
+            if (isA_CommentToken(token)
                 || isA_MultiLineCommentToken(token)
-                || (removeWhiteSpace && isA_WhitespaceToken(token))
-                || (removeWhiteSpace && isP_WhitespaceToken(token))) {
+                || (removeWhiteSpace && isA_WhitespaceToken(token))) {
                 return false;
             }
             return true;
@@ -6296,59 +6135,83 @@ var Playground = (function (exports) {
         return __assign(__assign({}, tokenStream), { tokens: tokens });
     }
 
-    var nonNumberReservedSymbolRecord = {
-        true: true,
-        false: false,
-        null: null,
-        then: null,
-        else: null,
-        end: null,
-        case: null,
-        each: null,
-        in: null,
-        when: null,
-        while: null,
-        function: null,
-        export: null,
-    };
-    var phi = (1 + Math.sqrt(5)) / 2;
-    var numberReservedSymbolRecord = {
-        'E': Math.E,
-        '-E': -Math.E,
-        'ε': Math.E,
-        '-ε': -Math.E,
-        'PI': Math.PI,
-        '-PI': -Math.PI,
-        'π': Math.PI,
-        '-π': -Math.PI,
-        'PHI': phi,
-        '-PHI': -phi,
-        'φ': phi,
-        '-φ': -phi,
-        'POSITIVE_INFINITY': Number.POSITIVE_INFINITY,
-        '∞': Number.POSITIVE_INFINITY,
-        'NEGATIVE_INFINITY': Number.NEGATIVE_INFINITY,
-        '-∞': Number.NEGATIVE_INFINITY,
-        'MAX_SAFE_INTEGER': Number.MAX_SAFE_INTEGER,
-        'MIN_SAFE_INTEGER': Number.MIN_SAFE_INTEGER,
-        'MAX_VALUE': Number.MAX_VALUE,
-        'MIN_VALUE': Number.MIN_VALUE,
-        'DELTA': Number.EPSILON, // TODO use DELTA instead of DELTA δ
-        '-DELTA': -Number.EPSILON,
-        'δ': Number.EPSILON, // TODO use DELTA instead of DELTA δ
-        '-δ': -Number.EPSILON,
-        'NaN': Number.NaN,
-    };
-    var algebraicReservedSymbolRecord = __assign(__assign({}, nonNumberReservedSymbolRecord), numberReservedSymbolRecord);
-    __assign(__assign({}, nonNumberReservedSymbolRecord), numberReservedSymbolRecord);
-    function isNumberReservedSymbol(symbol) {
-        return symbol in numberReservedSymbolRecord;
+    var binaryOperators = [
+        '**', // exponentiation
+        '*', // multiplication
+        '/', // division
+        '%', // remainder
+        '+', // addition
+        '-', // subtraction
+        '<<', // left shift
+        '>>', // signed right shift
+        '>>>', // unsigned right shift
+        '++', // string concatenation
+        '<', // less than
+        '<=', // less than or equal
+        '≤', // less than or equal
+        '>', // greater than
+        '>=', // greater than or equal
+        '≥', // greater than or equal
+        '=', // equal
+        '!=', // not equal
+        '≠', // not equal
+        '&', // bitwise AND
+        '^', // bitwise XOR
+        '|', // bitwise OR
+        '&&', // logical AND
+        '||', // logical OR
+        '??', // nullish coalescing
+    ];
+    var otherOperators = [
+        '->', // lambda
+        '...', // rest
+        '.', // property accessor
+        ',', // item separator
+        ':=', // property assignment
+        ';', // statement terminator
+    ];
+    var symbolicOperators = __spreadArray(__spreadArray([], __read(binaryOperators), false), __read(otherOperators), false);
+    var nonFunctionOperators = [
+        '??',
+        '&&',
+        '||',
+        'comment',
+        'cond',
+        'def',
+        'defined?',
+        'defn',
+        'do',
+        'doseq',
+        'fn',
+        'if',
+        'let',
+        'loop',
+        'recur',
+        'throw',
+        'try',
+        'unless',
+        'while',
+    ];
+    var nonFunctionOperatorSet = new Set(nonFunctionOperators);
+    function isFunctionOperator(operator) {
+        return !nonFunctionOperatorSet.has(operator);
+    }
+    var binaryOperatorSet = new Set(binaryOperators);
+    function isBinaryOperator(operator) {
+        return binaryOperatorSet.has(operator);
+    }
+    var symbolicOperatorSet = new Set(symbolicOperators);
+    function isSymbolicOperator(operator) {
+        return symbolicOperatorSet.has(operator);
+    }
+    function isA_BinaryOperatorToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'A_Operator' && isBinaryOperator(token[1]);
     }
 
     function parseSymbol(tokenStream, parseState) {
         var _a;
         var tkn = asToken(tokenStream.tokens[parseState.position++]);
-        if (!isA_SymbolToken(tkn) && !isP_SymbolToken(tkn)) {
+        if (!isA_SymbolToken(tkn)) {
             throw new LitsError("Expected symbol token, got ".concat(tkn[0]), (_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
         }
         if (tkn[1][0] !== '\'') {
@@ -6383,7 +6246,7 @@ var Playground = (function (exports) {
     function parseReservedSymbol(tokenStream, parseState) {
         var _a;
         var tkn = asToken(tokenStream.tokens[parseState.position++]);
-        if (!isA_ReservedSymbolToken(tkn) && !isP_ReservedSymbolToken(tkn)) {
+        if (!isA_ReservedSymbolToken(tkn)) {
             throw new LitsError("Expected symbol token, got ".concat(tkn[0]), (_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
         }
         if (isA_ReservedSymbolToken(tkn)) {
@@ -6409,7 +6272,7 @@ var Playground = (function (exports) {
     function parseNumber(tokenStream, parseState) {
         var _a;
         var tkn = tokenStream.tokens[parseState.position++];
-        if (!isP_NumberToken(tkn) && !isA_BasePrefixedNumberToken(tkn) && !isA_NumberToken(tkn)) {
+        if (!isA_BasePrefixedNumberToken(tkn) && !isA_NumberToken(tkn)) {
             throw new LitsError("Expected number token, got ".concat(tkn), (_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
         }
         var value = tkn[1];
@@ -6490,7 +6353,7 @@ var Playground = (function (exports) {
 
     var exponentiationPrecedence = 10;
     var binaryFunctionalOperatorPrecedence = 1;
-    var placeholderRegexp$1 = /^\$([1-9]\d?)?$/;
+    var placeholderRegexp = /^\$([1-9]\d?)?$/;
     function getPrecedence(operatorSign) {
         switch (operatorSign) {
             case '**': // exponentiation
@@ -7075,7 +6938,7 @@ var Playground = (function (exports) {
             for (var pos = startPos; pos <= endPos; pos += 1) {
                 var tkn = this.tokenStream.tokens[pos];
                 if (isA_SymbolToken(tkn)) {
-                    var match = placeholderRegexp$1.exec(tkn[1]);
+                    var match = placeholderRegexp.exec(tkn[1]);
                     if (match) {
                         var number = (_a = match[1]) !== null && _a !== void 0 ? _a : '1';
                         if (number === '1') {
@@ -7652,269 +7515,12 @@ var Playground = (function (exports) {
         return AlgebraicParser;
     }());
 
-    function parseStringShorthand(tokenStream, parseState) {
-        var tkn = asP_StringShorthandToken(tokenStream.tokens[parseState.position++]);
-        var value = tkn[1].substring(1);
-        return {
-            t: AstNodeType.String,
-            v: value,
-            p: [],
-            n: undefined,
-            token: getTokenDebugData(tkn) && tkn,
-        };
-    }
-    function parseComment(tokenStream, parseState) {
-        var tkn = asP_CommentToken(tokenStream.tokens[parseState.position++]);
-        return {
-            t: AstNodeType.Comment,
-            v: tkn[1],
-            p: [],
-            n: undefined,
-            token: getTokenDebugData(tkn) && tkn,
-        };
-    }
-    function parseTokensUntilClosingBracket(tokenStream, parseState) {
-        var tkn = asToken(tokenStream.tokens[parseState.position]);
-        var astNodes = [];
-        while (!isRParenToken(tkn) && !isRBracketToken(tkn)) {
-            astNodes.push(parseState.parseToken(tokenStream, parseState));
-            tkn = asToken(tokenStream.tokens[parseState.position]);
-        }
-        return astNodes;
-    }
-    var parseExpression = function (tokenStream, parseState) {
-        var tkn = asToken(tokenStream.tokens[parseState.position + 1]);
-        if (isP_SymbolToken(tkn) && builtin.specialExpressions[tkn[1]])
-            return parseSpecialExpression(tokenStream, parseState);
-        return parseNormalExpression(tokenStream, parseState);
-    };
-    function parseArrayLitteral(tokenStream, parseState) {
-        var firstToken = asToken(tokenStream.tokens[parseState.position++]);
-        var tkn = asToken(tokenStream.tokens[parseState.position]);
-        var params = [];
-        while (!isRBracketToken(tkn)) {
-            params.push(parseState.parseToken(tokenStream, parseState));
-            tkn = asToken(tokenStream.tokens[parseState.position]);
-        }
-        parseState.position += 1;
-        var node = {
-            t: AstNodeType.NormalExpression,
-            n: 'array',
-            p: params,
-            token: getTokenDebugData(firstToken) && firstToken,
-        };
-        return node;
-    }
-    function parseObjectLitteral(tokenStream, parseState) {
-        var firstToken = asToken(tokenStream.tokens[parseState.position++]);
-        var tkn = asToken(tokenStream.tokens[parseState.position]);
-        var params = [];
-        while (!isRBraceToken(tkn)) {
-            params.push(parseState.parseToken(tokenStream, parseState));
-            tkn = asToken(tokenStream.tokens[parseState.position]);
-        }
-        parseState.position += 1;
-        var node = {
-            t: AstNodeType.NormalExpression,
-            n: 'object',
-            p: params,
-            token: getTokenDebugData(firstToken) && firstToken,
-        };
-        assertNumberOfParams({ even: true }, node);
-        return node;
-    }
-    var placeholderRegexp = /^%([1-9]\d?)?$/;
-    function parseFnShorthand(tokenStream, parseState) {
-        var _a, _b, _c, _d;
-        var firstToken = asToken(tokenStream.tokens[parseState.position++]);
-        var startPos = parseState.position + 1;
-        var exprNode = parseExpression(tokenStream, parseState);
-        var arity = 0;
-        var percent1 = 'NOT_SET'; // referring to argument bindings. % = NAKED, %1, %2, %3, etc = WITH_1
-        for (var pos = startPos; pos < parseState.position - 1; pos += 1) {
-            var tkn = asToken(tokenStream.tokens[pos]);
-            if (isP_SymbolToken(tkn)) {
-                var match = placeholderRegexp.exec(tkn[1]);
-                if (match) {
-                    var number = (_a = match[1]) !== null && _a !== void 0 ? _a : '1';
-                    if (number === '1') {
-                        var mixedPercent1 = (!match[1] && percent1 === 'WITH_1') || (match[1] && percent1 === 'NAKED');
-                        if (mixedPercent1)
-                            throw new LitsError('Please make up your mind, either use % or %1', (_b = getTokenDebugData(firstToken)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
-                        percent1 = match[1] ? 'WITH_1' : 'NAKED';
-                    }
-                    arity = Math.max(arity, Number(number));
-                    if (arity > 20)
-                        throw new LitsError('Can\'t specify more than 20 arguments', (_c = getTokenDebugData(firstToken)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
-                }
-            }
-            if (isP_FnShorthandToken(tkn))
-                throw new LitsError('Nested shortcut functions are not allowed', (_d = getTokenDebugData(firstToken)) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
-        }
-        var mandatoryArguments = [];
-        for (var i = 1; i <= arity; i += 1) {
-            if (i === 1 && percent1 === 'NAKED')
-                mandatoryArguments.push('%');
-            else
-                mandatoryArguments.push("%".concat(i));
-        }
-        var args = {
-            b: [],
-            m: mandatoryArguments,
-        };
-        var node = {
-            t: AstNodeType.SpecialExpression,
-            n: 'fn',
-            p: [],
-            o: [
-                {
-                    as: args,
-                    b: [exprNode],
-                    a: args.m.length,
-                },
-            ],
-            token: getTokenDebugData(firstToken) && firstToken,
-        };
-        return node;
-    }
-    var parseArgument = function (tokenStream, parseState) {
-        var _a;
-        var tkn = asToken(tokenStream.tokens[parseState.position++]);
-        if (isP_SymbolToken(tkn)) {
-            return {
-                t: AstNodeType.Argument,
-                n: tkn[1],
-                p: [],
-                token: getTokenDebugData(tkn) && tkn,
-            };
-        }
-        else if (isP_ModifierToken(tkn)) {
-            return {
-                t: AstNodeType.Modifier,
-                v: tkn[1],
-                p: [],
-                n: undefined,
-                token: getTokenDebugData(tkn) && tkn,
-            };
-        }
-        else {
-            throw new LitsError("Expected name or modifier token, got ".concat(valueToString(tkn), "."), (_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-        }
-    };
-    function parseBindings(tokenStream, parseState) {
-        assertLBracketToken(tokenStream.tokens[parseState.position++]);
-        var tkn = asToken(tokenStream.tokens[parseState.position]);
-        var bindings = [];
-        while (!isRBracketToken(tkn)) {
-            bindings.push(parseBinding(tokenStream, parseState));
-            tkn = asToken(tokenStream.tokens[parseState.position]);
-        }
-        parseState.position += 1;
-        return bindings;
-    }
-    function parseBinding(tokenStream, parseState) {
-        var firstToken = asP_SymbolToken(tokenStream.tokens[parseState.position]);
-        var name = parseSymbol(tokenStream, parseState);
-        var value = parseState.parseToken(tokenStream, parseState);
-        var node = {
-            t: AstNodeType.Binding,
-            n: name.v,
-            v: value,
-            p: [],
-            token: getTokenDebugData(firstToken) && firstToken,
-        };
-        return node;
-    }
-    function parseNormalExpression(tokenStream, parseState) {
-        var _a;
-        var startBracketToken = tokenStream.hasDebugData ? asLParenToken(tokenStream.tokens[parseState.position]) : undefined;
-        parseState.position += 1;
-        var fnNode = parseState.parseToken(tokenStream, parseState);
-        var params = parseTokensUntilClosingBracket(tokenStream, parseState);
-        assertRParenToken(tokenStream.tokens[parseState.position++]);
-        if (isExpressionNode(fnNode)) {
-            var node_1 = {
-                t: AstNodeType.NormalExpression,
-                p: __spreadArray([fnNode], __read(params), false),
-                n: undefined,
-                token: startBracketToken,
-            };
-            return node_1;
-        }
-        assertSymbolNode(fnNode, (_a = getTokenDebugData(fnNode.token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-        var node = {
-            t: AstNodeType.NormalExpression,
-            n: fnNode.v,
-            p: params,
-            token: startBracketToken,
-        };
-        var builtinExpression = builtin.normalExpressions[node.n];
-        if (builtinExpression) {
-            assertNumberOfParams(builtinExpression.paramCount, node);
-        }
-        return node;
-    }
-    function parseSpecialExpression(tokenStream, parseState) {
-        var _a;
-        var firstToken = asLParenToken(tokenStream.tokens[parseState.position++]);
-        var nameToken = asP_SymbolToken(tokenStream.tokens[parseState.position++]);
-        var expressionName = nameToken[1];
-        var _b = asNonUndefined(builtin.specialExpressions[expressionName], (_a = getTokenDebugData(nameToken)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo), parse = _b.polishParse, paramCount = _b.paramCount;
-        var node = parse(tokenStream, parseState, firstToken, {
-            parseExpression: parseExpression,
-            parseTokensUntilClosingBracket: parseTokensUntilClosingBracket,
-            parseToken: parseState.parseToken,
-            parseBinding: parseBinding,
-            parseBindings: parseBindings,
-            parseArgument: parseArgument,
-        });
-        assertNumberOfParams(paramCount, node);
-        return node;
-    }
-    function parsePolishToken(tokenStream, parseState) {
-        var _a, _b;
-        var tkn = asToken(tokenStream.tokens[parseState.position]);
-        var tokenType = tkn[0];
-        switch (tokenType) {
-            case 'String':
-                return parseString(tokenStream, parseState);
-            case 'P_Number':
-                return parseNumber(tokenStream, parseState);
-            case 'P_StringShorthand':
-                return parseStringShorthand(tokenStream, parseState);
-            case 'P_Symbol':
-                return parseSymbol(tokenStream, parseState);
-            case 'P_ReservedSymbol':
-                return parseReservedSymbol(tokenStream, parseState);
-            case 'LParen':
-                return parseExpression(tokenStream, parseState);
-            case 'LBracket':
-                return parseArrayLitteral(tokenStream, parseState);
-            case 'LBrace':
-                return parseObjectLitteral(tokenStream, parseState);
-            case 'RegexpShorthand':
-                return parseRegexpShorthand(tokenStream, parseState);
-            case 'P_FnShorthand':
-                return parseFnShorthand(tokenStream, parseState);
-            case 'P_Comment':
-                return parseComment(tokenStream, parseState);
-            case 'P_CollectionAccessor':
-            case 'P_Modifier':
-            case 'RParen':
-            case 'RBracket':
-            case 'RBrace':
-            case 'P_Whitespace':
-                break;
-            /* v8 ignore next 2 */
-            default:
-                throw new LitsError("Unrecognized token: ".concat(tokenType, " ").concat(tkn[1]), (_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-        }
-        throw new LitsError("Unrecognized token: ".concat(tokenType).concat(tkn[1] ? " ".concat(tkn[1]) : ''), (_b = getTokenDebugData(tkn)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+    function parsePolishToken(_tokenStream, _parseState) {
+        throw new Error('Should not be called');
     }
 
     function parse$1(tokenStream) {
         tokenStream = minifyTokenStream(tokenStream, { removeWhiteSpace: true });
-        var prefix = tokenStream.polish;
         var ast = {
             b: [],
             hasDebugData: tokenStream.hasDebugData,
@@ -7923,25 +7529,48 @@ var Playground = (function (exports) {
             position: 0,
             parseToken: parseToken,
         };
-        if (!prefix) {
-            var algebraicParser = new AlgebraicParser(tokenStream, parseState);
-            ast.b = algebraicParser.parse();
-        }
-        else {
-            while (parseState.position < tokenStream.tokens.length) {
-                ast.b.push(parseToken(tokenStream, parseState));
-            }
-        }
+        var algebraicParser = new AlgebraicParser(tokenStream, parseState);
+        ast.b = algebraicParser.parse();
         return ast;
     }
     function parseToken(tokenStream, parseState) {
-        return parsePolishToken(tokenStream, parseState);
+        return parsePolishToken();
     }
 
+    var illegalSymbolCharacters = [
+        '(',
+        ')',
+        '[',
+        ']',
+        '{',
+        '}',
+        '\'',
+        '"',
+        '`',
+        ',',
+        '.',
+        ';',
+        ' ',
+        '\n',
+        '\r',
+        '\t',
+    ];
+    var illegalFirstSymbolCharacters = __spreadArray([
+        '0',
+        '1',
+        '2',
+        '3',
+        '4',
+        '5',
+        '6',
+        '7',
+        '8',
+        '9'
+    ], __read(illegalSymbolCharacters), false);
+    var illegalSymbolCharacterSet = new Set(illegalSymbolCharacters);
+    var illegalFirstSymbolCharacterSet = new Set(illegalFirstSymbolCharacters);
+    var whitespaceRegExp = /\s/;
     var NO_MATCH = [0];
-    function isNoMatch(tokenDescriptor) {
-        return tokenDescriptor[0] === 0;
-    }
     var tokenizeLParen = function (input, position) {
         return tokenizeToken('LParen', '(', input, position);
     };
@@ -8011,69 +7640,25 @@ var Playground = (function (exports) {
         else
             return NO_MATCH;
     }
-    var commonTokenizers = [
-        tokenizeLParen,
-        tokenizeRParen,
-        tokenizeLBracket,
-        tokenizeRBracket,
-        tokenizeLBrace,
-        tokenizeRBrace,
-        tokenizeString,
-        tokenizeRegexpShorthand,
-    ];
-
-    var illegalSymbolCharacters = [
-        '(',
-        ')',
-        '[',
-        ']',
-        '{',
-        '}',
-        '\'',
-        '"',
-        '`',
-        ',',
-        '.',
-        ';',
-        ' ',
-        '\n',
-        '\r',
-        '\t',
-    ];
-    var illegalFirstSymbolCharacters = __spreadArray([
-        '0',
-        '1',
-        '2',
-        '3',
-        '4',
-        '5',
-        '6',
-        '7',
-        '8',
-        '9'
-    ], __read(illegalSymbolCharacters), false);
-    var illegalSymbolCharacterSet = new Set(illegalSymbolCharacters);
-    var illegalFirstSymbolCharacterSet = new Set(illegalFirstSymbolCharacters);
-    var whitespaceRegExp$1 = /\s/;
     var tokenizeA_Whitespace = function (input, position) {
         var char = input[position];
-        if (!char || !whitespaceRegExp$1.test(char)) {
+        if (!char || !whitespaceRegExp.test(char)) {
             return NO_MATCH;
         }
         var value = char;
         position += 1;
         char = input[position];
-        while (char && whitespaceRegExp$1.test(char)) {
+        while (char && whitespaceRegExp.test(char)) {
             value += char;
             position += 1;
             char = input[position];
         }
         return [value.length, ['A_Whitespace', value]];
     };
-    var decimalNumberRegExp$1 = /\d/;
-    var octalNumberRegExp$1 = /[0-7]/;
-    var hexNumberRegExp$1 = /[0-9a-f]/i;
-    var binaryNumberRegExp$1 = /[01]/;
+    var decimalNumberRegExp = /\d/;
+    var octalNumberRegExp = /[0-7]/;
+    var hexNumberRegExp = /[0-9a-f]/i;
+    var binaryNumberRegExp = /[01]/;
     var tokenizeA_Number = function (input, position) {
         var i;
         var negate = input[position] === '-';
@@ -8084,7 +7669,7 @@ var Playground = (function (exports) {
         for (i = start; i < input.length; i += 1) {
             var char = input[i];
             if (char === '_') {
-                if (!decimalNumberRegExp$1.test(input[i - 1]) || !decimalNumberRegExp$1.test(input[i + 1])) {
+                if (!decimalNumberRegExp.test(input[i - 1]) || !decimalNumberRegExp.test(input[i + 1])) {
                     return NO_MATCH;
                 }
             }
@@ -8106,7 +7691,7 @@ var Playground = (function (exports) {
                 }
                 hasExponent = true;
             }
-            else if (!decimalNumberRegExp$1.test(char)) {
+            else if (!decimalNumberRegExp.test(char)) {
                 break;
             }
         }
@@ -8137,13 +7722,13 @@ var Playground = (function (exports) {
         var i;
         for (i = position + 2; i < input.length; i += 1) {
             var char = input[i];
-            if (type === 'binary' && !binaryNumberRegExp$1.test(char)) {
+            if (type === 'binary' && !binaryNumberRegExp.test(char)) {
                 break;
             }
-            if (type === 'octal' && !octalNumberRegExp$1.test(char)) {
+            if (type === 'octal' && !octalNumberRegExp.test(char)) {
                 break;
             }
-            if (type === 'hex' && !hexNumberRegExp$1.test(char)) {
+            if (type === 'hex' && !hexNumberRegExp.test(char)) {
                 break;
             }
         }
@@ -8253,312 +7838,24 @@ var Playground = (function (exports) {
         return NO_MATCH;
     };
     // All tokenizers, order matters!
-    var algebraicTokenizers = __spreadArray(__spreadArray([
+    var tokenizers = [
         tokenizeA_Whitespace,
         tokenizeA_MultiLineComment,
         tokenizeA_SingleLineComment,
-        tokenizeA_ReservedSymbolToken
-    ], __read(commonTokenizers), false), [
+        tokenizeA_ReservedSymbolToken,
+        tokenizeLParen,
+        tokenizeRParen,
+        tokenizeLBracket,
+        tokenizeRBracket,
+        tokenizeLBrace,
+        tokenizeRBrace,
+        tokenizeString,
+        tokenizeRegexpShorthand,
         tokenizeA_BasePrefixedNumber,
         tokenizeA_Number,
         tokenizeA_Operator,
         tokenizeA_Symbol,
-    ], false);
-
-    var polishSymbolCharacterClass = '[\\w@%^?=!$<>+*/:&\|~-]';
-
-    var whitespaceRegExp = /\s|,/;
-    var tokenizeP_Comment = function (input, position) {
-        if (input[position] === ';') {
-            var length_1 = 0;
-            var value = '';
-            while (input[position + length_1] !== '\n' && position + length_1 < input.length) {
-                value += input[position + length_1];
-                length_1 += 1;
-            }
-            return [length_1, ['P_Comment', value]];
-        }
-        return NO_MATCH;
-    };
-    var tokenizeP_Whitespace = function (input, position) {
-        var char = input[position];
-        if (!char || !whitespaceRegExp.test(char)) {
-            return NO_MATCH;
-        }
-        var value = char;
-        position += 1;
-        char = input[position];
-        while (char && whitespaceRegExp.test(char)) {
-            value += char;
-            position += 1;
-            char = input[position];
-        }
-        return [value.length, ['P_Whitespace', value]];
-    };
-    var endOfNumberRegExp = /[\s)\]},;#`]/;
-    var decimalNumberRegExp = /\d/;
-    var octalNumberRegExp = /[0-7]/;
-    var hexNumberRegExp = /[0-9a-f]/i;
-    var binaryNumberRegExp = /[01]/;
-    var firstCharRegExp = /[0-9.-]/;
-    var tokenizeP_Number = function (input, position) {
-        var type = 'decimal';
-        var firstChar = input[position];
-        if (!firstCharRegExp.test(firstChar))
-            return NO_MATCH;
-        var hasDecimals = firstChar === '.';
-        var i;
-        for (i = position + 1; i < input.length; i += 1) {
-            var char = input[i];
-            if (endOfNumberRegExp.test(char))
-                break;
-            if (char === '.') {
-                var nextChar = input[i + 1];
-                if (typeof nextChar === 'string' && !decimalNumberRegExp.test(nextChar))
-                    break;
-            }
-            if (i === position + 1 && firstChar === '0') {
-                if (char === 'b' || char === 'B') {
-                    type = 'binary';
-                    continue;
-                }
-                if (char === 'o' || char === 'O') {
-                    type = 'octal';
-                    continue;
-                }
-                if (char === 'x' || char === 'X') {
-                    type = 'hex';
-                    continue;
-                }
-            }
-            if (type === 'decimal' && hasDecimals) {
-                if (!decimalNumberRegExp.test(char))
-                    return NO_MATCH;
-            }
-            else if (type === 'binary') {
-                if (!binaryNumberRegExp.test(char))
-                    return NO_MATCH;
-            }
-            else if (type === 'octal') {
-                if (!octalNumberRegExp.test(char))
-                    return NO_MATCH;
-            }
-            else if (type === 'hex') {
-                if (!hexNumberRegExp.test(char))
-                    return NO_MATCH;
-            }
-            else {
-                if (char === '.') {
-                    hasDecimals = true;
-                    continue;
-                }
-                if (!decimalNumberRegExp.test(char))
-                    return NO_MATCH;
-            }
-        }
-        var length = i - position;
-        var value = input.substring(position, i);
-        if ((type !== 'decimal' && length <= 2) || value === '.' || value === '-')
-            return NO_MATCH;
-        return [length, ['P_Number', value]];
-    };
-    var P_symbolRegExp = new RegExp(polishSymbolCharacterClass);
-    var tokenizeP_Symbol = function (input, position) {
-        var value = input[position];
-        if (!value) {
-            return NO_MATCH;
-        }
-        if (value === '\'') {
-            var length_2 = 1;
-            var char = input[position + length_2];
-            var escaping = false;
-            while (char !== '\'' || escaping) {
-                if (char === undefined)
-                    throw new LitsError("Unclosed string at position ".concat(position, "."), undefined);
-                length_2 += 1;
-                if (escaping) {
-                    escaping = false;
-                    value += char;
-                }
-                else {
-                    if (char === '\\') {
-                        escaping = true;
-                    }
-                    value += char;
-                }
-                char = input[position + length_2];
-            }
-            value += '\''; // closing quote
-            return [length_2 + 1, ['P_Symbol', value]];
-        }
-        if (P_symbolRegExp.test(value)) {
-            var initialPosition = position;
-            position += 1;
-            var char = input[position];
-            while (char && P_symbolRegExp.test(char)) {
-                value += char;
-                position += 1;
-                char = input[position];
-            }
-            return [position - initialPosition, ['P_Symbol', value]];
-        }
-        return NO_MATCH;
-    };
-    var tokenizeP_FnShorthand = function (input, position) {
-        if (input.slice(position, position + 2) !== '#(')
-            return NO_MATCH;
-        return [1, ['P_FnShorthand', '#']];
-    };
-    var tokenizeP_ReservedSymbol = function (input, position) {
-        var symbolMeta = tokenizeP_Symbol(input, position);
-        if (symbolMeta[0] === 0 || !symbolMeta[1]) {
-            return NO_MATCH;
-        }
-        var symbolName = symbolMeta[1][1];
-        symbolName = symbolName.startsWith('\'') ? symbolName.slice(1, symbolName.length - 1) : symbolName;
-        var info = polishReservedNamesRecord[symbolName];
-        if (!info) {
-            return NO_MATCH;
-        }
-        if (info.forbidden) {
-            throw new LitsError("".concat(symbolName, " is forbidden!"), undefined);
-        }
-        return [symbolMeta[0], ['P_ReservedSymbol', symbolName]];
-    };
-    var tokenizeP_StringShorthand = function (input, position) {
-        if (input[position] !== ':')
-            return NO_MATCH;
-        var symbolDescription = tokenizeP_Symbol(input, position + 1);
-        if (isNoMatch(symbolDescription)) {
-            return symbolDescription;
-        }
-        var symbolToken = asP_SymbolToken(symbolDescription[1]);
-        return [symbolDescription[0] + 1, ['P_StringShorthand', ":".concat(symbolToken[1])]];
-    };
-    var tokenizeP_Modifier = function (input, position) {
-        var e_1, _a;
-        try {
-            for (var modifierNames_1 = __values(modifierNames), modifierNames_1_1 = modifierNames_1.next(); !modifierNames_1_1.done; modifierNames_1_1 = modifierNames_1.next()) {
-                var modifierName = modifierNames_1_1.value;
-                var length_3 = modifierName.length;
-                var charAfterModifier = input[position + length_3];
-                if (input.substring(position, position + length_3) === modifierName && (!charAfterModifier || !P_symbolRegExp.test(charAfterModifier))) {
-                    var value = modifierName;
-                    return [length_3, ['P_Modifier', value]];
-                }
-            }
-        }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
-        finally {
-            try {
-                if (modifierNames_1_1 && !modifierNames_1_1.done && (_a = modifierNames_1.return)) _a.call(modifierNames_1);
-            }
-            finally { if (e_1) throw e_1.error; }
-        }
-        return NO_MATCH;
-    };
-    var tokenizeP_CollectionAccessor = function (input, position) {
-        var char = input[position];
-        if (char !== '.' && char !== '#')
-            return NO_MATCH;
-        return [1, ['P_CollectionAccessor', char]];
-    };
-    // All tokenizers, order matters!
-    var polishTokenizers = __spreadArray(__spreadArray([
-        tokenizeP_Whitespace,
-        tokenizeP_Comment
-    ], __read(commonTokenizers), false), [
-        tokenizeP_StringShorthand,
-        tokenizeP_Number,
-        tokenizeP_ReservedSymbol,
-        tokenizeP_Modifier,
-        tokenizeP_Symbol,
-        tokenizeP_FnShorthand,
-        tokenizeP_CollectionAccessor,
-    ], false);
-
-    var applyCollectionAccessors = function (tokenStream) {
-        var dotTokenIndex = tokenStream.tokens.findIndex(isP_CollectionAccessorToken);
-        while (dotTokenIndex >= 0) {
-            applyCollectionAccessor(tokenStream, dotTokenIndex);
-            dotTokenIndex = tokenStream.tokens.findIndex(isP_CollectionAccessorToken);
-        }
-        return tokenStream;
-    };
-    function applyCollectionAccessor(tokenStream, position) {
-        var dotTkn = asP_CollectionAccessorToken(tokenStream.tokens[position]);
-        var debugData = getTokenDebugData(dotTkn);
-        var backPosition = getPositionBackwards(tokenStream, position, debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo);
-        checkForward(tokenStream, position, dotTkn, debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo);
-        tokenStream.tokens.splice(position, 1);
-        tokenStream.tokens.splice(backPosition, 0, ['LParen', '(']);
-        var nextTkn = asToken(tokenStream.tokens[position + 1]);
-        if (dotTkn[1] === '.') {
-            assertP_SymbolToken(nextTkn);
-            var token = ['P_StringShorthand', ":".concat(nextTkn[1])];
-            tokenStream.tokens[position + 1] = token;
-            var nextTkndebugData = getTokenDebugData(nextTkn);
-            if (nextTkndebugData) {
-                addTokenDebugData(token, nextTkndebugData);
-            }
-        }
-        else {
-            assertP_NumberToken(nextTkn);
-            assertNumber(Number(nextTkn[1]), debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo, { integer: true, nonNegative: true });
-            tokenStream.tokens[position + 1] = ['P_Number', nextTkn[1]];
-        }
-        tokenStream.tokens.splice(position + 2, 0, ['RParen', ')']);
-    }
-    function getPositionBackwards(tokenStream, position, sourceCodeInfo) {
-        var bracketCount = null;
-        if (position <= 0)
-            throw new LitsError('Array accessor # must come after a sequence', sourceCodeInfo);
-        var prevToken = asNonUndefined(tokenStream.tokens[position - 1]);
-        var openBracket = null;
-        var closeBracket = null;
-        if (isRParenToken(prevToken)) {
-            openBracket = 'LParen';
-            closeBracket = 'RParen';
-        }
-        else if (isRBracketToken(prevToken)) {
-            openBracket = 'LBracket';
-            closeBracket = 'RBracket';
-        }
-        else if (isRBraceToken(prevToken)) {
-            openBracket = 'LBrace';
-            closeBracket = 'RBrace';
-        }
-        while (bracketCount !== 0) {
-            bracketCount = bracketCount === null ? 0 : bracketCount;
-            position -= 1;
-            var tkn = asNonUndefined(tokenStream.tokens[position], sourceCodeInfo);
-            if (tkn[0] === openBracket) {
-                bracketCount += 1;
-            }
-            else if (tkn[0] === closeBracket) {
-                bracketCount -= 1;
-            }
-        }
-        if (openBracket === 'LParen' && position > 0) {
-            var tokenBeforeBracket = asNonUndefined(tokenStream.tokens[position - 1]);
-            if (isP_FnShorthandToken(tokenBeforeBracket))
-                throw new LitsError('# or . must NOT be preceeded by shorthand lambda function', sourceCodeInfo);
-        }
-        return position;
-    }
-    function checkForward(tokenStream, position, dotTkn, sourceCodeInfo) {
-        var tkn = tokenStream.tokens[position + 1];
-        if (dotTkn[1] === '.' && !isP_SymbolToken(tkn)) {
-            throw new LitsError('# as a collection accessor must be followed by an name', sourceCodeInfo);
-        }
-        if (dotTkn[1] === '#' && isNumber(tkn)) {
-            throw new LitsError('# as a collection accessor must be followed by an integer', sourceCodeInfo);
-        }
-    }
-
-    function getSugar() {
-        return [applyCollectionAccessors];
-    }
+    ];
 
     function tokenize$1(input, params) {
         var debug = !!params.debug;
@@ -8567,11 +7864,9 @@ var Playground = (function (exports) {
             tokens: [],
             filePath: params.filePath,
             hasDebugData: debug,
-            polish: !!params.polish,
         };
         while (position < input.length) {
-            var tokenizers = params.polish ? polishTokenizers : algebraicTokenizers;
-            var tokenDescriptor = getCurrentToken(input, position, tokenizers);
+            var tokenDescriptor = getCurrentToken(input, position);
             var debugData = debug
                 ? {
                     sourceCodeInfo: createSourceCodeInfo(input, position, params.filePath),
@@ -8589,7 +7884,6 @@ var Playground = (function (exports) {
                 tokenStream.tokens.push(token);
             }
         }
-        applySugar(tokenStream);
         return tokenStream;
     }
     function getSourceCodeLine(input, lineNbr) {
@@ -8610,7 +7904,7 @@ var Playground = (function (exports) {
             filePath: filePath,
         };
     }
-    function getCurrentToken(input, position, tokenizers) {
+    function getCurrentToken(input, position) {
         var e_1, _a;
         var initialPosition = position;
         var tryNext = true;
@@ -8644,13 +7938,9 @@ var Playground = (function (exports) {
         }
         return null;
     }
-    function applySugar(tokenStream) {
-        var sugar = getSugar();
-        sugar.forEach(function (sugarFn) { return sugarFn(tokenStream); });
-    }
 
     function transformTokens(tokenStram, transformer) {
-        return __assign(__assign({}, tokenStram), { tokens: tokenStram.tokens.map(function (token) { return isA_SymbolToken(token) || isP_SymbolToken(token)
+        return __assign(__assign({}, tokenStram), { tokens: tokenStram.tokens.map(function (token) { return isA_SymbolToken(token)
                 ? [token[0], transformer(token[1])]
                 : token; }) });
     }
@@ -8725,23 +8015,22 @@ var Playground = (function (exports) {
         function Lits(config) {
             var e_1, _a;
             if (config === void 0) { config = {}; }
-            var _b, _c, _d, _e;
+            var _b, _c, _d;
             this.debug = (_b = config.debug) !== null && _b !== void 0 ? _b : false;
-            this.polish = (_c = config.polish) !== null && _c !== void 0 ? _c : false;
-            this.astCacheSize = (_d = config.astCacheSize) !== null && _d !== void 0 ? _d : null;
+            this.astCacheSize = (_c = config.astCacheSize) !== null && _c !== void 0 ? _c : null;
             if (this.astCacheSize) {
                 this.astCache = new Cache(this.astCacheSize);
-                var initialCache = (_e = config.initialCache) !== null && _e !== void 0 ? _e : {};
+                var initialCache = (_d = config.initialCache) !== null && _d !== void 0 ? _d : {};
                 try {
-                    for (var _f = __values(Object.keys(initialCache)), _g = _f.next(); !_g.done; _g = _f.next()) {
-                        var cacheEntry = _g.value;
+                    for (var _e = __values(Object.keys(initialCache)), _f = _e.next(); !_f.done; _f = _e.next()) {
+                        var cacheEntry = _f.value;
                         this.astCache.set(cacheEntry, initialCache[cacheEntry]);
                     }
                 }
                 catch (e_1_1) { e_1 = { error: e_1_1 }; }
                 finally {
                     try {
-                        if (_g && !_g.done && (_a = _f.return)) _a.call(_f);
+                        if (_f && !_f.done && (_a = _e.return)) _a.call(_e);
                     }
                     finally { if (e_1) throw e_1.error; }
                 }
@@ -8777,8 +8066,7 @@ var Playground = (function (exports) {
         Lits.prototype.tokenize = function (program, tokenizeParams) {
             if (tokenizeParams === void 0) { tokenizeParams = {}; }
             var debug = this.debug;
-            var prefix = this.polish;
-            var tokenStream = tokenize$1(program, __assign(__assign({}, tokenizeParams), { debug: debug, polish: prefix }));
+            var tokenStream = tokenize$1(program, __assign(__assign({}, tokenizeParams), { debug: debug }));
             return tokenizeParams.minify ? minifyTokenStream(tokenStream, { removeWhiteSpace: false }) : tokenStream;
         };
         Lits.prototype.parse = function (tokenStream) {
@@ -8812,8 +8100,8 @@ var Playground = (function (exports) {
                 .map(function (_, index) {
                 return "".concat(fnName, "_").concat(index);
             })
-                .join(this.polish ? ' ' : ', ');
-            return this.polish ? "(".concat(fnName, " ").concat(paramsString, ")") : "".concat(fnName, "(").concat(paramsString, ")");
+                .join(', ');
+            return "".concat(fnName, "(").concat(paramsString, ")");
         };
         Lits.prototype.generateAst = function (program, params) {
             var _a;

@@ -1,5 +1,5 @@
 import { normalExpressions } from '../src/builtin/normalExpressions'
-import { isSymbolicOperator } from '../src/tokenizer/algebraic/algebraicTokens'
+import { isSymbolicOperator } from '../src/tokenizer/operators'
 import { canBeOperator, isUnknownRecord } from '../src/typeGuards'
 import type { ApiName, Category, DataType, NormalExpressionName } from './api'
 import { arrayReference } from './categories/array'

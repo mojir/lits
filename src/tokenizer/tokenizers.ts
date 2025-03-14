@@ -1,13 +1,9 @@
-import { LitsError } from '../../errors'
-import {
-  NO_MATCH,
-  commonTokenizers,
-} from '../common/commonTokenizers'
-import type { Tokenizer } from '../interface'
-import type { AlgebraicReservedSymbol, ValidReservedSymbol } from './algebraicReservedNames'
-import { algebraicReservedSymbolRecord } from './algebraicReservedNames'
-import type { A_BasePrefixedNumberToken, A_MultiLineCommentToken, A_NumberToken, A_OperatorToken, A_ReservedSymbolToken, A_SingleLineCommentToken, A_SymbolToken, A_WhitespaceToken, AlgebraicToken } from './algebraicTokens'
-import { isSymbolicOperator } from './algebraicTokens'
+import { LitsError } from '../errors'
+import type { TokenDescriptor, Tokenizer } from './interface'
+import { isSymbolicOperator } from './operators'
+import type { A_BasePrefixedNumberToken, A_MultiLineCommentToken, A_NumberToken, A_OperatorToken, A_ReservedSymbolToken, A_SingleLineCommentToken, A_SymbolToken, A_WhitespaceToken, LBraceToken, LBracketToken, LParenToken, RBraceToken, RBracketToken, RParenToken, RegexpShorthandToken, StringToken, Token } from './tokens'
+import type { AlgebraicReservedSymbol, ValidReservedSymbol } from './reservedNames'
+import { algebraicReservedSymbolRecord } from './reservedNames'
 
 const illegalSymbolCharacters = [
   '(',
@@ -44,6 +40,86 @@ const illegalSymbolCharacterSet = new Set(illegalSymbolCharacters)
 const illegalFirstSymbolCharacterSet = new Set(illegalFirstSymbolCharacters)
 
 const whitespaceRegExp = /\s/
+
+export const NO_MATCH: TokenDescriptor<never> = [0]
+
+const tokenizeLParen: Tokenizer<LParenToken> = (input, position) =>
+  tokenizeToken('LParen', '(', input, position)
+const tokenizeRParen: Tokenizer<RParenToken> = (input, position) =>
+  tokenizeToken('RParen', ')', input, position)
+const tokenizeLBracket: Tokenizer<LBracketToken> = (input, position) =>
+  tokenizeToken('LBracket', '[', input, position)
+const tokenizeRBracket: Tokenizer<RBracketToken> = (input, position) =>
+  tokenizeToken('RBracket', ']', input, position)
+const tokenizeLBrace: Tokenizer<LBraceToken> = (input, position) =>
+  tokenizeToken('LBrace', '{', input, position)
+const tokenizeRBrace: Tokenizer<RBraceToken> = (input, position) =>
+  tokenizeToken('RBrace', '}', input, position)
+
+const tokenizeString: Tokenizer<StringToken> = (input, position) => {
+  if (input[position] !== '"')
+    return NO_MATCH
+
+  let value = '"'
+  let length = 1
+  let char = input[position + length]
+  let escaping = false
+  while (char !== '"' || escaping) {
+    if (char === undefined)
+      throw new LitsError(`Unclosed string at position ${position}.`, undefined)
+
+    length += 1
+    if (escaping) {
+      escaping = false
+      value += char
+    }
+    else {
+      if (char === '\\') {
+        escaping = true
+      }
+      value += char
+    }
+    char = input[position + length]
+  }
+  value += '"' // closing quote
+  return [length + 1, ['String', value]]
+}
+
+const tokenizeRegexpShorthand: Tokenizer<RegexpShorthandToken> = (input, position) => {
+  if (input[position] !== '#')
+    return NO_MATCH
+
+  const [stringLength, token] = tokenizeString(input, position + 1)
+  if (!token)
+    return NO_MATCH
+
+  position += stringLength + 1
+  let length = stringLength + 1
+
+  let options = ''
+  while (input[position] === 'g' || input[position] === 'i') {
+    if (options.includes(input[position]!)) {
+      throw new LitsError(`Duplicated regexp option "${input[position]}" at position ${position}.`, undefined)
+    }
+    options += input[position]!
+    length += 1
+    position += 1
+  }
+
+  return [length, ['RegexpShorthand', `#${token[1]}${options}`]]
+}
+
+function tokenizeToken<T extends Token>(
+  type: T[0],
+  value: string,
+  input: string,
+  position: number,
+): TokenDescriptor<T> {
+  if (value === input.slice(position, position + value.length))
+    return [value.length, [type, value] as T]
+  else
+    return NO_MATCH
+}
 
 export const tokenizeA_Whitespace: Tokenizer<A_WhitespaceToken> = (input, position) => {
   let char = input[position]
@@ -278,14 +354,21 @@ export const tokenizeA_SingleLineComment: Tokenizer<A_SingleLineCommentToken> = 
 }
 
 // All tokenizers, order matters!
-export const algebraicTokenizers = [
+export const tokenizers = [
   tokenizeA_Whitespace,
   tokenizeA_MultiLineComment,
   tokenizeA_SingleLineComment,
   tokenizeA_ReservedSymbolToken,
-  ...commonTokenizers,
+  tokenizeLParen,
+  tokenizeRParen,
+  tokenizeLBracket,
+  tokenizeRBracket,
+  tokenizeLBrace,
+  tokenizeRBrace,
+  tokenizeString,
+  tokenizeRegexpShorthand,
   tokenizeA_BasePrefixedNumber,
   tokenizeA_Number,
   tokenizeA_Operator,
   tokenizeA_Symbol,
-] as const satisfies Tokenizer<AlgebraicToken>[]
+] as const satisfies Tokenizer<Token>[]

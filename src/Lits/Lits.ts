@@ -6,7 +6,7 @@ import type { Context } from '../evaluator/interface'
 import type { Any, Obj } from '../interface'
 import { parse } from '../parser'
 import type { Ast, LitsFunction } from '../parser/interface'
-import { tokenize } from '../tokenizer'
+import { tokenize } from '../tokenizer/tokenize'
 import type { TokenStream, TokenizeParams } from '../tokenizer/interface'
 import { minifyTokenStream } from '../tokenizer/minifyTokenStream'
 import { transformTokens } from '../transformer'
@@ -41,18 +41,15 @@ interface LitsConfig {
   initialCache?: Record<string, Ast>
   astCacheSize?: number | null
   debug?: boolean
-  polish?: boolean
 }
 
 export class Lits {
   private astCache: Cache | null
   private astCacheSize: number | null
   private debug: boolean
-  private polish: boolean
 
   constructor(config: LitsConfig = {}) {
     this.debug = config.debug ?? false
-    this.polish = config.polish ?? false
     this.astCacheSize = config.astCacheSize ?? null
     if (this.astCacheSize) {
       this.astCache = new Cache(this.astCacheSize)
@@ -93,8 +90,7 @@ export class Lits {
 
   public tokenize(program: string, tokenizeParams: Pick<TokenizeParams, 'filePath'> & { minify?: boolean } = {}): TokenStream {
     const debug = this.debug
-    const prefix = this.polish
-    const tokenStream = tokenize(program, { ...tokenizeParams, debug, polish: prefix })
+    const tokenStream = tokenize(program, { ...tokenizeParams, debug })
     return tokenizeParams.minify ? minifyTokenStream(tokenStream, { removeWhiteSpace: false }) : tokenStream
   }
 
@@ -139,8 +135,8 @@ export class Lits {
       .map((_, index) => {
         return `${fnName}_${index}`
       })
-      .join(this.polish ? ' ' : ', ')
-    return this.polish ? `(${fnName} ${paramsString})` : `${fnName}(${paramsString})`
+      .join(', ')
+    return `${fnName}(${paramsString})`
   }
 
   private generateAst(program: string, params: LitsParams): Ast {

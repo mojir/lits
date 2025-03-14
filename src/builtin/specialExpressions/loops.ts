@@ -6,10 +6,8 @@ import type { ContextStack } from '../../evaluator/ContextStack'
 import type { Context, EvaluateAstNode } from '../../evaluator/interface'
 import type { Any, Arr } from '../../interface'
 import type { AstNode, BindingNode, CommonSpecialExpressionNode, ParseState } from '../../parser/interface'
-import { assertLBracketToken, assertRParenToken, isRBracketToken } from '../../tokenizer/common/commonTokens'
+import { asToken, assertLBracketToken, assertRParenToken, isRBracketToken } from '../../tokenizer/tokens'
 import type { SourceCodeInfo, TokenStream } from '../../tokenizer/interface'
-import { isP_ModifierToken } from '../../tokenizer/polish/polishTokens'
-import { asToken } from '../../tokenizer/tokens'
 import { getTokenDebugData } from '../../tokenizer/utils'
 import { asNonUndefined } from '../../typeGuards'
 import { asAstNode } from '../../typeGuards/astNode'
@@ -37,7 +35,7 @@ export interface LoopBindingNode {
 function parseLoopBinding(
   tokenStream: TokenStream,
   parseState: ParseState,
-  { parseBinding, parseBindings, parseToken }: ParserHelpers,
+  { parseBinding }: ParserHelpers,
 ): LoopBindingNode {
   const bindingNode = parseBinding(tokenStream, parseState)
 
@@ -46,41 +44,6 @@ function parseLoopBinding(
     m: [],
   }
 
-  let tkn = asToken(tokenStream.tokens[parseState.position])
-  while (isP_ModifierToken(tkn)) {
-    const modifier = tkn[1]
-    switch (modifier) {
-      case '&let':
-        if (loopBinding.l) {
-          throw new LitsError('Only one &let modifier allowed', getTokenDebugData(tkn)?.sourceCodeInfo)
-        }
-        parseState.position += 1
-        loopBinding.l = parseBindings(tokenStream, parseState)
-        loopBinding.m.push('&let')
-        break
-      case '&when':
-        if (loopBinding.wn) {
-          throw new LitsError('Only one &when modifier allowed', getTokenDebugData(tkn)?.sourceCodeInfo)
-        }
-        parseState.position += 1
-        loopBinding.wn = parseToken(tokenStream, parseState)
-        loopBinding.m.push('&when')
-        break
-      case '&while':
-        if (loopBinding.we) {
-          throw new LitsError('Only one &while modifier allowed', getTokenDebugData(tkn)?.sourceCodeInfo)
-        }
-        parseState.position += 1
-        loopBinding.we = parseToken(tokenStream, parseState)
-        loopBinding.m.push('&while')
-        break
-      case '&rest':
-        throw new LitsError(`Illegal modifier: ${modifier}`, getTokenDebugData(tkn)?.sourceCodeInfo)
-      default:
-        throw new LitsError(`Illegal modifier: ${modifier satisfies never}`, getTokenDebugData(tkn)?.sourceCodeInfo)
-    }
-    tkn = asToken(tokenStream.tokens[parseState.position])
-  }
   return loopBinding
 }
 

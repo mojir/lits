@@ -6,8 +6,6 @@ import { parsePolishToken } from './PolishTokenParsers'
 
 export function parse(tokenStream: TokenStream): Ast {
   tokenStream = minifyTokenStream(tokenStream, { removeWhiteSpace: true })
-  const prefix = tokenStream.polish
-
   const ast: Ast = {
     b: [],
     hasDebugData: tokenStream.hasDebugData,
@@ -18,15 +16,8 @@ export function parse(tokenStream: TokenStream): Ast {
     parseToken,
   }
 
-  if (!prefix) {
-    const algebraicParser = new AlgebraicParser(tokenStream, parseState)
-    ast.b = algebraicParser.parse()
-  }
-  else {
-    while (parseState.position < tokenStream.tokens.length) {
-      ast.b.push(parseToken(tokenStream, parseState))
-    }
-  }
+  const algebraicParser = new AlgebraicParser(tokenStream, parseState)
+  ast.b = algebraicParser.parse()
 
   return ast
 }

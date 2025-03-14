@@ -1,8 +1,8 @@
 import { LitsError } from '../errors'
 import type { ContextStack } from '../evaluator/ContextStack'
 import type { AstNode, BindingNode } from '../parser/interface'
-import { polishReservedNamesRecord } from '../tokenizer/polish/polishReservedNames'
 import type { SourceCodeInfo } from '../tokenizer/interface'
+import { isReservedSymbol } from '../tokenizer/reservedNames'
 import type { Builtin } from './interface'
 import type { SpecialExpressionName } from '.'
 
@@ -35,8 +35,7 @@ export function assertNameNotDefined<T>(
   if (builtin.normalExpressions[name])
     throw new LitsError(`Cannot define variable ${name}, it's a builtin function.`, sourceCodeInfo)
 
-  // eslint-disable-next-line ts/no-unsafe-member-access
-  if ((polishReservedNamesRecord as any)[name])
+  if (isReservedSymbol(name))
     throw new LitsError(`Cannot define variable ${name}, it's a reserved name.`, sourceCodeInfo)
 
   if (contextStack.globalContext[name])

@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { NO_MATCH } from '../common/commonTokenizers'
-import { tokenizeA_BasePrefixedNumber, tokenizeA_MultiLineComment, tokenizeA_Number, tokenizeA_Operator, tokenizeA_SingleLineComment, tokenizeA_Symbol } from './algebraicTokenizers'
+import { NO_MATCH, tokenizeA_BasePrefixedNumber, tokenizeA_MultiLineComment, tokenizeA_Number, tokenizeA_Operator, tokenizeA_SingleLineComment, tokenizeA_Symbol } from './tokenizers'
 
 describe('algebraicTokenizers', () => {
   describe('tokenizeA_SingleLineComment', () => {

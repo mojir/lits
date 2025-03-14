@@ -1,8 +1,6 @@
 import { LitsError } from '../errors'
-import { algebraicTokenizers } from './algebraic/algebraicTokenizers'
-import type { SourceCodeInfo, TokenDescriptor, TokenStream, TokenizeParams, Tokenizer } from './interface'
-import { polishTokenizers } from './polish/polishTokenizers'
-import { getSugar } from './sugar'
+import { tokenizers } from './tokenizers'
+import type { SourceCodeInfo, TokenDescriptor, TokenStream, TokenizeParams } from './interface'
 import type { Token } from './tokens'
 import type { TokenDebugData } from './utils'
 import { addTokenDebugData } from './utils'
@@ -14,12 +12,10 @@ export function tokenize(input: string, params: TokenizeParams): TokenStream {
     tokens: [],
     filePath: params.filePath,
     hasDebugData: debug,
-    polish: !!params.polish,
   }
 
   while (position < input.length) {
-    const tokenizers = params.polish ? polishTokenizers : algebraicTokenizers
-    const tokenDescriptor = getCurrentToken(input, position, tokenizers)
+    const tokenDescriptor = getCurrentToken(input, position)
 
     const debugData: TokenDebugData | undefined = debug
       ? {
@@ -42,8 +38,6 @@ export function tokenize(input: string, params: TokenizeParams): TokenStream {
       tokenStream.tokens.push(token)
     }
   }
-
-  applySugar(tokenStream)
 
   return tokenStream
 }
@@ -69,7 +63,7 @@ function createSourceCodeInfo(input: string, position: number, filePath?: string
   }
 }
 
-function getCurrentToken(input: string, position: number, tokenizers: Tokenizer<Token>[]): TokenDescriptor<Token> | null {
+function getCurrentToken(input: string, position: number): TokenDescriptor<Token> | null {
   const initialPosition = position
 
   let tryNext = true
@@ -94,9 +88,4 @@ function getCurrentToken(input: string, position: number, tokenizers: Tokenizer<
     }
   }
   return null
-}
-
-function applySugar(tokenStream: TokenStream) {
-  const sugar = getSugar()
-  sugar.forEach(sugarFn => sugarFn(tokenStream))
 }

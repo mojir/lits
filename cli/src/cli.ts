@@ -8,7 +8,6 @@ import type { Context } from '../../src'
 import {
   Lits,
   normalExpressionKeys,
-  polishReservedNames,
   specialExpressionKeys,
 } from '../../src'
 import { runTest } from '../../src/testFramework'
@@ -397,7 +396,8 @@ function completer(line: string) {
   if (expressionMatch)
     return [expressions.filter(c => c.startsWith(expressionMatch[2]!)).map(c => `${expressionMatch[1]}${c} `), line]
 
-  const names = Array.from(new Set([...polishReservedNames, ...Object.keys(config.context)]))
+  // TODO, add reserved names
+  const names = Array.from(new Set([...Object.keys(config.context)]))
   const nameMatch = nameRegExp.exec(line)
 
   if (nameMatch)

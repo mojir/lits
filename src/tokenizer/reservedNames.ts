@@ -1,4 +1,4 @@
-import type { Any } from '../../interface'
+import type { Any } from '../interface'
 
 const nonNumberReservedSymbolRecord = {
   true: true,

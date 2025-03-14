@@ -14,9 +14,8 @@ import type {
   ParseState,
   SymbolNode,
 } from '../../parser/interface'
-import { asLBracketToken, assertRParenToken, isLBracketToken, isLParenToken, isRBracketToken, isRParenToken } from '../../tokenizer/common/commonTokens'
+import { asLBracketToken, asToken, assertRParenToken, isLBracketToken, isLParenToken, isRBracketToken, isRParenToken } from '../../tokenizer/tokens'
 import type { TokenStream } from '../../tokenizer/interface'
-import { asToken } from '../../tokenizer/tokens'
 import { getTokenDebugData } from '../../tokenizer/utils'
 import { assertSymbolNode } from '../../typeGuards/astNode'
 import { valueToString } from '../../utils/debug/debugTools'

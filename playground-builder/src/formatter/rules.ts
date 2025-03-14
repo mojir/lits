@@ -126,16 +126,6 @@ function getStylesFromToken(token: Token): string {
     case 'LParen':
     case 'RParen':
       return styles('text-color-gray-200')
-    case 'P_CollectionAccessor':
-    case 'P_Symbol':
-    case 'P_ReservedSymbol':
-    case 'P_StringShorthand':
-    case 'P_Number':
-    case 'P_Whitespace':
-    case 'P_Comment':
-    case 'P_FnShorthand':
-    case 'P_Modifier':
-      throw new Error(`Unexpected polish token: ${token}`)
 
     default:
       throw new Error(`Unexpected token: ${token satisfies never}`)
