@@ -1,6 +1,5 @@
 import { describe, it } from 'vitest'
 import { testTypeGuars } from '../../__tests__/testUtils'
-import { FunctionType } from '../constants/constants'
 import type { LitsFunction } from '../parser/types'
 import { createNativeJsFunction } from '../utils'
 import { FUNCTION_SYMBOL } from '../utils/symbols'
@@ -20,39 +19,37 @@ import {
 describe('litsFunction type guards', () => {
   const lf1: LitsFunction = {
     [FUNCTION_SYMBOL]: true,
-    functionType: FunctionType.UserDefined,
+    functionType: 'UserDefined',
     name: undefined,
-    o: [
-      {
-        arguments: {
-          mandatoryArguments: [],
-        },
-        context: {},
-        body: [],
-        arity: 0,
+    function: {
+      arguments: {
+        mandatoryArguments: [],
       },
-    ],
+      context: {},
+      body: [],
+      arity: 0,
+    },
   }
   const lf2: LitsFunction = {
     [FUNCTION_SYMBOL]: true,
-    functionType: FunctionType.Builtin,
+    functionType: 'Builtin',
     n: '+',
   }
   const lf3: LitsFunction = {
     [FUNCTION_SYMBOL]: true,
-    functionType: FunctionType.Partial,
-    f: { a: 10, b: 20 },
-    p: [],
+    functionType: 'Partial',
+    function: { a: 10, b: 20 },
+    params: [],
   }
   const lf4: LitsFunction = {
     [FUNCTION_SYMBOL]: true,
-    functionType: FunctionType.Comp,
-    f: ['x'],
+    functionType: 'Comp',
+    params: ['x'],
   }
   const lf5: LitsFunction = {
     [FUNCTION_SYMBOL]: true,
-    functionType: FunctionType.Constantly,
-    v: 10,
+    functionType: 'Constantly',
+    value: 10,
   }
   const lf6 = createNativeJsFunction(() => undefined)
   const lf7 = createNativeJsFunction(() => undefined, 'native')

@@ -3,7 +3,6 @@ import type { RegularExpression, SymbolNode } from '../src/parser/types'
 import { cloneColl, collHasKey, createNativeJsFunction, deepEqual, toNonNegativeInteger } from '../src/utils'
 import { FUNCTION_SYMBOL, REGEXP_SYMBOL } from '../src/utils/symbols'
 import { valueToString } from '../src/utils/debug/debugTools'
-import { FunctionType } from '../src/constants/constants'
 
 describe('utils', () => {
   it('createNativeJsFunction', () => {
@@ -11,14 +10,14 @@ describe('utils', () => {
     expect(fnWithName.sourceCodeInfo).toBeUndefined()
     expect(fnWithName.name).toBe('foo')
     expect(typeof fnWithName.nativeFn.fn).toBe('function')
-    expect(fnWithName.functionType).toBe(FunctionType.NativeJsFunction)
+    expect(fnWithName.functionType).toBe('NativeJsFunction')
     expect(fnWithName[FUNCTION_SYMBOL]).toBe(true)
 
     const fnWithoutName = createNativeJsFunction(() => undefined)
     expect(fnWithoutName.sourceCodeInfo).toBeUndefined()
     expect(fnWithoutName.name).toBeUndefined()
     expect(typeof fnWithoutName.nativeFn.fn).toBe('function')
-    expect(fnWithoutName.functionType).toBe(FunctionType.NativeJsFunction)
+    expect(fnWithoutName.functionType).toBe('NativeJsFunction')
     expect(fnWithoutName[FUNCTION_SYMBOL]).toBe(true)
   })
   it('collHasKey', () => {

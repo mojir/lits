@@ -20,33 +20,24 @@ export function isAstNodeType(type: unknown): type is AstNodeType {
   return typeof type === 'string' && astNodeTypeSet.has(type as AstNodeType)
 }
 
-export enum FunctionType {
-  UserDefined = 301,
-  Partial = 302,
-  Comp = 303,
-  Constantly = 304,
-  Juxt = 305,
-  Complement = 306,
-  EveryPred = 307,
-  SomePred = 308,
-  Fnull = 309,
-  Builtin = 310,
-  NativeJsFunction = 399,
-}
+const functionTypes = [
+  'UserDefined',
+  'Partial',
+  'Comp',
+  'Constantly',
+  'Juxt',
+  'Complement',
+  'EveryPred',
+  'SomePred',
+  'Fnull',
+  'Builtin',
+  'NativeJsFunction',
+] as const
 
-export const functionTypeName = new Map([
-  [FunctionType.UserDefined, 'UserDefined'],
-  [FunctionType.Partial, 'Partial'],
-  [FunctionType.Comp, 'Comp'],
-  [FunctionType.Constantly, 'Constantly'],
-  [FunctionType.Juxt, 'Juxt'],
-  [FunctionType.Complement, 'Complement'],
-  [FunctionType.EveryPred, 'EveryPred'],
-  [FunctionType.SomePred, 'SomePred'],
-  [FunctionType.Fnull, 'Fnull'],
-  [FunctionType.Builtin, 'Builtin'],
-])
+const functionTypeSet = new Set(functionTypes)
+
+export type FunctionType = typeof functionTypes[number]
 
 export function isFunctionType(type: unknown): type is FunctionType {
-  return typeof type === 'number' && functionTypeName.has(type)
+  return typeof type === 'string' && functionTypeSet.has(type as FunctionType)
 }

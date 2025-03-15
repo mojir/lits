@@ -1,4 +1,4 @@
-import type { JsFunction, LazyValue } from '../Lits/Lits'
+import type { JsFunction } from '../Lits/Lits'
 import type { SpecialExpressionName, SpecialExpressionNode } from '../builtin'
 import type { Arity } from '../builtin/utils'
 import type { AstNodeType, FunctionType } from '../constants/constants'
@@ -37,61 +37,61 @@ export interface RegularExpression {
 }
 
 export interface NativeJsFunction extends GenericLitsFunction {
-  functionType: FunctionType.NativeJsFunction
+  functionType: 'NativeJsFunction'
   name: string | undefined // name
   nativeFn: JsFunction
 }
 
 export interface UserDefinedFunction extends GenericLitsFunction {
-  functionType: FunctionType.UserDefined
+  functionType: 'UserDefined'
   name: string | undefined // name
-  o: EvaluatedFunction[]
+  function: EvaluatedFunction
 }
 
 export interface PartialFunction extends GenericLitsFunction {
-  functionType: FunctionType.Partial
-  f: Any
-  p: Arr
+  functionType: 'Partial'
+  function: Any
+  params: Arr
 }
 
 export interface CompFunction extends GenericLitsFunction {
-  functionType: FunctionType.Comp
-  f: Arr
+  functionType: 'Comp'
+  params: Arr
 }
 
 export interface ConstantlyFunction extends GenericLitsFunction {
-  functionType: FunctionType.Constantly
-  v: Any
+  functionType: 'Constantly'
+  value: Any
 }
 
 export interface JuxtFunction extends GenericLitsFunction {
-  functionType: FunctionType.Juxt
-  f: Arr
+  functionType: 'Juxt'
+  params: Arr
 }
 
 export interface ComplementFunction extends GenericLitsFunction {
-  functionType: FunctionType.Complement
-  f: Any
+  functionType: 'Complement'
+  function: Any
 }
 
 export interface EveryPredFunction extends GenericLitsFunction {
-  functionType: FunctionType.EveryPred
-  f: Arr
+  functionType: 'EveryPred'
+  params: Arr
 }
 
 export interface SomePredFunction extends GenericLitsFunction {
-  functionType: FunctionType.SomePred
-  f: Arr
+  functionType: 'SomePred'
+  params: Arr
 }
 
 export interface FNullFunction extends GenericLitsFunction {
-  functionType: FunctionType.Fnull
-  f: Any
-  p: Arr
+  functionType: 'Fnull'
+  function: Any
+  params: Arr
 }
 
 export interface BuiltinFunction extends GenericLitsFunction {
-  functionType: FunctionType.Builtin
+  functionType: 'Builtin'
   n: string // name
 }
 

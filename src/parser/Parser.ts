@@ -561,11 +561,11 @@ export class Parser {
         type: 'SpecialExpression',
         name: 'fn',
         params: [],
-        o: [{
+        function: {
           as: functionArguments,
           b: [body],
           a: arity,
-        }],
+        },
         token: tokenSourceCodeInfo(firstToken) && firstToken,
       }
     }
@@ -706,13 +706,12 @@ export class Parser {
       type: 'SpecialExpression',
       name: 'fn',
       params: [],
-      o: [
-        {
-          as: args,
-          b: [exprNode],
-          a: args.m.length,
-        },
-      ],
+      function: {
+        as: args,
+        b: [exprNode],
+        a: args.m.length,
+      },
+
       token: tokenSourceCodeInfo(firstToken) && firstToken,
     }
 
@@ -1242,11 +1241,11 @@ export class Parser {
       name: 'function',
       f: symbol,
       params: [],
-      o: [{
+      function: {
         as: functionArguments,
         b: body,
         a: arity,
-      }],
+      },
       token: tokenSourceCodeInfo(token) && token,
     } satisfies FunctionNode
   }
@@ -1312,11 +1311,11 @@ export class Parser {
         name: 'defn',
         f: symbol,
         params: [],
-        o: [{
+        function: {
           as: functionArguments,
           b: body,
           a: arity,
-        }],
+        },
         token: tokenSourceCodeInfo(token) && token,
       }
     }

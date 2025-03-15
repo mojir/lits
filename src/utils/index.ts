@@ -5,7 +5,6 @@ import { asAny, isColl, isObj, isRegularExpression } from '../typeGuards/lits'
 import { isNumber } from '../typeGuards/number'
 import { asString, assertStringOrNumber } from '../typeGuards/string'
 import { isUnknownRecord } from '../typeGuards'
-import { FunctionType } from '../constants/constants'
 import { LitsError } from '../errors'
 import { FUNCTION_SYMBOL } from './symbols'
 
@@ -104,8 +103,8 @@ export function createNativeJsFunction(fn: (...args: any[]) => unknown, name?: s
     nativeFn: {
       fn,
     },
-    name: name,
-    functionType: FunctionType.NativeJsFunction,
+    name,
+    functionType: 'NativeJsFunction',
   }
 }
 

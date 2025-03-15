@@ -584,53 +584,6 @@ var Playground = (function (exports) {
         onClose: onClose,
     };
 
-    var astNodeTypeNames = [
-        'Number',
-        'String',
-        'NormalExpression',
-        'SpecialExpression',
-        'Symbol',
-        'Modifier',
-        'ReservedSymbol',
-        'Binding',
-        'Argument',
-        'Partial',
-        'Comment',
-    ];
-    var astNodeTypeSet = new Set(astNodeTypeNames);
-    function isAstNodeType(type) {
-        return typeof type === 'string' && astNodeTypeSet.has(type);
-    }
-    var FunctionType;
-    (function (FunctionType) {
-        FunctionType[FunctionType["UserDefined"] = 301] = "UserDefined";
-        FunctionType[FunctionType["Partial"] = 302] = "Partial";
-        FunctionType[FunctionType["Comp"] = 303] = "Comp";
-        FunctionType[FunctionType["Constantly"] = 304] = "Constantly";
-        FunctionType[FunctionType["Juxt"] = 305] = "Juxt";
-        FunctionType[FunctionType["Complement"] = 306] = "Complement";
-        FunctionType[FunctionType["EveryPred"] = 307] = "EveryPred";
-        FunctionType[FunctionType["SomePred"] = 308] = "SomePred";
-        FunctionType[FunctionType["Fnull"] = 309] = "Fnull";
-        FunctionType[FunctionType["Builtin"] = 310] = "Builtin";
-        FunctionType[FunctionType["NativeJsFunction"] = 399] = "NativeJsFunction";
-    })(FunctionType || (FunctionType = {}));
-    var functionTypeName = new Map([
-        [FunctionType.UserDefined, 'UserDefined'],
-        [FunctionType.Partial, 'Partial'],
-        [FunctionType.Comp, 'Comp'],
-        [FunctionType.Constantly, 'Constantly'],
-        [FunctionType.Juxt, 'Juxt'],
-        [FunctionType.Complement, 'Complement'],
-        [FunctionType.EveryPred, 'EveryPred'],
-        [FunctionType.SomePred, 'SomePred'],
-        [FunctionType.Fnull, 'Fnull'],
-        [FunctionType.Builtin, 'Builtin'],
-    ]);
-    function isFunctionType(type) {
-        return typeof type === 'number' && functionTypeName.has(type);
-    }
-
     function getCodeMarker(sourceCodeInfo) {
         if (!sourceCodeInfo.position || !sourceCodeInfo.code)
             return '';
@@ -721,13 +674,48 @@ var Playground = (function (exports) {
         return UndefinedSymbolError;
     }(LitsError));
 
+    var astNodeTypeNames = [
+        'Number',
+        'String',
+        'NormalExpression',
+        'SpecialExpression',
+        'Symbol',
+        'Modifier',
+        'ReservedSymbol',
+        'Binding',
+        'Argument',
+        'Partial',
+        'Comment',
+    ];
+    var astNodeTypeSet = new Set(astNodeTypeNames);
+    function isAstNodeType(type) {
+        return typeof type === 'string' && astNodeTypeSet.has(type);
+    }
+    var functionTypes = [
+        'UserDefined',
+        'Partial',
+        'Comp',
+        'Constantly',
+        'Juxt',
+        'Complement',
+        'EveryPred',
+        'SomePred',
+        'Fnull',
+        'Builtin',
+        'NativeJsFunction',
+    ];
+    var functionTypeSet = new Set(functionTypes);
+    function isFunctionType(type) {
+        return typeof type === 'string' && functionTypeSet.has(type);
+    }
+
     var FUNCTION_SYMBOL = '^^fn^^';
     var REGEXP_SYMBOL = '^^re^^';
 
     function isLitsFunction$1(func) {
         if (func === null || typeof func !== 'object')
             return false;
-        return FUNCTION_SYMBOL in func && 't' in func && isFunctionType(func.t);
+        return FUNCTION_SYMBOL in func && 'functionType' in func && isFunctionType(func.functionType);
     }
     function isAstNode$1(value) {
         if (value === null || typeof value !== 'object')
@@ -1024,7 +1012,7 @@ var Playground = (function (exports) {
             throw getAssertionError('LitsFunction', value, sourceCodeInfo);
     }
     function isBuiltinFunction(value) {
-        return isUnknownRecord(value) && value.t === FunctionType.Builtin;
+        return isUnknownRecord(value) && value.functionType === 'Builtin';
     }
 
     function isAny(value) {
@@ -1095,7 +1083,7 @@ var Playground = (function (exports) {
         var gt = '>';
         var lt = '<';
         if (isLitsFunction(value)) {
-            if (value.t === FunctionType.Builtin)
+            if (value.functionType === 'Builtin')
                 return "".concat(lt, "builtin function ").concat(value.n).concat(gt);
             else
                 return "".concat(lt, "function ").concat((_a = value.n) !== null && _a !== void 0 ? _a : '\u03BB').concat(gt);
@@ -4241,21 +4229,21 @@ var Playground = (function (exports) {
                 return _b = {},
                     _b[FUNCTION_SYMBOL] = true,
                     _b.sourceCodeInfo = sourceCodeInfo,
-                    _b.t = FunctionType.Partial,
-                    _b.f = toAny(fn),
-                    _b.p = params,
+                    _b.functionType = 'Partial',
+                    _b.function = toAny(fn),
+                    _b.params = params,
                     _b;
             },
             paramCount: { min: 1 },
         },
         'comp': {
-            evaluate: function (fns, sourceCodeInfo) {
+            evaluate: function (params, sourceCodeInfo) {
                 var _a;
                 return _a = {},
                     _a[FUNCTION_SYMBOL] = true,
                     _a.sourceCodeInfo = sourceCodeInfo,
-                    _a.t = FunctionType.Comp,
-                    _a.f = fns,
+                    _a.functionType = 'Comp',
+                    _a.params = params,
                     _a;
             },
             paramCount: {},
@@ -4267,20 +4255,20 @@ var Playground = (function (exports) {
                 return _b = {},
                     _b[FUNCTION_SYMBOL] = true,
                     _b.sourceCodeInfo = sourceCodeInfo,
-                    _b.t = FunctionType.Constantly,
-                    _b.v = toAny(value),
+                    _b.functionType = 'Constantly',
+                    _b.value = toAny(value),
                     _b;
             },
             paramCount: 1,
         },
         'juxt': {
-            evaluate: function (fns, sourceCodeInfo) {
+            evaluate: function (params, sourceCodeInfo) {
                 var _a;
                 return _a = {},
                     _a[FUNCTION_SYMBOL] = true,
                     _a.sourceCodeInfo = sourceCodeInfo,
-                    _a.t = FunctionType.Juxt,
-                    _a.f = fns,
+                    _a.functionType = 'Juxt',
+                    _a.params = params,
                     _a;
             },
             paramCount: { min: 1 },
@@ -4292,32 +4280,32 @@ var Playground = (function (exports) {
                 return _b = {},
                     _b[FUNCTION_SYMBOL] = true,
                     _b.sourceCodeInfo = sourceCodeInfo,
-                    _b.t = FunctionType.Complement,
-                    _b.f = toAny(fn),
+                    _b.functionType = 'Complement',
+                    _b.function = toAny(fn),
                     _b;
             },
             paramCount: 1,
         },
         'every-pred': {
-            evaluate: function (fns, sourceCodeInfo) {
+            evaluate: function (params, sourceCodeInfo) {
                 var _a;
                 return _a = {},
                     _a[FUNCTION_SYMBOL] = true,
                     _a.sourceCodeInfo = sourceCodeInfo,
-                    _a.t = FunctionType.EveryPred,
-                    _a.f = fns,
+                    _a.functionType = 'EveryPred',
+                    _a.params = params,
                     _a;
             },
             paramCount: { min: 1 },
         },
         'some-pred': {
-            evaluate: function (fns, sourceCodeInfo) {
+            evaluate: function (params, sourceCodeInfo) {
                 var _a;
                 return _a = {},
                     _a[FUNCTION_SYMBOL] = true,
                     _a.sourceCodeInfo = sourceCodeInfo,
-                    _a.t = FunctionType.SomePred,
-                    _a.f = fns,
+                    _a.functionType = 'SomePred',
+                    _a.params = params,
                     _a;
             },
             paramCount: { min: 1 },
@@ -4329,9 +4317,9 @@ var Playground = (function (exports) {
                 return _b = {},
                     _b[FUNCTION_SYMBOL] = true,
                     _b.sourceCodeInfo = sourceCodeInfo,
-                    _b.t = FunctionType.Fnull,
-                    _b.f = toAny(fn),
-                    _b.p = params,
+                    _b.functionType = 'Fnull',
+                    _b.function = toAny(fn),
+                    _b.params = params,
                     _b;
             },
             paramCount: { min: 2 },
@@ -4606,13 +4594,13 @@ var Playground = (function (exports) {
             var builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
             var name = node.f.value;
             assertNameNotDefined(name, contextStack, builtin, tokenSourceCodeInfo(node.token));
-            var evaluatedFunctionOverloades = evaluateFunctionOverloades(node, contextStack, evaluateAstNode);
+            var evaluatedFunctionOverloades = evaluateFunction(node, contextStack, evaluateAstNode);
             var litsFunction = (_b = {},
                 _b[FUNCTION_SYMBOL] = true,
                 _b.sourceCodeInfo = tokenSourceCodeInfo(node.token),
-                _b.t = FunctionType.UserDefined,
-                _b.n = name,
-                _b.o = evaluatedFunctionOverloades,
+                _b.functionType = 'UserDefined',
+                _b.name = name,
+                _b.function = evaluatedFunctionOverloades,
                 _b);
             contextStack.addValue(name, litsFunction);
             return null;
@@ -4622,7 +4610,7 @@ var Playground = (function (exports) {
             var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin;
             contextStack.exportValue(node.f.value, true);
             var newContext = (_b = {}, _b[node.f.value] = { value: true }, _b);
-            return addOverloadsUnresolvedSymbols(node.o, contextStack, getUndefinedSymbols, builtin, newContext);
+            return addFunctionUnresolvedSymbols(node.function, contextStack, getUndefinedSymbols, builtin, newContext);
         },
     };
     var defnSpecialExpression = {
@@ -4632,13 +4620,13 @@ var Playground = (function (exports) {
             var builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
             var name = node.f.value;
             assertNameNotDefined(name, contextStack, builtin, tokenSourceCodeInfo(node.token));
-            var evaluatedFunctionOverloades = evaluateFunctionOverloades(node, contextStack, evaluateAstNode);
+            var evaluatedFunctionOverloades = evaluateFunction(node, contextStack, evaluateAstNode);
             var litsFunction = (_b = {},
                 _b[FUNCTION_SYMBOL] = true,
                 _b.sourceCodeInfo = tokenSourceCodeInfo(node.token),
-                _b.t = FunctionType.UserDefined,
-                _b.n = name,
-                _b.o = evaluatedFunctionOverloades,
+                _b.functionType = 'UserDefined',
+                _b.name = name,
+                _b.function = evaluatedFunctionOverloades,
                 _b);
             contextStack.exportValue(name, litsFunction);
             return null;
@@ -4648,7 +4636,7 @@ var Playground = (function (exports) {
             var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin;
             contextStack.exportValue(node.f.value, true);
             var newContext = (_b = {}, _b[node.f.value] = { value: true }, _b);
-            return addOverloadsUnresolvedSymbols(node.o, contextStack, getUndefinedSymbols, builtin, newContext);
+            return addFunctionUnresolvedSymbols(node.function, contextStack, getUndefinedSymbols, builtin, newContext);
         },
     };
     var fnSpecialExpression = {
@@ -4656,97 +4644,68 @@ var Playground = (function (exports) {
         evaluate: function (node, contextStack, _a) {
             var _b;
             var evaluateAstNode = _a.evaluateAstNode;
-            var evaluatedFunctionOverloades = evaluateFunctionOverloades(node, contextStack, evaluateAstNode);
+            var evaluatedFunctionOverloades = evaluateFunction(node, contextStack, evaluateAstNode);
             var litsFunction = (_b = {},
                 _b[FUNCTION_SYMBOL] = true,
                 _b.sourceCodeInfo = tokenSourceCodeInfo(node.token),
-                _b.t = FunctionType.UserDefined,
-                _b.n = undefined,
-                _b.o = evaluatedFunctionOverloades,
+                _b.functionType = 'UserDefined',
+                _b.name = undefined,
+                _b.function = evaluatedFunctionOverloades,
                 _b);
             return litsFunction;
         },
         getUndefinedSymbols: function (node, contextStack, _a) {
             var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin;
-            return addOverloadsUnresolvedSymbols(node.o, contextStack, getUndefinedSymbols, builtin);
+            return addFunctionUnresolvedSymbols(node.function, contextStack, getUndefinedSymbols, builtin);
         },
     };
-    function evaluateFunctionOverloades(node, contextStack, evaluateAstNode) {
-        var e_1, _a, e_2, _b;
-        var evaluatedFunctionOverloades = [];
+    function evaluateFunction(node, contextStack, evaluateAstNode) {
+        var e_1, _a;
+        var fn = node.function;
+        var functionContext = {};
         try {
-            for (var _c = __values(node.o), _d = _c.next(); !_d.done; _d = _c.next()) {
-                var functionOverload = _d.value;
-                var functionContext = {};
-                try {
-                    for (var _e = (e_2 = void 0, __values(functionOverload.as.b)), _f = _e.next(); !_f.done; _f = _e.next()) {
-                        var binding = _f.value;
-                        var bindingValueNode = binding.value;
-                        var bindingValue = evaluateAstNode(bindingValueNode, contextStack);
-                        functionContext[binding.name] = { value: bindingValue };
-                    }
-                }
-                catch (e_2_1) { e_2 = { error: e_2_1 }; }
-                finally {
-                    try {
-                        if (_f && !_f.done && (_b = _e.return)) _b.call(_e);
-                    }
-                    finally { if (e_2) throw e_2.error; }
-                }
-                var evaluatedFunctionOverload = {
-                    as: {
-                        mandatoryArguments: functionOverload.as.m,
-                        restArgument: functionOverload.as.r,
-                    },
-                    a: functionOverload.a,
-                    b: functionOverload.b,
-                    f: functionContext,
-                };
-                evaluatedFunctionOverloades.push(evaluatedFunctionOverload);
+            for (var _b = __values(fn.as.b), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var binding = _c.value;
+                var bindingValueNode = binding.value;
+                var bindingValue = evaluateAstNode(bindingValueNode, contextStack);
+                functionContext[binding.name] = { value: bindingValue };
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
         finally {
             try {
-                if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
             }
             finally { if (e_1) throw e_1.error; }
         }
-        return evaluatedFunctionOverloades;
+        var evaluatedFunction = {
+            arguments: {
+                mandatoryArguments: fn.as.m,
+                restArgument: fn.as.r,
+            },
+            arity: fn.a,
+            body: fn.b,
+            context: functionContext,
+        };
+        return evaluatedFunction;
     }
-    function addOverloadsUnresolvedSymbols(overloads, contextStack, getUndefinedSymbols, builtin, functionNameContext) {
-        var e_3, _a;
+    function addFunctionUnresolvedSymbols(fn, contextStack, getUndefinedSymbols, builtin, functionNameContext) {
         var result = new Set();
         var contextStackWithFunctionName = functionNameContext ? contextStack.create(functionNameContext) : contextStack;
-        var _loop_1 = function (overload) {
-            var newContext = {};
-            overload.as.b.forEach(function (binding) {
-                var bindingResult = getUndefinedSymbols([binding.value], contextStack, builtin);
-                addToSet(result, bindingResult);
-                newContext[binding.name] = { value: true };
-            });
-            overload.as.m.forEach(function (arg) {
-                newContext[arg] = { value: true };
-            });
-            if (typeof overload.as.r === 'string')
-                newContext[overload.as.r] = { value: true };
-            var newContextStack = contextStackWithFunctionName.create(newContext);
-            var overloadResult = getUndefinedSymbols(overload.b, newContextStack, builtin);
-            addToSet(result, overloadResult);
-        };
-        try {
-            for (var overloads_1 = __values(overloads), overloads_1_1 = overloads_1.next(); !overloads_1_1.done; overloads_1_1 = overloads_1.next()) {
-                var overload = overloads_1_1.value;
-                _loop_1(overload);
-            }
-        }
-        catch (e_3_1) { e_3 = { error: e_3_1 }; }
-        finally {
-            try {
-                if (overloads_1_1 && !overloads_1_1.done && (_a = overloads_1.return)) _a.call(overloads_1);
-            }
-            finally { if (e_3) throw e_3.error; }
-        }
+        var newContext = {};
+        fn.as.b.forEach(function (binding) {
+            var bindingResult = getUndefinedSymbols([binding.value], contextStack, builtin);
+            addToSet(result, bindingResult);
+            newContext[binding.name] = { value: true };
+        });
+        fn.as.m.forEach(function (arg) {
+            newContext[arg] = { value: true };
+        });
+        if (typeof fn.as.r === 'string')
+            newContext[fn.as.r] = { value: true };
+        var newContextStack = contextStackWithFunctionName.create(newContext);
+        var overloadResult = getUndefinedSymbols(fn.b, newContextStack, builtin);
+        addToSet(result, overloadResult);
         return result;
     }
 
@@ -5181,27 +5140,28 @@ var Playground = (function (exports) {
     var normalExpressionKeys = Object.keys(normalExpressions);
     var specialExpressionKeys = Object.keys(specialExpressions);
 
-    var _a;
-    function findOverloadFunction(overloads, nbrOfParams, sourceCodeInfo) {
-        var overloadFunction = overloads.find(function (overload) {
-            var arity = overload.a;
-            if (typeof arity === 'number')
-                return arity === nbrOfParams;
-            else
-                return arity.min <= nbrOfParams;
-        });
-        if (!overloadFunction)
-            throw new LitsError("Unexpected number of arguments, got ".concat(valueToString(nbrOfParams), "."), sourceCodeInfo);
-        return overloadFunction;
+    function checkParams(fn, nbrOfParams, sourceCodeInfo) {
+        var arity = fn.arity;
+        if (typeof arity === 'number') {
+            if (arity === nbrOfParams) {
+                return;
+            }
+        }
+        else {
+            if (arity.min <= nbrOfParams) {
+                return;
+            }
+        }
+        throw new LitsError("Unexpected number of arguments, got ".concat(valueToString(nbrOfParams), "."), sourceCodeInfo);
     }
-    var functionExecutors = (_a = {},
-        _a[FunctionType.NativeJsFunction] = function (fn, params, sourceCodeInfo) {
+    var functionExecutors = {
+        NativeJsFunction: function (fn, params, sourceCodeInfo) {
             var _a;
             try {
                 // eslint-disable-next-line ts/no-unsafe-assignment
                 var clonedParams = JSON.parse(JSON.stringify(params));
                 // eslint-disable-next-line ts/no-unsafe-argument
-                return toAny((_a = fn.f).fn.apply(_a, __spreadArray([], __read(clonedParams), false)));
+                return toAny((_a = fn.nativeFn).fn.apply(_a, __spreadArray([], __read(clonedParams), false)));
             }
             catch (error) {
                 var message = typeof error === 'string'
@@ -5212,14 +5172,15 @@ var Playground = (function (exports) {
                 throw new LitsError("Native function throwed: \"".concat(message, "\""), sourceCodeInfo);
             }
         },
-        _a[FunctionType.UserDefined] = function (fn, params, sourceCodeInfo, contextStack, _a) {
+        UserDefined: function (fn, params, sourceCodeInfo, contextStack, _a) {
             var e_1, _b;
             var evaluateAstNode = _a.evaluateAstNode;
             for (;;) {
-                var overloadFunction = findOverloadFunction(fn.o, params.length, sourceCodeInfo);
-                var args = overloadFunction.as;
+                checkParams(fn.function, params.length, sourceCodeInfo);
+                var overloadFunction = fn.function;
+                var args = overloadFunction.arguments;
                 var nbrOfMandatoryArgs = args.mandatoryArguments.length;
-                var newContext = __assign({}, overloadFunction.f);
+                var newContext = __assign({}, overloadFunction.context);
                 var length_1 = Math.max(params.length, args.mandatoryArguments.length);
                 var rest = [];
                 for (var i = 0; i < length_1; i += 1) {
@@ -5236,9 +5197,9 @@ var Playground = (function (exports) {
                     newContext[args.restArgument] = { value: rest };
                 try {
                     var result = null;
-                    var newContextStack = contextStack.create(newContext, fn.x);
+                    var newContextStack = contextStack.create(newContext);
                     try {
-                        for (var _c = (e_1 = void 0, __values(overloadFunction.b)), _d = _c.next(); !_d.done; _d = _c.next()) {
+                        for (var _c = (e_1 = void 0, __values(overloadFunction.body)), _d = _c.next(); !_d.done; _d = _c.next()) {
                             var node = _d.value;
                             result = evaluateAstNode(node, newContextStack);
                         }
@@ -5261,13 +5222,13 @@ var Playground = (function (exports) {
                 }
             }
         },
-        _a[FunctionType.Partial] = function (fn, params, sourceCodeInfo, contextStack, _a) {
+        Partial: function (fn, params, sourceCodeInfo, contextStack, _a) {
             var executeFunction = _a.executeFunction;
-            return executeFunction(fn.f, __spreadArray(__spreadArray([], __read(fn.p), false), __read(params), false), contextStack, sourceCodeInfo);
+            return executeFunction(fn.function, __spreadArray(__spreadArray([], __read(fn.params), false), __read(params), false), contextStack, sourceCodeInfo);
         },
-        _a[FunctionType.Comp] = function (fn, params, sourceCodeInfo, contextStack, _a) {
+        Comp: function (fn, params, sourceCodeInfo, contextStack, _a) {
             var executeFunction = _a.executeFunction;
-            var f = fn.f;
+            var f = fn.params;
             if (f.length === 0) {
                 if (params.length !== 1)
                     throw new LitsError("(comp) expects one argument, got ".concat(valueToString(params.length), "."), sourceCodeInfo);
@@ -5277,22 +5238,22 @@ var Playground = (function (exports) {
                 return [executeFunction(toAny(fun), result, contextStack, sourceCodeInfo)];
             }, params)[0], sourceCodeInfo);
         },
-        _a[FunctionType.Constantly] = function (fn) {
-            return fn.v;
+        Constantly: function (fn) {
+            return fn.value;
         },
-        _a[FunctionType.Juxt] = function (fn, params, sourceCodeInfo, contextStack, _a) {
+        Juxt: function (fn, params, sourceCodeInfo, contextStack, _a) {
             var executeFunction = _a.executeFunction;
-            return fn.f.map(function (fun) { return executeFunction(toAny(fun), params, contextStack, sourceCodeInfo); });
+            return fn.params.map(function (fun) { return executeFunction(toAny(fun), params, contextStack, sourceCodeInfo); });
         },
-        _a[FunctionType.Complement] = function (fn, params, sourceCodeInfo, contextStack, _a) {
+        Complement: function (fn, params, sourceCodeInfo, contextStack, _a) {
             var executeFunction = _a.executeFunction;
-            return !executeFunction(fn.f, params, contextStack, sourceCodeInfo);
+            return !executeFunction(fn.function, params, contextStack, sourceCodeInfo);
         },
-        _a[FunctionType.EveryPred] = function (fn, params, sourceCodeInfo, contextStack, _a) {
+        EveryPred: function (fn, params, sourceCodeInfo, contextStack, _a) {
             var e_2, _b, e_3, _c;
             var executeFunction = _a.executeFunction;
             try {
-                for (var _d = __values(fn.f), _e = _d.next(); !_e.done; _e = _d.next()) {
+                for (var _d = __values(fn.params), _e = _d.next(); !_e.done; _e = _d.next()) {
                     var f = _e.value;
                     try {
                         for (var params_1 = (e_3 = void 0, __values(params)), params_1_1 = params_1.next(); !params_1_1.done; params_1_1 = params_1.next()) {
@@ -5320,11 +5281,11 @@ var Playground = (function (exports) {
             }
             return true;
         },
-        _a[FunctionType.SomePred] = function (fn, params, sourceCodeInfo, contextStack, _a) {
+        SomePred: function (fn, params, sourceCodeInfo, contextStack, _a) {
             var e_4, _b, e_5, _c;
             var executeFunction = _a.executeFunction;
             try {
-                for (var _d = __values(fn.f), _e = _d.next(); !_e.done; _e = _d.next()) {
+                for (var _d = __values(fn.params), _e = _d.next(); !_e.done; _e = _d.next()) {
                     var f = _e.value;
                     try {
                         for (var params_2 = (e_5 = void 0, __values(params)), params_2_1 = params_2.next(); !params_2_1.done; params_2_1 = params_2.next()) {
@@ -5352,17 +5313,17 @@ var Playground = (function (exports) {
             }
             return false;
         },
-        _a[FunctionType.Fnull] = function (fn, params, sourceCodeInfo, contextStack, _a) {
+        Fnull: function (fn, params, sourceCodeInfo, contextStack, _a) {
             var executeFunction = _a.executeFunction;
-            var fnulledParams = params.map(function (param, index) { return (param === null ? toAny(fn.p[index]) : param); });
-            return executeFunction(toAny(fn.f), fnulledParams, contextStack, sourceCodeInfo);
+            var fnulledParams = params.map(function (param, index) { return (param === null ? toAny(fn.params[index]) : param); });
+            return executeFunction(toAny(fn.function), fnulledParams, contextStack, sourceCodeInfo);
         },
-        _a[FunctionType.Builtin] = function (fn, params, sourceCodeInfo, contextStack, _a) {
+        Builtin: function (fn, params, sourceCodeInfo, contextStack, _a) {
             var executeFunction = _a.executeFunction;
             var normalExpression = asNonUndefined(normalExpressions[fn.n], sourceCodeInfo);
             return normalExpression.evaluate(params, sourceCodeInfo, contextStack, { executeFunction: executeFunction });
         },
-        _a);
+    };
 
     function evaluate(ast, contextStack) {
         var e_1, _a;
@@ -5428,7 +5389,7 @@ var Playground = (function (exports) {
     }
     function executeFunction(fn, params, contextStack, sourceCodeInfo) {
         if (isLitsFunction(fn))
-            return functionExecutors[fn.t](fn, params, sourceCodeInfo, contextStack, { evaluateAstNode: evaluateAstNode, executeFunction: executeFunction });
+            return functionExecutors[fn.functionType](fn, params, sourceCodeInfo, contextStack, { evaluateAstNode: evaluateAstNode, executeFunction: executeFunction });
         if (Array.isArray(fn))
             return evaluateArrayAsFunction(fn, params, sourceCodeInfo);
         if (isObj(fn))
@@ -5574,12 +5535,12 @@ var Playground = (function (exports) {
             this.lazyValues = lazyHostValues;
             this.nativeJsFunctions = nativeJsFunctions;
         }
-        ContextStackImpl.prototype.create = function (context, extraData) {
+        ContextStackImpl.prototype.create = function (context) {
             var globalContext = this.globalContext;
             var contextStack = new ContextStackImpl({
                 contexts: __spreadArray([context], __read(this.contexts), false),
                 values: this.values,
-                lazyValues: extraData ? __assign(__assign({}, this.lazyValues), extraData) : this.lazyValues,
+                lazyValues: this.lazyValues,
                 nativeJsFunctions: this.nativeJsFunctions,
             });
             contextStack.globalContext = globalContext;
@@ -5673,7 +5634,7 @@ var Playground = (function (exports) {
                 var builtinFunction = (_b = {},
                     _b[FUNCTION_SYMBOL] = true,
                     _b.sourceCodeInfo = sourceCodeInfo,
-                    _b.t = FunctionType.Builtin,
+                    _b.functionType = 'Builtin',
                     _b.n = value,
                     _b);
                 return builtinFunction;
@@ -5719,9 +5680,9 @@ var Playground = (function (exports) {
                         return acc;
                     }
                     acc[name] = (_b = {
-                            t: FunctionType.NativeJsFunction,
-                            f: jsFunction,
-                            n: name
+                            functionType: 'NativeJsFunction',
+                            nativeFn: jsFunction,
+                            name: name
                         },
                         _b[FUNCTION_SYMBOL] = true,
                         _b);
@@ -6615,11 +6576,11 @@ var Playground = (function (exports) {
                     type: 'SpecialExpression',
                     name: 'fn',
                     params: [],
-                    o: [{
-                            as: functionArguments,
-                            b: [body],
-                            a: arity,
-                        }],
+                    function: {
+                        as: functionArguments,
+                        b: [body],
+                        a: arity,
+                    },
                     token: tokenSourceCodeInfo(firstToken) && firstToken,
                 };
             }
@@ -6745,13 +6706,11 @@ var Playground = (function (exports) {
                 type: 'SpecialExpression',
                 name: 'fn',
                 params: [],
-                o: [
-                    {
-                        as: args,
-                        b: [exprNode],
-                        a: args.m.length,
-                    },
-                ],
+                function: {
+                    as: args,
+                    b: [exprNode],
+                    a: args.m.length,
+                },
                 token: tokenSourceCodeInfo(firstToken) && firstToken,
             };
             return node;
@@ -7212,11 +7171,11 @@ var Playground = (function (exports) {
                 name: 'function',
                 f: symbol,
                 params: [],
-                o: [{
-                        as: functionArguments,
-                        b: body,
-                        a: arity,
-                    }],
+                function: {
+                    as: functionArguments,
+                    b: body,
+                    a: arity,
+                },
                 token: tokenSourceCodeInfo(token) && token,
             };
         };
@@ -7273,11 +7232,11 @@ var Playground = (function (exports) {
                     name: 'defn',
                     f: symbol,
                     params: [],
-                    o: [{
-                            as: functionArguments,
-                            b: body,
-                            a: arity,
-                        }],
+                    function: {
+                        as: functionArguments,
+                        b: body,
+                        a: arity,
+                    },
                     token: tokenSourceCodeInfo(token) && token,
                 };
             }

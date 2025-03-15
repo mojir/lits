@@ -1,5 +1,4 @@
 /* v8 ignore next 1000 */
-export { FunctionType } from './constants/constants'
 export {
   isBuiltinFunction,
   isLitsFunction,
@@ -12,7 +11,7 @@ export {
   asNativeJsFunction,
   assertNativeJsFunction,
 } from './typeGuards/litsFunction'
-export { type LitsFunction, type NativeJsFunction, type ExtraData } from './parser/types'
+export { type LitsFunction, type NativeJsFunction } from './parser/types'
 export type { Context } from './evaluator/interface'
 export type { Ast } from './parser/types'
 export type { SourceCodeInfo } from './tokenizer/token'

@@ -1,5 +1,4 @@
 import { builtin, normalExpressionKeys, specialExpressionKeys } from '../builtin'
-import { FunctionType } from '../constants/constants'
 import { UndefinedSymbolError } from '../errors'
 import type { Any } from '../interface'
 import type { ContextParams, LazyValue } from '../Lits/Lits'
@@ -120,7 +119,7 @@ export class ContextStackImpl {
       const builtinFunction: BuiltinFunction = {
         [FUNCTION_SYMBOL]: true,
         sourceCodeInfo,
-        functionType: FunctionType.Builtin,
+        functionType: 'Builtin',
         n: value,
       }
       return builtinFunction
@@ -168,7 +167,7 @@ export function createContextStack(params: ContextParams = {}): ContextStack {
           return acc
         }
         acc[name] = {
-          functionType: FunctionType.NativeJsFunction,
+          functionType: 'NativeJsFunction',
           nativeFn: jsFunction,
           name,
           [FUNCTION_SYMBOL]: true,

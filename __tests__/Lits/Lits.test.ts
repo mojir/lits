@@ -6,7 +6,6 @@ import { Lits } from '../../src/Lits/Lits'
 import { assertLitsFunction } from '../../src/typeGuards/litsFunction'
 import { FUNCTION_SYMBOL } from '../../src/utils/symbols'
 import type { Ast } from '../../src/parser/types'
-import { FunctionType } from '../../src/constants/constants'
 
 describe('all tests', () => {
   describe('tEST', () => {
@@ -42,22 +41,20 @@ describe('all tests', () => {
         foo: {
           read: () => ({
             [FUNCTION_SYMBOL]: true,
-            functionType: FunctionType.UserDefined,
-            o: [
-              {
-                arguments: {
-                  mandatoryArguments: [],
-                },
-                arity: 0,
-                body: [
-                  {
-                    type: 'Number',
-                    value: 42,
-                  },
-                ],
-                f: {},
+            functionType: 'UserDefined',
+            function: {
+              arguments: {
+                mandatoryArguments: [],
               },
-            ],
+              arity: 0,
+              body: [
+                {
+                  type: 'Number',
+                  value: 42,
+                },
+              ],
+              f: {},
+            },
           }),
         },
       }

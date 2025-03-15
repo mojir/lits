@@ -2,7 +2,6 @@ import { getAssertionError } from '../utils/getAssertionError'
 import type { BuiltinFunction, LitsFunction, NativeJsFunction, UserDefinedFunction } from '../parser/types'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { FUNCTION_SYMBOL } from '../utils/symbols'
-import { FunctionType } from '../constants/constants'
 import { isUnknownRecord } from '.'
 
 export function isLitsFunction(value: unknown): value is LitsFunction {
@@ -21,7 +20,7 @@ export function assertLitsFunction(value: unknown, sourceCodeInfo?: SourceCodeIn
 }
 
 export function isUserDefinedFunction(value: unknown): value is UserDefinedFunction {
-  return isLitsFunction(value) && value.functionType === FunctionType.UserDefined
+  return isLitsFunction(value) && value.functionType === 'UserDefined'
 }
 export function asUserDefinedFunction(value: unknown, sourceCodeInfo?: SourceCodeInfo): UserDefinedFunction {
   assertUserDefinedFunction(value, sourceCodeInfo)
@@ -36,7 +35,7 @@ export function assertUserDefinedFunction(
 }
 
 export function isNativeJsFunction(value: unknown): value is NativeJsFunction {
-  return isLitsFunction(value) && value.functionType === FunctionType.NativeJsFunction
+  return isLitsFunction(value) && value.functionType === 'NativeJsFunction'
 }
 export function asNativeJsFunction(value: unknown, sourceCodeInfo?: SourceCodeInfo): NativeJsFunction {
   assertNativeJsFunction(value, sourceCodeInfo)
@@ -51,5 +50,5 @@ export function assertNativeJsFunction(
 }
 
 export function isBuiltinFunction(value: unknown): value is BuiltinFunction {
-  return isUnknownRecord(value) && value.functionType === FunctionType.Builtin
+  return isUnknownRecord(value) && value.functionType === 'Builtin'
 }

@@ -1,4 +1,3 @@
-import { FunctionType } from '../src/constants/constants'
 import type { UnknownRecord } from '../src/interface'
 import { isRegularExpression } from '../src/typeGuards/lits'
 import { isLitsFunction } from '../src/typeGuards/litsFunction'
@@ -7,7 +6,7 @@ export function stringifyValue(value: unknown, html: boolean): string {
   const gt = html ? '&gt;' : '>'
   const lt = html ? '&lt;' : '<'
   if (isLitsFunction(value)) {
-    if (value.functionType === FunctionType.Builtin)
+    if (value.functionType === 'Builtin')
       return `${lt}builtin function ${value.n}${gt}`
     else
       return `${lt}function ${(value as unknown as UnknownRecord).n ?? '\u03BB'}${gt}`

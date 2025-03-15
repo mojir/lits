@@ -1,16 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { ContextStackImpl, createContextStack } from '../../src/evaluator/ContextStack'
-import type { SymbolNode } from '../../src/parser/types'
-
-function createNameNode(name: string): SymbolNode {
-  return {
-    type: 'Symbol',
-    value: name,
-    token: undefined,
-    params: [],
-    name: undefined,
-  }
-}
+import { createContextStack } from '../../src/evaluator/ContextStack'
 
 describe('contextStack', () => {
   it('should throw if adding duplicate export', () => {
