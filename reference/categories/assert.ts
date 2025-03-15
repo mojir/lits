@@ -29,7 +29,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
     title: 'assert!=',
     category: 'Assert',
     linkName: 'assert-exclamation-equal',
-    clojureDocs: null,
     returns: {
       type: 'null',
     },
@@ -56,7 +55,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
     title: 'assert=',
     category: 'Assert',
     linkName: 'assert-equal',
-    clojureDocs: null,
     returns: {
       type: 'null',
     },
@@ -82,7 +80,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
     title: 'assert-gt',
     category: 'Assert',
     linkName: 'assert-gt',
-    clojureDocs: null,
     returns: {
       type: 'null',
     },
@@ -108,7 +105,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
     title: 'assert-lt',
     category: 'Assert',
     linkName: 'assert-lt',
-    clojureDocs: null,
     returns: {
       type: 'null',
     },
@@ -134,7 +130,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
     title: 'assert-gte',
     category: 'Assert',
     linkName: 'assert-gte',
-    clojureDocs: null,
     returns: {
       type: 'null',
     },
@@ -160,7 +155,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
     title: 'assert-lte',
     category: 'Assert',
     linkName: 'assert-lte',
-    clojureDocs: null,
     returns: {
       type: 'null',
     },
@@ -186,7 +180,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
     title: 'assert-true',
     category: 'Assert',
     linkName: 'assert-true',
-    clojureDocs: null,
     returns: {
       type: 'null',
     },
@@ -214,7 +207,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
     title: 'assert-false',
     category: 'Assert',
     linkName: 'assert-false',
-    clojureDocs: null,
     returns: {
       type: 'null',
     },
@@ -242,7 +234,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
     title: 'assert-truthy',
     category: 'Assert',
     linkName: 'assert-truthy',
-    clojureDocs: null,
     returns: {
       type: 'null',
     },
@@ -277,7 +268,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
     title: 'assert-falsy',
     category: 'Assert',
     linkName: 'assert-falsy',
-    clojureDocs: null,
     returns: {
       type: 'null',
     },
@@ -311,7 +301,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
     title: 'assert-null',
     category: 'Assert',
     linkName: 'assert-null',
-    clojureDocs: null,
     returns: {
       type: 'null',
     },
@@ -345,7 +334,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
     title: 'assert-throws',
     category: 'Assert',
     linkName: 'assert-throws',
-    clojureDocs: null,
     returns: {
       type: 'null',
     },
@@ -372,7 +360,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
     title: 'assert-throws-error',
     category: 'Assert',
     linkName: 'assert-throws-error',
-    clojureDocs: null,
     returns: {
       type: 'null',
     },
@@ -402,7 +389,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
     title: 'assert-not-throws',
     category: 'Assert',
     linkName: 'assert-not-throws',
-    clojureDocs: null,
     returns: {
       type: 'null',
     },

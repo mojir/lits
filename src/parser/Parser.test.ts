@@ -614,14 +614,14 @@ describe('operators', () => {
 
   describe('export', () => {
     test('samples', () => {
-      // expect(lits.run('export let a := 10; a')).toBe(10)
+      expect(lits.run('export let a := 10; a')).toBe(10)
       expect(lits.run(`
         export function foo()
           10
         end;
         foo()`)).toBe(10)
     })
-    // expect(() => lits.run('export let a := 10; let a := 2;')).toThrow()
+    expect(() => lits.run('export let a := 10; let a := 2;')).toThrow()
   })
 
   test('multinine comment', () => {
@@ -1129,6 +1129,7 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
     it('supports lambda functions with let bindings', () => {
       // Support for let bindings
       expect(lits.run('(x -> (y, let x := x) -> x + y)(1)(2)')).toBe(3)
+      expect(lits.run('((let x := 1) -> x + x)()')).toBe(2)
       expect(lits.run(`
 (a -> 
   (b, 

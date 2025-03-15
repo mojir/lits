@@ -829,12 +829,12 @@ export class Parser {
   private parseTry(token: SymbolToken): TryNode {
     this.advance()
     const tryExpressions: AstNode[] = []
-    while (!this.isAtEnd() && !isSymbolToken(this.peek(), 'catch')) {
+    while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'catch')) {
       tryExpressions.push(this.parseExpression())
       if (isOperatorToken(this.peek(), ';')) {
         this.advance()
       }
-      else if (!isSymbolToken(this.peek(), 'catch')) {
+      else if (!isReservedSymbolToken(this.peek(), 'catch')) {
         throw new LitsError('Expected ;', tokenSourceCodeInfo(this.peek()))
       }
     }
@@ -848,7 +848,7 @@ export class Parser {
         token: tokenSourceCodeInfo(token) && token,
       } satisfies DoNode
 
-    assertSymbolToken(this.peek(), 'catch')
+    assertReservedSymbolToken(this.peek(), 'catch')
     this.advance()
 
     let errorSymbol: SymbolNode | undefined
@@ -1264,11 +1264,8 @@ export class Parser {
     if (isOperatorToken(token)) {
       return [';', ','].includes(token[1])
     }
-    if (isSymbolToken(token)) {
-      return ['catch'].includes(token[1])
-    }
     if (isReservedSymbolToken(token)) {
-      return ['else', 'when', 'while', 'then', 'end', 'case'].includes(token[1])
+      return ['else', 'when', 'while', 'then', 'end', 'case', 'catch'].includes(token[1])
     }
     return false
   }

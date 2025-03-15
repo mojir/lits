@@ -115,7 +115,7 @@ function getStylesFromToken(token: Token): string {
       return styles('text-color-Pink')
     case 'Symbol':
       return specialExpressionSet.has(token[1])
-        ? styles('text-color-white')
+        ? styles('text-color-BrightYellow')
         : normalExpressionSet.has(token[1])
           ? styles('text-color-Beige')
           : styles('text-color-Mint')
@@ -128,7 +128,7 @@ function getStylesFromToken(token: Token): string {
     case 'Operator':
       return styles('text-color-gray-300')
     case 'ReservedSymbol':
-      return styles('text-color-white')
+      return styles('text-color-BrightYellow')
     case 'Whitespace':
       return ''
     case 'LBrace':

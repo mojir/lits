@@ -104,7 +104,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
     title: 'function?',
     category: 'Predicate',
     linkName: 'function-question',
-    clojureDocs: null,
     returns: {
       type: 'boolean',
     },
@@ -157,7 +156,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
     title: 'array?',
     category: 'Predicate',
     linkName: 'array-question',
-    clojureDocs: 'vector_q',
     returns: {
       type: 'boolean',
     },
@@ -183,7 +181,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
     title: 'object?',
     category: 'Predicate',
     linkName: 'object-question',
-    clojureDocs: null,
     returns: {
       type: 'boolean',
     },
@@ -211,7 +208,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
     title: 'coll?',
     category: 'Predicate',
     linkName: 'coll-question',
-    clojureDocs: null,
     returns: {
       type: 'boolean',
     },
@@ -238,7 +234,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
     title: 'seq?',
     category: 'Predicate',
     linkName: 'seq-question',
-    clojureDocs: null,
     returns: {
       type: 'boolean',
     },
@@ -265,7 +260,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
     title: 'regexp?',
     category: 'Predicate',
     linkName: 'regexp-question',
-    clojureDocs: null,
     returns: {
       type: 'boolean',
     },
@@ -409,7 +403,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
     title: 'finite?',
     category: 'Predicate',
     linkName: 'finite-question',
-    clojureDocs: null,
     returns: {
       type: 'boolean',
     },
@@ -433,7 +426,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
     title: 'nan?',
     category: 'Predicate',
     linkName: 'nan-question',
-    clojureDocs: null,
     returns: {
       type: 'boolean',
     },
@@ -457,7 +449,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
     title: 'negative-infinity?',
     category: 'Predicate',
     linkName: 'negative-infinity-question',
-    clojureDocs: null,
     returns: {
       type: 'boolean',
     },
@@ -481,7 +472,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
     title: 'positive-infinity?',
     category: 'Predicate',
     linkName: 'positive-infinity-question',
-    clojureDocs: null,
     returns: {
       type: 'boolean',
     },
@@ -577,7 +567,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
     title: 'not-empty?',
     category: 'Predicate',
     linkName: 'not-empty-question',
-    clojureDocs: null,
     returns: {
       type: 'boolean',
     },

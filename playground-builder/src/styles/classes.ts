@@ -45,6 +45,8 @@ type standardColors =
   | '-black'
 
 type customColors =
+  | '-BrightYellow'
+  | '-GoldenYellow'
   | '-Rose'
   | '-Viola'
   | '-Blue'

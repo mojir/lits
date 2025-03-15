@@ -53,6 +53,367 @@ write!([1, 2, 3][2]);
   plus(x, y)
       `.trim(),
   },
+  {
+    id: 'text-based-game',
+    name: 'A game',
+    description: 'Text based adventure game.',
+    context: {
+      jsFunctions: {
+        'alert!': '(message) => alert(message)',
+        'read-line!': '(message) => prompt(message)',
+      },
+    },
+    code: `
+// Functional Text Adventure Game in Lits
+
+// Define locations
+let locations := {
+  forest := {
+    description := "You are in a dense forest. Light filters through the leaves above.",
+    exits := { north := "cave", east := "river", south := "meadow" }
+  },
+  cave := {
+    description := "You stand in a dark cave. Water drips from stalactites overhead.",
+    exits := { south := "forest", east := "tunnel" },
+    items := ["torch"]
+  },
+  river := {
+    description := "A swift river flows from the mountains. The water is crystal clear.",
+    exits := { west := "forest", north := "waterfall" },
+    items := ["fishing rod"]
+  },
+  meadow := {
+    description := "A peaceful meadow stretches before you, filled with wildflowers.",
+    exits := { north := "forest", east := "cottage" },
+    items := ["flowers"]
+  },
+  waterfall := {
+    description := "A magnificent waterfall cascades down from high cliffs.",
+    exits := { south := "river" },
+    items := ["shiny stone"]
+  },
+  tunnel := {
+    description := "A narrow tunnel leads deeper into the mountain.",
+    exits := { west := "cave", east := "treasure room" }
+  },
+  "treasure room" := {
+    description := "A small chamber glittering with treasure!",
+    exits := { west := "tunnel" },
+    items := ["gold key", "ancient map", "jeweled crown"]
+  },
+  cottage := {
+    description := "A cozy cottage with a smoking chimney stands here.",
+    exits := { west := "meadow" },
+    items := ["bread"]
+  }
+};
+
+// Define game state
+let initial-state := {
+  current-location := "forest",
+  inventory := [],
+  visited := {},
+  game-over := false,
+  moves := 0,
+  light-source := false
+};
+
+// Helper functions
+function has-item?(state, item)
+  contains?(state.inventory, item);
+end;
+
+function location-has-item?(location, item)
+  contains?(get(location, "items", []), item);
+end;
+
+function describe-location(state)
+  let location := get(locations, state.current-location);
+  let description := location.description;
+
+  // Add visited status
+  let visited-status := if get(state.visited, state.current-location, 0) > 1 then
+    "You've been here before."
+  else
+    "This is your first time here."
+  end;
+
+  // Check if location has items
+  let items-desc := if !(empty?(get(location, "items", []))) then
+    "You see: " ++ join(location.items, ", ")
+  end;
+
+  // Describe exits
+  let exits := keys(location.exits) join ", ";
+  let exits-desc := "Exits: " ++ exits;
+
+  // Join all descriptions
+  filter([description, visited-status, items-desc, exits-desc], -> !(empty?($))) join "\\n"
+end;
+
+function get-location-items(state)
+  let location := get(locations, state.current-location);
+  get(location, "items", [])
+end;
+
+// Game actions
+function move(state, direction)
+  let location := get(locations, state.current-location);
+  let exits := get(location, "exits", {});
+
+  // Check if direction is valid
+  if contains?(exits, direction) then
+    let new-location := get(exits, direction);
+    let is-dark := new-location = "tunnel" || new-location = "treasure room";
+
+    // Check if player has light source for dark areas
+    if is-dark && !(state.light-source) then
+      [state, "It's too dark to go that way without a light source."]
+    else
+      let new-visited := assoc(
+        state.visited,
+        new-location,
+        inc(state.visited["new-location"] ?? 0)
+      );
+      let new-state := assoc(
+        assoc(
+          assoc(state, "current-location", new-location),
+          "visited",
+          new-visited
+        ),
+        "moves",
+        state.moves + 1
+      );
+
+      [new-state, "You move " ++ direction ++ " to the " ++ new-location ++ "."]
+    end
+  else
+    [state, "You can't go that way."]
+  end
+end;
+
+function take!(state, item)
+  let items := get-location-items(state);
+
+  if contains?(items, item) then
+    let location := get(locations, state.current-location);
+    let new-location-items := filter(items, -> $ ≠ item);
+    let new-inventory := push(state.inventory, item);
+
+    // Update game state
+    let new-locations := assoc(
+      locations, 
+      state.current-location,
+      assoc(location, "items", new-location-items)
+    );
+
+    // Special case for torch
+    let has-light := item = "torch" || state.light-source;
+
+    // Update locations and state
+    let locations := new-locations;
+    let new-state := assoc(
+      assoc(
+        assoc(state, "inventory", new-inventory),
+        "light-source", has-light
+      ),
+      "moves",
+      state.moves + 1
+    );
+    [new-state, "You take the " ++ item ++ "."]
+  else
+    [state, "There is no " ++ item ++ " here."]
+  end
+end;
+
+function drop!(state, item)
+  if has-item?(state, item) then
+    let location := get(locations, state.current-location);
+    let location-items := get(location, "items", []);
+    let new-location-items := push(location-items, item);
+    let new-inventory := filter(-> $ ≠ item, state.inventory);
+
+    // Special case for torch
+    let still-has-light := !(item = "torch") || contains?(new-inventory, "torch");
+
+    // Update locations and state
+    let new-location := assoc(location, "items", new-location-items);
+    let locations := assoc(locations, state.current-location, new-location);
+
+    let new-state := assoc(
+      assoc(
+        assoc(
+          state, "inventory", new-inventory),
+          "light-source",
+          still-has-light
+        ),
+        "moves",
+        state.moves + 1
+      );
+    [new-state, "You drop the " ++ item ++ "."]
+  else
+    [state, "You don't have a " ++ item ++ " in your inventory."]
+  end
+end;
+
+function inventory(state)
+  if empty?(state.inventory) then
+    [state, "Your inventory is empty."]
+  else
+    [state, "Inventory: " ++ join(state.inventory, ", ")]
+  end
+end;
+
+function use(state, item)
+  switch item
+    case "fishing rod" then
+      if state.current-location = "river" then
+        [assoc(state, "moves", state.moves + 1), "You catch a small fish, but it slips away."]
+      else
+        [state, "There's no place to use a fishing rod here."]
+      end
+    case "torch" then
+      if has-item?(state, item) then
+        [
+          assoc(assoc(state, "light-source", true), "moves", state.moves + 1),
+          "The torch illuminates the area with a warm glow."
+        ]
+      else
+        [state, "You don't have a torch."]
+      end
+    case "gold key" then
+      if has-item?(state, item) && state.current-location = "treasure room" then
+        [
+          assoc(
+            assoc(state, "game-over", true),
+            "moves",
+            state.moves + 1
+          ),
+         "You use the gold key to unlock a secret compartment, revealing a fabulous diamond! You win!"
+        ]
+      else
+        [state, "The key doesn't fit anything here."]
+      end
+    case "bread" then
+      if has-item?(state, item) then
+        let new-inventory := filter(state.inventory, -> $ ≠ item);
+        [
+          assoc(
+            assoc(state, "inventory", new-inventory),
+            "moves",
+            state.moves + 1
+          ),
+          "You eat the bread. It's delicious and nourishing."
+        ]
+      else
+        [state, "You don't have any bread."]
+      end
+    case "shiny stone" then
+      if has-item?(state, item) then
+        [
+          assoc(state, "moves", state.moves + 1),
+          "The stone glows with a faint blue light. It seems magical but you're not sure how to use it yet."
+        ]
+      else
+        [state, "You don't have a shiny stone."]
+      end
+    case "flowers" then
+      if has-item?(state, item) then
+        [
+          assoc(state, "moves", state.moves + 1),
+          "You smell the flowers. They have a sweet, calming fragrance."
+        ]
+      else
+        [state, "You don't have any flowers."]
+      end
+    case "ancient map" then
+      if has-item?(state, item) then
+        [
+          assoc(state, "moves", state.moves + 1),
+          "The map shows the layout of the area. All locations are now marked as visited."
+        ]
+      else
+        [state, "You don't have a map."]
+      end
+    case "jeweled crown" then
+      if has-item?(state, item) then
+        [
+          assoc(state, "moves", state.moves + 1),
+          "You place the crown on your head. You feel very regal."
+        ]
+      else
+        [state, "You don't have a crown."]
+      end
+  end ?? [state, "You can't use that."]
+end;
+
+// Command parser
+function parse-command(state, input)
+  let tokens := lower-case(input) split " ";
+  let command := first(tokens);
+  let args := rest(tokens) join " ";
+
+  let result := switch command
+    case "go" then
+      move(state, args)
+    case "north" then
+      move(state, "north")
+    case "south" then
+      move(state, "south")
+    case "east" then
+      move(state, "east")
+    case "west" then
+      move(state, "west")
+    case "take" then
+      take!(state, args)
+    case "drop" then
+      drop!(state, args)
+    case "inventory" then
+      inventory(state)
+    case "i" then
+      inventory(state)
+    case "look" then
+      [assoc(state, "moves", state.moves + 1), describe-location(state)]
+    case "use" then
+      use(state, args)
+    case "help" then
+      [state, "Commands: go [direction], north, south, east, west, take [item], drop [item], inventory, look, use [item], help, quit"]
+    case "quit" then
+      [assoc(state, "game-over", true), "Thanks for playing!"]
+  end ?? [state, "I don't understand that command. Type 'help' for a list of commands."]
+
+  result
+end;
+
+// Game loop
+function game-loop(state)
+  alert!(describe-location(state) ++ "\\nWhat do you do? ");
+
+  let input := read-line!();
+  let command_result := parse-command(state, input);
+  let new-state := first(command_result);
+  let message := second(command_result);
+
+  alert!("\\n" ++ message ++ "\\n");
+
+  if new-state.game-over then
+    alert!("\\nGame over! You made " ++ str(new-state.moves) ++ " moves.");
+    new-state
+  else
+    game-loop(new-state)
+  end
+end;
+
+// Start game
+function start-game()
+  alert!("=== Lits Adventure Game ===\\n" ++ "Type 'help' for a list of commands.\\n\\n");
+  game-loop(initial-state)
+end;
+
+// Call the function to start the game
+start-game()    
+    `.trim(),
+  },
   //   {
   //     id: 'phone-number-formatter',
   //     name: 'Phone number formatter',

@@ -1,7 +1,7 @@
 import { type SpecialExpressionsApiName, getOperatorArgs } from '../api'
-import type { FunctionReference } from '..'
+import type { CustomReference, FunctionReference } from '..'
 
-export const specialExpressionsReference: Record<SpecialExpressionsApiName, FunctionReference<'Special expression'>> = {
+export const specialExpressionsReference: Record<SpecialExpressionsApiName, FunctionReference<'Special expression'> | CustomReference<'Special expression'>> = {
   '&&': {
     title: '&&',
     category: 'Special expression',
@@ -39,7 +39,6 @@ If all expressions evaluate to truthy values, the value of the last expression i
     title: '||',
     category: 'Special expression',
     linkName: '-or-or',
-    clojureDocs: 'or',
     returns: {
       type: 'boolean',
     },
@@ -68,232 +67,100 @@ If all expressions evaluate to truthy values, the value of the last expression i
       '||(1, 2, 3, 4)',
     ],
   },
-  //   'def': {
-  //     title: 'def',
-  //     category: 'Special expression',
-  //     linkName: 'def',
-  //     returns: {
-  //       type: 'any',
-  //     },
-  //     args: {
-  //       n: {
-  //         type: '*name',
-  //       },
-  //       value: {
-  //         type: '*expression',
-  //       },
-  //     },
-  //     variants: [
-  //       { argumentNames: ['n', 'value'] },
-  //     ],
-  //     description: `Bind $value to variable $n.
+  'let': {
+    title: 'let',
+    category: 'Special expression',
+    linkName: 'let',
+    customVariants: ['let s := value;'],
+    details: [
+      ['s', 'symbol', 'The name of the variable to bind.'],
+      ['value', 'any', 'The value to bind to the variable.'],
+    ],
+    description: `
+  Binds local variables s to \`value\`. \`value\` can be any expression. The scope of the variables is the body of the let expression.`,
+    examples: [`
+let a := 1 + 2 + 3 + 4;
+let b := -> $ * ( $ + 1 );
+write!("a", a, "b", b)`],
+  },
+  'function': {
+    title: 'function',
+    category: 'Special expression',
+    linkName: 'function',
+    customVariants: ['function name(args [, let-bindings]) body end;'],
+    details: [
+      ['name', 'symbol', 'The name of the function.'],
+      ['args', 'symbol', 'The arguments of the function.'],
+      ['let-bindings', 'symbol', 'Optional. The let bindings of the function.'],
+      ['body', 'one or more expressions', 'The body of the function.'],
+    ],
+    description: 'Creates a named function. When called, evaluation of the last expression in the body is returned.',
+    examples: [
+      `
+function hyp (a, b)
+  sqrt(a * a + b * b)
+end;
 
-  // If $n is already defined, an error is thrown.`,
-  //     examples: [
-  //       '(def a (object))',
-  //       '(def a (object :x 10 :y true :z "A string"))',
-  //     ],
-  //   },
-  //   'let': {
-  //     title: 'let',
-  //     category: 'Special expression',
-  //     linkName: 'let',
-  //     returns: {
-  //       type: 'any',
-  //     },
-  //     args: {
-  //       bindings: {
-  //         type: '*binding',
-  //         rest: true,
-  //       },
-  //     },
-  //     variants: [
-  //       { argumentNames: ['bindings'] },
-  //     ],
-  //     description: `
-  // Binds local variables.`,
-  //     examples: [`
-  // (let [a (+ 1 2 3 4)
-  //       b (* 1 2 3 4)])
-  // (write! a b)`],
-  //   },
+hyp(3, 4)`,
+      `
+function sumOfSquares(...s)
+  apply(
+    +,
+    map(s, -> $ ** 2)
+  )
+end;
 
-  //   'fn': {
-  //     title: 'fun',
-  //     category: 'Special expression',
-  //     linkName: 'fun',
-  //     returns: {
-  //       type: 'function',
-  //     },
-  //     args: {
-  //       args: {
-  //         type: '*arguments',
-  //       },
-  //       expressions: {
-  //         type: '*expression',
-  //         rest: true,
-  //       },
-  //     },
-  //     variants: [
-  //       { argumentNames: ['args', 'expressions'] },
-  //     ],
-  //     description: 'Creates a function. When called, evaluation of the last expression in the body is returned.',
-  //     examples: [
-  //       `
-  // (fun [a b]
-  //   (sqrt
-  //     (+
-  //       (* a a)
-  //       (* b b))))`,
-  //       `
-  // (
-  //   (fun [a b]
-  //     (sqrt
-  //       (+
-  //         (* a a)
-  //         (* b b))))
-  //   3
-  //   4)`,
-  //     ],
-  //   },
-  //   'function': {
-  //     title: 'function',
-  //     category: 'Special expression',
-  //     linkName: 'function',
-  //     clojureDocs: null,
-  //     returns: {
-  //       type: 'function',
-  //     },
-  //     args: {
-  //       n: {
-  //         type: '*name',
-  //       },
-  //       args: {
-  //         type: '*arguments',
-  //       },
-  //       expressions: {
-  //         type: '*expression',
-  //         rest: true,
-  //       },
-  //     },
-  //     variants: [
-  //       { argumentNames: ['n', 'args', 'expressions'] },
-  //     ],
-  //     description: 'Creates a named function. When called, evaluation of the last expression in the body is returned.',
-  //     examples: [
-  //       `
-  // (defn hyp [a b]
-  //   (sqrt
-  //     (+
-  //       (* a a)
-  //       (* b b))))
-  // hyp`,
-  //       `
-  // (defn hyp [a b]
-  //   (sqrt
-  //     (+
-  //       (* a a)
-  //       (* b b))))
-  // (hyp 3 4)`,
-  //       `
-  // (defn sumOfSquares [& s]
-  //   (apply
-  //     +
-  //     (map
-  //       (fun [x] (* x x))
-  //       s)))
-  // (sumOfSquares 1 2 3 4 5)`,
-  //     ],
-  //   },
-  //   'defn': {
-  //     title: 'defn',
-  //     category: 'Special expression',
-  //     linkName: 'defn',
-  //     returns: {
-  //       type: 'function',
-  //     },
-  //     args: {
-  //       n: {
-  //         type: '*name',
-  //       },
-  //       args: {
-  //         type: '*arguments',
-  //       },
-  //       expressions: {
-  //         type: '*expression',
-  //         rest: true,
-  //       },
-  //     },
-  //     variants: [
-  //       { argumentNames: ['n', 'args', 'expressions'] },
-  //     ],
-  //     description: 'Creates a named global function. When called, evaluation of the last expression in the body is returned.',
-  //     examples: [
-  //       `
-  // (defn hyp [a b]
-  //   (sqrt
-  //     (+
-  //       (* a a)
-  //       (* b b))))
-  // hyp`,
-  //       `
-  // (defn hyp [a b]
-  //   (sqrt
-  //     (+
-  //       (* a a)
-  //       (* b b))))
-  // (hyp 3 4)`,
-  //       `
-  // (defn sumOfSquares [& s]
-  //   (apply
-  //     +
-  //     (map
-  //       (fun [x] (* x x))
-  //       s)))
-  // (sumOfSquares 1 2 3 4 5)`,
-  //     ],
-  //   },
-  //   'try': {
-  //     title: 'try',
-  //     category: 'Special expression',
-  //     linkName: 'try',
-  //     clojureDocs: null,
-  //     returns: {
-  //       type: 'any',
-  //     },
-  //     args: {
-  //       exp: {
-  //         type: '*expression',
-  //       },
-  //       catch: {
-  //         type: '*catch-expression',
-  //       },
-  //     },
-  //     variants: [
-  //       { argumentNames: ['exp', 'catch'] },
-  //     ],
-  //     description: 'Executes $exp. If that throws, the $catch `body` gets executed. See examples for details.',
-  //     examples: [
-  //       `
-  // (try
-  //   (/ 2 4)
-  //   (catch error "Oops!"))`,
-  //       `
-  // (try
-  //   (foo)
-  //   (catch error "Oops!"))`,
-  //       `
-  // (try
-  //   (foo)
-  //   (catch error error))`,
-  //     ],
-  //   },
+sumOfSquares(1, 2, 3, 4, 5)`,
+      `
+// binding variables is sometimes useful due to dynamic scoping.
+// withBindings can be exported, and used in other files and the bound variables will be available.
+let a := 1;
+let b := 1;
+function withBindings(let x := a, let b := b)
+  x + b
+end;
+
+withBindings()`,
+
+    ],
+  },
+  'try': {
+    title: 'try',
+    category: 'Special expression',
+    linkName: 'try',
+    customVariants: ['try try-body catch catch-body end', 'try try-body catch(error) catch-body end'],
+    details: [
+      ['try-body', 'expressions', 'The expressions to try.'],
+      ['error', 'symbol', 'The error variable to bind.'],
+      ['catch-body', 'expression', 'The expressions to evaluate if the try-body throws an error.'],
+    ],
+    description: 'Executes `try-body`. If that throws, the `catch-body` gets executed. See examples for details.',
+    examples: [
+      `
+try
+  2 / 4
+catch
+  "Oops!"
+end`,
+      `
+try
+  foo()
+catch(error)
+  "Error: " ++ error.message
+end`,
+      `
+try
+  foo()
+catch
+  42
+end`,
+    ],
+  },
   //   'throw': {
   //     title: 'throw',
   //     category: 'Special expression',
   //     linkName: 'throw',
-  //     clojureDocs: null,
-  //     returns: {
+  //   //     returns: {
   //       type: 'never',
   //     },
   //     args: {
@@ -344,8 +211,7 @@ If all expressions evaluate to truthy values, the value of the last expression i
   //     title: 'unless',
   //     category: 'Special expression',
   //     linkName: 'unless',
-  //     clojureDocs: 'if-not',
-  //     returns: {
+  //   //     returns: {
   //       type: 'any',
   //     },
   //     args: {

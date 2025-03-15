@@ -36,12 +36,6 @@ export function getFunctionSignature({ title: name, variants, args, returns, _is
         if (arg.rest)
           result += '...'
         result += argName
-        if (arg.type === '*binding' || arg.type === '*for-binding')
-          result = '...TODO...'
-        else if (arg.type === '*arguments')
-          result = '...TODO...'
-        else if (arg.type === '*catch-expression')
-          result = '...TODO...'
       }
       return result
     }).join(', ')})`

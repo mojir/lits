@@ -6,7 +6,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     title: 'string-repeat',
     category: 'String',
     linkName: 'string-repeat',
-    clojureDocs: null,
     returns: {
       type: 'number',
     },
@@ -58,7 +57,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     title: 'number',
     category: 'String',
     linkName: 'number',
-    clojureDocs: null,
     returns: {
       type: 'number',
     },
@@ -102,7 +100,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     title: 'upper-case',
     category: 'String',
     linkName: 'upper-case',
-    clojureDocs: null,
     returns: {
       type: 'string',
     },
@@ -124,7 +121,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     title: 'trim',
     category: 'String',
     linkName: 'trim',
-    clojureDocs: null,
     returns: {
       type: 'string',
     },
@@ -147,7 +143,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     title: 'trim-left',
     category: 'String',
     linkName: 'trim-left',
-    clojureDocs: null,
     returns: {
       type: 'string',
     },
@@ -170,7 +165,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     title: 'trim-right',
     category: 'String',
     linkName: 'trim-right',
-    clojureDocs: null,
     returns: {
       type: 'string',
     },
@@ -193,7 +187,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     title: 'pad-left',
     category: 'String',
     linkName: 'pad-left',
-    clojureDocs: null,
     returns: {
       type: 'string',
     },
@@ -226,7 +219,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     title: 'pad-right',
     category: 'String',
     linkName: 'pad-right',
-    clojureDocs: null,
     returns: {
       type: 'string',
     },
@@ -259,7 +251,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     title: 'split',
     category: 'String',
     linkName: 'split',
-    clojureDocs: null,
     returns: {
       type: 'string',
     },
@@ -292,7 +283,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     title: 'split-lines',
     category: 'String',
     linkName: 'split-lines',
-    clojureDocs: null,
     returns: {
       type: 'string',
     },
@@ -316,7 +306,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     title: 'template',
     category: 'String',
     linkName: 'template',
-    clojureDocs: null,
     returns: {
       type: 'string',
     },
@@ -354,7 +343,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     title: 'to-char-code',
     category: 'String',
     linkName: 'to-char-code',
-    clojureDocs: null,
     returns: {
       type: 'number',
     },
@@ -376,7 +364,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     title: 'from-char-code',
     category: 'String',
     linkName: 'from-char-code',
-    clojureDocs: null,
     returns: {
       type: 'string',
     },
@@ -398,7 +385,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     title: 'encode-base64',
     category: 'String',
     linkName: 'encode-base64',
-    clojureDocs: null,
     returns: {
       type: 'string',
     },
@@ -419,7 +405,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     title: 'decode-base64',
     category: 'String',
     linkName: 'decode-base64',
-    clojureDocs: null,
     returns: {
       type: 'string',
     },
@@ -440,7 +425,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     title: 'encode-uri-component',
     category: 'String',
     linkName: 'encode-uri-component',
-    clojureDocs: null,
     returns: {
       type: 'string',
     },
@@ -461,7 +445,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     title: 'decode-uri-component',
     category: 'String',
     linkName: 'decode-uri-component',
-    clojureDocs: null,
     returns: {
       type: 'string',
     },
@@ -483,7 +466,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     title: 'join',
     category: 'String',
     linkName: 'join',
-    clojureDocs: null,
     returns: {
       type: 'string',
     },
@@ -512,7 +494,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     title: 'capitalize',
     category: 'String',
     linkName: 'capitalize',
-    clojureDocs: 'clojure.string/capitalize',
     returns: {
       type: 'string',
     },
@@ -536,7 +517,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     title: 'blank?',
     category: 'String',
     linkName: 'blank-question',
-    clojureDocs: 'clojure.string/blank_q',
     returns: {
       type: 'boolean',
     },

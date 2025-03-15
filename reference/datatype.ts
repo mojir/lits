@@ -4,7 +4,6 @@ import type { DatatypeReference } from '.'
 export const datatype: Record<DatatypeName, DatatypeReference> = {
   '-type-number': {
     datatype: true,
-    clojureDocs: null,
     title: 'number',
     category: 'Datatype',
     linkName: '-type-number',
@@ -16,7 +15,6 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
   },
   '-type-string': {
     datatype: true,
-    clojureDocs: null,
     title: 'string',
     category: 'Datatype',
     linkName: '-type-string',
@@ -28,7 +26,6 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
   },
   '-type-object': {
     datatype: true,
-    clojureDocs: null,
     title: 'object',
     category: 'Datatype',
     linkName: '-type-object',
@@ -40,7 +37,6 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
   },
   '-type-array': {
     datatype: true,
-    clojureDocs: null,
     title: 'array',
     category: 'Datatype',
     linkName: '-type-array',
@@ -53,7 +49,6 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
   },
   '-type-boolean': {
     datatype: true,
-    clojureDocs: null,
     title: 'boolean',
     category: 'Datatype',
     linkName: '-type-boolean',
@@ -65,7 +60,6 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
   },
   '-type-function': {
     datatype: true,
-    clojureDocs: null,
     title: 'function',
     category: 'Datatype',
     linkName: '-type-function',
@@ -79,7 +73,6 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
   },
   '-type-integer': {
     datatype: true,
-    clojureDocs: null,
     title: 'integer',
     category: 'Datatype',
     linkName: '-type-integer',
@@ -91,7 +84,6 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
   },
   '-type-any': {
     datatype: true,
-    clojureDocs: null,
     title: 'any',
     category: 'Datatype',
     linkName: '-type-any',
@@ -105,7 +97,6 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
   },
   '-type-null': {
     datatype: true,
-    clojureDocs: null,
     title: 'null',
     category: 'Datatype',
     linkName: '-type-null',
@@ -116,7 +107,6 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
   },
   '-type-collection': {
     datatype: true,
-    clojureDocs: null,
     title: 'collection',
     category: 'Datatype',
     linkName: '-type-collection',
@@ -129,7 +119,6 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
   },
   '-type-sequence': {
     datatype: true,
-    clojureDocs: null,
     title: 'sequence',
     category: 'Datatype',
     linkName: '-type-sequence',
@@ -141,7 +130,6 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
   },
   '-type-regexp': {
     datatype: true,
-    clojureDocs: null,
     title: 'regexp',
     category: 'Datatype',
     linkName: '-type-regexp',
@@ -153,7 +141,6 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
   },
   '-type-never': {
     datatype: true,
-    clojureDocs: null,
     title: 'never',
     category: 'Datatype',
     linkName: '-type-never',

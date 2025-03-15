@@ -66,7 +66,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     title: '/',
     category: 'Math',
     linkName: '-slash',
-    clojureDocs: '_fs',
     returns: {
       type: 'number',
     },
@@ -103,7 +102,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     title: '%',
     category: 'Math',
     linkName: '-percent',
-    clojureDocs: 'rem',
     returns: {
       type: 'number',
     },
@@ -173,7 +171,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     title: '√',
     category: 'Math',
     linkName: 'sqrt',
-    clojureDocs: null,
     returns: {
       type: 'number',
     },
@@ -193,7 +190,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     title: '∛',
     category: 'Math',
     linkName: 'cbrt',
-    clojureDocs: null,
     returns: {
       type: 'number',
     },
@@ -213,7 +209,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     title: '**',
     category: 'Math',
     linkName: '-star-star',
-    clojureDocs: null,
     returns: {
       type: 'number',
     },
@@ -230,7 +225,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     title: 'round',
     category: 'Math',
     linkName: 'round',
-    clojureDocs: null,
     returns: {
       type: 'number',
     },
@@ -263,7 +257,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     title: 'trunc',
     category: 'Math',
     linkName: 'trunc',
-    clojureDocs: null,
     returns: {
       type: 'integer',
     },
@@ -282,7 +275,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     title: 'floor',
     category: 'Math',
     linkName: 'floor',
-    clojureDocs: null,
     returns: {
       type: 'integer',
     },
@@ -301,7 +293,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     title: 'ceil',
     category: 'Math',
     linkName: 'ceil',
-    clojureDocs: null,
     returns: {
       type: 'integer',
     },
@@ -372,7 +363,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     title: 'abs',
     category: 'Math',
     linkName: 'abs',
-    clojureDocs: null,
     returns: {
       type: 'number',
     },
@@ -391,7 +381,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     title: 'sign',
     category: 'Math',
     linkName: 'sign',
-    clojureDocs: null,
     returns: {
       type: 'number',
     },
@@ -410,7 +399,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     title: 'log',
     category: 'Math',
     linkName: 'log',
-    clojureDocs: null,
     returns: {
       type: 'number',
     },
@@ -429,7 +417,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     title: 'log2',
     category: 'Math',
     linkName: 'log2',
-    clojureDocs: null,
     returns: {
       type: 'number',
     },
@@ -448,7 +435,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     title: 'log10',
     category: 'Math',
     linkName: 'log10',
-    clojureDocs: null,
     returns: {
       type: 'number',
     },
@@ -467,7 +453,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     title: 'sin',
     category: 'Math',
     linkName: 'sin',
-    clojureDocs: null,
     returns: {
       type: 'number',
     },
@@ -486,7 +471,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     title: 'cos',
     category: 'Math',
     linkName: 'cos',
-    clojureDocs: null,
     returns: {
       type: 'number',
     },
@@ -505,7 +489,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     title: 'tan',
     category: 'Math',
     linkName: 'tan',
-    clojureDocs: null,
     returns: {
       type: 'number',
     },
@@ -524,7 +507,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     title: 'asin',
     category: 'Math',
     linkName: 'asin',
-    clojureDocs: null,
     returns: {
       type: 'number',
     },
@@ -543,7 +525,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     title: 'acos',
     category: 'Math',
     linkName: 'acos',
-    clojureDocs: null,
     returns: {
       type: 'number',
     },
@@ -562,7 +543,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     title: 'atan',
     category: 'Math',
     linkName: 'atan',
-    clojureDocs: null,
     returns: {
       type: 'number',
     },
@@ -581,7 +561,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     title: 'sinh',
     category: 'Math',
     linkName: 'sinh',
-    clojureDocs: null,
     returns: {
       type: 'number',
     },
@@ -600,7 +579,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     title: 'cosh',
     category: 'Math',
     linkName: 'cosh',
-    clojureDocs: null,
     returns: {
       type: 'number',
     },
@@ -619,7 +597,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     title: 'tanh',
     category: 'Math',
     linkName: 'tanh',
-    clojureDocs: null,
     returns: {
       type: 'number',
     },
@@ -638,7 +615,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     title: 'asinh',
     category: 'Math',
     linkName: 'asinh',
-    clojureDocs: null,
     returns: {
       type: 'number',
     },
@@ -657,7 +633,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     title: 'acosh',
     category: 'Math',
     linkName: 'acosh',
-    clojureDocs: null,
     returns: {
       type: 'number',
     },
@@ -676,7 +651,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     title: 'atanh',
     category: 'Math',
     linkName: 'atanh',
-    clojureDocs: null,
     returns: {
       type: 'number',
     },

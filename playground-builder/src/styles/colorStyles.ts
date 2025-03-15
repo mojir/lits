@@ -1,6 +1,8 @@
 import type { CssTemplateFunction, Styles } from '.'
 
 export enum Color {
+  GoldenYellow = '#e6c07b',
+  BrightYellow = '#f0e68c',
   Viola = '#c586c0',
   Mint = '#4ec9b0',
   Rose = '#d16969',
@@ -40,6 +42,12 @@ export function getColorStyles(css: CssTemplateFunction) {
     `,
     'text-color-Rose': css`
       color: ${Color.Rose};
+    `,
+    'text-color-GoldenYellow': css`
+      color: ${Color.GoldenYellow};
+    `,
+    'text-color-BrightYellow': css`
+      color: ${Color.BrightYellow};
     `,
     'text-color-Mint': css`
       color: ${Color.Mint};

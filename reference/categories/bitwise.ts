@@ -6,7 +6,6 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
     title: '<<',
     category: 'Bitwise',
     linkName: '-lt-lt',
-    clojureDocs: 'bit-shift-left',
     returns: {
       type: 'integer',
     },
@@ -27,7 +26,6 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
     title: '>>',
     category: 'Bitwise',
     linkName: '-gt-gt',
-    clojureDocs: 'bit-shift-right',
     returns: {
       type: 'integer',
     },
@@ -49,7 +47,6 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
     title: '>>>',
     category: 'Bitwise',
     linkName: '-gt-gt-gt',
-    clojureDocs: 'unsigned-bit-shift-right',
     returns: {
       type: 'integer',
     },
@@ -72,7 +69,6 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
     title: '~',
     category: 'Bitwise',
     linkName: '-tilde',
-    clojureDocs: 'bit-not',
     returns: {
       type: 'integer',
     },
@@ -94,7 +90,6 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
     title: '&',
     category: 'Bitwise',
     linkName: '-and',
-    clojureDocs: 'bit-and',
     returns: {
       type: 'integer',
     },
@@ -145,7 +140,6 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
     title: '|',
     category: 'Bitwise',
     linkName: '-or',
-    clojureDocs: 'bit-or',
     returns: {
       type: 'integer',
     },
@@ -171,7 +165,6 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
     title: '^',
     category: 'Bitwise',
     linkName: '-caret',
-    clojureDocs: 'bit-xor',
     returns: {
       type: 'integer',
     },

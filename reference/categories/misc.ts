@@ -5,7 +5,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
   '≠': {
     title: '≠',
     category: 'Misc',
-    clojureDocs: 'not=',
     linkName: '-ne',
     returns: {
       type: 'boolean',
@@ -39,7 +38,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
     title: '=',
     category: 'Misc',
     linkName: '-equal',
-    clojureDocs: '=',
     returns: {
       type: 'boolean',
     },
@@ -207,7 +205,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
     title: '!',
     category: 'Misc',
     linkName: '-exclamation',
-    clojureDocs: 'not',
     returns: {
       type: 'boolean',
     },
@@ -234,7 +231,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
     title: 'write!',
     category: 'Misc',
     linkName: 'write-exclamation',
-    clojureDocs: null,
     returns: {
       type: 'any',
     },
@@ -348,7 +344,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
     title: 'identical?',
     category: 'Misc',
     linkName: 'identical-question',
-    clojureDocs: null,
     returns: {
       type: 'boolean',
     },
@@ -369,7 +364,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
     title: 'json-parse',
     category: 'Misc',
     linkName: 'json-parse',
-    clojureDocs: null,
     returns: {
       type: 'any',
     },
@@ -390,7 +384,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
     title: 'json-stringify',
     category: 'Misc',
     linkName: 'json-stringify',
-    clojureDocs: null,
     returns: {
       type: 'string',
     },

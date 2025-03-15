@@ -45,7 +45,6 @@ export const sequenceReference: Record<SequenceApiName, FunctionReference<'Seque
     title: 'push',
     category: 'Sequence',
     linkName: 'push',
-    clojureDocs: null,
     returns: {
       type: 'sequence',
     },
@@ -101,7 +100,6 @@ l`,
     title: 'unshift',
     category: 'Sequence',
     linkName: 'unshift',
-    clojureDocs: null,
     returns: {
       type: 'sequence',
     },
@@ -133,7 +131,6 @@ l`,
     title: 'shift',
     category: 'Sequence',
     linkName: 'shift',
-    clojureDocs: null,
     returns: {
       type: ['sequence', 'null'],
     },
@@ -155,7 +152,6 @@ l`,
     title: 'slice',
     category: 'Sequence',
     linkName: 'slice',
-    clojureDocs: null,
     returns: {
       type: 'sequence',
     },
@@ -190,7 +186,6 @@ l`,
     title: 'splice',
     category: 'Sequence',
     linkName: 'splice',
-    clojureDocs: null,
     returns: {
       type: 'sequence',
     },
@@ -300,7 +295,6 @@ reduce(
     title: 'reduce-right',
     category: 'Sequence',
     linkName: 'reduce-right',
-    clojureDocs: null,
     returns: {
       type: 'sequence',
     },
@@ -390,7 +384,6 @@ filter(
     title: 'position',
     category: 'Sequence',
     linkName: 'position',
-    clojureDocs: null,
     returns: {
       type: ['number', 'null'],
     },
@@ -434,7 +427,6 @@ position(
     title: 'index-of',
     category: 'Sequence',
     linkName: 'index-of',
-    clojureDocs: null,
     returns: {
       type: ['number', 'null'],
     },
@@ -463,7 +455,6 @@ position(
     title: 'last-index-of',
     category: 'Sequence',
     linkName: 'last-index-of',
-    clojureDocs: null,
     returns: {
       type: ['number', 'null'],
     },
@@ -975,7 +966,6 @@ sort(
     title: 'remove-at',
     category: 'Sequence',
     linkName: 'remove-at',
-    clojureDocs: null,
     returns: {
       type: 'sequence',
     },
@@ -1209,7 +1199,6 @@ sort(
     title: 'starts-with?',
     category: 'Sequence',
     linkName: 'starts-with-question',
-    clojureDocs: null,
     returns: {
       type: 'boolean',
     },
@@ -1238,7 +1227,6 @@ sort(
     title: 'ends-with?',
     category: 'Sequence',
     linkName: 'ends-with-question',
-    clojureDocs: null,
     returns: {
       type: 'boolean',
     },
@@ -1268,7 +1256,6 @@ sort(
     title: 'interleave',
     category: 'Sequence',
     linkName: 'interleave',
-    clojureDocs: null,
     returns: {
       type: 'sequence',
     },
@@ -1299,7 +1286,6 @@ sort(
     title: 'interpose',
     category: 'Sequence',
     linkName: 'interpose',
-    clojureDocs: null,
     returns: {
       type: 'sequence',
     },

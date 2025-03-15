@@ -6,7 +6,6 @@ export const regularExpressionReference: Record<RegularExpressionApiName, Functi
     title: 'regexp',
     category: 'Regular expression',
     linkName: 'regexp',
-    clojureDocs: null,
     returns: {
       type: 'regexp',
     },
@@ -36,7 +35,6 @@ export const regularExpressionReference: Record<RegularExpressionApiName, Functi
     title: 'match',
     category: 'Regular expression',
     linkName: 'match',
-    clojureDocs: null,
     returns: {
       type: 'any',
       array: true,
@@ -63,7 +61,6 @@ If $b is a string and matches the regular expression, a \`match\`-array is retur
     title: 'replace',
     category: 'Regular expression',
     linkName: 'replace',
-    clojureDocs: null,
     returns: {
       type: 'any',
       array: true,
@@ -91,7 +88,6 @@ If $b is a string and matches the regular expression, a \`match\`-array is retur
     title: 'replace-all',
     category: 'Regular expression',
     linkName: 'replace-all',
-    clojureDocs: null,
     returns: {
       type: 'any',
       array: true,

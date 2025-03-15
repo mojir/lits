@@ -7,7 +7,6 @@ export const shorthand: Record<ShorthandName, ShorthandReference> = {
     title: '#"pattern"',
     category: 'Shorthand',
     linkName: '-short-regexp',
-    clojureDocs: null,
     description: 'Shorthand for `regexp(pattern)`. Only difference is that escaping is not needed.',
     examples: [
       '#"^\\s*(.*)$"',
@@ -20,7 +19,6 @@ export const shorthand: Record<ShorthandName, ShorthandReference> = {
     title: '=> expression',
     category: 'Shorthand',
     linkName: '-short-fn',
-    clojureDocs: null,
     description: `
 Shorthand for \`(args, ...) => expression\`.
 \`$1, $2, $3, ...\` are shorthand for the first, second, third, ... argument.

@@ -6,7 +6,6 @@ export const arrayReference: Record<ArrayApiName, FunctionReference<'Array'>> = 
     title: 'array',
     category: 'Array',
     linkName: 'array',
-    clojureDocs: 'vector',
     returns: {
       type: 'any',
       array: true,

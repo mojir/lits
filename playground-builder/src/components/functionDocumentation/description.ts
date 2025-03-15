@@ -7,8 +7,8 @@ import { polishSymbolCharacterClass, polishSymbolFirstCharacterClass } from '../
 
 const variableRegExp = new RegExp(`\\$${polishSymbolFirstCharacterClass}${polishSymbolCharacterClass}*`, 'g')
 
-export function formatDescription(description: string, reference: Reference): string {
-  if (isFunctionReference(reference))
+export function formatDescription(description: string, reference?: Reference): string {
+  if (reference && isFunctionReference(reference))
     return formatFunctionDescription(description, reference)
   else
     return formatCommonDescription(description)

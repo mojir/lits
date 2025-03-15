@@ -79,10 +79,9 @@ describe('apiReference', () => {
     const duplicateAliases = referenceAliases.filter((item, index) => referenceAliases.indexOf(item) !== index)
     expect(duplicateAliases.length, `Duplicate aliases found: ${duplicateAliases}`).toBe(0)
 
-    const allReferenceKeys = [...functionReferenceKeys, ...referenceAliases]
+    const allReferenceKeys = [...functionReferenceKeys, ...referenceAliases].filter(key => !specialExpressionKeys.includes(key))
 
-    // const builtinKeys = [...specialExpressionKeys, ...normalExpressionKeys]
-    const builtinKeys = [...['&&', '||'], ...normalExpressionKeys]
+    const builtinKeys = [...normalExpressionKeys]
     const missingReference = allReferenceKeys.find(key => !builtinKeys.includes(key))
     expect(missingReference, `Missing reference: ${missingReference}`).toBeUndefined()
 

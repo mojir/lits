@@ -1,10 +1,9 @@
-import { type Argument, type TypedValue, isSpecialExpressionArgument } from '../../../../reference'
+import type { Argument, TypedValue } from '../../../../reference'
 import { isDataType } from '../../../../reference/api'
 import { styles } from '../../styles'
 
 export function getType(arg: Argument | TypedValue) {
-  const argType = isSpecialExpressionArgument(arg) ? arg.type.slice(1) : arg.type
-  const types = Array.isArray(argType) ? argType : [argType]
+  const types = Array.isArray(arg.type) ? arg.type : [arg.type]
   const typeString = types.map((type) => {
     return isDataType(type)
       ? `<span ${styles('text-color-Rose')}><a onclick="Playground.showPage('-type-${type}', 'smooth')">${type}</a></span>`

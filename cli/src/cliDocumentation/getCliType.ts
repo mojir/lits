@@ -1,8 +1,8 @@
 import type { Colorizer } from '../colorizer'
-import { type Argument, type TypedValue, isSpecialExpressionArgument } from '../../../reference'
+import type { Argument, TypedValue } from '../../../reference'
 
 export function getCliType(fmt: Colorizer, arg: Argument | TypedValue) {
-  const argType = isSpecialExpressionArgument(arg) ? arg.type.slice(1) : arg.type
+  const argType = arg.type
   const types = Array.isArray(argType) ? argType : [argType]
   const typeString = types.map((type) => {
     return fmt.dim.red(type)

@@ -13,12 +13,6 @@ export function getCliFunctionSignature(fmt: Colorizer, { title: name, variants,
           if (arg.rest)
             result += fmt.white('& ')
           result += `${fmt.green(argName)}`
-          if (arg.type === '*binding' || arg.type === '*for-binding')
-            result = `${fmt.white('[')}${result}${fmt.white(']')}`
-          else if (arg.type === '*arguments')
-            result = `${fmt.white('[')}${result}${fmt.white(']')}`
-          else if (arg.type === '*catch-expression')
-            result = `${fmt.white('(')}${result} ${fmt.bright.blue('body')}${fmt.white(')')}`
         }
         return result
       }).join(' ')}${fmt.white(')')}`

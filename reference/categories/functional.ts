@@ -247,7 +247,6 @@ every-pred(string?, -> count($) > 3)(
     title: 'some-pred',
     category: 'Functional',
     linkName: 'some-pred',
-    clojureDocs: null,
     returns: {
       type: 'function',
     },

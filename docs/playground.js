@@ -4506,6 +4506,7 @@ var Playground = (function (exports) {
         in: null,
         when: null,
         while: null,
+        catch: null,
         function: null,
         export: null,
     };
@@ -6863,12 +6864,12 @@ var Playground = (function (exports) {
         Parser.prototype.parseTry = function (token) {
             this.advance();
             var tryExpressions = [];
-            while (!this.isAtEnd() && !isSymbolToken(this.peek(), 'catch')) {
+            while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'catch')) {
                 tryExpressions.push(this.parseExpression());
                 if (isOperatorToken(this.peek(), ';')) {
                     this.advance();
                 }
-                else if (!isSymbolToken(this.peek(), 'catch')) {
+                else if (!isReservedSymbolToken(this.peek(), 'catch')) {
                     throw new LitsError('Expected ;', tokenSourceCodeInfo(this.peek()));
                 }
             }
@@ -6880,7 +6881,7 @@ var Playground = (function (exports) {
                     p: tryExpressions,
                     token: tokenSourceCodeInfo(token) && token,
                 };
-            assertSymbolToken(this.peek(), 'catch');
+            assertReservedSymbolToken(this.peek(), 'catch');
             this.advance();
             var errorSymbol;
             if (isLParenToken(this.peek())) {
@@ -7242,11 +7243,8 @@ var Playground = (function (exports) {
             if (isOperatorToken(token)) {
                 return [';', ','].includes(token[1]);
             }
-            if (isSymbolToken(token)) {
-                return ['catch'].includes(token[1]);
-            }
             if (isReservedSymbolToken(token)) {
-                return ['else', 'when', 'while', 'then', 'end', 'case'].includes(token[1]);
+                return ['else', 'when', 'while', 'then', 'end', 'case', 'catch'].includes(token[1]);
             }
             return false;
         };
