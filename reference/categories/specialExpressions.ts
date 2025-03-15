@@ -156,221 +156,182 @@ catch
 end`,
     ],
   },
-  //   'throw': {
-  //     title: 'throw',
-  //     category: 'Special expression',
-  //     linkName: 'throw',
-  //   //     returns: {
-  //       type: 'never',
-  //     },
-  //     args: {
-  //       expr: {
-  //         type: '*expression',
-  //       },
-  //     },
-  //     variants: [
-  //       { argumentNames: ['expr'] },
-  //     ],
-  //     description: 'Throws `UserDefinedError` with message set to $expr evaluated. $expr must evaluate to a string.',
-  //     examples: [
-  //       '(throw "You shall not pass!")',
-  //       '(throw (slice "You shall not pass!" 0 3))',
-  //     ],
-  //   },
-  //   'if': {
-  //     title: 'if',
-  //     category: 'Special expression',
-  //     linkName: 'if',
-  //     returns: {
-  //       type: 'any',
-  //     },
-  //     args: {
-  //       'test': {
-  //         type: 'any',
-  //       },
-  //       'then-expr': {
-  //         type: 'any',
-  //       },
-  //       'else-expr': {
-  //         type: 'any',
-  //       },
-  //     },
-  //     variants: [
-  //       { argumentNames: ['test', 'then-expr'] },
-  //       { argumentNames: ['test', 'then-expr', 'else-expr'] },
-  //     ],
-  //     description: 'Either $then-expr or $else-expr branch is taken. $then-expr is selected when $test is truthy. If $test is falsy $else-expr is executed, if no $else-expr exists, `null` is returned.',
-  //     examples: [
-  //       '(if true (write! "TRUE") (write! "FALSE"))',
-  //       '(if false (write! "TRUE") (write! "FALSE"))',
-  //       '(if true (write! "TRUE"))',
-  //       '(if false (write! "TRUE"))',
-  //     ],
-  //   },
-  //   'unless': {
-  //     title: 'unless',
-  //     category: 'Special expression',
-  //     linkName: 'unless',
-  //   //     returns: {
-  //       type: 'any',
-  //     },
-  //     args: {
-  //       'test': {
-  //         type: 'any',
-  //       },
-  //       'then-expr': {
-  //         type: 'any',
-  //       },
-  //       'else-expr': {
-  //         type: 'any',
-  //       },
-  //     },
-  //     variants: [
-  //       { argumentNames: ['test', 'then-expr'] },
-  //       { argumentNames: ['test', 'then-expr', 'else-expr'] },
-  //     ],
-  //     description: 'Either $then-expr or $else-expr branch is taken. $then-expr is selected when $test is falsy. If $test is truthy $else-expr is executed, if no $else-expr exists, `null` is returned.',
-  //     examples: [
-  //       '(unless true (write! "TRUE") (write! "FALSE"))',
-  //       '(unless false (write! "TRUE") (write! "FALSE"))',
-  //       '(unless true (write! "TRUE"))',
-  //       '(unless false (write! "TRUE"))',
-  //     ],
-  //   },
-  //   'cond': {
-  //     title: 'cond',
-  //     category: 'Special expression',
-  //     linkName: 'cond',
-  //     returns: {
-  //       type: 'any',
-  //     },
-  //     args: {
-  //       conds: {
-  //         type: '*conditions',
-  //       },
-  //     },
-  //     variants: [
-  //       { argumentNames: ['conds'] },
-  //     ],
-  //     description: 'Used for branching. $conds are tested sequentially from the top. If no branch is tested truthy, `null` is returned.',
-  //     examples: [
-  //       `
-  // (cond
-  //   false (write! "FALSE")
-  //   null (write! "null")
-  //   :else (write! "TRUE"))`,
-  //       `
-  // (cond
-  //   false (write! "FALSE")
-  //   null (write! "null")
-  //   true (write! "TRUE"))`,
-  //       `
-  // (cond
-  //   false (write! "FALSE")
-  //   null (write! "null"))`,
-  //     ],
-  //   },
-  //   'switch': {
-  //     title: 'switch',
-  //     category: 'Special expression',
-  //     linkName: 'switch',
-  //     returns: {
-  //       type: 'any',
-  //     },
-  //     args: {
-  //       value: {
-  //         type: 'any',
-  //       },
-  //       conds: {
-  //         type: '*conditions',
-  //       },
-  //     },
-  //     variants: [
-  //       { argumentNames: ['value', 'conds'] },
-  //     ],
-  //     description: 'Used for branching. $conds are tested sequentially from the top against $value. If no branch is tested truthy, `null` is returned.',
-  //     examples: [
-  //       `
-  // (switch 1
-  //   1 (write! "FALSE")
-  //   2 (write! "null"))`,
-  //       `
-  // (switch 2
-  //   1 (write! "FALSE")
-  //   2 (write! "null"))`,
-  //       `
-  // (switch 3
-  //   1 (write! "FALSE")
-  //   2 (write! "null"))`,
-  //     ],
-  //   },
-  //   'do': {
-  //     title: 'do',
-  //     category: 'Special expression',
-  //     linkName: 'do',
-  //     returns: {
-  //       type: 'any',
-  //     },
-  //     args: {
-  //       expressions: {
-  //         type: '*expression',
-  //         rest: true,
-  //       },
-  //     },
-  //     variants: [
-  //       { argumentNames: ['expressions'] },
-  //     ],
-  //     description: 'Evaluates $expressions. Resulting value is the value of the last expression.',
-  //     examples: [
-  //       `
-  // (do
-  //   (write! "Hi")
-  //   (write! "Albert"))`,
-  //       '(do)',
-  //     ],
-  //   },
-  //   'recur': {
-  //     title: 'recur',
-  //     category: 'Special expression',
-  //     linkName: 'recur',
-  //     returns: {
-  //       type: 'null',
-  //     },
-  //     args: {
-  //       expressions: {
-  //         type: '*expression',
-  //         rest: true,
-  //       },
-  //     },
-  //     variants: [
-  //       { argumentNames: ['expressions'] },
-  //     ],
-  //     description: 'Recursevly calls enclosing function or loop with its evaluated $expressions.',
-  //     examples: [
-  //       `
-  // (defn foo [n]
-  //   (write! n)
-  //   (if (! (zero? n))
-  //     (recur
-  //       (dec n))))
-  // (foo 3)`,
-  //       `
-  // (
-  //   (fun [n]
-  //     (write! n)
-  //     (if (! (zero? n))
-  //       (recur
-  //         (dec n))))
-  //   3)`,
-  //       `
-  // (
-  //   loop [n 3]
-  //     (write! n)
-  //     (if
-  //       (! (zero? n))
-  //       (recur (dec n))))`,
-  //     ],
-  //   },
+  'throw': {
+    title: 'throw',
+    category: 'Special expression',
+    linkName: 'throw',
+    returns: {
+      type: 'never',
+    },
+    args: {
+      expr: {
+        type: 'any',
+      },
+    },
+    variants: [
+      { argumentNames: ['expr'] },
+    ],
+    description: 'Throws `UserDefinedError` with message set to $expr evaluated. $expr must evaluate to a string.',
+    examples: [
+      'try throw("You shall not pass!") catch(error) "Error: " ++ error.message end',
+      'try throw(slice("You shall not pass!", 0, 3)) catch(error) "Error: " ++ error.message end',
+    ],
+  },
+  'if': {
+    title: 'if',
+    category: 'Special expression',
+    linkName: 'if',
+    customVariants: ['if test then-body else else-body end', 'if test then-body end'],
+    details: [
+      ['test', 'expression', 'The condition to test.'],
+      ['then-body', 'expressions', 'The expressions to evaluate if the test is truthy.'],
+      ['else-body', 'expressions', 'The expressions to evaluate if the test is falsy.'],
+    ],
+    description: 'Either `then-expr` or `else-expr` branch is taken. `then-expr` is selected when $test is truthy. If $test is falsy `else-expr` is executed, if no `else-expr` exists, `null` is returned.',
+    examples: [
+      `
+if true then
+  write!("TRUE")
+else
+  write!("FALSE")
+end`,
+      'if false then write!("TRUE") else write!("FALSE") end',
+      'if true then write!("TRUE") end',
+      'if false then write!("TRUE") end',
+    ],
+  },
+  'unless': {
+    title: 'unless',
+    category: 'Special expression',
+    linkName: 'unless',
+    customVariants: ['unless test then-body else else-body end', 'unless test then-body end'],
+    details: [
+      ['test', 'expression', 'The condition to test.'],
+      ['then-body', 'expressions', 'The expressions to evaluate if the test is falsy.'],
+      ['else-body', 'expressions', 'The expressions to evaluate if the test is truthy.'],
+    ],
+    description: 'Either `then-expr` or `else-expr` branch is taken. `then-expr` is selected when $test is falsy. If $test is truthy `else-expr` is executed, if no `else-expr` exists, `null` is returned.',
+    examples: [
+      `
+unless true then
+  write!("TRUE")
+else
+  write!("FALSE")
+end`,
+      'unless false then write!("TRUE") else write!("FALSE") end',
+      'unless true then write!("TRUE") end',
+      'unless false then write!("TRUE") end',
+    ],
+  },
+  'cond': {
+    title: 'cond',
+    category: 'Special expression',
+    linkName: 'cond',
+    customVariants: ['cond cond-branch cond-branch ... end'],
+    details: [
+      ['cond-branch', 'case test then body', 'A branch of the cond expression.'],
+      ['test', 'expression', 'The condition to test.'],
+      ['body', 'expressions', 'The expressions to evaluate if the test is truthy.'],
+    ],
+    description: 'Used for branching. `cond-branches` are tested sequentially from the top. If no branch is tested truthy, `null` is returned.',
+    examples: [
+      `
+cond
+  case false then write!("FALSE")
+  case true then write!("TRUE")
+end
+  `,
+      `
+cond
+  case false then write!("FALSE")
+  case null then write!("null")
+ end ?? write!("TRUE")`,
+      `
+cond
+  case false then write!("FALSE")
+  case null then write!("null")
+end`,
+    ],
+  },
+  'switch': {
+    title: 'switch',
+    category: 'Special expression',
+    linkName: 'switch',
+    customVariants: ['switch value switch-branch switch-branch ... end'],
+    details: [
+      ['value', 'any', 'The value to test.'],
+      ['switch-branch', 'case test then body', 'A branch of the switch expression.'],
+      ['test', 'expression', 'The condition to test.'],
+      ['body', 'expressions', 'The expressions to evaluate if the test is truthy.'],
+    ],
+    description: 'Used for branching. `switch-branches` are tested sequentially from the top against `value`. If no branch is tested truthy, `null` is returned.',
+    examples: [
+      `
+switch 1
+  case 1 then write!("One")
+  case 2 then write!("Two")
+end`,
+      `
+switch 2
+  case 1 then write!("One")
+  case 2 then write!("Two")
+end`,
+      `
+switch 3
+  case 1 then write!("One")
+  case 2 then write!("Two")
+end`,
+    ],
+  },
+  'do': {
+    title: 'do',
+    category: 'Special expression',
+    linkName: 'do',
+    customVariants: ['do body end'],
+    details: [
+      ['body', 'expressions', 'The expressions to evaluate.'],
+    ],
+    description: 'Evaluates `body`. Resulting value is the value of the last expression.',
+    examples: [
+      `
+do
+  let a := 1 + 2 + 3 + 4;
+  let b := -> $ * ( $ + 1 );
+  b(a)
+end`,
+    ],
+  },
+  'recur': {
+    title: 'recur',
+    category: 'Special expression',
+    linkName: 'recur',
+    customVariants: ['recur(...recur-args)'],
+    description: 'Recursevly calls enclosing function or loop with its evaluated `recur-args`.',
+    examples: [
+      `
+function foo(n)
+  write!(n);
+  if !(zero?(n)) then
+    recur(n - 1)
+  end
+end;
+foo(3)`,
+      `
+(n -> do
+  write!(n);
+  if !(zero?(n)) then
+    recur(n - 1)
+  end
+end)(3)`,
+      `
+loop let n := 3 do
+  write!(n);
+  if !(zero?(n)) then
+    recur(n - 1)
+  end
+end`,
+    ],
+  },
   //   'loop': {
   //     title: 'loop',
   //     category: 'Special expression',
@@ -395,13 +356,13 @@ end`,
   //     examples: [
   //       `
   // (loop [n 3]
-  //   (write! n)
+  //   write!(n)
   //   (if
   //     (! (zero? n))
   //     (recur (dec n))))`,
   //       `
   // (loop [n 3]
-  //   (write! n)
+  //   write!(n)
   //   (if
   //     (! (zero? n))
   //     (recur (dec n))
@@ -429,7 +390,7 @@ end`,
   //       { argumentNames: ['vars', 'expr'] },
   //     ],
   //     description: 'Same syntax as `for`, but returns `null`. Use for side effects. Consumes less memory than `for`.',
-  //     examples: ['(doseq [x [1 2 4]] (write! x))'],
+  //     examples: ['(doseq [x [1 2 4]] write!(x))'],
   //   },
   //   'for': {
   //     title: 'for',
