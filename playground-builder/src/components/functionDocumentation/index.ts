@@ -16,19 +16,10 @@ export function getAllDocumentationItems() {
 }
 
 function getDocumentation(reference: Reference) {
-  const { linkName, category, algebraic } = reference
+  const { linkName, category } = reference
   const aliases = isFunctionReference(reference) ? reference.aliases : undefined
   const title = `${escapeTitle(reference.title)}${aliases ? `, ${aliases.join(', ')}` : ''}`
 
-  if (!algebraic) {
-    return `
-    <div id="${linkName}" class="content function">
-      <div ${styles('flex', 'justify-between', 'text-2xl', 'items-center', 'bg-gray-700', 'p-2', 'px-4')}">
-        <div ${styles('text-color-gray-200', 'font-mono')}><a onclick="Playground.showPage('${reference.linkName}', 'smooth')">${title}</a></div>
-        <div ${styles('text-color-gray-400')}>${category}</div>
-      </div>
-    </div>`
-  }
   const clojureDocsLink = getClojureDocsLink(reference.title, reference.clojureDocs)
   const functionReferences = reference.seeAlso?.map(apiName => apiReference[apiName])
 

@@ -44,7 +44,6 @@ export function getSideBar() {
               ${
                 categoryCollections[categoryKey]
                   ? categoryCollections[categoryKey]
-                      .filter(obj => obj.algebraic)
                       .sort((a, b) => {
                         const aSpecial = a.title[0]!.match(/[^a-z]/i)
                         const bSpecial = b.title[0]!.match(/[^a-z]/i)

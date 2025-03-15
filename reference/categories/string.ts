@@ -28,7 +28,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       'string-repeat("*", 10)',
       'string-repeat("***", 0)',
     ],
-    algebraic: true,
   },
   'str': {
     title: 'str',
@@ -53,7 +52,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       'str()',
       'str(0, false, true, null, #"^kalle", [1, 2, 3], {a := "a"})',
     ],
-    algebraic: true,
     noOperatorDocumentation: true,
   },
   'number': {
@@ -78,7 +76,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       'number("010")',
       'number("-1.01")',
     ],
-    algebraic: true,
   },
   'lower-case': {
     title: 'lower-case',
@@ -100,7 +97,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       'lower-case("Albert")',
       'lower-case("")',
     ],
-    algebraic: true,
   },
   'upper-case': {
     title: 'upper-case',
@@ -123,7 +119,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       'upper-case("Albert")',
       'upper-case("")',
     ],
-    algebraic: true,
   },
   'trim': {
     title: 'trim',
@@ -147,7 +142,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       'trim("   ")',
       'trim("")',
     ],
-    algebraic: true,
   },
   'trim-left': {
     title: 'trim-left',
@@ -171,7 +165,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       'trim-left("   ")',
       'trim-left("")',
     ],
-    algebraic: true,
   },
   'trim-right': {
     title: 'trim-right',
@@ -195,7 +188,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       'trim-right("   ")',
       'trim-right("")',
     ],
-    algebraic: true,
   },
   'pad-left': {
     title: 'pad-left',
@@ -229,7 +221,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       'pad-left("Albert", 5)',
       'pad-left("Albert", -1)',
     ],
-    algebraic: true,
   },
   'pad-right': {
     title: 'pad-right',
@@ -263,7 +254,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       'pad-right("Albert", 5)',
       'pad-right("Albert", -1)',
     ],
-    algebraic: true,
   },
   'split': {
     title: 'split',
@@ -297,7 +287,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       'split("0123456789", "")',
       'split("0123456789", "", 5) map number',
     ],
-    algebraic: true,
   },
   'split-lines': {
     title: 'split-lines',
@@ -322,7 +311,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       'split-lines("Albert\nMojir\n\n")',
       'split-lines("")',
     ],
-    algebraic: true,
   },
   'template': {
     title: 'template',
@@ -360,7 +348,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       'template("No book||||One book||||Two books||||Three books||||$1 books", 3)',
       'template("No book||||One book||||Two books||||Three books||||$1 books", 4)',
     ],
-    algebraic: true,
     noOperatorDocumentation: true,
   },
   'to-char-code': {
@@ -384,7 +371,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       'to-char-code("A")',
       'to-char-code("Albert")',
     ],
-    algebraic: true,
   },
   'from-char-code': {
     title: 'from-char-code',
@@ -407,7 +393,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       'from-char-code(65)',
       'from-char-code(0)',
     ],
-    algebraic: true,
   },
   'encode-base64': {
     title: 'encode-base64',
@@ -429,7 +414,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     examples: [
       'encode-base64("Albert")',
     ],
-    algebraic: true,
   },
   'decode-base64': {
     title: 'decode-base64',
@@ -451,7 +435,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     examples: [
       'decode-base64("QWxiZXJ0IPCfkLs=")',
     ],
-    algebraic: true,
   },
   'encode-uri-component': {
     title: 'encode-uri-component',
@@ -473,7 +456,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     examples: [
       'encode-uri-component("Hi everyone!?")',
     ],
-    algebraic: true,
   },
   'decode-uri-component': {
     title: 'decode-uri-component',
@@ -495,7 +477,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     examples: [
       'decode-uri-component("Hi%20everyone!%3F%20%F0%9F%91%8D")',
     ],
-    algebraic: true,
   },
 
   'join': {
@@ -526,7 +507,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       'join(["Albert", "Mojir"], " ")',
       'join(map([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], str), ", ")',
     ],
-    algebraic: true,
   },
   'capitalize': {
     title: 'capitalize',
@@ -551,7 +531,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       'capitalize("aLBERT")',
       'capitalize("")',
     ],
-    algebraic: true,
   },
   'blank?': {
     title: 'blank?',
@@ -577,6 +556,5 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       'blank?(" ")',
       'blank?(".")',
     ],
-    algebraic: true,
   },
 }

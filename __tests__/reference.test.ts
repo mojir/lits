@@ -90,6 +90,11 @@ describe('apiReference', () => {
   })
 
   describe('argument names', () => {
+    const allBuiltins = [...normalExpressionKeys
+      .flatMap(key => ([
+        key,
+        ...normalExpressions[key]!.aliases ?? [],
+      ])), ...specialExpressionKeys]
     Object.entries(apiReference).forEach(([key, obj]) => {
       if (!isFunctionReference(obj))
         return
@@ -98,7 +103,7 @@ describe('apiReference', () => {
         variants.forEach((variant) => {
           const argumentNames = variant.argumentNames
           argumentNames.forEach((argName) => {
-            expect(isReservedSymbol(argName), `${key} in ${obj.category} has invalid argument name ${argName}`).toBe(false)
+            expect(isReservedSymbol(argName) || allBuiltins.includes(argName), `${key} in ${obj.category} has invalid argument name ${argName}`).toBe(false)
           })
         })
       })
@@ -110,9 +115,7 @@ describe('apiReference', () => {
       test(key, () => {
         obj.examples.forEach((example, index) => {
           expect(example, `${obj.category}:${key}. Example number ${index + 1} ended with ;`).not.toMatch(/;\s*$/)
-          if (obj.algebraic) {
-            expect(() => lits.run(example), `${obj.category}:${key}. Example number ${index + 1}`).not.toThrow()
-          }
+          expect(() => lits.run(example), `${obj.category}:${key}. Example number ${index + 1}`).not.toThrow()
         })
       })
     })
@@ -120,7 +123,6 @@ describe('apiReference', () => {
 
   describe('operator functions', () => {
     Object.entries(normalExpressionReference)
-      .filter(([, value]) => value.algebraic)
       .forEach(([key, obj]) => {
         test(key, () => {
           const paramCount = normalExpressions[key]!.paramCount

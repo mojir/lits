@@ -25,7 +25,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
       'boolean?(0)',
       'boolean?("A string")',
     ],
-    algebraic: true,
   },
   'null?': {
     title: 'null?',
@@ -50,7 +49,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
       'null?(0)',
       'null?("A string")',
     ],
-    algebraic: true,
   },
   'number?': {
     title: 'number?',
@@ -76,7 +74,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
       'number?([1, 2, 3])',
       'number?("A string")',
     ],
-    algebraic: true,
   },
   'string?': {
     title: 'string?',
@@ -102,7 +99,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
       'string?([1, 2, 3])',
       'string?(100)',
     ],
-    algebraic: true,
   },
   'function?': {
     title: 'function?',
@@ -129,7 +125,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
       'function?("false")',
       'function?([1, 2, 3])',
     ],
-    algebraic: true,
   },
   'integer?': {
     title: 'integer?',
@@ -157,7 +152,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
       'integer?("false")',
       'integer?([1, 2, 3])',
     ],
-    algebraic: true,
   },
   'array?': {
     title: 'array?',
@@ -184,7 +178,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
       'array?(10.1)',
       'array?((x, y) -> x + y)',
     ],
-    algebraic: true,
   },
   'object?': {
     title: 'object?',
@@ -213,7 +206,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
       'object?("false")',
       'object?([1, 2, 3])',
     ],
-    algebraic: true,
   },
   'coll?': {
     title: 'coll?',
@@ -241,7 +233,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
       'coll?(10.1)',
       'coll?((x, y) -> x + y)',
     ],
-    algebraic: true,
   },
   'seq?': {
     title: 'seq?',
@@ -269,7 +260,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
       'seq?(10.1)',
       'seq?((x, y) -> x + y)',
     ],
-    algebraic: true,
   },
   'regexp?': {
     title: 'regexp?',
@@ -299,7 +289,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
       'regexp?("false")',
       'regexp?([1, 2, 3])',
     ],
-    algebraic: true,
   },
   'zero?': {
     title: 'zero?',
@@ -323,7 +312,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
       'zero?(1)',
       'zero?(0.1)',
     ],
-    algebraic: true,
   },
   'pos?': {
     title: 'pos?',
@@ -347,7 +335,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
       'pos?(1)',
       'pos?(-0.1)',
     ],
-    algebraic: true,
   },
   'neg?': {
     title: 'neg?',
@@ -371,7 +358,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
       'neg?(1)',
       'neg?(-0.1)',
     ],
-    algebraic: true,
   },
   'even?': {
     title: 'even?',
@@ -395,7 +381,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
       'even?(-1)',
       'even?(2.1)',
     ],
-    algebraic: true,
   },
   'odd?': {
     title: 'odd?',
@@ -419,7 +404,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
       'odd?(-1)',
       'odd?(2.1)',
     ],
-    algebraic: true,
   },
   'finite?': {
     title: 'finite?',
@@ -444,7 +428,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
       'finite?(-1 / 0)',
       'finite?(sqrt(-1))',
     ],
-    algebraic: true,
   },
   'nan?': {
     title: 'nan?',
@@ -469,7 +452,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
       'nan?(-1 / 0)',
       'nan?(sqrt(-1))',
     ],
-    algebraic: true,
   },
   'negative-infinity?': {
     title: 'negative-infinity?',
@@ -494,7 +476,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
       'negative-infinity?(-1 / 0)',
       'negative-infinity?(sqrt(-1))',
     ],
-    algebraic: true,
   },
   'positive-infinity?': {
     title: 'positive-infinity?',
@@ -519,7 +500,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
       'positive-infinity?(-1 / 0)',
       'positive-infinity?(sqrt(-1))',
     ],
-    algebraic: true,
   },
   'false?': {
     title: 'false?',
@@ -543,7 +523,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
       'false?(1)',
       'false?(0)',
     ],
-    algebraic: true,
   },
   'true?': {
     title: 'true?',
@@ -567,7 +546,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
       'true?(1)',
       'true?(0)',
     ],
-    algebraic: true,
   },
   'empty?': {
     title: 'empty?',
@@ -594,7 +572,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
       'empty?("Albert")',
       'empty?(null)',
     ],
-    algebraic: true,
   },
   'not-empty?': {
     title: 'not-empty?',
@@ -622,6 +599,5 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
       'not-empty?("Albert")',
       'not-empty?(null)',
     ],
-    algebraic: true,
   },
 }

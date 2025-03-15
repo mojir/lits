@@ -21,7 +21,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     ],
     description: 'Computes sum of $xs.',
     examples: ['1 + 2', '1 + 20 + 30', '+(1, 2, 3, 4)', '+()', '+(1)'],
-    algebraic: true,
   },
   '-': {
     title: '-',
@@ -42,7 +41,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     ],
     description: 'Computes difference between first value and sum of the rest. When called with only one argument, it does negation.',
     examples: ['50 - 8', '1 - 1 - 1', '-()', '-(4, 2)', '-(4, 3, 2, 1,)'],
-    algebraic: true,
   },
   '*': {
     title: '*',
@@ -63,7 +61,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     ],
     description: 'Computes product of $xs.',
     examples: ['6 * 7', '-1 * 4', '*(4, 7)', '*(1, 2, 3, 4, 5)', '*()', '*(8)'],
-    algebraic: true,
   },
   '/': {
     title: '/',
@@ -85,7 +82,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     ],
     description: 'Computes division or reciprocal. When called with one argument it computes reciprocal. When called with two or more arguments it does compute division of the first by the all remaining $xs.',
     examples: ['12 / 100', '-1 / 4', '/(7, 4)', '/(1, 2, 4, 8)', '/()', '/(8)'],
-    algebraic: true,
   },
   'mod': {
     title: 'mod',
@@ -102,7 +98,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     ],
     description: 'Modulus of `dividend` and `divisor`. Truncates toward negative infinity.',
     examples: ['mod(5, 3)', 'mod(5.2, 3.1)', 'mod(-5, 3)', '5 mod -3', '-5 mod -3'],
-    algebraic: true,
   },
   '%': {
     title: '%',
@@ -120,7 +115,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     ],
     description: 'Remainder of dividing `dividend` and `divisor`.',
     examples: ['5 % 3', '5.2 % 3.1', '-5 % 3', '%(5, -3)', '%(-5, -3)'],
-    algebraic: true,
     aliases: ['rem'],
   },
   'quot': {
@@ -138,7 +132,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     ],
     description: 'Quotient of dividing `dividend` and `divisor`.',
     examples: ['quot(5, 3)', 'quot(5.2, 3.1)', 'quot(-5, 3)', '5 quot -3', '-5 quot -3'],
-    algebraic: true,
   },
   'inc': {
     title: 'inc',
@@ -157,7 +150,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     ],
     description: 'Adds one to $x.',
     examples: ['inc(0)', 'inc(1)', 'inc(100.1)'],
-    algebraic: true,
   },
   'dec': {
     title: 'dec',
@@ -176,7 +168,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     ],
     description: 'Subtracts one from $x.',
     examples: ['dec(0)', 'dec(1)', 'dec(100.1)'],
-    algebraic: true,
   },
   '√': {
     title: '√',
@@ -196,7 +187,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     ],
     description: 'Computes square root of $x.',
     examples: ['√(0)', '√(9)', '√(2)', 'sqrt(0)', 'sqrt(9)', 'sqrt(2)'],
-    algebraic: true,
     aliases: ['sqrt'],
   },
   '∛': {
@@ -235,7 +225,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     ],
     description: 'Computes returns $a raised to the power of $b.',
     examples: ['2 ** 3', '2 ** 0', '2 ** -3', '**(-2, 3)', '**(-2, -3)'],
-    algebraic: true,
   },
   'round': {
     title: 'round',
@@ -268,7 +257,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
       'round(1.23456789, 4)',
       '1.123456789 round 2',
     ],
-    algebraic: true,
     noOperatorDocumentation: true,
   },
   'trunc': {
@@ -289,7 +277,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     ],
     description: 'Returns the integer part of $x by removing any fractional digits.',
     examples: ['trunc(2)', 'trunc(2.49)', 'trunc(2.5)', 'trunc(-2.49)', 'trunc(-2.5)', 'trunc(-2.501)'],
-    algebraic: true,
   },
   'floor': {
     title: 'floor',
@@ -309,7 +296,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     ],
     description: 'Returns the largest `integer` less than or equal to $x.',
     examples: ['floor(2)', 'floor(2.49)', 'floor(2.5)', 'floor(-2.49)', 'floor(-2.5)', 'floor(-2.501)'],
-    algebraic: true,
   },
   'ceil': {
     title: 'ceil',
@@ -329,7 +315,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     ],
     description: 'Returns the smallest `integer` larger than or equal to $x.',
     examples: ['ceil(2)', 'ceil(2.49)', 'ceil(2.5)', 'ceil(-2.49)', 'ceil(-2.5)', 'ceil(-2.501)'],
-    algebraic: true,
   },
   'min': {
     title: 'min',
@@ -356,7 +341,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
       'min(2.5)',
       '12 min 14',
     ],
-    algebraic: true,
   },
   'max': {
     title: 'max',
@@ -383,7 +367,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
       'max(2, 0.5)',
       '4 max 2',
     ],
-    algebraic: true,
   },
   'abs': {
     title: 'abs',
@@ -403,7 +386,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     ],
     description: 'Returns the absolute value of $x.',
     examples: ['abs(-2.3)', 'abs(0)', 'abs(2.5)'],
-    algebraic: true,
   },
   'sign': {
     title: 'sign',
@@ -423,7 +405,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     ],
     description: 'Returns `1` if $x `> 0`, `-1` if $x `< 0`, `0` if $x `= 0` or `-0` if $x `= -0`.',
     examples: ['sign(-2.3)', 'sign(-0)', 'sign(0)', 'sign(12312)'],
-    algebraic: true,
   },
   'log': {
     title: 'log',
@@ -443,7 +424,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     ],
     description: 'Returns the natural logarithm (base e) of $x.',
     examples: ['log(0.01)', 'log(2.5)'],
-    algebraic: true,
   },
   'log2': {
     title: 'log2',
@@ -463,7 +443,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     ],
     description: 'Returns the base `2` logarithm of a number.',
     examples: ['log2(0.01)', 'log2(2 ** 12)', 'log2(2.5)'],
-    algebraic: true,
   },
   'log10': {
     title: 'log10',
@@ -483,7 +462,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     ],
     description: 'Returns the `10` logarithm of a number.',
     examples: ['log10(0.01)', 'log10(10 ** 12)', 'log10(2.5)'],
-    algebraic: true,
   },
   'sin': {
     title: 'sin',
@@ -503,7 +481,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     ],
     description: 'Returns the sine of $x. $x must be specified in radians.',
     examples: ['sin(0)', 'sin(1)', 'sin(PI)', 'sin(-0.5)'],
-    algebraic: true,
   },
   'cos': {
     title: 'cos',
@@ -523,7 +500,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     ],
     description: 'Returns the cosine of $x. $x must be specified in radians.',
     examples: ['cos(0)', 'cos(1)', 'cos(PI)', 'cos(-0.5)'],
-    algebraic: true,
   },
   'tan': {
     title: 'tan',
@@ -562,7 +538,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     ],
     description: 'Returns the arcsine (in radians) of $x.',
     examples: ['asin(0)', 'asin(1)', 'asin(-0.5)'],
-    algebraic: true,
   },
   'acos': {
     title: 'acos',
@@ -582,7 +557,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     ],
     description: 'Returns the arccosine (in radians) of $x.',
     examples: ['acos(0)', 'acos(1)', 'acos(-0.5)'],
-    algebraic: true,
   },
   'atan': {
     title: 'atan',
@@ -621,7 +595,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     ],
     description: 'Returns the hyperbolic sine of $x.',
     examples: ['sinh(0)', 'sinh(1)', 'sinh(-0.5)'],
-    algebraic: true,
   },
   'cosh': {
     title: 'cosh',
@@ -641,7 +614,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     ],
     description: 'Returns the hyperbolic cosine of $x.',
     examples: ['cosh(0)', 'cosh(1)', 'cosh(-0.5)'],
-    algebraic: true,
   },
   'tanh': {
     title: 'tanh',
@@ -661,7 +633,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     ],
     description: 'Returns the hyperbolic tangent of $x.',
     examples: ['tanh(0)', 'tanh(1)', 'tanh(-0.5)', 'tanh(50)'],
-    algebraic: true,
   },
   'asinh': {
     title: 'asinh',
@@ -681,7 +652,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     ],
     description: 'Returns the hyperbolic arcsine of $x.',
     examples: ['asinh(0)', 'asinh(0.9)', 'asinh (0.5)'],
-    algebraic: true,
   },
   'acosh': {
     title: 'acosh',
@@ -701,7 +671,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     ],
     description: 'Returns the hyperbolic arccosine of $x.',
     examples: ['acosh(1)', 'acosh(2)', 'acosh(100)'],
-    algebraic: true,
   },
   'atanh': {
     title: 'atanh',
@@ -721,6 +690,5 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     ],
     description: 'Returns the hyperbolic arctangent of $x.',
     examples: ['atanh(0)', 'atanh(0.9)', 'atanh(-0.5)'],
-    algebraic: true,
   },
 }

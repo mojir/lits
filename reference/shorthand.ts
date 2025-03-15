@@ -14,7 +14,6 @@ export const shorthand: Record<ShorthandName, ShorthandReference> = {
       '#"albert"ig',
     ],
     seeAlso: ['regexp'],
-    algebraic: true,
   },
   '-short-fn': {
     shorthand: true,
@@ -33,6 +32,5 @@ E.g. \`#(* $ $1)\` is not valid.`,
       '-> $1 + $2',
       '(-> $ * $)(9)',
     ],
-    algebraic: true,
   },
 }

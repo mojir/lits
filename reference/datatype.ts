@@ -35,7 +35,7 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
     description: 'An object, a collection of key-value pairs where keys are strings',
     examples: [
       '{}',
-      '{:a 1 :b 2}',
+      '{ a := 1, b := 2}',
     ],
   },
   '-type-array': {
@@ -47,8 +47,8 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
     description: 'An array, a collection of values',
     examples: [
       '[]',
-      '[1 2 3]',
-      '[:a null true]',
+      '[1, 2, 3]',
+      '["a", null, true]',
     ],
   },
   '-type-boolean': {
@@ -71,9 +71,10 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
     linkName: '-type-function',
     description: 'A function',
     examples: [
-      '(fn [x] (+ x 1))',
-      '(fn [] 42)',
-      '#(+ %1 %2)',
+      'x -> x + 1',
+      '(a, b, c) -> (a + b) * c',
+      '() -> 42',
+      '-> $1 + $2',
     ],
   },
   '-type-integer': {
@@ -121,7 +122,7 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
     linkName: '-type-collection',
     description: 'A collection, an object, an array or a string',
     examples: [
-      '{:foo 42}',
+      '{ foo := 42 }',
       '[1, 2, 3]',
       '"hello"',
     ],
@@ -134,7 +135,7 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
     linkName: '-type-sequence',
     description: 'A sequence, an array or a string',
     examples: [
-      '[1 2 3]',
+      '[1, 2, 3]',
       '"hello"',
     ],
   },
@@ -146,7 +147,7 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
     linkName: '-type-regexp',
     description: 'A regular expression',
     examples: [
-      '(regexp "^\\s*(.*)$")',
+      'regexp("^\\\\s*(.*)$")',
       '#"albert"ig',
     ],
   },
@@ -158,7 +159,7 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
     linkName: '-type-never',
     description: 'A value that can never be created',
     examples: [
-      '(throw "error")',
+      'throw("error")',
     ],
   },
 }

@@ -5946,13 +5946,14 @@ var Playground = (function (exports) {
         if (length <= 2) {
             return NO_MATCH;
         }
+        var nextChar = input[i];
+        if (nextChar && !postNumberRegExp.test(nextChar)) {
+            return NO_MATCH;
+        }
         return [length, ['BasePrefixedNumber', input.substring(position, i)]];
     };
     var tokenizeSymbol = function (input, position) {
         var value = input[position];
-        if (!value) {
-            return NO_MATCH;
-        }
         if (value === '\'') {
             var length_1 = 1;
             var char = input[position + length_1];
@@ -6114,34 +6115,23 @@ var Playground = (function (exports) {
     function getCurrentToken(input, position) {
         var e_1, _a;
         var initialPosition = position;
-        var tryNext = true;
-        while (tryNext) {
-            if (position >= input.length) {
-                return [position - initialPosition, undefined];
+        try {
+            for (var tokenizers_1 = __values(tokenizers), tokenizers_1_1 = tokenizers_1.next(); !tokenizers_1_1.done; tokenizers_1_1 = tokenizers_1.next()) {
+                var tokenizer = tokenizers_1_1.value;
+                var _b = __read(tokenizer(input, position), 2), nbrOfCharacters = _b[0], token = _b[1];
+                position += nbrOfCharacters;
+                if (nbrOfCharacters === 0) {
+                    continue;
+                }
+                return [position - initialPosition, token];
             }
-            tryNext = false;
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
             try {
-                for (var tokenizers_1 = (e_1 = void 0, __values(tokenizers)), tokenizers_1_1 = tokenizers_1.next(); !tokenizers_1_1.done; tokenizers_1_1 = tokenizers_1.next()) {
-                    var tokenizer = tokenizers_1_1.value;
-                    var _b = __read(tokenizer(input, position), 2), nbrOfCharacters = _b[0], token = _b[1];
-                    position += nbrOfCharacters;
-                    if (nbrOfCharacters === 0) {
-                        continue;
-                    }
-                    if (!token) {
-                        tryNext = true;
-                        break;
-                    }
-                    return [position - initialPosition, token];
-                }
+                if (tokenizers_1_1 && !tokenizers_1_1.done && (_a = tokenizers_1.return)) _a.call(tokenizers_1);
             }
-            catch (e_1_1) { e_1 = { error: e_1_1 }; }
-            finally {
-                try {
-                    if (tokenizers_1_1 && !tokenizers_1_1.done && (_a = tokenizers_1.return)) _a.call(tokenizers_1);
-                }
-                finally { if (e_1) throw e_1.error; }
-            }
+            finally { if (e_1) throw e_1.error; }
         }
         return null;
     }

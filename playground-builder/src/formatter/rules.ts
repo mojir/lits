@@ -3,6 +3,7 @@ import type { TextFormatter } from '../../../common/createFormatter'
 import { polishSymbolCharacterClass, polishSymbolFirstCharacterClass } from '../../../src/symbolPatterns'
 import { Lits } from '../../../src/Lits/Lits'
 import type { Token } from '../../../src/tokenizer/token'
+import { builtin, normalExpressionKeys, specialExpressionKeys } from '../../../src/builtin'
 
 export type FormatterRule = (text: string, index: number, formatter: TextFormatter) => {
   count: number
@@ -81,6 +82,13 @@ export type StyleOverride = {
   style: string
 }
 
+const normalExpressionSet = new Set(normalExpressionKeys.flatMap(key => ([
+  key,
+  ...builtin.normalExpressions[key]?.aliases ?? [],
+])))
+
+const specialExpressionSet = new Set(specialExpressionKeys)
+
 export function formatLitsExpression(program: string, styleOverride?: StyleOverride): string {
   try {
     const tokens = lits.tokenize(program).tokens
@@ -106,17 +114,21 @@ function getStylesFromToken(token: Token): string {
     case 'RegexpShorthand':
       return styles('text-color-Pink')
     case 'Symbol':
-      return styles('text-color-Mint')
+      return specialExpressionSet.has(token[1])
+        ? styles('text-color-white')
+        : normalExpressionSet.has(token[1])
+          ? styles('text-color-Beige')
+          : styles('text-color-Mint')
     case 'BasePrefixedNumber':
     case 'Number':
-      return styles('text-color-Beige')
+      return styles('text-color-Viola')
     case 'SingleLineComment':
     case 'MultiLineComment':
       return styles('text-color-gray-500', 'italic')
     case 'Operator':
-      return styles('text-color-gray-200')
+      return styles('text-color-gray-300')
     case 'ReservedSymbol':
-      return styles('text-color-gray-200')
+      return styles('text-color-white')
     case 'Whitespace':
       return ''
     case 'LBrace':
@@ -125,7 +137,7 @@ function getStylesFromToken(token: Token): string {
     case 'RBracket':
     case 'LParen':
     case 'RParen':
-      return styles('text-color-gray-200')
+      return styles('text-color-gray-300')
 
     default:
       throw new Error(`Unexpected token: ${token satisfies never}`)

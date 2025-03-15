@@ -60,7 +60,6 @@ export interface CommonReference<T extends Category> {
   description: string
   clojureDocs?: string | null
   seeAlso?: ApiName[]
-  algebraic?: boolean
 }
 export type FunctionReference<T extends Category = Category> = CommonReference<T> & {
   returns: TypedValue

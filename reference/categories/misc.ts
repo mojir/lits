@@ -34,7 +34,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       '!=(0, -0)',
     ],
     aliases: ['!='],
-    algebraic: true,
   },
   '=': {
     title: '=',
@@ -78,7 +77,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       '=([1, 2], [1, 2])',
       '=({ a := 1, b := 2 }, { b := 2, a := 1 })',
     ],
-    algebraic: true,
   },
   '<': {
     title: '<',
@@ -109,7 +107,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       '<(1, 2, 2, 3)',
       '<("a", "b")',
     ],
-    algebraic: true,
   },
   '>': {
     title: '>',
@@ -140,7 +137,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       '>(4, 3, 2, 1)',
       '>(3, 2, 2, 1)',
     ],
-    algebraic: true,
   },
   '≤': {
     title: '≤',
@@ -173,7 +169,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       '<=(1, 2, 2, 3)',
     ],
     aliases: ['<='],
-    algebraic: true,
   },
   '≥': {
     title: '≥',
@@ -207,7 +202,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       '>=(3, 2, 2, 1)',
     ],
     aliases: ['>='],
-    algebraic: true,
   },
   '!': {
     title: '!',
@@ -235,7 +229,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       '!(null)',
       '!("")',
     ],
-    algebraic: true,
   },
   'write!': {
     title: 'write!',
@@ -263,7 +256,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       'write!(#"^start")',
       'write!(null, true, false)',
     ],
-    algebraic: true,
     noOperatorDocumentation: true,
   },
   'iso-date->epoch': {
@@ -286,7 +278,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       'iso-date->epoch("2022-04-12T09:37:10.899Z")',
       'iso-date->epoch("1980-01-01")',
     ],
-    algebraic: true,
   },
   'epoch->iso-date': {
     title: 'epoch->iso-date',
@@ -308,7 +299,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       'epoch->iso-date(1649756230899)',
       'epoch->iso-date(0)',
     ],
-    algebraic: true,
   },
   'boolean': {
     title: 'boolean',
@@ -332,7 +322,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       'boolean(null)',
       'boolean("Albert")',
     ],
-    algebraic: true,
   },
   'compare': {
     title: 'compare',
@@ -354,7 +343,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       'compare(1, 0)',
       'compare("Albert", "Mojir")',
     ],
-    algebraic: true,
   },
   'identical?': {
     title: 'identical?',
@@ -376,7 +364,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       'identical?([1, true, null], [1, true, null])',
       'identical?(0.3, 0.1 + 0.2)',
     ],
-    algebraic: true,
   },
   'json-parse': {
     title: 'json-parse',
@@ -398,7 +385,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
     examples: [
       'json-parse("[1, 2, 3]")',
     ],
-    algebraic: true,
   },
   'json-stringify': {
     title: 'json-stringify',
@@ -426,7 +412,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       'json-stringify([1, 2, 3])',
       'json-stringify({ a := { b := 10 }}, 2)',
     ],
-    algebraic: true,
     noOperatorDocumentation: true,
   },
 }

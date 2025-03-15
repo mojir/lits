@@ -11,7 +11,7 @@ export const functionalReference: Record<FunctionalApiName, FunctionReference<'F
     },
     args: {
       ...getOperatorArgs('function', 'array'),
-      fn: {
+      fun: {
         type: 'function',
       },
       args: {
@@ -19,9 +19,9 @@ export const functionalReference: Record<FunctionalApiName, FunctionReference<'F
       },
     },
     variants: [
-      { argumentNames: ['fn', 'args'] },
+      { argumentNames: ['fun', 'args'] },
     ],
-    description: 'Call supplied function $fn with specified arguments $args.',
+    description: 'Call supplied function $fun with specified arguments $args.',
     examples: [
       `
 apply(+, [1, 2, 3])`,
@@ -33,7 +33,6 @@ apply(
       `
 (x, y) -> sqrt(x ** 2 + y ** 2) apply [3, 4]`,
     ],
-    algebraic: true,
   },
   'identity': {
     title: 'identity',
@@ -52,7 +51,6 @@ apply(
     ],
     description: 'Returns $x.',
     examples: ['identity(1)', 'identity("Albert")', 'identity({ a := 1 })', 'identity(null)'],
-    algebraic: true,
   },
   'partial': {
     title: 'partial',
@@ -62,7 +60,7 @@ apply(
       type: 'function',
     },
     args: {
-      fn: {
+      fun: {
         type: 'function',
       },
       args: {
@@ -71,11 +69,11 @@ apply(
       },
     },
     variants: [
-      { argumentNames: ['fn', 'args'] },
+      { argumentNames: ['fun', 'args'] },
     ],
-    description: `Takes a function $fn and a optional number arguments $args to $fn.
+    description: `Takes a function $fun and a optional number arguments $args to $fun.
 It returns a function that takes the additional additional arguments.
-When called, the returned function calls \`(\`$fn \`...\`$args\` ...additional_arguments)\`.`,
+When called, the returned function calls \`(\`$fun \`...\`$args\` ...additional_arguments)\`.`,
     examples: [
       'partial(+, 100)',
       `
@@ -86,7 +84,6 @@ let addHundred := partial(+, 100);
 addHundred(10)`,
     ],
     noOperatorDocumentation: true,
-    algebraic: true,
   },
   'comp': {
     title: 'comp',
@@ -118,7 +115,6 @@ negative-quotient(9, 3)`,
 let x := { bar := { foo := 42 } };
 comp("foo", "bar")(x)`,
     ],
-    algebraic: true,
   },
   'constantly': {
     title: 'constantly',
@@ -141,7 +137,6 @@ comp("foo", "bar")(x)`,
 let always-true := constantly(true);
 always-true(9, 3)`,
     ],
-    algebraic: true,
   },
 
   'juxt': {
@@ -153,7 +148,7 @@ always-true(9, 3)`,
     },
     args: {
       ...getOperatorArgs('function', 'function'),
-      fn: {
+      fun: {
         type: 'function',
       },
       fns: {
@@ -162,8 +157,8 @@ always-true(9, 3)`,
       },
     },
     variants: [
-      { argumentNames: ['fn'] },
-      { argumentNames: ['fn', 'fns'] },
+      { argumentNames: ['fun'] },
+      { argumentNames: ['fun', 'fns'] },
     ],
     description: `Takes one or many function and returns a function that is the juxtaposition of those functions.  
 The returned function takes a variable number of args,
@@ -187,7 +182,6 @@ juxt("a", "b")(
       `
 juxt(+, *, min, max) apply range(1, 11)`,
     ],
-    algebraic: true,
   },
   'complement': {
     title: 'complement',
@@ -197,21 +191,20 @@ juxt(+, *, min, max) apply range(1, 11)`,
       type: 'function',
     },
     args: {
-      fn: {
+      fun: {
         type: 'function',
       },
     },
     variants: [
-      { argumentNames: ['fn'] },
+      { argumentNames: ['fun'] },
     ],
-    description: 'Takes a function $fn and returns a new function that takes the same arguments as f, has the same effects, if any, and returns the opposite truth value.',
+    description: 'Takes a function $fun and returns a new function that takes the same arguments as f, has the same effects, if any, and returns the opposite truth value.',
     examples: [
       'complement(>)(1, 3)',
       'complement(<)(1, 3)',
       'complement(+)(1, 3)',
       'complement(+)(0, 0)',
     ],
-    algebraic: true,
   },
   'every-pred': {
     title: 'every-pred',
@@ -221,7 +214,7 @@ juxt(+, *, min, max) apply range(1, 11)`,
       type: 'function',
     },
     args: {
-      fn: {
+      fun: {
         type: 'function',
       },
       fns: {
@@ -230,8 +223,8 @@ juxt(+, *, min, max) apply range(1, 11)`,
       },
     },
     variants: [
-      { argumentNames: ['fn'] },
-      { argumentNames: ['fn', 'fns'] },
+      { argumentNames: ['fun'] },
+      { argumentNames: ['fun', 'fns'] },
     ],
     description: `
 Takes a number of predicates and returns a function that returns \`true\` if all predicates
@@ -248,7 +241,6 @@ every-pred(string?, -> count($) > 3)(
   "M"
 )`,
     ],
-    algebraic: true,
     noOperatorDocumentation: true,
   },
   'some-pred': {
@@ -260,7 +252,7 @@ every-pred(string?, -> count($) > 3)(
       type: 'function',
     },
     args: {
-      fn: {
+      fun: {
         type: 'function',
       },
       fns: {
@@ -269,8 +261,8 @@ every-pred(string?, -> count($) > 3)(
       },
     },
     variants: [
-      { argumentNames: ['fn'] },
-      { argumentNames: ['fn', 'fns'] },
+      { argumentNames: ['fun'] },
+      { argumentNames: ['fun', 'fns'] },
     ],
     description: 'Takes a number of `predicates` and returns a function that returns \`true\` if at least one of the `predicates` return a truthy \`true\` value against at least one of its arguments, else it returns `false`.',
     examples: [
@@ -279,7 +271,6 @@ every-pred(string?, -> count($) > 3)(
       'some-pred(string?, -> count($) > 3)("a", [1, 2, 3])',
       'some-pred(string?, -> count($) > 3)([1, 2, 3], [2])',
     ],
-    algebraic: true,
     noOperatorDocumentation: true,
   },
   'fnull': {
@@ -291,7 +282,7 @@ every-pred(string?, -> count($) > 3)(
     },
     args: {
       ...getOperatorArgs('function', 'any'),
-      fn: {
+      fun: {
         type: 'function',
       },
       arg: {
@@ -303,10 +294,10 @@ every-pred(string?, -> count($) > 3)(
       },
     },
     variants: [
-      { argumentNames: ['fn', 'arg'] },
-      { argumentNames: ['fn', 'arg', 'args'] },
+      { argumentNames: ['fun', 'arg'] },
+      { argumentNames: ['fun', 'arg', 'args'] },
     ],
-    description: 'Takes a function $fn, and returns a function that calls $fn, replacing a null argument to the corresponding argument.',
+    description: 'Takes a function $fun, and returns a function that calls $fun, replacing a null argument to the corresponding argument.',
     examples: [
       'fnull(inc, 0)(1)',
       'fnull(inc, 0)(null)',
@@ -316,6 +307,5 @@ every-pred(string?, -> count($) > 3)(
       'fnull(+, 1, 2)(null, null)',
       'fnull(+, 1, 2)(null, null, 3, 4)',
     ],
-    algebraic: true,
   },
 }

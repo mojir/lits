@@ -30,7 +30,6 @@ export const arrayReference: Record<ArrayApiName, FunctionReference<'Array'>> = 
       '[1, 2, 3][1]',
     ],
     noOperatorDocumentation: true,
-    algebraic: true,
   },
   range: {
     title: 'range',
@@ -67,7 +66,6 @@ range(
   0.25, // step value
 )`,
     ],
-    algebraic: true,
   },
   repeat: {
     title: 'repeat',
@@ -89,7 +87,6 @@ range(
       'repeat(10, 0)',
       '"Albert" repeat 5',
     ],
-    algebraic: true,
   },
   flatten: {
     title: 'flatten',
@@ -122,7 +119,6 @@ flatten([
 
       'flatten(12)',
     ],
-    algebraic: true,
     noOperatorDocumentation: true,
   },
   mapcat: {
@@ -138,14 +134,14 @@ flatten([
         type: 'collection',
         array: true,
       },
-      fn: {
+      fun: {
         type: 'function',
       },
     },
     variants: [{
-      argumentNames: ['colls', 'fn'],
+      argumentNames: ['colls', 'fun'],
     }],
-    description: 'Returns the result of applying concat to the result of applying map to $fn and $colls.',
+    description: 'Returns the result of applying concat to the result of applying map to $fun and $colls.',
     examples: [
       '[[3, 2, 1, 0], [6, 5, 4], [9, 8, 7]] mapcat reverse',
       'mapcat([[3, 2, 1, 0], [6, 5, 4], [9, 8, 7]], reverse)',
@@ -161,6 +157,5 @@ mapcat(
   -> $ remove even?
 )`,
     ],
-    algebraic: true,
   },
 }

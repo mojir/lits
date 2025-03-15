@@ -23,7 +23,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
     ],
     description: 'If $value is falsy it throws `AssertionError` with $message. If no $message is provided, message is set to $value.',
     examples: ['try assert(0, "Expected a positive value") catch (e) e.message end'],
-    algebraic: true,
     noOperatorDocumentation: true,
   },
   'assert!=': {
@@ -51,7 +50,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
       'try 0 assert!= 0 catch (e) e.message end',
       'try assert!=(0, 1) catch (e) e.message end',
     ],
-    algebraic: true,
     noOperatorDocumentation: true,
   },
   'assert=': {
@@ -78,7 +76,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
       'try assert=({ "a" := 1 }, { "a" := 2 }) catch (e) e.message end',
       'try assert=({ "a" := 1 }, { "a" := 1 }) catch (e) e.message end',
     ],
-    algebraic: true,
     noOperatorDocumentation: true,
   },
   'assert-gt': {
@@ -105,7 +102,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
       'try assert-gt(0, 0) catch (e) e.message end',
       'try assert-gt(1, 0) catch (e) e.message end',
     ],
-    algebraic: true,
     noOperatorDocumentation: true,
   },
   'assert-lt': {
@@ -132,7 +128,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
       'try assert-lte(1, 1) catch (e) e.message end',
       'try assert-lte(0, 1) catch (e) e.message end',
     ],
-    algebraic: true,
     noOperatorDocumentation: true,
   },
   'assert-gte': {
@@ -159,7 +154,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
       'try assert-gte(0, 1) catch (e) e.message end',
       'try assert-gte(1, 1) catch (e) e.message end',
     ],
-    algebraic: true,
     noOperatorDocumentation: true,
   },
   'assert-lte': {
@@ -186,7 +180,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
       'try assert-lte(1, 0) catch (e) e.message end',
       'try assert-lte(1, 1) catch (e) e.message end',
     ],
-    algebraic: true,
     noOperatorDocumentation: true,
   },
   'assert-true': {
@@ -215,7 +208,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
       'try assert-true(false) catch (e) e.message end',
       'try assert-true(true) catch (e) e.message end',
     ],
-    algebraic: true,
     noOperatorDocumentation: true,
   },
   'assert-false': {
@@ -244,7 +236,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
       'try assert-false(true) catch (e) e.message end',
       'try assert-false(false) catch (e) e.message end',
     ],
-    algebraic: true,
     noOperatorDocumentation: true,
   },
   'assert-truthy': {
@@ -280,7 +271,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
       'try assert-truthy([]) catch (e) e.message end',
       'try assert-truthy({}) catch (e) e.message end',
     ],
-    algebraic: true,
     noOperatorDocumentation: true,
   },
   'assert-falsy': {
@@ -315,7 +305,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
       'try assert-falsy(null) catch (e) e.message end',
       'try assert-falsy("") catch (e) e.message end',
     ],
-    algebraic: true,
     noOperatorDocumentation: true,
   },
   'assert-null': {
@@ -350,7 +339,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
       'try assert-null(0) catch (e) e.message end',
       'try assert-null("") catch (e) e.message end',
     ],
-    algebraic: true,
     noOperatorDocumentation: true,
   },
   'assert-throws': {
@@ -362,7 +350,7 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
       type: 'null',
     },
     args: {
-      fn: {
+      fun: {
         type: 'function',
       },
       message: {
@@ -370,15 +358,14 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
       },
     },
     variants: [
-      { argumentNames: ['fn'] },
-      { argumentNames: ['fn', 'message'] },
+      { argumentNames: ['fun'] },
+      { argumentNames: ['fun', 'message'] },
     ],
-    description: 'If $fn does not throw, it throws `AssertionError`.',
+    description: 'If $fun does not throw, it throws `AssertionError`.',
     examples: [
       'assert-throws(-> throw("Error"))',
       'try assert-throws(-> identity("Error")) catch (e) e.message end',
     ],
-    algebraic: true,
     noOperatorDocumentation: true,
   },
   'assert-throws-error': {
@@ -390,7 +377,7 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
       type: 'null',
     },
     args: {
-      'fn': {
+      'fun': {
         type: 'function',
       },
       'error-message': {
@@ -404,12 +391,11 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
       { argumentNames: ['value', 'error-message'] },
       { argumentNames: ['value', 'error-message', 'message'] },
     ],
-    description: 'If $fn does not throw $error-message, it throws `AssertionError`.',
+    description: 'If $fun does not throw $error-message, it throws `AssertionError`.',
     examples: [
       'try assert-throws-error(-> throw("Error"), "Error") catch (e) e.message end',
       'try assert-throws-error(-> identity("Error"), "Error") catch (e) e.message end',
     ],
-    algebraic: true,
     noOperatorDocumentation: true,
   },
   'assert-not-throws': {
@@ -421,7 +407,7 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
       type: 'null',
     },
     args: {
-      fn: {
+      fun: {
         type: 'function',
       },
       message: {
@@ -429,15 +415,14 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
       },
     },
     variants: [
-      { argumentNames: ['fn'] },
-      { argumentNames: ['fn', 'message'] },
+      { argumentNames: ['fun'] },
+      { argumentNames: ['fun', 'message'] },
     ],
-    description: 'If $fn throws, it throws `AssertionError`.',
+    description: 'If $fun throws, it throws `AssertionError`.',
     examples: [
       'try assert-not-throws(-> identity("Error")) catch (e) e.message end',
       'try assert-not-throws(-> throw("Error")) catch (e) e.message end',
     ],
-    algebraic: true,
     noOperatorDocumentation: true,
   },
 }

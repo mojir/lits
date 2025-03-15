@@ -31,7 +31,6 @@ let o := { a := 5 };
 dissoc(o, "a");
 o`,
     ],
-    algebraic: true,
   },
   'object': {
     title: 'object',
@@ -58,7 +57,6 @@ o`,
       '{}',
       '{ a := 1, b := 2 }',
     ],
-    algebraic: true,
     noOperatorDocumentation: true,
   },
   'keys': {
@@ -83,7 +81,6 @@ o`,
       'keys({ x := 10, y := true, z := "A string" })',
       'keys(object("x", 10, "y", true, "z", "A string"))',
     ],
-    algebraic: true,
   },
   'vals': {
     title: 'vals',
@@ -107,7 +104,6 @@ o`,
       'vals({ x := 10, y := true, z := "A string" })',
       'vals(object("x", 10, "y", true, "z", "A string"))',
     ],
-    algebraic: true,
   },
   'entries': {
     title: 'entries',
@@ -131,7 +127,6 @@ o`,
       'entries({ x := 10, y := true, z := "A string" })',
       'entries(object("x", 10, "y", true, "z", "A string"))',
     ],
-    algebraic: true,
   },
   'find': {
     title: 'find',
@@ -158,7 +153,6 @@ o`,
       'find(object("a", 1, "b", 2), "b")',
       'find(object("a", 1, "b", 2), "c")',
     ],
-    algebraic: true,
   },
   'merge': {
     title: 'merge',
@@ -186,7 +180,6 @@ If no arguments are provided \`null\` is returned.`,
       'merge(object("x", 10), object("y", 20))',
       'merge(object("x", 10), object("x", 15, "y", 20))',
     ],
-    algebraic: true,
   },
   'merge-with': {
     title: 'merge-with',
@@ -200,16 +193,16 @@ If no arguments are provided \`null\` is returned.`,
         type: 'object',
         rest: true,
       },
-      fn: {
+      fun: {
         type: 'function',
       },
     },
     variants: [
-      { argumentNames: ['objs', 'fn'] },
+      { argumentNames: ['objs', 'fun'] },
     ],
     description: `
 Returns a new object created by merging together all arguments.
-If two keys appears in more than one object $fn is used to calculate the new value.
+If two keys appears in more than one object $fun is used to calculate the new value.
 
 If no arguments are provided \`null\` is returned.`,
     examples: [
@@ -217,7 +210,6 @@ If no arguments are provided \`null\` is returned.`,
       'merge-with(object("x", 10), object("x", 15, "y", 20), +)',
       'merge-with({ x := 10 }, { x := 20 }, { x := 30 }, { x := 40 }, -)',
     ],
-    algebraic: true,
     noOperatorDocumentation: true,
   },
   'zipmap': {
@@ -228,27 +220,18 @@ If no arguments are provided \`null\` is returned.`,
       type: 'object',
     },
     args: {
-      ...getOperatorArgs('string', 'any'),
-      keys: {
-        type: 'string',
-        array: true,
-      },
-      values: {
-        type: 'any',
-        array: true,
-      },
+      ...getOperatorArgs('array', 'array'),
     },
     variants: [
-      { argumentNames: ['keys', 'values'] },
+      { argumentNames: ['a', 'b'] },
     ],
-    description: 'Returns a new object created by mapping $keys to $values.',
+    description: 'Returns a new object created by mapping $a to $b.',
     examples: [
       '["a", "b", "c"] zipmap [1, 2, 3]',
       'zipmap(["a", "b", "c"], [10, null, [1, 2, 3]])',
       'zipmap(["a", "b", "c"], [1])',
       'zipmap([], [10, null, [1, 2, 3]])',
     ],
-    algebraic: true,
   },
   'select-keys': {
     title: 'select-keys',
@@ -259,23 +242,15 @@ If no arguments are provided \`null\` is returned.`,
     },
     args: {
       ...getOperatorArgs('object', 'array'),
-      obj: {
-        type: 'object',
-      },
-      keys: {
-        type: 'string',
-        array: true,
-      },
     },
     variants: [
-      { argumentNames: ['obj', 'keys'] },
+      { argumentNames: ['a', 'b'] },
     ],
-    description: 'Returns an object containing only those entries in $obj whose key is in $keys.',
+    description: 'Returns an object containing only those entries in $a whose key is in $b.',
     examples: [
       '{ a := 1, b := 2, c := 3 } select-keys ["a", "b"]',
       'select-keys({ a := 1, b := 2, c := 3 }, ["a", "b"])',
       'select-keys({ a := 1 }, ["a", "b"])',
     ],
-    algebraic: true,
   },
 }

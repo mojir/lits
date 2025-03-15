@@ -40,7 +40,6 @@ export const sequenceReference: Record<SequenceApiName, FunctionReference<'Seque
       'nth(null, 1)',
       'nth(null, 1, "Default value")',
     ],
-    algebraic: true,
   },
   'push': {
     title: 'push',
@@ -75,7 +74,6 @@ let l := [1, 2, 3];
 push(l, 4);
 l`,
     ],
-    algebraic: true,
   },
   'pop': {
     title: 'pop',
@@ -98,7 +96,6 @@ l`,
       'pop([1, 2, 3])',
       'pop([])',
     ],
-    algebraic: true,
   },
   'unshift': {
     title: 'unshift',
@@ -131,7 +128,6 @@ let l := [1, 2, 3];
 unshift(l, 4);
 l`,
     ],
-    algebraic: true,
   },
   'shift': {
     title: 'shift',
@@ -154,7 +150,6 @@ l`,
       'shift([1, 2, 3])',
       'shift([])',
     ],
-    algebraic: true,
   },
   'slice': {
     title: 'slice',
@@ -190,7 +185,6 @@ l`,
       'slice([1, 2, 3, 4, 5], 2, 4)',
       'slice([1, 2, 3, 4, 5], 2)',
     ],
-    algebraic: true,
   },
   'splice': {
     title: 'splice',
@@ -226,7 +220,6 @@ l`,
       'splice([1, 2, 3, 4, 5], -2, 1, "x")',
       'splice("Albert", 2, 2, "fo")',
     ],
-    algebraic: true,
   },
   'reductions': {
     title: 'reductions',
@@ -238,7 +231,7 @@ l`,
     },
     args: {
       ...getOperatorArgs('sequence', 'function'),
-      fn: {
+      fun: {
         type: 'function',
       },
       seq: {
@@ -250,10 +243,10 @@ l`,
       },
     },
     variants: [
-      { argumentNames: ['seq', 'fn'] },
-      { argumentNames: ['seq', 'fn', 'start'] },
+      { argumentNames: ['seq', 'fun'] },
+      { argumentNames: ['seq', 'fun', 'start'] },
     ],
-    description: 'Returns an array of the intermediate values of the reduction (see `reduce`) of $seq by $fn.',
+    description: 'Returns an array of the intermediate values of the reduction (see `reduce`) of $seq by $fun.',
     examples: [
       '[1, 2, 3] reductions +',
       'reductions([1, 2, 3], +)',
@@ -266,7 +259,6 @@ reductions(
   0
 )`,
     ],
-    algebraic: true,
   },
   'reduce': {
     title: 'reduce',
@@ -277,7 +269,7 @@ reductions(
     },
     args: {
       ...getOperatorArgs('sequence', 'function'),
-      fn: {
+      fun: {
         type: 'function',
       },
       seq: {
@@ -288,10 +280,10 @@ reductions(
       },
     },
     variants: [
-      { argumentNames: ['seq', 'fn'] },
-      { argumentNames: ['seq', 'fn', 'start'] },
+      { argumentNames: ['seq', 'fun'] },
+      { argumentNames: ['seq', 'fun', 'start'] },
     ],
-    description: 'Runs $fn function on each element of the $seq, passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $seq is a single value.',
+    description: 'Runs $fun function on each element of the $seq, passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $seq is a single value.',
     examples: [
       '[1, 2, 3] reduce +',
       'reduce([1, 2, 3], +)',
@@ -303,7 +295,6 @@ reduce(
   (result, value) -> result + if even?(value) then value else 0 end,
   0)`,
     ],
-    algebraic: true,
   },
   'reduce-right': {
     title: 'reduce-right',
@@ -315,7 +306,7 @@ reduce(
     },
     args: {
       ...getOperatorArgs('sequence', 'function'),
-      fn: {
+      fun: {
         type: 'function',
       },
       seq: {
@@ -326,15 +317,14 @@ reduce(
       },
     },
     variants: [
-      { argumentNames: ['seq', 'fn'] },
-      { argumentNames: ['seq', 'fn', 'start'] },
+      { argumentNames: ['seq', 'fun'] },
+      { argumentNames: ['seq', 'fun', 'start'] },
     ],
-    description: 'Runs $fn function on each element of the $seq (starting from the last item), passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $seq is a single value.',
+    description: 'Runs $fun function on each element of the $seq (starting from the last item), passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $seq is a single value.',
     examples: [
       'range(1, 10) reduce-right *',
       'reduce-right(["A", "B", "C"], str, "")',
     ],
-    algebraic: true,
   },
   'map': {
     title: 'map',
@@ -349,20 +339,19 @@ reduce(
       seq: {
         type: 'sequence',
       },
-      fn: {
+      fun: {
         type: 'function',
       },
     },
     variants: [
-      { argumentNames: ['seq', 'fn'] },
+      { argumentNames: ['seq', 'fun'] },
     ],
-    description: 'Creates a new array populated with the results of calling $fn on every elements in $seq.',
+    description: 'Creates a new array populated with the results of calling $fun on every elements in $seq.',
     examples: [
       '[1, 2, 3] map -> -($)',
       'map(["Albert", "Mojir", 42], str)',
       'map([1, 2, 3], inc)',
     ],
-    algebraic: true,
   },
   'filter': {
     title: 'filter',
@@ -376,14 +365,14 @@ reduce(
       seq: {
         type: 'sequence',
       },
-      fn: {
+      fun: {
         type: 'function',
       },
     },
     variants: [
-      { argumentNames: ['seq', 'fn'] },
+      { argumentNames: ['seq', 'fun'] },
     ],
-    description: 'Creates a new array with all elements that pass the test implemented by $fn.',
+    description: 'Creates a new array with all elements that pass the test implemented by $fun.',
     examples: [
       `
 filter(
@@ -396,7 +385,6 @@ filter(
   -> $ > 10
 )`,
     ],
-    algebraic: true,
   },
   'position': {
     title: 'position',
@@ -411,14 +399,14 @@ filter(
       seq: {
         type: ['sequence', 'null'],
       },
-      fn: {
+      fun: {
         type: 'function',
       },
     },
     variants: [
-      { argumentNames: ['seq', 'fn'] },
+      { argumentNames: ['seq', 'fun'] },
     ],
-    description: 'Returns the index of the first elements that passes the test implemented by $fn. If no element was found, `null` is returned.',
+    description: 'Returns the index of the first elements that passes the test implemented by $fun. If no element was found, `null` is returned.',
     examples: [
       `
 position(
@@ -441,7 +429,6 @@ position(
   -> $ > 100
 )`,
     ],
-    algebraic: true,
   },
   'index-of': {
     title: 'index-of',
@@ -471,7 +458,6 @@ position(
       'index-of([5, 10, 15, 20], 1)',
       'index-of(null, 1)',
     ],
-    algebraic: true,
   },
   'last-index-of': {
     title: 'last-index-of',
@@ -501,7 +487,6 @@ position(
       'last-index-of([5, 10, 15, 20], 1)',
       'last-index-of(null, 1)',
     ],
-    algebraic: true,
   },
   'some': {
     title: 'some',
@@ -515,14 +500,14 @@ position(
       seq: {
         type: ['sequence', 'null'],
       },
-      fn: {
+      fun: {
         type: 'function',
       },
     },
     variants: [
-      { argumentNames: ['seq', 'fn'] },
+      { argumentNames: ['seq', 'fun'] },
     ],
-    description: 'Returns the first element that passes the test implemented by $fn. I no element was found, `null` is returned.',
+    description: 'Returns the first element that passes the test implemented by $fun. I no element was found, `null` is returned.',
     examples: [
       `
 some(
@@ -550,7 +535,6 @@ some(
   -> $ > 10
 )`,
     ],
-    algebraic: true,
   },
   'reverse': {
     title: 'reverse',
@@ -574,7 +558,6 @@ some(
       'reverse("Albert")',
       'reverse(null)',
     ],
-    algebraic: true,
   },
   'first': {
     title: 'first',
@@ -597,7 +580,6 @@ some(
       'first([])',
       'first(null)',
     ],
-    algebraic: true,
   },
   'second': {
     title: 'second',
@@ -621,7 +603,6 @@ some(
       'second([])',
       'second(null)',
     ],
-    algebraic: true,
   },
   'last': {
     title: 'last',
@@ -646,7 +627,6 @@ some(
       'last([])',
       'last(null)',
     ],
-    algebraic: true,
   },
   'rest': {
     title: 'rest',
@@ -674,7 +654,6 @@ For string $seq returns all but the first characters in $seq.`,
       'rest("A",)',
       'rest("")',
     ],
-    algebraic: true,
   },
   'next': {
     title: 'next',
@@ -700,7 +679,6 @@ For string $seq returns all but the first characters in $seq.`,
       'next("A",)',
       'next("")',
     ],
-    algebraic: true,
   },
   'take': {
     title: 'take',
@@ -729,7 +707,6 @@ For string $seq returns all but the first characters in $seq.`,
       'take("Albert", 2)',
       'take("Albert", 50)',
     ],
-    algebraic: true,
   },
   'take-last': {
     title: 'take-last',
@@ -756,7 +733,6 @@ For string $seq returns all but the first characters in $seq.`,
       'take-last([1, 2, 3, 4, 5], 3)',
       'take-last([1, 2, 3, 4, 5], 0)',
     ],
-    algebraic: true,
   },
   'take-while': {
     title: 'take-while',
@@ -770,12 +746,12 @@ For string $seq returns all but the first characters in $seq.`,
       seq: {
         type: 'sequence',
       },
-      fn: {
+      fun: {
         type: 'function',
       },
     },
     variants: [
-      { argumentNames: ['seq', 'fn'] },
+      { argumentNames: ['seq', 'fun'] },
     ],
     description: 'Returns the members of $seq in order, stopping before the first one for which `predicate` returns a falsy value.',
     examples: [
@@ -843,7 +819,6 @@ take-while(
       'drop-last([1, 2, 3, 4, 5], 3)',
       'drop-last([1, 2, 3, 4, 5], 0)',
     ],
-    algebraic: true,
   },
   'drop-while': {
     title: 'drop-while',
@@ -857,12 +832,12 @@ take-while(
       seq: {
         type: 'sequence',
       },
-      fn: {
+      fun: {
         type: 'function',
       },
     },
     variants: [
-      { argumentNames: ['seq', 'fn'] },
+      { argumentNames: ['seq', 'fun'] },
     ],
     description: 'Returns the members of $seq in order, skipping the fist elements for witch the `predicate` returns a truethy value.',
     examples: [
@@ -877,7 +852,6 @@ drop-while(
   -> $ > 3
 )`,
     ],
-    algebraic: true,
   },
   'sort': {
     title: 'sort',
@@ -892,15 +866,15 @@ drop-while(
       seq: {
         type: 'sequence',
       },
-      fn: {
+      fun: {
         type: 'function',
       },
     },
     variants: [
       { argumentNames: ['seq'] },
-      { argumentNames: ['seq', 'fn'] },
+      { argumentNames: ['seq', 'fun'] },
     ],
-    description: 'Returns a new sequence with the elements from $seq sorted according to $fn. If no $fn is supplied, builtin `compare` will be used.',
+    description: 'Returns a new sequence with the elements from $seq sorted according to $fun. If no $fun is supplied, builtin `compare` will be used.',
     examples: [
       '[3, 1, 2] sort (a, b) -> b - a',
       'sort([3, 1, 2])',
@@ -915,7 +889,6 @@ sort(
   (a, b) -> cond case a > b then -1 case a < b then 1 case true then -1 end
 )`,
     ],
-    algebraic: true,
   },
   'sort-by': {
     title: 'sort-by',
@@ -933,21 +906,20 @@ sort(
       keyfn: {
         type: 'function',
       },
-      comp: {
+      comparer: {
         type: 'function',
       },
     },
     variants: [
       { argumentNames: ['seq', 'keyfn'] },
-      { argumentNames: ['seq', 'keyfn', 'comp'] },
+      { argumentNames: ['seq', 'keyfn', 'comparer'] },
     ],
-    description: 'Returns a sorted sequence of the items in $seq, where the sort order is determined by comparing `(keyfn item)`. If no $comp is supplied, uses builtin `compare`.',
+    description: 'Returns a sorted sequence of the items in $seq, where the sort order is determined by comparing `(keyfn item)`. If no $comparer is supplied, uses builtin `compare`.',
     examples: [
       '["Albert", "Mojir", "Nina"] sort-by count',
       'sort-by(["Albert", "Mojir", "Nina"], count)',
       'sort-by("Albert", lower-case, -> $2 compare $1)',
     ],
-    algebraic: true,
   },
   'distinct': {
     title: 'distinct',
@@ -972,7 +944,6 @@ sort(
       'distinct([])',
       'distinct("")',
     ],
-    algebraic: true,
   },
   'remove': {
     title: 'remove',
@@ -986,12 +957,12 @@ sort(
       seq: {
         type: 'sequence',
       },
-      fn: {
+      fun: {
         type: 'function',
       },
     },
     variants: [
-      { argumentNames: ['seq', 'fn'] },
+      { argumentNames: ['seq', 'fun'] },
     ],
     description: 'Returns a new sequence of items in $seq for witch `pred(item)` returns a falsy value.',
     examples: [
@@ -999,7 +970,6 @@ sort(
       'remove([1, 2, 3, 1, 3, 5], even?)',
       'remove("Albert Mojir", -> "aoueiyAOUEIY" contains? $)',
     ],
-    algebraic: true,
   },
   'remove-at': {
     title: 'remove-at',
@@ -1029,7 +999,6 @@ sort(
       'remove-at([1, 2, 3, 1, 3, 5], -1)',
       'remove-at("Albert Mojir", 6)',
     ],
-    algebraic: true,
   },
   'split-at': {
     title: 'split-at',
@@ -1057,7 +1026,6 @@ sort(
       'split-at([1, 2, 3, 4, 5], -2)',
       'split-at("Albert", 2)',
     ],
-    algebraic: true,
   },
   'split-with': {
     title: 'split-with',
@@ -1071,20 +1039,19 @@ sort(
       seq: {
         type: 'sequence',
       },
-      fn: {
+      fun: {
         type: 'function',
       },
     },
     variants: [
-      { argumentNames: ['seq', 'fn'] },
+      { argumentNames: ['seq', 'fun'] },
     ],
-    description: 'Returns a pair of sequences `[take-while(input, fn), drop-while(input, fn)]`.',
+    description: 'Returns a pair of sequences `[take-while(input, fun), drop-while(input, fun)]`.',
     examples: [
       '[1, 2, 3, 4, 5] split-with odd?',
       'split-with([1, 2, 3, 4, 5], -> $ > 3)',
       'split-with("Albert", -> $ <= "o")',
     ],
-    algebraic: true,
   },
   'frequencies': {
     title: 'frequencies',
@@ -1106,7 +1073,6 @@ sort(
       'frequencies(["Albert", "Mojir", "Nina", "Mojir"])',
       'frequencies("Pneumonoultramicroscopicsilicovolcanoconiosis")',
     ],
-    algebraic: true,
   },
   'group-by': {
     title: 'group-by',
@@ -1120,18 +1086,18 @@ sort(
       seq: {
         type: 'sequence',
       },
-      fn: {
+      fun: {
         type: 'function',
       },
     },
     variants: [
-      { argumentNames: ['seq', 'fn'] },
+      { argumentNames: ['seq', 'fun'] },
     ],
-    description: 'Returns an object of the elements of $seq keyed by the result of $fn on each element. The value at each key will be an array of the corresponding elements.',
+    description: 'Returns an object of the elements of $seq keyed by the result of $fun on each element. The value at each key will be an array of the corresponding elements.',
     examples: [
-      '[{ name := "Albert" } { name := "Albert" } { name := "Mojir" }] group-by "name"',
-      'group-by([{name := "Albert"} {name := "Albert"} {name := "Mojir"}] "name")',
-      'group-by("Albert Mojir" -> if "aoueiAOUEI" contains? $ then "vowel" else "other" end)',
+      '[{ name := "Albert" }, { name := "Albert" }, { name := "Mojir" }] group-by "name"',
+      'group-by([{name := "Albert"}, {name := "Albert"}, {name := "Mojir"}], "name")',
+      'group-by("Albert Mojir", -> if "aoueiAOUEI" contains? $ then "vowel" else "other" end)',
     ],
   },
   'partition': {
@@ -1180,7 +1146,6 @@ sort(
       'partition("superfragilistic", 5, 5, null)',
       'let foo := [5, 6, 7, 8]; partition(foo, 2, 1, foo)',
     ],
-    algebraic: true,
   },
   'partition-all': {
     title: 'partition-all',
@@ -1212,7 +1177,6 @@ sort(
       'partition([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 4)',
       'partition-all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 2, 4)',
     ],
-    algebraic: true,
   },
   'partition-by': {
     title: 'partition-by',
@@ -1226,21 +1190,20 @@ sort(
       seq: {
         type: 'sequence',
       },
-      fn: {
+      fun: {
         type: 'function',
       },
     },
     variants: [
-      { argumentNames: ['seq', 'fn'] },
+      { argumentNames: ['seq', 'fun'] },
     ],
-    description: 'Applies $fn to each value in $seq, splitting it each time $fn returns a new value. Returns an array of sequences.',
+    description: 'Applies $fun to each value in $seq, splitting it each time $fun returns a new value. Returns an array of sequences.',
     examples: [
       '[1, 2, 3, 4, 5] partition-by odd?',
       'partition-by([1, 2, 3, 4, 5], -> $ = 3)',
       'partition-by([1, 1, 1, 2, 2, 3, 3], odd?)',
       'partition-by("Leeeeeerrroyyy", identity)',
     ],
-    algebraic: true,
   },
   'starts-with?': {
     title: 'starts-with?',
@@ -1270,7 +1233,6 @@ sort(
       'starts-with?("Albert", "Al")',
       'starts-with?("Albert", "al")',
     ],
-    algebraic: true,
   },
   'ends-with?': {
     title: 'ends-with?',
@@ -1301,7 +1263,6 @@ sort(
       'ends-with?("Albert", "rt")',
       'ends-with?("Albert", "RT")',
     ],
-    algebraic: true,
   },
   'interleave': {
     title: 'interleave',
@@ -1333,7 +1294,6 @@ sort(
       'interleave([1, 2, 3], [])',
       'interleave([])',
     ],
-    algebraic: true,
   },
   'interpose': {
     title: 'interpose',
@@ -1362,6 +1322,5 @@ sort(
       'interpose(["Albert", "Mojir", "Nina"], ", ")',
       'interpose("Albert", ".")',
     ],
-    algebraic: true,
   },
 }

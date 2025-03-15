@@ -26,7 +26,6 @@ export const collectionReference: Record<CollectionApiName, FunctionReference<'C
       'count("Albert")',
       'count(null)',
     ],
-    algebraic: true,
   },
   'get': {
     title: 'get',
@@ -95,7 +94,6 @@ get(
   "default"
 )`,
     ],
-    algebraic: true,
   },
   'get-in': {
     title: 'get-in',
@@ -105,35 +103,33 @@ get(
       type: 'any',
     },
     args: {
-      'coll': {
-        type: 'collection',
-      },
-      'keys': {
-        type: 'array',
-      },
+      ...getOperatorArgs('collection', 'array'),
       'not-found': {
         type: 'any',
       },
     },
     variants: [
-      { argumentNames: ['coll', 'keys'] },
-      { argumentNames: ['coll', 'keys', 'not-found'] },
+      { argumentNames: ['a', 'b'] },
+      { argumentNames: ['a', 'b', 'not-found'] },
     ],
-    description: 'Returns the value in a nested collection, where $keys is an array of keys. Returns $not-found if the key is not present. If $not-found is not set, `null` is returned.',
+    description: 'Returns the value in a nested collection, where $b is an array of keys. Returns $not-found if the key is not present. If $not-found is not set, `null` is returned.',
     examples: [
       `
-(get-in
-  [[1, 2, 3] [4 {:a "Kalle"} 6]]
-  [1 1 :a 0])`,
+get-in(
+  [[1, 2, 3], [4, { a := "Kalle" }, 6]],
+  [1, 1, "a", 0]
+)`,
       `
-(get-in
-  [[1, 2, 3] [4 {:a "Kalle"} 6]]
-  [1 1 :b 0])`,
+get-in(
+  [[1, 2, 3], [4, { a := "Kalle" }, 6]],
+  [1, 1, "b", 0]
+)`,
       `
-(get-in
-  [[1, 2, 3] [4 {:a "Kalle"} 6]]
-  [1 1 :b 0]
-  "Lisa")`,
+get-in(
+  [[1, 2, 3], [4, { a := "Kalle" }, 6]],
+  [1, 1, "b", 0],
+  "Lisa"
+)`,
     ],
   },
   'contains?': {
@@ -180,7 +176,6 @@ contains?(
   "a"
 )`,
     ],
-    algebraic: true,
   },
   'assoc': {
     title: 'assoc',
@@ -241,7 +236,6 @@ assoc(
   6,
   "a")`,
     ],
-    algebraic: true,
   },
   'assoc-in': {
     title: 'assoc-in',
@@ -254,7 +248,7 @@ assoc(
       coll: {
         type: 'collection',
       },
-      keys: {
+      ks: {
         type: ['number', 'string'],
         array: true,
       },
@@ -263,10 +257,10 @@ assoc(
       },
     },
     variants: [
-      { argumentNames: ['coll', 'keys', 'value'] },
+      { argumentNames: ['coll', 'ks', 'value'] },
     ],
     description: `
-Associates a value in the nested collection $coll, where $keys is an array of keys and $value is the new value.
+Associates a value in the nested collection $coll, where $ks is an array of keys and $value is the new value.
 
 If any levels do not exist, objects will be created - and the corresponding keys must be of type string.`,
     examples: [
@@ -289,7 +283,6 @@ assoc-in(
   "A"
 )`,
     ],
-    algebraic: true,
   },
   '++': {
     title: '++',
@@ -329,7 +322,6 @@ assoc-in(
       'concat({ a := 1, b := 2 }, { b := 1, c := 2 })',
       'concat({}, { a := 1 })',
     ],
-    algebraic: true,
     aliases: ['concat'],
   },
   'not-empty': {
@@ -357,7 +349,6 @@ assoc-in(
       'not-empty("Albert")',
       'not-empty(null)',
     ],
-    algebraic: true,
   },
   'every?': {
     title: 'every?',
@@ -412,7 +403,6 @@ every?(
   -> even?(second($))
 )`,
     ],
-    algebraic: true,
   },
   'not-every?': {
     title: 'not-every?',
@@ -465,7 +455,6 @@ not-every?(
   -> even?(second($))
 )`,
     ],
-    algebraic: true,
   },
   'any?': {
     title: 'any?',
@@ -518,7 +507,6 @@ any?(
   -> even?(second($))
 )`,
     ],
-    algebraic: true,
   },
   'not-any?': {
     title: 'not-any?',
@@ -571,7 +559,6 @@ not-any?(
   -> even?(second($))
 )`,
     ],
-    algebraic: true,
   },
   'update': {
     title: 'update',
@@ -587,21 +574,21 @@ not-any?(
       'key': {
         type: ['string', 'number'],
       },
-      'fn': {
+      'fun': {
         type: 'function',
       },
-      'fn-args': {
+      'fun-args': {
         type: 'any',
         rest: true,
       },
     },
     variants: [
-      { argumentNames: ['coll', 'value', 'fn'] },
-      { argumentNames: ['coll', 'value', 'fn', 'fn-args'] },
+      { argumentNames: ['coll', 'value', 'fun'] },
+      { argumentNames: ['coll', 'value', 'fun', 'fun-args'] },
     ],
     description: `
-Updates a value in the $coll collection, where $key is a key. $fn is a function
-that will take the old value and any supplied $fn-args and
+Updates a value in the $coll collection, where $key is a key. $fun is a function
+that will take the old value and any supplied $fun-args and
 return the new value.
 If the key does not exist, \`null\` is passed as the old value.`,
     examples: [
@@ -616,7 +603,6 @@ update(
   val -> if null?(val) then 0 else inc(val) end
 )`,
     ],
-    algebraic: true,
   },
   'update-in': {
     title: 'update-in',
@@ -629,24 +615,24 @@ update(
       'coll': {
         type: 'collection',
       },
-      'keys': {
+      'ks': {
         type: 'array',
       },
-      'fn': {
+      'fun': {
         type: 'function',
       },
-      'fn-args': {
+      'fun-args': {
         type: 'any',
         rest: true,
       },
     },
     variants: [
-      { argumentNames: ['coll', 'keys', 'fn'] },
-      { argumentNames: ['coll', 'keys', 'fn', 'fn-args'] },
+      { argumentNames: ['coll', 'ks', 'fun'] },
+      { argumentNames: ['coll', 'ks', 'fun', 'fun-args'] },
     ],
-    description: `Updates a value in the $coll collection, where $keys is an array of
-keys and $fn is a function that will take the old value and
-any supplied $fn-args and return the new value. If any levels do not exist,
+    description: `Updates a value in the $coll collection, where $ks is an array of
+keys and $fun is a function that will take the old value and
+any supplied $fun-args and return the new value. If any levels do not exist,
 objects will be created - and the corresponding keys must be of type string.`,
     examples: [
       `
@@ -677,6 +663,5 @@ update-in(
   10,
 )`,
     ],
-    algebraic: true,
   },
 }

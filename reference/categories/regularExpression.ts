@@ -30,7 +30,6 @@ export const regularExpressionReference: Record<RegularExpressionApiName, Functi
       'regexp("albert", "ig")',
       '#"albert"ig',
     ],
-    algebraic: true,
     noOperatorDocumentation: true,
   },
   'match': {
@@ -59,7 +58,6 @@ If $b is a string and matches the regular expression, a \`match\`-array is retur
       'match(1, #"albert"i)',
       'match({}, #"albert"i)',
     ],
-    algebraic: true,
   },
   'replace': {
     title: 'replace',
@@ -88,7 +86,6 @@ If $b is a string and matches the regular expression, a \`match\`-array is retur
       'replace("abcABC", #"a"i, "-")',
       'replace("abcABC", #"a"gi, "-")',
     ],
-    algebraic: true,
   },
   'replace-all': {
     title: 'replace-all',
@@ -117,6 +114,5 @@ If $b is a string and matches the regular expression, a \`match\`-array is retur
       'replace-all("abcABC", #"a"i, "-")',
       'replace-all("abcABC", #"a"gi, "-")',
     ],
-    algebraic: true,
   },
 }
