@@ -521,7 +521,7 @@ export class Parser {
           case 'fn':
           case 'def':
           case 'defn':
-            throw new Error(`Special expression ${name} is not available in algebraic notation`)
+            throw new Error(`${name} is not allowed`)
           /* v8 ignore next 2 */
           default:
             throw new Error(`Unknown special expression: ${name satisfies never}`)

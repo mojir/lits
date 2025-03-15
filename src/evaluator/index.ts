@@ -22,8 +22,8 @@ import { asNonUndefined } from '../typeGuards'
 import { asAny, assertSeq, isObj } from '../typeGuards/lits'
 import { assertString } from '../typeGuards/string'
 import { tokenSourceCodeInfo } from '../tokenizer/token'
-import type { AlgebraicReservedSymbol } from '../tokenizer/reservedNames'
-import { algebraicReservedSymbolRecord } from '../tokenizer/reservedNames'
+import type { ReservedSymbol } from '../tokenizer/reservedNames'
+import { reservedSymbolRecord } from '../tokenizer/reservedNames'
 import type { ContextStack } from './ContextStack'
 import { functionExecutors } from './functionExecutors'
 
@@ -66,8 +66,8 @@ function evaluateString(node: StringNode): string {
 }
 
 function evaluateReservedName(node: ReservedSymbolNode): Any {
-  const reservedName = node.v as AlgebraicReservedSymbol
-  const value = algebraicReservedSymbolRecord[reservedName]
+  const reservedName = node.v as ReservedSymbol
+  const value = reservedSymbolRecord[reservedName]
   return asNonUndefined(value, tokenSourceCodeInfo(node.token))
 }
 

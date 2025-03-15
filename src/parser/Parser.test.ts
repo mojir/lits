@@ -4,7 +4,7 @@ import { Lits } from '../Lits/Lits'
 const lits = new Lits()
 const litsDebug = new Lits({ debug: true })
 
-describe('algebraic operators', () => {
+describe('operators', () => {
   describe('const E', () => {
     it('samples', () => {
       expect(lits.run('E')).toBe(Math.E)

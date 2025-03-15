@@ -81,7 +81,8 @@ describe('apiReference', () => {
 
     const allReferenceKeys = [...functionReferenceKeys, ...referenceAliases]
 
-    const builtinKeys = [...specialExpressionKeys, ...normalExpressionKeys]
+    // const builtinKeys = [...specialExpressionKeys, ...normalExpressionKeys]
+    const builtinKeys = [...['&&'], ...normalExpressionKeys]
     const missingReference = allReferenceKeys.find(key => !builtinKeys.includes(key))
     expect(missingReference, `Missing reference: ${missingReference}`).toBeUndefined()
 

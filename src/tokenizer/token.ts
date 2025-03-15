@@ -26,25 +26,25 @@ export type TokenType = typeof tokenTypes[number]
 const modifierNames = ['&rest', '&let', '&when', '&while'] as const
 export type ModifierName = typeof modifierNames[number]
 
-type GenericAlgebraicValueToken<T extends TokenType, V extends string = string> = [T, V] | [T, V, SourceCodeInfo]
+type GenericToken<T extends TokenType, V extends string = string> = [T, V] | [T, V, SourceCodeInfo]
 
-export type LBraceToken = GenericAlgebraicValueToken<'LBrace', '{'>
-export type LBracketToken = GenericAlgebraicValueToken<'LBracket', '['>
-export type LParenToken = GenericAlgebraicValueToken<'LParen', '('>
-export type RBraceToken = GenericAlgebraicValueToken<'RBrace', '}'>
-export type RBracketToken = GenericAlgebraicValueToken<'RBracket', ']'>
-export type RParenToken = GenericAlgebraicValueToken<'RParen', ')'>
+export type LBraceToken = GenericToken<'LBrace', '{'>
+export type LBracketToken = GenericToken<'LBracket', '['>
+export type LParenToken = GenericToken<'LParen', '('>
+export type RBraceToken = GenericToken<'RBrace', '}'>
+export type RBracketToken = GenericToken<'RBracket', ']'>
+export type RParenToken = GenericToken<'RParen', ')'>
 
-export type BasePrefixedNumberToken = GenericAlgebraicValueToken<'BasePrefixedNumber'>
-export type MultiLineCommentToken = GenericAlgebraicValueToken<'MultiLineComment'>
-export type NumberToken = GenericAlgebraicValueToken<'Number'>
-export type OperatorToken<T extends SymbolicOperator = SymbolicOperator> = GenericAlgebraicValueToken<'Operator', T>
-export type RegexpShorthandToken = GenericAlgebraicValueToken<'RegexpShorthand'>
-export type ReservedSymbolToken<T extends ValidReservedSymbol = ValidReservedSymbol> = GenericAlgebraicValueToken<'ReservedSymbol', T>
-export type SingleLineCommentToken = GenericAlgebraicValueToken<'SingleLineComment'>
-export type StringToken = GenericAlgebraicValueToken<'String'>
-export type SymbolToken<T extends string = string> = GenericAlgebraicValueToken<'Symbol', T>
-export type WhitespaceToken = GenericAlgebraicValueToken<'Whitespace'>
+export type BasePrefixedNumberToken = GenericToken<'BasePrefixedNumber'>
+export type MultiLineCommentToken = GenericToken<'MultiLineComment'>
+export type NumberToken = GenericToken<'Number'>
+export type OperatorToken<T extends SymbolicOperator = SymbolicOperator> = GenericToken<'Operator', T>
+export type RegexpShorthandToken = GenericToken<'RegexpShorthand'>
+export type ReservedSymbolToken<T extends ValidReservedSymbol = ValidReservedSymbol> = GenericToken<'ReservedSymbol', T>
+export type SingleLineCommentToken = GenericToken<'SingleLineComment'>
+export type StringToken = GenericToken<'String'>
+export type SymbolToken<T extends string = string> = GenericToken<'Symbol', T>
+export type WhitespaceToken = GenericToken<'Whitespace'>
 
 export type Token =
   | LBraceToken

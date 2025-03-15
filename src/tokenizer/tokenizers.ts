@@ -1,8 +1,8 @@
 import { LitsError } from '../errors'
 import { isSymbolicOperator } from './operators'
 import type { BasePrefixedNumberToken, LBraceToken, LBracketToken, LParenToken, MultiLineCommentToken, NumberToken, OperatorToken, RBraceToken, RBracketToken, RParenToken, RegexpShorthandToken, ReservedSymbolToken, SingleLineCommentToken, StringToken, SymbolToken, Token, TokenDescriptor, WhitespaceToken } from './token'
-import type { AlgebraicReservedSymbol, ValidReservedSymbol } from './reservedNames'
-import { algebraicReservedSymbolRecord } from './reservedNames'
+import type { ReservedSymbol, ValidReservedSymbol } from './reservedNames'
+import { reservedSymbolRecord } from './reservedNames'
 
 export type Tokenizer<T extends Token> = (input: string, position: number) => TokenDescriptor<T>
 
@@ -303,7 +303,7 @@ export const tokenizeReservedSymbolToken: Tokenizer<ReservedSymbolToken> = (inpu
   let symbolName = symbolMeta[1][1]
   symbolName = symbolName.startsWith('\'') ? symbolName.slice(1, symbolName.length - 1) : symbolName
 
-  const info = algebraicReservedSymbolRecord[symbolName as AlgebraicReservedSymbol]
+  const info = reservedSymbolRecord[symbolName as ReservedSymbol]
   if (info === undefined) {
     return NO_MATCH
   }

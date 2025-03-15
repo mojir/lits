@@ -288,7 +288,7 @@ export type MiscApiName = typeof api.misc[number]
 export type ObjectApiName = typeof api.object[number]
 export type PredicateApiName = typeof api.predicate[number]
 export type RegularExpressionApiName = typeof api.regularExpression[number]
-export type SpecialExpressionsApiName = typeof api.specialExpressions[number]
+export type SpecialExpressionsApiName = typeof api.specialExpressions[number] & '&&'
 export type StringApiName = typeof api.string[number]
 export type BitwiseApiName = typeof api.bitwise[number]
 export type AssertApiName = typeof api.assert[number]
@@ -325,7 +325,8 @@ const apiFunctionNames = [
   ...api.object,
   ...api.predicate,
   ...api.regularExpression,
-  ...api.specialExpressions,
+  // ...api.specialExpressions,
+  ...['&&'],
   ...api.string,
   ...api.bitwise,
   ...api.assert,
@@ -457,23 +458,23 @@ export function getOperatorArgs(a: DataType | DataType[], b: DataType | DataType
 // function describe-location(state)
 //   let location := get(locations, state.current-location);
 //   let description := location.description;
-  
+
 //   // Add visited status
 //   let visited-status := if get(state.visited, state.current-location, false) then
 //     "You've been here before."
 //   else
 //     "This is your first time here."
 //   end;
-  
+
 //   // Check if location has items
 //   let items-desc := if !(empty?(get(location, "items", []))) then
 //     "You see: " ++ join(location.items, ", ")
 //   end;
-  
+
 //   // Describe exits
 //   let exits := join(keys(location.exits), ", ");
 //   let exits-desc := "Exits: " ++ exits;
-  
+
 //   // Join all descriptions
 //   join(filter([description, visited-status, items-desc, exits-desc], -> !(empty?($))), "\n");
 // end;
@@ -487,22 +488,22 @@ export function getOperatorArgs(a: DataType | DataType[], b: DataType | DataType
 // function move(state, direction)
 //   let location := get(locations, state.current-location);
 //   let exits := get(location, "exits", {});
-  
+
 //   // Check if direction is valid
 //   if contains?(exits, direction) then
 //     let new-location := get(exits, direction);
 //     let is-dark := new-location = "tunnel" || new-location = "treasure room";
-    
+
 //     // Check if player has light source for dark areas
 //     if is-dark && !state.light-source then
 //       let result := [state, "It's too dark to go that way without a light source."];
 //       result
 //     else
 //       let new-visited := assoc(state.visited, new-location, true);
-//       let new-state := assoc(assoc(assoc(state, "current-location", new-location), 
+//       let new-state := assoc(assoc(assoc(state, "current-location", new-location),
 //                                    "visited", new-visited),
 //                              "moves", state.moves + 1);
-      
+
 //       let result := [new-state, "You move " ++ direction ++ " to the " ++ new-location ++ "."];
 //       result
 //     end
@@ -514,25 +515,25 @@ export function getOperatorArgs(a: DataType | DataType[], b: DataType | DataType
 
 // function take!(state, item)
 //   let items := get-location-items(state);
-  
+
 //   if contains?(items, item) then
 //     let location := get(locations, state.current-location);
 //     let new-location-items := filter(-> $ ≠ item, items);
 //     let new-inventory := push(state.inventory, item);
-    
+
 //     // Update game state
-//     let new-locations := assoc(locations, state.current-location, 
+//     let new-locations := assoc(locations, state.current-location,
 //                               assoc(location, "items", new-location-items));
-    
+
 //     // Special case for torch
 //     let has-light := item = "torch" || state.light-source;
-    
+
 //     // Update locations and state
 //     let locations := new-locations;
 //     let new-state := assoc(assoc(assoc(state, "inventory", new-inventory),
 //                                 "light-source", has-light),
 //                           "moves", state.moves + 1);
-    
+
 //     let result := [new-state, "You take the " ++ item ++ "."];
 //     result
 //   else
@@ -547,18 +548,18 @@ export function getOperatorArgs(a: DataType | DataType[], b: DataType | DataType
 //     let location-items := get(location, "items", []);
 //     let new-location-items := push(location-items, item);
 //     let new-inventory := filter(-> $ ≠ item, state.inventory);
-    
+
 //     // Special case for torch
 //     let still-has-light := !(item = "torch") || contains?(new-inventory, "torch");
-    
+
 //     // Update locations and state
 //     let new-location := assoc(location, "items", new-location-items);
 //     let locations := assoc(locations, state.current-location, new-location);
-    
+
 //     let new-state := assoc(assoc(assoc(state, "inventory", new-inventory),
 //                                 "light-source", still-has-light),
 //                           "moves", state.moves + 1);
-    
+
 //     let result := [new-state, "You drop the " ++ item ++ "."];
 //     result
 //   else
@@ -589,7 +590,7 @@ export function getOperatorArgs(a: DataType | DataType[], b: DataType | DataType
 //       end
 //     case "torch" then
 //       if has-item?(state, item) then
-//         let result := [assoc(assoc(state, "light-source", true), "moves", state.moves + 1), 
+//         let result := [assoc(assoc(state, "light-source", true), "moves", state.moves + 1),
 //          "The torch illuminates the area with a warm glow."];
 //         result
 //       else
@@ -598,7 +599,7 @@ export function getOperatorArgs(a: DataType | DataType[], b: DataType | DataType
 //       end
 //     case "gold key" then
 //       if has-item?(state, item) && state.current-location = "treasure room" then
-//         let result := [assoc(assoc(state, "game-over", true), "moves", state.moves + 1), 
+//         let result := [assoc(assoc(state, "game-over", true), "moves", state.moves + 1),
 //          "You use the gold key to unlock a secret compartment, revealing a fabulous diamond! You win!"];
 //         result
 //       else
@@ -608,7 +609,7 @@ export function getOperatorArgs(a: DataType | DataType[], b: DataType | DataType
 //     case "bread" then
 //       if has-item?(state, item) then
 //         let new-inventory := filter(state.inventory, -> $ ≠ item);
-//         let result := [assoc(assoc(state, "inventory", new-inventory), "moves", state.moves + 1), 
+//         let result := [assoc(assoc(state, "inventory", new-inventory), "moves", state.moves + 1),
 //          "You eat the bread. It's delicious and nourishing."];
 //         result
 //       else
@@ -617,7 +618,7 @@ export function getOperatorArgs(a: DataType | DataType[], b: DataType | DataType
 //       end
 //     case "shiny stone" then
 //       if has-item?(state, item) then
-//         let result := [assoc(state, "moves", state.moves + 1), 
+//         let result := [assoc(state, "moves", state.moves + 1),
 //          "The stone glows with a faint blue light. It seems magical but you're not sure how to use it yet."];
 //         result
 //       else
@@ -626,7 +627,7 @@ export function getOperatorArgs(a: DataType | DataType[], b: DataType | DataType
 //       end
 //     case "flowers" then
 //       if has-item?(state, item) then
-//         let result := [assoc(state, "moves", state.moves + 1), 
+//         let result := [assoc(state, "moves", state.moves + 1),
 //          "You smell the flowers. They have a sweet, calming fragrance."];
 //         result
 //       else
@@ -635,7 +636,7 @@ export function getOperatorArgs(a: DataType | DataType[], b: DataType | DataType
 //       end
 //     case "ancient map" then
 //       if has-item?(state, item) then
-//         let result := [assoc(state, "moves", state.moves + 1), 
+//         let result := [assoc(state, "moves", state.moves + 1),
 //          "The map shows the layout of the area. All locations are now marked as visited."];
 //         result
 //       else
@@ -644,7 +645,7 @@ export function getOperatorArgs(a: DataType | DataType[], b: DataType | DataType
 //       end
 //     case "jeweled crown" then
 //       if has-item?(state, item) then
-//         let result := [assoc(state, "moves", state.moves + 1), 
+//         let result := [assoc(state, "moves", state.moves + 1),
 //          "You place the crown on your head. You feel very regal."];
 //         result
 //       else
@@ -662,7 +663,7 @@ export function getOperatorArgs(a: DataType | DataType[], b: DataType | DataType
 //   let tokens := split(lower-case(input), " ");
 //   let command := first(tokens);
 //   let args := join(rest(tokens), " ");
-  
+
 //   let result := switch command
 //     case "go" then
 //       move(state, args)
@@ -697,7 +698,7 @@ export function getOperatorArgs(a: DataType | DataType[], b: DataType | DataType
 //       let unknown_result := [state, "I don't understand that command. Type 'help' for a list of commands."];
 //       unknown_result
 //   end;
-  
+
 //   result
 // end;
 
@@ -705,14 +706,14 @@ export function getOperatorArgs(a: DataType | DataType[], b: DataType | DataType
 // function game-loop(state)
 //   alert!(describe-location(state));
 //   alert!("\nWhat do you do? ");
-  
+
 //   let input := read-line!();
 //   let command_result := parse-command(state, input);
 //   let new-state := first(command_result);
 //   let message := second(command_result);
-  
+
 //   alert!("\n" ++ message ++ "\n");
-  
+
 //   if new-state.game-over then
 //     alert!("\nGame over! You made " ++ str(new-state.moves) ++ " moves.");
 //     new-state

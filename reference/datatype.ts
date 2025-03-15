@@ -158,8 +158,9 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
     category: 'Datatype',
     linkName: '-type-never',
     description: 'A value that can never be created',
-    examples: [
-      'throw("error")',
+    examples: [`
+// throw("error") will never return a value
+try throw("error") catch "never" end`,
     ],
   },
 }

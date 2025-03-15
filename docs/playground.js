@@ -4537,7 +4537,7 @@ var Playground = (function (exports) {
         '-δ': -Number.EPSILON,
         'NaN': Number.NaN,
     };
-    var algebraicReservedSymbolRecord = __assign(__assign({}, nonNumberReservedSymbolRecord), numberReservedSymbolRecord);
+    var reservedSymbolRecord = __assign(__assign({}, nonNumberReservedSymbolRecord), numberReservedSymbolRecord);
     var validReservedSymbolRecord = __assign(__assign({}, nonNumberReservedSymbolRecord), numberReservedSymbolRecord);
     function isReservedSymbol(symbol) {
         return symbol in validReservedSymbolRecord;
@@ -5420,7 +5420,7 @@ var Playground = (function (exports) {
     }
     function evaluateReservedName(node) {
         var reservedName = node.v;
-        var value = algebraicReservedSymbolRecord[reservedName];
+        var value = reservedSymbolRecord[reservedName];
         return asNonUndefined(value, tokenSourceCodeInfo(node.token));
     }
     function evaluateNormalExpression(node, contextStack) {
@@ -5997,7 +5997,7 @@ var Playground = (function (exports) {
         }
         var symbolName = symbolMeta[1][1];
         symbolName = symbolName.startsWith('\'') ? symbolName.slice(1, symbolName.length - 1) : symbolName;
-        var info = algebraicReservedSymbolRecord[symbolName];
+        var info = reservedSymbolRecord[symbolName];
         if (info === undefined) {
             return NO_MATCH;
         }
@@ -6591,7 +6591,7 @@ var Playground = (function (exports) {
                         case 'fn':
                         case 'def':
                         case 'defn':
-                            throw new Error("Special expression ".concat(name_2, " is not available in algebraic notation"));
+                            throw new Error("".concat(name_2, " is not allowed"));
                         /* v8 ignore next 2 */
                         default:
                             throw new Error("Unknown special expression: ".concat(name_2));

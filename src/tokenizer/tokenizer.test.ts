@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { NO_MATCH, tokenizeBasePrefixedNumber, tokenizeMultiLineComment, tokenizeNumber, tokenizeOperator, tokenizeSingleLineComment, tokenizeSymbol } from './tokenizers'
 
-describe('algebraicTokenizers', () => {
+describe('tokenizers', () => {
   describe('tokenizeSingleLineComment', () => {
     it('should tokenize inline comment', () => {
       expect(tokenizeSingleLineComment('// comment', 0)).toEqual([10, ['SingleLineComment', '// comment']])

@@ -45,7 +45,7 @@ export const numberReservedSymbolRecord = {
   'NaN': Number.NaN,
 } as const satisfies Record<string, number>
 
-export const algebraicReservedSymbolRecord = {
+export const reservedSymbolRecord = {
   ...nonNumberReservedSymbolRecord,
   ...numberReservedSymbolRecord,
 } as const
@@ -56,7 +56,7 @@ export const validReservedSymbolRecord = {
 } as const
 
 export type ValidReservedSymbol = keyof typeof validReservedSymbolRecord
-export type AlgebraicReservedSymbol = keyof typeof algebraicReservedSymbolRecord
+export type ReservedSymbol = keyof typeof reservedSymbolRecord
 
 export function isReservedSymbol(symbol: string): symbol is keyof typeof validReservedSymbolRecord {
   return symbol in validReservedSymbolRecord
