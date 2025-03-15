@@ -17,9 +17,8 @@ import { LitsError } from '../errors'
 import type { TokenStream } from '../tokenizer/tokenize'
 import { type SymbolicBinaryOperator, isBinaryOperator, isFunctionOperator } from '../tokenizer/operators'
 import type { OperatorToken, ReservedSymbolToken, SymbolToken, Token, TokenType } from '../tokenizer/token'
-import { asLBraceToken, asLBracketToken, asSymbolToken, assertOperatorToken, assertRBraceToken, assertRBracketToken, assertRParenToken, assertReservedSymbolToken, assertSymbolToken, hasTokenSourceCodeInfo, isA_BinaryOperatorToken, isBasePrefixedNumberToken, isLBraceToken, isLBracketToken, isLParenToken, isNumberToken, isOperatorToken, isRBraceToken, isRBracketToken, isRParenToken, isReservedSymbolToken, isSymbolToken, tokenSourceCodeInfo } from '../tokenizer/token'
+import { asLBraceToken, asLBracketToken, asSymbolToken, assertOperatorToken, assertRBraceToken, assertRBracketToken, assertRParenToken, assertReservedSymbolToken, assertSymbolToken, hasTokenSourceCodeInfo, isA_BinaryOperatorToken, isLBraceToken, isLBracketToken, isLParenToken, isOperatorToken, isRBraceToken, isRBracketToken, isRParenToken, isReservedSymbolToken, isSymbolToken, tokenSourceCodeInfo } from '../tokenizer/token'
 import { assertNumberOfParams } from '../typeGuards'
-import { asSymbolNode } from '../typeGuards/astNode'
 import type { QqNode } from '../builtin/specialExpressions/qq'
 import type { AndNode } from '../builtin/specialExpressions/and'
 import type { DeclaredNode } from '../builtin/specialExpressions/declared'
@@ -79,6 +78,7 @@ function getPrecedence(operatorSign: SymbolicBinaryOperator): number {
       return 2
 
     // leave room for binaryFunctionalOperatorPrecedence = 1
+    /* v8 ignore next 2 */
     default:
       throw new Error(`Unknown binary operator: ${operatorSign satisfies never}`)
   }
@@ -100,16 +100,6 @@ function createNamedNormalExpressionNode(name: string, params: AstNode[], token:
   return node
 }
 
-function fromSymbolToStringNode(symbol: SymbolNode): StringNode {
-  return {
-    t: AstNodeType.String,
-    v: symbol.v,
-    token: tokenSourceCodeInfo(symbol.token) && symbol.token,
-    p: [],
-    n: undefined,
-  }
-}
-
 function createAccessorNode(left: AstNode, right: AstNode, token: Token | undefined): AstNode {
   // Unnamed normal expression
   return {
@@ -124,8 +114,6 @@ function fromBinaryOperatorToAstNode(operator: OperatorToken | SymbolToken<'+'>,
   const operatorName = operator[1]
 
   switch (operatorName) {
-    case '.':
-      return createAccessorNode(left, fromSymbolToStringNode(asSymbolNode(right, tokenSourceCodeInfo(token))), token)
     case '**': // exponentiation
     case '*':
     case '/':
@@ -158,7 +146,8 @@ function fromBinaryOperatorToAstNode(operator: OperatorToken | SymbolToken<'+'>,
         p: [left, right],
         token: tokenSourceCodeInfo(token) && token,
       }
-    /* v8 ignore next 9 */
+    /* v8 ignore next 10 */
+    case '.':
     case ';':
     case ':=':
     case ',':
@@ -286,10 +275,6 @@ export class Parser {
       }
 
       operator = this.peek()
-    }
-
-    if (!left) {
-      throw new LitsError('Expected operand', tokenSourceCodeInfo(this.peek()))
     }
 
     return left
@@ -432,9 +417,6 @@ export class Parser {
     const params: AstNode[] = []
     while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
       const key = this.parseOperand()
-      if (key === null) {
-        throw new LitsError('Expected key', tokenSourceCodeInfo(this.peek()))
-      }
       if (key.t !== AstNodeType.Symbol && key.t !== AstNodeType.String) {
         throw new LitsError('Expected key to be a symbol or a string', tokenSourceCodeInfo(this.peek()))
       }
@@ -540,6 +522,7 @@ export class Parser {
           case 'def':
           case 'defn':
             throw new Error(`Special expression ${name} is not available in algebraic notation`)
+          /* v8 ignore next 2 */
           default:
             throw new Error(`Unknown special expression: ${name satisfies never}`)
         }
@@ -684,7 +667,7 @@ export class Parser {
     const endPos = this.parseState.position - 1
 
     let arity = 0
-    let percent1: 'NOT_SET' | 'WITH_1' | 'NAKED' = 'NOT_SET' // referring to argument bindings. % = NAKED, %1, %2, %3, etc = WITH_1
+    let dollar1: 'NOT_SET' | 'WITH_1' | 'NAKED' = 'NOT_SET' // referring to argument bindings. $ = NAKED, $1, $2, $3, etc = WITH_1
     for (let pos = startPos; pos <= endPos; pos += 1) {
       const token = this.tokenStream.tokens[pos]!
       if (isSymbolToken(token)) {
@@ -692,11 +675,11 @@ export class Parser {
         if (match) {
           const number = match[1] ?? '1'
           if (number === '1') {
-            const mixedPercent1 = (!match[1] && percent1 === 'WITH_1') || (match[1] && percent1 === 'NAKED')
+            const mixedPercent1 = (!match[1] && dollar1 === 'WITH_1') || (match[1] && dollar1 === 'NAKED')
             if (mixedPercent1)
               throw new LitsError('Please make up your mind, either use $ or $1', tokenSourceCodeInfo(firstToken))
 
-            percent1 = match[1] ? 'WITH_1' : 'NAKED'
+            dollar1 = match[1] ? 'WITH_1' : 'NAKED'
           }
 
           arity = Math.max(arity, Number(number))
@@ -709,7 +692,7 @@ export class Parser {
     const mandatoryArguments: string[] = []
 
     for (let i = 1; i <= arity; i += 1) {
-      if (i === 1 && percent1 === 'NAKED')
+      if (i === 1 && dollar1 === 'NAKED')
         mandatoryArguments.push('$')
       else
         mandatoryArguments.push(`$${i}`)
@@ -1394,10 +1377,6 @@ export class Parser {
     const token = this.peek()
     this.advance()
 
-    if (!isReservedSymbolToken(token)) {
-      throw new LitsError(`Expected symbol token, got ${token[0]}`, tokenSourceCodeInfo(token))
-    }
-
     if (isReservedSymbolToken(token)) {
       const symbol = token[1]
       if (isNumberReservedSymbol(symbol)) {
@@ -1422,9 +1401,6 @@ export class Parser {
   private parseNumber(): NumberNode {
     const token = this.peek()
     this.advance()
-    if (!isBasePrefixedNumberToken(token) && !isNumberToken(token)) {
-      throw new LitsError(`Expected number token, got ${token}`, tokenSourceCodeInfo(token))
-    }
 
     const value = token[1]
     const negative = value[0] === '-'

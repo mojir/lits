@@ -848,9 +848,6 @@ var Playground = (function (exports) {
         return !!token[2];
     }
     function addTokenSourceCodeInfo(token, sourceCodeInfo) {
-        if (token[2]) {
-            throw new Error("Token already has debug data: ".concat(token));
-        }
         token[2] = sourceCodeInfo;
     }
     function isSymbolToken(token, symbolName) {
@@ -885,7 +882,7 @@ var Playground = (function (exports) {
             throwUnexpectedToken('ReservedSymbol', symbolName, token);
         }
     }
-    function isA_CommentToken(token) {
+    function isSingleLineCommentToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'SingleLineComment';
     }
     function isMultiLineCommentToken(token) {
@@ -910,12 +907,6 @@ var Playground = (function (exports) {
     }
     function isWhitespaceToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'Whitespace';
-    }
-    function isNumberToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'Number';
-    }
-    function isBasePrefixedNumberToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'BasePrefixedNumber';
     }
     function isLParenToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'LParen';
@@ -972,7 +963,7 @@ var Playground = (function (exports) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'Operator' && isBinaryOperator(token[1]);
     }
     function throwUnexpectedToken(expected, expectedValue, actual) {
-        var actualOutput = "".concat(actual[0]).concat(actual[1] ? " '".concat(actual[1], "'") : '');
+        var actualOutput = "".concat(actual[0], " '").concat(actual[1], "'");
         throw new LitsError("Unexpected token: ".concat(actualOutput, ", expected ").concat(expected).concat(expectedValue ? " '".concat(expectedValue, "'") : ''), tokenSourceCodeInfo(actual));
     }
 
@@ -5873,6 +5864,7 @@ var Playground = (function (exports) {
     var octalNumberRegExp = /[0-7]/;
     var hexNumberRegExp = /[0-9a-f]/i;
     var binaryNumberRegExp = /[01]/;
+    var postNumberRegExp = /[\s)\]}(,;]/;
     var tokenizeNumber = function (input, position) {
         var i;
         var negate = input[position] === '-';
@@ -5914,6 +5906,10 @@ var Playground = (function (exports) {
         }
         var length = i - position;
         if (length === 0) {
+            return NO_MATCH;
+        }
+        var nextChar = input[i];
+        if (nextChar && !postNumberRegExp.test(nextChar)) {
             return NO_MATCH;
         }
         return [length, ['Number', input.substring(position, i)]];
@@ -6154,7 +6150,7 @@ var Playground = (function (exports) {
         var removeWhiteSpace = _a.removeWhiteSpace;
         var tokens = tokenStream.tokens
             .filter(function (token) {
-            if (isA_CommentToken(token)
+            if (isSingleLineCommentToken(token)
                 || isMultiLineCommentToken(token)
                 || (removeWhiteSpace && isWhitespaceToken(token))) {
                 return false;
@@ -6216,6 +6212,7 @@ var Playground = (function (exports) {
             case '??': // nullish coalescing
                 return 2;
             // leave room for binaryFunctionalOperatorPrecedence = 1
+            /* v8 ignore next 2 */
             default:
                 throw new Error("Unknown binary operator: ".concat(operatorSign));
         }
@@ -6233,15 +6230,6 @@ var Playground = (function (exports) {
         }
         return node;
     }
-    function fromSymbolToStringNode(symbol) {
-        return {
-            t: AstNodeType.String,
-            v: symbol.v,
-            token: tokenSourceCodeInfo(symbol.token) && symbol.token,
-            p: [],
-            n: undefined,
-        };
-    }
     function createAccessorNode(left, right, token) {
         // Unnamed normal expression
         return {
@@ -6254,8 +6242,6 @@ var Playground = (function (exports) {
     function fromBinaryOperatorToAstNode(operator, left, right, token) {
         var operatorName = operator[1];
         switch (operatorName) {
-            case '.':
-                return createAccessorNode(left, fromSymbolToStringNode(asSymbolNode(right, tokenSourceCodeInfo(token))), token);
             case '**': // exponentiation
             case '*':
             case '/':
@@ -6288,7 +6274,8 @@ var Playground = (function (exports) {
                     p: [left, right],
                     token: tokenSourceCodeInfo(token) && token,
                 };
-            /* v8 ignore next 9 */
+            /* v8 ignore next 10 */
+            case '.':
             case ';':
             case ':=':
             case ',':
@@ -6404,9 +6391,6 @@ var Playground = (function (exports) {
                     break;
                 }
                 operator = this.peek();
-            }
-            if (!left) {
-                throw new LitsError('Expected operand', tokenSourceCodeInfo(this.peek()));
             }
             return left;
         };
@@ -6524,9 +6508,6 @@ var Playground = (function (exports) {
             var params = [];
             while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
                 var key = this.parseOperand();
-                if (key === null) {
-                    throw new LitsError('Expected key', tokenSourceCodeInfo(this.peek()));
-                }
                 if (key.t !== AstNodeType.Symbol && key.t !== AstNodeType.String) {
                     throw new LitsError('Expected key to be a symbol or a string', tokenSourceCodeInfo(this.peek()));
                 }
@@ -6621,6 +6602,7 @@ var Playground = (function (exports) {
                         case 'def':
                         case 'defn':
                             throw new Error("Special expression ".concat(name_2, " is not available in algebraic notation"));
+                        /* v8 ignore next 2 */
                         default:
                             throw new Error("Unknown special expression: ".concat(name_2));
                     }
@@ -6750,7 +6732,7 @@ var Playground = (function (exports) {
             var exprNode = this.parseExpression();
             var endPos = this.parseState.position - 1;
             var arity = 0;
-            var percent1 = 'NOT_SET'; // referring to argument bindings. % = NAKED, %1, %2, %3, etc = WITH_1
+            var dollar1 = 'NOT_SET'; // referring to argument bindings. $ = NAKED, $1, $2, $3, etc = WITH_1
             for (var pos = startPos; pos <= endPos; pos += 1) {
                 var token = this.tokenStream.tokens[pos];
                 if (isSymbolToken(token)) {
@@ -6758,10 +6740,10 @@ var Playground = (function (exports) {
                     if (match) {
                         var number = (_a = match[1]) !== null && _a !== void 0 ? _a : '1';
                         if (number === '1') {
-                            var mixedPercent1 = (!match[1] && percent1 === 'WITH_1') || (match[1] && percent1 === 'NAKED');
+                            var mixedPercent1 = (!match[1] && dollar1 === 'WITH_1') || (match[1] && dollar1 === 'NAKED');
                             if (mixedPercent1)
                                 throw new LitsError('Please make up your mind, either use $ or $1', tokenSourceCodeInfo(firstToken));
-                            percent1 = match[1] ? 'WITH_1' : 'NAKED';
+                            dollar1 = match[1] ? 'WITH_1' : 'NAKED';
                         }
                         arity = Math.max(arity, Number(number));
                         if (arity > 20)
@@ -6771,7 +6753,7 @@ var Playground = (function (exports) {
             }
             var mandatoryArguments = [];
             for (var i = 1; i <= arity; i += 1) {
-                if (i === 1 && percent1 === 'NAKED')
+                if (i === 1 && dollar1 === 'NAKED')
                     mandatoryArguments.push('$');
                 else
                     mandatoryArguments.push("$".concat(i));
@@ -7365,9 +7347,6 @@ var Playground = (function (exports) {
         Parser.prototype.parseReservedSymbol = function () {
             var token = this.peek();
             this.advance();
-            if (!isReservedSymbolToken(token)) {
-                throw new LitsError("Expected symbol token, got ".concat(token[0]), tokenSourceCodeInfo(token));
-            }
             if (isReservedSymbolToken(token)) {
                 var symbol = token[1];
                 if (isNumberReservedSymbol(symbol)) {
@@ -7391,9 +7370,6 @@ var Playground = (function (exports) {
         Parser.prototype.parseNumber = function () {
             var token = this.peek();
             this.advance();
-            if (!isBasePrefixedNumberToken(token) && !isNumberToken(token)) {
-                throw new LitsError("Expected number token, got ".concat(token), tokenSourceCodeInfo(token));
-            }
             var value = token[1];
             var negative = value[0] === '-';
             var numberString = (negative ? value.substring(1) : value).replace(/_/g, '');

@@ -84,14 +84,7 @@ export function hasTokenSourceCodeInfo(token: Token): boolean {
 }
 
 export function addTokenSourceCodeInfo(token: Token, sourceCodeInfo: SourceCodeInfo): void {
-  if (token[2]) {
-    throw new Error(`Token already has debug data: ${token}`)
-  }
   token[2] = sourceCodeInfo
-}
-
-export function isTokenType(type: string): type is TokenType {
-  return typeof type === 'string' && tokenTypes.includes(type as TokenType)
 }
 
 export function isSymbolToken<T extends string>(token: Token, symbolName?: T): token is SymbolToken<T> {
@@ -133,16 +126,16 @@ export function asReservedSymbolToken<T extends ValidReservedSymbol>(token: Toke
   return token
 }
 
-export function isA_CommentToken(token: Token): token is SingleLineCommentToken {
+export function isSingleLineCommentToken(token: Token): token is SingleLineCommentToken {
   return token?.[0] === 'SingleLineComment'
 }
-export function assertA_CommentToken(token: Token): asserts token is SingleLineCommentToken {
-  if (!isA_CommentToken(token)) {
+export function assertSingleLineCommentToken(token: Token): asserts token is SingleLineCommentToken {
+  if (!isSingleLineCommentToken(token)) {
     throwUnexpectedToken('SingleLineComment', undefined, token)
   }
 }
-export function asA_CommentToken(token: Token): SingleLineCommentToken {
-  assertA_CommentToken(token)
+export function asSingleLineCommentToken(token: Token): SingleLineCommentToken {
+  assertSingleLineCommentToken(token)
   return token
 }
 
@@ -338,6 +331,6 @@ export function asA_BinaryOperatorToken(token: Token): OperatorToken<SymbolicBin
 }
 
 function throwUnexpectedToken(expected: TokenType, expectedValue: string | undefined, actual: Token): never {
-  const actualOutput = `${actual[0]}${actual[1] ? ` '${actual[1]}'` : ''}`
+  const actualOutput = `${actual[0]} '${actual[1]}'`
   throw new LitsError(`Unexpected token: ${actualOutput}, expected ${expected}${expectedValue ? ` '${expectedValue}'` : ''}`, tokenSourceCodeInfo(actual))
 }

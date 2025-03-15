@@ -68,26 +68,14 @@ function createSourceCodeInfo(input: string, position: number, filePath?: string
 function getCurrentToken(input: string, position: number): TokenDescriptor<Token> | null {
   const initialPosition = position
 
-  let tryNext = true
-  while (tryNext) {
-    if (position >= input.length) {
-      return [position - initialPosition, undefined]
+  for (const tokenizer of tokenizers) {
+    const [nbrOfCharacters, token] = tokenizer(input, position)
+    position += nbrOfCharacters
+    if (nbrOfCharacters === 0) {
+      continue
     }
-    tryNext = false
-    for (const tokenizer of tokenizers) {
-      const [nbrOfCharacters, token] = tokenizer(input, position)
-      position += nbrOfCharacters
-      if (nbrOfCharacters === 0) {
-        continue
-      }
 
-      if (!token) {
-        tryNext = true
-        break
-      }
-
-      return [position - initialPosition, token]
-    }
+    return [position - initialPosition, token]
   }
   return null
 }

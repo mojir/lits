@@ -142,6 +142,7 @@ const decimalNumberRegExp = /\d/
 const octalNumberRegExp = /[0-7]/
 const hexNumberRegExp = /[0-9a-f]/i
 const binaryNumberRegExp = /[01]/
+const postNumberRegExp = /[\s)\]}(,;]/
 
 export const tokenizeNumber: Tokenizer<NumberToken> = (input, position) => {
   let i: number
@@ -196,6 +197,11 @@ export const tokenizeNumber: Tokenizer<NumberToken> = (input, position) => {
     return NO_MATCH
   }
 
+  const nextChar = input[i]
+  if (nextChar && !postNumberRegExp.test(nextChar)) {
+    return NO_MATCH
+  }
+
   return [length, ['Number', input.substring(position, i)]]
 }
 
@@ -237,15 +243,16 @@ export const tokenizeBasePrefixedNumber: Tokenizer<BasePrefixedNumberToken> = (i
     return NO_MATCH
   }
 
+  const nextChar = input[i]
+  if (nextChar && !postNumberRegExp.test(nextChar)) {
+    return NO_MATCH
+  }
+
   return [length, ['BasePrefixedNumber', input.substring(position, i)]]
 }
 
 export const tokenizeSymbol: Tokenizer<SymbolToken> = (input, position) => {
-  let value = input[position]
-
-  if (!value) {
-    return NO_MATCH
-  }
+  let value = input[position]!
 
   if (value === '\'') {
     let length = 1
