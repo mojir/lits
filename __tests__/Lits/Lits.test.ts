@@ -3,7 +3,6 @@ import { UndefinedSymbolError } from '../../src/errors'
 import { Cache } from '../../src/Lits/Cache'
 import type { LazyValue } from '../../src/Lits/Lits'
 import { Lits } from '../../src/Lits/Lits'
-import { AstNodeType } from '../../src/constants/constants'
 import { assertLitsFunction } from '../../src/typeGuards/litsFunction'
 import { FUNCTION_SYMBOL } from '../../src/utils/symbols'
 import type { Ast } from '../../src/parser/types'
@@ -50,8 +49,8 @@ describe('lazy host values as function', () => {
               a: 0,
               b: [
                 {
-                  t: 201,
-                  v: 42,
+                  type: 'Number',
+                  value: 42,
                 },
               ],
               f: {},
@@ -105,24 +104,24 @@ describe('context', () => {
     const initialCache: Record<string, Ast> = {
       '2 ** 4': {
         hasDebugData: true,
-        b: [
+        body: [
           {
-            t: AstNodeType.NormalExpression,
-            n: '**',
-            p: [
+            type: 'NormalExpression',
+            name: '**',
+            params: [
               {
-                t: AstNodeType.Number,
-                v: 2,
+                type: 'Number',
+                value: 2,
                 token: ['Number', '2'],
-                p: [],
-                n: undefined,
+                params: [],
+                name: undefined,
               },
               {
-                t: AstNodeType.Number,
-                v: 2,
+                type: 'Number',
+                value: 2,
                 token: ['Number', '2'],
-                p: [],
-                n: undefined,
+                params: [],
+                name: undefined,
               },
             ],
             token: ['Operator', '**'],
@@ -172,13 +171,13 @@ describe('context', () => {
 function ast(n: number): Ast {
   return {
     hasDebugData: false,
-    b: [
+    body: [
       {
-        t: AstNodeType.Number,
-        v: n,
+        type: 'Number',
+        value: n,
         token: undefined,
-        p: [],
-        n: undefined,
+        params: [],
+        name: undefined,
       },
     ],
   }

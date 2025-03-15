@@ -6,8 +6,8 @@ export interface DeclaredNode extends CommonSpecialExpressionNode<'defined?'> {}
 export const declaredSpecialExpression: BuiltinSpecialExpression<boolean, DeclaredNode> = {
   paramCount: 1,
   evaluate: (node, contextStack) => {
-    const lookUpResult = contextStack.lookUp(node.p[0] as SymbolNode)
+    const lookUpResult = contextStack.lookUp(node.params[0] as SymbolNode)
     return lookUpResult !== null
   },
-  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => getUndefinedSymbols(node.p, contextStack, builtin),
+  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => getUndefinedSymbols(node.params, contextStack, builtin),
 }

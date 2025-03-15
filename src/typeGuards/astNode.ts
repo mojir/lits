@@ -1,4 +1,4 @@
-import { AstNodeType, isAstNodeType } from '../constants/constants'
+import { isAstNodeType } from '../constants/constants'
 import type {
   AstNode,
   ExpressionNode,
@@ -13,7 +13,7 @@ export function isAstNode(value: unknown): value is AstNode {
   if (value === null || typeof value !== 'object')
     return false
 
-  if (!isAstNodeType((value as AstNode).t))
+  if (!isAstNodeType((value as AstNode).type))
     return false
 
   return true
@@ -31,7 +31,7 @@ export function isSymbolNode(value: unknown): value is SymbolNode {
   if (!isAstNode(value))
     return false
 
-  return value.t === AstNodeType.Symbol
+  return value.type === 'Symbol'
 }
 export function asSymbolNode(value: unknown, sourceCodeInfo?: SourceCodeInfo): SymbolNode {
   assertSymbolNode(value, sourceCodeInfo)
@@ -46,7 +46,7 @@ export function isNormalExpressionNode(value: unknown): value is NormalExpressio
   if (!isAstNode(value))
     return false
 
-  return value.t === AstNodeType.NormalExpression
+  return value.type === 'NormalExpression'
 }
 export function asNormalExpressionNode(value: unknown, sourceCodeInfo?: SourceCodeInfo): NormalExpressionNode {
   assertNormalExpressionNode(value, sourceCodeInfo)
@@ -64,7 +64,7 @@ export function isNormalExpressionNodeWithName(value: unknown): value is NormalE
   if (!isAstNode(value))
     return false
 
-  return value.t === AstNodeType.NormalExpression && typeof value.n === 'string'
+  return value.type === 'NormalExpression' && typeof value.name === 'string'
 }
 export function asNormalExpressionNodeWithName(
   value: unknown,
@@ -86,10 +86,10 @@ export function isExpressionNode(value: unknown): value is ExpressionNode {
     return false
 
   return (
-    value.t === AstNodeType.NormalExpression
-    || value.t === AstNodeType.SpecialExpression
-    || value.t === AstNodeType.Number
-    || value.t === AstNodeType.String
+    value.type === 'NormalExpression'
+    || value.type === 'SpecialExpression'
+    || value.type === 'Number'
+    || value.type === 'String'
   )
 }
 export function asExpressionNode(value: unknown, sourceCodeInfo?: SourceCodeInfo): ExpressionNode {

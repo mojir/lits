@@ -1,32 +1,23 @@
-export enum AstNodeType {
-  Number = 201,
-  String = 202,
-  NormalExpression = 203,
-  SpecialExpression = 204,
-  Symbol = 205,
-  Modifier = 206,
-  ReservedSymbol = 207,
-  Binding = 208,
-  Argument = 209,
-  Partial = 210,
-  Comment = 211,
-}
+export const astNodeTypeNames = [
+  'Number',
+  'String',
+  'NormalExpression',
+  'SpecialExpression',
+  'Symbol',
+  'Modifier',
+  'ReservedSymbol',
+  'Binding',
+  'Argument',
+  'Partial',
+  'Comment',
+] as const
 
-export const astNodeTypeName = new Map([
-  [AstNodeType.Number, 'Number'],
-  [AstNodeType.String, 'String'],
-  [AstNodeType.NormalExpression, 'NormalExpression'],
-  [AstNodeType.SpecialExpression, 'SpecialExpression'],
-  [AstNodeType.Symbol, 'Name'],
-  [AstNodeType.Modifier, 'Modifier'],
-  [AstNodeType.ReservedSymbol, 'ReservedName'],
-  [AstNodeType.Binding, 'Binding'],
-  [AstNodeType.Argument, 'Argument'],
-  [AstNodeType.Partial, 'Partial'],
-])
+const astNodeTypeSet = new Set(astNodeTypeNames)
+
+export type AstNodeType = typeof astNodeTypeNames[number]
 
 export function isAstNodeType(type: unknown): type is AstNodeType {
-  return typeof type === 'number' && astNodeTypeName.has(type)
+  return typeof type === 'string' && astNodeTypeSet.has(type as AstNodeType)
 }
 
 export enum FunctionType {

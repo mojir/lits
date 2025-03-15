@@ -103,7 +103,7 @@ export class Lits {
   public parse(tokenStream: TokenStream): Ast {
     tokenStream = minifyTokenStream(tokenStream, { removeWhiteSpace: true })
     const ast: Ast = {
-      b: [],
+      body: [],
       hasDebugData: tokenStream.hasDebugData,
     }
 
@@ -111,7 +111,7 @@ export class Lits {
       position: 0,
     }
 
-    ast.b = new Parser(tokenStream, parseState).parse()
+    ast.body = new Parser(tokenStream, parseState).parse()
 
     return ast
   }

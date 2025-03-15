@@ -14,25 +14,25 @@ export interface TryNode extends CommonSpecialExpressionNode<'try'> {
 export const trySpecialExpression: BuiltinSpecialExpression<Any, TryNode> = {
   paramCount: 1,
   evaluate: (node, contextStack, { evaluateAstNode }) => {
-    const { p: tryExpressions, ce: catchExpression, e: errorNode } = node
+    const { params: tryExpressions, ce: catchExpression, e: errorNode } = node
     try {
       return evaluateAstNode(tryExpressions[0]!, contextStack)
     }
     catch (error) {
       const newContext: Context = errorNode
         ? {
-            [errorNode.v]: { value: asAny(error, tokenSourceCodeInfo(node.token)) },
+            [errorNode.value]: { value: asAny(error, tokenSourceCodeInfo(node.token)) },
           }
         : {}
       return evaluateAstNode(catchExpression, contextStack.create(newContext))
     }
   },
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => {
-    const { p: tryExpressions, ce: catchExpression, e: errorNode } = node
+    const { params: tryExpressions, ce: catchExpression, e: errorNode } = node
     const tryResult = getUndefinedSymbols(tryExpressions, contextStack, builtin)
     const newContext: Context = errorNode
       ? {
-          [errorNode.v]: { value: true },
+          [errorNode.value]: { value: true },
         }
       : {}
     const catchResult = getUndefinedSymbols([catchExpression], contextStack.create(newContext), builtin)

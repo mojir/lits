@@ -1,15 +1,14 @@
 import { describe, expect, it } from 'vitest'
 import { ContextStackImpl, createContextStack } from '../../src/evaluator/ContextStack'
 import type { SymbolNode } from '../../src/parser/types'
-import { AstNodeType } from '../../src/constants/constants'
 
 function createNameNode(name: string): SymbolNode {
   return {
-    t: AstNodeType.Symbol,
-    v: name,
+    type: 'Symbol',
+    value: name,
     token: undefined,
-    p: [],
-    n: undefined,
+    params: [],
+    name: undefined,
   }
 }
 

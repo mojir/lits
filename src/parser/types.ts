@@ -118,9 +118,9 @@ export type DebugData = {
   nameToken?: Token
 }
 export interface GenericNode {
-  t: AstNodeType // type
-  p: AstNode[] // params
-  n: string | undefined // name
+  type: AstNodeType // type
+  params: AstNode[] // params
+  name: string | undefined // name
   token: Token | undefined
 }
 
@@ -133,60 +133,60 @@ export type ParseTokensUntilClosingBracket = (tokens: TokenStream, parseState: P
 export type ParseToken = (tokens: TokenStream, parseState: ParseState) => AstNode
 
 export interface NumberNode extends GenericNode {
-  t: AstNodeType.Number // type
-  v: number // value
+  type: 'Number' // type
+  value: number // value
 }
 export interface StringNode extends GenericNode {
-  t: AstNodeType.String // type
-  v: string // value
+  type: 'String' // type
+  value: string // value
 }
 export interface SymbolNode extends GenericNode {
-  t: AstNodeType.Symbol // type
-  v: string // value
+  type: 'Symbol' // type
+  value: string // value
 }
 export interface ModifierNode extends GenericNode {
-  t: AstNodeType.Modifier // type
-  v: ModifierName
+  type: 'Modifier' // type
+  value: ModifierName
 }
 export interface ReservedSymbolNode extends GenericNode {
-  t: AstNodeType.ReservedSymbol // type
-  v: string
+  type: 'ReservedSymbol' // type
+  value: string
 }
 
 interface CommonNormalExpressionNode extends GenericNode {
-  t: AstNodeType.NormalExpression // type
+  type: 'NormalExpression' // type
 }
 
 export interface CommonSpecialExpressionNode<T extends SpecialExpressionName> extends GenericNode {
-  t: AstNodeType.SpecialExpression // type
-  n: T // name
+  type: 'SpecialExpression' // type
+  name: T // name
 }
 
 export interface NormalExpressionNodeWithName extends CommonNormalExpressionNode {
-  n: string // name
+  name: string // name
 }
 
 interface NormalExpressionNodeExpression extends CommonNormalExpressionNode {
-  n: undefined // name not present. E.g. ([1 2 3] 2)
+  name: undefined // name not present. E.g. ([1 2 3] 2)
 }
 
 export type NormalExpressionNode = NormalExpressionNodeWithName | NormalExpressionNodeExpression
 
 export interface BindingNode extends GenericNode {
-  t: AstNodeType.Binding // type
-  n: string // name
-  v: AstNode // value
+  type: 'Binding' // type
+  name: string // name
+  value: AstNode // value
 }
 
 export interface ArgumentNode extends GenericNode {
-  t: AstNodeType.Argument // type
-  n: string // name
-  d?: AstNode // defaultValue
+  type: 'Argument' // type
+  name: string // name
+  default?: AstNode // defaultValue
 }
 
 export interface CommentNode extends GenericNode {
-  t: AstNodeType.Comment // type
-  v: string // value
+  type: 'Comment' // type
+  value: string // value
 }
 
 export type AstNode =
@@ -201,6 +201,6 @@ export type AstNode =
 
 type AstBody = AstNode[]
 export interface Ast {
-  b: AstBody // body
+  body: AstBody // body
   hasDebugData: boolean
 }

@@ -9,10 +9,10 @@ export interface ThrowNode extends CommonSpecialExpressionNode<'throw'> {}
 export const throwSpecialExpression: BuiltinSpecialExpression<null, ThrowNode> = {
   paramCount: 1,
   evaluate: (node, contextStack, { evaluateAstNode }) => {
-    const message = asString(evaluateAstNode(node.p[0]!, contextStack), tokenSourceCodeInfo(node.token), {
+    const message = asString(evaluateAstNode(node.params[0]!, contextStack), tokenSourceCodeInfo(node.token), {
       nonEmpty: true,
     })
     throw new UserDefinedError(message, tokenSourceCodeInfo(node.token))
   },
-  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => getUndefinedSymbols(node.p, contextStack, builtin),
+  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => getUndefinedSymbols(node.params, contextStack, builtin),
 }

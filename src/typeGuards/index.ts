@@ -10,8 +10,8 @@ import { getSourceCodeInfo } from '../utils/debug/getSourceCodeInfo'
 export function assertNumberOfParams(count: Count, node: GenericNode): void {
   assertCount({
     count,
-    length: node.p.length,
-    name: node.n,
+    length: node.params.length,
+    name: node.name,
     sourceCodeInfo: tokenSourceCodeInfo(node.token),
   })
 }

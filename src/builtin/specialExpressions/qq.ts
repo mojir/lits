@@ -10,7 +10,7 @@ export interface QqNode extends CommonSpecialExpressionNode<'??'> {}
 export const qqSpecialExpression: BuiltinSpecialExpression<Any, QqNode> = {
   paramCount: { min: 1, max: 2 },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
-    const [firstNode, secondNode] = node.p
+    const [firstNode, secondNode] = node.params
 
     if (isSymbolNode(firstNode)) {
       if (contextStack.lookUp(firstNode) === null)
@@ -20,5 +20,5 @@ export const qqSpecialExpression: BuiltinSpecialExpression<Any, QqNode> = {
     const firstResult = evaluateAstNode(firstNode, contextStack)
     return firstResult ?? (secondNode ? evaluateAstNode(secondNode, contextStack) : null)
   },
-  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => getUndefinedSymbols(node.p, contextStack, builtin),
+  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => getUndefinedSymbols(node.params, contextStack, builtin),
 }

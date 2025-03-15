@@ -1,6 +1,5 @@
 import { describe, expect, it, test } from 'vitest'
 import { testTypeGuars } from '../../__tests__/testUtils'
-import { AstNodeType } from '../constants/constants'
 import type { AstNode, NormalExpressionNode } from '../parser/types'
 import {
   asNonUndefined,
@@ -14,16 +13,16 @@ import {
 
 function toNormalExpressionNode(arr: number[]): NormalExpressionNode {
   const astNodes: AstNode[] = arr.map(n => ({
-    t: AstNodeType.Number,
-    v: n,
+    type: 'Number',
+    value: n,
     token: undefined,
-    p: [],
-    n: undefined,
+    params: [],
+    name: undefined,
   }))
   return {
-    n: 'let',
-    p: astNodes,
-    t: AstNodeType.NormalExpression,
+    name: 'let',
+    params: astNodes,
+    type: 'NormalExpression',
     token: ['Symbol', 'X'],
   }
 }

@@ -11,16 +11,16 @@ export const unlessSpecialExpression: BuiltinSpecialExpression<Any, UnlessNode> 
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const sourceCodeInfo = tokenSourceCodeInfo(node.token)
 
-    const [conditionNode, trueNode, falseNode] = node.p
+    const [conditionNode, trueNode, falseNode] = node.params
     if (!evaluateAstNode(asAstNode(conditionNode, sourceCodeInfo), contextStack)) {
       return evaluateAstNode(asAstNode(trueNode, sourceCodeInfo), contextStack)
     }
     else {
-      if (node.p.length === 3)
+      if (node.params.length === 3)
         return evaluateAstNode(asAstNode(falseNode, sourceCodeInfo), contextStack)
       else
         return null
     }
   },
-  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => getUndefinedSymbols(node.p, contextStack, builtin),
+  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => getUndefinedSymbols(node.params, contextStack, builtin),
 }

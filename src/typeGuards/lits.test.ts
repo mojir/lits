@@ -1,6 +1,5 @@
 import { describe, it } from 'vitest'
 import { testTypeGuars } from '../../__tests__/testUtils'
-import { AstNodeType } from '../constants/constants'
 import type { Seq } from '../interface'
 import type { AstNode, RegularExpression } from '../parser/types'
 import { FUNCTION_SYMBOL, REGEXP_SYMBOL } from '../utils/symbols'
@@ -28,11 +27,11 @@ import {
 describe('lits type guards', () => {
   it('any', () => {
     const node: AstNode = {
-      t: AstNodeType.Symbol,
-      v: 'test',
+      type: 'Symbol',
+      value: 'test',
       token: ['Symbol', 'X'],
-      p: [],
-      n: undefined,
+      params: [],
+      name: undefined,
     }
 
     const valid = [node, 1, 'bar', null, [], {}]

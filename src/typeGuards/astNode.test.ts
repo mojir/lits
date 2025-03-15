@@ -1,7 +1,6 @@
 import { describe, it } from 'vitest'
 import { testTypeGuars } from '../../__tests__/testUtils'
 import type { QqNode } from '../builtin/specialExpressions/qq'
-import { AstNodeType } from '../constants/constants'
 import type {
   AstNode,
   ExpressionNode,
@@ -35,12 +34,12 @@ describe('astNode type guards', () => {
   const invalidAstNodes: unknown[] = [
     {
       tkn,
-      v: 'A name',
+      value: 'A name',
     },
     {
-      t: 999,
+      type: 999,
       tkn,
-      v: 'A name',
+      value: 'A name',
     },
     {},
     null,
@@ -52,63 +51,63 @@ describe('astNode type guards', () => {
     [],
   ]
   const specialExpressionNode: QqNode = {
-    t: AstNodeType.SpecialExpression,
-    n: '??',
-    p: [{
-      t: AstNodeType.ReservedSymbol,
-      v: 'null',
+    type: 'SpecialExpression',
+    name: '??',
+    params: [{
+      type: 'ReservedSymbol',
+      value: 'null',
       token: undefined,
-      p: [],
-      n: undefined,
+      params: [],
+      name: undefined,
     }, {
-      t: AstNodeType.ReservedSymbol,
-      v: 'null',
+      type: 'ReservedSymbol',
+      value: 'null',
       token: undefined,
-      p: [],
-      n: undefined,
+      params: [],
+      name: undefined,
     }],
     token: undefined,
   }
   const nameNode: SymbolNode = {
-    t: AstNodeType.Symbol,
+    type: 'Symbol',
     token: tkn,
-    v: 'A name',
-    p: [],
-    n: undefined,
+    value: 'A name',
+    params: [],
+    name: undefined,
   }
   const numberNode: NumberNode = {
-    t: AstNodeType.Number,
-    v: 12,
+    type: 'Number',
+    value: 12,
     token: tkn,
-    p: [],
-    n: undefined,
+    params: [],
+    name: undefined,
   }
   const stringNode: StringNode = {
-    t: AstNodeType.String,
-    v: 'foo',
+    type: 'String',
+    value: 'foo',
     token: ['Symbol', 'X'],
-    p: [],
-    n: undefined,
+    params: [],
+    name: undefined,
   }
   const normalExpressionNodeWithName: NormalExpressionNodeWithName = {
-    t: AstNodeType.NormalExpression,
-    p: [],
-    n: 'object',
+    type: 'NormalExpression',
+    params: [],
+    name: 'object',
     token: ['Symbol', 'X'],
   }
   const normalExpressionNodeWithoutName: NormalExpressionNode = {
-    t: AstNodeType.NormalExpression,
-    n: undefined,
-    p: [{
-      t: AstNodeType.NormalExpression,
-      n: '+',
-      p: [
+    type: 'NormalExpression',
+    name: undefined,
+    params: [{
+      type: 'NormalExpression',
+      name: '+',
+      params: [
         {
-          t: AstNodeType.Number,
-          v: 2,
+          type: 'Number',
+          value: 2,
           token: ['Symbol', 'X'],
-          p: [],
-          n: undefined,
+          params: [],
+          name: undefined,
         },
       ],
       token: undefined,

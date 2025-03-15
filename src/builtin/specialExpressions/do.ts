@@ -12,12 +12,12 @@ export const doSpecialExpression: BuiltinSpecialExpression<Any, DoNode> = {
 
     const newContextStack = contextStack.create(newContext)
     let result: Any = null
-    for (const form of node.p)
+    for (const form of node.params)
       result = evaluateAstNode(form, newContextStack)
 
     return result
   },
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => {
-    return getUndefinedSymbols(node.p, contextStack.create({}), builtin)
+    return getUndefinedSymbols(node.params, contextStack.create({}), builtin)
   },
 }

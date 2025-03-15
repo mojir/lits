@@ -13,7 +13,6 @@ import { toAny } from '../utils'
 import type { Any, Arr, Obj } from '../interface'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { LitsError, NotAFunctionError, UndefinedSymbolError } from '../errors'
-import { AstNodeType } from '../constants/constants'
 import { isNormalExpressionNodeWithName } from '../typeGuards/astNode'
 import { valueToString } from '../utils/debug/debugTools'
 import { isLitsFunction } from '../typeGuards/litsFunction'
@@ -30,7 +29,7 @@ import { functionExecutors } from './functionExecutors'
 export function evaluate(ast: Ast, contextStack: ContextStack): Any {
   let result: Any = null
 
-  for (const node of ast.b) {
+  for (const node of ast.body) {
     result = evaluateAstNode(node, contextStack)
   }
 
@@ -38,44 +37,44 @@ export function evaluate(ast: Ast, contextStack: ContextStack): Any {
 }
 
 export function evaluateAstNode(node: AstNode, contextStack: ContextStack): Any {
-  switch (node.t) {
-    case AstNodeType.Number:
+  switch (node.type) {
+    case 'Number':
       return evaluateNumber(node)
-    case AstNodeType.String:
+    case 'String':
       return evaluateString(node)
-    case AstNodeType.Symbol:
+    case 'Symbol':
       return contextStack.evaluateName(node)
-    case AstNodeType.ReservedSymbol:
+    case 'ReservedSymbol':
       return evaluateReservedName(node)
-    case AstNodeType.NormalExpression:
+    case 'NormalExpression':
       return evaluateNormalExpression(node, contextStack)
-    case AstNodeType.SpecialExpression:
+    case 'SpecialExpression':
       return evaluateSpecialExpression(node, contextStack)
     /* v8 ignore next 2 */
     default:
-      throw new LitsError(`${node.t}-node cannot be evaluated`, tokenSourceCodeInfo(node.token))
+      throw new LitsError(`${node.type}-node cannot be evaluated`, tokenSourceCodeInfo(node.token))
   }
 }
 
 function evaluateNumber(node: NumberNode): number {
-  return node.v
+  return node.value
 }
 
 function evaluateString(node: StringNode): string {
-  return node.v
+  return node.value
 }
 
 function evaluateReservedName(node: ReservedSymbolNode): Any {
-  const reservedName = node.v as ReservedSymbol
+  const reservedName = node.value as ReservedSymbol
   const value = reservedSymbolRecord[reservedName]
   return asNonUndefined(value, tokenSourceCodeInfo(node.token))
 }
 
 function evaluateNormalExpression(node: NormalExpressionNode, contextStack: ContextStack): Any {
-  const params = node.p.map(paramNode => evaluateAstNode(paramNode, contextStack))
+  const params = node.params.map(paramNode => evaluateAstNode(paramNode, contextStack))
   const sourceCodeInfo = tokenSourceCodeInfo(node.token)
   if (isNormalExpressionNodeWithName(node)) {
-    const value = contextStack.getValue(node.n)
+    const value = contextStack.getValue(node.name)
     if (value !== undefined)
       return executeFunction(asAny(value), params, contextStack, sourceCodeInfo)
 
@@ -111,15 +110,15 @@ function evaluateBuiltinNormalExpression(
   params: Arr,
   contextStack: ContextStack,
 ): Any {
-  const normalExpression = builtin.normalExpressions[node.n]
+  const normalExpression = builtin.normalExpressions[node.name]
   if (!normalExpression)
-    throw new UndefinedSymbolError(node.n, tokenSourceCodeInfo(node.token))
+    throw new UndefinedSymbolError(node.name, tokenSourceCodeInfo(node.token))
 
   return normalExpression.evaluate(params, tokenSourceCodeInfo(node.token), contextStack, { executeFunction })
 }
 
 function evaluateSpecialExpression(node: SpecialExpressionNode, contextStack: ContextStack): Any {
-  const specialExpression = asNonUndefined(builtin.specialExpressions[node.n], tokenSourceCodeInfo(node.token))
+  const specialExpression = asNonUndefined(builtin.specialExpressions[node.name], tokenSourceCodeInfo(node.token))
 
   // eslint-disable-next-line ts/no-unsafe-argument
   return specialExpression.evaluate(node as any, contextStack, { evaluateAstNode, builtin })

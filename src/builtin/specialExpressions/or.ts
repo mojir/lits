@@ -9,7 +9,7 @@ export const orSpecialExpression: BuiltinSpecialExpression<Any, OrNode> = {
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     let value: Any = false
 
-    for (const param of node.p) {
+    for (const param of node.params) {
       value = evaluateAstNode(param, contextStack)
       if (value)
         break
@@ -17,5 +17,5 @@ export const orSpecialExpression: BuiltinSpecialExpression<Any, OrNode> = {
 
     return value
   },
-  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => getUndefinedSymbols(node.p, contextStack, builtin),
+  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => getUndefinedSymbols(node.params, contextStack, builtin),
 }

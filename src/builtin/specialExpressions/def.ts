@@ -10,19 +10,19 @@ export const defSpecialExpression: BuiltinSpecialExpression<null, DefNode> = {
   paramCount: 2,
   evaluate: (node, contextStack, { evaluateAstNode, builtin }) => {
     const sourceCodeInfo = tokenSourceCodeInfo(node.token)
-    const name = (node.p[0] as SymbolNode).v
+    const name = (node.params[0] as SymbolNode).value
 
     assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo)
 
-    contextStack.exportValue(name, evaluateAstNode(node.p[1]!, contextStack))
+    contextStack.exportValue(name, evaluateAstNode(node.params[1]!, contextStack))
 
     return null
   },
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => {
     const sourceCodeInfo = tokenSourceCodeInfo(node.token)
-    const subNode = asAstNode(node.p[1])
+    const subNode = asAstNode(node.params[1])
     const result = getUndefinedSymbols([subNode], contextStack, builtin)
-    const name = asSymbolNode(node.p[0]).v
+    const name = asSymbolNode(node.params[0]).value
     assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo)
     contextStack.exportValue(name, true)
     return result

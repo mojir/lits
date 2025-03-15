@@ -12,27 +12,27 @@ export const letSpecialExpression: BuiltinSpecialExpression<Any, LetNode> = {
   paramCount: 0,
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     for (const binding of node.bs) {
-      const bindingValueNode = binding.v
+      const bindingValueNode = binding.value
       const bindingValue = evaluateAstNode(bindingValueNode, contextStack)
-      contextStack.addValue(binding.n, bindingValue)
+      contextStack.addValue(binding.name, bindingValue)
     }
     return null
   },
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => {
     const newContext = node.bs
-      .map(binding => binding.n)
+      .map(binding => binding.name)
       .reduce((context: Context, name) => {
         context[name] = { value: true }
         return context
       }, {})
     const bindingResults = node.bs.map((bindingNode) => {
-      const valueNode = bindingNode.v
+      const valueNode = bindingNode.value
       const bindingsResult = getUndefinedSymbols([valueNode], contextStack, builtin)
-      contextStack.addValue(bindingNode.n, { value: true })
+      contextStack.addValue(bindingNode.name, { value: true })
       return bindingsResult
     })
 
-    const paramsResult = getUndefinedSymbols(node.p, contextStack.create(newContext), builtin)
+    const paramsResult = getUndefinedSymbols(node.params, contextStack.create(newContext), builtin)
     return joinSets(...bindingResults, paramsResult)
   },
 }

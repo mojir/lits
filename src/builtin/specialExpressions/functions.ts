@@ -28,14 +28,14 @@ export interface FunctionNode extends CommonSpecialExpressionNode<'function'> {
 }
 
 export interface FnNode extends CommonSpecialExpressionNode<'fn'> {
-  p: AstNode[]
+  params: AstNode[]
   o: FunctionOverload[]
 }
 
 export const functionSpecialExpression: BuiltinSpecialExpression<null, FunctionNode> = {
   paramCount: {},
   evaluate: (node, contextStack, { builtin, evaluateAstNode }) => {
-    const name = node.f.v
+    const name = node.f.value
 
     assertNameNotDefined(name, contextStack, builtin, tokenSourceCodeInfo(node.token))
 
@@ -54,8 +54,8 @@ export const functionSpecialExpression: BuiltinSpecialExpression<null, FunctionN
   },
 
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => {
-    contextStack.exportValue(node.f.v, true)
-    const newContext: Context = { [node.f.v]: { value: true } }
+    contextStack.exportValue(node.f.value, true)
+    const newContext: Context = { [node.f.value]: { value: true } }
     return addOverloadsUnresolvedSymbols(node.o, contextStack, getUndefinedSymbols, builtin, newContext)
   },
 }
@@ -63,7 +63,7 @@ export const functionSpecialExpression: BuiltinSpecialExpression<null, FunctionN
 export const defnSpecialExpression: BuiltinSpecialExpression<null, DefnNode> = {
   paramCount: {},
   evaluate: (node, contextStack, { builtin, evaluateAstNode }) => {
-    const name = node.f.v
+    const name = node.f.value
 
     assertNameNotDefined(name, contextStack, builtin, tokenSourceCodeInfo(node.token))
 
@@ -82,8 +82,8 @@ export const defnSpecialExpression: BuiltinSpecialExpression<null, DefnNode> = {
   },
 
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => {
-    contextStack.exportValue(node.f.v, true)
-    const newContext: Context = { [node.f.v]: { value: true } }
+    contextStack.exportValue(node.f.value, true)
+    const newContext: Context = { [node.f.value]: { value: true } }
     return addOverloadsUnresolvedSymbols(node.o, contextStack, getUndefinedSymbols, builtin, newContext)
   },
 }
@@ -116,9 +116,9 @@ function evaluateFunctionOverloades(
   for (const functionOverload of (node as DefnNode | FnNode).o) {
     const functionContext: Context = {}
     for (const binding of functionOverload.as.b) {
-      const bindingValueNode = binding.v
+      const bindingValueNode = binding.value
       const bindingValue = evaluateAstNode(bindingValueNode, contextStack)
-      functionContext[binding.n] = { value: bindingValue }
+      functionContext[binding.name] = { value: bindingValue }
     }
 
     const evaluatedFunctionOverload: EvaluatedFunctionOverload = {
@@ -148,9 +148,9 @@ function addOverloadsUnresolvedSymbols(
   for (const overload of overloads) {
     const newContext: Context = {}
     overload.as.b.forEach((binding) => {
-      const bindingResult = getUndefinedSymbols([binding.v], contextStack, builtin)
+      const bindingResult = getUndefinedSymbols([binding.value], contextStack, builtin)
       addToSet(result, bindingResult)
-      newContext[binding.n] = { value: true }
+      newContext[binding.name] = { value: true }
     })
     overload.as.m.forEach((arg) => {
       newContext[arg] = { value: true }

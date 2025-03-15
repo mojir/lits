@@ -12,7 +12,6 @@ import type { SwitchNode } from '../builtin/specialExpressions/switch'
 import type { TryNode } from '../builtin/specialExpressions/try'
 import type { UnlessNode } from '../builtin/specialExpressions/unless'
 import type { Arity, FunctionArguments } from '../builtin/utils'
-import { AstNodeType } from '../constants/constants'
 import { LitsError } from '../errors'
 import type { TokenStream } from '../tokenizer/tokenize'
 import { type SymbolicBinaryOperator, isBinaryOperator, isFunctionOperator } from '../tokenizer/operators'
@@ -86,12 +85,12 @@ function getPrecedence(operatorSign: SymbolicBinaryOperator): number {
 
 function createNamedNormalExpressionNode(name: string, params: AstNode[], token: Token | undefined): NormalExpressionNodeWithName {
   const node: NormalExpressionNodeWithName = {
-    t: AstNodeType.NormalExpression,
-    n: name,
-    p: params,
+    type: 'NormalExpression',
+    name,
+    params,
     token: tokenSourceCodeInfo(token) && token,
   }
-  const builtinExpression = builtin.normalExpressions[node.n]
+  const builtinExpression = builtin.normalExpressions[node.name]
 
   if (builtinExpression) {
     assertNumberOfParams(builtinExpression.paramCount, node)
@@ -103,9 +102,9 @@ function createNamedNormalExpressionNode(name: string, params: AstNode[], token:
 function createAccessorNode(left: AstNode, right: AstNode, token: Token | undefined): AstNode {
   // Unnamed normal expression
   return {
-    t: AstNodeType.NormalExpression,
-    p: [left, right],
-    n: undefined,
+    type: 'NormalExpression',
+    params: [left, right],
+    name: undefined,
     token: tokenSourceCodeInfo(token) && token,
   }
 }
@@ -141,9 +140,9 @@ function fromBinaryOperatorToAstNode(operator: OperatorToken | SymbolToken<'+'>,
     case '||':
     case '??':
       return {
-        t: AstNodeType.SpecialExpression,
-        n: operatorName,
-        p: [left, right],
+        type: 'SpecialExpression',
+        name: operatorName,
+        params: [left, right],
         token: tokenSourceCodeInfo(token) && token,
       }
     /* v8 ignore next 10 */
@@ -291,11 +290,11 @@ export class Parser {
           throw new LitsError('Expected symbol', tokenSourceCodeInfo(this.peek()))
         }
         const stringNode: StringNode = {
-          t: AstNodeType.String,
-          v: symbolToken[1],
+          type: 'String',
+          value: symbolToken[1],
           token: tokenSourceCodeInfo(symbolToken) && symbolToken,
-          p: [],
-          n: undefined,
+          params: [],
+          name: undefined,
         }
         operand = createAccessorNode(operand, stringNode, token)
         this.advance()
@@ -345,11 +344,11 @@ export class Parser {
       if (isBinaryOperator(operatorName)) {
         this.advance()
         return {
-          t: AstNodeType.Symbol,
-          v: operatorName,
+          type: 'Symbol',
+          value: operatorName,
           token: tokenSourceCodeInfo(token) && token,
-          p: [],
-          n: undefined,
+          params: [],
+          name: undefined,
         } satisfies SymbolNode
       }
 
@@ -417,16 +416,16 @@ export class Parser {
     const params: AstNode[] = []
     while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
       const key = this.parseOperand()
-      if (key.t !== AstNodeType.Symbol && key.t !== AstNodeType.String) {
+      if (key.type !== 'Symbol' && key.type !== 'String') {
         throw new LitsError('Expected key to be a symbol or a string', tokenSourceCodeInfo(this.peek()))
       }
 
       params.push({
-        t: AstNodeType.String,
-        v: key.v,
+        type: 'String',
+        value: key.value,
         token: tokenSourceCodeInfo(key.token) && key.token,
-        p: [],
-        n: undefined,
+        params: [],
+        name: undefined,
       })
 
       assertOperatorToken(this.peek(), ':=')
@@ -447,9 +446,9 @@ export class Parser {
     this.advance()
 
     return {
-      t: AstNodeType.NormalExpression,
-      n: 'object',
-      p: params,
+      type: 'NormalExpression',
+      name: 'object',
+      params,
       token: tokenSourceCodeInfo(firstToken) && firstToken,
     }
   }
@@ -473,15 +472,15 @@ export class Parser {
     this.advance()
 
     return {
-      t: AstNodeType.NormalExpression,
-      n: 'array',
-      p: params,
+      type: 'NormalExpression',
+      name: 'array',
+      params,
       token: tokenSourceCodeInfo(firstToken) && firstToken,
     }
   }
 
   private parseFunctionCall(symbol: AstNode): AstNode {
-    const isNamedFunction = symbol.t === AstNodeType.Symbol
+    const isNamedFunction = symbol.type === 'Symbol'
     this.advance()
 
     const params: AstNode[] = []
@@ -500,8 +499,8 @@ export class Parser {
     }
     this.advance()
     if (isNamedFunction) {
-      if (specialExpressionKeys.includes(symbol.v)) {
-        const name: SpecialExpressionName = symbol.v as Exclude<SpecialExpressionName, 'for' | 'if' | 'unless' | 'cond' | 'switch' | 'let' | 'do' | 'loop' | 'try' | 'doseq' | 'function'>
+      if (specialExpressionKeys.includes(symbol.value)) {
+        const name: SpecialExpressionName = symbol.value as Exclude<SpecialExpressionName, 'for' | 'if' | 'unless' | 'cond' | 'switch' | 'let' | 'do' | 'loop' | 'try' | 'doseq' | 'function'>
         switch (name) {
           case '??':
           case '&&':
@@ -510,12 +509,12 @@ export class Parser {
           case 'recur':
           case 'throw': {
             const node: QqNode | AndNode | DeclaredNode | OrNode | RecurNode | ThrowNode = {
-              t: AstNodeType.SpecialExpression,
-              n: name,
-              p: params,
+              type: 'SpecialExpression',
+              name,
+              params,
               token: tokenSourceCodeInfo(symbol.token) && symbol.token,
             }
-            assertNumberOfParams(builtin.specialExpressions[node.n].paramCount, node)
+            assertNumberOfParams(builtin.specialExpressions[node.name].paramCount, node)
             return node
           }
           case 'fn':
@@ -527,13 +526,13 @@ export class Parser {
             throw new Error(`Unknown special expression: ${name satisfies never}`)
         }
       }
-      return createNamedNormalExpressionNode(symbol.v, params, symbol.token)
+      return createNamedNormalExpressionNode(symbol.value, params, symbol.token)
     }
     else {
       return {
-        t: AstNodeType.NormalExpression,
-        n: undefined,
-        p: [symbol, ...params],
+        type: 'NormalExpression',
+        name: undefined,
+        params: [symbol, ...params],
         token: tokenSourceCodeInfo(symbol.token) && symbol.token,
       }
     }
@@ -559,9 +558,9 @@ export class Parser {
       const body = this.parseExpression()
 
       return {
-        t: AstNodeType.SpecialExpression,
-        n: 'fn',
-        p: [],
+        type: 'SpecialExpression',
+        name: 'fn',
+        params: [],
         o: [{
           as: functionArguments,
           b: [body],
@@ -704,9 +703,9 @@ export class Parser {
     }
 
     const node: FnNode = {
-      t: AstNodeType.SpecialExpression,
-      n: 'fn',
-      p: [],
+      type: 'SpecialExpression',
+      name: 'fn',
+      params: [],
       o: [
         {
           as: args,
@@ -735,14 +734,14 @@ export class Parser {
     }
 
     return {
-      t: AstNodeType.SpecialExpression,
-      n: 'let',
-      p: [],
+      type: 'SpecialExpression',
+      name: 'let',
+      params: [],
       bs: [{
-        t: AstNodeType.Binding,
-        n: letSymbol.v,
-        v: value,
-        p: [],
+        type: 'Binding',
+        name: letSymbol.value,
+        value,
+        params: [],
         token: tokenSourceCodeInfo(token) && token,
       }],
       token: tokenSourceCodeInfo(letSymbol.token) && letSymbol.token,
@@ -764,9 +763,9 @@ export class Parser {
     assertReservedSymbolToken(this.peek(), 'end')
     this.advance()
     return {
-      t: AstNodeType.SpecialExpression,
-      n: 'do',
-      p: expressions,
+      type: 'SpecialExpression',
+      name: 'do',
+      params: expressions,
       token: tokenSourceCodeInfo(token) && token,
     }
   }
@@ -785,10 +784,10 @@ export class Parser {
       this.advance()
       const value = this.parseExpression()
       bindingNodes.push({
-        t: AstNodeType.Binding,
-        n: symbol.v,
-        v: value,
-        p: [],
+        type: 'Binding',
+        name: symbol.value,
+        value,
+        params: [],
         token: tokenSourceCodeInfo(symbol.token) && symbol.token,
       } satisfies BindingNode)
 
@@ -818,9 +817,9 @@ export class Parser {
     this.advance()
 
     return {
-      t: AstNodeType.SpecialExpression,
-      n: 'loop',
-      p: params,
+      type: 'SpecialExpression',
+      name: 'loop',
+      params,
       bs: bindingNodes,
       token: tokenSourceCodeInfo(firstToken) && firstToken,
     }
@@ -842,9 +841,9 @@ export class Parser {
     const tryExpression = tryExpressions.length === 1
       ? tryExpressions[0]!
       : {
-        t: AstNodeType.SpecialExpression,
-        n: 'do',
-        p: tryExpressions,
+        type: 'SpecialExpression',
+        name: 'do',
+        params: tryExpressions,
         token: tokenSourceCodeInfo(token) && token,
       } satisfies DoNode
 
@@ -876,16 +875,16 @@ export class Parser {
     const catchExpression = catchExpressions.length === 1
       ? catchExpressions[0]!
       : {
-        t: AstNodeType.SpecialExpression,
-        n: 'do',
-        p: catchExpressions,
+        type: 'SpecialExpression',
+        name: 'do',
+        params: catchExpressions,
         token: tokenSourceCodeInfo(token) && token,
       } satisfies DoNode
 
     return {
-      t: AstNodeType.SpecialExpression,
-      n: 'try',
-      p: [tryExpression],
+      type: 'SpecialExpression',
+      name: 'try',
+      params: [tryExpression],
       ce: catchExpression,
       e: errorSymbol,
       token: tokenSourceCodeInfo(token) && token,
@@ -900,7 +899,7 @@ export class Parser {
 
     while (!this.isAtEnd() && !isSymbolToken(this.peek(), 'do')) {
       const loopBinding = this.parseForLoopBinding()
-      if (forLoopBindings.some(b => b.b.n === loopBinding.b.n)) {
+      if (forLoopBindings.some(b => b.b.name === loopBinding.b.name)) {
         throw new LitsError('Duplicate binding', tokenSourceCodeInfo(loopBinding.b.token))
       }
       forLoopBindings.push(loopBinding)
@@ -925,9 +924,9 @@ export class Parser {
     this.advance()
 
     return {
-      t: AstNodeType.SpecialExpression,
-      n: isDoseq ? 'doseq' : 'for',
-      p: expressions,
+      type: 'SpecialExpression',
+      name: isDoseq ? 'doseq' : 'for',
+      params: expressions,
       token: tokenSourceCodeInfo(firstToken) && firstToken,
       l: forLoopBindings,
     }
@@ -966,7 +965,7 @@ export class Parser {
       letBindings = []
       while (isSymbolToken(token, 'let')) {
         const letNode = this.parseLet(token, true)
-        if (letBindings.some(b => b.n === letNode.bs[0]!.n)) {
+        if (letBindings.some(b => b.name === letNode.bs[0]!.name)) {
           throw new LitsError('Duplicate binding', tokenSourceCodeInfo(letNode.bs[0]!.token))
         }
         letBindings.push(letNode.bs[0]!)
@@ -1037,10 +1036,10 @@ export class Parser {
     const value = this.parseExpression()
 
     const node: BindingNode = {
-      t: AstNodeType.Binding,
-      n: name,
-      v: value,
-      p: [],
+      type: 'Binding',
+      name,
+      value,
+      params: [],
       token: tokenSourceCodeInfo(firstToken) && firstToken,
     }
     return node
@@ -1070,9 +1069,9 @@ export class Parser {
     const thenExpression = thenExpressions.length === 1
       ? thenExpressions[0]!
       : {
-        t: AstNodeType.SpecialExpression,
-        n: 'do',
-        p: thenExpressions,
+        type: 'SpecialExpression',
+        name: 'do',
+        params: thenExpressions,
         token: tokenSourceCodeInfo(token) && token,
       } satisfies DoNode
 
@@ -1093,9 +1092,9 @@ export class Parser {
       elseExpression = elseExpressions.length === 1
         ? elseExpressions[0]
         : {
-          t: AstNodeType.SpecialExpression,
-          n: 'do',
-          p: elseExpressions,
+          type: 'SpecialExpression',
+          name: 'do',
+          params: elseExpressions,
           token: tokenSourceCodeInfo(token) && token,
         } satisfies DoNode
     }
@@ -1109,9 +1108,9 @@ export class Parser {
     }
 
     return {
-      t: AstNodeType.SpecialExpression,
-      n: isUnless ? 'unless' : 'if',
-      p: params,
+      type: 'SpecialExpression',
+      name: isUnless ? 'unless' : 'if',
+      params,
       token: tokenSourceCodeInfo(token) && token,
     }
   }
@@ -1144,9 +1143,9 @@ export class Parser {
         expressions.length === 1
           ? expressions[0]!
           : {
-            t: AstNodeType.SpecialExpression,
-            n: 'do',
-            p: expressions,
+            type: 'SpecialExpression',
+            name: 'do',
+            params: expressions,
             token: tokenSourceCodeInfo(token) && token,
           } satisfies DoNode,
       )
@@ -1160,9 +1159,9 @@ export class Parser {
     this.advance()
 
     return {
-      t: AstNodeType.SpecialExpression,
-      n: 'cond',
-      p: params,
+      type: 'SpecialExpression',
+      name: 'cond',
+      params,
       token: tokenSourceCodeInfo(token) && token,
     }
   }
@@ -1195,9 +1194,9 @@ export class Parser {
         expressions.length === 1
           ? expressions[0]!
           : {
-            t: AstNodeType.SpecialExpression,
-            n: 'do',
-            p: expressions,
+            type: 'SpecialExpression',
+            name: 'do',
+            params: expressions,
             token: tokenSourceCodeInfo(token) && token,
           } satisfies DoNode,
       )
@@ -1211,9 +1210,9 @@ export class Parser {
     this.advance()
 
     return {
-      t: AstNodeType.SpecialExpression,
-      n: 'switch',
-      p: params,
+      type: 'SpecialExpression',
+      name: 'switch',
+      params,
       token: tokenSourceCodeInfo(token) && token,
     }
   }
@@ -1239,10 +1238,10 @@ export class Parser {
     assertOperatorToken(this.peek(), ';')
 
     return {
-      t: AstNodeType.SpecialExpression,
-      n: 'function',
+      type: 'SpecialExpression',
+      name: 'function',
       f: symbol,
-      p: [],
+      params: [],
       o: [{
         as: functionArguments,
         b: body,
@@ -1283,9 +1282,9 @@ export class Parser {
 
       assertOperatorToken(this.peek(), ';')
       return {
-        t: AstNodeType.SpecialExpression,
-        n: 'def',
-        p: [symbol, value],
+        type: 'SpecialExpression',
+        name: 'def',
+        params: [symbol, value],
         token: tokenSourceCodeInfo(symbol.token) && symbol.token,
       }
     }
@@ -1309,10 +1308,10 @@ export class Parser {
       assertReservedSymbolToken(this.peek(), 'end')
       this.advance()
       return {
-        t: AstNodeType.SpecialExpression,
-        n: 'defn',
+        type: 'SpecialExpression',
+        name: 'defn',
         f: symbol,
-        p: [],
+        params: [],
         o: [{
           as: functionArguments,
           b: body,
@@ -1334,10 +1333,10 @@ export class Parser {
     }
     if (token[1][0] !== '\'') {
       return {
-        t: AstNodeType.Symbol,
-        v: token[1],
-        p: [],
-        n: undefined,
+        type: 'Symbol',
+        value: token[1],
+        params: [],
+        name: undefined,
         token: tokenSourceCodeInfo(token) && token,
       }
     }
@@ -1361,10 +1360,10 @@ export class Parser {
           },
         )
       return {
-        t: AstNodeType.Symbol,
-        v: value,
-        p: [],
-        n: undefined,
+        type: 'Symbol',
+        value,
+        params: [],
+        name: undefined,
         token: tokenSourceCodeInfo(token) && token,
       }
     }
@@ -1378,19 +1377,19 @@ export class Parser {
       const symbol = token[1]
       if (isNumberReservedSymbol(symbol)) {
         return {
-          t: AstNodeType.Number,
-          v: numberReservedSymbolRecord[symbol],
-          p: [],
-          n: undefined,
+          type: 'Number',
+          value: numberReservedSymbolRecord[symbol],
+          params: [],
+          name: undefined,
           token: tokenSourceCodeInfo(token) && token,
         }
       }
     }
     return {
-      t: AstNodeType.ReservedSymbol,
-      v: token[1],
-      p: [],
-      n: undefined,
+      type: 'ReservedSymbol',
+      value: token[1],
+      params: [],
+      name: undefined,
       token: tokenSourceCodeInfo(token) && token,
     } satisfies ReservedSymbolNode
   }
@@ -1403,10 +1402,10 @@ export class Parser {
     const negative = value[0] === '-'
     const numberString = (negative ? value.substring(1) : value).replace(/_/g, '')
     return {
-      t: AstNodeType.Number,
-      v: negative ? -Number(numberString) : Number(numberString),
-      p: [],
-      n: undefined,
+      type: 'Number',
+      value: negative ? -Number(numberString) : Number(numberString),
+      params: [],
+      name: undefined,
       token: tokenSourceCodeInfo(token) && token,
     }
   }
@@ -1456,10 +1455,10 @@ export class Parser {
       )
 
     return {
-      t: AstNodeType.String,
-      v: value,
-      p: [],
-      n: undefined,
+      type: 'String',
+      value,
+      params: [],
+      name: undefined,
       token: tokenSourceCodeInfo(token) && token,
     }
   }
@@ -1472,25 +1471,25 @@ export class Parser {
     const regexpString = token[1].substring(2, endStringPosition)
     const optionsString = token[1].substring(endStringPosition + 1)
     const stringNode: StringNode = {
-      t: AstNodeType.String,
-      v: regexpString,
-      p: [],
-      n: undefined,
+      type: 'String',
+      value: regexpString,
+      params: [],
+      name: undefined,
       token: tokenSourceCodeInfo(token) && token,
     }
 
     const optionsNode: StringNode = {
-      t: AstNodeType.String,
-      v: optionsString,
-      p: [],
-      n: undefined,
+      type: 'String',
+      value: optionsString,
+      params: [],
+      name: undefined,
       token: tokenSourceCodeInfo(token) && token,
     }
 
     const node: NormalExpressionNode = {
-      t: AstNodeType.NormalExpression,
-      n: 'regexp',
-      p: [stringNode, optionsNode],
+      type: 'NormalExpression',
+      name: 'regexp',
+      params: [stringNode, optionsNode],
       token: tokenSourceCodeInfo(token) && token,
     }
 

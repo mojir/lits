@@ -35,7 +35,7 @@ function addToContext(
   evaluateAstNode: EvaluateAstNode,
 ) {
   for (const binding of bindings) {
-    context[binding.n] = { value: evaluateAstNode(binding.v, contextStack) }
+    context[binding.name] = { value: evaluateAstNode(binding.value, contextStack) }
   }
 }
 
@@ -46,7 +46,7 @@ function evaluateLoop(
   evaluateAstNode: EvaluateAstNode,
 ) {
   const sourceCodeInfo = tokenSourceCodeInfo(node.token)
-  const { l: loopBindings, p: params } = node as LoopNode
+  const { l: loopBindings, params } = node as LoopNode
 
   const result: Arr = []
 
@@ -64,7 +64,7 @@ function evaluateLoop(
         we: whileNode,
         m: modifiers,
       } = asNonUndefined(loopBindings[bindingIndex], sourceCodeInfo)
-      const coll = asColl(evaluateAstNode(binding.v, newContextStack), sourceCodeInfo)
+      const coll = asColl(evaluateAstNode(binding.value, newContextStack), sourceCodeInfo)
       const seq = isSeq(coll) ? coll : Object.entries(coll)
       if (seq.length === 0) {
         skip = true
@@ -83,7 +83,7 @@ function evaluateLoop(
         break
       }
 
-      context[binding.n] = {
+      context[binding.name] = {
         value: asAny(seq[index], sourceCodeInfo),
       }
       for (const modifier of modifiers) {
@@ -136,16 +136,16 @@ function analyze(
   const { l: loopBindings } = node
   loopBindings.forEach((loopBinding) => {
     const { b: binding, l: letBindings, wn: whenNode, we: whileNode } = loopBinding
-    getUndefinedSymbols([binding.v], contextStack.create(newContext), builtin).forEach(symbol =>
+    getUndefinedSymbols([binding.value], contextStack.create(newContext), builtin).forEach(symbol =>
       result.add(symbol),
     )
-    newContext[binding.n] = { value: true }
+    newContext[binding.name] = { value: true }
     if (letBindings) {
       letBindings.forEach((letBinding) => {
-        getUndefinedSymbols([letBinding.v], contextStack.create(newContext), builtin).forEach(symbol =>
+        getUndefinedSymbols([letBinding.value], contextStack.create(newContext), builtin).forEach(symbol =>
           result.add(symbol),
         )
-        newContext[letBinding.n] = { value: true }
+        newContext[letBinding.name] = { value: true }
       })
     }
     if (whenNode) {
@@ -159,7 +159,7 @@ function analyze(
       )
     }
   })
-  getUndefinedSymbols(node.p, contextStack.create(newContext), builtin).forEach(symbol =>
+  getUndefinedSymbols(node.params, contextStack.create(newContext), builtin).forEach(symbol =>
     result.add(symbol),
   )
   return result

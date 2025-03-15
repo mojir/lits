@@ -1,4 +1,4 @@
-import { astNodeTypeName, isAstNodeType, isFunctionType } from '../../constants/constants'
+import { isAstNodeType, isFunctionType } from '../../constants/constants'
 import type { AstNode, LitsFunction } from '../../parser/types'
 import { FUNCTION_SYMBOL } from '../symbols'
 
@@ -12,7 +12,7 @@ function isLitsFunction(func: unknown): func is LitsFunction {
 function isAstNode(value: unknown): value is AstNode {
   if (value === null || typeof value !== 'object')
     return false
-  return 't' in value && isAstNodeType(value.t)
+  return 'type' in value && isAstNodeType(value.type)
 }
 
 export function valueToString(value: unknown): string {
@@ -21,7 +21,7 @@ export function valueToString(value: unknown): string {
     return `<function ${(value as any).name || '\u03BB'}>`
 
   if (isAstNode(value))
-    return `${astNodeTypeName.get(value.t)}-node`
+    return `${value.type}-node`
 
   if (value === null)
     return 'null'

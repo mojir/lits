@@ -8,7 +8,7 @@ export interface CondNode extends CommonSpecialExpressionNode<'cond'> {}
 export const condSpecialExpression: BuiltinSpecialExpression<Any, CondNode> = {
   paramCount: { even: true },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
-    for (const [test, form] of arrayToPairs(node.p)) {
+    for (const [test, form] of arrayToPairs(node.params)) {
       const value = evaluateAstNode(test!, contextStack)
       if (!value)
         continue
@@ -17,5 +17,5 @@ export const condSpecialExpression: BuiltinSpecialExpression<Any, CondNode> = {
     }
     return null
   },
-  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => getUndefinedSymbols(node.p, contextStack, builtin),
+  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => getUndefinedSymbols(node.params, contextStack, builtin),
 }
