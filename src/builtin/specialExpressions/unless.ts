@@ -1,6 +1,6 @@
 import type { Any } from '../../interface'
 import type { CommonSpecialExpressionNode } from '../../parser/types'
-import { getTokenDebugData } from '../../tokenizer/token'
+import { tokenSourceCodeInfo } from '../../tokenizer/token'
 import { asAstNode } from '../../typeGuards/astNode'
 import type { BuiltinSpecialExpression } from '../interface'
 
@@ -9,7 +9,7 @@ export interface UnlessNode extends CommonSpecialExpressionNode<'unless'> {}
 export const unlessSpecialExpression: BuiltinSpecialExpression<Any, UnlessNode> = {
   paramCount: { min: 2, max: 3 },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
-    const sourceCodeInfo = getTokenDebugData(node.token)?.sourceCodeInfo
+    const sourceCodeInfo = tokenSourceCodeInfo(node.token)
 
     const [conditionNode, trueNode, falseNode] = node.p
     if (!evaluateAstNode(asAstNode(conditionNode, sourceCodeInfo), contextStack)) {

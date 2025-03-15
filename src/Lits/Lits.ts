@@ -96,8 +96,7 @@ export class Lits {
   }
 
   public tokenize(program: string, tokenizeParams: FilePathParams & MinifyParams = {}): TokenStream {
-    const debug = this.debug
-    const tokenStream = tokenize(program, debug, tokenizeParams.filePath)
+    const tokenStream = tokenize(program, this.debug, tokenizeParams.filePath)
     return tokenizeParams.minify ? minifyTokenStream(tokenStream, { removeWhiteSpace: false }) : tokenStream
   }
 

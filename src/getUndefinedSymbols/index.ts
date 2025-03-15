@@ -4,7 +4,7 @@ import { AstNodeType } from '../constants/constants'
 import { evaluateAstNode } from '../evaluator'
 import type { ContextStack } from '../evaluator/ContextStack'
 import type { Ast, AstNode } from '../parser/types'
-import { getTokenDebugData } from '../tokenizer/token'
+import { tokenSourceCodeInfo } from '../tokenizer/token'
 import { asNonUndefined } from '../typeGuards'
 
 export type UndefinedSymbols = Set<string>
@@ -59,7 +59,7 @@ function findUnresolvedSymbolsInAstNode(astNode: AstNode, contextStack: ContextS
       return unresolvedSymbols
     }
     case AstNodeType.SpecialExpression: {
-      const specialExpression = asNonUndefined(builtin.specialExpressions[astNode.n], getTokenDebugData(astNode.token)?.sourceCodeInfo)
+      const specialExpression = asNonUndefined(builtin.specialExpressions[astNode.n], tokenSourceCodeInfo(astNode.token))
 
       // eslint-disable-next-line ts/no-unsafe-argument
       return specialExpression.getUndefinedSymbols(astNode as any, contextStack, {

@@ -2,6 +2,7 @@ import { describe, expect, it, test } from 'vitest'
 import { Lits } from '../Lits/Lits'
 
 const lits = new Lits()
+const litsDebug = new Lits({ debug: true })
 
 describe('algebraic operators', () => {
   describe('const E', () => {
@@ -10,6 +11,12 @@ describe('algebraic operators', () => {
       expect(lits.run('ε')).toBe(Math.E)
       expect(lits.run('-E')).toBe(-Math.E)
       expect(lits.run('-ε')).toBe(-Math.E)
+    })
+  })
+
+  describe('test', () => {
+    it('samples', () => {
+      // litsDebug.run('let a =')
     })
   })
 
@@ -344,19 +351,16 @@ describe('algebraic operators', () => {
 
   describe('debug', () => {
     test('samples', () => {
-      const litsDebug = new Lits({ debug: true })
       expect(litsDebug.run('2 + 3')).toBe(5)
       expect(litsDebug.tokenize('2 + 3').tokens).toEqual([
         [
           'Number',
           '2',
           {
-            sourceCodeInfo: {
-              code: '2 + 3',
-              position: {
-                column: 1,
-                line: 1,
-              },
+            code: '2 + 3',
+            position: {
+              column: 1,
+              line: 1,
             },
           },
         ],
@@ -364,12 +368,10 @@ describe('algebraic operators', () => {
           'Whitespace',
           ' ',
           {
-            sourceCodeInfo: {
-              code: '2 + 3',
-              position: {
-                column: 2,
-                line: 1,
-              },
+            code: '2 + 3',
+            position: {
+              column: 2,
+              line: 1,
             },
           },
         ],
@@ -377,12 +379,10 @@ describe('algebraic operators', () => {
           'Operator',
           '+',
           {
-            sourceCodeInfo: {
-              code: '2 + 3',
-              position: {
-                column: 3,
-                line: 1,
-              },
+            code: '2 + 3',
+            position: {
+              column: 3,
+              line: 1,
             },
           },
         ],
@@ -390,12 +390,10 @@ describe('algebraic operators', () => {
           'Whitespace',
           ' ',
           {
-            sourceCodeInfo: {
-              code: '2 + 3',
-              position: {
-                column: 4,
-                line: 1,
-              },
+            code: '2 + 3',
+            position: {
+              column: 4,
+              line: 1,
             },
           },
         ],
@@ -403,12 +401,10 @@ describe('algebraic operators', () => {
           'Number',
           '3',
           {
-            sourceCodeInfo: {
-              code: '2 + 3',
-              position: {
-                column: 5,
-                line: 1,
-              },
+            code: '2 + 3',
+            position: {
+              column: 5,
+              line: 1,
             },
           },
         ],
@@ -419,12 +415,10 @@ describe('algebraic operators', () => {
           'Number',
           '-2',
           {
-            sourceCodeInfo: {
-              code: '-2',
-              position: {
-                column: 1,
-                line: 1,
-              },
+            code: '-2',
+            position: {
+              column: 1,
+              line: 1,
             },
           },
         ],

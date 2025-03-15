@@ -3,7 +3,7 @@ import { LitsError } from '../errors'
 import type { UnknownRecord } from '../interface'
 import type { GenericNode } from '../parser/types'
 import type { SourceCodeInfo } from '../tokenizer/token'
-import { getTokenDebugData } from '../tokenizer/token'
+import { tokenSourceCodeInfo } from '../tokenizer/token'
 import { valueToString } from '../utils/debug/debugTools'
 import { getSourceCodeInfo } from '../utils/debug/getSourceCodeInfo'
 
@@ -12,7 +12,7 @@ export function assertNumberOfParams(count: Count, node: GenericNode): void {
     count,
     length: node.p.length,
     name: node.n,
-    sourceCodeInfo: getTokenDebugData(node.token)?.sourceCodeInfo,
+    sourceCodeInfo: tokenSourceCodeInfo(node.token),
   })
 }
 

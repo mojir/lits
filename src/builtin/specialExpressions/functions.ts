@@ -10,7 +10,7 @@ import type {
   LitsFunction,
   SymbolNode,
 } from '../../parser/types'
-import { getTokenDebugData } from '../../tokenizer/token'
+import { tokenSourceCodeInfo } from '../../tokenizer/token'
 import { FUNCTION_SYMBOL } from '../../utils/symbols'
 import type { Builtin, BuiltinSpecialExpression } from '../interface'
 import type { FunctionOverload } from '../utils'
@@ -37,13 +37,13 @@ export const functionSpecialExpression: BuiltinSpecialExpression<null, FunctionN
   evaluate: (node, contextStack, { builtin, evaluateAstNode }) => {
     const name = node.f.v
 
-    assertNameNotDefined(name, contextStack, builtin, getTokenDebugData(node.token)?.sourceCodeInfo)
+    assertNameNotDefined(name, contextStack, builtin, tokenSourceCodeInfo(node.token))
 
     const evaluatedFunctionOverloades = evaluateFunctionOverloades(node, contextStack, evaluateAstNode)
 
     const litsFunction: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
-      sourceCodeInfo: getTokenDebugData(node.token)?.sourceCodeInfo,
+      sourceCodeInfo: tokenSourceCodeInfo(node.token),
       t: FunctionType.UserDefined,
       n: name,
       o: evaluatedFunctionOverloades,
@@ -65,13 +65,13 @@ export const defnSpecialExpression: BuiltinSpecialExpression<null, DefnNode> = {
   evaluate: (node, contextStack, { builtin, evaluateAstNode }) => {
     const name = node.f.v
 
-    assertNameNotDefined(name, contextStack, builtin, getTokenDebugData(node.token)?.sourceCodeInfo)
+    assertNameNotDefined(name, contextStack, builtin, tokenSourceCodeInfo(node.token))
 
     const evaluatedFunctionOverloades = evaluateFunctionOverloades(node, contextStack, evaluateAstNode)
 
     const litsFunction: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
-      sourceCodeInfo: getTokenDebugData(node.token)?.sourceCodeInfo,
+      sourceCodeInfo: tokenSourceCodeInfo(node.token),
       t: FunctionType.UserDefined,
       n: name,
       o: evaluatedFunctionOverloades,
@@ -95,7 +95,7 @@ export const fnSpecialExpression: BuiltinSpecialExpression<LitsFunction, FnNode>
 
     const litsFunction: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
-      sourceCodeInfo: getTokenDebugData(node.token)?.sourceCodeInfo,
+      sourceCodeInfo: tokenSourceCodeInfo(node.token),
       t: FunctionType.UserDefined,
       n: undefined,
       o: evaluatedFunctionOverloades,

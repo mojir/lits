@@ -1,8 +1,8 @@
 import { LitsError } from '../errors'
 import type { FilePathParams } from '../Lits/Lits'
 import { tokenizers } from './tokenizers'
-import type { SourceCodeInfo, Token, TokenDebugData, TokenDescriptor } from './token'
-import { addTokenDebugData } from './token'
+import type { SourceCodeInfo, Token, TokenDescriptor } from './token'
+import { addTokenSourceCodeInfo } from './token'
 
 export interface TokenStream {
   tokens: Token[]
@@ -21,22 +21,20 @@ export function tokenize(input: string, debug: boolean, filePath: FilePathParams
   while (position < input.length) {
     const tokenDescriptor = getCurrentToken(input, position)
 
-    const debugData: TokenDebugData | undefined = debug
-      ? {
-          sourceCodeInfo: createSourceCodeInfo(input, position, filePath),
-        }
+    const sourceCodeInfo: SourceCodeInfo | undefined = debug
+      ? createSourceCodeInfo(input, position, filePath)
       : undefined
 
     if (!tokenDescriptor) {
-      throw new LitsError(`Unrecognized character '${input[position]}'.`, debugData?.sourceCodeInfo)
+      throw new LitsError(`Unrecognized character '${input[position]}'.`, sourceCodeInfo)
     }
 
     const [count, token] = tokenDescriptor
 
     position += count
     if (token) {
-      if (debugData) {
-        addTokenDebugData(token, debugData)
+      if (sourceCodeInfo) {
+        addTokenSourceCodeInfo(token, sourceCodeInfo)
       }
 
       tokenStream.tokens.push(token)

@@ -4,7 +4,7 @@ import { UndefinedSymbolError } from '../errors'
 import type { Any } from '../interface'
 import type { ContextParams, LazyValue } from '../Lits/Lits'
 import type { BuiltinFunction, ExtraData, NativeJsFunction, SymbolNode } from '../parser/types'
-import { getTokenDebugData } from '../tokenizer/token'
+import { tokenSourceCodeInfo } from '../tokenizer/token'
 import { asNonUndefined } from '../typeGuards'
 import { isBuiltinFunction } from '../typeGuards/litsFunction'
 import { toAny } from '../utils'
@@ -97,7 +97,7 @@ export class ContextStackImpl {
 
   public lookUp(node: SymbolNode): LookUpResult {
     const value = node.v
-    const sourceCodeInfo = getTokenDebugData(node.token)?.sourceCodeInfo
+    const sourceCodeInfo = tokenSourceCodeInfo(node.token)
 
     for (const context of this.contexts) {
       const contextEntry = context[value]
@@ -144,7 +144,7 @@ export class ContextStackImpl {
     else if (isBuiltinFunction(lookUpResult))
       return lookUpResult
 
-    throw new UndefinedSymbolError(node.v, getTokenDebugData(node.token)?.sourceCodeInfo)
+    throw new UndefinedSymbolError(node.v, tokenSourceCodeInfo(node.token))
   }
 }
 
