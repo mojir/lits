@@ -26,6 +26,7 @@ As soon as an \`expression\` evaluates to a falsy value, the result is returned.
 
 If all expressions evaluate to truthy values, the value of the last expression is returned.`,
     examples: [
+      'true && 1',
       '&&(1, 1)',
       '&&(3 > 2, "string")',
       '&&(3 < 2, "string")',
@@ -34,36 +35,39 @@ If all expressions evaluate to truthy values, the value of the last expression i
     ],
   },
 
-  //   '||': {
-  //     title: '||',
-  //     category: 'Special expression',
-  //     linkName: '-or-or',
-  //     clojureDocs: 'or',
-  //     returns: {
-  //       type: 'boolean',
-  //     },
-  //     args: {
-  //       expressions: {
-  //         type: '*expression',
-  //         rest: true,
-  //       },
-  //     },
-  //     variants: [
-  //       { argumentNames: ['expressions'] },
-  //     ],
-  //     description: `
-  // Computes logical \`or\`. Evaluation of $expressions evaluation starts from left.
-  // As soon as a \`expression\` evaluates to a truthy value, the result is returned.
+  '||': {
+    title: '||',
+    category: 'Special expression',
+    linkName: '-or-or',
+    clojureDocs: 'or',
+    returns: {
+      type: 'boolean',
+    },
+    args: {
+      ...getOperatorArgs('any', 'any'),
+      c: {
+        type: 'any',
+        rest: true,
+      },
+    },
+    variants: [
+      { argumentNames: ['a', 'b'] },
+      { argumentNames: ['a', 'b', 'c'] },
+    ],
+    description: `
+  Computes logical \`or\`. Evaluation of expressions evaluation starts from left.
+  As soon as a \`expression\` evaluates to a truthy value, the result is returned.
 
-  // If all expressions evaluate to falsy values, the value of the last expression is returned.`,
-  //     examples: [
-  //       '(|| 1 1)',
-  //       '(|| (> 3 2) "string")',
-  //       '(|| (< 3 2) "string")',
-  //       '(|| true, true, true, true)',
-  //       '(|| 1 2 3 4)',
-  //     ],
-  //   },
+  If all expressions evaluate to falsy values, the value of the last expression is returned.`,
+    examples: [
+      'false || 1',
+      '||(1, 1)',
+      '||(3 > 2, "string")',
+      '||(3 < 2, "string")',
+      '||(false, false, false, true)',
+      '||(1, 2, 3, 4)',
+    ],
+  },
   //   'def': {
   //     title: 'def',
   //     category: 'Special expression',

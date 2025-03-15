@@ -1,3 +1,5 @@
+import { builtin } from '../src/builtin'
+import type { Count } from '../src/builtin/interface'
 import { normalExpressions } from '../src/builtin/normalExpressions'
 import { isSymbolicOperator } from '../src/tokenizer/operators'
 import { canBeOperator, isUnknownRecord } from '../src/typeGuards'
@@ -117,6 +119,14 @@ Object.entries(normalExpressionReference).forEach(([key, obj]) => {
     if (isSymbolicOperator(key)) {
       obj._prefereOperator = true
     }
+  }
+})
+
+Object.entries(specialExpressionsReference).forEach(([key, obj]) => {
+  const specialExpressions = builtin.specialExpressions as Record<string, { paramCount: Count }>
+  const paramCount = specialExpressions[key]?.paramCount
+  if (paramCount && canBeOperator(paramCount)) {
+    obj._isOperator = true
   }
 })
 

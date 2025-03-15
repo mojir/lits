@@ -288,7 +288,7 @@ export type MiscApiName = typeof api.misc[number]
 export type ObjectApiName = typeof api.object[number]
 export type PredicateApiName = typeof api.predicate[number]
 export type RegularExpressionApiName = typeof api.regularExpression[number]
-export type SpecialExpressionsApiName = typeof api.specialExpressions[number] & '&&'
+export type SpecialExpressionsApiName = typeof api.specialExpressions[number] & ('&&' | '||')
 export type StringApiName = typeof api.string[number]
 export type BitwiseApiName = typeof api.bitwise[number]
 export type AssertApiName = typeof api.assert[number]
@@ -326,7 +326,7 @@ const apiFunctionNames = [
   ...api.predicate,
   ...api.regularExpression,
   // ...api.specialExpressions,
-  ...['&&'],
+  ...['&&', '||'],
   ...api.string,
   ...api.bitwise,
   ...api.assert,
