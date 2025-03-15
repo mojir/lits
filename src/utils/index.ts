@@ -101,11 +101,11 @@ export function cloneColl<T extends Coll>(value: T): T {
 export function createNativeJsFunction(fn: (...args: any[]) => unknown, name?: string): NativeJsFunction {
   return {
     [FUNCTION_SYMBOL]: true,
-    f: {
+    nativeFn: {
       fn,
     },
-    n: name,
-    t: FunctionType.NativeJsFunction,
+    name: name,
+    functionType: FunctionType.NativeJsFunction,
   }
 }
 

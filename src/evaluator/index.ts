@@ -88,7 +88,7 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
 
 function executeFunction(fn: Any, params: Arr, contextStack: ContextStack, sourceCodeInfo?: SourceCodeInfo): Any {
   if (isLitsFunction(fn))
-    return functionExecutors[fn.t](fn, params, sourceCodeInfo, contextStack, { evaluateAstNode, executeFunction })
+    return functionExecutors[fn.functionType](fn, params, sourceCodeInfo, contextStack, { evaluateAstNode, executeFunction })
 
   if (Array.isArray(fn))
     return evaluateArrayAsFunction(fn, params, sourceCodeInfo)

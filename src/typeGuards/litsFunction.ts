@@ -21,7 +21,7 @@ export function assertLitsFunction(value: unknown, sourceCodeInfo?: SourceCodeIn
 }
 
 export function isUserDefinedFunction(value: unknown): value is UserDefinedFunction {
-  return isLitsFunction(value) && value.t === FunctionType.UserDefined
+  return isLitsFunction(value) && value.functionType === FunctionType.UserDefined
 }
 export function asUserDefinedFunction(value: unknown, sourceCodeInfo?: SourceCodeInfo): UserDefinedFunction {
   assertUserDefinedFunction(value, sourceCodeInfo)
@@ -36,7 +36,7 @@ export function assertUserDefinedFunction(
 }
 
 export function isNativeJsFunction(value: unknown): value is NativeJsFunction {
-  return isLitsFunction(value) && value.t === FunctionType.NativeJsFunction
+  return isLitsFunction(value) && value.functionType === FunctionType.NativeJsFunction
 }
 export function asNativeJsFunction(value: unknown, sourceCodeInfo?: SourceCodeInfo): NativeJsFunction {
   assertNativeJsFunction(value, sourceCodeInfo)
@@ -51,5 +51,5 @@ export function assertNativeJsFunction(
 }
 
 export function isBuiltinFunction(value: unknown): value is BuiltinFunction {
-  return isUnknownRecord(value) && value.t === FunctionType.Builtin
+  return isUnknownRecord(value) && value.functionType === FunctionType.Builtin
 }

@@ -16,19 +16,17 @@ export interface EvaluatedFunctionArguments {
   restArgument?: string
 }
 
-export interface EvaluatedFunctionOverload {
-  as: EvaluatedFunctionArguments
-  b: AstNode[]
-  a: Arity
-  f: Context
+export interface EvaluatedFunction {
+  arguments: EvaluatedFunctionArguments
+  body: AstNode[]
+  arity: Arity
+  context: Context
 }
-
-export type ExtraData = Record<string, LazyValue>
 
 interface GenericLitsFunction {
   [FUNCTION_SYMBOL]: true
   sourceCodeInfo?: SourceCodeInfo
-  t: FunctionType
+  functionType: FunctionType
 }
 
 export interface RegularExpression {
@@ -39,62 +37,61 @@ export interface RegularExpression {
 }
 
 export interface NativeJsFunction extends GenericLitsFunction {
-  t: FunctionType.NativeJsFunction
-  n: string | undefined // name
-  f: JsFunction
+  functionType: FunctionType.NativeJsFunction
+  name: string | undefined // name
+  nativeFn: JsFunction
 }
 
 export interface UserDefinedFunction extends GenericLitsFunction {
-  t: FunctionType.UserDefined
-  n: string | undefined // name
-  o: EvaluatedFunctionOverload[]
-  x?: ExtraData
+  functionType: FunctionType.UserDefined
+  name: string | undefined // name
+  o: EvaluatedFunction[]
 }
 
 export interface PartialFunction extends GenericLitsFunction {
-  t: FunctionType.Partial
+  functionType: FunctionType.Partial
   f: Any
   p: Arr
 }
 
 export interface CompFunction extends GenericLitsFunction {
-  t: FunctionType.Comp
+  functionType: FunctionType.Comp
   f: Arr
 }
 
 export interface ConstantlyFunction extends GenericLitsFunction {
-  t: FunctionType.Constantly
+  functionType: FunctionType.Constantly
   v: Any
 }
 
 export interface JuxtFunction extends GenericLitsFunction {
-  t: FunctionType.Juxt
+  functionType: FunctionType.Juxt
   f: Arr
 }
 
 export interface ComplementFunction extends GenericLitsFunction {
-  t: FunctionType.Complement
+  functionType: FunctionType.Complement
   f: Any
 }
 
 export interface EveryPredFunction extends GenericLitsFunction {
-  t: FunctionType.EveryPred
+  functionType: FunctionType.EveryPred
   f: Arr
 }
 
 export interface SomePredFunction extends GenericLitsFunction {
-  t: FunctionType.SomePred
+  functionType: FunctionType.SomePred
   f: Arr
 }
 
 export interface FNullFunction extends GenericLitsFunction {
-  t: FunctionType.Fnull
+  functionType: FunctionType.Fnull
   f: Any
   p: Arr
 }
 
 export interface BuiltinFunction extends GenericLitsFunction {
-  t: FunctionType.Builtin
+  functionType: FunctionType.Builtin
   n: string // name
 }
 
@@ -111,7 +108,7 @@ export type LitsFunction =
   | SomePredFunction
   | FNullFunction
 
-export type LitsFunctionType = LitsFunction['t']
+export type LitsFunctionType = LitsFunction['functionType']
 
 export type DebugData = {
   token: Token

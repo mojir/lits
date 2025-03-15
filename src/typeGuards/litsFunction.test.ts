@@ -20,38 +20,38 @@ import {
 describe('litsFunction type guards', () => {
   const lf1: LitsFunction = {
     [FUNCTION_SYMBOL]: true,
-    t: FunctionType.UserDefined,
-    n: undefined,
+    functionType: FunctionType.UserDefined,
+    name: undefined,
     o: [
       {
-        as: {
+        arguments: {
           mandatoryArguments: [],
         },
-        f: {},
-        b: [],
-        a: 0,
+        context: {},
+        body: [],
+        arity: 0,
       },
     ],
   }
   const lf2: LitsFunction = {
     [FUNCTION_SYMBOL]: true,
-    t: FunctionType.Builtin,
+    functionType: FunctionType.Builtin,
     n: '+',
   }
   const lf3: LitsFunction = {
     [FUNCTION_SYMBOL]: true,
-    t: FunctionType.Partial,
+    functionType: FunctionType.Partial,
     f: { a: 10, b: 20 },
     p: [],
   }
   const lf4: LitsFunction = {
     [FUNCTION_SYMBOL]: true,
-    t: FunctionType.Comp,
+    functionType: FunctionType.Comp,
     f: ['x'],
   }
   const lf5: LitsFunction = {
     [FUNCTION_SYMBOL]: true,
-    t: FunctionType.Constantly,
+    functionType: FunctionType.Constantly,
     v: 10,
   }
   const lf6 = createNativeJsFunction(() => undefined)

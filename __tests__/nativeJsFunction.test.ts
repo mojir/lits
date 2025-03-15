@@ -38,11 +38,11 @@ const stupidJsFunctions: Record<string, JsFunction> = {
 }
 
 const nativeJsFunction: NativeJsFunction = {
-  f: {
+  nativeFn: {
     fn: (value: number) => value * value,
   },
-  n: 'square',
-  t: FunctionType.NativeJsFunction,
+  name: 'square',
+  functionType: FunctionType.NativeJsFunction,
   [FUNCTION_SYMBOL]: true,
 }
 const values = {

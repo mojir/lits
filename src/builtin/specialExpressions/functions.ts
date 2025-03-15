@@ -6,7 +6,7 @@ import type { Context, EvaluateAstNode } from '../../evaluator/interface'
 import type {
   AstNode,
   CommonSpecialExpressionNode,
-  EvaluatedFunctionOverload,
+  EvaluatedFunction,
   LitsFunction,
   SymbolNode,
 } from '../../parser/types'
@@ -44,8 +44,8 @@ export const functionSpecialExpression: BuiltinSpecialExpression<null, FunctionN
     const litsFunction: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
       sourceCodeInfo: tokenSourceCodeInfo(node.token),
-      t: FunctionType.UserDefined,
-      n: name,
+      functionType: FunctionType.UserDefined,
+      name,
       o: evaluatedFunctionOverloades,
     }
 
@@ -72,8 +72,8 @@ export const defnSpecialExpression: BuiltinSpecialExpression<null, DefnNode> = {
     const litsFunction: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
       sourceCodeInfo: tokenSourceCodeInfo(node.token),
-      t: FunctionType.UserDefined,
-      n: name,
+      functionType: FunctionType.UserDefined,
+      name,
       o: evaluatedFunctionOverloades,
     }
 
@@ -96,8 +96,8 @@ export const fnSpecialExpression: BuiltinSpecialExpression<LitsFunction, FnNode>
     const litsFunction: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
       sourceCodeInfo: tokenSourceCodeInfo(node.token),
-      t: FunctionType.UserDefined,
-      n: undefined,
+      functionType: FunctionType.UserDefined,
+      name: undefined,
       o: evaluatedFunctionOverloades,
     }
 
@@ -111,8 +111,8 @@ function evaluateFunctionOverloades(
   node: SpecialExpressionNode,
   contextStack: ContextStack,
   evaluateAstNode: EvaluateAstNode,
-): EvaluatedFunctionOverload[] {
-  const evaluatedFunctionOverloades: EvaluatedFunctionOverload[] = []
+): EvaluatedFunction[] {
+  const evaluatedFunctionOverloades: EvaluatedFunction[] = []
   for (const functionOverload of (node as DefnNode | FnNode).o) {
     const functionContext: Context = {}
     for (const binding of functionOverload.as.b) {
@@ -121,14 +121,14 @@ function evaluateFunctionOverloades(
       functionContext[binding.name] = { value: bindingValue }
     }
 
-    const evaluatedFunctionOverload: EvaluatedFunctionOverload = {
-      as: {
+    const evaluatedFunctionOverload: EvaluatedFunction = {
+      arguments: {
         mandatoryArguments: functionOverload.as.m,
         restArgument: functionOverload.as.r,
       },
-      a: functionOverload.a,
-      b: functionOverload.b,
-      f: functionContext,
+      arity: functionOverload.a,
+      body: functionOverload.b,
+      context: functionContext,
     }
 
     evaluatedFunctionOverloades.push(evaluatedFunctionOverload)

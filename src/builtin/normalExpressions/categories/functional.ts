@@ -41,7 +41,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
       return {
         [FUNCTION_SYMBOL]: true,
         sourceCodeInfo,
-        t: FunctionType.Partial,
+        functionType: FunctionType.Partial,
         f: toAny(fn),
         p: params,
       }
@@ -54,7 +54,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
       return {
         [FUNCTION_SYMBOL]: true,
         sourceCodeInfo,
-        t: FunctionType.Comp,
+        functionType: FunctionType.Comp,
         f: fns,
       }
     },
@@ -66,7 +66,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
       return {
         [FUNCTION_SYMBOL]: true,
         sourceCodeInfo,
-        t: FunctionType.Constantly,
+        functionType: FunctionType.Constantly,
         v: toAny(value),
       }
     },
@@ -78,7 +78,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
       return {
         [FUNCTION_SYMBOL]: true,
         sourceCodeInfo,
-        t: FunctionType.Juxt,
+        functionType: FunctionType.Juxt,
         f: fns,
       }
     },
@@ -90,7 +90,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
       return {
         [FUNCTION_SYMBOL]: true,
         sourceCodeInfo,
-        t: FunctionType.Complement,
+        functionType: FunctionType.Complement,
         f: toAny(fn),
       }
     },
@@ -102,7 +102,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
       return {
         [FUNCTION_SYMBOL]: true,
         sourceCodeInfo,
-        t: FunctionType.EveryPred,
+        functionType: FunctionType.EveryPred,
         f: fns,
       }
     },
@@ -114,7 +114,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
       return {
         [FUNCTION_SYMBOL]: true,
         sourceCodeInfo,
-        t: FunctionType.SomePred,
+        functionType: FunctionType.SomePred,
         f: fns,
       }
     },
@@ -126,7 +126,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
       return {
         [FUNCTION_SYMBOL]: true,
         sourceCodeInfo,
-        t: FunctionType.Fnull,
+        functionType: FunctionType.Fnull,
         f: toAny(fn),
         p: params,
       }

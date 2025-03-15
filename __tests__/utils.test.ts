@@ -9,16 +9,16 @@ describe('utils', () => {
   it('createNativeJsFunction', () => {
     const fnWithName = createNativeJsFunction(() => undefined, 'foo')
     expect(fnWithName.sourceCodeInfo).toBeUndefined()
-    expect(fnWithName.n).toBe('foo')
-    expect(typeof fnWithName.f.fn).toBe('function')
-    expect(fnWithName.t).toBe(FunctionType.NativeJsFunction)
+    expect(fnWithName.name).toBe('foo')
+    expect(typeof fnWithName.nativeFn.fn).toBe('function')
+    expect(fnWithName.functionType).toBe(FunctionType.NativeJsFunction)
     expect(fnWithName[FUNCTION_SYMBOL]).toBe(true)
 
     const fnWithoutName = createNativeJsFunction(() => undefined)
     expect(fnWithoutName.sourceCodeInfo).toBeUndefined()
-    expect(fnWithoutName.n).toBeUndefined()
-    expect(typeof fnWithoutName.f.fn).toBe('function')
-    expect(fnWithoutName.t).toBe(FunctionType.NativeJsFunction)
+    expect(fnWithoutName.name).toBeUndefined()
+    expect(typeof fnWithoutName.nativeFn.fn).toBe('function')
+    expect(fnWithoutName.functionType).toBe(FunctionType.NativeJsFunction)
     expect(fnWithoutName[FUNCTION_SYMBOL]).toBe(true)
   })
   it('collHasKey', () => {

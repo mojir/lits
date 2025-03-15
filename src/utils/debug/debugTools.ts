@@ -6,7 +6,7 @@ function isLitsFunction(func: unknown): func is LitsFunction {
   if (func === null || typeof func !== 'object')
     return false
 
-  return FUNCTION_SYMBOL in func && 't' in func && isFunctionType(func.t)
+  return FUNCTION_SYMBOL in func && 'functionType' in func && isFunctionType(func.functionType)
 }
 
 function isAstNode(value: unknown): value is AstNode {

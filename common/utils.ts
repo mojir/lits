@@ -7,7 +7,7 @@ export function stringifyValue(value: unknown, html: boolean): string {
   const gt = html ? '&gt;' : '>'
   const lt = html ? '&lt;' : '<'
   if (isLitsFunction(value)) {
-    if (value.t === FunctionType.Builtin)
+    if (value.functionType === FunctionType.Builtin)
       return `${lt}builtin function ${value.n}${gt}`
     else
       return `${lt}function ${(value as unknown as UnknownRecord).n ?? '\u03BB'}${gt}`

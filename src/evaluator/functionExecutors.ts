@@ -6,7 +6,7 @@ import type {
   CompFunction,
   ComplementFunction,
   ConstantlyFunction,
-  EvaluatedFunctionOverload,
+  EvaluatedFunction,
   EveryPredFunction,
   FNullFunction,
   JuxtFunction,
@@ -38,12 +38,12 @@ type FunctionExecutors = Record<
 >
 
 function findOverloadFunction(
-  overloads: EvaluatedFunctionOverload[],
+  overloads: EvaluatedFunction[],
   nbrOfParams: number,
   sourceCodeInfo?: SourceCodeInfo,
-): EvaluatedFunctionOverload {
+): EvaluatedFunction {
   const overloadFunction = overloads.find((overload) => {
-    const arity = overload.a
+    const arity = overload.arity
     if (typeof arity === 'number')
       return arity === nbrOfParams
     else
@@ -61,7 +61,7 @@ export const functionExecutors: FunctionExecutors = {
       // eslint-disable-next-line ts/no-unsafe-assignment
       const clonedParams = JSON.parse(JSON.stringify(params))
       // eslint-disable-next-line ts/no-unsafe-argument
-      return toAny(fn.f.fn(...clonedParams))
+      return toAny(fn.nativeFn.fn(...clonedParams))
     }
     catch (error) {
       const message
@@ -76,10 +76,10 @@ export const functionExecutors: FunctionExecutors = {
   [FunctionType.UserDefined]: (fn: UserDefinedFunction, params, sourceCodeInfo, contextStack, { evaluateAstNode }) => {
     for (;;) {
       const overloadFunction = findOverloadFunction(fn.o, params.length, sourceCodeInfo)
-      const args = overloadFunction.as
+      const args = overloadFunction.arguments
       const nbrOfMandatoryArgs: number = args.mandatoryArguments.length
 
-      const newContext: Context = { ...overloadFunction.f }
+      const newContext: Context = { ...overloadFunction.context }
 
       const length = Math.max(params.length, args.mandatoryArguments.length)
       const rest: Arr = []
@@ -99,8 +99,8 @@ export const functionExecutors: FunctionExecutors = {
 
       try {
         let result: Any = null
-        const newContextStack = contextStack.create(newContext, fn.x)
-        for (const node of overloadFunction.b)
+        const newContextStack = contextStack.create(newContext)
+        for (const node of overloadFunction.body)
           result = evaluateAstNode(node, newContextStack)
 
         return result

@@ -3,7 +3,7 @@ import { FunctionType } from '../constants/constants'
 import { UndefinedSymbolError } from '../errors'
 import type { Any } from '../interface'
 import type { ContextParams, LazyValue } from '../Lits/Lits'
-import type { BuiltinFunction, ExtraData, NativeJsFunction, SymbolNode } from '../parser/types'
+import type { BuiltinFunction, NativeJsFunction, SymbolNode } from '../parser/types'
 import { tokenSourceCodeInfo } from '../tokenizer/token'
 import { asNonUndefined } from '../typeGuards'
 import { isBuiltinFunction } from '../typeGuards/litsFunction'
@@ -38,12 +38,12 @@ export class ContextStackImpl {
     this.nativeJsFunctions = nativeJsFunctions
   }
 
-  public create(context: Context, extraData?: ExtraData): ContextStack {
+  public create(context: Context): ContextStack {
     const globalContext = this.globalContext
     const contextStack = new ContextStackImpl({
       contexts: [context, ...this.contexts],
       values: this.values,
-      lazyValues: extraData ? { ...this.lazyValues, ...extraData } : this.lazyValues,
+      lazyValues: this.lazyValues,
       nativeJsFunctions: this.nativeJsFunctions,
     })
     contextStack.globalContext = globalContext
@@ -120,7 +120,7 @@ export class ContextStackImpl {
       const builtinFunction: BuiltinFunction = {
         [FUNCTION_SYMBOL]: true,
         sourceCodeInfo,
-        t: FunctionType.Builtin,
+        functionType: FunctionType.Builtin,
         n: value,
       }
       return builtinFunction
@@ -168,9 +168,9 @@ export function createContextStack(params: ContextParams = {}): ContextStack {
           return acc
         }
         acc[name] = {
-          t: FunctionType.NativeJsFunction,
-          f: jsFunction,
-          n: name,
+          functionType: FunctionType.NativeJsFunction,
+          nativeFn: jsFunction,
+          name,
           [FUNCTION_SYMBOL]: true,
         }
         return acc
