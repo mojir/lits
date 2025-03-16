@@ -15,6 +15,7 @@ describe('operators', () => {
   })
 
   test('random samples', () => {
+    expect(() => litsDebug.run('function foo(let a := 1;) 1 end')).toThrow()
     expect(() => litsDebug.run('"\\t\\r\\n\\b\\f"')).not.toThrow()
     expect(() => litsDebug.run('E')).not.toThrow()
     expect(() => litsDebug.run('123')).not.toThrow()
@@ -1162,17 +1163,18 @@ foo(1, 2)`)).toBe(3)
 
     it('supports lambda functions with let bindings', () => {
       // Support for let bindings
-      expect(lits.run('(x -> (y, let x := x) -> x + y)(1)(2)')).toBe(3)
+      expect(lits.run('(x -> (let x := x, y) -> x + y)(1)(2)')).toBe(3)
       expect(lits.run('((let x := 1) -> x + x)()')).toBe(2)
       expect(lits.run(`
 (a -> 
-  (b, 
-    let a := a
+  (
+    let a := a,
+    b, 
   ) -> 
     (
-      c, 
       let a := a,
       let b := b,
+      c, 
     ) -> 
       a * b * c
 )(2)(3)(4)`)).toBe(24)

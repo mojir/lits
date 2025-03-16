@@ -42,7 +42,7 @@ function checkParams(
   sourceCodeInfo?: SourceCodeInfo,
 ) {
   const hasRest = evaluatedFunction.arguments.some(arg => arg.rest)
-  const minArity = evaluatedFunction.arguments.filter(arg => !arg.rest && !arg.defaultValue).length
+  const minArity = evaluatedFunction.arguments.filter(arg => !arg.rest && !arg.default).length
   const maxArity = hasRest ? Number.MAX_SAFE_INTEGER : evaluatedFunction.arguments.length
   if (nbrOfParams < minArity || nbrOfParams > maxArity) {
     throw new LitsError(`Unexpected number of arguments, got ${valueToString(nbrOfParams)}.`, sourceCodeInfo)
@@ -90,7 +90,7 @@ export const functionExecutors: FunctionExecutors = {
 
       for (let i = params.length; i < nbrOfNonRestArgs; i++) {
         const arg = args[i]!
-        newContext[arg.name] = { value: arg.defaultValue! }
+        newContext[arg.name] = { value: evaluateAstNode(arg.default!, contextStack.create(newContext)) }
       }
 
       const restArgumentName = args.find(arg => arg.rest)?.name

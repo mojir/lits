@@ -887,6 +887,11 @@ var Playground = (function (exports) {
     function isLParenToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'LParen';
     }
+    function assertLParenToken(token) {
+        if (!isLParenToken(token)) {
+            throwUnexpectedToken('LParen', undefined, token);
+        }
+    }
     function isRParenToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'RParen';
     }
@@ -4679,11 +4684,7 @@ var Playground = (function (exports) {
             finally { if (e_1) throw e_1.error; }
         }
         var evaluatedFunction = {
-            arguments: fn.arguments.map(function (arg) { return ({
-                name: arg.name,
-                defaultValue: arg.default ? evaluateAstNode(arg.default, contextStack) : undefined,
-                rest: arg.rest,
-            }); }),
+            arguments: fn.arguments,
             body: fn.body,
             context: functionContext,
         };
@@ -5140,7 +5141,7 @@ var Playground = (function (exports) {
 
     function checkParams(evaluatedFunction, nbrOfParams, sourceCodeInfo) {
         var hasRest = evaluatedFunction.arguments.some(function (arg) { return arg.rest; });
-        var minArity = evaluatedFunction.arguments.filter(function (arg) { return !arg.rest && !arg.defaultValue; }).length;
+        var minArity = evaluatedFunction.arguments.filter(function (arg) { return !arg.rest && !arg.default; }).length;
         var maxArity = hasRest ? Number.MAX_SAFE_INTEGER : evaluatedFunction.arguments.length;
         if (nbrOfParams < minArity || nbrOfParams > maxArity) {
             throw new LitsError("Unexpected number of arguments, got ".concat(valueToString(nbrOfParams), "."), sourceCodeInfo);
@@ -5187,7 +5188,7 @@ var Playground = (function (exports) {
                 }
                 for (var i = params.length; i < nbrOfNonRestArgs; i++) {
                     var arg = args[i];
-                    newContext[arg.name] = { value: arg.defaultValue };
+                    newContext[arg.name] = { value: evaluateAstNode(arg.default, contextStack.create(newContext)) };
                 }
                 var restArgumentName = (_d = args.find(function (arg) { return arg.rest; })) === null || _d === void 0 ? void 0 : _d.name;
                 if (restArgumentName !== undefined)
@@ -6596,7 +6597,26 @@ var Playground = (function (exports) {
                     bindingNodes: [],
                 };
             }
+            assertLParenToken(firstToken);
             this.advance();
+            // let bindings, to be able to pass on values in the context down to the body
+            // This is needed since lits is dynamically scoped
+            // E.g.
+            // x => y => x + y // would not work, x is not available in the second lambda
+            // x => (y, let x = x) => x + y // would work, x is available in the second lambda
+            var bindingNodes = [];
+            var token = this.peek();
+            while (isSymbolToken(token, 'let')) {
+                var letNode = this.parseLet(token, true);
+                bindingNodes.push(letNode.bindingNodes[0]);
+                if (!isOperatorToken(this.peek(), ',') && !isRParenToken(this.peek())) {
+                    throw new LitsError('Expected comma or closing parenthesis', tokenSourceCodeInfo(this.peek()));
+                }
+                if (isOperatorToken(this.peek(), ',')) {
+                    this.advance();
+                }
+                token = this.peek();
+            }
             var rest = false;
             var defaults = false;
             var functionArguments = [];
@@ -6637,24 +6657,6 @@ var Playground = (function (exports) {
                 if (isOperatorToken(this.peek(), ',')) {
                     this.advance();
                 }
-            }
-            // let bindings, to be able to pass on values in the context down to the body
-            // This is needed since lits is dynamically scoped
-            // E.g.
-            // x => y => x + y // would not work, x is not available in the second lambda
-            // x => (y, let x = x) => x + y // would work, x is available in the second lambda
-            var bindingNodes = [];
-            var token = this.peek();
-            while (isSymbolToken(token, 'let')) {
-                var letNode = this.parseLet(token, true);
-                bindingNodes.push(letNode.bindingNodes[0]);
-                if (!isOperatorToken(this.peek(), ',') && !isRParenToken(this.peek())) {
-                    throw new LitsError('Expected comma or closing parenthesis', tokenSourceCodeInfo(this.peek()));
-                }
-                if (isOperatorToken(this.peek(), ',')) {
-                    this.advance();
-                }
-                token = this.peek();
             }
             if (!isRParenToken(this.peek())) {
                 throw new LitsError('Expected closing parenthesis', tokenSourceCodeInfo(this.peek()));

@@ -120,11 +120,7 @@ function evaluateFunction(
   }
 
   const evaluatedFunction: EvaluatedFunction = {
-    arguments: fn.arguments.map(arg => ({
-      name: arg.name,
-      defaultValue: arg.default ? evaluateAstNode(arg.default, contextStack) : undefined,
-      rest: arg.rest,
-    })),
+    arguments: fn.arguments,
     body: fn.body,
     context: functionContext,
   }

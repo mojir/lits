@@ -16,7 +16,30 @@ import { LitsError } from '../errors'
 import type { TokenStream } from '../tokenizer/tokenize'
 import { type SymbolicBinaryOperator, isBinaryOperator, isFunctionOperator } from '../tokenizer/operators'
 import type { OperatorToken, ReservedSymbolToken, SymbolToken, Token, TokenType } from '../tokenizer/token'
-import { asLBraceToken, asLBracketToken, asSymbolToken, assertOperatorToken, assertRBraceToken, assertRBracketToken, assertRParenToken, assertReservedSymbolToken, assertSymbolToken, hasTokenSourceCodeInfo, isA_BinaryOperatorToken, isLBraceToken, isLBracketToken, isLParenToken, isOperatorToken, isRBraceToken, isRBracketToken, isRParenToken, isReservedSymbolToken, isSymbolToken, tokenSourceCodeInfo } from '../tokenizer/token'
+import {
+  asLBraceToken,
+  asLBracketToken,
+  asSymbolToken,
+  assertLParenToken,
+  assertOperatorToken,
+  assertRBraceToken,
+  assertRBracketToken,
+  assertRParenToken,
+  assertReservedSymbolToken,
+  assertSymbolToken,
+  hasTokenSourceCodeInfo,
+  isA_BinaryOperatorToken,
+  isLBraceToken,
+  isLBracketToken,
+  isLParenToken,
+  isOperatorToken,
+  isRBraceToken,
+  isRBracketToken,
+  isRParenToken,
+  isReservedSymbolToken,
+  isSymbolToken,
+  tokenSourceCodeInfo,
+} from '../tokenizer/token'
 import { assertNumberOfParams } from '../typeGuards'
 import type { QqNode } from '../builtin/specialExpressions/qq'
 import type { AndNode } from '../builtin/specialExpressions/and'
@@ -586,7 +609,28 @@ export class Parser {
       }
     }
 
+    assertLParenToken(firstToken)
     this.advance()
+
+    // let bindings, to be able to pass on values in the context down to the body
+    // This is needed since lits is dynamically scoped
+    // E.g.
+    // x => y => x + y // would not work, x is not available in the second lambda
+    // x => (y, let x = x) => x + y // would work, x is available in the second lambda
+    const bindingNodes: BindingNode[] = []
+    let token = this.peek()
+    while (isSymbolToken(token, 'let')) {
+      const letNode = this.parseLet(token, true)
+      bindingNodes.push(letNode.bindingNodes[0]!)
+      if (!isOperatorToken(this.peek(), ',') && !isRParenToken(this.peek())) {
+        throw new LitsError('Expected comma or closing parenthesis', tokenSourceCodeInfo(this.peek()))
+      }
+      if (isOperatorToken(this.peek(), ',')) {
+        this.advance()
+      }
+      token = this.peek()
+    }
+
     let rest = false
     let defaults = false
     const functionArguments: FunctionArgument[] = []
@@ -630,25 +674,6 @@ export class Parser {
       if (isOperatorToken(this.peek(), ',')) {
         this.advance()
       }
-    }
-
-    // let bindings, to be able to pass on values in the context down to the body
-    // This is needed since lits is dynamically scoped
-    // E.g.
-    // x => y => x + y // would not work, x is not available in the second lambda
-    // x => (y, let x = x) => x + y // would work, x is available in the second lambda
-    const bindingNodes: BindingNode[] = []
-    let token = this.peek()
-    while (isSymbolToken(token, 'let')) {
-      const letNode = this.parseLet(token, true)
-      bindingNodes.push(letNode.bindingNodes[0]!)
-      if (!isOperatorToken(this.peek(), ',') && !isRParenToken(this.peek())) {
-        throw new LitsError('Expected comma or closing parenthesis', tokenSourceCodeInfo(this.peek()))
-      }
-      if (isOperatorToken(this.peek(), ',')) {
-        this.advance()
-      }
-      token = this.peek()
     }
 
     if (!isRParenToken(this.peek())) {

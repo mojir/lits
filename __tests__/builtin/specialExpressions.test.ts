@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import type { Mock } from 'vitest'
-import { afterEach, beforeEach, describe, expect, it, vitest } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, test, vitest } from 'vitest'
 import { Lits } from '../../src/Lits/Lits'
 import { UserDefinedError } from '../../src/errors'
 
@@ -328,11 +328,41 @@ function add(a, b)
   a + b
 end;
 add(1, 2)`)).toBe(3)
-      expect(lits.run('function add(a, b, let x := 10) a + b + x end; add(1, 2)')).toBe(13)
+      expect(lits.run('function add(let x := 10, a, b) a + b + x end; add(1, 2)')).toBe(13)
       expect(lits.run('function add() 10 end; add()')).toBe(10)
     })
 
-    it('call defn function', () => {
+    test('default argument', () => {
+      expect(lits.run(`
+function foo(a, b := 10)
+  a + b
+end;
+
+foo(1)`)).toBe(11)
+
+      expect(lits.run(`
+  function foo(a, b := a + 1)
+    a + b
+  end;
+  
+  foo(1)`)).toBe(3)
+
+      expect(lits.run(`
+    function foo(a, b := a + 1)
+      a + b
+    end;
+    
+    foo(1, 1)`)).toBe(2)
+
+      expect(lits.run(`
+      function foo(a, b := a + 1, c := a + b)
+        a + b + c
+      end;
+      
+      foo(1)`)).toBe(6)
+    })
+
+    it('call function', () => {
       expect(lits.run(`
 function sum-one-to-n(n)
   if n <= 1 then
@@ -363,7 +393,7 @@ end;`))).toEqual(
           new Set(),
         )
         expect(
-          (litsDebug.getUndefinedSymbols('export function foo(a, let x := y, let y := z) if a = 1 then 1 else a + foo(a - 1) end end;')),
+          (litsDebug.getUndefinedSymbols('export function foo(let x := y, let y := z, a) if a = 1 then 1 else a + foo(a - 1) end end;')),
         ).toEqual(new Set(['y', 'z']))
         expect((lits.getUndefinedSymbols('export function foo(a, b) str(a, b, c) end;'))).toEqual(new Set(['c']))
         expect((lits.getUndefinedSymbols('function foo(a, b) str(a, b, c) end; foo(x, y)'))).toEqual(

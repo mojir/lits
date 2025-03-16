@@ -6,18 +6,13 @@ import type { Any, Arr } from '../interface'
 import type { TokenStream } from '../tokenizer/tokenize'
 import type { ModifierName, SourceCodeInfo, Token } from '../tokenizer/token'
 import type { FUNCTION_SYMBOL, REGEXP_SYMBOL } from '../utils/symbols'
+import type { FunctionArgument } from '../builtin/utils'
 
 export interface ParseState {
   position: number
 }
-export interface EvaluatedFunctionArgument {
-  name: string
-  rest?: true
-  defaultValue?: Any
-}
-
 export interface EvaluatedFunction {
-  arguments: EvaluatedFunctionArgument[]
+  arguments: FunctionArgument[]
   body: AstNode[]
   context: Context
 }

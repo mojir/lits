@@ -125,8 +125,8 @@ write!(withOptional(1), withOptional(1, 2))`,
 // withBindings can be exported, and used in other files and the bound variables will be available.
 let a := 1;
 let b := 1;
-function withBindings(let x := a, let b := b)
-  x + b
+function withBindings(let x := a, let b := b, letSum := x + b)
+  x + b + letSum
 end;
 
 withBindings()`,
