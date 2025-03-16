@@ -1,6 +1,5 @@
 import type { JsFunction } from '../Lits/Lits'
 import type { SpecialExpressionName, SpecialExpressionNode } from '../builtin'
-import type { Arity } from '../builtin/utils'
 import type { AstNodeType, FunctionType } from '../constants/constants'
 import type { Context } from '../evaluator/interface'
 import type { Any, Arr } from '../interface'
@@ -11,15 +10,15 @@ import type { FUNCTION_SYMBOL, REGEXP_SYMBOL } from '../utils/symbols'
 export interface ParseState {
   position: number
 }
-export interface EvaluatedFunctionArguments {
-  mandatoryArguments: string[]
-  restArgument?: string
+export interface EvaluatedFunctionArgument {
+  name: string
+  rest?: true
+  defaultValue?: Any
 }
 
 export interface EvaluatedFunction {
-  arguments: EvaluatedFunctionArguments
+  arguments: EvaluatedFunctionArgument[]
   body: AstNode[]
-  arity: Arity
   context: Context
 }
 
@@ -45,7 +44,7 @@ export interface NativeJsFunction extends GenericLitsFunction {
 export interface UserDefinedFunction extends GenericLitsFunction {
   functionType: 'UserDefined'
   name: string | undefined // name
-  function: EvaluatedFunction
+  evaluatedfunction: EvaluatedFunction
 }
 
 export interface PartialFunction extends GenericLitsFunction {

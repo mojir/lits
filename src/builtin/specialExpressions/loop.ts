@@ -10,14 +10,14 @@ import { valueToString } from '../../utils/debug/debugTools'
 import type { BuiltinSpecialExpression } from '../interface'
 
 export interface LoopNode extends CommonSpecialExpressionNode<'loop'> {
-  bs: BindingNode[]
+  bindingNodes: BindingNode[]
 }
 
 export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
   paramCount: {},
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const sourceCodeInfo = tokenSourceCodeInfo(node.token)
-    const bindingContext: Context = node.bs.reduce((result: Context, binding) => {
+    const bindingContext: Context = node.bindingNodes.reduce((result: Context, binding) => {
       result[binding.name] = { value: evaluateAstNode(binding.value, contextStack) }
       return result
     }, {})
@@ -32,13 +32,13 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
       catch (error) {
         if (error instanceof RecurSignal) {
           const params = error.params
-          if (params.length !== node.bs.length) {
+          if (params.length !== node.bindingNodes.length) {
             throw new LitsError(
-              `recur expected ${node.bs.length} parameters, got ${valueToString(params.length)}`,
+              `recur expected ${node.bindingNodes.length} parameters, got ${valueToString(params.length)}`,
               sourceCodeInfo,
             )
           }
-          ;node.bs.forEach((binding, index) => {
+          ;node.bindingNodes.forEach((binding, index) => {
             asNonUndefined(bindingContext[binding.name], sourceCodeInfo).value = asAny(params[index], sourceCodeInfo)
           })
           continue
@@ -49,14 +49,14 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
     }
   },
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => {
-    const newContext = node.bs
+    const newContext = node.bindingNodes
       .map(binding => binding.name)
       .reduce((context: Context, name) => {
         context[name] = { value: true }
         return context
       }, {})
 
-    const bindingValueNodes = node.bs.map(binding => binding.value)
+    const bindingValueNodes = node.bindingNodes.map(binding => binding.value)
     const bindingsResult = getUndefinedSymbols(bindingValueNodes, contextStack, builtin)
     const paramsResult = getUndefinedSymbols(node.params, contextStack.create(newContext), builtin)
     return joinSets(bindingsResult, paramsResult)

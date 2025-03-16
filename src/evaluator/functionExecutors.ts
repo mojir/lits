@@ -37,22 +37,16 @@ type FunctionExecutors = Record<
 >
 
 function checkParams(
-  fn: EvaluatedFunction,
+  evaluatedFunction: EvaluatedFunction,
   nbrOfParams: number,
   sourceCodeInfo?: SourceCodeInfo,
 ) {
-  const arity = fn.arity
-  if (typeof arity === 'number') {
-    if (arity === nbrOfParams) {
-      return
-    }
+  const hasRest = evaluatedFunction.arguments.some(arg => arg.rest)
+  const minArity = evaluatedFunction.arguments.filter(arg => !arg.rest && !arg.defaultValue).length
+  const maxArity = hasRest ? Number.MAX_SAFE_INTEGER : evaluatedFunction.arguments.length
+  if (nbrOfParams < minArity || nbrOfParams > maxArity) {
+    throw new LitsError(`Unexpected number of arguments, got ${valueToString(nbrOfParams)}.`, sourceCodeInfo)
   }
-  else {
-    if (arity.min <= nbrOfParams) {
-      return
-    }
-  }
-  throw new LitsError(`Unexpected number of arguments, got ${valueToString(nbrOfParams)}.`, sourceCodeInfo)
 }
 
 export const functionExecutors: FunctionExecutors = {
@@ -75,19 +69,18 @@ export const functionExecutors: FunctionExecutors = {
   },
   UserDefined: (fn: UserDefinedFunction, params, sourceCodeInfo, contextStack, { evaluateAstNode }) => {
     for (;;) {
-      checkParams(fn.function, params.length, sourceCodeInfo)
-      const overloadFunction = fn.function
-      const args = overloadFunction.arguments
-      const nbrOfMandatoryArgs: number = args.mandatoryArguments.length
+      checkParams(fn.evaluatedfunction, params.length, sourceCodeInfo)
+      const evaluatedFunction = fn.evaluatedfunction
+      const args = evaluatedFunction.arguments
+      const nbrOfNonRestArgs: number = args.filter(arg => !arg.rest).length
 
-      const newContext: Context = { ...overloadFunction.context }
+      const newContext: Context = { ...evaluatedFunction.context }
 
-      const length = Math.max(params.length, args.mandatoryArguments.length)
       const rest: Arr = []
-      for (let i = 0; i < length; i += 1) {
-        if (i < nbrOfMandatoryArgs) {
+      for (let i = 0; i < params.length; i += 1) {
+        if (i < nbrOfNonRestArgs) {
           const param = toAny(params[i])
-          const key = asString(args.mandatoryArguments[i], sourceCodeInfo)
+          const key = asString(args[i]?.name, sourceCodeInfo)
           newContext[key] = { value: param }
         }
         else {
@@ -95,13 +88,19 @@ export const functionExecutors: FunctionExecutors = {
         }
       }
 
-      if (args.restArgument)
-        newContext[args.restArgument] = { value: rest }
+      for (let i = params.length; i < nbrOfNonRestArgs; i++) {
+        const arg = args[i]!
+        newContext[arg.name] = { value: arg.defaultValue! }
+      }
+
+      const restArgumentName = args.find(arg => arg.rest)?.name
+      if (restArgumentName !== undefined)
+        newContext[restArgumentName] = { value: rest }
 
       try {
         let result: Any = null
         const newContextStack = contextStack.create(newContext)
-        for (const node of overloadFunction.body) {
+        for (const node of evaluatedFunction.body) {
           result = evaluateAstNode(node, newContextStack)
         }
 

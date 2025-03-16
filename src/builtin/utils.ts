@@ -6,18 +6,16 @@ import { isReservedSymbol } from '../tokenizer/reservedNames'
 import type { Builtin } from './interface'
 import type { SpecialExpressionName } from '.'
 
-export type Arity = number | { min: number }
-
-export interface FunctionOverload {
-  as: FunctionArguments
-  a: Arity
-  b: AstNode[]
+export interface Function {
+  arguments: FunctionArgument[]
+  bindingNodes: BindingNode[]
+  body: AstNode[]
 }
 
-export interface FunctionArguments {
-  m: string[]
-  r?: string
-  b: BindingNode[]
+export interface FunctionArgument {
+  name: string
+  rest?: true
+  default?: AstNode
 }
 
 export function assertNameNotDefined<T>(

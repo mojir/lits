@@ -5,7 +5,7 @@ import type { LazyValue } from '../../src/Lits/Lits'
 import { Lits } from '../../src/Lits/Lits'
 import { assertLitsFunction } from '../../src/typeGuards/litsFunction'
 import { FUNCTION_SYMBOL } from '../../src/utils/symbols'
-import type { Ast } from '../../src/parser/types'
+import type { Ast, UserDefinedFunction } from '../../src/parser/types'
 
 describe('all tests', () => {
   describe('tEST', () => {
@@ -41,21 +41,22 @@ describe('all tests', () => {
         foo: {
           read: () => ({
             [FUNCTION_SYMBOL]: true,
+            name: undefined,
             functionType: 'UserDefined',
-            function: {
-              arguments: {
-                mandatoryArguments: [],
-              },
-              arity: 0,
+            evaluatedfunction: {
+              arguments: [],
               body: [
                 {
                   type: 'Number',
                   value: 42,
+                  name: undefined,
+                  params: [],
+                  token: undefined,
                 },
               ],
-              f: {},
+              context: {},
             },
-          }),
+          } satisfies UserDefinedFunction),
         },
       }
 

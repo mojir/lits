@@ -87,11 +87,14 @@ write!("a", a, "b", b)`],
     title: 'function',
     category: 'Special expression',
     linkName: 'function',
-    customVariants: ['function name(args [, let-bindings]) body end;'],
+    customVariants: ['function name(...arg, ...let-binding) body end;'],
     details: [
       ['name', 'symbol', 'The name of the function.'],
-      ['args', 'symbol', 'The arguments of the function.'],
-      ['let-bindings', 'symbol', 'Optional. The let bindings of the function.'],
+      ['arg', '[...]arg-name [:= value]', 'Arguments of the function.'],
+      ['...', 'rest-symbol', 'Optional. The rest argument of the function.'],
+      ['arg-name', 'symbol', 'The name of the argument.'],
+      ['value', 'any', 'Optional. The default value of the argument.'],
+      ['let-binding', 'symbol', 'Optional. The let bindings of the function.'],
       ['body', 'one or more expressions', 'The body of the function.'],
     ],
     description: 'Creates a named function. When called, evaluation of the last expression in the body is returned.',
@@ -111,6 +114,12 @@ function sumOfSquares(...s)
 end;
 
 sumOfSquares(1, 2, 3, 4, 5)`,
+      `
+function withOptional(a, b := 42)
+  a + b
+end;
+
+write!(withOptional(1), withOptional(1, 2))`,
       `
 // binding variables is sometimes useful due to dynamic scoping.
 // withBindings can be exported, and used in other files and the bound variables will be available.

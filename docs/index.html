@@ -23183,7 +23183,7 @@ As soon as an <span style="color: rgb(229 229 229); font-family: 'Fira Code', mo
     <table>
   
     <tr>
-      <td><span style="color: rgb(229 229 229); font-family: 'Fira Code', monospace;"><span style="color: #f0e68c;">function</span><span > </span><span style="color: #4ec9b0;">name</span><span style="color: rgb(212 212 212);">(</span><span style="color: #4ec9b0;">args</span><span > </span><span style="color: rgb(212 212 212);">[</span><span style="color: rgb(212 212 212);">,</span><span > </span><span style="color: #4ec9b0;">let-bindings</span><span style="color: rgb(212 212 212);">]</span><span style="color: rgb(212 212 212);">)</span><span > </span><span style="color: #4ec9b0;">body</span><span > </span><span style="color: #f0e68c;">end</span><span style="color: rgb(212 212 212);">;</span></span></td>
+      <td><span style="color: rgb(229 229 229); font-family: 'Fira Code', monospace;"><span style="color: #f0e68c;">function</span><span > </span><span style="color: #4ec9b0;">name</span><span style="color: rgb(212 212 212);">(</span><span style="color: rgb(212 212 212);">...</span><span style="color: #4ec9b0;">arg</span><span style="color: rgb(212 212 212);">,</span><span > </span><span style="color: rgb(212 212 212);">...</span><span style="color: #4ec9b0;">let-binding</span><span style="color: rgb(212 212 212);">)</span><span > </span><span style="color: #4ec9b0;">body</span><span > </span><span style="color: #f0e68c;">end</span><span style="color: rgb(212 212 212);">;</span></span></td>
     </tr>
   </table>
   </div>
@@ -23212,14 +23212,35 @@ As soon as an <span style="color: rgb(229 229 229); font-family: 'Fira Code', mo
   </div></td>
     </tr>
     <tr>
-      <td style="color: #d16969;">args</td>
-      <td style="padding-left: 2rem;"><span style="color: rgb(229 229 229); font-family: 'Fira Code', monospace;"><span style="color: #4ec9b0;">symbol</span></span></td>
+      <td style="color: #d16969;">arg</td>
+      <td style="padding-left: 2rem;"><span style="color: rgb(229 229 229); font-family: 'Fira Code', monospace;"><span style="color: rgb(212 212 212);">[</span><span style="color: rgb(212 212 212);">...</span><span style="color: rgb(212 212 212);">]</span><span style="color: #4ec9b0;">arg-name</span><span > </span><span style="color: rgb(212 212 212);">[</span><span style="color: rgb(212 212 212);">:=</span><span > </span><span style="color: #4ec9b0;">value</span><span style="color: rgb(212 212 212);">]</span></span></td>
       <td style="padding-left: 1rem; font-style: italic; font-size: 1rem;"><div style="color: rgb(163 163 163);">
-    The arguments of the function.
+    Arguments of the function.
   </div></td>
     </tr>
     <tr>
-      <td style="color: #d16969;">let-bindings</td>
+      <td style="color: #d16969;">...</td>
+      <td style="padding-left: 2rem;"><span style="color: rgb(229 229 229); font-family: 'Fira Code', monospace;"><span style="color: #4ec9b0;">rest-symbol</span></span></td>
+      <td style="padding-left: 1rem; font-style: italic; font-size: 1rem;"><div style="color: rgb(163 163 163);">
+    Optional. The rest argument of the function.
+  </div></td>
+    </tr>
+    <tr>
+      <td style="color: #d16969;">arg-name</td>
+      <td style="padding-left: 2rem;"><span style="color: rgb(229 229 229); font-family: 'Fira Code', monospace;"><span style="color: #4ec9b0;">symbol</span></span></td>
+      <td style="padding-left: 1rem; font-style: italic; font-size: 1rem;"><div style="color: rgb(163 163 163);">
+    The name of the argument.
+  </div></td>
+    </tr>
+    <tr>
+      <td style="color: #d16969;">value</td>
+      <td style="padding-left: 2rem;"><span style="color: rgb(229 229 229); font-family: 'Fira Code', monospace;"><span style="color: #4ec9b0;">any</span></span></td>
+      <td style="padding-left: 1rem; font-style: italic; font-size: 1rem;"><div style="color: rgb(163 163 163);">
+    Optional. The default value of the argument.
+  </div></td>
+    </tr>
+    <tr>
+      <td style="color: #d16969;">let-binding</td>
       <td style="padding-left: 2rem;"><span style="color: rgb(229 229 229); font-family: 'Fira Code', monospace;"><span style="color: #4ec9b0;">symbol</span></span></td>
       <td style="padding-left: 1rem; font-style: italic; font-size: 1rem;"><div style="color: rgb(163 163 163);">
     Optional. The let bindings of the function.
@@ -23267,6 +23288,19 @@ As soon as an <span style="color: rgb(229 229 229); font-family: 'Fira Code', mo
 </span><span style="color: #4ec9b0;">sumOfSquares</span><span style="color: rgb(212 212 212);">(</span><span style="color: #c586c0;">1</span><span style="color: rgb(212 212 212);">,</span><span > </span><span style="color: #c586c0;">2</span><span style="color: rgb(212 212 212);">,</span><span > </span><span style="color: #c586c0;">3</span><span style="color: rgb(212 212 212);">,</span><span > </span><span style="color: #c586c0;">4</span><span style="color: rgb(212 212 212);">,</span><span > </span><span style="color: #c586c0;">5</span><span style="color: rgb(212 212 212);">)</span></span></span>
               </div>
               <div style="white-space: pre-wrap; color: rgb(163 163 163); margin-top: 0.25rem;">55</div>
+            </div>
+              
+
+            <div style="font-size: 0.875rem; font-family: 'Fira Code', monospace; display: flex; flex-direction: column;">
+              <div style="display: flex; gap: 0.75rem;" >
+                <span style="font-weight: bold; user-select: none;">&gt;</span>
+                <span style="cursor: pointer; white-space: pre-wrap;" onclick="Playground.addToPlayground('function', 'ZnVuY3Rpb24lMjB3aXRoT3B0aW9uYWwoYSUyQyUyMGIlMjAlM0ElM0QlMjA0MiklMEElMjAlMjBhJTIwJTJCJTIwYiUwQWVuZCUzQiUwQSUwQXdyaXRlISh3aXRoT3B0aW9uYWwoMSklMkMlMjB3aXRoT3B0aW9uYWwoMSUyQyUyMDIpKQ==')"><span style="color: rgb(229 229 229); font-family: 'Fira Code', monospace;"><span style="color: #f0e68c;">function</span><span > </span><span style="color: #4ec9b0;">withOptional</span><span style="color: rgb(212 212 212);">(</span><span style="color: #4ec9b0;">a</span><span style="color: rgb(212 212 212);">,</span><span > </span><span style="color: #4ec9b0;">b</span><span > </span><span style="color: rgb(212 212 212);">:=</span><span > </span><span style="color: #c586c0;">42</span><span style="color: rgb(212 212 212);">)</span><span >
+  </span><span style="color: #4ec9b0;">a</span><span > </span><span style="color: rgb(212 212 212);">+</span><span > </span><span style="color: #4ec9b0;">b</span><span >
+</span><span style="color: #f0e68c;">end</span><span style="color: rgb(212 212 212);">;</span><span >
+
+</span><span style="color: #dcdcaa;">write!</span><span style="color: rgb(212 212 212);">(</span><span style="color: #4ec9b0;">withOptional</span><span style="color: rgb(212 212 212);">(</span><span style="color: #c586c0;">1</span><span style="color: rgb(212 212 212);">)</span><span style="color: rgb(212 212 212);">,</span><span > </span><span style="color: #4ec9b0;">withOptional</span><span style="color: rgb(212 212 212);">(</span><span style="color: #c586c0;">1</span><span style="color: rgb(212 212 212);">,</span><span > </span><span style="color: #c586c0;">2</span><span style="color: rgb(212 212 212);">)</span><span style="color: rgb(212 212 212);">)</span></span></span>
+              </div>
+              <div style="white-space: pre-wrap; color: rgb(163 163 163); margin-top: 0.25rem;">3</div>
             </div>
               
 

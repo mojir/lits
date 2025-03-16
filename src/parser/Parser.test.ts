@@ -739,20 +739,54 @@ describe('operators', () => {
     })
   })
 
-  test('function', () => {
-    expect(lits.run(`
+  describe('function', () => {
+    test('basic', () => {
+      expect(lits.run(`
 function foo()
   42
 end;
 
 foo()`)).toBe(42)
-
-    expect(lits.run(`
+    })
+    test('with rest arguments', () => {
+      expect(lits.run(`
 function foo(...x)
   '+' apply (x filter -> $ > 0)
 end;
 
 foo(-1, 0, 1, 2, 3)`)).toBe(6)
+    })
+
+    test('with default arguments', () => {
+      expect(lits.run(`
+function foo(a := 10, b := 20)
+  a + b
+end;
+
+foo()`)).toBe(30)
+    })
+
+    test('with default arguments 1', () => {
+      expect(lits.run(`
+function foo(a := 10, b := 20)
+  a + b
+end;
+
+foo(0)`)).toBe(20)
+    })
+
+    test('with default arguments 2', () => {
+      expect(lits.run(`
+function foo(a := 10, b := 20)
+  a + b
+end;
+
+foo(1, 2)`)).toBe(3)
+    })
+    test('errors', () => {
+      expect(() => lits.run('function foo(...rest := 1) rest end')).toThrow()
+      expect(() => lits.run('function foo(a := 1, b) rest end')).toThrow()
+    })
   })
 
   test('cond expression', () => {

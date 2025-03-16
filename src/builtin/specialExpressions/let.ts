@@ -5,13 +5,13 @@ import { joinSets } from '../../utils'
 import type { BuiltinSpecialExpression } from '../interface'
 
 export interface LetNode extends CommonSpecialExpressionNode<'let'> {
-  bs: BindingNode[]
+  bindingNodes: BindingNode[]
 }
 
 export const letSpecialExpression: BuiltinSpecialExpression<Any, LetNode> = {
   paramCount: 0,
   evaluate: (node, contextStack, { evaluateAstNode }) => {
-    for (const binding of node.bs) {
+    for (const binding of node.bindingNodes) {
       const bindingValueNode = binding.value
       const bindingValue = evaluateAstNode(bindingValueNode, contextStack)
       contextStack.addValue(binding.name, bindingValue)
@@ -19,13 +19,13 @@ export const letSpecialExpression: BuiltinSpecialExpression<Any, LetNode> = {
     return null
   },
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => {
-    const newContext = node.bs
+    const newContext = node.bindingNodes
       .map(binding => binding.name)
       .reduce((context: Context, name) => {
         context[name] = { value: true }
         return context
       }, {})
-    const bindingResults = node.bs.map((bindingNode) => {
+    const bindingResults = node.bindingNodes.map((bindingNode) => {
       const valueNode = bindingNode.value
       const bindingsResult = getUndefinedSymbols([valueNode], contextStack, builtin)
       contextStack.addValue(bindingNode.name, { value: true })

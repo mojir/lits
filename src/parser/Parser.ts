@@ -11,7 +11,7 @@ import type { DoSeqNode, ForNode, LoopBindingNode } from '../builtin/specialExpr
 import type { SwitchNode } from '../builtin/specialExpressions/switch'
 import type { TryNode } from '../builtin/specialExpressions/try'
 import type { UnlessNode } from '../builtin/specialExpressions/unless'
-import type { Arity, FunctionArguments } from '../builtin/utils'
+import type { FunctionArgument } from '../builtin/utils'
 import { LitsError } from '../errors'
 import type { TokenStream } from '../tokenizer/tokenize'
 import { type SymbolicBinaryOperator, isBinaryOperator, isFunctionOperator } from '../tokenizer/operators'
@@ -548,7 +548,7 @@ export class Parser {
     }
 
     try {
-      const { functionArguments, arity } = this.parseFunctionArguments()
+      const { functionArguments, bindingNodes } = this.parseFunctionArguments()
 
       if (!isOperatorToken(this.peek(), '->')) {
         return null
@@ -562,9 +562,9 @@ export class Parser {
         name: 'fn',
         params: [],
         function: {
-          as: functionArguments,
-          b: [body],
-          a: arity,
+          arguments: functionArguments,
+          bindingNodes,
+          body: [body],
         },
         token: tokenSourceCodeInfo(firstToken) && firstToken,
       }
@@ -574,29 +574,27 @@ export class Parser {
     }
   }
 
-  parseFunctionArguments(): { functionArguments: FunctionArguments, arity: Arity } {
+  parseFunctionArguments(): { functionArguments: FunctionArgument[], bindingNodes: BindingNode[] } {
     const firstToken = this.peek()
     if (isSymbolToken(firstToken)) {
       this.advance()
       return {
-        functionArguments: {
-          m: [firstToken[1]],
-          b: [],
-          r: undefined,
-        } satisfies FunctionArguments,
-        arity: 1,
+        functionArguments: [{
+          name: firstToken[1],
+        } satisfies FunctionArgument],
+        bindingNodes: [],
       }
     }
 
     this.advance()
     let rest = false
-    const args: string[] = []
-    let restArg: string | undefined
+    let defaults = false
+    const functionArguments: FunctionArgument[] = []
     while (!this.isAtEnd() && !isRParenToken(this.peek()) && !isSymbolToken(this.peek(), 'let')) {
+      if (rest) {
+        throw new LitsError('Rest argument must be last', tokenSourceCodeInfo(this.peek()))
+      }
       if (isOperatorToken(this.peek(), '...')) {
-        if (rest) {
-          throw new LitsError('Multiple spread operators in lambda function', tokenSourceCodeInfo(this.peek()))
-        }
         this.advance()
         rest = true
       }
@@ -604,13 +602,27 @@ export class Parser {
       if (!isSymbolToken(symbolToken)) {
         throw new LitsError('Expected symbol', tokenSourceCodeInfo(this.peek()))
       }
-      if (rest) {
-        restArg = symbolToken[1]
-      }
-      else {
-        args.push(symbolToken[1])
-      }
+      const name = symbolToken[1]
       this.advance()
+
+      let isDefault: AstNode | undefined
+      if (isOperatorToken(this.peek(), ':=')) {
+        if (rest) {
+          throw new LitsError('Optional arguments must be last', tokenSourceCodeInfo(this.peek()))
+        }
+        defaults = true
+        this.advance()
+        isDefault = this.parseExpression()
+      }
+      else if (defaults) {
+        throw new LitsError('Optional arguments must be last', tokenSourceCodeInfo(this.peek()))
+      }
+
+      functionArguments.push({
+        name,
+        default: isDefault,
+        rest: rest ? true : undefined,
+      })
 
       if (!isOperatorToken(this.peek(), ',') && !isRParenToken(this.peek()) && !isSymbolToken(this.peek(), 'let')) {
         throw new LitsError('Expected comma or closing parenthesis', tokenSourceCodeInfo(this.peek()))
@@ -620,18 +632,16 @@ export class Parser {
       }
     }
 
-    const arity: Arity = restArg !== undefined ? { min: args.length } : args.length
-
     // let bindings, to be able to pass on values in the context down to the body
     // This is needed since lits is dynamically scoped
     // E.g.
     // x => y => x + y // would not work, x is not available in the second lambda
     // x => (y, let x = x) => x + y // would work, x is available in the second lambda
-    const bindingNodess: BindingNode[] = []
+    const bindingNodes: BindingNode[] = []
     let token = this.peek()
     while (isSymbolToken(token, 'let')) {
       const letNode = this.parseLet(token, true)
-      bindingNodess.push(letNode.bs[0]!)
+      bindingNodes.push(letNode.bindingNodes[0]!)
       if (!isOperatorToken(this.peek(), ',') && !isRParenToken(this.peek())) {
         throw new LitsError('Expected comma or closing parenthesis', tokenSourceCodeInfo(this.peek()))
       }
@@ -644,17 +654,12 @@ export class Parser {
     if (!isRParenToken(this.peek())) {
       throw new LitsError('Expected closing parenthesis', tokenSourceCodeInfo(this.peek()))
     }
-    const functionArguments: FunctionArguments = {
-      m: args,
-      r: restArg,
-      b: bindingNodess,
-    }
 
     this.advance()
 
     return {
       functionArguments,
-      arity,
+      bindingNodes,
     }
   }
 
@@ -688,18 +693,13 @@ export class Parser {
       }
     }
 
-    const mandatoryArguments: string[] = []
+    const functionArguments: FunctionArgument[] = []
 
     for (let i = 1; i <= arity; i += 1) {
       if (i === 1 && dollar1 === 'NAKED')
-        mandatoryArguments.push('$')
+        functionArguments.push({ name: '$' })
       else
-        mandatoryArguments.push(`$${i}`)
-    }
-
-    const args: FunctionArguments = {
-      b: [],
-      m: mandatoryArguments,
+        functionArguments.push({ name: `$${i}` })
     }
 
     const node: FnNode = {
@@ -707,9 +707,9 @@ export class Parser {
       name: 'fn',
       params: [],
       function: {
-        as: args,
-        b: [exprNode],
-        a: args.m.length,
+        arguments: functionArguments,
+        bindingNodes: [],
+        body: [exprNode],
       },
 
       token: tokenSourceCodeInfo(firstToken) && firstToken,
@@ -736,7 +736,7 @@ export class Parser {
       type: 'SpecialExpression',
       name: 'let',
       params: [],
-      bs: [{
+      bindingNodes: [{
         type: 'Binding',
         name: letSymbol.value,
         value,
@@ -819,7 +819,7 @@ export class Parser {
       type: 'SpecialExpression',
       name: 'loop',
       params,
-      bs: bindingNodes,
+      bindingNodes,
       token: tokenSourceCodeInfo(firstToken) && firstToken,
     }
   }
@@ -964,10 +964,10 @@ export class Parser {
       letBindings = []
       while (isSymbolToken(token, 'let')) {
         const letNode = this.parseLet(token, true)
-        if (letBindings.some(b => b.name === letNode.bs[0]!.name)) {
-          throw new LitsError('Duplicate binding', tokenSourceCodeInfo(letNode.bs[0]!.token))
+        if (letBindings.some(b => b.name === letNode.bindingNodes[0]!.name)) {
+          throw new LitsError('Duplicate binding', tokenSourceCodeInfo(letNode.bindingNodes[0]!.token))
         }
-        letBindings.push(letNode.bs[0]!)
+        letBindings.push(letNode.bindingNodes[0]!)
         token = this.peek()
         if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this.peek(), 'each') && !isOperatorToken(token, ',')) {
           throw new LitsError('Expected do, each or comma', tokenSourceCodeInfo(token))
@@ -1219,7 +1219,7 @@ export class Parser {
   parseFunction(token: ReservedSymbolToken<'function'>): FunctionNode {
     this.advance()
     const symbol = this.parseSymbol()
-    const { functionArguments, arity } = this.parseFunctionArguments()
+    const { functionArguments, bindingNodes } = this.parseFunctionArguments()
 
     const body: AstNode[] = []
 
@@ -1239,12 +1239,12 @@ export class Parser {
     return {
       type: 'SpecialExpression',
       name: 'function',
-      f: symbol,
+      functionName: symbol,
       params: [],
       function: {
-        as: functionArguments,
-        b: body,
-        a: arity,
+        arguments: functionArguments,
+        bindingNodes,
+        body,
       },
       token: tokenSourceCodeInfo(token) && token,
     } satisfies FunctionNode
@@ -1291,7 +1291,7 @@ export class Parser {
       this.advance()
       const symbol = this.parseSymbol()
 
-      const { functionArguments, arity } = this.parseFunctionArguments()
+      const { functionArguments, bindingNodes } = this.parseFunctionArguments()
 
       const body: AstNode[] = []
 
@@ -1309,12 +1309,12 @@ export class Parser {
       return {
         type: 'SpecialExpression',
         name: 'defn',
-        f: symbol,
+        functionName: symbol,
         params: [],
         function: {
-          as: functionArguments,
-          b: body,
-          a: arity,
+          arguments: functionArguments,
+          bindingNodes,
+          body,
         },
         token: tokenSourceCodeInfo(token) && token,
       }

@@ -21,13 +21,10 @@ describe('litsFunction type guards', () => {
     [FUNCTION_SYMBOL]: true,
     functionType: 'UserDefined',
     name: undefined,
-    function: {
-      arguments: {
-        mandatoryArguments: [],
-      },
+    evaluatedfunction: {
+      arguments: [],
       context: {},
       body: [],
-      arity: 0,
     },
   }
   const lf2: LitsFunction = {

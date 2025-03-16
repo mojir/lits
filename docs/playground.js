@@ -4592,7 +4592,7 @@ var Playground = (function (exports) {
         evaluate: function (node, contextStack, _a) {
             var _b;
             var builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
-            var name = node.f.value;
+            var name = node.functionName.value;
             assertNameNotDefined(name, contextStack, builtin, tokenSourceCodeInfo(node.token));
             var evaluatedFunctionOverloades = evaluateFunction(node, contextStack, evaluateAstNode);
             var litsFunction = (_b = {},
@@ -4600,7 +4600,7 @@ var Playground = (function (exports) {
                 _b.sourceCodeInfo = tokenSourceCodeInfo(node.token),
                 _b.functionType = 'UserDefined',
                 _b.name = name,
-                _b.function = evaluatedFunctionOverloades,
+                _b.evaluatedfunction = evaluatedFunctionOverloades,
                 _b);
             contextStack.addValue(name, litsFunction);
             return null;
@@ -4608,8 +4608,8 @@ var Playground = (function (exports) {
         getUndefinedSymbols: function (node, contextStack, _a) {
             var _b;
             var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin;
-            contextStack.exportValue(node.f.value, true);
-            var newContext = (_b = {}, _b[node.f.value] = { value: true }, _b);
+            contextStack.exportValue(node.functionName.value, true);
+            var newContext = (_b = {}, _b[node.functionName.value] = { value: true }, _b);
             return addFunctionUnresolvedSymbols(node.function, contextStack, getUndefinedSymbols, builtin, newContext);
         },
     };
@@ -4618,7 +4618,7 @@ var Playground = (function (exports) {
         evaluate: function (node, contextStack, _a) {
             var _b;
             var builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
-            var name = node.f.value;
+            var name = node.functionName.value;
             assertNameNotDefined(name, contextStack, builtin, tokenSourceCodeInfo(node.token));
             var evaluatedFunctionOverloades = evaluateFunction(node, contextStack, evaluateAstNode);
             var litsFunction = (_b = {},
@@ -4626,7 +4626,7 @@ var Playground = (function (exports) {
                 _b.sourceCodeInfo = tokenSourceCodeInfo(node.token),
                 _b.functionType = 'UserDefined',
                 _b.name = name,
-                _b.function = evaluatedFunctionOverloades,
+                _b.evaluatedfunction = evaluatedFunctionOverloades,
                 _b);
             contextStack.exportValue(name, litsFunction);
             return null;
@@ -4634,8 +4634,8 @@ var Playground = (function (exports) {
         getUndefinedSymbols: function (node, contextStack, _a) {
             var _b;
             var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin;
-            contextStack.exportValue(node.f.value, true);
-            var newContext = (_b = {}, _b[node.f.value] = { value: true }, _b);
+            contextStack.exportValue(node.functionName.value, true);
+            var newContext = (_b = {}, _b[node.functionName.value] = { value: true }, _b);
             return addFunctionUnresolvedSymbols(node.function, contextStack, getUndefinedSymbols, builtin, newContext);
         },
     };
@@ -4650,7 +4650,7 @@ var Playground = (function (exports) {
                 _b.sourceCodeInfo = tokenSourceCodeInfo(node.token),
                 _b.functionType = 'UserDefined',
                 _b.name = undefined,
-                _b.function = evaluatedFunctionOverloades,
+                _b.evaluatedfunction = evaluatedFunctionOverloades,
                 _b);
             return litsFunction;
         },
@@ -4664,7 +4664,7 @@ var Playground = (function (exports) {
         var fn = node.function;
         var functionContext = {};
         try {
-            for (var _b = __values(fn.as.b), _c = _b.next(); !_c.done; _c = _b.next()) {
+            for (var _b = __values(fn.bindingNodes), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var binding = _c.value;
                 var bindingValueNode = binding.value;
                 var bindingValue = evaluateAstNode(bindingValueNode, contextStack);
@@ -4679,12 +4679,12 @@ var Playground = (function (exports) {
             finally { if (e_1) throw e_1.error; }
         }
         var evaluatedFunction = {
-            arguments: {
-                mandatoryArguments: fn.as.m,
-                restArgument: fn.as.r,
-            },
-            arity: fn.a,
-            body: fn.b,
+            arguments: fn.arguments.map(function (arg) { return ({
+                name: arg.name,
+                defaultValue: arg.default ? evaluateAstNode(arg.default, contextStack) : undefined,
+                rest: arg.rest,
+            }); }),
+            body: fn.body,
             context: functionContext,
         };
         return evaluatedFunction;
@@ -4693,18 +4693,16 @@ var Playground = (function (exports) {
         var result = new Set();
         var contextStackWithFunctionName = functionNameContext ? contextStack.create(functionNameContext) : contextStack;
         var newContext = {};
-        fn.as.b.forEach(function (binding) {
+        fn.bindingNodes.forEach(function (binding) {
             var bindingResult = getUndefinedSymbols([binding.value], contextStack, builtin);
             addToSet(result, bindingResult);
             newContext[binding.name] = { value: true };
         });
-        fn.as.m.forEach(function (arg) {
-            newContext[arg] = { value: true };
+        fn.arguments.forEach(function (arg) {
+            newContext[arg.name] = { value: true };
         });
-        if (typeof fn.as.r === 'string')
-            newContext[fn.as.r] = { value: true };
         var newContextStack = contextStackWithFunctionName.create(newContext);
-        var overloadResult = getUndefinedSymbols(fn.b, newContextStack, builtin);
+        var overloadResult = getUndefinedSymbols(fn.body, newContextStack, builtin);
         addToSet(result, overloadResult);
         return result;
     }
@@ -4759,7 +4757,7 @@ var Playground = (function (exports) {
             var e_1, _b;
             var evaluateAstNode = _a.evaluateAstNode;
             try {
-                for (var _c = __values(node.bs), _d = _c.next(); !_d.done; _d = _c.next()) {
+                for (var _c = __values(node.bindingNodes), _d = _c.next(); !_d.done; _d = _c.next()) {
                     var binding = _d.value;
                     var bindingValueNode = binding.value;
                     var bindingValue = evaluateAstNode(bindingValueNode, contextStack);
@@ -4777,13 +4775,13 @@ var Playground = (function (exports) {
         },
         getUndefinedSymbols: function (node, contextStack, _a) {
             var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin;
-            var newContext = node.bs
+            var newContext = node.bindingNodes
                 .map(function (binding) { return binding.name; })
                 .reduce(function (context, name) {
                 context[name] = { value: true };
                 return context;
             }, {});
-            var bindingResults = node.bs.map(function (bindingNode) {
+            var bindingResults = node.bindingNodes.map(function (bindingNode) {
                 var valueNode = bindingNode.value;
                 var bindingsResult = getUndefinedSymbols([valueNode], contextStack, builtin);
                 contextStack.addValue(bindingNode.name, { value: true });
@@ -4799,7 +4797,7 @@ var Playground = (function (exports) {
         evaluate: function (node, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode;
             var sourceCodeInfo = tokenSourceCodeInfo(node.token);
-            var bindingContext = node.bs.reduce(function (result, binding) {
+            var bindingContext = node.bindingNodes.reduce(function (result, binding) {
                 result[binding.name] = { value: evaluateAstNode(binding.value, contextStack) };
                 return result;
             }, {});
@@ -4825,10 +4823,10 @@ var Playground = (function (exports) {
                 catch (error) {
                     if (error instanceof RecurSignal) {
                         var params_1 = error.params;
-                        if (params_1.length !== node.bs.length) {
-                            throw new LitsError("recur expected ".concat(node.bs.length, " parameters, got ").concat(valueToString(params_1.length)), sourceCodeInfo);
+                        if (params_1.length !== node.bindingNodes.length) {
+                            throw new LitsError("recur expected ".concat(node.bindingNodes.length, " parameters, got ").concat(valueToString(params_1.length)), sourceCodeInfo);
                         }
-                        node.bs.forEach(function (binding, index) {
+                        node.bindingNodes.forEach(function (binding, index) {
                             asNonUndefined(bindingContext[binding.name], sourceCodeInfo).value = asAny(params_1[index], sourceCodeInfo);
                         });
                         return "continue";
@@ -4845,13 +4843,13 @@ var Playground = (function (exports) {
         },
         getUndefinedSymbols: function (node, contextStack, _a) {
             var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin;
-            var newContext = node.bs
+            var newContext = node.bindingNodes
                 .map(function (binding) { return binding.name; })
                 .reduce(function (context, name) {
                 context[name] = { value: true };
                 return context;
             }, {});
-            var bindingValueNodes = node.bs.map(function (binding) { return binding.value; });
+            var bindingValueNodes = node.bindingNodes.map(function (binding) { return binding.value; });
             var bindingsResult = getUndefinedSymbols(bindingValueNodes, contextStack, builtin);
             var paramsResult = getUndefinedSymbols(node.params, contextStack.create(newContext), builtin);
             return joinSets(bindingsResult, paramsResult);
@@ -5140,19 +5138,13 @@ var Playground = (function (exports) {
     var normalExpressionKeys = Object.keys(normalExpressions);
     var specialExpressionKeys = Object.keys(specialExpressions);
 
-    function checkParams(fn, nbrOfParams, sourceCodeInfo) {
-        var arity = fn.arity;
-        if (typeof arity === 'number') {
-            if (arity === nbrOfParams) {
-                return;
-            }
+    function checkParams(evaluatedFunction, nbrOfParams, sourceCodeInfo) {
+        var hasRest = evaluatedFunction.arguments.some(function (arg) { return arg.rest; });
+        var minArity = evaluatedFunction.arguments.filter(function (arg) { return !arg.rest && !arg.defaultValue; }).length;
+        var maxArity = hasRest ? Number.MAX_SAFE_INTEGER : evaluatedFunction.arguments.length;
+        if (nbrOfParams < minArity || nbrOfParams > maxArity) {
+            throw new LitsError("Unexpected number of arguments, got ".concat(valueToString(nbrOfParams), "."), sourceCodeInfo);
         }
-        else {
-            if (arity.min <= nbrOfParams) {
-                return;
-            }
-        }
-        throw new LitsError("Unexpected number of arguments, got ".concat(valueToString(nbrOfParams), "."), sourceCodeInfo);
     }
     var functionExecutors = {
         NativeJsFunction: function (fn, params, sourceCodeInfo) {
@@ -5174,40 +5166,45 @@ var Playground = (function (exports) {
         },
         UserDefined: function (fn, params, sourceCodeInfo, contextStack, _a) {
             var e_1, _b;
+            var _c, _d;
             var evaluateAstNode = _a.evaluateAstNode;
             for (;;) {
-                checkParams(fn.function, params.length, sourceCodeInfo);
-                var overloadFunction = fn.function;
-                var args = overloadFunction.arguments;
-                var nbrOfMandatoryArgs = args.mandatoryArguments.length;
-                var newContext = __assign({}, overloadFunction.context);
-                var length_1 = Math.max(params.length, args.mandatoryArguments.length);
+                checkParams(fn.evaluatedfunction, params.length, sourceCodeInfo);
+                var evaluatedFunction = fn.evaluatedfunction;
+                var args = evaluatedFunction.arguments;
+                var nbrOfNonRestArgs = args.filter(function (arg) { return !arg.rest; }).length;
+                var newContext = __assign({}, evaluatedFunction.context);
                 var rest = [];
-                for (var i = 0; i < length_1; i += 1) {
-                    if (i < nbrOfMandatoryArgs) {
+                for (var i = 0; i < params.length; i += 1) {
+                    if (i < nbrOfNonRestArgs) {
                         var param = toAny(params[i]);
-                        var key = asString(args.mandatoryArguments[i], sourceCodeInfo);
+                        var key = asString((_c = args[i]) === null || _c === void 0 ? void 0 : _c.name, sourceCodeInfo);
                         newContext[key] = { value: param };
                     }
                     else {
                         rest.push(toAny(params[i]));
                     }
                 }
-                if (args.restArgument)
-                    newContext[args.restArgument] = { value: rest };
+                for (var i = params.length; i < nbrOfNonRestArgs; i++) {
+                    var arg = args[i];
+                    newContext[arg.name] = { value: arg.defaultValue };
+                }
+                var restArgumentName = (_d = args.find(function (arg) { return arg.rest; })) === null || _d === void 0 ? void 0 : _d.name;
+                if (restArgumentName !== undefined)
+                    newContext[restArgumentName] = { value: rest };
                 try {
                     var result = null;
                     var newContextStack = contextStack.create(newContext);
                     try {
-                        for (var _c = (e_1 = void 0, __values(overloadFunction.body)), _d = _c.next(); !_d.done; _d = _c.next()) {
-                            var node = _d.value;
+                        for (var _e = (e_1 = void 0, __values(evaluatedFunction.body)), _f = _e.next(); !_f.done; _f = _e.next()) {
+                            var node = _f.value;
                             result = evaluateAstNode(node, newContextStack);
                         }
                     }
                     catch (e_1_1) { e_1 = { error: e_1_1 }; }
                     finally {
                         try {
-                            if (_d && !_d.done && (_b = _c.return)) _b.call(_c);
+                            if (_f && !_f.done && (_b = _e.return)) _b.call(_e);
                         }
                         finally { if (e_1) throw e_1.error; }
                     }
@@ -6566,7 +6563,7 @@ var Playground = (function (exports) {
                 return null;
             }
             try {
-                var _a = this.parseFunctionArguments(), functionArguments = _a.functionArguments, arity = _a.arity;
+                var _a = this.parseFunctionArguments(), functionArguments = _a.functionArguments, bindingNodes = _a.bindingNodes;
                 if (!isOperatorToken(this.peek(), '->')) {
                     return null;
                 }
@@ -6577,9 +6574,9 @@ var Playground = (function (exports) {
                     name: 'fn',
                     params: [],
                     function: {
-                        as: functionArguments,
-                        b: [body],
-                        a: arity,
+                        arguments: functionArguments,
+                        bindingNodes: bindingNodes,
+                        body: [body],
                     },
                     token: tokenSourceCodeInfo(firstToken) && firstToken,
                 };
@@ -6593,23 +6590,21 @@ var Playground = (function (exports) {
             if (isSymbolToken(firstToken)) {
                 this.advance();
                 return {
-                    functionArguments: {
-                        m: [firstToken[1]],
-                        b: [],
-                        r: undefined,
-                    },
-                    arity: 1,
+                    functionArguments: [{
+                            name: firstToken[1],
+                        }],
+                    bindingNodes: [],
                 };
             }
             this.advance();
             var rest = false;
-            var args = [];
-            var restArg;
+            var defaults = false;
+            var functionArguments = [];
             while (!this.isAtEnd() && !isRParenToken(this.peek()) && !isSymbolToken(this.peek(), 'let')) {
+                if (rest) {
+                    throw new LitsError('Rest argument must be last', tokenSourceCodeInfo(this.peek()));
+                }
                 if (isOperatorToken(this.peek(), '...')) {
-                    if (rest) {
-                        throw new LitsError('Multiple spread operators in lambda function', tokenSourceCodeInfo(this.peek()));
-                    }
                     this.advance();
                     rest = true;
                 }
@@ -6617,13 +6612,25 @@ var Playground = (function (exports) {
                 if (!isSymbolToken(symbolToken)) {
                     throw new LitsError('Expected symbol', tokenSourceCodeInfo(this.peek()));
                 }
-                if (rest) {
-                    restArg = symbolToken[1];
-                }
-                else {
-                    args.push(symbolToken[1]);
-                }
+                var name_3 = symbolToken[1];
                 this.advance();
+                var isDefault = void 0;
+                if (isOperatorToken(this.peek(), ':=')) {
+                    if (rest) {
+                        throw new LitsError('Optional arguments must be last', tokenSourceCodeInfo(this.peek()));
+                    }
+                    defaults = true;
+                    this.advance();
+                    isDefault = this.parseExpression();
+                }
+                else if (defaults) {
+                    throw new LitsError('Optional arguments must be last', tokenSourceCodeInfo(this.peek()));
+                }
+                functionArguments.push({
+                    name: name_3,
+                    default: isDefault,
+                    rest: rest ? true : undefined,
+                });
                 if (!isOperatorToken(this.peek(), ',') && !isRParenToken(this.peek()) && !isSymbolToken(this.peek(), 'let')) {
                     throw new LitsError('Expected comma or closing parenthesis', tokenSourceCodeInfo(this.peek()));
                 }
@@ -6631,17 +6638,16 @@ var Playground = (function (exports) {
                     this.advance();
                 }
             }
-            var arity = restArg !== undefined ? { min: args.length } : args.length;
             // let bindings, to be able to pass on values in the context down to the body
             // This is needed since lits is dynamically scoped
             // E.g.
             // x => y => x + y // would not work, x is not available in the second lambda
             // x => (y, let x = x) => x + y // would work, x is available in the second lambda
-            var bindingNodess = [];
+            var bindingNodes = [];
             var token = this.peek();
             while (isSymbolToken(token, 'let')) {
                 var letNode = this.parseLet(token, true);
-                bindingNodess.push(letNode.bs[0]);
+                bindingNodes.push(letNode.bindingNodes[0]);
                 if (!isOperatorToken(this.peek(), ',') && !isRParenToken(this.peek())) {
                     throw new LitsError('Expected comma or closing parenthesis', tokenSourceCodeInfo(this.peek()));
                 }
@@ -6653,15 +6659,10 @@ var Playground = (function (exports) {
             if (!isRParenToken(this.peek())) {
                 throw new LitsError('Expected closing parenthesis', tokenSourceCodeInfo(this.peek()));
             }
-            var functionArguments = {
-                m: args,
-                r: restArg,
-                b: bindingNodess,
-            };
             this.advance();
             return {
                 functionArguments: functionArguments,
-                arity: arity,
+                bindingNodes: bindingNodes,
             };
         };
         Parser.prototype.parseShorthandLamdaFunction = function () {
@@ -6691,25 +6692,21 @@ var Playground = (function (exports) {
                     }
                 }
             }
-            var mandatoryArguments = [];
+            var functionArguments = [];
             for (var i = 1; i <= arity; i += 1) {
                 if (i === 1 && dollar1 === 'NAKED')
-                    mandatoryArguments.push('$');
+                    functionArguments.push({ name: '$' });
                 else
-                    mandatoryArguments.push("$".concat(i));
+                    functionArguments.push({ name: "$".concat(i) });
             }
-            var args = {
-                b: [],
-                m: mandatoryArguments,
-            };
             var node = {
                 type: 'SpecialExpression',
                 name: 'fn',
                 params: [],
                 function: {
-                    as: args,
-                    b: [exprNode],
-                    a: args.m.length,
+                    arguments: functionArguments,
+                    bindingNodes: [],
+                    body: [exprNode],
                 },
                 token: tokenSourceCodeInfo(firstToken) && firstToken,
             };
@@ -6729,7 +6726,7 @@ var Playground = (function (exports) {
                 type: 'SpecialExpression',
                 name: 'let',
                 params: [],
-                bs: [{
+                bindingNodes: [{
                         type: 'Binding',
                         name: letSymbol.value,
                         value: value,
@@ -6804,7 +6801,7 @@ var Playground = (function (exports) {
                 type: 'SpecialExpression',
                 name: 'loop',
                 params: params,
-                bs: bindingNodes,
+                bindingNodes: bindingNodes,
                 token: tokenSourceCodeInfo(firstToken) && firstToken,
             };
         };
@@ -6929,10 +6926,10 @@ var Playground = (function (exports) {
                 letBindings = [];
                 var _loop_2 = function () {
                     var letNode = this_2.parseLet(token, true);
-                    if (letBindings.some(function (b) { return b.name === letNode.bs[0].name; })) {
-                        throw new LitsError('Duplicate binding', tokenSourceCodeInfo(letNode.bs[0].token));
+                    if (letBindings.some(function (b) { return b.name === letNode.bindingNodes[0].name; })) {
+                        throw new LitsError('Duplicate binding', tokenSourceCodeInfo(letNode.bindingNodes[0].token));
                     }
-                    letBindings.push(letNode.bs[0]);
+                    letBindings.push(letNode.bindingNodes[0]);
                     token = this_2.peek();
                     if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this_2.peek(), 'each') && !isOperatorToken(token, ',')) {
                         throw new LitsError('Expected do, each or comma', tokenSourceCodeInfo(token));
@@ -7152,7 +7149,7 @@ var Playground = (function (exports) {
         Parser.prototype.parseFunction = function (token) {
             this.advance();
             var symbol = this.parseSymbol();
-            var _a = this.parseFunctionArguments(), functionArguments = _a.functionArguments, arity = _a.arity;
+            var _a = this.parseFunctionArguments(), functionArguments = _a.functionArguments, bindingNodes = _a.bindingNodes;
             var body = [];
             while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
                 body.push(this.parseExpression());
@@ -7169,12 +7166,12 @@ var Playground = (function (exports) {
             return {
                 type: 'SpecialExpression',
                 name: 'function',
-                f: symbol,
+                functionName: symbol,
                 params: [],
                 function: {
-                    as: functionArguments,
-                    b: body,
-                    a: arity,
+                    arguments: functionArguments,
+                    bindingNodes: bindingNodes,
+                    body: body,
                 },
                 token: tokenSourceCodeInfo(token) && token,
             };
@@ -7214,7 +7211,7 @@ var Playground = (function (exports) {
             else if (isReservedSymbolToken(this.peek(), 'function')) {
                 this.advance();
                 var symbol = this.parseSymbol();
-                var _a = this.parseFunctionArguments(), functionArguments = _a.functionArguments, arity = _a.arity;
+                var _a = this.parseFunctionArguments(), functionArguments = _a.functionArguments, bindingNodes = _a.bindingNodes;
                 var body = [];
                 while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
                     body.push(this.parseExpression());
@@ -7230,12 +7227,12 @@ var Playground = (function (exports) {
                 return {
                     type: 'SpecialExpression',
                     name: 'defn',
-                    f: symbol,
+                    functionName: symbol,
                     params: [],
                     function: {
-                        as: functionArguments,
-                        b: body,
-                        a: arity,
+                        arguments: functionArguments,
+                        bindingNodes: bindingNodes,
+                        body: body,
                     },
                     token: tokenSourceCodeInfo(token) && token,
                 };
