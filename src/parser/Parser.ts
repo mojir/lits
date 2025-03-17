@@ -740,52 +740,80 @@ export class Parser {
   }
 
   private parseBindingTarget(): BindingTarget {
-    const token = this.peek()
-    if (isSymbolToken(token)) {
+    const firstToken = this.peek()
+    if (isSymbolToken(firstToken)) {
       const symbol = this.parseSymbol()
       return {
         type: 'symbol',
         name: symbol.value,
-        sourceCodeInfo: token[2],
+        sourceCodeInfo: firstToken[2],
       }
     }
-    if (isLBracketToken(token)) {
+    if (isLBracketToken(firstToken)) {
       this.advance()
-      const elements: BindingTarget[] = []
-      while (!isRBracketToken(this.peek())) {
+      const elements: (BindingTarget | null)[] = []
+      let token = this.peek()
+      while (!isRBracketToken(token)) {
+        if (isOperatorToken(token, ',')) {
+          elements.push(null)
+          this.advance()
+          token = this.peek()
+          continue
+        }
+
         elements.push(this.parseBindingTarget())
-        if (!isRBracketToken(this.peek())) {
-          assertOperatorToken(this.peek(), ',')
+        token = this.peek()
+
+        if (!isRBracketToken(token)) {
+          assertOperatorToken(token, ',')
           this.advance()
         }
+        token = this.peek()
       }
       this.advance()
       return {
         type: 'array',
         elements,
-        sourceCodeInfo: token[2],
+        sourceCodeInfo: firstToken[2],
       }
     }
-    if (isLBraceToken(token)) {
+    if (isLBraceToken(firstToken)) {
       this.advance()
       const elements: Record<string, BindingTarget> = {}
-      while (!isRBraceToken(this.peek())) {
+      let token = this.peek()
+      while (!isRBraceToken(token)) {
         const key = this.parseSymbol().value
-        elements[key] = {
-          type: 'symbol',
-          name: key,
-          sourceCodeInfo: token[2],
+        token = this.peek()
+        if (isReservedSymbolToken(token, 'as')) {
+          this.advance()
+          elements[key] = {
+            type: 'symbol',
+            name: this.parseSymbol().value,
+            sourceCodeInfo: firstToken[2],
+          }
         }
+        else if (isRBraceToken(token) || isOperatorToken(token, ',')) {
+          elements[key] = {
+            type: 'symbol',
+            name: key,
+            sourceCodeInfo: firstToken[2],
+          }
+        }
+        else if (!isRBraceToken(token) && !isOperatorToken(token, ',')) {
+          elements[key] = this.parseBindingTarget()
+        }
+
         if (!isRBraceToken(this.peek())) {
           assertOperatorToken(this.peek(), ',')
           this.advance()
         }
+        token = this.peek()
       }
       this.advance()
       return {
         type: 'object',
         elements,
-        sourceCodeInfo: token[2],
+        sourceCodeInfo: firstToken[2],
       }
     }
 

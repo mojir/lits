@@ -15,6 +15,7 @@ const nonNumberReservedSymbolRecord = {
   catch: null,
   function: null,
   export: null,
+  as: null,
 } as const satisfies Record<string, Any>
 
 const phi = (1 + Math.sqrt(5)) / 2

@@ -15,11 +15,14 @@ export function bindingNodeEntries(
 }
 
 export function bindingTargetEntries(
-  bindingTarget: BindingTarget,
+  bindingTarget: BindingTarget | null,
   value: Any,
   onEntry: (name: string, value: Any) => void,
   sourceCodeInfo: SourceCodeInfo | undefined,
 ): void {
+  if (bindingTarget === null) {
+    return
+  }
   if (bindingTarget.type === 'object') {
     Object.entries(bindingTarget.elements).forEach(([key, element]) => {
       assertUnknownRecord(value, sourceCodeInfo)
@@ -37,7 +40,7 @@ export function bindingTargetEntries(
     })
   }
   else {
-    onEntry(bindingTarget.alias ?? bindingTarget.name, value)
+    onEntry(bindingTarget.name, value)
   }
 }
 
@@ -47,7 +50,10 @@ export function getAllBindingTargetNames(bindingTarget: BindingTarget): string[]
   return names
 }
 
-function getNamesFromBindingTarget(target: BindingTarget, names: string[]): void {
+function getNamesFromBindingTarget(target: BindingTarget | null, names: string[]): void {
+  if (target === null) {
+    return
+  }
   if (target.type === 'array') {
     for (const element of target.elements) {
       getNamesFromBindingTarget(element, names)
@@ -59,6 +65,6 @@ function getNamesFromBindingTarget(target: BindingTarget, names: string[]): void
     }
   }
   else {
-    names.push(target.alias ?? target.name)
+    names.push(target.name)
   }
 }

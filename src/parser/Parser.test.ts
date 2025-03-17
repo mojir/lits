@@ -950,6 +950,41 @@ foo(1, 2)`)).toBe(3)
         [1, 3, 3],
       ])
     })
+    describe('destructuring', () => {
+      const values = {
+        'an-object': {
+          name: 'John Doe',
+          age: 42,
+          married: true,
+          children: [
+            { name: 'Alice', age: 10 },
+            { name: 'Bob', age: 7 },
+          ],
+          address: {
+            street: '123 Main St',
+            city: 'Springfield',
+            state: 'IL',
+            zip: '62701',
+          },
+        },
+      }
+      test('samples.', () => {
+        expect(lits.run(`
+          let { children [{ age as firstChildAge }] } := an-object;
+          firstChildAge
+        `, { values })).toBe(10)
+
+        expect(lits.run(`
+          let { children [{ age as firstChildAge, name }] } := an-object;
+          [firstChildAge, name]
+        `, { values })).toEqual([10, 'Alice'])
+
+        expect(lits.run(`
+          let { children [, { age, name }] } := an-object;
+          [age, name]
+        `, { values })).toEqual([7, 'Bob'])
+      })
+    })
     test('complex example with three iterations', () => {
       expect(lits.run(`
         for

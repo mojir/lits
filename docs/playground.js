@@ -4289,6 +4289,7 @@ var Playground = (function (exports) {
         catch: null,
         function: null,
         export: null,
+        as: null,
     };
     var phi = (1 + Math.sqrt(5)) / 2;
     var numberReservedSymbolRecord = {
@@ -4394,7 +4395,6 @@ var Playground = (function (exports) {
         bindingTargetEntries(target, value, onEntry, sourceCodeInfo);
     }
     function bindingTargetEntries(bindingTarget, value, onEntry, sourceCodeInfo) {
-        var _a;
         if (bindingTarget.type === 'object') {
             Object.entries(bindingTarget.elements).forEach(function (_a) {
                 var _b;
@@ -4415,7 +4415,7 @@ var Playground = (function (exports) {
             });
         }
         else {
-            onEntry((_a = bindingTarget.alias) !== null && _a !== void 0 ? _a : bindingTarget.name, value);
+            onEntry(bindingTarget.name, value);
         }
     }
     function getAllBindingTargetNames(bindingTarget) {
@@ -4425,39 +4425,38 @@ var Playground = (function (exports) {
     }
     function getNamesFromBindingTarget(target, names) {
         var e_1, _a, e_2, _b;
-        var _c;
         if (target.type === 'array') {
             try {
-                for (var _d = __values(target.elements), _e = _d.next(); !_e.done; _e = _d.next()) {
-                    var element = _e.value;
+                for (var _c = __values(target.elements), _d = _c.next(); !_d.done; _d = _c.next()) {
+                    var element = _d.value;
                     getNamesFromBindingTarget(element, names);
                 }
             }
             catch (e_1_1) { e_1 = { error: e_1_1 }; }
             finally {
                 try {
-                    if (_e && !_e.done && (_a = _d.return)) _a.call(_d);
+                    if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
                 }
                 finally { if (e_1) throw e_1.error; }
             }
         }
         else if (target.type === 'object') {
             try {
-                for (var _f = __values(Object.values(target.elements)), _g = _f.next(); !_g.done; _g = _f.next()) {
-                    var element = _g.value;
+                for (var _e = __values(Object.values(target.elements)), _f = _e.next(); !_f.done; _f = _e.next()) {
+                    var element = _f.value;
                     getNamesFromBindingTarget(element, names);
                 }
             }
             catch (e_2_1) { e_2 = { error: e_2_1 }; }
             finally {
                 try {
-                    if (_g && !_g.done && (_b = _f.return)) _b.call(_f);
+                    if (_f && !_f.done && (_b = _e.return)) _b.call(_e);
                 }
                 finally { if (e_2) throw e_2.error; }
             }
         }
         else {
-            names.push((_c = target.alias) !== null && _c !== void 0 ? _c : target.name);
+            names.push(target.name);
         }
     }
 
@@ -6800,16 +6799,16 @@ var Playground = (function (exports) {
             return node;
         };
         Parser.prototype.parseBindingTarget = function () {
-            var token = this.peek();
-            if (isSymbolToken(token)) {
+            var firstToken = this.peek();
+            if (isSymbolToken(firstToken)) {
                 var symbol = this.parseSymbol();
                 return {
                     type: 'symbol',
                     name: symbol.value,
-                    sourceCodeInfo: token[2],
+                    sourceCodeInfo: firstToken[2],
                 };
             }
-            if (isLBracketToken(token)) {
+            if (isLBracketToken(firstToken)) {
                 this.advance();
                 var elements = [];
                 while (!isRBracketToken(this.peek())) {
@@ -6823,29 +6822,45 @@ var Playground = (function (exports) {
                 return {
                     type: 'array',
                     elements: elements,
-                    sourceCodeInfo: token[2],
+                    sourceCodeInfo: firstToken[2],
                 };
             }
-            if (isLBraceToken(token)) {
+            if (isLBraceToken(firstToken)) {
                 this.advance();
                 var elements = {};
-                while (!isRBraceToken(this.peek())) {
+                var token = this.peek();
+                while (!isRBraceToken(token)) {
                     var key = this.parseSymbol().value;
-                    elements[key] = {
-                        type: 'symbol',
-                        name: key,
-                        sourceCodeInfo: token[2],
-                    };
+                    token = this.peek();
+                    if (isReservedSymbolToken(token, 'as')) {
+                        this.advance();
+                        elements[key] = {
+                            type: 'symbol',
+                            name: this.parseSymbol().value,
+                            sourceCodeInfo: firstToken[2],
+                        };
+                    }
+                    else if (isRBraceToken(token) || isOperatorToken(token, ',')) {
+                        elements[key] = {
+                            type: 'symbol',
+                            name: key,
+                            sourceCodeInfo: firstToken[2],
+                        };
+                    }
+                    else if (!isRBraceToken(token) && !isOperatorToken(token, ',')) {
+                        elements[key] = this.parseBindingTarget();
+                    }
                     if (!isRBraceToken(this.peek())) {
                         assertOperatorToken(this.peek(), ',');
                         this.advance();
                     }
+                    token = this.peek();
                 }
                 this.advance();
                 return {
                     type: 'object',
                     elements: elements,
-                    sourceCodeInfo: token[2],
+                    sourceCodeInfo: firstToken[2],
                 };
             }
             throw new LitsError('Expected symbol', this.peek()[2]);

@@ -59,18 +59,6 @@ describe('getAllBindingTargetNames', () => {
     expect(result).toEqual(['x', 'y', 'z'])
   })
 
-  it('should handle alias names for symbols', () => {
-    const bindingTarget: BindingTarget = {
-      type: 'symbol',
-      name: 'originalName',
-      alias: 'aliasName',
-      sourceCodeInfo: undefined,
-    }
-
-    const result = getAllBindingTargetNames(bindingTarget)
-    expect(result).toEqual(['aliasName'])
-  })
-
   it('should return all names for an array target', () => {
     const bindingTarget: BindingTarget = {
       type: 'array',

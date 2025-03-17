@@ -166,13 +166,12 @@ export type NormalExpressionNode = NormalExpressionNodeWithName | NormalExpressi
 export type BindingTarget = { sourceCodeInfo?: SourceCodeInfo | undefined } & ({
   type: 'symbol'
   name: string
-  alias?: string
 } | {
   type: 'object'
   elements: Record<string, BindingTarget>
 } | {
   type: 'array'
-  elements: BindingTarget[]
+  elements: (BindingTarget | null)[]
 })
 
 export interface BindingNode extends GenericNode {
