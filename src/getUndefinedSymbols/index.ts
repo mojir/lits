@@ -47,7 +47,7 @@ function findUnresolvedSymbolsInAstNode(astNode: AstNode, contextStack: ContextS
       const unresolvedSymbols = new Set<string>()
       const { name, sourceCodeInfo } = astNode
       if (typeof name === 'string') {
-        const lookUpResult = contextStack.lookUp({ type: 'Symbol', value: name, sourceCodeInfo, params: [], name: undefined })
+        const lookUpResult = contextStack.lookUp({ type: 'Symbol', value: name, sourceCodeInfo })
         if (lookUpResult === null)
           unresolvedSymbols.add(name)
       }

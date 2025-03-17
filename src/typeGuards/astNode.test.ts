@@ -57,14 +57,10 @@ describe('astNode type guards', () => {
       type: 'ReservedSymbol',
       value: 'null',
       sourceCodeInfo: undefined,
-      params: [],
-      name: undefined,
     }, {
       type: 'ReservedSymbol',
       value: 'null',
       sourceCodeInfo: undefined,
-      params: [],
-      name: undefined,
     }],
     sourceCodeInfo: undefined,
   }
@@ -72,22 +68,16 @@ describe('astNode type guards', () => {
     type: 'Symbol',
     sourceCodeInfo: undefined,
     value: 'A name',
-    params: [],
-    name: undefined,
   }
   const numberNode: NumberNode = {
     type: 'Number',
     value: 12,
     sourceCodeInfo: undefined,
-    params: [],
-    name: undefined,
   }
   const stringNode: StringNode = {
     type: 'String',
     value: 'foo',
     sourceCodeInfo: undefined,
-    params: [],
-    name: undefined,
   }
   const normalExpressionNodeWithName: NormalExpressionNodeWithName = {
     type: 'NormalExpression',
@@ -106,8 +96,6 @@ describe('astNode type guards', () => {
           type: 'Number',
           value: 2,
           sourceCodeInfo: undefined,
-          params: [],
-          name: undefined,
         },
       ],
       sourceCodeInfo: undefined,

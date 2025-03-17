@@ -49,8 +49,6 @@ describe('all tests', () => {
                 {
                   type: 'Number',
                   value: 42,
-                  name: undefined,
-                  params: [],
                   sourceCodeInfo: undefined,
                 },
               ],
@@ -113,15 +111,11 @@ describe('all tests', () => {
                   type: 'Number',
                   value: 2,
                   sourceCodeInfo: undefined,
-                  params: [],
-                  name: undefined,
                 },
                 {
                   type: 'Number',
                   value: 2,
                   sourceCodeInfo: undefined,
-                  params: [],
-                  name: undefined,
                 },
               ],
               sourceCodeInfo: undefined,
@@ -176,8 +170,6 @@ describe('all tests', () => {
           type: 'Number',
           value: n,
           sourceCodeInfo: undefined,
-          params: [],
-          name: undefined,
         },
       ],
     }

@@ -113,8 +113,6 @@ describe('utils', () => {
       type: 'Symbol',
       value: 'Foo',
       sourceCodeInfo: undefined,
-      params: [],
-      name: undefined,
     }
     it('valueToString', () => {
       expect(valueToString(new Error('An error'))).toBe('Error: An error')

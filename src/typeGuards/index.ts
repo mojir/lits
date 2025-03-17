@@ -1,12 +1,12 @@
 import type { Count } from '../builtin/interface'
 import { LitsError } from '../errors'
 import type { UnknownRecord } from '../interface'
-import type { GenericNode } from '../parser/types'
+import type { AstNode, GenericNode } from '../parser/types'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { valueToString } from '../utils/debug/debugTools'
 import { getSourceCodeInfo } from '../utils/debug/getSourceCodeInfo'
 
-export function assertNumberOfParams(count: Count, node: GenericNode): void {
+export function assertNumberOfParams(count: Count, node: GenericNode & { params: AstNode[], name: string }): void {
   assertCount({
     count,
     length: node.params.length,

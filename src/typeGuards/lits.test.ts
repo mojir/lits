@@ -30,8 +30,6 @@ describe('lits type guards', () => {
       type: 'Symbol',
       value: 'test',
       sourceCodeInfo: undefined,
-      params: [],
-      name: undefined,
     }
 
     const valid = [node, 1, 'bar', null, [], {}]

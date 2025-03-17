@@ -312,8 +312,6 @@ export class Parser {
           type: 'String',
           value: symbolToken[1],
           sourceCodeInfo: symbolToken[2],
-          params: [],
-          name: undefined,
         }
         operand = createAccessorNode(operand, stringNode, token[2])
         this.advance()
@@ -366,8 +364,6 @@ export class Parser {
           type: 'Symbol',
           value: operatorName,
           sourceCodeInfo: token[2],
-          params: [],
-          name: undefined,
         } satisfies SymbolNode
       }
 
@@ -443,8 +439,6 @@ export class Parser {
         type: 'String',
         value: key.value,
         sourceCodeInfo: key.sourceCodeInfo,
-        params: [],
-        name: undefined,
       })
 
       assertOperatorToken(this.peek(), ':=')
@@ -841,9 +835,7 @@ export class Parser {
       bindingNodes: [{
         type: 'Binding',
         target,
-        name: undefined,
         value,
-        params: [],
         sourceCodeInfo: token[2],
       }],
       sourceCodeInfo: token[2],
@@ -888,9 +880,7 @@ export class Parser {
       bindingNodes.push({
         type: 'Binding',
         target,
-        name: undefined,
         value,
-        params: [],
         sourceCodeInfo: token[2],
       } satisfies BindingNode)
 
@@ -1150,9 +1140,7 @@ export class Parser {
         name,
         sourceCodeInfo: firstToken[2],
       },
-      name: undefined,
       value,
-      params: [],
       sourceCodeInfo: firstToken[2],
     }
     return node
@@ -1448,8 +1436,6 @@ export class Parser {
       return {
         type: 'Symbol',
         value: token[1],
-        params: [],
-        name: undefined,
         sourceCodeInfo: token[2],
       }
     }
@@ -1475,8 +1461,6 @@ export class Parser {
       return {
         type: 'Symbol',
         value,
-        params: [],
-        name: undefined,
         sourceCodeInfo: token[2],
       }
     }
@@ -1492,8 +1476,6 @@ export class Parser {
         return {
           type: 'Number',
           value: numberReservedSymbolRecord[symbol],
-          params: [],
-          name: undefined,
           sourceCodeInfo: token[2],
         }
       }
@@ -1501,8 +1483,6 @@ export class Parser {
     return {
       type: 'ReservedSymbol',
       value: token[1],
-      params: [],
-      name: undefined,
       sourceCodeInfo: token[2],
     } satisfies ReservedSymbolNode
   }
@@ -1517,8 +1497,6 @@ export class Parser {
     return {
       type: 'Number',
       value: negative ? -Number(numberString) : Number(numberString),
-      params: [],
-      name: undefined,
       sourceCodeInfo: token[2],
     }
   }
@@ -1570,8 +1548,6 @@ export class Parser {
     return {
       type: 'String',
       value,
-      params: [],
-      name: undefined,
       sourceCodeInfo: token[2],
     }
   }
@@ -1586,16 +1562,12 @@ export class Parser {
     const stringNode: StringNode = {
       type: 'String',
       value: regexpString,
-      params: [],
-      name: undefined,
       sourceCodeInfo: token[2],
     }
 
     const optionsNode: StringNode = {
       type: 'String',
       value: optionsString,
-      params: [],
-      name: undefined,
       sourceCodeInfo: token[2],
     }
 

@@ -110,8 +110,6 @@ export type DebugData = {
 }
 export interface GenericNode {
   type: AstNodeType // type
-  params: AstNode[] // params
-  name: string | undefined // name
   sourceCodeInfo?: SourceCodeInfo | undefined
 }
 
@@ -146,11 +144,13 @@ export interface ReservedSymbolNode extends GenericNode {
 
 interface CommonNormalExpressionNode extends GenericNode {
   type: 'NormalExpression' // type
+  params: AstNode[] // params
 }
 
 export interface CommonSpecialExpressionNode<T extends SpecialExpressionName> extends GenericNode {
   type: 'SpecialExpression' // type
   name: T // name
+  params: AstNode[] // params
 }
 
 export interface NormalExpressionNodeWithName extends CommonNormalExpressionNode {
@@ -177,7 +177,6 @@ export type BindingTarget = { sourceCodeInfo?: SourceCodeInfo | undefined, defau
 export interface BindingNode extends GenericNode {
   type: 'Binding' // type
   target: BindingTarget
-  name: undefined
   value: AstNode // value
 }
 

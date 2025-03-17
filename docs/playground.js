@@ -4395,6 +4395,9 @@ var Playground = (function (exports) {
         bindingTargetEntries(target, value, onEntry, sourceCodeInfo);
     }
     function bindingTargetEntries(bindingTarget, value, onEntry, sourceCodeInfo) {
+        if (bindingTarget === null) {
+            return;
+        }
         if (bindingTarget.type === 'object') {
             Object.entries(bindingTarget.elements).forEach(function (_a) {
                 var _b;
@@ -4425,6 +4428,9 @@ var Playground = (function (exports) {
     }
     function getNamesFromBindingTarget(target, names) {
         var e_1, _a, e_2, _b;
+        if (target === null) {
+            return;
+        }
         if (target.type === 'array') {
             try {
                 for (var _c = __values(target.elements), _d = _c.next(); !_d.done; _d = _c.next()) {
@@ -5383,7 +5389,7 @@ var Playground = (function (exports) {
                 var unresolvedSymbols_1 = new Set();
                 var name_1 = astNode.name, sourceCodeInfo = astNode.sourceCodeInfo;
                 if (typeof name_1 === 'string') {
-                    var lookUpResult = contextStack.lookUp({ type: 'Symbol', value: name_1, sourceCodeInfo: sourceCodeInfo, params: [], name: undefined });
+                    var lookUpResult = contextStack.lookUp({ type: 'Symbol', value: name_1, sourceCodeInfo: sourceCodeInfo });
                     if (lookUpResult === null)
                         unresolvedSymbols_1.add(name_1);
                 }
@@ -6430,8 +6436,6 @@ var Playground = (function (exports) {
                         type: 'String',
                         value: symbolToken[1],
                         sourceCodeInfo: symbolToken[2],
-                        params: [],
-                        name: undefined,
                     };
                     operand = createAccessorNode(operand, stringNode, token[2]);
                     this.advance();
@@ -6481,8 +6485,6 @@ var Playground = (function (exports) {
                         type: 'Symbol',
                         value: operatorName,
                         sourceCodeInfo: token[2],
-                        params: [],
-                        name: undefined,
                     };
                 }
                 if (operatorName === '->') {
@@ -6537,8 +6539,6 @@ var Playground = (function (exports) {
                     type: 'String',
                     value: key.value,
                     sourceCodeInfo: key.sourceCodeInfo,
-                    params: [],
-                    name: undefined,
                 });
                 assertOperatorToken(this.peek(), ':=');
                 this.advance();
@@ -6811,12 +6811,21 @@ var Playground = (function (exports) {
             if (isLBracketToken(firstToken)) {
                 this.advance();
                 var elements = [];
-                while (!isRBracketToken(this.peek())) {
+                var token = this.peek();
+                while (!isRBracketToken(token)) {
+                    if (isOperatorToken(token, ',')) {
+                        elements.push(null);
+                        this.advance();
+                        token = this.peek();
+                        continue;
+                    }
                     elements.push(this.parseBindingTarget());
-                    if (!isRBracketToken(this.peek())) {
-                        assertOperatorToken(this.peek(), ',');
+                    token = this.peek();
+                    if (!isRBracketToken(token)) {
+                        assertOperatorToken(token, ',');
                         this.advance();
                     }
+                    token = this.peek();
                 }
                 this.advance();
                 return {
@@ -6882,9 +6891,7 @@ var Playground = (function (exports) {
                 bindingNodes: [{
                         type: 'Binding',
                         target: target,
-                        name: undefined,
                         value: value,
-                        params: [],
                         sourceCodeInfo: token[2],
                     }],
                 sourceCodeInfo: token[2],
@@ -6925,9 +6932,7 @@ var Playground = (function (exports) {
                 bindingNodes.push({
                     type: 'Binding',
                     target: target,
-                    name: undefined,
                     value: value,
-                    params: [],
                     sourceCodeInfo: token[2],
                 });
                 if (isOperatorToken(this.peek(), ',')) {
@@ -7156,9 +7161,7 @@ var Playground = (function (exports) {
                     name: name,
                     sourceCodeInfo: firstToken[2],
                 },
-                name: undefined,
                 value: value,
-                params: [],
                 sourceCodeInfo: firstToken[2],
             };
             return node;
@@ -7415,8 +7418,6 @@ var Playground = (function (exports) {
                 return {
                     type: 'Symbol',
                     value: token[1],
-                    params: [],
-                    name: undefined,
                     sourceCodeInfo: token[2],
                 };
             }
@@ -7434,8 +7435,6 @@ var Playground = (function (exports) {
                 return {
                     type: 'Symbol',
                     value: value,
-                    params: [],
-                    name: undefined,
                     sourceCodeInfo: token[2],
                 };
             }
@@ -7449,8 +7448,6 @@ var Playground = (function (exports) {
                     return {
                         type: 'Number',
                         value: numberReservedSymbolRecord[symbol],
-                        params: [],
-                        name: undefined,
                         sourceCodeInfo: token[2],
                     };
                 }
@@ -7458,8 +7455,6 @@ var Playground = (function (exports) {
             return {
                 type: 'ReservedSymbol',
                 value: token[1],
-                params: [],
-                name: undefined,
                 sourceCodeInfo: token[2],
             };
         };
@@ -7472,8 +7467,6 @@ var Playground = (function (exports) {
             return {
                 type: 'Number',
                 value: negative ? -Number(numberString) : Number(numberString),
-                params: [],
-                name: undefined,
                 sourceCodeInfo: token[2],
             };
         };
@@ -7510,8 +7503,6 @@ var Playground = (function (exports) {
             return {
                 type: 'String',
                 value: value,
-                params: [],
-                name: undefined,
                 sourceCodeInfo: token[2],
             };
         };
@@ -7524,15 +7515,11 @@ var Playground = (function (exports) {
             var stringNode = {
                 type: 'String',
                 value: regexpString,
-                params: [],
-                name: undefined,
                 sourceCodeInfo: token[2],
             };
             var optionsNode = {
                 type: 'String',
                 value: optionsString,
-                params: [],
-                name: undefined,
                 sourceCodeInfo: token[2],
             };
             var node = {
