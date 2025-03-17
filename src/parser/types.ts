@@ -163,7 +163,7 @@ interface NormalExpressionNodeExpression extends CommonNormalExpressionNode {
 
 export type NormalExpressionNode = NormalExpressionNodeWithName | NormalExpressionNodeExpression
 
-export type BindingTarget = { sourceCodeInfo?: SourceCodeInfo | undefined } & ({
+export type BindingTarget = { sourceCodeInfo?: SourceCodeInfo | undefined, default?: AstNode } & ({
   type: 'symbol'
   name: string
 } | {
