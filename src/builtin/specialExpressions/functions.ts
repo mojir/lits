@@ -9,7 +9,6 @@ import type {
   LitsFunction,
   SymbolNode,
 } from '../../parser/types'
-import { tokenSourceCodeInfo } from '../../tokenizer/token'
 import { addToSet } from '../../utils'
 import { FUNCTION_SYMBOL } from '../../utils/symbols'
 import { bindingNodeEntries, getAllBindingTargetNames } from '../bindingNode'
@@ -37,13 +36,13 @@ export const functionSpecialExpression: BuiltinSpecialExpression<null, FunctionN
   evaluate: (node, contextStack, { builtin, evaluateAstNode }) => {
     const name = node.functionName.value
 
-    assertNameNotDefined(name, contextStack, builtin, tokenSourceCodeInfo(node.token))
+    assertNameNotDefined(name, contextStack, builtin, node.sourceCodeInfo)
 
     const evaluatedFunctionOverloades = evaluateFunction(node, contextStack, evaluateAstNode)
 
     const litsFunction: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
-      sourceCodeInfo: tokenSourceCodeInfo(node.token),
+      sourceCodeInfo: node.sourceCodeInfo,
       functionType: 'UserDefined',
       name,
       evaluatedfunction: evaluatedFunctionOverloades,
@@ -65,13 +64,13 @@ export const defnSpecialExpression: BuiltinSpecialExpression<null, DefnNode> = {
   evaluate: (node, contextStack, { builtin, evaluateAstNode }) => {
     const name = node.functionName.value
 
-    assertNameNotDefined(name, contextStack, builtin, tokenSourceCodeInfo(node.token))
+    assertNameNotDefined(name, contextStack, builtin, node.sourceCodeInfo)
 
     const evaluatedFunctionOverloades = evaluateFunction(node, contextStack, evaluateAstNode)
 
     const litsFunction: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
-      sourceCodeInfo: tokenSourceCodeInfo(node.token),
+      sourceCodeInfo: node.sourceCodeInfo,
       functionType: 'UserDefined',
       name,
       evaluatedfunction: evaluatedFunctionOverloades,
@@ -95,7 +94,7 @@ export const fnSpecialExpression: BuiltinSpecialExpression<LitsFunction, FnNode>
 
     const litsFunction: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
-      sourceCodeInfo: tokenSourceCodeInfo(node.token),
+      sourceCodeInfo: node.sourceCodeInfo,
       functionType: 'UserDefined',
       name: undefined,
       evaluatedfunction: evaluatedFunctionOverloades,

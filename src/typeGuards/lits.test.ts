@@ -29,7 +29,7 @@ describe('lits type guards', () => {
     const node: AstNode = {
       type: 'Symbol',
       value: 'test',
-      token: ['Symbol', 'X'],
+      sourceCodeInfo: undefined,
       params: [],
       name: undefined,
     }

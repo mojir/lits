@@ -1,6 +1,6 @@
 import type { Any } from '../interface'
 import type { BindingNode, BindingTarget } from '../parser/types'
-import type { Token } from '../tokenizer/token'
+import type { SourceCodeInfo } from '../tokenizer/token'
 import { assertUnknownRecord } from '../typeGuards'
 import { assertArray } from '../typeGuards/array'
 import { assertAny } from '../typeGuards/lits'
@@ -10,30 +10,30 @@ export function bindingNodeEntries(
   value: Any,
   onEntry: (name: string, value: Any) => void,
 ): void {
-  const { target, token } = bindingNode
-  bindingTargetEntries(target, value, onEntry, token)
+  const { target, sourceCodeInfo } = bindingNode
+  bindingTargetEntries(target, value, onEntry, sourceCodeInfo)
 }
 
 export function bindingTargetEntries(
   bindingTarget: BindingTarget,
   value: Any,
   onEntry: (name: string, value: Any) => void,
-  token: Token | undefined,
+  sourceCodeInfo: SourceCodeInfo | undefined,
 ): void {
   if (bindingTarget.type === 'object') {
     Object.entries(bindingTarget.elements).forEach(([key, element]) => {
-      assertUnknownRecord(value, token?.[2])
+      assertUnknownRecord(value, sourceCodeInfo)
       const val = value[key] ?? null
-      assertAny(val, token?.[2])
-      bindingTargetEntries(element, val, onEntry, token)
+      assertAny(val, sourceCodeInfo)
+      bindingTargetEntries(element, val, onEntry, sourceCodeInfo)
     })
   }
   else if (bindingTarget.type === 'array') {
     bindingTarget.elements.forEach((element, index) => {
-      assertArray(value, token?.[2])
+      assertArray(value, sourceCodeInfo)
       const val = value[index] ?? null
-      assertAny(val, token?.[2])
-      bindingTargetEntries(element, val, onEntry, token)
+      assertAny(val, sourceCodeInfo)
+      bindingTargetEntries(element, val, onEntry, sourceCodeInfo)
     })
   }
   else {

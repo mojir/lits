@@ -112,7 +112,7 @@ export interface GenericNode {
   type: AstNodeType // type
   params: AstNode[] // params
   name: string | undefined // name
-  token: Token | undefined
+  sourceCodeInfo?: SourceCodeInfo | undefined
 }
 
 export type ExpressionNode = NormalExpressionNode | SpecialExpressionNode | NumberNode | StringNode
@@ -163,7 +163,7 @@ interface NormalExpressionNodeExpression extends CommonNormalExpressionNode {
 
 export type NormalExpressionNode = NormalExpressionNodeWithName | NormalExpressionNodeExpression
 
-export type BindingTarget = { token: Token | undefined } & ({
+export type BindingTarget = { sourceCodeInfo?: SourceCodeInfo | undefined } & ({
   type: 'symbol'
   name: string
   alias?: string

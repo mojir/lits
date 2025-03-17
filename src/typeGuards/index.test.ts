@@ -15,7 +15,7 @@ function toNormalExpressionNode(arr: number[]): NormalExpressionNode {
   const astNodes: AstNode[] = arr.map(n => ({
     type: 'Number',
     value: n,
-    token: undefined,
+    sourceCodeInfo: undefined,
     params: [],
     name: undefined,
   }))
@@ -23,7 +23,7 @@ function toNormalExpressionNode(arr: number[]): NormalExpressionNode {
     name: 'let',
     params: astNodes,
     type: 'NormalExpression',
-    token: ['Symbol', 'X'],
+    sourceCodeInfo: undefined,
   }
 }
 

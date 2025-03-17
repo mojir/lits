@@ -75,18 +75,6 @@ export interface SourceCodeInfo {
   filePath?: string
 }
 
-export function tokenSourceCodeInfo(token?: Token): SourceCodeInfo | undefined {
-  return token ? token[2] : undefined
-}
-
-export function hasTokenSourceCodeInfo(token: Token): boolean {
-  return !!token[2]
-}
-
-export function addTokenSourceCodeInfo(token: Token, sourceCodeInfo: SourceCodeInfo): void {
-  token[2] = sourceCodeInfo
-}
-
 export function isSymbolToken<T extends string>(token: Token, symbolName?: T): token is SymbolToken<T> {
   if (token?.[0] !== 'Symbol') {
     return false
@@ -164,7 +152,7 @@ export function isOperatorToken<T extends SymbolicOperator>(token: Token, operat
 export function assertOperatorToken<T extends SymbolicOperator>(token: Token, operatorName?: T): asserts token is OperatorToken<T> {
   if (!isOperatorToken(token, operatorName)) {
     if (operatorName) {
-      throw new LitsError(`Unexpected token: ${token}, expected operator ${operatorName}`, tokenSourceCodeInfo(token))
+      throw new LitsError(`Unexpected token: ${token}, expected operator ${operatorName}`, token[2])
     }
     throwUnexpectedToken('Operator', operatorName, token)
   }
@@ -332,5 +320,5 @@ export function asA_BinaryOperatorToken(token: Token): OperatorToken<SymbolicBin
 
 function throwUnexpectedToken(expected: TokenType, expectedValue: string | undefined, actual: Token): never {
   const actualOutput = `${actual[0]} '${actual[1]}'`
-  throw new LitsError(`Unexpected token: ${actualOutput}, expected ${expected}${expectedValue ? ` '${expectedValue}'` : ''}`, tokenSourceCodeInfo(actual))
+  throw new LitsError(`Unexpected token: ${actualOutput}, expected ${expected}${expectedValue ? ` '${expectedValue}'` : ''}`, actual[2])
 }

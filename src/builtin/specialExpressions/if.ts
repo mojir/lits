@@ -1,6 +1,5 @@
 import type { Any } from '../../interface'
 import type { CommonSpecialExpressionNode } from '../../parser/types'
-import { tokenSourceCodeInfo } from '../../tokenizer/token'
 import { asAstNode } from '../../typeGuards/astNode'
 import type { BuiltinSpecialExpression } from '../interface'
 
@@ -9,7 +8,7 @@ export interface IfNode extends CommonSpecialExpressionNode<'if'> {}
 export const ifSpecialExpression: BuiltinSpecialExpression<Any, IfNode> = {
   paramCount: { min: 2, max: 3 },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
-    const sourceCodeInfo = tokenSourceCodeInfo(node.token)
+    const sourceCodeInfo = node.sourceCodeInfo
 
     const [conditionNode, trueNode, falseNode] = node.params
     if (evaluateAstNode(asAstNode(conditionNode, sourceCodeInfo), contextStack)) {

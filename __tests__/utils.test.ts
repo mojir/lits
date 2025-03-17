@@ -112,7 +112,7 @@ describe('utils', () => {
     const n: SymbolNode = {
       type: 'Symbol',
       value: 'Foo',
-      token: undefined,
+      sourceCodeInfo: undefined,
       params: [],
       name: undefined,
     }

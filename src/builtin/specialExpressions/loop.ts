@@ -2,7 +2,6 @@ import { LitsError, RecurSignal } from '../../errors'
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
 import type { BindingNode, CommonSpecialExpressionNode } from '../../parser/types'
-import { tokenSourceCodeInfo } from '../../tokenizer/token'
 import { asNonUndefined } from '../../typeGuards'
 import { asAny } from '../../typeGuards/lits'
 import { joinSets } from '../../utils'
@@ -17,7 +16,7 @@ export interface LoopNode extends CommonSpecialExpressionNode<'loop'> {
 export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
   paramCount: {},
   evaluate: (node, contextStack, { evaluateAstNode }) => {
-    const sourceCodeInfo = tokenSourceCodeInfo(node.token)
+    const sourceCodeInfo = node.sourceCodeInfo
     const bindingContext: Context = node.bindingNodes.reduce((result: Context, binding) => {
       const val = evaluateAstNode(binding.value, contextStack)
       bindingNodeEntries(binding, val, (name, value) => {

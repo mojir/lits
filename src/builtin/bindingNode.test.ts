@@ -7,7 +7,7 @@ describe('getAllBindingTargetNames', () => {
     const bindingTarget: BindingTarget = {
       type: 'object',
       elements: {},
-      token: undefined,
+      sourceCodeInfo: undefined,
     }
 
     const result = getAllBindingTargetNames(bindingTarget)
@@ -18,7 +18,7 @@ describe('getAllBindingTargetNames', () => {
     const bindingTarget: BindingTarget = {
       type: 'symbol',
       name: 'x',
-      token: undefined,
+      sourceCodeInfo: undefined,
     }
 
     const result = getAllBindingTargetNames(bindingTarget)
@@ -29,10 +29,10 @@ describe('getAllBindingTargetNames', () => {
     const bindingTarget: BindingTarget = {
       type: 'object',
       elements: {
-        a: { type: 'symbol', name: 'a', token: undefined },
-        b: { type: 'symbol', name: 'b', token: undefined },
+        a: { type: 'symbol', name: 'a', sourceCodeInfo: undefined },
+        b: { type: 'symbol', name: 'b', sourceCodeInfo: undefined },
       },
-      token: undefined,
+      sourceCodeInfo: undefined,
     }
     const result = getAllBindingTargetNames(bindingTarget)
     expect(result).toEqual(['a', 'b'])
@@ -45,14 +45,14 @@ describe('getAllBindingTargetNames', () => {
         a: {
           type: 'object',
           elements: {
-            x: { type: 'symbol', name: 'x', token: undefined },
-            y: { type: 'symbol', name: 'y', token: undefined },
+            x: { type: 'symbol', name: 'x', sourceCodeInfo: undefined },
+            y: { type: 'symbol', name: 'y', sourceCodeInfo: undefined },
           },
-          token: undefined,
+          sourceCodeInfo: undefined,
         },
-        z: { type: 'symbol', name: 'z', token: undefined },
+        z: { type: 'symbol', name: 'z', sourceCodeInfo: undefined },
       },
-      token: undefined,
+      sourceCodeInfo: undefined,
     }
 
     const result = getAllBindingTargetNames(bindingTarget)
@@ -64,7 +64,7 @@ describe('getAllBindingTargetNames', () => {
       type: 'symbol',
       name: 'originalName',
       alias: 'aliasName',
-      token: undefined,
+      sourceCodeInfo: undefined,
     }
 
     const result = getAllBindingTargetNames(bindingTarget)
@@ -75,10 +75,10 @@ describe('getAllBindingTargetNames', () => {
     const bindingTarget: BindingTarget = {
       type: 'array',
       elements: [
-        { type: 'symbol', name: 'a', token: undefined },
-        { type: 'symbol', name: 'b', token: undefined },
+        { type: 'symbol', name: 'a', sourceCodeInfo: undefined },
+        { type: 'symbol', name: 'b', sourceCodeInfo: undefined },
       ],
-      token: undefined,
+      sourceCodeInfo: undefined,
     }
 
     const result = getAllBindingTargetNames(bindingTarget)
@@ -92,20 +92,20 @@ describe('getAllBindingTargetNames', () => {
         a: {
           type: 'array',
           elements: [
-            { type: 'symbol', name: 'x', token: undefined },
+            { type: 'symbol', name: 'x', sourceCodeInfo: undefined },
             {
               type: 'object',
               elements: {
-                y: { type: 'symbol', name: 'y', token: undefined },
-                z: { type: 'symbol', name: 'z', token: undefined },
+                y: { type: 'symbol', name: 'y', sourceCodeInfo: undefined },
+                z: { type: 'symbol', name: 'z', sourceCodeInfo: undefined },
               },
-              token: undefined,
+              sourceCodeInfo: undefined,
             },
           ],
-          token: undefined,
+          sourceCodeInfo: undefined,
         },
       },
-      token: undefined,
+      sourceCodeInfo: undefined,
     }
 
     const result = getAllBindingTargetNames(bindingTarget)

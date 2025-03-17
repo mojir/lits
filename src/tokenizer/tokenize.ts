@@ -2,7 +2,6 @@ import { LitsError } from '../errors'
 import type { FilePathParams } from '../Lits/Lits'
 import { tokenizers } from './tokenizers'
 import type { SourceCodeInfo, Token, TokenDescriptor } from './token'
-import { addTokenSourceCodeInfo } from './token'
 
 export interface TokenStream {
   tokens: Token[]
@@ -34,7 +33,7 @@ export function tokenize(input: string, debug: boolean, filePath: FilePathParams
     position += count
     if (token) {
       if (sourceCodeInfo) {
-        addTokenSourceCodeInfo(token, sourceCodeInfo)
+        token[2] = sourceCodeInfo
       }
 
       tokenStream.tokens.push(token)

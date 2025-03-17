@@ -747,213 +747,12 @@ var Playground = (function (exports) {
         return new LitsError("Expected ".concat(typeName, ", got ").concat(valueToString(value), "."), getSourceCodeInfo(value, sourceCodeInfo));
     }
 
-    var binaryOperators = [
-        '**', // exponentiation
-        '*', // multiplication
-        '/', // division
-        '%', // remainder
-        '+', // addition
-        '-', // subtraction
-        '<<', // left shift
-        '>>', // signed right shift
-        '>>>', // unsigned right shift
-        '++', // string concatenation
-        '<', // less than
-        '<=', // less than or equal
-        '≤', // less than or equal
-        '>', // greater than
-        '>=', // greater than or equal
-        '≥', // greater than or equal
-        '=', // equal
-        '!=', // not equal
-        '≠', // not equal
-        '&', // bitwise AND
-        '^', // bitwise XOR
-        '|', // bitwise OR
-        '&&', // logical AND
-        '||', // logical OR
-        '??', // nullish coalescing
-    ];
-    var otherOperators = [
-        '->', // lambda
-        '...', // rest
-        '.', // property accessor
-        ',', // item separator
-        ':=', // property assignment
-        ';', // statement terminator
-    ];
-    var symbolicOperators = __spreadArray(__spreadArray([], __read(binaryOperators), false), __read(otherOperators), false);
-    var nonFunctionOperators = [
-        '??',
-        '&&',
-        '||',
-        'comment',
-        'cond',
-        'def',
-        'defined?',
-        'defn',
-        'do',
-        'doseq',
-        'fn',
-        'if',
-        'let',
-        'loop',
-        'recur',
-        'throw',
-        'try',
-        'unless',
-        'while',
-    ];
-    var nonFunctionOperatorSet = new Set(nonFunctionOperators);
-    function isFunctionOperator(operator) {
-        return !nonFunctionOperatorSet.has(operator);
-    }
-    var binaryOperatorSet = new Set(binaryOperators);
-    function isBinaryOperator(operator) {
-        return binaryOperatorSet.has(operator);
-    }
-    var symbolicOperatorSet = new Set(symbolicOperators);
-    function isSymbolicOperator(operator) {
-        return symbolicOperatorSet.has(operator);
-    }
-
-    function tokenSourceCodeInfo(token) {
-        return token ? token[2] : undefined;
-    }
-    function hasTokenSourceCodeInfo(token) {
-        return !!token[2];
-    }
-    function addTokenSourceCodeInfo(token, sourceCodeInfo) {
-        token[2] = sourceCodeInfo;
-    }
-    function isSymbolToken(token, symbolName) {
-        if ((token === null || token === void 0 ? void 0 : token[0]) !== 'Symbol') {
-            return false;
-        }
-        if (symbolName && token[1] !== symbolName) {
-            return false;
-        }
-        return true;
-    }
-    function assertSymbolToken(token, symbolName) {
-        if (!isSymbolToken(token, symbolName)) {
-            throwUnexpectedToken('Symbol', undefined, token);
-        }
-    }
-    function asSymbolToken(token, symbolName) {
-        assertSymbolToken(token, symbolName);
-        return token;
-    }
-    function isReservedSymbolToken(token, symbolName) {
-        if ((token === null || token === void 0 ? void 0 : token[0]) !== 'ReservedSymbol') {
-            return false;
-        }
-        if (symbolName && token[1] !== symbolName) {
-            return false;
-        }
-        return true;
-    }
-    function assertReservedSymbolToken(token, symbolName) {
-        if (!isReservedSymbolToken(token, symbolName)) {
-            throwUnexpectedToken('ReservedSymbol', symbolName, token);
-        }
-    }
-    function isSingleLineCommentToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'SingleLineComment';
-    }
-    function isMultiLineCommentToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'MultiLineComment';
-    }
-    function isOperatorToken(token, operatorName) {
-        if ((token === null || token === void 0 ? void 0 : token[0]) !== 'Operator') {
-            return false;
-        }
-        if (operatorName && token[1] !== operatorName) {
-            return false;
-        }
-        return true;
-    }
-    function assertOperatorToken(token, operatorName) {
-        if (!isOperatorToken(token, operatorName)) {
-            if (operatorName) {
-                throw new LitsError("Unexpected token: ".concat(token, ", expected operator ").concat(operatorName), tokenSourceCodeInfo(token));
-            }
-            throwUnexpectedToken('Operator', operatorName, token);
-        }
-    }
-    function isWhitespaceToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'Whitespace';
-    }
-    function isLParenToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'LParen';
-    }
-    function assertLParenToken(token) {
-        if (!isLParenToken(token)) {
-            throwUnexpectedToken('LParen', undefined, token);
-        }
-    }
-    function isRParenToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'RParen';
-    }
-    function assertRParenToken(token) {
-        if (!isRParenToken(token)) {
-            throwUnexpectedToken('RParen', undefined, token);
-        }
-    }
-    function isLBracketToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'LBracket';
-    }
-    function assertLBracketToken(token) {
-        if (!isLBracketToken(token)) {
-            throwUnexpectedToken('LBracket', undefined, token);
-        }
-    }
-    function asLBracketToken(token) {
-        assertLBracketToken(token);
-        return token;
-    }
-    function isRBracketToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'RBracket';
-    }
-    function assertRBracketToken(token) {
-        if (!isRBracketToken(token)) {
-            throwUnexpectedToken('RBracket', undefined, token);
-        }
-    }
-    function isLBraceToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'LBrace';
-    }
-    function assertLBraceToken(token) {
-        if (!isLBraceToken(token)) {
-            throwUnexpectedToken('LBrace', undefined, token);
-        }
-    }
-    function asLBraceToken(token) {
-        assertLBraceToken(token);
-        return token;
-    }
-    function isRBraceToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'RBrace';
-    }
-    function assertRBraceToken(token) {
-        if (!isRBraceToken(token)) {
-            throwUnexpectedToken('RBrace', undefined, token);
-        }
-    }
-    function isA_BinaryOperatorToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'Operator' && isBinaryOperator(token[1]);
-    }
-    function throwUnexpectedToken(expected, expectedValue, actual) {
-        var actualOutput = "".concat(actual[0], " '").concat(actual[1], "'");
-        throw new LitsError("Unexpected token: ".concat(actualOutput, ", expected ").concat(expected).concat(expectedValue ? " '".concat(expectedValue, "'") : ''), tokenSourceCodeInfo(actual));
-    }
-
     function assertNumberOfParams(count, node) {
         assertCount({
             count: count,
             length: node.params.length,
             name: node.name,
-            sourceCodeInfo: tokenSourceCodeInfo(node.token),
+            sourceCodeInfo: node.sourceCodeInfo,
         });
     }
     function isNonUndefined(value) {
@@ -4545,19 +4344,17 @@ var Playground = (function (exports) {
         paramCount: 2,
         evaluate: function (node, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode, builtin = _a.builtin;
-            var sourceCodeInfo = tokenSourceCodeInfo(node.token);
             var name = node.params[0].value;
-            assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo);
+            assertNameNotDefined(name, contextStack, builtin, node.sourceCodeInfo);
             contextStack.exportValue(name, evaluateAstNode(node.params[1], contextStack));
             return null;
         },
         getUndefinedSymbols: function (node, contextStack, _a) {
             var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin;
-            var sourceCodeInfo = tokenSourceCodeInfo(node.token);
             var subNode = asAstNode(node.params[1]);
             var result = getUndefinedSymbols([subNode], contextStack, builtin);
             var name = asSymbolNode(node.params[0]).value;
-            assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo);
+            assertNameNotDefined(name, contextStack, builtin, node.sourceCodeInfo);
             contextStack.exportValue(name, true);
             return result;
         },
@@ -4593,28 +4390,28 @@ var Playground = (function (exports) {
     };
 
     function bindingNodeEntries(bindingNode, value, onEntry) {
-        var target = bindingNode.target, token = bindingNode.token;
-        bindingTargetEntries(target, value, onEntry, token);
+        var target = bindingNode.target, sourceCodeInfo = bindingNode.sourceCodeInfo;
+        bindingTargetEntries(target, value, onEntry, sourceCodeInfo);
     }
-    function bindingTargetEntries(bindingTarget, value, onEntry, token) {
+    function bindingTargetEntries(bindingTarget, value, onEntry, sourceCodeInfo) {
         var _a;
         if (bindingTarget.type === 'object') {
             Object.entries(bindingTarget.elements).forEach(function (_a) {
                 var _b;
                 var _c = __read(_a, 2), key = _c[0], element = _c[1];
-                assertUnknownRecord(value, token === null || token === void 0 ? void 0 : token[2]);
+                assertUnknownRecord(value, sourceCodeInfo);
                 var val = (_b = value[key]) !== null && _b !== void 0 ? _b : null;
-                assertAny(val, token === null || token === void 0 ? void 0 : token[2]);
-                bindingTargetEntries(element, val, onEntry, token);
+                assertAny(val, sourceCodeInfo);
+                bindingTargetEntries(element, val, onEntry, sourceCodeInfo);
             });
         }
         else if (bindingTarget.type === 'array') {
             bindingTarget.elements.forEach(function (element, index) {
                 var _a;
-                assertArray(value, token === null || token === void 0 ? void 0 : token[2]);
+                assertArray(value, sourceCodeInfo);
                 var val = (_a = value[index]) !== null && _a !== void 0 ? _a : null;
-                assertAny(val, token === null || token === void 0 ? void 0 : token[2]);
-                bindingTargetEntries(element, val, onEntry, token);
+                assertAny(val, sourceCodeInfo);
+                bindingTargetEntries(element, val, onEntry, sourceCodeInfo);
             });
         }
         else {
@@ -4670,11 +4467,11 @@ var Playground = (function (exports) {
             var _b;
             var builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
             var name = node.functionName.value;
-            assertNameNotDefined(name, contextStack, builtin, tokenSourceCodeInfo(node.token));
+            assertNameNotDefined(name, contextStack, builtin, node.sourceCodeInfo);
             var evaluatedFunctionOverloades = evaluateFunction(node, contextStack, evaluateAstNode);
             var litsFunction = (_b = {},
                 _b[FUNCTION_SYMBOL] = true,
-                _b.sourceCodeInfo = tokenSourceCodeInfo(node.token),
+                _b.sourceCodeInfo = node.sourceCodeInfo,
                 _b.functionType = 'UserDefined',
                 _b.name = name,
                 _b.evaluatedfunction = evaluatedFunctionOverloades,
@@ -4696,11 +4493,11 @@ var Playground = (function (exports) {
             var _b;
             var builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
             var name = node.functionName.value;
-            assertNameNotDefined(name, contextStack, builtin, tokenSourceCodeInfo(node.token));
+            assertNameNotDefined(name, contextStack, builtin, node.sourceCodeInfo);
             var evaluatedFunctionOverloades = evaluateFunction(node, contextStack, evaluateAstNode);
             var litsFunction = (_b = {},
                 _b[FUNCTION_SYMBOL] = true,
-                _b.sourceCodeInfo = tokenSourceCodeInfo(node.token),
+                _b.sourceCodeInfo = node.sourceCodeInfo,
                 _b.functionType = 'UserDefined',
                 _b.name = name,
                 _b.evaluatedfunction = evaluatedFunctionOverloades,
@@ -4724,7 +4521,7 @@ var Playground = (function (exports) {
             var evaluatedFunctionOverloades = evaluateFunction(node, contextStack, evaluateAstNode);
             var litsFunction = (_b = {},
                 _b[FUNCTION_SYMBOL] = true,
-                _b.sourceCodeInfo = tokenSourceCodeInfo(node.token),
+                _b.sourceCodeInfo = node.sourceCodeInfo,
                 _b.functionType = 'UserDefined',
                 _b.name = undefined,
                 _b.evaluatedfunction = evaluatedFunctionOverloades,
@@ -4788,7 +4585,7 @@ var Playground = (function (exports) {
         paramCount: { min: 2, max: 3 },
         evaluate: function (node, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode;
-            var sourceCodeInfo = tokenSourceCodeInfo(node.token);
+            var sourceCodeInfo = node.sourceCodeInfo;
             var _b = __read(node.params, 3), conditionNode = _b[0], trueNode = _b[1], falseNode = _b[2];
             if (evaluateAstNode(asAstNode(conditionNode, sourceCodeInfo), contextStack)) {
                 return evaluateAstNode(asAstNode(trueNode, sourceCodeInfo), contextStack);
@@ -4810,7 +4607,7 @@ var Playground = (function (exports) {
         paramCount: { min: 2, max: 3 },
         evaluate: function (node, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode;
-            var sourceCodeInfo = tokenSourceCodeInfo(node.token);
+            var sourceCodeInfo = node.sourceCodeInfo;
             var _b = __read(node.params, 3), conditionNode = _b[0], trueNode = _b[1], falseNode = _b[2];
             if (!evaluateAstNode(asAstNode(conditionNode, sourceCodeInfo), contextStack)) {
                 return evaluateAstNode(asAstNode(trueNode, sourceCodeInfo), contextStack);
@@ -4878,7 +4675,7 @@ var Playground = (function (exports) {
         paramCount: {},
         evaluate: function (node, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode;
-            var sourceCodeInfo = tokenSourceCodeInfo(node.token);
+            var sourceCodeInfo = node.sourceCodeInfo;
             var bindingContext = node.bindingNodes.reduce(function (result, binding) {
                 var val = evaluateAstNode(binding.value, contextStack);
                 bindingNodeEntries(binding, val, function (name, value) {
@@ -4964,7 +4761,7 @@ var Playground = (function (exports) {
         }
     }
     function evaluateLoop(returnResult, node, contextStack, evaluateAstNode) {
-        var sourceCodeInfo = tokenSourceCodeInfo(node.token);
+        var sourceCodeInfo = node.sourceCodeInfo;
         var _a = node, loopBindings = _a.l, params = _a.params;
         var result = [];
         var bindingIndices = loopBindings.map(function () { return 0; });
@@ -5139,7 +4936,7 @@ var Playground = (function (exports) {
                 if (contextStack.lookUp(firstNode) === null)
                     return secondNode ? evaluateAstNode(secondNode, contextStack) : null;
             }
-            assertAny(firstNode, tokenSourceCodeInfo(node.token));
+            assertAny(firstNode, node.sourceCodeInfo);
             var firstResult = evaluateAstNode(firstNode, contextStack);
             return firstResult !== null && firstResult !== void 0 ? firstResult : (secondNode ? evaluateAstNode(secondNode, contextStack) : null);
         },
@@ -5166,10 +4963,10 @@ var Playground = (function (exports) {
         paramCount: 1,
         evaluate: function (node, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode;
-            var message = asString(evaluateAstNode(node.params[0], contextStack), tokenSourceCodeInfo(node.token), {
+            var message = asString(evaluateAstNode(node.params[0], contextStack), node.sourceCodeInfo, {
                 nonEmpty: true,
             });
-            throw new UserDefinedError(message, tokenSourceCodeInfo(node.token));
+            throw new UserDefinedError(message, node.sourceCodeInfo);
         },
         getUndefinedSymbols: function (node, contextStack, _a) {
             var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin;
@@ -5189,7 +4986,7 @@ var Playground = (function (exports) {
             catch (error) {
                 var newContext = errorNode
                     ? (_b = {},
-                        _b[errorNode.value] = { value: asAny(error, tokenSourceCodeInfo(node.token)) },
+                        _b[errorNode.value] = { value: asAny(error, node.sourceCodeInfo) },
                         _b) : {};
                 return evaluateAstNode(catchExpression, contextStack.create(newContext));
             }
@@ -5455,7 +5252,7 @@ var Playground = (function (exports) {
                 return evaluateSpecialExpression(node, contextStack);
             /* v8 ignore next 2 */
             default:
-                throw new LitsError("".concat(node.type, "-node cannot be evaluated"), tokenSourceCodeInfo(node.token));
+                throw new LitsError("".concat(node.type, "-node cannot be evaluated"), node.sourceCodeInfo);
         }
     }
     function evaluateNumber(node) {
@@ -5467,11 +5264,11 @@ var Playground = (function (exports) {
     function evaluateReservedName(node) {
         var reservedName = node.value;
         var value = reservedSymbolRecord[reservedName];
-        return asNonUndefined(value, tokenSourceCodeInfo(node.token));
+        return asNonUndefined(value, node.sourceCodeInfo);
     }
     function evaluateNormalExpression(node, contextStack) {
         var params = node.params.map(function (paramNode) { return evaluateAstNode(paramNode, contextStack); });
-        var sourceCodeInfo = tokenSourceCodeInfo(node.token);
+        var sourceCodeInfo = node.sourceCodeInfo;
         if (isNormalExpressionNodeWithName(node)) {
             var value = contextStack.getValue(node.name);
             if (value !== undefined)
@@ -5499,11 +5296,11 @@ var Playground = (function (exports) {
     function evaluateBuiltinNormalExpression(node, params, contextStack) {
         var normalExpression = builtin.normalExpressions[node.name];
         if (!normalExpression)
-            throw new UndefinedSymbolError(node.name, tokenSourceCodeInfo(node.token));
-        return normalExpression.evaluate(params, tokenSourceCodeInfo(node.token), contextStack, { executeFunction: executeFunction });
+            throw new UndefinedSymbolError(node.name, node.sourceCodeInfo);
+        return normalExpression.evaluate(params, node.sourceCodeInfo, contextStack, { executeFunction: executeFunction });
     }
     function evaluateSpecialExpression(node, contextStack) {
-        var specialExpression = asNonUndefined(builtin.specialExpressions[node.name], tokenSourceCodeInfo(node.token));
+        var specialExpression = asNonUndefined(builtin.specialExpressions[node.name], node.sourceCodeInfo);
         // eslint-disable-next-line ts/no-unsafe-argument
         return specialExpression.evaluate(node, contextStack, { evaluateAstNode: evaluateAstNode, builtin: builtin });
     }
@@ -5549,7 +5346,7 @@ var Playground = (function (exports) {
                     type: 'SpecialExpression',
                     name: 'do',
                     params: ast.body,
-                    token: undefined,
+                    sourceCodeInfo: undefined,
                 }];
         var unresolvedSymbols = new Set();
         try {
@@ -5585,9 +5382,9 @@ var Playground = (function (exports) {
                 return null;
             case 'NormalExpression': {
                 var unresolvedSymbols_1 = new Set();
-                var name_1 = astNode.name, debug = astNode.token;
+                var name_1 = astNode.name, sourceCodeInfo = astNode.sourceCodeInfo;
                 if (typeof name_1 === 'string') {
-                    var lookUpResult = contextStack.lookUp({ type: 'Symbol', value: name_1, token: debug, params: [], name: undefined });
+                    var lookUpResult = contextStack.lookUp({ type: 'Symbol', value: name_1, sourceCodeInfo: sourceCodeInfo, params: [], name: undefined });
                     if (lookUpResult === null)
                         unresolvedSymbols_1.add(name_1);
                 }
@@ -5607,7 +5404,7 @@ var Playground = (function (exports) {
                 return unresolvedSymbols_1;
             }
             case 'SpecialExpression': {
-                var specialExpression = asNonUndefined(builtin.specialExpressions[astNode.name], tokenSourceCodeInfo(astNode.token));
+                var specialExpression = asNonUndefined(builtin.specialExpressions[astNode.name], astNode.sourceCodeInfo);
                 // eslint-disable-next-line ts/no-unsafe-argument
                 return specialExpression.getUndefinedSymbols(astNode, contextStack, {
                     getUndefinedSymbols: getUndefinedSymbols,
@@ -5698,7 +5495,7 @@ var Playground = (function (exports) {
             var e_2, _a, _b;
             var _c, _d, _e;
             var value = node.value;
-            var sourceCodeInfo = tokenSourceCodeInfo(node.token);
+            var sourceCodeInfo = node.sourceCodeInfo;
             try {
                 for (var _f = __values(this.contexts), _g = _f.next(); !_g.done; _g = _f.next()) {
                     var context = _g.value;
@@ -5749,7 +5546,7 @@ var Playground = (function (exports) {
                 return lookUpResult.value;
             else if (isBuiltinFunction(lookUpResult))
                 return lookUpResult;
-            throw new UndefinedSymbolError(node.value, tokenSourceCodeInfo(node.token));
+            throw new UndefinedSymbolError(node.value, node.sourceCodeInfo);
         };
         return ContextStackImpl;
     }());
@@ -5786,6 +5583,76 @@ var Playground = (function (exports) {
                 }, {}),
         });
         return contextStack.create({});
+    }
+
+    var binaryOperators = [
+        '**', // exponentiation
+        '*', // multiplication
+        '/', // division
+        '%', // remainder
+        '+', // addition
+        '-', // subtraction
+        '<<', // left shift
+        '>>', // signed right shift
+        '>>>', // unsigned right shift
+        '++', // string concatenation
+        '<', // less than
+        '<=', // less than or equal
+        '≤', // less than or equal
+        '>', // greater than
+        '>=', // greater than or equal
+        '≥', // greater than or equal
+        '=', // equal
+        '!=', // not equal
+        '≠', // not equal
+        '&', // bitwise AND
+        '^', // bitwise XOR
+        '|', // bitwise OR
+        '&&', // logical AND
+        '||', // logical OR
+        '??', // nullish coalescing
+    ];
+    var otherOperators = [
+        '->', // lambda
+        '...', // rest
+        '.', // property accessor
+        ',', // item separator
+        ':=', // property assignment
+        ';', // statement terminator
+    ];
+    var symbolicOperators = __spreadArray(__spreadArray([], __read(binaryOperators), false), __read(otherOperators), false);
+    var nonFunctionOperators = [
+        '??',
+        '&&',
+        '||',
+        'comment',
+        'cond',
+        'def',
+        'defined?',
+        'defn',
+        'do',
+        'doseq',
+        'fn',
+        'if',
+        'let',
+        'loop',
+        'recur',
+        'throw',
+        'try',
+        'unless',
+        'while',
+    ];
+    var nonFunctionOperatorSet = new Set(nonFunctionOperators);
+    function isFunctionOperator(operator) {
+        return !nonFunctionOperatorSet.has(operator);
+    }
+    var binaryOperatorSet = new Set(binaryOperators);
+    function isBinaryOperator(operator) {
+        return binaryOperatorSet.has(operator);
+    }
+    var symbolicOperatorSet = new Set(symbolicOperators);
+    function isSymbolicOperator(operator) {
+        return symbolicOperatorSet.has(operator);
     }
 
     var illegalSymbolCharacters = [
@@ -6133,7 +6000,7 @@ var Playground = (function (exports) {
             position += count;
             if (token) {
                 if (sourceCodeInfo) {
-                    addTokenSourceCodeInfo(token, sourceCodeInfo);
+                    token[2] = sourceCodeInfo;
                 }
                 tokenStream.tokens.push(token);
             }
@@ -6180,6 +6047,128 @@ var Playground = (function (exports) {
             finally { if (e_1) throw e_1.error; }
         }
         return null;
+    }
+
+    function isSymbolToken(token, symbolName) {
+        if ((token === null || token === void 0 ? void 0 : token[0]) !== 'Symbol') {
+            return false;
+        }
+        if (symbolName && token[1] !== symbolName) {
+            return false;
+        }
+        return true;
+    }
+    function assertSymbolToken(token, symbolName) {
+        if (!isSymbolToken(token, symbolName)) {
+            throwUnexpectedToken('Symbol', undefined, token);
+        }
+    }
+    function asSymbolToken(token, symbolName) {
+        assertSymbolToken(token, symbolName);
+        return token;
+    }
+    function isReservedSymbolToken(token, symbolName) {
+        if ((token === null || token === void 0 ? void 0 : token[0]) !== 'ReservedSymbol') {
+            return false;
+        }
+        if (symbolName && token[1] !== symbolName) {
+            return false;
+        }
+        return true;
+    }
+    function assertReservedSymbolToken(token, symbolName) {
+        if (!isReservedSymbolToken(token, symbolName)) {
+            throwUnexpectedToken('ReservedSymbol', symbolName, token);
+        }
+    }
+    function isSingleLineCommentToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'SingleLineComment';
+    }
+    function isMultiLineCommentToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'MultiLineComment';
+    }
+    function isOperatorToken(token, operatorName) {
+        if ((token === null || token === void 0 ? void 0 : token[0]) !== 'Operator') {
+            return false;
+        }
+        if (operatorName && token[1] !== operatorName) {
+            return false;
+        }
+        return true;
+    }
+    function assertOperatorToken(token, operatorName) {
+        if (!isOperatorToken(token, operatorName)) {
+            if (operatorName) {
+                throw new LitsError("Unexpected token: ".concat(token, ", expected operator ").concat(operatorName), token[2]);
+            }
+            throwUnexpectedToken('Operator', operatorName, token);
+        }
+    }
+    function isWhitespaceToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'Whitespace';
+    }
+    function isLParenToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'LParen';
+    }
+    function assertLParenToken(token) {
+        if (!isLParenToken(token)) {
+            throwUnexpectedToken('LParen', undefined, token);
+        }
+    }
+    function isRParenToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'RParen';
+    }
+    function assertRParenToken(token) {
+        if (!isRParenToken(token)) {
+            throwUnexpectedToken('RParen', undefined, token);
+        }
+    }
+    function isLBracketToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'LBracket';
+    }
+    function assertLBracketToken(token) {
+        if (!isLBracketToken(token)) {
+            throwUnexpectedToken('LBracket', undefined, token);
+        }
+    }
+    function asLBracketToken(token) {
+        assertLBracketToken(token);
+        return token;
+    }
+    function isRBracketToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'RBracket';
+    }
+    function assertRBracketToken(token) {
+        if (!isRBracketToken(token)) {
+            throwUnexpectedToken('RBracket', undefined, token);
+        }
+    }
+    function isLBraceToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'LBrace';
+    }
+    function assertLBraceToken(token) {
+        if (!isLBraceToken(token)) {
+            throwUnexpectedToken('LBrace', undefined, token);
+        }
+    }
+    function asLBraceToken(token) {
+        assertLBraceToken(token);
+        return token;
+    }
+    function isRBraceToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'RBrace';
+    }
+    function assertRBraceToken(token) {
+        if (!isRBraceToken(token)) {
+            throwUnexpectedToken('RBrace', undefined, token);
+        }
+    }
+    function isA_BinaryOperatorToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'Operator' && isBinaryOperator(token[1]);
+    }
+    function throwUnexpectedToken(expected, expectedValue, actual) {
+        var actualOutput = "".concat(actual[0], " '").concat(actual[1], "'");
+        throw new LitsError("Unexpected token: ".concat(actualOutput, ", expected ").concat(expected).concat(expectedValue ? " '".concat(expectedValue, "'") : ''), actual[2]);
     }
 
     function minifyTokenStream(tokenStream, _a) {
@@ -6253,12 +6242,12 @@ var Playground = (function (exports) {
                 throw new Error("Unknown binary operator: ".concat(operatorSign));
         }
     }
-    function createNamedNormalExpressionNode(name, params, token) {
+    function createNamedNormalExpressionNode(name, params, sourceCodeInfo) {
         var node = {
             type: 'NormalExpression',
             name: name,
             params: params,
-            token: tokenSourceCodeInfo(token) && token,
+            sourceCodeInfo: sourceCodeInfo,
         };
         var builtinExpression = builtin.normalExpressions[node.name];
         if (builtinExpression) {
@@ -6266,16 +6255,16 @@ var Playground = (function (exports) {
         }
         return node;
     }
-    function createAccessorNode(left, right, token) {
+    function createAccessorNode(left, right, sourceCodeInfo) {
         // Unnamed normal expression
         return {
             type: 'NormalExpression',
             params: [left, right],
             name: undefined,
-            token: tokenSourceCodeInfo(token) && token,
+            sourceCodeInfo: sourceCodeInfo,
         };
     }
-    function fromBinaryOperatorToAstNode(operator, left, right, token) {
+    function fromBinaryOperatorToAstNode(operator, left, right, sourceCodeInfo) {
         var operatorName = operator[1];
         switch (operatorName) {
             case '**': // exponentiation
@@ -6300,7 +6289,7 @@ var Playground = (function (exports) {
             case '&':
             case '^':
             case '|':
-                return createNamedNormalExpressionNode(operatorName, [left, right], token);
+                return createNamedNormalExpressionNode(operatorName, [left, right], sourceCodeInfo);
             case '&&':
             case '||':
             case '??':
@@ -6308,7 +6297,7 @@ var Playground = (function (exports) {
                     type: 'SpecialExpression',
                     name: operatorName,
                     params: [left, right],
-                    token: tokenSourceCodeInfo(token) && token,
+                    sourceCodeInfo: sourceCodeInfo,
                 };
             /* v8 ignore next 10 */
             case '.':
@@ -6317,9 +6306,9 @@ var Playground = (function (exports) {
             case ',':
             case '->':
             case '...':
-                throw new LitsError("Unknown binary operator: ".concat(operatorName), tokenSourceCodeInfo(token));
+                throw new LitsError("Unknown binary operator: ".concat(operatorName), sourceCodeInfo);
             default:
-                throw new LitsError("Unknown binary operator: ".concat(operatorName), tokenSourceCodeInfo(token));
+                throw new LitsError("Unknown binary operator: ".concat(operatorName), sourceCodeInfo);
         }
     }
     var Parser = /** @class */ (function () {
@@ -6345,7 +6334,7 @@ var Playground = (function (exports) {
                 }
                 else {
                     if (!this.isAtEnd()) {
-                        throw new LitsError('Expected ;', tokenSourceCodeInfo(this.peek()));
+                        throw new LitsError('Expected ;', this.peek()[2]);
                     }
                 }
             }
@@ -6390,7 +6379,7 @@ var Playground = (function (exports) {
             }
             else if (isReservedSymbolToken(firstToken, 'export')) {
                 if (!moduleScope) {
-                    throw new LitsError('export is only allowed in module scope', tokenSourceCodeInfo(firstToken));
+                    throw new LitsError('export is only allowed in module scope', firstToken[2]);
                 }
                 return this.parseExport(firstToken);
             }
@@ -6407,8 +6396,7 @@ var Playground = (function (exports) {
                     }
                     this.advance();
                     var right = this.parseExpression(newPrecedece);
-                    var token = hasTokenSourceCodeInfo(operator) ? operator : undefined;
-                    left = fromBinaryOperatorToAstNode(operator, left, right, token);
+                    left = fromBinaryOperatorToAstNode(operator, left, right, operator[2]);
                 }
                 else if (isSymbolToken(operator)) {
                     if (!isFunctionOperator(operator[1])) {
@@ -6420,8 +6408,7 @@ var Playground = (function (exports) {
                     }
                     this.advance();
                     var right = this.parseExpression(newPrecedece);
-                    var token = hasTokenSourceCodeInfo(operator) ? operator : undefined;
-                    left = createNamedNormalExpressionNode(operator[1], [left, right], token);
+                    left = createNamedNormalExpressionNode(operator[1], [left, right], operator[2]);
                 }
                 else {
                     break;
@@ -6438,16 +6425,16 @@ var Playground = (function (exports) {
                     this.advance();
                     var symbolToken = this.peek();
                     if (!isSymbolToken(symbolToken)) {
-                        throw new LitsError('Expected symbol', tokenSourceCodeInfo(this.peek()));
+                        throw new LitsError('Expected symbol', this.peek()[2]);
                     }
                     var stringNode = {
                         type: 'String',
                         value: symbolToken[1],
-                        token: tokenSourceCodeInfo(symbolToken) && symbolToken,
+                        sourceCodeInfo: symbolToken[2],
                         params: [],
                         name: undefined,
                     };
-                    operand = createAccessorNode(operand, stringNode, token);
+                    operand = createAccessorNode(operand, stringNode, token[2]);
                     this.advance();
                     token = this.peek();
                 }
@@ -6455,9 +6442,9 @@ var Playground = (function (exports) {
                     this.advance();
                     var expression = this.parseExpression();
                     if (!isRBracketToken(this.peek())) {
-                        throw new LitsError('Expected closing bracket', tokenSourceCodeInfo(this.peek()));
+                        throw new LitsError('Expected closing bracket', this.peek()[2]);
                     }
-                    operand = createAccessorNode(operand, expression, token);
+                    operand = createAccessorNode(operand, expression, token[2]);
                     this.advance();
                     token = this.peek();
                 }
@@ -6494,7 +6481,7 @@ var Playground = (function (exports) {
                     return {
                         type: 'Symbol',
                         value: operatorName,
-                        token: tokenSourceCodeInfo(token) && token,
+                        sourceCodeInfo: token[2],
                         params: [],
                         name: undefined,
                     };
@@ -6503,7 +6490,7 @@ var Playground = (function (exports) {
                     return this.parseShorthandLamdaFunction();
                 }
                 else {
-                    throw new LitsError("Illegal operator: ".concat(operatorName), tokenSourceCodeInfo(token));
+                    throw new LitsError("Illegal operator: ".concat(operatorName), token[2]);
                 }
             }
             // Object litteral, e.g. {a=1, b=2}
@@ -6535,7 +6522,7 @@ var Playground = (function (exports) {
                 case 'RegexpShorthand':
                     return this.parseRegexpShorthand();
                 default:
-                    throw new LitsError("Unknown token type: ".concat(tokenType), tokenSourceCodeInfo(token));
+                    throw new LitsError("Unknown token type: ".concat(tokenType), token[2]);
             }
         };
         Parser.prototype.parseObject = function () {
@@ -6545,12 +6532,12 @@ var Playground = (function (exports) {
             while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
                 var key = this.parseOperand();
                 if (key.type !== 'Symbol' && key.type !== 'String') {
-                    throw new LitsError('Expected key to be a symbol or a string', tokenSourceCodeInfo(this.peek()));
+                    throw new LitsError('Expected key to be a symbol or a string', this.peek()[2]);
                 }
                 params.push({
                     type: 'String',
                     value: key.value,
-                    token: tokenSourceCodeInfo(key.token) && key.token,
+                    sourceCodeInfo: key.sourceCodeInfo,
                     params: [],
                     name: undefined,
                 });
@@ -6559,7 +6546,7 @@ var Playground = (function (exports) {
                 params.push(this.parseExpression());
                 var nextToken = this.peek();
                 if (!isOperatorToken(nextToken, ',') && !isRBraceToken(nextToken)) {
-                    throw new LitsError('Expected comma or closing brace', tokenSourceCodeInfo(this.peek()));
+                    throw new LitsError('Expected comma or closing brace', this.peek()[2]);
                 }
                 if (isOperatorToken(nextToken, ',')) {
                     this.advance();
@@ -6571,7 +6558,7 @@ var Playground = (function (exports) {
                 type: 'NormalExpression',
                 name: 'object',
                 params: params,
-                token: tokenSourceCodeInfo(firstToken) && firstToken,
+                sourceCodeInfo: firstToken[2],
             };
         };
         Parser.prototype.parseArray = function () {
@@ -6582,7 +6569,7 @@ var Playground = (function (exports) {
                 params.push(this.parseExpression());
                 var nextToken = this.peek();
                 if (!isOperatorToken(nextToken, ',') && !isRBracketToken(nextToken)) {
-                    throw new LitsError('Expected comma or closing parenthesis', tokenSourceCodeInfo(this.peek()));
+                    throw new LitsError('Expected comma or closing parenthesis', this.peek()[2]);
                 }
                 if (isOperatorToken(nextToken, ',')) {
                     this.advance();
@@ -6594,7 +6581,7 @@ var Playground = (function (exports) {
                 type: 'NormalExpression',
                 name: 'array',
                 params: params,
-                token: tokenSourceCodeInfo(firstToken) && firstToken,
+                sourceCodeInfo: firstToken[2],
             };
         };
         Parser.prototype.parseFunctionCall = function (symbol) {
@@ -6605,14 +6592,14 @@ var Playground = (function (exports) {
                 params.push(this.parseExpression());
                 var nextToken = this.peek();
                 if (!isOperatorToken(nextToken, ',') && !isRParenToken(nextToken)) {
-                    throw new LitsError('Expected comma or closing parenthesis', tokenSourceCodeInfo(this.peek()));
+                    throw new LitsError('Expected comma or closing parenthesis', this.peek()[2]);
                 }
                 if (isOperatorToken(nextToken, ',')) {
                     this.advance();
                 }
             }
             if (!isRParenToken(this.peek())) {
-                throw new LitsError('Expected closing parenthesis', tokenSourceCodeInfo(this.peek()));
+                throw new LitsError('Expected closing parenthesis', this.peek()[2]);
             }
             this.advance();
             if (isNamedFunction) {
@@ -6629,7 +6616,7 @@ var Playground = (function (exports) {
                                 type: 'SpecialExpression',
                                 name: name_2,
                                 params: params,
-                                token: tokenSourceCodeInfo(symbol.token) && symbol.token,
+                                sourceCodeInfo: symbol.sourceCodeInfo,
                             };
                             assertNumberOfParams(builtin.specialExpressions[node.name].paramCount, node);
                             return node;
@@ -6643,14 +6630,14 @@ var Playground = (function (exports) {
                             throw new Error("Unknown special expression: ".concat(name_2));
                     }
                 }
-                return createNamedNormalExpressionNode(symbol.value, params, symbol.token);
+                return createNamedNormalExpressionNode(symbol.value, params, symbol.sourceCodeInfo);
             }
             else {
                 return {
                     type: 'NormalExpression',
                     name: undefined,
                     params: __spreadArray([symbol], __read(params), false),
-                    token: tokenSourceCodeInfo(symbol.token) && symbol.token,
+                    sourceCodeInfo: symbol.sourceCodeInfo,
                 };
             }
         };
@@ -6677,7 +6664,7 @@ var Playground = (function (exports) {
                         bindingNodes: bindingNodes,
                         body: [body],
                     },
-                    token: tokenSourceCodeInfo(firstToken) && firstToken,
+                    sourceCodeInfo: firstToken[2],
                 };
             }
             catch (_b) {
@@ -6708,7 +6695,7 @@ var Playground = (function (exports) {
                 var letNode = this.parseLet(token, true);
                 bindingNodes.push(letNode.bindingNodes[0]);
                 if (!isOperatorToken(this.peek(), ',') && !isRParenToken(this.peek())) {
-                    throw new LitsError('Expected comma or closing parenthesis', tokenSourceCodeInfo(this.peek()));
+                    throw new LitsError('Expected comma or closing parenthesis', this.peek()[2]);
                 }
                 if (isOperatorToken(this.peek(), ',')) {
                     this.advance();
@@ -6720,7 +6707,7 @@ var Playground = (function (exports) {
             var functionArguments = [];
             while (!this.isAtEnd() && !isRParenToken(this.peek()) && !isSymbolToken(this.peek(), 'let')) {
                 if (rest) {
-                    throw new LitsError('Rest argument must be last', tokenSourceCodeInfo(this.peek()));
+                    throw new LitsError('Rest argument must be last', this.peek()[2]);
                 }
                 if (isOperatorToken(this.peek(), '...')) {
                     this.advance();
@@ -6728,21 +6715,21 @@ var Playground = (function (exports) {
                 }
                 var symbolToken = this.peek();
                 if (!isSymbolToken(symbolToken)) {
-                    throw new LitsError('Expected symbol', tokenSourceCodeInfo(this.peek()));
+                    throw new LitsError('Expected symbol', this.peek()[2]);
                 }
                 var name_3 = symbolToken[1];
                 this.advance();
                 var isDefault = void 0;
                 if (isOperatorToken(this.peek(), ':=')) {
                     if (rest) {
-                        throw new LitsError('Optional arguments must be last', tokenSourceCodeInfo(this.peek()));
+                        throw new LitsError('Optional arguments must be last', this.peek()[2]);
                     }
                     defaults = true;
                     this.advance();
                     isDefault = this.parseExpression();
                 }
                 else if (defaults) {
-                    throw new LitsError('Optional arguments must be last', tokenSourceCodeInfo(this.peek()));
+                    throw new LitsError('Optional arguments must be last', this.peek()[2]);
                 }
                 functionArguments.push({
                     name: name_3,
@@ -6750,14 +6737,14 @@ var Playground = (function (exports) {
                     rest: rest ? true : undefined,
                 });
                 if (!isOperatorToken(this.peek(), ',') && !isRParenToken(this.peek()) && !isSymbolToken(this.peek(), 'let')) {
-                    throw new LitsError('Expected comma or closing parenthesis', tokenSourceCodeInfo(this.peek()));
+                    throw new LitsError('Expected comma or closing parenthesis', this.peek()[2]);
                 }
                 if (isOperatorToken(this.peek(), ',')) {
                     this.advance();
                 }
             }
             if (!isRParenToken(this.peek())) {
-                throw new LitsError('Expected closing parenthesis', tokenSourceCodeInfo(this.peek()));
+                throw new LitsError('Expected closing parenthesis', this.peek()[2]);
             }
             this.advance();
             return {
@@ -6783,12 +6770,12 @@ var Playground = (function (exports) {
                         if (number === '1') {
                             var mixedPercent1 = (!match[1] && dollar1 === 'WITH_1') || (match[1] && dollar1 === 'NAKED');
                             if (mixedPercent1)
-                                throw new LitsError('Please make up your mind, either use $ or $1', tokenSourceCodeInfo(firstToken));
+                                throw new LitsError('Please make up your mind, either use $ or $1', firstToken[2]);
                             dollar1 = match[1] ? 'WITH_1' : 'NAKED';
                         }
                         arity = Math.max(arity, Number(number));
                         if (arity > 20)
-                            throw new LitsError('Can\'t specify more than 20 arguments', tokenSourceCodeInfo(firstToken));
+                            throw new LitsError('Can\'t specify more than 20 arguments', firstToken[2]);
                     }
                 }
             }
@@ -6808,7 +6795,7 @@ var Playground = (function (exports) {
                     bindingNodes: [],
                     body: [exprNode],
                 },
-                token: tokenSourceCodeInfo(firstToken) && firstToken,
+                sourceCodeInfo: firstToken[2],
             };
             return node;
         };
@@ -6819,7 +6806,7 @@ var Playground = (function (exports) {
                 return {
                     type: 'symbol',
                     name: symbol.value,
-                    token: tokenSourceCodeInfo(token) && token,
+                    sourceCodeInfo: token[2],
                 };
             }
             if (isLBracketToken(token)) {
@@ -6836,7 +6823,7 @@ var Playground = (function (exports) {
                 return {
                     type: 'array',
                     elements: elements,
-                    token: tokenSourceCodeInfo(token) && token,
+                    sourceCodeInfo: token[2],
                 };
             }
             if (isLBraceToken(token)) {
@@ -6847,7 +6834,7 @@ var Playground = (function (exports) {
                     elements[key] = {
                         type: 'symbol',
                         name: key,
-                        token: tokenSourceCodeInfo(token) && token,
+                        sourceCodeInfo: token[2],
                     };
                     if (!isRBraceToken(this.peek())) {
                         assertOperatorToken(this.peek(), ',');
@@ -6858,10 +6845,10 @@ var Playground = (function (exports) {
                 return {
                     type: 'object',
                     elements: elements,
-                    token: tokenSourceCodeInfo(token) && token,
+                    sourceCodeInfo: token[2],
                 };
             }
-            throw new LitsError('Expected symbol', tokenSourceCodeInfo(this.peek()));
+            throw new LitsError('Expected symbol', this.peek()[2]);
         };
         Parser.prototype.parseLet = function (token, optionalSemicolon) {
             if (optionalSemicolon === void 0) { optionalSemicolon = false; }
@@ -6883,9 +6870,9 @@ var Playground = (function (exports) {
                         name: undefined,
                         value: value,
                         params: [],
-                        token: tokenSourceCodeInfo(token) && token,
+                        sourceCodeInfo: token[2],
                     }],
-                token: tokenSourceCodeInfo(token) && token,
+                sourceCodeInfo: token[2],
             };
         };
         Parser.prototype.parseDo = function (token) {
@@ -6897,7 +6884,7 @@ var Playground = (function (exports) {
                     this.advance();
                 }
                 else if (!isReservedSymbolToken(this.peek(), 'end')) {
-                    throw new LitsError('Expected ;', tokenSourceCodeInfo(this.peek()));
+                    throw new LitsError('Expected ;', this.peek()[2]);
                 }
             }
             assertReservedSymbolToken(this.peek(), 'end');
@@ -6906,7 +6893,7 @@ var Playground = (function (exports) {
                 type: 'SpecialExpression',
                 name: 'do',
                 params: expressions,
-                token: tokenSourceCodeInfo(token) && token,
+                sourceCodeInfo: token[2],
             };
         };
         Parser.prototype.parseLoop = function (firstToken) {
@@ -6926,7 +6913,7 @@ var Playground = (function (exports) {
                     name: undefined,
                     value: value,
                     params: [],
-                    token: tokenSourceCodeInfo(token) && token,
+                    sourceCodeInfo: token[2],
                 });
                 if (isOperatorToken(this.peek(), ',')) {
                     this.advance();
@@ -6934,7 +6921,7 @@ var Playground = (function (exports) {
                 token = this.peek();
             }
             if (bindingNodes.length === 0) {
-                throw new LitsError('Expected binding', tokenSourceCodeInfo(this.peek()));
+                throw new LitsError('Expected binding', this.peek()[2]);
             }
             assertSymbolToken(token, 'do');
             this.advance();
@@ -6945,7 +6932,7 @@ var Playground = (function (exports) {
                     this.advance();
                 }
                 else if (!isReservedSymbolToken(this.peek(), 'end')) {
-                    throw new LitsError('Expected ;', tokenSourceCodeInfo(this.peek()));
+                    throw new LitsError('Expected ;', this.peek()[2]);
                 }
             }
             assertReservedSymbolToken(this.peek(), 'end');
@@ -6955,7 +6942,7 @@ var Playground = (function (exports) {
                 name: 'loop',
                 params: params,
                 bindingNodes: bindingNodes,
-                token: tokenSourceCodeInfo(firstToken) && firstToken,
+                sourceCodeInfo: firstToken[2],
             };
         };
         Parser.prototype.parseTry = function (token) {
@@ -6967,7 +6954,7 @@ var Playground = (function (exports) {
                     this.advance();
                 }
                 else if (!isReservedSymbolToken(this.peek(), 'catch')) {
-                    throw new LitsError('Expected ;', tokenSourceCodeInfo(this.peek()));
+                    throw new LitsError('Expected ;', this.peek()[2]);
                 }
             }
             var tryExpression = tryExpressions.length === 1
@@ -6976,7 +6963,7 @@ var Playground = (function (exports) {
                     type: 'SpecialExpression',
                     name: 'do',
                     params: tryExpressions,
-                    token: tokenSourceCodeInfo(token) && token,
+                    sourceCodeInfo: token[2],
                 };
             assertReservedSymbolToken(this.peek(), 'catch');
             this.advance();
@@ -6994,7 +6981,7 @@ var Playground = (function (exports) {
                     this.advance();
                 }
                 else if (!isReservedSymbolToken(this.peek(), 'end')) {
-                    throw new LitsError('Expected ;', tokenSourceCodeInfo(this.peek()));
+                    throw new LitsError('Expected ;', this.peek()[2]);
                 }
             }
             assertReservedSymbolToken(this.peek(), 'end');
@@ -7005,7 +6992,7 @@ var Playground = (function (exports) {
                     type: 'SpecialExpression',
                     name: 'do',
                     params: catchExpressions,
-                    token: tokenSourceCodeInfo(token) && token,
+                    sourceCodeInfo: token[2],
                 };
             return {
                 type: 'SpecialExpression',
@@ -7013,7 +7000,7 @@ var Playground = (function (exports) {
                 params: [tryExpression],
                 ce: catchExpression,
                 e: errorSymbol,
-                token: tokenSourceCodeInfo(token) && token,
+                sourceCodeInfo: token[2],
             };
         };
         Parser.prototype.parseForOrDoseq = function (firstToken) {
@@ -7025,7 +7012,7 @@ var Playground = (function (exports) {
                 var existingBoundNames = forLoopBindings.flatMap(function (b) { return getAllBindingTargetNames(b.b.target); });
                 var newBoundNames = getAllBindingTargetNames(loopBinding.b.target);
                 if (newBoundNames.some(function (n) { return existingBoundNames.includes(n); })) {
-                    throw new LitsError('Duplicate binding', tokenSourceCodeInfo(loopBinding.b.token));
+                    throw new LitsError('Duplicate binding', loopBinding.b.sourceCodeInfo);
                 }
                 forLoopBindings.push(loopBinding);
             };
@@ -7042,7 +7029,7 @@ var Playground = (function (exports) {
                     this.advance();
                 }
                 else if (!isReservedSymbolToken(this.peek(), 'end')) {
-                    throw new LitsError('Expected ;', tokenSourceCodeInfo(this.peek()));
+                    throw new LitsError('Expected ;', this.peek()[2]);
                 }
             }
             assertReservedSymbolToken(this.peek(), 'end');
@@ -7051,7 +7038,7 @@ var Playground = (function (exports) {
                 type: 'SpecialExpression',
                 name: isDoseq ? 'doseq' : 'for',
                 params: expressions,
-                token: tokenSourceCodeInfo(firstToken) && firstToken,
+                sourceCodeInfo: firstToken[2],
                 l: forLoopBindings,
             };
         };
@@ -7062,7 +7049,7 @@ var Playground = (function (exports) {
             var modifiers = [];
             var token = this.peek();
             if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this.peek(), 'each') && !isOperatorToken(token, ',')) {
-                throw new LitsError('Expected do, each or comma', tokenSourceCodeInfo(token));
+                throw new LitsError('Expected do, each or comma', token[2]);
             }
             if (isOperatorToken(token, ',')) {
                 this.advance();
@@ -7073,7 +7060,7 @@ var Playground = (function (exports) {
                 && !isReservedSymbolToken(token, 'while')
                 && !isSymbolToken(token, 'do')
                 && !isReservedSymbolToken(token, 'each')) {
-                throw new LitsError('Expected symbol each, do, let, when or while', tokenSourceCodeInfo(token));
+                throw new LitsError('Expected symbol each, do, let, when or while', token[2]);
             }
             var letBindings;
             if (token[1] === 'let') {
@@ -7084,12 +7071,12 @@ var Playground = (function (exports) {
                     var existingBoundNames = letBindings.flatMap(function (b) { return getAllBindingTargetNames(b.target); });
                     var newBoundNames = getAllBindingTargetNames(letNode.bindingNodes[0].target);
                     if (newBoundNames.some(function (n) { return existingBoundNames.includes(n); })) {
-                        throw new LitsError('Duplicate binding', tokenSourceCodeInfo(letNode.bindingNodes[0].token));
+                        throw new LitsError('Duplicate binding', letNode.bindingNodes[0].sourceCodeInfo);
                     }
                     letBindings.push(letNode.bindingNodes[0]);
                     token = this_2.peek();
                     if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this_2.peek(), 'each') && !isOperatorToken(token, ',')) {
-                        throw new LitsError('Expected do, each or comma', tokenSourceCodeInfo(token));
+                        throw new LitsError('Expected do, each or comma', token[2]);
                     }
                     if (isOperatorToken(token, ',')) {
                         this_2.advance();
@@ -7108,21 +7095,21 @@ var Playground = (function (exports) {
                 this.advance();
                 if (token[1] === 'when') {
                     if (modifiers.includes('&when')) {
-                        throw new LitsError('Multiple when modifiers in for loop', tokenSourceCodeInfo(token));
+                        throw new LitsError('Multiple when modifiers in for loop', token[2]);
                     }
                     modifiers.push('&when');
                     whenNode = this.parseExpression();
                 }
                 else {
                     if (modifiers.includes('&while')) {
-                        throw new LitsError('Multiple while modifiers in for loop', tokenSourceCodeInfo(token));
+                        throw new LitsError('Multiple while modifiers in for loop', token[2]);
                     }
                     modifiers.push('&while');
                     whileNode = this.parseExpression();
                 }
                 token = this.peek();
                 if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this.peek(), 'each') && !isOperatorToken(token, ',')) {
-                    throw new LitsError('Expected do or comma', tokenSourceCodeInfo(token));
+                    throw new LitsError('Expected do or comma', token[2]);
                 }
                 if (isOperatorToken(token, ',')) {
                     this.advance();
@@ -7130,7 +7117,7 @@ var Playground = (function (exports) {
                 token = this.peek();
             }
             if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this.peek(), 'each')) {
-                throw new LitsError('Expected do or each', tokenSourceCodeInfo(token));
+                throw new LitsError('Expected do or each', token[2]);
             }
             return {
                 b: bindingNode,
@@ -7152,12 +7139,12 @@ var Playground = (function (exports) {
                 target: {
                     type: 'symbol',
                     name: name,
-                    token: tokenSourceCodeInfo(firstToken) && firstToken,
+                    sourceCodeInfo: firstToken[2],
                 },
                 name: undefined,
                 value: value,
                 params: [],
-                token: tokenSourceCodeInfo(firstToken) && firstToken,
+                sourceCodeInfo: firstToken[2],
             };
             return node;
         };
@@ -7176,7 +7163,7 @@ var Playground = (function (exports) {
                     this.advance();
                 }
                 else if (!isReservedSymbolToken(this.peek(), 'else') && !isReservedSymbolToken(this.peek(), 'end')) {
-                    throw new LitsError('Expected ;', tokenSourceCodeInfo(this.peek()));
+                    throw new LitsError('Expected ;', this.peek()[2]);
                 }
             }
             var thenExpression = thenExpressions.length === 1
@@ -7185,7 +7172,7 @@ var Playground = (function (exports) {
                     type: 'SpecialExpression',
                     name: 'do',
                     params: thenExpressions,
-                    token: tokenSourceCodeInfo(token) && token,
+                    sourceCodeInfo: token[2],
                 };
             var elseExpression;
             if (isReservedSymbolToken(this.peek(), 'else')) {
@@ -7197,7 +7184,7 @@ var Playground = (function (exports) {
                         this.advance();
                     }
                     else if (!isReservedSymbolToken(this.peek(), 'end')) {
-                        throw new LitsError('Expected ;', tokenSourceCodeInfo(this.peek()));
+                        throw new LitsError('Expected ;', this.peek()[2]);
                     }
                 }
                 elseExpression = elseExpressions.length === 1
@@ -7206,7 +7193,7 @@ var Playground = (function (exports) {
                         type: 'SpecialExpression',
                         name: 'do',
                         params: elseExpressions,
-                        token: tokenSourceCodeInfo(token) && token,
+                        sourceCodeInfo: token[2],
                     };
             }
             assertReservedSymbolToken(this.peek(), 'end');
@@ -7219,7 +7206,7 @@ var Playground = (function (exports) {
                 type: 'SpecialExpression',
                 name: isUnless ? 'unless' : 'if',
                 params: params,
-                token: tokenSourceCodeInfo(token) && token,
+                sourceCodeInfo: token[2],
             };
         };
         Parser.prototype.parseCond = function (token) {
@@ -7240,7 +7227,7 @@ var Playground = (function (exports) {
                         this.advance();
                     }
                     else if (!isReservedSymbolToken(this.peek(), 'case') && !isReservedSymbolToken(this.peek(), 'end')) {
-                        throw new LitsError('Expected ;', tokenSourceCodeInfo(this.peek()));
+                        throw new LitsError('Expected ;', this.peek()[2]);
                     }
                 }
                 params.push(expressions.length === 1
@@ -7249,7 +7236,7 @@ var Playground = (function (exports) {
                         type: 'SpecialExpression',
                         name: 'do',
                         params: expressions,
-                        token: tokenSourceCodeInfo(token) && token,
+                        sourceCodeInfo: token[2],
                     });
                 if (isReservedSymbolToken(this.peek(), 'end')) {
                     break;
@@ -7262,7 +7249,7 @@ var Playground = (function (exports) {
                 type: 'SpecialExpression',
                 name: 'cond',
                 params: params,
-                token: tokenSourceCodeInfo(token) && token,
+                sourceCodeInfo: token[2],
             };
         };
         Parser.prototype.parseSwitch = function (token) {
@@ -7283,7 +7270,7 @@ var Playground = (function (exports) {
                         this.advance();
                     }
                     else if (!isReservedSymbolToken(this.peek(), 'case') && !isReservedSymbolToken(this.peek(), 'end')) {
-                        throw new LitsError('Expected ;', tokenSourceCodeInfo(this.peek()));
+                        throw new LitsError('Expected ;', this.peek()[2]);
                     }
                 }
                 params.push(expressions.length === 1
@@ -7292,7 +7279,7 @@ var Playground = (function (exports) {
                         type: 'SpecialExpression',
                         name: 'do',
                         params: expressions,
-                        token: tokenSourceCodeInfo(token) && token,
+                        sourceCodeInfo: token[2],
                     });
                 if (isReservedSymbolToken(this.peek(), 'end')) {
                     break;
@@ -7305,7 +7292,7 @@ var Playground = (function (exports) {
                 type: 'SpecialExpression',
                 name: 'switch',
                 params: params,
-                token: tokenSourceCodeInfo(token) && token,
+                sourceCodeInfo: token[2],
             };
         };
         Parser.prototype.parseFunction = function (token) {
@@ -7319,7 +7306,7 @@ var Playground = (function (exports) {
                     this.advance();
                 }
                 else if (!isReservedSymbolToken(this.peek(), 'end')) {
-                    throw new LitsError('Expected ;', tokenSourceCodeInfo(this.peek()));
+                    throw new LitsError('Expected ;', this.peek()[2]);
                 }
             }
             assertReservedSymbolToken(this.peek(), 'end');
@@ -7335,7 +7322,7 @@ var Playground = (function (exports) {
                     bindingNodes: bindingNodes,
                     body: body,
                 },
-                token: tokenSourceCodeInfo(token) && token,
+                sourceCodeInfo: token[2],
             };
         };
         Parser.prototype.isAtEnd = function () {
@@ -7367,7 +7354,7 @@ var Playground = (function (exports) {
                     type: 'SpecialExpression',
                     name: 'def',
                     params: [symbol, value],
-                    token: tokenSourceCodeInfo(symbol.token) && symbol.token,
+                    sourceCodeInfo: symbol.sourceCodeInfo,
                 };
             }
             else if (isReservedSymbolToken(this.peek(), 'function')) {
@@ -7381,7 +7368,7 @@ var Playground = (function (exports) {
                         this.advance();
                     }
                     else if (!isReservedSymbolToken(this.peek(), 'end')) {
-                        throw new LitsError('Expected ;', tokenSourceCodeInfo(this.peek()));
+                        throw new LitsError('Expected ;', this.peek()[2]);
                     }
                 }
                 assertReservedSymbolToken(this.peek(), 'end');
@@ -7396,18 +7383,18 @@ var Playground = (function (exports) {
                         bindingNodes: bindingNodes,
                         body: body,
                     },
-                    token: tokenSourceCodeInfo(token) && token,
+                    sourceCodeInfo: token[2],
                 };
             }
             else {
-                throw new LitsError('Expected let or function', tokenSourceCodeInfo(this.peek()));
+                throw new LitsError('Expected let or function', this.peek()[2]);
             }
         };
         Parser.prototype.parseSymbol = function () {
             var token = this.peek();
             this.advance();
             if (!isSymbolToken(token)) {
-                throw new LitsError("Expected symbol token, got ".concat(token[0]), tokenSourceCodeInfo(token));
+                throw new LitsError("Expected symbol token, got ".concat(token[0]), token[2]);
             }
             if (token[1][0] !== '\'') {
                 return {
@@ -7415,7 +7402,7 @@ var Playground = (function (exports) {
                     value: token[1],
                     params: [],
                     name: undefined,
-                    token: tokenSourceCodeInfo(token) && token,
+                    sourceCodeInfo: token[2],
                 };
             }
             else {
@@ -7434,7 +7421,7 @@ var Playground = (function (exports) {
                     value: value,
                     params: [],
                     name: undefined,
-                    token: tokenSourceCodeInfo(token) && token,
+                    sourceCodeInfo: token[2],
                 };
             }
         };
@@ -7449,7 +7436,7 @@ var Playground = (function (exports) {
                         value: numberReservedSymbolRecord[symbol],
                         params: [],
                         name: undefined,
-                        token: tokenSourceCodeInfo(token) && token,
+                        sourceCodeInfo: token[2],
                     };
                 }
             }
@@ -7458,7 +7445,7 @@ var Playground = (function (exports) {
                 value: token[1],
                 params: [],
                 name: undefined,
-                token: tokenSourceCodeInfo(token) && token,
+                sourceCodeInfo: token[2],
             };
         };
         Parser.prototype.parseNumber = function () {
@@ -7472,7 +7459,7 @@ var Playground = (function (exports) {
                 value: negative ? -Number(numberString) : Number(numberString),
                 params: [],
                 name: undefined,
-                token: tokenSourceCodeInfo(token) && token,
+                sourceCodeInfo: token[2],
             };
         };
         Parser.prototype.parseString = function () {
@@ -7510,7 +7497,7 @@ var Playground = (function (exports) {
                 value: value,
                 params: [],
                 name: undefined,
-                token: tokenSourceCodeInfo(token) && token,
+                sourceCodeInfo: token[2],
             };
         };
         Parser.prototype.parseRegexpShorthand = function () {
@@ -7524,20 +7511,20 @@ var Playground = (function (exports) {
                 value: regexpString,
                 params: [],
                 name: undefined,
-                token: tokenSourceCodeInfo(token) && token,
+                sourceCodeInfo: token[2],
             };
             var optionsNode = {
                 type: 'String',
                 value: optionsString,
                 params: [],
                 name: undefined,
-                token: tokenSourceCodeInfo(token) && token,
+                sourceCodeInfo: token[2],
             };
             var node = {
                 type: 'NormalExpression',
                 name: 'regexp',
                 params: [stringNode, optionsNode],
-                token: tokenSourceCodeInfo(token) && token,
+                sourceCodeInfo: token[2],
             };
             return node;
         };

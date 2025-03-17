@@ -15,7 +15,7 @@ import type { FunctionArgument } from '../builtin/utils'
 import { LitsError } from '../errors'
 import type { TokenStream } from '../tokenizer/tokenize'
 import { type SymbolicBinaryOperator, isBinaryOperator, isFunctionOperator } from '../tokenizer/operators'
-import type { OperatorToken, ReservedSymbolToken, SymbolToken, Token, TokenType } from '../tokenizer/token'
+import type { OperatorToken, ReservedSymbolToken, SourceCodeInfo, SymbolToken, Token, TokenType } from '../tokenizer/token'
 import {
   asLBraceToken,
   asLBracketToken,
@@ -27,7 +27,6 @@ import {
   assertRParenToken,
   assertReservedSymbolToken,
   assertSymbolToken,
-  hasTokenSourceCodeInfo,
   isA_BinaryOperatorToken,
   isLBraceToken,
   isLBracketToken,
@@ -38,7 +37,6 @@ import {
   isRParenToken,
   isReservedSymbolToken,
   isSymbolToken,
-  tokenSourceCodeInfo,
 } from '../tokenizer/token'
 import { assertNumberOfParams } from '../typeGuards'
 import type { QqNode } from '../builtin/specialExpressions/qq'
@@ -107,12 +105,12 @@ function getPrecedence(operatorSign: SymbolicBinaryOperator): number {
   }
 }
 
-function createNamedNormalExpressionNode(name: string, params: AstNode[], token: Token | undefined): NormalExpressionNodeWithName {
+function createNamedNormalExpressionNode(name: string, params: AstNode[], sourceCodeInfo: SourceCodeInfo | undefined): NormalExpressionNodeWithName {
   const node: NormalExpressionNodeWithName = {
     type: 'NormalExpression',
     name,
     params,
-    token: tokenSourceCodeInfo(token) && token,
+    sourceCodeInfo,
   }
   const builtinExpression = builtin.normalExpressions[node.name]
 
@@ -123,17 +121,17 @@ function createNamedNormalExpressionNode(name: string, params: AstNode[], token:
   return node
 }
 
-function createAccessorNode(left: AstNode, right: AstNode, token: Token | undefined): AstNode {
+function createAccessorNode(left: AstNode, right: AstNode, sourceCodeInfo: SourceCodeInfo | undefined): AstNode {
   // Unnamed normal expression
   return {
     type: 'NormalExpression',
     params: [left, right],
     name: undefined,
-    token: tokenSourceCodeInfo(token) && token,
+    sourceCodeInfo,
   }
 }
 
-function fromBinaryOperatorToAstNode(operator: OperatorToken | SymbolToken<'+'>, left: AstNode, right: AstNode, token: Token | undefined): AstNode {
+function fromBinaryOperatorToAstNode(operator: OperatorToken | SymbolToken<'+'>, left: AstNode, right: AstNode, sourceCodeInfo: SourceCodeInfo | undefined): AstNode {
   const operatorName = operator[1]
 
   switch (operatorName) {
@@ -159,7 +157,7 @@ function fromBinaryOperatorToAstNode(operator: OperatorToken | SymbolToken<'+'>,
     case '&':
     case '^':
     case '|':
-      return createNamedNormalExpressionNode(operatorName, [left, right], token)
+      return createNamedNormalExpressionNode(operatorName, [left, right], sourceCodeInfo)
     case '&&':
     case '||':
     case '??':
@@ -167,7 +165,7 @@ function fromBinaryOperatorToAstNode(operator: OperatorToken | SymbolToken<'+'>,
         type: 'SpecialExpression',
         name: operatorName,
         params: [left, right],
-        token: tokenSourceCodeInfo(token) && token,
+        sourceCodeInfo,
       }
     /* v8 ignore next 10 */
     case '.':
@@ -176,10 +174,10 @@ function fromBinaryOperatorToAstNode(operator: OperatorToken | SymbolToken<'+'>,
     case ',':
     case '->':
     case '...':
-      throw new LitsError(`Unknown binary operator: ${operatorName}`, tokenSourceCodeInfo(token))
+      throw new LitsError(`Unknown binary operator: ${operatorName}`, sourceCodeInfo)
 
     default:
-      throw new LitsError(`Unknown binary operator: ${operatorName satisfies never}`, tokenSourceCodeInfo(token))
+      throw new LitsError(`Unknown binary operator: ${operatorName satisfies never}`, sourceCodeInfo)
   }
 }
 
@@ -210,7 +208,7 @@ export class Parser {
       }
       else {
         if (!this.isAtEnd()) {
-          throw new LitsError('Expected ;', tokenSourceCodeInfo(this.peek()))
+          throw new LitsError('Expected ;', this.peek()[2])
         }
       }
     }
@@ -256,7 +254,7 @@ export class Parser {
     }
     else if (isReservedSymbolToken(firstToken, 'export')) {
       if (!moduleScope) {
-        throw new LitsError('export is only allowed in module scope', tokenSourceCodeInfo(firstToken))
+        throw new LitsError('export is only allowed in module scope', firstToken[2])
       }
       return this.parseExport(firstToken)
     }
@@ -276,8 +274,7 @@ export class Parser {
         }
         this.advance()
         const right = this.parseExpression(newPrecedece)
-        const token: Token | undefined = hasTokenSourceCodeInfo(operator) ? operator : undefined
-        left = fromBinaryOperatorToAstNode(operator, left, right, token)
+        left = fromBinaryOperatorToAstNode(operator, left, right, operator[2])
       }
       else if (isSymbolToken(operator)) {
         if (!isFunctionOperator(operator[1])) {
@@ -289,9 +286,7 @@ export class Parser {
         }
         this.advance()
         const right = this.parseExpression(newPrecedece)
-        const token: Token | undefined = hasTokenSourceCodeInfo(operator) ? operator : undefined
-
-        left = createNamedNormalExpressionNode(operator[1], [left, right], token)
+        left = createNamedNormalExpressionNode(operator[1], [left, right], operator[2])
       }
       else {
         break
@@ -311,16 +306,16 @@ export class Parser {
         this.advance()
         const symbolToken = this.peek()
         if (!isSymbolToken(symbolToken)) {
-          throw new LitsError('Expected symbol', tokenSourceCodeInfo(this.peek()))
+          throw new LitsError('Expected symbol', this.peek()[2])
         }
         const stringNode: StringNode = {
           type: 'String',
           value: symbolToken[1],
-          token: tokenSourceCodeInfo(symbolToken) && symbolToken,
+          sourceCodeInfo: symbolToken[2],
           params: [],
           name: undefined,
         }
-        operand = createAccessorNode(operand, stringNode, token)
+        operand = createAccessorNode(operand, stringNode, token[2])
         this.advance()
         token = this.peek()
       }
@@ -328,9 +323,9 @@ export class Parser {
         this.advance()
         const expression = this.parseExpression()
         if (!isRBracketToken(this.peek())) {
-          throw new LitsError('Expected closing bracket', tokenSourceCodeInfo(this.peek()))
+          throw new LitsError('Expected closing bracket', this.peek()[2])
         }
-        operand = createAccessorNode(operand, expression, token)
+        operand = createAccessorNode(operand, expression, token[2])
         this.advance()
         token = this.peek()
       }
@@ -370,7 +365,7 @@ export class Parser {
         return {
           type: 'Symbol',
           value: operatorName,
-          token: tokenSourceCodeInfo(token) && token,
+          sourceCodeInfo: token[2],
           params: [],
           name: undefined,
         } satisfies SymbolNode
@@ -380,7 +375,7 @@ export class Parser {
         return this.parseShorthandLamdaFunction()
       }
       else {
-        throw new LitsError(`Illegal operator: ${operatorName}`, tokenSourceCodeInfo(token))
+        throw new LitsError(`Illegal operator: ${operatorName}`, token[2])
       }
     }
 
@@ -430,7 +425,7 @@ export class Parser {
         return this.parseRegexpShorthand()
 
       default:
-        throw new LitsError(`Unknown token type: ${tokenType}`, tokenSourceCodeInfo(token))
+        throw new LitsError(`Unknown token type: ${tokenType}`, token[2])
     }
   }
 
@@ -441,13 +436,13 @@ export class Parser {
     while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
       const key = this.parseOperand()
       if (key.type !== 'Symbol' && key.type !== 'String') {
-        throw new LitsError('Expected key to be a symbol or a string', tokenSourceCodeInfo(this.peek()))
+        throw new LitsError('Expected key to be a symbol or a string', this.peek()[2])
       }
 
       params.push({
         type: 'String',
         value: key.value,
-        token: tokenSourceCodeInfo(key.token) && key.token,
+        sourceCodeInfo: key.sourceCodeInfo,
         params: [],
         name: undefined,
       })
@@ -458,7 +453,7 @@ export class Parser {
       params.push(this.parseExpression())
       const nextToken = this.peek()
       if (!isOperatorToken(nextToken, ',') && !isRBraceToken(nextToken)) {
-        throw new LitsError('Expected comma or closing brace', tokenSourceCodeInfo(this.peek()))
+        throw new LitsError('Expected comma or closing brace', this.peek()[2])
       }
 
       if (isOperatorToken(nextToken, ',')) {
@@ -473,7 +468,7 @@ export class Parser {
       type: 'NormalExpression',
       name: 'object',
       params,
-      token: tokenSourceCodeInfo(firstToken) && firstToken,
+      sourceCodeInfo: firstToken[2],
     }
   }
 
@@ -485,7 +480,7 @@ export class Parser {
       params.push(this.parseExpression())
       const nextToken = this.peek()
       if (!isOperatorToken(nextToken, ',') && !isRBracketToken(nextToken)) {
-        throw new LitsError('Expected comma or closing parenthesis', tokenSourceCodeInfo(this.peek()))
+        throw new LitsError('Expected comma or closing parenthesis', this.peek()[2])
       }
       if (isOperatorToken(nextToken, ',')) {
         this.advance()
@@ -499,7 +494,7 @@ export class Parser {
       type: 'NormalExpression',
       name: 'array',
       params,
-      token: tokenSourceCodeInfo(firstToken) && firstToken,
+      sourceCodeInfo: firstToken[2],
     }
   }
 
@@ -512,14 +507,14 @@ export class Parser {
       params.push(this.parseExpression())
       const nextToken = this.peek()
       if (!isOperatorToken(nextToken, ',') && !isRParenToken(nextToken)) {
-        throw new LitsError('Expected comma or closing parenthesis', tokenSourceCodeInfo(this.peek()))
+        throw new LitsError('Expected comma or closing parenthesis', this.peek()[2])
       }
       if (isOperatorToken(nextToken, ',')) {
         this.advance()
       }
     }
     if (!isRParenToken(this.peek())) {
-      throw new LitsError('Expected closing parenthesis', tokenSourceCodeInfo(this.peek()))
+      throw new LitsError('Expected closing parenthesis', this.peek()[2])
     }
     this.advance()
     if (isNamedFunction) {
@@ -536,7 +531,7 @@ export class Parser {
               type: 'SpecialExpression',
               name,
               params,
-              token: tokenSourceCodeInfo(symbol.token) && symbol.token,
+              sourceCodeInfo: symbol.sourceCodeInfo,
             }
             assertNumberOfParams(builtin.specialExpressions[node.name].paramCount, node)
             return node
@@ -550,14 +545,14 @@ export class Parser {
             throw new Error(`Unknown special expression: ${name satisfies never}`)
         }
       }
-      return createNamedNormalExpressionNode(symbol.value, params, symbol.token)
+      return createNamedNormalExpressionNode(symbol.value, params, symbol.sourceCodeInfo)
     }
     else {
       return {
         type: 'NormalExpression',
         name: undefined,
         params: [symbol, ...params],
-        token: tokenSourceCodeInfo(symbol.token) && symbol.token,
+        sourceCodeInfo: symbol.sourceCodeInfo,
       }
     }
   }
@@ -590,7 +585,7 @@ export class Parser {
           bindingNodes,
           body: [body],
         },
-        token: tokenSourceCodeInfo(firstToken) && firstToken,
+        sourceCodeInfo: firstToken[2],
       }
     }
     catch {
@@ -624,7 +619,7 @@ export class Parser {
       const letNode = this.parseLet(token, true)
       bindingNodes.push(letNode.bindingNodes[0]!)
       if (!isOperatorToken(this.peek(), ',') && !isRParenToken(this.peek())) {
-        throw new LitsError('Expected comma or closing parenthesis', tokenSourceCodeInfo(this.peek()))
+        throw new LitsError('Expected comma or closing parenthesis', this.peek()[2])
       }
       if (isOperatorToken(this.peek(), ',')) {
         this.advance()
@@ -637,7 +632,7 @@ export class Parser {
     const functionArguments: FunctionArgument[] = []
     while (!this.isAtEnd() && !isRParenToken(this.peek()) && !isSymbolToken(this.peek(), 'let')) {
       if (rest) {
-        throw new LitsError('Rest argument must be last', tokenSourceCodeInfo(this.peek()))
+        throw new LitsError('Rest argument must be last', this.peek()[2])
       }
       if (isOperatorToken(this.peek(), '...')) {
         this.advance()
@@ -645,7 +640,7 @@ export class Parser {
       }
       const symbolToken = this.peek()
       if (!isSymbolToken(symbolToken)) {
-        throw new LitsError('Expected symbol', tokenSourceCodeInfo(this.peek()))
+        throw new LitsError('Expected symbol', this.peek()[2])
       }
       const name = symbolToken[1]
       this.advance()
@@ -653,14 +648,14 @@ export class Parser {
       let isDefault: AstNode | undefined
       if (isOperatorToken(this.peek(), ':=')) {
         if (rest) {
-          throw new LitsError('Optional arguments must be last', tokenSourceCodeInfo(this.peek()))
+          throw new LitsError('Optional arguments must be last', this.peek()[2])
         }
         defaults = true
         this.advance()
         isDefault = this.parseExpression()
       }
       else if (defaults) {
-        throw new LitsError('Optional arguments must be last', tokenSourceCodeInfo(this.peek()))
+        throw new LitsError('Optional arguments must be last', this.peek()[2])
       }
 
       functionArguments.push({
@@ -670,7 +665,7 @@ export class Parser {
       })
 
       if (!isOperatorToken(this.peek(), ',') && !isRParenToken(this.peek()) && !isSymbolToken(this.peek(), 'let')) {
-        throw new LitsError('Expected comma or closing parenthesis', tokenSourceCodeInfo(this.peek()))
+        throw new LitsError('Expected comma or closing parenthesis', this.peek()[2])
       }
       if (isOperatorToken(this.peek(), ',')) {
         this.advance()
@@ -678,7 +673,7 @@ export class Parser {
     }
 
     if (!isRParenToken(this.peek())) {
-      throw new LitsError('Expected closing parenthesis', tokenSourceCodeInfo(this.peek()))
+      throw new LitsError('Expected closing parenthesis', this.peek()[2])
     }
 
     this.advance()
@@ -707,14 +702,14 @@ export class Parser {
           if (number === '1') {
             const mixedPercent1 = (!match[1] && dollar1 === 'WITH_1') || (match[1] && dollar1 === 'NAKED')
             if (mixedPercent1)
-              throw new LitsError('Please make up your mind, either use $ or $1', tokenSourceCodeInfo(firstToken))
+              throw new LitsError('Please make up your mind, either use $ or $1', firstToken[2])
 
             dollar1 = match[1] ? 'WITH_1' : 'NAKED'
           }
 
           arity = Math.max(arity, Number(number))
           if (arity > 20)
-            throw new LitsError('Can\'t specify more than 20 arguments', tokenSourceCodeInfo(firstToken))
+            throw new LitsError('Can\'t specify more than 20 arguments', firstToken[2])
         }
       }
     }
@@ -738,7 +733,7 @@ export class Parser {
         body: [exprNode],
       },
 
-      token: tokenSourceCodeInfo(firstToken) && firstToken,
+      sourceCodeInfo: firstToken[2],
     }
 
     return node
@@ -751,7 +746,7 @@ export class Parser {
       return {
         type: 'symbol',
         name: symbol.value,
-        token: tokenSourceCodeInfo(token) && token,
+        sourceCodeInfo: token[2],
       }
     }
     if (isLBracketToken(token)) {
@@ -768,7 +763,7 @@ export class Parser {
       return {
         type: 'array',
         elements,
-        token: tokenSourceCodeInfo(token) && token,
+        sourceCodeInfo: token[2],
       }
     }
     if (isLBraceToken(token)) {
@@ -779,7 +774,7 @@ export class Parser {
         elements[key] = {
           type: 'symbol',
           name: key,
-          token: tokenSourceCodeInfo(token) && token,
+          sourceCodeInfo: token[2],
         }
         if (!isRBraceToken(this.peek())) {
           assertOperatorToken(this.peek(), ',')
@@ -790,11 +785,11 @@ export class Parser {
       return {
         type: 'object',
         elements,
-        token: tokenSourceCodeInfo(token) && token,
+        sourceCodeInfo: token[2],
       }
     }
 
-    throw new LitsError('Expected symbol', tokenSourceCodeInfo(this.peek()))
+    throw new LitsError('Expected symbol', this.peek()[2])
   }
 
   private parseLet(token: SymbolToken, optionalSemicolon = false): LetNode {
@@ -821,9 +816,9 @@ export class Parser {
         name: undefined,
         value,
         params: [],
-        token: tokenSourceCodeInfo(token) && token,
+        sourceCodeInfo: token[2],
       }],
-      token: tokenSourceCodeInfo(token) && token,
+      sourceCodeInfo: token[2],
     }
   }
 
@@ -836,7 +831,7 @@ export class Parser {
         this.advance()
       }
       else if (!isReservedSymbolToken(this.peek(), 'end')) {
-        throw new LitsError('Expected ;', tokenSourceCodeInfo(this.peek()))
+        throw new LitsError('Expected ;', this.peek()[2])
       }
     }
     assertReservedSymbolToken(this.peek(), 'end')
@@ -845,7 +840,7 @@ export class Parser {
       type: 'SpecialExpression',
       name: 'do',
       params: expressions,
-      token: tokenSourceCodeInfo(token) && token,
+      sourceCodeInfo: token[2],
     }
   }
 
@@ -868,7 +863,7 @@ export class Parser {
         name: undefined,
         value,
         params: [],
-        token: tokenSourceCodeInfo(token) && token,
+        sourceCodeInfo: token[2],
       } satisfies BindingNode)
 
       if (isOperatorToken(this.peek(), ',')) {
@@ -877,7 +872,7 @@ export class Parser {
       token = this.peek()
     }
     if (bindingNodes.length === 0) {
-      throw new LitsError('Expected binding', tokenSourceCodeInfo(this.peek()))
+      throw new LitsError('Expected binding', this.peek()[2])
     }
 
     assertSymbolToken(token, 'do')
@@ -890,7 +885,7 @@ export class Parser {
         this.advance()
       }
       else if (!isReservedSymbolToken(this.peek(), 'end')) {
-        throw new LitsError('Expected ;', tokenSourceCodeInfo(this.peek()))
+        throw new LitsError('Expected ;', this.peek()[2])
       }
     }
     assertReservedSymbolToken(this.peek(), 'end')
@@ -901,7 +896,7 @@ export class Parser {
       name: 'loop',
       params,
       bindingNodes,
-      token: tokenSourceCodeInfo(firstToken) && firstToken,
+      sourceCodeInfo: firstToken[2],
     }
   }
 
@@ -914,7 +909,7 @@ export class Parser {
         this.advance()
       }
       else if (!isReservedSymbolToken(this.peek(), 'catch')) {
-        throw new LitsError('Expected ;', tokenSourceCodeInfo(this.peek()))
+        throw new LitsError('Expected ;', this.peek()[2])
       }
     }
 
@@ -924,7 +919,7 @@ export class Parser {
         type: 'SpecialExpression',
         name: 'do',
         params: tryExpressions,
-        token: tokenSourceCodeInfo(token) && token,
+        sourceCodeInfo: token[2],
       } satisfies DoNode
 
     assertReservedSymbolToken(this.peek(), 'catch')
@@ -945,7 +940,7 @@ export class Parser {
         this.advance()
       }
       else if (!isReservedSymbolToken(this.peek(), 'end')) {
-        throw new LitsError('Expected ;', tokenSourceCodeInfo(this.peek()))
+        throw new LitsError('Expected ;', this.peek()[2])
       }
     }
 
@@ -958,7 +953,7 @@ export class Parser {
         type: 'SpecialExpression',
         name: 'do',
         params: catchExpressions,
-        token: tokenSourceCodeInfo(token) && token,
+        sourceCodeInfo: token[2],
       } satisfies DoNode
 
     return {
@@ -967,7 +962,7 @@ export class Parser {
       params: [tryExpression],
       ce: catchExpression,
       e: errorSymbol,
-      token: tokenSourceCodeInfo(token) && token,
+      sourceCodeInfo: token[2],
     }
   }
 
@@ -982,7 +977,7 @@ export class Parser {
       const existingBoundNames = forLoopBindings.flatMap(b => getAllBindingTargetNames(b.b.target))
       const newBoundNames = getAllBindingTargetNames(loopBinding.b.target)
       if (newBoundNames.some(n => existingBoundNames.includes(n))) {
-        throw new LitsError('Duplicate binding', tokenSourceCodeInfo(loopBinding.b.token))
+        throw new LitsError('Duplicate binding', loopBinding.b.sourceCodeInfo)
       }
       forLoopBindings.push(loopBinding)
     }
@@ -998,7 +993,7 @@ export class Parser {
         this.advance()
       }
       else if (!isReservedSymbolToken(this.peek(), 'end')) {
-        throw new LitsError('Expected ;', tokenSourceCodeInfo(this.peek()))
+        throw new LitsError('Expected ;', this.peek()[2])
       }
     }
 
@@ -1009,7 +1004,7 @@ export class Parser {
       type: 'SpecialExpression',
       name: isDoseq ? 'doseq' : 'for',
       params: expressions,
-      token: tokenSourceCodeInfo(firstToken) && firstToken,
+      sourceCodeInfo: firstToken[2],
       l: forLoopBindings,
     }
   }
@@ -1025,7 +1020,7 @@ export class Parser {
     let token = this.peek()
 
     if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this.peek(), 'each') && !isOperatorToken(token, ',')) {
-      throw new LitsError('Expected do, each or comma', tokenSourceCodeInfo(token))
+      throw new LitsError('Expected do, each or comma', token[2])
     }
     if (isOperatorToken(token, ',')) {
       this.advance()
@@ -1038,7 +1033,7 @@ export class Parser {
       && !isSymbolToken(token, 'do')
       && !isReservedSymbolToken(token, 'each')
     ) {
-      throw new LitsError('Expected symbol each, do, let, when or while', tokenSourceCodeInfo(token))
+      throw new LitsError('Expected symbol each, do, let, when or while', token[2])
     }
 
     let letBindings: BindingNode[] | undefined
@@ -1050,13 +1045,13 @@ export class Parser {
         const existingBoundNames = letBindings.flatMap(b => getAllBindingTargetNames(b.target))
         const newBoundNames = getAllBindingTargetNames(letNode.bindingNodes[0]!.target)
         if (newBoundNames.some(n => existingBoundNames.includes(n))) {
-          throw new LitsError('Duplicate binding', tokenSourceCodeInfo(letNode.bindingNodes[0]!.token))
+          throw new LitsError('Duplicate binding', letNode.bindingNodes[0]!.sourceCodeInfo)
         }
 
         letBindings.push(letNode.bindingNodes[0]!)
         token = this.peek()
         if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this.peek(), 'each') && !isOperatorToken(token, ',')) {
-          throw new LitsError('Expected do, each or comma', tokenSourceCodeInfo(token))
+          throw new LitsError('Expected do, each or comma', token[2])
         }
         if (isOperatorToken(token, ',')) {
           this.advance()
@@ -1075,21 +1070,21 @@ export class Parser {
 
       if (token[1] === 'when') {
         if (modifiers.includes('&when')) {
-          throw new LitsError('Multiple when modifiers in for loop', tokenSourceCodeInfo(token))
+          throw new LitsError('Multiple when modifiers in for loop', token[2])
         }
         modifiers.push('&when')
         whenNode = this.parseExpression()
       }
       else {
         if (modifiers.includes('&while')) {
-          throw new LitsError('Multiple while modifiers in for loop', tokenSourceCodeInfo(token))
+          throw new LitsError('Multiple while modifiers in for loop', token[2])
         }
         modifiers.push('&while')
         whileNode = this.parseExpression()
       }
       token = this.peek()
       if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this.peek(), 'each') && !isOperatorToken(token, ',')) {
-        throw new LitsError('Expected do or comma', tokenSourceCodeInfo(token))
+        throw new LitsError('Expected do or comma', token[2])
       }
       if (isOperatorToken(token, ',')) {
         this.advance()
@@ -1098,7 +1093,7 @@ export class Parser {
     }
 
     if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this.peek(), 'each')) {
-      throw new LitsError('Expected do or each', tokenSourceCodeInfo(token))
+      throw new LitsError('Expected do or each', token[2])
     }
 
     return {
@@ -1125,12 +1120,12 @@ export class Parser {
       target: {
         type: 'symbol',
         name,
-        token: tokenSourceCodeInfo(firstToken) && firstToken,
+        sourceCodeInfo: firstToken[2],
       },
       name: undefined,
       value,
       params: [],
-      token: tokenSourceCodeInfo(firstToken) && firstToken,
+      sourceCodeInfo: firstToken[2],
     }
     return node
   }
@@ -1152,7 +1147,7 @@ export class Parser {
         this.advance()
       }
       else if (!isReservedSymbolToken(this.peek(), 'else') && !isReservedSymbolToken(this.peek(), 'end')) {
-        throw new LitsError('Expected ;', tokenSourceCodeInfo(this.peek()))
+        throw new LitsError('Expected ;', this.peek()[2])
       }
     }
 
@@ -1162,7 +1157,7 @@ export class Parser {
         type: 'SpecialExpression',
         name: 'do',
         params: thenExpressions,
-        token: tokenSourceCodeInfo(token) && token,
+        sourceCodeInfo: token[2],
       } satisfies DoNode
 
     let elseExpression: AstNode | undefined
@@ -1175,7 +1170,7 @@ export class Parser {
           this.advance()
         }
         else if (!isReservedSymbolToken(this.peek(), 'end')) {
-          throw new LitsError('Expected ;', tokenSourceCodeInfo(this.peek()))
+          throw new LitsError('Expected ;', this.peek()[2])
         }
       }
 
@@ -1185,7 +1180,7 @@ export class Parser {
           type: 'SpecialExpression',
           name: 'do',
           params: elseExpressions,
-          token: tokenSourceCodeInfo(token) && token,
+          sourceCodeInfo: token[2],
         } satisfies DoNode
     }
 
@@ -1201,7 +1196,7 @@ export class Parser {
       type: 'SpecialExpression',
       name: isUnless ? 'unless' : 'if',
       params,
-      token: tokenSourceCodeInfo(token) && token,
+      sourceCodeInfo: token[2],
     }
   }
 
@@ -1225,7 +1220,7 @@ export class Parser {
           this.advance()
         }
         else if (!isReservedSymbolToken(this.peek(), 'case') && !isReservedSymbolToken(this.peek(), 'end')) {
-          throw new LitsError('Expected ;', tokenSourceCodeInfo(this.peek()))
+          throw new LitsError('Expected ;', this.peek()[2])
         }
       }
 
@@ -1236,7 +1231,7 @@ export class Parser {
             type: 'SpecialExpression',
             name: 'do',
             params: expressions,
-            token: tokenSourceCodeInfo(token) && token,
+            sourceCodeInfo: token[2],
           } satisfies DoNode,
       )
       if (isReservedSymbolToken(this.peek(), 'end')) {
@@ -1252,7 +1247,7 @@ export class Parser {
       type: 'SpecialExpression',
       name: 'cond',
       params,
-      token: tokenSourceCodeInfo(token) && token,
+      sourceCodeInfo: token[2],
     }
   }
 
@@ -1276,7 +1271,7 @@ export class Parser {
           this.advance()
         }
         else if (!isReservedSymbolToken(this.peek(), 'case') && !isReservedSymbolToken(this.peek(), 'end')) {
-          throw new LitsError('Expected ;', tokenSourceCodeInfo(this.peek()))
+          throw new LitsError('Expected ;', this.peek()[2])
         }
       }
 
@@ -1287,7 +1282,7 @@ export class Parser {
             type: 'SpecialExpression',
             name: 'do',
             params: expressions,
-            token: tokenSourceCodeInfo(token) && token,
+            sourceCodeInfo: token[2],
           } satisfies DoNode,
       )
       if (isReservedSymbolToken(this.peek(), 'end')) {
@@ -1303,7 +1298,7 @@ export class Parser {
       type: 'SpecialExpression',
       name: 'switch',
       params,
-      token: tokenSourceCodeInfo(token) && token,
+      sourceCodeInfo: token[2],
     }
   }
 
@@ -1320,7 +1315,7 @@ export class Parser {
         this.advance()
       }
       else if (!isReservedSymbolToken(this.peek(), 'end')) {
-        throw new LitsError('Expected ;', tokenSourceCodeInfo(this.peek()))
+        throw new LitsError('Expected ;', this.peek()[2])
       }
     }
     assertReservedSymbolToken(this.peek(), 'end')
@@ -1337,7 +1332,7 @@ export class Parser {
         bindingNodes,
         body,
       },
-      token: tokenSourceCodeInfo(token) && token,
+      sourceCodeInfo: token[2],
     } satisfies FunctionNode
   }
 
@@ -1375,7 +1370,7 @@ export class Parser {
         type: 'SpecialExpression',
         name: 'def',
         params: [symbol, value],
-        token: tokenSourceCodeInfo(symbol.token) && symbol.token,
+        sourceCodeInfo: symbol.sourceCodeInfo,
       }
     }
     else if (isReservedSymbolToken(this.peek(), 'function')) {
@@ -1392,7 +1387,7 @@ export class Parser {
           this.advance()
         }
         else if (!isReservedSymbolToken(this.peek(), 'end')) {
-          throw new LitsError('Expected ;', tokenSourceCodeInfo(this.peek()))
+          throw new LitsError('Expected ;', this.peek()[2])
         }
       }
       assertReservedSymbolToken(this.peek(), 'end')
@@ -1407,11 +1402,11 @@ export class Parser {
           bindingNodes,
           body,
         },
-        token: tokenSourceCodeInfo(token) && token,
+        sourceCodeInfo: token[2],
       }
     }
     else {
-      throw new LitsError('Expected let or function', tokenSourceCodeInfo(this.peek()))
+      throw new LitsError('Expected let or function', this.peek()[2])
     }
   }
 
@@ -1419,7 +1414,7 @@ export class Parser {
     const token = this.peek()
     this.advance()
     if (!isSymbolToken(token)) {
-      throw new LitsError(`Expected symbol token, got ${token[0]}`, tokenSourceCodeInfo(token))
+      throw new LitsError(`Expected symbol token, got ${token[0]}`, token[2])
     }
     if (token[1][0] !== '\'') {
       return {
@@ -1427,7 +1422,7 @@ export class Parser {
         value: token[1],
         params: [],
         name: undefined,
-        token: tokenSourceCodeInfo(token) && token,
+        sourceCodeInfo: token[2],
       }
     }
     else {
@@ -1454,7 +1449,7 @@ export class Parser {
         value,
         params: [],
         name: undefined,
-        token: tokenSourceCodeInfo(token) && token,
+        sourceCodeInfo: token[2],
       }
     }
   }
@@ -1471,7 +1466,7 @@ export class Parser {
           value: numberReservedSymbolRecord[symbol],
           params: [],
           name: undefined,
-          token: tokenSourceCodeInfo(token) && token,
+          sourceCodeInfo: token[2],
         }
       }
     }
@@ -1480,7 +1475,7 @@ export class Parser {
       value: token[1],
       params: [],
       name: undefined,
-      token: tokenSourceCodeInfo(token) && token,
+      sourceCodeInfo: token[2],
     } satisfies ReservedSymbolNode
   }
 
@@ -1496,7 +1491,7 @@ export class Parser {
       value: negative ? -Number(numberString) : Number(numberString),
       params: [],
       name: undefined,
-      token: tokenSourceCodeInfo(token) && token,
+      sourceCodeInfo: token[2],
     }
   }
 
@@ -1549,7 +1544,7 @@ export class Parser {
       value,
       params: [],
       name: undefined,
-      token: tokenSourceCodeInfo(token) && token,
+      sourceCodeInfo: token[2],
     }
   }
 
@@ -1565,7 +1560,7 @@ export class Parser {
       value: regexpString,
       params: [],
       name: undefined,
-      token: tokenSourceCodeInfo(token) && token,
+      sourceCodeInfo: token[2],
     }
 
     const optionsNode: StringNode = {
@@ -1573,14 +1568,14 @@ export class Parser {
       value: optionsString,
       params: [],
       name: undefined,
-      token: tokenSourceCodeInfo(token) && token,
+      sourceCodeInfo: token[2],
     }
 
     const node: NormalExpressionNode = {
       type: 'NormalExpression',
       name: 'regexp',
       params: [stringNode, optionsNode],
-      token: tokenSourceCodeInfo(token) && token,
+      sourceCodeInfo: token[2],
     }
 
     return node

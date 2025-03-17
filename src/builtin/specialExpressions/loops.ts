@@ -4,7 +4,6 @@ import type { ContextStack } from '../../evaluator/ContextStack'
 import type { Context, EvaluateAstNode } from '../../evaluator/interface'
 import type { Any, Arr } from '../../interface'
 import type { AstNode, BindingNode, CommonSpecialExpressionNode } from '../../parser/types'
-import { tokenSourceCodeInfo } from '../../tokenizer/token'
 import { asNonUndefined } from '../../typeGuards'
 import { asAstNode } from '../../typeGuards/astNode'
 import { asAny, asColl, isSeq } from '../../typeGuards/lits'
@@ -49,7 +48,7 @@ function evaluateLoop(
   contextStack: ContextStack,
   evaluateAstNode: EvaluateAstNode,
 ) {
-  const sourceCodeInfo = tokenSourceCodeInfo(node.token)
+  const sourceCodeInfo = node.sourceCodeInfo
   const { l: loopBindings, params } = node as LoopNode
 
   const result: Arr = []

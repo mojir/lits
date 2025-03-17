@@ -56,21 +56,21 @@ describe('astNode type guards', () => {
     params: [{
       type: 'ReservedSymbol',
       value: 'null',
-      token: undefined,
+      sourceCodeInfo: undefined,
       params: [],
       name: undefined,
     }, {
       type: 'ReservedSymbol',
       value: 'null',
-      token: undefined,
+      sourceCodeInfo: undefined,
       params: [],
       name: undefined,
     }],
-    token: undefined,
+    sourceCodeInfo: undefined,
   }
   const nameNode: SymbolNode = {
     type: 'Symbol',
-    token: tkn,
+    sourceCodeInfo: undefined,
     value: 'A name',
     params: [],
     name: undefined,
@@ -78,14 +78,14 @@ describe('astNode type guards', () => {
   const numberNode: NumberNode = {
     type: 'Number',
     value: 12,
-    token: tkn,
+    sourceCodeInfo: undefined,
     params: [],
     name: undefined,
   }
   const stringNode: StringNode = {
     type: 'String',
     value: 'foo',
-    token: ['Symbol', 'X'],
+    sourceCodeInfo: undefined,
     params: [],
     name: undefined,
   }
@@ -93,7 +93,7 @@ describe('astNode type guards', () => {
     type: 'NormalExpression',
     params: [],
     name: 'object',
-    token: ['Symbol', 'X'],
+    sourceCodeInfo: undefined,
   }
   const normalExpressionNodeWithoutName: NormalExpressionNode = {
     type: 'NormalExpression',
@@ -105,14 +105,14 @@ describe('astNode type guards', () => {
         {
           type: 'Number',
           value: 2,
-          token: ['Symbol', 'X'],
+          sourceCodeInfo: undefined,
           params: [],
           name: undefined,
         },
       ],
-      token: undefined,
+      sourceCodeInfo: undefined,
     }],
-    token: undefined,
+    sourceCodeInfo: undefined,
   }
 
   const expressionNodes: ExpressionNode[] = [

@@ -1,7 +1,6 @@
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
 import type { AstNode, CommonSpecialExpressionNode, SymbolNode } from '../../parser/types'
-import { tokenSourceCodeInfo } from '../../tokenizer/token'
 import { asAny } from '../../typeGuards/lits'
 import { joinSets } from '../../utils'
 import type { BuiltinSpecialExpression } from '../interface'
@@ -21,7 +20,7 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any, TryNode> = {
     catch (error) {
       const newContext: Context = errorNode
         ? {
-            [errorNode.value]: { value: asAny(error, tokenSourceCodeInfo(node.token)) },
+            [errorNode.value]: { value: asAny(error, node.sourceCodeInfo) },
           }
         : {}
       return evaluateAstNode(catchExpression, contextStack.create(newContext))

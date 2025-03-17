@@ -3,7 +3,6 @@ import type { DoNode } from '../builtin/specialExpressions/do'
 import { evaluateAstNode } from '../evaluator'
 import type { ContextStack } from '../evaluator/ContextStack'
 import type { Ast, AstNode } from '../parser/types'
-import { tokenSourceCodeInfo } from '../tokenizer/token'
 import { asNonUndefined } from '../typeGuards'
 
 export type UndefinedSymbols = Set<string>
@@ -15,7 +14,7 @@ export const getUndefinedSymbols: GetUndefinedSymbols = (ast, contextStack, buil
       type: 'SpecialExpression',
       name: 'do',
       params: ast.body,
-      token: undefined,
+      sourceCodeInfo: undefined,
     } satisfies DoNode]
 
   const unresolvedSymbols = new Set<string>()
@@ -46,9 +45,9 @@ function findUnresolvedSymbolsInAstNode(astNode: AstNode, contextStack: ContextS
       return null
     case 'NormalExpression': {
       const unresolvedSymbols = new Set<string>()
-      const { name, token: debug } = astNode
+      const { name, sourceCodeInfo } = astNode
       if (typeof name === 'string') {
-        const lookUpResult = contextStack.lookUp({ type: 'Symbol', value: name, token: debug, params: [], name: undefined })
+        const lookUpResult = contextStack.lookUp({ type: 'Symbol', value: name, sourceCodeInfo, params: [], name: undefined })
         if (lookUpResult === null)
           unresolvedSymbols.add(name)
       }
@@ -58,7 +57,7 @@ function findUnresolvedSymbolsInAstNode(astNode: AstNode, contextStack: ContextS
       return unresolvedSymbols
     }
     case 'SpecialExpression': {
-      const specialExpression = asNonUndefined(builtin.specialExpressions[astNode.name], tokenSourceCodeInfo(astNode.token))
+      const specialExpression = asNonUndefined(builtin.specialExpressions[astNode.name], astNode.sourceCodeInfo)
 
       // eslint-disable-next-line ts/no-unsafe-argument
       return specialExpression.getUndefinedSymbols(astNode as any, contextStack, {
