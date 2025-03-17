@@ -9,6 +9,7 @@ import { asNonUndefined } from '../../typeGuards'
 import { asAstNode } from '../../typeGuards/astNode'
 import { asAny, asColl, isSeq } from '../../typeGuards/lits'
 import type { Builtin, BuiltinSpecialExpression } from '../interface'
+import { bindingNodeEntries, getAllBindingTargetNames } from '../bindingNode'
 
 export interface ForNode extends CommonSpecialExpressionNode<'for'> {
   l: LoopBindingNode[]
@@ -35,7 +36,10 @@ function addToContext(
   evaluateAstNode: EvaluateAstNode,
 ) {
   for (const binding of bindings) {
-    context[binding.name] = { value: evaluateAstNode(binding.value, contextStack) }
+    const val = evaluateAstNode(binding.value, contextStack)
+    bindingNodeEntries(binding, val, (name, value) => {
+      context[name] = { value }
+    })
   }
 }
 
@@ -83,9 +87,10 @@ function evaluateLoop(
         break
       }
 
-      context[binding.name] = {
-        value: asAny(seq[index], sourceCodeInfo),
-      }
+      const val = asAny(seq[index], sourceCodeInfo)
+      bindingNodeEntries(binding, val, (name, value) => {
+        context[name] = { value }
+      })
       for (const modifier of modifiers) {
         switch (modifier) {
           case '&let':
@@ -139,13 +144,17 @@ function analyze(
     getUndefinedSymbols([binding.value], contextStack.create(newContext), builtin).forEach(symbol =>
       result.add(symbol),
     )
-    newContext[binding.name] = { value: true }
+    getAllBindingTargetNames(binding.target).forEach((name) => {
+      newContext[name] = { value: true }
+    })
     if (letBindings) {
       letBindings.forEach((letBinding) => {
         getUndefinedSymbols([letBinding.value], contextStack.create(newContext), builtin).forEach(symbol =>
           result.add(symbol),
         )
-        newContext[letBinding.name] = { value: true }
+        getAllBindingTargetNames(letBinding.target).forEach((name) => {
+          newContext[name] = { value: true }
+        })
       })
     }
     if (whenNode) {

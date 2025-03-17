@@ -48,7 +48,8 @@ import type { OrNode } from '../builtin/specialExpressions/or'
 import type { RecurNode } from '../builtin/specialExpressions/recur'
 import type { ThrowNode } from '../builtin/specialExpressions/throw'
 import { isNumberReservedSymbol, numberReservedSymbolRecord } from '../tokenizer/reservedNames'
-import type { AstNode, BindingNode, NormalExpressionNode, NormalExpressionNodeWithName, NumberNode, ParseState, ReservedSymbolNode, StringNode, SymbolNode } from './types'
+import { getAllBindingTargetNames } from '../builtin/bindingNode'
+import type { AstNode, BindingNode, BindingTarget, NormalExpressionNode, NormalExpressionNodeWithName, NumberNode, ParseState, ReservedSymbolNode, StringNode, SymbolNode } from './types'
 
 const exponentiationPrecedence = 10
 const binaryFunctionalOperatorPrecedence = 1
@@ -743,10 +744,63 @@ export class Parser {
     return node
   }
 
+  private parseBindingTarget(): BindingTarget {
+    const token = this.peek()
+    if (isSymbolToken(token)) {
+      const symbol = this.parseSymbol()
+      return {
+        type: 'symbol',
+        name: symbol.value,
+        token: tokenSourceCodeInfo(token) && token,
+      }
+    }
+    if (isLBracketToken(token)) {
+      this.advance()
+      const elements: BindingTarget[] = []
+      while (!isRBracketToken(this.peek())) {
+        elements.push(this.parseBindingTarget())
+        if (!isRBracketToken(this.peek())) {
+          assertOperatorToken(this.peek(), ',')
+          this.advance()
+        }
+      }
+      this.advance()
+      return {
+        type: 'array',
+        elements,
+        token: tokenSourceCodeInfo(token) && token,
+      }
+    }
+    if (isLBraceToken(token)) {
+      this.advance()
+      const elements: Record<string, BindingTarget> = {}
+      while (!isRBraceToken(this.peek())) {
+        const key = this.parseSymbol().value
+        elements[key] = {
+          type: 'symbol',
+          name: key,
+          token: tokenSourceCodeInfo(token) && token,
+        }
+        if (!isRBraceToken(this.peek())) {
+          assertOperatorToken(this.peek(), ',')
+          this.advance()
+        }
+      }
+      this.advance()
+      return {
+        type: 'object',
+        elements,
+        token: tokenSourceCodeInfo(token) && token,
+      }
+    }
+
+    throw new LitsError('Expected symbol', tokenSourceCodeInfo(this.peek()))
+  }
+
   private parseLet(token: SymbolToken, optionalSemicolon = false): LetNode {
     this.advance()
 
-    const letSymbol = this.parseSymbol()
+    const target = this.parseBindingTarget()
 
     assertOperatorToken(this.peek(), ':=')
     this.advance()
@@ -763,12 +817,13 @@ export class Parser {
       params: [],
       bindingNodes: [{
         type: 'Binding',
-        name: letSymbol.value,
+        target,
+        name: undefined,
         value,
         params: [],
         token: tokenSourceCodeInfo(token) && token,
       }],
-      token: tokenSourceCodeInfo(letSymbol.token) && letSymbol.token,
+      token: tokenSourceCodeInfo(token) && token,
     }
   }
 
@@ -803,16 +858,17 @@ export class Parser {
       assertSymbolToken(token, 'let')
       this.advance()
 
-      const symbol = this.parseSymbol()
+      const target = this.parseBindingTarget()
       assertOperatorToken(this.peek(), ':=')
       this.advance()
       const value = this.parseExpression()
       bindingNodes.push({
         type: 'Binding',
-        name: symbol.value,
+        target,
+        name: undefined,
         value,
         params: [],
-        token: tokenSourceCodeInfo(symbol.token) && symbol.token,
+        token: tokenSourceCodeInfo(token) && token,
       } satisfies BindingNode)
 
       if (isOperatorToken(this.peek(), ',')) {
@@ -923,7 +979,9 @@ export class Parser {
 
     while (!this.isAtEnd() && !isSymbolToken(this.peek(), 'do')) {
       const loopBinding = this.parseForLoopBinding()
-      if (forLoopBindings.some(b => b.b.name === loopBinding.b.name)) {
+      const existingBoundNames = forLoopBindings.flatMap(b => getAllBindingTargetNames(b.b.target))
+      const newBoundNames = getAllBindingTargetNames(loopBinding.b.target)
+      if (newBoundNames.some(n => existingBoundNames.includes(n))) {
         throw new LitsError('Duplicate binding', tokenSourceCodeInfo(loopBinding.b.token))
       }
       forLoopBindings.push(loopBinding)
@@ -989,9 +1047,12 @@ export class Parser {
       letBindings = []
       while (isSymbolToken(token, 'let')) {
         const letNode = this.parseLet(token, true)
-        if (letBindings.some(b => b.name === letNode.bindingNodes[0]!.name)) {
+        const existingBoundNames = letBindings.flatMap(b => getAllBindingTargetNames(b.target))
+        const newBoundNames = getAllBindingTargetNames(letNode.bindingNodes[0]!.target)
+        if (newBoundNames.some(n => existingBoundNames.includes(n))) {
           throw new LitsError('Duplicate binding', tokenSourceCodeInfo(letNode.bindingNodes[0]!.token))
         }
+
         letBindings.push(letNode.bindingNodes[0]!)
         token = this.peek()
         if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this.peek(), 'each') && !isOperatorToken(token, ',')) {
@@ -1061,7 +1122,12 @@ export class Parser {
 
     const node: BindingNode = {
       type: 'Binding',
-      name,
+      target: {
+        type: 'symbol',
+        name,
+        token: tokenSourceCodeInfo(firstToken) && firstToken,
+      },
+      name: undefined,
       value,
       params: [],
       token: tokenSourceCodeInfo(firstToken) && firstToken,
@@ -1285,7 +1351,7 @@ export class Parser {
     }
     const token = this.peek()
     if (isOperatorToken(token)) {
-      return [';', ','].includes(token[1])
+      return [';', ',', ':='].includes(token[1])
     }
     if (isReservedSymbolToken(token)) {
       return ['else', 'when', 'while', 'then', 'end', 'case', 'catch'].includes(token[1])

@@ -1,7 +1,7 @@
 import type { SpecialExpressionNode } from '..'
-import type { GetUndefinedSymbols, UndefinedSymbols } from '../../getUndefinedSymbols'
 import type { ContextStack } from '../../evaluator/ContextStack'
 import type { Context, EvaluateAstNode } from '../../evaluator/interface'
+import type { GetUndefinedSymbols, UndefinedSymbols } from '../../getUndefinedSymbols'
 import type {
   AstNode,
   CommonSpecialExpressionNode,
@@ -10,11 +10,12 @@ import type {
   SymbolNode,
 } from '../../parser/types'
 import { tokenSourceCodeInfo } from '../../tokenizer/token'
+import { addToSet } from '../../utils'
 import { FUNCTION_SYMBOL } from '../../utils/symbols'
+import { bindingNodeEntries, getAllBindingTargetNames } from '../bindingNode'
 import type { Builtin, BuiltinSpecialExpression } from '../interface'
 import type { Function } from '../utils'
 import { assertNameNotDefined } from '../utils'
-import { addToSet } from '../../utils'
 
 export interface DefnNode extends CommonSpecialExpressionNode<'defn'> {
   functionName: SymbolNode
@@ -116,7 +117,9 @@ function evaluateFunction(
   for (const binding of fn.bindingNodes) {
     const bindingValueNode = binding.value
     const bindingValue = evaluateAstNode(bindingValueNode, contextStack)
-    functionContext[binding.name] = { value: bindingValue }
+    bindingNodeEntries(binding, bindingValue, (name, value) => {
+      functionContext[name] = { value }
+    })
   }
 
   const evaluatedFunction: EvaluatedFunction = {
@@ -142,7 +145,9 @@ function addFunctionUnresolvedSymbols(
   fn.bindingNodes.forEach((binding) => {
     const bindingResult = getUndefinedSymbols([binding.value], contextStack, builtin)
     addToSet(result, bindingResult)
-    newContext[binding.name] = { value: true }
+    getAllBindingTargetNames(binding.target).forEach((name) => {
+      newContext[name] = { value: true }
+    })
   })
   fn.arguments.forEach((arg) => {
     newContext[arg.name] = { value: true }

@@ -2,6 +2,7 @@ import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
 import type { BindingNode, CommonSpecialExpressionNode } from '../../parser/types'
 import { joinSets } from '../../utils'
+import { bindingNodeEntries, getAllBindingTargetNames } from '../bindingNode'
 import type { BuiltinSpecialExpression } from '../interface'
 
 export interface LetNode extends CommonSpecialExpressionNode<'let'> {
@@ -14,21 +15,26 @@ export const letSpecialExpression: BuiltinSpecialExpression<Any, LetNode> = {
     for (const binding of node.bindingNodes) {
       const bindingValueNode = binding.value
       const bindingValue = evaluateAstNode(bindingValueNode, contextStack)
-      contextStack.addValue(binding.name, bindingValue)
+      bindingNodeEntries(binding, bindingValue, (name, value) => {
+        contextStack.addValue(name, value)
+      })
     }
     return null
   },
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => {
     const newContext = node.bindingNodes
-      .map(binding => binding.name)
-      .reduce((context: Context, name) => {
-        context[name] = { value: true }
+      .reduce((context: Context, bindingNode) => {
+        getAllBindingTargetNames(bindingNode.target).forEach((name) => {
+          context[name] = { value: true }
+        })
         return context
       }, {})
     const bindingResults = node.bindingNodes.map((bindingNode) => {
       const valueNode = bindingNode.value
       const bindingsResult = getUndefinedSymbols([valueNode], contextStack, builtin)
-      contextStack.addValue(bindingNode.name, { value: true })
+      getAllBindingTargetNames(bindingNode.target).forEach((name) => {
+        contextStack.addValue(name, { value: true })
+      })
       return bindingsResult
     })
 

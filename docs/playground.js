@@ -4592,6 +4592,78 @@ var Playground = (function (exports) {
         },
     };
 
+    function bindingNodeEntries(bindingNode, value, onEntry) {
+        var target = bindingNode.target, token = bindingNode.token;
+        bindingTargetEntries(target, value, onEntry, token);
+    }
+    function bindingTargetEntries(bindingTarget, value, onEntry, token) {
+        var _a;
+        if (bindingTarget.type === 'object') {
+            Object.entries(bindingTarget.elements).forEach(function (_a) {
+                var _b;
+                var _c = __read(_a, 2), key = _c[0], element = _c[1];
+                assertUnknownRecord(value, token === null || token === void 0 ? void 0 : token[2]);
+                var val = (_b = value[key]) !== null && _b !== void 0 ? _b : null;
+                assertAny(val, token === null || token === void 0 ? void 0 : token[2]);
+                bindingTargetEntries(element, val, onEntry, token);
+            });
+        }
+        else if (bindingTarget.type === 'array') {
+            bindingTarget.elements.forEach(function (element, index) {
+                var _a;
+                assertArray(value, token === null || token === void 0 ? void 0 : token[2]);
+                var val = (_a = value[index]) !== null && _a !== void 0 ? _a : null;
+                assertAny(val, token === null || token === void 0 ? void 0 : token[2]);
+                bindingTargetEntries(element, val, onEntry, token);
+            });
+        }
+        else {
+            onEntry((_a = bindingTarget.alias) !== null && _a !== void 0 ? _a : bindingTarget.name, value);
+        }
+    }
+    function getAllBindingTargetNames(bindingTarget) {
+        var names = [];
+        getNamesFromBindingTarget(bindingTarget, names);
+        return names;
+    }
+    function getNamesFromBindingTarget(target, names) {
+        var e_1, _a, e_2, _b;
+        var _c;
+        if (target.type === 'array') {
+            try {
+                for (var _d = __values(target.elements), _e = _d.next(); !_e.done; _e = _d.next()) {
+                    var element = _e.value;
+                    getNamesFromBindingTarget(element, names);
+                }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (_e && !_e.done && (_a = _d.return)) _a.call(_d);
+                }
+                finally { if (e_1) throw e_1.error; }
+            }
+        }
+        else if (target.type === 'object') {
+            try {
+                for (var _f = __values(Object.values(target.elements)), _g = _f.next(); !_g.done; _g = _f.next()) {
+                    var element = _g.value;
+                    getNamesFromBindingTarget(element, names);
+                }
+            }
+            catch (e_2_1) { e_2 = { error: e_2_1 }; }
+            finally {
+                try {
+                    if (_g && !_g.done && (_b = _f.return)) _b.call(_f);
+                }
+                finally { if (e_2) throw e_2.error; }
+            }
+        }
+        else {
+            names.push((_c = target.alias) !== null && _c !== void 0 ? _c : target.name);
+        }
+    }
+
     var functionSpecialExpression = {
         paramCount: {},
         evaluate: function (node, contextStack, _a) {
@@ -4673,7 +4745,9 @@ var Playground = (function (exports) {
                 var binding = _c.value;
                 var bindingValueNode = binding.value;
                 var bindingValue = evaluateAstNode(bindingValueNode, contextStack);
-                functionContext[binding.name] = { value: bindingValue };
+                bindingNodeEntries(binding, bindingValue, function (name, value) {
+                    functionContext[name] = { value: value };
+                });
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -4697,7 +4771,9 @@ var Playground = (function (exports) {
         fn.bindingNodes.forEach(function (binding) {
             var bindingResult = getUndefinedSymbols([binding.value], contextStack, builtin);
             addToSet(result, bindingResult);
-            newContext[binding.name] = { value: true };
+            getAllBindingTargetNames(binding.target).forEach(function (name) {
+                newContext[name] = { value: true };
+            });
         });
         fn.arguments.forEach(function (arg) {
             newContext[arg.name] = { value: true };
@@ -4762,7 +4838,9 @@ var Playground = (function (exports) {
                     var binding = _d.value;
                     var bindingValueNode = binding.value;
                     var bindingValue = evaluateAstNode(bindingValueNode, contextStack);
-                    contextStack.addValue(binding.name, bindingValue);
+                    bindingNodeEntries(binding, bindingValue, function (name, value) {
+                        contextStack.addValue(name, value);
+                    });
                 }
             }
             catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -4777,15 +4855,18 @@ var Playground = (function (exports) {
         getUndefinedSymbols: function (node, contextStack, _a) {
             var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin;
             var newContext = node.bindingNodes
-                .map(function (binding) { return binding.name; })
-                .reduce(function (context, name) {
-                context[name] = { value: true };
+                .reduce(function (context, bindingNode) {
+                getAllBindingTargetNames(bindingNode.target).forEach(function (name) {
+                    context[name] = { value: true };
+                });
                 return context;
             }, {});
             var bindingResults = node.bindingNodes.map(function (bindingNode) {
                 var valueNode = bindingNode.value;
                 var bindingsResult = getUndefinedSymbols([valueNode], contextStack, builtin);
-                contextStack.addValue(bindingNode.name, { value: true });
+                getAllBindingTargetNames(bindingNode.target).forEach(function (name) {
+                    contextStack.addValue(name, { value: true });
+                });
                 return bindingsResult;
             });
             var paramsResult = getUndefinedSymbols(node.params, contextStack.create(newContext), builtin);
@@ -4799,7 +4880,10 @@ var Playground = (function (exports) {
             var evaluateAstNode = _a.evaluateAstNode;
             var sourceCodeInfo = tokenSourceCodeInfo(node.token);
             var bindingContext = node.bindingNodes.reduce(function (result, binding) {
-                result[binding.name] = { value: evaluateAstNode(binding.value, contextStack) };
+                var val = evaluateAstNode(binding.value, contextStack);
+                bindingNodeEntries(binding, val, function (name, value) {
+                    result[name] = { value: value };
+                });
                 return result;
             }, {});
             var newContextStack = contextStack.create(bindingContext);
@@ -4828,7 +4912,9 @@ var Playground = (function (exports) {
                             throw new LitsError("recur expected ".concat(node.bindingNodes.length, " parameters, got ").concat(valueToString(params_1.length)), sourceCodeInfo);
                         }
                         node.bindingNodes.forEach(function (binding, index) {
-                            asNonUndefined(bindingContext[binding.name], sourceCodeInfo).value = asAny(params_1[index], sourceCodeInfo);
+                            bindingNodeEntries(binding, asAny(params_1[index], sourceCodeInfo), function (name, value) {
+                                asNonUndefined(bindingContext[name], sourceCodeInfo).value = value;
+                            });
                         });
                         return "continue";
                     }
@@ -4845,9 +4931,10 @@ var Playground = (function (exports) {
         getUndefinedSymbols: function (node, contextStack, _a) {
             var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin;
             var newContext = node.bindingNodes
-                .map(function (binding) { return binding.name; })
-                .reduce(function (context, name) {
-                context[name] = { value: true };
+                .reduce(function (context, bindingNode) {
+                getAllBindingTargetNames(bindingNode.target).forEach(function (name) {
+                    context[name] = { value: true };
+                });
                 return context;
             }, {});
             var bindingValueNodes = node.bindingNodes.map(function (binding) { return binding.value; });
@@ -4862,7 +4949,10 @@ var Playground = (function (exports) {
         try {
             for (var bindings_1 = __values(bindings), bindings_1_1 = bindings_1.next(); !bindings_1_1.done; bindings_1_1 = bindings_1.next()) {
                 var binding = bindings_1_1.value;
-                context[binding.name] = { value: evaluateAstNode(binding.value, contextStack) };
+                var val = evaluateAstNode(binding.value, contextStack);
+                bindingNodeEntries(binding, val, function (name, value) {
+                    context[name] = { value: value };
+                });
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -4874,13 +4964,13 @@ var Playground = (function (exports) {
         }
     }
     function evaluateLoop(returnResult, node, contextStack, evaluateAstNode) {
-        var e_2, _a;
         var sourceCodeInfo = tokenSourceCodeInfo(node.token);
-        var _b = node, loopBindings = _b.l, params = _b.params;
+        var _a = node, loopBindings = _a.l, params = _a.params;
         var result = [];
         var bindingIndices = loopBindings.map(function () { return 0; });
         var abort = false;
-        while (!abort) {
+        var _loop_1 = function () {
+            var e_2, _b;
             var context = {};
             var newContextStack = contextStack.create(context);
             var skip = false;
@@ -4904,9 +4994,10 @@ var Playground = (function (exports) {
                     bindingIndices[bindingIndex - 1] = asNonUndefined(bindingIndices[bindingIndex - 1], sourceCodeInfo) + 1;
                     break;
                 }
-                context[binding.name] = {
-                    value: asAny(seq[index], sourceCodeInfo),
-                };
+                var val = asAny(seq[index], sourceCodeInfo);
+                bindingNodeEntries(binding, val, function (name, value) {
+                    context[name] = { value: value };
+                });
                 try {
                     for (var modifiers_1 = (e_2 = void 0, __values(modifiers)), modifiers_1_1 = modifiers_1.next(); !modifiers_1_1.done; modifiers_1_1 = modifiers_1.next()) {
                         var modifier = modifiers_1_1.value;
@@ -4934,7 +5025,7 @@ var Playground = (function (exports) {
                 catch (e_2_1) { e_2 = { error: e_2_1 }; }
                 finally {
                     try {
-                        if (modifiers_1_1 && !modifiers_1_1.done && (_a = modifiers_1.return)) _a.call(modifiers_1);
+                        if (modifiers_1_1 && !modifiers_1_1.done && (_b = modifiers_1.return)) _b.call(modifiers_1);
                     }
                     finally { if (e_2) throw e_2.error; }
                 }
@@ -4946,6 +5037,9 @@ var Playground = (function (exports) {
                 if (bindingIndices.length > 0)
                     bindingIndices[bindingIndices.length - 1] += 1;
             }
+        };
+        while (!abort) {
+            _loop_1();
         }
         return returnResult ? result : null;
     }
@@ -4958,13 +5052,17 @@ var Playground = (function (exports) {
             getUndefinedSymbols([binding.value], contextStack.create(newContext), builtin).forEach(function (symbol) {
                 return result.add(symbol);
             });
-            newContext[binding.name] = { value: true };
+            getAllBindingTargetNames(binding.target).forEach(function (name) {
+                newContext[name] = { value: true };
+            });
             if (letBindings) {
                 letBindings.forEach(function (letBinding) {
                     getUndefinedSymbols([letBinding.value], contextStack.create(newContext), builtin).forEach(function (symbol) {
                         return result.add(symbol);
                     });
-                    newContext[letBinding.name] = { value: true };
+                    getAllBindingTargetNames(letBinding.target).forEach(function (name) {
+                        newContext[name] = { value: true };
+                    });
                 });
             }
             if (whenNode) {
@@ -6714,10 +6812,61 @@ var Playground = (function (exports) {
             };
             return node;
         };
+        Parser.prototype.parseBindingTarget = function () {
+            var token = this.peek();
+            if (isSymbolToken(token)) {
+                var symbol = this.parseSymbol();
+                return {
+                    type: 'symbol',
+                    name: symbol.value,
+                    token: tokenSourceCodeInfo(token) && token,
+                };
+            }
+            if (isLBracketToken(token)) {
+                this.advance();
+                var elements = [];
+                while (!isRBracketToken(this.peek())) {
+                    elements.push(this.parseBindingTarget());
+                    if (!isRBracketToken(this.peek())) {
+                        assertOperatorToken(this.peek(), ',');
+                        this.advance();
+                    }
+                }
+                this.advance();
+                return {
+                    type: 'array',
+                    elements: elements,
+                    token: tokenSourceCodeInfo(token) && token,
+                };
+            }
+            if (isLBraceToken(token)) {
+                this.advance();
+                var elements = {};
+                while (!isRBraceToken(this.peek())) {
+                    var key = this.parseSymbol().value;
+                    elements[key] = {
+                        type: 'symbol',
+                        name: key,
+                        token: tokenSourceCodeInfo(token) && token,
+                    };
+                    if (!isRBraceToken(this.peek())) {
+                        assertOperatorToken(this.peek(), ',');
+                        this.advance();
+                    }
+                }
+                this.advance();
+                return {
+                    type: 'object',
+                    elements: elements,
+                    token: tokenSourceCodeInfo(token) && token,
+                };
+            }
+            throw new LitsError('Expected symbol', tokenSourceCodeInfo(this.peek()));
+        };
         Parser.prototype.parseLet = function (token, optionalSemicolon) {
             if (optionalSemicolon === void 0) { optionalSemicolon = false; }
             this.advance();
-            var letSymbol = this.parseSymbol();
+            var target = this.parseBindingTarget();
             assertOperatorToken(this.peek(), ':=');
             this.advance();
             var value = this.parseExpression();
@@ -6730,12 +6879,13 @@ var Playground = (function (exports) {
                 params: [],
                 bindingNodes: [{
                         type: 'Binding',
-                        name: letSymbol.value,
+                        target: target,
+                        name: undefined,
                         value: value,
                         params: [],
                         token: tokenSourceCodeInfo(token) && token,
                     }],
-                token: tokenSourceCodeInfo(letSymbol.token) && letSymbol.token,
+                token: tokenSourceCodeInfo(token) && token,
             };
         };
         Parser.prototype.parseDo = function (token) {
@@ -6766,16 +6916,17 @@ var Playground = (function (exports) {
             while (!this.isAtEnd() && !isSymbolToken(token, 'do')) {
                 assertSymbolToken(token, 'let');
                 this.advance();
-                var symbol = this.parseSymbol();
+                var target = this.parseBindingTarget();
                 assertOperatorToken(this.peek(), ':=');
                 this.advance();
                 var value = this.parseExpression();
                 bindingNodes.push({
                     type: 'Binding',
-                    name: symbol.value,
+                    target: target,
+                    name: undefined,
                     value: value,
                     params: [],
-                    token: tokenSourceCodeInfo(symbol.token) && symbol.token,
+                    token: tokenSourceCodeInfo(token) && token,
                 });
                 if (isOperatorToken(this.peek(), ',')) {
                     this.advance();
@@ -6871,7 +7022,9 @@ var Playground = (function (exports) {
             var forLoopBindings = [];
             var _loop_1 = function () {
                 var loopBinding = this_1.parseForLoopBinding();
-                if (forLoopBindings.some(function (b) { return b.b.name === loopBinding.b.name; })) {
+                var existingBoundNames = forLoopBindings.flatMap(function (b) { return getAllBindingTargetNames(b.b.target); });
+                var newBoundNames = getAllBindingTargetNames(loopBinding.b.target);
+                if (newBoundNames.some(function (n) { return existingBoundNames.includes(n); })) {
                     throw new LitsError('Duplicate binding', tokenSourceCodeInfo(loopBinding.b.token));
                 }
                 forLoopBindings.push(loopBinding);
@@ -6928,7 +7081,9 @@ var Playground = (function (exports) {
                 letBindings = [];
                 var _loop_2 = function () {
                     var letNode = this_2.parseLet(token, true);
-                    if (letBindings.some(function (b) { return b.name === letNode.bindingNodes[0].name; })) {
+                    var existingBoundNames = letBindings.flatMap(function (b) { return getAllBindingTargetNames(b.target); });
+                    var newBoundNames = getAllBindingTargetNames(letNode.bindingNodes[0].target);
+                    if (newBoundNames.some(function (n) { return existingBoundNames.includes(n); })) {
                         throw new LitsError('Duplicate binding', tokenSourceCodeInfo(letNode.bindingNodes[0].token));
                     }
                     letBindings.push(letNode.bindingNodes[0]);
@@ -6994,7 +7149,12 @@ var Playground = (function (exports) {
             var value = this.parseExpression();
             var node = {
                 type: 'Binding',
-                name: name,
+                target: {
+                    type: 'symbol',
+                    name: name,
+                    token: tokenSourceCodeInfo(firstToken) && firstToken,
+                },
+                name: undefined,
                 value: value,
                 params: [],
                 token: tokenSourceCodeInfo(firstToken) && firstToken,
@@ -7187,7 +7347,7 @@ var Playground = (function (exports) {
             }
             var token = this.peek();
             if (isOperatorToken(token)) {
-                return [';', ','].includes(token[1]);
+                return [';', ',', ':='].includes(token[1]);
             }
             if (isReservedSymbolToken(token)) {
                 return ['else', 'when', 'while', 'then', 'end', 'case', 'catch'].includes(token[1]);

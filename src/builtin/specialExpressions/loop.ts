@@ -7,6 +7,7 @@ import { asNonUndefined } from '../../typeGuards'
 import { asAny } from '../../typeGuards/lits'
 import { joinSets } from '../../utils'
 import { valueToString } from '../../utils/debug/debugTools'
+import { bindingNodeEntries, getAllBindingTargetNames } from '../bindingNode'
 import type { BuiltinSpecialExpression } from '../interface'
 
 export interface LoopNode extends CommonSpecialExpressionNode<'loop'> {
@@ -18,7 +19,10 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const sourceCodeInfo = tokenSourceCodeInfo(node.token)
     const bindingContext: Context = node.bindingNodes.reduce((result: Context, binding) => {
-      result[binding.name] = { value: evaluateAstNode(binding.value, contextStack) }
+      const val = evaluateAstNode(binding.value, contextStack)
+      bindingNodeEntries(binding, val, (name, value) => {
+        result[name] = { value }
+      })
       return result
     }, {})
     const newContextStack = contextStack.create(bindingContext)
@@ -38,8 +42,10 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
               sourceCodeInfo,
             )
           }
-          ;node.bindingNodes.forEach((binding, index) => {
-            asNonUndefined(bindingContext[binding.name], sourceCodeInfo).value = asAny(params[index], sourceCodeInfo)
+          node.bindingNodes.forEach((binding, index) => {
+            bindingNodeEntries(binding, asAny(params[index], sourceCodeInfo), (name, value) => {
+              asNonUndefined(bindingContext[name], sourceCodeInfo).value = value
+            })
           })
           continue
         }
@@ -50,9 +56,10 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
   },
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => {
     const newContext = node.bindingNodes
-      .map(binding => binding.name)
-      .reduce((context: Context, name) => {
-        context[name] = { value: true }
+      .reduce((context: Context, bindingNode) => {
+        getAllBindingTargetNames(bindingNode.target).forEach((name) => {
+          context[name] = { value: true }
+        })
         return context
       }, {})
 

@@ -163,9 +163,22 @@ interface NormalExpressionNodeExpression extends CommonNormalExpressionNode {
 
 export type NormalExpressionNode = NormalExpressionNodeWithName | NormalExpressionNodeExpression
 
+export type BindingTarget = { token: Token | undefined } & ({
+  type: 'symbol'
+  name: string
+  alias?: string
+} | {
+  type: 'object'
+  elements: Record<string, BindingTarget>
+} | {
+  type: 'array'
+  elements: BindingTarget[]
+})
+
 export interface BindingNode extends GenericNode {
   type: 'Binding' // type
-  name: string // name
+  target: BindingTarget
+  name: undefined
   value: AstNode // value
 }
 
