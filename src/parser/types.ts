@@ -6,13 +6,12 @@ import type { Any, Arr } from '../interface'
 import type { TokenStream } from '../tokenizer/tokenize'
 import type { ModifierName, SourceCodeInfo, Token } from '../tokenizer/token'
 import type { FUNCTION_SYMBOL, REGEXP_SYMBOL } from '../utils/symbols'
-import type { FunctionArgument } from '../builtin/utils'
 
 export interface ParseState {
   position: number
 }
 export interface EvaluatedFunction {
-  arguments: FunctionArgument[]
+  arguments: BindingTarget[]
   body: AstNode[]
   context: Context
 }
@@ -163,16 +162,32 @@ interface NormalExpressionNodeExpression extends CommonNormalExpressionNode {
 
 export type NormalExpressionNode = NormalExpressionNodeWithName | NormalExpressionNodeExpression
 
-export type BindingTarget = { sourceCodeInfo: SourceCodeInfo | undefined, default?: AstNode } & ({
+interface CommonBindingTarget {
+  sourceCodeInfo: SourceCodeInfo | undefined
+  default?: AstNode
+}
+
+export type SymbolBindingTarget = CommonBindingTarget & {
   type: 'symbol'
   name: string
-} | {
+}
+
+export type RestBindingTarget = CommonBindingTarget & {
+  type: 'rest'
+  name: string
+}
+
+export type ObjectBindingTarget = CommonBindingTarget & {
   type: 'object'
   elements: Record<string, BindingTarget>
-} | {
+}
+
+export type ArrayBindingTarget = CommonBindingTarget & {
   type: 'array'
   elements: (BindingTarget | null)[]
-})
+}
+
+export type BindingTarget = SymbolBindingTarget | RestBindingTarget | ObjectBindingTarget | ArrayBindingTarget
 
 export interface BindingNode extends GenericNode {
   type: 'Binding' // type

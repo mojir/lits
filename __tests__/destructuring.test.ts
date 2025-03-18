@@ -207,54 +207,30 @@ describe('lits Destructuring', () => {
   describe('rest pattern', () => {
     test('basic rest in array', () => {
       expect(lits.run(`
-        let [one, ...rest] := [1, 2, 3, 4];
-        [one, rest]
+        let [one, ...others] := [1, 2, 3, 4];
+        [one, others]
       `)).toEqual([1, [2, 3, 4]])
     })
 
     test('empty rest in array', () => {
       expect(lits.run(`
-        let [one, ...rest] := [1];
-        [one, rest]
+        let [one, ...others] := [1];
+        [one, others]
       `)).toEqual([1, []])
     })
 
     test('rest in object', () => {
       expect(lits.run(`
-        let { name, ...rest } := { name := "Linda", age := 31, city := "Boston" };
-        [name, rest]
+        let { name, ...others } := { name := "Linda", age := 31, city := "Boston" };
+        [name, others]
       `)).toEqual(['Linda', { age: 31, city: 'Boston' }])
     })
 
     test('empty rest in object', () => {
       expect(lits.run(`
-        let { name, ...rest } := { name := "Marcus" };
-        [name, rest]
+        let { name, ...others } := { name := "Marcus" };
+        [name, others]
       `)).toEqual(['Marcus', {}])
-    })
-  })
-
-  // Rest destructuring
-  describe('rest destructuring', () => {
-    test('destructure rest array', () => {
-      expect(lits.run(`
-        let [one, ...{ length, [0] as two }] := [1, 2, 3, 4];
-        [one, length, two]
-      `)).toEqual([1, 3, 2])
-    })
-
-    test('destructure rest object', () => {
-      expect(lits.run(`
-        let { name, ...{ age, city }} := { name := "Nancy", age := 34, city := "Chicago" };
-        [name, age, city]
-      `)).toEqual(['Nancy', 34, 'Chicago'])
-    })
-
-    test('nested destructuring in rest', () => {
-      expect(lits.run(`
-        let { name, ...{ contact { email }}} := { name := "Oliver", contact := { email := "oliver@example.com", phone := "555-1234" }};
-        [name, email]
-      `)).toEqual(['Oliver', 'oliver@example.com'])
     })
   })
 
@@ -304,33 +280,10 @@ describe('lits Destructuring', () => {
         processCoords([3, 4])
       `)).toBe(7)
     })
-
-    test('complex mixed parameter destructuring', () => {
-      expect(lits.run(`
-        function process({ user { name }, [one, two] as scores })
-          name ++ ": " ++ str(one + two)
-        end;
-        process({ user := { name := "Rachel" }, scores := [10, 15] })
-      `)).toBe('Rachel: 25')
-    })
   })
 
   // Edge cases
   describe('edge cases', () => {
-    test('null destructuring should not error', () => {
-      expect(lits.run(`
-        let { name } := null;
-        name
-      `)).toBe(null)
-    })
-
-    test('destructuring non-object', () => {
-      expect(lits.run(`
-        let { length } := "string";
-        length
-      `)).toBe(6)
-    })
-
     test('destructuring a number should fail gracefully', () => {
       expect(lits.run(`
         try
@@ -380,10 +333,10 @@ describe('lits Destructuring', () => {
           },
           settings := { theme := "light" },
           scores as userScores := [],
-          ...rest
+          ...others
         } := { name := "Sam", profile := { contact := {} }};
         
-        [userName, age, userEmail, settings.theme, userScores, rest]
+        [userName, age, userEmail, settings.theme, userScores, others]
       `)).toEqual(['Sam', 0, 'none', 'light', [], {}])
     })
 

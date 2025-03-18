@@ -1,14 +1,14 @@
 import { LitsError } from '../errors'
 import type { Any } from '../interface'
-import type { AstNode, BindingNode, BindingTarget } from '../parser/types'
+import type { AstNode, BindingNode, BindingTarget, RestBindingTarget } from '../parser/types'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { assertUnknownRecord } from '../typeGuards'
 import { assertArray } from '../typeGuards/array'
+import { asRestBindingTarget } from '../typeGuards/bindingTarget'
 import { asAny, assertAny } from '../typeGuards/lits'
-import type { FunctionArgument } from './utils'
 
 export function evalueateBindingNodeValues(
-  input: BindingNode | FunctionArgument,
+  input: BindingNode | BindingTarget,
   value: Any,
   evaluate: (astNode: AstNode) => Any,
 ): Record<string, Any> {
@@ -27,23 +27,51 @@ function createRecord(
   record: Record<string, Any>,
 ): void {
   if (bindingTarget.type === 'object') {
+    assertUnknownRecord(value, sourceCodeInfo)
+    const capturedKeys = new Set<string>()
+    let restElement: RestBindingTarget | undefined
     Object.entries(bindingTarget.elements).forEach(([key, element]) => {
-      assertUnknownRecord(value, sourceCodeInfo)
+      if (element.type === 'rest') {
+        restElement = element
+        return
+      }
+      capturedKeys.add(key)
       const val = (value[key] !== undefined ? value[key] : element.default && evaluate(element.default)) ?? null
       assertAny(val, sourceCodeInfo)
       createRecord(element, val, evaluate, sourceCodeInfo, record)
     })
+    if (restElement) {
+      const restValues = Object.entries(value)
+        .filter(([key]) => !capturedKeys.has(key))
+        .reduce((acc: Record<string, Any>, [key, val]) => {
+          acc[key] = asAny(val)
+          return acc
+        }, {})
+
+      record[restElement.name] = restValues
+    }
   }
   else if (bindingTarget.type === 'array') {
-    bindingTarget.elements.forEach((element, index) => {
+    let restIndex: number | null = null
+    assertArray(value, sourceCodeInfo)
+    for (let index = 0; index < bindingTarget.elements.length; index += 1) {
+      const element = bindingTarget.elements[index] ?? null
       if (element === null) {
-        return
+        continue
       }
-      assertArray(value, sourceCodeInfo)
+      if (element.type === 'rest') {
+        restIndex = index
+        break
+      }
       const val = (value[index] !== undefined ? value[index] : element.default && evaluate(element.default)) ?? null
       assertAny(val, sourceCodeInfo)
       createRecord(element, val, evaluate, sourceCodeInfo, record)
-    })
+    }
+    if (restIndex !== null) {
+      const restValues = value.slice(restIndex)
+      const restElement = bindingTarget.elements[restIndex]! as RestBindingTarget
+      record[restElement.name] = restValues
+    }
   }
   else {
     record[bindingTarget.name] = asAny(value)

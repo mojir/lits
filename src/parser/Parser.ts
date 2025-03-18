@@ -46,7 +46,6 @@ import type { RecurNode } from '../builtin/specialExpressions/recur'
 import type { ThrowNode } from '../builtin/specialExpressions/throw'
 import { isNumberReservedSymbol, numberReservedSymbolRecord } from '../tokenizer/reservedNames'
 import { getAllBindingTargetNames } from '../builtin/bindingNode'
-import type { FunctionArgument } from '../builtin/utils'
 import type { AstNode, BindingNode, BindingTarget, NormalExpressionNode, NormalExpressionNodeWithName, NumberNode, ParseState, ReservedSymbolNode, StringNode, SymbolNode } from './types'
 
 const exponentiationPrecedence = 10
@@ -587,7 +586,7 @@ export class Parser {
     }
   }
 
-  parseFunctionArguments(): { functionArguments: FunctionArgument[], bindingNodes: BindingNode[] } {
+  parseFunctionArguments(): { functionArguments: BindingTarget[], bindingNodes: BindingNode[] } {
     const firstToken = this.peek()
     if (isSymbolToken(firstToken)) {
       return {
@@ -624,26 +623,22 @@ export class Parser {
 
     let rest = false
     let defaults = false
-    const functionArguments: FunctionArgument[] = []
+    const functionArguments: BindingTarget[] = []
     while (!this.isAtEnd() && !isRParenToken(this.peek()) && !isSymbolToken(this.peek(), 'let')) {
       if (rest) {
         throw new LitsError('Rest argument must be last', this.peek()[2])
-      }
-      if (isOperatorToken(this.peek(), '...')) {
-        this.advance()
-        rest = true
       }
       const bindingTarget = this.parseBindingTarget()
       if (bindingTarget.default) {
         defaults = true
       }
+      if (bindingTarget.type === 'rest') {
+        rest = true
+      }
       if (defaults && !bindingTarget.default) {
         throw new LitsError('Default arguments must be last', this.peek()[2])
       }
-      functionArguments.push({
-        ...bindingTarget,
-        rest: rest ? true : undefined,
-      })
+      functionArguments.push(bindingTarget)
 
       if (!isOperatorToken(this.peek(), ',') && !isRParenToken(this.peek()) && !isSymbolToken(this.peek(), 'let')) {
         throw new LitsError('Expected comma or closing parenthesis', this.peek()[2])
@@ -695,7 +690,7 @@ export class Parser {
       }
     }
 
-    const functionArguments: FunctionArgument[] = []
+    const functionArguments: BindingTarget[] = []
 
     for (let i = 1; i <= arity; i += 1) {
       if (i === 1 && dollar1 === 'NAKED') {
@@ -730,8 +725,10 @@ export class Parser {
     return undefined
   }
 
-  private parseBindingTarget({ requireDefaultValue }: { requireDefaultValue?: true } = { }): BindingTarget {
+  private parseBindingTarget({ requireDefaultValue, noRest }: { requireDefaultValue?: true, noRest?: true } = {}): BindingTarget {
     const firstToken = this.peek()
+
+    // Symbol
     if (isSymbolToken(firstToken)) {
       const symbol = this.parseSymbol()
 
@@ -747,11 +744,34 @@ export class Parser {
         sourceCodeInfo: firstToken[2],
       }
     }
+
+    // Rest
+    if (isOperatorToken(firstToken, '...')) {
+      if (noRest) {
+        throw new LitsError('Rest element not allowed', firstToken[2])
+      }
+      this.advance()
+      const symbol = this.parseSymbol()
+      if (isOperatorToken(this.peek(), ':=')) {
+        throw new LitsError('Rest argument can not have default value', this.peek()[2])
+      }
+      return {
+        type: 'rest',
+        name: symbol.value,
+        sourceCodeInfo: firstToken[2],
+      }
+    }
+
+    // Array
     if (isLBracketToken(firstToken)) {
       this.advance()
       const elements: (BindingTarget | null)[] = []
       let token = this.peek()
+      let rest = false
       while (!isRBracketToken(token)) {
+        if (rest) {
+          throw new LitsError('Rest argument must be last', token[2])
+        }
         if (isOperatorToken(token, ',')) {
           elements.push(null)
           this.advance()
@@ -759,7 +779,13 @@ export class Parser {
           continue
         }
 
-        elements.push(this.parseBindingTarget())
+        const target = this.parseBindingTarget()
+          
+        if (target.type === 'rest') {
+          rest = true
+        }
+
+        elements.push(target)
         token = this.peek()
 
         if (!isRBracketToken(token)) {
@@ -782,14 +808,27 @@ export class Parser {
         sourceCodeInfo: firstToken[2],
       }
     }
+
+    // Object
     if (isLBraceToken(firstToken)) {
       this.advance()
       const elements: Record<string, BindingTarget> = {}
       let token = this.peek()
+      let rest = false
       while (!isRBraceToken(token)) {
+        if (rest) {
+          throw new LitsError('Rest argument must be last', token[2])
+        }
+        if (isOperatorToken(token, '...')) {
+          rest = true
+          this.advance()
+        }
         const key = this.parseSymbol().value
         token = this.peek()
         if (isReservedSymbolToken(token, 'as')) {
+          if (rest) {
+            throw new LitsError('Rest argument can not have alias', token[2])
+          }
           this.advance()
           const name = this.parseSymbol().value
           if (elements[name]) {
@@ -806,8 +845,12 @@ export class Parser {
           if (elements[key]) {
             throw new LitsError(`Duplicate binding name: ${key}`, token[2])
           }
+          if (rest && isOperatorToken(this.peek(), ':=')) {
+            throw new LitsError('Rest argument can not have default value', this.peek()[2])
+          }
+
           elements[key] = {
-            type: 'symbol',
+            type: rest ? 'rest' : 'symbol',
             name: key,
             default: this.parseOptionalDefaulValue(),
             sourceCodeInfo: firstToken[2],
@@ -844,7 +887,7 @@ export class Parser {
   private parseLet(token: SymbolToken, optionalSemicolon = false): LetNode {
     this.advance()
 
-    const target = this.parseBindingTarget({ requireDefaultValue: true })
+    const target = this.parseBindingTarget({ requireDefaultValue: true, noRest: true })
 
     const value = target.default!
     delete target.default
@@ -897,7 +940,7 @@ export class Parser {
       assertSymbolToken(token, 'let')
       this.advance()
 
-      const target = this.parseBindingTarget({ requireDefaultValue: true })
+      const target = this.parseBindingTarget({ requireDefaultValue: true, noRest: true })
       const value = target.default!
       delete target.default
 

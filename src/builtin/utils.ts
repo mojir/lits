@@ -7,13 +7,9 @@ import type { Builtin } from './interface'
 import type { SpecialExpressionName } from '.'
 
 export interface Function {
-  arguments: FunctionArgument[]
+  arguments: BindingTarget[]
   bindingNodes: BindingNode[]
   body: AstNode[]
-}
-
-export type FunctionArgument = BindingTarget & {
-  rest?: true
 }
 
 export function assertNameNotDefined<T>(

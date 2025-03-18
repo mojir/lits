@@ -41,8 +41,8 @@ function checkParams(
   nbrOfParams: number,
   sourceCodeInfo?: SourceCodeInfo,
 ) {
-  const hasRest = evaluatedFunction.arguments.some(arg => arg.rest)
-  const minArity = evaluatedFunction.arguments.filter(arg => !arg.rest && !arg.default).length
+  const hasRest = evaluatedFunction.arguments.some(arg => arg.type === 'rest')
+  const minArity = evaluatedFunction.arguments.filter(arg => arg.type !== 'rest' && !arg.default).length
   const maxArity = hasRest ? Number.MAX_SAFE_INTEGER : evaluatedFunction.arguments.length
   if (nbrOfParams < minArity || nbrOfParams > maxArity) {
     throw new LitsError(`Unexpected number of arguments, got ${valueToString(nbrOfParams)}.`, sourceCodeInfo)
@@ -72,7 +72,7 @@ export const functionExecutors: FunctionExecutors = {
       checkParams(fn.evaluatedfunction, params.length, sourceCodeInfo)
       const evaluatedFunction = fn.evaluatedfunction
       const args = evaluatedFunction.arguments
-      const nbrOfNonRestArgs: number = args.filter(arg => !arg.rest).length
+      const nbrOfNonRestArgs: number = args.filter(arg => arg.type !== 'rest').length
 
       const newContext: Context = { ...evaluatedFunction.context }
 
@@ -101,7 +101,7 @@ export const functionExecutors: FunctionExecutors = {
         })
       }
 
-      const restArgument = args.find(arg => arg.rest)
+      const restArgument = args.find(arg => arg.type === 'rest')
       if (restArgument !== undefined) {
         const valueRecord = evalueateBindingNodeValues(restArgument, rest, astNode => evaluateAstNode(astNode, contextStack.create(newContext)))
         Object.entries(valueRecord).forEach(([key, value]) => {
