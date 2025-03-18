@@ -11,7 +11,7 @@ describe('getAllBindingTargetNames', () => {
     }
 
     const result = getAllBindingTargetNames(bindingTarget)
-    expect(result).toEqual([])
+    expect(result).toEqual({})
   })
 
   it('should return a single name for a symbol target', () => {
@@ -22,7 +22,7 @@ describe('getAllBindingTargetNames', () => {
     }
 
     const result = getAllBindingTargetNames(bindingTarget)
-    expect(result).toEqual(['x'])
+    expect(result).toEqual({ x: true })
   })
 
   it('should return all names for an object target', () => {
@@ -35,7 +35,7 @@ describe('getAllBindingTargetNames', () => {
       sourceCodeInfo: undefined,
     }
     const result = getAllBindingTargetNames(bindingTarget)
-    expect(result).toEqual(['a', 'b'])
+    expect(result).toEqual({ a: true, b: true })
   })
 
   it('should return all names for a nested object target', () => {
@@ -56,7 +56,7 @@ describe('getAllBindingTargetNames', () => {
     }
 
     const result = getAllBindingTargetNames(bindingTarget)
-    expect(result).toEqual(['x', 'y', 'z'])
+    expect(result).toEqual({ x: true, y: true, z: true })
   })
 
   it('should return all names for an array target', () => {
@@ -70,7 +70,7 @@ describe('getAllBindingTargetNames', () => {
     }
 
     const result = getAllBindingTargetNames(bindingTarget)
-    expect(result).toEqual(['a', 'b'])
+    expect(result).toEqual({ a: true, b: true })
   })
 
   it('should return all names for a deeply nested structure', () => {
@@ -97,6 +97,6 @@ describe('getAllBindingTargetNames', () => {
     }
 
     const result = getAllBindingTargetNames(bindingTarget)
-    expect(result).toEqual(['x', 'y', 'z'])
+    expect(result).toEqual({ x: true, y: true, z: true })
   })
 })

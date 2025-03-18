@@ -8,7 +8,7 @@ import { asNonUndefined } from '../../typeGuards'
 import { asAstNode } from '../../typeGuards/astNode'
 import { asAny, asColl, isSeq } from '../../typeGuards/lits'
 import type { Builtin, BuiltinSpecialExpression } from '../interface'
-import { bindingNodeEntries, getAllBindingTargetNames } from '../bindingNode'
+import { evalueateBindingNodeValues, getAllBindingTargetNames } from '../bindingNode'
 
 export interface ForNode extends CommonSpecialExpressionNode<'for'> {
   l: LoopBindingNode[]
@@ -36,7 +36,9 @@ function addToContext(
 ) {
   for (const binding of bindings) {
     const val = evaluateAstNode(binding.value, contextStack)
-    bindingNodeEntries(binding, val, (name, value) => {
+    const valueRecord
+    = evalueateBindingNodeValues(binding, val, astNode => evaluateAstNode(astNode, contextStack))
+    Object.entries(valueRecord).forEach(([name, value]) => {
       context[name] = { value }
     })
   }
@@ -87,7 +89,8 @@ function evaluateLoop(
       }
 
       const val = asAny(seq[index], sourceCodeInfo)
-      bindingNodeEntries(binding, val, (name, value) => {
+      const valueRecord = evalueateBindingNodeValues(binding, val, astNode => evaluateAstNode(astNode, newContextStack))
+      Object.entries(valueRecord).forEach(([name, value]) => {
         context[name] = { value }
       })
       for (const modifier of modifiers) {
@@ -143,17 +146,13 @@ function analyze(
     getUndefinedSymbols([binding.value], contextStack.create(newContext), builtin).forEach(symbol =>
       result.add(symbol),
     )
-    getAllBindingTargetNames(binding.target).forEach((name) => {
-      newContext[name] = { value: true }
-    })
+    Object.assign(newContext, getAllBindingTargetNames(binding.target))
     if (letBindings) {
       letBindings.forEach((letBinding) => {
         getUndefinedSymbols([letBinding.value], contextStack.create(newContext), builtin).forEach(symbol =>
           result.add(symbol),
         )
-        getAllBindingTargetNames(letBinding.target).forEach((name) => {
-          newContext[name] = { value: true }
-        })
+        Object.assign(newContext, getAllBindingTargetNames(letBinding.target))
       })
     }
     if (whenNode) {

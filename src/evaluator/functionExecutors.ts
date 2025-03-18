@@ -1,3 +1,4 @@
+import { evalueateBindingNodeValues } from '../builtin/bindingNode'
 import { normalExpressions } from '../builtin/normalExpressions'
 import { LitsError, RecurSignal } from '../errors'
 import type { Any, Arr } from '../interface'
@@ -17,13 +18,12 @@ import type {
   UserDefinedFunction,
 } from '../parser/types'
 import type { SourceCodeInfo } from '../tokenizer/token'
-import { toAny } from '../utils'
-import { valueToString } from '../utils/debug/debugTools'
-import { asString } from '../typeGuards/string'
 import { asNonUndefined, isUnknownRecord } from '../typeGuards'
 import { asAny } from '../typeGuards/lits'
-import type { Context, EvaluateAstNode, ExecuteFunction } from './interface'
+import { toAny } from '../utils'
+import { valueToString } from '../utils/debug/debugTools'
 import type { ContextStack } from './ContextStack'
+import type { Context, EvaluateAstNode, ExecuteFunction } from './interface'
 
 type FunctionExecutors = Record<
   LitsFunctionType,
@@ -80,8 +80,11 @@ export const functionExecutors: FunctionExecutors = {
       for (let i = 0; i < params.length; i += 1) {
         if (i < nbrOfNonRestArgs) {
           const param = toAny(params[i])
-          const key = asString(args[i]?.name, sourceCodeInfo)
-          newContext[key] = { value: param }
+          const valueRecord = evalueateBindingNodeValues(args[i]!, param, astNode =>
+            evaluateAstNode(astNode, contextStack.create(newContext)))
+          Object.entries(valueRecord).forEach(([key, value]) => {
+            newContext[key] = { value }
+          })
         }
         else {
           rest.push(toAny(params[i]))
@@ -90,12 +93,21 @@ export const functionExecutors: FunctionExecutors = {
 
       for (let i = params.length; i < nbrOfNonRestArgs; i++) {
         const arg = args[i]!
-        newContext[arg.name] = { value: evaluateAstNode(arg.default!, contextStack.create(newContext)) }
+        const defaultValue = evaluateAstNode(arg.default!, contextStack.create(newContext))
+        const valueRecord = evalueateBindingNodeValues(arg, defaultValue, astNode =>
+          evaluateAstNode(astNode, contextStack.create(newContext)))
+        Object.entries(valueRecord).forEach(([key, value]) => {
+          newContext[key] = { value }
+        })
       }
 
-      const restArgumentName = args.find(arg => arg.rest)?.name
-      if (restArgumentName !== undefined)
-        newContext[restArgumentName] = { value: rest }
+      const restArgument = args.find(arg => arg.rest)
+      if (restArgument !== undefined) {
+        const valueRecord = evalueateBindingNodeValues(restArgument, rest, astNode => evaluateAstNode(astNode, contextStack.create(newContext)))
+        Object.entries(valueRecord).forEach(([key, value]) => {
+          newContext[key] = { value }
+        })
+      }
 
       try {
         let result: Any = null

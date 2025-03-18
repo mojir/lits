@@ -48,32 +48,36 @@ export class ContextStackImpl {
     return contextStack
   }
 
-  public exportValue(name: string, value: Any) {
-    if (this.globalContext[name]) {
-      throw new Error(`Cannot redefine exported value "${name}"`)
+  public exportValues(values: Record<string, Any>) {
+    for (const [name, value] of Object.entries(values)) {
+      if (this.globalContext[name]) {
+        throw new Error(`Cannot redefine exported value "${name}"`)
+      }
+      if (specialExpressionKeys.includes(name)) {
+        throw new Error(`Cannot shadow special expression "${name}"`)
+      }
+      if (normalExpressionKeys.includes(name)) {
+        throw new Error(`Cannot shadow builtin function "${name}"`)
+      }
+      this.globalContext[name] = { value }
     }
-    if (specialExpressionKeys.includes(name)) {
-      throw new Error(`Cannot shadow special expression "${name}"`)
-    }
-    if (normalExpressionKeys.includes(name)) {
-      throw new Error(`Cannot shadow builtin function "${name}"`)
-    }
-    this.addValue(name, value)
-    this.globalContext[name] = { value }
+    this.addValues(values)
   }
 
-  public addValue(name: string, value: Any) {
+  public addValues(values: Record<string, Any>) {
     const currentContext = this.contexts[0]!
-    if (currentContext[name]) {
-      throw new Error(`Cannot redefine value "${name}"`)
+    for (const [name, value] of Object.entries(values)) {
+      if (currentContext[name]) {
+        throw new Error(`Cannot redefine value "${name}"`)
+      }
+      if (specialExpressionKeys.includes(name)) {
+        throw new Error(`Cannot shadow special expression "${name}"`)
+      }
+      if (normalExpressionKeys.includes(name)) {
+        throw new Error(`Cannot shadow builtin function "${name}"`)
+      }
+      currentContext[name] = { value: toAny(value) }
     }
-    if (specialExpressionKeys.includes(name)) {
-      throw new Error(`Cannot shadow special expression "${name}"`)
-    }
-    if (normalExpressionKeys.includes(name)) {
-      throw new Error(`Cannot shadow builtin function "${name}"`)
-    }
-    currentContext[name] = { value: toAny(value) }
   }
 
   public getValue(name: string): unknown {

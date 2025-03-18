@@ -1,6 +1,6 @@
 import { LitsError } from '../errors'
 import type { ContextStack } from '../evaluator/ContextStack'
-import type { AstNode, BindingNode } from '../parser/types'
+import type { AstNode, BindingNode, BindingTarget } from '../parser/types'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { isReservedSymbol } from '../tokenizer/reservedNames'
 import type { Builtin } from './interface'
@@ -12,10 +12,8 @@ export interface Function {
   body: AstNode[]
 }
 
-export interface FunctionArgument {
-  name: string
+export type FunctionArgument = BindingTarget & {
   rest?: true
-  default?: AstNode
 }
 
 export function assertNameNotDefined<T>(

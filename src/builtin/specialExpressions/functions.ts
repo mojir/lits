@@ -11,7 +11,7 @@ import type {
 } from '../../parser/types'
 import { addToSet } from '../../utils'
 import { FUNCTION_SYMBOL } from '../../utils/symbols'
-import { bindingNodeEntries, getAllBindingTargetNames } from '../bindingNode'
+import { evalueateBindingNodeValues, getAllBindingTargetNames } from '../bindingNode'
 import type { Builtin, BuiltinSpecialExpression } from '../interface'
 import type { Function } from '../utils'
 import { assertNameNotDefined } from '../utils'
@@ -48,12 +48,12 @@ export const functionSpecialExpression: BuiltinSpecialExpression<null, FunctionN
       evaluatedfunction: evaluatedFunctionOverloades,
     }
 
-    contextStack.addValue(name, litsFunction)
+    contextStack.addValues({ [name]: litsFunction })
     return null
   },
 
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => {
-    contextStack.exportValue(node.functionName.value, true)
+    contextStack.exportValues({ [node.functionName.value]: true })
     const newContext: Context = { [node.functionName.value]: { value: true } }
     return addFunctionUnresolvedSymbols(node.function, contextStack, getUndefinedSymbols, builtin, newContext)
   },
@@ -76,12 +76,12 @@ export const defnSpecialExpression: BuiltinSpecialExpression<null, DefnNode> = {
       evaluatedfunction: evaluatedFunctionOverloades,
     }
 
-    contextStack.exportValue(name, litsFunction)
+    contextStack.exportValues({ [name]: litsFunction })
     return null
   },
 
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => {
-    contextStack.exportValue(node.functionName.value, true)
+    contextStack.exportValues({ [node.functionName.value]: true })
     const newContext: Context = { [node.functionName.value]: { value: true } }
     return addFunctionUnresolvedSymbols(node.function, contextStack, getUndefinedSymbols, builtin, newContext)
   },
@@ -116,7 +116,8 @@ function evaluateFunction(
   for (const binding of fn.bindingNodes) {
     const bindingValueNode = binding.value
     const bindingValue = evaluateAstNode(bindingValueNode, contextStack)
-    bindingNodeEntries(binding, bindingValue, (name, value) => {
+    const valueRecord = evalueateBindingNodeValues(binding, bindingValue, astNode => evaluateAstNode(astNode, contextStack))
+    Object.entries(valueRecord).forEach(([name, value]) => {
       functionContext[name] = { value }
     })
   }
@@ -144,12 +145,10 @@ function addFunctionUnresolvedSymbols(
   fn.bindingNodes.forEach((binding) => {
     const bindingResult = getUndefinedSymbols([binding.value], contextStack, builtin)
     addToSet(result, bindingResult)
-    getAllBindingTargetNames(binding.target).forEach((name) => {
-      newContext[name] = { value: true }
-    })
+    Object.assign(newContext, getAllBindingTargetNames(binding.target))
   })
   fn.arguments.forEach((arg) => {
-    newContext[arg.name] = { value: true }
+    Object.assign(newContext, getAllBindingTargetNames(arg))
   })
 
   const newContextStack = contextStackWithFunctionName.create(newContext)

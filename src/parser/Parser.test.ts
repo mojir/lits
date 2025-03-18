@@ -15,6 +15,14 @@ describe('operators', () => {
   })
 
   test('random samples', () => {
+    expect(() => litsDebug.getUndefinedSymbols('function foo([,,a,a]) a end; foo([1, 2, 3])')).toThrow()
+    expect(() => litsDebug.getUndefinedSymbols('function foo([,,a]) a end; foo([1, 2, 3])')).not.toThrow()
+    expect(() => litsDebug.run('function foo([,,a]) a end; foo([1, 2, 3])')).not.toThrow()
+    expect(() => litsDebug.run('function foo({a}) a end; foo({})')).not.toThrow()
+    expect(() => litsDebug.run('function foo({a, [a]}) a end;')).toThrow()
+    expect(() => litsDebug.run('function foo({a a}) a end;')).toThrow()
+    expect(() => litsDebug.run('function foo({a, a}) a end;')).toThrow()
+    expect(() => litsDebug.run('function foo({a, b as a}) a end;')).toThrow()
     expect(() => litsDebug.run('function foo(let a := 1;) 1 end')).toThrow()
     expect(() => litsDebug.run('"\\t\\r\\n\\b\\f"')).not.toThrow()
     expect(() => litsDebug.run('E')).not.toThrow()
@@ -44,6 +52,8 @@ describe('operators', () => {
     expect(() => litsDebug.run('for each a in [1, 2], 2 do 1 end')).toThrow()
     expect(() => litsDebug.run('try 1; 2 catch 2; 3 end')).not.toThrow()
     expect(() => litsDebug.run('try 1; 2 catch 2, end')).toThrow()
+    expect(() => lits.getUndefinedSymbols('loop let [,x] := [1, 2] do 1 end')).not.toThrow()
+    expect(() => litsDebug.run('loop let [,x] := [1, 2] do 1 end')).not.toThrow()
     expect(() => litsDebug.run('loop let x := 2 do 1, end')).toThrow()
     expect(() => litsDebug.run('loop do 1 end')).toThrow()
     expect(() => litsDebug.run('do 1, end')).toThrow()
@@ -970,6 +980,13 @@ foo(1, 2)`)).toBe(3)
       }
       test('samples.', () => {
         expect(lits.run(`
+          function foo({ a as b := 10 })
+            b
+          end;
+
+          foo({ b := 1})
+        `)).toBe(10)
+        expect(lits.run(`
           let { children [{ age as firstChildAge }] } := an-object;
           firstChildAge
         `, { values })).toBe(10)
@@ -983,6 +1000,54 @@ foo(1, 2)`)).toBe(3)
           let { children [, { age, name }] } := an-object;
           [age, name]
         `, { values })).toEqual([7, 'Bob'])
+
+        expect(lits.run(`
+        export function foo([a, b] := [1, 2])
+          a + b
+        end;
+
+        foo()
+        `, { values })).toEqual(3)
+
+        expect(lits.run(`
+          export function foo([{ value as a }, { value as b }] := [{ value := 1 }, { value := 2 }])
+            a + b
+          end;
+
+          foo()
+          `, { values })).toEqual(3)
+
+        expect(lits.run(`
+            export function foo([{ value as a } := { value := 10 }, { value as b } := { value := 20 }] := [{ value := 1 }, { value := 2 }])
+              a + b
+            end;
+
+            foo([])
+            `, { values })).toEqual(30)
+
+        expect(lits.run(`
+          export function foo({ value := 10 })
+            value
+          end;
+  
+          foo({})
+          `, { values })).toEqual(10)
+
+        expect(lits.run(`
+            export function foo([{ value as a } := { value := 10 }, { value as b := 200 } := { value := 20 }] := [{ value := 1 }, { value := 2 }])
+              a + b
+            end;
+
+            foo([{ value := 1 }])
+            `, { values })).toEqual(21)
+
+        expect(lits.run(`
+            export function foo([{ value as a } := { value := 10 }, { value as b := 200 } := { value := 20 }] := [{ value := 1 }, { value := 2 }])
+              a + b
+            end;
+
+            foo([{ value := 1 }, { value := 200 }])
+            `, { values })).toEqual(201)
       })
     })
     test('complex example with three iterations', () => {

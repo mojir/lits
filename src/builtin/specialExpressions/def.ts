@@ -1,27 +1,24 @@
-import type { CommonSpecialExpressionNode, SymbolNode } from '../../parser/types'
-import { asAstNode, asSymbolNode } from '../../typeGuards/astNode'
+import type { BindingNode, GenericNode } from '../../parser/types'
+import { evalueateBindingNodeValues, getAllBindingTargetNames } from '../bindingNode'
 import type { BuiltinSpecialExpression } from '../interface'
-import { assertNameNotDefined } from '../utils'
 
-export interface DefNode extends CommonSpecialExpressionNode<'def'> {}
+export interface DefNode extends GenericNode {
+  name: 'def'
+  type: 'SpecialExpression'
+  bindingNode: BindingNode
+}
 
 export const defSpecialExpression: BuiltinSpecialExpression<null, DefNode> = {
   paramCount: 2,
-  evaluate: (node, contextStack, { evaluateAstNode, builtin }) => {
-    const name = (node.params[0] as SymbolNode).value
-
-    assertNameNotDefined(name, contextStack, builtin, node.sourceCodeInfo)
-
-    contextStack.exportValue(name, evaluateAstNode(node.params[1]!, contextStack))
-
+  evaluate: (node, contextStack, { evaluateAstNode }) => {
+    const bindingValue = evaluateAstNode(node.bindingNode.value, contextStack)
+    const values = evalueateBindingNodeValues(node.bindingNode, bindingValue, astNode => evaluateAstNode(astNode, contextStack))
+    contextStack.exportValues(values)
     return null
   },
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => {
-    const subNode = asAstNode(node.params[1])
-    const result = getUndefinedSymbols([subNode], contextStack, builtin)
-    const name = asSymbolNode(node.params[0]).value
-    assertNameNotDefined(name, contextStack, builtin, node.sourceCodeInfo)
-    contextStack.exportValue(name, true)
-    return result
+    const bindingResult = getUndefinedSymbols([node.bindingNode.value], contextStack, builtin)
+    contextStack.addValues(getAllBindingTargetNames(node.bindingNode.target))
+    return bindingResult
   },
 }

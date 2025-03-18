@@ -6,7 +6,7 @@ import { asNonUndefined } from '../../typeGuards'
 import { asAny } from '../../typeGuards/lits'
 import { joinSets } from '../../utils'
 import { valueToString } from '../../utils/debug/debugTools'
-import { bindingNodeEntries, getAllBindingTargetNames } from '../bindingNode'
+import { evalueateBindingNodeValues, getAllBindingTargetNames } from '../bindingNode'
 import type { BuiltinSpecialExpression } from '../interface'
 
 export interface LoopNode extends CommonSpecialExpressionNode<'loop'> {
@@ -18,8 +18,9 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const sourceCodeInfo = node.sourceCodeInfo
     const bindingContext: Context = node.bindingNodes.reduce((result: Context, binding) => {
-      const val = evaluateAstNode(binding.value, contextStack)
-      bindingNodeEntries(binding, val, (name, value) => {
+      const val = evaluateAstNode(binding.value, contextStack.create(result))
+      const valueRecord = evalueateBindingNodeValues(binding, val, astNode => evaluateAstNode(astNode, contextStack))
+      Object.entries(valueRecord).forEach(([name, value]) => {
         result[name] = { value }
       })
       return result
@@ -29,8 +30,9 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
     for (;;) {
       let result: Any = null
       try {
-        for (const form of node.params)
+        for (const form of node.params) {
           result = evaluateAstNode(form, newContextStack)
+        }
       }
       catch (error) {
         if (error instanceof RecurSignal) {
@@ -42,9 +44,10 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
             )
           }
           node.bindingNodes.forEach((binding, index) => {
-            bindingNodeEntries(binding, asAny(params[index], sourceCodeInfo), (name, value) => {
+            const valueRecord = evalueateBindingNodeValues(binding, asAny(params[index], sourceCodeInfo), astNode => evaluateAstNode(astNode, contextStack))
+            for (const [name, value] of Object.entries(valueRecord)) {
               asNonUndefined(bindingContext[name], sourceCodeInfo).value = value
-            })
+            }
           })
           continue
         }
@@ -56,7 +59,9 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => {
     const newContext = node.bindingNodes
       .reduce((context: Context, bindingNode) => {
-        getAllBindingTargetNames(bindingNode.target).forEach((name) => {
+        const names = getAllBindingTargetNames(bindingNode.target)
+
+        Object.keys(names).forEach((name) => {
           context[name] = { value: true }
         })
         return context

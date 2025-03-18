@@ -11,7 +11,6 @@ import type { DoSeqNode, ForNode, LoopBindingNode } from '../builtin/specialExpr
 import type { SwitchNode } from '../builtin/specialExpressions/switch'
 import type { TryNode } from '../builtin/specialExpressions/try'
 import type { UnlessNode } from '../builtin/specialExpressions/unless'
-import type { FunctionArgument } from '../builtin/utils'
 import { LitsError } from '../errors'
 import type { TokenStream } from '../tokenizer/tokenize'
 import { type SymbolicBinaryOperator, isBinaryOperator, isFunctionOperator } from '../tokenizer/operators'
@@ -47,6 +46,7 @@ import type { RecurNode } from '../builtin/specialExpressions/recur'
 import type { ThrowNode } from '../builtin/specialExpressions/throw'
 import { isNumberReservedSymbol, numberReservedSymbolRecord } from '../tokenizer/reservedNames'
 import { getAllBindingTargetNames } from '../builtin/bindingNode'
+import type { FunctionArgument } from '../builtin/utils'
 import type { AstNode, BindingNode, BindingTarget, NormalExpressionNode, NormalExpressionNodeWithName, NumberNode, ParseState, ReservedSymbolNode, StringNode, SymbolNode } from './types'
 
 const exponentiationPrecedence = 10
@@ -590,11 +590,12 @@ export class Parser {
   parseFunctionArguments(): { functionArguments: FunctionArgument[], bindingNodes: BindingNode[] } {
     const firstToken = this.peek()
     if (isSymbolToken(firstToken)) {
-      this.advance()
       return {
         functionArguments: [{
-          name: firstToken[1],
-        } satisfies FunctionArgument],
+          type: 'symbol',
+          name: this.parseSymbol().value,
+          sourceCodeInfo: firstToken[2],
+        } satisfies BindingTarget],
         bindingNodes: [],
       }
     }
@@ -611,7 +612,7 @@ export class Parser {
     let token = this.peek()
     while (isSymbolToken(token, 'let')) {
       const letNode = this.parseLet(token, true)
-      bindingNodes.push(letNode.bindingNodes[0]!)
+      bindingNodes.push(letNode.bindingNode)
       if (!isOperatorToken(this.peek(), ',') && !isRParenToken(this.peek())) {
         throw new LitsError('Expected comma or closing parenthesis', this.peek()[2])
       }
@@ -632,29 +633,15 @@ export class Parser {
         this.advance()
         rest = true
       }
-      const symbolToken = this.peek()
-      if (!isSymbolToken(symbolToken)) {
-        throw new LitsError('Expected symbol', this.peek()[2])
-      }
-      const name = symbolToken[1]
-      this.advance()
-
-      let isDefault: AstNode | undefined
-      if (isOperatorToken(this.peek(), ':=')) {
-        if (rest) {
-          throw new LitsError('Optional arguments must be last', this.peek()[2])
-        }
+      const bindingTarget = this.parseBindingTarget()
+      if (bindingTarget.default) {
         defaults = true
-        this.advance()
-        isDefault = this.parseExpression()
       }
-      else if (defaults) {
-        throw new LitsError('Optional arguments must be last', this.peek()[2])
+      if (defaults && !bindingTarget.default) {
+        throw new LitsError('Default arguments must be last', this.peek()[2])
       }
-
       functionArguments.push({
-        name,
-        default: isDefault,
+        ...bindingTarget,
         rest: rest ? true : undefined,
       })
 
@@ -711,10 +698,12 @@ export class Parser {
     const functionArguments: FunctionArgument[] = []
 
     for (let i = 1; i <= arity; i += 1) {
-      if (i === 1 && dollar1 === 'NAKED')
-        functionArguments.push({ name: '$' })
-      else
-        functionArguments.push({ name: `$${i}` })
+      if (i === 1 && dollar1 === 'NAKED') {
+        functionArguments.push({ type: 'symbol', name: '$', sourceCodeInfo: firstToken[2] })
+      }
+      else {
+        functionArguments.push({ type: 'symbol', name: `$${i}`, sourceCodeInfo: firstToken[2] })
+      }
     }
 
     const node: FnNode = {
@@ -733,13 +722,28 @@ export class Parser {
     return node
   }
 
-  private parseBindingTarget(): BindingTarget {
+  private parseOptionalDefaulValue(): AstNode | undefined {
+    if (isOperatorToken(this.peek(), ':=')) {
+      this.advance()
+      return this.parseExpression()
+    }
+    return undefined
+  }
+
+  private parseBindingTarget({ requireDefaultValue }: { requireDefaultValue?: true } = { }): BindingTarget {
     const firstToken = this.peek()
     if (isSymbolToken(firstToken)) {
       const symbol = this.parseSymbol()
+
+      const defaultValue = this.parseOptionalDefaulValue()
+      if (requireDefaultValue && !defaultValue) {
+        throw new LitsError('Expected assignment', this.peek()[2])
+      }
+
       return {
         type: 'symbol',
         name: symbol.value,
+        default: defaultValue,
         sourceCodeInfo: firstToken[2],
       }
     }
@@ -765,9 +769,16 @@ export class Parser {
         token = this.peek()
       }
       this.advance()
+
+      const defaultValue = this.parseOptionalDefaulValue()
+      if (requireDefaultValue && !defaultValue) {
+        throw new LitsError('Expected assignment', this.peek()[2])
+      }
+
       return {
         type: 'array',
         elements,
+        default: defaultValue,
         sourceCodeInfo: firstToken[2],
       }
     }
@@ -780,20 +791,29 @@ export class Parser {
         token = this.peek()
         if (isReservedSymbolToken(token, 'as')) {
           this.advance()
+          const name = this.parseSymbol().value
+          if (elements[name]) {
+            throw new LitsError(`Duplicate binding name: ${name}`, token[2])
+          }
           elements[key] = {
             type: 'symbol',
-            name: this.parseSymbol().value,
+            name,
+            default: this.parseOptionalDefaulValue(),
             sourceCodeInfo: firstToken[2],
           }
         }
-        else if (isRBraceToken(token) || isOperatorToken(token, ',')) {
+        else if (isRBraceToken(token) || isOperatorToken(token, ',') || isOperatorToken(token, ':=')) {
+          if (elements[key]) {
+            throw new LitsError(`Duplicate binding name: ${key}`, token[2])
+          }
           elements[key] = {
             type: 'symbol',
             name: key,
+            default: this.parseOptionalDefaulValue(),
             sourceCodeInfo: firstToken[2],
           }
         }
-        else if (!isRBraceToken(token) && !isOperatorToken(token, ',')) {
+        else if (isLBraceToken(token) || isLBracketToken(token)) {
           elements[key] = this.parseBindingTarget()
         }
 
@@ -804,9 +824,16 @@ export class Parser {
         token = this.peek()
       }
       this.advance()
+      token = this.peek()
+      const defaultValue = this.parseOptionalDefaulValue()
+      if (requireDefaultValue && !defaultValue) {
+        throw new LitsError('Expected assignment', token[2])
+      }
+
       return {
         type: 'object',
         elements,
+        default: defaultValue,
         sourceCodeInfo: firstToken[2],
       }
     }
@@ -817,12 +844,10 @@ export class Parser {
   private parseLet(token: SymbolToken, optionalSemicolon = false): LetNode {
     this.advance()
 
-    const target = this.parseBindingTarget()
+    const target = this.parseBindingTarget({ requireDefaultValue: true })
 
-    assertOperatorToken(this.peek(), ':=')
-    this.advance()
-
-    const value = this.parseExpression()
+    const value = target.default!
+    delete target.default
 
     if (!optionalSemicolon) {
       assertOperatorToken(this.peek(), ';')
@@ -831,13 +856,12 @@ export class Parser {
     return {
       type: 'SpecialExpression',
       name: 'let',
-      params: [],
-      bindingNodes: [{
+      bindingNode: {
         type: 'Binding',
         target,
         value,
         sourceCodeInfo: token[2],
-      }],
+      },
       sourceCodeInfo: token[2],
     }
   }
@@ -873,10 +897,10 @@ export class Parser {
       assertSymbolToken(token, 'let')
       this.advance()
 
-      const target = this.parseBindingTarget()
-      assertOperatorToken(this.peek(), ':=')
-      this.advance()
-      const value = this.parseExpression()
+      const target = this.parseBindingTarget({ requireDefaultValue: true })
+      const value = target.default!
+      delete target.default
+
       bindingNodes.push({
         type: 'Binding',
         target,
@@ -992,9 +1016,9 @@ export class Parser {
 
     while (!this.isAtEnd() && !isSymbolToken(this.peek(), 'do')) {
       const loopBinding = this.parseForLoopBinding()
-      const existingBoundNames = forLoopBindings.flatMap(b => getAllBindingTargetNames(b.b.target))
+      const existingBoundNames = forLoopBindings.flatMap(b => Object.keys(getAllBindingTargetNames(b.b.target)))
       const newBoundNames = getAllBindingTargetNames(loopBinding.b.target)
-      if (newBoundNames.some(n => existingBoundNames.includes(n))) {
+      if (Object.keys(newBoundNames).some(n => existingBoundNames.includes(n))) {
         throw new LitsError('Duplicate binding', loopBinding.b.sourceCodeInfo)
       }
       forLoopBindings.push(loopBinding)
@@ -1060,13 +1084,13 @@ export class Parser {
       letBindings = []
       while (isSymbolToken(token, 'let')) {
         const letNode = this.parseLet(token, true)
-        const existingBoundNames = letBindings.flatMap(b => getAllBindingTargetNames(b.target))
-        const newBoundNames = getAllBindingTargetNames(letNode.bindingNodes[0]!.target)
+        const existingBoundNames = letBindings.flatMap(b => Object.keys(getAllBindingTargetNames(b.target)))
+        const newBoundNames = Object.keys(getAllBindingTargetNames(letNode.bindingNode.target))
         if (newBoundNames.some(n => existingBoundNames.includes(n))) {
-          throw new LitsError('Duplicate binding', letNode.bindingNodes[0]!.sourceCodeInfo)
+          throw new LitsError('Duplicate binding', letNode.bindingNode.sourceCodeInfo)
         }
 
-        letBindings.push(letNode.bindingNodes[0]!)
+        letBindings.push(letNode.bindingNode)
         token = this.peek()
         if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this.peek(), 'each') && !isOperatorToken(token, ',')) {
           throw new LitsError('Expected do, each or comma', token[2])
@@ -1373,20 +1397,10 @@ export class Parser {
   private parseExport(token: ReservedSymbolToken<'export'>): DefNode | DefnNode {
     this.advance()
     if (isSymbolToken(this.peek(), 'let')) {
-      this.advance()
-      const symbol = this.parseSymbol()
-
-      assertOperatorToken(this.peek(), ':=')
-      this.advance()
-
-      const value = this.parseExpression()
-
-      assertOperatorToken(this.peek(), ';')
+      const letNode = this.parseLet(asSymbolToken(this.peek()))
       return {
-        type: 'SpecialExpression',
+        ...letNode,
         name: 'def',
-        params: [symbol, value],
-        sourceCodeInfo: symbol.sourceCodeInfo,
       }
     }
     else if (isReservedSymbolToken(this.peek(), 'function')) {
