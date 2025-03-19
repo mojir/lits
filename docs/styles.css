@@ -281,15 +281,14 @@ div {
 
 .content .example {
   box-shadow: 1px 1px 3px rgb(23 23 23);
-  cursor: pointer;
 }
 
-.content .example:active:hover {
+/* .content .example:active:hover {
   box-shadow: inset 1px 1px 3px rgb(23 23 23);
   padding-top: 2px;
   padding-left: 2px;
   margin-bottom: -2px;
-}
+} */
 
 .content .example:hover svg {
   color: white;
