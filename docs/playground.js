@@ -7781,10 +7781,10 @@ var Playground = (function (exports) {
             var ast = this.generateAst(program, params);
             return this.evaluate(ast, params);
         };
-        Lits.prototype.context = function (program, params) {
+        Lits.prototype.context = function (programOrAst, params) {
             if (params === void 0) { params = {}; }
+            var ast = typeof programOrAst === 'string' ? this.generateAst(programOrAst, params) : programOrAst;
             var contextStack = createContextStack(params);
-            var ast = this.generateAst(program, params);
             evaluate(ast, contextStack);
             return contextStack.globalContext;
         };

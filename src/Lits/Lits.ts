@@ -82,9 +82,9 @@ export class Lits {
     return this.evaluate(ast, params)
   }
 
-  public context(program: string, params: ContextParams & FilePathParams = {}): Context {
+  public context(programOrAst: string | Ast, params: ContextParams & FilePathParams = {}): Context {
+    const ast = typeof programOrAst === 'string' ? this.generateAst(programOrAst, params) : programOrAst
     const contextStack = createContextStack(params)
-    const ast = this.generateAst(program, params)
     evaluate(ast, contextStack)
     return contextStack.globalContext
   }
