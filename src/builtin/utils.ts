@@ -1,6 +1,6 @@
 import { LitsError } from '../errors'
 import type { ContextStack } from '../evaluator/ContextStack'
-import type { AstNode, BindingNode, BindingTarget } from '../parser/types'
+import type { AstNode, BindingTarget } from '../parser/types'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { isReservedSymbol } from '../tokenizer/reservedNames'
 import type { Builtin } from './interface'
@@ -8,7 +8,6 @@ import type { SpecialExpressionName } from '.'
 
 export interface Function {
   arguments: BindingTarget[]
-  bindingNodes: BindingNode[]
   body: AstNode[]
 }
 

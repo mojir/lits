@@ -1269,25 +1269,6 @@ foo(1, 2)`)).toBe(3)
       expect(lits.run('((x) -> x + 1)(1)')).toBe(2)
     })
 
-    it('supports lambda functions with let bindings', () => {
-      // Support for let bindings
-      expect(lits.run('(x -> (let x := x, y) -> x + y)(1)(2)')).toBe(3)
-      expect(lits.run('((let x := 1) -> x + x)()')).toBe(2)
-      expect(lits.run(`
-(a -> 
-  (
-    let a := a,
-    b, 
-  ) -> 
-    (
-      let a := a,
-      let b := b,
-      c, 
-    ) -> 
-      a * b * c
-)(2)(3)(4)`)).toBe(24)
-    })
-
     it('supports shorthand lambda function definitions', () => {
     // Testing the provided lambda function example
       expect(lits.run('(-> 1)()')).toBe(1)

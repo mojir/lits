@@ -9,5 +9,5 @@ export const declaredSpecialExpression: BuiltinSpecialExpression<boolean, Declar
     const lookUpResult = contextStack.lookUp(node.params[0] as SymbolNode)
     return lookUpResult !== null
   },
-  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => getUndefinedSymbols(node.params, contextStack, builtin),
+  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateAstNode }) => getUndefinedSymbols(node.params, contextStack, builtin, evaluateAstNode),
 }

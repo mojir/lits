@@ -48,6 +48,12 @@ export class ContextStackImpl {
     return contextStack
   }
 
+  public new(context: Context): ContextStack {
+    const contexts = [{}, context]
+
+    return new ContextStackImpl({ contexts })
+  }
+
   public exportValues(values: Record<string, Any>) {
     for (const [name, value] of Object.entries(values)) {
       if (this.globalContext[name]) {

@@ -17,7 +17,7 @@ export const doSpecialExpression: BuiltinSpecialExpression<Any, DoNode> = {
 
     return result
   },
-  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => {
-    return getUndefinedSymbols(node.params, contextStack.create({}), builtin)
+  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateAstNode }) => {
+    return getUndefinedSymbols(node.params, contextStack.create({}), builtin, evaluateAstNode)
   },
 }

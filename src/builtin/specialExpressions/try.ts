@@ -26,15 +26,15 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any, TryNode> = {
       return evaluateAstNode(catchExpression, contextStack.create(newContext))
     }
   },
-  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => {
+  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateAstNode }) => {
     const { params: tryExpressions, ce: catchExpression, e: errorNode } = node
-    const tryResult = getUndefinedSymbols(tryExpressions, contextStack, builtin)
+    const tryResult = getUndefinedSymbols(tryExpressions, contextStack, builtin, evaluateAstNode)
     const newContext: Context = errorNode
       ? {
           [errorNode.value]: { value: true },
         }
       : {}
-    const catchResult = getUndefinedSymbols([catchExpression], contextStack.create(newContext), builtin)
+    const catchResult = getUndefinedSymbols([catchExpression], contextStack.create(newContext), builtin, evaluateAstNode)
     return joinSets(tryResult, catchResult)
   },
 }

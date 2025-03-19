@@ -137,36 +137,37 @@ function analyze(
   contextStack: ContextStack,
   getUndefinedSymbols: GetUndefinedSymbols,
   builtin: Builtin,
+  evaluateAstNode: EvaluateAstNode,
 ): UndefinedSymbols {
   const result = new Set<string>()
   const newContext: Context = {}
   const { l: loopBindings } = node
   loopBindings.forEach((loopBinding) => {
     const { b: binding, l: letBindings, wn: whenNode, we: whileNode } = loopBinding
-    getUndefinedSymbols([binding.value], contextStack.create(newContext), builtin).forEach(symbol =>
+    getUndefinedSymbols([binding.value], contextStack.create(newContext), builtin, evaluateAstNode).forEach(symbol =>
       result.add(symbol),
     )
     Object.assign(newContext, getAllBindingTargetNames(binding.target))
     if (letBindings) {
       letBindings.forEach((letBinding) => {
-        getUndefinedSymbols([letBinding.value], contextStack.create(newContext), builtin).forEach(symbol =>
+        getUndefinedSymbols([letBinding.value], contextStack.create(newContext), builtin, evaluateAstNode).forEach(symbol =>
           result.add(symbol),
         )
         Object.assign(newContext, getAllBindingTargetNames(letBinding.target))
       })
     }
     if (whenNode) {
-      getUndefinedSymbols([whenNode], contextStack.create(newContext), builtin).forEach(symbol =>
+      getUndefinedSymbols([whenNode], contextStack.create(newContext), builtin, evaluateAstNode).forEach(symbol =>
         result.add(symbol),
       )
     }
     if (whileNode) {
-      getUndefinedSymbols([whileNode], contextStack.create(newContext), builtin).forEach(symbol =>
+      getUndefinedSymbols([whileNode], contextStack.create(newContext), builtin, evaluateAstNode).forEach(symbol =>
         result.add(symbol),
       )
     }
   })
-  getUndefinedSymbols(node.params, contextStack.create(newContext), builtin).forEach(symbol =>
+  getUndefinedSymbols(node.params, contextStack.create(newContext), builtin, evaluateAstNode).forEach(symbol =>
     result.add(symbol),
   )
   return result
@@ -175,7 +176,7 @@ function analyze(
 export const forSpecialExpression: BuiltinSpecialExpression<Any, ForNode> = {
   paramCount: 1,
   evaluate: (node, contextStack, helpers) => evaluateLoop(true, node, contextStack, helpers.evaluateAstNode),
-  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => analyze(node, contextStack, getUndefinedSymbols, builtin),
+  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateAstNode }) => analyze(node, contextStack, getUndefinedSymbols, builtin, evaluateAstNode),
 }
 
 export const doseqSpecialExpression: BuiltinSpecialExpression<null, DoSeqNode> = {
@@ -184,5 +185,5 @@ export const doseqSpecialExpression: BuiltinSpecialExpression<null, DoSeqNode> =
     evaluateLoop(false, node, contextStack, helpers.evaluateAstNode)
     return null
   },
-  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => analyze(node, contextStack, getUndefinedSymbols, builtin),
+  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateAstNode }) => analyze(node, contextStack, getUndefinedSymbols, builtin, evaluateAstNode),
 }

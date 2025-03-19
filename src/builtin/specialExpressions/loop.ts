@@ -56,7 +56,7 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
       return result
     }
   },
-  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => {
+  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateAstNode }) => {
     const newContext = node.bindingNodes
       .reduce((context: Context, bindingNode) => {
         const names = getAllBindingTargetNames(bindingNode.target)
@@ -68,8 +68,8 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
       }, {})
 
     const bindingValueNodes = node.bindingNodes.map(binding => binding.value)
-    const bindingsResult = getUndefinedSymbols(bindingValueNodes, contextStack, builtin)
-    const paramsResult = getUndefinedSymbols(node.params, contextStack.create(newContext), builtin)
+    const bindingsResult = getUndefinedSymbols(bindingValueNodes, contextStack, builtin, evaluateAstNode)
+    const paramsResult = getUndefinedSymbols(node.params, contextStack.create(newContext), builtin, evaluateAstNode)
     return joinSets(bindingsResult, paramsResult)
   },
 }

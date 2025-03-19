@@ -22,6 +22,7 @@ import { asAny, assertSeq, isObj } from '../typeGuards/lits'
 import { assertString } from '../typeGuards/string'
 import type { ReservedSymbol } from '../tokenizer/reservedNames'
 import { reservedSymbolRecord } from '../tokenizer/reservedNames'
+import { getUndefinedSymbols } from '../getUndefinedSymbols'
 import type { ContextStack } from './ContextStack'
 import { functionExecutors } from './functionExecutors'
 
@@ -120,7 +121,7 @@ function evaluateSpecialExpression(node: SpecialExpressionNode, contextStack: Co
   const specialExpression = asNonUndefined(builtin.specialExpressions[node.name], node.sourceCodeInfo)
 
   // eslint-disable-next-line ts/no-unsafe-argument
-  return specialExpression.evaluate(node as any, contextStack, { evaluateAstNode, builtin })
+  return specialExpression.evaluate(node as any, contextStack, { evaluateAstNode, builtin, getUndefinedSymbols })
 }
 
 function evalueateObjectAsFunction(fn: Obj, params: Arr, sourceCodeInfo?: SourceCodeInfo): Any {

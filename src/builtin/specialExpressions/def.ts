@@ -16,8 +16,8 @@ export const defSpecialExpression: BuiltinSpecialExpression<null, DefNode> = {
     contextStack.exportValues(values)
     return null
   },
-  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => {
-    const bindingResult = getUndefinedSymbols([node.bindingNode.value], contextStack, builtin)
+  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateAstNode }) => {
+    const bindingResult = getUndefinedSymbols([node.bindingNode.value], contextStack, builtin, evaluateAstNode)
     contextStack.addValues(getAllBindingTargetNames(node.bindingNode.target))
     return bindingResult
   },

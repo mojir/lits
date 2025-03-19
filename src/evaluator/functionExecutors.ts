@@ -74,14 +74,15 @@ export const functionExecutors: FunctionExecutors = {
       const args = evaluatedFunction.arguments
       const nbrOfNonRestArgs: number = args.filter(arg => arg.type !== 'rest').length
 
-      const newContext: Context = { ...evaluatedFunction.context }
+      const newContextStack = contextStack.create(fn.evaluatedfunction.context)
+      const newContext: Context = {}
 
       const rest: Arr = []
       for (let i = 0; i < params.length; i += 1) {
         if (i < nbrOfNonRestArgs) {
           const param = toAny(params[i])
           const valueRecord = evalueateBindingNodeValues(args[i]!, param, astNode =>
-            evaluateAstNode(astNode, contextStack.create(newContext)))
+            evaluateAstNode(astNode, newContextStack.create(newContext)))
           Object.entries(valueRecord).forEach(([key, value]) => {
             newContext[key] = { value }
           })
@@ -111,9 +112,9 @@ export const functionExecutors: FunctionExecutors = {
 
       try {
         let result: Any = null
-        const newContextStack = contextStack.create(newContext)
+        const newContextStack2 = newContextStack.create(newContext)
         for (const node of evaluatedFunction.body) {
-          result = evaluateAstNode(node, newContextStack)
+          result = evaluateAstNode(node, newContextStack2)
         }
 
         return result

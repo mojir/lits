@@ -1,13 +1,13 @@
 import type { Builtin } from '../builtin/interface'
 import type { DoNode } from '../builtin/specialExpressions/do'
-import { evaluateAstNode } from '../evaluator'
 import type { ContextStack } from '../evaluator/ContextStack'
+import type { EvaluateAstNode } from '../evaluator/interface'
 import type { Ast, AstNode } from '../parser/types'
 import { asNonUndefined } from '../typeGuards'
 
 export type UndefinedSymbols = Set<string>
 
-export const getUndefinedSymbols: GetUndefinedSymbols = (ast, contextStack, builtin: Builtin) => {
+export const getUndefinedSymbols: GetUndefinedSymbols = (ast, contextStack, builtin, evaluateAstNode) => {
   const astNodes = Array.isArray(ast)
     ? ast
     : [{
@@ -20,15 +20,15 @@ export const getUndefinedSymbols: GetUndefinedSymbols = (ast, contextStack, buil
   const unresolvedSymbols = new Set<string>()
 
   for (const subNode of astNodes) {
-    findUnresolvedSymbolsInAstNode(subNode, contextStack, builtin)
+    findUnresolvedSymbolsInAstNode(subNode, contextStack, builtin, evaluateAstNode)
       ?.forEach(symbol => unresolvedSymbols.add(symbol))
   }
   return unresolvedSymbols
 }
 
-export type GetUndefinedSymbols = (ast: Ast | AstNode[], contextStack: ContextStack, builtin: Builtin) => UndefinedSymbols
+export type GetUndefinedSymbols = (ast: Ast | AstNode[], contextStack: ContextStack, builtin: Builtin, evaluateAstNode: EvaluateAstNode) => UndefinedSymbols
 
-function findUnresolvedSymbolsInAstNode(astNode: AstNode, contextStack: ContextStack, builtin: Builtin): UndefinedSymbols | null {
+function findUnresolvedSymbolsInAstNode(astNode: AstNode, contextStack: ContextStack, builtin: Builtin, evaluateAstNode: EvaluateAstNode): UndefinedSymbols | null {
   switch (astNode.type) {
     case 'Symbol': {
       const lookUpResult = contextStack.lookUp(astNode)
@@ -52,7 +52,7 @@ function findUnresolvedSymbolsInAstNode(astNode: AstNode, contextStack: ContextS
           unresolvedSymbols.add(name)
       }
       for (const subNode of astNode.params) {
-        findUnresolvedSymbolsInAstNode(subNode, contextStack, builtin)?.forEach(symbol => unresolvedSymbols.add(symbol))
+        findUnresolvedSymbolsInAstNode(subNode, contextStack, builtin, evaluateAstNode)?.forEach(symbol => unresolvedSymbols.add(symbol))
       }
       return unresolvedSymbols
     }

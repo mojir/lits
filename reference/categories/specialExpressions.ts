@@ -120,17 +120,6 @@ function withOptional(a, b := 42)
 end;
 
 write!(withOptional(1), withOptional(1, 2))`,
-      `
-// binding variables is sometimes useful due to dynamic scoping.
-// withBindings can be exported, and used in other files and the bound variables will be available.
-let a := 1;
-let b := 1;
-function withBindings(let x := a, let b := b, letSum := x + b)
-  x + b + letSum
-end;
-
-withBindings()`,
-
     ],
   },
   'try': {

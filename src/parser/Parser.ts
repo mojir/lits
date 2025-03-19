@@ -560,7 +560,7 @@ export class Parser {
     }
 
     try {
-      const { functionArguments, bindingNodes } = this.parseFunctionArguments()
+      const functionArguments = this.parseFunctionArguments()
 
       if (!isOperatorToken(this.peek(), '->')) {
         return null
@@ -575,7 +575,6 @@ export class Parser {
         params: [],
         function: {
           arguments: functionArguments,
-          bindingNodes,
           body: [body],
         },
         sourceCodeInfo: firstToken[2],
@@ -586,40 +585,18 @@ export class Parser {
     }
   }
 
-  parseFunctionArguments(): { functionArguments: BindingTarget[], bindingNodes: BindingNode[] } {
+  parseFunctionArguments(): BindingTarget[] {
     const firstToken = this.peek()
     if (isSymbolToken(firstToken)) {
-      return {
-        functionArguments: [{
-          type: 'symbol',
-          name: this.parseSymbol().value,
-          sourceCodeInfo: firstToken[2],
-        } satisfies BindingTarget],
-        bindingNodes: [],
-      }
+      return [{
+        type: 'symbol',
+        name: this.parseSymbol().value,
+        sourceCodeInfo: firstToken[2],
+      } satisfies BindingTarget]
     }
 
     assertLParenToken(firstToken)
     this.advance()
-
-    // let bindings, to be able to pass on values in the context down to the body
-    // This is needed since lits is dynamically scoped
-    // E.g.
-    // x => y => x + y // would not work, x is not available in the second lambda
-    // x => (y, let x = x) => x + y // would work, x is available in the second lambda
-    const bindingNodes: BindingNode[] = []
-    let token = this.peek()
-    while (isSymbolToken(token, 'let')) {
-      const letNode = this.parseLet(token, true)
-      bindingNodes.push(letNode.bindingNode)
-      if (!isOperatorToken(this.peek(), ',') && !isRParenToken(this.peek())) {
-        throw new LitsError('Expected comma or closing parenthesis', this.peek()[2])
-      }
-      if (isOperatorToken(this.peek(), ',')) {
-        this.advance()
-      }
-      token = this.peek()
-    }
 
     let rest = false
     let defaults = false
@@ -654,10 +631,7 @@ export class Parser {
 
     this.advance()
 
-    return {
-      functionArguments,
-      bindingNodes,
-    }
+    return functionArguments
   }
 
   private parseShorthandLamdaFunction(): FnNode {
@@ -707,7 +681,6 @@ export class Parser {
       params: [],
       function: {
         arguments: functionArguments,
-        bindingNodes: [],
         body: [exprNode],
       },
 
@@ -780,7 +753,7 @@ export class Parser {
         }
 
         const target = this.parseBindingTarget()
-          
+
         if (target.type === 'rest') {
           rest = true
         }
@@ -1388,7 +1361,7 @@ export class Parser {
   parseFunction(token: ReservedSymbolToken<'function'>): FunctionNode {
     this.advance()
     const symbol = this.parseSymbol()
-    const { functionArguments, bindingNodes } = this.parseFunctionArguments()
+    const functionArguments = this.parseFunctionArguments()
 
     const body: AstNode[] = []
 
@@ -1412,7 +1385,6 @@ export class Parser {
       params: [],
       function: {
         arguments: functionArguments,
-        bindingNodes,
         body,
       },
       sourceCodeInfo: token[2],
@@ -1450,7 +1422,7 @@ export class Parser {
       this.advance()
       const symbol = this.parseSymbol()
 
-      const { functionArguments, bindingNodes } = this.parseFunctionArguments()
+      const functionArguments = this.parseFunctionArguments()
 
       const body: AstNode[] = []
 
@@ -1472,7 +1444,6 @@ export class Parser {
         params: [],
         function: {
           arguments: functionArguments,
-          bindingNodes,
           body,
         },
         sourceCodeInfo: token[2],

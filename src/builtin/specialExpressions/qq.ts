@@ -19,5 +19,5 @@ export const qqSpecialExpression: BuiltinSpecialExpression<Any, QqNode> = {
     const firstResult = evaluateAstNode(firstNode, contextStack)
     return firstResult ?? (secondNode ? evaluateAstNode(secondNode, contextStack) : null)
   },
-  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin }) => getUndefinedSymbols(node.params, contextStack, builtin),
+  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateAstNode }) => getUndefinedSymbols(node.params, contextStack, builtin, evaluateAstNode),
 }

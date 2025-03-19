@@ -39,9 +39,10 @@ export interface ParserHelpers {
 
 export type BuiltinNormalExpressions = Record<string, BuiltinNormalExpression<Any>>
 
-interface EvaluateHelpers {
+export interface EvaluateHelpers {
   evaluateAstNode: EvaluateAstNode
   builtin: Builtin
+  getUndefinedSymbols: GetUndefinedSymbols
 }
 export interface BuiltinSpecialExpression<T, N extends SpecialExpressionNode> {
   evaluate: (node: N, contextStack: ContextStack, helpers: EvaluateHelpers) => T

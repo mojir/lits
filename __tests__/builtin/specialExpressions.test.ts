@@ -322,13 +322,25 @@ end`),
   })
 
   describe('function', () => {
+    test('lexical scoping', () => {
+      expect(lits.run(`
+      let bar := do 
+        let x := 10;
+        function foo(a) a * x end;
+        foo;
+      end;
+      
+      bar(1)
+      `)).toBe(10)
+    })
+
     it('samples', () => {
       expect(lits.run(`
 function add(a, b)
   a + b
 end;
 add(1, 2)`)).toBe(3)
-      expect(lits.run('function add(let x := 10, a, b) a + b + x end; add(1, 2)')).toBe(13)
+      // expect(lits.run('function add(let x := 10, a, b) a + b + x end; add(1, 2)')).toBe(13)
       expect(lits.run('function add() 10 end; add()')).toBe(10)
     })
 
@@ -392,9 +404,6 @@ function foo(a)
 end;`))).toEqual(
           new Set(),
         )
-        expect(
-          (litsDebug.getUndefinedSymbols('export function foo(let x := y, let y := z, a) if a = 1 then 1 else a + foo(a - 1) end end;')),
-        ).toEqual(new Set(['y', 'z']))
         expect((lits.getUndefinedSymbols('export function foo(a, b) str(a, b, c) end;'))).toEqual(new Set(['c']))
         expect((lits.getUndefinedSymbols('function foo(a, b) str(a, b, c) end; foo(x, y)'))).toEqual(
           new Set(['c', 'x', 'y']),

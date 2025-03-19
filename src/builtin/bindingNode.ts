@@ -4,7 +4,6 @@ import type { AstNode, BindingNode, BindingTarget, RestBindingTarget } from '../
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { assertUnknownRecord } from '../typeGuards'
 import { assertArray } from '../typeGuards/array'
-import { asRestBindingTarget } from '../typeGuards/bindingTarget'
 import { asAny, assertAny } from '../typeGuards/lits'
 
 export function evalueateBindingNodeValues(
