@@ -2,6 +2,8 @@
 
 Lits is a lexically scoped pure functional language with algebraic notation. It combines the power of functional programming with an intuitive, readable syntax.
 
+Try it in the [Lits Playground](https://mojir.github.io/lits/).
+
 ## Features
 
 - **Pure functional language** - Variables cannot be changed, ensuring predictable behavior and easier reasoning about code
