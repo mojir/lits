@@ -27,13 +27,16 @@ function square(x)
 end
 
 // Using the function
-let result := square(5); // 25
+let result := square(5);
+// => 25
 
 // Using function as an operator
-let squares := [1, 2, 3, 4, 5] map square; // [1, 4, 9, 16, 25]
+let squares := [1, 2, 3, 4, 5] map square;
+// => [1, 4, 9, 16, 25]
 
 // Using operator as a function
-let sum := +([1, 2, 3, 4, 5]); // 15
+let sum := +([1, 2, 3, 4, 5]);
+// => 15
 ```
 
 ## Syntax
@@ -66,11 +69,59 @@ null
 { name := "John", age := 30 }
 ```
 
+### Builtin Number Symbols
+
+Lits provides a set of predefined mathematical constants that can be used directly in your code:
+
+```
+// Mathematical constants
+PI    // => 3.141592653589793
+π     // => 3.141592653589793 (Unicode alternative)
+-PI   // => -3.141592653589793
+-π    // => -3.141592653589793
+
+E     // => 2.718281828459045 (Euler's number)
+ε     // => 2.718281828459045 (Unicode alternative)
+-E    // => -2.718281828459045
+-ε    // => -2.718281828459045
+
+PHI   // => 1.618033988749895 (Golden ratio)
+φ     // => 1.618033988749895 (Unicode alternative)
+-PHI  // => -1.618033988749895
+-φ    // => -1.618033988749895
+
+// Epsilon/Delta (smallest representable number)
+DELTA // => 2.220446049250313e-16
+δ     // => 2.220446049250313e-16 (Unicode alternative)
+-DELTA // => -2.220446049250313e-16
+-δ    // => -2.220446049250313e-16
+
+// Infinity values
+POSITIVE_INFINITY // => Infinity
+∞     // => Infinity (Unicode alternative)
+NEGATIVE_INFINITY // => -Infinity
+-∞    // => -Infinity (Unicode alternative)
+
+// Integer limits
+MAX_SAFE_INTEGER  // => 9007199254740991
+MIN_SAFE_INTEGER  // => -9007199254740991
+
+// Floating point limits
+MAX_VALUE  // => 1.7976931348623157e+308
+MIN_VALUE  // => 5e-324
+
+// Not a Number
+NaN  // => NaN
+```
+
+These constants can be used anywhere a number value is expected and help make mathematical code more readable and elegant.
+
 ### Variable Binding
 
 ```
 // Let expression
 let x := 10;
+// => 10
 
 // Variables are immutable
 let x := 20; // Error: x is already defined
@@ -79,7 +130,8 @@ let x := 20; // Error: x is already defined
 let y := do
   let x := 20;
   x
-end; // y is 20, outer x is still 10
+end;
+// => 20, outer x is still 10
 ```
 
 ### Functions
@@ -110,6 +162,7 @@ if x > 10 then
 else
   "small"
 end
+// => "large" (if x > 10) or "small" (if x <= 10)
 
 // Unless expression (reversed if)
 unless x > 10 then
@@ -117,6 +170,7 @@ unless x > 10 then
 else
   "large"
 end
+// => "small" (if x <= 10) or "large" (if x > 10)
 
 // Switch expression
 switch x
@@ -124,6 +178,7 @@ switch x
   case 1 then "one"
   case 2 then "two"
 end
+// => "zero" (if x = 0), "one" (if x = 1), "two" (if x = 2), or null (otherwise)
 
 // Cond expression
 cond
@@ -131,6 +186,7 @@ cond
   case val < 10 then "M"
   case val < 15 then "L"
 end ?? "No match"
+// => "S" (if val < 5), "M" (if 5 <= val < 10), "L" (if 10 <= val < 15), or "No match" (otherwise)
 
 // Try/catch
 try
@@ -138,6 +194,7 @@ try
 catch (error)
   "Error: " ++ error.message
 end
+// => result of riskyOperation() or error message if an exception occurs
 ```
 
 ### List Comprehension
@@ -149,6 +206,7 @@ for
 do
   y
 end
+// => [0, 6, 12]
 
 // Multiple generators
 for (
@@ -158,6 +216,9 @@ for (
 )
   [x, y, z]
 end
+// => [[1, 1, 1], [1, 1, 2], [1, 1, 3], [1, 2, 1], [1, 2, 2], [1, 2, 3], [1, 3, 1], [1, 3, 2], [1, 3, 3], 
+//     [2, 2, 1], [2, 2, 2], [2, 2, 3], [2, 3, 1], [2, 3, 2], [2, 3, 3], 
+//     [3, 3, 1], [3, 3, 2], [3, 3, 3]]
 ```
 
 ### Destructuring
@@ -165,14 +226,21 @@ end
 ```
 // Object destructuring
 let { name, age } := { name := "John", age := 30 };
+// name => "John"
+// age => 30
 
 // Array destructuring
 let [first, second] := [1, 2, 3, 4];
+// first => 1
+// second => 2
 
 // Destructuring in function parameters
 function displayPerson({name, age})
   name ++ " is " ++ str(age) ++ " years old"
 end
+
+displayPerson({ name := "John", age := 30 })
+// => "John is 30 years old"
 ```
 
 ## Operators and Functions
@@ -183,20 +251,24 @@ All functions that take two parameters can be used as operators:
 
 ```
 // As a function
-max(5, 10)  // 10
+max(5, 10)
+// => 10
 
 // As an operator
-5 max 10    // 10
+5 max 10
+// => 10
 ```
 
 All operators can be used as functions:
 
 ```
 // As an operator
-5 + 3       // 8
+5 + 3
+// => 8
 
 // As a function
-+(5, 3)     // 8
++(5, 3)
+// => 8
 ```
 
 ### Parameter Order
@@ -205,7 +277,8 @@ Unlike Clojure, Lits favors subject-first parameter order:
 
 ```
 // Lits
-filter([1, 2, 3, 4], odd?)  // [1, 3]
+filter([1, 2, 3, 4], odd?)
+// => [1, 3]
 
 // Equivalent Clojure
 // (filter odd? [1 2 3 4])
@@ -214,7 +287,8 @@ filter([1, 2, 3, 4], odd?)  // [1, 3]
 This makes operator usage more readable:
 
 ```
-[1, 2, 3, 4] filter odd?  // [1, 3]
+[1, 2, 3, 4] filter odd?
+// => [1, 3]
 ```
 
 ## Built-in Functions
@@ -260,12 +334,13 @@ You can export definitions to make them available to other modules:
 
 ```
 // Exporting variables
-export let PI := 3.14159;
+export let magic-number := 42;
+// => 42
 
 // Exporting functions
 export function square(x)
   x * x
-end
+end;
 ```
 
 ## API
@@ -276,7 +351,7 @@ Lits provides a JavaScript API for embedding:
 interface Lits {
   getRuntimeInfo: () => LitsRuntimeInfo
   run: (program: string, params?: ContextParams & FilePathParams) => unknown
-  context: (program: string, params?: ContextParams & FilePathParams) => Context
+  context: (programOrAst: string | Ast, params?: ContextParams & FilePathParams) => Context
   getUndefinedSymbols: (programOrAst: string | Ast, params: ContextParams) => Set<string>
   tokenize: (program: string, tokenizeParams: FilePathParams & MinifyParams) => TokenStream
   parse: (tokenStream: TokenStream) => Ast
@@ -298,9 +373,10 @@ function factorial(n)
   else
     n * factorial(n - 1)
   end
-end
+end;
 
-factorial(5) // 120
+factorial(5)
+// => 120
 ```
 
 ### Fibonacci Sequence
@@ -312,10 +388,11 @@ function fib(n)
   else
     fib(n - 1) + fib(n - 2)
   end
-end
+end;
 
 // Generate the first 10 Fibonacci numbers
-range(10) map fib // [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
+range(10) map fib
+// => [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
 ```
 
 ### Working with Collections
@@ -329,13 +406,16 @@ let people := [
 ];
 
 // Get all names
-people map (p -> p.name) // ["Alice", "Bob", "Charlie", "Diana"]
+people map (p -> p.name)
+// => ["Alice", "Bob", "Charlie", "Diana"]
 
 // Get people older than 30
-people filter (p -> p.age > 30) // [{ name: "Charlie", age: 35 }, { name: "Diana", age: 40 }]
+people filter (p -> p.age > 30)
+// => [{ name := "Charlie", age := 35 }, { name := "Diana", age := 40 }]
 
 // Calculate average age
-people map (p -> p.age) reduce (+) / count(people) // 32.5
+(people map (p -> p.age) reduce +) / count(people)
+// => 32.5
 ```
 
 ## Contributing
