@@ -24,7 +24,7 @@ Here's a simple example to get you started:
 // Defining a function
 function square(x)
   x * x
-end
+end;
 
 // Using the function
 let result := square(5);
@@ -140,7 +140,7 @@ end;
 // Standard function definition
 function add(a, b)
   a + b
-end
+end;
 
 // Lambda functions
 let add := (a, b) -> a + b;
@@ -161,7 +161,7 @@ if x > 10 then
   "large"
 else
   "small"
-end
+end;
 // => "large" (if x > 10) or "small" (if x <= 10)
 
 // Unless expression (reversed if)
@@ -169,7 +169,7 @@ unless x > 10 then
   "small"
 else
   "large"
-end
+end;
 // => "small" (if x <= 10) or "large" (if x > 10)
 
 // Switch expression
@@ -177,7 +177,7 @@ switch x
   case 0 then "zero"
   case 1 then "one"
   case 2 then "two"
-end
+end;
 // => "zero" (if x = 0), "one" (if x = 1), "two" (if x = 2), or null (otherwise)
 
 // Cond expression
@@ -185,7 +185,7 @@ cond
   case val < 5 then "S"
   case val < 10 then "M"
   case val < 15 then "L"
-end ?? "No match"
+end ?? "No match";
 // => "S" (if val < 5), "M" (if 5 <= val < 10), "L" (if 10 <= val < 15), or "No match" (otherwise)
 
 // Try/catch
@@ -193,7 +193,7 @@ try
   riskyOperation()
 catch (error)
   "Error: " ++ error.message
-end
+end;
 // => result of riskyOperation() or error message if an exception occurs
 ```
 
@@ -205,7 +205,7 @@ for
   each x of [0, 1, 2, 3, 4, 5], let y := x * 3, while even?(y)
 do
   y
-end
+end;
 // => [0, 6, 12]
 
 // Multiple generators
@@ -215,7 +215,7 @@ for (
   z of [1, 2, 3]
 )
   [x, y, z]
-end
+end;
 // => [[1, 1, 1], [1, 1, 2], [1, 1, 3], [1, 2, 1], [1, 2, 2], [1, 2, 3], [1, 3, 1], [1, 3, 2], [1, 3, 3], 
 //     [2, 2, 1], [2, 2, 2], [2, 2, 3], [2, 3, 1], [2, 3, 2], [2, 3, 3], 
 //     [3, 3, 1], [3, 3, 2], [3, 3, 3]]
@@ -230,16 +230,16 @@ let { name, age } := { name := "John", age := 30 };
 // age => 30
 
 // Array destructuring
-let [first, second] := [1, 2, 3, 4];
-// first => 1
-// second => 2
+let [nbr1, nbr2] := [1, 2, 3, 4];
+// nbr1 => 1
+// nbr2 => 2
 
 // Destructuring in function parameters
 function displayPerson({name, age})
   name ++ " is " ++ str(age) ++ " years old"
-end
+end;
 
-displayPerson({ name := "John", age := 30 })
+displayPerson({ name := "John", age := 30 });
 // => "John is 30 years old"
 ```
 
@@ -251,11 +251,11 @@ All functions that take two parameters can be used as operators:
 
 ```
 // As a function
-max(5, 10)
+max(5, 10);
 // => 10
 
 // As an operator
-5 max 10
+5 max 10;
 // => 10
 ```
 
@@ -263,11 +263,11 @@ All operators can be used as functions:
 
 ```
 // As an operator
-5 + 3
+5 + 3;
 // => 8
 
 // As a function
-+(5, 3)
++(5, 3);
 // => 8
 ```
 
@@ -277,7 +277,7 @@ Unlike Clojure, Lits favors subject-first parameter order:
 
 ```
 // Lits
-filter([1, 2, 3, 4], odd?)
+filter([1, 2, 3, 4], odd?);
 // => [1, 3]
 
 // Equivalent Clojure
@@ -287,7 +287,7 @@ filter([1, 2, 3, 4], odd?)
 This makes operator usage more readable:
 
 ```
-[1, 2, 3, 4] filter odd?
+[1, 2, 3, 4] filter odd?;
 // => [1, 3]
 ```
 
@@ -375,7 +375,7 @@ function factorial(n)
   end
 end;
 
-factorial(5)
+factorial(5);
 // => 120
 ```
 
@@ -391,7 +391,7 @@ function fib(n)
 end;
 
 // Generate the first 10 Fibonacci numbers
-range(10) map fib
+range(10) map fib;
 // => [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
 ```
 
@@ -406,15 +406,15 @@ let people := [
 ];
 
 // Get all names
-people map (p -> p.name)
+people map (p -> p.name);
 // => ["Alice", "Bob", "Charlie", "Diana"]
 
 // Get people older than 30
-people filter (p -> p.age > 30)
+people filter (p -> p.age > 30);
 // => [{ name := "Charlie", age := 35 }, { name := "Diana", age := 40 }]
 
 // Calculate average age
-(people map (p -> p.age) reduce +) / count(people)
+(people map (p -> p.age) reduce +) / count(people);
 // => 32.5
 ```
 
