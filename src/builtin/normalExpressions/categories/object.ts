@@ -7,20 +7,6 @@ import { collHasKey, toAny } from '../../../utils'
 import type { BuiltinNormalExpressions } from '../../interface'
 
 export const objectNormalExpression: BuiltinNormalExpressions = {
-  'object': {
-    evaluate: (params, sourceCodeInfo): Obj => {
-      const result: Obj = {}
-      for (let i = 0; i < params.length; i += 2) {
-        const key = params[i]
-        const value = params[i + 1]
-        assertString(key, sourceCodeInfo)
-        result[key] = value
-      }
-      return result
-    },
-    paramCount: { even: true },
-  },
-
   'keys': {
     evaluate: ([obj], sourceCodeInfo): string[] => {
       assertObj(obj, sourceCodeInfo)

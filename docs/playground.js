@@ -686,6 +686,7 @@ var Playground = (function (exports) {
         'Argument',
         'Partial',
         'Comment',
+        'Spread',
     ];
     var astNodeTypeSet = new Set(astNodeTypeNames);
     function isAstNodeType(type) {
@@ -986,6 +987,8 @@ var Playground = (function (exports) {
                     evaluateAstNode: evaluateAstNode,
                 });
             }
+            case 'Spread':
+                return findUnresolvedSymbolsInAstNode(astNode.value, contextStack, builtin, evaluateAstNode);
         }
     }
 
@@ -1698,10 +1701,6 @@ var Playground = (function (exports) {
     };
 
     var arrayNormalExpression = {
-        array: {
-            evaluate: function (params) { return params; },
-            paramCount: {},
-        },
         range: {
             evaluate: function (params, sourceCodeInfo) {
                 var _a = __read(params, 3), first = _a[0], second = _a[1], third = _a[2];
@@ -3439,19 +3438,6 @@ var Playground = (function (exports) {
     };
 
     var objectNormalExpression = {
-        'object': {
-            evaluate: function (params, sourceCodeInfo) {
-                var result = {};
-                for (var i = 0; i < params.length; i += 2) {
-                    var key = params[i];
-                    var value = params[i + 1];
-                    assertString(key, sourceCodeInfo);
-                    result[key] = value;
-                }
-                return result;
-            },
-            paramCount: { even: true },
-        },
         'keys': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), obj = _b[0];
@@ -5088,6 +5074,72 @@ var Playground = (function (exports) {
         },
     };
 
+    var arraySpecialExpression = {
+        paramCount: {},
+        evaluate: function (node, contextStack, _a) {
+            var e_1, _b;
+            var evaluateAstNode = _a.evaluateAstNode;
+            var result = [];
+            try {
+                for (var _c = __values(node.params), _d = _c.next(); !_d.done; _d = _c.next()) {
+                    var param = _d.value;
+                    if (param.type === 'Spread') {
+                        var spreadValue = evaluateAstNode(param.value, contextStack);
+                        if (!Array.isArray(spreadValue)) {
+                            throw new LitsError('Spread value is not an array', param.sourceCodeInfo);
+                        }
+                        result.push.apply(result, __spreadArray([], __read(spreadValue), false));
+                    }
+                    else {
+                        result.push(evaluateAstNode(param, contextStack));
+                    }
+                }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (_d && !_d.done && (_b = _c.return)) _b.call(_c);
+                }
+                finally { if (e_1) throw e_1.error; }
+            }
+            return result;
+        },
+        getUndefinedSymbols: function (node, contextStack, _a) {
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
+            return getUndefinedSymbols(node.params, contextStack, builtin, evaluateAstNode);
+        },
+    };
+
+    var objectSpecialExpression = {
+        paramCount: {},
+        evaluate: function (node, contextStack, _a) {
+            var evaluateAstNode = _a.evaluateAstNode;
+            var result = {};
+            for (var i = 0; i < node.params.length; i += 2) {
+                var keyNode = asAstNode(node.params[i]);
+                if ((keyNode === null || keyNode === void 0 ? void 0 : keyNode.type) === 'Spread') {
+                    var spreadObject = evaluateAstNode(keyNode.value, contextStack);
+                    if (!isUnknownRecord(spreadObject)) {
+                        throw new LitsError('Spread value is not an object', keyNode.sourceCodeInfo);
+                    }
+                    Object.assign(result, spreadObject);
+                    i -= 1;
+                }
+                else {
+                    var key = evaluateAstNode(keyNode, contextStack);
+                    var value = evaluateAstNode(node.params[i + 1], contextStack);
+                    assertString(key, keyNode.sourceCodeInfo);
+                    result[key] = value;
+                }
+            }
+            return result;
+        },
+        getUndefinedSymbols: function (node, contextStack, _a) {
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
+            return getUndefinedSymbols(node.params, contextStack, builtin, evaluateAstNode);
+        },
+    };
+
     var specialExpressions = {
         '&&': andSpecialExpression,
         'cond': condSpecialExpression,
@@ -5109,6 +5161,8 @@ var Playground = (function (exports) {
         'try': trySpecialExpression,
         'defined?': declaredSpecialExpression,
         '??': qqSpecialExpression,
+        'array': arraySpecialExpression,
+        'object': objectSpecialExpression,
     };
     var builtin = {
         normalExpressions: normalExpressions,
@@ -6583,18 +6637,28 @@ var Playground = (function (exports) {
             this.advance();
             var params = [];
             while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
-                var key = this.parseOperand();
-                if (key.type !== 'Symbol' && key.type !== 'String') {
-                    throw new LitsError('Expected key to be a symbol or a string', this.peek()[2]);
+                if (isOperatorToken(this.peek(), '...')) {
+                    this.advance();
+                    params.push({
+                        type: 'Spread',
+                        value: this.parseExpression(),
+                        sourceCodeInfo: this.peek()[2],
+                    });
                 }
-                params.push({
-                    type: 'String',
-                    value: key.value,
-                    sourceCodeInfo: key.sourceCodeInfo,
-                });
-                assertOperatorToken(this.peek(), ':=');
-                this.advance();
-                params.push(this.parseExpression());
+                else {
+                    var key = this.parseOperand();
+                    if (key.type !== 'Symbol' && key.type !== 'String') {
+                        throw new LitsError('Expected key to be a symbol or a string', this.peek()[2]);
+                    }
+                    params.push({
+                        type: 'String',
+                        value: key.value,
+                        sourceCodeInfo: key.sourceCodeInfo,
+                    });
+                    assertOperatorToken(this.peek(), ':=');
+                    this.advance();
+                    params.push(this.parseExpression());
+                }
                 var nextToken = this.peek();
                 if (!isOperatorToken(nextToken, ',') && !isRBraceToken(nextToken)) {
                     throw new LitsError('Expected comma or closing brace', this.peek()[2]);
@@ -6606,7 +6670,7 @@ var Playground = (function (exports) {
             assertRBraceToken(this.peek());
             this.advance();
             return {
-                type: 'NormalExpression',
+                type: 'SpecialExpression',
                 name: 'object',
                 params: params,
                 sourceCodeInfo: firstToken[2],
@@ -6617,7 +6681,17 @@ var Playground = (function (exports) {
             this.advance();
             var params = [];
             while (!this.isAtEnd() && !isRBracketToken(this.peek())) {
-                params.push(this.parseExpression());
+                if (isOperatorToken(this.peek(), '...')) {
+                    this.advance();
+                    params.push({
+                        type: 'Spread',
+                        value: this.parseExpression(),
+                        sourceCodeInfo: this.peek()[2],
+                    });
+                }
+                else {
+                    params.push(this.parseExpression());
+                }
                 var nextToken = this.peek();
                 if (!isOperatorToken(nextToken, ',') && !isRBracketToken(nextToken)) {
                     throw new LitsError('Expected comma or closing parenthesis', this.peek()[2]);
@@ -6629,7 +6703,7 @@ var Playground = (function (exports) {
             assertRBracketToken(this.peek());
             this.advance();
             return {
-                type: 'NormalExpression',
+                type: 'SpecialExpression',
                 name: 'array',
                 params: params,
                 sourceCodeInfo: firstToken[2],
@@ -6662,6 +6736,8 @@ var Playground = (function (exports) {
                         case 'defined?':
                         case '||':
                         case 'recur':
+                        case 'array':
+                        case 'object':
                         case 'throw': {
                             var node = {
                                 type: 'SpecialExpression',

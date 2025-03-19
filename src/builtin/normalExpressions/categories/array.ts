@@ -5,11 +5,6 @@ import type { BuiltinNormalExpressions } from '../../interface'
 import { assertLitsFunction } from '../../../typeGuards/litsFunction'
 
 export const arrayNormalExpression: BuiltinNormalExpressions = {
-  array: {
-    evaluate: (params): Arr => params,
-    paramCount: {},
-  },
-
   range: {
     evaluate: (params, sourceCodeInfo): Arr => {
       const [first, second, third] = params

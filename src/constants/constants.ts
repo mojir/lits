@@ -10,6 +10,7 @@ export const astNodeTypeNames = [
   'Argument',
   'Partial',
   'Comment',
+  'Spread',
 ] as const
 
 const astNodeTypeSet = new Set(astNodeTypeNames)

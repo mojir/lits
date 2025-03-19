@@ -2,6 +2,72 @@ import { type SpecialExpressionsApiName, getOperatorArgs } from '../api'
 import type { CustomReference, FunctionReference } from '..'
 
 export const specialExpressionsReference: Record<SpecialExpressionsApiName, FunctionReference<'Special expression'> | CustomReference<'Special expression'>> = {
+  'array': {
+    title: 'array',
+    category: 'Special expression',
+    linkName: 'array',
+    returns: {
+      type: 'any',
+      array: true,
+    },
+    args: {
+      values: {
+        type: 'any',
+        rest: true,
+      },
+    },
+    variants: [
+      { argumentNames: ['values'] },
+    ],
+    description: 'Makes new array from $values.',
+    examples: [
+      'array(1, 2, 3)',
+      'array(array(null, false, true))',
+      '[]',
+      '[1, 2, 3]',
+      '[1, 2, ...[3, 4, 5], 6]',
+      '[[null, false, true]]',
+      '[1, 2, 3][1]',
+    ],
+    noOperatorDocumentation: true,
+  },
+  'object': {
+    title: 'object',
+    category: 'Special expression',
+    linkName: 'object',
+    returns: {
+      type: 'object',
+    },
+    args: {
+      kvps: {
+        type: 'any',
+        rest: true,
+        description: 'key - value pairs, where key is a string',
+      },
+    },
+    variants: [
+      { argumentNames: ['kvps'] },
+    ],
+    description: 'Constructs a new object. Object members are created from the $kvps key-value pairs. Requires an even number of arguments.',
+    examples: [
+      'object()',
+      `
+let default := {
+  type := "Person",
+  name := "John Doe",
+  age := 42
+};
+
+{
+  ...default,
+  name := "Lisa"
+}`,
+      'object("x", 10, "y", true, "z", "A string")',
+      '{}',
+      '{ a := 1, b := 2 }',
+    ],
+    noOperatorDocumentation: true,
+  },
   '&&': {
     title: '&&',
     category: 'Special expression',

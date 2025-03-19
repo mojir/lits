@@ -34,6 +34,10 @@ import type { ThrowNode } from './specialExpressions/throw'
 import { throwSpecialExpression } from './specialExpressions/throw'
 import type { TryNode } from './specialExpressions/try'
 import { trySpecialExpression } from './specialExpressions/try'
+import type { ArrayNode } from './specialExpressions/array'
+import { arraySpecialExpression } from './specialExpressions/array'
+import type { ObjectNode } from './specialExpressions/object'
+import { objectSpecialExpression } from './specialExpressions/object'
 
 const specialExpressions = {
   '&&': andSpecialExpression,
@@ -56,6 +60,8 @@ const specialExpressions = {
   'try': trySpecialExpression,
   'defined?': declaredSpecialExpression,
   '??': qqSpecialExpression,
+  'array': arraySpecialExpression,
+  'object': objectSpecialExpression,
 } as const
 
 export type SpecialExpressionName = keyof typeof specialExpressions
@@ -71,6 +77,8 @@ export type CommonSpecialExpressionName = keyof Pick<
   | 'unless'
   | '||'
   | 'throw'
+  | 'array'
+  | 'object'
 >
 
 export type BuiltinSpecialExpressions = typeof specialExpressions
@@ -97,6 +105,8 @@ export type SpecialExpressionNode =
   | TryNode
   | DeclaredNode
   | QqNode
+  | ArrayNode
+  | ObjectNode
 
 export const builtin: Builtin = {
   normalExpressions,

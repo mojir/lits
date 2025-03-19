@@ -1,5 +1,4 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import type { Arr } from '../../../src/interface'
 import type { TestData } from '../../testUtils'
 import { checkTestData, createTestData } from '../../testUtils'
 import { Lits } from '../../../src/Lits/Lits'
@@ -16,20 +15,6 @@ afterEach(() => {
 })
 
 describe('array functions', () => {
-  describe('array', () => {
-    it('samples', () => {
-      expect(lits.run('[]')).toEqual([])
-      expect(lits.run('array(1)')).toEqual([1])
-      expect(lits.run('array(0, "1", null, true, false, array([]), object())')).toEqual([0, '1', null, true, false, [[]], {}])
-    })
-    it('shorthand samples', () => {
-      expect(lits.run('[]')).toEqual([])
-      expect(lits.run('[1]')).toEqual([1])
-      expect((lits.run('[null]') as Arr)[0]).toEqual(null)
-      expect(lits.run('[0, "1", null, true, false, [[]], object()]')).toEqual([0, '1', null, true, false, [[]], {}])
-    })
-  })
-
   describe('range', () => {
     it('samples', () => {
       expect(lits.run('range(0)')).toEqual([])

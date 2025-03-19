@@ -66,5 +66,7 @@ function findUnresolvedSymbolsInAstNode(astNode: AstNode, contextStack: ContextS
         evaluateAstNode,
       })
     }
+    case 'Spread':
+      return findUnresolvedSymbolsInAstNode(astNode.value, contextStack, builtin, evaluateAstNode)
   }
 }

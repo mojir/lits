@@ -20,7 +20,7 @@ describe('regexp functions', () => {
         expect(() => lits.run('regexp(true)')).toThrow()
         expect(() => lits.run('regexp(false)')).toThrow()
         expect(() => lits.run('regexp([])')).toThrow()
-        expect(() => lits.run('regexp((object))')).toThrow()
+        expect(() => lits.run('regexp(object())')).toThrow()
         expect(() => lits.run('regexp("" "ab")')).toThrow()
         expect(() => lits.run('regexp("abc" "g" "extra")')).toThrow()
       })
@@ -101,7 +101,7 @@ describe('regexp functions', () => {
         expect(() => lits.run('replace("abcabcABCABC", regexp("^abc$") true)')).toThrow()
         expect(() => lits.run('replace("abcabcABCABC", regexp("^abc$") false)')).toThrow()
         expect(() => lits.run('replace("abcabcABCABC", regexp("^abc$") [])')).toThrow()
-        expect(() => lits.run('replace("abcabcABCABC", regexp("^abc$") (object))')).toThrow()
+        expect(() => lits.run('replace("abcabcABCABC", regexp("^abc$") object())')).toThrow()
       })
     })
   }

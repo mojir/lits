@@ -58,7 +58,7 @@ describe('all tests', () => {
         },
       }
 
-      // expect(lits.run(`x`, { lazyValues: lazyHostValues })).toBe(42)
+      expect(lits.run('x', { lazyValues: lazyHostValues })).toBe(42)
       expect(lits.run('foo()', { lazyValues: lazyHostValues })).toBe(42)
       expect(lits.run('z', { lazyValues: { z: { read: () => 12 } } })).toBe(12)
     })

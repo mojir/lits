@@ -46,6 +46,8 @@ import type { RecurNode } from '../builtin/specialExpressions/recur'
 import type { ThrowNode } from '../builtin/specialExpressions/throw'
 import { isNumberReservedSymbol, numberReservedSymbolRecord } from '../tokenizer/reservedNames'
 import { getAllBindingTargetNames } from '../builtin/bindingNode'
+import type { ArrayNode } from '../builtin/specialExpressions/array'
+import type { ObjectNode } from '../builtin/specialExpressions/object'
 import type { AstNode, BindingNode, BindingTarget, NormalExpressionNode, NormalExpressionNodeWithName, NumberNode, ParseState, ReservedSymbolNode, StringNode, SymbolNode } from './types'
 
 const exponentiationPrecedence = 10
@@ -424,26 +426,36 @@ export class Parser {
     }
   }
 
-  private parseObject(): AstNode {
+  private parseObject(): ObjectNode {
     const firstToken = asLBraceToken(this.peek())
     this.advance()
     const params: AstNode[] = []
     while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
-      const key = this.parseOperand()
-      if (key.type !== 'Symbol' && key.type !== 'String') {
-        throw new LitsError('Expected key to be a symbol or a string', this.peek()[2])
+      if (isOperatorToken(this.peek(), '...')) {
+        this.advance()
+        params.push({
+          type: 'Spread',
+          value: this.parseExpression(),
+          sourceCodeInfo: this.peek()[2],
+        })
       }
+      else {
+        const key = this.parseOperand()
+        if (key.type !== 'Symbol' && key.type !== 'String') {
+          throw new LitsError('Expected key to be a symbol or a string', this.peek()[2])
+        }
 
-      params.push({
-        type: 'String',
-        value: key.value,
-        sourceCodeInfo: key.sourceCodeInfo,
-      })
+        params.push({
+          type: 'String',
+          value: key.value,
+          sourceCodeInfo: key.sourceCodeInfo,
+        })
 
-      assertOperatorToken(this.peek(), ':=')
-      this.advance()
+        assertOperatorToken(this.peek(), ':=')
+        this.advance()
 
-      params.push(this.parseExpression())
+        params.push(this.parseExpression())
+      }
       const nextToken = this.peek()
       if (!isOperatorToken(nextToken, ',') && !isRBraceToken(nextToken)) {
         throw new LitsError('Expected comma or closing brace', this.peek()[2])
@@ -458,19 +470,29 @@ export class Parser {
     this.advance()
 
     return {
-      type: 'NormalExpression',
+      type: 'SpecialExpression',
       name: 'object',
       params,
       sourceCodeInfo: firstToken[2],
     }
   }
 
-  private parseArray(): AstNode {
+  private parseArray(): ArrayNode {
     const firstToken = asLBracketToken(this.peek())
     this.advance()
     const params: AstNode[] = []
     while (!this.isAtEnd() && !isRBracketToken(this.peek())) {
-      params.push(this.parseExpression())
+      if (isOperatorToken(this.peek(), '...')) {
+        this.advance()
+        params.push({
+          type: 'Spread',
+          value: this.parseExpression(),
+          sourceCodeInfo: this.peek()[2],
+        })
+      }
+      else {
+        params.push(this.parseExpression())
+      }
       const nextToken = this.peek()
       if (!isOperatorToken(nextToken, ',') && !isRBracketToken(nextToken)) {
         throw new LitsError('Expected comma or closing parenthesis', this.peek()[2])
@@ -484,7 +506,7 @@ export class Parser {
     this.advance()
 
     return {
-      type: 'NormalExpression',
+      type: 'SpecialExpression',
       name: 'array',
       params,
       sourceCodeInfo: firstToken[2],
@@ -519,8 +541,10 @@ export class Parser {
           case 'defined?':
           case '||':
           case 'recur':
+          case 'array':
+          case 'object':
           case 'throw': {
-            const node: QqNode | AndNode | DeclaredNode | OrNode | RecurNode | ThrowNode = {
+            const node: QqNode | AndNode | DeclaredNode | OrNode | RecurNode | ThrowNode | ArrayNode | ObjectNode = {
               type: 'SpecialExpression',
               name,
               params,

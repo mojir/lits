@@ -10,6 +10,7 @@ import type { FUNCTION_SYMBOL, REGEXP_SYMBOL } from '../utils/symbols'
 export interface ParseState {
   position: number
 }
+
 export interface EvaluatedFunction {
   arguments: BindingTarget[]
   body: AstNode[]
@@ -108,7 +109,7 @@ export type DebugData = {
   nameToken?: Token
 }
 export interface GenericNode {
-  type: AstNodeType // type
+  type: AstNodeType
   sourceCodeInfo?: SourceCodeInfo | undefined
 }
 
@@ -120,34 +121,39 @@ export type ParseExpression = (tokens: TokenStream, parseState: ParseState) => E
 export type ParseTokensUntilClosingBracket = (tokens: TokenStream, parseState: ParseState) => AstNode[]
 export type ParseToken = (tokens: TokenStream, parseState: ParseState) => AstNode
 
+export interface SpreadNode extends GenericNode {
+  type: 'Spread'
+  value: AstNode // An array node or object node
+}
+
 export interface NumberNode extends GenericNode {
-  type: 'Number' // type
-  value: number // value
+  type: 'Number'
+  value: number
 }
 export interface StringNode extends GenericNode {
-  type: 'String' // type
+  type: 'String'
   value: string // value
 }
 export interface SymbolNode extends GenericNode {
-  type: 'Symbol' // type
+  type: 'Symbol'
   value: string // value
 }
 export interface ModifierNode extends GenericNode {
-  type: 'Modifier' // type
+  type: 'Modifier'
   value: ModifierName
 }
 export interface ReservedSymbolNode extends GenericNode {
-  type: 'ReservedSymbol' // type
+  type: 'ReservedSymbol'
   value: string
 }
 
 interface CommonNormalExpressionNode extends GenericNode {
-  type: 'NormalExpression' // type
+  type: 'NormalExpression'
   params: AstNode[] // params
 }
 
 export interface CommonSpecialExpressionNode<T extends SpecialExpressionName> extends GenericNode {
-  type: 'SpecialExpression' // type
+  type: 'SpecialExpression'
   name: T // name
   params: AstNode[] // params
 }
@@ -190,19 +196,19 @@ export type ArrayBindingTarget = CommonBindingTarget & {
 export type BindingTarget = SymbolBindingTarget | RestBindingTarget | ObjectBindingTarget | ArrayBindingTarget
 
 export interface BindingNode extends GenericNode {
-  type: 'Binding' // type
+  type: 'Binding'
   target: BindingTarget
   value: AstNode // value
 }
 
 export interface ArgumentNode extends GenericNode {
-  type: 'Argument' // type
+  type: 'Argument'
   name: string // name
   default?: AstNode // defaultValue
 }
 
 export interface CommentNode extends GenericNode {
-  type: 'Comment' // type
+  type: 'Comment'
   value: string // value
 }
 
@@ -215,6 +221,7 @@ export type AstNode =
   | NormalExpressionNode
   | ModifierNode
   | SpecialExpressionNode
+  | SpreadNode
 
 type AstBody = AstNode[]
 export interface Ast {

@@ -3,6 +3,7 @@ import type { Mock } from 'vitest'
 import { afterEach, beforeEach, describe, expect, it, test, vitest } from 'vitest'
 import { Lits } from '../../src/Lits/Lits'
 import { UserDefinedError } from '../../src/errors'
+import type { Arr } from '../../src/interface'
 
 const lits = new Lits()
 const litsDebug = new Lits({ debug: true })
@@ -45,6 +46,74 @@ describe('specialExpressions', () => {
     }
     if (failed)
       throw new Error('Should have thrown an error')
+  })
+
+  describe('array.', () => {
+    test('spread', () => {
+      expect(lits.run('[...[1, 2], 3, ...[4, 5]]')).toEqual([1, 2, 3, 4, 5])
+      expect(lits.run('let x := [1, 2, 3]; [...x, ...x]')).toEqual([1, 2, 3, 1, 2, 3])
+      expect(() => lits.run('[1, ...{}]')).toThrow()
+    })
+    it('samples', () => {
+      expect(lits.run('[]')).toEqual([])
+      expect(lits.run('array(1)')).toEqual([1])
+      expect(lits.run('array(0, "1", null, true, false, array([]), object())')).toEqual([0, '1', null, true, false, [[]], {}])
+    })
+    it('shorthand samples', () => {
+      expect(lits.run('[]')).toEqual([])
+      expect(lits.run('[1]')).toEqual([1])
+      expect((lits.run('[null]') as Arr)[0]).toEqual(null)
+      expect(lits.run('[0, "1", null, true, false, [[]], object()]')).toEqual([0, '1', null, true, false, [[]], {}])
+    })
+    test('findUnresolvedIdentifiers', () => {
+      expect(litsDebug.getUndefinedSymbols('array(1, a, b)')).toEqual(new Set(['a', 'b']))
+      expect(litsDebug.getUndefinedSymbols('array(1, 2, 3)')).toEqual(new Set())
+      expect(litsDebug.getUndefinedSymbols('[1, ...x]')).toEqual(new Set('x'))
+      expect(litsDebug.getUndefinedSymbols('[1, ...[...[x], y]]')).toEqual(new Set(['x', 'y']))
+    })
+  })
+
+  describe('object.', () => {
+    test('spread', () => {
+      expect(lits.run('let x := { x := 10 };{ ...x, b := 20 }')).toEqual({ x: 10, b: 20 })
+      expect(lits.run('{ ...{ a := 10 }, b := 20 }')).toEqual({ a: 10, b: 20 })
+      expect(lits.run('{ ...{ a := 10 }, a := 20 }')).toEqual({ a: 20 })
+      expect(lits.run('{ a := 10, ...{ b := 20 } }')).toEqual({ a: 10, b: 20 })
+      expect(lits.run('{ a := 10, ...{ a := 20 } }')).toEqual({ a: 20 })
+      expect(lits.run('{ a := 10, ...{} }')).toEqual({ a: 10 })
+      expect(() => lits.run('{ a := 10, ...[] }')).toThrow()
+    })
+    it('samples', () => {
+      expect(lits.run('object()')).toEqual({})
+      expect(lits.run('object("x", 1)')).toEqual({ x: 1 })
+      expect(lits.run('object("x", null)')).toEqual({ x: null })
+      expect(lits.run('{ a := 10, ...{b := 20}}')).toEqual({ a: 10, b: 20 })
+      expect(lits.run('{ a := 10, ...{a := 20}}')).toEqual({ a: 20 })
+      expect(lits.run('object("x", 1, "x", 2)')).toEqual({ x: 2 })
+      expect(lits.run('object("a", null, "b", true, "c", false, "d", 0, "e", object("x", []))')).toEqual({
+        a: null,
+        b: true,
+        c: false,
+        d: 0,
+        e: { x: [] },
+      })
+      expect(lits.run('let a := "a"; object(a, 1)')).toEqual({ a: 1 })
+      expect(() => lits.run('object("x")')).toThrow()
+      expect(() => lits.run('object("x")')).toThrow()
+      expect(() => lits.run('object("x", 1, "y")')).toThrow()
+      expect(() => lits.run('object(0, 1)')).toThrow()
+      expect(() => lits.run('object(true, 1)')).toThrow()
+      expect(() => lits.run('object(false, 1)')).toThrow()
+      expect(() => lits.run('object(null, 1)')).toThrow()
+      expect(() => lits.run('object([], 1)')).toThrow()
+      expect(() => lits.run('object(object(), 1)')).toThrow()
+    })
+    test('findUnresolvedIdentifiers', () => {
+      expect(litsDebug.getUndefinedSymbols('object("x", 1, a, b)')).toEqual(new Set(['a', 'b']))
+      expect(litsDebug.getUndefinedSymbols('object("x", 1, 2, 3)')).toEqual(new Set())
+      expect(litsDebug.getUndefinedSymbols('{ x := 1, ...y }')).toEqual(new Set('y'))
+      expect(litsDebug.getUndefinedSymbols('{ x := 1, ...{ ...{ a := y }, z := z } }')).toEqual(new Set(['y', 'z']))
+    })
   })
 
   describe('let', () => {
@@ -140,7 +209,7 @@ describe('specialExpressions', () => {
       expect(lits.run('unless 1 then "A" else "B" end')).toBe('B')
       expect(lits.run('unless -1 then "A" else "B" end')).toBe('B')
       expect(lits.run('unless [] then "A" else "B" end')).toBe('B')
-      expect(lits.run('unless (object) then "A" else "B" end')).toBe('B')
+      expect(lits.run('unless object() then "A" else "B" end')).toBe('B')
       expect(() => lits.run('unless')).toThrow()
       expect(() => lits.run('unless true)')).toThrow()
     })
@@ -340,7 +409,6 @@ function add(a, b)
   a + b
 end;
 add(1, 2)`)).toBe(3)
-      // expect(lits.run('function add(let x := 10, a, b) a + b + x end; add(1, 2)')).toBe(13)
       expect(lits.run('function add() 10 end; add()')).toBe(10)
     })
 

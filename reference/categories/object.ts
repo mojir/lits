@@ -32,32 +32,6 @@ dissoc(o, "a");
 o`,
     ],
   },
-  'object': {
-    title: 'object',
-    category: 'Object',
-    linkName: 'object',
-    returns: {
-      type: 'object',
-    },
-    args: {
-      kvps: {
-        type: 'any',
-        rest: true,
-        description: 'key - value pairs, where key is a string',
-      },
-    },
-    variants: [
-      { argumentNames: ['kvps'] },
-    ],
-    description: 'Constructs a new object. Object members are created from the $kvps key-value pairs. Requires an even number of arguments.',
-    examples: [
-      'object()',
-      'object("x", 10, "y", true, "z", "A string")',
-      '{}',
-      '{ a := 1, b := 2 }',
-    ],
-    noOperatorDocumentation: true,
-  },
   'keys': {
     title: 'keys',
     category: 'Object',

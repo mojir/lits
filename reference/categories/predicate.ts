@@ -195,7 +195,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
     description: 'Returns `true` if $x is an object, otherwise `false`.',
     examples: [
       'object?(object("a", 10))',
-      'object?((object))',
       'object?(42)',
       'object?(10.1)',
       'object?((x, y) -> x + y)',
@@ -276,7 +275,7 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
       'regexp?(regexp("^start"))',
       'regexp?(#"^start")',
       'regexp?(-12)',
-      'regexp?((object))',
+      'regexp?({})',
       'regexp?(10.1)',
       'regexp?((x, y) -> x + y)',
       'regexp?(false)',

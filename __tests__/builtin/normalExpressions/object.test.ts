@@ -3,32 +3,6 @@ import { Lits } from '../../../src/Lits/Lits'
 
 describe('object functions', () => {
   for (const lits of [new Lits(), new Lits({ debug: true })]) {
-    describe('object', () => {
-      it('samples', () => {
-        expect(lits.run('object()')).toEqual({})
-        expect(lits.run('object("x", 1)')).toEqual({ x: 1 })
-        expect(lits.run('object("x", null)')).toEqual({ x: null })
-        expect(lits.run('object("x", 1, "x", 2)')).toEqual({ x: 2 })
-        expect(lits.run('object("a", null, "b", true, "c", false, "d", 0, "e", object("x", []))')).toEqual({
-          a: null,
-          b: true,
-          c: false,
-          d: 0,
-          e: { x: [] },
-        })
-        expect(lits.run('let a := "a"; object(a, 1)')).toEqual({ a: 1 })
-        expect(() => lits.run('object("x")')).toThrow()
-        expect(() => lits.run('object("x")')).toThrow()
-        expect(() => lits.run('object("x", 1, "y")')).toThrow()
-        expect(() => lits.run('object(0, 1)')).toThrow()
-        expect(() => lits.run('object(true, 1)')).toThrow()
-        expect(() => lits.run('object(false, 1)')).toThrow()
-        expect(() => lits.run('object(null, 1)')).toThrow()
-        expect(() => lits.run('object([], 1)')).toThrow()
-        expect(() => lits.run('object(object(), 1)')).toThrow()
-      })
-    })
-
     describe('keys', () => {
       it('samples', () => {
         expect(lits.run('keys(object())')).toEqual([])

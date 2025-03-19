@@ -2,34 +2,6 @@ import { type ArrayApiName, getOperatorArgs } from '../api'
 import type { FunctionReference } from '..'
 
 export const arrayReference: Record<ArrayApiName, FunctionReference<'Array'>> = {
-  array: {
-    title: 'array',
-    category: 'Array',
-    linkName: 'array',
-    returns: {
-      type: 'any',
-      array: true,
-    },
-    args: {
-      values: {
-        type: 'any',
-        rest: true,
-      },
-    },
-    variants: [
-      { argumentNames: ['values'] },
-    ],
-    description: 'Makes new array from $values.',
-    examples: [
-      'array(1, 2, 3)',
-      'array(array(null, false, true))',
-      '[]',
-      '[1, 2, 3]',
-      '[[null, false, true]]',
-      '[1, 2, 3][1]',
-    ],
-    noOperatorDocumentation: true,
-  },
   range: {
     title: 'range',
     category: 'Array',

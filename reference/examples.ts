@@ -380,7 +380,7 @@ function parse-command(state, input)
       [state, "Commands: go [direction], north, south, east, west, take [item], drop [item], inventory, look, use [item], help, quit"]
     case "quit" then
       [assoc(state, "game-over", true), "Thanks for playing!"]
-  end ?? [state, "I don't understand that command. Type 'help' for a list of commands."]
+  end ?? [state, "I don't understand that command. Type 'help' for a list of commands."];
 
   result
 end;
@@ -462,38 +462,39 @@ start-game()
   // (write! (formatPhoneNumber "+11232343456"))
   // `.trim(),
   //   },
-  //   {
-  //     id: 'factorial',
-  //     name: 'Factorial',
-  //     description: 'A recursive implementation of the factorial function.',
-  //     code: `
-  // (defn factorial [x]
-  //   (if (= x 1)
-  //     1
-  //     (* x (factorial (dec x)))
-  //   )
-  // )
+  {
+    id: 'factorial',
+    name: 'Factorial',
+    description: 'A recursive implementation of the factorial function.',
+    code: `
+function factorial(x)
+  if x = 1 then
+    1
+  else
+    x * factorial(x - 1)
+  end
+end;
 
-  // (factorial 4)
-  // `.trim(),
-  //   },
-  //   {
-  //     id: 'sort',
-  //     name: 'Sort',
-  //     description: 'Sort an array of numbers.',
-  //     code: `
-  // (def l [7 39 45 0 23 1 50 100 12 -5])
-  // (defn numberComparer [a b]
-  //   (cond
-  //     (< a b) -1
-  //     (> a b) 1
-  //     :else 0
-  //   )
-  // )
+factorial(5)
+  `.trim(),
 
-  // (sort l numberComparer)
-  //     `.trim(),
-  //   },
+  },
+  {
+    id: 'sort',
+    name: 'Sort',
+    description: 'Sort an array of numbers.',
+    code: `
+let l := [7, 39, 45, 0, 23, 1, 50, 100, 12, -5];
+function numberComparer(a, b)
+  cond
+    case a < b then -1
+    case a > b then 1
+  end ?? 0
+end;
+
+sort(l, numberComparer)
+      `.trim(),
+  },
   //   {
   //     id: 'multiple-arity',
   //     name: 'Many arities',

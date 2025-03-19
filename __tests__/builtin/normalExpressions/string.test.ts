@@ -5,6 +5,7 @@ describe('string functions', () => {
   for (const lits of [new Lits({}), new Lits({ debug: true })]) {
     describe('str', () => {
       it('samples', () => {
+        expect(lits.run('str({})')).toBe('{}')
         expect(lits.run('str(x)', { values: { x: null } })).toBe('')
         expect(lits.run('str()')).toBe('')
         expect(lits.run('str("")')).toBe('')
@@ -18,7 +19,6 @@ describe('string functions', () => {
         expect(lits.run('str(null)')).toBe('')
         expect(lits.run('str([])')).toBe('[]')
         expect(lits.run('str([1, 2, 3])')).toBe('[1,2,3]')
-        expect(lits.run('str({})')).toBe('{}')
         expect(lits.run('str({a := 1})')).toBe('{"a":1}')
       })
 
@@ -193,14 +193,14 @@ describe('string functions', () => {
         expect(() => lits.run('template("$1", null)')).toThrow()
         expect(() => lits.run('template("$1", undefined)')).toThrow()
         expect(() => lits.run('template("$1", [])')).toThrow()
-        expect(() => lits.run('template("$1", (object))')).toThrow()
+        expect(() => lits.run('template("$1", object())')).toThrow()
         expect(() => lits.run('template(true)')).toThrow()
         expect(() => lits.run('template(false)')).toThrow()
         expect(() => lits.run('template(null)')).toThrow()
         expect(() => lits.run('template(undefined)')).toThrow()
         expect(() => lits.run('template(1)')).toThrow()
         expect(() => lits.run('template([]')).toThrow()
-        expect(() => lits.run('template((object))')).toThrow()
+        expect(() => lits.run('template(object())')).toThrow()
       })
       it('pluralization samples', () => {
         expect(lits.run('template("", 0)')).toBe('')
