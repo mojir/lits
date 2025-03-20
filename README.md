@@ -7,6 +7,7 @@ Try it in the [Lits Playground](https://mojir.github.io/lits/).
 ## Features
 
 - **Pure functional language** - Variables cannot be changed, ensuring predictable behavior and easier reasoning about code
+- **JavaScript interoperability** - JavaScript values and functions can easily be exposed in Lits
 - **First-class functions** - Functions are treated as values that can be passed to other functions
 - **Algebraic notation** - All operators can be used as functions, and functions that take two parameters can be used as operators
 - **Clojure-inspired functions** - Most core functions are inspired by Clojure

@@ -26,8 +26,15 @@ export function getStartPage(): string {
           <div ${styles('flex', 'flex-row', 'gap-4', 'items-start')}>
             <div ${styles('mt-px')}>${checkIcon}</div>
             <div>
-              <span ${styles('font-bold')}>First-class functions</span>
-              <span ${styles('text-color-gray-400')}> - Functions are treated as values that can be passed to other functions</span>
+              <span ${styles('font-bold')}>JavaScript interoperability</span>
+              <span ${styles('text-color-gray-400')}> - JavaScript values and functions can easily be exposed in Lits</span>
+            </div>
+          </div>
+          <div ${styles('flex', 'flex-row', 'gap-4', 'items-start')}>
+            <div ${styles('mt-px')}>${checkIcon}</div>
+            <div>
+              <span ${styles('font-bold')}>Algebraic notation</span>
+              <span ${styles('text-color-gray-400')}> - All operators can be used as functions, and functions that take two parameters can be used as operators</span>
             </div>
           </div>
           <div ${styles('flex', 'flex-row', 'gap-4', 'items-start')}>
