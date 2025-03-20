@@ -9,72 +9,64 @@ export function getStartPage(): string {
       v${version}
     </div>
     <div ${styles('flex', 'text-center', 'flex-col')}>
-      <div ${styles('text-huge')}>&lambda;its</div>
-      <div ${styles('text-4xl')}>/lits/</div>
+      <div ${styles('text-huge')}>Lits</div>
     </div>
     <div ${styles('flex', 'justify-center', 'mt-8', 'mb-4')}>
       <div ${styles('font-sans', 'max-width: 600px;', 'text-color-gray-300', 'flex', 'flex-col')}>
-        <div ${styles('mt-4')}>&lambda;its is a Lisp dialect implemented in TypeScript, drawing heavy inspiration from Clojure. Most core functions have been ported to &lambda;its, ensuring a robust and familiar experience for Clojure users.</div>
-        <div ${styles('mt-4')}>Key features of &lambda;its include:</div>
+        <div ${styles('mt-4')}>Lits is a lexically scoped pure functional language with algebraic notation. It combines the power of functional programming with an intuitive, readable syntax.</div>
+        <div ${styles('mt-4')}>Features</div>
         <div ${styles('mt-4', 'ml-8', 'flex', 'flex-col', 'text-base', 'gap-2')}>
           <div ${styles('flex', 'flex-row', 'gap-4', 'items-start')}>
             <div ${styles('mt-px')}>${checkIcon}</div>
             <div>
-              <span ${styles('font-bold')}>Dependencies:</span>
-              <span ${styles('text-color-gray-400')}>No third party dependencies.</span>
+              <span ${styles('font-bold')}>Pure functional language</span>
+              <span ${styles('text-color-gray-400')}> - Variables cannot be changed, ensuring predictable behavior and easier reasoning about code</span>
             </div>
           </div>
           <div ${styles('flex', 'flex-row', 'gap-4', 'items-start')}>
             <div ${styles('mt-px')}>${checkIcon}</div>
             <div>
-              <span ${styles('font-bold')}>Immutability:</span>
-              <span ${styles('text-color-gray-400')}>All datatypes in &lambda;its are immutable.</span>
+              <span ${styles('font-bold')}>First-class functions</span>
+              <span ${styles('text-color-gray-400')}> - Functions are treated as values that can be passed to other functions</span>
             </div>
           </div>
           <div ${styles('flex', 'flex-row', 'gap-4', 'items-start')}>
             <div ${styles('mt-px')}>${checkIcon}</div>
             <div>
-              <span ${styles('font-bold')}>Pure Functions:</span>
-              <span ${styles('text-color-gray-400')}>Functions are <a class="external-link" href="https://en.wikipedia.org/wiki/Pure_function">pure</a> by default. Functions with side effects have names ending in an exclamation mark (!), such as <span ${styles('text-color-Blue')}><a onclick="Playground.showPage('write-exclamation')">write!</a></span> or <span ${styles('text-color-Blue')}><a onclick="Playground.showPage('rand-exclamation')">rand!</a></span>.</span>
+              <span ${styles('font-bold')}>Algebraic notation</span>
+              <span ${styles('text-color-gray-400')}> - All operators can be used as functions, and functions that take two parameters can be used as operators</span>
             </div>
           </div>
           <div ${styles('flex', 'flex-row', 'gap-4', 'items-start')}>
             <div ${styles('mt-px')}>${checkIcon}</div>
             <div>
-              <span ${styles('font-bold')}>Type Mapping:</span>
-              <span ${styles('text-color-gray-400')}>All datatypes in &lambda;its map directly to JavaScript types.</span>
+              <span ${styles('font-bold')}>Clojure-inspired functions</span>
+              <span ${styles('text-color-gray-400')}> - Most core functions are inspired by Clojure</span>
             </div>
           </div>
           <div ${styles('flex', 'flex-row', 'gap-4', 'items-start')}>
             <div ${styles('mt-px')}>${checkIcon}</div>
             <div>
-              <span ${styles('font-bold')}>Evaluation:</span>
-              <span ${styles('text-color-gray-400')}>&lambda;its does not support lazy evaluation.</span>
+              <span ${styles('font-bold')}>Comprehensive standard library</span>
+              <span ${styles('text-color-gray-400')}> - Rich set of functions for collections, math, strings, and more</span>
             </div>
           </div>
           <div ${styles('flex', 'flex-row', 'gap-4', 'items-start')}>
             <div ${styles('mt-px')}>${checkIcon}</div>
             <div>
-              <span ${styles('font-bold')}>Macros:</span>
-              <span ${styles('text-color-gray-400')}>Macros are not supported in &lambda;its.</span>
+              <span ${styles('font-bold')}>Structural equality</span>
+              <span ${styles('text-color-gray-400')}> - Objects are compared by value, not by reference</span>
             </div>
           </div>
           <div ${styles('flex', 'flex-row', 'gap-4', 'items-start')}>
             <div ${styles('mt-px')}>${checkIcon}</div>
             <div>
-              <span ${styles('font-bold')}>Keyword Symbols:</span>
-              <span ${styles('text-color-gray-400')}>There are no keyword symbols. The notation <span ${styles('text-color-Pink')}>:foo</span> is simply shorthand for the string <span ${styles('text-color-Pink')}>"foo"</span>.</span>
-            </div>
-          </div>
-          <div ${styles('flex', 'flex-row', 'gap-4', 'items-start')}>
-            <div ${styles('mt-px')}>${checkIcon}</div>
-            <div>
-              <span ${styles('font-bold')}>Scoping:</span>
-              <span ${styles('text-color-gray-400')}>&lambda;its uses <a class="external-link" href="https://en.wikipedia.org/wiki/Scope_(computer_science)#Dynamic_scope">dynamic scoping</a>, not <a class="external-link" href="https://en.wikipedia.org/wiki/Scope_(computer_science)#Lexical_scope">lexical scoping</a>.</span>
+              <span ${styles('font-bold')}>Destructuring</span>
+              <span ${styles('text-color-gray-400')}> - Extract values from complex data structures with ease</span>
             </div>
           </div>
         </div>
-        <div ${styles('mt-4')}>For more information, visit the <a class="external-link" href="https://github.com/YouCruit/lits">&lambda;its GitHub repository</a></div>
+        <div ${styles('mt-4')}>For more information, visit the <a class="external-link" href="https://github.com/mojir/lits">Lits GitHub repository</a></div>
         <div ${styles('mt-4')}>Happy coding!</div>
       </div>
     </div>

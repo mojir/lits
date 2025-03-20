@@ -9,7 +9,7 @@ Try it in the [Lits Playground](https://mojir.github.io/lits/).
 - **Pure functional language** - Variables cannot be changed, ensuring predictable behavior and easier reasoning about code
 - **First-class functions** - Functions are treated as values that can be passed to other functions
 - **Algebraic notation** - All operators can be used as functions, and functions that take two parameters can be used as operators
-- **Clojure-inspired functions** - Most core functions are inspired by Clojure, with a key difference in parameter order
+- **Clojure-inspired functions** - Most core functions are inspired by Clojure
 - **Comprehensive standard library** - Rich set of functions for collections, math, strings, and more
 - **Structural equality** - Objects are compared by value, not by reference
 - **Destructuring** - Extract values from complex data structures with ease

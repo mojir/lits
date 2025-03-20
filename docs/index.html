@@ -3,7 +3,7 @@
   <head>
     <title>Playground</title>
     <link rel='shortcut icon' type='image/x-icon' href='favicon.ico' />
-    <meta name="description" content="A reference and a playground for &lambda;its - a Lisp implementation in Typescript">
+    <meta name="description" content="A reference and a playground for Lits - a Lisp implementation in Typescript">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="UTF-8">
     <link rel="stylesheet" href="styles.css">
@@ -18,72 +18,64 @@
       v2.1.0
     </div>
     <div style="display: flex; text-align: center; flex-direction: column;">
-      <div style="font-size: 12rem;">&lambda;its</div>
-      <div style="font-size: 2.25rem;">/lits/</div>
+      <div style="font-size: 12rem;">Lits</div>
     </div>
     <div style="display: flex; justify-content: center; margin-top: 2rem; margin-bottom: 1rem;">
       <div style="font-family: 'Roboto', sans-serif; max-width: 600px; color: rgb(212 212 212); display: flex; flex-direction: column;">
-        <div style="margin-top: 1rem;">&lambda;its is a Lisp dialect implemented in TypeScript, drawing heavy inspiration from Clojure. Most core functions have been ported to &lambda;its, ensuring a robust and familiar experience for Clojure users.</div>
-        <div style="margin-top: 1rem;">Key features of &lambda;its include:</div>
+        <div style="margin-top: 1rem;">Lits is a lexically scoped pure functional language with algebraic notation. It combines the power of functional programming with an intuitive, readable syntax.</div>
+        <div style="margin-top: 1rem;">Features</div>
         <div style="margin-top: 1rem; margin-left: 2rem; display: flex; flex-direction: column; font-size: 1rem; gap: 0.5rem;">
           <div style="display: flex; flex-direction: row; gap: 1rem; align-items: start;">
             <div style="margin-top: 1px;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" fill-rule="evenodd"><path d="M24 0v24H0V0zM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427c-.002-.01-.009-.017-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093c.012.004.023 0 .029-.008l.004-.014l-.034-.614c-.003-.012-.01-.02-.02-.022m-.715.002a.023.023 0 0 0-.027.006l-.006.014l-.034.614c0 .012.007.02.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"/><path fill="currentColor" d="M21.546 5.111a1.5 1.5 0 0 1 0 2.121L10.303 18.475a1.6 1.6 0 0 1-2.263 0L2.454 12.89a1.5 1.5 0 1 1 2.121-2.121l4.596 4.596L19.424 5.111a1.5 1.5 0 0 1 2.122 0"/></g></svg></div>
             <div>
-              <span style="font-weight: bold;">Dependencies:</span>
-              <span style="color: rgb(163 163 163);">No third party dependencies.</span>
+              <span style="font-weight: bold;">Pure functional language</span>
+              <span style="color: rgb(163 163 163);"> - Variables cannot be changed, ensuring predictable behavior and easier reasoning about code</span>
             </div>
           </div>
           <div style="display: flex; flex-direction: row; gap: 1rem; align-items: start;">
             <div style="margin-top: 1px;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" fill-rule="evenodd"><path d="M24 0v24H0V0zM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427c-.002-.01-.009-.017-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093c.012.004.023 0 .029-.008l.004-.014l-.034-.614c-.003-.012-.01-.02-.02-.022m-.715.002a.023.023 0 0 0-.027.006l-.006.014l-.034.614c0 .012.007.02.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"/><path fill="currentColor" d="M21.546 5.111a1.5 1.5 0 0 1 0 2.121L10.303 18.475a1.6 1.6 0 0 1-2.263 0L2.454 12.89a1.5 1.5 0 1 1 2.121-2.121l4.596 4.596L19.424 5.111a1.5 1.5 0 0 1 2.122 0"/></g></svg></div>
             <div>
-              <span style="font-weight: bold;">Immutability:</span>
-              <span style="color: rgb(163 163 163);">All datatypes in &lambda;its are immutable.</span>
+              <span style="font-weight: bold;">First-class functions</span>
+              <span style="color: rgb(163 163 163);"> - Functions are treated as values that can be passed to other functions</span>
             </div>
           </div>
           <div style="display: flex; flex-direction: row; gap: 1rem; align-items: start;">
             <div style="margin-top: 1px;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" fill-rule="evenodd"><path d="M24 0v24H0V0zM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427c-.002-.01-.009-.017-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093c.012.004.023 0 .029-.008l.004-.014l-.034-.614c-.003-.012-.01-.02-.02-.022m-.715.002a.023.023 0 0 0-.027.006l-.006.014l-.034.614c0 .012.007.02.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"/><path fill="currentColor" d="M21.546 5.111a1.5 1.5 0 0 1 0 2.121L10.303 18.475a1.6 1.6 0 0 1-2.263 0L2.454 12.89a1.5 1.5 0 1 1 2.121-2.121l4.596 4.596L19.424 5.111a1.5 1.5 0 0 1 2.122 0"/></g></svg></div>
             <div>
-              <span style="font-weight: bold;">Pure Functions:</span>
-              <span style="color: rgb(163 163 163);">Functions are <a class="external-link" href="https://en.wikipedia.org/wiki/Pure_function">pure</a> by default. Functions with side effects have names ending in an exclamation mark (!), such as <span style="color: #569cd6;"><a onclick="Playground.showPage('write-exclamation')">write!</a></span> or <span style="color: #569cd6;"><a onclick="Playground.showPage('rand-exclamation')">rand!</a></span>.</span>
+              <span style="font-weight: bold;">Algebraic notation</span>
+              <span style="color: rgb(163 163 163);"> - All operators can be used as functions, and functions that take two parameters can be used as operators</span>
             </div>
           </div>
           <div style="display: flex; flex-direction: row; gap: 1rem; align-items: start;">
             <div style="margin-top: 1px;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" fill-rule="evenodd"><path d="M24 0v24H0V0zM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427c-.002-.01-.009-.017-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093c.012.004.023 0 .029-.008l.004-.014l-.034-.614c-.003-.012-.01-.02-.02-.022m-.715.002a.023.023 0 0 0-.027.006l-.006.014l-.034.614c0 .012.007.02.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"/><path fill="currentColor" d="M21.546 5.111a1.5 1.5 0 0 1 0 2.121L10.303 18.475a1.6 1.6 0 0 1-2.263 0L2.454 12.89a1.5 1.5 0 1 1 2.121-2.121l4.596 4.596L19.424 5.111a1.5 1.5 0 0 1 2.122 0"/></g></svg></div>
             <div>
-              <span style="font-weight: bold;">Type Mapping:</span>
-              <span style="color: rgb(163 163 163);">All datatypes in &lambda;its map directly to JavaScript types.</span>
+              <span style="font-weight: bold;">Clojure-inspired functions</span>
+              <span style="color: rgb(163 163 163);"> - Most core functions are inspired by Clojure</span>
             </div>
           </div>
           <div style="display: flex; flex-direction: row; gap: 1rem; align-items: start;">
             <div style="margin-top: 1px;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" fill-rule="evenodd"><path d="M24 0v24H0V0zM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427c-.002-.01-.009-.017-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093c.012.004.023 0 .029-.008l.004-.014l-.034-.614c-.003-.012-.01-.02-.02-.022m-.715.002a.023.023 0 0 0-.027.006l-.006.014l-.034.614c0 .012.007.02.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"/><path fill="currentColor" d="M21.546 5.111a1.5 1.5 0 0 1 0 2.121L10.303 18.475a1.6 1.6 0 0 1-2.263 0L2.454 12.89a1.5 1.5 0 1 1 2.121-2.121l4.596 4.596L19.424 5.111a1.5 1.5 0 0 1 2.122 0"/></g></svg></div>
             <div>
-              <span style="font-weight: bold;">Evaluation:</span>
-              <span style="color: rgb(163 163 163);">&lambda;its does not support lazy evaluation.</span>
+              <span style="font-weight: bold;">Comprehensive standard library</span>
+              <span style="color: rgb(163 163 163);"> - Rich set of functions for collections, math, strings, and more</span>
             </div>
           </div>
           <div style="display: flex; flex-direction: row; gap: 1rem; align-items: start;">
             <div style="margin-top: 1px;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" fill-rule="evenodd"><path d="M24 0v24H0V0zM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427c-.002-.01-.009-.017-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093c.012.004.023 0 .029-.008l.004-.014l-.034-.614c-.003-.012-.01-.02-.02-.022m-.715.002a.023.023 0 0 0-.027.006l-.006.014l-.034.614c0 .012.007.02.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"/><path fill="currentColor" d="M21.546 5.111a1.5 1.5 0 0 1 0 2.121L10.303 18.475a1.6 1.6 0 0 1-2.263 0L2.454 12.89a1.5 1.5 0 1 1 2.121-2.121l4.596 4.596L19.424 5.111a1.5 1.5 0 0 1 2.122 0"/></g></svg></div>
             <div>
-              <span style="font-weight: bold;">Macros:</span>
-              <span style="color: rgb(163 163 163);">Macros are not supported in &lambda;its.</span>
+              <span style="font-weight: bold;">Structural equality</span>
+              <span style="color: rgb(163 163 163);"> - Objects are compared by value, not by reference</span>
             </div>
           </div>
           <div style="display: flex; flex-direction: row; gap: 1rem; align-items: start;">
             <div style="margin-top: 1px;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" fill-rule="evenodd"><path d="M24 0v24H0V0zM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427c-.002-.01-.009-.017-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093c.012.004.023 0 .029-.008l.004-.014l-.034-.614c-.003-.012-.01-.02-.02-.022m-.715.002a.023.023 0 0 0-.027.006l-.006.014l-.034.614c0 .012.007.02.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"/><path fill="currentColor" d="M21.546 5.111a1.5 1.5 0 0 1 0 2.121L10.303 18.475a1.6 1.6 0 0 1-2.263 0L2.454 12.89a1.5 1.5 0 1 1 2.121-2.121l4.596 4.596L19.424 5.111a1.5 1.5 0 0 1 2.122 0"/></g></svg></div>
             <div>
-              <span style="font-weight: bold;">Keyword Symbols:</span>
-              <span style="color: rgb(163 163 163);">There are no keyword symbols. The notation <span style="color: #cc8f77;">:foo</span> is simply shorthand for the string <span style="color: #cc8f77;">"foo"</span>.</span>
-            </div>
-          </div>
-          <div style="display: flex; flex-direction: row; gap: 1rem; align-items: start;">
-            <div style="margin-top: 1px;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" fill-rule="evenodd"><path d="M24 0v24H0V0zM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427c-.002-.01-.009-.017-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093c.012.004.023 0 .029-.008l.004-.014l-.034-.614c-.003-.012-.01-.02-.02-.022m-.715.002a.023.023 0 0 0-.027.006l-.006.014l-.034.614c0 .012.007.02.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"/><path fill="currentColor" d="M21.546 5.111a1.5 1.5 0 0 1 0 2.121L10.303 18.475a1.6 1.6 0 0 1-2.263 0L2.454 12.89a1.5 1.5 0 1 1 2.121-2.121l4.596 4.596L19.424 5.111a1.5 1.5 0 0 1 2.122 0"/></g></svg></div>
-            <div>
-              <span style="font-weight: bold;">Scoping:</span>
-              <span style="color: rgb(163 163 163);">&lambda;its uses <a class="external-link" href="https://en.wikipedia.org/wiki/Scope_(computer_science)#Dynamic_scope">dynamic scoping</a>, not <a class="external-link" href="https://en.wikipedia.org/wiki/Scope_(computer_science)#Lexical_scope">lexical scoping</a>.</span>
+              <span style="font-weight: bold;">Destructuring</span>
+              <span style="color: rgb(163 163 163);"> - Extract values from complex data structures with ease</span>
             </div>
           </div>
         </div>
-        <div style="margin-top: 1rem;">For more information, visit the <a class="external-link" href="https://github.com/YouCruit/lits">&lambda;its GitHub repository</a></div>
+        <div style="margin-top: 1rem;">For more information, visit the <a class="external-link" href="https://github.com/mojir/lits">Lits GitHub repository</a></div>
         <div style="margin-top: 1rem;">Happy coding!</div>
       </div>
     </div>
