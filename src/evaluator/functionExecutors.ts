@@ -23,7 +23,7 @@ import { asAny } from '../typeGuards/lits'
 import { toAny } from '../utils'
 import { valueToString } from '../utils/debug/debugTools'
 import type { ContextStack } from './ContextStack'
-import type { Context, EvaluateAstNode, ExecuteFunction } from './interface'
+import type { Context, EvaluateNode, ExecuteFunction } from './interface'
 
 type FunctionExecutors = Record<
   LitsFunctionType,
@@ -32,7 +32,7 @@ type FunctionExecutors = Record<
     params: Arr,
     sourceCodeInfo: SourceCodeInfo | undefined,
     contextStack: ContextStack,
-    helpers: { evaluateAstNode: EvaluateAstNode, executeFunction: ExecuteFunction },
+    helpers: { evaluateNode: EvaluateNode, executeFunction: ExecuteFunction },
   ) => Any
 >
 
@@ -67,7 +67,7 @@ export const functionExecutors: FunctionExecutors = {
       throw new LitsError(`Native function throwed: "${message}"`, sourceCodeInfo)
     }
   },
-  UserDefined: (fn: UserDefinedFunction, params, sourceCodeInfo, contextStack, { evaluateAstNode }) => {
+  UserDefined: (fn: UserDefinedFunction, params, sourceCodeInfo, contextStack, { evaluateNode }) => {
     for (;;) {
       checkParams(fn.evaluatedfunction, params.length, sourceCodeInfo)
       const evaluatedFunction = fn.evaluatedfunction
@@ -81,8 +81,8 @@ export const functionExecutors: FunctionExecutors = {
       for (let i = 0; i < params.length; i += 1) {
         if (i < nbrOfNonRestArgs) {
           const param = toAny(params[i])
-          const valueRecord = evalueateBindingNodeValues(args[i]!, param, astNode =>
-            evaluateAstNode(astNode, newContextStack.create(newContext)))
+          const valueRecord = evalueateBindingNodeValues(args[i]!, param, Node =>
+            evaluateNode(Node, newContextStack.create(newContext)))
           Object.entries(valueRecord).forEach(([key, value]) => {
             newContext[key] = { value }
           })
@@ -94,9 +94,9 @@ export const functionExecutors: FunctionExecutors = {
 
       for (let i = params.length; i < nbrOfNonRestArgs; i++) {
         const arg = args[i]!
-        const defaultValue = evaluateAstNode(arg.default!, contextStack.create(newContext))
-        const valueRecord = evalueateBindingNodeValues(arg, defaultValue, astNode =>
-          evaluateAstNode(astNode, contextStack.create(newContext)))
+        const defaultValue = evaluateNode(arg.default!, contextStack.create(newContext))
+        const valueRecord = evalueateBindingNodeValues(arg, defaultValue, Node =>
+          evaluateNode(Node, contextStack.create(newContext)))
         Object.entries(valueRecord).forEach(([key, value]) => {
           newContext[key] = { value }
         })
@@ -104,7 +104,7 @@ export const functionExecutors: FunctionExecutors = {
 
       const restArgument = args.find(arg => arg.type === 'rest')
       if (restArgument !== undefined) {
-        const valueRecord = evalueateBindingNodeValues(restArgument, rest, astNode => evaluateAstNode(astNode, contextStack.create(newContext)))
+        const valueRecord = evalueateBindingNodeValues(restArgument, rest, Node => evaluateNode(Node, contextStack.create(newContext)))
         Object.entries(valueRecord).forEach(([key, value]) => {
           newContext[key] = { value }
         })
@@ -114,7 +114,7 @@ export const functionExecutors: FunctionExecutors = {
         let result: Any = null
         const newContextStack2 = newContextStack.create(newContext)
         for (const node of evaluatedFunction.body) {
-          result = evaluateAstNode(node, newContextStack2)
+          result = evaluateNode(node, newContextStack2)
         }
 
         return result

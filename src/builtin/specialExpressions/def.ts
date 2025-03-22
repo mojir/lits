@@ -1,24 +1,27 @@
-import type { BindingNode, GenericNode } from '../../parser/types'
+import type { BindingNode, SpecialExpressionNode } from '../../parser/types'
 import { evalueateBindingNodeValues, getAllBindingTargetNames } from '../bindingNode'
 import type { BuiltinSpecialExpression } from '../interface'
+import type { specialExpressionTypes } from '../specialExpressionTypes'
 
-export interface DefNode extends GenericNode {
-  name: 'def'
-  type: 'SpecialExpression'
-  bindingNode: BindingNode
-}
+export type DefNode = SpecialExpressionNode<[typeof specialExpressionTypes['def'], BindingNode]> // binding, value
 
 export const defSpecialExpression: BuiltinSpecialExpression<null, DefNode> = {
   paramCount: 2,
-  evaluate: (node, contextStack, { evaluateAstNode }) => {
-    const bindingValue = evaluateAstNode(node.bindingNode.value, contextStack)
-    const values = evalueateBindingNodeValues(node.bindingNode, bindingValue, astNode => evaluateAstNode(astNode, contextStack))
+  evaluate: (node, contextStack, { evaluateNode }) => {
+    const bindingNode: BindingNode = node[1][1]
+    const target = bindingNode[1][0]
+    const value = bindingNode[1][1]
+    const bindingValue = evaluateNode(value, contextStack)
+    const values = evalueateBindingNodeValues(target, bindingValue, Node => evaluateNode(Node, contextStack))
     contextStack.exportValues(values)
     return null
   },
-  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateAstNode }) => {
-    const bindingResult = getUndefinedSymbols([node.bindingNode.value], contextStack, builtin, evaluateAstNode)
-    contextStack.addValues(getAllBindingTargetNames(node.bindingNode.target))
+  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => {
+    const bindingNode: BindingNode = node[1][1]
+    const target = bindingNode[1][0]
+    const value = bindingNode[1][1]
+    const bindingResult = getUndefinedSymbols([value], contextStack, builtin, evaluateNode)
+    contextStack.addValues(getAllBindingTargetNames(target))
     return bindingResult
   },
 }

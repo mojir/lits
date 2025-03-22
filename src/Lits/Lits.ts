@@ -1,5 +1,5 @@
 import { getUndefinedSymbols } from '../getUndefinedSymbols'
-import { evaluate, evaluateAstNode } from '../evaluator'
+import { evaluate, evaluateNode } from '../evaluator'
 import { createContextStack } from '../evaluator/ContextStack'
 import type { Context } from '../evaluator/interface'
 import type { Any, Obj } from '../interface'
@@ -92,7 +92,7 @@ export class Lits {
   public getUndefinedSymbols(programOrAst: string | Ast, params: ContextParams = {}): Set<string> {
     const ast = typeof programOrAst === 'string' ? this.generateAst(programOrAst, params) : programOrAst
     const contextStack = createContextStack(params)
-    return getUndefinedSymbols(ast, contextStack, builtin, evaluateAstNode)
+    return getUndefinedSymbols(ast, contextStack, builtin, evaluateNode)
   }
 
   public tokenize(program: string, tokenizeParams: FilePathParams & MinifyParams = {}): TokenStream {

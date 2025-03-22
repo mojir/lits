@@ -1,14 +1,17 @@
 import { RecurSignal } from '../../errors'
-import type { CommonSpecialExpressionNode } from '../../parser/types'
+import type { Node, SpecialExpressionNode } from '../../parser/types'
 import type { BuiltinSpecialExpression } from '../interface'
+import type { specialExpressionTypes } from '../specialExpressionTypes'
 
-export interface RecurNode extends CommonSpecialExpressionNode<'recur'> {}
+export type RecurNode = SpecialExpressionNode<[typeof specialExpressionTypes['recur'], Node[]]>
 
 export const recurSpecialExpression: BuiltinSpecialExpression<null, RecurNode> = {
   paramCount: {},
-  evaluate: (node, contextStack, { evaluateAstNode }) => {
-    const params = node.params.map(paramNode => evaluateAstNode(paramNode, contextStack))
-    throw new RecurSignal(params)
+  evaluate: (node, contextStack, { evaluateNode }) => {
+    const params = node[1][1]
+    const evaluatedParams = params.map(paramNode => evaluateNode(paramNode, contextStack))
+    throw new RecurSignal(evaluatedParams)
   },
-  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateAstNode }) => getUndefinedSymbols(node.params, contextStack, builtin, evaluateAstNode),
+  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) =>
+    getUndefinedSymbols(node[1][1], contextStack, builtin, evaluateNode),
 }

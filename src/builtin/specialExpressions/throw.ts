@@ -1,17 +1,18 @@
 import { UserDefinedError } from '../../errors'
-import type { CommonSpecialExpressionNode } from '../../parser/types'
+import type { Node, SpecialExpressionNode } from '../../parser/types'
 import { asString } from '../../typeGuards/string'
 import type { BuiltinSpecialExpression } from '../interface'
+import type { specialExpressionTypes } from '../specialExpressionTypes'
 
-export interface ThrowNode extends CommonSpecialExpressionNode<'throw'> {}
+export type ThrowNode = SpecialExpressionNode<[typeof specialExpressionTypes['throw'], Node]>
 
 export const throwSpecialExpression: BuiltinSpecialExpression<null, ThrowNode> = {
   paramCount: 1,
-  evaluate: (node, contextStack, { evaluateAstNode }) => {
-    const message = asString(evaluateAstNode(node.params[0]!, contextStack), node.sourceCodeInfo, {
+  evaluate: (node, contextStack, { evaluateNode }) => {
+    const message = asString(evaluateNode(node[1][1], contextStack), node[2], {
       nonEmpty: true,
     })
-    throw new UserDefinedError(message, node.sourceCodeInfo)
+    throw new UserDefinedError(message, node[2])
   },
-  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateAstNode }) => getUndefinedSymbols(node.params, contextStack, builtin, evaluateAstNode),
+  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => getUndefinedSymbols([node[1][1]], contextStack, builtin, evaluateNode),
 }

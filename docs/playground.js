@@ -674,23 +674,24 @@ var Playground = (function (exports) {
         return UndefinedSymbolError;
     }(LitsError));
 
-    var astNodeTypeNames = [
-        'Number',
-        'String',
-        'NormalExpression',
-        'SpecialExpression',
-        'Symbol',
-        'Modifier',
-        'ReservedSymbol',
-        'Binding',
-        'Argument',
-        'Partial',
-        'Comment',
-        'Spread',
-    ];
-    var astNodeTypeSet = new Set(astNodeTypeNames);
-    function isAstNodeType(type) {
-        return typeof type === 'string' && astNodeTypeSet.has(type);
+    var NodeTypes = {
+        Number: 1,
+        String: 2,
+        NormalExpression: 3,
+        SpecialExpression: 4,
+        Symbol: 5,
+        Modifier: 6,
+        ReservedSymbol: 7,
+        Binding: 8,
+        Spread: 10,
+    };
+    var NodeTypesSet = new Set(Object.values(NodeTypes));
+    function getNodeTypeName(type) {
+        return Object.keys(NodeTypes).find(function (key) { return NodeTypes[key] === type; });
+    }
+    // TODO, is this needed?
+    function isNodeType(type) {
+        return typeof type === 'number' && NodeTypesSet.has(type);
     }
     var functionTypes = [
         'UserDefined',
@@ -718,17 +719,17 @@ var Playground = (function (exports) {
             return false;
         return FUNCTION_SYMBOL in func && 'functionType' in func && isFunctionType(func.functionType);
     }
-    function isAstNode$1(value) {
-        if (value === null || typeof value !== 'object')
+    function isNode(value) {
+        if (!Array.isArray(value) || value.length < 2)
             return false;
-        return 'type' in value && isAstNodeType(value.type);
+        return isNodeType(value[0]);
     }
     function valueToString(value) {
         if (isLitsFunction$1(value))
             // eslint-disable-next-line ts/no-unsafe-member-access
             return "<function ".concat(value.name || '\u03BB', ">");
-        if (isAstNode$1(value))
-            return "".concat(value.type, "-node");
+        if (isNode(value))
+            return "".concat(getNodeTypeName(value[0]), "-node");
         if (value === null)
             return 'null';
         if (typeof value === 'object' && value instanceof RegExp)
@@ -749,12 +750,36 @@ var Playground = (function (exports) {
     }
 
     function assertNumberOfParams(count, node) {
-        assertCount({
-            count: count,
-            length: node.params.length,
-            name: node.name,
-            sourceCodeInfo: node.sourceCodeInfo,
-        });
+        var length = node[1][1].length;
+        if (typeof count === 'number') {
+            if (length !== count) {
+                var name_1 = getNodeTypeName(node[0]);
+                throw new LitsError("Wrong number of arguments to \"".concat(name_1, "\", expected ").concat(count, ", got ").concat(valueToString(length), "."), node[2]);
+            }
+        }
+        else {
+            var min = count.min, max = count.max, even = count.even, odd = count.odd;
+            if (even) {
+                var name_2 = getNodeTypeName(node[0]);
+                if (length % 2 !== 0) {
+                    throw new LitsError("Wrong number of arguments to \"".concat(name_2, "\",, expected an even number, got ").concat(valueToString(length), "."), node[2]);
+                }
+            }
+            if (odd) {
+                if (length % 2 !== 1) {
+                    var name_3 = getNodeTypeName(node[0]);
+                    throw new LitsError("Wrong number of arguments to \"".concat(name_3, "\",, expected an odd number, got ").concat(valueToString(length), "."), node[2]);
+                }
+            }
+            if (typeof min === 'number' && length < min) {
+                var name_4 = getNodeTypeName(node[0]);
+                throw new LitsError("Wrong number of arguments to \"".concat(name_4, "\", expected at least ").concat(min, ", got ").concat(valueToString(length), "."), node[2]);
+            }
+            if (typeof max === 'number' && length > max) {
+                var name_5 = getNodeTypeName(node[0]);
+                throw new LitsError("Wrong number of arguments to \"".concat(name_5, "\", expected at most ").concat(max, ", got ").concat(valueToString(length), "."), node[2]);
+            }
+        }
     }
     function isNonUndefined(value) {
         return value !== undefined;
@@ -778,33 +803,6 @@ var Playground = (function (exports) {
     function asUnknownRecord(value, sourceCodeInfo) {
         assertUnknownRecord(value, sourceCodeInfo);
         return value;
-    }
-    function assertCount(_a) {
-        var count = _a.count, length = _a.length, name = _a.name, sourceCodeInfo = _a.sourceCodeInfo;
-        if (typeof count === 'number') {
-            if (length !== count) {
-                throw new LitsError("Wrong number of arguments to \"".concat(name, "\", expected ").concat(count, ", got ").concat(valueToString(length), "."), sourceCodeInfo);
-            }
-        }
-        else {
-            var min = count.min, max = count.max, even = count.even, odd = count.odd;
-            if (even) {
-                if (length % 2 !== 0) {
-                    throw new LitsError("Wrong number of arguments to \"".concat(name, "\",, expected an even number, got ").concat(valueToString(length), "."), sourceCodeInfo);
-                }
-            }
-            if (odd) {
-                if (length % 2 !== 1) {
-                    throw new LitsError("Wrong number of arguments to \"".concat(name, "\",, expected an odd number, got ").concat(valueToString(length), "."), sourceCodeInfo);
-                }
-            }
-            if (typeof min === 'number' && length < min) {
-                throw new LitsError("Wrong number of arguments to \"".concat(name, "\", expected at least ").concat(min, ", got ").concat(valueToString(length), "."), sourceCodeInfo);
-            }
-            if (typeof max === 'number' && length > max) {
-                throw new LitsError("Wrong number of arguments to \"".concat(name, "\", expected at most ").concat(max, ", got ").concat(valueToString(length), "."), sourceCodeInfo);
-            }
-        }
     }
 
     function isLitsFunction(value) {
@@ -912,83 +910,159 @@ var Playground = (function (exports) {
         return JSON.stringify(value, null, 2);
     }
 
-    var getUndefinedSymbols = function (ast, contextStack, builtin, evaluateAstNode) {
+    var specialExpressionTypes = {
+        '??': 0,
+        '&&': 1,
+        '||': 2,
+        'array': 3,
+        'cond': 4,
+        'def': 5,
+        'defined?': 6,
+        'defn': 7,
+        'do': 8,
+        'doseq': 9,
+        'fn': 10,
+        'for': 11,
+        'function': 12,
+        'if': 13,
+        'let': 14,
+        'loop': 15,
+        'object': 16,
+        'recur': 17,
+        'switch': 18,
+        'throw': 19,
+        'try': 20,
+        'unless': 21,
+    };
+
+    // export function isNode(value: Node): value is Node {
+    //   if (value === null || typeof value !== 'object')
+    //     return false
+    //   if (!isNodeType((value as Node).type))
+    //     return false
+    //   return true
+    // }
+    // export function asNode(value: Node, sourceCodeInfo?: SourceCodeInfo): Node {
+    //   assertNode(value, sourceCodeInfo)
+    //   return value
+    // }
+    // export function assertNode(value: Node, sourceCodeInfo?: SourceCodeInfo): asserts value is Node {
+    //   if (!isNode(value))
+    //     throw getAssertionError('Node', value, sourceCodeInfo)
+    // }
+    function isSymbolNode(value) {
+        return value[0] === NodeTypes.Symbol;
+    }
+    // export function isNumberNode(value: Node): value is NumberNode {
+    //   return value[0] === NodeTypes.Number
+    // }
+    // export function asNumberNode(value: Node, sourceCodeInfo?: SourceCodeInfo): NumberNode {
+    //   assertNumberNode(value, sourceCodeInfo)
+    //   return value
+    // }
+    // export function assertNumberNode(value: Node, sourceCodeInfo?: SourceCodeInfo): asserts value is NumberNode {
+    //   if (!isNumberNode(value))
+    //     throw getAssertionError('NumberNode', value, sourceCodeInfo)
+    // }
+    function isNormalExpressionNode(value) {
+        return value[0] === NodeTypes.NormalExpression;
+    }
+    function isNormalExpressionNodeWithName(value) {
+        if (!isNormalExpressionNode(value)) {
+            return false;
+        }
+        return typeof value[1][0] === 'string';
+    }
+    function isSpreadNode(value) {
+        return value[0] === NodeTypes.Spread;
+    }
+
+    var getUndefinedSymbols = function (ast, contextStack, builtin, evaluateNode) {
         var e_1, _a;
         var _b;
-        var astNodes = Array.isArray(ast)
+        var nodes = Array.isArray(ast)
             ? ast
-            : [{
-                    type: 'SpecialExpression',
-                    name: 'do',
-                    params: ast.body,
-                    sourceCodeInfo: undefined,
-                }];
+            : [[NodeTypes.SpecialExpression, [specialExpressionTypes.do, ast.body]]];
         var unresolvedSymbols = new Set();
         try {
-            for (var astNodes_1 = __values(astNodes), astNodes_1_1 = astNodes_1.next(); !astNodes_1_1.done; astNodes_1_1 = astNodes_1.next()) {
-                var subNode = astNodes_1_1.value;
-                (_b = findUnresolvedSymbolsInAstNode(subNode, contextStack, builtin, evaluateAstNode)) === null || _b === void 0 ? void 0 : _b.forEach(function (symbol) { return unresolvedSymbols.add(symbol); });
+            for (var nodes_1 = __values(nodes), nodes_1_1 = nodes_1.next(); !nodes_1_1.done; nodes_1_1 = nodes_1.next()) {
+                var subNode = nodes_1_1.value;
+                (_b = findUnresolvedSymbolsInNode(subNode, contextStack, builtin, evaluateNode)) === null || _b === void 0 ? void 0 : _b.forEach(function (symbol) { return unresolvedSymbols.add(symbol); });
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
         finally {
             try {
-                if (astNodes_1_1 && !astNodes_1_1.done && (_a = astNodes_1.return)) _a.call(astNodes_1);
+                if (nodes_1_1 && !nodes_1_1.done && (_a = nodes_1.return)) _a.call(nodes_1);
             }
             finally { if (e_1) throw e_1.error; }
         }
         return unresolvedSymbols;
     };
-    function findUnresolvedSymbolsInAstNode(astNode, contextStack, builtin, evaluateAstNode) {
+    function findUnresolvedSymbolsInNode(node, contextStack, builtin, evaluateNode) {
         var e_2, _a;
-        var _b;
-        switch (astNode.type) {
-            case 'Symbol': {
-                var lookUpResult = contextStack.lookUp(astNode);
+        var _b, _c;
+        var nodeType = node[0];
+        switch (nodeType) {
+            case NodeTypes.Symbol: {
+                var symbolNode = node;
+                var lookUpResult = contextStack.lookUp(symbolNode);
                 if (lookUpResult === null)
-                    return new Set([astNode.value]);
+                    return new Set([symbolNode[1]]);
                 return null;
             }
-            case 'String':
-            case 'Number':
-            case 'Modifier':
-            case 'ReservedSymbol':
-            case 'Comment':
+            case NodeTypes.String:
+            case NodeTypes.Number:
+            case NodeTypes.Modifier:
+            case NodeTypes.ReservedSymbol:
                 return null;
-            case 'NormalExpression': {
+            case NodeTypes.NormalExpression: {
+                var normalExpressionNode = node;
                 var unresolvedSymbols_1 = new Set();
-                var name_1 = astNode.name, sourceCodeInfo = astNode.sourceCodeInfo;
-                if (typeof name_1 === 'string') {
-                    var lookUpResult = contextStack.lookUp({ type: 'Symbol', value: name_1, sourceCodeInfo: sourceCodeInfo });
+                if (isNormalExpressionNodeWithName(normalExpressionNode)) {
+                    var _d = __read(normalExpressionNode, 2), _e = __read(_d[1], 1), name_1 = _e[0];
+                    var lookUpResult = contextStack.lookUp([NodeTypes.Symbol, name_1]);
                     if (lookUpResult === null)
                         unresolvedSymbols_1.add(name_1);
                 }
+                else {
+                    var _f = __read(normalExpressionNode, 2), _g = __read(_f[1], 1), expressionNode = _g[0];
+                    (_b = findUnresolvedSymbolsInNode(expressionNode, contextStack, builtin, evaluateNode)) === null || _b === void 0 ? void 0 : _b.forEach(function (symbol) { return unresolvedSymbols_1.add(symbol); });
+                }
                 try {
-                    for (var _c = __values(astNode.params), _d = _c.next(); !_d.done; _d = _c.next()) {
-                        var subNode = _d.value;
-                        (_b = findUnresolvedSymbolsInAstNode(subNode, contextStack, builtin, evaluateAstNode)) === null || _b === void 0 ? void 0 : _b.forEach(function (symbol) { return unresolvedSymbols_1.add(symbol); });
+                    for (var _h = __values(normalExpressionNode[1][1]), _j = _h.next(); !_j.done; _j = _h.next()) {
+                        var subNode = _j.value;
+                        (_c = findUnresolvedSymbolsInNode(subNode, contextStack, builtin, evaluateNode)) === null || _c === void 0 ? void 0 : _c.forEach(function (symbol) { return unresolvedSymbols_1.add(symbol); });
                     }
                 }
                 catch (e_2_1) { e_2 = { error: e_2_1 }; }
                 finally {
                     try {
-                        if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
+                        if (_j && !_j.done && (_a = _h.return)) _a.call(_h);
                     }
                     finally { if (e_2) throw e_2.error; }
                 }
                 return unresolvedSymbols_1;
             }
-            case 'SpecialExpression': {
-                var specialExpression = asNonUndefined(builtin.specialExpressions[astNode.name], astNode.sourceCodeInfo);
-                // eslint-disable-next-line ts/no-unsafe-argument
-                return specialExpression.getUndefinedSymbols(astNode, contextStack, {
+            case NodeTypes.SpecialExpression: {
+                var specialExpressionNode = node;
+                var specialExpressionType = specialExpressionNode[1][0];
+                var specialExpression = builtin.specialExpressions[specialExpressionType];
+                var castedGetUndefinedSymbols = specialExpression.getUndefinedSymbols;
+                return castedGetUndefinedSymbols(specialExpressionNode, contextStack, {
                     getUndefinedSymbols: getUndefinedSymbols,
                     builtin: builtin,
-                    evaluateAstNode: evaluateAstNode,
+                    evaluateNode: evaluateNode,
                 });
             }
-            case 'Spread':
-                return findUnresolvedSymbolsInAstNode(astNode.value, contextStack, builtin, evaluateAstNode);
+            case NodeTypes.Spread:
+                return findUnresolvedSymbolsInNode(node[1], contextStack, builtin, evaluateNode);
+            case NodeTypes.Binding: {
+                var bindingNode = node;
+                return findUnresolvedSymbolsInNode(bindingNode[1][1], contextStack, builtin, evaluateNode);
+            }
+            default:
+                throw new Error("Unhandled node type: ".concat(nodeType));
         }
     }
 
@@ -1299,12 +1373,6 @@ var Playground = (function (exports) {
     }
     function cloneColl(value) {
         return clone(value);
-    }
-    function arrayToPairs(arr) {
-        var pairs = [];
-        for (var i = 0; i < arr.length; i += 2)
-            pairs.push([arr[i], arr[i + 1]]);
-        return pairs;
     }
     function joinSets() {
         var e_1, _a;
@@ -4208,12 +4276,12 @@ var Playground = (function (exports) {
         paramCount: {},
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
-            var evaluateAstNode = _a.evaluateAstNode;
+            var evaluateNode = _a.evaluateNode;
             var value = true;
             try {
-                for (var _c = __values(node.params), _d = _c.next(); !_d.done; _d = _c.next()) {
+                for (var _c = __values(node[1][1]), _d = _c.next(); !_d.done; _d = _c.next()) {
                     var param = _d.value;
-                    value = evaluateAstNode(param, contextStack);
+                    value = evaluateNode(param, contextStack);
                     if (!value)
                         break;
                 }
@@ -4228,8 +4296,8 @@ var Playground = (function (exports) {
             return value;
         },
         getUndefinedSymbols: function (node, contextStack, _a) {
-            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
-            return getUndefinedSymbols(node.params, contextStack, builtin, evaluateAstNode);
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateNode = _a.evaluateNode;
+            return getUndefinedSymbols(node[1][1], contextStack, builtin, evaluateNode);
         },
     };
 
@@ -4237,28 +4305,29 @@ var Playground = (function (exports) {
         paramCount: { even: true },
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
-            var evaluateAstNode = _a.evaluateAstNode;
+            var evaluateNode = _a.evaluateNode;
+            var params = node[1][1];
             try {
-                for (var _c = __values(arrayToPairs(node.params)), _d = _c.next(); !_d.done; _d = _c.next()) {
-                    var _e = __read(_d.value, 2), test = _e[0], form = _e[1];
-                    var value = evaluateAstNode(test, contextStack);
+                for (var params_1 = __values(params), params_1_1 = params_1.next(); !params_1_1.done; params_1_1 = params_1.next()) {
+                    var _c = __read(params_1_1.value, 2), test = _c[0], form = _c[1];
+                    var value = evaluateNode(test, contextStack);
                     if (!value)
                         continue;
-                    return evaluateAstNode(form, contextStack);
+                    return evaluateNode(form, contextStack);
                 }
             }
             catch (e_1_1) { e_1 = { error: e_1_1 }; }
             finally {
                 try {
-                    if (_d && !_d.done && (_b = _c.return)) _b.call(_c);
+                    if (params_1_1 && !params_1_1.done && (_b = params_1.return)) _b.call(params_1);
                 }
                 finally { if (e_1) throw e_1.error; }
             }
             return null;
         },
         getUndefinedSymbols: function (node, contextStack, _a) {
-            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
-            return getUndefinedSymbols(node.params, contextStack, builtin, evaluateAstNode);
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateNode = _a.evaluateNode;
+            return getUndefinedSymbols(node[1][1].flat(), contextStack, builtin, evaluateNode);
         },
     };
 
@@ -4266,47 +4335,47 @@ var Playground = (function (exports) {
         paramCount: { odd: true },
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
-            var evaluateAstNode = _a.evaluateAstNode;
-            var switchValue = evaluateAstNode(node.params[0], contextStack);
+            var evaluateNode = _a.evaluateNode;
+            var _c = __read(node[1], 3), switchValueNode = _c[1], cases = _c[2];
+            var switchValue = evaluateNode(switchValueNode, contextStack);
             try {
-                for (var _c = __values(arrayToPairs(node.params.slice(1))), _d = _c.next(); !_d.done; _d = _c.next()) {
-                    var _e = __read(_d.value, 2), test = _e[0], form = _e[1];
-                    var value = evaluateAstNode(test, contextStack);
+                for (var cases_1 = __values(cases), cases_1_1 = cases_1.next(); !cases_1_1.done; cases_1_1 = cases_1.next()) {
+                    var _d = __read(cases_1_1.value, 2), test = _d[0], form = _d[1];
+                    var value = evaluateNode(test, contextStack);
                     if (value === switchValue) {
-                        return evaluateAstNode(form, contextStack);
+                        return evaluateNode(form, contextStack);
                     }
                 }
             }
             catch (e_1_1) { e_1 = { error: e_1_1 }; }
             finally {
                 try {
-                    if (_d && !_d.done && (_b = _c.return)) _b.call(_c);
+                    if (cases_1_1 && !cases_1_1.done && (_b = cases_1.return)) _b.call(cases_1);
                 }
                 finally { if (e_1) throw e_1.error; }
             }
             return null;
         },
         getUndefinedSymbols: function (node, contextStack, _a) {
-            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
-            return getUndefinedSymbols(node.params, contextStack, builtin, evaluateAstNode);
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateNode = _a.evaluateNode;
+            return getUndefinedSymbols(__spreadArray([node[1][1]], __read(node[1][2].flat()), false), contextStack, builtin, evaluateNode);
         },
     };
 
     var declaredSpecialExpression = {
         paramCount: 1,
         evaluate: function (node, contextStack) {
-            var lookUpResult = contextStack.lookUp(node.params[0]);
+            var lookUpResult = contextStack.lookUp(node[1][1]);
             return lookUpResult !== null;
         },
         getUndefinedSymbols: function (node, contextStack, _a) {
-            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
-            return getUndefinedSymbols(node.params, contextStack, builtin, evaluateAstNode);
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateNode = _a.evaluateNode;
+            return getUndefinedSymbols([node[1][1]], contextStack, builtin, evaluateNode);
         },
     };
 
-    function evalueateBindingNodeValues(input, value, evaluate) {
-        var target = 'target' in input ? input.target : input;
-        var sourceCodeInfo = input.sourceCodeInfo;
+    function evalueateBindingNodeValues(target, value, evaluate) {
+        var sourceCodeInfo = target.sourceCodeInfo;
         var record = {};
         createRecord(target, value, evaluate, sourceCodeInfo, record);
         return record;
@@ -4420,16 +4489,22 @@ var Playground = (function (exports) {
     var defSpecialExpression = {
         paramCount: 2,
         evaluate: function (node, contextStack, _a) {
-            var evaluateAstNode = _a.evaluateAstNode;
-            var bindingValue = evaluateAstNode(node.bindingNode.value, contextStack);
-            var values = evalueateBindingNodeValues(node.bindingNode, bindingValue, function (astNode) { return evaluateAstNode(astNode, contextStack); });
+            var evaluateNode = _a.evaluateNode;
+            var bindingNode = node[1][1];
+            var target = bindingNode[1][0];
+            var value = bindingNode[1][1];
+            var bindingValue = evaluateNode(value, contextStack);
+            var values = evalueateBindingNodeValues(target, bindingValue, function (Node) { return evaluateNode(Node, contextStack); });
             contextStack.exportValues(values);
             return null;
         },
         getUndefinedSymbols: function (node, contextStack, _a) {
-            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
-            var bindingResult = getUndefinedSymbols([node.bindingNode.value], contextStack, builtin, evaluateAstNode);
-            contextStack.addValues(getAllBindingTargetNames(node.bindingNode.target));
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateNode = _a.evaluateNode;
+            var bindingNode = node[1][1];
+            var target = bindingNode[1][0];
+            var value = bindingNode[1][1];
+            var bindingResult = getUndefinedSymbols([value], contextStack, builtin, evaluateNode);
+            contextStack.addValues(getAllBindingTargetNames(target));
             return bindingResult;
         },
     };
@@ -4438,14 +4513,14 @@ var Playground = (function (exports) {
         paramCount: {},
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
-            var evaluateAstNode = _a.evaluateAstNode;
+            var evaluateNode = _a.evaluateNode;
             var newContext = {};
             var newContextStack = contextStack.create(newContext);
             var result = null;
             try {
-                for (var _c = __values(node.params), _d = _c.next(); !_d.done; _d = _c.next()) {
+                for (var _c = __values(node[1][1]), _d = _c.next(); !_d.done; _d = _c.next()) {
                     var form = _d.value;
-                    result = evaluateAstNode(form, newContextStack);
+                    result = evaluateNode(form, newContextStack);
                 }
             }
             catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -4458,8 +4533,8 @@ var Playground = (function (exports) {
             return result;
         },
         getUndefinedSymbols: function (node, contextStack, _a) {
-            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
-            return getUndefinedSymbols(node.params, contextStack.create({}), builtin, evaluateAstNode);
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateNode = _a.evaluateNode;
+            return getUndefinedSymbols(node[1][1], contextStack.create({}), builtin, evaluateNode);
         },
     };
 
@@ -4520,7 +4595,8 @@ var Playground = (function (exports) {
     function assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo) {
         if (typeof name !== 'string')
             return;
-        if (builtin.specialExpressions[name])
+        // TODO only subset of special expressions are necessary to check (CommonSpecialExpressionType)
+        if (specialExpressionTypes[name])
             throw new LitsError("Cannot define variable ".concat(name, ", it's a special expression."), sourceCodeInfo);
         if (builtin.normalExpressions[name])
             throw new LitsError("Cannot define variable ".concat(name, ", it's a builtin function."), sourceCodeInfo);
@@ -4534,63 +4610,67 @@ var Playground = (function (exports) {
         paramCount: {},
         evaluate: function (node, contextStack, _a) {
             var _b, _c;
-            var builtin = _a.builtin, getUndefinedSymbols = _a.getUndefinedSymbols, evaluateAstNode = _a.evaluateAstNode;
-            var name = node.functionName.value;
-            assertNameNotDefined(name, contextStack, builtin, node.sourceCodeInfo);
-            var evaluatedFunction = evaluateFunction(node, contextStack, builtin, getUndefinedSymbols, evaluateAstNode);
+            var builtin = _a.builtin, getUndefinedSymbols = _a.getUndefinedSymbols, evaluateNode = _a.evaluateNode;
+            var _d = __read(node[1], 3), _e = __read(_d[1], 2), functionName = _e[1], fn = _d[2];
+            assertNameNotDefined(functionName, contextStack, builtin, node[2]);
+            var evaluatedFunction = evaluateFunction(fn, contextStack, builtin, getUndefinedSymbols, evaluateNode);
             var litsFunction = (_b = {},
                 _b[FUNCTION_SYMBOL] = true,
-                _b.sourceCodeInfo = node.sourceCodeInfo,
+                _b.sourceCodeInfo = node[2],
                 _b.functionType = 'UserDefined',
-                _b.name = name,
+                _b.name = functionName,
                 _b.evaluatedfunction = evaluatedFunction,
                 _b);
-            contextStack.addValues((_c = {}, _c[name] = litsFunction, _c));
+            contextStack.addValues((_c = {}, _c[functionName] = litsFunction, _c));
             return null;
         },
         getUndefinedSymbols: function (node, contextStack, _a) {
             var _b, _c;
-            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
-            contextStack.addValues((_b = {}, _b[node.functionName.value] = true, _b));
-            var newContext = (_c = {}, _c[node.functionName.value] = { value: true }, _c);
-            return addFunctionUnresolvedSymbols(node.function, contextStack, getUndefinedSymbols, builtin, evaluateAstNode, newContext);
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateNode = _a.evaluateNode;
+            var functionName = node[1][1][1];
+            contextStack.addValues((_b = {}, _b[functionName] = true, _b));
+            var newContext = (_c = {}, _c[functionName] = { value: true }, _c);
+            return addFunctionUnresolvedSymbols(node[1][2], contextStack, getUndefinedSymbols, builtin, evaluateNode, newContext);
         },
     };
     var defnSpecialExpression = {
         paramCount: {},
         evaluate: function (node, contextStack, _a) {
             var _b, _c;
-            var builtin = _a.builtin, getUndefinedSymbols = _a.getUndefinedSymbols, evaluateAstNode = _a.evaluateAstNode;
-            var name = node.functionName.value;
-            assertNameNotDefined(name, contextStack, builtin, node.sourceCodeInfo);
-            var evaluatedFunctionOverloades = evaluateFunction(node, contextStack, builtin, getUndefinedSymbols, evaluateAstNode);
+            var builtin = _a.builtin, getUndefinedSymbols = _a.getUndefinedSymbols, evaluateNode = _a.evaluateNode;
+            var _d = __read(node[1], 3), _e = __read(_d[1], 2), functionName = _e[1], fn = _d[2];
+            assertNameNotDefined(functionName, contextStack, builtin, node[2]);
+            var evaluatedFunctionOverloades = evaluateFunction(fn, contextStack, builtin, getUndefinedSymbols, evaluateNode);
             var litsFunction = (_b = {},
                 _b[FUNCTION_SYMBOL] = true,
-                _b.sourceCodeInfo = node.sourceCodeInfo,
+                _b.sourceCodeInfo = node[2],
                 _b.functionType = 'UserDefined',
-                _b.name = name,
+                _b.name = functionName,
                 _b.evaluatedfunction = evaluatedFunctionOverloades,
                 _b);
-            contextStack.exportValues((_c = {}, _c[name] = litsFunction, _c));
+            contextStack.exportValues((_c = {}, _c[functionName] = litsFunction, _c));
             return null;
         },
         getUndefinedSymbols: function (node, contextStack, _a) {
             var _b, _c;
-            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
-            contextStack.exportValues((_b = {}, _b[node.functionName.value] = true, _b));
-            var newContext = (_c = {}, _c[node.functionName.value] = { value: true }, _c);
-            return addFunctionUnresolvedSymbols(node.function, contextStack, getUndefinedSymbols, builtin, evaluateAstNode, newContext);
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateNode = _a.evaluateNode;
+            var functionName = node[1][1][1];
+            var fn = node[1][2];
+            contextStack.exportValues((_b = {}, _b[functionName] = true, _b));
+            var newContext = (_c = {}, _c[functionName] = { value: true }, _c);
+            return addFunctionUnresolvedSymbols(fn, contextStack, getUndefinedSymbols, builtin, evaluateNode, newContext);
         },
     };
     var fnSpecialExpression = {
         paramCount: {},
         evaluate: function (node, contextStack, _a) {
             var _b;
-            var builtin = _a.builtin, getUndefinedSymbols = _a.getUndefinedSymbols, evaluateAstNode = _a.evaluateAstNode;
-            var evaluatedFunction = evaluateFunction(node, contextStack, builtin, getUndefinedSymbols, evaluateAstNode);
+            var builtin = _a.builtin, getUndefinedSymbols = _a.getUndefinedSymbols, evaluateNode = _a.evaluateNode;
+            var fn = node[1][1];
+            var evaluatedFunction = evaluateFunction(fn, contextStack, builtin, getUndefinedSymbols, evaluateNode);
             var litsFunction = (_b = {},
                 _b[FUNCTION_SYMBOL] = true,
-                _b.sourceCodeInfo = node.sourceCodeInfo,
+                _b.sourceCodeInfo = node[2],
                 _b.functionType = 'UserDefined',
                 _b.name = undefined,
                 _b.evaluatedfunction = evaluatedFunction,
@@ -4598,12 +4678,12 @@ var Playground = (function (exports) {
             return litsFunction;
         },
         getUndefinedSymbols: function (node, contextStack, _a) {
-            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
-            return addFunctionUnresolvedSymbols(node.function, contextStack, getUndefinedSymbols, builtin, evaluateAstNode);
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateNode = _a.evaluateNode;
+            var fn = node[1][1];
+            return addFunctionUnresolvedSymbols(fn, contextStack, getUndefinedSymbols, builtin, evaluateNode);
         },
     };
-    function evaluateFunction(node, contextStack, builtin, getUndefinedSymbols, evaluateAstNode) {
-        var fn = node.function;
+    function evaluateFunction(fn, contextStack, builtin, getUndefinedSymbols, evaluateNode) {
         var functionContext = {};
         var context = fn.arguments.reduce(function (ctx, arg) {
             Object.keys(getAllBindingTargetNames(arg)).forEach(function (name) {
@@ -4611,7 +4691,7 @@ var Playground = (function (exports) {
             });
             return ctx;
         }, {});
-        var undefinedSymbols = getUndefinedSymbols(fn.body, contextStack.new(context), builtin, evaluateAstNode);
+        var undefinedSymbols = getUndefinedSymbols(fn.body, contextStack.new(context), builtin, evaluateNode);
         undefinedSymbols.forEach(function (name) {
             var value = contextStack.getValue(name);
             if (isAny(value)) {
@@ -4625,7 +4705,7 @@ var Playground = (function (exports) {
         };
         return evaluatedFunction;
     }
-    function addFunctionUnresolvedSymbols(fn, contextStack, getUndefinedSymbols, builtin, evaluateAstNode, functionNameContext) {
+    function addFunctionUnresolvedSymbols(fn, contextStack, getUndefinedSymbols, builtin, evaluateNode, functionNameContext) {
         var result = new Set();
         var contextStackWithFunctionName = functionNameContext ? contextStack.create(functionNameContext) : contextStack;
         var newContext = {};
@@ -4633,94 +4713,68 @@ var Playground = (function (exports) {
             Object.assign(newContext, getAllBindingTargetNames(arg));
         });
         var newContextStack = contextStackWithFunctionName.create(newContext);
-        var overloadResult = getUndefinedSymbols(fn.body, newContextStack, builtin, evaluateAstNode);
+        var overloadResult = getUndefinedSymbols(fn.body, newContextStack, builtin, evaluateNode);
         addToSet(result, overloadResult);
         return result;
-    }
-
-    function isAstNode(value) {
-        if (value === null || typeof value !== 'object')
-            return false;
-        if (!isAstNodeType(value.type))
-            return false;
-        return true;
-    }
-    function asAstNode(value, sourceCodeInfo) {
-        assertAstNode(value, sourceCodeInfo);
-        return value;
-    }
-    function assertAstNode(value, sourceCodeInfo) {
-        if (!isAstNode(value))
-            throw getAssertionError('AstNode', value, sourceCodeInfo);
-    }
-    function isSymbolNode(value) {
-        if (!isAstNode(value))
-            return false;
-        return value.type === 'Symbol';
-    }
-    function isNormalExpressionNodeWithName(value) {
-        if (!isAstNode(value))
-            return false;
-        return value.type === 'NormalExpression' && typeof value.name === 'string';
     }
 
     var ifSpecialExpression = {
         paramCount: { min: 2, max: 3 },
         evaluate: function (node, contextStack, _a) {
-            var evaluateAstNode = _a.evaluateAstNode;
-            var sourceCodeInfo = node.sourceCodeInfo;
-            var _b = __read(node.params, 3), conditionNode = _b[0], trueNode = _b[1], falseNode = _b[2];
-            if (evaluateAstNode(asAstNode(conditionNode, sourceCodeInfo), contextStack)) {
-                return evaluateAstNode(asAstNode(trueNode, sourceCodeInfo), contextStack);
+            var evaluateNode = _a.evaluateNode;
+            var _b = __read(node[1][1], 3), conditionNode = _b[0], trueNode = _b[1], falseNode = _b[2];
+            if (evaluateNode(conditionNode, contextStack)) {
+                return evaluateNode(trueNode, contextStack);
             }
-            else {
-                if (node.params.length === 3)
-                    return evaluateAstNode(asAstNode(falseNode, sourceCodeInfo), contextStack);
-                else
-                    return null;
+            else if (falseNode) {
+                return evaluateNode(falseNode, contextStack);
             }
+            return null;
         },
         getUndefinedSymbols: function (node, contextStack, _a) {
-            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
-            return getUndefinedSymbols(node.params, contextStack, builtin, evaluateAstNode);
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateNode = _a.evaluateNode;
+            return getUndefinedSymbols(node[1][1].filter(function (n) { return !!n; }), contextStack, builtin, evaluateNode);
         },
     };
 
     var unlessSpecialExpression = {
         paramCount: { min: 2, max: 3 },
         evaluate: function (node, contextStack, _a) {
-            var evaluateAstNode = _a.evaluateAstNode;
-            var sourceCodeInfo = node.sourceCodeInfo;
-            var _b = __read(node.params, 3), conditionNode = _b[0], trueNode = _b[1], falseNode = _b[2];
-            if (!evaluateAstNode(asAstNode(conditionNode, sourceCodeInfo), contextStack)) {
-                return evaluateAstNode(asAstNode(trueNode, sourceCodeInfo), contextStack);
+            var evaluateNode = _a.evaluateNode;
+            var _b = __read(node[1][1], 3), conditionNode = _b[0], trueNode = _b[1], falseNode = _b[2];
+            if (!evaluateNode(conditionNode, contextStack)) {
+                return evaluateNode(trueNode, contextStack);
             }
-            else {
-                if (node.params.length === 3)
-                    return evaluateAstNode(asAstNode(falseNode, sourceCodeInfo), contextStack);
-                else
-                    return null;
+            else if (falseNode) {
+                return evaluateNode(falseNode, contextStack);
             }
+            return null;
         },
         getUndefinedSymbols: function (node, contextStack, _a) {
-            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
-            return getUndefinedSymbols(node.params, contextStack, builtin, evaluateAstNode);
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateNode = _a.evaluateNode;
+            return getUndefinedSymbols(node[1][1].filter(function (n) { return !!n; }), contextStack, builtin, evaluateNode);
         },
     };
 
     var letSpecialExpression = {
         paramCount: 0,
         evaluate: function (node, contextStack, _a) {
-            var evaluateAstNode = _a.evaluateAstNode;
-            var bindingValue = evaluateAstNode(node.bindingNode.value, contextStack);
-            var values = evalueateBindingNodeValues(node.bindingNode, bindingValue, function (astNode) { return evaluateAstNode(astNode, contextStack); });
+            var evaluateNode = _a.evaluateNode;
+            var bindingNode = node[1][1];
+            var target = bindingNode[1][0];
+            var value = bindingNode[1][1];
+            var bindingValue = evaluateNode(value, contextStack);
+            var values = evalueateBindingNodeValues(target, bindingValue, function (Node) { return evaluateNode(Node, contextStack); });
             contextStack.addValues(values);
             return null;
         },
         getUndefinedSymbols: function (node, contextStack, _a) {
-            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
-            var bindingResult = getUndefinedSymbols([node.bindingNode.value], contextStack, builtin, evaluateAstNode);
-            contextStack.addValues(getAllBindingTargetNames(node.bindingNode.target));
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateNode = _a.evaluateNode;
+            var bindingNode = node[1][1];
+            var target = bindingNode[1][0];
+            var value = bindingNode[1][1];
+            var bindingResult = getUndefinedSymbols([value], contextStack, builtin, evaluateNode);
+            contextStack.addValues(getAllBindingTargetNames(target));
             return bindingResult;
         },
     };
@@ -4728,11 +4782,11 @@ var Playground = (function (exports) {
     var loopSpecialExpression = {
         paramCount: {},
         evaluate: function (node, contextStack, _a) {
-            var evaluateAstNode = _a.evaluateAstNode;
-            var sourceCodeInfo = node.sourceCodeInfo;
-            var bindingContext = node.bindingNodes.reduce(function (result, binding) {
-                var val = evaluateAstNode(binding.value, contextStack.create(result));
-                var valueRecord = evalueateBindingNodeValues(binding, val, function (astNode) { return evaluateAstNode(astNode, contextStack); });
+            var evaluateNode = _a.evaluateNode;
+            var bindingNodes = node[1][1];
+            var bindingContext = bindingNodes.reduce(function (result, bindingNode) {
+                var val = evaluateNode(bindingNode[1][1], contextStack.create(result));
+                var valueRecord = evalueateBindingNodeValues(bindingNode[1][0], val, function (Node) { return evaluateNode(Node, contextStack); });
                 Object.entries(valueRecord).forEach(function (_a) {
                     var _b = __read(_a, 2), name = _b[0], value = _b[1];
                     result[name] = { value: value };
@@ -4740,20 +4794,21 @@ var Playground = (function (exports) {
                 return result;
             }, {});
             var newContextStack = contextStack.create(bindingContext);
+            var body = node[1][2];
             var _loop_1 = function () {
                 var e_1, _b;
                 var result = null;
                 try {
                     try {
-                        for (var _c = (e_1 = void 0, __values(node.params)), _d = _c.next(); !_d.done; _d = _c.next()) {
-                            var form = _d.value;
-                            result = evaluateAstNode(form, newContextStack);
+                        for (var body_1 = (e_1 = void 0, __values(body)), body_1_1 = body_1.next(); !body_1_1.done; body_1_1 = body_1.next()) {
+                            var form = body_1_1.value;
+                            result = evaluateNode(form, newContextStack);
                         }
                     }
                     catch (e_1_1) { e_1 = { error: e_1_1 }; }
                     finally {
                         try {
-                            if (_d && !_d.done && (_b = _c.return)) _b.call(_c);
+                            if (body_1_1 && !body_1_1.done && (_b = body_1.return)) _b.call(body_1);
                         }
                         finally { if (e_1) throw e_1.error; }
                     }
@@ -4761,16 +4816,16 @@ var Playground = (function (exports) {
                 catch (error) {
                     if (error instanceof RecurSignal) {
                         var params_1 = error.params;
-                        if (params_1.length !== node.bindingNodes.length) {
-                            throw new LitsError("recur expected ".concat(node.bindingNodes.length, " parameters, got ").concat(valueToString(params_1.length)), sourceCodeInfo);
+                        if (params_1.length !== bindingNodes.length) {
+                            throw new LitsError("recur expected ".concat(bindingNodes.length, " parameters, got ").concat(valueToString(params_1.length)), node[2]);
                         }
-                        node.bindingNodes.forEach(function (binding, index) {
+                        bindingNodes.forEach(function (bindingNode, index) {
                             var e_2, _a;
-                            var valueRecord = evalueateBindingNodeValues(binding, asAny(params_1[index], sourceCodeInfo), function (astNode) { return evaluateAstNode(astNode, contextStack); });
+                            var valueRecord = evalueateBindingNodeValues(bindingNode[1][0], asAny(params_1[index]), function (Node) { return evaluateNode(Node, contextStack); });
                             try {
                                 for (var _b = (e_2 = void 0, __values(Object.entries(valueRecord))), _c = _b.next(); !_c.done; _c = _b.next()) {
                                     var _d = __read(_c.value, 2), name_1 = _d[0], value = _d[1];
-                                    asNonUndefined(bindingContext[name_1], sourceCodeInfo).value = value;
+                                    bindingContext[name_1].value = value;
                                 }
                             }
                             catch (e_2_1) { e_2 = { error: e_2_1 }; }
@@ -4794,29 +4849,31 @@ var Playground = (function (exports) {
             }
         },
         getUndefinedSymbols: function (node, contextStack, _a) {
-            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
-            var newContext = node.bindingNodes
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateNode = _a.evaluateNode;
+            var bindingNodes = node[1][1];
+            var newContext = bindingNodes
                 .reduce(function (context, bindingNode) {
-                var names = getAllBindingTargetNames(bindingNode.target);
+                var names = getAllBindingTargetNames(bindingNode[1][0]);
                 Object.keys(names).forEach(function (name) {
                     context[name] = { value: true };
                 });
                 return context;
             }, {});
-            var bindingValueNodes = node.bindingNodes.map(function (binding) { return binding.value; });
-            var bindingsResult = getUndefinedSymbols(bindingValueNodes, contextStack, builtin, evaluateAstNode);
-            var paramsResult = getUndefinedSymbols(node.params, contextStack.create(newContext), builtin, evaluateAstNode);
+            var bindingValueNodes = bindingNodes.map(function (bindingNode) { return bindingNode[1][1]; });
+            var bindingsResult = getUndefinedSymbols(bindingValueNodes, contextStack, builtin, evaluateNode);
+            var paramsResult = getUndefinedSymbols(node[1][2], contextStack.create(newContext), builtin, evaluateNode);
             return joinSets(bindingsResult, paramsResult);
         },
     };
 
-    function addToContext(bindings, context, contextStack, evaluateAstNode) {
+    function addToContext(bindings, context, contextStack, evaluateNode) {
         var e_1, _a;
         try {
             for (var bindings_1 = __values(bindings), bindings_1_1 = bindings_1.next(); !bindings_1_1.done; bindings_1_1 = bindings_1.next()) {
-                var binding = bindings_1_1.value;
-                var val = evaluateAstNode(binding.value, contextStack);
-                var valueRecord = evalueateBindingNodeValues(binding, val, function (astNode) { return evaluateAstNode(astNode, contextStack); });
+                var bindingNode = bindings_1_1.value;
+                var _b = __read(bindingNode[1], 2), target = _b[0], bindingValue = _b[1];
+                var val = evaluateNode(bindingValue, contextStack);
+                var valueRecord = evalueateBindingNodeValues(target, val, function (Node) { return evaluateNode(Node, contextStack); });
                 Object.entries(valueRecord).forEach(function (_a) {
                     var _b = __read(_a, 2), name = _b[0], value = _b[1];
                     context[name] = { value: value };
@@ -4831,9 +4888,9 @@ var Playground = (function (exports) {
             finally { if (e_1) throw e_1.error; }
         }
     }
-    function evaluateLoop(returnResult, node, contextStack, evaluateAstNode) {
-        var sourceCodeInfo = node.sourceCodeInfo;
-        var _a = node, loopBindings = _a.l, params = _a.params;
+    function evaluateLoop(returnResult, loopNode, contextStack, evaluateNode) {
+        var sourceCodeInfo = loopNode[2];
+        var _a = __read(loopNode[1], 3), loopBindings = _a[1], body = _a[2];
         var result = [];
         var bindingIndices = loopBindings.map(function () { return 0; });
         var abort = false;
@@ -4843,8 +4900,9 @@ var Playground = (function (exports) {
             var newContextStack = contextStack.create(context);
             var skip = false;
             bindingsLoop: for (var bindingIndex = 0; bindingIndex < loopBindings.length; bindingIndex += 1) {
-                var _c = asNonUndefined(loopBindings[bindingIndex], sourceCodeInfo), binding = _c.b, letBindings = _c.l, whenNode = _c.wn, whileNode = _c.we, modifiers = _c.m;
-                var coll = asColl(evaluateAstNode(binding.value, newContextStack), sourceCodeInfo);
+                var _c = __read(loopBindings[bindingIndex], 4), bindingNode = _c[0], letBindings = _c[1], whenNode = _c[2], whileNode = _c[3];
+                var _d = __read(bindingNode[1], 2), targetNode = _d[0], valueNode = _d[1];
+                var coll = asColl(evaluateNode(valueNode, newContextStack), sourceCodeInfo);
                 var seq = isSeq(coll) ? coll : Object.entries(coll);
                 if (seq.length === 0) {
                     skip = true;
@@ -4863,45 +4921,40 @@ var Playground = (function (exports) {
                     break;
                 }
                 var val = asAny(seq[index], sourceCodeInfo);
-                var valueRecord = evalueateBindingNodeValues(binding, val, function (astNode) { return evaluateAstNode(astNode, newContextStack); });
+                var valueRecord = evalueateBindingNodeValues(targetNode, val, function (Node) { return evaluateNode(Node, newContextStack); });
                 Object.entries(valueRecord).forEach(function (_a) {
                     var _b = __read(_a, 2), name = _b[0], value = _b[1];
                     context[name] = { value: value };
                 });
+                if (letBindings) {
+                    addToContext(letBindings, context, newContextStack, evaluateNode);
+                }
+                if (whenNode && !evaluateNode(whenNode, newContextStack)) {
+                    bindingIndices[bindingIndex] = asNonUndefined(bindingIndices[bindingIndex], sourceCodeInfo) + 1;
+                    skip = true;
+                    break bindingsLoop;
+                }
+                if (whileNode && !evaluateNode(whileNode, newContextStack)) {
+                    bindingIndices[bindingIndex] = Number.POSITIVE_INFINITY;
+                    skip = true;
+                    break bindingsLoop;
+                }
+            }
+            if (!skip) {
+                var value = null;
                 try {
-                    for (var modifiers_1 = (e_2 = void 0, __values(modifiers)), modifiers_1_1 = modifiers_1.next(); !modifiers_1_1.done; modifiers_1_1 = modifiers_1.next()) {
-                        var modifier = modifiers_1_1.value;
-                        switch (modifier) {
-                            case '&let':
-                                addToContext(asNonUndefined(letBindings, sourceCodeInfo), context, newContextStack, evaluateAstNode);
-                                break;
-                            case '&when':
-                                if (!evaluateAstNode(asAstNode(whenNode, sourceCodeInfo), newContextStack)) {
-                                    bindingIndices[bindingIndex] = asNonUndefined(bindingIndices[bindingIndex], sourceCodeInfo) + 1;
-                                    skip = true;
-                                    break bindingsLoop;
-                                }
-                                break;
-                            case '&while':
-                                if (!evaluateAstNode(asAstNode(whileNode, sourceCodeInfo), newContextStack)) {
-                                    bindingIndices[bindingIndex] = Number.POSITIVE_INFINITY;
-                                    skip = true;
-                                    break bindingsLoop;
-                                }
-                                break;
-                        }
+                    for (var body_1 = (e_2 = void 0, __values(body)), body_1_1 = body_1.next(); !body_1_1.done; body_1_1 = body_1.next()) {
+                        var form = body_1_1.value;
+                        value = evaluateNode(form, newContextStack);
                     }
                 }
                 catch (e_2_1) { e_2 = { error: e_2_1 }; }
                 finally {
                     try {
-                        if (modifiers_1_1 && !modifiers_1_1.done && (_b = modifiers_1.return)) _b.call(modifiers_1);
+                        if (body_1_1 && !body_1_1.done && (_b = body_1.return)) _b.call(body_1);
                     }
                     finally { if (e_2) throw e_2.error; }
                 }
-            }
-            if (!skip) {
-                var value = evaluateAstNode(params[0], newContextStack);
                 if (returnResult)
                     result.push(value);
                 if (bindingIndices.length > 0)
@@ -4913,57 +4966,59 @@ var Playground = (function (exports) {
         }
         return returnResult ? result : null;
     }
-    function analyze$1(node, contextStack, getUndefinedSymbols, builtin, evaluateAstNode) {
+    function analyze$1(loopNode, contextStack, getUndefinedSymbols, builtin, evaluateNode) {
         var result = new Set();
         var newContext = {};
-        var loopBindings = node.l;
-        loopBindings.forEach(function (loopBinding) {
-            var binding = loopBinding.b, letBindings = loopBinding.l, whenNode = loopBinding.wn, whileNode = loopBinding.we;
-            getUndefinedSymbols([binding.value], contextStack.create(newContext), builtin, evaluateAstNode).forEach(function (symbol) {
+        var _a = __read(loopNode[1], 3), loopBindings = _a[1], body = _a[2];
+        loopBindings.forEach(function (loopBindingNode) {
+            var _a = __read(loopBindingNode, 4), bindingNode = _a[0], letBindings = _a[1], whenNode = _a[2], whileNode = _a[3];
+            var _b = __read(bindingNode[1], 2), target = _b[0], value = _b[1];
+            getUndefinedSymbols([value], contextStack.create(newContext), builtin, evaluateNode).forEach(function (symbol) {
                 return result.add(symbol);
             });
-            Object.assign(newContext, getAllBindingTargetNames(binding.target));
+            Object.assign(newContext, getAllBindingTargetNames(target));
             if (letBindings) {
-                letBindings.forEach(function (letBinding) {
-                    getUndefinedSymbols([letBinding.value], contextStack.create(newContext), builtin, evaluateAstNode).forEach(function (symbol) {
+                letBindings.forEach(function (letBindingNode) {
+                    var _a = __read(letBindingNode[1], 2), letTarget = _a[0], letValue = _a[1];
+                    getUndefinedSymbols([letValue], contextStack.create(newContext), builtin, evaluateNode).forEach(function (symbol) {
                         return result.add(symbol);
                     });
-                    Object.assign(newContext, getAllBindingTargetNames(letBinding.target));
+                    Object.assign(newContext, getAllBindingTargetNames(letTarget));
                 });
             }
             if (whenNode) {
-                getUndefinedSymbols([whenNode], contextStack.create(newContext), builtin, evaluateAstNode).forEach(function (symbol) {
+                getUndefinedSymbols([whenNode], contextStack.create(newContext), builtin, evaluateNode).forEach(function (symbol) {
                     return result.add(symbol);
                 });
             }
             if (whileNode) {
-                getUndefinedSymbols([whileNode], contextStack.create(newContext), builtin, evaluateAstNode).forEach(function (symbol) {
+                getUndefinedSymbols([whileNode], contextStack.create(newContext), builtin, evaluateNode).forEach(function (symbol) {
                     return result.add(symbol);
                 });
             }
         });
-        getUndefinedSymbols(node.params, contextStack.create(newContext), builtin, evaluateAstNode).forEach(function (symbol) {
+        getUndefinedSymbols(body, contextStack.create(newContext), builtin, evaluateNode).forEach(function (symbol) {
             return result.add(symbol);
         });
         return result;
     }
     var forSpecialExpression = {
         paramCount: 1,
-        evaluate: function (node, contextStack, helpers) { return evaluateLoop(true, node, contextStack, helpers.evaluateAstNode); },
+        evaluate: function (node, contextStack, helpers) { return evaluateLoop(true, node, contextStack, helpers.evaluateNode); },
         getUndefinedSymbols: function (node, contextStack, _a) {
-            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
-            return analyze$1(node, contextStack, getUndefinedSymbols, builtin, evaluateAstNode);
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateNode = _a.evaluateNode;
+            return analyze$1(node, contextStack, getUndefinedSymbols, builtin, evaluateNode);
         },
     };
     var doseqSpecialExpression = {
         paramCount: 1,
         evaluate: function (node, contextStack, helpers) {
-            evaluateLoop(false, node, contextStack, helpers.evaluateAstNode);
+            evaluateLoop(false, node, contextStack, helpers.evaluateNode);
             return null;
         },
         getUndefinedSymbols: function (node, contextStack, _a) {
-            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
-            return analyze$1(node, contextStack, getUndefinedSymbols, builtin, evaluateAstNode);
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateNode = _a.evaluateNode;
+            return analyze$1(node, contextStack, getUndefinedSymbols, builtin, evaluateNode);
         },
     };
 
@@ -4971,12 +5026,12 @@ var Playground = (function (exports) {
         paramCount: {},
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
-            var evaluateAstNode = _a.evaluateAstNode;
+            var evaluateNode = _a.evaluateNode;
             var value = false;
             try {
-                for (var _c = __values(node.params), _d = _c.next(); !_d.done; _d = _c.next()) {
+                for (var _c = __values(node[1][1]), _d = _c.next(); !_d.done; _d = _c.next()) {
                     var param = _d.value;
-                    value = evaluateAstNode(param, contextStack);
+                    value = evaluateNode(param, contextStack);
                     if (value)
                         break;
                 }
@@ -4991,55 +5046,56 @@ var Playground = (function (exports) {
             return value;
         },
         getUndefinedSymbols: function (node, contextStack, _a) {
-            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
-            return getUndefinedSymbols(node.params, contextStack, builtin, evaluateAstNode);
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateNode = _a.evaluateNode;
+            return getUndefinedSymbols(node[1][1], contextStack, builtin, evaluateNode);
         },
     };
 
     var qqSpecialExpression = {
         paramCount: { min: 1, max: 2 },
         evaluate: function (node, contextStack, _a) {
-            var evaluateAstNode = _a.evaluateAstNode;
-            var _b = __read(node.params, 2), firstNode = _b[0], secondNode = _b[1];
+            var evaluateNode = _a.evaluateNode;
+            var _b = __read(node[1][1], 2), firstNode = _b[0], secondNode = _b[1];
             if (isSymbolNode(firstNode)) {
                 if (contextStack.lookUp(firstNode) === null)
-                    return secondNode ? evaluateAstNode(secondNode, contextStack) : null;
+                    return secondNode ? evaluateNode(secondNode, contextStack) : null;
             }
-            assertAny(firstNode, node.sourceCodeInfo);
-            var firstResult = evaluateAstNode(firstNode, contextStack);
-            return firstResult !== null && firstResult !== void 0 ? firstResult : (secondNode ? evaluateAstNode(secondNode, contextStack) : null);
+            assertAny(firstNode, node[2]);
+            var firstResult = evaluateNode(firstNode, contextStack);
+            return firstResult !== null && firstResult !== void 0 ? firstResult : (secondNode ? evaluateNode(secondNode, contextStack) : null);
         },
         getUndefinedSymbols: function (node, contextStack, _a) {
-            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
-            return getUndefinedSymbols(node.params, contextStack, builtin, evaluateAstNode);
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateNode = _a.evaluateNode;
+            return getUndefinedSymbols(node[1][1].filter(function (n) { return !!n; }), contextStack, builtin, evaluateNode);
         },
     };
 
     var recurSpecialExpression = {
         paramCount: {},
         evaluate: function (node, contextStack, _a) {
-            var evaluateAstNode = _a.evaluateAstNode;
-            var params = node.params.map(function (paramNode) { return evaluateAstNode(paramNode, contextStack); });
-            throw new RecurSignal(params);
+            var evaluateNode = _a.evaluateNode;
+            var params = node[1][1];
+            var evaluatedParams = params.map(function (paramNode) { return evaluateNode(paramNode, contextStack); });
+            throw new RecurSignal(evaluatedParams);
         },
         getUndefinedSymbols: function (node, contextStack, _a) {
-            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
-            return getUndefinedSymbols(node.params, contextStack, builtin, evaluateAstNode);
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateNode = _a.evaluateNode;
+            return getUndefinedSymbols(node[1][1], contextStack, builtin, evaluateNode);
         },
     };
 
     var throwSpecialExpression = {
         paramCount: 1,
         evaluate: function (node, contextStack, _a) {
-            var evaluateAstNode = _a.evaluateAstNode;
-            var message = asString(evaluateAstNode(node.params[0], contextStack), node.sourceCodeInfo, {
+            var evaluateNode = _a.evaluateNode;
+            var message = asString(evaluateNode(node[1][1], contextStack), node[2], {
                 nonEmpty: true,
             });
-            throw new UserDefinedError(message, node.sourceCodeInfo);
+            throw new UserDefinedError(message, node[2]);
         },
         getUndefinedSymbols: function (node, contextStack, _a) {
-            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
-            return getUndefinedSymbols(node.params, contextStack, builtin, evaluateAstNode);
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateNode = _a.evaluateNode;
+            return getUndefinedSymbols([node[1][1]], contextStack, builtin, evaluateNode);
         },
     };
 
@@ -5047,29 +5103,29 @@ var Playground = (function (exports) {
         paramCount: 1,
         evaluate: function (node, contextStack, _a) {
             var _b;
-            var evaluateAstNode = _a.evaluateAstNode;
-            var tryExpressions = node.params, catchExpression = node.ce, errorNode = node.e;
+            var evaluateNode = _a.evaluateNode;
+            var _c = __read(node[1], 4), tryExpression = _c[1], errorSymbol = _c[2], catchExpression = _c[3];
             try {
-                return evaluateAstNode(tryExpressions[0], contextStack);
+                return evaluateNode(tryExpression, contextStack);
             }
             catch (error) {
-                var newContext = errorNode
+                var newContext = errorSymbol
                     ? (_b = {},
-                        _b[errorNode.value] = { value: asAny(error, node.sourceCodeInfo) },
+                        _b[errorSymbol[1]] = { value: error },
                         _b) : {};
-                return evaluateAstNode(catchExpression, contextStack.create(newContext));
+                return evaluateNode(catchExpression, contextStack.create(newContext));
             }
         },
         getUndefinedSymbols: function (node, contextStack, _a) {
             var _b;
-            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
-            var tryExpressions = node.params, catchExpression = node.ce, errorNode = node.e;
-            var tryResult = getUndefinedSymbols(tryExpressions, contextStack, builtin, evaluateAstNode);
-            var newContext = errorNode
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateNode = _a.evaluateNode;
+            var _c = __read(node[1], 4), tryExpression = _c[1], errorSymbol = _c[2], catchExpression = _c[3];
+            var tryResult = getUndefinedSymbols([tryExpression], contextStack, builtin, evaluateNode);
+            var newContext = errorSymbol
                 ? (_b = {},
-                    _b[errorNode.value] = { value: true },
+                    _b[errorSymbol[1]] = { value: true },
                     _b) : {};
-            var catchResult = getUndefinedSymbols([catchExpression], contextStack.create(newContext), builtin, evaluateAstNode);
+            var catchResult = getUndefinedSymbols([catchExpression], contextStack.create(newContext), builtin, evaluateNode);
             return joinSets(tryResult, catchResult);
         },
     };
@@ -5078,20 +5134,20 @@ var Playground = (function (exports) {
         paramCount: {},
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
-            var evaluateAstNode = _a.evaluateAstNode;
+            var evaluateNode = _a.evaluateNode;
             var result = [];
             try {
-                for (var _c = __values(node.params), _d = _c.next(); !_d.done; _d = _c.next()) {
+                for (var _c = __values(node[1][1]), _d = _c.next(); !_d.done; _d = _c.next()) {
                     var param = _d.value;
-                    if (param.type === 'Spread') {
-                        var spreadValue = evaluateAstNode(param.value, contextStack);
+                    if (isSpreadNode(param)) {
+                        var spreadValue = evaluateNode(param[1], contextStack);
                         if (!Array.isArray(spreadValue)) {
-                            throw new LitsError('Spread value is not an array', param.sourceCodeInfo);
+                            throw new LitsError('Spread value is not an array', param[2]);
                         }
                         result.push.apply(result, __spreadArray([], __read(spreadValue), false));
                     }
                     else {
-                        result.push(evaluateAstNode(param, contextStack));
+                        result.push(evaluateNode(param, contextStack));
                     }
                 }
             }
@@ -5105,71 +5161,73 @@ var Playground = (function (exports) {
             return result;
         },
         getUndefinedSymbols: function (node, contextStack, _a) {
-            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
-            return getUndefinedSymbols(node.params, contextStack, builtin, evaluateAstNode);
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateNode = _a.evaluateNode;
+            return getUndefinedSymbols(node[1][1], contextStack, builtin, evaluateNode);
         },
     };
 
     var objectSpecialExpression = {
         paramCount: {},
         evaluate: function (node, contextStack, _a) {
-            var evaluateAstNode = _a.evaluateAstNode;
+            var evaluateNode = _a.evaluateNode;
             var result = {};
-            for (var i = 0; i < node.params.length; i += 2) {
-                var keyNode = asAstNode(node.params[i]);
-                if ((keyNode === null || keyNode === void 0 ? void 0 : keyNode.type) === 'Spread') {
-                    var spreadObject = evaluateAstNode(keyNode.value, contextStack);
+            var params = node[1][1];
+            for (var i = 0; i < params.length; i += 2) {
+                var keyNode = params[i];
+                if (isSpreadNode(keyNode)) {
+                    var spreadObject = evaluateNode(keyNode[1], contextStack);
                     if (!isUnknownRecord(spreadObject)) {
-                        throw new LitsError('Spread value is not an object', keyNode.sourceCodeInfo);
+                        throw new LitsError('Spread value is not an object', keyNode[2]);
                     }
                     Object.assign(result, spreadObject);
                     i -= 1;
                 }
                 else {
-                    var key = evaluateAstNode(keyNode, contextStack);
-                    var value = evaluateAstNode(node.params[i + 1], contextStack);
-                    assertString(key, keyNode.sourceCodeInfo);
+                    var key = evaluateNode(keyNode, contextStack);
+                    var value = evaluateNode(params[i + 1], contextStack);
+                    assertString(key, keyNode[2]);
                     result[key] = value;
                 }
             }
             return result;
         },
         getUndefinedSymbols: function (node, contextStack, _a) {
-            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
-            return getUndefinedSymbols(node.params, contextStack, builtin, evaluateAstNode);
+            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateNode = _a.evaluateNode;
+            return getUndefinedSymbols(node[1][1], contextStack, builtin, evaluateNode);
         },
     };
 
-    var specialExpressions = {
-        '&&': andSpecialExpression,
-        'cond': condSpecialExpression,
-        'switch': switchSpecialExpression,
-        'def': defSpecialExpression,
-        'defn': defnSpecialExpression,
-        'function': functionSpecialExpression,
-        'do': doSpecialExpression,
-        'doseq': doseqSpecialExpression,
-        'for': forSpecialExpression,
-        'fn': fnSpecialExpression,
-        'if': ifSpecialExpression,
-        'unless': unlessSpecialExpression,
-        'let': letSpecialExpression,
-        'loop': loopSpecialExpression,
-        '||': orSpecialExpression,
-        'recur': recurSpecialExpression,
-        'throw': throwSpecialExpression,
-        'try': trySpecialExpression,
-        'defined?': declaredSpecialExpression,
-        '??': qqSpecialExpression,
-        'array': arraySpecialExpression,
-        'object': objectSpecialExpression,
-    };
+    var specialExpressions = [
+        qqSpecialExpression,
+        andSpecialExpression,
+        orSpecialExpression,
+        arraySpecialExpression,
+        condSpecialExpression,
+        defSpecialExpression,
+        declaredSpecialExpression,
+        defnSpecialExpression,
+        doSpecialExpression,
+        doseqSpecialExpression,
+        fnSpecialExpression,
+        forSpecialExpression,
+        functionSpecialExpression,
+        ifSpecialExpression,
+        letSpecialExpression,
+        loopSpecialExpression,
+        objectSpecialExpression,
+        recurSpecialExpression,
+        switchSpecialExpression,
+        throwSpecialExpression,
+        trySpecialExpression,
+        unlessSpecialExpression,
+    ];
     var builtin = {
         normalExpressions: normalExpressions,
         specialExpressions: specialExpressions,
     };
     var normalExpressionKeys = Object.keys(normalExpressions);
-    var specialExpressionKeys = Object.keys(specialExpressions);
+    var specialExpressionKeys = Object.keys(specialExpressionTypes);
+    var specialExpressionNameSet = new Set(specialExpressionKeys);
 
     function checkParams(evaluatedFunction, nbrOfParams, sourceCodeInfo) {
         var hasRest = evaluatedFunction.arguments.some(function (arg) { return arg.type === 'rest'; });
@@ -5198,7 +5256,7 @@ var Playground = (function (exports) {
             }
         },
         UserDefined: function (fn, params, sourceCodeInfo, contextStack, _a) {
-            var evaluateAstNode = _a.evaluateAstNode;
+            var evaluateNode = _a.evaluateNode;
             var _loop_1 = function () {
                 var e_1, _b;
                 checkParams(fn.evaluatedfunction, params.length, sourceCodeInfo);
@@ -5211,8 +5269,8 @@ var Playground = (function (exports) {
                 for (var i = 0; i < params.length; i += 1) {
                     if (i < nbrOfNonRestArgs) {
                         var param = toAny(params[i]);
-                        var valueRecord = evalueateBindingNodeValues(args[i], param, function (astNode) {
-                            return evaluateAstNode(astNode, newContextStack.create(newContext));
+                        var valueRecord = evalueateBindingNodeValues(args[i], param, function (Node) {
+                            return evaluateNode(Node, newContextStack.create(newContext));
                         });
                         Object.entries(valueRecord).forEach(function (_a) {
                             var _b = __read(_a, 2), key = _b[0], value = _b[1];
@@ -5225,9 +5283,9 @@ var Playground = (function (exports) {
                 }
                 for (var i = params.length; i < nbrOfNonRestArgs; i++) {
                     var arg = args[i];
-                    var defaultValue = evaluateAstNode(arg.default, contextStack.create(newContext));
-                    var valueRecord = evalueateBindingNodeValues(arg, defaultValue, function (astNode) {
-                        return evaluateAstNode(astNode, contextStack.create(newContext));
+                    var defaultValue = evaluateNode(arg.default, contextStack.create(newContext));
+                    var valueRecord = evalueateBindingNodeValues(arg, defaultValue, function (Node) {
+                        return evaluateNode(Node, contextStack.create(newContext));
                     });
                     Object.entries(valueRecord).forEach(function (_a) {
                         var _b = __read(_a, 2), key = _b[0], value = _b[1];
@@ -5236,7 +5294,7 @@ var Playground = (function (exports) {
                 }
                 var restArgument = args.find(function (arg) { return arg.type === 'rest'; });
                 if (restArgument !== undefined) {
-                    var valueRecord = evalueateBindingNodeValues(restArgument, rest, function (astNode) { return evaluateAstNode(astNode, contextStack.create(newContext)); });
+                    var valueRecord = evalueateBindingNodeValues(restArgument, rest, function (Node) { return evaluateNode(Node, contextStack.create(newContext)); });
                     Object.entries(valueRecord).forEach(function (_a) {
                         var _b = __read(_a, 2), key = _b[0], value = _b[1];
                         newContext[key] = { value: value };
@@ -5248,7 +5306,7 @@ var Playground = (function (exports) {
                     try {
                         for (var _c = (e_1 = void 0, __values(evaluatedFunction.body)), _d = _c.next(); !_d.done; _d = _c.next()) {
                             var node = _d.value;
-                            result = evaluateAstNode(node, newContextStack2);
+                            result = evaluateNode(node, newContextStack2);
                         }
                     }
                     catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -5383,7 +5441,7 @@ var Playground = (function (exports) {
         try {
             for (var _b = __values(ast.body), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var node = _c.value;
-                result = evaluateAstNode(node, contextStack);
+                result = evaluateNode(node, contextStack);
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -5395,53 +5453,56 @@ var Playground = (function (exports) {
         }
         return result;
     }
-    function evaluateAstNode(node, contextStack) {
-        switch (node.type) {
-            case 'Number':
+    function evaluateNode(node, contextStack) {
+        switch (node[0]) {
+            case NodeTypes.Number:
                 return evaluateNumber(node);
-            case 'String':
+            case NodeTypes.String:
                 return evaluateString(node);
-            case 'Symbol':
+            case NodeTypes.Symbol:
                 return contextStack.evaluateName(node);
-            case 'ReservedSymbol':
-                return evaluateReservedName(node);
-            case 'NormalExpression':
+            case NodeTypes.ReservedSymbol:
+                return evaluateReservedSymbol(node);
+            case NodeTypes.NormalExpression:
                 return evaluateNormalExpression(node, contextStack);
-            case 'SpecialExpression':
+            case NodeTypes.SpecialExpression:
                 return evaluateSpecialExpression(node, contextStack);
             /* v8 ignore next 2 */
             default:
-                throw new LitsError("".concat(node.type, "-node cannot be evaluated"), node.sourceCodeInfo);
+                throw new LitsError("".concat(getNodeTypeName(node[0]), "-node cannot be evaluated"), node[2]);
         }
     }
     function evaluateNumber(node) {
-        return node.value;
+        return node[1];
     }
     function evaluateString(node) {
-        return node.value;
+        return node[1];
     }
-    function evaluateReservedName(node) {
-        var reservedName = node.value;
+    function evaluateReservedSymbol(node) {
+        var reservedName = node[1];
         var value = reservedSymbolRecord[reservedName];
-        return asNonUndefined(value, node.sourceCodeInfo);
+        return asNonUndefined(value, node[2]);
     }
     function evaluateNormalExpression(node, contextStack) {
-        var params = node.params.map(function (paramNode) { return evaluateAstNode(paramNode, contextStack); });
-        var sourceCodeInfo = node.sourceCodeInfo;
+        var sourceCodeInfo = node[2];
+        var paramNodes = node[1][1];
+        var params = paramNodes.map(function (paramNode) { return evaluateNode(paramNode, contextStack); });
         if (isNormalExpressionNodeWithName(node)) {
-            var value = contextStack.getValue(node.name);
-            if (value !== undefined)
-                return executeFunction(asAny(value), params, contextStack, sourceCodeInfo);
+            var fn = contextStack.getValue(node[1][0]);
+            if (fn !== undefined) {
+                return executeFunction(asAny(fn), params, contextStack, sourceCodeInfo);
+            }
             return evaluateBuiltinNormalExpression(node, params, contextStack);
         }
         else {
-            var fn = params[0];
-            return executeFunction(fn, params.slice(1), contextStack, sourceCodeInfo);
+            var fnNode = node[1][0];
+            var fn = evaluateNode(fnNode, contextStack);
+            return executeFunction(fn, params, contextStack, sourceCodeInfo);
         }
     }
     function executeFunction(fn, params, contextStack, sourceCodeInfo) {
         if (isLitsFunction(fn))
-            return functionExecutors[fn.functionType](fn, params, sourceCodeInfo, contextStack, { evaluateAstNode: evaluateAstNode, executeFunction: executeFunction });
+            return functionExecutors[fn.functionType](fn, params, sourceCodeInfo, contextStack, { evaluateNode: evaluateNode, executeFunction: executeFunction });
         if (Array.isArray(fn))
             return evaluateArrayAsFunction(fn, params, sourceCodeInfo);
         if (isObj(fn))
@@ -5453,15 +5514,17 @@ var Playground = (function (exports) {
         throw new NotAFunctionError(fn, sourceCodeInfo);
     }
     function evaluateBuiltinNormalExpression(node, params, contextStack) {
-        var normalExpression = builtin.normalExpressions[node.name];
+        var name = node[1][0];
+        var normalExpression = builtin.normalExpressions[name];
         if (!normalExpression)
-            throw new UndefinedSymbolError(node.name, node.sourceCodeInfo);
-        return normalExpression.evaluate(params, node.sourceCodeInfo, contextStack, { executeFunction: executeFunction });
+            throw new UndefinedSymbolError(name, node[2]);
+        return normalExpression.evaluate(params, node[2], contextStack, { executeFunction: executeFunction });
     }
     function evaluateSpecialExpression(node, contextStack) {
-        var specialExpression = asNonUndefined(builtin.specialExpressions[node.name], node.sourceCodeInfo);
-        // eslint-disable-next-line ts/no-unsafe-argument
-        return specialExpression.evaluate(node, contextStack, { evaluateAstNode: evaluateAstNode, builtin: builtin, getUndefinedSymbols: getUndefinedSymbols });
+        var specialExpressionType = node[1][0];
+        var specialExpression = asNonUndefined(builtin.specialExpressions[specialExpressionType], node[2]);
+        var castedEvaluate = specialExpression.evaluate;
+        return castedEvaluate(node, contextStack, { evaluateNode: evaluateNode, builtin: builtin, getUndefinedSymbols: getUndefinedSymbols });
     }
     function evalueateObjectAsFunction(fn, params, sourceCodeInfo) {
         if (params.length !== 1)
@@ -5605,8 +5668,8 @@ var Playground = (function (exports) {
         ContextStackImpl.prototype.lookUp = function (node) {
             var e_4, _a, _b;
             var _c, _d, _e;
-            var value = node.value;
-            var sourceCodeInfo = node.sourceCodeInfo;
+            var value = node[1];
+            var sourceCodeInfo = node[2];
             try {
                 for (var _f = __values(this.contexts), _g = _f.next(); !_g.done; _g = _f.next()) {
                     var context = _g.value;
@@ -5657,7 +5720,7 @@ var Playground = (function (exports) {
                 return lookUpResult.value;
             else if (isBuiltinFunction(lookUpResult))
                 return lookUpResult;
-            throw new UndefinedSymbolError(node.value, node.sourceCodeInfo);
+            throw new UndefinedSymbolError(node[1], node[2]);
         };
         return ContextStackImpl;
     }());
@@ -6192,6 +6255,10 @@ var Playground = (function (exports) {
             throwUnexpectedToken('ReservedSymbol', symbolName, token);
         }
     }
+    function asReservedSymbolToken(token, symbolName) {
+        assertReservedSymbolToken(token, symbolName);
+        return token;
+    }
     function isSingleLineCommentToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'SingleLineComment';
     }
@@ -6311,6 +6378,12 @@ var Playground = (function (exports) {
     var exponentiationPrecedence = 10;
     var binaryFunctionalOperatorPrecedence = 1;
     var placeholderRegexp = /^\$([1-9]\d?)?$/;
+    function withSourceCodeInfo(node, sourceCodeInfo) {
+        if (sourceCodeInfo) {
+            node[2] = sourceCodeInfo;
+        }
+        return node;
+    }
     function getPrecedence(operatorSign) {
         switch (operatorSign) {
             case '**': // exponentiation
@@ -6354,13 +6427,8 @@ var Playground = (function (exports) {
         }
     }
     function createNamedNormalExpressionNode(name, params, sourceCodeInfo) {
-        var node = {
-            type: 'NormalExpression',
-            name: name,
-            params: params,
-            sourceCodeInfo: sourceCodeInfo,
-        };
-        var builtinExpression = builtin.normalExpressions[node.name];
+        var node = withSourceCodeInfo([NodeTypes.NormalExpression, [name, params]], sourceCodeInfo);
+        var builtinExpression = builtin.normalExpressions[name];
         if (builtinExpression) {
             assertNumberOfParams(builtinExpression.paramCount, node);
         }
@@ -6368,14 +6436,9 @@ var Playground = (function (exports) {
     }
     function createAccessorNode(left, right, sourceCodeInfo) {
         // Unnamed normal expression
-        return {
-            type: 'NormalExpression',
-            params: [left, right],
-            name: undefined,
-            sourceCodeInfo: sourceCodeInfo,
-        };
+        return withSourceCodeInfo([NodeTypes.NormalExpression, [left, [right]]], sourceCodeInfo);
     }
-    function fromBinaryOperatorToAstNode(operator, left, right, sourceCodeInfo) {
+    function fromBinaryOperatorToNode(operator, left, right, sourceCodeInfo) {
         var operatorName = operator[1];
         switch (operatorName) {
             case '**': // exponentiation
@@ -6404,12 +6467,7 @@ var Playground = (function (exports) {
             case '&&':
             case '||':
             case '??':
-                return {
-                    type: 'SpecialExpression',
-                    name: operatorName,
-                    params: [left, right],
-                    sourceCodeInfo: sourceCodeInfo,
-                };
+                return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes[operatorName], [left, right]]], sourceCodeInfo);
             /* v8 ignore next 10 */
             case '.':
             case ';':
@@ -6507,7 +6565,7 @@ var Playground = (function (exports) {
                     }
                     this.advance();
                     var right = this.parseExpression(newPrecedece);
-                    left = fromBinaryOperatorToAstNode(operator, left, right, operator[2]);
+                    left = fromBinaryOperatorToNode(operator, left, right, operator[2]);
                 }
                 else if (isSymbolToken(operator)) {
                     if (!isFunctionOperator(operator[1])) {
@@ -6538,11 +6596,7 @@ var Playground = (function (exports) {
                     if (!isSymbolToken(symbolToken)) {
                         throw new LitsError('Expected symbol', this.peek()[2]);
                     }
-                    var stringNode = {
-                        type: 'String',
-                        value: symbolToken[1],
-                        sourceCodeInfo: symbolToken[2],
-                    };
+                    var stringNode = withSourceCodeInfo([NodeTypes.String, symbolToken[1]], symbolToken[2]);
                     operand = createAccessorNode(operand, stringNode, token[2]);
                     this.advance();
                     token = this.peek();
@@ -6587,11 +6641,7 @@ var Playground = (function (exports) {
                 var operatorName = token[1];
                 if (isBinaryOperator(operatorName)) {
                     this.advance();
-                    return {
-                        type: 'Symbol',
-                        value: operatorName,
-                        sourceCodeInfo: token[2],
-                    };
+                    return withSourceCodeInfo([NodeTypes.Symbol, operatorName], token[2]);
                 }
                 if (operatorName === '->') {
                     return this.parseShorthandLamdaFunction();
@@ -6639,22 +6689,14 @@ var Playground = (function (exports) {
             while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
                 if (isOperatorToken(this.peek(), '...')) {
                     this.advance();
-                    params.push({
-                        type: 'Spread',
-                        value: this.parseExpression(),
-                        sourceCodeInfo: this.peek()[2],
-                    });
+                    params.push(withSourceCodeInfo([NodeTypes.Spread, this.parseExpression()], this.peek()[2]));
                 }
                 else {
                     var key = this.parseOperand();
-                    if (key.type !== 'Symbol' && key.type !== 'String') {
+                    if (key[0] !== NodeTypes.Symbol && key[0] !== NodeTypes.String) {
                         throw new LitsError('Expected key to be a symbol or a string', this.peek()[2]);
                     }
-                    params.push({
-                        type: 'String',
-                        value: key.value,
-                        sourceCodeInfo: key.sourceCodeInfo,
-                    });
+                    params.push(withSourceCodeInfo([NodeTypes.String, key[1]], key[2]));
                     assertOperatorToken(this.peek(), ':=');
                     this.advance();
                     params.push(this.parseExpression());
@@ -6669,12 +6711,7 @@ var Playground = (function (exports) {
             }
             assertRBraceToken(this.peek());
             this.advance();
-            return {
-                type: 'SpecialExpression',
-                name: 'object',
-                params: params,
-                sourceCodeInfo: firstToken[2],
-            };
+            return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.object, params]], firstToken[2]);
         };
         Parser.prototype.parseArray = function () {
             var firstToken = asLBracketToken(this.peek());
@@ -6683,11 +6720,7 @@ var Playground = (function (exports) {
             while (!this.isAtEnd() && !isRBracketToken(this.peek())) {
                 if (isOperatorToken(this.peek(), '...')) {
                     this.advance();
-                    params.push({
-                        type: 'Spread',
-                        value: this.parseExpression(),
-                        sourceCodeInfo: this.peek()[2],
-                    });
+                    params.push(withSourceCodeInfo([NodeTypes.Spread, this.parseExpression()], this.peek()[2]));
                 }
                 else {
                     params.push(this.parseExpression());
@@ -6702,15 +6735,9 @@ var Playground = (function (exports) {
             }
             assertRBracketToken(this.peek());
             this.advance();
-            return {
-                type: 'SpecialExpression',
-                name: 'array',
-                params: params,
-                sourceCodeInfo: firstToken[2],
-            };
+            return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.array, params]], firstToken[2]);
         };
         Parser.prototype.parseFunctionCall = function (symbol) {
-            var isNamedFunction = symbol.type === 'Symbol';
             this.advance();
             var params = [];
             while (!this.isAtEnd() && !isRParenToken(this.peek())) {
@@ -6727,45 +6754,57 @@ var Playground = (function (exports) {
                 throw new LitsError('Expected closing parenthesis', this.peek()[2]);
             }
             this.advance();
-            if (isNamedFunction) {
-                if (specialExpressionKeys.includes(symbol.value)) {
-                    var name_2 = symbol.value;
+            if (symbol[0] === NodeTypes.Symbol) { // Named function
+                var functionName = symbol[1];
+                if (specialExpressionNameSet.has(functionName)) {
+                    var name_2 = functionName;
                     switch (name_2) {
-                        case '??':
-                        case '&&':
-                        case 'defined?':
                         case '||':
+                            return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes[name_2], params]], symbol[2]);
+                        case '&&':
+                            return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes[name_2], params]], symbol[2]);
                         case 'recur':
+                            return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes[name_2], params]], symbol[2]);
                         case 'array':
+                            return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes[name_2], params]], symbol[2]);
                         case 'object':
+                            return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes[name_2], params]], symbol[2]);
+                        case '??': {
+                            if (params.length === 1) {
+                                return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes[name_2], [params[0], undefined]]], symbol[2]);
+                            }
+                            if (params.length === 2) {
+                                return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes[name_2], [params[0], params[1]]]], symbol[2]);
+                            }
+                            throw new LitsError('Expected exactly two parameters', symbol[2]);
+                        }
+                        case 'defined?': {
+                            if (params.length !== 1) {
+                                throw new LitsError('Expected exactly one parameter', symbol[2]);
+                            }
+                            var _a = __read(params, 1), param = _a[0];
+                            return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes[name_2], param]], symbol[2]);
+                        }
                         case 'throw': {
-                            var node = {
-                                type: 'SpecialExpression',
-                                name: name_2,
-                                params: params,
-                                sourceCodeInfo: symbol.sourceCodeInfo,
-                            };
-                            assertNumberOfParams(builtin.specialExpressions[node.name].paramCount, node);
-                            return node;
+                            if (params.length !== 1) {
+                                throw new LitsError('Expected exactly one parameter', symbol[2]);
+                            }
+                            var _b = __read(params, 1), param = _b[0];
+                            return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes[name_2], param]], symbol[2]);
                         }
                         case 'fn':
                         case 'def':
                         case 'defn':
-                            throw new Error("".concat(name_2, " is not allowed"));
+                            throw new LitsError("".concat(name_2, " is not allowed"), symbol[2]);
                         /* v8 ignore next 2 */
                         default:
                             throw new Error("Unknown special expression: ".concat(name_2));
                     }
                 }
-                return createNamedNormalExpressionNode(symbol.value, params, symbol.sourceCodeInfo);
+                return createNamedNormalExpressionNode(functionName, params, symbol[2]);
             }
             else {
-                return {
-                    type: 'NormalExpression',
-                    name: undefined,
-                    params: __spreadArray([symbol], __read(params), false),
-                    sourceCodeInfo: symbol.sourceCodeInfo,
-                };
+                return withSourceCodeInfo([NodeTypes.NormalExpression, [symbol, params]], symbol[2]);
             }
         };
         Parser.prototype.parseLambdaFunction = function () {
@@ -6782,16 +6821,10 @@ var Playground = (function (exports) {
                 }
                 this.advance();
                 var body = this.parseExpression();
-                return {
-                    type: 'SpecialExpression',
-                    name: 'fn',
-                    params: [],
-                    function: {
-                        arguments: functionArguments,
-                        body: [body],
-                    },
-                    sourceCodeInfo: firstToken[2],
-                };
+                return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.fn, {
+                            arguments: functionArguments,
+                            body: [body],
+                        }]], firstToken[2]);
             }
             catch (_a) {
                 return null;
@@ -6802,7 +6835,7 @@ var Playground = (function (exports) {
             if (isSymbolToken(firstToken)) {
                 return [{
                         type: 'symbol',
-                        name: this.parseSymbol().value,
+                        name: this.parseSymbol()[1],
                         sourceCodeInfo: firstToken[2],
                     }];
             }
@@ -6875,16 +6908,10 @@ var Playground = (function (exports) {
                     functionArguments.push({ type: 'symbol', name: "$".concat(i), sourceCodeInfo: firstToken[2] });
                 }
             }
-            var node = {
-                type: 'SpecialExpression',
-                name: 'fn',
-                params: [],
-                function: {
-                    arguments: functionArguments,
-                    body: [exprNode],
-                },
-                sourceCodeInfo: firstToken[2],
-            };
+            var node = withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.fn, {
+                        arguments: functionArguments,
+                        body: [exprNode],
+                    }]], firstToken[2]);
             return node;
         };
         Parser.prototype.parseOptionalDefaulValue = function () {
@@ -6906,7 +6933,7 @@ var Playground = (function (exports) {
                 }
                 return {
                     type: 'symbol',
-                    name: symbol.value,
+                    name: symbol[1],
                     default: defaultValue,
                     sourceCodeInfo: firstToken[2],
                 };
@@ -6923,7 +6950,7 @@ var Playground = (function (exports) {
                 }
                 return {
                     type: 'rest',
-                    name: symbol.value,
+                    name: symbol[1],
                     sourceCodeInfo: firstToken[2],
                 };
             }
@@ -6981,14 +7008,14 @@ var Playground = (function (exports) {
                         rest = true;
                         this.advance();
                     }
-                    var key = this.parseSymbol().value;
+                    var key = this.parseSymbol()[1];
                     token = this.peek();
                     if (isReservedSymbolToken(token, 'as')) {
                         if (rest) {
                             throw new LitsError('Rest argument can not have alias', token[2]);
                         }
                         this.advance();
-                        var name_3 = this.parseSymbol().value;
+                        var name_3 = this.parseSymbol()[1];
                         if (elements[name_3]) {
                             throw new LitsError("Duplicate binding name: ".concat(name_3), token[2]);
                         }
@@ -7046,17 +7073,8 @@ var Playground = (function (exports) {
             if (!optionalSemicolon) {
                 assertOperatorToken(this.peek(), ';');
             }
-            return {
-                type: 'SpecialExpression',
-                name: 'let',
-                bindingNode: {
-                    type: 'Binding',
-                    target: target,
-                    value: value,
-                    sourceCodeInfo: token[2],
-                },
-                sourceCodeInfo: token[2],
-            };
+            var bindingTarget = withSourceCodeInfo([NodeTypes.Binding, [target, value]], token[2]);
+            return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.let, bindingTarget]], token[2]);
         };
         Parser.prototype.parseDo = function (token) {
             this.advance();
@@ -7072,12 +7090,7 @@ var Playground = (function (exports) {
             }
             assertReservedSymbolToken(this.peek(), 'end');
             this.advance();
-            return {
-                type: 'SpecialExpression',
-                name: 'do',
-                params: expressions,
-                sourceCodeInfo: token[2],
-            };
+            return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.do, expressions]], token[2]);
         };
         Parser.prototype.parseLoop = function (firstToken) {
             this.advance();
@@ -7089,12 +7102,7 @@ var Playground = (function (exports) {
                 var target = this.parseBindingTarget({ requireDefaultValue: true, noRest: true });
                 var value = target.default;
                 delete target.default;
-                bindingNodes.push({
-                    type: 'Binding',
-                    target: target,
-                    value: value,
-                    sourceCodeInfo: token[2],
-                });
+                bindingNodes.push(withSourceCodeInfo([NodeTypes.Binding, [target, value]], token[2]));
                 if (isOperatorToken(this.peek(), ',')) {
                     this.advance();
                 }
@@ -7117,13 +7125,7 @@ var Playground = (function (exports) {
             }
             assertReservedSymbolToken(this.peek(), 'end');
             this.advance();
-            return {
-                type: 'SpecialExpression',
-                name: 'loop',
-                params: params,
-                bindingNodes: bindingNodes,
-                sourceCodeInfo: firstToken[2],
-            };
+            return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.loop, bindingNodes, params]], firstToken[2]);
         };
         Parser.prototype.parseTry = function (token) {
             this.advance();
@@ -7139,12 +7141,7 @@ var Playground = (function (exports) {
             }
             var tryExpression = tryExpressions.length === 1
                 ? tryExpressions[0]
-                : {
-                    type: 'SpecialExpression',
-                    name: 'do',
-                    params: tryExpressions,
-                    sourceCodeInfo: token[2],
-                };
+                : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.do, tryExpressions]], token[2]);
             assertReservedSymbolToken(this.peek(), 'catch');
             this.advance();
             var errorSymbol;
@@ -7168,20 +7165,8 @@ var Playground = (function (exports) {
             this.advance();
             var catchExpression = catchExpressions.length === 1
                 ? catchExpressions[0]
-                : {
-                    type: 'SpecialExpression',
-                    name: 'do',
-                    params: catchExpressions,
-                    sourceCodeInfo: token[2],
-                };
-            return {
-                type: 'SpecialExpression',
-                name: 'try',
-                params: [tryExpression],
-                ce: catchExpression,
-                e: errorSymbol,
-                sourceCodeInfo: token[2],
-            };
+                : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.do, catchExpressions]], token[2]);
+            return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.try, tryExpression, errorSymbol, catchExpression]], token[2]);
         };
         Parser.prototype.parseForOrDoseq = function (firstToken) {
             var isDoseq = firstToken[1] === 'doseq';
@@ -7189,10 +7174,10 @@ var Playground = (function (exports) {
             var forLoopBindings = [];
             var _loop_1 = function () {
                 var loopBinding = this_1.parseForLoopBinding();
-                var existingBoundNames = forLoopBindings.flatMap(function (b) { return Object.keys(getAllBindingTargetNames(b.b.target)); });
-                var newBoundNames = getAllBindingTargetNames(loopBinding.b.target);
+                var existingBoundNames = forLoopBindings.flatMap(function (b) { return Object.keys(getAllBindingTargetNames(b[0][1][0])); });
+                var newBoundNames = getAllBindingTargetNames(loopBinding[0][1][0]);
                 if (Object.keys(newBoundNames).some(function (n) { return existingBoundNames.includes(n); })) {
-                    throw new LitsError('Duplicate binding', loopBinding.b.sourceCodeInfo);
+                    throw new LitsError('Duplicate binding', loopBinding[0][2]);
                 }
                 forLoopBindings.push(loopBinding);
             };
@@ -7214,13 +7199,9 @@ var Playground = (function (exports) {
             }
             assertReservedSymbolToken(this.peek(), 'end');
             this.advance();
-            return {
-                type: 'SpecialExpression',
-                name: isDoseq ? 'doseq' : 'for',
-                params: expressions,
-                sourceCodeInfo: firstToken[2],
-                l: forLoopBindings,
-            };
+            return isDoseq
+                ? withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.doseq, forLoopBindings, expressions]], firstToken[2])
+                : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.for, forLoopBindings, expressions]], firstToken[2]);
         };
         Parser.prototype.parseForLoopBinding = function () {
             assertReservedSymbolToken(this.peek(), 'each');
@@ -7242,18 +7223,17 @@ var Playground = (function (exports) {
                 && !isReservedSymbolToken(token, 'each')) {
                 throw new LitsError('Expected symbol each, do, let, when or while', token[2]);
             }
-            var letBindings;
+            var letBindings = [];
             if (token[1] === 'let') {
                 modifiers.push('&let');
-                letBindings = [];
                 var _loop_2 = function () {
                     var letNode = this_2.parseLet(token, true);
-                    var existingBoundNames = letBindings.flatMap(function (b) { return Object.keys(getAllBindingTargetNames(b.target)); });
-                    var newBoundNames = Object.keys(getAllBindingTargetNames(letNode.bindingNode.target));
+                    var existingBoundNames = letBindings.flatMap(function (b) { return Object.keys(getAllBindingTargetNames(b[1][0])); });
+                    var newBoundNames = Object.keys(getAllBindingTargetNames(letNode[1][1][1][0]));
                     if (newBoundNames.some(function (n) { return existingBoundNames.includes(n); })) {
-                        throw new LitsError('Duplicate binding', letNode.bindingNode.sourceCodeInfo);
+                        throw new LitsError('Duplicate binding', letNode[1][1][2]);
                     }
-                    letBindings.push(letNode.bindingNode);
+                    letBindings.push(letNode[1][1]);
                     token = this_2.peek();
                     if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this_2.peek(), 'each') && !isOperatorToken(token, ',')) {
                         throw new LitsError('Expected do, each or comma', token[2]);
@@ -7299,13 +7279,7 @@ var Playground = (function (exports) {
             if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this.peek(), 'each')) {
                 throw new LitsError('Expected do or each', token[2]);
             }
-            return {
-                b: bindingNode,
-                m: modifiers,
-                l: letBindings,
-                wn: whenNode,
-                we: whileNode,
-            };
+            return [bindingNode, letBindings, whenNode, whileNode];
         };
         Parser.prototype.parseBinding = function () {
             var firstToken = asSymbolToken(this.peek());
@@ -7314,16 +7288,11 @@ var Playground = (function (exports) {
             assertReservedSymbolToken(this.peek(), 'in');
             this.advance();
             var value = this.parseExpression();
-            var node = {
-                type: 'Binding',
-                target: {
-                    type: 'symbol',
-                    name: name,
-                    sourceCodeInfo: firstToken[2],
-                },
-                value: value,
-                sourceCodeInfo: firstToken[2],
-            };
+            var node = withSourceCodeInfo([NodeTypes.Binding, [{
+                        type: 'symbol',
+                        name: name,
+                        sourceCodeInfo: firstToken[2],
+                    }, value]], firstToken[2]);
             return node;
         };
         Parser.prototype.parseIfOrUnless = function (token) {
@@ -7346,12 +7315,7 @@ var Playground = (function (exports) {
             }
             var thenExpression = thenExpressions.length === 1
                 ? thenExpressions[0]
-                : {
-                    type: 'SpecialExpression',
-                    name: 'do',
-                    params: thenExpressions,
-                    sourceCodeInfo: token[2],
-                };
+                : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.do, thenExpressions]], token[2]);
             var elseExpression;
             if (isReservedSymbolToken(this.peek(), 'else')) {
                 this.advance();
@@ -7367,25 +7331,13 @@ var Playground = (function (exports) {
                 }
                 elseExpression = elseExpressions.length === 1
                     ? elseExpressions[0]
-                    : {
-                        type: 'SpecialExpression',
-                        name: 'do',
-                        params: elseExpressions,
-                        sourceCodeInfo: token[2],
-                    };
+                    : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.do, elseExpressions]], token[2]);
             }
             assertReservedSymbolToken(this.peek(), 'end');
             this.advance();
-            var params = [condition, thenExpression];
-            if (elseExpression) {
-                params.push(elseExpression);
-            }
-            return {
-                type: 'SpecialExpression',
-                name: isUnless ? 'unless' : 'if',
-                params: params,
-                sourceCodeInfo: token[2],
-            };
+            return isUnless
+                ? withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.unless, [condition, thenExpression, elseExpression]]], token[2])
+                : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.if, [condition, thenExpression, elseExpression]]], token[2]);
         };
         Parser.prototype.parseCond = function (token) {
             this.advance();
@@ -7393,7 +7345,7 @@ var Playground = (function (exports) {
             while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
                 assertReservedSymbolToken(this.peek(), 'case');
                 this.advance();
-                params.push(this.parseExpression());
+                var caseExpression = this.parseExpression();
                 assertReservedSymbolToken(this.peek(), 'then');
                 this.advance();
                 var expressions = [];
@@ -7408,14 +7360,10 @@ var Playground = (function (exports) {
                         throw new LitsError('Expected ;', this.peek()[2]);
                     }
                 }
-                params.push(expressions.length === 1
+                var thenExpression = expressions.length === 1
                     ? expressions[0]
-                    : {
-                        type: 'SpecialExpression',
-                        name: 'do',
-                        params: expressions,
-                        sourceCodeInfo: token[2],
-                    });
+                    : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.do, expressions]], token[2]);
+                params.push([caseExpression, thenExpression]);
                 if (isReservedSymbolToken(this.peek(), 'end')) {
                     break;
                 }
@@ -7423,20 +7371,16 @@ var Playground = (function (exports) {
             }
             assertReservedSymbolToken(this.peek(), 'end');
             this.advance();
-            return {
-                type: 'SpecialExpression',
-                name: 'cond',
-                params: params,
-                sourceCodeInfo: token[2],
-            };
+            return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.cond, params]], token[2]);
         };
         Parser.prototype.parseSwitch = function (token) {
             this.advance();
-            var params = [this.parseExpression()];
+            var valueExpression = this.parseExpression();
+            var params = [];
             while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
                 assertReservedSymbolToken(this.peek(), 'case');
                 this.advance();
-                params.push(this.parseExpression());
+                var caseExpression = this.parseExpression();
                 assertReservedSymbolToken(this.peek(), 'then');
                 this.advance();
                 var expressions = [];
@@ -7451,14 +7395,10 @@ var Playground = (function (exports) {
                         throw new LitsError('Expected ;', this.peek()[2]);
                     }
                 }
-                params.push(expressions.length === 1
+                var thenExpression = expressions.length === 1
                     ? expressions[0]
-                    : {
-                        type: 'SpecialExpression',
-                        name: 'do',
-                        params: expressions,
-                        sourceCodeInfo: token[2],
-                    });
+                    : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.do, expressions]], token[2]);
+                params.push([caseExpression, thenExpression]);
                 if (isReservedSymbolToken(this.peek(), 'end')) {
                     break;
                 }
@@ -7466,12 +7406,7 @@ var Playground = (function (exports) {
             }
             assertReservedSymbolToken(this.peek(), 'end');
             this.advance();
-            return {
-                type: 'SpecialExpression',
-                name: 'switch',
-                params: params,
-                sourceCodeInfo: token[2],
-            };
+            return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.switch, valueExpression, params]], token[2]);
         };
         Parser.prototype.parseFunction = function (token) {
             this.advance();
@@ -7490,17 +7425,10 @@ var Playground = (function (exports) {
             assertReservedSymbolToken(this.peek(), 'end');
             this.advance();
             assertOperatorToken(this.peek(), ';');
-            return {
-                type: 'SpecialExpression',
-                name: 'function',
-                functionName: symbol,
-                params: [],
-                function: {
-                    arguments: functionArguments,
-                    body: body,
-                },
-                sourceCodeInfo: token[2],
-            };
+            return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.function, symbol, {
+                        arguments: functionArguments,
+                        body: body,
+                    }]], token[2]);
         };
         Parser.prototype.isAtEnd = function () {
             return this.parseState.position >= this.tokenStream.tokens.length;
@@ -7522,7 +7450,7 @@ var Playground = (function (exports) {
             this.advance();
             if (isSymbolToken(this.peek(), 'let')) {
                 var letNode = this.parseLet(asSymbolToken(this.peek()));
-                return __assign(__assign({}, letNode), { name: 'def' });
+                return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.def, letNode[1][1]]], token[2]);
             }
             else if (isReservedSymbolToken(this.peek(), 'function')) {
                 this.advance();
@@ -7540,17 +7468,10 @@ var Playground = (function (exports) {
                 }
                 assertReservedSymbolToken(this.peek(), 'end');
                 this.advance();
-                return {
-                    type: 'SpecialExpression',
-                    name: 'defn',
-                    functionName: symbol,
-                    params: [],
-                    function: {
-                        arguments: functionArguments,
-                        body: body,
-                    },
-                    sourceCodeInfo: token[2],
-                };
+                return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.defn, symbol, {
+                            arguments: functionArguments,
+                            body: body,
+                        }]], token[2]);
             }
             else {
                 throw new LitsError('Expected let or function', this.peek()[2]);
@@ -7563,11 +7484,7 @@ var Playground = (function (exports) {
                 throw new LitsError("Expected symbol token, got ".concat(token[0]), token[2]);
             }
             if (token[1][0] !== '\'') {
-                return {
-                    type: 'Symbol',
-                    value: token[1],
-                    sourceCodeInfo: token[2],
-                };
+                return withSourceCodeInfo([NodeTypes.Symbol, token[1]], token[2]);
             }
             else {
                 var value = token[1].substring(1, token[1].length - 1)
@@ -7580,31 +7497,17 @@ var Playground = (function (exports) {
                     }
                     return "\\".concat(normalChar);
                 });
-                return {
-                    type: 'Symbol',
-                    value: value,
-                    sourceCodeInfo: token[2],
-                };
+                return withSourceCodeInfo([NodeTypes.Symbol, value], token[2]);
             }
         };
         Parser.prototype.parseReservedSymbol = function () {
-            var token = this.peek();
+            var token = asReservedSymbolToken(this.peek());
             this.advance();
-            if (isReservedSymbolToken(token)) {
-                var symbol = token[1];
-                if (isNumberReservedSymbol(symbol)) {
-                    return {
-                        type: 'Number',
-                        value: numberReservedSymbolRecord[symbol],
-                        sourceCodeInfo: token[2],
-                    };
-                }
+            var symbol = token[1];
+            if (isNumberReservedSymbol(symbol)) {
+                return withSourceCodeInfo([NodeTypes.Number, numberReservedSymbolRecord[symbol]], token[2]);
             }
-            return {
-                type: 'ReservedSymbol',
-                value: token[1],
-                sourceCodeInfo: token[2],
-            };
+            return withSourceCodeInfo([NodeTypes.ReservedSymbol, token[1]], token[2]);
         };
         Parser.prototype.parseNumber = function () {
             var token = this.peek();
@@ -7612,11 +7515,7 @@ var Playground = (function (exports) {
             var value = token[1];
             var negative = value[0] === '-';
             var numberString = (negative ? value.substring(1) : value).replace(/_/g, '');
-            return {
-                type: 'Number',
-                value: negative ? -Number(numberString) : Number(numberString),
-                sourceCodeInfo: token[2],
-            };
+            return withSourceCodeInfo([NodeTypes.Number, negative ? -Number(numberString) : Number(numberString)], token[2]);
         };
         Parser.prototype.parseString = function () {
             var token = this.peek();
@@ -7648,11 +7547,7 @@ var Playground = (function (exports) {
                 }
                 return normalChar;
             });
-            return {
-                type: 'String',
-                value: value,
-                sourceCodeInfo: token[2],
-            };
+            return withSourceCodeInfo([NodeTypes.String, value], token[2]);
         };
         Parser.prototype.parseRegexpShorthand = function () {
             var token = this.peek();
@@ -7660,22 +7555,9 @@ var Playground = (function (exports) {
             var endStringPosition = token[1].lastIndexOf('"');
             var regexpString = token[1].substring(2, endStringPosition);
             var optionsString = token[1].substring(endStringPosition + 1);
-            var stringNode = {
-                type: 'String',
-                value: regexpString,
-                sourceCodeInfo: token[2],
-            };
-            var optionsNode = {
-                type: 'String',
-                value: optionsString,
-                sourceCodeInfo: token[2],
-            };
-            var node = {
-                type: 'NormalExpression',
-                name: 'regexp',
-                params: [stringNode, optionsNode],
-                sourceCodeInfo: token[2],
-            };
+            var stringNode = withSourceCodeInfo([NodeTypes.String, regexpString], token[2]);
+            var optionsNode = withSourceCodeInfo([NodeTypes.String, optionsString], token[2]);
+            var node = withSourceCodeInfo([NodeTypes.NormalExpression, ['regexp', [stringNode, optionsNode]]], token[2]);
             return node;
         };
         return Parser;
@@ -7792,7 +7674,7 @@ var Playground = (function (exports) {
             if (params === void 0) { params = {}; }
             var ast = typeof programOrAst === 'string' ? this.generateAst(programOrAst, params) : programOrAst;
             var contextStack = createContextStack(params);
-            return getUndefinedSymbols(ast, contextStack, builtin, evaluateAstNode);
+            return getUndefinedSymbols(ast, contextStack, builtin, evaluateNode);
         };
         Lits.prototype.tokenize = function (program, tokenizeParams) {
             if (tokenizeParams === void 0) { tokenizeParams = {}; }

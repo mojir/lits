@@ -1,6 +1,6 @@
-import type { GetUndefinedSymbols, UndefinedSymbols } from '../getUndefinedSymbols'
 import type { ContextStack } from '../evaluator/ContextStack'
-import type { EvaluateAstNode, ExecuteFunction } from '../evaluator/interface'
+import type { EvaluateNode, ExecuteFunction } from '../evaluator/interface'
+import type { GetUndefinedSymbols, UndefinedSymbols } from '../getUndefinedSymbols'
 import type { Any, Arr } from '../interface'
 import type {
   ParseArgument,
@@ -9,9 +9,10 @@ import type {
   ParseExpression,
   ParseToken,
   ParseTokensUntilClosingBracket,
+  SpecialExpressionNode,
 } from '../parser/types'
 import type { SourceCodeInfo } from '../tokenizer/token'
-import type { BuiltinSpecialExpressions, SpecialExpressionNode } from '.'
+import type { SpecialExpressions } from '.'
 
 export type Count = number | { min?: number, max?: number, even?: true, odd?: true }
 
@@ -40,7 +41,7 @@ export interface ParserHelpers {
 export type BuiltinNormalExpressions = Record<string, BuiltinNormalExpression<Any>>
 
 export interface EvaluateHelpers {
-  evaluateAstNode: EvaluateAstNode
+  evaluateNode: EvaluateNode
   builtin: Builtin
   getUndefinedSymbols: GetUndefinedSymbols
 }
@@ -50,11 +51,11 @@ export interface BuiltinSpecialExpression<T, N extends SpecialExpressionNode> {
   getUndefinedSymbols: (
     node: N,
     contextStack: ContextStack,
-    params: { getUndefinedSymbols: GetUndefinedSymbols, builtin: Builtin, evaluateAstNode: EvaluateAstNode },
+    params: { getUndefinedSymbols: GetUndefinedSymbols, builtin: Builtin, evaluateNode: EvaluateNode },
   ) => UndefinedSymbols
 }
 
 export interface Builtin {
   normalExpressions: BuiltinNormalExpressions
-  specialExpressions: BuiltinSpecialExpressions
+  specialExpressions: SpecialExpressions
 }

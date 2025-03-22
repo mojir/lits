@@ -1,40 +1,37 @@
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
-import type { AstNode, CommonSpecialExpressionNode, SymbolNode } from '../../parser/types'
-import { asAny } from '../../typeGuards/lits'
+import type { Node, SpecialExpressionNode, SymbolNode } from '../../parser/types'
 import { joinSets } from '../../utils'
 import type { BuiltinSpecialExpression } from '../interface'
+import type { specialExpressionTypes } from '../specialExpressionTypes'
 
-export interface TryNode extends CommonSpecialExpressionNode<'try'> {
-  e: SymbolNode | undefined
-  ce: AstNode
-}
+export type TryNode = SpecialExpressionNode<[typeof specialExpressionTypes['try'], Node, SymbolNode | undefined, Node]>
 
 export const trySpecialExpression: BuiltinSpecialExpression<Any, TryNode> = {
   paramCount: 1,
-  evaluate: (node, contextStack, { evaluateAstNode }) => {
-    const { params: tryExpressions, ce: catchExpression, e: errorNode } = node
+  evaluate: (node, contextStack, { evaluateNode }) => {
+    const [, tryExpression, errorSymbol, catchExpression] = node[1]
     try {
-      return evaluateAstNode(tryExpressions[0]!, contextStack)
+      return evaluateNode(tryExpression, contextStack)
     }
     catch (error) {
-      const newContext: Context = errorNode
+      const newContext: Context = errorSymbol
         ? {
-            [errorNode.value]: { value: asAny(error, node.sourceCodeInfo) },
+            [errorSymbol[1]]: { value: error as Any },
           }
         : {}
-      return evaluateAstNode(catchExpression, contextStack.create(newContext))
+      return evaluateNode(catchExpression, contextStack.create(newContext))
     }
   },
-  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateAstNode }) => {
-    const { params: tryExpressions, ce: catchExpression, e: errorNode } = node
-    const tryResult = getUndefinedSymbols(tryExpressions, contextStack, builtin, evaluateAstNode)
-    const newContext: Context = errorNode
+  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => {
+    const [, tryExpression, errorSymbol, catchExpression] = node[1]
+    const tryResult = getUndefinedSymbols([tryExpression], contextStack, builtin, evaluateNode)
+    const newContext: Context = errorSymbol
       ? {
-          [errorNode.value]: { value: true },
+          [errorSymbol[1]]: { value: true },
         }
       : {}
-    const catchResult = getUndefinedSymbols([catchExpression], contextStack.create(newContext), builtin, evaluateAstNode)
+    const catchResult = getUndefinedSymbols([catchExpression], contextStack.create(newContext), builtin, evaluateNode)
     return joinSets(tryResult, catchResult)
   },
 }

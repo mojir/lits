@@ -1,10 +1,11 @@
 import type { JsFunction } from '../Lits/Lits'
-import type { SpecialExpressionName, SpecialExpressionNode } from '../builtin'
-import type { AstNodeType, FunctionType } from '../constants/constants'
+import type { SpecialExpressionType } from '../builtin'
+import type { FunctionType, NodeType, NodeTypes } from '../constants/constants'
 import type { Context } from '../evaluator/interface'
 import type { Any, Arr } from '../interface'
-import type { TokenStream } from '../tokenizer/tokenize'
+import type { ReservedSymbol } from '../tokenizer/reservedNames'
 import type { ModifierName, SourceCodeInfo, Token } from '../tokenizer/token'
+import type { TokenStream } from '../tokenizer/tokenize'
 import type { FUNCTION_SYMBOL, REGEXP_SYMBOL } from '../utils/symbols'
 
 export interface ParseState {
@@ -13,7 +14,7 @@ export interface ParseState {
 
 export interface EvaluatedFunction {
   arguments: BindingTarget[]
-  body: AstNode[]
+  body: Node[]
   context: Context
 }
 
@@ -108,69 +109,30 @@ export type DebugData = {
   token: Token
   nameToken?: Token
 }
-export interface GenericNode {
-  type: AstNodeType
-  sourceCodeInfo?: SourceCodeInfo | undefined
-}
+export type Node<T extends NodeType = NodeType, Payload = unknown> = [T, Payload] | [T, Payload, SourceCodeInfo]
 
 export type ExpressionNode = NormalExpressionNode | SpecialExpressionNode | NumberNode | StringNode
 export type ParseBinding = (tokens: TokenStream, parseState: ParseState) => BindingNode
 export type ParseBindings = (tokens: TokenStream, parseState: ParseState) => BindingNode[]
-export type ParseArgument = (tokens: TokenStream, parseState: ParseState) => ArgumentNode | ModifierNode
+export type ParseArgument = (tokens: TokenStream, parseState: ParseState) => ModifierNode
 export type ParseExpression = (tokens: TokenStream, parseState: ParseState) => ExpressionNode
-export type ParseTokensUntilClosingBracket = (tokens: TokenStream, parseState: ParseState) => AstNode[]
-export type ParseToken = (tokens: TokenStream, parseState: ParseState) => AstNode
+export type ParseTokensUntilClosingBracket = (tokens: TokenStream, parseState: ParseState) => Node[]
+export type ParseToken = (tokens: TokenStream, parseState: ParseState) => Node
 
-export interface SpreadNode extends GenericNode {
-  type: 'Spread'
-  value: AstNode // An array node or object node
-}
+export type SpreadNode = Node<typeof NodeTypes.Spread, Node> // Payload should be array or object depending on context
+export type NumberNode = Node<typeof NodeTypes.Number, number>
+export type StringNode = Node<typeof NodeTypes.String, string>
+export type SymbolNode = Node<typeof NodeTypes.Symbol, string>
+export type ModifierNode = Node<typeof NodeTypes.Modifier, ModifierName>
+export type ReservedSymbolNode = Node<typeof NodeTypes.ReservedSymbol, ReservedSymbol>
+export type SpecialExpressionNode<T extends [SpecialExpressionType, ...unknown[]] = [SpecialExpressionType, ...unknown[]]> = Node<typeof NodeTypes.SpecialExpression, T> // [name, params]
 
-export interface NumberNode extends GenericNode {
-  type: 'Number'
-  value: number
-}
-export interface StringNode extends GenericNode {
-  type: 'String'
-  value: string // value
-}
-export interface SymbolNode extends GenericNode {
-  type: 'Symbol'
-  value: string // value
-}
-export interface ModifierNode extends GenericNode {
-  type: 'Modifier'
-  value: ModifierName
-}
-export interface ReservedSymbolNode extends GenericNode {
-  type: 'ReservedSymbol'
-  value: string
-}
-
-interface CommonNormalExpressionNode extends GenericNode {
-  type: 'NormalExpression'
-  params: AstNode[] // params
-}
-
-export interface CommonSpecialExpressionNode<T extends SpecialExpressionName> extends GenericNode {
-  type: 'SpecialExpression'
-  name: T // name
-  params: AstNode[] // params
-}
-
-export interface NormalExpressionNodeWithName extends CommonNormalExpressionNode {
-  name: string // name
-}
-
-interface NormalExpressionNodeExpression extends CommonNormalExpressionNode {
-  name: undefined // name not present. E.g. ([1 2 3] 2)
-}
-
+export type NormalExpressionNodeWithName = Node<typeof NodeTypes.NormalExpression, [string, Node[]]> // [params, name]
+export type NormalExpressionNodeExpression = Node<typeof NodeTypes.NormalExpression, [Node, Node[]]> // [name, node as function] node can be string number object or array
 export type NormalExpressionNode = NormalExpressionNodeWithName | NormalExpressionNodeExpression
-
 interface CommonBindingTarget {
   sourceCodeInfo: SourceCodeInfo | undefined
-  default?: AstNode
+  default?: Node
 }
 
 export type SymbolBindingTarget = CommonBindingTarget & {
@@ -195,35 +157,9 @@ export type ArrayBindingTarget = CommonBindingTarget & {
 
 export type BindingTarget = SymbolBindingTarget | RestBindingTarget | ObjectBindingTarget | ArrayBindingTarget
 
-export interface BindingNode extends GenericNode {
-  type: 'Binding'
-  target: BindingTarget
-  value: AstNode // value
-}
+export type BindingNode = Node<typeof NodeTypes.Binding, [BindingTarget, Node]> // [target, value]
 
-export interface ArgumentNode extends GenericNode {
-  type: 'Argument'
-  name: string // name
-  default?: AstNode // defaultValue
-}
-
-export interface CommentNode extends GenericNode {
-  type: 'Comment'
-  value: string // value
-}
-
-export type AstNode =
-  | NumberNode
-  | StringNode
-  | ReservedSymbolNode
-  | SymbolNode
-  | CommentNode
-  | NormalExpressionNode
-  | ModifierNode
-  | SpecialExpressionNode
-  | SpreadNode
-
-type AstBody = AstNode[]
+type AstBody = Node[]
 export interface Ast {
   body: AstBody // body
   hasDebugData: boolean

@@ -1,6 +1,7 @@
 import { describe, expect, it, test } from 'vitest'
 import { testTypeGuars } from '../../__tests__/testUtils'
-import type { AstNode, NormalExpressionNodeWithName } from '../parser/types'
+import type { Node, NormalExpressionNodeWithName } from '../parser/types'
+import { NodeTypes } from '../constants/constants'
 import {
   asNonUndefined,
   asUnknownRecord,
@@ -12,19 +13,8 @@ import {
 } from '.'
 
 function toNormalExpressionNode(arr: number[]): NormalExpressionNodeWithName {
-  const astNodes: AstNode[] = arr.map(n => ({
-    type: 'Number',
-    value: n,
-    sourceCodeInfo: undefined,
-    params: [],
-    name: 'X',
-  }))
-  return {
-    name: 'let',
-    params: astNodes,
-    type: 'NormalExpression',
-    sourceCodeInfo: undefined,
-  }
+  const nodes: Node[] = arr.map(n => [NodeTypes.Number, n])
+  return [NodeTypes.NormalExpression, ['+', nodes]]
 }
 
 describe('typeGuards index file', () => {

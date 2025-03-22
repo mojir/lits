@@ -2,106 +2,38 @@ import { describe, it } from 'vitest'
 import { testTypeGuars } from '../../__tests__/testUtils'
 import type { QqNode } from '../builtin/specialExpressions/qq'
 import type {
-  AstNode,
   ExpressionNode,
-  NormalExpressionNode,
+  Node,
+  NormalExpressionNodeExpression,
   NormalExpressionNodeWithName,
   NumberNode,
   StringNode,
   SymbolNode,
 } from '../parser/types'
-import type { Token } from '../tokenizer/token'
+import { NodeTypes } from '../constants/constants'
+import { specialExpressionTypes } from '../builtin/specialExpressionTypes'
 import {
-  asAstNode,
   asExpressionNode,
   asNormalExpressionNode,
   asNormalExpressionNodeWithName,
   asSymbolNode,
-  assertAstNode,
   assertExpressionNode,
   assertNormalExpressionNode,
   assertNormalExpressionNodeWithName,
   assertSymbolNode,
-  isAstNode,
   isExpressionNode,
   isNormalExpressionNode,
   isNormalExpressionNodeWithName,
   isSymbolNode,
 } from './astNode'
 
-describe('astNode type guards', () => {
-  const tkn: Token = ['Symbol', 'X']
-  const invalidAstNodes: unknown[] = [
-    {
-      tkn,
-      value: 'A name',
-    },
-    {
-      type: 999,
-      tkn,
-      value: 'A name',
-    },
-    {},
-    null,
-    0,
-    1,
-    true,
-    false,
-    null,
-    [],
-  ]
-  const specialExpressionNode: QqNode = {
-    type: 'SpecialExpression',
-    name: '??',
-    params: [{
-      type: 'ReservedSymbol',
-      value: 'null',
-      sourceCodeInfo: undefined,
-    }, {
-      type: 'ReservedSymbol',
-      value: 'null',
-      sourceCodeInfo: undefined,
-    }],
-    sourceCodeInfo: undefined,
-  }
-  const nameNode: SymbolNode = {
-    type: 'Symbol',
-    sourceCodeInfo: undefined,
-    value: 'A name',
-  }
-  const numberNode: NumberNode = {
-    type: 'Number',
-    value: 12,
-    sourceCodeInfo: undefined,
-  }
-  const stringNode: StringNode = {
-    type: 'String',
-    value: 'foo',
-    sourceCodeInfo: undefined,
-  }
-  const normalExpressionNodeWithName: NormalExpressionNodeWithName = {
-    type: 'NormalExpression',
-    params: [],
-    name: 'object',
-    sourceCodeInfo: undefined,
-  }
-  const normalExpressionNodeWithoutName: NormalExpressionNode = {
-    type: 'NormalExpression',
-    name: undefined,
-    params: [{
-      type: 'NormalExpression',
-      name: '+',
-      params: [
-        {
-          type: 'Number',
-          value: 2,
-          sourceCodeInfo: undefined,
-        },
-      ],
-      sourceCodeInfo: undefined,
-    }],
-    sourceCodeInfo: undefined,
-  }
+describe('node type guards', () => {
+  const specialExpressionNode: QqNode = [NodeTypes.SpecialExpression, [specialExpressionTypes['??'], [[NodeTypes.ReservedSymbol, null], [NodeTypes.ReservedSymbol, null]]]]
+  const symbolNode: SymbolNode = [NodeTypes.Symbol, 'A name']
+  const numberNode: NumberNode = [NodeTypes.Number, 12]
+  const stringNode: StringNode = [NodeTypes.String, 'foo']
+  const normalExpressionNodeWithName: NormalExpressionNodeWithName = [NodeTypes.NormalExpression, ['object', []]]
+  const normalExpressionNodeWithoutName: NormalExpressionNodeExpression = [NodeTypes.NormalExpression, [stringNode, [numberNode]]]
 
   const expressionNodes: ExpressionNode[] = [
     normalExpressionNodeWithName,
@@ -111,23 +43,13 @@ describe('astNode type guards', () => {
     stringNode,
   ]
 
-  const validAstNodes: AstNode[] = [nameNode, ...expressionNodes]
-
-  it('astNode', () => {
-    testTypeGuars(
-      {
-        valid: [...validAstNodes],
-        invalid: [...invalidAstNodes],
-      },
-      { is: isAstNode, as: asAstNode, assert: assertAstNode },
-    )
-  })
+  const validNodes: Node[] = [symbolNode, ...expressionNodes]
 
   it('nameNode', () => {
     testTypeGuars(
       {
-        valid: [nameNode],
-        invalid: [...invalidAstNodes, ...validAstNodes.filter(node => node !== nameNode)],
+        valid: [symbolNode],
+        invalid: [...validNodes.filter(node => node !== symbolNode)],
       },
       { is: isSymbolNode, as: asSymbolNode, assert: assertSymbolNode },
     )
@@ -137,7 +59,7 @@ describe('astNode type guards', () => {
     testTypeGuars(
       {
         valid: [normalExpressionNodeWithName],
-        invalid: [...invalidAstNodes, ...validAstNodes.filter(node => node !== normalExpressionNodeWithName)],
+        invalid: [...validNodes.filter(node => node !== normalExpressionNodeWithName)],
       },
       {
         is: isNormalExpressionNodeWithName,
@@ -152,8 +74,7 @@ describe('astNode type guards', () => {
       {
         valid: [normalExpressionNodeWithName, normalExpressionNodeWithoutName],
         invalid: [
-          ...invalidAstNodes,
-          ...validAstNodes.filter(
+          ...validNodes.filter(
             node => node !== normalExpressionNodeWithName && node !== normalExpressionNodeWithoutName,
           ),
         ],
@@ -166,7 +87,7 @@ describe('astNode type guards', () => {
     testTypeGuars(
       {
         valid: [...expressionNodes],
-        invalid: [...invalidAstNodes, ...validAstNodes.filter(node => !(expressionNodes as unknown[]).includes(node))],
+        invalid: [...validNodes.filter(node => !(expressionNodes as unknown[]).includes(node))],
       },
       { is: isExpressionNode, as: asExpressionNode, assert: assertExpressionNode },
     )

@@ -1,25 +1,28 @@
 import type { Any } from '../../interface'
-import type { BindingNode, GenericNode } from '../../parser/types'
+import type { BindingNode, SpecialExpressionNode } from '../../parser/types'
 import { evalueateBindingNodeValues, getAllBindingTargetNames } from '../bindingNode'
 import type { BuiltinSpecialExpression } from '../interface'
+import type { specialExpressionTypes } from '../specialExpressionTypes'
 
-export interface LetNode extends GenericNode {
-  type: 'SpecialExpression'
-  bindingNode: BindingNode
-  name: 'let'
-}
+export type LetNode = SpecialExpressionNode<[typeof specialExpressionTypes['let'], BindingNode]>
 
 export const letSpecialExpression: BuiltinSpecialExpression<Any, LetNode> = {
   paramCount: 0,
-  evaluate: (node, contextStack, { evaluateAstNode }) => {
-    const bindingValue = evaluateAstNode(node.bindingNode.value, contextStack)
-    const values = evalueateBindingNodeValues(node.bindingNode, bindingValue, astNode => evaluateAstNode(astNode, contextStack))
+  evaluate: (node, contextStack, { evaluateNode }) => {
+    const bindingNode = node[1][1]
+    const target = bindingNode[1][0]
+    const value = bindingNode[1][1]
+    const bindingValue = evaluateNode(value, contextStack)
+    const values = evalueateBindingNodeValues(target, bindingValue, Node => evaluateNode(Node, contextStack))
     contextStack.addValues(values)
     return null
   },
-  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateAstNode }) => {
-    const bindingResult = getUndefinedSymbols([node.bindingNode.value], contextStack, builtin, evaluateAstNode)
-    contextStack.addValues(getAllBindingTargetNames(node.bindingNode.target))
+  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => {
+    const bindingNode = node[1][1]
+    const target = bindingNode[1][0]
+    const value = bindingNode[1][1]
+    const bindingResult = getUndefinedSymbols([value], contextStack, builtin, evaluateNode)
+    contextStack.addValues(getAllBindingTargetNames(target))
     return bindingResult
   },
 }

@@ -1,12 +1,10 @@
-import type { SpecialExpressionNode } from '..'
 import type { ContextStack } from '../../evaluator/ContextStack'
-import type { Context, EvaluateAstNode } from '../../evaluator/interface'
+import type { Context, EvaluateNode } from '../../evaluator/interface'
 import type { GetUndefinedSymbols, UndefinedSymbols } from '../../getUndefinedSymbols'
 import type {
-  AstNode,
-  CommonSpecialExpressionNode,
   EvaluatedFunction,
   LitsFunction,
+  SpecialExpressionNode,
   SymbolNode,
 } from '../../parser/types'
 import { isAny } from '../../typeGuards/lits'
@@ -16,86 +14,80 @@ import { getAllBindingTargetNames } from '../bindingNode'
 import type { Builtin, BuiltinSpecialExpression } from '../interface'
 import type { Function } from '../utils'
 import { assertNameNotDefined } from '../utils'
+import type { specialExpressionTypes } from '../specialExpressionTypes'
 
-export interface DefnNode extends CommonSpecialExpressionNode<'defn'> {
-  functionName: SymbolNode
-  function: Function
-}
-
-export interface FunctionNode extends CommonSpecialExpressionNode<'function'> {
-  functionName: SymbolNode
-  function: Function
-}
-
-export interface FnNode extends CommonSpecialExpressionNode<'fn'> {
-  params: AstNode[]
-  function: Function
-}
+export type DefnNode = SpecialExpressionNode<[typeof specialExpressionTypes['defn'], SymbolNode, Function]>
+export type FunctionNode = SpecialExpressionNode<[typeof specialExpressionTypes['function'], SymbolNode, Function]>
+export type FnNode = SpecialExpressionNode<[typeof specialExpressionTypes['fn'], Function]>
 
 export const functionSpecialExpression: BuiltinSpecialExpression<null, FunctionNode> = {
   paramCount: {},
-  evaluate: (node, contextStack, { builtin, getUndefinedSymbols, evaluateAstNode }) => {
-    const name = node.functionName.value
+  evaluate: (node, contextStack, { builtin, getUndefinedSymbols, evaluateNode }) => {
+    const [, [, functionName], fn] = node[1]
 
-    assertNameNotDefined(name, contextStack, builtin, node.sourceCodeInfo)
+    assertNameNotDefined(functionName, contextStack, builtin, node[2])
 
-    const evaluatedFunction = evaluateFunction(node, contextStack, builtin, getUndefinedSymbols, evaluateAstNode)
+    const evaluatedFunction = evaluateFunction(fn, contextStack, builtin, getUndefinedSymbols, evaluateNode)
 
     const litsFunction: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
-      sourceCodeInfo: node.sourceCodeInfo,
+      sourceCodeInfo: node[2],
       functionType: 'UserDefined',
-      name,
+      name: functionName,
       evaluatedfunction: evaluatedFunction,
     }
 
-    contextStack.addValues({ [name]: litsFunction })
+    contextStack.addValues({ [functionName]: litsFunction })
     return null
   },
 
-  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateAstNode }) => {
-    contextStack.addValues({ [node.functionName.value]: true })
-    const newContext: Context = { [node.functionName.value]: { value: true } }
-    return addFunctionUnresolvedSymbols(node.function, contextStack, getUndefinedSymbols, builtin, evaluateAstNode, newContext)
+  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => {
+    const functionName = node[1][1][1]
+    contextStack.addValues({ [functionName]: true })
+    const newContext: Context = { [functionName]: { value: true } }
+    return addFunctionUnresolvedSymbols(node[1][2], contextStack, getUndefinedSymbols, builtin, evaluateNode, newContext)
   },
 }
 
 export const defnSpecialExpression: BuiltinSpecialExpression<null, DefnNode> = {
   paramCount: {},
-  evaluate: (node, contextStack, { builtin, getUndefinedSymbols, evaluateAstNode }) => {
-    const name = node.functionName.value
+  evaluate: (node, contextStack, { builtin, getUndefinedSymbols, evaluateNode }) => {
+    const [, [, functionName], fn] = node[1]
 
-    assertNameNotDefined(name, contextStack, builtin, node.sourceCodeInfo)
+    assertNameNotDefined(functionName, contextStack, builtin, node[2])
 
-    const evaluatedFunctionOverloades = evaluateFunction(node, contextStack, builtin, getUndefinedSymbols, evaluateAstNode)
+    const evaluatedFunctionOverloades = evaluateFunction(fn, contextStack, builtin, getUndefinedSymbols, evaluateNode)
 
     const litsFunction: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
-      sourceCodeInfo: node.sourceCodeInfo,
+      sourceCodeInfo: node[2],
       functionType: 'UserDefined',
-      name,
+      name: functionName,
       evaluatedfunction: evaluatedFunctionOverloades,
     }
 
-    contextStack.exportValues({ [name]: litsFunction })
+    contextStack.exportValues({ [functionName]: litsFunction })
     return null
   },
 
-  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateAstNode }) => {
-    contextStack.exportValues({ [node.functionName.value]: true })
-    const newContext: Context = { [node.functionName.value]: { value: true } }
-    return addFunctionUnresolvedSymbols(node.function, contextStack, getUndefinedSymbols, builtin, evaluateAstNode, newContext)
+  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => {
+    const functionName = node[1][1][1]
+    const fn = node[1][2]
+    contextStack.exportValues({ [functionName]: true })
+    const newContext: Context = { [functionName]: { value: true } }
+    return addFunctionUnresolvedSymbols(fn, contextStack, getUndefinedSymbols, builtin, evaluateNode, newContext)
   },
 }
 
 export const fnSpecialExpression: BuiltinSpecialExpression<LitsFunction, FnNode> = {
   paramCount: {},
-  evaluate: (node, contextStack, { builtin, getUndefinedSymbols, evaluateAstNode }) => {
-    const evaluatedFunction = evaluateFunction(node, contextStack, builtin, getUndefinedSymbols, evaluateAstNode)
+  evaluate: (node, contextStack, { builtin, getUndefinedSymbols, evaluateNode }) => {
+    const fn = node[1][1]
+    const evaluatedFunction = evaluateFunction(fn, contextStack, builtin, getUndefinedSymbols, evaluateNode)
 
     const litsFunction: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
-      sourceCodeInfo: node.sourceCodeInfo,
+      sourceCodeInfo: node[2],
       functionType: 'UserDefined',
       name: undefined,
       evaluatedfunction: evaluatedFunction,
@@ -103,18 +95,20 @@ export const fnSpecialExpression: BuiltinSpecialExpression<LitsFunction, FnNode>
 
     return litsFunction
   },
-  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateAstNode }) =>
-    addFunctionUnresolvedSymbols(node.function, contextStack, getUndefinedSymbols, builtin, evaluateAstNode),
+  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => {
+    const fn = node[1][1]
+    return addFunctionUnresolvedSymbols(fn, contextStack, getUndefinedSymbols, builtin, evaluateNode)
+  },
+
 }
 
 function evaluateFunction(
-  node: SpecialExpressionNode,
+  fn: Function,
   contextStack: ContextStack,
   builtin: Builtin,
   getUndefinedSymbols: GetUndefinedSymbols,
-  evaluateAstNode: EvaluateAstNode,
+  evaluateNode: EvaluateNode,
 ): EvaluatedFunction {
-  const fn = (node as DefnNode | FnNode).function
   const functionContext: Context = {}
 
   const context = fn.arguments.reduce((ctx: Context, arg) => {
@@ -123,7 +117,7 @@ function evaluateFunction(
     })
     return ctx
   }, {})
-  const undefinedSymbols = getUndefinedSymbols(fn.body, contextStack.new(context), builtin, evaluateAstNode)
+  const undefinedSymbols = getUndefinedSymbols(fn.body, contextStack.new(context), builtin, evaluateNode)
   undefinedSymbols.forEach((name) => {
     const value = contextStack.getValue(name)
     if (isAny(value)) {
@@ -145,7 +139,7 @@ function addFunctionUnresolvedSymbols(
   contextStack: ContextStack,
   getUndefinedSymbols: GetUndefinedSymbols,
   builtin: Builtin,
-  evaluateAstNode: EvaluateAstNode,
+  evaluateNode: EvaluateNode,
   functionNameContext?: Context,
 ): UndefinedSymbols {
   const result = new Set<string>()
@@ -158,7 +152,7 @@ function addFunctionUnresolvedSymbols(
   })
 
   const newContextStack = contextStackWithFunctionName.create(newContext)
-  const overloadResult = getUndefinedSymbols(fn.body, newContextStack, builtin, evaluateAstNode)
+  const overloadResult = getUndefinedSymbols(fn.body, newContextStack, builtin, evaluateNode)
   addToSet(result, overloadResult)
   return result
 }

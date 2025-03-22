@@ -1,21 +1,22 @@
 import type { Any } from '../../interface'
-import type { CommonSpecialExpressionNode } from '../../parser/types'
-import { arrayToPairs } from '../../utils'
+import type { Node, SpecialExpressionNode } from '../../parser/types'
 import type { BuiltinSpecialExpression } from '../interface'
+import type { specialExpressionTypes } from '../specialExpressionTypes'
 
-export interface SwitchNode extends CommonSpecialExpressionNode<'switch'> {}
+export type SwitchNode = SpecialExpressionNode<[typeof specialExpressionTypes['switch'], Node, [Node, Node][]]>
 
 export const switchSpecialExpression: BuiltinSpecialExpression<Any, SwitchNode> = {
   paramCount: { odd: true },
-  evaluate: (node, contextStack, { evaluateAstNode }) => {
-    const switchValue = evaluateAstNode(node.params[0]!, contextStack)
-    for (const [test, form] of arrayToPairs(node.params.slice(1))) {
-      const value = evaluateAstNode(test!, contextStack)
+  evaluate: (node, contextStack, { evaluateNode }) => {
+    const [, switchValueNode, cases] = node[1]
+    const switchValue = evaluateNode(switchValueNode, contextStack)
+    for (const [test, form] of cases) {
+      const value = evaluateNode(test, contextStack)
       if (value === switchValue) {
-        return evaluateAstNode(form!, contextStack)
+        return evaluateNode(form, contextStack)
       }
     }
     return null
   },
-  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateAstNode }) => getUndefinedSymbols(node.params, contextStack, builtin, evaluateAstNode),
+  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => getUndefinedSymbols([node[1][1], ...node[1][2].flat()], contextStack, builtin, evaluateNode),
 }

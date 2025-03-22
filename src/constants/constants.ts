@@ -1,24 +1,26 @@
-export const astNodeTypeNames = [
-  'Number',
-  'String',
-  'NormalExpression',
-  'SpecialExpression',
-  'Symbol',
-  'Modifier',
-  'ReservedSymbol',
-  'Binding',
-  'Argument',
-  'Partial',
-  'Comment',
-  'Spread',
-] as const
+export const NodeTypes = {
+  Number: 1,
+  String: 2,
+  NormalExpression: 3,
+  SpecialExpression: 4,
+  Symbol: 5,
+  Modifier: 6,
+  ReservedSymbol: 7,
+  Binding: 8,
+  Spread: 10,
+} as const
 
-const astNodeTypeSet = new Set(astNodeTypeNames)
+const NodeTypesSet = new Set(Object.values(NodeTypes))
 
-export type AstNodeType = typeof astNodeTypeNames[number]
+export type NodeType = typeof NodeTypes[keyof typeof NodeTypes]
 
-export function isAstNodeType(type: unknown): type is AstNodeType {
-  return typeof type === 'string' && astNodeTypeSet.has(type as AstNodeType)
+export function getNodeTypeName(type: NodeType): keyof typeof NodeTypes {
+  return Object.keys(NodeTypes).find(key => NodeTypes[key as keyof typeof NodeTypes] === type) as keyof typeof NodeTypes
+}
+
+// TODO, is this needed?
+export function isNodeType(type: unknown): type is NodeType {
+  return typeof type === 'number' && NodeTypesSet.has(type as NodeType)
 }
 
 const functionTypes = [

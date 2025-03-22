@@ -3,6 +3,7 @@ import type { RegularExpression, SymbolNode } from '../src/parser/types'
 import { cloneColl, collHasKey, createNativeJsFunction, deepEqual, toNonNegativeInteger } from '../src/utils'
 import { FUNCTION_SYMBOL, REGEXP_SYMBOL } from '../src/utils/symbols'
 import { valueToString } from '../src/utils/debug/debugTools'
+import { NodeTypes } from '../src/constants/constants'
 
 describe('utils', () => {
   it('createNativeJsFunction', () => {
@@ -109,11 +110,7 @@ describe('utils', () => {
   })
 
   describe('helpers', () => {
-    const n: SymbolNode = {
-      type: 'Symbol',
-      value: 'Foo',
-      sourceCodeInfo: undefined,
-    }
+    const n: SymbolNode = [NodeTypes.Symbol, 'Foo']
     it('valueToString', () => {
       expect(valueToString(new Error('An error'))).toBe('Error: An error')
       expect(valueToString(n)).toBe('Symbol-node')

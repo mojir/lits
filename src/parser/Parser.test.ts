@@ -848,7 +848,7 @@ foo(1, 2)`)).toBe(3)
       end`)).toBe(null)
   })
 
-  test('doseq', () => {
+  test('simple doseq.', () => {
     expect(lits.run(`
       doseq
         each x in "Al"

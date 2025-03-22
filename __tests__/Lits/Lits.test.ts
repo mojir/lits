@@ -5,7 +5,8 @@ import type { LazyValue } from '../../src/Lits/Lits'
 import { Lits } from '../../src/Lits/Lits'
 import { assertLitsFunction } from '../../src/typeGuards/litsFunction'
 import { FUNCTION_SYMBOL } from '../../src/utils/symbols'
-import type { Ast, UserDefinedFunction } from '../../src/parser/types'
+import type { Ast, NormalExpressionNodeWithName, UserDefinedFunction } from '../../src/parser/types'
+import { NodeTypes } from '../../src/constants/constants'
 
 describe('all tests', () => {
   describe('tEST', () => {
@@ -45,13 +46,7 @@ describe('all tests', () => {
             functionType: 'UserDefined',
             evaluatedfunction: {
               arguments: [],
-              body: [
-                {
-                  type: 'Number',
-                  value: 42,
-                  sourceCodeInfo: undefined,
-                },
-              ],
+              body: [[NodeTypes.Number, 42]],
               context: {},
             },
           } satisfies UserDefinedFunction),
@@ -101,25 +96,9 @@ describe('all tests', () => {
     it('a function - initial cache', () => {
       const initialCache: Record<string, Ast> = {
         '2 ** 4': {
-          hasDebugData: true,
+          hasDebugData: false,
           body: [
-            {
-              type: 'NormalExpression',
-              name: '**',
-              params: [
-                {
-                  type: 'Number',
-                  value: 2,
-                  sourceCodeInfo: undefined,
-                },
-                {
-                  type: 'Number',
-                  value: 2,
-                  sourceCodeInfo: undefined,
-                },
-              ],
-              sourceCodeInfo: undefined,
-            },
+            [NodeTypes.NormalExpression, ['**', [[NodeTypes.Number, 2], [NodeTypes.Number, 2]]]] satisfies NormalExpressionNodeWithName,
           ],
         },
       }
@@ -165,13 +144,7 @@ describe('all tests', () => {
   function ast(n: number): Ast {
     return {
       hasDebugData: false,
-      body: [
-        {
-          type: 'Number',
-          value: n,
-          sourceCodeInfo: undefined,
-        },
-      ],
+      body: [[NodeTypes.Number, n]],
     }
   }
 

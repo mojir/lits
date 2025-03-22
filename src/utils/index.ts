@@ -108,14 +108,6 @@ export function createNativeJsFunction(fn: (...args: any[]) => unknown, name?: s
   }
 }
 
-export function arrayToPairs<T>(arr: T[]): T[][] {
-  const pairs: T[][] = []
-  for (let i = 0; i < arr.length; i += 2)
-    pairs.push([arr[i]!, arr[i + 1]!])
-
-  return pairs
-}
-
 export function joinSets<T>(...results: Set<T>[]): Set<T> {
   const result = new Set<T>()
   for (const symbols of results)

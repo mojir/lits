@@ -1,36 +1,38 @@
 import { LitsError } from '../../errors'
 import type { Any, Obj } from '../../interface'
-import type { CommonSpecialExpressionNode } from '../../parser/types'
+import type { Node, SpecialExpressionNode } from '../../parser/types'
 import { isUnknownRecord } from '../../typeGuards'
-import { asAstNode } from '../../typeGuards/astNode'
+import { isSpreadNode } from '../../typeGuards/astNode'
 import { assertString } from '../../typeGuards/string'
 import type { BuiltinSpecialExpression } from '../interface'
+import type { specialExpressionTypes } from '../specialExpressionTypes'
 
-export interface ObjectNode extends CommonSpecialExpressionNode<'object'> {}
+export type ObjectNode = SpecialExpressionNode<[typeof specialExpressionTypes['object'], Node[]]>
 
 export const objectSpecialExpression: BuiltinSpecialExpression<Any, ObjectNode> = {
   paramCount: {},
-  evaluate: (node, contextStack, { evaluateAstNode }) => {
+  evaluate: (node, contextStack, { evaluateNode }) => {
     const result: Obj = {}
 
-    for (let i = 0; i < node.params.length; i += 2) {
-      const keyNode = asAstNode(node.params[i])
-      if (keyNode?.type === 'Spread') {
-        const spreadObject = evaluateAstNode(keyNode.value, contextStack)
+    const params = node[1][1]
+    for (let i = 0; i < params.length; i += 2) {
+      const keyNode = params[i]!
+      if (isSpreadNode(keyNode)) {
+        const spreadObject = evaluateNode(keyNode[1], contextStack)
         if (!isUnknownRecord(spreadObject)) {
-          throw new LitsError('Spread value is not an object', keyNode.sourceCodeInfo)
+          throw new LitsError('Spread value is not an object', keyNode[2])
         }
         Object.assign(result, spreadObject)
         i -= 1
       }
       else {
-        const key = evaluateAstNode(keyNode, contextStack)
-        const value = evaluateAstNode(node.params[i + 1]!, contextStack)
-        assertString(key, keyNode.sourceCodeInfo)
+        const key = evaluateNode(keyNode, contextStack)
+        const value = evaluateNode(params[i + 1]!, contextStack)
+        assertString(key, keyNode[2])
         result[key] = value
       }
     }
     return result
   },
-  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateAstNode }) => getUndefinedSymbols(node.params, contextStack, builtin, evaluateAstNode),
+  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => getUndefinedSymbols(node[1][1], contextStack, builtin, evaluateNode),
 }

@@ -1,21 +1,22 @@
 import type { Any } from '../../interface'
-import type { CommonSpecialExpressionNode } from '../../parser/types'
-import { arrayToPairs } from '../../utils'
+import type { Node, SpecialExpressionNode } from '../../parser/types'
 import type { BuiltinSpecialExpression } from '../interface'
+import type { specialExpressionTypes } from '../specialExpressionTypes'
 
-export interface CondNode extends CommonSpecialExpressionNode<'cond'> {}
+export type CondNode = SpecialExpressionNode<[typeof specialExpressionTypes['cond'], [Node, Node][]]>
 
 export const condSpecialExpression: BuiltinSpecialExpression<Any, CondNode> = {
   paramCount: { even: true },
-  evaluate: (node, contextStack, { evaluateAstNode }) => {
-    for (const [test, form] of arrayToPairs(node.params)) {
-      const value = evaluateAstNode(test!, contextStack)
+  evaluate: (node, contextStack, { evaluateNode }) => {
+    const params = node[1][1]
+    for (const [test, form] of params) {
+      const value = evaluateNode(test, contextStack)
       if (!value)
         continue
 
-      return evaluateAstNode(form!, contextStack)
+      return evaluateNode(form, contextStack)
     }
     return null
   },
-  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateAstNode }) => getUndefinedSymbols(node.params, contextStack, builtin, evaluateAstNode),
+  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => getUndefinedSymbols(node[1][1].flat(), contextStack, builtin, evaluateNode),
 }

@@ -1,0 +1,32 @@
+import type { SpecialExpressionName, SpecialExpressionType } from '.'
+
+export const specialExpressionTypes = {
+  '??': 0,
+  '&&': 1,
+  '||': 2,
+  'array': 3,
+  'cond': 4,
+  'def': 5,
+  'defined?': 6,
+  'defn': 7,
+  'do': 8,
+  'doseq': 9,
+  'fn': 10,
+  'for': 11,
+  'function': 12,
+  'if': 13,
+  'let': 14,
+  'loop': 15,
+  'object': 16,
+  'recur': 17,
+  'switch': 18,
+  'throw': 19,
+  'try': 20,
+  'unless': 21,
+} as const
+
+export type SpecialExpressionTypes = typeof specialExpressionTypes
+
+export function getNameFromSpecialExpressionType(type: SpecialExpressionType): SpecialExpressionName {
+  return Object.keys(specialExpressionTypes).find(key => specialExpressionTypes[key as SpecialExpressionName] === type) as SpecialExpressionName
+}

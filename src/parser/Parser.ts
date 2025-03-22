@@ -1,6 +1,10 @@
 import type { SpecialExpressionName } from '../builtin'
-import { builtin, specialExpressionKeys } from '../builtin'
+import { builtin, specialExpressionNameSet } from '../builtin'
+import { getAllBindingTargetNames } from '../builtin/bindingNode'
+import type { AndNode } from '../builtin/specialExpressions/and'
+import type { ArrayNode } from '../builtin/specialExpressions/array'
 import type { CondNode } from '../builtin/specialExpressions/cond'
+import type { DefinedNode } from '../builtin/specialExpressions/declared'
 import type { DefNode } from '../builtin/specialExpressions/def'
 import type { DoNode } from '../builtin/specialExpressions/do'
 import type { DefnNode, FnNode, FunctionNode } from '../builtin/specialExpressions/functions'
@@ -8,16 +12,24 @@ import type { IfNode } from '../builtin/specialExpressions/if'
 import type { LetNode } from '../builtin/specialExpressions/let'
 import type { LoopNode } from '../builtin/specialExpressions/loop'
 import type { DoSeqNode, ForNode, LoopBindingNode } from '../builtin/specialExpressions/loops'
+import type { ObjectNode } from '../builtin/specialExpressions/object'
+import type { OrNode } from '../builtin/specialExpressions/or'
+import type { QqNode } from '../builtin/specialExpressions/qq'
+import type { RecurNode } from '../builtin/specialExpressions/recur'
 import type { SwitchNode } from '../builtin/specialExpressions/switch'
+import type { ThrowNode } from '../builtin/specialExpressions/throw'
 import type { TryNode } from '../builtin/specialExpressions/try'
 import type { UnlessNode } from '../builtin/specialExpressions/unless'
+import { specialExpressionTypes } from '../builtin/specialExpressionTypes'
+import { NodeTypes } from '../constants/constants'
 import { LitsError } from '../errors'
-import type { TokenStream } from '../tokenizer/tokenize'
 import { type SymbolicBinaryOperator, isBinaryOperator, isFunctionOperator } from '../tokenizer/operators'
+import { isNumberReservedSymbol, numberReservedSymbolRecord } from '../tokenizer/reservedNames'
 import type { OperatorToken, ReservedSymbolToken, SourceCodeInfo, SymbolToken, Token, TokenType } from '../tokenizer/token'
 import {
   asLBraceToken,
   asLBracketToken,
+  asReservedSymbolToken,
   asSymbolToken,
   assertLParenToken,
   assertOperatorToken,
@@ -37,22 +49,20 @@ import {
   isReservedSymbolToken,
   isSymbolToken,
 } from '../tokenizer/token'
+import type { TokenStream } from '../tokenizer/tokenize'
 import { assertNumberOfParams } from '../typeGuards'
-import type { QqNode } from '../builtin/specialExpressions/qq'
-import type { AndNode } from '../builtin/specialExpressions/and'
-import type { DeclaredNode } from '../builtin/specialExpressions/declared'
-import type { OrNode } from '../builtin/specialExpressions/or'
-import type { RecurNode } from '../builtin/specialExpressions/recur'
-import type { ThrowNode } from '../builtin/specialExpressions/throw'
-import { isNumberReservedSymbol, numberReservedSymbolRecord } from '../tokenizer/reservedNames'
-import { getAllBindingTargetNames } from '../builtin/bindingNode'
-import type { ArrayNode } from '../builtin/specialExpressions/array'
-import type { ObjectNode } from '../builtin/specialExpressions/object'
-import type { AstNode, BindingNode, BindingTarget, NormalExpressionNode, NormalExpressionNodeWithName, NumberNode, ParseState, ReservedSymbolNode, StringNode, SymbolNode } from './types'
+import type { BindingNode, BindingTarget, Node, NormalExpressionNodeExpression, NormalExpressionNodeWithName, NumberNode, ParseState, ReservedSymbolNode, StringNode, SymbolNode } from './types'
 
 const exponentiationPrecedence = 10
 const binaryFunctionalOperatorPrecedence = 1
 const placeholderRegexp = /^\$([1-9]\d?)?$/
+
+function withSourceCodeInfo<T extends Node>(node: T, sourceCodeInfo: SourceCodeInfo | undefined): T {
+  if (sourceCodeInfo) {
+    node[2] = sourceCodeInfo
+  }
+  return node
+}
 
 function getPrecedence(operatorSign: SymbolicBinaryOperator): number {
   switch (operatorSign) {
@@ -106,14 +116,9 @@ function getPrecedence(operatorSign: SymbolicBinaryOperator): number {
   }
 }
 
-function createNamedNormalExpressionNode(name: string, params: AstNode[], sourceCodeInfo: SourceCodeInfo | undefined): NormalExpressionNodeWithName {
-  const node: NormalExpressionNodeWithName = {
-    type: 'NormalExpression',
-    name,
-    params,
-    sourceCodeInfo,
-  }
-  const builtinExpression = builtin.normalExpressions[node.name]
+function createNamedNormalExpressionNode(name: string, params: Node[], sourceCodeInfo: SourceCodeInfo | undefined): NormalExpressionNodeWithName {
+  const node: NormalExpressionNodeWithName = withSourceCodeInfo([NodeTypes.NormalExpression, [name, params]], sourceCodeInfo)
+  const builtinExpression = builtin.normalExpressions[name]
 
   if (builtinExpression) {
     assertNumberOfParams(builtinExpression.paramCount, node)
@@ -122,17 +127,12 @@ function createNamedNormalExpressionNode(name: string, params: AstNode[], source
   return node
 }
 
-function createAccessorNode(left: AstNode, right: AstNode, sourceCodeInfo: SourceCodeInfo | undefined): AstNode {
+function createAccessorNode(left: Node, right: Node, sourceCodeInfo: SourceCodeInfo | undefined): NormalExpressionNodeExpression {
   // Unnamed normal expression
-  return {
-    type: 'NormalExpression',
-    params: [left, right],
-    name: undefined,
-    sourceCodeInfo,
-  }
+  return withSourceCodeInfo([NodeTypes.NormalExpression, [left, [right]]], sourceCodeInfo)
 }
 
-function fromBinaryOperatorToAstNode(operator: OperatorToken | SymbolToken<'+'>, left: AstNode, right: AstNode, sourceCodeInfo: SourceCodeInfo | undefined): AstNode {
+function fromBinaryOperatorToNode(operator: OperatorToken | SymbolToken<'+'>, left: Node, right: Node, sourceCodeInfo: SourceCodeInfo | undefined): Node {
   const operatorName = operator[1]
 
   switch (operatorName) {
@@ -162,12 +162,7 @@ function fromBinaryOperatorToAstNode(operator: OperatorToken | SymbolToken<'+'>,
     case '&&':
     case '||':
     case '??':
-      return {
-        type: 'SpecialExpression',
-        name: operatorName,
-        params: [left, right],
-        sourceCodeInfo,
-      }
+      return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes[operatorName], [left, right]]] as AndNode, sourceCodeInfo)
     /* v8 ignore next 10 */
     case '.':
     case ';':
@@ -200,8 +195,8 @@ export class Parser {
     this.parseState.position += 1
   }
 
-  public parse(): AstNode[] {
-    const nodes: AstNode[] = []
+  public parse(): Node[] {
+    const nodes: Node[] = []
     while (!this.isAtEnd()) {
       nodes.push(this.parseExpression(0, true))
       if (isOperatorToken(this.peek(), ';')) {
@@ -216,10 +211,10 @@ export class Parser {
     return nodes
   }
 
-  private parseExpression(precedence = 0, moduleScope = false): AstNode {
+  private parseExpression(precedence = 0, moduleScope = false): Node {
     const firstToken = this.peek()
 
-    let left: AstNode
+    let left: Node
 
     if (isSymbolToken(firstToken)) {
       switch (firstToken[1]) {
@@ -275,7 +270,7 @@ export class Parser {
         }
         this.advance()
         const right = this.parseExpression(newPrecedece)
-        left = fromBinaryOperatorToAstNode(operator, left, right, operator[2])
+        left = fromBinaryOperatorToNode(operator, left, right, operator[2])
       }
       else if (isSymbolToken(operator)) {
         if (!isFunctionOperator(operator[1])) {
@@ -299,7 +294,7 @@ export class Parser {
     return left
   }
 
-  private parseOperand(): AstNode {
+  private parseOperand(): Node {
     let operand = this.parseOperandPart()
     let token = this.peek()
     while (isOperatorToken(token, '.') || isLBracketToken(token) || isLParenToken(token)) {
@@ -309,11 +304,7 @@ export class Parser {
         if (!isSymbolToken(symbolToken)) {
           throw new LitsError('Expected symbol', this.peek()[2])
         }
-        const stringNode: StringNode = {
-          type: 'String',
-          value: symbolToken[1],
-          sourceCodeInfo: symbolToken[2],
-        }
+        const stringNode: StringNode = withSourceCodeInfo([NodeTypes.String, symbolToken[1]], symbolToken[2])
         operand = createAccessorNode(operand, stringNode, token[2])
         this.advance()
         token = this.peek()
@@ -336,7 +327,7 @@ export class Parser {
     return operand
   }
 
-  private parseOperandPart(): AstNode {
+  private parseOperandPart(): Node {
     const token = this.peek()
 
     // Parentheses
@@ -361,11 +352,7 @@ export class Parser {
       const operatorName = token[1]
       if (isBinaryOperator(operatorName)) {
         this.advance()
-        return {
-          type: 'Symbol',
-          value: operatorName,
-          sourceCodeInfo: token[2],
-        } satisfies SymbolNode
+        return withSourceCodeInfo([NodeTypes.Symbol, operatorName], token[2])
       }
 
       if (operatorName === '->') {
@@ -429,27 +416,19 @@ export class Parser {
   private parseObject(): ObjectNode {
     const firstToken = asLBraceToken(this.peek())
     this.advance()
-    const params: AstNode[] = []
+    const params: Node[] = []
     while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
       if (isOperatorToken(this.peek(), '...')) {
         this.advance()
-        params.push({
-          type: 'Spread',
-          value: this.parseExpression(),
-          sourceCodeInfo: this.peek()[2],
-        })
+        params.push(withSourceCodeInfo([NodeTypes.Spread, this.parseExpression()], this.peek()[2]))
       }
       else {
         const key = this.parseOperand()
-        if (key.type !== 'Symbol' && key.type !== 'String') {
+        if (key[0] !== NodeTypes.Symbol && key[0] !== NodeTypes.String) {
           throw new LitsError('Expected key to be a symbol or a string', this.peek()[2])
         }
 
-        params.push({
-          type: 'String',
-          value: key.value,
-          sourceCodeInfo: key.sourceCodeInfo,
-        })
+        params.push(withSourceCodeInfo([NodeTypes.String, key[1]], key[2]))
 
         assertOperatorToken(this.peek(), ':=')
         this.advance()
@@ -469,26 +448,17 @@ export class Parser {
     assertRBraceToken(this.peek())
     this.advance()
 
-    return {
-      type: 'SpecialExpression',
-      name: 'object',
-      params,
-      sourceCodeInfo: firstToken[2],
-    }
+    return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.object, params]], firstToken[2])
   }
 
   private parseArray(): ArrayNode {
     const firstToken = asLBracketToken(this.peek())
     this.advance()
-    const params: AstNode[] = []
+    const params: Node[] = []
     while (!this.isAtEnd() && !isRBracketToken(this.peek())) {
       if (isOperatorToken(this.peek(), '...')) {
         this.advance()
-        params.push({
-          type: 'Spread',
-          value: this.parseExpression(),
-          sourceCodeInfo: this.peek()[2],
-        })
+        params.push(withSourceCodeInfo([NodeTypes.Spread, this.parseExpression()], this.peek()[2]))
       }
       else {
         params.push(this.parseExpression())
@@ -505,19 +475,13 @@ export class Parser {
     assertRBracketToken(this.peek())
     this.advance()
 
-    return {
-      type: 'SpecialExpression',
-      name: 'array',
-      params,
-      sourceCodeInfo: firstToken[2],
-    }
+    return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.array, params]], firstToken[2])
   }
 
-  private parseFunctionCall(symbol: AstNode): AstNode {
-    const isNamedFunction = symbol.type === 'Symbol'
+  private parseFunctionCall(symbol: Node): Node {
     this.advance()
 
-    const params: AstNode[] = []
+    const params: Node[] = []
     while (!this.isAtEnd() && !isRParenToken(this.peek())) {
       params.push(this.parseExpression())
       const nextToken = this.peek()
@@ -532,49 +496,61 @@ export class Parser {
       throw new LitsError('Expected closing parenthesis', this.peek()[2])
     }
     this.advance()
-    if (isNamedFunction) {
-      if (specialExpressionKeys.includes(symbol.value)) {
-        const name: SpecialExpressionName = symbol.value as Exclude<SpecialExpressionName, 'for' | 'if' | 'unless' | 'cond' | 'switch' | 'let' | 'do' | 'loop' | 'try' | 'doseq' | 'function'>
+    if (symbol[0] === NodeTypes.Symbol) { // Named function
+      const functionName = (symbol as SymbolNode)[1]
+      if (specialExpressionNameSet.has(functionName)) {
+        const name: SpecialExpressionName = functionName as Exclude<SpecialExpressionName, 'for' | 'if' | 'unless' | 'cond' | 'switch' | 'let' | 'do' | 'loop' | 'try' | 'doseq' | 'function'>
         switch (name) {
-          case '??':
-          case '&&':
-          case 'defined?':
           case '||':
+            return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes[name], params]], symbol[2]) satisfies OrNode
+          case '&&':
+            return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes[name], params]], symbol[2]) satisfies AndNode
           case 'recur':
+            return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes[name], params]], symbol[2]) satisfies RecurNode
           case 'array':
+            return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes[name], params]], symbol[2]) satisfies ArrayNode
           case 'object':
-          case 'throw': {
-            const node: QqNode | AndNode | DeclaredNode | OrNode | RecurNode | ThrowNode | ArrayNode | ObjectNode = {
-              type: 'SpecialExpression',
-              name,
-              params,
-              sourceCodeInfo: symbol.sourceCodeInfo,
+            return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes[name], params]], symbol[2]) satisfies ObjectNode
+          case '??': {
+            if (params.length === 1) {
+              return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes[name], [params[0]!, undefined]]], symbol[2]) satisfies QqNode
             }
-            assertNumberOfParams(builtin.specialExpressions[node.name].paramCount, node)
-            return node
+            if (params.length === 2) {
+              return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes[name], [params[0]!, params[1]!]]], symbol[2]) satisfies QqNode
+            }
+            throw new LitsError('Expected exactly two parameters', symbol[2])
+          }
+          case 'defined?': {
+            if (params.length !== 1) {
+              throw new LitsError('Expected exactly one parameter', symbol[2])
+            }
+            const [param] = params
+            return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes[name], param as SymbolNode]], symbol[2]) satisfies DefinedNode
+          }
+          case 'throw': {
+            if (params.length !== 1) {
+              throw new LitsError('Expected exactly one parameter', symbol[2])
+            }
+            const [param] = params
+            return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes[name], param!]], symbol[2]) satisfies ThrowNode
           }
           case 'fn':
           case 'def':
           case 'defn':
-            throw new Error(`${name} is not allowed`)
+            throw new LitsError(`${name} is not allowed`, symbol[2])
           /* v8 ignore next 2 */
           default:
             throw new Error(`Unknown special expression: ${name satisfies never}`)
         }
       }
-      return createNamedNormalExpressionNode(symbol.value, params, symbol.sourceCodeInfo)
+      return createNamedNormalExpressionNode(functionName, params, symbol[2])
     }
     else {
-      return {
-        type: 'NormalExpression',
-        name: undefined,
-        params: [symbol, ...params],
-        sourceCodeInfo: symbol.sourceCodeInfo,
-      }
+      return withSourceCodeInfo([NodeTypes.NormalExpression, [symbol, params]], symbol[2]) satisfies NormalExpressionNodeExpression
     }
   }
 
-  parseLambdaFunction(): AstNode | null {
+  parseLambdaFunction(): FnNode | null {
     const firstToken = this.peek()
 
     if (isLParenToken(firstToken)
@@ -593,16 +569,10 @@ export class Parser {
 
       const body = this.parseExpression()
 
-      return {
-        type: 'SpecialExpression',
-        name: 'fn',
-        params: [],
-        function: {
-          arguments: functionArguments,
-          body: [body],
-        },
-        sourceCodeInfo: firstToken[2],
-      }
+      return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.fn, {
+        arguments: functionArguments,
+        body: [body],
+      }]], firstToken[2]) satisfies FnNode
     }
     catch {
       return null
@@ -614,7 +584,7 @@ export class Parser {
     if (isSymbolToken(firstToken)) {
       return [{
         type: 'symbol',
-        name: this.parseSymbol().value,
+        name: this.parseSymbol()[1],
         sourceCodeInfo: firstToken[2],
       } satisfies BindingTarget]
     }
@@ -699,22 +669,15 @@ export class Parser {
       }
     }
 
-    const node: FnNode = {
-      type: 'SpecialExpression',
-      name: 'fn',
-      params: [],
-      function: {
-        arguments: functionArguments,
-        body: [exprNode],
-      },
-
-      sourceCodeInfo: firstToken[2],
-    }
+    const node: FnNode = withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.fn, {
+      arguments: functionArguments,
+      body: [exprNode],
+    }]], firstToken[2])
 
     return node
   }
 
-  private parseOptionalDefaulValue(): AstNode | undefined {
+  private parseOptionalDefaulValue(): Node | undefined {
     if (isOperatorToken(this.peek(), ':=')) {
       this.advance()
       return this.parseExpression()
@@ -736,7 +699,7 @@ export class Parser {
 
       return {
         type: 'symbol',
-        name: symbol.value,
+        name: symbol[1],
         default: defaultValue,
         sourceCodeInfo: firstToken[2],
       }
@@ -754,7 +717,7 @@ export class Parser {
       }
       return {
         type: 'rest',
-        name: symbol.value,
+        name: symbol[1],
         sourceCodeInfo: firstToken[2],
       }
     }
@@ -820,14 +783,14 @@ export class Parser {
           rest = true
           this.advance()
         }
-        const key = this.parseSymbol().value
+        const key = this.parseSymbol()[1]
         token = this.peek()
         if (isReservedSymbolToken(token, 'as')) {
           if (rest) {
             throw new LitsError('Rest argument can not have alias', token[2])
           }
           this.advance()
-          const name = this.parseSymbol().value
+          const name = this.parseSymbol()[1]
           if (elements[name]) {
             throw new LitsError(`Duplicate binding name: ${name}`, token[2])
           }
@@ -893,22 +856,13 @@ export class Parser {
       assertOperatorToken(this.peek(), ';')
     }
 
-    return {
-      type: 'SpecialExpression',
-      name: 'let',
-      bindingNode: {
-        type: 'Binding',
-        target,
-        value,
-        sourceCodeInfo: token[2],
-      },
-      sourceCodeInfo: token[2],
-    }
+    const bindingTarget: BindingNode = withSourceCodeInfo([NodeTypes.Binding, [target, value]], token[2])
+    return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.let, bindingTarget]], token[2]) satisfies LetNode
   }
 
   private parseDo(token: SymbolToken): DoNode {
     this.advance()
-    const expressions: AstNode[] = []
+    const expressions: Node[] = []
     while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
       expressions.push(this.parseExpression())
       if (isOperatorToken(this.peek(), ';')) {
@@ -920,12 +874,7 @@ export class Parser {
     }
     assertReservedSymbolToken(this.peek(), 'end')
     this.advance()
-    return {
-      type: 'SpecialExpression',
-      name: 'do',
-      params: expressions,
-      sourceCodeInfo: token[2],
-    }
+    return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.do, expressions]], token[2]) satisfies DoNode
   }
 
   private parseLoop(firstToken: SymbolToken): LoopNode {
@@ -941,12 +890,7 @@ export class Parser {
       const value = target.default!
       delete target.default
 
-      bindingNodes.push({
-        type: 'Binding',
-        target,
-        value,
-        sourceCodeInfo: token[2],
-      } satisfies BindingNode)
+      bindingNodes.push(withSourceCodeInfo([NodeTypes.Binding, [target, value]], token[2]) satisfies BindingNode)
 
       if (isOperatorToken(this.peek(), ',')) {
         this.advance()
@@ -960,7 +904,7 @@ export class Parser {
     assertSymbolToken(token, 'do')
     this.advance()
 
-    const params: AstNode[] = []
+    const params: Node[] = []
     while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
       params.push(this.parseExpression())
       if (isOperatorToken(this.peek(), ';')) {
@@ -973,18 +917,12 @@ export class Parser {
     assertReservedSymbolToken(this.peek(), 'end')
     this.advance()
 
-    return {
-      type: 'SpecialExpression',
-      name: 'loop',
-      params,
-      bindingNodes,
-      sourceCodeInfo: firstToken[2],
-    }
+    return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.loop, bindingNodes, params]], firstToken[2]) satisfies LoopNode
   }
 
   private parseTry(token: SymbolToken): TryNode {
     this.advance()
-    const tryExpressions: AstNode[] = []
+    const tryExpressions: Node[] = []
     while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'catch')) {
       tryExpressions.push(this.parseExpression())
       if (isOperatorToken(this.peek(), ';')) {
@@ -997,12 +935,7 @@ export class Parser {
 
     const tryExpression = tryExpressions.length === 1
       ? tryExpressions[0]!
-      : {
-        type: 'SpecialExpression',
-        name: 'do',
-        params: tryExpressions,
-        sourceCodeInfo: token[2],
-      } satisfies DoNode
+      : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.do, tryExpressions]], token[2]) satisfies DoNode
 
     assertReservedSymbolToken(this.peek(), 'catch')
     this.advance()
@@ -1015,7 +948,7 @@ export class Parser {
       this.advance()
     }
 
-    const catchExpressions: AstNode[] = []
+    const catchExpressions: Node[] = []
     while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
       catchExpressions.push(this.parseExpression())
       if (isOperatorToken(this.peek(), ';')) {
@@ -1031,21 +964,9 @@ export class Parser {
 
     const catchExpression = catchExpressions.length === 1
       ? catchExpressions[0]!
-      : {
-        type: 'SpecialExpression',
-        name: 'do',
-        params: catchExpressions,
-        sourceCodeInfo: token[2],
-      } satisfies DoNode
+      : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.do, catchExpressions]], token[2]) satisfies DoNode
 
-    return {
-      type: 'SpecialExpression',
-      name: 'try',
-      params: [tryExpression],
-      ce: catchExpression,
-      e: errorSymbol,
-      sourceCodeInfo: token[2],
-    }
+    return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.try, tryExpression, errorSymbol, catchExpression]], token[2]) satisfies TryNode
   }
 
   private parseForOrDoseq(firstToken: SymbolToken): ForNode | DoSeqNode {
@@ -1056,10 +977,10 @@ export class Parser {
 
     while (!this.isAtEnd() && !isSymbolToken(this.peek(), 'do')) {
       const loopBinding = this.parseForLoopBinding()
-      const existingBoundNames = forLoopBindings.flatMap(b => Object.keys(getAllBindingTargetNames(b.b.target)))
-      const newBoundNames = getAllBindingTargetNames(loopBinding.b.target)
+      const existingBoundNames = forLoopBindings.flatMap(b => Object.keys(getAllBindingTargetNames(b[0][1][0])))
+      const newBoundNames = getAllBindingTargetNames(loopBinding[0][1][0])
       if (Object.keys(newBoundNames).some(n => existingBoundNames.includes(n))) {
-        throw new LitsError('Duplicate binding', loopBinding.b.sourceCodeInfo)
+        throw new LitsError('Duplicate binding', loopBinding[0][2])
       }
       forLoopBindings.push(loopBinding)
     }
@@ -1067,7 +988,7 @@ export class Parser {
     assertSymbolToken(this.peek(), 'do')
     this.advance()
 
-    const expressions: AstNode[] = []
+    const expressions: Node[] = []
 
     while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
       expressions.push(this.parseExpression())
@@ -1082,13 +1003,9 @@ export class Parser {
     assertReservedSymbolToken(this.peek(), 'end')
     this.advance()
 
-    return {
-      type: 'SpecialExpression',
-      name: isDoseq ? 'doseq' : 'for',
-      params: expressions,
-      sourceCodeInfo: firstToken[2],
-      l: forLoopBindings,
-    }
+    return isDoseq
+      ? withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.doseq, forLoopBindings, expressions]], firstToken[2]) satisfies DoSeqNode
+      : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.for, forLoopBindings, expressions]], firstToken[2]) satisfies ForNode
   }
 
   private parseForLoopBinding(): LoopBindingNode {
@@ -1118,19 +1035,18 @@ export class Parser {
       throw new LitsError('Expected symbol each, do, let, when or while', token[2])
     }
 
-    let letBindings: BindingNode[] | undefined
+    const letBindings: BindingNode[] = []
     if (token[1] === 'let') {
       modifiers.push('&let')
-      letBindings = []
       while (isSymbolToken(token, 'let')) {
         const letNode = this.parseLet(token, true)
-        const existingBoundNames = letBindings.flatMap(b => Object.keys(getAllBindingTargetNames(b.target)))
-        const newBoundNames = Object.keys(getAllBindingTargetNames(letNode.bindingNode.target))
+        const existingBoundNames = letBindings.flatMap(b => Object.keys(getAllBindingTargetNames(b[1][0])))
+        const newBoundNames = Object.keys(getAllBindingTargetNames(letNode[1][1][1][0]))
         if (newBoundNames.some(n => existingBoundNames.includes(n))) {
-          throw new LitsError('Duplicate binding', letNode.bindingNode.sourceCodeInfo)
+          throw new LitsError('Duplicate binding', letNode[1][1][2])
         }
 
-        letBindings.push(letNode.bindingNode)
+        letBindings.push(letNode[1][1])
         token = this.peek()
         if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this.peek(), 'each') && !isOperatorToken(token, ',')) {
           throw new LitsError('Expected do, each or comma', token[2])
@@ -1142,8 +1058,8 @@ export class Parser {
       }
     }
 
-    let whenNode: AstNode | undefined
-    let whileNode: AstNode | undefined
+    let whenNode: Node | undefined
+    let whileNode: Node | undefined
     while (
       isReservedSymbolToken(token, 'when')
       || isReservedSymbolToken(token, 'while')
@@ -1178,13 +1094,7 @@ export class Parser {
       throw new LitsError('Expected do or each', token[2])
     }
 
-    return {
-      b: bindingNode,
-      m: modifiers,
-      l: letBindings,
-      wn: whenNode,
-      we: whileNode,
-    }
+    return [bindingNode, letBindings, whenNode, whileNode] satisfies LoopBindingNode
   }
 
   private parseBinding(): BindingNode {
@@ -1197,16 +1107,11 @@ export class Parser {
 
     const value = this.parseExpression()
 
-    const node: BindingNode = {
-      type: 'Binding',
-      target: {
-        type: 'symbol',
-        name,
-        sourceCodeInfo: firstToken[2],
-      },
-      value,
+    const node: BindingNode = withSourceCodeInfo([NodeTypes.Binding, [{
+      type: 'symbol',
+      name,
       sourceCodeInfo: firstToken[2],
-    }
+    }, value]], firstToken[2])
     return node
   }
 
@@ -1216,7 +1121,7 @@ export class Parser {
     const condition = this.parseExpression()
     assertReservedSymbolToken(this.peek(), 'then')
     this.advance()
-    const thenExpressions: AstNode[] = []
+    const thenExpressions: Node[] = []
     while (
       !this.isAtEnd()
       && !isReservedSymbolToken(this.peek(), 'else')
@@ -1233,17 +1138,12 @@ export class Parser {
 
     const thenExpression = thenExpressions.length === 1
       ? thenExpressions[0]!
-      : {
-        type: 'SpecialExpression',
-        name: 'do',
-        params: thenExpressions,
-        sourceCodeInfo: token[2],
-      } satisfies DoNode
+      : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.do, thenExpressions]], token[2]) satisfies DoNode
 
-    let elseExpression: AstNode | undefined
+    let elseExpression: Node | undefined
     if (isReservedSymbolToken(this.peek(), 'else')) {
       this.advance()
-      const elseExpressions: AstNode[] = []
+      const elseExpressions: Node[] = []
       while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
         elseExpressions.push(this.parseExpression())
         if (isOperatorToken(this.peek(), ';')) {
@@ -1256,12 +1156,7 @@ export class Parser {
 
       elseExpression = elseExpressions.length === 1
         ? elseExpressions[0]
-        : {
-          type: 'SpecialExpression',
-          name: 'do',
-          params: elseExpressions,
-          sourceCodeInfo: token[2],
-        } satisfies DoNode
+        : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.do, elseExpressions]], token[2]) satisfies DoNode
     }
 
     assertReservedSymbolToken(this.peek(), 'end')
@@ -1272,25 +1167,22 @@ export class Parser {
       params.push(elseExpression)
     }
 
-    return {
-      type: 'SpecialExpression',
-      name: isUnless ? 'unless' : 'if',
-      params,
-      sourceCodeInfo: token[2],
-    }
+    return isUnless
+      ? withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.unless, [condition, thenExpression, elseExpression]]], token[2]) satisfies UnlessNode
+      : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.if, [condition, thenExpression, elseExpression]]], token[2]) satisfies IfNode
   }
 
   parseCond(token: SymbolToken): CondNode {
     this.advance()
-    const params: AstNode[] = []
+    const params: [Node, Node][] = []
 
     while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
       assertReservedSymbolToken(this.peek(), 'case')
       this.advance()
-      params.push(this.parseExpression())
+      const caseExpression = this.parseExpression()
       assertReservedSymbolToken(this.peek(), 'then')
       this.advance()
-      const expressions: AstNode[] = []
+      const expressions: Node[] = []
       while (
         !this.isAtEnd()
         && !isReservedSymbolToken(this.peek(), 'case')
@@ -1304,16 +1196,11 @@ export class Parser {
         }
       }
 
-      params.push(
-        expressions.length === 1
-          ? expressions[0]!
-          : {
-            type: 'SpecialExpression',
-            name: 'do',
-            params: expressions,
-            sourceCodeInfo: token[2],
-          } satisfies DoNode,
-      )
+      const thenExpression = expressions.length === 1
+        ? expressions[0]!
+        : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.do, expressions]], token[2]) satisfies DoNode
+
+      params.push([caseExpression, thenExpression])
       if (isReservedSymbolToken(this.peek(), 'end')) {
         break
       }
@@ -1323,25 +1210,21 @@ export class Parser {
     assertReservedSymbolToken(this.peek(), 'end')
     this.advance()
 
-    return {
-      type: 'SpecialExpression',
-      name: 'cond',
-      params,
-      sourceCodeInfo: token[2],
-    }
+    return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.cond, params]], token[2]) satisfies CondNode
   }
 
   parseSwitch(token: SymbolToken): SwitchNode {
     this.advance()
-    const params: AstNode[] = [this.parseExpression()]
+    const valueExpression = this.parseExpression()
+    const params: [Node, Node][] = []
 
     while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
       assertReservedSymbolToken(this.peek(), 'case')
       this.advance()
-      params.push(this.parseExpression())
+      const caseExpression = this.parseExpression()
       assertReservedSymbolToken(this.peek(), 'then')
       this.advance()
-      const expressions: AstNode[] = []
+      const expressions: Node[] = []
       while (
         !this.isAtEnd()
         && !isReservedSymbolToken(this.peek(), 'case')
@@ -1355,16 +1238,11 @@ export class Parser {
         }
       }
 
-      params.push(
-        expressions.length === 1
-          ? expressions[0]!
-          : {
-            type: 'SpecialExpression',
-            name: 'do',
-            params: expressions,
-            sourceCodeInfo: token[2],
-          } satisfies DoNode,
-      )
+      const thenExpression = expressions.length === 1
+        ? expressions[0]!
+        : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.do, expressions]], token[2]) satisfies DoNode
+
+      params.push([caseExpression, thenExpression])
       if (isReservedSymbolToken(this.peek(), 'end')) {
         break
       }
@@ -1374,12 +1252,7 @@ export class Parser {
     assertReservedSymbolToken(this.peek(), 'end')
     this.advance()
 
-    return {
-      type: 'SpecialExpression',
-      name: 'switch',
-      params,
-      sourceCodeInfo: token[2],
-    }
+    return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.switch, valueExpression, params]], token[2]) satisfies SwitchNode
   }
 
   parseFunction(token: ReservedSymbolToken<'function'>): FunctionNode {
@@ -1387,7 +1260,7 @@ export class Parser {
     const symbol = this.parseSymbol()
     const functionArguments = this.parseFunctionArguments()
 
-    const body: AstNode[] = []
+    const body: Node[] = []
 
     while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
       body.push(this.parseExpression())
@@ -1402,17 +1275,10 @@ export class Parser {
     this.advance()
     assertOperatorToken(this.peek(), ';')
 
-    return {
-      type: 'SpecialExpression',
-      name: 'function',
-      functionName: symbol,
-      params: [],
-      function: {
-        arguments: functionArguments,
-        body,
-      },
-      sourceCodeInfo: token[2],
-    } satisfies FunctionNode
+    return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.function, symbol, {
+      arguments: functionArguments,
+      body,
+    }]], token[2]) satisfies FunctionNode
   }
 
   private isAtEnd(): boolean {
@@ -1437,10 +1303,7 @@ export class Parser {
     this.advance()
     if (isSymbolToken(this.peek(), 'let')) {
       const letNode = this.parseLet(asSymbolToken(this.peek()))
-      return {
-        ...letNode,
-        name: 'def',
-      }
+      return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.def, letNode[1][1]]], token[2]) satisfies DefNode
     }
     else if (isReservedSymbolToken(this.peek(), 'function')) {
       this.advance()
@@ -1448,7 +1311,7 @@ export class Parser {
 
       const functionArguments = this.parseFunctionArguments()
 
-      const body: AstNode[] = []
+      const body: Node[] = []
 
       while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
         body.push(this.parseExpression())
@@ -1461,17 +1324,10 @@ export class Parser {
       }
       assertReservedSymbolToken(this.peek(), 'end')
       this.advance()
-      return {
-        type: 'SpecialExpression',
-        name: 'defn',
-        functionName: symbol,
-        params: [],
-        function: {
-          arguments: functionArguments,
-          body,
-        },
-        sourceCodeInfo: token[2],
-      }
+      return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.defn, symbol, {
+        arguments: functionArguments,
+        body,
+      }]], token[2]) satisfies DefnNode
     }
     else {
       throw new LitsError('Expected let or function', this.peek()[2])
@@ -1485,11 +1341,7 @@ export class Parser {
       throw new LitsError(`Expected symbol token, got ${token[0]}`, token[2])
     }
     if (token[1][0] !== '\'') {
-      return {
-        type: 'Symbol',
-        value: token[1],
-        sourceCodeInfo: token[2],
-      }
+      return withSourceCodeInfo([NodeTypes.Symbol, token[1]], token[2]) satisfies SymbolNode
     }
     else {
       const value = token[1].substring(1, token[1].length - 1)
@@ -1510,33 +1362,19 @@ export class Parser {
             return `\\${normalChar}`
           },
         )
-      return {
-        type: 'Symbol',
-        value,
-        sourceCodeInfo: token[2],
-      }
+      return withSourceCodeInfo([NodeTypes.Symbol, value], token[2]) satisfies SymbolNode
     }
   }
 
   private parseReservedSymbol(): ReservedSymbolNode | NumberNode {
-    const token = this.peek()
+    const token = asReservedSymbolToken(this.peek())
     this.advance()
 
-    if (isReservedSymbolToken(token)) {
-      const symbol = token[1]
-      if (isNumberReservedSymbol(symbol)) {
-        return {
-          type: 'Number',
-          value: numberReservedSymbolRecord[symbol],
-          sourceCodeInfo: token[2],
-        }
-      }
+    const symbol = token[1]
+    if (isNumberReservedSymbol(symbol)) {
+      return withSourceCodeInfo([NodeTypes.Number, numberReservedSymbolRecord[symbol]], token[2]) satisfies NumberNode
     }
-    return {
-      type: 'ReservedSymbol',
-      value: token[1],
-      sourceCodeInfo: token[2],
-    } satisfies ReservedSymbolNode
+    return withSourceCodeInfo([NodeTypes.ReservedSymbol, token[1]], token[2]) satisfies ReservedSymbolNode
   }
 
   private parseNumber(): NumberNode {
@@ -1546,11 +1384,7 @@ export class Parser {
     const value = token[1]
     const negative = value[0] === '-'
     const numberString = (negative ? value.substring(1) : value).replace(/_/g, '')
-    return {
-      type: 'Number',
-      value: negative ? -Number(numberString) : Number(numberString),
-      sourceCodeInfo: token[2],
-    }
+    return withSourceCodeInfo([NodeTypes.Number, negative ? -Number(numberString) : Number(numberString)], token[2]) satisfies NumberNode
   }
 
   private parseString(): StringNode {
@@ -1597,11 +1431,7 @@ export class Parser {
         },
       )
 
-    return {
-      type: 'String',
-      value,
-      sourceCodeInfo: token[2],
-    }
+    return withSourceCodeInfo([NodeTypes.String, value], token[2]) satisfies StringNode
   }
 
   private parseRegexpShorthand(): NormalExpressionNodeWithName {
@@ -1611,24 +1441,11 @@ export class Parser {
     const endStringPosition = token[1].lastIndexOf('"')
     const regexpString = token[1].substring(2, endStringPosition)
     const optionsString = token[1].substring(endStringPosition + 1)
-    const stringNode: StringNode = {
-      type: 'String',
-      value: regexpString,
-      sourceCodeInfo: token[2],
-    }
+    const stringNode: StringNode = withSourceCodeInfo([NodeTypes.String, regexpString], token[2]) satisfies StringNode
 
-    const optionsNode: StringNode = {
-      type: 'String',
-      value: optionsString,
-      sourceCodeInfo: token[2],
-    }
+    const optionsNode: StringNode = withSourceCodeInfo([NodeTypes.String, optionsString], token[2]) satisfies StringNode
 
-    const node: NormalExpressionNode = {
-      type: 'NormalExpression',
-      name: 'regexp',
-      params: [stringNode, optionsNode],
-      sourceCodeInfo: token[2],
-    }
+    const node: NormalExpressionNodeWithName = withSourceCodeInfo([NodeTypes.NormalExpression, ['regexp', [stringNode, optionsNode]]], token[2])
 
     return node
   }

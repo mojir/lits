@@ -1,14 +1,15 @@
 import { LitsError } from '../errors'
 import type { ContextStack } from '../evaluator/ContextStack'
-import type { AstNode, BindingTarget } from '../parser/types'
+import type { BindingTarget, Node } from '../parser/types'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { isReservedSymbol } from '../tokenizer/reservedNames'
 import type { Builtin } from './interface'
+import { specialExpressionTypes } from './specialExpressionTypes'
 import type { SpecialExpressionName } from '.'
 
 export interface Function {
   arguments: BindingTarget[]
-  body: AstNode[]
+  body: Node[]
 }
 
 export function assertNameNotDefined<T>(
@@ -20,7 +21,8 @@ export function assertNameNotDefined<T>(
   if (typeof name !== 'string')
     return
 
-  if (builtin.specialExpressions[name as SpecialExpressionName])
+  // TODO only subset of special expressions are necessary to check (CommonSpecialExpressionType)
+  if (specialExpressionTypes[name as SpecialExpressionName])
     throw new LitsError(`Cannot define variable ${name}, it's a special expression.`, sourceCodeInfo)
 
   if (builtin.normalExpressions[name])

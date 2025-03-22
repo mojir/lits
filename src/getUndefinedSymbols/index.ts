@@ -1,72 +1,85 @@
 import type { Builtin } from '../builtin/interface'
 import type { DoNode } from '../builtin/specialExpressions/do'
+import { specialExpressionTypes } from '../builtin/specialExpressionTypes'
+import { NodeTypes } from '../constants/constants'
 import type { ContextStack } from '../evaluator/ContextStack'
-import type { EvaluateAstNode } from '../evaluator/interface'
-import type { Ast, AstNode } from '../parser/types'
-import { asNonUndefined } from '../typeGuards'
+import type { EvaluateNode } from '../evaluator/interface'
+import type { Ast, BindingNode, Node, NormalExpressionNode, SpecialExpressionNode, SpreadNode, SymbolNode } from '../parser/types'
+import { isNormalExpressionNodeWithName } from '../typeGuards/astNode'
 
 export type UndefinedSymbols = Set<string>
 
-export const getUndefinedSymbols: GetUndefinedSymbols = (ast, contextStack, builtin, evaluateAstNode) => {
-  const astNodes = Array.isArray(ast)
+export const getUndefinedSymbols: GetUndefinedSymbols = (ast, contextStack, builtin, evaluateNode) => {
+  const nodes: Node[] = Array.isArray(ast)
     ? ast
-    : [{
-      type: 'SpecialExpression',
-      name: 'do',
-      params: ast.body,
-      sourceCodeInfo: undefined,
-    } satisfies DoNode]
+    : [[NodeTypes.SpecialExpression, [specialExpressionTypes.do, ast.body]] satisfies DoNode]
 
   const unresolvedSymbols = new Set<string>()
 
-  for (const subNode of astNodes) {
-    findUnresolvedSymbolsInAstNode(subNode, contextStack, builtin, evaluateAstNode)
+  for (const subNode of nodes) {
+    findUnresolvedSymbolsInNode(subNode, contextStack, builtin, evaluateNode)
       ?.forEach(symbol => unresolvedSymbols.add(symbol))
   }
   return unresolvedSymbols
 }
 
-export type GetUndefinedSymbols = (ast: Ast | AstNode[], contextStack: ContextStack, builtin: Builtin, evaluateAstNode: EvaluateAstNode) => UndefinedSymbols
+export type GetUndefinedSymbols = (ast: Ast | Node[], contextStack: ContextStack, builtin: Builtin, evaluateNode: EvaluateNode) => UndefinedSymbols
 
-function findUnresolvedSymbolsInAstNode(astNode: AstNode, contextStack: ContextStack, builtin: Builtin, evaluateAstNode: EvaluateAstNode): UndefinedSymbols | null {
-  switch (astNode.type) {
-    case 'Symbol': {
-      const lookUpResult = contextStack.lookUp(astNode)
+function findUnresolvedSymbolsInNode(node: Node, contextStack: ContextStack, builtin: Builtin, evaluateNode: EvaluateNode): UndefinedSymbols | null {
+  const nodeType = node[0]
+  switch (nodeType) {
+    case NodeTypes.Symbol: {
+      const symbolNode = node as SymbolNode
+      const lookUpResult = contextStack.lookUp(symbolNode)
       if (lookUpResult === null)
-        return new Set([astNode.value])
+        return new Set([symbolNode[1]])
 
       return null
     }
-    case 'String':
-    case 'Number':
-    case 'Modifier':
-    case 'ReservedSymbol':
-    case 'Comment':
+    case NodeTypes.String:
+    case NodeTypes.Number:
+    case NodeTypes.Modifier:
+    case NodeTypes.ReservedSymbol:
       return null
-    case 'NormalExpression': {
+    case NodeTypes.NormalExpression: {
+      const normalExpressionNode = node as NormalExpressionNode
       const unresolvedSymbols = new Set<string>()
-      const { name, sourceCodeInfo } = astNode
-      if (typeof name === 'string') {
-        const lookUpResult = contextStack.lookUp({ type: 'Symbol', value: name, sourceCodeInfo })
+      if (isNormalExpressionNodeWithName(normalExpressionNode)) {
+        const [, [name]] = normalExpressionNode
+        const lookUpResult = contextStack.lookUp([NodeTypes.Symbol, name])
         if (lookUpResult === null)
           unresolvedSymbols.add(name)
       }
-      for (const subNode of astNode.params) {
-        findUnresolvedSymbolsInAstNode(subNode, contextStack, builtin, evaluateAstNode)?.forEach(symbol => unresolvedSymbols.add(symbol))
+      else {
+        const [, [expressionNode]] = normalExpressionNode
+        findUnresolvedSymbolsInNode(expressionNode, contextStack, builtin, evaluateNode)?.forEach(symbol => unresolvedSymbols.add(symbol))
+      }
+      for (const subNode of normalExpressionNode[1][1]) {
+        findUnresolvedSymbolsInNode(subNode, contextStack, builtin, evaluateNode)?.forEach(symbol => unresolvedSymbols.add(symbol))
       }
       return unresolvedSymbols
     }
-    case 'SpecialExpression': {
-      const specialExpression = asNonUndefined(builtin.specialExpressions[astNode.name], astNode.sourceCodeInfo)
+    case NodeTypes.SpecialExpression: {
+      const specialExpressionNode = node as SpecialExpressionNode
+      const specialExpressionType = specialExpressionNode[1][0]
+      const specialExpression = builtin.specialExpressions[specialExpressionType]
 
-      // eslint-disable-next-line ts/no-unsafe-argument
-      return specialExpression.getUndefinedSymbols(astNode as any, contextStack, {
+      const castedGetUndefinedSymbols = specialExpression.getUndefinedSymbols as Function
+
+      return castedGetUndefinedSymbols(specialExpressionNode, contextStack, {
         getUndefinedSymbols,
         builtin,
-        evaluateAstNode,
-      })
+        evaluateNode,
+      }) as UndefinedSymbols
     }
-    case 'Spread':
-      return findUnresolvedSymbolsInAstNode(astNode.value, contextStack, builtin, evaluateAstNode)
+    case NodeTypes.Spread:
+      return findUnresolvedSymbolsInNode((node as SpreadNode)[1], contextStack, builtin, evaluateNode)
+    case NodeTypes.Binding: {
+      const bindingNode = node as BindingNode
+      return findUnresolvedSymbolsInNode(bindingNode[1][1], contextStack, builtin, evaluateNode)
+    }
+
+    default:
+      throw new Error(`Unhandled node type: ${nodeType satisfies never}`)
   }
 }

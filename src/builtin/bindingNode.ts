@@ -1,18 +1,17 @@
 import { LitsError } from '../errors'
 import type { Any } from '../interface'
-import type { AstNode, BindingNode, BindingTarget, RestBindingTarget } from '../parser/types'
+import type { BindingTarget, Node, RestBindingTarget } from '../parser/types'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { assertUnknownRecord } from '../typeGuards'
 import { assertArray } from '../typeGuards/array'
 import { asAny, assertAny } from '../typeGuards/lits'
 
 export function evalueateBindingNodeValues(
-  input: BindingNode | BindingTarget,
+  target: BindingTarget,
   value: Any,
-  evaluate: (astNode: AstNode) => Any,
+  evaluate: (Node: Node) => Any,
 ): Record<string, Any> {
-  const target = 'target' in input ? input.target : input
-  const sourceCodeInfo = input.sourceCodeInfo
+  const sourceCodeInfo = target.sourceCodeInfo
   const record: Record<string, Any> = {}
   createRecord(target, value, evaluate, sourceCodeInfo, record)
   return record
@@ -21,7 +20,7 @@ export function evalueateBindingNodeValues(
 function createRecord(
   bindingTarget: BindingTarget,
   value: Any,
-  evaluate: (astNode: AstNode) => Any,
+  evaluate: (Node: Node) => Any,
   sourceCodeInfo: SourceCodeInfo | undefined,
   record: Record<string, Any>,
 ): void {

@@ -1,18 +1,61 @@
 import type { Count } from '../builtin/interface'
+import { getNodeTypeName } from '../constants/constants'
 import { LitsError } from '../errors'
 import type { UnknownRecord } from '../interface'
-import type { AstNode, GenericNode } from '../parser/types'
+import type { NormalExpressionNodeWithName } from '../parser/types'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { valueToString } from '../utils/debug/debugTools'
 import { getSourceCodeInfo } from '../utils/debug/getSourceCodeInfo'
 
-export function assertNumberOfParams(count: Count, node: GenericNode & { params: AstNode[], name: string }): void {
-  assertCount({
-    count,
-    length: node.params.length,
-    name: node.name,
-    sourceCodeInfo: node.sourceCodeInfo,
-  })
+export function assertNumberOfParams(count: Count, node: NormalExpressionNodeWithName): void {
+  const length = node[1][1].length
+  if (typeof count === 'number') {
+    if (length !== count) {
+      const name = getNodeTypeName(node[0])
+      throw new LitsError(
+        `Wrong number of arguments to "${name}", expected ${count}, got ${valueToString(length)}.`,
+        node[2],
+      )
+    }
+  }
+  else {
+    const { min, max, even, odd } = count
+    if (even) {
+      const name = getNodeTypeName(node[0])
+      if (length % 2 !== 0) {
+        throw new LitsError(
+          `Wrong number of arguments to "${name}",, expected an even number, got ${valueToString(length)}.`,
+          node[2],
+        )
+      }
+    }
+
+    if (odd) {
+      if (length % 2 !== 1) {
+        const name = getNodeTypeName(node[0])
+        throw new LitsError(
+          `Wrong number of arguments to "${name}",, expected an odd number, got ${valueToString(length)}.`,
+          node[2],
+        )
+      }
+    }
+
+    if (typeof min === 'number' && length < min) {
+      const name = getNodeTypeName(node[0])
+      throw new LitsError(
+        `Wrong number of arguments to "${name}", expected at least ${min}, got ${valueToString(length)}.`,
+        node[2],
+      )
+    }
+
+    if (typeof max === 'number' && length > max) {
+      const name = getNodeTypeName(node[0])
+      throw new LitsError(
+        `Wrong number of arguments to "${name}", expected at most ${max}, got ${valueToString(length)}.`,
+        node[2],
+      )
+    }
+  }
 }
 
 export function isNonUndefined<T>(value: T | undefined): value is T {
@@ -45,51 +88,6 @@ export function assertUnknownRecord(value: unknown, sourceCodeInfo?: SourceCodeI
 export function asUnknownRecord(value: unknown, sourceCodeInfo?: SourceCodeInfo): UnknownRecord {
   assertUnknownRecord(value, sourceCodeInfo)
   return value
-}
-
-function assertCount({ count, length, name, sourceCodeInfo }: { name: string | undefined, count: Count, length: number, sourceCodeInfo?: SourceCodeInfo }): void {
-  if (typeof count === 'number') {
-    if (length !== count) {
-      throw new LitsError(
-        `Wrong number of arguments to "${name}", expected ${count}, got ${valueToString(length)}.`,
-        sourceCodeInfo,
-      )
-    }
-  }
-  else {
-    const { min, max, even, odd } = count
-    if (even) {
-      if (length % 2 !== 0) {
-        throw new LitsError(
-          `Wrong number of arguments to "${name}",, expected an even number, got ${valueToString(length)}.`,
-          sourceCodeInfo,
-        )
-      }
-    }
-
-    if (odd) {
-      if (length % 2 !== 1) {
-        throw new LitsError(
-          `Wrong number of arguments to "${name}",, expected an odd number, got ${valueToString(length)}.`,
-          sourceCodeInfo,
-        )
-      }
-    }
-
-    if (typeof min === 'number' && length < min) {
-      throw new LitsError(
-        `Wrong number of arguments to "${name}", expected at least ${min}, got ${valueToString(length)}.`,
-        sourceCodeInfo,
-      )
-    }
-
-    if (typeof max === 'number' && length > max) {
-      throw new LitsError(
-        `Wrong number of arguments to "${name}", expected at most ${max}, got ${valueToString(length)}.`,
-        sourceCodeInfo,
-      )
-    }
-  }
 }
 
 export function canBeOperator(count: Count): boolean {
