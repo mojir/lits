@@ -2,8 +2,12 @@
 import { describe, it } from 'vitest'
 import { Lits } from '../Lits/Lits'
 
-const lits = new Lits({ debug: false })
+const lits = new Lits({ debug: false, astCacheSize: 0 })
 
+// 6c195a7
+// lits.run is slower than eval by a factor 163.2
+// lits.parse + lits.evaluate is slower than eval by a factor 83.85
+// lits.evaluate is slower than eval by a factor 12.86
 describe.skip('performance comparison', () => {
   const expressions = [
     '42', // a bit faster than eval
