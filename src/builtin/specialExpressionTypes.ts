@@ -1,5 +1,3 @@
-import type { SpecialExpressionName, SpecialExpressionType } from '.'
-
 export const specialExpressionTypes = {
   '??': 0,
   '&&': 1,
