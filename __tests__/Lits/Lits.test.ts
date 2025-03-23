@@ -82,6 +82,13 @@ describe('all tests', () => {
       expect(lits.run('tripple(10)', { contexts })).toBe(30)
       expect(lits.run('tripple(10)', { contexts })).toBe(30)
     })
+    it('a function with ast.', () => {
+      lits = new Lits({ astCacheSize: 10 })
+      const parseResult = lits.parse(lits.tokenize('export function tripple(x) x * 3 end;'))
+      const contexts = [lits.context(parseResult)]
+      expect(lits.run('tripple(10)', { contexts })).toBe(30)
+      expect(lits.run('tripple(10)', { contexts })).toBe(30)
+    })
 
     it('a function - no cache', () => {
       lits = new Lits({ debug: true })

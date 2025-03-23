@@ -1,4 +1,4 @@
-import { describe, it } from 'vitest'
+import { describe, expect, it, test } from 'vitest'
 import { testTypeGuars } from '../../__tests__/testUtils'
 import type { LitsFunction } from '../parser/types'
 import { createNativeJsFunction } from '../utils'
@@ -12,6 +12,7 @@ import {
   assertLitsFunction,
   assertNativeJsFunction,
   assertUserDefinedFunction,
+  isBuiltinFunction,
   isLitsFunction,
   isNativeJsFunction,
   isUserDefinedFunction,
@@ -84,5 +85,9 @@ describe('litsFunction type guards', () => {
       },
       { is: isNativeJsFunction, as: asNativeJsFunction, assert: assertNativeJsFunction },
     )
+  })
+  test('isBuiltinFunction', () => {
+    expect(isBuiltinFunction(lf1)).toBe(false)
+    expect(isBuiltinFunction(lf2)).toBe(true)
   })
 })

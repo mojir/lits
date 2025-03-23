@@ -157,6 +157,7 @@ describe('specialExpressions', () => {
         expect(() => litsDebug.getUndefinedSymbols('export let throw := a + b;')).toThrow()
         expect(() => litsDebug.getUndefinedSymbols('export let + := a + b;')).toThrow()
         expect(() => litsDebug.getUndefinedSymbols('export let foo := a + b; export let foo := a + b;')).toThrow()
+        expect(litsDebug.getUndefinedSymbols('let [a := b] := [];')).toEqual(new Set(['b']))
         expect(litsDebug.getUndefinedSymbols('export let foo := a + b;')).toEqual(new Set(['a', 'b']))
         expect(lits.getUndefinedSymbols('let foo := a + b; foo')).toEqual(new Set(['a', 'b']))
       })

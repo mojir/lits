@@ -26,7 +26,3 @@ export const specialExpressionTypes = {
 } as const
 
 export type SpecialExpressionTypes = typeof specialExpressionTypes
-
-export function getNameFromSpecialExpressionType(type: SpecialExpressionType): SpecialExpressionName {
-  return Object.keys(specialExpressionTypes).find(key => specialExpressionTypes[key as SpecialExpressionName] === type) as SpecialExpressionName
-}
