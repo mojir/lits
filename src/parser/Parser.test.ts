@@ -14,7 +14,12 @@ describe('operators', () => {
     })
   })
 
+  test('random samples0', () => {
+    expect(() => litsDebug.getUndefinedSymbols('let { x, ...x } := {};')).toThrow()
+  })
+
   test('random samples', () => {
+    expect(() => litsDebug.run('let { x, ...x } := {};')).toThrow()
     expect(() => litsDebug.run('let [ x as y ] := [];')).toThrow()
     expect(() => litsDebug.run('let { ...x as y } := {};')).toThrow()
     expect(() => litsDebug.run('let { ...x, y } := {};')).toThrow()
@@ -23,6 +28,8 @@ describe('operators', () => {
     expect(() => litsDebug.run('let ...x := 1;')).toThrow()
     expect(() => litsDebug.run('let { a, ...x := y } := {};')).toThrow()
     expect(() => litsDebug.run('let x;')).toThrow()
+    expect(() => litsDebug.getUndefinedSymbols('function foo([,,a,...a]) a end; foo([1, 2, 3])')).toThrow()
+    expect(() => litsDebug.getUndefinedSymbols('function foo([,,a,...a]) a end; foo([1, 2, 3])')).toThrow()
     expect(() => litsDebug.getUndefinedSymbols('function foo([,,a,a]) a end; foo([1, 2, 3])')).toThrow()
     expect(() => litsDebug.getUndefinedSymbols('function foo([,,a]) a end; foo([1, 2, 3])')).not.toThrow()
     expect(() => litsDebug.run('function foo([,,a]) a end; foo([1, 2, 3])')).not.toThrow()

@@ -4,7 +4,7 @@ import { specialExpressionTypes } from '../builtin/specialExpressionTypes'
 import { NodeTypes } from '../constants/constants'
 import type { ContextStack } from '../evaluator/ContextStack'
 import type { EvaluateNode } from '../evaluator/interface'
-import type { Ast, BindingNode, Node, NormalExpressionNode, SpecialExpressionNode, SpreadNode, UserDefinedSymbolNode } from '../parser/types'
+import type { Ast, Node, NormalExpressionNode, SpecialExpressionNode, SpreadNode, UserDefinedSymbolNode } from '../parser/types'
 import { isNormalExpressionNodeWithName, isUserDefinedSymbolNode } from '../typeGuards/astNode'
 
 export type UndefinedSymbols = Set<string>
@@ -41,6 +41,7 @@ function findUnresolvedSymbolsInNode(node: Node, contextStack: ContextStack, bui
     case NodeTypes.String:
     case NodeTypes.Number:
     case NodeTypes.ReservedSymbol:
+    case NodeTypes.Binding:
       return null
     case NodeTypes.NormalExpression: {
       const normalExpressionNode = node as NormalExpressionNode
@@ -77,11 +78,8 @@ function findUnresolvedSymbolsInNode(node: Node, contextStack: ContextStack, bui
     }
     case NodeTypes.Spread:
       return findUnresolvedSymbolsInNode((node as SpreadNode)[1], contextStack, builtin, evaluateNode)
-    case NodeTypes.Binding: {
-      const bindingNode = node as BindingNode
-      return findUnresolvedSymbolsInNode(bindingNode[1][1], contextStack, builtin, evaluateNode)
-    }
 
+    /* v8 ignore next 2 */
     default:
       throw new Error(`Unhandled node type: ${nodeType satisfies never}`)
   }

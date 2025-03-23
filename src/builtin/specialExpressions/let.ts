@@ -1,6 +1,7 @@
 import type { Any } from '../../interface'
 import type { BindingNode, SpecialExpressionNode } from '../../parser/types'
-import { evalueateBindingNodeValues, getAllBindingTargetNames } from '../bindingNode'
+import { addToSet } from '../../utils'
+import { evalueateBindingNodeValues, getAllBindingTargetNames, walkDefaults } from '../bindingNode'
 import type { BuiltinSpecialExpression } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 
@@ -22,6 +23,9 @@ export const letSpecialExpression: BuiltinSpecialExpression<Any, LetNode> = {
     const target = bindingNode[1][0]
     const value = bindingNode[1][1]
     const bindingResult = getUndefinedSymbols([value], contextStack, builtin, evaluateNode)
+    walkDefaults(target, (defaultNode) => {
+      addToSet(bindingResult, getUndefinedSymbols([defaultNode], contextStack, builtin, evaluateNode))
+    })
     contextStack.addValues(getAllBindingTargetNames(target))
     return bindingResult
   },

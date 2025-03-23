@@ -815,9 +815,6 @@ var Playground = (function (exports) {
         if (!isLitsFunction(value))
             throw getAssertionError('LitsFunction', value, sourceCodeInfo);
     }
-    function isBuiltinFunction(value) {
-        return isUnknownRecord(value) && value.functionType === 'Builtin';
-    }
 
     function isAny(value) {
         // TODO weak test
@@ -917,12 +914,12 @@ var Playground = (function (exports) {
         '||': 2,
         'array': 3,
         'cond': 4,
-        'def': 5,
+        '0_def': 5,
         'defined?': 6,
-        'defn': 7,
+        '0_defn': 7,
         'do': 8,
         'doseq': 9,
-        'fn': 10,
+        '0_fn': 10,
         'for': 11,
         'function': 12,
         'if': 13,
@@ -960,25 +957,9 @@ var Playground = (function (exports) {
     function isNormalBuiltinSymbolNode(node) {
         return NodeTypes.NormalBuiltinSymbol === node[0];
     }
-    function isSpecialBuiltinSymbolNode(node, name) {
-        if (NodeTypes.SpecialBuiltinSymbol !== node[0]) {
-            return false;
-        }
-        {
-            return true;
-        }
+    function isSpecialBuiltinSymbolNode(node) {
+        return NodeTypes.SpecialBuiltinSymbol === node[0];
     }
-    // export function isNumberNode(node: Node): node is NumberNode {
-    //   return node[0] === NodeTypes.Number
-    // }
-    // export function asNumberNode(node: Node, sourceCodeInfo?: SourceCodeInfo): NumberNode {
-    //   assertNumberNode(node, sourceCodeInfo)
-    //   return node
-    // }
-    // export function assertNumberNode(node: Node, sourceCodeInfo?: SourceCodeInfo): asserts node is NumberNode {
-    //   if (!isNumberNode(node))
-    //     throw getAssertionError('NumberNode', node, sourceCodeInfo)
-    // }
     function isNormalExpressionNode(node) {
         return node[0] === NodeTypes.NormalExpression;
     }
@@ -1031,6 +1012,7 @@ var Playground = (function (exports) {
             case NodeTypes.String:
             case NodeTypes.Number:
             case NodeTypes.ReservedSymbol:
+            case NodeTypes.Binding:
                 return null;
             case NodeTypes.NormalExpression: {
                 var normalExpressionNode = node;
@@ -1075,10 +1057,7 @@ var Playground = (function (exports) {
             }
             case NodeTypes.Spread:
                 return findUnresolvedSymbolsInNode(node[1], contextStack, builtin, evaluateNode);
-            case NodeTypes.Binding: {
-                var bindingNode = node;
-                return findUnresolvedSymbolsInNode(bindingNode[1][1], contextStack, builtin, evaluateNode);
-            }
+            /* v8 ignore next 2 */
             default:
                 throw new Error("Unhandled node type: ".concat(nodeType));
         }
@@ -4411,6 +4390,29 @@ var Playground = (function (exports) {
         array: 14,
     };
 
+    function walkDefaults(bindingTarget, onDefault) {
+        var _a;
+        if (bindingTarget[0] === bindingTargetTypes.object) {
+            Object.values(bindingTarget[1][0]).forEach(function (element) {
+                if (element[1][1]) {
+                    onDefault(element[1][1]);
+                }
+                walkDefaults(element, onDefault);
+            });
+        }
+        else if (bindingTarget[0] === bindingTargetTypes.array) {
+            for (var index = 0; index < bindingTarget[1][0].length; index += 1) {
+                var element = (_a = bindingTarget[1][0][index]) !== null && _a !== void 0 ? _a : null;
+                if (element === null) {
+                    continue;
+                }
+                if (element[1][1]) {
+                    onDefault(element[1][1]);
+                }
+                walkDefaults(element, onDefault);
+            }
+        }
+    }
     function evalueateBindingNodeValues(target, value, evaluate) {
         var sourceCodeInfo = target[2];
         var record = {};
@@ -4550,6 +4552,9 @@ var Playground = (function (exports) {
             var target = bindingNode[1][0];
             var value = bindingNode[1][1];
             var bindingResult = getUndefinedSymbols([value], contextStack, builtin, evaluateNode);
+            walkDefaults(target, function (defaultNode) {
+                addToSet(bindingResult, getUndefinedSymbols([defaultNode], contextStack, builtin, evaluateNode));
+            });
             contextStack.addValues(getAllBindingTargetNames(target));
             return bindingResult;
         },
@@ -4677,7 +4682,7 @@ var Playground = (function (exports) {
             var functionName = node[1][1][1];
             contextStack.addValues((_b = {}, _b[functionName] = true, _b));
             var newContext = (_c = {}, _c[functionName] = { value: true }, _c);
-            return addFunctionUnresolvedSymbols(node[1][2], contextStack, getUndefinedSymbols, builtin, evaluateNode, newContext);
+            return getFunctionUnresolvedSymbols(node[1][2], contextStack, getUndefinedSymbols, builtin, evaluateNode, newContext);
         },
     };
     var defnSpecialExpression = {
@@ -4706,7 +4711,7 @@ var Playground = (function (exports) {
             var fn = node[1][2];
             contextStack.exportValues((_b = {}, _b[functionName] = true, _b));
             var newContext = (_c = {}, _c[functionName] = { value: true }, _c);
-            return addFunctionUnresolvedSymbols(fn, contextStack, getUndefinedSymbols, builtin, evaluateNode, newContext);
+            return getFunctionUnresolvedSymbols(fn, contextStack, getUndefinedSymbols, builtin, evaluateNode, newContext);
         },
     };
     var fnSpecialExpression = {
@@ -4728,7 +4733,7 @@ var Playground = (function (exports) {
         getUndefinedSymbols: function (node, contextStack, _a) {
             var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateNode = _a.evaluateNode;
             var fn = node[1][1];
-            return addFunctionUnresolvedSymbols(fn, contextStack, getUndefinedSymbols, builtin, evaluateNode);
+            return getFunctionUnresolvedSymbols(fn, contextStack, getUndefinedSymbols, builtin, evaluateNode);
         },
     };
     function evaluateFunction(fn, contextStack, builtin, getUndefinedSymbols, evaluateNode) {
@@ -4753,12 +4758,15 @@ var Playground = (function (exports) {
         ];
         return evaluatedFunction;
     }
-    function addFunctionUnresolvedSymbols(fn, contextStack, getUndefinedSymbols, builtin, evaluateNode, functionNameContext) {
+    function getFunctionUnresolvedSymbols(fn, contextStack, getUndefinedSymbols, builtin, evaluateNode, functionNameContext) {
         var result = new Set();
         var contextStackWithFunctionName = functionNameContext ? contextStack.create(functionNameContext) : contextStack;
         var newContext = {};
         fn[0].forEach(function (arg) {
             Object.assign(newContext, getAllBindingTargetNames(arg));
+            walkDefaults(arg, function (defaultNode) {
+                addToSet(result, getUndefinedSymbols([defaultNode], contextStack, builtin, evaluateNode));
+            });
         });
         var newContextStack = contextStackWithFunctionName.create(newContext);
         var overloadResult = getUndefinedSymbols(fn[1], newContextStack, builtin, evaluateNode);
@@ -4822,6 +4830,9 @@ var Playground = (function (exports) {
             var target = bindingNode[1][0];
             var value = bindingNode[1][1];
             var bindingResult = getUndefinedSymbols([value], contextStack, builtin, evaluateNode);
+            walkDefaults(target, function (defaultNode) {
+                addToSet(bindingResult, getUndefinedSymbols([defaultNode], contextStack, builtin, evaluateNode));
+            });
             contextStack.addValues(getAllBindingTargetNames(target));
             return bindingResult;
         },
@@ -5773,8 +5784,6 @@ var Playground = (function (exports) {
             var lookUpResult = this.lookUp(node);
             if (isContextEntry(lookUpResult))
                 return lookUpResult.value;
-            else if (isBuiltinFunction(lookUpResult))
-                return lookUpResult;
             throw new UndefinedSymbolError(node[1], node[2]);
         };
         return ContextStackImpl;
@@ -5858,10 +5867,10 @@ var Playground = (function (exports) {
         'cond',
         'def',
         'defined?',
-        'defn',
+        // 'defn',
         'do',
         'doseq',
-        'fn',
+        // 'fn',
         'if',
         'let',
         'loop',
@@ -6706,10 +6715,7 @@ var Playground = (function (exports) {
                     if (specialExpressionTypes[operatorName] !== undefined) {
                         return withSourceCodeInfo([NodeTypes.SpecialBuiltinSymbol, specialExpressionTypes[operatorName]], token[2]);
                     }
-                    else if (normalExpressionTypes[operatorName] !== undefined) {
-                        return withSourceCodeInfo([NodeTypes.NormalBuiltinSymbol, normalExpressionTypes[operatorName]], token[2]);
-                    }
-                    return withSourceCodeInfo([NodeTypes.UserDefinedSymbol, operatorName], token[2]);
+                    return withSourceCodeInfo([NodeTypes.NormalBuiltinSymbol, normalExpressionTypes[operatorName]], token[2]);
                 }
                 if (operatorName === '->') {
                     return this.parseShorthandLamdaFunction();
@@ -6869,9 +6875,9 @@ var Playground = (function (exports) {
                         var _b = __read(params, 1), param = _b[0];
                         return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, param]], symbol[2]);
                     }
-                    case specialExpressionTypes.fn:
-                    case specialExpressionTypes.def:
-                    case specialExpressionTypes.defn:
+                    case specialExpressionTypes['0_fn']:
+                    case specialExpressionTypes['0_def']:
+                    case specialExpressionTypes['0_defn']:
                         throw new LitsError("".concat(type, " is not allowed"), symbol[2]);
                     /* v8 ignore next 2 */
                     default:
@@ -6899,7 +6905,7 @@ var Playground = (function (exports) {
                 }
                 this.advance();
                 var body = this.parseExpression();
-                return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.fn, [
+                return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes['0_fn'], [
                             functionArguments,
                             [body],
                         ]]], firstToken[2]);
@@ -6982,7 +6988,7 @@ var Playground = (function (exports) {
                     functionArguments.push(withSourceCodeInfo([bindingTargetTypes.symbol, [[NodeTypes.UserDefinedSymbol, "$".concat(i)], undefined]], firstToken[2]));
                 }
             }
-            var node = withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.fn, [
+            var node = withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes['0_fn'], [
                         functionArguments,
                         [exprNode],
                     ]]], firstToken[2]);
@@ -7501,7 +7507,7 @@ var Playground = (function (exports) {
             this.advance();
             if (isSymbolToken(this.peek(), 'let')) {
                 var letNode = this.parseLet(asSymbolToken(this.peek()));
-                return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.def, letNode[1][1]]], token[2]);
+                return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes['0_def'], letNode[1][1]]], token[2]);
             }
             else if (isReservedSymbolToken(this.peek(), 'function')) {
                 this.advance();
@@ -7519,7 +7525,7 @@ var Playground = (function (exports) {
                 }
                 assertReservedSymbolToken(this.peek(), 'end');
                 this.advance();
-                return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.defn, symbol, [
+                return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes['0_defn'], symbol, [
                             functionArguments,
                             body,
                         ]]], token[2]);
@@ -7529,7 +7535,7 @@ var Playground = (function (exports) {
             }
         };
         Parser.prototype.stringToSymbolNode = function (value, sourceCodeInfo) {
-            if (specialExpressionTypes[value] !== undefined) {
+            if (specialExpressionTypes[value] !== undefined && value !== 'fn' && value !== 'def' && value !== 'defn') {
                 return withSourceCodeInfo([NodeTypes.SpecialBuiltinSymbol, specialExpressionTypes[value]], sourceCodeInfo);
             }
             if (normalExpressionTypes[value] !== undefined) {

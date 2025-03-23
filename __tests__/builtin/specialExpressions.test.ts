@@ -70,6 +70,10 @@ describe('specialExpressions', () => {
       expect(litsDebug.getUndefinedSymbols('array(1, 2, 3)')).toEqual(new Set())
       expect(litsDebug.getUndefinedSymbols('[1, ...x]')).toEqual(new Set('x'))
       expect(litsDebug.getUndefinedSymbols('[1, ...[...[x], y]]')).toEqual(new Set(['x', 'y']))
+      expect(litsDebug.getUndefinedSymbols('let {a := b} := {};')).toEqual(new Set(['b']))
+      expect(litsDebug.getUndefinedSymbols('export let {a := b} := {};')).toEqual(new Set(['b']))
+      expect(litsDebug.getUndefinedSymbols('function foo({a := b} := {}) a end;')).toEqual(new Set(['b']))
+      expect(litsDebug.getUndefinedSymbols('export function foo({a := b} := {}) a end;')).toEqual(new Set(['b']))
     })
   })
 
@@ -81,6 +85,7 @@ describe('specialExpressions', () => {
       expect(lits.run('{ a := 10, ...{ b := 20 } }')).toEqual({ a: 10, b: 20 })
       expect(lits.run('{ a := 10, ...{ a := 20 } }')).toEqual({ a: 20 })
       expect(lits.run('{ a := 10, ...{} }')).toEqual({ a: 10 })
+      expect(lits.run('{ \'a\' := 10, ...{} }')).toEqual({ a: 10 })
       expect(() => lits.run('{ a := 10, ...[] }')).toThrow()
     })
     it('samples', () => {
@@ -410,6 +415,9 @@ function add(a, b)
 end;
 add(1, 2)`)).toBe(3)
       expect(lits.run('function add() 10 end; add()')).toBe(10)
+      expect(() => lits.run('function add(...x := []) x end;')).toThrow()
+      expect(() => lits.run('function \'0_fn\'() 10 end;')).toThrow()
+      expect(() => lits.run('\'0_fn\'();')).toThrow()
     })
 
     test('default argument', () => {
@@ -528,6 +536,7 @@ end;`))).toEqual(
       expect(() => lits.run('throw(slice("An error", 3))')).toThrowError(UserDefinedError)
       expect(() => lits.run('throw("An error" 10)')).not.toThrowError(UserDefinedError)
       expect(() => lits.run('throw("An error" 10)')).toThrow()
+      expect(() => lits.run('throw()')).toThrow()
     })
 
     describe('unresolvedIdentifiers', () => {

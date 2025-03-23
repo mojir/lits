@@ -5,7 +5,6 @@ import type { ContextParams, LazyValue } from '../Lits/Lits'
 import type { NativeJsFunction, NormalBuiltinFunction, SymbolNode, UserDefinedSymbolNode } from '../parser/types'
 import { asNonUndefined } from '../typeGuards'
 import { isNormalBuiltinSymbolNode, isSpecialBuiltinSymbolNode } from '../typeGuards/astNode'
-import { isBuiltinFunction } from '../typeGuards/litsFunction'
 import { toAny } from '../utils'
 import { FUNCTION_SYMBOL } from '../utils/symbols'
 import type { Context, LookUpResult } from './interface'
@@ -153,8 +152,6 @@ export class ContextStackImpl {
 
     if (isContextEntry(lookUpResult))
       return lookUpResult.value
-    else if (isBuiltinFunction(lookUpResult))
-      return lookUpResult
 
     throw new UndefinedSymbolError(node[1], node[2])
   }

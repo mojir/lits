@@ -362,10 +362,7 @@ export class Parser {
         if (specialExpressionTypes[operatorName as SpecialExpressionName] !== undefined) {
           return withSourceCodeInfo([NodeTypes.SpecialBuiltinSymbol, specialExpressionTypes[operatorName as SpecialExpressionName]], token[2]) satisfies SpecialBuiltinSymbolNode
         }
-        else if (normalExpressionTypes[operatorName as NormalExpressionName] !== undefined) {
-          return withSourceCodeInfo([NodeTypes.NormalBuiltinSymbol, normalExpressionTypes[operatorName as NormalExpressionName] as number], token[2]) satisfies NormalBuiltinSymbolNode
-        }
-        return withSourceCodeInfo([NodeTypes.UserDefinedSymbol, operatorName], token[2])
+        return withSourceCodeInfo([NodeTypes.NormalBuiltinSymbol, normalExpressionTypes[operatorName as NormalExpressionName] as number], token[2]) satisfies NormalBuiltinSymbolNode
       }
 
       if (operatorName === '->') {
@@ -569,9 +566,9 @@ export class Parser {
           const [param] = params
           return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, param!]], symbol[2]) satisfies ThrowNode
         }
-        case specialExpressionTypes.fn:
-        case specialExpressionTypes.def:
-        case specialExpressionTypes.defn:
+        case specialExpressionTypes['0_fn']:
+        case specialExpressionTypes['0_def']:
+        case specialExpressionTypes['0_defn']:
           throw new LitsError(`${type} is not allowed`, symbol[2])
           /* v8 ignore next 2 */
         default:
@@ -606,7 +603,7 @@ export class Parser {
 
       const body = this.parseExpression()
 
-      return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.fn, [
+      return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes['0_fn'], [
         functionArguments,
         [body],
       ]]], firstToken[2]) satisfies FnNode
@@ -702,7 +699,7 @@ export class Parser {
       }
     }
 
-    const node: FnNode = withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.fn, [
+    const node: FnNode = withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes['0_fn'], [
       functionArguments,
       [exprNode],
     ]]], firstToken[2])
@@ -1317,7 +1314,7 @@ export class Parser {
     this.advance()
     if (isSymbolToken(this.peek(), 'let')) {
       const letNode = this.parseLet(asSymbolToken(this.peek()))
-      return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.def, letNode[1][1]]], token[2]) satisfies DefNode
+      return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes['0_def'], letNode[1][1]]], token[2]) satisfies DefNode
     }
     else if (isReservedSymbolToken(this.peek(), 'function')) {
       this.advance()
@@ -1338,7 +1335,7 @@ export class Parser {
       }
       assertReservedSymbolToken(this.peek(), 'end')
       this.advance()
-      return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.defn, symbol, [
+      return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes['0_defn'], symbol, [
         functionArguments,
         body,
       ]]], token[2]) satisfies DefnNode
@@ -1349,7 +1346,7 @@ export class Parser {
   }
 
   private stringToSymbolNode(value: string, sourceCodeInfo: SourceCodeInfo | undefined): SymbolNode {
-    if (specialExpressionTypes[value as SpecialExpressionName] !== undefined) {
+    if (specialExpressionTypes[value as SpecialExpressionName] !== undefined && value !== 'fn' && value !== 'def' && value !== 'defn') {
       return withSourceCodeInfo([NodeTypes.SpecialBuiltinSymbol, specialExpressionTypes[value as SpecialExpressionName]], sourceCodeInfo) satisfies SymbolNode
     }
     if (normalExpressionTypes[value as NormalExpressionName] !== undefined) {

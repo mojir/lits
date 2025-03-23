@@ -1,5 +1,3 @@
-import type { SpecialExpressionName } from '../builtin'
-import { specialExpressionTypes } from '../builtin/specialExpressionTypes'
 import { NodeTypes } from '../constants/constants'
 import type {
   ExpressionNode,
@@ -45,45 +43,10 @@ export function assertUserDefinedSymbolNode(node: Node, sourceCodeInfo?: SourceC
 export function isNormalBuiltinSymbolNode(node: Node): node is NormalBuiltinSymbolNode {
   return NodeTypes.NormalBuiltinSymbol === node[0]
 }
-export function asNormalBuiltinSymbolNode(node: Node, sourceCodeInfo?: SourceCodeInfo): NormalBuiltinSymbolNode {
-  assertNormalBuiltinSymbolNode(node, sourceCodeInfo)
-  return node
-}
-export function assertNormalBuiltinSymbolNode(node: Node, sourceCodeInfo?: SourceCodeInfo): asserts node is NormalBuiltinSymbolNode {
-  if (!isNormalBuiltinSymbolNode(node))
-    throw getAssertionError('NormalBuiltinSymbolNode', node, sourceCodeInfo)
-}
 
-export function isSpecialBuiltinSymbolNode(node: Node, name?: SpecialExpressionName): node is SpecialBuiltinSymbolNode {
-  if (NodeTypes.SpecialBuiltinSymbol !== node[0]) {
-    return false
-  }
-  if (name === undefined) {
-    return true
-  }
-  const specialExpressionNode = node as SpecialBuiltinSymbolNode
-  return specialExpressionNode[1] === specialExpressionTypes[name]
+export function isSpecialBuiltinSymbolNode(node: Node): node is SpecialBuiltinSymbolNode {
+  return NodeTypes.SpecialBuiltinSymbol === node[0]
 }
-export function asSpecialBuiltinSymbolNode(node: Node, sourceCodeInfo?: SourceCodeInfo): SpecialBuiltinSymbolNode {
-  assertSpecialBuiltinSymbolNode(node, sourceCodeInfo)
-  return node
-}
-export function assertSpecialBuiltinSymbolNode(node: Node, sourceCodeInfo?: SourceCodeInfo): asserts node is SpecialBuiltinSymbolNode {
-  if (!isSpecialBuiltinSymbolNode(node))
-    throw getAssertionError('SpecialBuiltinSymbolNode', node, sourceCodeInfo)
-}
-
-// export function isNumberNode(node: Node): node is NumberNode {
-//   return node[0] === NodeTypes.Number
-// }
-// export function asNumberNode(node: Node, sourceCodeInfo?: SourceCodeInfo): NumberNode {
-//   assertNumberNode(node, sourceCodeInfo)
-//   return node
-// }
-// export function assertNumberNode(node: Node, sourceCodeInfo?: SourceCodeInfo): asserts node is NumberNode {
-//   if (!isNumberNode(node))
-//     throw getAssertionError('NumberNode', node, sourceCodeInfo)
-// }
 
 export function isNormalExpressionNode(node: Node): node is NormalExpressionNode {
   return node[0] === NodeTypes.NormalExpression

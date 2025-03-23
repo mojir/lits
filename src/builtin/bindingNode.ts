@@ -6,6 +6,32 @@ import { assertUnknownRecord } from '../typeGuards'
 import { assertArray } from '../typeGuards/array'
 import { asAny, assertAny } from '../typeGuards/lits'
 
+export function walkDefaults(
+  bindingTarget: BindingTarget,
+  onDefault: (Node: Node) => void,
+): void {
+  if (bindingTarget[0] === bindingTargetTypes.object) {
+    Object.values(bindingTarget[1][0]).forEach((element) => {
+      if (element[1][1]) {
+        onDefault(element[1][1])
+      }
+      walkDefaults(element, onDefault)
+    })
+  }
+  else if (bindingTarget[0] === bindingTargetTypes.array) {
+    for (let index = 0; index < bindingTarget[1][0].length; index += 1) {
+      const element = bindingTarget[1][0][index] ?? null
+      if (element === null) {
+        continue
+      }
+      if (element[1][1]) {
+        onDefault(element[1][1])
+      }
+      walkDefaults(element, onDefault)
+    }
+  }
+}
+
 export function evalueateBindingNodeValues(
   target: BindingTarget,
   value: Any,
