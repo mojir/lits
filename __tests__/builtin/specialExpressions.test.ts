@@ -476,7 +476,7 @@ end;`))).toEqual(
         expect((lits.getUndefinedSymbols('function foo(a, b) str(a, b, c) end; foo(x, y)'))).toEqual(
           new Set(['c', 'x', 'y']),
         )
-        expect((lits.getUndefinedSymbols('function add(a, b, ...rest) a + b; [a](10) end;'))).toEqual(new Set())
+        expect((lits.getUndefinedSymbols('function add(a, b, ...the-rest) a + b; [a](10) end;'))).toEqual(new Set())
       })
     })
   })
@@ -493,7 +493,7 @@ end;`))).toEqual(
       expect((lits.getUndefinedSymbols('let foo := (a, b) -> str(a, b, c); foo(1, x)'))).toEqual(
         new Set(['c', 'x']),
       )
-      expect((lits.getUndefinedSymbols('(a, b, ...rest) -> do a + b; [a](10) end'))).toEqual(new Set())
+      expect((lits.getUndefinedSymbols('(a, b, ...the-rest) -> do a + b; [a](10) end'))).toEqual(new Set())
     })
   })
 
@@ -576,8 +576,8 @@ foo(3)`)
 
     describe('unresolvedIdentifiers', () => {
       it('samples', () => {
-        // expect((lits.getUndefinedSymbols('(-> if !(zero?($)) then recur($ - 1) end)(3)')))
-        //   .toEqual(new Set())
+        expect((lits.getUndefinedSymbols('(-> if !(zero?($)) then recur($ - 1) end)(3)')))
+          .toEqual(new Set())
         expect((lits.getUndefinedSymbols('(-> if !(zero?($)) then recur($ - a) end)(3)')))
           .toEqual(new Set('a'))
       })

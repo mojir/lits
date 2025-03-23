@@ -1,6 +1,6 @@
 import { LitsError } from '../errors'
 import type { Any } from '../interface'
-import type { BindingTarget, Node, RestBindingTarget } from '../parser/types'
+import { type BindingTarget, type Node, type RestBindingTarget, type UserDefinedSymbolNode, bindingTargetTypes } from '../parser/types'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { assertUnknownRecord } from '../typeGuards'
 import { assertArray } from '../typeGuards/array'
@@ -11,7 +11,7 @@ export function evalueateBindingNodeValues(
   value: Any,
   evaluate: (Node: Node) => Any,
 ): Record<string, Any> {
-  const sourceCodeInfo = target.sourceCodeInfo
+  const sourceCodeInfo = target[2]
   const record: Record<string, Any> = {}
   createRecord(target, value, evaluate, sourceCodeInfo, record)
   return record
@@ -24,17 +24,17 @@ function createRecord(
   sourceCodeInfo: SourceCodeInfo | undefined,
   record: Record<string, Any>,
 ): void {
-  if (bindingTarget.type === 'object') {
+  if (bindingTarget[0] === bindingTargetTypes.object) {
     assertUnknownRecord(value, sourceCodeInfo)
     const capturedKeys = new Set<string>()
     let restElement: RestBindingTarget | undefined
-    Object.entries(bindingTarget.elements).forEach(([key, element]) => {
-      if (element.type === 'rest') {
+    Object.entries(bindingTarget[1][0]).forEach(([key, element]) => {
+      if (element[0] === bindingTargetTypes.rest) {
         restElement = element
         return
       }
       capturedKeys.add(key)
-      const val = (value[key] !== undefined ? value[key] : element.default && evaluate(element.default)) ?? null
+      const val = (value[key] !== undefined ? value[key] : element[1][1] && evaluate(element[1][1])) ?? null
       assertAny(val, sourceCodeInfo)
       createRecord(element, val, evaluate, sourceCodeInfo, record)
     })
@@ -46,33 +46,36 @@ function createRecord(
           return acc
         }, {})
 
-      record[restElement.name] = restValues
+      record[restElement[1][0]] = restValues
     }
   }
-  else if (bindingTarget.type === 'array') {
+  else if (bindingTarget[0] === bindingTargetTypes.array) {
     let restIndex: number | null = null
     assertArray(value, sourceCodeInfo)
-    for (let index = 0; index < bindingTarget.elements.length; index += 1) {
-      const element = bindingTarget.elements[index] ?? null
+    for (let index = 0; index < bindingTarget[1][0].length; index += 1) {
+      const element = bindingTarget[1][0][index] ?? null
       if (element === null) {
         continue
       }
-      if (element.type === 'rest') {
+      if (element[0] === bindingTargetTypes.rest) {
         restIndex = index
         break
       }
-      const val = (value[index] !== undefined ? value[index] : element.default && evaluate(element.default)) ?? null
+      const val = (value[index] !== undefined ? value[index] : element[1][1] && evaluate(element[1][1])) ?? null
       assertAny(val, sourceCodeInfo)
       createRecord(element, val, evaluate, sourceCodeInfo, record)
     }
     if (restIndex !== null) {
       const restValues = value.slice(restIndex)
-      const restElement = bindingTarget.elements[restIndex]! as RestBindingTarget
-      record[restElement.name] = restValues
+      const restElement = bindingTarget[1][0][restIndex]! as RestBindingTarget
+      record[restElement[1][0]] = restValues
     }
   }
+  else if (bindingTarget[0] === bindingTargetTypes.rest) {
+    record[bindingTarget[1][0]] = asAny(value)
+  }
   else {
-    record[bindingTarget.name] = asAny(value)
+    record[(bindingTarget[1][0] as UserDefinedSymbolNode)[1]] = asAny(value)
   }
 }
 
@@ -86,20 +89,26 @@ function getNamesFromBindingTarget(target: BindingTarget | null, names: Record<s
   if (target === null) {
     return
   }
-  if (target.type === 'array') {
-    for (const element of target.elements) {
+  if (target[0] === bindingTargetTypes.array) {
+    for (const element of target[1][0]) {
       getNamesFromBindingTarget(element, names)
     }
   }
-  else if (target.type === 'object') {
-    for (const element of Object.values(target.elements)) {
+  else if (target[0] === bindingTargetTypes.object) {
+    for (const element of Object.values(target[1][0])) {
       getNamesFromBindingTarget(element, names)
     }
+  }
+  else if (target[0] === bindingTargetTypes.rest) {
+    if (names[target[1][0]]) {
+      throw new LitsError(`Duplicate binding name: ${target[1][0]}`, target[2])
+    }
+    names[target[1][0]] = true
   }
   else {
-    if (names[target.name]) {
-      throw new LitsError(`Duplicate binding name: ${target.name}`, target.sourceCodeInfo)
+    if (names[target[1][0][1]]) {
+      throw new LitsError(`Duplicate binding name: ${target[1][0]}`, target[2])
     }
-    names[target.name] = true
+    names[target[1][0][1]] = true
   }
 }

@@ -110,10 +110,10 @@ describe('utils', () => {
   })
 
   describe('helpers', () => {
-    const n: SymbolNode = [NodeTypes.Symbol, 'Foo']
+    const n: SymbolNode = [NodeTypes.UserDefinedSymbol, 'Foo']
     it('valueToString', () => {
       expect(valueToString(new Error('An error'))).toBe('Error: An error')
-      expect(valueToString(n)).toBe('Symbol-node')
+      expect(valueToString(n)).toBe('UserDefinedSymbol-node')
     })
   })
 })

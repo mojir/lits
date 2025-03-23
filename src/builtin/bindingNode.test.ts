@@ -1,100 +1,81 @@
 import { describe, expect, it } from 'vitest'
-import type { BindingTarget } from '../parser/types'
+import type { ArrayBindingTarget, BindingTarget } from '../parser/types'
+import { bindingTargetTypes } from '../parser/types'
+import { NodeTypes } from '../constants/constants'
 import { getAllBindingTargetNames } from './bindingNode'
 
 describe('getAllBindingTargetNames', () => {
   it('should return an empty array for an empty binding node', () => {
-    const bindingTarget: BindingTarget = {
-      type: 'object',
-      elements: {},
-      sourceCodeInfo: undefined,
-    }
+    const bindingTarget: BindingTarget = [bindingTargetTypes.array, [[], undefined]]
 
     const result = getAllBindingTargetNames(bindingTarget)
     expect(result).toEqual({})
   })
 
   it('should return a single name for a symbol target', () => {
-    const bindingTarget: BindingTarget = {
-      type: 'symbol',
-      name: 'x',
-      sourceCodeInfo: undefined,
-    }
+    const bindingTarget: BindingTarget = [bindingTargetTypes.symbol, [[NodeTypes.UserDefinedSymbol, 'x'], undefined]]
 
     const result = getAllBindingTargetNames(bindingTarget)
     expect(result).toEqual({ x: true })
   })
 
   it('should return all names for an object target', () => {
-    const bindingTarget: BindingTarget = {
-      type: 'object',
-      elements: {
-        a: { type: 'symbol', name: 'a', sourceCodeInfo: undefined },
-        b: { type: 'symbol', name: 'b', sourceCodeInfo: undefined },
+    const bindingTarget: BindingTarget = [bindingTargetTypes.object, [
+      {
+        a: [bindingTargetTypes.symbol, [[NodeTypes.UserDefinedSymbol, 'a'], undefined]],
+        b: [bindingTargetTypes.symbol, [[NodeTypes.UserDefinedSymbol, 'b'], undefined]],
       },
-      sourceCodeInfo: undefined,
-    }
+      undefined,
+    ]]
     const result = getAllBindingTargetNames(bindingTarget)
     expect(result).toEqual({ a: true, b: true })
   })
 
   it('should return all names for a nested object target', () => {
-    const bindingTarget: BindingTarget = {
-      type: 'object',
-      elements: {
-        a: {
-          type: 'object',
-          elements: {
-            x: { type: 'symbol', name: 'x', sourceCodeInfo: undefined },
-            y: { type: 'symbol', name: 'y', sourceCodeInfo: undefined },
-          },
-          sourceCodeInfo: undefined,
-        },
-        z: { type: 'symbol', name: 'z', sourceCodeInfo: undefined },
+    const bindingTarget: BindingTarget = [bindingTargetTypes.object, [{ a: [bindingTargetTypes.object, [
+      {
+        x: [bindingTargetTypes.symbol, [[NodeTypes.UserDefinedSymbol, 'x'], undefined]],
+        y: [bindingTargetTypes.symbol, [[NodeTypes.UserDefinedSymbol, 'y'], undefined]],
       },
-      sourceCodeInfo: undefined,
-    }
+      undefined,
+    ]], z: [bindingTargetTypes.symbol, [[NodeTypes.UserDefinedSymbol, 'z'], undefined]] }, undefined]]
 
     const result = getAllBindingTargetNames(bindingTarget)
     expect(result).toEqual({ x: true, y: true, z: true })
   })
 
   it('should return all names for an array target', () => {
-    const bindingTarget: BindingTarget = {
-      type: 'array',
-      elements: [
-        { type: 'symbol', name: 'a', sourceCodeInfo: undefined },
-        { type: 'symbol', name: 'b', sourceCodeInfo: undefined },
+    const bindingTarget: ArrayBindingTarget = [bindingTargetTypes.array, [
+      [
+        [bindingTargetTypes.symbol, [[NodeTypes.UserDefinedSymbol, 'a'], undefined]],
+        [bindingTargetTypes.symbol, [[NodeTypes.UserDefinedSymbol, 'b'], undefined]],
       ],
-      sourceCodeInfo: undefined,
-    }
+      undefined,
+    ]]
 
     const result = getAllBindingTargetNames(bindingTarget)
     expect(result).toEqual({ a: true, b: true })
   })
 
   it('should return all names for a deeply nested structure', () => {
-    const bindingTarget: BindingTarget = {
-      type: 'object',
-      elements: {
-        a: {
-          type: 'array',
-          elements: [
-            { type: 'symbol', name: 'x', sourceCodeInfo: undefined },
-            {
-              type: 'object',
-              elements: {
-                y: { type: 'symbol', name: 'y', sourceCodeInfo: undefined },
-                z: { type: 'symbol', name: 'z', sourceCodeInfo: undefined },
+    const bindingTarget: BindingTarget = [bindingTargetTypes.object, [
+      {
+        a: [bindingTargetTypes.array, [
+          [
+            [bindingTargetTypes.symbol, [[NodeTypes.UserDefinedSymbol, 'x'], undefined]],
+            [bindingTargetTypes.object, [
+              {
+                y: [bindingTargetTypes.symbol, [[NodeTypes.UserDefinedSymbol, 'y'], undefined]],
+                z: [bindingTargetTypes.symbol, [[NodeTypes.UserDefinedSymbol, 'z'], undefined]],
               },
-              sourceCodeInfo: undefined,
-            },
+              undefined,
+            ]],
           ],
-          sourceCodeInfo: undefined,
-        },
+          undefined,
+        ]],
       },
-      sourceCodeInfo: undefined,
-    }
+      undefined,
+    ]]
 
     const result = getAllBindingTargetNames(bindingTarget)
     expect(result).toEqual({ x: true, y: true, z: true })

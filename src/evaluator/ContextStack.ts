@@ -1,9 +1,10 @@
-import { builtin, normalExpressionKeys, specialExpressionKeys } from '../builtin'
+import { normalExpressionKeys, specialExpressionKeys } from '../builtin'
 import { UndefinedSymbolError } from '../errors'
 import type { Any } from '../interface'
 import type { ContextParams, LazyValue } from '../Lits/Lits'
-import type { BuiltinFunction, NativeJsFunction, SymbolNode } from '../parser/types'
+import type { NativeJsFunction, NormalBuiltinFunction, SymbolNode, UserDefinedSymbolNode } from '../parser/types'
 import { asNonUndefined } from '../typeGuards'
+import { isNormalBuiltinSymbolNode, isSpecialBuiltinSymbolNode } from '../typeGuards/astNode'
 import { isBuiltinFunction } from '../typeGuards/litsFunction'
 import { toAny } from '../utils'
 import { FUNCTION_SYMBOL } from '../utils/symbols'
@@ -103,9 +104,9 @@ export class ContextStackImpl {
     return this.values?.[name]
   }
 
-  public lookUp(node: SymbolNode): LookUpResult {
+  public lookUp(node: UserDefinedSymbolNode): LookUpResult {
     const value = node[1]
-    const sourceCodeInfo = node[2]
+    // const sourceCodeInfo = node[2]
 
     for (const context of this.contexts) {
       const contextEntry = context[value]
@@ -124,15 +125,6 @@ export class ContextStackImpl {
         value: toAny(hostValue),
       }
     }
-    if (builtin.normalExpressions[value]) {
-      const builtinFunction: BuiltinFunction = {
-        [FUNCTION_SYMBOL]: true,
-        sourceCodeInfo,
-        functionType: 'Builtin',
-        n: value,
-      }
-      return builtinFunction
-    }
 
     const nativeJsFunction = this.nativeJsFunctions?.[value]
     if (nativeJsFunction) {
@@ -144,7 +136,19 @@ export class ContextStackImpl {
     return null
   }
 
-  public evaluateName(node: SymbolNode): Any {
+  public evaluateSymbol(node: SymbolNode): Any {
+    if (isSpecialBuiltinSymbolNode(node)) {
+      throw new Error('Special builtin symbols should not be evaluated')
+    }
+    if (isNormalBuiltinSymbolNode(node)) {
+      const type = node[1]
+      return {
+        [FUNCTION_SYMBOL]: true,
+        functionType: 'Builtin',
+        normalBuitinSymbolType: type,
+        sourceCodeInfo: node[2],
+      } satisfies NormalBuiltinFunction
+    }
     const lookUpResult = this.lookUp(node)
 
     if (isContextEntry(lookUpResult))

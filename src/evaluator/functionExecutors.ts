@@ -1,21 +1,22 @@
 import { evalueateBindingNodeValues } from '../builtin/bindingNode'
-import { normalExpressions } from '../builtin/normalExpressions'
+import { allNormalExpressions } from '../builtin/normalExpressions'
 import { LitsError, RecurSignal } from '../errors'
 import type { Any, Arr } from '../interface'
-import type {
-  BuiltinFunction,
-  CompFunction,
-  ComplementFunction,
-  ConstantlyFunction,
-  EvaluatedFunction,
-  EveryPredFunction,
-  FNullFunction,
-  JuxtFunction,
-  LitsFunctionType,
-  NativeJsFunction,
-  PartialFunction,
-  SomePredFunction,
-  UserDefinedFunction,
+import {
+  type CompFunction,
+  type ComplementFunction,
+  type ConstantlyFunction,
+  type EvaluatedFunction,
+  type EveryPredFunction,
+  type FNullFunction,
+  type JuxtFunction,
+  type LitsFunctionType,
+  type NativeJsFunction,
+  type NormalBuiltinFunction,
+  type PartialFunction,
+  type SomePredFunction,
+  type UserDefinedFunction,
+  bindingTargetTypes,
 } from '../parser/types'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { asNonUndefined, isUnknownRecord } from '../typeGuards'
@@ -41,9 +42,9 @@ function checkParams(
   nbrOfParams: number,
   sourceCodeInfo?: SourceCodeInfo,
 ) {
-  const hasRest = evaluatedFunction.arguments.some(arg => arg.type === 'rest')
-  const minArity = evaluatedFunction.arguments.filter(arg => arg.type !== 'rest' && !arg.default).length
-  const maxArity = hasRest ? Number.MAX_SAFE_INTEGER : evaluatedFunction.arguments.length
+  const hasRest = evaluatedFunction[0].some(arg => arg[0] === bindingTargetTypes.rest)
+  const minArity = evaluatedFunction[0].filter(arg => arg[0] !== bindingTargetTypes.rest && arg[1][1] === undefined).length
+  const maxArity = hasRest ? Number.MAX_SAFE_INTEGER : evaluatedFunction[0].length
   if (nbrOfParams < minArity || nbrOfParams > maxArity) {
     throw new LitsError(`Unexpected number of arguments, got ${valueToString(nbrOfParams)}.`, sourceCodeInfo)
   }
@@ -71,10 +72,10 @@ export const functionExecutors: FunctionExecutors = {
     for (;;) {
       checkParams(fn.evaluatedfunction, params.length, sourceCodeInfo)
       const evaluatedFunction = fn.evaluatedfunction
-      const args = evaluatedFunction.arguments
-      const nbrOfNonRestArgs: number = args.filter(arg => arg.type !== 'rest').length
+      const args = evaluatedFunction[0]
+      const nbrOfNonRestArgs: number = args.filter(arg => arg[0] !== bindingTargetTypes.rest).length
 
-      const newContextStack = contextStack.create(fn.evaluatedfunction.context)
+      const newContextStack = contextStack.create(fn.evaluatedfunction[2])
       const newContext: Context = {}
 
       const rest: Arr = []
@@ -94,7 +95,7 @@ export const functionExecutors: FunctionExecutors = {
 
       for (let i = params.length; i < nbrOfNonRestArgs; i++) {
         const arg = args[i]!
-        const defaultValue = evaluateNode(arg.default!, contextStack.create(newContext))
+        const defaultValue = evaluateNode(arg[1][1]!, contextStack.create(newContext))
         const valueRecord = evalueateBindingNodeValues(arg, defaultValue, Node =>
           evaluateNode(Node, contextStack.create(newContext)))
         Object.entries(valueRecord).forEach(([key, value]) => {
@@ -102,7 +103,7 @@ export const functionExecutors: FunctionExecutors = {
         })
       }
 
-      const restArgument = args.find(arg => arg.type === 'rest')
+      const restArgument = args.find(arg => arg[0] === bindingTargetTypes.rest)
       if (restArgument !== undefined) {
         const valueRecord = evalueateBindingNodeValues(restArgument, rest, Node => evaluateNode(Node, contextStack.create(newContext)))
         Object.entries(valueRecord).forEach(([key, value]) => {
@@ -113,7 +114,7 @@ export const functionExecutors: FunctionExecutors = {
       try {
         let result: Any = null
         const newContextStack2 = newContextStack.create(newContext)
-        for (const node of evaluatedFunction.body) {
+        for (const node of evaluatedFunction[1]) {
           result = evaluateNode(node, newContextStack2)
         }
 
@@ -179,8 +180,8 @@ export const functionExecutors: FunctionExecutors = {
     const fnulledParams = params.map((param, index) => (param === null ? toAny(fn.params[index]) : param))
     return executeFunction(toAny(fn.function), fnulledParams, contextStack, sourceCodeInfo)
   },
-  Builtin: (fn: BuiltinFunction, params, sourceCodeInfo, contextStack, { executeFunction }) => {
-    const normalExpression = asNonUndefined(normalExpressions[fn.n], sourceCodeInfo)
+  Builtin: (fn: NormalBuiltinFunction, params, sourceCodeInfo, contextStack, { executeFunction }) => {
+    const normalExpression = asNonUndefined(allNormalExpressions[fn.normalBuitinSymbolType], sourceCodeInfo)
     return normalExpression.evaluate(params, sourceCodeInfo, contextStack, { executeFunction })
   },
 }

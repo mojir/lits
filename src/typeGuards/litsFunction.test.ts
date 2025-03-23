@@ -4,6 +4,7 @@ import type { LitsFunction } from '../parser/types'
 import { createNativeJsFunction } from '../utils'
 import { FUNCTION_SYMBOL } from '../utils/symbols'
 
+import { normalExpressionTypes } from '../builtin/normalExpressions'
 import {
   asLitsFunction,
   asNativeJsFunction,
@@ -21,16 +22,12 @@ describe('litsFunction type guards', () => {
     [FUNCTION_SYMBOL]: true,
     functionType: 'UserDefined',
     name: undefined,
-    evaluatedfunction: {
-      arguments: [],
-      context: {},
-      body: [],
-    },
+    evaluatedfunction: [[], [], {}],
   }
   const lf2: LitsFunction = {
     [FUNCTION_SYMBOL]: true,
     functionType: 'Builtin',
-    n: '+',
+    normalBuitinSymbolType: normalExpressionTypes['+'] as number,
   }
   const lf3: LitsFunction = {
     [FUNCTION_SYMBOL]: true,

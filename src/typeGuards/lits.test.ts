@@ -27,7 +27,7 @@ import {
 
 describe('lits type guards', () => {
   it('any', () => {
-    const node: Node = [NodeTypes.Symbol, 'test']
+    const node: Node = [NodeTypes.UserDefinedSymbol, 'test']
 
     const valid = [node, 1, 'bar', null, [], {}]
     const invalid = [undefined]

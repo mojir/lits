@@ -1,9 +1,9 @@
 import type { Builtin } from './interface'
-import { normalExpressions } from './normalExpressions'
+import { allNormalExpressions, normalExpressions } from './normalExpressions'
 import { andSpecialExpression } from './specialExpressions/and'
 import { condSpecialExpression } from './specialExpressions/cond'
 import { switchSpecialExpression } from './specialExpressions/switch'
-import { declaredSpecialExpression } from './specialExpressions/declared'
+import { definedSpecialExpression } from './specialExpressions/defined'
 import { defSpecialExpression } from './specialExpressions/def'
 import { doSpecialExpression } from './specialExpressions/do'
 import { defnSpecialExpression, fnSpecialExpression, functionSpecialExpression } from './specialExpressions/functions'
@@ -28,7 +28,7 @@ export const specialExpressions = [
   arraySpecialExpression,
   condSpecialExpression,
   defSpecialExpression,
-  declaredSpecialExpression,
+  definedSpecialExpression,
   defnSpecialExpression,
   doSpecialExpression,
   doseqSpecialExpression,
@@ -69,6 +69,7 @@ export type SpecialExpressionType = typeof specialExpressionTypes[SpecialExpress
 export const builtin: Builtin = {
   normalExpressions,
   specialExpressions,
+  allNormalExpressions,
 }
 
 export const normalExpressionKeys = Object.keys(normalExpressions)

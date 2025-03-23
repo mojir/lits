@@ -129,7 +129,7 @@ describe('sequence functions', () => {
       function countChars(stringArray)
         reduce(
           stringArray,
-          (sum, str) -> sum + count(str),
+          (sum, s) -> sum + count(s),
           0
         )
       end;
@@ -142,11 +142,11 @@ describe('sequence functions', () => {
       function longestLength(stringArray)
         reduce(
           stringArray,
-          (sum, str) ->
-            if sum > count(str) then
+          (sum, s) ->
+            if sum > count(s) then
               sum
             else
-              count(str)
+              count(s)
             end,
           0
         )

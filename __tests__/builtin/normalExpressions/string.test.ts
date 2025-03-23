@@ -120,7 +120,7 @@ describe('string functions', () => {
       })
     })
 
-    describe('split', () => {
+    describe('split.', () => {
       it('samples', () => {
         expect(lits.run('split("Albert Mojir", " ")')).toEqual(['Albert', 'Mojir'])
         expect(lits.run('split("0123456789", "")')).toEqual(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])

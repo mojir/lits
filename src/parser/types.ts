@@ -4,19 +4,14 @@ import type { FunctionType, NodeType, NodeTypes } from '../constants/constants'
 import type { Context } from '../evaluator/interface'
 import type { Any, Arr } from '../interface'
 import type { ReservedSymbol } from '../tokenizer/reservedNames'
-import type { ModifierName, SourceCodeInfo, Token } from '../tokenizer/token'
-import type { TokenStream } from '../tokenizer/tokenize'
+import type { SourceCodeInfo, Token } from '../tokenizer/token'
 import type { FUNCTION_SYMBOL, REGEXP_SYMBOL } from '../utils/symbols'
 
 export interface ParseState {
   position: number
 }
 
-export interface EvaluatedFunction {
-  arguments: BindingTarget[]
-  body: Node[]
-  context: Context
-}
+export type EvaluatedFunction = [BindingTarget[], Node[], Context]
 
 interface GenericLitsFunction {
   [FUNCTION_SYMBOL]: true
@@ -85,15 +80,15 @@ export interface FNullFunction extends GenericLitsFunction {
   params: Arr
 }
 
-export interface BuiltinFunction extends GenericLitsFunction {
+export interface NormalBuiltinFunction extends GenericLitsFunction {
   functionType: 'Builtin'
-  n: string // name
+  normalBuitinSymbolType: number
 }
 
 export type LitsFunction =
   | NativeJsFunction
   | UserDefinedFunction
-  | BuiltinFunction
+  | NormalBuiltinFunction
   | PartialFunction
   | CompFunction
   | ConstantlyFunction
@@ -112,48 +107,35 @@ export type DebugData = {
 export type Node<T extends NodeType = NodeType, Payload = unknown> = [T, Payload] | [T, Payload, SourceCodeInfo]
 
 export type ExpressionNode = NormalExpressionNode | SpecialExpressionNode | NumberNode | StringNode
-export type ParseBinding = (tokens: TokenStream, parseState: ParseState) => BindingNode
-export type ParseBindings = (tokens: TokenStream, parseState: ParseState) => BindingNode[]
-export type ParseArgument = (tokens: TokenStream, parseState: ParseState) => ModifierNode
-export type ParseExpression = (tokens: TokenStream, parseState: ParseState) => ExpressionNode
-export type ParseTokensUntilClosingBracket = (tokens: TokenStream, parseState: ParseState) => Node[]
-export type ParseToken = (tokens: TokenStream, parseState: ParseState) => Node
 
 export type SpreadNode = Node<typeof NodeTypes.Spread, Node> // Payload should be array or object depending on context
 export type NumberNode = Node<typeof NodeTypes.Number, number>
 export type StringNode = Node<typeof NodeTypes.String, string>
-export type SymbolNode = Node<typeof NodeTypes.Symbol, string>
-export type ModifierNode = Node<typeof NodeTypes.Modifier, ModifierName>
+export type UserDefinedSymbolNode = Node<typeof NodeTypes.UserDefinedSymbol, string>
+export type NormalBuiltinSymbolNode = Node<typeof NodeTypes.NormalBuiltinSymbol, number>
+export type SpecialBuiltinSymbolNode = Node<typeof NodeTypes.SpecialBuiltinSymbol, SpecialExpressionType>
+export type SymbolNode = UserDefinedSymbolNode | NormalBuiltinSymbolNode | SpecialBuiltinSymbolNode
 export type ReservedSymbolNode = Node<typeof NodeTypes.ReservedSymbol, ReservedSymbol>
 export type SpecialExpressionNode<T extends [SpecialExpressionType, ...unknown[]] = [SpecialExpressionType, ...unknown[]]> = Node<typeof NodeTypes.SpecialExpression, T> // [name, params]
 
-export type NormalExpressionNodeWithName = Node<typeof NodeTypes.NormalExpression, [string, Node[]]> // [params, name]
+export type NormalExpressionNodeWithName = Node<typeof NodeTypes.NormalExpression, [NormalBuiltinSymbolNode | UserDefinedSymbolNode, Node[]]> // [params, name]
 export type NormalExpressionNodeExpression = Node<typeof NodeTypes.NormalExpression, [Node, Node[]]> // [name, node as function] node can be string number object or array
 export type NormalExpressionNode = NormalExpressionNodeWithName | NormalExpressionNodeExpression
-interface CommonBindingTarget {
-  sourceCodeInfo: SourceCodeInfo | undefined
-  default?: Node
-}
+export const bindingTargetTypes = {
+  symbol: 11,
+  rest: 12,
+  object: 13,
+  array: 14,
+} as const
 
-export type SymbolBindingTarget = CommonBindingTarget & {
-  type: 'symbol'
-  name: string
-}
+export type BindingTargetType = typeof bindingTargetTypes[keyof typeof bindingTargetTypes]
 
-export type RestBindingTarget = CommonBindingTarget & {
-  type: 'rest'
-  name: string
-}
+type GenericTarget<T extends BindingTargetType, Payload extends unknown[]> = [T, Payload] | [T, Payload, SourceCodeInfo]
 
-export type ObjectBindingTarget = CommonBindingTarget & {
-  type: 'object'
-  elements: Record<string, BindingTarget>
-}
-
-export type ArrayBindingTarget = CommonBindingTarget & {
-  type: 'array'
-  elements: (BindingTarget | null)[]
-}
+export type SymbolBindingTarget = GenericTarget<typeof bindingTargetTypes.symbol, [SymbolNode, Node | undefined]>
+export type RestBindingTarget = GenericTarget<typeof bindingTargetTypes.rest, [string, Node | undefined]>
+export type ObjectBindingTarget = GenericTarget<typeof bindingTargetTypes.object, [Record<string, BindingTarget>, Node | undefined]>
+export type ArrayBindingTarget = GenericTarget<typeof bindingTargetTypes.array, [(BindingTarget | null)[], Node | undefined]>
 
 export type BindingTarget = SymbolBindingTarget | RestBindingTarget | ObjectBindingTarget | ArrayBindingTarget
 

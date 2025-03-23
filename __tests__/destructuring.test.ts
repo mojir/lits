@@ -47,7 +47,7 @@ describe('lits Destructuring', () => {
     test('renaming with original property name still inaccessible', () => {
       expect(lits.run(`
         let { name as userName } := { name := "Frank" };
-        defined?("name")
+        defined?(name)
       `)).toBe(false)
     })
   })

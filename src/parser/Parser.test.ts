@@ -767,7 +767,7 @@ end;
 
 foo()`)).toBe(42)
     })
-    test('with rest arguments', () => {
+    test('with rest arguments///', () => {
       expect(lits.run(`
 function foo(...x)
   '+' apply (x filter -> $ > 0)
@@ -1283,7 +1283,7 @@ foo(1, 2)`)).toBe(3)
 
     it('supports lambda functions with rest parameters', () => {
       expect(lits.run('((...args) -> apply(+, args))(1, 2, 3, 4, 5, 6)')).toBe(21)
-      expect(lits.run('((first, ...args) -> first + apply(+, args))(1, 2, 3, 4, 5, 6)')).toBe(21)
+      expect(lits.run('((nbr1, ...args) -> nbr1 + apply(+, args))(1, 2, 3, 4, 5, 6)')).toBe(21)
     })
 
     it('supports lambda function expressions in data structures', () => {

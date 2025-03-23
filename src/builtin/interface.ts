@@ -3,12 +3,6 @@ import type { EvaluateNode, ExecuteFunction } from '../evaluator/interface'
 import type { GetUndefinedSymbols, UndefinedSymbols } from '../getUndefinedSymbols'
 import type { Any, Arr } from '../interface'
 import type {
-  ParseArgument,
-  ParseBinding,
-  ParseBindings,
-  ParseExpression,
-  ParseToken,
-  ParseTokensUntilClosingBracket,
   SpecialExpressionNode,
 } from '../parser/types'
 import type { SourceCodeInfo } from '../tokenizer/token'
@@ -23,22 +17,14 @@ export type NormalExpressionEvaluator<T> = (
   { executeFunction }: { executeFunction: ExecuteFunction },
 ) => T
 
-interface BuiltinNormalExpression<T> {
+export interface BuiltinNormalExpression<T> {
   evaluate: NormalExpressionEvaluator<T>
   paramCount: Count
   aliases?: string[]
 }
 
-export interface ParserHelpers {
-  parseExpression: ParseExpression
-  parseTokensUntilClosingBracket: ParseTokensUntilClosingBracket
-  parseToken: ParseToken
-  parseBinding: ParseBinding
-  parseBindings: ParseBindings
-  parseArgument: ParseArgument
-}
-
 export type BuiltinNormalExpressions = Record<string, BuiltinNormalExpression<Any>>
+export type BuiltingAllNormalExpressions = BuiltinNormalExpression<Any>[]
 
 export interface EvaluateHelpers {
   evaluateNode: EvaluateNode
@@ -57,5 +43,6 @@ export interface BuiltinSpecialExpression<T, N extends SpecialExpressionNode> {
 
 export interface Builtin {
   normalExpressions: BuiltinNormalExpressions
+  allNormalExpressions: BuiltingAllNormalExpressions
   specialExpressions: SpecialExpressions
 }

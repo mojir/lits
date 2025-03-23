@@ -15,6 +15,7 @@ import type { Builtin, BuiltinSpecialExpression } from '../interface'
 import type { Function } from '../utils'
 import { assertNameNotDefined } from '../utils'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
+import { assertUserDefinedSymbolNode } from '../../typeGuards/astNode'
 
 export type DefnNode = SpecialExpressionNode<[typeof specialExpressionTypes['defn'], SymbolNode, Function]>
 export type FunctionNode = SpecialExpressionNode<[typeof specialExpressionTypes['function'], SymbolNode, Function]>
@@ -23,9 +24,10 @@ export type FnNode = SpecialExpressionNode<[typeof specialExpressionTypes['fn'],
 export const functionSpecialExpression: BuiltinSpecialExpression<null, FunctionNode> = {
   paramCount: {},
   evaluate: (node, contextStack, { builtin, getUndefinedSymbols, evaluateNode }) => {
-    const [, [, functionName], fn] = node[1]
+    const [, functionSymbol, fn] = node[1]
 
-    assertNameNotDefined(functionName, contextStack, builtin, node[2])
+    assertUserDefinedSymbolNode(functionSymbol, node[2])
+    assertNameNotDefined(functionSymbol[1], contextStack, builtin, node[2])
 
     const evaluatedFunction = evaluateFunction(fn, contextStack, builtin, getUndefinedSymbols, evaluateNode)
 
@@ -33,11 +35,11 @@ export const functionSpecialExpression: BuiltinSpecialExpression<null, FunctionN
       [FUNCTION_SYMBOL]: true,
       sourceCodeInfo: node[2],
       functionType: 'UserDefined',
-      name: functionName,
+      name: functionSymbol[1],
       evaluatedfunction: evaluatedFunction,
     }
 
-    contextStack.addValues({ [functionName]: litsFunction })
+    contextStack.addValues({ [functionSymbol[1]]: litsFunction })
     return null
   },
 
@@ -52,9 +54,10 @@ export const functionSpecialExpression: BuiltinSpecialExpression<null, FunctionN
 export const defnSpecialExpression: BuiltinSpecialExpression<null, DefnNode> = {
   paramCount: {},
   evaluate: (node, contextStack, { builtin, getUndefinedSymbols, evaluateNode }) => {
-    const [, [, functionName], fn] = node[1]
+    const [, functionSymbol, fn] = node[1]
 
-    assertNameNotDefined(functionName, contextStack, builtin, node[2])
+    assertUserDefinedSymbolNode(functionSymbol, node[2])
+    assertNameNotDefined(functionSymbol[1], contextStack, builtin, node[2])
 
     const evaluatedFunctionOverloades = evaluateFunction(fn, contextStack, builtin, getUndefinedSymbols, evaluateNode)
 
@@ -62,11 +65,11 @@ export const defnSpecialExpression: BuiltinSpecialExpression<null, DefnNode> = {
       [FUNCTION_SYMBOL]: true,
       sourceCodeInfo: node[2],
       functionType: 'UserDefined',
-      name: functionName,
+      name: functionSymbol[1],
       evaluatedfunction: evaluatedFunctionOverloades,
     }
 
-    contextStack.exportValues({ [functionName]: litsFunction })
+    contextStack.exportValues({ [functionSymbol[1]]: litsFunction })
     return null
   },
 
@@ -111,13 +114,13 @@ function evaluateFunction(
 ): EvaluatedFunction {
   const functionContext: Context = {}
 
-  const context = fn.arguments.reduce((ctx: Context, arg) => {
+  const context = fn[0].reduce((ctx: Context, arg) => {
     Object.keys(getAllBindingTargetNames(arg)).forEach((name) => {
       ctx[name] = { value: null }
     })
     return ctx
   }, {})
-  const undefinedSymbols = getUndefinedSymbols(fn.body, contextStack.new(context), builtin, evaluateNode)
+  const undefinedSymbols = getUndefinedSymbols(fn[1], contextStack.new(context), builtin, evaluateNode)
   undefinedSymbols.forEach((name) => {
     const value = contextStack.getValue(name)
     if (isAny(value)) {
@@ -125,11 +128,11 @@ function evaluateFunction(
     }
   })
 
-  const evaluatedFunction: EvaluatedFunction = {
-    arguments: fn.arguments,
-    body: fn.body,
-    context: functionContext,
-  }
+  const evaluatedFunction: EvaluatedFunction = [
+    fn[0],
+    fn[1],
+    functionContext,
+  ]
 
   return evaluatedFunction
 }
@@ -147,12 +150,12 @@ function addFunctionUnresolvedSymbols(
   const contextStackWithFunctionName = functionNameContext ? contextStack.create(functionNameContext) : contextStack
   const newContext: Context = {}
 
-  fn.arguments.forEach((arg) => {
+  fn[0].forEach((arg) => {
     Object.assign(newContext, getAllBindingTargetNames(arg))
   })
 
   const newContextStack = contextStackWithFunctionName.create(newContext)
-  const overloadResult = getUndefinedSymbols(fn.body, newContextStack, builtin, evaluateNode)
+  const overloadResult = getUndefinedSymbols(fn[1], newContextStack, builtin, evaluateNode)
   addToSet(result, overloadResult)
   return result
 }

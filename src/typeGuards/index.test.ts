@@ -2,6 +2,7 @@ import { describe, expect, it, test } from 'vitest'
 import { testTypeGuars } from '../../__tests__/testUtils'
 import type { Node, NormalExpressionNodeWithName } from '../parser/types'
 import { NodeTypes } from '../constants/constants'
+import { normalExpressionTypes } from '../builtin/normalExpressions'
 import {
   asNonUndefined,
   asUnknownRecord,
@@ -14,7 +15,7 @@ import {
 
 function toNormalExpressionNode(arr: number[]): NormalExpressionNodeWithName {
   const nodes: Node[] = arr.map(n => [NodeTypes.Number, n])
-  return [NodeTypes.NormalExpression, ['+', nodes]]
+  return [NodeTypes.NormalExpression, [[NodeTypes.NormalBuiltinSymbol, normalExpressionTypes['+'] as number], nodes]]
 }
 
 describe('typeGuards index file', () => {

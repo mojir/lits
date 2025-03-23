@@ -1,4 +1,5 @@
-import type { BuiltinNormalExpressions } from '../interface'
+import type { BuiltinNormalExpression, BuiltinNormalExpressions } from '../interface'
+import type { Any } from '../../interface'
 import { bitwiseNormalExpression } from './categories/bitwise'
 import { collectionNormalExpression } from './categories/collection'
 import { arrayNormalExpression } from './categories/array'
@@ -39,3 +40,11 @@ export const normalExpressions: BuiltinNormalExpressions = {
   ...expressions,
   ...aliases,
 }
+
+export const normalExpressionTypes: Record<string, number> = {}
+export const allNormalExpressions: BuiltinNormalExpression<Any>[] = []
+
+Object.entries(normalExpressions).forEach(([key, value], index) => {
+  normalExpressionTypes[key] = index
+  allNormalExpressions.push(value)
+})

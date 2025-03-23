@@ -7,7 +7,7 @@ export function stringifyValue(value: unknown, html: boolean): string {
   const lt = html ? '&lt;' : '<'
   if (isLitsFunction(value)) {
     if (value.functionType === 'Builtin')
-      return `${lt}builtin function ${value.n}${gt}`
+      return `${lt}builtin function ${value.normalBuitinSymbolType}${gt}`
     else
       return `${lt}function ${(value as unknown as UnknownRecord).n ?? '\u03BB'}${gt}`
   }

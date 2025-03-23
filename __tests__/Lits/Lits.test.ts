@@ -7,6 +7,7 @@ import { assertLitsFunction } from '../../src/typeGuards/litsFunction'
 import { FUNCTION_SYMBOL } from '../../src/utils/symbols'
 import type { Ast, NormalExpressionNodeWithName, UserDefinedFunction } from '../../src/parser/types'
 import { NodeTypes } from '../../src/constants/constants'
+import { normalExpressionTypes } from '../../src/builtin/normalExpressions'
 
 describe('all tests', () => {
   describe('tEST', () => {
@@ -44,11 +45,7 @@ describe('all tests', () => {
             [FUNCTION_SYMBOL]: true,
             name: undefined,
             functionType: 'UserDefined',
-            evaluatedfunction: {
-              arguments: [],
-              body: [[NodeTypes.Number, 42]],
-              context: {},
-            },
+            evaluatedfunction: [[], [[NodeTypes.Number, 42]], {}],
           } satisfies UserDefinedFunction),
         },
       }
@@ -98,7 +95,7 @@ describe('all tests', () => {
         '2 ** 4': {
           hasDebugData: false,
           body: [
-            [NodeTypes.NormalExpression, ['**', [[NodeTypes.Number, 2], [NodeTypes.Number, 2]]]] satisfies NormalExpressionNodeWithName,
+            [NodeTypes.NormalExpression, [[NodeTypes.NormalBuiltinSymbol, normalExpressionTypes['**'] as number], [[NodeTypes.Number, 2], [NodeTypes.Number, 2]]]] satisfies NormalExpressionNodeWithName,
           ],
         },
       }

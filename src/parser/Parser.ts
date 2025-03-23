@@ -1,10 +1,11 @@
-import type { SpecialExpressionName } from '../builtin'
-import { builtin, specialExpressionNameSet } from '../builtin'
+import type { NormalExpressionName } from '../../reference/api'
+import type { SpecialExpressionName, SpecialExpressionType } from '../builtin'
 import { getAllBindingTargetNames } from '../builtin/bindingNode'
+import { allNormalExpressions, normalExpressionTypes } from '../builtin/normalExpressions'
 import type { AndNode } from '../builtin/specialExpressions/and'
 import type { ArrayNode } from '../builtin/specialExpressions/array'
 import type { CondNode } from '../builtin/specialExpressions/cond'
-import type { DefinedNode } from '../builtin/specialExpressions/declared'
+import type { DefinedNode } from '../builtin/specialExpressions/defined'
 import type { DefNode } from '../builtin/specialExpressions/def'
 import type { DoNode } from '../builtin/specialExpressions/do'
 import type { DefnNode, FnNode, FunctionNode } from '../builtin/specialExpressions/functions'
@@ -47,17 +48,19 @@ import {
   isRBracketToken,
   isRParenToken,
   isReservedSymbolToken,
+  isStringToken,
   isSymbolToken,
 } from '../tokenizer/token'
 import type { TokenStream } from '../tokenizer/tokenize'
 import { assertNumberOfParams } from '../typeGuards'
-import type { BindingNode, BindingTarget, Node, NormalExpressionNodeExpression, NormalExpressionNodeWithName, NumberNode, ParseState, ReservedSymbolNode, StringNode, SymbolNode } from './types'
+import { asUserDefinedSymbolNode, isNormalBuiltinSymbolNode, isSpecialBuiltinSymbolNode, isUserDefinedSymbolNode } from '../typeGuards/astNode'
+import { type BindingNode, type BindingTarget, type Node, type NormalBuiltinSymbolNode, type NormalExpressionNodeExpression, type NormalExpressionNodeWithName, type NumberNode, type ParseState, type ReservedSymbolNode, type SpecialBuiltinSymbolNode, type StringNode, type SymbolNode, type UserDefinedSymbolNode, bindingTargetTypes } from './types'
 
 const exponentiationPrecedence = 10
 const binaryFunctionalOperatorPrecedence = 1
 const placeholderRegexp = /^\$([1-9]\d?)?$/
 
-function withSourceCodeInfo<T extends Node>(node: T, sourceCodeInfo: SourceCodeInfo | undefined): T {
+function withSourceCodeInfo<T extends Node | BindingTarget>(node: T, sourceCodeInfo: SourceCodeInfo | undefined): T {
   if (sourceCodeInfo) {
     node[2] = sourceCodeInfo
   }
@@ -116,12 +119,11 @@ function getPrecedence(operatorSign: SymbolicBinaryOperator): number {
   }
 }
 
-function createNamedNormalExpressionNode(name: string, params: Node[], sourceCodeInfo: SourceCodeInfo | undefined): NormalExpressionNodeWithName {
-  const node: NormalExpressionNodeWithName = withSourceCodeInfo([NodeTypes.NormalExpression, [name, params]], sourceCodeInfo)
-  const builtinExpression = builtin.normalExpressions[name]
+function createNamedNormalExpressionNode(symbolNode: NormalBuiltinSymbolNode | UserDefinedSymbolNode, params: Node[], sourceCodeInfo: SourceCodeInfo | undefined): NormalExpressionNodeWithName {
+  const node: NormalExpressionNodeWithName = withSourceCodeInfo([NodeTypes.NormalExpression, [symbolNode, params]], sourceCodeInfo)
 
-  if (builtinExpression) {
-    assertNumberOfParams(builtinExpression.paramCount, node)
+  if (isNormalBuiltinSymbolNode(symbolNode)) {
+    assertNumberOfParams(allNormalExpressions[symbolNode[1]]!.paramCount, node)
   }
 
   return node
@@ -132,7 +134,7 @@ function createAccessorNode(left: Node, right: Node, sourceCodeInfo: SourceCodeI
   return withSourceCodeInfo([NodeTypes.NormalExpression, [left, [right]]], sourceCodeInfo)
 }
 
-function fromBinaryOperatorToNode(operator: OperatorToken | SymbolToken<'+'>, left: Node, right: Node, sourceCodeInfo: SourceCodeInfo | undefined): Node {
+function fromBinaryOperatorToNode(operator: OperatorToken, symbolNode: SymbolNode, left: Node, right: Node, sourceCodeInfo: SourceCodeInfo | undefined): Node {
   const operatorName = operator[1]
 
   switch (operatorName) {
@@ -158,7 +160,7 @@ function fromBinaryOperatorToNode(operator: OperatorToken | SymbolToken<'+'>, le
     case '&':
     case '^':
     case '|':
-      return createNamedNormalExpressionNode(operatorName, [left, right], sourceCodeInfo)
+      return createNamedNormalExpressionNode(symbolNode as NormalBuiltinSymbolNode, [left, right], sourceCodeInfo)
     case '&&':
     case '||':
     case '??':
@@ -268,9 +270,12 @@ export class Parser {
           && !(newPrecedece === exponentiationPrecedence && precedence === exponentiationPrecedence)) {
           break
         }
+        const symbol: SymbolNode = specialExpressionTypes[name as SpecialExpressionName]
+          ? withSourceCodeInfo([NodeTypes.SpecialBuiltinSymbol, specialExpressionTypes[name as SpecialExpressionName]], operator[2])
+          : withSourceCodeInfo([NodeTypes.NormalBuiltinSymbol, normalExpressionTypes[name]!], operator[2])
         this.advance()
         const right = this.parseExpression(newPrecedece)
-        left = fromBinaryOperatorToNode(operator, left, right, operator[2])
+        left = fromBinaryOperatorToNode(operator, symbol, left, right, operator[2])
       }
       else if (isSymbolToken(operator)) {
         if (!isFunctionOperator(operator[1])) {
@@ -280,9 +285,12 @@ export class Parser {
         if (newPrecedece <= precedence) {
           break
         }
-        this.advance()
+        const operatorSymbol = this.parseSymbol()
         const right = this.parseExpression(newPrecedece)
-        left = createNamedNormalExpressionNode(operator[1], [left, right], operator[2])
+        if (isSpecialBuiltinSymbolNode(operatorSymbol)) {
+          throw new LitsError('Special expressions are not allowed in binary functional operators', operatorSymbol[2])
+        }
+        left = createNamedNormalExpressionNode(operatorSymbol, [left, right], operator[2])
       }
       else {
         break
@@ -347,12 +355,17 @@ export class Parser {
       return expression
     }
 
-    // Unary operators
     else if (isOperatorToken(token)) {
       const operatorName = token[1]
       if (isBinaryOperator(operatorName)) {
         this.advance()
-        return withSourceCodeInfo([NodeTypes.Symbol, operatorName], token[2])
+        if (specialExpressionTypes[operatorName as SpecialExpressionName] !== undefined) {
+          return withSourceCodeInfo([NodeTypes.SpecialBuiltinSymbol, specialExpressionTypes[operatorName as SpecialExpressionName]], token[2]) satisfies SpecialBuiltinSymbolNode
+        }
+        else if (normalExpressionTypes[operatorName as NormalExpressionName] !== undefined) {
+          return withSourceCodeInfo([NodeTypes.NormalBuiltinSymbol, normalExpressionTypes[operatorName as NormalExpressionName] as number], token[2]) satisfies NormalBuiltinSymbolNode
+        }
+        return withSourceCodeInfo([NodeTypes.UserDefinedSymbol, operatorName], token[2])
       }
 
       if (operatorName === '->') {
@@ -423,12 +436,21 @@ export class Parser {
         params.push(withSourceCodeInfo([NodeTypes.Spread, this.parseExpression()], this.peek()[2]))
       }
       else {
-        const key = this.parseOperand()
-        if (key[0] !== NodeTypes.Symbol && key[0] !== NodeTypes.String) {
+        const token = this.peek()
+        if (isStringToken(token)) {
+          const stringNode = this.parseString()
+          params.push(withSourceCodeInfo([NodeTypes.String, stringNode[1]], token[2]))
+        }
+        else if (isSymbolToken(token)) {
+          const value = token[1].startsWith('\'')
+            ? this.stringFromQuotedSymbol(token[1])
+            : token[1]
+          params.push(withSourceCodeInfo([NodeTypes.String, value], token[2]))
+          this.advance()
+        }
+        else {
           throw new LitsError('Expected key to be a symbol or a string', this.peek()[2])
         }
-
-        params.push(withSourceCodeInfo([NodeTypes.String, key[1]], key[2]))
 
         assertOperatorToken(this.peek(), ':=')
         this.advance()
@@ -496,55 +518,70 @@ export class Parser {
       throw new LitsError('Expected closing parenthesis', this.peek()[2])
     }
     this.advance()
-    if (symbol[0] === NodeTypes.Symbol) { // Named function
-      const functionName = (symbol as SymbolNode)[1]
-      if (specialExpressionNameSet.has(functionName)) {
-        const name: SpecialExpressionName = functionName as Exclude<SpecialExpressionName, 'for' | 'if' | 'unless' | 'cond' | 'switch' | 'let' | 'do' | 'loop' | 'try' | 'doseq' | 'function'>
-        switch (name) {
-          case '||':
-            return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes[name], params]], symbol[2]) satisfies OrNode
-          case '&&':
-            return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes[name], params]], symbol[2]) satisfies AndNode
-          case 'recur':
-            return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes[name], params]], symbol[2]) satisfies RecurNode
-          case 'array':
-            return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes[name], params]], symbol[2]) satisfies ArrayNode
-          case 'object':
-            return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes[name], params]], symbol[2]) satisfies ObjectNode
-          case '??': {
-            if (params.length === 1) {
-              return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes[name], [params[0]!, undefined]]], symbol[2]) satisfies QqNode
-            }
-            if (params.length === 2) {
-              return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes[name], [params[0]!, params[1]!]]], symbol[2]) satisfies QqNode
-            }
-            throw new LitsError('Expected exactly two parameters', symbol[2])
+
+    if (isSpecialBuiltinSymbolNode(symbol)) { // Named function
+      const specialExpressionType = symbol[1]
+      const type = specialExpressionType as Exclude<
+        SpecialExpressionType,
+        | typeof specialExpressionTypes.for
+        | typeof specialExpressionTypes.if
+        | typeof specialExpressionTypes.unless
+        | typeof specialExpressionTypes.cond
+        | typeof specialExpressionTypes.switch
+        | typeof specialExpressionTypes.let
+        | typeof specialExpressionTypes.do
+        | typeof specialExpressionTypes.loop
+        | typeof specialExpressionTypes.try
+        | typeof specialExpressionTypes.doseq
+        | typeof specialExpressionTypes.function
+      >
+      switch (type) {
+        case specialExpressionTypes['||']:
+          return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, params]], symbol[2]) satisfies OrNode
+        case specialExpressionTypes['&&']:
+          return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, params]], symbol[2]) satisfies AndNode
+        case specialExpressionTypes.recur:
+          return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, params]], symbol[2]) satisfies RecurNode
+        case specialExpressionTypes.array:
+          return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, params]], symbol[2]) satisfies ArrayNode
+        case specialExpressionTypes.object:
+          return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, params]], symbol[2]) satisfies ObjectNode
+        case specialExpressionTypes['??']: {
+          if (params.length === 1) {
+            return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, [params[0]!, undefined]]], symbol[2]) satisfies QqNode
           }
-          case 'defined?': {
-            if (params.length !== 1) {
-              throw new LitsError('Expected exactly one parameter', symbol[2])
-            }
-            const [param] = params
-            return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes[name], param as SymbolNode]], symbol[2]) satisfies DefinedNode
+          if (params.length === 2) {
+            return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, [params[0]!, params[1]!]]], symbol[2]) satisfies QqNode
           }
-          case 'throw': {
-            if (params.length !== 1) {
-              throw new LitsError('Expected exactly one parameter', symbol[2])
-            }
-            const [param] = params
-            return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes[name], param!]], symbol[2]) satisfies ThrowNode
-          }
-          case 'fn':
-          case 'def':
-          case 'defn':
-            throw new LitsError(`${name} is not allowed`, symbol[2])
-          /* v8 ignore next 2 */
-          default:
-            throw new Error(`Unknown special expression: ${name satisfies never}`)
+          throw new LitsError('Expected exactly two parameters', symbol[2])
         }
+        case specialExpressionTypes['defined?']: {
+          if (params.length !== 1) {
+            throw new LitsError('Expected exactly one parameter', symbol[2])
+          }
+          const [param] = params
+          return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, param as SymbolNode]], symbol[2]) satisfies DefinedNode
+        }
+        case specialExpressionTypes.throw: {
+          if (params.length !== 1) {
+            throw new LitsError('Expected exactly one parameter', symbol[2])
+          }
+          const [param] = params
+          return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, param!]], symbol[2]) satisfies ThrowNode
+        }
+        case specialExpressionTypes.fn:
+        case specialExpressionTypes.def:
+        case specialExpressionTypes.defn:
+          throw new LitsError(`${type} is not allowed`, symbol[2])
+          /* v8 ignore next 2 */
+        default:
+          throw new Error(`Unknown special expression: ${type satisfies never}`)
       }
-      return createNamedNormalExpressionNode(functionName, params, symbol[2])
     }
+    else if (isNormalBuiltinSymbolNode(symbol) || isNormalBuiltinSymbolNode(symbol)) {
+      return createNamedNormalExpressionNode(symbol, params, symbol[2])
+    }
+
     else {
       return withSourceCodeInfo([NodeTypes.NormalExpression, [symbol, params]], symbol[2]) satisfies NormalExpressionNodeExpression
     }
@@ -569,10 +606,10 @@ export class Parser {
 
       const body = this.parseExpression()
 
-      return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.fn, {
-        arguments: functionArguments,
-        body: [body],
-      }]], firstToken[2]) satisfies FnNode
+      return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.fn, [
+        functionArguments,
+        [body],
+      ]]], firstToken[2]) satisfies FnNode
     }
     catch {
       return null
@@ -582,11 +619,7 @@ export class Parser {
   parseFunctionArguments(): BindingTarget[] {
     const firstToken = this.peek()
     if (isSymbolToken(firstToken)) {
-      return [{
-        type: 'symbol',
-        name: this.parseSymbol()[1],
-        sourceCodeInfo: firstToken[2],
-      } satisfies BindingTarget]
+      return [withSourceCodeInfo([bindingTargetTypes.symbol, [this.parseSymbol(), undefined]], firstToken[2])]
     }
 
     assertLParenToken(firstToken)
@@ -600,13 +633,13 @@ export class Parser {
         throw new LitsError('Rest argument must be last', this.peek()[2])
       }
       const bindingTarget = this.parseBindingTarget()
-      if (bindingTarget.default) {
+      if (bindingTarget[1][1] !== undefined) {
         defaults = true
       }
-      if (bindingTarget.type === 'rest') {
+      if (bindingTarget[0] === bindingTargetTypes.rest) {
         rest = true
       }
-      if (defaults && !bindingTarget.default) {
+      if (defaults && !bindingTarget[1][1]) {
         throw new LitsError('Default arguments must be last', this.peek()[2])
       }
       functionArguments.push(bindingTarget)
@@ -662,17 +695,17 @@ export class Parser {
 
     for (let i = 1; i <= arity; i += 1) {
       if (i === 1 && dollar1 === 'NAKED') {
-        functionArguments.push({ type: 'symbol', name: '$', sourceCodeInfo: firstToken[2] })
+        functionArguments.push(withSourceCodeInfo([bindingTargetTypes.symbol, [[NodeTypes.UserDefinedSymbol, '$'], undefined]], firstToken[2]))
       }
       else {
-        functionArguments.push({ type: 'symbol', name: `$${i}`, sourceCodeInfo: firstToken[2] })
+        functionArguments.push(withSourceCodeInfo([bindingTargetTypes.symbol, [[NodeTypes.UserDefinedSymbol, `$${i}`], undefined]], firstToken[2]))
       }
     }
 
-    const node: FnNode = withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.fn, {
-      arguments: functionArguments,
-      body: [exprNode],
-    }]], firstToken[2])
+    const node: FnNode = withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.fn, [
+      functionArguments,
+      [exprNode],
+    ]]], firstToken[2])
 
     return node
   }
@@ -691,18 +724,16 @@ export class Parser {
     // Symbol
     if (isSymbolToken(firstToken)) {
       const symbol = this.parseSymbol()
+      if (!isUserDefinedSymbolNode(symbol)) {
+        throw new LitsError('Expected user defined symbol', firstToken[2])
+      }
 
       const defaultValue = this.parseOptionalDefaulValue()
       if (requireDefaultValue && !defaultValue) {
         throw new LitsError('Expected assignment', this.peek()[2])
       }
 
-      return {
-        type: 'symbol',
-        name: symbol[1],
-        default: defaultValue,
-        sourceCodeInfo: firstToken[2],
-      }
+      return withSourceCodeInfo([bindingTargetTypes.symbol, [symbol, defaultValue]], firstToken[2])
     }
 
     // Rest
@@ -711,15 +742,11 @@ export class Parser {
         throw new LitsError('Rest element not allowed', firstToken[2])
       }
       this.advance()
-      const symbol = this.parseSymbol()
+      const symbol = asUserDefinedSymbolNode(this.parseSymbol())
       if (isOperatorToken(this.peek(), ':=')) {
         throw new LitsError('Rest argument can not have default value', this.peek()[2])
       }
-      return {
-        type: 'rest',
-        name: symbol[1],
-        sourceCodeInfo: firstToken[2],
-      }
+      return withSourceCodeInfo([bindingTargetTypes.rest, [symbol[1], undefined]], firstToken[2])
     }
 
     // Array
@@ -741,7 +768,7 @@ export class Parser {
 
         const target = this.parseBindingTarget()
 
-        if (target.type === 'rest') {
+        if (target[0] === bindingTargetTypes.rest) {
           rest = true
         }
 
@@ -761,12 +788,7 @@ export class Parser {
         throw new LitsError('Expected assignment', this.peek()[2])
       }
 
-      return {
-        type: 'array',
-        elements,
-        default: defaultValue,
-        sourceCodeInfo: firstToken[2],
-      }
+      return withSourceCodeInfo([bindingTargetTypes.array, [elements, defaultValue]], firstToken[2])
     }
 
     // Object
@@ -783,41 +805,34 @@ export class Parser {
           rest = true
           this.advance()
         }
-        const key = this.parseSymbol()[1]
+        const key = asUserDefinedSymbolNode(this.parseSymbol())
         token = this.peek()
         if (isReservedSymbolToken(token, 'as')) {
           if (rest) {
             throw new LitsError('Rest argument can not have alias', token[2])
           }
           this.advance()
-          const name = this.parseSymbol()[1]
-          if (elements[name]) {
+          const name = asUserDefinedSymbolNode(this.parseSymbol())
+          if (elements[name[1]]) {
             throw new LitsError(`Duplicate binding name: ${name}`, token[2])
           }
-          elements[key] = {
-            type: 'symbol',
-            name,
-            default: this.parseOptionalDefaulValue(),
-            sourceCodeInfo: firstToken[2],
-          }
+          elements[key[1]] = withSourceCodeInfo([bindingTargetTypes.symbol, [name, this.parseOptionalDefaulValue()]], firstToken[2])
         }
         else if (isRBraceToken(token) || isOperatorToken(token, ',') || isOperatorToken(token, ':=')) {
-          if (elements[key]) {
+          if (elements[key[1]]) {
             throw new LitsError(`Duplicate binding name: ${key}`, token[2])
           }
           if (rest && isOperatorToken(this.peek(), ':=')) {
             throw new LitsError('Rest argument can not have default value', this.peek()[2])
           }
 
-          elements[key] = {
-            type: rest ? 'rest' : 'symbol',
-            name: key,
-            default: this.parseOptionalDefaulValue(),
-            sourceCodeInfo: firstToken[2],
-          }
+          elements[key[1]] = rest
+            ? withSourceCodeInfo([bindingTargetTypes.rest, [key[1], this.parseOptionalDefaulValue()]], firstToken[2])
+            : withSourceCodeInfo([bindingTargetTypes.symbol, [key, this.parseOptionalDefaulValue()]], firstToken[2])
         }
+
         else if (isLBraceToken(token) || isLBracketToken(token)) {
-          elements[key] = this.parseBindingTarget()
+          elements[key[1]] = this.parseBindingTarget()
         }
 
         if (!isRBraceToken(this.peek())) {
@@ -833,12 +848,7 @@ export class Parser {
         throw new LitsError('Expected assignment', token[2])
       }
 
-      return {
-        type: 'object',
-        elements,
-        default: defaultValue,
-        sourceCodeInfo: firstToken[2],
-      }
+      return withSourceCodeInfo([bindingTargetTypes.object, [elements, defaultValue]], firstToken[2])
     }
 
     throw new LitsError('Expected symbol', this.peek()[2])
@@ -849,8 +859,8 @@ export class Parser {
 
     const target = this.parseBindingTarget({ requireDefaultValue: true, noRest: true })
 
-    const value = target.default!
-    delete target.default
+    const value = target[1][1]!
+    target[1][1] = undefined
 
     if (!optionalSemicolon) {
       assertOperatorToken(this.peek(), ';')
@@ -887,8 +897,8 @@ export class Parser {
       this.advance()
 
       const target = this.parseBindingTarget({ requireDefaultValue: true, noRest: true })
-      const value = target.default!
-      delete target.default
+      const value = target[1][1]!
+      target[1][1] = undefined
 
       bindingNodes.push(withSourceCodeInfo([NodeTypes.Binding, [target, value]], token[2]) satisfies BindingNode)
 
@@ -1099,19 +1109,23 @@ export class Parser {
 
   private parseBinding(): BindingNode {
     const firstToken = asSymbolToken(this.peek())
-    const name = firstToken[1]
-    this.advance()
+    const name = asUserDefinedSymbolNode(this.parseSymbol())
 
     assertReservedSymbolToken(this.peek(), 'in')
     this.advance()
 
     const value = this.parseExpression()
 
-    const node: BindingNode = withSourceCodeInfo([NodeTypes.Binding, [{
-      type: 'symbol',
-      name,
-      sourceCodeInfo: firstToken[2],
-    }, value]], firstToken[2])
+    const node: BindingNode = withSourceCodeInfo(
+      [
+        NodeTypes.Binding,
+        [
+          withSourceCodeInfo([bindingTargetTypes.symbol, [name, undefined]], firstToken[2]),
+          value,
+        ],
+      ],
+      firstToken[2],
+    )
     return node
   }
 
@@ -1275,10 +1289,10 @@ export class Parser {
     this.advance()
     assertOperatorToken(this.peek(), ';')
 
-    return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.function, symbol, {
-      arguments: functionArguments,
+    return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.function, symbol, [
+      functionArguments,
       body,
-    }]], token[2]) satisfies FunctionNode
+    ]]], token[2]) satisfies FunctionNode
   }
 
   private isAtEnd(): boolean {
@@ -1324,45 +1338,58 @@ export class Parser {
       }
       assertReservedSymbolToken(this.peek(), 'end')
       this.advance()
-      return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.defn, symbol, {
-        arguments: functionArguments,
+      return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.defn, symbol, [
+        functionArguments,
         body,
-      }]], token[2]) satisfies DefnNode
+      ]]], token[2]) satisfies DefnNode
     }
     else {
       throw new LitsError('Expected let or function', this.peek()[2])
     }
   }
 
-  private parseSymbol(): SymbolNode {
+  private stringToSymbolNode(value: string, sourceCodeInfo: SourceCodeInfo | undefined): SymbolNode {
+    if (specialExpressionTypes[value as SpecialExpressionName] !== undefined) {
+      return withSourceCodeInfo([NodeTypes.SpecialBuiltinSymbol, specialExpressionTypes[value as SpecialExpressionName]], sourceCodeInfo) satisfies SymbolNode
+    }
+    if (normalExpressionTypes[value as NormalExpressionName] !== undefined) {
+      return withSourceCodeInfo([NodeTypes.NormalBuiltinSymbol, normalExpressionTypes[value as NormalExpressionName] as number], sourceCodeInfo) satisfies SymbolNode
+    }
+    return withSourceCodeInfo([NodeTypes.UserDefinedSymbol, value], sourceCodeInfo) satisfies SymbolNode
+  }
+
+  stringFromQuotedSymbol(value: string): string {
+    return value.substring(1, value.length - 1)
+      .replace(
+        /(\\{2})|(\\')|\\(.)/g,
+        (
+          _,
+          backslash: string,
+          singleQuote: string,
+          normalChar: string,
+        ) => {
+          if (backslash) {
+            return '\\'
+          }
+          if (singleQuote) {
+            return '\''
+          }
+          return `\\${normalChar}`
+        },
+      )
+  }
+
+  private parseSymbol(): SymbolNode | NormalBuiltinSymbolNode | SpecialBuiltinSymbolNode {
     const token = this.peek()
     this.advance()
     if (!isSymbolToken(token)) {
       throw new LitsError(`Expected symbol token, got ${token[0]}`, token[2])
     }
-    if (token[1][0] !== '\'') {
-      return withSourceCodeInfo([NodeTypes.Symbol, token[1]], token[2]) satisfies SymbolNode
+    if (token[1][0] === '\'') {
+      return this.stringToSymbolNode(this.stringFromQuotedSymbol(token[1]), token[2])
     }
     else {
-      const value = token[1].substring(1, token[1].length - 1)
-        .replace(
-          /(\\{2})|(\\')|\\(.)/g,
-          (
-            _,
-            backslash: string,
-            singleQuote: string,
-            normalChar: string,
-          ) => {
-            if (backslash) {
-              return '\\'
-            }
-            if (singleQuote) {
-              return '\''
-            }
-            return `\\${normalChar}`
-          },
-        )
-      return withSourceCodeInfo([NodeTypes.Symbol, value], token[2]) satisfies SymbolNode
+      return this.stringToSymbolNode(token[1], token[2])
     }
   }
 
@@ -1445,7 +1472,13 @@ export class Parser {
 
     const optionsNode: StringNode = withSourceCodeInfo([NodeTypes.String, optionsString], token[2]) satisfies StringNode
 
-    const node: NormalExpressionNodeWithName = withSourceCodeInfo([NodeTypes.NormalExpression, ['regexp', [stringNode, optionsNode]]], token[2])
+    const node: NormalExpressionNodeWithName = withSourceCodeInfo([
+      NodeTypes.NormalExpression,
+      [
+        withSourceCodeInfo([NodeTypes.NormalBuiltinSymbol, normalExpressionTypes.regexp as number], token[2]),
+        [stringNode, optionsNode],
+      ],
+    ], token[2])
 
     return node
   }

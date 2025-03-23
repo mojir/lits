@@ -8,7 +8,6 @@ import type {
   Ast,
   Node,
   NormalExpressionNode,
-  NormalExpressionNodeWithName,
   NumberNode,
   ReservedSymbolNode,
   SpecialExpressionNode,
@@ -18,7 +17,7 @@ import type {
 import { reservedSymbolRecord } from '../tokenizer/reservedNames'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { asNonUndefined } from '../typeGuards'
-import { isNormalExpressionNodeWithName } from '../typeGuards/astNode'
+import { isNormalBuiltinSymbolNode, isNormalExpressionNodeWithName } from '../typeGuards/astNode'
 import { asAny, assertSeq, isObj } from '../typeGuards/lits'
 import { isLitsFunction } from '../typeGuards/litsFunction'
 import { assertNumber, isNumber } from '../typeGuards/number'
@@ -44,8 +43,10 @@ export function evaluateNode(node: Node, contextStack: ContextStack): Any {
       return evaluateNumber(node as NumberNode)
     case NodeTypes.String:
       return evaluateString(node as StringNode)
-    case NodeTypes.Symbol:
-      return contextStack.evaluateName(node as SymbolNode)
+    case NodeTypes.NormalBuiltinSymbol:
+    case NodeTypes.SpecialBuiltinSymbol:
+    case NodeTypes.UserDefinedSymbol:
+      return contextStack.evaluateSymbol(node as SymbolNode)
     case NodeTypes.ReservedSymbol:
       return evaluateReservedSymbol(node as ReservedSymbolNode)
     case NodeTypes.NormalExpression:
@@ -77,12 +78,20 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
   const paramNodes: Node[] = node[1][1]
   const params = paramNodes.map(paramNode => evaluateNode(paramNode, contextStack))
   if (isNormalExpressionNodeWithName(node)) {
-    const fn = contextStack.getValue(node[1][0])
-    if (fn !== undefined) {
-      return executeFunction(asAny(fn), params, contextStack, sourceCodeInfo)
-    }
+    const nameSymbol = node[1][0]
 
-    return evaluateBuiltinNormalExpression(node, params, contextStack)
+    if (isNormalBuiltinSymbolNode(nameSymbol)) {
+      const type = nameSymbol[1]
+      const normalExpression = builtin.allNormalExpressions[type]!
+      return normalExpression.evaluate(params, node[2], contextStack, { executeFunction })
+    }
+    else {
+      const fn = contextStack.getValue(nameSymbol[1])
+      if (fn !== undefined) {
+        return executeFunction(asAny(fn), params, contextStack, sourceCodeInfo)
+      }
+      throw new UndefinedSymbolError(nameSymbol[1], node[2])
+    }
   }
   else {
     const fnNode: Node = node[1][0]
@@ -108,19 +117,6 @@ function executeFunction(fn: Any, params: Arr, contextStack: ContextStack, sourc
     return evaluateNumberAsFunction(fn, params, sourceCodeInfo)
 
   throw new NotAFunctionError(fn, sourceCodeInfo)
-}
-
-function evaluateBuiltinNormalExpression(
-  node: NormalExpressionNodeWithName,
-  params: Arr,
-  contextStack: ContextStack,
-): Any {
-  const name = node[1][0]
-  const normalExpression = builtin.normalExpressions[name]
-  if (!normalExpression)
-    throw new UndefinedSymbolError(name, node[2])
-
-  return normalExpression.evaluate(params, node[2], contextStack, { executeFunction })
 }
 
 function evaluateSpecialExpression(node: SpecialExpressionNode, contextStack: ContextStack): Any {

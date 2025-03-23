@@ -4,8 +4,8 @@ import { specialExpressionTypes } from '../builtin/specialExpressionTypes'
 import { NodeTypes } from '../constants/constants'
 import type { ContextStack } from '../evaluator/ContextStack'
 import type { EvaluateNode } from '../evaluator/interface'
-import type { Ast, BindingNode, Node, NormalExpressionNode, SpecialExpressionNode, SpreadNode, SymbolNode } from '../parser/types'
-import { isNormalExpressionNodeWithName } from '../typeGuards/astNode'
+import type { Ast, BindingNode, Node, NormalExpressionNode, SpecialExpressionNode, SpreadNode, UserDefinedSymbolNode } from '../parser/types'
+import { isNormalExpressionNodeWithName, isUserDefinedSymbolNode } from '../typeGuards/astNode'
 
 export type UndefinedSymbols = Set<string>
 
@@ -28,27 +28,30 @@ export type GetUndefinedSymbols = (ast: Ast | Node[], contextStack: ContextStack
 function findUnresolvedSymbolsInNode(node: Node, contextStack: ContextStack, builtin: Builtin, evaluateNode: EvaluateNode): UndefinedSymbols | null {
   const nodeType = node[0]
   switch (nodeType) {
-    case NodeTypes.Symbol: {
-      const symbolNode = node as SymbolNode
+    case NodeTypes.UserDefinedSymbol: {
+      const symbolNode = node as UserDefinedSymbolNode
       const lookUpResult = contextStack.lookUp(symbolNode)
       if (lookUpResult === null)
         return new Set([symbolNode[1]])
 
       return null
     }
+    case NodeTypes.NormalBuiltinSymbol:
+    case NodeTypes.SpecialBuiltinSymbol:
     case NodeTypes.String:
     case NodeTypes.Number:
-    case NodeTypes.Modifier:
     case NodeTypes.ReservedSymbol:
       return null
     case NodeTypes.NormalExpression: {
       const normalExpressionNode = node as NormalExpressionNode
       const unresolvedSymbols = new Set<string>()
       if (isNormalExpressionNodeWithName(normalExpressionNode)) {
-        const [, [name]] = normalExpressionNode
-        const lookUpResult = contextStack.lookUp([NodeTypes.Symbol, name])
-        if (lookUpResult === null)
-          unresolvedSymbols.add(name)
+        const [, [symbolNode]] = normalExpressionNode
+        if (isUserDefinedSymbolNode(symbolNode)) {
+          const lookUpResult = contextStack.lookUp(symbolNode)
+          if (lookUpResult === null)
+            unresolvedSymbols.add(symbolNode[1])
+        }
       }
       else {
         const [, [expressionNode]] = normalExpressionNode

@@ -752,12 +752,14 @@ export function parse() {
     const result = getLits().parse(tokens)
     const content = JSON.stringify(result, null, 2)
     appendOutput(content, 'parse')
+    hijacker.releaseConsole()
+    console.log(result)
   }
   catch (error) {
     appendOutput(error, 'error')
+    hijacker.releaseConsole()
   }
   finally {
-    hijacker.releaseConsole()
     focusLitsCode()
   }
 }
@@ -776,13 +778,15 @@ export function tokenize() {
     const result = getLits().tokenize(code)
     const content = JSON.stringify(result, null, 2)
     appendOutput(content, 'tokenize')
+    hijacker.releaseConsole()
+    console.log(result)
   }
   catch (error) {
     appendOutput(error, 'error')
+    hijacker.releaseConsole()
     return
   }
   finally {
-    hijacker.releaseConsole()
     focusLitsCode()
   }
 }

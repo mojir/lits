@@ -3,10 +3,11 @@ export const NodeTypes = {
   String: 2,
   NormalExpression: 3,
   SpecialExpression: 4,
-  Symbol: 5,
-  Modifier: 6,
-  ReservedSymbol: 7,
-  Binding: 8,
+  UserDefinedSymbol: 5,
+  NormalBuiltinSymbol: 6,
+  SpecialBuiltinSymbol: 7,
+  ReservedSymbol: 8,
+  Binding: 9,
   Spread: 10,
 } as const
 
