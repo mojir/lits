@@ -422,7 +422,7 @@ start-game()
 // Determinant function for square matrices
 function determinant(matrix)
   // Check if input is an array
-  if !(array?(matrix)) then
+  unless array?(matrix) then
     throw("Input must be an array");
   end;
 
@@ -437,7 +437,7 @@ function determinant(matrix)
   let firstRow := first(matrix);
   
   // Check if first row is an array
-  if !(array?(firstRow)) then
+  unless array?(firstRow) then
     throw("Input must be a 2D array");
   end;
   
