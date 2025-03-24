@@ -1,8 +1,10 @@
 import { normalExpressionKeys, specialExpressionKeys } from '../builtin'
-import { UndefinedSymbolError } from '../errors'
+import { specialExpressionTypes } from '../builtin/specialExpressionTypes'
+import { LitsError, UndefinedSymbolError } from '../errors'
 import type { Any } from '../interface'
 import type { ContextParams, LazyValue } from '../Lits/Lits'
 import type { NativeJsFunction, NormalBuiltinFunction, SymbolNode, UserDefinedSymbolNode } from '../parser/types'
+import type { SourceCodeInfo } from '../tokenizer/token'
 import { asNonUndefined } from '../typeGuards'
 import { isNormalBuiltinSymbolNode, isSpecialBuiltinSymbolNode } from '../typeGuards/astNode'
 import { toAny } from '../utils'
@@ -54,33 +56,33 @@ export class ContextStackImpl {
     return new ContextStackImpl({ contexts })
   }
 
-  public exportValues(values: Record<string, Any>) {
+  public exportValues(values: Record<string, Any>, sourceCodeInfo: SourceCodeInfo | undefined) {
     for (const [name, value] of Object.entries(values)) {
       if (this.globalContext[name]) {
-        throw new Error(`Cannot redefine exported value "${name}"`)
+        throw new LitsError(`Cannot redefine exported value "${name}"`, sourceCodeInfo)
       }
       if (specialExpressionKeys.includes(name)) {
-        throw new Error(`Cannot shadow special expression "${name}"`)
+        throw new LitsError(`Cannot shadow special expression "${name}"`, sourceCodeInfo)
       }
       if (normalExpressionKeys.includes(name)) {
-        throw new Error(`Cannot shadow builtin function "${name}"`)
+        throw new LitsError(`Cannot shadow builtin function "${name}"`, sourceCodeInfo)
       }
       this.globalContext[name] = { value }
     }
-    this.addValues(values)
+    this.addValues(values, sourceCodeInfo)
   }
 
-  public addValues(values: Record<string, Any>) {
+  public addValues(values: Record<string, Any>, sourceCodeInfo: SourceCodeInfo | undefined) {
     const currentContext = this.contexts[0]!
     for (const [name, value] of Object.entries(values)) {
       if (currentContext[name]) {
-        throw new Error(`Cannot redefine value "${name}"`)
+        throw new LitsError(`Cannot redefine value "${name}"`, sourceCodeInfo)
       }
       if (specialExpressionKeys.includes(name)) {
-        throw new Error(`Cannot shadow special expression "${name}"`)
+        throw new LitsError(`Cannot shadow special expression "${name}"`, sourceCodeInfo)
       }
       if (normalExpressionKeys.includes(name)) {
-        throw new Error(`Cannot shadow builtin function "${name}"`)
+        throw new LitsError(`Cannot shadow builtin function "${name}"`, sourceCodeInfo)
       }
       currentContext[name] = { value: toAny(value) }
     }
@@ -137,7 +139,25 @@ export class ContextStackImpl {
 
   public evaluateSymbol(node: SymbolNode): Any {
     if (isSpecialBuiltinSymbolNode(node)) {
-      throw new Error('Special builtin symbols should not be evaluated')
+      const functionType = node[1]
+      switch (functionType) {
+        case specialExpressionTypes['&&']:
+        case specialExpressionTypes['||']:
+        case specialExpressionTypes.array:
+        case specialExpressionTypes.object:
+        case specialExpressionTypes['defined?']:
+        case specialExpressionTypes.recur:
+        case specialExpressionTypes.throw:
+        case specialExpressionTypes['??']:
+          return {
+            [FUNCTION_SYMBOL]: true,
+            functionType: 'SpecialBuiltin',
+            specialBuiltinSymbolType: functionType,
+            sourceCodeInfo: node[2],
+          }
+        default:
+          throw new LitsError(`Unknown special builtin symbol type: ${functionType}`, node[2])
+      }
     }
     if (isNormalBuiltinSymbolNode(node)) {
       const type = node[1]

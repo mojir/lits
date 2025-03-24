@@ -18,7 +18,7 @@ describe('errors', () => {
     })
     expect(err).toBeInstanceOf(UserDefinedError)
     expect(err.name).toBe('UserDefinedError')
-    expect(err.message).toBe('A message\n(+ 1 2)\n^      ')
+    expect(err.message).toBe('A message\nLocation 1:1\n(+ 1 2)\n^      ')
   })
   describe('isLitsError', () => {
     it('isLitsError', () => {

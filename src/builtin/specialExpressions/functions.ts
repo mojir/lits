@@ -39,13 +39,13 @@ export const functionSpecialExpression: BuiltinSpecialExpression<null, FunctionN
       evaluatedfunction: evaluatedFunction,
     }
 
-    contextStack.addValues({ [functionSymbol[1]]: litsFunction })
+    contextStack.addValues({ [functionSymbol[1]]: litsFunction }, functionSymbol[2])
     return null
   },
 
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => {
     const functionName = node[1][1][1]
-    contextStack.addValues({ [functionName]: true })
+    contextStack.addValues({ [functionName]: true }, node[1][1][2])
     const newContext: Context = { [functionName]: { value: true } }
     return getFunctionUnresolvedSymbols(node[1][2], contextStack, getUndefinedSymbols, builtin, evaluateNode, newContext)
   },
@@ -69,14 +69,14 @@ export const defnSpecialExpression: BuiltinSpecialExpression<null, DefnNode> = {
       evaluatedfunction: evaluatedFunctionOverloades,
     }
 
-    contextStack.exportValues({ [functionSymbol[1]]: litsFunction })
+    contextStack.exportValues({ [functionSymbol[1]]: litsFunction }, functionSymbol[2])
     return null
   },
 
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => {
     const functionName = node[1][1][1]
     const fn = node[1][2]
-    contextStack.exportValues({ [functionName]: true })
+    contextStack.exportValues({ [functionName]: true }, node[1][1][2])
     const newContext: Context = { [functionName]: { value: true } }
     return getFunctionUnresolvedSymbols(fn, contextStack, getUndefinedSymbols, builtin, evaluateNode, newContext)
   },

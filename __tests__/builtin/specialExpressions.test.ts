@@ -41,7 +41,7 @@ describe('specialExpressions', () => {
     }
     catch (error) {
       expect((error as UserDefinedError).message).toBe(
-        'error\nthrow(slice("An error", 3))\n^                          ',
+        'error\nLocation 1:1\nthrow(slice("An error", 3))\n^                          ',
       )
     }
     if (failed)
@@ -746,9 +746,16 @@ foo(3)`)
 
     describe('unresolvedIdentifiers', () => {
       it('samples', () => {
-        expect((lits.getUndefinedSymbols('??(x)'))).toEqual(new Set(['x']))
-        expect((lits.getUndefinedSymbols('??(x, y)'))).toEqual(new Set(['x', 'y']))
+        expect(lits.getUndefinedSymbols('??(x)')).toEqual(new Set(['x']))
+        expect(lits.getUndefinedSymbols('??(x, y)')).toEqual(new Set(['x', 'y']))
       })
+    })
+  })
+  describe('passing special expression as arguments', () => {
+    test('samples', () => {
+      expect(lits.run(`
+function foo(a, b, c) a(b, c) end;
+foo(&&, true, false)`)).toBe(false)
     })
   })
 })

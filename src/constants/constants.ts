@@ -35,6 +35,7 @@ const functionTypes = [
   'SomePred',
   'Fnull',
   'Builtin',
+  'SpecialBuiltin',
   'NativeJsFunction',
 ] as const
 

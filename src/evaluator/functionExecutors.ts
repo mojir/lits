@@ -1,23 +1,25 @@
+import { specialExpressions } from '../builtin'
 import { evalueateBindingNodeValues } from '../builtin/bindingNode'
 import { allNormalExpressions } from '../builtin/normalExpressions'
 import { LitsError, RecurSignal } from '../errors'
 import type { Any, Arr } from '../interface'
-import {
-  type CompFunction,
-  type ComplementFunction,
-  type ConstantlyFunction,
-  type EvaluatedFunction,
-  type EveryPredFunction,
-  type FNullFunction,
-  type JuxtFunction,
-  type LitsFunctionType,
-  type NativeJsFunction,
-  type NormalBuiltinFunction,
-  type PartialFunction,
-  type SomePredFunction,
-  type UserDefinedFunction,
-  bindingTargetTypes,
+import type {
+  CompFunction,
+  ComplementFunction,
+  ConstantlyFunction,
+  EvaluatedFunction,
+  EveryPredFunction,
+  FNullFunction,
+  JuxtFunction,
+  LitsFunctionType,
+  NativeJsFunction,
+  NormalBuiltinFunction,
+  PartialFunction,
+  SomePredFunction,
+  SpecialBuiltinFunction,
+  UserDefinedFunction,
 } from '../parser/types'
+import { bindingTargetTypes } from '../parser/types'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { asNonUndefined, isUnknownRecord } from '../typeGuards'
 import { asAny } from '../typeGuards/lits'
@@ -26,16 +28,13 @@ import { valueToString } from '../utils/debug/debugTools'
 import type { ContextStack } from './ContextStack'
 import type { Context, EvaluateNode, ExecuteFunction } from './interface'
 
-type FunctionExecutors = Record<
-  LitsFunctionType,
-  (
-    fn: any,
-    params: Arr,
-    sourceCodeInfo: SourceCodeInfo | undefined,
-    contextStack: ContextStack,
-    helpers: { evaluateNode: EvaluateNode, executeFunction: ExecuteFunction },
-  ) => Any
->
+type FunctionExecutors = Record<LitsFunctionType, (
+  fn: any,
+  params: Arr,
+  sourceCodeInfo: SourceCodeInfo | undefined,
+  contextStack: ContextStack,
+  helpers: { evaluateNode: EvaluateNode, executeFunction: ExecuteFunction },
+) => Any>
 
 function checkParams(
   evaluatedFunction: EvaluatedFunction,
@@ -183,5 +182,14 @@ export const functionExecutors: FunctionExecutors = {
   Builtin: (fn: NormalBuiltinFunction, params, sourceCodeInfo, contextStack, { executeFunction }) => {
     const normalExpression = asNonUndefined(allNormalExpressions[fn.normalBuitinSymbolType], sourceCodeInfo)
     return normalExpression.evaluate(params, sourceCodeInfo, contextStack, { executeFunction })
+  },
+  SpecialBuiltin: (fn: SpecialBuiltinFunction, params, sourceCodeInfo, contextStack, { executeFunction }) => {
+    const specialExpression = asNonUndefined(specialExpressions[fn.specialBuiltinSymbolType], sourceCodeInfo)
+    if (specialExpression.evaluateAsNormalExpression) {
+      return specialExpression.evaluateAsNormalExpression(params, sourceCodeInfo, contextStack, { executeFunction })
+    }
+    else {
+      throw new LitsError(`Special builtin function ${fn.specialBuiltinSymbolType} is not supported as normal expression.`, sourceCodeInfo)
+    }
   },
 }

@@ -3,9 +3,15 @@ import type { Arr } from './interface'
 import type { SourceCodeInfo } from './tokenizer/token'
 
 function getLitsErrorMessage(message: string, sourceCodeInfo?: SourceCodeInfo) {
-  const filePathLine = sourceCodeInfo?.filePath ? `\n${sourceCodeInfo.filePath}` : ''
-  const codeLine = sourceCodeInfo?.code ? `\n${sourceCodeInfo.code}` : ''
-  const codeMarker = sourceCodeInfo && codeLine ? `\n${getCodeMarker(sourceCodeInfo)}` : ''
+  if (!sourceCodeInfo) {
+    return message
+  }
+  const location = `${sourceCodeInfo.position.line}:${sourceCodeInfo.position.column}`
+  const filePathLine = sourceCodeInfo.filePath
+    ? `\n${sourceCodeInfo.filePath}:${location}`
+    : `\nLocation ${location}`
+  const codeLine = `\n${sourceCodeInfo.code}`
+  const codeMarker = `\n${getCodeMarker(sourceCodeInfo)}`
   return `${message}${filePathLine}${codeLine}${codeMarker}`
 }
 

@@ -2,6 +2,7 @@ import { LitsError } from '../../errors'
 import type { Any, Arr } from '../../interface'
 import type { Node, SpecialExpressionNode } from '../../parser/types'
 import { isSpreadNode } from '../../typeGuards/astNode'
+import { asAny } from '../../typeGuards/lits'
 import type { BuiltinSpecialExpression } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 
@@ -27,5 +28,15 @@ export const arraySpecialExpression: BuiltinSpecialExpression<Any, ArrayNode> = 
 
     return result
   },
+  evaluateAsNormalExpression: (params, sourceCodeInfo) => {
+    const result: Arr = []
+
+    for (const param of params) {
+      result.push(asAny(param, sourceCodeInfo))
+    }
+
+    return result
+  },
+
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => getUndefinedSymbols(node[1][1], contextStack, builtin, evaluateNode),
 }

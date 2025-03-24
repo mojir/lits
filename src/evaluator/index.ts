@@ -17,7 +17,7 @@ import type {
 import { reservedSymbolRecord } from '../tokenizer/reservedNames'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { asNonUndefined } from '../typeGuards'
-import { isNormalBuiltinSymbolNode, isNormalExpressionNodeWithName } from '../typeGuards/astNode'
+import { isNormalBuiltinSymbolNode, isNormalExpressionNodeWithName, isSpreadNode } from '../typeGuards/astNode'
 import { asAny, assertSeq, isObj } from '../typeGuards/lits'
 import { isLitsFunction } from '../typeGuards/litsFunction'
 import { assertNumber, isNumber } from '../typeGuards/number'
@@ -76,7 +76,21 @@ function evaluateReservedSymbol(node: ReservedSymbolNode): Any {
 function evaluateNormalExpression(node: NormalExpressionNode, contextStack: ContextStack): Any {
   const sourceCodeInfo = node[2]
   const paramNodes: Node[] = node[1][1]
-  const params = paramNodes.map(paramNode => evaluateNode(paramNode, contextStack))
+  const params: Arr = []
+  paramNodes.forEach((paramNode) => {
+    if (isSpreadNode(paramNode)) {
+      const spreadValue = evaluateNode(paramNode[1], contextStack)
+      if (Array.isArray(spreadValue)) {
+        params.push(...spreadValue)
+      }
+      else {
+        throw new LitsError(`Spread operator requires an array, got ${valueToString(paramNode)}`, paramNode[2])
+      }
+    }
+    else {
+      params.push(evaluateNode(paramNode, contextStack))
+    }
+  })
   if (isNormalExpressionNodeWithName(node)) {
     const nameSymbol = node[1][0]
 

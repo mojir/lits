@@ -67,11 +67,11 @@ export type Token =
 export type TokenDescriptor<T extends Token> = [length: number, token?: T]
 
 export interface SourceCodeInfo {
-  position?: {
+  position: {
     line: number
     column: number
   }
-  code?: string
+  code: string
   filePath?: string
 }
 

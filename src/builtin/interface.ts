@@ -33,6 +33,7 @@ export interface EvaluateHelpers {
 }
 export interface BuiltinSpecialExpression<T, N extends SpecialExpressionNode> {
   evaluate: (node: N, contextStack: ContextStack, helpers: EvaluateHelpers) => T
+  evaluateAsNormalExpression?: NormalExpressionEvaluator<T>
   paramCount: Count
   getUndefinedSymbols: (
     node: N,

@@ -1,5 +1,6 @@
 import type { JsFunction } from '../Lits/Lits'
 import type { SpecialExpressionType } from '../builtin'
+import type { specialExpressionTypes } from '../builtin/specialExpressionTypes'
 import type { FunctionType, NodeType, NodeTypes } from '../constants/constants'
 import type { Context } from '../evaluator/interface'
 import type { Any, Arr } from '../interface'
@@ -85,10 +86,24 @@ export interface NormalBuiltinFunction extends GenericLitsFunction {
   normalBuitinSymbolType: number
 }
 
+export interface SpecialBuiltinFunction extends GenericLitsFunction {
+  functionType: 'SpecialBuiltin'
+  specialBuiltinSymbolType:
+    | typeof specialExpressionTypes['&&']
+    | typeof specialExpressionTypes['||']
+    | typeof specialExpressionTypes['array']
+    | typeof specialExpressionTypes['object']
+    | typeof specialExpressionTypes['defined?']
+    | typeof specialExpressionTypes['recur']
+    | typeof specialExpressionTypes['throw']
+    | typeof specialExpressionTypes['??']
+}
+
 export type LitsFunction =
   | NativeJsFunction
   | UserDefinedFunction
   | NormalBuiltinFunction
+  | SpecialBuiltinFunction
   | PartialFunction
   | CompFunction
   | ConstantlyFunction

@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
-import { afterEach, beforeEach, describe, expect, it, vitest } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, test, vitest } from 'vitest'
 import { Lits } from '../../../src/Lits/Lits'
+import { LitsError, RecurSignal, UserDefinedError } from '../../../src/errors'
 
 describe('functional functions.', () => {
   for (const lits of [new Lits(), new Lits({ debug: true })]) {
@@ -134,6 +135,54 @@ let foo := comp(!, odd?);
         expect(() => lits.run('fnull()')).toThrow()
         expect(() => lits.run('fnull(+)')).toThrow()
       })
+    })
+
+    describe('spread.', () => {
+      it('samples.', () => {
+        expect(lits.run(`
+let params := [1, 2, 3];
++(...params)`)).toBe(6)
+      })
+      expect(() => lits.run(`
+let params := {};
++(...params)`)).toThrow()
+    })
+
+    describe('special expressions as normal expressions.', () => {
+      test('samples.', () => {
+        expect(lits.run(`
+let and := &&;
+true and false`)).toBe(false)
+        expect(lits.run(`
+let or := ||;
+true or false`)).toBe(true)
+        expect(lits.run(`
+let obj := object;
+obj("a", 1, "b", 2)`)).toEqual({ a: 1, b: 2 })
+        expect(lits.run(`
+let obj := object;
+obj("a", 1, "b")`)).toEqual({ a: 1, b: null })
+        expect(lits.run(`
+let arr := array;
+arr(1, 2, 3)`)).toEqual([1, 2, 3])
+        expect(lits.run(`
+let qq := ??;
+null qq 0`)).toBe(0)
+        expect(lits.run(`
+let qq := ??;
+0 qq 1`)).toBe(0)
+        expect(lits.run(`
+let qq := ??;
+qq(null)`)).toBe(null)
+        expect(() => lits.run(`
+let r := recur;
+r(1)`)).toThrow(RecurSignal)
+      })
+      expect(() => lits.run(`
+let t := throw;
+t("error")`)).toThrow(UserDefinedError)
+      expect(() => lits.run('let t := \'if\';')).toThrow(LitsError)
+      expect(() => lits.run('let d := defined?; d(+)')).toThrow(LitsError)
     })
   }
 })

@@ -1,7 +1,7 @@
 import type { Any } from '../../interface'
 import type { Node, SpecialExpressionNode } from '../../parser/types'
 import { isUserDefinedSymbolNode } from '../../typeGuards/astNode'
-import { assertAny } from '../../typeGuards/lits'
+import { asAny, assertAny } from '../../typeGuards/lits'
 import type { BuiltinSpecialExpression } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 
@@ -18,6 +18,12 @@ export const qqSpecialExpression: BuiltinSpecialExpression<Any, QqNode> = {
     assertAny(firstNode, node[2])
     const firstResult = evaluateNode(firstNode, contextStack)
     return firstResult ?? (secondNode ? evaluateNode(secondNode, contextStack) : null)
+  },
+
+  evaluateAsNormalExpression: (params, sourceCodeInfo) => {
+    const firstParam = asAny(params[0], sourceCodeInfo)
+    const secondParam = params[1] !== undefined ? asAny(params[1], sourceCodeInfo) : null
+    return firstParam ?? secondParam
   },
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => getUndefinedSymbols(node[1][1].filter(n => !!n), contextStack, builtin, evaluateNode),
 }

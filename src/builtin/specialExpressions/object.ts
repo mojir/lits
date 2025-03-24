@@ -34,5 +34,17 @@ export const objectSpecialExpression: BuiltinSpecialExpression<Any, ObjectNode> 
     }
     return result
   },
+  evaluateAsNormalExpression: (params, sourceCodeInfo) => {
+    const result: Obj = {}
+
+    for (let i = 0; i < params.length; i += 2) {
+      const key = params[i]
+      const value = params[i + 1]
+      assertString(key, sourceCodeInfo)
+      result[key] = value ?? null
+    }
+
+    return result
+  },
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => getUndefinedSymbols(node[1][1], contextStack, builtin, evaluateNode),
 }

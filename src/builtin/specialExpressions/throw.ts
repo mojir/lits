@@ -14,5 +14,11 @@ export const throwSpecialExpression: BuiltinSpecialExpression<null, ThrowNode> =
     })
     throw new UserDefinedError(message, node[2])
   },
+  evaluateAsNormalExpression: (params, sourceCodeInfo) => {
+    const message = asString(params[0], sourceCodeInfo, {
+      nonEmpty: true,
+    })
+    throw new UserDefinedError(message, undefined)
+  },
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => getUndefinedSymbols([node[1][1]], contextStack, builtin, evaluateNode),
 }

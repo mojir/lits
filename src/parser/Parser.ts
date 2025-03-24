@@ -67,7 +67,7 @@ function withSourceCodeInfo<T extends Node | BindingTarget>(node: T, sourceCodeI
   return node
 }
 
-function getPrecedence(operatorSign: SymbolicBinaryOperator): number {
+function getPrecedence(operatorSign: SymbolicBinaryOperator, sourceCodeInfo: SourceCodeInfo | undefined): number {
   switch (operatorSign) {
     case '**': // exponentiation
       return exponentiationPrecedence
@@ -115,7 +115,7 @@ function getPrecedence(operatorSign: SymbolicBinaryOperator): number {
     // leave room for binaryFunctionalOperatorPrecedence = 1
     /* v8 ignore next 2 */
     default:
-      throw new Error(`Unknown binary operator: ${operatorSign satisfies never}`)
+      throw new LitsError(`Unknown binary operator: ${operatorSign satisfies never}`, sourceCodeInfo)
   }
 }
 
@@ -263,7 +263,7 @@ export class Parser {
     while (!this.isAtExpressionEnd()) {
       if (isA_BinaryOperatorToken(operator)) {
         const name = operator[1]
-        const newPrecedece = getPrecedence(name)
+        const newPrecedece = getPrecedence(name, operator[2])
         if (
           newPrecedece <= precedence
           // ** (exponentiation) is right associative
@@ -349,7 +349,7 @@ export class Parser {
       this.advance()
       const expression = this.parseExpression()
       if (!isRParenToken(this.peek())) {
-        throw new Error('Expected closing parenthesis')
+        throw new LitsError('Expected closing parenthesis', this.peek()[2])
       }
       this.advance()
       return expression
@@ -502,7 +502,13 @@ export class Parser {
 
     const params: Node[] = []
     while (!this.isAtEnd() && !isRParenToken(this.peek())) {
-      params.push(this.parseExpression())
+      if (isOperatorToken(this.peek(), '...')) {
+        this.advance()
+        params.push(withSourceCodeInfo([NodeTypes.Spread, this.parseExpression()], this.peek()[2]))
+      }
+      else {
+        params.push(this.parseExpression())
+      }
       const nextToken = this.peek()
       if (!isOperatorToken(nextToken, ',') && !isRParenToken(nextToken)) {
         throw new LitsError('Expected comma or closing parenthesis', this.peek()[2])
@@ -572,7 +578,7 @@ export class Parser {
           throw new LitsError(`${type} is not allowed`, symbol[2])
           /* v8 ignore next 2 */
         default:
-          throw new Error(`Unknown special expression: ${type satisfies never}`)
+          throw new LitsError(`Unknown special expression: ${type satisfies never}`, symbol[2])
       }
     }
     else if (isNormalBuiltinSymbolNode(symbol) || isNormalBuiltinSymbolNode(symbol)) {
