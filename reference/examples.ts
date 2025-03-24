@@ -501,11 +501,14 @@ function getMinor(matrix, rowToRemove, colToRemove)
   ) filter (row -> row ≠ null);
 end;
   
-// 3x3 invertible matrix
-let matrix4 := [[2, 3, 4],
-                [1, 2, 3],
-                [3, 4, 1]];
-determinant(matrix4);
+// 4x4 invertible matrix
+let matrix4x4 := [
+  [4,  3,  2,  2],
+  [0,  1, -3,  3],
+  [0, -1,  3,  3],
+  [0,  3,  1,  1]
+];
+determinant(matrix4x4);
     `.trim(),
   },
   {

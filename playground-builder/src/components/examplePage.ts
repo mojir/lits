@@ -26,11 +26,13 @@ export function getExamplePage(): string {
             ${styles('flex', 'flex-col', 'bg-gray-700')}
           >
             <div
-              onclick="document.getElementById('${`example-${index}`}').classList.toggle('hidden')"
               ${styles('select-none', 'text-color-gray-400', 'flex', 'flex-row', 'items-center', 'pr-4')}
             >
               <div ${styles('font-size: 3.5rem;', 'flex', 'items-center', 'justify-center', 'width: 5rem;')}>${lampIcon}</div>
-              <div ${styles('flex', 'flex-1', 'flex-col', 'gap-2', 'my-4')}>
+              <div
+                onclick="document.getElementById('${`example-${index}`}').classList.toggle('hidden')"
+                ${styles('flex', 'flex-1', 'flex-col', 'gap-2', 'my-4', 'cursor-pointer')}
+              >
                 <div ${styles('text-xl', 'text-color-gray-200')}>${example.name}</div>
                 <div ${styles('text-base', 'text-color-gray-400')}>${example.description}</div>
               </div>
