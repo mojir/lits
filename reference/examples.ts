@@ -450,7 +450,7 @@ function determinant(matrix)
   
   // Base case: 1x1 matrix
   if rows = 1 then
-    get(get(matrix, 0), 0);
+    matrix[0][0];
   else
     // Base case: 2x2 matrix
     if rows = 2 then
@@ -469,7 +469,7 @@ function determinant(matrix)
           let minor := getMinor(matrix, 0, j);
           let cofactor := determinant(minor);
           let signFactor := if even?(j) then 1 else -1 end;
-          let term := signFactor * get(get(matrix, 0), j) * cofactor;
+          let term := signFactor * matrix[0][j] * cofactor;
           
           acc + term;
         end,
@@ -502,7 +502,9 @@ function getMinor(matrix, rowToRemove, colToRemove)
 end;
   
 // 3x3 invertible matrix
-let matrix4 := [[2, 3, 4], [1, 2, 3], [3, 4, 1]];
+let matrix4 := [[2, 3, 4],
+                [1, 2, 3],
+                [3, 4, 1]];
 determinant(matrix4);
     `.trim(),
   },
