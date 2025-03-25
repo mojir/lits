@@ -818,6 +818,10 @@ var Playground = (function (exports) {
             return false;
         return !!value[FUNCTION_SYMBOL];
     }
+    function asLitsFunction(value, sourceCodeInfo) {
+        assertLitsFunction(value, sourceCodeInfo);
+        return value;
+    }
     function assertLitsFunction(value, sourceCodeInfo) {
         if (!isLitsFunction(value))
             throw getAssertionError('LitsFunction', value, sourceCodeInfo);
@@ -1892,26 +1896,37 @@ var Playground = (function (exports) {
             paramCount: 1,
         },
         'map': {
-            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
-                var _c = __read(_a, 2), seq = _c[0], fn = _c[1];
-                var executeFunction = _b.executeFunction;
-                assertSeq(seq, sourceCodeInfo);
-                assertLitsFunction(fn, sourceCodeInfo);
-                if (Array.isArray(seq)) {
-                    return seq.map(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
+            evaluate: function (params, sourceCodeInfo, contextStack, _a) {
+                var executeFunction = _a.executeFunction;
+                var fn = asLitsFunction(params.at(-1));
+                var seqs = params.slice(0, -1);
+                assertSeq(seqs[0], sourceCodeInfo);
+                var isString = typeof seqs[0] === 'string';
+                var len = seqs[0].length;
+                seqs.slice(1).forEach(function (seq) {
+                    if (isString) {
+                        assertString(seq, sourceCodeInfo);
+                    }
+                    else {
+                        assertArray(seq, sourceCodeInfo);
+                    }
+                    len = Math.min(len, seq.length);
+                });
+                var paramArray = [];
+                var _loop_1 = function (i) {
+                    paramArray.push(seqs.map(function (seq) { return seq[i]; }));
+                };
+                for (var i = 0; i < len; i++) {
+                    _loop_1(i);
                 }
-                else {
-                    return seq
-                        .split('')
-                        .map(function (elem) {
-                        var newVal = executeFunction(fn, [elem], contextStack, sourceCodeInfo);
-                        assertString(newVal, sourceCodeInfo, { char: true });
-                        return newVal;
-                    })
-                        .join('');
+                var mapped = paramArray.map(function (p) { return executeFunction(fn, p, contextStack, sourceCodeInfo); });
+                if (!isString) {
+                    return mapped;
                 }
+                mapped.forEach(function (char) { return assertString(char, sourceCodeInfo); });
+                return mapped.join('');
             },
-            paramCount: 2,
+            paramCount: { min: 2 },
         },
         'pop': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2461,7 +2476,7 @@ var Playground = (function (exports) {
                 assertSeq(input, sourceCodeInfo);
                 if (Array.isArray(input)) {
                     var result = [];
-                    var _loop_1 = function (item) {
+                    var _loop_2 = function (item) {
                         assertAny(item, sourceCodeInfo);
                         if (!result.some(function (existingItem) { return deepEqual(existingItem, item, sourceCodeInfo); })) {
                             result.push(item);
@@ -2470,7 +2485,7 @@ var Playground = (function (exports) {
                     try {
                         for (var input_1 = __values(input), input_1_1 = input_1.next(); !input_1_1.done; input_1_1 = input_1.next()) {
                             var item = input_1_1.value;
-                            _loop_1(item);
+                            _loop_2(item);
                         }
                     }
                     catch (e_2_1) { e_2 = { error: e_2_1 }; }

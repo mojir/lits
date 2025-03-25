@@ -279,6 +279,8 @@ describe('sequence functions', () => {
       expect(lits.run('map([1, "2", 3], number?)')).toEqual([true, false, true])
       expect(lits.run('map([], number?)')).toEqual([])
       expect(lits.run('map([1, 2, 3], -> 2 * $)')).toEqual([2, 4, 6])
+      expect(lits.run('map("ABCDE", "12345", ++)')).toBe('A1B2C3D4E5')
+      expect(lits.run('map([1, 2, 3], [1, 2], +)')).toEqual([2, 4])
       expect(lits.run('map("AaBbCc", -> if $ >= "a" then "-" else "+" end)')).toBe('+-+-+-')
       expect(() => lits.run('map("AaBbCc", -> if $ >= "a" then 0 else 1 end)')).toThrow()
       expect(lits.run('map([1, "2", 3], null?)')).toEqual([false, false, false])
@@ -293,7 +295,6 @@ describe('sequence functions', () => {
         false,
       ])
       expect(lits.run('map([0, 1, 2, 3, 4, 5, 6, 7], inc)')).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
-      expect(() => lits.run('map([1, 2, 3], [1, 2], +)')).toThrow()
       expect(() => lits.run('map(+)')).toThrow()
       expect(() => lits.run('map()')).toThrow()
       expect(() => lits.run('map(1 number?)')).toThrow()

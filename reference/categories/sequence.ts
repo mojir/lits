@@ -330,21 +330,25 @@ reduce(
     },
     args: {
       ...getOperatorArgs('sequence', 'function'),
-      seq: {
+      seqs: {
         type: 'sequence',
+        rest: true,
+        description: 'At least one.',
       },
       fun: {
         type: 'function',
       },
     },
     variants: [
-      { argumentNames: ['seq', 'fun'] },
+      { argumentNames: ['seqs', 'fun'] },
     ],
-    description: 'Creates a new array populated with the results of calling $fun on every elements in $seq.',
+    description: 'Creates a new array populated with the results of calling $fun on every element in $seqs.',
     examples: [
+      '[1, 2, 3] map -',
       '[1, 2, 3] map -> -($)',
       'map(["Albert", "Mojir", 42], str)',
       'map([1, 2, 3], inc)',
+      'map([1, 2, 3], [1, 10, 100], *)',
     ],
   },
   'filter': {

@@ -2,7 +2,7 @@ import type { Any, Arr, Obj, Seq } from '../../../interface'
 import type { SourceCodeInfo } from '../../../tokenizer/token'
 import { asArray, assertArray, assertCharArray } from '../../../typeGuards/array'
 import { asAny, asSeq, assertAny, assertSeq } from '../../../typeGuards/lits'
-import { assertLitsFunction } from '../../../typeGuards/litsFunction'
+import { asLitsFunction, assertLitsFunction } from '../../../typeGuards/litsFunction'
 import { asNumber, assertNumber } from '../../../typeGuards/number'
 import { assertString, assertStringOrNumber } from '../../../typeGuards/string'
 import { collHasKey, compare, deepEqual, toAny, toNonNegativeInteger } from '../../../utils'
@@ -59,25 +59,36 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     paramCount: 1,
   },
   'map': {
-    evaluate: ([seq, fn], sourceCodeInfo, contextStack, { executeFunction }) => {
-      assertSeq(seq, sourceCodeInfo)
-      assertLitsFunction(fn, sourceCodeInfo)
+    evaluate: (params, sourceCodeInfo, contextStack, { executeFunction }) => {
+      const fn = asLitsFunction(params.at(-1))
+      const seqs = params.slice(0, -1) as Seq[]
+      assertSeq(seqs[0], sourceCodeInfo)
+      const isString = typeof seqs[0] === 'string'
+      let len = seqs[0].length
+      seqs.slice(1).forEach((seq) => {
+        if (isString) {
+          assertString(seq, sourceCodeInfo)
+        }
+        else {
+          assertArray(seq, sourceCodeInfo)
+        }
+        len = Math.min(len, seq.length)
+      })
 
-      if (Array.isArray(seq)) {
-        return seq.map(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo))
+      const paramArray: unknown[][] = []
+      for (let i = 0; i < len; i++) {
+        paramArray.push(seqs.map(seq => seq[i]))
       }
-      else {
-        return seq
-          .split('')
-          .map((elem) => {
-            const newVal = executeFunction(fn, [elem], contextStack, sourceCodeInfo)
-            assertString(newVal, sourceCodeInfo, { char: true })
-            return newVal
-          })
-          .join('')
+
+      const mapped = paramArray.map(p => executeFunction(fn, p, contextStack, sourceCodeInfo))
+
+      if (!isString) {
+        return mapped
       }
+      mapped.forEach(char => assertString(char, sourceCodeInfo))
+      return mapped.join('')
     },
-    paramCount: 2,
+    paramCount: { min: 2 },
   },
   'pop': {
     evaluate: ([seq], sourceCodeInfo): Seq => {
