@@ -283,6 +283,15 @@ export function addSampleContext() {
         zip: '62701',
       },
     },
+    'matrix-a': [
+      [1, 2, 3],
+      [4, 5, 6],
+    ],
+    'matrix-b': [
+      [7, 8],
+      [9, 10],
+      [11, 12],
+    ],
   }
 
   const jsFunctions = {
@@ -678,8 +687,9 @@ window.addEventListener('popstate', () => {
   showPage(id, 'instant', 'none')
 })
 
-function truncateCode(code: string, count = 1000) {
+function truncateCode(code: string) {
   const oneLiner = getLits().tokenize(code, { minify: true }).tokens.map(t => t[0] === 'Whitespace' ? ' ' : t[1]).join('').trim()
+  const count = 100
   if (oneLiner.length <= count)
     return oneLiner
   else

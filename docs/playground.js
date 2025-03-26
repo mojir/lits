@@ -916,7 +916,63 @@ var Playground = (function (exports) {
             return "/".concat(value.s, "/").concat(value.f);
         if (typeof value === 'string')
             return "\"".concat(value, "\"");
+        if (isMatrix(value))
+            return stringifyMatrix(value);
         return JSON.stringify(value, null, 2);
+    }
+    function stringifyMatrix(matrix) {
+        var padding = matrix.flat().reduce(function (max, cell) { return Math.max(max, "".concat(cell).length); }, 0) + 1;
+        var rows = matrix.map(function (row) { return "[".concat(row.map(function (cell) { return cell.toString().padStart(padding); }).join(' '), " ]"); });
+        return rows.join('\n');
+    }
+    function isMatrix(value) {
+        var e_1, _a, e_2, _b;
+        if (!Array.isArray(value)) {
+            return false;
+        }
+        if (!value.every(function (row) { return Array.isArray(row); })) {
+            return false;
+        }
+        var cols = -1;
+        try {
+            for (var value_1 = __values(value), value_1_1 = value_1.next(); !value_1_1.done; value_1_1 = value_1.next()) {
+                var row = value_1_1.value;
+                if (cols === -1) {
+                    cols = row.length;
+                    if (cols === 0) {
+                        return false;
+                    }
+                }
+                else {
+                    if (row.length !== cols) {
+                        return false;
+                    }
+                }
+                try {
+                    for (var row_1 = (e_2 = void 0, __values(row)), row_1_1 = row_1.next(); !row_1_1.done; row_1_1 = row_1.next()) {
+                        var cell = row_1_1.value;
+                        if (typeof cell !== 'number') {
+                            return false;
+                        }
+                    }
+                }
+                catch (e_2_1) { e_2 = { error: e_2_1 }; }
+                finally {
+                    try {
+                        if (row_1_1 && !row_1_1.done && (_b = row_1.return)) _b.call(row_1);
+                    }
+                    finally { if (e_2) throw e_2.error; }
+                }
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (value_1_1 && !value_1_1.done && (_a = value_1.return)) _a.call(value_1);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        return true;
     }
 
     var specialExpressionTypes = {
@@ -8175,6 +8231,15 @@ var Playground = (function (exports) {
                     zip: '62701',
                 },
             },
+            'matrix-a': [
+                [1, 2, 3],
+                [4, 5, 6],
+            ],
+            'matrix-b': [
+                [7, 8],
+                [9, 10],
+                [11, 12],
+            ],
         };
         var jsFunctions = {
             'prompt!': '(title) => prompt(title)',
@@ -8519,9 +8584,9 @@ var Playground = (function (exports) {
         var id = location.hash.substring(1) || 'index';
         showPage(id, 'instant', 'none');
     });
-    function truncateCode(code, count) {
-        if (count === void 0) { count = 1000; }
+    function truncateCode(code) {
         var oneLiner = getLits().tokenize(code, { minify: true }).tokens.map(function (t) { return t[0] === 'Whitespace' ? ' ' : t[1]; }).join('').trim();
+        var count = 100;
         if (oneLiner.length <= count)
             return oneLiner;
         else

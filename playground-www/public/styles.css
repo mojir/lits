@@ -98,10 +98,7 @@ a.disabled {
 #output-result .output {
   color: #ca9d8b;
   white-space: pre-wrap;
-}
-#output-result .output::before {
-  content: '> ';
-  color: #ca9d8b;
+  padding-left: 0.5rem;
 }
 
 #output-result .analyze {
