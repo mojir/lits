@@ -12,6 +12,10 @@ import { predicatesNormalExpression } from './categories/predicates'
 import { regexpNormalExpression } from './categories/regexp'
 import { stringNormalExpression } from './categories/string'
 import { functionalNormalExpression } from './categories/functional'
+import { tableNormalExpression } from './categories/table'
+import { vectorNormalExpression } from './categories/vector'
+import { matrixNormalExpression } from './categories/matrix'
+import { combinatoricalNormalExpression } from './categories/combinatorial'
 
 const expressions: BuiltinNormalExpressions = {
   ...bitwiseNormalExpression,
@@ -26,6 +30,10 @@ const expressions: BuiltinNormalExpressions = {
   ...regexpNormalExpression,
   ...stringNormalExpression,
   ...functionalNormalExpression,
+  ...vectorNormalExpression,
+  ...tableNormalExpression,
+  ...matrixNormalExpression,
+  ...combinatoricalNormalExpression,
 }
 
 const aliases: BuiltinNormalExpressions = {}

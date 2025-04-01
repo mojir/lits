@@ -1,5 +1,9 @@
 import type { Argument } from '.'
 
+function getCombinatorialSequenceNames<T extends string>(name: T): [`c:${T}-seq`, `c:${T}-nth`, `c:${T}-take-while`, `c:${T}?`] {
+  return [`c:${name}-seq`, `c:${name}-nth`, `c:${name}-take-while`, `c:${name}?`]
+}
+
 export const api = {
   collection: [
     'count',
@@ -234,6 +238,18 @@ export const api = {
     'assert-throws-error',
     'assert-not-throws',
   ] as const,
+  matrix: [
+    'm:matrix?',
+  ] as const,
+  combinatorial: [
+    ...getCombinatorialSequenceNames('bell'),
+    ...getCombinatorialSequenceNames('catalan'),
+    ...getCombinatorialSequenceNames('look-and-say'),
+    ...getCombinatorialSequenceNames('padovan'),
+    ...getCombinatorialSequenceNames('pell'),
+    ...getCombinatorialSequenceNames('recaman'),
+    ...getCombinatorialSequenceNames('thue-morse'),
+  ] as const,
   shorthand: [
     '-short-regexp',
     '-short-fn',
@@ -268,6 +284,8 @@ export type SpecialExpressionsApiName = string
 export type StringApiName = typeof api.string[number]
 export type BitwiseApiName = typeof api.bitwise[number]
 export type AssertApiName = typeof api.assert[number]
+export type MatrixApiName = typeof api.matrix[number]
+export type CombinatorialApiName = typeof api.combinatorial[number]
 
 export type NormalExpressionName =
   | CollectionApiName
@@ -282,6 +300,8 @@ export type NormalExpressionName =
   | StringApiName
   | BitwiseApiName
   | AssertApiName
+  | MatrixApiName
+  | CombinatorialApiName
 
 export type FunctionName =
   | NormalExpressionName
@@ -304,6 +324,8 @@ const apiFunctionNames = [
   ...api.string,
   ...api.bitwise,
   ...api.assert,
+  ...api.matrix,
+  ...api.combinatorial,
 ] as const
 
 const apiNames = [
@@ -332,6 +354,8 @@ export const categoryRecord = {
   'Bitwise': true,
   'Misc': true,
   'Assert': true,
+  'Matrix': true,
+  'Combinatorial': true,
   'Shorthand': true,
   'Datatype': true,
 } as const

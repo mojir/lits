@@ -41,11 +41,9 @@ function checkParams(
   nbrOfParams: number,
   sourceCodeInfo?: SourceCodeInfo,
 ) {
-  const hasRest = evaluatedFunction[0].some(arg => arg[0] === bindingTargetTypes.rest)
   const minArity = evaluatedFunction[0].filter(arg => arg[0] !== bindingTargetTypes.rest && arg[1][1] === undefined).length
-  const maxArity = hasRest ? Number.MAX_SAFE_INTEGER : evaluatedFunction[0].length
-  if (nbrOfParams < minArity || nbrOfParams > maxArity) {
-    throw new LitsError(`Unexpected number of arguments, got ${valueToString(nbrOfParams)}.`, sourceCodeInfo)
+  if (nbrOfParams < minArity) {
+    throw new LitsError(`Unexpected number of arguments. Expected at least ${minArity}, got ${nbrOfParams}.`, sourceCodeInfo)
   }
 }
 

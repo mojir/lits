@@ -76,6 +76,7 @@ type LtOptions =
 type NumberOptions = {
   integer?: true
   finite?: true
+  eq?: number
 } & SignOptions &
 GtOptions &
 LtOptions
@@ -120,8 +121,9 @@ function getNumberTypeName(options: NumberOptions): string {
   const numberType = options.integer ? 'integer' : 'number'
   const finite = options.finite ? 'finite' : ''
   const range = getRangeString(options)
+  const equal = typeof options.eq === 'number' ? `equal to ${options.eq}` : ''
 
-  return [sign, finite, numberType, range].filter(x => !!x).join(' ')
+  return [sign, finite, numberType, range, equal].filter(x => !!x).join(' ')
 }
 
 export function isNumber(value: unknown, options: NumberOptions = {}): value is number {

@@ -292,6 +292,11 @@ export function addSampleContext() {
       [9, 10],
       [11, 12],
     ],
+    'matrix-c': [
+      [3, 0, 2],
+      [2, 0, -2],
+      [0, 1, 1],
+    ],
   }
 
   const jsFunctions = {
