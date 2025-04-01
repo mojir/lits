@@ -916,16 +916,16 @@ var Playground = (function (exports) {
             return "/".concat(value.s, "/").concat(value.f);
         if (typeof value === 'string')
             return "\"".concat(value, "\"");
-        if (isMatrix(value))
+        if (isMatrix$1(value))
             return stringifyMatrix(value);
         return JSON.stringify(value, null, 2);
     }
     function stringifyMatrix(matrix) {
         var padding = matrix.flat().reduce(function (max, cell) { return Math.max(max, "".concat(cell).length); }, 0) + 1;
-        var rows = matrix.map(function (row) { return "[".concat(row.map(function (cell) { return cell.toString().padStart(padding); }).join(' '), " ]"); });
+        var rows = matrix.map(function (row) { return "[".concat(row.map(function (cell) { return "".concat(cell).padStart(padding); }).join(' '), " ]"); });
         return rows.join('\n');
     }
-    function isMatrix(value) {
+    function isMatrix$1(value) {
         var e_1, _a, e_2, _b;
         if (!Array.isArray(value)) {
             return false;
@@ -951,7 +951,7 @@ var Playground = (function (exports) {
                 try {
                     for (var row_1 = (e_2 = void 0, __values(row)), row_1_1 = row_1.next(); !row_1_1.done; row_1_1 = row_1.next()) {
                         var cell = row_1_1.value;
-                        if (typeof cell !== 'number') {
+                        if (typeof cell !== 'number' && typeof cell !== 'string' && typeof cell !== 'boolean' && cell !== null) {
                             return false;
                         }
                     }
@@ -1166,7 +1166,8 @@ var Playground = (function (exports) {
         var numberType = options.integer ? 'integer' : 'number';
         var finite = options.finite ? 'finite' : '';
         var range = getRangeString(options);
-        return [sign, finite, numberType, range].filter(function (x) { return !!x; }).join(' ');
+        var equal = typeof options.eq === 'number' ? "equal to ".concat(options.eq) : '';
+        return [sign, finite, numberType, range, equal].filter(function (x) { return !!x; }).join(' ');
     }
     function isNumber(value, options) {
         if (options === void 0) { options = {}; }
@@ -1903,7 +1904,7 @@ var Playground = (function (exports) {
         },
     };
 
-    var sequenceNormalExpression = {
+    var sequenceNormalExpression$1 = {
         'nth': {
             evaluate: function (params, sourceCodeInfo) {
                 var _a = __read(params, 2), seq = _a[0], i = _a[1];
@@ -4337,7 +4338,5914 @@ var Playground = (function (exports) {
         },
     };
 
-    var expressions = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, bitwiseNormalExpression), collectionNormalExpression), arrayNormalExpression), sequenceNormalExpression), mathNormalExpression), miscNormalExpression), assertNormalExpression), objectNormalExpression), predicatesNormalExpression), regexpNormalExpression), stringNormalExpression), functionalNormalExpression);
+    /**
+     * Creates a matrix from a flat array with specified dimensions
+     *
+     * @param flatArray The flat array of values
+     * @param rows Number of rows in the resulting matrix
+     * @param cols Number of columns in the resulting matrix
+     * @returns A 2D array representing the matrix
+     */
+    function fromArray(flatArray, rows, cols) {
+        // Create the matrix
+        var table = [];
+        // Reshape the flat array into rows and columns
+        for (var i = 0; i < rows; i++) {
+            var start = i * cols;
+            var end = start + cols;
+            table.push(flatArray.slice(start, end));
+        }
+        return table;
+    }
+
+    function tableEqual(tables) {
+        var firstTable = tables[0];
+        return tables.slice(1).every(function (table) {
+            if (table.length !== firstTable.length) {
+                return false;
+            }
+            if (table[0].length !== firstTable[0].length) {
+                return false;
+            }
+            return table.every(function (row, i) {
+                return row.every(function (cell, j) { return cell === firstTable[i][j]; });
+            });
+        });
+    }
+
+    function transpose(table) {
+        var result = [];
+        for (var i = 0; i < table[0].length; i += 1) {
+            var row = [];
+            for (var j = 0; j < table.length; j += 1) {
+                row.push(table[j][i]);
+            }
+            result.push(row);
+        }
+        return result;
+    }
+
+    function isTable(table) {
+        var e_1, _a;
+        if (!Array.isArray(table)) {
+            return false;
+        }
+        if (table.length === 0) {
+            return false;
+        }
+        if (!Array.isArray(table[0])) {
+            return false;
+        }
+        var nbrOfCols = table[0].length;
+        try {
+            for (var _b = __values(table.slice(1)), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var row = _c.value;
+                if (!Array.isArray(row)) {
+                    return false;
+                }
+                if (row.length !== nbrOfCols) {
+                    return false;
+                }
+                if (row.some(function (cell) { return isAny(cell); })) {
+                    return false;
+                }
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        return true;
+    }
+    function assertTable(table, sourceCodeInfo) {
+        if (!isTable(table)) {
+            throw new LitsError("Expected a table, but got ".concat(table), sourceCodeInfo);
+        }
+    }
+    function assertAnyArray(value, sourceCodeInfo) {
+        if (!Array.isArray(value)) {
+            throw new LitsError("Expected an array, but got ".concat(value), sourceCodeInfo);
+        }
+        if (value.some(function (cell) { return !isAny(cell); })) {
+            throw new LitsError("Expected an array of Any, but got ".concat(value), sourceCodeInfo);
+        }
+    }
+    var tableNormalExpression = {
+        't:table?': {
+            evaluate: function (_a) {
+                var _b = __read(_a, 1), table = _b[0];
+                return isTable(table);
+            },
+            paramCount: 1,
+        },
+        't:=': {
+            evaluate: function (params, sourceCodeInfo) {
+                assertArray(params, sourceCodeInfo);
+                params.every(function (table) { return assertTable(table, sourceCodeInfo); });
+                if (params.length <= 1) {
+                    return true;
+                }
+                return tableEqual(params);
+            },
+            paramCount: { min: 1 },
+        },
+        't:!=': {
+            evaluate: function (params, sourceCodeInfo) {
+                assertArray(params, sourceCodeInfo);
+                params.every(function (table) { return assertTable(table, sourceCodeInfo); });
+                if (params.length <= 1) {
+                    return false;
+                }
+                return !tableEqual(params);
+            },
+            paramCount: { min: 1 },
+        },
+        'table-every?': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var e_2, _c, e_3, _d;
+                var _e = __read(_a, 2), table = _e[0], predicate = _e[1];
+                var executeFunction = _b.executeFunction;
+                assertTable(table, sourceCodeInfo);
+                assertLitsFunction(predicate, sourceCodeInfo);
+                try {
+                    for (var table_1 = __values(table), table_1_1 = table_1.next(); !table_1_1.done; table_1_1 = table_1.next()) {
+                        var row = table_1_1.value;
+                        try {
+                            for (var row_1 = (e_3 = void 0, __values(row)), row_1_1 = row_1.next(); !row_1_1.done; row_1_1 = row_1.next()) {
+                                var cell = row_1_1.value;
+                                if (!executeFunction(predicate, [cell], contextStack, sourceCodeInfo)) {
+                                    return false;
+                                }
+                            }
+                        }
+                        catch (e_3_1) { e_3 = { error: e_3_1 }; }
+                        finally {
+                            try {
+                                if (row_1_1 && !row_1_1.done && (_d = row_1.return)) _d.call(row_1);
+                            }
+                            finally { if (e_3) throw e_3.error; }
+                        }
+                    }
+                }
+                catch (e_2_1) { e_2 = { error: e_2_1 }; }
+                finally {
+                    try {
+                        if (table_1_1 && !table_1_1.done && (_c = table_1.return)) _c.call(table_1);
+                    }
+                    finally { if (e_2) throw e_2.error; }
+                }
+                return true;
+            },
+            paramCount: 2,
+        },
+        't:some?': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var e_4, _c, e_5, _d;
+                var _e = __read(_a, 2), table = _e[0], predicate = _e[1];
+                var executeFunction = _b.executeFunction;
+                assertTable(table, sourceCodeInfo);
+                assertLitsFunction(predicate, sourceCodeInfo);
+                try {
+                    for (var table_2 = __values(table), table_2_1 = table_2.next(); !table_2_1.done; table_2_1 = table_2.next()) {
+                        var row = table_2_1.value;
+                        try {
+                            for (var row_2 = (e_5 = void 0, __values(row)), row_2_1 = row_2.next(); !row_2_1.done; row_2_1 = row_2.next()) {
+                                var cell = row_2_1.value;
+                                if (executeFunction(predicate, [cell], contextStack, sourceCodeInfo)) {
+                                    return true;
+                                }
+                            }
+                        }
+                        catch (e_5_1) { e_5 = { error: e_5_1 }; }
+                        finally {
+                            try {
+                                if (row_2_1 && !row_2_1.done && (_d = row_2.return)) _d.call(row_2);
+                            }
+                            finally { if (e_5) throw e_5.error; }
+                        }
+                    }
+                }
+                catch (e_4_1) { e_4 = { error: e_4_1 }; }
+                finally {
+                    try {
+                        if (table_2_1 && !table_2_1.done && (_c = table_2.return)) _c.call(table_2);
+                    }
+                    finally { if (e_4) throw e_4.error; }
+                }
+                return false;
+            },
+            paramCount: 2,
+        },
+        't:every-row?': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var e_6, _c;
+                var _d = __read(_a, 2), table = _d[0], predicate = _d[1];
+                var executeFunction = _b.executeFunction;
+                assertTable(table, sourceCodeInfo);
+                assertLitsFunction(predicate, sourceCodeInfo);
+                try {
+                    for (var table_3 = __values(table), table_3_1 = table_3.next(); !table_3_1.done; table_3_1 = table_3.next()) {
+                        var row = table_3_1.value;
+                        if (!executeFunction(predicate, [row], contextStack, sourceCodeInfo)) {
+                            return false;
+                        }
+                    }
+                }
+                catch (e_6_1) { e_6 = { error: e_6_1 }; }
+                finally {
+                    try {
+                        if (table_3_1 && !table_3_1.done && (_c = table_3.return)) _c.call(table_3);
+                    }
+                    finally { if (e_6) throw e_6.error; }
+                }
+                return true;
+            },
+            paramCount: 2,
+        },
+        't:some-row?': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var e_7, _c;
+                var _d = __read(_a, 2), table = _d[0], predicate = _d[1];
+                var executeFunction = _b.executeFunction;
+                assertTable(table, sourceCodeInfo);
+                assertLitsFunction(predicate, sourceCodeInfo);
+                try {
+                    for (var table_4 = __values(table), table_4_1 = table_4.next(); !table_4_1.done; table_4_1 = table_4.next()) {
+                        var row = table_4_1.value;
+                        if (executeFunction(predicate, [row], contextStack, sourceCodeInfo)) {
+                            return true;
+                        }
+                    }
+                }
+                catch (e_7_1) { e_7 = { error: e_7_1 }; }
+                finally {
+                    try {
+                        if (table_4_1 && !table_4_1.done && (_c = table_4.return)) _c.call(table_4);
+                    }
+                    finally { if (e_7) throw e_7.error; }
+                }
+                return false;
+            },
+            paramCount: 2,
+        },
+        't:every-col?': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var e_8, _c;
+                var _d = __read(_a, 2), table = _d[0], predicate = _d[1];
+                var executeFunction = _b.executeFunction;
+                assertTable(table, sourceCodeInfo);
+                assertLitsFunction(predicate, sourceCodeInfo);
+                var transposed = transpose(table);
+                try {
+                    for (var transposed_1 = __values(transposed), transposed_1_1 = transposed_1.next(); !transposed_1_1.done; transposed_1_1 = transposed_1.next()) {
+                        var row = transposed_1_1.value;
+                        if (!executeFunction(predicate, [row], contextStack, sourceCodeInfo)) {
+                            return false;
+                        }
+                    }
+                }
+                catch (e_8_1) { e_8 = { error: e_8_1 }; }
+                finally {
+                    try {
+                        if (transposed_1_1 && !transposed_1_1.done && (_c = transposed_1.return)) _c.call(transposed_1);
+                    }
+                    finally { if (e_8) throw e_8.error; }
+                }
+                return true;
+            },
+            paramCount: 2,
+        },
+        't:some-col?': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var e_9, _c;
+                var _d = __read(_a, 2), table = _d[0], predicate = _d[1];
+                var executeFunction = _b.executeFunction;
+                assertTable(table, sourceCodeInfo);
+                assertLitsFunction(predicate, sourceCodeInfo);
+                var transposed = transpose(table);
+                try {
+                    for (var transposed_2 = __values(transposed), transposed_2_1 = transposed_2.next(); !transposed_2_1.done; transposed_2_1 = transposed_2.next()) {
+                        var row = transposed_2_1.value;
+                        if (executeFunction(predicate, [row], contextStack, sourceCodeInfo)) {
+                            return true;
+                        }
+                    }
+                }
+                catch (e_9_1) { e_9 = { error: e_9_1 }; }
+                finally {
+                    try {
+                        if (transposed_2_1 && !transposed_2_1.done && (_c = transposed_2.return)) _c.call(transposed_2);
+                    }
+                    finally { if (e_9) throw e_9.error; }
+                }
+                return false;
+            },
+            paramCount: 2,
+        },
+        't:row': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), table = _b[0], row = _b[1];
+                assertTable(table, sourceCodeInfo);
+                assertNumber(row, sourceCodeInfo, { integer: true, nonNegative: true, lte: table.length });
+                return table[row];
+            },
+            paramCount: 2,
+        },
+        't:col': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), table = _b[0], col = _b[1];
+                assertTable(table, sourceCodeInfo);
+                assertNumber(col, sourceCodeInfo, { integer: true, nonNegative: true, lte: table[0].length });
+                return table.map(function (row) { return row[col]; });
+            },
+            paramCount: 2,
+        },
+        't:shape': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), table = _b[0];
+                assertTable(table, sourceCodeInfo);
+                return [table.length, table[0].length];
+            },
+            paramCount: 1,
+        },
+        't:generate': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var _c = __read(_a, 3), rows = _c[0], cols = _c[1], generator = _c[2];
+                var executeFunction = _b.executeFunction;
+                assertNumber(rows, sourceCodeInfo, { integer: true, positive: true });
+                assertNumber(cols, sourceCodeInfo, { integer: true, positive: true });
+                assertLitsFunction(generator, sourceCodeInfo);
+                var result = [];
+                for (var i = 0; i < rows; i += 1) {
+                    var row = [];
+                    for (var j = 0; j < cols; j += 1) {
+                        var value = executeFunction(generator, [i, j], contextStack, sourceCodeInfo);
+                        if (!isAny(value)) {
+                            throw new LitsError("The generator function must return Any, but got ".concat(value), sourceCodeInfo);
+                        }
+                        row.push(value);
+                    }
+                    result.push(row);
+                }
+                return result;
+            },
+            paramCount: 3,
+        },
+        't:reshape': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), table = _b[0], rows = _b[1], cols = _b[2];
+                assertTable(table, sourceCodeInfo);
+                assertNumber(rows, sourceCodeInfo, { integer: true, positive: true });
+                assertNumber(cols, sourceCodeInfo, { integer: true, positive: true });
+                var flatTable = table.flat();
+                if (flatTable.length !== rows * cols) {
+                    throw new LitsError("The number of elements in the table must be equal to rows * cols, but got ".concat(flatTable.length, " and ").concat(rows, " * ").concat(cols), sourceCodeInfo);
+                }
+                var result = [];
+                for (var i = 0; i < rows; i += 1) {
+                    var row = [];
+                    for (var j = 0; j < cols; j += 1) {
+                        row.push(flatTable[i * cols + j]);
+                    }
+                    result.push(row);
+                }
+                return result;
+            },
+            paramCount: 3,
+        },
+        't:transpose': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), table = _b[0];
+                assertTable(table, sourceCodeInfo);
+                return transpose(table);
+            },
+            paramCount: 1,
+        },
+        't:slice': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 5), table = _b[0], rowStart = _b[1], rowEnd = _b[2], colStart = _b[3], colEnd = _b[4];
+                assertTable(table, sourceCodeInfo);
+                assertNumber(rowStart, sourceCodeInfo, { integer: true, nonNegative: true, lte: table.length });
+                assertNumber(rowEnd, sourceCodeInfo, { integer: true });
+                rowEnd = rowEnd < 0 ? table.length + rowEnd : rowEnd;
+                assertNumber(rowEnd, sourceCodeInfo, { gt: rowStart, lte: table.length });
+                assertNumber(colStart, sourceCodeInfo, { integer: true, nonNegative: true, lte: table[0].length });
+                assertNumber(colEnd, sourceCodeInfo, { integer: true });
+                colEnd = colEnd < 0 ? table[0].length + colEnd : colEnd;
+                assertNumber(colEnd, sourceCodeInfo, { gt: colStart, lte: table[0].length });
+                var result = [];
+                for (var i = rowStart; i < rowEnd; i += 1) {
+                    var row = [];
+                    for (var j = colStart; j < colEnd; j += 1) {
+                        row.push(table[i][j]);
+                    }
+                    result.push(row);
+                }
+                return result;
+            },
+            paramCount: 5,
+        },
+        't:slice-rows': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), table = _b[0], rowStart = _b[1], rowEnd = _b[2];
+                assertTable(table, sourceCodeInfo);
+                if (typeof rowEnd === 'undefined') {
+                    assertNumber(rowStart, sourceCodeInfo, { integer: true, lte: table.length, gte: -table.length });
+                    if (rowStart < 0) {
+                        return table.slice(table.length + rowStart);
+                    }
+                    return table.slice(rowStart);
+                }
+                assertNumber(rowStart, sourceCodeInfo, { integer: true, nonNegative: true, lte: table.length });
+                assertNumber(rowEnd, sourceCodeInfo, { integer: true });
+                rowEnd = rowEnd < 0 ? table.length + rowEnd : rowEnd;
+                assertNumber(rowEnd, sourceCodeInfo, { gt: rowStart, lte: table.length });
+                return table.slice(rowStart, rowEnd);
+            },
+            paramCount: 3,
+        },
+        't:slice-cols': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), table = _b[0], colStart = _b[1], colEnd = _b[2];
+                assertTable(table, sourceCodeInfo);
+                var trMatrix = transpose(table);
+                if (typeof colEnd === 'undefined') {
+                    assertNumber(colStart, sourceCodeInfo, { integer: true, lte: trMatrix.length, gte: -trMatrix.length });
+                    if (colStart < 0) {
+                        return transpose(trMatrix.slice(trMatrix.length + colStart));
+                    }
+                    return transpose(trMatrix.slice(colStart));
+                }
+                assertNumber(colStart, sourceCodeInfo, { integer: true, nonNegative: true, lte: trMatrix.length });
+                assertNumber(colEnd, sourceCodeInfo, { integer: true });
+                colEnd = colEnd < 0 ? trMatrix.length + colEnd : colEnd;
+                assertNumber(colEnd, sourceCodeInfo, { gt: colStart, lte: trMatrix.length });
+                return transpose(trMatrix.slice(colStart, colEnd));
+            },
+            paramCount: 3,
+        },
+        't:splice-rows': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a), table = _b[0], rowStart = _b[1], rowDeleteCount = _b[2], rows = _b.slice(3);
+                assertTable(table, sourceCodeInfo);
+                assertNumber(rowStart, sourceCodeInfo, { integer: true, nonNegative: true, lte: table.length });
+                assertNumber(rowDeleteCount, sourceCodeInfo, { integer: true, nonNegative: true });
+                assertTable(rows, sourceCodeInfo);
+                rows.every(function (row) {
+                    assertArray(row, sourceCodeInfo);
+                    if (table[0].length !== row.length) {
+                        throw new LitsError("All rows must have the same length as the number of columns in table, but got ".concat(row.length), sourceCodeInfo);
+                    }
+                    return true;
+                });
+                var result = [];
+                for (var i = 0; i < rowStart; i += 1) {
+                    result.push(table[i]);
+                }
+                result.push.apply(result, __spreadArray([], __read(rows), false));
+                for (var i = rowStart + rowDeleteCount; i < table.length; i += 1) {
+                    result.push(table[i]);
+                }
+                return result;
+            },
+            paramCount: { min: 3 },
+        },
+        't:splice-cols': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a), table = _b[0], colStart = _b[1], colDeleteCount = _b[2], cols = _b.slice(3);
+                assertTable(table, sourceCodeInfo);
+                var trMatrix = transpose(table);
+                assertNumber(colStart, sourceCodeInfo, { integer: true, nonNegative: true, lte: trMatrix.length });
+                assertNumber(colDeleteCount, sourceCodeInfo, { integer: true, nonNegative: true });
+                assertTable(cols, sourceCodeInfo);
+                cols.every(function (row) {
+                    assertArray(row, sourceCodeInfo);
+                    if (trMatrix[0].length !== row.length) {
+                        throw new LitsError("All rows must have the same length as the number of rows in table, but got ".concat(row.length), sourceCodeInfo);
+                    }
+                    return true;
+                });
+                var result = [];
+                for (var i = 0; i < colStart; i += 1) {
+                    result.push(trMatrix[i]);
+                }
+                result.push.apply(result, __spreadArray([], __read(cols), false));
+                for (var i = colStart + colDeleteCount; i < trMatrix.length; i += 1) {
+                    result.push(trMatrix[i]);
+                }
+                return transpose(result);
+            },
+            paramCount: { min: 3 },
+        },
+        't:concat-rows': {
+            evaluate: function (params, sourceCodeInfo) {
+                assertArray(params, sourceCodeInfo);
+                params.every(function (table) { return assertTable(table, sourceCodeInfo); });
+                var cols = params[0][0].length;
+                params.slice(1).every(function (table) {
+                    if (table[0].length !== cols) {
+                        throw new LitsError("All matrices must have the same number of columns, but got ".concat(cols, " and ").concat(table[0].length), sourceCodeInfo);
+                    }
+                    return true;
+                });
+                var result = [];
+                params.forEach(function (table) {
+                    table.forEach(function (row) {
+                        result.push(row);
+                    });
+                });
+                return result;
+            },
+            paramCount: { min: 1 },
+        },
+        't:concat-cols': {
+            evaluate: function (params, sourceCodeInfo) {
+                assertArray(params, sourceCodeInfo);
+                params.every(function (table) { return assertTable(table, sourceCodeInfo); });
+                var rows = params[0].length;
+                params.slice(1).every(function (table) {
+                    if (table.length !== rows) {
+                        throw new LitsError("All matrices must have the same number of rows, but got ".concat(rows, " and ").concat(table.length), sourceCodeInfo);
+                    }
+                    return true;
+                });
+                var result = [];
+                var _loop_1 = function (i) {
+                    var row = [];
+                    params.forEach(function (table) {
+                        row.push.apply(row, __spreadArray([], __read(table[i]), false));
+                    });
+                    result.push(row);
+                };
+                for (var i = 0; i < rows; i += 1) {
+                    _loop_1(i);
+                }
+                return result;
+            },
+            paramCount: { min: 1 },
+        },
+        't:map': {
+            evaluate: function (params, sourceCodeInfo, contextStack, _a) {
+                var executeFunction = _a.executeFunction;
+                var fn = asLitsFunction(params.at(-1));
+                var matrices = params.slice(0, -1);
+                assertTable(matrices[0], sourceCodeInfo);
+                var rows = matrices[0].length;
+                var cols = matrices[0][0].length;
+                matrices.slice(1).forEach(function (table) {
+                    assertTable(table, sourceCodeInfo);
+                    if (table.length !== rows) {
+                        throw new LitsError("All matrices must have the same number of rows, but got ".concat(rows, " and ").concat(table.length), sourceCodeInfo);
+                    }
+                    if (table[0].length !== cols) {
+                        throw new LitsError("All matrices must have the same number of columns, but got ".concat(cols, " and ").concat(table[0].length), sourceCodeInfo);
+                    }
+                });
+                var result = [];
+                var _loop_2 = function (i) {
+                    var row = [];
+                    var _loop_3 = function (j) {
+                        var args = matrices.map(function (table) { return table[i][j]; });
+                        var value = executeFunction(fn, args, contextStack, sourceCodeInfo);
+                        if (!isAny(value)) {
+                            throw new LitsError("The function must return a number, but got ".concat(value), sourceCodeInfo);
+                        }
+                        row.push(value);
+                    };
+                    for (var j = 0; j < cols; j += 1) {
+                        _loop_3(j);
+                    }
+                    result.push(row);
+                };
+                for (var i = 0; i < rows; i += 1) {
+                    _loop_2(i);
+                }
+                return result;
+            },
+            paramCount: { min: 2 },
+        },
+        't:map-with-indices': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var _c = __read(_a, 2), table = _c[0], fn = _c[1];
+                var executeFunction = _b.executeFunction;
+                assertTable(table, sourceCodeInfo);
+                assertLitsFunction(fn, sourceCodeInfo);
+                var rows = table.length;
+                var cols = table[0].length;
+                var result = [];
+                for (var i = 0; i < rows; i += 1) {
+                    var row = [];
+                    for (var j = 0; j < cols; j += 1) {
+                        var value = executeFunction(fn, [table[i][j], i, j], contextStack, sourceCodeInfo);
+                        if (!isAny(value)) {
+                            throw new LitsError("The function must return a number, but got ".concat(value), sourceCodeInfo);
+                        }
+                        row.push(value);
+                    }
+                    result.push(row);
+                }
+                return result;
+            },
+            paramCount: 2,
+        },
+        't:reduce': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var e_10, _c, e_11, _d;
+                var _e = __read(_a, 3), table = _e[0], fn = _e[1], initialValue = _e[2];
+                var executeFunction = _b.executeFunction;
+                assertTable(table, sourceCodeInfo);
+                assertLitsFunction(fn, sourceCodeInfo);
+                var accumulator = asAny(initialValue);
+                try {
+                    for (var table_5 = __values(table), table_5_1 = table_5.next(); !table_5_1.done; table_5_1 = table_5.next()) {
+                        var row = table_5_1.value;
+                        try {
+                            for (var row_3 = (e_11 = void 0, __values(row)), row_3_1 = row_3.next(); !row_3_1.done; row_3_1 = row_3.next()) {
+                                var cell = row_3_1.value;
+                                accumulator = executeFunction(fn, [accumulator, cell], contextStack, sourceCodeInfo);
+                            }
+                        }
+                        catch (e_11_1) { e_11 = { error: e_11_1 }; }
+                        finally {
+                            try {
+                                if (row_3_1 && !row_3_1.done && (_d = row_3.return)) _d.call(row_3);
+                            }
+                            finally { if (e_11) throw e_11.error; }
+                        }
+                    }
+                }
+                catch (e_10_1) { e_10 = { error: e_10_1 }; }
+                finally {
+                    try {
+                        if (table_5_1 && !table_5_1.done && (_c = table_5.return)) _c.call(table_5);
+                    }
+                    finally { if (e_10) throw e_10.error; }
+                }
+                return accumulator;
+            },
+            paramCount: 3,
+        },
+        't:reduce-with-indices': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var _c = __read(_a, 3), table = _c[0], fn = _c[1], initialValue = _c[2];
+                var executeFunction = _b.executeFunction;
+                assertTable(table, sourceCodeInfo);
+                assertLitsFunction(fn, sourceCodeInfo);
+                var accumulator = asAny(initialValue);
+                for (var i = 0; i < table.length; i += 1) {
+                    for (var j = 0; j < table[i].length; j += 1) {
+                        accumulator = executeFunction(fn, [accumulator, table[i][j], i, j], contextStack, sourceCodeInfo);
+                    }
+                }
+                return accumulator;
+            },
+            paramCount: 3,
+        },
+        't:reduce-rows': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var e_12, _c, e_13, _d;
+                var _e = __read(_a, 3), table = _e[0], fn = _e[1], initialValue = _e[2];
+                var executeFunction = _b.executeFunction;
+                assertTable(table, sourceCodeInfo);
+                assertLitsFunction(fn, sourceCodeInfo);
+                assertAny(initialValue);
+                var result = [];
+                try {
+                    for (var table_6 = __values(table), table_6_1 = table_6.next(); !table_6_1.done; table_6_1 = table_6.next()) {
+                        var row = table_6_1.value;
+                        var accumulator = asAny(initialValue);
+                        try {
+                            for (var row_4 = (e_13 = void 0, __values(row)), row_4_1 = row_4.next(); !row_4_1.done; row_4_1 = row_4.next()) {
+                                var cell = row_4_1.value;
+                                accumulator = executeFunction(fn, [accumulator, cell], contextStack, sourceCodeInfo);
+                            }
+                        }
+                        catch (e_13_1) { e_13 = { error: e_13_1 }; }
+                        finally {
+                            try {
+                                if (row_4_1 && !row_4_1.done && (_d = row_4.return)) _d.call(row_4);
+                            }
+                            finally { if (e_13) throw e_13.error; }
+                        }
+                        result.push(accumulator);
+                    }
+                }
+                catch (e_12_1) { e_12 = { error: e_12_1 }; }
+                finally {
+                    try {
+                        if (table_6_1 && !table_6_1.done && (_c = table_6.return)) _c.call(table_6);
+                    }
+                    finally { if (e_12) throw e_12.error; }
+                }
+                return result;
+            },
+            paramCount: 3,
+        },
+        't:reduce-cols': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var _c = __read(_a, 3), table = _c[0], fn = _c[1], initialValue = _c[2];
+                var executeFunction = _b.executeFunction;
+                assertTable(table, sourceCodeInfo);
+                assertLitsFunction(fn, sourceCodeInfo);
+                assertAny(initialValue);
+                var result = [];
+                for (var j = 0; j < table[0].length; j += 1) {
+                    var accumulator = asAny(initialValue);
+                    for (var i = 0; i < table.length; i += 1) {
+                        accumulator = executeFunction(fn, [accumulator, table[i][j]], contextStack, sourceCodeInfo);
+                    }
+                    result.push(accumulator);
+                }
+                return result;
+            },
+            paramCount: 3,
+        },
+        't:push-rows': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a), table = _b[0], rows = _b.slice(1);
+                assertTable(table, sourceCodeInfo);
+                assertTable(rows, sourceCodeInfo);
+                if (table[0].length !== rows[0].length) {
+                    throw new LitsError("All rows must have the same length as the number of columns in table, but got ".concat(table[0].length, " and ").concat(rows[0].length), sourceCodeInfo);
+                }
+                return __spreadArray(__spreadArray([], __read(table), false), __read(rows), false);
+            },
+            paramCount: { min: 2 },
+        },
+        't:unshift-rows': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a), table = _b[0], rows = _b.slice(1);
+                assertTable(table, sourceCodeInfo);
+                assertTable(rows, sourceCodeInfo);
+                if (table[0].length !== rows[0].length) {
+                    throw new LitsError("All rows must have the same length as the number of columns in table, but got ".concat(table[0].length, " and ").concat(rows[0].length), sourceCodeInfo);
+                }
+                return __spreadArray(__spreadArray([], __read(rows), false), __read(table), false);
+            },
+            paramCount: { min: 2 },
+        },
+        't:pop-row': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), table = _b[0];
+                assertTable(table, sourceCodeInfo);
+                if (table.length === 1) {
+                    return null;
+                }
+                return table.slice(0, -1);
+            },
+            paramCount: 1,
+        },
+        't:shift-row': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), table = _b[0];
+                assertTable(table, sourceCodeInfo);
+                if (table.length === 1) {
+                    return null;
+                }
+                return table.slice(1);
+            },
+            paramCount: 1,
+        },
+        't:push-cols': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a), table = _b[0], cols = _b.slice(1);
+                assertTable(table, sourceCodeInfo);
+                assertTable(cols, sourceCodeInfo);
+                if (table.length !== cols[0].length) {
+                    throw new LitsError("All columns must have the same length as the number of rows in table, but got ".concat(cols.length), sourceCodeInfo);
+                }
+                var result = [];
+                var _loop_4 = function (i) {
+                    var row = [];
+                    row.push.apply(row, __spreadArray([], __read(table[i]), false));
+                    cols.forEach(function (col) {
+                        row.push(col[i]);
+                    });
+                    result.push(row);
+                };
+                for (var i = 0; i < table.length; i += 1) {
+                    _loop_4(i);
+                }
+                return result;
+            },
+            paramCount: { min: 2 },
+        },
+        't:unshift-cols': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a), table = _b[0], cols = _b.slice(1);
+                assertTable(table, sourceCodeInfo);
+                assertTable(cols, sourceCodeInfo);
+                if (table.length !== cols[0].length) {
+                    throw new LitsError("All columns must have the same length as the number of rows in table, but got ".concat(cols.length), sourceCodeInfo);
+                }
+                var result = [];
+                var _loop_5 = function (i) {
+                    var row = [];
+                    cols.forEach(function (col) {
+                        row.push(col[i]);
+                    });
+                    row.push.apply(row, __spreadArray([], __read(table[i]), false));
+                    result.push(row);
+                };
+                for (var i = 0; i < table.length; i += 1) {
+                    _loop_5(i);
+                }
+                return result;
+            },
+            paramCount: { min: 2 },
+        },
+        't:pop-col': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), table = _b[0];
+                assertTable(table, sourceCodeInfo);
+                if (table[0].length === 1) {
+                    return null;
+                }
+                return table.map(function (row) { return row.slice(0, -1); });
+            },
+            paramCount: 1,
+        },
+        't:shift-col': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), table = _b[0];
+                assertTable(table, sourceCodeInfo);
+                if (table[0].length === 1) {
+                    return null;
+                }
+                return table.map(function (row) { return row.slice(1); });
+            },
+            paramCount: 1,
+        },
+        't:from-array': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), array = _b[0], rows = _b[1], cols = _b[2];
+                assertAnyArray(array, sourceCodeInfo);
+                assertNumber(rows, sourceCodeInfo, { integer: true, positive: true });
+                assertNumber(cols, sourceCodeInfo, { integer: true, positive: true });
+                if (array.length !== rows * cols) {
+                    throw new LitsError("The number of elements in the array must be equal to rows * cols, but got ".concat(array.length, " and ").concat(rows, " * ").concat(cols), sourceCodeInfo);
+                }
+                return fromArray(array, rows, cols);
+            },
+            paramCount: 3,
+        },
+    };
+
+    /**
+     * Counts occurrences of each integer value in an array of non-negative integers.
+     *
+     * @param array - Array of non-negative integers to count
+     * @param minLength - Minimum length of the output array (default: 0)
+     * @param weights - Optional array of weights (same length as input array)
+     * @returns An array where index i contains the count of occurrences of i in the input array
+     */
+    function bincount(array, minLength, weights) {
+        if (minLength === void 0) { minLength = 0; }
+        if (array.length === 0) {
+            return Array.from({ length: minLength }, function () { return 0; });
+        }
+        // Find the maximum value to determine output array size
+        var maxValue = Math.max.apply(Math, __spreadArray([], __read(array), false));
+        var outputLength = Math.max(maxValue + 1, minLength);
+        var counts = Array.from({ length: outputLength }, function () { return 0; });
+        // Count occurrences (or sum weights if provided)
+        for (var i = 0; i < array.length; i++) {
+            var value = Math.floor(array[i]);
+            if (value < outputLength) {
+                // If weights provided, add weight; otherwise add 1
+                counts[value] += weights ? weights[i] : 1;
+            }
+        }
+        return counts;
+    }
+
+    function calcMean(vector) {
+        if (vector.length === 0) {
+            return 0;
+        }
+        var sum = vector.reduce(function (acc, val) { return acc + val; }, 0);
+        return sum / vector.length;
+    }
+
+    function calcVariance(vector) {
+        if (vector.length === 0) {
+            return 0;
+        }
+        var mean = calcMean(vector);
+        var variance = vector.reduce(function (acc, val) { return acc + Math.pow((val - mean), 2); }, 0) / vector.length;
+        return variance;
+    }
+
+    function calcStdDev(vector) {
+        if (vector.length === 0) {
+            return 0;
+        }
+        var variance = calcVariance(vector);
+        return Math.sqrt(variance);
+    }
+
+    /**
+     * Calculates the Shannon entropy of a vector.
+     * Entropy measures the amount of uncertainty or randomness in the data.
+     *
+     * @param vector - An array of values to calculate entropy for
+     * @returns The entropy value (in bits) or 0 for empty arrays
+     */
+    function calculateEntropy(vector) {
+        var e_1, _a, e_2, _b;
+        // Return 0 for empty vectors
+        if (vector.length === 0) {
+            return 0;
+        }
+        // Count occurrences of each value
+        var frequencies = new Map();
+        try {
+            for (var vector_1 = __values(vector), vector_1_1 = vector_1.next(); !vector_1_1.done; vector_1_1 = vector_1.next()) {
+                var value = vector_1_1.value;
+                frequencies.set(value, (frequencies.get(value) || 0) + 1);
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (vector_1_1 && !vector_1_1.done && (_a = vector_1.return)) _a.call(vector_1);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        // Get the total number of elements
+        var total = vector.length;
+        // Calculate entropy using Shannon's formula
+        var entropy = 0;
+        try {
+            for (var _c = __values(frequencies.values()), _d = _c.next(); !_d.done; _d = _c.next()) {
+                var frequency = _d.value;
+                var probability = frequency / total;
+                // Skip cases where probability is 0 (log(0) is undefined)
+                if (probability > 0) {
+                    entropy -= probability * Math.log2(probability);
+                }
+            }
+        }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        finally {
+            try {
+                if (_d && !_d.done && (_b = _c.return)) _b.call(_c);
+            }
+            finally { if (e_2) throw e_2.error; }
+        }
+        return entropy;
+    }
+
+    /**
+     * Calculates the mode (most frequent value(s)) of a dataset
+     * @param values An array of values of any type
+     * @returns An array containing the mode(s) of the dataset
+     */
+    function mode(values) {
+        var e_1, _a, e_2, _b, e_3, _c;
+        if (values.length === 0) {
+            return [];
+        }
+        // Create a frequency map
+        var frequencyMap = new Map();
+        try {
+            // Count occurrences of each value
+            for (var values_1 = __values(values), values_1_1 = values_1.next(); !values_1_1.done; values_1_1 = values_1.next()) {
+                var value = values_1_1.value;
+                frequencyMap.set(value, (frequencyMap.get(value) || 0) + 1);
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (values_1_1 && !values_1_1.done && (_a = values_1.return)) _a.call(values_1);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        // Find the maximum frequency
+        var maxFrequency = 0;
+        try {
+            for (var _d = __values(frequencyMap.values()), _e = _d.next(); !_e.done; _e = _d.next()) {
+                var frequency = _e.value;
+                if (frequency > maxFrequency) {
+                    maxFrequency = frequency;
+                }
+            }
+        }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        finally {
+            try {
+                if (_e && !_e.done && (_b = _d.return)) _b.call(_d);
+            }
+            finally { if (e_2) throw e_2.error; }
+        }
+        // If all values appear only once, there is no mode
+        if (maxFrequency === 1) {
+            return [];
+        }
+        // Collect all values that appear with the maximum frequency
+        var modes = [];
+        try {
+            for (var _f = __values(frequencyMap.entries()), _g = _f.next(); !_g.done; _g = _f.next()) {
+                var _h = __read(_g.value, 2), value = _h[0], frequency = _h[1];
+                if (frequency === maxFrequency) {
+                    modes.push(value);
+                }
+            }
+        }
+        catch (e_3_1) { e_3 = { error: e_3_1 }; }
+        finally {
+            try {
+                if (_g && !_g.done && (_c = _f.return)) _c.call(_f);
+            }
+            finally { if (e_3) throw e_3.error; }
+        }
+        return modes;
+    }
+
+    function isVector(vector) {
+        if (!Array.isArray(vector)) {
+            return false;
+        }
+        return vector.every(function (elem) { return isNumber(elem, { finite: true }); });
+    }
+    function assertVector(vector, sourceCodeInfo) {
+        if (!isVector(vector)) {
+            throw new LitsError("Expected a vector, but got ".concat(vector), sourceCodeInfo);
+        }
+    }
+    function assertNonEmptyVector(vector, sourceCodeInfo) {
+        assertVector(vector, sourceCodeInfo);
+        if (vector.length === 0) {
+            throw new LitsError("Expected a non empty vector, but got ".concat(vector), sourceCodeInfo);
+        }
+    }
+    var vectorNormalExpression = {
+        'v:vector?': {
+            evaluate: function (_a) {
+                var _b = __read(_a, 1), vector = _b[0];
+                return isVector(vector);
+            },
+            paramCount: 1,
+        },
+        'v:sorted?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return vector.every(function (val, i) { return i === 0 || val >= vector[i - 1]; });
+            },
+            paramCount: 1,
+        },
+        'v:monotonic?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return vector.every(function (val, i) { return i === 0 || val >= vector[i - 1]; })
+                    || vector.every(function (val, i) { return i === 0 || val <= vector[i - 1]; });
+            },
+            paramCount: 1,
+        },
+        'v:+': {
+            evaluate: function (params, sourceCodeInfo) {
+                var e_1, _a;
+                var firstParam = params[0];
+                assertVector(firstParam, sourceCodeInfo);
+                var restParams = params.slice(1);
+                try {
+                    for (var restParams_1 = __values(restParams), restParams_1_1 = restParams_1.next(); !restParams_1_1.done; restParams_1_1 = restParams_1.next()) {
+                        var param = restParams_1_1.value;
+                        assertVector(param, sourceCodeInfo);
+                        if (firstParam.length !== param.length) {
+                            throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                        }
+                    }
+                }
+                catch (e_1_1) { e_1 = { error: e_1_1 }; }
+                finally {
+                    try {
+                        if (restParams_1_1 && !restParams_1_1.done && (_a = restParams_1.return)) _a.call(restParams_1);
+                    }
+                    finally { if (e_1) throw e_1.error; }
+                }
+                var rest = restParams;
+                return rest.reduce(function (acc, vector) { return acc.map(function (val, i) { return val + vector[i]; }); }, firstParam);
+            },
+            paramCount: { min: 1 },
+        },
+        'v:-': {
+            evaluate: function (params, sourceCodeInfo) {
+                var e_2, _a;
+                var firstParam = params[0];
+                assertVector(firstParam, sourceCodeInfo);
+                var restParams = params.slice(1);
+                try {
+                    for (var restParams_2 = __values(restParams), restParams_2_1 = restParams_2.next(); !restParams_2_1.done; restParams_2_1 = restParams_2.next()) {
+                        var param = restParams_2_1.value;
+                        assertVector(param, sourceCodeInfo);
+                        if (firstParam.length !== param.length) {
+                            throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                        }
+                    }
+                }
+                catch (e_2_1) { e_2 = { error: e_2_1 }; }
+                finally {
+                    try {
+                        if (restParams_2_1 && !restParams_2_1.done && (_a = restParams_2.return)) _a.call(restParams_2);
+                    }
+                    finally { if (e_2) throw e_2.error; }
+                }
+                if (restParams.length === 0) {
+                    return firstParam.map(function (val) { return -val; });
+                }
+                var rest = restParams;
+                return rest.reduce(function (acc, vector) { return acc.map(function (val, i) { return val - vector[i]; }); }, firstParam);
+            },
+            paramCount: { min: 1 },
+        },
+        'v:*': {
+            evaluate: function (params, sourceCodeInfo) {
+                var e_3, _a;
+                var firstParam = params[0];
+                assertVector(firstParam, sourceCodeInfo);
+                var restParams = params.slice(1);
+                try {
+                    for (var restParams_3 = __values(restParams), restParams_3_1 = restParams_3.next(); !restParams_3_1.done; restParams_3_1 = restParams_3.next()) {
+                        var param = restParams_3_1.value;
+                        assertVector(param, sourceCodeInfo);
+                        if (firstParam.length !== param.length) {
+                            throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                        }
+                    }
+                }
+                catch (e_3_1) { e_3 = { error: e_3_1 }; }
+                finally {
+                    try {
+                        if (restParams_3_1 && !restParams_3_1.done && (_a = restParams_3.return)) _a.call(restParams_3);
+                    }
+                    finally { if (e_3) throw e_3.error; }
+                }
+                var rest = restParams;
+                return rest.reduce(function (acc, vector) { return acc.map(function (val, i) { return val * vector[i]; }); }, firstParam);
+            },
+            paramCount: { min: 1 },
+        },
+        'v:/': {
+            evaluate: function (params, sourceCodeInfo) {
+                var e_4, _a;
+                var firstParam = params[0];
+                assertVector(firstParam, sourceCodeInfo);
+                var restParams = params.slice(1);
+                try {
+                    for (var restParams_4 = __values(restParams), restParams_4_1 = restParams_4.next(); !restParams_4_1.done; restParams_4_1 = restParams_4.next()) {
+                        var param = restParams_4_1.value;
+                        assertVector(param, sourceCodeInfo);
+                        if (firstParam.length !== param.length) {
+                            throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                        }
+                    }
+                }
+                catch (e_4_1) { e_4 = { error: e_4_1 }; }
+                finally {
+                    try {
+                        if (restParams_4_1 && !restParams_4_1.done && (_a = restParams_4.return)) _a.call(restParams_4);
+                    }
+                    finally { if (e_4) throw e_4.error; }
+                }
+                if (restParams.length === 0) {
+                    return firstParam.map(function (val) { return 1 / val; });
+                }
+                var rest = restParams;
+                return rest.reduce(function (acc, vector) { return acc.map(function (val, i) { return val / vector[i]; }); }, firstParam);
+            },
+            paramCount: { min: 1 },
+        },
+        'v:**': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], exponent = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(exponent, sourceCodeInfo, { finite: true });
+                return vector.map(function (val) { return Math.pow(val, exponent); });
+            },
+            paramCount: 2,
+        },
+        'v:scale': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], scalar = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(scalar, sourceCodeInfo, { finite: true });
+                return vector.map(function (val) { return val * scalar; });
+            },
+            paramCount: 2,
+        },
+        'v:abs': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return vector.map(function (val) { return Math.abs(val); });
+            },
+            paramCount: 1,
+        },
+        'v:dot': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
+            },
+            paramCount: 2,
+        },
+        'v:cross': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== 3 || vectorB.length !== 3) {
+                    throw new LitsError('Cross product is only defined for 3D vectors', sourceCodeInfo);
+                }
+                return [
+                    vectorA[1] * vectorB[2] - vectorA[2] * vectorB[1],
+                    vectorA[2] * vectorB[0] - vectorA[0] * vectorB[2],
+                    vectorA[0] * vectorB[1] - vectorA[1] * vectorB[0],
+                ];
+            },
+            paramCount: 2,
+        },
+        'v:normalize': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var magnitude = Math.sqrt(vector.reduce(function (acc, val) { return acc + val * val; }, 0));
+                if (magnitude === 0) {
+                    throw new LitsError('Cannot normalize a zero vector', sourceCodeInfo);
+                }
+                return vector.map(function (val) { return val / magnitude; });
+            },
+            paramCount: 1,
+        },
+        'v:magnitude': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return Math.sqrt(vector.reduce(function (acc, val) { return acc + val * val; }, 0));
+            },
+            paramCount: 1,
+        },
+        'v:sum': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return vector.reduce(function (acc, val) { return acc + val; }, 0);
+            },
+            paramCount: 1,
+        },
+        'v:product': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return vector.reduce(function (acc, val) { return acc * val; }, 1);
+            },
+            paramCount: 1,
+        },
+        'v:mean': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return calcMean(vector);
+            },
+            paramCount: 1,
+        },
+        'v:median': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
+                var mid = Math.floor(sorted.length / 2);
+                return sorted.length % 2 === 0
+                    ? (sorted[mid - 1] + sorted[mid]) / 2
+                    : sorted[mid];
+            },
+            paramCount: 1,
+        },
+        'v:mode': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return mode(vector);
+            },
+            paramCount: 1,
+        },
+        'v:variance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var mean = calcMean(vector);
+                return vector.reduce(function (acc, val) { return acc + Math.pow((val - mean), 2); }, 0) / vector.length;
+            },
+            paramCount: 1,
+        },
+        'v:std-dev': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return Math.sqrt(vector.reduce(function (acc, val) { return acc + val; }, 0) / vector.length);
+            },
+            paramCount: 1,
+        },
+        'v:min': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertNonEmptyVector(vector, sourceCodeInfo);
+                return vector.reduce(function (acc, val) { return (val < vector[acc] ? val : acc); }, vector[0]);
+            },
+            paramCount: 1,
+        },
+        'v:max': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertNonEmptyVector(vector, sourceCodeInfo);
+                return vector.reduce(function (acc, val) { return (val > vector[acc] ? val : acc); }, vector[0]);
+            },
+            paramCount: 1,
+        },
+        'v:min-index': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertNonEmptyVector(vector, sourceCodeInfo);
+                return vector.reduce(function (acc, val, i) { return (val < vector[acc] ? i : acc); }, 0);
+            },
+            paramCount: 1,
+        },
+        'v:max-index': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertNonEmptyVector(vector, sourceCodeInfo);
+                return vector.reduce(function (acc, val, i) { return (val > vector[acc] ? i : acc); }, 0);
+            },
+            paramCount: 1,
+        },
+        'v:sort-indices': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return __spreadArray([], __read(vector.keys()), false).sort(function (a, b) { return vector[a] - vector[b]; });
+            },
+            paramCount: 1,
+        },
+        'v:count-values': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var e_5, _b;
+                var _c = __read(_a, 1), vector = _c[0];
+                assertVector(vector, sourceCodeInfo);
+                var frequencyMap = new Map();
+                try {
+                    for (var vector_1 = __values(vector), vector_1_1 = vector_1.next(); !vector_1_1.done; vector_1_1 = vector_1.next()) {
+                        var value = vector_1_1.value;
+                        frequencyMap.set(value, (frequencyMap.get(value) || 0) + 1);
+                    }
+                }
+                catch (e_5_1) { e_5 = { error: e_5_1 }; }
+                finally {
+                    try {
+                        if (vector_1_1 && !vector_1_1.done && (_b = vector_1.return)) _b.call(vector_1);
+                    }
+                    finally { if (e_5) throw e_5.error; }
+                }
+                return __spreadArray([], __read(frequencyMap.entries()), false).sort(function (a, b) {
+                    // First compare by count (descending)
+                    var countDiff = b[1] - a[1];
+                    if (countDiff !== 0)
+                        return countDiff;
+                    // If counts are equal, sort by value (ascending)
+                    return a[0] - b[0];
+                });
+            },
+            paramCount: 1,
+        },
+        'v:linspace': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), start = _b[0], end = _b[1], numPoints = _b[2];
+                assertNumber(start, sourceCodeInfo, { finite: true });
+                assertNumber(end, sourceCodeInfo, { finite: true });
+                assertNumber(numPoints, sourceCodeInfo, { integer: true, positive: true });
+                var step = (end - start) / (numPoints - 1);
+                return Array.from({ length: numPoints }, function (_, i) { return start + i * step; });
+            },
+            paramCount: 3,
+        },
+        'v:ones': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), length = _b[0];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                return Array.from({ length: length }, function () { return 1; });
+            },
+            paramCount: 1,
+        },
+        'v:zeros': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), length = _b[0];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                return Array.from({ length: length }, function () { return 0; });
+            },
+            paramCount: 1,
+        },
+        'v:fill': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), length = _b[0], value = _b[1];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                return Array.from({ length: length }, function () { return value; });
+            },
+            paramCount: 2,
+        },
+        'v:generate': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var _c = __read(_a, 2), length = _c[0], generator = _c[1];
+                var executeFunction = _b.executeFunction;
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                assertLitsFunction(generator, sourceCodeInfo);
+                return Array.from({ length: length }, function (_, i) {
+                    var value = executeFunction(generator, [i], contextStack, sourceCodeInfo);
+                    assertNumber(value, sourceCodeInfo, { finite: true });
+                    return value;
+                });
+            },
+            paramCount: 2,
+        },
+        'v:cumsum': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return vector.reduce(function (acc, val) {
+                    var last = acc[acc.length - 1] || 0;
+                    acc.push(last + val);
+                    return acc;
+                }, []);
+            },
+            paramCount: 1,
+        },
+        'v:cumprod': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return vector.reduce(function (acc, val) {
+                    var last = acc[acc.length - 1] || 1;
+                    acc.push(last * val);
+                    return acc;
+                }, []);
+            },
+            paramCount: 1,
+        },
+        'v:angle': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var dotProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
+                var magnitudeA = Math.sqrt(vectorA.reduce(function (acc, val) { return acc + val * val; }, 0));
+                var magnitudeB = Math.sqrt(vectorB.reduce(function (acc, val) { return acc + val * val; }, 0));
+                return Math.acos(dotProduct / (magnitudeA * magnitudeB));
+            },
+            paramCount: 2,
+        },
+        'v:projection': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var dotProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
+                var magnitudeB = Math.sqrt(vectorB.reduce(function (acc, val) { return acc + val * val; }, 0));
+                return vectorB.map(function (val) { return (dotProduct / (Math.pow(magnitudeB, 2))) * val; });
+            },
+            paramCount: 2,
+        },
+        'v:orthogonal?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var dotProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
+                return dotProduct === 0;
+            },
+            paramCount: 2,
+        },
+        'v:parallel?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var crossProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
+                return crossProduct === 0;
+            },
+            paramCount: 2,
+        },
+        'v:collinear?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var crossProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
+                return crossProduct === 0;
+            },
+            paramCount: 2,
+        },
+        'v:cosine-similarity': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var dotProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
+                var magnitudeA = Math.sqrt(vectorA.reduce(function (acc, val) { return acc + val * val; }, 0));
+                var magnitudeB = Math.sqrt(vectorB.reduce(function (acc, val) { return acc + val * val; }, 0));
+                return dotProduct / (magnitudeA * magnitudeB);
+            },
+            paramCount: 2,
+        },
+        'v:distance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return Math.sqrt(vectorA.reduce(function (acc, val, i) { return acc + Math.pow((val - vectorB[i]), 2); }, 0));
+            },
+            paramCount: 2,
+        },
+        'v:euclidean-distance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return Math.sqrt(vectorA.reduce(function (acc, val, i) { return acc + Math.pow((val - vectorB[i]), 2); }, 0));
+            },
+            paramCount: 2,
+        },
+        'v:manhattan-distance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return vectorA.reduce(function (acc, val, i) { return acc + Math.abs(val - vectorB[i]); }, 0);
+            },
+            paramCount: 2,
+        },
+        'v:hamming-distance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return vectorA.reduce(function (acc, val, i) { return acc + (val !== vectorB[i] ? 1 : 0); }, 0);
+            },
+            paramCount: 2,
+        },
+        'v:chebyshev-distance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return Math.max.apply(Math, __spreadArray([], __read(vectorA.map(function (val, i) { return Math.abs(val - vectorB[i]); })), false));
+            },
+            paramCount: 2,
+        },
+        'v:minkowski-distance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), vectorA = _b[0], vectorB = _b[1], p = _b[2];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                assertNumber(p, sourceCodeInfo, { finite: true });
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return Math.pow(vectorA.reduce(function (acc, val, i) { return acc + Math.pow(Math.abs(val - vectorB[i]), p); }, 0), (1 / p));
+            },
+            paramCount: 3,
+        },
+        'v:jaccard-distance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                var intersection = vectorA.filter(function (val) { return vectorB.includes(val); }).length;
+                var union = new Set(__spreadArray(__spreadArray([], __read(vectorA), false), __read(vectorB), false)).size;
+                return 1 - intersection / union;
+            },
+            paramCount: 2,
+        },
+        'v:dice-coefficient': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                var intersection = vectorA.filter(function (val) { return vectorB.includes(val); }).length;
+                return (2 * intersection) / (vectorA.length + vectorB.length);
+            },
+            paramCount: 2,
+        },
+        'v:levenshtein-distance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                var m = vectorA.length;
+                var n = vectorB.length;
+                var d = Array.from({ length: m + 1 }, function () { return Array(n + 1).fill(0); });
+                for (var i = 0; i <= m; i += 1) {
+                    d[i][0] = i;
+                }
+                for (var j = 0; j <= n; j += 1) {
+                    d[0][j] = j;
+                }
+                for (var i = 1; i <= m; i += 1) {
+                    for (var j = 1; j <= n; j += 1) {
+                        var cost = vectorA[i - 1] === vectorB[j - 1] ? 0 : 1;
+                        d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + cost);
+                    }
+                }
+                return d[m][n];
+            },
+            paramCount: 2,
+        },
+        'v:l1-norm': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return vector.reduce(function (acc, val) { return acc + Math.abs(val); }, 0);
+            },
+            paramCount: 1,
+        },
+        'v:l2-norm': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return Math.sqrt(vector.reduce(function (acc, val) { return acc + val * val; }, 0));
+            },
+            paramCount: 1,
+        },
+        'v:quartiles': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
+                var q1 = sorted[Math.floor((sorted.length / 4))];
+                var q2 = sorted[Math.floor((sorted.length / 2))];
+                var q3 = sorted[Math.floor((3 * sorted.length) / 4)];
+                return [q1, q2, q3];
+            },
+            paramCount: 1,
+        },
+        'v:iqr': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
+                var q1 = sorted[Math.floor((sorted.length / 4))];
+                var q3 = sorted[Math.floor((3 * sorted.length) / 4)];
+                return q3 - q1;
+            },
+            paramCount: 1,
+        },
+        'v:percentile': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], percentile = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(percentile, sourceCodeInfo, { finite: true });
+                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
+                var index = Math.floor((percentile / 100) * (sorted.length - 1));
+                return sorted[index];
+            },
+            paramCount: 2,
+        },
+        'v:quantile': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], quantile = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(quantile, sourceCodeInfo, { finite: true });
+                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
+                var index = Math.floor(quantile * (sorted.length - 1));
+                return sorted[index];
+            },
+            paramCount: 2,
+        },
+        'v:range': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertNonEmptyVector(vector, sourceCodeInfo);
+                var min = vector.reduce(function (acc, val) { return (val < vector[acc] ? val : acc); }, vector[0]);
+                var max = vector.reduce(function (acc, val) { return (val > vector[acc] ? val : acc); }, vector[0]);
+                return max - min;
+            },
+            paramCount: 1,
+        },
+        'v:skewness': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var mean = calcMean(vector);
+                var stdDev = calcStdDev(vector);
+                return vector.reduce(function (acc, val) { return acc + (Math.pow((val - mean), 3)); }, 0) / (vector.length * Math.pow(stdDev, 3));
+            },
+            paramCount: 1,
+        },
+        'v:kurtosis': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var mean = calcMean(vector);
+                var stdDev = calcStdDev(vector);
+                return vector.reduce(function (acc, val) { return acc + (Math.pow((val - mean), 4)); }, 0) / (vector.length * Math.pow(stdDev, 4));
+            },
+            paramCount: 1,
+        },
+        'v:geometric-mean': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return Math.exp(vector.reduce(function (acc, val) { return acc + Math.log(val); }, 0) / vector.length);
+            },
+            paramCount: 1,
+        },
+        'v:harmonic-mean': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return vector.length / vector.reduce(function (acc, val) { return acc + 1 / val; }, 0);
+            },
+            paramCount: 1,
+        },
+        'v:rms': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return Math.sqrt(vector.reduce(function (acc, val) { return acc + Math.pow(val, 2); }, 0) / vector.length);
+            },
+            paramCount: 1,
+        },
+        'v:z-score': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var mean = calcMean(vector);
+                var stdDev = calcStdDev(vector);
+                return vector.map(function (val) { return (val - mean) / stdDev; });
+            },
+            paramCount: 1,
+        },
+        'v:normalize-minmax': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var min = vector.reduce(function (acc, val) { return (val < vector[acc] ? val : acc); }, vector[0]);
+                var max = vector.reduce(function (acc, val) { return (val > vector[acc] ? val : acc); }, vector[0]);
+                return vector.map(function (val) { return (val - min) / (max - min); });
+            },
+            paramCount: 1,
+        },
+        'v:normalize-robust': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var median = vector.reduce(function (acc, val) { return acc + val; }, 0) / vector.length;
+                var iqr = vector.reduce(function (acc, val) { return acc + Math.abs(val - median); }, 0) / vector.length;
+                return vector.map(function (val) { return (val - median) / iqr; });
+            },
+            paramCount: 1,
+        },
+        'v:covariance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var meanA = calcMean(vectorA);
+                var meanB = calcMean(vectorB);
+                return vectorA.reduce(function (acc, val, i) { return acc + (val - meanA) * (vectorB[i] - meanB); }, 0) / vectorA.length;
+            },
+            paramCount: 2,
+        },
+        'v:correlation': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var meanA = calcMean(vectorA);
+                var meanB = calcMean(vectorB);
+                var numerator = vectorA.reduce(function (acc, val, i) { return acc + (val - meanA) * (vectorB[i] - meanB); }, 0);
+                var denominator = Math.sqrt(vectorA.reduce(function (acc, val) { return acc + Math.pow((val - meanA), 2); }, 0) * vectorB.reduce(function (acc, val) { return acc + Math.pow((val - meanB), 2); }, 0));
+                return numerator / denominator;
+            },
+            paramCount: 2,
+        },
+        'v:spearman-correlation': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var rankA = __spreadArray([], __read(vectorA.keys()), false).sort(function (a, b) { return vectorA[a] - vectorA[b]; });
+                var rankB = __spreadArray([], __read(vectorB.keys()), false).sort(function (a, b) { return vectorB[a] - vectorB[b]; });
+                return vectorA.reduce(function (acc, _val, i) { return acc + (rankA[i] - rankB[i]); }, 0) / vectorA.length;
+            },
+            paramCount: 2,
+        },
+        'v:kendall-tau': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var concordant = 0;
+                var discordant = 0;
+                for (var i = 0; i < vectorA.length; i += 1) {
+                    for (var j = i + 1; j < vectorA.length; j += 1) {
+                        if ((vectorA[i] - vectorA[j]) * (vectorB[i] - vectorB[j]) > 0) {
+                            concordant += 1;
+                        }
+                        else {
+                            discordant += 1;
+                        }
+                    }
+                }
+                return (concordant - discordant) / Math.sqrt(Math.pow((concordant + discordant), 2));
+            },
+            paramCount: 2,
+        },
+        'v:histogram': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var e_6, _b;
+                var _c = __read(_a, 2), vector = _c[0], bins = _c[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(bins, sourceCodeInfo, { integer: true, positive: true });
+                var min = vector.reduce(function (acc, val) { return (val < vector[acc] ? val : acc); }, vector[0]);
+                var max = vector.reduce(function (acc, val) { return (val > vector[acc] ? val : acc); }, vector[0]);
+                var binSize = (max - min) / bins;
+                var histogram = Array.from({ length: bins }, function () { return 0; });
+                try {
+                    for (var vector_2 = __values(vector), vector_2_1 = vector_2.next(); !vector_2_1.done; vector_2_1 = vector_2.next()) {
+                        var value = vector_2_1.value;
+                        var binIndex = Math.floor((value - min) / binSize);
+                        if (binIndex >= 0 && binIndex < bins) {
+                            histogram[binIndex] += 1;
+                        }
+                    }
+                }
+                catch (e_6_1) { e_6 = { error: e_6_1 }; }
+                finally {
+                    try {
+                        if (vector_2_1 && !vector_2_1.done && (_b = vector_2.return)) _b.call(vector_2);
+                    }
+                    finally { if (e_6) throw e_6.error; }
+                }
+                return histogram;
+            },
+            paramCount: 2,
+        },
+        'v:cdf': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], value = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(value, sourceCodeInfo, { finite: true });
+                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
+                var index = sorted.findIndex(function (val) { return val > value; });
+                return index === -1 ? 1 : index / sorted.length;
+            },
+            paramCount: 2,
+        },
+        'v:ecdf': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], value = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(value, sourceCodeInfo, { finite: true });
+                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
+                var index = sorted.findIndex(function (val) { return val >= value; });
+                return index === -1 ? 1 : (index + 1) / sorted.length;
+            },
+            paramCount: 2,
+        },
+        'v:no-extreme-eutliers?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var mean = calcMean(vector);
+                var stdDev = calcStdDev(vector);
+                return vector.every(function (val) { return Math.abs((val - mean) / stdDev) < 3; });
+            },
+            paramCount: 1,
+        },
+        'v:outliers': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var mean = calcMean(vector);
+                var stdDev = calcStdDev(vector);
+                return vector.filter(function (val) { return Math.abs((val - mean) / stdDev) > 3; });
+            },
+            paramCount: 1,
+        },
+        'v:moving-average': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
+                var result = [];
+                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
+                    var sum = vector.slice(i, i + windowSize).reduce(function (acc, val) { return acc + val; }, 0);
+                    result.push(sum / windowSize);
+                }
+                return result;
+            },
+            paramCount: 2,
+        },
+        'v:moving-median': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
+                var result = [];
+                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
+                    var median = vector.slice(i, i + windowSize).sort(function (a, b) { return a - b; })[Math.floor(windowSize / 2)];
+                    result.push(median);
+                }
+                return result;
+            },
+            paramCount: 2,
+        },
+        'v:moving-std': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
+                var result = [];
+                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
+                    var stdDev = calcStdDev(vector.slice(i, i + windowSize));
+                    result.push(stdDev);
+                }
+                return result;
+            },
+            paramCount: 2,
+        },
+        'v:moving-sum': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
+                var result = [];
+                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
+                    var sum = vector.slice(i, i + windowSize).reduce(function (acc, val) { return acc + val; }, 0);
+                    result.push(sum);
+                }
+                return result;
+            },
+            paramCount: 2,
+        },
+        'v:moving-product': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
+                var result = [];
+                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
+                    var product = vector.slice(i, i + windowSize).reduce(function (acc, val) { return acc * val; }, 1);
+                    result.push(product);
+                }
+                return result;
+            },
+            paramCount: 2,
+        },
+        'v:moving-min': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
+                var result = [];
+                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
+                    var min = vector.slice(i, i + windowSize).reduce(function (acc, val) { return (val < acc ? val : acc); }, vector[i]);
+                    result.push(min);
+                }
+                return result;
+            },
+            paramCount: 2,
+        },
+        'v:moving-max': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
+                var result = [];
+                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
+                    var max = vector.slice(i, i + windowSize).reduce(function (acc, val) { return (val > acc ? val : acc); }, vector[i]);
+                    result.push(max);
+                }
+                return result;
+            },
+            paramCount: 2,
+        },
+        'moving-variance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
+                var result = [];
+                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
+                    result.push(calcVariance(vector.slice(i, i + windowSize)));
+                }
+                return result;
+            },
+            paramCount: 2,
+        },
+        'moving-rms': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
+                var result = [];
+                var _loop_1 = function (i) {
+                    var mean = calcMean(vector.slice(i, i + windowSize));
+                    var rms = Math.sqrt(vector.slice(i, i + windowSize).reduce(function (acc, val) { return acc + Math.pow((val - mean), 2); }, 0) / windowSize);
+                    result.push(rms);
+                };
+                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
+                    _loop_1(i);
+                }
+                return result;
+            },
+            paramCount: 2,
+        },
+        'v:moving-percentile': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), vector = _b[0], windowSize = _b[1], percentile = _b[2];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
+                assertNumber(percentile, sourceCodeInfo, { finite: true });
+                var result = [];
+                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
+                    var sorted = vector.slice(i, i + windowSize).sort(function (a, b) { return a - b; });
+                    var index = Math.floor(percentile * (sorted.length - 1));
+                    result.push(sorted[index]);
+                }
+                return result;
+            },
+            paramCount: 3,
+        },
+        'v:moving-quantile': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), vector = _b[0], windowSize = _b[1], quantile = _b[2];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
+                assertNumber(quantile, sourceCodeInfo, { finite: true });
+                var result = [];
+                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
+                    var sorted = vector.slice(i, i + windowSize).sort(function (a, b) { return a - b; });
+                    var index = Math.floor(quantile * (sorted.length - 1));
+                    result.push(sorted[index]);
+                }
+                return result;
+            },
+            paramCount: 3,
+        },
+        'v:entropy': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return calculateEntropy(vector);
+            },
+            paramCount: 1,
+        },
+        'v:gini-coefficient': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
+                var n = sorted.length;
+                var sum = sorted.reduce(function (acc, val) { return acc + val; }, 0);
+                var gini = (2 * sorted.reduce(function (acc, val, i) { return acc + (i + 1) * val; }, 0)) / (n * sum) - (n + 1) / n;
+                return gini;
+            },
+            paramCount: 1,
+        },
+        'v:bincount': {
+            evaluate: function (params, sourceCodeInfo) {
+                var _a, _b;
+                var vector = params[0];
+                assertVector(vector, sourceCodeInfo);
+                vector.forEach(function (val) { return assertNumber(val, sourceCodeInfo, { finite: true, integer: true, nonNegative: true }); });
+                var minSize = (_a = params[1]) !== null && _a !== void 0 ? _a : 0;
+                assertNumber(minSize, sourceCodeInfo, { integer: true, nonNegative: true });
+                var weights = (_b = params[2]) !== null && _b !== void 0 ? _b : undefined;
+                if (weights !== null) {
+                    assertVector(weights, sourceCodeInfo);
+                    if (weights.length !== vector.length) {
+                        throw new LitsError('Weights vector must be the same length as the input vector', sourceCodeInfo);
+                    }
+                    weights.forEach(function (val) { return assertNumber(val, sourceCodeInfo, { finite: true }); });
+                }
+                return bincount(vector, minSize, weights);
+            },
+            paramCount: { min: 1, max: 3 },
+        },
+        'v:arithmetic-sum': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), start = _b[0], step = _b[1], length = _b[2];
+                assertNumber(start, sourceCodeInfo, { finite: true });
+                assertNumber(step, sourceCodeInfo, { finite: true });
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                return (length / 2) * (2 * start + (length - 1) * step);
+            },
+            paramCount: 3,
+        },
+        'v:autocorrelation': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], lag = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                var effectiveLag = lag !== null && lag !== void 0 ? lag : vector.length - 1;
+                assertNumber(effectiveLag, sourceCodeInfo, { integer: true });
+                if (effectiveLag >= vector.length) {
+                    throw new LitsError('Lag must be less than the length of the vector', sourceCodeInfo);
+                }
+                var mean = calcMean(vector);
+                var variance = calcVariance(vector);
+                var autocovariance = vector.reduce(function (acc, val, i) { return acc + (val - mean) * (vector[i + effectiveLag] - mean); }, 0) / vector.length;
+                return autocovariance / variance;
+            },
+            paramCount: { min: 1, max: 2 },
+        },
+        'v:cross-correlation': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), vectorA = _b[0], vectorB = _b[1], lag = _b[2];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var effectiveLag = lag !== null && lag !== void 0 ? lag : vectorA.length - 1;
+                assertNumber(effectiveLag, sourceCodeInfo, { integer: true, positive: true });
+                if (effectiveLag >= vectorA.length || effectiveLag >= vectorB.length) {
+                    throw new LitsError('Lag must be less than the length of the vectors', sourceCodeInfo);
+                }
+                var n = vectorA.length;
+                var meanA = vectorA.reduce(function (sum, x) { return sum + x; }, 0) / n;
+                var meanB = vectorB.reduce(function (sum, x) { return sum + x; }, 0) / n;
+                var stdA = Math.sqrt(vectorA.reduce(function (sum, x) { return sum + Math.pow((x - meanA), 2); }, 0) / n);
+                var stdB = Math.sqrt(vectorB.reduce(function (sum, x) { return sum + Math.pow((x - meanB), 2); }, 0) / n);
+                if (stdA === 0 || stdB === 0)
+                    return 0;
+                var overlapLength = n - Math.abs(effectiveLag);
+                var sum = 0;
+                if (effectiveLag >= 0) {
+                    for (var i = 0; i < overlapLength; i++) {
+                        sum += (vectorA[i] - meanA) * (vectorB[i + effectiveLag] - meanB);
+                    }
+                }
+                else {
+                    for (var i = 0; i < overlapLength; i++) {
+                        sum += (vectorA[i - effectiveLag] - meanA) * (vectorB[i] - meanB);
+                    }
+                }
+                return sum / (overlapLength * stdA * stdB);
+            },
+            paramCount: 3,
+        },
+        'v:winsorize': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), vector = _b[0], lowerPercentile = _b[1], upperPercentile = _b[2];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(lowerPercentile, sourceCodeInfo, { finite: true });
+                assertNumber(upperPercentile, sourceCodeInfo, { finite: true });
+                if (vector.length === 0)
+                    return [];
+                if (lowerPercentile < 0 || lowerPercentile > 0.5 || upperPercentile < 0 || upperPercentile > 0.5) {
+                    throw new LitsError('Percentiles must be between 0 and 0.5', sourceCodeInfo);
+                }
+                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
+                var lowerIndex = Math.max(0, Math.floor(lowerPercentile * vector.length));
+                var upperIndex = Math.min(vector.length - 1, Math.floor((1 - upperPercentile) * vector.length));
+                var lowerBound = sorted[lowerIndex];
+                var upperBound = sorted[upperIndex];
+                return vector.map(function (val) { return Math.max(lowerBound, Math.min(val, upperBound)); });
+            },
+            paramCount: 3,
+        },
+        'v:mse': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return vectorA.reduce(function (acc, val, i) { return acc + Math.pow((val - vectorB[i]), 2); }, 0) / vectorA.length;
+            },
+            paramCount: 2,
+        },
+        'v:mae': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return vectorA.reduce(function (acc, val, i) { return acc + Math.abs(val - vectorB[i]); }, 0) / vectorA.length;
+            },
+            paramCount: 2,
+        },
+    };
+
+    /**
+     * Calculates the determinant of a matrix using Gaussian Elimination
+     * @param matrix A square matrix represented as a 2D array
+     * @returns The determinant of the matrix
+     */
+    function determinant(matrix) {
+        var _a;
+        // First, make a deep copy of the matrix to avoid modifying the original
+        var n = matrix.length;
+        var A = [];
+        for (var i = 0; i < n; i++) {
+            A[i] = __spreadArray([], __read(matrix[i]), false);
+        }
+        // Handle special cases for small matrices
+        if (n === 1) {
+            return A[0][0];
+        }
+        if (n === 2) {
+            return A[0][0] * A[1][1] - A[0][1] * A[1][0];
+        }
+        // For larger matrices, use Gaussian elimination
+        var sign = 1; // Track sign changes from row swaps
+        // Perform Gaussian elimination to get an upper triangular matrix
+        for (var i = 0; i < n - 1; i += 1) {
+            // Find pivot (maximum element in current column)
+            var maxRow = i;
+            for (var j = i + 1; j < n; j += 1) {
+                if (Math.abs(A[j][i]) > Math.abs(A[maxRow][i])) {
+                    maxRow = j;
+                }
+            }
+            // If the pivot is zero, the determinant is zero
+            if (Math.abs(A[maxRow][i]) < 1e-10) {
+                return 0;
+            }
+            // Swap rows if necessary
+            if (maxRow !== i) {
+                _a = __read([A[maxRow], A[i]], 2), A[i] = _a[0], A[maxRow] = _a[1]; // ES6 array destructuring for swap
+                sign = -sign; // Each row swap changes the sign
+            }
+            // Eliminate entries below the pivot
+            for (var j = i + 1; j < n; j += 1) {
+                var factor = A[j][i] / A[i][i];
+                // Subtract (factor * pivot row) from current row
+                for (var k = i; k < n; k++) {
+                    A[j][k] -= factor * A[i][k];
+                }
+            }
+        }
+        // Calculate determinant as the product of diagonal elements
+        var det = sign;
+        for (var i = 0; i < n; i++) {
+            det *= A[i][i];
+        }
+        return det;
+    }
+
+    function minor(matrix, row, col) {
+        var n = matrix.length;
+        var result = [];
+        for (var i = 0; i < n; i++) {
+            if (i !== row) {
+                var minorRow = [];
+                for (var j = 0; j < n; j++) {
+                    if (j !== col) {
+                        minorRow.push(matrix[i][j]);
+                    }
+                }
+                result.push(minorRow);
+            }
+        }
+        return result;
+    }
+
+    function adjugate(matrix) {
+        var n = matrix.length;
+        var adj = [];
+        for (var i = 0; i < n; i++) {
+            adj[i] = [];
+            for (var j = 0; j < n; j++) {
+                var min = minor(matrix, j, i);
+                var sign = Math.pow((-1), (i + j));
+                var cofactor = sign * determinant(min);
+                adj[i][j] = cofactor;
+            }
+        }
+        return adj;
+    }
+
+    /**
+     * Creates a band matrix with specified lower and upper bandwidths
+     *
+     * @param n Size of the square matrix
+     * @param lband Lower bandwidth (number of non-zero diagonals below main diagonal)
+     * @param uband Upper bandwidth (number of non-zero diagonals above main diagonal)
+     * @returns A 2D array representing the band matrix with 1s in the band and 0s elsewhere
+     */
+    function band(n, lband, uband) {
+        // Create an n×n matrix filled with zeros
+        var matrix = Array.from({ length: n }, function () { return Array.from({ length: n }, function () { return 0; }); });
+        // Fill the band with 1s
+        for (var i = 0; i < n; i++) {
+            for (var j = Math.max(0, i - lband); j <= Math.min(n - 1, i + uband); j++) {
+                matrix[i][j] = 1;
+            }
+        }
+        return matrix;
+    }
+
+    function cofactor(matrix) {
+        var n = matrix.length;
+        var cofactors = [];
+        // Create a new matrix to store cofactors
+        for (var i = 0; i < n; i++) {
+            cofactors[i] = [];
+            for (var j = 0; j < n; j++) {
+                // Get the minor by removing row i and column j
+                var min = minor(matrix, i, j);
+                var sign = Math.pow((-1), (i + j));
+                cofactors[i][j] = sign * determinant(min);
+            }
+        }
+        return cofactors;
+    }
+
+    /**
+     * Performs Gauss-Jordan elimination on a matrix, transforming it to reduced row echelon form
+     *
+     * @param matrix - The input matrix
+     * @returns A tuple containing the reduced row echelon form matrix and the rank
+     */
+    function gaussJordanElimination(matrix) {
+        var _a;
+        // Create a copy of the matrix to avoid modifying the original
+        var m = matrix.map(function (row) { return __spreadArray([], __read(row), false); });
+        var rows = m.length;
+        var cols = m[0].length;
+        // Tolerance for considering a value as zero
+        var EPSILON = 1e-10;
+        var rank = 0;
+        var rowsProcessed = 0;
+        // Row reduction to reduced row echelon form
+        for (var col = 0; col < cols; col++) {
+            // Find the pivot
+            var pivotRow = -1;
+            for (var row = rowsProcessed; row < rows; row++) {
+                if (Math.abs(m[row][col]) > EPSILON) {
+                    pivotRow = row;
+                    break;
+                }
+            }
+            if (pivotRow === -1)
+                continue; // No pivot in this column
+            // Increase rank
+            rank += 1;
+            // Swap rows
+            if (pivotRow !== rowsProcessed) {
+                _a = __read([m[rowsProcessed], m[pivotRow]], 2), m[pivotRow] = _a[0], m[rowsProcessed] = _a[1];
+            }
+            // Get the pivot value
+            var pivotValue = m[rowsProcessed][col];
+            // Normalize the pivot row (always, for RREF)
+            for (var j = col; j < cols; j++) {
+                m[rowsProcessed][j] /= pivotValue;
+            }
+            // Eliminate above and below (full Gauss-Jordan)
+            for (var row = 0; row < rows; row++) {
+                if (row !== rowsProcessed && Math.abs(m[row][col]) > EPSILON) {
+                    var factor = m[row][col];
+                    for (var j = col; j < cols; j++) {
+                        m[row][j] -= factor * m[rowsProcessed][j];
+                    }
+                }
+            }
+            rowsProcessed++;
+            if (rowsProcessed === rows)
+                break;
+        }
+        return [m, rank];
+    }
+
+    /**
+     * Calculate the inverse of a matrix using the adjugate method
+     * @param matrix The input matrix
+     * @returns The inverse matrix or null if the matrix is not invertible
+     */
+    var EPSILON = 1e-10;
+    function inverse(matrix) {
+        var n = matrix.length;
+        // Special case for 1x1 matrix - handle it directly
+        if (n === 1) {
+            var element = matrix[0][0];
+            if (Math.abs(element) < EPSILON) {
+                return null; // Not invertible
+            }
+            return [[1 / element]];
+        }
+        // Calculate determinant
+        var det = determinant(matrix);
+        // Check if matrix is invertible
+        if (Math.abs(det) < EPSILON) {
+            return null; // Matrix is not invertible
+        }
+        // Get the adjugate matrix
+        var adj = adjugate(matrix);
+        // Calculate the inverse: inverse = adjugate / determinant
+        var inverseMatrix = [];
+        for (var i = 0; i < n; i++) {
+            inverseMatrix[i] = [];
+            for (var j = 0; j < n; j++) {
+                inverseMatrix[i][j] = adj[i][j] / det;
+            }
+        }
+        return inverseMatrix;
+    }
+
+    /**
+     * Checks if a matrix is banded with the given lower and upper bandwidth.
+     * A matrix is banded if all non-zero elements are within 'lower' diagonals
+     * below the main diagonal and 'upper' diagonals above the main diagonal.
+     *
+     * @param matrix - The matrix to check, represented as a 2D array of numbers
+     * @param lower - Number of non-zero diagonals below the main diagonal
+     * @param upper - Number of non-zero diagonals above the main diagonal
+     * @returns true if the matrix is banded with the given parameters, false otherwise
+     */
+    function isBanded(matrix, lower, upper) {
+        var rows = matrix.length;
+        var cols = matrix[0].length;
+        // Check each element in the matrix
+        for (var i = 0; i < rows; i++) {
+            for (var j = 0; j < cols; j++) {
+                // If we find a non-zero element outside the band, return false
+                if (matrix[i][j] !== 0 && (j < i - lower || j > i + upper)) {
+                    return false;
+                }
+            }
+        }
+        // All elements outside the band are zero
+        return true;
+    }
+
+    function isSquare(matrix) {
+        return matrix.length === matrix[0].length;
+    }
+
+    /**
+     * Checks if a given matrix is diagonal.
+     *
+     * A matrix is considered diagonal if it is square (i.e., the number of rows equals the number of columns)
+     * and all elements outside the main diagonal are zero.
+     *
+     * @param matrix - A two-dimensional array of numbers representing the matrix to check.
+     * @returns `true` if the matrix is diagonal, otherwise `false`.
+     */
+    function isDiagonal(matrix) {
+        if (!isSquare(matrix)) {
+            return false;
+        }
+        var rows = matrix.length;
+        for (var i = 0; i < rows; i += 1) {
+            for (var j = 0; j < rows; j += 1) {
+                if (i !== j && matrix[i][j] !== 0) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    var epsilon = 1e-10;
+    function isIdentity(matrix) {
+        if (!isSquare(matrix)) {
+            return false;
+        }
+        var n = matrix.length;
+        for (var i = 0; i < n; i++) {
+            for (var j = 0; j < n; j++) {
+                if (i === j) {
+                    if (Math.abs(matrix[i][j] - 1) > epsilon) {
+                        return false;
+                    }
+                }
+                else {
+                    if (Math.abs(matrix[i][j]) > epsilon) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Performs cache-optimized matrix multiplication.
+     * @param A The first input matrix (m x n)
+     * @param B The second input matrix (n x p)
+     * @returns The result matrix C (m x p) where C = A × B
+     */
+    function multiply(A, B) {
+        // Check if matrices can be multiplied
+        if (A.length === 0 || B.length === 0 || A[0].length !== B.length) {
+            throw new Error('Matrix dimensions do not match for multiplication');
+        }
+        var m = A.length; // Number of rows in A
+        var n = A[0].length; // Number of columns in A / Number of rows in B
+        var p = B[0].length; // Number of columns in B
+        // Initialize result matrix C with zeros
+        var C = Array(m).fill(0).map(function () { return Array(p).fill(0); });
+        // Perform multiplication with cache-optimized loop order (i-k-j)
+        for (var i = 0; i < m; i++) {
+            for (var k = 0; k < n; k++) {
+                var aik = A[i][k]; // Cache this value to avoid repeated lookups
+                for (var j = 0; j < p; j++) {
+                    C[i][j] += aik * B[k][j];
+                }
+            }
+        }
+        return C;
+    }
+
+    function isOrthogonal(matrix) {
+        if (!isSquare(matrix)) {
+            return false;
+        }
+        // Calculate matrix transpose
+        var transposed = transpose(matrix);
+        // Check if matrix * transpose = Identity
+        var product = multiply(matrix, transposed);
+        if (!product) {
+            return false;
+        }
+        // Check if the product is an identity matrix
+        return isIdentity(product);
+    }
+
+    /**
+     * Checks if a given matrix is symmetric.
+     * A matrix is symmetric if it is square and its transpose is equal to itself.
+     *
+     * @param matrix - A 2D array representing the matrix.
+     * @returns `true` if the matrix is symmetric, otherwise `false`.
+     */
+    function isSymetric(matrix) {
+        var rows = matrix.length;
+        // Check if the matrix is square
+        if (!isSquare(matrix)) {
+            return false;
+        }
+        // Check symmetry
+        for (var i = 0; i < rows; i += 1) {
+            for (var j = 0; j < i; j += 1) {
+                if (matrix[i][j] !== matrix[j][i]) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Determines whether a given matrix is triangular.
+     *
+     * A triangular matrix is a square matrix where all elements
+     * below or above the main diagonal are zero. This function
+     * checks if the matrix is square and symmetric.
+     *
+     * @param matrix - A two-dimensional array of numbers representing the matrix.
+     * @returns `true` if the matrix is triangular, otherwise `false`.
+     */
+    function isTriangular$1(matrix) {
+        if (!isSquare(matrix)) {
+            return false;
+        }
+        var rows = matrix.length;
+        var isUpperTriangular = true;
+        var isLowerTriangular = true;
+        for (var i = 0; i < rows; i++) {
+            for (var j = 0; j < rows; j++) {
+                if (i > j && matrix[i][j] !== 0) {
+                    isUpperTriangular = false;
+                    if (!isLowerTriangular) {
+                        return false;
+                    }
+                }
+                if (i < j && matrix[i][j] !== 0) {
+                    isLowerTriangular = false;
+                    if (!isUpperTriangular) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return isUpperTriangular || isLowerTriangular;
+    }
+    function isTriangularUpper(matrix) {
+        if (!isSquare(matrix)) {
+            return false;
+        }
+        var rows = matrix.length;
+        for (var i = 0; i < rows; i++) {
+            for (var j = 0; j < i; j++) {
+                if (matrix[i][j] !== 0) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    function isTriangularLower(matrix) {
+        if (!isSquare(matrix)) {
+            return false;
+        }
+        var rows = matrix.length;
+        // Check if the matrix is square
+        if (!matrix.every(function (row) { return row.length === rows; })) {
+            return false;
+        }
+        for (var i = 0; i < rows; i++) {
+            for (var j = i + 1; j < rows; j++) {
+                if (matrix[i][j] !== 0) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    // Assuming a matrix is represented as a 2D array
+    function norm1(matrix) {
+        var numRows = matrix.length;
+        var numCols = matrix[0].length;
+        var maxColSum = 0;
+        // Iterate through each column
+        for (var j = 0; j < numCols; j += 1) {
+            var colSum = 0;
+            // Sum the absolute values of all elements in this column
+            for (var i = 0; i < numRows; i += 1) {
+                colSum += Math.abs(matrix[i][j]);
+            }
+            // Update the maximum column sum if necessary
+            maxColSum = Math.max(maxColSum, colSum);
+        }
+        return maxColSum;
+    }
+
+    function identity(number) {
+        var result = [];
+        for (var i = 0; i < number; i += 1) {
+            var row = [];
+            for (var j = 0; j < number; j += 1) {
+                row.push(i === j ? 1 : 0);
+            }
+            result.push(row);
+        }
+        return result;
+    }
+
+    /**
+     * Compute the nth power of a square matrix
+     *
+     * @param A - A square matrix
+     * @param n - The power to raise the matrix to
+     * @returns The matrix A raised to power n
+     */
+    function pow(A, n) {
+        var rows = A.length;
+        var result = identity(rows);
+        // Handle special cases
+        if (n === 0) {
+            return result;
+        }
+        if (n < 0) {
+            var inverseA = inverse(A);
+            if (!inverseA) {
+                throw new Error('Matrix is not invertible');
+            }
+            A = inverseA;
+            n = -n;
+        }
+        // Binary exponentiation method (faster than naive repeated multiplication)
+        var power = A.map(function (row) { return __spreadArray([], __read(row), false); }); // Create a deep copy of A
+        while (n > 0) {
+            if (n % 2 === 1) {
+                result = multiply(result, power);
+            }
+            power = multiply(power, power);
+            n = Math.floor(n / 2);
+        }
+        return result;
+    }
+
+    /**
+     * Solves a system of linear equations Ax = b
+     *
+     * @param A - The coefficient matrix
+     * @param b - The constant vector
+     * @returns The solution vector x, or null if no unique solution exists
+     */
+    function solve(A, b) {
+        var n = A.length;
+        // Create augmented matrix [A|b]
+        var augmented = A.map(function (row, i) { return __spreadArray(__spreadArray([], __read(row), false), [b[i]], false); });
+        // Convert to row echelon form using your existing function
+        var _a = __read(gaussJordanElimination(augmented), 1), echelon = _a[0];
+        // Check if the system has a unique solution
+        for (var i = 0; i < n; i += 1) {
+            if (Math.abs(echelon[i][i]) < 1e-10) {
+                return null; // No unique solution
+            }
+        }
+        // Back substitution
+        var x = Array.from({ length: n }, function () { return 0; });
+        for (var i = n - 1; i >= 0; i--) {
+            var sum = 0;
+            for (var j = i + 1; j < n; j++) {
+                sum += echelon[i][j] * x[j];
+            }
+            x[i] = (echelon[i][n] - sum) / echelon[i][i];
+        }
+        return x;
+    }
+
+    /**
+     * Calculates the trace of a square matrix.
+     * The trace is defined as the sum of the elements on the main diagonal.
+     *
+     * @param matrix - A 2D array representing a square matrix.
+     * @returns The trace of the matrix.
+     */
+    function trace(matrix) {
+        return matrix.reduce(function (sum, row, i) { return sum + row[i]; }, 0);
+    }
+
+    function isMatrix(matrix) {
+        var e_1, _a;
+        if (!Array.isArray(matrix)) {
+            return false;
+        }
+        if (matrix.length === 0) {
+            return false;
+        }
+        if (!Array.isArray(matrix[0])) {
+            return false;
+        }
+        var nbrOfCols = matrix[0].length;
+        try {
+            for (var _b = __values(matrix.slice(1)), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var row = _c.value;
+                if (!Array.isArray(row)) {
+                    return false;
+                }
+                if (row.length !== nbrOfCols) {
+                    return false;
+                }
+                if (row.some(function (cell) { return !isNumber(cell, { finite: true }); })) {
+                    return false;
+                }
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        return true;
+    }
+    function assertMatrix(matrix, sourceCodeInfo) {
+        if (!isMatrix(matrix)) {
+            throw new LitsError("Expected a matrix, but got ".concat(matrix), sourceCodeInfo);
+        }
+    }
+    function assertSquareMatrix(matrix, sourceCodeInfo) {
+        if (!isMatrix(matrix)) {
+            throw new LitsError("Expected a matrix, but got ".concat(matrix), sourceCodeInfo);
+        }
+        if (matrix.length !== matrix[0].length) {
+            throw new LitsError("Expected square matrix, but got ".concat(matrix.length, " and ").concat(matrix[0].length), sourceCodeInfo);
+        }
+    }
+    var matrixNormalExpression = {
+        'm:matrix?': {
+            evaluate: function (_a) {
+                var _b = __read(_a, 1), matrix = _b[0];
+                return isMatrix(matrix);
+            },
+            paramCount: 1,
+        },
+        'm:~': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), m1 = _b[0], m2 = _b[1], _c = _b[2], epsilon = _c === void 0 ? 1e-10 : _c;
+                assertMatrix(m1, sourceCodeInfo);
+                assertMatrix(m2, sourceCodeInfo);
+                assertNumber(epsilon, sourceCodeInfo);
+                if (m1.length !== m2.length) {
+                    return false;
+                }
+                if (m1[0].length !== m2[0].length) {
+                    return false;
+                }
+                for (var i = 0; i < m1.length; i += 1) {
+                    for (var j = 0; j < m1[i].length; j += 1) {
+                        if (Math.abs(m1[i][j] - m2[i][j]) > epsilon) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            },
+            paramCount: { min: 2, max: 3 },
+        },
+        'm:scale': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), matrix = _b[0], scalar = _b[1];
+                assertMatrix(matrix, sourceCodeInfo);
+                assertNumber(scalar, sourceCodeInfo);
+                return matrix.map(function (row) { return row.map(function (cell) { return cell * scalar; }); });
+            },
+            paramCount: 2,
+        },
+        'm:+': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a), firstMatrix = _b[0], params = _b.slice(1);
+                assertMatrix(firstMatrix, sourceCodeInfo);
+                assertArray(params, sourceCodeInfo);
+                params.forEach(function (matrix) {
+                    assertMatrix(matrix, sourceCodeInfo);
+                    if (matrix.length !== firstMatrix.length) {
+                        throw new LitsError("All matrices must have the same number of rows, but got ".concat(firstMatrix.length, " and ").concat(matrix.length), sourceCodeInfo);
+                    }
+                    if (matrix[0].length !== firstMatrix[0].length) {
+                        throw new LitsError("All matrices must have the same number of columns, but got ".concat(firstMatrix[0].length, " and ").concat(matrix[0].length), sourceCodeInfo);
+                    }
+                });
+                if (params.length === 0) {
+                    return params[0];
+                }
+                var matrices = params;
+                var result = [];
+                var _loop_1 = function (i) {
+                    var row = [];
+                    var _loop_2 = function (j) {
+                        var sum = firstMatrix[i][j];
+                        matrices.forEach(function (matrix) {
+                            sum += matrix[i][j];
+                        });
+                        row.push(sum);
+                    };
+                    for (var j = 0; j < firstMatrix[i].length; j += 1) {
+                        _loop_2(j);
+                    }
+                    result.push(row);
+                };
+                for (var i = 0; i < firstMatrix.length; i += 1) {
+                    _loop_1(i);
+                }
+                return result;
+            },
+            paramCount: { min: 1 },
+        },
+        'm:-': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a), firstMatrix = _b[0], params = _b.slice(1);
+                assertMatrix(firstMatrix, sourceCodeInfo);
+                assertArray(params, sourceCodeInfo);
+                params.forEach(function (matrix) {
+                    assertMatrix(matrix, sourceCodeInfo);
+                    if (matrix.length !== firstMatrix.length) {
+                        throw new LitsError("All matrices must have the same number of rows, but got ".concat(firstMatrix.length, " and ").concat(matrix.length), sourceCodeInfo);
+                    }
+                    if (matrix[0].length !== firstMatrix[0].length) {
+                        throw new LitsError("All matrices must have the same number of columns, but got ".concat(firstMatrix[0].length, " and ").concat(matrix[0].length), sourceCodeInfo);
+                    }
+                });
+                if (params.length === 0) {
+                    var result_1 = [];
+                    for (var i = 0; i < firstMatrix.length; i += 1) {
+                        var row = [];
+                        for (var j = 0; j < firstMatrix[i].length; j += 1) {
+                            row.push(-firstMatrix[i][j]);
+                        }
+                        result_1.push(row);
+                    }
+                }
+                var matrices = params;
+                var result = [];
+                var _loop_3 = function (i) {
+                    var row = [];
+                    var _loop_4 = function (j) {
+                        var sum = firstMatrix[i][j];
+                        matrices.forEach(function (matrix) {
+                            sum -= matrix[i][j];
+                        });
+                        row.push(sum);
+                    };
+                    for (var j = 0; j < firstMatrix[i].length; j += 1) {
+                        _loop_4(j);
+                    }
+                    result.push(row);
+                };
+                for (var i = 0; i < firstMatrix.length; i += 1) {
+                    _loop_3(i);
+                }
+                return result;
+            },
+            paramCount: { min: 1 },
+        },
+        'm:*': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a), firstMatrix = _b[0], params = _b.slice(1);
+                assertMatrix(firstMatrix, sourceCodeInfo);
+                assertArray(params, sourceCodeInfo);
+                params.forEach(function (matrix) {
+                    assertMatrix(matrix, sourceCodeInfo);
+                    if (matrix.length !== firstMatrix.length) {
+                        throw new LitsError("All matrices must have the same number of rows, but got ".concat(firstMatrix.length, " and ").concat(matrix.length), sourceCodeInfo);
+                    }
+                    if (matrix[0].length !== firstMatrix[0].length) {
+                        throw new LitsError("All matrices must have the same number of columns, but got ".concat(firstMatrix[0].length, " and ").concat(matrix[0].length), sourceCodeInfo);
+                    }
+                });
+                if (params.length === 0) {
+                    return params[0];
+                }
+                var matrices = params;
+                var result = [];
+                var _loop_5 = function (i) {
+                    var row = [];
+                    var _loop_6 = function (j) {
+                        var prod = firstMatrix[i][j];
+                        matrices.forEach(function (matrix) {
+                            prod *= matrix[i][j];
+                        });
+                        row.push(prod);
+                    };
+                    for (var j = 0; j < firstMatrix[i].length; j += 1) {
+                        _loop_6(j);
+                    }
+                    result.push(row);
+                };
+                for (var i = 0; i < firstMatrix.length; i += 1) {
+                    _loop_5(i);
+                }
+                return result;
+            },
+            paramCount: { min: 1 },
+        },
+        'm:/': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a), firstMatrix = _b[0], params = _b.slice(1);
+                assertMatrix(firstMatrix, sourceCodeInfo);
+                assertArray(params, sourceCodeInfo);
+                params.forEach(function (matrix) {
+                    assertMatrix(matrix, sourceCodeInfo);
+                    if (matrix.length !== firstMatrix.length) {
+                        throw new LitsError("All matrices must have the same number of rows, but got ".concat(firstMatrix.length, " and ").concat(matrix.length), sourceCodeInfo);
+                    }
+                    if (matrix[0].length !== firstMatrix[0].length) {
+                        throw new LitsError("All matrices must have the same number of columns, but got ".concat(firstMatrix[0].length, " and ").concat(matrix[0].length), sourceCodeInfo);
+                    }
+                });
+                if (params.length === 0) {
+                    var result_2 = [];
+                    for (var i = 0; i < firstMatrix.length; i += 1) {
+                        var row = [];
+                        for (var j = 0; j < firstMatrix[i].length; j += 1) {
+                            row.push(1 / firstMatrix[i][j]);
+                        }
+                        result_2.push(row);
+                    }
+                }
+                var matrices = params;
+                var result = [];
+                var _loop_7 = function (i) {
+                    var row = [];
+                    var _loop_8 = function (j) {
+                        var prod = firstMatrix[i][j];
+                        matrices.forEach(function (matrix) {
+                            prod /= matrix[i][j];
+                        });
+                        row.push(prod);
+                    };
+                    for (var j = 0; j < firstMatrix[i].length; j += 1) {
+                        _loop_8(j);
+                    }
+                    result.push(row);
+                };
+                for (var i = 0; i < firstMatrix.length; i += 1) {
+                    _loop_7(i);
+                }
+                return result;
+            },
+            paramCount: { min: 1 },
+        },
+        'm:**': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), matrix = _b[0], power = _b[1];
+                assertSquareMatrix(matrix, sourceCodeInfo);
+                assertNumber(power, sourceCodeInfo, { integer: true });
+                return pow(matrix, power);
+            },
+            paramCount: 2,
+        },
+        'm:dot': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), matrix1 = _b[0], matrix2 = _b[1];
+                assertMatrix(matrix1, sourceCodeInfo);
+                assertMatrix(matrix2, sourceCodeInfo);
+                try {
+                    return multiply(matrix1, matrix2);
+                }
+                catch (error) {
+                    throw new LitsError("The number of columns in the first matrix must be equal to the number of rows in the second matrix, but got ".concat(matrix1[0].length, " and ").concat(matrix2.length), sourceCodeInfo);
+                }
+            },
+            paramCount: 2,
+        },
+        'm:determinant': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), matrix = _b[0];
+                assertSquareMatrix(matrix, sourceCodeInfo);
+                return determinant(matrix);
+            },
+            paramCount: 1,
+        },
+        'm:inverse': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), matrix = _b[0];
+                assertSquareMatrix(matrix, sourceCodeInfo);
+                var result = inverse(matrix);
+                if (result === null) {
+                    throw new LitsError('The matrix must be invertible', sourceCodeInfo);
+                }
+                return result;
+            },
+            paramCount: 1,
+        },
+        'm:adjugate': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), matrix = _b[0];
+                assertSquareMatrix(matrix, sourceCodeInfo);
+                return adjugate(matrix);
+            },
+            paramCount: 1,
+        },
+        'm:cofactor': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), matrix = _b[0];
+                assertSquareMatrix(matrix, sourceCodeInfo);
+                return cofactor(matrix);
+            },
+            paramCount: 1,
+        },
+        'm:minor': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), matrix = _b[0], row = _b[1], col = _b[2];
+                assertMatrix(matrix, sourceCodeInfo);
+                assertNumber(row, sourceCodeInfo, { integer: true, nonNegative: true, lte: matrix.length });
+                assertNumber(col, sourceCodeInfo, { integer: true, nonNegative: true, lte: matrix[0].length });
+                return minor(matrix, row, col);
+            },
+            paramCount: 3,
+        },
+        'm:trace': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), matrix = _b[0];
+                assertSquareMatrix(matrix, sourceCodeInfo);
+                return trace(matrix);
+            },
+            paramCount: 1,
+        },
+        'm:symmetric?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), matrix = _b[0];
+                assertMatrix(matrix, sourceCodeInfo);
+                return isSymetric(matrix);
+            },
+            paramCount: 1,
+        },
+        'm:triangular?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), matrix = _b[0];
+                assertMatrix(matrix, sourceCodeInfo);
+                return isTriangular$1(matrix);
+            },
+            paramCount: 1,
+        },
+        'm:upper-triangular?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), matrix = _b[0];
+                assertMatrix(matrix, sourceCodeInfo);
+                return isTriangularUpper(matrix);
+            },
+            paramCount: 1,
+        },
+        'm:lower-triangular?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), matrix = _b[0];
+                assertMatrix(matrix, sourceCodeInfo);
+                return isTriangularLower(matrix);
+            },
+            paramCount: 1,
+        },
+        'm:diagonal?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), matrix = _b[0];
+                assertMatrix(matrix, sourceCodeInfo);
+                return isDiagonal(matrix);
+            },
+            paramCount: 1,
+        },
+        'm:square?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), matrix = _b[0];
+                assertMatrix(matrix, sourceCodeInfo);
+                return isSquare(matrix);
+            },
+            paramCount: 1,
+        },
+        'm:orthogonal?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), matrix = _b[0];
+                assertMatrix(matrix, sourceCodeInfo);
+                return isOrthogonal(matrix);
+            },
+            paramCount: 1,
+        },
+        'm:identity?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), matrix = _b[0];
+                assertMatrix(matrix, sourceCodeInfo);
+                return isIdentity(matrix);
+            },
+            paramCount: 1,
+        },
+        'm:singular?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), matrix = _b[0];
+                assertSquareMatrix(matrix, sourceCodeInfo);
+                return determinant(matrix) < 1e-10;
+            },
+            paramCount: 1,
+        },
+        'm:rref': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), matrix = _b[0];
+                assertMatrix(matrix, sourceCodeInfo);
+                // Reduced Row Echelon Form (RREF)
+                var _c = __read(gaussJordanElimination(matrix), 1), rref = _c[0];
+                return rref;
+            },
+            paramCount: 1,
+        },
+        'm:rank': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), matrix = _b[0];
+                assertMatrix(matrix, sourceCodeInfo);
+                var _c = __read(gaussJordanElimination(matrix), 2), result = _c[1];
+                return result;
+            },
+            paramCount: 1,
+        },
+        'm:solve': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), matrix = _b[0], vector = _b[1];
+                assertSquareMatrix(matrix, sourceCodeInfo);
+                assertVector(vector, sourceCodeInfo);
+                if (matrix.length !== vector.length) {
+                    throw new LitsError("The number of rows in the matrix must be equal to the length of the vector, but got ".concat(matrix.length, " and ").concat(vector.length), sourceCodeInfo);
+                }
+                return solve(matrix, vector);
+            },
+            paramCount: 2,
+        },
+        // Frobenius norm
+        'm:norm-frobenius': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), matrix = _b[0];
+                assertMatrix(matrix, sourceCodeInfo);
+                return Math.sqrt(matrix.reduce(function (sum, row) { return sum + row.reduce(function (rowSum, cell) { return rowSum + cell * cell; }, 0); }, 0));
+            },
+            paramCount: 1,
+        },
+        // 1-norm
+        'm:norm-1': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), matrix = _b[0];
+                assertMatrix(matrix, sourceCodeInfo);
+                return norm1(matrix);
+            },
+            paramCount: 1,
+        },
+        // Infinity norm
+        'm:norm-infinity': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), matrix = _b[0];
+                assertMatrix(matrix, sourceCodeInfo);
+                return matrix.reduce(function (max, row) { return Math.max(max, row.reduce(function (sum, cell) { return sum + Math.abs(cell); }, 0)); }, 0);
+            },
+            paramCount: 1,
+        },
+        // Max norm
+        'm:norm-max': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), matrix = _b[0];
+                assertMatrix(matrix, sourceCodeInfo);
+                return matrix.reduce(function (maxVal, row) {
+                    var rowMax = row.reduce(function (max, val) { return Math.max(max, Math.abs(val)); }, 0);
+                    return Math.max(maxVal, rowMax);
+                }, 0);
+            },
+            paramCount: 1,
+        },
+        'm:hilbert': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), size = _b[0];
+                assertNumber(size, sourceCodeInfo, { integer: true, positive: true });
+                var result = [];
+                for (var i = 0; i < size; i += 1) {
+                    var row = [];
+                    for (var j = 0; j < size; j += 1) {
+                        row.push(1 / (i + j + 1));
+                    }
+                    result.push(row);
+                }
+                return result;
+            },
+            paramCount: 1,
+        },
+        'm:vandermonde': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var result = [];
+                for (var i = 0; i < vector.length; i += 1) {
+                    var row = [];
+                    for (var j = 0; j < vector.length; j += 1) {
+                        row.push(Math.pow((vector[i]), j));
+                    }
+                    result.push(row);
+                }
+                return result;
+            },
+            paramCount: 1,
+        },
+        'm:band': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), n = _b[0], lband = _b[1], uband = _b[2];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                assertNumber(lband, sourceCodeInfo, { integer: true, nonNegative: true, lt: n });
+                assertNumber(uband, sourceCodeInfo, { integer: true, nonNegative: true, lte: n });
+                return band(n, lband, uband);
+            },
+            paramCount: 3,
+        },
+        'm:banded?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), matrix = _b[0], lband = _b[1], uband = _b[2];
+                assertMatrix(matrix, sourceCodeInfo);
+                var maxBand = Math.max(matrix.length, matrix[0].length);
+                assertNumber(lband, sourceCodeInfo, { integer: true, nonNegative: true, lt: maxBand });
+                assertNumber(uband, sourceCodeInfo, { integer: true, nonNegative: true, lt: maxBand });
+                return isBanded(matrix, lband, uband);
+            },
+            paramCount: 1,
+        },
+    };
+
+    // Pre-calculated Bell numbers (for efficient lookup)
+    // Only including values up to the safe integer limit in JavaScript
+    var bellNumbers = [
+        1,
+        1,
+        2,
+        5,
+        15,
+        52,
+        203,
+        877,
+        4140,
+        21147,
+        115975,
+        678570,
+        4213597,
+        27644437,
+        190899322,
+        1382958545,
+        10480142147,
+        82864869804,
+        682076806159,
+        5832742205057,
+        51724158235372,
+        474869816156751,
+        4506715738447323,
+    ];
+    var bellSequence = {
+        'maxLength': bellNumbers.length,
+        'c:bell-seq': function (length) {
+            return bellNumbers.slice(0, length);
+        },
+        'c:bell-nth': function (n) { return bellNumbers[n - 1]; },
+        'c:bell?': function (n) { return bellNumbers.includes(n); },
+        'c:bell-take-while': function (takeWhile) {
+            var bell = [];
+            for (var i = 0;; i += 1) {
+                if (i >= bellNumbers.length) {
+                    break;
+                }
+                var value = bellNumbers[i];
+                if (!takeWhile(value, i)) {
+                    break;
+                }
+                bell[i] = value;
+            }
+            return bell;
+        },
+    };
+
+    var catalanNumbers = [
+        1,
+        1,
+        2,
+        5,
+        14,
+        42,
+        132,
+        429,
+        1430,
+        4862,
+        16796,
+        58786,
+        208012,
+        742900,
+        2674440,
+        9694845,
+        35357670,
+        129644790,
+        477638700,
+        1767263190,
+        6564120420,
+        24466267020,
+        91482563640,
+        343059613650,
+        1289904147324,
+        4861946401452,
+        18367353072152,
+        69533550916004,
+        263747951750360,
+        1002242216651368,
+        3814986502092304,
+    ];
+    var catalanSequence = {
+        'maxLength': catalanNumbers.length,
+        'c:catalan-seq': function (length) {
+            return catalanNumbers.slice(0, length);
+        },
+        'c:catalan-nth': function (n) { return catalanNumbers[n - 1]; },
+        'c:catalan?': function (n) { return catalanNumbers.includes(n); },
+        'c:catalan-take-while': function (takeWhile) {
+            var catalan = [];
+            for (var i = 0;; i += 1) {
+                if (i >= catalanNumbers.length) {
+                    break;
+                }
+                var value = catalanNumbers[i];
+                if (!takeWhile(value, i)) {
+                    break;
+                }
+                catalan[i] = value;
+            }
+            return catalan;
+        },
+    };
+
+    /**
+     * Checks if a number is part of the Look-and-Say sequence.
+     *
+     * The Look-and-Say sequence starts with "1" and each subsequent term describes
+     * the previous term by counting consecutive digits. For example:
+     * 1, 11, 21, 1211, 111221, 312211, 13112221, ...
+     *
+     * @param {string|number} target - The number to check (can be a string or number)
+     * @param {number} limit - How many terms to generate for checking (default: 25)
+     * @returns {boolean} - Whether the target is in the sequence
+     */
+    function isLookAndSay(target, limit) {
+        if (limit === void 0) { limit = 25; }
+        // The first term of the sequence
+        var current = '1';
+        // Check if the first term matches
+        if (current === target) {
+            return true;
+        }
+        // Generate terms and check against the target
+        for (var i = 1; i < limit; i++) {
+            current = getNextLookAndSayTerm(current);
+            if (current === target) {
+                return true;
+            }
+            // Optimization: if the current term is longer than the target, and
+            // the sequence is strictly increasing in length, the target won't be found
+            if (current.length > target.length) {
+                return false;
+            }
+        }
+        // If we've generated 'limit' terms without finding a match, return false
+        return false;
+    }
+    /**
+     * Generates the next term in the Look-and-Say sequence
+     *
+     * @param {string} term - The current term
+     * @returns {string} - The next term in the sequence
+     */
+    function getNextLookAndSayTerm(term) {
+        var result = '';
+        var count = 1;
+        for (var i = 0; i < term.length; i++) {
+            // If the current digit is the same as the next one, increment count
+            if (i + 1 < term.length && term[i] === term[i + 1]) {
+                count++;
+            }
+            else {
+                // Otherwise, append count and the digit to the result
+                result += count.toString() + term[i];
+                count = 1;
+            }
+        }
+        return result;
+    }
+    var lookAndSaySequence = {
+        'string': true,
+        'c:look-and-say-seq': function (length) {
+            var lookAndSay = ['1'];
+            for (var i = 1; i < length; i += 1) {
+                var prev = lookAndSay[i - 1];
+                var next = prev.replace(/(\d)\1*/g, function (match) { return "".concat(match.length).concat(match[0]); });
+                lookAndSay[i] = next;
+            }
+            return lookAndSay;
+        },
+        'c:look-and-say-take-while': function (takeWhile) {
+            if (!takeWhile('1', 0)) {
+                return [];
+            }
+            var lookAndSay = ['1'];
+            for (var i = 1;; i += 1) {
+                var prev = lookAndSay[i - 1];
+                var next = prev.replace(/(\d)\1*/g, function (match) { return "".concat(match.length).concat(match[0]); });
+                if (!takeWhile(next, i)) {
+                    break;
+                }
+                lookAndSay[i] = next;
+            }
+            return lookAndSay;
+        },
+        'c:look-and-say-nth': function (n) {
+            var lookAndSay = '1';
+            for (var i = 1; i < n; i += 1) {
+                lookAndSay = lookAndSay.replace(/(\d)\1*/g, function (match) { return "".concat(match.length).concat(match[0]); });
+            }
+            return lookAndSay;
+        },
+        'c:look-and-say?': function (n) { return isLookAndSay(n); },
+    };
+
+    /**
+     * Checks if a number is a Padovan number.
+     * Padovan numbers follow the recurrence relation: P(n) = P(n-2) + P(n-3) for n >= 3,
+     * with initial values P(0) = P(1) = P(2) = 1.
+     *
+     * The first few Padovan numbers are:
+     * 1, 1, 1, 2, 2, 3, 4, 5, 7, 9, 12, 16, 21, 28, 37, 49, 65, 86, 114, 151, 200, ...
+     *
+     * @param num - The number to check
+     * @returns True if the number is a Padovan number, false otherwise
+     */
+    function isPadovan(num) {
+        // Padovan numbers are always positive integers
+        if (!Number.isInteger(num) || num <= 0) {
+            return false;
+        }
+        // Special case: The first three Padovan numbers are all 1
+        if (num === 1) {
+            return true;
+        }
+        // Pre-calculated Padovan numbers (for efficient lookup, verified for correctness)
+        var padovanNumbers = [
+            1,
+            1,
+            1,
+            2,
+            2,
+            3,
+            4,
+            5,
+            7,
+            9,
+            12,
+            16,
+            21,
+            28,
+            37,
+            49,
+            65,
+            86,
+            114,
+            151,
+            200,
+            265,
+            351,
+            465,
+            616,
+            816,
+            1081,
+            1432,
+            1897,
+            2513,
+            3329,
+            4410,
+            5842,
+            7739,
+            10252,
+            13581,
+            17991,
+            23833,
+            31572,
+            41824,
+            55405,
+            73396,
+            97229,
+            128801,
+            170625,
+            226030,
+            299426,
+            396655,
+            525456,
+            696081,
+            922111,
+        ];
+        // Direct lookup for known values
+        if (padovanNumbers.includes(num)) {
+            return true;
+        }
+        // For numbers larger than our pre-calculated list but within JavaScript's safe range
+        if (num > padovanNumbers[padovanNumbers.length - 1] && num <= Number.MAX_SAFE_INTEGER) {
+            // Start with the last three values from our known sequence
+            var a = padovanNumbers[padovanNumbers.length - 3];
+            var b = padovanNumbers[padovanNumbers.length - 2];
+            var c = padovanNumbers[padovanNumbers.length - 1];
+            var next 
+            // Generate Padovan numbers until we either find a match or exceed the input
+            = void 0;
+            // Generate Padovan numbers until we either find a match or exceed the input
+            while (c < num) {
+                next = a + b;
+                a = b;
+                b = c;
+                c = next;
+                if (c === num) {
+                    return true;
+                }
+                // Check for numeric overflow/precision issues
+                if (!Number.isSafeInteger(c)) {
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+    var padovanSequence = {
+        'c:padovan-seq': function (length) {
+            var padovan = [1, 1, 1];
+            for (var i = 3; i < length; i += 1) {
+                padovan[i] = padovan[i - 2] + padovan[i - 3];
+            }
+            return padovan.slice(0, length);
+        },
+        'c:padovan-nth': function (n) {
+            if (n === 1 || n === 2 || n === 3)
+                return 1;
+            var a = 1;
+            var b = 1;
+            var c = 1;
+            for (var i = 4; i <= n; i += 1) {
+                var temp = a + b;
+                a = b;
+                b = c;
+                c = temp;
+            }
+            return c;
+        },
+        'c:padovan?': function (n) { return isPadovan(n); },
+        'c:padovan-take-while': function (takeWhile) {
+            var padovan = [];
+            if (!takeWhile(1, 0)) {
+                return padovan;
+            }
+            padovan.push(1);
+            if (!takeWhile(1, 1)) {
+                return padovan;
+            }
+            padovan.push(1);
+            if (!takeWhile(1, 2)) {
+                return padovan;
+            }
+            padovan.push(1);
+            var a = 1;
+            var b = 1;
+            var c = 1;
+            for (var i = 4;; i += 1) {
+                var temp = a + b;
+                a = b;
+                b = c;
+                c = temp;
+                if (!takeWhile(c, i)) {
+                    break;
+                }
+                padovan.push(c);
+            }
+            return padovan;
+        },
+    };
+
+    var pellNumbers = [
+        0,
+        1,
+        2,
+        5,
+        12,
+        29,
+        70,
+        169,
+        408,
+        985,
+        2378,
+        5741,
+        13860,
+        33461,
+        80782,
+        195025,
+        470832,
+        1136689,
+        2744210,
+        6625109,
+        15994428,
+        38613965,
+        93222358,
+        225058681,
+        543339720,
+        1311738121,
+        3166815962,
+        7645370045,
+        18457556052,
+        44560482149,
+        107578520350,
+        259717522849,
+        627013566048,
+        1513744654945,
+        3654502875938,
+        8822750406821,
+        21300003689580,
+        51422757785981,
+        124145519261542,
+        299713796309065,
+        723573111879672,
+        1746860020068409,
+        4217293152016490,
+    ];
+    var pellSequence = {
+        'maxLength': pellNumbers.length,
+        'c:pell-seq': function (length) {
+            return pellNumbers.slice(0, length);
+        },
+        'c:pell-nth': function (n) { return pellNumbers[n - 1]; },
+        'c:pell?': function (n) { return pellNumbers.includes(n); },
+        'c:pell-take-while': function (takeWhile) {
+            var pell = [];
+            for (var i = 0;; i += 1) {
+                if (i >= pellNumbers.length) {
+                    break;
+                }
+                var value = pellNumbers[i];
+                if (!takeWhile(value, i)) {
+                    break;
+                }
+                pell[i] = value;
+            }
+            return pell;
+        },
+    };
+
+    /**
+     * Generates the first 'n' terms of the Recamán sequence.
+     *
+     * @param n - Number of terms to generate
+     * @returns Array containing the first n terms of the Recamán sequence
+     */
+    function generateRecamanSequence(n) {
+        if (n === 1)
+            return [0];
+        var sequence = [0];
+        var seen = new Set([0]);
+        for (var i = 1; i < n; i++) {
+            // Try to go backward
+            var next = sequence[i - 1] - i;
+            // If that's not positive or already seen, go forward
+            if (next <= 0 || seen.has(next)) {
+                next = sequence[i - 1] + i;
+            }
+            sequence.push(next);
+            seen.add(next);
+        }
+        return sequence;
+    }
+    var recamanSequence = {
+        'c:recaman-seq': function (length) { return generateRecamanSequence(length); },
+        'c:recaman-take-while': function (takeWhile) {
+            if (!takeWhile(0, 0))
+                return [];
+            var sequence = [0];
+            var seen = new Set([0]);
+            for (var i = 1;; i++) {
+                // Try to go backward
+                var next = sequence[i - 1] - i;
+                // If that's not positive or already seen, go forward
+                if (next <= 0 || seen.has(next)) {
+                    next = sequence[i - 1] + i;
+                }
+                if (!takeWhile(next, i))
+                    break;
+                sequence.push(next);
+                seen.add(next);
+            }
+            return sequence;
+        },
+        'c:recaman-nth': function (n) { var _a; return (_a = generateRecamanSequence(n)[n - 1]) !== null && _a !== void 0 ? _a : 0; },
+        'c:recaman?': function () { return true; },
+    };
+
+    var thueMorseSequence = {
+        'c:thue-morse-seq': function (length) {
+            var thueMorse = [];
+            for (var i = 0; i < length; i += 1) {
+                thueMorse[i] = countSetBits(i) % 2;
+            }
+            return thueMorse;
+        },
+        'c:thue-morse-take-while': function (takeWhile) {
+            var thueMorse = [];
+            for (var i = 0;; i += 1) {
+                var value = countSetBits(i) % 2;
+                if (!takeWhile(value, i)) {
+                    break;
+                }
+                thueMorse[i] = value;
+            }
+            return thueMorse;
+        },
+        'c:thue-morse-nth': function (n) { return countSetBits(n - 1) % 2; },
+        'c:thue-morse?': function (n) { return n === 1 || n === 0; },
+    };
+    function countSetBits(num) {
+        var count = 0;
+        while (num) {
+            count += num & 1;
+            num >>= 1;
+        }
+        return count;
+    }
+
+    var sequenceNormalExpression = {};
+    addSequence(bellSequence);
+    addSequence(catalanSequence);
+    addSequence(lookAndSaySequence);
+    addSequence(padovanSequence);
+    addSequence(pellSequence);
+    addSequence(recamanSequence);
+    addSequence(thueMorseSequence);
+    function addSequence(sequence) {
+        var e_1, _a;
+        try {
+            for (var _b = __values(Object.entries(sequence)), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var _d = __read(_c.value, 2), key = _d[0], value = _d[1];
+                if (sequenceNormalExpression[key]) {
+                    throw new Error("Duplicate normal expression key found: ".concat(key));
+                }
+                if (key.endsWith('seq')) {
+                    sequenceNormalExpression[key] = createSeqNormalExpression(value, sequence.maxLength);
+                }
+                else if (key.endsWith('take-while')) {
+                    sequenceNormalExpression[key] = createTakeWhileNormalExpression(value, sequence.maxLength);
+                }
+                else if (key.endsWith('nth')) {
+                    sequenceNormalExpression[key] = createNthNormalExpression(value, sequence.maxLength);
+                }
+                else if (key.endsWith('?')) {
+                    if (sequence.string) {
+                        sequenceNormalExpression[key] = createStringPredNormalExpression(value);
+                    }
+                    else {
+                        sequenceNormalExpression[key] = createNumberPredNormalExpression(value);
+                    }
+                }
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+    }
+    function createSeqNormalExpression(seqFunction, maxLength) {
+        return {
+            evaluate: function (params, sourceCodeInfo) {
+                var _a;
+                var length = (_a = params[0]) !== null && _a !== void 0 ? _a : maxLength;
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true, lte: maxLength });
+                return seqFunction(length, sourceCodeInfo);
+            },
+            paramCount: typeof maxLength === 'number' ? { max: 1 } : 1,
+        };
+    }
+    function createTakeWhileNormalExpression(takeWhileFunction, maxLength) {
+        return {
+            evaluate: function (params, sourceCodeInfo, contextStack, _a) {
+                var executeFunction = _a.executeFunction;
+                var fn = params[0];
+                assertLitsFunction(fn, sourceCodeInfo);
+                return takeWhileFunction(function (value, index) { return !!executeFunction(fn, [value, index], contextStack); }, sourceCodeInfo);
+            },
+            paramCount: typeof maxLength === 'number' ? { max: 1 } : 1,
+        };
+    }
+    function createNthNormalExpression(nthFunction, maxLength) {
+        return {
+            evaluate: function (params, sourceCodeInfo) {
+                var n = params[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true, lte: maxLength });
+                return nthFunction(n, sourceCodeInfo);
+            },
+            paramCount: 1,
+        };
+    }
+    function createNumberPredNormalExpression(predFunction) {
+        return {
+            evaluate: function (params, sourceCodeInfo) {
+                var value = params[0];
+                assertNumber(value, sourceCodeInfo);
+                return predFunction(value, sourceCodeInfo);
+            },
+            paramCount: 1,
+        };
+    }
+    function createStringPredNormalExpression(predFunction) {
+        return {
+            evaluate: function (params, sourceCodeInfo) {
+                var value = params[0];
+                assertString(value, sourceCodeInfo);
+                return predFunction(value, sourceCodeInfo);
+            },
+            paramCount: 1,
+        };
+    }
+
+    // Multinomial coefficient calculation - You have binomial coefficients (presumably through count-combinations), but multinomial coefficients are their natural extension and widely used.
+    // Gray code generation - This is a fundamental combinatorial structure used in many algorithms and applications, particularly in coding theory and computer science.
+    // Partition by specific constraints - Your partition functions are great, but adding specialized versions for common constraints (like partitions into distinct parts or odd parts) would enhance their utility.
+    var perfectNumbers = [6, 28, 496, 8128, 33550336, 8589869056, 137438691328];
+    var mersennePrimes = [3, 7, 31, 127, 2047, 8191, 131071, 524287, 2147483647];
+    var armstrongNumbers = [
+        // 1 digit (all single digits are narcissistic)
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        // 3 digits
+        153,
+        370,
+        371,
+        407,
+        // 4 digits
+        1634,
+        8208,
+        9474,
+        // 5 digits
+        54748,
+        92727,
+        93084,
+        // 6 digits
+        548834,
+        // 7 digits
+        1741725,
+        4210818,
+        9800817,
+        9926315,
+        // 8 digits
+        24678050,
+        24678051,
+        88593477,
+        // 9 digits
+        146511208,
+        472335975,
+        534494836,
+        912985153,
+        // 10 digits
+        4679307774,
+        // 11 digits
+        32164049650,
+        32164049651,
+        40028394225,
+        42678290603,
+        44708635679,
+        49388550606,
+        82693916578,
+        94204591914,
+        // 14 digits
+        28116440335967,
+        // 16 digits
+        4338281769391370,
+        4338281769391371,
+    ];
+    /**
+     * Checks if a number is a perfect square.
+     *
+     * @param {number} n - The number to check
+     * @return {boolean} - True if n is a perfect square, false otherwise
+     */
+    function isPerfectSquare(n) {
+        var sqrt = Math.sqrt(n);
+        return Math.floor(sqrt) === sqrt;
+    }
+    /**
+     * Checks if a number is in the Fibonacci sequence.
+     *
+     * A number is in the Fibonacci sequence if and only if one of
+     * (5n² + 4) or (5n² - 4) is a perfect square.
+     * This is based on Binet's formula.
+     *
+     * @param {number} n - The number to check
+     * @return {boolean} - True if n is a Fibonacci number, false otherwise
+     */
+    function isFibonacciNumber(n) {
+        // Handle edge cases
+        if (n < 0)
+            return false;
+        if (n === 0 || n === 1)
+            return true;
+        // Check if 5n² + 4 or 5n² - 4 is a perfect square
+        var test1 = 5 * n * n + 4;
+        var test2 = 5 * n * n - 4;
+        return isPerfectSquare(test1) || isPerfectSquare(test2);
+    }
+    /**
+     * Checks if a number is in the Lucas sequence.
+     *
+     * The Lucas sequence starts with L(0) = 2, L(1) = 1 and each subsequent number
+     * is the sum of the two previous ones: L(n) = L(n-1) + L(n-2).
+     *
+     * @param {number} n - The number to check
+     * @return {boolean} - True if n is a Lucas number, false otherwise
+     */
+    function isLucasNumber(n) {
+        // Handle edge cases
+        if (n <= 0)
+            return false;
+        // Direct check for small numbers
+        if (n === 1 || n === 2)
+            return true;
+        // Use the iterative approach for all numbers
+        var a = 2; // L(0)
+        var b = 1; // L(1)
+        while (b < n) {
+            // Calculate the next Lucas number
+            var temp = a + b;
+            a = b;
+            b = temp;
+            // Check if we've found our number
+            if (b === n) {
+                return true;
+            }
+        }
+        // If we've exceeded n without finding it, it's not a Lucas number
+        return false;
+    }
+    /**
+     * Checks if a number is part of the Tribonacci sequence.
+     * The Tribonacci sequence starts with 0, 0, 1 and each subsequent
+     * number is the sum of the three preceding ones.
+     *
+     * @param num - The number to check
+     * @returns True if the number is in the Tribonacci sequence, false otherwise
+     */
+    function isTribonacciNumber(num) {
+        // Handle edge cases
+        if (num < 0)
+            return false;
+        if (num === 0 || num === 1)
+            return true;
+        // Special case for 2, which is in the sequence
+        if (num === 2)
+            return true;
+        // Initialize the first three numbers of the sequence
+        var a = 0;
+        var b = 0;
+        var c = 1;
+        // Generate the sequence until we reach or exceed the input number
+        while (c < num) {
+            var next = a + b + c;
+            a = b;
+            b = c;
+            c = next;
+        }
+        // If c equals the input number, it's in the sequence
+        return c === num;
+    }
+    /**
+     * Checks if a number is a triangular number.
+     * A triangular number is a number that can be represented as the sum of consecutive integers from 1 to n.
+     * The formula for the nth triangular number is n(n+1)/2.
+     *
+     * @param num - The number to check
+     * @returns True if the number is triangular, false otherwise
+     */
+    function isTriangular(num) {
+        // Negative numbers and non-integers cannot be triangular
+        if (num < 0 || !Number.isInteger(num)) {
+            return false;
+        }
+        // Edge case: 0 is considered triangular (0th triangular number)
+        if (num === 0) {
+            return true;
+        }
+        // Using the formula for triangular numbers: n(n+1)/2 = num
+        // This can be rewritten as n² + n - 2*num = 0
+        // Using the quadratic formula: n = (-1 + √(1 + 8*num))/2
+        // If n is a positive integer, then the number is triangular
+        var discriminant = 1 + 8 * num;
+        var sqrtDiscriminant = Math.sqrt(discriminant);
+        // Check if the result is an integer
+        // Due to floating point precision, we check if the value is very close to an integer
+        var n = (-1 + sqrtDiscriminant) / 2;
+        return Math.abs(Math.round(n) - n) < 1e-10;
+    }
+    /* Checks if a number is a hexagonal number.
+    * A hexagonal number is a figurate number that can be represented as a hexagonal arrangement of points.
+    * The formula for the nth hexagonal number is n(2n-1).
+    *
+    * @param num - The number to check
+    * @returns True if the number is hexagonal, false otherwise
+    */
+    function isHexagonal(num) {
+        // Negative numbers and non-integers cannot be hexagonal
+        if (num < 0 || !Number.isInteger(num)) {
+            return false;
+        }
+        // Edge case: 0 is considered the 0th hexagonal number
+        if (num === 0) {
+            return true;
+        }
+        // Using the formula for hexagonal numbers: H_n = n(2n-1)
+        // We can rewrite this as 2n² - n - num = 0
+        // Using the quadratic formula: n = (1 + √(1 + 8*num))/4
+        // If n is a positive integer, then the number is hexagonal
+        var discriminant = 1 + 8 * num;
+        var sqrtDiscriminant = Math.sqrt(discriminant);
+        // Check if the result is an integer
+        // Due to floating point precision, we check if the value is very close to an integer
+        var n = (1 + sqrtDiscriminant) / 4;
+        return Math.abs(Math.round(n) - n) < 1e-10;
+    }
+    /**
+     * Checks if a number is a pentagonal number.
+     * A pentagonal number is a figurate number that can be represented as a pentagonal arrangement of points.
+     * The formula for the nth pentagonal number is n(3n-1)/2.
+     *
+     * The first few pentagonal numbers are:
+     * 0, 1, 5, 12, 22, 35, 51, 70, 92, 117, 145, 176, 210, 247, 287, 330, ...
+     *
+     * @param num - The number to check
+     * @returns True if the number is pentagonal, false otherwise
+     */
+    function isPentagonal(num) {
+        // Negative numbers and non-integers cannot be pentagonal
+        if (num < 0 || !Number.isInteger(num)) {
+            return false;
+        }
+        // Edge case: 0 is considered the 0th pentagonal number
+        if (num === 0) {
+            return true;
+        }
+        // Using the formula for pentagonal numbers: P_n = n(3n-1)/2
+        // We can rewrite this as 3n² - n - 2*num = 0
+        // Using the quadratic formula: n = (1 + √(1 + 24*num))/6
+        // If n is a positive integer, then the number is pentagonal
+        var discriminant = 1 + 24 * num;
+        var sqrtDiscriminant = Math.sqrt(discriminant);
+        // Check if the result is an integer
+        // Due to floating point precision, we check if the value is very close to an integer
+        var n = (1 + sqrtDiscriminant) / 6;
+        return Math.abs(Math.round(n) - n) < 1e-10;
+    }
+    /**
+     * Checks if a number is a pentatope number.
+     * A pentatope number (also known as a 4-simplex number or tetrahedral pyramidal number)
+     * is a 4-dimensional figurate number that represents the number of points in a 4-simplex.
+     *
+     * The formula for the nth pentatope number is: n(n+1)(n+2)(n+3)/24
+     *
+     * The first few pentatope numbers are:
+     * 0, 1, 5, 15, 35, 70, 126, 210, 330, 495, 715, 1001, 1365, 1820, 2380, ...
+     *
+     * @param num - The number to check
+     * @returns True if the number is a pentatope number, false otherwise
+     */
+    function isPentatope(num) {
+        // Negative numbers and non-integers cannot be pentatope numbers
+        if (num < 0 || !Number.isInteger(num)) {
+            return false;
+        }
+        // Edge case: 0 is considered the 0th pentatope number
+        if (num === 0) {
+            return true;
+        }
+        // For a more efficient approach, we can use an approximate solution
+        // and then check nearby values
+        // A rough approximation for n given P(n) = num is n ≈ (24*num)^(1/4)
+        var estimatedN = Math.pow((24 * num), 0.25);
+        // Check a small range around the estimate (typically only need to check 1-2 values)
+        // We'll check n ± 2 to be safe
+        var lowerBound = Math.max(1, Math.floor(estimatedN) - 2);
+        var upperBound = Math.ceil(estimatedN) + 2;
+        for (var n = lowerBound; n <= upperBound; n++) {
+            var pentatope = (n * (n + 1) * (n + 2) * (n + 3)) / 24;
+            if (pentatope === num) {
+                return true;
+            }
+            // Since pentatope numbers grow monotonically, we can exit early
+            // if we've exceeded the target number
+            if (pentatope > num) {
+                return false;
+            }
+        }
+        return false;
+    }
+    /**
+     * Checks if a number is a hexacube number.
+     * A hexacube number is a perfect 6th power (n^6 for some integer n).
+     *
+     * The first few hexacube numbers are:
+     * 0, 1, 64, 729, 4096, 15625, 46656, 117649, 262144, 531441, 1000000, ...
+     *
+     * @param num - The number to check
+     * @returns True if the number is a hexacube, false otherwise
+     */
+    function isHexacube(num) {
+        // Non-integers cannot be hexacubes
+        if (!Number.isInteger(num)) {
+            return false;
+        }
+        // Edge case: 0^6 = 0
+        if (num === 0) {
+            return true;
+        }
+        // A key insight: n^6 is always positive for any real n
+        // So negative numbers cannot be hexacubes
+        if (num < 0) {
+            return false;
+        }
+        // For numbers within the safe integer range, use a direct approach
+        if (num <= Number.MAX_SAFE_INTEGER) {
+            // Calculate the 6th root
+            var sixthRoot = Math.pow(num, (1 / 6));
+            // Round to the nearest integer
+            var roundedRoot = Math.round(sixthRoot);
+            // Calculate the 6th power of the rounded root
+            var calculatedHexacube = Math.pow(roundedRoot, 6);
+            // Check for exact equality
+            return calculatedHexacube === num;
+        }
+        // For extremely large numbers, use a safer approach that accounts for precision limits
+        else {
+            // Get a more accurate estimate of the 6th root using logarithms
+            // log(n^6) = 6*log(n), so n = 10^(log(num)/6)
+            var estimatedRoot = Math.pow(10, (Math.log10(num) / 6));
+            var roundedRoot = Math.round(estimatedRoot);
+            // For very large numbers, instead of computing roundedRoot^6 directly
+            // (which might lose precision), compare logs
+            var originalLog = Math.log10(num);
+            var hexacubeLog = 6 * Math.log10(roundedRoot);
+            // If the logs are very close, it's likely a hexacube
+            return Math.abs(originalLog - hexacubeLog) < 1e-10;
+        }
+    }
+    /**
+     * Checks if a number is a factorial number.
+     * A factorial number is a number that equals n! for some integer n >= 0.
+     *
+     * The first few factorial numbers are:
+     * 1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, ...
+     * (Note: 0! = 1 and 1! = 1)
+     *
+     * @param num - The number to check
+     * @returns True if the number is a factorial, false otherwise
+     */
+    function isFactorial(num) {
+        // Non-integers cannot be factorials
+        if (!Number.isInteger(num)) {
+            return false;
+        }
+        // Negative numbers cannot be factorials
+        if (num < 0) {
+            return false;
+        }
+        // Special case: 0 is not a factorial (0! = 1, but 0 itself is not)
+        if (num === 0) {
+            return false;
+        }
+        // Special case: 1 is both 0! and 1!
+        if (num === 1) {
+            return true;
+        }
+        // Pre-calculate factorials for efficient lookup (up to a reasonable limit)
+        var factorials = [1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600, 6227020800, 87178291200, 1307674368000, 20922789888000, 355687428096000, 6402373705728000, 121645100408832000, 2432902008176640000];
+        // Direct lookup for known factorials
+        if (factorials.includes(num)) {
+            return true;
+        }
+        // For numbers smaller than largest pre-computed factorial but not in the list
+        if (num < factorials[factorials.length - 1]) {
+            return false;
+        }
+        // For numbers larger than the pre-computed list, use the division approach
+        // This is more expensive but necessary for large numbers
+        var divisor = 2;
+        var remainder = num;
+        while (remainder > 1) {
+            if (remainder % divisor !== 0) {
+                return false;
+            }
+            remainder /= divisor;
+            divisor++;
+            // Safety check to avoid precision issues
+            if (divisor > 25 || remainder > Number.MAX_SAFE_INTEGER / divisor) {
+                // If we get here, either:
+                // 1. The number is too large to safely check
+                // 2. We've exceeded our divisor limit (unlikely to be a factorial)
+                return false;
+            }
+        }
+        return remainder === 1;
+    }
+    /**
+     * Checks if a number is a perfect power and returns the base and exponent if it is.
+     * A perfect power is a number that can be expressed as an integer power of another integer.
+     *
+     * @param n - The number to check
+     * @returns [base, exponent] if n is a perfect power, null otherwise
+     */
+    function perfectPower(n) {
+        // Handle edge cases
+        if (n < 2) {
+            if (n === 1) {
+                // 1 is 1^k for any k, we return [1, 2] as the simplest representation
+                return [1, 2];
+            }
+            if (n === 0) {
+                // 0 is 0^k for any k > 0, we return [0, 2] as the simplest representation
+                return [0, 2];
+            }
+            return null; // Negative numbers are not handled in this implementation
+        }
+        // For each possible exponent k, try to find base b such that b^k = n
+        var maxK = Math.floor(Math.log2(n)) + 1;
+        for (var k = 2; k <= maxK; k++) {
+            // Calculate the potential base as n^(1/k)
+            var b = Math.pow(n, (1 / k));
+            var roundedB = Math.round(b);
+            // Check if roundedB^k is equal to n (within a small epsilon to account for floating point errors)
+            var epsilon = 1e-10;
+            if (Math.abs(Math.pow(roundedB, k) - n) < epsilon) {
+                return [roundedB, k];
+            }
+        }
+        return null; // Not a perfect power
+    }
+    /**
+     * Generates all possible combinations of a specified size from a collection.
+     * @param collection The input collection to generate combinations from
+     * @param size The size of each combination
+     * @returns An array of arrays, where each inner array is a combination of the specified size
+     */
+    function combinations(collection, size) {
+        var e_1, _a;
+        // Return empty array if invalid inputs
+        if (size <= 0 || size > collection.length) {
+            return [];
+        }
+        // Base case: if size is 1, return each element as its own combination
+        if (size === 1) {
+            return collection.map(function (item) { return [item]; });
+        }
+        var result = [];
+        // Recursive approach to build combinations
+        for (var i = 0; i <= collection.length - size; i++) {
+            // Take the current element
+            var current = collection[i];
+            // Get all combinations of size-1 from the rest of the elements
+            var subCombinations = combinations(collection.slice(i + 1), size - 1);
+            try {
+                // Add the current element to each sub-combination
+                for (var subCombinations_1 = (e_1 = void 0, __values(subCombinations)), subCombinations_1_1 = subCombinations_1.next(); !subCombinations_1_1.done; subCombinations_1_1 = subCombinations_1.next()) {
+                    var subComb = subCombinations_1_1.value;
+                    result.push(__spreadArray([current], __read(subComb), false));
+                }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (subCombinations_1_1 && !subCombinations_1_1.done && (_a = subCombinations_1.return)) _a.call(subCombinations_1);
+                }
+                finally { if (e_1) throw e_1.error; }
+            }
+        }
+        return result;
+    }
+    /**
+     * Generates all possible permutations of a collection.
+     * @param collection The input collection to generate permutations from
+     * @returns An array of arrays, where each inner array is a permutation of the input collection
+     */
+    function permutations(collection) {
+        var e_2, _a;
+        // Base case: empty array has one permutation - itself
+        if (collection.length === 0) {
+            return [[]];
+        }
+        var result = [];
+        // For each element in the array
+        for (var i = 0; i < collection.length; i++) {
+            // Extract the current element
+            var current = collection[i];
+            // Create a new array without the current element
+            var remainingElements = __spreadArray(__spreadArray([], __read(collection.slice(0, i)), false), __read(collection.slice(i + 1)), false);
+            // Generate all permutations of the remaining elements
+            var subPermutations = permutations(remainingElements);
+            try {
+                // Add the current element to the beginning of each sub-permutation
+                for (var subPermutations_1 = (e_2 = void 0, __values(subPermutations)), subPermutations_1_1 = subPermutations_1.next(); !subPermutations_1_1.done; subPermutations_1_1 = subPermutations_1.next()) {
+                    var subPerm = subPermutations_1_1.value;
+                    result.push(__spreadArray([current], __read(subPerm), false));
+                }
+            }
+            catch (e_2_1) { e_2 = { error: e_2_1 }; }
+            finally {
+                try {
+                    if (subPermutations_1_1 && !subPermutations_1_1.done && (_a = subPermutations_1.return)) _a.call(subPermutations_1);
+                }
+                finally { if (e_2) throw e_2.error; }
+            }
+        }
+        return result;
+    }
+    function derangement(n) {
+        if (n === 0)
+            return 1;
+        if (n === 1)
+            return 0;
+        var a = 1; // !0
+        var b = 0; // !1
+        var result = 0;
+        for (var i = 2; i <= n; i++) {
+            result = (i - 1) * (a + b);
+            a = b;
+            b = result;
+        }
+        return result;
+    }
+    function powerSet(set) {
+        var e_3, _a;
+        var result = [[]];
+        var _loop_1 = function (value) {
+            var newSubsets = result.map(function (subset) { return __spreadArray(__spreadArray([], __read(subset), false), [value], false); });
+            result.push.apply(result, __spreadArray([], __read(newSubsets), false));
+        };
+        try {
+            for (var set_1 = __values(set), set_1_1 = set_1.next(); !set_1_1.done; set_1_1 = set_1.next()) {
+                var value = set_1_1.value;
+                _loop_1(value);
+            }
+        }
+        catch (e_3_1) { e_3 = { error: e_3_1 }; }
+        finally {
+            try {
+                if (set_1_1 && !set_1_1.done && (_a = set_1.return)) _a.call(set_1);
+            }
+            finally { if (e_3) throw e_3.error; }
+        }
+        return result;
+    }
+    function getLuckyNumbers(length) {
+        var numbers = [];
+        for (var i = 1; i <= length * 10; i += 2) { // Generate more than needed
+            numbers.push(i);
+        }
+        // Apply the sieve process
+        var idx = 1; // Start from the second element (index 1, which is 3)
+        while (idx < numbers.length) {
+            var step = numbers[idx]; // Current lucky number
+            // Remove every step-th number from the list
+            // Count from the beginning each time, and account for changing indices
+            var j = 0;
+            var count = 0;
+            while (j < numbers.length) {
+                count++;
+                if (count % step === 0) {
+                    numbers.splice(j, 1);
+                }
+                else {
+                    j++; // Only increment if we didn't remove an element
+                }
+            }
+            // Get the new index of the next element (which may have changed)
+            idx++;
+        }
+        // Return the first 'length' lucky numbers
+        return numbers.slice(0, length);
+    }
+    function isHappyNumber(n) {
+        // A happy number is defined by the following process:
+        // 1. Starting with any positive integer, replace the number by the sum of the squares of its digits
+        // 2. Repeat until either:
+        //    - The number equals 1 (in which case it's a happy number)
+        //    - It enters a cycle that doesn't include 1 (in which case it's not a happy number)
+        if (n <= 0)
+            return false;
+        // Use a set to detect cycles
+        var seen = new Set();
+        // Continue until we either reach 1 or detect a cycle
+        while (n !== 1 && !seen.has(n)) {
+            seen.add(n);
+            n = getSumOfSquaredDigits(n);
+        }
+        // If we reached 1, it's a happy number
+        return n === 1;
+    }
+    function getSumOfSquaredDigits(n) {
+        var sum = 0;
+        while (n > 0) {
+            var digit = n % 10;
+            sum += digit * digit;
+            n = Math.floor(n / 10);
+        }
+        return sum;
+    }
+    function calcPartitions(n) {
+        var partition = Array.from({ length: n + 1 }, function () { return 0; });
+        partition[0] = 1;
+        for (var i = 1; i <= n; i += 1) {
+            for (var j = i; j <= n; j += 1) {
+                partition[j] += partition[j - i];
+            }
+        }
+        return partition[n];
+    }
+    function gcd(a, b) {
+        while (b !== 0) {
+            var temp = b;
+            b = a % b;
+            a = temp;
+        }
+        return Math.abs(a);
+    }
+    function factorsOf(n) {
+        var factors = [];
+        for (var i = 1; i <= Math.sqrt(n); i++) {
+            if (n % i === 0) {
+                factors.push(i);
+                if (i !== n / i) {
+                    factors.push(n / i);
+                }
+            }
+        }
+        return factors;
+    }
+    function factorialOf(n) {
+        if (n < 0)
+            throw new Error('Factorial is not defined for negative numbers');
+        if (n === 0 || n === 1)
+            return 1;
+        var result = 1;
+        for (var i = 2; i <= n; i++)
+            result *= i;
+        return result;
+    }
+    function binomialCoefficient(n, k) {
+        if (k < 0 || k > n)
+            return 0;
+        if (k === 0 || k === n)
+            return 1;
+        var result = 1;
+        for (var i = 0; i < k; i++)
+            result *= (n - i) / (i + 1);
+        return result;
+    }
+    function isPrime(num) {
+        if (num <= 1) {
+            return false;
+        }
+        if (num <= 3) {
+            return true;
+        }
+        if (num % 2 === 0 || num % 3 === 0) {
+            return false;
+        }
+        for (var i = 5; i * i <= num; i += 6) {
+            if (num % i === 0 || num % (i + 2) === 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+    function modularExponentiation(base, exponent, mod) {
+        if (mod === 1)
+            return 0; // Any number mod 1 is 0
+        var result = 1;
+        base = base % mod;
+        while (exponent > 0) {
+            if (exponent % 2 === 1) {
+                result = (result * base) % mod;
+            }
+            exponent = Math.floor(exponent / 2);
+            base = (base * base) % mod;
+        }
+        return result;
+    }
+    /**
+     * Extended Euclidean Algorithm
+     * Finds gcd(a,b) and coefficients x,y such that ax + by = gcd(a,b)
+     */
+    function extendedGcd(a, b) {
+        if (b === 0) {
+            return [a, 1, 0];
+        }
+        var _a = __read(extendedGcd(b, a % b), 3), g = _a[0], x = _a[1], y = _a[2];
+        return [g, y, x - Math.floor(a / b) * y];
+    }
+    /**
+     * Modular Multiplicative Inverse
+     * Finds x such that (a * x) % m = 1
+     */
+    function modInverse(a, m) {
+        var _a = __read(extendedGcd(a, m), 2), g = _a[0], x = _a[1];
+        if (g !== 1) {
+            throw new Error("Modular inverse does not exist (gcd(".concat(a, ", ").concat(m, ") = ").concat(g, ")"));
+        }
+        return ((x % m) + m) % m; // Ensure positive result
+    }
+    /**
+     * Chinese Remainder Theorem
+     * Solve system of congruences: x ≡ remainders[i] (mod moduli[i])
+     * Returns the smallest positive integer that satisfies all congruences
+     */
+    function chineseRemainder(remainders, moduli) {
+        if (remainders.length !== moduli.length) {
+            throw new Error('Number of remainders must equal number of moduli');
+        }
+        // Verify moduli are pairwise coprime
+        for (var i = 0; i < moduli.length; i++) {
+            for (var j = i + 1; j < moduli.length; j++) {
+                var extGcd = extendedGcd(moduli[i], moduli[j])[0];
+                if (extGcd !== 1) {
+                    throw new Error("Moduli must be pairwise coprime, but gcd(".concat(moduli[i], ", ").concat(moduli[j], ") = ").concat(extGcd));
+                }
+            }
+        }
+        // Calculate product of all moduli
+        var product = moduli.reduce(function (acc, val) { return acc * val; }, 1);
+        var sum = 0;
+        for (var i = 0; i < remainders.length; i++) {
+            var ai = remainders[i];
+            var ni = moduli[i];
+            var bi = product / ni;
+            // Find modular multiplicative inverse of bi modulo ni
+            var inverse = modInverse(bi, ni);
+            // Add contribution from this congruence
+            sum = (sum + ai * bi * inverse) % product;
+        }
+        return sum;
+    }
+    var combinatoricalNormalExpression = {
+        'c:factors': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), number = _b[0];
+                assertNumber(number, sourceCodeInfo, { finite: true, integer: true, positive: true });
+                return factorsOf(number);
+            },
+            paramCount: 1,
+        },
+        'c:prime-factors': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), number = _b[0];
+                assertNumber(number, sourceCodeInfo, { finite: true });
+                var factors = [];
+                for (var i = 2; i <= number; i += 1) {
+                    if (number % i === 0 && isPrime(i)) {
+                        factors.push(i);
+                    }
+                }
+                return factors;
+            },
+            paramCount: 1,
+        },
+        'c:divisible-by?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), value = _b[0], divisor = _b[1];
+                assertNumber(value, sourceCodeInfo);
+                assertNumber(divisor, sourceCodeInfo);
+                if (divisor === 0)
+                    return false;
+                return value % divisor === 0;
+            },
+            paramCount: 2,
+        },
+        'c:gcd': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), a = _b[0], b = _b[1];
+                assertNumber(a, sourceCodeInfo);
+                assertNumber(b, sourceCodeInfo);
+                return gcd(a, b);
+            },
+            paramCount: 2,
+        },
+        'c:lcm': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), a = _b[0], b = _b[1];
+                assertNumber(a, sourceCodeInfo);
+                assertNumber(b, sourceCodeInfo);
+                return Math.abs((a * b) / gcd(a, b));
+            },
+            paramCount: 2,
+        },
+        'c:factorial': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true });
+                if (n > 170) {
+                    // Factorial of numbers greater than 170 exceeds the maximum safe integer in JavaScript
+                    throw new LitsError('Factorial is too large to compute safely', sourceCodeInfo);
+                }
+                return factorialOf(n);
+            },
+            paramCount: 1,
+        },
+        'c:generate-combinations': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), set = _b[0], n = _b[1];
+                assertArray(set, sourceCodeInfo);
+                assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true, lte: set.length });
+                return combinations(set, n);
+            },
+            paramCount: 1,
+        },
+        'c:generate-permutations': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), set = _b[0];
+                assertArray(set, sourceCodeInfo);
+                return permutations(set);
+            },
+            paramCount: 1,
+        },
+        'c:count-permutations': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), n = _b[0], k = _b[1];
+                assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true });
+                assertNumber(k, sourceCodeInfo, { integer: true, nonNegative: true, lte: n });
+                return factorialOf(n) / factorialOf(n - k);
+            },
+            paramCount: 2,
+        },
+        'c:count-combinations': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), n = _b[0], k = _b[1];
+                assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true });
+                assertNumber(k, sourceCodeInfo, { integer: true, nonNegative: true, lte: n });
+                return binomialCoefficient(n, k);
+            },
+            aliases: ['c:binomial-coefficient'],
+            paramCount: 2,
+        },
+        'c:multinomial': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a), args = _b.slice(0);
+                assertVector(args, sourceCodeInfo);
+                var sum = args.reduce(function (acc, curr) {
+                    assertNumber(curr, sourceCodeInfo, { integer: true, nonNegative: true });
+                    return acc + curr;
+                }, 0);
+                return factorialOf(sum) / args.reduce(function (acc, curr) { return acc * factorialOf(curr); }, 1);
+            },
+            paramCount: { min: 1 },
+        },
+        'c:prime?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), value = _b[0];
+                assertNumber(value, sourceCodeInfo, { integer: true });
+                return isPrime(value);
+            },
+            paramCount: 1,
+        },
+        'c:composite?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), value = _b[0];
+                assertNumber(value, sourceCodeInfo, { integer: true });
+                return !isPrime(value) && value > 1;
+            },
+            paramCount: 1,
+        },
+        'c:abundant?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), value = _b[0];
+                assertNumber(value, sourceCodeInfo, { integer: true, positive: true });
+                var factors = factorsOf(value - 1);
+                var sum = factors.reduce(function (acc, curr) { return acc + curr; }, 0);
+                return sum > value;
+            },
+            paramCount: 1,
+        },
+        'c:deficient?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), value = _b[0];
+                assertNumber(value, sourceCodeInfo, { integer: true, positive: true });
+                var factors = factorsOf(value - 1);
+                var sum = factors.reduce(function (acc, curr) { return acc + curr; }, 0);
+                return sum < value;
+            },
+            paramCount: 1,
+        },
+        'c:perfect?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), value = _b[0];
+                assertNumber(value, sourceCodeInfo, { integer: true, positive: true });
+                return perfectNumbers.includes(value);
+            },
+            paramCount: 1,
+        },
+        'c:mersenne?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), value = _b[0];
+                assertNumber(value, sourceCodeInfo, { integer: true, positive: true });
+                return mersennePrimes.includes(value);
+            },
+            paramCount: 1,
+        },
+        'c:amicable?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), a = _b[0], b = _b[1];
+                assertNumber(a, sourceCodeInfo, { integer: true, positive: true });
+                assertNumber(b, sourceCodeInfo, { integer: true, positive: true });
+                var sumA = factorsOf(a).reduce(function (acc, curr) { return acc + curr; }, 0);
+                var sumB = factorsOf(b).reduce(function (acc, curr) { return acc + curr; }, 0);
+                return sumA === b && sumB === a && a !== b;
+            },
+            paramCount: 2,
+        },
+        'c:narcissistic?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), value = _b[0];
+                assertNumber(value, sourceCodeInfo, { integer: true, positive: true });
+                return armstrongNumbers.includes(value);
+            },
+            aliases: ['c:armstrong?'],
+            paramCount: 1,
+        },
+        'c-narcissistic-seq': {
+            evaluate: function (params, sourceCodeInfo) {
+                var _a;
+                var length = asNumber((_a = params[0]) !== null && _a !== void 0 ? _a : armstrongNumbers.length, sourceCodeInfo, { integer: true, positive: true, lte: armstrongNumbers.length });
+                return armstrongNumbers.slice(0, length);
+            },
+            aliases: ['c:armstrong-seq'],
+            paramCount: { max: 1 },
+        },
+        'c-narcissistic-nth': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true, lte: armstrongNumbers.length });
+                return armstrongNumbers[n - 1];
+            },
+            aliases: ['c:armstrong-nth'],
+            paramCount: 1,
+        },
+        'c:euler-totient': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                var result = n;
+                for (var p = 2; p * p <= n; p += 1) {
+                    if (n % p === 0) {
+                        while (n % p === 0)
+                            n /= p;
+                        result -= result / p;
+                    }
+                }
+                if (n > 1)
+                    result -= result / n;
+                return result;
+            },
+            paramCount: 1,
+        },
+        'c:mobius': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                if (n === 1)
+                    return 1;
+                var factors = factorsOf(n);
+                var uniqueFactors = new Set(factors);
+                return uniqueFactors.size === factors.length ? -1 : 0;
+            },
+            paramCount: 1,
+            aliases: ['c:möbius'],
+        },
+        'c:sigma': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                var factors = factorsOf(n);
+                return factors.reduce(function (acc, curr) { return acc + curr; }, 0);
+            },
+            paramCount: 1,
+        },
+        'c:divisor-count': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                var factors = factorsOf(n);
+                return factors.length;
+            },
+            paramCount: 1,
+        },
+        'c:carmichael-lambda': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var e_4, _b;
+                var _c = __read(_a, 1), n = _c[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                if (n === 1)
+                    return 1;
+                var result = n;
+                var factors = factorsOf(n);
+                try {
+                    for (var factors_1 = __values(factors), factors_1_1 = factors_1.next(); !factors_1_1.done; factors_1_1 = factors_1.next()) {
+                        var factor = factors_1_1.value;
+                        result *= (factor - 1) / factor;
+                    }
+                }
+                catch (e_4_1) { e_4 = { error: e_4_1 }; }
+                finally {
+                    try {
+                        if (factors_1_1 && !factors_1_1.done && (_b = factors_1.return)) _b.call(factors_1);
+                    }
+                    finally { if (e_4) throw e_4.error; }
+                }
+                return result;
+            },
+            paramCount: 1,
+        },
+        'c:derangement': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return derangement(n);
+            },
+            paramCount: 1,
+        },
+        'c:power-set': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), set = _b[0];
+                assertArray(set, sourceCodeInfo);
+                return powerSet(set);
+            },
+            paramCount: 1,
+        },
+        'c:cartesian-product': {
+            evaluate: function (params, sourceCodeInfo) {
+                params.forEach(function (set) { return assertArray(set, sourceCodeInfo); });
+                var sets = params;
+                return sets.reduce(function (acc, set) {
+                    var result = [];
+                    acc.forEach(function (arr) {
+                        set.forEach(function (value) {
+                            result.push(__spreadArray(__spreadArray([], __read(arr), false), [value], false));
+                        });
+                    });
+                    return result;
+                }, [[]]);
+            },
+            paramCount: { min: 1 },
+        },
+        'c:perfect-power?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return perfectPower(n) !== null;
+            },
+            paramCount: 1,
+        },
+        'c:perfect-power': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return perfectPower(n);
+            },
+            paramCount: 1,
+        },
+        'c:perfect-power-seq': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), length = _b[0];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                var perfectPowers = [];
+                for (var i = 1; perfectPowers.length < length; i++) {
+                    if (perfectPower(i)) {
+                        perfectPowers.push(i);
+                    }
+                }
+                return perfectPowers;
+            },
+            paramCount: 1,
+        },
+        'c:perfect-power-nth': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                var count = 0;
+                var current = 1;
+                while (count < n) {
+                    if (perfectPower(current)) {
+                        count++;
+                    }
+                    current++;
+                }
+                return current - 1;
+            },
+            paramCount: 1,
+        },
+        'c:collatz-seq': {
+            evaluate: function (params, sourceCodeInfo) {
+                var x = asNumber(params[0], sourceCodeInfo, { integer: true, positive: true });
+                var collatz = [x];
+                while (x !== 1) {
+                    if (x % 2 === 0) {
+                        x /= 2;
+                    }
+                    else {
+                        x = 3 * x + 1;
+                    }
+                    collatz.push(x);
+                }
+                return collatz;
+            },
+            paramCount: 1,
+        },
+        'c:mod-exp': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), base = _b[0], exponent = _b[1], modulus = _b[2];
+                assertNumber(base, sourceCodeInfo, { finite: true });
+                assertNumber(exponent, sourceCodeInfo, { integer: true, positive: true });
+                assertNumber(modulus, sourceCodeInfo, { integer: true, positive: true });
+                return modularExponentiation(base, exponent, modulus);
+            },
+            paramCount: 3,
+        },
+        'c:mod-inv': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), a = _b[0], m = _b[1];
+                assertNumber(a, sourceCodeInfo, { integer: true, positive: true });
+                assertNumber(m, sourceCodeInfo, { integer: true, positive: true });
+                return modInverse(a, m);
+            },
+            paramCount: 2,
+        },
+        'c:extended-gcd': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), a = _b[0], b = _b[1];
+                assertNumber(a, sourceCodeInfo, { integer: true });
+                assertNumber(b, sourceCodeInfo, { integer: true });
+                return extendedGcd(a, b);
+            },
+            paramCount: 2,
+        },
+        'c:chinese-remainder': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), remainders = _b[0], moduli = _b[1];
+                assertVector(remainders, sourceCodeInfo);
+                assertVector(moduli, sourceCodeInfo);
+                if (remainders.length !== moduli.length) {
+                    throw new Error('Remainders and moduli must have the same length.');
+                }
+                return chineseRemainder(remainders, moduli);
+            },
+            paramCount: 2,
+        },
+        'c:perfect-square?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return isPerfectSquare(n);
+            },
+            paramCount: 1,
+        },
+        'c:perfect-square-seq': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), length = _b[0];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                var perfectSquares = [];
+                for (var i = 0; perfectSquares.length < length; i++) {
+                    perfectSquares.push(i * i);
+                }
+                return perfectSquares;
+            },
+            paramCount: 1,
+        },
+        'c:perfect-square-nth': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return n * n;
+            },
+            paramCount: 1,
+        },
+        'c:perfect-cube?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                var cbrt = Math.cbrt(n);
+                return Math.floor(cbrt) === cbrt;
+            },
+            paramCount: 1,
+        },
+        'c:perfect-cube-seq': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), length = _b[0];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                var perfectCubes = [];
+                for (var i = 0; perfectCubes.length < length; i++) {
+                    perfectCubes.push(i * i * i);
+                }
+                return perfectCubes;
+            },
+            paramCount: 1,
+        },
+        'c:perfect-cube-nth': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return n * n * n;
+            },
+            paramCount: 1,
+        },
+        'c:palindrome?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), value = _b[0];
+                assertNumber(value, sourceCodeInfo, { integer: true, nonNegative: true });
+                var strValue = value.toString();
+                return strValue === strValue.split('').reverse().join('');
+            },
+            paramCount: 1,
+        },
+        'c:stirling-first-seq': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), length = _b[0];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                var stirlingFirst = [];
+                for (var n = 0; n < length; n += 1) {
+                    stirlingFirst[n] = [];
+                    for (var k = 0; k <= n; k += 1) {
+                        if (k === 0 || k === n)
+                            stirlingFirst[n][k] = 1;
+                        else
+                            stirlingFirst[n][k] = (n - 1) * (stirlingFirst[n - 1][k] + stirlingFirst[n - 1][k - 1]);
+                    }
+                }
+                return stirlingFirst[length - 1];
+            },
+            paramCount: 1,
+        },
+        'c:stirling-first-nth': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), n = _b[0], k = _b[1];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                assertNumber(k, sourceCodeInfo, { integer: true, positive: true, lte: n });
+                if (k === 0 || k === n)
+                    return 1;
+                return (n - 1) * (calcPartitions(n - 1) + calcPartitions(n - k - 1));
+            },
+            paramCount: 2,
+        },
+        'c:stirling-second-seq': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), length = _b[0];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                var stirlingSecond = [];
+                for (var n = 0; n < length; n += 1) {
+                    stirlingSecond[n] = [];
+                    for (var k = 0; k <= n; k += 1) {
+                        if (k === 0 || k === n)
+                            stirlingSecond[n][k] = 1;
+                        else
+                            stirlingSecond[n][k] = k * stirlingSecond[n - 1][k] + stirlingSecond[n - 1][k - 1];
+                    }
+                }
+                return stirlingSecond[length - 1];
+            },
+            paramCount: 1,
+        },
+        'c:stirling-second-nth': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), n = _b[0], k = _b[1];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                assertNumber(k, sourceCodeInfo, { integer: true, positive: true, lte: n });
+                if (k === 0 || k === n)
+                    return 1;
+                return k * calcPartitions(n - 1) + calcPartitions(n - k - 1);
+            },
+            paramCount: 2,
+        },
+        'c:bernoulli-seq': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), length = _b[0];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                var bernoulli = [1];
+                for (var n = 1; n < length; n += 1) {
+                    var sum = 0;
+                    for (var k = 0; k < n; k += 1) {
+                        sum += binomialCoefficient(n + 1, k) * bernoulli[k];
+                    }
+                    bernoulli[n] = -sum / (n + 1);
+                }
+                return bernoulli;
+            },
+            paramCount: 1,
+        },
+        'c:bernoulli-nth': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                if (n === 0)
+                    return 1;
+                var sum = 0;
+                for (var k = 0; k < n; k += 1) {
+                    sum += binomialCoefficient(n + 1, k) * calcPartitions(k);
+                }
+                return -sum / (n + 1);
+            },
+            paramCount: 1,
+        },
+        'c:brenoulli?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return n % 2 === 0 && n !== 2;
+            },
+            paramCount: 1,
+        },
+        'c:sylvester-seq': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), length = _b[0];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                var sylvester = [2];
+                for (var n = 1; n < length; n += 1) {
+                    sylvester[n] = sylvester[n - 1] + Math.sqrt(sylvester[n - 1]);
+                }
+                return sylvester;
+            },
+            paramCount: 1,
+        },
+        'c:sylvester-nth': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                var sylvester = 2;
+                for (var i = 1; i < n; i += 1) {
+                    sylvester += Math.sqrt(sylvester);
+                }
+                return sylvester;
+            },
+            paramCount: 1,
+        },
+        'c:sylvester?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return n === 2 || (n > 2 && n % Math.sqrt(n) === 0);
+            },
+            paramCount: 1,
+        },
+        'c:golomb-seq': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), length = _b[0];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                var golomb = [0];
+                for (var n = 1; n < length; n += 1) {
+                    golomb[n] = 1 + golomb[n - golomb[golomb[n - 1]]];
+                }
+                return golomb;
+            },
+            paramCount: 1,
+        },
+        'c:golomb-nth': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                var golomb = [0];
+                for (var i = 1; i <= n; i += 1) {
+                    golomb[i] = 1 + golomb[i - golomb[golomb[i - 1]]];
+                }
+                return golomb[n];
+            },
+            paramCount: 1,
+        },
+        'c:golomb?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return n === 1 || (n > 1 && n % Math.sqrt(n) === 0);
+            },
+            paramCount: 1,
+        },
+        'c:lucky-number-seq': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), length = _b[0];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                return getLuckyNumbers(length);
+            },
+            paramCount: 1,
+        },
+        'c:lucky-number-nth': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return getLuckyNumbers(n).at(-1);
+            },
+            paramCount: 1,
+        },
+        'c:lucky-number?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return getLuckyNumbers(n * 5).includes(n);
+            },
+            paramCount: 1,
+        },
+        'c:happy-number-seq': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), length = _b[0];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                var happyNumbers = [];
+                for (var i = 1; happyNumbers.length < length; i++) {
+                    var n = i;
+                    var seen = new Set();
+                    while (n !== 1 && !seen.has(n)) {
+                        seen.add(n);
+                        n = String(n)
+                            .split('')
+                            .reduce(function (sum, digit) { return sum + Math.pow(Number(digit), 2); }, 0);
+                    }
+                    if (n === 1)
+                        happyNumbers.push(i);
+                }
+                return happyNumbers;
+            },
+            paramCount: 1,
+        },
+        'c:happy-number-nth': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                var happyCount = 0;
+                var currentNumber = 1;
+                while (happyCount < n) {
+                    var num = currentNumber;
+                    var seen = new Set();
+                    while (num !== 1 && !seen.has(num)) {
+                        seen.add(num);
+                        num = String(num)
+                            .split('')
+                            .reduce(function (sum, digit) { return sum + Math.pow(Number(digit), 2); }, 0);
+                    }
+                    if (num === 1)
+                        happyCount++;
+                    currentNumber++;
+                }
+                return currentNumber - 1;
+            },
+            paramCount: 1,
+        },
+        'c:happy-number?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return isHappyNumber(n);
+            },
+            paramCount: 1,
+        },
+        'c:juggler-seq': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), length = _b[0];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                var juggler = [1];
+                for (var n = 1; n < length; n += 1) {
+                    juggler[n] = Math.floor(Math.sqrt(juggler[n - 1]));
+                }
+                return juggler;
+            },
+            paramCount: 1,
+        },
+        'c:juggler-nth': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                var juggler = 1;
+                for (var i = 1; i < n; i += 1) {
+                    juggler = Math.floor(Math.sqrt(juggler));
+                }
+                return juggler;
+            },
+            paramCount: 1,
+        },
+        'c:juggler?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return n === 1 || (n > 1 && n % Math.sqrt(n) === 0);
+            },
+            paramCount: 1,
+        },
+        'c:partition-seq': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), length = _b[0];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                var result = [1]; // First partition number is always 1
+                for (var m = 1; m < length; m++) {
+                    result.push(calcPartitions(m));
+                }
+                return result;
+            },
+            paramCount: 1,
+        },
+        'c:partition-nth': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return calcPartitions(n);
+            },
+            paramCount: 1,
+        },
+        'c:partition?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return n === 1 || (n > 1 && n % Math.sqrt(n) === 0);
+            },
+            paramCount: 1,
+        },
+        'c:perfect-seq': {
+            evaluate: function (params, sourceCodeInfo) {
+                var _a;
+                var length = asNumber((_a = params[0]) !== null && _a !== void 0 ? _a : perfectNumbers.length, sourceCodeInfo, { integer: true, positive: true, lte: perfectNumbers.length });
+                return perfectNumbers.slice(0, length);
+            },
+            paramCount: { max: 1 },
+        },
+        'c:perfect-nth': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true, lte: perfectNumbers.length });
+                return perfectNumbers[n - 1];
+            },
+            paramCount: 1,
+        },
+        'c:mersenne-seq': {
+            evaluate: function (params, sourceCodeInfo) {
+                var _a;
+                var length = asNumber((_a = params[0]) !== null && _a !== void 0 ? _a : mersennePrimes.length, sourceCodeInfo, { integer: true, positive: true, lte: mersennePrimes.length });
+                return mersennePrimes.slice(0, length);
+            },
+            paramCount: { max: 1 },
+        },
+        'c:mersenne-nth': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true, lte: mersennePrimes.length });
+                return mersennePrimes[n - 1];
+            },
+            paramCount: 1,
+        },
+        'c:arithmetic-seq': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), start = _b[0], step = _b[1], length = _b[2];
+                assertNumber(start, sourceCodeInfo, { finite: true });
+                assertNumber(step, sourceCodeInfo, { finite: true });
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                return Array.from({ length: length }, function (_, i) { return start + i * step; });
+            },
+            paramCount: 3,
+        },
+        'c:arithmetic-nth': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), start = _b[0], step = _b[1], n = _b[2];
+                assertNumber(start, sourceCodeInfo, { finite: true });
+                assertNumber(step, sourceCodeInfo, { finite: true });
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return start + (n - 1) * step;
+            },
+            paramCount: 3,
+        },
+        'c:geometric-seq': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), start = _b[0], ratio = _b[1], length = _b[2];
+                assertNumber(start, sourceCodeInfo, { finite: true });
+                assertNumber(ratio, sourceCodeInfo, { finite: true });
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                return Array.from({ length: length }, function (_, i) { return start * Math.pow(ratio, i); });
+            },
+            paramCount: 3,
+        },
+        'c:geometric-nth': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), start = _b[0], ratio = _b[1], n = _b[2];
+                assertNumber(start, sourceCodeInfo, { finite: true });
+                assertNumber(ratio, sourceCodeInfo, { finite: true });
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return start * Math.pow(ratio, (n - 1));
+            },
+            paramCount: 3,
+        },
+        'c:fibonacci-seq': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), length = _b[0];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                var fib = [0, 1];
+                for (var i = 2; i < length; i += 1) {
+                    fib[i] = fib[i - 1] + fib[i - 2];
+                }
+                return fib.slice(0, length);
+            },
+            paramCount: 1,
+        },
+        'c:fibonacci-nth': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                if (n === 1)
+                    return 0;
+                if (n === 2)
+                    return 1;
+                var a = 0;
+                var b = 1;
+                for (var i = 3; i <= n; i += 1) {
+                    var temp = a + b;
+                    a = b;
+                    b = temp;
+                }
+                return b;
+            },
+            paramCount: 1,
+        },
+        'c:fibbonacci?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return isFibonacciNumber(n);
+            },
+            paramCount: 1,
+        },
+        'c:lucas-seq': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), length = _b[0];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                var lucas = [2, 1];
+                for (var i = 2; i < length; i += 1) {
+                    lucas[i] = lucas[i - 1] + lucas[i - 2];
+                }
+                return lucas.slice(0, length);
+            },
+            paramCount: 1,
+        },
+        'c:lucas-nth': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                if (n === 1)
+                    return 2;
+                if (n === 2)
+                    return 1;
+                var a = 2;
+                var b = 1;
+                for (var i = 3; i <= n; i += 1) {
+                    var temp = a + b;
+                    a = b;
+                    b = temp;
+                }
+                return b;
+            },
+            paramCount: 1,
+        },
+        'c:lucas?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return isLucasNumber(n);
+            },
+            paramCount: 1,
+        },
+        'c:tribonacci-seq': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), length = _b[0];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                var tribonacci = [0, 1, 1];
+                for (var i = 3; i < length; i += 1) {
+                    tribonacci[i] = tribonacci[i - 1] + tribonacci[i - 2] + tribonacci[i - 3];
+                }
+                return tribonacci.slice(0, length);
+            },
+            paramCount: 1,
+        },
+        'c:tribonacci-nth': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                if (n === 1)
+                    return 0;
+                if (n === 2)
+                    return 1;
+                if (n === 3)
+                    return 1;
+                var a = 0;
+                var b = 1;
+                var c = 1;
+                for (var i = 4; i <= n; i += 1) {
+                    var temp = a + b + c;
+                    a = b;
+                    b = c;
+                    c = temp;
+                }
+                return c;
+            },
+            paramCount: 1,
+        },
+        'c:tribonacci?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return isTribonacciNumber(n);
+            },
+            paramCount: 1,
+        },
+        'c:prime-seq': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), length = _b[0];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                var primes = [];
+                var num = 2;
+                while (primes.length < length) {
+                    if (isPrime(num)) {
+                        primes.push(num);
+                    }
+                    num += 1;
+                }
+                return primes;
+            },
+            paramCount: 1,
+        },
+        'c:prime-nth': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                var count = 0;
+                var num = 2;
+                while (count < n) {
+                    if (isPrime(num)) {
+                        count += 1;
+                    }
+                    num += 1;
+                }
+                return num - 1;
+            },
+            paramCount: 1,
+        },
+        'c:triangular-seq': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), length = _b[0];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                var triangular = [];
+                for (var i = 0; i < length; i += 1) {
+                    triangular[i] = (i * (i + 1)) / 2;
+                }
+                return triangular;
+            },
+            paramCount: 1,
+        },
+        'c:triangular-nth': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return (n * (n + 1)) / 2;
+            },
+            paramCount: 1,
+        },
+        'c:triangular?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return isTriangular(n);
+            },
+            paramCount: 1,
+        },
+        'c:square-seq': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), length = _b[0];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                var square = [];
+                for (var i = 0; i < length; i += 1) {
+                    square[i] = Math.pow(i, 2);
+                }
+                return square;
+            },
+            paramCount: 1,
+        },
+        'c:square-nth': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return Math.pow(n, 2);
+            },
+            paramCount: 1,
+        },
+        'c:hexagonal-seq': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), length = _b[0];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                var hexagonal = [];
+                for (var i = 0; i < length; i += 1) {
+                    hexagonal[i] = i * (2 * i - 1);
+                }
+                return hexagonal;
+            },
+            paramCount: 1,
+        },
+        'c:hexagonal-nth': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return n * (2 * n - 1);
+            },
+            paramCount: 1,
+        },
+        'c:hexagonal?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return isHexagonal(n);
+            },
+            paramCount: 1,
+        },
+        'c:pentagonal-seq': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), length = _b[0];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                var pentagonal = [];
+                for (var i = 0; i < length; i += 1) {
+                    pentagonal[i] = (3 * Math.pow(i, 2) - i) / 2;
+                }
+                return pentagonal;
+            },
+            paramCount: 1,
+        },
+        'c:pentagonal-nth': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return (3 * Math.pow(n, 2) - n) / 2;
+            },
+            paramCount: 1,
+        },
+        'c:pentagonal?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return isPentagonal(n);
+            },
+            paramCount: 1,
+        },
+        'c:cubic-seq': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), length = _b[0];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                var cubic = [];
+                for (var i = 0; i < length; i += 1) {
+                    cubic[i] = Math.pow(i, 3);
+                }
+                return cubic;
+            },
+            paramCount: 1,
+        },
+        'c:cubic-nth': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return Math.pow(n, 3);
+            },
+            paramCount: 1,
+        },
+        'c:pentatope-seq': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), length = _b[0];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                var pentatope = [];
+                for (var i = 0; i < length; i += 1) {
+                    pentatope[i] = (i * (i + 1) * (i + 2)) / 6;
+                }
+                return pentatope;
+            },
+            paramCount: 1,
+        },
+        'c:pentatope-nth': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return (n * (n + 1) * (n + 2)) / 6;
+            },
+            paramCount: 1,
+        },
+        'c:pentatope?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return isPentatope(n);
+            },
+            paramCount: 1,
+        },
+        'c:hexacube-seq': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), length = _b[0];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                var hexacube = [];
+                for (var i = 0; i < length; i += 1) {
+                    hexacube[i] = (i * (i + 1) * (i + 2) * (i + 3)) / 24;
+                }
+                return hexacube;
+            },
+            paramCount: 1,
+        },
+        'c:hexacube-nth': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return (n * (n + 1) * (n + 2) * (n + 3)) / 24;
+            },
+            paramCount: 1,
+        },
+        'c:hexacube?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return isHexacube(n);
+            },
+            paramCount: 1,
+        },
+        'c:polygonal-seq': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), length = _b[0], sides = _b[1];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                assertNumber(sides, sourceCodeInfo, { integer: true, positive: true });
+                var polygonal = [];
+                for (var i = 0; i < length; i += 1) {
+                    polygonal[i] = (sides * i * (i - 1)) / 2;
+                }
+                return polygonal;
+            },
+            paramCount: 2,
+        },
+        'c:polygonal-nth': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), n = _b[0], sides = _b[1];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                assertNumber(sides, sourceCodeInfo, { integer: true, positive: true });
+                return (sides * n * (n - 1)) / 2;
+            },
+            paramCount: 2,
+        },
+        'c:factorial-seq': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), length = _b[0];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                var factorial = [];
+                for (var i = 0; i < length; i += 1) {
+                    factorial[i] = factorialOf(i);
+                }
+                return factorial;
+            },
+            paramCount: 1,
+        },
+        'c:factorial-nth': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return factorialOf(n);
+            },
+            paramCount: 1,
+        },
+        'c:factorial?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return isFactorial(n);
+            },
+            paramCount: 1,
+        },
+    };
+    addSequences(sequenceNormalExpression);
+    function addSequences(sequences) {
+        var e_5, _a;
+        try {
+            for (var _b = __values(Object.entries(sequences)), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var _d = __read(_c.value, 2), key = _d[0], value = _d[1];
+                if (combinatoricalNormalExpression[key]) {
+                    throw new Error("Duplicate normal expression key found: ".concat(key));
+                }
+                combinatoricalNormalExpression[key] = value;
+            }
+        }
+        catch (e_5_1) { e_5 = { error: e_5_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_5) throw e_5.error; }
+        }
+    }
+
+    var expressions = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, bitwiseNormalExpression), collectionNormalExpression), arrayNormalExpression), sequenceNormalExpression$1), mathNormalExpression), miscNormalExpression), assertNormalExpression), objectNormalExpression), predicatesNormalExpression), regexpNormalExpression), stringNormalExpression), functionalNormalExpression), vectorNormalExpression), tableNormalExpression), matrixNormalExpression), combinatoricalNormalExpression);
     var aliases = {};
     Object.values(expressions).forEach(function (normalExpression) {
         var _a;
@@ -5449,11 +11357,9 @@ var Playground = (function (exports) {
     new Set(specialExpressionKeys);
 
     function checkParams(evaluatedFunction, nbrOfParams, sourceCodeInfo) {
-        var hasRest = evaluatedFunction[0].some(function (arg) { return arg[0] === bindingTargetTypes.rest; });
         var minArity = evaluatedFunction[0].filter(function (arg) { return arg[0] !== bindingTargetTypes.rest && arg[1][1] === undefined; }).length;
-        var maxArity = hasRest ? Number.MAX_SAFE_INTEGER : evaluatedFunction[0].length;
-        if (nbrOfParams < minArity || nbrOfParams > maxArity) {
-            throw new LitsError("Unexpected number of arguments, got ".concat(valueToString(nbrOfParams), "."), sourceCodeInfo);
+        if (nbrOfParams < minArity) {
+            throw new LitsError("Unexpected number of arguments. Expected at least ".concat(minArity, ", got ").concat(nbrOfParams, "."), sourceCodeInfo);
         }
     }
     var functionExecutors = {
@@ -8239,6 +14145,11 @@ var Playground = (function (exports) {
                 [7, 8],
                 [9, 10],
                 [11, 12],
+            ],
+            'matrix-c': [
+                [3, 0, 2],
+                [2, 0, -2],
+                [0, 1, 1],
             ],
         };
         var jsFunctions = {

@@ -13,6 +13,7 @@ import { functionalReference } from './categories/functional'
 import { mathReference } from './categories/math'
 import { miscReference } from './categories/misc'
 import { objectReference } from './categories/object'
+import { matrixReference } from './categories/matrix'
 import { predicateReference } from './categories/predicate'
 import { regularExpressionReference } from './categories/regularExpression'
 import { sequenceReference } from './categories/sequence'
@@ -20,6 +21,7 @@ import { specialExpressionsReference } from './categories/specialExpressions'
 import { stringReference } from './categories/string'
 import { datatype } from './datatype'
 import { shorthand } from './shorthand'
+import { combinatorialReference } from './categories/combinatorial'
 
 export interface TypedValue {
   type: DataType[] | DataType
@@ -101,6 +103,8 @@ export const normalExpressionReference: Record<NormalExpressionName, FunctionRef
   ...stringReference,
   ...bitwiseReference,
   ...assertReference,
+  ...matrixReference,
+  ...combinatorialReference,
 }
 
 Object.entries(normalExpressionReference).forEach(([key, obj]) => {

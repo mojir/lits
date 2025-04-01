@@ -577,7 +577,8 @@ foo(3)`)
     it('recur must be called with the right number of parameters', () => {
       expect(() => lits.run('function foo(n) if !(zero?(n)) then recur() end end; foo(3)')).toThrow()
       expect(() => lits.run('function foo(n) if !(zero?(n)) then recur(n - 1) end end; foo(3)')).not.toThrow()
-      expect(() => lits.run('function foo(n) if !(zero?(n)) then recur(n - 1, 1) end end; foo(3)')).toThrow()
+      // Too many parameters ok
+      expect(() => lits.run('function foo(n) if !(zero?(n)) then recur(n - 1, 1) end end; foo(3)')).not.toThrow()
       expect(() => lits.run('((n) -> if !(zero?(n)) then recur() end)(3)')).toThrow()
       expect(() => lits.run('((n) -> if !(zero?(n)) then recur(n - 1) end)(3)')).not.toThrow()
       expect(() => lits.run('((n) -> if !(zero?(n)) then recur(n - 1 1) end)(3)')).toThrow()

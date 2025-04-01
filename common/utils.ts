@@ -41,13 +41,13 @@ export function stringifyValue(value: unknown, html: boolean): string {
   return JSON.stringify(value, null, 2)
 }
 
-function stringifyMatrix(matrix: number[][]): string {
-  const padding = matrix.flat().reduce((max, cell) => Math.max(max, `${cell}`.length), 0) + 1
-  const rows = matrix.map(row => `[${row.map(cell => cell.toString().padStart(padding)).join(' ')} ]`)
+function stringifyMatrix(matrix: (null | number | string | boolean)[][]): string {
+  const padding = matrix.flat().reduce((max: number, cell) => Math.max(max, `${cell}`.length), 0) + 1
+  const rows = matrix.map(row => `[${row.map(cell => `${cell}`.padStart(padding)).join(' ')} ]`)
   return rows.join('\n')
 }
 
-function isMatrix(value: unknown): value is number[][] {
+function isMatrix(value: unknown): value is (null | number | string | boolean)[][] {
   if (!Array.isArray(value)) {
     return false
   }
@@ -68,7 +68,7 @@ function isMatrix(value: unknown): value is number[][] {
       }
     }
     for (const cell of row) {
-      if (typeof cell !== 'number') {
+      if (typeof cell !== 'number' && typeof cell !== 'string' && typeof cell !== 'boolean' && cell !== null) {
         return false
       }
     }

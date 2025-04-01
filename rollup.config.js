@@ -14,6 +14,7 @@ const plugins = [
 module.exports = [
   {
     input,
+    external: ['mathjs'],
     output: [
       {
         file: pkg.module,
