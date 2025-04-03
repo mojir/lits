@@ -1,7 +1,6 @@
 import type { SequenceDefinition } from '.'
 
 const pellNumbers = [
-  0,
   1,
   2,
   5,
