@@ -4,12 +4,11 @@ import { Lits } from '../../../../../Lits/Lits'
 const lits = new Lits()
 describe('pell', () => {
   it('should return the correct sequence', () => {
-    expect(lits.run('c:pell-seq(1)')).toEqual([0])
-    expect(lits.run('c:pell-seq(2)')).toEqual([0, 1])
-    expect(lits.run('c:pell-seq(3)')).toEqual([0, 1, 2])
-    expect(lits.run('c:pell-seq(4)')).toEqual([0, 1, 2, 5])
-    expect(lits.run('c:pell-seq(43)')).toEqual([
-      0,
+    expect(lits.run('c:pell-seq(1)')).toEqual([1])
+    expect(lits.run('c:pell-seq(2)')).toEqual([1, 2])
+    expect(lits.run('c:pell-seq(3)')).toEqual([1, 2, 5])
+    expect(lits.run('c:pell-seq(4)')).toEqual([1, 2, 5, 12])
+    expect(lits.run('c:pell-seq(42)')).toEqual([
       1,
       2,
       5,
@@ -54,24 +53,24 @@ describe('pell', () => {
       4217293152016490,
     ])
     expect(() => lits.run('c:pell-seq(0)')).toThrow()
-    expect(() => lits.run('c:pell-seq(44)')).toThrow()
+    expect(() => lits.run('c:pell-seq(43)')).toThrow()
   })
 
   it('should return the correct nth term', () => {
-    expect(lits.run('c:pell-nth(1)')).toEqual(0)
-    expect(lits.run('c:pell-nth(2)')).toEqual(1)
-    expect(lits.run('c:pell-nth(3)')).toEqual(2)
-    expect(lits.run('c:pell-nth(4)')).toEqual(5)
-    expect(lits.run('c:pell-nth(32)')).toEqual(259717522849)
-    expect(lits.run('c:pell-nth(43)')).toEqual(4217293152016490)
+    expect(lits.run('c:pell-nth(1)')).toEqual(1)
+    expect(lits.run('c:pell-nth(2)')).toEqual(2)
+    expect(lits.run('c:pell-nth(3)')).toEqual(5)
+    expect(lits.run('c:pell-nth(4)')).toEqual(12)
+    expect(lits.run('c:pell-nth(31)')).toEqual(259717522849)
+    expect(lits.run('c:pell-nth(42)')).toEqual(4217293152016490)
   })
 
   it('should return the correct takeWhile sequence', () => {
-    expect(lits.run('c:pell-take-while(-> $ < 1000)')).toEqual([0, 1, 2, 5, 12, 29, 70, 169, 408, 985])
+    expect(lits.run('c:pell-take-while(-> $ < 1000)')).toEqual([1, 2, 5, 12, 29, 70, 169, 408, 985])
   })
 
   it('should determine if numbers are in the sequence', () => {
-    expect(lits.run('c:pell?(0)')).toEqual(true)
+    expect(lits.run('c:pell?(0)')).toEqual(false)
     expect(lits.run('c:pell?(1)')).toEqual(true)
     expect(lits.run('c:pell?(2)')).toEqual(true)
     expect(lits.run('c:pell?(3)')).toEqual(false)
