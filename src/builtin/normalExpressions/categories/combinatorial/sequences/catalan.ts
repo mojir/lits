@@ -2,7 +2,6 @@ import type { SequenceDefinition } from '.'
 
 const catalanNumbers = [
   1,
-  1,
   2,
   5,
   14,
@@ -50,7 +49,7 @@ export const catalanSequence: SequenceDefinition<'catalan'> = {
       if (!takeWhile(value, i)) {
         break
       }
-      catalan[i] = value
+      catalan.push(value)
     }
     return catalan
   },

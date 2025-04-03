@@ -5,11 +5,10 @@ const lits = new Lits()
 describe('catalan', () => {
   it('should return the correct sequence', () => {
     expect(lits.run('c:catalan-seq(1)')).toEqual([1])
-    expect(lits.run('c:catalan-seq(2)')).toEqual([1, 1])
-    expect(lits.run('c:catalan-seq(3)')).toEqual([1, 1, 2])
-    expect(lits.run('c:catalan-seq(4)')).toEqual([1, 1, 2, 5])
-    expect(lits.run('c:catalan-seq(31)')).toEqual([
-      1,
+    expect(lits.run('c:catalan-seq(2)')).toEqual([1, 2])
+    expect(lits.run('c:catalan-seq(3)')).toEqual([1, 2, 5])
+    expect(lits.run('c:catalan-seq(4)')).toEqual([1, 2, 5, 14])
+    expect(lits.run('c:catalan-seq(30)')).toEqual([
       1,
       2,
       5,
@@ -47,14 +46,14 @@ describe('catalan', () => {
 
   it('should return the correct nth term', () => {
     expect(lits.run('c:catalan-nth(1)')).toEqual(1)
-    expect(lits.run('c:catalan-nth(2)')).toEqual(1)
-    expect(lits.run('c:catalan-nth(3)')).toEqual(2)
-    expect(lits.run('c:catalan-nth(4)')).toEqual(5)
-    expect(lits.run('c:catalan-nth(31)')).toEqual(3814986502092304)
+    expect(lits.run('c:catalan-nth(2)')).toEqual(2)
+    expect(lits.run('c:catalan-nth(3)')).toEqual(5)
+    expect(lits.run('c:catalan-nth(4)')).toEqual(14)
+    expect(lits.run('c:catalan-nth(30)')).toEqual(3814986502092304)
   })
 
   it('should return the correct takeWhile sequence', () => {
-    expect(lits.run('c:catalan-take-while(-> $ < 1000)')).toEqual([1, 1, 2, 5, 14, 42, 132, 429])
+    expect(lits.run('c:catalan-take-while(-> $ < 1000)')).toEqual([1, 2, 5, 14, 42, 132, 429])
   })
 
   it('should determine if numbers are in the sequence', () => {
