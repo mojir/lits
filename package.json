@@ -49,9 +49,13 @@
     "playground": "open-cli ./docs/index.html",
     "lcov": "open-cli ./coverage/index.html"
   },
+  "dependencies": {
+    "@mojir/pretty-pi": "0.0.7"
+  },
   "devDependencies": {
     "@antfu/eslint-config": "2.21.1",
     "@rollup/plugin-json": "6.1.0",
+    "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-typescript": "11.1.6",
     "@types/node": "22.7.6",
     "@vitest/coverage-v8": "1.6.0",

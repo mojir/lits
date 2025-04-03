@@ -3,13 +3,26 @@ import { assertLitsFunction } from '../../../../../typeGuards/litsFunction'
 import { assertNumber } from '../../../../../typeGuards/number'
 import { assertString } from '../../../../../typeGuards/string'
 import type { BuiltinNormalExpression, BuiltinNormalExpressions } from '../../../../interface'
+import { arithmeticNormalExpressions } from './arithmetic'
 import { bellSequence } from './bell'
 import { catalanSequence } from './catalan'
+import { factorialSequence } from './factorial'
+import { fibonacciSequence } from './fibonacci'
+import { geometricNormalExpressions } from './geometric'
 import { lookAndSaySequence } from './lookAndSay'
+import { happySequence } from './happy'
+import { lucasSequence } from './lucas'
+import { mersenneSequence } from './mersenne'
 import { padovanSequence } from './padovan'
+import { partitionSequence } from './partition'
 import { pellSequence } from './pell'
+import { perfectSequence } from './perfect'
+import { poligonalNormalExpressions } from './poligonal'
+import { primeSequence } from './prime'
 import { recamanSequence } from './recaman'
 import { thueMorseSequence } from './thueMorse'
+import { tribonacciSequence } from './tribonacci'
+import { luckySequence } from './lucky'
 
 type SeqKey<T extends string> = `c:${T}-seq`
 type TakeWhileKey<T extends string> = `c:${T}-take-while`
@@ -39,15 +52,47 @@ export type SequenceDefinition<T extends string, Type extends number | string = 
   string?: never
 })
 
+export type SequenceNormalExpressions<T extends string> = {
+  [key in SequenceKeys<T>]: key extends SeqKey<T>
+    ? BuiltinNormalExpression<number[]>
+    : key extends TakeWhileKey<T>
+      ? BuiltinNormalExpression<number[]>
+      : key extends NthKey<T>
+        ? BuiltinNormalExpression<number>
+        : BuiltinNormalExpression<boolean>
+}
+
 export const sequenceNormalExpression: BuiltinNormalExpressions = {}
 
 addSequence(bellSequence)
 addSequence(catalanSequence)
+addSequence(factorialSequence)
+addSequence(fibonacciSequence)
+addSequence(happySequence)
 addSequence(lookAndSaySequence)
+addSequence(lucasSequence)
+addSequence(luckySequence)
+addSequence(mersenneSequence)
 addSequence(padovanSequence)
+addSequence(partitionSequence)
 addSequence(pellSequence)
+addSequence(perfectSequence)
+addSequence(primeSequence)
 addSequence(recamanSequence)
 addSequence(thueMorseSequence)
+addSequence(tribonacciSequence)
+addNormalExpressions(arithmeticNormalExpressions)
+addNormalExpressions(geometricNormalExpressions)
+addNormalExpressions(poligonalNormalExpressions)
+
+function addNormalExpressions(normalExpressions: BuiltinNormalExpressions) {
+  for (const [key, value] of Object.entries(normalExpressions)) {
+    if (sequenceNormalExpression[key]) {
+      throw new Error(`Duplicate normal expression key found: ${key}`)
+    }
+    sequenceNormalExpression[key] = value
+  }
+}
 
 function addSequence<Type extends number | string>(sequence: SequenceDefinition<string, Type>) {
   for (const [key, value] of Object.entries(sequence)) {
