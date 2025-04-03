@@ -584,6 +584,1347 @@ var Playground = (function (exports) {
         onClose: onClose,
     };
 
+    /**
+     * Factorizes a number under a radical to extract perfect square factors
+     * @param n The number to factorize
+     * @returns Object containing the coefficient and remaining radicand
+     */
+    function factorizeRadicand(n) {
+        // Find largest perfect square factor
+        let coefficient = 1;
+        let i = 2;
+        while (i * i <= n) {
+            // Check if i² is a factor of n
+            if (n % (i * i) === 0) {
+                coefficient *= i;
+                n /= (i * i);
+                // Continue with the same i to check for multiple powers
+                continue;
+            }
+            i++;
+        }
+        return { coefficient, radicand: n };
+    }
+    /**
+     * Finds the greatest common divisor of two numbers
+     * @param a First number
+     * @param b Second number
+     * @returns The GCD of a and b
+     */
+    function findGCD(a, b) {
+        a = Math.abs(a);
+        b = Math.abs(b);
+        while (b !== 0) {
+            const temp = b;
+            b = a % b;
+            a = temp;
+        }
+        return a;
+    }
+    /**
+     * Checks if a number is prime
+     * @param n The number to check
+     * @returns True if n is prime, false otherwise
+     */
+    function isPrime$1(n) {
+        if (n <= 1)
+            return false;
+        if (n <= 3)
+            return true;
+        if (n % 2 === 0 || n % 3 === 0)
+            return false;
+        let i = 5;
+        while (i * i <= n) {
+            if (n % i === 0 || n % (i + 2) === 0)
+                return false;
+            i += 6;
+        }
+        return true;
+    }
+    /**
+     * Determines if a number's square root should be preserved in direct form
+     * @param n The number to check
+     * @returns True if the square root should be kept in direct form
+     */
+    function shouldPreserveDirectRadical(n) {
+        // Always preserve direct form for prime numbers
+        if (isPrime$1(n))
+            return true;
+        // Always preserve direct form for small integers
+        if (n <= 30)
+            return true;
+        // Check if n has any perfect square factors
+        const factorized = factorizeRadicand(n);
+        // If no perfect square factors were found, preserve direct form
+        return factorized.coefficient === 1;
+    }
+
+    function isNumberNode(node) {
+        return node.type === 'Number';
+    }
+    function isUnaryOpNode(node) {
+        return node.type === 'UnaryOp';
+    }
+    function isBinaryOpNode(node) {
+        return node.type === 'BinaryOp';
+    }
+    function isRootNode(node) {
+        return node.type === 'Root';
+    }
+    function isConstantNode(node) {
+        return node.type === 'Constant';
+    }
+    function isPowerNode(node) {
+        return node.type === 'Power';
+    }
+
+    /**
+     * Helper function to determine expression type priority for ordering
+     * @returns A priority number (lower number = higher priority)
+     */
+    function getExpressionPriority(node) {
+        // Priority order: Number < Root/Power < Constant < Other
+        if (isNumberNode(node))
+            return 1;
+        if (isRootNode(node))
+            return 2;
+        // Handle other node types here
+        return 6; // Default for other types
+    }
+    /**
+     * Determines if two expressions should be swapped in multiplication
+     * @returns true if expressions should be swapped
+     */
+    function shouldSwapInMultiplication(left, right) {
+        const leftPriority = getExpressionPriority(left);
+        const rightPriority = getExpressionPriority(right);
+        // Lower priority number should come first
+        return leftPriority > rightPriority;
+    }
+
+    /**
+     * Base abstract class for all expression nodes
+     */
+    class ExprNode {
+    }
+
+    /**
+     * Checks if a node represents exactly zero within epsilon tolerance
+     */
+    function isZero(node) {
+        return isNumberNode(node) && Math.abs(node.evaluate()) < 1e-10;
+    }
+    /**
+     * Checks if a node represents exactly one within epsilon tolerance
+     */
+    function isOne(node) {
+        return isNumberNode(node) && Math.abs(node.evaluate() - 1) < 1e-10;
+    }
+    /**
+     * Node for numeric constants (integers, simple fractions, etc.)
+     */
+    class NumberNode extends ExprNode {
+        constructor(value) {
+            super();
+            Object.defineProperty(this, "value", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: value
+            });
+            Object.defineProperty(this, "type", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: 'Number'
+            });
+        }
+        evaluate() {
+            return this.value;
+        }
+        toString(spaceSeparated) {
+            const EPSILON = 1e-10;
+            // Round values extremely close to zero to exactly zero
+            if (Math.abs(this.value) < EPSILON) {
+                return "0";
+            }
+            if (Number.isInteger(this.value)) {
+                return this.value.toString();
+            }
+            // Handle fractions if it's a "nice" fraction
+            const MAX_DENOMINATOR = 1000;
+            for (let denominator = 2; denominator <= MAX_DENOMINATOR; denominator++) {
+                const numerator = Math.round(this.value * denominator);
+                if (Math.abs(this.value - numerator / denominator) < EPSILON) {
+                    const gcd = findGCD(Math.abs(numerator), denominator);
+                    return spaceSeparated ? `${numerator / gcd} / ${denominator / gcd}` : `${numerator / gcd}/${denominator / gcd}`;
+                }
+            }
+            // Just return the decimal representation
+            if (this.value.toString().length > 10) {
+                return this.value.toFixed(8);
+            }
+            return this.value.toString();
+        }
+        simplify() {
+            return this; // Numbers are already in simplest form
+        }
+        equals(other) {
+            if (!(isNumberNode(other)))
+                return false;
+            const EPSILON = 1e-10;
+            return Math.abs(this.value - other.evaluate()) < EPSILON;
+        }
+    }
+
+    /**
+     * Node for unary operations (-, sqrt, cbrt, etc.)
+     */
+    class UnaryOpNode extends ExprNode {
+        constructor(op, operand) {
+            super();
+            Object.defineProperty(this, "op", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: op
+            });
+            Object.defineProperty(this, "operand", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: operand
+            });
+            Object.defineProperty(this, "type", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: 'UnaryOp'
+            });
+        }
+        evaluate() {
+            const val = this.operand.evaluate();
+            switch (this.op) {
+                case '-': return -val;
+                case 'sqrt': return Math.sqrt(val);
+                case 'cbrt': return Math.cbrt(val);
+            }
+        }
+        toString(spaceSeparated) {
+            const operandStr = this.operand.toString(spaceSeparated);
+            if (operandStr === '0') {
+                return '0';
+            }
+            switch (this.op) {
+                case '-': return spaceSeparated ? `-(${operandStr})` : `-${operandStr}`;
+                case 'sqrt': return spaceSeparated ? `√(${operandStr})` : `√${operandStr}`;
+                case 'cbrt': return spaceSeparated ? `∛(${operandStr})` : `∛${operandStr}`;
+            }
+        }
+        simplify() {
+            const operand = this.operand.simplify();
+            // Double negation: --a = a
+            if (this.op === '-' && isUnaryOpNode(operand)
+                && (operand).getOp() === '-') {
+                return (operand).getOperand();
+            }
+            // Simplify sqrt of perfect squares
+            if (this.op === 'sqrt' && isNumberNode(operand)) {
+                const val = operand.evaluate();
+                const sqrtVal = Math.sqrt(val);
+                if (Number.isInteger(sqrtVal)) {
+                    return new NumberNode(sqrtVal);
+                }
+            }
+            // Simplify cbrt of perfect cubes
+            if (this.op === 'cbrt' && isNumberNode(operand)) {
+                const val = operand.evaluate();
+                const cbrtVal = Math.cbrt(val);
+                if (Number.isInteger(cbrtVal)) {
+                    return new NumberNode(cbrtVal);
+                }
+            }
+            return new UnaryOpNode(this.op, operand);
+        }
+        getOp() {
+            return this.op;
+        }
+        getOperand() {
+            return this.operand;
+        }
+        equals(other) {
+            if (!(isUnaryOpNode(other)))
+                return false;
+            const otherOp = other;
+            return this.op === otherOp.getOp()
+                && this.operand.equals(otherOp.getOperand());
+        }
+    }
+
+    /**
+     * Node for binary operations (+, -, *, /)
+     */
+    class BinaryOpNode extends ExprNode {
+        constructor(op, left, right) {
+            super();
+            Object.defineProperty(this, "op", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: op
+            });
+            Object.defineProperty(this, "left", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: left
+            });
+            Object.defineProperty(this, "right", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: right
+            });
+            Object.defineProperty(this, "type", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: 'BinaryOp'
+            });
+            // Apply automatic ordering for multiplication operations
+            if (this.op === '*' && shouldSwapInMultiplication(left, right)) {
+                // Swap the operands if they're in the wrong order
+                this.left = right;
+                this.right = left;
+            }
+        }
+        evaluate() {
+            const leftVal = this.left.evaluate();
+            const rightVal = this.right.evaluate();
+            switch (this.op) {
+                case '+': return leftVal + rightVal;
+                case '-': return leftVal - rightVal;
+                case '*': return leftVal * rightVal;
+                case '/': return leftVal / rightVal;
+            }
+        }
+        toString(spaceSeparated) {
+            let leftStr = this.left.toString(spaceSeparated);
+            let rightStr = this.right.toString(spaceSeparated);
+            // Add parentheses if needed
+            if ((this.op === '+' || this.op === '-')
+                && (isBinaryOpNode(this.left) && (this.left.getOp() === '+' || this.left.getOp() === '-'))) {
+                leftStr = `(${leftStr})`;
+            }
+            else if ((this.op === '+' || this.op === '-')
+                && (isBinaryOpNode(this.right) && (this.right.getOp() === '+' || this.right.getOp() === '-'))) {
+                rightStr = `(${rightStr})`;
+            }
+            if (this.op === '*') {
+                // Double-check order at display time
+                if (shouldSwapInMultiplication(this.left, this.right)) {
+                    return spaceSeparated
+                        ? `${this.right.toString(spaceSeparated)} · ${this.left.toString(spaceSeparated)}`
+                        : `${this.right.toString(spaceSeparated)}·${this.left.toString(spaceSeparated)}`;
+                }
+                return spaceSeparated
+                    ? `${this.left.toString(spaceSeparated)} · ${this.right.toString(spaceSeparated)}`
+                    : `${this.left.toString(spaceSeparated)}·${this.right.toString(spaceSeparated)}`;
+            }
+            else {
+                return spaceSeparated
+                    ? `${leftStr} ${this.op} ${rightStr}`
+                    : `${leftStr}${this.op}${rightStr}`;
+            }
+        }
+        getOp() {
+            return this.op;
+        }
+        getLeft() {
+            return this.left;
+        }
+        getRight() {
+            return this.right;
+        }
+        simplify() {
+            // First simplify both children
+            const left = this.left.simplify();
+            const right = this.right.simplify();
+            // If both are numbers, perform the operation
+            if (isNumberNode(left) && isNumberNode(right)) {
+                return new NumberNode(this.evaluate());
+            }
+            // Simplification rules for addition
+            if (this.op === '+') {
+                // a + 0 = a
+                if (isNumberNode(right) && right.evaluate() === 0) {
+                    return left;
+                }
+                // 0 + a = a
+                if (isNumberNode(left) && left.evaluate() === 0) {
+                    return right;
+                }
+            }
+            // Simplification rules for subtraction
+            if (this.op === '-') {
+                // a - 0 = a
+                if (isNumberNode(right) && right.evaluate() === 0) {
+                    return left;
+                }
+                // 0 - a = -a
+                if (isNumberNode(left) && left.evaluate() === 0) {
+                    return new UnaryOpNode('-', right);
+                }
+                // a - a = 0
+                if (left.equals(right)) {
+                    return new NumberNode(0);
+                }
+            }
+            // Simplification rules for multiplication
+            if (this.op === '*') {
+                // a * 0 = 0
+                if (isZero(left) || isZero(right)) {
+                    return new NumberNode(0);
+                }
+                // a * 1 = a
+                if (isOne(right)) {
+                    return left;
+                }
+                // 1 * a = a
+                if (isOne(left)) {
+                    return right;
+                }
+                // Special case for n·√m/2 (12·√3/2 case)
+                if (isNumberNode(left)
+                    && isBinaryOpNode(right)
+                    && right.getOp() === '/'
+                    && isNumberNode(right.getRight())
+                    && right.getRight().evaluate() === 2
+                    && isRootNode(right.getLeft())) {
+                    const n = left.evaluate();
+                    const rootNode = right.getLeft();
+                    return new BinaryOpNode('*', new NumberNode(n / 2), rootNode);
+                }
+                // Handle multiplications with fractions
+                if (isBinaryOpNode(left) && left.getOp() === '/') {
+                    // (a/b) * c = (a*c)/b
+                    const fraction = left;
+                    const numerator = fraction.getLeft();
+                    const denominator = fraction.getRight();
+                    return new BinaryOpNode('/', new BinaryOpNode('*', numerator, right), denominator).simplify();
+                }
+                if (isBinaryOpNode(right) && right.getOp() === '/') {
+                    // c * (a/b) = (c*a)/b
+                    const fraction = right;
+                    const numerator = fraction.getLeft();
+                    const denominator = fraction.getRight();
+                    return new BinaryOpNode('/', new BinaryOpNode('*', left, numerator), denominator).simplify();
+                }
+                // Multiple numeric factors: (2·3)·π = 6·π
+                if (isNumberNode(left)
+                    && isBinaryOpNode(right)
+                    && right.getOp() === '*'
+                    && isNumberNode(right.getLeft())) {
+                    const n1 = left.evaluate();
+                    const n2 = (right).getLeft().evaluate();
+                    const restTerm = right.getRight();
+                    return new BinaryOpNode('*', new NumberNode(n1 * n2), restTerm).simplify();
+                }
+                // Consolidate products of square roots: √a·√b = √(a·b)
+                if (isRootNode(left) && isRootNode(right)) {
+                    const leftOperand = getRootOperand(left);
+                    const rightOperand = getRootOperand(right);
+                    // Create √(a·b) instead of √a·√b
+                    if (isNumberNode(leftOperand) && isNumberNode(rightOperand)) {
+                        const newRadicand = leftOperand.evaluate() * rightOperand.evaluate();
+                        return new RootNode(new NumberNode(newRadicand)).simplify();
+                    }
+                }
+            }
+            // Simplification rules for division
+            if (this.op === '/') {
+                // 0 / a = 0
+                if (isZero(left)) {
+                    return new NumberNode(0);
+                }
+                // a / 1 = a
+                if (isOne(right)) {
+                    return left;
+                }
+                // a / a = 1
+                if (left.equals(right)) {
+                    return new NumberNode(1);
+                }
+                // Simplify numeric fractions
+                if (isNumberNode(left) && isNumberNode(right)) {
+                    const num = left.evaluate();
+                    const denom = right.evaluate();
+                    if (Number.isInteger(num) && Number.isInteger(denom)) {
+                        const gcd = findGCD(Math.abs(num), Math.abs(denom));
+                        if (gcd > 1) {
+                            return new BinaryOpNode('/', new NumberNode(num / gcd), new NumberNode(denom / gcd));
+                        }
+                    }
+                }
+                // (a*b) / b = a
+                if (isBinaryOpNode(left) && left.getOp() === '*') {
+                    const product = left;
+                    // Case for n·something / n = something (6·√3/6 = √3)
+                    if (isNumberNode(product.getLeft())
+                        && isNumberNode(right)
+                        && Math.abs(product.getLeft().evaluate() - right.evaluate()) < 1e-10) {
+                        return product.getRight();
+                    }
+                    if (isNumberNode(product.getRight())
+                        && isNumberNode(right)
+                        && Math.abs(product.getRight().evaluate() - right.evaluate()) < 1e-10) {
+                        return product.getLeft();
+                    }
+                    // General case
+                    if (product.getLeft().equals(right)) {
+                        return product.getRight();
+                    }
+                    if (product.getRight().equals(right)) {
+                        return product.getLeft();
+                    }
+                }
+            }
+            // If no simplification rules apply, return a new node with simplified children
+            return new BinaryOpNode(this.op, left, right);
+        }
+        equals(other) {
+            if (!(isBinaryOpNode(other)))
+                return false;
+            const otherOp = other;
+            return this.op === otherOp.getOp()
+                && this.left.equals(otherOp.getLeft())
+                && this.right.equals(otherOp.getRight());
+        }
+    }
+    /**
+     * Extracts the radicand from a square root expression
+     */
+    function getRootOperand(node) {
+        if (isRootNode(node)) {
+            return node.getOperand();
+        }
+        if (isUnaryOpNode(node) && node.getOp() === 'sqrt') {
+            return node.getOperand();
+        }
+        throw new Error('Not a root node');
+    }
+    /**
+     * Checks if a node represents a square root expression
+     */
+    function isRootLikeNode(node) {
+        return isRootNode(node)
+            || (isUnaryOpNode(node) && node.getOp() === 'sqrt');
+    }
+    /**
+     * Specialized node for square roots for nicer formatting
+     */
+    class RootNode extends ExprNode {
+        constructor(operand) {
+            super();
+            Object.defineProperty(this, "operand", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: operand
+            });
+            Object.defineProperty(this, "type", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: 'Root'
+            });
+        }
+        evaluate() {
+            return Math.sqrt(this.operand.evaluate());
+        }
+        toString(spaceSeparated) {
+            return spaceSeparated ? `√(${this.operand.toString(spaceSeparated)})` : `√${this.operand.toString(spaceSeparated)}`;
+        }
+        simplify() {
+            const operand = this.operand.simplify();
+            // Simplify sqrt of perfect squares
+            if (isNumberNode(operand)) {
+                const val = operand.evaluate();
+                const sqrtVal = Math.sqrt(val);
+                // If it's a perfect square, return the number
+                if (Number.isInteger(sqrtVal)) {
+                    return new NumberNode(sqrtVal);
+                }
+                // Otherwise, check if we can simplify the radicand
+                const factorized = factorizeRadicand(val);
+                if (factorized.coefficient > 1) {
+                    // If there's a perfect square factor, extract it
+                    return new BinaryOpNode('*', new NumberNode(factorized.coefficient), new RootNode(new NumberNode(factorized.radicand)));
+                }
+            }
+            // Handle product of radicands under a root
+            if (isBinaryOpNode(operand) && operand.getOp() === '*') {
+                const left = operand.getLeft();
+                const right = operand.getRight();
+                // We can't simplify if they aren't both numbers
+                if (isNumberNode(left) && isNumberNode(right)) {
+                    const leftVal = left.evaluate();
+                    const rightVal = right.evaluate();
+                    // Try to factorize the product
+                    const factorized = factorizeRadicand(leftVal * rightVal);
+                    if (factorized.coefficient > 1) {
+                        // If there's a perfect square factor, extract it
+                        return new BinaryOpNode('*', new NumberNode(factorized.coefficient), new RootNode(new NumberNode(factorized.radicand))).simplify();
+                    }
+                }
+            }
+            return new RootNode(operand);
+        }
+        getOperand() {
+            return this.operand;
+        }
+        equals(other) {
+            if (!(isRootLikeNode(other)))
+                return false;
+            return this.operand.equals(other.getOperand());
+        }
+    }
+
+    /**
+     * Node for mathematical constants (π, e, etc.)
+     */
+    class ConstantNode extends ExprNode {
+        constructor(symbol, value) {
+            super();
+            Object.defineProperty(this, "symbol", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: symbol
+            });
+            Object.defineProperty(this, "value", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: value
+            });
+            Object.defineProperty(this, "type", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: 'Constant'
+            });
+        }
+        evaluate() {
+            return this.value;
+        }
+        toString(_spaceSeparated) {
+            return this.symbol;
+        }
+        simplify() {
+            return this; // Constants are already in simplest form
+        }
+        equals(other) {
+            if (!(isConstantNode(other)))
+                return false;
+            return this.symbol === other.symbol;
+        }
+        getSymbol() {
+            return this.symbol;
+        }
+    }
+
+    /**
+     * Specialized node for power expressions
+     */
+    class PowerNode extends ExprNode {
+        constructor(base, exponent) {
+            super();
+            Object.defineProperty(this, "base", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: base
+            });
+            Object.defineProperty(this, "exponent", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: exponent
+            });
+            Object.defineProperty(this, "type", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: 'Power'
+            });
+        }
+        evaluate() {
+            return this.base.evaluate() ** this.exponent.evaluate();
+        }
+        toString(spaceSeparated) {
+            const baseStr = this.base.toString(spaceSeparated);
+            const expVal = this.exponent.evaluate();
+            // Use superscript for powers 2 and 3
+            if (expVal === 2)
+                return `${baseStr}²`;
+            if (expVal === 3)
+                return `${baseStr}³`;
+            return spaceSeparated ? `${baseStr} ^ ${this.exponent.toString(spaceSeparated)}` : `${baseStr}^${this.exponent.toString(spaceSeparated)}`;
+        }
+        simplify() {
+            const base = this.base.simplify();
+            const exponent = this.exponent.simplify();
+            // Anything to the power of 0 is 1
+            if (isNumberNode(exponent) && exponent.evaluate() === 0) {
+                return new NumberNode(1);
+            }
+            // Anything to the power of 1 is itself
+            if (isNumberNode(exponent) && exponent.evaluate() === 1) {
+                return base;
+            }
+            // 0 to any positive power is 0
+            if (isNumberNode(base) && base.evaluate() === 0
+                && isNumberNode(exponent) && exponent.evaluate() > 0) {
+                return new NumberNode(0);
+            }
+            // 1 to any power is 1
+            if (isNumberNode(base) && base.evaluate() === 1) {
+                return new NumberNode(1);
+            }
+            // If both are numbers, compute the power
+            if (isNumberNode(base) && isNumberNode(exponent)) {
+                return new NumberNode(base.evaluate() ** exponent.evaluate());
+            }
+            return new PowerNode(base, exponent);
+        }
+        equals(other) {
+            if (!(isPowerNode(other)))
+                return false;
+            const otherPower = other;
+            return this.base.equals(otherPower.base)
+                && this.exponent.equals(otherPower.exponent);
+        }
+        getBase() {
+            return this.base;
+        }
+        getExponent() {
+            return this.exponent;
+        }
+    }
+
+    /**
+     * Mathematical constants used for symbolic representation
+     */
+    const CONSTANTS = [
+        { symbol: 'π', value: Math.PI },
+        { symbol: 'e', value: Math.E },
+        { symbol: 'φ', value: (1 + Math.sqrt(5)) / 2 },
+        { symbol: '√2', value: Math.sqrt(2) },
+        { symbol: '√3', value: Math.sqrt(3) },
+        { symbol: '√5', value: Math.sqrt(5) },
+        { symbol: '√7', value: Math.sqrt(7) },
+        { symbol: '√11', value: Math.sqrt(11) },
+        { symbol: '√13', value: Math.sqrt(13) },
+        { symbol: '√17', value: Math.sqrt(17) },
+        { symbol: '√19', value: Math.sqrt(19) },
+        { symbol: '√π', value: Math.sqrt(Math.PI) },
+        { symbol: 'ln(2)', value: Math.LN2 },
+        { symbol: 'ln(10)', value: Math.LN10 },
+        { symbol: 'log₂(e)', value: Math.LOG2E },
+        { symbol: 'log₁₀(e)', value: Math.LOG10E },
+    ];
+    /**
+     * Trigonometric values with their exact symbolic representations
+     */
+    const TRIG_VALUES = [
+        // sin values
+        { value: Math.sin(Math.PI / 6), symbol: 'sin(π/6)', exactForm: '1/2' },
+        { value: Math.sin(Math.PI / 4), symbol: 'sin(π/4)', exactForm: '√2/2' },
+        { value: Math.sin(Math.PI / 3), symbol: 'sin(π/3)', exactForm: '√3/2' },
+        { value: Math.sin(Math.PI / 2), symbol: 'sin(π/2)', exactForm: '1' },
+        // cos values
+        { value: Math.cos(0), symbol: 'cos(0)', exactForm: '1' },
+        { value: Math.cos(Math.PI / 6), symbol: 'cos(π/6)', exactForm: '√3/2' },
+        { value: Math.cos(Math.PI / 4), symbol: 'cos(π/4)', exactForm: '√2/2' },
+        { value: Math.cos(Math.PI / 3), symbol: 'cos(π/3)', exactForm: '1/2' },
+        { value: Math.cos(Math.PI / 2), symbol: 'cos(π/2)', exactForm: '0' },
+        // tan values
+        { value: Math.tan(Math.PI / 6), symbol: 'tan(π/6)', exactForm: '1/√3' },
+        { value: Math.tan(Math.PI / 4), symbol: 'tan(π/4)', exactForm: '1' },
+        { value: Math.tan(Math.PI / 3), symbol: 'tan(π/3)', exactForm: '√3' },
+    ];
+
+    /**
+     * Converts a number to its continued fraction representation
+     * @param x The number to convert
+     * @param maxTerms Maximum number of terms to compute
+     * @returns Array of continued fraction terms [a0, a1, a2, ...]
+     */
+    function toContinuedFraction(x, maxTerms = 20) {
+        const terms = [];
+        const EPSILON = 1e-10;
+        for (let i = 0; i < maxTerms; i++) {
+            const a = Math.floor(x);
+            terms.push(a);
+            // If we've reached a very small remainder, we're done
+            if (Math.abs(x - a) < EPSILON) {
+                break;
+            }
+            // Prevent division by zero and avoid floating point issues
+            const remainder = x - a;
+            if (Math.abs(remainder) < EPSILON) {
+                break;
+            }
+            x = 1 / remainder;
+        }
+        return terms;
+    }
+    /**
+     * Converts continued fraction terms to a fraction [numerator, denominator]
+     * @param terms Array of continued fraction terms
+     * @returns [numerator, denominator]
+     */
+    function fromContinuedFraction(terms) {
+        if (terms.length === 0)
+            return [0, 1];
+        if (terms.length === 1)
+            return [terms[0], 1];
+        // Start with the last term
+        let numerator = terms[terms.length - 1];
+        let denominator = 1;
+        // Work backwards through the terms
+        for (let i = terms.length - 2; i >= 0; i--) {
+            // For each term, compute the new fraction 
+            // a_i + 1/previous
+            const newNumerator = terms[i] * numerator + denominator;
+            const newDenominator = numerator;
+            // Update for next iteration
+            numerator = newNumerator;
+            denominator = newDenominator;
+        }
+        return [numerator, denominator];
+    }
+    /**
+     * Generates all convergents (approximations) from continued fraction terms
+     * @param terms Array of continued fraction terms
+     * @returns Array of [numerator, denominator] pairs
+     */
+    function getConvergents(terms) {
+        const convergents = [];
+        for (let i = 1; i <= terms.length; i++) {
+            convergents.push(fromContinuedFraction(terms.slice(0, i)));
+        }
+        return convergents;
+    }
+    /**
+     * Tries to identify if a number is a simple quadratic irrational
+     * @param x The number to check
+     * @returns The identified form or null if not recognized
+     */
+    function identifyQuadraticIrrational(x) {
+        const EPSILON = 1e-10;
+        // Direct checks for common values
+        // Check for square roots of integers
+        for (let n = 2; n <= 20; n++) {
+            if (Math.abs(x - Math.sqrt(n)) < EPSILON) {
+                return `√${n}`;
+            }
+        }
+        // Check for golden ratio and its conjugate
+        if (Math.abs(x - (1 + Math.sqrt(5)) / 2) < EPSILON) {
+            return "φ"; // Already defined as a constant
+        }
+        if (Math.abs(x - (Math.sqrt(5) - 1) / 2) < EPSILON) {
+            return "(√5-1)/2";
+        }
+        // Check for expressions of form (√n ± m)/k where n, m, k are small integers
+        for (let n = 2; n <= 30; n++) {
+            const sqrtN = Math.sqrt(n);
+            for (let m = 1; m <= 10; m++) {
+                for (let k = 2; k <= 10; k++) {
+                    // Check (√n + m)/k
+                    if (Math.abs(x - (sqrtN + m) / k) < EPSILON) {
+                        if (m === 1 && k === 2) {
+                            return `(√${n}+1)/2`;
+                        }
+                        else {
+                            return `(√${n}+${m})/${k}`;
+                        }
+                    }
+                    // Check (√n - m)/k
+                    if (Math.abs(x - (sqrtN - m) / k) < EPSILON) {
+                        if (m === 1 && k === 2) {
+                            return `(√${n}-1)/2`;
+                        }
+                        else {
+                            return `(√${n}-${m})/${k}`;
+                        }
+                    }
+                }
+            }
+        }
+        // Get continued fraction for pattern analysis
+        const terms = toContinuedFraction(x, 30);
+        // Analyze the continued fraction for periodic patterns
+        const period = detectPeriod(terms);
+        if (period) {
+            // For purely periodic CFs (√D): [a0; a1, a2, ..., aN, a1, a2, ...]
+            // where a0 = floor(√D) and the sequence after a0 is periodic
+            // For √2: [1; 2, 2, 2, ...]
+            if (period.length === 1 && period[0] === 2 && terms[0] === 1) {
+                return "√2";
+            }
+            // For √3: [1; 1, 2, 1, 2, ...]
+            if (period.length === 2 && period[0] === 1 && period[1] === 2 && terms[0] === 1) {
+                return "√3";
+            }
+            // For √5: [2; 4, 4, 4, ...]
+            if (period.length === 1 && period[0] === 4 && terms[0] === 2) {
+                return "√5";
+            }
+            // For √6: [2; 2, 4, 2, 4, ...] 
+            if (period.length === 2 && period[0] === 2 && period[1] === 4 && terms[0] === 2) {
+                return "√6";
+            }
+            // For √7: [2; 1, 1, 1, 4, 1, 1, 1, 4, ...] 
+            if (period.length === 4 &&
+                period[0] === 1 && period[1] === 1 &&
+                period[2] === 1 && period[3] === 4 &&
+                terms[0] === 2) {
+                return "√7";
+            }
+            // For √8: [2; 1, 4, 1, 4, ...]
+            if (period.length === 2 && period[0] === 1 && period[1] === 4 && terms[0] === 2) {
+                return "√8";
+            }
+            // Try to reconstruct the quadratic form from the pattern
+            // (Complex algorithm that would determine D from periodic CF)
+            const D = reconstructD(terms[0], period);
+            if (D > 0 && Math.abs(x - Math.sqrt(D)) < EPSILON) {
+                return `√${D}`;
+            }
+        }
+        return null; // Could not identify
+    }
+    // Helper function to detect periodic patterns in continued fractions
+    function detectPeriod(terms) {
+        // Need at least a few terms to detect patterns
+        if (terms.length < 6)
+            return null;
+        // Check for single repeating digit (like √2 = [1; 2, 2, 2, ...])
+        const allSameAfterFirst = terms.slice(1).every(t => t === terms[1]);
+        if (allSameAfterFirst) {
+            return [terms[1]];
+        }
+        // For period of length 2
+        const periodLength2 = terms.slice(1, 3).every((val, idx) => {
+            for (let i = 1; i < Math.floor((terms.length - 1) / 2); i++) {
+                if (terms[1 + idx + 2 * i] !== val)
+                    return false;
+            }
+            return true;
+        });
+        if (periodLength2) {
+            return terms.slice(1, 3);
+        }
+        // For period of length 4
+        if (terms.length >= 9) {
+            const periodLength4 = terms.slice(1, 5).every((val, idx) => {
+                return terms[1 + idx + 4] === val && (terms.length >= 13 ? terms[1 + idx + 8] === val : true);
+            });
+            if (periodLength4) {
+                return terms.slice(1, 5);
+            }
+        }
+        // Could add more pattern detection logic here
+        return null;
+    }
+    // Helper function to reconstruct D from continued fraction pattern
+    function reconstructD(a0, period) {
+        // Simple cases
+        if (period.length === 1 && period[0] === 2)
+            return 2;
+        if (period.length === 2 && period[0] === 1 && period[1] === 2)
+            return 3;
+        if (period.length === 1 && period[0] === 4)
+            return 5;
+        if (period.length === 2 && period[0] === 2 && period[1] === 4)
+            return 6;
+        if (period.length === 4 &&
+            period[0] === 1 && period[1] === 1 &&
+            period[2] === 1 && period[3] === 4)
+            return 7;
+        if (period.length === 2 && period[0] === 1 && period[1] === 4)
+            return 8;
+        // For purely periodic CFs, D = a0² + P where P depends on the period
+        // This is a simplified heuristic approach
+        if (period.length === 1) {
+            // If period has form [n], then D ≈ a0² + 1/n
+            return Math.round(a0 * a0 + 1 / period[0]);
+        }
+        // Generalized approach for reconstructing D would be more complex
+        // and would involve solving the Pell equation
+        return -1; // Couldn't determine D
+    }
+
+    /**
+     * Parser to convert numeric values to expression trees
+     */
+    class ExpressionParser {
+        /**
+         * Main parsing function that converts a number to an expression tree
+         */
+        parseNumber(num, depth = 0) {
+            const EPSILON = 1e-10;
+            const MAX_DEPTH = 3;
+            // Handle zero
+            if (Math.abs(num) < EPSILON) {
+                return new NumberNode(0);
+            }
+            // Handle negative numbers
+            if (num < 0) {
+                return new UnaryOpNode('-', this.parseNumber(-num, depth));
+            }
+            // Handle integers
+            if (Math.abs(num - Math.round(num)) < EPSILON) {
+                return new NumberNode(Math.round(num));
+            }
+            const cfTerms = toContinuedFraction(num, 20);
+            const convergents = getConvergents(cfTerms);
+            for (const [numerator, denominator] of convergents) {
+                // Only consider fractions with reasonably-sized components
+                if (denominator <= 1000 && Math.abs(numerator) <= 10000) {
+                    // Verify the approximation is within our epsilon
+                    if (Math.abs(num - numerator / denominator) < EPSILON) {
+                        const gcd = this.findGCD(Math.abs(numerator), denominator);
+                        return new BinaryOpNode('/', new NumberNode(numerator / gcd), new NumberNode(denominator / gcd));
+                    }
+                }
+            }
+            // Try direct matches to constants
+            for (const constant of CONSTANTS) {
+                if (Math.abs(num - constant.value) < EPSILON) {
+                    return new ConstantNode(constant.symbol, constant.value);
+                }
+            }
+            // Try direct matches to trig values
+            for (const trigValue of TRIG_VALUES) {
+                if (Math.abs(num - trigValue.value) < EPSILON) {
+                    // If it has an exact form, parse that instead
+                    if (trigValue.exactForm) {
+                        return this.parseExactForm(trigValue.exactForm);
+                    }
+                    return new ConstantNode(trigValue.symbol, trigValue.value);
+                }
+            }
+            const quadraticForm = identifyQuadraticIrrational(num);
+            if (quadraticForm) {
+                // If we identified something like "√7" or "(√13-3)/2"
+                return this.parseExactForm(quadraticForm);
+            }
+            // Direct check for square roots before other decompositions
+            // This ensures square roots of integers are handled directly
+            for (let i = 2; i <= 100; i++) {
+                if (Math.abs(num - Math.sqrt(i)) < EPSILON) {
+                    // Use our enhanced check to determine if we should keep direct form
+                    if (shouldPreserveDirectRadical(i)) {
+                        return new RootNode(new NumberNode(i));
+                    }
+                    // Only factorize if appropriate
+                    const factorized = factorizeRadicand(i);
+                    if (factorized.coefficient > 1) {
+                        return new BinaryOpNode('*', new NumberNode(factorized.coefficient), new RootNode(new NumberNode(factorized.radicand)));
+                    }
+                    // Default to direct representation
+                    return new RootNode(new NumberNode(i));
+                }
+            }
+            // Check for powers
+            for (const constant of [...CONSTANTS, ...TRIG_VALUES]) {
+                for (let power = 2; power <= 3; power++) {
+                    if (Math.abs(num - constant.value ** power) < EPSILON) {
+                        const baseNode = constant.exactForm
+                            ? this.parseExactForm(constant.exactForm)
+                            : new ConstantNode(constant.symbol, constant.value);
+                        return new PowerNode(baseNode, new NumberNode(power));
+                    }
+                }
+            }
+            // Recursive decomposition with extra care for square roots
+            if (depth < MAX_DEPTH) {
+                // Check for π/n pattern
+                for (const constant of CONSTANTS) {
+                    for (let denominator = 2; denominator <= 12; denominator++) {
+                        if (Math.abs(num - constant.value / denominator) < EPSILON) {
+                            return new BinaryOpNode('/', constant.exactForm
+                                ? this.parseExactForm(constant.exactForm)
+                                : new ConstantNode(constant.symbol, constant.value), new NumberNode(denominator));
+                        }
+                    }
+                }
+                // Check for products with more careful handling of square roots
+                for (const constant of [...CONSTANTS, ...TRIG_VALUES]) {
+                    if (Math.abs(constant.value) > EPSILON) {
+                        const multiplier = num / constant.value;
+                        // Skip square root decomposition attempts for prime square roots
+                        if (constant.symbol && constant.symbol.startsWith('√')
+                            && isPrime$1(Number.parseInt(constant.symbol.substring(1)))) {
+                            continue;
+                        }
+                        // Skip common fractions that might be misidentified as complex expressions
+                        if ((Math.abs(multiplier - 0.75) < EPSILON)
+                            || (Math.abs(multiplier - 0.5) < EPSILON)
+                            || (Math.abs(multiplier - 0.25) < EPSILON)
+                            || (Math.abs(multiplier - 0.3333333333333333) < EPSILON)
+                            || (Math.abs(multiplier - 0.6666666666666666) < EPSILON)) {
+                            continue;
+                        }
+                        if (this.isNiceValue(multiplier)) {
+                            const multiplierNode = this.parseNumber(multiplier, depth + 1);
+                            const valueNode = constant.exactForm
+                                ? this.parseExactForm(constant.exactForm)
+                                : new ConstantNode(constant.symbol, constant.value);
+                            // If multiplier is 1, just return the constant
+                            if (isNumberNode(multiplierNode)
+                                && Math.abs(multiplierNode.evaluate() - 1) < EPSILON) {
+                                return valueNode;
+                            }
+                            // Create the product node with canonical ordering
+                            let productNode;
+                            // Define a priority order for constants
+                            // Lower number = higher priority (should appear first)
+                            const getConstantPriority = (node) => {
+                                if (!(isConstantNode(node)))
+                                    return 100;
+                                const symbol = node.getSymbol();
+                                if (symbol === 'e')
+                                    return 1;
+                                if (symbol === 'π')
+                                    return 2;
+                                if (symbol === 'φ')
+                                    return 3;
+                                if (symbol.startsWith('√'))
+                                    return 10;
+                                return 50; // Other constants
+                            };
+                            // Apply the priority ordering
+                            if (isConstantNode(multiplierNode) && isConstantNode(valueNode)) {
+                                // When multiplying two constants, order them by priority
+                                const multiplierPriority = getConstantPriority(multiplierNode);
+                                const valuePriority = getConstantPriority(valueNode);
+                                if (multiplierPriority <= valuePriority) {
+                                    productNode = new BinaryOpNode('*', multiplierNode, valueNode);
+                                }
+                                else {
+                                    productNode = new BinaryOpNode('*', valueNode, multiplierNode);
+                                }
+                            }
+                            else if (isNumberNode(multiplierNode)) {
+                                // Number multiplier always goes first
+                                productNode = new BinaryOpNode('*', multiplierNode, valueNode);
+                            }
+                            else if (getConstantPriority(valueNode) < 50) {
+                                // Special constants (e, π, φ) go before other expressions
+                                productNode = new BinaryOpNode('*', valueNode, multiplierNode);
+                            }
+                            else {
+                                // Default ordering
+                                productNode = new BinaryOpNode('*', multiplierNode, valueNode);
+                            }
+                            // Check if this product is part of a sum
+                            // Try to see if the product plus a nice value equals our number
+                            for (let addend = 1; addend <= 10; addend++) {
+                                const productValue = productNode.evaluate();
+                                const sum = productValue + addend;
+                                if (Math.abs(num - sum) < EPSILON) {
+                                    return new BinaryOpNode('+', productNode, new NumberNode(addend));
+                                }
+                            }
+                            return productNode;
+                        }
+                    }
+                }
+                // Check for sums and differences with base constants
+                for (const constant of [...CONSTANTS, ...TRIG_VALUES]) {
+                    const remainder = num - constant.value;
+                    if (this.isNiceValue(remainder)) {
+                        const remainderNode = this.parseNumber(remainder, depth + 1);
+                        const valueNode = constant.exactForm
+                            ? this.parseExactForm(constant.exactForm)
+                            : new ConstantNode(constant.symbol, constant.value);
+                        // If remainder is 0, just return the constant
+                        if (isNumberNode(remainderNode)
+                            && Math.abs(remainderNode.evaluate()) < EPSILON) {
+                            return valueNode;
+                        }
+                        // If remainder is negative, use subtraction
+                        if (remainder < 0) {
+                            return new BinaryOpNode('-', valueNode, this.parseNumber(-remainder, depth + 1));
+                        }
+                        return new BinaryOpNode('+', valueNode, remainderNode);
+                    }
+                }
+                // Check for sums and differences with multiples of constants
+                for (const constant of [...CONSTANTS, ...TRIG_VALUES]) {
+                    for (let multiplier = 2; multiplier <= 5; multiplier++) {
+                        const multipleValue = multiplier * constant.value;
+                        const remainder = num - multipleValue;
+                        if (this.isNiceValue(remainder)) {
+                            // Create the multiple constant node
+                            const constantNode = constant.exactForm
+                                ? this.parseExactForm(constant.exactForm)
+                                : new ConstantNode(constant.symbol, constant.value);
+                            const multipleNode = new BinaryOpNode('*', new NumberNode(multiplier), constantNode);
+                            // Create the remainder node
+                            const remainderNode = this.parseNumber(remainder, depth + 1);
+                            // If remainder is 0, just return the multiple
+                            if (isNumberNode(remainderNode)
+                                && Math.abs(remainderNode.evaluate()) < EPSILON) {
+                                return multipleNode;
+                            }
+                            // If remainder is negative, use subtraction
+                            if (remainder < 0) {
+                                return new BinaryOpNode('-', multipleNode, this.parseNumber(-remainder, depth + 1));
+                            }
+                            return new BinaryOpNode('+', multipleNode, remainderNode);
+                        }
+                    }
+                }
+                // Check for cube roots of integers
+                for (let i = 2; i <= 100; i++) {
+                    if (Math.abs(num - Math.cbrt(i)) < EPSILON) {
+                        return new UnaryOpNode('cbrt', new NumberNode(i));
+                    }
+                }
+            }
+            // Final direct check for square roots before giving up
+            // This ensures we catch any square roots we might have missed
+            const possibleRadicand = Math.round(num * num);
+            if (Math.abs(num - Math.sqrt(possibleRadicand)) < EPSILON) {
+                return new RootNode(new NumberNode(possibleRadicand));
+            }
+            // Fallback to decimal representation
+            return new NumberNode(num);
+        }
+        /**
+         * Helper method to parse exact forms like "√2/2"
+         */
+        parseExactForm(exactForm) {
+            // Handle fractions
+            if (exactForm.includes('/')) {
+                const [numerator, denominator] = exactForm.split('/');
+                return new BinaryOpNode('/', this.parseExactForm(numerator), this.parseExactForm(denominator));
+            }
+            // Handle square roots
+            if (exactForm.startsWith('√')) {
+                const argument = exactForm.substring(1);
+                return new RootNode(this.parseExactForm(argument));
+            }
+            // Handle simple numbers
+            if (/^\d+$/.test(exactForm)) {
+                return new NumberNode(Number.parseInt(exactForm));
+            }
+            // Handle known constants
+            for (const constant of CONSTANTS) {
+                if (exactForm === constant.symbol) {
+                    return new ConstantNode(constant.symbol, constant.value);
+                }
+            }
+            // If we don't recognize it, treat it as a symbol
+            return new ConstantNode(exactForm, Number.NaN);
+        }
+        /**
+         * Helper to determine if a value is "nice"
+         */
+        isNiceValue(num) {
+            const EPSILON = 1e-10;
+            // Check if it's close to an integer
+            if (Math.abs(num - Math.round(num)) < EPSILON) {
+                return true;
+            }
+            const cfTerms = toContinuedFraction(num, 10);
+            const convergents = getConvergents(cfTerms);
+            // Check if any convergent is a good approximation and reasonably simple
+            for (const [numerator, denominator] of convergents) {
+                // Only consider "nice" fractions (reasonable size numerator/denominator)
+                if (denominator <= 20 && Math.abs(numerator) <= 50) {
+                    if (Math.abs(num - numerator / denominator) < EPSILON) {
+                        return true;
+                    }
+                }
+            }
+            // Check if it's a square root of a small integer (highest priority)
+            // This helps prefer direct √n forms
+            for (let i = 2; i <= 30; i++) {
+                if (Math.abs(num - Math.sqrt(i)) < EPSILON) {
+                    // Give very high priority to prime square roots
+                    if (isPrime$1(i)) {
+                        return true;
+                    }
+                    // Also prioritize other small square roots
+                    if (i <= 20) {
+                        return true;
+                    }
+                }
+            }
+            // Check if it's close to a common constant
+            for (const constant of CONSTANTS) {
+                if (Math.abs(num - constant.value) < EPSILON) {
+                    return true;
+                }
+            }
+            // Check trig values
+            for (const value of TRIG_VALUES) {
+                if (Math.abs(num - value.value) < EPSILON) {
+                    return true;
+                }
+            }
+            // Other common values with lower priority
+            const COMMON_VALUES = [
+                Math.sin(Math.PI / 3),
+                Math.cos(Math.PI / 4),
+            ];
+            for (const value of COMMON_VALUES) {
+                if (Math.abs(num - value) < EPSILON) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        /**
+         * Find greatest common divisor helper method
+         */
+        findGCD(a, b) {
+            a = Math.abs(a);
+            b = Math.abs(b);
+            while (b !== 0) {
+                const temp = b;
+                b = a % b;
+                a = temp;
+            }
+            return a;
+        }
+    }
+
+    /**
+     * Symbolic Number Printer using Expression Tree Representation
+     *
+     * This implementation uses a proper expression tree to represent mathematical
+     * expressions, enabling more sophisticated simplification and consistent formatting.
+     */
+    /**
+     * Main function to convert a number to its symbolic representation
+     * @param num The number to convert to symbolic form
+     * @returns A string containing the symbolic representation
+     */
+    function prettyPi(num, { spaceSeparate = false } = { spaceSeparate: false }) {
+        const parser = new ExpressionParser();
+        const exprTree = parser.parseNumber(num);
+        const simplified = exprTree.simplify();
+        return simplified.toString(spaceSeparate);
+    }
+
     function getCodeMarker(sourceCodeInfo) {
         if (!sourceCodeInfo.position || !sourceCodeInfo.code)
             return '';
@@ -890,6 +2231,1488 @@ var Playground = (function (exports) {
             throw getAssertionError('string or RegularExpression', value, sourceCodeInfo);
     }
 
+    function getRangeString(options) {
+        var hasUpperAndLowerBound = (typeof options.gt === 'number' || typeof options.gte === 'number')
+            && (typeof options.lt === 'number' || typeof options.lte === 'number');
+        if (hasUpperAndLowerBound) {
+            return "".concat(typeof options.gt === 'number' ? "".concat(options.gt, " < n ") : "".concat(options.gte, " <= n ")).concat(typeof options.lt === 'number' ? "< ".concat(options.lt) : "<= ".concat(options.lte));
+        }
+        else if (typeof options.gt === 'number' || typeof options.gte === 'number') {
+            return "".concat(typeof options.gt === 'number' ? "n > ".concat(options.gt) : "n >= ".concat(options.gte));
+        }
+        else if (typeof options.lt === 'number' || typeof options.lte === 'number') {
+            return "".concat(typeof options.lt === 'number' ? "n < ".concat(options.lt) : "n <= ".concat(options.lte));
+        }
+        else {
+            return '';
+        }
+    }
+    function getSignString(options) {
+        return options.positive
+            ? 'positive'
+            : options.negative
+                ? 'negative'
+                : options.nonNegative
+                    ? 'non negative'
+                    : options.nonPositive
+                        ? 'non positive'
+                        : options.nonZero
+                            ? 'non zero'
+                            : '';
+    }
+    function getNumberTypeName(options) {
+        if (options.zero)
+            return 'zero';
+        var sign = getSignString(options);
+        var numberType = options.integer ? 'integer' : 'number';
+        var finite = options.finite ? 'finite' : '';
+        var range = getRangeString(options);
+        var equal = typeof options.eq === 'number' ? "equal to ".concat(options.eq) : '';
+        return [sign, finite, numberType, range, equal].filter(function (x) { return !!x; }).join(' ');
+    }
+    function isNumber(value, options) {
+        if (options === void 0) { options = {}; }
+        if (typeof value !== 'number')
+            return false;
+        if (options.integer && !Number.isInteger(value))
+            return false;
+        if (options.finite && !Number.isFinite(value))
+            return false;
+        if (options.zero && value !== 0)
+            return false;
+        if (options.nonZero && value === 0)
+            return false;
+        if (options.positive && value <= 0)
+            return false;
+        if (options.negative && value >= 0)
+            return false;
+        if (options.nonPositive && value > 0)
+            return false;
+        if (options.nonNegative && value < 0)
+            return false;
+        if (typeof options.gt === 'number' && value <= options.gt)
+            return false;
+        if (typeof options.gte === 'number' && value < options.gte)
+            return false;
+        if (typeof options.lt === 'number' && value >= options.lt)
+            return false;
+        if (typeof options.lte === 'number' && value > options.lte)
+            return false;
+        return true;
+    }
+    function assertNumber(value, sourceCodeInfo, options) {
+        if (options === void 0) { options = {}; }
+        if (!isNumber(value, options)) {
+            throw new LitsError("Expected ".concat(getNumberTypeName(options), ", got ").concat(valueToString(value), "."), getSourceCodeInfo(value, sourceCodeInfo));
+        }
+    }
+    function asNumber(value, sourceCodeInfo, options) {
+        if (options === void 0) { options = {}; }
+        assertNumber(value, sourceCodeInfo, options);
+        return value;
+    }
+
+    /**
+     * Counts occurrences of each integer value in an array of non-negative integers.
+     *
+     * @param array - Array of non-negative integers to count
+     * @param minLength - Minimum length of the output array (default: 0)
+     * @param weights - Optional array of weights (same length as input array)
+     * @returns An array where index i contains the count of occurrences of i in the input array
+     */
+    function bincount(array, minLength, weights) {
+        if (minLength === void 0) { minLength = 0; }
+        if (array.length === 0) {
+            return Array.from({ length: minLength }, function () { return 0; });
+        }
+        // Find the maximum value to determine output array size
+        var maxValue = Math.max.apply(Math, __spreadArray([], __read(array), false));
+        var outputLength = Math.max(maxValue + 1, minLength);
+        var counts = Array.from({ length: outputLength }, function () { return 0; });
+        // Count occurrences (or sum weights if provided)
+        for (var i = 0; i < array.length; i++) {
+            var value = Math.floor(array[i]);
+            if (value < outputLength) {
+                // If weights provided, add weight; otherwise add 1
+                counts[value] += weights ? weights[i] : 1;
+            }
+        }
+        return counts;
+    }
+
+    function calcMean(vector) {
+        if (vector.length === 0) {
+            return 0;
+        }
+        var sum = vector.reduce(function (acc, val) { return acc + val; }, 0);
+        return sum / vector.length;
+    }
+
+    function calcVariance(vector) {
+        if (vector.length === 0) {
+            return 0;
+        }
+        var mean = calcMean(vector);
+        var variance = vector.reduce(function (acc, val) { return acc + Math.pow((val - mean), 2); }, 0) / vector.length;
+        return variance;
+    }
+
+    function calcStdDev(vector) {
+        if (vector.length === 0) {
+            return 0;
+        }
+        var variance = calcVariance(vector);
+        return Math.sqrt(variance);
+    }
+
+    /**
+     * Calculates the Shannon entropy of a vector.
+     * Entropy measures the amount of uncertainty or randomness in the data.
+     *
+     * @param vector - An array of values to calculate entropy for
+     * @returns The entropy value (in bits) or 0 for empty arrays
+     */
+    function calculateEntropy(vector) {
+        var e_1, _a, e_2, _b;
+        // Return 0 for empty vectors
+        if (vector.length === 0) {
+            return 0;
+        }
+        // Count occurrences of each value
+        var frequencies = new Map();
+        try {
+            for (var vector_1 = __values(vector), vector_1_1 = vector_1.next(); !vector_1_1.done; vector_1_1 = vector_1.next()) {
+                var value = vector_1_1.value;
+                frequencies.set(value, (frequencies.get(value) || 0) + 1);
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (vector_1_1 && !vector_1_1.done && (_a = vector_1.return)) _a.call(vector_1);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        // Get the total number of elements
+        var total = vector.length;
+        // Calculate entropy using Shannon's formula
+        var entropy = 0;
+        try {
+            for (var _c = __values(frequencies.values()), _d = _c.next(); !_d.done; _d = _c.next()) {
+                var frequency = _d.value;
+                var probability = frequency / total;
+                // Skip cases where probability is 0 (log(0) is undefined)
+                if (probability > 0) {
+                    entropy -= probability * Math.log2(probability);
+                }
+            }
+        }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        finally {
+            try {
+                if (_d && !_d.done && (_b = _c.return)) _b.call(_c);
+            }
+            finally { if (e_2) throw e_2.error; }
+        }
+        return entropy;
+    }
+
+    /**
+     * Calculates the mode (most frequent value(s)) of a dataset
+     * @param values An array of values of any type
+     * @returns An array containing the mode(s) of the dataset
+     */
+    function mode(values) {
+        var e_1, _a, e_2, _b, e_3, _c;
+        if (values.length === 0) {
+            return [];
+        }
+        // Create a frequency map
+        var frequencyMap = new Map();
+        try {
+            // Count occurrences of each value
+            for (var values_1 = __values(values), values_1_1 = values_1.next(); !values_1_1.done; values_1_1 = values_1.next()) {
+                var value = values_1_1.value;
+                frequencyMap.set(value, (frequencyMap.get(value) || 0) + 1);
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (values_1_1 && !values_1_1.done && (_a = values_1.return)) _a.call(values_1);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        // Find the maximum frequency
+        var maxFrequency = 0;
+        try {
+            for (var _d = __values(frequencyMap.values()), _e = _d.next(); !_e.done; _e = _d.next()) {
+                var frequency = _e.value;
+                if (frequency > maxFrequency) {
+                    maxFrequency = frequency;
+                }
+            }
+        }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        finally {
+            try {
+                if (_e && !_e.done && (_b = _d.return)) _b.call(_d);
+            }
+            finally { if (e_2) throw e_2.error; }
+        }
+        // If all values appear only once, there is no mode
+        if (maxFrequency === 1) {
+            return [];
+        }
+        // Collect all values that appear with the maximum frequency
+        var modes = [];
+        try {
+            for (var _f = __values(frequencyMap.entries()), _g = _f.next(); !_g.done; _g = _f.next()) {
+                var _h = __read(_g.value, 2), value = _h[0], frequency = _h[1];
+                if (frequency === maxFrequency) {
+                    modes.push(value);
+                }
+            }
+        }
+        catch (e_3_1) { e_3 = { error: e_3_1 }; }
+        finally {
+            try {
+                if (_g && !_g.done && (_c = _f.return)) _c.call(_f);
+            }
+            finally { if (e_3) throw e_3.error; }
+        }
+        return modes;
+    }
+
+    function isVector(vector) {
+        if (!Array.isArray(vector)) {
+            return false;
+        }
+        return vector.every(function (elem) { return isNumber(elem, { finite: true }); });
+    }
+    function assertVector(vector, sourceCodeInfo) {
+        if (!isVector(vector)) {
+            throw new LitsError("Expected a vector, but got ".concat(vector), sourceCodeInfo);
+        }
+    }
+    function assertNonEmptyVector(vector, sourceCodeInfo) {
+        assertVector(vector, sourceCodeInfo);
+        if (vector.length === 0) {
+            throw new LitsError("Expected a non empty vector, but got ".concat(vector), sourceCodeInfo);
+        }
+    }
+    var vectorNormalExpression = {
+        'v:vector?': {
+            evaluate: function (_a) {
+                var _b = __read(_a, 1), vector = _b[0];
+                return isVector(vector);
+            },
+            paramCount: 1,
+        },
+        'v:sorted?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return vector.every(function (val, i) { return i === 0 || val >= vector[i - 1]; });
+            },
+            paramCount: 1,
+        },
+        'v:monotonic?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return vector.every(function (val, i) { return i === 0 || val >= vector[i - 1]; })
+                    || vector.every(function (val, i) { return i === 0 || val <= vector[i - 1]; });
+            },
+            paramCount: 1,
+        },
+        'v:+': {
+            evaluate: function (params, sourceCodeInfo) {
+                var e_1, _a;
+                var firstParam = params[0];
+                assertVector(firstParam, sourceCodeInfo);
+                var restParams = params.slice(1);
+                try {
+                    for (var restParams_1 = __values(restParams), restParams_1_1 = restParams_1.next(); !restParams_1_1.done; restParams_1_1 = restParams_1.next()) {
+                        var param = restParams_1_1.value;
+                        assertVector(param, sourceCodeInfo);
+                        if (firstParam.length !== param.length) {
+                            throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                        }
+                    }
+                }
+                catch (e_1_1) { e_1 = { error: e_1_1 }; }
+                finally {
+                    try {
+                        if (restParams_1_1 && !restParams_1_1.done && (_a = restParams_1.return)) _a.call(restParams_1);
+                    }
+                    finally { if (e_1) throw e_1.error; }
+                }
+                var rest = restParams;
+                return rest.reduce(function (acc, vector) { return acc.map(function (val, i) { return val + vector[i]; }); }, firstParam);
+            },
+            paramCount: { min: 1 },
+        },
+        'v:-': {
+            evaluate: function (params, sourceCodeInfo) {
+                var e_2, _a;
+                var firstParam = params[0];
+                assertVector(firstParam, sourceCodeInfo);
+                var restParams = params.slice(1);
+                try {
+                    for (var restParams_2 = __values(restParams), restParams_2_1 = restParams_2.next(); !restParams_2_1.done; restParams_2_1 = restParams_2.next()) {
+                        var param = restParams_2_1.value;
+                        assertVector(param, sourceCodeInfo);
+                        if (firstParam.length !== param.length) {
+                            throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                        }
+                    }
+                }
+                catch (e_2_1) { e_2 = { error: e_2_1 }; }
+                finally {
+                    try {
+                        if (restParams_2_1 && !restParams_2_1.done && (_a = restParams_2.return)) _a.call(restParams_2);
+                    }
+                    finally { if (e_2) throw e_2.error; }
+                }
+                if (restParams.length === 0) {
+                    return firstParam.map(function (val) { return -val; });
+                }
+                var rest = restParams;
+                return rest.reduce(function (acc, vector) { return acc.map(function (val, i) { return val - vector[i]; }); }, firstParam);
+            },
+            paramCount: { min: 1 },
+        },
+        'v:*': {
+            evaluate: function (params, sourceCodeInfo) {
+                var e_3, _a;
+                var firstParam = params[0];
+                assertVector(firstParam, sourceCodeInfo);
+                var restParams = params.slice(1);
+                try {
+                    for (var restParams_3 = __values(restParams), restParams_3_1 = restParams_3.next(); !restParams_3_1.done; restParams_3_1 = restParams_3.next()) {
+                        var param = restParams_3_1.value;
+                        assertVector(param, sourceCodeInfo);
+                        if (firstParam.length !== param.length) {
+                            throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                        }
+                    }
+                }
+                catch (e_3_1) { e_3 = { error: e_3_1 }; }
+                finally {
+                    try {
+                        if (restParams_3_1 && !restParams_3_1.done && (_a = restParams_3.return)) _a.call(restParams_3);
+                    }
+                    finally { if (e_3) throw e_3.error; }
+                }
+                var rest = restParams;
+                return rest.reduce(function (acc, vector) { return acc.map(function (val, i) { return val * vector[i]; }); }, firstParam);
+            },
+            paramCount: { min: 1 },
+        },
+        'v:/': {
+            evaluate: function (params, sourceCodeInfo) {
+                var e_4, _a;
+                var firstParam = params[0];
+                assertVector(firstParam, sourceCodeInfo);
+                var restParams = params.slice(1);
+                try {
+                    for (var restParams_4 = __values(restParams), restParams_4_1 = restParams_4.next(); !restParams_4_1.done; restParams_4_1 = restParams_4.next()) {
+                        var param = restParams_4_1.value;
+                        assertVector(param, sourceCodeInfo);
+                        if (firstParam.length !== param.length) {
+                            throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                        }
+                    }
+                }
+                catch (e_4_1) { e_4 = { error: e_4_1 }; }
+                finally {
+                    try {
+                        if (restParams_4_1 && !restParams_4_1.done && (_a = restParams_4.return)) _a.call(restParams_4);
+                    }
+                    finally { if (e_4) throw e_4.error; }
+                }
+                if (restParams.length === 0) {
+                    return firstParam.map(function (val) { return 1 / val; });
+                }
+                var rest = restParams;
+                return rest.reduce(function (acc, vector) { return acc.map(function (val, i) { return val / vector[i]; }); }, firstParam);
+            },
+            paramCount: { min: 1 },
+        },
+        'v:**': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], exponent = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(exponent, sourceCodeInfo, { finite: true });
+                return vector.map(function (val) { return Math.pow(val, exponent); });
+            },
+            paramCount: 2,
+        },
+        'v:scale': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], scalar = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(scalar, sourceCodeInfo, { finite: true });
+                return vector.map(function (val) { return val * scalar; });
+            },
+            paramCount: 2,
+        },
+        'v:abs': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return vector.map(function (val) { return Math.abs(val); });
+            },
+            paramCount: 1,
+        },
+        'v:dot': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
+            },
+            paramCount: 2,
+        },
+        'v:cross': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== 3 || vectorB.length !== 3) {
+                    throw new LitsError('Cross product is only defined for 3D vectors', sourceCodeInfo);
+                }
+                return [
+                    vectorA[1] * vectorB[2] - vectorA[2] * vectorB[1],
+                    vectorA[2] * vectorB[0] - vectorA[0] * vectorB[2],
+                    vectorA[0] * vectorB[1] - vectorA[1] * vectorB[0],
+                ];
+            },
+            paramCount: 2,
+        },
+        'v:normalize': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var magnitude = Math.sqrt(vector.reduce(function (acc, val) { return acc + val * val; }, 0));
+                if (magnitude === 0) {
+                    throw new LitsError('Cannot normalize a zero vector', sourceCodeInfo);
+                }
+                return vector.map(function (val) { return val / magnitude; });
+            },
+            paramCount: 1,
+        },
+        'v:magnitude': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return Math.sqrt(vector.reduce(function (acc, val) { return acc + val * val; }, 0));
+            },
+            paramCount: 1,
+        },
+        'v:sum': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return vector.reduce(function (acc, val) { return acc + val; }, 0);
+            },
+            paramCount: 1,
+        },
+        'v:product': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return vector.reduce(function (acc, val) { return acc * val; }, 1);
+            },
+            paramCount: 1,
+        },
+        'v:mean': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return calcMean(vector);
+            },
+            paramCount: 1,
+        },
+        'v:median': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
+                var mid = Math.floor(sorted.length / 2);
+                return sorted.length % 2 === 0
+                    ? (sorted[mid - 1] + sorted[mid]) / 2
+                    : sorted[mid];
+            },
+            paramCount: 1,
+        },
+        'v:mode': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return mode(vector);
+            },
+            paramCount: 1,
+        },
+        'v:variance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var mean = calcMean(vector);
+                return vector.reduce(function (acc, val) { return acc + Math.pow((val - mean), 2); }, 0) / vector.length;
+            },
+            paramCount: 1,
+        },
+        'v:std-dev': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return Math.sqrt(vector.reduce(function (acc, val) { return acc + val; }, 0) / vector.length);
+            },
+            paramCount: 1,
+        },
+        'v:min': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertNonEmptyVector(vector, sourceCodeInfo);
+                return vector.reduce(function (acc, val) { return (val < vector[acc] ? val : acc); }, vector[0]);
+            },
+            paramCount: 1,
+        },
+        'v:max': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertNonEmptyVector(vector, sourceCodeInfo);
+                return vector.reduce(function (acc, val) { return (val > vector[acc] ? val : acc); }, vector[0]);
+            },
+            paramCount: 1,
+        },
+        'v:min-index': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertNonEmptyVector(vector, sourceCodeInfo);
+                return vector.reduce(function (acc, val, i) { return (val < vector[acc] ? i : acc); }, 0);
+            },
+            paramCount: 1,
+        },
+        'v:max-index': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertNonEmptyVector(vector, sourceCodeInfo);
+                return vector.reduce(function (acc, val, i) { return (val > vector[acc] ? i : acc); }, 0);
+            },
+            paramCount: 1,
+        },
+        'v:sort-indices': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return __spreadArray([], __read(vector.keys()), false).sort(function (a, b) { return vector[a] - vector[b]; });
+            },
+            paramCount: 1,
+        },
+        'v:count-values': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var e_5, _b;
+                var _c = __read(_a, 1), vector = _c[0];
+                assertVector(vector, sourceCodeInfo);
+                var frequencyMap = new Map();
+                try {
+                    for (var vector_1 = __values(vector), vector_1_1 = vector_1.next(); !vector_1_1.done; vector_1_1 = vector_1.next()) {
+                        var value = vector_1_1.value;
+                        frequencyMap.set(value, (frequencyMap.get(value) || 0) + 1);
+                    }
+                }
+                catch (e_5_1) { e_5 = { error: e_5_1 }; }
+                finally {
+                    try {
+                        if (vector_1_1 && !vector_1_1.done && (_b = vector_1.return)) _b.call(vector_1);
+                    }
+                    finally { if (e_5) throw e_5.error; }
+                }
+                return __spreadArray([], __read(frequencyMap.entries()), false).sort(function (a, b) {
+                    // First compare by count (descending)
+                    var countDiff = b[1] - a[1];
+                    if (countDiff !== 0)
+                        return countDiff;
+                    // If counts are equal, sort by value (ascending)
+                    return a[0] - b[0];
+                });
+            },
+            paramCount: 1,
+        },
+        'v:linspace': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), start = _b[0], end = _b[1], numPoints = _b[2];
+                assertNumber(start, sourceCodeInfo, { finite: true });
+                assertNumber(end, sourceCodeInfo, { finite: true });
+                assertNumber(numPoints, sourceCodeInfo, { integer: true, positive: true });
+                var step = (end - start) / (numPoints - 1);
+                return Array.from({ length: numPoints }, function (_, i) { return start + i * step; });
+            },
+            paramCount: 3,
+        },
+        'v:ones': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), length = _b[0];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                return Array.from({ length: length }, function () { return 1; });
+            },
+            paramCount: 1,
+        },
+        'v:zeros': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), length = _b[0];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                return Array.from({ length: length }, function () { return 0; });
+            },
+            paramCount: 1,
+        },
+        'v:fill': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), length = _b[0], value = _b[1];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                return Array.from({ length: length }, function () { return value; });
+            },
+            paramCount: 2,
+        },
+        'v:generate': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var _c = __read(_a, 2), length = _c[0], generator = _c[1];
+                var executeFunction = _b.executeFunction;
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                assertLitsFunction(generator, sourceCodeInfo);
+                return Array.from({ length: length }, function (_, i) {
+                    var value = executeFunction(generator, [i], contextStack, sourceCodeInfo);
+                    assertNumber(value, sourceCodeInfo, { finite: true });
+                    return value;
+                });
+            },
+            paramCount: 2,
+        },
+        'v:cumsum': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return vector.reduce(function (acc, val) {
+                    var last = acc[acc.length - 1] || 0;
+                    acc.push(last + val);
+                    return acc;
+                }, []);
+            },
+            paramCount: 1,
+        },
+        'v:cumprod': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return vector.reduce(function (acc, val) {
+                    var last = acc[acc.length - 1] || 1;
+                    acc.push(last * val);
+                    return acc;
+                }, []);
+            },
+            paramCount: 1,
+        },
+        'v:angle': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var dotProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
+                var magnitudeA = Math.sqrt(vectorA.reduce(function (acc, val) { return acc + val * val; }, 0));
+                var magnitudeB = Math.sqrt(vectorB.reduce(function (acc, val) { return acc + val * val; }, 0));
+                return Math.acos(dotProduct / (magnitudeA * magnitudeB));
+            },
+            paramCount: 2,
+        },
+        'v:projection': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var dotProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
+                var magnitudeB = Math.sqrt(vectorB.reduce(function (acc, val) { return acc + val * val; }, 0));
+                return vectorB.map(function (val) { return (dotProduct / (Math.pow(magnitudeB, 2))) * val; });
+            },
+            paramCount: 2,
+        },
+        'v:orthogonal?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var dotProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
+                return dotProduct === 0;
+            },
+            paramCount: 2,
+        },
+        'v:parallel?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var crossProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
+                return crossProduct === 0;
+            },
+            paramCount: 2,
+        },
+        'v:collinear?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var crossProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
+                return crossProduct === 0;
+            },
+            paramCount: 2,
+        },
+        'v:cosine-similarity': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var dotProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
+                var magnitudeA = Math.sqrt(vectorA.reduce(function (acc, val) { return acc + val * val; }, 0));
+                var magnitudeB = Math.sqrt(vectorB.reduce(function (acc, val) { return acc + val * val; }, 0));
+                return dotProduct / (magnitudeA * magnitudeB);
+            },
+            paramCount: 2,
+        },
+        'v:distance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return Math.sqrt(vectorA.reduce(function (acc, val, i) { return acc + Math.pow((val - vectorB[i]), 2); }, 0));
+            },
+            paramCount: 2,
+        },
+        'v:euclidean-distance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return Math.sqrt(vectorA.reduce(function (acc, val, i) { return acc + Math.pow((val - vectorB[i]), 2); }, 0));
+            },
+            paramCount: 2,
+        },
+        'v:manhattan-distance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return vectorA.reduce(function (acc, val, i) { return acc + Math.abs(val - vectorB[i]); }, 0);
+            },
+            paramCount: 2,
+        },
+        'v:hamming-distance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return vectorA.reduce(function (acc, val, i) { return acc + (val !== vectorB[i] ? 1 : 0); }, 0);
+            },
+            paramCount: 2,
+        },
+        'v:chebyshev-distance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return Math.max.apply(Math, __spreadArray([], __read(vectorA.map(function (val, i) { return Math.abs(val - vectorB[i]); })), false));
+            },
+            paramCount: 2,
+        },
+        'v:minkowski-distance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), vectorA = _b[0], vectorB = _b[1], p = _b[2];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                assertNumber(p, sourceCodeInfo, { finite: true });
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return Math.pow(vectorA.reduce(function (acc, val, i) { return acc + Math.pow(Math.abs(val - vectorB[i]), p); }, 0), (1 / p));
+            },
+            paramCount: 3,
+        },
+        'v:jaccard-distance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                var intersection = vectorA.filter(function (val) { return vectorB.includes(val); }).length;
+                var union = new Set(__spreadArray(__spreadArray([], __read(vectorA), false), __read(vectorB), false)).size;
+                return 1 - intersection / union;
+            },
+            paramCount: 2,
+        },
+        'v:dice-coefficient': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                var intersection = vectorA.filter(function (val) { return vectorB.includes(val); }).length;
+                return (2 * intersection) / (vectorA.length + vectorB.length);
+            },
+            paramCount: 2,
+        },
+        'v:levenshtein-distance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                var m = vectorA.length;
+                var n = vectorB.length;
+                var d = Array.from({ length: m + 1 }, function () { return Array(n + 1).fill(0); });
+                for (var i = 0; i <= m; i += 1) {
+                    d[i][0] = i;
+                }
+                for (var j = 0; j <= n; j += 1) {
+                    d[0][j] = j;
+                }
+                for (var i = 1; i <= m; i += 1) {
+                    for (var j = 1; j <= n; j += 1) {
+                        var cost = vectorA[i - 1] === vectorB[j - 1] ? 0 : 1;
+                        d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + cost);
+                    }
+                }
+                return d[m][n];
+            },
+            paramCount: 2,
+        },
+        'v:l1-norm': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return vector.reduce(function (acc, val) { return acc + Math.abs(val); }, 0);
+            },
+            paramCount: 1,
+        },
+        'v:l2-norm': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return Math.sqrt(vector.reduce(function (acc, val) { return acc + val * val; }, 0));
+            },
+            paramCount: 1,
+        },
+        'v:quartiles': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
+                var q1 = sorted[Math.floor((sorted.length / 4))];
+                var q2 = sorted[Math.floor((sorted.length / 2))];
+                var q3 = sorted[Math.floor((3 * sorted.length) / 4)];
+                return [q1, q2, q3];
+            },
+            paramCount: 1,
+        },
+        'v:iqr': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
+                var q1 = sorted[Math.floor((sorted.length / 4))];
+                var q3 = sorted[Math.floor((3 * sorted.length) / 4)];
+                return q3 - q1;
+            },
+            paramCount: 1,
+        },
+        'v:percentile': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], percentile = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(percentile, sourceCodeInfo, { finite: true });
+                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
+                var index = Math.floor((percentile / 100) * (sorted.length - 1));
+                return sorted[index];
+            },
+            paramCount: 2,
+        },
+        'v:quantile': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], quantile = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(quantile, sourceCodeInfo, { finite: true });
+                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
+                var index = Math.floor(quantile * (sorted.length - 1));
+                return sorted[index];
+            },
+            paramCount: 2,
+        },
+        'v:range': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertNonEmptyVector(vector, sourceCodeInfo);
+                var min = vector.reduce(function (acc, val) { return (val < vector[acc] ? val : acc); }, vector[0]);
+                var max = vector.reduce(function (acc, val) { return (val > vector[acc] ? val : acc); }, vector[0]);
+                return max - min;
+            },
+            paramCount: 1,
+        },
+        'v:skewness': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var mean = calcMean(vector);
+                var stdDev = calcStdDev(vector);
+                return vector.reduce(function (acc, val) { return acc + (Math.pow((val - mean), 3)); }, 0) / (vector.length * Math.pow(stdDev, 3));
+            },
+            paramCount: 1,
+        },
+        'v:kurtosis': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var mean = calcMean(vector);
+                var stdDev = calcStdDev(vector);
+                return vector.reduce(function (acc, val) { return acc + (Math.pow((val - mean), 4)); }, 0) / (vector.length * Math.pow(stdDev, 4));
+            },
+            paramCount: 1,
+        },
+        'v:geometric-mean': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return Math.exp(vector.reduce(function (acc, val) { return acc + Math.log(val); }, 0) / vector.length);
+            },
+            paramCount: 1,
+        },
+        'v:harmonic-mean': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return vector.length / vector.reduce(function (acc, val) { return acc + 1 / val; }, 0);
+            },
+            paramCount: 1,
+        },
+        'v:rms': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return Math.sqrt(vector.reduce(function (acc, val) { return acc + Math.pow(val, 2); }, 0) / vector.length);
+            },
+            paramCount: 1,
+        },
+        'v:z-score': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var mean = calcMean(vector);
+                var stdDev = calcStdDev(vector);
+                return vector.map(function (val) { return (val - mean) / stdDev; });
+            },
+            paramCount: 1,
+        },
+        'v:normalize-minmax': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var min = vector.reduce(function (acc, val) { return (val < vector[acc] ? val : acc); }, vector[0]);
+                var max = vector.reduce(function (acc, val) { return (val > vector[acc] ? val : acc); }, vector[0]);
+                return vector.map(function (val) { return (val - min) / (max - min); });
+            },
+            paramCount: 1,
+        },
+        'v:normalize-robust': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var median = vector.reduce(function (acc, val) { return acc + val; }, 0) / vector.length;
+                var iqr = vector.reduce(function (acc, val) { return acc + Math.abs(val - median); }, 0) / vector.length;
+                return vector.map(function (val) { return (val - median) / iqr; });
+            },
+            paramCount: 1,
+        },
+        'v:covariance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var meanA = calcMean(vectorA);
+                var meanB = calcMean(vectorB);
+                return vectorA.reduce(function (acc, val, i) { return acc + (val - meanA) * (vectorB[i] - meanB); }, 0) / vectorA.length;
+            },
+            paramCount: 2,
+        },
+        'v:correlation': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var meanA = calcMean(vectorA);
+                var meanB = calcMean(vectorB);
+                var numerator = vectorA.reduce(function (acc, val, i) { return acc + (val - meanA) * (vectorB[i] - meanB); }, 0);
+                var denominator = Math.sqrt(vectorA.reduce(function (acc, val) { return acc + Math.pow((val - meanA), 2); }, 0) * vectorB.reduce(function (acc, val) { return acc + Math.pow((val - meanB), 2); }, 0));
+                return numerator / denominator;
+            },
+            paramCount: 2,
+        },
+        'v:spearman-correlation': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var rankA = __spreadArray([], __read(vectorA.keys()), false).sort(function (a, b) { return vectorA[a] - vectorA[b]; });
+                var rankB = __spreadArray([], __read(vectorB.keys()), false).sort(function (a, b) { return vectorB[a] - vectorB[b]; });
+                return vectorA.reduce(function (acc, _val, i) { return acc + (rankA[i] - rankB[i]); }, 0) / vectorA.length;
+            },
+            paramCount: 2,
+        },
+        'v:kendall-tau': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var concordant = 0;
+                var discordant = 0;
+                for (var i = 0; i < vectorA.length; i += 1) {
+                    for (var j = i + 1; j < vectorA.length; j += 1) {
+                        if ((vectorA[i] - vectorA[j]) * (vectorB[i] - vectorB[j]) > 0) {
+                            concordant += 1;
+                        }
+                        else {
+                            discordant += 1;
+                        }
+                    }
+                }
+                return (concordant - discordant) / Math.sqrt(Math.pow((concordant + discordant), 2));
+            },
+            paramCount: 2,
+        },
+        'v:histogram': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var e_6, _b;
+                var _c = __read(_a, 2), vector = _c[0], bins = _c[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(bins, sourceCodeInfo, { integer: true, positive: true });
+                var min = vector.reduce(function (acc, val) { return (val < vector[acc] ? val : acc); }, vector[0]);
+                var max = vector.reduce(function (acc, val) { return (val > vector[acc] ? val : acc); }, vector[0]);
+                var binSize = (max - min) / bins;
+                var histogram = Array.from({ length: bins }, function () { return 0; });
+                try {
+                    for (var vector_2 = __values(vector), vector_2_1 = vector_2.next(); !vector_2_1.done; vector_2_1 = vector_2.next()) {
+                        var value = vector_2_1.value;
+                        var binIndex = Math.floor((value - min) / binSize);
+                        if (binIndex >= 0 && binIndex < bins) {
+                            histogram[binIndex] += 1;
+                        }
+                    }
+                }
+                catch (e_6_1) { e_6 = { error: e_6_1 }; }
+                finally {
+                    try {
+                        if (vector_2_1 && !vector_2_1.done && (_b = vector_2.return)) _b.call(vector_2);
+                    }
+                    finally { if (e_6) throw e_6.error; }
+                }
+                return histogram;
+            },
+            paramCount: 2,
+        },
+        'v:cdf': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], value = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(value, sourceCodeInfo, { finite: true });
+                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
+                var index = sorted.findIndex(function (val) { return val > value; });
+                return index === -1 ? 1 : index / sorted.length;
+            },
+            paramCount: 2,
+        },
+        'v:ecdf': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], value = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(value, sourceCodeInfo, { finite: true });
+                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
+                var index = sorted.findIndex(function (val) { return val >= value; });
+                return index === -1 ? 1 : (index + 1) / sorted.length;
+            },
+            paramCount: 2,
+        },
+        'v:no-extreme-eutliers?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var mean = calcMean(vector);
+                var stdDev = calcStdDev(vector);
+                return vector.every(function (val) { return Math.abs((val - mean) / stdDev) < 3; });
+            },
+            paramCount: 1,
+        },
+        'v:outliers': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var mean = calcMean(vector);
+                var stdDev = calcStdDev(vector);
+                return vector.filter(function (val) { return Math.abs((val - mean) / stdDev) > 3; });
+            },
+            paramCount: 1,
+        },
+        'v:moving-average': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
+                var result = [];
+                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
+                    var sum = vector.slice(i, i + windowSize).reduce(function (acc, val) { return acc + val; }, 0);
+                    result.push(sum / windowSize);
+                }
+                return result;
+            },
+            paramCount: 2,
+        },
+        'v:moving-median': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
+                var result = [];
+                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
+                    var median = vector.slice(i, i + windowSize).sort(function (a, b) { return a - b; })[Math.floor(windowSize / 2)];
+                    result.push(median);
+                }
+                return result;
+            },
+            paramCount: 2,
+        },
+        'v:moving-std': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
+                var result = [];
+                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
+                    var stdDev = calcStdDev(vector.slice(i, i + windowSize));
+                    result.push(stdDev);
+                }
+                return result;
+            },
+            paramCount: 2,
+        },
+        'v:moving-sum': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
+                var result = [];
+                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
+                    var sum = vector.slice(i, i + windowSize).reduce(function (acc, val) { return acc + val; }, 0);
+                    result.push(sum);
+                }
+                return result;
+            },
+            paramCount: 2,
+        },
+        'v:moving-product': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
+                var result = [];
+                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
+                    var product = vector.slice(i, i + windowSize).reduce(function (acc, val) { return acc * val; }, 1);
+                    result.push(product);
+                }
+                return result;
+            },
+            paramCount: 2,
+        },
+        'v:moving-min': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
+                var result = [];
+                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
+                    var min = vector.slice(i, i + windowSize).reduce(function (acc, val) { return (val < acc ? val : acc); }, vector[i]);
+                    result.push(min);
+                }
+                return result;
+            },
+            paramCount: 2,
+        },
+        'v:moving-max': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
+                var result = [];
+                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
+                    var max = vector.slice(i, i + windowSize).reduce(function (acc, val) { return (val > acc ? val : acc); }, vector[i]);
+                    result.push(max);
+                }
+                return result;
+            },
+            paramCount: 2,
+        },
+        'moving-variance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
+                var result = [];
+                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
+                    result.push(calcVariance(vector.slice(i, i + windowSize)));
+                }
+                return result;
+            },
+            paramCount: 2,
+        },
+        'moving-rms': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
+                var result = [];
+                var _loop_1 = function (i) {
+                    var mean = calcMean(vector.slice(i, i + windowSize));
+                    var rms = Math.sqrt(vector.slice(i, i + windowSize).reduce(function (acc, val) { return acc + Math.pow((val - mean), 2); }, 0) / windowSize);
+                    result.push(rms);
+                };
+                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
+                    _loop_1(i);
+                }
+                return result;
+            },
+            paramCount: 2,
+        },
+        'v:moving-percentile': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), vector = _b[0], windowSize = _b[1], percentile = _b[2];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
+                assertNumber(percentile, sourceCodeInfo, { finite: true });
+                var result = [];
+                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
+                    var sorted = vector.slice(i, i + windowSize).sort(function (a, b) { return a - b; });
+                    var index = Math.floor(percentile * (sorted.length - 1));
+                    result.push(sorted[index]);
+                }
+                return result;
+            },
+            paramCount: 3,
+        },
+        'v:moving-quantile': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), vector = _b[0], windowSize = _b[1], quantile = _b[2];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
+                assertNumber(quantile, sourceCodeInfo, { finite: true });
+                var result = [];
+                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
+                    var sorted = vector.slice(i, i + windowSize).sort(function (a, b) { return a - b; });
+                    var index = Math.floor(quantile * (sorted.length - 1));
+                    result.push(sorted[index]);
+                }
+                return result;
+            },
+            paramCount: 3,
+        },
+        'v:entropy': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return calculateEntropy(vector);
+            },
+            paramCount: 1,
+        },
+        'v:gini-coefficient': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
+                var n = sorted.length;
+                var sum = sorted.reduce(function (acc, val) { return acc + val; }, 0);
+                var gini = (2 * sorted.reduce(function (acc, val, i) { return acc + (i + 1) * val; }, 0)) / (n * sum) - (n + 1) / n;
+                return gini;
+            },
+            paramCount: 1,
+        },
+        'v:bincount': {
+            evaluate: function (params, sourceCodeInfo) {
+                var _a, _b;
+                var vector = params[0];
+                assertVector(vector, sourceCodeInfo);
+                vector.forEach(function (val) { return assertNumber(val, sourceCodeInfo, { finite: true, integer: true, nonNegative: true }); });
+                var minSize = (_a = params[1]) !== null && _a !== void 0 ? _a : 0;
+                assertNumber(minSize, sourceCodeInfo, { integer: true, nonNegative: true });
+                var weights = (_b = params[2]) !== null && _b !== void 0 ? _b : undefined;
+                if (weights !== null) {
+                    assertVector(weights, sourceCodeInfo);
+                    if (weights.length !== vector.length) {
+                        throw new LitsError('Weights vector must be the same length as the input vector', sourceCodeInfo);
+                    }
+                    weights.forEach(function (val) { return assertNumber(val, sourceCodeInfo, { finite: true }); });
+                }
+                return bincount(vector, minSize, weights);
+            },
+            paramCount: { min: 1, max: 3 },
+        },
+        'v:arithmetic-sum': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), start = _b[0], step = _b[1], length = _b[2];
+                assertNumber(start, sourceCodeInfo, { finite: true });
+                assertNumber(step, sourceCodeInfo, { finite: true });
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                return (length / 2) * (2 * start + (length - 1) * step);
+            },
+            paramCount: 3,
+        },
+        'v:autocorrelation': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], lag = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                var effectiveLag = lag !== null && lag !== void 0 ? lag : vector.length - 1;
+                assertNumber(effectiveLag, sourceCodeInfo, { integer: true });
+                if (effectiveLag >= vector.length) {
+                    throw new LitsError('Lag must be less than the length of the vector', sourceCodeInfo);
+                }
+                var mean = calcMean(vector);
+                var variance = calcVariance(vector);
+                var autocovariance = vector.reduce(function (acc, val, i) { return acc + (val - mean) * (vector[i + effectiveLag] - mean); }, 0) / vector.length;
+                return autocovariance / variance;
+            },
+            paramCount: { min: 1, max: 2 },
+        },
+        'v:cross-correlation': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), vectorA = _b[0], vectorB = _b[1], lag = _b[2];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var effectiveLag = lag !== null && lag !== void 0 ? lag : vectorA.length - 1;
+                assertNumber(effectiveLag, sourceCodeInfo, { integer: true, positive: true });
+                if (effectiveLag >= vectorA.length || effectiveLag >= vectorB.length) {
+                    throw new LitsError('Lag must be less than the length of the vectors', sourceCodeInfo);
+                }
+                var n = vectorA.length;
+                var meanA = vectorA.reduce(function (sum, x) { return sum + x; }, 0) / n;
+                var meanB = vectorB.reduce(function (sum, x) { return sum + x; }, 0) / n;
+                var stdA = Math.sqrt(vectorA.reduce(function (sum, x) { return sum + Math.pow((x - meanA), 2); }, 0) / n);
+                var stdB = Math.sqrt(vectorB.reduce(function (sum, x) { return sum + Math.pow((x - meanB), 2); }, 0) / n);
+                if (stdA === 0 || stdB === 0)
+                    return 0;
+                var overlapLength = n - Math.abs(effectiveLag);
+                var sum = 0;
+                if (effectiveLag >= 0) {
+                    for (var i = 0; i < overlapLength; i++) {
+                        sum += (vectorA[i] - meanA) * (vectorB[i + effectiveLag] - meanB);
+                    }
+                }
+                else {
+                    for (var i = 0; i < overlapLength; i++) {
+                        sum += (vectorA[i - effectiveLag] - meanA) * (vectorB[i] - meanB);
+                    }
+                }
+                return sum / (overlapLength * stdA * stdB);
+            },
+            paramCount: 3,
+        },
+        'v:winsorize': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), vector = _b[0], lowerPercentile = _b[1], upperPercentile = _b[2];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(lowerPercentile, sourceCodeInfo, { finite: true });
+                assertNumber(upperPercentile, sourceCodeInfo, { finite: true });
+                if (vector.length === 0)
+                    return [];
+                if (lowerPercentile < 0 || lowerPercentile > 0.5 || upperPercentile < 0 || upperPercentile > 0.5) {
+                    throw new LitsError('Percentiles must be between 0 and 0.5', sourceCodeInfo);
+                }
+                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
+                var lowerIndex = Math.max(0, Math.floor(lowerPercentile * vector.length));
+                var upperIndex = Math.min(vector.length - 1, Math.floor((1 - upperPercentile) * vector.length));
+                var lowerBound = sorted[lowerIndex];
+                var upperBound = sorted[upperIndex];
+                return vector.map(function (val) { return Math.max(lowerBound, Math.min(val, upperBound)); });
+            },
+            paramCount: 3,
+        },
+        'v:mse': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return vectorA.reduce(function (acc, val, i) { return acc + Math.pow((val - vectorB[i]), 2); }, 0) / vectorA.length;
+            },
+            paramCount: 2,
+        },
+        'v:mae': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return vectorA.reduce(function (acc, val, i) { return acc + Math.abs(val - vectorB[i]); }, 0) / vectorA.length;
+            },
+            paramCount: 2,
+        },
+    };
+
     function stringifyValue(value, html) {
         var _a;
         var gt = '>';
@@ -910,19 +3733,31 @@ var Playground = (function (exports) {
             return "".concat(Number.POSITIVE_INFINITY);
         if (value === Number.NEGATIVE_INFINITY)
             return "".concat(Number.NEGATIVE_INFINITY);
-        if (typeof value === 'number' && Number.isNaN(value))
-            return 'NaN';
+        if (typeof value === 'number') {
+            var pretty = prettyPi(value, { spaceSeparate: true });
+            var decimal = "".concat(value);
+            return pretty === decimal ? pretty : "".concat(pretty, "   (").concat(decimal, ")");
+        }
         if (isRegularExpression(value))
             return "/".concat(value.s, "/").concat(value.f);
         if (typeof value === 'string')
             return "\"".concat(value, "\"");
         if (isMatrix$1(value))
             return stringifyMatrix(value);
+        if (isVector(value)) {
+            return "[\n  ".concat(value.map(function (cell) { return prettyPi(cell); }).join(',\n  '), "\n]");
+        }
         return JSON.stringify(value, null, 2);
     }
+    function prettyIfNumber(value) {
+        if (typeof value === 'number') {
+            return prettyPi(value, { spaceSeparate: true });
+        }
+        return "".concat(value);
+    }
     function stringifyMatrix(matrix) {
-        var padding = matrix.flat().reduce(function (max, cell) { return Math.max(max, "".concat(cell).length); }, 0) + 1;
-        var rows = matrix.map(function (row) { return "[".concat(row.map(function (cell) { return "".concat(cell).padStart(padding); }).join(' '), " ]"); });
+        var padding = matrix.flat().reduce(function (max, cell) { return Math.max(max, prettyIfNumber(cell).length); }, 0) + 1;
+        var rows = matrix.map(function (row) { return "[".concat(row.map(function (cell) { return prettyIfNumber(cell).padStart(padding); }).join(' '), " ]"); });
         return rows.join('\n');
     }
     function isMatrix$1(value) {
@@ -1128,87 +3963,6 @@ var Playground = (function (exports) {
             default:
                 throw new LitsError("Unhandled node type: ".concat(nodeType), node[2]);
         }
-    }
-
-    function getRangeString(options) {
-        var hasUpperAndLowerBound = (typeof options.gt === 'number' || typeof options.gte === 'number')
-            && (typeof options.lt === 'number' || typeof options.lte === 'number');
-        if (hasUpperAndLowerBound) {
-            return "".concat(typeof options.gt === 'number' ? "".concat(options.gt, " < n ") : "".concat(options.gte, " <= n ")).concat(typeof options.lt === 'number' ? "< ".concat(options.lt) : "<= ".concat(options.lte));
-        }
-        else if (typeof options.gt === 'number' || typeof options.gte === 'number') {
-            return "".concat(typeof options.gt === 'number' ? "n > ".concat(options.gt) : "n >= ".concat(options.gte));
-        }
-        else if (typeof options.lt === 'number' || typeof options.lte === 'number') {
-            return "".concat(typeof options.lt === 'number' ? "n < ".concat(options.lt) : "n <= ".concat(options.lte));
-        }
-        else {
-            return '';
-        }
-    }
-    function getSignString(options) {
-        return options.positive
-            ? 'positive'
-            : options.negative
-                ? 'negative'
-                : options.nonNegative
-                    ? 'non negative'
-                    : options.nonPositive
-                        ? 'non positive'
-                        : options.nonZero
-                            ? 'non zero'
-                            : '';
-    }
-    function getNumberTypeName(options) {
-        if (options.zero)
-            return 'zero';
-        var sign = getSignString(options);
-        var numberType = options.integer ? 'integer' : 'number';
-        var finite = options.finite ? 'finite' : '';
-        var range = getRangeString(options);
-        var equal = typeof options.eq === 'number' ? "equal to ".concat(options.eq) : '';
-        return [sign, finite, numberType, range, equal].filter(function (x) { return !!x; }).join(' ');
-    }
-    function isNumber(value, options) {
-        if (options === void 0) { options = {}; }
-        if (typeof value !== 'number')
-            return false;
-        if (options.integer && !Number.isInteger(value))
-            return false;
-        if (options.finite && !Number.isFinite(value))
-            return false;
-        if (options.zero && value !== 0)
-            return false;
-        if (options.nonZero && value === 0)
-            return false;
-        if (options.positive && value <= 0)
-            return false;
-        if (options.negative && value >= 0)
-            return false;
-        if (options.nonPositive && value > 0)
-            return false;
-        if (options.nonNegative && value < 0)
-            return false;
-        if (typeof options.gt === 'number' && value <= options.gt)
-            return false;
-        if (typeof options.gte === 'number' && value < options.gte)
-            return false;
-        if (typeof options.lt === 'number' && value >= options.lt)
-            return false;
-        if (typeof options.lte === 'number' && value > options.lte)
-            return false;
-        return true;
-    }
-    function assertNumber(value, sourceCodeInfo, options) {
-        if (options === void 0) { options = {}; }
-        if (!isNumber(value, options)) {
-            throw new LitsError("Expected ".concat(getNumberTypeName(options), ", got ").concat(valueToString(value), "."), getSourceCodeInfo(value, sourceCodeInfo));
-        }
-    }
-    function asNumber(value, sourceCodeInfo, options) {
-        if (options === void 0) { options = {}; }
-        assertNumber(value, sourceCodeInfo, options);
-        return value;
     }
 
     var bitwiseNormalExpression = {
@@ -2830,6 +5584,7 @@ var Playground = (function (exports) {
                     return result * param;
                 }, 1);
             },
+            aliases: ['·'],
             paramCount: {},
         },
         '/': {
@@ -5195,1407 +7950,6 @@ var Playground = (function (exports) {
     };
 
     /**
-     * Counts occurrences of each integer value in an array of non-negative integers.
-     *
-     * @param array - Array of non-negative integers to count
-     * @param minLength - Minimum length of the output array (default: 0)
-     * @param weights - Optional array of weights (same length as input array)
-     * @returns An array where index i contains the count of occurrences of i in the input array
-     */
-    function bincount(array, minLength, weights) {
-        if (minLength === void 0) { minLength = 0; }
-        if (array.length === 0) {
-            return Array.from({ length: minLength }, function () { return 0; });
-        }
-        // Find the maximum value to determine output array size
-        var maxValue = Math.max.apply(Math, __spreadArray([], __read(array), false));
-        var outputLength = Math.max(maxValue + 1, minLength);
-        var counts = Array.from({ length: outputLength }, function () { return 0; });
-        // Count occurrences (or sum weights if provided)
-        for (var i = 0; i < array.length; i++) {
-            var value = Math.floor(array[i]);
-            if (value < outputLength) {
-                // If weights provided, add weight; otherwise add 1
-                counts[value] += weights ? weights[i] : 1;
-            }
-        }
-        return counts;
-    }
-
-    function calcMean(vector) {
-        if (vector.length === 0) {
-            return 0;
-        }
-        var sum = vector.reduce(function (acc, val) { return acc + val; }, 0);
-        return sum / vector.length;
-    }
-
-    function calcVariance(vector) {
-        if (vector.length === 0) {
-            return 0;
-        }
-        var mean = calcMean(vector);
-        var variance = vector.reduce(function (acc, val) { return acc + Math.pow((val - mean), 2); }, 0) / vector.length;
-        return variance;
-    }
-
-    function calcStdDev(vector) {
-        if (vector.length === 0) {
-            return 0;
-        }
-        var variance = calcVariance(vector);
-        return Math.sqrt(variance);
-    }
-
-    /**
-     * Calculates the Shannon entropy of a vector.
-     * Entropy measures the amount of uncertainty or randomness in the data.
-     *
-     * @param vector - An array of values to calculate entropy for
-     * @returns The entropy value (in bits) or 0 for empty arrays
-     */
-    function calculateEntropy(vector) {
-        var e_1, _a, e_2, _b;
-        // Return 0 for empty vectors
-        if (vector.length === 0) {
-            return 0;
-        }
-        // Count occurrences of each value
-        var frequencies = new Map();
-        try {
-            for (var vector_1 = __values(vector), vector_1_1 = vector_1.next(); !vector_1_1.done; vector_1_1 = vector_1.next()) {
-                var value = vector_1_1.value;
-                frequencies.set(value, (frequencies.get(value) || 0) + 1);
-            }
-        }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
-        finally {
-            try {
-                if (vector_1_1 && !vector_1_1.done && (_a = vector_1.return)) _a.call(vector_1);
-            }
-            finally { if (e_1) throw e_1.error; }
-        }
-        // Get the total number of elements
-        var total = vector.length;
-        // Calculate entropy using Shannon's formula
-        var entropy = 0;
-        try {
-            for (var _c = __values(frequencies.values()), _d = _c.next(); !_d.done; _d = _c.next()) {
-                var frequency = _d.value;
-                var probability = frequency / total;
-                // Skip cases where probability is 0 (log(0) is undefined)
-                if (probability > 0) {
-                    entropy -= probability * Math.log2(probability);
-                }
-            }
-        }
-        catch (e_2_1) { e_2 = { error: e_2_1 }; }
-        finally {
-            try {
-                if (_d && !_d.done && (_b = _c.return)) _b.call(_c);
-            }
-            finally { if (e_2) throw e_2.error; }
-        }
-        return entropy;
-    }
-
-    /**
-     * Calculates the mode (most frequent value(s)) of a dataset
-     * @param values An array of values of any type
-     * @returns An array containing the mode(s) of the dataset
-     */
-    function mode(values) {
-        var e_1, _a, e_2, _b, e_3, _c;
-        if (values.length === 0) {
-            return [];
-        }
-        // Create a frequency map
-        var frequencyMap = new Map();
-        try {
-            // Count occurrences of each value
-            for (var values_1 = __values(values), values_1_1 = values_1.next(); !values_1_1.done; values_1_1 = values_1.next()) {
-                var value = values_1_1.value;
-                frequencyMap.set(value, (frequencyMap.get(value) || 0) + 1);
-            }
-        }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
-        finally {
-            try {
-                if (values_1_1 && !values_1_1.done && (_a = values_1.return)) _a.call(values_1);
-            }
-            finally { if (e_1) throw e_1.error; }
-        }
-        // Find the maximum frequency
-        var maxFrequency = 0;
-        try {
-            for (var _d = __values(frequencyMap.values()), _e = _d.next(); !_e.done; _e = _d.next()) {
-                var frequency = _e.value;
-                if (frequency > maxFrequency) {
-                    maxFrequency = frequency;
-                }
-            }
-        }
-        catch (e_2_1) { e_2 = { error: e_2_1 }; }
-        finally {
-            try {
-                if (_e && !_e.done && (_b = _d.return)) _b.call(_d);
-            }
-            finally { if (e_2) throw e_2.error; }
-        }
-        // If all values appear only once, there is no mode
-        if (maxFrequency === 1) {
-            return [];
-        }
-        // Collect all values that appear with the maximum frequency
-        var modes = [];
-        try {
-            for (var _f = __values(frequencyMap.entries()), _g = _f.next(); !_g.done; _g = _f.next()) {
-                var _h = __read(_g.value, 2), value = _h[0], frequency = _h[1];
-                if (frequency === maxFrequency) {
-                    modes.push(value);
-                }
-            }
-        }
-        catch (e_3_1) { e_3 = { error: e_3_1 }; }
-        finally {
-            try {
-                if (_g && !_g.done && (_c = _f.return)) _c.call(_f);
-            }
-            finally { if (e_3) throw e_3.error; }
-        }
-        return modes;
-    }
-
-    function isVector(vector) {
-        if (!Array.isArray(vector)) {
-            return false;
-        }
-        return vector.every(function (elem) { return isNumber(elem, { finite: true }); });
-    }
-    function assertVector(vector, sourceCodeInfo) {
-        if (!isVector(vector)) {
-            throw new LitsError("Expected a vector, but got ".concat(vector), sourceCodeInfo);
-        }
-    }
-    function assertNonEmptyVector(vector, sourceCodeInfo) {
-        assertVector(vector, sourceCodeInfo);
-        if (vector.length === 0) {
-            throw new LitsError("Expected a non empty vector, but got ".concat(vector), sourceCodeInfo);
-        }
-    }
-    var vectorNormalExpression = {
-        'v:vector?': {
-            evaluate: function (_a) {
-                var _b = __read(_a, 1), vector = _b[0];
-                return isVector(vector);
-            },
-            paramCount: 1,
-        },
-        'v:sorted?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return vector.every(function (val, i) { return i === 0 || val >= vector[i - 1]; });
-            },
-            paramCount: 1,
-        },
-        'v:monotonic?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return vector.every(function (val, i) { return i === 0 || val >= vector[i - 1]; })
-                    || vector.every(function (val, i) { return i === 0 || val <= vector[i - 1]; });
-            },
-            paramCount: 1,
-        },
-        'v:+': {
-            evaluate: function (params, sourceCodeInfo) {
-                var e_1, _a;
-                var firstParam = params[0];
-                assertVector(firstParam, sourceCodeInfo);
-                var restParams = params.slice(1);
-                try {
-                    for (var restParams_1 = __values(restParams), restParams_1_1 = restParams_1.next(); !restParams_1_1.done; restParams_1_1 = restParams_1.next()) {
-                        var param = restParams_1_1.value;
-                        assertVector(param, sourceCodeInfo);
-                        if (firstParam.length !== param.length) {
-                            throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                        }
-                    }
-                }
-                catch (e_1_1) { e_1 = { error: e_1_1 }; }
-                finally {
-                    try {
-                        if (restParams_1_1 && !restParams_1_1.done && (_a = restParams_1.return)) _a.call(restParams_1);
-                    }
-                    finally { if (e_1) throw e_1.error; }
-                }
-                var rest = restParams;
-                return rest.reduce(function (acc, vector) { return acc.map(function (val, i) { return val + vector[i]; }); }, firstParam);
-            },
-            paramCount: { min: 1 },
-        },
-        'v:-': {
-            evaluate: function (params, sourceCodeInfo) {
-                var e_2, _a;
-                var firstParam = params[0];
-                assertVector(firstParam, sourceCodeInfo);
-                var restParams = params.slice(1);
-                try {
-                    for (var restParams_2 = __values(restParams), restParams_2_1 = restParams_2.next(); !restParams_2_1.done; restParams_2_1 = restParams_2.next()) {
-                        var param = restParams_2_1.value;
-                        assertVector(param, sourceCodeInfo);
-                        if (firstParam.length !== param.length) {
-                            throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                        }
-                    }
-                }
-                catch (e_2_1) { e_2 = { error: e_2_1 }; }
-                finally {
-                    try {
-                        if (restParams_2_1 && !restParams_2_1.done && (_a = restParams_2.return)) _a.call(restParams_2);
-                    }
-                    finally { if (e_2) throw e_2.error; }
-                }
-                if (restParams.length === 0) {
-                    return firstParam.map(function (val) { return -val; });
-                }
-                var rest = restParams;
-                return rest.reduce(function (acc, vector) { return acc.map(function (val, i) { return val - vector[i]; }); }, firstParam);
-            },
-            paramCount: { min: 1 },
-        },
-        'v:*': {
-            evaluate: function (params, sourceCodeInfo) {
-                var e_3, _a;
-                var firstParam = params[0];
-                assertVector(firstParam, sourceCodeInfo);
-                var restParams = params.slice(1);
-                try {
-                    for (var restParams_3 = __values(restParams), restParams_3_1 = restParams_3.next(); !restParams_3_1.done; restParams_3_1 = restParams_3.next()) {
-                        var param = restParams_3_1.value;
-                        assertVector(param, sourceCodeInfo);
-                        if (firstParam.length !== param.length) {
-                            throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                        }
-                    }
-                }
-                catch (e_3_1) { e_3 = { error: e_3_1 }; }
-                finally {
-                    try {
-                        if (restParams_3_1 && !restParams_3_1.done && (_a = restParams_3.return)) _a.call(restParams_3);
-                    }
-                    finally { if (e_3) throw e_3.error; }
-                }
-                var rest = restParams;
-                return rest.reduce(function (acc, vector) { return acc.map(function (val, i) { return val * vector[i]; }); }, firstParam);
-            },
-            paramCount: { min: 1 },
-        },
-        'v:/': {
-            evaluate: function (params, sourceCodeInfo) {
-                var e_4, _a;
-                var firstParam = params[0];
-                assertVector(firstParam, sourceCodeInfo);
-                var restParams = params.slice(1);
-                try {
-                    for (var restParams_4 = __values(restParams), restParams_4_1 = restParams_4.next(); !restParams_4_1.done; restParams_4_1 = restParams_4.next()) {
-                        var param = restParams_4_1.value;
-                        assertVector(param, sourceCodeInfo);
-                        if (firstParam.length !== param.length) {
-                            throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                        }
-                    }
-                }
-                catch (e_4_1) { e_4 = { error: e_4_1 }; }
-                finally {
-                    try {
-                        if (restParams_4_1 && !restParams_4_1.done && (_a = restParams_4.return)) _a.call(restParams_4);
-                    }
-                    finally { if (e_4) throw e_4.error; }
-                }
-                if (restParams.length === 0) {
-                    return firstParam.map(function (val) { return 1 / val; });
-                }
-                var rest = restParams;
-                return rest.reduce(function (acc, vector) { return acc.map(function (val, i) { return val / vector[i]; }); }, firstParam);
-            },
-            paramCount: { min: 1 },
-        },
-        'v:**': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], exponent = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(exponent, sourceCodeInfo, { finite: true });
-                return vector.map(function (val) { return Math.pow(val, exponent); });
-            },
-            paramCount: 2,
-        },
-        'v:scale': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], scalar = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(scalar, sourceCodeInfo, { finite: true });
-                return vector.map(function (val) { return val * scalar; });
-            },
-            paramCount: 2,
-        },
-        'v:abs': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return vector.map(function (val) { return Math.abs(val); });
-            },
-            paramCount: 1,
-        },
-        'v:dot': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                return vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
-            },
-            paramCount: 2,
-        },
-        'v:cross': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== 3 || vectorB.length !== 3) {
-                    throw new LitsError('Cross product is only defined for 3D vectors', sourceCodeInfo);
-                }
-                return [
-                    vectorA[1] * vectorB[2] - vectorA[2] * vectorB[1],
-                    vectorA[2] * vectorB[0] - vectorA[0] * vectorB[2],
-                    vectorA[0] * vectorB[1] - vectorA[1] * vectorB[0],
-                ];
-            },
-            paramCount: 2,
-        },
-        'v:normalize': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                var magnitude = Math.sqrt(vector.reduce(function (acc, val) { return acc + val * val; }, 0));
-                if (magnitude === 0) {
-                    throw new LitsError('Cannot normalize a zero vector', sourceCodeInfo);
-                }
-                return vector.map(function (val) { return val / magnitude; });
-            },
-            paramCount: 1,
-        },
-        'v:magnitude': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return Math.sqrt(vector.reduce(function (acc, val) { return acc + val * val; }, 0));
-            },
-            paramCount: 1,
-        },
-        'v:sum': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return vector.reduce(function (acc, val) { return acc + val; }, 0);
-            },
-            paramCount: 1,
-        },
-        'v:product': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return vector.reduce(function (acc, val) { return acc * val; }, 1);
-            },
-            paramCount: 1,
-        },
-        'v:mean': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return calcMean(vector);
-            },
-            paramCount: 1,
-        },
-        'v:median': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
-                var mid = Math.floor(sorted.length / 2);
-                return sorted.length % 2 === 0
-                    ? (sorted[mid - 1] + sorted[mid]) / 2
-                    : sorted[mid];
-            },
-            paramCount: 1,
-        },
-        'v:mode': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return mode(vector);
-            },
-            paramCount: 1,
-        },
-        'v:variance': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                var mean = calcMean(vector);
-                return vector.reduce(function (acc, val) { return acc + Math.pow((val - mean), 2); }, 0) / vector.length;
-            },
-            paramCount: 1,
-        },
-        'v:std-dev': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return Math.sqrt(vector.reduce(function (acc, val) { return acc + val; }, 0) / vector.length);
-            },
-            paramCount: 1,
-        },
-        'v:min': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertNonEmptyVector(vector, sourceCodeInfo);
-                return vector.reduce(function (acc, val) { return (val < vector[acc] ? val : acc); }, vector[0]);
-            },
-            paramCount: 1,
-        },
-        'v:max': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertNonEmptyVector(vector, sourceCodeInfo);
-                return vector.reduce(function (acc, val) { return (val > vector[acc] ? val : acc); }, vector[0]);
-            },
-            paramCount: 1,
-        },
-        'v:min-index': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertNonEmptyVector(vector, sourceCodeInfo);
-                return vector.reduce(function (acc, val, i) { return (val < vector[acc] ? i : acc); }, 0);
-            },
-            paramCount: 1,
-        },
-        'v:max-index': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertNonEmptyVector(vector, sourceCodeInfo);
-                return vector.reduce(function (acc, val, i) { return (val > vector[acc] ? i : acc); }, 0);
-            },
-            paramCount: 1,
-        },
-        'v:sort-indices': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return __spreadArray([], __read(vector.keys()), false).sort(function (a, b) { return vector[a] - vector[b]; });
-            },
-            paramCount: 1,
-        },
-        'v:count-values': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var e_5, _b;
-                var _c = __read(_a, 1), vector = _c[0];
-                assertVector(vector, sourceCodeInfo);
-                var frequencyMap = new Map();
-                try {
-                    for (var vector_1 = __values(vector), vector_1_1 = vector_1.next(); !vector_1_1.done; vector_1_1 = vector_1.next()) {
-                        var value = vector_1_1.value;
-                        frequencyMap.set(value, (frequencyMap.get(value) || 0) + 1);
-                    }
-                }
-                catch (e_5_1) { e_5 = { error: e_5_1 }; }
-                finally {
-                    try {
-                        if (vector_1_1 && !vector_1_1.done && (_b = vector_1.return)) _b.call(vector_1);
-                    }
-                    finally { if (e_5) throw e_5.error; }
-                }
-                return __spreadArray([], __read(frequencyMap.entries()), false).sort(function (a, b) {
-                    // First compare by count (descending)
-                    var countDiff = b[1] - a[1];
-                    if (countDiff !== 0)
-                        return countDiff;
-                    // If counts are equal, sort by value (ascending)
-                    return a[0] - b[0];
-                });
-            },
-            paramCount: 1,
-        },
-        'v:linspace': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), start = _b[0], end = _b[1], numPoints = _b[2];
-                assertNumber(start, sourceCodeInfo, { finite: true });
-                assertNumber(end, sourceCodeInfo, { finite: true });
-                assertNumber(numPoints, sourceCodeInfo, { integer: true, positive: true });
-                var step = (end - start) / (numPoints - 1);
-                return Array.from({ length: numPoints }, function (_, i) { return start + i * step; });
-            },
-            paramCount: 3,
-        },
-        'v:ones': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), length = _b[0];
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                return Array.from({ length: length }, function () { return 1; });
-            },
-            paramCount: 1,
-        },
-        'v:zeros': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), length = _b[0];
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                return Array.from({ length: length }, function () { return 0; });
-            },
-            paramCount: 1,
-        },
-        'v:fill': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), length = _b[0], value = _b[1];
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                return Array.from({ length: length }, function () { return value; });
-            },
-            paramCount: 2,
-        },
-        'v:generate': {
-            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
-                var _c = __read(_a, 2), length = _c[0], generator = _c[1];
-                var executeFunction = _b.executeFunction;
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                assertLitsFunction(generator, sourceCodeInfo);
-                return Array.from({ length: length }, function (_, i) {
-                    var value = executeFunction(generator, [i], contextStack, sourceCodeInfo);
-                    assertNumber(value, sourceCodeInfo, { finite: true });
-                    return value;
-                });
-            },
-            paramCount: 2,
-        },
-        'v:cumsum': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return vector.reduce(function (acc, val) {
-                    var last = acc[acc.length - 1] || 0;
-                    acc.push(last + val);
-                    return acc;
-                }, []);
-            },
-            paramCount: 1,
-        },
-        'v:cumprod': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return vector.reduce(function (acc, val) {
-                    var last = acc[acc.length - 1] || 1;
-                    acc.push(last * val);
-                    return acc;
-                }, []);
-            },
-            paramCount: 1,
-        },
-        'v:angle': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                var dotProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
-                var magnitudeA = Math.sqrt(vectorA.reduce(function (acc, val) { return acc + val * val; }, 0));
-                var magnitudeB = Math.sqrt(vectorB.reduce(function (acc, val) { return acc + val * val; }, 0));
-                return Math.acos(dotProduct / (magnitudeA * magnitudeB));
-            },
-            paramCount: 2,
-        },
-        'v:projection': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                var dotProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
-                var magnitudeB = Math.sqrt(vectorB.reduce(function (acc, val) { return acc + val * val; }, 0));
-                return vectorB.map(function (val) { return (dotProduct / (Math.pow(magnitudeB, 2))) * val; });
-            },
-            paramCount: 2,
-        },
-        'v:orthogonal?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                var dotProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
-                return dotProduct === 0;
-            },
-            paramCount: 2,
-        },
-        'v:parallel?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                var crossProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
-                return crossProduct === 0;
-            },
-            paramCount: 2,
-        },
-        'v:collinear?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                var crossProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
-                return crossProduct === 0;
-            },
-            paramCount: 2,
-        },
-        'v:cosine-similarity': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                var dotProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
-                var magnitudeA = Math.sqrt(vectorA.reduce(function (acc, val) { return acc + val * val; }, 0));
-                var magnitudeB = Math.sqrt(vectorB.reduce(function (acc, val) { return acc + val * val; }, 0));
-                return dotProduct / (magnitudeA * magnitudeB);
-            },
-            paramCount: 2,
-        },
-        'v:distance': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                return Math.sqrt(vectorA.reduce(function (acc, val, i) { return acc + Math.pow((val - vectorB[i]), 2); }, 0));
-            },
-            paramCount: 2,
-        },
-        'v:euclidean-distance': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                return Math.sqrt(vectorA.reduce(function (acc, val, i) { return acc + Math.pow((val - vectorB[i]), 2); }, 0));
-            },
-            paramCount: 2,
-        },
-        'v:manhattan-distance': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                return vectorA.reduce(function (acc, val, i) { return acc + Math.abs(val - vectorB[i]); }, 0);
-            },
-            paramCount: 2,
-        },
-        'v:hamming-distance': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                return vectorA.reduce(function (acc, val, i) { return acc + (val !== vectorB[i] ? 1 : 0); }, 0);
-            },
-            paramCount: 2,
-        },
-        'v:chebyshev-distance': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                return Math.max.apply(Math, __spreadArray([], __read(vectorA.map(function (val, i) { return Math.abs(val - vectorB[i]); })), false));
-            },
-            paramCount: 2,
-        },
-        'v:minkowski-distance': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), vectorA = _b[0], vectorB = _b[1], p = _b[2];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                assertNumber(p, sourceCodeInfo, { finite: true });
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                return Math.pow(vectorA.reduce(function (acc, val, i) { return acc + Math.pow(Math.abs(val - vectorB[i]), p); }, 0), (1 / p));
-            },
-            paramCount: 3,
-        },
-        'v:jaccard-distance': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                var intersection = vectorA.filter(function (val) { return vectorB.includes(val); }).length;
-                var union = new Set(__spreadArray(__spreadArray([], __read(vectorA), false), __read(vectorB), false)).size;
-                return 1 - intersection / union;
-            },
-            paramCount: 2,
-        },
-        'v:dice-coefficient': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                var intersection = vectorA.filter(function (val) { return vectorB.includes(val); }).length;
-                return (2 * intersection) / (vectorA.length + vectorB.length);
-            },
-            paramCount: 2,
-        },
-        'v:levenshtein-distance': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                var m = vectorA.length;
-                var n = vectorB.length;
-                var d = Array.from({ length: m + 1 }, function () { return Array(n + 1).fill(0); });
-                for (var i = 0; i <= m; i += 1) {
-                    d[i][0] = i;
-                }
-                for (var j = 0; j <= n; j += 1) {
-                    d[0][j] = j;
-                }
-                for (var i = 1; i <= m; i += 1) {
-                    for (var j = 1; j <= n; j += 1) {
-                        var cost = vectorA[i - 1] === vectorB[j - 1] ? 0 : 1;
-                        d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + cost);
-                    }
-                }
-                return d[m][n];
-            },
-            paramCount: 2,
-        },
-        'v:l1-norm': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return vector.reduce(function (acc, val) { return acc + Math.abs(val); }, 0);
-            },
-            paramCount: 1,
-        },
-        'v:l2-norm': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return Math.sqrt(vector.reduce(function (acc, val) { return acc + val * val; }, 0));
-            },
-            paramCount: 1,
-        },
-        'v:quartiles': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
-                var q1 = sorted[Math.floor((sorted.length / 4))];
-                var q2 = sorted[Math.floor((sorted.length / 2))];
-                var q3 = sorted[Math.floor((3 * sorted.length) / 4)];
-                return [q1, q2, q3];
-            },
-            paramCount: 1,
-        },
-        'v:iqr': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
-                var q1 = sorted[Math.floor((sorted.length / 4))];
-                var q3 = sorted[Math.floor((3 * sorted.length) / 4)];
-                return q3 - q1;
-            },
-            paramCount: 1,
-        },
-        'v:percentile': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], percentile = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(percentile, sourceCodeInfo, { finite: true });
-                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
-                var index = Math.floor((percentile / 100) * (sorted.length - 1));
-                return sorted[index];
-            },
-            paramCount: 2,
-        },
-        'v:quantile': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], quantile = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(quantile, sourceCodeInfo, { finite: true });
-                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
-                var index = Math.floor(quantile * (sorted.length - 1));
-                return sorted[index];
-            },
-            paramCount: 2,
-        },
-        'v:range': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertNonEmptyVector(vector, sourceCodeInfo);
-                var min = vector.reduce(function (acc, val) { return (val < vector[acc] ? val : acc); }, vector[0]);
-                var max = vector.reduce(function (acc, val) { return (val > vector[acc] ? val : acc); }, vector[0]);
-                return max - min;
-            },
-            paramCount: 1,
-        },
-        'v:skewness': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                var mean = calcMean(vector);
-                var stdDev = calcStdDev(vector);
-                return vector.reduce(function (acc, val) { return acc + (Math.pow((val - mean), 3)); }, 0) / (vector.length * Math.pow(stdDev, 3));
-            },
-            paramCount: 1,
-        },
-        'v:kurtosis': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                var mean = calcMean(vector);
-                var stdDev = calcStdDev(vector);
-                return vector.reduce(function (acc, val) { return acc + (Math.pow((val - mean), 4)); }, 0) / (vector.length * Math.pow(stdDev, 4));
-            },
-            paramCount: 1,
-        },
-        'v:geometric-mean': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return Math.exp(vector.reduce(function (acc, val) { return acc + Math.log(val); }, 0) / vector.length);
-            },
-            paramCount: 1,
-        },
-        'v:harmonic-mean': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return vector.length / vector.reduce(function (acc, val) { return acc + 1 / val; }, 0);
-            },
-            paramCount: 1,
-        },
-        'v:rms': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return Math.sqrt(vector.reduce(function (acc, val) { return acc + Math.pow(val, 2); }, 0) / vector.length);
-            },
-            paramCount: 1,
-        },
-        'v:z-score': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                var mean = calcMean(vector);
-                var stdDev = calcStdDev(vector);
-                return vector.map(function (val) { return (val - mean) / stdDev; });
-            },
-            paramCount: 1,
-        },
-        'v:normalize-minmax': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                var min = vector.reduce(function (acc, val) { return (val < vector[acc] ? val : acc); }, vector[0]);
-                var max = vector.reduce(function (acc, val) { return (val > vector[acc] ? val : acc); }, vector[0]);
-                return vector.map(function (val) { return (val - min) / (max - min); });
-            },
-            paramCount: 1,
-        },
-        'v:normalize-robust': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                var median = vector.reduce(function (acc, val) { return acc + val; }, 0) / vector.length;
-                var iqr = vector.reduce(function (acc, val) { return acc + Math.abs(val - median); }, 0) / vector.length;
-                return vector.map(function (val) { return (val - median) / iqr; });
-            },
-            paramCount: 1,
-        },
-        'v:covariance': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                var meanA = calcMean(vectorA);
-                var meanB = calcMean(vectorB);
-                return vectorA.reduce(function (acc, val, i) { return acc + (val - meanA) * (vectorB[i] - meanB); }, 0) / vectorA.length;
-            },
-            paramCount: 2,
-        },
-        'v:correlation': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                var meanA = calcMean(vectorA);
-                var meanB = calcMean(vectorB);
-                var numerator = vectorA.reduce(function (acc, val, i) { return acc + (val - meanA) * (vectorB[i] - meanB); }, 0);
-                var denominator = Math.sqrt(vectorA.reduce(function (acc, val) { return acc + Math.pow((val - meanA), 2); }, 0) * vectorB.reduce(function (acc, val) { return acc + Math.pow((val - meanB), 2); }, 0));
-                return numerator / denominator;
-            },
-            paramCount: 2,
-        },
-        'v:spearman-correlation': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                var rankA = __spreadArray([], __read(vectorA.keys()), false).sort(function (a, b) { return vectorA[a] - vectorA[b]; });
-                var rankB = __spreadArray([], __read(vectorB.keys()), false).sort(function (a, b) { return vectorB[a] - vectorB[b]; });
-                return vectorA.reduce(function (acc, _val, i) { return acc + (rankA[i] - rankB[i]); }, 0) / vectorA.length;
-            },
-            paramCount: 2,
-        },
-        'v:kendall-tau': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                var concordant = 0;
-                var discordant = 0;
-                for (var i = 0; i < vectorA.length; i += 1) {
-                    for (var j = i + 1; j < vectorA.length; j += 1) {
-                        if ((vectorA[i] - vectorA[j]) * (vectorB[i] - vectorB[j]) > 0) {
-                            concordant += 1;
-                        }
-                        else {
-                            discordant += 1;
-                        }
-                    }
-                }
-                return (concordant - discordant) / Math.sqrt(Math.pow((concordant + discordant), 2));
-            },
-            paramCount: 2,
-        },
-        'v:histogram': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var e_6, _b;
-                var _c = __read(_a, 2), vector = _c[0], bins = _c[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(bins, sourceCodeInfo, { integer: true, positive: true });
-                var min = vector.reduce(function (acc, val) { return (val < vector[acc] ? val : acc); }, vector[0]);
-                var max = vector.reduce(function (acc, val) { return (val > vector[acc] ? val : acc); }, vector[0]);
-                var binSize = (max - min) / bins;
-                var histogram = Array.from({ length: bins }, function () { return 0; });
-                try {
-                    for (var vector_2 = __values(vector), vector_2_1 = vector_2.next(); !vector_2_1.done; vector_2_1 = vector_2.next()) {
-                        var value = vector_2_1.value;
-                        var binIndex = Math.floor((value - min) / binSize);
-                        if (binIndex >= 0 && binIndex < bins) {
-                            histogram[binIndex] += 1;
-                        }
-                    }
-                }
-                catch (e_6_1) { e_6 = { error: e_6_1 }; }
-                finally {
-                    try {
-                        if (vector_2_1 && !vector_2_1.done && (_b = vector_2.return)) _b.call(vector_2);
-                    }
-                    finally { if (e_6) throw e_6.error; }
-                }
-                return histogram;
-            },
-            paramCount: 2,
-        },
-        'v:cdf': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], value = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(value, sourceCodeInfo, { finite: true });
-                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
-                var index = sorted.findIndex(function (val) { return val > value; });
-                return index === -1 ? 1 : index / sorted.length;
-            },
-            paramCount: 2,
-        },
-        'v:ecdf': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], value = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(value, sourceCodeInfo, { finite: true });
-                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
-                var index = sorted.findIndex(function (val) { return val >= value; });
-                return index === -1 ? 1 : (index + 1) / sorted.length;
-            },
-            paramCount: 2,
-        },
-        'v:no-extreme-eutliers?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                var mean = calcMean(vector);
-                var stdDev = calcStdDev(vector);
-                return vector.every(function (val) { return Math.abs((val - mean) / stdDev) < 3; });
-            },
-            paramCount: 1,
-        },
-        'v:outliers': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                var mean = calcMean(vector);
-                var stdDev = calcStdDev(vector);
-                return vector.filter(function (val) { return Math.abs((val - mean) / stdDev) > 3; });
-            },
-            paramCount: 1,
-        },
-        'v:moving-average': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
-                var result = [];
-                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
-                    var sum = vector.slice(i, i + windowSize).reduce(function (acc, val) { return acc + val; }, 0);
-                    result.push(sum / windowSize);
-                }
-                return result;
-            },
-            paramCount: 2,
-        },
-        'v:moving-median': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
-                var result = [];
-                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
-                    var median = vector.slice(i, i + windowSize).sort(function (a, b) { return a - b; })[Math.floor(windowSize / 2)];
-                    result.push(median);
-                }
-                return result;
-            },
-            paramCount: 2,
-        },
-        'v:moving-std': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
-                var result = [];
-                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
-                    var stdDev = calcStdDev(vector.slice(i, i + windowSize));
-                    result.push(stdDev);
-                }
-                return result;
-            },
-            paramCount: 2,
-        },
-        'v:moving-sum': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
-                var result = [];
-                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
-                    var sum = vector.slice(i, i + windowSize).reduce(function (acc, val) { return acc + val; }, 0);
-                    result.push(sum);
-                }
-                return result;
-            },
-            paramCount: 2,
-        },
-        'v:moving-product': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
-                var result = [];
-                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
-                    var product = vector.slice(i, i + windowSize).reduce(function (acc, val) { return acc * val; }, 1);
-                    result.push(product);
-                }
-                return result;
-            },
-            paramCount: 2,
-        },
-        'v:moving-min': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
-                var result = [];
-                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
-                    var min = vector.slice(i, i + windowSize).reduce(function (acc, val) { return (val < acc ? val : acc); }, vector[i]);
-                    result.push(min);
-                }
-                return result;
-            },
-            paramCount: 2,
-        },
-        'v:moving-max': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
-                var result = [];
-                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
-                    var max = vector.slice(i, i + windowSize).reduce(function (acc, val) { return (val > acc ? val : acc); }, vector[i]);
-                    result.push(max);
-                }
-                return result;
-            },
-            paramCount: 2,
-        },
-        'moving-variance': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
-                var result = [];
-                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
-                    result.push(calcVariance(vector.slice(i, i + windowSize)));
-                }
-                return result;
-            },
-            paramCount: 2,
-        },
-        'moving-rms': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
-                var result = [];
-                var _loop_1 = function (i) {
-                    var mean = calcMean(vector.slice(i, i + windowSize));
-                    var rms = Math.sqrt(vector.slice(i, i + windowSize).reduce(function (acc, val) { return acc + Math.pow((val - mean), 2); }, 0) / windowSize);
-                    result.push(rms);
-                };
-                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
-                    _loop_1(i);
-                }
-                return result;
-            },
-            paramCount: 2,
-        },
-        'v:moving-percentile': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), vector = _b[0], windowSize = _b[1], percentile = _b[2];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
-                assertNumber(percentile, sourceCodeInfo, { finite: true });
-                var result = [];
-                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
-                    var sorted = vector.slice(i, i + windowSize).sort(function (a, b) { return a - b; });
-                    var index = Math.floor(percentile * (sorted.length - 1));
-                    result.push(sorted[index]);
-                }
-                return result;
-            },
-            paramCount: 3,
-        },
-        'v:moving-quantile': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), vector = _b[0], windowSize = _b[1], quantile = _b[2];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
-                assertNumber(quantile, sourceCodeInfo, { finite: true });
-                var result = [];
-                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
-                    var sorted = vector.slice(i, i + windowSize).sort(function (a, b) { return a - b; });
-                    var index = Math.floor(quantile * (sorted.length - 1));
-                    result.push(sorted[index]);
-                }
-                return result;
-            },
-            paramCount: 3,
-        },
-        'v:entropy': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return calculateEntropy(vector);
-            },
-            paramCount: 1,
-        },
-        'v:gini-coefficient': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
-                var n = sorted.length;
-                var sum = sorted.reduce(function (acc, val) { return acc + val; }, 0);
-                var gini = (2 * sorted.reduce(function (acc, val, i) { return acc + (i + 1) * val; }, 0)) / (n * sum) - (n + 1) / n;
-                return gini;
-            },
-            paramCount: 1,
-        },
-        'v:bincount': {
-            evaluate: function (params, sourceCodeInfo) {
-                var _a, _b;
-                var vector = params[0];
-                assertVector(vector, sourceCodeInfo);
-                vector.forEach(function (val) { return assertNumber(val, sourceCodeInfo, { finite: true, integer: true, nonNegative: true }); });
-                var minSize = (_a = params[1]) !== null && _a !== void 0 ? _a : 0;
-                assertNumber(minSize, sourceCodeInfo, { integer: true, nonNegative: true });
-                var weights = (_b = params[2]) !== null && _b !== void 0 ? _b : undefined;
-                if (weights !== null) {
-                    assertVector(weights, sourceCodeInfo);
-                    if (weights.length !== vector.length) {
-                        throw new LitsError('Weights vector must be the same length as the input vector', sourceCodeInfo);
-                    }
-                    weights.forEach(function (val) { return assertNumber(val, sourceCodeInfo, { finite: true }); });
-                }
-                return bincount(vector, minSize, weights);
-            },
-            paramCount: { min: 1, max: 3 },
-        },
-        'v:arithmetic-sum': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), start = _b[0], step = _b[1], length = _b[2];
-                assertNumber(start, sourceCodeInfo, { finite: true });
-                assertNumber(step, sourceCodeInfo, { finite: true });
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                return (length / 2) * (2 * start + (length - 1) * step);
-            },
-            paramCount: 3,
-        },
-        'v:autocorrelation': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], lag = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                var effectiveLag = lag !== null && lag !== void 0 ? lag : vector.length - 1;
-                assertNumber(effectiveLag, sourceCodeInfo, { integer: true });
-                if (effectiveLag >= vector.length) {
-                    throw new LitsError('Lag must be less than the length of the vector', sourceCodeInfo);
-                }
-                var mean = calcMean(vector);
-                var variance = calcVariance(vector);
-                var autocovariance = vector.reduce(function (acc, val, i) { return acc + (val - mean) * (vector[i + effectiveLag] - mean); }, 0) / vector.length;
-                return autocovariance / variance;
-            },
-            paramCount: { min: 1, max: 2 },
-        },
-        'v:cross-correlation': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), vectorA = _b[0], vectorB = _b[1], lag = _b[2];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                var effectiveLag = lag !== null && lag !== void 0 ? lag : vectorA.length - 1;
-                assertNumber(effectiveLag, sourceCodeInfo, { integer: true, positive: true });
-                if (effectiveLag >= vectorA.length || effectiveLag >= vectorB.length) {
-                    throw new LitsError('Lag must be less than the length of the vectors', sourceCodeInfo);
-                }
-                var n = vectorA.length;
-                var meanA = vectorA.reduce(function (sum, x) { return sum + x; }, 0) / n;
-                var meanB = vectorB.reduce(function (sum, x) { return sum + x; }, 0) / n;
-                var stdA = Math.sqrt(vectorA.reduce(function (sum, x) { return sum + Math.pow((x - meanA), 2); }, 0) / n);
-                var stdB = Math.sqrt(vectorB.reduce(function (sum, x) { return sum + Math.pow((x - meanB), 2); }, 0) / n);
-                if (stdA === 0 || stdB === 0)
-                    return 0;
-                var overlapLength = n - Math.abs(effectiveLag);
-                var sum = 0;
-                if (effectiveLag >= 0) {
-                    for (var i = 0; i < overlapLength; i++) {
-                        sum += (vectorA[i] - meanA) * (vectorB[i + effectiveLag] - meanB);
-                    }
-                }
-                else {
-                    for (var i = 0; i < overlapLength; i++) {
-                        sum += (vectorA[i - effectiveLag] - meanA) * (vectorB[i] - meanB);
-                    }
-                }
-                return sum / (overlapLength * stdA * stdB);
-            },
-            paramCount: 3,
-        },
-        'v:winsorize': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), vector = _b[0], lowerPercentile = _b[1], upperPercentile = _b[2];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(lowerPercentile, sourceCodeInfo, { finite: true });
-                assertNumber(upperPercentile, sourceCodeInfo, { finite: true });
-                if (vector.length === 0)
-                    return [];
-                if (lowerPercentile < 0 || lowerPercentile > 0.5 || upperPercentile < 0 || upperPercentile > 0.5) {
-                    throw new LitsError('Percentiles must be between 0 and 0.5', sourceCodeInfo);
-                }
-                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
-                var lowerIndex = Math.max(0, Math.floor(lowerPercentile * vector.length));
-                var upperIndex = Math.min(vector.length - 1, Math.floor((1 - upperPercentile) * vector.length));
-                var lowerBound = sorted[lowerIndex];
-                var upperBound = sorted[upperIndex];
-                return vector.map(function (val) { return Math.max(lowerBound, Math.min(val, upperBound)); });
-            },
-            paramCount: 3,
-        },
-        'v:mse': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                return vectorA.reduce(function (acc, val, i) { return acc + Math.pow((val - vectorB[i]), 2); }, 0) / vectorA.length;
-            },
-            paramCount: 2,
-        },
-        'v:mae': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                return vectorA.reduce(function (acc, val, i) { return acc + Math.abs(val - vectorB[i]); }, 0) / vectorA.length;
-            },
-            paramCount: 2,
-        },
-    };
-
-    /**
      * Calculates the determinant of a matrix using Gaussian Elimination
      * @param matrix A square matrix represented as a 2D array
      * @returns The determinant of the matrix
@@ -6965,7 +8319,7 @@ var Playground = (function (exports) {
      * @param matrix - A two-dimensional array of numbers representing the matrix.
      * @returns `true` if the matrix is triangular, otherwise `false`.
      */
-    function isTriangular$1(matrix) {
+    function isTriangular(matrix) {
         if (!isSquare(matrix)) {
             return false;
         }
@@ -7480,7 +8834,7 @@ var Playground = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), matrix = _b[0];
                 assertMatrix(matrix, sourceCodeInfo);
-                return isTriangular$1(matrix);
+                return isTriangular(matrix);
             },
             paramCount: 1,
         },
@@ -7665,6 +9019,112 @@ var Playground = (function (exports) {
         },
     };
 
+    /**
+     * Checks if a number is a perfect square.
+     *
+     * @param {number} n - The number to check
+     * @return {boolean} - True if n is a perfect square, false otherwise
+     */
+    function isPerfectSquare(n) {
+        var sqrt = Math.sqrt(n);
+        return Math.floor(sqrt) === sqrt;
+    }
+
+    /**
+     * Checks if a number is a member of an arithmetic sequence.
+     * @param start The first term of the sequence
+     * @param step The common difference between terms
+     * @param n The number to check
+     * @returns true if the number is in the sequence, false otherwise
+     */
+    function isInArithmeticSequence(start, step, n) {
+        // Special case: If step is 0, n must equal start
+        if (step === 0) {
+            return Math.abs(n - start) < 1e-12;
+        }
+        // Check if n is a valid arithmetic sequence term
+        var position = (n - start) / step;
+        // Position must be non-negative
+        if (position < 0) {
+            return false;
+        }
+        // For tiny steps, do a direct calculation instead of using the position
+        // This helps avoid floating point precision issues
+        if (Math.abs(step) < 1e-6) {
+            // Find the closest position (rounding to nearest integer)
+            var roundedPosition_1 = Math.round(position);
+            var calculatedValue_1 = start + step * roundedPosition_1;
+            // Direct comparison with tiny values should use absolute difference
+            return Math.abs(calculatedValue_1 - n) < 1e-12;
+        }
+        // For normal cases, check if position is very close to an integer
+        var roundedPosition = Math.round(position);
+        if (Math.abs(roundedPosition - position) > 1e-12) {
+            return false;
+        }
+        // Double check by calculating the value at that position
+        var calculatedValue = start + step * roundedPosition;
+        // For values very close to zero, use absolute difference
+        if (Math.abs(n) < 1e-10 || Math.abs(calculatedValue) < 1e-10) {
+            return Math.abs(calculatedValue - n) < 1e-12;
+        }
+        // Otherwise use relative difference for better precision with large numbers
+        var relativeDifference = Math.abs(calculatedValue - n)
+            / Math.max(Math.abs(n), Math.abs(calculatedValue));
+        return relativeDifference < 1e-12;
+    }
+    var arithmeticNormalExpressions = {
+        'c:arithmetic-seq': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), start = _b[0], step = _b[1], length = _b[2];
+                assertNumber(start, sourceCodeInfo, { finite: true });
+                assertNumber(step, sourceCodeInfo, { finite: true });
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                return Array.from({ length: length }, function (_, i) { return start + i * step; });
+            },
+            paramCount: 3,
+        },
+        'c:arithmetic-take-while': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var _c = __read(_a, 3), start = _c[0], step = _c[1], fn = _c[2];
+                var executeFunction = _b.executeFunction;
+                assertNumber(start, sourceCodeInfo, { finite: true });
+                assertNumber(step, sourceCodeInfo, { finite: true });
+                assertLitsFunction(fn, sourceCodeInfo);
+                var arithmetic = [];
+                for (var i = 0;; i += 1) {
+                    var value = start + i * step;
+                    if (!executeFunction(fn, [value, i], contextStack, sourceCodeInfo)) {
+                        break;
+                    }
+                    arithmetic[i] = value;
+                }
+                return arithmetic;
+            },
+            paramCount: 3,
+        },
+        'c:arithmetic-nth': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), start = _b[0], step = _b[1], n = _b[2];
+                assertNumber(start, sourceCodeInfo, { finite: true });
+                assertNumber(step, sourceCodeInfo, { finite: true });
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return start + (n - 1) * step;
+            },
+            paramCount: 3,
+        },
+        'c:arithmetic?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), start = _b[0], step = _b[1], n = _b[2];
+                assertNumber(n, sourceCodeInfo);
+                assertNumber(start, sourceCodeInfo, { finite: true });
+                assertNumber(step, sourceCodeInfo, { finite: true });
+                return isInArithmeticSequence(start, step, n);
+            },
+            paramCount: 3,
+        },
+    };
+
     // Pre-calculated Bell numbers (for efficient lookup)
     // Only including values up to the safe integer limit in JavaScript
     var bellNumbers = [
@@ -7771,6 +9231,261 @@ var Playground = (function (exports) {
         },
     };
 
+    var factorialNumbers = [
+        1,
+        1,
+        2,
+        6,
+        24,
+        120,
+        720,
+        5040,
+        40320,
+        362880,
+        3628800,
+        39916800,
+        479001600,
+        6227020800,
+        87178291200,
+        1307674368000,
+        20922789888000,
+        355687428096000,
+        6402373705728000,
+    ];
+    var factorialSequence = {
+        'maxLength': factorialNumbers.length,
+        'c:factorial-seq': function (length) {
+            return factorialNumbers.slice(0, length);
+        },
+        'c:factorial-nth': function (n) { return factorialNumbers[n - 1]; },
+        'c:factorial?': function (n) { return factorialNumbers.includes(n); },
+        'c:factorial-take-while': function (takeWhile) {
+            var factorial = [];
+            for (var i = 0;; i += 1) {
+                if (i >= factorialNumbers.length) {
+                    break;
+                }
+                var value = factorialNumbers[i];
+                if (!takeWhile(value, i)) {
+                    break;
+                }
+                factorial[i] = value;
+            }
+            return factorial;
+        },
+    };
+
+    var fibonacciNumbers = [
+        0,
+        1,
+        1,
+        2,
+        3,
+        5,
+        8,
+        13,
+        21,
+        34,
+        55,
+        89,
+        144,
+        233,
+        377,
+        610,
+        987,
+        1597,
+        2584,
+        4181,
+        6765,
+        10946,
+        17711,
+        28657,
+        46368,
+        75025,
+        121393,
+        196418,
+        317811,
+        514229,
+        832040,
+        1346269,
+        2178309,
+        3524578,
+        5702887,
+        9227465,
+        14930352,
+        24157817,
+        39088169,
+        63245986,
+        102334155,
+        165580141,
+        267914296,
+        433494437,
+        701408733,
+        1134903170,
+        1836311903,
+        2971215073,
+        4807526976,
+        7778742049,
+        12586269025,
+        20365011074,
+        32951280099,
+        53316291173,
+        86267571272,
+        139583862445,
+        225851433717,
+        365435296162,
+        591286729879,
+        956722026041,
+        1548008755920,
+        2504730781961,
+        4052739537881,
+        6557470319842,
+        10610209857723,
+        17167680177565,
+        27777890035288,
+        44945570212853,
+        72723460248141,
+        117669030460994,
+        190392490709135,
+        308061521170129,
+        498454011879264,
+        806515533049393,
+        1304969544928657,
+        2111485077978050,
+        3416454622906707,
+        5527939700884757,
+        8944394323791464,
+    ];
+    var fibonacciSequence = {
+        'maxLength': fibonacciNumbers.length,
+        'c:fibonacci-seq': function (length) {
+            return fibonacciNumbers.slice(0, length);
+        },
+        'c:fibonacci-nth': function (n) { return fibonacciNumbers[n - 1]; },
+        'c:fibonacci?': function (n) { return fibonacciNumbers.includes(n); },
+        'c:fibonacci-take-while': function (takeWhile) {
+            var fibonacci = [];
+            for (var i = 0;; i += 1) {
+                if (i >= fibonacciNumbers.length) {
+                    break;
+                }
+                var value = fibonacciNumbers[i];
+                if (!takeWhile(value, i)) {
+                    break;
+                }
+                fibonacci[i] = value;
+            }
+            return fibonacci;
+        },
+    };
+
+    /**
+     * Checks if a number is a member of a geometric sequence.
+     * @param initialTerm The first term of the sequence (a)
+     * @param ratio The common ratio of the sequence (r)
+     * @param number The number to check
+     * @returns true if the number is in the sequence, false otherwise
+     */
+    function isInGeometricSequence(initialTerm, ratio, number) {
+        // Handle special cases
+        if (number === 0 && initialTerm === 0)
+            return true;
+        if (initialTerm === 0)
+            return number === 0;
+        if (ratio === 1)
+            return number === initialTerm;
+        if (ratio === 0)
+            return number === 0 || number === initialTerm;
+        // For negative ratios, we need special handling
+        if (ratio < 0) {
+            // Calculate log using absolute values
+            var logResult_1 = Math.log(Math.abs(number / initialTerm)) / Math.log(Math.abs(ratio));
+            // Check if logResult is very close to an integer
+            var roundedLogResult_1 = Math.round(logResult_1);
+            if (Math.abs(roundedLogResult_1 - logResult_1) > 1e-10 || logResult_1 < 0) {
+                return false;
+            }
+            // For negative ratios, alternating terms have alternating signs
+            // Check if sign matches what we expect based on the power
+            var expectedSign = roundedLogResult_1 % 2 === 0
+                ? Math.sign(initialTerm)
+                : -Math.sign(initialTerm);
+            return Math.sign(number) === expectedSign;
+        }
+        // For positive ratios
+        // Quick check based on sequence direction
+        // If ratio > 1, number should be >= initialTerm to be in the sequence
+        // If 0 < ratio < 1, number should be <= initialTerm to be in the sequence
+        if ((ratio > 1 && number < initialTerm)
+            || (ratio < 1 && number > initialTerm)) {
+            return false;
+        }
+        // Calculate n in: number = initialTerm * (ratio^n)
+        var logResult = Math.log(number / initialTerm) / Math.log(ratio);
+        // Check if logResult is very close to an integer
+        var roundedLogResult = Math.round(logResult);
+        if (Math.abs(roundedLogResult - logResult) > 1e-10 || logResult < 0) {
+            return false;
+        }
+        // Verify calculated value matches the number exactly (within floating point precision)
+        // This is important to avoid false positives due to floating point arithmetic
+        var calculatedValue = initialTerm * Math.pow(ratio, roundedLogResult);
+        var relativeDifference = Math.abs(calculatedValue - number)
+            / Math.max(Math.abs(number), Math.abs(calculatedValue));
+        return relativeDifference < 1e-10;
+    }
+    var geometricNormalExpressions = {
+        'c:geometric-seq': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), start = _b[0], ratio = _b[1], length = _b[2];
+                assertNumber(start, sourceCodeInfo, { finite: true });
+                assertNumber(ratio, sourceCodeInfo, { finite: true });
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                return Array.from({ length: length }, function (_, i) { return start * Math.pow(ratio, i); });
+            },
+            paramCount: 3,
+        },
+        'c:geometric-take-while': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var _c = __read(_a, 3), start = _c[0], ratio = _c[1], fn = _c[2];
+                var executeFunction = _b.executeFunction;
+                assertNumber(start, sourceCodeInfo, { finite: true });
+                assertNumber(ratio, sourceCodeInfo, { finite: true });
+                assertLitsFunction(fn, sourceCodeInfo);
+                var geometric = [];
+                for (var i = 0;; i += 1) {
+                    var value = start * Math.pow(ratio, i);
+                    if (!executeFunction(fn, [value, i], contextStack, sourceCodeInfo)) {
+                        break;
+                    }
+                    geometric[i] = value;
+                }
+                return geometric;
+            },
+            paramCount: 3,
+        },
+        'c:geometric-nth': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), start = _b[0], ratio = _b[1], n = _b[2];
+                assertNumber(start, sourceCodeInfo, { finite: true });
+                assertNumber(ratio, sourceCodeInfo, { finite: true });
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return start * Math.pow(ratio, (n - 1));
+            },
+            paramCount: 3,
+        },
+        'c:geometric?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), start = _b[0], ratio = _b[1], n = _b[2];
+                assertNumber(n, sourceCodeInfo);
+                assertNumber(start, sourceCodeInfo, { finite: true });
+                assertNumber(ratio, sourceCodeInfo, { finite: true });
+                return isInGeometricSequence(start, ratio, n);
+            },
+            paramCount: 3,
+        },
+    };
+
     /**
      * Checks if a number is part of the Look-and-Say sequence.
      *
@@ -7861,6 +9576,217 @@ var Playground = (function (exports) {
             return lookAndSay;
         },
         'c:look-and-say?': function (n) { return isLookAndSay(n); },
+    };
+
+    function isHappyNumber(n) {
+        // A happy number is defined by the following process:
+        // 1. Starting with any positive integer, replace the number by the sum of the squares of its digits
+        // 2. Repeat until either:
+        //    - The number equals 1 (in which case it's a happy number)
+        //    - It enters a cycle that doesn't include 1 (in which case it's not a happy number)
+        if (n <= 0)
+            return false;
+        // Use a set to detect cycles
+        var seen = new Set();
+        // Continue until we either reach 1 or detect a cycle
+        while (n !== 1 && !seen.has(n)) {
+            seen.add(n);
+            n = getSumOfSquaredDigits(n);
+        }
+        // If we reached 1, it's a happy number
+        return n === 1;
+    }
+    function getSumOfSquaredDigits(n) {
+        var sum = 0;
+        while (n > 0) {
+            var digit = n % 10;
+            sum += digit * digit;
+            n = Math.floor(n / 10);
+        }
+        return sum;
+    }
+    var happySequence = {
+        'c:happy-seq': function (length) {
+            var happyNumbers = [];
+            for (var i = 1; happyNumbers.length < length; i++) {
+                var n = i;
+                var seen = new Set();
+                while (n !== 1 && !seen.has(n)) {
+                    seen.add(n);
+                    n = String(n)
+                        .split('')
+                        .reduce(function (sum, digit) { return sum + Math.pow(Number(digit), 2); }, 0);
+                }
+                if (n === 1)
+                    happyNumbers.push(i);
+            }
+            return happyNumbers;
+        },
+        'c:happy-nth': function (n) {
+            var happyCount = 0;
+            var currentNumber = 1;
+            while (happyCount < n) {
+                var num = currentNumber;
+                var seen = new Set();
+                while (num !== 1 && !seen.has(num)) {
+                    seen.add(num);
+                    num = String(num)
+                        .split('')
+                        .reduce(function (sum, digit) { return sum + Math.pow(Number(digit), 2); }, 0);
+                }
+                if (num === 1)
+                    happyCount++;
+                currentNumber++;
+            }
+            return currentNumber - 1;
+        },
+        'c:happy?': function (n) { return isHappyNumber(n); },
+        'c:happy-take-while': function (takeWhile) {
+            var happyNumbers = [];
+            for (var i = 1;; i++) {
+                var n = i;
+                var seen = new Set();
+                while (n !== 1 && !seen.has(n)) {
+                    seen.add(n);
+                    n = String(n)
+                        .split('')
+                        .reduce(function (sum, digit) { return sum + Math.pow(Number(digit), 2); }, 0);
+                }
+                if (n === 1) {
+                    if (!takeWhile(i, happyNumbers.length)) {
+                        break;
+                    }
+                    happyNumbers.push(i);
+                }
+            }
+            return happyNumbers;
+        },
+    };
+
+    var lucasNumbers = [
+        2,
+        1,
+        3,
+        4,
+        7,
+        11,
+        18,
+        29,
+        47,
+        76,
+        123,
+        199,
+        322,
+        521,
+        843,
+        1364,
+        2207,
+        3571,
+        5778,
+        9349,
+        15127,
+        24476,
+        39603,
+        64079,
+        103682,
+        167761,
+        271443,
+        439204,
+        710647,
+        1149851,
+        1860498,
+        3010349,
+        4870847,
+        7881196,
+        12752043,
+        20633239,
+        33385282,
+        54018521,
+        87403803,
+        141422324,
+        228826127,
+        370248451,
+        599074578,
+        969323029,
+        1568397607,
+        2537720636,
+        4106118243,
+        6643838879,
+        10749957122,
+        17393796001,
+        28143753123,
+        45537549124,
+        73681302247,
+        119218851371,
+        192900153618,
+        312119004989,
+        505019158607,
+        817138163596,
+        1322157322203,
+        2139295485799,
+        3461452808002,
+        5600748293801,
+        9062201101803,
+        14662949395604,
+        23725150497407,
+        38388099893011,
+        62113250390418,
+        100501350283429,
+        162614600673847,
+        263115950957276,
+        425730551631123,
+        688846502588399,
+        1114577054219522,
+        1803423556807921,
+        2918000611027443,
+        4721424167835364,
+        7639424778862807,
+    ];
+    var lucasSequence = {
+        'maxLength': lucasNumbers.length,
+        'c:lucas-seq': function (length) {
+            return lucasNumbers.slice(0, length);
+        },
+        'c:lucas-nth': function (n) { return lucasNumbers[n - 1]; },
+        'c:lucas?': function (n) { return lucasNumbers.includes(n); },
+        'c:lucas-take-while': function (takeWhile) {
+            var lucas = [];
+            for (var i = 0;; i += 1) {
+                if (i >= lucasNumbers.length) {
+                    break;
+                }
+                var value = lucasNumbers[i];
+                if (!takeWhile(value, i)) {
+                    break;
+                }
+                lucas[i] = value;
+            }
+            return lucas;
+        },
+    };
+
+    var mersenneNumbers = [3, 7, 31, 127, 2047, 8191, 131071, 524287, 2147483647];
+    var mersenneSequence = {
+        'maxLength': mersenneNumbers.length,
+        'c:mersenne-seq': function (length) {
+            return mersenneNumbers.slice(0, length);
+        },
+        'c:mersenne-nth': function (n) { return mersenneNumbers[n - 1]; },
+        'c:mersenne?': function (n) { return mersenneNumbers.includes(n); },
+        'c:mersenne-take-while': function (takeWhile) {
+            var mersenne = [];
+            for (var i = 0;; i += 1) {
+                if (i >= mersenneNumbers.length) {
+                    break;
+                }
+                var value = mersenneNumbers[i];
+                if (!takeWhile(value, i)) {
+                    break;
+                }
+                mersenne[i] = value;
+            }
+            return mersenne;
+        },
     };
 
     /**
@@ -8021,6 +9947,331 @@ var Playground = (function (exports) {
         },
     };
 
+    var partitionNumbers = [
+        1,
+        1,
+        2,
+        3,
+        5,
+        7,
+        11,
+        15,
+        22,
+        30,
+        42,
+        56,
+        77,
+        101,
+        135,
+        176,
+        231,
+        297,
+        385,
+        490,
+        627,
+        792,
+        1002,
+        1255,
+        1575,
+        1958,
+        2436,
+        3010,
+        3718,
+        4565,
+        5604,
+        6842,
+        8349,
+        10143,
+        12310,
+        14883,
+        17977,
+        21637,
+        26015,
+        31185,
+        37338,
+        44583,
+        53174,
+        63261,
+        75175,
+        89134,
+        105558,
+        124754,
+        147273,
+        173525,
+        204226,
+        239943,
+        281589,
+        329931,
+        386155,
+        451276,
+        526823,
+        614154,
+        715220,
+        831820,
+        966467,
+        1121505,
+        1300156,
+        1505499,
+        1741630,
+        2012558,
+        2323520,
+        2679689,
+        3087735,
+        3554345,
+        4087968,
+        4697205,
+        5392783,
+        6185689,
+        7089500,
+        8118264,
+        9289091,
+        10619863,
+        12132164,
+        13848650,
+        15796476,
+        18004327,
+        20506255,
+        23338469,
+        26543660,
+        30167357,
+        34262962,
+        38887673,
+        44108109,
+        49995925,
+        56634173,
+        64112359,
+        72533807,
+        82010177,
+        92669720,
+        104651419,
+        118114304,
+        133230930,
+        150198136,
+        169229875,
+        190569292,
+        214481126,
+        241265379,
+        271248950,
+        304801365,
+        342325709,
+        384276336,
+        431149389,
+        483502844,
+        541946240,
+        607163746,
+        679903203,
+        761002156,
+        851376628,
+        952050665,
+        1064144451,
+        1188908248,
+        1327710076,
+        1482074143,
+        1653668665,
+        1844349560,
+        2056148051,
+        2291320912,
+        2552338241,
+        2841940500,
+        3163127352,
+        3519222692,
+        3913864295,
+        4351078600,
+        4835271870,
+        5371315400,
+        5964539504,
+        6620830889,
+        7346629512,
+        8149040695,
+        9035836076,
+        10015581680,
+        11097645016,
+        12292341831,
+        13610949895,
+        15065878135,
+        16670689208,
+        18440293320,
+        20390982757,
+        22540654445,
+        24908858009,
+        27517052599,
+        30388671978,
+        33549419497,
+        37027355200,
+        40853235313,
+        45060624582,
+        49686288421,
+        54770336324,
+        60356673280,
+        66493182097,
+        73232243759,
+        80630964769,
+        88751778802,
+        97662728555,
+        107438159466,
+        118159068427,
+        129913904637,
+        142798995930,
+        156919475295,
+        172389800255,
+        189334822579,
+        207890420102,
+        228204732751,
+        250438925115,
+        274768617130,
+        301384802048,
+        330495499613,
+        362326859895,
+        397125074750,
+        435157697830,
+        476715857290,
+        522115831195,
+        571701605655,
+        625846753120,
+        684957390936,
+        749474411781,
+        819876908323,
+        896684817527,
+        980462880430,
+        1071823774337,
+        1171432692373,
+        1280011042268,
+        1398341745571,
+        1527273599625,
+        1667727404093,
+        1820701100652,
+        1987276856363,
+        2168627105469,
+        2366022741845,
+        2580840212973,
+        2814570987591,
+        3068829878530,
+        3345365983698,
+        3646072432125,
+        3972999029388,
+        4328363658647,
+        4714566886083,
+        5134205287973,
+        5590088317495,
+        6085253859260,
+        6622987708040,
+        7206841706490,
+        7840656226137,
+        8528581302375,
+        9275102575355,
+        10085065885767,
+        10963707205259,
+        11916681236278,
+        12950095925895,
+        14070545699287,
+        15285151248481,
+        16601598107914,
+        18028182516671,
+        19573856161145,
+        21248279009367,
+        23061871173849,
+        25025873760111,
+        27152408925615,
+        29454549941750,
+        31946390696157,
+        34643126322519,
+        37561133582570,
+        40718063627362,
+        44132934884255,
+        47826239745920,
+        51820051838712,
+        56138148670947,
+        60806135438329,
+        65851585970275,
+        71304185514919,
+        77195892663512,
+        83561103925871,
+        90436839668817,
+        97862933703585,
+        105882246722733,
+        114540884553038,
+        123888443077259,
+        133978259344888,
+        144867692496445,
+        156618412527946,
+        169296722391554,
+        182973889854026,
+        197726516681672,
+        213636919820625,
+        230793554364681,
+        249291451168559,
+        269232701252579,
+        290726957916112,
+        313891991306665,
+        338854264248680,
+        365749566870782,
+        394723676655357,
+        425933084409356,
+        459545750448675,
+        495741934760846,
+        534715062908609,
+        576672674947168,
+        621837416509615,
+        670448123060170,
+        722760953690372,
+        779050629562167,
+        839611730366814,
+        904760108316360,
+        974834369944625,
+        1050197489931117,
+        1131238503938606,
+        1218374349844333,
+        1312051800816215,
+        1412749565173450,
+        1520980492851175,
+        1637293969337171,
+        1762278433057269,
+        1896564103591584,
+        2040825852575075,
+        2195786311682516,
+        2362219145337711,
+        2540952590045698,
+        2732873183547535,
+        2938929793929555,
+        3160137867148997,
+        3397584011986773,
+        3652430836071053,
+        3925922161489422,
+        4219388528587095,
+        4534253126900886,
+        4872038056472084,
+        5234371069753672,
+        5622992691950605,
+        6039763882095515,
+        6486674127079088,
+        6965850144195831,
+        7479565078510584,
+        8030248384943040,
+        8620496275465025,
+    ];
+    var partitionSequence = {
+        'maxLength': partitionNumbers.length,
+        'c:partition-seq': function (length) {
+            return partitionNumbers.slice(0, length);
+        },
+        'c:partition-nth': function (n) { return partitionNumbers[n - 1]; },
+        'c:partition?': function (n) { return partitionNumbers.includes(n); },
+        'c:partition-take-while': function (takeWhile) {
+            var partition = [];
+            for (var i = 0;; i += 1) {
+                if (i >= partitionNumbers.length) {
+                    break;
+                }
+                var value = partitionNumbers[i];
+                if (!takeWhile(value, i)) {
+                    break;
+                }
+                partition[i] = value;
+            }
+            return partition;
+        },
+    };
+
     var pellNumbers = [
         0,
         1,
@@ -8086,6 +10337,166 @@ var Playground = (function (exports) {
                 pell[i] = value;
             }
             return pell;
+        },
+    };
+
+    var perfectNumbers = [6, 28, 496, 8128, 33550336, 8589869056, 137438691328];
+    var perfectSequence = {
+        'maxLength': perfectNumbers.length,
+        'c:perfect-seq': function (length) {
+            return perfectNumbers.slice(0, length);
+        },
+        'c:perfect-nth': function (n) { return perfectNumbers[n - 1]; },
+        'c:perfect?': function (n) { return perfectNumbers.includes(n); },
+        'c:perfect-take-while': function (takeWhile) {
+            var perfect = [];
+            for (var i = 0;; i += 1) {
+                if (i >= perfectNumbers.length) {
+                    break;
+                }
+                var value = perfectNumbers[i];
+                if (!takeWhile(value, i)) {
+                    break;
+                }
+                perfect[i] = value;
+            }
+            return perfect;
+        },
+    };
+
+    var poligonalNormalExpressions = {
+        'c:polygonal-seq': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), sides = _b[0], n = _b[1];
+                assertNumber(sides, sourceCodeInfo, { integer: true, gte: 3 });
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                var polygonal = [];
+                for (var i = 1; i <= n; i += 1) {
+                    polygonal[i - 1] = (i * i * (sides - 2) - i * (sides - 4)) / 2;
+                }
+                return polygonal;
+            },
+            paramCount: 2,
+        },
+        'c:polygonal-take-while': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var _c = __read(_a, 2), sides = _c[0], fn = _c[1];
+                var executeFunction = _b.executeFunction;
+                assertNumber(sides, sourceCodeInfo, { integer: true, gte: 3 });
+                assertLitsFunction(fn, sourceCodeInfo);
+                var polygonal = [];
+                for (var i = 1;; i += 1) {
+                    var value = (i * i * (sides - 2) - i * (sides - 4)) / 2;
+                    if (!executeFunction(fn, [value, i], contextStack, sourceCodeInfo)) {
+                        break;
+                    }
+                    polygonal[i - 1] = (i * i * (sides - 2) - i * (sides - 4)) / 2;
+                }
+                return polygonal;
+            },
+            paramCount: 2,
+        },
+        'c:polygonal-nth': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), sides = _b[0], n = _b[1];
+                assertNumber(sides, sourceCodeInfo, { integer: true, gte: 3 });
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return (n * n * (sides - 2) - n * (sides - 4)) / 2;
+            },
+            paramCount: 2,
+        },
+        'c:polygonal?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), sides = _b[0], n = _b[1];
+                assertNumber(n, sourceCodeInfo);
+                assertNumber(sides, sourceCodeInfo, { integer: true, gte: 3 });
+                if (Number.isInteger(n) && n <= 0) {
+                    return false;
+                }
+                var a = sides - 2;
+                var b = sides - 4;
+                var discriminant = 8 * a * n + b * b;
+                var sqrtPart = Math.sqrt(discriminant);
+                // Discriminant must yield an integer square root
+                if (!Number.isInteger(sqrtPart))
+                    return false;
+                var numerator = sqrtPart + b;
+                // Numerator must be divisible by 2*a
+                if (numerator % (2 * a) !== 0)
+                    return false;
+                var x = numerator / (2 * a);
+                // x must be a positive integer
+                return Number.isInteger(x) && x > 0;
+            },
+            paramCount: 2,
+        },
+    };
+
+    function isPrime(num) {
+        if (num <= 1) {
+            return false;
+        }
+        if (num <= 3) {
+            return true;
+        }
+        if (num % 2 === 0 || num % 3 === 0) {
+            return false;
+        }
+        for (var i = 5; i * i <= num; i += 6) {
+            if (num % i === 0 || num % (i + 2) === 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+    function nthPrime(n) {
+        if (n <= 0) {
+            throw new Error('Input must be a positive integer');
+        }
+        if (n === 1)
+            return 2; // First prime is 2
+        if (n === 2)
+            return 3; // Second prime is 3
+        var count = 2; // We've already counted 2 and 3
+        var candidate = 5; // Start checking from 5
+        while (count < n) {
+            if (isPrime(candidate)) {
+                count++;
+                if (count === n) {
+                    break;
+                }
+            }
+            // We can skip even numbers and use the 6k±1 optimization
+            candidate += 2;
+        }
+        return candidate;
+    }
+    var primeSequence = {
+        'c:prime-seq': function (length) {
+            var primes = [];
+            var num = 2;
+            while (primes.length < length) {
+                if (isPrime(num)) {
+                    primes.push(num);
+                }
+                num += 1;
+            }
+            return primes;
+        },
+        'c:prime-nth': function (n) { return nthPrime(n); },
+        'c:prime?': function (n) { return isPrime(n); },
+        'c:prime-take-while': function (takeWhile) {
+            var primes = [];
+            for (var i = 2;; i += 1) {
+                if (!isPrime(i)) {
+                    continue;
+                }
+                if (!takeWhile(i, primes.length)) {
+                    break;
+                }
+                primes.push(i);
+            }
+            return primes;
         },
     };
 
@@ -8168,16 +10579,218 @@ var Playground = (function (exports) {
         return count;
     }
 
+    var tribonacciSequence = {
+        'c:tribonacci-seq': function (length) {
+            var tribonacci = [0, 1, 1];
+            for (var i = 3; i < length; i += 1) {
+                tribonacci[i] = tribonacci[i - 1] + tribonacci[i - 2] + tribonacci[i - 3];
+            }
+            return tribonacci.slice(0, length);
+        },
+        'c:tribonacci-nth': function (n) {
+            if (n === 1) {
+                return 0;
+            }
+            if (n === 2) {
+                return 1;
+            }
+            if (n === 3) {
+                return 1;
+            }
+            var a = 0;
+            var b = 1;
+            var c = 1;
+            for (var i = 4; i <= n; i += 1) {
+                var temp = a + b + c;
+                a = b;
+                b = c;
+                c = temp;
+            }
+            return c;
+        },
+        'c:tribonacci?': function (n) {
+            if (n < 0) {
+                return false;
+            }
+            if (n === 0 || n === 1 || n === 2) {
+                return true;
+            }
+            // Initialize the first three numbers of the sequence
+            var a = 0;
+            var b = 0;
+            var c = 1;
+            // Generate the sequence until we reach or exceed the input number
+            while (c < n) {
+                var next = a + b + c;
+                a = b;
+                b = c;
+                c = next;
+            }
+            // If c equals the input number, it's in the sequence
+            return c === n;
+        },
+        'c:tribonacci-take-while': function (takeWhile) {
+            var tribonacci = [];
+            if (!takeWhile(0, 0)) {
+                return tribonacci;
+            }
+            tribonacci.push(0);
+            if (!takeWhile(1, 1)) {
+                return tribonacci;
+            }
+            tribonacci.push(1);
+            if (!takeWhile(1, 2)) {
+                return tribonacci;
+            }
+            tribonacci.push(1);
+            for (var i = 3;; i += 1) {
+                var value = tribonacci[i - 1] + tribonacci[i - 2] + tribonacci[i - 3];
+                if (!takeWhile(value, i)) {
+                    break;
+                }
+                tribonacci.push(value);
+            }
+            return tribonacci;
+        },
+    };
+
+    /**
+     * Generates lucky numbers while the predicate function returns true.
+     *
+     * @param predicate - Function that tests if we should continue generating numbers.
+     *                    Takes the current lucky number and index as parameters.
+     * @returns An array of lucky numbers
+     */
+    function generateLuckyNumbers(predicate) {
+        // Start with counting from 1
+        var numbers = [];
+        for (var i = 1; i <= 2000; i++) {
+            numbers.push(i);
+        }
+        // First step: remove all even numbers (keep 1)
+        var filteredNumbers = [1];
+        for (var i = 1; i < numbers.length; i++) {
+            if (numbers[i] % 2 !== 0) {
+                filteredNumbers.push(numbers[i]);
+            }
+        }
+        var luckyNumbers = [1]; // 1 is always the first lucky number
+        var count = 1;
+        // Check if we should continue after the first number
+        if (!predicate(1, 0)) {
+            return [];
+        }
+        // Continue the sieve process
+        var index = 1; // Start with the second element (index 1, which is 3)
+        while (index < filteredNumbers.length) {
+            // Get the current lucky number
+            var luckyNumber = filteredNumbers[index];
+            // Check if we should continue
+            if (!predicate(luckyNumber, count)) {
+                break;
+            }
+            // Add to result
+            luckyNumbers.push(luckyNumber);
+            count++;
+            // Apply the sieve
+            var step = luckyNumber;
+            var newFiltered = [];
+            for (var i = 0; i < filteredNumbers.length; i++) {
+                if ((i + 1) % step !== 0) { // Keep numbers not at positions divisible by step
+                    newFiltered.push(filteredNumbers[i]);
+                }
+            }
+            filteredNumbers = newFiltered;
+            index++;
+            // If we're running low on numbers, extend the sequence
+            if (index >= filteredNumbers.length - 5) {
+                var lastNum = filteredNumbers[filteredNumbers.length - 1];
+                var next = lastNum + 2;
+                while (filteredNumbers.length < index + 1000) {
+                    filteredNumbers.push(next);
+                    next += 2;
+                }
+            }
+        }
+        return luckyNumbers;
+    }
+    function getLuckyNumbers(length) {
+        var numbers = [];
+        for (var i = 1; i <= length * 10; i += 2) { // Generate more than needed
+            numbers.push(i);
+        }
+        // Apply the sieve process
+        var idx = 1; // Start from the second element (index 1, which is 3)
+        while (idx < numbers.length) {
+            var step = numbers[idx]; // Current lucky number
+            // Remove every step-th number from the list
+            // Count from the beginning each time, and account for changing indices
+            var j = 0;
+            var count = 0;
+            while (j < numbers.length) {
+                count++;
+                if (count % step === 0) {
+                    numbers.splice(j, 1);
+                }
+                else {
+                    j++; // Only increment if we didn't remove an element
+                }
+            }
+            // Get the new index of the next element (which may have changed)
+            idx++;
+        }
+        // Return the first 'length' lucky numbers
+        return numbers.slice(0, length);
+    }
+    var luckySequence = {
+        'c:lucky-seq': function (length) { return getLuckyNumbers(length); },
+        'c:lucky-nth': function (n) { return getLuckyNumbers(n)[n - 1]; },
+        'c:lucky?': function (n) { return generateLuckyNumbers(function (l) { return l <= n; }).includes(n); },
+        'c:lucky-take-while': function (takeWhile) { return generateLuckyNumbers(takeWhile); },
+    };
+
     var sequenceNormalExpression = {};
     addSequence(bellSequence);
     addSequence(catalanSequence);
+    addSequence(factorialSequence);
+    addSequence(fibonacciSequence);
+    addSequence(happySequence);
     addSequence(lookAndSaySequence);
+    addSequence(lucasSequence);
+    addSequence(luckySequence);
+    addSequence(mersenneSequence);
     addSequence(padovanSequence);
+    addSequence(partitionSequence);
     addSequence(pellSequence);
+    addSequence(perfectSequence);
+    addSequence(primeSequence);
     addSequence(recamanSequence);
     addSequence(thueMorseSequence);
-    function addSequence(sequence) {
+    addSequence(tribonacciSequence);
+    addNormalExpressions(arithmeticNormalExpressions);
+    addNormalExpressions(geometricNormalExpressions);
+    addNormalExpressions(poligonalNormalExpressions);
+    function addNormalExpressions(normalExpressions) {
         var e_1, _a;
+        try {
+            for (var _b = __values(Object.entries(normalExpressions)), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var _d = __read(_c.value, 2), key = _d[0], value = _d[1];
+                if (sequenceNormalExpression[key]) {
+                    throw new Error("Duplicate normal expression key found: ".concat(key));
+                }
+                sequenceNormalExpression[key] = value;
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+    }
+    function addSequence(sequence) {
+        var e_2, _a;
         try {
             for (var _b = __values(Object.entries(sequence)), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var _d = __read(_c.value, 2), key = _d[0], value = _d[1];
@@ -8203,12 +10816,12 @@ var Playground = (function (exports) {
                 }
             }
         }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
         finally {
             try {
                 if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
             }
-            finally { if (e_1) throw e_1.error; }
+            finally { if (e_2) throw e_2.error; }
         }
     }
     function createSeqNormalExpression(seqFunction, maxLength) {
@@ -8264,11 +10877,6 @@ var Playground = (function (exports) {
         };
     }
 
-    // Multinomial coefficient calculation - You have binomial coefficients (presumably through count-combinations), but multinomial coefficients are their natural extension and widely used.
-    // Gray code generation - This is a fundamental combinatorial structure used in many algorithms and applications, particularly in coding theory and computer science.
-    // Partition by specific constraints - Your partition functions are great, but adding specialized versions for common constraints (like partitions into distinct parts or odd parts) would enhance their utility.
-    var perfectNumbers = [6, 28, 496, 8128, 33550336, 8589869056, 137438691328];
-    var mersennePrimes = [3, 7, 31, 127, 2047, 8191, 131071, 524287, 2147483647];
     var armstrongNumbers = [
         // 1 digit (all single digits are narcissistic)
         1,
@@ -8326,336 +10934,6 @@ var Playground = (function (exports) {
         4338281769391370,
         4338281769391371,
     ];
-    /**
-     * Checks if a number is a perfect square.
-     *
-     * @param {number} n - The number to check
-     * @return {boolean} - True if n is a perfect square, false otherwise
-     */
-    function isPerfectSquare(n) {
-        var sqrt = Math.sqrt(n);
-        return Math.floor(sqrt) === sqrt;
-    }
-    /**
-     * Checks if a number is in the Fibonacci sequence.
-     *
-     * A number is in the Fibonacci sequence if and only if one of
-     * (5n² + 4) or (5n² - 4) is a perfect square.
-     * This is based on Binet's formula.
-     *
-     * @param {number} n - The number to check
-     * @return {boolean} - True if n is a Fibonacci number, false otherwise
-     */
-    function isFibonacciNumber(n) {
-        // Handle edge cases
-        if (n < 0)
-            return false;
-        if (n === 0 || n === 1)
-            return true;
-        // Check if 5n² + 4 or 5n² - 4 is a perfect square
-        var test1 = 5 * n * n + 4;
-        var test2 = 5 * n * n - 4;
-        return isPerfectSquare(test1) || isPerfectSquare(test2);
-    }
-    /**
-     * Checks if a number is in the Lucas sequence.
-     *
-     * The Lucas sequence starts with L(0) = 2, L(1) = 1 and each subsequent number
-     * is the sum of the two previous ones: L(n) = L(n-1) + L(n-2).
-     *
-     * @param {number} n - The number to check
-     * @return {boolean} - True if n is a Lucas number, false otherwise
-     */
-    function isLucasNumber(n) {
-        // Handle edge cases
-        if (n <= 0)
-            return false;
-        // Direct check for small numbers
-        if (n === 1 || n === 2)
-            return true;
-        // Use the iterative approach for all numbers
-        var a = 2; // L(0)
-        var b = 1; // L(1)
-        while (b < n) {
-            // Calculate the next Lucas number
-            var temp = a + b;
-            a = b;
-            b = temp;
-            // Check if we've found our number
-            if (b === n) {
-                return true;
-            }
-        }
-        // If we've exceeded n without finding it, it's not a Lucas number
-        return false;
-    }
-    /**
-     * Checks if a number is part of the Tribonacci sequence.
-     * The Tribonacci sequence starts with 0, 0, 1 and each subsequent
-     * number is the sum of the three preceding ones.
-     *
-     * @param num - The number to check
-     * @returns True if the number is in the Tribonacci sequence, false otherwise
-     */
-    function isTribonacciNumber(num) {
-        // Handle edge cases
-        if (num < 0)
-            return false;
-        if (num === 0 || num === 1)
-            return true;
-        // Special case for 2, which is in the sequence
-        if (num === 2)
-            return true;
-        // Initialize the first three numbers of the sequence
-        var a = 0;
-        var b = 0;
-        var c = 1;
-        // Generate the sequence until we reach or exceed the input number
-        while (c < num) {
-            var next = a + b + c;
-            a = b;
-            b = c;
-            c = next;
-        }
-        // If c equals the input number, it's in the sequence
-        return c === num;
-    }
-    /**
-     * Checks if a number is a triangular number.
-     * A triangular number is a number that can be represented as the sum of consecutive integers from 1 to n.
-     * The formula for the nth triangular number is n(n+1)/2.
-     *
-     * @param num - The number to check
-     * @returns True if the number is triangular, false otherwise
-     */
-    function isTriangular(num) {
-        // Negative numbers and non-integers cannot be triangular
-        if (num < 0 || !Number.isInteger(num)) {
-            return false;
-        }
-        // Edge case: 0 is considered triangular (0th triangular number)
-        if (num === 0) {
-            return true;
-        }
-        // Using the formula for triangular numbers: n(n+1)/2 = num
-        // This can be rewritten as n² + n - 2*num = 0
-        // Using the quadratic formula: n = (-1 + √(1 + 8*num))/2
-        // If n is a positive integer, then the number is triangular
-        var discriminant = 1 + 8 * num;
-        var sqrtDiscriminant = Math.sqrt(discriminant);
-        // Check if the result is an integer
-        // Due to floating point precision, we check if the value is very close to an integer
-        var n = (-1 + sqrtDiscriminant) / 2;
-        return Math.abs(Math.round(n) - n) < 1e-10;
-    }
-    /* Checks if a number is a hexagonal number.
-    * A hexagonal number is a figurate number that can be represented as a hexagonal arrangement of points.
-    * The formula for the nth hexagonal number is n(2n-1).
-    *
-    * @param num - The number to check
-    * @returns True if the number is hexagonal, false otherwise
-    */
-    function isHexagonal(num) {
-        // Negative numbers and non-integers cannot be hexagonal
-        if (num < 0 || !Number.isInteger(num)) {
-            return false;
-        }
-        // Edge case: 0 is considered the 0th hexagonal number
-        if (num === 0) {
-            return true;
-        }
-        // Using the formula for hexagonal numbers: H_n = n(2n-1)
-        // We can rewrite this as 2n² - n - num = 0
-        // Using the quadratic formula: n = (1 + √(1 + 8*num))/4
-        // If n is a positive integer, then the number is hexagonal
-        var discriminant = 1 + 8 * num;
-        var sqrtDiscriminant = Math.sqrt(discriminant);
-        // Check if the result is an integer
-        // Due to floating point precision, we check if the value is very close to an integer
-        var n = (1 + sqrtDiscriminant) / 4;
-        return Math.abs(Math.round(n) - n) < 1e-10;
-    }
-    /**
-     * Checks if a number is a pentagonal number.
-     * A pentagonal number is a figurate number that can be represented as a pentagonal arrangement of points.
-     * The formula for the nth pentagonal number is n(3n-1)/2.
-     *
-     * The first few pentagonal numbers are:
-     * 0, 1, 5, 12, 22, 35, 51, 70, 92, 117, 145, 176, 210, 247, 287, 330, ...
-     *
-     * @param num - The number to check
-     * @returns True if the number is pentagonal, false otherwise
-     */
-    function isPentagonal(num) {
-        // Negative numbers and non-integers cannot be pentagonal
-        if (num < 0 || !Number.isInteger(num)) {
-            return false;
-        }
-        // Edge case: 0 is considered the 0th pentagonal number
-        if (num === 0) {
-            return true;
-        }
-        // Using the formula for pentagonal numbers: P_n = n(3n-1)/2
-        // We can rewrite this as 3n² - n - 2*num = 0
-        // Using the quadratic formula: n = (1 + √(1 + 24*num))/6
-        // If n is a positive integer, then the number is pentagonal
-        var discriminant = 1 + 24 * num;
-        var sqrtDiscriminant = Math.sqrt(discriminant);
-        // Check if the result is an integer
-        // Due to floating point precision, we check if the value is very close to an integer
-        var n = (1 + sqrtDiscriminant) / 6;
-        return Math.abs(Math.round(n) - n) < 1e-10;
-    }
-    /**
-     * Checks if a number is a pentatope number.
-     * A pentatope number (also known as a 4-simplex number or tetrahedral pyramidal number)
-     * is a 4-dimensional figurate number that represents the number of points in a 4-simplex.
-     *
-     * The formula for the nth pentatope number is: n(n+1)(n+2)(n+3)/24
-     *
-     * The first few pentatope numbers are:
-     * 0, 1, 5, 15, 35, 70, 126, 210, 330, 495, 715, 1001, 1365, 1820, 2380, ...
-     *
-     * @param num - The number to check
-     * @returns True if the number is a pentatope number, false otherwise
-     */
-    function isPentatope(num) {
-        // Negative numbers and non-integers cannot be pentatope numbers
-        if (num < 0 || !Number.isInteger(num)) {
-            return false;
-        }
-        // Edge case: 0 is considered the 0th pentatope number
-        if (num === 0) {
-            return true;
-        }
-        // For a more efficient approach, we can use an approximate solution
-        // and then check nearby values
-        // A rough approximation for n given P(n) = num is n ≈ (24*num)^(1/4)
-        var estimatedN = Math.pow((24 * num), 0.25);
-        // Check a small range around the estimate (typically only need to check 1-2 values)
-        // We'll check n ± 2 to be safe
-        var lowerBound = Math.max(1, Math.floor(estimatedN) - 2);
-        var upperBound = Math.ceil(estimatedN) + 2;
-        for (var n = lowerBound; n <= upperBound; n++) {
-            var pentatope = (n * (n + 1) * (n + 2) * (n + 3)) / 24;
-            if (pentatope === num) {
-                return true;
-            }
-            // Since pentatope numbers grow monotonically, we can exit early
-            // if we've exceeded the target number
-            if (pentatope > num) {
-                return false;
-            }
-        }
-        return false;
-    }
-    /**
-     * Checks if a number is a hexacube number.
-     * A hexacube number is a perfect 6th power (n^6 for some integer n).
-     *
-     * The first few hexacube numbers are:
-     * 0, 1, 64, 729, 4096, 15625, 46656, 117649, 262144, 531441, 1000000, ...
-     *
-     * @param num - The number to check
-     * @returns True if the number is a hexacube, false otherwise
-     */
-    function isHexacube(num) {
-        // Non-integers cannot be hexacubes
-        if (!Number.isInteger(num)) {
-            return false;
-        }
-        // Edge case: 0^6 = 0
-        if (num === 0) {
-            return true;
-        }
-        // A key insight: n^6 is always positive for any real n
-        // So negative numbers cannot be hexacubes
-        if (num < 0) {
-            return false;
-        }
-        // For numbers within the safe integer range, use a direct approach
-        if (num <= Number.MAX_SAFE_INTEGER) {
-            // Calculate the 6th root
-            var sixthRoot = Math.pow(num, (1 / 6));
-            // Round to the nearest integer
-            var roundedRoot = Math.round(sixthRoot);
-            // Calculate the 6th power of the rounded root
-            var calculatedHexacube = Math.pow(roundedRoot, 6);
-            // Check for exact equality
-            return calculatedHexacube === num;
-        }
-        // For extremely large numbers, use a safer approach that accounts for precision limits
-        else {
-            // Get a more accurate estimate of the 6th root using logarithms
-            // log(n^6) = 6*log(n), so n = 10^(log(num)/6)
-            var estimatedRoot = Math.pow(10, (Math.log10(num) / 6));
-            var roundedRoot = Math.round(estimatedRoot);
-            // For very large numbers, instead of computing roundedRoot^6 directly
-            // (which might lose precision), compare logs
-            var originalLog = Math.log10(num);
-            var hexacubeLog = 6 * Math.log10(roundedRoot);
-            // If the logs are very close, it's likely a hexacube
-            return Math.abs(originalLog - hexacubeLog) < 1e-10;
-        }
-    }
-    /**
-     * Checks if a number is a factorial number.
-     * A factorial number is a number that equals n! for some integer n >= 0.
-     *
-     * The first few factorial numbers are:
-     * 1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, ...
-     * (Note: 0! = 1 and 1! = 1)
-     *
-     * @param num - The number to check
-     * @returns True if the number is a factorial, false otherwise
-     */
-    function isFactorial(num) {
-        // Non-integers cannot be factorials
-        if (!Number.isInteger(num)) {
-            return false;
-        }
-        // Negative numbers cannot be factorials
-        if (num < 0) {
-            return false;
-        }
-        // Special case: 0 is not a factorial (0! = 1, but 0 itself is not)
-        if (num === 0) {
-            return false;
-        }
-        // Special case: 1 is both 0! and 1!
-        if (num === 1) {
-            return true;
-        }
-        // Pre-calculate factorials for efficient lookup (up to a reasonable limit)
-        var factorials = [1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600, 6227020800, 87178291200, 1307674368000, 20922789888000, 355687428096000, 6402373705728000, 121645100408832000, 2432902008176640000];
-        // Direct lookup for known factorials
-        if (factorials.includes(num)) {
-            return true;
-        }
-        // For numbers smaller than largest pre-computed factorial but not in the list
-        if (num < factorials[factorials.length - 1]) {
-            return false;
-        }
-        // For numbers larger than the pre-computed list, use the division approach
-        // This is more expensive but necessary for large numbers
-        var divisor = 2;
-        var remainder = num;
-        while (remainder > 1) {
-            if (remainder % divisor !== 0) {
-                return false;
-            }
-            remainder /= divisor;
-            divisor++;
-            // Safety check to avoid precision issues
-            if (divisor > 25 || remainder > Number.MAX_SAFE_INTEGER / divisor) {
-                // If we get here, either:
-                // 1. The number is too large to safely check
-                // 2. We've exceeded our divisor limit (unlikely to be a factorial)
-                return false;
-            }
-        }
-        return remainder === 1;
-    }
     /**
      * Checks if a number is a perfect power and returns the base and exponent if it is.
      * A perfect power is a number that can be expressed as an integer power of another integer.
@@ -8804,61 +11082,6 @@ var Playground = (function (exports) {
         }
         return result;
     }
-    function getLuckyNumbers(length) {
-        var numbers = [];
-        for (var i = 1; i <= length * 10; i += 2) { // Generate more than needed
-            numbers.push(i);
-        }
-        // Apply the sieve process
-        var idx = 1; // Start from the second element (index 1, which is 3)
-        while (idx < numbers.length) {
-            var step = numbers[idx]; // Current lucky number
-            // Remove every step-th number from the list
-            // Count from the beginning each time, and account for changing indices
-            var j = 0;
-            var count = 0;
-            while (j < numbers.length) {
-                count++;
-                if (count % step === 0) {
-                    numbers.splice(j, 1);
-                }
-                else {
-                    j++; // Only increment if we didn't remove an element
-                }
-            }
-            // Get the new index of the next element (which may have changed)
-            idx++;
-        }
-        // Return the first 'length' lucky numbers
-        return numbers.slice(0, length);
-    }
-    function isHappyNumber(n) {
-        // A happy number is defined by the following process:
-        // 1. Starting with any positive integer, replace the number by the sum of the squares of its digits
-        // 2. Repeat until either:
-        //    - The number equals 1 (in which case it's a happy number)
-        //    - It enters a cycle that doesn't include 1 (in which case it's not a happy number)
-        if (n <= 0)
-            return false;
-        // Use a set to detect cycles
-        var seen = new Set();
-        // Continue until we either reach 1 or detect a cycle
-        while (n !== 1 && !seen.has(n)) {
-            seen.add(n);
-            n = getSumOfSquaredDigits(n);
-        }
-        // If we reached 1, it's a happy number
-        return n === 1;
-    }
-    function getSumOfSquaredDigits(n) {
-        var sum = 0;
-        while (n > 0) {
-            var digit = n % 10;
-            sum += digit * digit;
-            n = Math.floor(n / 10);
-        }
-        return sum;
-    }
     function calcPartitions(n) {
         var partition = Array.from({ length: n + 1 }, function () { return 0; });
         partition[0] = 1;
@@ -8894,8 +11117,11 @@ var Playground = (function (exports) {
             throw new Error('Factorial is not defined for negative numbers');
         if (n === 0 || n === 1)
             return 1;
-        var result = 1;
-        for (var i = 2; i <= n; i++)
+        if (n <= 18) {
+            return factorialNumbers[n];
+        }
+        var result = factorialNumbers[18];
+        for (var i = 19; i <= n; i++)
             result *= i;
         return result;
     }
@@ -8908,23 +11134,6 @@ var Playground = (function (exports) {
         for (var i = 0; i < k; i++)
             result *= (n - i) / (i + 1);
         return result;
-    }
-    function isPrime(num) {
-        if (num <= 1) {
-            return false;
-        }
-        if (num <= 3) {
-            return true;
-        }
-        if (num % 2 === 0 || num % 3 === 0) {
-            return false;
-        }
-        for (var i = 5; i * i <= num; i += 6) {
-            if (num % i === 0 || num % (i + 2) === 0) {
-                return false;
-            }
-        }
-        return true;
     }
     function modularExponentiation(base, exponent, mod) {
         if (mod === 1)
@@ -9056,6 +11265,7 @@ var Playground = (function (exports) {
                 }
                 return factorialOf(n);
             },
+            aliases: ['c:!'],
             paramCount: 1,
         },
         'c:generate-combinations': {
@@ -9106,14 +11316,6 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 1 },
         },
-        'c:prime?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), value = _b[0];
-                assertNumber(value, sourceCodeInfo, { integer: true });
-                return isPrime(value);
-            },
-            paramCount: 1,
-        },
         'c:composite?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), value = _b[0];
@@ -9139,22 +11341,6 @@ var Playground = (function (exports) {
                 var factors = factorsOf(value - 1);
                 var sum = factors.reduce(function (acc, curr) { return acc + curr; }, 0);
                 return sum < value;
-            },
-            paramCount: 1,
-        },
-        'c:perfect?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), value = _b[0];
-                assertNumber(value, sourceCodeInfo, { integer: true, positive: true });
-                return perfectNumbers.includes(value);
-            },
-            paramCount: 1,
-        },
-        'c:mersenne?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), value = _b[0];
-                assertNumber(value, sourceCodeInfo, { integer: true, positive: true });
-                return mersennePrimes.includes(value);
             },
             paramCount: 1,
         },
@@ -9632,594 +11818,21 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'c:lucky-number-seq': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), length = _b[0];
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                return getLuckyNumbers(length);
-            },
-            paramCount: 1,
-        },
-        'c:lucky-number-nth': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return getLuckyNumbers(n).at(-1);
-            },
-            paramCount: 1,
-        },
-        'c:lucky-number?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return getLuckyNumbers(n * 5).includes(n);
-            },
-            paramCount: 1,
-        },
-        'c:happy-number-seq': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), length = _b[0];
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                var happyNumbers = [];
-                for (var i = 1; happyNumbers.length < length; i++) {
-                    var n = i;
-                    var seen = new Set();
-                    while (n !== 1 && !seen.has(n)) {
-                        seen.add(n);
-                        n = String(n)
-                            .split('')
-                            .reduce(function (sum, digit) { return sum + Math.pow(Number(digit), 2); }, 0);
-                    }
-                    if (n === 1)
-                        happyNumbers.push(i);
-                }
-                return happyNumbers;
-            },
-            paramCount: 1,
-        },
-        'c:happy-number-nth': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                var happyCount = 0;
-                var currentNumber = 1;
-                while (happyCount < n) {
-                    var num = currentNumber;
-                    var seen = new Set();
-                    while (num !== 1 && !seen.has(num)) {
-                        seen.add(num);
-                        num = String(num)
-                            .split('')
-                            .reduce(function (sum, digit) { return sum + Math.pow(Number(digit), 2); }, 0);
-                    }
-                    if (num === 1)
-                        happyCount++;
-                    currentNumber++;
-                }
-                return currentNumber - 1;
-            },
-            paramCount: 1,
-        },
-        'c:happy-number?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return isHappyNumber(n);
-            },
-            paramCount: 1,
-        },
         'c:juggler-seq': {
             evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), length = _b[0];
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                var juggler = [1];
-                for (var n = 1; n < length; n += 1) {
-                    juggler[n] = Math.floor(Math.sqrt(juggler[n - 1]));
+                var _b = __read(_a, 1), start = _b[0];
+                assertNumber(start, sourceCodeInfo, { integer: true, positive: true });
+                var next = start;
+                var juggler = [next];
+                var index = 0;
+                while (next > 1) {
+                    next = next % 2 === 0
+                        ? Math.floor(Math.sqrt(juggler[index]))
+                        : Math.floor(juggler[index] * Math.sqrt(juggler[index]));
+                    index += 1;
+                    juggler.push(next);
                 }
                 return juggler;
-            },
-            paramCount: 1,
-        },
-        'c:juggler-nth': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                var juggler = 1;
-                for (var i = 1; i < n; i += 1) {
-                    juggler = Math.floor(Math.sqrt(juggler));
-                }
-                return juggler;
-            },
-            paramCount: 1,
-        },
-        'c:juggler?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return n === 1 || (n > 1 && n % Math.sqrt(n) === 0);
-            },
-            paramCount: 1,
-        },
-        'c:partition-seq': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), length = _b[0];
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                var result = [1]; // First partition number is always 1
-                for (var m = 1; m < length; m++) {
-                    result.push(calcPartitions(m));
-                }
-                return result;
-            },
-            paramCount: 1,
-        },
-        'c:partition-nth': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return calcPartitions(n);
-            },
-            paramCount: 1,
-        },
-        'c:partition?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return n === 1 || (n > 1 && n % Math.sqrt(n) === 0);
-            },
-            paramCount: 1,
-        },
-        'c:perfect-seq': {
-            evaluate: function (params, sourceCodeInfo) {
-                var _a;
-                var length = asNumber((_a = params[0]) !== null && _a !== void 0 ? _a : perfectNumbers.length, sourceCodeInfo, { integer: true, positive: true, lte: perfectNumbers.length });
-                return perfectNumbers.slice(0, length);
-            },
-            paramCount: { max: 1 },
-        },
-        'c:perfect-nth': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true, lte: perfectNumbers.length });
-                return perfectNumbers[n - 1];
-            },
-            paramCount: 1,
-        },
-        'c:mersenne-seq': {
-            evaluate: function (params, sourceCodeInfo) {
-                var _a;
-                var length = asNumber((_a = params[0]) !== null && _a !== void 0 ? _a : mersennePrimes.length, sourceCodeInfo, { integer: true, positive: true, lte: mersennePrimes.length });
-                return mersennePrimes.slice(0, length);
-            },
-            paramCount: { max: 1 },
-        },
-        'c:mersenne-nth': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true, lte: mersennePrimes.length });
-                return mersennePrimes[n - 1];
-            },
-            paramCount: 1,
-        },
-        'c:arithmetic-seq': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), start = _b[0], step = _b[1], length = _b[2];
-                assertNumber(start, sourceCodeInfo, { finite: true });
-                assertNumber(step, sourceCodeInfo, { finite: true });
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                return Array.from({ length: length }, function (_, i) { return start + i * step; });
-            },
-            paramCount: 3,
-        },
-        'c:arithmetic-nth': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), start = _b[0], step = _b[1], n = _b[2];
-                assertNumber(start, sourceCodeInfo, { finite: true });
-                assertNumber(step, sourceCodeInfo, { finite: true });
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return start + (n - 1) * step;
-            },
-            paramCount: 3,
-        },
-        'c:geometric-seq': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), start = _b[0], ratio = _b[1], length = _b[2];
-                assertNumber(start, sourceCodeInfo, { finite: true });
-                assertNumber(ratio, sourceCodeInfo, { finite: true });
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                return Array.from({ length: length }, function (_, i) { return start * Math.pow(ratio, i); });
-            },
-            paramCount: 3,
-        },
-        'c:geometric-nth': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), start = _b[0], ratio = _b[1], n = _b[2];
-                assertNumber(start, sourceCodeInfo, { finite: true });
-                assertNumber(ratio, sourceCodeInfo, { finite: true });
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return start * Math.pow(ratio, (n - 1));
-            },
-            paramCount: 3,
-        },
-        'c:fibonacci-seq': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), length = _b[0];
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                var fib = [0, 1];
-                for (var i = 2; i < length; i += 1) {
-                    fib[i] = fib[i - 1] + fib[i - 2];
-                }
-                return fib.slice(0, length);
-            },
-            paramCount: 1,
-        },
-        'c:fibonacci-nth': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                if (n === 1)
-                    return 0;
-                if (n === 2)
-                    return 1;
-                var a = 0;
-                var b = 1;
-                for (var i = 3; i <= n; i += 1) {
-                    var temp = a + b;
-                    a = b;
-                    b = temp;
-                }
-                return b;
-            },
-            paramCount: 1,
-        },
-        'c:fibbonacci?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return isFibonacciNumber(n);
-            },
-            paramCount: 1,
-        },
-        'c:lucas-seq': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), length = _b[0];
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                var lucas = [2, 1];
-                for (var i = 2; i < length; i += 1) {
-                    lucas[i] = lucas[i - 1] + lucas[i - 2];
-                }
-                return lucas.slice(0, length);
-            },
-            paramCount: 1,
-        },
-        'c:lucas-nth': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                if (n === 1)
-                    return 2;
-                if (n === 2)
-                    return 1;
-                var a = 2;
-                var b = 1;
-                for (var i = 3; i <= n; i += 1) {
-                    var temp = a + b;
-                    a = b;
-                    b = temp;
-                }
-                return b;
-            },
-            paramCount: 1,
-        },
-        'c:lucas?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return isLucasNumber(n);
-            },
-            paramCount: 1,
-        },
-        'c:tribonacci-seq': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), length = _b[0];
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                var tribonacci = [0, 1, 1];
-                for (var i = 3; i < length; i += 1) {
-                    tribonacci[i] = tribonacci[i - 1] + tribonacci[i - 2] + tribonacci[i - 3];
-                }
-                return tribonacci.slice(0, length);
-            },
-            paramCount: 1,
-        },
-        'c:tribonacci-nth': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                if (n === 1)
-                    return 0;
-                if (n === 2)
-                    return 1;
-                if (n === 3)
-                    return 1;
-                var a = 0;
-                var b = 1;
-                var c = 1;
-                for (var i = 4; i <= n; i += 1) {
-                    var temp = a + b + c;
-                    a = b;
-                    b = c;
-                    c = temp;
-                }
-                return c;
-            },
-            paramCount: 1,
-        },
-        'c:tribonacci?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return isTribonacciNumber(n);
-            },
-            paramCount: 1,
-        },
-        'c:prime-seq': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), length = _b[0];
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                var primes = [];
-                var num = 2;
-                while (primes.length < length) {
-                    if (isPrime(num)) {
-                        primes.push(num);
-                    }
-                    num += 1;
-                }
-                return primes;
-            },
-            paramCount: 1,
-        },
-        'c:prime-nth': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                var count = 0;
-                var num = 2;
-                while (count < n) {
-                    if (isPrime(num)) {
-                        count += 1;
-                    }
-                    num += 1;
-                }
-                return num - 1;
-            },
-            paramCount: 1,
-        },
-        'c:triangular-seq': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), length = _b[0];
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                var triangular = [];
-                for (var i = 0; i < length; i += 1) {
-                    triangular[i] = (i * (i + 1)) / 2;
-                }
-                return triangular;
-            },
-            paramCount: 1,
-        },
-        'c:triangular-nth': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return (n * (n + 1)) / 2;
-            },
-            paramCount: 1,
-        },
-        'c:triangular?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return isTriangular(n);
-            },
-            paramCount: 1,
-        },
-        'c:square-seq': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), length = _b[0];
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                var square = [];
-                for (var i = 0; i < length; i += 1) {
-                    square[i] = Math.pow(i, 2);
-                }
-                return square;
-            },
-            paramCount: 1,
-        },
-        'c:square-nth': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return Math.pow(n, 2);
-            },
-            paramCount: 1,
-        },
-        'c:hexagonal-seq': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), length = _b[0];
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                var hexagonal = [];
-                for (var i = 0; i < length; i += 1) {
-                    hexagonal[i] = i * (2 * i - 1);
-                }
-                return hexagonal;
-            },
-            paramCount: 1,
-        },
-        'c:hexagonal-nth': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return n * (2 * n - 1);
-            },
-            paramCount: 1,
-        },
-        'c:hexagonal?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return isHexagonal(n);
-            },
-            paramCount: 1,
-        },
-        'c:pentagonal-seq': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), length = _b[0];
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                var pentagonal = [];
-                for (var i = 0; i < length; i += 1) {
-                    pentagonal[i] = (3 * Math.pow(i, 2) - i) / 2;
-                }
-                return pentagonal;
-            },
-            paramCount: 1,
-        },
-        'c:pentagonal-nth': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return (3 * Math.pow(n, 2) - n) / 2;
-            },
-            paramCount: 1,
-        },
-        'c:pentagonal?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return isPentagonal(n);
-            },
-            paramCount: 1,
-        },
-        'c:cubic-seq': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), length = _b[0];
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                var cubic = [];
-                for (var i = 0; i < length; i += 1) {
-                    cubic[i] = Math.pow(i, 3);
-                }
-                return cubic;
-            },
-            paramCount: 1,
-        },
-        'c:cubic-nth': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return Math.pow(n, 3);
-            },
-            paramCount: 1,
-        },
-        'c:pentatope-seq': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), length = _b[0];
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                var pentatope = [];
-                for (var i = 0; i < length; i += 1) {
-                    pentatope[i] = (i * (i + 1) * (i + 2)) / 6;
-                }
-                return pentatope;
-            },
-            paramCount: 1,
-        },
-        'c:pentatope-nth': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return (n * (n + 1) * (n + 2)) / 6;
-            },
-            paramCount: 1,
-        },
-        'c:pentatope?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return isPentatope(n);
-            },
-            paramCount: 1,
-        },
-        'c:hexacube-seq': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), length = _b[0];
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                var hexacube = [];
-                for (var i = 0; i < length; i += 1) {
-                    hexacube[i] = (i * (i + 1) * (i + 2) * (i + 3)) / 24;
-                }
-                return hexacube;
-            },
-            paramCount: 1,
-        },
-        'c:hexacube-nth': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return (n * (n + 1) * (n + 2) * (n + 3)) / 24;
-            },
-            paramCount: 1,
-        },
-        'c:hexacube?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return isHexacube(n);
-            },
-            paramCount: 1,
-        },
-        'c:polygonal-seq': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), length = _b[0], sides = _b[1];
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                assertNumber(sides, sourceCodeInfo, { integer: true, positive: true });
-                var polygonal = [];
-                for (var i = 0; i < length; i += 1) {
-                    polygonal[i] = (sides * i * (i - 1)) / 2;
-                }
-                return polygonal;
-            },
-            paramCount: 2,
-        },
-        'c:polygonal-nth': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), n = _b[0], sides = _b[1];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                assertNumber(sides, sourceCodeInfo, { integer: true, positive: true });
-                return (sides * n * (n - 1)) / 2;
-            },
-            paramCount: 2,
-        },
-        'c:factorial-seq': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), length = _b[0];
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                var factorial = [];
-                for (var i = 0; i < length; i += 1) {
-                    factorial[i] = factorialOf(i);
-                }
-                return factorial;
-            },
-            paramCount: 1,
-        },
-        'c:factorial-nth': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return factorialOf(n);
-            },
-            paramCount: 1,
-        },
-        'c:factorial?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return isFactorial(n);
             },
             paramCount: 1,
         },

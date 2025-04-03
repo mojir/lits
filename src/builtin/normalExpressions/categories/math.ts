@@ -35,6 +35,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return result * param
       }, 1)
     },
+    aliases: ['·'],
     paramCount: {},
   },
 

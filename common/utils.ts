@@ -1,6 +1,8 @@
+import { prettyPi } from '@mojir/pretty-pi'
 import type { UnknownRecord } from '../src/interface'
 import { isRegularExpression } from '../src/typeGuards/lits'
 import { isLitsFunction } from '../src/typeGuards/litsFunction'
+import { isVector } from '../src/builtin/normalExpressions/categories/vector'
 
 export function stringifyValue(value: unknown, html: boolean): string {
   const gt = html ? '&gt;' : '>'
@@ -26,8 +28,11 @@ export function stringifyValue(value: unknown, html: boolean): string {
   if (value === Number.NEGATIVE_INFINITY)
     return `${Number.NEGATIVE_INFINITY}`
 
-  if (typeof value === 'number' && Number.isNaN(value))
-    return 'NaN'
+  if (typeof value === 'number') {
+    const pretty = prettyPi(value, { spaceSeparate: true })
+    const decimal = `${value}`
+    return pretty === decimal ? pretty : `${pretty}   (${decimal})`
+  }
 
   if (isRegularExpression(value))
     return `/${value.s}/${value.f}`
@@ -38,12 +43,23 @@ export function stringifyValue(value: unknown, html: boolean): string {
   if (isMatrix(value))
     return stringifyMatrix(value)
 
+  if (isVector(value)) {
+    return `[\n  ${value.map(cell => prettyPi(cell)).join(',\n  ')}\n]`
+  }
+
   return JSON.stringify(value, null, 2)
 }
 
+function prettyIfNumber(value: unknown): string {
+  if (typeof value === 'number') {
+    return prettyPi(value, { spaceSeparate: true })
+  }
+  return `${value}`
+}
+
 function stringifyMatrix(matrix: (null | number | string | boolean)[][]): string {
-  const padding = matrix.flat().reduce((max: number, cell) => Math.max(max, `${cell}`.length), 0) + 1
-  const rows = matrix.map(row => `[${row.map(cell => `${cell}`.padStart(padding)).join(' ')} ]`)
+  const padding = matrix.flat().reduce((max: number, cell) => Math.max(max, prettyIfNumber(cell).length), 0) + 1
+  const rows = matrix.map(row => `[${row.map(cell => prettyIfNumber(cell).padStart(padding)).join(' ')} ]`)
   return rows.join('\n')
 }
 

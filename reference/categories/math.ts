@@ -61,6 +61,7 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     ],
     description: 'Computes product of $xs.',
     examples: ['6 * 7', '-1 * 4', '*(4, 7)', '*(1, 2, 3, 4, 5)', '*()', '*(8)'],
+    aliases: ['·'],
   },
   '/': {
     title: '/',
