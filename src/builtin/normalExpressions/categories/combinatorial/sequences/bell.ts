@@ -4,7 +4,6 @@ import type { SequenceDefinition } from '.'
 // Only including values up to the safe integer limit in JavaScript
 const bellNumbers = [
   1,
-  1,
   2,
   5,
   15,
@@ -45,7 +44,7 @@ export const bellSequence: SequenceDefinition<'bell'> = {
       if (!takeWhile(value, i)) {
         break
       }
-      bell[i] = value
+      bell.push(value)
     }
     return bell
   },
