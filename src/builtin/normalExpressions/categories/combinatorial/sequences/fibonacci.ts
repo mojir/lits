@@ -1,6 +1,4 @@
-import type { SequenceDefinition } from '.'
-
-const fibonacciNumbers = [
+export const fibonacciNumbers = [
   0,
   1,
   1,
@@ -81,26 +79,3 @@ const fibonacciNumbers = [
   5527939700884757,
   8944394323791464,
 ]
-
-export const fibonacciSequence: SequenceDefinition<'fibonacci'> = {
-  'maxLength': fibonacciNumbers.length,
-  'c:fibonacci-seq': (length) => {
-    return fibonacciNumbers.slice(0, length)
-  },
-  'c:fibonacci-nth': n => fibonacciNumbers[n - 1]!,
-  'c:fibonacci?': n => fibonacciNumbers.includes(n),
-  'c:fibonacci-take-while': (takeWhile) => {
-    const fibonacci = []
-    for (let i = 0; ; i += 1) {
-      if (i >= fibonacciNumbers.length) {
-        break
-      }
-      const value = fibonacciNumbers[i]!
-      if (!takeWhile(value, i)) {
-        break
-      }
-      fibonacci[i] = value
-    }
-    return fibonacci
-  },
-}

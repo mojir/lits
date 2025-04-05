@@ -18,6 +18,7 @@ export const lucasReference: CombinatorialSequenceReference<'lucas'> = {
     },
     variants: [
       { argumentNames: ['length'] },
+      { argumentNames: [] },
     ],
     examples: [
       'c:lucas-seq(1)',

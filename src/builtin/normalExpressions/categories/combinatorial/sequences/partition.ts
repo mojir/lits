@@ -1,7 +1,4 @@
-import type { SequenceDefinition } from '.'
-
-const partitionNumbers = [
-  1,
+export const partitionNumbers = [
   1,
   2,
   3,
@@ -302,26 +299,3 @@ const partitionNumbers = [
   8030248384943040,
   8620496275465025,
 ]
-
-export const partitionSequence: SequenceDefinition<'partition'> = {
-  'maxLength': partitionNumbers.length,
-  'c:partition-seq': (length) => {
-    return partitionNumbers.slice(0, length)
-  },
-  'c:partition-nth': n => partitionNumbers[n - 1]!,
-  'c:partition?': n => partitionNumbers.includes(n),
-  'c:partition-take-while': (takeWhile) => {
-    const partition = []
-    for (let i = 0; ; i += 1) {
-      if (i >= partitionNumbers.length) {
-        break
-      }
-      const value = partitionNumbers[i]!
-      if (!takeWhile(value, i)) {
-        break
-      }
-      partition[i] = value
-    }
-    return partition
-  },
-}

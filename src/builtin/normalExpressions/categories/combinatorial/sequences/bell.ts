@@ -1,8 +1,4 @@
-import type { SequenceDefinition } from '.'
-
-// Pre-calculated Bell numbers (for efficient lookup)
-// Only including values up to the safe integer limit in JavaScript
-const bellNumbers = [
+export const bellNumbers = [
   1,
   2,
   5,
@@ -26,26 +22,3 @@ const bellNumbers = [
   474869816156751,
   4506715738447323,
 ]
-
-export const bellSequence: SequenceDefinition<'bell'> = {
-  'maxLength': bellNumbers.length,
-  'c:bell-seq': (length) => {
-    return bellNumbers.slice(0, length)
-  },
-  'c:bell-nth': n => bellNumbers[n - 1]!,
-  'c:bell?': n => bellNumbers.includes(n),
-  'c:bell-take-while': (takeWhile) => {
-    const bell = []
-    for (let i = 0; ; i += 1) {
-      if (i >= bellNumbers.length) {
-        break
-      }
-      const value = bellNumbers[i]!
-      if (!takeWhile(value, i)) {
-        break
-      }
-      bell.push(value)
-    }
-    return bell
-  },
-}

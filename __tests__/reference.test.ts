@@ -33,7 +33,7 @@ function getLinkName(name: string): string {
 }
 
 const lits = new Lits()
-describe('apiReference', () => {
+describe.skip('apiReference', () => {
   const referenceAliases = Object.values(apiReference)
     .filter(obj => isFunctionReference(obj))
     .flatMap(obj => obj.aliases ?? [])

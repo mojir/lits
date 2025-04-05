@@ -5,11 +5,10 @@ const lits = new Lits()
 describe('partition', () => {
   it('should return the correct sequence', () => {
     expect(lits.run('c:partition-seq(1)')).toEqual([1])
-    expect(lits.run('c:partition-seq(2)')).toEqual([1, 1])
-    expect(lits.run('c:partition-seq(3)')).toEqual([1, 1, 2])
-    expect(lits.run('c:partition-seq(4)')).toEqual([1, 1, 2, 3])
-    expect(lits.run('c:partition-seq(300)')).toEqual([
-      1,
+    expect(lits.run('c:partition-seq(2)')).toEqual([1, 2])
+    expect(lits.run('c:partition-seq(3)')).toEqual([1, 2, 3])
+    expect(lits.run('c:partition-seq(4)')).toEqual([1, 2, 3, 5])
+    expect(lits.run('c:partition-seq(299)')).toEqual([
       1,
       2,
       3,
@@ -311,19 +310,19 @@ describe('partition', () => {
       8620496275465025,
     ])
     expect(() => lits.run('c:partition-seq(0)')).toThrow()
-    expect(() => lits.run('c:partition-seq(301)')).toThrow()
+    expect(() => lits.run('c:partition-seq(300)')).toThrow()
   })
 
   it('should return the correct nth term', () => {
     expect(lits.run('c:partition-nth(1)')).toBe(1)
-    expect(lits.run('c:partition-nth(2)')).toBe(1)
-    expect(lits.run('c:partition-nth(3)')).toBe(2)
-    expect(lits.run('c:partition-nth(4)')).toBe(3)
-    expect(lits.run('c:partition-nth(300)')).toBe(8620496275465025)
+    expect(lits.run('c:partition-nth(2)')).toBe(2)
+    expect(lits.run('c:partition-nth(3)')).toBe(3)
+    expect(lits.run('c:partition-nth(4)')).toBe(5)
+    expect(lits.run('c:partition-nth(299)')).toBe(8620496275465025)
   })
 
   it('should return the correct takeWhile sequence', () => {
-    expect(lits.run('c:partition-take-while(-> $ < 100)')).toEqual([1, 1, 2, 3, 5, 7, 11, 15, 22, 30, 42, 56, 77])
+    expect(lits.run('c:partition-take-while(-> $ < 100)')).toEqual([1, 2, 3, 5, 7, 11, 15, 22, 30, 42, 56, 77])
   })
 
   it('should determine if numbers are in the sequence', () => {

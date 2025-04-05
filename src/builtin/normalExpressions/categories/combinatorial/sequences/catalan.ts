@@ -1,6 +1,4 @@
-import type { SequenceDefinition } from '.'
-
-const catalanNumbers = [
+export const catalanNumbers = [
   1,
   2,
   5,
@@ -32,25 +30,3 @@ const catalanNumbers = [
   1002242216651368,
   3814986502092304,
 ]
-export const catalanSequence: SequenceDefinition<'catalan'> = {
-  'maxLength': catalanNumbers.length,
-  'c:catalan-seq': (length) => {
-    return catalanNumbers.slice(0, length)
-  },
-  'c:catalan-nth': n => catalanNumbers[n - 1]!,
-  'c:catalan?': n => catalanNumbers.includes(n),
-  'c:catalan-take-while': (takeWhile) => {
-    const catalan = []
-    for (let i = 0; ; i += 1) {
-      if (i >= catalanNumbers.length) {
-        break
-      }
-      const value = catalanNumbers[i]!
-      if (!takeWhile(value, i)) {
-        break
-      }
-      catalan.push(value)
-    }
-    return catalan
-  },
-}

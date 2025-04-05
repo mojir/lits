@@ -13,11 +13,12 @@ export const happyReference: CombinatorialSequenceReference<'happy'> = {
     args: {
       length: {
         type: 'integer',
-        description: 'The length of the sequence to generate. If not provided, the default is 77 (the maximum length of the pre-calculated happy numbers).',
+        description: 'The length of the sequence to generate. If not provided, the default is 20 (the maximum length of the pre-calculated happy numbers).',
       },
     },
     variants: [
       { argumentNames: ['length'] },
+      { argumentNames: [] },
     ],
     examples: [
       'c:happy-seq(1)',

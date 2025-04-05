@@ -13,11 +13,12 @@ export const perfectReference: CombinatorialSequenceReference<'perfect'> = {
     args: {
       length: {
         type: 'integer',
-        description: 'The length of the sequence to generate.',
+        description: 'The length of the sequence to generate. If no length is provided, it defaults to 7 (the maximum length of the pre-calculated perfect numbers).',
       },
     },
     variants: [
       { argumentNames: ['length'] },
+      { argumentNames: [] },
     ],
     examples: [
       'c:perfect-seq(1)',

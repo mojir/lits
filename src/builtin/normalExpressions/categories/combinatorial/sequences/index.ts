@@ -3,26 +3,37 @@ import { assertLitsFunction } from '../../../../../typeGuards/litsFunction'
 import { assertNumber } from '../../../../../typeGuards/number'
 import { assertString } from '../../../../../typeGuards/string'
 import type { BuiltinNormalExpression, BuiltinNormalExpressions } from '../../../../interface'
+import { abundantSequence } from './abundant'
 import { arithmeticNormalExpressions } from './arithmetic'
-import { bellSequence } from './bell'
-import { catalanSequence } from './catalan'
-import { factorialSequence } from './factorial'
-import { fibonacciSequence } from './fibonacci'
+import { bellNumbers } from './bell'
+import { bernoulliNormalExpressions } from './bernoulli'
+import { catalanNumbers } from './catalan'
+import { collatzSequence } from './collatz'
+import { compositeSequence } from './composite'
+import { deficientSequence } from './deficient'
+import { factorialNumbers } from './factorial'
+import { fibonacciNumbers } from './fibonacci'
 import { geometricNormalExpressions } from './geometric'
-import { lookAndSaySequence } from './lookAndSay'
+import { golombSequence } from './golomb'
 import { happySequence } from './happy'
-import { lucasSequence } from './lucas'
-import { mersenneSequence } from './mersenne'
+import { jugglerSequence } from './juggler'
+import { lookAndSaySequence } from './lookAndSay'
+import { lucasNumbers } from './lucas'
+import { luckySequence } from './lucky'
+import { mersenneNumbers } from './mersenne'
 import { padovanSequence } from './padovan'
-import { partitionSequence } from './partition'
-import { pellSequence } from './pell'
-import { perfectSequence } from './perfect'
+import { partitionNumbers } from './partition'
+import { pellNumbers } from './pell'
+import { perfectNumbers } from './perfect'
+import { perfectCubeSequence } from './perfectCube'
+import { perfectPowerSequence } from './perfectPower'
+import { perfectSquareSequence } from './perfectSquare'
 import { poligonalNormalExpressions } from './poligonal'
 import { primeSequence } from './prime'
 import { recamanSequence } from './recaman'
+import { sylvesterNumbers } from './sylvester'
 import { thueMorseSequence } from './thueMorse'
-import { tribonacciSequence } from './tribonacci'
-import { luckySequence } from './lucky'
+import { tribonacciNumbers } from './tribonacci'
 
 type SeqKey<T extends string> = `c:${T}-seq`
 type TakeWhileKey<T extends string> = `c:${T}-take-while`
@@ -52,68 +63,99 @@ export type SequenceDefinition<T extends string, Type extends number | string = 
   string?: never
 })
 
-export type SequenceNormalExpressions<T extends string> = {
+export type SequenceNormalExpressions<T extends string, Type extends string | number = number> = {
   [key in SequenceKeys<T>]: key extends SeqKey<T>
-    ? BuiltinNormalExpression<number[]>
+    ? BuiltinNormalExpression<Type[]>
     : key extends TakeWhileKey<T>
-      ? BuiltinNormalExpression<number[]>
+      ? BuiltinNormalExpression<Type[]>
       : key extends NthKey<T>
-        ? BuiltinNormalExpression<number>
+        ? BuiltinNormalExpression<Type>
         : BuiltinNormalExpression<boolean>
 }
 
-export const sequenceNormalExpression: BuiltinNormalExpressions = {}
+export const sequenceNormalExpressions: BuiltinNormalExpressions = {}
 
-addSequence(bellSequence)
-addSequence(catalanSequence)
-addSequence(factorialSequence)
-addSequence(fibonacciSequence)
+addSequence(abundantSequence)
+addSequence(collatzSequence)
+addSequence(compositeSequence)
+addSequence(deficientSequence)
+addSequence(golombSequence)
 addSequence(happySequence)
+addSequence(jugglerSequence)
 addSequence(lookAndSaySequence)
-addSequence(lucasSequence)
 addSequence(luckySequence)
-addSequence(mersenneSequence)
 addSequence(padovanSequence)
-addSequence(partitionSequence)
-addSequence(pellSequence)
-addSequence(perfectSequence)
+addSequence(perfectSquareSequence)
+addSequence(perfectCubeSequence)
+addSequence(perfectPowerSequence)
 addSequence(primeSequence)
 addSequence(recamanSequence)
 addSequence(thueMorseSequence)
-addSequence(tribonacciSequence)
+addNormalExpressions(getFiniteNumberSequence('tribonacci', tribonacciNumbers))
+addNormalExpressions(getFiniteNumberSequence('catalan', catalanNumbers))
+addNormalExpressions(getFiniteNumberSequence('factorial', factorialNumbers))
+addNormalExpressions(getFiniteNumberSequence('fibonacci', fibonacciNumbers))
+addNormalExpressions(getFiniteNumberSequence('lucas', lucasNumbers))
+addNormalExpressions(getFiniteNumberSequence('mersenne', mersenneNumbers))
+addNormalExpressions(getFiniteNumberSequence('partition', partitionNumbers))
+addNormalExpressions(getFiniteNumberSequence('pell', pellNumbers))
+addNormalExpressions(getFiniteNumberSequence('perfect', perfectNumbers))
+addNormalExpressions(getFiniteNumberSequence('sylvester', sylvesterNumbers))
+addNormalExpressions(getFiniteNumberSequence('bell', bellNumbers))
 addNormalExpressions(arithmeticNormalExpressions)
+addNormalExpressions(bernoulliNormalExpressions)
 addNormalExpressions(geometricNormalExpressions)
 addNormalExpressions(poligonalNormalExpressions)
 
 function addNormalExpressions(normalExpressions: BuiltinNormalExpressions) {
   for (const [key, value] of Object.entries(normalExpressions)) {
-    if (sequenceNormalExpression[key]) {
+    if (sequenceNormalExpressions[key]) {
       throw new Error(`Duplicate normal expression key found: ${key}`)
     }
-    sequenceNormalExpression[key] = value
+    sequenceNormalExpressions[key] = value
   }
+}
+
+function getFiniteNumberSequence<T extends string>(name: T, sequence: number[]): SequenceNormalExpressions<T> {
+  return {
+    [`c:${name}-seq`]: createSeqNormalExpression(length => sequence.slice(0, length), sequence.length),
+    [`c:${name}-take-while`]: createTakeWhileNormalExpression((takeWhile) => {
+      let i = 0
+      for (i = 0; ; i += 1) {
+        if (i >= sequence.length) {
+          break
+        }
+        if (!takeWhile(sequence[i]!, i)) {
+          break
+        }
+      }
+      return sequence.slice(0, i)
+    }, sequence.length),
+    [`c:${name}-nth`]: createNthNormalExpression(n => sequence[n - 1]!, sequence.length),
+    [`c:${name}?`]: createNumberPredNormalExpression(n => sequence.includes(n)),
+  } as unknown as SequenceNormalExpressions<T>
 }
 
 function addSequence<Type extends number | string>(sequence: SequenceDefinition<string, Type>) {
   for (const [key, value] of Object.entries(sequence)) {
-    if (sequenceNormalExpression[key]) {
+    if (sequenceNormalExpressions[key]) {
       throw new Error(`Duplicate normal expression key found: ${key}`)
     }
     if (key.endsWith('seq')) {
-      sequenceNormalExpression[key] = createSeqNormalExpression(value as SeqFunction<Type>, sequence.maxLength)
+      sequenceNormalExpressions[key] = createSeqNormalExpression(value as SeqFunction<Type>, sequence.maxLength)
     }
     else if (key.endsWith('take-while')) {
-      sequenceNormalExpression[key] = createTakeWhileNormalExpression(value as TakeWhileFunction<Type>, sequence.maxLength)
+      sequenceNormalExpressions[key] = createTakeWhileNormalExpression(value as TakeWhileFunction<Type>, sequence.maxLength)
     }
     else if (key.endsWith('nth')) {
-      sequenceNormalExpression[key] = createNthNormalExpression(value as NthFunction<Type>, sequence.maxLength)
+      sequenceNormalExpressions[key] = createNthNormalExpression(value as NthFunction<Type>, sequence.maxLength)
     }
     else if (key.endsWith('?')) {
       if (sequence.string) {
-        sequenceNormalExpression[key] = createStringPredNormalExpression(value as PredFunction<string>)
+        sequenceNormalExpressions[key] = createStringPredNormalExpression(value as PredFunction<string>)
       }
       else {
-        sequenceNormalExpression[key] = createNumberPredNormalExpression(value as PredFunction<number>)
+        sequenceNormalExpressions[key] = createNumberPredNormalExpression(value as PredFunction<number>)
       }
     }
   }

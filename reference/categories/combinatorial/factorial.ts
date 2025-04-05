@@ -13,11 +13,12 @@ export const factorialReference: CombinatorialSequenceReference<'factorial'> = {
     args: {
       length: {
         type: 'integer',
-        description: 'The length of the sequence to generate.',
+        description: 'The length of the sequence to generate. If not provided, the default is 19 (the maximum length of the pre-calculated factorial numbers).',
       },
     },
     variants: [
       { argumentNames: ['length'] },
+      { argumentNames: [] },
     ],
     examples: [
       'c:factorial-seq(1)',

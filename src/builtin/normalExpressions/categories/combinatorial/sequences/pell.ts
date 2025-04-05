@@ -1,6 +1,4 @@
-import type { SequenceDefinition } from '.'
-
-const pellNumbers = [
+export const pellNumbers = [
   1,
   2,
   5,
@@ -44,25 +42,3 @@ const pellNumbers = [
   1746860020068409,
   4217293152016490,
 ]
-export const pellSequence: SequenceDefinition<'pell'> = {
-  'maxLength': pellNumbers.length,
-  'c:pell-seq': (length) => {
-    return pellNumbers.slice(0, length)
-  },
-  'c:pell-nth': n => pellNumbers[n - 1]!,
-  'c:pell?': n => pellNumbers.includes(n),
-  'c:pell-take-while': (takeWhile) => {
-    const pell = []
-    for (let i = 0; ; i += 1) {
-      if (i >= pellNumbers.length) {
-        break
-      }
-      const value = pellNumbers[i]!
-      if (!takeWhile(value, i)) {
-        break
-      }
-      pell[i] = value
-    }
-    return pell
-  },
-}

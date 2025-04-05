@@ -13,7 +13,7 @@ export const bellReference: CombinatorialSequenceReference<'bell'> = {
     args: {
       length: {
         type: 'integer',
-        description: 'The length of the sequence to generate. If not provided, the default is 23 (the maximum length of the pre-calculated Bell numbers).',
+        description: 'The length of the sequence to generate. If not provided, the default is 22 (the maximum length of the pre-calculated bell numbers).',
       },
     },
     variants: [

@@ -16,11 +16,11 @@ export const shorthand: Record<ShorthandName, ShorthandReference> = {
   },
   '-short-fn': {
     shorthand: true,
-    title: '=> expression',
+    title: '-> expression',
     category: 'Shorthand',
     linkName: '-short-fn',
     description: `
-Shorthand for \`(args, ...) => expression\`.
+Shorthand for \`(args, ...) -> expression\`.
 \`$1, $2, $3, ...\` are shorthand for the first, second, third, ... argument.
 
 You can reference the first argument using either \`$1\` or \`$\`.

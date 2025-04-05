@@ -13,11 +13,12 @@ export const pellReference: CombinatorialSequenceReference<'pell'> = {
     args: {
       length: {
         type: 'integer',
-        description: 'The length of the sequence to generate. If not provided, the default is 43 (the maximum length of the pre-calculated Pell numbers).',
+        description: 'The length of the sequence to generate. If not provided, the default is 42 (the maximum length of the pre-calculated Pell numbers).',
       },
     },
     variants: [
       { argumentNames: ['length'] },
+      { argumentNames: [] },
     ],
     examples: [
       'c:pell-seq(5)',

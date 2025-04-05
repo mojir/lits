@@ -4,7 +4,7 @@ export const partitionReference: CombinatorialSequenceReference<'partition'> = {
   'c:partition-seq': {
     title: 'c:partition-seq',
     category: 'Combinatorial',
-    description: 'Generates the partition numbers up to a specified length.',
+    description: 'Generates the partition numbers up to a specified length. If no length is provided, it defaults to 299 (the maximum length of the pre-calculated partition numbers).',
     linkName: 'c-colon-partition-seq',
     returns: {
       type: 'integer',
@@ -18,6 +18,7 @@ export const partitionReference: CombinatorialSequenceReference<'partition'> = {
     },
     variants: [
       { argumentNames: ['length'] },
+      { argumentNames: [] },
     ],
     examples: [
       'c:partition-seq(1)',

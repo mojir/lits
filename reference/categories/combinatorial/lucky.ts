@@ -13,7 +13,7 @@ export const luckyReference: CombinatorialSequenceReference<'lucky'> = {
     args: {
       length: {
         type: 'integer',
-        description: 'The length of the sequence to generate. If not provided, the default is 77 (the maximum length of the pre-calculated lucky numbers).',
+        description: 'The length of the sequence to generate.',
       },
     },
     variants: [

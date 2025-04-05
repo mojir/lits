@@ -1,6 +1,4 @@
-import type { SequenceDefinition } from '.'
-
-const lucasNumbers = [
+export const lucasNumbers = [
   2,
   1,
   3,
@@ -79,26 +77,3 @@ const lucasNumbers = [
   4721424167835364,
   7639424778862807,
 ]
-
-export const lucasSequence: SequenceDefinition<'lucas'> = {
-  'maxLength': lucasNumbers.length,
-  'c:lucas-seq': (length) => {
-    return lucasNumbers.slice(0, length)
-  },
-  'c:lucas-nth': n => lucasNumbers[n - 1]!,
-  'c:lucas?': n => lucasNumbers.includes(n),
-  'c:lucas-take-while': (takeWhile) => {
-    const lucas = []
-    for (let i = 0; ; i += 1) {
-      if (i >= lucasNumbers.length) {
-        break
-      }
-      const value = lucasNumbers[i]!
-      if (!takeWhile(value, i)) {
-        break
-      }
-      lucas[i] = value
-    }
-    return lucas
-  },
-}

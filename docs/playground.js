@@ -584,6 +584,63 @@ var Playground = (function (exports) {
         onClose: onClose,
     };
 
+    const defaultConfig = {
+        spaceSeparation: false,
+        precision: 8,
+        epsilon: 1e-10,
+    };
+    const CONFIG = {
+        spaceSeparation: false,
+        precision: 8,
+        epsilon: 1e-10,
+    };
+    function setConfig(newConfig) {
+        CONFIG.spaceSeparation = newConfig.spaceSeparation ?? defaultConfig.spaceSeparation;
+        CONFIG.precision = newConfig.precision ?? defaultConfig.precision;
+        CONFIG.epsilon = newConfig.epsilon ?? defaultConfig.epsilon;
+    }
+    /**
+     * Mathematical constants used for symbolic representation
+     */
+    const CONSTANTS = [
+        { getSymbol: () => 'π', value: Math.PI },
+        { getSymbol: () => 'e', value: Math.E },
+        { getSymbol: () => 'φ', value: (1 + Math.sqrt(5)) / 2 },
+        { getSymbol: noSpaceSeparation => CONFIG.spaceSeparation && !noSpaceSeparation ? '√(2)' : '√2', value: Math.sqrt(2) },
+        { getSymbol: noSpaceSeparation => CONFIG.spaceSeparation && !noSpaceSeparation ? '√(3)' : '√3', value: Math.sqrt(3) },
+        { getSymbol: noSpaceSeparation => CONFIG.spaceSeparation && !noSpaceSeparation ? '√(5)' : '√5', value: Math.sqrt(5) },
+        { getSymbol: noSpaceSeparation => CONFIG.spaceSeparation && !noSpaceSeparation ? '√(7)' : '√7', value: Math.sqrt(7) },
+        { getSymbol: noSpaceSeparation => CONFIG.spaceSeparation && !noSpaceSeparation ? '√(11)' : '√11', value: Math.sqrt(11) },
+        { getSymbol: noSpaceSeparation => CONFIG.spaceSeparation && !noSpaceSeparation ? '√(13)' : '√13', value: Math.sqrt(13) },
+        { getSymbol: noSpaceSeparation => CONFIG.spaceSeparation && !noSpaceSeparation ? '√(17)' : '√17', value: Math.sqrt(17) },
+        { getSymbol: noSpaceSeparation => CONFIG.spaceSeparation && !noSpaceSeparation ? '√(19)' : '√19', value: Math.sqrt(19) },
+        { getSymbol: noSpaceSeparation => CONFIG.spaceSeparation && !noSpaceSeparation ? '√(π)' : '√π', value: Math.sqrt(Math.PI) },
+        { getSymbol: () => 'ln(2)', value: Math.LN2 },
+        { getSymbol: () => 'ln(10)', value: Math.LN10 },
+        { getSymbol: () => 'log₂(e)', value: Math.LOG2E },
+        { getSymbol: () => 'log₁₀(e)', value: Math.LOG10E },
+    ];
+    /**
+     * Trigonometric values with their exact symbolic representations
+     */
+    const TRIG_VALUES = [
+        // sin values
+        { value: Math.sin(Math.PI / 6), getSymbol: noSpaceSeparation => CONFIG.spaceSeparation && !noSpaceSeparation ? 'sin(π / 6)' : 'sin(π/6)', getExactForm: () => CONFIG.spaceSeparation ? '1 / 2' : '1/2' },
+        { value: Math.sin(Math.PI / 4), getSymbol: noSpaceSeparation => CONFIG.spaceSeparation && !noSpaceSeparation ? 'sin(π / 4)' : 'sin(π/4)', getExactForm: () => CONFIG.spaceSeparation ? '√2 / 2' : '√2/2' },
+        { value: Math.sin(Math.PI / 3), getSymbol: noSpaceSeparation => CONFIG.spaceSeparation && !noSpaceSeparation ? 'sin(π / 3)' : 'sin(π/3)', getExactForm: () => CONFIG.spaceSeparation ? '√3 / 2' : '√3/2' },
+        { value: Math.sin(Math.PI / 2), getSymbol: noSpaceSeparation => CONFIG.spaceSeparation && !noSpaceSeparation ? 'sin(π / 2)' : 'sin(π/2)', getExactForm: () => '1' },
+        // cos values
+        { value: Math.cos(0), getSymbol: () => 'cos(0)', getExactForm: () => '1' },
+        { value: Math.cos(Math.PI / 6), getSymbol: noSpaceSeparation => CONFIG.spaceSeparation && !noSpaceSeparation ? 'cos(π / 6)' : 'cos(π/6)', getExactForm: () => CONFIG.spaceSeparation ? '√(3) / 2' : '√3/2' },
+        { value: Math.cos(Math.PI / 4), getSymbol: noSpaceSeparation => CONFIG.spaceSeparation && !noSpaceSeparation ? 'cos(π / 4)' : 'cos(π/4)', getExactForm: () => CONFIG.spaceSeparation ? '√(2) / 2' : '√2/2' },
+        { value: Math.cos(Math.PI / 3), getSymbol: noSpaceSeparation => CONFIG.spaceSeparation && !noSpaceSeparation ? 'cos(π / 3)' : 'cos(π/3)', getExactForm: () => CONFIG.spaceSeparation ? '1 / 2' : '1/2' },
+        { value: Math.cos(Math.PI / 2), getSymbol: noSpaceSeparation => CONFIG.spaceSeparation && !noSpaceSeparation ? 'cos(π / 2)' : 'cos(π/2)', getExactForm: () => '0' },
+        // tan values
+        { value: Math.tan(Math.PI / 6), getSymbol: noSpaceSeparation => CONFIG.spaceSeparation && !noSpaceSeparation ? 'tan(π / 6)' : 'tan(π/6)', getExactForm: () => CONFIG.spaceSeparation ? '1 / √(3)' : '1/√3' },
+        { value: Math.tan(Math.PI / 4), getSymbol: noSpaceSeparation => CONFIG.spaceSeparation && !noSpaceSeparation ? 'tan(π / 4)' : 'tan(π/4)', getExactForm: () => '1' },
+        { value: Math.tan(Math.PI / 3), getSymbol: noSpaceSeparation => CONFIG.spaceSeparation && !noSpaceSeparation ? 'tan(π / 3)' : 'tan(π/3)', getExactForm: () => CONFIG.spaceSeparation ? '√(3)' : '√3' },
+    ];
+
     /**
      * Factorizes a number under a radical to extract perfect square factors
      * @param n The number to factorize
@@ -742,11 +799,16 @@ var Playground = (function (exports) {
         evaluate() {
             return this.value;
         }
-        toString(spaceSeparated) {
-            const EPSILON = 1e-10;
+        toString() {
             // Round values extremely close to zero to exactly zero
-            if (Math.abs(this.value) < EPSILON) {
+            if (Math.abs(this.value) < CONFIG.epsilon) {
                 return "0";
+            }
+            if (this.value === Number.POSITIVE_INFINITY) {
+                return "∞";
+            }
+            if (this.value === Number.NEGATIVE_INFINITY) {
+                return "-∞";
             }
             if (Number.isInteger(this.value)) {
                 return this.value.toString();
@@ -755,14 +817,18 @@ var Playground = (function (exports) {
             const MAX_DENOMINATOR = 1000;
             for (let denominator = 2; denominator <= MAX_DENOMINATOR; denominator++) {
                 const numerator = Math.round(this.value * denominator);
-                if (Math.abs(this.value - numerator / denominator) < EPSILON) {
+                if (Math.abs(this.value - numerator / denominator) < CONFIG.epsilon) {
                     const gcd = findGCD(Math.abs(numerator), denominator);
-                    return spaceSeparated ? `${numerator / gcd} / ${denominator / gcd}` : `${numerator / gcd}/${denominator / gcd}`;
+                    return CONFIG.spaceSeparation ? `${numerator / gcd} / ${denominator / gcd}` : `${numerator / gcd}/${denominator / gcd}`;
                 }
             }
             // Just return the decimal representation
-            if (this.value.toString().length > 10) {
-                return this.value.toFixed(8);
+            const valueStr = this.value.toString();
+            if (valueStr.includes('.')) {
+                const [, decimalPart] = valueStr.split('.');
+                if (decimalPart.length > 8) {
+                    return this.value.toFixed(CONFIG.precision);
+                }
             }
             return this.value.toString();
         }
@@ -772,92 +838,7 @@ var Playground = (function (exports) {
         equals(other) {
             if (!(isNumberNode(other)))
                 return false;
-            const EPSILON = 1e-10;
-            return Math.abs(this.value - other.evaluate()) < EPSILON;
-        }
-    }
-
-    /**
-     * Node for unary operations (-, sqrt, cbrt, etc.)
-     */
-    class UnaryOpNode extends ExprNode {
-        constructor(op, operand) {
-            super();
-            Object.defineProperty(this, "op", {
-                enumerable: true,
-                configurable: true,
-                writable: true,
-                value: op
-            });
-            Object.defineProperty(this, "operand", {
-                enumerable: true,
-                configurable: true,
-                writable: true,
-                value: operand
-            });
-            Object.defineProperty(this, "type", {
-                enumerable: true,
-                configurable: true,
-                writable: true,
-                value: 'UnaryOp'
-            });
-        }
-        evaluate() {
-            const val = this.operand.evaluate();
-            switch (this.op) {
-                case '-': return -val;
-                case 'sqrt': return Math.sqrt(val);
-                case 'cbrt': return Math.cbrt(val);
-            }
-        }
-        toString(spaceSeparated) {
-            const operandStr = this.operand.toString(spaceSeparated);
-            if (operandStr === '0') {
-                return '0';
-            }
-            switch (this.op) {
-                case '-': return spaceSeparated ? `-(${operandStr})` : `-${operandStr}`;
-                case 'sqrt': return spaceSeparated ? `√(${operandStr})` : `√${operandStr}`;
-                case 'cbrt': return spaceSeparated ? `∛(${operandStr})` : `∛${operandStr}`;
-            }
-        }
-        simplify() {
-            const operand = this.operand.simplify();
-            // Double negation: --a = a
-            if (this.op === '-' && isUnaryOpNode(operand)
-                && (operand).getOp() === '-') {
-                return (operand).getOperand();
-            }
-            // Simplify sqrt of perfect squares
-            if (this.op === 'sqrt' && isNumberNode(operand)) {
-                const val = operand.evaluate();
-                const sqrtVal = Math.sqrt(val);
-                if (Number.isInteger(sqrtVal)) {
-                    return new NumberNode(sqrtVal);
-                }
-            }
-            // Simplify cbrt of perfect cubes
-            if (this.op === 'cbrt' && isNumberNode(operand)) {
-                const val = operand.evaluate();
-                const cbrtVal = Math.cbrt(val);
-                if (Number.isInteger(cbrtVal)) {
-                    return new NumberNode(cbrtVal);
-                }
-            }
-            return new UnaryOpNode(this.op, operand);
-        }
-        getOp() {
-            return this.op;
-        }
-        getOperand() {
-            return this.operand;
-        }
-        equals(other) {
-            if (!(isUnaryOpNode(other)))
-                return false;
-            const otherOp = other;
-            return this.op === otherOp.getOp()
-                && this.operand.equals(otherOp.getOperand());
+            return Math.abs(this.value - other.evaluate()) < CONFIG.epsilon;
         }
     }
 
@@ -908,9 +889,9 @@ var Playground = (function (exports) {
                 case '/': return leftVal / rightVal;
             }
         }
-        toString(spaceSeparated) {
-            let leftStr = this.left.toString(spaceSeparated);
-            let rightStr = this.right.toString(spaceSeparated);
+        toString() {
+            let leftStr = this.left.toString();
+            let rightStr = this.right.toString();
             // Add parentheses if needed
             if ((this.op === '+' || this.op === '-')
                 && (isBinaryOpNode(this.left) && (this.left.getOp() === '+' || this.left.getOp() === '-'))) {
@@ -923,16 +904,16 @@ var Playground = (function (exports) {
             if (this.op === '*') {
                 // Double-check order at display time
                 if (shouldSwapInMultiplication(this.left, this.right)) {
-                    return spaceSeparated
-                        ? `${this.right.toString(spaceSeparated)} · ${this.left.toString(spaceSeparated)}`
-                        : `${this.right.toString(spaceSeparated)}·${this.left.toString(spaceSeparated)}`;
+                    return CONFIG.spaceSeparation
+                        ? `${this.right.toString()} · ${this.left.toString()}`
+                        : `${this.right.toString()}·${this.left.toString()}`;
                 }
-                return spaceSeparated
-                    ? `${this.left.toString(spaceSeparated)} · ${this.right.toString(spaceSeparated)}`
-                    : `${this.left.toString(spaceSeparated)}·${this.right.toString(spaceSeparated)}`;
+                return CONFIG.spaceSeparation
+                    ? `${this.left.toString()} · ${this.right.toString()}`
+                    : `${this.left.toString()}·${this.right.toString()}`;
             }
             else {
-                return spaceSeparated
+                return CONFIG.spaceSeparation
                     ? `${leftStr} ${this.op} ${rightStr}`
                     : `${leftStr}${this.op}${rightStr}`;
             }
@@ -1142,8 +1123,19 @@ var Playground = (function (exports) {
         evaluate() {
             return Math.sqrt(this.operand.evaluate());
         }
-        toString(spaceSeparated) {
-            return spaceSeparated ? `√(${this.operand.toString(spaceSeparated)})` : `√${this.operand.toString(spaceSeparated)}`;
+        toString() {
+            if (CONFIG.spaceSeparation) {
+                const operandStr = this.operand.toString();
+                if (!isNumberNode(this.operand) || operandStr.includes('/')) {
+                    return `√(${operandStr})`;
+                }
+                else {
+                    return `√${operandStr}`;
+                }
+            }
+            else {
+                return `√${this.operand.toString()}`;
+            }
         }
         simplify() {
             const operand = this.operand.simplify();
@@ -1189,51 +1181,6 @@ var Playground = (function (exports) {
             return this.operand.equals(other.getOperand());
         }
     }
-
-    /**
-     * Node for mathematical constants (π, e, etc.)
-     */
-    class ConstantNode extends ExprNode {
-        constructor(symbol, value) {
-            super();
-            Object.defineProperty(this, "symbol", {
-                enumerable: true,
-                configurable: true,
-                writable: true,
-                value: symbol
-            });
-            Object.defineProperty(this, "value", {
-                enumerable: true,
-                configurable: true,
-                writable: true,
-                value: value
-            });
-            Object.defineProperty(this, "type", {
-                enumerable: true,
-                configurable: true,
-                writable: true,
-                value: 'Constant'
-            });
-        }
-        evaluate() {
-            return this.value;
-        }
-        toString(_spaceSeparated) {
-            return this.symbol;
-        }
-        simplify() {
-            return this; // Constants are already in simplest form
-        }
-        equals(other) {
-            if (!(isConstantNode(other)))
-                return false;
-            return this.symbol === other.symbol;
-        }
-        getSymbol() {
-            return this.symbol;
-        }
-    }
-
     /**
      * Specialized node for power expressions
      */
@@ -1262,15 +1209,15 @@ var Playground = (function (exports) {
         evaluate() {
             return this.base.evaluate() ** this.exponent.evaluate();
         }
-        toString(spaceSeparated) {
-            const baseStr = this.base.toString(spaceSeparated);
+        toString() {
+            const baseStr = this.base.toString();
             const expVal = this.exponent.evaluate();
             // Use superscript for powers 2 and 3
             if (expVal === 2)
                 return `${baseStr}²`;
             if (expVal === 3)
                 return `${baseStr}³`;
-            return spaceSeparated ? `${baseStr} ^ ${this.exponent.toString(spaceSeparated)}` : `${baseStr}^${this.exponent.toString(spaceSeparated)}`;
+            return CONFIG.spaceSeparation ? `${baseStr} ^ ${this.exponent.toString()}` : `${baseStr}^${this.exponent.toString()}`;
         }
         simplify() {
             const base = this.base.simplify();
@@ -1312,48 +1259,133 @@ var Playground = (function (exports) {
             return this.exponent;
         }
     }
+    /**
+     * Node for unary operations (-, sqrt, cbrt, etc.)
+     */
+    class UnaryOpNode extends ExprNode {
+        constructor(op, operand) {
+            super();
+            Object.defineProperty(this, "op", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: op
+            });
+            Object.defineProperty(this, "operand", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: operand
+            });
+            Object.defineProperty(this, "type", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: 'UnaryOp'
+            });
+        }
+        evaluate() {
+            const val = this.operand.evaluate();
+            switch (this.op) {
+                case '-': return -val;
+                case 'sqrt': return Math.sqrt(val);
+                case 'cbrt': return Math.cbrt(val);
+            }
+        }
+        toString() {
+            const operandStr = this.operand.toString();
+            if (operandStr === '0') {
+                return '0';
+            }
+            switch (this.op) {
+                case '-': return CONFIG.spaceSeparation && (!isNumberNode(this.operand) || operandStr.includes('/')) ? `-(${operandStr})` : `-${operandStr}`;
+                case 'sqrt': return CONFIG.spaceSeparation ? `√(${operandStr})` : `√${operandStr}`;
+                case 'cbrt': return CONFIG.spaceSeparation ? `∛(${operandStr})` : `∛${operandStr}`;
+            }
+        }
+        simplify() {
+            const operand = this.operand.simplify();
+            // Double negation: --a = a
+            if (this.op === '-' && isUnaryOpNode(operand)
+                && operand.getOp() === '-') {
+                return operand.getOperand();
+            }
+            // Simplify sqrt of perfect squares
+            if (this.op === 'sqrt' && isNumberNode(operand)) {
+                const val = operand.evaluate();
+                const sqrtVal = Math.sqrt(val);
+                if (Number.isInteger(sqrtVal)) {
+                    return new NumberNode(sqrtVal);
+                }
+            }
+            // Simplify cbrt of perfect cubes
+            if (this.op === 'cbrt' && isNumberNode(operand)) {
+                const val = operand.evaluate();
+                const cbrtVal = Math.cbrt(val);
+                if (Number.isInteger(cbrtVal)) {
+                    return new NumberNode(cbrtVal);
+                }
+            }
+            return new UnaryOpNode(this.op, operand);
+        }
+        getOp() {
+            return this.op;
+        }
+        getOperand() {
+            return this.operand;
+        }
+        equals(other) {
+            if (!(isUnaryOpNode(other)))
+                return false;
+            const otherOp = other;
+            return this.op === otherOp.getOp()
+                && this.operand.equals(otherOp.getOperand());
+        }
+    }
 
     /**
-     * Mathematical constants used for symbolic representation
+     * Node for mathematical constants (π, e, etc.)
      */
-    const CONSTANTS = [
-        { symbol: 'π', value: Math.PI },
-        { symbol: 'e', value: Math.E },
-        { symbol: 'φ', value: (1 + Math.sqrt(5)) / 2 },
-        { symbol: '√2', value: Math.sqrt(2) },
-        { symbol: '√3', value: Math.sqrt(3) },
-        { symbol: '√5', value: Math.sqrt(5) },
-        { symbol: '√7', value: Math.sqrt(7) },
-        { symbol: '√11', value: Math.sqrt(11) },
-        { symbol: '√13', value: Math.sqrt(13) },
-        { symbol: '√17', value: Math.sqrt(17) },
-        { symbol: '√19', value: Math.sqrt(19) },
-        { symbol: '√π', value: Math.sqrt(Math.PI) },
-        { symbol: 'ln(2)', value: Math.LN2 },
-        { symbol: 'ln(10)', value: Math.LN10 },
-        { symbol: 'log₂(e)', value: Math.LOG2E },
-        { symbol: 'log₁₀(e)', value: Math.LOG10E },
-    ];
-    /**
-     * Trigonometric values with their exact symbolic representations
-     */
-    const TRIG_VALUES = [
-        // sin values
-        { value: Math.sin(Math.PI / 6), symbol: 'sin(π/6)', exactForm: '1/2' },
-        { value: Math.sin(Math.PI / 4), symbol: 'sin(π/4)', exactForm: '√2/2' },
-        { value: Math.sin(Math.PI / 3), symbol: 'sin(π/3)', exactForm: '√3/2' },
-        { value: Math.sin(Math.PI / 2), symbol: 'sin(π/2)', exactForm: '1' },
-        // cos values
-        { value: Math.cos(0), symbol: 'cos(0)', exactForm: '1' },
-        { value: Math.cos(Math.PI / 6), symbol: 'cos(π/6)', exactForm: '√3/2' },
-        { value: Math.cos(Math.PI / 4), symbol: 'cos(π/4)', exactForm: '√2/2' },
-        { value: Math.cos(Math.PI / 3), symbol: 'cos(π/3)', exactForm: '1/2' },
-        { value: Math.cos(Math.PI / 2), symbol: 'cos(π/2)', exactForm: '0' },
-        // tan values
-        { value: Math.tan(Math.PI / 6), symbol: 'tan(π/6)', exactForm: '1/√3' },
-        { value: Math.tan(Math.PI / 4), symbol: 'tan(π/4)', exactForm: '1' },
-        { value: Math.tan(Math.PI / 3), symbol: 'tan(π/3)', exactForm: '√3' },
-    ];
+    class ConstantNode extends ExprNode {
+        constructor(symbol, value) {
+            super();
+            Object.defineProperty(this, "symbol", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: symbol
+            });
+            Object.defineProperty(this, "value", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: value
+            });
+            Object.defineProperty(this, "type", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: 'Constant'
+            });
+        }
+        evaluate() {
+            return this.value;
+        }
+        toString() {
+            return this.symbol;
+        }
+        simplify() {
+            return this; // Constants are already in simplest form
+        }
+        equals(other) {
+            if (!(isConstantNode(other)))
+                return false;
+            return this.symbol === other.symbol;
+        }
+        getSymbol() {
+            return this.symbol;
+        }
+    }
 
     /**
      * Converts a number to its continued fraction representation
@@ -1363,17 +1395,16 @@ var Playground = (function (exports) {
      */
     function toContinuedFraction(x, maxTerms = 20) {
         const terms = [];
-        const EPSILON = 1e-10;
         for (let i = 0; i < maxTerms; i++) {
             const a = Math.floor(x);
             terms.push(a);
             // If we've reached a very small remainder, we're done
-            if (Math.abs(x - a) < EPSILON) {
+            if (Math.abs(x - a) < CONFIG.epsilon) {
                 break;
             }
             // Prevent division by zero and avoid floating point issues
             const remainder = x - a;
-            if (Math.abs(remainder) < EPSILON) {
+            if (Math.abs(remainder) < CONFIG.epsilon) {
                 break;
             }
             x = 1 / remainder;
@@ -1423,19 +1454,18 @@ var Playground = (function (exports) {
      * @returns The identified form or null if not recognized
      */
     function identifyQuadraticIrrational(x) {
-        const EPSILON = 1e-10;
         // Direct checks for common values
         // Check for square roots of integers
         for (let n = 2; n <= 20; n++) {
-            if (Math.abs(x - Math.sqrt(n)) < EPSILON) {
+            if (Math.abs(x - Math.sqrt(n)) < CONFIG.epsilon) {
                 return `√${n}`;
             }
         }
         // Check for golden ratio and its conjugate
-        if (Math.abs(x - (1 + Math.sqrt(5)) / 2) < EPSILON) {
+        if (Math.abs(x - (1 + Math.sqrt(5)) / 2) < CONFIG.epsilon) {
             return "φ"; // Already defined as a constant
         }
-        if (Math.abs(x - (Math.sqrt(5) - 1) / 2) < EPSILON) {
+        if (Math.abs(x - (Math.sqrt(5) - 1) / 2) < CONFIG.epsilon) {
             return "(√5-1)/2";
         }
         // Check for expressions of form (√n ± m)/k where n, m, k are small integers
@@ -1444,7 +1474,7 @@ var Playground = (function (exports) {
             for (let m = 1; m <= 10; m++) {
                 for (let k = 2; k <= 10; k++) {
                     // Check (√n + m)/k
-                    if (Math.abs(x - (sqrtN + m) / k) < EPSILON) {
+                    if (Math.abs(x - (sqrtN + m) / k) < CONFIG.epsilon) {
                         if (m === 1 && k === 2) {
                             return `(√${n}+1)/2`;
                         }
@@ -1453,7 +1483,7 @@ var Playground = (function (exports) {
                         }
                     }
                     // Check (√n - m)/k
-                    if (Math.abs(x - (sqrtN - m) / k) < EPSILON) {
+                    if (Math.abs(x - (sqrtN - m) / k) < CONFIG.epsilon) {
                         if (m === 1 && k === 2) {
                             return `(√${n}-1)/2`;
                         }
@@ -1501,7 +1531,7 @@ var Playground = (function (exports) {
             // Try to reconstruct the quadratic form from the pattern
             // (Complex algorithm that would determine D from periodic CF)
             const D = reconstructD(terms[0], period);
-            if (D > 0 && Math.abs(x - Math.sqrt(D)) < EPSILON) {
+            if (D > 0 && Math.abs(x - Math.sqrt(D)) < CONFIG.epsilon) {
                 return `√${D}`;
             }
         }
@@ -1576,10 +1606,9 @@ var Playground = (function (exports) {
          * Main parsing function that converts a number to an expression tree
          */
         parseNumber(num, depth = 0) {
-            const EPSILON = 1e-10;
             const MAX_DEPTH = 3;
             // Handle zero
-            if (Math.abs(num) < EPSILON) {
+            if (Math.abs(num) < CONFIG.epsilon) {
                 return new NumberNode(0);
             }
             // Handle negative numbers
@@ -1587,7 +1616,7 @@ var Playground = (function (exports) {
                 return new UnaryOpNode('-', this.parseNumber(-num, depth));
             }
             // Handle integers
-            if (Math.abs(num - Math.round(num)) < EPSILON) {
+            if (Math.abs(num - Math.round(num)) < CONFIG.epsilon) {
                 return new NumberNode(Math.round(num));
             }
             const cfTerms = toContinuedFraction(num, 20);
@@ -1596,7 +1625,7 @@ var Playground = (function (exports) {
                 // Only consider fractions with reasonably-sized components
                 if (denominator <= 1000 && Math.abs(numerator) <= 10000) {
                     // Verify the approximation is within our epsilon
-                    if (Math.abs(num - numerator / denominator) < EPSILON) {
+                    if (Math.abs(num - numerator / denominator) < CONFIG.epsilon) {
                         const gcd = this.findGCD(Math.abs(numerator), denominator);
                         return new BinaryOpNode('/', new NumberNode(numerator / gcd), new NumberNode(denominator / gcd));
                     }
@@ -1604,18 +1633,18 @@ var Playground = (function (exports) {
             }
             // Try direct matches to constants
             for (const constant of CONSTANTS) {
-                if (Math.abs(num - constant.value) < EPSILON) {
-                    return new ConstantNode(constant.symbol, constant.value);
+                if (Math.abs(num - constant.value) < CONFIG.epsilon) {
+                    return new ConstantNode(constant.getSymbol(), constant.value);
                 }
             }
             // Try direct matches to trig values
             for (const trigValue of TRIG_VALUES) {
-                if (Math.abs(num - trigValue.value) < EPSILON) {
+                if (Math.abs(num - trigValue.value) < CONFIG.epsilon) {
                     // If it has an exact form, parse that instead
-                    if (trigValue.exactForm) {
-                        return this.parseExactForm(trigValue.exactForm);
+                    if (trigValue.getExactForm) {
+                        return this.parseExactForm(trigValue.getExactForm());
                     }
-                    return new ConstantNode(trigValue.symbol, trigValue.value);
+                    return new ConstantNode(trigValue.getSymbol(), trigValue.value);
                 }
             }
             const quadraticForm = identifyQuadraticIrrational(num);
@@ -1626,7 +1655,7 @@ var Playground = (function (exports) {
             // Direct check for square roots before other decompositions
             // This ensures square roots of integers are handled directly
             for (let i = 2; i <= 100; i++) {
-                if (Math.abs(num - Math.sqrt(i)) < EPSILON) {
+                if (Math.abs(num - Math.sqrt(i)) < CONFIG.epsilon) {
                     // Use our enhanced check to determine if we should keep direct form
                     if (shouldPreserveDirectRadical(i)) {
                         return new RootNode(new NumberNode(i));
@@ -1643,10 +1672,10 @@ var Playground = (function (exports) {
             // Check for powers
             for (const constant of [...CONSTANTS, ...TRIG_VALUES]) {
                 for (let power = 2; power <= 3; power++) {
-                    if (Math.abs(num - constant.value ** power) < EPSILON) {
-                        const baseNode = constant.exactForm
-                            ? this.parseExactForm(constant.exactForm)
-                            : new ConstantNode(constant.symbol, constant.value);
+                    if (Math.abs(num - constant.value ** power) < CONFIG.epsilon) {
+                        const baseNode = constant.getExactForm
+                            ? this.parseExactForm(constant.getExactForm())
+                            : new ConstantNode(constant.getSymbol(), constant.value);
                         return new PowerNode(baseNode, new NumberNode(power));
                     }
                 }
@@ -1656,38 +1685,38 @@ var Playground = (function (exports) {
                 // Check for π/n pattern
                 for (const constant of CONSTANTS) {
                     for (let denominator = 2; denominator <= 12; denominator++) {
-                        if (Math.abs(num - constant.value / denominator) < EPSILON) {
-                            return new BinaryOpNode('/', constant.exactForm
-                                ? this.parseExactForm(constant.exactForm)
-                                : new ConstantNode(constant.symbol, constant.value), new NumberNode(denominator));
+                        if (Math.abs(num - constant.value / denominator) < CONFIG.epsilon) {
+                            return new BinaryOpNode('/', constant.getExactForm
+                                ? this.parseExactForm(constant.getExactForm())
+                                : new ConstantNode(constant.getSymbol(), constant.value), new NumberNode(denominator));
                         }
                     }
                 }
                 // Check for products with more careful handling of square roots
                 for (const constant of [...CONSTANTS, ...TRIG_VALUES]) {
-                    if (Math.abs(constant.value) > EPSILON) {
+                    if (Math.abs(constant.value) > CONFIG.epsilon) {
                         const multiplier = num / constant.value;
                         // Skip square root decomposition attempts for prime square roots
-                        if (constant.symbol && constant.symbol.startsWith('√')
-                            && isPrime$1(Number.parseInt(constant.symbol.substring(1)))) {
+                        if (constant.getSymbol() && constant.getSymbol().startsWith('√')
+                            && isPrime$1(Number.parseInt(constant.getSymbol(true).substring(1)))) {
                             continue;
                         }
                         // Skip common fractions that might be misidentified as complex expressions
-                        if ((Math.abs(multiplier - 0.75) < EPSILON)
-                            || (Math.abs(multiplier - 0.5) < EPSILON)
-                            || (Math.abs(multiplier - 0.25) < EPSILON)
-                            || (Math.abs(multiplier - 0.3333333333333333) < EPSILON)
-                            || (Math.abs(multiplier - 0.6666666666666666) < EPSILON)) {
+                        if ((Math.abs(multiplier - 0.75) < CONFIG.epsilon)
+                            || (Math.abs(multiplier - 0.5) < CONFIG.epsilon)
+                            || (Math.abs(multiplier - 0.25) < CONFIG.epsilon)
+                            || (Math.abs(multiplier - 0.3333333333333333) < CONFIG.epsilon)
+                            || (Math.abs(multiplier - 0.6666666666666666) < CONFIG.epsilon)) {
                             continue;
                         }
                         if (this.isNiceValue(multiplier)) {
                             const multiplierNode = this.parseNumber(multiplier, depth + 1);
-                            const valueNode = constant.exactForm
-                                ? this.parseExactForm(constant.exactForm)
-                                : new ConstantNode(constant.symbol, constant.value);
+                            const valueNode = constant.getExactForm
+                                ? this.parseExactForm(constant.getExactForm())
+                                : new ConstantNode(constant.getSymbol(), constant.value);
                             // If multiplier is 1, just return the constant
                             if (isNumberNode(multiplierNode)
-                                && Math.abs(multiplierNode.evaluate() - 1) < EPSILON) {
+                                && Math.abs(multiplierNode.evaluate() - 1) < CONFIG.epsilon) {
                                 return valueNode;
                             }
                             // Create the product node with canonical ordering
@@ -1737,7 +1766,7 @@ var Playground = (function (exports) {
                             for (let addend = 1; addend <= 10; addend++) {
                                 const productValue = productNode.evaluate();
                                 const sum = productValue + addend;
-                                if (Math.abs(num - sum) < EPSILON) {
+                                if (Math.abs(num - sum) < CONFIG.epsilon) {
                                     return new BinaryOpNode('+', productNode, new NumberNode(addend));
                                 }
                             }
@@ -1750,12 +1779,12 @@ var Playground = (function (exports) {
                     const remainder = num - constant.value;
                     if (this.isNiceValue(remainder)) {
                         const remainderNode = this.parseNumber(remainder, depth + 1);
-                        const valueNode = constant.exactForm
-                            ? this.parseExactForm(constant.exactForm)
-                            : new ConstantNode(constant.symbol, constant.value);
+                        const valueNode = constant.getExactForm
+                            ? this.parseExactForm(constant.getExactForm())
+                            : new ConstantNode(constant.getSymbol(), constant.value);
                         // If remainder is 0, just return the constant
                         if (isNumberNode(remainderNode)
-                            && Math.abs(remainderNode.evaluate()) < EPSILON) {
+                            && Math.abs(remainderNode.evaluate()) < CONFIG.epsilon) {
                             return valueNode;
                         }
                         // If remainder is negative, use subtraction
@@ -1772,15 +1801,15 @@ var Playground = (function (exports) {
                         const remainder = num - multipleValue;
                         if (this.isNiceValue(remainder)) {
                             // Create the multiple constant node
-                            const constantNode = constant.exactForm
-                                ? this.parseExactForm(constant.exactForm)
-                                : new ConstantNode(constant.symbol, constant.value);
+                            const constantNode = constant.getExactForm
+                                ? this.parseExactForm(constant.getExactForm())
+                                : new ConstantNode(constant.getSymbol(), constant.value);
                             const multipleNode = new BinaryOpNode('*', new NumberNode(multiplier), constantNode);
                             // Create the remainder node
                             const remainderNode = this.parseNumber(remainder, depth + 1);
                             // If remainder is 0, just return the multiple
                             if (isNumberNode(remainderNode)
-                                && Math.abs(remainderNode.evaluate()) < EPSILON) {
+                                && Math.abs(remainderNode.evaluate()) < CONFIG.epsilon) {
                                 return multipleNode;
                             }
                             // If remainder is negative, use subtraction
@@ -1793,7 +1822,7 @@ var Playground = (function (exports) {
                 }
                 // Check for cube roots of integers
                 for (let i = 2; i <= 100; i++) {
-                    if (Math.abs(num - Math.cbrt(i)) < EPSILON) {
+                    if (Math.abs(num - Math.cbrt(i)) < CONFIG.epsilon) {
                         return new UnaryOpNode('cbrt', new NumberNode(i));
                     }
                 }
@@ -1801,7 +1830,7 @@ var Playground = (function (exports) {
             // Final direct check for square roots before giving up
             // This ensures we catch any square roots we might have missed
             const possibleRadicand = Math.round(num * num);
-            if (Math.abs(num - Math.sqrt(possibleRadicand)) < EPSILON) {
+            if (Math.abs(num - Math.sqrt(possibleRadicand)) < CONFIG.epsilon) {
                 return new RootNode(new NumberNode(possibleRadicand));
             }
             // Fallback to decimal representation
@@ -1827,8 +1856,8 @@ var Playground = (function (exports) {
             }
             // Handle known constants
             for (const constant of CONSTANTS) {
-                if (exactForm === constant.symbol) {
-                    return new ConstantNode(constant.symbol, constant.value);
+                if (exactForm === constant.getSymbol()) {
+                    return new ConstantNode(constant.getSymbol(), constant.value);
                 }
             }
             // If we don't recognize it, treat it as a symbol
@@ -1838,9 +1867,8 @@ var Playground = (function (exports) {
          * Helper to determine if a value is "nice"
          */
         isNiceValue(num) {
-            const EPSILON = 1e-10;
             // Check if it's close to an integer
-            if (Math.abs(num - Math.round(num)) < EPSILON) {
+            if (Math.abs(num - Math.round(num)) < CONFIG.epsilon) {
                 return true;
             }
             const cfTerms = toContinuedFraction(num, 10);
@@ -1849,7 +1877,7 @@ var Playground = (function (exports) {
             for (const [numerator, denominator] of convergents) {
                 // Only consider "nice" fractions (reasonable size numerator/denominator)
                 if (denominator <= 20 && Math.abs(numerator) <= 50) {
-                    if (Math.abs(num - numerator / denominator) < EPSILON) {
+                    if (Math.abs(num - numerator / denominator) < CONFIG.epsilon) {
                         return true;
                     }
                 }
@@ -1857,7 +1885,7 @@ var Playground = (function (exports) {
             // Check if it's a square root of a small integer (highest priority)
             // This helps prefer direct √n forms
             for (let i = 2; i <= 30; i++) {
-                if (Math.abs(num - Math.sqrt(i)) < EPSILON) {
+                if (Math.abs(num - Math.sqrt(i)) < CONFIG.epsilon) {
                     // Give very high priority to prime square roots
                     if (isPrime$1(i)) {
                         return true;
@@ -1870,13 +1898,13 @@ var Playground = (function (exports) {
             }
             // Check if it's close to a common constant
             for (const constant of CONSTANTS) {
-                if (Math.abs(num - constant.value) < EPSILON) {
+                if (Math.abs(num - constant.value) < CONFIG.epsilon) {
                     return true;
                 }
             }
             // Check trig values
             for (const value of TRIG_VALUES) {
-                if (Math.abs(num - value.value) < EPSILON) {
+                if (Math.abs(num - value.value) < CONFIG.epsilon) {
                     return true;
                 }
             }
@@ -1886,7 +1914,7 @@ var Playground = (function (exports) {
                 Math.cos(Math.PI / 4),
             ];
             for (const value of COMMON_VALUES) {
-                if (Math.abs(num - value) < EPSILON) {
+                if (Math.abs(num - value) < CONFIG.epsilon) {
                     return true;
                 }
             }
@@ -1918,11 +1946,12 @@ var Playground = (function (exports) {
      * @param num The number to convert to symbolic form
      * @returns A string containing the symbolic representation
      */
-    function prettyPi(num, { spaceSeparate = false } = { spaceSeparate: false }) {
+    function prettyPi(num, config = {}) {
+        setConfig(config);
         const parser = new ExpressionParser();
         const exprTree = parser.parseNumber(num);
         const simplified = exprTree.simplify();
-        return simplified.toString(spaceSeparate);
+        return simplified.toString();
     }
 
     function getCodeMarker(sourceCodeInfo) {
@@ -3734,7 +3763,7 @@ var Playground = (function (exports) {
         if (value === Number.NEGATIVE_INFINITY)
             return "".concat(Number.NEGATIVE_INFINITY);
         if (typeof value === 'number') {
-            var pretty = prettyPi(value, { spaceSeparate: true });
+            var pretty = prettyPi(value, { spaceSeparation: true });
             var decimal = "".concat(value);
             return pretty === decimal ? pretty : "".concat(pretty, "   (").concat(decimal, ")");
         }
@@ -3745,13 +3774,17 @@ var Playground = (function (exports) {
         if (isMatrix$1(value))
             return stringifyMatrix(value);
         if (isVector(value)) {
-            return "[\n  ".concat(value.map(function (cell) { return prettyPi(cell); }).join(',\n  '), "\n]");
+            return "[\n  ".concat(value.map(function (cell) {
+                var pretty = prettyPi(cell, { spaceSeparation: true });
+                var decimal = "".concat(cell);
+                return pretty === decimal ? pretty : "".concat(pretty, "   (").concat(decimal, ")");
+            }).join(',\n  '), "\n]");
         }
         return JSON.stringify(value, null, 2);
     }
     function prettyIfNumber(value) {
         if (typeof value === 'number') {
-            return prettyPi(value, { spaceSeparate: true });
+            return prettyPi(value, { spaceSeparation: true });
         }
         return "".concat(value);
     }
@@ -4658,7 +4691,7 @@ var Playground = (function (exports) {
         },
     };
 
-    var sequenceNormalExpression$1 = {
+    var sequenceNormalExpression = {
         'nth': {
             evaluate: function (params, sourceCodeInfo) {
                 var _a = __read(params, 2), seq = _a[0], i = _a[1];
@@ -9019,215 +9052,191 @@ var Playground = (function (exports) {
         },
     };
 
-    /**
-     * Checks if a number is a perfect square.
-     *
-     * @param {number} n - The number to check
-     * @return {boolean} - True if n is a perfect square, false otherwise
-     */
-    function isPerfectSquare(n) {
-        var sqrt = Math.sqrt(n);
-        return Math.floor(sqrt) === sqrt;
+    function binomialCoefficient(n, k) {
+        if (k < 0 || k > n)
+            return 0;
+        if (k === 0 || k === n)
+            return 1;
+        var result = 1;
+        for (var i = 0; i < k; i++)
+            result *= (n - i) / (i + 1);
+        return result;
     }
 
     /**
-     * Checks if a number is a member of an arithmetic sequence.
-     * @param start The first term of the sequence
-     * @param step The common difference between terms
-     * @param n The number to check
-     * @returns true if the number is in the sequence, false otherwise
+     * Generates all possible combinations of a specified size from a collection.
+     * @param collection The input collection to generate combinations from
+     * @param size The size of each combination
+     * @returns An array of arrays, where each inner array is a combination of the specified size
      */
-    function isInArithmeticSequence(start, step, n) {
-        // Special case: If step is 0, n must equal start
-        if (step === 0) {
-            return Math.abs(n - start) < 1e-12;
+    function combinations(collection, size) {
+        var e_1, _a;
+        // Return empty array if invalid inputs
+        if (size <= 0 || size > collection.length) {
+            return [];
         }
-        // Check if n is a valid arithmetic sequence term
-        var position = (n - start) / step;
-        // Position must be non-negative
-        if (position < 0) {
-            return false;
+        // Base case: if size is 1, return each element as its own combination
+        if (size === 1) {
+            return collection.map(function (item) { return [item]; });
         }
-        // For tiny steps, do a direct calculation instead of using the position
-        // This helps avoid floating point precision issues
-        if (Math.abs(step) < 1e-6) {
-            // Find the closest position (rounding to nearest integer)
-            var roundedPosition_1 = Math.round(position);
-            var calculatedValue_1 = start + step * roundedPosition_1;
-            // Direct comparison with tiny values should use absolute difference
-            return Math.abs(calculatedValue_1 - n) < 1e-12;
+        var result = [];
+        // Recursive approach to build combinations
+        for (var i = 0; i <= collection.length - size; i++) {
+            // Take the current element
+            var current = collection[i];
+            // Get all combinations of size-1 from the rest of the elements
+            var subCombinations = combinations(collection.slice(i + 1), size - 1);
+            try {
+                // Add the current element to each sub-combination
+                for (var subCombinations_1 = (e_1 = void 0, __values(subCombinations)), subCombinations_1_1 = subCombinations_1.next(); !subCombinations_1_1.done; subCombinations_1_1 = subCombinations_1.next()) {
+                    var subComb = subCombinations_1_1.value;
+                    result.push(__spreadArray([current], __read(subComb), false));
+                }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (subCombinations_1_1 && !subCombinations_1_1.done && (_a = subCombinations_1.return)) _a.call(subCombinations_1);
+                }
+                finally { if (e_1) throw e_1.error; }
+            }
         }
-        // For normal cases, check if position is very close to an integer
-        var roundedPosition = Math.round(position);
-        if (Math.abs(roundedPosition - position) > 1e-12) {
-            return false;
-        }
-        // Double check by calculating the value at that position
-        var calculatedValue = start + step * roundedPosition;
-        // For values very close to zero, use absolute difference
-        if (Math.abs(n) < 1e-10 || Math.abs(calculatedValue) < 1e-10) {
-            return Math.abs(calculatedValue - n) < 1e-12;
-        }
-        // Otherwise use relative difference for better precision with large numbers
-        var relativeDifference = Math.abs(calculatedValue - n)
-            / Math.max(Math.abs(n), Math.abs(calculatedValue));
-        return relativeDifference < 1e-12;
+        return result.length === 0 ? [[]] : result;
     }
-    var arithmeticNormalExpressions = {
-        'c:arithmetic-seq': {
+    var combinationsNormalExpressions = {
+        'c:combinations': {
             evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), start = _b[0], step = _b[1], length = _b[2];
-                assertNumber(start, sourceCodeInfo, { finite: true });
-                assertNumber(step, sourceCodeInfo, { finite: true });
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                return Array.from({ length: length }, function (_, i) { return start + i * step; });
+                var _b = __read(_a, 2), set = _b[0], n = _b[1];
+                assertArray(set, sourceCodeInfo);
+                assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true, lte: set.length });
+                if (n === 0)
+                    return [[]];
+                return combinations(set, n);
             },
-            paramCount: 3,
+            paramCount: 2,
         },
-        'c:arithmetic-take-while': {
-            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
-                var _c = __read(_a, 3), start = _c[0], step = _c[1], fn = _c[2];
-                var executeFunction = _b.executeFunction;
-                assertNumber(start, sourceCodeInfo, { finite: true });
-                assertNumber(step, sourceCodeInfo, { finite: true });
-                assertLitsFunction(fn, sourceCodeInfo);
-                var arithmetic = [];
-                for (var i = 0;; i += 1) {
-                    var value = start + i * step;
-                    if (!executeFunction(fn, [value, i], contextStack, sourceCodeInfo)) {
-                        break;
-                    }
-                    arithmetic[i] = value;
-                }
-                return arithmetic;
-            },
-            paramCount: 3,
-        },
-        'c:arithmetic-nth': {
+        'c:count-combinations': {
             evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), start = _b[0], step = _b[1], n = _b[2];
-                assertNumber(start, sourceCodeInfo, { finite: true });
-                assertNumber(step, sourceCodeInfo, { finite: true });
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return start + (n - 1) * step;
+                var _b = __read(_a, 2), n = _b[0], k = _b[1];
+                assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true });
+                assertNumber(k, sourceCodeInfo, { integer: true, nonNegative: true, lte: n });
+                return binomialCoefficient(n, k);
             },
-            paramCount: 3,
-        },
-        'c:arithmetic?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), start = _b[0], step = _b[1], n = _b[2];
-                assertNumber(n, sourceCodeInfo);
-                assertNumber(start, sourceCodeInfo, { finite: true });
-                assertNumber(step, sourceCodeInfo, { finite: true });
-                return isInArithmeticSequence(start, step, n);
-            },
-            paramCount: 3,
+            aliases: ['c:binomial', 'c:C'],
+            paramCount: 2,
         },
     };
 
-    // Pre-calculated Bell numbers (for efficient lookup)
-    // Only including values up to the safe integer limit in JavaScript
-    var bellNumbers = [
-        1,
-        1,
-        2,
-        5,
-        15,
-        52,
-        203,
-        877,
-        4140,
-        21147,
-        115975,
-        678570,
-        4213597,
-        27644437,
-        190899322,
-        1382958545,
-        10480142147,
-        82864869804,
-        682076806159,
-        5832742205057,
-        51724158235372,
-        474869816156751,
-        4506715738447323,
-    ];
-    var bellSequence = {
-        'maxLength': bellNumbers.length,
-        'c:bell-seq': function (length) {
-            return bellNumbers.slice(0, length);
-        },
-        'c:bell-nth': function (n) { return bellNumbers[n - 1]; },
-        'c:bell?': function (n) { return bellNumbers.includes(n); },
-        'c:bell-take-while': function (takeWhile) {
-            var bell = [];
-            for (var i = 0;; i += 1) {
-                if (i >= bellNumbers.length) {
-                    break;
-                }
-                var value = bellNumbers[i];
-                if (!takeWhile(value, i)) {
-                    break;
-                }
-                bell[i] = value;
+    function getAllDerangements(arr) {
+        var n = arr.length;
+        var result = [];
+        var used = Array.from({ length: n }, function () { return false; });
+        var temp = Array.from({ length: n });
+        function generateDerangements(pos) {
+            if (pos === n) {
+                result.push(__spreadArray([], __read(temp), false));
+                return;
             }
-            return bell;
+            for (var i = 0; i < n; i++) {
+                // Skip if element is already used or would be in its original position
+                if (used[i] || i === pos) {
+                    continue;
+                }
+                used[i] = true;
+                temp[pos] = arr[i];
+                generateDerangements(pos + 1);
+                used[i] = false;
+            }
+        }
+        generateDerangements(0);
+        return result;
+    }
+    function countDerangements(n) {
+        if (n === 0)
+            return 1;
+        if (n === 1)
+            return 0;
+        var a = 1; // !0
+        var b = 0; // !1
+        var result = 0;
+        for (var i = 2; i <= n; i++) {
+            result = (i - 1) * (a + b);
+            a = b;
+            b = result;
+        }
+        return result;
+    }
+    var derangementsNormalExpressions = {
+        'c:derangements': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), set = _b[0];
+                assertArray(set, sourceCodeInfo);
+                return getAllDerangements(set);
+            },
+            paramCount: 1,
+        },
+        'c:count-derangements': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { finite: true, integer: true, positive: true });
+                return countDerangements(n);
+            },
+            paramCount: 1,
         },
     };
 
-    var catalanNumbers = [
-        1,
-        1,
-        2,
-        5,
-        14,
-        42,
-        132,
-        429,
-        1430,
-        4862,
-        16796,
-        58786,
-        208012,
-        742900,
-        2674440,
-        9694845,
-        35357670,
-        129644790,
-        477638700,
-        1767263190,
-        6564120420,
-        24466267020,
-        91482563640,
-        343059613650,
-        1289904147324,
-        4861946401452,
-        18367353072152,
-        69533550916004,
-        263747951750360,
-        1002242216651368,
-        3814986502092304,
-    ];
-    var catalanSequence = {
-        'maxLength': catalanNumbers.length,
-        'c:catalan-seq': function (length) {
-            return catalanNumbers.slice(0, length);
-        },
-        'c:catalan-nth': function (n) { return catalanNumbers[n - 1]; },
-        'c:catalan?': function (n) { return catalanNumbers.includes(n); },
-        'c:catalan-take-while': function (takeWhile) {
-            var catalan = [];
-            for (var i = 0;; i += 1) {
-                if (i >= catalanNumbers.length) {
-                    break;
+    function calcUnsortedDivisors(number) {
+        var divisors = [];
+        for (var i = 1; i <= Math.sqrt(number); i++) {
+            if (number % i === 0) {
+                divisors.push(i);
+                if (i !== number / i) {
+                    divisors.push(number / i);
                 }
-                var value = catalanNumbers[i];
-                if (!takeWhile(value, i)) {
-                    break;
-                }
-                catalan[i] = value;
             }
-            return catalan;
+        }
+        return divisors;
+    }
+    function getDivisors(n) {
+        var unsortedDivisors = calcUnsortedDivisors(n);
+        var sortedDivisors = unsortedDivisors.sort(function (a, b) { return a - b; });
+        return sortedDivisors;
+    }
+    function getProperDivisors(n) {
+        return getDivisors(n).slice(0, -1); // Exclude the number itself
+    }
+    var divisorsNormalExpressions = {
+        'c:divisors': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), number = _b[0];
+                assertNumber(number, sourceCodeInfo, { finite: true, integer: true, positive: true });
+                return getDivisors(number);
+            },
+            paramCount: 1,
+        },
+        'c:count-divisors': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), number = _b[0];
+                assertNumber(number, sourceCodeInfo, { finite: true, integer: true, positive: true });
+                return calcUnsortedDivisors(number).length;
+            },
+            paramCount: 1,
+        },
+        'c:proper-divisors': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), number = _b[0];
+                assertNumber(number, sourceCodeInfo, { finite: true, integer: true, positive: true });
+                return getProperDivisors(number);
+            },
+            paramCount: 1,
+        },
+        'c:count-proper-divisors': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), number = _b[0];
+                assertNumber(number, sourceCodeInfo, { finite: true, integer: true, positive: true });
+                return calcUnsortedDivisors(number).length - 1; // Exclude the number itself
+            },
+            paramCount: 1,
         },
     };
 
@@ -9252,703 +9261,37 @@ var Playground = (function (exports) {
         355687428096000,
         6402373705728000,
     ];
-    var factorialSequence = {
-        'maxLength': factorialNumbers.length,
-        'c:factorial-seq': function (length) {
-            return factorialNumbers.slice(0, length);
-        },
-        'c:factorial-nth': function (n) { return factorialNumbers[n - 1]; },
-        'c:factorial?': function (n) { return factorialNumbers.includes(n); },
-        'c:factorial-take-while': function (takeWhile) {
-            var factorial = [];
-            for (var i = 0;; i += 1) {
-                if (i >= factorialNumbers.length) {
-                    break;
-                }
-                var value = factorialNumbers[i];
-                if (!takeWhile(value, i)) {
-                    break;
-                }
-                factorial[i] = value;
-            }
-            return factorial;
-        },
-    };
 
-    var fibonacciNumbers = [
-        0,
-        1,
-        1,
-        2,
-        3,
-        5,
-        8,
-        13,
-        21,
-        34,
-        55,
-        89,
-        144,
-        233,
-        377,
-        610,
-        987,
-        1597,
-        2584,
-        4181,
-        6765,
-        10946,
-        17711,
-        28657,
-        46368,
-        75025,
-        121393,
-        196418,
-        317811,
-        514229,
-        832040,
-        1346269,
-        2178309,
-        3524578,
-        5702887,
-        9227465,
-        14930352,
-        24157817,
-        39088169,
-        63245986,
-        102334155,
-        165580141,
-        267914296,
-        433494437,
-        701408733,
-        1134903170,
-        1836311903,
-        2971215073,
-        4807526976,
-        7778742049,
-        12586269025,
-        20365011074,
-        32951280099,
-        53316291173,
-        86267571272,
-        139583862445,
-        225851433717,
-        365435296162,
-        591286729879,
-        956722026041,
-        1548008755920,
-        2504730781961,
-        4052739537881,
-        6557470319842,
-        10610209857723,
-        17167680177565,
-        27777890035288,
-        44945570212853,
-        72723460248141,
-        117669030460994,
-        190392490709135,
-        308061521170129,
-        498454011879264,
-        806515533049393,
-        1304969544928657,
-        2111485077978050,
-        3416454622906707,
-        5527939700884757,
-        8944394323791464,
-    ];
-    var fibonacciSequence = {
-        'maxLength': fibonacciNumbers.length,
-        'c:fibonacci-seq': function (length) {
-            return fibonacciNumbers.slice(0, length);
-        },
-        'c:fibonacci-nth': function (n) { return fibonacciNumbers[n - 1]; },
-        'c:fibonacci?': function (n) { return fibonacciNumbers.includes(n); },
-        'c:fibonacci-take-while': function (takeWhile) {
-            var fibonacci = [];
-            for (var i = 0;; i += 1) {
-                if (i >= fibonacciNumbers.length) {
-                    break;
-                }
-                var value = fibonacciNumbers[i];
-                if (!takeWhile(value, i)) {
-                    break;
-                }
-                fibonacci[i] = value;
-            }
-            return fibonacci;
-        },
-    };
-
-    /**
-     * Checks if a number is a member of a geometric sequence.
-     * @param initialTerm The first term of the sequence (a)
-     * @param ratio The common ratio of the sequence (r)
-     * @param number The number to check
-     * @returns true if the number is in the sequence, false otherwise
-     */
-    function isInGeometricSequence(initialTerm, ratio, number) {
-        // Handle special cases
-        if (number === 0 && initialTerm === 0)
-            return true;
-        if (initialTerm === 0)
-            return number === 0;
-        if (ratio === 1)
-            return number === initialTerm;
-        if (ratio === 0)
-            return number === 0 || number === initialTerm;
-        // For negative ratios, we need special handling
-        if (ratio < 0) {
-            // Calculate log using absolute values
-            var logResult_1 = Math.log(Math.abs(number / initialTerm)) / Math.log(Math.abs(ratio));
-            // Check if logResult is very close to an integer
-            var roundedLogResult_1 = Math.round(logResult_1);
-            if (Math.abs(roundedLogResult_1 - logResult_1) > 1e-10 || logResult_1 < 0) {
-                return false;
-            }
-            // For negative ratios, alternating terms have alternating signs
-            // Check if sign matches what we expect based on the power
-            var expectedSign = roundedLogResult_1 % 2 === 0
-                ? Math.sign(initialTerm)
-                : -Math.sign(initialTerm);
-            return Math.sign(number) === expectedSign;
+    function factorialOf(n) {
+        if (n < 0)
+            throw new Error('Factorial is not defined for negative numbers');
+        if (n === 0 || n === 1)
+            return 1;
+        if (n <= 18) {
+            return factorialNumbers[n];
         }
-        // For positive ratios
-        // Quick check based on sequence direction
-        // If ratio > 1, number should be >= initialTerm to be in the sequence
-        // If 0 < ratio < 1, number should be <= initialTerm to be in the sequence
-        if ((ratio > 1 && number < initialTerm)
-            || (ratio < 1 && number > initialTerm)) {
-            return false;
-        }
-        // Calculate n in: number = initialTerm * (ratio^n)
-        var logResult = Math.log(number / initialTerm) / Math.log(ratio);
-        // Check if logResult is very close to an integer
-        var roundedLogResult = Math.round(logResult);
-        if (Math.abs(roundedLogResult - logResult) > 1e-10 || logResult < 0) {
-            return false;
-        }
-        // Verify calculated value matches the number exactly (within floating point precision)
-        // This is important to avoid false positives due to floating point arithmetic
-        var calculatedValue = initialTerm * Math.pow(ratio, roundedLogResult);
-        var relativeDifference = Math.abs(calculatedValue - number)
-            / Math.max(Math.abs(number), Math.abs(calculatedValue));
-        return relativeDifference < 1e-10;
-    }
-    var geometricNormalExpressions = {
-        'c:geometric-seq': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), start = _b[0], ratio = _b[1], length = _b[2];
-                assertNumber(start, sourceCodeInfo, { finite: true });
-                assertNumber(ratio, sourceCodeInfo, { finite: true });
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                return Array.from({ length: length }, function (_, i) { return start * Math.pow(ratio, i); });
-            },
-            paramCount: 3,
-        },
-        'c:geometric-take-while': {
-            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
-                var _c = __read(_a, 3), start = _c[0], ratio = _c[1], fn = _c[2];
-                var executeFunction = _b.executeFunction;
-                assertNumber(start, sourceCodeInfo, { finite: true });
-                assertNumber(ratio, sourceCodeInfo, { finite: true });
-                assertLitsFunction(fn, sourceCodeInfo);
-                var geometric = [];
-                for (var i = 0;; i += 1) {
-                    var value = start * Math.pow(ratio, i);
-                    if (!executeFunction(fn, [value, i], contextStack, sourceCodeInfo)) {
-                        break;
-                    }
-                    geometric[i] = value;
-                }
-                return geometric;
-            },
-            paramCount: 3,
-        },
-        'c:geometric-nth': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), start = _b[0], ratio = _b[1], n = _b[2];
-                assertNumber(start, sourceCodeInfo, { finite: true });
-                assertNumber(ratio, sourceCodeInfo, { finite: true });
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return start * Math.pow(ratio, (n - 1));
-            },
-            paramCount: 3,
-        },
-        'c:geometric?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), start = _b[0], ratio = _b[1], n = _b[2];
-                assertNumber(n, sourceCodeInfo);
-                assertNumber(start, sourceCodeInfo, { finite: true });
-                assertNumber(ratio, sourceCodeInfo, { finite: true });
-                return isInGeometricSequence(start, ratio, n);
-            },
-            paramCount: 3,
-        },
-    };
-
-    /**
-     * Checks if a number is part of the Look-and-Say sequence.
-     *
-     * The Look-and-Say sequence starts with "1" and each subsequent term describes
-     * the previous term by counting consecutive digits. For example:
-     * 1, 11, 21, 1211, 111221, 312211, 13112221, ...
-     *
-     * @param {string|number} target - The number to check (can be a string or number)
-     * @param {number} limit - How many terms to generate for checking (default: 25)
-     * @returns {boolean} - Whether the target is in the sequence
-     */
-    function isLookAndSay(target, limit) {
-        if (limit === void 0) { limit = 25; }
-        // The first term of the sequence
-        var current = '1';
-        // Check if the first term matches
-        if (current === target) {
-            return true;
-        }
-        // Generate terms and check against the target
-        for (var i = 1; i < limit; i++) {
-            current = getNextLookAndSayTerm(current);
-            if (current === target) {
-                return true;
-            }
-            // Optimization: if the current term is longer than the target, and
-            // the sequence is strictly increasing in length, the target won't be found
-            if (current.length > target.length) {
-                return false;
-            }
-        }
-        // If we've generated 'limit' terms without finding a match, return false
-        return false;
-    }
-    /**
-     * Generates the next term in the Look-and-Say sequence
-     *
-     * @param {string} term - The current term
-     * @returns {string} - The next term in the sequence
-     */
-    function getNextLookAndSayTerm(term) {
-        var result = '';
-        var count = 1;
-        for (var i = 0; i < term.length; i++) {
-            // If the current digit is the same as the next one, increment count
-            if (i + 1 < term.length && term[i] === term[i + 1]) {
-                count++;
-            }
-            else {
-                // Otherwise, append count and the digit to the result
-                result += count.toString() + term[i];
-                count = 1;
-            }
-        }
+        var result = factorialNumbers[18];
+        for (var i = 19; i <= n; i++)
+            result *= i;
         return result;
     }
-    var lookAndSaySequence = {
-        'string': true,
-        'c:look-and-say-seq': function (length) {
-            var lookAndSay = ['1'];
-            for (var i = 1; i < length; i += 1) {
-                var prev = lookAndSay[i - 1];
-                var next = prev.replace(/(\d)\1*/g, function (match) { return "".concat(match.length).concat(match[0]); });
-                lookAndSay[i] = next;
-            }
-            return lookAndSay;
-        },
-        'c:look-and-say-take-while': function (takeWhile) {
-            if (!takeWhile('1', 0)) {
-                return [];
-            }
-            var lookAndSay = ['1'];
-            for (var i = 1;; i += 1) {
-                var prev = lookAndSay[i - 1];
-                var next = prev.replace(/(\d)\1*/g, function (match) { return "".concat(match.length).concat(match[0]); });
-                if (!takeWhile(next, i)) {
-                    break;
+    var factorialNormalExpressions = {
+        'c:factorial': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true });
+                if (n > 170) {
+                    // Factorial of numbers greater than 170 exceeds the maximum safe integer in JavaScript
+                    throw new LitsError('Factorial is too large to compute safely', sourceCodeInfo);
                 }
-                lookAndSay[i] = next;
-            }
-            return lookAndSay;
-        },
-        'c:look-and-say-nth': function (n) {
-            var lookAndSay = '1';
-            for (var i = 1; i < n; i += 1) {
-                lookAndSay = lookAndSay.replace(/(\d)\1*/g, function (match) { return "".concat(match.length).concat(match[0]); });
-            }
-            return lookAndSay;
-        },
-        'c:look-and-say?': function (n) { return isLookAndSay(n); },
-    };
-
-    function isHappyNumber(n) {
-        // A happy number is defined by the following process:
-        // 1. Starting with any positive integer, replace the number by the sum of the squares of its digits
-        // 2. Repeat until either:
-        //    - The number equals 1 (in which case it's a happy number)
-        //    - It enters a cycle that doesn't include 1 (in which case it's not a happy number)
-        if (n <= 0)
-            return false;
-        // Use a set to detect cycles
-        var seen = new Set();
-        // Continue until we either reach 1 or detect a cycle
-        while (n !== 1 && !seen.has(n)) {
-            seen.add(n);
-            n = getSumOfSquaredDigits(n);
-        }
-        // If we reached 1, it's a happy number
-        return n === 1;
-    }
-    function getSumOfSquaredDigits(n) {
-        var sum = 0;
-        while (n > 0) {
-            var digit = n % 10;
-            sum += digit * digit;
-            n = Math.floor(n / 10);
-        }
-        return sum;
-    }
-    var happySequence = {
-        'c:happy-seq': function (length) {
-            var happyNumbers = [];
-            for (var i = 1; happyNumbers.length < length; i++) {
-                var n = i;
-                var seen = new Set();
-                while (n !== 1 && !seen.has(n)) {
-                    seen.add(n);
-                    n = String(n)
-                        .split('')
-                        .reduce(function (sum, digit) { return sum + Math.pow(Number(digit), 2); }, 0);
-                }
-                if (n === 1)
-                    happyNumbers.push(i);
-            }
-            return happyNumbers;
-        },
-        'c:happy-nth': function (n) {
-            var happyCount = 0;
-            var currentNumber = 1;
-            while (happyCount < n) {
-                var num = currentNumber;
-                var seen = new Set();
-                while (num !== 1 && !seen.has(num)) {
-                    seen.add(num);
-                    num = String(num)
-                        .split('')
-                        .reduce(function (sum, digit) { return sum + Math.pow(Number(digit), 2); }, 0);
-                }
-                if (num === 1)
-                    happyCount++;
-                currentNumber++;
-            }
-            return currentNumber - 1;
-        },
-        'c:happy?': function (n) { return isHappyNumber(n); },
-        'c:happy-take-while': function (takeWhile) {
-            var happyNumbers = [];
-            for (var i = 1;; i++) {
-                var n = i;
-                var seen = new Set();
-                while (n !== 1 && !seen.has(n)) {
-                    seen.add(n);
-                    n = String(n)
-                        .split('')
-                        .reduce(function (sum, digit) { return sum + Math.pow(Number(digit), 2); }, 0);
-                }
-                if (n === 1) {
-                    if (!takeWhile(i, happyNumbers.length)) {
-                        break;
-                    }
-                    happyNumbers.push(i);
-                }
-            }
-            return happyNumbers;
-        },
-    };
-
-    var lucasNumbers = [
-        2,
-        1,
-        3,
-        4,
-        7,
-        11,
-        18,
-        29,
-        47,
-        76,
-        123,
-        199,
-        322,
-        521,
-        843,
-        1364,
-        2207,
-        3571,
-        5778,
-        9349,
-        15127,
-        24476,
-        39603,
-        64079,
-        103682,
-        167761,
-        271443,
-        439204,
-        710647,
-        1149851,
-        1860498,
-        3010349,
-        4870847,
-        7881196,
-        12752043,
-        20633239,
-        33385282,
-        54018521,
-        87403803,
-        141422324,
-        228826127,
-        370248451,
-        599074578,
-        969323029,
-        1568397607,
-        2537720636,
-        4106118243,
-        6643838879,
-        10749957122,
-        17393796001,
-        28143753123,
-        45537549124,
-        73681302247,
-        119218851371,
-        192900153618,
-        312119004989,
-        505019158607,
-        817138163596,
-        1322157322203,
-        2139295485799,
-        3461452808002,
-        5600748293801,
-        9062201101803,
-        14662949395604,
-        23725150497407,
-        38388099893011,
-        62113250390418,
-        100501350283429,
-        162614600673847,
-        263115950957276,
-        425730551631123,
-        688846502588399,
-        1114577054219522,
-        1803423556807921,
-        2918000611027443,
-        4721424167835364,
-        7639424778862807,
-    ];
-    var lucasSequence = {
-        'maxLength': lucasNumbers.length,
-        'c:lucas-seq': function (length) {
-            return lucasNumbers.slice(0, length);
-        },
-        'c:lucas-nth': function (n) { return lucasNumbers[n - 1]; },
-        'c:lucas?': function (n) { return lucasNumbers.includes(n); },
-        'c:lucas-take-while': function (takeWhile) {
-            var lucas = [];
-            for (var i = 0;; i += 1) {
-                if (i >= lucasNumbers.length) {
-                    break;
-                }
-                var value = lucasNumbers[i];
-                if (!takeWhile(value, i)) {
-                    break;
-                }
-                lucas[i] = value;
-            }
-            return lucas;
-        },
-    };
-
-    var mersenneNumbers = [3, 7, 31, 127, 2047, 8191, 131071, 524287, 2147483647];
-    var mersenneSequence = {
-        'maxLength': mersenneNumbers.length,
-        'c:mersenne-seq': function (length) {
-            return mersenneNumbers.slice(0, length);
-        },
-        'c:mersenne-nth': function (n) { return mersenneNumbers[n - 1]; },
-        'c:mersenne?': function (n) { return mersenneNumbers.includes(n); },
-        'c:mersenne-take-while': function (takeWhile) {
-            var mersenne = [];
-            for (var i = 0;; i += 1) {
-                if (i >= mersenneNumbers.length) {
-                    break;
-                }
-                var value = mersenneNumbers[i];
-                if (!takeWhile(value, i)) {
-                    break;
-                }
-                mersenne[i] = value;
-            }
-            return mersenne;
-        },
-    };
-
-    /**
-     * Checks if a number is a Padovan number.
-     * Padovan numbers follow the recurrence relation: P(n) = P(n-2) + P(n-3) for n >= 3,
-     * with initial values P(0) = P(1) = P(2) = 1.
-     *
-     * The first few Padovan numbers are:
-     * 1, 1, 1, 2, 2, 3, 4, 5, 7, 9, 12, 16, 21, 28, 37, 49, 65, 86, 114, 151, 200, ...
-     *
-     * @param num - The number to check
-     * @returns True if the number is a Padovan number, false otherwise
-     */
-    function isPadovan(num) {
-        // Padovan numbers are always positive integers
-        if (!Number.isInteger(num) || num <= 0) {
-            return false;
-        }
-        // Special case: The first three Padovan numbers are all 1
-        if (num === 1) {
-            return true;
-        }
-        // Pre-calculated Padovan numbers (for efficient lookup, verified for correctness)
-        var padovanNumbers = [
-            1,
-            1,
-            1,
-            2,
-            2,
-            3,
-            4,
-            5,
-            7,
-            9,
-            12,
-            16,
-            21,
-            28,
-            37,
-            49,
-            65,
-            86,
-            114,
-            151,
-            200,
-            265,
-            351,
-            465,
-            616,
-            816,
-            1081,
-            1432,
-            1897,
-            2513,
-            3329,
-            4410,
-            5842,
-            7739,
-            10252,
-            13581,
-            17991,
-            23833,
-            31572,
-            41824,
-            55405,
-            73396,
-            97229,
-            128801,
-            170625,
-            226030,
-            299426,
-            396655,
-            525456,
-            696081,
-            922111,
-        ];
-        // Direct lookup for known values
-        if (padovanNumbers.includes(num)) {
-            return true;
-        }
-        // For numbers larger than our pre-calculated list but within JavaScript's safe range
-        if (num > padovanNumbers[padovanNumbers.length - 1] && num <= Number.MAX_SAFE_INTEGER) {
-            // Start with the last three values from our known sequence
-            var a = padovanNumbers[padovanNumbers.length - 3];
-            var b = padovanNumbers[padovanNumbers.length - 2];
-            var c = padovanNumbers[padovanNumbers.length - 1];
-            var next 
-            // Generate Padovan numbers until we either find a match or exceed the input
-            = void 0;
-            // Generate Padovan numbers until we either find a match or exceed the input
-            while (c < num) {
-                next = a + b;
-                a = b;
-                b = c;
-                c = next;
-                if (c === num) {
-                    return true;
-                }
-                // Check for numeric overflow/precision issues
-                if (!Number.isSafeInteger(c)) {
-                    return false;
-                }
-            }
-        }
-        return false;
-    }
-    var padovanSequence = {
-        'c:padovan-seq': function (length) {
-            var padovan = [1, 1, 1];
-            for (var i = 3; i < length; i += 1) {
-                padovan[i] = padovan[i - 2] + padovan[i - 3];
-            }
-            return padovan.slice(0, length);
-        },
-        'c:padovan-nth': function (n) {
-            if (n === 1 || n === 2 || n === 3)
-                return 1;
-            var a = 1;
-            var b = 1;
-            var c = 1;
-            for (var i = 4; i <= n; i += 1) {
-                var temp = a + b;
-                a = b;
-                b = c;
-                c = temp;
-            }
-            return c;
-        },
-        'c:padovan?': function (n) { return isPadovan(n); },
-        'c:padovan-take-while': function (takeWhile) {
-            var padovan = [];
-            if (!takeWhile(1, 0)) {
-                return padovan;
-            }
-            padovan.push(1);
-            if (!takeWhile(1, 1)) {
-                return padovan;
-            }
-            padovan.push(1);
-            if (!takeWhile(1, 2)) {
-                return padovan;
-            }
-            padovan.push(1);
-            var a = 1;
-            var b = 1;
-            var c = 1;
-            for (var i = 4;; i += 1) {
-                var temp = a + b;
-                a = b;
-                b = c;
-                c = temp;
-                if (!takeWhile(c, i)) {
-                    break;
-                }
-                padovan.push(c);
-            }
-            return padovan;
+                return factorialOf(n);
+            },
+            aliases: ['c:!'],
+            paramCount: 1,
         },
     };
 
     var partitionNumbers = [
-        1,
         1,
         2,
         3,
@@ -10249,186 +9592,505 @@ var Playground = (function (exports) {
         8030248384943040,
         8620496275465025,
     ];
-    var partitionSequence = {
-        'maxLength': partitionNumbers.length,
-        'c:partition-seq': function (length) {
-            return partitionNumbers.slice(0, length);
-        },
-        'c:partition-nth': function (n) { return partitionNumbers[n - 1]; },
-        'c:partition?': function (n) { return partitionNumbers.includes(n); },
-        'c:partition-take-while': function (takeWhile) {
-            var partition = [];
-            for (var i = 0;; i += 1) {
-                if (i >= partitionNumbers.length) {
-                    break;
-                }
-                var value = partitionNumbers[i];
-                if (!takeWhile(value, i)) {
-                    break;
-                }
-                partition[i] = value;
-            }
-            return partition;
-        },
-    };
 
-    var pellNumbers = [
-        0,
-        1,
-        2,
-        5,
-        12,
-        29,
-        70,
-        169,
-        408,
-        985,
-        2378,
-        5741,
-        13860,
-        33461,
-        80782,
-        195025,
-        470832,
-        1136689,
-        2744210,
-        6625109,
-        15994428,
-        38613965,
-        93222358,
-        225058681,
-        543339720,
-        1311738121,
-        3166815962,
-        7645370045,
-        18457556052,
-        44560482149,
-        107578520350,
-        259717522849,
-        627013566048,
-        1513744654945,
-        3654502875938,
-        8822750406821,
-        21300003689580,
-        51422757785981,
-        124145519261542,
-        299713796309065,
-        723573111879672,
-        1746860020068409,
-        4217293152016490,
-    ];
-    var pellSequence = {
-        'maxLength': pellNumbers.length,
-        'c:pell-seq': function (length) {
-            return pellNumbers.slice(0, length);
-        },
-        'c:pell-nth': function (n) { return pellNumbers[n - 1]; },
-        'c:pell?': function (n) { return pellNumbers.includes(n); },
-        'c:pell-take-while': function (takeWhile) {
-            var pell = [];
-            for (var i = 0;; i += 1) {
-                if (i >= pellNumbers.length) {
-                    break;
-                }
-                var value = pellNumbers[i];
-                if (!takeWhile(value, i)) {
-                    break;
-                }
-                pell[i] = value;
+    function partitions(n) {
+        // Base cases
+        if (n <= 0)
+            return [];
+        if (n === 1)
+            return [[1]];
+        var result = [];
+        // Helper function to generate partitions recursively
+        function generatePartitions(remaining, max, current) {
+            if (remaining === 0) {
+                result.push(__spreadArray([], __read(current), false));
+                return;
             }
-            return pell;
-        },
-    };
-
-    var perfectNumbers = [6, 28, 496, 8128, 33550336, 8589869056, 137438691328];
-    var perfectSequence = {
-        'maxLength': perfectNumbers.length,
-        'c:perfect-seq': function (length) {
-            return perfectNumbers.slice(0, length);
-        },
-        'c:perfect-nth': function (n) { return perfectNumbers[n - 1]; },
-        'c:perfect?': function (n) { return perfectNumbers.includes(n); },
-        'c:perfect-take-while': function (takeWhile) {
-            var perfect = [];
-            for (var i = 0;; i += 1) {
-                if (i >= perfectNumbers.length) {
-                    break;
-                }
-                var value = perfectNumbers[i];
-                if (!takeWhile(value, i)) {
-                    break;
-                }
-                perfect[i] = value;
+            // Try all possible numbers from 1 up to max
+            for (var i = Math.min(max, remaining); i >= 1; i--) {
+                current.push(i);
+                generatePartitions(remaining - i, i, current);
+                current.pop();
             }
-            return perfect;
-        },
-    };
-
-    var poligonalNormalExpressions = {
-        'c:polygonal-seq': {
+        }
+        generatePartitions(n, n, []);
+        return result;
+    }
+    var partitionsNormalExpressions = {
+        'c:partitions': {
             evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), sides = _b[0], n = _b[1];
-                assertNumber(sides, sourceCodeInfo, { integer: true, gte: 3 });
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                var polygonal = [];
-                for (var i = 1; i <= n; i += 1) {
-                    polygonal[i - 1] = (i * i * (sides - 2) - i * (sides - 4)) / 2;
-                }
-                return polygonal;
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true });
+                return partitions(n);
             },
+            paramCount: 1,
+        },
+        'c:count-partitions': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true });
+                if (n === 0)
+                    return 1;
+                if (n > partitionNumbers.length) {
+                    throw new Error("n is too large. The maximum value is ".concat(partitionNumbers.length - 1, "."));
+                }
+                return partitionNumbers[n - 1];
+            },
+            paramCount: 1,
+        },
+    };
+
+    /**
+     * Generates all possible permutations of a collection.
+     * @param collection The input collection to generate permutations from
+     * @returns An array of arrays, where each inner array is a permutation of the input collection
+     */
+    function permutations(collection) {
+        var e_1, _a;
+        // Base case: empty array has one permutation - itself
+        if (collection.length === 0) {
+            return [[]];
+        }
+        var result = [];
+        // For each element in the array
+        for (var i = 0; i < collection.length; i++) {
+            // Extract the current element
+            var current = collection[i];
+            // Create a new array without the current element
+            var remainingElements = __spreadArray(__spreadArray([], __read(collection.slice(0, i)), false), __read(collection.slice(i + 1)), false);
+            // Generate all permutations of the remaining elements
+            var subPermutations = permutations(remainingElements);
+            try {
+                // Add the current element to the beginning of each sub-permutation
+                for (var subPermutations_1 = (e_1 = void 0, __values(subPermutations)), subPermutations_1_1 = subPermutations_1.next(); !subPermutations_1_1.done; subPermutations_1_1 = subPermutations_1.next()) {
+                    var subPerm = subPermutations_1_1.value;
+                    result.push(__spreadArray([current], __read(subPerm), false));
+                }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (subPermutations_1_1 && !subPermutations_1_1.done && (_a = subPermutations_1.return)) _a.call(subPermutations_1);
+                }
+                finally { if (e_1) throw e_1.error; }
+            }
+        }
+        return result;
+    }
+    var permutationsNormalExpressions = {
+        'c:permutations': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), set = _b[0];
+                assertArray(set, sourceCodeInfo);
+                return permutations(set);
+            },
+            paramCount: 1,
+        },
+        'c:count-permutations': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), n = _b[0], k = _b[1];
+                assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true });
+                assertNumber(k, sourceCodeInfo, { integer: true, nonNegative: true, lte: n });
+                return factorialOf(n) / factorialOf(n - k);
+            },
+            aliases: ['c:P'],
             paramCount: 2,
         },
-        'c:polygonal-take-while': {
+    };
+
+    function powerSet(set) {
+        var e_1, _a;
+        var result = [[]];
+        var _loop_1 = function (value) {
+            var newSubsets = result.map(function (subset) { return __spreadArray(__spreadArray([], __read(subset), false), [value], false); });
+            result.push.apply(result, __spreadArray([], __read(newSubsets), false));
+        };
+        try {
+            for (var set_1 = __values(set), set_1_1 = set_1.next(); !set_1_1.done; set_1_1 = set_1.next()) {
+                var value = set_1_1.value;
+                _loop_1(value);
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (set_1_1 && !set_1_1.done && (_a = set_1.return)) _a.call(set_1);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        return result;
+    }
+    var powerSetNormalExpressions = {
+        'c:power-set': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), set = _b[0];
+                assertArray(set, sourceCodeInfo);
+                return powerSet(set);
+            },
+            paramCount: 1,
+        },
+        'c:count-power-set': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true });
+                if (n >= 53) {
+                    // Number.MAX_SAFE_INTEGER is 2^53 - 1
+                    return Infinity;
+                }
+                return Math.pow(2, n);
+            },
+            paramCount: 1,
+        },
+    };
+
+    /**
+     * Returns the prime factorization of a number as an array of its prime factors.
+     * For example, factors(12) returns [2, 2, 3].
+     * Special case: factors(1) returns an empty array [].
+     *
+     * @param n - A positive integer to factorize
+     * @returns An array of prime factors in ascending order
+     */
+    function primeFactors(n) {
+        // Special case: 1 has no prime factors
+        if (n === 1) {
+            return [];
+        }
+        var factors = [];
+        var divisor = 2;
+        // Find factors by trial division
+        while (n > 1) {
+            // If divisor divides n evenly
+            if (n % divisor === 0) {
+                // Add divisor to the factors list
+                factors.push(divisor);
+                // Divide n by the found factor
+                n /= divisor;
+            }
+            else {
+                // Move to the next potential divisor
+                divisor++;
+            }
+        }
+        return factors;
+    }
+    var primeFactorsNormalExpressions = {
+        'c:prime-factors': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), number = _b[0];
+                assertNumber(number, sourceCodeInfo, { finite: true, integer: true, positive: true });
+                return primeFactors(number);
+            },
+            paramCount: 1,
+        },
+        'c:count-prime-factors': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { finite: true, integer: true, positive: true });
+                return primeFactors(n).length;
+            },
+            paramCount: 1,
+        },
+        'c:count-distinct-prime-factors': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { finite: true, integer: true, positive: true });
+                var factors = primeFactors(n);
+                var distinctFactors = new Set(factors);
+                return distinctFactors.size;
+            },
+            paramCount: 1,
+        },
+    };
+
+    function isAbundant(num) {
+        var properDivisors = getProperDivisors(num);
+        var sum = properDivisors.reduce(function (acc, curr) { return acc + curr; }, 0);
+        return sum > num;
+    }
+    var abundantSequence = {
+        'c:abundant-seq': function (length) {
+            var abundants = [];
+            var num = 2;
+            while (abundants.length < length) {
+                if (isAbundant(num)) {
+                    abundants.push(num);
+                }
+                num += 1;
+            }
+            return abundants;
+        },
+        'c:abundant-nth': function (n) {
+            if (n === 1)
+                return 12; // First abundant number is 12
+            if (n === 2)
+                return 18; // Second abundant number is 18
+            var count = 2; // We've already counted 12 and 18
+            var candidate = 20; // Start checking from 20
+            while (count < n) {
+                if (isAbundant(candidate)) {
+                    count++;
+                    if (count === n) {
+                        break;
+                    }
+                }
+                candidate += 1;
+            }
+            return candidate;
+        },
+        'c:abundant?': function (n) { return isAbundant(n); },
+        'c:abundant-take-while': function (takeWhile) {
+            var abundants = [];
+            for (var i = 2;; i += 1) {
+                if (!isAbundant(i)) {
+                    continue;
+                }
+                if (!takeWhile(i, abundants.length)) {
+                    break;
+                }
+                abundants.push(i);
+            }
+            return abundants;
+        },
+    };
+
+    /**
+     * Checks if a number is a member of an arithmetic sequence.
+     * @param start The first term of the sequence
+     * @param step The common difference between terms
+     * @param n The number to check
+     * @returns true if the number is in the sequence, false otherwise
+     */
+    function isInArithmeticSequence(start, step, n) {
+        // Special case: If step is 0, n must equal start
+        if (step === 0) {
+            return Math.abs(n - start) < 1e-12;
+        }
+        // Check if n is a valid arithmetic sequence term
+        var position = (n - start) / step;
+        // Position must be non-negative
+        if (position < 0) {
+            return false;
+        }
+        // For tiny steps, do a direct calculation instead of using the position
+        // This helps avoid floating point precision issues
+        if (Math.abs(step) < 1e-6) {
+            // Find the closest position (rounding to nearest integer)
+            var roundedPosition_1 = Math.round(position);
+            var calculatedValue_1 = start + step * roundedPosition_1;
+            // Direct comparison with tiny values should use absolute difference
+            return Math.abs(calculatedValue_1 - n) < 1e-12;
+        }
+        // For normal cases, check if position is very close to an integer
+        var roundedPosition = Math.round(position);
+        if (Math.abs(roundedPosition - position) > 1e-12) {
+            return false;
+        }
+        // Double check by calculating the value at that position
+        var calculatedValue = start + step * roundedPosition;
+        // For values very close to zero, use absolute difference
+        if (Math.abs(n) < 1e-10 || Math.abs(calculatedValue) < 1e-10) {
+            return Math.abs(calculatedValue - n) < 1e-12;
+        }
+        // Otherwise use relative difference for better precision with large numbers
+        var relativeDifference = Math.abs(calculatedValue - n)
+            / Math.max(Math.abs(n), Math.abs(calculatedValue));
+        return relativeDifference < 1e-12;
+    }
+    var arithmeticNormalExpressions = {
+        'c:arithmetic-seq': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), start = _b[0], step = _b[1], length = _b[2];
+                assertNumber(start, sourceCodeInfo, { finite: true });
+                assertNumber(step, sourceCodeInfo, { finite: true });
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                return Array.from({ length: length }, function (_, i) { return start + i * step; });
+            },
+            paramCount: 3,
+        },
+        'c:arithmetic-take-while': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
-                var _c = __read(_a, 2), sides = _c[0], fn = _c[1];
+                var _c = __read(_a, 3), start = _c[0], step = _c[1], fn = _c[2];
                 var executeFunction = _b.executeFunction;
-                assertNumber(sides, sourceCodeInfo, { integer: true, gte: 3 });
+                assertNumber(start, sourceCodeInfo, { finite: true });
+                assertNumber(step, sourceCodeInfo, { finite: true });
                 assertLitsFunction(fn, sourceCodeInfo);
-                var polygonal = [];
-                for (var i = 1;; i += 1) {
-                    var value = (i * i * (sides - 2) - i * (sides - 4)) / 2;
+                var arithmetic = [];
+                for (var i = 0;; i += 1) {
+                    var value = start + i * step;
                     if (!executeFunction(fn, [value, i], contextStack, sourceCodeInfo)) {
                         break;
                     }
-                    polygonal[i - 1] = (i * i * (sides - 2) - i * (sides - 4)) / 2;
+                    arithmetic[i] = value;
                 }
-                return polygonal;
+                return arithmetic;
             },
-            paramCount: 2,
+            paramCount: 3,
         },
-        'c:polygonal-nth': {
+        'c:arithmetic-nth': {
             evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), sides = _b[0], n = _b[1];
-                assertNumber(sides, sourceCodeInfo, { integer: true, gte: 3 });
+                var _b = __read(_a, 3), start = _b[0], step = _b[1], n = _b[2];
+                assertNumber(start, sourceCodeInfo, { finite: true });
+                assertNumber(step, sourceCodeInfo, { finite: true });
                 assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return (n * n * (sides - 2) - n * (sides - 4)) / 2;
+                return start + (n - 1) * step;
             },
-            paramCount: 2,
+            paramCount: 3,
         },
-        'c:polygonal?': {
+        'c:arithmetic?': {
             evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), sides = _b[0], n = _b[1];
+                var _b = __read(_a, 3), start = _b[0], step = _b[1], n = _b[2];
                 assertNumber(n, sourceCodeInfo);
-                assertNumber(sides, sourceCodeInfo, { integer: true, gte: 3 });
-                if (Number.isInteger(n) && n <= 0) {
-                    return false;
-                }
-                var a = sides - 2;
-                var b = sides - 4;
-                var discriminant = 8 * a * n + b * b;
-                var sqrtPart = Math.sqrt(discriminant);
-                // Discriminant must yield an integer square root
-                if (!Number.isInteger(sqrtPart))
-                    return false;
-                var numerator = sqrtPart + b;
-                // Numerator must be divisible by 2*a
-                if (numerator % (2 * a) !== 0)
-                    return false;
-                var x = numerator / (2 * a);
-                // x must be a positive integer
-                return Number.isInteger(x) && x > 0;
+                assertNumber(start, sourceCodeInfo, { finite: true });
+                assertNumber(step, sourceCodeInfo, { finite: true });
+                return isInArithmeticSequence(start, step, n);
             },
-            paramCount: 2,
+            paramCount: 3,
+        },
+    };
+
+    var bellNumbers = [
+        1,
+        2,
+        5,
+        15,
+        52,
+        203,
+        877,
+        4140,
+        21147,
+        115975,
+        678570,
+        4213597,
+        27644437,
+        190899322,
+        1382958545,
+        10480142147,
+        82864869804,
+        682076806159,
+        5832742205057,
+        51724158235372,
+        474869816156751,
+        4506715738447323,
+    ];
+
+    function getBernoulliSeq(length) {
+        var bernoulli = [1];
+        for (var n = 1; n < length; n += 1) {
+            var sum = 0;
+            for (var k = 0; k < n; k += 1) {
+                sum += binomialCoefficient(n + 1, k) * bernoulli[k];
+            }
+            bernoulli[n] = n > 1 && n % 2 === 1 ? 0 : -sum / (n + 1);
+        }
+        return bernoulli;
+    }
+    /**
+     * Generates Bernoulli numbers as long as the predicate function returns true
+     * @param predicate - Function that takes a Bernoulli number and its index and returns true if generation should continue
+     * @returns Array of Bernoulli numbers generated until predicate returns false
+     */
+    function generateBernoulli(predicate) {
+        var batchSize = 100;
+        // Start with computing the Bernoulli numbers
+        var bernoulli = [1];
+        var n = 1;
+        // Continue generating as long as the predicate returns true
+        while (true) {
+            // Generate a batch of numbers at a time for efficiency
+            var targetLength = bernoulli.length + batchSize;
+            for (; n < targetLength; n++) {
+                var sum = 0;
+                for (var k = 0; k < n; k++) {
+                    sum += binomialCoefficient(n + 1, k) * bernoulli[k];
+                }
+                var newValue = n > 1 && n % 2 === 1 ? 0 : -sum / (n + 1);
+                // Check if we should continue
+                if (!predicate(newValue, n)) {
+                    // We're done, return the generated sequence (including the last value)
+                    return bernoulli;
+                }
+                bernoulli.push(newValue);
+            }
+        }
+    }
+    var bernoulliNormalExpressions = {
+        'c:bernoulli-seq': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), length = _b[0];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                return getBernoulliSeq(length);
+            },
+            paramCount: 1,
+        },
+        'c:bernoulli-nth': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                var bernoulli = getBernoulliSeq(n);
+                return bernoulli[n - 1];
+            },
+            paramCount: 1,
+        },
+        'c:bernoulli-take-while': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var _c = __read(_a, 1), fn = _c[0];
+                var executeFunction = _b.executeFunction;
+                assertLitsFunction(fn, sourceCodeInfo);
+                var bernoulli = generateBernoulli(function (value, index) { return !!executeFunction(fn, [value, index], contextStack); });
+                return bernoulli;
+            },
+            paramCount: 1,
+        },
+    };
+
+    var catalanNumbers = [
+        1,
+        2,
+        5,
+        14,
+        42,
+        132,
+        429,
+        1430,
+        4862,
+        16796,
+        58786,
+        208012,
+        742900,
+        2674440,
+        9694845,
+        35357670,
+        129644790,
+        477638700,
+        1767263190,
+        6564120420,
+        24466267020,
+        91482563640,
+        343059613650,
+        1289904147324,
+        4861946401452,
+        18367353072152,
+        69533550916004,
+        263747951750360,
+        1002242216651368,
+        3814986502092304,
+    ];
+
+    var collatzSequence = {
+        'c:collatz-seq': function (start) {
+            var x = start;
+            var collatz = [x];
+            while (x !== 1) {
+                if (x % 2 === 0) {
+                    x /= 2;
+                }
+                else {
+                    x = 3 * x + 1;
+                }
+                collatz.push(x);
+            }
+            return collatz;
         },
     };
 
@@ -10500,159 +10162,598 @@ var Playground = (function (exports) {
         },
     };
 
-    /**
-     * Generates the first 'n' terms of the Recamán sequence.
-     *
-     * @param n - Number of terms to generate
-     * @returns Array containing the first n terms of the Recamán sequence
-     */
-    function generateRecamanSequence(n) {
+    function isComposite(num) {
+        if (num <= 1) {
+            return false;
+        }
+        return !isPrime(num);
+    }
+    function nthComposite(n) {
+        if (n <= 0) {
+            throw new Error('Input must be a positive integer');
+        }
         if (n === 1)
-            return [0];
-        var sequence = [0];
-        var seen = new Set([0]);
-        for (var i = 1; i < n; i++) {
-            // Try to go backward
-            var next = sequence[i - 1] - i;
-            // If that's not positive or already seen, go forward
-            if (next <= 0 || seen.has(next)) {
-                next = sequence[i - 1] + i;
-            }
-            sequence.push(next);
-            seen.add(next);
-        }
-        return sequence;
-    }
-    var recamanSequence = {
-        'c:recaman-seq': function (length) { return generateRecamanSequence(length); },
-        'c:recaman-take-while': function (takeWhile) {
-            if (!takeWhile(0, 0))
-                return [];
-            var sequence = [0];
-            var seen = new Set([0]);
-            for (var i = 1;; i++) {
-                // Try to go backward
-                var next = sequence[i - 1] - i;
-                // If that's not positive or already seen, go forward
-                if (next <= 0 || seen.has(next)) {
-                    next = sequence[i - 1] + i;
-                }
-                if (!takeWhile(next, i))
-                    break;
-                sequence.push(next);
-                seen.add(next);
-            }
-            return sequence;
-        },
-        'c:recaman-nth': function (n) { var _a; return (_a = generateRecamanSequence(n)[n - 1]) !== null && _a !== void 0 ? _a : 0; },
-        'c:recaman?': function () { return true; },
-    };
-
-    var thueMorseSequence = {
-        'c:thue-morse-seq': function (length) {
-            var thueMorse = [];
-            for (var i = 0; i < length; i += 1) {
-                thueMorse[i] = countSetBits(i) % 2;
-            }
-            return thueMorse;
-        },
-        'c:thue-morse-take-while': function (takeWhile) {
-            var thueMorse = [];
-            for (var i = 0;; i += 1) {
-                var value = countSetBits(i) % 2;
-                if (!takeWhile(value, i)) {
+            return 4; // First composite is 4
+        if (n === 2)
+            return 6; // Second composite is 6
+        var count = 2; // We've already counted 4 and 6
+        var candidate = 8; // Start checking from 8
+        while (count < n) {
+            if (isComposite(candidate)) {
+                count++;
+                if (count === n) {
                     break;
                 }
-                thueMorse[i] = value;
             }
-            return thueMorse;
-        },
-        'c:thue-morse-nth': function (n) { return countSetBits(n - 1) % 2; },
-        'c:thue-morse?': function (n) { return n === 1 || n === 0; },
-    };
-    function countSetBits(num) {
-        var count = 0;
-        while (num) {
-            count += num & 1;
-            num >>= 1;
+            candidate += 1;
         }
-        return count;
+        return candidate;
     }
+    var compositeSequence = {
+        'c:composite-seq': function (length) {
+            var composites = [];
+            var num = 2;
+            while (composites.length < length) {
+                if (isComposite(num)) {
+                    composites.push(num);
+                }
+                num += 1;
+            }
+            return composites;
+        },
+        'c:composite-nth': function (n) { return nthComposite(n); },
+        'c:composite?': function (n) { return isComposite(n); },
+        'c:composite-take-while': function (takeWhile) {
+            var composites = [];
+            for (var i = 4;; i += 1) {
+                if (!isComposite(i)) {
+                    continue;
+                }
+                if (!takeWhile(i, composites.length)) {
+                    break;
+                }
+                composites.push(i);
+            }
+            return composites;
+        },
+    };
 
-    var tribonacciSequence = {
-        'c:tribonacci-seq': function (length) {
-            var tribonacci = [0, 1, 1];
-            for (var i = 3; i < length; i += 1) {
-                tribonacci[i] = tribonacci[i - 1] + tribonacci[i - 2] + tribonacci[i - 3];
+    function isDeficient(num) {
+        var properDivisors = getProperDivisors(num);
+        var sum = properDivisors.reduce(function (acc, curr) { return acc + curr; }, 0);
+        return sum < num;
+    }
+    var deficientSequence = {
+        'c:deficient-seq': function (length) {
+            var deficients = [];
+            var num = 1;
+            while (deficients.length < length) {
+                if (isDeficient(num)) {
+                    deficients.push(num);
+                }
+                num += 1;
             }
-            return tribonacci.slice(0, length);
+            return deficients;
         },
-        'c:tribonacci-nth': function (n) {
-            if (n === 1) {
-                return 0;
+        'c:deficient-nth': function (n) {
+            var count = 0; // We've already counted 12 and 18
+            var candidate = 1; // Start checking from 20
+            while (count < n) {
+                if (isDeficient(candidate)) {
+                    count++;
+                    if (count === n) {
+                        break;
+                    }
+                }
+                candidate += 1;
             }
-            if (n === 2) {
-                return 1;
-            }
-            if (n === 3) {
-                return 1;
-            }
-            var a = 0;
-            var b = 1;
-            var c = 1;
-            for (var i = 4; i <= n; i += 1) {
-                var temp = a + b + c;
-                a = b;
-                b = c;
-                c = temp;
-            }
-            return c;
+            return candidate;
         },
-        'c:tribonacci?': function (n) {
-            if (n < 0) {
+        'c:deficient?': function (n) { return isDeficient(n); },
+        'c:deficient-take-while': function (takeWhile) {
+            var deficients = [];
+            for (var i = 1;; i += 1) {
+                if (!isDeficient(i)) {
+                    continue;
+                }
+                if (!takeWhile(i, deficients.length)) {
+                    break;
+                }
+                deficients.push(i);
+            }
+            return deficients;
+        },
+    };
+
+    var fibonacciNumbers = [
+        0,
+        1,
+        1,
+        2,
+        3,
+        5,
+        8,
+        13,
+        21,
+        34,
+        55,
+        89,
+        144,
+        233,
+        377,
+        610,
+        987,
+        1597,
+        2584,
+        4181,
+        6765,
+        10946,
+        17711,
+        28657,
+        46368,
+        75025,
+        121393,
+        196418,
+        317811,
+        514229,
+        832040,
+        1346269,
+        2178309,
+        3524578,
+        5702887,
+        9227465,
+        14930352,
+        24157817,
+        39088169,
+        63245986,
+        102334155,
+        165580141,
+        267914296,
+        433494437,
+        701408733,
+        1134903170,
+        1836311903,
+        2971215073,
+        4807526976,
+        7778742049,
+        12586269025,
+        20365011074,
+        32951280099,
+        53316291173,
+        86267571272,
+        139583862445,
+        225851433717,
+        365435296162,
+        591286729879,
+        956722026041,
+        1548008755920,
+        2504730781961,
+        4052739537881,
+        6557470319842,
+        10610209857723,
+        17167680177565,
+        27777890035288,
+        44945570212853,
+        72723460248141,
+        117669030460994,
+        190392490709135,
+        308061521170129,
+        498454011879264,
+        806515533049393,
+        1304969544928657,
+        2111485077978050,
+        3416454622906707,
+        5527939700884757,
+        8944394323791464,
+    ];
+
+    /**
+     * Checks if a number is a member of a geometric sequence.
+     * @param initialTerm The first term of the sequence (a)
+     * @param ratio The common ratio of the sequence (r)
+     * @param number The number to check
+     * @returns true if the number is in the sequence, false otherwise
+     */
+    function isInGeometricSequence(initialTerm, ratio, number) {
+        // Handle special cases
+        if (number === 0 && initialTerm === 0)
+            return true;
+        if (initialTerm === 0)
+            return number === 0;
+        if (ratio === 1)
+            return number === initialTerm;
+        if (ratio === 0)
+            return number === 0 || number === initialTerm;
+        // For negative ratios, we need special handling
+        if (ratio < 0) {
+            // Calculate log using absolute values
+            var logResult_1 = Math.log(Math.abs(number / initialTerm)) / Math.log(Math.abs(ratio));
+            // Check if logResult is very close to an integer
+            var roundedLogResult_1 = Math.round(logResult_1);
+            if (Math.abs(roundedLogResult_1 - logResult_1) > 1e-10 || logResult_1 < 0) {
                 return false;
             }
-            if (n === 0 || n === 1 || n === 2) {
-                return true;
-            }
-            // Initialize the first three numbers of the sequence
-            var a = 0;
-            var b = 0;
-            var c = 1;
-            // Generate the sequence until we reach or exceed the input number
-            while (c < n) {
-                var next = a + b + c;
-                a = b;
-                b = c;
-                c = next;
-            }
-            // If c equals the input number, it's in the sequence
-            return c === n;
+            // For negative ratios, alternating terms have alternating signs
+            // Check if sign matches what we expect based on the power
+            var expectedSign = roundedLogResult_1 % 2 === 0
+                ? Math.sign(initialTerm)
+                : -Math.sign(initialTerm);
+            return Math.sign(number) === expectedSign;
+        }
+        // For positive ratios
+        // Quick check based on sequence direction
+        // If ratio > 1, number should be >= initialTerm to be in the sequence
+        // If 0 < ratio < 1, number should be <= initialTerm to be in the sequence
+        if ((ratio > 1 && number < initialTerm)
+            || (ratio < 1 && number > initialTerm)) {
+            return false;
+        }
+        // Calculate n in: number = initialTerm * (ratio^n)
+        var logResult = Math.log(number / initialTerm) / Math.log(ratio);
+        // Check if logResult is very close to an integer
+        var roundedLogResult = Math.round(logResult);
+        if (Math.abs(roundedLogResult - logResult) > 1e-10 || logResult < 0) {
+            return false;
+        }
+        // Verify calculated value matches the number exactly (within floating point precision)
+        // This is important to avoid false positives due to floating point arithmetic
+        var calculatedValue = initialTerm * Math.pow(ratio, roundedLogResult);
+        var relativeDifference = Math.abs(calculatedValue - number)
+            / Math.max(Math.abs(number), Math.abs(calculatedValue));
+        return relativeDifference < 1e-10;
+    }
+    var geometricNormalExpressions = {
+        'c:geometric-seq': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), start = _b[0], ratio = _b[1], length = _b[2];
+                assertNumber(start, sourceCodeInfo, { finite: true });
+                assertNumber(ratio, sourceCodeInfo, { finite: true });
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                return Array.from({ length: length }, function (_, i) { return start * Math.pow(ratio, i); });
+            },
+            paramCount: 3,
         },
-        'c:tribonacci-take-while': function (takeWhile) {
-            var tribonacci = [];
-            if (!takeWhile(0, 0)) {
-                return tribonacci;
-            }
-            tribonacci.push(0);
-            if (!takeWhile(1, 1)) {
-                return tribonacci;
-            }
-            tribonacci.push(1);
-            if (!takeWhile(1, 2)) {
-                return tribonacci;
-            }
-            tribonacci.push(1);
-            for (var i = 3;; i += 1) {
-                var value = tribonacci[i - 1] + tribonacci[i - 2] + tribonacci[i - 3];
-                if (!takeWhile(value, i)) {
-                    break;
+        'c:geometric-take-while': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var _c = __read(_a, 3), start = _c[0], ratio = _c[1], fn = _c[2];
+                var executeFunction = _b.executeFunction;
+                assertNumber(start, sourceCodeInfo, { finite: true });
+                assertNumber(ratio, sourceCodeInfo, { finite: true });
+                assertLitsFunction(fn, sourceCodeInfo);
+                var geometric = [];
+                for (var i = 0;; i += 1) {
+                    var value = start * Math.pow(ratio, i);
+                    if (!executeFunction(fn, [value, i], contextStack, sourceCodeInfo)) {
+                        break;
+                    }
+                    geometric[i] = value;
                 }
-                tribonacci.push(value);
-            }
-            return tribonacci;
+                return geometric;
+            },
+            paramCount: 3,
+        },
+        'c:geometric-nth': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), start = _b[0], ratio = _b[1], n = _b[2];
+                assertNumber(start, sourceCodeInfo, { finite: true });
+                assertNumber(ratio, sourceCodeInfo, { finite: true });
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return start * Math.pow(ratio, (n - 1));
+            },
+            paramCount: 3,
+        },
+        'c:geometric?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), start = _b[0], ratio = _b[1], n = _b[2];
+                assertNumber(n, sourceCodeInfo);
+                assertNumber(start, sourceCodeInfo, { finite: true });
+                assertNumber(ratio, sourceCodeInfo, { finite: true });
+                return isInGeometricSequence(start, ratio, n);
+            },
+            paramCount: 3,
         },
     };
+
+    function getGolombSeq(n) {
+        var golomb = [0, 1];
+        for (var i = 2; i <= n; i += 1) {
+            golomb.push(1 + golomb[i - golomb[golomb[i - 1]]]);
+        }
+        return golomb.slice(1);
+    }
+    function generateGolombSeq(pred) {
+        if (!pred(1, 0)) {
+            return [];
+        }
+        var golomb = [0, 1];
+        for (var i = 2;; i++) {
+            var golombNumber = 1 + golomb[i - golomb[golomb[i - 1]]];
+            if (!pred(golombNumber, i - 1)) {
+                break;
+            }
+            golomb.push(golombNumber);
+        }
+        return golomb.slice(1);
+    }
+    var golombSequence = {
+        'c:golomb-seq': function (length) { return getGolombSeq(length); },
+        'c:golomb-nth': function (n) { return getGolombSeq(n)[n - 1]; },
+        'c:golomb?': function () { return true; },
+        'c:golomb-take-while': function (takeWhile) { return generateGolombSeq(takeWhile); },
+    };
+
+    function isHappyNumber(n) {
+        // A happy number is defined by the following process:
+        // 1. Starting with any positive integer, replace the number by the sum of the squares of its digits
+        // 2. Repeat until either:
+        //    - The number equals 1 (in which case it's a happy number)
+        //    - It enters a cycle that doesn't include 1 (in which case it's not a happy number)
+        if (n <= 0)
+            return false;
+        // Use a set to detect cycles
+        var seen = new Set();
+        // Continue until we either reach 1 or detect a cycle
+        while (n !== 1 && !seen.has(n)) {
+            seen.add(n);
+            n = getSumOfSquaredDigits(n);
+        }
+        // If we reached 1, it's a happy number
+        return n === 1;
+    }
+    function getSumOfSquaredDigits(n) {
+        var sum = 0;
+        while (n > 0) {
+            var digit = n % 10;
+            sum += digit * digit;
+            n = Math.floor(n / 10);
+        }
+        return sum;
+    }
+    var happySequence = {
+        'c:happy-seq': function (length) {
+            var happyNumbers = [];
+            for (var i = 1; happyNumbers.length < length; i++) {
+                var n = i;
+                var seen = new Set();
+                while (n !== 1 && !seen.has(n)) {
+                    seen.add(n);
+                    n = String(n)
+                        .split('')
+                        .reduce(function (sum, digit) { return sum + Math.pow(Number(digit), 2); }, 0);
+                }
+                if (n === 1)
+                    happyNumbers.push(i);
+            }
+            return happyNumbers;
+        },
+        'c:happy-nth': function (n) {
+            var happyCount = 0;
+            var currentNumber = 1;
+            while (happyCount < n) {
+                var num = currentNumber;
+                var seen = new Set();
+                while (num !== 1 && !seen.has(num)) {
+                    seen.add(num);
+                    num = String(num)
+                        .split('')
+                        .reduce(function (sum, digit) { return sum + Math.pow(Number(digit), 2); }, 0);
+                }
+                if (num === 1)
+                    happyCount++;
+                currentNumber++;
+            }
+            return currentNumber - 1;
+        },
+        'c:happy?': function (n) { return isHappyNumber(n); },
+        'c:happy-take-while': function (takeWhile) {
+            var happyNumbers = [];
+            for (var i = 1;; i++) {
+                var n = i;
+                var seen = new Set();
+                while (n !== 1 && !seen.has(n)) {
+                    seen.add(n);
+                    n = String(n)
+                        .split('')
+                        .reduce(function (sum, digit) { return sum + Math.pow(Number(digit), 2); }, 0);
+                }
+                if (n === 1) {
+                    if (!takeWhile(i, happyNumbers.length)) {
+                        break;
+                    }
+                    happyNumbers.push(i);
+                }
+            }
+            return happyNumbers;
+        },
+    };
+
+    var jugglerSequence = {
+        'c:juggler-seq': function (start) {
+            var next = start;
+            var juggler = [next];
+            var index = 0;
+            while (next > 1) {
+                next = next % 2 === 0
+                    ? Math.floor(Math.sqrt(juggler[index]))
+                    : Math.floor(juggler[index] * Math.sqrt(juggler[index]));
+                index += 1;
+                juggler.push(next);
+            }
+            return juggler;
+        },
+    };
+
+    /**
+     * Checks if a number is part of the Look-and-Say sequence.
+     *
+     * The Look-and-Say sequence starts with "1" and each subsequent term describes
+     * the previous term by counting consecutive digits. For example:
+     * 1, 11, 21, 1211, 111221, 312211, 13112221, ...
+     *
+     * @param {string|number} target - The number to check (can be a string or number)
+     * @param {number} limit - How many terms to generate for checking (default: 25)
+     * @returns {boolean} - Whether the target is in the sequence
+     */
+    function isLookAndSay(target, limit) {
+        if (limit === void 0) { limit = 25; }
+        // The first term of the sequence
+        var current = '1';
+        // Check if the first term matches
+        if (current === target) {
+            return true;
+        }
+        // Generate terms and check against the target
+        for (var i = 1; i < limit; i++) {
+            current = getNextLookAndSayTerm(current);
+            if (current === target) {
+                return true;
+            }
+            // Optimization: if the current term is longer than the target, and
+            // the sequence is strictly increasing in length, the target won't be found
+            if (current.length > target.length) {
+                return false;
+            }
+        }
+        // If we've generated 'limit' terms without finding a match, return false
+        return false;
+    }
+    /**
+     * Generates the next term in the Look-and-Say sequence
+     *
+     * @param {string} term - The current term
+     * @returns {string} - The next term in the sequence
+     */
+    function getNextLookAndSayTerm(term) {
+        var result = '';
+        var count = 1;
+        for (var i = 0; i < term.length; i++) {
+            // If the current digit is the same as the next one, increment count
+            if (i + 1 < term.length && term[i] === term[i + 1]) {
+                count++;
+            }
+            else {
+                // Otherwise, append count and the digit to the result
+                result += count.toString() + term[i];
+                count = 1;
+            }
+        }
+        return result;
+    }
+    var lookAndSaySequence = {
+        'string': true,
+        'c:look-and-say-seq': function (length) {
+            var lookAndSay = ['1'];
+            for (var i = 1; i < length; i += 1) {
+                var prev = lookAndSay[i - 1];
+                var next = prev.replace(/(\d)\1*/g, function (match) { return "".concat(match.length).concat(match[0]); });
+                lookAndSay[i] = next;
+            }
+            return lookAndSay;
+        },
+        'c:look-and-say-take-while': function (takeWhile) {
+            if (!takeWhile('1', 0)) {
+                return [];
+            }
+            var lookAndSay = ['1'];
+            for (var i = 1;; i += 1) {
+                var prev = lookAndSay[i - 1];
+                var next = prev.replace(/(\d)\1*/g, function (match) { return "".concat(match.length).concat(match[0]); });
+                if (!takeWhile(next, i)) {
+                    break;
+                }
+                lookAndSay[i] = next;
+            }
+            return lookAndSay;
+        },
+        'c:look-and-say-nth': function (n) {
+            var lookAndSay = '1';
+            for (var i = 1; i < n; i += 1) {
+                lookAndSay = lookAndSay.replace(/(\d)\1*/g, function (match) { return "".concat(match.length).concat(match[0]); });
+            }
+            return lookAndSay;
+        },
+        'c:look-and-say?': function (n) { return isLookAndSay(n); },
+    };
+
+    var lucasNumbers = [
+        2,
+        1,
+        3,
+        4,
+        7,
+        11,
+        18,
+        29,
+        47,
+        76,
+        123,
+        199,
+        322,
+        521,
+        843,
+        1364,
+        2207,
+        3571,
+        5778,
+        9349,
+        15127,
+        24476,
+        39603,
+        64079,
+        103682,
+        167761,
+        271443,
+        439204,
+        710647,
+        1149851,
+        1860498,
+        3010349,
+        4870847,
+        7881196,
+        12752043,
+        20633239,
+        33385282,
+        54018521,
+        87403803,
+        141422324,
+        228826127,
+        370248451,
+        599074578,
+        969323029,
+        1568397607,
+        2537720636,
+        4106118243,
+        6643838879,
+        10749957122,
+        17393796001,
+        28143753123,
+        45537549124,
+        73681302247,
+        119218851371,
+        192900153618,
+        312119004989,
+        505019158607,
+        817138163596,
+        1322157322203,
+        2139295485799,
+        3461452808002,
+        5600748293801,
+        9062201101803,
+        14662949395604,
+        23725150497407,
+        38388099893011,
+        62113250390418,
+        100501350283429,
+        162614600673847,
+        263115950957276,
+        425730551631123,
+        688846502588399,
+        1114577054219522,
+        1803423556807921,
+        2918000611027443,
+        4721424167835364,
+        7639424778862807,
+    ];
 
     /**
      * Generates lucky numbers while the predicate function returns true.
@@ -10749,36 +10850,588 @@ var Playground = (function (exports) {
         'c:lucky-take-while': function (takeWhile) { return generateLuckyNumbers(takeWhile); },
     };
 
-    var sequenceNormalExpression = {};
-    addSequence(bellSequence);
-    addSequence(catalanSequence);
-    addSequence(factorialSequence);
-    addSequence(fibonacciSequence);
+    var mersenneNumbers = [3, 7, 31, 127, 2047, 8191, 131071, 524287, 2147483647];
+
+    /**
+     * Checks if a number is a Padovan number.
+     * Padovan numbers follow the recurrence relation: P(n) = P(n-2) + P(n-3) for n >= 3,
+     * with initial values P(0) = P(1) = P(2) = 1.
+     *
+     * The first few Padovan numbers are:
+     * 1, 1, 1, 2, 2, 3, 4, 5, 7, 9, 12, 16, 21, 28, 37, 49, 65, 86, 114, 151, 200, ...
+     *
+     * @param num - The number to check
+     * @returns True if the number is a Padovan number, false otherwise
+     */
+    function isPadovan(num) {
+        // Padovan numbers are always positive integers
+        if (!Number.isInteger(num) || num <= 0) {
+            return false;
+        }
+        // Special case: The first three Padovan numbers are all 1
+        if (num === 1) {
+            return true;
+        }
+        // Pre-calculated Padovan numbers (for efficient lookup, verified for correctness)
+        var padovanNumbers = [
+            1,
+            1,
+            1,
+            2,
+            2,
+            3,
+            4,
+            5,
+            7,
+            9,
+            12,
+            16,
+            21,
+            28,
+            37,
+            49,
+            65,
+            86,
+            114,
+            151,
+            200,
+            265,
+            351,
+            465,
+            616,
+            816,
+            1081,
+            1432,
+            1897,
+            2513,
+            3329,
+            4410,
+            5842,
+            7739,
+            10252,
+            13581,
+            17991,
+            23833,
+            31572,
+            41824,
+            55405,
+            73396,
+            97229,
+            128801,
+            170625,
+            226030,
+            299426,
+            396655,
+            525456,
+            696081,
+            922111,
+        ];
+        // Direct lookup for known values
+        if (padovanNumbers.includes(num)) {
+            return true;
+        }
+        // For numbers larger than our pre-calculated list but within JavaScript's safe range
+        if (num > padovanNumbers[padovanNumbers.length - 1] && num <= Number.MAX_SAFE_INTEGER) {
+            // Start with the last three values from our known sequence
+            var a = padovanNumbers[padovanNumbers.length - 3];
+            var b = padovanNumbers[padovanNumbers.length - 2];
+            var c = padovanNumbers[padovanNumbers.length - 1];
+            var next 
+            // Generate Padovan numbers until we either find a match or exceed the input
+            = void 0;
+            // Generate Padovan numbers until we either find a match or exceed the input
+            while (c < num) {
+                next = a + b;
+                a = b;
+                b = c;
+                c = next;
+                if (c === num) {
+                    return true;
+                }
+                // Check for numeric overflow/precision issues
+                if (!Number.isSafeInteger(c)) {
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+    var padovanSequence = {
+        'c:padovan-seq': function (length) {
+            var padovan = [1, 1, 1];
+            for (var i = 3; i < length; i += 1) {
+                padovan[i] = padovan[i - 2] + padovan[i - 3];
+            }
+            return padovan.slice(0, length);
+        },
+        'c:padovan-nth': function (n) {
+            if (n === 1 || n === 2 || n === 3)
+                return 1;
+            var a = 1;
+            var b = 1;
+            var c = 1;
+            for (var i = 4; i <= n; i += 1) {
+                var temp = a + b;
+                a = b;
+                b = c;
+                c = temp;
+            }
+            return c;
+        },
+        'c:padovan?': function (n) { return isPadovan(n); },
+        'c:padovan-take-while': function (takeWhile) {
+            var padovan = [];
+            if (!takeWhile(1, 0)) {
+                return padovan;
+            }
+            padovan.push(1);
+            if (!takeWhile(1, 1)) {
+                return padovan;
+            }
+            padovan.push(1);
+            if (!takeWhile(1, 2)) {
+                return padovan;
+            }
+            padovan.push(1);
+            var a = 1;
+            var b = 1;
+            var c = 1;
+            for (var i = 4;; i += 1) {
+                var temp = a + b;
+                a = b;
+                b = c;
+                c = temp;
+                if (!takeWhile(c, i)) {
+                    break;
+                }
+                padovan.push(c);
+            }
+            return padovan;
+        },
+    };
+
+    var pellNumbers = [
+        1,
+        2,
+        5,
+        12,
+        29,
+        70,
+        169,
+        408,
+        985,
+        2378,
+        5741,
+        13860,
+        33461,
+        80782,
+        195025,
+        470832,
+        1136689,
+        2744210,
+        6625109,
+        15994428,
+        38613965,
+        93222358,
+        225058681,
+        543339720,
+        1311738121,
+        3166815962,
+        7645370045,
+        18457556052,
+        44560482149,
+        107578520350,
+        259717522849,
+        627013566048,
+        1513744654945,
+        3654502875938,
+        8822750406821,
+        21300003689580,
+        51422757785981,
+        124145519261542,
+        299713796309065,
+        723573111879672,
+        1746860020068409,
+        4217293152016490,
+    ];
+
+    var perfectNumbers = [6, 28, 496, 8128, 33550336, 8589869056, 137438691328];
+
+    var perfectCubeSequence = {
+        'c:perfect-cube-seq': function (length) {
+            var perfectcubes = [];
+            for (var i = 1; i <= length; i++) {
+                perfectcubes.push(Math.pow(i, 3));
+            }
+            return perfectcubes;
+        },
+        'c:perfect-cube-nth': function (n) { return Math.pow(n, 3); },
+        'c:perfect-cube?': function (n) { return n > 0 && Number.isInteger(Math.cbrt(n)); },
+        'c:perfect-cube-take-while': function (takeWhile) {
+            var perfectcubes = [];
+            for (var i = 1;; i++) {
+                var value = Math.pow(i, 3);
+                if (!takeWhile(value, i)) {
+                    break;
+                }
+                perfectcubes.push(value);
+            }
+            return perfectcubes;
+        },
+    };
+
+    /**
+     * Checks if a number is a perfect power and returns the base and exponent if it is.
+     * A perfect power is a number that can be expressed as an integer power of another integer.
+     *
+     * @param n - The number to check
+     * @returns [base, exponent] if n is a perfect power, null otherwise
+     */
+    function perfectPower(n) {
+        // Handle edge cases
+        if (n < 2) {
+            if (n === 1) {
+                // 1 is 1^k for any k, we return [1, 2] as the simplest representation
+                return [1, 2];
+            }
+            return null; // Non positive numbers are not perfect powers
+        }
+        // For each possible exponent k, try to find base b such that b^k = n
+        var maxK = Math.floor(Math.log2(n)) + 1;
+        for (var k = 2; k <= maxK; k++) {
+            // Calculate the potential base as n^(1/k)
+            var b = Math.pow(n, (1 / k));
+            var roundedB = Math.round(b);
+            // Check if roundedB^k is equal to n (within a small epsilon to account for floating point errors)
+            var epsilon = 1e-10;
+            if (Math.abs(Math.pow(roundedB, k) - n) < epsilon) {
+                return [roundedB, k];
+            }
+        }
+        return null; // Not a perfect power
+    }
+    var perfectPowerSequence = {
+        'c:perfect-power-seq': function (length) {
+            var perfectPowers = [];
+            for (var i = 1; perfectPowers.length < length; i++) {
+                if (perfectPower(i)) {
+                    perfectPowers.push(i);
+                }
+            }
+            return perfectPowers;
+        },
+        'c:perfect-power-nth': function (n) {
+            var count = 0;
+            var current = 1;
+            while (count < n) {
+                if (perfectPower(current)) {
+                    count++;
+                }
+                current++;
+            }
+            return current - 1;
+        },
+        'c:perfect-power?': function (n) { return perfectPower(n) !== null; },
+        'c:perfect-power-take-while': function (takeWhile) {
+            var perfectPowers = [];
+            for (var i = 1;; i++) {
+                if (perfectPower(i)) {
+                    if (!takeWhile(i, perfectPowers.length)) {
+                        break;
+                    }
+                    perfectPowers.push(i);
+                }
+            }
+            return perfectPowers;
+        },
+    };
+
+    var perfectSquareSequence = {
+        'c:perfect-square-seq': function (length) {
+            var perfectSquares = [];
+            for (var i = 1; i <= length; i++) {
+                perfectSquares.push(Math.pow(i, 2));
+            }
+            return perfectSquares;
+        },
+        'c:perfect-square-nth': function (n) { return Math.pow(n, 2); },
+        'c:perfect-square?': function (n) { return n > 0 && Number.isInteger(Math.sqrt(n)); },
+        'c:perfect-square-take-while': function (takeWhile) {
+            var perfectSquares = [];
+            for (var i = 1;; i++) {
+                var value = Math.pow(i, 2);
+                if (!takeWhile(value, i)) {
+                    break;
+                }
+                perfectSquares.push(value);
+            }
+            return perfectSquares;
+        },
+    };
+
+    var poligonalNormalExpressions = {
+        'c:polygonal-seq': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), sides = _b[0], n = _b[1];
+                assertNumber(sides, sourceCodeInfo, { integer: true, gte: 3 });
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                var polygonal = [];
+                for (var i = 1; i <= n; i += 1) {
+                    polygonal[i - 1] = (i * i * (sides - 2) - i * (sides - 4)) / 2;
+                }
+                return polygonal;
+            },
+            paramCount: 2,
+        },
+        'c:polygonal-take-while': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var _c = __read(_a, 2), sides = _c[0], fn = _c[1];
+                var executeFunction = _b.executeFunction;
+                assertNumber(sides, sourceCodeInfo, { integer: true, gte: 3 });
+                assertLitsFunction(fn, sourceCodeInfo);
+                var polygonal = [];
+                for (var i = 1;; i += 1) {
+                    var value = (i * i * (sides - 2) - i * (sides - 4)) / 2;
+                    if (!executeFunction(fn, [value, i], contextStack, sourceCodeInfo)) {
+                        break;
+                    }
+                    polygonal[i - 1] = (i * i * (sides - 2) - i * (sides - 4)) / 2;
+                }
+                return polygonal;
+            },
+            paramCount: 2,
+        },
+        'c:polygonal-nth': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), sides = _b[0], n = _b[1];
+                assertNumber(sides, sourceCodeInfo, { integer: true, gte: 3 });
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                return (n * n * (sides - 2) - n * (sides - 4)) / 2;
+            },
+            paramCount: 2,
+        },
+        'c:polygonal?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), sides = _b[0], n = _b[1];
+                assertNumber(n, sourceCodeInfo);
+                assertNumber(sides, sourceCodeInfo, { integer: true, gte: 3 });
+                if (Number.isInteger(n) && n <= 0) {
+                    return false;
+                }
+                var a = sides - 2;
+                var b = sides - 4;
+                var discriminant = 8 * a * n + b * b;
+                var sqrtPart = Math.sqrt(discriminant);
+                // Discriminant must yield an integer square root
+                if (!Number.isInteger(sqrtPart))
+                    return false;
+                var numerator = sqrtPart + b;
+                // Numerator must be divisible by 2*a
+                if (numerator % (2 * a) !== 0)
+                    return false;
+                var x = numerator / (2 * a);
+                // x must be a positive integer
+                return Number.isInteger(x) && x > 0;
+            },
+            paramCount: 2,
+        },
+    };
+
+    /**
+     * Generates the first 'n' terms of the Recamán sequence.
+     *
+     * @param n - Number of terms to generate
+     * @returns Array containing the first n terms of the Recamán sequence
+     */
+    function generateRecamanSequence(n) {
+        if (n === 1)
+            return [0];
+        var sequence = [0];
+        var seen = new Set([0]);
+        for (var i = 1; i < n; i++) {
+            // Try to go backward
+            var next = sequence[i - 1] - i;
+            // If that's not positive or already seen, go forward
+            if (next <= 0 || seen.has(next)) {
+                next = sequence[i - 1] + i;
+            }
+            sequence.push(next);
+            seen.add(next);
+        }
+        return sequence;
+    }
+    var recamanSequence = {
+        'c:recaman-seq': function (length) { return generateRecamanSequence(length); },
+        'c:recaman-take-while': function (takeWhile) {
+            if (!takeWhile(0, 0))
+                return [];
+            var sequence = [0];
+            var seen = new Set([0]);
+            for (var i = 1;; i++) {
+                // Try to go backward
+                var next = sequence[i - 1] - i;
+                // If that's not positive or already seen, go forward
+                if (next <= 0 || seen.has(next)) {
+                    next = sequence[i - 1] + i;
+                }
+                if (!takeWhile(next, i))
+                    break;
+                sequence.push(next);
+                seen.add(next);
+            }
+            return sequence;
+        },
+        'c:recaman-nth': function (n) { var _a; return (_a = generateRecamanSequence(n)[n - 1]) !== null && _a !== void 0 ? _a : 0; },
+        'c:recaman?': function () { return true; },
+    };
+
+    var sylvesterNumbers = [
+        2,
+        6,
+        42,
+        1806,
+        3263442,
+        10650056950806,
+    ];
+
+    var thueMorseSequence = {
+        'c:thue-morse-seq': function (length) {
+            var thueMorse = [];
+            for (var i = 0; i < length; i += 1) {
+                thueMorse[i] = countSetBits(i) % 2;
+            }
+            return thueMorse;
+        },
+        'c:thue-morse-take-while': function (takeWhile) {
+            var thueMorse = [];
+            for (var i = 0;; i += 1) {
+                var value = countSetBits(i) % 2;
+                if (!takeWhile(value, i)) {
+                    break;
+                }
+                thueMorse[i] = value;
+            }
+            return thueMorse;
+        },
+        'c:thue-morse-nth': function (n) { return countSetBits(n - 1) % 2; },
+        'c:thue-morse?': function (n) { return n === 1 || n === 0; },
+    };
+    function countSetBits(num) {
+        var count = 0;
+        while (num) {
+            count += num & 1;
+            num >>= 1;
+        }
+        return count;
+    }
+
+    var tribonacciNumbers = [
+        0,
+        1,
+        1,
+        2,
+        4,
+        7,
+        13,
+        24,
+        44,
+        81,
+        149,
+        274,
+        504,
+        927,
+        1705,
+        3136,
+        5768,
+        10609,
+        19513,
+        35890,
+        66012,
+        121415,
+        223317,
+        410744,
+        755476,
+        1389537,
+        2555757,
+        4700770,
+        8646064,
+        15902591,
+        29249425,
+        53798080,
+        98950096,
+        181997601,
+        334745777,
+        615693474,
+        1132436852,
+        2082876103,
+        3831006429,
+        7046319384,
+        12960201916,
+        23837527729,
+        43844049029,
+        80641778674,
+        148323355432,
+        272809183135,
+        501774317241,
+        922906855808,
+        1697490356184,
+        3122171529233,
+        5742568741225,
+        10562230626642,
+        19426970897100,
+        35731770264967,
+        65720971788709,
+        120879712950776,
+        222332455004452,
+        408933139743937,
+        752145307699165,
+        1383410902447554,
+        2544489349890656,
+        4680045560037375,
+        8607945812375585,
+    ];
+
+    var sequenceNormalExpressions = {};
+    addSequence(abundantSequence);
+    addSequence(collatzSequence);
+    addSequence(compositeSequence);
+    addSequence(deficientSequence);
+    addSequence(golombSequence);
     addSequence(happySequence);
+    addSequence(jugglerSequence);
     addSequence(lookAndSaySequence);
-    addSequence(lucasSequence);
     addSequence(luckySequence);
-    addSequence(mersenneSequence);
     addSequence(padovanSequence);
-    addSequence(partitionSequence);
-    addSequence(pellSequence);
-    addSequence(perfectSequence);
+    addSequence(perfectSquareSequence);
+    addSequence(perfectCubeSequence);
+    addSequence(perfectPowerSequence);
     addSequence(primeSequence);
     addSequence(recamanSequence);
     addSequence(thueMorseSequence);
-    addSequence(tribonacciSequence);
-    addNormalExpressions(arithmeticNormalExpressions);
-    addNormalExpressions(geometricNormalExpressions);
-    addNormalExpressions(poligonalNormalExpressions);
-    function addNormalExpressions(normalExpressions) {
+    addNormalExpressions$1(getFiniteNumberSequence('tribonacci', tribonacciNumbers));
+    addNormalExpressions$1(getFiniteNumberSequence('catalan', catalanNumbers));
+    addNormalExpressions$1(getFiniteNumberSequence('factorial', factorialNumbers));
+    addNormalExpressions$1(getFiniteNumberSequence('fibonacci', fibonacciNumbers));
+    addNormalExpressions$1(getFiniteNumberSequence('lucas', lucasNumbers));
+    addNormalExpressions$1(getFiniteNumberSequence('mersenne', mersenneNumbers));
+    addNormalExpressions$1(getFiniteNumberSequence('partition', partitionNumbers));
+    addNormalExpressions$1(getFiniteNumberSequence('pell', pellNumbers));
+    addNormalExpressions$1(getFiniteNumberSequence('perfect', perfectNumbers));
+    addNormalExpressions$1(getFiniteNumberSequence('sylvester', sylvesterNumbers));
+    addNormalExpressions$1(getFiniteNumberSequence('bell', bellNumbers));
+    addNormalExpressions$1(arithmeticNormalExpressions);
+    addNormalExpressions$1(bernoulliNormalExpressions);
+    addNormalExpressions$1(geometricNormalExpressions);
+    addNormalExpressions$1(poligonalNormalExpressions);
+    function addNormalExpressions$1(normalExpressions) {
         var e_1, _a;
         try {
             for (var _b = __values(Object.entries(normalExpressions)), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var _d = __read(_c.value, 2), key = _d[0], value = _d[1];
-                if (sequenceNormalExpression[key]) {
+                if (sequenceNormalExpressions[key]) {
                     throw new Error("Duplicate normal expression key found: ".concat(key));
                 }
-                sequenceNormalExpression[key] = value;
+                sequenceNormalExpressions[key] = value;
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -10789,29 +11442,49 @@ var Playground = (function (exports) {
             finally { if (e_1) throw e_1.error; }
         }
     }
+    function getFiniteNumberSequence(name, sequence) {
+        var _a;
+        return _a = {},
+            _a["c:".concat(name, "-seq")] = createSeqNormalExpression(function (length) { return sequence.slice(0, length); }, sequence.length),
+            _a["c:".concat(name, "-take-while")] = createTakeWhileNormalExpression(function (takeWhile) {
+                var i = 0;
+                for (i = 0;; i += 1) {
+                    if (i >= sequence.length) {
+                        break;
+                    }
+                    if (!takeWhile(sequence[i], i)) {
+                        break;
+                    }
+                }
+                return sequence.slice(0, i);
+            }, sequence.length),
+            _a["c:".concat(name, "-nth")] = createNthNormalExpression(function (n) { return sequence[n - 1]; }, sequence.length),
+            _a["c:".concat(name, "?")] = createNumberPredNormalExpression(function (n) { return sequence.includes(n); }),
+            _a;
+    }
     function addSequence(sequence) {
         var e_2, _a;
         try {
             for (var _b = __values(Object.entries(sequence)), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var _d = __read(_c.value, 2), key = _d[0], value = _d[1];
-                if (sequenceNormalExpression[key]) {
+                if (sequenceNormalExpressions[key]) {
                     throw new Error("Duplicate normal expression key found: ".concat(key));
                 }
                 if (key.endsWith('seq')) {
-                    sequenceNormalExpression[key] = createSeqNormalExpression(value, sequence.maxLength);
+                    sequenceNormalExpressions[key] = createSeqNormalExpression(value, sequence.maxLength);
                 }
                 else if (key.endsWith('take-while')) {
-                    sequenceNormalExpression[key] = createTakeWhileNormalExpression(value, sequence.maxLength);
+                    sequenceNormalExpressions[key] = createTakeWhileNormalExpression(value, sequence.maxLength);
                 }
                 else if (key.endsWith('nth')) {
-                    sequenceNormalExpression[key] = createNthNormalExpression(value, sequence.maxLength);
+                    sequenceNormalExpressions[key] = createNthNormalExpression(value, sequence.maxLength);
                 }
                 else if (key.endsWith('?')) {
                     if (sequence.string) {
-                        sequenceNormalExpression[key] = createStringPredNormalExpression(value);
+                        sequenceNormalExpressions[key] = createStringPredNormalExpression(value);
                     }
                     else {
-                        sequenceNormalExpression[key] = createNumberPredNormalExpression(value);
+                        sequenceNormalExpressions[key] = createNumberPredNormalExpression(value);
                     }
                 }
             }
@@ -10877,221 +11550,6 @@ var Playground = (function (exports) {
         };
     }
 
-    var armstrongNumbers = [
-        // 1 digit (all single digits are narcissistic)
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-        // 3 digits
-        153,
-        370,
-        371,
-        407,
-        // 4 digits
-        1634,
-        8208,
-        9474,
-        // 5 digits
-        54748,
-        92727,
-        93084,
-        // 6 digits
-        548834,
-        // 7 digits
-        1741725,
-        4210818,
-        9800817,
-        9926315,
-        // 8 digits
-        24678050,
-        24678051,
-        88593477,
-        // 9 digits
-        146511208,
-        472335975,
-        534494836,
-        912985153,
-        // 10 digits
-        4679307774,
-        // 11 digits
-        32164049650,
-        32164049651,
-        40028394225,
-        42678290603,
-        44708635679,
-        49388550606,
-        82693916578,
-        94204591914,
-        // 14 digits
-        28116440335967,
-        // 16 digits
-        4338281769391370,
-        4338281769391371,
-    ];
-    /**
-     * Checks if a number is a perfect power and returns the base and exponent if it is.
-     * A perfect power is a number that can be expressed as an integer power of another integer.
-     *
-     * @param n - The number to check
-     * @returns [base, exponent] if n is a perfect power, null otherwise
-     */
-    function perfectPower(n) {
-        // Handle edge cases
-        if (n < 2) {
-            if (n === 1) {
-                // 1 is 1^k for any k, we return [1, 2] as the simplest representation
-                return [1, 2];
-            }
-            if (n === 0) {
-                // 0 is 0^k for any k > 0, we return [0, 2] as the simplest representation
-                return [0, 2];
-            }
-            return null; // Negative numbers are not handled in this implementation
-        }
-        // For each possible exponent k, try to find base b such that b^k = n
-        var maxK = Math.floor(Math.log2(n)) + 1;
-        for (var k = 2; k <= maxK; k++) {
-            // Calculate the potential base as n^(1/k)
-            var b = Math.pow(n, (1 / k));
-            var roundedB = Math.round(b);
-            // Check if roundedB^k is equal to n (within a small epsilon to account for floating point errors)
-            var epsilon = 1e-10;
-            if (Math.abs(Math.pow(roundedB, k) - n) < epsilon) {
-                return [roundedB, k];
-            }
-        }
-        return null; // Not a perfect power
-    }
-    /**
-     * Generates all possible combinations of a specified size from a collection.
-     * @param collection The input collection to generate combinations from
-     * @param size The size of each combination
-     * @returns An array of arrays, where each inner array is a combination of the specified size
-     */
-    function combinations(collection, size) {
-        var e_1, _a;
-        // Return empty array if invalid inputs
-        if (size <= 0 || size > collection.length) {
-            return [];
-        }
-        // Base case: if size is 1, return each element as its own combination
-        if (size === 1) {
-            return collection.map(function (item) { return [item]; });
-        }
-        var result = [];
-        // Recursive approach to build combinations
-        for (var i = 0; i <= collection.length - size; i++) {
-            // Take the current element
-            var current = collection[i];
-            // Get all combinations of size-1 from the rest of the elements
-            var subCombinations = combinations(collection.slice(i + 1), size - 1);
-            try {
-                // Add the current element to each sub-combination
-                for (var subCombinations_1 = (e_1 = void 0, __values(subCombinations)), subCombinations_1_1 = subCombinations_1.next(); !subCombinations_1_1.done; subCombinations_1_1 = subCombinations_1.next()) {
-                    var subComb = subCombinations_1_1.value;
-                    result.push(__spreadArray([current], __read(subComb), false));
-                }
-            }
-            catch (e_1_1) { e_1 = { error: e_1_1 }; }
-            finally {
-                try {
-                    if (subCombinations_1_1 && !subCombinations_1_1.done && (_a = subCombinations_1.return)) _a.call(subCombinations_1);
-                }
-                finally { if (e_1) throw e_1.error; }
-            }
-        }
-        return result;
-    }
-    /**
-     * Generates all possible permutations of a collection.
-     * @param collection The input collection to generate permutations from
-     * @returns An array of arrays, where each inner array is a permutation of the input collection
-     */
-    function permutations(collection) {
-        var e_2, _a;
-        // Base case: empty array has one permutation - itself
-        if (collection.length === 0) {
-            return [[]];
-        }
-        var result = [];
-        // For each element in the array
-        for (var i = 0; i < collection.length; i++) {
-            // Extract the current element
-            var current = collection[i];
-            // Create a new array without the current element
-            var remainingElements = __spreadArray(__spreadArray([], __read(collection.slice(0, i)), false), __read(collection.slice(i + 1)), false);
-            // Generate all permutations of the remaining elements
-            var subPermutations = permutations(remainingElements);
-            try {
-                // Add the current element to the beginning of each sub-permutation
-                for (var subPermutations_1 = (e_2 = void 0, __values(subPermutations)), subPermutations_1_1 = subPermutations_1.next(); !subPermutations_1_1.done; subPermutations_1_1 = subPermutations_1.next()) {
-                    var subPerm = subPermutations_1_1.value;
-                    result.push(__spreadArray([current], __read(subPerm), false));
-                }
-            }
-            catch (e_2_1) { e_2 = { error: e_2_1 }; }
-            finally {
-                try {
-                    if (subPermutations_1_1 && !subPermutations_1_1.done && (_a = subPermutations_1.return)) _a.call(subPermutations_1);
-                }
-                finally { if (e_2) throw e_2.error; }
-            }
-        }
-        return result;
-    }
-    function derangement(n) {
-        if (n === 0)
-            return 1;
-        if (n === 1)
-            return 0;
-        var a = 1; // !0
-        var b = 0; // !1
-        var result = 0;
-        for (var i = 2; i <= n; i++) {
-            result = (i - 1) * (a + b);
-            a = b;
-            b = result;
-        }
-        return result;
-    }
-    function powerSet(set) {
-        var e_3, _a;
-        var result = [[]];
-        var _loop_1 = function (value) {
-            var newSubsets = result.map(function (subset) { return __spreadArray(__spreadArray([], __read(subset), false), [value], false); });
-            result.push.apply(result, __spreadArray([], __read(newSubsets), false));
-        };
-        try {
-            for (var set_1 = __values(set), set_1_1 = set_1.next(); !set_1_1.done; set_1_1 = set_1.next()) {
-                var value = set_1_1.value;
-                _loop_1(value);
-            }
-        }
-        catch (e_3_1) { e_3 = { error: e_3_1 }; }
-        finally {
-            try {
-                if (set_1_1 && !set_1_1.done && (_a = set_1.return)) _a.call(set_1);
-            }
-            finally { if (e_3) throw e_3.error; }
-        }
-        return result;
-    }
-    function calcPartitions(n) {
-        var partition = Array.from({ length: n + 1 }, function () { return 0; });
-        partition[0] = 1;
-        for (var i = 1; i <= n; i += 1) {
-            for (var j = i; j <= n; j += 1) {
-                partition[j] += partition[j - i];
-            }
-        }
-        return partition[n];
-    }
     function gcd(a, b) {
         while (b !== 0) {
             var temp = b;
@@ -11100,40 +11558,17 @@ var Playground = (function (exports) {
         }
         return Math.abs(a);
     }
-    function factorsOf(n) {
-        var factors = [];
-        for (var i = 1; i <= Math.sqrt(n); i++) {
-            if (n % i === 0) {
-                factors.push(i);
-                if (i !== n / i) {
-                    factors.push(n / i);
-                }
-            }
-        }
-        return factors;
-    }
-    function factorialOf(n) {
-        if (n < 0)
-            throw new Error('Factorial is not defined for negative numbers');
-        if (n === 0 || n === 1)
+    function mobius(n) {
+        if (n === 1)
             return 1;
-        if (n <= 18) {
-            return factorialNumbers[n];
-        }
-        var result = factorialNumbers[18];
-        for (var i = 19; i <= n; i++)
-            result *= i;
-        return result;
-    }
-    function binomialCoefficient(n, k) {
-        if (k < 0 || k > n)
+        var factors = primeFactors(n);
+        var uniqueFactors = new Set(factors);
+        // If n has a repeated prime factor (not square-free)
+        if (uniqueFactors.size !== factors.length)
             return 0;
-        if (k === 0 || k === n)
-            return 1;
-        var result = 1;
-        for (var i = 0; i < k; i++)
-            result *= (n - i) / (i + 1);
-        return result;
+        // If square-free with even number of prime factors: return 1
+        // If square-free with odd number of prime factors: return -1
+        return factors.length % 2 === 0 ? 1 : -1;
     }
     function modularExponentiation(base, exponent, mod) {
         if (mod === 1)
@@ -11204,28 +11639,6 @@ var Playground = (function (exports) {
         return sum;
     }
     var combinatoricalNormalExpression = {
-        'c:factors': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), number = _b[0];
-                assertNumber(number, sourceCodeInfo, { finite: true, integer: true, positive: true });
-                return factorsOf(number);
-            },
-            paramCount: 1,
-        },
-        'c:prime-factors': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), number = _b[0];
-                assertNumber(number, sourceCodeInfo, { finite: true });
-                var factors = [];
-                for (var i = 2; i <= number; i += 1) {
-                    if (number % i === 0 && isPrime(i)) {
-                        factors.push(i);
-                    }
-                }
-                return factors;
-            },
-            paramCount: 1,
-        },
         'c:divisible-by?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), value = _b[0], divisor = _b[1];
@@ -11255,55 +11668,6 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'c:factorial': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true });
-                if (n > 170) {
-                    // Factorial of numbers greater than 170 exceeds the maximum safe integer in JavaScript
-                    throw new LitsError('Factorial is too large to compute safely', sourceCodeInfo);
-                }
-                return factorialOf(n);
-            },
-            aliases: ['c:!'],
-            paramCount: 1,
-        },
-        'c:generate-combinations': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), set = _b[0], n = _b[1];
-                assertArray(set, sourceCodeInfo);
-                assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true, lte: set.length });
-                return combinations(set, n);
-            },
-            paramCount: 1,
-        },
-        'c:generate-permutations': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), set = _b[0];
-                assertArray(set, sourceCodeInfo);
-                return permutations(set);
-            },
-            paramCount: 1,
-        },
-        'c:count-permutations': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), n = _b[0], k = _b[1];
-                assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true });
-                assertNumber(k, sourceCodeInfo, { integer: true, nonNegative: true, lte: n });
-                return factorialOf(n) / factorialOf(n - k);
-            },
-            paramCount: 2,
-        },
-        'c:count-combinations': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), n = _b[0], k = _b[1];
-                assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true });
-                assertNumber(k, sourceCodeInfo, { integer: true, nonNegative: true, lte: n });
-                return binomialCoefficient(n, k);
-            },
-            aliases: ['c:binomial-coefficient'],
-            paramCount: 2,
-        },
         'c:multinomial': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a), args = _b.slice(0);
@@ -11316,71 +11680,16 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 1 },
         },
-        'c:composite?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), value = _b[0];
-                assertNumber(value, sourceCodeInfo, { integer: true });
-                return !isPrime(value) && value > 1;
-            },
-            paramCount: 1,
-        },
-        'c:abundant?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), value = _b[0];
-                assertNumber(value, sourceCodeInfo, { integer: true, positive: true });
-                var factors = factorsOf(value - 1);
-                var sum = factors.reduce(function (acc, curr) { return acc + curr; }, 0);
-                return sum > value;
-            },
-            paramCount: 1,
-        },
-        'c:deficient?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), value = _b[0];
-                assertNumber(value, sourceCodeInfo, { integer: true, positive: true });
-                var factors = factorsOf(value - 1);
-                var sum = factors.reduce(function (acc, curr) { return acc + curr; }, 0);
-                return sum < value;
-            },
-            paramCount: 1,
-        },
         'c:amicable?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), a = _b[0], b = _b[1];
                 assertNumber(a, sourceCodeInfo, { integer: true, positive: true });
                 assertNumber(b, sourceCodeInfo, { integer: true, positive: true });
-                var sumA = factorsOf(a).reduce(function (acc, curr) { return acc + curr; }, 0);
-                var sumB = factorsOf(b).reduce(function (acc, curr) { return acc + curr; }, 0);
+                var sumA = getProperDivisors(a).reduce(function (acc, curr) { return acc + curr; }, 0);
+                var sumB = getProperDivisors(b).reduce(function (acc, curr) { return acc + curr; }, 0);
                 return sumA === b && sumB === a && a !== b;
             },
             paramCount: 2,
-        },
-        'c:narcissistic?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), value = _b[0];
-                assertNumber(value, sourceCodeInfo, { integer: true, positive: true });
-                return armstrongNumbers.includes(value);
-            },
-            aliases: ['c:armstrong?'],
-            paramCount: 1,
-        },
-        'c-narcissistic-seq': {
-            evaluate: function (params, sourceCodeInfo) {
-                var _a;
-                var length = asNumber((_a = params[0]) !== null && _a !== void 0 ? _a : armstrongNumbers.length, sourceCodeInfo, { integer: true, positive: true, lte: armstrongNumbers.length });
-                return armstrongNumbers.slice(0, length);
-            },
-            aliases: ['c:armstrong-seq'],
-            paramCount: { max: 1 },
-        },
-        'c-narcissistic-nth': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true, lte: armstrongNumbers.length });
-                return armstrongNumbers[n - 1];
-            },
-            aliases: ['c:armstrong-nth'],
-            paramCount: 1,
         },
         'c:euler-totient': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11406,18 +11715,39 @@ var Playground = (function (exports) {
                 assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
                 if (n === 1)
                     return 1;
-                var factors = factorsOf(n);
+                var factors = primeFactors(n);
                 var uniqueFactors = new Set(factors);
-                return uniqueFactors.size === factors.length ? -1 : 0;
+                // If n has a repeated prime factor (not square-free)
+                if (uniqueFactors.size !== factors.length)
+                    return 0;
+                // If square-free with even number of prime factors: return 1
+                // If square-free with odd number of prime factors: return -1
+                return factors.length % 2 === 0 ? 1 : -1;
             },
             paramCount: 1,
             aliases: ['c:möbius'],
+        },
+        'c:mertens': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
+                if (n === 1)
+                    return 1;
+                var result = 0;
+                for (var i = 1; i <= n; i++) {
+                    var mobiusValue = mobius(i);
+                    result += mobiusValue; // * Math.floor(n / i)
+                }
+                return result;
+            },
+            paramCount: 1,
+            aliases: ['c:mertens'],
         },
         'c:sigma': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), n = _b[0];
                 assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                var factors = factorsOf(n);
+                var factors = primeFactors(n);
                 return factors.reduce(function (acc, curr) { return acc + curr; }, 0);
             },
             paramCount: 1,
@@ -11426,50 +11756,34 @@ var Playground = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), n = _b[0];
                 assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                var factors = factorsOf(n);
+                var factors = primeFactors(n);
                 return factors.length;
             },
             paramCount: 1,
         },
         'c:carmichael-lambda': {
             evaluate: function (_a, sourceCodeInfo) {
-                var e_4, _b;
+                var e_1, _b;
                 var _c = __read(_a, 1), n = _c[0];
                 assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
                 if (n === 1)
                     return 1;
                 var result = n;
-                var factors = factorsOf(n);
+                var factors = primeFactors(n);
                 try {
                     for (var factors_1 = __values(factors), factors_1_1 = factors_1.next(); !factors_1_1.done; factors_1_1 = factors_1.next()) {
                         var factor = factors_1_1.value;
                         result *= (factor - 1) / factor;
                     }
                 }
-                catch (e_4_1) { e_4 = { error: e_4_1 }; }
+                catch (e_1_1) { e_1 = { error: e_1_1 }; }
                 finally {
                     try {
                         if (factors_1_1 && !factors_1_1.done && (_b = factors_1.return)) _b.call(factors_1);
                     }
-                    finally { if (e_4) throw e_4.error; }
+                    finally { if (e_1) throw e_1.error; }
                 }
                 return result;
-            },
-            paramCount: 1,
-        },
-        'c:derangement': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return derangement(n);
-            },
-            paramCount: 1,
-        },
-        'c:power-set': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), set = _b[0];
-                assertArray(set, sourceCodeInfo);
-                return powerSet(set);
             },
             paramCount: 1,
         },
@@ -11489,66 +11803,11 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 1 },
         },
-        'c:perfect-power?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return perfectPower(n) !== null;
-            },
-            paramCount: 1,
-        },
         'c:perfect-power': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), n = _b[0];
                 assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
                 return perfectPower(n);
-            },
-            paramCount: 1,
-        },
-        'c:perfect-power-seq': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), length = _b[0];
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                var perfectPowers = [];
-                for (var i = 1; perfectPowers.length < length; i++) {
-                    if (perfectPower(i)) {
-                        perfectPowers.push(i);
-                    }
-                }
-                return perfectPowers;
-            },
-            paramCount: 1,
-        },
-        'c:perfect-power-nth': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                var count = 0;
-                var current = 1;
-                while (count < n) {
-                    if (perfectPower(current)) {
-                        count++;
-                    }
-                    current++;
-                }
-                return current - 1;
-            },
-            paramCount: 1,
-        },
-        'c:collatz-seq': {
-            evaluate: function (params, sourceCodeInfo) {
-                var x = asNumber(params[0], sourceCodeInfo, { integer: true, positive: true });
-                var collatz = [x];
-                while (x !== 1) {
-                    if (x % 2 === 0) {
-                        x /= 2;
-                    }
-                    else {
-                        x = 3 * x + 1;
-                    }
-                    collatz.push(x);
-                }
-                return collatz;
             },
             paramCount: 1,
         },
@@ -11592,254 +11851,74 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'c:perfect-square?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return isPerfectSquare(n);
-            },
-            paramCount: 1,
-        },
-        'c:perfect-square-seq': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), length = _b[0];
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                var perfectSquares = [];
-                for (var i = 0; perfectSquares.length < length; i++) {
-                    perfectSquares.push(i * i);
-                }
-                return perfectSquares;
-            },
-            paramCount: 1,
-        },
-        'c:perfect-square-nth': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return n * n;
-            },
-            paramCount: 1,
-        },
-        'c:perfect-cube?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                var cbrt = Math.cbrt(n);
-                return Math.floor(cbrt) === cbrt;
-            },
-            paramCount: 1,
-        },
-        'c:perfect-cube-seq': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), length = _b[0];
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                var perfectCubes = [];
-                for (var i = 0; perfectCubes.length < length; i++) {
-                    perfectCubes.push(i * i * i);
-                }
-                return perfectCubes;
-            },
-            paramCount: 1,
-        },
-        'c:perfect-cube-nth': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return n * n * n;
-            },
-            paramCount: 1,
-        },
-        'c:palindrome?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), value = _b[0];
-                assertNumber(value, sourceCodeInfo, { integer: true, nonNegative: true });
-                var strValue = value.toString();
-                return strValue === strValue.split('').reverse().join('');
-            },
-            paramCount: 1,
-        },
-        'c:stirling-first-seq': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), length = _b[0];
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                var stirlingFirst = [];
-                for (var n = 0; n < length; n += 1) {
-                    stirlingFirst[n] = [];
-                    for (var k = 0; k <= n; k += 1) {
-                        if (k === 0 || k === n)
-                            stirlingFirst[n][k] = 1;
-                        else
-                            stirlingFirst[n][k] = (n - 1) * (stirlingFirst[n - 1][k] + stirlingFirst[n - 1][k - 1]);
-                    }
-                }
-                return stirlingFirst[length - 1];
-            },
-            paramCount: 1,
-        },
-        'c:stirling-first-nth': {
+        'c:stirling-first': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), n = _b[0], k = _b[1];
                 assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
                 assertNumber(k, sourceCodeInfo, { integer: true, positive: true, lte: n });
-                if (k === 0 || k === n)
+                // Handle edge cases
+                if (n === 0 && k === 0)
                     return 1;
-                return (n - 1) * (calcPartitions(n - 1) + calcPartitions(n - k - 1));
+                if (n > 0 && k === 0)
+                    return 0;
+                if (k > n)
+                    return 0;
+                // Create a table to store results
+                var dp = Array.from({ length: n + 1 }, function () { return Array(k + 1).fill(0); });
+                // Base case
+                dp[0][0] = 1;
+                // Fill the table using the recurrence relation
+                for (var i = 1; i <= n; i++) {
+                    for (var j = 1; j <= Math.min(i, k); j++) {
+                        dp[i][j] = dp[i - 1][j - 1] - (i - 1) * dp[i - 1][j];
+                    }
+                }
+                return dp[n][k];
             },
             paramCount: 2,
         },
-        'c:stirling-second-seq': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), length = _b[0];
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                var stirlingSecond = [];
-                for (var n = 0; n < length; n += 1) {
-                    stirlingSecond[n] = [];
-                    for (var k = 0; k <= n; k += 1) {
-                        if (k === 0 || k === n)
-                            stirlingSecond[n][k] = 1;
-                        else
-                            stirlingSecond[n][k] = k * stirlingSecond[n - 1][k] + stirlingSecond[n - 1][k - 1];
-                    }
-                }
-                return stirlingSecond[length - 1];
-            },
-            paramCount: 1,
-        },
-        'c:stirling-second-nth': {
+        'c:stirling-second': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), n = _b[0], k = _b[1];
                 assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
                 assertNumber(k, sourceCodeInfo, { integer: true, positive: true, lte: n });
-                if (k === 0 || k === n)
-                    return 1;
-                return k * calcPartitions(n - 1) + calcPartitions(n - k - 1);
+                if (n === 0 && k === 0)
+                    return 1; // Empty set has one way to be partitioned into zero subsets
+                if (n === 0 || k === 0)
+                    return 0; // No ways to partition n objects into 0 subsets or 0 objects into k subsets
+                if (k > n)
+                    return 0; // Can't have more subsets than objects
+                if (k === 1)
+                    return 1; // Only one way to put n objects into one subset
+                if (k === n)
+                    return 1; // Only one way to put n objects into n subsets (one object per subset)
+                // Create a 2D array for memoization
+                var dp = Array.from({ length: n + 1 }, function () { return Array(k + 1).fill(0); });
+                // Initialize base cases
+                dp[0][0] = 1;
+                // Fill the dp table using the recurrence relation:
+                // S(n,k) = k * S(n-1,k) + S(n-1,k-1)
+                for (var i = 1; i <= n; i++) {
+                    for (var j = 1; j <= Math.min(i, k); j++) {
+                        dp[i][j] = j * dp[i - 1][j] + dp[i - 1][j - 1];
+                    }
+                }
+                return dp[n][k];
             },
             paramCount: 2,
-        },
-        'c:bernoulli-seq': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), length = _b[0];
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                var bernoulli = [1];
-                for (var n = 1; n < length; n += 1) {
-                    var sum = 0;
-                    for (var k = 0; k < n; k += 1) {
-                        sum += binomialCoefficient(n + 1, k) * bernoulli[k];
-                    }
-                    bernoulli[n] = -sum / (n + 1);
-                }
-                return bernoulli;
-            },
-            paramCount: 1,
-        },
-        'c:bernoulli-nth': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                if (n === 0)
-                    return 1;
-                var sum = 0;
-                for (var k = 0; k < n; k += 1) {
-                    sum += binomialCoefficient(n + 1, k) * calcPartitions(k);
-                }
-                return -sum / (n + 1);
-            },
-            paramCount: 1,
-        },
-        'c:brenoulli?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return n % 2 === 0 && n !== 2;
-            },
-            paramCount: 1,
-        },
-        'c:sylvester-seq': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), length = _b[0];
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                var sylvester = [2];
-                for (var n = 1; n < length; n += 1) {
-                    sylvester[n] = sylvester[n - 1] + Math.sqrt(sylvester[n - 1]);
-                }
-                return sylvester;
-            },
-            paramCount: 1,
-        },
-        'c:sylvester-nth': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                var sylvester = 2;
-                for (var i = 1; i < n; i += 1) {
-                    sylvester += Math.sqrt(sylvester);
-                }
-                return sylvester;
-            },
-            paramCount: 1,
-        },
-        'c:sylvester?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return n === 2 || (n > 2 && n % Math.sqrt(n) === 0);
-            },
-            paramCount: 1,
-        },
-        'c:golomb-seq': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), length = _b[0];
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                var golomb = [0];
-                for (var n = 1; n < length; n += 1) {
-                    golomb[n] = 1 + golomb[n - golomb[golomb[n - 1]]];
-                }
-                return golomb;
-            },
-            paramCount: 1,
-        },
-        'c:golomb-nth': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                var golomb = [0];
-                for (var i = 1; i <= n; i += 1) {
-                    golomb[i] = 1 + golomb[i - golomb[golomb[i - 1]]];
-                }
-                return golomb[n];
-            },
-            paramCount: 1,
-        },
-        'c:golomb?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return n === 1 || (n > 1 && n % Math.sqrt(n) === 0);
-            },
-            paramCount: 1,
-        },
-        'c:juggler-seq': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), start = _b[0];
-                assertNumber(start, sourceCodeInfo, { integer: true, positive: true });
-                var next = start;
-                var juggler = [next];
-                var index = 0;
-                while (next > 1) {
-                    next = next % 2 === 0
-                        ? Math.floor(Math.sqrt(juggler[index]))
-                        : Math.floor(juggler[index] * Math.sqrt(juggler[index]));
-                    index += 1;
-                    juggler.push(next);
-                }
-                return juggler;
-            },
-            paramCount: 1,
         },
     };
-    addSequences(sequenceNormalExpression);
+    addSequences(sequenceNormalExpressions);
+    addNormalExpressions(factorialNormalExpressions);
+    addNormalExpressions(divisorsNormalExpressions);
+    addNormalExpressions(combinationsNormalExpressions);
+    addNormalExpressions(permutationsNormalExpressions);
+    addNormalExpressions(partitionsNormalExpressions);
+    addNormalExpressions(primeFactorsNormalExpressions);
+    addNormalExpressions(derangementsNormalExpressions);
+    addNormalExpressions(powerSetNormalExpressions);
     function addSequences(sequences) {
-        var e_5, _a;
+        var e_2, _a;
         try {
             for (var _b = __values(Object.entries(sequences)), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var _d = __read(_c.value, 2), key = _d[0], value = _d[1];
@@ -11849,16 +11928,35 @@ var Playground = (function (exports) {
                 combinatoricalNormalExpression[key] = value;
             }
         }
-        catch (e_5_1) { e_5 = { error: e_5_1 }; }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
         finally {
             try {
                 if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
             }
-            finally { if (e_5) throw e_5.error; }
+            finally { if (e_2) throw e_2.error; }
+        }
+    }
+    function addNormalExpressions(normalExpressions) {
+        var e_3, _a;
+        try {
+            for (var _b = __values(Object.entries(normalExpressions)), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var _d = __read(_c.value, 2), key = _d[0], value = _d[1];
+                if (combinatoricalNormalExpression[key]) {
+                    throw new Error("Duplicate normal expression key found: ".concat(key));
+                }
+                combinatoricalNormalExpression[key] = value;
+            }
+        }
+        catch (e_3_1) { e_3 = { error: e_3_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_3) throw e_3.error; }
         }
     }
 
-    var expressions = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, bitwiseNormalExpression), collectionNormalExpression), arrayNormalExpression), sequenceNormalExpression$1), mathNormalExpression), miscNormalExpression), assertNormalExpression), objectNormalExpression), predicatesNormalExpression), regexpNormalExpression), stringNormalExpression), functionalNormalExpression), vectorNormalExpression), tableNormalExpression), matrixNormalExpression), combinatoricalNormalExpression);
+    var expressions = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, bitwiseNormalExpression), collectionNormalExpression), arrayNormalExpression), sequenceNormalExpression), mathNormalExpression), miscNormalExpression), assertNormalExpression), objectNormalExpression), predicatesNormalExpression), regexpNormalExpression), stringNormalExpression), functionalNormalExpression), vectorNormalExpression), tableNormalExpression), matrixNormalExpression), combinatoricalNormalExpression);
     var aliases = {};
     Object.values(expressions).forEach(function (normalExpression) {
         var _a;

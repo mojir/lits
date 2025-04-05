@@ -1,5 +1,3 @@
-import type { SequenceDefinition } from '.'
-
 export const factorialNumbers = [
   1,
   1,
@@ -21,25 +19,3 @@ export const factorialNumbers = [
   355687428096000,
   6402373705728000,
 ]
-export const factorialSequence: SequenceDefinition<'factorial'> = {
-  'maxLength': factorialNumbers.length,
-  'c:factorial-seq': (length) => {
-    return factorialNumbers.slice(0, length)
-  },
-  'c:factorial-nth': n => factorialNumbers[n - 1]!,
-  'c:factorial?': n => factorialNumbers.includes(n),
-  'c:factorial-take-while': (takeWhile) => {
-    const factorial = []
-    for (let i = 0; ; i += 1) {
-      if (i >= factorialNumbers.length) {
-        break
-      }
-      const value = factorialNumbers[i]!
-      if (!takeWhile(value, i)) {
-        break
-      }
-      factorial[i] = value
-    }
-    return factorial
-  },
-}

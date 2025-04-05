@@ -1,7 +1,9 @@
+import { vi } from 'vitest'
 import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   test: {
+    setupFiles: ['./vitest.setup.mjs'],
     coverage: {
       exclude: [
         '**/[.]**',
@@ -21,5 +23,4 @@ export default defineConfig({
       ],
     },
   },
-
 })

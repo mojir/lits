@@ -1,235 +1,18 @@
-import { LitsError } from '../../../../errors'
 import type { Arr } from '../../../../interface'
 import { assertArray } from '../../../../typeGuards/array'
-import { asNumber, assertNumber } from '../../../../typeGuards/number'
+import { assertNumber } from '../../../../typeGuards/number'
 import type { BuiltinNormalExpressions } from '../../../interface'
 import { assertVector } from '../vector'
-import { isPerfectSquare } from './isPerfectSquare'
-import { sequenceNormalExpression } from './sequences'
-import { factorialNumbers } from './sequences/factorial'
-import { isPrime } from './sequences/prime'
-
-const armstrongNumbers = [
-  // 1 digit (all single digits are narcissistic)
-  1,
-  2,
-  3,
-  4,
-  5,
-  6,
-  7,
-  8,
-  9,
-
-  // 3 digits
-  153,
-  370,
-  371,
-  407,
-
-  // 4 digits
-  1634,
-  8208,
-  9474,
-
-  // 5 digits
-  54748,
-  92727,
-  93084,
-
-  // 6 digits
-  548834,
-
-  // 7 digits
-  1741725,
-  4210818,
-  9800817,
-  9926315,
-
-  // 8 digits
-  24678050,
-  24678051,
-  88593477,
-
-  // 9 digits
-  146511208,
-  472335975,
-  534494836,
-  912985153,
-
-  // 10 digits
-  4679307774,
-
-  // 11 digits
-  32164049650,
-  32164049651,
-  40028394225,
-  42678290603,
-  44708635679,
-  49388550606,
-  82693916578,
-  94204591914,
-
-  // 14 digits
-  28116440335967,
-
-  // 16 digits
-  4338281769391370,
-  4338281769391371,
-]
-
-/**
- * Checks if a number is a perfect power and returns the base and exponent if it is.
- * A perfect power is a number that can be expressed as an integer power of another integer.
- *
- * @param n - The number to check
- * @returns [base, exponent] if n is a perfect power, null otherwise
- */
-function perfectPower(n: number): [number, number] | null {
-  // Handle edge cases
-  if (n < 2) {
-    if (n === 1) {
-      // 1 is 1^k for any k, we return [1, 2] as the simplest representation
-      return [1, 2]
-    }
-    if (n === 0) {
-      // 0 is 0^k for any k > 0, we return [0, 2] as the simplest representation
-      return [0, 2]
-    }
-    return null // Negative numbers are not handled in this implementation
-  }
-
-  // For each possible exponent k, try to find base b such that b^k = n
-  const maxK = Math.floor(Math.log2(n)) + 1
-
-  for (let k = 2; k <= maxK; k++) {
-    // Calculate the potential base as n^(1/k)
-    const b = n ** (1 / k)
-    const roundedB = Math.round(b)
-
-    // Check if roundedB^k is equal to n (within a small epsilon to account for floating point errors)
-    const epsilon = 1e-10
-    if (Math.abs(roundedB ** k - n) < epsilon) {
-      return [roundedB, k]
-    }
-  }
-
-  return null // Not a perfect power
-}
-
-/**
- * Generates all possible combinations of a specified size from a collection.
- * @param collection The input collection to generate combinations from
- * @param size The size of each combination
- * @returns An array of arrays, where each inner array is a combination of the specified size
- */
-function combinations<T>(collection: T[], size: number): T[][] {
-  // Return empty array if invalid inputs
-  if (size <= 0 || size > collection.length) {
-    return []
-  }
-
-  // Base case: if size is 1, return each element as its own combination
-  if (size === 1) {
-    return collection.map(item => [item])
-  }
-
-  const result: T[][] = []
-
-  // Recursive approach to build combinations
-  for (let i = 0; i <= collection.length - size; i++) {
-    // Take the current element
-    const current = collection[i]!
-
-    // Get all combinations of size-1 from the rest of the elements
-    const subCombinations = combinations(
-      collection.slice(i + 1),
-      size - 1,
-    )
-
-    // Add the current element to each sub-combination
-    for (const subComb of subCombinations) {
-      result.push([current, ...subComb])
-    }
-  }
-
-  return result
-}
-
-/**
- * Generates all possible permutations of a collection.
- * @param collection The input collection to generate permutations from
- * @returns An array of arrays, where each inner array is a permutation of the input collection
- */
-function permutations<T>(collection: T[]): T[][] {
-  // Base case: empty array has one permutation - itself
-  if (collection.length === 0) {
-    return [[]]
-  }
-
-  const result: T[][] = []
-
-  // For each element in the array
-  for (let i = 0; i < collection.length; i++) {
-    // Extract the current element
-    const current = collection[i]!
-
-    // Create a new array without the current element
-    const remainingElements = [...collection.slice(0, i), ...collection.slice(i + 1)]
-
-    // Generate all permutations of the remaining elements
-    const subPermutations = permutations(remainingElements)
-
-    // Add the current element to the beginning of each sub-permutation
-    for (const subPerm of subPermutations) {
-      result.push([current, ...subPerm])
-    }
-  }
-
-  return result
-}
-
-function derangement(n: number): number {
-  if (n === 0)
-    return 1
-  if (n === 1)
-    return 0
-
-  let a = 1 // !0
-  let b = 0 // !1
-  let result = 0
-
-  for (let i = 2; i <= n; i++) {
-    result = (i - 1) * (a + b)
-    a = b
-    b = result
-  }
-
-  return result
-}
-
-function powerSet(set: Arr): Arr[] {
-  const result: Arr[] = [[]]
-
-  for (const value of set) {
-    const newSubsets = result.map(subset => [...subset, value])
-    result.push(...newSubsets)
-  }
-
-  return result
-}
-
-
-function calcPartitions(n: number): number {
-  const partition: number[] = Array.from({ length: n + 1 }, () => 0)
-  partition[0] = 1
-  for (let i = 1; i <= n; i += 1) {
-    for (let j = i; j <= n; j += 1) {
-      partition[j]! += partition[j - i]!
-    }
-  }
-  return partition[n]!
-}
+import { combinationsNormalExpressions } from './combinations'
+import { derangementsNormalExpressions } from './derangements'
+import { divisorsNormalExpressions, getDivisors, getProperDivisors } from './divisors'
+import { factorialNormalExpressions, factorialOf } from './factorial'
+import { partitionsNormalExpressions } from './partitions'
+import { permutationsNormalExpressions } from './permutations'
+import { powerSetNormalExpressions } from './powerSet'
+import { primeFactors, primeFactorsNormalExpressions } from './primeFactors'
+import { sequenceNormalExpressions } from './sequences'
+import { perfectPower } from './sequences/perfectPower'
 
 function gcd(a: number, b: number): number {
   while (b !== 0) {
@@ -240,62 +23,64 @@ function gcd(a: number, b: number): number {
   return Math.abs(a)
 }
 
-function factorsOf(n: number): number[] {
-  const factors: number[] = []
-  for (let i = 1; i <= Math.sqrt(n); i++) {
-    if (n % i === 0) {
-      factors.push(i)
-      if (i !== n / i) {
-        factors.push(n / i)
-      }
-    }
-  }
-  return factors
+function lcm(a: number, b: number): number {
+  return Math.floor((a * b) / gcd(a, b))
 }
-export function factorialOf(n: number): number {
-  if (n < 0)
-    throw new Error('Factorial is not defined for negative numbers')
 
-  if (n === 0 || n === 1)
+function mobius(n: number): number {
+  if (n === 1)
     return 1
 
-  if (n <= 18) {
-    return factorialNumbers[n]!
-  }
-  let result = factorialNumbers[18]!
-  for (let i = 19; i <= n; i++)
-    result *= i
+  const factors = primeFactors(n)
+  const uniqueFactors = new Set(factors)
 
-  return result
-}
-
-export function binomialCoefficient(n: number, k: number): number {
-  if (k < 0 || k > n)
+  // If n has a repeated prime factor (not square-free)
+  if (uniqueFactors.size !== factors.length)
     return 0
 
-  if (k === 0 || k === n)
-    return 1
-
-  let result = 1
-  for (let i = 0; i < k; i++)
-    result *= (n - i) / (i + 1)
-
-  return result
+  // If square-free with even number of prime factors: return 1
+  // If square-free with odd number of prime factors: return -1
+  return factors.length % 2 === 0 ? 1 : -1
 }
 
-function modularExponentiation(base: number, exponent: number, mod: number): number {
-  if (mod === 1)
-    return 0 // Any number mod 1 is 0
-  let result = 1
-  base = base % mod
-
-  while (exponent > 0) {
-    if (exponent % 2 === 1) {
-      result = (result * base) % mod
-    }
-    exponent = Math.floor(exponent / 2)
-    base = (base * base) % mod
+/**
+ * Efficiently computes (base^exponent) % modulus using the square-and-multiply algorithm
+ * Based on the pseudocode algorithm for modular exponentiation
+ *
+ * @param base - The base number
+ * @param exponent - The exponent (must be non-negative)
+ * @param modulus - The modulus (must be positive)
+ * @returns The result of (base^exponent) % modulus
+ */
+function modExp(base: number, exponent: number, modulus: number): number {
+  // Edge case: modulus is 1
+  if (modulus === 1) {
+    return 0
   }
+
+  // Assert: (modulus - 1) * (modulus - 1) does not overflow base
+  // This is a limitation of using regular JavaScript numbers instead of BigInt
+
+  // Initialize result
+  let result = 1
+
+  // Apply modulo to base first
+  base = base % modulus
+
+  // Square and multiply algorithm
+  while (exponent > 0) {
+    // If current bit of exponent is 1, multiply result with current base
+    if (exponent % 2 === 1) {
+      result = (result * base) % modulus
+    }
+
+    // Shift exponent right (divide by 2)
+    exponent = exponent >> 1
+
+    // Square the base for next iteration
+    base = (base * base) % modulus
+  }
+
   return result
 }
 
@@ -367,26 +152,6 @@ function chineseRemainder(remainders: number[], moduli: number[]): number {
 }
 
 export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
-  'c:factors': {
-    evaluate: ([number], sourceCodeInfo): number[] => {
-      assertNumber(number, sourceCodeInfo, { finite: true, integer: true, positive: true })
-      return factorsOf(number)
-    },
-    paramCount: 1,
-  },
-  'c:prime-factors': {
-    evaluate: ([number], sourceCodeInfo): number[] => {
-      assertNumber(number, sourceCodeInfo, { finite: true })
-      const factors: number[] = []
-      for (let i = 2; i <= number; i += 1) {
-        if (number % i === 0 && isPrime(i)) {
-          factors.push(i)
-        }
-      }
-      return factors
-    },
-    paramCount: 1,
-  },
   'c:divisible-by?': {
     evaluate: ([value, divisor], sourceCodeInfo): boolean => {
       assertNumber(value, sourceCodeInfo)
@@ -409,54 +174,11 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([a, b], sourceCodeInfo): number => {
       assertNumber(a, sourceCodeInfo)
       assertNumber(b, sourceCodeInfo)
-      return Math.abs((a * b) / gcd(a, b))
+      return lcm(a, b)
     },
     paramCount: 2,
   },
-  'c:factorial': {
-    evaluate: ([n], sourceCodeInfo): number => {
-      assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true })
-      if (n > 170) {
-        // Factorial of numbers greater than 170 exceeds the maximum safe integer in JavaScript
-        throw new LitsError('Factorial is too large to compute safely', sourceCodeInfo)
-      }
-      return factorialOf(n)
-    },
-    aliases: ['c:!'],
-    paramCount: 1,
-  },
-  'c:generate-combinations': {
-    evaluate: ([set, n], sourceCodeInfo): Arr[] => {
-      assertArray(set, sourceCodeInfo)
-      assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true, lte: set.length })
-      return combinations(set, n)
-    },
-    paramCount: 1,
-  },
-  'c:generate-permutations': {
-    evaluate: ([set], sourceCodeInfo): Arr[] => {
-      assertArray(set, sourceCodeInfo)
-      return permutations(set)
-    },
-    paramCount: 1,
-  },
-  'c:count-permutations': {
-    evaluate: ([n, k], sourceCodeInfo): number => {
-      assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true })
-      assertNumber(k, sourceCodeInfo, { integer: true, nonNegative: true, lte: n })
-      return factorialOf(n) / factorialOf(n - k)
-    },
-    paramCount: 2,
-  },
-  'c:count-combinations': {
-    evaluate: ([n, k], sourceCodeInfo): number => {
-      assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true })
-      assertNumber(k, sourceCodeInfo, { integer: true, nonNegative: true, lte: n })
-      return binomialCoefficient(n, k)
-    },
-    aliases: ['c:binomial-coefficient'],
-    paramCount: 2,
-  },
+
   'c:multinomial': {
     evaluate: ([...args], sourceCodeInfo): number => {
       assertVector(args, sourceCodeInfo)
@@ -468,64 +190,15 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 1 },
   },
-  'c:composite?': {
-    evaluate: ([value], sourceCodeInfo): boolean => {
-      assertNumber(value, sourceCodeInfo, { integer: true })
-      return !isPrime(value) && value > 1
-    },
-    paramCount: 1,
-  },
-  'c:abundant?': {
-    evaluate: ([value], sourceCodeInfo): boolean => {
-      assertNumber(value, sourceCodeInfo, { integer: true, positive: true })
-      const factors = factorsOf(value - 1)
-      const sum = factors.reduce((acc, curr) => acc + curr, 0)
-      return sum > value
-    },
-    paramCount: 1,
-  },
-  'c:deficient?': {
-    evaluate: ([value], sourceCodeInfo): boolean => {
-      assertNumber(value, sourceCodeInfo, { integer: true, positive: true })
-      const factors = factorsOf(value - 1)
-      const sum = factors.reduce((acc, curr) => acc + curr, 0)
-      return sum < value
-    },
-    paramCount: 1,
-  },
   'c:amicable?': {
     evaluate: ([a, b], sourceCodeInfo): boolean => {
       assertNumber(a, sourceCodeInfo, { integer: true, positive: true })
       assertNumber(b, sourceCodeInfo, { integer: true, positive: true })
-      const sumA = factorsOf(a).reduce((acc, curr) => acc + curr, 0)
-      const sumB = factorsOf(b).reduce((acc, curr) => acc + curr, 0)
+      const sumA = getProperDivisors(a).reduce((acc, curr) => acc + curr, 0)
+      const sumB = getProperDivisors(b).reduce((acc, curr) => acc + curr, 0)
       return sumA === b && sumB === a && a !== b
     },
     paramCount: 2,
-  },
-  'c:narcissistic?': {
-    evaluate: ([value], sourceCodeInfo): boolean => {
-      assertNumber(value, sourceCodeInfo, { integer: true, positive: true })
-      return armstrongNumbers.includes(value)
-    },
-    aliases: ['c:armstrong?'],
-    paramCount: 1,
-  },
-  'c-narcissistic-seq': {
-    evaluate: (params, sourceCodeInfo): number[] => {
-      const length = asNumber(params[0] ?? armstrongNumbers.length, sourceCodeInfo, { integer: true, positive: true, lte: armstrongNumbers.length })
-      return armstrongNumbers.slice(0, length)
-    },
-    aliases: ['c:armstrong-seq'],
-    paramCount: { max: 1 },
-  },
-  'c-narcissistic-nth': {
-    evaluate: ([n], sourceCodeInfo): number => {
-      assertNumber(n, sourceCodeInfo, { integer: true, positive: true, lte: armstrongNumbers.length })
-      return armstrongNumbers[n - 1]!
-    },
-    aliases: ['c:armstrong-nth'],
-    paramCount: 1,
   },
   'c:euler-totient': {
     evaluate: ([n], sourceCodeInfo): number => {
@@ -549,54 +222,81 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
       assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
       if (n === 1)
         return 1
-      const factors = factorsOf(n)
+
+      const factors = primeFactors(n)
       const uniqueFactors = new Set(factors)
-      return uniqueFactors.size === factors.length ? -1 : 0
+
+      // If n has a repeated prime factor (not square-free)
+      if (uniqueFactors.size !== factors.length)
+        return 0
+
+      // If square-free with even number of prime factors: return 1
+      // If square-free with odd number of prime factors: return -1
+      return factors.length % 2 === 0 ? 1 : -1
     },
     paramCount: 1,
     aliases: ['c:möbius'],
   },
+  'c:mertens': {
+    evaluate: ([n], sourceCodeInfo): number => {
+      assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
+      if (n === 1)
+        return 1
+      let result = 0
+      for (let i = 1; i <= n; i++) {
+        const mobiusValue = mobius(i)
+        result += mobiusValue// * Math.floor(n / i)
+      }
+      return result
+    },
+    paramCount: 1,
+    aliases: ['c:mertens'],
+  },
   'c:sigma': {
     evaluate: ([n], sourceCodeInfo): number => {
       assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
-      const factors = factorsOf(n)
-      return factors.reduce((acc, curr) => acc + curr, 0)
-    },
-    paramCount: 1,
-  },
-  'c:divisor-count': {
-    evaluate: ([n], sourceCodeInfo): number => {
-      assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
-      const factors = factorsOf(n)
-      return factors.length
+      return getDivisors(n).reduce((acc, curr) => acc + curr, 0)
     },
     paramCount: 1,
   },
   'c:carmichael-lambda': {
     evaluate: ([n], sourceCodeInfo): number => {
       assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
-      if (n === 1)
+      if (n === 1) {
         return 1
-      let result = n
-      const factors = factorsOf(n)
-      for (const factor of factors) {
-        result *= (factor - 1) / factor
       }
-      return result
-    },
-    paramCount: 1,
-  },
-  'c:derangement': {
-    evaluate: ([n], sourceCodeInfo): number => {
-      assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
-      return derangement(n)
-    },
-    paramCount: 1,
-  },
-  'c:power-set': {
-    evaluate: ([set], sourceCodeInfo): Arr[] => {
-      assertArray(set, sourceCodeInfo)
-      return powerSet(set)
+
+      // Count occurrences of each prime factor
+      const primes = primeFactors(n)
+      const factorMap = new Map<number, number>()
+
+      for (const prime of primes) {
+        factorMap.set(prime, (factorMap.get(prime) || 0) + 1)
+      }
+
+      const lambdaValues: number[] = []
+
+      // Calculate lambda for each prime power
+      for (const [p, k] of factorMap.entries()) {
+        if (p === 2) {
+          if (k === 1) {
+            lambdaValues.push(1) // λ(2) = 1
+          }
+          else if (k === 2) {
+            lambdaValues.push(2) // λ(4) = 2
+          }
+          else {
+            lambdaValues.push(2 ** (k - 2)) // λ(2^k) = 2^(k-2) for k >= 3
+          }
+        }
+        else {
+          // For odd prime powers p^k: λ(p^k) = (p-1)*p^(k-1)
+          lambdaValues.push((p - 1) * p ** (k - 1))
+        }
+      }
+
+      // Find LCM of all lambda values
+      return lambdaValues.reduce((acc, val) => lcm(acc, val), 1)
     },
     paramCount: 1,
   },
@@ -616,65 +316,10 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 1 },
   },
-  'c:perfect-power?': {
-    evaluate: ([n], sourceCodeInfo): boolean => {
-      assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
-      return perfectPower(n) !== null
-    },
-    paramCount: 1,
-  },
   'c:perfect-power': {
     evaluate: ([n], sourceCodeInfo): [number, number] | null => {
       assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
       return perfectPower(n)
-    },
-    paramCount: 1,
-  },
-  'c:perfect-power-seq': {
-    evaluate: ([length], sourceCodeInfo): number[] => {
-      assertNumber(length, sourceCodeInfo, { integer: true, positive: true })
-      const perfectPowers: number[] = [] as unknown as number[]
-      for (let i = 1; perfectPowers.length < length; i++) {
-        if (perfectPower(i)) {
-          perfectPowers.push(i)
-        }
-      }
-      return perfectPowers
-    },
-    paramCount: 1,
-  },
-  'c:perfect-power-nth': {
-    evaluate: ([n], sourceCodeInfo): number => {
-      assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
-      let count = 0
-      let current = 1
-
-      while (count < n) {
-        if (perfectPower(current)) {
-          count++
-        }
-        current++
-      }
-
-      return current - 1
-    },
-    paramCount: 1,
-  },
-  'c:collatz-seq': {
-    evaluate: (params, sourceCodeInfo): number[] => {
-      let x = asNumber(params[0], sourceCodeInfo, { integer: true, positive: true })
-
-      const collatz = [x]
-      while (x !== 1) {
-        if (x % 2 === 0) {
-          x /= 2
-        }
-        else {
-          x = 3 * x + 1
-        }
-        collatz.push(x)
-      }
-      return collatz
     },
     paramCount: 1,
   },
@@ -684,7 +329,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
       assertNumber(exponent, sourceCodeInfo, { integer: true, positive: true })
       assertNumber(modulus, sourceCodeInfo, { integer: true, positive: true })
 
-      return modularExponentiation(base, exponent, modulus)
+      return modExp(base, exponent, modulus)
     },
     paramCount: 3,
   },
@@ -718,241 +363,91 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'c:perfect-square?': {
-    evaluate: ([n], sourceCodeInfo): boolean => {
-      assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
-      return isPerfectSquare(n)
-    },
-    paramCount: 1,
-  },
-  'c:perfect-square-seq': {
-    evaluate: ([length], sourceCodeInfo): number[] => {
-      assertNumber(length, sourceCodeInfo, { integer: true, positive: true })
-      const perfectSquares = []
-      for (let i = 0; perfectSquares.length < length; i++) {
-        perfectSquares.push(i * i)
-      }
-      return perfectSquares
-    },
-    paramCount: 1,
-  },
-  'c:perfect-square-nth': {
-    evaluate: ([n], sourceCodeInfo): number => {
-      assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
-      return n * n
-    },
-    paramCount: 1,
-  },
-  'c:perfect-cube?': {
-    evaluate: ([n], sourceCodeInfo): boolean => {
-      assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
-      const cbrt = Math.cbrt(n)
-      return Math.floor(cbrt) === cbrt
-    },
-    paramCount: 1,
-  },
-  'c:perfect-cube-seq': {
-    evaluate: ([length], sourceCodeInfo): number[] => {
-      assertNumber(length, sourceCodeInfo, { integer: true, positive: true })
-      const perfectCubes = []
-      for (let i = 0; perfectCubes.length < length; i++) {
-        perfectCubes.push(i * i * i)
-      }
-      return perfectCubes
-    },
-    paramCount: 1,
-  },
-  'c:perfect-cube-nth': {
-    evaluate: ([n], sourceCodeInfo): number => {
-      assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
-      return n * n * n
-    },
-    paramCount: 1,
-  },
-  'c:palindrome?': {
-    evaluate: ([value], sourceCodeInfo): boolean => {
-      assertNumber(value, sourceCodeInfo, { integer: true, nonNegative: true })
-      const strValue = value.toString()
-      return strValue === strValue.split('').reverse().join('')
-    },
-    paramCount: 1,
-  },
-  'c:stirling-first-seq': {
-    evaluate: ([length], sourceCodeInfo): number[] => {
-      assertNumber(length, sourceCodeInfo, { integer: true, positive: true })
-
-      const stirlingFirst: number[][] = []
-      for (let n = 0; n < length; n += 1) {
-        stirlingFirst[n] = []
-        for (let k = 0; k <= n; k += 1) {
-          if (k === 0 || k === n)
-            stirlingFirst[n]![k] = 1
-          else
-            stirlingFirst[n]![k] = (n - 1) * (stirlingFirst[n - 1]![k]! + stirlingFirst[n - 1]![k - 1]!)
-        }
-      }
-      return stirlingFirst[length - 1] as number[]
-    },
-    paramCount: 1,
-  },
-  'c:stirling-first-nth': {
+  'c:stirling-first': {
     evaluate: ([n, k], sourceCodeInfo): number => {
       assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
       assertNumber(k, sourceCodeInfo, { integer: true, positive: true, lte: n })
-      if (k === 0 || k === n)
+      // Handle edge cases
+      if (n === 0 && k === 0)
         return 1
-      return (n - 1) * (calcPartitions(n - 1) + calcPartitions(n - k - 1))
+      if (n > 0 && k === 0)
+        return 0
+      if (k > n)
+        return 0
+
+      // Create a table to store results
+      const dp: number[][] = Array.from({ length: n + 1 }, () => Array<number>(k + 1).fill(0))
+
+      // Base case
+      dp[0]![0] = 1
+
+      // Fill the table using the recurrence relation
+      for (let i = 1; i <= n; i++) {
+        for (let j = 1; j <= Math.min(i, k); j++) {
+          dp[i]![j] = dp[i - 1]![j - 1]! - (i - 1) * dp[i - 1]![j]!
+        }
+      }
+
+      return dp[n]![k]!
     },
     paramCount: 2,
   },
-  'c:stirling-second-seq': {
-    evaluate: ([length], sourceCodeInfo): number[] => {
-      assertNumber(length, sourceCodeInfo, { integer: true, positive: true })
-
-      const stirlingSecond: number[][] = []
-      for (let n = 0; n < length; n += 1) {
-        stirlingSecond[n] = []
-        for (let k = 0; k <= n; k += 1) {
-          if (k === 0 || k === n)
-            stirlingSecond[n]![k] = 1
-          else
-            stirlingSecond[n]![k] = k * stirlingSecond[n - 1]![k]! + stirlingSecond[n - 1]![k - 1]!
-        }
-      }
-      return stirlingSecond[length - 1] as number[]
-    },
-    paramCount: 1,
-  },
-  'c:stirling-second-nth': {
+  'c:stirling-second': {
     evaluate: ([n, k], sourceCodeInfo): number => {
       assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
       assertNumber(k, sourceCodeInfo, { integer: true, positive: true, lte: n })
-      if (k === 0 || k === n)
-        return 1
-      return k * calcPartitions(n - 1) + calcPartitions(n - k - 1)
+      if (n === 0 && k === 0)
+        return 1 // Empty set has one way to be partitioned into zero subsets
+      if (n === 0 || k === 0)
+        return 0 // No ways to partition n objects into 0 subsets or 0 objects into k subsets
+      if (k > n)
+        return 0 // Can't have more subsets than objects
+      if (k === 1)
+        return 1 // Only one way to put n objects into one subset
+      if (k === n)
+        return 1 // Only one way to put n objects into n subsets (one object per subset)
+
+      // Create a 2D array for memoization
+      const dp: number[][] = Array.from({ length: n + 1 }, () => Array<number>(k + 1).fill(0))
+
+      // Initialize base cases
+      dp[0]![0] = 1
+
+      // Fill the dp table using the recurrence relation:
+      // S(n,k) = k * S(n-1,k) + S(n-1,k-1)
+      for (let i = 1; i <= n; i++) {
+        for (let j = 1; j <= Math.min(i, k); j++) {
+          dp[i]![j] = j * dp[i - 1]![j]! + dp[i - 1]![j - 1]!
+        }
+      }
+
+      return dp[n]![k]!
     },
     paramCount: 2,
-  },
-  'c:bernoulli-seq': {
-    evaluate: ([length], sourceCodeInfo): number[] => {
-      assertNumber(length, sourceCodeInfo, { integer: true, positive: true })
-
-      const bernoulli = [1]
-      for (let n = 1; n < length; n += 1) {
-        let sum = 0
-        for (let k = 0; k < n; k += 1) {
-          sum += binomialCoefficient(n + 1, k) * bernoulli[k]!
-        }
-        bernoulli[n] = -sum / (n + 1)
-      }
-      return bernoulli
-    },
-    paramCount: 1,
-  },
-  'c:bernoulli-nth': {
-    evaluate: ([n], sourceCodeInfo): number => {
-      assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
-      if (n === 0)
-        return 1
-      let sum = 0
-      for (let k = 0; k < n; k += 1) {
-        sum += binomialCoefficient(n + 1, k) * calcPartitions(k)
-      }
-      return -sum / (n + 1)
-    },
-    paramCount: 1,
-  },
-  'c:brenoulli?': {
-    evaluate: ([n], sourceCodeInfo): boolean => {
-      assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
-      return n % 2 === 0 && n !== 2
-    },
-    paramCount: 1,
-  },
-  'c:sylvester-seq': {
-    evaluate: ([length], sourceCodeInfo): number[] => {
-      assertNumber(length, sourceCodeInfo, { integer: true, positive: true })
-
-      const sylvester = [2]
-      for (let n = 1; n < length; n += 1) {
-        sylvester[n] = sylvester[n - 1]! + Math.sqrt(sylvester[n - 1]!)
-      }
-      return sylvester
-    },
-    paramCount: 1,
-  },
-  'c:sylvester-nth': {
-    evaluate: ([n], sourceCodeInfo): number => {
-      assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
-      let sylvester = 2
-      for (let i = 1; i < n; i += 1) {
-        sylvester += Math.sqrt(sylvester)
-      }
-      return sylvester
-    },
-    paramCount: 1,
-  },
-  'c:sylvester?': {
-    evaluate: ([n], sourceCodeInfo): boolean => {
-      assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
-      return n === 2 || (n > 2 && n % Math.sqrt(n) === 0)
-    },
-    paramCount: 1,
-  },
-  'c:golomb-seq': {
-    evaluate: ([length], sourceCodeInfo): number[] => {
-      assertNumber(length, sourceCodeInfo, { integer: true, positive: true })
-
-      const golomb = [0]
-      for (let n = 1; n < length; n += 1) {
-        golomb[n] = 1 + golomb[n - golomb[golomb[n - 1]!]!]!
-      }
-      return golomb
-    },
-    paramCount: 1,
-  },
-  'c:golomb-nth': {
-    evaluate: ([n], sourceCodeInfo): number => {
-      assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
-      const golomb = [0]
-      for (let i = 1; i <= n; i += 1) {
-        golomb[i] = 1 + golomb[i - golomb[golomb[i - 1]!]!]!
-      }
-      return golomb[n]!
-    },
-    paramCount: 1,
-  },
-  'c:golomb?': {
-    evaluate: ([n], sourceCodeInfo): boolean => {
-      assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
-      return n === 1 || (n > 1 && n % Math.sqrt(n) === 0)
-    },
-    paramCount: 1,
-  },
-  'c:juggler-seq': {
-    evaluate: ([start], sourceCodeInfo): number[] => {
-      assertNumber(start, sourceCodeInfo, { integer: true, positive: true })
-
-      let next = start
-      const juggler = [next]
-      let index = 0
-      while (next > 1) {
-        next = next % 2 === 0
-          ? Math.floor(Math.sqrt(juggler[index]!))
-          : Math.floor(juggler[index]! * Math.sqrt(juggler[index]!))
-        index += 1
-        juggler.push(next)
-      }
-      return juggler
-    },
-    paramCount: 1,
   },
 }
 
-addSequences(sequenceNormalExpression)
+addSequences(sequenceNormalExpressions)
+addNormalExpressions(factorialNormalExpressions)
+addNormalExpressions(divisorsNormalExpressions)
+addNormalExpressions(combinationsNormalExpressions)
+addNormalExpressions(permutationsNormalExpressions)
+addNormalExpressions(partitionsNormalExpressions)
+addNormalExpressions(primeFactorsNormalExpressions)
+addNormalExpressions(derangementsNormalExpressions)
+addNormalExpressions(powerSetNormalExpressions)
 
 function addSequences(sequences: BuiltinNormalExpressions) {
   for (const [key, value] of Object.entries(sequences)) {
+    if (combinatoricalNormalExpression[key]) {
+      throw new Error(`Duplicate normal expression key found: ${key}`)
+    }
+    combinatoricalNormalExpression[key] = value
+  }
+}
+
+function addNormalExpressions(normalExpressions: BuiltinNormalExpressions) {
+  for (const [key, value] of Object.entries(normalExpressions)) {
     if (combinatoricalNormalExpression[key]) {
       throw new Error(`Duplicate normal expression key found: ${key}`)
     }

@@ -14,7 +14,7 @@ export const catalanReference: CombinatorialSequenceReference<'catalan'> = {
       length: {
         type: 'integer',
         description:
-          'The length of the sequence to generate. If not provided, the default is 31 (the maximum length of the pre-calculated Catalan numbers).',
+          'The length of the sequence to generate. If not provided, the default is 30 (the maximum length of the pre-calculated catalan numbers).',
       },
     },
     variants: [

@@ -29,7 +29,7 @@ export function stringifyValue(value: unknown, html: boolean): string {
     return `${Number.NEGATIVE_INFINITY}`
 
   if (typeof value === 'number') {
-    const pretty = prettyPi(value, { spaceSeparate: true })
+    const pretty = prettyPi(value, { spaceSeparation: true })
     const decimal = `${value}`
     return pretty === decimal ? pretty : `${pretty}   (${decimal})`
   }
@@ -44,7 +44,11 @@ export function stringifyValue(value: unknown, html: boolean): string {
     return stringifyMatrix(value)
 
   if (isVector(value)) {
-    return `[\n  ${value.map(cell => prettyPi(cell)).join(',\n  ')}\n]`
+    return `[\n  ${value.map((cell) => {
+      const pretty = prettyPi(cell, { spaceSeparation: true })
+      const decimal = `${cell}`
+      return pretty === decimal ? pretty : `${pretty}   (${decimal})`
+    }).join(',\n  ')}\n]`
   }
 
   return JSON.stringify(value, null, 2)
@@ -52,7 +56,7 @@ export function stringifyValue(value: unknown, html: boolean): string {
 
 function prettyIfNumber(value: unknown): string {
   if (typeof value === 'number') {
-    return prettyPi(value, { spaceSeparate: true })
+    return prettyPi(value, { spaceSeparation: true })
   }
   return `${value}`
 }
