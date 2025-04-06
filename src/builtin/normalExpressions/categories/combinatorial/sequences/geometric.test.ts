@@ -22,10 +22,37 @@ describe('geometric', () => {
   })
 
   it('should determine if numbers are in the sequence', () => {
+    expect(lits.run('c:geometric?(0, 2, 0)')).toEqual(true)
+    expect(lits.run('c:geometric?(0, 2, 1)')).toEqual(false)
+    expect(lits.run('c:geometric?(2, 1, 2)')).toEqual(true)
+    expect(lits.run('c:geometric?(2, 1, 3)')).toEqual(false)
+    expect(lits.run('c:geometric?(2, 0, 3)')).toEqual(false)
+    expect(lits.run('c:geometric?(2, 0, 2)')).toEqual(true)
+    expect(lits.run('c:geometric?(2, 0, 0)')).toEqual(true)
     expect(lits.run('c:geometric?(1, 2, 1)')).toEqual(true)
     expect(lits.run('c:geometric?(2, 3, 2)')).toEqual(true)
     expect(lits.run('c:geometric?(3, 2, 2)')).toEqual(false)
     expect(lits.run('c:geometric?(1, 1.5, 2.25)')).toEqual(true)
     expect(lits.run('c:geometric?(1, 1.5, -4)')).toEqual(false)
+    expect(lits.run('c:geometric?(1, 0.1, 0.01)')).toEqual(true)
+    expect(lits.run('c:geometric?(3, -1, 3)')).toEqual(true)
+    expect(lits.run('c:geometric?(3, -1, -3)')).toEqual(true)
+    expect(lits.run('c:geometric?(3, -2, -6)')).toEqual(true)
+    expect(lits.run('c:geometric?(3, -2, 6)')).toEqual(false)
+    expect(lits.run('c:geometric?(3, -2, -9)')).toEqual(false)
+    expect(lits.run('c:geometric?(3, -2, -7)')).toEqual(false)
+    expect(lits.run('c:geometric?(3, -2, 12)')).toEqual(true)
+    // Test cases for "not close to an integer"
+    expect(lits.run('c:geometric?(2, 2, 9)')).toEqual(false)
+    expect(lits.run('c:geometric?(3, 3, 10)')).toEqual(false)
+    expect(lits.run('c:geometric?(5, -2, 13)')).toEqual(false)
+
+    // Test cases for "negative power"
+    expect(lits.run('c:geometric?(8, 2, 2)')).toEqual(false)
+    expect(lits.run('c:geometric?(16, 4, 1)')).toEqual(false)
+    expect(lits.run('c:geometric?(25, -5, 1)')).toEqual(false)
+
+    // Test case that hits both conditions
+    expect(lits.run('c:geometric?(100, 10, 3)')).toEqual(false)
   })
 })

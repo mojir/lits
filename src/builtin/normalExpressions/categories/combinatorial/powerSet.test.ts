@@ -25,6 +25,7 @@ describe('powerSet', () => {
       expect(lits.run('c:count-power-set(3)')).toEqual(8)
       expect(lits.run('c:count-power-set(4)')).toEqual(16)
       expect(lits.run('c:count-power-set(5)')).toEqual(32)
+      expect(lits.run('c:count-power-set(54)')).toBe(Number.POSITIVE_INFINITY)
     })
   })
 })

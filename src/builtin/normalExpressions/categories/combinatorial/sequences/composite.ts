@@ -9,9 +9,6 @@ export function isComposite(num: number): boolean {
 }
 
 function nthComposite(n: number): number {
-  if (n <= 0) {
-    throw new Error('Input must be a positive integer')
-  }
   if (n === 1)
     return 4 // First composite is 4
   if (n === 2)

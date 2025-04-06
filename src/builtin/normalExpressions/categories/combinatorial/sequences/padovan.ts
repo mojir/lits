@@ -67,14 +67,6 @@ function isPadovan(num: number): boolean {
     55405,
     73396,
     97229,
-    128801,
-    170625,
-    226030,
-    299426,
-    396655,
-    525456,
-    696081,
-    922111,
   ]
 
   // Direct lookup for known values

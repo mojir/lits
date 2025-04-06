@@ -25,6 +25,8 @@ describe('polygonal', () => {
   it('should determine if numbers are in the sequence', () => {
     expect(lits.run('c:polygonal?(3, 10)')).toEqual(true)
     expect(lits.run('c:polygonal?(3, 9)')).toEqual(false)
+    expect(lits.run('c:polygonal?(5, 2)')).toEqual(false)
+    expect(lits.run('c:polygonal?(3, -9)')).toEqual(false)
     expect(lits.run('c:polygonal?(4, 10000)')).toEqual(true)
     expect(lits.run('c:polygonal?(4, 1000)')).toEqual(false)
     expect(lits.run('c:polygonal?(6, 45)')).toEqual(true)

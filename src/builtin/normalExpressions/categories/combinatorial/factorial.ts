@@ -23,11 +23,7 @@ export function factorialOf(n: number): number {
 export const factorialNormalExpressions: BuiltinNormalExpressions = {
   'c:factorial': {
     evaluate: ([n], sourceCodeInfo): number => {
-      assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true })
-      if (n > 170) {
-        // Factorial of numbers greater than 170 exceeds the maximum safe integer in JavaScript
-        throw new LitsError('Factorial is too large to compute safely', sourceCodeInfo)
-      }
+      assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true, lte: 170 })
       return factorialOf(n)
     },
     aliases: ['c:!'],

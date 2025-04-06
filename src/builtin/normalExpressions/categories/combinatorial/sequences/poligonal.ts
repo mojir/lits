@@ -43,10 +43,10 @@ export const poligonalNormalExpressions: SequenceNormalExpressions<'polygonal'> 
   },
   'c:polygonal?': {
     evaluate: ([sides, n], sourceCodeInfo): boolean => {
-      assertNumber(n, sourceCodeInfo)
+      assertNumber(n, sourceCodeInfo, { integer: true })
       assertNumber(sides, sourceCodeInfo, { integer: true, gte: 3 })
 
-      if (Number.isInteger(n) && n <= 0) {
+      if (n <= 0) {
         return false
       }
       const a = sides - 2

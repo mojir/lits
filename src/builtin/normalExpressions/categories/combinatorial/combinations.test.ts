@@ -5,6 +5,7 @@ const lits = new Lits()
 describe('combinations', () => {
   describe('c:combinations', () => {
     it('should return the combinations of n elements from a set', () => {
+      expect(lits.run('c:combinations(["a", "b", "c"], 0)')).toEqual([[]])
       expect(lits.run('c:combinations(["a", "b", "c"], 2)')).toEqual([
         ['a', 'b'],
         ['a', 'c'],

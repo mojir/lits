@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../../Lits/Lits'
+import { LitsError } from '../../../../errors'
 
 const lits = new Lits()
 describe('combinatorial', () => {
@@ -12,6 +13,8 @@ describe('combinatorial', () => {
       expect(lits.run('c:divisible-by?(9, 3)')).toEqual(true)
       expect(lits.run('c:divisible-by?(10, 5)')).toEqual(true)
       expect(lits.run('c:divisible-by?(11, 5)')).toEqual(false)
+      expect(lits.run('c:divisible-by?(11, 0)')).toEqual(false)
+      expect(() => lits.run('c:divisible-by?(2.5, 0.5)')).toThrow()
     })
   })
   describe('c:divisors', () => {
@@ -279,6 +282,7 @@ describe('combinatorial', () => {
   })
   describe('c:mod-exp', () => {
     it('should return the modular exponentiation of a number', () => {
+      expect(lits.run('c:mod-exp(2, 3, 1)')).toEqual(0)
       expect(lits.run('c:mod-exp(2, 3, 5)')).toEqual(3)
       expect(lits.run('c:mod-exp(3, 4, 7)')).toEqual(4)
       expect(lits.run('c:mod-exp(5, 6, 11)')).toEqual(5)
@@ -300,6 +304,7 @@ describe('combinatorial', () => {
       expect(lits.run('c:mod-inv(7, 19)')).toEqual(11)
       expect(lits.run('c:mod-inv(8, 23)')).toEqual(3)
       expect(lits.run('c:mod-inv(9, 29)')).toEqual(13)
+      expect(() => lits.run('c:mod-inv(4, 6)')).toThrow()
     })
   })
   describe('extended-gcd', () => {
@@ -317,6 +322,42 @@ describe('combinatorial', () => {
       expect(lits.run('c:chinese-remainder([2, 3], [3, 5])')).toEqual(8)
       expect(lits.run('c:chinese-remainder([2, 3], [3, 5])')).toEqual(8)
       expect(lits.run('c:chinese-remainder([1, 2, 3], [2, 3, 5])')).toEqual(23)
+      expect(() => lits.run('c:chinese-remainder([1, 2, 4], [2, 3, 6])')).toThrow(LitsError)
+      expect(() => lits.run('c:chinese-remainder([1, 2], [2, 3, 5])')).toThrow()
+    })
+  })
+  describe('c:stirling-first', () => {
+    it('should return the stirling number of the first kind', () => {
+      expect(lits.run('c:stirling-first(1, 1)')).toEqual(1)
+      expect(lits.run('c:stirling-first(2, 1)')).toEqual(1)
+      expect(lits.run('c:stirling-first(2, 2)')).toEqual(1)
+      expect(lits.run('c:stirling-first(3, 1)')).toEqual(2)
+      expect(lits.run('c:stirling-first(3, 2)')).toEqual(3)
+      expect(lits.run('c:stirling-first(3, 3)')).toEqual(1)
+      expect(lits.run('c:stirling-first(4, 1)')).toEqual(6)
+      expect(lits.run('c:stirling-first(4, 2)')).toEqual(11)
+      expect(lits.run('c:stirling-first(4, 3)')).toEqual(6)
+      expect(lits.run('c:stirling-first(4, 4)')).toEqual(1)
+      expect(() => lits.run('c:stirling-first(4, 5)')).toThrow()
+      expect(() => lits.run('c:stirling-first(4, 0)')).toThrow()
+      expect(() => lits.run('c:stirling-first(0, 0)')).toThrow()
+    })
+  })
+  describe('c:stirling-second', () => {
+    it('should return the stirling number of the second kind', () => {
+      expect(lits.run('c:stirling-second(1, 1)')).toEqual(1)
+      expect(lits.run('c:stirling-second(2, 1)')).toEqual(1)
+      expect(lits.run('c:stirling-second(2, 2)')).toEqual(1)
+      expect(lits.run('c:stirling-second(3, 1)')).toEqual(1)
+      expect(lits.run('c:stirling-second(3, 2)')).toEqual(3)
+      expect(lits.run('c:stirling-second(3, 3)')).toEqual(1)
+      expect(lits.run('c:stirling-second(4, 1)')).toEqual(1)
+      expect(lits.run('c:stirling-second(4, 2)')).toEqual(7)
+      expect(lits.run('c:stirling-second(4, 3)')).toEqual(6)
+      expect(lits.run('c:stirling-second(4, 4)')).toEqual(1)
+      expect(() => lits.run('c:stirling-first(4, 5)')).toThrow()
+      expect(() => lits.run('c:stirling-first(4, 0)')).toThrow()
+      expect(() => lits.run('c:stirling-first(0, 0)')).toThrow()
     })
   })
 })

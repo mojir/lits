@@ -26,9 +26,13 @@ describe('padovan', () => {
   it('should return the correct takeWhile sequence', () => {
     expect(lits.run('c:padovan-take-while(-> $ < 8)')).toEqual([1, 1, 1, 2, 2, 3, 4, 5, 7])
     expect(lits.run('c:padovan-take-while(-> $2 < 10)')).toEqual([1, 1, 1, 2, 2, 3, 4, 5, 7])
+    expect(lits.run('c:padovan-take-while(-> $2 < 0)')).toEqual([])
+    expect(lits.run('c:padovan-take-while(-> $2 < 1)')).toEqual([1])
+    expect(lits.run('c:padovan-take-while(-> $2 < 2)')).toEqual([1, 1])
   })
 
   it('should determine if numbers are in the sequence', () => {
+    expect(lits.run('c:padovan?(0)')).toEqual(false)
     expect(lits.run('c:padovan?(1)')).toEqual(true)
     expect(lits.run('c:padovan?(2)')).toEqual(true)
     expect(lits.run('c:padovan?(3)')).toEqual(true)
@@ -38,5 +42,7 @@ describe('padovan', () => {
     expect(lits.run('c:padovan?(7)')).toEqual(true)
     expect(lits.run('c:padovan?(8)')).toEqual(false)
     expect(lits.run('c:padovan?(265)')).toEqual(true)
+    expect(lits.run('c:padovan?(922111)')).toEqual(true)
+    expect(lits.run(`c:padovan?(${Number.MAX_SAFE_INTEGER - 1})`)).toEqual(false)
   })
 })

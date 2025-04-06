@@ -21,6 +21,7 @@ describe('lookAndSay', () => {
 
   it('should return the correct takeWhile sequence', () => {
     expect(lits.run('c:look-and-say-take-while(-> $2 < 5)')).toEqual(['1', '11', '21', '1211', '111221'])
+    expect(lits.run('c:look-and-say-take-while(-> false)')).toEqual([])
   })
 
   it('should determine if numbers are in the sequence', () => {

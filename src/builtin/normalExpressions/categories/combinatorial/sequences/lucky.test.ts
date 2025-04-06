@@ -22,10 +22,12 @@ describe('lucky', () => {
     expect(lits.run('c:lucky-nth(7)')).toEqual(21)
     expect(lits.run('c:lucky-nth(8)')).toEqual(25)
     expect(lits.run('c:lucky-nth(20)')).toEqual(79)
+    expect(lits.run('c:lucky-nth(3000)')).toEqual(30367)
   })
 
   it('should return the correct takeWhile sequence', () => {
     expect(lits.run('c:lucky-take-while(-> $ < 100)')).toEqual([1, 3, 7, 9, 13, 15, 21, 25, 31, 33, 37, 43, 49, 51, 63, 67, 69, 73, 75, 79, 87, 93, 99])
+    expect(lits.run('c:lucky-take-while(-> $2 < 3000)')).toBeDefined()
   })
 
   it('should determine if numbers are in the sequence', () => {

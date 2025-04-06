@@ -8,10 +8,9 @@ import type { SequenceDefinition } from '.'
  * 1, 11, 21, 1211, 111221, 312211, 13112221, ...
  *
  * @param {string|number} target - The number to check (can be a string or number)
- * @param {number} limit - How many terms to generate for checking (default: 25)
  * @returns {boolean} - Whether the target is in the sequence
  */
-function isLookAndSay(target: string, limit: number = 25): boolean {
+function isLookAndSay(target: string): boolean {
   // The first term of the sequence
   let current = '1'
 
@@ -21,7 +20,7 @@ function isLookAndSay(target: string, limit: number = 25): boolean {
   }
 
   // Generate terms and check against the target
-  for (let i = 1; i < limit; i++) {
+  while (true) {
     current = getNextLookAndSayTerm(current)
 
     if (current === target) {
@@ -34,9 +33,6 @@ function isLookAndSay(target: string, limit: number = 25): boolean {
       return false
     }
   }
-
-  // If we've generated 'limit' terms without finding a match, return false
-  return false
 }
 
 /**

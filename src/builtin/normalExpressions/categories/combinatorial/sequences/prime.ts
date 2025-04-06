@@ -20,10 +20,6 @@ export function isPrime(num: number): boolean {
 }
 
 function nthPrime(n: number): number {
-  if (n <= 0) {
-    throw new Error('Input must be a positive integer')
-  }
-
   if (n === 1)
     return 2 // First prime is 2
   if (n === 2)

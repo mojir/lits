@@ -9,6 +9,7 @@ describe('perfect', () => {
     expect(lits.run('c:perfect-seq(3)')).toEqual([6, 28, 496])
     expect(lits.run('c:perfect-seq(4)')).toEqual([6, 28, 496, 8128])
     expect(lits.run('c:perfect-seq(7)')).toEqual([6, 28, 496, 8128, 33550336, 8589869056, 137438691328])
+    expect(lits.run('c:perfect-seq()')).toEqual([6, 28, 496, 8128, 33550336, 8589869056, 137438691328])
     expect(() => lits.run('c:perfect-seq(0)')).toThrow()
     expect(() => lits.run('c:perfect-seq(20)')).toThrow()
   })
@@ -23,6 +24,7 @@ describe('perfect', () => {
 
   it('should return the correct takeWhile sequence', () => {
     expect(lits.run('c:perfect-take-while(-> $ < 1000)')).toEqual([6, 28, 496])
+    expect(lits.run('c:perfect-take-while(-> true)')).toEqual([6, 28, 496, 8128, 33550336, 8589869056, 137438691328])
   })
 
   it('should determine if numbers are in the sequence', () => {

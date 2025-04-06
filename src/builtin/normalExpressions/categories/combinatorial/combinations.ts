@@ -11,11 +11,6 @@ import { binomialCoefficient } from './binomialCefficient'
  * @returns An array of arrays, where each inner array is a combination of the specified size
  */
 function combinations<T>(collection: T[], size: number): T[][] {
-  // Return empty array if invalid inputs
-  if (size <= 0 || size > collection.length) {
-    return []
-  }
-
   // Base case: if size is 1, return each element as its own combination
   if (size === 1) {
     return collection.map(item => [item])
@@ -40,7 +35,7 @@ function combinations<T>(collection: T[], size: number): T[][] {
     }
   }
 
-  return result.length === 0 ? [[]] : result
+  return result
 }
 
 export const combinationsNormalExpressions: BuiltinNormalExpressions = {

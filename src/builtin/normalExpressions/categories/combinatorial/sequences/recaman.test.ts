@@ -28,6 +28,7 @@ describe('recaman', () => {
   it('should return the correct takeWhile sequence', () => {
     expect(lits.run('c:recaman-take-while(-> $ < 8)')).toEqual([0, 1, 3, 6, 2, 7])
     expect(lits.run('c:recaman-take-while(-> $2 < 10)')).toEqual([0, 1, 3, 6, 2, 7, 13, 20, 12, 21])
+    expect(lits.run('c:recaman-take-while(-> false)')).toEqual([])
   })
 
   it('should determine if numbers are in the sequence', () => {

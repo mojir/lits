@@ -109,6 +109,7 @@ addNormalExpressions(poligonalNormalExpressions)
 
 function addNormalExpressions(normalExpressions: BuiltinNormalExpressions) {
   for (const [key, value] of Object.entries(normalExpressions)) {
+    /* v8 ignore next 3 */
     if (sequenceNormalExpressions[key]) {
       throw new Error(`Duplicate normal expression key found: ${key}`)
     }
@@ -138,6 +139,7 @@ function getFiniteNumberSequence<T extends string>(name: T, sequence: number[]):
 
 function addSequence<Type extends number | string>(sequence: SequenceDefinition<string, Type>) {
   for (const [key, value] of Object.entries(sequence)) {
+    /* v8 ignore next 3 */
     if (sequenceNormalExpressions[key]) {
       throw new Error(`Duplicate normal expression key found: ${key}`)
     }

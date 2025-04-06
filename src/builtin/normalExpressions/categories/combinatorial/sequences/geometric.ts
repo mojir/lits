@@ -15,14 +15,16 @@ function isInGeometricSequence(
   number: number,
 ): boolean {
   // Handle special cases
-  if (number === 0 && initialTerm === 0)
-    return true
   if (initialTerm === 0)
     return number === 0
   if (ratio === 1)
     return number === initialTerm
   if (ratio === 0)
     return number === 0 || number === initialTerm
+
+  // Check if the number is exactly the initial term
+  if (number === initialTerm)
+    return true
 
   // For negative ratios, we need special handling
   if (ratio < 0) {
@@ -31,7 +33,7 @@ function isInGeometricSequence(
 
     // Check if logResult is very close to an integer
     const roundedLogResult = Math.round(logResult)
-    if (Math.abs(roundedLogResult - logResult) > 1e-10 || logResult < 0) {
+    if (Math.abs(roundedLogResult - logResult) > 1e-10 || roundedLogResult < 0) {
       return false
     }
 
@@ -39,7 +41,7 @@ function isInGeometricSequence(
     // Check if sign matches what we expect based on the power
     const expectedSign = roundedLogResult % 2 === 0
       ? Math.sign(initialTerm)
-      : -Math.sign(initialTerm)
+      : Math.sign(initialTerm) * Math.sign(ratio)
 
     return Math.sign(number) === expectedSign
   }
@@ -59,7 +61,7 @@ function isInGeometricSequence(
 
   // Check if logResult is very close to an integer
   const roundedLogResult = Math.round(logResult)
-  if (Math.abs(roundedLogResult - logResult) > 1e-10 || logResult < 0) {
+  if (Math.abs(roundedLogResult - logResult) > 1e-10 || roundedLogResult < 0) {
     return false
   }
 

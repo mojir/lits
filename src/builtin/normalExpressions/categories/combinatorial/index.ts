@@ -1,3 +1,4 @@
+import { LitsError } from '../../../../errors'
 import type { Arr } from '../../../../interface'
 import { assertArray } from '../../../../typeGuards/array'
 import { assertNumber } from '../../../../typeGuards/number'
@@ -117,10 +118,6 @@ function modInverse(a: number, m: number): number {
  * Returns the smallest positive integer that satisfies all congruences
  */
 function chineseRemainder(remainders: number[], moduli: number[]): number {
-  if (remainders.length !== moduli.length) {
-    throw new Error('Number of remainders must equal number of moduli')
-  }
-
   // Verify moduli are pairwise coprime
   for (let i = 0; i < moduli.length; i++) {
     for (let j = i + 1; j < moduli.length; j++) {
@@ -154,8 +151,8 @@ function chineseRemainder(remainders: number[], moduli: number[]): number {
 export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
   'c:divisible-by?': {
     evaluate: ([value, divisor], sourceCodeInfo): boolean => {
-      assertNumber(value, sourceCodeInfo)
-      assertNumber(divisor, sourceCodeInfo)
+      assertNumber(value, sourceCodeInfo, { integer: true })
+      assertNumber(divisor, sourceCodeInfo, { integer: true })
       if (divisor === 0)
         return false
       return value % divisor === 0
@@ -358,8 +355,12 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
       if (remainders.length !== moduli.length) {
         throw new Error('Remainders and moduli must have the same length.')
       }
-
-      return chineseRemainder(remainders, moduli)
+      try {
+        return chineseRemainder(remainders, moduli)
+      }
+      catch (error) {
+        throw new LitsError((error as Error).message, sourceCodeInfo)
+      }
     },
     paramCount: 2,
   },
@@ -367,13 +368,6 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([n, k], sourceCodeInfo): number => {
       assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
       assertNumber(k, sourceCodeInfo, { integer: true, positive: true, lte: n })
-      // Handle edge cases
-      if (n === 0 && k === 0)
-        return 1
-      if (n > 0 && k === 0)
-        return 0
-      if (k > n)
-        return 0
 
       // Create a table to store results
       const dp: number[][] = Array.from({ length: n + 1 }, () => Array<number>(k + 1).fill(0))
@@ -384,7 +378,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
       // Fill the table using the recurrence relation
       for (let i = 1; i <= n; i++) {
         for (let j = 1; j <= Math.min(i, k); j++) {
-          dp[i]![j] = dp[i - 1]![j - 1]! - (i - 1) * dp[i - 1]![j]!
+          dp[i]![j] = dp[i - 1]![j - 1]! + (i - 1) * dp[i - 1]![j]!
         }
       }
 
@@ -396,12 +390,6 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([n, k], sourceCodeInfo): number => {
       assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
       assertNumber(k, sourceCodeInfo, { integer: true, positive: true, lte: n })
-      if (n === 0 && k === 0)
-        return 1 // Empty set has one way to be partitioned into zero subsets
-      if (n === 0 || k === 0)
-        return 0 // No ways to partition n objects into 0 subsets or 0 objects into k subsets
-      if (k > n)
-        return 0 // Can't have more subsets than objects
       if (k === 1)
         return 1 // Only one way to put n objects into one subset
       if (k === n)
@@ -439,6 +427,7 @@ addNormalExpressions(powerSetNormalExpressions)
 
 function addSequences(sequences: BuiltinNormalExpressions) {
   for (const [key, value] of Object.entries(sequences)) {
+    /* v8 ignore next 3 */
     if (combinatoricalNormalExpression[key]) {
       throw new Error(`Duplicate normal expression key found: ${key}`)
     }
@@ -448,6 +437,7 @@ function addSequences(sequences: BuiltinNormalExpressions) {
 
 function addNormalExpressions(normalExpressions: BuiltinNormalExpressions) {
   for (const [key, value] of Object.entries(normalExpressions)) {
+    /* v8 ignore next 3 */
     if (combinatoricalNormalExpression[key]) {
       throw new Error(`Duplicate normal expression key found: ${key}`)
     }

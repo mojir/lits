@@ -5,7 +5,7 @@ import { partitionNumbers } from './sequences/partition'
 function partitions(n: number): number[][] {
   // Base cases
   if (n <= 0)
-    return []
+    return [[]]
   if (n === 1)
     return [[1]]
 
