@@ -161,10 +161,10 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
       '|(0b1000, 0b0100, 0b0010)',
     ],
   },
-  '^': {
-    title: '^',
+  'xor': {
+    title: 'xor',
     category: 'Bitwise',
-    linkName: '-caret',
+    linkName: 'xor',
     returns: {
       type: 'integer',
     },
@@ -181,9 +181,9 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
     ],
     description: 'Returns bitwise `xor` of all arguments.',
     examples: [
-      '0b0011 ^ 0b0110',
-      '^(0b0011, 0b0110)',
-      '^(0b11110000, 0b00111100, 0b10101010)',
+      '0b0011 xor 0b0110',
+      'xor(0b0011, 0b0110)',
+      'xor(0b11110000, 0b00111100, 0b10101010)',
     ],
   },
   'bit-flip': {

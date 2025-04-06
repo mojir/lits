@@ -99,10 +99,10 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     description: 'Modulus of `dividend` and `divisor`. Truncates toward negative infinity.',
     examples: ['mod(5, 3)', 'mod(5.2, 3.1)', 'mod(-5, 3)', '5 mod -3', '-5 mod -3'],
   },
-  '%': {
-    title: '%',
+  'rem': {
+    title: 'rem',
     category: 'Math',
-    linkName: '-percent',
+    linkName: 'rem',
     returns: {
       type: 'number',
     },
@@ -114,7 +114,7 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     ],
     description: 'Remainder of dividing `dividend` and `divisor`.',
     examples: ['5 % 3', '5.2 % 3.1', '-5 % 3', '%(5, -3)', '%(-5, -3)'],
-    aliases: ['rem'],
+    aliases: ['%'],
   },
   'quot': {
     title: 'quot',
@@ -168,8 +168,8 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     description: 'Subtracts one from $x.',
     examples: ['dec(0)', 'dec(1)', 'dec(100.1)'],
   },
-  '√': {
-    title: '√',
+  'sqrt': {
+    title: 'sqrt',
     category: 'Math',
     linkName: 'sqrt',
     returns: {
@@ -185,10 +185,10 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     ],
     description: 'Computes square root of $x.',
     examples: ['√(0)', '√(9)', '√(2)', 'sqrt(0)', 'sqrt(9)', 'sqrt(2)'],
-    aliases: ['sqrt'],
+    aliases: ['√'],
   },
-  '∛': {
-    title: '∛',
+  'cbrt': {
+    title: 'cbrt',
     category: 'Math',
     linkName: 'cbrt',
     returns: {
@@ -204,12 +204,12 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     ],
     description: 'Computes cube root of $x.',
     examples: ['∛(0)', '∛(27)', '∛(2)', '∛(1)', 'cbrt(0)', 'cbrt(27)', 'cbrt(2)', 'cbrt(1)'],
-    aliases: ['cbrt'],
+    aliases: ['∛'],
   },
-  '**': {
-    title: '**',
+  '^': {
+    title: '^',
     category: 'Math',
-    linkName: '-star-star',
+    linkName: '-caret',
     returns: {
       type: 'number',
     },
@@ -220,7 +220,7 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
       { argumentNames: ['a', 'b'] },
     ],
     description: 'Computes returns $a raised to the power of $b.',
-    examples: ['2 ** 3', '2 ** 0', '2 ** -3', '**(-2, 3)', '**(-2, -3)'],
+    examples: ['2 ^ 3', '2 ^ 0', '2 ^ -3', '^(-2, 3)', '^(-2, -3)'],
   },
   'round': {
     title: 'round',
@@ -430,7 +430,8 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
       { argumentNames: ['x'] },
     ],
     description: 'Returns the base `2` logarithm of a number.',
-    examples: ['log2(0.01)', 'log2(2 ** 12)', 'log2(2.5)'],
+    examples: ['log2(0.01)', 'log2(2 ^ 12)', 'log2(2.5)'],
+    aliases: ['log₂'],
   },
   'log10': {
     title: 'log10',
@@ -439,6 +440,7 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     returns: {
       type: 'number',
     },
+    aliases: ['log₁₀'],
     args: {
       x: {
         type: 'number',
@@ -448,7 +450,7 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
       { argumentNames: ['x'] },
     ],
     description: 'Returns the `10` logarithm of a number.',
-    examples: ['log10(0.01)', 'log10(10 ** 12)', 'log10(2.5)'],
+    examples: ['log10(0.01)', 'log10(10 ^ 12)', 'log10(2.5)'],
   },
   'sin': {
     title: 'sin',

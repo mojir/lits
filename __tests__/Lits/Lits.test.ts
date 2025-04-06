@@ -99,16 +99,16 @@ describe('all tests', () => {
 
     it('a function - initial cache', () => {
       const initialCache: Record<string, Ast> = {
-        '2 ** 4': {
+        '2 ^ 4': {
           hasDebugData: false,
           body: [
-            [NodeTypes.NormalExpression, [[NodeTypes.NormalBuiltinSymbol, normalExpressionTypes['**'] as number], [[NodeTypes.Number, 2], [NodeTypes.Number, 2]]]] satisfies NormalExpressionNodeWithName,
+            [NodeTypes.NormalExpression, [[NodeTypes.NormalBuiltinSymbol, normalExpressionTypes['^'] as number], [[NodeTypes.Number, 2], [NodeTypes.Number, 2]]]] satisfies NormalExpressionNodeWithName,
           ],
         },
       }
       lits = new Lits({ astCacheSize: 10, initialCache })
-      expect(lits.run('2 ** 2')).toBe(4)
-      expect(lits.run('2 ** 4')).toBe(4)
+      expect(lits.run('2 ^ 2')).toBe(4)
+      expect(lits.run('2 ^ 4')).toBe(4)
     })
 
     it('a variable.', () => {

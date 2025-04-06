@@ -13,12 +13,12 @@ describe.skip('performance comparison', () => {
     '42', // a bit faster than eval
     '42 + 1', // a bit slower than eval
     '2 + 3 * 4',
-    '5 ** 2 - 3 / 2',
+    '5 ^ 2 - 3 / 2',
     '[1, 2, 3][1]',
     ['((x, y) -> x + y)(2, 3)', '((x, y) => x + y)(2, 3)'],
-    '2 ** (3 + 1) - 5 / (1 + 1)',
-    '2 ** (3 * 2) + 4 / (2 - 1) - 5 % 3',
-    '((2 + 3) * 4 / 2 - 1) ** 2 % 5 + 6 - 7 * 8 / 9', // more than 20 times slower than eval
+    '2 ^ (3 + 1) - 5 / (1 + 1)',
+    '2 ^ (3 * 2) + 4 / (2 - 1) - 5 % 3',
+    '((2 + 3) * 4 / 2 - 1) ^ 2 % 5 + 6 - 7 * 8 / 9', // more than 20 times slower than eval
   ]
   const iterations = 10000
 

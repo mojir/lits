@@ -69,7 +69,7 @@ function withSourceCodeInfo<T extends Node | BindingTarget>(node: T, sourceCodeI
 
 function getPrecedence(operatorSign: SymbolicBinaryOperator, sourceCodeInfo: SourceCodeInfo | undefined): number {
   switch (operatorSign) {
-    case '**': // exponentiation
+    case '^': // exponentiation
       return exponentiationPrecedence
 
     case '*': // multiplication
@@ -103,7 +103,7 @@ function getPrecedence(operatorSign: SymbolicBinaryOperator, sourceCodeInfo: Sou
       return 4
 
     case '&': // bitwise AND
-    case '^': // bitwise XOR
+    case 'xor': // bitwise XOR
     case '|': // bitwise OR
       return 3
 
@@ -138,7 +138,7 @@ function fromBinaryOperatorToNode(operator: OperatorToken, symbolNode: SymbolNod
   const operatorName = operator[1]
 
   switch (operatorName) {
-    case '**': // exponentiation
+    case '^': // exponentiation
     case '*':
     case '/':
     case '%':
@@ -158,7 +158,7 @@ function fromBinaryOperatorToNode(operator: OperatorToken, symbolNode: SymbolNod
     case '!=':
     case '≠':
     case '&':
-    case '^':
+    case 'xor':
     case '|':
       return createNamedNormalExpressionNode(symbolNode as NormalBuiltinSymbolNode, [left, right], sourceCodeInfo)
     case '&&':
@@ -266,7 +266,7 @@ export class Parser {
         const newPrecedece = getPrecedence(name, operator[2])
         if (
           newPrecedece <= precedence
-          // ** (exponentiation) is right associative
+          // ^ (exponentiation) is right associative
           && !(newPrecedece === exponentiationPrecedence && precedence === exponentiationPrecedence)) {
           break
         }

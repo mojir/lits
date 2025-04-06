@@ -1,7 +1,7 @@
 import { LitsError } from '../errors'
 
 const binaryOperators = [
-  '**', // exponentiation
+  '^', // exponentiation
 
   '*', // multiplication
   '/', // division
@@ -28,7 +28,7 @@ const binaryOperators = [
   '≠', // not equal
 
   '&', // bitwise AND
-  '^', // bitwise XOR
+  'xor', // bitwise XOR
   '|', // bitwise OR
 
   '&&', // logical AND

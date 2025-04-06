@@ -1,4 +1,3 @@
-import { LitsError } from '../../../../errors'
 import { assertNumber } from '../../../../typeGuards/number'
 import type { BuiltinNormalExpressions } from '../../../interface'
 import { factorialNumbers } from './sequences/factorial'

@@ -77,13 +77,13 @@ describe('predicates', () => {
         expect(() => lits.run('|(1, 2.1)')).toThrow()
       })
     })
-    describe('^', () => {
+    describe('xor', () => {
       it('samples', () => {
-        expect(lits.run('0b0011 ^ 0b1010')).toBe(0b1001)
-        expect(lits.run('^(0b0011, 0b1010)')).toBe(0b1001)
-        expect(lits.run('^(0b11110000, 0b00111100, 0b10101010)')).toBe(0b01100110)
-        expect(() => lits.run('^()')).toThrow()
-        expect(() => lits.run('^(1)')).toThrow()
+        expect(lits.run('0b0011 xor 0b1010')).toBe(0b1001)
+        expect(lits.run('xor(0b0011, 0b1010)')).toBe(0b1001)
+        expect(lits.run('xor(0b11110000, 0b00111100, 0b10101010)')).toBe(0b01100110)
+        expect(() => lits.run('xor()')).toThrow()
+        expect(() => lits.run('xor(1)')).toThrow()
       })
     })
     describe('bit-clear', () => {

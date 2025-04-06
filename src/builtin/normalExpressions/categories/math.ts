@@ -107,25 +107,25 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     aliases: ['rem'],
   },
 
-  '√': {
+  'sqrt': {
     evaluate: ([first], sourceCodeInfo): number => {
       assertNumber(first, sourceCodeInfo)
       return Math.sqrt(first)
     },
     paramCount: 1,
-    aliases: ['sqrt'],
+    aliases: ['√'],
   },
 
-  '∛': {
+  'cbrt': {
     evaluate: ([first], sourceCodeInfo): number => {
       assertNumber(first, sourceCodeInfo)
       return Math.cbrt(first)
     },
     paramCount: 1,
-    aliases: ['cbrt'],
+    aliases: ['∛'],
   },
 
-  '**': {
+  '^': {
     evaluate: ([first, second], sourceCodeInfo): number => {
       assertNumber(first, sourceCodeInfo)
       assertNumber(second, sourceCodeInfo)

@@ -27,11 +27,11 @@ export const functionalReference: Record<FunctionalApiName, FunctionReference<'F
 apply(+, [1, 2, 3])`,
       `
 apply(
-  (x, y) -> sqrt(x ** 2 + y ** 2),
+  (x, y) -> sqrt(x ^ 2 + y ^ 2),
   [3, 4]
 )`,
       `
-(x, y) -> sqrt(x ** 2 + y ** 2) apply [3, 4]`,
+(x, y) -> sqrt(x ^ 2 + y ^ 2) apply [3, 4]`,
     ],
   },
   'identity': {

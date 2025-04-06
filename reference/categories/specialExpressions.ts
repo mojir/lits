@@ -175,7 +175,7 @@ hyp(3, 4)`,
 function sumOfSquares(...s)
   apply(
     +,
-    map(s, -> $ ** 2)
+    map(s, -> $ ^ 2)
   )
 end;
 

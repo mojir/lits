@@ -18,7 +18,7 @@ describe('powerSet', () => {
     })
   })
   describe('c:count-power-set', () => {
-    it('should return the size of a poser set from a set with length n', () => {
+    it('should return the size of a power set from a set with length n', () => {
       expect(lits.run('c:count-power-set(0)')).toEqual(1)
       expect(lits.run('c:count-power-set(1)')).toEqual(2)
       expect(lits.run('c:count-power-set(2)')).toEqual(4)

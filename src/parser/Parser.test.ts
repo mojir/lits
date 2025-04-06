@@ -145,8 +145,8 @@ describe('operators', () => {
 
   describe('**', () => {
     test('samples', () => {
-      expect(lits.run('2 ** 3')).toBe(8)
-      expect(lits.run('2 ** 3 ** 2')).toBe(512)
+      expect(lits.run('2 ^ 3')).toBe(8)
+      expect(lits.run('2 ^ 3 ^ 2')).toBe(512)
     })
   })
   describe('*', () => {
@@ -268,8 +268,8 @@ describe('operators', () => {
   })
   describe('^', () => {
     test('samples', () => {
-      expect(lits.run('0b1001 ^ 0b0100')).toBe(0b1101)
-      expect(lits.run('0b1001 ^ 0b0100 ^ 0b0010')).toBe(0b1111)
+      expect(lits.run('0b1001 xor 0b0100')).toBe(0b1101)
+      expect(lits.run('0b1001 xor 0b0100 xor 0b0010')).toBe(0b1111)
     })
   })
   describe('&&', () => {
@@ -538,9 +538,9 @@ describe('operators', () => {
     })
 
     it('evaluates exponentiation', () => {
-      expect(lits.run('2 ** 3')).toBe(8)
-      expect(lits.run('2 ** 0')).toBe(1)
-      expect(lits.run('0 ** 0')).toBe(1)
+      expect(lits.run('2 ^ 3')).toBe(8)
+      expect(lits.run('2 ^ 0')).toBe(1)
+      expect(lits.run('0 ^ 0')).toBe(1)
     })
   })
 
@@ -548,8 +548,8 @@ describe('operators', () => {
     it('respects standard precedence rules', () => {
       expect(lits.run('2 + 3 * 4')).toBe(14)
       expect(lits.run('2 * 3 + 4')).toBe(10)
-      expect(lits.run('2 ** 3 * 2')).toBe(16)
-      expect(lits.run('2 * 3 ** 2')).toBe(18)
+      expect(lits.run('2 ^ 3 * 2')).toBe(16)
+      expect(lits.run('2 * 3 ^ 2')).toBe(18)
     })
 
     it('handles parentheses correctly', () => {
@@ -626,8 +626,8 @@ describe('operators', () => {
     })
 
     it('evaluates bitwise XOR', () => {
-      expect(lits.run('5 ^ 3')).toBe(6)
-      expect(lits.run('12 ^ 4')).toBe(8)
+      expect(lits.run('5 xor 3')).toBe(6)
+      expect(lits.run('12 xor 4')).toBe(8)
     })
 
     it('evaluates bitwise shifts', () => {
@@ -687,7 +687,7 @@ describe('operators', () => {
     it('supports array literals', () => {
       expect(lits.run('[1, 2, 3]')).toEqual([1, 2, 3])
       expect(lits.run('[]')).toEqual([])
-      expect(lits.run('[1 + 1, 2 * 2, 3 ** 2]')).toEqual([2, 4, 9])
+      expect(lits.run('[1 + 1, 2 * 2, 3 ^ 2]')).toEqual([2, 4, 9])
     })
 
     it('supports nested arrays', () => {
@@ -1214,7 +1214,7 @@ foo(1, 2)`)).toBe(3)
   describe('complex expressions', () => {
     it('handles complex arithmetic expressions', () => {
       expect(lits.run('(2 + 3) * 4 / 2 - 1')).toBe(9)
-      expect(lits.run('2 ** 3 + 4 * 2 / (1 + 1)')).toBe(12)
+      expect(lits.run('2 ^ 3 + 4 * 2 / (1 + 1)')).toBe(12)
     })
 
     it('handles complex logical expressions', () => {
@@ -1241,17 +1241,17 @@ foo(1, 2)`)).toBe(3)
 
     it('handles super complex arithmetic expressions', () => {
       const expressions = [
-        '((2 + 3) * 4 / 2 - 1) ** 2 % 5 + 6 - 7 * 8 / 9',
-        '2 ** 3 * 4 + 5 - 6 / 3 % 2 + (7 - 8) * 9',
-        '((10 / 2) + 3) * (4 - 1) ** 2 % 7',
-        '2 ** (3 + 1) - 5 / (1 + 1)',
-        '((2 + 3) * (4 - 1)) ** 2 % 7 + 6 - 7 * 8 / 9',
-        '2 ** (3 * 2) + 4 / (2 - 1) - 5 % 3',
+        '((2 + 3) * 4 / 2 - 1) ^ 2 % 5 + 6 - 7 * 8 / 9',
+        '2 ^ 3 * 4 + 5 - 6 / 3 % 2 + (7 - 8) * 9',
+        '((10 / 2) + 3) * (4 - 1) ^ 2 % 7',
+        '2 ^ (3 + 1) - 5 / (1 + 1)',
+        '((2 + 3) * (4 - 1)) ^ 2 % 7 + 6 - 7 * 8 / 9',
+        '2 ^ (3 * 2) + 4 / (2 - 1) - 5 % 3',
       ]
 
       for (const expression of expressions) {
         // eslint-disable-next-line ts/no-unsafe-argument, no-eval
-        expect(lits.run(expression)).toBeCloseTo(eval(expression))
+        expect(lits.run(expression)).toBeCloseTo(eval(expression.replaceAll('^', '**')))
       }
     })
   })
@@ -1299,7 +1299,7 @@ foo(1, 2)`)).toBe(3)
     })
 
     it('supports complex expressions in lambda functions', () => {
-      expect(lits.run('((x, y) -> x ** 2 + y ** 2)(3, 4)')).toBe(25)
+      expect(lits.run('((x, y) -> x ^ 2 + y ^ 2)(3, 4)')).toBe(25)
       expect(lits.run('((a, b) -> ({ sum := a + b, product := a * b }))(3, 4).sum')).toBe(7)
       expect(lits.run('((a, b) -> ({ sum := a + b, product := a * b }))(3, 4).product')).toBe(12)
     })

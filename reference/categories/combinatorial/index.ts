@@ -73,6 +73,32 @@ export const combinatorialReference: Record<CombinatorialApiName, FunctionRefere
   ...sylvesterReference,
   ...thueMorseReference,
   ...tribonacciReference,
+  'c:combinations': {
+    title: 'c:combinations',
+    category: 'Combinatorial',
+    description: 'Calculates the number of combinations of n items taken k at a time.',
+    linkName: 'c-colon-combinations',
+    returns: {
+      type: 'integer',
+    },
+    args: {
+      n: {
+        type: 'integer',
+        description: 'The total number of items.',
+      },
+      k: {
+        type: 'integer',
+        description: 'The number of items to choose.',
+      },
+    },
+    variants: [
+      { argumentNames: ['n', 'k'] },
+    ],
+    examples: [
+      'c:combinations(5, 3)',
+      'c:combinations(10, 2)',
+    ],
+  },
   'c:prime-factors': {
     title: 'c:prime-factors',
     category: 'Combinatorial',
