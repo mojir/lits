@@ -19,6 +19,19 @@ describe('primeFactors', () => {
       expect(lits.run('c:prime-factors(1484147626962)')).toEqual([2, 3, 7, 11, 13, 17, 19, 23, 29, 31, 37])
     })
   })
+  describe('c:distinct-prime-factors', () => {
+    it('should return distinct prime factors', () => {
+      expect(lits.run('c:distinct-prime-factors(1)')).toEqual([])
+      expect(lits.run('c:distinct-prime-factors(2)')).toEqual([2])
+      expect(lits.run('c:distinct-prime-factors(3)')).toEqual([3])
+      expect(lits.run('c:distinct-prime-factors(4)')).toEqual([2])
+      expect(lits.run('c:distinct-prime-factors(5)')).toEqual([5])
+      expect(lits.run('c:distinct-prime-factors(6)')).toEqual([2, 3])
+      expect(lits.run('c:distinct-prime-factors(7)')).toEqual([7])
+      expect(lits.run('c:distinct-prime-factors(8)')).toEqual([2])
+      expect(lits.run('c:distinct-prime-factors(9)')).toEqual([3])
+    })
+  })
   describe('c:count-prime-factors', () => {
     it('should return the number of prime factors of n', () => {
       expect(lits.run('c:count-prime-factors(1)')).toEqual(0)

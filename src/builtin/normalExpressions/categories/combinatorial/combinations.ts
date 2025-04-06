@@ -55,7 +55,7 @@ export const combinationsNormalExpressions: BuiltinNormalExpressions = {
       assertNumber(k, sourceCodeInfo, { integer: true, nonNegative: true, lte: n })
       return binomialCoefficient(n, k)
     },
-    aliases: ['c:binomial', 'c:C'],
+    aliases: ['c:binomial'],
     paramCount: 2,
   },
 }

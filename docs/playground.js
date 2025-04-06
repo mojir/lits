@@ -4067,7 +4067,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 2 },
         },
-        '^': {
+        'xor': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a), first = _b[0], rest = _b.slice(1);
                 assertNumber(first, sourceCodeInfo, { integer: true });
@@ -5683,25 +5683,25 @@ var Playground = (function (exports) {
             paramCount: 2,
             aliases: ['rem'],
         },
-        '√': {
+        'sqrt': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), first = _b[0];
                 assertNumber(first, sourceCodeInfo);
                 return Math.sqrt(first);
             },
             paramCount: 1,
-            aliases: ['sqrt'],
+            aliases: ['√'],
         },
-        '∛': {
+        'cbrt': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), first = _b[0];
                 assertNumber(first, sourceCodeInfo);
                 return Math.cbrt(first);
             },
             paramCount: 1,
-            aliases: ['cbrt'],
+            aliases: ['∛'],
         },
-        '**': {
+        '^': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), first = _b[0], second = _b[1];
                 assertNumber(first, sourceCodeInfo);
@@ -9071,10 +9071,6 @@ var Playground = (function (exports) {
      */
     function combinations(collection, size) {
         var e_1, _a;
-        // Return empty array if invalid inputs
-        if (size <= 0 || size > collection.length) {
-            return [];
-        }
         // Base case: if size is 1, return each element as its own combination
         if (size === 1) {
             return collection.map(function (item) { return [item]; });
@@ -9101,7 +9097,7 @@ var Playground = (function (exports) {
                 finally { if (e_1) throw e_1.error; }
             }
         }
-        return result.length === 0 ? [[]] : result;
+        return result;
     }
     var combinationsNormalExpressions = {
         'c:combinations': {
@@ -9122,7 +9118,7 @@ var Playground = (function (exports) {
                 assertNumber(k, sourceCodeInfo, { integer: true, nonNegative: true, lte: n });
                 return binomialCoefficient(n, k);
             },
-            aliases: ['c:binomial', 'c:C'],
+            aliases: ['c:binomial'],
             paramCount: 2,
         },
     };
@@ -9279,11 +9275,7 @@ var Playground = (function (exports) {
         'c:factorial': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true });
-                if (n > 170) {
-                    // Factorial of numbers greater than 170 exceeds the maximum safe integer in JavaScript
-                    throw new LitsError('Factorial is too large to compute safely', sourceCodeInfo);
-                }
+                assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true, lte: 170 });
                 return factorialOf(n);
             },
             aliases: ['c:!'],
@@ -9596,7 +9588,7 @@ var Playground = (function (exports) {
     function partitions(n) {
         // Base cases
         if (n <= 0)
-            return [];
+            return [[]];
         if (n === 1)
             return [[1]];
         var result = [];
@@ -9693,7 +9685,6 @@ var Playground = (function (exports) {
                 assertNumber(k, sourceCodeInfo, { integer: true, nonNegative: true, lte: n });
                 return factorialOf(n) / factorialOf(n - k);
             },
-            aliases: ['c:P'],
             paramCount: 2,
         },
     };
@@ -9780,6 +9771,16 @@ var Playground = (function (exports) {
                 var _b = __read(_a, 1), number = _b[0];
                 assertNumber(number, sourceCodeInfo, { finite: true, integer: true, positive: true });
                 return primeFactors(number);
+            },
+            paramCount: 1,
+        },
+        'c:distinct-prime-factors': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), n = _b[0];
+                assertNumber(n, sourceCodeInfo, { finite: true, integer: true, positive: true });
+                var factors = primeFactors(n);
+                var distinctFactors = new Set(factors);
+                return Array.from(distinctFactors);
             },
             paramCount: 1,
         },
@@ -10112,9 +10113,6 @@ var Playground = (function (exports) {
         return true;
     }
     function nthPrime(n) {
-        if (n <= 0) {
-            throw new Error('Input must be a positive integer');
-        }
         if (n === 1)
             return 2; // First prime is 2
         if (n === 2)
@@ -10169,9 +10167,6 @@ var Playground = (function (exports) {
         return !isPrime(num);
     }
     function nthComposite(n) {
-        if (n <= 0) {
-            throw new Error('Input must be a positive integer');
-        }
         if (n === 1)
             return 4; // First composite is 4
         if (n === 2)
@@ -10356,28 +10351,29 @@ var Playground = (function (exports) {
      */
     function isInGeometricSequence(initialTerm, ratio, number) {
         // Handle special cases
-        if (number === 0 && initialTerm === 0)
-            return true;
         if (initialTerm === 0)
             return number === 0;
         if (ratio === 1)
             return number === initialTerm;
         if (ratio === 0)
             return number === 0 || number === initialTerm;
+        // Check if the number is exactly the initial term
+        if (number === initialTerm)
+            return true;
         // For negative ratios, we need special handling
         if (ratio < 0) {
             // Calculate log using absolute values
             var logResult_1 = Math.log(Math.abs(number / initialTerm)) / Math.log(Math.abs(ratio));
             // Check if logResult is very close to an integer
             var roundedLogResult_1 = Math.round(logResult_1);
-            if (Math.abs(roundedLogResult_1 - logResult_1) > 1e-10 || logResult_1 < 0) {
+            if (Math.abs(roundedLogResult_1 - logResult_1) > 1e-10 || roundedLogResult_1 < 0) {
                 return false;
             }
             // For negative ratios, alternating terms have alternating signs
             // Check if sign matches what we expect based on the power
             var expectedSign = roundedLogResult_1 % 2 === 0
                 ? Math.sign(initialTerm)
-                : -Math.sign(initialTerm);
+                : Math.sign(initialTerm) * Math.sign(ratio);
             return Math.sign(number) === expectedSign;
         }
         // For positive ratios
@@ -10392,7 +10388,7 @@ var Playground = (function (exports) {
         var logResult = Math.log(number / initialTerm) / Math.log(ratio);
         // Check if logResult is very close to an integer
         var roundedLogResult = Math.round(logResult);
-        if (Math.abs(roundedLogResult - logResult) > 1e-10 || logResult < 0) {
+        if (Math.abs(roundedLogResult - logResult) > 1e-10 || roundedLogResult < 0) {
             return false;
         }
         // Verify calculated value matches the number exactly (within floating point precision)
@@ -10591,11 +10587,9 @@ var Playground = (function (exports) {
      * 1, 11, 21, 1211, 111221, 312211, 13112221, ...
      *
      * @param {string|number} target - The number to check (can be a string or number)
-     * @param {number} limit - How many terms to generate for checking (default: 25)
      * @returns {boolean} - Whether the target is in the sequence
      */
-    function isLookAndSay(target, limit) {
-        if (limit === void 0) { limit = 25; }
+    function isLookAndSay(target) {
         // The first term of the sequence
         var current = '1';
         // Check if the first term matches
@@ -10603,7 +10597,7 @@ var Playground = (function (exports) {
             return true;
         }
         // Generate terms and check against the target
-        for (var i = 1; i < limit; i++) {
+        while (true) {
             current = getNextLookAndSayTerm(current);
             if (current === target) {
                 return true;
@@ -10614,8 +10608,6 @@ var Playground = (function (exports) {
                 return false;
             }
         }
-        // If we've generated 'limit' terms without finding a match, return false
-        return false;
     }
     /**
      * Generates the next term in the Look-and-Say sequence
@@ -10815,33 +10807,53 @@ var Playground = (function (exports) {
         }
         return luckyNumbers;
     }
-    function getLuckyNumbers(length) {
+    /**
+     * Generates lucky numbers up to a specified length or count
+     *
+     * Lucky numbers are a subset of integers defined by a specific sieving process:
+     * 1. Start with all positive integers: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, ...
+     * 2. Keep 1, delete every 2nd number: 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, ...
+     * 3. The second remaining number is 3, so keep it and delete every 3rd number: 1, 3, 7, 9, 13, 15, 19, ...
+     * 4. The third remaining number is 7, so keep it and delete every 7th number
+     * 5. Continue this process to get all lucky numbers
+     *
+     * @param count - The number of lucky numbers to generate
+     * @returns An array containing the first 'count' lucky numbers
+     */
+    function getLuckyNumbers(count) {
+        // Step 1: Start with all odd numbers (we skip the first elimination step since we know
+        // the first sieve removes all even numbers)
         var numbers = [];
-        for (var i = 1; i <= length * 10; i += 2) { // Generate more than needed
-            numbers.push(i);
+        var n = 1;
+        // Generate enough odd numbers to ensure we'll have 'count' lucky numbers after sieving
+        // The factor depends on how many numbers we expect to be eliminated
+        // For larger counts, we need a higher factor to ensure we have enough numbers
+        var factor = count < 100 ? 20 : 30;
+        var initialSize = count * factor;
+        while (numbers.length < initialSize) {
+            numbers.push(n);
+            n += 2;
         }
-        // Apply the sieve process
-        var idx = 1; // Start from the second element (index 1, which is 3)
-        while (idx < numbers.length) {
-            var step = numbers[idx]; // Current lucky number
-            // Remove every step-th number from the list
-            // Count from the beginning each time, and account for changing indices
+        // Step 2 and beyond: Apply the lucky number sieve
+        var sieveIndex = 1; // Start at index 1 (the second element which is 3)
+        while (sieveIndex < numbers.length && sieveIndex < count) {
+            var sieveValue = numbers[sieveIndex];
+            // Remove every sieveValue-th number
+            // This is an optimization over creating a new array each time
             var j = 0;
-            var count = 0;
-            while (j < numbers.length) {
-                count++;
-                if (count % step === 0) {
-                    numbers.splice(j, 1);
-                }
-                else {
-                    j++; // Only increment if we didn't remove an element
+            for (var i = 0; i < numbers.length; i++) {
+                if ((i + 1) % sieveValue !== 0) {
+                    numbers[j++] = numbers[i];
                 }
             }
-            // Get the new index of the next element (which may have changed)
-            idx++;
+            numbers.length = j; // Truncate the array
+            // Only increment sieveIndex if it's still within the new array bounds
+            if (sieveIndex < numbers.length) {
+                sieveIndex++;
+            }
         }
-        // Return the first 'length' lucky numbers
-        return numbers.slice(0, length);
+        // Return the requested number of lucky numbers
+        return numbers.slice(0, count);
     }
     var luckySequence = {
         'c:lucky-seq': function (length) { return getLuckyNumbers(length); },
@@ -10917,14 +10929,6 @@ var Playground = (function (exports) {
             55405,
             73396,
             97229,
-            128801,
-            170625,
-            226030,
-            299426,
-            396655,
-            525456,
-            696081,
-            922111,
         ];
         // Direct lookup for known values
         if (padovanNumbers.includes(num)) {
@@ -11213,9 +11217,9 @@ var Playground = (function (exports) {
         'c:polygonal?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), sides = _b[0], n = _b[1];
-                assertNumber(n, sourceCodeInfo);
+                assertNumber(n, sourceCodeInfo, { integer: true });
                 assertNumber(sides, sourceCodeInfo, { integer: true, gte: 3 });
-                if (Number.isInteger(n) && n <= 0) {
+                if (n <= 0) {
                     return false;
                 }
                 var a = sides - 2;
@@ -11281,7 +11285,7 @@ var Playground = (function (exports) {
             }
             return sequence;
         },
-        'c:recaman-nth': function (n) { var _a; return (_a = generateRecamanSequence(n)[n - 1]) !== null && _a !== void 0 ? _a : 0; },
+        'c:recaman-nth': function (n) { return generateRecamanSequence(n)[n - 1]; },
         'c:recaman?': function () { return true; },
     };
 
@@ -11428,6 +11432,7 @@ var Playground = (function (exports) {
         try {
             for (var _b = __values(Object.entries(normalExpressions)), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var _d = __read(_c.value, 2), key = _d[0], value = _d[1];
+                /* v8 ignore next 3 */
                 if (sequenceNormalExpressions[key]) {
                     throw new Error("Duplicate normal expression key found: ".concat(key));
                 }
@@ -11467,6 +11472,7 @@ var Playground = (function (exports) {
         try {
             for (var _b = __values(Object.entries(sequence)), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var _d = __read(_c.value, 2), key = _d[0], value = _d[1];
+                /* v8 ignore next 3 */
                 if (sequenceNormalExpressions[key]) {
                     throw new Error("Duplicate normal expression key found: ".concat(key));
                 }
@@ -11558,6 +11564,9 @@ var Playground = (function (exports) {
         }
         return Math.abs(a);
     }
+    function lcm(a, b) {
+        return Math.floor((a * b) / gcd(a, b));
+    }
     function mobius(n) {
         if (n === 1)
             return 1;
@@ -11570,17 +11579,36 @@ var Playground = (function (exports) {
         // If square-free with odd number of prime factors: return -1
         return factors.length % 2 === 0 ? 1 : -1;
     }
-    function modularExponentiation(base, exponent, mod) {
-        if (mod === 1)
-            return 0; // Any number mod 1 is 0
+    /**
+     * Efficiently computes (base^exponent) % modulus using the square-and-multiply algorithm
+     * Based on the pseudocode algorithm for modular exponentiation
+     *
+     * @param base - The base number
+     * @param exponent - The exponent (must be non-negative)
+     * @param modulus - The modulus (must be positive)
+     * @returns The result of (base^exponent) % modulus
+     */
+    function modExp(base, exponent, modulus) {
+        // Edge case: modulus is 1
+        if (modulus === 1) {
+            return 0;
+        }
+        // Assert: (modulus - 1) * (modulus - 1) does not overflow base
+        // This is a limitation of using regular JavaScript numbers instead of BigInt
+        // Initialize result
         var result = 1;
-        base = base % mod;
+        // Apply modulo to base first
+        base = base % modulus;
+        // Square and multiply algorithm
         while (exponent > 0) {
+            // If current bit of exponent is 1, multiply result with current base
             if (exponent % 2 === 1) {
-                result = (result * base) % mod;
+                result = (result * base) % modulus;
             }
-            exponent = Math.floor(exponent / 2);
-            base = (base * base) % mod;
+            // Shift exponent right (divide by 2)
+            exponent = exponent >> 1;
+            // Square the base for next iteration
+            base = (base * base) % modulus;
         }
         return result;
     }
@@ -11612,9 +11640,6 @@ var Playground = (function (exports) {
      * Returns the smallest positive integer that satisfies all congruences
      */
     function chineseRemainder(remainders, moduli) {
-        if (remainders.length !== moduli.length) {
-            throw new Error('Number of remainders must equal number of moduli');
-        }
         // Verify moduli are pairwise coprime
         for (var i = 0; i < moduli.length; i++) {
             for (var j = i + 1; j < moduli.length; j++) {
@@ -11639,11 +11664,20 @@ var Playground = (function (exports) {
         return sum;
     }
     var combinatoricalNormalExpression = {
+        'c:coprime?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), a = _b[0], b = _b[1];
+                assertNumber(a, sourceCodeInfo, { integer: true });
+                assertNumber(b, sourceCodeInfo, { integer: true });
+                return gcd(a, b) === 1;
+            },
+            paramCount: 2,
+        },
         'c:divisible-by?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), value = _b[0], divisor = _b[1];
-                assertNumber(value, sourceCodeInfo);
-                assertNumber(divisor, sourceCodeInfo);
+                assertNumber(value, sourceCodeInfo, { integer: true });
+                assertNumber(divisor, sourceCodeInfo, { integer: true });
                 if (divisor === 0)
                     return false;
                 return value % divisor === 0;
@@ -11664,7 +11698,7 @@ var Playground = (function (exports) {
                 var _b = __read(_a, 2), a = _b[0], b = _b[1];
                 assertNumber(a, sourceCodeInfo);
                 assertNumber(b, sourceCodeInfo);
-                return Math.abs((a * b) / gcd(a, b));
+                return lcm(a, b);
             },
             paramCount: 2,
         },
@@ -11747,43 +11781,65 @@ var Playground = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), n = _b[0];
                 assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                var factors = primeFactors(n);
-                return factors.reduce(function (acc, curr) { return acc + curr; }, 0);
-            },
-            paramCount: 1,
-        },
-        'c:divisor-count': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), n = _b[0];
-                assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                var factors = primeFactors(n);
-                return factors.length;
+                return getDivisors(n).reduce(function (acc, curr) { return acc + curr; }, 0);
             },
             paramCount: 1,
         },
         'c:carmichael-lambda': {
             evaluate: function (_a, sourceCodeInfo) {
-                var e_1, _b;
-                var _c = __read(_a, 1), n = _c[0];
+                var e_1, _b, e_2, _c;
+                var _d = __read(_a, 1), n = _d[0];
                 assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                if (n === 1)
+                if (n === 1) {
                     return 1;
-                var result = n;
-                var factors = primeFactors(n);
+                }
+                // Count occurrences of each prime factor
+                var primes = primeFactors(n);
+                var factorMap = new Map();
                 try {
-                    for (var factors_1 = __values(factors), factors_1_1 = factors_1.next(); !factors_1_1.done; factors_1_1 = factors_1.next()) {
-                        var factor = factors_1_1.value;
-                        result *= (factor - 1) / factor;
+                    for (var primes_1 = __values(primes), primes_1_1 = primes_1.next(); !primes_1_1.done; primes_1_1 = primes_1.next()) {
+                        var prime = primes_1_1.value;
+                        factorMap.set(prime, (factorMap.get(prime) || 0) + 1);
                     }
                 }
                 catch (e_1_1) { e_1 = { error: e_1_1 }; }
                 finally {
                     try {
-                        if (factors_1_1 && !factors_1_1.done && (_b = factors_1.return)) _b.call(factors_1);
+                        if (primes_1_1 && !primes_1_1.done && (_b = primes_1.return)) _b.call(primes_1);
                     }
                     finally { if (e_1) throw e_1.error; }
                 }
-                return result;
+                var lambdaValues = [];
+                try {
+                    // Calculate lambda for each prime power
+                    for (var _e = __values(factorMap.entries()), _f = _e.next(); !_f.done; _f = _e.next()) {
+                        var _g = __read(_f.value, 2), p = _g[0], k = _g[1];
+                        if (p === 2) {
+                            if (k === 1) {
+                                lambdaValues.push(1); // λ(2) = 1
+                            }
+                            else if (k === 2) {
+                                lambdaValues.push(2); // λ(4) = 2
+                            }
+                            else {
+                                lambdaValues.push(Math.pow(2, (k - 2))); // λ(2^k) = 2^(k-2) for k >= 3
+                            }
+                        }
+                        else {
+                            // For odd prime powers p^k: λ(p^k) = (p-1)*p^(k-1)
+                            lambdaValues.push((p - 1) * Math.pow(p, (k - 1)));
+                        }
+                    }
+                }
+                catch (e_2_1) { e_2 = { error: e_2_1 }; }
+                finally {
+                    try {
+                        if (_f && !_f.done && (_c = _e.return)) _c.call(_e);
+                    }
+                    finally { if (e_2) throw e_2.error; }
+                }
+                // Find LCM of all lambda values
+                return lambdaValues.reduce(function (acc, val) { return lcm(acc, val); }, 1);
             },
             paramCount: 1,
         },
@@ -11817,7 +11873,7 @@ var Playground = (function (exports) {
                 assertNumber(base, sourceCodeInfo, { finite: true });
                 assertNumber(exponent, sourceCodeInfo, { integer: true, positive: true });
                 assertNumber(modulus, sourceCodeInfo, { integer: true, positive: true });
-                return modularExponentiation(base, exponent, modulus);
+                return modExp(base, exponent, modulus);
             },
             paramCount: 3,
         },
@@ -11847,7 +11903,12 @@ var Playground = (function (exports) {
                 if (remainders.length !== moduli.length) {
                     throw new Error('Remainders and moduli must have the same length.');
                 }
-                return chineseRemainder(remainders, moduli);
+                try {
+                    return chineseRemainder(remainders, moduli);
+                }
+                catch (error) {
+                    throw new LitsError(error.message, sourceCodeInfo);
+                }
             },
             paramCount: 2,
         },
@@ -11856,13 +11917,6 @@ var Playground = (function (exports) {
                 var _b = __read(_a, 2), n = _b[0], k = _b[1];
                 assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
                 assertNumber(k, sourceCodeInfo, { integer: true, positive: true, lte: n });
-                // Handle edge cases
-                if (n === 0 && k === 0)
-                    return 1;
-                if (n > 0 && k === 0)
-                    return 0;
-                if (k > n)
-                    return 0;
                 // Create a table to store results
                 var dp = Array.from({ length: n + 1 }, function () { return Array(k + 1).fill(0); });
                 // Base case
@@ -11870,7 +11924,7 @@ var Playground = (function (exports) {
                 // Fill the table using the recurrence relation
                 for (var i = 1; i <= n; i++) {
                     for (var j = 1; j <= Math.min(i, k); j++) {
-                        dp[i][j] = dp[i - 1][j - 1] - (i - 1) * dp[i - 1][j];
+                        dp[i][j] = dp[i - 1][j - 1] + (i - 1) * dp[i - 1][j];
                     }
                 }
                 return dp[n][k];
@@ -11882,12 +11936,6 @@ var Playground = (function (exports) {
                 var _b = __read(_a, 2), n = _b[0], k = _b[1];
                 assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
                 assertNumber(k, sourceCodeInfo, { integer: true, positive: true, lte: n });
-                if (n === 0 && k === 0)
-                    return 1; // Empty set has one way to be partitioned into zero subsets
-                if (n === 0 || k === 0)
-                    return 0; // No ways to partition n objects into 0 subsets or 0 objects into k subsets
-                if (k > n)
-                    return 0; // Can't have more subsets than objects
                 if (k === 1)
                     return 1; // Only one way to put n objects into one subset
                 if (k === n)
@@ -11918,29 +11966,11 @@ var Playground = (function (exports) {
     addNormalExpressions(derangementsNormalExpressions);
     addNormalExpressions(powerSetNormalExpressions);
     function addSequences(sequences) {
-        var e_2, _a;
+        var e_3, _a;
         try {
             for (var _b = __values(Object.entries(sequences)), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var _d = __read(_c.value, 2), key = _d[0], value = _d[1];
-                if (combinatoricalNormalExpression[key]) {
-                    throw new Error("Duplicate normal expression key found: ".concat(key));
-                }
-                combinatoricalNormalExpression[key] = value;
-            }
-        }
-        catch (e_2_1) { e_2 = { error: e_2_1 }; }
-        finally {
-            try {
-                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
-            }
-            finally { if (e_2) throw e_2.error; }
-        }
-    }
-    function addNormalExpressions(normalExpressions) {
-        var e_3, _a;
-        try {
-            for (var _b = __values(Object.entries(normalExpressions)), _c = _b.next(); !_c.done; _c = _b.next()) {
-                var _d = __read(_c.value, 2), key = _d[0], value = _d[1];
+                /* v8 ignore next 3 */
                 if (combinatoricalNormalExpression[key]) {
                     throw new Error("Duplicate normal expression key found: ".concat(key));
                 }
@@ -11955,6 +11985,27 @@ var Playground = (function (exports) {
             finally { if (e_3) throw e_3.error; }
         }
     }
+    function addNormalExpressions(normalExpressions) {
+        var e_4, _a;
+        try {
+            for (var _b = __values(Object.entries(normalExpressions)), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var _d = __read(_c.value, 2), key = _d[0], value = _d[1];
+                /* v8 ignore next 3 */
+                if (combinatoricalNormalExpression[key]) {
+                    throw new Error("Duplicate normal expression key found: ".concat(key));
+                }
+                combinatoricalNormalExpression[key] = value;
+            }
+        }
+        catch (e_4_1) { e_4 = { error: e_4_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_4) throw e_4.error; }
+        }
+    }
+    console.log(Object.keys(combinatoricalNormalExpression).length);
 
     var expressions = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, bitwiseNormalExpression), collectionNormalExpression), arrayNormalExpression), sequenceNormalExpression), mathNormalExpression), miscNormalExpression), assertNormalExpression), objectNormalExpression), predicatesNormalExpression), regexpNormalExpression), stringNormalExpression), functionalNormalExpression), vectorNormalExpression), tableNormalExpression), matrixNormalExpression), combinatoricalNormalExpression);
     var aliases = {};
@@ -13643,7 +13694,7 @@ var Playground = (function (exports) {
     }
 
     var binaryOperators = [
-        '**', // exponentiation
+        '^', // exponentiation
         '*', // multiplication
         '/', // division
         '%', // remainder
@@ -13663,7 +13714,7 @@ var Playground = (function (exports) {
         '!=', // not equal
         '≠', // not equal
         '&', // bitwise AND
-        '^', // bitwise XOR
+        'xor', // bitwise XOR
         '|', // bitwise OR
         '&&', // logical AND
         '||', // logical OR
@@ -14272,7 +14323,7 @@ var Playground = (function (exports) {
     }
     function getPrecedence(operatorSign, sourceCodeInfo) {
         switch (operatorSign) {
-            case '**': // exponentiation
+            case '^': // exponentiation
                 return exponentiationPrecedence;
             case '*': // multiplication
             case '/': // division
@@ -14299,7 +14350,7 @@ var Playground = (function (exports) {
             case '≠': // not equal
                 return 4;
             case '&': // bitwise AND
-            case '^': // bitwise XOR
+            case 'xor': // bitwise XOR
             case '|': // bitwise OR
                 return 3;
             case '&&': // logical AND
@@ -14326,7 +14377,7 @@ var Playground = (function (exports) {
     function fromBinaryOperatorToNode(operator, symbolNode, left, right, sourceCodeInfo) {
         var operatorName = operator[1];
         switch (operatorName) {
-            case '**': // exponentiation
+            case '^': // exponentiation
             case '*':
             case '/':
             case '%':
@@ -14346,7 +14397,7 @@ var Playground = (function (exports) {
             case '!=':
             case '≠':
             case '&':
-            case '^':
+            case 'xor':
             case '|':
                 return createNamedNormalExpressionNode(symbolNode, [left, right], sourceCodeInfo);
             case '&&':
@@ -14444,7 +14495,7 @@ var Playground = (function (exports) {
                     var name_1 = operator[1];
                     var newPrecedece = getPrecedence(name_1, operator[2]);
                     if (newPrecedece <= precedence
-                        // ** (exponentiation) is right associative
+                        // ^ (exponentiation) is right associative
                         && !(newPrecedece === exponentiationPrecedence && precedence === exponentiationPrecedence)) {
                         break;
                     }

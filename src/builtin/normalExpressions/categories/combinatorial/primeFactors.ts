@@ -44,6 +44,15 @@ export const primeFactorsNormalExpressions: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
+  'c:distinct-prime-factors': {
+    evaluate: ([n], sourceCodeInfo): number[] => {
+      assertNumber(n, sourceCodeInfo, { finite: true, integer: true, positive: true })
+      const factors = primeFactors(n)
+      const distinctFactors = new Set(factors)
+      return Array.from(distinctFactors)
+    },
+    paramCount: 1,
+  },
   'c:count-prime-factors': {
     evaluate: ([n], sourceCodeInfo): number => {
       assertNumber(n, sourceCodeInfo, { finite: true, integer: true, positive: true })
@@ -59,5 +68,5 @@ export const primeFactorsNormalExpressions: BuiltinNormalExpressions = {
       return distinctFactors.size
     },
     paramCount: 1,
-  },
+  },    
 }

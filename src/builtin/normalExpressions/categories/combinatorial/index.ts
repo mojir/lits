@@ -149,6 +149,14 @@ function chineseRemainder(remainders: number[], moduli: number[]): number {
 }
 
 export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
+  'c:coprime?': {
+    evaluate: ([a, b], sourceCodeInfo): boolean => {
+      assertNumber(a, sourceCodeInfo, { integer: true })
+      assertNumber(b, sourceCodeInfo, { integer: true })
+      return gcd(a, b) === 1
+    },
+    paramCount: 2,
+  },
   'c:divisible-by?': {
     evaluate: ([value, divisor], sourceCodeInfo): boolean => {
       assertNumber(value, sourceCodeInfo, { integer: true })
@@ -340,7 +348,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
     paramCount: 2,
   },
   'c:extended-gcd': {
-    evaluate: ([a, b], sourceCodeInfo): number[] => {
+    evaluate: ([a, b], sourceCodeInfo): [number, number, number] => {
       assertNumber(a, sourceCodeInfo, { integer: true })
       assertNumber(b, sourceCodeInfo, { integer: true })
 

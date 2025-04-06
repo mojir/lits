@@ -51,7 +51,6 @@ export const permutationsNormalExpressions: BuiltinNormalExpressions = {
       assertNumber(k, sourceCodeInfo, { integer: true, nonNegative: true, lte: n })
       return factorialOf(n) / factorialOf(n - k)
     },
-    aliases: ['c:P'],
     paramCount: 2,
   },
 }

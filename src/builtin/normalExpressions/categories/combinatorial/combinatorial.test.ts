@@ -4,6 +4,16 @@ import { LitsError } from '../../../../errors'
 
 const lits = new Lits()
 describe('combinatorial', () => {
+  describe('c:coprime?', () => {
+    it('should return true if two numbers are coprime', () => {
+      expect(lits.run('c:coprime?(1, 1)')).toEqual(true)
+      expect(lits.run('c:coprime?(2, 3)')).toEqual(true)
+      expect(lits.run('c:coprime?(4, 6)')).toEqual(false)
+      expect(lits.run('c:coprime?(8, 12)')).toEqual(false)
+      expect(lits.run('c:coprime?(10, 15)')).toEqual(false)
+      expect(lits.run('c:coprime?(100, 200)')).toEqual(false)
+    })
+  })
   describe('c:divisible-by?', () => {
     it('should return true if divisible by', () => {
       expect(lits.run('c:divisible-by?(2, 1)')).toEqual(true)
