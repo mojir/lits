@@ -1,5 +1,4 @@
 import type { Any } from '../../../../interface'
-import type { Table } from '.'
 
 /**
  * Creates a matrix from a flat array with specified dimensions
@@ -9,9 +8,9 @@ import type { Table } from '.'
  * @param cols Number of columns in the resulting matrix
  * @returns A 2D array representing the matrix
  */
-export function fromArray(flatArray: Any[], rows: number, cols: number): Table {
+export function fromArray(flatArray: Any[], rows: number, cols: number): Any[][] {
   // Create the matrix
-  const table: Table = []
+  const table: Any[][] = []
 
   // Reshape the flat array into rows and columns
   for (let i = 0; i < rows; i++) {

@@ -1,6 +1,6 @@
-import type { Table } from '.'
+import type { Any } from '../../../../interface'
 
-export function tableEqual(tables: Table[]): boolean {
+export function tableEqual(tables: Any[][][]): boolean {
   const firstTable = tables[0]!
   return tables.slice(1).every((table) => {
     if (table.length !== firstTable.length) {

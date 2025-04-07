@@ -25,6 +25,5 @@ describe('c:factorial', () => {
     expect(lits.run('c:factorial(10)')).toEqual(3628800)
     expect(lits.run('c:factorial(20)')).toEqual(2432902008176640000)
     expect(() => lits.run('c:factorial(171)')).toThrow()
-
   })
 })

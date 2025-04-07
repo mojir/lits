@@ -1,6 +1,7 @@
 import { LitsError } from '../../../../errors'
 import type { Any } from '../../../../interface'
 import type { SourceCodeInfo } from '../../../../tokenizer/token'
+import { assertGrid, isGrid } from '../../../../typeGuards/annotatedArrays'
 import { assertArray } from '../../../../typeGuards/array'
 import { asAny, assertAny, isAny } from '../../../../typeGuards/lits'
 import { asLitsFunction, assertLitsFunction } from '../../../../typeGuards/litsFunction'
@@ -9,39 +10,6 @@ import type { BuiltinNormalExpressions } from '../../../interface'
 import { fromArray } from './fromArray'
 import { tableEqual } from './tableEqual'
 import { transpose } from './transpose'
-
-export type Table = Any[][]
-
-function isTable(table: unknown): table is Table {
-  if (!Array.isArray(table)) {
-    return false
-  }
-  if (table.length === 0) {
-    return false
-  }
-  if (!Array.isArray(table[0])) {
-    return false
-  }
-  const nbrOfCols = table[0].length
-  for (const row of table.slice(1)) {
-    if (!Array.isArray(row)) {
-      return false
-    }
-    if (row.length !== nbrOfCols) {
-      return false
-    }
-    if (row.some(cell => isAny(cell))) {
-      return false
-    }
-  }
-  return true
-}
-
-function assertTable(table: unknown, sourceCodeInfo: SourceCodeInfo | undefined): asserts table is Table {
-  if (!isTable(table)) {
-    throw new LitsError(`Expected a table, but got ${table}`, sourceCodeInfo)
-  }
-}
 
 function assertAnyArray(value: unknown, sourceCodeInfo: SourceCodeInfo | undefined): asserts value is Any[] {
   if (!Array.isArray(value)) {
@@ -54,34 +22,34 @@ function assertAnyArray(value: unknown, sourceCodeInfo: SourceCodeInfo | undefin
 
 export const tableNormalExpression: BuiltinNormalExpressions = {
   't:table?': {
-    evaluate: ([table]): boolean => isTable(table),
+    evaluate: ([table]): boolean => isGrid(table),
     paramCount: 1,
   },
   't:=': {
     evaluate: (params, sourceCodeInfo): boolean => {
       assertArray(params, sourceCodeInfo)
-      params.every(table => assertTable(table, sourceCodeInfo))
+      params.every(table => assertGrid(table, sourceCodeInfo))
       if (params.length <= 1) {
         return true
       }
-      return tableEqual(params as Table[])
+      return tableEqual(params as Any[][][])
     },
     paramCount: { min: 1 },
   },
   't:!=': {
     evaluate: (params, sourceCodeInfo): boolean => {
       assertArray(params, sourceCodeInfo)
-      params.every(table => assertTable(table, sourceCodeInfo))
+      params.every(table => assertGrid(table, sourceCodeInfo))
       if (params.length <= 1) {
         return false
       }
-      return !tableEqual(params as Table[])
+      return !tableEqual(params as Any[][][])
     },
     paramCount: { min: 1 },
   },
   'table-every?': {
     evaluate: ([table, predicate], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
-      assertTable(table, sourceCodeInfo)
+      assertGrid(table, sourceCodeInfo)
       assertLitsFunction(predicate, sourceCodeInfo)
 
       for (const row of table) {
@@ -97,7 +65,7 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
   },
   't:some?': {
     evaluate: ([table, predicate], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
-      assertTable(table, sourceCodeInfo)
+      assertGrid(table, sourceCodeInfo)
       assertLitsFunction(predicate, sourceCodeInfo)
 
       for (const row of table) {
@@ -113,7 +81,7 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
   },
   't:every-row?': {
     evaluate: ([table, predicate], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
-      assertTable(table, sourceCodeInfo)
+      assertGrid(table, sourceCodeInfo)
       assertLitsFunction(predicate, sourceCodeInfo)
 
       for (const row of table) {
@@ -127,7 +95,7 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
   },
   't:some-row?': {
     evaluate: ([table, predicate], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
-      assertTable(table, sourceCodeInfo)
+      assertGrid(table, sourceCodeInfo)
       assertLitsFunction(predicate, sourceCodeInfo)
 
       for (const row of table) {
@@ -141,7 +109,7 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
   },
   't:every-col?': {
     evaluate: ([table, predicate], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
-      assertTable(table, sourceCodeInfo)
+      assertGrid(table, sourceCodeInfo)
       assertLitsFunction(predicate, sourceCodeInfo)
 
       const transposed = transpose(table)
@@ -156,7 +124,7 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
   },
   't:some-col?': {
     evaluate: ([table, predicate], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
-      assertTable(table, sourceCodeInfo)
+      assertGrid(table, sourceCodeInfo)
       assertLitsFunction(predicate, sourceCodeInfo)
 
       const transposed = transpose(table)
@@ -171,7 +139,7 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
   },
   't:row': {
     evaluate: ([table, row], sourceCodeInfo): Any[] => {
-      assertTable(table, sourceCodeInfo)
+      assertGrid(table, sourceCodeInfo)
       assertNumber(row, sourceCodeInfo, { integer: true, nonNegative: true, lte: table.length })
       return table[row]!
     },
@@ -179,7 +147,7 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
   },
   't:col': {
     evaluate: ([table, col], sourceCodeInfo): Any[] => {
-      assertTable(table, sourceCodeInfo)
+      assertGrid(table, sourceCodeInfo)
       assertNumber(col, sourceCodeInfo, { integer: true, nonNegative: true, lte: table[0]!.length })
       return table.map(row => row[col]!)
     },
@@ -187,18 +155,18 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
   },
   't:shape': {
     evaluate: ([table], sourceCodeInfo): Any[] => {
-      assertTable(table, sourceCodeInfo)
+      assertGrid(table, sourceCodeInfo)
       return [table.length, table[0]!.length]
     },
     paramCount: 1,
   },
   't:generate': {
-    evaluate: ([rows, cols, generator], sourceCodeInfo, contextStack, { executeFunction }): Table => {
+    evaluate: ([rows, cols, generator], sourceCodeInfo, contextStack, { executeFunction }): Any[][] => {
       assertNumber(rows, sourceCodeInfo, { integer: true, positive: true })
       assertNumber(cols, sourceCodeInfo, { integer: true, positive: true })
       assertLitsFunction(generator, sourceCodeInfo)
 
-      const result: Table = []
+      const result: Any[][] = []
       for (let i = 0; i < rows; i += 1) {
         const row: Any[] = []
         for (let j = 0; j < cols; j += 1) {
@@ -215,8 +183,8 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
     paramCount: 3,
   },
   't:reshape': {
-    evaluate: ([table, rows, cols], sourceCodeInfo): Table => {
-      assertTable(table, sourceCodeInfo)
+    evaluate: ([table, rows, cols], sourceCodeInfo): Any[][] => {
+      assertGrid(table, sourceCodeInfo)
       assertNumber(rows, sourceCodeInfo, { integer: true, positive: true })
       assertNumber(cols, sourceCodeInfo, { integer: true, positive: true })
 
@@ -225,7 +193,7 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
         throw new LitsError(`The number of elements in the table must be equal to rows * cols, but got ${flatTable.length} and ${rows} * ${cols}`, sourceCodeInfo)
       }
 
-      const result: Table = []
+      const result: Any[][] = []
       for (let i = 0; i < rows; i += 1) {
         const row: Any[] = []
         for (let j = 0; j < cols; j += 1) {
@@ -238,15 +206,15 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
     paramCount: 3,
   },
   't:transpose': {
-    evaluate: ([table], sourceCodeInfo): Table => {
-      assertTable(table, sourceCodeInfo)
+    evaluate: ([table], sourceCodeInfo): Any[][] => {
+      assertGrid(table, sourceCodeInfo)
       return transpose(table)
     },
     paramCount: 1,
   },
   't:slice': {
-    evaluate: ([table, rowStart, rowEnd, colStart, colEnd], sourceCodeInfo): Table => {
-      assertTable(table, sourceCodeInfo)
+    evaluate: ([table, rowStart, rowEnd, colStart, colEnd], sourceCodeInfo): Any[][] => {
+      assertGrid(table, sourceCodeInfo)
       assertNumber(rowStart, sourceCodeInfo, { integer: true, nonNegative: true, lte: table.length })
       assertNumber(rowEnd, sourceCodeInfo, { integer: true })
       rowEnd = rowEnd < 0 ? table.length + rowEnd : rowEnd
@@ -256,7 +224,7 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
       colEnd = colEnd < 0 ? table[0]!.length + colEnd : colEnd
       assertNumber(colEnd, sourceCodeInfo, { gt: colStart, lte: table[0]!.length })
 
-      const result: Table = []
+      const result: Any[][] = []
       for (let i = rowStart; i < rowEnd; i += 1) {
         const row: Any[] = []
         for (let j = colStart; j < colEnd; j += 1) {
@@ -269,8 +237,8 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
     paramCount: 5,
   },
   't:slice-rows': {
-    evaluate: ([table, rowStart, rowEnd], sourceCodeInfo): Table => {
-      assertTable(table, sourceCodeInfo)
+    evaluate: ([table, rowStart, rowEnd], sourceCodeInfo): Any[][] => {
+      assertGrid(table, sourceCodeInfo)
 
       if (typeof rowEnd === 'undefined') {
         assertNumber(rowStart, sourceCodeInfo, { integer: true, lte: table.length, gte: -table.length })
@@ -290,8 +258,8 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
     paramCount: 3,
   },
   't:slice-cols': {
-    evaluate: ([table, colStart, colEnd], sourceCodeInfo): Table => {
-      assertTable(table, sourceCodeInfo)
+    evaluate: ([table, colStart, colEnd], sourceCodeInfo): Any[][] => {
+      assertGrid(table, sourceCodeInfo)
       const trMatrix = transpose(table)
 
       if (typeof colEnd === 'undefined') {
@@ -312,11 +280,11 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
     paramCount: 3,
   },
   't:splice-rows': {
-    evaluate: ([table, rowStart, rowDeleteCount, ...rows], sourceCodeInfo): Table => {
-      assertTable(table, sourceCodeInfo)
+    evaluate: ([table, rowStart, rowDeleteCount, ...rows], sourceCodeInfo): Any[][] => {
+      assertGrid(table, sourceCodeInfo)
       assertNumber(rowStart, sourceCodeInfo, { integer: true, nonNegative: true, lte: table.length })
       assertNumber(rowDeleteCount, sourceCodeInfo, { integer: true, nonNegative: true })
-      assertTable(rows, sourceCodeInfo)
+      assertGrid(rows, sourceCodeInfo)
       rows.every((row) => {
         assertArray(row, sourceCodeInfo)
         if (table[0]!.length !== row.length) {
@@ -325,7 +293,7 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
         return true
       })
 
-      const result: Table = []
+      const result: Any[][] = []
       for (let i = 0; i < rowStart; i += 1) {
         result.push(table[i]!)
       }
@@ -338,12 +306,12 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
     paramCount: { min: 3 },
   },
   't:splice-cols': {
-    evaluate: ([table, colStart, colDeleteCount, ...cols], sourceCodeInfo): Table => {
-      assertTable(table, sourceCodeInfo)
+    evaluate: ([table, colStart, colDeleteCount, ...cols], sourceCodeInfo): Any[][] => {
+      assertGrid(table, sourceCodeInfo)
       const trMatrix = transpose(table)
       assertNumber(colStart, sourceCodeInfo, { integer: true, nonNegative: true, lte: trMatrix.length })
       assertNumber(colDeleteCount, sourceCodeInfo, { integer: true, nonNegative: true })
-      assertTable(cols, sourceCodeInfo)
+      assertGrid(cols, sourceCodeInfo)
       cols.every((row) => {
         assertArray(row, sourceCodeInfo)
         if (trMatrix[0]!.length !== row.length) {
@@ -352,7 +320,7 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
         return true
       })
 
-      const result: Table = []
+      const result: Any[][] = []
       for (let i = 0; i < colStart; i += 1) {
         result.push(trMatrix[i]!)
       }
@@ -365,19 +333,19 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
     paramCount: { min: 3 },
   },
   't:concat-rows': {
-    evaluate: (params, sourceCodeInfo): Table => {
+    evaluate: (params, sourceCodeInfo): Any[][] => {
       assertArray(params, sourceCodeInfo)
-      params.every(table => assertTable(table, sourceCodeInfo))
-      const cols = (params[0] as Table)[0]!.length
-      ;(params as Table[]).slice(1).every((table) => {
+      params.every(table => assertGrid(table, sourceCodeInfo))
+      const cols = (params[0] as Any[][])[0]!.length
+      ;(params as Any[][][]).slice(1).every((table) => {
         if (table[0]!.length !== cols) {
           throw new LitsError(`All matrices must have the same number of columns, but got ${cols} and ${table[0]!.length}`, sourceCodeInfo)
         }
         return true
       })
 
-      const result: Table = []
-      ;(params as Table[]).forEach((table) => {
+      const result: Any[][] = []
+      ;(params as Any[][][]).forEach((table) => {
         table.forEach((row) => {
           result.push(row)
         })
@@ -387,21 +355,21 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
     paramCount: { min: 1 },
   },
   't:concat-cols': {
-    evaluate: (params, sourceCodeInfo): Table => {
+    evaluate: (params, sourceCodeInfo): Any[][] => {
       assertArray(params, sourceCodeInfo)
-      params.every(table => assertTable(table, sourceCodeInfo))
-      const rows = (params[0] as Table).length
-      ;(params as Table[]).slice(1).every((table) => {
+      params.every(table => assertGrid(table, sourceCodeInfo))
+      const rows = (params[0] as Any[][]).length
+      ;(params as Any[][][]).slice(1).every((table) => {
         if (table.length !== rows) {
           throw new LitsError(`All matrices must have the same number of rows, but got ${rows} and ${table.length}`, sourceCodeInfo)
         }
         return true
       })
 
-      const result: Table = []
+      const result: Any[][] = []
       for (let i = 0; i < rows; i += 1) {
         const row: Any[] = []
-        ;(params as Table[]).forEach((table) => {
+        ;(params as Any[][][]).forEach((table) => {
           row.push(...table[i]!)
         })
         result.push(row)
@@ -411,14 +379,14 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
     paramCount: { min: 1 },
   },
   't:map': {
-    evaluate: (params, sourceCodeInfo, contextStack, { executeFunction }): Table => {
+    evaluate: (params, sourceCodeInfo, contextStack, { executeFunction }): Any[][] => {
       const fn = asLitsFunction(params.at(-1))
       const matrices = params.slice(0, -1)
-      assertTable(matrices[0], sourceCodeInfo)
+      assertGrid(matrices[0], sourceCodeInfo)
       const rows = matrices[0].length
       const cols = matrices[0][0]!.length
       matrices.slice(1).forEach((table) => {
-        assertTable(table, sourceCodeInfo)
+        assertGrid(table, sourceCodeInfo)
         if (table.length !== rows) {
           throw new LitsError(`All matrices must have the same number of rows, but got ${rows} and ${table.length}`, sourceCodeInfo)
         }
@@ -427,11 +395,11 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
         }
       })
 
-      const result: Table = []
+      const result: Any[][] = []
       for (let i = 0; i < rows; i += 1) {
         const row: Any[] = []
         for (let j = 0; j < cols; j += 1) {
-          const args = matrices.map(table => (table as Table)[i]![j])
+          const args = matrices.map(table => (table as Any[][])[i]![j])
           const value = executeFunction(fn, args, contextStack, sourceCodeInfo)
           if (!isAny(value)) {
             throw new LitsError(`The function must return a number, but got ${value}`, sourceCodeInfo)
@@ -445,14 +413,14 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
     paramCount: { min: 2 },
   },
   't:map-with-indices': {
-    evaluate: ([table, fn], sourceCodeInfo, contextStack, { executeFunction }): Table => {
-      assertTable(table, sourceCodeInfo)
+    evaluate: ([table, fn], sourceCodeInfo, contextStack, { executeFunction }): Any[][] => {
+      assertGrid(table, sourceCodeInfo)
       assertLitsFunction(fn, sourceCodeInfo)
 
       const rows = table.length
       const cols = table[0]!.length
 
-      const result: Table = []
+      const result: Any[][] = []
       for (let i = 0; i < rows; i += 1) {
         const row: Any[] = []
         for (let j = 0; j < cols; j += 1) {
@@ -470,7 +438,7 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
   },
   't:reduce': {
     evaluate: ([table, fn, initialValue], sourceCodeInfo, contextStack, { executeFunction }): Any => {
-      assertTable(table, sourceCodeInfo)
+      assertGrid(table, sourceCodeInfo)
       assertLitsFunction(fn, sourceCodeInfo)
 
       let accumulator = asAny(initialValue)
@@ -485,7 +453,7 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
   },
   't:reduce-with-indices': {
     evaluate: ([table, fn, initialValue], sourceCodeInfo, contextStack, { executeFunction }): Any => {
-      assertTable(table, sourceCodeInfo)
+      assertGrid(table, sourceCodeInfo)
       assertLitsFunction(fn, sourceCodeInfo)
 
       let accumulator = asAny(initialValue)
@@ -500,7 +468,7 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
   },
   't:reduce-rows': {
     evaluate: ([table, fn, initialValue], sourceCodeInfo, contextStack, { executeFunction }): Any[] => {
-      assertTable(table, sourceCodeInfo)
+      assertGrid(table, sourceCodeInfo)
       assertLitsFunction(fn, sourceCodeInfo)
       assertAny(initialValue)
 
@@ -518,7 +486,7 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
   },
   't:reduce-cols': {
     evaluate: ([table, fn, initialValue], sourceCodeInfo, contextStack, { executeFunction }): Any[] => {
-      assertTable(table, sourceCodeInfo)
+      assertGrid(table, sourceCodeInfo)
       assertLitsFunction(fn, sourceCodeInfo)
       assertAny(initialValue)
 
@@ -535,9 +503,9 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
     paramCount: 3,
   },
   't:push-rows': {
-    evaluate: ([table, ...rows], sourceCodeInfo): Table => {
-      assertTable(table, sourceCodeInfo)
-      assertTable(rows, sourceCodeInfo)
+    evaluate: ([table, ...rows], sourceCodeInfo): Any[][] => {
+      assertGrid(table, sourceCodeInfo)
+      assertGrid(rows, sourceCodeInfo)
       if (table[0]!.length !== rows[0]!.length) {
         throw new LitsError(`All rows must have the same length as the number of columns in table, but got ${table[0]!.length} and ${rows[0]!.length}`, sourceCodeInfo)
       }
@@ -546,9 +514,9 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
     paramCount: { min: 2 },
   },
   't:unshift-rows': {
-    evaluate: ([table, ...rows], sourceCodeInfo): Table => {
-      assertTable(table, sourceCodeInfo)
-      assertTable(rows, sourceCodeInfo)
+    evaluate: ([table, ...rows], sourceCodeInfo): Any[][] => {
+      assertGrid(table, sourceCodeInfo)
+      assertGrid(rows, sourceCodeInfo)
       if (table[0]!.length !== rows[0]!.length) {
         throw new LitsError(`All rows must have the same length as the number of columns in table, but got ${table[0]!.length} and ${rows[0]!.length}`, sourceCodeInfo)
       }
@@ -557,8 +525,8 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
     paramCount: { min: 2 },
   },
   't:pop-row': {
-    evaluate: ([table], sourceCodeInfo): Table | null => {
-      assertTable(table, sourceCodeInfo)
+    evaluate: ([table], sourceCodeInfo): Any[][] | null => {
+      assertGrid(table, sourceCodeInfo)
       if (table.length === 1) {
         return null
       }
@@ -568,8 +536,8 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
 
   },
   't:shift-row': {
-    evaluate: ([table], sourceCodeInfo): Table | null => {
-      assertTable(table, sourceCodeInfo)
+    evaluate: ([table], sourceCodeInfo): Any[][] | null => {
+      assertGrid(table, sourceCodeInfo)
       if (table.length === 1) {
         return null
       }
@@ -578,14 +546,14 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
     paramCount: 1,
   },
   't:push-cols': {
-    evaluate: ([table, ...cols], sourceCodeInfo): Table => {
-      assertTable(table, sourceCodeInfo)
-      assertTable(cols, sourceCodeInfo)
+    evaluate: ([table, ...cols], sourceCodeInfo): Any[][] => {
+      assertGrid(table, sourceCodeInfo)
+      assertGrid(cols, sourceCodeInfo)
       if (table.length !== cols[0]!.length) {
         throw new LitsError(`All columns must have the same length as the number of rows in table, but got ${cols.length}`, sourceCodeInfo)
       }
 
-      const result: Table = []
+      const result: Any[][] = []
 
       for (let i = 0; i < table.length; i += 1) {
         const row: Any[] = []
@@ -600,14 +568,14 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
     paramCount: { min: 2 },
   },
   't:unshift-cols': {
-    evaluate: ([table, ...cols], sourceCodeInfo): Table => {
-      assertTable(table, sourceCodeInfo)
-      assertTable(cols, sourceCodeInfo)
+    evaluate: ([table, ...cols], sourceCodeInfo): Any[][] => {
+      assertGrid(table, sourceCodeInfo)
+      assertGrid(cols, sourceCodeInfo)
       if (table.length !== cols[0]!.length) {
         throw new LitsError(`All columns must have the same length as the number of rows in table, but got ${cols.length}`, sourceCodeInfo)
       }
 
-      const result: Table = []
+      const result: Any[][] = []
 
       for (let i = 0; i < table.length; i += 1) {
         const row: Any[] = []
@@ -622,8 +590,8 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
     paramCount: { min: 2 },
   },
   't:pop-col': {
-    evaluate: ([table], sourceCodeInfo): Table | null => {
-      assertTable(table, sourceCodeInfo)
+    evaluate: ([table], sourceCodeInfo): Any[][] | null => {
+      assertGrid(table, sourceCodeInfo)
       if (table[0]!.length === 1) {
         return null
       }
@@ -632,8 +600,8 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
     paramCount: 1,
   },
   't:shift-col': {
-    evaluate: ([table], sourceCodeInfo): Table | null => {
-      assertTable(table, sourceCodeInfo)
+    evaluate: ([table], sourceCodeInfo): Any[][] | null => {
+      assertGrid(table, sourceCodeInfo)
       if (table[0]!.length === 1) {
         return null
       }
@@ -642,7 +610,7 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
     paramCount: 1,
   },
   't:from-array': {
-    evaluate: ([array, rows, cols], sourceCodeInfo): Table => {
+    evaluate: ([array, rows, cols], sourceCodeInfo): Any[][] => {
       assertAnyArray(array, sourceCodeInfo)
       assertNumber(rows, sourceCodeInfo, { integer: true, positive: true })
       assertNumber(cols, sourceCodeInfo, { integer: true, positive: true })

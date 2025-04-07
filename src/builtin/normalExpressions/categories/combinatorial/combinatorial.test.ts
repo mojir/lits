@@ -27,21 +27,6 @@ describe('combinatorial', () => {
       expect(() => lits.run('c:divisible-by?(2.5, 0.5)')).toThrow()
     })
   })
-  describe('c:divisors', () => {
-    it('should return divisors of a number', () => {
-      expect(lits.run('c:divisors(1)')).toEqual([1])
-      expect(lits.run('c:divisors(2)')).toEqual([1, 2])
-      expect(lits.run('c:divisors(3)')).toEqual([1, 3])
-      expect(lits.run('c:divisors(4)')).toEqual([1, 2, 4])
-      expect(lits.run('c:divisors(5)')).toEqual([1, 5])
-      expect(lits.run('c:divisors(6)')).toEqual([1, 2, 3, 6])
-      expect(lits.run('c:divisors(7)')).toEqual([1, 7])
-      expect(lits.run('c:divisors(8)')).toEqual([1, 2, 4, 8])
-      expect(lits.run('c:divisors(9)')).toEqual([1, 3, 9])
-      expect(lits.run('c:divisors(10)')).toEqual([1, 2, 5, 10])
-      expect(lits.run('c:divisors(100)')).toEqual([1, 2, 4, 5, 10, 20, 25, 50, 100])
-    })
-  })
   describe('c:gcd', () => {
     it('should return the gcd of two numbers', () => {
       expect(lits.run('c:gcd(1, 1)')).toEqual(1)

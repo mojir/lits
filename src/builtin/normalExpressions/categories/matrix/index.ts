@@ -1,9 +1,9 @@
 import { LitsError } from '../../../../errors'
 import type { SourceCodeInfo } from '../../../../tokenizer/token'
+import { assertMatrix, assertVector, isMatrix } from '../../../../typeGuards/annotatedArrays'
 import { assertArray } from '../../../../typeGuards/array'
-import { assertNumber, isNumber } from '../../../../typeGuards/number'
+import { assertNumber } from '../../../../typeGuards/number'
 import type { BuiltinNormalExpressions } from '../../../interface'
-import { assertVector } from '../vector'
 import { adjugate } from './adjugate'
 import { band } from './band'
 import { cofactor } from './cofactor'
@@ -24,40 +24,7 @@ import { pow } from './power'
 import { solve } from './solve'
 import { trace } from './trace'
 
-type Matrix = number[][]
-
-function isMatrix(matrix: unknown): matrix is Matrix {
-  if (!Array.isArray(matrix)) {
-    return false
-  }
-  if (matrix.length === 0) {
-    return false
-  }
-  if (!Array.isArray(matrix[0])) {
-    return false
-  }
-  const nbrOfCols = matrix[0].length
-  for (const row of matrix.slice(1)) {
-    if (!Array.isArray(row)) {
-      return false
-    }
-    if (row.length !== nbrOfCols) {
-      return false
-    }
-    if (row.some(cell => !isNumber(cell, { finite: true }))) {
-      return false
-    }
-  }
-  return true
-}
-
-function assertMatrix(matrix: unknown, sourceCodeInfo: SourceCodeInfo | undefined): asserts matrix is Matrix {
-  if (!isMatrix(matrix)) {
-    throw new LitsError(`Expected a matrix, but got ${matrix}`, sourceCodeInfo)
-  }
-}
-
-function assertSquareMatrix(matrix: unknown, sourceCodeInfo: SourceCodeInfo | undefined): asserts matrix is Matrix {
+function assertSquareMatrix(matrix: unknown, sourceCodeInfo: SourceCodeInfo | undefined): asserts matrix is number[][] {
   if (!isMatrix(matrix)) {
     throw new LitsError(`Expected a matrix, but got ${matrix}`, sourceCodeInfo)
   }
@@ -94,7 +61,7 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
     paramCount: { min: 2, max: 3 },
   },
   'm:scale': {
-    evaluate: ([matrix, scalar], sourceCodeInfo): Matrix => {
+    evaluate: ([matrix, scalar], sourceCodeInfo): number[][] => {
       assertMatrix(matrix, sourceCodeInfo)
       assertNumber(scalar, sourceCodeInfo)
       return matrix.map(row => row.map(cell => cell * scalar))
@@ -102,7 +69,7 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
     paramCount: 2,
   },
   'm:+': {
-    evaluate: ([firstMatrix, ...params], sourceCodeInfo): Matrix => {
+    evaluate: ([firstMatrix, ...params], sourceCodeInfo): number[][] => {
       assertMatrix(firstMatrix, sourceCodeInfo)
       assertArray(params, sourceCodeInfo)
       params.forEach((matrix) => {
@@ -115,10 +82,10 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
         }
       })
       if (params.length === 0) {
-        return params[0] as Matrix
+        return params[0] as number[][]
       }
-      const matrices = params as Matrix[]
-      const result: Matrix = []
+      const matrices = params as number[][][]
+      const result: number[][] = []
       for (let i = 0; i < firstMatrix.length; i += 1) {
         const row: number[] = []
         for (let j = 0; j < firstMatrix[i]!.length; j += 1) {
@@ -135,7 +102,7 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
     paramCount: { min: 1 },
   },
   'm:-': {
-    evaluate: ([firstMatrix, ...params], sourceCodeInfo): Matrix => {
+    evaluate: ([firstMatrix, ...params], sourceCodeInfo): number[][] => {
       assertMatrix(firstMatrix, sourceCodeInfo)
       assertArray(params, sourceCodeInfo)
       params.forEach((matrix) => {
@@ -148,7 +115,7 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
         }
       })
       if (params.length === 0) {
-        const result: Matrix = []
+        const result: number[][] = []
         for (let i = 0; i < firstMatrix.length; i += 1) {
           const row: number[] = []
           for (let j = 0; j < firstMatrix[i]!.length; j += 1) {
@@ -157,8 +124,8 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
           result.push(row)
         }
       }
-      const matrices = params as Matrix[]
-      const result: Matrix = []
+      const matrices = params as number[][][]
+      const result: number[][] = []
       for (let i = 0; i < firstMatrix.length; i += 1) {
         const row: number[] = []
         for (let j = 0; j < firstMatrix[i]!.length; j += 1) {
@@ -175,7 +142,7 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
     paramCount: { min: 1 },
   },
   'm:*': {
-    evaluate: ([firstMatrix, ...params], sourceCodeInfo): Matrix => {
+    evaluate: ([firstMatrix, ...params], sourceCodeInfo): number[][] => {
       assertMatrix(firstMatrix, sourceCodeInfo)
       assertArray(params, sourceCodeInfo)
       params.forEach((matrix) => {
@@ -188,10 +155,10 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
         }
       })
       if (params.length === 0) {
-        return params[0] as Matrix
+        return params[0] as number[][]
       }
-      const matrices = params as Matrix[]
-      const result: Matrix = []
+      const matrices = params as number[][][]
+      const result: number[][] = []
       for (let i = 0; i < firstMatrix.length; i += 1) {
         const row: number[] = []
         for (let j = 0; j < firstMatrix[i]!.length; j += 1) {
@@ -208,7 +175,7 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
     paramCount: { min: 1 },
   },
   'm:/': {
-    evaluate: ([firstMatrix, ...params], sourceCodeInfo): Matrix => {
+    evaluate: ([firstMatrix, ...params], sourceCodeInfo): number[][] => {
       assertMatrix(firstMatrix, sourceCodeInfo)
       assertArray(params, sourceCodeInfo)
       params.forEach((matrix) => {
@@ -221,7 +188,7 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
         }
       })
       if (params.length === 0) {
-        const result: Matrix = []
+        const result: number[][] = []
         for (let i = 0; i < firstMatrix.length; i += 1) {
           const row: number[] = []
           for (let j = 0; j < firstMatrix[i]!.length; j += 1) {
@@ -230,8 +197,8 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
           result.push(row)
         }
       }
-      const matrices = params as Matrix[]
-      const result: Matrix = []
+      const matrices = params as number[][][]
+      const result: number[][] = []
       for (let i = 0; i < firstMatrix.length; i += 1) {
         const row: number[] = []
         for (let j = 0; j < firstMatrix[i]!.length; j += 1) {
@@ -248,7 +215,7 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
     paramCount: { min: 1 },
   },
   'm:**': {
-    evaluate: ([matrix, power], sourceCodeInfo): Matrix => {
+    evaluate: ([matrix, power], sourceCodeInfo): number[][] => {
       assertSquareMatrix(matrix, sourceCodeInfo)
       assertNumber(power, sourceCodeInfo, { integer: true })
       return pow(matrix, power)
@@ -256,7 +223,7 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
     paramCount: 2,
   },
   'm:dot': {
-    evaluate: ([matrix1, matrix2], sourceCodeInfo): Matrix => {
+    evaluate: ([matrix1, matrix2], sourceCodeInfo): number[][] => {
       assertMatrix(matrix1, sourceCodeInfo)
       assertMatrix(matrix2, sourceCodeInfo)
       try {
@@ -276,7 +243,7 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
     paramCount: 1,
   },
   'm:inverse': {
-    evaluate: ([matrix], sourceCodeInfo): Matrix => {
+    evaluate: ([matrix], sourceCodeInfo): number[][] => {
       assertSquareMatrix(matrix, sourceCodeInfo)
       const result = inverse(matrix)
       if (result === null) {
@@ -287,21 +254,21 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
     paramCount: 1,
   },
   'm:adjugate': {
-    evaluate: ([matrix], sourceCodeInfo): Matrix => {
+    evaluate: ([matrix], sourceCodeInfo): number[][] => {
       assertSquareMatrix(matrix, sourceCodeInfo)
       return adjugate(matrix)
     },
     paramCount: 1,
   },
   'm:cofactor': {
-    evaluate: ([matrix], sourceCodeInfo): Matrix => {
+    evaluate: ([matrix], sourceCodeInfo): number[][] => {
       assertSquareMatrix(matrix, sourceCodeInfo)
       return cofactor(matrix)
     },
     paramCount: 1,
   },
   'm:minor': {
-    evaluate: ([matrix, row, col], sourceCodeInfo): Matrix => {
+    evaluate: ([matrix, row, col], sourceCodeInfo): number[][] => {
       assertMatrix(matrix, sourceCodeInfo)
       assertNumber(row, sourceCodeInfo, { integer: true, nonNegative: true, lte: matrix.length })
       assertNumber(col, sourceCodeInfo, { integer: true, nonNegative: true, lte: matrix[0]!.length })
@@ -381,7 +348,7 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
     paramCount: 1,
   },
   'm:rref': {
-    evaluate: ([matrix], sourceCodeInfo): Matrix => {
+    evaluate: ([matrix], sourceCodeInfo): number[][] => {
       assertMatrix(matrix, sourceCodeInfo)
 
       // Reduced Row Echelon Form (RREF)
@@ -445,9 +412,9 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
     paramCount: 1,
   },
   'm:hilbert': {
-    evaluate: ([size], sourceCodeInfo): Matrix => {
+    evaluate: ([size], sourceCodeInfo): number[][] => {
       assertNumber(size, sourceCodeInfo, { integer: true, positive: true })
-      const result: Matrix = []
+      const result: number[][] = []
       for (let i = 0; i < size; i += 1) {
         const row: number[] = []
         for (let j = 0; j < size; j += 1) {
@@ -460,9 +427,9 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
     paramCount: 1,
   },
   'm:vandermonde': {
-    evaluate: ([vector], sourceCodeInfo): Matrix => {
+    evaluate: ([vector], sourceCodeInfo): number[][] => {
       assertVector(vector, sourceCodeInfo)
-      const result: Matrix = []
+      const result: number[][] = []
       for (let i = 0; i < vector.length; i += 1) {
         const row: number[] = []
         for (let j = 0; j < vector.length; j += 1) {
@@ -475,7 +442,7 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
     paramCount: 1,
   },
   'm:band': {
-    evaluate: ([n, lband, uband], sourceCodeInfo): Matrix => {
+    evaluate: ([n, lband, uband], sourceCodeInfo): number[][] => {
       assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
       assertNumber(lband, sourceCodeInfo, { integer: true, nonNegative: true, lt: n })
       assertNumber(uband, sourceCodeInfo, { integer: true, nonNegative: true, lte: n })

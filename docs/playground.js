@@ -2341,183 +2341,36 @@ var Playground = (function (exports) {
         return value;
     }
 
-    /**
-     * Counts occurrences of each integer value in an array of non-negative integers.
-     *
-     * @param array - Array of non-negative integers to count
-     * @param minLength - Minimum length of the output array (default: 0)
-     * @param weights - Optional array of weights (same length as input array)
-     * @returns An array where index i contains the count of occurrences of i in the input array
-     */
-    function bincount(array, minLength, weights) {
-        if (minLength === void 0) { minLength = 0; }
-        if (array.length === 0) {
-            return Array.from({ length: minLength }, function () { return 0; });
+    var annotatedArrays = new WeakSet();
+    var vectors = new WeakSet();
+    var matrices = new WeakSet();
+    var grids = new WeakSet();
+    function annotate(value) {
+        if (!Array.isArray(value)) {
+            return value;
         }
-        // Find the maximum value to determine output array size
-        var maxValue = Math.max.apply(Math, __spreadArray([], __read(array), false));
-        var outputLength = Math.max(maxValue + 1, minLength);
-        var counts = Array.from({ length: outputLength }, function () { return 0; });
-        // Count occurrences (or sum weights if provided)
-        for (var i = 0; i < array.length; i++) {
-            var value = Math.floor(array[i]);
-            if (value < outputLength) {
-                // If weights provided, add weight; otherwise add 1
-                counts[value] += weights ? weights[i] : 1;
-            }
+        if (annotatedArrays.has(value)) {
+            return value;
         }
-        return counts;
+        isVector(value);
+        if (!isMatrix(value)) {
+            isGrid(value);
+        }
+        return value;
     }
-
-    function calcMean(vector) {
-        if (vector.length === 0) {
-            return 0;
-        }
-        var sum = vector.reduce(function (acc, val) { return acc + val; }, 0);
-        return sum / vector.length;
-    }
-
-    function calcVariance(vector) {
-        if (vector.length === 0) {
-            return 0;
-        }
-        var mean = calcMean(vector);
-        var variance = vector.reduce(function (acc, val) { return acc + Math.pow((val - mean), 2); }, 0) / vector.length;
-        return variance;
-    }
-
-    function calcStdDev(vector) {
-        if (vector.length === 0) {
-            return 0;
-        }
-        var variance = calcVariance(vector);
-        return Math.sqrt(variance);
-    }
-
-    /**
-     * Calculates the Shannon entropy of a vector.
-     * Entropy measures the amount of uncertainty or randomness in the data.
-     *
-     * @param vector - An array of values to calculate entropy for
-     * @returns The entropy value (in bits) or 0 for empty arrays
-     */
-    function calculateEntropy(vector) {
-        var e_1, _a, e_2, _b;
-        // Return 0 for empty vectors
-        if (vector.length === 0) {
-            return 0;
-        }
-        // Count occurrences of each value
-        var frequencies = new Map();
-        try {
-            for (var vector_1 = __values(vector), vector_1_1 = vector_1.next(); !vector_1_1.done; vector_1_1 = vector_1.next()) {
-                var value = vector_1_1.value;
-                frequencies.set(value, (frequencies.get(value) || 0) + 1);
-            }
-        }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
-        finally {
-            try {
-                if (vector_1_1 && !vector_1_1.done && (_a = vector_1.return)) _a.call(vector_1);
-            }
-            finally { if (e_1) throw e_1.error; }
-        }
-        // Get the total number of elements
-        var total = vector.length;
-        // Calculate entropy using Shannon's formula
-        var entropy = 0;
-        try {
-            for (var _c = __values(frequencies.values()), _d = _c.next(); !_d.done; _d = _c.next()) {
-                var frequency = _d.value;
-                var probability = frequency / total;
-                // Skip cases where probability is 0 (log(0) is undefined)
-                if (probability > 0) {
-                    entropy -= probability * Math.log2(probability);
-                }
-            }
-        }
-        catch (e_2_1) { e_2 = { error: e_2_1 }; }
-        finally {
-            try {
-                if (_d && !_d.done && (_b = _c.return)) _b.call(_c);
-            }
-            finally { if (e_2) throw e_2.error; }
-        }
-        return entropy;
-    }
-
-    /**
-     * Calculates the mode (most frequent value(s)) of a dataset
-     * @param values An array of values of any type
-     * @returns An array containing the mode(s) of the dataset
-     */
-    function mode(values) {
-        var e_1, _a, e_2, _b, e_3, _c;
-        if (values.length === 0) {
-            return [];
-        }
-        // Create a frequency map
-        var frequencyMap = new Map();
-        try {
-            // Count occurrences of each value
-            for (var values_1 = __values(values), values_1_1 = values_1.next(); !values_1_1.done; values_1_1 = values_1.next()) {
-                var value = values_1_1.value;
-                frequencyMap.set(value, (frequencyMap.get(value) || 0) + 1);
-            }
-        }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
-        finally {
-            try {
-                if (values_1_1 && !values_1_1.done && (_a = values_1.return)) _a.call(values_1);
-            }
-            finally { if (e_1) throw e_1.error; }
-        }
-        // Find the maximum frequency
-        var maxFrequency = 0;
-        try {
-            for (var _d = __values(frequencyMap.values()), _e = _d.next(); !_e.done; _e = _d.next()) {
-                var frequency = _e.value;
-                if (frequency > maxFrequency) {
-                    maxFrequency = frequency;
-                }
-            }
-        }
-        catch (e_2_1) { e_2 = { error: e_2_1 }; }
-        finally {
-            try {
-                if (_e && !_e.done && (_b = _d.return)) _b.call(_d);
-            }
-            finally { if (e_2) throw e_2.error; }
-        }
-        // If all values appear only once, there is no mode
-        if (maxFrequency === 1) {
-            return [];
-        }
-        // Collect all values that appear with the maximum frequency
-        var modes = [];
-        try {
-            for (var _f = __values(frequencyMap.entries()), _g = _f.next(); !_g.done; _g = _f.next()) {
-                var _h = __read(_g.value, 2), value = _h[0], frequency = _h[1];
-                if (frequency === maxFrequency) {
-                    modes.push(value);
-                }
-            }
-        }
-        catch (e_3_1) { e_3 = { error: e_3_1 }; }
-        finally {
-            try {
-                if (_g && !_g.done && (_c = _f.return)) _c.call(_f);
-            }
-            finally { if (e_3) throw e_3.error; }
-        }
-        return modes;
-    }
-
     function isVector(vector) {
         if (!Array.isArray(vector)) {
             return false;
         }
-        return vector.every(function (elem) { return isNumber(elem, { finite: true }); });
+        if (vectors.has(vector)) {
+            return true;
+        }
+        if (vector.every(function (elem) { return isNumber(elem, { finite: true }); })) {
+            annotatedArrays.add(vector);
+            vectors.add(vector);
+            return true;
+        }
+        return false;
     }
     function assertVector(vector, sourceCodeInfo) {
         if (!isVector(vector)) {
@@ -2530,1217 +2383,97 @@ var Playground = (function (exports) {
             throw new LitsError("Expected a non empty vector, but got ".concat(vector), sourceCodeInfo);
         }
     }
-    var vectorNormalExpression = {
-        'v:vector?': {
-            evaluate: function (_a) {
-                var _b = __read(_a, 1), vector = _b[0];
-                return isVector(vector);
-            },
-            paramCount: 1,
-        },
-        'v:sorted?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return vector.every(function (val, i) { return i === 0 || val >= vector[i - 1]; });
-            },
-            paramCount: 1,
-        },
-        'v:monotonic?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return vector.every(function (val, i) { return i === 0 || val >= vector[i - 1]; })
-                    || vector.every(function (val, i) { return i === 0 || val <= vector[i - 1]; });
-            },
-            paramCount: 1,
-        },
-        'v:+': {
-            evaluate: function (params, sourceCodeInfo) {
-                var e_1, _a;
-                var firstParam = params[0];
-                assertVector(firstParam, sourceCodeInfo);
-                var restParams = params.slice(1);
-                try {
-                    for (var restParams_1 = __values(restParams), restParams_1_1 = restParams_1.next(); !restParams_1_1.done; restParams_1_1 = restParams_1.next()) {
-                        var param = restParams_1_1.value;
-                        assertVector(param, sourceCodeInfo);
-                        if (firstParam.length !== param.length) {
-                            throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                        }
-                    }
+    function isGrid(grid) {
+        var e_1, _a;
+        if (!Array.isArray(grid)) {
+            return false;
+        }
+        if (grids.has(grid)) {
+            return true;
+        }
+        if (grid.length === 0) {
+            return false;
+        }
+        if (!Array.isArray(grid[0])) {
+            return false;
+        }
+        var nbrOfCols = grid[0].length;
+        try {
+            for (var _b = __values(grid.slice(1)), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var row = _c.value;
+                if (!Array.isArray(row)) {
+                    return false;
                 }
-                catch (e_1_1) { e_1 = { error: e_1_1 }; }
-                finally {
-                    try {
-                        if (restParams_1_1 && !restParams_1_1.done && (_a = restParams_1.return)) _a.call(restParams_1);
-                    }
-                    finally { if (e_1) throw e_1.error; }
+                if (row.length !== nbrOfCols) {
+                    return false;
                 }
-                var rest = restParams;
-                return rest.reduce(function (acc, vector) { return acc.map(function (val, i) { return val + vector[i]; }); }, firstParam);
-            },
-            paramCount: { min: 1 },
-        },
-        'v:-': {
-            evaluate: function (params, sourceCodeInfo) {
-                var e_2, _a;
-                var firstParam = params[0];
-                assertVector(firstParam, sourceCodeInfo);
-                var restParams = params.slice(1);
-                try {
-                    for (var restParams_2 = __values(restParams), restParams_2_1 = restParams_2.next(); !restParams_2_1.done; restParams_2_1 = restParams_2.next()) {
-                        var param = restParams_2_1.value;
-                        assertVector(param, sourceCodeInfo);
-                        if (firstParam.length !== param.length) {
-                            throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                        }
-                    }
+                if (row.some(function (cell) { return isAny(cell); })) {
+                    return false;
                 }
-                catch (e_2_1) { e_2 = { error: e_2_1 }; }
-                finally {
-                    try {
-                        if (restParams_2_1 && !restParams_2_1.done && (_a = restParams_2.return)) _a.call(restParams_2);
-                    }
-                    finally { if (e_2) throw e_2.error; }
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        annotatedArrays.add(grid);
+        grids.add(grid);
+        return true;
+    }
+    function assertGrid(table, sourceCodeInfo) {
+        if (!isGrid(table)) {
+            throw new LitsError("Expected a grid, but got ".concat(table), sourceCodeInfo);
+        }
+    }
+    function isMatrix(matrix) {
+        var e_2, _a;
+        if (!Array.isArray(matrix)) {
+            return false;
+        }
+        if (matrices.has(matrix)) {
+            return true;
+        }
+        if (matrix.length === 0) {
+            return false;
+        }
+        if (!Array.isArray(matrix[0])) {
+            return false;
+        }
+        var nbrOfCols = matrix[0].length;
+        try {
+            for (var _b = __values(matrix.slice(1)), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var row = _c.value;
+                if (!Array.isArray(row)) {
+                    return false;
                 }
-                if (restParams.length === 0) {
-                    return firstParam.map(function (val) { return -val; });
+                if (row.length !== nbrOfCols) {
+                    return false;
                 }
-                var rest = restParams;
-                return rest.reduce(function (acc, vector) { return acc.map(function (val, i) { return val - vector[i]; }); }, firstParam);
-            },
-            paramCount: { min: 1 },
-        },
-        'v:*': {
-            evaluate: function (params, sourceCodeInfo) {
-                var e_3, _a;
-                var firstParam = params[0];
-                assertVector(firstParam, sourceCodeInfo);
-                var restParams = params.slice(1);
-                try {
-                    for (var restParams_3 = __values(restParams), restParams_3_1 = restParams_3.next(); !restParams_3_1.done; restParams_3_1 = restParams_3.next()) {
-                        var param = restParams_3_1.value;
-                        assertVector(param, sourceCodeInfo);
-                        if (firstParam.length !== param.length) {
-                            throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                        }
-                    }
+                if (row.some(function (cell) { return !isNumber(cell, { finite: true }); })) {
+                    return false;
                 }
-                catch (e_3_1) { e_3 = { error: e_3_1 }; }
-                finally {
-                    try {
-                        if (restParams_3_1 && !restParams_3_1.done && (_a = restParams_3.return)) _a.call(restParams_3);
-                    }
-                    finally { if (e_3) throw e_3.error; }
-                }
-                var rest = restParams;
-                return rest.reduce(function (acc, vector) { return acc.map(function (val, i) { return val * vector[i]; }); }, firstParam);
-            },
-            paramCount: { min: 1 },
-        },
-        'v:/': {
-            evaluate: function (params, sourceCodeInfo) {
-                var e_4, _a;
-                var firstParam = params[0];
-                assertVector(firstParam, sourceCodeInfo);
-                var restParams = params.slice(1);
-                try {
-                    for (var restParams_4 = __values(restParams), restParams_4_1 = restParams_4.next(); !restParams_4_1.done; restParams_4_1 = restParams_4.next()) {
-                        var param = restParams_4_1.value;
-                        assertVector(param, sourceCodeInfo);
-                        if (firstParam.length !== param.length) {
-                            throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                        }
-                    }
-                }
-                catch (e_4_1) { e_4 = { error: e_4_1 }; }
-                finally {
-                    try {
-                        if (restParams_4_1 && !restParams_4_1.done && (_a = restParams_4.return)) _a.call(restParams_4);
-                    }
-                    finally { if (e_4) throw e_4.error; }
-                }
-                if (restParams.length === 0) {
-                    return firstParam.map(function (val) { return 1 / val; });
-                }
-                var rest = restParams;
-                return rest.reduce(function (acc, vector) { return acc.map(function (val, i) { return val / vector[i]; }); }, firstParam);
-            },
-            paramCount: { min: 1 },
-        },
-        'v:**': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], exponent = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(exponent, sourceCodeInfo, { finite: true });
-                return vector.map(function (val) { return Math.pow(val, exponent); });
-            },
-            paramCount: 2,
-        },
-        'v:scale': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], scalar = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(scalar, sourceCodeInfo, { finite: true });
-                return vector.map(function (val) { return val * scalar; });
-            },
-            paramCount: 2,
-        },
-        'v:abs': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return vector.map(function (val) { return Math.abs(val); });
-            },
-            paramCount: 1,
-        },
-        'v:dot': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                return vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
-            },
-            paramCount: 2,
-        },
-        'v:cross': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== 3 || vectorB.length !== 3) {
-                    throw new LitsError('Cross product is only defined for 3D vectors', sourceCodeInfo);
-                }
-                return [
-                    vectorA[1] * vectorB[2] - vectorA[2] * vectorB[1],
-                    vectorA[2] * vectorB[0] - vectorA[0] * vectorB[2],
-                    vectorA[0] * vectorB[1] - vectorA[1] * vectorB[0],
-                ];
-            },
-            paramCount: 2,
-        },
-        'v:normalize': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                var magnitude = Math.sqrt(vector.reduce(function (acc, val) { return acc + val * val; }, 0));
-                if (magnitude === 0) {
-                    throw new LitsError('Cannot normalize a zero vector', sourceCodeInfo);
-                }
-                return vector.map(function (val) { return val / magnitude; });
-            },
-            paramCount: 1,
-        },
-        'v:magnitude': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return Math.sqrt(vector.reduce(function (acc, val) { return acc + val * val; }, 0));
-            },
-            paramCount: 1,
-        },
-        'v:sum': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return vector.reduce(function (acc, val) { return acc + val; }, 0);
-            },
-            paramCount: 1,
-        },
-        'v:product': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return vector.reduce(function (acc, val) { return acc * val; }, 1);
-            },
-            paramCount: 1,
-        },
-        'v:mean': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return calcMean(vector);
-            },
-            paramCount: 1,
-        },
-        'v:median': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
-                var mid = Math.floor(sorted.length / 2);
-                return sorted.length % 2 === 0
-                    ? (sorted[mid - 1] + sorted[mid]) / 2
-                    : sorted[mid];
-            },
-            paramCount: 1,
-        },
-        'v:mode': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return mode(vector);
-            },
-            paramCount: 1,
-        },
-        'v:variance': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                var mean = calcMean(vector);
-                return vector.reduce(function (acc, val) { return acc + Math.pow((val - mean), 2); }, 0) / vector.length;
-            },
-            paramCount: 1,
-        },
-        'v:std-dev': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return Math.sqrt(vector.reduce(function (acc, val) { return acc + val; }, 0) / vector.length);
-            },
-            paramCount: 1,
-        },
-        'v:min': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertNonEmptyVector(vector, sourceCodeInfo);
-                return vector.reduce(function (acc, val) { return (val < vector[acc] ? val : acc); }, vector[0]);
-            },
-            paramCount: 1,
-        },
-        'v:max': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertNonEmptyVector(vector, sourceCodeInfo);
-                return vector.reduce(function (acc, val) { return (val > vector[acc] ? val : acc); }, vector[0]);
-            },
-            paramCount: 1,
-        },
-        'v:min-index': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertNonEmptyVector(vector, sourceCodeInfo);
-                return vector.reduce(function (acc, val, i) { return (val < vector[acc] ? i : acc); }, 0);
-            },
-            paramCount: 1,
-        },
-        'v:max-index': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertNonEmptyVector(vector, sourceCodeInfo);
-                return vector.reduce(function (acc, val, i) { return (val > vector[acc] ? i : acc); }, 0);
-            },
-            paramCount: 1,
-        },
-        'v:sort-indices': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return __spreadArray([], __read(vector.keys()), false).sort(function (a, b) { return vector[a] - vector[b]; });
-            },
-            paramCount: 1,
-        },
-        'v:count-values': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var e_5, _b;
-                var _c = __read(_a, 1), vector = _c[0];
-                assertVector(vector, sourceCodeInfo);
-                var frequencyMap = new Map();
-                try {
-                    for (var vector_1 = __values(vector), vector_1_1 = vector_1.next(); !vector_1_1.done; vector_1_1 = vector_1.next()) {
-                        var value = vector_1_1.value;
-                        frequencyMap.set(value, (frequencyMap.get(value) || 0) + 1);
-                    }
-                }
-                catch (e_5_1) { e_5 = { error: e_5_1 }; }
-                finally {
-                    try {
-                        if (vector_1_1 && !vector_1_1.done && (_b = vector_1.return)) _b.call(vector_1);
-                    }
-                    finally { if (e_5) throw e_5.error; }
-                }
-                return __spreadArray([], __read(frequencyMap.entries()), false).sort(function (a, b) {
-                    // First compare by count (descending)
-                    var countDiff = b[1] - a[1];
-                    if (countDiff !== 0)
-                        return countDiff;
-                    // If counts are equal, sort by value (ascending)
-                    return a[0] - b[0];
-                });
-            },
-            paramCount: 1,
-        },
-        'v:linspace': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), start = _b[0], end = _b[1], numPoints = _b[2];
-                assertNumber(start, sourceCodeInfo, { finite: true });
-                assertNumber(end, sourceCodeInfo, { finite: true });
-                assertNumber(numPoints, sourceCodeInfo, { integer: true, positive: true });
-                var step = (end - start) / (numPoints - 1);
-                return Array.from({ length: numPoints }, function (_, i) { return start + i * step; });
-            },
-            paramCount: 3,
-        },
-        'v:ones': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), length = _b[0];
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                return Array.from({ length: length }, function () { return 1; });
-            },
-            paramCount: 1,
-        },
-        'v:zeros': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), length = _b[0];
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                return Array.from({ length: length }, function () { return 0; });
-            },
-            paramCount: 1,
-        },
-        'v:fill': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), length = _b[0], value = _b[1];
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                return Array.from({ length: length }, function () { return value; });
-            },
-            paramCount: 2,
-        },
-        'v:generate': {
-            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
-                var _c = __read(_a, 2), length = _c[0], generator = _c[1];
-                var executeFunction = _b.executeFunction;
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                assertLitsFunction(generator, sourceCodeInfo);
-                return Array.from({ length: length }, function (_, i) {
-                    var value = executeFunction(generator, [i], contextStack, sourceCodeInfo);
-                    assertNumber(value, sourceCodeInfo, { finite: true });
-                    return value;
-                });
-            },
-            paramCount: 2,
-        },
-        'v:cumsum': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return vector.reduce(function (acc, val) {
-                    var last = acc[acc.length - 1] || 0;
-                    acc.push(last + val);
-                    return acc;
-                }, []);
-            },
-            paramCount: 1,
-        },
-        'v:cumprod': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return vector.reduce(function (acc, val) {
-                    var last = acc[acc.length - 1] || 1;
-                    acc.push(last * val);
-                    return acc;
-                }, []);
-            },
-            paramCount: 1,
-        },
-        'v:angle': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                var dotProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
-                var magnitudeA = Math.sqrt(vectorA.reduce(function (acc, val) { return acc + val * val; }, 0));
-                var magnitudeB = Math.sqrt(vectorB.reduce(function (acc, val) { return acc + val * val; }, 0));
-                return Math.acos(dotProduct / (magnitudeA * magnitudeB));
-            },
-            paramCount: 2,
-        },
-        'v:projection': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                var dotProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
-                var magnitudeB = Math.sqrt(vectorB.reduce(function (acc, val) { return acc + val * val; }, 0));
-                return vectorB.map(function (val) { return (dotProduct / (Math.pow(magnitudeB, 2))) * val; });
-            },
-            paramCount: 2,
-        },
-        'v:orthogonal?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                var dotProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
-                return dotProduct === 0;
-            },
-            paramCount: 2,
-        },
-        'v:parallel?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                var crossProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
-                return crossProduct === 0;
-            },
-            paramCount: 2,
-        },
-        'v:collinear?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                var crossProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
-                return crossProduct === 0;
-            },
-            paramCount: 2,
-        },
-        'v:cosine-similarity': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                var dotProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
-                var magnitudeA = Math.sqrt(vectorA.reduce(function (acc, val) { return acc + val * val; }, 0));
-                var magnitudeB = Math.sqrt(vectorB.reduce(function (acc, val) { return acc + val * val; }, 0));
-                return dotProduct / (magnitudeA * magnitudeB);
-            },
-            paramCount: 2,
-        },
-        'v:distance': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                return Math.sqrt(vectorA.reduce(function (acc, val, i) { return acc + Math.pow((val - vectorB[i]), 2); }, 0));
-            },
-            paramCount: 2,
-        },
-        'v:euclidean-distance': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                return Math.sqrt(vectorA.reduce(function (acc, val, i) { return acc + Math.pow((val - vectorB[i]), 2); }, 0));
-            },
-            paramCount: 2,
-        },
-        'v:manhattan-distance': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                return vectorA.reduce(function (acc, val, i) { return acc + Math.abs(val - vectorB[i]); }, 0);
-            },
-            paramCount: 2,
-        },
-        'v:hamming-distance': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                return vectorA.reduce(function (acc, val, i) { return acc + (val !== vectorB[i] ? 1 : 0); }, 0);
-            },
-            paramCount: 2,
-        },
-        'v:chebyshev-distance': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                return Math.max.apply(Math, __spreadArray([], __read(vectorA.map(function (val, i) { return Math.abs(val - vectorB[i]); })), false));
-            },
-            paramCount: 2,
-        },
-        'v:minkowski-distance': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), vectorA = _b[0], vectorB = _b[1], p = _b[2];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                assertNumber(p, sourceCodeInfo, { finite: true });
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                return Math.pow(vectorA.reduce(function (acc, val, i) { return acc + Math.pow(Math.abs(val - vectorB[i]), p); }, 0), (1 / p));
-            },
-            paramCount: 3,
-        },
-        'v:jaccard-distance': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                var intersection = vectorA.filter(function (val) { return vectorB.includes(val); }).length;
-                var union = new Set(__spreadArray(__spreadArray([], __read(vectorA), false), __read(vectorB), false)).size;
-                return 1 - intersection / union;
-            },
-            paramCount: 2,
-        },
-        'v:dice-coefficient': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                var intersection = vectorA.filter(function (val) { return vectorB.includes(val); }).length;
-                return (2 * intersection) / (vectorA.length + vectorB.length);
-            },
-            paramCount: 2,
-        },
-        'v:levenshtein-distance': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                var m = vectorA.length;
-                var n = vectorB.length;
-                var d = Array.from({ length: m + 1 }, function () { return Array(n + 1).fill(0); });
-                for (var i = 0; i <= m; i += 1) {
-                    d[i][0] = i;
-                }
-                for (var j = 0; j <= n; j += 1) {
-                    d[0][j] = j;
-                }
-                for (var i = 1; i <= m; i += 1) {
-                    for (var j = 1; j <= n; j += 1) {
-                        var cost = vectorA[i - 1] === vectorB[j - 1] ? 0 : 1;
-                        d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + cost);
-                    }
-                }
-                return d[m][n];
-            },
-            paramCount: 2,
-        },
-        'v:l1-norm': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return vector.reduce(function (acc, val) { return acc + Math.abs(val); }, 0);
-            },
-            paramCount: 1,
-        },
-        'v:l2-norm': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return Math.sqrt(vector.reduce(function (acc, val) { return acc + val * val; }, 0));
-            },
-            paramCount: 1,
-        },
-        'v:quartiles': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
-                var q1 = sorted[Math.floor((sorted.length / 4))];
-                var q2 = sorted[Math.floor((sorted.length / 2))];
-                var q3 = sorted[Math.floor((3 * sorted.length) / 4)];
-                return [q1, q2, q3];
-            },
-            paramCount: 1,
-        },
-        'v:iqr': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
-                var q1 = sorted[Math.floor((sorted.length / 4))];
-                var q3 = sorted[Math.floor((3 * sorted.length) / 4)];
-                return q3 - q1;
-            },
-            paramCount: 1,
-        },
-        'v:percentile': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], percentile = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(percentile, sourceCodeInfo, { finite: true });
-                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
-                var index = Math.floor((percentile / 100) * (sorted.length - 1));
-                return sorted[index];
-            },
-            paramCount: 2,
-        },
-        'v:quantile': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], quantile = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(quantile, sourceCodeInfo, { finite: true });
-                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
-                var index = Math.floor(quantile * (sorted.length - 1));
-                return sorted[index];
-            },
-            paramCount: 2,
-        },
-        'v:range': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertNonEmptyVector(vector, sourceCodeInfo);
-                var min = vector.reduce(function (acc, val) { return (val < vector[acc] ? val : acc); }, vector[0]);
-                var max = vector.reduce(function (acc, val) { return (val > vector[acc] ? val : acc); }, vector[0]);
-                return max - min;
-            },
-            paramCount: 1,
-        },
-        'v:skewness': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                var mean = calcMean(vector);
-                var stdDev = calcStdDev(vector);
-                return vector.reduce(function (acc, val) { return acc + (Math.pow((val - mean), 3)); }, 0) / (vector.length * Math.pow(stdDev, 3));
-            },
-            paramCount: 1,
-        },
-        'v:kurtosis': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                var mean = calcMean(vector);
-                var stdDev = calcStdDev(vector);
-                return vector.reduce(function (acc, val) { return acc + (Math.pow((val - mean), 4)); }, 0) / (vector.length * Math.pow(stdDev, 4));
-            },
-            paramCount: 1,
-        },
-        'v:geometric-mean': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return Math.exp(vector.reduce(function (acc, val) { return acc + Math.log(val); }, 0) / vector.length);
-            },
-            paramCount: 1,
-        },
-        'v:harmonic-mean': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return vector.length / vector.reduce(function (acc, val) { return acc + 1 / val; }, 0);
-            },
-            paramCount: 1,
-        },
-        'v:rms': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return Math.sqrt(vector.reduce(function (acc, val) { return acc + Math.pow(val, 2); }, 0) / vector.length);
-            },
-            paramCount: 1,
-        },
-        'v:z-score': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                var mean = calcMean(vector);
-                var stdDev = calcStdDev(vector);
-                return vector.map(function (val) { return (val - mean) / stdDev; });
-            },
-            paramCount: 1,
-        },
-        'v:normalize-minmax': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                var min = vector.reduce(function (acc, val) { return (val < vector[acc] ? val : acc); }, vector[0]);
-                var max = vector.reduce(function (acc, val) { return (val > vector[acc] ? val : acc); }, vector[0]);
-                return vector.map(function (val) { return (val - min) / (max - min); });
-            },
-            paramCount: 1,
-        },
-        'v:normalize-robust': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                var median = vector.reduce(function (acc, val) { return acc + val; }, 0) / vector.length;
-                var iqr = vector.reduce(function (acc, val) { return acc + Math.abs(val - median); }, 0) / vector.length;
-                return vector.map(function (val) { return (val - median) / iqr; });
-            },
-            paramCount: 1,
-        },
-        'v:covariance': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                var meanA = calcMean(vectorA);
-                var meanB = calcMean(vectorB);
-                return vectorA.reduce(function (acc, val, i) { return acc + (val - meanA) * (vectorB[i] - meanB); }, 0) / vectorA.length;
-            },
-            paramCount: 2,
-        },
-        'v:correlation': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                var meanA = calcMean(vectorA);
-                var meanB = calcMean(vectorB);
-                var numerator = vectorA.reduce(function (acc, val, i) { return acc + (val - meanA) * (vectorB[i] - meanB); }, 0);
-                var denominator = Math.sqrt(vectorA.reduce(function (acc, val) { return acc + Math.pow((val - meanA), 2); }, 0) * vectorB.reduce(function (acc, val) { return acc + Math.pow((val - meanB), 2); }, 0));
-                return numerator / denominator;
-            },
-            paramCount: 2,
-        },
-        'v:spearman-correlation': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                var rankA = __spreadArray([], __read(vectorA.keys()), false).sort(function (a, b) { return vectorA[a] - vectorA[b]; });
-                var rankB = __spreadArray([], __read(vectorB.keys()), false).sort(function (a, b) { return vectorB[a] - vectorB[b]; });
-                return vectorA.reduce(function (acc, _val, i) { return acc + (rankA[i] - rankB[i]); }, 0) / vectorA.length;
-            },
-            paramCount: 2,
-        },
-        'v:kendall-tau': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                var concordant = 0;
-                var discordant = 0;
-                for (var i = 0; i < vectorA.length; i += 1) {
-                    for (var j = i + 1; j < vectorA.length; j += 1) {
-                        if ((vectorA[i] - vectorA[j]) * (vectorB[i] - vectorB[j]) > 0) {
-                            concordant += 1;
-                        }
-                        else {
-                            discordant += 1;
-                        }
-                    }
-                }
-                return (concordant - discordant) / Math.sqrt(Math.pow((concordant + discordant), 2));
-            },
-            paramCount: 2,
-        },
-        'v:histogram': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var e_6, _b;
-                var _c = __read(_a, 2), vector = _c[0], bins = _c[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(bins, sourceCodeInfo, { integer: true, positive: true });
-                var min = vector.reduce(function (acc, val) { return (val < vector[acc] ? val : acc); }, vector[0]);
-                var max = vector.reduce(function (acc, val) { return (val > vector[acc] ? val : acc); }, vector[0]);
-                var binSize = (max - min) / bins;
-                var histogram = Array.from({ length: bins }, function () { return 0; });
-                try {
-                    for (var vector_2 = __values(vector), vector_2_1 = vector_2.next(); !vector_2_1.done; vector_2_1 = vector_2.next()) {
-                        var value = vector_2_1.value;
-                        var binIndex = Math.floor((value - min) / binSize);
-                        if (binIndex >= 0 && binIndex < bins) {
-                            histogram[binIndex] += 1;
-                        }
-                    }
-                }
-                catch (e_6_1) { e_6 = { error: e_6_1 }; }
-                finally {
-                    try {
-                        if (vector_2_1 && !vector_2_1.done && (_b = vector_2.return)) _b.call(vector_2);
-                    }
-                    finally { if (e_6) throw e_6.error; }
-                }
-                return histogram;
-            },
-            paramCount: 2,
-        },
-        'v:cdf': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], value = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(value, sourceCodeInfo, { finite: true });
-                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
-                var index = sorted.findIndex(function (val) { return val > value; });
-                return index === -1 ? 1 : index / sorted.length;
-            },
-            paramCount: 2,
-        },
-        'v:ecdf': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], value = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(value, sourceCodeInfo, { finite: true });
-                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
-                var index = sorted.findIndex(function (val) { return val >= value; });
-                return index === -1 ? 1 : (index + 1) / sorted.length;
-            },
-            paramCount: 2,
-        },
-        'v:no-extreme-eutliers?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                var mean = calcMean(vector);
-                var stdDev = calcStdDev(vector);
-                return vector.every(function (val) { return Math.abs((val - mean) / stdDev) < 3; });
-            },
-            paramCount: 1,
-        },
-        'v:outliers': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                var mean = calcMean(vector);
-                var stdDev = calcStdDev(vector);
-                return vector.filter(function (val) { return Math.abs((val - mean) / stdDev) > 3; });
-            },
-            paramCount: 1,
-        },
-        'v:moving-average': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
-                var result = [];
-                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
-                    var sum = vector.slice(i, i + windowSize).reduce(function (acc, val) { return acc + val; }, 0);
-                    result.push(sum / windowSize);
-                }
-                return result;
-            },
-            paramCount: 2,
-        },
-        'v:moving-median': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
-                var result = [];
-                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
-                    var median = vector.slice(i, i + windowSize).sort(function (a, b) { return a - b; })[Math.floor(windowSize / 2)];
-                    result.push(median);
-                }
-                return result;
-            },
-            paramCount: 2,
-        },
-        'v:moving-std': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
-                var result = [];
-                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
-                    var stdDev = calcStdDev(vector.slice(i, i + windowSize));
-                    result.push(stdDev);
-                }
-                return result;
-            },
-            paramCount: 2,
-        },
-        'v:moving-sum': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
-                var result = [];
-                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
-                    var sum = vector.slice(i, i + windowSize).reduce(function (acc, val) { return acc + val; }, 0);
-                    result.push(sum);
-                }
-                return result;
-            },
-            paramCount: 2,
-        },
-        'v:moving-product': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
-                var result = [];
-                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
-                    var product = vector.slice(i, i + windowSize).reduce(function (acc, val) { return acc * val; }, 1);
-                    result.push(product);
-                }
-                return result;
-            },
-            paramCount: 2,
-        },
-        'v:moving-min': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
-                var result = [];
-                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
-                    var min = vector.slice(i, i + windowSize).reduce(function (acc, val) { return (val < acc ? val : acc); }, vector[i]);
-                    result.push(min);
-                }
-                return result;
-            },
-            paramCount: 2,
-        },
-        'v:moving-max': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
-                var result = [];
-                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
-                    var max = vector.slice(i, i + windowSize).reduce(function (acc, val) { return (val > acc ? val : acc); }, vector[i]);
-                    result.push(max);
-                }
-                return result;
-            },
-            paramCount: 2,
-        },
-        'moving-variance': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
-                var result = [];
-                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
-                    result.push(calcVariance(vector.slice(i, i + windowSize)));
-                }
-                return result;
-            },
-            paramCount: 2,
-        },
-        'moving-rms': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
-                var result = [];
-                var _loop_1 = function (i) {
-                    var mean = calcMean(vector.slice(i, i + windowSize));
-                    var rms = Math.sqrt(vector.slice(i, i + windowSize).reduce(function (acc, val) { return acc + Math.pow((val - mean), 2); }, 0) / windowSize);
-                    result.push(rms);
-                };
-                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
-                    _loop_1(i);
-                }
-                return result;
-            },
-            paramCount: 2,
-        },
-        'v:moving-percentile': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), vector = _b[0], windowSize = _b[1], percentile = _b[2];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
-                assertNumber(percentile, sourceCodeInfo, { finite: true });
-                var result = [];
-                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
-                    var sorted = vector.slice(i, i + windowSize).sort(function (a, b) { return a - b; });
-                    var index = Math.floor(percentile * (sorted.length - 1));
-                    result.push(sorted[index]);
-                }
-                return result;
-            },
-            paramCount: 3,
-        },
-        'v:moving-quantile': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), vector = _b[0], windowSize = _b[1], quantile = _b[2];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
-                assertNumber(quantile, sourceCodeInfo, { finite: true });
-                var result = [];
-                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
-                    var sorted = vector.slice(i, i + windowSize).sort(function (a, b) { return a - b; });
-                    var index = Math.floor(quantile * (sorted.length - 1));
-                    result.push(sorted[index]);
-                }
-                return result;
-            },
-            paramCount: 3,
-        },
-        'v:entropy': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return calculateEntropy(vector);
-            },
-            paramCount: 1,
-        },
-        'v:gini-coefficient': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
-                var n = sorted.length;
-                var sum = sorted.reduce(function (acc, val) { return acc + val; }, 0);
-                var gini = (2 * sorted.reduce(function (acc, val, i) { return acc + (i + 1) * val; }, 0)) / (n * sum) - (n + 1) / n;
-                return gini;
-            },
-            paramCount: 1,
-        },
-        'v:bincount': {
-            evaluate: function (params, sourceCodeInfo) {
-                var _a, _b;
-                var vector = params[0];
-                assertVector(vector, sourceCodeInfo);
-                vector.forEach(function (val) { return assertNumber(val, sourceCodeInfo, { finite: true, integer: true, nonNegative: true }); });
-                var minSize = (_a = params[1]) !== null && _a !== void 0 ? _a : 0;
-                assertNumber(minSize, sourceCodeInfo, { integer: true, nonNegative: true });
-                var weights = (_b = params[2]) !== null && _b !== void 0 ? _b : undefined;
-                if (weights !== null) {
-                    assertVector(weights, sourceCodeInfo);
-                    if (weights.length !== vector.length) {
-                        throw new LitsError('Weights vector must be the same length as the input vector', sourceCodeInfo);
-                    }
-                    weights.forEach(function (val) { return assertNumber(val, sourceCodeInfo, { finite: true }); });
-                }
-                return bincount(vector, minSize, weights);
-            },
-            paramCount: { min: 1, max: 3 },
-        },
-        'v:arithmetic-sum': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), start = _b[0], step = _b[1], length = _b[2];
-                assertNumber(start, sourceCodeInfo, { finite: true });
-                assertNumber(step, sourceCodeInfo, { finite: true });
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                return (length / 2) * (2 * start + (length - 1) * step);
-            },
-            paramCount: 3,
-        },
-        'v:autocorrelation': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], lag = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                var effectiveLag = lag !== null && lag !== void 0 ? lag : vector.length - 1;
-                assertNumber(effectiveLag, sourceCodeInfo, { integer: true });
-                if (effectiveLag >= vector.length) {
-                    throw new LitsError('Lag must be less than the length of the vector', sourceCodeInfo);
-                }
-                var mean = calcMean(vector);
-                var variance = calcVariance(vector);
-                var autocovariance = vector.reduce(function (acc, val, i) { return acc + (val - mean) * (vector[i + effectiveLag] - mean); }, 0) / vector.length;
-                return autocovariance / variance;
-            },
-            paramCount: { min: 1, max: 2 },
-        },
-        'v:cross-correlation': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), vectorA = _b[0], vectorB = _b[1], lag = _b[2];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                var effectiveLag = lag !== null && lag !== void 0 ? lag : vectorA.length - 1;
-                assertNumber(effectiveLag, sourceCodeInfo, { integer: true, positive: true });
-                if (effectiveLag >= vectorA.length || effectiveLag >= vectorB.length) {
-                    throw new LitsError('Lag must be less than the length of the vectors', sourceCodeInfo);
-                }
-                var n = vectorA.length;
-                var meanA = vectorA.reduce(function (sum, x) { return sum + x; }, 0) / n;
-                var meanB = vectorB.reduce(function (sum, x) { return sum + x; }, 0) / n;
-                var stdA = Math.sqrt(vectorA.reduce(function (sum, x) { return sum + Math.pow((x - meanA), 2); }, 0) / n);
-                var stdB = Math.sqrt(vectorB.reduce(function (sum, x) { return sum + Math.pow((x - meanB), 2); }, 0) / n);
-                if (stdA === 0 || stdB === 0)
-                    return 0;
-                var overlapLength = n - Math.abs(effectiveLag);
-                var sum = 0;
-                if (effectiveLag >= 0) {
-                    for (var i = 0; i < overlapLength; i++) {
-                        sum += (vectorA[i] - meanA) * (vectorB[i + effectiveLag] - meanB);
-                    }
-                }
-                else {
-                    for (var i = 0; i < overlapLength; i++) {
-                        sum += (vectorA[i - effectiveLag] - meanA) * (vectorB[i] - meanB);
-                    }
-                }
-                return sum / (overlapLength * stdA * stdB);
-            },
-            paramCount: 3,
-        },
-        'v:winsorize': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), vector = _b[0], lowerPercentile = _b[1], upperPercentile = _b[2];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(lowerPercentile, sourceCodeInfo, { finite: true });
-                assertNumber(upperPercentile, sourceCodeInfo, { finite: true });
-                if (vector.length === 0)
-                    return [];
-                if (lowerPercentile < 0 || lowerPercentile > 0.5 || upperPercentile < 0 || upperPercentile > 0.5) {
-                    throw new LitsError('Percentiles must be between 0 and 0.5', sourceCodeInfo);
-                }
-                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
-                var lowerIndex = Math.max(0, Math.floor(lowerPercentile * vector.length));
-                var upperIndex = Math.min(vector.length - 1, Math.floor((1 - upperPercentile) * vector.length));
-                var lowerBound = sorted[lowerIndex];
-                var upperBound = sorted[upperIndex];
-                return vector.map(function (val) { return Math.max(lowerBound, Math.min(val, upperBound)); });
-            },
-            paramCount: 3,
-        },
-        'v:mse': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                return vectorA.reduce(function (acc, val, i) { return acc + Math.pow((val - vectorB[i]), 2); }, 0) / vectorA.length;
-            },
-            paramCount: 2,
-        },
-        'v:mae': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                return vectorA.reduce(function (acc, val, i) { return acc + Math.abs(val - vectorB[i]); }, 0) / vectorA.length;
-            },
-            paramCount: 2,
-        },
-    };
+            }
+        }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_2) throw e_2.error; }
+        }
+        annotatedArrays.add(matrix);
+        grids.add(matrix);
+        matrices.add(matrix);
+        return true;
+    }
+    function assertMatrix(matrix, sourceCodeInfo) {
+        if (!isMatrix(matrix)) {
+            throw new LitsError("Expected a matrix, but got ".concat(matrix), sourceCodeInfo);
+        }
+    }
 
     function stringifyValue(value, html) {
         var _a;
@@ -3771,9 +2504,9 @@ var Playground = (function (exports) {
             return "/".concat(value.s, "/").concat(value.f);
         if (typeof value === 'string')
             return "\"".concat(value, "\"");
-        if (isMatrix$1(value))
+        if (Array.isArray(value) && isMatrix(value))
             return stringifyMatrix(value);
-        if (isVector(value)) {
+        if (Array.isArray(value) && isVector(value)) {
             return "[\n  ".concat(value.map(function (cell) {
                 var pretty = prettyPi(cell, { spaceSeparation: true });
                 var decimal = "".concat(cell);
@@ -3792,55 +2525,6 @@ var Playground = (function (exports) {
         var padding = matrix.flat().reduce(function (max, cell) { return Math.max(max, prettyIfNumber(cell).length); }, 0) + 1;
         var rows = matrix.map(function (row) { return "[".concat(row.map(function (cell) { return prettyIfNumber(cell).padStart(padding); }).join(' '), " ]"); });
         return rows.join('\n');
-    }
-    function isMatrix$1(value) {
-        var e_1, _a, e_2, _b;
-        if (!Array.isArray(value)) {
-            return false;
-        }
-        if (!value.every(function (row) { return Array.isArray(row); })) {
-            return false;
-        }
-        var cols = -1;
-        try {
-            for (var value_1 = __values(value), value_1_1 = value_1.next(); !value_1_1.done; value_1_1 = value_1.next()) {
-                var row = value_1_1.value;
-                if (cols === -1) {
-                    cols = row.length;
-                    if (cols === 0) {
-                        return false;
-                    }
-                }
-                else {
-                    if (row.length !== cols) {
-                        return false;
-                    }
-                }
-                try {
-                    for (var row_1 = (e_2 = void 0, __values(row)), row_1_1 = row_1.next(); !row_1_1.done; row_1_1 = row_1.next()) {
-                        var cell = row_1_1.value;
-                        if (typeof cell !== 'number' && typeof cell !== 'string' && typeof cell !== 'boolean' && cell !== null) {
-                            return false;
-                        }
-                    }
-                }
-                catch (e_2_1) { e_2 = { error: e_2_1 }; }
-                finally {
-                    try {
-                        if (row_1_1 && !row_1_1.done && (_b = row_1.return)) _b.call(row_1);
-                    }
-                    finally { if (e_2) throw e_2.error; }
-                }
-            }
-        }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
-        finally {
-            try {
-                if (value_1_1 && !value_1_1.done && (_a = value_1.return)) _a.call(value_1);
-            }
-            finally { if (e_1) throw e_1.error; }
-        }
-        return true;
     }
 
     var specialExpressionTypes = {
@@ -4700,7 +3384,13 @@ var Playground = (function (exports) {
                 if (seq === null)
                     return defaultValue;
                 assertSeq(seq, sourceCodeInfo);
-                return i >= 0 && i < seq.length ? toAny(seq[i]) : defaultValue;
+                if (i >= 0 && i < seq.length) {
+                    var result = toAny(seq[i]);
+                    return result;
+                }
+                else {
+                    return defaultValue;
+                }
             },
             paramCount: { min: 2, max: 3 },
         },
@@ -4710,8 +3400,10 @@ var Playground = (function (exports) {
                 var executeFunction = _b.executeFunction;
                 assertSeq(seq, sourceCodeInfo);
                 assertLitsFunction(fn, sourceCodeInfo);
-                if (Array.isArray(seq))
-                    return seq.filter(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
+                if (Array.isArray(seq)) {
+                    var result = seq.filter(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
+                    return result;
+                }
                 return seq
                     .split('')
                     .filter(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); })
@@ -4725,7 +3417,8 @@ var Playground = (function (exports) {
                 if (array === null)
                     return null;
                 assertSeq(array, sourceCodeInfo);
-                return toAny(array[0]);
+                var result = toAny(array[0]);
+                return result;
             },
             paramCount: 1,
         },
@@ -4735,7 +3428,8 @@ var Playground = (function (exports) {
                 if (array === null)
                     return null;
                 assertSeq(array, sourceCodeInfo);
-                return toAny(array[array.length - 1]);
+                var result = toAny(array.at(-1));
+                return result;
             },
             paramCount: 1,
         },
@@ -4947,8 +3641,7 @@ var Playground = (function (exports) {
                         if (seq.length === 0)
                             return val;
                         return seq.split('').reduce(function (result, elem) {
-                            var newVal = executeFunction(fn, [result, elem], contextStack, sourceCodeInfo);
-                            return newVal;
+                            return executeFunction(fn, [result, elem], contextStack, sourceCodeInfo);
                         }, val);
                     }
                     else {
@@ -4995,8 +3688,7 @@ var Playground = (function (exports) {
                         if (seq.length === 0)
                             return val;
                         return seq.split('').reduceRight(function (result, elem) {
-                            var newVal = executeFunction(fn, [result, elem], contextStack, sourceCodeInfo);
-                            return newVal;
+                            return executeFunction(fn, [result, elem], contextStack, sourceCodeInfo);
                         }, val);
                     }
                     else {
@@ -5044,8 +3736,9 @@ var Playground = (function (exports) {
                 if (seq === null)
                     return null;
                 assertSeq(seq, sourceCodeInfo);
-                if (Array.isArray(seq))
+                if (Array.isArray(seq)) {
                     return __spreadArray([], __read(seq), false).reverse();
+                }
                 return seq.split('').reverse().join('');
             },
             paramCount: 1,
@@ -5077,9 +3770,16 @@ var Playground = (function (exports) {
                 var _a = __read(params, 3), seq = _a[0], from = _a[1], to = _a[2];
                 assertSeq(seq, sourceCodeInfo);
                 assertNumber(from, sourceCodeInfo, { integer: true });
-                if (params.length === 2)
+                if (params.length === 2) {
+                    if (Array.isArray(seq)) {
+                        return seq.slice(from);
+                    }
                     return seq.slice(from);
+                }
                 assertNumber(to, sourceCodeInfo, { integer: true });
+                if (Array.isArray(seq)) {
+                    return seq.slice(from, to);
+                }
                 return seq.slice(from, to);
             },
             paramCount: { min: 2, max: 3 },
@@ -7173,46 +5873,6 @@ var Playground = (function (exports) {
         return result;
     }
 
-    function isTable(table) {
-        var e_1, _a;
-        if (!Array.isArray(table)) {
-            return false;
-        }
-        if (table.length === 0) {
-            return false;
-        }
-        if (!Array.isArray(table[0])) {
-            return false;
-        }
-        var nbrOfCols = table[0].length;
-        try {
-            for (var _b = __values(table.slice(1)), _c = _b.next(); !_c.done; _c = _b.next()) {
-                var row = _c.value;
-                if (!Array.isArray(row)) {
-                    return false;
-                }
-                if (row.length !== nbrOfCols) {
-                    return false;
-                }
-                if (row.some(function (cell) { return isAny(cell); })) {
-                    return false;
-                }
-            }
-        }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
-        finally {
-            try {
-                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
-            }
-            finally { if (e_1) throw e_1.error; }
-        }
-        return true;
-    }
-    function assertTable(table, sourceCodeInfo) {
-        if (!isTable(table)) {
-            throw new LitsError("Expected a table, but got ".concat(table), sourceCodeInfo);
-        }
-    }
     function assertAnyArray(value, sourceCodeInfo) {
         if (!Array.isArray(value)) {
             throw new LitsError("Expected an array, but got ".concat(value), sourceCodeInfo);
@@ -7225,14 +5885,14 @@ var Playground = (function (exports) {
         't:table?': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), table = _b[0];
-                return isTable(table);
+                return isGrid(table);
             },
             paramCount: 1,
         },
         't:=': {
             evaluate: function (params, sourceCodeInfo) {
                 assertArray(params, sourceCodeInfo);
-                params.every(function (table) { return assertTable(table, sourceCodeInfo); });
+                params.every(function (table) { return assertGrid(table, sourceCodeInfo); });
                 if (params.length <= 1) {
                     return true;
                 }
@@ -7243,7 +5903,7 @@ var Playground = (function (exports) {
         't:!=': {
             evaluate: function (params, sourceCodeInfo) {
                 assertArray(params, sourceCodeInfo);
-                params.every(function (table) { return assertTable(table, sourceCodeInfo); });
+                params.every(function (table) { return assertGrid(table, sourceCodeInfo); });
                 if (params.length <= 1) {
                     return false;
                 }
@@ -7253,37 +5913,37 @@ var Playground = (function (exports) {
         },
         'table-every?': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
-                var e_2, _c, e_3, _d;
+                var e_1, _c, e_2, _d;
                 var _e = __read(_a, 2), table = _e[0], predicate = _e[1];
                 var executeFunction = _b.executeFunction;
-                assertTable(table, sourceCodeInfo);
+                assertGrid(table, sourceCodeInfo);
                 assertLitsFunction(predicate, sourceCodeInfo);
                 try {
                     for (var table_1 = __values(table), table_1_1 = table_1.next(); !table_1_1.done; table_1_1 = table_1.next()) {
                         var row = table_1_1.value;
                         try {
-                            for (var row_1 = (e_3 = void 0, __values(row)), row_1_1 = row_1.next(); !row_1_1.done; row_1_1 = row_1.next()) {
+                            for (var row_1 = (e_2 = void 0, __values(row)), row_1_1 = row_1.next(); !row_1_1.done; row_1_1 = row_1.next()) {
                                 var cell = row_1_1.value;
                                 if (!executeFunction(predicate, [cell], contextStack, sourceCodeInfo)) {
                                     return false;
                                 }
                             }
                         }
-                        catch (e_3_1) { e_3 = { error: e_3_1 }; }
+                        catch (e_2_1) { e_2 = { error: e_2_1 }; }
                         finally {
                             try {
                                 if (row_1_1 && !row_1_1.done && (_d = row_1.return)) _d.call(row_1);
                             }
-                            finally { if (e_3) throw e_3.error; }
+                            finally { if (e_2) throw e_2.error; }
                         }
                     }
                 }
-                catch (e_2_1) { e_2 = { error: e_2_1 }; }
+                catch (e_1_1) { e_1 = { error: e_1_1 }; }
                 finally {
                     try {
                         if (table_1_1 && !table_1_1.done && (_c = table_1.return)) _c.call(table_1);
                     }
-                    finally { if (e_2) throw e_2.error; }
+                    finally { if (e_1) throw e_1.error; }
                 }
                 return true;
             },
@@ -7291,37 +5951,37 @@ var Playground = (function (exports) {
         },
         't:some?': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
-                var e_4, _c, e_5, _d;
+                var e_3, _c, e_4, _d;
                 var _e = __read(_a, 2), table = _e[0], predicate = _e[1];
                 var executeFunction = _b.executeFunction;
-                assertTable(table, sourceCodeInfo);
+                assertGrid(table, sourceCodeInfo);
                 assertLitsFunction(predicate, sourceCodeInfo);
                 try {
                     for (var table_2 = __values(table), table_2_1 = table_2.next(); !table_2_1.done; table_2_1 = table_2.next()) {
                         var row = table_2_1.value;
                         try {
-                            for (var row_2 = (e_5 = void 0, __values(row)), row_2_1 = row_2.next(); !row_2_1.done; row_2_1 = row_2.next()) {
+                            for (var row_2 = (e_4 = void 0, __values(row)), row_2_1 = row_2.next(); !row_2_1.done; row_2_1 = row_2.next()) {
                                 var cell = row_2_1.value;
                                 if (executeFunction(predicate, [cell], contextStack, sourceCodeInfo)) {
                                     return true;
                                 }
                             }
                         }
-                        catch (e_5_1) { e_5 = { error: e_5_1 }; }
+                        catch (e_4_1) { e_4 = { error: e_4_1 }; }
                         finally {
                             try {
                                 if (row_2_1 && !row_2_1.done && (_d = row_2.return)) _d.call(row_2);
                             }
-                            finally { if (e_5) throw e_5.error; }
+                            finally { if (e_4) throw e_4.error; }
                         }
                     }
                 }
-                catch (e_4_1) { e_4 = { error: e_4_1 }; }
+                catch (e_3_1) { e_3 = { error: e_3_1 }; }
                 finally {
                     try {
                         if (table_2_1 && !table_2_1.done && (_c = table_2.return)) _c.call(table_2);
                     }
-                    finally { if (e_4) throw e_4.error; }
+                    finally { if (e_3) throw e_3.error; }
                 }
                 return false;
             },
@@ -7329,10 +5989,10 @@ var Playground = (function (exports) {
         },
         't:every-row?': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
-                var e_6, _c;
+                var e_5, _c;
                 var _d = __read(_a, 2), table = _d[0], predicate = _d[1];
                 var executeFunction = _b.executeFunction;
-                assertTable(table, sourceCodeInfo);
+                assertGrid(table, sourceCodeInfo);
                 assertLitsFunction(predicate, sourceCodeInfo);
                 try {
                     for (var table_3 = __values(table), table_3_1 = table_3.next(); !table_3_1.done; table_3_1 = table_3.next()) {
@@ -7342,12 +6002,12 @@ var Playground = (function (exports) {
                         }
                     }
                 }
-                catch (e_6_1) { e_6 = { error: e_6_1 }; }
+                catch (e_5_1) { e_5 = { error: e_5_1 }; }
                 finally {
                     try {
                         if (table_3_1 && !table_3_1.done && (_c = table_3.return)) _c.call(table_3);
                     }
-                    finally { if (e_6) throw e_6.error; }
+                    finally { if (e_5) throw e_5.error; }
                 }
                 return true;
             },
@@ -7355,10 +6015,10 @@ var Playground = (function (exports) {
         },
         't:some-row?': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
-                var e_7, _c;
+                var e_6, _c;
                 var _d = __read(_a, 2), table = _d[0], predicate = _d[1];
                 var executeFunction = _b.executeFunction;
-                assertTable(table, sourceCodeInfo);
+                assertGrid(table, sourceCodeInfo);
                 assertLitsFunction(predicate, sourceCodeInfo);
                 try {
                     for (var table_4 = __values(table), table_4_1 = table_4.next(); !table_4_1.done; table_4_1 = table_4.next()) {
@@ -7368,12 +6028,12 @@ var Playground = (function (exports) {
                         }
                     }
                 }
-                catch (e_7_1) { e_7 = { error: e_7_1 }; }
+                catch (e_6_1) { e_6 = { error: e_6_1 }; }
                 finally {
                     try {
                         if (table_4_1 && !table_4_1.done && (_c = table_4.return)) _c.call(table_4);
                     }
-                    finally { if (e_7) throw e_7.error; }
+                    finally { if (e_6) throw e_6.error; }
                 }
                 return false;
             },
@@ -7381,10 +6041,10 @@ var Playground = (function (exports) {
         },
         't:every-col?': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
-                var e_8, _c;
+                var e_7, _c;
                 var _d = __read(_a, 2), table = _d[0], predicate = _d[1];
                 var executeFunction = _b.executeFunction;
-                assertTable(table, sourceCodeInfo);
+                assertGrid(table, sourceCodeInfo);
                 assertLitsFunction(predicate, sourceCodeInfo);
                 var transposed = transpose(table);
                 try {
@@ -7395,12 +6055,12 @@ var Playground = (function (exports) {
                         }
                     }
                 }
-                catch (e_8_1) { e_8 = { error: e_8_1 }; }
+                catch (e_7_1) { e_7 = { error: e_7_1 }; }
                 finally {
                     try {
                         if (transposed_1_1 && !transposed_1_1.done && (_c = transposed_1.return)) _c.call(transposed_1);
                     }
-                    finally { if (e_8) throw e_8.error; }
+                    finally { if (e_7) throw e_7.error; }
                 }
                 return true;
             },
@@ -7408,10 +6068,10 @@ var Playground = (function (exports) {
         },
         't:some-col?': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
-                var e_9, _c;
+                var e_8, _c;
                 var _d = __read(_a, 2), table = _d[0], predicate = _d[1];
                 var executeFunction = _b.executeFunction;
-                assertTable(table, sourceCodeInfo);
+                assertGrid(table, sourceCodeInfo);
                 assertLitsFunction(predicate, sourceCodeInfo);
                 var transposed = transpose(table);
                 try {
@@ -7422,12 +6082,12 @@ var Playground = (function (exports) {
                         }
                     }
                 }
-                catch (e_9_1) { e_9 = { error: e_9_1 }; }
+                catch (e_8_1) { e_8 = { error: e_8_1 }; }
                 finally {
                     try {
                         if (transposed_2_1 && !transposed_2_1.done && (_c = transposed_2.return)) _c.call(transposed_2);
                     }
-                    finally { if (e_9) throw e_9.error; }
+                    finally { if (e_8) throw e_8.error; }
                 }
                 return false;
             },
@@ -7436,7 +6096,7 @@ var Playground = (function (exports) {
         't:row': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), table = _b[0], row = _b[1];
-                assertTable(table, sourceCodeInfo);
+                assertGrid(table, sourceCodeInfo);
                 assertNumber(row, sourceCodeInfo, { integer: true, nonNegative: true, lte: table.length });
                 return table[row];
             },
@@ -7445,7 +6105,7 @@ var Playground = (function (exports) {
         't:col': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), table = _b[0], col = _b[1];
-                assertTable(table, sourceCodeInfo);
+                assertGrid(table, sourceCodeInfo);
                 assertNumber(col, sourceCodeInfo, { integer: true, nonNegative: true, lte: table[0].length });
                 return table.map(function (row) { return row[col]; });
             },
@@ -7454,7 +6114,7 @@ var Playground = (function (exports) {
         't:shape': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), table = _b[0];
-                assertTable(table, sourceCodeInfo);
+                assertGrid(table, sourceCodeInfo);
                 return [table.length, table[0].length];
             },
             paramCount: 1,
@@ -7485,7 +6145,7 @@ var Playground = (function (exports) {
         't:reshape': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), table = _b[0], rows = _b[1], cols = _b[2];
-                assertTable(table, sourceCodeInfo);
+                assertGrid(table, sourceCodeInfo);
                 assertNumber(rows, sourceCodeInfo, { integer: true, positive: true });
                 assertNumber(cols, sourceCodeInfo, { integer: true, positive: true });
                 var flatTable = table.flat();
@@ -7507,7 +6167,7 @@ var Playground = (function (exports) {
         't:transpose': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), table = _b[0];
-                assertTable(table, sourceCodeInfo);
+                assertGrid(table, sourceCodeInfo);
                 return transpose(table);
             },
             paramCount: 1,
@@ -7515,7 +6175,7 @@ var Playground = (function (exports) {
         't:slice': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 5), table = _b[0], rowStart = _b[1], rowEnd = _b[2], colStart = _b[3], colEnd = _b[4];
-                assertTable(table, sourceCodeInfo);
+                assertGrid(table, sourceCodeInfo);
                 assertNumber(rowStart, sourceCodeInfo, { integer: true, nonNegative: true, lte: table.length });
                 assertNumber(rowEnd, sourceCodeInfo, { integer: true });
                 rowEnd = rowEnd < 0 ? table.length + rowEnd : rowEnd;
@@ -7539,7 +6199,7 @@ var Playground = (function (exports) {
         't:slice-rows': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), table = _b[0], rowStart = _b[1], rowEnd = _b[2];
-                assertTable(table, sourceCodeInfo);
+                assertGrid(table, sourceCodeInfo);
                 if (typeof rowEnd === 'undefined') {
                     assertNumber(rowStart, sourceCodeInfo, { integer: true, lte: table.length, gte: -table.length });
                     if (rowStart < 0) {
@@ -7558,7 +6218,7 @@ var Playground = (function (exports) {
         't:slice-cols': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), table = _b[0], colStart = _b[1], colEnd = _b[2];
-                assertTable(table, sourceCodeInfo);
+                assertGrid(table, sourceCodeInfo);
                 var trMatrix = transpose(table);
                 if (typeof colEnd === 'undefined') {
                     assertNumber(colStart, sourceCodeInfo, { integer: true, lte: trMatrix.length, gte: -trMatrix.length });
@@ -7578,10 +6238,10 @@ var Playground = (function (exports) {
         't:splice-rows': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a), table = _b[0], rowStart = _b[1], rowDeleteCount = _b[2], rows = _b.slice(3);
-                assertTable(table, sourceCodeInfo);
+                assertGrid(table, sourceCodeInfo);
                 assertNumber(rowStart, sourceCodeInfo, { integer: true, nonNegative: true, lte: table.length });
                 assertNumber(rowDeleteCount, sourceCodeInfo, { integer: true, nonNegative: true });
-                assertTable(rows, sourceCodeInfo);
+                assertGrid(rows, sourceCodeInfo);
                 rows.every(function (row) {
                     assertArray(row, sourceCodeInfo);
                     if (table[0].length !== row.length) {
@@ -7604,11 +6264,11 @@ var Playground = (function (exports) {
         't:splice-cols': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a), table = _b[0], colStart = _b[1], colDeleteCount = _b[2], cols = _b.slice(3);
-                assertTable(table, sourceCodeInfo);
+                assertGrid(table, sourceCodeInfo);
                 var trMatrix = transpose(table);
                 assertNumber(colStart, sourceCodeInfo, { integer: true, nonNegative: true, lte: trMatrix.length });
                 assertNumber(colDeleteCount, sourceCodeInfo, { integer: true, nonNegative: true });
-                assertTable(cols, sourceCodeInfo);
+                assertGrid(cols, sourceCodeInfo);
                 cols.every(function (row) {
                     assertArray(row, sourceCodeInfo);
                     if (trMatrix[0].length !== row.length) {
@@ -7631,7 +6291,7 @@ var Playground = (function (exports) {
         't:concat-rows': {
             evaluate: function (params, sourceCodeInfo) {
                 assertArray(params, sourceCodeInfo);
-                params.every(function (table) { return assertTable(table, sourceCodeInfo); });
+                params.every(function (table) { return assertGrid(table, sourceCodeInfo); });
                 var cols = params[0][0].length;
                 params.slice(1).every(function (table) {
                     if (table[0].length !== cols) {
@@ -7652,7 +6312,7 @@ var Playground = (function (exports) {
         't:concat-cols': {
             evaluate: function (params, sourceCodeInfo) {
                 assertArray(params, sourceCodeInfo);
-                params.every(function (table) { return assertTable(table, sourceCodeInfo); });
+                params.every(function (table) { return assertGrid(table, sourceCodeInfo); });
                 var rows = params[0].length;
                 params.slice(1).every(function (table) {
                     if (table.length !== rows) {
@@ -7680,11 +6340,11 @@ var Playground = (function (exports) {
                 var executeFunction = _a.executeFunction;
                 var fn = asLitsFunction(params.at(-1));
                 var matrices = params.slice(0, -1);
-                assertTable(matrices[0], sourceCodeInfo);
+                assertGrid(matrices[0], sourceCodeInfo);
                 var rows = matrices[0].length;
                 var cols = matrices[0][0].length;
                 matrices.slice(1).forEach(function (table) {
-                    assertTable(table, sourceCodeInfo);
+                    assertGrid(table, sourceCodeInfo);
                     if (table.length !== rows) {
                         throw new LitsError("All matrices must have the same number of rows, but got ".concat(rows, " and ").concat(table.length), sourceCodeInfo);
                     }
@@ -7719,7 +6379,7 @@ var Playground = (function (exports) {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 2), table = _c[0], fn = _c[1];
                 var executeFunction = _b.executeFunction;
-                assertTable(table, sourceCodeInfo);
+                assertGrid(table, sourceCodeInfo);
                 assertLitsFunction(fn, sourceCodeInfo);
                 var rows = table.length;
                 var cols = table[0].length;
@@ -7741,36 +6401,36 @@ var Playground = (function (exports) {
         },
         't:reduce': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
-                var e_10, _c, e_11, _d;
+                var e_9, _c, e_10, _d;
                 var _e = __read(_a, 3), table = _e[0], fn = _e[1], initialValue = _e[2];
                 var executeFunction = _b.executeFunction;
-                assertTable(table, sourceCodeInfo);
+                assertGrid(table, sourceCodeInfo);
                 assertLitsFunction(fn, sourceCodeInfo);
                 var accumulator = asAny(initialValue);
                 try {
                     for (var table_5 = __values(table), table_5_1 = table_5.next(); !table_5_1.done; table_5_1 = table_5.next()) {
                         var row = table_5_1.value;
                         try {
-                            for (var row_3 = (e_11 = void 0, __values(row)), row_3_1 = row_3.next(); !row_3_1.done; row_3_1 = row_3.next()) {
+                            for (var row_3 = (e_10 = void 0, __values(row)), row_3_1 = row_3.next(); !row_3_1.done; row_3_1 = row_3.next()) {
                                 var cell = row_3_1.value;
                                 accumulator = executeFunction(fn, [accumulator, cell], contextStack, sourceCodeInfo);
                             }
                         }
-                        catch (e_11_1) { e_11 = { error: e_11_1 }; }
+                        catch (e_10_1) { e_10 = { error: e_10_1 }; }
                         finally {
                             try {
                                 if (row_3_1 && !row_3_1.done && (_d = row_3.return)) _d.call(row_3);
                             }
-                            finally { if (e_11) throw e_11.error; }
+                            finally { if (e_10) throw e_10.error; }
                         }
                     }
                 }
-                catch (e_10_1) { e_10 = { error: e_10_1 }; }
+                catch (e_9_1) { e_9 = { error: e_9_1 }; }
                 finally {
                     try {
                         if (table_5_1 && !table_5_1.done && (_c = table_5.return)) _c.call(table_5);
                     }
-                    finally { if (e_10) throw e_10.error; }
+                    finally { if (e_9) throw e_9.error; }
                 }
                 return accumulator;
             },
@@ -7780,7 +6440,7 @@ var Playground = (function (exports) {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 3), table = _c[0], fn = _c[1], initialValue = _c[2];
                 var executeFunction = _b.executeFunction;
-                assertTable(table, sourceCodeInfo);
+                assertGrid(table, sourceCodeInfo);
                 assertLitsFunction(fn, sourceCodeInfo);
                 var accumulator = asAny(initialValue);
                 for (var i = 0; i < table.length; i += 1) {
@@ -7794,10 +6454,10 @@ var Playground = (function (exports) {
         },
         't:reduce-rows': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
-                var e_12, _c, e_13, _d;
+                var e_11, _c, e_12, _d;
                 var _e = __read(_a, 3), table = _e[0], fn = _e[1], initialValue = _e[2];
                 var executeFunction = _b.executeFunction;
-                assertTable(table, sourceCodeInfo);
+                assertGrid(table, sourceCodeInfo);
                 assertLitsFunction(fn, sourceCodeInfo);
                 assertAny(initialValue);
                 var result = [];
@@ -7806,27 +6466,27 @@ var Playground = (function (exports) {
                         var row = table_6_1.value;
                         var accumulator = asAny(initialValue);
                         try {
-                            for (var row_4 = (e_13 = void 0, __values(row)), row_4_1 = row_4.next(); !row_4_1.done; row_4_1 = row_4.next()) {
+                            for (var row_4 = (e_12 = void 0, __values(row)), row_4_1 = row_4.next(); !row_4_1.done; row_4_1 = row_4.next()) {
                                 var cell = row_4_1.value;
                                 accumulator = executeFunction(fn, [accumulator, cell], contextStack, sourceCodeInfo);
                             }
                         }
-                        catch (e_13_1) { e_13 = { error: e_13_1 }; }
+                        catch (e_12_1) { e_12 = { error: e_12_1 }; }
                         finally {
                             try {
                                 if (row_4_1 && !row_4_1.done && (_d = row_4.return)) _d.call(row_4);
                             }
-                            finally { if (e_13) throw e_13.error; }
+                            finally { if (e_12) throw e_12.error; }
                         }
                         result.push(accumulator);
                     }
                 }
-                catch (e_12_1) { e_12 = { error: e_12_1 }; }
+                catch (e_11_1) { e_11 = { error: e_11_1 }; }
                 finally {
                     try {
                         if (table_6_1 && !table_6_1.done && (_c = table_6.return)) _c.call(table_6);
                     }
-                    finally { if (e_12) throw e_12.error; }
+                    finally { if (e_11) throw e_11.error; }
                 }
                 return result;
             },
@@ -7836,7 +6496,7 @@ var Playground = (function (exports) {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 3), table = _c[0], fn = _c[1], initialValue = _c[2];
                 var executeFunction = _b.executeFunction;
-                assertTable(table, sourceCodeInfo);
+                assertGrid(table, sourceCodeInfo);
                 assertLitsFunction(fn, sourceCodeInfo);
                 assertAny(initialValue);
                 var result = [];
@@ -7854,8 +6514,8 @@ var Playground = (function (exports) {
         't:push-rows': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a), table = _b[0], rows = _b.slice(1);
-                assertTable(table, sourceCodeInfo);
-                assertTable(rows, sourceCodeInfo);
+                assertGrid(table, sourceCodeInfo);
+                assertGrid(rows, sourceCodeInfo);
                 if (table[0].length !== rows[0].length) {
                     throw new LitsError("All rows must have the same length as the number of columns in table, but got ".concat(table[0].length, " and ").concat(rows[0].length), sourceCodeInfo);
                 }
@@ -7866,8 +6526,8 @@ var Playground = (function (exports) {
         't:unshift-rows': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a), table = _b[0], rows = _b.slice(1);
-                assertTable(table, sourceCodeInfo);
-                assertTable(rows, sourceCodeInfo);
+                assertGrid(table, sourceCodeInfo);
+                assertGrid(rows, sourceCodeInfo);
                 if (table[0].length !== rows[0].length) {
                     throw new LitsError("All rows must have the same length as the number of columns in table, but got ".concat(table[0].length, " and ").concat(rows[0].length), sourceCodeInfo);
                 }
@@ -7878,7 +6538,7 @@ var Playground = (function (exports) {
         't:pop-row': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), table = _b[0];
-                assertTable(table, sourceCodeInfo);
+                assertGrid(table, sourceCodeInfo);
                 if (table.length === 1) {
                     return null;
                 }
@@ -7889,7 +6549,7 @@ var Playground = (function (exports) {
         't:shift-row': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), table = _b[0];
-                assertTable(table, sourceCodeInfo);
+                assertGrid(table, sourceCodeInfo);
                 if (table.length === 1) {
                     return null;
                 }
@@ -7900,8 +6560,8 @@ var Playground = (function (exports) {
         't:push-cols': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a), table = _b[0], cols = _b.slice(1);
-                assertTable(table, sourceCodeInfo);
-                assertTable(cols, sourceCodeInfo);
+                assertGrid(table, sourceCodeInfo);
+                assertGrid(cols, sourceCodeInfo);
                 if (table.length !== cols[0].length) {
                     throw new LitsError("All columns must have the same length as the number of rows in table, but got ".concat(cols.length), sourceCodeInfo);
                 }
@@ -7924,8 +6584,8 @@ var Playground = (function (exports) {
         't:unshift-cols': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a), table = _b[0], cols = _b.slice(1);
-                assertTable(table, sourceCodeInfo);
-                assertTable(cols, sourceCodeInfo);
+                assertGrid(table, sourceCodeInfo);
+                assertGrid(cols, sourceCodeInfo);
                 if (table.length !== cols[0].length) {
                     throw new LitsError("All columns must have the same length as the number of rows in table, but got ".concat(cols.length), sourceCodeInfo);
                 }
@@ -7948,7 +6608,7 @@ var Playground = (function (exports) {
         't:pop-col': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), table = _b[0];
-                assertTable(table, sourceCodeInfo);
+                assertGrid(table, sourceCodeInfo);
                 if (table[0].length === 1) {
                     return null;
                 }
@@ -7959,7 +6619,7 @@ var Playground = (function (exports) {
         't:shift-col': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), table = _b[0];
-                assertTable(table, sourceCodeInfo);
+                assertGrid(table, sourceCodeInfo);
                 if (table[0].length === 1) {
                     return null;
                 }
@@ -7979,6 +6639,1390 @@ var Playground = (function (exports) {
                 return fromArray(array, rows, cols);
             },
             paramCount: 3,
+        },
+    };
+
+    /**
+     * Counts occurrences of each integer value in an array of non-negative integers.
+     *
+     * @param array - Array of non-negative integers to count
+     * @param minLength - Minimum length of the output array (default: 0)
+     * @param weights - Optional array of weights (same length as input array)
+     * @returns An array where index i contains the count of occurrences of i in the input array
+     */
+    function bincount(array, minLength, weights) {
+        if (minLength === void 0) { minLength = 0; }
+        if (array.length === 0) {
+            return Array.from({ length: minLength }, function () { return 0; });
+        }
+        // Find the maximum value to determine output array size
+        var maxValue = Math.max.apply(Math, __spreadArray([], __read(array), false));
+        var outputLength = Math.max(maxValue + 1, minLength);
+        var counts = Array.from({ length: outputLength }, function () { return 0; });
+        // Count occurrences (or sum weights if provided)
+        for (var i = 0; i < array.length; i++) {
+            var value = Math.floor(array[i]);
+            if (value < outputLength) {
+                // If weights provided, add weight; otherwise add 1
+                counts[value] += weights ? weights[i] : 1;
+            }
+        }
+        return counts;
+    }
+
+    function calcMean(vector) {
+        if (vector.length === 0) {
+            return 0;
+        }
+        var sum = vector.reduce(function (acc, val) { return acc + val; }, 0);
+        return sum / vector.length;
+    }
+
+    function calcVariance(vector) {
+        if (vector.length === 0) {
+            return 0;
+        }
+        var mean = calcMean(vector);
+        var variance = vector.reduce(function (acc, val) { return acc + Math.pow((val - mean), 2); }, 0) / vector.length;
+        return variance;
+    }
+
+    function calcStdDev(vector) {
+        if (vector.length === 0) {
+            return 0;
+        }
+        var variance = calcVariance(vector);
+        return Math.sqrt(variance);
+    }
+
+    /**
+     * Calculates the Shannon entropy of a vector.
+     * Entropy measures the amount of uncertainty or randomness in the data.
+     *
+     * @param vector - An array of values to calculate entropy for
+     * @returns The entropy value (in bits) or 0 for empty arrays
+     */
+    function calculateEntropy(vector) {
+        var e_1, _a, e_2, _b;
+        // Return 0 for empty vectors
+        if (vector.length === 0) {
+            return 0;
+        }
+        // Count occurrences of each value
+        var frequencies = new Map();
+        try {
+            for (var vector_1 = __values(vector), vector_1_1 = vector_1.next(); !vector_1_1.done; vector_1_1 = vector_1.next()) {
+                var value = vector_1_1.value;
+                frequencies.set(value, (frequencies.get(value) || 0) + 1);
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (vector_1_1 && !vector_1_1.done && (_a = vector_1.return)) _a.call(vector_1);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        // Get the total number of elements
+        var total = vector.length;
+        // Calculate entropy using Shannon's formula
+        var entropy = 0;
+        try {
+            for (var _c = __values(frequencies.values()), _d = _c.next(); !_d.done; _d = _c.next()) {
+                var frequency = _d.value;
+                var probability = frequency / total;
+                // Skip cases where probability is 0 (log(0) is undefined)
+                if (probability > 0) {
+                    entropy -= probability * Math.log2(probability);
+                }
+            }
+        }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        finally {
+            try {
+                if (_d && !_d.done && (_b = _c.return)) _b.call(_c);
+            }
+            finally { if (e_2) throw e_2.error; }
+        }
+        return entropy;
+    }
+
+    /**
+     * Calculates the mode (most frequent value(s)) of a dataset
+     * @param values An array of values of any type
+     * @returns An array containing the mode(s) of the dataset
+     */
+    function mode(values) {
+        var e_1, _a, e_2, _b, e_3, _c;
+        if (values.length === 0) {
+            return [];
+        }
+        // Create a frequency map
+        var frequencyMap = new Map();
+        try {
+            // Count occurrences of each value
+            for (var values_1 = __values(values), values_1_1 = values_1.next(); !values_1_1.done; values_1_1 = values_1.next()) {
+                var value = values_1_1.value;
+                frequencyMap.set(value, (frequencyMap.get(value) || 0) + 1);
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (values_1_1 && !values_1_1.done && (_a = values_1.return)) _a.call(values_1);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        // Find the maximum frequency
+        var maxFrequency = 0;
+        try {
+            for (var _d = __values(frequencyMap.values()), _e = _d.next(); !_e.done; _e = _d.next()) {
+                var frequency = _e.value;
+                if (frequency > maxFrequency) {
+                    maxFrequency = frequency;
+                }
+            }
+        }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        finally {
+            try {
+                if (_e && !_e.done && (_b = _d.return)) _b.call(_d);
+            }
+            finally { if (e_2) throw e_2.error; }
+        }
+        // If all values appear only once, there is no mode
+        if (maxFrequency === 1) {
+            return [];
+        }
+        // Collect all values that appear with the maximum frequency
+        var modes = [];
+        try {
+            for (var _f = __values(frequencyMap.entries()), _g = _f.next(); !_g.done; _g = _f.next()) {
+                var _h = __read(_g.value, 2), value = _h[0], frequency = _h[1];
+                if (frequency === maxFrequency) {
+                    modes.push(value);
+                }
+            }
+        }
+        catch (e_3_1) { e_3 = { error: e_3_1 }; }
+        finally {
+            try {
+                if (_g && !_g.done && (_c = _f.return)) _c.call(_f);
+            }
+            finally { if (e_3) throw e_3.error; }
+        }
+        return modes;
+    }
+
+    var vectorNormalExpression = {
+        'v:vector?': {
+            evaluate: function (_a) {
+                var _b = __read(_a, 1), vector = _b[0];
+                return isVector(vector);
+            },
+            paramCount: 1,
+        },
+        'v:sorted?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return vector.every(function (val, i) { return i === 0 || val >= vector[i - 1]; });
+            },
+            paramCount: 1,
+        },
+        'v:monotonic?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return vector.every(function (val, i) { return i === 0 || val >= vector[i - 1]; })
+                    || vector.every(function (val, i) { return i === 0 || val <= vector[i - 1]; });
+            },
+            paramCount: 1,
+        },
+        'v:+': {
+            evaluate: function (params, sourceCodeInfo) {
+                var e_1, _a;
+                var firstParam = params[0];
+                assertVector(firstParam, sourceCodeInfo);
+                var restParams = params.slice(1);
+                try {
+                    for (var restParams_1 = __values(restParams), restParams_1_1 = restParams_1.next(); !restParams_1_1.done; restParams_1_1 = restParams_1.next()) {
+                        var param = restParams_1_1.value;
+                        assertVector(param, sourceCodeInfo);
+                        if (firstParam.length !== param.length) {
+                            throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                        }
+                    }
+                }
+                catch (e_1_1) { e_1 = { error: e_1_1 }; }
+                finally {
+                    try {
+                        if (restParams_1_1 && !restParams_1_1.done && (_a = restParams_1.return)) _a.call(restParams_1);
+                    }
+                    finally { if (e_1) throw e_1.error; }
+                }
+                var rest = restParams;
+                return rest.reduce(function (acc, vector) { return acc.map(function (val, i) { return val + vector[i]; }); }, firstParam);
+            },
+            paramCount: { min: 1 },
+        },
+        'v:-': {
+            evaluate: function (params, sourceCodeInfo) {
+                var e_2, _a;
+                var firstParam = params[0];
+                assertVector(firstParam, sourceCodeInfo);
+                var restParams = params.slice(1);
+                try {
+                    for (var restParams_2 = __values(restParams), restParams_2_1 = restParams_2.next(); !restParams_2_1.done; restParams_2_1 = restParams_2.next()) {
+                        var param = restParams_2_1.value;
+                        assertVector(param, sourceCodeInfo);
+                        if (firstParam.length !== param.length) {
+                            throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                        }
+                    }
+                }
+                catch (e_2_1) { e_2 = { error: e_2_1 }; }
+                finally {
+                    try {
+                        if (restParams_2_1 && !restParams_2_1.done && (_a = restParams_2.return)) _a.call(restParams_2);
+                    }
+                    finally { if (e_2) throw e_2.error; }
+                }
+                if (restParams.length === 0) {
+                    return firstParam.map(function (val) { return -val; });
+                }
+                var rest = restParams;
+                return rest.reduce(function (acc, vector) { return acc.map(function (val, i) { return val - vector[i]; }); }, firstParam);
+            },
+            paramCount: { min: 1 },
+        },
+        'v:*': {
+            evaluate: function (params, sourceCodeInfo) {
+                var e_3, _a;
+                var firstParam = params[0];
+                assertVector(firstParam, sourceCodeInfo);
+                var restParams = params.slice(1);
+                try {
+                    for (var restParams_3 = __values(restParams), restParams_3_1 = restParams_3.next(); !restParams_3_1.done; restParams_3_1 = restParams_3.next()) {
+                        var param = restParams_3_1.value;
+                        assertVector(param, sourceCodeInfo);
+                        if (firstParam.length !== param.length) {
+                            throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                        }
+                    }
+                }
+                catch (e_3_1) { e_3 = { error: e_3_1 }; }
+                finally {
+                    try {
+                        if (restParams_3_1 && !restParams_3_1.done && (_a = restParams_3.return)) _a.call(restParams_3);
+                    }
+                    finally { if (e_3) throw e_3.error; }
+                }
+                var rest = restParams;
+                return rest.reduce(function (acc, vector) { return acc.map(function (val, i) { return val * vector[i]; }); }, firstParam);
+            },
+            paramCount: { min: 1 },
+        },
+        'v:/': {
+            evaluate: function (params, sourceCodeInfo) {
+                var e_4, _a;
+                var firstParam = params[0];
+                assertVector(firstParam, sourceCodeInfo);
+                var restParams = params.slice(1);
+                try {
+                    for (var restParams_4 = __values(restParams), restParams_4_1 = restParams_4.next(); !restParams_4_1.done; restParams_4_1 = restParams_4.next()) {
+                        var param = restParams_4_1.value;
+                        assertVector(param, sourceCodeInfo);
+                        if (firstParam.length !== param.length) {
+                            throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                        }
+                    }
+                }
+                catch (e_4_1) { e_4 = { error: e_4_1 }; }
+                finally {
+                    try {
+                        if (restParams_4_1 && !restParams_4_1.done && (_a = restParams_4.return)) _a.call(restParams_4);
+                    }
+                    finally { if (e_4) throw e_4.error; }
+                }
+                if (restParams.length === 0) {
+                    return firstParam.map(function (val) { return 1 / val; });
+                }
+                var rest = restParams;
+                return rest.reduce(function (acc, vector) { return acc.map(function (val, i) { return val / vector[i]; }); }, firstParam);
+            },
+            paramCount: { min: 1 },
+        },
+        'v:**': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], exponent = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(exponent, sourceCodeInfo, { finite: true });
+                return vector.map(function (val) { return Math.pow(val, exponent); });
+            },
+            paramCount: 2,
+        },
+        'v:scale': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], scalar = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(scalar, sourceCodeInfo, { finite: true });
+                return vector.map(function (val) { return val * scalar; });
+            },
+            paramCount: 2,
+        },
+        'v:abs': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return vector.map(function (val) { return Math.abs(val); });
+            },
+            paramCount: 1,
+        },
+        'v:dot': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
+            },
+            paramCount: 2,
+        },
+        'v:cross': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== 3 || vectorB.length !== 3) {
+                    throw new LitsError('Cross product is only defined for 3D vectors', sourceCodeInfo);
+                }
+                return [
+                    vectorA[1] * vectorB[2] - vectorA[2] * vectorB[1],
+                    vectorA[2] * vectorB[0] - vectorA[0] * vectorB[2],
+                    vectorA[0] * vectorB[1] - vectorA[1] * vectorB[0],
+                ];
+            },
+            paramCount: 2,
+        },
+        'v:normalize': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var magnitude = Math.sqrt(vector.reduce(function (acc, val) { return acc + val * val; }, 0));
+                if (magnitude === 0) {
+                    throw new LitsError('Cannot normalize a zero vector', sourceCodeInfo);
+                }
+                return vector.map(function (val) { return val / magnitude; });
+            },
+            paramCount: 1,
+        },
+        'v:magnitude': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return Math.sqrt(vector.reduce(function (acc, val) { return acc + val * val; }, 0));
+            },
+            paramCount: 1,
+        },
+        'v:sum': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return vector.reduce(function (acc, val) { return acc + val; }, 0);
+            },
+            paramCount: 1,
+        },
+        'v:product': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return vector.reduce(function (acc, val) { return acc * val; }, 1);
+            },
+            paramCount: 1,
+        },
+        'v:mean': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return calcMean(vector);
+            },
+            paramCount: 1,
+        },
+        'v:median': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
+                var mid = Math.floor(sorted.length / 2);
+                return sorted.length % 2 === 0
+                    ? (sorted[mid - 1] + sorted[mid]) / 2
+                    : sorted[mid];
+            },
+            paramCount: 1,
+        },
+        'v:mode': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return mode(vector);
+            },
+            paramCount: 1,
+        },
+        'v:variance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var mean = calcMean(vector);
+                return vector.reduce(function (acc, val) { return acc + Math.pow((val - mean), 2); }, 0) / vector.length;
+            },
+            paramCount: 1,
+        },
+        'v:std-dev': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return Math.sqrt(vector.reduce(function (acc, val) { return acc + val; }, 0) / vector.length);
+            },
+            paramCount: 1,
+        },
+        'v:min': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertNonEmptyVector(vector, sourceCodeInfo);
+                return vector.reduce(function (acc, val) { return (val < vector[acc] ? val : acc); }, vector[0]);
+            },
+            paramCount: 1,
+        },
+        'v:max': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertNonEmptyVector(vector, sourceCodeInfo);
+                return vector.reduce(function (acc, val) { return (val > vector[acc] ? val : acc); }, vector[0]);
+            },
+            paramCount: 1,
+        },
+        'v:min-index': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertNonEmptyVector(vector, sourceCodeInfo);
+                return vector.reduce(function (acc, val, i) { return (val < vector[acc] ? i : acc); }, 0);
+            },
+            paramCount: 1,
+        },
+        'v:max-index': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertNonEmptyVector(vector, sourceCodeInfo);
+                return vector.reduce(function (acc, val, i) { return (val > vector[acc] ? i : acc); }, 0);
+            },
+            paramCount: 1,
+        },
+        'v:sort-indices': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return __spreadArray([], __read(vector.keys()), false).sort(function (a, b) { return vector[a] - vector[b]; });
+            },
+            paramCount: 1,
+        },
+        'v:count-values': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var e_5, _b;
+                var _c = __read(_a, 1), vector = _c[0];
+                assertVector(vector, sourceCodeInfo);
+                var frequencyMap = new Map();
+                try {
+                    for (var vector_1 = __values(vector), vector_1_1 = vector_1.next(); !vector_1_1.done; vector_1_1 = vector_1.next()) {
+                        var value = vector_1_1.value;
+                        frequencyMap.set(value, (frequencyMap.get(value) || 0) + 1);
+                    }
+                }
+                catch (e_5_1) { e_5 = { error: e_5_1 }; }
+                finally {
+                    try {
+                        if (vector_1_1 && !vector_1_1.done && (_b = vector_1.return)) _b.call(vector_1);
+                    }
+                    finally { if (e_5) throw e_5.error; }
+                }
+                return __spreadArray([], __read(frequencyMap.entries()), false).sort(function (a, b) {
+                    // First compare by count (descending)
+                    var countDiff = b[1] - a[1];
+                    if (countDiff !== 0)
+                        return countDiff;
+                    // If counts are equal, sort by value (ascending)
+                    return a[0] - b[0];
+                });
+            },
+            paramCount: 1,
+        },
+        'v:linspace': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), start = _b[0], end = _b[1], numPoints = _b[2];
+                assertNumber(start, sourceCodeInfo, { finite: true });
+                assertNumber(end, sourceCodeInfo, { finite: true });
+                assertNumber(numPoints, sourceCodeInfo, { integer: true, positive: true });
+                var step = (end - start) / (numPoints - 1);
+                return Array.from({ length: numPoints }, function (_, i) { return start + i * step; });
+            },
+            paramCount: 3,
+        },
+        'v:ones': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), length = _b[0];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                return Array.from({ length: length }, function () { return 1; });
+            },
+            paramCount: 1,
+        },
+        'v:zeros': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), length = _b[0];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                return Array.from({ length: length }, function () { return 0; });
+            },
+            paramCount: 1,
+        },
+        'v:fill': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), length = _b[0], value = _b[1];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                return Array.from({ length: length }, function () { return value; });
+            },
+            paramCount: 2,
+        },
+        'v:generate': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var _c = __read(_a, 2), length = _c[0], generator = _c[1];
+                var executeFunction = _b.executeFunction;
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                assertLitsFunction(generator, sourceCodeInfo);
+                return Array.from({ length: length }, function (_, i) {
+                    var value = executeFunction(generator, [i], contextStack, sourceCodeInfo);
+                    assertNumber(value, sourceCodeInfo, { finite: true });
+                    return value;
+                });
+            },
+            paramCount: 2,
+        },
+        'v:cumsum': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return vector.reduce(function (acc, val) {
+                    var last = acc[acc.length - 1] || 0;
+                    acc.push(last + val);
+                    return acc;
+                }, []);
+            },
+            paramCount: 1,
+        },
+        'v:cumprod': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return vector.reduce(function (acc, val) {
+                    var last = acc[acc.length - 1] || 1;
+                    acc.push(last * val);
+                    return acc;
+                }, []);
+            },
+            paramCount: 1,
+        },
+        'v:angle': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var dotProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
+                var magnitudeA = Math.sqrt(vectorA.reduce(function (acc, val) { return acc + val * val; }, 0));
+                var magnitudeB = Math.sqrt(vectorB.reduce(function (acc, val) { return acc + val * val; }, 0));
+                return Math.acos(dotProduct / (magnitudeA * magnitudeB));
+            },
+            paramCount: 2,
+        },
+        'v:projection': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var dotProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
+                var magnitudeB = Math.sqrt(vectorB.reduce(function (acc, val) { return acc + val * val; }, 0));
+                return vectorB.map(function (val) { return (dotProduct / (Math.pow(magnitudeB, 2))) * val; });
+            },
+            paramCount: 2,
+        },
+        'v:orthogonal?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var dotProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
+                return dotProduct === 0;
+            },
+            paramCount: 2,
+        },
+        'v:parallel?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var crossProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
+                return crossProduct === 0;
+            },
+            paramCount: 2,
+        },
+        'v:collinear?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var crossProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
+                return crossProduct === 0;
+            },
+            paramCount: 2,
+        },
+        'v:cosine-similarity': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var dotProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
+                var magnitudeA = Math.sqrt(vectorA.reduce(function (acc, val) { return acc + val * val; }, 0));
+                var magnitudeB = Math.sqrt(vectorB.reduce(function (acc, val) { return acc + val * val; }, 0));
+                return dotProduct / (magnitudeA * magnitudeB);
+            },
+            paramCount: 2,
+        },
+        'v:distance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return Math.sqrt(vectorA.reduce(function (acc, val, i) { return acc + Math.pow((val - vectorB[i]), 2); }, 0));
+            },
+            paramCount: 2,
+        },
+        'v:euclidean-distance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return Math.sqrt(vectorA.reduce(function (acc, val, i) { return acc + Math.pow((val - vectorB[i]), 2); }, 0));
+            },
+            paramCount: 2,
+        },
+        'v:manhattan-distance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return vectorA.reduce(function (acc, val, i) { return acc + Math.abs(val - vectorB[i]); }, 0);
+            },
+            paramCount: 2,
+        },
+        'v:hamming-distance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return vectorA.reduce(function (acc, val, i) { return acc + (val !== vectorB[i] ? 1 : 0); }, 0);
+            },
+            paramCount: 2,
+        },
+        'v:chebyshev-distance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return Math.max.apply(Math, __spreadArray([], __read(vectorA.map(function (val, i) { return Math.abs(val - vectorB[i]); })), false));
+            },
+            paramCount: 2,
+        },
+        'v:minkowski-distance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), vectorA = _b[0], vectorB = _b[1], p = _b[2];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                assertNumber(p, sourceCodeInfo, { finite: true });
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return Math.pow(vectorA.reduce(function (acc, val, i) { return acc + Math.pow(Math.abs(val - vectorB[i]), p); }, 0), (1 / p));
+            },
+            paramCount: 3,
+        },
+        'v:jaccard-distance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                var intersection = vectorA.filter(function (val) { return vectorB.includes(val); }).length;
+                var union = new Set(__spreadArray(__spreadArray([], __read(vectorA), false), __read(vectorB), false)).size;
+                return 1 - intersection / union;
+            },
+            paramCount: 2,
+        },
+        'v:dice-coefficient': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                var intersection = vectorA.filter(function (val) { return vectorB.includes(val); }).length;
+                return (2 * intersection) / (vectorA.length + vectorB.length);
+            },
+            paramCount: 2,
+        },
+        'v:levenshtein-distance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                var m = vectorA.length;
+                var n = vectorB.length;
+                var d = Array.from({ length: m + 1 }, function () { return Array(n + 1).fill(0); });
+                for (var i = 0; i <= m; i += 1) {
+                    d[i][0] = i;
+                }
+                for (var j = 0; j <= n; j += 1) {
+                    d[0][j] = j;
+                }
+                for (var i = 1; i <= m; i += 1) {
+                    for (var j = 1; j <= n; j += 1) {
+                        var cost = vectorA[i - 1] === vectorB[j - 1] ? 0 : 1;
+                        d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + cost);
+                    }
+                }
+                return d[m][n];
+            },
+            paramCount: 2,
+        },
+        'v:l1-norm': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return vector.reduce(function (acc, val) { return acc + Math.abs(val); }, 0);
+            },
+            paramCount: 1,
+        },
+        'v:l2-norm': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return Math.sqrt(vector.reduce(function (acc, val) { return acc + val * val; }, 0));
+            },
+            paramCount: 1,
+        },
+        'v:quartiles': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
+                var q1 = sorted[Math.floor((sorted.length / 4))];
+                var q2 = sorted[Math.floor((sorted.length / 2))];
+                var q3 = sorted[Math.floor((3 * sorted.length) / 4)];
+                return [q1, q2, q3];
+            },
+            paramCount: 1,
+        },
+        'v:iqr': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
+                var q1 = sorted[Math.floor((sorted.length / 4))];
+                var q3 = sorted[Math.floor((3 * sorted.length) / 4)];
+                return q3 - q1;
+            },
+            paramCount: 1,
+        },
+        'v:percentile': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], percentile = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(percentile, sourceCodeInfo, { finite: true });
+                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
+                var index = Math.floor((percentile / 100) * (sorted.length - 1));
+                return sorted[index];
+            },
+            paramCount: 2,
+        },
+        'v:quantile': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], quantile = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(quantile, sourceCodeInfo, { finite: true });
+                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
+                var index = Math.floor(quantile * (sorted.length - 1));
+                return sorted[index];
+            },
+            paramCount: 2,
+        },
+        'v:range': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertNonEmptyVector(vector, sourceCodeInfo);
+                var min = vector.reduce(function (acc, val) { return (val < vector[acc] ? val : acc); }, vector[0]);
+                var max = vector.reduce(function (acc, val) { return (val > vector[acc] ? val : acc); }, vector[0]);
+                return max - min;
+            },
+            paramCount: 1,
+        },
+        'v:skewness': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var mean = calcMean(vector);
+                var stdDev = calcStdDev(vector);
+                return vector.reduce(function (acc, val) { return acc + (Math.pow((val - mean), 3)); }, 0) / (vector.length * Math.pow(stdDev, 3));
+            },
+            paramCount: 1,
+        },
+        'v:kurtosis': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var mean = calcMean(vector);
+                var stdDev = calcStdDev(vector);
+                return vector.reduce(function (acc, val) { return acc + (Math.pow((val - mean), 4)); }, 0) / (vector.length * Math.pow(stdDev, 4));
+            },
+            paramCount: 1,
+        },
+        'v:geometric-mean': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return Math.exp(vector.reduce(function (acc, val) { return acc + Math.log(val); }, 0) / vector.length);
+            },
+            paramCount: 1,
+        },
+        'v:harmonic-mean': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return vector.length / vector.reduce(function (acc, val) { return acc + 1 / val; }, 0);
+            },
+            paramCount: 1,
+        },
+        'v:rms': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return Math.sqrt(vector.reduce(function (acc, val) { return acc + Math.pow(val, 2); }, 0) / vector.length);
+            },
+            paramCount: 1,
+        },
+        'v:z-score': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var mean = calcMean(vector);
+                var stdDev = calcStdDev(vector);
+                return vector.map(function (val) { return (val - mean) / stdDev; });
+            },
+            paramCount: 1,
+        },
+        'v:normalize-minmax': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var min = vector.reduce(function (acc, val) { return (val < vector[acc] ? val : acc); }, vector[0]);
+                var max = vector.reduce(function (acc, val) { return (val > vector[acc] ? val : acc); }, vector[0]);
+                return vector.map(function (val) { return (val - min) / (max - min); });
+            },
+            paramCount: 1,
+        },
+        'v:normalize-robust': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var median = vector.reduce(function (acc, val) { return acc + val; }, 0) / vector.length;
+                var iqr = vector.reduce(function (acc, val) { return acc + Math.abs(val - median); }, 0) / vector.length;
+                return vector.map(function (val) { return (val - median) / iqr; });
+            },
+            paramCount: 1,
+        },
+        'v:covariance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var meanA = calcMean(vectorA);
+                var meanB = calcMean(vectorB);
+                return vectorA.reduce(function (acc, val, i) { return acc + (val - meanA) * (vectorB[i] - meanB); }, 0) / vectorA.length;
+            },
+            paramCount: 2,
+        },
+        'v:correlation': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var meanA = calcMean(vectorA);
+                var meanB = calcMean(vectorB);
+                var numerator = vectorA.reduce(function (acc, val, i) { return acc + (val - meanA) * (vectorB[i] - meanB); }, 0);
+                var denominator = Math.sqrt(vectorA.reduce(function (acc, val) { return acc + Math.pow((val - meanA), 2); }, 0) * vectorB.reduce(function (acc, val) { return acc + Math.pow((val - meanB), 2); }, 0));
+                return numerator / denominator;
+            },
+            paramCount: 2,
+        },
+        'v:spearman-correlation': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var rankA = __spreadArray([], __read(vectorA.keys()), false).sort(function (a, b) { return vectorA[a] - vectorA[b]; });
+                var rankB = __spreadArray([], __read(vectorB.keys()), false).sort(function (a, b) { return vectorB[a] - vectorB[b]; });
+                return vectorA.reduce(function (acc, _val, i) { return acc + (rankA[i] - rankB[i]); }, 0) / vectorA.length;
+            },
+            paramCount: 2,
+        },
+        'v:kendall-tau': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var concordant = 0;
+                var discordant = 0;
+                for (var i = 0; i < vectorA.length; i += 1) {
+                    for (var j = i + 1; j < vectorA.length; j += 1) {
+                        if ((vectorA[i] - vectorA[j]) * (vectorB[i] - vectorB[j]) > 0) {
+                            concordant += 1;
+                        }
+                        else {
+                            discordant += 1;
+                        }
+                    }
+                }
+                return (concordant - discordant) / Math.sqrt(Math.pow((concordant + discordant), 2));
+            },
+            paramCount: 2,
+        },
+        'v:histogram': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var e_6, _b;
+                var _c = __read(_a, 2), vector = _c[0], bins = _c[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(bins, sourceCodeInfo, { integer: true, positive: true });
+                var min = vector.reduce(function (acc, val) { return (val < vector[acc] ? val : acc); }, vector[0]);
+                var max = vector.reduce(function (acc, val) { return (val > vector[acc] ? val : acc); }, vector[0]);
+                var binSize = (max - min) / bins;
+                var histogram = Array.from({ length: bins }, function () { return 0; });
+                try {
+                    for (var vector_2 = __values(vector), vector_2_1 = vector_2.next(); !vector_2_1.done; vector_2_1 = vector_2.next()) {
+                        var value = vector_2_1.value;
+                        var binIndex = Math.floor((value - min) / binSize);
+                        if (binIndex >= 0 && binIndex < bins) {
+                            histogram[binIndex] += 1;
+                        }
+                    }
+                }
+                catch (e_6_1) { e_6 = { error: e_6_1 }; }
+                finally {
+                    try {
+                        if (vector_2_1 && !vector_2_1.done && (_b = vector_2.return)) _b.call(vector_2);
+                    }
+                    finally { if (e_6) throw e_6.error; }
+                }
+                return histogram;
+            },
+            paramCount: 2,
+        },
+        'v:cdf': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], value = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(value, sourceCodeInfo, { finite: true });
+                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
+                var index = sorted.findIndex(function (val) { return val > value; });
+                return index === -1 ? 1 : index / sorted.length;
+            },
+            paramCount: 2,
+        },
+        'v:ecdf': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], value = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(value, sourceCodeInfo, { finite: true });
+                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
+                var index = sorted.findIndex(function (val) { return val >= value; });
+                return index === -1 ? 1 : (index + 1) / sorted.length;
+            },
+            paramCount: 2,
+        },
+        'v:no-extreme-eutliers?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var mean = calcMean(vector);
+                var stdDev = calcStdDev(vector);
+                return vector.every(function (val) { return Math.abs((val - mean) / stdDev) < 3; });
+            },
+            paramCount: 1,
+        },
+        'v:outliers': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var mean = calcMean(vector);
+                var stdDev = calcStdDev(vector);
+                return vector.filter(function (val) { return Math.abs((val - mean) / stdDev) > 3; });
+            },
+            paramCount: 1,
+        },
+        'v:moving-average': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
+                var result = [];
+                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
+                    var sum = vector.slice(i, i + windowSize).reduce(function (acc, val) { return acc + val; }, 0);
+                    result.push(sum / windowSize);
+                }
+                return result;
+            },
+            paramCount: 2,
+        },
+        'v:moving-median': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
+                var result = [];
+                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
+                    var median = vector.slice(i, i + windowSize).sort(function (a, b) { return a - b; })[Math.floor(windowSize / 2)];
+                    result.push(median);
+                }
+                return result;
+            },
+            paramCount: 2,
+        },
+        'v:moving-std': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
+                var result = [];
+                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
+                    var stdDev = calcStdDev(vector.slice(i, i + windowSize));
+                    result.push(stdDev);
+                }
+                return result;
+            },
+            paramCount: 2,
+        },
+        'v:moving-sum': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
+                var result = [];
+                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
+                    var sum = vector.slice(i, i + windowSize).reduce(function (acc, val) { return acc + val; }, 0);
+                    result.push(sum);
+                }
+                return result;
+            },
+            paramCount: 2,
+        },
+        'v:moving-product': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
+                var result = [];
+                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
+                    var product = vector.slice(i, i + windowSize).reduce(function (acc, val) { return acc * val; }, 1);
+                    result.push(product);
+                }
+                return result;
+            },
+            paramCount: 2,
+        },
+        'v:moving-min': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
+                var result = [];
+                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
+                    var min = vector.slice(i, i + windowSize).reduce(function (acc, val) { return (val < acc ? val : acc); }, vector[i]);
+                    result.push(min);
+                }
+                return result;
+            },
+            paramCount: 2,
+        },
+        'v:moving-max': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
+                var result = [];
+                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
+                    var max = vector.slice(i, i + windowSize).reduce(function (acc, val) { return (val > acc ? val : acc); }, vector[i]);
+                    result.push(max);
+                }
+                return result;
+            },
+            paramCount: 2,
+        },
+        'moving-variance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
+                var result = [];
+                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
+                    result.push(calcVariance(vector.slice(i, i + windowSize)));
+                }
+                return result;
+            },
+            paramCount: 2,
+        },
+        'moving-rms': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
+                var result = [];
+                var _loop_1 = function (i) {
+                    var mean = calcMean(vector.slice(i, i + windowSize));
+                    var rms = Math.sqrt(vector.slice(i, i + windowSize).reduce(function (acc, val) { return acc + Math.pow((val - mean), 2); }, 0) / windowSize);
+                    result.push(rms);
+                };
+                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
+                    _loop_1(i);
+                }
+                return result;
+            },
+            paramCount: 2,
+        },
+        'v:moving-percentile': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), vector = _b[0], windowSize = _b[1], percentile = _b[2];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
+                assertNumber(percentile, sourceCodeInfo, { finite: true });
+                var result = [];
+                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
+                    var sorted = vector.slice(i, i + windowSize).sort(function (a, b) { return a - b; });
+                    var index = Math.floor(percentile * (sorted.length - 1));
+                    result.push(sorted[index]);
+                }
+                return result;
+            },
+            paramCount: 3,
+        },
+        'v:moving-quantile': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), vector = _b[0], windowSize = _b[1], quantile = _b[2];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
+                assertNumber(quantile, sourceCodeInfo, { finite: true });
+                var result = [];
+                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
+                    var sorted = vector.slice(i, i + windowSize).sort(function (a, b) { return a - b; });
+                    var index = Math.floor(quantile * (sorted.length - 1));
+                    result.push(sorted[index]);
+                }
+                return result;
+            },
+            paramCount: 3,
+        },
+        'v:entropy': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return calculateEntropy(vector);
+            },
+            paramCount: 1,
+        },
+        'v:gini-coefficient': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
+                var n = sorted.length;
+                var sum = sorted.reduce(function (acc, val) { return acc + val; }, 0);
+                var gini = (2 * sorted.reduce(function (acc, val, i) { return acc + (i + 1) * val; }, 0)) / (n * sum) - (n + 1) / n;
+                return gini;
+            },
+            paramCount: 1,
+        },
+        'v:bincount': {
+            evaluate: function (params, sourceCodeInfo) {
+                var _a, _b;
+                var vector = params[0];
+                assertVector(vector, sourceCodeInfo);
+                vector.forEach(function (val) { return assertNumber(val, sourceCodeInfo, { finite: true, integer: true, nonNegative: true }); });
+                var minSize = (_a = params[1]) !== null && _a !== void 0 ? _a : 0;
+                assertNumber(minSize, sourceCodeInfo, { integer: true, nonNegative: true });
+                var weights = (_b = params[2]) !== null && _b !== void 0 ? _b : undefined;
+                if (weights !== null) {
+                    assertVector(weights, sourceCodeInfo);
+                    if (weights.length !== vector.length) {
+                        throw new LitsError('Weights vector must be the same length as the input vector', sourceCodeInfo);
+                    }
+                    weights.forEach(function (val) { return assertNumber(val, sourceCodeInfo, { finite: true }); });
+                }
+                return bincount(vector, minSize, weights);
+            },
+            paramCount: { min: 1, max: 3 },
+        },
+        'v:arithmetic-sum': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), start = _b[0], step = _b[1], length = _b[2];
+                assertNumber(start, sourceCodeInfo, { finite: true });
+                assertNumber(step, sourceCodeInfo, { finite: true });
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                return (length / 2) * (2 * start + (length - 1) * step);
+            },
+            paramCount: 3,
+        },
+        'v:autocorrelation': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], lag = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                var effectiveLag = lag !== null && lag !== void 0 ? lag : vector.length - 1;
+                assertNumber(effectiveLag, sourceCodeInfo, { integer: true });
+                if (effectiveLag >= vector.length) {
+                    throw new LitsError('Lag must be less than the length of the vector', sourceCodeInfo);
+                }
+                var mean = calcMean(vector);
+                var variance = calcVariance(vector);
+                var autocovariance = vector.reduce(function (acc, val, i) { return acc + (val - mean) * (vector[i + effectiveLag] - mean); }, 0) / vector.length;
+                return autocovariance / variance;
+            },
+            paramCount: { min: 1, max: 2 },
+        },
+        'v:cross-correlation': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), vectorA = _b[0], vectorB = _b[1], lag = _b[2];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var effectiveLag = lag !== null && lag !== void 0 ? lag : vectorA.length - 1;
+                assertNumber(effectiveLag, sourceCodeInfo, { integer: true, positive: true });
+                if (effectiveLag >= vectorA.length || effectiveLag >= vectorB.length) {
+                    throw new LitsError('Lag must be less than the length of the vectors', sourceCodeInfo);
+                }
+                var n = vectorA.length;
+                var meanA = vectorA.reduce(function (sum, x) { return sum + x; }, 0) / n;
+                var meanB = vectorB.reduce(function (sum, x) { return sum + x; }, 0) / n;
+                var stdA = Math.sqrt(vectorA.reduce(function (sum, x) { return sum + Math.pow((x - meanA), 2); }, 0) / n);
+                var stdB = Math.sqrt(vectorB.reduce(function (sum, x) { return sum + Math.pow((x - meanB), 2); }, 0) / n);
+                if (stdA === 0 || stdB === 0)
+                    return 0;
+                var overlapLength = n - Math.abs(effectiveLag);
+                var sum = 0;
+                if (effectiveLag >= 0) {
+                    for (var i = 0; i < overlapLength; i++) {
+                        sum += (vectorA[i] - meanA) * (vectorB[i + effectiveLag] - meanB);
+                    }
+                }
+                else {
+                    for (var i = 0; i < overlapLength; i++) {
+                        sum += (vectorA[i - effectiveLag] - meanA) * (vectorB[i] - meanB);
+                    }
+                }
+                return sum / (overlapLength * stdA * stdB);
+            },
+            paramCount: 3,
+        },
+        'v:winsorize': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), vector = _b[0], lowerPercentile = _b[1], upperPercentile = _b[2];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(lowerPercentile, sourceCodeInfo, { finite: true });
+                assertNumber(upperPercentile, sourceCodeInfo, { finite: true });
+                if (vector.length === 0)
+                    return [];
+                if (lowerPercentile < 0 || lowerPercentile > 0.5 || upperPercentile < 0 || upperPercentile > 0.5) {
+                    throw new LitsError('Percentiles must be between 0 and 0.5', sourceCodeInfo);
+                }
+                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
+                var lowerIndex = Math.max(0, Math.floor(lowerPercentile * vector.length));
+                var upperIndex = Math.min(vector.length - 1, Math.floor((1 - upperPercentile) * vector.length));
+                var lowerBound = sorted[lowerIndex];
+                var upperBound = sorted[upperIndex];
+                return vector.map(function (val) { return Math.max(lowerBound, Math.min(val, upperBound)); });
+            },
+            paramCount: 3,
+        },
+        'v:mse': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return vectorA.reduce(function (acc, val, i) { return acc + Math.pow((val - vectorB[i]), 2); }, 0) / vectorA.length;
+            },
+            paramCount: 2,
+        },
+        'v:mae': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return vectorA.reduce(function (acc, val, i) { return acc + Math.abs(val - vectorB[i]); }, 0) / vectorA.length;
+            },
+            paramCount: 2,
         },
     };
 
@@ -8516,46 +8560,6 @@ var Playground = (function (exports) {
         return matrix.reduce(function (sum, row, i) { return sum + row[i]; }, 0);
     }
 
-    function isMatrix(matrix) {
-        var e_1, _a;
-        if (!Array.isArray(matrix)) {
-            return false;
-        }
-        if (matrix.length === 0) {
-            return false;
-        }
-        if (!Array.isArray(matrix[0])) {
-            return false;
-        }
-        var nbrOfCols = matrix[0].length;
-        try {
-            for (var _b = __values(matrix.slice(1)), _c = _b.next(); !_c.done; _c = _b.next()) {
-                var row = _c.value;
-                if (!Array.isArray(row)) {
-                    return false;
-                }
-                if (row.length !== nbrOfCols) {
-                    return false;
-                }
-                if (row.some(function (cell) { return !isNumber(cell, { finite: true }); })) {
-                    return false;
-                }
-            }
-        }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
-        finally {
-            try {
-                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
-            }
-            finally { if (e_1) throw e_1.error; }
-        }
-        return true;
-    }
-    function assertMatrix(matrix, sourceCodeInfo) {
-        if (!isMatrix(matrix)) {
-            throw new LitsError("Expected a matrix, but got ".concat(matrix), sourceCodeInfo);
-        }
-    }
     function assertSquareMatrix(matrix, sourceCodeInfo) {
         if (!isMatrix(matrix)) {
             throw new LitsError("Expected a matrix, but got ".concat(matrix), sourceCodeInfo);
@@ -11845,7 +11849,9 @@ var Playground = (function (exports) {
         },
         'c:cartesian-product': {
             evaluate: function (params, sourceCodeInfo) {
-                params.forEach(function (set) { return assertArray(set, sourceCodeInfo); });
+                params.forEach(function (set) {
+                    assertArray(set, sourceCodeInfo);
+                });
                 var sets = params;
                 return sets.reduce(function (acc, set) {
                     var result = [];
@@ -11863,7 +11869,8 @@ var Playground = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), n = _b[0];
                 assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
-                return perfectPower(n);
+                var result = perfectPower(n);
+                return result || null;
             },
             paramCount: 1,
         },
@@ -12005,7 +12012,6 @@ var Playground = (function (exports) {
             finally { if (e_4) throw e_4.error; }
         }
     }
-    console.log(Object.keys(combinatoricalNormalExpression).length);
 
     var expressions = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, bitwiseNormalExpression), collectionNormalExpression), arrayNormalExpression), sequenceNormalExpression), mathNormalExpression), miscNormalExpression), assertNormalExpression), objectNormalExpression), predicatesNormalExpression), regexpNormalExpression), stringNormalExpression), functionalNormalExpression), vectorNormalExpression), tableNormalExpression), matrixNormalExpression), combinatoricalNormalExpression);
     var aliases = {};
@@ -13363,9 +13369,9 @@ var Playground = (function (exports) {
             case NodeTypes.ReservedSymbol:
                 return evaluateReservedSymbol(node);
             case NodeTypes.NormalExpression:
-                return evaluateNormalExpression(node, contextStack);
+                return annotate(evaluateNormalExpression(node, contextStack));
             case NodeTypes.SpecialExpression:
-                return evaluateSpecialExpression(node, contextStack);
+                return annotate(evaluateSpecialExpression(node, contextStack));
             /* v8 ignore next 2 */
             default:
                 throw new LitsError("".concat(getNodeTypeName(node[0]), "-node cannot be evaluated"), node[2]);

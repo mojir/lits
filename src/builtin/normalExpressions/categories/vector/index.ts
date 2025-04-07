@@ -1,7 +1,7 @@
 import { LitsError } from '../../../../errors'
-import type { SourceCodeInfo } from '../../../../tokenizer/token'
+import { assertNonEmptyVector, assertVector, isVector } from '../../../../typeGuards/annotatedArrays'
 import { assertLitsFunction } from '../../../../typeGuards/litsFunction'
-import { assertNumber, isNumber } from '../../../../typeGuards/number'
+import { assertNumber } from '../../../../typeGuards/number'
 import type { BuiltinNormalExpressions } from '../../../interface'
 import { bincount } from './bincount'
 import { calcMean } from './calcMean'
@@ -9,27 +9,6 @@ import { calcStdDev } from './calcStdDev'
 import { calcVariance } from './calcVariance'
 import { calculateEntropy } from './entropy'
 import { mode } from './mode'
-
-export function isVector(vector: unknown): vector is number[] {
-  if (!Array.isArray(vector)) {
-    return false
-  }
-
-  return vector.every(elem => isNumber(elem, { finite: true }))
-}
-
-export function assertVector(vector: unknown, sourceCodeInfo: SourceCodeInfo | undefined): asserts vector is number[] {
-  if (!isVector(vector)) {
-    throw new LitsError(`Expected a vector, but got ${vector}`, sourceCodeInfo)
-  }
-}
-
-export function assertNonEmptyVector(vector: unknown, sourceCodeInfo: SourceCodeInfo | undefined): asserts vector is number[] {
-  assertVector(vector, sourceCodeInfo)
-  if (vector.length === 0) {
-    throw new LitsError(`Expected a non empty vector, but got ${vector}`, sourceCodeInfo)
-  }
-}
 
 export const vectorNormalExpression: BuiltinNormalExpressions = {
   'v:vector?': {

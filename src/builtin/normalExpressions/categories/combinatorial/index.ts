@@ -1,9 +1,9 @@
 import { LitsError } from '../../../../errors'
 import type { Arr } from '../../../../interface'
+import { assertVector } from '../../../../typeGuards/annotatedArrays'
 import { assertArray } from '../../../../typeGuards/array'
 import { assertNumber } from '../../../../typeGuards/number'
 import type { BuiltinNormalExpressions } from '../../../interface'
-import { assertVector } from '../vector'
 import { combinationsNormalExpressions } from './combinations'
 import { derangementsNormalExpressions } from './derangements'
 import { divisorsNormalExpressions, getDivisors, getProperDivisors } from './divisors'
@@ -307,7 +307,9 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
   },
   'c:cartesian-product': {
     evaluate: (params, sourceCodeInfo): Arr[] => {
-      params.forEach(set => assertArray(set, sourceCodeInfo))
+      params.forEach((set) => {
+        assertArray(set, sourceCodeInfo)
+      })
       const sets = params as Arr[]
       return sets.reduce((acc: Arr[], set) => {
         const result: Arr[] = []
@@ -324,7 +326,8 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
   'c:perfect-power': {
     evaluate: ([n], sourceCodeInfo): [number, number] | null => {
       assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
-      return perfectPower(n)
+      const result = perfectPower(n)
+      return result || null
     },
     paramCount: 1,
   },

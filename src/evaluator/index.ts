@@ -17,6 +17,7 @@ import type {
 import { reservedSymbolRecord } from '../tokenizer/reservedNames'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { asNonUndefined } from '../typeGuards'
+import { annotate } from '../typeGuards/annotatedArrays'
 import { isNormalBuiltinSymbolNode, isNormalExpressionNodeWithName, isSpreadNode } from '../typeGuards/astNode'
 import { asAny, assertSeq, isObj } from '../typeGuards/lits'
 import { isLitsFunction } from '../typeGuards/litsFunction'
@@ -50,9 +51,9 @@ export function evaluateNode(node: Node, contextStack: ContextStack): Any {
     case NodeTypes.ReservedSymbol:
       return evaluateReservedSymbol(node as ReservedSymbolNode)
     case NodeTypes.NormalExpression:
-      return evaluateNormalExpression(node as NormalExpressionNode, contextStack)
+      return annotate(evaluateNormalExpression(node as NormalExpressionNode, contextStack))
     case NodeTypes.SpecialExpression:
-      return evaluateSpecialExpression(node as SpecialExpressionNode, contextStack)
+      return annotate(evaluateSpecialExpression(node as SpecialExpressionNode, contextStack))
     /* v8 ignore next 2 */
     default:
       throw new LitsError(`${getNodeTypeName(node[0])}-node cannot be evaluated`, node[2])

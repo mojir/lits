@@ -2,7 +2,7 @@ import { prettyPi } from '@mojir/pretty-pi'
 import type { UnknownRecord } from '../src/interface'
 import { isRegularExpression } from '../src/typeGuards/lits'
 import { isLitsFunction } from '../src/typeGuards/litsFunction'
-import { isVector } from '../src/builtin/normalExpressions/categories/vector'
+import { isMatrix, isVector } from '../src/typeGuards/annotatedArrays'
 
 export function stringifyValue(value: unknown, html: boolean): string {
   const gt = html ? '&gt;' : '>'
@@ -40,10 +40,10 @@ export function stringifyValue(value: unknown, html: boolean): string {
   if (typeof value === 'string')
     return `"${value}"`
 
-  if (isMatrix(value))
+  if (Array.isArray(value) && isMatrix(value))
     return stringifyMatrix(value)
 
-  if (isVector(value)) {
+  if (Array.isArray(value) && isVector(value)) {
     return `[\n  ${value.map((cell) => {
       const pretty = prettyPi(cell, { spaceSeparation: true })
       const decimal = `${cell}`
@@ -67,34 +67,34 @@ function stringifyMatrix(matrix: (null | number | string | boolean)[][]): string
   return rows.join('\n')
 }
 
-function isMatrix(value: unknown): value is (null | number | string | boolean)[][] {
-  if (!Array.isArray(value)) {
-    return false
-  }
-  if (!value.every(row => Array.isArray(row))) {
-    return false
-  }
-  let cols = -1
-  for (const row of value) {
-    if (cols === -1) {
-      cols = row.length
-      if (cols === 0) {
-        return false
-      }
-    }
-    else {
-      if (row.length !== cols) {
-        return false
-      }
-    }
-    for (const cell of row) {
-      if (typeof cell !== 'number' && typeof cell !== 'string' && typeof cell !== 'boolean' && cell !== null) {
-        return false
-      }
-    }
-  }
-  return true
-}
+// function isMatrix(value: unknown): value is (null | number | string | boolean)[][] {
+//   if (!Array.isArray(value)) {
+//     return false
+//   }
+//   if (!value.every(row => Array.isArray(row))) {
+//     return false
+//   }
+//   let cols = -1
+//   for (const row of value) {
+//     if (cols === -1) {
+//       cols = row.length
+//       if (cols === 0) {
+//         return false
+//       }
+//     }
+//     else {
+//       if (row.length !== cols) {
+//         return false
+//       }
+//     }
+//     for (const cell of row) {
+//       if (typeof cell !== 'number' && typeof cell !== 'string' && typeof cell !== 'boolean' && cell !== null) {
+//         return false
+//       }
+//     }
+//   }
+//   return true
+// }
 
 export function findAllOccurrences(input: string, pattern: RegExp): Set<string> {
   const matches = [...input.matchAll(pattern)]

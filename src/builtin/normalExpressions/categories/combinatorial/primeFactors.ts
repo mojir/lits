@@ -68,5 +68,5 @@ export const primeFactorsNormalExpressions: BuiltinNormalExpressions = {
       return distinctFactors.size
     },
     paramCount: 1,
-  },    
+  },
 }

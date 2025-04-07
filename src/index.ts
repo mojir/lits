@@ -25,3 +25,4 @@ export { apiReference, isDatatypeReference, isFunctionReference, isShorthandRefe
 export type { Argument, CommonReference, DatatypeReference, FunctionReference, Reference, ShorthandReference } from '../reference'
 export type { ApiName, FunctionName, ShorthandName, DatatypeName } from '../reference/api'
 export { isApiName, isDataType } from '../reference/api'
+export { isGrid, isMatrix, isVector } from './typeGuards/annotatedArrays'

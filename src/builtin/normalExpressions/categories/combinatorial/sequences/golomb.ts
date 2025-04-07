@@ -14,7 +14,7 @@ function generateGolombSeq(pred: (golombNumber: number, index: number) => boolea
   }
   const golomb = [0, 1]
   for (let i = 2; ; i++) {
-    const golombNumber = 1 +golomb[i - golomb[golomb[i - 1]!]!]!
+    const golombNumber = 1 + golomb[i - golomb[golomb[i - 1]!]!]!
     if (!pred(golombNumber, i - 1)) {
       break
     }

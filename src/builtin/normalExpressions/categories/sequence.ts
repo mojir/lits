@@ -20,7 +20,13 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
         return defaultValue
 
       assertSeq(seq, sourceCodeInfo)
-      return i >= 0 && i < seq.length ? toAny(seq[i]) : defaultValue
+      if (i >= 0 && i < seq.length) {
+        const result = toAny(seq[i])
+        return result
+      }
+      else {
+        return defaultValue
+      }
     },
     paramCount: { min: 2, max: 3 },
   },
@@ -28,8 +34,10 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([seq, fn]: Arr, sourceCodeInfo, contextStack, { executeFunction }): Seq => {
       assertSeq(seq, sourceCodeInfo)
       assertLitsFunction(fn, sourceCodeInfo)
-      if (Array.isArray(seq))
-        return seq.filter(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo))
+      if (Array.isArray(seq)) {
+        const result = seq.filter(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo))
+        return result
+      }
 
       return seq
         .split('')
@@ -44,7 +52,9 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
         return null
 
       assertSeq(array, sourceCodeInfo)
-      return toAny(array[0])
+      const result = toAny(array[0])
+
+      return result
     },
     paramCount: 1,
   },
@@ -54,7 +64,9 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
         return null
 
       assertSeq(array, sourceCodeInfo)
-      return toAny(array[array.length - 1])
+      const result = toAny(array.at(-1))
+
+      return result
     },
     paramCount: 1,
   },
@@ -274,8 +286,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
             return val
 
           return seq.split('').reduce((result: Any, elem) => {
-            const newVal = executeFunction(fn, [result, elem], contextStack, sourceCodeInfo)
-            return newVal
+            return executeFunction(fn, [result, elem], contextStack, sourceCodeInfo)
           }, val)
         }
         else {
@@ -331,8 +342,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
             return val
 
           return seq.split('').reduceRight((result: Any, elem) => {
-            const newVal = executeFunction(fn, [result, elem], contextStack, sourceCodeInfo)
-            return newVal
+            return executeFunction(fn, [result, elem], contextStack, sourceCodeInfo)
           }, val)
         }
         else {
@@ -382,8 +392,9 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
         return null
 
       assertSeq(seq, sourceCodeInfo)
-      if (Array.isArray(seq))
+      if (Array.isArray(seq)) {
         return [...seq].reverse()
+      }
 
       return seq.split('').reverse().join('')
     },
@@ -417,10 +428,17 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       assertSeq(seq, sourceCodeInfo)
       assertNumber(from, sourceCodeInfo, { integer: true })
 
-      if (params.length === 2)
+      if (params.length === 2) {
+        if (Array.isArray(seq)) {
+          return seq.slice(from)
+        }
         return seq.slice(from)
+      }
 
       assertNumber(to, sourceCodeInfo, { integer: true })
+      if (Array.isArray(seq)) {
+        return seq.slice(from, to)
+      }
       return seq.slice(from, to)
     },
     paramCount: { min: 2, max: 3 },
