@@ -15,7 +15,7 @@ import { functionalNormalExpression } from './categories/functional'
 import { tableNormalExpression } from './categories/table'
 import { vectorNormalExpression } from './categories/vector'
 import { matrixNormalExpression } from './categories/matrix'
-import { combinatoricalNormalExpression } from './categories/combinatorial'
+import { combinatoricalNormalExpression } from './categories/numberTheory'
 
 const expressions: BuiltinNormalExpressions = {
   ...bitwiseNormalExpression,

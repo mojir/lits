@@ -23,7 +23,6 @@ export function annotate<T>(value: T): T {
 
   return value
 }
-
 export function isVector(vector: unknown): vector is number[] {
   if (!Array.isArray(vector)) {
     return false

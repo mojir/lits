@@ -9104,7 +9104,7 @@ var Playground = (function (exports) {
         return result;
     }
     var combinationsNormalExpressions = {
-        'c:combinations': {
+        'n:combinations': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), set = _b[0], n = _b[1];
                 assertArray(set, sourceCodeInfo);
@@ -9115,14 +9115,14 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'c:count-combinations': {
+        'n:count-combinations': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), n = _b[0], k = _b[1];
                 assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true });
                 assertNumber(k, sourceCodeInfo, { integer: true, nonNegative: true, lte: n });
                 return binomialCoefficient(n, k);
             },
-            aliases: ['c:binomial'],
+            aliases: ['n:binomial'],
             paramCount: 2,
         },
     };
@@ -9167,7 +9167,7 @@ var Playground = (function (exports) {
         return result;
     }
     var derangementsNormalExpressions = {
-        'c:derangements': {
+        'n:derangements': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), set = _b[0];
                 assertArray(set, sourceCodeInfo);
@@ -9175,7 +9175,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'c:count-derangements': {
+        'n:count-derangements': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), n = _b[0];
                 assertNumber(n, sourceCodeInfo, { finite: true, integer: true, positive: true });
@@ -9206,7 +9206,7 @@ var Playground = (function (exports) {
         return getDivisors(n).slice(0, -1); // Exclude the number itself
     }
     var divisorsNormalExpressions = {
-        'c:divisors': {
+        'n:divisors': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), number = _b[0];
                 assertNumber(number, sourceCodeInfo, { finite: true, integer: true, positive: true });
@@ -9214,7 +9214,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'c:count-divisors': {
+        'n:count-divisors': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), number = _b[0];
                 assertNumber(number, sourceCodeInfo, { finite: true, integer: true, positive: true });
@@ -9222,7 +9222,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'c:proper-divisors': {
+        'n:proper-divisors': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), number = _b[0];
                 assertNumber(number, sourceCodeInfo, { finite: true, integer: true, positive: true });
@@ -9230,7 +9230,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'c:count-proper-divisors': {
+        'n:count-proper-divisors': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), number = _b[0];
                 assertNumber(number, sourceCodeInfo, { finite: true, integer: true, positive: true });
@@ -9276,13 +9276,13 @@ var Playground = (function (exports) {
         return result;
     }
     var factorialNormalExpressions = {
-        'c:factorial': {
+        'n:factorial': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), n = _b[0];
                 assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true, lte: 170 });
                 return factorialOf(n);
             },
-            aliases: ['c:!'],
+            aliases: ['n:!'],
             paramCount: 1,
         },
     };
@@ -9613,7 +9613,7 @@ var Playground = (function (exports) {
         return result;
     }
     var partitionsNormalExpressions = {
-        'c:partitions': {
+        'n:partitions': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), n = _b[0];
                 assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true });
@@ -9621,7 +9621,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'c:count-partitions': {
+        'n:count-partitions': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), n = _b[0];
                 assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true });
@@ -9674,7 +9674,7 @@ var Playground = (function (exports) {
         return result;
     }
     var permutationsNormalExpressions = {
-        'c:permutations': {
+        'n:permutations': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), set = _b[0];
                 assertArray(set, sourceCodeInfo);
@@ -9682,7 +9682,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'c:count-permutations': {
+        'n:count-permutations': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), n = _b[0], k = _b[1];
                 assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true });
@@ -9716,7 +9716,7 @@ var Playground = (function (exports) {
         return result;
     }
     var powerSetNormalExpressions = {
-        'c:power-set': {
+        'n:power-set': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), set = _b[0];
                 assertArray(set, sourceCodeInfo);
@@ -9724,7 +9724,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'c:count-power-set': {
+        'n:count-power-set': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), n = _b[0];
                 assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true });
@@ -9770,7 +9770,7 @@ var Playground = (function (exports) {
         return factors;
     }
     var primeFactorsNormalExpressions = {
-        'c:prime-factors': {
+        'n:prime-factors': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), number = _b[0];
                 assertNumber(number, sourceCodeInfo, { finite: true, integer: true, positive: true });
@@ -9778,7 +9778,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'c:distinct-prime-factors': {
+        'n:distinct-prime-factors': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), n = _b[0];
                 assertNumber(n, sourceCodeInfo, { finite: true, integer: true, positive: true });
@@ -9788,7 +9788,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'c:count-prime-factors': {
+        'n:count-prime-factors': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), n = _b[0];
                 assertNumber(n, sourceCodeInfo, { finite: true, integer: true, positive: true });
@@ -9796,7 +9796,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'c:count-distinct-prime-factors': {
+        'n:count-distinct-prime-factors': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), n = _b[0];
                 assertNumber(n, sourceCodeInfo, { finite: true, integer: true, positive: true });
@@ -9814,7 +9814,7 @@ var Playground = (function (exports) {
         return sum > num;
     }
     var abundantSequence = {
-        'c:abundant-seq': function (length) {
+        'n:abundant-seq': function (length) {
             var abundants = [];
             var num = 2;
             while (abundants.length < length) {
@@ -9825,7 +9825,7 @@ var Playground = (function (exports) {
             }
             return abundants;
         },
-        'c:abundant-nth': function (n) {
+        'n:abundant-nth': function (n) {
             if (n === 1)
                 return 12; // First abundant number is 12
             if (n === 2)
@@ -9843,8 +9843,8 @@ var Playground = (function (exports) {
             }
             return candidate;
         },
-        'c:abundant?': function (n) { return isAbundant(n); },
-        'c:abundant-take-while': function (takeWhile) {
+        'n:abundant?': function (n) { return isAbundant(n); },
+        'n:abundant-take-while': function (takeWhile) {
             var abundants = [];
             for (var i = 2;; i += 1) {
                 if (!isAbundant(i)) {
@@ -9903,7 +9903,7 @@ var Playground = (function (exports) {
         return relativeDifference < 1e-12;
     }
     var arithmeticNormalExpressions = {
-        'c:arithmetic-seq': {
+        'n:arithmetic-seq': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), start = _b[0], step = _b[1], length = _b[2];
                 assertNumber(start, sourceCodeInfo, { finite: true });
@@ -9913,7 +9913,7 @@ var Playground = (function (exports) {
             },
             paramCount: 3,
         },
-        'c:arithmetic-take-while': {
+        'n:arithmetic-take-while': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 3), start = _c[0], step = _c[1], fn = _c[2];
                 var executeFunction = _b.executeFunction;
@@ -9932,7 +9932,7 @@ var Playground = (function (exports) {
             },
             paramCount: 3,
         },
-        'c:arithmetic-nth': {
+        'n:arithmetic-nth': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), start = _b[0], step = _b[1], n = _b[2];
                 assertNumber(start, sourceCodeInfo, { finite: true });
@@ -9942,7 +9942,7 @@ var Playground = (function (exports) {
             },
             paramCount: 3,
         },
-        'c:arithmetic?': {
+        'n:arithmetic?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), start = _b[0], step = _b[1], n = _b[2];
                 assertNumber(n, sourceCodeInfo);
@@ -10020,7 +10020,7 @@ var Playground = (function (exports) {
         }
     }
     var bernoulliNormalExpressions = {
-        'c:bernoulli-seq': {
+        'n:bernoulli-seq': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), length = _b[0];
                 assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
@@ -10028,7 +10028,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'c:bernoulli-nth': {
+        'n:bernoulli-nth': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), n = _b[0];
                 assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
@@ -10037,7 +10037,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'c:bernoulli-take-while': {
+        'n:bernoulli-take-while': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 1), fn = _c[0];
                 var executeFunction = _b.executeFunction;
@@ -10083,7 +10083,7 @@ var Playground = (function (exports) {
     ];
 
     var collatzSequence = {
-        'c:collatz-seq': function (start) {
+        'n:collatz-seq': function (start) {
             var x = start;
             var collatz = [x];
             while (x !== 1) {
@@ -10136,7 +10136,7 @@ var Playground = (function (exports) {
         return candidate;
     }
     var primeSequence = {
-        'c:prime-seq': function (length) {
+        'n:prime-seq': function (length) {
             var primes = [];
             var num = 2;
             while (primes.length < length) {
@@ -10147,9 +10147,9 @@ var Playground = (function (exports) {
             }
             return primes;
         },
-        'c:prime-nth': function (n) { return nthPrime(n); },
-        'c:prime?': function (n) { return isPrime(n); },
-        'c:prime-take-while': function (takeWhile) {
+        'n:prime-nth': function (n) { return nthPrime(n); },
+        'n:prime?': function (n) { return isPrime(n); },
+        'n:prime-take-while': function (takeWhile) {
             var primes = [];
             for (var i = 2;; i += 1) {
                 if (!isPrime(i)) {
@@ -10189,7 +10189,7 @@ var Playground = (function (exports) {
         return candidate;
     }
     var compositeSequence = {
-        'c:composite-seq': function (length) {
+        'n:composite-seq': function (length) {
             var composites = [];
             var num = 2;
             while (composites.length < length) {
@@ -10200,9 +10200,9 @@ var Playground = (function (exports) {
             }
             return composites;
         },
-        'c:composite-nth': function (n) { return nthComposite(n); },
-        'c:composite?': function (n) { return isComposite(n); },
-        'c:composite-take-while': function (takeWhile) {
+        'n:composite-nth': function (n) { return nthComposite(n); },
+        'n:composite?': function (n) { return isComposite(n); },
+        'n:composite-take-while': function (takeWhile) {
             var composites = [];
             for (var i = 4;; i += 1) {
                 if (!isComposite(i)) {
@@ -10223,7 +10223,7 @@ var Playground = (function (exports) {
         return sum < num;
     }
     var deficientSequence = {
-        'c:deficient-seq': function (length) {
+        'n:deficient-seq': function (length) {
             var deficients = [];
             var num = 1;
             while (deficients.length < length) {
@@ -10234,7 +10234,7 @@ var Playground = (function (exports) {
             }
             return deficients;
         },
-        'c:deficient-nth': function (n) {
+        'n:deficient-nth': function (n) {
             var count = 0; // We've already counted 12 and 18
             var candidate = 1; // Start checking from 20
             while (count < n) {
@@ -10248,8 +10248,8 @@ var Playground = (function (exports) {
             }
             return candidate;
         },
-        'c:deficient?': function (n) { return isDeficient(n); },
-        'c:deficient-take-while': function (takeWhile) {
+        'n:deficient?': function (n) { return isDeficient(n); },
+        'n:deficient-take-while': function (takeWhile) {
             var deficients = [];
             for (var i = 1;; i += 1) {
                 if (!isDeficient(i)) {
@@ -10403,7 +10403,7 @@ var Playground = (function (exports) {
         return relativeDifference < 1e-10;
     }
     var geometricNormalExpressions = {
-        'c:geometric-seq': {
+        'n:geometric-seq': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), start = _b[0], ratio = _b[1], length = _b[2];
                 assertNumber(start, sourceCodeInfo, { finite: true });
@@ -10413,7 +10413,7 @@ var Playground = (function (exports) {
             },
             paramCount: 3,
         },
-        'c:geometric-take-while': {
+        'n:geometric-take-while': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 3), start = _c[0], ratio = _c[1], fn = _c[2];
                 var executeFunction = _b.executeFunction;
@@ -10432,7 +10432,7 @@ var Playground = (function (exports) {
             },
             paramCount: 3,
         },
-        'c:geometric-nth': {
+        'n:geometric-nth': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), start = _b[0], ratio = _b[1], n = _b[2];
                 assertNumber(start, sourceCodeInfo, { finite: true });
@@ -10442,7 +10442,7 @@ var Playground = (function (exports) {
             },
             paramCount: 3,
         },
-        'c:geometric?': {
+        'n:geometric?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), start = _b[0], ratio = _b[1], n = _b[2];
                 assertNumber(n, sourceCodeInfo);
@@ -10476,10 +10476,10 @@ var Playground = (function (exports) {
         return golomb.slice(1);
     }
     var golombSequence = {
-        'c:golomb-seq': function (length) { return getGolombSeq(length); },
-        'c:golomb-nth': function (n) { return getGolombSeq(n)[n - 1]; },
-        'c:golomb?': function () { return true; },
-        'c:golomb-take-while': function (takeWhile) { return generateGolombSeq(takeWhile); },
+        'n:golomb-seq': function (length) { return getGolombSeq(length); },
+        'n:golomb-nth': function (n) { return getGolombSeq(n)[n - 1]; },
+        'n:golomb?': function () { return true; },
+        'n:golomb-take-while': function (takeWhile) { return generateGolombSeq(takeWhile); },
     };
 
     function isHappyNumber(n) {
@@ -10510,7 +10510,7 @@ var Playground = (function (exports) {
         return sum;
     }
     var happySequence = {
-        'c:happy-seq': function (length) {
+        'n:happy-seq': function (length) {
             var happyNumbers = [];
             for (var i = 1; happyNumbers.length < length; i++) {
                 var n = i;
@@ -10526,7 +10526,7 @@ var Playground = (function (exports) {
             }
             return happyNumbers;
         },
-        'c:happy-nth': function (n) {
+        'n:happy-nth': function (n) {
             var happyCount = 0;
             var currentNumber = 1;
             while (happyCount < n) {
@@ -10544,8 +10544,8 @@ var Playground = (function (exports) {
             }
             return currentNumber - 1;
         },
-        'c:happy?': function (n) { return isHappyNumber(n); },
-        'c:happy-take-while': function (takeWhile) {
+        'n:happy?': function (n) { return isHappyNumber(n); },
+        'n:happy-take-while': function (takeWhile) {
             var happyNumbers = [];
             for (var i = 1;; i++) {
                 var n = i;
@@ -10568,7 +10568,7 @@ var Playground = (function (exports) {
     };
 
     var jugglerSequence = {
-        'c:juggler-seq': function (start) {
+        'n:juggler-seq': function (start) {
             var next = start;
             var juggler = [next];
             var index = 0;
@@ -10637,7 +10637,7 @@ var Playground = (function (exports) {
     }
     var lookAndSaySequence = {
         'string': true,
-        'c:look-and-say-seq': function (length) {
+        'n:look-and-say-seq': function (length) {
             var lookAndSay = ['1'];
             for (var i = 1; i < length; i += 1) {
                 var prev = lookAndSay[i - 1];
@@ -10646,7 +10646,7 @@ var Playground = (function (exports) {
             }
             return lookAndSay;
         },
-        'c:look-and-say-take-while': function (takeWhile) {
+        'n:look-and-say-take-while': function (takeWhile) {
             if (!takeWhile('1', 0)) {
                 return [];
             }
@@ -10661,14 +10661,14 @@ var Playground = (function (exports) {
             }
             return lookAndSay;
         },
-        'c:look-and-say-nth': function (n) {
+        'n:look-and-say-nth': function (n) {
             var lookAndSay = '1';
             for (var i = 1; i < n; i += 1) {
                 lookAndSay = lookAndSay.replace(/(\d)\1*/g, function (match) { return "".concat(match.length).concat(match[0]); });
             }
             return lookAndSay;
         },
-        'c:look-and-say?': function (n) { return isLookAndSay(n); },
+        'n:look-and-say?': function (n) { return isLookAndSay(n); },
     };
 
     var lucasNumbers = [
@@ -10860,10 +10860,10 @@ var Playground = (function (exports) {
         return numbers.slice(0, count);
     }
     var luckySequence = {
-        'c:lucky-seq': function (length) { return getLuckyNumbers(length); },
-        'c:lucky-nth': function (n) { return getLuckyNumbers(n)[n - 1]; },
-        'c:lucky?': function (n) { return generateLuckyNumbers(function (l) { return l <= n; }).includes(n); },
-        'c:lucky-take-while': function (takeWhile) { return generateLuckyNumbers(takeWhile); },
+        'n:lucky-seq': function (length) { return getLuckyNumbers(length); },
+        'n:lucky-nth': function (n) { return getLuckyNumbers(n)[n - 1]; },
+        'n:lucky?': function (n) { return generateLuckyNumbers(function (l) { return l <= n; }).includes(n); },
+        'n:lucky-take-while': function (takeWhile) { return generateLuckyNumbers(takeWhile); },
     };
 
     var mersenneNumbers = [3, 7, 31, 127, 2047, 8191, 131071, 524287, 2147483647];
@@ -10965,14 +10965,14 @@ var Playground = (function (exports) {
         return false;
     }
     var padovanSequence = {
-        'c:padovan-seq': function (length) {
+        'n:padovan-seq': function (length) {
             var padovan = [1, 1, 1];
             for (var i = 3; i < length; i += 1) {
                 padovan[i] = padovan[i - 2] + padovan[i - 3];
             }
             return padovan.slice(0, length);
         },
-        'c:padovan-nth': function (n) {
+        'n:padovan-nth': function (n) {
             if (n === 1 || n === 2 || n === 3)
                 return 1;
             var a = 1;
@@ -10986,8 +10986,8 @@ var Playground = (function (exports) {
             }
             return c;
         },
-        'c:padovan?': function (n) { return isPadovan(n); },
-        'c:padovan-take-while': function (takeWhile) {
+        'n:padovan?': function (n) { return isPadovan(n); },
+        'n:padovan-take-while': function (takeWhile) {
             var padovan = [];
             if (!takeWhile(1, 0)) {
                 return padovan;
@@ -11066,16 +11066,16 @@ var Playground = (function (exports) {
     var perfectNumbers = [6, 28, 496, 8128, 33550336, 8589869056, 137438691328];
 
     var perfectCubeSequence = {
-        'c:perfect-cube-seq': function (length) {
+        'n:perfect-cube-seq': function (length) {
             var perfectcubes = [];
             for (var i = 1; i <= length; i++) {
                 perfectcubes.push(Math.pow(i, 3));
             }
             return perfectcubes;
         },
-        'c:perfect-cube-nth': function (n) { return Math.pow(n, 3); },
-        'c:perfect-cube?': function (n) { return n > 0 && Number.isInteger(Math.cbrt(n)); },
-        'c:perfect-cube-take-while': function (takeWhile) {
+        'n:perfect-cube-nth': function (n) { return Math.pow(n, 3); },
+        'n:perfect-cube?': function (n) { return n > 0 && Number.isInteger(Math.cbrt(n)); },
+        'n:perfect-cube-take-while': function (takeWhile) {
             var perfectcubes = [];
             for (var i = 1;; i++) {
                 var value = Math.pow(i, 3);
@@ -11119,7 +11119,7 @@ var Playground = (function (exports) {
         return null; // Not a perfect power
     }
     var perfectPowerSequence = {
-        'c:perfect-power-seq': function (length) {
+        'n:perfect-power-seq': function (length) {
             var perfectPowers = [];
             for (var i = 1; perfectPowers.length < length; i++) {
                 if (perfectPower(i)) {
@@ -11128,7 +11128,7 @@ var Playground = (function (exports) {
             }
             return perfectPowers;
         },
-        'c:perfect-power-nth': function (n) {
+        'n:perfect-power-nth': function (n) {
             var count = 0;
             var current = 1;
             while (count < n) {
@@ -11139,8 +11139,8 @@ var Playground = (function (exports) {
             }
             return current - 1;
         },
-        'c:perfect-power?': function (n) { return perfectPower(n) !== null; },
-        'c:perfect-power-take-while': function (takeWhile) {
+        'n:perfect-power?': function (n) { return perfectPower(n) !== null; },
+        'n:perfect-power-take-while': function (takeWhile) {
             var perfectPowers = [];
             for (var i = 1;; i++) {
                 if (perfectPower(i)) {
@@ -11155,16 +11155,16 @@ var Playground = (function (exports) {
     };
 
     var perfectSquareSequence = {
-        'c:perfect-square-seq': function (length) {
+        'n:perfect-square-seq': function (length) {
             var perfectSquares = [];
             for (var i = 1; i <= length; i++) {
                 perfectSquares.push(Math.pow(i, 2));
             }
             return perfectSquares;
         },
-        'c:perfect-square-nth': function (n) { return Math.pow(n, 2); },
-        'c:perfect-square?': function (n) { return n > 0 && Number.isInteger(Math.sqrt(n)); },
-        'c:perfect-square-take-while': function (takeWhile) {
+        'n:perfect-square-nth': function (n) { return Math.pow(n, 2); },
+        'n:perfect-square?': function (n) { return n > 0 && Number.isInteger(Math.sqrt(n)); },
+        'n:perfect-square-take-while': function (takeWhile) {
             var perfectSquares = [];
             for (var i = 1;; i++) {
                 var value = Math.pow(i, 2);
@@ -11178,7 +11178,7 @@ var Playground = (function (exports) {
     };
 
     var poligonalNormalExpressions = {
-        'c:polygonal-seq': {
+        'n:polygonal-seq': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), sides = _b[0], n = _b[1];
                 assertNumber(sides, sourceCodeInfo, { integer: true, gte: 3 });
@@ -11191,7 +11191,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'c:polygonal-take-while': {
+        'n:polygonal-take-while': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 2), sides = _c[0], fn = _c[1];
                 var executeFunction = _b.executeFunction;
@@ -11209,7 +11209,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'c:polygonal-nth': {
+        'n:polygonal-nth': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), sides = _b[0], n = _b[1];
                 assertNumber(sides, sourceCodeInfo, { integer: true, gte: 3 });
@@ -11218,7 +11218,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'c:polygonal?': {
+        'n:polygonal?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), sides = _b[0], n = _b[1];
                 assertNumber(n, sourceCodeInfo, { integer: true });
@@ -11269,8 +11269,8 @@ var Playground = (function (exports) {
         return sequence;
     }
     var recamanSequence = {
-        'c:recaman-seq': function (length) { return generateRecamanSequence(length); },
-        'c:recaman-take-while': function (takeWhile) {
+        'n:recaman-seq': function (length) { return generateRecamanSequence(length); },
+        'n:recaman-take-while': function (takeWhile) {
             if (!takeWhile(0, 0))
                 return [];
             var sequence = [0];
@@ -11289,8 +11289,8 @@ var Playground = (function (exports) {
             }
             return sequence;
         },
-        'c:recaman-nth': function (n) { return generateRecamanSequence(n)[n - 1]; },
-        'c:recaman?': function () { return true; },
+        'n:recaman-nth': function (n) { return generateRecamanSequence(n)[n - 1]; },
+        'n:recaman?': function () { return true; },
     };
 
     var sylvesterNumbers = [
@@ -11303,14 +11303,14 @@ var Playground = (function (exports) {
     ];
 
     var thueMorseSequence = {
-        'c:thue-morse-seq': function (length) {
+        'n:thue-morse-seq': function (length) {
             var thueMorse = [];
             for (var i = 0; i < length; i += 1) {
                 thueMorse[i] = countSetBits(i) % 2;
             }
             return thueMorse;
         },
-        'c:thue-morse-take-while': function (takeWhile) {
+        'n:thue-morse-take-while': function (takeWhile) {
             var thueMorse = [];
             for (var i = 0;; i += 1) {
                 var value = countSetBits(i) % 2;
@@ -11321,8 +11321,8 @@ var Playground = (function (exports) {
             }
             return thueMorse;
         },
-        'c:thue-morse-nth': function (n) { return countSetBits(n - 1) % 2; },
-        'c:thue-morse?': function (n) { return n === 1 || n === 0; },
+        'n:thue-morse-nth': function (n) { return countSetBits(n - 1) % 2; },
+        'n:thue-morse?': function (n) { return n === 1 || n === 0; },
     };
     function countSetBits(num) {
         var count = 0;
@@ -11454,8 +11454,8 @@ var Playground = (function (exports) {
     function getFiniteNumberSequence(name, sequence) {
         var _a;
         return _a = {},
-            _a["c:".concat(name, "-seq")] = createSeqNormalExpression(function (length) { return sequence.slice(0, length); }, sequence.length),
-            _a["c:".concat(name, "-take-while")] = createTakeWhileNormalExpression(function (takeWhile) {
+            _a["n:".concat(name, "-seq")] = createSeqNormalExpression(function (length) { return sequence.slice(0, length); }, sequence.length),
+            _a["n:".concat(name, "-take-while")] = createTakeWhileNormalExpression(function (takeWhile) {
                 var i = 0;
                 for (i = 0;; i += 1) {
                     if (i >= sequence.length) {
@@ -11467,8 +11467,8 @@ var Playground = (function (exports) {
                 }
                 return sequence.slice(0, i);
             }, sequence.length),
-            _a["c:".concat(name, "-nth")] = createNthNormalExpression(function (n) { return sequence[n - 1]; }, sequence.length),
-            _a["c:".concat(name, "?")] = createNumberPredNormalExpression(function (n) { return sequence.includes(n); }),
+            _a["n:".concat(name, "-nth")] = createNthNormalExpression(function (n) { return sequence[n - 1]; }, sequence.length),
+            _a["n:".concat(name, "?")] = createNumberPredNormalExpression(function (n) { return sequence.includes(n); }),
             _a;
     }
     function addSequence(sequence) {
@@ -11668,7 +11668,7 @@ var Playground = (function (exports) {
         return sum;
     }
     var combinatoricalNormalExpression = {
-        'c:coprime?': {
+        'n:coprime?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), a = _b[0], b = _b[1];
                 assertNumber(a, sourceCodeInfo, { integer: true });
@@ -11677,7 +11677,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'c:divisible-by?': {
+        'n:divisible-by?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), value = _b[0], divisor = _b[1];
                 assertNumber(value, sourceCodeInfo, { integer: true });
@@ -11688,7 +11688,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'c:gcd': {
+        'n:gcd': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), a = _b[0], b = _b[1];
                 assertNumber(a, sourceCodeInfo);
@@ -11697,7 +11697,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'c:lcm': {
+        'n:lcm': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), a = _b[0], b = _b[1];
                 assertNumber(a, sourceCodeInfo);
@@ -11706,7 +11706,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'c:multinomial': {
+        'n:multinomial': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a), args = _b.slice(0);
                 assertVector(args, sourceCodeInfo);
@@ -11718,7 +11718,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 1 },
         },
-        'c:amicable?': {
+        'n:amicable?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), a = _b[0], b = _b[1];
                 assertNumber(a, sourceCodeInfo, { integer: true, positive: true });
@@ -11729,7 +11729,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'c:euler-totient': {
+        'n:euler-totient': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), n = _b[0];
                 assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
@@ -11747,7 +11747,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'c:mobius': {
+        'n:mobius': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), n = _b[0];
                 assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
@@ -11763,9 +11763,9 @@ var Playground = (function (exports) {
                 return factors.length % 2 === 0 ? 1 : -1;
             },
             paramCount: 1,
-            aliases: ['c:möbius'],
+            aliases: ['n:möbius'],
         },
-        'c:mertens': {
+        'n:mertens': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), n = _b[0];
                 assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
@@ -11779,9 +11779,9 @@ var Playground = (function (exports) {
                 return result;
             },
             paramCount: 1,
-            aliases: ['c:mertens'],
+            aliases: ['n:mertens'],
         },
-        'c:sigma': {
+        'n:sigma': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), n = _b[0];
                 assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
@@ -11789,7 +11789,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'c:carmichael-lambda': {
+        'n:carmichael-lambda': {
             evaluate: function (_a, sourceCodeInfo) {
                 var e_1, _b, e_2, _c;
                 var _d = __read(_a, 1), n = _d[0];
@@ -11847,7 +11847,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'c:cartesian-product': {
+        'n:cartesian-product': {
             evaluate: function (params, sourceCodeInfo) {
                 params.forEach(function (set) {
                     assertArray(set, sourceCodeInfo);
@@ -11865,7 +11865,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 1 },
         },
-        'c:perfect-power': {
+        'n:perfect-power': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), n = _b[0];
                 assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
@@ -11874,7 +11874,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'c:mod-exp': {
+        'n:mod-exp': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), base = _b[0], exponent = _b[1], modulus = _b[2];
                 assertNumber(base, sourceCodeInfo, { finite: true });
@@ -11884,7 +11884,7 @@ var Playground = (function (exports) {
             },
             paramCount: 3,
         },
-        'c:mod-inv': {
+        'n:mod-inv': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), a = _b[0], m = _b[1];
                 assertNumber(a, sourceCodeInfo, { integer: true, positive: true });
@@ -11893,7 +11893,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'c:extended-gcd': {
+        'n:extended-gcd': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), a = _b[0], b = _b[1];
                 assertNumber(a, sourceCodeInfo, { integer: true });
@@ -11902,7 +11902,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'c:chinese-remainder': {
+        'n:chinese-remainder': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), remainders = _b[0], moduli = _b[1];
                 assertVector(remainders, sourceCodeInfo);
@@ -11919,7 +11919,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'c:stirling-first': {
+        'n:stirling-first': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), n = _b[0], k = _b[1];
                 assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
@@ -11938,7 +11938,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'c:stirling-second': {
+        'n:stirling-second': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), n = _b[0], k = _b[1];
                 assertNumber(n, sourceCodeInfo, { integer: true, positive: true });

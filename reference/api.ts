@@ -1,7 +1,7 @@
 import type { Argument } from '.'
 
-function getCombinatorialSequenceNames<T extends string>(name: T): [`c:${T}-seq`, `c:${T}-nth`, `c:${T}-take-while`, `c:${T}?`] {
-  return [`c:${name}-seq`, `c:${name}-nth`, `c:${name}-take-while`, `c:${name}?`]
+function getNumberTheorySequenceNames<T extends string>(name: T): [`n:${T}-seq`, `n:${T}-nth`, `n:${T}-take-while`, `n:${T}?`] {
+  return [`n:${name}-seq`, `n:${name}-nth`, `n:${name}-take-while`, `n:${name}?`]
 }
 
 export const api = {
@@ -241,76 +241,76 @@ export const api = {
   matrix: [
     'm:matrix?',
   ] as const,
-  combinatorial: [
-    ...getCombinatorialSequenceNames('abundant'),
-    ...getCombinatorialSequenceNames('bell'),
-    ...getCombinatorialSequenceNames('catalan'),
-    ...getCombinatorialSequenceNames('composite'),
-    ...getCombinatorialSequenceNames('factorial'),
-    ...getCombinatorialSequenceNames('fibonacci'),
-    ...getCombinatorialSequenceNames('geometric'),
-    ...getCombinatorialSequenceNames('golomb'),
-    ...getCombinatorialSequenceNames('happy'),
-    ...getCombinatorialSequenceNames('look-and-say'),
-    ...getCombinatorialSequenceNames('lucas'),
-    ...getCombinatorialSequenceNames('lucky'),
-    ...getCombinatorialSequenceNames('mersenne'),
-    ...getCombinatorialSequenceNames('padovan'),
-    ...getCombinatorialSequenceNames('partition'),
-    ...getCombinatorialSequenceNames('pell'),
-    ...getCombinatorialSequenceNames('perfect'),
-    ...getCombinatorialSequenceNames('perfect-cube'),
-    ...getCombinatorialSequenceNames('perfect-power'),
-    ...getCombinatorialSequenceNames('perfect-square'),
-    ...getCombinatorialSequenceNames('polygonal'),
-    ...getCombinatorialSequenceNames('prime'),
-    ...getCombinatorialSequenceNames('recaman'),
-    ...getCombinatorialSequenceNames('sylvester'),
-    ...getCombinatorialSequenceNames('thue-morse'),
-    ...getCombinatorialSequenceNames('tribonacci'),
-    'c:collatz-seq',
-    'c:juggler-seq',
-    'c:bernoulli-seq',
-    'c:bernoulli-take-while',
-    'c:bernoulli-nth',
-    'c:combinations',
-    'c:count-combinations',
-    'c:derangements',
-    'c:count-derangements',
-    'c:divisors',
-    'c:count-divisors',
-    'c:proper-divisors',
-    'c:count-proper-divisors',
-    'c:prime-factors',
-    'c:count-prime-factors',
-    'c:distinct-prime-factors',
-    'c:count-distinct-prime-factors',
-    'c:factorial',
-    'c:partitions',
-    'c:count-partitions',
-    'c:permutations',
-    'c:count-permutations',
-    'c:power-set',
-    'c:count-power-set',
-    'c:coprime?',
-    'c:divisible-by?',
-    'c:gcd',
-    'c:lcm',
-    'c:multinomial',
-    'c:amicable?',
-    'c:euler-totient',
-    'c:mobius',
-    'c:mertens',
-    'c:sigma',
-    'c:carmichael-lambda',
-    'c:cartesian-product',
-    'c:perfect-power',
-    'c:mod-exp',
-    'c:mod-inv',
-    'c:extended-gcd',
-    'c:chinese-remainder',
-    'c:stirling-first',
-    'c:stirling-second',
+  numberTheory: [
+    ...getNumberTheorySequenceNames('abundant'),
+    ...getNumberTheorySequenceNames('bell'),
+    ...getNumberTheorySequenceNames('catalan'),
+    ...getNumberTheorySequenceNames('composite'),
+    ...getNumberTheorySequenceNames('factorial'),
+    ...getNumberTheorySequenceNames('fibonacci'),
+    ...getNumberTheorySequenceNames('geometric'),
+    ...getNumberTheorySequenceNames('golomb'),
+    ...getNumberTheorySequenceNames('happy'),
+    ...getNumberTheorySequenceNames('look-and-say'),
+    ...getNumberTheorySequenceNames('lucas'),
+    ...getNumberTheorySequenceNames('lucky'),
+    ...getNumberTheorySequenceNames('mersenne'),
+    ...getNumberTheorySequenceNames('padovan'),
+    ...getNumberTheorySequenceNames('partition'),
+    ...getNumberTheorySequenceNames('pell'),
+    ...getNumberTheorySequenceNames('perfect'),
+    ...getNumberTheorySequenceNames('perfect-cube'),
+    ...getNumberTheorySequenceNames('perfect-power'),
+    ...getNumberTheorySequenceNames('perfect-square'),
+    ...getNumberTheorySequenceNames('polygonal'),
+    ...getNumberTheorySequenceNames('prime'),
+    ...getNumberTheorySequenceNames('recaman'),
+    ...getNumberTheorySequenceNames('sylvester'),
+    ...getNumberTheorySequenceNames('thue-morse'),
+    ...getNumberTheorySequenceNames('tribonacci'),
+    'n:collatz-seq',
+    'n:juggler-seq',
+    'n:bernoulli-seq',
+    'n:bernoulli-take-while',
+    'n:bernoulli-nth',
+    'n:combinations',
+    'n:count-combinations',
+    'n:derangements',
+    'n:count-derangements',
+    'n:divisors',
+    'n:count-divisors',
+    'n:proper-divisors',
+    'n:count-proper-divisors',
+    'n:prime-factors',
+    'n:count-prime-factors',
+    'n:distinct-prime-factors',
+    'n:count-distinct-prime-factors',
+    'n:factorial',
+    'n:partitions',
+    'n:count-partitions',
+    'n:permutations',
+    'n:count-permutations',
+    'n:power-set',
+    'n:count-power-set',
+    'n:coprime?',
+    'n:divisible-by?',
+    'n:gcd',
+    'n:lcm',
+    'n:multinomial',
+    'n:amicable?',
+    'n:euler-totient',
+    'n:mobius',
+    'n:mertens',
+    'n:sigma',
+    'n:carmichael-lambda',
+    'n:cartesian-product',
+    'n:perfect-power',
+    'n:mod-exp',
+    'n:mod-inv',
+    'n:extended-gcd',
+    'n:chinese-remainder',
+    'n:stirling-first',
+    'n:stirling-second',
   ] as const,
   shorthand: [
     '-short-regexp',
@@ -347,7 +347,7 @@ export type StringApiName = typeof api.string[number]
 export type BitwiseApiName = typeof api.bitwise[number]
 export type AssertApiName = typeof api.assert[number]
 export type MatrixApiName = typeof api.matrix[number]
-export type CombinatorialApiName = typeof api.combinatorial[number]
+export type NumberTheoryApiName = typeof api.numberTheory[number]
 
 export type NormalExpressionName =
   | CollectionApiName
@@ -363,7 +363,7 @@ export type NormalExpressionName =
   | BitwiseApiName
   | AssertApiName
   | MatrixApiName
-  | CombinatorialApiName
+  | NumberTheoryApiName
 
 export type FunctionName =
   | NormalExpressionName
@@ -387,7 +387,7 @@ const apiFunctionNames = [
   ...api.bitwise,
   ...api.assert,
   ...api.matrix,
-  ...api.combinatorial,
+  ...api.numberTheory,
 ] as const
 
 const apiNames = [
@@ -417,7 +417,7 @@ export const categoryRecord = {
   'Misc': true,
   'Assert': true,
   'Matrix': true,
-  'Combinatorial': true,
+  'Number Theory': true,
   'Shorthand': true,
   'Datatype': true,
 } as const

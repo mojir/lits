@@ -1,0 +1,96 @@
+import type { NumberTheorySequenceReference } from '.'
+
+export const mersenneReference: NumberTheorySequenceReference<'mersenne'> = {
+  'n:mersenne-seq': {
+    title: 'n:mersenne-seq',
+    category: 'Number Theory',
+    description: 'Generates the Mersenne sequence up to a specified length.',
+    linkName: 'c-colon-mersenne-seq',
+    returns: {
+      type: 'integer',
+      array: true,
+    },
+    args: {
+      length: {
+        type: 'integer',
+        description: 'The length of the sequence to generate. If not provided, the default is 9 (the maximum length of the pre-calculated mersenne numbers).',
+      },
+    },
+    variants: [
+      { argumentNames: ['length'] },
+      { argumentNames: [] },
+    ],
+    examples: [
+      'n:mersenne-seq(1)',
+      'n:mersenne-seq(5)',
+      'n:mersenne-seq()',
+    ],
+  },
+  'n:mersenne-take-while': {
+    title: 'n:mersenne-take-while',
+    category: 'Number Theory',
+    description: 'Generates the Mersenne sequence while a condition is met.',
+    linkName: 'c-colon-mersenne-take-while',
+    returns: {
+      type: 'integer',
+      array: true,
+    },
+    args: {
+      takeWhile: {
+        type: 'function',
+        description: 'A function that takes an integer and an index and returns a boolean.',
+      },
+    },
+    variants: [
+      { argumentNames: ['takeWhile'] },
+    ],
+    examples: [
+      'n:mersenne-take-while(-> $ < 1000)',
+    ],
+  },
+  'n:mersenne-nth': {
+    title: 'n:mersenne-nth',
+    category: 'Number Theory',
+    description: 'Generates the nth term of the Mersenne sequence.',
+    linkName: 'c-colon-mersenne-nth',
+    returns: {
+      type: 'integer',
+    },
+    args: {
+      n: {
+        type: 'integer',
+        description: 'The index of the term to generate.',
+      },
+    },
+    variants: [
+      { argumentNames: ['n'] },
+    ],
+    examples: [
+      'n:mersenne-nth(1)',
+      'n:mersenne-nth(5)',
+    ],
+  },
+  'n:mersenne?': {
+    title: 'n:mersenne?',
+    category: 'Number Theory',
+    description: 'Checks if a number is in the Mersenne sequence.',
+    linkName: 'c-colon-mersenne-question-mark',
+    returns: {
+      type: 'boolean',
+    },
+    args: {
+      n: {
+        type: 'integer',
+        description: 'The number to check.',
+      },
+    },
+    variants: [
+      { argumentNames: ['n'] },
+    ],
+    examples: [
+      'n:mersenne?(3)',
+      'n:mersenne?(4)',
+      'n:mersenne?(7)',
+    ],
+  },
+}

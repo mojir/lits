@@ -21,7 +21,7 @@ import { specialExpressionsReference } from './categories/specialExpressions'
 import { stringReference } from './categories/string'
 import { datatype } from './datatype'
 import { shorthand } from './shorthand'
-import { combinatorialReference } from './categories/combinatorial'
+import { numberTheoryReference } from './categories/numberTheory'
 
 export interface TypedValue {
   type: DataType[] | DataType
@@ -104,7 +104,7 @@ export const normalExpressionReference: Record<NormalExpressionName, FunctionRef
   ...bitwiseReference,
   ...assertReference,
   ...matrixReference,
-  ...combinatorialReference,
+  ...numberTheoryReference,
 }
 
 Object.entries(normalExpressionReference).forEach(([key, obj]) => {
