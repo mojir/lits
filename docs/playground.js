@@ -9735,6 +9735,7 @@ var Playground = (function (exports) {
             }
             return collatz;
         },
+        'noNth': true,
     };
 
     function isPrime(num) {
@@ -10137,16 +10138,15 @@ var Playground = (function (exports) {
         'n:juggler-seq': function (start) {
             var next = start;
             var juggler = [next];
-            var index = 0;
             while (next > 1) {
                 next = next % 2 === 0
-                    ? Math.floor(Math.sqrt(juggler[index]))
-                    : Math.floor(juggler[index] * Math.sqrt(juggler[index]));
-                index += 1;
+                    ? Math.floor(Math.sqrt(next))
+                    : Math.floor(Math.pow(next, (3 / 2)));
                 juggler.push(next);
             }
             return juggler;
         },
+        'noNth': true,
     };
 
     /**
@@ -11011,7 +11011,9 @@ var Playground = (function (exports) {
                 }
                 if (key.endsWith('seq')) {
                     sequenceNormalExpressions[key] = createSeqNormalExpression(value, sequence.maxLength);
-                    sequenceNormalExpressions[key.replace(/seq$/, 'nth')] = createNthNormalExpression(value, sequence.maxLength);
+                    if (!sequence.noNth) {
+                        sequenceNormalExpressions[key.replace(/seq$/, 'nth')] = createNthNormalExpression(value, sequence.maxLength);
+                    }
                 }
                 else if (key.endsWith('take-while')) {
                     sequenceNormalExpressions[key] = createTakeWhileNormalExpression(value, sequence.maxLength);

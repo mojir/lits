@@ -15,5 +15,6 @@ describe('juggler', () => {
       1,
     ])
     expect(() => lits.run('n:juggler-seq(0)')).toThrow()
+    expect(() => lits.run('n:juggler-seq(58025)')).toThrow()
   })
 })

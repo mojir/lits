@@ -15,5 +15,5 @@ export const collatzSequence: Omit<SequenceDefinition<'collatz'>, 'n:collatz-nth
     }
     return collatz
   },
-  noNth: true,
+  'noNth': true,
 }
