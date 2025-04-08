@@ -36,7 +36,7 @@ export function perfectPower(n: number): [number, number] | null {
 }
 
 export const perfectPowerSequence: SequenceDefinition<'perfect-power'> = {
-  'n:perfect-power-seq': (length) => {
+  'nth:perfect-power-seq': (length) => {
     const perfectPowers: number[] = []
     for (let i = 1; perfectPowers.length < length; i++) {
       if (perfectPower(i)) {
@@ -45,8 +45,8 @@ export const perfectPowerSequence: SequenceDefinition<'perfect-power'> = {
     }
     return perfectPowers
   },
-  'n:perfect-power?': n => perfectPower(n) !== null,
-  'n:perfect-power-take-while': (takeWhile) => {
+  'nth:perfect-power?': n => perfectPower(n) !== null,
+  'nth:perfect-power-take-while': (takeWhile) => {
     const perfectPowers: number[] = []
     for (let i = 1; ; i++) {
       if (perfectPower(i)) {

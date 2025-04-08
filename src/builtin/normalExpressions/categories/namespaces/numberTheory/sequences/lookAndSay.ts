@@ -62,7 +62,7 @@ function getNextLookAndSayTerm(term: string): string {
 
 export const lookAndSaySequence: SequenceDefinition<'look-and-say', string> = {
   'string': true,
-  'n:look-and-say-seq': (length) => {
+  'nth:look-and-say-seq': (length) => {
     const lookAndSay = ['1']
     for (let i = 1; i < length; i += 1) {
       const prev = lookAndSay[i - 1]!
@@ -71,7 +71,7 @@ export const lookAndSaySequence: SequenceDefinition<'look-and-say', string> = {
     }
     return lookAndSay
   },
-  'n:look-and-say-take-while': (takeWhile) => {
+  'nth:look-and-say-take-while': (takeWhile) => {
     if (!takeWhile('1', 0)) {
       return []
     }
@@ -86,5 +86,5 @@ export const lookAndSaySequence: SequenceDefinition<'look-and-say', string> = {
     }
     return lookAndSay
   },
-  'n:look-and-say?': n => isLookAndSay(n),
+  'nth:look-and-say?': n => isLookAndSay(n),
 }

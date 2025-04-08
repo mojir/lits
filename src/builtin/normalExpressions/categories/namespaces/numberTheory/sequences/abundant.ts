@@ -8,7 +8,7 @@ function isAbundant(num: number): boolean {
 }
 
 export const abundantSequence: SequenceDefinition<'abundant'> = {
-  'n:abundant-seq': (length) => {
+  'nth:abundant-seq': (length) => {
     const abundants = []
     let num = 2
     while (abundants.length < length) {
@@ -19,8 +19,8 @@ export const abundantSequence: SequenceDefinition<'abundant'> = {
     }
     return abundants
   },
-  'n:abundant?': n => isAbundant(n),
-  'n:abundant-take-while': (takeWhile) => {
+  'nth:abundant?': n => isAbundant(n),
+  'nth:abundant-take-while': (takeWhile) => {
     const abundants = []
     for (let i = 2; ; i += 1) {
       if (!isAbundant(i)) {

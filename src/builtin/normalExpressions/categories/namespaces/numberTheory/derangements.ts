@@ -52,14 +52,14 @@ function countDerangements(n: number): number {
 }
 
 export const derangementsNormalExpressions: BuiltinNormalExpressions = {
-  'n:derangements': {
+  'nth:derangements': {
     evaluate: ([set], sourceCodeInfo): Arr => {
       assertArray(set, sourceCodeInfo)
       return getAllDerangements(set)
     },
     paramCount: 1,
   },
-  'n:count-derangements': {
+  'nth:count-derangements': {
     evaluate: ([n], sourceCodeInfo): number => {
       assertNumber(n, sourceCodeInfo, { finite: true, integer: true, positive: true })
       return countDerangements(n)

@@ -149,7 +149,7 @@ function chineseRemainder(remainders: number[], moduli: number[]): number {
 }
 
 export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
-  'n:coprime?': {
+  'nth:coprime?': {
     evaluate: ([a, b], sourceCodeInfo): boolean => {
       assertNumber(a, sourceCodeInfo, { integer: true })
       assertNumber(b, sourceCodeInfo, { integer: true })
@@ -157,7 +157,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'n:divisible-by?': {
+  'nth:divisible-by?': {
     evaluate: ([value, divisor], sourceCodeInfo): boolean => {
       assertNumber(value, sourceCodeInfo, { integer: true })
       assertNumber(divisor, sourceCodeInfo, { integer: true })
@@ -167,7 +167,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'n:gcd': {
+  'nth:gcd': {
     evaluate: ([a, b], sourceCodeInfo): number => {
       assertNumber(a, sourceCodeInfo)
       assertNumber(b, sourceCodeInfo)
@@ -175,7 +175,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'n:lcm': {
+  'nth:lcm': {
     evaluate: ([a, b], sourceCodeInfo): number => {
       assertNumber(a, sourceCodeInfo)
       assertNumber(b, sourceCodeInfo)
@@ -184,7 +184,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
     paramCount: 2,
   },
 
-  'n:multinomial': {
+  'nth:multinomial': {
     evaluate: ([...args], sourceCodeInfo): number => {
       assertVector(args, sourceCodeInfo)
       const sum = args.reduce((acc: number, curr) => {
@@ -195,7 +195,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 1 },
   },
-  'n:amicable?': {
+  'nth:amicable?': {
     evaluate: ([a, b], sourceCodeInfo): boolean => {
       assertNumber(a, sourceCodeInfo, { integer: true, positive: true })
       assertNumber(b, sourceCodeInfo, { integer: true, positive: true })
@@ -205,7 +205,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'n:euler-totient': {
+  'nth:euler-totient': {
     evaluate: ([n], sourceCodeInfo): number => {
       assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
       let result = n
@@ -222,7 +222,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'n:mobius': {
+  'nth:mobius': {
     evaluate: ([n], sourceCodeInfo): number => {
       assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
       if (n === 1)
@@ -240,9 +240,9 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
       return factors.length % 2 === 0 ? 1 : -1
     },
     paramCount: 1,
-    aliases: ['n:möbius'],
+    aliases: ['nth:möbius'],
   },
-  'n:mertens': {
+  'nth:mertens': {
     evaluate: ([n], sourceCodeInfo): number => {
       assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
       if (n === 1)
@@ -255,16 +255,16 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
       return result
     },
     paramCount: 1,
-    aliases: ['n:mertens'],
+    aliases: ['nth:mertens'],
   },
-  'n:sigma': {
+  'nth:sigma': {
     evaluate: ([n], sourceCodeInfo): number => {
       assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
       return getDivisors(n).reduce((acc, curr) => acc + curr, 0)
     },
     paramCount: 1,
   },
-  'n:carmichael-lambda': {
+  'nth:carmichael-lambda': {
     evaluate: ([n], sourceCodeInfo): number => {
       assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
       if (n === 1) {
@@ -305,7 +305,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'n:cartesian-product': {
+  'nth:cartesian-product': {
     evaluate: (params, sourceCodeInfo): Arr[] => {
       params.forEach((set) => {
         assertArray(set, sourceCodeInfo)
@@ -323,7 +323,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 1 },
   },
-  'n:perfect-power': {
+  'nth:perfect-power': {
     evaluate: ([n], sourceCodeInfo): [number, number] | null => {
       assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
       const result = perfectPower(n)
@@ -331,7 +331,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'n:mod-exp': {
+  'nth:mod-exp': {
     evaluate: ([base, exponent, modulus], sourceCodeInfo): number => {
       assertNumber(base, sourceCodeInfo, { finite: true })
       assertNumber(exponent, sourceCodeInfo, { integer: true, positive: true })
@@ -341,7 +341,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 3,
   },
-  'n:mod-inv': {
+  'nth:mod-inv': {
     evaluate: ([a, m], sourceCodeInfo): number => {
       assertNumber(a, sourceCodeInfo, { integer: true, positive: true })
       assertNumber(m, sourceCodeInfo, { integer: true, positive: true })
@@ -350,7 +350,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'n:extended-gcd': {
+  'nth:extended-gcd': {
     evaluate: ([a, b], sourceCodeInfo): [number, number, number] => {
       assertNumber(a, sourceCodeInfo, { integer: true })
       assertNumber(b, sourceCodeInfo, { integer: true })
@@ -359,7 +359,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'n:chinese-remainder': {
+  'nth:chinese-remainder': {
     evaluate: ([remainders, moduli], sourceCodeInfo): number => {
       assertVector(remainders, sourceCodeInfo)
       assertVector(moduli, sourceCodeInfo)
@@ -375,7 +375,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'n:stirling-first': {
+  'nth:stirling-first': {
     evaluate: ([n, k], sourceCodeInfo): number => {
       assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
       assertNumber(k, sourceCodeInfo, { integer: true, positive: true, lte: n })
@@ -397,7 +397,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'n:stirling-second': {
+  'nth:stirling-second': {
     evaluate: ([n, k], sourceCodeInfo): number => {
       assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
       assertNumber(k, sourceCodeInfo, { integer: true, positive: true, lte: n })

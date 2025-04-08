@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const tribonacciReference: NumberTheorySequenceReference<'tribonacci'> = {
-  'n:tribonacci-seq': {
-    title: 'n:tribonacci-seq',
+  'nth:tribonacci-seq': {
+    title: 'nth:tribonacci-seq',
     category: 'Number Theory',
     description: 'Generates the tribonacci sequence up to a specified length.',
     linkName: 'c-colon-tribonacci-seq',
@@ -20,13 +20,13 @@ export const tribonacciReference: NumberTheorySequenceReference<'tribonacci'> = 
       { argumentNames: ['length'] },
     ],
     examples: [
-      'n:tribonacci-seq(1)',
-      'n:tribonacci-seq(2)',
-      'n:tribonacci-seq(10)',
+      'nth:tribonacci-seq(1)',
+      'nth:tribonacci-seq(2)',
+      'nth:tribonacci-seq(10)',
     ],
   },
-  'n:tribonacci-take-while': {
-    title: 'n:tribonacci-take-while',
+  'nth:tribonacci-take-while': {
+    title: 'nth:tribonacci-take-while',
     category: 'Number Theory',
     description: 'Generates the tribonacci sequence while a condition is met.',
     linkName: 'c-colon-tribonacci-take-while',
@@ -44,11 +44,11 @@ export const tribonacciReference: NumberTheorySequenceReference<'tribonacci'> = 
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'n:tribonacci-take-while(-> $ < 100)',
+      'nth:tribonacci-take-while(-> $ < 100)',
     ],
   },
-  'n:tribonacci-nth': {
-    title: 'n:tribonacci-nth',
+  'nth:tribonacci-nth': {
+    title: 'nth:tribonacci-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the tribonacci sequence.',
     linkName: 'c-colon-tribonacci-nth',
@@ -65,13 +65,13 @@ export const tribonacciReference: NumberTheorySequenceReference<'tribonacci'> = 
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:tribonacci-nth(1)',
-      'n:tribonacci-nth(2)',
-      'n:tribonacci-nth(10)',
+      'nth:tribonacci-nth(1)',
+      'nth:tribonacci-nth(2)',
+      'nth:tribonacci-nth(10)',
     ],
   },
-  'n:tribonacci?': {
-    title: 'n:tribonacci?',
+  'nth:tribonacci?': {
+    title: 'nth:tribonacci?',
     category: 'Number Theory',
     description: 'Determines if a number is in the tribonacci sequence.',
     linkName: 'c-colon-tribonacci-question',
@@ -88,17 +88,17 @@ export const tribonacciReference: NumberTheorySequenceReference<'tribonacci'> = 
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:tribonacci?(0)',
-      'n:tribonacci?(1)',
-      'n:tribonacci?(2)',
-      'n:tribonacci?(3)',
-      'n:tribonacci?(4)',
-      'n:tribonacci?(5)',
-      'n:tribonacci?(6)',
-      'n:tribonacci?(7)',
-      'n:tribonacci?(8)',
-      'n:tribonacci?(9)',
-      'n:tribonacci?(10)',
+      'nth:tribonacci?(0)',
+      'nth:tribonacci?(1)',
+      'nth:tribonacci?(2)',
+      'nth:tribonacci?(3)',
+      'nth:tribonacci?(4)',
+      'nth:tribonacci?(5)',
+      'nth:tribonacci?(6)',
+      'nth:tribonacci?(7)',
+      'nth:tribonacci?(8)',
+      'nth:tribonacci?(9)',
+      'nth:tribonacci?(10)',
     ],
   },
 }

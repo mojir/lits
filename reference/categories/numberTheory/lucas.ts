@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const lucasReference: NumberTheorySequenceReference<'lucas'> = {
-  'n:lucas-seq': {
-    title: 'n:lucas-seq',
+  'nth:lucas-seq': {
+    title: 'nth:lucas-seq',
     category: 'Number Theory',
     description: 'Generates the lucas sequence up to a specified length.',
     linkName: 'c-colon-lucas-seq',
@@ -21,13 +21,13 @@ export const lucasReference: NumberTheorySequenceReference<'lucas'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'n:lucas-seq(1)',
-      'n:lucas-seq(2)',
-      'n:lucas-seq()',
+      'nth:lucas-seq(1)',
+      'nth:lucas-seq(2)',
+      'nth:lucas-seq()',
     ],
   },
-  'n:lucas-take-while': {
-    title: 'n:lucas-take-while',
+  'nth:lucas-take-while': {
+    title: 'nth:lucas-take-while',
     category: 'Number Theory',
     description: 'Generates the lucas sequence while a condition is met.',
     linkName: 'c-colon-lucas-take-while',
@@ -45,11 +45,11 @@ export const lucasReference: NumberTheorySequenceReference<'lucas'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'n:lucas-take-while(-> $ < 100)',
+      'nth:lucas-take-while(-> $ < 100)',
     ],
   },
-  'n:lucas-nth': {
-    title: 'n:lucas-nth',
+  'nth:lucas-nth': {
+    title: 'nth:lucas-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the lucas sequence.',
     linkName: 'c-colon-lucas-nth',
@@ -66,13 +66,13 @@ export const lucasReference: NumberTheorySequenceReference<'lucas'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:lucas-nth(1)',
-      'n:lucas-nth(2)',
-      'n:lucas-nth(10)',
+      'nth:lucas-nth(1)',
+      'nth:lucas-nth(2)',
+      'nth:lucas-nth(10)',
     ],
   },
-  'n:lucas?': {
-    title: 'n:lucas?',
+  'nth:lucas?': {
+    title: 'nth:lucas?',
     category: 'Number Theory',
     description: 'Determines if a number is in the lucas sequence.',
     linkName: 'c-colon-lucas-question-mark',
@@ -89,9 +89,9 @@ export const lucasReference: NumberTheorySequenceReference<'lucas'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:lucas?(1)',
-      'n:lucas?(2)',
-      'n:lucas?(10)',
+      'nth:lucas?(1)',
+      'nth:lucas?(2)',
+      'nth:lucas?(10)',
     ],
   },
 }

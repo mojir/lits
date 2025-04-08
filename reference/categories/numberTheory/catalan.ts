@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const catalanReference: NumberTheorySequenceReference<'catalan'> = {
-  'n:catalan-seq': {
-    title: 'n:catalan-seq',
+  'nth:catalan-seq': {
+    title: 'nth:catalan-seq',
     category: 'Number Theory',
     description: 'Generates the Catalan sequence up to a specified length.',
     linkName: 'c-colon-catalan-seq',
@@ -22,13 +22,13 @@ export const catalanReference: NumberTheorySequenceReference<'catalan'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'n:catalan-seq(5)',
-      'n:catalan-seq(10)',
-      'n:catalan-seq()',
+      'nth:catalan-seq(5)',
+      'nth:catalan-seq(10)',
+      'nth:catalan-seq()',
     ],
   },
-  'n:catalan-take-while': {
-    title: 'n:catalan-take-while',
+  'nth:catalan-take-while': {
+    title: 'nth:catalan-take-while',
     category: 'Number Theory',
     description: 'Generates the Catalan sequence while a condition is met.',
     linkName: 'c-colon-catalan-take-while',
@@ -46,11 +46,11 @@ export const catalanReference: NumberTheorySequenceReference<'catalan'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'n:catalan-take-while(-> $ < 1000)',
+      'nth:catalan-take-while(-> $ < 1000)',
     ],
   },
-  'n:catalan-nth': {
-    title: 'n:catalan-nth',
+  'nth:catalan-nth': {
+    title: 'nth:catalan-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Catalan sequence.',
     linkName: 'c-colon-catalan-nth',
@@ -67,12 +67,12 @@ export const catalanReference: NumberTheorySequenceReference<'catalan'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:catalan-nth(5)',
-      'n:catalan-nth(10)',
+      'nth:catalan-nth(5)',
+      'nth:catalan-nth(10)',
     ],
   },
-  'n:catalan?': {
-    title: 'n:catalan?',
+  'nth:catalan?': {
+    title: 'nth:catalan?',
     category: 'Number Theory',
     description: 'Determines if a number is in the Catalan sequence.',
     linkName: 'c-colon-catalan-question-mark',
@@ -89,8 +89,8 @@ export const catalanReference: NumberTheorySequenceReference<'catalan'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:catalan?(5)',
-      'n:catalan?(10)',
+      'nth:catalan?(5)',
+      'nth:catalan?(10)',
     ],
   },
 }

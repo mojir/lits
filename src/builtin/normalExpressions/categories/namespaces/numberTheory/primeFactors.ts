@@ -37,14 +37,14 @@ export function primeFactors(n: number): number[] {
 }
 
 export const primeFactorsNormalExpressions: BuiltinNormalExpressions = {
-  'n:prime-factors': {
+  'nth:prime-factors': {
     evaluate: ([number], sourceCodeInfo): number[] => {
       assertNumber(number, sourceCodeInfo, { finite: true, integer: true, positive: true })
       return primeFactors(number)
     },
     paramCount: 1,
   },
-  'n:distinct-prime-factors': {
+  'nth:distinct-prime-factors': {
     evaluate: ([n], sourceCodeInfo): number[] => {
       assertNumber(n, sourceCodeInfo, { finite: true, integer: true, positive: true })
       const factors = primeFactors(n)
@@ -53,14 +53,14 @@ export const primeFactorsNormalExpressions: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'n:count-prime-factors': {
+  'nth:count-prime-factors': {
     evaluate: ([n], sourceCodeInfo): number => {
       assertNumber(n, sourceCodeInfo, { finite: true, integer: true, positive: true })
       return primeFactors(n).length
     },
     paramCount: 1,
   },
-  'n:count-distinct-prime-factors': {
+  'nth:count-distinct-prime-factors': {
     evaluate: ([n], sourceCodeInfo): number => {
       assertNumber(n, sourceCodeInfo, { finite: true, integer: true, positive: true })
       const factors = primeFactors(n)

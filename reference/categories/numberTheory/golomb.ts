@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const golombReference: NumberTheorySequenceReference<'golomb'> = {
-  'n:golomb-seq': {
-    title: 'n:golomb-seq',
+  'nth:golomb-seq': {
+    title: 'nth:golomb-seq',
     category: 'Number Theory',
     description: 'Generates the Golomb sequence up to a specified length.',
     linkName: 'c-colon-golomb-seq',
@@ -20,12 +20,12 @@ export const golombReference: NumberTheorySequenceReference<'golomb'> = {
       { argumentNames: ['length'] },
     ],
     examples: [
-      'n:golomb-seq(5)',
-      'n:golomb-seq(20)',
+      'nth:golomb-seq(5)',
+      'nth:golomb-seq(20)',
     ],
   },
-  'n:golomb-take-while': {
-    title: 'n:golomb-take-while',
+  'nth:golomb-take-while': {
+    title: 'nth:golomb-take-while',
     category: 'Number Theory',
     description: 'Generates the Golomb sequence while a condition is met.',
     linkName: 'c-colon-golomb-take-while',
@@ -43,11 +43,11 @@ export const golombReference: NumberTheorySequenceReference<'golomb'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'n:golomb-take-while(-> $ <= 10)',
+      'nth:golomb-take-while(-> $ <= 10)',
     ],
   },
-  'n:golomb-nth': {
-    title: 'n:golomb-nth',
+  'nth:golomb-nth': {
+    title: 'nth:golomb-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Golomb sequence.',
     linkName: 'c-colon-golomb-nth',
@@ -64,12 +64,12 @@ export const golombReference: NumberTheorySequenceReference<'golomb'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:golomb-nth(5)',
-      'n:golomb-nth(1000)',
+      'nth:golomb-nth(5)',
+      'nth:golomb-nth(1000)',
     ],
   },
-  'n:golomb?': {
-    title: 'n:golomb?',
+  'nth:golomb?': {
+    title: 'nth:golomb?',
     category: 'Number Theory',
     description: 'Checks if a number is in the Golomb sequence.',
     linkName: 'c-colon-golomb',
@@ -86,10 +86,10 @@ export const golombReference: NumberTheorySequenceReference<'golomb'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:golomb?(1)',
-      'n:golomb?(2)',
-      'n:golomb?(3345)',
-      'n:golomb?(67867864)',
+      'nth:golomb?(1)',
+      'nth:golomb?(2)',
+      'nth:golomb?(3345)',
+      'nth:golomb?(67867864)',
     ],
   },
 }

@@ -59,7 +59,7 @@ function isInArithmeticSequence(
 }
 
 export const arithmeticNormalExpressions: SequenceNormalExpressions<'arithmetic'> = {
-  'n:arithmetic-seq': {
+  'nth:arithmetic-seq': {
     evaluate: ([start, step, length], sourceCodeInfo): number[] => {
       assertNumber(start, sourceCodeInfo, { finite: true })
       assertNumber(step, sourceCodeInfo, { finite: true })
@@ -69,7 +69,7 @@ export const arithmeticNormalExpressions: SequenceNormalExpressions<'arithmetic'
     },
     paramCount: 3,
   },
-  'n:arithmetic-take-while': {
+  'nth:arithmetic-take-while': {
     evaluate: ([start, step, fn], sourceCodeInfo, contextStack, { executeFunction }): number[] => {
       assertNumber(start, sourceCodeInfo, { finite: true })
       assertNumber(step, sourceCodeInfo, { finite: true })
@@ -87,7 +87,7 @@ export const arithmeticNormalExpressions: SequenceNormalExpressions<'arithmetic'
     },
     paramCount: 3,
   },
-  'n:arithmetic-nth': {
+  'nth:arithmetic-nth': {
     evaluate: ([start, step, n], sourceCodeInfo): number => {
       assertNumber(start, sourceCodeInfo, { finite: true })
       assertNumber(step, sourceCodeInfo, { finite: true })
@@ -96,7 +96,7 @@ export const arithmeticNormalExpressions: SequenceNormalExpressions<'arithmetic'
     },
     paramCount: 3,
   },
-  'n:arithmetic?': {
+  'nth:arithmetic?': {
     evaluate: ([start, step, n], sourceCodeInfo): boolean => {
       assertNumber(n, sourceCodeInfo)
       assertNumber(start, sourceCodeInfo, { finite: true })

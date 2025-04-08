@@ -104,15 +104,15 @@ function isPadovan(num: number): boolean {
 }
 
 export const padovanSequence: SequenceDefinition<'padovan'> = {
-  'n:padovan-seq': (length) => {
+  'nth:padovan-seq': (length) => {
     const padovan = [1, 1, 1]
     for (let i = 3; i < length; i += 1) {
       padovan[i] = padovan[i - 2]! + padovan[i - 3]!
     }
     return padovan.slice(0, length)
   },
-  'n:padovan?': n => isPadovan(n),
-  'n:padovan-take-while': (takeWhile) => {
+  'nth:padovan?': n => isPadovan(n),
+  'nth:padovan-take-while': (takeWhile) => {
     const padovan: number[] = []
     if (!takeWhile(1, 0)) {
       return padovan

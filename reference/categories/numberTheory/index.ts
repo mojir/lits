@@ -32,10 +32,10 @@ import { sylvesterReference } from './sylvester'
 import { thueMorseReference } from './thueMorse'
 import { tribonacciReference } from './tribonacci'
 
-type SeqKey<T extends string> = `n:${T}-seq`
-type TakeWhileKey<T extends string> = `n:${T}-take-while`
-type NthKey<T extends string> = `n:${T}-nth`
-type PredKey<T extends string> = `n:${T}?`
+type SeqKey<T extends string> = `nth:${T}-seq`
+type TakeWhileKey<T extends string> = `nth:${T}-take-while`
+type NthKey<T extends string> = `nth:${T}-nth`
+type PredKey<T extends string> = `nth:${T}?`
 
 type SequenceKeys<T extends string> = SeqKey<T> | TakeWhileKey<T> | NthKey<T> | PredKey<T>
 
@@ -74,8 +74,8 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
   ...sylvesterReference,
   ...thueMorseReference,
   ...tribonacciReference,
-  'n:count-combinations': {
-    title: 'n:count-combinations',
+  'nth:count-combinations': {
+    title: 'nth:count-combinations',
     category: 'Number Theory',
     description: 'Calculates the number of combinations of n items taken k at a time.',
     linkName: 'c-colon-count-combinations',
@@ -83,27 +83,19 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       type: 'integer',
     },
     args: {
-      n: {
-        type: 'integer',
-        description: 'The total number of items.',
-      },
-      k: {
-        type: 'integer',
-        description: 'The number of items to choose.',
-      },
       ...getOperatorArgs('integer', 'integer'),
     },
     variants: [
-      { argumentNames: ['n', 'k'] },
+      { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'n:count-combinations(5, 3)',
-      'n:binomial(10, 2)',
+      'nth:count-combinations(5, 3)',
+      'nth:binomial(10, 2)',
     ],
-    aliases: ['n:binomial'],
+    aliases: ['nth:binomial'],
   },
-  'n:combinations': {
-    title: 'n:combinations',
+  'nth:combinations': {
+    title: 'nth:combinations',
     category: 'Number Theory',
     description: 'Generates all possible combinations of a specified size from a collection.',
     linkName: 'c-colon-combinations',
@@ -127,15 +119,15 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['set', 'n'] },
     ],
     examples: [
-      'n:combinations([1, 2, 3], 2)',
-      'n:combinations(["a", "b", "c"], 2)',
-      'n:combinations([1, 2, 3], 0)',
-      'n:combinations([1, 2, 3], 1)',
-      'n:combinations([1, 2, 3], 3)',
+      'nth:combinations([1, 2, 3], 2)',
+      'nth:combinations(["a", "b", "c"], 2)',
+      'nth:combinations([1, 2, 3], 0)',
+      'nth:combinations([1, 2, 3], 1)',
+      'nth:combinations([1, 2, 3], 3)',
     ],
   },
-  'n:count-derangements': {
-    title: 'n:count-derangements',
+  'nth:count-derangements': {
+    title: 'nth:count-derangements',
     category: 'Number Theory',
     description: 'Calculates the number of derangements (permutations where no element appears in its original position) of n items.',
     linkName: 'c-colon-count-derangements',
@@ -152,12 +144,12 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:count-derangements(4)',
-      'n:count-derangements(5)',
+      'nth:count-derangements(4)',
+      'nth:count-derangements(5)',
     ],
   },
-  'n:derangements': {
-    title: 'n:derangements',
+  'nth:derangements': {
+    title: 'nth:derangements',
     category: 'Number Theory',
     description: 'Generates all derangements (permutations where no element appears in its original position) of a set.',
     linkName: 'c-colon-derangements',
@@ -176,12 +168,12 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['set'] },
     ],
     examples: [
-      'n:derangements([1, 2, 3, 4])',
-      'n:derangements(["a", "b", "c"])',
+      'nth:derangements([1, 2, 3, 4])',
+      'nth:derangements(["a", "b", "c"])',
     ],
   },
-  'n:divisors': {
-    title: 'n:divisors',
+  'nth:divisors': {
+    title: 'nth:divisors',
     category: 'Number Theory',
     description: 'Returns the divisors of a number.',
     linkName: 'c-colon-divisors',
@@ -199,13 +191,13 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:divisors(12)',
-      'n:divisors(100)',
-      'n:divisors(37)',
+      'nth:divisors(12)',
+      'nth:divisors(100)',
+      'nth:divisors(37)',
     ],
   },
-  'n:count-divisors': {
-    title: 'n:count-divisors',
+  'nth:count-divisors': {
+    title: 'nth:count-divisors',
     category: 'Number Theory',
     description: 'Returns the number of divisors of a number.',
     linkName: 'c-colon-count-divisors',
@@ -222,13 +214,13 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:count-divisors(12)',
-      'n:count-divisors(100)',
-      'n:count-divisors(37)',
+      'nth:count-divisors(12)',
+      'nth:count-divisors(100)',
+      'nth:count-divisors(37)',
     ],
   },
-  'n:proper-divisors': {
-    title: 'n:proper-divisors',
+  'nth:proper-divisors': {
+    title: 'nth:proper-divisors',
     category: 'Number Theory',
     description: 'Returns the proper divisors of a number.',
     linkName: 'c-colon-proper-divisors',
@@ -246,13 +238,13 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:proper-divisors(12)',
-      'n:proper-divisors(100)',
-      'n:proper-divisors(37)',
+      'nth:proper-divisors(12)',
+      'nth:proper-divisors(100)',
+      'nth:proper-divisors(37)',
     ],
   },
-  'n:count-proper-divisors': {
-    title: 'n:count-proper-divisors',
+  'nth:count-proper-divisors': {
+    title: 'nth:count-proper-divisors',
     category: 'Number Theory',
     description: 'Returns the number of proper divisors of a number.',
     linkName: 'c-colon-count-proper-divisors',
@@ -269,13 +261,13 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:count-proper-divisors(12)',
-      'n:count-proper-divisors(100)',
-      'n:count-proper-divisors(37)',
+      'nth:count-proper-divisors(12)',
+      'nth:count-proper-divisors(100)',
+      'nth:count-proper-divisors(37)',
     ],
   },
-  'n:factorial': {
-    title: 'n:factorial',
+  'nth:factorial': {
+    title: 'nth:factorial',
     category: 'Number Theory',
     description: 'Calculates the factorial of a number.',
     linkName: 'c-colon-factorial',
@@ -292,15 +284,15 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:factorial(5)',
-      'n:factorial(0)',
-      'n:!(10)',
-      'n:!(20)',
+      'nth:factorial(5)',
+      'nth:factorial(0)',
+      'nth:!(10)',
+      'nth:!(20)',
     ],
-    aliases: ['n:!'],
+    aliases: ['nth:!'],
   },
-  'n:partitions': {
-    title: 'n:partitions',
+  'nth:partitions': {
+    title: 'nth:partitions',
     category: 'Number Theory',
     description: 'Generates all partitions of a number.',
     linkName: 'c-colon-partitions',
@@ -318,12 +310,12 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:partitions(4)',
-      'n:partitions(8)',
+      'nth:partitions(4)',
+      'nth:partitions(8)',
     ],
   },
-  'n:count-partitions': {
-    title: 'n:count-partitions',
+  'nth:count-partitions': {
+    title: 'nth:count-partitions',
     category: 'Number Theory',
     description: 'Returns the number of partitions of a number.',
     linkName: 'c-colon-count-partitions',
@@ -340,13 +332,13 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:count-partitions(4)',
-      'n:count-partitions(8)',
-      'n:count-partitions(15)',
+      'nth:count-partitions(4)',
+      'nth:count-partitions(8)',
+      'nth:count-partitions(15)',
     ],
   },
-  'n:permutations': {
-    title: 'n:permutations',
+  'nth:permutations': {
+    title: 'nth:permutations',
     category: 'Number Theory',
     description: 'Generates all permutations of a collection.',
     linkName: 'c-colon-permutations',
@@ -365,16 +357,16 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['set'] },
     ],
     examples: [
-      'n:permutations([1, 2, 3])',
-      'n:permutations(["a", "b", "c"])',
-      'n:permutations([1, 2, 3, 4])',
-      'n:permutations([1, 2])',
-      'n:permutations([1])',
-      'n:permutations([])',
+      'nth:permutations([1, 2, 3])',
+      'nth:permutations(["a", "b", "c"])',
+      'nth:permutations([1, 2, 3, 4])',
+      'nth:permutations([1, 2])',
+      'nth:permutations([1])',
+      'nth:permutations([])',
     ],
   },
-  'n:count-permutations': {
-    title: 'n:count-permutations',
+  'nth:count-permutations': {
+    title: 'nth:count-permutations',
     category: 'Number Theory',
     description: 'Returns the number of permutations of n items taken k at a time.',
     linkName: 'c-colon-count-permutations',
@@ -382,29 +374,21 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       type: 'integer',
     },
     args: {
-      n: {
-        type: 'integer',
-        description: 'The total number of items.',
-      },
-      k: {
-        type: 'integer',
-        description: 'The number of items to choose.',
-      },
       ...getOperatorArgs('integer', 'integer'),
     },
     variants: [
-      { argumentNames: ['n', 'k'] },
+      { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'n:count-permutations(5, 3)',
-      'n:count-permutations(10, 2)',
-      'n:count-permutations(10, 10)',
-      'n:count-permutations(10, 0)',
-      'n:count-permutations(10, 1)',
+      'nth:count-permutations(5, 3)',
+      'nth:count-permutations(10, 2)',
+      'nth:count-permutations(10, 10)',
+      'nth:count-permutations(10, 0)',
+      'nth:count-permutations(10, 1)',
     ],
   },
-  'n:power-set': {
-    title: 'n:power-set',
+  'nth:power-set': {
+    title: 'nth:power-set',
     category: 'Number Theory',
     description: 'Generates the power set of a collection.',
     linkName: 'c-colon-power-set',
@@ -423,14 +407,14 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['set'] },
     ],
     examples: [
-      'n:power-set(["a", "b", "c"])',
-      'n:power-set([1, 2])',
-      'n:power-set([1])',
-      'n:power-set([])',
+      'nth:power-set(["a", "b", "c"])',
+      'nth:power-set([1, 2])',
+      'nth:power-set([1])',
+      'nth:power-set([])',
     ],
   },
-  'n:count-power-set': {
-    title: 'n:count-power-set',
+  'nth:count-power-set': {
+    title: 'nth:count-power-set',
     category: 'Number Theory',
     description: 'Returns the number of subsets of a set.',
     linkName: 'c-colon-count-power-set',
@@ -447,13 +431,13 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:count-power-set(3)',
-      'n:count-power-set(5)',
-      'n:count-power-set(10)',
+      'nth:count-power-set(3)',
+      'nth:count-power-set(5)',
+      'nth:count-power-set(10)',
     ],
   },
-  'n:prime-factors': {
-    title: 'n:prime-factors',
+  'nth:prime-factors': {
+    title: 'nth:prime-factors',
     category: 'Number Theory',
     description: 'Returns the prime factors of a number.',
     linkName: 'c-colon-factors',
@@ -471,13 +455,13 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:prime-factors(12)',
-      'n:prime-factors(100)',
-      'n:prime-factors(37)',
+      'nth:prime-factors(12)',
+      'nth:prime-factors(100)',
+      'nth:prime-factors(37)',
     ],
   },
-  'n:count-prime-factors': {
-    title: 'n:count-prime-factors',
+  'nth:count-prime-factors': {
+    title: 'nth:count-prime-factors',
     category: 'Number Theory',
     description: 'Returns the number of prime factors of a number.',
     linkName: 'c-colon-count-factors',
@@ -494,13 +478,13 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:count-prime-factors(12)',
-      'n:count-prime-factors(100)',
-      'n:count-prime-factors(37)',
+      'nth:count-prime-factors(12)',
+      'nth:count-prime-factors(100)',
+      'nth:count-prime-factors(37)',
     ],
   },
-  'n:distinct-prime-factors': {
-    title: 'n:distinct-prime-factors',
+  'nth:distinct-prime-factors': {
+    title: 'nth:distinct-prime-factors',
     category: 'Number Theory',
     description: 'Returns the distinct prime factors of a number.',
     linkName: 'c-colon-distinct-factors',
@@ -518,13 +502,13 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:distinct-prime-factors(12)',
-      'n:distinct-prime-factors(100)',
-      'n:distinct-prime-factors(37)',
+      'nth:distinct-prime-factors(12)',
+      'nth:distinct-prime-factors(100)',
+      'nth:distinct-prime-factors(37)',
     ],
   },
-  'n:count-distinct-prime-factors': {
-    title: 'n:count-distinct-prime-factors',
+  'nth:count-distinct-prime-factors': {
+    title: 'nth:count-distinct-prime-factors',
     category: 'Number Theory',
     description: 'Returns the number of distinct prime factors of a number.',
     linkName: 'c-colon-count-distinct-factors',
@@ -541,13 +525,13 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:count-distinct-prime-factors(12)',
-      'n:count-distinct-prime-factors(100)',
-      'n:count-distinct-prime-factors(37)',
+      'nth:count-distinct-prime-factors(12)',
+      'nth:count-distinct-prime-factors(100)',
+      'nth:count-distinct-prime-factors(37)',
     ],
   },
-  'n:coprime?': {
-    title: 'n:coprime?',
+  'nth:coprime?': {
+    title: 'nth:coprime?',
     category: 'Number Theory',
     description: 'Checks if two numbers are coprime (i.e., their GCD is 1).',
     linkName: 'c-colon-coprime',
@@ -561,20 +545,20 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'n:coprime?(12, 8)',
-      'n:coprime?(12, 5)',
-      'n:coprime?(37, 1)',
-      'n:coprime?(0, 0)',
-      'n:coprime?(0, 5)',
-      'n:coprime?(5, 0)',
-      'n:coprime?(1, 0)',
-      'n:coprime?(0, 1)',
-      'n:coprime?(1, 1)',
-      'n:coprime?(2, 3)',
+      'nth:coprime?(12, 8)',
+      'nth:coprime?(12, 5)',
+      'nth:coprime?(37, 1)',
+      'nth:coprime?(0, 0)',
+      'nth:coprime?(0, 5)',
+      'nth:coprime?(5, 0)',
+      'nth:coprime?(1, 0)',
+      'nth:coprime?(0, 1)',
+      'nth:coprime?(1, 1)',
+      'nth:coprime?(2, 3)',
     ],
   },
-  'n:divisible-by?': {
-    title: 'n:divisible-by?',
+  'nth:divisible-by?': {
+    title: 'nth:divisible-by?',
     category: 'Number Theory',
     description: 'Checks if a number is divisible by another number.',
     linkName: 'c-colon-divisible-by',
@@ -588,17 +572,17 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      '12 n:divisible-by? 4',
-      'n:divisible-by?(12, 4)',
-      'n:divisible-by?(12, 5)',
-      'n:divisible-by?(37, 1)',
-      'n:divisible-by?(0, 0)',
-      'n:divisible-by?(0, 5)',
-      'n:divisible-by?(5, 0)',
+      '12 nth:divisible-by? 4',
+      'nth:divisible-by?(12, 4)',
+      'nth:divisible-by?(12, 5)',
+      'nth:divisible-by?(37, 1)',
+      'nth:divisible-by?(0, 0)',
+      'nth:divisible-by?(0, 5)',
+      'nth:divisible-by?(5, 0)',
     ],
   },
-  'n:gcd': {
-    title: 'n:gcd',
+  'nth:gcd': {
+    title: 'nth:gcd',
     category: 'Number Theory',
     description: 'Calculates the greatest common divisor (GCD) of two numbers.',
     linkName: 'c-colon-gcd',
@@ -612,16 +596,16 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      '12 n:gcd  8',
-      'n:gcd(100, 25)',
-      'n:gcd(37, 1)',
-      'n:gcd(0, 0)',
-      'n:gcd(0, 5)',
-      'n:gcd(5, 0)',
+      '12 nth:gcd  8',
+      'nth:gcd(100, 25)',
+      'nth:gcd(37, 1)',
+      'nth:gcd(0, 0)',
+      'nth:gcd(0, 5)',
+      'nth:gcd(5, 0)',
     ],
   },
-  'n:lcm': {
-    title: 'n:lcm',
+  'nth:lcm': {
+    title: 'nth:lcm',
     category: 'Number Theory',
     description: 'Calculates the least common multiple (LCM) of two numbers.',
     linkName: 'c-colon-lcm',
@@ -635,16 +619,16 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      '12 n:lcm  8',
-      'n:lcm(100, 25)',
-      'n:lcm(37, 1)',
-      'n:lcm(0, 0)',
-      'n:lcm(0, 5)',
-      'n:lcm(5, 0)',
+      '12 nth:lcm  8',
+      'nth:lcm(100, 25)',
+      'nth:lcm(37, 1)',
+      'nth:lcm(0, 0)',
+      'nth:lcm(0, 5)',
+      'nth:lcm(5, 0)',
     ],
   },
-  'n:multinomial': {
-    title: 'n:multinomial',
+  'nth:multinomial': {
+    title: 'nth:multinomial',
     category: 'Number Theory',
     description: 'Calculates the multinomial coefficient from of a list of numbers representing the sizes of each group.',
     linkName: 'c-colon-multinomial',
@@ -659,16 +643,16 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       },
     },
     variants: [
-      { argumentNames: ['n', 'k'] },
+      { argumentNames: ['args'] },
     ],
     examples: [
-      'n:multinomial(5, 2, 3)',
-      'n:multinomial(10, 2, 3, 5)',
+      'nth:multinomial(5, 2, 3)',
+      'nth:multinomial(10, 2, 3, 5)',
     ],
     noOperatorDocumentation: true,
   },
-  'n:amicable?': {
-    title: 'n:amicable?',
+  'nth:amicable?': {
+    title: 'nth:amicable?',
     category: 'Number Theory',
     description: 'Checks if two numbers are amicable (i.e., the sum of the proper divisors of each number equals the other number).',
     linkName: 'c-colon-amicable',
@@ -682,15 +666,15 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'n:amicable?(220, 284)',
-      'n:amicable?(1184, 1210)',
-      'n:amicable?(2620, 2924)',
-      'n:amicable?(5020, 5564)',
-      'n:amicable?(6232, 6368)',
+      'nth:amicable?(220, 284)',
+      'nth:amicable?(1184, 1210)',
+      'nth:amicable?(2620, 2924)',
+      'nth:amicable?(5020, 5564)',
+      'nth:amicable?(6232, 6368)',
     ],
   },
-  'n:euler-totient': {
-    title: 'n:euler-totient',
+  'nth:euler-totient': {
+    title: 'nth:euler-totient',
     category: 'Number Theory',
     description: 'Calculates the Euler\'s totient function (φ(n)) of a number, which counts the integers up to n that are coprime to n.',
     linkName: 'c-colon-euler-totient',
@@ -707,14 +691,14 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:euler-totient(1)',
-      'n:euler-totient(2)',
-      'n:euler-totient(10)',
-      'n:euler-totient(20)',
+      'nth:euler-totient(1)',
+      'nth:euler-totient(2)',
+      'nth:euler-totient(10)',
+      'nth:euler-totient(20)',
     ],
   },
-  'n:mobius': {
-    title: 'n:mobius',
+  'nth:mobius': {
+    title: 'nth:mobius',
     category: 'Number Theory',
     description: 'Calculates the Möbius function (μ(n)) of a number, which is used in number theory.',
     linkName: 'c-colon-mobius',
@@ -731,17 +715,17 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:mobius(1)',
-      'n:mobius(2)',
-      'n:mobius(3)',
-      'n:mobius(4)',
-      'n:mobius(6)',
-      'n:mobius(12)',
-      'n:mobius(30)',
+      'nth:mobius(1)',
+      'nth:mobius(2)',
+      'nth:mobius(3)',
+      'nth:mobius(4)',
+      'nth:mobius(6)',
+      'nth:mobius(12)',
+      'nth:mobius(30)',
     ],
   },
-  'n:mertens': {
-    title: 'n:mertens',
+  'nth:mertens': {
+    title: 'nth:mertens',
     category: 'Number Theory',
     description: 'Calculates the Mertens function (M(n)) of a number, which is the sum of the Möbius function up to n.',
     linkName: 'c-colon-mertens',
@@ -758,17 +742,17 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:mobius(1)',
-      'n:mobius(2)',
-      'n:mobius(3)',
-      'n:mobius(4)',
-      'n:mobius(6)',
-      'n:mobius(12)',
-      'n:mobius(30)',
+      'nth:mobius(1)',
+      'nth:mobius(2)',
+      'nth:mobius(3)',
+      'nth:mobius(4)',
+      'nth:mobius(6)',
+      'nth:mobius(12)',
+      'nth:mobius(30)',
     ],
   },
-  'n:sigma': {
-    title: 'n:sigma',
+  'nth:sigma': {
+    title: 'nth:sigma',
     category: 'Number Theory',
     description: 'Calculates the sum of divisors function (σ(n)) of a number, which is the sum of all positive divisors of n.',
     linkName: 'c-colon-sigma',
@@ -785,17 +769,17 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:sigma(1)',
-      'n:sigma(2)',
-      'n:sigma(3)',
-      'n:sigma(4)',
-      'n:sigma(6)',
-      'n:sigma(12)',
-      'n:sigma(30)',
+      'nth:sigma(1)',
+      'nth:sigma(2)',
+      'nth:sigma(3)',
+      'nth:sigma(4)',
+      'nth:sigma(6)',
+      'nth:sigma(12)',
+      'nth:sigma(30)',
     ],
   },
-  'n:carmichael-lambda': {
-    title: 'n:carmichael-lambda',
+  'nth:carmichael-lambda': {
+    title: 'nth:carmichael-lambda',
     category: 'Number Theory',
     description: 'Calculates the Carmichael function (λ(n)) of a number, which is the smallest positive integer m such that a^m ≡ 1 (mod n) for all integers a coprime to n.',
     linkName: 'c-colon-carmichael-lambda',
@@ -812,17 +796,17 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:carmichael-lambda(1)',
-      'n:carmichael-lambda(2)',
-      'n:carmichael-lambda(3)',
-      'n:carmichael-lambda(4)',
-      'n:carmichael-lambda(6)',
-      'n:carmichael-lambda(12)',
-      'n:carmichael-lambda(30)',
+      'nth:carmichael-lambda(1)',
+      'nth:carmichael-lambda(2)',
+      'nth:carmichael-lambda(3)',
+      'nth:carmichael-lambda(4)',
+      'nth:carmichael-lambda(6)',
+      'nth:carmichael-lambda(12)',
+      'nth:carmichael-lambda(30)',
     ],
   },
-  'n:cartesian-product': {
-    title: 'n:cartesian-product',
+  'nth:cartesian-product': {
+    title: 'nth:cartesian-product',
     category: 'Number Theory',
     description: 'Calculates the Cartesian product of two or more sets.',
     linkName: 'c-colon-cartesian-product',
@@ -841,13 +825,13 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['sets'] },
     ],
     examples: [
-      'n:cartesian-product([1, 2], ["a", "b"])',
-      'n:cartesian-product([1, 2], ["a", "b"], [true, false])',
-      'n:cartesian-product([1, 2, 3], ["x", "y", "z"])',
+      'nth:cartesian-product([1, 2], ["a", "b"])',
+      'nth:cartesian-product([1, 2], ["a", "b"], [true, false])',
+      'nth:cartesian-product([1, 2, 3], ["x", "y", "z"])',
     ],
   },
-  'n:perfect-power': {
-    title: 'n:perfect-power',
+  'nth:perfect-power': {
+    title: 'nth:perfect-power',
     category: 'Number Theory',
     description: 'Returns a tuple of the base and exponent if the number is a perfect power, otherwise returns null.',
     linkName: 'c-colon-perfect-power',
@@ -865,17 +849,17 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:perfect-power(1)',
-      'n:perfect-power(2)',
-      'n:perfect-power(4)',
-      'n:perfect-power(8)',
-      'n:perfect-power(9)',
-      'n:perfect-power(16)',
-      'n:perfect-power(19)',
+      'nth:perfect-power(1)',
+      'nth:perfect-power(2)',
+      'nth:perfect-power(4)',
+      'nth:perfect-power(8)',
+      'nth:perfect-power(9)',
+      'nth:perfect-power(16)',
+      'nth:perfect-power(19)',
     ],
   },
-  'n:mod-exp': {
-    title: 'n:mod-exp',
+  'nth:mod-exp': {
+    title: 'nth:mod-exp',
     category: 'Number Theory',
     description: 'Calculates the modular exponentiation of a base raised to an exponent modulo a modulus.',
     linkName: 'c-colon-mod-exp',
@@ -897,14 +881,14 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['base', 'exponent', 'modulus'] },
     ],
     examples: [
-      'n:mod-exp(2, 3, 5)',
-      'n:mod-exp(3, 4, 7)',
-      'n:mod-exp(5, 6, 11)',
-      'n:mod-exp(7, 8, 13)',
+      'nth:mod-exp(2, 3, 5)',
+      'nth:mod-exp(3, 4, 7)',
+      'nth:mod-exp(5, 6, 11)',
+      'nth:mod-exp(7, 8, 13)',
     ],
   },
-  'n:mod-inv': {
-    title: 'n:mod-inv',
+  'nth:mod-inv': {
+    title: 'nth:mod-inv',
     category: 'Number Theory',
     description: 'Calculates the modular multiplicative inverse of a number modulo another number.',
     linkName: 'c-colon-mod-inv',
@@ -918,14 +902,14 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['a', 'm'] },
     ],
     examples: [
-      'n:mod-inv(3, 11)',
-      'n:mod-inv(10, 17)',
-      'n:mod-inv(5, 13)',
-      'n:mod-inv(7, 19)',
+      'nth:mod-inv(3, 11)',
+      'nth:mod-inv(10, 17)',
+      'nth:mod-inv(5, 13)',
+      'nth:mod-inv(7, 19)',
     ],
   },
-  'n:extended-gcd': {
-    title: 'n:extended-gcd',
+  'nth:extended-gcd': {
+    title: 'nth:extended-gcd',
     category: 'Number Theory',
     description: 'Calculates the extended greatest common divisor (GCD) of two numbers, returning the GCD and the coefficients of Bézout\'s identity.',
     linkName: 'c-colon-extended-gcd',
@@ -940,14 +924,14 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'n:extended-gcd(30, 12)',
-      'n:extended-gcd(56, 98)',
-      'n:extended-gcd(101, 10)',
-      'n:extended-gcd(17, 13)',
+      'nth:extended-gcd(30, 12)',
+      'nth:extended-gcd(56, 98)',
+      'nth:extended-gcd(101, 10)',
+      'nth:extended-gcd(17, 13)',
     ],
   },
-  'n:chinese-remainder': {
-    title: 'n:chinese-remainder',
+  'nth:chinese-remainder': {
+    title: 'nth:chinese-remainder',
     category: 'Number Theory',
     description: 'Solves a system of simultaneous congruences using the Chinese Remainder Theorem.',
     linkName: 'c-colon-chinese-remainder',
@@ -970,14 +954,14 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['remainders', 'moduli'] },
     ],
     examples: [
-      'n:chinese-remainder([2, 3], [3, 5])',
-      'n:chinese-remainder([1, 2], [3, 4])',
-      'n:chinese-remainder([0, 1], [2, 3])',
-      'n:chinese-remainder([1, 2, 3], [4, 5, 6])',
+      'nth:chinese-remainder([2, 3], [3, 5])',
+      'nth:chinese-remainder([1, 2], [3, 4])',
+      'nth:chinese-remainder([0, 1], [2, 3])',
+      'nth:chinese-remainder([1, 2, 3], [4, 5, 6])',
     ],
   },
-  'n:stirling-first': {
-    title: 'n:stirling-first',
+  'nth:stirling-first': {
+    title: 'nth:stirling-first',
     category: 'Number Theory',
     description: 'Calculates the Stirling numbers of the first kind, which count the number of permutations of n elements with k cycles.',
     linkName: 'c-colon-stirling-first',
@@ -998,15 +982,15 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'n:stirling-first(5, 2)',
-      'n:stirling-first(4, 3)',
-      'n:stirling-first(6, 1)',
-      'n:stirling-first(7, 4)',
-      'n:stirling-first(8, 5)',
+      'nth:stirling-first(5, 2)',
+      'nth:stirling-first(4, 3)',
+      'nth:stirling-first(6, 1)',
+      'nth:stirling-first(7, 4)',
+      'nth:stirling-first(8, 5)',
     ],
   },
-  'n:stirling-second': {
-    title: 'n:stirling-second',
+  'nth:stirling-second': {
+    title: 'nth:stirling-second',
     category: 'Number Theory',
     description: 'Calculates the Stirling numbers of the second kind, which count the number of ways to partition n elements into k non-empty subsets.',
     linkName: 'c-colon-stirling-second',
@@ -1027,11 +1011,11 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'n:stirling-second(5, 2)',
-      'n:stirling-second(4, 3)',
-      'n:stirling-second(6, 1)',
-      'n:stirling-second(7, 4)',
-      'n:stirling-second(8, 5)',
+      'nth:stirling-second(5, 2)',
+      'nth:stirling-second(4, 3)',
+      'nth:stirling-second(6, 1)',
+      'nth:stirling-second(7, 4)',
+      'nth:stirling-second(8, 5)',
     ],
   },
 }

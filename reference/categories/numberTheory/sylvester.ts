@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const sylvesterReference: NumberTheorySequenceReference<'sylvester'> = {
-  'n:sylvester-seq': {
-    title: 'n:sylvester-seq',
+  'nth:sylvester-seq': {
+    title: 'nth:sylvester-seq',
     category: 'Number Theory',
     description: 'Generates the Sylvester sequence up to a specified length.',
     linkName: 'c-colon-sylvester-seq',
@@ -21,13 +21,13 @@ export const sylvesterReference: NumberTheorySequenceReference<'sylvester'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'n:sylvester-seq(5)',
-      'n:sylvester-seq()',
-      'n:sylvester-seq()',
+      'nth:sylvester-seq(5)',
+      'nth:sylvester-seq()',
+      'nth:sylvester-seq()',
     ],
   },
-  'n:sylvester-take-while': {
-    title: 'n:sylvester-take-while',
+  'nth:sylvester-take-while': {
+    title: 'nth:sylvester-take-while',
     category: 'Number Theory',
     description: 'Generates the Sylvester sequence while a condition is met.',
     linkName: 'c-colon-sylvester-take-while',
@@ -45,11 +45,11 @@ export const sylvesterReference: NumberTheorySequenceReference<'sylvester'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'n:sylvester-take-while(-> $ < 100000)',
+      'nth:sylvester-take-while(-> $ < 100000)',
     ],
   },
-  'n:sylvester-nth': {
-    title: 'n:sylvester-nth',
+  'nth:sylvester-nth': {
+    title: 'nth:sylvester-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Sylvester sequence.',
     linkName: 'c-colon-sylvester-nth',
@@ -66,12 +66,12 @@ export const sylvesterReference: NumberTheorySequenceReference<'sylvester'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:sylvester-nth(1)',
-      'n:sylvester-nth(5)',
+      'nth:sylvester-nth(1)',
+      'nth:sylvester-nth(5)',
     ],
   },
-  'n:sylvester?': {
-    title: 'n:sylvester?',
+  'nth:sylvester?': {
+    title: 'nth:sylvester?',
     category: 'Number Theory',
     description: 'Checks if a number is in the Sylvester sequence.',
     linkName: 'c-colon-sylvester-question-mark',
@@ -88,9 +88,9 @@ export const sylvesterReference: NumberTheorySequenceReference<'sylvester'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:sylvester?(2)',
-      'n:sylvester?(3)',
-      'n:sylvester?(6)',
+      'nth:sylvester?(2)',
+      'nth:sylvester?(3)',
+      'nth:sylvester?(6)',
     ],
   },
 }

@@ -39,7 +39,7 @@ function combinations<T>(collection: T[], size: number): T[][] {
 }
 
 export const combinationsNormalExpressions: BuiltinNormalExpressions = {
-  'n:combinations': {
+  'nth:combinations': {
     evaluate: ([set, n], sourceCodeInfo): Arr[] => {
       assertArray(set, sourceCodeInfo)
       assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true, lte: set.length })
@@ -49,13 +49,13 @@ export const combinationsNormalExpressions: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'n:count-combinations': {
+  'nth:count-combinations': {
     evaluate: ([n, k], sourceCodeInfo): number => {
       assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true })
       assertNumber(k, sourceCodeInfo, { integer: true, nonNegative: true, lte: n })
       return binomialCoefficient(n, k)
     },
-    aliases: ['n:binomial'],
+    aliases: ['nth:binomial'],
     paramCount: 2,
   },
 }

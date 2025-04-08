@@ -75,7 +75,7 @@ function isInGeometricSequence(
 }
 
 export const geometricNormalExpressions: SequenceNormalExpressions<'geometric'> = {
-  'n:geometric-seq': {
+  'nth:geometric-seq': {
     evaluate: ([start, ratio, length], sourceCodeInfo): number[] => {
       assertNumber(start, sourceCodeInfo, { finite: true })
       assertNumber(ratio, sourceCodeInfo, { finite: true })
@@ -85,7 +85,7 @@ export const geometricNormalExpressions: SequenceNormalExpressions<'geometric'> 
     },
     paramCount: 3,
   },
-  'n:geometric-take-while': {
+  'nth:geometric-take-while': {
     evaluate: ([start, ratio, fn], sourceCodeInfo, contextStack, { executeFunction }): number[] => {
       assertNumber(start, sourceCodeInfo, { finite: true })
       assertNumber(ratio, sourceCodeInfo, { finite: true })
@@ -103,7 +103,7 @@ export const geometricNormalExpressions: SequenceNormalExpressions<'geometric'> 
     },
     paramCount: 3,
   },
-  'n:geometric-nth': {
+  'nth:geometric-nth': {
     evaluate: ([start, ratio, n], sourceCodeInfo): number => {
       assertNumber(start, sourceCodeInfo, { finite: true })
       assertNumber(ratio, sourceCodeInfo, { finite: true })
@@ -112,7 +112,7 @@ export const geometricNormalExpressions: SequenceNormalExpressions<'geometric'> 
     },
     paramCount: 3,
   },
-  'n:geometric?': {
+  'nth:geometric?': {
     evaluate: ([start, ratio, n], sourceCodeInfo): boolean => {
       assertNumber(n, sourceCodeInfo)
       assertNumber(start, sourceCodeInfo, { finite: true })

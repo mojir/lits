@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const perfectCubeReference: NumberTheorySequenceReference<'perfect-cube'> = {
-  'n:perfect-cube-seq': {
-    title: 'n:perfect-cube-seq',
+  'nth:perfect-cube-seq': {
+    title: 'nth:perfect-cube-seq',
     category: 'Number Theory',
     description: 'Generates the perfect cube numbers up to a specified length.',
     linkName: 'c-colon-perfect-cube-seq',
@@ -20,12 +20,12 @@ export const perfectCubeReference: NumberTheorySequenceReference<'perfect-cube'>
       { argumentNames: ['length'] },
     ],
     examples: [
-      'n:perfect-cube-seq(5)',
-      'n:perfect-cube-seq(20)',
+      'nth:perfect-cube-seq(5)',
+      'nth:perfect-cube-seq(20)',
     ],
   },
-  'n:perfect-cube-take-while': {
-    title: 'n:perfect-cube-take-while',
+  'nth:perfect-cube-take-while': {
+    title: 'nth:perfect-cube-take-while',
     category: 'Number Theory',
     description: 'Generates the perfect cube numbers while a condition is met.',
     linkName: 'c-colon-perfect-cube-take-while',
@@ -43,11 +43,11 @@ export const perfectCubeReference: NumberTheorySequenceReference<'perfect-cube'>
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'n:perfect-cube-take-while(-> $ <= 100)',
+      'nth:perfect-cube-take-while(-> $ <= 100)',
     ],
   },
-  'n:perfect-cube-nth': {
-    title: 'n:perfect-cube-nth',
+  'nth:perfect-cube-nth': {
+    title: 'nth:perfect-cube-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the perfect cube numbers.',
     linkName: 'c-colon-perfect-cube-nth',
@@ -64,12 +64,12 @@ export const perfectCubeReference: NumberTheorySequenceReference<'perfect-cube'>
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:perfect-cube-nth(1)',
-      'n:perfect-cube-nth(5)',
+      'nth:perfect-cube-nth(1)',
+      'nth:perfect-cube-nth(5)',
     ],
   },
-  'n:perfect-cube?': {
-    title: 'n:perfect-cube?',
+  'nth:perfect-cube?': {
+    title: 'nth:perfect-cube?',
     category: 'Number Theory',
     description: 'Checks if a number is in the perfect cube numbers.',
     linkName: 'c-colon-perfect-cube?',
@@ -86,9 +86,9 @@ export const perfectCubeReference: NumberTheorySequenceReference<'perfect-cube'>
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:perfect-cube?(7)',
-      'n:perfect-cube?(8)',
-      'n:perfect-cube?(9)',
+      'nth:perfect-cube?(7)',
+      'nth:perfect-cube?(8)',
+      'nth:perfect-cube?(9)',
     ],
   },
 }

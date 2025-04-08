@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const abundantReference: NumberTheorySequenceReference<'abundant'> = {
-  'n:abundant-seq': {
-    title: 'n:abundant-seq',
+  'nth:abundant-seq': {
+    title: 'nth:abundant-seq',
     category: 'Number Theory',
     description: 'Generates the abundant numbers up to a specified length.',
     linkName: 'c-colon-abundant-seq',
@@ -20,12 +20,12 @@ export const abundantReference: NumberTheorySequenceReference<'abundant'> = {
       { argumentNames: ['length'] },
     ],
     examples: [
-      'n:abundant-seq(1)',
-      'n:abundant-seq(5)',
+      'nth:abundant-seq(1)',
+      'nth:abundant-seq(5)',
     ],
   },
-  'n:abundant-take-while': {
-    title: 'n:abundant-take-while',
+  'nth:abundant-take-while': {
+    title: 'nth:abundant-take-while',
     category: 'Number Theory',
     description: 'Generates the abundant numbers while a condition is met.',
     linkName: 'c-colon-abundant-take-while',
@@ -43,11 +43,11 @@ export const abundantReference: NumberTheorySequenceReference<'abundant'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'n:abundant-take-while(-> $ < 100)',
+      'nth:abundant-take-while(-> $ < 100)',
     ],
   },
-  'n:abundant-nth': {
-    title: 'n:abundant-nth',
+  'nth:abundant-nth': {
+    title: 'nth:abundant-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the abundant numbers.',
     linkName: 'c-colon-abundant-nth',
@@ -64,12 +64,12 @@ export const abundantReference: NumberTheorySequenceReference<'abundant'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:abundant-nth(1)',
-      'n:abundant-nth(5)',
+      'nth:abundant-nth(1)',
+      'nth:abundant-nth(5)',
     ],
   },
-  'n:abundant?': {
-    title: 'n:abundant?',
+  'nth:abundant?': {
+    title: 'nth:abundant?',
     category: 'Number Theory',
     description: 'Checks if a number is abundant.',
     linkName: 'c-colon-abundant',
@@ -86,8 +86,8 @@ export const abundantReference: NumberTheorySequenceReference<'abundant'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:abundant?(12)',
-      'n:abundant?(15)',
+      'nth:abundant?(12)',
+      'nth:abundant?(15)',
     ],
   },
 }

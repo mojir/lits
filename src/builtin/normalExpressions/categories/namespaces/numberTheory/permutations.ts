@@ -38,14 +38,14 @@ function permutations<T>(collection: T[]): T[][] {
 }
 
 export const permutationsNormalExpressions: BuiltinNormalExpressions = {
-  'n:permutations': {
+  'nth:permutations': {
     evaluate: ([set], sourceCodeInfo): Arr[] => {
       assertArray(set, sourceCodeInfo)
       return permutations(set)
     },
     paramCount: 1,
   },
-  'n:count-permutations': {
+  'nth:count-permutations': {
     evaluate: ([n, k], sourceCodeInfo): number => {
       assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true })
       assertNumber(k, sourceCodeInfo, { integer: true, nonNegative: true, lte: n })

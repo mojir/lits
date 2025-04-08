@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const happyReference: NumberTheorySequenceReference<'happy'> = {
-  'n:happy-seq': {
-    title: 'n:happy-seq',
+  'nth:happy-seq': {
+    title: 'nth:happy-seq',
     category: 'Number Theory',
     description: 'Generates the happy sequence up to a specified length.',
     linkName: 'c-colon-happy-seq',
@@ -21,13 +21,13 @@ export const happyReference: NumberTheorySequenceReference<'happy'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'n:happy-seq(1)',
-      'n:happy-seq(2)',
-      'n:happy-seq(20)',
+      'nth:happy-seq(1)',
+      'nth:happy-seq(2)',
+      'nth:happy-seq(20)',
     ],
   },
-  'n:happy-take-while': {
-    title: 'n:happy-take-while',
+  'nth:happy-take-while': {
+    title: 'nth:happy-take-while',
     category: 'Number Theory',
     description: 'Generates the happy sequence while a condition is met.',
     linkName: 'c-colon-happy-take-while',
@@ -45,11 +45,11 @@ export const happyReference: NumberTheorySequenceReference<'happy'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'n:happy-take-while(-> $ < 100)',
+      'nth:happy-take-while(-> $ < 100)',
     ],
   },
-  'n:happy-nth': {
-    title: 'n:happy-nth',
+  'nth:happy-nth': {
+    title: 'nth:happy-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the happy sequence.',
     linkName: 'c-colon-happy-nth',
@@ -66,13 +66,13 @@ export const happyReference: NumberTheorySequenceReference<'happy'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:happy-nth(1)',
-      'n:happy-nth(2)',
-      'n:happy-nth(20)',
+      'nth:happy-nth(1)',
+      'nth:happy-nth(2)',
+      'nth:happy-nth(20)',
     ],
   },
-  'n:happy?': {
-    title: 'n:happy?',
+  'nth:happy?': {
+    title: 'nth:happy?',
     category: 'Number Theory',
     description: 'Determines if a number is a happy number.',
     linkName: 'c-colon-happy-question',
@@ -89,9 +89,9 @@ export const happyReference: NumberTheorySequenceReference<'happy'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:happy?(1)',
-      'n:happy?(2)',
-      'n:happy?(100)',
+      'nth:happy?(1)',
+      'nth:happy?(2)',
+      'nth:happy?(100)',
     ],
   },
 }

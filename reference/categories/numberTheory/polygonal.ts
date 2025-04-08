@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const polygonalReference: NumberTheorySequenceReference<'polygonal'> = {
-  'n:polygonal-seq': {
-    title: 'n:polygonal-seq',
+  'nth:polygonal-seq': {
+    title: 'nth:polygonal-seq',
     category: 'Number Theory',
     description: 'Generates the polygonal sequence for a given number of sides and length.',
     linkName: 'c-colon-polygonal-seq',
@@ -24,15 +24,15 @@ export const polygonalReference: NumberTheorySequenceReference<'polygonal'> = {
       { argumentNames: ['sides', 'length'] },
     ],
     examples: [
-      'n:polygonal-seq(3, 2)',
-      'n:polygonal-seq(4, 2)',
-      'n:polygonal-seq(5, 3)',
-      'n:polygonal-seq(6, 5)',
-      'n:polygonal-seq(100, 10)',
+      'nth:polygonal-seq(3, 2)',
+      'nth:polygonal-seq(4, 2)',
+      'nth:polygonal-seq(5, 3)',
+      'nth:polygonal-seq(6, 5)',
+      'nth:polygonal-seq(100, 10)',
     ],
   },
-  'n:polygonal-take-while': {
-    title: 'n:polygonal-take-while',
+  'nth:polygonal-take-while': {
+    title: 'nth:polygonal-take-while',
     category: 'Number Theory',
     description: 'Generates the polygonal sequence while a condition is met.',
     linkName: 'c-colon-polygonal-take-while',
@@ -54,11 +54,11 @@ export const polygonalReference: NumberTheorySequenceReference<'polygonal'> = {
       { argumentNames: ['sides', 'takeWhile'] },
     ],
     examples: [
-      'n:polygonal-take-while(15, -> $ < 1000)',
+      'nth:polygonal-take-while(15, -> $ < 1000)',
     ],
   },
-  'n:polygonal-nth': {
-    title: 'n:polygonal-nth',
+  'nth:polygonal-nth': {
+    title: 'nth:polygonal-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the polygonal sequence.',
     linkName: 'c-colon-polygonal-nth',
@@ -79,13 +79,13 @@ export const polygonalReference: NumberTheorySequenceReference<'polygonal'> = {
       { argumentNames: ['sides', 'n'] },
     ],
     examples: [
-      'n:polygonal-nth(3, 9)',
-      'n:polygonal-nth(4, 5)',
-      'n:polygonal-nth(5, 5)',
+      'nth:polygonal-nth(3, 9)',
+      'nth:polygonal-nth(4, 5)',
+      'nth:polygonal-nth(5, 5)',
     ],
   },
-  'n:polygonal?': {
-    title: 'n:polygonal?',
+  'nth:polygonal?': {
+    title: 'nth:polygonal?',
     category: 'Number Theory',
     description: 'Checks if a number is in the polygonal sequence.',
     linkName: 'c-colon-polygonal',
@@ -106,11 +106,11 @@ export const polygonalReference: NumberTheorySequenceReference<'polygonal'> = {
       { argumentNames: ['sides', 'n'] },
     ],
     examples: [
-      'n:polygonal?(3, 10)',
-      'n:polygonal?(3, 9)',
-      'n:polygonal?(4, 10000)',
-      'n:polygonal?(4, 1000)',
-      'n:polygonal?(6, 45)',
+      'nth:polygonal?(3, 10)',
+      'nth:polygonal?(3, 9)',
+      'nth:polygonal?(4, 10000)',
+      'nth:polygonal?(4, 1000)',
+      'nth:polygonal?(6, 45)',
     ],
   },
 }

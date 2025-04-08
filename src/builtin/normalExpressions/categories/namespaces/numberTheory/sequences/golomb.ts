@@ -24,7 +24,7 @@ function generateGolombSeq(pred: (golombNumber: number, index: number) => boolea
 }
 
 export const golombSequence: SequenceDefinition<'golomb'> = {
-  'n:golomb-seq': length => getGolombSeq(length),
-  'n:golomb?': () => true,
-  'n:golomb-take-while': takeWhile => generateGolombSeq(takeWhile),
+  'nth:golomb-seq': length => getGolombSeq(length),
+  'nth:golomb?': () => true,
+  'nth:golomb-take-while': takeWhile => generateGolombSeq(takeWhile),
 }

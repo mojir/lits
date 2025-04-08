@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const primeReference: NumberTheorySequenceReference<'prime'> = {
-  'n:prime-seq': {
-    title: 'n:prime-seq',
+  'nth:prime-seq': {
+    title: 'nth:prime-seq',
     category: 'Number Theory',
     description: 'Generates the prime sequence up to a specified length.',
     linkName: 'c-colon-prime-seq',
@@ -20,13 +20,13 @@ export const primeReference: NumberTheorySequenceReference<'prime'> = {
       { argumentNames: ['length'] },
     ],
     examples: [
-      'n:prime-seq(1)',
-      'n:prime-seq(2)',
-      'n:prime-seq(10)',
+      'nth:prime-seq(1)',
+      'nth:prime-seq(2)',
+      'nth:prime-seq(10)',
     ],
   },
-  'n:prime-take-while': {
-    title: 'n:prime-take-while',
+  'nth:prime-take-while': {
+    title: 'nth:prime-take-while',
     category: 'Number Theory',
     description: 'Generates the prime sequence while a condition is met.',
     linkName: 'c-colon-prime-take-while',
@@ -44,11 +44,11 @@ export const primeReference: NumberTheorySequenceReference<'prime'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'n:prime-take-while(-> $ < 50)',
+      'nth:prime-take-while(-> $ < 50)',
     ],
   },
-  'n:prime-nth': {
-    title: 'n:prime-nth',
+  'nth:prime-nth': {
+    title: 'nth:prime-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the prime sequence.',
     linkName: 'c-colon-prime-nth',
@@ -65,13 +65,13 @@ export const primeReference: NumberTheorySequenceReference<'prime'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:prime-nth(1)',
-      'n:prime-nth(2)',
-      'n:prime-nth(10)',
+      'nth:prime-nth(1)',
+      'nth:prime-nth(2)',
+      'nth:prime-nth(10)',
     ],
   },
-  'n:prime?': {
-    title: 'n:prime?',
+  'nth:prime?': {
+    title: 'nth:prime?',
     category: 'Number Theory',
     description: 'Determines if a number is prime.',
     linkName: 'c-colon-prime-question-mark',
@@ -88,12 +88,12 @@ export const primeReference: NumberTheorySequenceReference<'prime'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:prime?(1)',
-      'n:prime?(2)',
-      'n:prime?(3)',
-      'n:prime?(4)',
-      'n:prime?(997)',
-      'n:prime?(1001)',
+      'nth:prime?(1)',
+      'nth:prime?(2)',
+      'nth:prime?(3)',
+      'nth:prime?(4)',
+      'nth:prime?(997)',
+      'nth:prime?(1001)',
     ],
   },
 }

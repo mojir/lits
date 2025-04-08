@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const factorialReference: NumberTheorySequenceReference<'factorial'> = {
-  'n:factorial-seq': {
-    title: 'n:factorial-seq',
+  'nth:factorial-seq': {
+    title: 'nth:factorial-seq',
     category: 'Number Theory',
     description: 'Generates the factorial sequence up to a specified length.',
     linkName: 'c-colon-factorial-seq',
@@ -21,16 +21,16 @@ export const factorialReference: NumberTheorySequenceReference<'factorial'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'n:factorial-seq(1)',
-      'n:factorial-seq(2)',
-      'n:factorial-seq(3)',
-      'n:factorial-seq(4)',
-      'n:factorial-seq(5)',
-      'n:factorial-seq(10)',
+      'nth:factorial-seq(1)',
+      'nth:factorial-seq(2)',
+      'nth:factorial-seq(3)',
+      'nth:factorial-seq(4)',
+      'nth:factorial-seq(5)',
+      'nth:factorial-seq(10)',
     ],
   },
-  'n:factorial-take-while': {
-    title: 'n:factorial-take-while',
+  'nth:factorial-take-while': {
+    title: 'nth:factorial-take-while',
     category: 'Number Theory',
     description: 'Generates the factorial sequence while a condition is met.',
     linkName: 'c-colon-factorial-take-while',
@@ -48,11 +48,11 @@ export const factorialReference: NumberTheorySequenceReference<'factorial'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'n:factorial-take-while(-> $ < 1000)',
+      'nth:factorial-take-while(-> $ < 1000)',
     ],
   },
-  'n:factorial-nth': {
-    title: 'n:factorial-nth',
+  'nth:factorial-nth': {
+    title: 'nth:factorial-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the factorial sequence.',
     linkName: 'c-colon-factorial-nth',
@@ -69,16 +69,16 @@ export const factorialReference: NumberTheorySequenceReference<'factorial'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:factorial-nth(1)',
-      'n:factorial-nth(2)',
-      'n:factorial-nth(3)',
-      'n:factorial-nth(4)',
-      'n:factorial-nth(5)',
-      'n:factorial-nth(10)',
+      'nth:factorial-nth(1)',
+      'nth:factorial-nth(2)',
+      'nth:factorial-nth(3)',
+      'nth:factorial-nth(4)',
+      'nth:factorial-nth(5)',
+      'nth:factorial-nth(10)',
     ],
   },
-  'n:factorial?': {
-    title: 'n:factorial?',
+  'nth:factorial?': {
+    title: 'nth:factorial?',
     category: 'Number Theory',
     description: 'Checks if a number is in the factorial sequence.',
     linkName: 'c-colon-factorial-question-mark',
@@ -95,16 +95,16 @@ export const factorialReference: NumberTheorySequenceReference<'factorial'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:factorial?(1)',
-      'n:factorial?(2)',
-      'n:factorial?(3)',
-      'n:factorial?(4)',
-      'n:factorial?(5)',
-      'n:factorial?(6)',
-      'n:factorial?(7)',
-      'n:factorial?(8)',
-      'n:factorial?(9)',
-      'n:factorial?(3628800)',
+      'nth:factorial?(1)',
+      'nth:factorial?(2)',
+      'nth:factorial?(3)',
+      'nth:factorial?(4)',
+      'nth:factorial?(5)',
+      'nth:factorial?(6)',
+      'nth:factorial?(7)',
+      'nth:factorial?(8)',
+      'nth:factorial?(9)',
+      'nth:factorial?(3628800)',
     ],
   },
 }

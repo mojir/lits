@@ -6792,7 +6792,7 @@ var Playground = (function (exports) {
         }
         // If all values appear only once, there is no mode
         if (maxFrequency === 1) {
-            return [];
+            return values;
         }
         // Collect all values that appear with the maximum frequency
         var modes = [];
@@ -6815,14 +6815,14 @@ var Playground = (function (exports) {
     }
 
     var vectorNormalExpression = {
-        'v:vector?': {
+        'vec:vector?': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), vector = _b[0];
                 return isVector(vector);
             },
             paramCount: 1,
         },
-        'v:sorted?': {
+        'vec:sorted?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
@@ -6830,7 +6830,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'v:monotonic?': {
+        'vec:monotonic?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
@@ -6839,7 +6839,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'v:strictly-monotonic?': {
+        'vec:strictly-monotonic?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
@@ -6848,7 +6848,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'v:increasing?': {
+        'vec:increasing?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
@@ -6856,7 +6856,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'v:decreasing?': {
+        'vec:decreasing?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
@@ -6864,7 +6864,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'v:strictly-increasing?': {
+        'vec:strictly-increasing?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
@@ -6872,7 +6872,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'v:strictly-decreasing?': {
+        'vec:strictly-decreasing?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
@@ -6883,136 +6883,198 @@ var Playground = (function (exports) {
         'v:+': {
             evaluate: function (params, sourceCodeInfo) {
                 var e_1, _a;
-                var firstParam = params[0];
-                assertVector(firstParam, sourceCodeInfo);
-                var restParams = params.slice(1);
+                var length = null;
                 try {
-                    for (var restParams_1 = __values(restParams), restParams_1_1 = restParams_1.next(); !restParams_1_1.done; restParams_1_1 = restParams_1.next()) {
-                        var param = restParams_1_1.value;
-                        assertVector(param, sourceCodeInfo);
-                        if (firstParam.length !== param.length) {
-                            throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                    for (var params_1 = __values(params), params_1_1 = params_1.next(); !params_1_1.done; params_1_1 = params_1.next()) {
+                        var param = params_1_1.value;
+                        if (isVector(param)) {
+                            if (length !== null && length !== param.length) {
+                                throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                            }
+                            length = param.length;
                         }
                     }
                 }
                 catch (e_1_1) { e_1 = { error: e_1_1 }; }
                 finally {
                     try {
-                        if (restParams_1_1 && !restParams_1_1.done && (_a = restParams_1.return)) _a.call(restParams_1);
+                        if (params_1_1 && !params_1_1.done && (_a = params_1.return)) _a.call(params_1);
                     }
                     finally { if (e_1) throw e_1.error; }
                 }
-                var rest = restParams;
-                return rest.reduce(function (acc, vector) { return acc.map(function (val, i) { return val + vector[i]; }); }, firstParam);
+                if (length === null) {
+                    throw new LitsError('At least one parameter must be a vector', sourceCodeInfo);
+                }
+                var vectors = params.map(function (param) {
+                    if (isVector(param)) {
+                        return param;
+                    }
+                    if (!isNumber(param, { finite: true })) {
+                        throw new LitsError('parameter must be either vector or number', sourceCodeInfo);
+                    }
+                    return Array.from({ length: length }, function () { return param; });
+                });
+                var firstVector = vectors[0];
+                var restVectors = vectors.slice(1);
+                return restVectors.reduce(function (acc, vector) { return acc.map(function (val, i) { return val + vector[i]; }); }, firstVector);
             },
             paramCount: { min: 1 },
         },
         'v:-': {
             evaluate: function (params, sourceCodeInfo) {
                 var e_2, _a;
-                var firstParam = params[0];
-                assertVector(firstParam, sourceCodeInfo);
-                var restParams = params.slice(1);
+                var length = null;
                 try {
-                    for (var restParams_2 = __values(restParams), restParams_2_1 = restParams_2.next(); !restParams_2_1.done; restParams_2_1 = restParams_2.next()) {
-                        var param = restParams_2_1.value;
-                        assertVector(param, sourceCodeInfo);
-                        if (firstParam.length !== param.length) {
-                            throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                    for (var params_2 = __values(params), params_2_1 = params_2.next(); !params_2_1.done; params_2_1 = params_2.next()) {
+                        var param = params_2_1.value;
+                        if (isVector(param)) {
+                            if (length !== null && length !== param.length) {
+                                throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                            }
+                            length = param.length;
                         }
                     }
                 }
                 catch (e_2_1) { e_2 = { error: e_2_1 }; }
                 finally {
                     try {
-                        if (restParams_2_1 && !restParams_2_1.done && (_a = restParams_2.return)) _a.call(restParams_2);
+                        if (params_2_1 && !params_2_1.done && (_a = params_2.return)) _a.call(params_2);
                     }
                     finally { if (e_2) throw e_2.error; }
                 }
-                if (restParams.length === 0) {
-                    return firstParam.map(function (val) { return -val; });
+                if (length === null) {
+                    throw new LitsError('At least one parameter must be a vector', sourceCodeInfo);
                 }
-                var rest = restParams;
-                return rest.reduce(function (acc, vector) { return acc.map(function (val, i) { return val - vector[i]; }); }, firstParam);
+                var vectors = params.map(function (param) {
+                    if (isVector(param)) {
+                        return param;
+                    }
+                    if (!isNumber(param, { finite: true })) {
+                        throw new LitsError('parameter must be either vector or number', sourceCodeInfo);
+                    }
+                    return Array.from({ length: length }, function () { return param; });
+                });
+                var firstVector = vectors[0];
+                var restVectors = vectors.slice(1);
+                return restVectors.reduce(function (acc, vector) { return acc.map(function (val, i) { return val - vector[i]; }); }, firstVector);
             },
             paramCount: { min: 1 },
         },
         'v:*': {
             evaluate: function (params, sourceCodeInfo) {
                 var e_3, _a;
-                var firstParam = params[0];
-                assertVector(firstParam, sourceCodeInfo);
-                var restParams = params.slice(1);
+                var length = null;
                 try {
-                    for (var restParams_3 = __values(restParams), restParams_3_1 = restParams_3.next(); !restParams_3_1.done; restParams_3_1 = restParams_3.next()) {
-                        var param = restParams_3_1.value;
-                        assertVector(param, sourceCodeInfo);
-                        if (firstParam.length !== param.length) {
-                            throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                    for (var params_3 = __values(params), params_3_1 = params_3.next(); !params_3_1.done; params_3_1 = params_3.next()) {
+                        var param = params_3_1.value;
+                        if (isVector(param)) {
+                            if (length !== null && length !== param.length) {
+                                throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                            }
+                            length = param.length;
                         }
                     }
                 }
                 catch (e_3_1) { e_3 = { error: e_3_1 }; }
                 finally {
                     try {
-                        if (restParams_3_1 && !restParams_3_1.done && (_a = restParams_3.return)) _a.call(restParams_3);
+                        if (params_3_1 && !params_3_1.done && (_a = params_3.return)) _a.call(params_3);
                     }
                     finally { if (e_3) throw e_3.error; }
                 }
-                var rest = restParams;
-                return rest.reduce(function (acc, vector) { return acc.map(function (val, i) { return val * vector[i]; }); }, firstParam);
+                if (length === null) {
+                    throw new LitsError('At least one parameter must be a vector', sourceCodeInfo);
+                }
+                var vectors = params.map(function (param) {
+                    if (isVector(param)) {
+                        return param;
+                    }
+                    if (!isNumber(param, { finite: true })) {
+                        throw new LitsError('parameter must be either vector or number', sourceCodeInfo);
+                    }
+                    return Array.from({ length: length }, function () { return param; });
+                });
+                var firstVector = vectors[0];
+                var restVectors = vectors.slice(1);
+                return restVectors.reduce(function (acc, vector) { return acc.map(function (val, i) { return val * vector[i]; }); }, firstVector);
             },
             paramCount: { min: 1 },
         },
         'v:/': {
             evaluate: function (params, sourceCodeInfo) {
                 var e_4, _a;
-                var firstParam = params[0];
-                assertVector(firstParam, sourceCodeInfo);
-                var restParams = params.slice(1);
+                var length = null;
                 try {
-                    for (var restParams_4 = __values(restParams), restParams_4_1 = restParams_4.next(); !restParams_4_1.done; restParams_4_1 = restParams_4.next()) {
-                        var param = restParams_4_1.value;
-                        assertVector(param, sourceCodeInfo);
-                        if (firstParam.length !== param.length) {
-                            throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                    for (var params_4 = __values(params), params_4_1 = params_4.next(); !params_4_1.done; params_4_1 = params_4.next()) {
+                        var param = params_4_1.value;
+                        if (isVector(param)) {
+                            if (length !== null && length !== param.length) {
+                                throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                            }
+                            length = param.length;
                         }
                     }
                 }
                 catch (e_4_1) { e_4 = { error: e_4_1 }; }
                 finally {
                     try {
-                        if (restParams_4_1 && !restParams_4_1.done && (_a = restParams_4.return)) _a.call(restParams_4);
+                        if (params_4_1 && !params_4_1.done && (_a = params_4.return)) _a.call(params_4);
                     }
                     finally { if (e_4) throw e_4.error; }
                 }
-                if (restParams.length === 0) {
-                    return firstParam.map(function (val) { return 1 / val; });
+                if (length === null) {
+                    throw new LitsError('At least one parameter must be a vector', sourceCodeInfo);
                 }
-                var rest = restParams;
-                return rest.reduce(function (acc, vector) { return acc.map(function (val, i) { return val / vector[i]; }); }, firstParam);
+                var vectors = params.map(function (param) {
+                    if (isVector(param)) {
+                        return param;
+                    }
+                    if (!isNumber(param, { finite: true })) {
+                        throw new LitsError('parameter must be either vector or number', sourceCodeInfo);
+                    }
+                    return Array.from({ length: length }, function () { return param; });
+                });
+                var firstVector = vectors[0];
+                var restVectors = vectors.slice(1);
+                return restVectors.reduce(function (acc, vector) { return acc.map(function (val, i) { return val / vector[i]; }); }, firstVector);
             },
             paramCount: { min: 1 },
         },
-        'v:**': {
+        'v:^': {
             evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], exponent = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(exponent, sourceCodeInfo, { finite: true });
-                return vector.map(function (val) { return Math.pow(val, exponent); });
+                var _b = __read(_a, 2), a = _b[0], b = _b[1];
+                if (!isVector(a) && !isVector(b)) {
+                    throw new LitsError('At least one parameter must be a vector', sourceCodeInfo);
+                }
+                if (!isVector(a)) {
+                    assertVector(b, sourceCodeInfo);
+                    assertNumber(a, sourceCodeInfo, { finite: true });
+                }
+                if (!isVector(b)) {
+                    assertVector(a, sourceCodeInfo);
+                    assertNumber(b, sourceCodeInfo, { finite: true });
+                }
+                var length = (isVector(a) ? a : b).length;
+                var _c = __read([a, b].map(function (operand) {
+                    if (isVector(operand)) {
+                        if (operand.length !== length) {
+                            throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                        }
+                        return operand;
+                    }
+                    return Array.from({ length: length }, function () { return operand; });
+                }), 2), vector1 = _c[0], vector2 = _c[1];
+                return vector1.map(function (val, i) {
+                    var exponent = vector2[i];
+                    if (exponent < 0 && val === 0) {
+                        throw new LitsError('Cannot raise zero to a negative exponent', sourceCodeInfo);
+                    }
+                    return Math.pow(val, exponent);
+                });
             },
             paramCount: 2,
         },
-        'v:scale': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], scalar = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(scalar, sourceCodeInfo, { finite: true });
-                return vector.map(function (val) { return val * scalar; });
-            },
-            paramCount: 2,
-        },
-        'v:abs': {
+        'vec:abs': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
@@ -7020,7 +7082,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'v:sum': {
+        'vec:sum': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
@@ -7028,7 +7090,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'v:product': {
+        'vec:prod': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
@@ -7036,18 +7098,18 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'v:mean': {
+        'vec:mean': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
+                assertNonEmptyVector(vector, sourceCodeInfo);
                 return calcMean(vector);
             },
             paramCount: 1,
         },
-        'v:median': {
+        'vec:median': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
+                assertNonEmptyVector(vector, sourceCodeInfo);
                 var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
                 var mid = Math.floor(sorted.length / 2);
                 return sorted.length % 2 === 0
@@ -7056,48 +7118,75 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'v:mode': {
+        'vec:mode': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
+                assertNonEmptyVector(vector, sourceCodeInfo);
                 return mode(vector);
             },
             paramCount: 1,
         },
-        'v:variance': {
+        'vec:variance': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
+                assertNonEmptyVector(vector, sourceCodeInfo);
                 var mean = calcMean(vector);
                 return vector.reduce(function (acc, val) { return acc + Math.pow((val - mean), 2); }, 0) / vector.length;
             },
             paramCount: 1,
         },
-        'v:std-dev': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return Math.sqrt(vector.reduce(function (acc, val) { return acc + val; }, 0) / vector.length);
-            },
-            paramCount: 1,
-        },
-        'v:min': {
+        'vec:sample-variance': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertNonEmptyVector(vector, sourceCodeInfo);
-                return vector.reduce(function (acc, val) { return (val < vector[acc] ? val : acc); }, vector[0]);
+                if (vector.length < 2) {
+                    throw new LitsError('Sample variance requires at least two values', sourceCodeInfo);
+                }
+                var mean = calcMean(vector);
+                return vector.reduce(function (acc, val) { return acc + Math.pow((val - mean), 2); }, 0) / (vector.length - 1);
             },
             paramCount: 1,
         },
-        'v:max': {
+        'vec:stdev': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertNonEmptyVector(vector, sourceCodeInfo);
-                return vector.reduce(function (acc, val) { return (val > vector[acc] ? val : acc); }, vector[0]);
+                var mean = vector.reduce(function (acc, val) { return acc + val; }, 0) / vector.length;
+                // calculate the squared differences from the mean, average them, and take the square root
+                return Math.sqrt(vector.reduce(function (acc, val) { return acc + Math.pow((val - mean), 2); }, 0) / vector.length);
             },
             paramCount: 1,
         },
-        'v:min-index': {
+        'vec:sample-stdev': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertNonEmptyVector(vector, sourceCodeInfo);
+                if (vector.length < 2) {
+                    throw new LitsError('Sample standard deviation requires at least two values', sourceCodeInfo);
+                }
+                var mean = vector.reduce(function (acc, val) { return acc + val; }, 0) / vector.length;
+                // calculate the squared differences from the mean, sum them, divide by (n-1), and take the square root
+                return Math.sqrt(vector.reduce(function (acc, val) { return acc + Math.pow((val - mean), 2); }, 0) / (vector.length - 1));
+            },
+            paramCount: 1,
+        },
+        'vec:min': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertNonEmptyVector(vector, sourceCodeInfo);
+                return vector.reduce(function (acc, val) { return (val < acc ? val : acc); }, vector[0]);
+            },
+            paramCount: 1,
+        },
+        'vec:max': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertNonEmptyVector(vector, sourceCodeInfo);
+                return vector.reduce(function (acc, val) { return (val > acc ? val : acc); }, vector[0]);
+            },
+            paramCount: 1,
+        },
+        'vec:min-index': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertNonEmptyVector(vector, sourceCodeInfo);
@@ -7105,7 +7194,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'v:max-index': {
+        'vec:max-index': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertNonEmptyVector(vector, sourceCodeInfo);
@@ -7113,7 +7202,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'v:sort-indices': {
+        'vec:sort-indices': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
@@ -7121,7 +7210,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'v:count-values': {
+        'vec:count-values': {
             evaluate: function (_a, sourceCodeInfo) {
                 var e_5, _b;
                 var _c = __read(_a, 1), vector = _c[0];
@@ -7151,46 +7240,52 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'v:linspace': {
+        'vec:linspace': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), start = _b[0], end = _b[1], numPoints = _b[2];
                 assertNumber(start, sourceCodeInfo, { finite: true });
                 assertNumber(end, sourceCodeInfo, { finite: true });
-                assertNumber(numPoints, sourceCodeInfo, { integer: true, positive: true });
+                assertNumber(numPoints, sourceCodeInfo, { integer: true, nonNegative: true });
+                if (numPoints === 0) {
+                    return [];
+                }
+                if (numPoints === 1) {
+                    return [start];
+                }
                 var step = (end - start) / (numPoints - 1);
                 return Array.from({ length: numPoints }, function (_, i) { return start + i * step; });
             },
             paramCount: 3,
         },
-        'v:ones': {
+        'vec:ones': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), length = _b[0];
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                assertNumber(length, sourceCodeInfo, { integer: true, nonNegative: true });
                 return Array.from({ length: length }, function () { return 1; });
             },
             paramCount: 1,
         },
-        'v:zeros': {
+        'vec:zeros': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), length = _b[0];
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                assertNumber(length, sourceCodeInfo, { integer: true, nonNegative: true });
                 return Array.from({ length: length }, function () { return 0; });
             },
             paramCount: 1,
         },
-        'v:fill': {
+        'vec:fill': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), length = _b[0], value = _b[1];
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                assertNumber(length, sourceCodeInfo, { integer: true, nonNegative: true });
                 return Array.from({ length: length }, function () { return value; });
             },
             paramCount: 2,
         },
-        'v:generate': {
+        'vec:generate': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 2), length = _c[0], generator = _c[1];
                 var executeFunction = _b.executeFunction;
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                assertNumber(length, sourceCodeInfo, { integer: true, nonNegative: true });
                 assertLitsFunction(generator, sourceCodeInfo);
                 return Array.from({ length: length }, function (_, i) {
                     var value = executeFunction(generator, [i], contextStack, sourceCodeInfo);
@@ -7200,7 +7295,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'v:cumsum': {
+        'vec:cumsum': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
@@ -7212,7 +7307,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'v:cumprod': {
+        'vec:cumprod': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
@@ -7224,7 +7319,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'v:quartiles': {
+        'vec:quartiles': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
@@ -7236,7 +7331,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'v:iqr': {
+        'vec:iqr': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
@@ -7247,7 +7342,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'v:percentile': {
+        'vec:percentile': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vector = _b[0], percentile = _b[1];
                 assertVector(vector, sourceCodeInfo);
@@ -7258,7 +7353,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'v:quantile': {
+        'vec:quantile': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vector = _b[0], quantile = _b[1];
                 assertVector(vector, sourceCodeInfo);
@@ -7269,7 +7364,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'v:range': {
+        'vec:range': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertNonEmptyVector(vector, sourceCodeInfo);
@@ -7279,7 +7374,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'v:skewness': {
+        'vec:skewness': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
@@ -7289,7 +7384,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'v:kurtosis': {
+        'vec:kurtosis': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
@@ -7299,7 +7394,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'v:geometric-mean': {
+        'vec:geometric-mean': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
@@ -7307,7 +7402,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'v:harmonic-mean': {
+        'vec:harmonic-mean': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
@@ -7315,7 +7410,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'v:rms': {
+        'vec:rms': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
@@ -7323,7 +7418,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'v:z-score': {
+        'vec:z-score': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
@@ -7333,7 +7428,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'v:normalize-minmax': {
+        'vec:normalize-minmax': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
@@ -7343,7 +7438,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'v:normalize-robust': {
+        'vec:normalize-robust': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
@@ -7353,7 +7448,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'v:histogram': {
+        'vec:histogram': {
             evaluate: function (_a, sourceCodeInfo) {
                 var e_6, _b;
                 var _c = __read(_a, 2), vector = _c[0], bins = _c[1];
@@ -7383,7 +7478,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'v:cdf': {
+        'vec:cdf': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vector = _b[0], value = _b[1];
                 assertVector(vector, sourceCodeInfo);
@@ -7394,7 +7489,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'v:ecdf': {
+        'vec:ecdf': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vector = _b[0], value = _b[1];
                 assertVector(vector, sourceCodeInfo);
@@ -7405,7 +7500,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'v:no-extreme-eutliers?': {
+        'vec:no-extreme-eutliers?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
@@ -7415,7 +7510,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'v:outliers': {
+        'vec:outliers': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
@@ -7425,7 +7520,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'v:moving-average': {
+        'vec:moving-average': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
                 assertVector(vector, sourceCodeInfo);
@@ -7439,7 +7534,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'v:moving-median': {
+        'vec:moving-median': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
                 assertVector(vector, sourceCodeInfo);
@@ -7453,7 +7548,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'v:moving-std': {
+        'vec:moving-std': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
                 assertVector(vector, sourceCodeInfo);
@@ -7467,7 +7562,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'v:moving-sum': {
+        'vec:moving-sum': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
                 assertVector(vector, sourceCodeInfo);
@@ -7481,7 +7576,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'v:moving-product': {
+        'vec:moving-product': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
                 assertVector(vector, sourceCodeInfo);
@@ -7495,7 +7590,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'v:moving-min': {
+        'vec:moving-min': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
                 assertVector(vector, sourceCodeInfo);
@@ -7509,7 +7604,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'v:moving-max': {
+        'vec:moving-max': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
                 assertVector(vector, sourceCodeInfo);
@@ -7554,7 +7649,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'v:moving-percentile': {
+        'vec:moving-percentile': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), vector = _b[0], windowSize = _b[1], percentile = _b[2];
                 assertVector(vector, sourceCodeInfo);
@@ -7570,7 +7665,7 @@ var Playground = (function (exports) {
             },
             paramCount: 3,
         },
-        'v:moving-quantile': {
+        'vec:moving-quantile': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), vector = _b[0], windowSize = _b[1], quantile = _b[2];
                 assertVector(vector, sourceCodeInfo);
@@ -7586,7 +7681,7 @@ var Playground = (function (exports) {
             },
             paramCount: 3,
         },
-        'v:entropy': {
+        'vec:entropy': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
@@ -7594,7 +7689,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'v:gini-coefficient': {
+        'vec:gini-coefficient': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
@@ -7606,7 +7701,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'v:bincount': {
+        'vec:bincount': {
             evaluate: function (params, sourceCodeInfo) {
                 var _a, _b;
                 var vector = params[0];
@@ -7626,7 +7721,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 1, max: 3 },
         },
-        'v:arithmetic-sum': {
+        'vec:arithmetic-sum': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), start = _b[0], step = _b[1], length = _b[2];
                 assertNumber(start, sourceCodeInfo, { finite: true });
@@ -7636,7 +7731,7 @@ var Playground = (function (exports) {
             },
             paramCount: 3,
         },
-        'v:winsorize': {
+        'vec:winsorize': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), vector = _b[0], lowerPercentile = _b[1], upperPercentile = _b[2];
                 assertVector(vector, sourceCodeInfo);
@@ -7656,7 +7751,7 @@ var Playground = (function (exports) {
             },
             paramCount: 3,
         },
-        'v:mse': {
+        'vec:mse': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
                 assertVector(vectorA, sourceCodeInfo);
@@ -7668,7 +7763,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'v:mae': {
+        'vec:mae': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
                 assertVector(vectorA, sourceCodeInfo);
@@ -8225,7 +8320,7 @@ var Playground = (function (exports) {
         }
     }
     var matrixNormalExpression = {
-        'm:matrix?': {
+        'mat:matrix?': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), matrix = _b[0];
                 return isMatrix(matrix);
@@ -8255,7 +8350,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 2, max: 3 },
         },
-        'm:scale': {
+        'mat:scale': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), matrix = _b[0], scalar = _b[1];
                 assertMatrix(matrix, sourceCodeInfo);
@@ -8447,7 +8542,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'm:dot': {
+        'mat:dot': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), matrix1 = _b[0], matrix2 = _b[1];
                 assertMatrix(matrix1, sourceCodeInfo);
@@ -8461,7 +8556,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'm:determinant': {
+        'mat:determinant': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), matrix = _b[0];
                 assertSquareMatrix(matrix, sourceCodeInfo);
@@ -8469,7 +8564,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'm:inverse': {
+        'mat:inverse': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), matrix = _b[0];
                 assertSquareMatrix(matrix, sourceCodeInfo);
@@ -8481,7 +8576,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'm:adjugate': {
+        'mat:adjugate': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), matrix = _b[0];
                 assertSquareMatrix(matrix, sourceCodeInfo);
@@ -8489,7 +8584,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'm:cofactor': {
+        'mat:cofactor': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), matrix = _b[0];
                 assertSquareMatrix(matrix, sourceCodeInfo);
@@ -8497,7 +8592,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'm:minor': {
+        'mat:minor': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), matrix = _b[0], row = _b[1], col = _b[2];
                 assertMatrix(matrix, sourceCodeInfo);
@@ -8507,7 +8602,7 @@ var Playground = (function (exports) {
             },
             paramCount: 3,
         },
-        'm:trace': {
+        'mat:trace': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), matrix = _b[0];
                 assertSquareMatrix(matrix, sourceCodeInfo);
@@ -8515,7 +8610,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'm:symmetric?': {
+        'mat:symmetric?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), matrix = _b[0];
                 assertMatrix(matrix, sourceCodeInfo);
@@ -8523,7 +8618,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'm:triangular?': {
+        'mat:triangular?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), matrix = _b[0];
                 assertMatrix(matrix, sourceCodeInfo);
@@ -8531,7 +8626,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'm:upper-triangular?': {
+        'mat:upper-triangular?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), matrix = _b[0];
                 assertMatrix(matrix, sourceCodeInfo);
@@ -8539,7 +8634,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'm:lower-triangular?': {
+        'mat:lower-triangular?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), matrix = _b[0];
                 assertMatrix(matrix, sourceCodeInfo);
@@ -8547,7 +8642,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'm:diagonal?': {
+        'mat:diagonal?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), matrix = _b[0];
                 assertMatrix(matrix, sourceCodeInfo);
@@ -8555,7 +8650,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'm:square?': {
+        'mat:square?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), matrix = _b[0];
                 assertMatrix(matrix, sourceCodeInfo);
@@ -8563,7 +8658,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'm:orthogonal?': {
+        'mat:orthogonal?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), matrix = _b[0];
                 assertMatrix(matrix, sourceCodeInfo);
@@ -8571,7 +8666,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'm:identity?': {
+        'mat:identity?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), matrix = _b[0];
                 assertMatrix(matrix, sourceCodeInfo);
@@ -8579,7 +8674,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'm:singular?': {
+        'mat:singular?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), matrix = _b[0];
                 assertSquareMatrix(matrix, sourceCodeInfo);
@@ -8587,7 +8682,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'm:rref': {
+        'mat:rref': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), matrix = _b[0];
                 assertMatrix(matrix, sourceCodeInfo);
@@ -8597,7 +8692,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'm:rank': {
+        'mat:rank': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), matrix = _b[0];
                 assertMatrix(matrix, sourceCodeInfo);
@@ -8606,7 +8701,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'm:solve': {
+        'mat:solve': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), matrix = _b[0], vector = _b[1];
                 assertSquareMatrix(matrix, sourceCodeInfo);
@@ -8619,7 +8714,7 @@ var Playground = (function (exports) {
             paramCount: 2,
         },
         // Frobenius norm
-        'm:norm-frobenius': {
+        'mat:norm-frobenius': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), matrix = _b[0];
                 assertMatrix(matrix, sourceCodeInfo);
@@ -8628,7 +8723,7 @@ var Playground = (function (exports) {
             paramCount: 1,
         },
         // 1-norm
-        'm:norm-1': {
+        'mat:norm-1': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), matrix = _b[0];
                 assertMatrix(matrix, sourceCodeInfo);
@@ -8637,7 +8732,7 @@ var Playground = (function (exports) {
             paramCount: 1,
         },
         // Infinity norm
-        'm:norm-infinity': {
+        'mat:norm-infinity': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), matrix = _b[0];
                 assertMatrix(matrix, sourceCodeInfo);
@@ -8646,7 +8741,7 @@ var Playground = (function (exports) {
             paramCount: 1,
         },
         // Max norm
-        'm:norm-max': {
+        'mat:norm-max': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), matrix = _b[0];
                 assertMatrix(matrix, sourceCodeInfo);
@@ -8657,7 +8752,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'm:hilbert': {
+        'mat:hilbert': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), size = _b[0];
                 assertNumber(size, sourceCodeInfo, { integer: true, positive: true });
@@ -8673,7 +8768,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'm:vandermonde': {
+        'mat:vandermonde': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
@@ -8689,7 +8784,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'm:band': {
+        'mat:band': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), n = _b[0], lband = _b[1], uband = _b[2];
                 assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
@@ -8699,7 +8794,7 @@ var Playground = (function (exports) {
             },
             paramCount: 3,
         },
-        'm:banded?': {
+        'mat:banded?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), matrix = _b[0], lband = _b[1], uband = _b[2];
                 assertMatrix(matrix, sourceCodeInfo);
@@ -8760,7 +8855,7 @@ var Playground = (function (exports) {
         return result;
     }
     var combinationsNormalExpressions = {
-        'n:combinations': {
+        'nth:combinations': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), set = _b[0], n = _b[1];
                 assertArray(set, sourceCodeInfo);
@@ -8771,14 +8866,14 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'n:count-combinations': {
+        'nth:count-combinations': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), n = _b[0], k = _b[1];
                 assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true });
                 assertNumber(k, sourceCodeInfo, { integer: true, nonNegative: true, lte: n });
                 return binomialCoefficient(n, k);
             },
-            aliases: ['n:binomial'],
+            aliases: ['nth:binomial'],
             paramCount: 2,
         },
     };
@@ -8823,7 +8918,7 @@ var Playground = (function (exports) {
         return result;
     }
     var derangementsNormalExpressions = {
-        'n:derangements': {
+        'nth:derangements': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), set = _b[0];
                 assertArray(set, sourceCodeInfo);
@@ -8831,7 +8926,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'n:count-derangements': {
+        'nth:count-derangements': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), n = _b[0];
                 assertNumber(n, sourceCodeInfo, { finite: true, integer: true, positive: true });
@@ -8862,7 +8957,7 @@ var Playground = (function (exports) {
         return getDivisors(n).slice(0, -1); // Exclude the number itself
     }
     var divisorsNormalExpressions = {
-        'n:divisors': {
+        'nth:divisors': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), number = _b[0];
                 assertNumber(number, sourceCodeInfo, { finite: true, integer: true, positive: true });
@@ -8870,7 +8965,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'n:count-divisors': {
+        'nth:count-divisors': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), number = _b[0];
                 assertNumber(number, sourceCodeInfo, { finite: true, integer: true, positive: true });
@@ -8878,7 +8973,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'n:proper-divisors': {
+        'nth:proper-divisors': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), number = _b[0];
                 assertNumber(number, sourceCodeInfo, { finite: true, integer: true, positive: true });
@@ -8886,7 +8981,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'n:count-proper-divisors': {
+        'nth:count-proper-divisors': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), number = _b[0];
                 assertNumber(number, sourceCodeInfo, { finite: true, integer: true, positive: true });
@@ -8932,13 +9027,13 @@ var Playground = (function (exports) {
         return result;
     }
     var factorialNormalExpressions = {
-        'n:factorial': {
+        'nth:factorial': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), n = _b[0];
                 assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true, lte: 170 });
                 return factorialOf(n);
             },
-            aliases: ['n:!'],
+            aliases: ['nth:!'],
             paramCount: 1,
         },
     };
@@ -9269,7 +9364,7 @@ var Playground = (function (exports) {
         return result;
     }
     var partitionsNormalExpressions = {
-        'n:partitions': {
+        'nth:partitions': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), n = _b[0];
                 assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true });
@@ -9277,7 +9372,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'n:count-partitions': {
+        'nth:count-partitions': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), n = _b[0];
                 assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true });
@@ -9330,7 +9425,7 @@ var Playground = (function (exports) {
         return result;
     }
     var permutationsNormalExpressions = {
-        'n:permutations': {
+        'nth:permutations': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), set = _b[0];
                 assertArray(set, sourceCodeInfo);
@@ -9338,7 +9433,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'n:count-permutations': {
+        'nth:count-permutations': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), n = _b[0], k = _b[1];
                 assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true });
@@ -9372,7 +9467,7 @@ var Playground = (function (exports) {
         return result;
     }
     var powerSetNormalExpressions = {
-        'n:power-set': {
+        'nth:power-set': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), set = _b[0];
                 assertArray(set, sourceCodeInfo);
@@ -9380,7 +9475,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'n:count-power-set': {
+        'nth:count-power-set': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), n = _b[0];
                 assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true });
@@ -9426,7 +9521,7 @@ var Playground = (function (exports) {
         return factors;
     }
     var primeFactorsNormalExpressions = {
-        'n:prime-factors': {
+        'nth:prime-factors': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), number = _b[0];
                 assertNumber(number, sourceCodeInfo, { finite: true, integer: true, positive: true });
@@ -9434,7 +9529,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'n:distinct-prime-factors': {
+        'nth:distinct-prime-factors': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), n = _b[0];
                 assertNumber(n, sourceCodeInfo, { finite: true, integer: true, positive: true });
@@ -9444,7 +9539,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'n:count-prime-factors': {
+        'nth:count-prime-factors': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), n = _b[0];
                 assertNumber(n, sourceCodeInfo, { finite: true, integer: true, positive: true });
@@ -9452,7 +9547,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'n:count-distinct-prime-factors': {
+        'nth:count-distinct-prime-factors': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), n = _b[0];
                 assertNumber(n, sourceCodeInfo, { finite: true, integer: true, positive: true });
@@ -9470,7 +9565,7 @@ var Playground = (function (exports) {
         return sum > num;
     }
     var abundantSequence = {
-        'n:abundant-seq': function (length) {
+        'nth:abundant-seq': function (length) {
             var abundants = [];
             var num = 2;
             while (abundants.length < length) {
@@ -9481,8 +9576,8 @@ var Playground = (function (exports) {
             }
             return abundants;
         },
-        'n:abundant?': function (n) { return isAbundant(n); },
-        'n:abundant-take-while': function (takeWhile) {
+        'nth:abundant?': function (n) { return isAbundant(n); },
+        'nth:abundant-take-while': function (takeWhile) {
             var abundants = [];
             for (var i = 2;; i += 1) {
                 if (!isAbundant(i)) {
@@ -9541,7 +9636,7 @@ var Playground = (function (exports) {
         return relativeDifference < 1e-12;
     }
     var arithmeticNormalExpressions = {
-        'n:arithmetic-seq': {
+        'nth:arithmetic-seq': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), start = _b[0], step = _b[1], length = _b[2];
                 assertNumber(start, sourceCodeInfo, { finite: true });
@@ -9551,7 +9646,7 @@ var Playground = (function (exports) {
             },
             paramCount: 3,
         },
-        'n:arithmetic-take-while': {
+        'nth:arithmetic-take-while': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 3), start = _c[0], step = _c[1], fn = _c[2];
                 var executeFunction = _b.executeFunction;
@@ -9570,7 +9665,7 @@ var Playground = (function (exports) {
             },
             paramCount: 3,
         },
-        'n:arithmetic-nth': {
+        'nth:arithmetic-nth': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), start = _b[0], step = _b[1], n = _b[2];
                 assertNumber(start, sourceCodeInfo, { finite: true });
@@ -9580,7 +9675,7 @@ var Playground = (function (exports) {
             },
             paramCount: 3,
         },
-        'n:arithmetic?': {
+        'nth:arithmetic?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), start = _b[0], step = _b[1], n = _b[2];
                 assertNumber(n, sourceCodeInfo);
@@ -9658,7 +9753,7 @@ var Playground = (function (exports) {
         }
     }
     var bernoulliNormalExpressions = {
-        'n:bernoulli-seq': {
+        'nth:bernoulli-seq': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), length = _b[0];
                 assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
@@ -9666,7 +9761,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'n:bernoulli-nth': {
+        'nth:bernoulli-nth': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), n = _b[0];
                 assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
@@ -9675,7 +9770,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'n:bernoulli-take-while': {
+        'nth:bernoulli-take-while': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 1), fn = _c[0];
                 var executeFunction = _b.executeFunction;
@@ -9721,7 +9816,7 @@ var Playground = (function (exports) {
     ];
 
     var collatzSequence = {
-        'n:collatz-seq': function (start) {
+        'nth:collatz-seq': function (start) {
             var x = start;
             var collatz = [x];
             while (x !== 1) {
@@ -9756,7 +9851,7 @@ var Playground = (function (exports) {
         return true;
     }
     var primeSequence = {
-        'n:prime-seq': function (length) {
+        'nth:prime-seq': function (length) {
             var primes = [];
             var num = 2;
             while (primes.length < length) {
@@ -9767,8 +9862,8 @@ var Playground = (function (exports) {
             }
             return primes;
         },
-        'n:prime?': function (n) { return isPrime(n); },
-        'n:prime-take-while': function (takeWhile) {
+        'nth:prime?': function (n) { return isPrime(n); },
+        'nth:prime-take-while': function (takeWhile) {
             var primes = [];
             for (var i = 2;; i += 1) {
                 if (!isPrime(i)) {
@@ -9790,7 +9885,7 @@ var Playground = (function (exports) {
         return !isPrime(num);
     }
     var compositeSequence = {
-        'n:composite-seq': function (length) {
+        'nth:composite-seq': function (length) {
             var composites = [];
             var num = 2;
             while (composites.length < length) {
@@ -9801,8 +9896,8 @@ var Playground = (function (exports) {
             }
             return composites;
         },
-        'n:composite?': function (n) { return isComposite(n); },
-        'n:composite-take-while': function (takeWhile) {
+        'nth:composite?': function (n) { return isComposite(n); },
+        'nth:composite-take-while': function (takeWhile) {
             var composites = [];
             for (var i = 4;; i += 1) {
                 if (!isComposite(i)) {
@@ -9823,7 +9918,7 @@ var Playground = (function (exports) {
         return sum < num;
     }
     var deficientSequence = {
-        'n:deficient-seq': function (length) {
+        'nth:deficient-seq': function (length) {
             var deficients = [];
             var num = 1;
             while (deficients.length < length) {
@@ -9834,8 +9929,8 @@ var Playground = (function (exports) {
             }
             return deficients;
         },
-        'n:deficient?': function (n) { return isDeficient(n); },
-        'n:deficient-take-while': function (takeWhile) {
+        'nth:deficient?': function (n) { return isDeficient(n); },
+        'nth:deficient-take-while': function (takeWhile) {
             var deficients = [];
             for (var i = 1;; i += 1) {
                 if (!isDeficient(i)) {
@@ -9989,7 +10084,7 @@ var Playground = (function (exports) {
         return relativeDifference < 1e-10;
     }
     var geometricNormalExpressions = {
-        'n:geometric-seq': {
+        'nth:geometric-seq': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), start = _b[0], ratio = _b[1], length = _b[2];
                 assertNumber(start, sourceCodeInfo, { finite: true });
@@ -9999,7 +10094,7 @@ var Playground = (function (exports) {
             },
             paramCount: 3,
         },
-        'n:geometric-take-while': {
+        'nth:geometric-take-while': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 3), start = _c[0], ratio = _c[1], fn = _c[2];
                 var executeFunction = _b.executeFunction;
@@ -10018,7 +10113,7 @@ var Playground = (function (exports) {
             },
             paramCount: 3,
         },
-        'n:geometric-nth': {
+        'nth:geometric-nth': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), start = _b[0], ratio = _b[1], n = _b[2];
                 assertNumber(start, sourceCodeInfo, { finite: true });
@@ -10028,7 +10123,7 @@ var Playground = (function (exports) {
             },
             paramCount: 3,
         },
-        'n:geometric?': {
+        'nth:geometric?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), start = _b[0], ratio = _b[1], n = _b[2];
                 assertNumber(n, sourceCodeInfo);
@@ -10062,9 +10157,9 @@ var Playground = (function (exports) {
         return golomb.slice(1);
     }
     var golombSequence = {
-        'n:golomb-seq': function (length) { return getGolombSeq(length); },
-        'n:golomb?': function () { return true; },
-        'n:golomb-take-while': function (takeWhile) { return generateGolombSeq(takeWhile); },
+        'nth:golomb-seq': function (length) { return getGolombSeq(length); },
+        'nth:golomb?': function () { return true; },
+        'nth:golomb-take-while': function (takeWhile) { return generateGolombSeq(takeWhile); },
     };
 
     function isHappyNumber(n) {
@@ -10095,7 +10190,7 @@ var Playground = (function (exports) {
         return sum;
     }
     var happySequence = {
-        'n:happy-seq': function (length) {
+        'nth:happy-seq': function (length) {
             var happyNumbers = [];
             for (var i = 1; happyNumbers.length < length; i++) {
                 var n = i;
@@ -10111,8 +10206,8 @@ var Playground = (function (exports) {
             }
             return happyNumbers;
         },
-        'n:happy?': function (n) { return isHappyNumber(n); },
-        'n:happy-take-while': function (takeWhile) {
+        'nth:happy?': function (n) { return isHappyNumber(n); },
+        'nth:happy-take-while': function (takeWhile) {
             var happyNumbers = [];
             for (var i = 1;; i++) {
                 var n = i;
@@ -10135,7 +10230,7 @@ var Playground = (function (exports) {
     };
 
     var jugglerSequence = {
-        'n:juggler-seq': function (start) {
+        'nth:juggler-seq': function (start) {
             var next = start;
             var juggler = [next];
             while (next > 1) {
@@ -10203,7 +10298,7 @@ var Playground = (function (exports) {
     }
     var lookAndSaySequence = {
         'string': true,
-        'n:look-and-say-seq': function (length) {
+        'nth:look-and-say-seq': function (length) {
             var lookAndSay = ['1'];
             for (var i = 1; i < length; i += 1) {
                 var prev = lookAndSay[i - 1];
@@ -10212,7 +10307,7 @@ var Playground = (function (exports) {
             }
             return lookAndSay;
         },
-        'n:look-and-say-take-while': function (takeWhile) {
+        'nth:look-and-say-take-while': function (takeWhile) {
             if (!takeWhile('1', 0)) {
                 return [];
             }
@@ -10227,7 +10322,7 @@ var Playground = (function (exports) {
             }
             return lookAndSay;
         },
-        'n:look-and-say?': function (n) { return isLookAndSay(n); },
+        'nth:look-and-say?': function (n) { return isLookAndSay(n); },
     };
 
     var lucasNumbers = [
@@ -10419,9 +10514,9 @@ var Playground = (function (exports) {
         return numbers.slice(0, count);
     }
     var luckySequence = {
-        'n:lucky-seq': function (length) { return getLuckyNumbers(length); },
-        'n:lucky?': function (n) { return generateLuckyNumbers(function (l) { return l <= n; }).includes(n); },
-        'n:lucky-take-while': function (takeWhile) { return generateLuckyNumbers(takeWhile); },
+        'nth:lucky-seq': function (length) { return getLuckyNumbers(length); },
+        'nth:lucky?': function (n) { return generateLuckyNumbers(function (l) { return l <= n; }).includes(n); },
+        'nth:lucky-take-while': function (takeWhile) { return generateLuckyNumbers(takeWhile); },
     };
 
     var mersenneNumbers = [3, 7, 31, 127, 2047, 8191, 131071, 524287, 2147483647];
@@ -10523,15 +10618,15 @@ var Playground = (function (exports) {
         return false;
     }
     var padovanSequence = {
-        'n:padovan-seq': function (length) {
+        'nth:padovan-seq': function (length) {
             var padovan = [1, 1, 1];
             for (var i = 3; i < length; i += 1) {
                 padovan[i] = padovan[i - 2] + padovan[i - 3];
             }
             return padovan.slice(0, length);
         },
-        'n:padovan?': function (n) { return isPadovan(n); },
-        'n:padovan-take-while': function (takeWhile) {
+        'nth:padovan?': function (n) { return isPadovan(n); },
+        'nth:padovan-take-while': function (takeWhile) {
             var padovan = [];
             if (!takeWhile(1, 0)) {
                 return padovan;
@@ -10610,15 +10705,15 @@ var Playground = (function (exports) {
     var perfectNumbers = [6, 28, 496, 8128, 33550336, 8589869056, 137438691328];
 
     var perfectCubeSequence = {
-        'n:perfect-cube-seq': function (length) {
+        'nth:perfect-cube-seq': function (length) {
             var perfectcubes = [];
             for (var i = 1; i <= length; i++) {
                 perfectcubes.push(Math.pow(i, 3));
             }
             return perfectcubes;
         },
-        'n:perfect-cube?': function (n) { return n > 0 && Number.isInteger(Math.cbrt(n)); },
-        'n:perfect-cube-take-while': function (takeWhile) {
+        'nth:perfect-cube?': function (n) { return n > 0 && Number.isInteger(Math.cbrt(n)); },
+        'nth:perfect-cube-take-while': function (takeWhile) {
             var perfectcubes = [];
             for (var i = 1;; i++) {
                 var value = Math.pow(i, 3);
@@ -10662,7 +10757,7 @@ var Playground = (function (exports) {
         return null; // Not a perfect power
     }
     var perfectPowerSequence = {
-        'n:perfect-power-seq': function (length) {
+        'nth:perfect-power-seq': function (length) {
             var perfectPowers = [];
             for (var i = 1; perfectPowers.length < length; i++) {
                 if (perfectPower(i)) {
@@ -10671,8 +10766,8 @@ var Playground = (function (exports) {
             }
             return perfectPowers;
         },
-        'n:perfect-power?': function (n) { return perfectPower(n) !== null; },
-        'n:perfect-power-take-while': function (takeWhile) {
+        'nth:perfect-power?': function (n) { return perfectPower(n) !== null; },
+        'nth:perfect-power-take-while': function (takeWhile) {
             var perfectPowers = [];
             for (var i = 1;; i++) {
                 if (perfectPower(i)) {
@@ -10687,15 +10782,15 @@ var Playground = (function (exports) {
     };
 
     var perfectSquareSequence = {
-        'n:perfect-square-seq': function (length) {
+        'nth:perfect-square-seq': function (length) {
             var perfectSquares = [];
             for (var i = 1; i <= length; i++) {
                 perfectSquares.push(Math.pow(i, 2));
             }
             return perfectSquares;
         },
-        'n:perfect-square?': function (n) { return n > 0 && Number.isInteger(Math.sqrt(n)); },
-        'n:perfect-square-take-while': function (takeWhile) {
+        'nth:perfect-square?': function (n) { return n > 0 && Number.isInteger(Math.sqrt(n)); },
+        'nth:perfect-square-take-while': function (takeWhile) {
             var perfectSquares = [];
             for (var i = 1;; i++) {
                 var value = Math.pow(i, 2);
@@ -10709,7 +10804,7 @@ var Playground = (function (exports) {
     };
 
     var poligonalNormalExpressions = {
-        'n:polygonal-seq': {
+        'nth:polygonal-seq': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), sides = _b[0], n = _b[1];
                 assertNumber(sides, sourceCodeInfo, { integer: true, gte: 3 });
@@ -10722,7 +10817,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'n:polygonal-take-while': {
+        'nth:polygonal-take-while': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 2), sides = _c[0], fn = _c[1];
                 var executeFunction = _b.executeFunction;
@@ -10740,7 +10835,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'n:polygonal-nth': {
+        'nth:polygonal-nth': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), sides = _b[0], n = _b[1];
                 assertNumber(sides, sourceCodeInfo, { integer: true, gte: 3 });
@@ -10749,7 +10844,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'n:polygonal?': {
+        'nth:polygonal?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), sides = _b[0], n = _b[1];
                 assertNumber(n, sourceCodeInfo, { integer: true });
@@ -10800,8 +10895,8 @@ var Playground = (function (exports) {
         return sequence;
     }
     var recamanSequence = {
-        'n:recaman-seq': function (length) { return generateRecamanSequence(length); },
-        'n:recaman-take-while': function (takeWhile) {
+        'nth:recaman-seq': function (length) { return generateRecamanSequence(length); },
+        'nth:recaman-take-while': function (takeWhile) {
             if (!takeWhile(0, 0))
                 return [];
             var sequence = [0];
@@ -10820,7 +10915,7 @@ var Playground = (function (exports) {
             }
             return sequence;
         },
-        'n:recaman?': function () { return true; },
+        'nth:recaman?': function () { return true; },
     };
 
     var sylvesterNumbers = [
@@ -10833,14 +10928,14 @@ var Playground = (function (exports) {
     ];
 
     var thueMorseSequence = {
-        'n:thue-morse-seq': function (length) {
+        'nth:thue-morse-seq': function (length) {
             var thueMorse = [];
             for (var i = 0; i < length; i += 1) {
                 thueMorse[i] = countSetBits(i) % 2;
             }
             return thueMorse;
         },
-        'n:thue-morse-take-while': function (takeWhile) {
+        'nth:thue-morse-take-while': function (takeWhile) {
             var thueMorse = [];
             for (var i = 0;; i += 1) {
                 var value = countSetBits(i) % 2;
@@ -10851,7 +10946,7 @@ var Playground = (function (exports) {
             }
             return thueMorse;
         },
-        'n:thue-morse?': function (n) { return n === 1 || n === 0; },
+        'nth:thue-morse?': function (n) { return n === 1 || n === 0; },
     };
     function countSetBits(num) {
         var count = 0;
@@ -10983,8 +11078,8 @@ var Playground = (function (exports) {
     function getFiniteNumberSequence(name, sequence) {
         var _a;
         return _a = {},
-            _a["n:".concat(name, "-seq")] = createSeqNormalExpression(function (length) { return sequence.slice(0, length); }, sequence.length),
-            _a["n:".concat(name, "-take-while")] = createTakeWhileNormalExpression(function (takeWhile) {
+            _a["nth:".concat(name, "-seq")] = createSeqNormalExpression(function (length) { return sequence.slice(0, length); }, sequence.length),
+            _a["nth:".concat(name, "-take-while")] = createTakeWhileNormalExpression(function (takeWhile) {
                 var i = 0;
                 for (i = 0;; i += 1) {
                     if (i >= sequence.length) {
@@ -10996,8 +11091,8 @@ var Playground = (function (exports) {
                 }
                 return sequence.slice(0, i);
             }, sequence.length),
-            _a["n:".concat(name, "-nth")] = createNthNormalExpression(function () { return sequence; }, sequence.length),
-            _a["n:".concat(name, "?")] = createNumberPredNormalExpression(function (n) { return sequence.includes(n); }),
+            _a["nth:".concat(name, "-nth")] = createNthNormalExpression(function () { return sequence; }, sequence.length),
+            _a["nth:".concat(name, "?")] = createNumberPredNormalExpression(function (n) { return sequence.includes(n); }),
             _a;
     }
     function addSequence(sequence) {
@@ -11218,7 +11313,7 @@ var Playground = (function (exports) {
         return sum;
     }
     var combinatoricalNormalExpression = {
-        'n:coprime?': {
+        'nth:coprime?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), a = _b[0], b = _b[1];
                 assertNumber(a, sourceCodeInfo, { integer: true });
@@ -11227,7 +11322,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'n:divisible-by?': {
+        'nth:divisible-by?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), value = _b[0], divisor = _b[1];
                 assertNumber(value, sourceCodeInfo, { integer: true });
@@ -11238,7 +11333,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'n:gcd': {
+        'nth:gcd': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), a = _b[0], b = _b[1];
                 assertNumber(a, sourceCodeInfo);
@@ -11247,7 +11342,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'n:lcm': {
+        'nth:lcm': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), a = _b[0], b = _b[1];
                 assertNumber(a, sourceCodeInfo);
@@ -11256,7 +11351,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'n:multinomial': {
+        'nth:multinomial': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a), args = _b.slice(0);
                 assertVector(args, sourceCodeInfo);
@@ -11268,7 +11363,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 1 },
         },
-        'n:amicable?': {
+        'nth:amicable?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), a = _b[0], b = _b[1];
                 assertNumber(a, sourceCodeInfo, { integer: true, positive: true });
@@ -11279,7 +11374,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'n:euler-totient': {
+        'nth:euler-totient': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), n = _b[0];
                 assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
@@ -11297,7 +11392,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'n:mobius': {
+        'nth:mobius': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), n = _b[0];
                 assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
@@ -11313,9 +11408,9 @@ var Playground = (function (exports) {
                 return factors.length % 2 === 0 ? 1 : -1;
             },
             paramCount: 1,
-            aliases: ['n:möbius'],
+            aliases: ['nth:möbius'],
         },
-        'n:mertens': {
+        'nth:mertens': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), n = _b[0];
                 assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
@@ -11329,9 +11424,9 @@ var Playground = (function (exports) {
                 return result;
             },
             paramCount: 1,
-            aliases: ['n:mertens'],
+            aliases: ['nth:mertens'],
         },
-        'n:sigma': {
+        'nth:sigma': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), n = _b[0];
                 assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
@@ -11339,7 +11434,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'n:carmichael-lambda': {
+        'nth:carmichael-lambda': {
             evaluate: function (_a, sourceCodeInfo) {
                 var e_1, _b, e_2, _c;
                 var _d = __read(_a, 1), n = _d[0];
@@ -11397,7 +11492,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'n:cartesian-product': {
+        'nth:cartesian-product': {
             evaluate: function (params, sourceCodeInfo) {
                 params.forEach(function (set) {
                     assertArray(set, sourceCodeInfo);
@@ -11415,7 +11510,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 1 },
         },
-        'n:perfect-power': {
+        'nth:perfect-power': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), n = _b[0];
                 assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
@@ -11424,7 +11519,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'n:mod-exp': {
+        'nth:mod-exp': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), base = _b[0], exponent = _b[1], modulus = _b[2];
                 assertNumber(base, sourceCodeInfo, { finite: true });
@@ -11434,7 +11529,7 @@ var Playground = (function (exports) {
             },
             paramCount: 3,
         },
-        'n:mod-inv': {
+        'nth:mod-inv': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), a = _b[0], m = _b[1];
                 assertNumber(a, sourceCodeInfo, { integer: true, positive: true });
@@ -11443,7 +11538,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'n:extended-gcd': {
+        'nth:extended-gcd': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), a = _b[0], b = _b[1];
                 assertNumber(a, sourceCodeInfo, { integer: true });
@@ -11452,7 +11547,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'n:chinese-remainder': {
+        'nth:chinese-remainder': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), remainders = _b[0], moduli = _b[1];
                 assertVector(remainders, sourceCodeInfo);
@@ -11469,7 +11564,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'n:stirling-first': {
+        'nth:stirling-first': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), n = _b[0], k = _b[1];
                 assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
@@ -11488,7 +11583,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'n:stirling-second': {
+        'nth:stirling-second': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), n = _b[0], k = _b[1];
                 assertNumber(n, sourceCodeInfo, { integer: true, positive: true });

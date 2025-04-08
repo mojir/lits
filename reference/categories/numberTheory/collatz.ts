@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
-export const collatzReference: Omit<NumberTheorySequenceReference<'collatz'>, 'n:collatz-take-while' | 'n:collatz-nth' | 'n:collatz?'> = {
-  'n:collatz-seq': {
-    title: 'n:collatz-seq',
+export const collatzReference: Omit<NumberTheorySequenceReference<'collatz'>, 'nth:collatz-take-while' | 'nth:collatz-nth' | 'nth:collatz?'> = {
+  'nth:collatz-seq': {
+    title: 'nth:collatz-seq',
     category: 'Number Theory',
     description: 'Generates the collatz sequence starting from a given integer.',
     linkName: 'c-colon-collatz-seq',
@@ -20,8 +20,8 @@ export const collatzReference: Omit<NumberTheorySequenceReference<'collatz'>, 'n
       { argumentNames: ['start'] },
     ],
     examples: [
-      'n:collatz-seq(3)',
-      'n:collatz-seq(11)',
+      'nth:collatz-seq(3)',
+      'nth:collatz-seq(11)',
     ],
   },
 }

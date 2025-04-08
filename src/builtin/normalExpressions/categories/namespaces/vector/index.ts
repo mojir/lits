@@ -1,7 +1,7 @@
 import { LitsError } from '../../../../../errors'
 import { assertNonEmptyVector, assertVector, isVector } from '../../../../../typeGuards/annotatedArrays'
 import { assertLitsFunction } from '../../../../../typeGuards/litsFunction'
-import { assertNumber } from '../../../../../typeGuards/number'
+import { assertNumber, isNumber } from '../../../../../typeGuards/number'
 import type { BuiltinNormalExpressions } from '../../../../interface'
 import { bincount } from './bincount'
 import { calcMean } from './calcMean'
@@ -11,18 +11,18 @@ import { calculateEntropy } from './entropy'
 import { mode } from './mode'
 
 export const vectorNormalExpression: BuiltinNormalExpressions = {
-  'v:vector?': {
+  'vec:vector?': {
     evaluate: ([vector]): boolean => isVector(vector),
     paramCount: 1,
   },
-  'v:sorted?': {
+  'vec:sorted?': {
     evaluate: ([vector], sourceCodeInfo): boolean => {
       assertVector(vector, sourceCodeInfo)
       return vector.every((val, i) => i === 0 || val >= vector[i - 1]!)
     },
     paramCount: 1,
   },
-  'v:monotonic?': {
+  'vec:monotonic?': {
     evaluate: ([vector], sourceCodeInfo): boolean => {
       assertVector(vector, sourceCodeInfo)
       return vector.every((val, i) => i === 0 || val >= vector[i - 1]!)
@@ -30,7 +30,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'v:strictly-monotonic?': {
+  'vec:strictly-monotonic?': {
     evaluate: ([vector], sourceCodeInfo): boolean => {
       assertVector(vector, sourceCodeInfo)
       return vector.every((val, i) => i === 0 || val > vector[i - 1]!)
@@ -38,105 +38,159 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'v:increasing?': {
+  'vec:increasing?': {
     evaluate: ([vector], sourceCodeInfo): boolean => {
       assertVector(vector, sourceCodeInfo)
       return vector.every((val, i) => i === 0 || val >= vector[i - 1]!)
     },
     paramCount: 1,
   },
-  'v:decreasing?': {
+  'vec:decreasing?': {
     evaluate: ([vector], sourceCodeInfo): boolean => {
       assertVector(vector, sourceCodeInfo)
       return vector.every((val, i) => i === 0 || val <= vector[i - 1]!)
     },
     paramCount: 1,
   },
-  'v:strictly-increasing?': {
+  'vec:strictly-increasing?': {
     evaluate: ([vector], sourceCodeInfo): boolean => {
       assertVector(vector, sourceCodeInfo)
       return vector.every((val, i) => i === 0 || val > vector[i - 1]!)
     },
     paramCount: 1,
   },
-  'v:strictly-decreasing?': {
+  'vec:strictly-decreasing?': {
     evaluate: ([vector], sourceCodeInfo): boolean => {
       assertVector(vector, sourceCodeInfo)
       return vector.every((val, i) => i === 0 || val < vector[i - 1]!)
     },
     paramCount: 1,
   },
-  'v:+': {
+  'vec:+': {
     evaluate: (params, sourceCodeInfo): number[] => {
-      const firstParam = params[0]!
-      assertVector(firstParam, sourceCodeInfo)
-      const restParams = params.slice(1)
-      for (const param of restParams) {
-        assertVector(param, sourceCodeInfo)
-        if (firstParam.length !== param.length) {
-          throw new LitsError('Vectors must be of the same length', sourceCodeInfo)
+      let length: number | null = null
+      for (const param of params) {
+        if (isVector(param)) {
+          if (length !== null && length !== param.length) {
+            throw new LitsError('Vectors must be of the same length', sourceCodeInfo)
+          }
+          length = param.length
         }
       }
-      const rest = restParams as number[][]
-      return rest.reduce((acc, vector) => acc.map((val, i) => val + vector[i]!), firstParam)
+      if (length === null) {
+        throw new LitsError('At least one parameter must be a vector', sourceCodeInfo)
+      }
+
+      const vectors = params.map((param) => {
+        if (isVector(param)) {
+          return param
+        }
+        if (!isNumber(param, { finite: true })) {
+          throw new LitsError('parameter must be either vector or number', sourceCodeInfo)
+        }
+        return Array.from({ length }, () => param)
+      })
+
+      const firstVector = vectors[0]!
+      const restVectors = vectors.slice(1)
+      return restVectors.reduce((acc, vector) => acc.map((val, i) => val + vector[i]!), firstVector)
     },
     paramCount: { min: 1 },
   },
-  'v:-': {
+  'vec:-': {
     evaluate: (params, sourceCodeInfo): number[] => {
-      const firstParam = params[0]!
-      assertVector(firstParam, sourceCodeInfo)
-      const restParams = params.slice(1)
-      for (const param of restParams) {
-        assertVector(param, sourceCodeInfo)
-        if (firstParam.length !== param.length) {
-          throw new LitsError('Vectors must be of the same length', sourceCodeInfo)
+      let length: number | null = null
+      for (const param of params) {
+        if (isVector(param)) {
+          if (length !== null && length !== param.length) {
+            throw new LitsError('Vectors must be of the same length', sourceCodeInfo)
+          }
+          length = param.length
         }
       }
-      if (restParams.length === 0) {
-        return firstParam.map(val => -val)
+      if (length === null) {
+        throw new LitsError('At least one parameter must be a vector', sourceCodeInfo)
       }
-      const rest = restParams as number[][]
-      return rest.reduce((acc, vector) => acc.map((val, i) => val - vector[i]!), firstParam)
+
+      const vectors = params.map((param) => {
+        if (isVector(param)) {
+          return param
+        }
+        if (!isNumber(param, { finite: true })) {
+          throw new LitsError('parameter must be either vector or number', sourceCodeInfo)
+        }
+        return Array.from({ length }, () => param)
+      })
+
+      const firstVector = vectors[0]!
+      const restVectors = vectors.slice(1)
+      return restVectors.reduce((acc, vector) => acc.map((val, i) => val - vector[i]!), firstVector)
     },
     paramCount: { min: 1 },
   },
-  'v:*': {
+  'vec:*': {
     evaluate: (params, sourceCodeInfo): number[] => {
-      const firstParam = params[0]!
-      assertVector(firstParam, sourceCodeInfo)
-      const restParams = params.slice(1)
-      for (const param of restParams) {
-        assertVector(param, sourceCodeInfo)
-        if (firstParam.length !== param.length) {
-          throw new LitsError('Vectors must be of the same length', sourceCodeInfo)
+      let length: number | null = null
+      for (const param of params) {
+        if (isVector(param)) {
+          if (length !== null && length !== param.length) {
+            throw new LitsError('Vectors must be of the same length', sourceCodeInfo)
+          }
+          length = param.length
         }
       }
-      const rest = restParams as number[][]
-      return rest.reduce((acc, vector) => acc.map((val, i) => val * vector[i]!), firstParam)
+      if (length === null) {
+        throw new LitsError('At least one parameter must be a vector', sourceCodeInfo)
+      }
+
+      const vectors = params.map((param) => {
+        if (isVector(param)) {
+          return param
+        }
+        if (!isNumber(param, { finite: true })) {
+          throw new LitsError('parameter must be either vector or number', sourceCodeInfo)
+        }
+        return Array.from({ length }, () => param)
+      })
+
+      const firstVector = vectors[0]!
+      const restVectors = vectors.slice(1)
+      return restVectors.reduce((acc, vector) => acc.map((val, i) => val * vector[i]!), firstVector)
     },
     paramCount: { min: 1 },
   },
-  'v:/': {
+  'vec:/': {
     evaluate: (params, sourceCodeInfo): number[] => {
-      const firstParam = params[0]!
-      assertVector(firstParam, sourceCodeInfo)
-      const restParams = params.slice(1)
-      for (const param of restParams) {
-        assertVector(param, sourceCodeInfo)
-        if (firstParam.length !== param.length) {
-          throw new LitsError('Vectors must be of the same length', sourceCodeInfo)
+      let length: number | null = null
+      for (const param of params) {
+        if (isVector(param)) {
+          if (length !== null && length !== param.length) {
+            throw new LitsError('Vectors must be of the same length', sourceCodeInfo)
+          }
+          length = param.length
         }
       }
-      if (restParams.length === 0) {
-        return firstParam.map(val => 1 / val)
+      if (length === null) {
+        throw new LitsError('At least one parameter must be a vector', sourceCodeInfo)
       }
-      const rest = restParams as number[][]
-      return rest.reduce((acc, vector) => acc.map((val, i) => val / vector[i]!), firstParam)
+
+      const vectors = params.map((param) => {
+        if (isVector(param)) {
+          return param
+        }
+        if (!isNumber(param, { finite: true })) {
+          throw new LitsError('parameter must be either vector or number', sourceCodeInfo)
+        }
+        return Array.from({ length }, () => param)
+      })
+
+      const firstVector = vectors[0]!
+      const restVectors = vectors.slice(1)
+      return restVectors.reduce((acc, vector) => acc.map((val, i) => val / vector[i]!), firstVector)
     },
     paramCount: { min: 1 },
   },
-  'v:^': {
+  'vec:^': {
     evaluate: ([a, b], sourceCodeInfo): number[] => {
       if (!isVector(a) && !isVector(b)) {
         throw new LitsError('At least one parameter must be a vector', sourceCodeInfo)
@@ -171,16 +225,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'v:scale': {
-    evaluate: ([vector, scalar], sourceCodeInfo): number[] => {
-      assertVector(vector, sourceCodeInfo)
-      assertNumber(scalar, sourceCodeInfo, { finite: true })
-
-      return vector.map(val => val * scalar)
-    },
-    paramCount: 2,
-  },
-  'v:abs': {
+  'vec:abs': {
     evaluate: ([vector], sourceCodeInfo): number[] => {
       assertVector(vector, sourceCodeInfo)
 
@@ -188,7 +233,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'v:sum': {
+  'vec:sum': {
     evaluate: ([vector], sourceCodeInfo): number => {
       assertVector(vector, sourceCodeInfo)
 
@@ -196,7 +241,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'v:product': {
+  'vec:prod': {
     evaluate: ([vector], sourceCodeInfo): number => {
       assertVector(vector, sourceCodeInfo)
 
@@ -204,17 +249,17 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'v:mean': {
+  'vec:mean': {
     evaluate: ([vector], sourceCodeInfo): number => {
-      assertVector(vector, sourceCodeInfo)
+      assertNonEmptyVector(vector, sourceCodeInfo)
 
       return calcMean(vector)
     },
     paramCount: 1,
   },
-  'v:median': {
+  'vec:median': {
     evaluate: ([vector], sourceCodeInfo): number => {
-      assertVector(vector, sourceCodeInfo)
+      assertNonEmptyVector(vector, sourceCodeInfo)
 
       const sorted = [...vector].sort((a, b) => a - b)
       const mid = Math.floor(sorted.length / 2)
@@ -225,45 +270,76 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'v:mode': {
+  'vec:mode': {
     evaluate: ([vector], sourceCodeInfo): number[] => {
-      assertVector(vector, sourceCodeInfo)
+      assertNonEmptyVector(vector, sourceCodeInfo)
       return mode(vector)
     },
     paramCount: 1,
   },
-  'v:variance': {
+  'vec:variance': {
     evaluate: ([vector], sourceCodeInfo): number => {
-      assertVector(vector, sourceCodeInfo)
+      assertNonEmptyVector(vector, sourceCodeInfo)
 
       const mean = calcMean(vector)
       return vector.reduce((acc, val) => acc + (val - mean) ** 2, 0) / vector.length
     },
     paramCount: 1,
   },
-  'v:std-dev': {
+  'vec:sample-variance': {
     evaluate: ([vector], sourceCodeInfo): number => {
-      assertVector(vector, sourceCodeInfo)
+      assertNonEmptyVector(vector, sourceCodeInfo)
+      if (vector.length < 2) {
+        throw new LitsError('Sample variance requires at least two values', sourceCodeInfo)
+      }
+      const mean = calcMean(vector)
+      return vector.reduce((acc, val) => acc + (val - mean) ** 2, 0) / (vector.length - 1)
+    },
+    paramCount: 1,
+  },
+  'vec:stdev': {
+    evaluate: ([vector], sourceCodeInfo): number => {
+      assertNonEmptyVector(vector, sourceCodeInfo)
 
-      return Math.sqrt(vector.reduce((acc, val) => acc + val, 0) / vector.length)
+      const mean = vector.reduce((acc, val) => acc + val, 0) / vector.length
+
+      // calculate the squared differences from the mean, average them, and take the square root
+      return Math.sqrt(
+        vector.reduce((acc, val) => acc + (val - mean) ** 2, 0) / vector.length,
+      )
     },
     paramCount: 1,
   },
-  'v:min': {
+  'vec:sample-stdev': {
     evaluate: ([vector], sourceCodeInfo): number => {
       assertNonEmptyVector(vector, sourceCodeInfo)
-      return vector.reduce((acc, val) => (val < vector[acc]! ? val : acc), vector[0]!)
+      if (vector.length < 2) {
+        throw new LitsError('Sample standard deviation requires at least two values', sourceCodeInfo)
+      }
+      const mean = vector.reduce((acc, val) => acc + val, 0) / vector.length
+
+      // calculate the squared differences from the mean, sum them, divide by (n-1), and take the square root
+      return Math.sqrt(
+        vector.reduce((acc, val) => acc + (val - mean) ** 2, 0) / (vector.length - 1),
+      )
     },
     paramCount: 1,
   },
-  'v:max': {
+  'vec:min': {
     evaluate: ([vector], sourceCodeInfo): number => {
       assertNonEmptyVector(vector, sourceCodeInfo)
-      return vector.reduce((acc, val) => (val > vector[acc]! ? val : acc), vector[0]!)
+      return vector.reduce((acc, val) => (val < acc ? val : acc), vector[0]!)
     },
     paramCount: 1,
   },
-  'v:min-index': {
+  'vec:max': {
+    evaluate: ([vector], sourceCodeInfo): number => {
+      assertNonEmptyVector(vector, sourceCodeInfo)
+      return vector.reduce((acc, val) => (val > acc ? val : acc), vector[0]!)
+    },
+    paramCount: 1,
+  },
+  'vec:min-index': {
     evaluate: ([vector], sourceCodeInfo): number => {
       assertNonEmptyVector(vector, sourceCodeInfo)
 
@@ -271,7 +347,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'v:max-index': {
+  'vec:max-index': {
     evaluate: ([vector], sourceCodeInfo): number => {
       assertNonEmptyVector(vector, sourceCodeInfo)
 
@@ -279,7 +355,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'v:sort-indices': {
+  'vec:sort-indices': {
     evaluate: ([vector], sourceCodeInfo): number[] => {
       assertVector(vector, sourceCodeInfo)
 
@@ -287,7 +363,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'v:count-values': {
+  'vec:count-values': {
     evaluate: ([vector], sourceCodeInfo): [number, number][] => {
       assertVector(vector, sourceCodeInfo)
 
@@ -306,41 +382,47 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'v:linspace': {
+  'vec:linspace': {
     evaluate: ([start, end, numPoints], sourceCodeInfo): number[] => {
       assertNumber(start, sourceCodeInfo, { finite: true })
       assertNumber(end, sourceCodeInfo, { finite: true })
-      assertNumber(numPoints, sourceCodeInfo, { integer: true, positive: true })
+      assertNumber(numPoints, sourceCodeInfo, { integer: true, nonNegative: true })
 
+      if (numPoints === 0) {
+        return []
+      }
+      if (numPoints === 1) {
+        return [start]
+      }
       const step = (end - start) / (numPoints - 1)
       return Array.from({ length: numPoints }, (_, i) => start + i * step)
     },
     paramCount: 3,
   },
-  'v:ones': {
+  'vec:ones': {
     evaluate: ([length], sourceCodeInfo): number[] => {
-      assertNumber(length, sourceCodeInfo, { integer: true, positive: true })
+      assertNumber(length, sourceCodeInfo, { integer: true, nonNegative: true })
       return Array.from({ length }, () => 1)
     },
     paramCount: 1,
   },
-  'v:zeros': {
+  'vec:zeros': {
     evaluate: ([length], sourceCodeInfo): number[] => {
-      assertNumber(length, sourceCodeInfo, { integer: true, positive: true })
+      assertNumber(length, sourceCodeInfo, { integer: true, nonNegative: true })
       return Array.from({ length }, () => 0)
     },
     paramCount: 1,
   },
-  'v:fill': {
+  'vec:fill': {
     evaluate: ([length, value], sourceCodeInfo): number[] => {
-      assertNumber(length, sourceCodeInfo, { integer: true, positive: true })
+      assertNumber(length, sourceCodeInfo, { integer: true, nonNegative: true })
       return Array.from({ length }, () => value) as number[]
     },
     paramCount: 2,
   },
-  'v:generate': {
+  'vec:generate': {
     evaluate: ([length, generator], sourceCodeInfo, contextStack, { executeFunction }): number[] => {
-      assertNumber(length, sourceCodeInfo, { integer: true, positive: true })
+      assertNumber(length, sourceCodeInfo, { integer: true, nonNegative: true })
       assertLitsFunction(generator, sourceCodeInfo)
 
       return Array.from({ length }, (_, i) => {
@@ -351,7 +433,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'v:cumsum': {
+  'vec:cumsum': {
     evaluate: ([vector], sourceCodeInfo): number[] => {
       assertVector(vector, sourceCodeInfo)
 
@@ -363,7 +445,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'v:cumprod': {
+  'vec:cumprod': {
     evaluate: ([vector], sourceCodeInfo): number[] => {
       assertVector(vector, sourceCodeInfo)
 
@@ -375,7 +457,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'v:quartiles': {
+  'vec:quartiles': {
     evaluate: ([vector], sourceCodeInfo): number[] => {
       assertVector(vector, sourceCodeInfo)
 
@@ -388,7 +470,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'v:iqr': {
+  'vec:iqr': {
     evaluate: ([vector], sourceCodeInfo): number => {
       assertVector(vector, sourceCodeInfo)
 
@@ -400,7 +482,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'v:percentile': {
+  'vec:percentile': {
     evaluate: ([vector, percentile], sourceCodeInfo): number => {
       assertVector(vector, sourceCodeInfo)
       assertNumber(percentile, sourceCodeInfo, { finite: true })
@@ -411,7 +493,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'v:quantile': {
+  'vec:quantile': {
     evaluate: ([vector, quantile], sourceCodeInfo): number => {
       assertVector(vector, sourceCodeInfo)
       assertNumber(quantile, sourceCodeInfo, { finite: true })
@@ -422,7 +504,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'v:range': {
+  'vec:range': {
     evaluate: ([vector], sourceCodeInfo): number => {
       assertNonEmptyVector(vector, sourceCodeInfo)
 
@@ -433,7 +515,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'v:skewness': {
+  'vec:skewness': {
     evaluate: ([vector], sourceCodeInfo): number => {
       assertVector(vector, sourceCodeInfo)
 
@@ -443,7 +525,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'v:kurtosis': {
+  'vec:kurtosis': {
     evaluate: ([vector], sourceCodeInfo): number => {
       assertVector(vector, sourceCodeInfo)
 
@@ -453,7 +535,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'v:geometric-mean': {
+  'vec:geometric-mean': {
     evaluate: ([vector], sourceCodeInfo): number => {
       assertVector(vector, sourceCodeInfo)
 
@@ -461,7 +543,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'v:harmonic-mean': {
+  'vec:harmonic-mean': {
     evaluate: ([vector], sourceCodeInfo): number => {
       assertVector(vector, sourceCodeInfo)
 
@@ -469,7 +551,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'v:rms': {
+  'vec:rms': {
     evaluate: ([vector], sourceCodeInfo): number => {
       assertVector(vector, sourceCodeInfo)
 
@@ -477,7 +559,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'v:z-score': {
+  'vec:z-score': {
     evaluate: ([vector], sourceCodeInfo): number[] => {
       assertVector(vector, sourceCodeInfo)
 
@@ -488,7 +570,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'v:normalize-minmax': {
+  'vec:normalize-minmax': {
     evaluate: ([vector], sourceCodeInfo): number[] => {
       assertVector(vector, sourceCodeInfo)
 
@@ -499,7 +581,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'v:normalize-robust': {
+  'vec:normalize-robust': {
     evaluate: ([vector], sourceCodeInfo): number[] => {
       assertVector(vector, sourceCodeInfo)
 
@@ -510,7 +592,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'v:histogram': {
+  'vec:histogram': {
     evaluate: ([vector, bins], sourceCodeInfo): number[] => {
       assertVector(vector, sourceCodeInfo)
       assertNumber(bins, sourceCodeInfo, { integer: true, positive: true })
@@ -532,7 +614,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'v:cdf': {
+  'vec:cdf': {
     evaluate: ([vector, value], sourceCodeInfo): number => {
       assertVector(vector, sourceCodeInfo)
       assertNumber(value, sourceCodeInfo, { finite: true })
@@ -544,7 +626,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'v:ecdf': {
+  'vec:ecdf': {
     evaluate: ([vector, value], sourceCodeInfo): number => {
       assertVector(vector, sourceCodeInfo)
       assertNumber(value, sourceCodeInfo, { finite: true })
@@ -556,7 +638,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'v:no-extreme-eutliers?': {
+  'vec:no-extreme-eutliers?': {
     evaluate: ([vector], sourceCodeInfo): boolean => {
       assertVector(vector, sourceCodeInfo)
 
@@ -567,7 +649,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'v:outliers': {
+  'vec:outliers': {
     evaluate: ([vector], sourceCodeInfo): number[] => {
       assertVector(vector, sourceCodeInfo)
 
@@ -578,7 +660,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'v:moving-average': {
+  'vec:moving-average': {
     evaluate: ([vector, windowSize], sourceCodeInfo): number[] => {
       assertVector(vector, sourceCodeInfo)
       assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true })
@@ -592,7 +674,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'v:moving-median': {
+  'vec:moving-median': {
     evaluate: ([vector, windowSize], sourceCodeInfo): number[] => {
       assertVector(vector, sourceCodeInfo)
       assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true })
@@ -606,7 +688,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'v:moving-std': {
+  'vec:moving-std': {
     evaluate: ([vector, windowSize], sourceCodeInfo): number[] => {
       assertVector(vector, sourceCodeInfo)
       assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true })
@@ -620,7 +702,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'v:moving-sum': {
+  'vec:moving-sum': {
     evaluate: ([vector, windowSize], sourceCodeInfo): number[] => {
       assertVector(vector, sourceCodeInfo)
       assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true })
@@ -633,7 +715,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'v:moving-product': {
+  'vec:moving-product': {
     evaluate: ([vector, windowSize], sourceCodeInfo): number[] => {
       assertVector(vector, sourceCodeInfo)
       assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true })
@@ -646,7 +728,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'v:moving-min': {
+  'vec:moving-min': {
     evaluate: ([vector, windowSize], sourceCodeInfo): number[] => {
       assertVector(vector, sourceCodeInfo)
       assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true })
@@ -659,7 +741,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'v:moving-max': {
+  'vec:moving-max': {
     evaluate: ([vector, windowSize], sourceCodeInfo): number[] => {
       assertVector(vector, sourceCodeInfo)
       assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true })
@@ -698,7 +780,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'v:moving-percentile': {
+  'vec:moving-percentile': {
     evaluate: ([vector, windowSize, percentile], sourceCodeInfo): number[] => {
       assertVector(vector, sourceCodeInfo)
       assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true })
@@ -714,7 +796,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 3,
   },
-  'v:moving-quantile': {
+  'vec:moving-quantile': {
     evaluate: ([vector, windowSize, quantile], sourceCodeInfo): number[] => {
       assertVector(vector, sourceCodeInfo)
       assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true })
@@ -730,14 +812,14 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 3,
   },
-  'v:entropy': {
+  'vec:entropy': {
     evaluate: ([vector], sourceCodeInfo): number => {
       assertVector(vector, sourceCodeInfo)
       return calculateEntropy(vector)
     },
     paramCount: 1,
   },
-  'v:gini-coefficient': {
+  'vec:gini-coefficient': {
     evaluate: ([vector], sourceCodeInfo): number => {
       assertVector(vector, sourceCodeInfo)
       const sorted = [...vector].sort((a, b) => a - b)
@@ -748,7 +830,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'v:bincount': {
+  'vec:bincount': {
     evaluate: (params, sourceCodeInfo): number[] => {
       const vector = params[0]
       assertVector(vector, sourceCodeInfo)
@@ -770,7 +852,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 1, max: 3 },
   },
-  'v:arithmetic-sum': {
+  'vec:arithmetic-sum': {
     evaluate: ([start, step, length], sourceCodeInfo): number => {
       assertNumber(start, sourceCodeInfo, { finite: true })
       assertNumber(step, sourceCodeInfo, { finite: true })
@@ -780,7 +862,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 3,
   },
-  'v:winsorize': {
+  'vec:winsorize': {
     evaluate: ([vector, lowerPercentile, upperPercentile], sourceCodeInfo): number[] => {
       assertVector(vector, sourceCodeInfo)
       assertNumber(lowerPercentile, sourceCodeInfo, { finite: true })
@@ -805,7 +887,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 3,
   },
-  'v:mse': {
+  'vec:mse': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
       assertVector(vectorA, sourceCodeInfo)
       assertVector(vectorB, sourceCodeInfo)
@@ -816,7 +898,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'v:mae': {
+  'vec:mae': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
       assertVector(vectorA, sourceCodeInfo)
       assertVector(vectorB, sourceCodeInfo)

@@ -4,11 +4,11 @@ import { Lits } from '../../../../../../Lits/Lits'
 const lits = new Lits()
 describe('prime', () => {
   it('should return the correct sequence', () => {
-    expect(lits.run('n:prime-seq(1)')).toEqual([2])
-    expect(lits.run('n:prime-seq(2)')).toEqual([2, 3])
-    expect(lits.run('n:prime-seq(3)')).toEqual([2, 3, 5])
-    expect(lits.run('n:prime-seq(4)')).toEqual([2, 3, 5, 7])
-    expect(lits.run('n:prime-seq(168)')).toEqual([
+    expect(lits.run('nth:prime-seq(1)')).toEqual([2])
+    expect(lits.run('nth:prime-seq(2)')).toEqual([2, 3])
+    expect(lits.run('nth:prime-seq(3)')).toEqual([2, 3, 5])
+    expect(lits.run('nth:prime-seq(4)')).toEqual([2, 3, 5, 7])
+    expect(lits.run('nth:prime-seq(168)')).toEqual([
       2,
       3,
       5,
@@ -178,19 +178,19 @@ describe('prime', () => {
       991,
       997,
     ])
-    expect(() => lits.run('n:prime-seq(0)')).toThrow()
+    expect(() => lits.run('nth:prime-seq(0)')).toThrow()
   })
 
   it('should return the correct nth term', () => {
-    expect(lits.run('n:prime-nth(1)')).toEqual(2)
-    expect(lits.run('n:prime-nth(2)')).toEqual(3)
-    expect(lits.run('n:prime-nth(3)')).toEqual(5)
-    expect(lits.run('n:prime-nth(4)')).toEqual(7)
-    expect(lits.run('n:prime-nth(100)')).toEqual(541)
+    expect(lits.run('nth:prime-nth(1)')).toEqual(2)
+    expect(lits.run('nth:prime-nth(2)')).toEqual(3)
+    expect(lits.run('nth:prime-nth(3)')).toEqual(5)
+    expect(lits.run('nth:prime-nth(4)')).toEqual(7)
+    expect(lits.run('nth:prime-nth(100)')).toEqual(541)
   })
 
   it('should return the correct takeWhile sequence', () => {
-    expect(lits.run('n:prime-take-while(-> $ < 100)')).toEqual([
+    expect(lits.run('nth:prime-take-while(-> $ < 100)')).toEqual([
       2,
       3,
       5,
@@ -220,17 +220,17 @@ describe('prime', () => {
   })
 
   it('should determine if numbers are in the sequence', () => {
-    expect(lits.run('n:prime?(0)')).toEqual(false)
-    expect(lits.run('n:prime?(1)')).toEqual(false)
-    expect(lits.run('n:prime?(2)')).toEqual(true)
-    expect(lits.run('n:prime?(3)')).toEqual(true)
-    expect(lits.run('n:prime?(4)')).toEqual(false)
-    expect(lits.run('n:prime?(5)')).toEqual(true)
-    expect(lits.run('n:prime?(6)')).toEqual(false)
-    expect(lits.run('n:prime?(7)')).toEqual(true)
-    expect(lits.run('n:prime?(8)')).toEqual(false)
-    expect(lits.run('n:prime?(9)')).toEqual(false)
-    expect(lits.run('n:prime?(997)')).toEqual(true)
-    expect(lits.run('n:prime?(1001)')).toEqual(false)
+    expect(lits.run('nth:prime?(0)')).toEqual(false)
+    expect(lits.run('nth:prime?(1)')).toEqual(false)
+    expect(lits.run('nth:prime?(2)')).toEqual(true)
+    expect(lits.run('nth:prime?(3)')).toEqual(true)
+    expect(lits.run('nth:prime?(4)')).toEqual(false)
+    expect(lits.run('nth:prime?(5)')).toEqual(true)
+    expect(lits.run('nth:prime?(6)')).toEqual(false)
+    expect(lits.run('nth:prime?(7)')).toEqual(true)
+    expect(lits.run('nth:prime?(8)')).toEqual(false)
+    expect(lits.run('nth:prime?(9)')).toEqual(false)
+    expect(lits.run('nth:prime?(997)')).toEqual(true)
+    expect(lits.run('nth:prime?(1001)')).toEqual(false)
   })
 })

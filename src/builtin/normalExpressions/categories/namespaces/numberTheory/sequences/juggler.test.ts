@@ -4,7 +4,7 @@ import { Lits } from '../../../../../../Lits/Lits'
 const lits = new Lits()
 describe('juggler', () => {
   it('should return the correct sequence', () => {
-    expect(lits.run('n:juggler-seq(10)')).toEqual([
+    expect(lits.run('nth:juggler-seq(10)')).toEqual([
       10,
       3,
       5,
@@ -14,7 +14,7 @@ describe('juggler', () => {
       2,
       1,
     ])
-    expect(() => lits.run('n:juggler-seq(0)')).toThrow()
-    expect(() => lits.run('n:juggler-seq(58025)')).toThrow()
+    expect(() => lits.run('nth:juggler-seq(0)')).toThrow()
+    expect(() => lits.run('nth:juggler-seq(58025)')).toThrow()
   })
 })

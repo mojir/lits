@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const deficientReference: NumberTheorySequenceReference<'deficient'> = {
-  'n:deficient-seq': {
-    title: 'n:deficient-seq',
+  'nth:deficient-seq': {
+    title: 'nth:deficient-seq',
     category: 'Number Theory',
     description: 'Generates the deficient numbers up to a specified length.',
     linkName: 'c-colon-deficient-seq',
@@ -20,12 +20,12 @@ export const deficientReference: NumberTheorySequenceReference<'deficient'> = {
       { argumentNames: ['length'] },
     ],
     examples: [
-      'n:deficient-seq(1)',
-      'n:deficient-seq(5)',
+      'nth:deficient-seq(1)',
+      'nth:deficient-seq(5)',
     ],
   },
-  'n:deficient-take-while': {
-    title: 'n:deficient-take-while',
+  'nth:deficient-take-while': {
+    title: 'nth:deficient-take-while',
     category: 'Number Theory',
     description: 'Generates the deficient numbers while a condition is met.',
     linkName: 'c-colon-deficient-take-while',
@@ -43,11 +43,11 @@ export const deficientReference: NumberTheorySequenceReference<'deficient'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'n:deficient-take-while(-> $ < 100)',
+      'nth:deficient-take-while(-> $ < 100)',
     ],
   },
-  'n:deficient-nth': {
-    title: 'n:deficient-nth',
+  'nth:deficient-nth': {
+    title: 'nth:deficient-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the deficient numbers.',
     linkName: 'c-colon-deficient-nth',
@@ -64,12 +64,12 @@ export const deficientReference: NumberTheorySequenceReference<'deficient'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:deficient-nth(5)',
-      'n:deficient-nth(12)',
+      'nth:deficient-nth(5)',
+      'nth:deficient-nth(12)',
     ],
   },
-  'n:deficient?': {
-    title: 'n:deficient?',
+  'nth:deficient?': {
+    title: 'nth:deficient?',
     category: 'Number Theory',
     description: 'Checks if a number is deficient.',
     linkName: 'c-colon-deficient',
@@ -86,8 +86,8 @@ export const deficientReference: NumberTheorySequenceReference<'deficient'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:deficient?(12)',
-      'n:deficient?(15)',
+      'nth:deficient?(12)',
+      'nth:deficient?(15)',
     ],
   },
 }

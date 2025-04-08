@@ -3,7 +3,7 @@ import { assertNumber } from '../../../../../../typeGuards/number'
 import type { SequenceNormalExpressions } from '.'
 
 export const poligonalNormalExpressions: SequenceNormalExpressions<'polygonal'> = {
-  'n:polygonal-seq': {
+  'nth:polygonal-seq': {
     evaluate: ([sides, n], sourceCodeInfo): number[] => {
       assertNumber(sides, sourceCodeInfo, { integer: true, gte: 3 })
       assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
@@ -16,7 +16,7 @@ export const poligonalNormalExpressions: SequenceNormalExpressions<'polygonal'> 
     },
     paramCount: 2,
   },
-  'n:polygonal-take-while': {
+  'nth:polygonal-take-while': {
     evaluate: ([sides, fn], sourceCodeInfo, contextStack, { executeFunction }): number[] => {
       assertNumber(sides, sourceCodeInfo, { integer: true, gte: 3 })
       assertLitsFunction(fn, sourceCodeInfo)
@@ -33,7 +33,7 @@ export const poligonalNormalExpressions: SequenceNormalExpressions<'polygonal'> 
     },
     paramCount: 2,
   },
-  'n:polygonal-nth': {
+  'nth:polygonal-nth': {
     evaluate: ([sides, n], sourceCodeInfo): number => {
       assertNumber(sides, sourceCodeInfo, { integer: true, gte: 3 })
       assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
@@ -41,7 +41,7 @@ export const poligonalNormalExpressions: SequenceNormalExpressions<'polygonal'> 
     },
     paramCount: 2,
   },
-  'n:polygonal?': {
+  'nth:polygonal?': {
     evaluate: ([sides, n], sourceCodeInfo): boolean => {
       assertNumber(n, sourceCodeInfo, { integer: true })
       assertNumber(sides, sourceCodeInfo, { integer: true, gte: 3 })

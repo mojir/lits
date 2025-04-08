@@ -4,7 +4,7 @@ import { Lits } from '../../../../../../Lits/Lits'
 const lits = new Lits()
 describe('collatz', () => {
   it('should return the correct sequence', () => {
-    expect(lits.run('n:collatz-seq(11)')).toEqual([
+    expect(lits.run('nth:collatz-seq(11)')).toEqual([
       11,
       34,
       17,
@@ -21,6 +21,6 @@ describe('collatz', () => {
       2,
       1,
     ])
-    expect(() => lits.run('n:collatz-seq(0)')).toThrow()
+    expect(() => lits.run('nth:collatz-seq(0)')).toThrow()
   })
 })

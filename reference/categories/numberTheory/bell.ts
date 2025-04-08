@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const bellReference: NumberTheorySequenceReference<'bell'> = {
-  'n:bell-seq': {
-    title: 'n:bell-seq',
+  'nth:bell-seq': {
+    title: 'nth:bell-seq',
     category: 'Number Theory',
     description: 'Generates the Bell sequence up to a specified length.',
     linkName: 'c-colon-bell-seq',
@@ -21,13 +21,13 @@ export const bellReference: NumberTheorySequenceReference<'bell'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'n:bell-seq(5)',
-      'n:bell-seq(10)',
-      'n:bell-seq()',
+      'nth:bell-seq(5)',
+      'nth:bell-seq(10)',
+      'nth:bell-seq()',
     ],
   },
-  'n:bell-take-while': {
-    title: 'n:bell-take-while',
+  'nth:bell-take-while': {
+    title: 'nth:bell-take-while',
     category: 'Number Theory',
     description: 'Generates the Bell sequence while a condition is met.',
     linkName: 'c-colon-bell-take-while',
@@ -45,11 +45,11 @@ export const bellReference: NumberTheorySequenceReference<'bell'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'n:bell-take-while(-> $ < 1000)',
+      'nth:bell-take-while(-> $ < 1000)',
     ],
   },
-  'n:bell-nth': {
-    title: 'n:bell-nth',
+  'nth:bell-nth': {
+    title: 'nth:bell-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Bell sequence.',
     linkName: 'c-colon-bell-nth',
@@ -66,13 +66,13 @@ export const bellReference: NumberTheorySequenceReference<'bell'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:bell-nth(5)',
-      'n:bell-nth(10)',
-      'n:bell-nth(23)',
+      'nth:bell-nth(5)',
+      'nth:bell-nth(10)',
+      'nth:bell-nth(23)',
     ],
   },
-  'n:bell?': {
-    title: 'n:bell?',
+  'nth:bell?': {
+    title: 'nth:bell?',
     category: 'Number Theory',
     description: 'Checks if a number is in the Bell sequence.',
     linkName: 'c-colon-bell-question-mark',
@@ -89,9 +89,9 @@ export const bellReference: NumberTheorySequenceReference<'bell'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:bell?(1)',
-      'n:bell?(27644437)',
-      'n:bell?(27644436)',
+      'nth:bell?(1)',
+      'nth:bell?(27644437)',
+      'nth:bell?(27644436)',
     ],
   },
 }

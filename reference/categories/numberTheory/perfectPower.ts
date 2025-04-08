@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const perfectPowerReference: NumberTheorySequenceReference<'perfect-power'> = {
-  'n:perfect-power-seq': {
-    title: 'n:perfect-power-seq',
+  'nth:perfect-power-seq': {
+    title: 'nth:perfect-power-seq',
     category: 'Number Theory',
     description: 'Generates the perfect power numbers up to a specified length.',
     linkName: 'c-colon-perfect-power-seq',
@@ -20,12 +20,12 @@ export const perfectPowerReference: NumberTheorySequenceReference<'perfect-power
       { argumentNames: ['length'] },
     ],
     examples: [
-      'n:perfect-power-seq(5)',
-      'n:perfect-power-seq(20)',
+      'nth:perfect-power-seq(5)',
+      'nth:perfect-power-seq(20)',
     ],
   },
-  'n:perfect-power-take-while': {
-    title: 'n:perfect-power-take-while',
+  'nth:perfect-power-take-while': {
+    title: 'nth:perfect-power-take-while',
     category: 'Number Theory',
     description: 'Generates the perfect power numbers while a condition is met.',
     linkName: 'c-colon-perfect-power-take-while',
@@ -43,11 +43,11 @@ export const perfectPowerReference: NumberTheorySequenceReference<'perfect-power
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'n:perfect-power-take-while(-> $ <= 100)',
+      'nth:perfect-power-take-while(-> $ <= 100)',
     ],
   },
-  'n:perfect-power-nth': {
-    title: 'n:perfect-power-nth',
+  'nth:perfect-power-nth': {
+    title: 'nth:perfect-power-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the perfect power numbers.',
     linkName: 'c-colon-perfect-power-nth',
@@ -64,12 +64,12 @@ export const perfectPowerReference: NumberTheorySequenceReference<'perfect-power
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:perfect-power-nth(3)',
-      'n:perfect-power-nth(15)',
+      'nth:perfect-power-nth(3)',
+      'nth:perfect-power-nth(15)',
     ],
   },
-  'n:perfect-power?': {
-    title: 'n:perfect-power?',
+  'nth:perfect-power?': {
+    title: 'nth:perfect-power?',
     category: 'Number Theory',
     description: 'Checks if a number is in the perfect power numbers.',
     linkName: 'c-colon-perfect-power?',
@@ -86,10 +86,10 @@ export const perfectPowerReference: NumberTheorySequenceReference<'perfect-power
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:perfect-power?(7)',
-      'n:perfect-power?(8)',
-      'n:perfect-power?(9)',
-      'n:perfect-power?(10)',
+      'nth:perfect-power?(7)',
+      'nth:perfect-power?(8)',
+      'nth:perfect-power?(9)',
+      'nth:perfect-power?(10)',
     ],
   },
 }

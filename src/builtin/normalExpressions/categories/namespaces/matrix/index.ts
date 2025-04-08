@@ -34,7 +34,7 @@ function assertSquareMatrix(matrix: unknown, sourceCodeInfo: SourceCodeInfo | un
 }
 
 export const matrixNormalExpression: BuiltinNormalExpressions = {
-  'm:matrix?': {
+  'mat:matrix?': {
     evaluate: ([matrix]): boolean => isMatrix(matrix),
     paramCount: 1,
   },
@@ -60,7 +60,7 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 2, max: 3 },
   },
-  'm:scale': {
+  'mat:scale': {
     evaluate: ([matrix, scalar], sourceCodeInfo): number[][] => {
       assertMatrix(matrix, sourceCodeInfo)
       assertNumber(scalar, sourceCodeInfo)
@@ -222,7 +222,7 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'm:dot': {
+  'mat:dot': {
     evaluate: ([matrix1, matrix2], sourceCodeInfo): number[][] => {
       assertMatrix(matrix1, sourceCodeInfo)
       assertMatrix(matrix2, sourceCodeInfo)
@@ -235,14 +235,14 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'm:determinant': {
+  'mat:determinant': {
     evaluate: ([matrix], sourceCodeInfo): number => {
       assertSquareMatrix(matrix, sourceCodeInfo)
       return determinant(matrix)
     },
     paramCount: 1,
   },
-  'm:inverse': {
+  'mat:inverse': {
     evaluate: ([matrix], sourceCodeInfo): number[][] => {
       assertSquareMatrix(matrix, sourceCodeInfo)
       const result = inverse(matrix)
@@ -253,21 +253,21 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'm:adjugate': {
+  'mat:adjugate': {
     evaluate: ([matrix], sourceCodeInfo): number[][] => {
       assertSquareMatrix(matrix, sourceCodeInfo)
       return adjugate(matrix)
     },
     paramCount: 1,
   },
-  'm:cofactor': {
+  'mat:cofactor': {
     evaluate: ([matrix], sourceCodeInfo): number[][] => {
       assertSquareMatrix(matrix, sourceCodeInfo)
       return cofactor(matrix)
     },
     paramCount: 1,
   },
-  'm:minor': {
+  'mat:minor': {
     evaluate: ([matrix, row, col], sourceCodeInfo): number[][] => {
       assertMatrix(matrix, sourceCodeInfo)
       assertNumber(row, sourceCodeInfo, { integer: true, nonNegative: true, lte: matrix.length })
@@ -277,77 +277,77 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 3,
   },
-  'm:trace': {
+  'mat:trace': {
     evaluate: ([matrix], sourceCodeInfo): number => {
       assertSquareMatrix(matrix, sourceCodeInfo)
       return trace(matrix)
     },
     paramCount: 1,
   },
-  'm:symmetric?': {
+  'mat:symmetric?': {
     evaluate: ([matrix], sourceCodeInfo): boolean => {
       assertMatrix(matrix, sourceCodeInfo)
       return isSymetric(matrix)
     },
     paramCount: 1,
   },
-  'm:triangular?': {
+  'mat:triangular?': {
     evaluate: ([matrix], sourceCodeInfo): boolean => {
       assertMatrix(matrix, sourceCodeInfo)
       return isTriangular(matrix)
     },
     paramCount: 1,
   },
-  'm:upper-triangular?': {
+  'mat:upper-triangular?': {
     evaluate: ([matrix], sourceCodeInfo): boolean => {
       assertMatrix(matrix, sourceCodeInfo)
       return isTriangularUpper(matrix)
     },
     paramCount: 1,
   },
-  'm:lower-triangular?': {
+  'mat:lower-triangular?': {
     evaluate: ([matrix], sourceCodeInfo): boolean => {
       assertMatrix(matrix, sourceCodeInfo)
       return isTriangularLower(matrix)
     },
     paramCount: 1,
   },
-  'm:diagonal?': {
+  'mat:diagonal?': {
     evaluate: ([matrix], sourceCodeInfo): boolean => {
       assertMatrix(matrix, sourceCodeInfo)
       return isDiagonal(matrix)
     },
     paramCount: 1,
   },
-  'm:square?': {
+  'mat:square?': {
     evaluate: ([matrix], sourceCodeInfo): boolean => {
       assertMatrix(matrix, sourceCodeInfo)
       return isSquare(matrix)
     },
     paramCount: 1,
   },
-  'm:orthogonal?': {
+  'mat:orthogonal?': {
     evaluate: ([matrix], sourceCodeInfo): boolean => {
       assertMatrix(matrix, sourceCodeInfo)
       return isOrthogonal(matrix)
     },
     paramCount: 1,
   },
-  'm:identity?': {
+  'mat:identity?': {
     evaluate: ([matrix], sourceCodeInfo): boolean => {
       assertMatrix(matrix, sourceCodeInfo)
       return isIdentity(matrix)
     },
     paramCount: 1,
   },
-  'm:singular?': {
+  'mat:singular?': {
     evaluate: ([matrix], sourceCodeInfo): boolean => {
       assertSquareMatrix(matrix, sourceCodeInfo)
       return determinant(matrix) < 1e-10
     },
     paramCount: 1,
   },
-  'm:rref': {
+  'mat:rref': {
     evaluate: ([matrix], sourceCodeInfo): number[][] => {
       assertMatrix(matrix, sourceCodeInfo)
 
@@ -357,7 +357,7 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'm:rank': {
+  'mat:rank': {
     evaluate: ([matrix], sourceCodeInfo): number => {
       assertMatrix(matrix, sourceCodeInfo)
       const [, result] = gaussJordanElimination(matrix)
@@ -365,7 +365,7 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'm:solve': {
+  'mat:solve': {
     evaluate: ([matrix, vector], sourceCodeInfo): number[] | null => {
       assertSquareMatrix(matrix, sourceCodeInfo)
       assertVector(vector, sourceCodeInfo)
@@ -377,7 +377,7 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
     paramCount: 2,
   },
   // Frobenius norm
-  'm:norm-frobenius': {
+  'mat:norm-frobenius': {
     evaluate: ([matrix], sourceCodeInfo): number => {
       assertMatrix(matrix, sourceCodeInfo)
       return Math.sqrt(matrix.reduce((sum, row) => sum + row.reduce((rowSum, cell) => rowSum + cell * cell, 0), 0))
@@ -385,7 +385,7 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
     paramCount: 1,
   },
   // 1-norm
-  'm:norm-1': {
+  'mat:norm-1': {
     evaluate: ([matrix], sourceCodeInfo): number => {
       assertMatrix(matrix, sourceCodeInfo)
       return norm1(matrix)
@@ -393,7 +393,7 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
     paramCount: 1,
   },
   // Infinity norm
-  'm:norm-infinity': {
+  'mat:norm-infinity': {
     evaluate: ([matrix], sourceCodeInfo): number => {
       assertMatrix(matrix, sourceCodeInfo)
       return matrix.reduce((max, row) => Math.max(max, row.reduce((sum, cell) => sum + Math.abs(cell), 0)), 0)
@@ -401,7 +401,7 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
     paramCount: 1,
   },
   // Max norm
-  'm:norm-max': {
+  'mat:norm-max': {
     evaluate: ([matrix], sourceCodeInfo): number => {
       assertMatrix(matrix, sourceCodeInfo)
       return matrix.reduce((maxVal, row) => {
@@ -411,7 +411,7 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'm:hilbert': {
+  'mat:hilbert': {
     evaluate: ([size], sourceCodeInfo): number[][] => {
       assertNumber(size, sourceCodeInfo, { integer: true, positive: true })
       const result: number[][] = []
@@ -426,7 +426,7 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'm:vandermonde': {
+  'mat:vandermonde': {
     evaluate: ([vector], sourceCodeInfo): number[][] => {
       assertVector(vector, sourceCodeInfo)
       const result: number[][] = []
@@ -441,7 +441,7 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'm:band': {
+  'mat:band': {
     evaluate: ([n, lband, uband], sourceCodeInfo): number[][] => {
       assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
       assertNumber(lband, sourceCodeInfo, { integer: true, nonNegative: true, lt: n })
@@ -450,7 +450,7 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 3,
   },
-  'm:banded?': {
+  'mat:banded?': {
     evaluate: ([matrix, lband, uband], sourceCodeInfo): boolean => {
       assertMatrix(matrix, sourceCodeInfo)
       const maxBand = Math.max(matrix.length, matrix[0]!.length)

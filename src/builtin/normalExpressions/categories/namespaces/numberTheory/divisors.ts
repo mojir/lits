@@ -25,28 +25,28 @@ export function getProperDivisors(n: number): number[] {
 }
 
 export const divisorsNormalExpressions: BuiltinNormalExpressions = {
-  'n:divisors': {
+  'nth:divisors': {
     evaluate: ([number], sourceCodeInfo): number[] => {
       assertNumber(number, sourceCodeInfo, { finite: true, integer: true, positive: true })
       return getDivisors(number)
     },
     paramCount: 1,
   },
-  'n:count-divisors': {
+  'nth:count-divisors': {
     evaluate: ([number], sourceCodeInfo): number => {
       assertNumber(number, sourceCodeInfo, { finite: true, integer: true, positive: true })
       return calcUnsortedDivisors(number).length
     },
     paramCount: 1,
   },
-  'n:proper-divisors': {
+  'nth:proper-divisors': {
     evaluate: ([number], sourceCodeInfo): number[] => {
       assertNumber(number, sourceCodeInfo, { finite: true, integer: true, positive: true })
       return getProperDivisors(number)
     },
     paramCount: 1,
   },
-  'n:count-proper-divisors': {
+  'nth:count-proper-divisors': {
     evaluate: ([number], sourceCodeInfo): number => {
       assertNumber(number, sourceCodeInfo, { finite: true, integer: true, positive: true })
       return calcUnsortedDivisors(number).length - 1 // Exclude the number itself

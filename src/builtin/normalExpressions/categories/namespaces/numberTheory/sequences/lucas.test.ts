@@ -4,11 +4,11 @@ import { Lits } from '../../../../../../Lits/Lits'
 const lits = new Lits()
 describe('lucas', () => {
   it('should return the correct sequence', () => {
-    expect(lits.run('n:lucas-seq(1)')).toEqual([2])
-    expect(lits.run('n:lucas-seq(2)')).toEqual([2, 1])
-    expect(lits.run('n:lucas-seq(3)')).toEqual([2, 1, 3])
-    expect(lits.run('n:lucas-seq(4)')).toEqual([2, 1, 3, 4])
-    expect(lits.run('n:lucas-seq(77)')).toEqual([
+    expect(lits.run('nth:lucas-seq(1)')).toEqual([2])
+    expect(lits.run('nth:lucas-seq(2)')).toEqual([2, 1])
+    expect(lits.run('nth:lucas-seq(3)')).toEqual([2, 1, 3])
+    expect(lits.run('nth:lucas-seq(4)')).toEqual([2, 1, 3, 4])
+    expect(lits.run('nth:lucas-seq(77)')).toEqual([
       2,
       1,
       3,
@@ -87,37 +87,37 @@ describe('lucas', () => {
       4721424167835364,
       7639424778862807,
     ])
-    expect(() => lits.run('n:lucas-seq(0)')).toThrow()
-    expect(() => lits.run('n:lucas-seq(78)')).toThrow()
+    expect(() => lits.run('nth:lucas-seq(0)')).toThrow()
+    expect(() => lits.run('nth:lucas-seq(78)')).toThrow()
   })
 
   it('should return the correct nth term', () => {
-    expect(lits.run('n:lucas-nth(1)')).toEqual(2)
-    expect(lits.run('n:lucas-nth(2)')).toEqual(1)
-    expect(lits.run('n:lucas-nth(3)')).toEqual(3)
-    expect(lits.run('n:lucas-nth(4)')).toEqual(4)
-    expect(lits.run('n:lucas-nth(5)')).toEqual(7)
-    expect(lits.run('n:lucas-nth(6)')).toEqual(11)
-    expect(lits.run('n:lucas-nth(7)')).toEqual(18)
-    expect(lits.run('n:lucas-nth(8)')).toEqual(29)
-    expect(lits.run('n:lucas-nth(77)')).toEqual(7639424778862807)
+    expect(lits.run('nth:lucas-nth(1)')).toEqual(2)
+    expect(lits.run('nth:lucas-nth(2)')).toEqual(1)
+    expect(lits.run('nth:lucas-nth(3)')).toEqual(3)
+    expect(lits.run('nth:lucas-nth(4)')).toEqual(4)
+    expect(lits.run('nth:lucas-nth(5)')).toEqual(7)
+    expect(lits.run('nth:lucas-nth(6)')).toEqual(11)
+    expect(lits.run('nth:lucas-nth(7)')).toEqual(18)
+    expect(lits.run('nth:lucas-nth(8)')).toEqual(29)
+    expect(lits.run('nth:lucas-nth(77)')).toEqual(7639424778862807)
   })
 
   it('should return the correct takeWhile sequence', () => {
-    expect(lits.run('n:lucas-take-while(-> $ < 50)')).toEqual([2, 1, 3, 4, 7, 11, 18, 29, 47])
+    expect(lits.run('nth:lucas-take-while(-> $ < 50)')).toEqual([2, 1, 3, 4, 7, 11, 18, 29, 47])
   })
 
   it('should determine if numbers are in the sequence', () => {
-    expect(lits.run('n:lucas?(0)')).toEqual(false)
-    expect(lits.run('n:lucas?(1)')).toEqual(true)
-    expect(lits.run('n:lucas?(2)')).toEqual(true)
-    expect(lits.run('n:lucas?(3)')).toEqual(true)
-    expect(lits.run('n:lucas?(4)')).toEqual(true)
-    expect(lits.run('n:lucas?(5)')).toEqual(false)
-    expect(lits.run('n:lucas?(6)')).toEqual(false)
-    expect(lits.run('n:lucas?(7)')).toEqual(true)
-    expect(lits.run('n:lucas?(8)')).toEqual(false)
-    expect(lits.run('n:lucas?(9349)')).toEqual(true)
-    expect(lits.run('n:lucas?(9350)')).toEqual(false)
+    expect(lits.run('nth:lucas?(0)')).toEqual(false)
+    expect(lits.run('nth:lucas?(1)')).toEqual(true)
+    expect(lits.run('nth:lucas?(2)')).toEqual(true)
+    expect(lits.run('nth:lucas?(3)')).toEqual(true)
+    expect(lits.run('nth:lucas?(4)')).toEqual(true)
+    expect(lits.run('nth:lucas?(5)')).toEqual(false)
+    expect(lits.run('nth:lucas?(6)')).toEqual(false)
+    expect(lits.run('nth:lucas?(7)')).toEqual(true)
+    expect(lits.run('nth:lucas?(8)')).toEqual(false)
+    expect(lits.run('nth:lucas?(9349)')).toEqual(true)
+    expect(lits.run('nth:lucas?(9350)')).toEqual(false)
   })
 })

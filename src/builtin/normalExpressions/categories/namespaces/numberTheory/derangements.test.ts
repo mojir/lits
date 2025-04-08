@@ -3,13 +3,13 @@ import { Lits } from '../../../../../Lits/Lits'
 
 const lits = new Lits()
 describe('derangements', () => {
-  describe('n:derangements', () => {
+  describe('nth:derangements', () => {
     it('should return all derangements of a set', () => {
-      expect(lits.run('n:derangements([1, 2, 3])')).toEqual([
+      expect(lits.run('nth:derangements([1, 2, 3])')).toEqual([
         [2, 3, 1],
         [3, 1, 2],
       ])
-      expect(lits.run('n:derangements(["a", "b", "c", "d"])')).toEqual([
+      expect(lits.run('nth:derangements(["a", "b", "c", "d"])')).toEqual([
         ['b', 'a', 'd', 'c'],
         ['b', 'c', 'd', 'a'],
         ['b', 'd', 'a', 'c'],
@@ -22,14 +22,14 @@ describe('derangements', () => {
       ])
     })
   })
-  describe('n:count-derangements', () => {
+  describe('nth:count-derangements', () => {
     it('should return the number of derangements from n', () => {
-      expect(lits.run('n:count-derangements(1)')).toEqual(0)
-      expect(lits.run('n:count-derangements(2)')).toEqual(1)
-      expect(lits.run('n:count-derangements(3)')).toEqual(2)
-      expect(lits.run('n:count-derangements(4)')).toEqual(9)
-      expect(lits.run('n:count-derangements(5)')).toEqual(44)
-      expect(lits.run('n:count-derangements(6)')).toEqual(265)
+      expect(lits.run('nth:count-derangements(1)')).toEqual(0)
+      expect(lits.run('nth:count-derangements(2)')).toEqual(1)
+      expect(lits.run('nth:count-derangements(3)')).toEqual(2)
+      expect(lits.run('nth:count-derangements(4)')).toEqual(9)
+      expect(lits.run('nth:count-derangements(5)')).toEqual(44)
+      expect(lits.run('nth:count-derangements(6)')).toEqual(265)
     })
   })
 })

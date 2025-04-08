@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const padovanReference: NumberTheorySequenceReference<'padovan'> = {
-  'n:padovan-seq': {
-    title: 'n:padovan-seq',
+  'nth:padovan-seq': {
+    title: 'nth:padovan-seq',
     category: 'Number Theory',
     description: 'Generates the Padovan sequence up to a specified length.',
     linkName: 'c-colon-padovan-seq',
@@ -20,13 +20,13 @@ export const padovanReference: NumberTheorySequenceReference<'padovan'> = {
       { argumentNames: ['length'] },
     ],
     examples: [
-      'n:padovan-seq(5)',
-      'n:padovan-seq(10)',
-      'n:padovan-seq(20)',
+      'nth:padovan-seq(5)',
+      'nth:padovan-seq(10)',
+      'nth:padovan-seq(20)',
     ],
   },
-  'n:padovan-take-while': {
-    title: 'n:padovan-take-while',
+  'nth:padovan-take-while': {
+    title: 'nth:padovan-take-while',
     category: 'Number Theory',
     description: 'Generates the Padovan sequence while a condition is met.',
     linkName: 'c-colon-padovan-take-while',
@@ -44,11 +44,11 @@ export const padovanReference: NumberTheorySequenceReference<'padovan'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'n:padovan-take-while(-> $ < 1000)',
+      'nth:padovan-take-while(-> $ < 1000)',
     ],
   },
-  'n:padovan-nth': {
-    title: 'n:padovan-nth',
+  'nth:padovan-nth': {
+    title: 'nth:padovan-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Padovan sequence.',
     linkName: 'c-colon-padovan-nth',
@@ -65,13 +65,13 @@ export const padovanReference: NumberTheorySequenceReference<'padovan'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:padovan-nth(5)',
-      'n:padovan-nth(10)',
-      'n:padovan-nth(20)',
+      'nth:padovan-nth(5)',
+      'nth:padovan-nth(10)',
+      'nth:padovan-nth(20)',
     ],
   },
-  'n:padovan?': {
-    title: 'n:padovan?',
+  'nth:padovan?': {
+    title: 'nth:padovan?',
     category: 'Number Theory',
     description: 'Checks if a number is in the Padovan sequence.',
     linkName: 'c-colon-padovan-question-mark',
@@ -88,9 +88,9 @@ export const padovanReference: NumberTheorySequenceReference<'padovan'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:padovan?(1)',
-      'n:padovan?(265)',
-      'n:padovan?(6)',
+      'nth:padovan?(1)',
+      'nth:padovan?(265)',
+      'nth:padovan?(6)',
     ],
   },
 }

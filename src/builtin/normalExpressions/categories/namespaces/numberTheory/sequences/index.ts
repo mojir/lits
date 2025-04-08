@@ -36,10 +36,10 @@ import { sylvesterNumbers } from './sylvester'
 import { thueMorseSequence } from './thueMorse'
 import { tribonacciNumbers } from './tribonacci'
 
-type SeqKey<T extends string> = `n:${T}-seq`
-type TakeWhileKey<T extends string> = `n:${T}-take-while`
-type NthKey<T extends string> = `n:${T}-nth`
-type PredKey<T extends string> = `n:${T}?`
+type SeqKey<T extends string> = `nth:${T}-seq`
+type TakeWhileKey<T extends string> = `nth:${T}-take-while`
+type NthKey<T extends string> = `nth:${T}-nth`
+type PredKey<T extends string> = `nth:${T}?`
 
 type SeqFunction<Type extends number | string> = (length: number, sourceCodeInfo: SourceCodeInfo | undefined) => Type[]
 type TakeWhileFunction<Type extends number | string> = (pred: (value: Type, index: number) => boolean, sourceCodeInfo: SourceCodeInfo | undefined) => Type[]
@@ -119,8 +119,8 @@ function addNormalExpressions(normalExpressions: BuiltinNormalExpressions) {
 
 function getFiniteNumberSequence<T extends string>(name: T, sequence: number[]): SequenceNormalExpressions<T> {
   return {
-    [`n:${name}-seq`]: createSeqNormalExpression(length => sequence.slice(0, length), sequence.length),
-    [`n:${name}-take-while`]: createTakeWhileNormalExpression((takeWhile) => {
+    [`nth:${name}-seq`]: createSeqNormalExpression(length => sequence.slice(0, length), sequence.length),
+    [`nth:${name}-take-while`]: createTakeWhileNormalExpression((takeWhile) => {
       let i = 0
       for (i = 0; ; i += 1) {
         if (i >= sequence.length) {
@@ -132,8 +132,8 @@ function getFiniteNumberSequence<T extends string>(name: T, sequence: number[]):
       }
       return sequence.slice(0, i)
     }, sequence.length),
-    [`n:${name}-nth`]: createNthNormalExpression(() => sequence, sequence.length),
-    [`n:${name}?`]: createNumberPredNormalExpression(n => sequence.includes(n)),
+    [`nth:${name}-nth`]: createNthNormalExpression(() => sequence, sequence.length),
+    [`nth:${name}?`]: createNumberPredNormalExpression(n => sequence.includes(n)),
   } as unknown as SequenceNormalExpressions<T>
 }
 

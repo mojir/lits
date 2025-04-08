@@ -30,8 +30,8 @@ export function generateRecamanSequence(n: number): number[] {
 }
 
 export const recamanSequence: SequenceDefinition<'recaman'> = {
-  'n:recaman-seq': length => generateRecamanSequence(length),
-  'n:recaman-take-while': (takeWhile) => {
+  'nth:recaman-seq': length => generateRecamanSequence(length),
+  'nth:recaman-take-while': (takeWhile) => {
     if (!takeWhile(0, 0))
       return []
 
@@ -56,5 +56,5 @@ export const recamanSequence: SequenceDefinition<'recaman'> = {
 
     return sequence
   },
-  'n:recaman?': () => true,
+  'nth:recaman?': () => true,
 }

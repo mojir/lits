@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const partitionReference: NumberTheorySequenceReference<'partition'> = {
-  'n:partition-seq': {
-    title: 'n:partition-seq',
+  'nth:partition-seq': {
+    title: 'nth:partition-seq',
     category: 'Number Theory',
     description: 'Generates the partition numbers up to a specified length. If no length is provided, it defaults to 299 (the maximum length of the pre-calculated partition numbers).',
     linkName: 'c-colon-partition-seq',
@@ -21,13 +21,13 @@ export const partitionReference: NumberTheorySequenceReference<'partition'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'n:partition-seq(1)',
-      'n:partition-seq(10)',
-      'n:partition-seq()',
+      'nth:partition-seq(1)',
+      'nth:partition-seq(10)',
+      'nth:partition-seq()',
     ],
   },
-  'n:partition-take-while': {
-    title: 'n:partition-take-while',
+  'nth:partition-take-while': {
+    title: 'nth:partition-take-while',
     category: 'Number Theory',
     description: 'Generates the partition numbers while a condition is met.',
     linkName: 'c-colon-partition-take-while',
@@ -45,11 +45,11 @@ export const partitionReference: NumberTheorySequenceReference<'partition'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'n:partition-take-while(-> $ < 1000)',
+      'nth:partition-take-while(-> $ < 1000)',
     ],
   },
-  'n:partition-nth': {
-    title: 'n:partition-nth',
+  'nth:partition-nth': {
+    title: 'nth:partition-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the partition numbers.',
     linkName: 'c-colon-partition-nth',
@@ -66,12 +66,12 @@ export const partitionReference: NumberTheorySequenceReference<'partition'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:partition-nth(1)',
-      'n:partition-nth(5)',
+      'nth:partition-nth(1)',
+      'nth:partition-nth(5)',
     ],
   },
-  'n:partition?': {
-    title: 'n:partition?',
+  'nth:partition?': {
+    title: 'nth:partition?',
     category: 'Number Theory',
     description: 'Checks if a number is in the partition numbers.',
     linkName: 'c-colon-partition?',
@@ -88,12 +88,12 @@ export const partitionReference: NumberTheorySequenceReference<'partition'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:partition?(0)',
-      'n:partition?(1)',
-      'n:partition?(2)',
-      'n:partition?(3)',
-      'n:partition?(4)',
-      'n:partition?(5)',
+      'nth:partition?(0)',
+      'nth:partition?(1)',
+      'nth:partition?(2)',
+      'nth:partition?(3)',
+      'nth:partition?(4)',
+      'nth:partition?(5)',
     ],
   },
 }

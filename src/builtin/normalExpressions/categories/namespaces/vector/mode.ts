@@ -26,7 +26,7 @@ export function mode(values: number[]): number[] {
 
   // If all values appear only once, there is no mode
   if (maxFrequency === 1) {
-    return ([] as number[])
+    return values
   }
 
   // Collect all values that appear with the maximum frequency

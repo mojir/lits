@@ -31,14 +31,14 @@ function partitions(n: number): number[][] {
 }
 
 export const partitionsNormalExpressions: BuiltinNormalExpressions = {
-  'n:partitions': {
+  'nth:partitions': {
     evaluate: ([n], sourceCodeInfo): number[][] => {
       assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true })
       return partitions(n)
     },
     paramCount: 1,
   },
-  'n:count-partitions': {
+  'nth:count-partitions': {
     evaluate: ([n], sourceCodeInfo): number => {
       assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true })
       if (n === 0)

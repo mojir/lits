@@ -132,7 +132,7 @@ function getLuckyNumbers(count: number): number[] {
 }
 
 export const luckySequence: SequenceDefinition<'lucky'> = {
-  'n:lucky-seq': length => getLuckyNumbers(length),
-  'n:lucky?': n => generateLuckyNumbers(l => l <= n).includes(n),
-  'n:lucky-take-while': takeWhile => generateLuckyNumbers(takeWhile),
+  'nth:lucky-seq': length => getLuckyNumbers(length),
+  'nth:lucky?': n => generateLuckyNumbers(l => l <= n).includes(n),
+  'nth:lucky-take-while': takeWhile => generateLuckyNumbers(takeWhile),
 }

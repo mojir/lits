@@ -51,15 +51,15 @@ function generateBernoulli(
   }
 }
 
-export const bernoulliNormalExpressions: Omit<SequenceNormalExpressions<'bernoulli'>, 'n:bernoulli?'> = {
-  'n:bernoulli-seq': {
+export const bernoulliNormalExpressions: Omit<SequenceNormalExpressions<'bernoulli'>, 'nth:bernoulli?'> = {
+  'nth:bernoulli-seq': {
     evaluate: ([length], sourceCodeInfo): number[] => {
       assertNumber(length, sourceCodeInfo, { integer: true, positive: true })
       return getBernoulliSeq(length)
     },
     paramCount: 1,
   },
-  'n:bernoulli-nth': {
+  'nth:bernoulli-nth': {
     evaluate: ([n], sourceCodeInfo): number => {
       assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
       const bernoulli = getBernoulliSeq(n)
@@ -67,7 +67,7 @@ export const bernoulliNormalExpressions: Omit<SequenceNormalExpressions<'bernoul
     },
     paramCount: 1,
   },
-  'n:bernoulli-take-while': {
+  'nth:bernoulli-take-while': {
     evaluate: ([fn], sourceCodeInfo, contextStack, { executeFunction }): number[] => {
       assertLitsFunction(fn, sourceCodeInfo)
       const bernoulli = generateBernoulli((value, index) => !!executeFunction(fn, [value, index], contextStack))

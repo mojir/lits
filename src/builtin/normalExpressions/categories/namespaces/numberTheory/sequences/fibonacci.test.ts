@@ -4,11 +4,11 @@ import { Lits } from '../../../../../../Lits/Lits'
 const lits = new Lits()
 describe('fibonacci', () => {
   it('should return the correct sequence', () => {
-    expect(lits.run('n:fibonacci-seq(1)')).toEqual([0])
-    expect(lits.run('n:fibonacci-seq(2)')).toEqual([0, 1])
-    expect(lits.run('n:fibonacci-seq(3)')).toEqual([0, 1, 1])
-    expect(lits.run('n:fibonacci-seq(4)')).toEqual([0, 1, 1, 2])
-    expect(lits.run('n:fibonacci-seq(79)')).toEqual([
+    expect(lits.run('nth:fibonacci-seq(1)')).toEqual([0])
+    expect(lits.run('nth:fibonacci-seq(2)')).toEqual([0, 1])
+    expect(lits.run('nth:fibonacci-seq(3)')).toEqual([0, 1, 1])
+    expect(lits.run('nth:fibonacci-seq(4)')).toEqual([0, 1, 1, 2])
+    expect(lits.run('nth:fibonacci-seq(79)')).toEqual([
       0,
       1,
       1,
@@ -89,32 +89,32 @@ describe('fibonacci', () => {
       5527939700884757,
       8944394323791464,
     ])
-    expect(() => lits.run('n:fibonacci-seq(0)')).toThrow()
-    expect(() => lits.run('n:fibonacci-seq(80)')).toThrow()
+    expect(() => lits.run('nth:fibonacci-seq(0)')).toThrow()
+    expect(() => lits.run('nth:fibonacci-seq(80)')).toThrow()
   })
 
   it('should return the correct nth term', () => {
-    expect(lits.run('n:fibonacci-nth(1)')).toEqual(0)
-    expect(lits.run('n:fibonacci-nth(2)')).toEqual(1)
-    expect(lits.run('n:fibonacci-nth(3)')).toEqual(1)
-    expect(lits.run('n:fibonacci-nth(4)')).toEqual(2)
-    expect(lits.run('n:fibonacci-nth(11)')).toEqual(55)
+    expect(lits.run('nth:fibonacci-nth(1)')).toEqual(0)
+    expect(lits.run('nth:fibonacci-nth(2)')).toEqual(1)
+    expect(lits.run('nth:fibonacci-nth(3)')).toEqual(1)
+    expect(lits.run('nth:fibonacci-nth(4)')).toEqual(2)
+    expect(lits.run('nth:fibonacci-nth(11)')).toEqual(55)
   })
 
   it('should return the correct takeWhile sequence', () => {
-    expect(lits.run('n:fibonacci-take-while(-> $ < 100)')).toEqual([0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89])
+    expect(lits.run('nth:fibonacci-take-while(-> $ < 100)')).toEqual([0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89])
   })
 
   it('should determine if numbers are in the sequence', () => {
-    expect(lits.run('n:fibonacci?(0)')).toEqual(true)
-    expect(lits.run('n:fibonacci?(1)')).toEqual(true)
-    expect(lits.run('n:fibonacci?(2)')).toEqual(true)
-    expect(lits.run('n:fibonacci?(3)')).toEqual(true)
-    expect(lits.run('n:fibonacci?(4)')).toEqual(false)
-    expect(lits.run('n:fibonacci?(5)')).toEqual(true)
-    expect(lits.run('n:fibonacci?(6)')).toEqual(false)
-    expect(lits.run('n:fibonacci?(7)')).toEqual(false)
-    expect(lits.run('n:fibonacci?(8)')).toEqual(true)
-    expect(lits.run('n:fibonacci?(9)')).toEqual(false)
+    expect(lits.run('nth:fibonacci?(0)')).toEqual(true)
+    expect(lits.run('nth:fibonacci?(1)')).toEqual(true)
+    expect(lits.run('nth:fibonacci?(2)')).toEqual(true)
+    expect(lits.run('nth:fibonacci?(3)')).toEqual(true)
+    expect(lits.run('nth:fibonacci?(4)')).toEqual(false)
+    expect(lits.run('nth:fibonacci?(5)')).toEqual(true)
+    expect(lits.run('nth:fibonacci?(6)')).toEqual(false)
+    expect(lits.run('nth:fibonacci?(7)')).toEqual(false)
+    expect(lits.run('nth:fibonacci?(8)')).toEqual(true)
+    expect(lits.run('nth:fibonacci?(9)')).toEqual(false)
   })
 })

@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const perfectSquareReference: NumberTheorySequenceReference<'perfect-square'> = {
-  'n:perfect-square-seq': {
-    title: 'n:perfect-square-seq',
+  'nth:perfect-square-seq': {
+    title: 'nth:perfect-square-seq',
     category: 'Number Theory',
     description: 'Generates the perfect square numbers up to a specified length.',
     linkName: 'c-colon-perfect-square-seq',
@@ -20,12 +20,12 @@ export const perfectSquareReference: NumberTheorySequenceReference<'perfect-squa
       { argumentNames: ['length'] },
     ],
     examples: [
-      'n:perfect-square-seq(5)',
-      'n:perfect-square-seq(20)',
+      'nth:perfect-square-seq(5)',
+      'nth:perfect-square-seq(20)',
     ],
   },
-  'n:perfect-square-take-while': {
-    title: 'n:perfect-square-take-while',
+  'nth:perfect-square-take-while': {
+    title: 'nth:perfect-square-take-while',
     category: 'Number Theory',
     description: 'Generates the perfect square numbers while a condition is met.',
     linkName: 'c-colon-perfect-square-take-while',
@@ -43,11 +43,11 @@ export const perfectSquareReference: NumberTheorySequenceReference<'perfect-squa
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'n:perfect-square-take-while(-> $ <= 100)',
+      'nth:perfect-square-take-while(-> $ <= 100)',
     ],
   },
-  'n:perfect-square-nth': {
-    title: 'n:perfect-square-nth',
+  'nth:perfect-square-nth': {
+    title: 'nth:perfect-square-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the perfect square numbers.',
     linkName: 'c-colon-perfect-square-nth',
@@ -64,12 +64,12 @@ export const perfectSquareReference: NumberTheorySequenceReference<'perfect-squa
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:perfect-square-nth(1)',
-      'n:perfect-square-nth(5)',
+      'nth:perfect-square-nth(1)',
+      'nth:perfect-square-nth(5)',
     ],
   },
-  'n:perfect-square?': {
-    title: 'n:perfect-square?',
+  'nth:perfect-square?': {
+    title: 'nth:perfect-square?',
     category: 'Number Theory',
     description: 'Checks if a number is a perfect square.',
     linkName: 'c-colon-perfect-square',
@@ -86,8 +86,8 @@ export const perfectSquareReference: NumberTheorySequenceReference<'perfect-squa
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:perfect-square?(16)',
-      'n:perfect-square?(20)',
+      'nth:perfect-square?(16)',
+      'nth:perfect-square?(20)',
     ],
   },
 }

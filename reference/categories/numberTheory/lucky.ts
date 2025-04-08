@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const luckyReference: NumberTheorySequenceReference<'lucky'> = {
-  'n:lucky-seq': {
-    title: 'n:lucky-seq',
+  'nth:lucky-seq': {
+    title: 'nth:lucky-seq',
     category: 'Number Theory',
     description: 'Generates the lucky sequence up to a specified length.',
     linkName: 'c-colon-lucky-seq',
@@ -20,13 +20,13 @@ export const luckyReference: NumberTheorySequenceReference<'lucky'> = {
       { argumentNames: ['length'] },
     ],
     examples: [
-      'n:lucky-seq(1)',
-      'n:lucky-seq(2)',
-      'n:lucky-seq(20)',
+      'nth:lucky-seq(1)',
+      'nth:lucky-seq(2)',
+      'nth:lucky-seq(20)',
     ],
   },
-  'n:lucky-take-while': {
-    title: 'n:lucky-take-while',
+  'nth:lucky-take-while': {
+    title: 'nth:lucky-take-while',
     category: 'Number Theory',
     description: 'Generates the lucky sequence while a condition is met.',
     linkName: 'c-colon-lucky-take-while',
@@ -44,11 +44,11 @@ export const luckyReference: NumberTheorySequenceReference<'lucky'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'n:lucky-take-while(-> $ < 100)',
+      'nth:lucky-take-while(-> $ < 100)',
     ],
   },
-  'n:lucky-nth': {
-    title: 'n:lucky-nth',
+  'nth:lucky-nth': {
+    title: 'nth:lucky-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the lucky sequence.',
     linkName: 'c-colon-lucky-nth',
@@ -65,13 +65,13 @@ export const luckyReference: NumberTheorySequenceReference<'lucky'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:lucky-nth(1)',
-      'n:lucky-nth(2)',
-      'n:lucky-nth(20)',
+      'nth:lucky-nth(1)',
+      'nth:lucky-nth(2)',
+      'nth:lucky-nth(20)',
     ],
   },
-  'n:lucky?': {
-    title: 'n:lucky?',
+  'nth:lucky?': {
+    title: 'nth:lucky?',
     category: 'Number Theory',
     description: 'Checks if a number is a lucky number.',
     linkName: 'c-colon-lucky-question-mark',
@@ -88,9 +88,9 @@ export const luckyReference: NumberTheorySequenceReference<'lucky'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:lucky?(4)',
-      'n:lucky?(7)',
-      'n:lucky?(33)',
+      'nth:lucky?(4)',
+      'nth:lucky?(7)',
+      'nth:lucky?(33)',
     ],
   },
 }

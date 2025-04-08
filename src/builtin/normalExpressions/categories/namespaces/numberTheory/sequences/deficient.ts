@@ -8,7 +8,7 @@ function isDeficient(num: number): boolean {
 }
 
 export const deficientSequence: SequenceDefinition<'deficient'> = {
-  'n:deficient-seq': (length) => {
+  'nth:deficient-seq': (length) => {
     const deficients = []
     let num = 1
     while (deficients.length < length) {
@@ -19,8 +19,8 @@ export const deficientSequence: SequenceDefinition<'deficient'> = {
     }
     return deficients
   },
-  'n:deficient?': n => isDeficient(n),
-  'n:deficient-take-while': (takeWhile) => {
+  'nth:deficient?': n => isDeficient(n),
+  'nth:deficient-take-while': (takeWhile) => {
     const deficients = []
     for (let i = 1; ; i += 1) {
       if (!isDeficient(i)) {

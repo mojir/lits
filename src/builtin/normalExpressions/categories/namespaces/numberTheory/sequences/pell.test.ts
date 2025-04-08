@@ -4,11 +4,11 @@ import { Lits } from '../../../../../../Lits/Lits'
 const lits = new Lits()
 describe('pell', () => {
   it('should return the correct sequence', () => {
-    expect(lits.run('n:pell-seq(1)')).toEqual([1])
-    expect(lits.run('n:pell-seq(2)')).toEqual([1, 2])
-    expect(lits.run('n:pell-seq(3)')).toEqual([1, 2, 5])
-    expect(lits.run('n:pell-seq(4)')).toEqual([1, 2, 5, 12])
-    expect(lits.run('n:pell-seq(42)')).toEqual([
+    expect(lits.run('nth:pell-seq(1)')).toEqual([1])
+    expect(lits.run('nth:pell-seq(2)')).toEqual([1, 2])
+    expect(lits.run('nth:pell-seq(3)')).toEqual([1, 2, 5])
+    expect(lits.run('nth:pell-seq(4)')).toEqual([1, 2, 5, 12])
+    expect(lits.run('nth:pell-seq(42)')).toEqual([
       1,
       2,
       5,
@@ -52,33 +52,33 @@ describe('pell', () => {
       1746860020068409,
       4217293152016490,
     ])
-    expect(() => lits.run('n:pell-seq(0)')).toThrow()
-    expect(() => lits.run('n:pell-seq(43)')).toThrow()
+    expect(() => lits.run('nth:pell-seq(0)')).toThrow()
+    expect(() => lits.run('nth:pell-seq(43)')).toThrow()
   })
 
   it('should return the correct nth term', () => {
-    expect(lits.run('n:pell-nth(1)')).toEqual(1)
-    expect(lits.run('n:pell-nth(2)')).toEqual(2)
-    expect(lits.run('n:pell-nth(3)')).toEqual(5)
-    expect(lits.run('n:pell-nth(4)')).toEqual(12)
-    expect(lits.run('n:pell-nth(31)')).toEqual(259717522849)
-    expect(lits.run('n:pell-nth(42)')).toEqual(4217293152016490)
+    expect(lits.run('nth:pell-nth(1)')).toEqual(1)
+    expect(lits.run('nth:pell-nth(2)')).toEqual(2)
+    expect(lits.run('nth:pell-nth(3)')).toEqual(5)
+    expect(lits.run('nth:pell-nth(4)')).toEqual(12)
+    expect(lits.run('nth:pell-nth(31)')).toEqual(259717522849)
+    expect(lits.run('nth:pell-nth(42)')).toEqual(4217293152016490)
   })
 
   it('should return the correct takeWhile sequence', () => {
-    expect(lits.run('n:pell-take-while(-> $ < 1000)')).toEqual([1, 2, 5, 12, 29, 70, 169, 408, 985])
+    expect(lits.run('nth:pell-take-while(-> $ < 1000)')).toEqual([1, 2, 5, 12, 29, 70, 169, 408, 985])
   })
 
   it('should determine if numbers are in the sequence', () => {
-    expect(lits.run('n:pell?(0)')).toEqual(false)
-    expect(lits.run('n:pell?(1)')).toEqual(true)
-    expect(lits.run('n:pell?(2)')).toEqual(true)
-    expect(lits.run('n:pell?(3)')).toEqual(false)
-    expect(lits.run('n:pell?(4)')).toEqual(false)
-    expect(lits.run('n:pell?(5)')).toEqual(true)
-    expect(lits.run('n:pell?(6)')).toEqual(false)
-    expect(lits.run('n:pell?(7)')).toEqual(false)
-    expect(lits.run('n:pell?(8)')).toEqual(false)
-    expect(lits.run('n:pell?(9)')).toEqual(false)
+    expect(lits.run('nth:pell?(0)')).toEqual(false)
+    expect(lits.run('nth:pell?(1)')).toEqual(true)
+    expect(lits.run('nth:pell?(2)')).toEqual(true)
+    expect(lits.run('nth:pell?(3)')).toEqual(false)
+    expect(lits.run('nth:pell?(4)')).toEqual(false)
+    expect(lits.run('nth:pell?(5)')).toEqual(true)
+    expect(lits.run('nth:pell?(6)')).toEqual(false)
+    expect(lits.run('nth:pell?(7)')).toEqual(false)
+    expect(lits.run('nth:pell?(8)')).toEqual(false)
+    expect(lits.run('nth:pell?(9)')).toEqual(false)
   })
 })

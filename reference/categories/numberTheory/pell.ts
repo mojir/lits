@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const pellReference: NumberTheorySequenceReference<'pell'> = {
-  'n:pell-seq': {
-    title: 'n:pell-seq',
+  'nth:pell-seq': {
+    title: 'nth:pell-seq',
     category: 'Number Theory',
     description: 'Generates the Pell sequence up to a specified length.',
     linkName: 'c-colon-pell-seq',
@@ -21,13 +21,13 @@ export const pellReference: NumberTheorySequenceReference<'pell'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'n:pell-seq(5)',
-      'n:pell-seq(10)',
-      'n:pell-seq()',
+      'nth:pell-seq(5)',
+      'nth:pell-seq(10)',
+      'nth:pell-seq()',
     ],
   },
-  'n:pell-take-while': {
-    title: 'n:pell-take-while',
+  'nth:pell-take-while': {
+    title: 'nth:pell-take-while',
     category: 'Number Theory',
     description: 'Generates the Pell sequence while a condition is met.',
     linkName: 'c-colon-pell-take-while',
@@ -45,11 +45,11 @@ export const pellReference: NumberTheorySequenceReference<'pell'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'n:pell-take-while(-> $ < 1000)',
+      'nth:pell-take-while(-> $ < 1000)',
     ],
   },
-  'n:pell-nth': {
-    title: 'n:pell-nth',
+  'nth:pell-nth': {
+    title: 'nth:pell-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Pell sequence.',
     linkName: 'c-colon-pell-nth',
@@ -66,13 +66,13 @@ export const pellReference: NumberTheorySequenceReference<'pell'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:pell-nth(5)',
-      'n:pell-nth(10)',
-      'n:pell-nth(20)',
+      'nth:pell-nth(5)',
+      'nth:pell-nth(10)',
+      'nth:pell-nth(20)',
     ],
   },
-  'n:pell?': {
-    title: 'n:pell?',
+  'nth:pell?': {
+    title: 'nth:pell?',
     category: 'Number Theory',
     description: 'Checks if a number is a Pell number.',
     linkName: 'c-colon-pell-question-mark',
@@ -89,9 +89,9 @@ export const pellReference: NumberTheorySequenceReference<'pell'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:pell?(1)',
-      'n:pell?(470832)',
-      'n:pell?(10)',
+      'nth:pell?(1)',
+      'nth:pell?(470832)',
+      'nth:pell?(10)',
     ],
   },
 }

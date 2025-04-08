@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const perfectReference: NumberTheorySequenceReference<'perfect'> = {
-  'n:perfect-seq': {
-    title: 'n:perfect-seq',
+  'nth:perfect-seq': {
+    title: 'nth:perfect-seq',
     category: 'Number Theory',
     description: 'Generates the perfect numbers up to a specified length.',
     linkName: 'c-colon-perfect-seq',
@@ -21,13 +21,13 @@ export const perfectReference: NumberTheorySequenceReference<'perfect'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'n:perfect-seq(1)',
-      'n:perfect-seq(5)',
-      'n:perfect-seq()',
+      'nth:perfect-seq(1)',
+      'nth:perfect-seq(5)',
+      'nth:perfect-seq()',
     ],
   },
-  'n:perfect-take-while': {
-    title: 'n:perfect-take-while',
+  'nth:perfect-take-while': {
+    title: 'nth:perfect-take-while',
     category: 'Number Theory',
     description: 'Generates the perfect numbers while a condition is met.',
     linkName: 'c-colon-perfect-take-while',
@@ -45,11 +45,11 @@ export const perfectReference: NumberTheorySequenceReference<'perfect'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'n:perfect-take-while(-> $ < 1000)',
+      'nth:perfect-take-while(-> $ < 1000)',
     ],
   },
-  'n:perfect-nth': {
-    title: 'n:perfect-nth',
+  'nth:perfect-nth': {
+    title: 'nth:perfect-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the perfect numbers.',
     linkName: 'c-colon-perfect-nth',
@@ -66,12 +66,12 @@ export const perfectReference: NumberTheorySequenceReference<'perfect'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:perfect-nth(1)',
-      'n:perfect-nth(5)',
+      'nth:perfect-nth(1)',
+      'nth:perfect-nth(5)',
     ],
   },
-  'n:perfect?': {
-    title: 'n:perfect?',
+  'nth:perfect?': {
+    title: 'nth:perfect?',
     category: 'Number Theory',
     description: 'Checks if a number is in the perfect numbers.',
     linkName: 'c-colon-perfect-question-mark',
@@ -88,16 +88,16 @@ export const perfectReference: NumberTheorySequenceReference<'perfect'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:perfect?(0)',
-      'n:perfect?(1)',
-      'n:perfect?(2)',
-      'n:perfect?(3)',
-      'n:perfect?(4)',
-      'n:perfect?(5)',
-      'n:perfect?(6)',
-      'n:perfect?(7)',
-      'n:perfect?(8)',
-      'n:perfect?(9)',
+      'nth:perfect?(0)',
+      'nth:perfect?(1)',
+      'nth:perfect?(2)',
+      'nth:perfect?(3)',
+      'nth:perfect?(4)',
+      'nth:perfect?(5)',
+      'nth:perfect?(6)',
+      'nth:perfect?(7)',
+      'nth:perfect?(8)',
+      'nth:perfect?(9)',
     ],
   },
 }

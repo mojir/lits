@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const recamanReference: NumberTheorySequenceReference<'recaman'> = {
-  'n:recaman-seq': {
-    title: 'n:recaman-seq',
+  'nth:recaman-seq': {
+    title: 'nth:recaman-seq',
     category: 'Number Theory',
     description: 'Generates the Recaman sequence up to a specified length.',
     linkName: 'c-colon-recaman-seq',
@@ -20,13 +20,13 @@ export const recamanReference: NumberTheorySequenceReference<'recaman'> = {
       { argumentNames: ['length'] },
     ],
     examples: [
-      'n:recaman-seq(5)',
-      'n:recaman-seq(10)',
-      'n:recaman-seq(20)',
+      'nth:recaman-seq(5)',
+      'nth:recaman-seq(10)',
+      'nth:recaman-seq(20)',
     ],
   },
-  'n:recaman-take-while': {
-    title: 'n:recaman-take-while',
+  'nth:recaman-take-while': {
+    title: 'nth:recaman-take-while',
     category: 'Number Theory',
     description: 'Generates the Recaman sequence while a condition is met.',
     linkName: 'c-colon-recaman-take-while',
@@ -44,11 +44,11 @@ export const recamanReference: NumberTheorySequenceReference<'recaman'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'n:recaman-take-while(-> $ < 10)',
+      'nth:recaman-take-while(-> $ < 10)',
     ],
   },
-  'n:recaman-nth': {
-    title: 'n:recaman-nth',
+  'nth:recaman-nth': {
+    title: 'nth:recaman-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Recaman sequence.',
     linkName: 'c-colon-recaman-nth',
@@ -65,13 +65,13 @@ export const recamanReference: NumberTheorySequenceReference<'recaman'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:recaman-nth(5)',
-      'n:recaman-nth(10)',
-      'n:recaman-nth(20)',
+      'nth:recaman-nth(5)',
+      'nth:recaman-nth(10)',
+      'nth:recaman-nth(20)',
     ],
   },
-  'n:recaman?': {
-    title: 'n:recaman?',
+  'nth:recaman?': {
+    title: 'nth:recaman?',
     category: 'Number Theory',
     description: 'Checks if a number is in the Recaman sequence.',
     linkName: 'c-colon-recaman-question-mark',
@@ -88,9 +88,9 @@ export const recamanReference: NumberTheorySequenceReference<'recaman'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'n:recaman?(5)',
-      'n:recaman?(10)',
-      'n:recaman?(20)',
+      'nth:recaman?(5)',
+      'nth:recaman?(10)',
+      'nth:recaman?(20)',
     ],
   },
 }

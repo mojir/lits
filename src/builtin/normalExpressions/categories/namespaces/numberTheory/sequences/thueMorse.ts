@@ -1,14 +1,14 @@
 import type { SequenceDefinition } from '.'
 
 export const thueMorseSequence: SequenceDefinition<'thue-morse'> = {
-  'n:thue-morse-seq': (length) => {
+  'nth:thue-morse-seq': (length) => {
     const thueMorse = []
     for (let i = 0; i < length; i += 1) {
       thueMorse[i] = countSetBits(i) % 2
     }
     return thueMorse
   },
-  'n:thue-morse-take-while': (takeWhile) => {
+  'nth:thue-morse-take-while': (takeWhile) => {
     const thueMorse = []
     for (let i = 0; ; i += 1) {
       const value = countSetBits(i) % 2
@@ -19,7 +19,7 @@ export const thueMorseSequence: SequenceDefinition<'thue-morse'> = {
     }
     return thueMorse
   },
-  'n:thue-morse?': n => n === 1 || n === 0,
+  'nth:thue-morse?': n => n === 1 || n === 0,
 }
 
 function countSetBits(num: number): number {

@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const arithmeticReference: NumberTheorySequenceReference<'arithmetic'> = {
-  'n:arithmetic-seq': {
-    title: 'n:arithmetic-seq',
+  'nth:arithmetic-seq': {
+    title: 'nth:arithmetic-seq',
     category: 'Number Theory',
     description: 'Generates the arithmetic sequence for a given $start, $step, and $length.',
     linkName: 'c-colon-arithmetic-seq',
@@ -28,14 +28,14 @@ export const arithmeticReference: NumberTheorySequenceReference<'arithmetic'> = 
       { argumentNames: ['start', 'step', 'length'] },
     ],
     examples: [
-      'n:arithmetic-seq(3, 2, 2)',
-      'n:arithmetic-seq(2, 3, 2)',
-      'n:arithmetic-seq(1, 2, 2)',
-      'n:arithmetic-seq(1, 1.5, 12)',
+      'nth:arithmetic-seq(3, 2, 2)',
+      'nth:arithmetic-seq(2, 3, 2)',
+      'nth:arithmetic-seq(1, 2, 2)',
+      'nth:arithmetic-seq(1, 1.5, 12)',
     ],
   },
-  'n:arithmetic-take-while': {
-    title: 'n:arithmetic-take-while',
+  'nth:arithmetic-take-while': {
+    title: 'nth:arithmetic-take-while',
     category: 'Number Theory',
     description: 'Generates the arithmetic sequence while a condition is met.',
     linkName: 'c-colon-arithmetic-take-while',
@@ -61,11 +61,11 @@ export const arithmeticReference: NumberTheorySequenceReference<'arithmetic'> = 
       { argumentNames: ['start', 'step', 'takeWhile'] },
     ],
     examples: [
-      'n:arithmetic-take-while(1, 0.25, -> $ < 3)',
+      'nth:arithmetic-take-while(1, 0.25, -> $ < 3)',
     ],
   },
-  'n:arithmetic-nth': {
-    title: 'n:arithmetic-nth',
+  'nth:arithmetic-nth': {
+    title: 'nth:arithmetic-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the arithmetic sequence.',
     linkName: 'c-colon-arithmetic-nth',
@@ -90,14 +90,14 @@ export const arithmeticReference: NumberTheorySequenceReference<'arithmetic'> = 
       { argumentNames: ['start', 'step', 'n'] },
     ],
     examples: [
-      'n:arithmetic-nth(3, 2, 2)',
-      'n:arithmetic-nth(2, 3, 2)',
-      'n:arithmetic-nth(1, 2, 2)',
-      'n:arithmetic-nth(1, 1.5, 12)',
+      'nth:arithmetic-nth(3, 2, 2)',
+      'nth:arithmetic-nth(2, 3, 2)',
+      'nth:arithmetic-nth(1, 2, 2)',
+      'nth:arithmetic-nth(1, 1.5, 12)',
     ],
   },
-  'n:arithmetic?': {
-    title: 'n:arithmetic?',
+  'nth:arithmetic?': {
+    title: 'nth:arithmetic?',
     category: 'Number Theory',
     description: 'Checks if a number is part of the arithmetic sequence.',
     linkName: 'c-colon-arithmetic?',
@@ -122,10 +122,10 @@ export const arithmeticReference: NumberTheorySequenceReference<'arithmetic'> = 
       { argumentNames: ['start', 'step', 'n'] },
     ],
     examples: [
-      'n:arithmetic?(3, 2, 2)',
-      'n:arithmetic?(2, 3, 2)',
-      'n:arithmetic?(1, 2, 2)',
-      'n:arithmetic?(1, 1.5, 12)',
+      'nth:arithmetic?(3, 2, 2)',
+      'nth:arithmetic?(2, 3, 2)',
+      'nth:arithmetic?(1, 2, 2)',
+      'nth:arithmetic?(1, 1.5, 12)',
     ],
   },
 }
