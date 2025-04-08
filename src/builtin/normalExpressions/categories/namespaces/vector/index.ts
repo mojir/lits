@@ -136,12 +136,38 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 1 },
   },
-  'v:**': {
-    evaluate: ([vector, exponent], sourceCodeInfo): number[] => {
-      assertVector(vector, sourceCodeInfo)
-      assertNumber(exponent, sourceCodeInfo, { finite: true })
+  'v:^': {
+    evaluate: ([a, b], sourceCodeInfo): number[] => {
+      if (!isVector(a) && !isVector(b)) {
+        throw new LitsError('At least one parameter must be a vector', sourceCodeInfo)
+      }
+      if (!isVector(a)) {
+        assertVector(b, sourceCodeInfo)
+        assertNumber(a, sourceCodeInfo, { finite: true })
+      }
+      if (!isVector(b)) {
+        assertVector(a, sourceCodeInfo)
+        assertNumber(b, sourceCodeInfo, { finite: true })
+      }
+      const length = (isVector(a) ? a : (b as number[])).length
 
-      return vector.map(val => val ** exponent)
+      const [vector1, vector2] = [a, b].map<number[]>((operand) => {
+        if (isVector(operand)) {
+          if (operand.length !== length) {
+            throw new LitsError('Vectors must be of the same length', sourceCodeInfo)
+          }
+          return operand
+        }
+        return Array.from({ length }, () => operand)
+      })
+
+      return vector1!.map((val, i) => {
+        const exponent = vector2![i]!
+        if (exponent < 0 && val === 0) {
+          throw new LitsError('Cannot raise zero to a negative exponent', sourceCodeInfo)
+        }
+        return val ** exponent
+      })
     },
     paramCount: 2,
   },
