@@ -108,7 +108,10 @@ export const normalExpressionReference: Record<NormalExpressionName, FunctionRef
 }
 
 Object.entries(normalExpressionReference).forEach(([key, obj]) => {
-  const paramCount = normalExpressions[key]!.paramCount
+  if (!normalExpressions[key]) {
+    throw new Error(`Missing normal expression ${key} in normalExpressions`)
+  }
+  const paramCount = normalExpressions[key].paramCount
   if (!obj.noOperatorDocumentation && canBeOperator(paramCount)) {
     obj._isOperator = true
     if (isSymbolicOperator(key)) {

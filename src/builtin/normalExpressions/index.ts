@@ -12,10 +12,10 @@ import { predicatesNormalExpression } from './categories/predicates'
 import { regexpNormalExpression } from './categories/regexp'
 import { stringNormalExpression } from './categories/string'
 import { functionalNormalExpression } from './categories/functional'
-import { tableNormalExpression } from './categories/table'
-import { vectorNormalExpression } from './categories/vector'
-import { matrixNormalExpression } from './categories/matrix'
-import { combinatoricalNormalExpression } from './categories/numberTheory'
+import { tableNormalExpression } from './categories/namespaces/table'
+import { vectorNormalExpression } from './categories/namespaces/vector'
+import { matrixNormalExpression } from './categories/namespaces/matrix'
+import { combinatoricalNormalExpression } from './categories/namespaces/numberTheory'
 
 const expressions: BuiltinNormalExpressions = {
   ...bitwiseNormalExpression,
