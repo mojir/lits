@@ -3,7 +3,7 @@ import type { SpecialExpressionType } from '../builtin'
 import type { specialExpressionTypes } from '../builtin/specialExpressionTypes'
 import type { FunctionType, NodeType, NodeTypes } from '../constants/constants'
 import type { Context } from '../evaluator/interface'
-import type { Any, Arr } from '../interface'
+import type { Any, Arr, Coll } from '../interface'
 import type { ReservedSymbol } from '../tokenizer/reservedNames'
 import type { SourceCodeInfo, Token } from '../tokenizer/token'
 import type { FUNCTION_SYMBOL, REGEXP_SYMBOL } from '../utils/symbols'
@@ -114,6 +114,8 @@ export type LitsFunction =
   | FNullFunction
 
 export type LitsFunctionType = LitsFunction['functionType']
+
+export type FunctionLike = LitsFunction | Coll | number
 
 export type DebugData = {
   token: Token

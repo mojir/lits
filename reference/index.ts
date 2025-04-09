@@ -13,7 +13,8 @@ import { functionalReference } from './categories/functional'
 import { mathReference } from './categories/math'
 import { miscReference } from './categories/misc'
 import { objectReference } from './categories/object'
-import { matrixReference } from './categories/matrix'
+import { matrixReference } from './categories/matrix/matrix'
+import { vectorReference } from './categories/vector'
 import { predicateReference } from './categories/predicate'
 import { regularExpressionReference } from './categories/regularExpression'
 import { sequenceReference } from './categories/sequence'
@@ -103,6 +104,7 @@ export const normalExpressionReference: Record<NormalExpressionName, FunctionRef
   ...stringReference,
   ...bitwiseReference,
   ...assertReference,
+  ...vectorReference,
   ...matrixReference,
   ...numberTheoryReference,
 }

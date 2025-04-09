@@ -10,15 +10,15 @@ import type {
   SomePredFunction,
 } from '../../../parser/types'
 import { toAny } from '../../../utils'
-import { assertLitsFunction } from '../../../typeGuards/litsFunction'
 import { FUNCTION_SYMBOL } from '../../../utils/symbols'
 import type { BuiltinNormalExpressions } from '../../interface'
 import { assertArray } from '../../../typeGuards/array'
+import { assertAny } from '../../../typeGuards/lits'
 
 export const functionalNormalExpression: BuiltinNormalExpressions = {
   'apply': {
     evaluate: ([func, ...params]: Arr, sourceCodeInfo, contextStack, { executeFunction }): Any => {
-      assertLitsFunction(func, sourceCodeInfo)
+      assertAny(func, sourceCodeInfo)
       const paramsLength = params.length
       const last = params[paramsLength - 1]
       assertArray(last, sourceCodeInfo)

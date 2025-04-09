@@ -2259,6 +2259,19 @@ var Playground = (function (exports) {
         if (!isStringOrRegularExpression(value))
             throw getAssertionError('string or RegularExpression', value, sourceCodeInfo);
     }
+    function isFunctionLike(value) {
+        if (typeof value === 'number')
+            return true;
+        if (isColl(value))
+            return true;
+        if (isLitsFunction(value))
+            return true;
+        return false;
+    }
+    function assertFunctionLike(value, sourceCodeInfo) {
+        if (!isFunctionLike(value))
+            throw getAssertionError('FunctionLike', value, sourceCodeInfo);
+    }
 
     function getRangeString(options) {
         var hasUpperAndLowerBound = (typeof options.gt === 'number' || typeof options.gte === 'number')
@@ -4120,7 +4133,7 @@ var Playground = (function (exports) {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 2), seq = _c[0], fn = _c[1];
                 var executeFunction = _b.executeFunction;
-                assertAny(fn, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
                 assertSeq(seq, sourceCodeInfo);
                 var arr = Array.isArray(seq) ? seq : seq.split('');
                 return arr.reduce(function (result, val) {
@@ -5706,7 +5719,7 @@ var Playground = (function (exports) {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a), func = _c[0], params = _c.slice(1);
                 var executeFunction = _b.executeFunction;
-                assertLitsFunction(func, sourceCodeInfo);
+                assertAny(func, sourceCodeInfo);
                 var paramsLength = params.length;
                 var last = params[paramsLength - 1];
                 assertArray(last, sourceCodeInfo);
@@ -6814,6 +6827,120 @@ var Playground = (function (exports) {
         return modes;
     }
 
+    /**
+     * Calculate the percentile value from an array of numbers
+     * @param data Array of numbers to calculate percentile from
+     * @param percentile The percentile to calculate (0-100)
+     * @returns The value at the specified percentile
+     */
+    function calcPercentile(data, percentile) {
+        if (percentile < 0 || percentile > 100) {
+            throw new Error('Percentile must be between 0 and 100');
+        }
+        if (data.length === 0) {
+            throw new Error('Data array cannot be empty');
+        }
+        // Sort the data in ascending order
+        var sortedData = __spreadArray([], __read(data), false).sort(function (a, b) { return a - b; });
+        // If percentile is 0, return the minimum value
+        if (percentile === 0) {
+            return sortedData[0];
+        }
+        // If percentile is 100, return the maximum value
+        if (percentile === 100) {
+            return sortedData[sortedData.length - 1];
+        }
+        // Calculate the index
+        var index = (percentile / 100) * (sortedData.length - 1);
+        // If index is an integer, return the value at that index
+        if (Number.isInteger(index)) {
+            return sortedData[index];
+        }
+        // Otherwise, interpolate between the two adjacent values
+        var lowerIndex = Math.floor(index);
+        var upperIndex = Math.ceil(index);
+        var weight = index - lowerIndex;
+        return sortedData[lowerIndex] * (1 - weight) + sortedData[upperIndex] * weight;
+    }
+
+    function quartiles(vector) {
+        var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
+        // Median calculation (Q2)
+        var midIndex = sorted.length / 2;
+        var q2;
+        if (sorted.length % 2 === 0) {
+            // Even length - average the two middle values
+            q2 = (sorted[midIndex - 1] + sorted[midIndex]) / 2;
+        }
+        else {
+            // Odd length - take the middle value
+            q2 = sorted[Math.floor(midIndex)];
+        }
+        // Lower half for Q1
+        var lowerHalf = sorted.slice(0, Math.floor(sorted.length / 2));
+        // Upper half for Q3
+        var upperHalf = sorted.slice(Math.ceil(sorted.length / 2));
+        // Calculate Q1 and Q3 using the same median logic on the halves
+        var q1, q3;
+        if (lowerHalf.length % 2 === 0) {
+            var midLower = lowerHalf.length / 2;
+            q1 = (lowerHalf[midLower - 1] + lowerHalf[midLower]) / 2;
+        }
+        else {
+            q1 = lowerHalf[Math.floor(lowerHalf.length / 2)];
+        }
+        if (upperHalf.length % 2 === 0) {
+            var midUpper = upperHalf.length / 2;
+            q3 = (upperHalf[midUpper - 1] + upperHalf[midUpper]) / 2;
+        }
+        else {
+            q3 = upperHalf[Math.floor(upperHalf.length / 2)];
+        }
+        return [q1, q2, q3];
+    }
+
+    function skewness(vector) {
+        var mean = calcMean(vector);
+        var stdDev = calcStdDev(vector);
+        if (stdDev === 0) {
+            throw new Error('Standard deviation is zero, skewness is undefined');
+        }
+        return vector.reduce(function (acc, val) { return acc + (Math.pow((val - mean), 3)); }, 0) / (vector.length * Math.pow(stdDev, 3));
+    }
+    function sampleSkewness(vector) {
+        var e_1, _a;
+        var n = vector.length;
+        // Calculate the mean
+        var mean = vector.reduce(function (acc, val) { return acc + val; }, 0) / n;
+        // Calculate sum of squared differences and sum of cubed differences
+        var sumSquaredDiffs = 0;
+        var sumCubedDiffs = 0;
+        try {
+            for (var vector_1 = __values(vector), vector_1_1 = vector_1.next(); !vector_1_1.done; vector_1_1 = vector_1.next()) {
+                var val = vector_1_1.value;
+                var diff = val - mean;
+                sumSquaredDiffs += diff * diff;
+                sumCubedDiffs += diff * diff * diff;
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (vector_1_1 && !vector_1_1.done && (_a = vector_1.return)) _a.call(vector_1);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        // Calculate sample standard deviation (using n-1)
+        var sampleVariance = sumSquaredDiffs / (n - 1);
+        var sampleStdDev = Math.sqrt(sampleVariance);
+        // If standard deviation is 0, skewness is undefined
+        if (sampleStdDev === 0) {
+            throw new Error('Cannot calculate sample skewness when standard deviation is 0');
+        }
+        // Calculate sample skewness with Fisher's adjustment
+        return (n / ((n - 1) * (n - 2))) * sumCubedDiffs / Math.pow(sampleStdDev, 3);
+    }
+
     var vectorNormalExpression = {
         'vec:vector?': {
             evaluate: function (_a) {
@@ -6880,7 +7007,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'v:+': {
+        'vec:+': {
             evaluate: function (params, sourceCodeInfo) {
                 var e_1, _a;
                 var length = null;
@@ -6920,7 +7047,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 1 },
         },
-        'v:-': {
+        'vec:-': {
             evaluate: function (params, sourceCodeInfo) {
                 var e_2, _a;
                 var length = null;
@@ -6960,7 +7087,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 1 },
         },
-        'v:*': {
+        'vec:*': {
             evaluate: function (params, sourceCodeInfo) {
                 var e_3, _a;
                 var length = null;
@@ -7000,7 +7127,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 1 },
         },
-        'v:/': {
+        'vec:/': {
             evaluate: function (params, sourceCodeInfo) {
                 var e_4, _a;
                 var length = null;
@@ -7040,7 +7167,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 1 },
         },
-        'v:^': {
+        'vec:^': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), a = _b[0], b = _b[1];
                 if (!isVector(a) && !isVector(b)) {
@@ -7323,11 +7450,10 @@ var Playground = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
-                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
-                var q1 = sorted[Math.floor((sorted.length / 4))];
-                var q2 = sorted[Math.floor((sorted.length / 2))];
-                var q3 = sorted[Math.floor((3 * sorted.length) / 4)];
-                return [q1, q2, q3];
+                if (vector.length < 4) {
+                    throw new LitsError('Quartiles require at least four values', sourceCodeInfo);
+                }
+                return quartiles(vector);
             },
             paramCount: 1,
         },
@@ -7335,9 +7461,10 @@ var Playground = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
-                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
-                var q1 = sorted[Math.floor((sorted.length / 4))];
-                var q3 = sorted[Math.floor((3 * sorted.length) / 4)];
+                if (vector.length < 4) {
+                    throw new LitsError('IQR requires at least four values', sourceCodeInfo);
+                }
+                var _c = __read(quartiles(vector), 3), q1 = _c[0], q3 = _c[2];
                 return q3 - q1;
             },
             paramCount: 1,
@@ -7345,11 +7472,9 @@ var Playground = (function (exports) {
         'vec:percentile': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vector = _b[0], percentile = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(percentile, sourceCodeInfo, { finite: true });
-                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
-                var index = Math.floor((percentile / 100) * (sorted.length - 1));
-                return sorted[index];
+                assertNonEmptyVector(vector, sourceCodeInfo);
+                assertNumber(percentile, sourceCodeInfo, { finite: true, nonNegative: true, lte: 100 });
+                return calcPercentile(vector, percentile);
             },
             paramCount: 2,
         },
@@ -7357,19 +7482,17 @@ var Playground = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vector = _b[0], quantile = _b[1];
                 assertVector(vector, sourceCodeInfo);
-                assertNumber(quantile, sourceCodeInfo, { finite: true });
-                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
-                var index = Math.floor(quantile * (sorted.length - 1));
-                return sorted[index];
+                assertNumber(quantile, sourceCodeInfo, { finite: true, nonNegative: true, lte: 1 });
+                return calcPercentile(vector, quantile * 100);
             },
             paramCount: 2,
         },
-        'vec:range': {
+        'vec:get-range': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertNonEmptyVector(vector, sourceCodeInfo);
-                var min = vector.reduce(function (acc, val) { return (val < vector[acc] ? val : acc); }, vector[0]);
-                var max = vector.reduce(function (acc, val) { return (val > vector[acc] ? val : acc); }, vector[0]);
+                var min = vector.reduce(function (acc, val) { return (val < acc ? val : acc); }, vector[0]);
+                var max = vector.reduce(function (acc, val) { return (val > acc ? val : acc); }, vector[0]);
                 return max - min;
             },
             paramCount: 1,
@@ -7377,10 +7500,38 @@ var Playground = (function (exports) {
         'vec:skewness': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                var mean = calcMean(vector);
-                var stdDev = calcStdDev(vector);
-                return vector.reduce(function (acc, val) { return acc + (Math.pow((val - mean), 3)); }, 0) / (vector.length * Math.pow(stdDev, 3));
+                assertNonEmptyVector(vector, sourceCodeInfo);
+                if (vector.length < 3) {
+                    throw new LitsError('Skewness requires at least three values', sourceCodeInfo);
+                }
+                try {
+                    return skewness(vector);
+                }
+                catch (error) {
+                    if (error instanceof Error) {
+                        throw new LitsError(error.message, sourceCodeInfo);
+                    }
+                    throw error;
+                }
+            },
+            paramCount: 1,
+        },
+        'vec:sample-skewness': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertNonEmptyVector(vector, sourceCodeInfo);
+                if (vector.length < 3) {
+                    throw new LitsError('Skewness requires at least three values', sourceCodeInfo);
+                }
+                try {
+                    return sampleSkewness(vector);
+                }
+                catch (error) {
+                    if (error instanceof Error) {
+                        throw new LitsError(error.message, sourceCodeInfo);
+                    }
+                    throw error;
+                }
             },
             paramCount: 1,
         },

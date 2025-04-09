@@ -7,7 +7,7 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
     title: 'number',
     category: 'Datatype',
     linkName: '-type-number',
-    description: 'A number',
+    description: 'A `number`',
     examples: [
       '42',
       '3.14',
@@ -18,7 +18,7 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
     title: 'string',
     category: 'Datatype',
     linkName: '-type-string',
-    description: 'A string',
+    description: 'A `string`',
     examples: [
       '"hello"',
       '""',
@@ -29,7 +29,7 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
     title: 'object',
     category: 'Datatype',
     linkName: '-type-object',
-    description: 'An object, a collection of key-value pairs where keys are strings',
+    description: 'An `object`, a collection of key-value pairs where keys are `strings`',
     examples: [
       '{}',
       '{ a := 1, b := 2}',
@@ -40,11 +40,46 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
     title: 'array',
     category: 'Datatype',
     linkName: '-type-array',
-    description: 'An array, a collection of values',
+    description: 'An `array`',
     examples: [
       '[]',
       '[1, 2, 3]',
       '["a", null, true]',
+    ],
+  },
+  '-type-vector': {
+    datatype: true,
+    title: 'array',
+    category: 'Datatype',
+    linkName: '-type-array',
+    description: 'An `array` of `numbers`',
+    examples: [
+      '[]',
+      '[1, 2, 3]',
+    ],
+  },
+  '-type-matrix': {
+    datatype: true,
+    title: 'matrix',
+    category: 'Datatype',
+    linkName: '-type-matrix',
+    description: 'A `matrix`, a two-dimensional `array` with `numbers` where each row has the same number of columns. A `matrix` is also a `grid`.',
+    examples: [
+      '[[]]',
+      '[[1, 2], [3, 4]]',
+      '[[1, 2], [3, 4], [5, 6]]',
+    ],
+  },
+  '-type-grid': {
+    datatype: true,
+    title: 'grid',
+    category: 'Datatype',
+    linkName: '-type-grid',
+    description: 'A `grid`, a two-dimensional `array` where each row has the same number of columns',
+    examples: [
+      '[[]]',
+      '[[1, 2], [3, 4]]',
+      '[["a", "b"], [3, 4], [5, 6]]',
     ],
   },
   '-type-boolean': {
@@ -52,7 +87,7 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
     title: 'boolean',
     category: 'Datatype',
     linkName: '-type-boolean',
-    description: 'A boolean',
+    description: 'A `boolean`',
     examples: [
       'true',
       'false',
@@ -63,7 +98,7 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
     title: 'function',
     category: 'Datatype',
     linkName: '-type-function',
-    description: 'A function',
+    description: 'A `function`',
     examples: [
       'x -> x + 1',
       '(a, b, c) -> (a + b) * c',
@@ -76,7 +111,7 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
     title: 'integer',
     category: 'Datatype',
     linkName: '-type-integer',
-    description: 'An integer',
+    description: 'An `integer`',
     examples: [
       '42',
       '-42',
@@ -87,7 +122,7 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
     title: 'any',
     category: 'Datatype',
     linkName: '-type-any',
-    description: 'Any value',
+    description: '`Any` value',
     examples: [
       '42',
       '"hello"',
@@ -100,7 +135,7 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
     title: 'null',
     category: 'Datatype',
     linkName: '-type-null',
-    description: 'The value null',
+    description: 'The value `null`',
     examples: [
       'null',
     ],
@@ -110,7 +145,7 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
     title: 'collection',
     category: 'Datatype',
     linkName: '-type-collection',
-    description: 'A collection, an object, an array or a string',
+    description: 'A collection, an `object`, an `array` or a `string`',
     examples: [
       '{ foo := 42 }',
       '[1, 2, 3]',
@@ -122,7 +157,7 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
     title: 'sequence',
     category: 'Datatype',
     linkName: '-type-sequence',
-    description: 'A sequence, an array or a string',
+    description: 'A sequence, an `array` or a `string`',
     examples: [
       '[1, 2, 3]',
       '"hello"',

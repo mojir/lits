@@ -9,6 +9,9 @@ import { calcStdDev } from './calcStdDev'
 import { calcVariance } from './calcVariance'
 import { calculateEntropy } from './entropy'
 import { mode } from './mode'
+import { calcPercentile } from './percentile'
+import { quartiles } from './quartiles'
+import { sampleSkewness, skewness } from './skewness'
 
 export const vectorNormalExpression: BuiltinNormalExpressions = {
   'vec:vector?': {
@@ -458,58 +461,48 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     paramCount: 1,
   },
   'vec:quartiles': {
-    evaluate: ([vector], sourceCodeInfo): number[] => {
+    evaluate: ([vector], sourceCodeInfo): [number, number, number] => {
       assertVector(vector, sourceCodeInfo)
-
-      const sorted = [...vector].sort((a, b) => a - b)
-      const q1 = sorted[Math.floor((sorted.length / 4))]!
-      const q2 = sorted[Math.floor((sorted.length / 2))]!
-      const q3 = sorted[Math.floor((3 * sorted.length) / 4)]!
-
-      return [q1, q2, q3]
+      if (vector.length < 4) {
+        throw new LitsError('Quartiles require at least four values', sourceCodeInfo)
+      }
+      return quartiles(vector)
     },
     paramCount: 1,
   },
   'vec:iqr': {
     evaluate: ([vector], sourceCodeInfo): number => {
       assertVector(vector, sourceCodeInfo)
-
-      const sorted = [...vector].sort((a, b) => a - b)
-      const q1 = sorted[Math.floor((sorted.length / 4))]!
-      const q3 = sorted[Math.floor((3 * sorted.length) / 4)]!
-
+      if (vector.length < 4) {
+        throw new LitsError('IQR requires at least four values', sourceCodeInfo)
+      }
+      const [q1, , q3] = quartiles(vector)
       return q3 - q1
     },
     paramCount: 1,
   },
   'vec:percentile': {
     evaluate: ([vector, percentile], sourceCodeInfo): number => {
-      assertVector(vector, sourceCodeInfo)
-      assertNumber(percentile, sourceCodeInfo, { finite: true })
-
-      const sorted = [...vector].sort((a, b) => a - b)
-      const index = Math.floor((percentile / 100) * (sorted.length - 1))
-      return sorted[index]!
+      assertNonEmptyVector(vector, sourceCodeInfo)
+      assertNumber(percentile, sourceCodeInfo, { finite: true, nonNegative: true, lte: 100 })
+      return calcPercentile(vector, percentile)
     },
     paramCount: 2,
   },
   'vec:quantile': {
     evaluate: ([vector, quantile], sourceCodeInfo): number => {
       assertVector(vector, sourceCodeInfo)
-      assertNumber(quantile, sourceCodeInfo, { finite: true })
-
-      const sorted = [...vector].sort((a, b) => a - b)
-      const index = Math.floor(quantile * (sorted.length - 1))
-      return sorted[index]!
+      assertNumber(quantile, sourceCodeInfo, { finite: true, nonNegative: true, lte: 1 })
+      return calcPercentile(vector, quantile * 100)
     },
     paramCount: 2,
   },
-  'vec:range': {
+  'vec:get-range': {
     evaluate: ([vector], sourceCodeInfo): number => {
       assertNonEmptyVector(vector, sourceCodeInfo)
 
-      const min = vector.reduce((acc, val) => (val < vector[acc]! ? val : acc), vector[0]!)
-      const max = vector.reduce((acc, val) => (val > vector[acc]! ? val : acc), vector[0]!)
+      const min = vector.reduce((acc, val) => (val < acc ? val : acc), vector[0]!)
+      const max = vector.reduce((acc, val) => (val > acc ? val : acc), vector[0]!)
 
       return max - min
     },
@@ -517,11 +510,37 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
   },
   'vec:skewness': {
     evaluate: ([vector], sourceCodeInfo): number => {
-      assertVector(vector, sourceCodeInfo)
-
-      const mean = calcMean(vector)
-      const stdDev = calcStdDev(vector)
-      return vector.reduce((acc, val) => acc + ((val - mean) ** 3), 0) / (vector.length * stdDev ** 3)
+      assertNonEmptyVector(vector, sourceCodeInfo)
+      if (vector.length < 3) {
+        throw new LitsError('Skewness requires at least three values', sourceCodeInfo)
+      }
+      try {
+        return skewness(vector)
+      }
+      catch (error) {
+        if (error instanceof Error) {
+          throw new LitsError(error.message, sourceCodeInfo)
+        }
+        throw error
+      }
+    },
+    paramCount: 1,
+  },
+  'vec:sample-skewness': {
+    evaluate: ([vector], sourceCodeInfo): number => {
+      assertNonEmptyVector(vector, sourceCodeInfo)
+      if (vector.length < 3) {
+        throw new LitsError('Skewness requires at least three values', sourceCodeInfo)
+      }
+      try {
+        return sampleSkewness(vector)
+      }
+      catch (error) {
+        if (error instanceof Error) {
+          throw new LitsError(error.message, sourceCodeInfo)
+        }
+        throw error
+      }
     },
     paramCount: 1,
   },

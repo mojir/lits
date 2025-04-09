@@ -1,7 +1,7 @@
 import type { Any, Arr, Obj, Seq } from '../../../interface'
 import type { SourceCodeInfo } from '../../../tokenizer/token'
 import { asArray, assertArray, assertCharArray } from '../../../typeGuards/array'
-import { asAny, asSeq, assertAny, assertSeq } from '../../../typeGuards/lits'
+import { asAny, asSeq, assertAny, assertFunctionLike, assertSeq } from '../../../typeGuards/lits'
 import { asLitsFunction, assertLitsFunction } from '../../../typeGuards/litsFunction'
 import { asNumber, assertNumber } from '../../../typeGuards/number'
 import { assertString, assertStringOrNumber } from '../../../typeGuards/string'
@@ -758,7 +758,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
 
   'group-by': {
     evaluate: ([seq, fn], sourceCodeInfo, contextStack, { executeFunction }): Obj => {
-      assertAny(fn, sourceCodeInfo)
+      assertFunctionLike(fn, sourceCodeInfo)
       assertSeq(seq, sourceCodeInfo)
       const arr = Array.isArray(seq) ? seq : seq.split('')
 

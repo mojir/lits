@@ -1,5 +1,5 @@
 import type { Any, Coll, Obj, Seq } from '../interface'
-import type { RegularExpression } from '../parser/types'
+import type { FunctionLike, RegularExpression } from '../parser/types'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { getAssertionError } from '../utils/getAssertionError'
 import { REGEXP_SYMBOL } from '../utils/symbols'
@@ -95,4 +95,23 @@ export function assertStringOrRegularExpression(
 ): asserts value is string | RegularExpression {
   if (!isStringOrRegularExpression(value))
     throw getAssertionError('string or RegularExpression', value, sourceCodeInfo)
+}
+
+export function isFunctionLike(value: unknown): value is FunctionLike {
+  if (typeof value === 'number')
+    return true
+  if (isColl(value))
+    return true
+  if (isLitsFunction(value))
+    return true
+
+  return false
+}
+export function asFunctionLike(value: unknown, sourceCodeInfo?: SourceCodeInfo): FunctionLike {
+  assertFunctionLike(value, sourceCodeInfo)
+  return value
+}
+export function assertFunctionLike(value: unknown, sourceCodeInfo?: SourceCodeInfo): asserts value is FunctionLike {
+  if (!isFunctionLike(value))
+    throw getAssertionError('FunctionLike', value, sourceCodeInfo)
 }
