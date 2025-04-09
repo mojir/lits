@@ -3,9 +3,8 @@ import { AssertionError } from '../../../errors'
 import type { Any } from '../../../interface'
 import { compare, deepEqual } from '../../../utils'
 import type { BuiltinNormalExpressions } from '../../interface'
-import { assertLitsFunction } from '../../../typeGuards/litsFunction'
+import { asAny, assertFunctionLike } from '../../../typeGuards/lits'
 import { assertString, assertStringOrNumber } from '../../../typeGuards/string'
-import { asAny } from '../../../typeGuards/lits'
 
 export const assertNormalExpression: BuiltinNormalExpressions = {
   'assert': {
@@ -183,7 +182,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
         assertString(message, sourceCodeInfo)
       }
       message ??= ''
-      assertLitsFunction(func, sourceCodeInfo)
+      assertFunctionLike(func, sourceCodeInfo)
       try {
         executeFunction(func, [], contextStack, sourceCodeInfo)
       }
@@ -201,7 +200,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
       }
       message ??= ''
       assertString(throwMessage, sourceCodeInfo)
-      assertLitsFunction(func, sourceCodeInfo)
+      assertFunctionLike(func, sourceCodeInfo)
       try {
         executeFunction(func, [], contextStack, sourceCodeInfo)
       }
@@ -225,7 +224,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
         assertString(message, sourceCodeInfo)
       }
       message ??= ''
-      assertLitsFunction(func, sourceCodeInfo)
+      assertFunctionLike(func, sourceCodeInfo)
       try {
         executeFunction(func, [], contextStack, sourceCodeInfo)
       }

@@ -1,4 +1,4 @@
-import { assertLitsFunction } from '../../../../../../typeGuards/litsFunction'
+import { assertFunctionLike } from '../../../../../../typeGuards/lits'
 import { assertNumber } from '../../../../../../typeGuards/number'
 import { binomialCoefficient } from '../binomialCefficient'
 import type { SequenceNormalExpressions } from '.'
@@ -69,7 +69,7 @@ export const bernoulliNormalExpressions: Omit<SequenceNormalExpressions<'bernoul
   },
   'nth:bernoulli-take-while': {
     evaluate: ([fn], sourceCodeInfo, contextStack, { executeFunction }): number[] => {
-      assertLitsFunction(fn, sourceCodeInfo)
+      assertFunctionLike(fn, sourceCodeInfo)
       const bernoulli = generateBernoulli((value, index) => !!executeFunction(fn, [value, index], contextStack))
       return bernoulli
     },

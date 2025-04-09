@@ -3,13 +3,12 @@ import type { ExecuteFunction } from '../../../evaluator/interface'
 import type { Any, Arr, Coll, Obj } from '../../../interface'
 import type { SourceCodeInfo } from '../../../tokenizer/token'
 import { cloneColl, collHasKey, deepEqual, toAny, toNonNegativeInteger } from '../../../utils'
-import { assertLitsFunction } from '../../../typeGuards/litsFunction'
+import { asAny, asColl, assertAny, assertColl, assertFunctionLike, assertObj, isColl, isObj, isSeq } from '../../../typeGuards/lits'
 import type { BuiltinNormalExpressions } from '../../interface'
 import { assertArray } from '../../../typeGuards/array'
-import { asAny, asColl, assertAny, assertColl, assertObj, isColl, isObj, isSeq } from '../../../typeGuards/lits'
 import { assertNumber, isNumber } from '../../../typeGuards/number'
 import { asString, asStringOrNumber, assertString, assertStringOrNumber, isString, isStringOrNumber } from '../../../typeGuards/string'
-import type { LitsFunction } from '../../../parser/types'
+import type { FunctionLike } from '../../../parser/types'
 
 interface CollMeta {
   coll: Coll
@@ -65,7 +64,7 @@ function get(coll: Coll, key: string | number): Any | undefined {
 function update(
   coll: Coll,
   key: string | number,
-  fn: LitsFunction,
+  fn: FunctionLike,
   params: Arr,
   contextStack: ContextStack,
   executeFunction: ExecuteFunction,
@@ -252,7 +251,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([coll, key, fn, ...params], sourceCodeInfo, contextStack, { executeFunction }): Coll => {
       assertColl(coll, sourceCodeInfo)
       assertStringOrNumber(key, sourceCodeInfo)
-      assertLitsFunction(fn, sourceCodeInfo)
+      assertFunctionLike(fn, sourceCodeInfo)
       return update(coll, key, fn, params, contextStack, executeFunction, sourceCodeInfo)
     },
     paramCount: { min: 3 },
@@ -261,7 +260,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([originalColl, keys, fn, ...params], sourceCodeInfo, contextStack, { executeFunction }): Coll => {
       assertColl(originalColl, sourceCodeInfo)
       assertArray(keys, sourceCodeInfo)
-      assertLitsFunction(fn, sourceCodeInfo)
+      assertFunctionLike(fn, sourceCodeInfo)
 
       if (keys.length === 1) {
         assertStringOrNumber(keys[0], sourceCodeInfo)
@@ -348,7 +347,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
   'every?': {
     evaluate: ([coll, fn], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
       assertColl(coll, sourceCodeInfo)
-      assertLitsFunction(fn, sourceCodeInfo)
+      assertFunctionLike(fn, sourceCodeInfo)
 
       if (Array.isArray(coll))
         return coll.every(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo))
@@ -362,7 +361,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
   },
   'any?': {
     evaluate: ([coll, fn], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
-      assertLitsFunction(fn, sourceCodeInfo)
+      assertFunctionLike(fn, sourceCodeInfo)
       assertColl(coll, sourceCodeInfo)
 
       if (Array.isArray(coll))
@@ -377,7 +376,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
   },
   'not-any?': {
     evaluate: ([coll, fn], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
-      assertLitsFunction(fn, sourceCodeInfo)
+      assertFunctionLike(fn, sourceCodeInfo)
       assertColl(coll, sourceCodeInfo)
 
       if (Array.isArray(coll))
@@ -392,7 +391,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
   },
   'not-every?': {
     evaluate: ([coll, fn], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
-      assertLitsFunction(fn, sourceCodeInfo)
+      assertFunctionLike(fn, sourceCodeInfo)
       assertColl(coll, sourceCodeInfo)
 
       if (Array.isArray(coll))

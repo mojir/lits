@@ -22,7 +22,7 @@ import type {
 import { bindingTargetTypes } from '../parser/types'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { asNonUndefined, isUnknownRecord } from '../typeGuards'
-import { asAny } from '../typeGuards/lits'
+import { asAny, asFunctionLike } from '../typeGuards/lits'
 import { toAny } from '../utils'
 import { valueToString } from '../utils/debug/debugTools'
 import type { ContextStack } from './ContextStack'
@@ -139,7 +139,7 @@ export const functionExecutors: FunctionExecutors = {
     }
     return asAny(
       f.reduceRight((result: Arr, fun) => {
-        return [executeFunction(toAny(fun), result, contextStack, sourceCodeInfo)]
+        return [executeFunction(asFunctionLike(fun, sourceCodeInfo), result, contextStack, sourceCodeInfo)]
       }, params)[0],
       sourceCodeInfo,
     )
@@ -148,7 +148,7 @@ export const functionExecutors: FunctionExecutors = {
     return fn.value
   },
   Juxt: (fn: JuxtFunction, params, sourceCodeInfo, contextStack, { executeFunction }) => {
-    return fn.params.map(fun => executeFunction(toAny(fun), params, contextStack, sourceCodeInfo))
+    return fn.params.map(fun => executeFunction(asFunctionLike(fun, sourceCodeInfo), params, contextStack, sourceCodeInfo))
   },
   Complement: (fn: ComplementFunction, params, sourceCodeInfo, contextStack, { executeFunction }) => {
     return !executeFunction(fn.function, params, contextStack, sourceCodeInfo)
@@ -156,7 +156,7 @@ export const functionExecutors: FunctionExecutors = {
   EveryPred: (fn: EveryPredFunction, params, sourceCodeInfo, contextStack, { executeFunction }) => {
     for (const f of fn.params) {
       for (const param of params) {
-        const result = executeFunction(toAny(f), [param], contextStack, sourceCodeInfo)
+        const result = executeFunction(asFunctionLike(f, sourceCodeInfo), [param], contextStack, sourceCodeInfo)
         if (!result)
           return false
       }
@@ -166,7 +166,7 @@ export const functionExecutors: FunctionExecutors = {
   SomePred: (fn: SomePredFunction, params, sourceCodeInfo, contextStack, { executeFunction }) => {
     for (const f of fn.params) {
       for (const param of params) {
-        const result = executeFunction(toAny(f), [param], contextStack, sourceCodeInfo)
+        const result = executeFunction(asFunctionLike(f, sourceCodeInfo), [param], contextStack, sourceCodeInfo)
         if (result)
           return true
       }
@@ -175,7 +175,7 @@ export const functionExecutors: FunctionExecutors = {
   },
   Fnull: (fn: FNullFunction, params, sourceCodeInfo, contextStack, { executeFunction }) => {
     const fnulledParams = params.map((param, index) => (param === null ? toAny(fn.params[index]) : param))
-    return executeFunction(toAny(fn.function), fnulledParams, contextStack, sourceCodeInfo)
+    return executeFunction(asFunctionLike(fn.function, sourceCodeInfo), fnulledParams, contextStack, sourceCodeInfo)
   },
   Builtin: (fn: NormalBuiltinFunction, params, sourceCodeInfo, contextStack, { executeFunction }) => {
     const normalExpression = asNonUndefined(allNormalExpressions[fn.normalBuitinSymbolType], sourceCodeInfo)

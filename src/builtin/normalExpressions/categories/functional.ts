@@ -13,12 +13,12 @@ import { toAny } from '../../../utils'
 import { FUNCTION_SYMBOL } from '../../../utils/symbols'
 import type { BuiltinNormalExpressions } from '../../interface'
 import { assertArray } from '../../../typeGuards/array'
-import { assertAny } from '../../../typeGuards/lits'
+import { asFunctionLike, assertFunctionLike } from '../../../typeGuards/lits'
 
 export const functionalNormalExpression: BuiltinNormalExpressions = {
   'apply': {
     evaluate: ([func, ...params]: Arr, sourceCodeInfo, contextStack, { executeFunction }): Any => {
-      assertAny(func, sourceCodeInfo)
+      assertFunctionLike(func, sourceCodeInfo)
       const paramsLength = params.length
       const last = params[paramsLength - 1]
       assertArray(last, sourceCodeInfo)
@@ -41,7 +41,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         [FUNCTION_SYMBOL]: true,
         sourceCodeInfo,
         functionType: 'Partial',
-        function: toAny(fn),
+        function: asFunctionLike(fn, sourceCodeInfo),
         params,
       }
     },
@@ -90,7 +90,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         [FUNCTION_SYMBOL]: true,
         sourceCodeInfo,
         functionType: 'Complement',
-        function: toAny(fn),
+        function: asFunctionLike(fn, sourceCodeInfo),
       }
     },
     paramCount: 1,
@@ -126,7 +126,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         [FUNCTION_SYMBOL]: true,
         sourceCodeInfo,
         functionType: 'Fnull',
-        function: toAny(fn),
+        function: asFunctionLike(fn, sourceCodeInfo),
         params,
       }
     },

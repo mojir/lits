@@ -3,8 +3,7 @@ import type { Any } from '../../../../../interface'
 import type { SourceCodeInfo } from '../../../../../tokenizer/token'
 import { assertGrid, isGrid } from '../../../../../typeGuards/annotatedArrays'
 import { assertArray } from '../../../../../typeGuards/array'
-import { asAny, assertAny, isAny } from '../../../../../typeGuards/lits'
-import { asLitsFunction, assertLitsFunction } from '../../../../../typeGuards/litsFunction'
+import { asAny, asFunctionLike, assertAny, assertFunctionLike, isAny } from '../../../../../typeGuards/lits'
 import { assertNumber } from '../../../../../typeGuards/number'
 import type { BuiltinNormalExpressions } from '../../../../interface'
 import { fromArray } from './fromArray'
@@ -50,7 +49,7 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
   'table-every?': {
     evaluate: ([table, predicate], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
       assertGrid(table, sourceCodeInfo)
-      assertLitsFunction(predicate, sourceCodeInfo)
+      assertFunctionLike(predicate, sourceCodeInfo)
 
       for (const row of table) {
         for (const cell of row) {
@@ -66,7 +65,7 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
   't:some?': {
     evaluate: ([table, predicate], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
       assertGrid(table, sourceCodeInfo)
-      assertLitsFunction(predicate, sourceCodeInfo)
+      assertFunctionLike(predicate, sourceCodeInfo)
 
       for (const row of table) {
         for (const cell of row) {
@@ -82,7 +81,7 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
   't:every-row?': {
     evaluate: ([table, predicate], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
       assertGrid(table, sourceCodeInfo)
-      assertLitsFunction(predicate, sourceCodeInfo)
+      assertFunctionLike(predicate, sourceCodeInfo)
 
       for (const row of table) {
         if (!executeFunction(predicate, [row], contextStack, sourceCodeInfo)) {
@@ -96,7 +95,7 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
   't:some-row?': {
     evaluate: ([table, predicate], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
       assertGrid(table, sourceCodeInfo)
-      assertLitsFunction(predicate, sourceCodeInfo)
+      assertFunctionLike(predicate, sourceCodeInfo)
 
       for (const row of table) {
         if (executeFunction(predicate, [row], contextStack, sourceCodeInfo)) {
@@ -110,7 +109,7 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
   't:every-col?': {
     evaluate: ([table, predicate], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
       assertGrid(table, sourceCodeInfo)
-      assertLitsFunction(predicate, sourceCodeInfo)
+      assertFunctionLike(predicate, sourceCodeInfo)
 
       const transposed = transpose(table)
       for (const row of transposed) {
@@ -125,7 +124,7 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
   't:some-col?': {
     evaluate: ([table, predicate], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
       assertGrid(table, sourceCodeInfo)
-      assertLitsFunction(predicate, sourceCodeInfo)
+      assertFunctionLike(predicate, sourceCodeInfo)
 
       const transposed = transpose(table)
       for (const row of transposed) {
@@ -164,7 +163,7 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([rows, cols, generator], sourceCodeInfo, contextStack, { executeFunction }): Any[][] => {
       assertNumber(rows, sourceCodeInfo, { integer: true, positive: true })
       assertNumber(cols, sourceCodeInfo, { integer: true, positive: true })
-      assertLitsFunction(generator, sourceCodeInfo)
+      assertFunctionLike(generator, sourceCodeInfo)
 
       const result: Any[][] = []
       for (let i = 0; i < rows; i += 1) {
@@ -380,7 +379,7 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
   },
   't:map': {
     evaluate: (params, sourceCodeInfo, contextStack, { executeFunction }): Any[][] => {
-      const fn = asLitsFunction(params.at(-1))
+      const fn = asFunctionLike(params.at(-1), sourceCodeInfo)
       const matrices = params.slice(0, -1)
       assertGrid(matrices[0], sourceCodeInfo)
       const rows = matrices[0].length
@@ -415,7 +414,7 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
   't:map-with-indices': {
     evaluate: ([table, fn], sourceCodeInfo, contextStack, { executeFunction }): Any[][] => {
       assertGrid(table, sourceCodeInfo)
-      assertLitsFunction(fn, sourceCodeInfo)
+      assertFunctionLike(fn, sourceCodeInfo)
 
       const rows = table.length
       const cols = table[0]!.length
@@ -439,7 +438,7 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
   't:reduce': {
     evaluate: ([table, fn, initialValue], sourceCodeInfo, contextStack, { executeFunction }): Any => {
       assertGrid(table, sourceCodeInfo)
-      assertLitsFunction(fn, sourceCodeInfo)
+      assertFunctionLike(fn, sourceCodeInfo)
 
       let accumulator = asAny(initialValue)
       for (const row of table) {
@@ -454,7 +453,7 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
   't:reduce-with-indices': {
     evaluate: ([table, fn, initialValue], sourceCodeInfo, contextStack, { executeFunction }): Any => {
       assertGrid(table, sourceCodeInfo)
-      assertLitsFunction(fn, sourceCodeInfo)
+      assertFunctionLike(fn, sourceCodeInfo)
 
       let accumulator = asAny(initialValue)
       for (let i = 0; i < table.length; i += 1) {
@@ -469,7 +468,7 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
   't:reduce-rows': {
     evaluate: ([table, fn, initialValue], sourceCodeInfo, contextStack, { executeFunction }): Any[] => {
       assertGrid(table, sourceCodeInfo)
-      assertLitsFunction(fn, sourceCodeInfo)
+      assertFunctionLike(fn, sourceCodeInfo)
       assertAny(initialValue)
 
       const result: Any[] = []
@@ -487,7 +486,7 @@ export const tableNormalExpression: BuiltinNormalExpressions = {
   't:reduce-cols': {
     evaluate: ([table, fn, initialValue], sourceCodeInfo, contextStack, { executeFunction }): Any[] => {
       assertGrid(table, sourceCodeInfo)
-      assertLitsFunction(fn, sourceCodeInfo)
+      assertFunctionLike(fn, sourceCodeInfo)
       assertAny(initialValue)
 
       const result: Any[] = []

@@ -1,4 +1,4 @@
-import { assertLitsFunction } from '../../../../../../typeGuards/litsFunction'
+import { assertFunctionLike } from '../../../../../../typeGuards/lits'
 import { assertNumber } from '../../../../../../typeGuards/number'
 import type { SequenceNormalExpressions } from '.'
 
@@ -19,7 +19,7 @@ export const poligonalNormalExpressions: SequenceNormalExpressions<'polygonal'> 
   'nth:polygonal-take-while': {
     evaluate: ([sides, fn], sourceCodeInfo, contextStack, { executeFunction }): number[] => {
       assertNumber(sides, sourceCodeInfo, { integer: true, gte: 3 })
-      assertLitsFunction(fn, sourceCodeInfo)
+      assertFunctionLike(fn, sourceCodeInfo)
 
       const polygonal = []
       for (let i = 1; ; i += 1) {

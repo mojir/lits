@@ -832,7 +832,6 @@ describe('sequence functions', () => {
       expect(() => lits.run('sort-by("a")')).toThrow()
       expect(() => lits.run('sort-by({} "a")')).toThrow()
       expect(() => lits.run('sort-by(3 "a")')).toThrow()
-      expect(() => lits.run('sort-by("", "a", "")')).toThrow()
     })
   })
 

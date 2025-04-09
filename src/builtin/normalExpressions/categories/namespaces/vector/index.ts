@@ -1,6 +1,6 @@
 import { LitsError } from '../../../../../errors'
 import { assertNonEmptyVector, assertVector, isVector } from '../../../../../typeGuards/annotatedArrays'
-import { assertLitsFunction } from '../../../../../typeGuards/litsFunction'
+import { assertFunctionLike } from '../../../../../typeGuards/lits'
 import { assertNumber, isNumber } from '../../../../../typeGuards/number'
 import type { BuiltinNormalExpressions } from '../../../../interface'
 import { bincount } from './bincount'
@@ -426,7 +426,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
   'vec:generate': {
     evaluate: ([length, generator], sourceCodeInfo, contextStack, { executeFunction }): number[] => {
       assertNumber(length, sourceCodeInfo, { integer: true, nonNegative: true })
-      assertLitsFunction(generator, sourceCodeInfo)
+      assertFunctionLike(generator, sourceCodeInfo)
 
       return Array.from({ length }, (_, i) => {
         const value = executeFunction(generator, [i], contextStack, sourceCodeInfo)

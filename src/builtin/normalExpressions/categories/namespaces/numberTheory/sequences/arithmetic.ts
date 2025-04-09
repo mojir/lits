@@ -1,4 +1,4 @@
-import { assertLitsFunction } from '../../../../../../typeGuards/litsFunction'
+import { assertFunctionLike } from '../../../../../../typeGuards/lits'
 import { assertNumber } from '../../../../../../typeGuards/number'
 import type { SequenceNormalExpressions } from '.'
 
@@ -73,7 +73,7 @@ export const arithmeticNormalExpressions: SequenceNormalExpressions<'arithmetic'
     evaluate: ([start, step, fn], sourceCodeInfo, contextStack, { executeFunction }): number[] => {
       assertNumber(start, sourceCodeInfo, { finite: true })
       assertNumber(step, sourceCodeInfo, { finite: true })
-      assertLitsFunction(fn, sourceCodeInfo)
+      assertFunctionLike(fn, sourceCodeInfo)
 
       const arithmetic = []
       for (let i = 0; ; i += 1) {

@@ -2,7 +2,7 @@ import type { Arr } from '../../../interface'
 import { assertArray } from '../../../typeGuards/array'
 import { assertNumber } from '../../../typeGuards/number'
 import type { BuiltinNormalExpressions } from '../../interface'
-import { assertLitsFunction } from '../../../typeGuards/litsFunction'
+import { assertFunctionLike } from '../../../typeGuards/lits'
 
 export const arrayNormalExpression: BuiltinNormalExpressions = {
   range: {
@@ -72,7 +72,7 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
   mapcat: {
     evaluate: ([arr, fn], sourceCodeInfo, contextStack, { executeFunction }): Arr | string => {
       assertArray(arr, sourceCodeInfo)
-      assertLitsFunction(fn, sourceCodeInfo)
+      assertFunctionLike(fn, sourceCodeInfo)
       return arr.map(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo)).flat(1)
     },
     paramCount: 2,

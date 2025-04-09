@@ -1,7 +1,6 @@
 import type { Any, Arr, Obj } from '../../../interface'
 import { assertArray, assertStringArray } from '../../../typeGuards/array'
-import { assertObj } from '../../../typeGuards/lits'
-import { assertLitsFunction } from '../../../typeGuards/litsFunction'
+import { assertFunctionLike, assertObj } from '../../../typeGuards/lits'
 import { asString, assertString } from '../../../typeGuards/string'
 import { collHasKey, toAny } from '../../../utils'
 import type { BuiltinNormalExpressions } from '../../interface'
@@ -80,7 +79,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
       const rest = params.slice(1, -1)
 
       assertObj(first, sourceCodeInfo)
-      assertLitsFunction(fn, sourceCodeInfo)
+      assertFunctionLike(fn, sourceCodeInfo)
 
       return rest.reduce(
         (result: Obj, obj) => {

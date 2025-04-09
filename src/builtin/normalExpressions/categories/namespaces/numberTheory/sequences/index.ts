@@ -1,6 +1,6 @@
 import { LitsError } from '../../../../../../errors'
 import type { SourceCodeInfo } from '../../../../../../tokenizer/token'
-import { assertLitsFunction } from '../../../../../../typeGuards/litsFunction'
+import { assertFunctionLike } from '../../../../../../typeGuards/lits'
 import { assertNumber } from '../../../../../../typeGuards/number'
 import { assertString } from '../../../../../../typeGuards/string'
 import type { BuiltinNormalExpression, BuiltinNormalExpressions } from '../../../../../interface'
@@ -193,7 +193,7 @@ function createTakeWhileNormalExpression<Type extends number | string>(
   return {
     evaluate: (params, sourceCodeInfo, contextStack, { executeFunction }) => {
       const fn = params[0]
-      assertLitsFunction(fn, sourceCodeInfo)
+      assertFunctionLike(fn, sourceCodeInfo)
       const result = takeWhileFunction((value, index) => !!executeFunction(fn, [value, index], contextStack), sourceCodeInfo)
       if (typeof result[0] === 'number') {
         if (result.some(n => (n as number) > Number.MAX_SAFE_INTEGER)) {

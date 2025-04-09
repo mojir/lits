@@ -2188,14 +2188,6 @@ var Playground = (function (exports) {
             return false;
         return !!value[FUNCTION_SYMBOL];
     }
-    function asLitsFunction(value, sourceCodeInfo) {
-        assertLitsFunction(value, sourceCodeInfo);
-        return value;
-    }
-    function assertLitsFunction(value, sourceCodeInfo) {
-        if (!isLitsFunction(value))
-            throw getAssertionError('LitsFunction', value, sourceCodeInfo);
-    }
 
     function isAny(value) {
         // TODO weak test
@@ -2267,6 +2259,10 @@ var Playground = (function (exports) {
         if (isLitsFunction(value))
             return true;
         return false;
+    }
+    function asFunctionLike(value, sourceCodeInfo) {
+        assertFunctionLike(value, sourceCodeInfo);
+        return value;
     }
     function assertFunctionLike(value, sourceCodeInfo) {
         if (!isFunctionLike(value))
@@ -3187,7 +3183,7 @@ var Playground = (function (exports) {
                 var executeFunction = _b.executeFunction;
                 assertColl(coll, sourceCodeInfo);
                 assertStringOrNumber(key, sourceCodeInfo);
-                assertLitsFunction(fn, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
                 return update(coll, key, fn, params, contextStack, executeFunction, sourceCodeInfo);
             },
             paramCount: { min: 3 },
@@ -3198,7 +3194,7 @@ var Playground = (function (exports) {
                 var executeFunction = _b.executeFunction;
                 assertColl(originalColl, sourceCodeInfo);
                 assertArray(keys, sourceCodeInfo);
-                assertLitsFunction(fn, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
                 if (keys.length === 1) {
                     assertStringOrNumber(keys[0], sourceCodeInfo);
                     return update(originalColl, keys[0], fn, params, contextStack, executeFunction, sourceCodeInfo);
@@ -3264,7 +3260,7 @@ var Playground = (function (exports) {
                 var _c = __read(_a, 2), coll = _c[0], fn = _c[1];
                 var executeFunction = _b.executeFunction;
                 assertColl(coll, sourceCodeInfo);
-                assertLitsFunction(fn, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
                 if (Array.isArray(coll))
                     return coll.every(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
                 if (typeof coll === 'string')
@@ -3277,7 +3273,7 @@ var Playground = (function (exports) {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 2), coll = _c[0], fn = _c[1];
                 var executeFunction = _b.executeFunction;
-                assertLitsFunction(fn, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
                 assertColl(coll, sourceCodeInfo);
                 if (Array.isArray(coll))
                     return coll.some(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
@@ -3291,7 +3287,7 @@ var Playground = (function (exports) {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 2), coll = _c[0], fn = _c[1];
                 var executeFunction = _b.executeFunction;
-                assertLitsFunction(fn, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
                 assertColl(coll, sourceCodeInfo);
                 if (Array.isArray(coll))
                     return !coll.some(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
@@ -3305,7 +3301,7 @@ var Playground = (function (exports) {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 2), coll = _c[0], fn = _c[1];
                 var executeFunction = _b.executeFunction;
-                assertLitsFunction(fn, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
                 assertColl(coll, sourceCodeInfo);
                 if (Array.isArray(coll))
                     return !coll.every(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
@@ -3381,7 +3377,7 @@ var Playground = (function (exports) {
                 var _c = __read(_a, 2), arr = _c[0], fn = _c[1];
                 var executeFunction = _b.executeFunction;
                 assertArray(arr, sourceCodeInfo);
-                assertLitsFunction(fn, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
                 return arr.map(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); }).flat(1);
             },
             paramCount: 2,
@@ -3412,7 +3408,7 @@ var Playground = (function (exports) {
                 var _c = __read(_a, 2), seq = _c[0], fn = _c[1];
                 var executeFunction = _b.executeFunction;
                 assertSeq(seq, sourceCodeInfo);
-                assertLitsFunction(fn, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
                 if (Array.isArray(seq)) {
                     var result = seq.filter(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
                     return result;
@@ -3449,7 +3445,7 @@ var Playground = (function (exports) {
         'map': {
             evaluate: function (params, sourceCodeInfo, contextStack, _a) {
                 var executeFunction = _a.executeFunction;
-                var fn = asLitsFunction(params.at(-1));
+                var fn = asFunctionLike(params.at(-1), sourceCodeInfo);
                 var seqs = params.slice(0, -1);
                 assertSeq(seqs[0], sourceCodeInfo);
                 var isString = typeof seqs[0] === 'string';
@@ -3494,7 +3490,7 @@ var Playground = (function (exports) {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 2), seq = _c[0], fn = _c[1];
                 var executeFunction = _b.executeFunction;
-                assertLitsFunction(fn, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
                 if (seq === null)
                     return null;
                 assertSeq(seq, sourceCodeInfo);
@@ -3566,7 +3562,7 @@ var Playground = (function (exports) {
                 var executeFunction = _a.executeFunction;
                 var _b = __read(params, 2), seq = _b[0], fn = _b[1];
                 assertSeq(seq, sourceCodeInfo);
-                assertLitsFunction(fn, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
                 if (params.length === 2) {
                     if (seq.length === 0)
                         return [executeFunction(fn, [], contextStack, sourceCodeInfo)];
@@ -3627,7 +3623,7 @@ var Playground = (function (exports) {
                 var executeFunction = _a.executeFunction;
                 var _b = __read(params, 2), seq = _b[0], fn = _b[1];
                 assertSeq(seq, sourceCodeInfo);
-                assertLitsFunction(fn, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
                 if (params.length === 2) {
                     if (seq.length === 0)
                         return executeFunction(fn, [], contextStack, sourceCodeInfo);
@@ -3673,7 +3669,7 @@ var Playground = (function (exports) {
                 var executeFunction = _a.executeFunction;
                 var _b = __read(params, 2), seq = _b[0], fn = _b[1];
                 assertSeq(seq, sourceCodeInfo);
-                assertLitsFunction(fn, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
                 if (params.length === 2) {
                     if (seq.length === 0)
                         return executeFunction(fn, [], contextStack, sourceCodeInfo);
@@ -3817,7 +3813,7 @@ var Playground = (function (exports) {
                 var _c;
                 var _d = __read(_a, 2), seq = _d[0], fn = _d[1];
                 var executeFunction = _b.executeFunction;
-                assertLitsFunction(fn, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
                 if (seq === null)
                     return null;
                 assertSeq(seq, sourceCodeInfo);
@@ -3842,7 +3838,7 @@ var Playground = (function (exports) {
                         result_1.sort(function (a, b) { return compare(a, b, sourceCodeInfo); });
                     }
                     else {
-                        assertLitsFunction(comparer, sourceCodeInfo);
+                        assertFunctionLike(comparer, sourceCodeInfo);
                         result_1.sort(function (a, b) {
                             var compareValue = executeFunction(comparer, [a, b], contextStack, sourceCodeInfo);
                             assertNumber(compareValue, sourceCodeInfo, { finite: true });
@@ -3861,7 +3857,7 @@ var Playground = (function (exports) {
                 }
                 else {
                     result.sort(function (a, b) {
-                        assertLitsFunction(comparer, sourceCodeInfo);
+                        assertFunctionLike(comparer, sourceCodeInfo);
                         var compareValue = executeFunction(comparer, [a, b], contextStack, sourceCodeInfo);
                         assertNumber(compareValue, sourceCodeInfo, { finite: true });
                         return compareValue;
@@ -3877,7 +3873,7 @@ var Playground = (function (exports) {
                 var _b = __read(params, 2), seq = _b[0], keyfn = _b[1];
                 var defaultComparer = params.length === 2;
                 assertSeq(seq, sourceCodeInfo);
-                assertAny(keyfn, sourceCodeInfo);
+                assertFunctionLike(keyfn, sourceCodeInfo);
                 var comparer = defaultComparer ? null : params[2];
                 if (typeof seq === 'string') {
                     var result_2 = seq.split('');
@@ -3891,7 +3887,7 @@ var Playground = (function (exports) {
                         });
                     }
                     else {
-                        assertLitsFunction(comparer, sourceCodeInfo);
+                        assertFunctionLike(comparer, sourceCodeInfo);
                         result_2.sort(function (a, b) {
                             var aKey = executeFunction(keyfn, [a], contextStack, sourceCodeInfo);
                             var bKey = executeFunction(keyfn, [b], contextStack, sourceCodeInfo);
@@ -3913,7 +3909,7 @@ var Playground = (function (exports) {
                     });
                 }
                 else {
-                    assertLitsFunction(comparer, sourceCodeInfo);
+                    assertFunctionLike(comparer, sourceCodeInfo);
                     result.sort(function (a, b) {
                         var aKey = executeFunction(keyfn, [a], contextStack, sourceCodeInfo);
                         var bKey = executeFunction(keyfn, [b], contextStack, sourceCodeInfo);
@@ -3953,7 +3949,7 @@ var Playground = (function (exports) {
                 var _d = __read(_a, 2), seq = _d[0], fn = _d[1];
                 var executeFunction = _b.executeFunction;
                 assertSeq(seq, sourceCodeInfo);
-                assertLitsFunction(fn, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
                 var result = [];
                 try {
                     for (var seq_1 = __values(seq), seq_1_1 = seq_1.next(); !seq_1_1.done; seq_1_1 = seq_1.next()) {
@@ -4001,7 +3997,7 @@ var Playground = (function (exports) {
                 var _c = __read(_a, 2), seq = _c[0], fn = _c[1];
                 var executeFunction = _b.executeFunction;
                 assertSeq(seq, sourceCodeInfo);
-                assertLitsFunction(fn, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
                 if (Array.isArray(seq)) {
                     var from_1 = seq.findIndex(function (elem) { return !executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
                     return seq.slice(from_1);
@@ -4062,7 +4058,7 @@ var Playground = (function (exports) {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 2), input = _c[0], fn = _c[1];
                 var executeFunction = _b.executeFunction;
-                assertLitsFunction(fn, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
                 assertSeq(input, sourceCodeInfo);
                 if (Array.isArray(input))
                     return input.filter(function (elem) { return !executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
@@ -4102,7 +4098,7 @@ var Playground = (function (exports) {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 2), seq = _c[0], fn = _c[1];
                 var executeFunction = _b.executeFunction;
-                assertLitsFunction(fn, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
                 assertSeq(seq, sourceCodeInfo);
                 var seqIsArray = Array.isArray(seq);
                 var arr = seqIsArray ? seq : seq.split('');
@@ -4172,7 +4168,7 @@ var Playground = (function (exports) {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 2), seq = _c[0], fn = _c[1];
                 var executeFunction = _b.executeFunction;
-                assertLitsFunction(fn, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
                 assertSeq(seq, sourceCodeInfo);
                 var isStringSeq = typeof seq === 'string';
                 var oldValue;
@@ -5026,7 +5022,7 @@ var Playground = (function (exports) {
                     assertString(message, sourceCodeInfo);
                 }
                 message !== null && message !== void 0 ? message : (message = '');
-                assertLitsFunction(func, sourceCodeInfo);
+                assertFunctionLike(func, sourceCodeInfo);
                 try {
                     executeFunction(func, [], contextStack, sourceCodeInfo);
                 }
@@ -5046,7 +5042,7 @@ var Playground = (function (exports) {
                 }
                 message !== null && message !== void 0 ? message : (message = '');
                 assertString(throwMessage, sourceCodeInfo);
-                assertLitsFunction(func, sourceCodeInfo);
+                assertFunctionLike(func, sourceCodeInfo);
                 try {
                     executeFunction(func, [], contextStack, sourceCodeInfo);
                 }
@@ -5069,7 +5065,7 @@ var Playground = (function (exports) {
                     assertString(message, sourceCodeInfo);
                 }
                 message !== null && message !== void 0 ? message : (message = '');
-                assertLitsFunction(func, sourceCodeInfo);
+                assertFunctionLike(func, sourceCodeInfo);
                 try {
                     executeFunction(func, [], contextStack, sourceCodeInfo);
                 }
@@ -5149,7 +5145,7 @@ var Playground = (function (exports) {
                 var fn = params.at(-1);
                 var rest = params.slice(1, -1);
                 assertObj(first, sourceCodeInfo);
-                assertLitsFunction(fn, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
                 return rest.reduce(function (result, obj) {
                     assertObj(obj, sourceCodeInfo);
                     Object.entries(obj).forEach(function (entry) {
@@ -5719,7 +5715,7 @@ var Playground = (function (exports) {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a), func = _c[0], params = _c.slice(1);
                 var executeFunction = _b.executeFunction;
-                assertAny(func, sourceCodeInfo);
+                assertFunctionLike(func, sourceCodeInfo);
                 var paramsLength = params.length;
                 var last = params[paramsLength - 1];
                 assertArray(last, sourceCodeInfo);
@@ -5743,7 +5739,7 @@ var Playground = (function (exports) {
                     _b[FUNCTION_SYMBOL] = true,
                     _b.sourceCodeInfo = sourceCodeInfo,
                     _b.functionType = 'Partial',
-                    _b.function = toAny(fn),
+                    _b.function = asFunctionLike(fn, sourceCodeInfo),
                     _b.params = params,
                     _b;
             },
@@ -5794,7 +5790,7 @@ var Playground = (function (exports) {
                     _b[FUNCTION_SYMBOL] = true,
                     _b.sourceCodeInfo = sourceCodeInfo,
                     _b.functionType = 'Complement',
-                    _b.function = toAny(fn),
+                    _b.function = asFunctionLike(fn, sourceCodeInfo),
                     _b;
             },
             paramCount: 1,
@@ -5831,7 +5827,7 @@ var Playground = (function (exports) {
                     _b[FUNCTION_SYMBOL] = true,
                     _b.sourceCodeInfo = sourceCodeInfo,
                     _b.functionType = 'Fnull',
-                    _b.function = toAny(fn),
+                    _b.function = asFunctionLike(fn, sourceCodeInfo),
                     _b.params = params,
                     _b;
             },
@@ -5930,7 +5926,7 @@ var Playground = (function (exports) {
                 var _e = __read(_a, 2), table = _e[0], predicate = _e[1];
                 var executeFunction = _b.executeFunction;
                 assertGrid(table, sourceCodeInfo);
-                assertLitsFunction(predicate, sourceCodeInfo);
+                assertFunctionLike(predicate, sourceCodeInfo);
                 try {
                     for (var table_1 = __values(table), table_1_1 = table_1.next(); !table_1_1.done; table_1_1 = table_1.next()) {
                         var row = table_1_1.value;
@@ -5968,7 +5964,7 @@ var Playground = (function (exports) {
                 var _e = __read(_a, 2), table = _e[0], predicate = _e[1];
                 var executeFunction = _b.executeFunction;
                 assertGrid(table, sourceCodeInfo);
-                assertLitsFunction(predicate, sourceCodeInfo);
+                assertFunctionLike(predicate, sourceCodeInfo);
                 try {
                     for (var table_2 = __values(table), table_2_1 = table_2.next(); !table_2_1.done; table_2_1 = table_2.next()) {
                         var row = table_2_1.value;
@@ -6006,7 +6002,7 @@ var Playground = (function (exports) {
                 var _d = __read(_a, 2), table = _d[0], predicate = _d[1];
                 var executeFunction = _b.executeFunction;
                 assertGrid(table, sourceCodeInfo);
-                assertLitsFunction(predicate, sourceCodeInfo);
+                assertFunctionLike(predicate, sourceCodeInfo);
                 try {
                     for (var table_3 = __values(table), table_3_1 = table_3.next(); !table_3_1.done; table_3_1 = table_3.next()) {
                         var row = table_3_1.value;
@@ -6032,7 +6028,7 @@ var Playground = (function (exports) {
                 var _d = __read(_a, 2), table = _d[0], predicate = _d[1];
                 var executeFunction = _b.executeFunction;
                 assertGrid(table, sourceCodeInfo);
-                assertLitsFunction(predicate, sourceCodeInfo);
+                assertFunctionLike(predicate, sourceCodeInfo);
                 try {
                     for (var table_4 = __values(table), table_4_1 = table_4.next(); !table_4_1.done; table_4_1 = table_4.next()) {
                         var row = table_4_1.value;
@@ -6058,7 +6054,7 @@ var Playground = (function (exports) {
                 var _d = __read(_a, 2), table = _d[0], predicate = _d[1];
                 var executeFunction = _b.executeFunction;
                 assertGrid(table, sourceCodeInfo);
-                assertLitsFunction(predicate, sourceCodeInfo);
+                assertFunctionLike(predicate, sourceCodeInfo);
                 var transposed = transpose(table);
                 try {
                     for (var transposed_1 = __values(transposed), transposed_1_1 = transposed_1.next(); !transposed_1_1.done; transposed_1_1 = transposed_1.next()) {
@@ -6085,7 +6081,7 @@ var Playground = (function (exports) {
                 var _d = __read(_a, 2), table = _d[0], predicate = _d[1];
                 var executeFunction = _b.executeFunction;
                 assertGrid(table, sourceCodeInfo);
-                assertLitsFunction(predicate, sourceCodeInfo);
+                assertFunctionLike(predicate, sourceCodeInfo);
                 var transposed = transpose(table);
                 try {
                     for (var transposed_2 = __values(transposed), transposed_2_1 = transposed_2.next(); !transposed_2_1.done; transposed_2_1 = transposed_2.next()) {
@@ -6138,7 +6134,7 @@ var Playground = (function (exports) {
                 var executeFunction = _b.executeFunction;
                 assertNumber(rows, sourceCodeInfo, { integer: true, positive: true });
                 assertNumber(cols, sourceCodeInfo, { integer: true, positive: true });
-                assertLitsFunction(generator, sourceCodeInfo);
+                assertFunctionLike(generator, sourceCodeInfo);
                 var result = [];
                 for (var i = 0; i < rows; i += 1) {
                     var row = [];
@@ -6351,7 +6347,7 @@ var Playground = (function (exports) {
         't:map': {
             evaluate: function (params, sourceCodeInfo, contextStack, _a) {
                 var executeFunction = _a.executeFunction;
-                var fn = asLitsFunction(params.at(-1));
+                var fn = asFunctionLike(params.at(-1), sourceCodeInfo);
                 var matrices = params.slice(0, -1);
                 assertGrid(matrices[0], sourceCodeInfo);
                 var rows = matrices[0].length;
@@ -6393,7 +6389,7 @@ var Playground = (function (exports) {
                 var _c = __read(_a, 2), table = _c[0], fn = _c[1];
                 var executeFunction = _b.executeFunction;
                 assertGrid(table, sourceCodeInfo);
-                assertLitsFunction(fn, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
                 var rows = table.length;
                 var cols = table[0].length;
                 var result = [];
@@ -6418,7 +6414,7 @@ var Playground = (function (exports) {
                 var _e = __read(_a, 3), table = _e[0], fn = _e[1], initialValue = _e[2];
                 var executeFunction = _b.executeFunction;
                 assertGrid(table, sourceCodeInfo);
-                assertLitsFunction(fn, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
                 var accumulator = asAny(initialValue);
                 try {
                     for (var table_5 = __values(table), table_5_1 = table_5.next(); !table_5_1.done; table_5_1 = table_5.next()) {
@@ -6454,7 +6450,7 @@ var Playground = (function (exports) {
                 var _c = __read(_a, 3), table = _c[0], fn = _c[1], initialValue = _c[2];
                 var executeFunction = _b.executeFunction;
                 assertGrid(table, sourceCodeInfo);
-                assertLitsFunction(fn, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
                 var accumulator = asAny(initialValue);
                 for (var i = 0; i < table.length; i += 1) {
                     for (var j = 0; j < table[i].length; j += 1) {
@@ -6471,7 +6467,7 @@ var Playground = (function (exports) {
                 var _e = __read(_a, 3), table = _e[0], fn = _e[1], initialValue = _e[2];
                 var executeFunction = _b.executeFunction;
                 assertGrid(table, sourceCodeInfo);
-                assertLitsFunction(fn, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
                 assertAny(initialValue);
                 var result = [];
                 try {
@@ -6510,7 +6506,7 @@ var Playground = (function (exports) {
                 var _c = __read(_a, 3), table = _c[0], fn = _c[1], initialValue = _c[2];
                 var executeFunction = _b.executeFunction;
                 assertGrid(table, sourceCodeInfo);
-                assertLitsFunction(fn, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
                 assertAny(initialValue);
                 var result = [];
                 for (var j = 0; j < table[0].length; j += 1) {
@@ -7413,7 +7409,7 @@ var Playground = (function (exports) {
                 var _c = __read(_a, 2), length = _c[0], generator = _c[1];
                 var executeFunction = _b.executeFunction;
                 assertNumber(length, sourceCodeInfo, { integer: true, nonNegative: true });
-                assertLitsFunction(generator, sourceCodeInfo);
+                assertFunctionLike(generator, sourceCodeInfo);
                 return Array.from({ length: length }, function (_, i) {
                     var value = executeFunction(generator, [i], contextStack, sourceCodeInfo);
                     assertNumber(value, sourceCodeInfo, { finite: true });
@@ -9803,7 +9799,7 @@ var Playground = (function (exports) {
                 var executeFunction = _b.executeFunction;
                 assertNumber(start, sourceCodeInfo, { finite: true });
                 assertNumber(step, sourceCodeInfo, { finite: true });
-                assertLitsFunction(fn, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
                 var arithmetic = [];
                 for (var i = 0;; i += 1) {
                     var value = start + i * step;
@@ -9925,7 +9921,7 @@ var Playground = (function (exports) {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 1), fn = _c[0];
                 var executeFunction = _b.executeFunction;
-                assertLitsFunction(fn, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
                 var bernoulli = generateBernoulli(function (value, index) { return !!executeFunction(fn, [value, index], contextStack); });
                 return bernoulli;
             },
@@ -10251,7 +10247,7 @@ var Playground = (function (exports) {
                 var executeFunction = _b.executeFunction;
                 assertNumber(start, sourceCodeInfo, { finite: true });
                 assertNumber(ratio, sourceCodeInfo, { finite: true });
-                assertLitsFunction(fn, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
                 var geometric = [];
                 for (var i = 0;; i += 1) {
                     var value = start * Math.pow(ratio, i);
@@ -10973,7 +10969,7 @@ var Playground = (function (exports) {
                 var _c = __read(_a, 2), sides = _c[0], fn = _c[1];
                 var executeFunction = _b.executeFunction;
                 assertNumber(sides, sourceCodeInfo, { integer: true, gte: 3 });
-                assertLitsFunction(fn, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
                 var polygonal = [];
                 for (var i = 1;; i += 1) {
                     var value = (i * i * (sides - 2) - i * (sides - 4)) / 2;
@@ -11307,7 +11303,7 @@ var Playground = (function (exports) {
             evaluate: function (params, sourceCodeInfo, contextStack, _a) {
                 var executeFunction = _a.executeFunction;
                 var fn = params[0];
-                assertLitsFunction(fn, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
                 var result = takeWhileFunction(function (value, index) { return !!executeFunction(fn, [value, index], contextStack); }, sourceCodeInfo);
                 if (typeof result[0] === 'number') {
                     if (result.some(function (n) { return n > Number.MAX_SAFE_INTEGER; })) {
@@ -13034,7 +13030,7 @@ var Playground = (function (exports) {
                 return asAny(params[0], sourceCodeInfo);
             }
             return asAny(f.reduceRight(function (result, fun) {
-                return [executeFunction(toAny(fun), result, contextStack, sourceCodeInfo)];
+                return [executeFunction(asFunctionLike(fun, sourceCodeInfo), result, contextStack, sourceCodeInfo)];
             }, params)[0], sourceCodeInfo);
         },
         Constantly: function (fn) {
@@ -13042,7 +13038,7 @@ var Playground = (function (exports) {
         },
         Juxt: function (fn, params, sourceCodeInfo, contextStack, _a) {
             var executeFunction = _a.executeFunction;
-            return fn.params.map(function (fun) { return executeFunction(toAny(fun), params, contextStack, sourceCodeInfo); });
+            return fn.params.map(function (fun) { return executeFunction(asFunctionLike(fun, sourceCodeInfo), params, contextStack, sourceCodeInfo); });
         },
         Complement: function (fn, params, sourceCodeInfo, contextStack, _a) {
             var executeFunction = _a.executeFunction;
@@ -13057,7 +13053,7 @@ var Playground = (function (exports) {
                     try {
                         for (var params_1 = (e_3 = void 0, __values(params)), params_1_1 = params_1.next(); !params_1_1.done; params_1_1 = params_1.next()) {
                             var param = params_1_1.value;
-                            var result = executeFunction(toAny(f), [param], contextStack, sourceCodeInfo);
+                            var result = executeFunction(asFunctionLike(f, sourceCodeInfo), [param], contextStack, sourceCodeInfo);
                             if (!result)
                                 return false;
                         }
@@ -13089,7 +13085,7 @@ var Playground = (function (exports) {
                     try {
                         for (var params_2 = (e_5 = void 0, __values(params)), params_2_1 = params_2.next(); !params_2_1.done; params_2_1 = params_2.next()) {
                             var param = params_2_1.value;
-                            var result = executeFunction(toAny(f), [param], contextStack, sourceCodeInfo);
+                            var result = executeFunction(asFunctionLike(f, sourceCodeInfo), [param], contextStack, sourceCodeInfo);
                             if (result)
                                 return true;
                         }
@@ -13115,7 +13111,7 @@ var Playground = (function (exports) {
         Fnull: function (fn, params, sourceCodeInfo, contextStack, _a) {
             var executeFunction = _a.executeFunction;
             var fnulledParams = params.map(function (param, index) { return (param === null ? toAny(fn.params[index]) : param); });
-            return executeFunction(toAny(fn.function), fnulledParams, contextStack, sourceCodeInfo);
+            return executeFunction(asFunctionLike(fn.function, sourceCodeInfo), fnulledParams, contextStack, sourceCodeInfo);
         },
         Builtin: function (fn, params, sourceCodeInfo, contextStack, _a) {
             var executeFunction = _a.executeFunction;
@@ -13212,14 +13208,14 @@ var Playground = (function (exports) {
             else {
                 var fn = contextStack.getValue(nameSymbol[1]);
                 if (fn !== undefined) {
-                    return executeFunction(asAny(fn), params, contextStack, sourceCodeInfo);
+                    return executeFunction(asFunctionLike(fn, sourceCodeInfo), params, contextStack, sourceCodeInfo);
                 }
                 throw new UndefinedSymbolError(nameSymbol[1], node[2]);
             }
         }
         else {
             var fnNode = node[1][0];
-            var fn = evaluateNode(fnNode, contextStack);
+            var fn = asFunctionLike(evaluateNode(fnNode, contextStack), sourceCodeInfo);
             return executeFunction(fn, params, contextStack, sourceCodeInfo);
         }
     }

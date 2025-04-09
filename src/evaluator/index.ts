@@ -6,6 +6,7 @@ import { getUndefinedSymbols } from '../getUndefinedSymbols'
 import type { Any, Arr, Obj } from '../interface'
 import type {
   Ast,
+  FunctionLike,
   Node,
   NormalExpressionNode,
   NumberNode,
@@ -19,7 +20,7 @@ import type { SourceCodeInfo } from '../tokenizer/token'
 import { asNonUndefined } from '../typeGuards'
 import { annotate } from '../typeGuards/annotatedArrays'
 import { isNormalBuiltinSymbolNode, isNormalExpressionNodeWithName, isSpreadNode } from '../typeGuards/astNode'
-import { asAny, assertSeq, isObj } from '../typeGuards/lits'
+import { asFunctionLike, assertSeq, isObj } from '../typeGuards/lits'
 import { isLitsFunction } from '../typeGuards/litsFunction'
 import { assertNumber, isNumber } from '../typeGuards/number'
 import { assertString } from '../typeGuards/string'
@@ -103,19 +104,19 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
     else {
       const fn = contextStack.getValue(nameSymbol[1])
       if (fn !== undefined) {
-        return executeFunction(asAny(fn), params, contextStack, sourceCodeInfo)
+        return executeFunction(asFunctionLike(fn, sourceCodeInfo), params, contextStack, sourceCodeInfo)
       }
       throw new UndefinedSymbolError(nameSymbol[1], node[2])
     }
   }
   else {
     const fnNode: Node = node[1][0]
-    const fn = evaluateNode(fnNode, contextStack)
+    const fn = asFunctionLike(evaluateNode(fnNode, contextStack), sourceCodeInfo)
     return executeFunction(fn, params, contextStack, sourceCodeInfo)
   }
 }
 
-function executeFunction(fn: Any, params: Arr, contextStack: ContextStack, sourceCodeInfo?: SourceCodeInfo): Any {
+function executeFunction(fn: FunctionLike, params: Arr, contextStack: ContextStack, sourceCodeInfo?: SourceCodeInfo): Any {
   if (isLitsFunction(fn))
     return functionExecutors[fn.functionType](fn, params, sourceCodeInfo, contextStack, { evaluateNode, executeFunction })
 

@@ -41,7 +41,7 @@ export interface UserDefinedFunction extends GenericLitsFunction {
 
 export interface PartialFunction extends GenericLitsFunction {
   functionType: 'Partial'
-  function: Any
+  function: FunctionLike
   params: Arr
 }
 
@@ -62,7 +62,7 @@ export interface JuxtFunction extends GenericLitsFunction {
 
 export interface ComplementFunction extends GenericLitsFunction {
   functionType: 'Complement'
-  function: Any
+  function: FunctionLike
 }
 
 export interface EveryPredFunction extends GenericLitsFunction {
@@ -77,7 +77,7 @@ export interface SomePredFunction extends GenericLitsFunction {
 
 export interface FNullFunction extends GenericLitsFunction {
   functionType: 'Fnull'
-  function: Any
+  function: FunctionLike
   params: Arr
 }
 
