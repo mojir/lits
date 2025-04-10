@@ -14,6 +14,7 @@ import { stringNormalExpression } from './categories/string'
 import { functionalNormalExpression } from './categories/functional'
 import { tableNormalExpression } from './categories/namespaces/table'
 import { vectorNormalExpression } from './categories/namespaces/vector'
+import { linearAlgebraNormalExpression } from './categories/namespaces/linearAlgebra'
 import { matrixNormalExpression } from './categories/namespaces/matrix'
 import { combinatoricalNormalExpression } from './categories/namespaces/numberTheory'
 
@@ -31,6 +32,7 @@ const expressions: BuiltinNormalExpressions = {
   ...stringNormalExpression,
   ...functionalNormalExpression,
   ...vectorNormalExpression,
+  ...linearAlgebraNormalExpression,
   ...tableNormalExpression,
   ...matrixNormalExpression,
   ...combinatoricalNormalExpression,

@@ -2505,9 +2505,7 @@ var Playground = (function (exports) {
         if (value === Number.NEGATIVE_INFINITY)
             return "".concat(Number.NEGATIVE_INFINITY);
         if (typeof value === 'number') {
-            var pretty = prettyPi(value, { spaceSeparation: true });
-            var decimal = "".concat(value);
-            return pretty === decimal ? pretty : "".concat(pretty, "   (").concat(decimal, ")");
+            return prettyPi(value);
         }
         if (isRegularExpression(value))
             return "/".concat(value.s, "/").concat(value.f);
@@ -2516,17 +2514,24 @@ var Playground = (function (exports) {
         if (Array.isArray(value) && isMatrix(value))
             return stringifyMatrix(value);
         if (Array.isArray(value) && isVector(value)) {
-            return "[\n  ".concat(value.map(function (cell) {
-                var pretty = prettyPi(cell, { spaceSeparation: true });
-                var decimal = "".concat(cell);
-                return pretty === decimal ? pretty : "".concat(pretty, "   (").concat(decimal, ")");
-            }).join(',\n  '), "\n]");
+            if (value.length === 0)
+                return '[]';
+            if (value.length > 8) {
+                return "[\n  ".concat(value.map(function (cell) {
+                    return prettyPi(cell);
+                }).join(',\n  '), "\n]");
+            }
+            else {
+                return "[".concat(value.map(function (cell) {
+                    return prettyPi(cell);
+                }).join(', '), "]");
+            }
         }
         return JSON.stringify(value, null, 2);
     }
     function prettyIfNumber(value) {
         if (typeof value === 'number') {
-            return prettyPi(value, { spaceSeparation: true });
+            return prettyPi(value);
         }
         return "".concat(value);
     }
@@ -4293,165 +4298,445 @@ var Playground = (function (exports) {
         return isStringSeq ? result.map(function (x) { return x.join(''); }) : result;
     }
 
+    function getNumberVectorOrMatrixOperation(params, sourceCodeInfo) {
+        var e_1, _a, e_2, _b, e_3, _c;
+        var hasVector = false;
+        var hasMatrix = false;
+        try {
+            for (var params_1 = __values(params), params_1_1 = params_1.next(); !params_1_1.done; params_1_1 = params_1.next()) {
+                var param = params_1_1.value;
+                if (isVector(param)) {
+                    hasVector = true;
+                }
+                else if (isMatrix(param)) {
+                    hasMatrix = true;
+                }
+                else if (!isNumber(param)) {
+                    throw new LitsError("Invalid parameter type: ".concat(typeof param), sourceCodeInfo);
+                }
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (params_1_1 && !params_1_1.done && (_a = params_1.return)) _a.call(params_1);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        if (hasMatrix) {
+            if (hasVector) {
+                throw new LitsError('Cannot mix vector and matrix types', sourceCodeInfo);
+            }
+            var rows_1 = null;
+            var cold_1 = null;
+            try {
+                for (var params_2 = __values(params), params_2_1 = params_2.next(); !params_2_1.done; params_2_1 = params_2.next()) {
+                    var param = params_2_1.value;
+                    if (isMatrix(param)) {
+                        if (rows_1 === null) {
+                            rows_1 = param.length;
+                            cold_1 = param[0].length;
+                        }
+                        else {
+                            if (param.length !== rows_1 || param[0].length !== cold_1) {
+                                throw new LitsError('Matrix dimensions do not match', sourceCodeInfo);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (e_2_1) { e_2 = { error: e_2_1 }; }
+            finally {
+                try {
+                    if (params_2_1 && !params_2_1.done && (_b = params_2.return)) _b.call(params_2);
+                }
+                finally { if (e_2) throw e_2.error; }
+            }
+            var matrices = params.map(function (param) {
+                if (isMatrix(param)) {
+                    return param;
+                }
+                return Array.from({ length: rows_1 }, function () { return Array.from({ length: cold_1 }, function () { return param; }); });
+            });
+            return ['matrix', matrices];
+        }
+        if (hasVector) {
+            var length_1 = null;
+            try {
+                for (var params_3 = __values(params), params_3_1 = params_3.next(); !params_3_1.done; params_3_1 = params_3.next()) {
+                    var param = params_3_1.value;
+                    if (isVector(param)) {
+                        if (length_1 === null) {
+                            length_1 = param.length;
+                        }
+                        else {
+                            if (param.length !== length_1) {
+                                throw new LitsError('Vector lengths do not match', sourceCodeInfo);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (e_3_1) { e_3 = { error: e_3_1 }; }
+            finally {
+                try {
+                    if (params_3_1 && !params_3_1.done && (_c = params_3.return)) _c.call(params_3);
+                }
+                finally { if (e_3) throw e_3.error; }
+            }
+            var vectors = params.map(function (param) {
+                if (isVector(param)) {
+                    return param;
+                }
+                return Array.from({ length: length_1 }, function () { return param; });
+            });
+            return ['vector', vectors];
+        }
+        return ['number', params];
+    }
     var mathNormalExpression = {
         'inc': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), first = _b[0];
-                assertNumber(first, sourceCodeInfo);
-                return first + 1;
+            evaluate: function (params, sourceCodeInfo) {
+                var _a = __read(getNumberVectorOrMatrixOperation(params, sourceCodeInfo), 2), operation = _a[0], operands = _a[1];
+                if (operation === 'number') {
+                    return operands[0] + 1;
+                }
+                else if (operation === 'vector') {
+                    var firstVector = operands[0];
+                    return firstVector.map(function (val) { return val + 1; });
+                }
+                else {
+                    var firstMatrix = operands[0];
+                    return firstMatrix.map(function (row) { return row.map(function (val) { return val + 1; }); });
+                }
             },
             paramCount: 1,
         },
         'dec': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), first = _b[0];
-                assertNumber(first, sourceCodeInfo);
-                return first - 1;
+            evaluate: function (params, sourceCodeInfo) {
+                var _a = __read(getNumberVectorOrMatrixOperation(params, sourceCodeInfo), 2), operation = _a[0], operands = _a[1];
+                if (operation === 'number') {
+                    return operands[0] - 1;
+                }
+                else if (operation === 'vector') {
+                    var firstVector = operands[0];
+                    return firstVector.map(function (val) { return val - 1; });
+                }
+                else {
+                    var firstMatrix = operands[0];
+                    return firstMatrix.map(function (row) { return row.map(function (val) { return val - 1; }); });
+                }
             },
             paramCount: 1,
         },
         '+': {
             evaluate: function (params, sourceCodeInfo) {
-                return params.reduce(function (result, param) {
-                    assertNumber(param, sourceCodeInfo);
-                    return result + param;
-                }, 0);
+                if (params.length === 0) {
+                    return 0;
+                }
+                var _a = __read(getNumberVectorOrMatrixOperation(params, sourceCodeInfo), 2), operation = _a[0], operands = _a[1];
+                if (operation === 'number') {
+                    return operands.reduce(function (result, param) { return result + (param); }, 0);
+                }
+                else if (operation === 'vector') {
+                    var firstVector = operands[0];
+                    var restVectors = operands.slice(1);
+                    return restVectors.reduce(function (acc, vector) { return acc.map(function (val, i) { return val + vector[i]; }); }, firstVector);
+                }
+                else {
+                    var firstMatrix = operands[0];
+                    var restMatrices = operands.slice(1);
+                    return restMatrices.reduce(function (acc, matrix) { return acc.map(function (row, i) { return row.map(function (val, j) { return val + matrix[i][j]; }); }); }, firstMatrix);
+                }
             },
             paramCount: {},
         },
         '*': {
             evaluate: function (params, sourceCodeInfo) {
-                return params.reduce(function (result, param) {
-                    assertNumber(param, sourceCodeInfo);
-                    return result * param;
-                }, 1);
+                if (params.length === 0) {
+                    return 1;
+                }
+                var _a = __read(getNumberVectorOrMatrixOperation(params, sourceCodeInfo), 2), operation = _a[0], operands = _a[1];
+                if (operation === 'number') {
+                    return operands.reduce(function (result, param) { return result * (param); }, 1);
+                }
+                else if (operation === 'vector') {
+                    var firstVector = operands[0];
+                    var restVectors = operands.slice(1);
+                    return restVectors.reduce(function (acc, vector) { return acc.map(function (val, i) { return val * vector[i]; }); }, firstVector);
+                }
+                else {
+                    var firstMatrix = operands[0];
+                    var restMatrices = operands.slice(1);
+                    return restMatrices.reduce(function (acc, matrix) { return acc.map(function (row, i) { return row.map(function (val, j) { return val * matrix[i][j]; }); }); }, firstMatrix);
+                }
             },
             aliases: ['·'],
             paramCount: {},
         },
         '/': {
             evaluate: function (params, sourceCodeInfo) {
-                if (params.length === 0)
+                if (params.length === 0) {
                     return 1;
-                var _a = __read(params), first = _a[0], rest = _a.slice(1);
-                assertNumber(first, sourceCodeInfo);
-                if (rest.length === 0) {
-                    assertNumber(first, sourceCodeInfo);
-                    return 1 / first;
                 }
-                return rest.reduce(function (result, param) {
-                    assertNumber(param, sourceCodeInfo);
-                    return result / param;
-                }, first);
+                var _a = __read(getNumberVectorOrMatrixOperation(params, sourceCodeInfo), 2), operation = _a[0], operands = _a[1];
+                if (operation === 'number') {
+                    var _b = __read(operands), first = _b[0], rest = _b.slice(1);
+                    if (rest.length === 0) {
+                        return 1 / first;
+                    }
+                    return rest.reduce(function (result, param) {
+                        return result / param;
+                    }, first);
+                }
+                else if (operation === 'vector') {
+                    var firstVector = operands[0];
+                    var restVectors = operands.slice(1);
+                    return restVectors.reduce(function (acc, vector) { return acc.map(function (val, i) { return val / vector[i]; }); }, firstVector);
+                }
+                else {
+                    var firstMatrix = operands[0];
+                    var restMatrices = operands.slice(1);
+                    return restMatrices.reduce(function (acc, matrix) { return acc.map(function (row, i) { return row.map(function (val, j) { return val / matrix[i][j]; }); }); }, firstMatrix);
+                }
             },
             paramCount: {},
         },
         '-': {
             evaluate: function (params, sourceCodeInfo) {
-                if (params.length === 0)
+                if (params.length === 0) {
                     return 0;
-                var _a = __read(params), first = _a[0], rest = _a.slice(1);
-                assertNumber(first, sourceCodeInfo);
-                if (rest.length === 0)
-                    return -first;
-                return rest.reduce(function (result, param) {
-                    assertNumber(param, sourceCodeInfo);
-                    return result - param;
-                }, first);
+                }
+                var _a = __read(getNumberVectorOrMatrixOperation(params, sourceCodeInfo), 2), operation = _a[0], operands = _a[1];
+                if (operation === 'number') {
+                    var _b = __read(operands), first = _b[0], rest = _b.slice(1);
+                    if (rest.length === 0)
+                        return -first;
+                    return rest.reduce(function (result, param) {
+                        return result - param;
+                    }, first);
+                }
+                else if (operation === 'vector') {
+                    var firstVector = operands[0];
+                    var restVectors = operands.slice(1);
+                    return restVectors.reduce(function (acc, vector) { return acc.map(function (val, i) { return val - vector[i]; }); }, firstVector);
+                }
+                else {
+                    var firstMatrix = operands[0];
+                    var restMatrices = operands.slice(1);
+                    return restMatrices.reduce(function (acc, matrix) { return acc.map(function (row, i) { return row.map(function (val, j) { return val - matrix[i][j]; }); }); }, firstMatrix);
+                }
             },
             paramCount: {},
         },
         'quot': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), dividend = _b[0], divisor = _b[1];
-                assertNumber(dividend, sourceCodeInfo);
-                assertNumber(divisor, sourceCodeInfo);
-                var quotient = Math.trunc(dividend / divisor);
-                return quotient;
+            evaluate: function (params, sourceCodeInfo) {
+                var _a = __read(getNumberVectorOrMatrixOperation(params, sourceCodeInfo), 2), operation = _a[0], operands = _a[1];
+                if (operation === 'number') {
+                    return Math.trunc(operands[0] / operands[1]);
+                }
+                else if (operation === 'vector') {
+                    var firstVector = operands[0];
+                    var secondVector_1 = operands[1];
+                    return firstVector.map(function (val, i) { return Math.trunc(val / secondVector_1[i]); });
+                }
+                else {
+                    var firstMatrix = operands[0];
+                    var secondMatrix_1 = operands[1];
+                    return firstMatrix.map(function (row, i) { return row.map(function (val, j) { return Math.trunc(val / secondMatrix_1[i][j]); }); });
+                }
             },
             paramCount: 2,
         },
         'mod': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), dividend = _b[0], divisor = _b[1];
-                assertNumber(dividend, sourceCodeInfo);
-                assertNumber(divisor, sourceCodeInfo);
-                var quotient = Math.floor(dividend / divisor);
-                return dividend - divisor * quotient;
+            evaluate: function (params, sourceCodeInfo) {
+                var _a = __read(getNumberVectorOrMatrixOperation(params, sourceCodeInfo), 2), operation = _a[0], operands = _a[1];
+                if (operation === 'number') {
+                    var quotient = Math.floor(operands[0] / operands[1]);
+                    return operands[0] - operands[1] * quotient;
+                }
+                else if (operation === 'vector') {
+                    var firstVector = operands[0];
+                    var secondVector_2 = operands[1];
+                    return firstVector.map(function (dividend, i) {
+                        var divisor = secondVector_2[i];
+                        var quotient = Math.floor(dividend / divisor);
+                        return dividend - divisor * quotient;
+                    });
+                }
+                else {
+                    var firstMatrix = operands[0];
+                    var secondMatrix_2 = operands[1];
+                    return firstMatrix.map(function (row, i) { return row.map(function (val, j) {
+                        var quotient = Math.floor(val / secondMatrix_2[i][j]);
+                        return val - secondMatrix_2[i][j] * quotient;
+                    }); });
+                }
             },
             paramCount: 2,
         },
         '%': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), dividend = _b[0], divisor = _b[1];
-                assertNumber(dividend, sourceCodeInfo);
-                assertNumber(divisor, sourceCodeInfo);
-                var quotient = Math.trunc(dividend / divisor);
-                return dividend - divisor * quotient;
+            evaluate: function (params, sourceCodeInfo) {
+                var _a = __read(getNumberVectorOrMatrixOperation(params, sourceCodeInfo), 2), operation = _a[0], operands = _a[1];
+                if (operation === 'number') {
+                    return operands[0] % operands[1];
+                }
+                else if (operation === 'vector') {
+                    var firstVector = operands[0];
+                    var secondVector_3 = operands[1];
+                    return firstVector.map(function (dividend, i) { return dividend % secondVector_3[i]; });
+                }
+                else {
+                    var firstMatrix = operands[0];
+                    var secondMatrix_3 = operands[1];
+                    return firstMatrix.map(function (row, i) { return row.map(function (dividend, j) { return dividend % secondMatrix_3[i][j]; }); });
+                }
             },
             paramCount: 2,
             aliases: ['rem'],
         },
         'sqrt': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), first = _b[0];
-                assertNumber(first, sourceCodeInfo);
-                return Math.sqrt(first);
+            evaluate: function (params, sourceCodeInfo) {
+                var _a = __read(getNumberVectorOrMatrixOperation(params, sourceCodeInfo), 2), operation = _a[0], operands = _a[1];
+                if (operation === 'number') {
+                    return Math.sqrt(operands[0]);
+                }
+                else if (operation === 'vector') {
+                    var firstVector = operands[0];
+                    return firstVector.map(function (val) { return Math.sqrt(val); });
+                }
+                else {
+                    var firstMatrix = operands[0];
+                    return firstMatrix.map(function (row) { return row.map(function (val) { return Math.sqrt(val); }); });
+                }
             },
             paramCount: 1,
             aliases: ['√'],
         },
         'cbrt': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), first = _b[0];
-                assertNumber(first, sourceCodeInfo);
-                return Math.cbrt(first);
+            evaluate: function (params, sourceCodeInfo) {
+                var _a = __read(getNumberVectorOrMatrixOperation(params, sourceCodeInfo), 2), operation = _a[0], operands = _a[1];
+                if (operation === 'number') {
+                    return Math.cbrt(operands[0]);
+                }
+                else if (operation === 'vector') {
+                    var firstVector = operands[0];
+                    return firstVector.map(function (val) { return Math.cbrt(val); });
+                }
+                else {
+                    var firstMatrix = operands[0];
+                    return firstMatrix.map(function (row) { return row.map(function (val) { return Math.cbrt(val); }); });
+                }
             },
             paramCount: 1,
             aliases: ['∛'],
         },
         '^': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), first = _b[0], second = _b[1];
-                assertNumber(first, sourceCodeInfo);
-                assertNumber(second, sourceCodeInfo);
-                return Math.pow(first, second);
+            evaluate: function (params, sourceCodeInfo) {
+                var _a = __read(getNumberVectorOrMatrixOperation(params, sourceCodeInfo), 2), operation = _a[0], operands = _a[1];
+                if (operation === 'number') {
+                    return Math.pow(operands[0], operands[1]);
+                }
+                else if (operation === 'vector') {
+                    var firstVector = operands[0];
+                    var secondVector_4 = operands[1];
+                    return firstVector.map(function (base, i) { return Math.pow(base, secondVector_4[i]); });
+                }
+                else {
+                    var firstMatrix = operands[0];
+                    var secondMatrix_4 = operands[1];
+                    return firstMatrix.map(function (row, i) { return row.map(function (base, j) { return Math.pow(base, secondMatrix_4[i][j]); }); });
+                }
             },
             paramCount: 2,
         },
         'round': {
-            evaluate: function (params, sourceCodeInfo) {
-                var _a = __read(params, 2), value = _a[0], decimals = _a[1];
-                assertNumber(value, sourceCodeInfo);
-                if (params.length === 1 || decimals === 0)
-                    return Math.round(value);
-                assertNumber(decimals, sourceCodeInfo, { integer: true, nonNegative: true });
-                var factor = Math.pow(10, decimals);
-                return Math.round(value * factor) / factor;
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), value = _b[0], decimals = _b[1];
+                var _c = __read(getNumberVectorOrMatrixOperation([value], sourceCodeInfo), 2), operation = _c[0], operands = _c[1];
+                if (operation === 'number') {
+                    if (decimals === undefined || decimals === 0) {
+                        return Math.round(operands[0]);
+                    }
+                    else {
+                        assertNumber(decimals, sourceCodeInfo, { integer: true, positive: true });
+                        var factor = Math.pow(10, decimals);
+                        return Math.round(operands[0] * factor) / factor;
+                    }
+                }
+                else if (operation === 'vector') {
+                    var vector = operands[0];
+                    if (decimals === undefined || decimals === 0) {
+                        return vector.map(function (val) { return Math.round(val); });
+                    }
+                    else {
+                        assertNumber(decimals, sourceCodeInfo, { integer: true, positive: true });
+                        var factor_1 = Math.pow(10, decimals);
+                        return vector.map(function (val) { return Math.round(val * factor_1) / factor_1; });
+                    }
+                }
+                else {
+                    var matrix = operands[0];
+                    if (decimals === undefined || decimals === 0) {
+                        return matrix.map(function (row) { return row.map(function (val) { return Math.round(val); }); });
+                    }
+                    else {
+                        assertNumber(decimals, sourceCodeInfo, { integer: true, positive: true });
+                        var factor_2 = Math.pow(10, decimals);
+                        return matrix.map(function (row) { return row.map(function (val) { return Math.round(val * factor_2) / factor_2; }); });
+                    }
+                }
             },
             paramCount: { min: 1, max: 2 },
         },
         'trunc': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), first = _b[0];
-                assertNumber(first, sourceCodeInfo);
-                return Math.trunc(first);
+            evaluate: function (params, sourceCodeInfo) {
+                var _a = __read(getNumberVectorOrMatrixOperation(params, sourceCodeInfo), 2), operation = _a[0], operands = _a[1];
+                if (operation === 'number') {
+                    return Math.trunc(operands[0]);
+                }
+                else if (operation === 'vector') {
+                    var vector = operands[0];
+                    return vector.map(function (val) { return Math.trunc(val); });
+                }
+                else {
+                    var matrix = operands[0];
+                    return matrix.map(function (row) { return row.map(function (val) { return Math.trunc(val); }); });
+                }
             },
             paramCount: 1,
         },
         'floor': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), first = _b[0];
-                assertNumber(first, sourceCodeInfo);
-                return Math.floor(first);
+            evaluate: function (params, sourceCodeInfo) {
+                var _a = __read(getNumberVectorOrMatrixOperation(params, sourceCodeInfo), 2), operation = _a[0], operands = _a[1];
+                if (operation === 'number') {
+                    return Math.floor(operands[0]);
+                }
+                else if (operation === 'vector') {
+                    var vector = operands[0];
+                    return vector.map(function (val) { return Math.floor(val); });
+                }
+                else {
+                    var matrix = operands[0];
+                    return matrix.map(function (row) { return row.map(function (val) { return Math.floor(val); }); });
+                }
             },
             paramCount: 1,
         },
         'ceil': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), first = _b[0];
-                assertNumber(first, sourceCodeInfo);
-                return Math.ceil(first);
+            evaluate: function (params, sourceCodeInfo) {
+                var _a = __read(getNumberVectorOrMatrixOperation(params, sourceCodeInfo), 2), operation = _a[0], operands = _a[1];
+                if (operation === 'number') {
+                    return Math.ceil(operands[0]);
+                }
+                else if (operation === 'vector') {
+                    var vector = operands[0];
+                    return vector.map(function (val) { return Math.ceil(val); });
+                }
+                else {
+                    var matrix = operands[0];
+                    return matrix.map(function (row) { return row.map(function (val) { return Math.ceil(val); }); });
+                }
             },
             paramCount: 1,
         },
@@ -4482,138 +4767,293 @@ var Playground = (function (exports) {
             paramCount: { min: 1 },
         },
         'abs': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), value = _b[0];
-                assertNumber(value, sourceCodeInfo);
-                return Math.abs(value);
+            evaluate: function (params, sourceCodeInfo) {
+                var _a = __read(getNumberVectorOrMatrixOperation(params, sourceCodeInfo), 2), operation = _a[0], operands = _a[1];
+                if (operation === 'number') {
+                    return Math.abs(operands[0]);
+                }
+                else if (operation === 'vector') {
+                    var vector = operands[0];
+                    return vector.map(function (val) { return Math.abs(val); });
+                }
+                else {
+                    var matrix = operands[0];
+                    return matrix.map(function (row) { return row.map(function (val) { return Math.abs(val); }); });
+                }
             },
             paramCount: 1,
         },
         'sign': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), value = _b[0];
-                assertNumber(value, sourceCodeInfo);
-                return Math.sign(value);
+            evaluate: function (params, sourceCodeInfo) {
+                var _a = __read(getNumberVectorOrMatrixOperation(params, sourceCodeInfo), 2), operation = _a[0], operands = _a[1];
+                if (operation === 'number') {
+                    return Math.sign(operands[0]);
+                }
+                else if (operation === 'vector') {
+                    var vector = operands[0];
+                    return vector.map(function (val) { return Math.sign(val); });
+                }
+                else {
+                    var matrix = operands[0];
+                    return matrix.map(function (row) { return row.map(function (val) { return Math.sign(val); }); });
+                }
             },
             paramCount: 1,
         },
-        'log': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), value = _b[0];
-                assertNumber(value, sourceCodeInfo);
-                return Math.log(value);
+        'ln': {
+            evaluate: function (params, sourceCodeInfo) {
+                var _a = __read(getNumberVectorOrMatrixOperation(params, sourceCodeInfo), 2), operation = _a[0], operands = _a[1];
+                if (operation === 'number') {
+                    return Math.log(operands[0]);
+                }
+                else if (operation === 'vector') {
+                    var vector = operands[0];
+                    return vector.map(function (val) { return Math.log(val); });
+                }
+                else {
+                    var matrix = operands[0];
+                    return matrix.map(function (row) { return row.map(function (val) { return Math.log(val); }); });
+                }
             },
             paramCount: 1,
         },
         'log2': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), value = _b[0];
-                assertNumber(value, sourceCodeInfo);
-                return Math.log2(value);
+            evaluate: function (params, sourceCodeInfo) {
+                var _a = __read(getNumberVectorOrMatrixOperation(params, sourceCodeInfo), 2), operation = _a[0], operands = _a[1];
+                if (operation === 'number') {
+                    return Math.log2(operands[0]);
+                }
+                else if (operation === 'vector') {
+                    var vector = operands[0];
+                    return vector.map(function (val) { return Math.log2(val); });
+                }
+                else {
+                    var matrix = operands[0];
+                    return matrix.map(function (row) { return row.map(function (val) { return Math.log2(val); }); });
+                }
             },
             paramCount: 1,
+            aliases: ['log₂'],
         },
         'log10': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), value = _b[0];
-                assertNumber(value, sourceCodeInfo);
-                return Math.log10(value);
+            evaluate: function (params, sourceCodeInfo) {
+                var _a = __read(getNumberVectorOrMatrixOperation(params, sourceCodeInfo), 2), operation = _a[0], operands = _a[1];
+                if (operation === 'number') {
+                    return Math.log10(operands[0]);
+                }
+                else if (operation === 'vector') {
+                    var vector = operands[0];
+                    return vector.map(function (val) { return Math.log10(val); });
+                }
+                else {
+                    var matrix = operands[0];
+                    return matrix.map(function (row) { return row.map(function (val) { return Math.log10(val); }); });
+                }
             },
             paramCount: 1,
+            aliases: ['log₁₀'],
         },
         'sin': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), value = _b[0];
-                assertNumber(value, sourceCodeInfo);
-                return Math.sin(value);
+            evaluate: function (params, sourceCodeInfo) {
+                var _a = __read(getNumberVectorOrMatrixOperation(params, sourceCodeInfo), 2), operation = _a[0], operands = _a[1];
+                if (operation === 'number') {
+                    return Math.sin(operands[0]);
+                }
+                else if (operation === 'vector') {
+                    var vector = operands[0];
+                    return vector.map(function (val) { return Math.sin(val); });
+                }
+                else {
+                    var matrix = operands[0];
+                    return matrix.map(function (row) { return row.map(function (val) { return Math.sin(val); }); });
+                }
             },
             paramCount: 1,
         },
         'asin': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), value = _b[0];
-                assertNumber(value, sourceCodeInfo);
-                return Math.asin(value);
+            evaluate: function (params, sourceCodeInfo) {
+                var _a = __read(getNumberVectorOrMatrixOperation(params, sourceCodeInfo), 2), operation = _a[0], operands = _a[1];
+                if (operation === 'number') {
+                    return Math.asin(operands[0]);
+                }
+                else if (operation === 'vector') {
+                    var vector = operands[0];
+                    return vector.map(function (val) { return Math.asin(val); });
+                }
+                else {
+                    var matrix = operands[0];
+                    return matrix.map(function (row) { return row.map(function (val) { return Math.asin(val); }); });
+                }
             },
             paramCount: 1,
         },
         'sinh': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), value = _b[0];
-                assertNumber(value, sourceCodeInfo);
-                return Math.sinh(value);
+            evaluate: function (params, sourceCodeInfo) {
+                var _a = __read(getNumberVectorOrMatrixOperation(params, sourceCodeInfo), 2), operation = _a[0], operands = _a[1];
+                if (operation === 'number') {
+                    return Math.sinh(operands[0]);
+                }
+                else if (operation === 'vector') {
+                    var vector = operands[0];
+                    return vector.map(function (val) { return Math.sinh(val); });
+                }
+                else {
+                    var matrix = operands[0];
+                    return matrix.map(function (row) { return row.map(function (val) { return Math.sinh(val); }); });
+                }
             },
             paramCount: 1,
         },
         'asinh': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), value = _b[0];
-                assertNumber(value, sourceCodeInfo);
-                return Math.asinh(value);
+            evaluate: function (params, sourceCodeInfo) {
+                var _a = __read(getNumberVectorOrMatrixOperation(params, sourceCodeInfo), 2), operation = _a[0], operands = _a[1];
+                if (operation === 'number') {
+                    return Math.asinh(operands[0]);
+                }
+                else if (operation === 'vector') {
+                    var vector = operands[0];
+                    return vector.map(function (val) { return Math.asinh(val); });
+                }
+                else {
+                    var matrix = operands[0];
+                    return matrix.map(function (row) { return row.map(function (val) { return Math.asinh(val); }); });
+                }
             },
             paramCount: 1,
         },
         'cos': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), value = _b[0];
-                assertNumber(value, sourceCodeInfo);
-                return Math.cos(value);
+            evaluate: function (params, sourceCodeInfo) {
+                var _a = __read(getNumberVectorOrMatrixOperation(params, sourceCodeInfo), 2), operation = _a[0], operands = _a[1];
+                if (operation === 'number') {
+                    return Math.cos(operands[0]);
+                }
+                else if (operation === 'vector') {
+                    var vector = operands[0];
+                    return vector.map(function (val) { return Math.cos(val); });
+                }
+                else {
+                    var matrix = operands[0];
+                    return matrix.map(function (row) { return row.map(function (val) { return Math.cos(val); }); });
+                }
             },
             paramCount: 1,
         },
         'acos': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), value = _b[0];
-                assertNumber(value, sourceCodeInfo);
-                return Math.acos(value);
+            evaluate: function (params, sourceCodeInfo) {
+                var _a = __read(getNumberVectorOrMatrixOperation(params, sourceCodeInfo), 2), operation = _a[0], operands = _a[1];
+                if (operation === 'number') {
+                    return Math.acos(operands[0]);
+                }
+                else if (operation === 'vector') {
+                    var vector = operands[0];
+                    return vector.map(function (val) { return Math.acos(val); });
+                }
+                else {
+                    var matrix = operands[0];
+                    return matrix.map(function (row) { return row.map(function (val) { return Math.acos(val); }); });
+                }
             },
             paramCount: 1,
         },
         'cosh': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), value = _b[0];
-                assertNumber(value, sourceCodeInfo);
-                return Math.cosh(value);
+            evaluate: function (params, sourceCodeInfo) {
+                var _a = __read(getNumberVectorOrMatrixOperation(params, sourceCodeInfo), 2), operation = _a[0], operands = _a[1];
+                if (operation === 'number') {
+                    return Math.cosh(operands[0]);
+                }
+                else if (operation === 'vector') {
+                    var vector = operands[0];
+                    return vector.map(function (val) { return Math.cosh(val); });
+                }
+                else {
+                    var matrix = operands[0];
+                    return matrix.map(function (row) { return row.map(function (val) { return Math.cosh(val); }); });
+                }
             },
             paramCount: 1,
         },
         'acosh': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), value = _b[0];
-                assertNumber(value, sourceCodeInfo);
-                return Math.acosh(value);
+            evaluate: function (params, sourceCodeInfo) {
+                var _a = __read(getNumberVectorOrMatrixOperation(params, sourceCodeInfo), 2), operation = _a[0], operands = _a[1];
+                if (operation === 'number') {
+                    return Math.acosh(operands[0]);
+                }
+                else if (operation === 'vector') {
+                    var vector = operands[0];
+                    return vector.map(function (val) { return Math.acosh(val); });
+                }
+                else {
+                    var matrix = operands[0];
+                    return matrix.map(function (row) { return row.map(function (val) { return Math.acosh(val); }); });
+                }
             },
             paramCount: 1,
         },
         'tan': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), value = _b[0];
-                assertNumber(value, sourceCodeInfo);
-                return Math.tan(value);
+            evaluate: function (params, sourceCodeInfo) {
+                var _a = __read(getNumberVectorOrMatrixOperation(params, sourceCodeInfo), 2), operation = _a[0], operands = _a[1];
+                if (operation === 'number') {
+                    return Math.tan(operands[0]);
+                }
+                else if (operation === 'vector') {
+                    var vector = operands[0];
+                    return vector.map(function (val) { return Math.tan(val); });
+                }
+                else {
+                    var matrix = operands[0];
+                    return matrix.map(function (row) { return row.map(function (val) { return Math.tan(val); }); });
+                }
             },
             paramCount: 1,
         },
         'atan': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), value = _b[0];
-                assertNumber(value, sourceCodeInfo);
-                return Math.atan(value);
+            evaluate: function (params, sourceCodeInfo) {
+                var _a = __read(getNumberVectorOrMatrixOperation(params, sourceCodeInfo), 2), operation = _a[0], operands = _a[1];
+                if (operation === 'number') {
+                    return Math.atan(operands[0]);
+                }
+                else if (operation === 'vector') {
+                    var vector = operands[0];
+                    return vector.map(function (val) { return Math.atan(val); });
+                }
+                else {
+                    var matrix = operands[0];
+                    return matrix.map(function (row) { return row.map(function (val) { return Math.atan(val); }); });
+                }
             },
             paramCount: 1,
         },
         'tanh': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), value = _b[0];
-                assertNumber(value, sourceCodeInfo);
-                return Math.tanh(value);
+            evaluate: function (params, sourceCodeInfo) {
+                var _a = __read(getNumberVectorOrMatrixOperation(params, sourceCodeInfo), 2), operation = _a[0], operands = _a[1];
+                if (operation === 'number') {
+                    return Math.tanh(operands[0]);
+                }
+                else if (operation === 'vector') {
+                    var vector = operands[0];
+                    return vector.map(function (val) { return Math.tanh(val); });
+                }
+                else {
+                    var matrix = operands[0];
+                    return matrix.map(function (row) { return row.map(function (val) { return Math.tanh(val); }); });
+                }
             },
             paramCount: 1,
         },
         'atanh': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), value = _b[0];
-                assertNumber(value, sourceCodeInfo);
-                return Math.atanh(value);
+            evaluate: function (params, sourceCodeInfo) {
+                var _a = __read(getNumberVectorOrMatrixOperation(params, sourceCodeInfo), 2), operation = _a[0], operands = _a[1];
+                if (operation === 'number') {
+                    return Math.atanh(operands[0]);
+                }
+                else if (operation === 'vector') {
+                    var vector = operands[0];
+                    return vector.map(function (val) { return Math.atanh(val); });
+                }
+                else {
+                    var matrix = operands[0];
+                    return matrix.map(function (row) { return row.map(function (val) { return Math.atanh(val); }); });
+                }
             },
             paramCount: 1,
         },
@@ -6679,12 +7119,36 @@ var Playground = (function (exports) {
         return counts;
     }
 
+    function calcMedian(vector) {
+        var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
+        var mid = Math.floor(sorted.length / 2);
+        return sorted.length % 2 === 0
+            ? (sorted[mid - 1] + sorted[mid]) / 2
+            : sorted[mid];
+    }
+
+    function calcMad(vector) {
+        var median = calcMedian(vector);
+        // Calculate mean absolute deviation
+        return vector.reduce(function (acc, val) { return acc + Math.abs(val - median); }, 0) / vector.length;
+    }
+
     function calcMean(vector) {
         if (vector.length === 0) {
             return 0;
         }
         var sum = vector.reduce(function (acc, val) { return acc + val; }, 0);
         return sum / vector.length;
+    }
+
+    function calcMedad(vector) {
+        var median = calcMedian(vector);
+        // Calculate absolute deviations from the median
+        var absoluteDeviations = vector.map(function (val) { return Math.abs(val - median); });
+        // Calculate the median of the absolute deviations
+        var medianOfDeviations = calcMedian(absoluteDeviations);
+        var scaleFactor = 1.4826; // Scale factor for robust scaling
+        return medianOfDeviations * scaleFactor;
     }
 
     function calcVariance(vector) {
@@ -6757,6 +7221,126 @@ var Playground = (function (exports) {
     }
 
     /**
+     * Creates a histogram from an array of numbers, returning bin ranges and counts.
+     * Each bin is represented as a tuple of [minValue, maxValue, count].
+     *
+     * @param vector - Array of numeric values
+     * @param bins - Number of bins to divide the data into
+     * @returns Array of tuples, each containing [binStart, binEnd, count]
+     */
+    function calcHistogram(vector, bins) {
+        var e_1, _a;
+        if (vector.length === 0) {
+            // Return empty bins with zero counts if input is empty
+            var result = [];
+            for (var i = 0; i < bins; i++) {
+                result.push([0, 0, 0]);
+            }
+            return result;
+        }
+        // Find min and max values
+        var min = Math.min.apply(Math, __spreadArray([], __read(vector), false));
+        var max = Math.max.apply(Math, __spreadArray([], __read(vector), false));
+        // Handle the case where all values are the same
+        if (min === max) {
+            var result = [];
+            // Create bins with the same min/max and zero counts
+            for (var i = 0; i < bins; i++) {
+                result.push([min, min, 0]);
+            }
+            // Put all values in the first bin
+            result[0][2] = vector.length;
+            return result;
+        }
+        // Calculate bin size
+        var binSize = (max - min) / bins;
+        // Initialize histogram array with bin boundaries and zero counts
+        var histogram = [];
+        for (var i = 0; i < bins; i++) {
+            var binStart = min + i * binSize;
+            var binEnd = i === bins - 1 ? max : min + (i + 1) * binSize;
+            histogram.push([binStart, binEnd, 0]);
+        }
+        try {
+            // Count values in each bin
+            for (var vector_1 = __values(vector), vector_1_1 = vector_1.next(); !vector_1_1.done; vector_1_1 = vector_1.next()) {
+                var value = vector_1_1.value;
+                if (value === max) {
+                    // Place maximum value in the last bin
+                    histogram[bins - 1][2] += 1;
+                }
+                else {
+                    var binIndex = Math.min(Math.floor((value - min) / binSize), bins - 1);
+                    histogram[binIndex][2] += 1;
+                }
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (vector_1_1 && !vector_1_1.done && (_a = vector_1.return)) _a.call(vector_1);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        return histogram;
+    }
+
+    function kurtosis(vector) {
+        var mean = calcMean(vector);
+        var stdDev = calcStdDev(vector);
+        if (stdDev === 0) {
+            throw new Error('Standard deviation is zero, kurtosis is undefined');
+        }
+        return vector.reduce(function (acc, val) { return acc + (Math.pow((val - mean), 4)); }, 0) / (vector.length * Math.pow(stdDev, 4));
+    }
+    function excessKurtosis(vector) {
+        return kurtosis(vector) - 3;
+    }
+    /**
+     * Calculates the sample kurtosis (bias-corrected)
+     * @param vector Array of numeric values
+     * @returns The sample kurtosis
+     * @throws Error if sample size is less than 4 or if variance is zero
+     */
+    function sampleKurtosis(vector) {
+        var n = vector.length;
+        if (n < 4) {
+            throw new Error('Sample size must be at least 4 for kurtosis calculation');
+        }
+        var mean = vector.reduce(function (sum, val) { return sum + val; }, 0) / n;
+        var sumSquaredDeviations = vector.reduce(function (sum, val) { return sum + Math.pow((val - mean), 2); }, 0);
+        var variance = sumSquaredDeviations / (n - 1);
+        if (variance === 0) {
+            throw new Error('Variance is zero, kurtosis is undefined');
+        }
+        var fourthMomentSum = vector.reduce(function (sum, val) { return sum + Math.pow((val - mean), 4); }, 0);
+        // Correct formula for sample kurtosis
+        return (n * (n + 1) * fourthMomentSum) / ((n - 1) * (n - 2) * (n - 3) * Math.pow(variance, 2));
+    }
+    /**
+     * Calculates the sample excess kurtosis (bias-corrected)
+     * @param vector Array of numeric values
+     * @returns The sample excess kurtosis
+     * @throws Error if sample size is less than 4 or if variance is zero
+     */
+    function sampleExcessKurtosis(vector) {
+        var n = vector.length;
+        if (n < 4) {
+            throw new Error('Sample size must be at least 4 for kurtosis calculation');
+        }
+        var mean = vector.reduce(function (sum, val) { return sum + val; }, 0) / n;
+        var sumSquaredDeviations = vector.reduce(function (sum, val) { return sum + Math.pow((val - mean), 2); }, 0);
+        var variance = sumSquaredDeviations / (n - 1);
+        if (variance === 0) {
+            throw new Error('Variance is zero, kurtosis is undefined');
+        }
+        var fourthMomentSum = vector.reduce(function (sum, val) { return sum + Math.pow((val - mean), 4); }, 0);
+        var rawKurtosis = (n * (n + 1) * fourthMomentSum) / ((n - 1) * (n - 2) * (n - 3) * Math.pow(variance, 2));
+        // Compute excess kurtosis by subtracting 3 times the bias correction factor
+        return rawKurtosis - (3 * (n - 1) * (n - 1)) / ((n - 2) * (n - 3));
+    }
+
+    /**
      * Calculates the mode (most frequent value(s)) of a dataset
      * @param values An array of values of any type
      * @returns An array containing the mode(s) of the dataset
@@ -6821,6 +7405,39 @@ var Playground = (function (exports) {
             finally { if (e_3) throw e_3.error; }
         }
         return modes;
+    }
+
+    /**
+     * Checks if a vector has no extreme outliers using the IQR method
+     * @param vector An array of numbers to check for extreme outliers
+     * @returns true if there are no extreme outliers, false otherwise
+     */
+    function hasOutliers(vector) {
+        return outliers(vector).length > 0;
+    }
+    function outliers(vector) {
+        // Handle edge cases
+        if (vector.length <= 1)
+            return [];
+        // Sort the vector to calculate quartiles
+        var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
+        // Calculate Q1 (25th percentile)
+        var q1Index = Math.floor(sorted.length * 0.25);
+        var q1 = sorted.length % 4 === 0
+            ? (sorted[q1Index - 1] + sorted[q1Index]) / 2
+            : sorted[q1Index];
+        // Calculate Q3 (75th percentile)
+        var q3Index = Math.floor(sorted.length * 0.75);
+        var q3 = sorted.length % 4 === 0
+            ? (sorted[q3Index - 1] + sorted[q3Index]) / 2
+            : sorted[q3Index];
+        // Calculate IQR (Interquartile Range)
+        var iqr = q3 - q1;
+        // Define bounds for outliers (using 1.5*IQR for mild outliers and 3*IQR for extreme outliers)
+        var lowerBound = q1 - iqr * 1.5;
+        var upperBound = q3 + iqr * 1.5;
+        // Filter the vector to find outliers
+        return vector.filter(function (val) { return val < lowerBound || val > upperBound; });
     }
 
     /**
@@ -6895,6 +7512,183 @@ var Playground = (function (exports) {
         return [q1, q2, q3];
     }
 
+    var maxReductionFunction = {
+        'vec:max': function (vector) { return Math.max.apply(Math, __spreadArray([], __read(vector), false)); },
+        'minLength': 1,
+        'paddingValue': -Number.MAX_VALUE,
+    };
+
+    var meanReductionFunction = {
+        'vec:mean': function (vector) { return calcMean(vector); },
+        'minLength': 1,
+        'paddingValue': 0,
+    };
+
+    var minReductionFunction = {
+        'vec:min': function (vector) { return Math.min.apply(Math, __spreadArray([], __read(vector), false)); },
+        'minLength': 1,
+        'paddingValue': Number.MAX_VALUE,
+    };
+
+    var prodReductionFunction = {
+        'vec:prod': function (vector) { return vector.reduce(function (acc, val) { return acc * val; }, 1); },
+        'minLength': 0,
+        'paddingValue': 1,
+    };
+
+    var sumReductionFunction = {
+        'vec:sum': function (vector) { return vector.reduce(function (acc, val) { return acc + val; }, 0); },
+        'minLength': 0,
+        'paddingValue': 0,
+    };
+
+    var reductionFunctionNormalExpressions = {};
+    addReductionFunctions$1(meanReductionFunction);
+    addReductionFunctions$1(sumReductionFunction);
+    addReductionFunctions$1(prodReductionFunction);
+    addReductionFunctions$1(minReductionFunction);
+    addReductionFunctions$1(maxReductionFunction);
+    function addReductionFunctions$1(fns) {
+        var e_1, _a;
+        var _b;
+        try {
+            for (var _c = __values(Object.entries(fns)), _d = _c.next(); !_d.done; _d = _c.next()) {
+                var _e = __read(_d.value, 2), key = _e[0], value = _e[1];
+                /* v8 ignore next 3 */
+                if (reductionFunctionNormalExpressions[key]) {
+                    throw new Error("Duplicate normal expression key found: ".concat(key));
+                }
+                if (key.startsWith('vec:')) {
+                    var movingKey = key.replace('vec:', 'vec:moving-');
+                    var centeredMovingKey = key.replace('vec:', 'vec:centered-moving-');
+                    var runningKey = key.replace('vec:', 'vec:running-');
+                    reductionFunctionNormalExpressions[key] = createReductionNormalExpression(value, fns.minLength);
+                    reductionFunctionNormalExpressions[movingKey] = createMovingNormalExpression(value, fns.minLength);
+                    reductionFunctionNormalExpressions[centeredMovingKey] = createCenteredMovingNormalExpression(value, fns.minLength, fns.paddingValue, (_b = fns.rightPaddingValue) !== null && _b !== void 0 ? _b : fns.paddingValue);
+                    reductionFunctionNormalExpressions[runningKey] = createRunningNormalExpression(value, fns.minLength);
+                }
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+    }
+    function createReductionNormalExpression(reductionFunction, minLength) {
+        return {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                if (vector.length < minLength) {
+                    throw new LitsError("Vector length must be at least ".concat(minLength), sourceCodeInfo);
+                }
+                try {
+                    return reductionFunction(vector);
+                }
+                catch (error) {
+                    if (error instanceof Error) {
+                        throw new LitsError(error.message, sourceCodeInfo);
+                    }
+                    throw error;
+                }
+            },
+            paramCount: 1,
+        };
+    }
+    function createMovingNormalExpression(reductionFunction, minLength) {
+        return {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, finite: true, gte: minLength });
+                if (vector.length < minLength) {
+                    throw new LitsError("Vector length must be at least ".concat(minLength), sourceCodeInfo);
+                }
+                if (vector.length === 0) {
+                    return [];
+                }
+                try {
+                    if (windowSize >= vector.length) {
+                        return [reductionFunction(vector)];
+                    }
+                    var result = [];
+                    for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
+                        result.push(reductionFunction(vector.slice(i, i + windowSize)));
+                    }
+                    return result;
+                }
+                catch (error) {
+                    if (error instanceof Error) {
+                        throw new LitsError(error.message, sourceCodeInfo);
+                    }
+                    throw error;
+                }
+            },
+            paramCount: 2,
+        };
+    }
+    function createCenteredMovingNormalExpression(reductionFunction, minLength, defaultLeftPaddingValue, defaultRightPaddingValue) {
+        return {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b;
+                var _c = __read(_a, 4), vector = _c[0], windowSize = _c[1], padding = _c[2], rightPadding = _c[3];
+                assertVector(vector, sourceCodeInfo);
+                if (vector.length < minLength) {
+                    throw new LitsError("Vector length must be at least ".concat(minLength), sourceCodeInfo);
+                }
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, finite: true, gte: minLength });
+                var leftPaddingValue = padding !== null && padding !== void 0 ? padding : defaultLeftPaddingValue;
+                assertNumber(leftPaddingValue, sourceCodeInfo, { finite: true });
+                var rightPaddingValue = (_b = rightPadding !== null && rightPadding !== void 0 ? rightPadding : padding) !== null && _b !== void 0 ? _b : defaultRightPaddingValue;
+                assertNumber(rightPaddingValue, sourceCodeInfo, { finite: true });
+                try {
+                    var result = [];
+                    var halfWindowSize = Math.floor(windowSize / 2);
+                    var paddedVector = __spreadArray(__spreadArray(__spreadArray([], __read(Array(halfWindowSize).fill(leftPaddingValue)), false), __read(vector), false), __read(Array(halfWindowSize).fill(rightPaddingValue)), false);
+                    for (var i = 0; i < vector.length; i += 1) {
+                        result.push(reductionFunction(paddedVector.slice(i, i + windowSize)));
+                    }
+                    return result;
+                }
+                catch (error) {
+                    if (error instanceof Error) {
+                        throw new LitsError(error.message, sourceCodeInfo);
+                    }
+                    throw error;
+                }
+            },
+            paramCount: { min: 2, max: 4 },
+        };
+    }
+    function createRunningNormalExpression(reductionFunction, minLength) {
+        return {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                if (vector.length < minLength) {
+                    throw new LitsError("Vector length must be at least ".concat(minLength), sourceCodeInfo);
+                }
+                try {
+                    var result = [];
+                    for (var i = 0; i < vector.length; i += 1) {
+                        result.push(reductionFunction(vector.slice(0, i + 1)));
+                    }
+                    return result;
+                }
+                catch (error) {
+                    if (error instanceof Error) {
+                        throw new LitsError(error.message, sourceCodeInfo);
+                    }
+                    throw error;
+                }
+            },
+            paramCount: 1,
+        };
+    }
+
     function skewness(vector) {
         var mean = calcMean(vector);
         var stdDev = calcStdDev(vector);
@@ -6942,14 +7736,6 @@ var Playground = (function (exports) {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), vector = _b[0];
                 return isVector(vector);
-            },
-            paramCount: 1,
-        },
-        'vec:sorted?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return vector.every(function (val, i) { return i === 0 || val >= vector[i - 1]; });
             },
             paramCount: 1,
         },
@@ -7003,241 +7789,11 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'vec:+': {
-            evaluate: function (params, sourceCodeInfo) {
-                var e_1, _a;
-                var length = null;
-                try {
-                    for (var params_1 = __values(params), params_1_1 = params_1.next(); !params_1_1.done; params_1_1 = params_1.next()) {
-                        var param = params_1_1.value;
-                        if (isVector(param)) {
-                            if (length !== null && length !== param.length) {
-                                throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                            }
-                            length = param.length;
-                        }
-                    }
-                }
-                catch (e_1_1) { e_1 = { error: e_1_1 }; }
-                finally {
-                    try {
-                        if (params_1_1 && !params_1_1.done && (_a = params_1.return)) _a.call(params_1);
-                    }
-                    finally { if (e_1) throw e_1.error; }
-                }
-                if (length === null) {
-                    throw new LitsError('At least one parameter must be a vector', sourceCodeInfo);
-                }
-                var vectors = params.map(function (param) {
-                    if (isVector(param)) {
-                        return param;
-                    }
-                    if (!isNumber(param, { finite: true })) {
-                        throw new LitsError('parameter must be either vector or number', sourceCodeInfo);
-                    }
-                    return Array.from({ length: length }, function () { return param; });
-                });
-                var firstVector = vectors[0];
-                var restVectors = vectors.slice(1);
-                return restVectors.reduce(function (acc, vector) { return acc.map(function (val, i) { return val + vector[i]; }); }, firstVector);
-            },
-            paramCount: { min: 1 },
-        },
-        'vec:-': {
-            evaluate: function (params, sourceCodeInfo) {
-                var e_2, _a;
-                var length = null;
-                try {
-                    for (var params_2 = __values(params), params_2_1 = params_2.next(); !params_2_1.done; params_2_1 = params_2.next()) {
-                        var param = params_2_1.value;
-                        if (isVector(param)) {
-                            if (length !== null && length !== param.length) {
-                                throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                            }
-                            length = param.length;
-                        }
-                    }
-                }
-                catch (e_2_1) { e_2 = { error: e_2_1 }; }
-                finally {
-                    try {
-                        if (params_2_1 && !params_2_1.done && (_a = params_2.return)) _a.call(params_2);
-                    }
-                    finally { if (e_2) throw e_2.error; }
-                }
-                if (length === null) {
-                    throw new LitsError('At least one parameter must be a vector', sourceCodeInfo);
-                }
-                var vectors = params.map(function (param) {
-                    if (isVector(param)) {
-                        return param;
-                    }
-                    if (!isNumber(param, { finite: true })) {
-                        throw new LitsError('parameter must be either vector or number', sourceCodeInfo);
-                    }
-                    return Array.from({ length: length }, function () { return param; });
-                });
-                var firstVector = vectors[0];
-                var restVectors = vectors.slice(1);
-                return restVectors.reduce(function (acc, vector) { return acc.map(function (val, i) { return val - vector[i]; }); }, firstVector);
-            },
-            paramCount: { min: 1 },
-        },
-        'vec:*': {
-            evaluate: function (params, sourceCodeInfo) {
-                var e_3, _a;
-                var length = null;
-                try {
-                    for (var params_3 = __values(params), params_3_1 = params_3.next(); !params_3_1.done; params_3_1 = params_3.next()) {
-                        var param = params_3_1.value;
-                        if (isVector(param)) {
-                            if (length !== null && length !== param.length) {
-                                throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                            }
-                            length = param.length;
-                        }
-                    }
-                }
-                catch (e_3_1) { e_3 = { error: e_3_1 }; }
-                finally {
-                    try {
-                        if (params_3_1 && !params_3_1.done && (_a = params_3.return)) _a.call(params_3);
-                    }
-                    finally { if (e_3) throw e_3.error; }
-                }
-                if (length === null) {
-                    throw new LitsError('At least one parameter must be a vector', sourceCodeInfo);
-                }
-                var vectors = params.map(function (param) {
-                    if (isVector(param)) {
-                        return param;
-                    }
-                    if (!isNumber(param, { finite: true })) {
-                        throw new LitsError('parameter must be either vector or number', sourceCodeInfo);
-                    }
-                    return Array.from({ length: length }, function () { return param; });
-                });
-                var firstVector = vectors[0];
-                var restVectors = vectors.slice(1);
-                return restVectors.reduce(function (acc, vector) { return acc.map(function (val, i) { return val * vector[i]; }); }, firstVector);
-            },
-            paramCount: { min: 1 },
-        },
-        'vec:/': {
-            evaluate: function (params, sourceCodeInfo) {
-                var e_4, _a;
-                var length = null;
-                try {
-                    for (var params_4 = __values(params), params_4_1 = params_4.next(); !params_4_1.done; params_4_1 = params_4.next()) {
-                        var param = params_4_1.value;
-                        if (isVector(param)) {
-                            if (length !== null && length !== param.length) {
-                                throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                            }
-                            length = param.length;
-                        }
-                    }
-                }
-                catch (e_4_1) { e_4 = { error: e_4_1 }; }
-                finally {
-                    try {
-                        if (params_4_1 && !params_4_1.done && (_a = params_4.return)) _a.call(params_4);
-                    }
-                    finally { if (e_4) throw e_4.error; }
-                }
-                if (length === null) {
-                    throw new LitsError('At least one parameter must be a vector', sourceCodeInfo);
-                }
-                var vectors = params.map(function (param) {
-                    if (isVector(param)) {
-                        return param;
-                    }
-                    if (!isNumber(param, { finite: true })) {
-                        throw new LitsError('parameter must be either vector or number', sourceCodeInfo);
-                    }
-                    return Array.from({ length: length }, function () { return param; });
-                });
-                var firstVector = vectors[0];
-                var restVectors = vectors.slice(1);
-                return restVectors.reduce(function (acc, vector) { return acc.map(function (val, i) { return val / vector[i]; }); }, firstVector);
-            },
-            paramCount: { min: 1 },
-        },
-        'vec:^': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), a = _b[0], b = _b[1];
-                if (!isVector(a) && !isVector(b)) {
-                    throw new LitsError('At least one parameter must be a vector', sourceCodeInfo);
-                }
-                if (!isVector(a)) {
-                    assertVector(b, sourceCodeInfo);
-                    assertNumber(a, sourceCodeInfo, { finite: true });
-                }
-                if (!isVector(b)) {
-                    assertVector(a, sourceCodeInfo);
-                    assertNumber(b, sourceCodeInfo, { finite: true });
-                }
-                var length = (isVector(a) ? a : b).length;
-                var _c = __read([a, b].map(function (operand) {
-                    if (isVector(operand)) {
-                        if (operand.length !== length) {
-                            throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                        }
-                        return operand;
-                    }
-                    return Array.from({ length: length }, function () { return operand; });
-                }), 2), vector1 = _c[0], vector2 = _c[1];
-                return vector1.map(function (val, i) {
-                    var exponent = vector2[i];
-                    if (exponent < 0 && val === 0) {
-                        throw new LitsError('Cannot raise zero to a negative exponent', sourceCodeInfo);
-                    }
-                    return Math.pow(val, exponent);
-                });
-            },
-            paramCount: 2,
-        },
-        'vec:abs': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return vector.map(function (val) { return Math.abs(val); });
-            },
-            paramCount: 1,
-        },
-        'vec:sum': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return vector.reduce(function (acc, val) { return acc + val; }, 0);
-            },
-            paramCount: 1,
-        },
-        'vec:prod': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return vector.reduce(function (acc, val) { return acc * val; }, 1);
-            },
-            paramCount: 1,
-        },
-        'vec:mean': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertNonEmptyVector(vector, sourceCodeInfo);
-                return calcMean(vector);
-            },
-            paramCount: 1,
-        },
         'vec:median': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertNonEmptyVector(vector, sourceCodeInfo);
-                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
-                var mid = Math.floor(sorted.length / 2);
-                return sorted.length % 2 === 0
-                    ? (sorted[mid - 1] + sorted[mid]) / 2
-                    : sorted[mid];
+                return calcMedian(vector);
             },
             paramCount: 1,
         },
@@ -7293,22 +7849,6 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'vec:min': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertNonEmptyVector(vector, sourceCodeInfo);
-                return vector.reduce(function (acc, val) { return (val < acc ? val : acc); }, vector[0]);
-            },
-            paramCount: 1,
-        },
-        'vec:max': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertNonEmptyVector(vector, sourceCodeInfo);
-                return vector.reduce(function (acc, val) { return (val > acc ? val : acc); }, vector[0]);
-            },
-            paramCount: 1,
-        },
         'vec:min-index': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
@@ -7335,7 +7875,7 @@ var Playground = (function (exports) {
         },
         'vec:count-values': {
             evaluate: function (_a, sourceCodeInfo) {
-                var e_5, _b;
+                var e_1, _b;
                 var _c = __read(_a, 1), vector = _c[0];
                 assertVector(vector, sourceCodeInfo);
                 var frequencyMap = new Map();
@@ -7345,12 +7885,12 @@ var Playground = (function (exports) {
                         frequencyMap.set(value, (frequencyMap.get(value) || 0) + 1);
                     }
                 }
-                catch (e_5_1) { e_5 = { error: e_5_1 }; }
+                catch (e_1_1) { e_1 = { error: e_1_1 }; }
                 finally {
                     try {
                         if (vector_1_1 && !vector_1_1.done && (_b = vector_1.return)) _b.call(vector_1);
                     }
-                    finally { if (e_5) throw e_5.error; }
+                    finally { if (e_1) throw e_1.error; }
                 }
                 return __spreadArray([], __read(frequencyMap.entries()), false).sort(function (a, b) {
                     // First compare by count (descending)
@@ -7423,7 +7963,8 @@ var Playground = (function (exports) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
                 return vector.reduce(function (acc, val) {
-                    var last = acc[acc.length - 1] || 0;
+                    var _a;
+                    var last = (_a = acc[acc.length - 1]) !== null && _a !== void 0 ? _a : 0;
                     acc.push(last + val);
                     return acc;
                 }, []);
@@ -7435,7 +7976,8 @@ var Playground = (function (exports) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
                 return vector.reduce(function (acc, val) {
-                    var last = acc[acc.length - 1] || 1;
+                    var _a;
+                    var last = (_a = acc[acc.length - 1]) !== null && _a !== void 0 ? _a : 1;
                     acc.push(last * val);
                     return acc;
                 }, []);
@@ -7483,7 +8025,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'vec:get-range': {
+        'vec:span': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertNonEmptyVector(vector, sourceCodeInfo);
@@ -7535,16 +8077,82 @@ var Playground = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
-                var mean = calcMean(vector);
-                var stdDev = calcStdDev(vector);
-                return vector.reduce(function (acc, val) { return acc + (Math.pow((val - mean), 4)); }, 0) / (vector.length * Math.pow(stdDev, 4));
+                if (vector.length < 4) {
+                    throw new LitsError('Kurtosis requires at least four values', sourceCodeInfo);
+                }
+                try {
+                    return kurtosis(vector);
+                }
+                catch (error) {
+                    if (error instanceof Error) {
+                        throw new LitsError(error.message, sourceCodeInfo);
+                    }
+                    throw error;
+                }
+            },
+            paramCount: 1,
+        },
+        'vec:excess-kurtosis': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                if (vector.length < 4) {
+                    throw new LitsError('Kurtosis requires at least four values', sourceCodeInfo);
+                }
+                try {
+                    return excessKurtosis(vector);
+                }
+                catch (error) {
+                    if (error instanceof Error) {
+                        throw new LitsError(error.message, sourceCodeInfo);
+                    }
+                    throw error;
+                }
+            },
+            paramCount: 1,
+        },
+        'vec:sample-kurtosis': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                if (vector.length < 4) {
+                    throw new LitsError('Kurtosis requires at least four values', sourceCodeInfo);
+                }
+                try {
+                    return sampleKurtosis(vector);
+                }
+                catch (error) {
+                    if (error instanceof Error) {
+                        throw new LitsError(error.message, sourceCodeInfo);
+                    }
+                    throw error;
+                }
+            },
+            paramCount: 1,
+        },
+        'vec:sample-excess-kurtosis': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                if (vector.length < 4) {
+                    throw new LitsError('Kurtosis requires at least four values', sourceCodeInfo);
+                }
+                try {
+                    return sampleExcessKurtosis(vector);
+                }
+                catch (error) {
+                    if (error instanceof Error) {
+                        throw new LitsError(error.message, sourceCodeInfo);
+                    }
+                    throw error;
+                }
             },
             paramCount: 1,
         },
         'vec:geometric-mean': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
+                assertNonEmptyVector(vector, sourceCodeInfo);
                 return Math.exp(vector.reduce(function (acc, val) { return acc + Math.log(val); }, 0) / vector.length);
             },
             paramCount: 1,
@@ -7552,7 +8160,7 @@ var Playground = (function (exports) {
         'vec:harmonic-mean': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
+                assertNonEmptyVector(vector, sourceCodeInfo);
                 return vector.length / vector.reduce(function (acc, val) { return acc + 1 / val; }, 0);
             },
             paramCount: 1,
@@ -7560,75 +8168,40 @@ var Playground = (function (exports) {
         'vec:rms': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
+                assertNonEmptyVector(vector, sourceCodeInfo);
                 return Math.sqrt(vector.reduce(function (acc, val) { return acc + Math.pow(val, 2); }, 0) / vector.length);
             },
             paramCount: 1,
         },
-        'vec:z-score': {
+        'vec:mad': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                var mean = calcMean(vector);
-                var stdDev = calcStdDev(vector);
-                return vector.map(function (val) { return (val - mean) / stdDev; });
+                assertNonEmptyVector(vector, sourceCodeInfo);
+                return calcMad(vector);
             },
             paramCount: 1,
         },
-        'vec:normalize-minmax': {
+        'vec:medad': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                var min = vector.reduce(function (acc, val) { return (val < vector[acc] ? val : acc); }, vector[0]);
-                var max = vector.reduce(function (acc, val) { return (val > vector[acc] ? val : acc); }, vector[0]);
-                return vector.map(function (val) { return (val - min) / (max - min); });
-            },
-            paramCount: 1,
-        },
-        'vec:normalize-robust': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                var median = vector.reduce(function (acc, val) { return acc + val; }, 0) / vector.length;
-                var iqr = vector.reduce(function (acc, val) { return acc + Math.abs(val - median); }, 0) / vector.length;
-                return vector.map(function (val) { return (val - median) / iqr; });
+                assertNonEmptyVector(vector, sourceCodeInfo);
+                return calcMedad(vector);
             },
             paramCount: 1,
         },
         'vec:histogram': {
             evaluate: function (_a, sourceCodeInfo) {
-                var e_6, _b;
-                var _c = __read(_a, 2), vector = _c[0], bins = _c[1];
+                var _b = __read(_a, 2), vector = _b[0], bins = _b[1];
                 assertVector(vector, sourceCodeInfo);
                 assertNumber(bins, sourceCodeInfo, { integer: true, positive: true });
-                var min = vector.reduce(function (acc, val) { return (val < vector[acc] ? val : acc); }, vector[0]);
-                var max = vector.reduce(function (acc, val) { return (val > vector[acc] ? val : acc); }, vector[0]);
-                var binSize = (max - min) / bins;
-                var histogram = Array.from({ length: bins }, function () { return 0; });
-                try {
-                    for (var vector_2 = __values(vector), vector_2_1 = vector_2.next(); !vector_2_1.done; vector_2_1 = vector_2.next()) {
-                        var value = vector_2_1.value;
-                        var binIndex = Math.floor((value - min) / binSize);
-                        if (binIndex >= 0 && binIndex < bins) {
-                            histogram[binIndex] += 1;
-                        }
-                    }
-                }
-                catch (e_6_1) { e_6 = { error: e_6_1 }; }
-                finally {
-                    try {
-                        if (vector_2_1 && !vector_2_1.done && (_b = vector_2.return)) _b.call(vector_2);
-                    }
-                    finally { if (e_6) throw e_6.error; }
-                }
-                return histogram;
+                return calcHistogram(vector, bins);
             },
             paramCount: 2,
         },
-        'vec:cdf': {
+        'vec:ecdf': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vector = _b[0], value = _b[1];
-                assertVector(vector, sourceCodeInfo);
+                assertNonEmptyVector(vector, sourceCodeInfo);
                 assertNumber(value, sourceCodeInfo, { finite: true });
                 var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
                 var index = sorted.findIndex(function (val) { return val > value; });
@@ -7636,24 +8209,11 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'vec:ecdf': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], value = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(value, sourceCodeInfo, { finite: true });
-                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
-                var index = sorted.findIndex(function (val) { return val >= value; });
-                return index === -1 ? 1 : (index + 1) / sorted.length;
-            },
-            paramCount: 2,
-        },
-        'vec:no-extreme-eutliers?': {
+        'vec:outliers?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
-                var mean = calcMean(vector);
-                var stdDev = calcStdDev(vector);
-                return vector.every(function (val) { return Math.abs((val - mean) / stdDev) < 3; });
+                return hasOutliers(vector);
             },
             paramCount: 1,
         },
@@ -7661,25 +8221,9 @@ var Playground = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
-                var mean = calcMean(vector);
-                var stdDev = calcStdDev(vector);
-                return vector.filter(function (val) { return Math.abs((val - mean) / stdDev) > 3; });
+                return outliers(vector);
             },
             paramCount: 1,
-        },
-        'vec:moving-average': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
-                var result = [];
-                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
-                    var sum = vector.slice(i, i + windowSize).reduce(function (acc, val) { return acc + val; }, 0);
-                    result.push(sum / windowSize);
-                }
-                return result;
-            },
-            paramCount: 2,
         },
         'vec:moving-median': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -7709,63 +8253,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'vec:moving-sum': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
-                var result = [];
-                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
-                    var sum = vector.slice(i, i + windowSize).reduce(function (acc, val) { return acc + val; }, 0);
-                    result.push(sum);
-                }
-                return result;
-            },
-            paramCount: 2,
-        },
-        'vec:moving-product': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
-                var result = [];
-                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
-                    var product = vector.slice(i, i + windowSize).reduce(function (acc, val) { return acc * val; }, 1);
-                    result.push(product);
-                }
-                return result;
-            },
-            paramCount: 2,
-        },
-        'vec:moving-min': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
-                var result = [];
-                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
-                    var min = vector.slice(i, i + windowSize).reduce(function (acc, val) { return (val < acc ? val : acc); }, vector[i]);
-                    result.push(min);
-                }
-                return result;
-            },
-            paramCount: 2,
-        },
-        'vec:moving-max': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
-                var result = [];
-                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
-                    var max = vector.slice(i, i + windowSize).reduce(function (acc, val) { return (val > acc ? val : acc); }, vector[i]);
-                    result.push(max);
-                }
-                return result;
-            },
-            paramCount: 2,
-        },
-        'moving-variance': {
+        'vec:moving-variance': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
                 assertVector(vector, sourceCodeInfo);
@@ -7778,7 +8266,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'moving-rms': {
+        'vec:moving-rms': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
                 assertVector(vector, sourceCodeInfo);
@@ -7921,6 +8409,490 @@ var Playground = (function (exports) {
                 return vectorA.reduce(function (acc, val, i) { return acc + Math.abs(val - vectorB[i]); }, 0) / vectorA.length;
             },
             paramCount: 2,
+        },
+    };
+    addReductionFunctions(reductionFunctionNormalExpressions);
+    function addReductionFunctions(sequences) {
+        var e_2, _a;
+        try {
+            for (var _b = __values(Object.entries(sequences)), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var _d = __read(_c.value, 2), key = _d[0], value = _d[1];
+                /* v8 ignore next 3 */
+                if (vectorNormalExpression[key]) {
+                    throw new Error("Duplicate normal expression key found: ".concat(key));
+                }
+                vectorNormalExpression[key] = value;
+            }
+        }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_2) throw e_2.error; }
+        }
+    }
+
+    var linearAlgebraNormalExpression = {
+        'lin:dot': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
+            },
+            paramCount: 2,
+        },
+        'lin:cross': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== 3 || vectorB.length !== 3) {
+                    throw new LitsError('Cross product is only defined for 3D vectors', sourceCodeInfo);
+                }
+                return [
+                    vectorA[1] * vectorB[2] - vectorA[2] * vectorB[1],
+                    vectorA[2] * vectorB[0] - vectorA[0] * vectorB[2],
+                    vectorA[0] * vectorB[1] - vectorA[1] * vectorB[0],
+                ];
+            },
+            paramCount: 2,
+        },
+        'lin:normalize-minmax': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var min = vector.reduce(function (acc, val) { return (val < acc ? val : acc); }, vector[0]);
+                var max = vector.reduce(function (acc, val) { return (val > acc ? val : acc); }, vector[0]);
+                if (min === max) {
+                    return vector.map(function () { return 0; });
+                }
+                return vector.map(function (val) { return (val - min) / (max - min); });
+            },
+            paramCount: 1,
+        },
+        'lin:normalize-robust': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                if (vector.length === 0) {
+                    return [];
+                }
+                var median = calcMedian(vector);
+                var medad = calcMedad(vector);
+                if (medad === 0) {
+                    return vector.map(function (val) { return val - median; });
+                }
+                return vector.map(function (val) { return (val - median) / medad; });
+            },
+            paramCount: 1,
+        },
+        'lin:normalize-zscore': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                var mean = calcMean(vector);
+                var stdDev = calcStdDev(vector);
+                if (stdDev === 0) {
+                    return vector.map(function () { return 0; });
+                }
+                return vector.map(function (val) { return (val - mean) / stdDev; });
+            },
+            paramCount: 1,
+        },
+        'lin:normalize-l1': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                if (vector.length === 0) {
+                    return [];
+                }
+                var norm = vector.reduce(function (acc, val) { return acc + Math.abs(val); }, 0);
+                if (norm === 0) {
+                    return vector.map(function () { return 0; });
+                }
+                return vector.map(function (val) { return val / norm; });
+            },
+            paramCount: 1,
+        },
+        'lin:normalize-l2': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                if (vector.length === 0) {
+                    return [];
+                }
+                var norm = Math.sqrt(vector.reduce(function (acc, val) { return acc + Math.pow(val, 2); }, 0));
+                if (norm === 0) {
+                    return vector.map(function () { return 0; });
+                }
+                return vector.map(function (val) { return val / norm; });
+            },
+            paramCount: 1,
+        },
+        'lin:normalize-log': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                if (vector.length === 0) {
+                    return [];
+                }
+                var min = vector.reduce(function (acc, val) { return (val < acc ? val : acc); }, vector[0]);
+                if (min <= 0) {
+                    throw new LitsError('Log normalization requires all values to be positive', sourceCodeInfo);
+                }
+                return vector.map(function (val) { return Math.log(val / min); });
+            },
+            paramCount: 1,
+        },
+        'lin:magnitude': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return Math.sqrt(vector.reduce(function (acc, val) { return acc + val * val; }, 0));
+            },
+            paramCount: 1,
+        },
+        'lin:angle': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var dotProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
+                var magnitudeA = Math.sqrt(vectorA.reduce(function (acc, val) { return acc + val * val; }, 0));
+                var magnitudeB = Math.sqrt(vectorB.reduce(function (acc, val) { return acc + val * val; }, 0));
+                return Math.acos(dotProduct / (magnitudeA * magnitudeB));
+            },
+            paramCount: 2,
+        },
+        'lin:projection': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var dotProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
+                var magnitudeB = Math.sqrt(vectorB.reduce(function (acc, val) { return acc + val * val; }, 0));
+                return vectorB.map(function (val) { return (dotProduct / (Math.pow(magnitudeB, 2))) * val; });
+            },
+            paramCount: 2,
+        },
+        'lin:orthogonal?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var dotProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
+                return dotProduct === 0;
+            },
+            paramCount: 2,
+        },
+        'lin:parallel?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var crossProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
+                return crossProduct === 0;
+            },
+            paramCount: 2,
+        },
+        'lin:collinear?': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var crossProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
+                return crossProduct === 0;
+            },
+            paramCount: 2,
+        },
+        'lin:cosine-similarity': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var dotProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
+                var magnitudeA = Math.sqrt(vectorA.reduce(function (acc, val) { return acc + val * val; }, 0));
+                var magnitudeB = Math.sqrt(vectorB.reduce(function (acc, val) { return acc + val * val; }, 0));
+                return dotProduct / (magnitudeA * magnitudeB);
+            },
+            paramCount: 2,
+        },
+        'lin:distance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return Math.sqrt(vectorA.reduce(function (acc, val, i) { return acc + Math.pow((val - vectorB[i]), 2); }, 0));
+            },
+            paramCount: 2,
+        },
+        'lin:euclidean-distance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return Math.sqrt(vectorA.reduce(function (acc, val, i) { return acc + Math.pow((val - vectorB[i]), 2); }, 0));
+            },
+            paramCount: 2,
+        },
+        'lin:manhattan-distance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return vectorA.reduce(function (acc, val, i) { return acc + Math.abs(val - vectorB[i]); }, 0);
+            },
+            paramCount: 2,
+        },
+        'lin:hamming-distance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return vectorA.reduce(function (acc, val, i) { return acc + (val !== vectorB[i] ? 1 : 0); }, 0);
+            },
+            paramCount: 2,
+        },
+        'lin:chebyshev-distance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return Math.max.apply(Math, __spreadArray([], __read(vectorA.map(function (val, i) { return Math.abs(val - vectorB[i]); })), false));
+            },
+            paramCount: 2,
+        },
+        'lin:minkowski-distance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), vectorA = _b[0], vectorB = _b[1], p = _b[2];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                assertNumber(p, sourceCodeInfo, { finite: true });
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return Math.pow(vectorA.reduce(function (acc, val, i) { return acc + Math.pow(Math.abs(val - vectorB[i]), p); }, 0), (1 / p));
+            },
+            paramCount: 3,
+        },
+        'lin:jaccard-distance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                var intersection = vectorA.filter(function (val) { return vectorB.includes(val); }).length;
+                var union = new Set(__spreadArray(__spreadArray([], __read(vectorA), false), __read(vectorB), false)).size;
+                return 1 - intersection / union;
+            },
+            paramCount: 2,
+        },
+        'lin:dice-coefficient': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                var intersection = vectorA.filter(function (val) { return vectorB.includes(val); }).length;
+                return (2 * intersection) / (vectorA.length + vectorB.length);
+            },
+            paramCount: 2,
+        },
+        'lin:levenshtein-distance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                var m = vectorA.length;
+                var n = vectorB.length;
+                var d = Array.from({ length: m + 1 }, function () { return Array(n + 1).fill(0); });
+                for (var i = 0; i <= m; i += 1) {
+                    d[i][0] = i;
+                }
+                for (var j = 0; j <= n; j += 1) {
+                    d[0][j] = j;
+                }
+                for (var i = 1; i <= m; i += 1) {
+                    for (var j = 1; j <= n; j += 1) {
+                        var cost = vectorA[i - 1] === vectorB[j - 1] ? 0 : 1;
+                        d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + cost);
+                    }
+                }
+                return d[m][n];
+            },
+            paramCount: 2,
+        },
+        'lin:l1-norm': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return vector.reduce(function (acc, val) { return acc + Math.abs(val); }, 0);
+            },
+            paramCount: 1,
+        },
+        'lin:l2-norm': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                return Math.sqrt(vector.reduce(function (acc, val) { return acc + val * val; }, 0));
+            },
+            paramCount: 1,
+        },
+        'lin:covariance': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var meanA = calcMean(vectorA);
+                var meanB = calcMean(vectorB);
+                return vectorA.reduce(function (acc, val, i) { return acc + (val - meanA) * (vectorB[i] - meanB); }, 0) / vectorA.length;
+            },
+            paramCount: 2,
+        },
+        'lin:correlation': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var meanA = calcMean(vectorA);
+                var meanB = calcMean(vectorB);
+                var numerator = vectorA.reduce(function (acc, val, i) { return acc + (val - meanA) * (vectorB[i] - meanB); }, 0);
+                var denominator = Math.sqrt(vectorA.reduce(function (acc, val) { return acc + Math.pow((val - meanA), 2); }, 0) * vectorB.reduce(function (acc, val) { return acc + Math.pow((val - meanB), 2); }, 0));
+                return numerator / denominator;
+            },
+            paramCount: 2,
+        },
+        'lin:spearman-correlation': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var rankA = __spreadArray([], __read(vectorA.keys()), false).sort(function (a, b) { return vectorA[a] - vectorA[b]; });
+                var rankB = __spreadArray([], __read(vectorB.keys()), false).sort(function (a, b) { return vectorB[a] - vectorB[b]; });
+                return vectorA.reduce(function (acc, _val, i) { return acc + (rankA[i] - rankB[i]); }, 0) / vectorA.length;
+            },
+            paramCount: 2,
+        },
+        'lin:kendall-tau': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var concordant = 0;
+                var discordant = 0;
+                for (var i = 0; i < vectorA.length; i += 1) {
+                    for (var j = i + 1; j < vectorA.length; j += 1) {
+                        if ((vectorA[i] - vectorA[j]) * (vectorB[i] - vectorB[j]) > 0) {
+                            concordant += 1;
+                        }
+                        else {
+                            discordant += 1;
+                        }
+                    }
+                }
+                return (concordant - discordant) / Math.sqrt(Math.pow((concordant + discordant), 2));
+            },
+            paramCount: 2,
+        },
+        'lin:autocorrelation': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], lag = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                var effectiveLag = lag !== null && lag !== void 0 ? lag : vector.length - 1;
+                assertNumber(effectiveLag, sourceCodeInfo, { integer: true });
+                if (effectiveLag >= vector.length) {
+                    throw new LitsError('Lag must be less than the length of the vector', sourceCodeInfo);
+                }
+                var mean = calcMean(vector);
+                var variance = calcVariance(vector);
+                var autocovariance = vector.reduce(function (acc, val, i) { return acc + (val - mean) * (vector[i + effectiveLag] - mean); }, 0) / vector.length;
+                return autocovariance / variance;
+            },
+            paramCount: { min: 1, max: 2 },
+        },
+        'lin:cross-correlation': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), vectorA = _b[0], vectorB = _b[1], lag = _b[2];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                var effectiveLag = lag !== null && lag !== void 0 ? lag : vectorA.length - 1;
+                assertNumber(effectiveLag, sourceCodeInfo, { integer: true, positive: true });
+                if (effectiveLag >= vectorA.length || effectiveLag >= vectorB.length) {
+                    throw new LitsError('Lag must be less than the length of the vectors', sourceCodeInfo);
+                }
+                var n = vectorA.length;
+                var meanA = vectorA.reduce(function (sum, x) { return sum + x; }, 0) / n;
+                var meanB = vectorB.reduce(function (sum, x) { return sum + x; }, 0) / n;
+                var stdA = Math.sqrt(vectorA.reduce(function (sum, x) { return sum + Math.pow((x - meanA), 2); }, 0) / n);
+                var stdB = Math.sqrt(vectorB.reduce(function (sum, x) { return sum + Math.pow((x - meanB), 2); }, 0) / n);
+                if (stdA === 0 || stdB === 0)
+                    return 0;
+                var overlapLength = n - Math.abs(effectiveLag);
+                var sum = 0;
+                if (effectiveLag >= 0) {
+                    for (var i = 0; i < overlapLength; i++) {
+                        sum += (vectorA[i] - meanA) * (vectorB[i + effectiveLag] - meanB);
+                    }
+                }
+                else {
+                    for (var i = 0; i < overlapLength; i++) {
+                        sum += (vectorA[i - effectiveLag] - meanA) * (vectorB[i] - meanB);
+                    }
+                }
+                return sum / (overlapLength * stdA * stdB);
+            },
+            paramCount: 3,
         },
     };
 
@@ -11805,7 +12777,7 @@ var Playground = (function (exports) {
         }
     }
 
-    var expressions = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, bitwiseNormalExpression), collectionNormalExpression), arrayNormalExpression), sequenceNormalExpression), mathNormalExpression), miscNormalExpression), assertNormalExpression), objectNormalExpression), predicatesNormalExpression), regexpNormalExpression), stringNormalExpression), functionalNormalExpression), vectorNormalExpression), tableNormalExpression), matrixNormalExpression), combinatoricalNormalExpression);
+    var expressions = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, bitwiseNormalExpression), collectionNormalExpression), arrayNormalExpression), sequenceNormalExpression), mathNormalExpression), miscNormalExpression), assertNormalExpression), objectNormalExpression), predicatesNormalExpression), regexpNormalExpression), stringNormalExpression), functionalNormalExpression), vectorNormalExpression), linearAlgebraNormalExpression), tableNormalExpression), matrixNormalExpression), combinatoricalNormalExpression);
     var aliases = {};
     Object.values(expressions).forEach(function (normalExpression) {
         var _a;

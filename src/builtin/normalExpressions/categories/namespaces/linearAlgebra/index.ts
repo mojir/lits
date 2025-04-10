@@ -3,10 +3,13 @@ import { assertVector } from '../../../../../typeGuards/annotatedArrays'
 import { assertNumber } from '../../../../../typeGuards/number'
 import type { BuiltinNormalExpressions } from '../../../../interface'
 import { calcMean } from '../vector/calcMean'
+import { calcMedad } from '../vector/calcMedad'
+import { calcMedian } from '../vector/calcMedian'
+import { calcStdDev } from '../vector/calcStdDev'
 import { calcVariance } from '../vector/calcVariance'
 
 export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
-  'l:dot': {
+  'lin:dot': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
       assertVector(vectorA, sourceCodeInfo)
       assertVector(vectorB, sourceCodeInfo)
@@ -19,7 +22,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'l:cross': {
+  'lin:cross': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number[] => {
       assertVector(vectorA, sourceCodeInfo)
       assertVector(vectorB, sourceCodeInfo)
@@ -36,21 +39,105 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'l:normalize': {
+  'lin:normalize-minmax': {
     evaluate: ([vector], sourceCodeInfo): number[] => {
       assertVector(vector, sourceCodeInfo)
 
-      const magnitude = Math.sqrt(vector.reduce((acc, val) => acc + val * val, 0))
+      const min = vector.reduce((acc, val) => (val < acc ? val : acc), vector[0]!)
+      const max = vector.reduce((acc, val) => (val > acc ? val : acc), vector[0]!)
 
-      if (magnitude === 0) {
-        throw new LitsError('Cannot normalize a zero vector', sourceCodeInfo)
+      if (min === max) {
+        return vector.map(() => 0)
       }
 
-      return vector.map(val => val / magnitude)
+      return vector.map(val => (val - min) / (max - min))
     },
     paramCount: 1,
   },
-  'l:magnitude': {
+  'lin:normalize-robust': {
+    evaluate: ([vector], sourceCodeInfo): number[] => {
+      assertVector(vector, sourceCodeInfo)
+
+      if (vector.length === 0) {
+        return []
+      }
+
+      const median = calcMedian(vector)
+      const medad = calcMedad(vector)
+
+      if (medad === 0) {
+        return vector.map(val => val - median)
+      }
+      return vector.map(val => (val - median) / medad)
+    },
+    paramCount: 1,
+  },
+  'lin:normalize-zscore': {
+    evaluate: ([vector], sourceCodeInfo): number[] => {
+      assertVector(vector, sourceCodeInfo)
+
+      const mean = calcMean(vector)
+      const stdDev = calcStdDev(vector)
+
+      if (stdDev === 0) {
+        return vector.map(() => 0)
+      }
+
+      return vector.map(val => (val - mean) / stdDev)
+    },
+    paramCount: 1,
+  },
+  'lin:normalize-l1': {
+    evaluate: ([vector], sourceCodeInfo): number[] => {
+      assertVector(vector, sourceCodeInfo)
+      if (vector.length === 0) {
+        return []
+      }
+      const norm = vector.reduce((acc, val) => acc + Math.abs(val), 0)
+
+      if (norm === 0) {
+        return vector.map(() => 0)
+      }
+
+      return vector.map(val => val / norm)
+    },
+    paramCount: 1,
+  },
+  'lin:normalize-l2': {
+    evaluate: ([vector], sourceCodeInfo): number[] => {
+      assertVector(vector, sourceCodeInfo)
+      if (vector.length === 0) {
+        return []
+      }
+      const norm = Math.sqrt(vector.reduce((acc, val) => acc + val ** 2, 0))
+
+      if (norm === 0) {
+        return vector.map(() => 0)
+      }
+
+      return vector.map(val => val / norm)
+    },
+    paramCount: 1,
+  },
+  'lin:normalize-log': {
+    evaluate: ([vector], sourceCodeInfo): number[] => {
+      assertVector(vector, sourceCodeInfo)
+
+      if (vector.length === 0) {
+        return []
+      }
+
+      const min = vector.reduce((acc, val) => (val < acc ? val : acc), vector[0]!)
+
+      if (min <= 0) {
+        throw new LitsError('Log normalization requires all values to be positive', sourceCodeInfo)
+      }
+
+      return vector.map(val => Math.log(val / min))
+    },
+    paramCount: 1,
+  },
+  'lin:magnitude': {
     evaluate: ([vector], sourceCodeInfo): number => {
       assertVector(vector, sourceCodeInfo)
 
@@ -58,7 +145,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'l:angle': {
+  'lin:angle': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
       assertVector(vectorA, sourceCodeInfo)
       assertVector(vectorB, sourceCodeInfo)
@@ -75,7 +162,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'l:projection': {
+  'lin:projection': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number[] => {
       assertVector(vectorA, sourceCodeInfo)
       assertVector(vectorB, sourceCodeInfo)
@@ -91,7 +178,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'l:orthogonal?': {
+  'lin:orthogonal?': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): boolean => {
       assertVector(vectorA, sourceCodeInfo)
       assertVector(vectorB, sourceCodeInfo)
@@ -105,7 +192,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'l:parallel?': {
+  'lin:parallel?': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): boolean => {
       assertVector(vectorA, sourceCodeInfo)
       assertVector(vectorB, sourceCodeInfo)
@@ -119,7 +206,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'l:collinear?': {
+  'lin:collinear?': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): boolean => {
       assertVector(vectorA, sourceCodeInfo)
       assertVector(vectorB, sourceCodeInfo)
@@ -133,7 +220,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'l:cosine-similarity': {
+  'lin:cosine-similarity': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
       assertVector(vectorA, sourceCodeInfo)
       assertVector(vectorB, sourceCodeInfo)
@@ -150,7 +237,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'l:distance': {
+  'lin:distance': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
       assertVector(vectorA, sourceCodeInfo)
       assertVector(vectorB, sourceCodeInfo)
@@ -163,7 +250,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'l:euclidean-distance': {
+  'lin:euclidean-distance': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
       assertVector(vectorA, sourceCodeInfo)
       assertVector(vectorB, sourceCodeInfo)
@@ -176,7 +263,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'l:manhattan-distance': {
+  'lin:manhattan-distance': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
       assertVector(vectorA, sourceCodeInfo)
       assertVector(vectorB, sourceCodeInfo)
@@ -189,7 +276,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'l:hamming-distance': {
+  'lin:hamming-distance': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
       assertVector(vectorA, sourceCodeInfo)
       assertVector(vectorB, sourceCodeInfo)
@@ -202,7 +289,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'l:chebyshev-distance': {
+  'lin:chebyshev-distance': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
       assertVector(vectorA, sourceCodeInfo)
       assertVector(vectorB, sourceCodeInfo)
@@ -215,7 +302,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'l:minkowski-distance': {
+  'lin:minkowski-distance': {
     evaluate: ([vectorA, vectorB, p], sourceCodeInfo): number => {
       assertVector(vectorA, sourceCodeInfo)
       assertVector(vectorB, sourceCodeInfo)
@@ -229,7 +316,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 3,
   },
-  'l:jaccard-distance': {
+  'lin:jaccard-distance': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
       assertVector(vectorA, sourceCodeInfo)
       assertVector(vectorB, sourceCodeInfo)
@@ -241,7 +328,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'l:dice-coefficient': {
+  'lin:dice-coefficient': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
       assertVector(vectorA, sourceCodeInfo)
       assertVector(vectorB, sourceCodeInfo)
@@ -251,7 +338,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'l:levenshtein-distance': {
+  'lin:levenshtein-distance': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
       assertVector(vectorA, sourceCodeInfo)
       assertVector(vectorB, sourceCodeInfo)
@@ -282,7 +369,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'l:l1-norm': {
+  'lin:l1-norm': {
     evaluate: ([vector], sourceCodeInfo): number => {
       assertVector(vector, sourceCodeInfo)
 
@@ -290,7 +377,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'l:l2-norm': {
+  'lin:l2-norm': {
     evaluate: ([vector], sourceCodeInfo): number => {
       assertVector(vector, sourceCodeInfo)
 
@@ -298,7 +385,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'l:covariance': {
+  'lin:covariance': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
       assertVector(vectorA, sourceCodeInfo)
       assertVector(vectorB, sourceCodeInfo)
@@ -314,7 +401,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'l:correlation': {
+  'lin:correlation': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
       assertVector(vectorA, sourceCodeInfo)
       assertVector(vectorB, sourceCodeInfo)
@@ -335,7 +422,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'l:spearman-correlation': {
+  'lin:spearman-correlation': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
       assertVector(vectorA, sourceCodeInfo)
       assertVector(vectorB, sourceCodeInfo)
@@ -351,7 +438,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'l:kendall-tau': {
+  'lin:kendall-tau': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
       assertVector(vectorA, sourceCodeInfo)
       assertVector(vectorB, sourceCodeInfo)
@@ -378,7 +465,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'l:autocorrelation': {
+  'lin:autocorrelation': {
     evaluate: ([vector, lag], sourceCodeInfo): number => {
       assertVector(vector, sourceCodeInfo)
       const effectiveLag = lag ?? vector.length - 1
@@ -393,7 +480,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 1, max: 2 },
   },
-  'l:cross-correlation': {
+  'lin:cross-correlation': {
     evaluate: ([vectorA, vectorB, lag], sourceCodeInfo): number => {
       assertVector(vectorA, sourceCodeInfo)
       assertVector(vectorB, sourceCodeInfo)

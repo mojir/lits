@@ -17,15 +17,6 @@ describe('vector functions', () => {
       expect(lits.run('vec:vector?({})')).toEqual(false)
     })
   })
-  describe('vec:sorted?', () => {
-    it('should determine if a vector is sorted', () => {
-      expect(lits.run('vec:sorted?([1, 2, 3])')).toEqual(true)
-      expect(lits.run('vec:sorted?([1, 2, 3, 2])')).toEqual(false)
-      expect(lits.run('vec:sorted?([1, 2, 3, 4])')).toEqual(true)
-      expect(lits.run('vec:sorted?([4, 3, 2, 1])')).toEqual(false)
-      expect(lits.run('vec:sorted?([])')).toEqual(true)
-    })
-  })
   describe('vec:monotonic?', () => {
     it('should determine if a vector is monotonic', () => {
       expect(lits.run('vec:monotonic?([1, 2, 3])')).toEqual(true)
@@ -83,105 +74,6 @@ describe('vector functions', () => {
       expect(lits.run('vec:strictly-decreasing?([4, 3, 2, 1])')).toEqual(true)
       expect(lits.run('vec:strictly-decreasing?([4, 3, 3, 2, 1])')).toEqual(false)
       expect(lits.run('vec:strictly-decreasing?([])')).toEqual(true)
-    })
-  })
-  describe('vec:+', () => {
-    it('should add vectors element-wise', () => {
-      expect(lits.run('vec:+([1, 2, 3])')).toEqual([1, 2, 3])
-      expect(lits.run('[1, 2, 3] vec:+ [4, 5, 6]')).toEqual([5, 7, 9])
-      expect(lits.run('vec:+([1, 2, 3], [4, 5, 6])')).toEqual([5, 7, 9])
-      expect(lits.run('vec:+([1, 2, 3], [4, 5, 6], [7, 8, 9])')).toEqual([12, 15, 18])
-      expect(lits.run('vec:+([1], [2])')).toEqual([3])
-      expect(lits.run('vec:+([], [])')).toEqual([])
-      expect(() => lits.run('vec:+([1, 2], [3, 4, 5])')).toThrowError(LitsError)
-      expect(() => lits.run('vec:+([], [1])')).toThrowError(LitsError)
-      expect(() => lits.run('vec:+([1], [])')).toThrowError(LitsError)
-    })
-    it('should add vectors and scalars', () => {
-      expect(lits.run('vec:+([1, 2, 3], 4)')).toEqual([5, 6, 7])
-      expect(lits.run('vec:+([1], 4)')).toEqual([5])
-      expect(lits.run('vec:+([], 4)')).toEqual([])
-      expect(lits.run('vec:+(4, [1, 2, 3])')).toEqual([5, 6, 7])
-      expect(lits.run('vec:+(4, [1])')).toEqual([5])
-      expect(lits.run('vec:+(4, [])')).toEqual([])
-      expect(lits.run('vec:+(4, [1, 2, 3], 5)')).toEqual([10, 11, 12])
-      expect(() => lits.run('vec:+([1, 2], [3, 4, 5])')).toThrowError(LitsError)
-      expect(() => lits.run('vec:+([], [1])')).toThrowError(LitsError)
-      expect(() => lits.run('vec:+([1], [])')).toThrowError(LitsError)
-      expect(() => lits.run('vec:+(1, 0)')).toThrowError(LitsError)
-    })
-  })
-  describe('vec:-', () => {
-    it('should subtract vectors', () => {
-      expect(lits.run('vec:-([1, 2, 3], [4, 5, 6])')).toEqual([-3, -3, -3])
-      expect(lits.run('vec:-([1, 2, 3], [4, 5, 6], -3)')).toEqual([0, 0, 0])
-      expect(lits.run('vec:-(10, [1, 2, 3])')).toEqual([9, 8, 7])
-      expect(lits.run('vec:-([1], [2])')).toEqual([-1])
-      expect(lits.run('vec:-([], [])')).toEqual([])
-      expect(() => lits.run('vec:-([1, 2], [3, 4, 5])')).toThrowError(LitsError)
-      expect(() => lits.run('vec:-([1, 2], [3, 4, 5])')).toThrowError(LitsError)
-      expect(() => lits.run('vec:-([], [1])')).toThrowError(LitsError)
-      expect(() => lits.run('vec:-([1], [])')).toThrowError(LitsError)
-      expect(() => lits.run('vec:-(1, 0)')).toThrowError(LitsError)
-    })
-  })
-  describe('vec:*', () => {
-    it('should multiply two vectors element-wise', () => {
-      expect(lits.run('vec:*([1, 2, 3], [4, 5, 6])')).toEqual([4, 10, 18])
-      expect(lits.run('vec:*(2, [1, 2, 3])')).toEqual([2, 4, 6])
-      expect(lits.run('vec:*(2, [1, 2, 3], 2)')).toEqual([4, 8, 12])
-      expect(lits.run('vec:*(2, [1, 2, 3], [2, 2, 2])')).toEqual([4, 8, 12])
-      expect(lits.run('vec:*([1], [2])')).toEqual([2])
-      expect(lits.run('vec:*([], [])')).toEqual([])
-      expect(() => lits.run('vec:*([1, 2], [3, 4, 5])')).toThrowError(LitsError)
-      expect(() => lits.run('vec:*([], [1])')).toThrowError(LitsError)
-      expect(() => lits.run('vec:*([1], [])')).toThrowError(LitsError)
-      expect(() => lits.run('vec:*(1, 0)')).toThrowError(LitsError)
-    })
-  })
-  describe('vec:/', () => {
-    it('should divide two vectors element-wise', () => {
-      expect(lits.run('vec:/([1, 2, 3], [4, 5, 6])')).toEqual([0.25, 0.4, 0.5])
-      expect(lits.run('vec:/([1, 2, 3], 2)')).toEqual([0.5, 1, 1.5])
-      expect(lits.run('vec:/(12, [1, 2, 3], 2)')).toEqual([6, 3, 2])
-      expect(lits.run('vec:/([1], [2])')).toEqual([0.5])
-      expect(lits.run('vec:/([], [])')).toEqual([])
-      expect(() => lits.run('vec:/([1, 2], [3, 4, 5])')).toThrowError(LitsError)
-      expect(() => lits.run('vec:/([], [1])')).toThrowError(LitsError)
-      expect(() => lits.run('vec:/([1], [])')).toThrowError(LitsError)
-    })
-  })
-  describe('vec:^', () => {
-    it('should exponentiate two vectors element-wise', () => {
-      expect(lits.run('vec:^([1, 2, 3], [4, 5, 6])')).toEqual([1, 32, 729])
-      expect(lits.run('vec:^([1], [2])')).toEqual([1])
-      expect(lits.run('vec:^([], [])')).toEqual([])
-      expect(() => lits.run('vec:^([1, 2], [3, 4, 5])')).toThrowError(LitsError)
-      expect(() => lits.run('vec:^([], [1])')).toThrowError(LitsError)
-      expect(() => lits.run('vec:^([1], [])')).toThrowError(LitsError)
-    })
-    it('should exponentiate a vector by a scalar', () => {
-      expect(lits.run('vec:^([1, 2, 3], 2)')).toEqual([1, 4, 9])
-      expect(lits.run('vec:^([1], 2)')).toEqual([1])
-      expect(lits.run('vec:^([], 2)')).toEqual([])
-      expect(() => lits.run('vec:^([1, 2], [3, 4, 5])')).toThrowError(LitsError)
-      expect(() => lits.run('vec:^([], [1])')).toThrowError(LitsError)
-      expect(() => lits.run('vec:^([1], [])')).toThrowError(LitsError)
-    })
-    it('should exponentiate a scalar by a vector', () => {
-      expect(lits.run('vec:^(2, [1, 2, 3])')).toEqual([2, 4, 8])
-      expect(lits.run('vec:^(2, [1])')).toEqual([2])
-      expect(lits.run('vec:^(2, [])')).toEqual([])
-      expect(() => lits.run('vec:^([2], [3, 4, 5])')).toThrowError(LitsError)
-      expect(() => lits.run('vec:^(2, 2)')).toThrowError(LitsError)
-    })
-  })
-  describe('vec:abs', () => {
-    it('should take the absolute value of a vector', () => {
-      expect(lits.run('vec:abs([1, -2, 3])')).toEqual([1, 2, 3])
-      expect(lits.run('vec:abs([-1, -2, -3])')).toEqual([1, 2, 3])
-      expect(lits.run('vec:abs([0])')).toEqual([0])
-      expect(lits.run('vec:abs([])')).toEqual([])
     })
   })
   describe('vec:sum', () => {
@@ -363,6 +255,7 @@ describe('vector functions', () => {
     it('should calculate the cumulative product of a vector', () => {
       expect(lits.run('vec:cumprod([1, 2, 3])')).toEqual([1, 2, 6])
       expect(lits.run('vec:cumprod([1, -2, 3])')).toEqual([1, -2, -6])
+      expect(lits.run('vec:cumprod([1, 0, 1])')).toEqual([1, 0, 0])
       expect(lits.run('vec:cumprod([-1, -2, -3])')).toEqual([-1, 2, -6])
       expect(lits.run('vec:cumprod([0])')).toEqual([0])
       expect(lits.run('vec:cumprod([])')).toEqual([])
@@ -437,12 +330,12 @@ describe('vector functions', () => {
       expect(lits.run('vec:quantile([5, 10, 15, 20, 25], 1)')).toEqual(25)
     })
   })
-  describe('vec:get-range', () => {
+  describe('vec:span', () => {
     it('should get the range of a vector', () => {
-      expect(lits.run('vec:get-range([1, 2, 3])')).toEqual(2)
-      expect(lits.run('vec:get-range([3, 2, 1])')).toEqual(2)
-      expect(lits.run('vec:get-range([0])')).toEqual(0)
-      expect(() => lits.run('vec:get-range([])')).toThrowError(LitsError)
+      expect(lits.run('vec:span([1, 2, 3])')).toEqual(2)
+      expect(lits.run('vec:span([3, 2, 1])')).toEqual(2)
+      expect(lits.run('vec:span([0])')).toEqual(0)
+      expect(() => lits.run('vec:span([])')).toThrowError(LitsError)
     })
   })
   describe('vec:skewness', () => {
@@ -460,6 +353,212 @@ describe('vector functions', () => {
       expect(lits.run('vec:sample-skewness([1, 2, 2, 3])')).toEqual(0)
       expect(() => lits.run('vec:sample-skewness([0, 1])')).toThrowError(LitsError)
       expect(() => lits.run('vec:sample-skewness([])')).toThrowError(LitsError)
+    })
+  })
+  describe('vec:kurtosis', () => {
+    it('should calculate the kurtosis of a vector', () => {
+      expect(lits.run('vec:kurtosis([1, 2, 3, 6, 12, 50])')).toBeCloseTo(3.87632753)
+      expect(lits.run('vec:kurtosis([1, 2, 2, 3])')).toBeCloseTo(2)
+      expect(lits.run('vec:kurtosis([0, 1, 1, 2, 2, 2, 2, 2, 1, 1, 0])')).toBeCloseTo(1.91955017)
+      expect(() => lits.run('vec:kurtosis([1, 1, 1, 1])')).toThrowError(LitsError)
+      expect(() => lits.run('vec:kurtosis([0, 1])')).toThrowError(LitsError)
+      expect(() => lits.run('vec:kurtosis([])')).toThrowError(LitsError)
+    })
+  })
+  describe('vec:sample-kurtosis', () => {
+    it('should calculate the sample kurtosis of a vector', () => {
+      expect(lits.run('vec:sample-kurtosis([1, 2, 3, 6, 12, 50])')).toBeCloseTo(11.3059553)
+      expect(lits.run('vec:sample-kurtosis([1, 2, 2, 3])')).toBeCloseTo(15)
+      expect(lits.run('vec:sample-kurtosis([0, 1, 1, 2, 2, 2, 2, 2, 1, 1, 0])')).toBeCloseTo(3.19925029)
+      expect(() => lits.run('vec:sample-kurtosis([1, 1, 1, 1])')).toThrowError(LitsError)
+      expect(() => lits.run('vec:sample-kurtosis([0, 1])')).toThrowError(LitsError)
+      expect(() => lits.run('vec:sample-kurtosis([])')).toThrowError(LitsError)
+    })
+  })
+  describe('vec:excess-kurtosis', () => {
+    it('should calculate the excess kurtosis of a vector', () => {
+      expect(lits.run('vec:excess-kurtosis([1, 2, 3, 6, 12, 50])')).toBeCloseTo(0.87632753)
+      expect(lits.run('vec:excess-kurtosis([1, 2, 2, 3])')).toBeCloseTo(-1)
+      expect(lits.run('vec:excess-kurtosis([0, 1, 1, 2, 2, 2, 2, 2, 1, 1, 0])')).toBeCloseTo(-1.08044983)
+      expect(() => lits.run('vec:excess-kurtosis([1, 1, 1, 1])')).toThrowError(LitsError)
+      expect(() => lits.run('vec:excess-kurtosis([0, 1])')).toThrowError(LitsError)
+      expect(() => lits.run('vec:excess-kurtosis([])')).toThrowError(LitsError)
+    })
+  })
+  describe('vec:sample-excess-kurtosis', () => {
+    it('should calculate the sample excess kurtosis of a vector', () => {
+      expect(lits.run('vec:sample-excess-kurtosis([1, 2, 3, 6, 12, 50])')).toBeCloseTo(5.05595529)
+      expect(lits.run('vec:sample-excess-kurtosis([1, 2, 2, 3])')).toBeCloseTo(1.5)
+      expect(lits.run('vec:sample-excess-kurtosis([0, 1, 1, 2, 2, 2, 2, 2, 1, 1, 0])')).toBeCloseTo(-0.967416378)
+      expect(() => lits.run('vec:sample-excess-kurtosis([1, 1, 1, 1])')).toThrowError(LitsError)
+      expect(() => lits.run('vec:sample-excess-kurtosis([0, 1])')).toThrowError(LitsError)
+      expect(() => lits.run('vec:sample-excess-kurtosis([])')).toThrowError(LitsError)
+    })
+  })
+  describe('vec:geometric-mean', () => {
+    it('should calculate the geometric mean of a vector', () => {
+      expect(lits.run('vec:geometric-mean([2, 4, 8, 16])')).toBeCloseTo(5.656854)
+      expect(lits.run('vec:geometric-mean([1, 2, 2, 3])')).toBeCloseTo(1.8612097182041991)
+      expect(() => lits.run('vec:geometric-mean([])')).toThrowError(LitsError)
+    })
+  })
+  describe('vec:harmonic-mean', () => {
+    it('should calculate the harmonic mean of a vector', () => {
+      expect(lits.run('vec:harmonic-mean([2, 4, 8, 16])')).toBeCloseTo(4.266666666667)
+      expect(lits.run('vec:harmonic-mean([1, 2, 2, 3])')).toBeCloseTo(1.7142857142857142)
+      expect(() => lits.run('vec:harmonic-mean([])')).toThrowError(LitsError)
+    })
+  })
+  describe('vec:rms', () => {
+    it('should calculate the root mean square of a vector', () => {
+      expect(lits.run('vec:rms([2, 4, 8, 16])')).toBeCloseTo(9.21954446)
+      expect(lits.run('vec:rms([1, 2, 2, 3])')).toBeCloseTo(2.12132034)
+      expect(() => lits.run('vec:rms([])')).toThrowError(LitsError)
+    })
+  })
+  describe('vec:mad', () => {
+    it('should calculate the mean absolute deviation of a vector', () => {
+      expect(lits.run('vec:mad([1, 2, 3])')).toEqual(0.6666666666666666)
+      expect(lits.run('vec:mad([1, 2, 2, 3])')).toEqual(0.5)
+      expect(() => lits.run('vec:mad([])')).toThrowError(LitsError)
+    })
+  })
+
+  describe('vec:medad', () => {
+    it('should calculate the median absolute deviation of a vector', () => {
+      expect(lits.run('vec:medad([1, 2, 3])')).toEqual(1.4826)
+      expect(lits.run('vec:medad([1, 2, 2, 3, 5, 15, 50])')).toEqual(2.9652)
+      expect(() => lits.run('vec:medad([])')).toThrowError(LitsError)
+    })
+  })
+
+  describe('vec:histogram', () => {
+    it('should calculate the histogram of a vector', () => {
+      expect(lits.run('vec:histogram([1, 2, 2, 3, 2, 6, 4, 3, 2, 4, 1, 3, 2, 9], 3)')).toEqual([
+        [
+          1,
+          3.6666666666666665,
+          10,
+        ],
+        [
+          3.6666666666666665,
+          6.333333333333333,
+          3,
+        ],
+        [
+          6.333333333333333,
+          9,
+          1,
+        ],
+      ])
+      expect(lits.run('vec:histogram([1, 2, 3], 5)')).toEqual([
+        [
+          1,
+          1.4,
+          1,
+        ],
+        [
+          1.4,
+          1.8,
+          0,
+        ],
+        [
+          1.8,
+          2.2,
+          1,
+        ],
+        [
+          2.2,
+          2.6,
+          0,
+        ],
+        [
+          2.6,
+          3,
+          1,
+        ],
+      ])
+      expect(lits.run('vec:histogram([0], 5)')).toEqual([
+        [
+          0,
+          0,
+          1,
+        ],
+        [
+          0,
+          0,
+          0,
+        ],
+        [
+          0,
+          0,
+          0,
+        ],
+        [
+          0,
+          0,
+          0,
+        ],
+        [
+          0,
+          0,
+          0,
+        ],
+      ])
+      expect(lits.run('vec:histogram([], 5)')).toEqual([
+        [
+          0,
+          0,
+          0,
+        ],
+        [
+          0,
+          0,
+          0,
+        ],
+        [
+          0,
+          0,
+          0,
+        ],
+        [
+          0,
+          0,
+          0,
+        ],
+        [
+          0,
+          0,
+          0,
+        ],
+      ])
+    })
+  })
+  describe('vec:ecdf', () => {
+    it('should calculate the cumulative distribution function of a vector', () => {
+      expect(lits.run('vec:ecdf([1, 2, 2, 3, 2, 6, 4, 3, 2, 4, 1, 3, 2, 9, 10], 5)')).toBe(0.8)
+      expect(lits.run('vec:ecdf([1, 2, 2, 3, 2, 6, 4, 3, 2, 4, 1, 3, 2, 9, 10, 12], 5)')).toEqual(0.75)
+      expect(lits.run('vec:ecdf([1], 3)')).toEqual(1)
+      expect(lits.run('vec:ecdf([1], 0)')).toEqual(0)
+      expect(() => lits.run('vec:ecdf([], 1)')).toThrow()
+    })
+  })
+  describe('vec:outliers?', () => {
+    it('should check if a vector has no extreme outliers', () => {
+      expect(lits.run('vec:outliers?([1, 2, 3])')).toEqual(false)
+      expect(lits.run('vec:outliers?([1, 2, 3, 4, 2, 1, 100])')).toEqual(true)
+      expect(lits.run('vec:outliers?([1, 2, 0, 2, -100])')).toEqual(true)
+      expect(lits.run('vec:outliers?([1])')).toEqual(false)
+      expect(lits.run('vec:outliers?([])')).toBe(false)
+    })
+  })
+  describe('vec:outliers', () => {
+    it('should find the extreme outliers in a vector', () => {
+      expect(lits.run('vec:outliers([1, 2, 3])')).toEqual([])
+      expect(lits.run('vec:outliers([1, 2, 3, 4, 2, 1, 100])')).toEqual([100])
+      expect(lits.run('vec:outliers([1, 2, 0, 2, -100])')).toEqual([-100])
+      expect(lits.run('vec:outliers([1])')).toEqual([])
+      expect(lits.run('vec:outliers([])')).toEqual([])
     })
   })
 })

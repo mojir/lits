@@ -1,66 +1,93 @@
-import type { FunctionReference } from '..'
+import type { FunctionReference, NormalExpressionArgument } from '..'
 import { type MathApiName, getOperatorArgs } from '../api'
 
+const mixedArgs: NormalExpressionArgument = {
+  type: ['number', 'vector', 'matrix'],
+  rest: true,
+}
+const mixedOperatorArgs = getOperatorArgs(['number', 'vector', 'matrix'], ['number', 'vector', 'matrix'])
 export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   '+': {
     title: '+',
     category: 'Math',
     linkName: '-plus',
     returns: {
-      type: 'number',
+      type: ['number', 'vector', 'matrix'],
     },
     args: {
-      xs: {
-        type: 'number',
-        rest: true,
-      },
-      ...getOperatorArgs('number', 'number'),
+      xs: mixedArgs,
+      ...mixedOperatorArgs,
     },
     variants: [
       { argumentNames: ['xs'] },
     ],
-    description: 'Computes sum of $xs.',
-    examples: ['1 + 2', '1 + 20 + 30', '+(1, 2, 3, 4)', '+()', '+(1)'],
+    description: 'The `+` function performs addition of numbers and element-wise addition of `vectors` and `matrices` of compatible dimensions, returning the same type as its inputs. When used with mixed types, it adds the scalar to each element of the collection.',
+    examples: [
+      '1 + 2',
+      '1 + 20 + 30',
+      '+(1, 2, 3, 4)',
+      '+()',
+      '+(1)',
+      '[1, 2, 3] + 2',
+      '[1, 2, 3] + [4, 5, 6]',
+      '[[1, 2, 3], [4, 5, 6]] + [[7, 8, 9], [10, 11, 12]]',
+      '[[1, 2, 3], [4, 5, 6]] + 2',
+    ],
   },
   '-': {
     title: '-',
     category: 'Math',
     linkName: '-minus',
     returns: {
-      type: 'number',
+      type: ['number', 'vector', 'matrix'],
     },
     args: {
-      xs: {
-        type: 'number',
-        rest: true,
-      },
-      ...getOperatorArgs('number', 'number'),
+      xs: mixedArgs,
+      ...mixedOperatorArgs,
     },
     variants: [
       { argumentNames: ['xs'] },
     ],
     description: 'Computes difference between first value and sum of the rest. When called with only one argument, it does negation.',
-    examples: ['50 - 8', '1 - 1 - 1', '-()', '-(4, 2)', '-(4, 3, 2, 1,)'],
+    examples: [
+      '50 - 8',
+      '1 - 1 - 1',
+      '-()',
+      '-(4, 2)',
+      '-(4, 3, 2, 1,)',
+      '[1, 2, 3] - 2',
+      '[1, 2, 3] - [4, 5, 6]',
+      '[[1, 2, 3], [4, 5, 6]] - [[7, 8, 9], [10, 11, 12]]',
+      '[[1, 2, 3], [4, 5, 6]] - 2',
+    ],
   },
   '*': {
     title: '*',
     category: 'Math',
     linkName: '-star',
     returns: {
-      type: 'number',
+      type: ['number', 'vector', 'matrix'],
     },
     args: {
-      xs: {
-        type: 'number',
-        rest: true,
-      },
-      ...getOperatorArgs('number', 'number'),
+      xs: mixedArgs,
+      ...mixedOperatorArgs,
     },
     variants: [
       { argumentNames: ['xs'] },
     ],
-    description: 'Computes product of $xs.',
-    examples: ['6 * 7', '-1 * 4', '*(4, 7)', '*(1, 2, 3, 4, 5)', '*()', '*(8)'],
+    description: 'The `*` function performs multiplication of `numbers` and element-wise multiplication of `vectors` and `matrices` of compatible dimensions, returning the same type as its inputs. When used with mixed types, it multiplies each element of the collection by the scalar.',
+    examples: [
+      '6 * 7',
+      '-1 * 4',
+      '*(4, 7)',
+      '*(1, 2, 3, 4, 5)',
+      '*()',
+      '*(8)',
+      '[1, 2, 3] * 2',
+      '[1, 2, 3] * [4, 5, 6]',
+      '[[1, 2, 3], [4, 5, 6]] * [[7, 8, 9], [10, 11, 12]]',
+      '[[1, 2, 3], [4, 5, 6]] * 2',
+    ],
     aliases: ['·'],
   },
   '/': {
@@ -68,52 +95,85 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     category: 'Math',
     linkName: '-slash',
     returns: {
-      type: 'number',
+      type: ['number', 'vector', 'matrix'],
     },
     args: {
-      xs: {
-        type: 'number',
-        rest: true,
-      },
-      ...getOperatorArgs('number', 'number'),
+      xs: mixedArgs,
+      ...mixedOperatorArgs,
     },
     variants: [
       { argumentNames: ['xs'] },
     ],
-    description: 'Computes division or reciprocal. When called with one argument it computes reciprocal. When called with two or more arguments it does compute division of the first by the all remaining $xs.',
-    examples: ['12 / 100', '-1 / 4', '/(7, 4)', '/(1, 2, 4, 8)', '/()', '/(8)'],
+    description: 'The `/` function performs division of `numbers` and element-wise division of `vectors` and `matrices` of compatible dimensions, returning the same type as its inputs. When used with mixed types, it divides each element of the collection by the scalar.',
+    examples: [
+      '12 / 100',
+      '-1 / 4',
+      '/(7, 4)',
+      '/(1, 2, 4, 8)',
+      '/()',
+      '/(8)',
+      '[1, 2, 3] / 2',
+      '[1, 2, 3] / [4, 5, 6]',
+      '[[1, 2, 3], [4, 5, 6]] / [[7, 8, 9], [10, 11, 12]]',
+      '[[1, 2, 3], [4, 5, 6]] / 2',
+    ],
   },
   'mod': {
     title: 'mod',
     category: 'Math',
     linkName: 'mod',
     returns: {
-      type: 'number',
+      type: ['number', 'vector', 'matrix'],
     },
     args: {
-      ...getOperatorArgs('number', 'number'),
+      ...mixedOperatorArgs,
     },
     variants: [
       { argumentNames: ['a', 'b'] },
     ],
-    description: 'Modulus of `dividend` and `divisor`. Truncates toward negative infinity.',
-    examples: ['mod(5, 3)', 'mod(5.2, 3.1)', 'mod(-5, 3)', '5 mod -3', '-5 mod -3'],
+    description: 'The `mod` function computes the modulo of division with the same sign as the divisor, working on `numbers` and element-wise on `vectors` and `matrices` of compatible dimensions. When used with mixed types, it applies the modulo operation between each element of the collection and the scalar.',
+    examples: [
+      'mod(5, 3)',
+      'mod(5.2, 3.1)',
+      'mod(-5, 3)',
+      '5 mod -3',
+      '-5 mod -3',
+      '[1, 2, 3] mod 2',
+      '2 mod [1, 2, 3]',
+      'mod([1, 2, 3], [4, 5, 6])',
+      '[[1, 2, 3], [4, 5, 6]] mod [[7, 8, 9], [10, 11, 12]]',
+      'mod([[1, 2, 3], [4, 5, 6]], 2)',
+    ],
   },
   'rem': {
     title: 'rem',
     category: 'Math',
     linkName: 'rem',
     returns: {
-      type: 'number',
+      type: ['number', 'vector', 'matrix'],
     },
     args: {
-      ...getOperatorArgs('number', 'number'),
+      ...mixedOperatorArgs,
     },
     variants: [
       { argumentNames: ['a', 'b'] },
     ],
-    description: 'Remainder of dividing `dividend` and `divisor`.',
-    examples: ['5 % 3', '5.2 % 3.1', '-5 % 3', '%(5, -3)', '%(-5, -3)'],
+    description: 'The `rem` function computes the remainder of division with the same sign as the dividend, working on `numbers` and element-wise on `vectors` and `matrices` of compatible dimensions. When used with mixed types, it applies the remainder operation between each element of the collection and the scalar.',
+    examples: [
+      '5 % 3',
+      '5.2 % 3.1',
+      '-5 % 3',
+      '%(5, -3)',
+      '%(-5, -3)',
+      '5 rem -3',
+      '-5 rem -3',
+      '[1, 2, 3] % 2',
+      '2 % [1, 2, 3]',
+      '%([1, 2, 3], [4, 5, 6])',
+      '[[1, 2, 3], [4, 5, 6]] % [[7, 8, 9], [10, 11, 12]]',
+      '%([[1, 2, 3], [4, 5, 6]], 2)',
+      '[[1, 2, 3], [4, 5, 6]] rem [[7, 8, 9], [10, 11, 12]]',
+    ],
     aliases: ['%'],
   },
   'quot': {
@@ -121,16 +181,30 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     category: 'Math',
     linkName: 'quot',
     returns: {
-      type: 'number',
+      type: ['number', 'vector', 'matrix'],
     },
     args: {
-      ...getOperatorArgs('number', 'number'),
+      ...mixedOperatorArgs,
     },
     variants: [
       { argumentNames: ['a', 'b'] },
     ],
-    description: 'Quotient of dividing `dividend` and `divisor`.',
-    examples: ['quot(5, 3)', 'quot(5.2, 3.1)', 'quot(-5, 3)', '5 quot -3', '-5 quot -3'],
+    description: 'The `quot` function performs integer division truncated toward zero, working on `numbers` and element-wise on `vectors` and `matrices` of compatible dimensions. When used with mixed types, it applies integer division between each element of the collection and the scalar.',
+    examples: [
+      'quot(5, 3)',
+      'quot(5.2, 3.1)',
+      'quot(-5, 3)',
+      '5 quot -3',
+      '-5 quot -3',
+      'quot(5, 0)',
+      'quot(0, 5)',
+      '[1, 2, 3] quot 2',
+      '2 quot [1, 2, 3]',
+      'quot([1, 2, 3], [4, 5, 6])',
+      '[[1, 2, 3], [4, 5, 6]] quot [[7, 8, 9], [10, 11, 12]]',
+      'quot([[1, 2, 3], [4, 5, 6]], 2)',
+      '[[1, 2, 3], [4, 5, 6]] quot [[7, 8, 9], [10, 11, 12]]',
+    ],
   },
   'inc': {
     title: 'inc',
@@ -141,50 +215,71 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     },
     args: {
       x: {
-        type: 'number',
+        type: ['number', 'vector', 'matrix'],
       },
     },
     variants: [
       { argumentNames: ['x'] },
     ],
-    description: 'Adds one to $x.',
-    examples: ['inc(0)', 'inc(1)', 'inc(100.1)'],
+    description: 'The `inc` function increments its argument by 1, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it increases each element by 1 while preserving the original structure.',
+    examples: [
+      'inc(0)',
+      'inc(1)',
+      'inc(100.1)',
+      'inc([1, 2, 3])',
+      'inc([[1, 2], [3, 4]])',
+    ],
   },
   'dec': {
     title: 'dec',
     category: 'Math',
     linkName: 'dec',
     returns: {
-      type: 'number',
+      type: ['number', 'vector', 'matrix'],
     },
     args: {
       x: {
-        type: 'number',
+        type: ['number', 'vector', 'matrix'],
       },
     },
     variants: [
       { argumentNames: ['x'] },
     ],
-    description: 'Subtracts one from $x.',
-    examples: ['dec(0)', 'dec(1)', 'dec(100.1)'],
+    description: 'The `dec` function decrements its argument by 1, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it decreases each element by 1 while preserving the original structure.',
+    examples: [
+      'dec(0)',
+      'dec(1)',
+      'dec(100.1)',
+      'dec([1, 2, 3])',
+      'dec([[1, 2], [3, 4]])',
+    ],
   },
   'sqrt': {
     title: 'sqrt',
     category: 'Math',
     linkName: 'sqrt',
     returns: {
-      type: 'number',
+      type: ['number', 'vector', 'matrix'],
     },
     args: {
       x: {
-        type: 'number',
+        type: ['number', 'vector', 'matrix'],
       },
     },
     variants: [
       { argumentNames: ['x'] },
     ],
-    description: 'Computes square root of $x.',
-    examples: ['√(0)', '√(9)', '√(2)', 'sqrt(0)', 'sqrt(9)', 'sqrt(2)'],
+    description: 'The `sqrt` function calculates the square root of `numbers` and computes element-wise square roots of `vectors` and `matrices`. When applied to collections, it returns the square root of each element while preserving the original structure.',
+    examples: [
+      '√(0)',
+      '√(9)',
+      '√(2)',
+      'sqrt(0)',
+      'sqrt(9)',
+      'sqrt(2)',
+      'sqrt([1, 4, 9])',
+      'sqrt([[1, 4], [9, 16]])',
+    ],
     aliases: ['√'],
   },
   'cbrt': {
@@ -192,18 +287,29 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     category: 'Math',
     linkName: 'cbrt',
     returns: {
-      type: 'number',
+      type: ['number', 'vector', 'matrix'],
     },
     args: {
       x: {
-        type: 'number',
+        type: ['number', 'vector', 'matrix'],
       },
     },
     variants: [
       { argumentNames: ['x'] },
     ],
-    description: 'Computes cube root of $x.',
-    examples: ['∛(0)', '∛(27)', '∛(2)', '∛(1)', 'cbrt(0)', 'cbrt(27)', 'cbrt(2)', 'cbrt(1)'],
+    description: 'The `cbrt` function calculates the cube root of `numbers` and computes element-wise cube roots of `vectors` and `matrices`. When applied to collections, it returns the cube root of each element while preserving the original structure.',
+    examples: [
+      '∛(0)',
+      '∛(27)',
+      '∛(2)',
+      '∛(1)',
+      'cbrt(0)',
+      'cbrt(27)',
+      'cbrt(2)',
+      'cbrt(1)',
+      'cbrt([1, 8, 27])',
+      'cbrt([[1, 8], [27, 64]])',
+    ],
     aliases: ['∛'],
   },
   '^': {
@@ -211,37 +317,43 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     category: 'Math',
     linkName: '-caret',
     returns: {
-      type: 'number',
+      type: ['number', 'vector', 'matrix'],
     },
     args: {
-      ...getOperatorArgs('number', 'number'),
+      ...mixedOperatorArgs,
     },
     variants: [
       { argumentNames: ['a', 'b'] },
     ],
-    description: 'Computes returns $a raised to the power of $b.',
-    examples: ['2 ^ 3', '2 ^ 0', '2 ^ -3', '^(-2, 3)', '^(-2, -3)'],
+    description: 'The ^ function computes exponentiation, raising the first argument to the power of the second, working on `numbers` and element-wise on `vectors` and `matrices` of compatible dimensions. When used with mixed types, it applies the power operation between each element of the collection and the scalar.',
+    examples: [
+      '2 ^ 3',
+      '2 ^ 0',
+      '2 ^ -3',
+      '^(-2, 3)',
+      '^(-2, -3)',
+      '[1, 2, 3] ^ 2',
+      '2 ^ [1, 2, 3]',
+      '^([1, 2, 3], [4, 5, 6])',
+      '[[1, 2, 3], [4, 5, 6]] ^ [[7, 8, 9], [10, 11, 12]]',
+      '^([[1, 2, 3], [4, 5, 6]], 2)',
+    ],
   },
   'round': {
     title: 'round',
     category: 'Math',
     linkName: 'round',
     returns: {
-      type: 'number',
+      type: ['number', 'vector', 'matrix'],
     },
     args: {
-      x: {
-        type: 'number',
-      },
-      decimals: {
-        type: 'integer',
-      },
+      ...getOperatorArgs(['number', 'vector', 'matrix'], 'integer'),
     },
     variants: [
-      { argumentNames: ['x'] },
-      { argumentNames: ['x', 'decimals'] },
+      { argumentNames: ['a'] },
+      { argumentNames: ['a', 'b'] },
     ],
-    description: 'Returns rounded $x. If $decimals is provided it return a number with that many decimals.',
+    description: 'The `round` function rounds a `number` to the nearest `integer` or to a specified number of `decimal` places, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it rounds each element while preserving the original structure.',
     examples: [
       'round(2)',
       'round(2.49)',
@@ -251,62 +363,92 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
       'round(-2.501)',
       'round(1.23456789, 4)',
       '1.123456789 round 2',
+      'round([1.23456789, 2.3456789], 1)',
+      '[1.23456789, 2.3456789] round 4',
+      '[[1.23456789, 2.3456789], [3.456789, 4.56789]] round 4',
+      'round([[1.23456789, 2.3456789], [3.456789, 4.56789]], 2)',
     ],
-    noOperatorDocumentation: true,
   },
   'trunc': {
     title: 'trunc',
     category: 'Math',
     linkName: 'trunc',
     returns: {
-      type: 'integer',
+      type: ['integer', 'vector', 'matrix'],
     },
     args: {
       x: {
-        type: 'number',
+        type: ['number', 'vector', 'matrix'],
       },
     },
     variants: [
       { argumentNames: ['x'] },
     ],
-    description: 'Returns the integer part of $x by removing any fractional digits.',
-    examples: ['trunc(2)', 'trunc(2.49)', 'trunc(2.5)', 'trunc(-2.49)', 'trunc(-2.5)', 'trunc(-2.501)'],
+    description: 'The `trunc` function truncates `numbers` toward zero (removing decimal portions without rounding), working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it truncates each element while preserving the original structure.',
+    examples: [
+      'trunc(2)',
+      'trunc(2.49)',
+      'trunc(2.5)',
+      'trunc(-2.49)',
+      'trunc(-2.5)',
+      'trunc(-2.501)',
+      'trunc([1.23456789, 2.3456789])',
+      'trunc([[1.23456789, 2.3456789], [3.456789, 4.56789]])',
+    ],
   },
   'floor': {
     title: 'floor',
     category: 'Math',
     linkName: 'floor',
     returns: {
-      type: 'integer',
+      type: ['integer', 'vector', 'matrix'],
     },
     args: {
       x: {
-        type: 'number',
+        type: ['number', 'vector', 'matrix'],
       },
     },
     variants: [
       { argumentNames: ['x'] },
     ],
-    description: 'Returns the largest `integer` less than or equal to $x.',
-    examples: ['floor(2)', 'floor(2.49)', 'floor(2.5)', 'floor(-2.49)', 'floor(-2.5)', 'floor(-2.501)'],
+    description: 'The `floor` function returns the largest `integer` less than or equal to a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the floor of each element while preserving the original structure.',
+    examples: [
+      'floor(2)',
+      'floor(2.49)',
+      'floor(2.5)',
+      'floor(-2.49)',
+      'floor(-2.5)',
+      'floor(-2.501)',
+      'floor([1.23456789, 2.3456789])',
+      'floor([[1.23456789, 2.3456789], [3.456789, 4.56789]])',
+    ],
   },
   'ceil': {
     title: 'ceil',
     category: 'Math',
     linkName: 'ceil',
     returns: {
-      type: 'integer',
+      type: ['integer', 'vector', 'matrix'],
     },
     args: {
       x: {
-        type: 'number',
+        type: ['number', 'vector', 'matrix'],
       },
     },
     variants: [
       { argumentNames: ['x'] },
     ],
-    description: 'Returns the smallest `integer` larger than or equal to $x.',
-    examples: ['ceil(2)', 'ceil(2.49)', 'ceil(2.5)', 'ceil(-2.49)', 'ceil(-2.5)', 'ceil(-2.501)'],
+    description: 'The `ceil` function returns the smallest `integer` greater than or equal to a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the ceiling of each element while preserving the original structure.',
+    examples: [
+      'ceil(2)',
+      'ceil(2.49)',
+      'ceil(2.5)',
+      'ceil(-2.49)',
+      'ceil(-2.5)',
+      'ceil(-2.501)',
+      'ceil([1.23456789, 2.3456789])',
+      'ceil([[1.23456789, 2.3456789], [3.456789, 4.56789]])',
+    ],
   },
   'min': {
     title: 'min',
@@ -365,72 +507,97 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     category: 'Math',
     linkName: 'abs',
     returns: {
-      type: 'number',
+      type: ['number', 'vector', 'matrix'],
     },
     args: {
       x: {
-        type: 'number',
+        type: ['number', 'vector', 'matrix'],
       },
     },
     variants: [
       { argumentNames: ['x'] },
     ],
-    description: 'Returns the absolute value of $x.',
-    examples: ['abs(-2.3)', 'abs(0)', 'abs(2.5)'],
+    description: 'The abs function returns the absolute value (magnitude) of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the absolute value of each element while preserving the original structure.',
+    examples: [
+      'abs(-2.3)',
+      'abs(0)',
+      'abs(2.5)',
+      'abs([1, -2, 3])',
+      'abs([[1, -2], [3, -4]])',
+    ],
   },
   'sign': {
     title: 'sign',
     category: 'Math',
     linkName: 'sign',
     returns: {
-      type: 'number',
+      type: ['number', 'vector', 'matrix'],
     },
     args: {
       x: {
-        type: 'number',
+        type: ['number', 'vector', 'matrix'],
       },
     },
     variants: [
       { argumentNames: ['x'] },
     ],
-    description: 'Returns `1` if $x `> 0`, `-1` if $x `< 0`, `0` if $x `= 0` or `-0` if $x `= -0`.',
-    examples: ['sign(-2.3)', 'sign(-0)', 'sign(0)', 'sign(12312)'],
+    description: 'The `sign` function returns the `sign` of a `number` (-1 for negative, 0 for zero, 1 for positive), working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the sign of each element while preserving the original structure.',
+    examples: [
+      'sign(-2.3)',
+      'sign(-0)',
+      'sign(0)',
+      'sign(12312)',
+      'sign([1, -2, 3])',
+      'sign([[1, -2], [3, -4]])',
+    ],
   },
-  'log': {
-    title: 'log',
+  'ln': {
+    title: 'ln',
     category: 'Math',
-    linkName: 'log',
+    linkName: 'ln',
     returns: {
-      type: 'number',
+      type: ['number', 'vector', 'matrix'],
     },
     args: {
       x: {
-        type: 'number',
+        type: ['number', 'vector', 'matrix'],
       },
     },
     variants: [
       { argumentNames: ['x'] },
     ],
-    description: 'Returns the natural logarithm (base e) of $x.',
-    examples: ['log(0.01)', 'log(2.5)'],
+    description: 'The `ln` function computes the natural logarithm (base `e`) of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the natural logarithm of each element while preserving the original structure.',
+    examples: [
+      'ln(0.01)',
+      'ln(2.5)',
+      'ln(E)',
+      'ln([1, 2, 3])',
+      'ln([[1, 2], [3, 4]])',
+    ],
   },
   'log2': {
     title: 'log2',
     category: 'Math',
     linkName: 'log2',
     returns: {
-      type: 'number',
+      type: ['number', 'vector', 'matrix'],
     },
     args: {
       x: {
-        type: 'number',
+        type: ['number', 'vector', 'matrix'],
       },
     },
     variants: [
       { argumentNames: ['x'] },
     ],
-    description: 'Returns the base `2` logarithm of a number.',
-    examples: ['log2(0.01)', 'log2(2 ^ 12)', 'log2(2.5)'],
+    description: 'The `log2` function computes the base `2` logarithm of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the base-2 logarithm of each element while preserving the original structure.',
+    examples: [
+      'log2(0.01)',
+      'log2(2 ^ 12)',
+      'log2(2.5)',
+      'log2([1, 2, 3])',
+      'log2([[1, 2], [3, 4]])',
+    ],
     aliases: ['log₂'],
   },
   'log10': {
@@ -438,180 +605,237 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     category: 'Math',
     linkName: 'log10',
     returns: {
-      type: 'number',
+      type: ['number', 'vector', 'matrix'],
     },
     aliases: ['log₁₀'],
     args: {
       x: {
-        type: 'number',
+        type: ['number', 'vector', 'matrix'],
       },
     },
     variants: [
       { argumentNames: ['x'] },
     ],
-    description: 'Returns the `10` logarithm of a number.',
-    examples: ['log10(0.01)', 'log10(10 ^ 12)', 'log10(2.5)'],
+    description: 'The `log10` function computes the base `10` logarithm of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the base-10 logarithm of each element while preserving the original structure.',
+    examples: [
+      'log10(0.01)',
+      'log10(10 ^ 12)',
+      'log10(2.5)',
+      'log10([1, 2, 3])',
+      'log10([[1, 2], [3, 4]])',
+    ],
   },
   'sin': {
     title: 'sin',
     category: 'Math',
     linkName: 'sin',
     returns: {
-      type: 'number',
+      type: ['number', 'vector', 'matrix'],
     },
     args: {
       x: {
-        type: 'number',
+        type: ['number', 'vector', 'matrix'],
       },
     },
     variants: [
       { argumentNames: ['x'] },
     ],
-    description: 'Returns the sine of $x. $x must be specified in radians.',
-    examples: ['sin(0)', 'sin(1)', 'sin(PI)', 'sin(-0.5)'],
+    description: 'The `sin` function computes the sine of an angle (in radians), working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the sine of each element while preserving the original structure.',
+    examples: [
+      'sin(0)',
+      'sin(1)',
+      'sin(PI)',
+      'sin(-0.5)',
+      'sin([1, 2, 3])',
+      'sin([[1, 2], [3, 4]])',
+    ],
   },
   'cos': {
     title: 'cos',
     category: 'Math',
     linkName: 'cos',
     returns: {
-      type: 'number',
+      type: ['number', 'vector', 'matrix'],
     },
     args: {
       x: {
-        type: 'number',
+        type: ['number', 'vector', 'matrix'],
       },
     },
     variants: [
       { argumentNames: ['x'] },
     ],
-    description: 'Returns the cosine of $x. $x must be specified in radians.',
-    examples: ['cos(0)', 'cos(1)', 'cos(PI)', 'cos(-0.5)'],
+    description: 'The `cos` function computes the cosine of an angle (in radians), working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the cosine of each element while preserving the original structure.',
+    examples: [
+      'cos(0)',
+      'cos(1)',
+      'cos(PI)',
+      'cos(-0.5)',
+      'cos([1, 2, 3])',
+      'cos([[1, 2], [3, 4]])',
+    ],
   },
   'tan': {
     title: 'tan',
     category: 'Math',
     linkName: 'tan',
     returns: {
-      type: 'number',
+      type: ['number', 'vector', 'matrix'],
     },
     args: {
       x: {
-        type: 'number',
+        type: ['number', 'vector', 'matrix'],
       },
     },
     variants: [
       { argumentNames: ['x'] },
     ],
-    description: 'Returns the tangent of $x. $x must be specified in radians.',
-    examples: ['tan(0)', 'tan(1)', 'tan(PI)', 'tan(-0.5)'],
+    description: 'The `tan` function computes the tangent of an angle (in radians), working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the tangent of each element while preserving the original structure.',
+    examples: [
+      'tan(0)',
+      'tan(1)',
+      'tan(PI)',
+      'tan(-0.5)',
+      'tan([1, 2, 3])',
+      'tan([[1, 2], [3, 4]])',
+    ],
   },
   'asin': {
     title: 'asin',
     category: 'Math',
     linkName: 'asin',
     returns: {
-      type: 'number',
+      type: ['number', 'vector', 'matrix'],
     },
     args: {
       x: {
-        type: 'number',
+        type: ['number', 'vector', 'matrix'],
       },
     },
     variants: [
       { argumentNames: ['x'] },
     ],
-    description: 'Returns the arcsine (in radians) of $x.',
-    examples: ['asin(0)', 'asin(1)', 'asin(-0.5)'],
+    description: 'The `asin` function computes the arcsine (inverse sine) of a `number` in radians, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the arcsine of each element while preserving the original structure.',
+    examples: [
+      'asin(0)',
+      'asin(1)',
+      'asin(-0.5)',
+      'asin([1, 2, 3])',
+      'asin([[1, 2], [3, 4]])',
+    ],
   },
   'acos': {
     title: 'acos',
     category: 'Math',
     linkName: 'acos',
     returns: {
-      type: 'number',
+      type: ['number', 'vector', 'matrix'],
     },
     args: {
       x: {
-        type: 'number',
+        type: ['number', 'vector', 'matrix'],
       },
     },
     variants: [
       { argumentNames: ['x'] },
     ],
-    description: 'Returns the arccosine (in radians) of $x.',
-    examples: ['acos(0)', 'acos(1)', 'acos(-0.5)'],
+    description: 'The `acos` function computes the arccosine (inverse cosine) of a `number` in radians, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the arccosine of each element while preserving the original structure.',
+    examples: [
+      'acos(0)',
+      'acos(1)',
+      'acos(-0.5)',
+      'acos([0.1, 0.2, 0.3])',
+      'acos([[0.1, 0.2], [0.3, 0.4]])',
+    ],
   },
   'atan': {
     title: 'atan',
     category: 'Math',
     linkName: 'atan',
     returns: {
-      type: 'number',
+      type: ['number', 'vector', 'matrix'],
     },
     args: {
       x: {
-        type: 'number',
+        type: ['number', 'vector', 'matrix'],
       },
     },
     variants: [
       { argumentNames: ['x'] },
     ],
-    description: 'Returns the arctangent (in radians) of $x.',
-    examples: ['atan(0)', 'atan(1)', 'atan(-0.5)'],
+    description: 'The `atan` function computes the arctangent (inverse tangent) of a `number` in radians, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the arctangent of each element while preserving the original structure.',
+    examples: [
+      'atan(0)',
+      'atan(1)',
+      'atan(-0.5)',
+      'atan([0.1, 0.2, 0.3])',
+      'atan([[0.1, 0.2], [0.3, 0.4]])',
+    ],
   },
   'sinh': {
     title: 'sinh',
     category: 'Math',
     linkName: 'sinh',
     returns: {
-      type: 'number',
+      type: ['number', 'vector', 'matrix'],
     },
     args: {
       x: {
-        type: 'number',
+        type: ['number', 'vector', 'matrix'],
       },
     },
     variants: [
       { argumentNames: ['x'] },
     ],
-    description: 'Returns the hyperbolic sine of $x.',
-    examples: ['sinh(0)', 'sinh(1)', 'sinh(-0.5)'],
+    description: 'The `sinh` function computes the hyperbolic sine of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the hyperbolic sine of each element while preserving the original structure.',
+    examples: [
+      'sinh(0)',
+      'sinh(1)',
+      'sinh(-0.5)',
+      'sinh([0.1, 0.2, 0.3])',
+      'sinh([[0.1, 0.2], [0.3, 0.4]])',
+    ],
   },
   'cosh': {
     title: 'cosh',
     category: 'Math',
     linkName: 'cosh',
     returns: {
-      type: 'number',
+      type: ['number', 'vector', 'matrix'],
     },
     args: {
       x: {
-        type: 'number',
+        type: ['number', 'vector', 'matrix'],
       },
     },
     variants: [
       { argumentNames: ['x'] },
     ],
-    description: 'Returns the hyperbolic cosine of $x.',
-    examples: ['cosh(0)', 'cosh(1)', 'cosh(-0.5)'],
+    description: 'The `cosh` function computes the hyperbolic cosine of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the hyperbolic cosine of each element while preserving the original structure.',
+    examples: [
+      'cosh(0)',
+      'cosh(1)',
+      'cosh(-0.5)',
+      'cosh([0.1, 0.2, 0.3])',
+      'cosh([[0.1, 0.2], [0.3, 0.4]])',
+    ],
   },
   'tanh': {
     title: 'tanh',
     category: 'Math',
     linkName: 'tanh',
     returns: {
-      type: 'number',
+      type: ['number', 'vector', 'matrix'],
     },
     args: {
       x: {
-        type: 'number',
+        type: ['number', 'vector', 'matrix'],
       },
     },
     variants: [
       { argumentNames: ['x'] },
     ],
-    description: 'Returns the hyperbolic tangent of $x.',
+    description: 'The `tanh` function computes the hyperbolic tangent of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the hyperbolic tangent of each element while preserving the original structure.',
     examples: ['tanh(0)', 'tanh(1)', 'tanh(-0.5)', 'tanh(50)'],
   },
   'asinh': {
@@ -619,53 +843,72 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     category: 'Math',
     linkName: 'asinh',
     returns: {
-      type: 'number',
+      type: ['number', 'vector', 'matrix'],
     },
     args: {
       x: {
-        type: 'number',
+        type: ['number', 'vector', 'matrix'],
       },
     },
     variants: [
       { argumentNames: ['x'] },
     ],
-    description: 'Returns the hyperbolic arcsine of $x.',
-    examples: ['asinh(0)', 'asinh(0.9)', 'asinh (0.5)'],
+    description: 'The `asinh` function computes the inverse hyperbolic sine of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the inverse hyperbolic sine of each element while preserving the original structure.',
+    examples: [
+      'asinh(10)',
+      'asinh(90)',
+      'asinh (50)',
+      'asinh([10, 20, 30])',
+      'asinh([[10, 20], [30, 40]])',
+    ],
   },
   'acosh': {
     title: 'acosh',
     category: 'Math',
     linkName: 'acosh',
     returns: {
-      type: 'number',
+      type: ['number', 'vector', 'matrix'],
     },
     args: {
       x: {
-        type: 'number',
+        type: ['number', 'vector', 'matrix'],
       },
     },
     variants: [
       { argumentNames: ['x'] },
     ],
-    description: 'Returns the hyperbolic arccosine of $x.',
-    examples: ['acosh(1)', 'acosh(2)', 'acosh(100)'],
+    description: 'The `acosh` function computes the inverse hyperbolic cosine of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the inverse hyperbolic cosine of each element while preserving the original structure.',
+    examples: [
+      'acosh(1)',
+      'acosh(2)',
+      'acosh(100)',
+      'acosh(50)',
+      'acosh([1, 2, 3])',
+      'acosh([[1, 2], [3, 4]])',
+    ],
   },
   'atanh': {
     title: 'atanh',
     category: 'Math',
     linkName: 'atanh',
     returns: {
-      type: 'number',
+      type: ['number', 'vector', 'matrix'],
     },
     args: {
       x: {
-        type: 'number',
+        type: ['number', 'vector', 'matrix'],
       },
     },
     variants: [
       { argumentNames: ['x'] },
     ],
-    description: 'Returns the hyperbolic arctangent of $x.',
-    examples: ['atanh(0)', 'atanh(0.9)', 'atanh(-0.5)'],
+    description: 'The `atanh` function computes the inverse hyperbolic tangent of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the inverse hyperbolic tangent of each element while preserving the original structure.',
+    examples: [
+      'atanh(0)',
+      'atanh(0.9)',
+      'atanh(-0.5)',
+      'atanh([0.1, 0.2, 0.3])',
+      'atanh([[0.1, 0.2], [0.3, 0.4]])',
+    ],
   },
 }

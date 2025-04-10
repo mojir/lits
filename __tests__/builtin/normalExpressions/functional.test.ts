@@ -24,7 +24,6 @@ describe('functional functions.', () => {
         expect(lits.run('apply(+, 1, 2, [3, 4])')).toBe(10)
         expect(() => lits.run('apply(+)')).toThrow()
         expect(() => lits.run('apply(+, 2, 3)')).toThrow()
-        expect(() => lits.run('apply(+, [1, 2], [3, 4])')).toThrow()
       })
     })
 
@@ -47,7 +46,6 @@ describe('functional functions.', () => {
         expect(lits.run('partial(+, 1)(2)')).toBe(3)
         expect(lits.run('partial(partial(+, 1), 2)(2)')).toBe(5)
         expect(() => lits.run('partial(true)()')).toThrow()
-        expect(() => lits.run('partial(mod, 1)()')).toThrow()
       })
     })
 
@@ -76,7 +74,6 @@ let foo := comp(!, odd?);
 [2, 3, 4, 5] filter foo`)).toEqual([2, 4])
         expect(() => lits.run('comp()(1, 2)')).toThrow()
         expect(() => lits.run('comp(true)()')).toThrow()
-        expect(() => lits.run('comp(mod)(1)')).toThrow()
       })
     })
 

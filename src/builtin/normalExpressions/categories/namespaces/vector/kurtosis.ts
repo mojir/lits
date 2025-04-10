@@ -1,0 +1,67 @@
+import { calcMean } from './calcMean'
+import { calcStdDev } from './calcStdDev'
+
+export function kurtosis(vector: number[]): number {
+  const mean = calcMean(vector)
+  const stdDev = calcStdDev(vector)
+  if (stdDev === 0) {
+    throw new Error('Standard deviation is zero, kurtosis is undefined')
+  }
+  return vector.reduce((acc, val) => acc + ((val - mean) ** 4), 0) / (vector.length * stdDev ** 4)
+}
+
+export function excessKurtosis(vector: number[]): number {
+  return kurtosis(vector) - 3
+}
+
+/**
+ * Calculates the sample kurtosis (bias-corrected)
+ * @param vector Array of numeric values
+ * @returns The sample kurtosis
+ * @throws Error if sample size is less than 4 or if variance is zero
+ */
+export function sampleKurtosis(vector: number[]): number {
+  const n = vector.length
+  if (n < 4) {
+    throw new Error('Sample size must be at least 4 for kurtosis calculation')
+  }
+
+  const mean = vector.reduce((sum, val) => sum + val, 0) / n
+  const sumSquaredDeviations = vector.reduce((sum, val) => sum + (val - mean) ** 2, 0)
+  const variance = sumSquaredDeviations / (n - 1)
+
+  if (variance === 0) {
+    throw new Error('Variance is zero, kurtosis is undefined')
+  }
+
+  const fourthMomentSum = vector.reduce((sum, val) => sum + (val - mean) ** 4, 0)
+
+  // Correct formula for sample kurtosis
+  return (n * (n + 1) * fourthMomentSum) / ((n - 1) * (n - 2) * (n - 3) * variance ** 2)
+}
+/**
+ * Calculates the sample excess kurtosis (bias-corrected)
+ * @param vector Array of numeric values
+ * @returns The sample excess kurtosis
+ * @throws Error if sample size is less than 4 or if variance is zero
+ */
+export function sampleExcessKurtosis(vector: number[]): number {
+  const n = vector.length
+  if (n < 4) {
+    throw new Error('Sample size must be at least 4 for kurtosis calculation')
+  }
+
+  const mean = vector.reduce((sum, val) => sum + val, 0) / n
+  const sumSquaredDeviations = vector.reduce((sum, val) => sum + (val - mean) ** 2, 0)
+  const variance = sumSquaredDeviations / (n - 1)
+
+  if (variance === 0) {
+    throw new Error('Variance is zero, kurtosis is undefined')
+  }
+
+  const fourthMomentSum = vector.reduce((sum, val) => sum + (val - mean) ** 4, 0)
+  const rawKurtosis = (n * (n + 1) * fourthMomentSum) / ((n - 1) * (n - 2) * (n - 3) * variance ** 2)
+
+  // Compute excess kurtosis by subtracting 3 times the bias correction factor
+  return rawKurtosis - (3 * (n - 1) * (n - 1)) / ((n - 2) * (n - 3))
+}

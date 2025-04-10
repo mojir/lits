@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../src/Lits/Lits'
+import { LitsError } from '../../../src/errors'
 
 describe('math functions', () => {
   const lits = new Lits()
@@ -17,7 +18,6 @@ describe('math functions', () => {
       expect(() => lits.run('inc(true)')).toThrow()
       expect(() => lits.run('inc(null)')).toThrow()
       expect(() => lits.run('inc(boolean)')).toThrow()
-      expect(() => lits.run('inc([])')).toThrow()
       expect(() => lits.run('inc({})')).toThrow()
     })
   })
@@ -36,7 +36,6 @@ describe('math functions', () => {
       expect(() => lits.run('dec(true)')).toThrow()
       expect(() => lits.run('dec(null)')).toThrow()
       expect(() => lits.run('dec(boolean)')).toThrow()
-      expect(() => lits.run('dec([])')).toThrow()
       expect(() => lits.run('dec({})')).toThrow()
     })
   })
@@ -50,6 +49,29 @@ describe('math functions', () => {
       expect(lits.run('1 + 2 + 3 + 4')).toBe(10)
       expect(() => lits.run('"1" + 2')).toThrow()
     })
+    it('should add vectors element-wise', () => {
+      expect(lits.run('+([1, 2, 3])')).toEqual([1, 2, 3])
+      expect(lits.run('[1, 2, 3] + [4, 5, 6]')).toEqual([5, 7, 9])
+      expect(lits.run('+([1, 2, 3], [4, 5, 6])')).toEqual([5, 7, 9])
+      expect(lits.run('+([1, 2, 3], [4, 5, 6], [7, 8, 9])')).toEqual([12, 15, 18])
+      expect(lits.run('+([1], [2])')).toEqual([3])
+      expect(lits.run('+([], [])')).toEqual([])
+      expect(() => lits.run('+([1, 2], [3, 4, 5])')).toThrowError(LitsError)
+      expect(() => lits.run('+([], [1])')).toThrowError(LitsError)
+      expect(() => lits.run('+([1], [])')).toThrowError(LitsError)
+    })
+    it('should add vectors and scalars', () => {
+      expect(lits.run('+([1, 2, 3], 4)')).toEqual([5, 6, 7])
+      expect(lits.run('+([1], 4)')).toEqual([5])
+      expect(lits.run('+([], 4)')).toEqual([])
+      expect(lits.run('+(4, [1, 2, 3])')).toEqual([5, 6, 7])
+      expect(lits.run('+(4, [1])')).toEqual([5])
+      expect(lits.run('+(4, [])')).toEqual([])
+      expect(lits.run('+(4, [1, 2, 3], 5)')).toEqual([10, 11, 12])
+      expect(() => lits.run('+([1, 2], [3, 4, 5])')).toThrowError(LitsError)
+      expect(() => lits.run('+([], [1])')).toThrowError(LitsError)
+      expect(() => lits.run('+([1], [])')).toThrowError(LitsError)
+    })
   })
 
   describe('*', () => {
@@ -61,6 +83,17 @@ describe('math functions', () => {
       expect(lits.run('-2 * 2')).toBe(-4)
       expect(lits.run('1 * 2 * 3 * 4')).toBe(24)
       expect(() => lits.run('"1" * 2')).toThrow()
+    })
+    it('should multiply two vectors element-wise', () => {
+      expect(lits.run('*([1, 2, 3], [4, 5, 6])')).toEqual([4, 10, 18])
+      expect(lits.run('*(2, [1, 2, 3])')).toEqual([2, 4, 6])
+      expect(lits.run('*(2, [1, 2, 3], 2)')).toEqual([4, 8, 12])
+      expect(lits.run('*(2, [1, 2, 3], [2, 2, 2])')).toEqual([4, 8, 12])
+      expect(lits.run('*([1], [2])')).toEqual([2])
+      expect(lits.run('*([], [])')).toEqual([])
+      expect(() => lits.run('*([1, 2], [3, 4, 5])')).toThrowError(LitsError)
+      expect(() => lits.run('*([], [1])')).toThrowError(LitsError)
+      expect(() => lits.run('*([1], [])')).toThrowError(LitsError)
     })
   })
 
@@ -74,6 +107,16 @@ describe('math functions', () => {
       expect(lits.run('-2 / 2')).toBe(-2 / 2)
       expect(lits.run('1 / 2 / 3 / 4')).toBe(1 / 2 / 3 / 4)
       expect(() => lits.run('"1" / 2')).toThrow()
+    })
+    it('should divide two vectors element-wise', () => {
+      expect(lits.run('/([1, 2, 3], [4, 5, 6])')).toEqual([0.25, 0.4, 0.5])
+      expect(lits.run('/([1, 2, 3], 2)')).toEqual([0.5, 1, 1.5])
+      expect(lits.run('/(12, [1, 2, 3], 2)')).toEqual([6, 3, 2])
+      expect(lits.run('/([1], [2])')).toEqual([0.5])
+      expect(lits.run('/([], [])')).toEqual([])
+      expect(() => lits.run('/([1, 2], [3, 4, 5])')).toThrowError(LitsError)
+      expect(() => lits.run('/([], [1])')).toThrowError(LitsError)
+      expect(() => lits.run('/([1], [])')).toThrowError(LitsError)
     })
   })
 
@@ -89,6 +132,17 @@ describe('math functions', () => {
     })
     it('strange bug', () => {
       expect(lits.run('let a := 0; let b := 2; a - b')).toBe(-2)
+    })
+    it('should subtract vectors', () => {
+      expect(lits.run('-([1, 2, 3], [4, 5, 6])')).toEqual([-3, -3, -3])
+      expect(lits.run('-([1, 2, 3], [4, 5, 6], -3)')).toEqual([0, 0, 0])
+      expect(lits.run('-(10, [1, 2, 3])')).toEqual([9, 8, 7])
+      expect(lits.run('-([1], [2])')).toEqual([-1])
+      expect(lits.run('-([], [])')).toEqual([])
+      expect(() => lits.run('-([1, 2], [3, 4, 5])')).toThrowError(LitsError)
+      expect(() => lits.run('-([1, 2], [3, 4, 5])')).toThrowError(LitsError)
+      expect(() => lits.run('-([], [1])')).toThrowError(LitsError)
+      expect(() => lits.run('-([1], [])')).toThrowError(LitsError)
     })
   })
 
@@ -131,6 +185,28 @@ describe('math functions', () => {
       expect(lits.run('^(10, -2)')).toBe(0.01)
       expect(lits.run('^(-2, -1)')).toBe(-0.5)
       expect(lits.run('^(-2, -2)')).toBe(0.25)
+    })
+    it('should exponentiate two vectors element-wise', () => {
+      expect(lits.run('^([1, 2, 3], [4, 5, 6])')).toEqual([1, 32, 729])
+      expect(lits.run('^([1], [2])')).toEqual([1])
+      expect(lits.run('^([], [])')).toEqual([])
+      expect(() => lits.run('^([1, 2], [3, 4, 5])')).toThrowError(LitsError)
+      expect(() => lits.run('^([], [1])')).toThrowError(LitsError)
+      expect(() => lits.run('^([1], [])')).toThrowError(LitsError)
+    })
+    it('should exponentiate a vector by a scalar', () => {
+      expect(lits.run('^([1, 2, 3], 2)')).toEqual([1, 4, 9])
+      expect(lits.run('^([1], 2)')).toEqual([1])
+      expect(lits.run('^([], 2)')).toEqual([])
+      expect(() => lits.run('^([1, 2], [3, 4, 5])')).toThrowError(LitsError)
+      expect(() => lits.run('^([], [1])')).toThrowError(LitsError)
+      expect(() => lits.run('^([1], [])')).toThrowError(LitsError)
+    })
+    it('should exponentiate a scalar by a vector', () => {
+      expect(lits.run('^(2, [1, 2, 3])')).toEqual([2, 4, 8])
+      expect(lits.run('^(2, [1])')).toEqual([2])
+      expect(lits.run('^(2, [])')).toEqual([])
+      expect(() => lits.run('^([2], [3, 4, 5])')).toThrowError(LitsError)
     })
   })
 
@@ -213,6 +289,12 @@ describe('math functions', () => {
       expect(() => lits.run('abs()')).toThrow()
       expect(() => lits.run('abs(1, 2)')).toThrow()
     })
+    it('should take the absolute value of a vector', () => {
+      expect(lits.run('abs([1, -2, 3])')).toEqual([1, 2, 3])
+      expect(lits.run('abs([-1, -2, -3])')).toEqual([1, 2, 3])
+      expect(lits.run('abs([0])')).toEqual([0])
+      expect(lits.run('abs([])')).toEqual([])
+    })
   })
 
   describe('sign', () => {
@@ -226,16 +308,16 @@ describe('math functions', () => {
     })
   })
 
-  describe('log', () => {
+  describe('ln', () => {
     it('samples', () => {
-      expect(lits.run('log(0.1)')).toBe(Math.log(0.1))
-      expect(lits.run('log(1)')).toBe(Math.log(1))
-      expect(lits.run('log(100)')).toBe(Math.log(100))
-      expect(lits.run('log(-2)')).toBeNaN()
-      expect(lits.run('log(0)')).toBe(Number.NEGATIVE_INFINITY)
-      expect(lits.run('log(-0)')).toBe(Number.NEGATIVE_INFINITY)
-      expect(() => lits.run('log()')).toThrow()
-      expect(() => lits.run('log(1, 2)')).toThrow()
+      expect(lits.run('ln(0.1)')).toBe(Math.log(0.1))
+      expect(lits.run('ln(1)')).toBe(Math.log(1))
+      expect(lits.run('ln(100)')).toBe(Math.log(100))
+      expect(lits.run('ln(-2)')).toBeNaN()
+      expect(lits.run('ln(0)')).toBe(Number.NEGATIVE_INFINITY)
+      expect(lits.run('ln(-0)')).toBe(Number.NEGATIVE_INFINITY)
+      expect(() => lits.run('ln()')).toThrow()
+      expect(() => lits.run('ln(1, 2)')).toThrow()
     })
   })
 

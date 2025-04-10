@@ -15,6 +15,7 @@ import { miscReference } from './categories/misc'
 import { objectReference } from './categories/object'
 import { matrixReference } from './categories/matrix/matrix'
 import { vectorReference } from './categories/vector'
+import { linAlgReference } from './categories/linearAlgebra'
 import { predicateReference } from './categories/predicate'
 import { regularExpressionReference } from './categories/regularExpression'
 import { sequenceReference } from './categories/sequence'
@@ -30,7 +31,7 @@ export interface TypedValue {
   array?: true
 }
 
-type NormalExpressionArgument = TypedValue & {
+export type NormalExpressionArgument = TypedValue & {
   description?: string
 }
 
@@ -105,6 +106,7 @@ export const normalExpressionReference: Record<NormalExpressionName, FunctionRef
   ...bitwiseReference,
   ...assertReference,
   ...vectorReference,
+  ...linAlgReference,
   ...matrixReference,
   ...numberTheoryReference,
 }
