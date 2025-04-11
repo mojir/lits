@@ -7524,6 +7524,12 @@ var Playground = (function (exports) {
         'paddingValue': 0,
     };
 
+    var medianReductionFunction = {
+        'vec:median': function (vector) { return calcMedian(vector); },
+        'minLength': 1,
+        'paddingValue': 0,
+    };
+
     var minReductionFunction = {
         'vec:min': function (vector) { return Math.min.apply(Math, __spreadArray([], __read(vector), false)); },
         'minLength': 1,
@@ -7536,18 +7542,39 @@ var Playground = (function (exports) {
         'paddingValue': 1,
     };
 
+    var sampleVarianceReductionFunction = {
+        'vec:sample-variance': function (vector) {
+            var mean = calcMean(vector);
+            return vector.reduce(function (acc, val) { return acc + Math.pow((val - mean), 2); }, 0) / (vector.length - 1);
+        },
+        'minLength': 2,
+        'paddingValue': 0,
+    };
+
     var sumReductionFunction = {
         'vec:sum': function (vector) { return vector.reduce(function (acc, val) { return acc + val; }, 0); },
         'minLength': 0,
         'paddingValue': 0,
     };
 
+    var varianceReductionFunction = {
+        'vec:variance': function (vector) {
+            var mean = calcMean(vector);
+            return vector.reduce(function (acc, val) { return acc + Math.pow((val - mean), 2); }, 0) / vector.length;
+        },
+        'minLength': 1,
+        'paddingValue': 0,
+    };
+
     var reductionFunctionNormalExpressions = {};
     addReductionFunctions$1(meanReductionFunction);
+    addReductionFunctions$1(medianReductionFunction);
     addReductionFunctions$1(sumReductionFunction);
     addReductionFunctions$1(prodReductionFunction);
     addReductionFunctions$1(minReductionFunction);
     addReductionFunctions$1(maxReductionFunction);
+    addReductionFunctions$1(varianceReductionFunction);
+    addReductionFunctions$1(sampleVarianceReductionFunction);
     function addReductionFunctions$1(fns) {
         var e_1, _a;
         var _b;
@@ -7672,8 +7699,9 @@ var Playground = (function (exports) {
                     throw new LitsError("Vector length must be at least ".concat(minLength), sourceCodeInfo);
                 }
                 try {
-                    var result = [];
-                    for (var i = 0; i < vector.length; i += 1) {
+                    var nullsCount = Math.max(minLength - 1, 0);
+                    var result = Array(nullsCount).fill(null);
+                    for (var i = nullsCount; i < vector.length; i += 1) {
                         result.push(reductionFunction(vector.slice(0, i + 1)));
                     }
                     return result;
@@ -7789,40 +7817,11 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'vec:median': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertNonEmptyVector(vector, sourceCodeInfo);
-                return calcMedian(vector);
-            },
-            paramCount: 1,
-        },
         'vec:mode': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertNonEmptyVector(vector, sourceCodeInfo);
                 return mode(vector);
-            },
-            paramCount: 1,
-        },
-        'vec:variance': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertNonEmptyVector(vector, sourceCodeInfo);
-                var mean = calcMean(vector);
-                return vector.reduce(function (acc, val) { return acc + Math.pow((val - mean), 2); }, 0) / vector.length;
-            },
-            paramCount: 1,
-        },
-        'vec:sample-variance': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertNonEmptyVector(vector, sourceCodeInfo);
-                if (vector.length < 2) {
-                    throw new LitsError('Sample variance requires at least two values', sourceCodeInfo);
-                }
-                var mean = calcMean(vector);
-                return vector.reduce(function (acc, val) { return acc + Math.pow((val - mean), 2); }, 0) / (vector.length - 1);
             },
             paramCount: 1,
         },
@@ -8225,20 +8224,6 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'vec:moving-median': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
-                var result = [];
-                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
-                    var median = vector.slice(i, i + windowSize).sort(function (a, b) { return a - b; })[Math.floor(windowSize / 2)];
-                    result.push(median);
-                }
-                return result;
-            },
-            paramCount: 2,
-        },
         'vec:moving-std': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
@@ -8248,19 +8233,6 @@ var Playground = (function (exports) {
                 for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
                     var stdDev = calcStdDev(vector.slice(i, i + windowSize));
                     result.push(stdDev);
-                }
-                return result;
-            },
-            paramCount: 2,
-        },
-        'vec:moving-variance': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
-                var result = [];
-                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
-                    result.push(calcVariance(vector.slice(i, i + windowSize)));
                 }
                 return result;
             },

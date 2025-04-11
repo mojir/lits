@@ -2,6 +2,9 @@ import type { FunctionReference } from '../..'
 import type { VectorReductionKeys } from '../../../src/builtin/normalExpressions/categories/namespaces/vector/reductionFunctions'
 import type { VectorApiName } from '../../api'
 import { meanReference } from './mean'
+import { medianReference } from './median'
+import { varianceReference } from './variance'
+import { sampleVarianceReference } from './sampleVariance'
 import { sumReference } from './sum'
 import { prodReference } from './prod'
 import { minReference } from './min'
@@ -13,6 +16,9 @@ export type VectorReductionReference<T extends string> = {
 
 export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>> = {
   ...meanReference,
+  ...medianReference,
+  ...varianceReference,
+  ...sampleVarianceReference,
   ...sumReference,
   ...prodReference,
   ...minReference,
@@ -271,31 +277,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       'vec:mode([2, 2, 3, 3, 4])',
       'vec:mode([2, 2, 3, 3])',
       'vec:mode([1, 2, 3, 2, 1, 2])',
-    ],
-  },
-  'vec:variance': {
-    title: 'vec:variance',
-    category: 'Vector',
-    description: 'Returns the variance of all elements in the vector.',
-    linkName: 'vec-colon-variance',
-    returns: {
-      type: 'number',
-    },
-    args: {
-      vector: {
-        type: 'vector',
-        description: 'Non emtpy vector to calculate the variance of.',
-      },
-    },
-    variants: [
-      { argumentNames: ['vector'] },
-    ],
-    examples: [
-      'vec:variance([1, 2, 3])',
-      'vec:variance([1, 2, -3])',
-      'vec:variance([1, 2, 3, 4])',
-      'vec:variance([1, 2, -3, 4])',
-      'vec:variance([1, 2, 3, 40, 50])',
     ],
   },
   'vec:sample-variance': {

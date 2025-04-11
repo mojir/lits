@@ -5,7 +5,7 @@ export const minReference: VectorReductionReference<'min'> = {
   'vec:min': {
     title: 'vec:min',
     category: 'Vector',
-    description: 'Returns the minimum of all elements in the vector.',
+    description: 'Returns the `minimum` of all elements in the `vector`.',
     linkName: 'vec-colon-min',
     returns: {
       type: 'number',
@@ -13,7 +13,7 @@ export const minReference: VectorReductionReference<'min'> = {
     args: {
       vector: {
         type: 'vector',
-        description: 'The vector to calculate the minimum of.',
+        description: 'The `vector` to calculate the `minimum` of.',
       },
     },
     variants: [
@@ -27,7 +27,7 @@ export const minReference: VectorReductionReference<'min'> = {
   'vec:moving-min': {
     title: 'vec:moving-min',
     category: 'Vector',
-    description: 'Returns the moving minimum of the vector with a given window size.',
+    description: 'Returns the `moving minimum` of the `vector` with a given window size.',
     linkName: 'vec-colon-moving-min',
     returns: {
       type: 'vector',
@@ -35,7 +35,7 @@ export const minReference: VectorReductionReference<'min'> = {
     args: {
       vector: {
         type: 'vector',
-        description: 'The vector to calculate the moving minimum of.',
+        description: 'The `vector` to calculate the `moving minimum` of.',
       },
       windowSize: {
         type: 'integer',
@@ -54,7 +54,7 @@ export const minReference: VectorReductionReference<'min'> = {
   'vec:centered-moving-min': {
     title: 'vec:centered-moving-min',
     category: 'Vector',
-    description: 'Returns the centered moving minimum of the vector with a given window size.',
+    description: 'Returns the `centered moving minimum` of the `vector` with a given window size.',
     linkName: 'vec-colon-centered-moving-min',
     returns: {
       type: 'vector',
@@ -62,7 +62,7 @@ export const minReference: VectorReductionReference<'min'> = {
     args: {
       vector: {
         type: 'vector',
-        description: 'The vector to calculate the centered moving minimum of.',
+        description: 'The `vector` to calculate the `centered moving minimum` of.',
       },
       windowSize: {
         type: 'integer',
@@ -93,7 +93,7 @@ export const minReference: VectorReductionReference<'min'> = {
   'vec:running-min': {
     title: 'vec:running-min',
     category: 'Vector',
-    description: 'Returns the running minimum of the vector.',
+    description: 'Returns the `running minimum` of the `vector`.',
     linkName: 'vec-colon-running-min',
     returns: {
       type: 'vector',
@@ -101,7 +101,7 @@ export const minReference: VectorReductionReference<'min'> = {
     args: {
       vector: {
         type: 'vector',
-        description: 'The vector to calculate the running minimum of.',
+        description: 'The `vector` to calculate the `running minimum` of.',
       },
     },
     variants: [

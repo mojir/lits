@@ -5,7 +5,7 @@ export const sumReference: VectorReductionReference<'sum'> = {
   'vec:sum': {
     title: 'vec:sum',
     category: 'Vector',
-    description: 'Returns the sum of all elements in the vector.',
+    description: 'Returns the `sum` of all elements in the `vector`.',
     linkName: 'vec-colon-sum',
     returns: {
       type: 'number',
@@ -13,7 +13,7 @@ export const sumReference: VectorReductionReference<'sum'> = {
     args: {
       vector: {
         type: 'vector',
-        description: 'The vector to calculate the sum of.',
+        description: 'The `vector` to calculate the `sum` of.',
       },
     },
     variants: [
@@ -27,7 +27,7 @@ export const sumReference: VectorReductionReference<'sum'> = {
   'vec:moving-sum': {
     title: 'vec:moving-sum',
     category: 'Vector',
-    description: 'Returns the moving sum of the vector with a given window size.',
+    description: 'Returns the `moving sum` of the `vector` with a given window size.',
     linkName: 'vec-colon-moving-sum',
     returns: {
       type: 'vector',
@@ -35,7 +35,7 @@ export const sumReference: VectorReductionReference<'sum'> = {
     args: {
       vector: {
         type: 'vector',
-        description: 'The vector to calculate the moving sum of.',
+        description: 'The `vector` to calculate the `moving sum` of.',
       },
       windowSize: {
         type: 'integer',
@@ -54,7 +54,7 @@ export const sumReference: VectorReductionReference<'sum'> = {
   'vec:centered-moving-sum': {
     title: 'vec:centered-moving-sum',
     category: 'Vector',
-    description: 'Returns the centered moving sum of the vector with a given window size.',
+    description: 'Returns the `centered moving sum` of the `vector` with a given window size.',
     linkName: 'vec-colon-centered-moving-sum',
     returns: {
       type: 'vector',
@@ -62,7 +62,7 @@ export const sumReference: VectorReductionReference<'sum'> = {
     args: {
       vector: {
         type: 'vector',
-        description: 'The vector to calculate the centered moving sum of.',
+        description: 'The `vector` to calculate the `centered moving sum` of.',
       },
       windowSize: {
         type: 'integer',
@@ -91,7 +91,7 @@ export const sumReference: VectorReductionReference<'sum'> = {
   'vec:running-sum': {
     title: 'vec:running-sum',
     category: 'Vector',
-    description: 'Returns the running sum of the vector.',
+    description: 'Returns the `running sum` of the `vector`.',
     linkName: 'vec-colon-running-sum',
     returns: {
       type: 'vector',
@@ -99,7 +99,7 @@ export const sumReference: VectorReductionReference<'sum'> = {
     args: {
       vector: {
         type: 'vector',
-        description: 'The vector to calculate the running sum of.',
+        description: 'The `vector` to calculate the `running sum` of.',
       },
     },
     variants: [

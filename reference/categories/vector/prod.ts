@@ -5,7 +5,7 @@ export const prodReference: VectorReductionReference<'prod'> = {
   'vec:prod': {
     title: 'vec:prod',
     category: 'Vector',
-    description: 'Returns the product of all elements in the vector.',
+    description: 'Returns the `product` of all elements in the `vector`.',
     linkName: 'vec-colon-prod',
     returns: {
       type: 'number',
@@ -13,7 +13,7 @@ export const prodReference: VectorReductionReference<'prod'> = {
     args: {
       vector: {
         type: 'vector',
-        description: 'The vector to calculate the product of.',
+        description: 'The `vector` to calculate the `product` of.',
       },
     },
     variants: [
@@ -27,7 +27,7 @@ export const prodReference: VectorReductionReference<'prod'> = {
   'vec:moving-prod': {
     title: 'vec:moving-prod',
     category: 'Vector',
-    description: 'Returns the moving product of the vector with a given window size.',
+    description: 'Returns the `moving product` of the `vector` with a given window size.',
     linkName: 'vec-colon-moving-prod',
     returns: {
       type: 'vector',
@@ -35,7 +35,7 @@ export const prodReference: VectorReductionReference<'prod'> = {
     args: {
       vector: {
         type: 'vector',
-        description: 'The vector to calculate the moving product of.',
+        description: 'The `vector` to calculate the `moving product` of.',
       },
       windowSize: {
         type: 'integer',
@@ -54,7 +54,7 @@ export const prodReference: VectorReductionReference<'prod'> = {
   'vec:centered-moving-prod': {
     title: 'vec:centered-moving-prod',
     category: 'Vector',
-    description: 'Returns the centered moving product of the vector with a given window size.',
+    description: 'Returns the `centered moving product` of the `vector` with a given window size.',
     linkName: 'vec-colon-centered-moving-prod',
     returns: {
       type: 'vector',
@@ -62,7 +62,7 @@ export const prodReference: VectorReductionReference<'prod'> = {
     args: {
       vector: {
         type: 'vector',
-        description: 'The vector to calculate the centered moving product of.',
+        description: 'The `vector` to calculate the `centered moving product` of.',
       },
       windowSize: {
         type: 'integer',
@@ -92,7 +92,7 @@ export const prodReference: VectorReductionReference<'prod'> = {
   'vec:running-prod': {
     title: 'vec:running-prod',
     category: 'Vector',
-    description: 'Returns the running product of the vector.',
+    description: 'Returns the `running product` of the `vector`.',
     linkName: 'vec-colon-running-prod',
     returns: {
       type: 'vector',
@@ -100,7 +100,7 @@ export const prodReference: VectorReductionReference<'prod'> = {
     args: {
       vector: {
         type: 'vector',
-        description: 'The vector to calculate the running product of.',
+        description: 'The `vector` to calculate the `running product` of.',
       },
     },
     variants: [

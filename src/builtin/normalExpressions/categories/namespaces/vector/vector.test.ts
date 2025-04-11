@@ -103,37 +103,12 @@ describe('vector functions', () => {
       expect(() => lits.run('vec:mean([])')).toThrowError(LitsError)
     })
   })
-  describe('vec:median', () => {
-    it('should calculate the median of a vector', () => {
-      expect(lits.run('vec:median([1, 2, 3])')).toEqual(2)
-      expect(lits.run('vec:median([1, -2, 3])')).toEqual(1)
-      expect(lits.run('vec:median([-1, -2, -3])')).toEqual(-2)
-      expect(lits.run('vec:median([0])')).toEqual(0)
-      expect(() => lits.run('vec:median([])')).toThrowError(LitsError)
-    })
-  })
   describe('vec:mode', () => {
     it('should calculate the mode of a vector', () => {
       expect(lits.run('vec:mode([1, 2, 3])')).toEqual([1, 2, 3])
       expect(lits.run('vec:mode([1, 2, 2, 3])')).toEqual([2])
       expect(lits.run('vec:mode([0])')).toEqual([0])
       expect(() => lits.run('vec:mode([])')).toThrowError(LitsError)
-    })
-  })
-  describe('vec:variance', () => {
-    it('should calculate the variance of a vector', () => {
-      expect(lits.run('vec:variance([1, 2, 3])')).toEqual(0.6666666666666666)
-      expect(lits.run('vec:variance([1, 2, 2, 3])')).toEqual(0.5)
-      expect(lits.run('vec:variance([0])')).toEqual(0)
-      expect(() => lits.run('vec:variance([])')).toThrowError(LitsError)
-    })
-  })
-  describe('vec:sample-variance', () => {
-    it('should calculate the sample variance of a vector', () => {
-      expect(lits.run('vec:sample-variance([1, 2, 3])')).toEqual(1)
-      expect(lits.run('vec:sample-variance([1, 2, 2, 3])')).toEqual(0.6666666666666666)
-      expect(() => lits.run('vec:sample-variance([0])')).toThrowError(LitsError)
-      expect(() => lits.run('vec:sample-variance([])')).toThrowError(LitsError)
     })
   })
   describe('vec:stdev', () => {

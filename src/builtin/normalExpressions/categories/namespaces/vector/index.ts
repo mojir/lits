@@ -7,9 +7,7 @@ import { bincount } from './bincount'
 import { calcMad } from './calcMad'
 import { calcMean } from './calcMean'
 import { calcMedad } from './calcMedad'
-import { calcMedian } from './calcMedian'
 import { calcStdDev } from './calcStdDev'
-import { calcVariance } from './calcVariance'
 import { calculateEntropy } from './entropy'
 import { calcHistogram } from './histogram'
 import { excessKurtosis, kurtosis, sampleExcessKurtosis, sampleKurtosis } from './kurtosis'
@@ -69,38 +67,10 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'vec:median': {
-    evaluate: ([vector], sourceCodeInfo): number => {
-      assertNonEmptyVector(vector, sourceCodeInfo)
-
-      return calcMedian(vector)
-    },
-    paramCount: 1,
-  },
   'vec:mode': {
     evaluate: ([vector], sourceCodeInfo): number[] => {
       assertNonEmptyVector(vector, sourceCodeInfo)
       return mode(vector)
-    },
-    paramCount: 1,
-  },
-  'vec:variance': {
-    evaluate: ([vector], sourceCodeInfo): number => {
-      assertNonEmptyVector(vector, sourceCodeInfo)
-
-      const mean = calcMean(vector)
-      return vector.reduce((acc, val) => acc + (val - mean) ** 2, 0) / vector.length
-    },
-    paramCount: 1,
-  },
-  'vec:sample-variance': {
-    evaluate: ([vector], sourceCodeInfo): number => {
-      assertNonEmptyVector(vector, sourceCodeInfo)
-      if (vector.length < 2) {
-        throw new LitsError('Sample variance requires at least two values', sourceCodeInfo)
-      }
-      const mean = calcMean(vector)
-      return vector.reduce((acc, val) => acc + (val - mean) ** 2, 0) / (vector.length - 1)
     },
     paramCount: 1,
   },
@@ -482,20 +452,6 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'vec:moving-median': {
-    evaluate: ([vector, windowSize], sourceCodeInfo): number[] => {
-      assertVector(vector, sourceCodeInfo)
-      assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true })
-
-      const result = []
-      for (let i = 0; i < vector.length - windowSize + 1; i += 1) {
-        const median = vector.slice(i, i + windowSize).sort((a, b) => a - b)[Math.floor(windowSize / 2)]!
-        result.push(median)
-      }
-      return result
-    },
-    paramCount: 2,
-  },
   'vec:moving-std': {
     evaluate: ([vector, windowSize], sourceCodeInfo): number[] => {
       assertVector(vector, sourceCodeInfo)
@@ -505,18 +461,6 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
       for (let i = 0; i < vector.length - windowSize + 1; i += 1) {
         const stdDev = calcStdDev(vector.slice(i, i + windowSize))
         result.push(stdDev)
-      }
-      return result
-    },
-    paramCount: 2,
-  },
-  'vec:moving-variance': {
-    evaluate: ([vector, windowSize], sourceCodeInfo): number[] => {
-      assertVector(vector, sourceCodeInfo)
-      assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true })
-      const result = []
-      for (let i = 0; i < vector.length - windowSize + 1; i += 1) {
-        result.push(calcVariance(vector.slice(i, i + windowSize)))
       }
       return result
     },

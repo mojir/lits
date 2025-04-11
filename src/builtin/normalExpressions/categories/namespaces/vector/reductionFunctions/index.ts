@@ -4,9 +4,12 @@ import { assertNumber } from '../../../../../../typeGuards/number'
 import type { BuiltinNormalExpression, BuiltinNormalExpressions } from '../../../../../interface'
 import { maxReductionFunction } from './max'
 import { meanReductionFunction } from './mean'
+import { medianReductionFunction } from './median'
 import { minReductionFunction } from './min'
 import { prodReductionFunction } from './prod'
+import { sampleVarianceReductionFunction } from './sampleVariance'
 import { sumReductionFunction } from './sum'
+import { varianceReductionFunction } from './variance'
 
 type VectorReductionKey<T extends string> = `vec:${T}`
 type VectorMovingWindowKey<T extends string> = `vec:moving-${T}`
@@ -27,10 +30,13 @@ export type ReductionFunctionDefinition<T extends string> = Record<VectorReducti
 export const reductionFunctionNormalExpressions: BuiltinNormalExpressions = {}
 
 addReductionFunctions(meanReductionFunction)
+addReductionFunctions(medianReductionFunction)
 addReductionFunctions(sumReductionFunction)
 addReductionFunctions(prodReductionFunction)
 addReductionFunctions(minReductionFunction)
 addReductionFunctions(maxReductionFunction)
+addReductionFunctions(varianceReductionFunction)
+addReductionFunctions(sampleVarianceReductionFunction)
 
 function addReductionFunctions(fns: ReductionFunctionDefinition<string>) {
   for (const [key, value] of Object.entries(fns)) {
@@ -157,7 +163,7 @@ function createCenteredMovingNormalExpression(
 function createRunningNormalExpression(
   reductionFunction: ReductionFunction,
   minLength: number,
-): BuiltinNormalExpression<number[]> {
+): BuiltinNormalExpression<(number | null)[]> {
   return {
     evaluate: ([vector], sourceCodeInfo) => {
       assertVector(vector, sourceCodeInfo)
@@ -166,8 +172,10 @@ function createRunningNormalExpression(
       }
 
       try {
-        const result = []
-        for (let i = 0; i < vector.length; i += 1) {
+        const nullsCount = Math.max(minLength - 1, 0)
+        const result: (number | null)[] = Array<null>(nullsCount).fill(null)
+
+        for (let i = nullsCount; i < vector.length; i += 1) {
           result.push(reductionFunction(vector.slice(0, i + 1)))
         }
         return result

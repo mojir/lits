@@ -5,7 +5,7 @@ export const meanReference: VectorReductionReference<'mean'> = {
   'vec:mean': {
     title: 'vec:mean',
     category: 'Vector',
-    description: 'Returns the mean of all elements in the vector.',
+    description: 'Returns the `mean` of all elements in the `vector`.',
     linkName: 'vec-colon-mean',
     returns: {
       type: 'number',
@@ -13,7 +13,7 @@ export const meanReference: VectorReductionReference<'mean'> = {
     args: {
       vector: {
         type: 'vector',
-        description: 'The vector to calculate the mean of.',
+        description: 'The `vector` to calculate the `mean` of.',
       },
     },
     variants: [
@@ -27,7 +27,7 @@ export const meanReference: VectorReductionReference<'mean'> = {
   'vec:moving-mean': {
     title: 'vec:moving-mean',
     category: 'Vector',
-    description: 'Returns the moving mean of the vector with a given window size.',
+    description: 'Returns the `moving mean` of the `vector` with a given window size.',
     linkName: 'vec-colon-moving-mean',
     returns: {
       type: 'vector',
@@ -35,7 +35,7 @@ export const meanReference: VectorReductionReference<'mean'> = {
     args: {
       vector: {
         type: 'vector',
-        description: 'The vector to calculate the moving mean of.',
+        description: 'The `vector` to calculate the `moving mean` of.',
       },
       windowSize: {
         type: 'integer',
@@ -54,7 +54,7 @@ export const meanReference: VectorReductionReference<'mean'> = {
   'vec:centered-moving-mean': {
     title: 'vec:centered-moving-mean',
     category: 'Vector',
-    description: 'Returns the centered moving mean of the vector with a given window size.',
+    description: 'Returns the `centered moving mean` of the `vector` with a given window size.',
     linkName: 'vec-colon-centered-moving-mean',
     returns: {
       type: 'vector',
@@ -62,7 +62,7 @@ export const meanReference: VectorReductionReference<'mean'> = {
     args: {
       vector: {
         type: 'vector',
-        description: 'The vector to calculate the centered moving mean of.',
+        description: 'The `vector` to calculate the `centered moving mean` of.',
       },
       windowSize: {
         type: 'integer',
@@ -92,7 +92,7 @@ export const meanReference: VectorReductionReference<'mean'> = {
   'vec:running-mean': {
     title: 'vec:running-mean',
     category: 'Vector',
-    description: 'Returns the running mean of the vector.',
+    description: 'Returns the `running mean` of the `vector`.',
     linkName: 'vec-colon-running-mean',
     returns: {
       type: 'vector',
@@ -100,7 +100,7 @@ export const meanReference: VectorReductionReference<'mean'> = {
     args: {
       vector: {
         type: 'vector',
-        description: 'The vector to calculate the running mean of.',
+        description: 'The `vector` to calculate the `running mean` of.',
       },
     },
     variants: [
