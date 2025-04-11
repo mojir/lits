@@ -23,29 +23,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
   ...prodReference,
   ...minReference,
   ...maxReference,
-  'vec:vector?': {
-    title: 'vec:vector?',
-    category: 'Vector',
-    description: 'Checks if a value is a vector.',
-    linkName: 'vec-colon-vector-question-mark',
-    returns: {
-      type: 'boolean',
-    },
-    args: {
-      value: {
-        type: 'any',
-        description: 'The value to check.',
-      },
-    },
-    variants: [
-      { argumentNames: ['value'] },
-    ],
-    examples: [
-      'vec:vector?(1)',
-      'vec:vector?([1, 2, 3])',
-      'vec:vector?([1, 2, "3"])',
-    ],
-  },
   'vec:monotonic?': {
     title: 'vec:monotonic?',
     category: 'Vector',

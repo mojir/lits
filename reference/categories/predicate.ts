@@ -588,4 +588,52 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
       'not-empty?(null)',
     ],
   },
+  'vector?': {
+    title: 'vector?',
+    category: 'Predicate',
+    description: 'Checks if a value is a `vector`. A `vector` is an array of `numbers`.',
+    linkName: 'vector-question-mark',
+    returns: {
+      type: 'boolean',
+    },
+    args: {
+      value: {
+        type: 'any',
+        description: 'The value to check.',
+      },
+    },
+    variants: [
+      { argumentNames: ['value'] },
+    ],
+    examples: [
+      'vector?(1)',
+      'vector?([1, 2, 3])',
+      'vector?([1, 2, "3"])',
+    ],
+  },
+  'matrix?': {
+    title: 'matrix?',
+    category: 'Predicate',
+    description: 'Checks if a value is a `matrix`. A `matrix` is an array of arrays of `numbers`.',
+    linkName: 'matrix-question-mark',
+    returns: {
+      type: 'boolean',
+    },
+    args: {
+      value: {
+        type: 'any',
+        description: 'The value to check.',
+      },
+    },
+    variants: [
+      { argumentNames: ['value'] },
+    ],
+    examples: [
+      'matrix?(1)',
+      'matrix?([1, 2, 3])',
+      'matrix?([[1, 2], [3, 4]])',
+      'matrix?([[1, 2], [3, "4"]])',
+      'matrix?([[1, 2], [3]])',
+    ],
+  },
 }

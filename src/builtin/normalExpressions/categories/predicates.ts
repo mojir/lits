@@ -2,6 +2,7 @@ import { isLitsFunction } from '../../../typeGuards/litsFunction'
 import { assertColl, isColl, isObj, isRegularExpression, isSeq } from '../../../typeGuards/lits'
 import { assertNumber, isNumber } from '../../../typeGuards/number'
 import type { BuiltinNormalExpressions } from '../../interface'
+import { isMatrix, isVector } from '../../../typeGuards/annotatedArrays'
 
 export const predicatesNormalExpression: BuiltinNormalExpressions = {
   'function?': {
@@ -181,6 +182,14 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
 
       return Object.keys(coll).length > 0
     },
+    paramCount: 1,
+  },
+  'vector?': {
+    evaluate: ([vector]): boolean => isVector(vector),
+    paramCount: 1,
+  },
+  'matrix?': {
+    evaluate: ([matrix]): boolean => isMatrix(matrix),
     paramCount: 1,
   },
 }

@@ -5823,6 +5823,20 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
+        'vector?': {
+            evaluate: function (_a) {
+                var _b = __read(_a, 1), vector = _b[0];
+                return isVector(vector);
+            },
+            paramCount: 1,
+        },
+        'matrix?': {
+            evaluate: function (_a) {
+                var _b = __read(_a, 1), matrix = _b[0];
+                return isMatrix(matrix);
+            },
+            paramCount: 1,
+        },
     };
 
     var regexpNormalExpression = {
@@ -7760,13 +7774,6 @@ var Playground = (function (exports) {
     }
 
     var vectorNormalExpression = {
-        'vec:vector?': {
-            evaluate: function (_a) {
-                var _b = __read(_a, 1), vector = _b[0];
-                return isVector(vector);
-            },
-            paramCount: 1,
-        },
         'vec:monotonic?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
@@ -9411,13 +9418,6 @@ var Playground = (function (exports) {
         }
     }
     var matrixNormalExpression = {
-        'mat:matrix?': {
-            evaluate: function (_a) {
-                var _b = __read(_a, 1), matrix = _b[0];
-                return isMatrix(matrix);
-            },
-            paramCount: 1,
-        },
         'm:~': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), m1 = _b[0], m2 = _b[1], _c = _b[2], epsilon = _c === void 0 ? 1e-10 : _c;

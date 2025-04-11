@@ -98,12 +98,12 @@ export const sampleVarianceReference: VectorReductionReference<'sample-variance'
     description: 'Returns the `running sample variance` of the `vector`.',
     linkName: 'vec-colon-running-sample-variance',
     returns: {
-      type: 'vector',
+      type: 'array',
     },
     args: {
       vector: {
         type: 'vector',
-        description: 'The `vector` to calculate the `running sample variance` of.',
+        description: 'The `vector` to calculate the `running sample variance` of. First element in result is `null` since `sample variance` is not defined for a single element.',
       },
     },
     variants: [

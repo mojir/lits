@@ -34,10 +34,6 @@ function assertSquareMatrix(matrix: unknown, sourceCodeInfo: SourceCodeInfo | un
 }
 
 export const matrixNormalExpression: BuiltinNormalExpressions = {
-  'mat:matrix?': {
-    evaluate: ([matrix]): boolean => isMatrix(matrix),
-    paramCount: 1,
-  },
   'm:~': {
     evaluate: ([m1, m2, epsilon = 1e-10], sourceCodeInfo): boolean => {
       assertMatrix(m1, sourceCodeInfo)

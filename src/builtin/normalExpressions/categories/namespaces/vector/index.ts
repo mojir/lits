@@ -1,5 +1,5 @@
 import { LitsError } from '../../../../../errors'
-import { assertNonEmptyVector, assertVector, isVector } from '../../../../../typeGuards/annotatedArrays'
+import { assertNonEmptyVector, assertVector } from '../../../../../typeGuards/annotatedArrays'
 import { assertFunctionLike } from '../../../../../typeGuards/lits'
 import { assertNumber } from '../../../../../typeGuards/number'
 import type { BuiltinNormalExpressions } from '../../../../interface'
@@ -19,10 +19,6 @@ import { reductionFunctionNormalExpressions } from './reductionFunctions'
 import { sampleSkewness, skewness } from './skewness'
 
 export const vectorNormalExpression: BuiltinNormalExpressions = {
-  'vec:vector?': {
-    evaluate: ([vector]): boolean => isVector(vector),
-    paramCount: 1,
-  },
   'vec:monotonic?': {
     evaluate: ([vector], sourceCodeInfo): boolean => {
       assertVector(vector, sourceCodeInfo)

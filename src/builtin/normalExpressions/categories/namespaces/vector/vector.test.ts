@@ -4,19 +4,6 @@ import { LitsError } from '../../../../../errors'
 
 const lits = new Lits()
 describe('vector functions', () => {
-  describe('vec:vector?', () => {
-    it('should determine if a value is a vector', () => {
-      expect(lits.run('vec:vector?([])')).toEqual(true)
-      expect(lits.run('vec:vector?([1, 2, 3])')).toEqual(true)
-      expect(lits.run('vec:vector?([1, 2, [3]])')).toEqual(false)
-      expect(lits.run('vec:vector?([1, 2, 3.0])')).toEqual(true)
-      expect(lits.run('vec:vector?([1, 2, "3"])')).toEqual(false)
-      expect(lits.run('vec:vector?([1, 2, true])')).toEqual(false)
-      expect(lits.run('vec:vector?([1, 2, {}])')).toEqual(false)
-      expect(lits.run('vec:vector?(12)')).toEqual(false)
-      expect(lits.run('vec:vector?({})')).toEqual(false)
-    })
-  })
   describe('vec:monotonic?', () => {
     it('should determine if a vector is monotonic', () => {
       expect(lits.run('vec:monotonic?([1, 2, 3])')).toEqual(true)

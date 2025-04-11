@@ -425,5 +425,19 @@ describe('predicates', () => {
         expect(() => lits.run('not-empty?(regexp("^start"))')).toThrow()
       })
     })
+
+    describe('vector?', () => {
+      it('should determine if a value is a vector', () => {
+        expect(lits.run('vector?([])')).toEqual(true)
+        expect(lits.run('vector?([1, 2, 3])')).toEqual(true)
+        expect(lits.run('vector?([1, 2, [3]])')).toEqual(false)
+        expect(lits.run('vector?([1, 2, 3.0])')).toEqual(true)
+        expect(lits.run('vector?([1, 2, "3"])')).toEqual(false)
+        expect(lits.run('vector?([1, 2, true])')).toEqual(false)
+        expect(lits.run('vector?([1, 2, {}])')).toEqual(false)
+        expect(lits.run('vector?(12)')).toEqual(false)
+        expect(lits.run('vector?({})')).toEqual(false)
+      })
+    })
   }
 })

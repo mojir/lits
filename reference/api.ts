@@ -179,6 +179,8 @@ export const api = {
     'true?',
     'empty?',
     'not-empty?',
+    'vector?',
+    'matrix?',
   ] as const,
   regularExpression: [
     'regexp',
@@ -243,10 +245,8 @@ export const api = {
     'assert-not-throws',
   ] as const,
   matrix: [
-    'mat:matrix?',
   ] as const,
   vector: [
-    'vec:vector?',
     'vec:monotonic?',
     'vec:strictly-monotonic?',
     'vec:increasing?',
