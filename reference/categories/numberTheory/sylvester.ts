@@ -5,7 +5,7 @@ export const sylvesterReference: NumberTheorySequenceReference<'sylvester'> = {
     title: 'nth:sylvester-seq',
     category: 'Number Theory',
     description: 'Generates the Sylvester sequence up to a specified length.',
-    linkName: 'c-colon-sylvester-seq',
+    linkName: 'nth-colon-sylvester-seq',
     returns: {
       type: 'integer',
       array: true,
@@ -30,7 +30,7 @@ export const sylvesterReference: NumberTheorySequenceReference<'sylvester'> = {
     title: 'nth:sylvester-take-while',
     category: 'Number Theory',
     description: 'Generates the Sylvester sequence while a condition is met.',
-    linkName: 'c-colon-sylvester-take-while',
+    linkName: 'nth-colon-sylvester-take-while',
     returns: {
       type: 'integer',
       array: true,
@@ -52,7 +52,7 @@ export const sylvesterReference: NumberTheorySequenceReference<'sylvester'> = {
     title: 'nth:sylvester-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Sylvester sequence.',
-    linkName: 'c-colon-sylvester-nth',
+    linkName: 'nth-colon-sylvester-nth',
     returns: {
       type: 'integer',
     },
@@ -74,7 +74,7 @@ export const sylvesterReference: NumberTheorySequenceReference<'sylvester'> = {
     title: 'nth:sylvester?',
     category: 'Number Theory',
     description: 'Checks if a number is in the Sylvester sequence.',
-    linkName: 'c-colon-sylvester-question-mark',
+    linkName: 'nth-colon-sylvester-question',
     returns: {
       type: 'boolean',
     },

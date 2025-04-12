@@ -27,7 +27,7 @@ export const maxReference: VectorReductionReference<'max'> = {
   'vec:moving-max': {
     title: 'vec:moving-max',
     category: 'Vector',
-    description: 'Returns the `moving maximum` of the `vector` with a given window size.',
+    description: 'Returns the **moving maximum` of the `vector** with a given window size.',
     linkName: 'vec-colon-moving-max',
     returns: {
       type: 'vector',
@@ -35,7 +35,7 @@ export const maxReference: VectorReductionReference<'max'> = {
     args: {
       vector: {
         type: 'vector',
-        description: 'The `vector` to calculate the `moving maximum` of.',
+        description: 'The `vector` to calculate the **moving maximum** of.',
       },
       windowSize: {
         type: 'integer',
@@ -48,52 +48,51 @@ export const maxReference: VectorReductionReference<'max'> = {
     ],
     examples: [
       'vec:moving-max([1, 2, 3, 4, 5], 3)',
-      'vec:moving-max([1, 2, 3, 4, 5], 10)',
+      'vec:moving-max([1, 2, 3, 4, 5], 5)',
     ],
   },
   'vec:centered-moving-max': {
     title: 'vec:centered-moving-max',
     category: 'Vector',
-    description: 'Returns the `centered moving maximum` of the `vector` with a given window size.',
+    description: 'Returns the **centered moving maximum` of the `vector** with a given window size.',
     linkName: 'vec-colon-centered-moving-max',
     returns: {
-      type: 'vector',
+      type: 'array',
     },
     args: {
       vector: {
         type: 'vector',
-        description: 'The `vector` to calculate the `centered moving maximum` of.',
+        description: 'The `vector` to calculate the **centered moving maximum** of.',
       },
       windowSize: {
         type: 'integer',
         description: 'The size of the moving window.',
       },
-      paddingValue: {
+      leftPadding: {
         type: 'number',
-        description: 'The value to use for padding. Default is 0.',
+        description: 'Optional value to use for padding. Default is `null`.',
       },
-      rightPaddingValue: {
+      rightPadding: {
         type: 'number',
-        description: 'The value to use for right padding. Default is the same as paddingValue.',
+        description: 'Optional value to use for right padding. Default is `null`.',
       },
       ...getOperatorArgs('vector', 'integer'),
     },
     variants: [
       { argumentNames: ['vector', 'windowSize'] },
-      { argumentNames: ['vector', 'windowSize', 'paddingValue'] },
-      { argumentNames: ['vector', 'windowSize', 'paddingValue', 'rightPaddingValue'] },
+      { argumentNames: ['vector', 'windowSize', 'leftPadding'] },
+      { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
       'vec:centered-moving-max([1, 2, 3, 4, 5], 3)',
       'vec:centered-moving-max([1, 2, 3, 4, 5], 3, 0, 100)',
       'vec:centered-moving-max([1, 2, 3, 4, 5], 3, 0)',
-      'vec:centered-moving-max([1, 2, 3, 4, 5], 10)',
     ],
   },
   'vec:running-max': {
     title: 'vec:running-max',
     category: 'Vector',
-    description: 'Returns the `running maximum` of the `vector`.',
+    description: 'Returns the **running maximum` of the `vector**.',
     linkName: 'vec-colon-running-max',
     returns: {
       type: 'vector',
@@ -101,7 +100,7 @@ export const maxReference: VectorReductionReference<'max'> = {
     args: {
       vector: {
         type: 'vector',
-        description: 'The `vector` to calculate the `running maximum` of.',
+        description: 'The `vector` to calculate the **running maximum** of.',
       },
     },
     variants: [

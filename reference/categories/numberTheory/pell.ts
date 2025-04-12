@@ -5,7 +5,7 @@ export const pellReference: NumberTheorySequenceReference<'pell'> = {
     title: 'nth:pell-seq',
     category: 'Number Theory',
     description: 'Generates the Pell sequence up to a specified length.',
-    linkName: 'c-colon-pell-seq',
+    linkName: 'nth-colon-pell-seq',
     returns: {
       type: 'integer',
       array: true,
@@ -30,7 +30,7 @@ export const pellReference: NumberTheorySequenceReference<'pell'> = {
     title: 'nth:pell-take-while',
     category: 'Number Theory',
     description: 'Generates the Pell sequence while a condition is met.',
-    linkName: 'c-colon-pell-take-while',
+    linkName: 'nth-colon-pell-take-while',
     returns: {
       type: 'integer',
       array: true,
@@ -52,7 +52,7 @@ export const pellReference: NumberTheorySequenceReference<'pell'> = {
     title: 'nth:pell-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Pell sequence.',
-    linkName: 'c-colon-pell-nth',
+    linkName: 'nth-colon-pell-nth',
     returns: {
       type: 'integer',
     },
@@ -75,7 +75,7 @@ export const pellReference: NumberTheorySequenceReference<'pell'> = {
     title: 'nth:pell?',
     category: 'Number Theory',
     description: 'Checks if a number is a Pell number.',
-    linkName: 'c-colon-pell-question-mark',
+    linkName: 'nth-colon-pell-question',
     returns: {
       type: 'boolean',
     },

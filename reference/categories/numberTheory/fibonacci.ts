@@ -5,7 +5,7 @@ export const fibonacciReference: NumberTheorySequenceReference<'fibonacci'> = {
     title: 'nth:fibonacci-seq',
     category: 'Number Theory',
     description: 'Generates the fibonacci sequence up to a specified length.',
-    linkName: 'c-colon-fibonacci-seq',
+    linkName: 'nth-colon-fibonacci-seq',
     returns: {
       type: 'integer',
       array: true,
@@ -30,7 +30,7 @@ export const fibonacciReference: NumberTheorySequenceReference<'fibonacci'> = {
     title: 'nth:fibonacci-take-while',
     category: 'Number Theory',
     description: 'Generates the fibonacci sequence while a condition is met.',
-    linkName: 'c-colon-fibonacci-take-while',
+    linkName: 'nth-colon-fibonacci-take-while',
     returns: {
       type: 'integer',
       array: true,
@@ -52,7 +52,7 @@ export const fibonacciReference: NumberTheorySequenceReference<'fibonacci'> = {
     title: 'nth:fibonacci-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the fibonacci sequence.',
-    linkName: 'c-colon-fibonacci-nth',
+    linkName: 'nth-colon-fibonacci-nth',
     returns: {
       type: 'integer',
     },
@@ -74,7 +74,7 @@ export const fibonacciReference: NumberTheorySequenceReference<'fibonacci'> = {
     title: 'nth:fibonacci?',
     category: 'Number Theory',
     description: 'Determines if a number is in the fibonacci sequence.',
-    linkName: 'c-colon-fibonacci-question-mark',
+    linkName: 'nth-colon-fibonacci-question',
     returns: {
       type: 'boolean',
     },

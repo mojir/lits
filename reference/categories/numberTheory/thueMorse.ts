@@ -5,7 +5,7 @@ export const thueMorseReference: NumberTheorySequenceReference<'thue-morse'> = {
     title: 'nth:thue-morse-seq',
     category: 'Number Theory',
     description: 'Generates the Thue-Morse sequence up to a specified length.',
-    linkName: 'c-colon-thue-morse-seq',
+    linkName: 'nth-colon-thue-morse-seq',
     returns: {
       type: 'integer',
       array: true,
@@ -29,7 +29,7 @@ export const thueMorseReference: NumberTheorySequenceReference<'thue-morse'> = {
     title: 'nth:thue-morse-take-while',
     category: 'Number Theory',
     description: 'Generates the Thue-Morse sequence while a condition is met.',
-    linkName: 'c-colon-thue-morse-take-while',
+    linkName: 'nth-colon-thue-morse-take-while',
     returns: {
       type: 'integer',
       array: true,
@@ -51,7 +51,7 @@ export const thueMorseReference: NumberTheorySequenceReference<'thue-morse'> = {
     title: 'nth:thue-morse-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Thue-Morse sequence.',
-    linkName: 'c-colon-thue-morse-nth',
+    linkName: 'nth-colon-thue-morse-nth',
     returns: {
       type: 'integer',
     },
@@ -74,7 +74,7 @@ export const thueMorseReference: NumberTheorySequenceReference<'thue-morse'> = {
     title: 'nth:thue-morse?',
     category: 'Number Theory',
     description: 'Checks if a number is part of the Thue-Morse sequence.',
-    linkName: 'c-colon-thue-morse-question',
+    linkName: 'nth-colon-thue-morse-question',
     returns: {
       type: 'boolean',
     },

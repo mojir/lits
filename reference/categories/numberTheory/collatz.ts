@@ -5,7 +5,7 @@ export const collatzReference: Omit<NumberTheorySequenceReference<'collatz'>, 'n
     title: 'nth:collatz-seq',
     category: 'Number Theory',
     description: 'Generates the collatz sequence starting from a given integer.',
-    linkName: 'c-colon-collatz-seq',
+    linkName: 'nth-colon-collatz-seq',
     returns: {
       type: 'integer',
       array: true,

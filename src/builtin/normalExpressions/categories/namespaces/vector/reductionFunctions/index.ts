@@ -3,13 +3,22 @@ import { assertVector } from '../../../../../../typeGuards/annotatedArrays'
 import { assertNumber } from '../../../../../../typeGuards/number'
 import type { BuiltinNormalExpression, BuiltinNormalExpressions } from '../../../../../interface'
 import { maxReductionFunction } from './max'
-import { meanReductionFunction } from './mean'
+import { geometricMeanReductionFunction, harmonicMeanReductionFunction, meanReductionFunction } from './mean'
 import { medianReductionFunction } from './median'
 import { minReductionFunction } from './min'
 import { prodReductionFunction } from './prod'
-import { sampleVarianceReductionFunction } from './sampleVariance'
 import { sumReductionFunction } from './sum'
-import { varianceReductionFunction } from './variance'
+import { sampleVarianceReductionFunction, varianceReductionFunction } from './variance'
+import { sampleStdevReductionFunction, stdevReductionFunction } from './standardDeviation'
+import { iqrReductionFunction } from './iqr'
+import { spanReductionFunction } from './span'
+import { sampleSkewnessReductionFunction, skewnessReductionFunction } from './skewness'
+import { eccessKurtosisReductionFunction, kurtosisReductionFunction, sampleExcessKurtosisReductionFunction, sampleKurtosisReductionFunction } from './kurtosis'
+import { rmsReductionFunction } from './rms'
+import { madReductionFunction } from './mad'
+import { medadReductionFunction } from './medad'
+import { giniCoefficientReductionFunction } from './giniCoefficient'
+import { entropyReductionFunction } from './entropy'
 
 type VectorReductionKey<T extends string> = `vec:${T}`
 type VectorMovingWindowKey<T extends string> = `vec:moving-${T}`
@@ -22,14 +31,15 @@ type ReductionFunction = (vector: number[]) => number
 // type MovingWindowFunction = (vector: number[], windowSize: number, sourceCodeInfo: SourceCodeInfo | undefined) => number[]
 
 export type ReductionFunctionDefinition<T extends string> = Record<VectorReductionKey<T>, ReductionFunction> & {
-  minLength: number
-  paddingValue: number
-  rightPaddingValue?: number
+  minLength?: number
+  padding?: number
 }
 
 export const reductionFunctionNormalExpressions: BuiltinNormalExpressions = {}
 
 addReductionFunctions(meanReductionFunction)
+addReductionFunctions(geometricMeanReductionFunction)
+addReductionFunctions(harmonicMeanReductionFunction)
 addReductionFunctions(medianReductionFunction)
 addReductionFunctions(sumReductionFunction)
 addReductionFunctions(prodReductionFunction)
@@ -37,6 +47,21 @@ addReductionFunctions(minReductionFunction)
 addReductionFunctions(maxReductionFunction)
 addReductionFunctions(varianceReductionFunction)
 addReductionFunctions(sampleVarianceReductionFunction)
+addReductionFunctions(stdevReductionFunction)
+addReductionFunctions(sampleStdevReductionFunction)
+addReductionFunctions(iqrReductionFunction)
+addReductionFunctions(spanReductionFunction)
+addReductionFunctions(skewnessReductionFunction)
+addReductionFunctions(sampleSkewnessReductionFunction)
+addReductionFunctions(eccessKurtosisReductionFunction)
+addReductionFunctions(kurtosisReductionFunction)
+addReductionFunctions(sampleExcessKurtosisReductionFunction)
+addReductionFunctions(sampleKurtosisReductionFunction)
+addReductionFunctions(rmsReductionFunction)
+addReductionFunctions(madReductionFunction)
+addReductionFunctions(medadReductionFunction)
+addReductionFunctions(giniCoefficientReductionFunction)
+addReductionFunctions(entropyReductionFunction)
 
 function addReductionFunctions(fns: ReductionFunctionDefinition<string>) {
   for (const [key, value] of Object.entries(fns)) {
@@ -48,10 +73,12 @@ function addReductionFunctions(fns: ReductionFunctionDefinition<string>) {
       const movingKey = key.replace('vec:', 'vec:moving-') as VectorMovingWindowKey<string>
       const centeredMovingKey = key.replace('vec:', 'vec:centered-moving-') as VectorCenteredMovingWindowKey<string>
       const runningKey = key.replace('vec:', 'vec:running-') as VectorRunningKey<string>
-      reductionFunctionNormalExpressions[key] = createReductionNormalExpression(value as ReductionFunction, fns.minLength)
-      reductionFunctionNormalExpressions[movingKey] = createMovingNormalExpression(value as ReductionFunction, fns.minLength)
-      reductionFunctionNormalExpressions[centeredMovingKey] = createCenteredMovingNormalExpression(value as ReductionFunction, fns.minLength, fns.paddingValue, fns.rightPaddingValue ?? fns.paddingValue)
-      reductionFunctionNormalExpressions[runningKey] = createRunningNormalExpression(value as ReductionFunction, fns.minLength)
+      const minLength = fns.minLength ?? 1
+      assertNumber(minLength, undefined, { integer: true, finite: true, gte: 0 })
+      reductionFunctionNormalExpressions[key] = createReductionNormalExpression(value as ReductionFunction, minLength)
+      reductionFunctionNormalExpressions[movingKey] = createMovingNormalExpression(value as ReductionFunction, minLength)
+      reductionFunctionNormalExpressions[centeredMovingKey] = createCenteredMovingNormalExpression(value as ReductionFunction, minLength, fns.padding ?? null)
+      reductionFunctionNormalExpressions[runningKey] = createRunningNormalExpression(value as ReductionFunction, minLength)
     }
   }
 }
@@ -88,11 +115,10 @@ function createMovingNormalExpression(
   return {
     evaluate: ([vector, windowSize], sourceCodeInfo) => {
       assertVector(vector, sourceCodeInfo)
-      assertNumber(windowSize, sourceCodeInfo, { integer: true, finite: true, gte: minLength })
+      assertNumber(windowSize, sourceCodeInfo, { integer: true, finite: true, gte: minLength, lte: vector.length })
       if (vector.length < minLength) {
         throw new LitsError(`Vector length must be at least ${minLength}`, sourceCodeInfo)
       }
-
       if (vector.length === 0) {
         return []
       }
@@ -120,34 +146,47 @@ function createMovingNormalExpression(
 function createCenteredMovingNormalExpression(
   reductionFunction: ReductionFunction,
   minLength: number,
-  defaultLeftPaddingValue: number,
-  defaultRightPaddingValue: number,
-): BuiltinNormalExpression<number[]> {
+  padding: number | null,
+): BuiltinNormalExpression<(number | null)[]> {
   return {
-    evaluate: ([vector, windowSize, padding, rightPadding], sourceCodeInfo) => {
+    evaluate: ([vector, windowSize, leftPadding, rightPadding], sourceCodeInfo) => {
       assertVector(vector, sourceCodeInfo)
       if (vector.length < minLength) {
         throw new LitsError(`Vector length must be at least ${minLength}`, sourceCodeInfo)
       }
 
-      assertNumber(windowSize, sourceCodeInfo, { integer: true, finite: true, gte: minLength })
-      const leftPaddingValue = padding ?? defaultLeftPaddingValue
-      assertNumber(leftPaddingValue, sourceCodeInfo, { finite: true })
-      const rightPaddingValue = rightPadding ?? padding ?? defaultRightPaddingValue
-      assertNumber(rightPaddingValue, sourceCodeInfo, { finite: true })
+      assertNumber(windowSize, sourceCodeInfo, { integer: true, finite: true, gte: minLength, lte: vector.length })
+      leftPadding = leftPadding ?? padding
+      if (leftPadding !== null) {
+        assertNumber(leftPadding, sourceCodeInfo, { finite: true })
+      }
+      rightPadding = rightPadding ?? padding
+      if (rightPadding !== null) {
+        assertNumber(rightPadding, sourceCodeInfo, { finite: true })
+      }
+
+      if (vector.length === 0) {
+        return []
+      }
+
+      const halfWindowSize = Math.floor(windowSize / 2)
+      const paddedVector = [
+        ...Array<number | null>(halfWindowSize).fill(leftPadding),
+        ...vector,
+        ...Array<number | null>(halfWindowSize).fill(rightPadding),
+      ]
+
+      const start = typeof leftPadding === 'number' ? 0 : halfWindowSize
+      const end = vector.length - (typeof rightPadding === 'number' ? 0 : (windowSize - halfWindowSize - 1))
+
+      const result: (number | null)[] = [
+        ...Array<null>(start).fill(null),
+      ]
 
       try {
-        const result = []
-        const halfWindowSize = Math.floor(windowSize / 2)
-        const paddedVector = [
-          ...Array<number>(halfWindowSize).fill(leftPaddingValue),
-          ...vector,
-          ...Array<number>(halfWindowSize).fill(rightPaddingValue),
-        ]
-        for (let i = 0; i < vector.length; i += 1) {
-          result.push(reductionFunction(paddedVector.slice(i, i + windowSize)))
+        for (let i = start; i < end; i += 1) {
+          result.push(reductionFunction(paddedVector.slice(i, i + windowSize) as number[]))
         }
-        return result
       }
       catch (error) {
         if (error instanceof Error) {
@@ -155,6 +194,9 @@ function createCenteredMovingNormalExpression(
         }
         throw error
       }
+
+      result.push(...Array<null>(vector.length - end).fill(null))
+      return result
     },
     paramCount: { min: 2, max: 4 },
   }
@@ -169,6 +211,10 @@ function createRunningNormalExpression(
       assertVector(vector, sourceCodeInfo)
       if (vector.length < minLength) {
         throw new LitsError(`Vector length must be at least ${minLength}`, sourceCodeInfo)
+      }
+
+      if (vector.length === 0) {
+        return []
       }
 
       try {

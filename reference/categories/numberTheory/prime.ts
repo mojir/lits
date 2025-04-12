@@ -5,7 +5,7 @@ export const primeReference: NumberTheorySequenceReference<'prime'> = {
     title: 'nth:prime-seq',
     category: 'Number Theory',
     description: 'Generates the prime sequence up to a specified length.',
-    linkName: 'c-colon-prime-seq',
+    linkName: 'nth-colon-prime-seq',
     returns: {
       type: 'integer',
       array: true,
@@ -29,7 +29,7 @@ export const primeReference: NumberTheorySequenceReference<'prime'> = {
     title: 'nth:prime-take-while',
     category: 'Number Theory',
     description: 'Generates the prime sequence while a condition is met.',
-    linkName: 'c-colon-prime-take-while',
+    linkName: 'nth-colon-prime-take-while',
     returns: {
       type: 'integer',
       array: true,
@@ -51,7 +51,7 @@ export const primeReference: NumberTheorySequenceReference<'prime'> = {
     title: 'nth:prime-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the prime sequence.',
-    linkName: 'c-colon-prime-nth',
+    linkName: 'nth-colon-prime-nth',
     returns: {
       type: 'integer',
     },
@@ -74,7 +74,7 @@ export const primeReference: NumberTheorySequenceReference<'prime'> = {
     title: 'nth:prime?',
     category: 'Number Theory',
     description: 'Determines if a number is prime.',
-    linkName: 'c-colon-prime-question-mark',
+    linkName: 'nth-colon-prime-question',
     returns: {
       type: 'boolean',
     },

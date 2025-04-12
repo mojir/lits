@@ -5,7 +5,7 @@ export const bellReference: NumberTheorySequenceReference<'bell'> = {
     title: 'nth:bell-seq',
     category: 'Number Theory',
     description: 'Generates the Bell sequence up to a specified length.',
-    linkName: 'c-colon-bell-seq',
+    linkName: 'nth-colon-bell-seq',
     returns: {
       type: 'integer',
       array: true,
@@ -30,7 +30,7 @@ export const bellReference: NumberTheorySequenceReference<'bell'> = {
     title: 'nth:bell-take-while',
     category: 'Number Theory',
     description: 'Generates the Bell sequence while a condition is met.',
-    linkName: 'c-colon-bell-take-while',
+    linkName: 'nth-colon-bell-take-while',
     returns: {
       type: 'integer',
       array: true,
@@ -52,7 +52,7 @@ export const bellReference: NumberTheorySequenceReference<'bell'> = {
     title: 'nth:bell-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Bell sequence.',
-    linkName: 'c-colon-bell-nth',
+    linkName: 'nth-colon-bell-nth',
     returns: {
       type: 'integer',
     },
@@ -68,14 +68,13 @@ export const bellReference: NumberTheorySequenceReference<'bell'> = {
     examples: [
       'nth:bell-nth(5)',
       'nth:bell-nth(10)',
-      'nth:bell-nth(23)',
     ],
   },
   'nth:bell?': {
     title: 'nth:bell?',
     category: 'Number Theory',
     description: 'Checks if a number is in the Bell sequence.',
-    linkName: 'c-colon-bell-question-mark',
+    linkName: 'nth-colon-bell-question',
     returns: {
       type: 'boolean',
     },

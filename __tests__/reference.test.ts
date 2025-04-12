@@ -22,6 +22,7 @@ function getLinkName(name: string): string {
   name = name.replace(/%/g, '-percent')
   name = name.replace(/\//g, '-slash')
   name = name.replace(/\?/g, '-question')
+  name = name.replace(/:/g, '-colon-')
   name = name.replace(/!/g, '-exclamation')
   name = name.replace(/&/g, '-and')
   name = name.replace(/\|/g, '-or')
@@ -33,7 +34,7 @@ function getLinkName(name: string): string {
 }
 
 const lits = new Lits()
-describe.skip('apiReference', () => {
+describe('apiReference', () => {
   const referenceAliases = Object.values(apiReference)
     .filter(obj => isFunctionReference(obj))
     .flatMap(obj => obj.aliases ?? [])
@@ -68,7 +69,7 @@ describe.skip('apiReference', () => {
     expect(linkNames).toEqual([])
   })
 
-  it('everything documented', () => {
+  it.skip('everything documented', () => {
     const functionReferenceKeys = Object.entries(apiReference)
       .filter(([, obj]) => isFunctionReference(obj))
       .map(([key]) => key)

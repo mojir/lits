@@ -541,7 +541,7 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     variants: [
       { argumentNames: ['x'] },
     ],
-    description: 'The `sign` function returns the `sign` of a `number` (-1 for negative, 0 for zero, 1 for positive), working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the sign of each element while preserving the original structure.',
+    description: 'The `sign` function returns the `sign** of a **number` (-1 for negative, 0 for zero, 1 for positive), working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the sign of each element while preserving the original structure.',
     examples: [
       'sign(-2.3)',
       'sign(-0)',

@@ -1,7 +1,8 @@
-import { calcMean } from './calcMean'
-import { calcStdDev } from './calcStdDev'
+import { calcMean } from '../calcMean'
+import { calcStdDev } from '../calcStdDev'
+import type { ReductionFunctionDefinition } from '.'
 
-export function skewness(vector: number[]): number {
+function skewness(vector: number[]): number {
   const mean = calcMean(vector)
   const stdDev = calcStdDev(vector)
   if (stdDev === 0) {
@@ -10,7 +11,7 @@ export function skewness(vector: number[]): number {
   return vector.reduce((acc, val) => acc + ((val - mean) ** 3), 0) / (vector.length * stdDev ** 3)
 }
 
-export function sampleSkewness(vector: number[]): number {
+function sampleSkewness(vector: number[]): number {
   const n = vector.length
 
   // Calculate the mean
@@ -37,4 +38,14 @@ export function sampleSkewness(vector: number[]): number {
 
   // Calculate sample skewness with Fisher's adjustment
   return (n / ((n - 1) * (n - 2))) * sumCubedDiffs / sampleStdDev ** 3
+}
+
+export const skewnessReductionFunction: ReductionFunctionDefinition<'skewness'> = {
+  'vec:skewness': vector => skewness(vector),
+  'minLength': 3,
+}
+
+export const sampleSkewnessReductionFunction: ReductionFunctionDefinition<'sample-skewness'> = {
+  'vec:sample-skewness': vector => sampleSkewness(vector),
+  'minLength': 3,
 }

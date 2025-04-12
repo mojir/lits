@@ -5,7 +5,7 @@ export const catalanReference: NumberTheorySequenceReference<'catalan'> = {
     title: 'nth:catalan-seq',
     category: 'Number Theory',
     description: 'Generates the Catalan sequence up to a specified length.',
-    linkName: 'c-colon-catalan-seq',
+    linkName: 'nth-colon-catalan-seq',
     returns: {
       type: 'integer',
       array: true,
@@ -31,7 +31,7 @@ export const catalanReference: NumberTheorySequenceReference<'catalan'> = {
     title: 'nth:catalan-take-while',
     category: 'Number Theory',
     description: 'Generates the Catalan sequence while a condition is met.',
-    linkName: 'c-colon-catalan-take-while',
+    linkName: 'nth-colon-catalan-take-while',
     returns: {
       type: 'integer',
       array: true,
@@ -53,7 +53,7 @@ export const catalanReference: NumberTheorySequenceReference<'catalan'> = {
     title: 'nth:catalan-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Catalan sequence.',
-    linkName: 'c-colon-catalan-nth',
+    linkName: 'nth-colon-catalan-nth',
     returns: {
       type: 'integer',
     },
@@ -75,7 +75,7 @@ export const catalanReference: NumberTheorySequenceReference<'catalan'> = {
     title: 'nth:catalan?',
     category: 'Number Theory',
     description: 'Determines if a number is in the Catalan sequence.',
-    linkName: 'c-colon-catalan-question-mark',
+    linkName: 'nth-colon-catalan-question',
     returns: {
       type: 'boolean',
     },

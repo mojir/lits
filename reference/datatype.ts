@@ -51,7 +51,7 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
     datatype: true,
     title: 'array',
     category: 'Datatype',
-    linkName: '-type-array',
+    linkName: '-type-vector',
     description: 'An `array` of `numbers`',
     examples: [
       '[]',

@@ -175,7 +175,7 @@ const boldRule = createRule({
   name: 'bold',
   startPattern: /^\*\*/,
   endPattern: /^\*\*/,
-  startTag: `<span ${styles('font-bold')}>`,
+  startTag: `<span ${styles('text-color-gray-300')}>`,
   endTag: '</span>',
 })
 

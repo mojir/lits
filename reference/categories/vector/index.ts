@@ -1,14 +1,23 @@
 import type { FunctionReference } from '../..'
 import type { VectorReductionKeys } from '../../../src/builtin/normalExpressions/categories/namespaces/vector/reductionFunctions'
-import type { VectorApiName } from '../../api'
-import { meanReference } from './mean'
+import { type VectorApiName, getOperatorArgs } from '../../api'
+import { geometricMeanReference, harmonicMeanReference, meanReference } from './mean'
 import { medianReference } from './median'
-import { varianceReference } from './variance'
-import { sampleVarianceReference } from './sampleVariance'
+import { sampleVarianceReference, varianceReference } from './variance'
+import { sampleStandardDeviationReference, standardDeviationReference } from './standardDeviation'
+import { sampleSkewnessReference, skewnessReference } from './skewness'
+import { interquartileRangeReference } from './iqr'
 import { sumReference } from './sum'
 import { prodReference } from './prod'
 import { minReference } from './min'
 import { maxReference } from './max'
+import { spanReference } from './span'
+import { excessKurtoisReference, kurtosisReference, sampleExcessKurtosisReference, sampleKurtosisReference } from './kurtosis'
+import { rootMeanSquareReference } from './rms'
+import { meanAbsoluteDeviationReference } from './mad'
+import { medianAbsoluteDeviationReference } from './medad'
+import { giniCoefficientReference } from './giniCoefficient'
+import { entropyReference } from './entropy'
 
 export type VectorReductionReference<T extends string> = {
   [key in VectorReductionKeys<T>]: FunctionReference<'Vector'>
@@ -16,18 +25,35 @@ export type VectorReductionReference<T extends string> = {
 
 export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>> = {
   ...meanReference,
+  ...geometricMeanReference,
+  ...harmonicMeanReference,
   ...medianReference,
   ...varianceReference,
   ...sampleVarianceReference,
+  ...standardDeviationReference,
+  ...sampleStandardDeviationReference,
+  ...interquartileRangeReference,
   ...sumReference,
   ...prodReference,
   ...minReference,
   ...maxReference,
+  ...spanReference,
+  ...skewnessReference,
+  ...sampleSkewnessReference,
+  ...excessKurtoisReference,
+  ...kurtosisReference,
+  ...sampleExcessKurtosisReference,
+  ...sampleKurtosisReference,
+  ...rootMeanSquareReference,
+  ...meanAbsoluteDeviationReference,
+  ...medianAbsoluteDeviationReference,
+  ...giniCoefficientReference,
+  ...entropyReference,
   'vec:monotonic?': {
     title: 'vec:monotonic?',
     category: 'Vector',
     description: 'Checks if a vector is monotonic.',
-    linkName: 'vec-colon-monotonic-question-mark',
+    linkName: 'vec-colon-monotonic-question',
     returns: {
       type: 'boolean',
     },
@@ -54,7 +80,7 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:strictly-monotonic?',
     category: 'Vector',
     description: 'Checks if a vector is strictly monotonic.',
-    linkName: 'vec-colon-strictly-monotonic-question-mark',
+    linkName: 'vec-colon-strictly-monotonic-question',
     returns: {
       type: 'boolean',
     },
@@ -81,7 +107,7 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:increasing?',
     category: 'Vector',
     description: 'Checks if a vector is increasing.',
-    linkName: 'vec-colon-increasing-question-mark',
+    linkName: 'vec-colon-increasing-question',
     returns: {
       type: 'boolean',
     },
@@ -108,7 +134,7 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:decreasing?',
     category: 'Vector',
     description: 'Checks if a vector is decreasing.',
-    linkName: 'vec-colon-decreasing-question-mark',
+    linkName: 'vec-colon-decreasing-question',
     returns: {
       type: 'boolean',
     },
@@ -135,7 +161,7 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:strictly-increasing?',
     category: 'Vector',
     description: 'Checks if a vector is strictly increasing.',
-    linkName: 'vec-colon-strictly-increasing-question-mark',
+    linkName: 'vec-colon-strictly-increasing-question',
     returns: {
       type: 'boolean',
     },
@@ -162,7 +188,7 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:strictly-decreasing?',
     category: 'Vector',
     description: 'Checks if a vector is strictly decreasing.',
-    linkName: 'vec-colon-strictly-decreasing-question-mark',
+    linkName: 'vec-colon-strictly-decreasing-question',
     returns: {
       type: 'boolean',
     },
@@ -495,17 +521,17 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
         type: 'number',
         description: 'The starting value.',
       },
-      end: {
+      stop: {
         type: 'number',
         description: 'The ending value.',
       },
-      count: {
+      n: {
         type: 'integer',
         description: 'The number of values to generate.',
       },
     },
     variants: [
-      { argumentNames: ['start', 'end', 'count'] },
+      { argumentNames: ['start', 'stop', 'n'] },
     ],
     examples: [
       'vec:linspace(0, 10, 6)',
@@ -578,6 +604,7 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
         type: 'number',
         description: 'The value to fill the vector with.',
       },
+      ...getOperatorArgs('number', 'integer'),
     },
     variants: [
       { argumentNames: ['length', 'value'] },
@@ -605,6 +632,7 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
         type: 'function',
         description: 'A function that takes an index and returns a number.',
       },
+      ...getOperatorArgs('number', 'integer'),
     },
     variants: [
       { argumentNames: ['length', 'func'] },
@@ -686,32 +714,7 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       'vec:quartiles([5, 4, 3, 2, 1, 2, 3, 4, 5])',
       'vec:quartiles(range(1, 1000))',
       'vec:quartiles(vec:generate(1000, -> 1e6 / ($ + 1) ^ 2))',
-      'vec:quartiles(vec:generate(1000, -> log($ + 1)))',
-    ],
-  },
-  'vec:iqr': {
-    title: 'vec:iqr',
-    category: 'Vector',
-    description: 'Calculates the interquartile range of a vector. Returns the difference between the third and first quartiles.',
-    linkName: 'vec-colon-iqr',
-    returns: {
-      type: 'number',
-    },
-    args: {
-      vector: {
-        type: 'vector',
-        description: 'The vector to calculate the interquartile range of. Minimum length is 4.',
-      },
-    },
-    variants: [
-      { argumentNames: ['vector'] },
-    ],
-    examples: [
-      'vec:iqr([1, 2, 3, 4])',
-      'vec:iqr([5, 4, 3, 2, 1, 2, 3, 4, 5])',
-      'vec:iqr(range(1, 1000))',
-      'vec:iqr(vec:generate(1000, -> 1e6 / ($ + 1) ^ 2))',
-      'vec:iqr(vec:generate(1000, -> log($ + 1)))',
+      'vec:quartiles(vec:generate(1000, -> ln($ + 1)))',
     ],
   },
   'vec:percentile': {
@@ -731,23 +734,24 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
         type: 'number',
         description: 'The percentile to calculate. Must be between 0 and 1.',
       },
+      ...getOperatorArgs('number', 'integer'),
     },
     variants: [
       { argumentNames: ['vector', 'percentile'] },
     ],
     examples: [
       'vec:percentile([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 35)',
-      'vec:percentile(range(100) vec:^ 0.5, 0)',
-      'vec:percentile(range(100) vec:^ 0.5, 10)',
-      'vec:percentile(range(100) vec:^ 0.5, 20)',
-      'vec:percentile(range(100) vec:^ 0.5, 30)',
-      'vec:percentile(range(100) vec:^ 0.5, 40)',
-      'vec:percentile(range(100) vec:^ 0.5, 50)',
-      'vec:percentile(range(100) vec:^ 0.5, 60)',
-      'vec:percentile(range(100) vec:^ 0.5, 70)',
-      'vec:percentile(range(100) vec:^ 0.5, 80)',
-      'vec:percentile(range(100) vec:^ 0.5, 90)',
-      'vec:percentile(range(100) vec:^ 0.5, 100)',
+      'vec:percentile(range(100) ^ 0.5, 0)',
+      'vec:percentile(range(100) ^ 0.5, 10)',
+      'vec:percentile(range(100) ^ 0.5, 20)',
+      'vec:percentile(range(100) ^ 0.5, 30)',
+      'vec:percentile(range(100) ^ 0.5, 40)',
+      'vec:percentile(range(100) ^ 0.5, 50)',
+      'vec:percentile(range(100) ^ 0.5, 60)',
+      'vec:percentile(range(100) ^ 0.5, 70)',
+      'vec:percentile(range(100) ^ 0.5, 80)',
+      'vec:percentile(range(100) ^ 0.5, 90)',
+      'vec:percentile(range(100) ^ 0.5, 100)',
     ],
   },
   'vec:quantile': {
@@ -767,23 +771,24 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
         type: 'number',
         description: 'The quantile to calculate. Must be between 0 and 1.',
       },
+      ...getOperatorArgs('number', 'integer'),
     },
     variants: [
       { argumentNames: ['vector', 'quantile'] },
     ],
     examples: [
       'vec:quantile([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 0.35)',
-      'vec:quantile(range(100) vec:^ 0.5, 0)',
-      'vec:quantile(range(100) vec:^ 0.5, 0.1)',
-      'vec:quantile(range(100) vec:^ 0.5, 0.2)',
-      'vec:quantile(range(100) vec:^ 0.5, 0.3)',
-      'vec:quantile(range(100) vec:^ 0.5, 0.4)',
-      'vec:quantile(range(100) vec:^ 0.5, 0.5)',
-      'vec:quantile(range(100) vec:^ 0.5, 0.6)',
-      'vec:quantile(range(100) vec:^ 0.5, 0.7)',
-      'vec:quantile(range(100) vec:^ 0.5, 0.8)',
-      'vec:quantile(range(100) vec:^ 0.5, 0.9)',
-      'vec:quantile(range(100) vec:^ 0.5, 1)',
+      'vec:quantile(range(100) ^ 0.5, 0)',
+      'vec:quantile(range(100) ^ 0.5, 0.1)',
+      'vec:quantile(range(100) ^ 0.5, 0.2)',
+      'vec:quantile(range(100) ^ 0.5, 0.3)',
+      'vec:quantile(range(100) ^ 0.5, 0.4)',
+      'vec:quantile(range(100) ^ 0.5, 0.5)',
+      'vec:quantile(range(100) ^ 0.5, 0.6)',
+      'vec:quantile(range(100) ^ 0.5, 0.7)',
+      'vec:quantile(range(100) ^ 0.5, 0.8)',
+      'vec:quantile(range(100) ^ 0.5, 0.9)',
+      'vec:quantile(range(100) ^ 0.5, 1)',
     ],
   },
   'vec:span': {
@@ -809,294 +814,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       'vec:span([1, 2, -3])',
     ],
   },
-  'vec:skewness': {
-    title: 'vec:skewness',
-    category: 'Vector',
-    description: 'Returns the `skewness` coefficient of all elements in the `vector`. Requires at least 3 elements in the `vector`. Measures the asymmetry of the data distribution - positive values indicate right skew (tail extends toward positive values), negative values indicate left skew, and zero indicates symmetry.',
-    linkName: 'vec-colon-skewness',
-    returns: {
-      type: 'number',
-    },
-    args: {
-      vector: {
-        type: 'vector',
-        description: 'Non emtpy vector to calculate the skewness of.',
-      },
-    },
-    variants: [
-      { argumentNames: ['vector'] },
-    ],
-    examples: [
-      'vec:skewness([1, 2, 3])',
-      'vec:skewness([1, 2, -3])',
-      'vec:skewness([1, 2, 3, 4])',
-      'vec:skewness([1, 2, -3, 4])',
-      'vec:skewness([1, 2, 3, 40, 50])',
-      'vec:skewness([-10, 2, 3, 4, 5])',
-    ],
-  },
-  'vec:sample-skewness': {
-    title: 'vec:sample-skewness',
-    category: 'Vector',
-    description: 'Returns the `sample skewness` coefficient of all elements in the `vector`. Requires at least 3 elements in the `vector`. Measures the asymmetry of the data distribution - positive values indicate right skew (tail extends toward positive values), negative values indicate left skew, and zero indicates symmetry.',
-    linkName: 'vec-colon-sample-skewness',
-    returns: {
-      type: 'number',
-    },
-    args: {
-      vector: {
-        type: 'vector',
-        description: 'Non emtpy vector to calculate the sample skewness of.',
-      },
-    },
-    variants: [
-      { argumentNames: ['vector'] },
-    ],
-    examples: [
-      'vec:sample-skewness([1, 2, 3])',
-      'vec:sample-skewness([1, 2, -3])',
-      'vec:sample-skewness([1, 2, 3, 4])',
-      'vec:sample-skewness([1, 2, -3, 4])',
-      'vec:sample-skewness([1, 2, 3, 40, 50])',
-      'vec:sample-skewness([-10, 2, 3, 4, 5])',
-    ],
-  },
-  'vec:kurtosis': {
-    title: 'vec:kurtosis',
-    category: 'Vector',
-    description: 'Returns the `kurtosis` coefficient of all elements in the `vector`. Requires at least 4 elements in the `vector`. Measures the "tailedness" of the data distribution - positive values indicate a distribution with heavier tails than a normal distribution, negative values indicate lighter tails.',
-    linkName: 'vec-colon-kurtosis',
-    returns: {
-      type: 'number',
-    },
-    args: {
-      vector: {
-        type: 'vector',
-        description: 'Non emtpy vector to calculate the kurtosis of.',
-      },
-    },
-    variants: [
-      { argumentNames: ['vector'] },
-    ],
-    examples: [
-      'vec:kurtosis([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])', // Uniform distribution
-      'vec:kurtosis([-3, -2, -1, 0, 1, 2, 3])', // Evenly spaced values
-      'vec:kurtosis([10, 20, 30, 40, 50, 60, 70, 80])', // Flat distribution
-      'vec:kurtosis([0, 0.5, 1, 1.2, 1.5, 1.8, 2, 2.5, 3])', // Approximates normal distribution
-      'vec:kurtosis([1, 1, 1, 1, 10, 1, 1, 1, 1])', // Mostly similar values with outliers
-      'vec:kurtosis([0, 1, 1, 2, 2, 2, 2, 2, 1, 1, 0, 15])', // Heavy tailed
-      'vec:kurtosis([5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 20])', // Peaked with an outlier
-    ],
-  },
-  'vec:sample-kurtosis': {
-    title: 'vec:sample-kurtosis',
-    category: 'Vector',
-    description: 'Returns the `sample kurtosis` coefficient of all elements in the `vector`. Requires at least 4 elements in the `vector`. Measures the "tailedness" of the data distribution - positive values indicate a distribution with heavier tails than a normal distribution, negative values indicate lighter tails.',
-    linkName: 'vec-colon-sample-kurtosis',
-    returns: {
-      type: 'number',
-    },
-    args: {
-      vector: {
-        type: 'vector',
-        description: 'Non emtpy vector to calculate the sample kurtosis of.',
-      },
-    },
-    variants: [
-      { argumentNames: ['vector'] },
-    ],
-    examples: [
-      'vec:sample-kurtosis([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])', // Uniform distribution
-      'vec:sample-kurtosis([-3, -2, -1, 0, 1, 2, 3])', // Evenly spaced values
-      'vec:sample-kurtosis([10, 20, 30, 40, 50, 60, 70, 80])', // Flat distribution
-      'vec:sample-kurtosis([0, 0.5, 1, 1.2, 1.5, 1.8, 2, 2.5, 3])', // Approximates normal distribution
-      'vec:sample-kurtosis([1, 1, 1, 1, 10, 1, 1, 1, 1])', // Mostly similar values with outliers
-      'vec:sample-kurtosis([0, 1, 1, 2, 2, 2, 2, 2, 1, 1, 0])', // Heavy tailed
-      'vec:sample-kurtosis([5, 6, 6, 6, 6, 7, 7, 7])', // Peaked with an outlier
-    ],
-  },
-  'vec:excess-kurtosis': {
-    title: 'vec:excess-kurtosis',
-    category: 'Vector',
-    description: 'Returns the `excess kurtosis` coefficient of all elements in the `vector`. Requires at least 4 elements in the `vector`. Measures the "tailedness" of the data distribution - positive values indicate a distribution with heavier tails than a normal distribution, negative values indicate lighter tails.',
-    linkName: 'vec-colon-excess-kurtosis',
-    returns: {
-      type: 'number',
-    },
-    args: {
-      vector: {
-        type: 'vector',
-        description: 'Non emtpy vector to calculate the excess kurtosis of.',
-      },
-    },
-    variants: [
-      { argumentNames: ['vector'] },
-    ],
-    examples: [
-      'vec:excess-kurtosis([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])', // Uniform distribution
-      'vec:excess-kurtosis([-3, -2, -1, 0, 1, 2, 3])', // Evenly spaced values
-      'vec:excess-kurtosis([10, 20, 30, 40, 50, 60, 70, 80])', // Flat distribution
-      'vec:excess-kurtosis([0, 0.5, 1, 1.2, 1.5, 1.8, 2, 2.5])', // Approximates normal distribution
-      'vec:excess-kurtosis([1, 1, 1, 1, 10, 1, 1, 1, 1])', // Mostly similar values with outliers
-      'vec:excess-kurtosis([0, 1, 1, 2, 2, 2, 2, 2, 1, 1, 0])', // Heavy tailed
-      'vec:excess-kurtosis([5, 6, 6, 6, 6, 7, 7, 7])', // Peaked with an outlier
-    ],
-  },
-  'vec:sample-excess-kurtosis': {
-    title: 'vec:sample-excess-kurtosis',
-    category: 'Vector',
-    description: 'Returns the `sample excess kurtosis` coefficient of all elements in the `vector`. Requires at least 4 elements in the `vector`. Measures the "tailedness" of the data distribution - positive values indicate a distribution with heavier tails than a normal distribution, negative values indicate lighter tails.',
-    linkName: 'vec-colon-sample-excess-kurtosis',
-    returns: {
-      type: 'number',
-    },
-    args: {
-      vector: {
-        type: 'vector',
-        description: 'Non emtpy vector to calculate the sample excess kurtosis of.',
-      },
-    },
-    variants: [
-      { argumentNames: ['vector'] },
-    ],
-    examples: [
-      'vec:sample-excess-kurtosis([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])', // Uniform distribution
-      'vec:sample-excess-kurtosis([-3, -2, -1, 0, 1, 2, 3])', // Evenly spaced values
-      'vec:sample-excess-kurtosis([10, 20, 30, 40, 50, 60, 70, 80])', // Flat distribution
-      'vec:sample-excess-kurtosis([0, 0.5, 1, 1.2, 1.5, 1.8])', // Approximates normal distribution
-      'vec:excess-excess-kurtosis([1, 1, 1, 1, 10, 1, 1, 1, 1])', // Mostly similar values with outliers
-      'vec:excess-excess-kurtosis([0, 1, 1, 2, 2, 2, 2, 2, 1, 1, 0])', // Heavy tailed
-      'vec:excess-excess-kurtosis([5, 6, 6, 6, 6, 7, 7, 7])', // Peaked with an outlier
-    ],
-  },
-  'vec:geometric-mean': {
-    title: 'vec:geometric-mean',
-    category: 'Vector',
-    description: 'Returns the geometric mean of all elements in the vector.',
-    linkName: 'vec-colon-geometric-mean',
-    returns: {
-      type: 'number',
-    },
-    args: {
-      vector: {
-        type: 'vector',
-        description: 'Non emtpy vector to calculate the geometric mean of.',
-      },
-    },
-    variants: [
-      { argumentNames: ['vector'] },
-    ],
-    examples: [
-      'vec:geometric-mean([1, 2, 3])',
-      'vec:geometric-mean([1, 2, -3])',
-      'vec:geometric-mean([1, 2, 3, 4])',
-      'vec:geometric-mean([1, 2, -3, 4])',
-      'vec:geometric-mean([1, 2, 3, 40, 50])',
-      'vec:geometric-mean([1, 2, 3, 4, 5])',
-    ],
-  },
-  'vec:harmonic-mean': {
-    title: 'vec:harmonic-mean',
-    category: 'Vector',
-    description: 'Returns the harmonic mean of all elements in the vector.',
-    linkName: 'vec-colon-harmonic-mean',
-    returns: {
-      type: 'number',
-    },
-    args: {
-      vector: {
-        type: 'vector',
-        description: 'Non emtpy vector to calculate the harmonic mean of.',
-      },
-    },
-    variants: [
-      { argumentNames: ['vector'] },
-    ],
-    examples: [
-      'vec:harmonic-mean([1, 2, 3])',
-      'vec:harmonic-mean([1, 2, -3])',
-      'vec:harmonic-mean([1, 2, 3, 4])',
-      'vec:harmonic-mean([1, 2, -3, 4])',
-      'vec:harmonic-mean([1, 2, 3, 40, 50])',
-      'vec:harmonic-mean([1, 2, 3, 4, 5])',
-    ],
-  },
-  'vec:rms': {
-    title: 'vec:rms',
-    category: 'Vector',
-    description: 'Returns the root mean square of all elements in the vector.',
-    linkName: 'vec-colon-rms',
-    returns: {
-      type: 'number',
-    },
-    args: {
-      vector: {
-        type: 'vector',
-        description: 'Non emtpy vector to calculate the root mean square of.',
-      },
-    },
-    variants: [
-      { argumentNames: ['vector'] },
-    ],
-    examples: [
-      'vec:rms([1, 2, 3])',
-      'vec:rms([1, 2, -3])',
-      'vec:rms([1, 2, 3, 4])',
-      'vec:rms([1, 2, -3, 4])',
-      'vec:rms([1, 2, 3, 40, 50])',
-      'vec:rms([1, 2, 3, 4, 5])',
-    ],
-  },
-  'vec:mad': {
-    title: 'vec:mad',
-    category: 'Vector',
-    description: 'Returns the mean absolute deviation of all elements in the vector.',
-    linkName: 'vec-colon-mad',
-    returns: {
-      type: 'number',
-    },
-    args: {
-      vector: {
-        type: 'vector',
-        description: 'Non emtpy vector to calculate the mean absolute deviation of.',
-      },
-    },
-    variants: [
-      { argumentNames: ['vector'] },
-    ],
-    examples: [
-      'vec:mad([1, 2, 3])',
-      'vec:mad([1, 2, -3])',
-      'vec:mad([1, 2, 3, 4])',
-      'vec:mad([1, 2, -3, 4])',
-      'vec:mad([1, 2, 3, 40, 50])',
-    ],
-  },
-  'vec:medad': {
-    title: 'vec:medad',
-    category: 'Vector',
-    description: 'Returns the median absolute deviation of all elements in the vector. Using scale 1.4826, the MedAD is a consistent estimator of the standard deviation for a normal distribution.',
-    linkName: 'vec-colon-medad',
-    returns: {
-      type: 'number',
-    },
-    args: {
-      vector: {
-        type: 'vector',
-        description: 'Non emtpy vector to calculate the median absolute deviation of.',
-      },
-    },
-    variants: [
-      { argumentNames: ['vector'] },
-    ],
-    examples: [
-      'vec:medad([1, 2, 3])',
-      'vec:medad([1, 2, -3])',
-      'vec:medad([1, 2, 3, 4])',
-      'vec:medad([1, 2, -3, 4])',
-      'vec:medad([1, 2, 3, 40, 50])',
-    ],
-  },
   'vec:histogram': {
     title: 'vec:histogram',
     category: 'Vector',
@@ -1115,6 +832,7 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
         type: 'integer',
         description: 'The number of bins to divide the data range into.',
       },
+      ...getOperatorArgs('number', 'integer'),
     },
     variants: [
       { argumentNames: ['vector', 'bins'] },
@@ -1123,7 +841,7 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       'vec:histogram([1, 2, 2, 3, 2, 6, 4, 3, 2, 4, 1, 3, 2, 9], 3)',
       'vec:histogram([1, 2, 3, 4, 5], 5)',
       'vec:histogram([1, 2, 3, 4, 5], 10)',
-      'vec:histogram([1, 2, 3, 4, 5], 0)',
+      'vec:histogram([1, 2, 3, 4, 5], 1)',
     ],
   },
   'vec:ecdf': {
@@ -1143,6 +861,7 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
         type: 'number',
         description: 'The threshold value to calculate the ECDF for.',
       },
+      ...getOperatorArgs('number', 'integer'),
     },
     variants: [
       { argumentNames: ['vector', 'threshold'] },
@@ -1159,7 +878,7 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:outliers?',
     category: 'Vector',
     description: 'Checks if the `vector` contains outliers based on the interquartile range (IQR) method. Returns `true` if outliers are present, `false` otherwise.',
-    linkName: 'vec-colon-outliers-question-mark',
+    linkName: 'vec-colon-outliers-question',
     returns: {
       type: 'boolean',
     },
@@ -1200,6 +919,189 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       'vec:outliers([1, 2, 3])',
       'vec:outliers([1, 2, -3])',
       'vec:outliers([1, 2, 3, 2, 4, 120])',
+    ],
+  },
+  'vec:bincount': {
+    title: 'vec:bincount',
+    category: 'Vector',
+    description: 'counts occurrences of each `integer` in a vector, returning an array where index `i` contains the count of value `i`, with optional **minimum size** and **weights parameters**.',
+    linkName: 'vec-colon-bincount',
+    returns: {
+      type: 'vector',
+    },
+    args: {
+      vector: {
+        type: 'vector',
+        description: 'The vector to count occurrences in.',
+      },
+      minSize: {
+        type: 'integer',
+        description: 'Optional minimum size of the output array.',
+      },
+      weights: {
+        type: 'number',
+        array: true,
+        description: 'Optional weights for each element in the vector.',
+      },
+    },
+    variants: [
+      { argumentNames: ['vector'] },
+      { argumentNames: ['vector', 'minSize'] },
+      { argumentNames: ['vector', 'minSize', 'weights'] },
+    ],
+    examples: [
+      'vec:bincount([1, 2, 3])',
+      'vec:bincount([1, 2, 2, 3, 3])',
+    ],
+    noOperatorDocumentation: true,
+  },
+  'vec:winsorize': {
+    title: 'vec:winsorize',
+    category: 'Vector',
+    description: 'Limits extreme values in a `vector` by replacing values below the **lower quantile** and above the **upper quantile** with the values at those quantiles. The function takes a `vector` of values and **quantile thresholds** (between 0 and 1), with the upper quantile. Winsorization reduces the influence of outliers while preserving the overall distribution shape, making statistical analyses more robust.',
+    linkName: 'vec-colon-winsorize',
+    returns: {
+      type: 'vector',
+    },
+    args: {
+      'vector': {
+        type: 'vector',
+        description: 'The vector to winsorize.',
+      },
+      'lower-quantile': {
+        type: 'number',
+        description: 'The lower quantile threshold (between 0 and 1).',
+      },
+      'upper-quantile': {
+        type: 'number',
+        description: 'Optional Upper quantile threshold (between 0 and 1). Defaults to `(1 - lower-quantile)` if `lower-quantile <= 0.5` otherwise `1`.',
+      },
+    },
+    variants: [
+      { argumentNames: ['vector', 'lower-quantile'] },
+      { argumentNames: ['vector', 'lower-quantile', 'upper-quantile'] },
+    ],
+    examples: [
+      'vec:winsorize([2, 5, 8, 10, 15, 18, 20, 35, 60, 100], 0.25)',
+      'vec:winsorize([2, 5, 8, 10, 15, 18, 20, 35, 60, 100], 0.25, 0.75)',
+      'vec:winsorize([2, 5, 8, 10, 15, 18, 20, 35, 60, 100], 0.25, 0.5)',
+    ],
+    noOperatorDocumentation: true,
+  },
+  'vec:mse': {
+    title: 'vec:mse',
+    category: 'Vector',
+    description: 'Calculates the **Mean Squared Error (MSE)** between two vectors. Returns the average of the squared differences between corresponding elements.',
+    linkName: 'vec-colon-mse',
+    returns: {
+      type: 'number',
+    },
+    args: {
+      a: {
+        type: 'vector',
+        description: 'The first vector.',
+      },
+      b: {
+        type: 'vector',
+        description: 'The second vector.',
+      },
+    },
+    variants: [
+      { argumentNames: ['a', 'b'] },
+    ],
+    examples: [
+      'vec:mse([1, 2, 3], [1, 2, 3])',
+      'vec:mse([1, 2, 3], [4, 5, 6])',
+      'vec:mse([1, 2, 3], [2, 2, 2])',
+      'vec:mse([1, 2], [3, 3])',
+      'vec:mse([1], [3])',
+    ],
+  },
+  'vec:rmse': {
+    title: 'vec:rmse',
+    category: 'Vector',
+    description: 'Calculates the **Root Mean Squared Error (RMSE)** between two vectors. Returns the square root of the average of the squared differences between corresponding elements.',
+    linkName: 'vec-colon-rmse',
+    returns: {
+      type: 'number',
+    },
+    args: {
+      a: {
+        type: 'vector',
+        description: 'The first vector.',
+      },
+      b: {
+        type: 'vector',
+        description: 'The second vector.',
+      },
+    },
+    variants: [
+      { argumentNames: ['a', 'b'] },
+    ],
+    examples: [
+      'vec:rmse([1, 2, 3], [1, 2, 3])',
+      'vec:rmse([1, 2, 3], [4, 5, 6])',
+      'vec:rmse([1, 2, 3], [2, 2, 2])',
+      'vec:rmse([1, 2], [3, 3])',
+      'vec:rmse([1], [3])',
+    ],
+  },
+  'vec:mae': {
+    title: 'vec:mae',
+    category: 'Vector',
+    description: 'Calculates the **Mean Absolute Error (MAE)** between two vectors. Returns the average of the absolute differences between corresponding elements.',
+    linkName: 'vec-colon-mae',
+    returns: {
+      type: 'number',
+    },
+    args: {
+      a: {
+        type: 'vector',
+        description: 'The first vector.',
+      },
+      b: {
+        type: 'vector',
+        description: 'The second vector.',
+      },
+    },
+    variants: [
+      { argumentNames: ['a', 'b'] },
+    ],
+    examples: [
+      'vec:mae([1, 2, 3], [1, 2, 3])',
+      'vec:mae([1, 2, 3], [4, 5, 6])',
+      'vec:mae([1, 2, 3], [2, 2, 2])',
+      'vec:mae([1, 2], [3, 3])',
+      'vec:mae([1], [3])',
+    ],
+  },
+  'vec:smape': {
+    title: 'vec:smape',
+    category: 'Vector',
+    description: 'Calculates the **Symmetric Mean Absolute Percentage Error (SMAPE)** between two vectors. Returns the average of the absolute percentage differences between corresponding elements.',
+    linkName: 'vec-colon-smape',
+    returns: {
+      type: 'number',
+    },
+    args: {
+      a: {
+        type: 'vector',
+        description: 'The first vector.',
+      },
+      b: {
+        type: 'vector',
+        description: 'The second vector.',
+      },
+    },
+    variants: [
+      { argumentNames: ['a', 'b'] },
+    ],
+    examples: [
+      'vec:smape([1, 2, 3], [1, 2, 3])',
+      'vec:smape([1, 2, 3], [4, 5, 6])',
+      'vec:smape([1, 2, 3], [2, 2, 2])',
+      'vec:smape([1, 2], [3, 3])',
+      'vec:smape([1], [3])',
     ],
   },
 }

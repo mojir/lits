@@ -5,7 +5,7 @@ export const jugglerReference: Omit<NumberTheorySequenceReference<'juggler'>, 'n
     title: 'nth:juggler-seq',
     category: 'Number Theory',
     description: 'Generates the Juggler sequence starting from a given integer.',
-    linkName: 'c-colon-juggler-seq',
+    linkName: 'nth-colon-juggler-seq',
     returns: {
       type: 'integer',
       array: true,

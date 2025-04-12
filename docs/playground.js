@@ -7133,107 +7133,6 @@ var Playground = (function (exports) {
         return counts;
     }
 
-    function calcMedian(vector) {
-        var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
-        var mid = Math.floor(sorted.length / 2);
-        return sorted.length % 2 === 0
-            ? (sorted[mid - 1] + sorted[mid]) / 2
-            : sorted[mid];
-    }
-
-    function calcMad(vector) {
-        var median = calcMedian(vector);
-        // Calculate mean absolute deviation
-        return vector.reduce(function (acc, val) { return acc + Math.abs(val - median); }, 0) / vector.length;
-    }
-
-    function calcMean(vector) {
-        if (vector.length === 0) {
-            return 0;
-        }
-        var sum = vector.reduce(function (acc, val) { return acc + val; }, 0);
-        return sum / vector.length;
-    }
-
-    function calcMedad(vector) {
-        var median = calcMedian(vector);
-        // Calculate absolute deviations from the median
-        var absoluteDeviations = vector.map(function (val) { return Math.abs(val - median); });
-        // Calculate the median of the absolute deviations
-        var medianOfDeviations = calcMedian(absoluteDeviations);
-        var scaleFactor = 1.4826; // Scale factor for robust scaling
-        return medianOfDeviations * scaleFactor;
-    }
-
-    function calcVariance(vector) {
-        if (vector.length === 0) {
-            return 0;
-        }
-        var mean = calcMean(vector);
-        var variance = vector.reduce(function (acc, val) { return acc + Math.pow((val - mean), 2); }, 0) / vector.length;
-        return variance;
-    }
-
-    function calcStdDev(vector) {
-        if (vector.length === 0) {
-            return 0;
-        }
-        var variance = calcVariance(vector);
-        return Math.sqrt(variance);
-    }
-
-    /**
-     * Calculates the Shannon entropy of a vector.
-     * Entropy measures the amount of uncertainty or randomness in the data.
-     *
-     * @param vector - An array of values to calculate entropy for
-     * @returns The entropy value (in bits) or 0 for empty arrays
-     */
-    function calculateEntropy(vector) {
-        var e_1, _a, e_2, _b;
-        // Return 0 for empty vectors
-        if (vector.length === 0) {
-            return 0;
-        }
-        // Count occurrences of each value
-        var frequencies = new Map();
-        try {
-            for (var vector_1 = __values(vector), vector_1_1 = vector_1.next(); !vector_1_1.done; vector_1_1 = vector_1.next()) {
-                var value = vector_1_1.value;
-                frequencies.set(value, (frequencies.get(value) || 0) + 1);
-            }
-        }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
-        finally {
-            try {
-                if (vector_1_1 && !vector_1_1.done && (_a = vector_1.return)) _a.call(vector_1);
-            }
-            finally { if (e_1) throw e_1.error; }
-        }
-        // Get the total number of elements
-        var total = vector.length;
-        // Calculate entropy using Shannon's formula
-        var entropy = 0;
-        try {
-            for (var _c = __values(frequencies.values()), _d = _c.next(); !_d.done; _d = _c.next()) {
-                var frequency = _d.value;
-                var probability = frequency / total;
-                // Skip cases where probability is 0 (log(0) is undefined)
-                if (probability > 0) {
-                    entropy -= probability * Math.log2(probability);
-                }
-            }
-        }
-        catch (e_2_1) { e_2 = { error: e_2_1 }; }
-        finally {
-            try {
-                if (_d && !_d.done && (_b = _c.return)) _b.call(_c);
-            }
-            finally { if (e_2) throw e_2.error; }
-        }
-        return entropy;
-    }
-
     /**
      * Creates a histogram from an array of numbers, returning bin ranges and counts.
      * Each bin is represented as a tuple of [minValue, maxValue, count].
@@ -7297,61 +7196,6 @@ var Playground = (function (exports) {
             finally { if (e_1) throw e_1.error; }
         }
         return histogram;
-    }
-
-    function kurtosis(vector) {
-        var mean = calcMean(vector);
-        var stdDev = calcStdDev(vector);
-        if (stdDev === 0) {
-            throw new Error('Standard deviation is zero, kurtosis is undefined');
-        }
-        return vector.reduce(function (acc, val) { return acc + (Math.pow((val - mean), 4)); }, 0) / (vector.length * Math.pow(stdDev, 4));
-    }
-    function excessKurtosis(vector) {
-        return kurtosis(vector) - 3;
-    }
-    /**
-     * Calculates the sample kurtosis (bias-corrected)
-     * @param vector Array of numeric values
-     * @returns The sample kurtosis
-     * @throws Error if sample size is less than 4 or if variance is zero
-     */
-    function sampleKurtosis(vector) {
-        var n = vector.length;
-        if (n < 4) {
-            throw new Error('Sample size must be at least 4 for kurtosis calculation');
-        }
-        var mean = vector.reduce(function (sum, val) { return sum + val; }, 0) / n;
-        var sumSquaredDeviations = vector.reduce(function (sum, val) { return sum + Math.pow((val - mean), 2); }, 0);
-        var variance = sumSquaredDeviations / (n - 1);
-        if (variance === 0) {
-            throw new Error('Variance is zero, kurtosis is undefined');
-        }
-        var fourthMomentSum = vector.reduce(function (sum, val) { return sum + Math.pow((val - mean), 4); }, 0);
-        // Correct formula for sample kurtosis
-        return (n * (n + 1) * fourthMomentSum) / ((n - 1) * (n - 2) * (n - 3) * Math.pow(variance, 2));
-    }
-    /**
-     * Calculates the sample excess kurtosis (bias-corrected)
-     * @param vector Array of numeric values
-     * @returns The sample excess kurtosis
-     * @throws Error if sample size is less than 4 or if variance is zero
-     */
-    function sampleExcessKurtosis(vector) {
-        var n = vector.length;
-        if (n < 4) {
-            throw new Error('Sample size must be at least 4 for kurtosis calculation');
-        }
-        var mean = vector.reduce(function (sum, val) { return sum + val; }, 0) / n;
-        var sumSquaredDeviations = vector.reduce(function (sum, val) { return sum + Math.pow((val - mean), 2); }, 0);
-        var variance = sumSquaredDeviations / (n - 1);
-        if (variance === 0) {
-            throw new Error('Variance is zero, kurtosis is undefined');
-        }
-        var fourthMomentSum = vector.reduce(function (sum, val) { return sum + Math.pow((val - mean), 4); }, 0);
-        var rawKurtosis = (n * (n + 1) * fourthMomentSum) / ((n - 1) * (n - 2) * (n - 3) * Math.pow(variance, 2));
-        // Compute excess kurtosis by subtracting 3 times the bias correction factor
-        return rawKurtosis - (3 * (n - 1) * (n - 1)) / ((n - 2) * (n - 3));
     }
 
     /**
@@ -7528,208 +7372,106 @@ var Playground = (function (exports) {
 
     var maxReductionFunction = {
         'vec:max': function (vector) { return Math.max.apply(Math, __spreadArray([], __read(vector), false)); },
-        'minLength': 1,
-        'paddingValue': -Number.MAX_VALUE,
+        'padding': -Number.MAX_VALUE,
     };
+
+    function calcMean(vector) {
+        if (vector.length === 0) {
+            return 0;
+        }
+        var sum = vector.reduce(function (acc, val) { return acc + val; }, 0);
+        return sum / vector.length;
+    }
 
     var meanReductionFunction = {
         'vec:mean': function (vector) { return calcMean(vector); },
-        'minLength': 1,
-        'paddingValue': 0,
     };
+    var geometricMeanReductionFunction = {
+        'vec:geometric-mean': function (vector) {
+            if (vector.some(function (val) { return val < 0; })) {
+                throw new Error('Geometric mean is not defined for non-positive numbers');
+            }
+            return Math.exp(vector.reduce(function (acc, val) { return acc + Math.log(val); }, 0) / vector.length);
+        },
+    };
+    var harmonicMeanReductionFunction = {
+        'vec:harmonic-mean': function (vector) { return vector.length / vector.reduce(function (acc, val) { return acc + 1 / val; }, 0); },
+    };
+
+    function calcMedian(vector) {
+        var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
+        var mid = Math.floor(sorted.length / 2);
+        return sorted.length % 2 === 0
+            ? (sorted[mid - 1] + sorted[mid]) / 2
+            : sorted[mid];
+    }
 
     var medianReductionFunction = {
         'vec:median': function (vector) { return calcMedian(vector); },
-        'minLength': 1,
-        'paddingValue': 0,
     };
 
     var minReductionFunction = {
         'vec:min': function (vector) { return Math.min.apply(Math, __spreadArray([], __read(vector), false)); },
-        'minLength': 1,
-        'paddingValue': Number.MAX_VALUE,
+        'padding': Number.MAX_VALUE,
     };
 
     var prodReductionFunction = {
         'vec:prod': function (vector) { return vector.reduce(function (acc, val) { return acc * val; }, 1); },
+        'padding': 1,
         'minLength': 0,
-        'paddingValue': 1,
-    };
-
-    var sampleVarianceReductionFunction = {
-        'vec:sample-variance': function (vector) {
-            var mean = calcMean(vector);
-            return vector.reduce(function (acc, val) { return acc + Math.pow((val - mean), 2); }, 0) / (vector.length - 1);
-        },
-        'minLength': 2,
-        'paddingValue': 0,
     };
 
     var sumReductionFunction = {
         'vec:sum': function (vector) { return vector.reduce(function (acc, val) { return acc + val; }, 0); },
         'minLength': 0,
-        'paddingValue': 0,
     };
+
+    function calcVariance(vector) {
+        var mean = calcMean(vector);
+        return vector.reduce(function (acc, val) { return acc + Math.pow((val - mean), 2); }, 0) / vector.length;
+    }
+    function calcSampleVariance(vector) {
+        var mean = calcMean(vector);
+        return vector.reduce(function (acc, val) { return acc + Math.pow((val - mean), 2); }, 0) / (vector.length - 1);
+    }
 
     var varianceReductionFunction = {
-        'vec:variance': function (vector) {
-            var mean = calcMean(vector);
-            return vector.reduce(function (acc, val) { return acc + Math.pow((val - mean), 2); }, 0) / vector.length;
-        },
-        'minLength': 1,
-        'paddingValue': 0,
+        'vec:variance': function (vector) { return calcVariance(vector); },
+    };
+    var sampleVarianceReductionFunction = {
+        'vec:sample-variance': function (vector) { return calcSampleVariance(vector); },
+        'minLength': 2,
     };
 
-    var reductionFunctionNormalExpressions = {};
-    addReductionFunctions$1(meanReductionFunction);
-    addReductionFunctions$1(medianReductionFunction);
-    addReductionFunctions$1(sumReductionFunction);
-    addReductionFunctions$1(prodReductionFunction);
-    addReductionFunctions$1(minReductionFunction);
-    addReductionFunctions$1(maxReductionFunction);
-    addReductionFunctions$1(varianceReductionFunction);
-    addReductionFunctions$1(sampleVarianceReductionFunction);
-    function addReductionFunctions$1(fns) {
-        var e_1, _a;
-        var _b;
-        try {
-            for (var _c = __values(Object.entries(fns)), _d = _c.next(); !_d.done; _d = _c.next()) {
-                var _e = __read(_d.value, 2), key = _e[0], value = _e[1];
-                /* v8 ignore next 3 */
-                if (reductionFunctionNormalExpressions[key]) {
-                    throw new Error("Duplicate normal expression key found: ".concat(key));
-                }
-                if (key.startsWith('vec:')) {
-                    var movingKey = key.replace('vec:', 'vec:moving-');
-                    var centeredMovingKey = key.replace('vec:', 'vec:centered-moving-');
-                    var runningKey = key.replace('vec:', 'vec:running-');
-                    reductionFunctionNormalExpressions[key] = createReductionNormalExpression(value, fns.minLength);
-                    reductionFunctionNormalExpressions[movingKey] = createMovingNormalExpression(value, fns.minLength);
-                    reductionFunctionNormalExpressions[centeredMovingKey] = createCenteredMovingNormalExpression(value, fns.minLength, fns.paddingValue, (_b = fns.rightPaddingValue) !== null && _b !== void 0 ? _b : fns.paddingValue);
-                    reductionFunctionNormalExpressions[runningKey] = createRunningNormalExpression(value, fns.minLength);
-                }
-            }
-        }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
-        finally {
-            try {
-                if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
-            }
-            finally { if (e_1) throw e_1.error; }
-        }
+    function calcStdDev(vector) {
+        var variance = calcVariance(vector);
+        return Math.sqrt(variance);
     }
-    function createReductionNormalExpression(reductionFunction, minLength) {
-        return {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                if (vector.length < minLength) {
-                    throw new LitsError("Vector length must be at least ".concat(minLength), sourceCodeInfo);
-                }
-                try {
-                    return reductionFunction(vector);
-                }
-                catch (error) {
-                    if (error instanceof Error) {
-                        throw new LitsError(error.message, sourceCodeInfo);
-                    }
-                    throw error;
-                }
-            },
-            paramCount: 1,
-        };
+    function calcSampleStdDev(vector) {
+        var variance = calcVariance(vector);
+        return Math.sqrt(variance * (vector.length / (vector.length - 1)));
     }
-    function createMovingNormalExpression(reductionFunction, minLength) {
-        return {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(windowSize, sourceCodeInfo, { integer: true, finite: true, gte: minLength });
-                if (vector.length < minLength) {
-                    throw new LitsError("Vector length must be at least ".concat(minLength), sourceCodeInfo);
-                }
-                if (vector.length === 0) {
-                    return [];
-                }
-                try {
-                    if (windowSize >= vector.length) {
-                        return [reductionFunction(vector)];
-                    }
-                    var result = [];
-                    for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
-                        result.push(reductionFunction(vector.slice(i, i + windowSize)));
-                    }
-                    return result;
-                }
-                catch (error) {
-                    if (error instanceof Error) {
-                        throw new LitsError(error.message, sourceCodeInfo);
-                    }
-                    throw error;
-                }
-            },
-            paramCount: 2,
-        };
-    }
-    function createCenteredMovingNormalExpression(reductionFunction, minLength, defaultLeftPaddingValue, defaultRightPaddingValue) {
-        return {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b;
-                var _c = __read(_a, 4), vector = _c[0], windowSize = _c[1], padding = _c[2], rightPadding = _c[3];
-                assertVector(vector, sourceCodeInfo);
-                if (vector.length < minLength) {
-                    throw new LitsError("Vector length must be at least ".concat(minLength), sourceCodeInfo);
-                }
-                assertNumber(windowSize, sourceCodeInfo, { integer: true, finite: true, gte: minLength });
-                var leftPaddingValue = padding !== null && padding !== void 0 ? padding : defaultLeftPaddingValue;
-                assertNumber(leftPaddingValue, sourceCodeInfo, { finite: true });
-                var rightPaddingValue = (_b = rightPadding !== null && rightPadding !== void 0 ? rightPadding : padding) !== null && _b !== void 0 ? _b : defaultRightPaddingValue;
-                assertNumber(rightPaddingValue, sourceCodeInfo, { finite: true });
-                try {
-                    var result = [];
-                    var halfWindowSize = Math.floor(windowSize / 2);
-                    var paddedVector = __spreadArray(__spreadArray(__spreadArray([], __read(Array(halfWindowSize).fill(leftPaddingValue)), false), __read(vector), false), __read(Array(halfWindowSize).fill(rightPaddingValue)), false);
-                    for (var i = 0; i < vector.length; i += 1) {
-                        result.push(reductionFunction(paddedVector.slice(i, i + windowSize)));
-                    }
-                    return result;
-                }
-                catch (error) {
-                    if (error instanceof Error) {
-                        throw new LitsError(error.message, sourceCodeInfo);
-                    }
-                    throw error;
-                }
-            },
-            paramCount: { min: 2, max: 4 },
-        };
-    }
-    function createRunningNormalExpression(reductionFunction, minLength) {
-        return {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                if (vector.length < minLength) {
-                    throw new LitsError("Vector length must be at least ".concat(minLength), sourceCodeInfo);
-                }
-                try {
-                    var nullsCount = Math.max(minLength - 1, 0);
-                    var result = Array(nullsCount).fill(null);
-                    for (var i = nullsCount; i < vector.length; i += 1) {
-                        result.push(reductionFunction(vector.slice(0, i + 1)));
-                    }
-                    return result;
-                }
-                catch (error) {
-                    if (error instanceof Error) {
-                        throw new LitsError(error.message, sourceCodeInfo);
-                    }
-                    throw error;
-                }
-            },
-            paramCount: 1,
-        };
-    }
+
+    var stdevReductionFunction = {
+        'vec:stdev': function (vector) { return calcStdDev(vector); },
+    };
+    var sampleStdevReductionFunction = {
+        'vec:sample-stdev': function (vector) { return calcSampleStdDev(vector); },
+        'minLength': 2,
+    };
+
+    var iqrReductionFunction = {
+        'vec:iqr': function (vector) {
+            var _a = __read(quartiles(vector), 3), q1 = _a[0], q3 = _a[2];
+            return q3 - q1;
+        },
+        'minLength': 4,
+    };
+
+    var spanReductionFunction = {
+        'vec:span': function (vector) { return vector.length === 0 ? 0 : Math.max.apply(Math, __spreadArray([], __read(vector), false)) - Math.min.apply(Math, __spreadArray([], __read(vector), false)); },
+        'minLength': 0,
+    };
 
     function skewness(vector) {
         var mean = calcMean(vector);
@@ -7771,6 +7513,369 @@ var Playground = (function (exports) {
         }
         // Calculate sample skewness with Fisher's adjustment
         return (n / ((n - 1) * (n - 2))) * sumCubedDiffs / Math.pow(sampleStdDev, 3);
+    }
+    var skewnessReductionFunction = {
+        'vec:skewness': function (vector) { return skewness(vector); },
+        'minLength': 3,
+    };
+    var sampleSkewnessReductionFunction = {
+        'vec:sample-skewness': function (vector) { return sampleSkewness(vector); },
+        'minLength': 3,
+    };
+
+    function kurtosis(vector) {
+        var mean = calcMean(vector);
+        var stdDev = calcStdDev(vector);
+        if (stdDev === 0) {
+            throw new Error('Standard deviation is zero, kurtosis is undefined');
+        }
+        return vector.reduce(function (acc, val) { return acc + (Math.pow((val - mean), 4)); }, 0) / (vector.length * Math.pow(stdDev, 4));
+    }
+    function excessKurtosis(vector) {
+        return kurtosis(vector) - 3;
+    }
+    /**
+     * Calculates the sample kurtosis (bias-corrected)
+     * @param vector Array of numeric values
+     * @returns The sample kurtosis
+     * @throws Error if sample size is less than 4 or if variance is zero
+     */
+    function sampleKurtosis(vector) {
+        var n = vector.length;
+        if (n < 4) {
+            throw new Error('Sample size must be at least 4 for kurtosis calculation');
+        }
+        var mean = vector.reduce(function (sum, val) { return sum + val; }, 0) / n;
+        var sumSquaredDeviations = vector.reduce(function (sum, val) { return sum + Math.pow((val - mean), 2); }, 0);
+        var variance = sumSquaredDeviations / (n - 1);
+        if (variance === 0) {
+            throw new Error('Variance is zero, kurtosis is undefined');
+        }
+        var fourthMomentSum = vector.reduce(function (sum, val) { return sum + Math.pow((val - mean), 4); }, 0);
+        // Correct formula for sample kurtosis
+        return (n * (n + 1) * fourthMomentSum) / ((n - 1) * (n - 2) * (n - 3) * Math.pow(variance, 2));
+    }
+    /**
+     * Calculates the sample excess kurtosis (bias-corrected)
+     * @param vector Array of numeric values
+     * @returns The sample excess kurtosis
+     * @throws Error if sample size is less than 4 or if variance is zero
+     */
+    function sampleExcessKurtosis(vector) {
+        var n = vector.length;
+        if (n < 4) {
+            throw new Error('Sample size must be at least 4 for kurtosis calculation');
+        }
+        var mean = vector.reduce(function (sum, val) { return sum + val; }, 0) / n;
+        var sumSquaredDeviations = vector.reduce(function (sum, val) { return sum + Math.pow((val - mean), 2); }, 0);
+        var variance = sumSquaredDeviations / (n - 1);
+        if (variance === 0) {
+            throw new Error('Variance is zero, kurtosis is undefined');
+        }
+        var fourthMomentSum = vector.reduce(function (sum, val) { return sum + Math.pow((val - mean), 4); }, 0);
+        var rawKurtosis = (n * (n + 1) * fourthMomentSum) / ((n - 1) * (n - 2) * (n - 3) * Math.pow(variance, 2));
+        // Compute excess kurtosis by subtracting 3 times the bias correction factor
+        return rawKurtosis - (3 * (n - 1) * (n - 1)) / ((n - 2) * (n - 3));
+    }
+    var kurtosisReductionFunction = {
+        'vec:kurtosis': function (vector) { return kurtosis(vector); },
+        'minLength': 4,
+    };
+    var eccessKurtosisReductionFunction = {
+        'vec:excess-kurtosis': function (vector) { return excessKurtosis(vector); },
+        'minLength': 4,
+    };
+    var sampleKurtosisReductionFunction = {
+        'vec:sample-kurtosis': function (vector) { return sampleKurtosis(vector); },
+        'minLength': 4,
+    };
+    var sampleExcessKurtosisReductionFunction = {
+        'vec:sample-excess-kurtosis': function (vector) { return sampleExcessKurtosis(vector); },
+        'minLength': 4,
+    };
+
+    var rmsReductionFunction = {
+        'vec:rms': function (vector) { return Math.sqrt(vector.reduce(function (acc, val) { return acc + Math.pow(val, 2); }, 0) / vector.length); },
+    };
+
+    function calcMad(vector) {
+        var median = calcMedian(vector);
+        // Calculate mean absolute deviation
+        return vector.reduce(function (acc, val) { return acc + Math.abs(val - median); }, 0) / vector.length;
+    }
+
+    var madReductionFunction = {
+        'vec:mad': function (vector) { return calcMad(vector); },
+    };
+
+    function calcMedad(vector) {
+        var median = calcMedian(vector);
+        // Calculate absolute deviations from the median
+        var absoluteDeviations = vector.map(function (val) { return Math.abs(val - median); });
+        // Calculate the median of the absolute deviations
+        var medianOfDeviations = calcMedian(absoluteDeviations);
+        var scaleFactor = 1.4826; // Scale factor for robust scaling
+        return medianOfDeviations * scaleFactor;
+    }
+
+    var medadReductionFunction = {
+        'vec:medad': function (vector) { return calcMedad(vector); },
+    };
+
+    var giniCoefficientReductionFunction = {
+        'vec:gini-coefficient': function (vector) {
+            if (vector.some(function (x) { return x < 0; })) {
+                throw new Error('Gini coefficient is not defined for negative values');
+            }
+            var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
+            var n = sorted.length;
+            var sum = sorted.reduce(function (acc, val) { return acc + val; }, 0);
+            if (sum === 0) {
+                return 0;
+            }
+            var gini = (2 * sorted.reduce(function (acc, val, i) { return acc + (i + 1) * val; }, 0)) / (n * sum) - (n + 1) / n;
+            return gini;
+        },
+        'minLength': 1,
+    };
+
+    /**
+     * Calculates the Shannon entropy of a vector.
+     * Entropy measures the amount of uncertainty or randomness in the data.
+     *
+     * @param vector - An array of values to calculate entropy for
+     * @returns The entropy value (in bits) or 0 for empty arrays
+     */
+    function calculateEntropy(vector) {
+        var e_1, _a, e_2, _b;
+        // Return 0 for empty vectors
+        if (vector.length === 0) {
+            return 0;
+        }
+        // Count occurrences of each value
+        var frequencies = new Map();
+        try {
+            for (var vector_1 = __values(vector), vector_1_1 = vector_1.next(); !vector_1_1.done; vector_1_1 = vector_1.next()) {
+                var value = vector_1_1.value;
+                frequencies.set(value, (frequencies.get(value) || 0) + 1);
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (vector_1_1 && !vector_1_1.done && (_a = vector_1.return)) _a.call(vector_1);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        // Get the total number of elements
+        var total = vector.length;
+        // Calculate entropy using Shannon's formula
+        var entropy = 0;
+        try {
+            for (var _c = __values(frequencies.values()), _d = _c.next(); !_d.done; _d = _c.next()) {
+                var frequency = _d.value;
+                var probability = frequency / total;
+                // Skip cases where probability is 0 (log(0) is undefined)
+                if (probability > 0) {
+                    entropy -= probability * Math.log2(probability);
+                }
+            }
+        }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        finally {
+            try {
+                if (_d && !_d.done && (_b = _c.return)) _b.call(_c);
+            }
+            finally { if (e_2) throw e_2.error; }
+        }
+        return entropy;
+    }
+
+    var entropyReductionFunction = {
+        'vec:entropy': function (vector) { return calculateEntropy(vector); },
+        'minLength': 1,
+    };
+
+    var reductionFunctionNormalExpressions = {};
+    addReductionFunctions$1(meanReductionFunction);
+    addReductionFunctions$1(geometricMeanReductionFunction);
+    addReductionFunctions$1(harmonicMeanReductionFunction);
+    addReductionFunctions$1(medianReductionFunction);
+    addReductionFunctions$1(sumReductionFunction);
+    addReductionFunctions$1(prodReductionFunction);
+    addReductionFunctions$1(minReductionFunction);
+    addReductionFunctions$1(maxReductionFunction);
+    addReductionFunctions$1(varianceReductionFunction);
+    addReductionFunctions$1(sampleVarianceReductionFunction);
+    addReductionFunctions$1(stdevReductionFunction);
+    addReductionFunctions$1(sampleStdevReductionFunction);
+    addReductionFunctions$1(iqrReductionFunction);
+    addReductionFunctions$1(spanReductionFunction);
+    addReductionFunctions$1(skewnessReductionFunction);
+    addReductionFunctions$1(sampleSkewnessReductionFunction);
+    addReductionFunctions$1(eccessKurtosisReductionFunction);
+    addReductionFunctions$1(kurtosisReductionFunction);
+    addReductionFunctions$1(sampleExcessKurtosisReductionFunction);
+    addReductionFunctions$1(sampleKurtosisReductionFunction);
+    addReductionFunctions$1(rmsReductionFunction);
+    addReductionFunctions$1(madReductionFunction);
+    addReductionFunctions$1(medadReductionFunction);
+    addReductionFunctions$1(giniCoefficientReductionFunction);
+    addReductionFunctions$1(entropyReductionFunction);
+    function addReductionFunctions$1(fns) {
+        var e_1, _a;
+        var _b, _c;
+        try {
+            for (var _d = __values(Object.entries(fns)), _e = _d.next(); !_e.done; _e = _d.next()) {
+                var _f = __read(_e.value, 2), key = _f[0], value = _f[1];
+                /* v8 ignore next 3 */
+                if (reductionFunctionNormalExpressions[key]) {
+                    throw new Error("Duplicate normal expression key found: ".concat(key));
+                }
+                if (key.startsWith('vec:')) {
+                    var movingKey = key.replace('vec:', 'vec:moving-');
+                    var centeredMovingKey = key.replace('vec:', 'vec:centered-moving-');
+                    var runningKey = key.replace('vec:', 'vec:running-');
+                    var minLength = (_b = fns.minLength) !== null && _b !== void 0 ? _b : 1;
+                    assertNumber(minLength, undefined, { integer: true, finite: true, gte: 0 });
+                    reductionFunctionNormalExpressions[key] = createReductionNormalExpression(value, minLength);
+                    reductionFunctionNormalExpressions[movingKey] = createMovingNormalExpression(value, minLength);
+                    reductionFunctionNormalExpressions[centeredMovingKey] = createCenteredMovingNormalExpression(value, minLength, (_c = fns.padding) !== null && _c !== void 0 ? _c : null);
+                    reductionFunctionNormalExpressions[runningKey] = createRunningNormalExpression(value, minLength);
+                }
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_e && !_e.done && (_a = _d.return)) _a.call(_d);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+    }
+    function createReductionNormalExpression(reductionFunction, minLength) {
+        return {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                if (vector.length < minLength) {
+                    throw new LitsError("Vector length must be at least ".concat(minLength), sourceCodeInfo);
+                }
+                try {
+                    return reductionFunction(vector);
+                }
+                catch (error) {
+                    if (error instanceof Error) {
+                        throw new LitsError(error.message, sourceCodeInfo);
+                    }
+                    throw error;
+                }
+            },
+            paramCount: 1,
+        };
+    }
+    function createMovingNormalExpression(reductionFunction, minLength) {
+        return {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, finite: true, gte: minLength, lte: vector.length });
+                if (vector.length < minLength) {
+                    throw new LitsError("Vector length must be at least ".concat(minLength), sourceCodeInfo);
+                }
+                if (vector.length === 0) {
+                    return [];
+                }
+                try {
+                    if (windowSize >= vector.length) {
+                        return [reductionFunction(vector)];
+                    }
+                    var result = [];
+                    for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
+                        result.push(reductionFunction(vector.slice(i, i + windowSize)));
+                    }
+                    return result;
+                }
+                catch (error) {
+                    if (error instanceof Error) {
+                        throw new LitsError(error.message, sourceCodeInfo);
+                    }
+                    throw error;
+                }
+            },
+            paramCount: 2,
+        };
+    }
+    function createCenteredMovingNormalExpression(reductionFunction, minLength, padding) {
+        return {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 4), vector = _b[0], windowSize = _b[1], leftPadding = _b[2], rightPadding = _b[3];
+                assertVector(vector, sourceCodeInfo);
+                if (vector.length < minLength) {
+                    throw new LitsError("Vector length must be at least ".concat(minLength), sourceCodeInfo);
+                }
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, finite: true, gte: minLength, lte: vector.length });
+                leftPadding = leftPadding !== null && leftPadding !== void 0 ? leftPadding : padding;
+                if (leftPadding !== null) {
+                    assertNumber(leftPadding, sourceCodeInfo, { finite: true });
+                }
+                rightPadding = rightPadding !== null && rightPadding !== void 0 ? rightPadding : padding;
+                if (rightPadding !== null) {
+                    assertNumber(rightPadding, sourceCodeInfo, { finite: true });
+                }
+                if (vector.length === 0) {
+                    return [];
+                }
+                var halfWindowSize = Math.floor(windowSize / 2);
+                var paddedVector = __spreadArray(__spreadArray(__spreadArray([], __read(Array(halfWindowSize).fill(leftPadding)), false), __read(vector), false), __read(Array(halfWindowSize).fill(rightPadding)), false);
+                var start = typeof leftPadding === 'number' ? 0 : halfWindowSize;
+                var end = vector.length - (typeof rightPadding === 'number' ? 0 : (windowSize - halfWindowSize - 1));
+                var result = __spreadArray([], __read(Array(start).fill(null)), false);
+                try {
+                    for (var i = start; i < end; i += 1) {
+                        result.push(reductionFunction(paddedVector.slice(i, i + windowSize)));
+                    }
+                }
+                catch (error) {
+                    if (error instanceof Error) {
+                        throw new LitsError(error.message, sourceCodeInfo);
+                    }
+                    throw error;
+                }
+                result.push.apply(result, __spreadArray([], __read(Array(vector.length - end).fill(null)), false));
+                return result;
+            },
+            paramCount: { min: 2, max: 4 },
+        };
+    }
+    function createRunningNormalExpression(reductionFunction, minLength) {
+        return {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertVector(vector, sourceCodeInfo);
+                if (vector.length < minLength) {
+                    throw new LitsError("Vector length must be at least ".concat(minLength), sourceCodeInfo);
+                }
+                if (vector.length === 0) {
+                    return [];
+                }
+                try {
+                    var nullsCount = Math.max(minLength - 1, 0);
+                    var result = Array(nullsCount).fill(null);
+                    for (var i = nullsCount; i < vector.length; i += 1) {
+                        result.push(reductionFunction(vector.slice(0, i + 1)));
+                    }
+                    return result;
+                }
+                catch (error) {
+                    if (error instanceof Error) {
+                        throw new LitsError(error.message, sourceCodeInfo);
+                    }
+                    throw error;
+                }
+            },
+            paramCount: 1,
+        };
     }
 
     var vectorNormalExpression = {
@@ -7829,29 +7934,6 @@ var Playground = (function (exports) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertNonEmptyVector(vector, sourceCodeInfo);
                 return mode(vector);
-            },
-            paramCount: 1,
-        },
-        'vec:stdev': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertNonEmptyVector(vector, sourceCodeInfo);
-                var mean = vector.reduce(function (acc, val) { return acc + val; }, 0) / vector.length;
-                // calculate the squared differences from the mean, average them, and take the square root
-                return Math.sqrt(vector.reduce(function (acc, val) { return acc + Math.pow((val - mean), 2); }, 0) / vector.length);
-            },
-            paramCount: 1,
-        },
-        'vec:sample-stdev': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertNonEmptyVector(vector, sourceCodeInfo);
-                if (vector.length < 2) {
-                    throw new LitsError('Sample standard deviation requires at least two values', sourceCodeInfo);
-                }
-                var mean = vector.reduce(function (acc, val) { return acc + val; }, 0) / vector.length;
-                // calculate the squared differences from the mean, sum them, divide by (n-1), and take the square root
-                return Math.sqrt(vector.reduce(function (acc, val) { return acc + Math.pow((val - mean), 2); }, 0) / (vector.length - 1));
             },
             paramCount: 1,
         },
@@ -8001,18 +8083,6 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'vec:iqr': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                if (vector.length < 4) {
-                    throw new LitsError('IQR requires at least four values', sourceCodeInfo);
-                }
-                var _c = __read(quartiles(vector), 3), q1 = _c[0], q3 = _c[2];
-                return q3 - q1;
-            },
-            paramCount: 1,
-        },
         'vec:percentile': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vector = _b[0], percentile = _b[1];
@@ -8030,170 +8100,6 @@ var Playground = (function (exports) {
                 return calcPercentile(vector, quantile * 100);
             },
             paramCount: 2,
-        },
-        'vec:span': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertNonEmptyVector(vector, sourceCodeInfo);
-                var min = vector.reduce(function (acc, val) { return (val < acc ? val : acc); }, vector[0]);
-                var max = vector.reduce(function (acc, val) { return (val > acc ? val : acc); }, vector[0]);
-                return max - min;
-            },
-            paramCount: 1,
-        },
-        'vec:skewness': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertNonEmptyVector(vector, sourceCodeInfo);
-                if (vector.length < 3) {
-                    throw new LitsError('Skewness requires at least three values', sourceCodeInfo);
-                }
-                try {
-                    return skewness(vector);
-                }
-                catch (error) {
-                    if (error instanceof Error) {
-                        throw new LitsError(error.message, sourceCodeInfo);
-                    }
-                    throw error;
-                }
-            },
-            paramCount: 1,
-        },
-        'vec:sample-skewness': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertNonEmptyVector(vector, sourceCodeInfo);
-                if (vector.length < 3) {
-                    throw new LitsError('Skewness requires at least three values', sourceCodeInfo);
-                }
-                try {
-                    return sampleSkewness(vector);
-                }
-                catch (error) {
-                    if (error instanceof Error) {
-                        throw new LitsError(error.message, sourceCodeInfo);
-                    }
-                    throw error;
-                }
-            },
-            paramCount: 1,
-        },
-        'vec:kurtosis': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                if (vector.length < 4) {
-                    throw new LitsError('Kurtosis requires at least four values', sourceCodeInfo);
-                }
-                try {
-                    return kurtosis(vector);
-                }
-                catch (error) {
-                    if (error instanceof Error) {
-                        throw new LitsError(error.message, sourceCodeInfo);
-                    }
-                    throw error;
-                }
-            },
-            paramCount: 1,
-        },
-        'vec:excess-kurtosis': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                if (vector.length < 4) {
-                    throw new LitsError('Kurtosis requires at least four values', sourceCodeInfo);
-                }
-                try {
-                    return excessKurtosis(vector);
-                }
-                catch (error) {
-                    if (error instanceof Error) {
-                        throw new LitsError(error.message, sourceCodeInfo);
-                    }
-                    throw error;
-                }
-            },
-            paramCount: 1,
-        },
-        'vec:sample-kurtosis': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                if (vector.length < 4) {
-                    throw new LitsError('Kurtosis requires at least four values', sourceCodeInfo);
-                }
-                try {
-                    return sampleKurtosis(vector);
-                }
-                catch (error) {
-                    if (error instanceof Error) {
-                        throw new LitsError(error.message, sourceCodeInfo);
-                    }
-                    throw error;
-                }
-            },
-            paramCount: 1,
-        },
-        'vec:sample-excess-kurtosis': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                if (vector.length < 4) {
-                    throw new LitsError('Kurtosis requires at least four values', sourceCodeInfo);
-                }
-                try {
-                    return sampleExcessKurtosis(vector);
-                }
-                catch (error) {
-                    if (error instanceof Error) {
-                        throw new LitsError(error.message, sourceCodeInfo);
-                    }
-                    throw error;
-                }
-            },
-            paramCount: 1,
-        },
-        'vec:geometric-mean': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertNonEmptyVector(vector, sourceCodeInfo);
-                return Math.exp(vector.reduce(function (acc, val) { return acc + Math.log(val); }, 0) / vector.length);
-            },
-            paramCount: 1,
-        },
-        'vec:harmonic-mean': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertNonEmptyVector(vector, sourceCodeInfo);
-                return vector.length / vector.reduce(function (acc, val) { return acc + 1 / val; }, 0);
-            },
-            paramCount: 1,
-        },
-        'vec:rms': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertNonEmptyVector(vector, sourceCodeInfo);
-                return Math.sqrt(vector.reduce(function (acc, val) { return acc + Math.pow(val, 2); }, 0) / vector.length);
-            },
-            paramCount: 1,
-        },
-        'vec:mad': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertNonEmptyVector(vector, sourceCodeInfo);
-                return calcMad(vector);
-            },
-            paramCount: 1,
-        },
-        'vec:medad': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertNonEmptyVector(vector, sourceCodeInfo);
-                return calcMedad(vector);
-            },
-            paramCount: 1,
         },
         'vec:histogram': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -8231,90 +8137,6 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'vec:moving-std': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
-                var result = [];
-                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
-                    var stdDev = calcStdDev(vector.slice(i, i + windowSize));
-                    result.push(stdDev);
-                }
-                return result;
-            },
-            paramCount: 2,
-        },
-        'vec:moving-rms': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
-                var result = [];
-                var _loop_1 = function (i) {
-                    var mean = calcMean(vector.slice(i, i + windowSize));
-                    var rms = Math.sqrt(vector.slice(i, i + windowSize).reduce(function (acc, val) { return acc + Math.pow((val - mean), 2); }, 0) / windowSize);
-                    result.push(rms);
-                };
-                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
-                    _loop_1(i);
-                }
-                return result;
-            },
-            paramCount: 2,
-        },
-        'vec:moving-percentile': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), vector = _b[0], windowSize = _b[1], percentile = _b[2];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
-                assertNumber(percentile, sourceCodeInfo, { finite: true });
-                var result = [];
-                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
-                    var sorted = vector.slice(i, i + windowSize).sort(function (a, b) { return a - b; });
-                    var index = Math.floor(percentile * (sorted.length - 1));
-                    result.push(sorted[index]);
-                }
-                return result;
-            },
-            paramCount: 3,
-        },
-        'vec:moving-quantile': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), vector = _b[0], windowSize = _b[1], quantile = _b[2];
-                assertVector(vector, sourceCodeInfo);
-                assertNumber(windowSize, sourceCodeInfo, { integer: true, positive: true });
-                assertNumber(quantile, sourceCodeInfo, { finite: true });
-                var result = [];
-                for (var i = 0; i < vector.length - windowSize + 1; i += 1) {
-                    var sorted = vector.slice(i, i + windowSize).sort(function (a, b) { return a - b; });
-                    var index = Math.floor(quantile * (sorted.length - 1));
-                    result.push(sorted[index]);
-                }
-                return result;
-            },
-            paramCount: 3,
-        },
-        'vec:entropy': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return calculateEntropy(vector);
-            },
-            paramCount: 1,
-        },
-        'vec:gini-coefficient': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
-                var n = sorted.length;
-                var sum = sorted.reduce(function (acc, val) { return acc + val; }, 0);
-                var gini = (2 * sorted.reduce(function (acc, val, i) { return acc + (i + 1) * val; }, 0)) / (n * sum) - (n + 1) / n;
-                return gini;
-            },
-            paramCount: 1,
-        },
         'vec:bincount': {
             evaluate: function (params, sourceCodeInfo) {
                 var _a, _b;
@@ -8324,7 +8146,7 @@ var Playground = (function (exports) {
                 var minSize = (_a = params[1]) !== null && _a !== void 0 ? _a : 0;
                 assertNumber(minSize, sourceCodeInfo, { integer: true, nonNegative: true });
                 var weights = (_b = params[2]) !== null && _b !== void 0 ? _b : undefined;
-                if (weights !== null) {
+                if (weights !== undefined) {
                     assertVector(weights, sourceCodeInfo);
                     if (weights.length !== vector.length) {
                         throw new LitsError('Weights vector must be the same length as the input vector', sourceCodeInfo);
@@ -8335,41 +8157,29 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 1, max: 3 },
         },
-        'vec:arithmetic-sum': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), start = _b[0], step = _b[1], length = _b[2];
-                assertNumber(start, sourceCodeInfo, { finite: true });
-                assertNumber(step, sourceCodeInfo, { finite: true });
-                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
-                return (length / 2) * (2 * start + (length - 1) * step);
-            },
-            paramCount: 3,
-        },
         'vec:winsorize': {
             evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), vector = _b[0], lowerPercentile = _b[1], upperPercentile = _b[2];
+                var _b = __read(_a, 3), vector = _b[0], lowerQuantile = _b[1], upperQuantile = _b[2];
                 assertVector(vector, sourceCodeInfo);
-                assertNumber(lowerPercentile, sourceCodeInfo, { finite: true });
-                assertNumber(upperPercentile, sourceCodeInfo, { finite: true });
+                assertNumber(lowerQuantile, sourceCodeInfo, { finite: true, gte: 0, lte: 1 });
+                upperQuantile !== null && upperQuantile !== void 0 ? upperQuantile : (upperQuantile = lowerQuantile > 0.5 ? 1 : (1 - lowerQuantile));
+                assertNumber(upperQuantile, sourceCodeInfo, { finite: true, gte: lowerQuantile, lte: 1 });
                 if (vector.length === 0)
                     return [];
-                if (lowerPercentile < 0 || lowerPercentile > 0.5 || upperPercentile < 0 || upperPercentile > 0.5) {
-                    throw new LitsError('Percentiles must be between 0 and 0.5', sourceCodeInfo);
-                }
                 var sorted = __spreadArray([], __read(vector), false).sort(function (a, b) { return a - b; });
-                var lowerIndex = Math.max(0, Math.floor(lowerPercentile * vector.length));
-                var upperIndex = Math.min(vector.length - 1, Math.floor((1 - upperPercentile) * vector.length));
+                var lowerIndex = Math.max(0, Math.floor(lowerQuantile * vector.length));
+                var upperIndex = Math.min(vector.length - 1, Math.max(0, Math.floor(upperQuantile * vector.length) - 1));
                 var lowerBound = sorted[lowerIndex];
                 var upperBound = sorted[upperIndex];
                 return vector.map(function (val) { return Math.max(lowerBound, Math.min(val, upperBound)); });
             },
-            paramCount: 3,
+            paramCount: { min: 2, max: 3 },
         },
         'vec:mse': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
+                assertNonEmptyVector(vectorA, sourceCodeInfo);
+                assertNonEmptyVector(vectorB, sourceCodeInfo);
                 if (vectorA.length !== vectorB.length) {
                     throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
                 }
@@ -8377,15 +8187,43 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
+        'vec:rmse': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertNonEmptyVector(vectorA, sourceCodeInfo);
+                assertNonEmptyVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return Math.sqrt(vectorA.reduce(function (acc, val, i) { return acc + Math.pow((val - vectorB[i]), 2); }, 0) / vectorA.length);
+            },
+            paramCount: 2,
+        },
         'vec:mae': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
+                assertNonEmptyVector(vectorA, sourceCodeInfo);
+                assertNonEmptyVector(vectorB, sourceCodeInfo);
                 if (vectorA.length !== vectorB.length) {
                     throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
                 }
                 return vectorA.reduce(function (acc, val, i) { return acc + Math.abs(val - vectorB[i]); }, 0) / vectorA.length;
+            },
+            paramCount: 2,
+        },
+        'vec:smape': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertNonEmptyVector(vectorA, sourceCodeInfo);
+                assertNonEmptyVector(vectorB, sourceCodeInfo);
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return vectorA.reduce(function (acc, val, i) {
+                    var diff = Math.abs(val - vectorB[i]);
+                    var denom = (Math.abs(val) + Math.abs(vectorB[i])) / 2;
+                    return acc + (denom === 0 ? 0 : diff / denom);
+                }, 0) / vectorA.length;
             },
             paramCount: 2,
         },
@@ -13859,6 +13697,9 @@ var Playground = (function (exports) {
     var normalExpressionKeys = Object.keys(normalExpressions);
     var specialExpressionKeys = Object.keys(specialExpressionTypes);
     new Set(specialExpressionKeys);
+    // TODO, remove
+    // eslint-disable-next-line no-console
+    console.log('builtin', __spreadArray(__spreadArray([], __read(specialExpressionKeys), false), __read(normalExpressionKeys), false).length);
 
     function checkParams(evaluatedFunction, nbrOfParams, sourceCodeInfo) {
         var minArity = evaluatedFunction[0].filter(function (arg) { return arg[0] !== bindingTargetTypes.rest && arg[1][1] === undefined; }).length;

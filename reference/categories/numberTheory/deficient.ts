@@ -5,7 +5,7 @@ export const deficientReference: NumberTheorySequenceReference<'deficient'> = {
     title: 'nth:deficient-seq',
     category: 'Number Theory',
     description: 'Generates the deficient numbers up to a specified length.',
-    linkName: 'c-colon-deficient-seq',
+    linkName: 'nth-colon-deficient-seq',
     returns: {
       type: 'integer',
       array: true,
@@ -28,7 +28,7 @@ export const deficientReference: NumberTheorySequenceReference<'deficient'> = {
     title: 'nth:deficient-take-while',
     category: 'Number Theory',
     description: 'Generates the deficient numbers while a condition is met.',
-    linkName: 'c-colon-deficient-take-while',
+    linkName: 'nth-colon-deficient-take-while',
     returns: {
       type: 'integer',
       array: true,
@@ -50,7 +50,7 @@ export const deficientReference: NumberTheorySequenceReference<'deficient'> = {
     title: 'nth:deficient-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the deficient numbers.',
-    linkName: 'c-colon-deficient-nth',
+    linkName: 'nth-colon-deficient-nth',
     returns: {
       type: 'integer',
     },
@@ -72,7 +72,7 @@ export const deficientReference: NumberTheorySequenceReference<'deficient'> = {
     title: 'nth:deficient?',
     category: 'Number Theory',
     description: 'Checks if a number is deficient.',
-    linkName: 'c-colon-deficient',
+    linkName: 'nth-colon-deficient-question',
     returns: {
       type: 'boolean',
     },

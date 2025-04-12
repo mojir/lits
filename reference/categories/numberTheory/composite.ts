@@ -5,7 +5,7 @@ export const compositeReference: NumberTheorySequenceReference<'composite'> = {
     title: 'nth:composite-seq',
     category: 'Number Theory',
     description: 'Generates the composite sequence up to a specified length.',
-    linkName: 'c-colon-composite-seq',
+    linkName: 'nth-colon-composite-seq',
     returns: {
       type: 'integer',
       array: true,
@@ -29,7 +29,7 @@ export const compositeReference: NumberTheorySequenceReference<'composite'> = {
     title: 'nth:composite-take-while',
     category: 'Number Theory',
     description: 'Generates the composite sequence while a condition is met.',
-    linkName: 'c-colon-composite-take-while',
+    linkName: 'nth-colon-composite-take-while',
     returns: {
       type: 'integer',
       array: true,
@@ -51,7 +51,7 @@ export const compositeReference: NumberTheorySequenceReference<'composite'> = {
     title: 'nth:composite-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the composite sequence.',
-    linkName: 'c-colon-composite-nth',
+    linkName: 'nth-colon-composite-nth',
     returns: {
       type: 'integer',
     },
@@ -74,7 +74,7 @@ export const compositeReference: NumberTheorySequenceReference<'composite'> = {
     title: 'nth:composite?',
     category: 'Number Theory',
     description: 'Determines if a number is composite.',
-    linkName: 'c-colon-composite-question-mark',
+    linkName: 'nth-colon-composite-question',
     returns: {
       type: 'boolean',
     },

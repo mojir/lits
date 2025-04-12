@@ -5,7 +5,7 @@ export const recamanReference: NumberTheorySequenceReference<'recaman'> = {
     title: 'nth:recaman-seq',
     category: 'Number Theory',
     description: 'Generates the Recaman sequence up to a specified length.',
-    linkName: 'c-colon-recaman-seq',
+    linkName: 'nth-colon-recaman-seq',
     returns: {
       type: 'integer',
       array: true,
@@ -29,7 +29,7 @@ export const recamanReference: NumberTheorySequenceReference<'recaman'> = {
     title: 'nth:recaman-take-while',
     category: 'Number Theory',
     description: 'Generates the Recaman sequence while a condition is met.',
-    linkName: 'c-colon-recaman-take-while',
+    linkName: 'nth-colon-recaman-take-while',
     returns: {
       type: 'integer',
       array: true,
@@ -51,7 +51,7 @@ export const recamanReference: NumberTheorySequenceReference<'recaman'> = {
     title: 'nth:recaman-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Recaman sequence.',
-    linkName: 'c-colon-recaman-nth',
+    linkName: 'nth-colon-recaman-nth',
     returns: {
       type: 'integer',
     },
@@ -74,7 +74,7 @@ export const recamanReference: NumberTheorySequenceReference<'recaman'> = {
     title: 'nth:recaman?',
     category: 'Number Theory',
     description: 'Checks if a number is in the Recaman sequence.',
-    linkName: 'c-colon-recaman-question-mark',
+    linkName: 'nth-colon-recaman-question',
     returns: {
       type: 'boolean',
     },

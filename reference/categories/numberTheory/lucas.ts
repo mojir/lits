@@ -5,7 +5,7 @@ export const lucasReference: NumberTheorySequenceReference<'lucas'> = {
     title: 'nth:lucas-seq',
     category: 'Number Theory',
     description: 'Generates the lucas sequence up to a specified length.',
-    linkName: 'c-colon-lucas-seq',
+    linkName: 'nth-colon-lucas-seq',
     returns: {
       type: 'integer',
       array: true,
@@ -30,7 +30,7 @@ export const lucasReference: NumberTheorySequenceReference<'lucas'> = {
     title: 'nth:lucas-take-while',
     category: 'Number Theory',
     description: 'Generates the lucas sequence while a condition is met.',
-    linkName: 'c-colon-lucas-take-while',
+    linkName: 'nth-colon-lucas-take-while',
     returns: {
       type: 'integer',
       array: true,
@@ -52,7 +52,7 @@ export const lucasReference: NumberTheorySequenceReference<'lucas'> = {
     title: 'nth:lucas-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the lucas sequence.',
-    linkName: 'c-colon-lucas-nth',
+    linkName: 'nth-colon-lucas-nth',
     returns: {
       type: 'integer',
     },
@@ -75,7 +75,7 @@ export const lucasReference: NumberTheorySequenceReference<'lucas'> = {
     title: 'nth:lucas?',
     category: 'Number Theory',
     description: 'Determines if a number is in the lucas sequence.',
-    linkName: 'c-colon-lucas-question-mark',
+    linkName: 'nth-colon-lucas-question',
     returns: {
       type: 'boolean',
     },

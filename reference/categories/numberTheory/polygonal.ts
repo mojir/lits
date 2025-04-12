@@ -1,3 +1,4 @@
+import { getOperatorArgs } from '../../api'
 import type { NumberTheorySequenceReference } from '.'
 
 export const polygonalReference: NumberTheorySequenceReference<'polygonal'> = {
@@ -5,7 +6,7 @@ export const polygonalReference: NumberTheorySequenceReference<'polygonal'> = {
     title: 'nth:polygonal-seq',
     category: 'Number Theory',
     description: 'Generates the polygonal sequence for a given number of sides and length.',
-    linkName: 'c-colon-polygonal-seq',
+    linkName: 'nth-colon-polygonal-seq',
     returns: {
       type: 'integer',
       array: true,
@@ -19,6 +20,7 @@ export const polygonalReference: NumberTheorySequenceReference<'polygonal'> = {
         type: 'integer',
         description: 'The length of the sequence to generate.',
       },
+      ...getOperatorArgs('integer', 'integer'),
     },
     variants: [
       { argumentNames: ['sides', 'length'] },
@@ -35,7 +37,7 @@ export const polygonalReference: NumberTheorySequenceReference<'polygonal'> = {
     title: 'nth:polygonal-take-while',
     category: 'Number Theory',
     description: 'Generates the polygonal sequence while a condition is met.',
-    linkName: 'c-colon-polygonal-take-while',
+    linkName: 'nth-colon-polygonal-take-while',
     returns: {
       type: 'integer',
       array: true,
@@ -49,6 +51,7 @@ export const polygonalReference: NumberTheorySequenceReference<'polygonal'> = {
         type: 'function',
         description: 'A function that takes an integer and an index and returns a boolean.',
       },
+      ...getOperatorArgs('integer', 'function'),
     },
     variants: [
       { argumentNames: ['sides', 'takeWhile'] },
@@ -61,7 +64,7 @@ export const polygonalReference: NumberTheorySequenceReference<'polygonal'> = {
     title: 'nth:polygonal-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the polygonal sequence.',
-    linkName: 'c-colon-polygonal-nth',
+    linkName: 'nth-colon-polygonal-nth',
     returns: {
       type: 'integer',
     },
@@ -74,6 +77,7 @@ export const polygonalReference: NumberTheorySequenceReference<'polygonal'> = {
         type: 'integer',
         description: 'The index of the term to generate.',
       },
+      ...getOperatorArgs('integer', 'integer'),
     },
     variants: [
       { argumentNames: ['sides', 'n'] },
@@ -88,7 +92,7 @@ export const polygonalReference: NumberTheorySequenceReference<'polygonal'> = {
     title: 'nth:polygonal?',
     category: 'Number Theory',
     description: 'Checks if a number is in the polygonal sequence.',
-    linkName: 'c-colon-polygonal',
+    linkName: 'nth-colon-polygonal-question',
     returns: {
       type: 'boolean',
     },
@@ -101,6 +105,7 @@ export const polygonalReference: NumberTheorySequenceReference<'polygonal'> = {
         type: 'integer',
         description: 'The number to check.',
       },
+      ...getOperatorArgs('integer', 'integer'),
     },
     variants: [
       { argumentNames: ['sides', 'n'] },

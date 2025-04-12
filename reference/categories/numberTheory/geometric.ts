@@ -5,7 +5,7 @@ export const geometricReference: NumberTheorySequenceReference<'geometric'> = {
     title: 'nth:geometric-seq',
     category: 'Number Theory',
     description: 'Generates the geometric sequence for a given $start, $ratio, and $length.',
-    linkName: 'c-colon-geometric-seq',
+    linkName: 'nth-colon-geometric-seq',
     returns: {
       type: 'integer',
       array: true,
@@ -38,7 +38,7 @@ export const geometricReference: NumberTheorySequenceReference<'geometric'> = {
     title: 'nth:geometric-take-while',
     category: 'Number Theory',
     description: 'Generates the geometric sequence while a condition is met.',
-    linkName: 'c-colon-geometric-take-while',
+    linkName: 'nth-colon-geometric-take-while',
     returns: {
       type: 'integer',
       array: true,
@@ -68,7 +68,7 @@ export const geometricReference: NumberTheorySequenceReference<'geometric'> = {
     title: 'nth:geometric-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the geometric sequence.',
-    linkName: 'c-colon-geometric-nth',
+    linkName: 'nth-colon-geometric-nth',
     returns: {
       type: 'integer',
     },
@@ -100,7 +100,7 @@ export const geometricReference: NumberTheorySequenceReference<'geometric'> = {
     title: 'nth:geometric?',
     category: 'Number Theory',
     description: 'Checks if a number is in the geometric sequence.',
-    linkName: 'c-colon-geometric',
+    linkName: 'nth-colon-geometric-question',
     returns: {
       type: 'boolean',
     },
@@ -113,13 +113,13 @@ export const geometricReference: NumberTheorySequenceReference<'geometric'> = {
         type: 'number',
         description: 'The common ratio of the sequence.',
       },
-      number: {
+      n: {
         type: 'number',
         description: 'The number to check.',
       },
     },
     variants: [
-      { argumentNames: ['start', 'ratio', 'number'] },
+      { argumentNames: ['start', 'ratio', 'n'] },
     ],
     examples: [
       'nth:geometric?(1, 2, 1)',

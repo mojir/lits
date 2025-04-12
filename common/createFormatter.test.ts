@@ -9,7 +9,7 @@ describe('textFormatter', () => {
     const input = '***Hello***, **world**!'
     const output = formatter(input)
     expect(output).toBe(
-      `<span ${styles('italic')}>Hello</span>, <span ${styles('font-bold')}>world</span>!`,
+      `<span ${styles('italic')}>Hello</span>, <span ${styles('text-color-gray-300')}>world</span>!`,
     )
   })
 })

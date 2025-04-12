@@ -75,3 +75,7 @@ export const builtin: Builtin = {
 export const normalExpressionKeys = Object.keys(normalExpressions)
 export const specialExpressionKeys = Object.keys(specialExpressionTypes)
 export const specialExpressionNameSet = new Set(specialExpressionKeys)
+
+// TODO, remove
+// eslint-disable-next-line no-console
+console.log('builtin', [...specialExpressionKeys, ...normalExpressionKeys].length)

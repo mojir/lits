@@ -5,7 +5,7 @@ export const perfectCubeReference: NumberTheorySequenceReference<'perfect-cube'>
     title: 'nth:perfect-cube-seq',
     category: 'Number Theory',
     description: 'Generates the perfect cube numbers up to a specified length.',
-    linkName: 'c-colon-perfect-cube-seq',
+    linkName: 'nth-colon-perfect-cube-seq',
     returns: {
       type: 'integer',
       array: true,
@@ -28,7 +28,7 @@ export const perfectCubeReference: NumberTheorySequenceReference<'perfect-cube'>
     title: 'nth:perfect-cube-take-while',
     category: 'Number Theory',
     description: 'Generates the perfect cube numbers while a condition is met.',
-    linkName: 'c-colon-perfect-cube-take-while',
+    linkName: 'nth-colon-perfect-cube-take-while',
     returns: {
       type: 'integer',
       array: true,
@@ -50,7 +50,7 @@ export const perfectCubeReference: NumberTheorySequenceReference<'perfect-cube'>
     title: 'nth:perfect-cube-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the perfect cube numbers.',
-    linkName: 'c-colon-perfect-cube-nth',
+    linkName: 'nth-colon-perfect-cube-nth',
     returns: {
       type: 'integer',
     },
@@ -72,7 +72,7 @@ export const perfectCubeReference: NumberTheorySequenceReference<'perfect-cube'>
     title: 'nth:perfect-cube?',
     category: 'Number Theory',
     description: 'Checks if a number is in the perfect cube numbers.',
-    linkName: 'c-colon-perfect-cube?',
+    linkName: 'nth-colon-perfect-cube-question',
     returns: {
       type: 'boolean',
     },

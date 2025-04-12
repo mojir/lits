@@ -5,7 +5,7 @@ export const perfectSquareReference: NumberTheorySequenceReference<'perfect-squa
     title: 'nth:perfect-square-seq',
     category: 'Number Theory',
     description: 'Generates the perfect square numbers up to a specified length.',
-    linkName: 'c-colon-perfect-square-seq',
+    linkName: 'nth-colon-perfect-square-seq',
     returns: {
       type: 'integer',
       array: true,
@@ -28,7 +28,7 @@ export const perfectSquareReference: NumberTheorySequenceReference<'perfect-squa
     title: 'nth:perfect-square-take-while',
     category: 'Number Theory',
     description: 'Generates the perfect square numbers while a condition is met.',
-    linkName: 'c-colon-perfect-square-take-while',
+    linkName: 'nth-colon-perfect-square-take-while',
     returns: {
       type: 'integer',
       array: true,
@@ -50,7 +50,7 @@ export const perfectSquareReference: NumberTheorySequenceReference<'perfect-squa
     title: 'nth:perfect-square-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the perfect square numbers.',
-    linkName: 'c-colon-perfect-square-nth',
+    linkName: 'nth-colon-perfect-square-nth',
     returns: {
       type: 'integer',
     },
@@ -72,7 +72,7 @@ export const perfectSquareReference: NumberTheorySequenceReference<'perfect-squa
     title: 'nth:perfect-square?',
     category: 'Number Theory',
     description: 'Checks if a number is a perfect square.',
-    linkName: 'c-colon-perfect-square',
+    linkName: 'nth-colon-perfect-square-question',
     returns: {
       type: 'boolean',
     },

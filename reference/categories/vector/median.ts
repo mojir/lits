@@ -27,7 +27,7 @@ export const medianReference: VectorReductionReference<'median'> = {
   'vec:moving-median': {
     title: 'vec:moving-median',
     category: 'Vector',
-    description: 'Returns the `moving median` of the `vector` with a given window size.',
+    description: 'Returns the **moving median` of the `vector** with a given window size.',
     linkName: 'vec-colon-moving-median',
     returns: {
       type: 'vector',
@@ -35,7 +35,7 @@ export const medianReference: VectorReductionReference<'median'> = {
     args: {
       vector: {
         type: 'vector',
-        description: 'The `vector` to calculate the `moving median` of.',
+        description: 'The `vector` to calculate the **moving median** of.',
       },
       windowSize: {
         type: 'integer',
@@ -48,51 +48,51 @@ export const medianReference: VectorReductionReference<'median'> = {
     ],
     examples: [
       'vec:moving-median([1, 2, 3, 4, 5], 3)',
-      'vec:moving-median([1, 2, 3, 4, 5], 10)',
+      'vec:moving-median([1, 2, 3, 4, 5], 5)',
     ],
   },
   'vec:centered-moving-median': {
     title: 'vec:centered-moving-median',
     category: 'Vector',
-    description: 'Returns the `centered moving median` of the `vector` with a given window size.',
+    description: 'Returns the **centered moving median` of the `vector** with a given window size.',
     linkName: 'vec-colon-centered-moving-median',
     returns: {
-      type: 'vector',
+      type: 'array',
     },
     args: {
       vector: {
         type: 'vector',
-        description: 'The `vector` to calculate the `centered moving median` of.',
+        description: 'The `vector` to calculate the **centered moving median** of.',
       },
       windowSize: {
         type: 'integer',
         description: 'The size of the centered moving window.',
       },
-      paddingValue: {
+      leftPadding: {
         type: 'number',
-        description: 'Optional value to use for padding. Default is 0.',
+        description: 'Optional value to use for padding. Default is `null`.',
       },
-      rightPaddingValue: {
+      rightPadding: {
         type: 'number',
-        description: 'The value to use for right padding. Default is the same as paddingValue.',
+        description: 'Optional value to use for right padding. Default is `null`.',
       },
       ...getOperatorArgs('vector', 'integer'),
     },
     variants: [
       { argumentNames: ['vector', 'windowSize'] },
-      { argumentNames: ['vector', 'windowSize', 'paddingValue'] },
-      { argumentNames: ['vector', 'windowSize', 'paddingValue', 'rightPaddingValue'] },
+      { argumentNames: ['vector', 'windowSize', 'leftPadding'] },
+      { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
       'vec:centered-moving-median([1, 2, 3, 4, 5], 3)',
+      'vec:centered-moving-median([1, 2, 3, 4, 5], 3, 0, 10)',
       'vec:centered-moving-median([1, 2, 3, 4, 5], 3, 10)',
-      'vec:centered-moving-median([1, 2, 3, 4, 5], 10)',
     ],
   },
   'vec:running-median': {
     title: 'vec:running-median',
     category: 'Vector',
-    description: 'Returns the `running median` of the `vector`.',
+    description: 'Returns the **running median` of the `vector**.',
     linkName: 'vec-colon-running-median',
     returns: {
       type: 'vector',
@@ -100,7 +100,7 @@ export const medianReference: VectorReductionReference<'median'> = {
     args: {
       vector: {
         type: 'vector',
-        description: 'The `vector` to calculate the `running median` of.',
+        description: 'The `vector` to calculate the **running median** of.',
       },
     },
     variants: [

@@ -5,7 +5,7 @@ export const golombReference: NumberTheorySequenceReference<'golomb'> = {
     title: 'nth:golomb-seq',
     category: 'Number Theory',
     description: 'Generates the Golomb sequence up to a specified length.',
-    linkName: 'c-colon-golomb-seq',
+    linkName: 'nth-colon-golomb-seq',
     returns: {
       type: 'integer',
       array: true,
@@ -28,7 +28,7 @@ export const golombReference: NumberTheorySequenceReference<'golomb'> = {
     title: 'nth:golomb-take-while',
     category: 'Number Theory',
     description: 'Generates the Golomb sequence while a condition is met.',
-    linkName: 'c-colon-golomb-take-while',
+    linkName: 'nth-colon-golomb-take-while',
     returns: {
       type: 'integer',
       array: true,
@@ -50,7 +50,7 @@ export const golombReference: NumberTheorySequenceReference<'golomb'> = {
     title: 'nth:golomb-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Golomb sequence.',
-    linkName: 'c-colon-golomb-nth',
+    linkName: 'nth-colon-golomb-nth',
     returns: {
       type: 'integer',
     },
@@ -72,7 +72,7 @@ export const golombReference: NumberTheorySequenceReference<'golomb'> = {
     title: 'nth:golomb?',
     category: 'Number Theory',
     description: 'Checks if a number is in the Golomb sequence.',
-    linkName: 'c-colon-golomb',
+    linkName: 'nth-colon-golomb-question',
     returns: {
       type: 'boolean',
     },

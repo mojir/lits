@@ -592,7 +592,7 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
     title: 'vector?',
     category: 'Predicate',
     description: 'Checks if a value is a `vector`. A `vector` is an array of `numbers`.',
-    linkName: 'vector-question-mark',
+    linkName: 'vector-question',
     returns: {
       type: 'boolean',
     },
@@ -615,7 +615,7 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
     title: 'matrix?',
     category: 'Predicate',
     description: 'Checks if a value is a `matrix`. A `matrix` is an array of arrays of `numbers`.',
-    linkName: 'matrix-question-mark',
+    linkName: 'matrix-question',
     returns: {
       type: 'boolean',
     },
