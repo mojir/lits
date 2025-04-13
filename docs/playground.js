@@ -2429,9 +2429,9 @@ var Playground = (function (exports) {
         grids.add(grid);
         return true;
     }
-    function assertGrid(table, sourceCodeInfo) {
-        if (!isGrid(table)) {
-            throw new LitsError("Expected a grid, but got ".concat(table), sourceCodeInfo);
+    function assertGrid(grid, sourceCodeInfo) {
+        if (!isGrid(grid)) {
+            throw new LitsError("Expected a grid, but got ".concat(grid), sourceCodeInfo);
         }
     }
     function isMatrix(matrix) {
@@ -2479,6 +2479,23 @@ var Playground = (function (exports) {
         if (!isMatrix(matrix)) {
             throw new LitsError("Expected a matrix, but got ".concat(matrix), sourceCodeInfo);
         }
+    }
+    function assertSquareMatrix(matrix, sourceCodeInfo) {
+        if (!isMatrix(matrix)) {
+            throw new LitsError("Expected a matrix, but got ".concat(matrix), sourceCodeInfo);
+        }
+        if (matrix.length !== matrix[0].length) {
+            throw new LitsError("Expected square matrix, but got ".concat(matrix.length, " and ").concat(matrix[0].length), sourceCodeInfo);
+        }
+    }
+    function isSquareMatrix(matrix) {
+        if (!isMatrix(matrix)) {
+            return false;
+        }
+        if (matrix.length !== matrix[0].length) {
+            return false;
+        }
+        return true;
     }
 
     function stringifyValue(value, html) {
@@ -6326,23 +6343,23 @@ var Playground = (function (exports) {
      */
     function fromArray(flatArray, rows) {
         // Create the grid
-        var table = [];
+        var grid = [];
         var cols = flatArray.length / rows;
         // Reshape the flat array into rows and columns
         for (var i = 0; i < rows; i++) {
             var start = i * cols;
             var end = start + cols;
-            table.push(flatArray.slice(start, end));
+            grid.push(flatArray.slice(start, end));
         }
-        return table;
+        return grid;
     }
 
-    function transpose(table) {
+    function transpose(grid) {
         var result = [];
-        for (var i = 0; i < table[0].length; i += 1) {
+        for (var i = 0; i < grid[0].length; i += 1) {
             var row = [];
-            for (var j = 0; j < table.length; j += 1) {
-                row.push(table[j][i]);
+            for (var j = 0; j < grid.length; j += 1) {
+                row.push(grid[j][i]);
             }
             result.push(row);
         }
@@ -8179,6 +8196,111 @@ var Playground = (function (exports) {
         }
     }
 
+    /**
+     * Performs Gauss-Jordan elimination on a matrix, transforming it to reduced row echelon form
+     *
+     * @param matrix - The input matrix
+     * @returns A tuple containing the reduced row echelon form matrix and the rank
+     */
+    function gaussJordanElimination(matrix) {
+        var _a;
+        // Create a copy of the matrix to avoid modifying the original
+        var m = matrix.map(function (row) { return __spreadArray([], __read(row), false); });
+        var rows = m.length;
+        var cols = m[0].length;
+        // Tolerance for considering a value as zero
+        var EPSILON = 1e-10;
+        var rank = 0;
+        var rowsProcessed = 0;
+        // Row reduction to reduced row echelon form
+        for (var col = 0; col < cols; col++) {
+            // Find the pivot
+            var pivotRow = -1;
+            for (var row = rowsProcessed; row < rows; row++) {
+                if (Math.abs(m[row][col]) > EPSILON) {
+                    pivotRow = row;
+                    break;
+                }
+            }
+            if (pivotRow === -1)
+                continue; // No pivot in this column
+            // Increase rank
+            rank += 1;
+            // Swap rows
+            if (pivotRow !== rowsProcessed) {
+                _a = __read([m[rowsProcessed], m[pivotRow]], 2), m[pivotRow] = _a[0], m[rowsProcessed] = _a[1];
+            }
+            // Get the pivot value
+            var pivotValue = m[rowsProcessed][col];
+            // Normalize the pivot row (always, for RREF)
+            for (var j = col; j < cols; j++) {
+                m[rowsProcessed][j] /= pivotValue;
+            }
+            // Eliminate above and below (full Gauss-Jordan)
+            for (var row = 0; row < rows; row++) {
+                if (row !== rowsProcessed && Math.abs(m[row][col]) > EPSILON) {
+                    var factor = m[row][col];
+                    for (var j = col; j < cols; j++) {
+                        m[row][j] -= factor * m[rowsProcessed][j];
+                    }
+                }
+            }
+            rowsProcessed++;
+            if (rowsProcessed === rows)
+                break;
+        }
+        return [m, rank];
+    }
+
+    /**
+     * Solves a system of linear equations Ax = b
+     *
+     * @param A - The coefficient matrix
+     * @param b - The constant vector
+     * @returns The solution vector x, or null if no unique solution exists
+     */
+    function solve(A, b) {
+        var n = A.length;
+        // Create augmented matrix [A|b]
+        var augmented = A.map(function (row, i) { return __spreadArray(__spreadArray([], __read(row), false), [b[i]], false); });
+        // Convert to row echelon form using your existing function
+        var _a = __read(gaussJordanElimination(augmented), 1), echelon = _a[0];
+        // Check if the system has a unique solution
+        for (var i = 0; i < n; i += 1) {
+            if (Math.abs(echelon[i][i]) < 1e-10) {
+                return null; // No unique solution
+            }
+        }
+        // Back substitution
+        var x = Array.from({ length: n }, function () { return 0; });
+        for (var i = n - 1; i >= 0; i--) {
+            var sum = 0;
+            for (var j = i + 1; j < n; j++) {
+                sum += echelon[i][j] * x[j];
+            }
+            x[i] = (echelon[i][n] - sum) / echelon[i][i];
+        }
+        return x;
+    }
+
+    // Assuming a matrix is represented as a 2D array
+    function norm1(matrix) {
+        var numRows = matrix.length;
+        var numCols = matrix[0].length;
+        var maxColSum = 0;
+        // Iterate through each column
+        for (var j = 0; j < numCols; j += 1) {
+            var colSum = 0;
+            // Sum the absolute values of all elements in this column
+            for (var i = 0; i < numRows; i += 1) {
+                colSum += Math.abs(matrix[i][j]);
+            }
+            // Update the maximum column sum if necessary
+            maxColSum = Math.max(maxColSum, colSum);
+        }
+        return maxColSum;
+    }
+
     var linearAlgebraNormalExpression = {
         'lin:dot': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -8640,6 +8762,76 @@ var Playground = (function (exports) {
             },
             paramCount: 3,
         },
+        'lin:rref': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), matrix = _b[0];
+                assertMatrix(matrix, sourceCodeInfo);
+                // Reduced Row Echelon Form (RREF)
+                var _c = __read(gaussJordanElimination(matrix), 1), rref = _c[0];
+                return rref;
+            },
+            paramCount: 1,
+        },
+        'lin:rank': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), matrix = _b[0];
+                assertMatrix(matrix, sourceCodeInfo);
+                var _c = __read(gaussJordanElimination(matrix), 2), result = _c[1];
+                return result;
+            },
+            paramCount: 1,
+        },
+        'lin:solve': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), matrix = _b[0], vector = _b[1];
+                assertSquareMatrix(matrix, sourceCodeInfo);
+                assertVector(vector, sourceCodeInfo);
+                if (matrix.length !== vector.length) {
+                    throw new LitsError("The number of rows in the matrix must be equal to the length of the vector, but got ".concat(matrix.length, " and ").concat(vector.length), sourceCodeInfo);
+                }
+                return solve(matrix, vector);
+            },
+            paramCount: 2,
+        },
+        // Frobenius norm
+        'lin:norm-frobenius': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), matrix = _b[0];
+                assertMatrix(matrix, sourceCodeInfo);
+                return Math.sqrt(matrix.reduce(function (sum, row) { return sum + row.reduce(function (rowSum, cell) { return rowSum + cell * cell; }, 0); }, 0));
+            },
+            paramCount: 1,
+        },
+        // 1-norm
+        'lin:norm-1': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), matrix = _b[0];
+                assertMatrix(matrix, sourceCodeInfo);
+                return norm1(matrix);
+            },
+            paramCount: 1,
+        },
+        // Infinity norm
+        'lin:norm-infinity': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), matrix = _b[0];
+                assertMatrix(matrix, sourceCodeInfo);
+                return matrix.reduce(function (max, row) { return Math.max(max, row.reduce(function (sum, cell) { return sum + Math.abs(cell); }, 0)); }, 0);
+            },
+            paramCount: 1,
+        },
+        // Max norm
+        'lin:norm-max': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), matrix = _b[0];
+                assertMatrix(matrix, sourceCodeInfo);
+                return matrix.reduce(function (maxVal, row) {
+                    var rowMax = row.reduce(function (max, val) { return Math.max(max, Math.abs(val)); }, 0);
+                    return Math.max(maxVal, rowMax);
+                }, 0);
+            },
+            paramCount: 1,
+        },
     };
 
     /**
@@ -8768,62 +8960,6 @@ var Playground = (function (exports) {
     }
 
     /**
-     * Performs Gauss-Jordan elimination on a matrix, transforming it to reduced row echelon form
-     *
-     * @param matrix - The input matrix
-     * @returns A tuple containing the reduced row echelon form matrix and the rank
-     */
-    function gaussJordanElimination(matrix) {
-        var _a;
-        // Create a copy of the matrix to avoid modifying the original
-        var m = matrix.map(function (row) { return __spreadArray([], __read(row), false); });
-        var rows = m.length;
-        var cols = m[0].length;
-        // Tolerance for considering a value as zero
-        var EPSILON = 1e-10;
-        var rank = 0;
-        var rowsProcessed = 0;
-        // Row reduction to reduced row echelon form
-        for (var col = 0; col < cols; col++) {
-            // Find the pivot
-            var pivotRow = -1;
-            for (var row = rowsProcessed; row < rows; row++) {
-                if (Math.abs(m[row][col]) > EPSILON) {
-                    pivotRow = row;
-                    break;
-                }
-            }
-            if (pivotRow === -1)
-                continue; // No pivot in this column
-            // Increase rank
-            rank += 1;
-            // Swap rows
-            if (pivotRow !== rowsProcessed) {
-                _a = __read([m[rowsProcessed], m[pivotRow]], 2), m[pivotRow] = _a[0], m[rowsProcessed] = _a[1];
-            }
-            // Get the pivot value
-            var pivotValue = m[rowsProcessed][col];
-            // Normalize the pivot row (always, for RREF)
-            for (var j = col; j < cols; j++) {
-                m[rowsProcessed][j] /= pivotValue;
-            }
-            // Eliminate above and below (full Gauss-Jordan)
-            for (var row = 0; row < rows; row++) {
-                if (row !== rowsProcessed && Math.abs(m[row][col]) > EPSILON) {
-                    var factor = m[row][col];
-                    for (var j = col; j < cols; j++) {
-                        m[row][j] -= factor * m[rowsProcessed][j];
-                    }
-                }
-            }
-            rowsProcessed++;
-            if (rowsProcessed === rows)
-                break;
-        }
-        return [m, rank];
-    }
-
-    /**
      * Calculate the inverse of a matrix using the adjugate method
      * @param matrix The input matrix
      * @returns The inverse matrix or null if the matrix is not invertible
@@ -8875,7 +9011,7 @@ var Playground = (function (exports) {
         for (var i = 0; i < rows; i++) {
             for (var j = 0; j < cols; j++) {
                 // If we find a non-zero element outside the band, return false
-                if (matrix[i][j] !== 0 && (j < i - lower || j > i + upper)) {
+                if (matrix[i][j] !== 0 && (i - j > lower || j - i > upper)) {
                     return false;
                 }
             }
@@ -8941,7 +9077,7 @@ var Playground = (function (exports) {
      * @param B The second input matrix (n x p)
      * @returns The result matrix C (m x p) where C = A × B
      */
-    function multiply(A, B) {
+    function matrixMultiply(A, B) {
         // Check if matrices can be multiplied
         if (A.length === 0 || B.length === 0 || A[0].length !== B.length) {
             throw new Error('Matrix dimensions do not match for multiplication');
@@ -8970,7 +9106,7 @@ var Playground = (function (exports) {
         // Calculate matrix transpose
         var transposed = transpose(matrix);
         // Check if matrix * transpose = Identity
-        var product = multiply(matrix, transposed);
+        var product = matrixMultiply(matrix, transposed);
         if (!product) {
             return false;
         }
@@ -9070,101 +9206,6 @@ var Playground = (function (exports) {
         return true;
     }
 
-    // Assuming a matrix is represented as a 2D array
-    function norm1(matrix) {
-        var numRows = matrix.length;
-        var numCols = matrix[0].length;
-        var maxColSum = 0;
-        // Iterate through each column
-        for (var j = 0; j < numCols; j += 1) {
-            var colSum = 0;
-            // Sum the absolute values of all elements in this column
-            for (var i = 0; i < numRows; i += 1) {
-                colSum += Math.abs(matrix[i][j]);
-            }
-            // Update the maximum column sum if necessary
-            maxColSum = Math.max(maxColSum, colSum);
-        }
-        return maxColSum;
-    }
-
-    function identity(number) {
-        var result = [];
-        for (var i = 0; i < number; i += 1) {
-            var row = [];
-            for (var j = 0; j < number; j += 1) {
-                row.push(i === j ? 1 : 0);
-            }
-            result.push(row);
-        }
-        return result;
-    }
-
-    /**
-     * Compute the nth power of a square matrix
-     *
-     * @param A - A square matrix
-     * @param n - The power to raise the matrix to
-     * @returns The matrix A raised to power n
-     */
-    function pow(A, n) {
-        var rows = A.length;
-        var result = identity(rows);
-        // Handle special cases
-        if (n === 0) {
-            return result;
-        }
-        if (n < 0) {
-            var inverseA = inverse(A);
-            if (!inverseA) {
-                throw new Error('Matrix is not invertible');
-            }
-            A = inverseA;
-            n = -n;
-        }
-        // Binary exponentiation method (faster than naive repeated multiplication)
-        var power = A.map(function (row) { return __spreadArray([], __read(row), false); }); // Create a deep copy of A
-        while (n > 0) {
-            if (n % 2 === 1) {
-                result = multiply(result, power);
-            }
-            power = multiply(power, power);
-            n = Math.floor(n / 2);
-        }
-        return result;
-    }
-
-    /**
-     * Solves a system of linear equations Ax = b
-     *
-     * @param A - The coefficient matrix
-     * @param b - The constant vector
-     * @returns The solution vector x, or null if no unique solution exists
-     */
-    function solve(A, b) {
-        var n = A.length;
-        // Create augmented matrix [A|b]
-        var augmented = A.map(function (row, i) { return __spreadArray(__spreadArray([], __read(row), false), [b[i]], false); });
-        // Convert to row echelon form using your existing function
-        var _a = __read(gaussJordanElimination(augmented), 1), echelon = _a[0];
-        // Check if the system has a unique solution
-        for (var i = 0; i < n; i += 1) {
-            if (Math.abs(echelon[i][i]) < 1e-10) {
-                return null; // No unique solution
-            }
-        }
-        // Back substitution
-        var x = Array.from({ length: n }, function () { return 0; });
-        for (var i = n - 1; i >= 0; i--) {
-            var sum = 0;
-            for (var j = i + 1; j < n; j++) {
-                sum += echelon[i][j] * x[j];
-            }
-            x[i] = (echelon[i][n] - sum) / echelon[i][i];
-        }
-        return x;
-    }
-
     /**
      * Calculates the trace of a square matrix.
      * The trace is defined as the sum of the elements on the main diagonal.
@@ -9176,237 +9217,14 @@ var Playground = (function (exports) {
         return matrix.reduce(function (sum, row, i) { return sum + row[i]; }, 0);
     }
 
-    function assertSquareMatrix(matrix, sourceCodeInfo) {
-        if (!isMatrix(matrix)) {
-            throw new LitsError("Expected a matrix, but got ".concat(matrix), sourceCodeInfo);
-        }
-        if (matrix.length !== matrix[0].length) {
-            throw new LitsError("Expected square matrix, but got ".concat(matrix.length, " and ").concat(matrix[0].length), sourceCodeInfo);
-        }
-    }
     var matrixNormalExpression = {
-        'm:~': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), m1 = _b[0], m2 = _b[1], _c = _b[2], epsilon = _c === void 0 ? 1e-10 : _c;
-                assertMatrix(m1, sourceCodeInfo);
-                assertMatrix(m2, sourceCodeInfo);
-                assertNumber(epsilon, sourceCodeInfo);
-                if (m1.length !== m2.length) {
-                    return false;
-                }
-                if (m1[0].length !== m2[0].length) {
-                    return false;
-                }
-                for (var i = 0; i < m1.length; i += 1) {
-                    for (var j = 0; j < m1[i].length; j += 1) {
-                        if (Math.abs(m1[i][j] - m2[i][j]) > epsilon) {
-                            return false;
-                        }
-                    }
-                }
-                return true;
-            },
-            paramCount: { min: 2, max: 3 },
-        },
-        'mat:scale': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), matrix = _b[0], scalar = _b[1];
-                assertMatrix(matrix, sourceCodeInfo);
-                assertNumber(scalar, sourceCodeInfo);
-                return matrix.map(function (row) { return row.map(function (cell) { return cell * scalar; }); });
-            },
-            paramCount: 2,
-        },
-        'm:+': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a), firstMatrix = _b[0], params = _b.slice(1);
-                assertMatrix(firstMatrix, sourceCodeInfo);
-                assertArray(params, sourceCodeInfo);
-                params.forEach(function (matrix) {
-                    assertMatrix(matrix, sourceCodeInfo);
-                    if (matrix.length !== firstMatrix.length) {
-                        throw new LitsError("All matrices must have the same number of rows, but got ".concat(firstMatrix.length, " and ").concat(matrix.length), sourceCodeInfo);
-                    }
-                    if (matrix[0].length !== firstMatrix[0].length) {
-                        throw new LitsError("All matrices must have the same number of columns, but got ".concat(firstMatrix[0].length, " and ").concat(matrix[0].length), sourceCodeInfo);
-                    }
-                });
-                if (params.length === 0) {
-                    return params[0];
-                }
-                var matrices = params;
-                var result = [];
-                var _loop_1 = function (i) {
-                    var row = [];
-                    var _loop_2 = function (j) {
-                        var sum = firstMatrix[i][j];
-                        matrices.forEach(function (matrix) {
-                            sum += matrix[i][j];
-                        });
-                        row.push(sum);
-                    };
-                    for (var j = 0; j < firstMatrix[i].length; j += 1) {
-                        _loop_2(j);
-                    }
-                    result.push(row);
-                };
-                for (var i = 0; i < firstMatrix.length; i += 1) {
-                    _loop_1(i);
-                }
-                return result;
-            },
-            paramCount: { min: 1 },
-        },
-        'm:-': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a), firstMatrix = _b[0], params = _b.slice(1);
-                assertMatrix(firstMatrix, sourceCodeInfo);
-                assertArray(params, sourceCodeInfo);
-                params.forEach(function (matrix) {
-                    assertMatrix(matrix, sourceCodeInfo);
-                    if (matrix.length !== firstMatrix.length) {
-                        throw new LitsError("All matrices must have the same number of rows, but got ".concat(firstMatrix.length, " and ").concat(matrix.length), sourceCodeInfo);
-                    }
-                    if (matrix[0].length !== firstMatrix[0].length) {
-                        throw new LitsError("All matrices must have the same number of columns, but got ".concat(firstMatrix[0].length, " and ").concat(matrix[0].length), sourceCodeInfo);
-                    }
-                });
-                if (params.length === 0) {
-                    var result_1 = [];
-                    for (var i = 0; i < firstMatrix.length; i += 1) {
-                        var row = [];
-                        for (var j = 0; j < firstMatrix[i].length; j += 1) {
-                            row.push(-firstMatrix[i][j]);
-                        }
-                        result_1.push(row);
-                    }
-                }
-                var matrices = params;
-                var result = [];
-                var _loop_3 = function (i) {
-                    var row = [];
-                    var _loop_4 = function (j) {
-                        var sum = firstMatrix[i][j];
-                        matrices.forEach(function (matrix) {
-                            sum -= matrix[i][j];
-                        });
-                        row.push(sum);
-                    };
-                    for (var j = 0; j < firstMatrix[i].length; j += 1) {
-                        _loop_4(j);
-                    }
-                    result.push(row);
-                };
-                for (var i = 0; i < firstMatrix.length; i += 1) {
-                    _loop_3(i);
-                }
-                return result;
-            },
-            paramCount: { min: 1 },
-        },
-        'm:*': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a), firstMatrix = _b[0], params = _b.slice(1);
-                assertMatrix(firstMatrix, sourceCodeInfo);
-                assertArray(params, sourceCodeInfo);
-                params.forEach(function (matrix) {
-                    assertMatrix(matrix, sourceCodeInfo);
-                    if (matrix.length !== firstMatrix.length) {
-                        throw new LitsError("All matrices must have the same number of rows, but got ".concat(firstMatrix.length, " and ").concat(matrix.length), sourceCodeInfo);
-                    }
-                    if (matrix[0].length !== firstMatrix[0].length) {
-                        throw new LitsError("All matrices must have the same number of columns, but got ".concat(firstMatrix[0].length, " and ").concat(matrix[0].length), sourceCodeInfo);
-                    }
-                });
-                if (params.length === 0) {
-                    return params[0];
-                }
-                var matrices = params;
-                var result = [];
-                var _loop_5 = function (i) {
-                    var row = [];
-                    var _loop_6 = function (j) {
-                        var prod = firstMatrix[i][j];
-                        matrices.forEach(function (matrix) {
-                            prod *= matrix[i][j];
-                        });
-                        row.push(prod);
-                    };
-                    for (var j = 0; j < firstMatrix[i].length; j += 1) {
-                        _loop_6(j);
-                    }
-                    result.push(row);
-                };
-                for (var i = 0; i < firstMatrix.length; i += 1) {
-                    _loop_5(i);
-                }
-                return result;
-            },
-            paramCount: { min: 1 },
-        },
-        'm:/': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a), firstMatrix = _b[0], params = _b.slice(1);
-                assertMatrix(firstMatrix, sourceCodeInfo);
-                assertArray(params, sourceCodeInfo);
-                params.forEach(function (matrix) {
-                    assertMatrix(matrix, sourceCodeInfo);
-                    if (matrix.length !== firstMatrix.length) {
-                        throw new LitsError("All matrices must have the same number of rows, but got ".concat(firstMatrix.length, " and ").concat(matrix.length), sourceCodeInfo);
-                    }
-                    if (matrix[0].length !== firstMatrix[0].length) {
-                        throw new LitsError("All matrices must have the same number of columns, but got ".concat(firstMatrix[0].length, " and ").concat(matrix[0].length), sourceCodeInfo);
-                    }
-                });
-                if (params.length === 0) {
-                    var result_2 = [];
-                    for (var i = 0; i < firstMatrix.length; i += 1) {
-                        var row = [];
-                        for (var j = 0; j < firstMatrix[i].length; j += 1) {
-                            row.push(1 / firstMatrix[i][j]);
-                        }
-                        result_2.push(row);
-                    }
-                }
-                var matrices = params;
-                var result = [];
-                var _loop_7 = function (i) {
-                    var row = [];
-                    var _loop_8 = function (j) {
-                        var prod = firstMatrix[i][j];
-                        matrices.forEach(function (matrix) {
-                            prod /= matrix[i][j];
-                        });
-                        row.push(prod);
-                    };
-                    for (var j = 0; j < firstMatrix[i].length; j += 1) {
-                        _loop_8(j);
-                    }
-                    result.push(row);
-                };
-                for (var i = 0; i < firstMatrix.length; i += 1) {
-                    _loop_7(i);
-                }
-                return result;
-            },
-            paramCount: { min: 1 },
-        },
-        'm:**': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), matrix = _b[0], power = _b[1];
-                assertSquareMatrix(matrix, sourceCodeInfo);
-                assertNumber(power, sourceCodeInfo, { integer: true });
-                return pow(matrix, power);
-            },
-            paramCount: 2,
-        },
-        'mat:dot': {
+        'mat:mul': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), matrix1 = _b[0], matrix2 = _b[1];
                 assertMatrix(matrix1, sourceCodeInfo);
                 assertMatrix(matrix2, sourceCodeInfo);
                 try {
-                    return multiply(matrix1, matrix2);
+                    return matrixMultiply(matrix1, matrix2);
                 }
                 catch (error) {
                     throw new LitsError("The number of columns in the first matrix must be equal to the number of rows in the second matrix, but got ".concat(matrix1[0].length, " and ").concat(matrix2.length), sourceCodeInfo);
@@ -9414,7 +9232,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'mat:determinant': {
+        'mat:det': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), matrix = _b[0];
                 assertSquareMatrix(matrix, sourceCodeInfo);
@@ -9422,7 +9240,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'mat:inverse': {
+        'mat:inv': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), matrix = _b[0];
                 assertSquareMatrix(matrix, sourceCodeInfo);
@@ -9434,7 +9252,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'mat:adjugate': {
+        'mat:adj': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), matrix = _b[0];
                 assertSquareMatrix(matrix, sourceCodeInfo);
@@ -9532,81 +9350,14 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'mat:singular?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), matrix = _b[0];
-                assertSquareMatrix(matrix, sourceCodeInfo);
-                return determinant(matrix) < 1e-10;
-            },
-            paramCount: 1,
-        },
-        'mat:rref': {
+        'mat:invertible?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), matrix = _b[0];
                 assertMatrix(matrix, sourceCodeInfo);
-                // Reduced Row Echelon Form (RREF)
-                var _c = __read(gaussJordanElimination(matrix), 1), rref = _c[0];
-                return rref;
-            },
-            paramCount: 1,
-        },
-        'mat:rank': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), matrix = _b[0];
-                assertMatrix(matrix, sourceCodeInfo);
-                var _c = __read(gaussJordanElimination(matrix), 2), result = _c[1];
-                return result;
-            },
-            paramCount: 1,
-        },
-        'mat:solve': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), matrix = _b[0], vector = _b[1];
-                assertSquareMatrix(matrix, sourceCodeInfo);
-                assertVector(vector, sourceCodeInfo);
-                if (matrix.length !== vector.length) {
-                    throw new LitsError("The number of rows in the matrix must be equal to the length of the vector, but got ".concat(matrix.length, " and ").concat(vector.length), sourceCodeInfo);
+                if (!isSquareMatrix(matrix)) {
+                    return false;
                 }
-                return solve(matrix, vector);
-            },
-            paramCount: 2,
-        },
-        // Frobenius norm
-        'mat:norm-frobenius': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), matrix = _b[0];
-                assertMatrix(matrix, sourceCodeInfo);
-                return Math.sqrt(matrix.reduce(function (sum, row) { return sum + row.reduce(function (rowSum, cell) { return rowSum + cell * cell; }, 0); }, 0));
-            },
-            paramCount: 1,
-        },
-        // 1-norm
-        'mat:norm-1': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), matrix = _b[0];
-                assertMatrix(matrix, sourceCodeInfo);
-                return norm1(matrix);
-            },
-            paramCount: 1,
-        },
-        // Infinity norm
-        'mat:norm-infinity': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), matrix = _b[0];
-                assertMatrix(matrix, sourceCodeInfo);
-                return matrix.reduce(function (max, row) { return Math.max(max, row.reduce(function (sum, cell) { return sum + Math.abs(cell); }, 0)); }, 0);
-            },
-            paramCount: 1,
-        },
-        // Max norm
-        'mat:norm-max': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), matrix = _b[0];
-                assertMatrix(matrix, sourceCodeInfo);
-                return matrix.reduce(function (maxVal, row) {
-                    var rowMax = row.reduce(function (max, val) { return Math.max(max, Math.abs(val)); }, 0);
-                    return Math.max(maxVal, rowMax);
-                }, 0);
+                return Math.abs(determinant(matrix)) > 1e-10;
             },
             paramCount: 1,
         },
@@ -9661,7 +9412,7 @@ var Playground = (function (exports) {
                 assertNumber(uband, sourceCodeInfo, { integer: true, nonNegative: true, lt: maxBand });
                 return isBanded(matrix, lband, uband);
             },
-            paramCount: 1,
+            paramCount: 3,
         },
     };
 

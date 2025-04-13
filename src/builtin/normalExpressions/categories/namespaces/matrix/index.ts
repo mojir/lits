@@ -1,14 +1,11 @@
 import { LitsError } from '../../../../../errors'
-import type { SourceCodeInfo } from '../../../../../tokenizer/token'
-import { assertMatrix, assertVector, isMatrix } from '../../../../../typeGuards/annotatedArrays'
-import { assertArray } from '../../../../../typeGuards/array'
+import { assertMatrix, assertSquareMatrix, assertVector, isSquareMatrix } from '../../../../../typeGuards/annotatedArrays'
 import { assertNumber } from '../../../../../typeGuards/number'
 import type { BuiltinNormalExpressions } from '../../../../interface'
 import { adjugate } from './helpers/adjugate'
 import { band } from './helpers/band'
 import { cofactor } from './helpers/cofactor'
 import { determinant } from './helpers/determinant'
-import { gaussJordanElimination } from './helpers/gaussJordanElimination'
 import { inverse } from './helpers/inverse'
 import { isBanded } from './helpers/isBanded'
 import { isDiagonal } from './helpers/isDiagonal'
@@ -17,29 +14,17 @@ import { isOrthogonal } from './helpers/isOrthogonal'
 import { isSquare } from './helpers/isSquare'
 import { isSymetric } from './helpers/isSymetric'
 import { isTriangular, isTriangularLower, isTriangularUpper } from './helpers/isTriangular'
+import { matrixMultiply } from './helpers/matrixMultiply'
 import { minor } from './helpers/minor'
-import { multiply } from './helpers/multiply'
-import { norm1 } from './helpers/norm1'
-import { pow } from './helpers/power'
-import { solve } from './helpers/solve'
 import { trace } from './helpers/trace'
 
-function assertSquareMatrix(matrix: unknown, sourceCodeInfo: SourceCodeInfo | undefined): asserts matrix is number[][] {
-  if (!isMatrix(matrix)) {
-    throw new LitsError(`Expected a matrix, but got ${matrix}`, sourceCodeInfo)
-  }
-  if (matrix.length !== matrix[0]!.length) {
-    throw new LitsError(`Expected square matrix, but got ${matrix.length} and ${matrix[0]!.length}`, sourceCodeInfo)
-  }
-}
-
 export const matrixNormalExpression: BuiltinNormalExpressions = {
-  'mat:dot': {
+  'mat:mul': {
     evaluate: ([matrix1, matrix2], sourceCodeInfo): number[][] => {
       assertMatrix(matrix1, sourceCodeInfo)
       assertMatrix(matrix2, sourceCodeInfo)
       try {
-        return multiply(matrix1, matrix2)
+        return matrixMultiply(matrix1, matrix2)
       }
       catch (error) {
         throw new LitsError(`The number of columns in the first matrix must be equal to the number of rows in the second matrix, but got ${matrix1[0]!.length} and ${matrix2.length}`, sourceCodeInfo)
@@ -47,14 +32,14 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'mat:determinant': {
+  'mat:det': {
     evaluate: ([matrix], sourceCodeInfo): number => {
       assertSquareMatrix(matrix, sourceCodeInfo)
       return determinant(matrix)
     },
     paramCount: 1,
   },
-  'mat:inverse': {
+  'mat:inv': {
     evaluate: ([matrix], sourceCodeInfo): number[][] => {
       assertSquareMatrix(matrix, sourceCodeInfo)
       const result = inverse(matrix)
@@ -65,7 +50,7 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'mat:adjugate': {
+  'mat:adj': {
     evaluate: ([matrix], sourceCodeInfo): number[][] => {
       assertSquareMatrix(matrix, sourceCodeInfo)
       return adjugate(matrix)
@@ -152,74 +137,13 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'mat:singular?': {
+  'mat:invertible?': {
     evaluate: ([matrix], sourceCodeInfo): boolean => {
-      assertSquareMatrix(matrix, sourceCodeInfo)
-      return determinant(matrix) < 1e-10
-    },
-    paramCount: 1,
-  },
-  'mat:rref': {
-    evaluate: ([matrix], sourceCodeInfo): number[][] => {
       assertMatrix(matrix, sourceCodeInfo)
-
-      // Reduced Row Echelon Form (RREF)
-      const [rref] = gaussJordanElimination(matrix)
-      return rref
-    },
-    paramCount: 1,
-  },
-  'mat:rank': {
-    evaluate: ([matrix], sourceCodeInfo): number => {
-      assertMatrix(matrix, sourceCodeInfo)
-      const [, result] = gaussJordanElimination(matrix)
-      return result
-    },
-    paramCount: 1,
-  },
-  'mat:solve': {
-    evaluate: ([matrix, vector], sourceCodeInfo): number[] | null => {
-      assertSquareMatrix(matrix, sourceCodeInfo)
-      assertVector(vector, sourceCodeInfo)
-      if (matrix.length !== vector.length) {
-        throw new LitsError(`The number of rows in the matrix must be equal to the length of the vector, but got ${matrix.length} and ${vector.length}`, sourceCodeInfo)
+      if (!isSquareMatrix(matrix)) {
+        return false
       }
-      return solve(matrix, vector)
-    },
-    paramCount: 2,
-  },
-  // Frobenius norm
-  'mat:norm-frobenius': {
-    evaluate: ([matrix], sourceCodeInfo): number => {
-      assertMatrix(matrix, sourceCodeInfo)
-      return Math.sqrt(matrix.reduce((sum, row) => sum + row.reduce((rowSum, cell) => rowSum + cell * cell, 0), 0))
-    },
-    paramCount: 1,
-  },
-  // 1-norm
-  'mat:norm-1': {
-    evaluate: ([matrix], sourceCodeInfo): number => {
-      assertMatrix(matrix, sourceCodeInfo)
-      return norm1(matrix)
-    },
-    paramCount: 1,
-  },
-  // Infinity norm
-  'mat:norm-infinity': {
-    evaluate: ([matrix], sourceCodeInfo): number => {
-      assertMatrix(matrix, sourceCodeInfo)
-      return matrix.reduce((max, row) => Math.max(max, row.reduce((sum, cell) => sum + Math.abs(cell), 0)), 0)
-    },
-    paramCount: 1,
-  },
-  // Max norm
-  'mat:norm-max': {
-    evaluate: ([matrix], sourceCodeInfo): number => {
-      assertMatrix(matrix, sourceCodeInfo)
-      return matrix.reduce((maxVal, row) => {
-        const rowMax = row.reduce((max, val) => Math.max(max, Math.abs(val)), 0)
-        return Math.max(maxVal, rowMax)
-      }, 0)
+      return Math.abs(determinant(matrix)) > 1e-10
     },
     paramCount: 1,
   },
@@ -270,6 +194,6 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
       assertNumber(uband, sourceCodeInfo, { integer: true, nonNegative: true, lt: maxBand })
       return isBanded(matrix, lband, uband)
     },
-    paramCount: 1,
+    paramCount: 3,
   },
 }

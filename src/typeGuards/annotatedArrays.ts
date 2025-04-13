@@ -121,3 +121,22 @@ export function assertMatrix(matrix: unknown, sourceCodeInfo: SourceCodeInfo | u
     throw new LitsError(`Expected a matrix, but got ${matrix}`, sourceCodeInfo)
   }
 }
+
+export function assertSquareMatrix(matrix: unknown, sourceCodeInfo: SourceCodeInfo | undefined): asserts matrix is number[][] {
+  if (!isMatrix(matrix)) {
+    throw new LitsError(`Expected a matrix, but got ${matrix}`, sourceCodeInfo)
+  }
+  if (matrix.length !== matrix[0]!.length) {
+    throw new LitsError(`Expected square matrix, but got ${matrix.length} and ${matrix[0]!.length}`, sourceCodeInfo)
+  }
+}
+
+export function isSquareMatrix(matrix: unknown): matrix is number[][] {
+  if (!isMatrix(matrix)) {
+    return false
+  }
+  if (matrix.length !== matrix[0]!.length) {
+    return false
+  }
+  return true
+}

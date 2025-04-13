@@ -1,7 +1,7 @@
 import { transpose } from '../../grid/transpose'
+import { matrixMultiply } from './matrixMultiply'
 import { isIdentity } from './isIdentity'
 import { isSquare } from './isSquare'
-import { multiply } from './multiply'
 
 export function isOrthogonal(matrix: number[][]): boolean {
   if (!isSquare(matrix)) {
@@ -12,7 +12,7 @@ export function isOrthogonal(matrix: number[][]): boolean {
   const transposed = transpose(matrix)
 
   // Check if matrix * transpose = Identity
-  const product = multiply(matrix, transposed)
+  const product = matrixMultiply(matrix, transposed)
   if (!product) {
     return false
   }

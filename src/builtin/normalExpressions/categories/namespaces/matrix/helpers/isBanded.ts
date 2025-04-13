@@ -16,7 +16,7 @@ export function isBanded(matrix: number[][], lower: number, upper: number): bool
   for (let i = 0; i < rows; i++) {
     for (let j = 0; j < cols; j++) {
       // If we find a non-zero element outside the band, return false
-      if (matrix[i]![j] !== 0 && (j < i - lower || j > i + upper)) {
+      if (matrix[i]![j] !== 0 && (i - j > lower || j - i > upper)) {
         return false
       }
     }

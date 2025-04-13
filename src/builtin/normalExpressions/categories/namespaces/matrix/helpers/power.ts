@@ -1,6 +1,6 @@
+import { matrixMultiply } from './matrixMultiply'
 import { identity } from './identity'
 import { inverse } from './inverse'
-import { multiply } from './multiply'
 
 /**
  * Compute the nth power of a square matrix
@@ -31,9 +31,9 @@ export function pow(A: number[][], n: number): number[][] {
 
   while (n > 0) {
     if (n % 2 === 1) {
-      result = multiply(result, power)
+      result = matrixMultiply(result, power)
     }
-    power = multiply(power, power)
+    power = matrixMultiply(power, power)
     n = Math.floor(n / 2)
   }
 

@@ -1,5 +1,5 @@
 import { LitsError } from '../../../../../errors'
-import { assertVector } from '../../../../../typeGuards/annotatedArrays'
+import { assertMatrix, assertSquareMatrix, assertVector } from '../../../../../typeGuards/annotatedArrays'
 import { assertNumber } from '../../../../../typeGuards/number'
 import type { BuiltinNormalExpressions } from '../../../../interface'
 import { calcMean } from '../vector/calcMean'
@@ -7,6 +7,9 @@ import { calcMedad } from '../vector/calcMedad'
 import { calcMedian } from '../vector/calcMedian'
 import { calcStdDev } from '../vector/calcStdDev'
 import { calcVariance } from '../vector/calcVariance'
+import { gaussJordanElimination } from './helpers.ts/gaussJordanElimination'
+import { solve } from './helpers.ts/solve'
+import { norm1 } from './helpers.ts/norm1'
 
 export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
   'lin:dot': {
@@ -518,5 +521,69 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
       return sum / (overlapLength * stdA * stdB)
     },
     paramCount: 3,
+  },
+  'lin:rref': {
+    evaluate: ([matrix], sourceCodeInfo): number[][] => {
+      assertMatrix(matrix, sourceCodeInfo)
+
+      // Reduced Row Echelon Form (RREF)
+      const [rref] = gaussJordanElimination(matrix)
+      return rref
+    },
+    paramCount: 1,
+  },
+  'lin:rank': {
+    evaluate: ([matrix], sourceCodeInfo): number => {
+      assertMatrix(matrix, sourceCodeInfo)
+      const [, result] = gaussJordanElimination(matrix)
+      return result
+    },
+    paramCount: 1,
+  },
+  'lin:solve': {
+    evaluate: ([matrix, vector], sourceCodeInfo): number[] | null => {
+      assertSquareMatrix(matrix, sourceCodeInfo)
+      assertVector(vector, sourceCodeInfo)
+      if (matrix.length !== vector.length) {
+        throw new LitsError(`The number of rows in the matrix must be equal to the length of the vector, but got ${matrix.length} and ${vector.length}`, sourceCodeInfo)
+      }
+      return solve(matrix, vector)
+    },
+    paramCount: 2,
+  },
+  // Frobenius norm
+  'lin:norm-frobenius': {
+    evaluate: ([matrix], sourceCodeInfo): number => {
+      assertMatrix(matrix, sourceCodeInfo)
+      return Math.sqrt(matrix.reduce((sum, row) => sum + row.reduce((rowSum, cell) => rowSum + cell * cell, 0), 0))
+    },
+    paramCount: 1,
+  },
+  // 1-norm
+  'lin:norm-1': {
+    evaluate: ([matrix], sourceCodeInfo): number => {
+      assertMatrix(matrix, sourceCodeInfo)
+      return norm1(matrix)
+    },
+    paramCount: 1,
+  },
+  // Infinity norm
+  'lin:norm-infinity': {
+    evaluate: ([matrix], sourceCodeInfo): number => {
+      assertMatrix(matrix, sourceCodeInfo)
+      return matrix.reduce((max, row) => Math.max(max, row.reduce((sum, cell) => sum + Math.abs(cell), 0)), 0)
+    },
+    paramCount: 1,
+  },
+  // Max norm
+  'lin:norm-max': {
+    evaluate: ([matrix], sourceCodeInfo): number => {
+      assertMatrix(matrix, sourceCodeInfo)
+      return matrix.reduce((maxVal, row) => {
+        const rowMax = row.reduce((max, val) => Math.max(max, Math.abs(val)), 0)
+        return Math.max(maxVal, rowMax)
+      }, 0)
+    },
+    paramCount: 1,
   },
 }
