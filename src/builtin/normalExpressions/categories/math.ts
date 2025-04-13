@@ -228,7 +228,29 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: {},
   },
-
+  '~': {
+    evaluate: (params, sourceCodeInfo): boolean => {
+      const [operation, operands] = getNumberVectorOrMatrixOperation([params[0], params[1]], sourceCodeInfo)
+      const eplsilon = params[2] ?? 1e-10
+      assertNumber(eplsilon, sourceCodeInfo, { positive: true, finite: true })
+      if (operation === 'number') {
+        const [first, second] = operands
+        return Math.abs(first! - second!) < eplsilon
+      }
+      else if (operation === 'vector') {
+        const firstVector = operands[0]!
+        const secondVector = operands[1]!
+        return firstVector.every((val, i) => Math.abs(val - secondVector[i]!) < eplsilon)
+      }
+      else {
+        const firstMatrix = operands[0]!
+        const secondMatrix = operands[1]!
+        return firstMatrix.every((row, i) => row.every((val, j) => Math.abs(val - secondMatrix[i]![j]!) < eplsilon))
+      }
+    },
+    paramCount: { min: 2, max: 3 },
+    aliases: ['≈'],
+  },
   'quot': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
       const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)

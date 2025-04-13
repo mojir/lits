@@ -26,6 +26,8 @@ const binaryOperators = [
   '=', // equal
   '!=', // not equal
   '≠', // not equal
+  '~', // approximate
+  '≈', // approximate
 
   '&', // bitwise AND
   'xor', // bitwise XOR

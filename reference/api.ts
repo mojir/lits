@@ -82,6 +82,7 @@ export const api = {
     '-',
     '*',
     '/',
+    '~',
     'mod',
     'rem',
     'quot',
@@ -180,6 +181,7 @@ export const api = {
     'empty?',
     'not-empty?',
     'vector?',
+    'grid?',
     'matrix?',
   ] as const,
   regularExpression: [
@@ -216,7 +218,7 @@ export const api = {
     '<<',
     '>>',
     '>>>',
-    '~',
+    'bit-not',
     '&',
     'bit-and-not',
     '|',
@@ -243,6 +245,40 @@ export const api = {
     'assert-throws',
     'assert-throws-error',
     'assert-not-throws',
+  ] as const,
+  grid: [
+    'grid:every?',
+    'grid:some?',
+    'grid:every-row?',
+    'grid:some-row?',
+    'grid:every-col?',
+    'grid:some-col?',
+    'grid:row',
+    'grid:col',
+    'grid:shape',
+    'grid:generate',
+    'grid:reshape',
+    'grid:transpose',
+    'grid:slice',
+    'grid:slice-rows',
+    'grid:slice-cols',
+    'grid:splice-rows',
+    'grid:splice-cols',
+    'grid:concat-rows',
+    'grid:concat-cols',
+    'grid:map',
+    'grid:mapi',
+    'grid:reduce',
+    'grid:reducei',
+    'grid:push-rows',
+    'grid:unshift-rows',
+    'grid:pop-row',
+    'grid:shift-row',
+    'grid:push-cols',
+    'grid:unshift-cols',
+    'grid:pop-col',
+    'grid:shift-col',
+    'grid:from-array',
   ] as const,
   matrix: [
   ] as const,
@@ -448,6 +484,7 @@ export type SpecialExpressionsApiName = string
 export type StringApiName = typeof api.string[number]
 export type BitwiseApiName = typeof api.bitwise[number]
 export type AssertApiName = typeof api.assert[number]
+export type GridApiName = typeof api.grid[number]
 export type MatrixApiName = typeof api.matrix[number]
 export type NumberTheoryApiName = typeof api.numberTheory[number]
 export type VectorApiName = typeof api.vector[number]
@@ -467,6 +504,9 @@ export type NormalExpressionName =
   | BitwiseApiName
   | AssertApiName
   | MatrixApiName
+  | VectorApiName
+  | LinAlgApiName
+  | GridApiName
   | NumberTheoryApiName
 
 export type FunctionName =
@@ -491,6 +531,9 @@ const apiFunctionNames = [
   ...api.bitwise,
   ...api.assert,
   ...api.matrix,
+  ...api.vector,
+  ...api.linAlg,
+  ...api.grid,
   ...api.numberTheory,
 ] as const
 
@@ -523,6 +566,7 @@ export const categoryRecord = {
   'Vector': true,
   'Linear Algebra': true,
   'Matrix': true,
+  'Grid': true,
   'Number Theory': true,
   'Shorthand': true,
   'Datatype': true,

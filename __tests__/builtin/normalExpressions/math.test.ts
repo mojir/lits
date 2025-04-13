@@ -146,6 +146,23 @@ describe('math functions', () => {
     })
   })
 
+  describe('~', () => {
+    it('should check for approximate equality', () => {
+      expect(lits.run('~(0.1, 0.1)')).toBe(true)
+      expect(lits.run('~(0.1, 0.10000000000001)')).toBe(true)
+      expect(lits.run('~(0.1, 0.2)')).toBe(false)
+      expect(lits.run('~(0.1, 0.101, 0.1)')).toBe(true)
+
+      expect(lits.run('~([1, 2, 3], [1.00000000000001, 2.00000000000001, 3.00000000000001])')).toBe(true)
+      expect(lits.run('~([1, 2, 3], [1.1, 2.1, 3.1])')).toBe(false)
+
+      expect(lits.run('~([[1, 2, 3], [1, 2, 3]], [[1.01, 2.01, 3.01], [1.01, 2.01, 3.01]], 0.1)')).toBe(true)
+
+      expect(() => lits.run('~()')).toThrow()
+      expect(() => lits.run('~(1, 2, 3, 4)')).toThrow()
+    })
+  })
+
   describe('sqrt', () => {
     it('samples', () => {
       expect(() => lits.run('sqrt()')).toThrow()

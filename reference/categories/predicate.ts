@@ -636,4 +636,29 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
       'matrix?([[1, 2], [3]])',
     ],
   },
+  'grid?': {
+    title: 'grid?',
+    category: 'Predicate',
+    description: 'Checks if a `value` is a `grid`. A `grid` is an `array` of `arrays` where all inner `arrays` have the same length.',
+    linkName: 'grid-question',
+    returns: {
+      type: 'boolean',
+    },
+    args: {
+      value: {
+        type: 'any',
+        description: 'The value to check.',
+      },
+    },
+    variants: [
+      { argumentNames: ['value'] },
+    ],
+    examples: [
+      'grid?("1")',
+      'grid?(["1", 2, 3])',
+      'grid?([["1", 2], [3, 4]])',
+      'grid?([["1", 2], [3, "4"]])',
+      'grid?([["1", 2], [3]])',
+    ],
+  },
 }

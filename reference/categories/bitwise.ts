@@ -65,10 +65,10 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
       '>>>(-1, 10)',
     ],
   },
-  '~': {
-    title: '~',
+  'bit-not': {
+    title: 'bit-not',
     category: 'Bitwise',
-    linkName: '-tilde',
+    linkName: 'bit-not',
     returns: {
       type: 'integer',
     },
@@ -82,8 +82,8 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
     ],
     description: 'Returns bitwise `not` of $a.',
     examples: [
-      '~(0)',
-      '~(255)',
+      'bit-not(0)',
+      'bit-not(255)',
     ],
   },
   '&': {

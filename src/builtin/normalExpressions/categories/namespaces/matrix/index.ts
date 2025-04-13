@@ -4,25 +4,25 @@ import { assertMatrix, assertVector, isMatrix } from '../../../../../typeGuards/
 import { assertArray } from '../../../../../typeGuards/array'
 import { assertNumber } from '../../../../../typeGuards/number'
 import type { BuiltinNormalExpressions } from '../../../../interface'
-import { adjugate } from './adjugate'
-import { band } from './band'
-import { cofactor } from './cofactor'
-import { determinant } from './determinant'
-import { gaussJordanElimination } from './gaussJordanElimination'
-import { inverse } from './inverse'
-import { isBanded } from './isBanded'
-import { isDiagonal } from './isDiagonal'
-import { isIdentity } from './isIdentity'
-import { isOrthogonal } from './isOrthogonal'
-import { isSquare } from './isSquare'
-import { isSymetric } from './isSymetric'
-import { isTriangular, isTriangularLower, isTriangularUpper } from './isTriangular'
-import { minor } from './minor'
-import { multiply } from './multiply'
-import { norm1 } from './norm1'
-import { pow } from './power'
-import { solve } from './solve'
-import { trace } from './trace'
+import { adjugate } from './helpers/adjugate'
+import { band } from './helpers/band'
+import { cofactor } from './helpers/cofactor'
+import { determinant } from './helpers/determinant'
+import { gaussJordanElimination } from './helpers/gaussJordanElimination'
+import { inverse } from './helpers/inverse'
+import { isBanded } from './helpers/isBanded'
+import { isDiagonal } from './helpers/isDiagonal'
+import { isIdentity } from './helpers/isIdentity'
+import { isOrthogonal } from './helpers/isOrthogonal'
+import { isSquare } from './helpers/isSquare'
+import { isSymetric } from './helpers/isSymetric'
+import { isTriangular, isTriangularLower, isTriangularUpper } from './helpers/isTriangular'
+import { minor } from './helpers/minor'
+import { multiply } from './helpers/multiply'
+import { norm1 } from './helpers/norm1'
+import { pow } from './helpers/power'
+import { solve } from './helpers/solve'
+import { trace } from './helpers/trace'
 
 function assertSquareMatrix(matrix: unknown, sourceCodeInfo: SourceCodeInfo | undefined): asserts matrix is number[][] {
   if (!isMatrix(matrix)) {
@@ -34,190 +34,6 @@ function assertSquareMatrix(matrix: unknown, sourceCodeInfo: SourceCodeInfo | un
 }
 
 export const matrixNormalExpression: BuiltinNormalExpressions = {
-  'm:~': {
-    evaluate: ([m1, m2, epsilon = 1e-10], sourceCodeInfo): boolean => {
-      assertMatrix(m1, sourceCodeInfo)
-      assertMatrix(m2, sourceCodeInfo)
-      assertNumber(epsilon, sourceCodeInfo)
-      if (m1.length !== m2.length) {
-        return false
-      }
-      if (m1[0]!.length !== m2[0]!.length) {
-        return false
-      }
-      for (let i = 0; i < m1.length; i += 1) {
-        for (let j = 0; j < m1[i]!.length; j += 1) {
-          if (Math.abs(m1[i]![j]! - m2[i]![j]!) > epsilon) {
-            return false
-          }
-        }
-      }
-      return true
-    },
-    paramCount: { min: 2, max: 3 },
-  },
-  'mat:scale': {
-    evaluate: ([matrix, scalar], sourceCodeInfo): number[][] => {
-      assertMatrix(matrix, sourceCodeInfo)
-      assertNumber(scalar, sourceCodeInfo)
-      return matrix.map(row => row.map(cell => cell * scalar))
-    },
-    paramCount: 2,
-  },
-  'm:+': {
-    evaluate: ([firstMatrix, ...params], sourceCodeInfo): number[][] => {
-      assertMatrix(firstMatrix, sourceCodeInfo)
-      assertArray(params, sourceCodeInfo)
-      params.forEach((matrix) => {
-        assertMatrix(matrix, sourceCodeInfo)
-        if (matrix.length !== firstMatrix.length) {
-          throw new LitsError(`All matrices must have the same number of rows, but got ${firstMatrix.length} and ${matrix.length}`, sourceCodeInfo)
-        }
-        if (matrix[0]!.length !== firstMatrix[0]!.length) {
-          throw new LitsError(`All matrices must have the same number of columns, but got ${firstMatrix[0]!.length} and ${matrix[0]!.length}`, sourceCodeInfo)
-        }
-      })
-      if (params.length === 0) {
-        return params[0] as number[][]
-      }
-      const matrices = params as number[][][]
-      const result: number[][] = []
-      for (let i = 0; i < firstMatrix.length; i += 1) {
-        const row: number[] = []
-        for (let j = 0; j < firstMatrix[i]!.length; j += 1) {
-          let sum = firstMatrix[i]![j]!
-          matrices.forEach((matrix) => {
-            sum += matrix[i]![j]!
-          })
-          row.push(sum)
-        }
-        result.push(row)
-      }
-      return result
-    },
-    paramCount: { min: 1 },
-  },
-  'm:-': {
-    evaluate: ([firstMatrix, ...params], sourceCodeInfo): number[][] => {
-      assertMatrix(firstMatrix, sourceCodeInfo)
-      assertArray(params, sourceCodeInfo)
-      params.forEach((matrix) => {
-        assertMatrix(matrix, sourceCodeInfo)
-        if (matrix.length !== firstMatrix.length) {
-          throw new LitsError(`All matrices must have the same number of rows, but got ${firstMatrix.length} and ${matrix.length}`, sourceCodeInfo)
-        }
-        if (matrix[0]!.length !== firstMatrix[0]!.length) {
-          throw new LitsError(`All matrices must have the same number of columns, but got ${firstMatrix[0]!.length} and ${matrix[0]!.length}`, sourceCodeInfo)
-        }
-      })
-      if (params.length === 0) {
-        const result: number[][] = []
-        for (let i = 0; i < firstMatrix.length; i += 1) {
-          const row: number[] = []
-          for (let j = 0; j < firstMatrix[i]!.length; j += 1) {
-            row.push(-firstMatrix[i]![j]!)
-          }
-          result.push(row)
-        }
-      }
-      const matrices = params as number[][][]
-      const result: number[][] = []
-      for (let i = 0; i < firstMatrix.length; i += 1) {
-        const row: number[] = []
-        for (let j = 0; j < firstMatrix[i]!.length; j += 1) {
-          let sum = firstMatrix[i]![j]!
-          matrices.forEach((matrix) => {
-            sum -= matrix[i]![j]!
-          })
-          row.push(sum)
-        }
-        result.push(row)
-      }
-      return result
-    },
-    paramCount: { min: 1 },
-  },
-  'm:*': {
-    evaluate: ([firstMatrix, ...params], sourceCodeInfo): number[][] => {
-      assertMatrix(firstMatrix, sourceCodeInfo)
-      assertArray(params, sourceCodeInfo)
-      params.forEach((matrix) => {
-        assertMatrix(matrix, sourceCodeInfo)
-        if (matrix.length !== firstMatrix.length) {
-          throw new LitsError(`All matrices must have the same number of rows, but got ${firstMatrix.length} and ${matrix.length}`, sourceCodeInfo)
-        }
-        if (matrix[0]!.length !== firstMatrix[0]!.length) {
-          throw new LitsError(`All matrices must have the same number of columns, but got ${firstMatrix[0]!.length} and ${matrix[0]!.length}`, sourceCodeInfo)
-        }
-      })
-      if (params.length === 0) {
-        return params[0] as number[][]
-      }
-      const matrices = params as number[][][]
-      const result: number[][] = []
-      for (let i = 0; i < firstMatrix.length; i += 1) {
-        const row: number[] = []
-        for (let j = 0; j < firstMatrix[i]!.length; j += 1) {
-          let prod = firstMatrix[i]![j]!
-          matrices.forEach((matrix) => {
-            prod *= matrix[i]![j]!
-          })
-          row.push(prod)
-        }
-        result.push(row)
-      }
-      return result
-    },
-    paramCount: { min: 1 },
-  },
-  'm:/': {
-    evaluate: ([firstMatrix, ...params], sourceCodeInfo): number[][] => {
-      assertMatrix(firstMatrix, sourceCodeInfo)
-      assertArray(params, sourceCodeInfo)
-      params.forEach((matrix) => {
-        assertMatrix(matrix, sourceCodeInfo)
-        if (matrix.length !== firstMatrix.length) {
-          throw new LitsError(`All matrices must have the same number of rows, but got ${firstMatrix.length} and ${matrix.length}`, sourceCodeInfo)
-        }
-        if (matrix[0]!.length !== firstMatrix[0]!.length) {
-          throw new LitsError(`All matrices must have the same number of columns, but got ${firstMatrix[0]!.length} and ${matrix[0]!.length}`, sourceCodeInfo)
-        }
-      })
-      if (params.length === 0) {
-        const result: number[][] = []
-        for (let i = 0; i < firstMatrix.length; i += 1) {
-          const row: number[] = []
-          for (let j = 0; j < firstMatrix[i]!.length; j += 1) {
-            row.push(1 / firstMatrix[i]![j]!)
-          }
-          result.push(row)
-        }
-      }
-      const matrices = params as number[][][]
-      const result: number[][] = []
-      for (let i = 0; i < firstMatrix.length; i += 1) {
-        const row: number[] = []
-        for (let j = 0; j < firstMatrix[i]!.length; j += 1) {
-          let prod = firstMatrix[i]![j]!
-          matrices.forEach((matrix) => {
-            prod /= matrix[i]![j]!
-          })
-          row.push(prod)
-        }
-        result.push(row)
-      }
-      return result
-    },
-    paramCount: { min: 1 },
-  },
-  'm:**': {
-    evaluate: ([matrix, power], sourceCodeInfo): number[][] => {
-      assertSquareMatrix(matrix, sourceCodeInfo)
-      assertNumber(power, sourceCodeInfo, { integer: true })
-      return pow(matrix, power)
-    },
-    paramCount: 2,
-  },
   'mat:dot': {
     evaluate: ([matrix1, matrix2], sourceCodeInfo): number[][] => {
       assertMatrix(matrix1, sourceCodeInfo)

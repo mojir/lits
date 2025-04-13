@@ -13,7 +13,8 @@ import { functionalReference } from './categories/functional'
 import { mathReference } from './categories/math'
 import { miscReference } from './categories/misc'
 import { objectReference } from './categories/object'
-import { matrixReference } from './categories/matrix/matrix'
+import { matrixReference } from './categories/matrix'
+import { gridReference } from './categories/grid'
 import { vectorReference } from './categories/vector'
 import { linAlgReference } from './categories/linearAlgebra'
 import { predicateReference } from './categories/predicate'
@@ -109,6 +110,7 @@ export const normalExpressionReference: Record<NormalExpressionName, FunctionRef
   ...linAlgReference,
   ...matrixReference,
   ...numberTheoryReference,
+  ...gridReference,
 }
 
 Object.entries(normalExpressionReference).forEach(([key, obj]) => {

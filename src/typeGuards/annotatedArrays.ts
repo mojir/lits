@@ -1,7 +1,6 @@
 import { LitsError } from '../errors'
 import type { Any } from '../interface'
 import type { SourceCodeInfo } from '../tokenizer/token'
-import { isAny } from './lits'
 import { isNumber } from './number'
 
 const annotatedArrays = new WeakSet<unknown[]>()
@@ -53,7 +52,7 @@ export function assertNonEmptyVector(vector: unknown, sourceCodeInfo: SourceCode
   }
 }
 
-export function isGrid(grid: unknown): grid is Any[][] {
+export function isGrid(grid: unknown): grid is unknown[][] {
   if (!Array.isArray(grid)) {
     return false
   }
@@ -72,9 +71,6 @@ export function isGrid(grid: unknown): grid is Any[][] {
       return false
     }
     if (row.length !== nbrOfCols) {
-      return false
-    }
-    if (row.some(cell => isAny(cell))) {
       return false
     }
   }

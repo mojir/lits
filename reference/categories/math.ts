@@ -118,6 +118,31 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
       '[[1, 2, 3], [4, 5, 6]] / 2',
     ],
   },
+  '~': {
+    title: '~',
+    category: 'Math',
+    linkName: '-tilde',
+    returns: {
+      type: ['number', 'vector', 'matrix'],
+    },
+    args: {
+      ...mixedOperatorArgs,
+    },
+    variants: [
+      { argumentNames: ['a, b'] },
+    ],
+    description: 'The `~` checks for approximately equal values, returning `true` if the absolute difference between the two numbers is less than or equal to a small threshold (default: `1e-10`). It works on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it checks each element for approximate equality.',
+    examples: [
+      '~(0.1, 0.1)',
+      '~(0.1, 0.10000000000001)',
+      '~(0.1, 0.2)',
+      '~(0.1, 0.101, 0.1)',
+      '~([1, 2, 3], [1.00000000000001, 2.00000000000001, 3.00000000000001])',
+      '~([1, 2, 3], [1.1, 2.1, 3.1])',
+      '~([[1, 2, 3], [1, 2, 3]], [[1.01, 2.01, 3.01], [1.01, 2.01, 3.01]], 0.1)',
+    ],
+    aliases: ['≈'],
+  },
   'mod': {
     title: 'mod',
     category: 'Math',

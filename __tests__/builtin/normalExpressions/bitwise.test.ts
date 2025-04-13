@@ -3,14 +3,14 @@ import { Lits } from '../../../src/Lits/Lits'
 
 describe('predicates', () => {
   for (const lits of [new Lits(), new Lits({ debug: true })]) {
-    describe('~', () => {
+    describe('bit-not', () => {
       it('samples', () => {
-        expect(lits.run('~(0)')).toBe(-1)
-        expect(lits.run('~(255)')).toBe(-256)
-        expect(lits.run('~(0b1111)')).toBe(~Number('0b1111'))
-        expect(lits.run('~(0xffff)')).toBe(~Number('0xffff'))
-        expect(() => lits.run('~()')).toThrow()
-        expect(() => lits.run('~(1, 2)')).toThrow()
+        expect(lits.run('bit-not(0)')).toBe(-1)
+        expect(lits.run('bit-not(255)')).toBe(-256)
+        expect(lits.run('bit-not(0b1111)')).toBe(~Number('0b1111'))
+        expect(lits.run('bit-not(0xffff)')).toBe(~Number('0xffff'))
+        expect(() => lits.run('bit-not()')).toThrow()
+        expect(() => lits.run('bit-not(1, 2)')).toThrow()
       })
     })
     describe('<<', () => {

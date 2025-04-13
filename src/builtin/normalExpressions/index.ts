@@ -12,7 +12,7 @@ import { predicatesNormalExpression } from './categories/predicates'
 import { regexpNormalExpression } from './categories/regexp'
 import { stringNormalExpression } from './categories/string'
 import { functionalNormalExpression } from './categories/functional'
-import { tableNormalExpression } from './categories/namespaces/table'
+import { gridNormalExpression } from './categories/namespaces/grid'
 import { vectorNormalExpression } from './categories/namespaces/vector'
 import { linearAlgebraNormalExpression } from './categories/namespaces/linearAlgebra'
 import { matrixNormalExpression } from './categories/namespaces/matrix'
@@ -33,7 +33,7 @@ const expressions: BuiltinNormalExpressions = {
   ...functionalNormalExpression,
   ...vectorNormalExpression,
   ...linearAlgebraNormalExpression,
-  ...tableNormalExpression,
+  ...gridNormalExpression,
   ...matrixNormalExpression,
   ...combinatoricalNormalExpression,
 }
