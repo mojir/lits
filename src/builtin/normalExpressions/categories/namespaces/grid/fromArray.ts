@@ -7,14 +7,14 @@
  */
 export function fromArray(flatArray: unknown[], rows: number): unknown[][] {
   // Create the grid
-  const table: unknown[][] = []
+  const grid: unknown[][] = []
   const cols = flatArray.length / rows
   // Reshape the flat array into rows and columns
   for (let i = 0; i < rows; i++) {
     const start = i * cols
     const end = start + cols
-    table.push(flatArray.slice(start, end))
+    grid.push(flatArray.slice(start, end))
   }
 
-  return table
+  return grid
 }

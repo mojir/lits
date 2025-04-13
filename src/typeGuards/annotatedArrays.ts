@@ -79,9 +79,9 @@ export function isGrid(grid: unknown): grid is unknown[][] {
   return true
 }
 
-export function assertGrid(table: unknown, sourceCodeInfo: SourceCodeInfo | undefined): asserts table is Any[][] {
-  if (!isGrid(table)) {
-    throw new LitsError(`Expected a grid, but got ${table}`, sourceCodeInfo)
+export function assertGrid(grid: unknown, sourceCodeInfo: SourceCodeInfo | undefined): asserts grid is Any[][] {
+  if (!isGrid(grid)) {
+    throw new LitsError(`Expected a grid, but got ${grid}`, sourceCodeInfo)
   }
 }
 
