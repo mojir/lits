@@ -1,5 +1,5 @@
 import { LitsError } from '../../../../../errors'
-import { assertMatrix, assertSquareMatrix, assertVector } from '../../../../../typeGuards/annotatedArrays'
+import { assertMatrix, assertNonEmptyVector, assertSquareMatrix, assertVector } from '../../../../../typeGuards/annotatedArrays'
 import { assertNumber } from '../../../../../typeGuards/number'
 import type { BuiltinNormalExpressions } from '../../../../interface'
 import { calcMean } from '../vector/calcMean'
@@ -142,7 +142,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
   },
   'lin:magnitude': {
     evaluate: ([vector], sourceCodeInfo): number => {
-      assertVector(vector, sourceCodeInfo)
+      assertNonEmptyVector(vector, sourceCodeInfo)
 
       return Math.sqrt(vector.reduce((acc, val) => acc + val * val, 0))
     },
@@ -150,8 +150,8 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
   },
   'lin:angle': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
-      assertVector(vectorA, sourceCodeInfo)
-      assertVector(vectorB, sourceCodeInfo)
+      assertNonEmptyVector(vectorA, sourceCodeInfo)
+      assertNonEmptyVector(vectorB, sourceCodeInfo)
 
       if (vectorA.length !== vectorB.length) {
         throw new LitsError('Vectors must be of the same length', sourceCodeInfo)

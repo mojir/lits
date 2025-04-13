@@ -139,4 +139,33 @@ describe('linalg functions', () => {
       expect(lits.run('lin:normalize-log([42])')).toEqual([0])
     })
   })
+  describe('lin:magnitude', () => {
+    it('should calculate the magnitude of a vector', () => {
+      // Basic case
+      expect(lits.run('lin:magnitude([3, 4])')).toEqual(5)
+      // Case with negative numbers
+      expect(lits.run('lin:magnitude([-3, -4])')).toEqual(5)
+      // Case with mixed numbers
+      expect(lits.run('lin:magnitude([3, -4])')).toEqual(5)
+      // Case with single element vector
+      expect(lits.run('lin:magnitude([42])')).toEqual(42)
+      // Case with empty vector
+      expect(() => lits.run('lin:magnitude([])')).toThrowError(LitsError)
+    })
+  })
+  describe('lin:angle', () => {
+    it('should calculate the angle between two vectors', () => {
+      // Basic case
+      expect(lits.run('lin:angle([1, 0], [0, 1])')).toEqual(Math.PI / 2)
+      // Case with negative numbers
+      expect(lits.run('lin:angle([-1, 0], [0, -1])')).toEqual(Math.PI / 2)
+      // Case with mixed numbers
+      expect(lits.run('lin:angle([1, -1], [-1, 1])')).toBeCloseTo(Math.PI)
+      // Case with single element vectors
+      expect(lits.run('lin:angle([42], [1])')).toBeCloseTo(0)
+      expect(lits.run('lin:angle([42], [-1])')).toBeCloseTo(Math.PI)
+      // Case with empty vectors (should throw an error)
+      expect(() => lits.run('lin:angle([], [])')).toThrowError(LitsError)
+    })
+  })
 })
