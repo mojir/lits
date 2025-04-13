@@ -6628,6 +6628,84 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
+        'grid:flip-h': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), grid = _b[0];
+                assertGrid(grid, sourceCodeInfo);
+                return grid.map(function (row) { return row.reverse(); });
+            },
+            paramCount: 1,
+        },
+        'grid:flip-v': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), grid = _b[0];
+                assertGrid(grid, sourceCodeInfo);
+                return grid.reverse();
+            },
+            paramCount: 1,
+        },
+        'grid:rotate': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), grid = _b[0], times = _b[1];
+                assertGrid(grid, sourceCodeInfo);
+                assertNumber(times, sourceCodeInfo, { integer: true });
+                // Normalize times to be between 0 and 3
+                times = ((times % 4) + 4) % 4;
+                // If times is 0, return the original grid
+                if (times === 0 || grid.length === 0) {
+                    return grid.map(function (row) { return __spreadArray([], __read(row), false); });
+                }
+                var height = grid.length;
+                var width = grid[0].length;
+                var result;
+                switch (times) {
+                    case 1: // 90 degrees clockwise
+                        result = Array(width).fill(null).map(function () { return Array(height).fill(null); });
+                        for (var y = 0; y < height; y++) {
+                            for (var x = 0; x < width; x++) {
+                                result[x][height - 1 - y] = grid[y][x];
+                            }
+                        }
+                        break;
+                    case 2: // 180 degrees
+                        result = Array(height).fill(null).map(function () { return Array(width).fill(null); });
+                        for (var y = 0; y < height; y++) {
+                            for (var x = 0; x < width; x++) {
+                                result[height - 1 - y][width - 1 - x] = grid[y][x];
+                            }
+                        }
+                        break;
+                    case 3: // 270 degrees clockwise (or 90 degrees counter-clockwise)
+                        result = Array(width).fill(null).map(function () { return Array(height).fill(null); });
+                        for (var y = 0; y < height; y++) {
+                            for (var x = 0; x < width; x++) {
+                                result[width - 1 - x][y] = grid[y][x];
+                            }
+                        }
+                        break;
+                    default:
+                        result = grid.map(function (row) { return __spreadArray([], __read(row), false); });
+                }
+                return result;
+            },
+            paramCount: 2,
+        },
+        'grid:reverse-rows': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), grid = _b[0];
+                assertGrid(grid, sourceCodeInfo);
+                return grid.reverse();
+            },
+            paramCount: 1,
+        },
+        'grid:reverse-cols': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), grid = _b[0];
+                assertGrid(grid, sourceCodeInfo);
+                return grid.map(function (row) { return row.reverse(); });
+            },
+            paramCount: 1,
+        },
         'grid:slice': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), grid = _b[0], start = _b[1], end = _b[2];
@@ -8420,7 +8498,7 @@ var Playground = (function (exports) {
         'lin:magnitude': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
+                assertNonEmptyVector(vector, sourceCodeInfo);
                 return Math.sqrt(vector.reduce(function (acc, val) { return acc + val * val; }, 0));
             },
             paramCount: 1,
@@ -8428,8 +8506,8 @@ var Playground = (function (exports) {
         'lin:angle': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
+                assertNonEmptyVector(vectorA, sourceCodeInfo);
+                assertNonEmptyVector(vectorB, sourceCodeInfo);
                 if (vectorA.length !== vectorB.length) {
                     throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
                 }

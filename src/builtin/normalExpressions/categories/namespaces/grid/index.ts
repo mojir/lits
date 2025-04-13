@@ -174,6 +174,87 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
+  'grid:flip-h': {
+    evaluate: ([grid], sourceCodeInfo): Any[][] => {
+      assertGrid(grid, sourceCodeInfo)
+      return grid.map(row => row.reverse())
+    },
+    paramCount: 1,
+  },
+  'grid:flip-v': {
+    evaluate: ([grid], sourceCodeInfo): Any[][] => {
+      assertGrid(grid, sourceCodeInfo)
+      return grid.reverse()
+    },
+    paramCount: 1,
+  },
+  'grid:rotate': {
+    evaluate: ([grid, times], sourceCodeInfo): Any[][] => {
+      assertGrid(grid, sourceCodeInfo)
+      assertNumber(times, sourceCodeInfo, { integer: true })
+      // Normalize times to be between 0 and 3
+      times = ((times % 4) + 4) % 4
+
+      // If times is 0, return the original grid
+      if (times === 0 || grid.length === 0) {
+        return grid.map(row => [...row])
+      }
+
+      const height = grid.length
+      const width = grid[0]!.length
+
+      let result: Any[][]
+
+      switch (times) {
+        case 1: // 90 degrees clockwise
+          result = Array<Any>(width).fill(null).map(() => Array<Any>(height).fill(null))
+          for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+              result[x]![height - 1 - y] = grid[y]![x]!
+            }
+          }
+          break
+
+        case 2: // 180 degrees
+          result = Array<Any>(height).fill(null).map(() => Array<Any>(width).fill(null))
+          for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+              result[height - 1 - y]![width - 1 - x] = grid[y]![x]!
+            }
+          }
+          break
+
+        case 3: // 270 degrees clockwise (or 90 degrees counter-clockwise)
+          result = Array<Any>(width).fill(null).map(() => Array<Any>(height).fill(null))
+          for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+              result[width - 1 - x]![y] = grid[y]![x]!
+            }
+          }
+          break
+
+        default:
+          result = grid.map(row => [...row])
+      }
+
+      return result
+    },
+    paramCount: 2,
+  },
+  'grid:reverse-rows': {
+    evaluate: ([grid], sourceCodeInfo): Any[][] => {
+      assertGrid(grid, sourceCodeInfo)
+      return grid.reverse()
+    },
+    paramCount: 1,
+  },
+  'grid:reverse-cols': {
+    evaluate: ([grid], sourceCodeInfo): Any[][] => {
+      assertGrid(grid, sourceCodeInfo)
+      return grid.map(row => row.reverse())
+    },
+    paramCount: 1,
+  },
   'grid:slice': {
     evaluate: ([grid, start, end], sourceCodeInfo): Any[][] => {
       assertGrid(grid, sourceCodeInfo)

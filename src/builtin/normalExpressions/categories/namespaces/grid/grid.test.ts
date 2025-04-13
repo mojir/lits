@@ -332,4 +332,64 @@ describe('grid', () => {
       expect(() => lits.run('grid:from-array([1, 2, 3], 2)')).toThrowError(LitsError)
     })
   })
+  describe('grid:rotate', () => {
+    it('should rotate the grid', () => {
+      expect(lits.run(`grid:rotate(${exampleGrid1}, 1)`)).toEqual([
+        ['Kian', 'Nina', 'Albert'],
+        ['son', 'mother', 'father'],
+        [30, 20, 10],
+      ])
+      expect(lits.run(`grid:rotate(${exampleGrid1}, 2)`)).toEqual([
+        [30, 'son', 'Kian'],
+        [20, 'mother', 'Nina'],
+        [10, 'father', 'Albert'],
+      ])
+      expect(lits.run(`grid:rotate(${exampleGrid1}, 3)`)).toEqual([
+        [10, 20, 30],
+        ['father', 'mother', 'son'],
+        ['Albert', 'Nina', 'Kian'],
+      ])
+      expect(lits.run(`grid:rotate(${exampleGrid1}, 4)`)).toEqual([
+        ['Albert', 'father', 10],
+        ['Nina', 'mother', 20],
+        ['Kian', 'son', 30],
+      ])
+    })
+  })
+  describe('grid:flip-h', () => {
+    it('should flip the grid horizontally', () => {
+      expect(lits.run(`grid:flip-h(${exampleGrid1})`)).toEqual([
+        [10, 'father', 'Albert'],
+        [20, 'mother', 'Nina'],
+        [30, 'son', 'Kian'],
+      ])
+    })
+  })
+  describe('grid:flip-v', () => {
+    it('should flip the grid vertically', () => {
+      expect(lits.run(`grid:flip-v(${exampleGrid1})`)).toEqual([
+        ['Kian', 'son', 30],
+        ['Nina', 'mother', 20],
+        ['Albert', 'father', 10],
+      ])
+    })
+  })
+  describe('grid:reverse-rows', () => {
+    it('should reverse the rows of the grid', () => {
+      expect(lits.run(`grid:reverse-rows(${exampleGrid1})`)).toEqual([
+        ['Kian', 'son', 30],
+        ['Nina', 'mother', 20],
+        ['Albert', 'father', 10],
+      ])
+    })
+  })
+  describe('grid:reverse-cols', () => {
+    it('should reverse the columns of the grid', () => {
+      expect(lits.run(`grid:reverse-cols(${exampleGrid1})`)).toEqual([
+        [10, 'father', 'Albert'],
+        [20, 'mother', 'Nina'],
+        [30, 'son', 'Kian'],
+      ])
+    })
+  })
 })

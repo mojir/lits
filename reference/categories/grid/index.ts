@@ -273,6 +273,122 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
       `grid:transpose(${exampleGrid3})`,
     ],
   },
+  'grid:flip-h': {
+    title: 'grid:flip-h',
+    category: 'Grid',
+    linkName: 'grid-colon-flip-h',
+    returns: {
+      type: 'grid',
+    },
+    args: {
+      g: {
+        type: 'grid',
+        description: 'The grid to flip horizontally.',
+      },
+    },
+    variants: [
+      { argumentNames: ['g'] },
+    ],
+    description: 'Flips the grid `g` horizontally.',
+    examples: [
+      `grid:flip-h(${exampleGrid1})`,
+      `grid:flip-h(${exampleGrid2})`,
+      `grid:flip-h(${exampleGrid3})`,
+    ],
+  },
+  'grid:flip-v': {
+    title: 'grid:flip-v',
+    category: 'Grid',
+    linkName: 'grid-colon-flip-v',
+    returns: {
+      type: 'grid',
+    },
+    args: {
+      g: {
+        type: 'grid',
+        description: 'The grid to flip vertically.',
+      },
+    },
+    variants: [
+      { argumentNames: ['g'] },
+    ],
+    description: 'Flips the grid `g` vertically.',
+    examples: [
+      `grid:flip-v(${exampleGrid1})`,
+      `grid:flip-v(${exampleGrid2})`,
+      `grid:flip-v(${exampleGrid3})`,
+    ],
+  },
+  'grid:rotate': {
+    title: 'grid:rotate',
+    category: 'Grid',
+    linkName: 'grid-colon-rotate',
+    returns: {
+      type: 'grid',
+    },
+    args: {
+      ...getOperatorArgs('grid', 'integer'),
+    },
+    variants: [
+      { argumentNames: ['a', 'b'] },
+    ],
+    description: 'Rotates the grid `g` by the specified angle. The angle is given in terms of 90-degree rotations. Positive values rotate the grid clockwise, while negative values rotate it counterclockwise.',
+    examples: [
+      `grid:rotate(${exampleGrid3}, 1)`,
+      `grid:rotate(${exampleGrid3}, 2)`,
+      `grid:rotate(${exampleGrid3}, 3)`,
+      `grid:rotate(${exampleGrid3}, 4)`,
+      `grid:rotate(${exampleGrid3}, -1)`,
+      `grid:rotate(${exampleGrid3}, -2)`,
+      `grid:rotate(${exampleGrid3}, -3)`,
+    ],
+  },
+  'grid:reverse-rows': {
+    title: 'grid:reverse-rows',
+    category: 'Grid',
+    linkName: 'grid-colon-reverse-rows',
+    returns: {
+      type: 'grid',
+    },
+    args: {
+      g: {
+        type: 'grid',
+        description: 'The grid to reverse rows.',
+      },
+    },
+    variants: [
+      { argumentNames: ['g'] },
+    ],
+    description: 'Reverses the order of rows in the grid `g`.',
+    examples: [
+      `grid:reverse-rows(${exampleGrid1})`,
+      `grid:reverse-rows(${exampleGrid2})`,
+      `grid:reverse-rows(${exampleGrid3})`,
+    ],
+  },
+  'grid:reverse-cols': {
+    title: 'grid:reverse-cols',
+    category: 'Grid',
+    linkName: 'grid-colon-reverse-cols',
+    returns: {
+      type: 'grid',
+    },
+    args: {
+      g: {
+        type: 'grid',
+        description: 'The grid to reverse columns.',
+      },
+    },
+    variants: [
+      { argumentNames: ['g'] },
+    ],
+    description: 'Reverses the order of columns in the grid `g`.',
+    examples: [
+      `grid:reverse-cols(${exampleGrid1})`,
+      `grid:reverse-cols(${exampleGrid2})`,
+      `grid:reverse-cols(${exampleGrid3})`,
+    ],
+  },
   'grid:slice': {
     title: 'grid:slice',
     category: 'Grid',
