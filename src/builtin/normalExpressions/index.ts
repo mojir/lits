@@ -17,6 +17,7 @@ import { vectorNormalExpression } from './categories/namespaces/vector'
 import { linearAlgebraNormalExpression } from './categories/namespaces/linearAlgebra'
 import { matrixNormalExpression } from './categories/namespaces/matrix'
 import { combinatoricalNormalExpression } from './categories/namespaces/numberTheory'
+import { randomNormalExpression } from './categories/namespaces/random'
 
 const expressions: BuiltinNormalExpressions = {
   ...bitwiseNormalExpression,
@@ -36,6 +37,7 @@ const expressions: BuiltinNormalExpressions = {
   ...gridNormalExpression,
   ...matrixNormalExpression,
   ...combinatoricalNormalExpression,
+  ...randomNormalExpression,
 }
 
 const aliases: BuiltinNormalExpressions = {}

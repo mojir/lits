@@ -12472,7 +12472,294 @@ var Playground = (function (exports) {
         }
     }
 
-    var expressions = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, bitwiseNormalExpression), collectionNormalExpression), arrayNormalExpression), sequenceNormalExpression), mathNormalExpression), miscNormalExpression), assertNormalExpression), objectNormalExpression), predicatesNormalExpression), regexpNormalExpression), stringNormalExpression), functionalNormalExpression), vectorNormalExpression), linearAlgebraNormalExpression), gridNormalExpression), matrixNormalExpression), combinatoricalNormalExpression);
+    var randomNormalExpression = {
+        '!:random': {
+            evaluate: function () {
+                return Math.random();
+            },
+            paramCount: 0,
+        },
+        '!:random-int': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), min = _b[0], max = _b[1];
+                assertNumber(min, sourceCodeInfo, { integer: true });
+                assertNumber(max, sourceCodeInfo, { integer: true, gt: min });
+                return Math.floor(Math.random() * (max - min)) + min;
+            },
+            paramCount: 2,
+        },
+        '!:random-int-inclusive': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), min = _b[0], max = _b[1];
+                assertNumber(min, sourceCodeInfo, { integer: true });
+                assertNumber(max, sourceCodeInfo, { integer: true, gte: min });
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            },
+            paramCount: 2,
+        },
+        '!:random-float': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), min = _b[0], max = _b[1];
+                assertNumber(min, sourceCodeInfo);
+                assertNumber(max, sourceCodeInfo, { gt: min });
+                return Math.random() * (max - min) + min;
+            },
+            paramCount: 2,
+        },
+        '!:random-boolean': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), prob = _b[0];
+                var probability = prob !== null && prob !== void 0 ? prob : 0.5;
+                assertNumber(probability, sourceCodeInfo, { gte: 0, lte: 1 });
+                return Math.random() < probability;
+            },
+            paramCount: { min: 0, max: 1 },
+        },
+        '!:random-item': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), array = _b[0];
+                assertArray(array, sourceCodeInfo);
+                var index = Math.floor(Math.random() * array.length);
+                return asAny(array[index]);
+            },
+            paramCount: 1,
+        },
+        '!:random-sample': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), array = _b[0], n = _b[1];
+                assertArray(array, sourceCodeInfo);
+                assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true });
+                if (array.length === 0) {
+                    throw new LitsError('Cannot sample from an empty array.', sourceCodeInfo);
+                }
+                var result = [];
+                for (var i = 0; i < n; i++) {
+                    // Pick a random index from the array
+                    var randomIndex = Math.floor(Math.random() * array.length);
+                    // Add the randomly selected item to the result
+                    result.push(array[randomIndex]);
+                }
+                return result;
+            },
+            paramCount: 2,
+        },
+        '!:random-sample-unique': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), array = _b[0], n = _b[1];
+                assertArray(array, sourceCodeInfo);
+                assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true, lte: array.length });
+                if (array.length === 0) {
+                    throw new LitsError('Cannot sample from an empty array.', sourceCodeInfo);
+                }
+                var result = [];
+                var copyArray = __spreadArray([], __read(array), false);
+                for (var i = 0; i < n; i++) {
+                    // Pick a random index from the array
+                    var randomIndex = Math.floor(Math.random() * copyArray.length);
+                    // Add the randomly selected item to the result
+                    result.push(copyArray[randomIndex]);
+                    // Remove the used item from the copy array
+                    copyArray.splice(randomIndex, 1);
+                }
+                return result;
+            },
+            paramCount: 2,
+        },
+        '!:shuffle': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b;
+                var _c = __read(_a, 1), array = _c[0];
+                assertArray(array, sourceCodeInfo);
+                var shuffledArray = __spreadArray([], __read(array), false);
+                for (var i = shuffledArray.length - 1; i > 0; i--) {
+                    var j = Math.floor(Math.random() * (i + 1));
+                    _b = __read([shuffledArray[j], shuffledArray[i]], 2), shuffledArray[i] = _b[0], shuffledArray[j] = _b[1];
+                }
+                return shuffledArray;
+            },
+            paramCount: 1,
+        },
+        '!:random-normal': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), mean = _b[0], stdDev = _b[1];
+                assertNumber(mean, sourceCodeInfo);
+                assertNumber(stdDev, sourceCodeInfo, { gt: 0 });
+                var u1 = Math.random();
+                var u2 = Math.random();
+                var z0 = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
+                return z0 * stdDev + mean;
+            },
+            paramCount: 2,
+        },
+        '!:random-exponential': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), lambda = _b[0];
+                assertNumber(lambda, sourceCodeInfo, { gt: 0 });
+                var u = Math.random();
+                return -Math.log(u) / lambda;
+            },
+            paramCount: 1,
+        },
+        '!:random-binomial': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), n = _b[0], p = _b[1];
+                assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true });
+                assertNumber(p, sourceCodeInfo, { gte: 0, lte: 1 });
+                var k = 0;
+                for (var i = 0; i < n; i++) {
+                    if (Math.random() < p) {
+                        k++;
+                    }
+                }
+                return k;
+            },
+            paramCount: 2,
+        },
+        '!:random-poisson': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), lambda = _b[0];
+                assertNumber(lambda, sourceCodeInfo, { gt: 0 });
+                var L = Math.exp(-lambda);
+                var k = 0;
+                var p = 1;
+                do {
+                    k++;
+                    p *= Math.random();
+                } while (p > L);
+                return k - 1;
+            },
+            paramCount: 1,
+        },
+        '!:random-gamma': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), shape = _b[0], scale = _b[1];
+                assertNumber(shape, sourceCodeInfo, { gt: 0 });
+                assertNumber(scale, sourceCodeInfo, { gt: 0 });
+                return randomGamma(shape, scale);
+            },
+            paramCount: 2,
+        },
+        '!:random-pareto': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), alpha = _b[0];
+                assertNumber(alpha, sourceCodeInfo, { gt: 0 });
+                var u = Math.random();
+                return Math.pow((1 / u), (1 / alpha));
+            },
+            paramCount: 1,
+        },
+        '!:uuid': {
+            evaluate: function () {
+                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (char) {
+                    var random = Math.random() * 16 | 0;
+                    var value = char === 'x' ? random : (random & 0x3 | 0x8);
+                    return value.toString(16);
+                });
+            },
+            paramCount: 0,
+        },
+        '!:random-char': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), charSet = _b[0];
+                assertString(charSet, sourceCodeInfo);
+                if (charSet.length === 0) {
+                    throw new Error('Character set cannot be empty.');
+                }
+                var randomIndex = Math.floor(Math.random() * charSet.length);
+                return charSet[randomIndex];
+            },
+            paramCount: 1,
+        },
+        '!:random-string': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), length = _b[0], charSet = _b[1];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                assertString(charSet, sourceCodeInfo);
+                if (charSet.length === 0) {
+                    throw new Error('Character set cannot be empty.');
+                }
+                var result = '';
+                for (var i = 0; i < length; i++) {
+                    var randomIndex = Math.floor(Math.random() * charSet.length);
+                    result += charSet[randomIndex];
+                }
+                return result;
+            },
+            paramCount: 2,
+        },
+        '!:random-id': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), length = _b[0];
+                assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
+                var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                var result = '';
+                for (var i = 0; i < length; i++) {
+                    var randomIndex = Math.floor(Math.random() * chars.length);
+                    result += chars[randomIndex];
+                }
+                return result;
+            },
+            paramCount: 1,
+        },
+        '!:random-color': {
+            evaluate: function () {
+                var randomColor = Math.floor(Math.random() * 0x1000000).toString(16);
+                return "#".concat(randomColor.padStart(6, '0'));
+            },
+            paramCount: 0,
+        },
+    };
+    /**
+     * Generates a random number from a gamma distribution
+     * @param shape The shape parameter (alpha) - must be positive
+     * @param scale The scale parameter (beta) - must be positive
+     * @returns A random number following the gamma distribution
+     */
+    function randomGamma(shape, scale) {
+        if (scale === void 0) { scale = 1; }
+        // Input validation
+        if (shape <= 0 || scale <= 0) {
+            throw new Error('Shape and scale parameters must be positive');
+        }
+        // Special case for shape < 1
+        if (shape < 1) {
+            var d_1 = shape + 1.0 - 1.0 / 3.0;
+            return randomGamma(d_1, scale) * Math.pow(Math.random(), (1.0 / shape));
+        }
+        // Marsaglia and Tsang method for shape >= 1
+        var d = shape - 1.0 / 3.0;
+        var c = 1.0 / Math.sqrt(9.0 * d);
+        var x, v, u;
+        while (true) {
+            do {
+                x = randn(); // Standard normal random variable
+                v = 1.0 + c * x;
+            } while (v <= 0);
+            v = v * v * v;
+            u = Math.random();
+            if (u < 1.0 - 0.0331 * x * x * x * x) {
+                return scale * d * v;
+            }
+            if (Math.log(u) < 0.5 * x * x + d * (1.0 - v + Math.log(v))) {
+                return scale * d * v;
+            }
+        }
+    }
+    /**
+     * Helper function to generate standard normal random variables
+     * using Box-Muller transform
+     */
+    function randn() {
+        var u = 0;
+        var v = 0;
+        while (u === 0)
+            u = Math.random();
+        while (v === 0)
+            v = Math.random();
+        return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+    }
+
+    var expressions = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, bitwiseNormalExpression), collectionNormalExpression), arrayNormalExpression), sequenceNormalExpression), mathNormalExpression), miscNormalExpression), assertNormalExpression), objectNormalExpression), predicatesNormalExpression), regexpNormalExpression), stringNormalExpression), functionalNormalExpression), vectorNormalExpression), linearAlgebraNormalExpression), gridNormalExpression), matrixNormalExpression), combinatoricalNormalExpression), randomNormalExpression);
     var aliases = {};
     Object.values(expressions).forEach(function (normalExpression) {
         var _a;
@@ -14147,6 +14434,28 @@ var Playground = (function (exports) {
             'nth:stirling-first',
             'nth:stirling-second',
         ], false),
+        random: [
+            '!:random',
+            '!:random-int',
+            '!:random-int-inclusive',
+            '!:random-float',
+            '!:random-boolean',
+            '!:random-item',
+            '!:random-sample',
+            '!:random-sample-unique',
+            '!:shuffle',
+            '!:random-normal',
+            '!:random-exponential',
+            '!:random-binomial',
+            '!:random-poisson',
+            '!:random-gamma',
+            '!:random-pareto',
+            '!:uuid',
+            '!:random-char',
+            '!:random-string',
+            '!:random-id',
+            '!:random-color',
+        ],
         shorthand: [
             '-short-regexp',
             '-short-fn',
@@ -14170,7 +14479,7 @@ var Playground = (function (exports) {
             '-type-never',
         ],
     };
-    var apiFunctionNames = __spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray([], __read(api.collection), false), __read(api.array), false), __read(api.sequence), false), __read(api.math), false), __read(api.functional), false), __read(api.misc), false), __read(api.object), false), __read(api.predicate), false), __read(api.regularExpression), false), __read(api.string), false), __read(api.bitwise), false), __read(api.assert), false), __read(api.matrix), false), __read(api.vector), false), __read(api.linAlg), false), __read(api.grid), false), __read(api.numberTheory), false);
+    var apiFunctionNames = __spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray([], __read(api.collection), false), __read(api.array), false), __read(api.sequence), false), __read(api.math), false), __read(api.functional), false), __read(api.misc), false), __read(api.object), false), __read(api.predicate), false), __read(api.regularExpression), false), __read(api.string), false), __read(api.bitwise), false), __read(api.assert), false), __read(api.matrix), false), __read(api.vector), false), __read(api.linAlg), false), __read(api.grid), false), __read(api.numberTheory), false), __read(api.random), false);
     __spreadArray(__spreadArray(__spreadArray([], __read(apiFunctionNames), false), __read(api.shorthand), false), __read(api.datatype), false);
     function getOperatorArgs(a, b) {
         return { a: { type: a }, b: { type: b } };
@@ -17286,7 +17595,7 @@ var Playground = (function (exports) {
                 'mat:diagonal?([[1, 0, 0], [2, 2, 2], [0, 0, 3]])',
             ],
         },
-        "mat:square?": {
+        'mat:square?': {
             title: 'mat:square?',
             category: 'Matrix',
             linkName: 'mat-colon-square-question',
@@ -17452,12 +17761,148 @@ var Playground = (function (exports) {
                 'mat:band(4, 1, 2)',
             ],
         },
-        // 'mat:banded?',
-        // 'mat:rank'
-        // 'mat:frobenius-norm'
-        // 'mat:1-norm'
-        // 'mat:inf-norm'
-        // 'mat:max-norm'
+        'mat:banded?': {
+            title: 'mat:banded?',
+            category: 'Matrix',
+            linkName: 'mat-colon-banded-question',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                m: {
+                    type: 'matrix',
+                    description: 'The `matrix` to check for **banded** property.',
+                },
+                lband: {
+                    type: 'integer',
+                    description: 'The lower band index.',
+                },
+                uband: {
+                    type: 'integer',
+                    description: 'The upper band index.',
+                },
+            },
+            variants: [
+                { argumentNames: ['m', 'lband', 'uband'] },
+            ],
+            description: 'Checks if a `matrix` is **banded** with lower band index `lband` and upper band index `uband`.',
+            examples: [
+                "mat:banded?([\n  [1, 1, 1, 0],\n  [1, 1, 1, 1],\n  [1, 1, 1, 1],\n  [0, 1, 1, 1],\n], 2, 2)",
+                "mat:banded?([\n  [1, 1, 1, 0],\n  [1, 1, 1, 1],\n  [1, 1, 1, 1],\n  [0, 1, 1, 1],\n], 1, 1)",
+            ],
+        },
+        'mat:rank': {
+            title: 'mat:rank',
+            category: 'Matrix',
+            linkName: 'mat-colon-rank',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                m: {
+                    type: 'matrix',
+                    description: 'The `matrix` to calculate the rank of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['m'] },
+            ],
+            description: 'Calculates the **rank** of a matrix using **Gaussian elimination**.',
+            examples: [
+                'mat:rank([[1, 0, 0], [0, 1, 0], [0, 0, 1]])',
+                'mat:rank([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+                'mat:rank([[2, 4, 6], [3, 6, 9], [4, 8, 12]])',
+            ],
+        },
+        'mat:frobenius-norm': {
+            title: 'mat:frobenius-norm',
+            category: 'Matrix',
+            linkName: 'mat-colon-frobenius-norm',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                m: {
+                    type: 'matrix',
+                    description: 'The `matrix` to calculate the Frobenius norm of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['m'] },
+            ],
+            description: 'Calculates the **Frobenius norm** of a matrix.',
+            examples: [
+                'mat:frobenius-norm([[1, 2], [3, 4]])',
+                'mat:frobenius-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+            ],
+        },
+        'mat:1-norm': {
+            title: 'mat:1-norm',
+            category: 'Matrix',
+            linkName: 'mat-colon-1-norm',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                m: {
+                    type: 'matrix',
+                    description: 'The `matrix` to calculate the 1-norm of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['m'] },
+            ],
+            description: 'Calculates the **1-norm** of a matrix.',
+            examples: [
+                'mat:1-norm([[1, 2], [3, 4]])',
+                'mat:1-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+            ],
+        },
+        'mat:inf-norm': {
+            title: 'mat:inf-norm',
+            category: 'Matrix',
+            linkName: 'mat-colon-inf-norm',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                m: {
+                    type: 'matrix',
+                    description: 'The `matrix` to calculate the infinity norm of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['m'] },
+            ],
+            description: 'Calculates the **infinity norm** of a matrix.',
+            examples: [
+                'mat:inf-norm([[1, 2], [3, 4]])',
+                'mat:inf-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+            ],
+            aliases: ['mat:row-norm'],
+        },
+        'mat:max-norm': {
+            title: 'mat:max-norm',
+            category: 'Matrix',
+            linkName: 'mat-colon-max-norm',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                m: {
+                    type: 'matrix',
+                    description: 'The `matrix` to calculate the max norm of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['m'] },
+            ],
+            description: 'Calculates the **max norm** of a matrix.',
+            examples: [
+                'mat:max-norm([[1, 2], [3, 4]])',
+                'mat:max-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+            ],
+        },
     };
 
     var exampleGrid1 = "[\n  [\"Albert\", \"father\", 10],\n  [\"Nina\", \"mother\", 20],\n  [\"Kian\", \"son\", 30],\n]";
@@ -22443,6 +22888,7 @@ var Playground = (function (exports) {
                 'lin:spearman-corr([1, 2, 3], [4, 5, 6])',
                 'lin:spearman-corr([1, 0], [0, 1])',
             ],
+            aliases: ['lin:spearman-rho'],
         },
         'lin:pearson-corr': {
             title: 'lin:pearson-corr',
@@ -22508,6 +22954,7 @@ var Playground = (function (exports) {
                 'lin:autocorrelation([1, 2, 3], 1)',
                 'lin:autocorrelation([1, 2, 3], 2)',
             ],
+            aliases: ['lin:acf'],
         },
         'lin:cross-correlation': {
             title: 'lin:cross-correlation',
@@ -22531,6 +22978,7 @@ var Playground = (function (exports) {
                 'lin:cross-correlation([1, 2, 3], [4, 5, 6], 1)',
                 'lin:cross-correlation([1, 2, 3], [4, 5, 6], 2)',
             ],
+            aliases: ['lin:ccf'],
         },
         'lin:rref': {
             title: 'lin:rref',
@@ -28419,7 +28867,99 @@ var Playground = (function (exports) {
         },
     };
 
-    var numberTheoryReference = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, abundantReference), arithmeticReference), bellReference), bernoulliReference), catalanReference), collatzReference), compositeReference), factorialReference), fibonacciReference), geometricReference), golombReference), happyReference), jugglerReference), lookAndSayReference), lucasReference), luckyReference), mersenneReference), padovanReference), partitionReference), pellReference), perfectReference), perfectSquareReference), perfectCubeReference), perfectPowerReference), polygonalReference), primeReference), recamanReference), sylvesterReference), thueMorseReference), tribonacciReference), { 'nth:count-combinations': {
+    var deficientReference = {
+        'nth:deficient-seq': {
+            title: 'nth:deficient-seq',
+            category: 'Number Theory',
+            description: 'Generates the deficient numbers up to a specified length.',
+            linkName: 'nth-colon-deficient-seq',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                length: {
+                    type: 'integer',
+                    description: 'The length of the sequence to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['length'] },
+            ],
+            examples: [
+                'nth:deficient-seq(1)',
+                'nth:deficient-seq(5)',
+            ],
+        },
+        'nth:deficient-take-while': {
+            title: 'nth:deficient-take-while',
+            category: 'Number Theory',
+            description: 'Generates the deficient numbers while a condition is met.',
+            linkName: 'nth-colon-deficient-take-while',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                takeWhile: {
+                    type: 'function',
+                    description: 'A function that takes an integer and an index and returns a boolean.',
+                },
+            },
+            variants: [
+                { argumentNames: ['takeWhile'] },
+            ],
+            examples: [
+                'nth:deficient-take-while(-> $ < 100)',
+            ],
+        },
+        'nth:deficient-nth': {
+            title: 'nth:deficient-nth',
+            category: 'Number Theory',
+            description: 'Generates the nth term of the deficient numbers.',
+            linkName: 'nth-colon-deficient-nth',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The index of the number in the sequence.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth:deficient-nth(5)',
+                'nth:deficient-nth(12)',
+            ],
+        },
+        'nth:deficient?': {
+            title: 'nth:deficient?',
+            category: 'Number Theory',
+            description: 'Checks if a number is deficient.',
+            linkName: 'nth-colon-deficient-question',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to check.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth:deficient?(12)',
+                'nth:deficient?(15)',
+            ],
+        },
+    };
+
+    var numberTheoryReference = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, abundantReference), arithmeticReference), bellReference), bernoulliReference), catalanReference), collatzReference), compositeReference), deficientReference), factorialReference), fibonacciReference), geometricReference), golombReference), happyReference), jugglerReference), lookAndSayReference), lucasReference), luckyReference), mersenneReference), padovanReference), partitionReference), pellReference), perfectReference), perfectSquareReference), perfectCubeReference), perfectPowerReference), polygonalReference), primeReference), recamanReference), sylvesterReference), thueMorseReference), tribonacciReference), { 'nth:count-combinations': {
             title: 'nth:count-combinations',
             category: 'Number Theory',
             description: 'Calculates the number of combinations of n items taken k at a time.',
@@ -29024,6 +29564,7 @@ var Playground = (function (exports) {
                 'nth:mobius(12)',
                 'nth:mobius(30)',
             ],
+            aliases: ['nth:möbius'],
         }, 'nth:mertens': {
             title: 'nth:mertens',
             category: 'Number Theory',
@@ -29300,10 +29841,474 @@ var Playground = (function (exports) {
             ],
         } });
 
+    var randomReference = {
+        '!:random': {
+            title: '!:random',
+            category: 'Random',
+            linkName: '-exclamation-colon-random',
+            returns: {
+                type: 'number',
+            },
+            args: {},
+            variants: [
+                { argumentNames: [] },
+            ],
+            description: 'Returns a random number between 0 and 1.',
+            examples: [
+                '!:random()',
+            ],
+        },
+        '!:random-int': {
+            title: '!:random-int',
+            category: 'Random',
+            linkName: '-exclamation-colon-random-int',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                a: {
+                    type: 'integer',
+                    description: 'The minimum value.',
+                },
+                b: {
+                    type: 'integer',
+                    description: 'The maximum value (exclusive).',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            description: 'Returns a random integer between min and max (exclusive).',
+            examples: [
+                '!:random-int(0, 10)',
+                '!:random-int(1, 100)',
+            ],
+        },
+        '!:random-int-inclusive': {
+            title: '!:random-int-inclusive',
+            category: 'Random',
+            linkName: '-exclamation-colon-random-int-inclusive',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                a: {
+                    type: 'integer',
+                    description: 'The minimum value.',
+                },
+                b: {
+                    type: 'integer',
+                    description: 'The maximum value (inclusive).',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            description: 'Returns a random integer between min and max (inclusive).',
+            examples: [
+                '!:random-int-inclusive(0, 10)',
+            ],
+        },
+        '!:random-float': {
+            title: '!:random-float',
+            category: 'Random',
+            linkName: '-exclamation-colon-random-float',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                a: {
+                    type: 'number',
+                    description: 'The minimum value.',
+                },
+                b: {
+                    type: 'number',
+                    description: 'The maximum value.',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            description: 'Returns a random float between min and max.',
+            examples: [
+                '!:random-float(0, 10)',
+                '!:random-float(1, 100)',
+            ],
+        },
+        '!:random-boolean': {
+            title: '!:random-boolean',
+            category: 'Random',
+            linkName: '-exclamation-colon-random-boolean',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                prob: {
+                    type: 'number',
+                    description: 'The probability of returning true (between 0 and 1).',
+                },
+            },
+            variants: [
+                { argumentNames: ['prob'] },
+            ],
+            description: 'Returns a random boolean.',
+            examples: [
+                '!:random-boolean()',
+                '!:random-boolean(0.99)',
+            ],
+        },
+        '!:random-item': {
+            title: '!:random-item',
+            category: 'Random',
+            linkName: '-exclamation-colon-random-item',
+            returns: {
+                type: 'any',
+            },
+            args: {
+                a: {
+                    type: 'array',
+                    description: 'The array to sample from.',
+                },
+            },
+            variants: [
+                { argumentNames: ['a'] },
+            ],
+            description: 'Returns a random item from the array.',
+            examples: [
+                '!:random-item([1, 2, 3, 4, 5])',
+                '!:random-item(["apple", "banana", "cherry"])',
+            ],
+        },
+        '!:random-sample-unique': {
+            title: '!:random-sample-unique',
+            category: 'Random',
+            linkName: '-exclamation-colon-random-sample-unique',
+            returns: {
+                type: 'array',
+            },
+            args: {
+                a: {
+                    type: 'array',
+                    description: 'The array to sample from.',
+                },
+                b: {
+                    type: 'integer',
+                    description: 'The number of items to sample.',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            description: 'Returns a random sample of n unique items from the array.',
+            examples: [
+                '!:random-sample-unique([1, 2, 3, 4, 5], 3)',
+                '!:random-sample-unique(["apple", "banana", "cherry"], 2)',
+            ],
+        },
+        '!:random-sample': {
+            title: '!:random-sample',
+            category: 'Random',
+            linkName: '-exclamation-colon-random-sample',
+            returns: {
+                type: 'array',
+            },
+            args: {
+                a: {
+                    type: 'array',
+                    description: 'The array to sample from.',
+                },
+                b: {
+                    type: 'integer',
+                    description: 'The number of items to sample.',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            description: 'Returns a random sample of n items from the array.',
+            examples: [
+                '!:random-sample([1, 2, 3, 4, 5], 3)',
+                '!:random-sample(["apple", "banana", "cherry"], 10)',
+            ],
+        },
+        '!:shuffle': {
+            title: '!:shuffle',
+            category: 'Random',
+            linkName: '-exclamation-colon-shuffle',
+            returns: {
+                type: 'array',
+            },
+            args: {
+                a: {
+                    type: 'array',
+                    description: 'The array to shuffle.',
+                },
+            },
+            variants: [
+                { argumentNames: ['a'] },
+            ],
+            description: 'Returns a shuffled version of the array.',
+            examples: [
+                '!:shuffle([1, 2, 3, 4, 5])',
+                '!:shuffle(["apple", "banana", "cherry"])',
+            ],
+        },
+        '!:random-normal': {
+            title: '!:random-normal',
+            category: 'Random',
+            linkName: '-exclamation-colon-random-normal',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                mean: {
+                    type: 'number',
+                    description: 'The mean of the normal distribution.',
+                },
+                stdDev: {
+                    type: 'number',
+                    description: 'The standard deviation of the normal distribution.',
+                },
+            },
+            variants: [
+                { argumentNames: ['mean', 'stdDev'] },
+            ],
+            description: 'Returns a random number from a normal distribution with the given mean and standard deviation.',
+            examples: [
+                '!:random-normal(0, 1)',
+                '!:random-normal(5, 2)',
+            ],
+            noOperatorDocumentation: true,
+        },
+        '!:random-exponential': {
+            title: '!:random-exponential',
+            category: 'Random',
+            linkName: '-exclamation-colon-random-exponential',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                lambda: {
+                    type: 'number',
+                    description: 'The rate parameter of the exponential distribution.',
+                },
+            },
+            variants: [
+                { argumentNames: ['lambda'] },
+            ],
+            description: 'Returns a random number from an exponential distribution with the given rate parameter.',
+            examples: [
+                '!:random-exponential(1)',
+                '!:random-exponential(0.5)',
+            ],
+        },
+        '!:random-binomial': {
+            title: '!:random-binomial',
+            category: 'Random',
+            linkName: '-exclamation-colon-random-binomial',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number of trials.',
+                },
+                p: {
+                    type: 'number',
+                    description: 'The probability of success on each trial.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n', 'p'] },
+            ],
+            description: 'Returns a random number from a binomial distribution with the given number of trials and probability of success.',
+            examples: [
+                '!:random-binomial(10, 0.5)',
+                '!:random-binomial(20, 0.3)',
+            ],
+            noOperatorDocumentation: true,
+        },
+        '!:random-poisson': {
+            title: '!:random-poisson',
+            category: 'Random',
+            linkName: '-exclamation-colon-random-poisson',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                lambda: {
+                    type: 'number',
+                    description: 'The rate parameter of the Poisson distribution.',
+                },
+            },
+            variants: [
+                { argumentNames: ['lambda'] },
+            ],
+            description: 'Returns a random number from a Poisson distribution with the given rate parameter.',
+            examples: [
+                '!:random-poisson(1)',
+                '!:random-poisson(5)',
+            ],
+        },
+        '!:random-gamma': {
+            title: '!:random-gamma',
+            category: 'Random',
+            linkName: '-exclamation-colon-random-gamma',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                shape: {
+                    type: 'number',
+                    description: 'The shape parameter of the gamma distribution.',
+                },
+                scale: {
+                    type: 'number',
+                    description: 'The scale parameter of the gamma distribution.',
+                },
+            },
+            variants: [
+                { argumentNames: ['shape', 'scale'] },
+            ],
+            description: 'Returns a random number from a gamma distribution with the given shape and scale parameters.',
+            examples: [
+                '!:random-gamma(2, 2)',
+                '!:random-gamma(5, 1)',
+            ],
+            noOperatorDocumentation: true,
+        },
+        '!:random-pareto': {
+            title: '!:random-pareto',
+            category: 'Random',
+            linkName: '-exclamation-colon-random-pareto',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                alpha: {
+                    type: 'number',
+                    description: 'The shape parameter of the Pareto distribution.',
+                },
+            },
+            variants: [
+                { argumentNames: ['alpha'] },
+            ],
+            description: 'Returns a random number from a Pareto distribution with the given shape parameter.',
+            examples: [
+                '!:random-pareto(1)',
+                '!:random-pareto(2)',
+            ],
+        },
+        '!:uuid': {
+            title: '!:uuid',
+            category: 'Random',
+            linkName: '-exclamation-colon-uuid',
+            returns: {
+                type: 'string',
+            },
+            args: {},
+            variants: [
+                { argumentNames: [] },
+            ],
+            description: 'Returns a random UUID v4 (Universally Unique Identifier).',
+            examples: [
+                '!:uuid()',
+            ],
+        },
+        '!:random-char': {
+            title: '!:random-char',
+            category: 'Random',
+            linkName: '-exclamation-colon-random-char',
+            returns: {
+                type: 'string',
+            },
+            args: {
+                charSet: {
+                    type: 'string',
+                    description: 'The string to sample from.',
+                },
+            },
+            variants: [
+                { argumentNames: ['charSet'] },
+            ],
+            description: 'Returns a random character from the given string.',
+            examples: [
+                '!:random-char("abcde")',
+                '!:random-char("ABCDEFGHIJKLMNOPQRSTUVWXYZ")',
+            ],
+        },
+        '!:random-string': {
+            title: '!:random-string',
+            category: 'Random',
+            linkName: '-exclamation-colon-random-string',
+            returns: {
+                type: 'string',
+            },
+            args: {
+                length: {
+                    type: 'integer',
+                    description: 'The length of the random string.',
+                },
+                charSet: {
+                    type: 'string',
+                    description: 'The string to sample from.',
+                },
+            },
+            variants: [
+                { argumentNames: ['length', 'charSet'] },
+            ],
+            description: 'Returns a random string of the given length from the given string.',
+            examples: [
+                '!:random-string(10, "abcde")',
+                '!:random-string(5, "ABCDEFGHIJKLMNOPQRSTUVWXYZ")',
+            ],
+            noOperatorDocumentation: true,
+        },
+        '!:random-id': {
+            title: '!:random-id',
+            category: 'Random',
+            linkName: '-exclamation-colon-random-id',
+            returns: {
+                type: 'string',
+            },
+            args: {
+                length: {
+                    type: 'integer',
+                    description: 'The length of the random ID.',
+                },
+            },
+            variants: [
+                { argumentNames: ['length'] },
+            ],
+            description: 'Returns a random ID of the given length.',
+            examples: [
+                '!:random-id(10)',
+                '!:random-id(5)',
+            ],
+        },
+        '!:random-color': {
+            title: '!:random-color',
+            category: 'Random',
+            linkName: '-exclamation-colon-random-color',
+            returns: {
+                type: 'string',
+            },
+            args: {},
+            variants: [
+                { argumentNames: [] },
+            ],
+            description: 'Returns a random color in hex format.',
+            examples: [
+                '!:random-color()',
+            ],
+        },
+    };
+
     function isFunctionReference(ref) {
         return 'returns' in ref && 'args' in ref && 'variants' in ref;
     }
-    var normalExpressionReference = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, collectionReference), arrayReference), sequenceReference), mathReference), functionalReference), miscReference), objectReference), predicateReference), regularExpressionReference), stringReference), bitwiseReference), assertReference), vectorReference), linAlgReference), matrixReference), numberTheoryReference), gridReference);
+    var normalExpressionReference = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, collectionReference), arrayReference), sequenceReference), mathReference), functionalReference), miscReference), objectReference), predicateReference), regularExpressionReference), stringReference), bitwiseReference), assertReference), vectorReference), linAlgReference), matrixReference), numberTheoryReference), gridReference), randomReference);
     Object.entries(normalExpressionReference).forEach(function (_a) {
         var _b = __read(_a, 2), key = _b[0], obj = _b[1];
         if (!normalExpressions[key]) {

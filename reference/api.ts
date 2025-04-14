@@ -478,6 +478,28 @@ export const api = {
     'nth:stirling-first',
     'nth:stirling-second',
   ] as const,
+  random: [
+    '!:random',
+    '!:random-int',
+    '!:random-int-inclusive',
+    '!:random-float',
+    '!:random-boolean',
+    '!:random-item',
+    '!:random-sample',
+    '!:random-sample-unique',
+    '!:shuffle',
+    '!:random-normal',
+    '!:random-exponential',
+    '!:random-binomial',
+    '!:random-poisson',
+    '!:random-gamma',
+    '!:random-pareto',
+    '!:uuid',
+    '!:random-char',
+    '!:random-string',
+    '!:random-id',
+    '!:random-color',
+  ] as const,
   shorthand: [
     '-short-regexp',
     '-short-fn',
@@ -520,6 +542,7 @@ export type MatrixApiName = typeof api.matrix[number]
 export type NumberTheoryApiName = typeof api.numberTheory[number]
 export type VectorApiName = typeof api.vector[number]
 export type LinAlgApiName = typeof api.linAlg[number]
+export type RandomApiName = typeof api.random[number]
 
 export type NormalExpressionName =
   | CollectionApiName
@@ -539,6 +562,7 @@ export type NormalExpressionName =
   | LinAlgApiName
   | GridApiName
   | NumberTheoryApiName
+  | RandomApiName
 
 export type FunctionName =
   | NormalExpressionName
@@ -566,6 +590,7 @@ const apiFunctionNames = [
   ...api.linAlg,
   ...api.grid,
   ...api.numberTheory,
+  ...api.random,
 ] as const
 
 const apiNames = [
@@ -599,6 +624,7 @@ export const categoryRecord = {
   'Matrix': true,
   'Grid': true,
   'Number Theory': true,
+  'Random': true,
   'Shorthand': true,
   'Datatype': true,
 } as const

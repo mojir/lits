@@ -25,6 +25,7 @@ import { stringReference } from './categories/string'
 import { datatype } from './datatype'
 import { shorthand } from './shorthand'
 import { numberTheoryReference } from './categories/numberTheory'
+import { randomReference } from './categories/random'
 
 export interface TypedValue {
   type: DataType[] | DataType
@@ -111,6 +112,7 @@ export const normalExpressionReference: Record<NormalExpressionName, FunctionRef
   ...matrixReference,
   ...numberTheoryReference,
   ...gridReference,
+  ...randomReference,
 }
 
 Object.entries(normalExpressionReference).forEach(([key, obj]) => {
