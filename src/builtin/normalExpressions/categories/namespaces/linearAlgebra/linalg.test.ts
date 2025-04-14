@@ -529,4 +529,116 @@ describe('linalg functions', () => {
       expect(lits.run('lin:kendall-tau([1.5, 2.3, 3.7, 4.2], [5.1, 4.8, 3.2, 2.9])')).toBeCloseTo(-1.0)
     })
   })
+  describe('lin:autocorrelation', () => {
+    it('should calculate the autocorrelation of a vector', () => {
+      // Basic cases
+      expect(lits.run('lin:autocorrelation([1, 2, 3, 4, 5], 0)')).toBeCloseTo(1)
+      expect(lits.run('lin:autocorrelation([1, 2, 3, 4, 5], 1)')).toBeCloseTo(0.4)
+      expect(lits.run('lin:autocorrelation([1, 2, 3, 4, 5], -1)')).toBeCloseTo(0.4)
+      expect(lits.run('lin:autocorrelation([1, 2, 3, 4, 5], 0)')).toBeCloseTo(1)
+      expect(lits.run('lin:autocorrelation([1, 2, 3, 4, 5], 2)')).toBeCloseTo(-0.1)
+      expect(lits.run('lin:acf([1, 2, 3, 4, 5], 3)')).toBeCloseTo(-0.4)
+      expect(lits.run('lin:autocorrelation([1, 2, 3, 4, 5], 4)')).toBeCloseTo(-0.4)
+      // Case with negative numbers
+      expect(lits.run('lin:autocorrelation([-1, -2, -3, -4, -5], 1)')).toBeCloseTo(0.4)
+      // Case with mixed numbers
+      expect(lits.run('lin:autocorrelation([1, -2, 3, -4, 5], 2)')).toBeCloseTo(0.441)
+
+      expect(lits.run('lin:autocorrelation([1, 1, 1, 1, 1], 2)')).toBe(0)
+
+      // Case with zero lag
+      expect(() => lits.run('lin:autocorrelation([42], 0)')).toThrowError(LitsError)
+      // Case with empty vectors (should throw an error)
+      expect(() => lits.run('lin:autocorrelation([], 0)')).toThrowError(LitsError)
+    })
+  })
+  describe('lin:cross-correlation', () => {
+    it('should calculate the cross correlation for two vectors and lag', () => {
+      // Basic cases - identical vectors
+      expect(lits.run('lin:cross-correlation([1, 2, 3, 4, 5], [1, 2, 3, 4, 5], 0)')).toBeCloseTo(1)
+      expect(lits.run('lin:cross-correlation([1, 2, 3, 4, 5], [1, 2, 3, 4, 5], 1)')).toBeCloseTo(1)
+      expect(lits.run('lin:cross-correlation([1, 2, 3, 4, 5], [1, 2, 3, 4, 5], 2)')).toBeCloseTo(1)
+
+      // Perfectly negatively correlated vectors
+      expect(lits.run('lin:cross-correlation([1, 2, 3, 4, 5], [5, 4, 3, 2, 1], 0)')).toBeCloseTo(-1)
+      expect(lits.run('lin:cross-correlation([1, 2, 3, 4, 5], [5, 4, 3, 2, 1], 1)')).toBeCloseTo(-1)
+
+      // Similar patterns with offset
+      expect(lits.run('lin:cross-correlation([10, 12, 15, 10, 8, 15, 20, 25, 18, 15], [8, 10, 14, 9, 7, 13, 19, 23, 17, 14], 0)')).toBeCloseTo(0.995)
+      expect(lits.run('lin:cross-correlation([10, 12, 15, 10, 8, 15, 20, 25, 18, 15], [8, 10, 14, 9, 7, 13, 19, 23, 17, 14], 1)')).toBeCloseTo(0.614)
+
+      // Uncorrelated vectors
+      expect(lits.run('lin:cross-correlation([1, 2, 3, 4, 5], [5, 1, 3, 2, 4], 0)')).toBeCloseTo(-0.1)
+      expect(lits.run('lin:cross-correlation([1, 2, 3, 4, 5], [5, 1, 3, 2, 4], 1)')).toBeCloseTo(0.8)
+
+      // Constant vectors (edge cases)
+      expect(lits.run('lin:cross-correlation([5, 5, 5, 5, 5], [5, 5, 5, 5, 5], 0)')).toBeCloseTo(1)
+      expect(lits.run('lin:cross-correlation([5, 5, 5, 5, 5], [10, 10, 10, 10, 10], 0)')).toBeCloseTo(0)
+
+      // Sine and cosine waves (phase-shifted signals)
+      const sine = [0, 0.588, 0.951, 0.951, 0.588, 0, -0.588, -0.951, -0.951, -0.588]
+      const cosine = [1, 0.809, 0.309, -0.309, -0.809, -1, -0.809, -0.309, 0.309, 0.809]
+      expect(lits.run(`lin:cross-correlation([${sine.join(', ')}], [${sine.join(', ')}], 0)`)).toBeCloseTo(1)
+      expect(lits.run(`lin:cross-correlation([${sine.join(', ')}], [${cosine.join(', ')}], 0)`)).toBeCloseTo(0)
+      expect(lits.run(`lin:cross-correlation([${sine.join(', ')}], [${sine.join(', ')}], 5)`)).toBeCloseTo(-1)
+
+      // Negative lags
+      expect(lits.run('lin:cross-correlation([1, 2, 3, 4, 5], [1, 2, 3, 4, 5], -1)')).toBeCloseTo(1)
+      expect(lits.run('lin:cross-correlation([1, 2, 3, 4, 5], [5, 4, 3, 2, 1], -1)')).toBeCloseTo(-1)
+    })
+  })
+  describe('lin:rref', () => {
+    it('should calculate the reduced row echelon form of a matrix', () => {
+      // Basic case
+      expect(lits.run('lin:rref([[1, 2], [3, 4]])')).toEqual([[1, 0], [0, 1]])
+      // Case with negative numbers
+      expect(lits.run('lin:rref([[-1, -2], [-3, -4]])')).toEqual([[1, 0], [0, 1]])
+      // Case with mixed numbers
+      expect(lits.run('lin:rref([[1, -2], [-3, 4]])')).toEqual([[1, 0], [0, 1]])
+      // Case with single element matrix
+      expect(lits.run('lin:rref([[42]])')).toEqual([[1]])
+      // Case with empty matrix (should throw an error)
+      expect(() => lits.run('lin:rref([])')).toThrowError(LitsError)
+    })
+  })
+  describe('lin:solve', () => {
+    it('should solve systems of linear equations', () => {
+      // Unique solution: 2x + 3y = 8, x - y = 2 => x = 2, y = 4/3
+      expect(lits.run('lin:solve([[2, 3], [1, -1]], [8, 2])')).toEqual([2.8, 0.8])
+
+      // Identity matrix: x = b
+      expect(lits.run('lin:solve([[1, 0, 0], [0, 1, 0], [0, 0, 1]], [5, -2, 3])')).toEqual([5, -2, 3])
+
+      // Inconsistent system: x + y = 1, x + y = 2 (no solution)
+      expect(lits.run('lin:solve([[1, 1], [1, 1]], [1, 2])')).toBeNull()
+
+      // Upper triangular system
+      expect(lits.run('lin:solve([[1, 2, 3], [0, 4, 5], [0, 0, 6]], [14, 23, 18])')).toEqual([1, 2, 3])
+
+      // Lower triangular system
+      expect(lits.run('lin:solve([[2, 0, 0], [3, 1, 0], [4, 5, 6]], [4, 5, 38])')).toEqual([2, -1, 35 / 6])
+
+      // Practical example: mixture problem
+      // 0.3x + 0.5y = 0.35 (blend percentage)
+      // x + y = 100 (total amount)
+      expect((lits.run('lin:solve([[0.3, 0.5], [1, 1]], [35, 100])') as number[])[0]).toBeCloseTo(75)
+      expect((lits.run('lin:solve([[0.3, 0.5], [1, 1]], [35, 100])') as number[])[1]).toBeCloseTo(25)
+
+      // Economic equilibrium example:
+      // 10 - 2p + q = 5 (demand for product 1)
+      // 15 + p - 3q = 5 (demand for product 2)
+      expect(lits.run('lin:solve([[-2, 1], [1, -3]], [-5, -10])')).toEqual([5, 5])
+
+      // Small values / precision test
+      expect(lits.run('lin:solve([[1, 1], [2, 2]], [5, 7])')).toBeNull()
+
+      // Larger system (4×4)
+      expect(lits.run(`lin:solve([
+        [2, 1, -1, 1], 
+        [4, 5, -3, 2], 
+        [6, -2, 5, -3], 
+        [8, 3, 2, 4]
+      ], [5, 10, 2, 17])`)).toEqual([1.519607843137255, -0.17647058823529416, -0.5294117647058822, 1.6078431372549018])
+    })
+  })
 })

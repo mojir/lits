@@ -6,15 +6,15 @@ import { calcMean } from '../vector/calcMean'
 import { calcMedad } from '../vector/calcMedad'
 import { calcMedian } from '../vector/calcMedian'
 import { calcStdDev } from '../vector/calcStdDev'
-import { calcVariance } from '../vector/calcVariance'
-import { gaussJordanElimination } from './helpers.ts/gaussJordanElimination'
-import { solve } from './helpers.ts/solve'
-import { norm1 } from './helpers.ts/norm1'
-import { areVectorsCollinear, areVectorsParallel } from './helpers.ts/collinear'
-import { isZeroVector } from './helpers.ts/isZeroVector'
-import { pearsonCorr } from './helpers.ts/pearsonCorr'
-import { calcFractionalRanks } from './helpers.ts/calcFractionalRanks'
-import { kendallTau } from './helpers.ts/kendallTau'
+import { gaussJordanElimination } from './helpers/gaussJordanElimination'
+import { solve } from './helpers/solve'
+import { areVectorsCollinear, areVectorsParallel } from './helpers/collinear'
+import { isZeroVector } from './helpers/isZeroVector'
+import { pearsonCorr } from './helpers/pearsonCorr'
+import { calcFractionalRanks } from './helpers/calcFractionalRanks'
+import { kendallTau } from './helpers/kendallTau'
+import { calcCovariance } from './helpers/covariance'
+import { calcCorrelation, extractOverlappingSegments } from './helpers/corrleation'
 
 export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
   'lin:dot': {
@@ -394,10 +394,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
         return 0
       }
 
-      const meanA = calcMean(vectorA)
-      const meanB = calcMean(vectorB)
-
-      return vectorA.reduce((acc, val, i) => acc + (val - meanA) * (vectorB[i]! - meanB), 0) / vectorA.length
+      return calcCovariance(vectorA, vectorB)
     },
     paramCount: 2,
   },
@@ -508,53 +505,85 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
   'lin:autocorrelation': {
     evaluate: ([vector, lag], sourceCodeInfo): number => {
       assertVector(vector, sourceCodeInfo)
-      const effectiveLag = lag ?? vector.length - 1
-      assertNumber(effectiveLag, sourceCodeInfo, { integer: true, lte: vector.length, positive: true })
+      if (vector.length < 2) {
+        throw new LitsError('Vector must have at least 2 elements for lin:autocorrelation', sourceCodeInfo)
+      }
+
+      assertNumber(lag, sourceCodeInfo, {
+        integer: true,
+        lt: vector.length,
+        gt: -vector.length,
+      })
+
+      // For lag 0, return 1 (a series is perfectly correlated with itself)
+      if (lag === 0) {
+        return 1
+      }
+      const absLag = Math.abs(lag)
       const mean = calcMean(vector)
-      const variance = calcVariance(vector)
-      const autocovariance = vector.reduce((acc, val, i) => acc + (val - mean) * (vector[i + effectiveLag]! - mean), 0) / vector.length
-      return autocovariance / variance
+
+      // Calculate the numerator (sum of products of deviations)
+      let numerator = 0
+      const n = vector.length
+
+      // If lag is positive, correlate current with past values
+      // If lag is negative, correlate current with future values (same calculation, different interpretation)
+      for (let i = 0; i < n - absLag; i++) {
+        const currentIndex = lag < 0 ? i + absLag : i
+        const laggedIndex = lag < 0 ? i : i + absLag
+
+        numerator += (vector[currentIndex]! - mean) * (vector[laggedIndex]! - mean)
+      }
+
+      // Calculate the denominator (sum of squared deviations)
+      let denominator = 0
+      for (let i = 0; i < n; i++) {
+        denominator += (vector[i]! - mean) ** 2
+      }
+
+      // Handle edge case of zero variance
+      if (denominator === 0) {
+        return lag === 0 ? 1 : 0 // Conventional definition
+      }
+
+      // Return the autocorrelation coefficient
+      return numerator / denominator
     },
-    paramCount: { min: 1, max: 2 },
+    paramCount: 2,
+    aliases: ['lin:acf'],
   },
+
   'lin:cross-correlation': {
     evaluate: ([vectorA, vectorB, lag], sourceCodeInfo): number => {
       assertVector(vectorA, sourceCodeInfo)
       assertVector(vectorB, sourceCodeInfo)
+
+      if (vectorA.length < 2) {
+        throw new Error('Vectors must have at least 2 elements')
+      }
+
       if (vectorA.length !== vectorB.length) {
-        throw new LitsError('Vectors must be of the same length', sourceCodeInfo)
-      }
-      const effectiveLag = lag ?? vectorA.length - 1
-      assertNumber(effectiveLag, sourceCodeInfo, { integer: true, positive: true })
-      if (effectiveLag >= vectorA.length || effectiveLag >= vectorB.length) {
-        throw new LitsError('Lag must be less than the length of the vectors', sourceCodeInfo)
-      }
-      const n = vectorA.length
-      const meanA = vectorA.reduce((sum, x) => sum + x, 0) / n
-      const meanB = vectorB.reduce((sum, x) => sum + x, 0) / n
-      const stdA = Math.sqrt(vectorA.reduce((sum, x) => sum + (x - meanA) ** 2, 0) / n)
-      const stdB = Math.sqrt(vectorB.reduce((sum, x) => sum + (x - meanB) ** 2, 0) / n)
-
-      if (stdA === 0 || stdB === 0)
-        return 0
-
-      const overlapLength = n - Math.abs(effectiveLag)
-      let sum = 0
-
-      if (effectiveLag >= 0) {
-        for (let i = 0; i < overlapLength; i++) {
-          sum += (vectorA[i]! - meanA) * (vectorB[i + effectiveLag]! - meanB)
-        }
-      }
-      else {
-        for (let i = 0; i < overlapLength; i++) {
-          sum += (vectorA[i - effectiveLag]! - meanA) * (vectorB[i]! - meanB)
-        }
+        throw new Error('Vectors must be of the same length')
       }
 
-      return sum / (overlapLength * stdA * stdB)
+      assertNumber(lag, sourceCodeInfo, {
+        integer: true,
+        lt: vectorA.length,
+        gt: -vectorA.length,
+      })
+
+      // For lag 0 between identical vectors, return 1
+      if (lag === 0
+        && vectorA.length === vectorB.length
+        && vectorA.every((v, i) => v === vectorB[i])) {
+        return 1
+      }
+
+      const [segmentA, segmentB] = extractOverlappingSegments(vectorA, vectorB, lag)
+      return calcCorrelation(segmentA, segmentB)
     },
     paramCount: 3,
+    aliases: ['lin:ccf'],
   },
   'lin:rref': {
     evaluate: ([matrix], sourceCodeInfo): number[][] => {
@@ -563,14 +592,6 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
       // Reduced Row Echelon Form (RREF)
       const [rref] = gaussJordanElimination(matrix)
       return rref
-    },
-    paramCount: 1,
-  },
-  'lin:matrix-rank': {
-    evaluate: ([matrix], sourceCodeInfo): number => {
-      assertMatrix(matrix, sourceCodeInfo)
-      const [, result] = gaussJordanElimination(matrix)
-      return result
     },
     paramCount: 1,
   },
@@ -584,40 +605,5 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
       return solve(matrix, vector)
     },
     paramCount: 2,
-  },
-  // Frobenius norm
-  'lin:norm-frobenius': {
-    evaluate: ([matrix], sourceCodeInfo): number => {
-      assertMatrix(matrix, sourceCodeInfo)
-      return Math.sqrt(matrix.reduce((sum, row) => sum + row.reduce((rowSum, cell) => rowSum + cell * cell, 0), 0))
-    },
-    paramCount: 1,
-  },
-  // 1-norm
-  'lin:norm-1': {
-    evaluate: ([matrix], sourceCodeInfo): number => {
-      assertMatrix(matrix, sourceCodeInfo)
-      return norm1(matrix)
-    },
-    paramCount: 1,
-  },
-  // Infinity norm
-  'lin:norm-infinity': {
-    evaluate: ([matrix], sourceCodeInfo): number => {
-      assertMatrix(matrix, sourceCodeInfo)
-      return matrix.reduce((max, row) => Math.max(max, row.reduce((sum, cell) => sum + Math.abs(cell), 0)), 0)
-    },
-    paramCount: 1,
-  },
-  // Max norm
-  'lin:norm-max': {
-    evaluate: ([matrix], sourceCodeInfo): number => {
-      assertMatrix(matrix, sourceCodeInfo)
-      return matrix.reduce((maxVal, row) => {
-        const rowMax = row.reduce((max, val) => Math.max(max, Math.abs(val)), 0)
-        return Math.max(maxVal, rowMax)
-      }, 0)
-    },
-    paramCount: 1,
   },
 }

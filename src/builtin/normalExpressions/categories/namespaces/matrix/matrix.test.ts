@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../../../Lits/Lits'
+import { LitsError } from '../../../../../errors'
 
 const lits = new Lits()
 describe('matrix', () => {
@@ -243,6 +244,70 @@ describe('matrix', () => {
         [1, 1, 1, 1],
         [0, 1, 1, 1],
       ], 2, 2)`)).toEqual(true)
+    })
+  })
+  describe('mat:rank', () => {
+    it('should calculate the rank of a matrix', () => {
+      // Basic case
+      expect(lits.run('mat:rank([[1, 2], [3, 4]])')).toEqual(2)
+      // Case with negative numbers
+      expect(lits.run('mat:rank([[-1, -2], [-3, -4]])')).toEqual(2)
+      // Case with mixed numbers
+      expect(lits.run('mat:rank([[1, -2], [-3, 4]])')).toEqual(2)
+      // Case with single element matrix
+      expect(lits.run('mat:rank([[42]])')).toEqual(1)
+
+      // Full rank (3×3)
+      expect(lits.run('mat:rank([[1, 0, 0], [0, 1, 0], [0, 0, 1]])')).toBe(3)
+
+      // Rank 2 (3×3)
+      expect(lits.run('mat:rank([[1, 2, 3], [4, 5, 6], [7, 8, 9]])')).toBe(2)
+
+      // Rank 1 (3×3)
+      expect(lits.run('mat:rank([[2, 4, 6], [3, 6, 9], [4, 8, 12]])')).toBe(1)
+
+      // Rank 0 (zero matrix)
+      expect(lits.run('mat:rank([[0, 0, 0], [0, 0, 0], [0, 0, 0]])')).toBe(0)
+
+      // Rectangular matrices
+      expect(lits.run('mat:rank([[1, 2], [3, 4], [5, 6]])')).toBe(2) // 3×2 matrix
+      expect(lits.run('mat:rank([[1, 2, 3], [4, 5, 6]])')).toBe(2) // 2×3 matrix
+
+      // Matrix with floating point elements
+      expect(lits.run('mat:rank([[1.5, 2.5, 3.5], [4.5, 5.5, 6.5], [6.0, 8.0, 10.0]])')).toBe(2)
+
+      // Larger matrix with dependency
+      expect(lits.run('mat:rank([[1, 2, 3, 4], [2, 3, 4, 5], [3, 4, 5, 6], [4, 5, 6, 7]])')).toBe(2)
+
+      // Edge cases
+      expect(() => lits.run('mat:rank([[]])')).toThrowError(LitsError) // Empty matrix
+
+      // Case with empty matrix (should throw an error)
+      expect(() => lits.run('mat:rank([])')).toThrowError(LitsError)
+    })
+  })
+  describe('mat:frobenius-norm', () => {
+    it('should return the Frobenius norm of a matrix', () => {
+      expect(lits.run('mat:frobenius-norm([[1, 2], [3, 4]])')).toEqual(5.477225575051661)
+      expect(lits.run('mat:frobenius-norm([[1, 0], [0, 1]])')).toEqual(1.4142135623730951)
+    })
+  })
+  describe('mat:1-norm', () => {
+    it('should return the 1-norm of a matrix', () => {
+      expect(lits.run('mat:1-norm([[1, 2], [3, 4]])')).toEqual(6)
+      expect(lits.run('mat:1-norm([[1, 0], [0, 1]])')).toEqual(1)
+    })
+  })
+  describe('mat:inf-norm', () => {
+    it('should return the infinity norm of a matrix', () => {
+      expect(lits.run('mat:inf-norm([[1, 2], [3, 4]])')).toEqual(7)
+      expect(lits.run('mat:row-norm([[1, 0], [0, 1]])')).toEqual(1)
+    })
+  })
+  describe('mat:max-norm', () => {
+    it('should return the max norm of a matrix', () => {
+      expect(lits.run('mat:max-norm([[1, 2], [3, 4]])')).toEqual(4)
+      expect(lits.run('mat:max-norm([[1, 0], [0, 1]])')).toEqual(1)
     })
   })
 })

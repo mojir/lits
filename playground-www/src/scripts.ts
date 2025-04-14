@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import { stringifyValue } from '../../common/utils'
 import type { Example } from '../../reference/examples'
+import { apiReference } from '../../reference'
 import type { UnknownRecord } from '../../src/interface'
 import { type ContextParams, type JsFunction, Lits } from '../../src/Lits/Lits'
 import { asUnknownRecord } from '../../src/typeGuards'
@@ -20,6 +21,19 @@ import {
   undoLitsCode,
 } from './state'
 import { isMac, throttle } from './utils'
+
+const csvApi = Object.values(apiReference)
+  .map((ref) => {
+    const title = ref.title
+    const description = ref.description.replaceAll(';', ':')
+    const titleParts = title.split(':')
+    const namespace = titleParts.length > 1 ? titleParts[0] : 'core'
+
+    return `${namespace};${title};${description}`
+  })
+  .join('\n')
+
+console.log(`Namespace;Title;Description\n${csvApi}`)
 
 const getLits: (forceDebug?: 'debug') => Lits = (() => {
   const lits = new Lits({ debug: true })

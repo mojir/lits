@@ -3,6 +3,7 @@ import { assertMatrix, assertSquareMatrix, assertVector, isSquareMatrix } from '
 import { assertNumber } from '../../../../../typeGuards/number'
 import { approxZero } from '../../../../../utils'
 import type { BuiltinNormalExpressions } from '../../../../interface'
+import { gaussJordanElimination } from '../linearAlgebra/helpers/gaussJordanElimination'
 import { adjugate } from './helpers/adjugate'
 import { band } from './helpers/band'
 import { cofactor } from './helpers/cofactor'
@@ -17,6 +18,7 @@ import { isSymetric } from './helpers/isSymetric'
 import { isTriangular, isTriangularLower, isTriangularUpper } from './helpers/isTriangular'
 import { matrixMultiply } from './helpers/matrixMultiply'
 import { minor } from './helpers/minor'
+import { norm1 } from './helpers/norm1'
 import { trace } from './helpers/trace'
 
 export const matrixNormalExpression: BuiltinNormalExpressions = {
@@ -196,5 +198,49 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
       return isBanded(matrix, lband, uband)
     },
     paramCount: 3,
+  },
+  'mat:rank': {
+    evaluate: ([matrix], sourceCodeInfo): number => {
+      assertMatrix(matrix, sourceCodeInfo)
+      const [, result] = gaussJordanElimination(matrix)
+      return result
+    },
+    paramCount: 1,
+  },
+  // Frobenius norm
+  'mat:frobenius-norm': {
+    evaluate: ([matrix], sourceCodeInfo): number => {
+      assertMatrix(matrix, sourceCodeInfo)
+      return Math.sqrt(matrix.reduce((sum, row) => sum + row.reduce((rowSum, cell) => rowSum + cell * cell, 0), 0))
+    },
+    paramCount: 1,
+  },
+  // 1-norm
+  'mat:1-norm': {
+    evaluate: ([matrix], sourceCodeInfo): number => {
+      assertMatrix(matrix, sourceCodeInfo)
+      return norm1(matrix)
+    },
+    paramCount: 1,
+  },
+  // Infinity norm
+  'mat:inf-norm': {
+    evaluate: ([matrix], sourceCodeInfo): number => {
+      assertMatrix(matrix, sourceCodeInfo)
+      return matrix.reduce((max, row) => Math.max(max, row.reduce((sum, cell) => sum + Math.abs(cell), 0)), 0)
+    },
+    paramCount: 1,
+    aliases: ['mat:row-norm'],
+  },
+  // Max norm
+  'mat:max-norm': {
+    evaluate: ([matrix], sourceCodeInfo): number => {
+      assertMatrix(matrix, sourceCodeInfo)
+      return matrix.reduce((maxVal, row) => {
+        const rowMax = row.reduce((max, val) => Math.max(max, Math.abs(val)), 0)
+        return Math.max(maxVal, rowMax)
+      }, 0)
+    },
+    paramCount: 1,
   },
 }

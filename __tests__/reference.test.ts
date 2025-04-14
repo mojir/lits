@@ -69,7 +69,7 @@ describe('apiReference', () => {
     expect(linkNames).toEqual([])
   })
 
-  it.skip('everything documented', () => {
+  it('everything documented', () => {
     const functionReferenceKeys = Object.entries(apiReference)
       .filter(([, obj]) => isFunctionReference(obj))
       .map(([key]) => key)

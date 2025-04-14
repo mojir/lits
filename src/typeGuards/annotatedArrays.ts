@@ -98,6 +98,9 @@ export function isMatrix(matrix: unknown): matrix is number[][] {
   if (!Array.isArray(matrix[0])) {
     return false
   }
+  if (matrix[0].length === 0) {
+    return false
+  }
   const nbrOfCols = matrix[0].length
   for (const row of matrix.slice(1)) {
     if (!Array.isArray(row)) {

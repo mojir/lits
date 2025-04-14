@@ -31,6 +31,7 @@ import { recamanReference } from './recaman'
 import { sylvesterReference } from './sylvester'
 import { thueMorseReference } from './thueMorse'
 import { tribonacciReference } from './tribonacci'
+import { deficientReference } from './deficient'
 
 type SeqKey<T extends string> = `nth:${T}-seq`
 type TakeWhileKey<T extends string> = `nth:${T}-take-while`
@@ -51,6 +52,7 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
   ...catalanReference,
   ...collatzReference,
   ...compositeReference,
+  ...deficientReference,
   ...factorialReference,
   ...fibonacciReference,
   ...geometricReference,
@@ -723,6 +725,7 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       'nth:mobius(12)',
       'nth:mobius(30)',
     ],
+    aliases: ['nth:möbius'],
   },
   'nth:mertens': {
     title: 'nth:mertens',
