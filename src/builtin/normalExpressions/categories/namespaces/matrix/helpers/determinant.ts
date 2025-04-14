@@ -1,3 +1,5 @@
+import { approxZero } from '../../../../../../utils'
+
 /**
  * Calculates the determinant of a matrix using Gaussian Elimination
  * @param matrix A square matrix represented as a 2D array
@@ -36,7 +38,7 @@ export function determinant(matrix: number[][]): number {
     }
 
     // If the pivot is zero, the determinant is zero
-    if (Math.abs(A[maxRow]![i]!) < 1e-10) {
+    if (approxZero(A[maxRow]![i]!)) {
       return 0
     }
 

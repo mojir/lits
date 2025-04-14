@@ -2963,6 +2963,26 @@ var Playground = (function (exports) {
     function addToSet(target, source) {
         source.forEach(function (symbol) { return target.add(symbol); });
     }
+    var EPSILON = 1e-10;
+    function approxEqual(a, b, epsilon) {
+        if (epsilon === void 0) { epsilon = EPSILON; }
+        if (a === b) {
+            return true;
+        }
+        var diff = Math.abs(a - b);
+        if (a === 0 || b === 0 || diff < epsilon) {
+            // Use absolute error for values near zero
+            return diff < epsilon;
+        }
+        var absA = Math.abs(a);
+        var absB = Math.abs(b);
+        // Use relative error for larger values
+        return diff / (absA + absB) < epsilon;
+    }
+    function approxZero(value, epsilon) {
+        if (epsilon === void 0) { epsilon = EPSILON; }
+        return Math.abs(value) < epsilon;
+    }
 
     // isArray not needed, use Array.isArary
     function asArray(value, sourceCodeInfo) {
@@ -4551,17 +4571,17 @@ var Playground = (function (exports) {
                 assertNumber(eplsilon, sourceCodeInfo, { positive: true, finite: true });
                 if (operation === 'number') {
                     var _c = __read(operands, 2), first = _c[0], second = _c[1];
-                    return Math.abs(first - second) < eplsilon;
+                    return approxEqual(first, second, eplsilon);
                 }
                 else if (operation === 'vector') {
                     var firstVector = operands[0];
                     var secondVector_1 = operands[1];
-                    return firstVector.every(function (val, i) { return Math.abs(val - secondVector_1[i]) < eplsilon; });
+                    return firstVector.every(function (val, i) { return approxEqual(val, secondVector_1[i], eplsilon); });
                 }
                 else {
                     var firstMatrix = operands[0];
                     var secondMatrix_1 = operands[1];
-                    return firstMatrix.every(function (row, i) { return row.every(function (val, j) { return Math.abs(val - secondMatrix_1[i][j]) < eplsilon; }); });
+                    return firstMatrix.every(function (row, i) { return row.every(function (val, j) { return approxEqual(val, secondMatrix_1[i][j], eplsilon); }); });
                 }
             },
             paramCount: { min: 2, max: 3 },
@@ -8286,8 +8306,6 @@ var Playground = (function (exports) {
         var m = matrix.map(function (row) { return __spreadArray([], __read(row), false); });
         var rows = m.length;
         var cols = m[0].length;
-        // Tolerance for considering a value as zero
-        var EPSILON = 1e-10;
         var rank = 0;
         var rowsProcessed = 0;
         // Row reduction to reduced row echelon form
@@ -8295,7 +8313,7 @@ var Playground = (function (exports) {
             // Find the pivot
             var pivotRow = -1;
             for (var row = rowsProcessed; row < rows; row++) {
-                if (Math.abs(m[row][col]) > EPSILON) {
+                if (!approxZero(m[row][col])) {
                     pivotRow = row;
                     break;
                 }
@@ -8316,7 +8334,7 @@ var Playground = (function (exports) {
             }
             // Eliminate above and below (full Gauss-Jordan)
             for (var row = 0; row < rows; row++) {
-                if (row !== rowsProcessed && Math.abs(m[row][col]) > EPSILON) {
+                if (row !== rowsProcessed && !approxZero(m[row][col])) {
                     var factor = m[row][col];
                     for (var j = col; j < cols; j++) {
                         m[row][j] -= factor * m[rowsProcessed][j];
@@ -8345,7 +8363,7 @@ var Playground = (function (exports) {
         var _a = __read(gaussJordanElimination(augmented), 1), echelon = _a[0];
         // Check if the system has a unique solution
         for (var i = 0; i < n; i += 1) {
-            if (Math.abs(echelon[i][i]) < 1e-10) {
+            if (approxZero(echelon[i][i])) {
                 return null; // No unique solution
             }
         }
@@ -8377,6 +8395,162 @@ var Playground = (function (exports) {
             maxColSum = Math.max(maxColSum, colSum);
         }
         return maxColSum;
+    }
+
+    function areVectorsCollinear(vectorA, vectorB) {
+        // Check if either vector is zero
+        var isZeroVector = function (vec) {
+            return vec.every(function (component) { return approxZero(component); });
+        };
+        if (isZeroVector(vectorA) || isZeroVector(vectorB)) {
+            return true; // Zero vector is technically collinear to all vectors
+        }
+        // Find the first non-zero component in vectorA
+        var index = 0;
+        while (index < vectorA.length && approxZero(vectorA[index])) {
+            index++;
+        }
+        // If we reached the end, vectorA is a zero vector (should be caught above)
+        if (index >= vectorA.length)
+            return true;
+        // Calculate the scale factor
+        var ratio = vectorB[index] / vectorA[index];
+        // Check if all other components maintain the same ratio
+        for (var i = 0; i < vectorA.length; i++) {
+            // Skip components where both vectors have (near) zero values
+            if (approxZero(vectorA[i]) && approxZero(vectorB[i]))
+                continue;
+            // If vectorA component is near zero but vectorB is not, vectors are not collinear
+            if (approxZero(vectorA[i]))
+                return false;
+            // Check if the ratio is consistent
+            if (!approxEqual(vectorB[i] / vectorA[i], ratio)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    function areVectorsParallel(vectorA, vectorB) {
+        if (!areVectorsCollinear(vectorA, vectorB)) {
+            return false;
+        }
+        // Then verify they point in the same direction
+        // Find first non-zero component in both vectors
+        for (var i = 0; i < vectorA.length; i++) {
+            if (!approxZero(vectorA[i]) && !approxZero(vectorB[i])) {
+                return Math.sign(vectorA[i]) === Math.sign(vectorB[i]);
+            }
+        }
+        // If we get here, one of the vectors must be zero
+        return true;
+    }
+
+    function isZeroVector(vector) {
+        return vector.every(function (component) { return approxZero(component); });
+    }
+
+    function pearsonCorr(vectorA, vectorB) {
+        var meanA = calcMean(vectorA);
+        var meanB = calcMean(vectorB);
+        var sumNumerator = 0;
+        var sumSquareA = 0;
+        var sumSquareB = 0;
+        for (var i = 0; i < vectorA.length; i++) {
+            var diffA = vectorA[i] - meanA;
+            var diffB = vectorB[i] - meanB;
+            sumNumerator += diffA * diffB;
+            sumSquareA += diffA * diffA;
+            sumSquareB += diffB * diffB;
+        }
+        // Check if either vector has zero variance
+        if (sumSquareA === 0 || sumSquareB === 0) {
+            throw new Error('Cannot calculate Pearson correlation coefficient: one of the vectors has zero variance.');
+        }
+        return sumNumerator / (Math.sqrt(sumSquareA) * Math.sqrt(sumSquareB));
+    }
+
+    function calcFractionalRanks(vector) {
+        // Create array of indices and sort by values
+        var indices = __spreadArray([], __read(vector.keys()), false).sort(function (a, b) { return vector[a] - vector[b]; });
+        // Create ranks array (same size as input vector)
+        var ranks = Array.from({ length: vector.length }).fill(0);
+        // Assign ranks, handling ties properly
+        var currentRank = 1;
+        var i = 0;
+        while (i < indices.length) {
+            var value = vector[indices[i]];
+            var j = i;
+            // Find all indices with the same value
+            while (j < indices.length && vector[indices[j]] === value) {
+                j++;
+            }
+            // Calculate average rank for ties
+            var averageRank = currentRank + (j - i - 1) / 2;
+            // Assign average rank to all tied elements
+            for (var k = i; k < j; k++) {
+                ranks[indices[k]] = averageRank;
+            }
+            // Update current rank and index
+            currentRank += j - i;
+            i = j;
+        }
+        return ranks;
+    }
+
+    /**
+     * Calculates Kendall's Tau-b rank correlation coefficient between two vectors
+     * This implementation handles ties and uses an epsilon value for floating-point comparisons
+     *
+     * @param vectorA - First vector of numbers
+     * @param vectorB - Second vector of numbers
+     * @param epsilon - Threshold for considering two values as equal (default: 1e-10)
+     * @returns The Kendall's Tau-b correlation coefficient
+     */
+    function kendallTau(vectorA, vectorB, epsilon) {
+        if (epsilon === void 0) { epsilon = 1e-10; }
+        var concordant = 0;
+        var discordant = 0;
+        var tiesInA = 0;
+        var tiesInB = 0;
+        // Compare all pairs
+        for (var i = 0; i < vectorA.length; i++) {
+            for (var j = i + 1; j < vectorA.length; j++) {
+                // Calculate differences
+                var diffA = vectorA[i] - vectorA[j];
+                var diffB = vectorB[i] - vectorB[j];
+                // Check for ties using epsilon
+                var isTieA = Math.abs(diffA) < epsilon;
+                var isTieB = Math.abs(diffB) < epsilon;
+                if (isTieA && isTieB) {
+                    // Tied in both vectors
+                    continue;
+                }
+                else if (isTieA) {
+                    // Tied in vector A only
+                    tiesInA += 1;
+                }
+                else if (isTieB) {
+                    // Tied in vector B only
+                    tiesInB += 1;
+                }
+                else if (diffA * diffB > 0) {
+                    // Concordant pair
+                    concordant += 1;
+                }
+                else {
+                    // Discordant pair
+                    discordant += 1;
+                }
+            }
+        }
+        var n1 = concordant + discordant + tiesInA;
+        var n2 = concordant + discordant + tiesInB;
+        // Handle edge cases to avoid division by zero
+        if (n1 === 0 || n2 === 0) {
+            throw new Error('Not enough data to calculate Kendall\'s Tau');
+        }
+        // Kendall's Tau-b formula
+        return (concordant - discordant) / Math.sqrt(n1 * n2);
     }
 
     var linearAlgebraNormalExpression = {
@@ -8495,19 +8669,14 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'lin:magnitude': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertNonEmptyVector(vector, sourceCodeInfo);
-                return Math.sqrt(vector.reduce(function (acc, val) { return acc + val * val; }, 0));
-            },
-            paramCount: 1,
-        },
         'lin:angle': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
                 assertNonEmptyVector(vectorA, sourceCodeInfo);
                 assertNonEmptyVector(vectorB, sourceCodeInfo);
+                if (isZeroVector(vectorA) || isZeroVector(vectorB)) {
+                    throw new LitsError('Cannot calculate angle with zero-length vector', sourceCodeInfo);
+                }
                 if (vectorA.length !== vectorB.length) {
                     throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
                 }
@@ -8521,8 +8690,11 @@ var Playground = (function (exports) {
         'lin:projection': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
+                assertNonEmptyVector(vectorA, sourceCodeInfo);
+                assertNonEmptyVector(vectorB, sourceCodeInfo);
+                if (isZeroVector(vectorB)) {
+                    throw new LitsError('Cannot project onto zero-length vector', sourceCodeInfo);
+                }
                 if (vectorA.length !== vectorB.length) {
                     throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
                 }
@@ -8535,8 +8707,8 @@ var Playground = (function (exports) {
         'lin:orthogonal?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
+                assertNonEmptyVector(vectorA, sourceCodeInfo);
+                assertNonEmptyVector(vectorB, sourceCodeInfo);
                 if (vectorA.length !== vectorB.length) {
                     throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
                 }
@@ -8548,34 +8720,35 @@ var Playground = (function (exports) {
         'lin:parallel?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
+                assertNonEmptyVector(vectorA, sourceCodeInfo);
+                assertNonEmptyVector(vectorB, sourceCodeInfo);
                 if (vectorA.length !== vectorB.length) {
                     throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
                 }
-                var crossProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
-                return crossProduct === 0;
+                return areVectorsParallel(vectorA, vectorB);
             },
             paramCount: 2,
         },
         'lin:collinear?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
+                assertNonEmptyVector(vectorA, sourceCodeInfo);
+                assertNonEmptyVector(vectorB, sourceCodeInfo);
                 if (vectorA.length !== vectorB.length) {
                     throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
                 }
-                var crossProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
-                return crossProduct === 0;
+                return areVectorsCollinear(vectorA, vectorB);
             },
             paramCount: 2,
         },
         'lin:cosine-similarity': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
+                assertNonEmptyVector(vectorA, sourceCodeInfo);
+                assertNonEmptyVector(vectorB, sourceCodeInfo);
+                if (isZeroVector(vectorA) || isZeroVector(vectorB)) {
+                    throw new LitsError('Cannot calculate cosine similarity with zero-length vector', sourceCodeInfo);
+                }
                 if (vectorA.length !== vectorB.length) {
                     throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
                 }
@@ -8586,47 +8759,55 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'lin:distance': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                return Math.sqrt(vectorA.reduce(function (acc, val, i) { return acc + Math.pow((val - vectorB[i]), 2); }, 0));
-            },
-            paramCount: 2,
-        },
         'lin:euclidean-distance': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
+                assertNonEmptyVector(vectorA, sourceCodeInfo);
+                assertNonEmptyVector(vectorB, sourceCodeInfo);
                 if (vectorA.length !== vectorB.length) {
                     throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
                 }
                 return Math.sqrt(vectorA.reduce(function (acc, val, i) { return acc + Math.pow((val - vectorB[i]), 2); }, 0));
             },
+            aliases: ['lin:distance', 'lin:l2-distance'],
             paramCount: 2,
+        },
+        'lin:euclidean-norm': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertNonEmptyVector(vector, sourceCodeInfo);
+                return Math.sqrt(vector.reduce(function (acc, val) { return acc + val * val; }, 0));
+            },
+            paramCount: 1,
+            aliases: ['lin:l2-norm', 'lin:magnitude'],
         },
         'lin:manhattan-distance': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
+                assertNonEmptyVector(vectorA, sourceCodeInfo);
+                assertNonEmptyVector(vectorB, sourceCodeInfo);
                 if (vectorA.length !== vectorB.length) {
                     throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
                 }
                 return vectorA.reduce(function (acc, val, i) { return acc + Math.abs(val - vectorB[i]); }, 0);
             },
             paramCount: 2,
+            aliases: ['lin:l1-distance', 'lin:cityblock-distance'],
+        },
+        'lin:manhattan-norm': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertNonEmptyVector(vector, sourceCodeInfo);
+                return vector.reduce(function (acc, val) { return acc + Math.abs(val); }, 0);
+            },
+            paramCount: 1,
+            aliases: ['lin:l1-norm', 'lin:cityblock-norm'],
         },
         'lin:hamming-distance': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
+                assertNonEmptyVector(vectorA, sourceCodeInfo);
+                assertNonEmptyVector(vectorB, sourceCodeInfo);
                 if (vectorA.length !== vectorB.length) {
                     throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
                 }
@@ -8634,11 +8815,19 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
+        'lin:hamming-norm': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertNonEmptyVector(vector, sourceCodeInfo);
+                return vector.reduce(function (acc, val) { return acc + (val !== 0 ? 1 : 0); }, 0);
+            },
+            paramCount: 1,
+        },
         'lin:chebyshev-distance': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
+                assertNonEmptyVector(vectorA, sourceCodeInfo);
+                assertNonEmptyVector(vectorB, sourceCodeInfo);
                 if (vectorA.length !== vectorB.length) {
                     throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
                 }
@@ -8646,12 +8835,20 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
+        'lin:chebyshev-norm': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assertNonEmptyVector(vector, sourceCodeInfo);
+                return Math.max.apply(Math, __spreadArray([], __read(vector.map(function (val) { return Math.abs(val); })), false));
+            },
+            paramCount: 1,
+        },
         'lin:minkowski-distance': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), vectorA = _b[0], vectorB = _b[1], p = _b[2];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                assertNumber(p, sourceCodeInfo, { finite: true });
+                assertNonEmptyVector(vectorA, sourceCodeInfo);
+                assertNonEmptyVector(vectorB, sourceCodeInfo);
+                assertNumber(p, sourceCodeInfo, { finite: true, positive: true });
                 if (vectorA.length !== vectorB.length) {
                     throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
                 }
@@ -8659,74 +8856,52 @@ var Playground = (function (exports) {
             },
             paramCount: 3,
         },
-        'lin:jaccard-distance': {
+        'lin:minkowski-norm': {
             evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                var intersection = vectorA.filter(function (val) { return vectorB.includes(val); }).length;
-                var union = new Set(__spreadArray(__spreadArray([], __read(vectorA), false), __read(vectorB), false)).size;
-                return 1 - intersection / union;
+                var _b = __read(_a, 2), vector = _b[0], p = _b[1];
+                assertNonEmptyVector(vector, sourceCodeInfo);
+                assertNumber(p, sourceCodeInfo, { finite: true, positive: true });
+                return Math.pow(vector.reduce(function (acc, val) { return acc + Math.pow(Math.abs(val), p); }, 0), (1 / p));
             },
             paramCount: 2,
         },
-        'lin:dice-coefficient': {
+        // TODO consider for Set namespace. E.g. 'set:jaccard-distance'
+        // 'lin:jaccard-distance': {
+        //   evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
+        //     assertNonEmptyVector(vectorA, sourceCodeInfo)
+        //     assertNonEmptyVector(vectorB, sourceCodeInfo)
+        //     const intersection = vectorA.filter(val => vectorB.includes(val)).length
+        //     const union = new Set([...vectorA, ...vectorB]).size
+        //     return 1 - intersection / union
+        //   },
+        //   paramCount: 2,
+        // },
+        // TODO consider for Set namespace. E.g. 'set:dice-coefficient'
+        // 'lin:dice-coefficient': {
+        //   evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
+        //     assertNonEmptyVector(vectorA, sourceCodeInfo)
+        //     assertNonEmptyVector(vectorB, sourceCodeInfo)
+        //     const intersection = vectorA.filter(val => vectorB.includes(val)).length
+        //     return (2 * intersection) / (vectorA.length + vectorB.length)
+        //   },
+        //   paramCount: 2,
+        // },
+        // TODO consider for String namespace. E.g. 'str:levenshtein-distance'
+        // 'lin:levenshtein-distance': {
+        //   evaluate: ([stringA, stringB], sourceCodeInfo): number => {
+        //   },
+        //   paramCount: 2,
+        // },
+        'lin:cov': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                var intersection = vectorA.filter(function (val) { return vectorB.includes(val); }).length;
-                return (2 * intersection) / (vectorA.length + vectorB.length);
-            },
-            paramCount: 2,
-        },
-        'lin:levenshtein-distance': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                var m = vectorA.length;
-                var n = vectorB.length;
-                var d = Array.from({ length: m + 1 }, function () { return Array(n + 1).fill(0); });
-                for (var i = 0; i <= m; i += 1) {
-                    d[i][0] = i;
-                }
-                for (var j = 0; j <= n; j += 1) {
-                    d[0][j] = j;
-                }
-                for (var i = 1; i <= m; i += 1) {
-                    for (var j = 1; j <= n; j += 1) {
-                        var cost = vectorA[i - 1] === vectorB[j - 1] ? 0 : 1;
-                        d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + cost);
-                    }
-                }
-                return d[m][n];
-            },
-            paramCount: 2,
-        },
-        'lin:l1-norm': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return vector.reduce(function (acc, val) { return acc + Math.abs(val); }, 0);
-            },
-            paramCount: 1,
-        },
-        'lin:l2-norm': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), vector = _b[0];
-                assertVector(vector, sourceCodeInfo);
-                return Math.sqrt(vector.reduce(function (acc, val) { return acc + val * val; }, 0));
-            },
-            paramCount: 1,
-        },
-        'lin:covariance': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
+                assertNonEmptyVector(vectorA, sourceCodeInfo);
+                assertNonEmptyVector(vectorB, sourceCodeInfo);
                 if (vectorA.length !== vectorB.length) {
                     throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                if (vectorA.length === 1) {
+                    return 0;
                 }
                 var meanA = calcMean(vectorA);
                 var meanB = calcMean(vectorB);
@@ -8734,11 +8909,14 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'lin:correlation': {
+        'lin:corr': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
                 assertVector(vectorA, sourceCodeInfo);
                 assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length <= 1) {
+                    throw new LitsError('Vectors must have at least 2 elements for lin:corr', sourceCodeInfo);
+                }
                 if (vectorA.length !== vectorB.length) {
                     throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
                 }
@@ -8750,17 +8928,52 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'lin:spearman-correlation': {
+        'lin:spearman-corr': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
                 assertVector(vectorA, sourceCodeInfo);
                 assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length <= 1) {
+                    throw new LitsError('Vectors must have at least 2 elements for lin:corr', sourceCodeInfo);
+                }
                 if (vectorA.length !== vectorB.length) {
                     throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
                 }
-                var rankA = __spreadArray([], __read(vectorA.keys()), false).sort(function (a, b) { return vectorA[a] - vectorA[b]; });
-                var rankB = __spreadArray([], __read(vectorB.keys()), false).sort(function (a, b) { return vectorB[a] - vectorB[b]; });
-                return vectorA.reduce(function (acc, _val, i) { return acc + (rankA[i] - rankB[i]); }, 0) / vectorA.length;
+                var ranksA = calcFractionalRanks(vectorA);
+                var ranksB = calcFractionalRanks(vectorB);
+                try {
+                    return pearsonCorr(ranksA, ranksB);
+                }
+                catch (error) {
+                    if (error instanceof Error) {
+                        throw new LitsError(error.message, sourceCodeInfo);
+                    }
+                    throw error;
+                }
+            },
+            paramCount: 2,
+            aliases: ['lin:spearman-rho'],
+        },
+        'lin:pearson-corr': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length <= 1) {
+                    throw new LitsError('Vectors must have at least 2 elements for lin:pearson-corr', sourceCodeInfo);
+                }
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                try {
+                    return pearsonCorr(vectorA, vectorB);
+                }
+                catch (error) {
+                    if (error instanceof Error) {
+                        throw new LitsError(error.message, sourceCodeInfo);
+                    }
+                    throw error;
+                }
             },
             paramCount: 2,
         },
@@ -8769,22 +8982,21 @@ var Playground = (function (exports) {
                 var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
                 assertVector(vectorA, sourceCodeInfo);
                 assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length < 2) {
+                    throw new LitsError('Vectors must have at least 2 elements for lin:kendall-tau', sourceCodeInfo);
+                }
                 if (vectorA.length !== vectorB.length) {
                     throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
                 }
-                var concordant = 0;
-                var discordant = 0;
-                for (var i = 0; i < vectorA.length; i += 1) {
-                    for (var j = i + 1; j < vectorA.length; j += 1) {
-                        if ((vectorA[i] - vectorA[j]) * (vectorB[i] - vectorB[j]) > 0) {
-                            concordant += 1;
-                        }
-                        else {
-                            discordant += 1;
-                        }
-                    }
+                try {
+                    return kendallTau(vectorA, vectorB);
                 }
-                return (concordant - discordant) / Math.sqrt(Math.pow((concordant + discordant), 2));
+                catch (error) {
+                    if (error instanceof Error) {
+                        throw new LitsError(error.message, sourceCodeInfo);
+                    }
+                    throw error;
+                }
             },
             paramCount: 2,
         },
@@ -8793,10 +9005,7 @@ var Playground = (function (exports) {
                 var _b = __read(_a, 2), vector = _b[0], lag = _b[1];
                 assertVector(vector, sourceCodeInfo);
                 var effectiveLag = lag !== null && lag !== void 0 ? lag : vector.length - 1;
-                assertNumber(effectiveLag, sourceCodeInfo, { integer: true });
-                if (effectiveLag >= vector.length) {
-                    throw new LitsError('Lag must be less than the length of the vector', sourceCodeInfo);
-                }
+                assertNumber(effectiveLag, sourceCodeInfo, { integer: true, lte: vector.length, positive: true });
                 var mean = calcMean(vector);
                 var variance = calcVariance(vector);
                 var autocovariance = vector.reduce(function (acc, val, i) { return acc + (val - mean) * (vector[i + effectiveLag] - mean); }, 0) / vector.length;
@@ -8850,7 +9059,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'lin:rank': {
+        'lin:matrix-rank': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), matrix = _b[0];
                 assertMatrix(matrix, sourceCodeInfo);
@@ -8944,7 +9153,7 @@ var Playground = (function (exports) {
                 }
             }
             // If the pivot is zero, the determinant is zero
-            if (Math.abs(A[maxRow][i]) < 1e-10) {
+            if (approxZero(A[maxRow][i])) {
                 return 0;
             }
             // Swap rows if necessary
@@ -9042,13 +9251,12 @@ var Playground = (function (exports) {
      * @param matrix The input matrix
      * @returns The inverse matrix or null if the matrix is not invertible
      */
-    var EPSILON = 1e-10;
     function inverse(matrix) {
         var n = matrix.length;
         // Special case for 1x1 matrix - handle it directly
         if (n === 1) {
             var element = matrix[0][0];
-            if (Math.abs(element) < EPSILON) {
+            if (approxZero(element)) {
                 return null; // Not invertible
             }
             return [[1 / element]];
@@ -9056,7 +9264,7 @@ var Playground = (function (exports) {
         // Calculate determinant
         var det = determinant(matrix);
         // Check if matrix is invertible
-        if (Math.abs(det) < EPSILON) {
+        if (approxZero(det)) {
             return null; // Matrix is not invertible
         }
         // Get the adjugate matrix
@@ -9126,7 +9334,6 @@ var Playground = (function (exports) {
         return true;
     }
 
-    var epsilon = 1e-10;
     function isIdentity(matrix) {
         if (!isSquare(matrix)) {
             return false;
@@ -9135,12 +9342,12 @@ var Playground = (function (exports) {
         for (var i = 0; i < n; i++) {
             for (var j = 0; j < n; j++) {
                 if (i === j) {
-                    if (Math.abs(matrix[i][j] - 1) > epsilon) {
+                    if (!approxEqual(matrix[i][j], 1)) {
                         return false;
                     }
                 }
                 else {
-                    if (Math.abs(matrix[i][j]) > epsilon) {
+                    if (!approxZero(matrix[i][j])) {
                         return false;
                     }
                 }
@@ -9435,7 +9642,7 @@ var Playground = (function (exports) {
                 if (!isSquareMatrix(matrix)) {
                     return false;
                 }
-                return Math.abs(determinant(matrix)) > 1e-10;
+                return !approxZero(determinant(matrix));
             },
             paramCount: 1,
         },
@@ -10289,38 +10496,21 @@ var Playground = (function (exports) {
     function isInArithmeticSequence(start, step, n) {
         // Special case: If step is 0, n must equal start
         if (step === 0) {
-            return Math.abs(n - start) < 1e-12;
+            return approxEqual(n, start);
         }
-        // Check if n is a valid arithmetic sequence term
+        // Calculate position in sequence
         var position = (n - start) / step;
         // Position must be non-negative
         if (position < 0) {
             return false;
         }
-        // For tiny steps, do a direct calculation instead of using the position
-        // This helps avoid floating point precision issues
-        if (Math.abs(step) < 1e-6) {
-            // Find the closest position (rounding to nearest integer)
-            var roundedPosition_1 = Math.round(position);
-            var calculatedValue_1 = start + step * roundedPosition_1;
-            // Direct comparison with tiny values should use absolute difference
-            return Math.abs(calculatedValue_1 - n) < 1e-12;
-        }
-        // For normal cases, check if position is very close to an integer
+        // Find nearest integer position
         var roundedPosition = Math.round(position);
-        if (Math.abs(roundedPosition - position) > 1e-12) {
-            return false;
-        }
-        // Double check by calculating the value at that position
+        // Calculate the value at that position
         var calculatedValue = start + step * roundedPosition;
-        // For values very close to zero, use absolute difference
-        if (Math.abs(n) < 1e-10 || Math.abs(calculatedValue) < 1e-10) {
-            return Math.abs(calculatedValue - n) < 1e-12;
-        }
-        // Otherwise use relative difference for better precision with large numbers
-        var relativeDifference = Math.abs(calculatedValue - n)
-            / Math.max(Math.abs(n), Math.abs(calculatedValue));
-        return relativeDifference < 1e-12;
+        // Check both if position is close to an integer and if the
+        // calculated value is close to the input value
+        return approxEqual(position, roundedPosition) && approxEqual(calculatedValue, n);
     }
     var arithmeticNormalExpressions = {
         'nth:arithmetic-seq': {
@@ -10723,22 +10913,31 @@ var Playground = (function (exports) {
      */
     function isInGeometricSequence(initialTerm, ratio, number) {
         // Handle special cases
-        if (initialTerm === 0)
-            return number === 0;
-        if (ratio === 1)
-            return number === initialTerm;
-        if (ratio === 0)
-            return number === 0 || number === initialTerm;
+        if (approxEqual(initialTerm, 0)) {
+            return approxEqual(number, 0);
+        }
+        if (approxEqual(ratio, 1)) {
+            return approxEqual(number, initialTerm);
+        }
+        if (approxEqual(ratio, 0)) {
+            return approxEqual(number, 0) || approxEqual(number, initialTerm);
+        }
         // Check if the number is exactly the initial term
-        if (number === initialTerm)
+        if (approxEqual(number, initialTerm)) {
             return true;
+        }
+        // Special case for ratio = -1 (alternating sequence)
+        if (approxEqual(ratio, -1)) {
+            // In an alternating sequence with ratio -1, the terms are just initialTerm and -initialTerm
+            return approxEqual(number, initialTerm) || approxEqual(number, -initialTerm);
+        }
         // For negative ratios, we need special handling
         if (ratio < 0) {
             // Calculate log using absolute values
             var logResult_1 = Math.log(Math.abs(number / initialTerm)) / Math.log(Math.abs(ratio));
             // Check if logResult is very close to an integer
             var roundedLogResult_1 = Math.round(logResult_1);
-            if (Math.abs(roundedLogResult_1 - logResult_1) > 1e-10 || roundedLogResult_1 < 0) {
+            if (!approxEqual(roundedLogResult_1, logResult_1) || roundedLogResult_1 < 0) {
                 return false;
             }
             // For negative ratios, alternating terms have alternating signs
@@ -10750,25 +10949,19 @@ var Playground = (function (exports) {
         }
         // For positive ratios
         // Quick check based on sequence direction
-        // If ratio > 1, number should be >= initialTerm to be in the sequence
-        // If 0 < ratio < 1, number should be <= initialTerm to be in the sequence
-        if ((ratio > 1 && number < initialTerm)
-            || (ratio < 1 && number > initialTerm)) {
+        if ((ratio > 1 && number < initialTerm) || (ratio < 1 && number > initialTerm)) {
             return false;
         }
         // Calculate n in: number = initialTerm * (ratio^n)
         var logResult = Math.log(number / initialTerm) / Math.log(ratio);
-        // Check if logResult is very close to an integer
+        // Check if logResult is very close to an integer and non-negative
         var roundedLogResult = Math.round(logResult);
-        if (Math.abs(roundedLogResult - logResult) > 1e-10 || roundedLogResult < 0) {
+        if (!approxEqual(roundedLogResult, logResult) || roundedLogResult < 0) {
             return false;
         }
-        // Verify calculated value matches the number exactly (within floating point precision)
-        // This is important to avoid false positives due to floating point arithmetic
+        // Verify calculated value matches the number exactly
         var calculatedValue = initialTerm * Math.pow(ratio, roundedLogResult);
-        var relativeDifference = Math.abs(calculatedValue - number)
-            / Math.max(Math.abs(number), Math.abs(calculatedValue));
-        return relativeDifference < 1e-10;
+        return approxEqual(calculatedValue, number);
     }
     var geometricNormalExpressions = {
         'nth:geometric-seq': {
@@ -11435,9 +11628,7 @@ var Playground = (function (exports) {
             // Calculate the potential base as n^(1/k)
             var b = Math.pow(n, (1 / k));
             var roundedB = Math.round(b);
-            // Check if roundedB^k is equal to n (within a small epsilon to account for floating point errors)
-            var epsilon = 1e-10;
-            if (Math.abs(Math.pow(roundedB, k) - n) < epsilon) {
+            if (approxEqual(Math.pow(roundedB, k), n)) {
                 return [roundedB, k];
             }
         }

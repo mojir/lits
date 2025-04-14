@@ -4,10 +4,9 @@
  * @returns The inverse matrix or null if the matrix is not invertible
  */
 
+import { approxZero } from '../../../../../../utils'
 import { adjugate } from './adjugate'
 import { determinant } from './determinant'
-
-const EPSILON = 1e-10
 
 export function inverse(matrix: number[][]): number[][] | null {
   const n = matrix.length
@@ -15,7 +14,7 @@ export function inverse(matrix: number[][]): number[][] | null {
   // Special case for 1x1 matrix - handle it directly
   if (n === 1) {
     const element = matrix[0]![0]!
-    if (Math.abs(element) < EPSILON) {
+    if (approxZero(element)) {
       return null // Not invertible
     }
     return [[1 / element]]
@@ -25,7 +24,7 @@ export function inverse(matrix: number[][]): number[][] | null {
   const det = determinant(matrix)
 
   // Check if matrix is invertible
-  if (Math.abs(det) < EPSILON) {
+  if (approxZero(det)) {
     return null // Matrix is not invertible
   }
 

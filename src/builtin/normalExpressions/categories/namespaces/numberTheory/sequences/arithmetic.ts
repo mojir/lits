@@ -1,5 +1,6 @@
 import { assertFunctionLike } from '../../../../../../typeGuards/lits'
 import { assertNumber } from '../../../../../../typeGuards/number'
+import { approxEqual } from '../../../../../../utils'
 import type { SequenceNormalExpressions } from '.'
 
 /**
@@ -16,10 +17,10 @@ function isInArithmeticSequence(
 ): boolean {
   // Special case: If step is 0, n must equal start
   if (step === 0) {
-    return Math.abs(n - start) < 1e-12
+    return approxEqual(n, start)
   }
 
-  // Check if n is a valid arithmetic sequence term
+  // Calculate position in sequence
   const position = (n - start) / step
 
   // Position must be non-negative
@@ -27,35 +28,15 @@ function isInArithmeticSequence(
     return false
   }
 
-  // For tiny steps, do a direct calculation instead of using the position
-  // This helps avoid floating point precision issues
-  if (Math.abs(step) < 1e-6) {
-    // Find the closest position (rounding to nearest integer)
-    const roundedPosition = Math.round(position)
-    const calculatedValue = start + step * roundedPosition
-
-    // Direct comparison with tiny values should use absolute difference
-    return Math.abs(calculatedValue - n) < 1e-12
-  }
-
-  // For normal cases, check if position is very close to an integer
+  // Find nearest integer position
   const roundedPosition = Math.round(position)
-  if (Math.abs(roundedPosition - position) > 1e-12) {
-    return false
-  }
 
-  // Double check by calculating the value at that position
+  // Calculate the value at that position
   const calculatedValue = start + step * roundedPosition
 
-  // For values very close to zero, use absolute difference
-  if (Math.abs(n) < 1e-10 || Math.abs(calculatedValue) < 1e-10) {
-    return Math.abs(calculatedValue - n) < 1e-12
-  }
-
-  // Otherwise use relative difference for better precision with large numbers
-  const relativeDifference = Math.abs(calculatedValue - n)
-    / Math.max(Math.abs(n), Math.abs(calculatedValue))
-  return relativeDifference < 1e-12
+  // Check both if position is close to an integer and if the
+  // calculated value is close to the input value
+  return approxEqual(position, roundedPosition) && approxEqual(calculatedValue, n)
 }
 
 export const arithmeticNormalExpressions: SequenceNormalExpressions<'arithmetic'> = {

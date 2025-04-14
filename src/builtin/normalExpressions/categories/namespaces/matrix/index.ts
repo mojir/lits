@@ -1,6 +1,7 @@
 import { LitsError } from '../../../../../errors'
 import { assertMatrix, assertSquareMatrix, assertVector, isSquareMatrix } from '../../../../../typeGuards/annotatedArrays'
 import { assertNumber } from '../../../../../typeGuards/number'
+import { approxZero } from '../../../../../utils'
 import type { BuiltinNormalExpressions } from '../../../../interface'
 import { adjugate } from './helpers/adjugate'
 import { band } from './helpers/band'
@@ -143,7 +144,7 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
       if (!isSquareMatrix(matrix)) {
         return false
       }
-      return Math.abs(determinant(matrix)) > 1e-10
+      return !approxZero(determinant(matrix))
     },
     paramCount: 1,
   },

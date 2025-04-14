@@ -1,3 +1,4 @@
+import { approxEqual } from '../../../../../../utils'
 import type { SequenceDefinition } from '.'
 
 /**
@@ -25,9 +26,7 @@ export function perfectPower(n: number): [number, number] | null {
     const b = n ** (1 / k)
     const roundedB = Math.round(b)
 
-    // Check if roundedB^k is equal to n (within a small epsilon to account for floating point errors)
-    const epsilon = 1e-10
-    if (Math.abs(roundedB ** k - n) < epsilon) {
+    if (approxEqual(roundedB ** k, n)) {
       return [roundedB, k]
     }
   }

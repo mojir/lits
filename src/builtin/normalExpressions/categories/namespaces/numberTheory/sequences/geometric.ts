@@ -1,5 +1,6 @@
 import { assertFunctionLike } from '../../../../../../typeGuards/lits'
 import { assertNumber } from '../../../../../../typeGuards/number'
+import { approxEqual } from '../../../../../../utils'
 import type { SequenceNormalExpressions } from '.'
 
 /**
@@ -15,16 +16,26 @@ function isInGeometricSequence(
   number: number,
 ): boolean {
   // Handle special cases
-  if (initialTerm === 0)
-    return number === 0
-  if (ratio === 1)
-    return number === initialTerm
-  if (ratio === 0)
-    return number === 0 || number === initialTerm
+  if (approxEqual(initialTerm, 0)) {
+    return approxEqual(number, 0)
+  }
+  if (approxEqual(ratio, 1)) {
+    return approxEqual(number, initialTerm)
+  }
+  if (approxEqual(ratio, 0)) {
+    return approxEqual(number, 0) || approxEqual(number, initialTerm)
+  }
 
   // Check if the number is exactly the initial term
-  if (number === initialTerm)
+  if (approxEqual(number, initialTerm)) {
     return true
+  }
+
+  // Special case for ratio = -1 (alternating sequence)
+  if (approxEqual(ratio, -1)) {
+    // In an alternating sequence with ratio -1, the terms are just initialTerm and -initialTerm
+    return approxEqual(number, initialTerm) || approxEqual(number, -initialTerm)
+  }
 
   // For negative ratios, we need special handling
   if (ratio < 0) {
@@ -33,7 +44,7 @@ function isInGeometricSequence(
 
     // Check if logResult is very close to an integer
     const roundedLogResult = Math.round(logResult)
-    if (Math.abs(roundedLogResult - logResult) > 1e-10 || roundedLogResult < 0) {
+    if (!approxEqual(roundedLogResult, logResult) || roundedLogResult < 0) {
       return false
     }
 
@@ -49,31 +60,24 @@ function isInGeometricSequence(
   // For positive ratios
 
   // Quick check based on sequence direction
-  // If ratio > 1, number should be >= initialTerm to be in the sequence
-  // If 0 < ratio < 1, number should be <= initialTerm to be in the sequence
-  if ((ratio > 1 && number < initialTerm)
-    || (ratio < 1 && number > initialTerm)) {
+  if ((ratio > 1 && number < initialTerm) || (ratio < 1 && number > initialTerm)) {
     return false
   }
 
   // Calculate n in: number = initialTerm * (ratio^n)
   const logResult = Math.log(number / initialTerm) / Math.log(ratio)
 
-  // Check if logResult is very close to an integer
+  // Check if logResult is very close to an integer and non-negative
   const roundedLogResult = Math.round(logResult)
-  if (Math.abs(roundedLogResult - logResult) > 1e-10 || roundedLogResult < 0) {
+  if (!approxEqual(roundedLogResult, logResult) || roundedLogResult < 0) {
     return false
   }
 
-  // Verify calculated value matches the number exactly (within floating point precision)
-  // This is important to avoid false positives due to floating point arithmetic
+  // Verify calculated value matches the number exactly
   const calculatedValue = initialTerm * ratio ** roundedLogResult
-  const relativeDifference = Math.abs(calculatedValue - number)
-    / Math.max(Math.abs(number), Math.abs(calculatedValue))
 
-  return relativeDifference < 1e-10
+  return approxEqual(calculatedValue, number)
 }
-
 export const geometricNormalExpressions: SequenceNormalExpressions<'geometric'> = {
   'nth:geometric-seq': {
     evaluate: ([start, ratio, length], sourceCodeInfo): number[] => {

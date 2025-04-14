@@ -2,6 +2,7 @@ import { LitsError } from '../../../errors'
 import type { SourceCodeInfo } from '../../../tokenizer/token'
 import { isMatrix, isVector } from '../../../typeGuards/annotatedArrays'
 import { assertNumber, isNumber } from '../../../typeGuards/number'
+import { approxEqual } from '../../../utils'
 import type { BuiltinNormalExpressions } from '../../interface'
 
 type NumberVectorOrMatrix = number | number[] | number[][]
@@ -235,17 +236,17 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       assertNumber(eplsilon, sourceCodeInfo, { positive: true, finite: true })
       if (operation === 'number') {
         const [first, second] = operands
-        return Math.abs(first! - second!) < eplsilon
+        return approxEqual(first!, second!, eplsilon)
       }
       else if (operation === 'vector') {
         const firstVector = operands[0]!
         const secondVector = operands[1]!
-        return firstVector.every((val, i) => Math.abs(val - secondVector[i]!) < eplsilon)
+        return firstVector.every((val, i) => approxEqual(val, secondVector[i]!, eplsilon))
       }
       else {
         const firstMatrix = operands[0]!
         const secondMatrix = operands[1]!
-        return firstMatrix.every((row, i) => row.every((val, j) => Math.abs(val - secondMatrix[i]![j]!) < eplsilon))
+        return firstMatrix.every((row, i) => row.every((val, j) => approxEqual(val, secondMatrix[i]![j]!, eplsilon)))
       }
     },
     paramCount: { min: 2, max: 3 },

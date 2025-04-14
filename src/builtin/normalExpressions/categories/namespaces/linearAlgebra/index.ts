@@ -10,6 +10,11 @@ import { calcVariance } from '../vector/calcVariance'
 import { gaussJordanElimination } from './helpers.ts/gaussJordanElimination'
 import { solve } from './helpers.ts/solve'
 import { norm1 } from './helpers.ts/norm1'
+import { areVectorsCollinear, areVectorsParallel } from './helpers.ts/collinear'
+import { isZeroVector } from './helpers.ts/isZeroVector'
+import { pearsonCorr } from './helpers.ts/pearsonCorr'
+import { calcFractionalRanks } from './helpers.ts/calcFractionalRanks'
+import { kendallTau } from './helpers.ts/kendallTau'
 
 export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
   'lin:dot': {
@@ -140,18 +145,13 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'lin:magnitude': {
-    evaluate: ([vector], sourceCodeInfo): number => {
-      assertNonEmptyVector(vector, sourceCodeInfo)
-
-      return Math.sqrt(vector.reduce((acc, val) => acc + val * val, 0))
-    },
-    paramCount: 1,
-  },
   'lin:angle': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
       assertNonEmptyVector(vectorA, sourceCodeInfo)
       assertNonEmptyVector(vectorB, sourceCodeInfo)
+      if (isZeroVector(vectorA) || isZeroVector(vectorB)) {
+        throw new LitsError('Cannot calculate angle with zero-length vector', sourceCodeInfo)
+      }
 
       if (vectorA.length !== vectorB.length) {
         throw new LitsError('Vectors must be of the same length', sourceCodeInfo)
@@ -167,8 +167,11 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
   },
   'lin:projection': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number[] => {
-      assertVector(vectorA, sourceCodeInfo)
-      assertVector(vectorB, sourceCodeInfo)
+      assertNonEmptyVector(vectorA, sourceCodeInfo)
+      assertNonEmptyVector(vectorB, sourceCodeInfo)
+      if (isZeroVector(vectorB)) {
+        throw new LitsError('Cannot project onto zero-length vector', sourceCodeInfo)
+      }
 
       if (vectorA.length !== vectorB.length) {
         throw new LitsError('Vectors must be of the same length', sourceCodeInfo)
@@ -183,8 +186,8 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
   },
   'lin:orthogonal?': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): boolean => {
-      assertVector(vectorA, sourceCodeInfo)
-      assertVector(vectorB, sourceCodeInfo)
+      assertNonEmptyVector(vectorA, sourceCodeInfo)
+      assertNonEmptyVector(vectorB, sourceCodeInfo)
 
       if (vectorA.length !== vectorB.length) {
         throw new LitsError('Vectors must be of the same length', sourceCodeInfo)
@@ -197,36 +200,37 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
   },
   'lin:parallel?': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): boolean => {
-      assertVector(vectorA, sourceCodeInfo)
-      assertVector(vectorB, sourceCodeInfo)
+      assertNonEmptyVector(vectorA, sourceCodeInfo)
+      assertNonEmptyVector(vectorB, sourceCodeInfo)
 
       if (vectorA.length !== vectorB.length) {
         throw new LitsError('Vectors must be of the same length', sourceCodeInfo)
       }
 
-      const crossProduct = vectorA.reduce((acc, val, i) => acc + val * vectorB[i]!, 0)
-      return crossProduct === 0
+      return areVectorsParallel(vectorA, vectorB)
     },
     paramCount: 2,
   },
   'lin:collinear?': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): boolean => {
-      assertVector(vectorA, sourceCodeInfo)
-      assertVector(vectorB, sourceCodeInfo)
+      assertNonEmptyVector(vectorA, sourceCodeInfo)
+      assertNonEmptyVector(vectorB, sourceCodeInfo)
 
       if (vectorA.length !== vectorB.length) {
         throw new LitsError('Vectors must be of the same length', sourceCodeInfo)
       }
 
-      const crossProduct = vectorA.reduce((acc, val, i) => acc + val * vectorB[i]!, 0)
-      return crossProduct === 0
+      return areVectorsCollinear(vectorA, vectorB)
     },
     paramCount: 2,
   },
   'lin:cosine-similarity': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
-      assertVector(vectorA, sourceCodeInfo)
-      assertVector(vectorB, sourceCodeInfo)
+      assertNonEmptyVector(vectorA, sourceCodeInfo)
+      assertNonEmptyVector(vectorB, sourceCodeInfo)
+      if (isZeroVector(vectorA) || isZeroVector(vectorB)) {
+        throw new LitsError('Cannot calculate cosine similarity with zero-length vector', sourceCodeInfo)
+      }
 
       if (vectorA.length !== vectorB.length) {
         throw new LitsError('Vectors must be of the same length', sourceCodeInfo)
@@ -240,23 +244,10 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'lin:distance': {
-    evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
-      assertVector(vectorA, sourceCodeInfo)
-      assertVector(vectorB, sourceCodeInfo)
-
-      if (vectorA.length !== vectorB.length) {
-        throw new LitsError('Vectors must be of the same length', sourceCodeInfo)
-      }
-
-      return Math.sqrt(vectorA.reduce((acc, val, i) => acc + (val - vectorB[i]!) ** 2, 0))
-    },
-    paramCount: 2,
-  },
   'lin:euclidean-distance': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
-      assertVector(vectorA, sourceCodeInfo)
-      assertVector(vectorB, sourceCodeInfo)
+      assertNonEmptyVector(vectorA, sourceCodeInfo)
+      assertNonEmptyVector(vectorB, sourceCodeInfo)
 
       if (vectorA.length !== vectorB.length) {
         throw new LitsError('Vectors must be of the same length', sourceCodeInfo)
@@ -264,12 +255,22 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
 
       return Math.sqrt(vectorA.reduce((acc, val, i) => acc + (val - vectorB[i]!) ** 2, 0))
     },
+    aliases: ['lin:distance', 'lin:l2-distance'],
     paramCount: 2,
+  },
+  'lin:euclidean-norm': {
+    evaluate: ([vector], sourceCodeInfo): number => {
+      assertNonEmptyVector(vector, sourceCodeInfo)
+
+      return Math.sqrt(vector.reduce((acc, val) => acc + val * val, 0))
+    },
+    paramCount: 1,
+    aliases: ['lin:l2-norm', 'lin:magnitude'],
   },
   'lin:manhattan-distance': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
-      assertVector(vectorA, sourceCodeInfo)
-      assertVector(vectorB, sourceCodeInfo)
+      assertNonEmptyVector(vectorA, sourceCodeInfo)
+      assertNonEmptyVector(vectorB, sourceCodeInfo)
 
       if (vectorA.length !== vectorB.length) {
         throw new LitsError('Vectors must be of the same length', sourceCodeInfo)
@@ -278,11 +279,21 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
       return vectorA.reduce((acc, val, i) => acc + Math.abs(val - vectorB[i]!), 0)
     },
     paramCount: 2,
+    aliases: ['lin:l1-distance', 'lin:cityblock-distance'],
+  },
+  'lin:manhattan-norm': {
+    evaluate: ([vector], sourceCodeInfo): number => {
+      assertNonEmptyVector(vector, sourceCodeInfo)
+
+      return vector.reduce((acc, val) => acc + Math.abs(val), 0)
+    },
+    paramCount: 1,
+    aliases: ['lin:l1-norm', 'lin:cityblock-norm'],
   },
   'lin:hamming-distance': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
-      assertVector(vectorA, sourceCodeInfo)
-      assertVector(vectorB, sourceCodeInfo)
+      assertNonEmptyVector(vectorA, sourceCodeInfo)
+      assertNonEmptyVector(vectorB, sourceCodeInfo)
 
       if (vectorA.length !== vectorB.length) {
         throw new LitsError('Vectors must be of the same length', sourceCodeInfo)
@@ -292,10 +303,17 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
+  'lin:hamming-norm': {
+    evaluate: ([vector], sourceCodeInfo): number => {
+      assertNonEmptyVector(vector, sourceCodeInfo)
+      return vector.reduce((acc, val) => acc + (val !== 0 ? 1 : 0), 0)
+    },
+    paramCount: 1,
+  },
   'lin:chebyshev-distance': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
-      assertVector(vectorA, sourceCodeInfo)
-      assertVector(vectorB, sourceCodeInfo)
+      assertNonEmptyVector(vectorA, sourceCodeInfo)
+      assertNonEmptyVector(vectorB, sourceCodeInfo)
 
       if (vectorA.length !== vectorB.length) {
         throw new LitsError('Vectors must be of the same length', sourceCodeInfo)
@@ -305,11 +323,18 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
+  'lin:chebyshev-norm': {
+    evaluate: ([vector], sourceCodeInfo): number => {
+      assertNonEmptyVector(vector, sourceCodeInfo)
+      return Math.max(...vector.map(val => Math.abs(val)))
+    },
+    paramCount: 1,
+  },
   'lin:minkowski-distance': {
     evaluate: ([vectorA, vectorB, p], sourceCodeInfo): number => {
-      assertVector(vectorA, sourceCodeInfo)
-      assertVector(vectorB, sourceCodeInfo)
-      assertNumber(p, sourceCodeInfo, { finite: true })
+      assertNonEmptyVector(vectorA, sourceCodeInfo)
+      assertNonEmptyVector(vectorB, sourceCodeInfo)
+      assertNumber(p, sourceCodeInfo, { finite: true, positive: true })
 
       if (vectorA.length !== vectorB.length) {
         throw new LitsError('Vectors must be of the same length', sourceCodeInfo)
@@ -319,82 +344,54 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 3,
   },
-  'lin:jaccard-distance': {
-    evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
-      assertVector(vectorA, sourceCodeInfo)
-      assertVector(vectorB, sourceCodeInfo)
-
-      const intersection = vectorA.filter(val => vectorB.includes(val)).length
-      const union = new Set([...vectorA, ...vectorB]).size
-
-      return 1 - intersection / union
+  'lin:minkowski-norm': {
+    evaluate: ([vector, p], sourceCodeInfo): number => {
+      assertNonEmptyVector(vector, sourceCodeInfo)
+      assertNumber(p, sourceCodeInfo, { finite: true, positive: true })
+      return vector.reduce((acc, val) => acc + Math.abs(val) ** p, 0) ** (1 / p)
     },
     paramCount: 2,
   },
-  'lin:dice-coefficient': {
+  // TODO consider for Set namespace. E.g. 'set:jaccard-distance'
+  // 'lin:jaccard-distance': {
+  //   evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
+  //     assertNonEmptyVector(vectorA, sourceCodeInfo)
+  //     assertNonEmptyVector(vectorB, sourceCodeInfo)
+
+  //     const intersection = vectorA.filter(val => vectorB.includes(val)).length
+  //     const union = new Set([...vectorA, ...vectorB]).size
+
+  //     return 1 - intersection / union
+  //   },
+  //   paramCount: 2,
+  // },
+  // TODO consider for Set namespace. E.g. 'set:dice-coefficient'
+  // 'lin:dice-coefficient': {
+  //   evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
+  //     assertNonEmptyVector(vectorA, sourceCodeInfo)
+  //     assertNonEmptyVector(vectorB, sourceCodeInfo)
+
+  //     const intersection = vectorA.filter(val => vectorB.includes(val)).length
+  //     return (2 * intersection) / (vectorA.length + vectorB.length)
+  //   },
+  //   paramCount: 2,
+  // },
+  // TODO consider for String namespace. E.g. 'str:levenshtein-distance'
+  // 'lin:levenshtein-distance': {
+  //   evaluate: ([stringA, stringB], sourceCodeInfo): number => {
+  //   },
+  //   paramCount: 2,
+  // },
+  'lin:cov': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
-      assertVector(vectorA, sourceCodeInfo)
-      assertVector(vectorB, sourceCodeInfo)
-
-      const intersection = vectorA.filter(val => vectorB.includes(val)).length
-      return (2 * intersection) / (vectorA.length + vectorB.length)
-    },
-    paramCount: 2,
-  },
-  'lin:levenshtein-distance': {
-    evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
-      assertVector(vectorA, sourceCodeInfo)
-      assertVector(vectorB, sourceCodeInfo)
-
-      const m = vectorA.length
-      const n = vectorB.length
-      const d: number[][] = Array.from({ length: m + 1 }, () => Array<number>(n + 1).fill(0))
-
-      for (let i = 0; i <= m; i += 1) {
-        d[i]![0] = i
-      }
-      for (let j = 0; j <= n; j += 1) {
-        d[0]![j] = j
-      }
-
-      for (let i = 1; i <= m; i += 1) {
-        for (let j = 1; j <= n; j += 1) {
-          const cost = vectorA[i - 1]! === vectorB[j - 1]! ? 0 : 1
-          d[i]![j] = Math.min(
-            d[i - 1]![j]! + 1,
-            d[i]![j - 1]! + 1,
-            d[i - 1]![j - 1]! + cost,
-          )
-        }
-      }
-
-      return d[m]![n]!
-    },
-    paramCount: 2,
-  },
-  'lin:l1-norm': {
-    evaluate: ([vector], sourceCodeInfo): number => {
-      assertVector(vector, sourceCodeInfo)
-
-      return vector.reduce((acc, val) => acc + Math.abs(val), 0)
-    },
-    paramCount: 1,
-  },
-  'lin:l2-norm': {
-    evaluate: ([vector], sourceCodeInfo): number => {
-      assertVector(vector, sourceCodeInfo)
-
-      return Math.sqrt(vector.reduce((acc, val) => acc + val * val, 0))
-    },
-    paramCount: 1,
-  },
-  'lin:covariance': {
-    evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
-      assertVector(vectorA, sourceCodeInfo)
-      assertVector(vectorB, sourceCodeInfo)
+      assertNonEmptyVector(vectorA, sourceCodeInfo)
+      assertNonEmptyVector(vectorB, sourceCodeInfo)
 
       if (vectorA.length !== vectorB.length) {
         throw new LitsError('Vectors must be of the same length', sourceCodeInfo)
+      }
+      if (vectorA.length === 1) {
+        return 0
       }
 
       const meanA = calcMean(vectorA)
@@ -404,10 +401,14 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'lin:correlation': {
+  'lin:corr': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
       assertVector(vectorA, sourceCodeInfo)
       assertVector(vectorB, sourceCodeInfo)
+
+      if (vectorA.length <= 1) {
+        throw new LitsError('Vectors must have at least 2 elements for lin:corr', sourceCodeInfo)
+      }
 
       if (vectorA.length !== vectorB.length) {
         throw new LitsError('Vectors must be of the same length', sourceCodeInfo)
@@ -425,19 +426,57 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'lin:spearman-correlation': {
+  'lin:spearman-corr': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
       assertVector(vectorA, sourceCodeInfo)
       assertVector(vectorB, sourceCodeInfo)
+
+      if (vectorA.length <= 1) {
+        throw new LitsError('Vectors must have at least 2 elements for lin:corr', sourceCodeInfo)
+      }
 
       if (vectorA.length !== vectorB.length) {
         throw new LitsError('Vectors must be of the same length', sourceCodeInfo)
       }
 
-      const rankA = [...vectorA.keys()].sort((a, b) => vectorA[a]! - vectorA[b]!)
-      const rankB = [...vectorB.keys()].sort((a, b) => vectorB[a]! - vectorB[b]!)
+      const ranksA = calcFractionalRanks(vectorA)
+      const ranksB = calcFractionalRanks(vectorB)
 
-      return vectorA.reduce((acc, _val, i) => acc + (rankA[i]! - rankB[i]!), 0) / vectorA.length
+      try {
+        return pearsonCorr(ranksA, ranksB)
+      }
+      catch (error) {
+        if (error instanceof Error) {
+          throw new LitsError(error.message, sourceCodeInfo)
+        }
+        throw error
+      }
+    },
+    paramCount: 2,
+    aliases: ['lin:spearman-rho'],
+  },
+  'lin:pearson-corr': {
+    evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
+      assertVector(vectorA, sourceCodeInfo)
+      assertVector(vectorB, sourceCodeInfo)
+
+      if (vectorA.length <= 1) {
+        throw new LitsError('Vectors must have at least 2 elements for lin:pearson-corr', sourceCodeInfo)
+      }
+
+      if (vectorA.length !== vectorB.length) {
+        throw new LitsError('Vectors must be of the same length', sourceCodeInfo)
+      }
+
+      try {
+        return pearsonCorr(vectorA, vectorB)
+      }
+      catch (error) {
+        if (error instanceof Error) {
+          throw new LitsError(error.message, sourceCodeInfo)
+        }
+        throw error
+      }
     },
     paramCount: 2,
   },
@@ -446,25 +485,23 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
       assertVector(vectorA, sourceCodeInfo)
       assertVector(vectorB, sourceCodeInfo)
 
+      if (vectorA.length < 2) {
+        throw new LitsError('Vectors must have at least 2 elements for lin:kendall-tau', sourceCodeInfo)
+      }
+
       if (vectorA.length !== vectorB.length) {
         throw new LitsError('Vectors must be of the same length', sourceCodeInfo)
       }
 
-      let concordant = 0
-      let discordant = 0
-
-      for (let i = 0; i < vectorA.length; i += 1) {
-        for (let j = i + 1; j < vectorA.length; j += 1) {
-          if ((vectorA[i]! - vectorA[j]!) * (vectorB[i]! - vectorB[j]!) > 0) {
-            concordant += 1
-          }
-          else {
-            discordant += 1
-          }
-        }
+      try {
+        return kendallTau(vectorA, vectorB)
       }
-
-      return (concordant - discordant) / Math.sqrt((concordant + discordant) ** 2)
+      catch (error) {
+        if (error instanceof Error) {
+          throw new LitsError(error.message, sourceCodeInfo)
+        }
+        throw error
+      }
     },
     paramCount: 2,
   },
@@ -472,10 +509,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([vector, lag], sourceCodeInfo): number => {
       assertVector(vector, sourceCodeInfo)
       const effectiveLag = lag ?? vector.length - 1
-      assertNumber(effectiveLag, sourceCodeInfo, { integer: true })
-      if (effectiveLag >= vector.length) {
-        throw new LitsError('Lag must be less than the length of the vector', sourceCodeInfo)
-      }
+      assertNumber(effectiveLag, sourceCodeInfo, { integer: true, lte: vector.length, positive: true })
       const mean = calcMean(vector)
       const variance = calcVariance(vector)
       const autocovariance = vector.reduce((acc, val, i) => acc + (val - mean) * (vector[i + effectiveLag]! - mean), 0) / vector.length
@@ -532,7 +566,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'lin:rank': {
+  'lin:matrix-rank': {
     evaluate: ([matrix], sourceCodeInfo): number => {
       assertMatrix(matrix, sourceCodeInfo)
       const [, result] = gaussJordanElimination(matrix)

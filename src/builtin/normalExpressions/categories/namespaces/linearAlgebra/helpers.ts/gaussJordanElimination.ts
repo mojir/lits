@@ -1,3 +1,5 @@
+import { approxZero } from '../../../../../../utils'
+
 /**
  * Performs Gauss-Jordan elimination on a matrix, transforming it to reduced row echelon form
  *
@@ -10,9 +12,6 @@ export function gaussJordanElimination(matrix: number[][]): [number[][], number]
   const rows = m.length
   const cols = m[0]!.length
 
-  // Tolerance for considering a value as zero
-  const EPSILON = 1e-10
-
   let rank = 0
   let rowsProcessed = 0
 
@@ -22,7 +21,7 @@ export function gaussJordanElimination(matrix: number[][]): [number[][], number]
     let pivotRow = -1
 
     for (let row = rowsProcessed; row < rows; row++) {
-      if (Math.abs(m[row]![col]!) > EPSILON) {
+      if (!approxZero(m[row]![col]!)) {
         pivotRow = row
         break
       }
@@ -49,7 +48,7 @@ export function gaussJordanElimination(matrix: number[][]): [number[][], number]
 
     // Eliminate above and below (full Gauss-Jordan)
     for (let row = 0; row < rows; row++) {
-      if (row !== rowsProcessed && Math.abs(m[row]![col]!) > EPSILON) {
+      if (row !== rowsProcessed && !approxZero(m[row]![col]!)) {
         const factor = m[row]![col]!
         for (let j = col; j < cols; j++) {
           m[row]![j]! -= factor * m[rowsProcessed]![j]!

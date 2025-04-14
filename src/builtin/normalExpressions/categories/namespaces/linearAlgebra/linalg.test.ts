@@ -139,20 +139,6 @@ describe('linalg functions', () => {
       expect(lits.run('lin:normalize-log([42])')).toEqual([0])
     })
   })
-  describe('lin:magnitude', () => {
-    it('should calculate the magnitude of a vector', () => {
-      // Basic case
-      expect(lits.run('lin:magnitude([3, 4])')).toEqual(5)
-      // Case with negative numbers
-      expect(lits.run('lin:magnitude([-3, -4])')).toEqual(5)
-      // Case with mixed numbers
-      expect(lits.run('lin:magnitude([3, -4])')).toEqual(5)
-      // Case with single element vector
-      expect(lits.run('lin:magnitude([42])')).toEqual(42)
-      // Case with empty vector
-      expect(() => lits.run('lin:magnitude([])')).toThrowError(LitsError)
-    })
-  })
   describe('lin:angle', () => {
     it('should calculate the angle between two vectors', () => {
       // Basic case
@@ -166,6 +152,381 @@ describe('linalg functions', () => {
       expect(lits.run('lin:angle([42], [-1])')).toBeCloseTo(Math.PI)
       // Case with empty vectors (should throw an error)
       expect(() => lits.run('lin:angle([], [])')).toThrowError(LitsError)
+    })
+  })
+  describe('lin:projection', () => {
+    it('should calculate the projection of one vector onto another', () => {
+      // Basic case
+      expect(lits.run('lin:projection([1, 2], [3, 4])')).toEqual([1.32, 1.76])
+      // Case with negative numbers
+      expect(lits.run('lin:projection([-1, -2], [-3, -4])')).toEqual([-1.32, -1.76])
+      // Case with mixed numbers
+      expect(lits.run('lin:projection([1, -2], [-3, 4])')).toEqual([1.32, -1.76])
+      // Case with single element vectors (should throw an error)
+      expect(lits.run('lin:projection([42], [1])')).toEqual([42])
+      // Case with empty vectors (should throw an error)
+      expect(() => lits.run('lin:projection([], [])')).toThrowError(LitsError)
+    })
+  })
+  describe('lin:orthogonal?', () => {
+    it('should check if two vectors are orthogonal', () => {
+      // Basic case
+      expect(lits.run('lin:orthogonal?([1, 0], [0, 1])')).toEqual(true)
+      // Case with negative numbers
+      expect(lits.run('lin:orthogonal?([-1, 0], [0, -1])')).toEqual(true)
+      // Case with mixed numbers
+      expect(lits.run('lin:orthogonal?([1, -1], [-1, 1])')).toEqual(false)
+      // Case with single element vectors
+      expect(lits.run('lin:orthogonal?([42], [1])')).toEqual(false)
+      // Case with empty vectors (should throw an error)
+      expect(() => lits.run('lin:orthogonal?([], [])')).toThrowError(LitsError)
+    })
+  })
+  describe('lin:parallel?', () => {
+    it('should check if two vectors are parallel', () => {
+      // Basic case
+      expect(lits.run('lin:parallel?([1, 0], [2, 0])')).toEqual(true)
+      // Case with negative numbers
+      expect(lits.run('lin:parallel?([-1, 0], [-2, 0])')).toEqual(true)
+      // Case with mixed numbers
+      expect(lits.run('lin:parallel?([1, -1], [-2, 2])')).toEqual(false) // collinear though
+
+      expect(lits.run('lin:parallel?([2, -3, 4], [6, -9, 12])')).toEqual(true)
+      expect(lits.run('lin:parallel?([2, -3, 4], [-6, 9, -12])')).toEqual(false) // collinear though
+      expect(lits.run('lin:parallel?([2, -3, 4], [6, 9, 12])')).toEqual(false)
+      // Case with single element vectors
+      expect(lits.run('lin:parallel?([42], [1])')).toEqual(true)
+      // Case with empty vectors (should throw an error)
+      expect(() => lits.run('lin:parallel?([], [])')).toThrowError(LitsError)
+    })
+  })
+  describe('lin:collinear?', () => {
+    it('should check if two vectors are collinear', () => {
+      // Basic case
+      expect(lits.run('lin:collinear?([1, 0], [2, 0])')).toEqual(true)
+      // Case with negative numbers
+      expect(lits.run('lin:collinear?([-1, 0], [-2, 0])')).toEqual(true)
+      // Case with mixed numbers
+      expect(lits.run('lin:collinear?([1, -1], [-2, 2])')).toEqual(true)
+
+      expect(lits.run('lin:collinear?([2, -3, 4], [6, -9, 12])')).toEqual(true)
+      expect(lits.run('lin:collinear?([2, -3, 4], [-6, 9, -12])')).toEqual(true)
+      expect(lits.run('lin:collinear?([2, -3, 4], [6, 9, 12])')).toEqual(false)
+      // Case with single element vectors
+      expect(lits.run('lin:collinear?([42], [1])')).toEqual(true)
+      // Case with empty vectors (should throw an error)
+      expect(() => lits.run('lin:collinear?([], [])')).toThrowError(LitsError)
+    })
+  })
+  describe('lin:cosine-similarity', () => {
+    it('should calculate the cosine similarity between two vectors', () => {
+      // Basic case
+      expect(lits.run('lin:cosine-similarity([1, 0], [0, 1])')).toEqual(0)
+      // Case with negative numbers
+      expect(lits.run('lin:cosine-similarity([-1, 0], [0, -1])')).toEqual(0)
+      // Case with mixed numbers
+      expect(lits.run('lin:cosine-similarity([1, -1], [-1, 1])')).toBeCloseTo(-1)
+      // Case with single element vectors
+      expect(lits.run('lin:cosine-similarity([42], [1])')).toBeCloseTo(1)
+      // Case with zero vector
+      expect(() => lits.run('lin:cosine-similarity([0, 0, 0], [1, 2, 3])')).toThrowError(LitsError)
+      // Case with empty vectors (should throw an error)
+      expect(() => lits.run('lin:cosine-similarity([], [])')).toThrowError(LitsError)
+    })
+  })
+  describe('lin:euclidean-distance', () => {
+    it('should calculate the Euclidean distance between two vectors', () => {
+      // Basic case
+      expect(lits.run('lin:euclidean-distance([1, 2], [4, 6])')).toEqual(5)
+      // Basic case
+      expect(lits.run('lin:distance([1, 2], [1, 2])')).toEqual(0)
+      // Case with negative numbers
+      expect(lits.run('lin:l2-distance([-1, -2], [-4, -6])')).toEqual(5)
+      // Case with mixed numbers
+      expect(lits.run('lin:euclidean-distance([1, -2], [-4, 6])')).toBeCloseTo(9.433981132056603)
+      // Case with single element vectors
+      expect(lits.run('lin:euclidean-distance([42], [1])')).toEqual(41)
+      // Case with empty vectors (should throw an error)
+      expect(() => lits.run('lin:euclidean-distance([], [])')).toThrowError(LitsError)
+      expect(() => lits.run('lin:distance([], [])')).toThrowError(LitsError)
+    })
+  })
+  describe('lin:euclidean-norm', () => {
+    it('should calculate the L2 norm of a vector', () => {
+      // Basic case
+      expect(lits.run('lin:euclidean-norm([3, 4])')).toEqual(5)
+      // Case with negative numbers
+      expect(lits.run('lin:magnitude([-3, -4])')).toEqual(5)
+      // Case with mixed numbers
+      expect(lits.run('lin:l2-norm([3, -4])')).toEqual(5)
+      // Case with single element vector
+      expect(lits.run('lin:magnitude([42])')).toEqual(42)
+      // Case with empty vector
+      expect(() => lits.run('lin:magnitude([])')).toThrowError(LitsError)
+    })
+  })
+  describe('lin:manhattan-distance', () => {
+    it('should calculate the Manhattan distance between two vectors', () => {
+      // Basic case
+      expect(lits.run('lin:manhattan-distance([1, 2], [4, 6])')).toEqual(7)
+      // Basic case
+      expect(lits.run('lin:l1-distance([1, 2], [1, 2])')).toEqual(0)
+      // Case with negative numbers
+      expect(lits.run('lin:cityblock-distance([-1, -2], [-4, -6])')).toEqual(7)
+      // Case with mixed numbers
+      expect(lits.run('lin:manhattan-distance([1, -2], [-4, 6])')).toBeCloseTo(13)
+      // Case with single element vectors
+      expect(lits.run('lin:manhattan-distance([42], [1])')).toEqual(41)
+      // Case with empty vectors (should throw an error)
+      expect(() => lits.run('lin:manhattan-distance([], [])')).toThrowError(LitsError)
+    })
+  })
+  describe('lin:manhattan-norm', () => {
+    it('should calculate the L1 norm of a vector', () => {
+      // Basic case
+      expect(lits.run('lin:l1-norm([1, 2, 3])')).toEqual(6)
+      // Case with negative numbers
+      expect(lits.run('lin:manhattan-norm([-1, -2, -3])')).toEqual(6)
+      // Case with mixed numbers
+      expect(lits.run('lin:cityblock-norm([1, -2, 3])')).toEqual(6)
+      // Case with single element vector
+      expect(lits.run('lin:l1-norm([42])')).toEqual(42)
+      // Case with empty vector
+      expect(() => lits.run('lin:l1-norm([])')).toThrowError(LitsError)
+    })
+  })
+  describe('lin:hamming-distance', () => {
+    it('should calculate the Hamming distance between two vectors', () => {
+      // Basic case
+      expect(lits.run('lin:hamming-distance([1, 2, 3], [1, 2, 4])')).toEqual(1)
+      // Basic case
+      expect(lits.run('lin:hamming-distance([1, 2, 3], [1, 2, 3])')).toEqual(0)
+      // Case with negative numbers
+      expect(lits.run('lin:hamming-distance([-1, -2], [-4, -6])')).toEqual(2)
+      // Case with mixed numbers
+      expect(lits.run('lin:hamming-distance([1, -2], [-4, 6])')).toEqual(2)
+      // Case with single element vectors
+      expect(lits.run('lin:hamming-distance([42], [1])')).toEqual(1)
+      // Case with empty vectors (should throw an error)
+      expect(() => lits.run('lin:hamming-distance([], [])')).toThrowError(LitsError)
+    })
+  })
+  describe('lin:hamming-norm', () => {
+    it('should calculate the Hamming norm of a vector', () => {
+      // Basic case
+      expect(lits.run('lin:hamming-norm([1, 2, 3])')).toEqual(3)
+      // Case with negative numbers
+      expect(lits.run('lin:hamming-norm([0, -2, -3])')).toEqual(2)
+      // Case with mixed numbers
+      expect(lits.run('lin:hamming-norm([0, 0, 0])')).toEqual(0)
+      // Case with single element vector
+      expect(lits.run('lin:hamming-norm([42])')).toEqual(1)
+      // Case with empty vector
+      expect(() => lits.run('lin:hamming-norm([])')).toThrowError(LitsError)
+    })
+  })
+  describe('lin:chebyshev-distance', () => {
+    it('should calculate the Chebyshev distance between two vectors', () => {
+      // Basic case
+      expect(lits.run('lin:chebyshev-distance([1, 2], [4, 6])')).toEqual(4)
+      // Basic case
+      expect(lits.run('lin:chebyshev-distance([1, 2], [1, 2])')).toEqual(0)
+      // Case with negative numbers
+      expect(lits.run('lin:chebyshev-distance([-1, -2], [-4, -6])')).toEqual(4)
+      // Case with mixed numbers
+      expect(lits.run('lin:chebyshev-distance([1, -2], [-4, 6])')).toBeCloseTo(8)
+      // Case with single element vectors
+      expect(lits.run('lin:chebyshev-distance([42], [1])')).toEqual(41)
+      // Case with empty vectors (should throw an error)
+      expect(() => lits.run('lin:chebyshev-distance([], [])')).toThrowError(LitsError)
+    })
+  })
+  describe('lin:chebyshev-norm', () => {
+    it('should calculate the Chebyshev norm of a vector', () => {
+      // Basic case
+      expect(lits.run('lin:chebyshev-norm([1, 2, 3])')).toEqual(3)
+      // Case with negative numbers
+      expect(lits.run('lin:chebyshev-norm([-1, -2, -3])')).toEqual(3)
+      // Case with mixed numbers
+      expect(lits.run('lin:chebyshev-norm([1, -2, 3])')).toEqual(3)
+      // Case with single element vector
+      expect(lits.run('lin:chebyshev-norm([42])')).toEqual(42)
+      // Case with empty vector
+      expect(() => lits.run('lin:chebyshev-norm([])')).toThrowError(LitsError)
+    })
+  })
+  describe('lin:minkowski-distance', () => {
+    it('should calculate the Minkowski distance between two vectors', () => {
+      // Basic case
+      expect(lits.run('lin:minkowski-distance([1, 2], [4, 6], 3)')).toBeCloseTo(4.5)
+      // Basic case
+      expect(lits.run('lin:minkowski-distance([1, 2], [4, 6], 1)')).toBeCloseTo(7)
+      // Basic case
+      expect(lits.run('lin:minkowski-distance([1, 2], [4, 6], 2)')).toBeCloseTo(5)
+      // Basic case
+      expect(lits.run('lin:minkowski-distance([1, 2], [4, 6], 0.5)')).toBeCloseTo(13.93)
+      // Basic case
+      expect(lits.run('lin:minkowski-distance([1, 2], [1, 2], 3)')).toEqual(0)
+      // Case with negative numbers
+      expect(lits.run('lin:minkowski-distance([-1, -2], [-4, -6], 3)')).toBeCloseTo(4.5)
+      // Case with mixed numbers
+      expect(lits.run('lin:minkowski-distance([1, -2], [-4, 6], 3)')).toBeCloseTo(8.6)
+      // Case with single element vectors
+      expect(lits.run('lin:minkowski-distance([42], [1], 3)')).toBeCloseTo(41)
+      // Case with empty vectors (should throw an error)
+      expect(() => lits.run('lin:minkowski-distance([], [], 3)')).toThrowError(LitsError)
+      // Case with invalid p value (should throw an error)
+      expect(() => lits.run('lin:minkowski-distance([1, 2], [4, 6], 0)')).toThrowError(LitsError)
+      expect(() => lits.run('lin:minkowski-distance([1, 2], [4, 6], -1)')).toThrowError(LitsError)
+    })
+  })
+  describe('lin:minkowski-norm', () => {
+    it('should calculate the Minkowski norm of a vector', () => {
+      // Basic case
+      expect(lits.run('lin:minkowski-norm([1, 2, 3], 3)')).toBeCloseTo(3.3019272488946263)
+      // Basic case
+      expect(lits.run('lin:minkowski-norm([1, 2, 3], 1)')).toEqual(6)
+      // Basic case
+      expect(lits.run('lin:minkowski-norm([1, 2, 3], 2)')).toBeCloseTo(3.7416573867739413)
+      // Basic case
+      expect(lits.run('lin:minkowski-norm([1, 2, 3], 0.5)')).toBeCloseTo(17.19)
+      // Case with negative numbers
+      expect(lits.run('lin:minkowski-norm([-1, -2, -3], 3)')).toBeCloseTo(3.3019272488946263)
+      // Case with mixed numbers
+      expect(lits.run('lin:minkowski-norm([1, -2, 3], 3)')).toBeCloseTo(3.3019272488946263)
+      // Case with single element vector
+      expect(lits.run('lin:minkowski-norm([42], 3)')).toBeCloseTo(42)
+      // Case with empty vector (should throw an error)
+      expect(() => lits.run('lin:minkowski-norm([], 3)')).toThrowError(LitsError)
+      // Case with invalid p value (should throw an error)
+      expect(() => lits.run('lin:minkowski-distance([1, 2], 0)')).toThrowError(LitsError)
+      expect(() => lits.run('lin:minkowski-distance([1, 2], -1)')).toThrowError(LitsError)
+    })
+  })
+  describe('lin:cov', () => {
+    it('should calculate the covariance between two vectors', () => {
+      // Basic case
+      expect(lits.run('lin:cov([1, 2, 3], [4, 5, 6])')).toBeCloseTo(2 / 3)
+      // Case with negative numbers
+      expect(lits.run('lin:cov([-1, -2, -3], [-4, -5, -6])')).toBeCloseTo(2 / 3)
+      // Case with mixed numbers
+      expect(lits.run('lin:cov([1, -2, 3], [-4, 5, -6])')).toBeCloseTo(-9.56)
+      // Case with single element vectors
+      expect(lits.run('lin:cov([42], [1])')).toBe(0)
+      // Case with empty vectors (should throw an error)
+      expect(() => lits.run('lin:cov([], [])')).toThrowError(LitsError)
+    })
+  })
+  describe('lin:corr', () => {
+    it('should calculate the correlation between two vectors', () => {
+      // Basic case
+      expect(lits.run('lin:corr([1, 2, 3], [4, 5, 6])')).toBeCloseTo(1)
+      // Case with negative numbers
+      expect(lits.run('lin:corr([-1, -2, -3], [-4, -5, -6])')).toBeCloseTo(1)
+      // Case with mixed numbers
+      expect(lits.run('lin:corr([1, -2, 3], [-4, 5, -6])')).toBeCloseTo(-0.972)
+      // Case with single element vectors (should throw an error)
+      expect(() => lits.run('lin:corr([42], [1])')).toThrowError(LitsError)
+      // Case with empty vectors (should throw an error)
+      expect(() => lits.run('lin:corr([], [])')).toThrowError(LitsError)
+    })
+  })
+  describe('lin:spearman-corr', () => {
+    it('should calculate the Spearman correlation between two vectors', () => {
+      expect(lits.run('lin:spearman-corr([1, 2, 3], [4, 5, 6])')).toBeCloseTo(1)
+      expect(lits.run('lin:spearman-rho([1, 2, 3, 4, 5], [1, 2, 3, 4, 5])')).toBeCloseTo(1)
+      expect(lits.run('lin:spearman-corr([1, 2, 3, 4, 5], [5, 4, 3, 2, 1])')).toBeCloseTo(-1)
+      expect(lits.run('lin:spearman-rho([1, 2, 3, 4, 5], [5, 2, 4, 1, 3])')).toBeCloseTo(-0.5)
+      expect(lits.run('lin:spearman-corr([1, 2, 3, 4, 100], [1, 2, 3, 4, 5])')).toBeCloseTo(1)
+
+      // Case with single element vectors (should throw an error)
+      expect(() => lits.run('lin:spearman-corr([42], [1])')).toThrowError(LitsError)
+      // Case with empty vectors (should throw an error)
+      expect(() => lits.run('lin:spearman-corr([], [])')).toThrowError(LitsError)
+    })
+  })
+  describe('lin:pearson-corr', () => {
+    it('should calculate the Pearson correlation between two vectors', () => {
+      expect(lits.run('lin:pearson-corr([1, 2, 3], [4, 5, 6])')).toBeCloseTo(1)
+      expect(lits.run('lin:pearson-corr([1, 2, 3, 4, 5], [1, 2, 3, 4, 5])')).toBeCloseTo(1)
+      expect(lits.run('lin:pearson-corr([1, 2, 3, 4, 5], [5, 4, 3, 2, 1])')).toBeCloseTo(-1)
+      expect(lits.run('lin:pearson-corr([1, 2, 3, 4, 5], [5, 2, 4, 1, 3])')).toBeCloseTo(-0.5)
+      expect(lits.run('lin:pearson-corr([1, 2, 3, 4, 100], [1, 2, 3, 4, 5])')).toBeCloseTo(0.725)
+
+      // Case with single element vectors (should throw an error)
+      expect(() => lits.run('lin:pearson-corr([42], [1])')).toThrowError(LitsError)
+      // Case with empty vectors (should throw an error)
+      expect(() => lits.run('lin:pearson-corr([], [])')).toThrowError(LitsError)
+    })
+  })
+
+  describe('lin:kendall-tau', () => {
+    it('should handle all my test cases', () => {
+      // Perfect positive correlation
+      expect(lits.run('lin:kendall-tau([1, 2, 3, 4, 5], [10, 20, 30, 40, 50])')).toBeCloseTo(1.0)
+
+      // Perfect negative correlation
+      expect(lits.run('lin:kendall-tau([1, 2, 3, 4, 5], [50, 40, 30, 20, 10])')).toBeCloseTo(-1.0)
+
+      // No correlation (random data)
+      expect(lits.run('lin:kendall-tau([1, 2, 3, 4, 5], [3, 5, 1, 4, 2])')).toBeCloseTo(-0.2)
+
+      // Ties in vector A
+      expect(lits.run('lin:kendall-tau([1, 2, 2, 4, 5], [10, 20, 30, 40, 50])')).toBeCloseTo(0.9487)
+
+      // Ties in vector B
+      expect(lits.run('lin:kendall-tau([1, 2, 3, 4, 5], [10, 20, 20, 40, 50])')).toBeCloseTo(0.9487)
+
+      // Ties in both vectors
+      expect(lits.run('lin:kendall-tau([1, 2, 2, 4, 5], [10, 20, 20, 40, 50])')).toBeCloseTo(1.0)
+
+      // Manual verification (small example with known result)
+      expect(lits.run('lin:kendall-tau([1, 2, 3, 4], [2, 1, 4, 3])')).toBeCloseTo(0.3333)
+
+      // Very close values that should be considered ties with default epsilon
+      expect(lits.run('lin:kendall-tau([1.0000001, 1.0000002, 2, 3], [5, 6, 7, 8])')).toBeCloseTo(1.0)
+
+      // Single pair
+      expect(lits.run('lin:kendall-tau([1, 2], [3, 4])')).toBeCloseTo(1.0)
+
+      // More complex rank example
+      expect(lits.run('lin:kendall-tau([1, 2, 3, 4, 5, 6], [2, 3, 1, 5, 6, 4])')).toBeCloseTo(0.4667)
+
+      // Another rank example
+      expect(lits.run('lin:kendall-tau([1, 2, 3, 4, 5, 6, 7, 8], [3, 4, 1, 2, 7, 8, 5, 6])')).toBeCloseTo(0.4286)
+
+      // Simple counterexample
+      expect(lits.run('lin:kendall-tau([1, 3, 2], [1, 2, 3])')).toBeCloseTo(0.3333)
+
+      // All ties in vector A
+      expect(() => lits.run('lin:kendall-tau([5, 5, 5, 5], [1, 2, 3, 4])')).toThrow('Not enough data to calculate Kendall\'s Tau')
+
+      // All ties in vector B
+      expect(() => lits.run('lin:kendall-tau([1, 2, 3, 4], [7, 7, 7, 7])')).toThrow(LitsError)
+
+      // Mixed ties and values
+      expect(lits.run('lin:kendall-tau([1, 1, 3, 4], [5, 5, 7, 8])')).toBeCloseTo(1.0)
+
+      // Another mixed case
+      expect(lits.run('lin:kendall-tau([1, 2, 3, 3], [4, 5, 6, 6])')).toBeCloseTo(1.0)
+
+      // Partial correlation
+      expect(lits.run('lin:kendall-tau([1, 2, 3, 4, 5], [1, 3, 2, 5, 4])')).toBeCloseTo(0.6)
+
+      // Empty arrays (should throw an error)
+      expect(() => lits.run('lin:kendall-tau([], [])')).toThrow(LitsError)
+
+      // Boundary case: arrays of length 1
+      expect(() => lits.run('lin:kendall-tau([1], [2])')).toThrow(LitsError)
+
+      // All tied pairs (corner case)
+      expect(() => lits.run('lin:kendall-tau([1, 1, 1], [2, 2, 2])')).toThrow('Not enough data to calculate Kendall\'s Tau')
+
+      // Inverse relationship with some noise
+      expect(lits.run('lin:kendall-tau([1, 2, 3, 4, 5], [5, 3, 4, 2, 1])')).toBeCloseTo(-0.8)
+
+      // Test with fractional values
+      expect(lits.run('lin:kendall-tau([1.5, 2.3, 3.7, 4.2], [5.1, 4.8, 3.2, 2.9])')).toBeCloseTo(-1.0)
     })
   })
 })

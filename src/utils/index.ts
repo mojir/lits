@@ -119,3 +119,27 @@ export function joinSets<T>(...results: Set<T>[]): Set<T> {
 export function addToSet<T>(target: Set<T>, source: Set<T>): void {
   source.forEach(symbol => target.add(symbol))
 }
+
+const EPSILON = 1e-10
+
+export function approxEqual(a: number, b: number, epsilon: number = EPSILON): boolean {
+  if (a === b) {
+    return true
+  }
+
+  const diff = Math.abs(a - b)
+
+  if (a === 0 || b === 0 || diff < epsilon) {
+    // Use absolute error for values near zero
+    return diff < epsilon
+  }
+  const absA = Math.abs(a)
+  const absB = Math.abs(b)
+
+  // Use relative error for larger values
+  return diff / (absA + absB) < epsilon
+}
+
+export function approxZero(value: number, epsilon: number = EPSILON): boolean {
+  return Math.abs(value) < epsilon
+}

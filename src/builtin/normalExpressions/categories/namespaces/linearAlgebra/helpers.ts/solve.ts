@@ -1,3 +1,4 @@
+import { approxZero } from '../../../../../../utils'
 import { gaussJordanElimination } from './gaussJordanElimination'
 
 /**
@@ -18,7 +19,7 @@ export function solve(A: number[][], b: number[]): number[] | null {
 
   // Check if the system has a unique solution
   for (let i = 0; i < n; i += 1) {
-    if (Math.abs(echelon[i]![i]!) < 1e-10) {
+    if (approxZero(echelon[i]![i]!)) {
       return null // No unique solution
     }
   }
