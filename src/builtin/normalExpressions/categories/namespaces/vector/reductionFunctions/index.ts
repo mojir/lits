@@ -98,10 +98,7 @@ function createReductionNormalExpression(
         return reductionFunction(vector)
       }
       catch (error) {
-        if (error instanceof Error) {
-          throw new LitsError(error.message, sourceCodeInfo)
-        }
-        throw error
+        throw new LitsError(error, sourceCodeInfo)
       }
     },
     paramCount: 1,
@@ -116,9 +113,6 @@ function createMovingNormalExpression(
     evaluate: ([vector, windowSize], sourceCodeInfo) => {
       assertVector(vector, sourceCodeInfo)
       assertNumber(windowSize, sourceCodeInfo, { integer: true, finite: true, gte: minLength, lte: vector.length })
-      if (vector.length < minLength) {
-        throw new LitsError(`Vector length must be at least ${minLength}`, sourceCodeInfo)
-      }
       if (vector.length === 0) {
         return []
       }
@@ -133,10 +127,7 @@ function createMovingNormalExpression(
         return result
       }
       catch (error) {
-        if (error instanceof Error) {
-          throw new LitsError(error.message, sourceCodeInfo)
-        }
-        throw error
+        throw new LitsError(error, sourceCodeInfo)
       }
     },
     paramCount: 2,
@@ -189,10 +180,7 @@ function createCenteredMovingNormalExpression(
         }
       }
       catch (error) {
-        if (error instanceof Error) {
-          throw new LitsError(error.message, sourceCodeInfo)
-        }
-        throw error
+        throw new LitsError(error, sourceCodeInfo)
       }
 
       result.push(...Array<null>(vector.length - end).fill(null))
@@ -227,10 +215,7 @@ function createRunningNormalExpression(
         return result
       }
       catch (error) {
-        if (error instanceof Error) {
-          throw new LitsError(error.message, sourceCodeInfo)
-        }
-        throw error
+        throw new LitsError(error, sourceCodeInfo)
       }
     },
     paramCount: 1,

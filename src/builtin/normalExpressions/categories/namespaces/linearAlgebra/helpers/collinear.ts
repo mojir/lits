@@ -15,10 +15,6 @@ export function areVectorsCollinear(vectorA: number[], vectorB: number[]): boole
     index++
   }
 
-  // If we reached the end, vectorA is a zero vector (should be caught above)
-  if (index >= vectorA.length)
-    return true
-
   // Calculate the scale factor
   const ratio = vectorB[index]! / vectorA[index]!
 

@@ -6,11 +6,6 @@
  * @returns The entropy value (in bits) or 0 for empty arrays
  */
 export function calculateEntropy<T>(vector: T[]): number {
-  // Return 0 for empty vectors
-  if (vector.length === 0) {
-    return 0
-  }
-
   // Count occurrences of each value
   const frequencies = new Map<T, number>()
   for (const value of vector) {

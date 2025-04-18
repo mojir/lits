@@ -5,14 +5,6 @@
  * @returns The value at the specified percentile
  */
 export function calcPercentile(data: number[], percentile: number): number {
-  if (percentile < 0 || percentile > 100) {
-    throw new Error('Percentile must be between 0 and 100')
-  }
-
-  if (data.length === 0) {
-    throw new Error('Data array cannot be empty')
-  }
-
   // Sort the data in ascending order
   const sortedData = [...data].sort((a, b) => a - b)
 

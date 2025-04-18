@@ -24,9 +24,6 @@ function excessKurtosis(vector: number[]): number {
  */
 function sampleKurtosis(vector: number[]): number {
   const n = vector.length
-  if (n < 4) {
-    throw new Error('Sample size must be at least 4 for kurtosis calculation')
-  }
 
   const mean = vector.reduce((sum, val) => sum + val, 0) / n
   const sumSquaredDeviations = vector.reduce((sum, val) => sum + (val - mean) ** 2, 0)
@@ -49,9 +46,6 @@ function sampleKurtosis(vector: number[]): number {
  */
 function sampleExcessKurtosis(vector: number[]): number {
   const n = vector.length
-  if (n < 4) {
-    throw new Error('Sample size must be at least 4 for kurtosis calculation')
-  }
 
   const mean = vector.reduce((sum, val) => sum + val, 0) / n
   const sumSquaredDeviations = vector.reduce((sum, val) => sum + (val - mean) ** 2, 0)

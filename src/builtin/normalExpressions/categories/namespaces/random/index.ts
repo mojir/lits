@@ -189,7 +189,7 @@ export const randomNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([charSet], sourceCodeInfo): string => {
       assertString(charSet, sourceCodeInfo)
       if (charSet.length === 0) {
-        throw new Error('Character set cannot be empty.')
+        throw new LitsError('Character set cannot be empty.', sourceCodeInfo)
       }
       const randomIndex = Math.floor(Math.random() * charSet.length)
       return charSet[randomIndex]!
@@ -201,7 +201,7 @@ export const randomNormalExpression: BuiltinNormalExpressions = {
       assertNumber(length, sourceCodeInfo, { integer: true, positive: true })
       assertString(charSet, sourceCodeInfo)
       if (charSet.length === 0) {
-        throw new Error('Character set cannot be empty.')
+        throw new LitsError('Character set cannot be empty.', sourceCodeInfo)
       }
       let result = ''
       for (let i = 0; i < length; i++) {
@@ -241,11 +241,6 @@ export const randomNormalExpression: BuiltinNormalExpressions = {
  * @returns A random number following the gamma distribution
  */
 function randomGamma(shape: number, scale: number = 1): number {
-  // Input validation
-  if (shape <= 0 || scale <= 0) {
-    throw new Error('Shape and scale parameters must be positive')
-  }
-
   // Special case for shape < 1
   if (shape < 1) {
     const d = shape + 1.0 - 1.0 / 3.0

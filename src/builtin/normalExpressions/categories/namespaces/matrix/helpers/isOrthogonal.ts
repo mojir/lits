@@ -13,9 +13,6 @@ export function isOrthogonal(matrix: number[][]): boolean {
 
   // Check if matrix * transpose = Identity
   const product = matrixMultiply(matrix, transposed)
-  if (!product) {
-    return false
-  }
 
   // Check if the product is an identity matrix
   return isIdentity(product)

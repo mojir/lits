@@ -351,6 +351,7 @@ describe('vector functions', () => {
       expect(lits.run('vec:outliers([1, 2, 0, 2, -100])')).toEqual([-100])
       expect(lits.run('vec:outliers([1])')).toEqual([])
       expect(lits.run('vec:outliers([])')).toEqual([])
+      expect(lits.run('vec:outliers([10, 20, 30, 40, 50, 60, 70, 80])')).toEqual([])
     })
   })
   describe('vec:bincount', () => {
@@ -361,6 +362,7 @@ describe('vector functions', () => {
       expect(lits.run('vec:bincount([1, 2, 2, 3])')).toEqual([0, 1, 2, 1])
       expect(lits.run('vec:bincount([1, 2, 2, 3], 5)')).toEqual([0, 1, 2, 1, 0])
       expect(lits.run('vec:bincount([1, 2, 2, 3], 5, [1, 2, 3, 4])')).toEqual([0, 1, 5, 4, 0])
+      expect(() => lits.run('vec:bincount([1, 2, 2, 3], 5, [1, 2, 3])')).toThrowError(LitsError)
     })
   })
   describe('vec:winsorize', () => {
@@ -370,6 +372,7 @@ describe('vector functions', () => {
       expect(lits.run('vec:winsorize([2, 5, 8, 10, 15, 18, 20, 35, 60, 100], 0, 1)')).toEqual([2, 5, 8, 10, 15, 18, 20, 35, 60, 100])
       expect(lits.run('vec:winsorize([2, 5, 8, 10, 15, 18, 20, 35, 60, 100], 0, 0)')).toEqual([2, 2, 2, 2, 2, 2, 2, 2, 2, 2])
       expect(lits.run('vec:winsorize([2, 5, 8, 10, 15, 18, 20, 35, 60, 100], 0.1, 0.1)')).toEqual([5, 5, 5, 5, 5, 5, 5, 5, 5, 5])
+      expect(lits.run('vec:winsorize([2, 5, 8, 10, 15, 18, 20, 35, 60, 100], 0.6)')).toEqual([20, 20, 20, 20, 20, 20, 20, 35, 60, 100])
       expect(lits.run('vec:winsorize([10, 20, 30, 40, 50], 0, 0.79)')).toEqual([10, 20, 30, 30, 30])
       expect(lits.run('vec:winsorize([10, 20, 30, 40, 50], 0, 0)')).toEqual([10, 10, 10, 10, 10])
       expect(lits.run('vec:winsorize([], 0.05)')).toEqual([])
@@ -382,6 +385,7 @@ describe('vector functions', () => {
       expect(lits.run('vec:mse([1, 2], [1, 1])')).toEqual(0.5)
       expect(lits.run('vec:mse([1], [1])')).toEqual(0)
       expect(() => lits.run('vec:mse([], [])')).toThrowError(LitsError)
+      expect(() => lits.run('vec:mse([2, 1], [1])')).toThrowError(LitsError)
     })
   })
   describe('vec:mae', () => {
@@ -391,6 +395,7 @@ describe('vector functions', () => {
       expect(lits.run('vec:mae([1, 2], [1, 1])')).toEqual(0.5)
       expect(lits.run('vec:mae([1], [1])')).toEqual(0)
       expect(() => lits.run('vec:mae([], [])')).toThrowError(LitsError)
+      expect(() => lits.run('vec:mae([2, 1], [2])')).toThrowError(LitsError)
     })
   })
   describe('vec:rmse', () => {
@@ -400,15 +405,18 @@ describe('vector functions', () => {
       expect(lits.run('vec:rmse([1, 2], [1, 1])')).toEqual(0.7071067811865476)
       expect(lits.run('vec:rmse([1], [1])')).toEqual(0)
       expect(() => lits.run('vec:rmse([], [])')).toThrowError(LitsError)
+      expect(() => lits.run('vec:rmse([2, 1], [1])')).toThrowError(LitsError)
     })
   })
   describe('vec:smape', () => {
     it('should calculate the symmetric mean absolute percentage error between two vectors', () => {
       expect(lits.run('vec:smape([1, 2, 3], [1, 2, 3])')).toEqual(0)
       expect(lits.run('vec:smape([1, 2, 3], [4, 5, 6])')).toEqual(0.9079365079365078)
+      expect(lits.run('vec:smape([0, 1, 2], [0, 3, 4])')).toEqual(0.5555555555555555)
       expect(lits.run('vec:smape([1, 2], [1, 1])')).toEqual(0.3333333333333333)
       expect(lits.run('vec:smape([1], [1])')).toEqual(0)
       expect(() => lits.run('vec:smape([], [])')).toThrowError(LitsError)
+      expect(() => lits.run('vec:smape([2, 1], [2])')).toThrowError(LitsError)
     })
   })
 })

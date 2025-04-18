@@ -33,8 +33,6 @@ function getAllDerangements(arr: Arr): Arr[] {
 }
 
 function countDerangements(n: number): number {
-  if (n === 0)
-    return 1
   if (n === 1)
     return 0
 

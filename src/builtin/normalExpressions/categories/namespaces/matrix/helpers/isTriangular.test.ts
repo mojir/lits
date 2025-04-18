@@ -12,6 +12,16 @@ describe('all isTriangular', () => {
       expect(isTriangular(matrix)).toBe(true)
     })
 
+    it('should return false for this', () => {
+      const matrix = [
+        [1, 2, 0],
+        [0, 3, 4],
+        [5, 0, 6],
+      ]
+
+      expect(isTriangular(matrix)).toBe(false)
+    })
+
     it('should return true for a lower triangular matrix', () => {
       const matrix = [
         [1, 0, 0],

@@ -171,11 +171,9 @@ function createSeqNormalExpression<Type extends number | string>(
     evaluate: (params, sourceCodeInfo) => {
       const length = params[0] ?? maxLength
       assertNumber(length, sourceCodeInfo, { integer: true, positive: true, lte: maxLength })
-      if (typeof length !== 'number') {
-        throw new LitsError('Length must be a number', sourceCodeInfo)
-      }
       const result = seqFunction(length, sourceCodeInfo)
       if (typeof result[0] === 'number') {
+        /* v8 ignore next 3 */
         if (result.some(n => (n as number) > Number.MAX_SAFE_INTEGER)) {
           throw new LitsError('Result exceeds maximum safe integer', sourceCodeInfo)
         }
@@ -196,6 +194,7 @@ function createTakeWhileNormalExpression<Type extends number | string>(
       assertFunctionLike(fn, sourceCodeInfo)
       const result = takeWhileFunction((value, index) => !!executeFunction(fn, [value, index], contextStack), sourceCodeInfo)
       if (typeof result[0] === 'number') {
+        /* v8 ignore next 3 */
         if (result.some(n => (n as number) > Number.MAX_SAFE_INTEGER)) {
           throw new LitsError('Result exceeds maximum safe integer', sourceCodeInfo)
         }
@@ -216,6 +215,7 @@ function createNthNormalExpression<Type extends number | string>(
       assertNumber(n, sourceCodeInfo, { integer: true, positive: true, lte: maxLength })
       const sequence = seqFunction(n, sourceCodeInfo)
       if (typeof sequence[0] === 'number') {
+        /* v8 ignore next 3 */
         if (sequence.some(val => (val as number) > Number.MAX_SAFE_INTEGER)) {
           throw new LitsError('Result exceeds maximum safe integer', sourceCodeInfo)
         }

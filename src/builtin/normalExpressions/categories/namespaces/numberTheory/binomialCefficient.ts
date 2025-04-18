@@ -1,7 +1,4 @@
 export function binomialCoefficient(n: number, k: number): number {
-  if (k < 0 || k > n)
-    return 0
-
   if (k === 0 || k === n)
     return 1
 

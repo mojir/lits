@@ -241,6 +241,13 @@ describe('grid', () => {
         ['Kian', 'son', '30'],
       ])
     })
+    it('should map multiple grids', () => {
+      expect(lits.run(`grid:map(${exampleGrid3}, ${exampleGrid3}, +)`)).toEqual([[2, 4], [6, 8]])
+    })
+    it('should throw on different dimensions', () => {
+      expect(() => lits.run(`grid:map(${exampleGrid3}, [[1], [2]], +)`)).toThrow()
+      expect(() => lits.run(`grid:map(${exampleGrid3}, [[1, 2]], +)`)).toThrow()
+    })
   })
   describe('grid:mapi', () => {
     it('should map the grid with index', () => {
@@ -316,6 +323,7 @@ describe('grid', () => {
         ['Albert', 'father', 10],
         ['Nina', 'mother', 20],
       ])
+      expect(lits.run('grid:pop-row([[1, 2]])')).toEqual(null)
     })
   })
   describe('grid:pop-col', () => {
@@ -325,6 +333,7 @@ describe('grid', () => {
         ['Nina', 'mother'],
         ['Kian', 'son'],
       ])
+      expect(lits.run('grid:pop-col([[1], [2]])')).toEqual(null)
     })
   })
   describe('grid:shift-row', () => {
@@ -334,6 +343,7 @@ describe('grid', () => {
         ['Kian', 'son', 30],
       ])
     })
+    expect(lits.run('grid:shift-row([[1, 2]])')).toEqual(null)
   })
   describe('grid:shift-col', () => {
     it('should shift columns from the grid', () => {
@@ -343,6 +353,7 @@ describe('grid', () => {
         ['son', 30],
       ])
     })
+    expect(lits.run('grid:shift-col([[1], [2]])')).toEqual(null)
   })
   describe('grid:from-array', () => {
     it('should convert an array to a grid', () => {

@@ -30,9 +30,6 @@ export function isTriangular(matrix: number[][]): boolean {
       }
       if (i < j && matrix[i]![j] !== 0) {
         isLowerTriangular = false
-        if (!isUpperTriangular) {
-          return false
-        }
       }
     }
   }

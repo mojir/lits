@@ -135,7 +135,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
         return []
       }
 
-      const min = vector.reduce((acc, val) => (val < acc ? val : acc), vector[0]!)
+      const min = Math.min(...vector)
 
       if (min <= 0) {
         throw new LitsError('Log normalization requires all values to be positive', sourceCodeInfo)
@@ -443,10 +443,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
         return pearsonCorr(ranksA, ranksB)
       }
       catch (error) {
-        if (error instanceof Error) {
-          throw new LitsError(error.message, sourceCodeInfo)
-        }
-        throw error
+        throw new LitsError(error, sourceCodeInfo)
       }
     },
     paramCount: 2,
@@ -469,10 +466,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
         return pearsonCorr(vectorA, vectorB)
       }
       catch (error) {
-        if (error instanceof Error) {
-          throw new LitsError(error.message, sourceCodeInfo)
-        }
-        throw error
+        throw new LitsError(error, sourceCodeInfo)
       }
     },
     paramCount: 2,
@@ -494,10 +488,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
         return kendallTau(vectorA, vectorB)
       }
       catch (error) {
-        if (error instanceof Error) {
-          throw new LitsError(error.message, sourceCodeInfo)
-        }
-        throw error
+        throw new LitsError(error, sourceCodeInfo)
       }
     },
     paramCount: 2,
@@ -543,7 +534,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
 
       // Handle edge case of zero variance
       if (denominator === 0) {
-        return lag === 0 ? 1 : 0 // Conventional definition
+        return 0 // Conventional definition
       }
 
       // Return the autocorrelation coefficient

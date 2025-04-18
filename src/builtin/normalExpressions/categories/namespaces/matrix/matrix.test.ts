@@ -9,6 +9,7 @@ describe('matrix', () => {
       expect(lits.run('mat:mul([[1, 2], [3, 4]], [[5, 6], [7, 8]])')).toEqual([[19, 22], [43, 50]])
       expect(lits.run('mat:mul([[1, 2, 3], [4, 5, 6]], [[7, 8], [9, 10], [11, 12]])')).toEqual([[58, 64], [139, 154]])
       expect(lits.run('mat:mul([[2]], [[3]])')).toEqual([[6]])
+      expect(() => lits.run('mat:mul([[2, 1]], [[3, 4]])')).toThrow()
     })
   })
   describe('mat:det', () => {
@@ -136,6 +137,7 @@ describe('matrix', () => {
     it('should return true for orthogonal matrices', () => {
       expect(lits.run('mat:orthogonal?([[1, 0], [0, 1.00000000001]])')).toEqual(true)
       expect(lits.run('mat:orthogonal?([[0, 1], [-1, 0]])')).toEqual(true)
+      expect(lits.run('mat:orthogonal?([[0, 0], [0, 0]])')).toEqual(false)
     })
     it('should return false for non-orthogonal matrices', () => {
       expect(lits.run('mat:orthogonal?([[1, 2], [3, 4]])')).toEqual(false)

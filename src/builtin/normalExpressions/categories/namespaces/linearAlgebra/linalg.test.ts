@@ -105,6 +105,8 @@ describe('linalg functions', () => {
       // Case with all same numbers (should handle division by zero)
       expect(lits.run('lin:normalize-l1([5, 5, 5, 5])')).toEqual([0.25, 0.25, 0.25, 0.25])
 
+      expect(lits.run('lin:normalize-l1([0, 0, 0, 0])')).toEqual([0, 0, 0, 0])
+
       // Empty array
       expect(lits.run('lin:normalize-l1([])')).toEqual([])
 
@@ -122,6 +124,8 @@ describe('linalg functions', () => {
       expect(lits.run('lin:normalize-l2([])')).toEqual([])
       // Single element array
       expect(lits.run('lin:normalize-l2([42])')).toEqual([1])
+
+      expect(lits.run('lin:normalize-l2([0, 0, 0, 0])')).toEqual([0, 0, 0, 0])
     })
   })
   describe('lin:normalize-log', () => {
@@ -137,6 +141,8 @@ describe('linalg functions', () => {
 
       // Single element array
       expect(lits.run('lin:normalize-log([42])')).toEqual([0])
+
+      expect(() => lits.run('lin:normalize-log([-42])')).toThrow()
     })
   })
   describe('lin:angle', () => {
@@ -152,6 +158,8 @@ describe('linalg functions', () => {
       expect(lits.run('lin:angle([42], [-1])')).toBeCloseTo(Math.PI)
       // Case with empty vectors (should throw an error)
       expect(() => lits.run('lin:angle([], [])')).toThrowError(LitsError)
+      expect(() => lits.run('lin:angle([0, 0], [1, 0])')).toThrowError(LitsError)
+      expect(() => lits.run('lin:angle([1, 0, 1], [1, 0])')).toThrowError(LitsError)
     })
   })
   describe('lin:projection', () => {
@@ -166,6 +174,8 @@ describe('linalg functions', () => {
       expect(lits.run('lin:projection([42], [1])')).toEqual([42])
       // Case with empty vectors (should throw an error)
       expect(() => lits.run('lin:projection([], [])')).toThrowError(LitsError)
+      expect(() => lits.run('lin:projection([1, 0], [0, 0])')).toThrowError(LitsError)
+      expect(() => lits.run('lin:projection([1, 0, 1], [1, 0])')).toThrowError(LitsError)
     })
   })
   describe('lin:orthogonal?', () => {
@@ -180,6 +190,8 @@ describe('linalg functions', () => {
       expect(lits.run('lin:orthogonal?([42], [1])')).toEqual(false)
       // Case with empty vectors (should throw an error)
       expect(() => lits.run('lin:orthogonal?([], [])')).toThrowError(LitsError)
+
+      expect(() => lits.run('lin:orthogonal?([1, 2], [1])')).toThrowError(LitsError)
     })
   })
   describe('lin:parallel?', () => {
@@ -191,6 +203,8 @@ describe('linalg functions', () => {
       // Case with mixed numbers
       expect(lits.run('lin:parallel?([1, -1], [-2, 2])')).toEqual(false) // collinear though
 
+      expect(lits.run('lin:parallel?([0, 0], [-2, 2])')).toEqual(true)
+
       expect(lits.run('lin:parallel?([2, -3, 4], [6, -9, 12])')).toEqual(true)
       expect(lits.run('lin:parallel?([2, -3, 4], [-6, 9, -12])')).toEqual(false) // collinear though
       expect(lits.run('lin:parallel?([2, -3, 4], [6, 9, 12])')).toEqual(false)
@@ -198,12 +212,19 @@ describe('linalg functions', () => {
       expect(lits.run('lin:parallel?([42], [1])')).toEqual(true)
       // Case with empty vectors (should throw an error)
       expect(() => lits.run('lin:parallel?([], [])')).toThrowError(LitsError)
+
+      expect(() => lits.run('lin:parallel?([1, 2], [1])')).toThrowError(LitsError)
     })
   })
   describe('lin:collinear?', () => {
     it('should check if two vectors are collinear', () => {
       // Basic case
       expect(lits.run('lin:collinear?([1, 0], [2, 0])')).toEqual(true)
+      expect(lits.run('lin:collinear?([0, 1, 0], [0, 2, 0])')).toEqual(true)
+
+      expect(lits.run('lin:collinear?([0, 0], [2, 0])')).toEqual(true)
+      expect(lits.run('lin:collinear?([2, 0], [0, 0])')).toEqual(true)
+      expect(lits.run('lin:collinear?([2, 0], [2, 2])')).toEqual(false)
       // Case with negative numbers
       expect(lits.run('lin:collinear?([-1, 0], [-2, 0])')).toEqual(true)
       // Case with mixed numbers
@@ -216,6 +237,8 @@ describe('linalg functions', () => {
       expect(lits.run('lin:collinear?([42], [1])')).toEqual(true)
       // Case with empty vectors (should throw an error)
       expect(() => lits.run('lin:collinear?([], [])')).toThrowError(LitsError)
+
+      expect(() => lits.run('lin:collinear?([1, 2], [1])')).toThrowError(LitsError)
     })
   })
   describe('lin:cosine-similarity', () => {
@@ -232,6 +255,8 @@ describe('linalg functions', () => {
       expect(() => lits.run('lin:cosine-similarity([0, 0, 0], [1, 2, 3])')).toThrowError(LitsError)
       // Case with empty vectors (should throw an error)
       expect(() => lits.run('lin:cosine-similarity([], [])')).toThrowError(LitsError)
+
+      expect(() => lits.run('lin:cosine-similarity([1, 2], [1])')).toThrowError(LitsError)
     })
   })
   describe('lin:euclidean-distance', () => {
@@ -249,6 +274,8 @@ describe('linalg functions', () => {
       // Case with empty vectors (should throw an error)
       expect(() => lits.run('lin:euclidean-distance([], [])')).toThrowError(LitsError)
       expect(() => lits.run('lin:distance([], [])')).toThrowError(LitsError)
+
+      expect(() => lits.run('lin:distance([1, 2], [1])')).toThrowError(LitsError)
     })
   })
   describe('lin:euclidean-norm', () => {
@@ -279,6 +306,8 @@ describe('linalg functions', () => {
       expect(lits.run('lin:manhattan-distance([42], [1])')).toEqual(41)
       // Case with empty vectors (should throw an error)
       expect(() => lits.run('lin:manhattan-distance([], [])')).toThrowError(LitsError)
+
+      expect(() => lits.run('lin:manhattan-distance([1, 2], [2])')).toThrowError(LitsError)
     })
   })
   describe('lin:manhattan-norm', () => {
@@ -309,6 +338,7 @@ describe('linalg functions', () => {
       expect(lits.run('lin:hamming-distance([42], [1])')).toEqual(1)
       // Case with empty vectors (should throw an error)
       expect(() => lits.run('lin:hamming-distance([], [])')).toThrowError(LitsError)
+      expect(() => lits.run('lin:hamming-distance([1, 2], [1])')).toThrowError(LitsError)
     })
   })
   describe('lin:hamming-norm', () => {
@@ -339,6 +369,7 @@ describe('linalg functions', () => {
       expect(lits.run('lin:chebyshev-distance([42], [1])')).toEqual(41)
       // Case with empty vectors (should throw an error)
       expect(() => lits.run('lin:chebyshev-distance([], [])')).toThrowError(LitsError)
+      expect(() => lits.run('lin:chebyshev-distance([1, 2], [1])')).toThrowError(LitsError)
     })
   })
   describe('lin:chebyshev-norm', () => {
@@ -378,6 +409,7 @@ describe('linalg functions', () => {
       // Case with invalid p value (should throw an error)
       expect(() => lits.run('lin:minkowski-distance([1, 2], [4, 6], 0)')).toThrowError(LitsError)
       expect(() => lits.run('lin:minkowski-distance([1, 2], [4, 6], -1)')).toThrowError(LitsError)
+      expect(() => lits.run('lin:minkowski-distance([1, 2, 3], [4, 6], 2)')).toThrowError(LitsError)
     })
   })
   describe('lin:minkowski-norm', () => {
@@ -415,6 +447,7 @@ describe('linalg functions', () => {
       expect(lits.run('lin:cov([42], [1])')).toBe(0)
       // Case with empty vectors (should throw an error)
       expect(() => lits.run('lin:cov([], [])')).toThrowError(LitsError)
+      expect(() => lits.run('lin:cov([1, 2], [1])')).toThrowError(LitsError)
     })
   })
   describe('lin:corr', () => {
@@ -429,6 +462,7 @@ describe('linalg functions', () => {
       expect(() => lits.run('lin:corr([42], [1])')).toThrowError(LitsError)
       // Case with empty vectors (should throw an error)
       expect(() => lits.run('lin:corr([], [])')).toThrowError(LitsError)
+      expect(() => lits.run('lin:corr([1, 2], [2])')).toThrowError(LitsError)
     })
   })
   describe('lin:spearman-corr', () => {
@@ -443,6 +477,8 @@ describe('linalg functions', () => {
       expect(() => lits.run('lin:spearman-corr([42], [1])')).toThrowError(LitsError)
       // Case with empty vectors (should throw an error)
       expect(() => lits.run('lin:spearman-corr([], [])')).toThrowError(LitsError)
+      expect(() => lits.run('lin:spearman-corr([1, 2], [1])')).toThrowError(LitsError)
+      expect(() => lits.run('lin:spearman-corr([1, 1], [1, 2])')).toThrowError(LitsError)
     })
   })
   describe('lin:pearson-corr', () => {
@@ -457,6 +493,8 @@ describe('linalg functions', () => {
       expect(() => lits.run('lin:pearson-corr([42], [1])')).toThrowError(LitsError)
       // Case with empty vectors (should throw an error)
       expect(() => lits.run('lin:pearson-corr([], [])')).toThrowError(LitsError)
+      expect(() => lits.run('lin:pearson-corr([1, 2], [1])')).toThrowError(LitsError)
+      expect(() => lits.run('lin:pearson-corr([1, 1], [1, 2])')).toThrowError(LitsError)
     })
   })
 
@@ -518,6 +556,7 @@ describe('linalg functions', () => {
 
       // Boundary case: arrays of length 1
       expect(() => lits.run('lin:kendall-tau([1], [2])')).toThrow(LitsError)
+      expect(() => lits.run('lin:kendall-tau([1, 2, 3], [1, 2])')).toThrow(LitsError)
 
       // All tied pairs (corner case)
       expect(() => lits.run('lin:kendall-tau([1, 1, 1], [2, 2, 2])')).toThrow('Not enough data to calculate Kendall\'s Tau')
@@ -545,6 +584,7 @@ describe('linalg functions', () => {
       expect(lits.run('lin:autocorrelation([1, -2, 3, -4, 5], 2)')).toBeCloseTo(0.441)
 
       expect(lits.run('lin:autocorrelation([1, 1, 1, 1, 1], 2)')).toBe(0)
+      expect(lits.run('lin:autocorrelation([1, 1, 1, 1, 1], 0)')).toBe(1)
 
       // Case with zero lag
       expect(() => lits.run('lin:autocorrelation([42], 0)')).toThrowError(LitsError)
@@ -562,6 +602,8 @@ describe('linalg functions', () => {
       // Perfectly negatively correlated vectors
       expect(lits.run('lin:cross-correlation([1, 2, 3, 4, 5], [5, 4, 3, 2, 1], 0)')).toBeCloseTo(-1)
       expect(lits.run('lin:cross-correlation([1, 2, 3, 4, 5], [5, 4, 3, 2, 1], 1)')).toBeCloseTo(-1)
+
+      expect(lits.run('lin:cross-correlation([1, 1, 1], [1, 1, 1], 1)')).toBeCloseTo(1)
 
       // Similar patterns with offset
       expect(lits.run('lin:cross-correlation([10, 12, 15, 10, 8, 15, 20, 25, 18, 15], [8, 10, 14, 9, 7, 13, 19, 23, 17, 14], 0)')).toBeCloseTo(0.995)
@@ -585,18 +627,28 @@ describe('linalg functions', () => {
       // Negative lags
       expect(lits.run('lin:cross-correlation([1, 2, 3, 4, 5], [1, 2, 3, 4, 5], -1)')).toBeCloseTo(1)
       expect(lits.run('lin:cross-correlation([1, 2, 3, 4, 5], [5, 4, 3, 2, 1], -1)')).toBeCloseTo(-1)
+
+      expect(() => lits.run('lin:cross-correlation([1, 2, 3, 4, 5, 6], [5, 4, 3, 2, 1], -1)')).toThrow()
+      expect(() => lits.run('lin:cross-correlation([1], [5], -1)')).toThrow()
     })
   })
   describe('lin:rref', () => {
     it('should calculate the reduced row echelon form of a matrix', () => {
       // Basic case
       expect(lits.run('lin:rref([[1, 2], [3, 4]])')).toEqual([[1, 0], [0, 1]])
+      expect(lits.run('lin:rref([[3, 4], [2, 1]])')).toEqual([[1, 0], [0, 1]])
       // Case with negative numbers
       expect(lits.run('lin:rref([[-1, -2], [-3, -4]])')).toEqual([[1, 0], [0, 1]])
       // Case with mixed numbers
       expect(lits.run('lin:rref([[1, -2], [-3, 4]])')).toEqual([[1, 0], [0, 1]])
       // Case with single element matrix
       expect(lits.run('lin:rref([[42]])')).toEqual([[1]])
+
+      expect(lits.run(`lin:rref([
+  [0, 2, 3],
+  [1, 2, 3],
+  [4, 5, 6]
+])`)).toEqual([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
       // Case with empty matrix (should throw an error)
       expect(() => lits.run('lin:rref([])')).toThrowError(LitsError)
     })
@@ -631,6 +683,8 @@ describe('linalg functions', () => {
 
       // Small values / precision test
       expect(lits.run('lin:solve([[1, 1], [2, 2]], [5, 7])')).toBeNull()
+
+      expect(() => lits.run('lin:solve([[1, 1], [2, 2]], [5, 7, 3])')).toThrow()
 
       // Larger system (4×4)
       expect(lits.run(`lin:solve([

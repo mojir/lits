@@ -129,10 +129,10 @@ function executeFunction(fn: FunctionLike, params: Arr, contextStack: ContextSta
   if (typeof fn === 'string')
     return evaluateStringAsFunction(fn, params, sourceCodeInfo)
 
-  if (isNumber(fn))
+  if (isNumber(fn)) {
     return evaluateNumberAsFunction(fn, params, sourceCodeInfo)
-
-  /* v8 ignore next 1 */
+    /* v8 ignore next 4 */
+  }
   throw new LitsError('Unexpected function type', sourceCodeInfo)
 }
 

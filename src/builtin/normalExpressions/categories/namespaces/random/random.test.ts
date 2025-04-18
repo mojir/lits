@@ -99,6 +99,12 @@ describe('random', () => {
         lits.run(`!:random-sample-unique(${JSON.stringify(array)}, 4)`)
       }).toThrowError(LitsError)
     })
+    it('should throw an error when sampling from empty array', () => {
+      const array = []
+      expect(() => {
+        lits.run(`!:random-sample-unique(${JSON.stringify(array)}, 0)`)
+      }).toThrowError(LitsError)
+    })
   })
   describe('!:shufffle', () => {
     it('should return a shuffled array', () => {
@@ -134,6 +140,9 @@ describe('random', () => {
   describe('!:random-gamma', () => {
     it('should return a random number from a gamma distribution', () => {
       expect(typeof lits.run('!:random-gamma(0.5, 0.5)')).toBe('number')
+      for (let i = 0; i < 1000; i++) {
+        expect(typeof lits.run('!:random-gamma(2, 1)')).toBe('number')
+      }
     })
   })
   describe('!:random-pareto', () => {
@@ -160,6 +169,9 @@ describe('random', () => {
         expect(str).toContain(r)
       }
     })
+    it('should throw', () => {
+      expect(() => lits.run('!:random-char("")')).toThrow(LitsError)
+    })
   })
   describe('!:random-string', () => {
     it('should return a random string of length 10', () => {
@@ -171,6 +183,9 @@ describe('random', () => {
           expect('abcde').toContain(char)
         }
       }
+    })
+    it('should throw', () => {
+      expect(() => lits.run('!:random-string(1, "")')).toThrow(LitsError)
     })
   })
   describe('!:random-id', () => {

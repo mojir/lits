@@ -32,6 +32,7 @@ describe('skewness functions', () => {
     it('should calculate the skewness of a vector', () => {
       expect(lits.run('vec:sample-skewness([1, 2, 3, 6])')).toBeCloseTo(1.19034013)
       expect(lits.run('vec:sample-skewness([1, 2, 2, 3])')).toEqual(0)
+      expect(() => lits.run('vec:sample-skewness([1, 1, 1, 1])')).toThrowError(LitsError)
       expect(() => lits.run('vec:sample-skewness([0, 1])')).toThrowError(LitsError)
       expect(() => lits.run('vec:sample-skewness([])')).toThrowError(LitsError)
     })

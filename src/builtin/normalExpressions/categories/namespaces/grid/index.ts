@@ -434,11 +434,11 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
   'grid:map': {
     evaluate: (params, sourceCodeInfo, contextStack, { executeFunction }): Any[][] => {
       const fn = asFunctionLike(params.at(-1), sourceCodeInfo)
-      const matrices = params.slice(0, -1)
-      assertGrid(matrices[0], sourceCodeInfo)
-      const rows = matrices[0].length
-      const cols = matrices[0][0]!.length
-      matrices.slice(1).forEach((grid) => {
+      const grids = params.slice(0, -1)
+      assertGrid(grids[0], sourceCodeInfo)
+      const rows = grids[0].length
+      const cols = grids[0][0]!.length
+      grids.slice(1).forEach((grid) => {
         assertGrid(grid, sourceCodeInfo)
         if (grid.length !== rows) {
           throw new LitsError(`All matrices must have the same number of rows, but got ${rows} and ${grid.length}`, sourceCodeInfo)
@@ -452,12 +452,8 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
       for (let i = 0; i < rows; i += 1) {
         const row: Any[] = []
         for (let j = 0; j < cols; j += 1) {
-          const args = matrices.map(grid => (grid as Any[][])[i]![j])
-          const value = executeFunction(fn, args, contextStack, sourceCodeInfo)
-          if (!isAny(value)) {
-            throw new LitsError(`The function must return Any, but got ${value}`, sourceCodeInfo)
-          }
-          row.push(value)
+          const args = grids.map(grid => (grid as Any[][])[i]![j])
+          row.push(asAny(executeFunction(fn, args, contextStack, sourceCodeInfo)))
         }
         result.push(row)
       }
@@ -477,11 +473,7 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
       for (let i = 0; i < rows; i += 1) {
         const row: Any[] = []
         for (let j = 0; j < cols; j += 1) {
-          const value = executeFunction(fn, [grid[i]![j], i, j], contextStack, sourceCodeInfo)
-          if (!isAny(value)) {
-            throw new LitsError(`The function must return Any, but got ${value}`, sourceCodeInfo)
-          }
-          row.push(value)
+          row.push(asAny(executeFunction(fn, [grid[i]![j], i, j], contextStack, sourceCodeInfo)))
         }
         result.push(row)
       }
