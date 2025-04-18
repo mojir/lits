@@ -137,6 +137,8 @@ describe('grid', () => {
         ['mother', 20],
         ['son', 30],
       ])
+      expect(() => lits.run(`grid:slice(${exampleGrid1}, [1, 1, 1], [2, 2])`)).toThrow(LitsError)
+      expect(() => lits.run(`grid:slice(${exampleGrid1}, [1, 1], [2, 2, 2])`)).toThrow(LitsError)
     })
   })
   describe('grid:slice-rows', () => {
@@ -145,6 +147,13 @@ describe('grid', () => {
         ['Nina', 'mother', 20],
       ])
       expect(lits.run(`grid:slice-rows(${exampleGrid1}, 1)`)).toEqual([
+        ['Nina', 'mother', 20],
+        ['Kian', 'son', 30],
+      ])
+      expect(lits.run(`grid:slice-rows(${exampleGrid1}, 1, -1)`)).toEqual([
+        ['Nina', 'mother', 20],
+      ])
+      expect(lits.run(`grid:slice-rows(${exampleGrid1}, -2)`)).toEqual([
         ['Nina', 'mother', 20],
         ['Kian', 'son', 30],
       ])
@@ -162,6 +171,16 @@ describe('grid', () => {
         ['mother', 20],
         ['son', 30],
       ])
+      expect(lits.run(`grid:slice-cols(${exampleGrid1}, 1, -1)`)).toEqual([
+        ['father'],
+        ['mother'],
+        ['son'],
+      ])
+      expect(lits.run(`grid:slice-cols(${exampleGrid1}, -1)`)).toEqual([
+        [10],
+        [20],
+        [30],
+      ])
     })
   })
   describe('grid:splice-rows', () => {
@@ -174,6 +193,7 @@ describe('grid', () => {
         ['Nazanin', 'mother', 40],
         ['Kian', 'son', 30],
       ])
+      expect(() => lits.run(`grid:splice-rows(${exampleGrid1}, 1, 1, ["Nazanin", "mother"])`)).toThrow(LitsError)
     })
   })
   describe('grid:splice-cols', () => {
@@ -188,6 +208,7 @@ describe('grid', () => {
         ['Nina', 'm', 20],
         ['Kian', 's', 30],
       ])
+      expect(() => lits.run(`grid:splice-cols(${exampleGrid1}, 1, 1, ["f", "m"])`)).toThrow(LitsError)
     })
   })
   describe('grid:concat-rows', () => {

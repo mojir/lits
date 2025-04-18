@@ -2,7 +2,7 @@ import { LitsError } from '../../../../../errors'
 import type { Any } from '../../../../../interface'
 import { assertGrid, assertVector } from '../../../../../typeGuards/annotatedArrays'
 import { assertArray } from '../../../../../typeGuards/array'
-import { asAny, asFunctionLike, assertFunctionLike, isAny } from '../../../../../typeGuards/lits'
+import { asAny, asFunctionLike, assertAny, assertFunctionLike, isAny } from '../../../../../typeGuards/lits'
 import { assertNumber } from '../../../../../typeGuards/number'
 import type { BuiltinNormalExpressions } from '../../../../interface'
 import { fromArray } from './fromArray'
@@ -133,9 +133,7 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
         const row: Any[] = []
         for (let j = 0; j < cols; j += 1) {
           const value = executeFunction(generator, [i, j], contextStack, sourceCodeInfo)
-          if (!isAny(value)) {
-            throw new LitsError(`The generator function must return Any, but got ${value}`, sourceCodeInfo)
-          }
+          assertAny(value, sourceCodeInfo)
           row.push(value)
         }
         result.push(row)
@@ -232,12 +230,9 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
             }
           }
           break
-
-        default:
-          result = grid.map(row => [...row])
       }
 
-      return result
+      return result!
     },
     paramCount: 2,
   },

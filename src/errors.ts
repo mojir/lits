@@ -44,15 +44,6 @@ export class LitsError extends Error {
   }
 }
 
-export class NotAFunctionError extends LitsError {
-  constructor(fn: unknown, sourceCodeInfo?: SourceCodeInfo) {
-    const message = `Expected function, got ${fn}.`
-    super(message, sourceCodeInfo)
-    Object.setPrototypeOf(this, NotAFunctionError.prototype)
-    this.name = 'NotAFunctionError'
-  }
-}
-
 export class UserDefinedError extends LitsError {
   public userMessage: string
   constructor(message: string, sourceCodeInfo?: SourceCodeInfo) {

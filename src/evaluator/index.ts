@@ -1,7 +1,7 @@
 import type { SpecialExpression } from '../builtin'
 import { builtin } from '../builtin'
 import { NodeTypes, getNodeTypeName } from '../constants/constants'
-import { LitsError, NotAFunctionError, UndefinedSymbolError } from '../errors'
+import { LitsError, UndefinedSymbolError } from '../errors'
 import { getUndefinedSymbols } from '../getUndefinedSymbols'
 import type { Any, Arr, Obj } from '../interface'
 import type {
@@ -132,7 +132,8 @@ function executeFunction(fn: FunctionLike, params: Arr, contextStack: ContextSta
   if (isNumber(fn))
     return evaluateNumberAsFunction(fn, params, sourceCodeInfo)
 
-  throw new NotAFunctionError(fn, sourceCodeInfo)
+  /* v8 ignore next 1 */
+  throw new LitsError('Unexpected function type', sourceCodeInfo)
 }
 
 function evaluateSpecialExpression(node: SpecialExpressionNode, contextStack: ContextStack): Any {

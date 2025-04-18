@@ -2003,18 +2003,6 @@ var Playground = (function (exports) {
         };
         return LitsError;
     }(Error));
-    var NotAFunctionError = /** @class */ (function (_super) {
-        __extends(NotAFunctionError, _super);
-        function NotAFunctionError(fn, sourceCodeInfo) {
-            var _this = this;
-            var message = "Expected function, got ".concat(fn, ".");
-            _this = _super.call(this, message, sourceCodeInfo) || this;
-            Object.setPrototypeOf(_this, NotAFunctionError.prototype);
-            _this.name = 'NotAFunctionError';
-            return _this;
-        }
-        return NotAFunctionError;
-    }(LitsError));
     var UserDefinedError = /** @class */ (function (_super) {
         __extends(UserDefinedError, _super);
         function UserDefinedError(message, sourceCodeInfo) {
@@ -2320,8 +2308,7 @@ var Playground = (function (exports) {
         var numberType = options.integer ? 'integer' : 'number';
         var finite = options.finite ? 'finite' : '';
         var range = getRangeString(options);
-        var equal = typeof options.eq === 'number' ? "equal to ".concat(options.eq) : '';
-        return [sign, finite, numberType, range, equal].filter(function (x) { return !!x; }).join(' ');
+        return [sign, finite, numberType, range].filter(function (x) { return !!x; }).join(' ');
     }
     function isNumber(value, options) {
         if (options === void 0) { options = {}; }
@@ -6470,9 +6457,7 @@ var Playground = (function (exports) {
                     var row = [];
                     for (var j = 0; j < cols; j += 1) {
                         var value = executeFunction(generator, [i, j], contextStack, sourceCodeInfo);
-                        if (!isAny(value)) {
-                            throw new LitsError("The generator function must return Any, but got ".concat(value), sourceCodeInfo);
-                        }
+                        assertAny(value, sourceCodeInfo);
                         row.push(value);
                     }
                     result.push(row);
@@ -6566,8 +6551,6 @@ var Playground = (function (exports) {
                             }
                         }
                         break;
-                    default:
-                        result = grid.map(function (row) { return __spreadArray([], __read(row), false); });
                 }
                 return result;
             },
@@ -13935,8 +13918,7 @@ var Playground = (function (exports) {
     var specialExpressionKeys = Object.keys(specialExpressionTypes);
     new Set(specialExpressionKeys);
     // TODO, remove
-    // eslint-disable-next-line no-console
-    console.log('builtin', __spreadArray(__spreadArray([], __read(specialExpressionKeys), false), __read(normalExpressionKeys), false).length);
+    // console.log('builtin', [...specialExpressionKeys, ...normalExpressionKeys].length)
 
     var binaryOperators = [
         '^', // exponentiation
@@ -30742,7 +30724,8 @@ var Playground = (function (exports) {
             return evaluateStringAsFunction(fn, params, sourceCodeInfo);
         if (isNumber(fn))
             return evaluateNumberAsFunction(fn, params, sourceCodeInfo);
-        throw new NotAFunctionError(fn, sourceCodeInfo);
+        /* v8 ignore next 1 */
+        throw new LitsError('Unexpected function type', sourceCodeInfo);
     }
     function evaluateSpecialExpression(node, contextStack) {
         var specialExpressionType = node[1][0];
