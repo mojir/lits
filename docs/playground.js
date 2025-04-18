@@ -1987,10 +1987,11 @@ var Playground = (function (exports) {
     }(Error));
     var LitsError = /** @class */ (function (_super) {
         __extends(LitsError, _super);
-        function LitsError(message, sourceCodeInfo) {
+        function LitsError(err, sourceCodeInfo) {
             var _this = this;
-            if (message instanceof Error)
-                message = "".concat(message.name).concat(message.message);
+            var message = err instanceof Error
+                ? err.message
+                : "".concat(err);
             _this = _super.call(this, getLitsErrorMessage(message, sourceCodeInfo)) || this;
             _this.shortMessage = message;
             _this.sourceCodeInfo = sourceCodeInfo;
@@ -6752,11 +6753,11 @@ var Playground = (function (exports) {
             evaluate: function (params, sourceCodeInfo, contextStack, _a) {
                 var executeFunction = _a.executeFunction;
                 var fn = asFunctionLike(params.at(-1), sourceCodeInfo);
-                var matrices = params.slice(0, -1);
-                assertGrid(matrices[0], sourceCodeInfo);
-                var rows = matrices[0].length;
-                var cols = matrices[0][0].length;
-                matrices.slice(1).forEach(function (grid) {
+                var grids = params.slice(0, -1);
+                assertGrid(grids[0], sourceCodeInfo);
+                var rows = grids[0].length;
+                var cols = grids[0][0].length;
+                grids.slice(1).forEach(function (grid) {
                     assertGrid(grid, sourceCodeInfo);
                     if (grid.length !== rows) {
                         throw new LitsError("All matrices must have the same number of rows, but got ".concat(rows, " and ").concat(grid.length), sourceCodeInfo);
@@ -6769,12 +6770,8 @@ var Playground = (function (exports) {
                 var _loop_2 = function (i) {
                     var row = [];
                     var _loop_3 = function (j) {
-                        var args = matrices.map(function (grid) { return grid[i][j]; });
-                        var value = executeFunction(fn, args, contextStack, sourceCodeInfo);
-                        if (!isAny(value)) {
-                            throw new LitsError("The function must return Any, but got ".concat(value), sourceCodeInfo);
-                        }
-                        row.push(value);
+                        var args = grids.map(function (grid) { return grid[i][j]; });
+                        row.push(asAny(executeFunction(fn, args, contextStack, sourceCodeInfo)));
                     };
                     for (var j = 0; j < cols; j += 1) {
                         _loop_3(j);
@@ -6800,11 +6797,7 @@ var Playground = (function (exports) {
                 for (var i = 0; i < rows; i += 1) {
                     var row = [];
                     for (var j = 0; j < cols; j += 1) {
-                        var value = executeFunction(fn, [grid[i][j], i, j], contextStack, sourceCodeInfo);
-                        if (!isAny(value)) {
-                            throw new LitsError("The function must return Any, but got ".concat(value), sourceCodeInfo);
-                        }
-                        row.push(value);
+                        row.push(asAny(executeFunction(fn, [grid[i][j], i, j], contextStack, sourceCodeInfo)));
                     }
                     result.push(row);
                 }
@@ -7095,9 +7088,6 @@ var Playground = (function (exports) {
      */
     function mode(values) {
         var e_1, _a, e_2, _b, e_3, _c;
-        if (values.length === 0) {
-            return [];
-        }
         // Create a frequency map
         var frequencyMap = new Map();
         try {
@@ -7195,12 +7185,6 @@ var Playground = (function (exports) {
      * @returns The value at the specified percentile
      */
     function calcPercentile(data, percentile) {
-        if (percentile < 0 || percentile > 100) {
-            throw new Error('Percentile must be between 0 and 100');
-        }
-        if (data.length === 0) {
-            throw new Error('Data array cannot be empty');
-        }
         // Sort the data in ascending order
         var sortedData = __spreadArray([], __read(data), false).sort(function (a, b) { return a - b; });
         // If percentile is 0, return the minimum value
@@ -7432,9 +7416,6 @@ var Playground = (function (exports) {
      */
     function sampleKurtosis(vector) {
         var n = vector.length;
-        if (n < 4) {
-            throw new Error('Sample size must be at least 4 for kurtosis calculation');
-        }
         var mean = vector.reduce(function (sum, val) { return sum + val; }, 0) / n;
         var sumSquaredDeviations = vector.reduce(function (sum, val) { return sum + Math.pow((val - mean), 2); }, 0);
         var variance = sumSquaredDeviations / (n - 1);
@@ -7453,9 +7434,6 @@ var Playground = (function (exports) {
      */
     function sampleExcessKurtosis(vector) {
         var n = vector.length;
-        if (n < 4) {
-            throw new Error('Sample size must be at least 4 for kurtosis calculation');
-        }
         var mean = vector.reduce(function (sum, val) { return sum + val; }, 0) / n;
         var sumSquaredDeviations = vector.reduce(function (sum, val) { return sum + Math.pow((val - mean), 2); }, 0);
         var variance = sumSquaredDeviations / (n - 1);
@@ -7538,10 +7516,6 @@ var Playground = (function (exports) {
      */
     function calculateEntropy(vector) {
         var e_1, _a, e_2, _b;
-        // Return 0 for empty vectors
-        if (vector.length === 0) {
-            return 0;
-        }
         // Count occurrences of each value
         var frequencies = new Map();
         try {
@@ -7655,10 +7629,7 @@ var Playground = (function (exports) {
                     return reductionFunction(vector);
                 }
                 catch (error) {
-                    if (error instanceof Error) {
-                        throw new LitsError(error.message, sourceCodeInfo);
-                    }
-                    throw error;
+                    throw new LitsError(error, sourceCodeInfo);
                 }
             },
             paramCount: 1,
@@ -7670,9 +7641,6 @@ var Playground = (function (exports) {
                 var _b = __read(_a, 2), vector = _b[0], windowSize = _b[1];
                 assertVector(vector, sourceCodeInfo);
                 assertNumber(windowSize, sourceCodeInfo, { integer: true, finite: true, gte: minLength, lte: vector.length });
-                if (vector.length < minLength) {
-                    throw new LitsError("Vector length must be at least ".concat(minLength), sourceCodeInfo);
-                }
                 if (vector.length === 0) {
                     return [];
                 }
@@ -7687,10 +7655,7 @@ var Playground = (function (exports) {
                     return result;
                 }
                 catch (error) {
-                    if (error instanceof Error) {
-                        throw new LitsError(error.message, sourceCodeInfo);
-                    }
-                    throw error;
+                    throw new LitsError(error, sourceCodeInfo);
                 }
             },
             paramCount: 2,
@@ -7727,10 +7692,7 @@ var Playground = (function (exports) {
                     }
                 }
                 catch (error) {
-                    if (error instanceof Error) {
-                        throw new LitsError(error.message, sourceCodeInfo);
-                    }
-                    throw error;
+                    throw new LitsError(error, sourceCodeInfo);
                 }
                 result.push.apply(result, __spreadArray([], __read(Array(vector.length - end).fill(null)), false));
                 return result;
@@ -7758,10 +7720,7 @@ var Playground = (function (exports) {
                     return result;
                 }
                 catch (error) {
-                    if (error instanceof Error) {
-                        throw new LitsError(error.message, sourceCodeInfo);
-                    }
-                    throw error;
+                    throw new LitsError(error, sourceCodeInfo);
                 }
             },
             paramCount: 1,
@@ -8238,9 +8197,6 @@ var Playground = (function (exports) {
         while (index < vectorA.length && approxZero(vectorA[index])) {
             index++;
         }
-        // If we reached the end, vectorA is a zero vector (should be caught above)
-        if (index >= vectorA.length)
-            return true;
         // Calculate the scale factor
         var ratio = vectorB[index] / vectorA[index];
         // Check if all other components maintain the same ratio
@@ -8541,7 +8497,7 @@ var Playground = (function (exports) {
                 if (vector.length === 0) {
                     return [];
                 }
-                var min = vector.reduce(function (acc, val) { return (val < acc ? val : acc); }, vector[0]);
+                var min = Math.min.apply(Math, __spreadArray([], __read(vector), false));
                 if (min <= 0) {
                     throw new LitsError('Log normalization requires all values to be positive', sourceCodeInfo);
                 }
@@ -8823,10 +8779,7 @@ var Playground = (function (exports) {
                     return pearsonCorr(ranksA, ranksB);
                 }
                 catch (error) {
-                    if (error instanceof Error) {
-                        throw new LitsError(error.message, sourceCodeInfo);
-                    }
-                    throw error;
+                    throw new LitsError(error, sourceCodeInfo);
                 }
             },
             paramCount: 2,
@@ -8847,10 +8800,7 @@ var Playground = (function (exports) {
                     return pearsonCorr(vectorA, vectorB);
                 }
                 catch (error) {
-                    if (error instanceof Error) {
-                        throw new LitsError(error.message, sourceCodeInfo);
-                    }
-                    throw error;
+                    throw new LitsError(error, sourceCodeInfo);
                 }
             },
             paramCount: 2,
@@ -8870,10 +8820,7 @@ var Playground = (function (exports) {
                     return kendallTau(vectorA, vectorB);
                 }
                 catch (error) {
-                    if (error instanceof Error) {
-                        throw new LitsError(error.message, sourceCodeInfo);
-                    }
-                    throw error;
+                    throw new LitsError(error, sourceCodeInfo);
                 }
             },
             paramCount: 2,
@@ -8913,7 +8860,7 @@ var Playground = (function (exports) {
                 }
                 // Handle edge case of zero variance
                 if (denominator === 0) {
-                    return lag === 0 ? 1 : 0; // Conventional definition
+                    return 0; // Conventional definition
                 }
                 // Return the autocorrelation coefficient
                 return numerator / denominator;
@@ -9244,9 +9191,6 @@ var Playground = (function (exports) {
         var transposed = transpose(matrix);
         // Check if matrix * transpose = Identity
         var product = matrixMultiply(matrix, transposed);
-        if (!product) {
-            return false;
-        }
         // Check if the product is an identity matrix
         return isIdentity(product);
     }
@@ -9302,9 +9246,6 @@ var Playground = (function (exports) {
                 }
                 if (i < j && matrix[i][j] !== 0) {
                     isLowerTriangular = false;
-                    if (!isUpperTriangular) {
-                        return false;
-                    }
                 }
             }
         }
@@ -9621,8 +9562,6 @@ var Playground = (function (exports) {
     };
 
     function binomialCoefficient(n, k) {
-        if (k < 0 || k > n)
-            return 0;
         if (k === 0 || k === n)
             return 1;
         var result = 1;
@@ -9716,8 +9655,6 @@ var Playground = (function (exports) {
         return result;
     }
     function countDerangements(n) {
-        if (n === 0)
-            return 1;
         if (n === 1)
             return 0;
         var a = 1; // !0
@@ -11934,11 +11871,9 @@ var Playground = (function (exports) {
                 var _a;
                 var length = (_a = params[0]) !== null && _a !== void 0 ? _a : maxLength;
                 assertNumber(length, sourceCodeInfo, { integer: true, positive: true, lte: maxLength });
-                if (typeof length !== 'number') {
-                    throw new LitsError('Length must be a number', sourceCodeInfo);
-                }
                 var result = seqFunction(length, sourceCodeInfo);
                 if (typeof result[0] === 'number') {
+                    /* v8 ignore next 3 */
                     if (result.some(function (n) { return n > Number.MAX_SAFE_INTEGER; })) {
                         throw new LitsError('Result exceeds maximum safe integer', sourceCodeInfo);
                     }
@@ -11956,6 +11891,7 @@ var Playground = (function (exports) {
                 assertFunctionLike(fn, sourceCodeInfo);
                 var result = takeWhileFunction(function (value, index) { return !!executeFunction(fn, [value, index], contextStack); }, sourceCodeInfo);
                 if (typeof result[0] === 'number') {
+                    /* v8 ignore next 3 */
                     if (result.some(function (n) { return n > Number.MAX_SAFE_INTEGER; })) {
                         throw new LitsError('Result exceeds maximum safe integer', sourceCodeInfo);
                     }
@@ -11972,6 +11908,7 @@ var Playground = (function (exports) {
                 assertNumber(n, sourceCodeInfo, { integer: true, positive: true, lte: maxLength });
                 var sequence = seqFunction(n, sourceCodeInfo);
                 if (typeof sequence[0] === 'number') {
+                    /* v8 ignore next 3 */
                     if (sequence.some(function (val) { return val > Number.MAX_SAFE_INTEGER; })) {
                         throw new LitsError('Result exceeds maximum safe integer', sourceCodeInfo);
                     }
@@ -12646,7 +12583,7 @@ var Playground = (function (exports) {
                 var _b = __read(_a, 1), charSet = _b[0];
                 assertString(charSet, sourceCodeInfo);
                 if (charSet.length === 0) {
-                    throw new Error('Character set cannot be empty.');
+                    throw new LitsError('Character set cannot be empty.', sourceCodeInfo);
                 }
                 var randomIndex = Math.floor(Math.random() * charSet.length);
                 return charSet[randomIndex];
@@ -12659,7 +12596,7 @@ var Playground = (function (exports) {
                 assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
                 assertString(charSet, sourceCodeInfo);
                 if (charSet.length === 0) {
-                    throw new Error('Character set cannot be empty.');
+                    throw new LitsError('Character set cannot be empty.', sourceCodeInfo);
                 }
                 var result = '';
                 for (var i = 0; i < length; i++) {
@@ -12700,10 +12637,6 @@ var Playground = (function (exports) {
      */
     function randomGamma(shape, scale) {
         if (scale === void 0) { scale = 1; }
-        // Input validation
-        if (shape <= 0 || scale <= 0) {
-            throw new Error('Shape and scale parameters must be positive');
-        }
         // Special case for shape < 1
         if (shape < 1) {
             var d_1 = shape + 1.0 - 1.0 / 3.0;
@@ -30722,9 +30655,10 @@ var Playground = (function (exports) {
             return evalueateObjectAsFunction(fn, params, sourceCodeInfo);
         if (typeof fn === 'string')
             return evaluateStringAsFunction(fn, params, sourceCodeInfo);
-        if (isNumber(fn))
+        if (isNumber(fn)) {
             return evaluateNumberAsFunction(fn, params, sourceCodeInfo);
-        /* v8 ignore next 1 */
+            /* v8 ignore next 4 */
+        }
         throw new LitsError('Unexpected function type', sourceCodeInfo);
     }
     function evaluateSpecialExpression(node, contextStack) {

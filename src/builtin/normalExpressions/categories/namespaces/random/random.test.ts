@@ -100,7 +100,7 @@ describe('random', () => {
       }).toThrowError(LitsError)
     })
     it('should throw an error when sampling from empty array', () => {
-      const array = []
+      const array: number[] = []
       expect(() => {
         lits.run(`!:random-sample-unique(${JSON.stringify(array)}, 0)`)
       }).toThrowError(LitsError)

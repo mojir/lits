@@ -4,7 +4,6 @@
  * @returns An array containing the mode(s) of the dataset
  */
 export function mode(values: number[]): number[] {
-
   // Create a frequency map
   const frequencyMap = new Map<number, number>()
 
