@@ -15,6 +15,13 @@ import { assertArray } from '../../../typeGuards/array'
 import { asFunctionLike, assertFunctionLike } from '../../../typeGuards/lits'
 
 export const functionalNormalExpression: BuiltinNormalExpressions = {
+  '|>': {
+    evaluate: ([value, func], sourceCodeInfo, contextStack, { executeFunction }): Any => {
+      assertFunctionLike(func, sourceCodeInfo)
+      return executeFunction(func, [value], contextStack, sourceCodeInfo)
+    },
+    paramCount: 2,
+  },
   'apply': {
     evaluate: ([func, ...params]: Arr, sourceCodeInfo, contextStack, { executeFunction }): Any => {
       assertFunctionLike(func, sourceCodeInfo)

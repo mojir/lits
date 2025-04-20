@@ -36,6 +36,8 @@ const binaryOperators = [
   '&&', // logical AND
   '||', // logical OR
   '??', // nullish coalescing
+
+  '|>', // pipe
 ] as const
 
 const otherOperators = [

@@ -56,8 +56,8 @@ import { assertNumberOfParams } from '../typeGuards'
 import { asUserDefinedSymbolNode, isNormalBuiltinSymbolNode, isSpecialBuiltinSymbolNode, isUserDefinedSymbolNode } from '../typeGuards/astNode'
 import { type BindingNode, type BindingTarget, type Node, type NormalBuiltinSymbolNode, type NormalExpressionNodeExpression, type NormalExpressionNodeWithName, type NumberNode, type ParseState, type ReservedSymbolNode, type SpecialBuiltinSymbolNode, type StringNode, type SymbolNode, type UserDefinedSymbolNode, bindingTargetTypes } from './types'
 
-const exponentiationPrecedence = 10
-const binaryFunctionalOperatorPrecedence = 1
+const exponentiationPrecedence = 11
+const binaryFunctionalOperatorPrecedence = 2
 const placeholderRegexp = /^\$([1-9]\d?)?$/
 
 function withSourceCodeInfo<T extends Node | BindingTarget>(node: T, sourceCodeInfo: SourceCodeInfo | undefined): T {
@@ -75,19 +75,19 @@ function getPrecedence(operatorSign: SymbolicBinaryOperator, sourceCodeInfo: Sou
     case '*': // multiplication
     case '/': // division
     case '%': // remainder
-      return 9
+      return 10
 
     case '+': // addition
     case '-': // subtraction
-      return 8
+      return 9
 
     case '<<': // left shift
     case '>>': // signed right shift
     case '>>>': // unsigned right shift
-      return 7
+      return 8
 
     case '++': // string concatenation
-      return 6
+      return 7
 
     case '<': // less than
     case '<=': // less than or equal
@@ -95,26 +95,29 @@ function getPrecedence(operatorSign: SymbolicBinaryOperator, sourceCodeInfo: Sou
     case '>': // greater than
     case '>=': // greater than or equal
     case '≥': // greater than or equal
-      return 5
+      return 6
 
     case '=': // equal
     case '!=': // not equal
     case '≠': // not equal
     case '~': // approximate
     case '≈': // approximate
-      return 4
+      return 5
 
     case '&': // bitwise AND
     case 'xor': // bitwise XOR
     case '|': // bitwise OR
-      return 3
+      return 4
 
     case '&&': // logical AND
     case '||': // logical OR
     case '??': // nullish coalescing
-      return 2
+      return 3
 
-    // leave room for binaryFunctionalOperatorPrecedence = 1
+    case '|>': // pipe
+      return 1
+
+    // leave room for binaryFunctionalOperatorPrecedence = 2
     /* v8 ignore next 2 */
     default:
       throw new LitsError(`Unknown binary operator: ${operatorSign satisfies never}`, sourceCodeInfo)
@@ -164,6 +167,7 @@ function fromBinaryOperatorToNode(operator: OperatorToken, symbolNode: SymbolNod
     case '|':
     case '~':
     case '≈':
+    case '|>':
       return createNamedNormalExpressionNode(symbolNode as NormalBuiltinSymbolNode, [left, right], sourceCodeInfo)
     case '&&':
     case '||':

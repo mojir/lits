@@ -6081,6 +6081,15 @@ var Playground = (function (exports) {
     }
 
     var functionalNormalExpression = {
+        '|>': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var _c = __read(_a, 2), value = _c[0], func = _c[1];
+                var executeFunction = _b.executeFunction;
+                assertFunctionLike(func, sourceCodeInfo);
+                return executeFunction(func, [value], contextStack, sourceCodeInfo);
+            },
+            paramCount: 2,
+        },
         'apply': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a), func = _c[0], params = _c.slice(1);
@@ -13868,6 +13877,7 @@ var Playground = (function (exports) {
         '&&', // logical AND
         '||', // logical OR
         '??', // nullish coalescing
+        '|>', // pipe
     ];
     var otherOperators = [
         '->', // lambda
@@ -31477,8 +31487,8 @@ var Playground = (function (exports) {
         }, '');
     }
 
-    var exponentiationPrecedence = 10;
-    var binaryFunctionalOperatorPrecedence = 1;
+    var exponentiationPrecedence = 11;
+    var binaryFunctionalOperatorPrecedence = 2;
     var placeholderRegexp = /^\$([1-9]\d?)?$/;
     function withSourceCodeInfo(node, sourceCodeInfo) {
         if (sourceCodeInfo) {
@@ -31493,38 +31503,40 @@ var Playground = (function (exports) {
             case '*': // multiplication
             case '/': // division
             case '%': // remainder
-                return 9;
+                return 10;
             case '+': // addition
             case '-': // subtraction
-                return 8;
+                return 9;
             case '<<': // left shift
             case '>>': // signed right shift
             case '>>>': // unsigned right shift
-                return 7;
+                return 8;
             case '++': // string concatenation
-                return 6;
+                return 7;
             case '<': // less than
             case '<=': // less than or equal
             case '≤': // less than or equal
             case '>': // greater than
             case '>=': // greater than or equal
             case '≥': // greater than or equal
-                return 5;
+                return 6;
             case '=': // equal
             case '!=': // not equal
             case '≠': // not equal
             case '~': // approximate
             case '≈': // approximate
-                return 4;
+                return 5;
             case '&': // bitwise AND
             case 'xor': // bitwise XOR
             case '|': // bitwise OR
-                return 3;
+                return 4;
             case '&&': // logical AND
             case '||': // logical OR
             case '??': // nullish coalescing
-                return 2;
-            // leave room for binaryFunctionalOperatorPrecedence = 1
+                return 3;
+            case '|>': // pipe
+                return 1;
+            // leave room for binaryFunctionalOperatorPrecedence = 2
             /* v8 ignore next 2 */
             default:
                 throw new LitsError("Unknown binary operator: ".concat(operatorSign), sourceCodeInfo);
@@ -31568,6 +31580,7 @@ var Playground = (function (exports) {
             case '|':
             case '~':
             case '≈':
+            case '|>':
                 return createNamedNormalExpressionNode(symbolNode, [left, right], sourceCodeInfo);
             case '&&':
             case '||':
@@ -32870,6 +32883,7 @@ var Playground = (function (exports) {
     })
         .join('\n');
     console.log("Namespace;Title;Description\n".concat(csvApi));
+    console.log(Object.keys(apiReference));
     var getLits = (function () {
         var lits = new Lits({ debug: true });
         var litsNoDebug = new Lits({ debug: false });

@@ -41,7 +41,7 @@ describe('functional functions.', () => {
       })
     })
 
-    describe('partial.', () => {
+    describe('partial functions.', () => {
       it('samples.', () => {
         expect(lits.run('+(1, _)(2)')).toBe(3)
         expect(lits.run('+(1, _, _)(2, _)(2)')).toBe(5)
@@ -49,6 +49,19 @@ describe('functional functions.', () => {
         expect(lits.run('+(_, _)(2, 2)')).toBe(4)
         expect(() => lits.run('+(_, _)(2)')).toThrow()
         expect(() => lits.run('+(_, _)(2, 2, 2)')).toThrow()
+      })
+    })
+
+    describe('pipe |>', () => {
+      it('samples.', () => {
+        expect(lits.run('1 |> +(_, 2)')).toBe(3)
+        expect(lits.run('|>(1, +(2, _))')).toBe(3)
+        expect(lits.run(`range(10)
+                           |> map(_, -> $ ^ 2) // [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+                           |> filter(_, odd?)  // [1, 9, 25, 49, 81]
+                           |> reduce(_, +, 0)  // 165
+                           |> sqrt             // 12.84523257866513
+                           |> round(_, 2)`)).toBe(12.85)
       })
     })
 
