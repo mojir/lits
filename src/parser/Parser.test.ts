@@ -1,10 +1,27 @@
 import { describe, expect, it, test } from 'vitest'
 import { Lits } from '../Lits/Lits'
+import { NodeTypes } from '../constants/constants'
+import { LitsError } from '../errors'
 
 const lits = new Lits()
 const litsDebug = new Lits({ debug: true })
 
-describe('operators', () => {
+describe('parser', () => {
+  describe('reserved symbol _', () => {
+    it('should parse reserved symbol _', () => {
+      expect(lits.parse(lits.tokenize('as'))).toEqual({
+        body: [
+          [
+            NodeTypes.ReservedSymbol,
+            'as',
+          ],
+        ],
+        hasDebugData: false,
+      })
+    })
+    expect(() => lits.run('_')).toThrow(LitsError)
+    expect(() => lits.run('let _ := 1;')).toThrow(LitsError)
+  })
   describe('const E', () => {
     it('samples', () => {
       expect(lits.run('E')).toBe(Math.E)

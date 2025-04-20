@@ -30,12 +30,6 @@ describe('litsFunction type guards', () => {
     functionType: 'Builtin',
     normalBuitinSymbolType: normalExpressionTypes['+'] as number,
   }
-  const lf3: LitsFunction = {
-    [FUNCTION_SYMBOL]: true,
-    functionType: 'Partial',
-    function: { a: 10, b: 20 },
-    params: [],
-  }
   const lf4: LitsFunction = {
     [FUNCTION_SYMBOL]: true,
     functionType: 'Comp',
@@ -50,7 +44,7 @@ describe('litsFunction type guards', () => {
   const lf7 = createNativeJsFunction(() => undefined, 'native')
 
   it('isLitsFunction', () => {
-    const valid = [lf1, lf2, lf3, lf4, lf5, lf6, lf7]
+    const valid = [lf1, lf2, lf4, lf5, lf6, lf7]
     const invalid = ['', '1', 0, 1, true, false, null, undefined, [], {}]
     testTypeGuars(
       {
@@ -63,7 +57,7 @@ describe('litsFunction type guards', () => {
 
   it('isUserDefinedFunction', () => {
     const valid = [lf1]
-    const invalid = [lf2, lf3, lf4, lf5, lf6, lf7, '', '1', 0, 1, true, false, null, undefined, [], {}]
+    const invalid = [lf2, lf4, lf5, lf6, lf7, '', '1', 0, 1, true, false, null, undefined, [], {}]
 
     testTypeGuars(
       {
@@ -76,7 +70,7 @@ describe('litsFunction type guards', () => {
 
   it('isNativeJsFunction', () => {
     const valid = [lf6, lf7]
-    const invalid = [lf1, lf2, lf3, lf4, lf5, '', '1', 0, 1, true, false, null, undefined, [], {}]
+    const invalid = [lf1, lf2, lf4, lf5, '', '1', 0, 1, true, false, null, undefined, [], {}]
 
     testTypeGuars(
       {

@@ -118,7 +118,6 @@ export const api = {
   functional: [
     'apply',
     'identity',
-    'partial',
     'comp',
     'constantly',
     'juxt',

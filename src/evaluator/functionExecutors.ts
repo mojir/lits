@@ -127,7 +127,15 @@ export const functionExecutors: FunctionExecutors = {
     }
   },
   Partial: (fn: PartialFunction, params, sourceCodeInfo, contextStack, { executeFunction }) => {
-    return executeFunction(fn.function, [...fn.params, ...params], contextStack, sourceCodeInfo)
+    const actualParams = [...fn.params]
+    if (params.length !== fn.placeholders.length) {
+      throw new LitsError(`(partial) expects ${fn.placeholders.length} arguments, got ${params.length}.`, sourceCodeInfo)
+    }
+    const paramsCopy = [...params]
+    for (const placeholderIndex of fn.placeholders) {
+      actualParams.splice(placeholderIndex, 0, paramsCopy.shift())
+    }
+    return executeFunction(fn.function, actualParams, contextStack, sourceCodeInfo)
   },
   Comp: (fn: CompFunction, params, sourceCodeInfo, contextStack, { executeFunction }) => {
     const { params: f } = fn

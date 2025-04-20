@@ -6101,20 +6101,6 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'partial': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b;
-                var _c = __read(_a), fn = _c[0], params = _c.slice(1);
-                return _b = {},
-                    _b[FUNCTION_SYMBOL] = true,
-                    _b.sourceCodeInfo = sourceCodeInfo,
-                    _b.functionType = 'Partial',
-                    _b.function = asFunctionLike(fn, sourceCodeInfo),
-                    _b.params = params,
-                    _b;
-            },
-            paramCount: { min: 1 },
-        },
         'comp': {
             evaluate: function (params, sourceCodeInfo) {
                 var _a;
@@ -13081,6 +13067,7 @@ var Playground = (function (exports) {
         function: null,
         export: null,
         as: null,
+        _: null,
     };
     var phi = (1 + Math.sqrt(5)) / 2;
     var numberReservedSymbolRecord = {
@@ -14041,7 +14028,6 @@ var Playground = (function (exports) {
         functional: [
             'apply',
             'identity',
-            'partial',
             'comp',
             'constantly',
             'juxt',
@@ -15555,33 +15541,6 @@ var Playground = (function (exports) {
             ],
             description: 'Returns $x.',
             examples: ['identity(1)', 'identity("Albert")', 'identity({ a := 1 })', 'identity(null)'],
-        },
-        'partial': {
-            title: 'partial',
-            category: 'Functional',
-            linkName: 'partial',
-            returns: {
-                type: 'function',
-            },
-            args: {
-                fun: {
-                    type: 'function',
-                },
-                args: {
-                    type: 'any',
-                    rest: true,
-                },
-            },
-            variants: [
-                { argumentNames: ['fun', 'args'] },
-            ],
-            description: "Takes a function $fun and a optional number arguments $args to $fun.\nIt returns a function that takes the additional additional arguments.\nWhen called, the returned function calls `(`$fun `...`$args` ...additional_arguments)`.",
-            examples: [
-                'partial(+, 100)',
-                "\nlet plusMany := partial(+, 100, 1000);\nplusMany(1, 10)",
-                "\nlet addHundred := partial(+, 100);\naddHundred(10)",
-            ],
-            noOperatorDocumentation: true,
         },
         'comp': {
             title: 'comp',
@@ -30445,8 +30404,27 @@ var Playground = (function (exports) {
             }
         },
         Partial: function (fn, params, sourceCodeInfo, contextStack, _a) {
+            var e_2, _b;
             var executeFunction = _a.executeFunction;
-            return executeFunction(fn.function, __spreadArray(__spreadArray([], __read(fn.params), false), __read(params), false), contextStack, sourceCodeInfo);
+            var actualParams = __spreadArray([], __read(fn.params), false);
+            if (params.length !== fn.placeholders.length) {
+                throw new LitsError("(partial) expects ".concat(fn.placeholders.length, " arguments, got ").concat(params.length, "."), sourceCodeInfo);
+            }
+            var paramsCopy = __spreadArray([], __read(params), false);
+            try {
+                for (var _c = __values(fn.placeholders), _d = _c.next(); !_d.done; _d = _c.next()) {
+                    var placeholderIndex = _d.value;
+                    actualParams.splice(placeholderIndex, 0, paramsCopy.shift());
+                }
+            }
+            catch (e_2_1) { e_2 = { error: e_2_1 }; }
+            finally {
+                try {
+                    if (_d && !_d.done && (_b = _c.return)) _b.call(_c);
+                }
+                finally { if (e_2) throw e_2.error; }
+            }
+            return executeFunction(fn.function, actualParams, contextStack, sourceCodeInfo);
         },
         Comp: function (fn, params, sourceCodeInfo, contextStack, _a) {
             var executeFunction = _a.executeFunction;
@@ -30472,66 +30450,66 @@ var Playground = (function (exports) {
             return !executeFunction(fn.function, params, contextStack, sourceCodeInfo);
         },
         EveryPred: function (fn, params, sourceCodeInfo, contextStack, _a) {
-            var e_2, _b, e_3, _c;
+            var e_3, _b, e_4, _c;
             var executeFunction = _a.executeFunction;
             try {
                 for (var _d = __values(fn.params), _e = _d.next(); !_e.done; _e = _d.next()) {
                     var f = _e.value;
                     try {
-                        for (var params_1 = (e_3 = void 0, __values(params)), params_1_1 = params_1.next(); !params_1_1.done; params_1_1 = params_1.next()) {
+                        for (var params_1 = (e_4 = void 0, __values(params)), params_1_1 = params_1.next(); !params_1_1.done; params_1_1 = params_1.next()) {
                             var param = params_1_1.value;
                             var result = executeFunction(asFunctionLike(f, sourceCodeInfo), [param], contextStack, sourceCodeInfo);
                             if (!result)
                                 return false;
                         }
                     }
-                    catch (e_3_1) { e_3 = { error: e_3_1 }; }
+                    catch (e_4_1) { e_4 = { error: e_4_1 }; }
                     finally {
                         try {
                             if (params_1_1 && !params_1_1.done && (_c = params_1.return)) _c.call(params_1);
                         }
-                        finally { if (e_3) throw e_3.error; }
+                        finally { if (e_4) throw e_4.error; }
                     }
                 }
             }
-            catch (e_2_1) { e_2 = { error: e_2_1 }; }
+            catch (e_3_1) { e_3 = { error: e_3_1 }; }
             finally {
                 try {
                     if (_e && !_e.done && (_b = _d.return)) _b.call(_d);
                 }
-                finally { if (e_2) throw e_2.error; }
+                finally { if (e_3) throw e_3.error; }
             }
             return true;
         },
         SomePred: function (fn, params, sourceCodeInfo, contextStack, _a) {
-            var e_4, _b, e_5, _c;
+            var e_5, _b, e_6, _c;
             var executeFunction = _a.executeFunction;
             try {
                 for (var _d = __values(fn.params), _e = _d.next(); !_e.done; _e = _d.next()) {
                     var f = _e.value;
                     try {
-                        for (var params_2 = (e_5 = void 0, __values(params)), params_2_1 = params_2.next(); !params_2_1.done; params_2_1 = params_2.next()) {
+                        for (var params_2 = (e_6 = void 0, __values(params)), params_2_1 = params_2.next(); !params_2_1.done; params_2_1 = params_2.next()) {
                             var param = params_2_1.value;
                             var result = executeFunction(asFunctionLike(f, sourceCodeInfo), [param], contextStack, sourceCodeInfo);
                             if (result)
                                 return true;
                         }
                     }
-                    catch (e_5_1) { e_5 = { error: e_5_1 }; }
+                    catch (e_6_1) { e_6 = { error: e_6_1 }; }
                     finally {
                         try {
                             if (params_2_1 && !params_2_1.done && (_c = params_2.return)) _c.call(params_2);
                         }
-                        finally { if (e_5) throw e_5.error; }
+                        finally { if (e_6) throw e_6.error; }
                     }
                 }
             }
-            catch (e_4_1) { e_4 = { error: e_4_1 }; }
+            catch (e_5_1) { e_5 = { error: e_5_1 }; }
             finally {
                 try {
                     if (_e && !_e.done && (_b = _d.return)) _b.call(_d);
                 }
-                finally { if (e_4) throw e_4.error; }
+                finally { if (e_5) throw e_5.error; }
             }
             return false;
         },
@@ -30604,6 +30582,9 @@ var Playground = (function (exports) {
     }
     function evaluateReservedSymbol(node) {
         var reservedName = node[1];
+        if (!['true', 'false', 'null'].includes(reservedName)) {
+            throw new LitsError("Reserved symbol ".concat(reservedName, " cannot be evaluated"), node[2]);
+        }
         var value = reservedSymbolRecord[reservedName];
         return asNonUndefined(value, node[2]);
     }
@@ -30611,7 +30592,8 @@ var Playground = (function (exports) {
         var sourceCodeInfo = node[2];
         var paramNodes = node[1][1];
         var params = [];
-        paramNodes.forEach(function (paramNode) {
+        var placeholders = [];
+        paramNodes.forEach(function (paramNode, index) {
             if (isSpreadNode(paramNode)) {
                 var spreadValue = evaluateNode(paramNode[1], contextStack);
                 if (Array.isArray(spreadValue)) {
@@ -30621,12 +30603,27 @@ var Playground = (function (exports) {
                     throw new LitsError("Spread operator requires an array, got ".concat(valueToString(paramNode)), paramNode[2]);
                 }
             }
+            else if (paramNode[0] === NodeTypes.ReservedSymbol && paramNode[1] === '_') {
+                placeholders.push(index);
+            }
             else {
                 params.push(evaluateNode(paramNode, contextStack));
             }
         });
         if (isNormalExpressionNodeWithName(node)) {
             var nameSymbol = node[1][0];
+            if (placeholders.length > 0) {
+                var fn = evaluateNode(nameSymbol, contextStack);
+                var partialFunction = {
+                    '^^fn^^': true,
+                    'function': asFunctionLike(fn, sourceCodeInfo),
+                    'functionType': 'Partial',
+                    params: params,
+                    placeholders: placeholders,
+                    sourceCodeInfo: sourceCodeInfo,
+                };
+                return partialFunction;
+            }
             if (isNormalBuiltinSymbolNode(nameSymbol)) {
                 var type = nameSymbol[1];
                 var normalExpression = builtin.allNormalExpressions[type];
@@ -30643,6 +30640,17 @@ var Playground = (function (exports) {
         else {
             var fnNode = node[1][0];
             var fn = asFunctionLike(evaluateNode(fnNode, contextStack), sourceCodeInfo);
+            if (placeholders.length > 0) {
+                var partialFunction = {
+                    '^^fn^^': true,
+                    'function': asFunctionLike(fn, sourceCodeInfo),
+                    'functionType': 'Partial',
+                    params: params,
+                    placeholders: placeholders,
+                    sourceCodeInfo: sourceCodeInfo,
+                };
+                return partialFunction;
+            }
             return executeFunction(fn, params, contextStack, sourceCodeInfo);
         }
     }

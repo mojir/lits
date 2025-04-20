@@ -52,39 +52,6 @@ apply(
     description: 'Returns $x.',
     examples: ['identity(1)', 'identity("Albert")', 'identity({ a := 1 })', 'identity(null)'],
   },
-  'partial': {
-    title: 'partial',
-    category: 'Functional',
-    linkName: 'partial',
-    returns: {
-      type: 'function',
-    },
-    args: {
-      fun: {
-        type: 'function',
-      },
-      args: {
-        type: 'any',
-        rest: true,
-      },
-    },
-    variants: [
-      { argumentNames: ['fun', 'args'] },
-    ],
-    description: `Takes a function $fun and a optional number arguments $args to $fun.
-It returns a function that takes the additional additional arguments.
-When called, the returned function calls \`(\`$fun \`...\`$args\` ...additional_arguments)\`.`,
-    examples: [
-      'partial(+, 100)',
-      `
-let plusMany := partial(+, 100, 1000);
-plusMany(1, 10)`,
-      `
-let addHundred := partial(+, 100);
-addHundred(10)`,
-    ],
-    noOperatorDocumentation: true,
-  },
   'comp': {
     title: 'comp',
     category: 'Functional',

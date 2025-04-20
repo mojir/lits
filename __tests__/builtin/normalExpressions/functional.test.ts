@@ -43,9 +43,12 @@ describe('functional functions.', () => {
 
     describe('partial.', () => {
       it('samples.', () => {
-        expect(lits.run('partial(+, 1)(2)')).toBe(3)
-        expect(lits.run('partial(partial(+, 1), 2)(2)')).toBe(5)
-        expect(() => lits.run('partial(true)()')).toThrow()
+        expect(lits.run('+(1, _)(2)')).toBe(3)
+        expect(lits.run('+(1, _, _)(2, _)(2)')).toBe(5)
+        expect(lits.run('+(_, _)(2, _)(2)')).toBe(4)
+        expect(lits.run('+(_, _)(2, 2)')).toBe(4)
+        expect(() => lits.run('+(_, _)(2)')).toThrow()
+        expect(() => lits.run('+(_, _)(2, 2, 2)')).toThrow()
       })
     })
 

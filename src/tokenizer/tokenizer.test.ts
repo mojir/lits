@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { NO_MATCH, tokenizeBasePrefixedNumber, tokenizeMultiLineComment, tokenizeNumber, tokenizeOperator, tokenizeSingleLineComment, tokenizeSymbol } from './tokenizers'
+import { NO_MATCH, tokenizeBasePrefixedNumber, tokenizeMultiLineComment, tokenizeNumber, tokenizeOperator, tokenizeReservedSymbolToken, tokenizeSingleLineComment, tokenizeSymbol } from './tokenizers'
 
 describe('tokenizers', () => {
   describe('tokenizeSingleLineComment', () => {
@@ -26,6 +26,12 @@ describe('tokenizers', () => {
       expect(tokenizeSymbol('... A-B', 4)).toEqual([3, ['Symbol', 'A-B']])
       expect(tokenizeSymbol('... \'A B\'', 4)).toEqual([5, ['Symbol', '\'A B\'']])
       expect(tokenizeSymbol('... \'A\\\'B\'', 4)).toEqual([6, ['Symbol', '\'A\\\'B\'']])
+    })
+  })
+  describe('tokenizeReservedSymbol', () => {
+    it('should tokenize reserved symbol', () => {
+      expect(tokenizeReservedSymbolToken('true', 0)).toEqual([4, ['ReservedSymbol', 'true']])
+      expect(tokenizeReservedSymbolToken('_', 0)).toEqual([1, ['ReservedSymbol', '_']])
     })
   })
   describe('tokenizeOperator', () => {

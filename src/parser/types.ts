@@ -43,6 +43,7 @@ export interface PartialFunction extends GenericLitsFunction {
   functionType: 'Partial'
   function: FunctionLike
   params: Arr
+  placeholders: number[] // indexes of the placeholders
 }
 
 export interface CompFunction extends GenericLitsFunction {

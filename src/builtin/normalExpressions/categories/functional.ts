@@ -6,7 +6,6 @@ import type {
   EveryPredFunction,
   FNullFunction,
   JuxtFunction,
-  PartialFunction,
   SomePredFunction,
 } from '../../../parser/types'
 import { toAny } from '../../../utils'
@@ -33,19 +32,6 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
       return toAny(value)
     },
     paramCount: 1,
-  },
-
-  'partial': {
-    evaluate: ([fn, ...params], sourceCodeInfo): PartialFunction => {
-      return {
-        [FUNCTION_SYMBOL]: true,
-        sourceCodeInfo,
-        functionType: 'Partial',
-        function: asFunctionLike(fn, sourceCodeInfo),
-        params,
-      }
-    },
-    paramCount: { min: 1 },
   },
 
   'comp': {

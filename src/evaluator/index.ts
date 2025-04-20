@@ -10,6 +10,7 @@ import type {
   Node,
   NormalExpressionNode,
   NumberNode,
+  PartialFunction,
   ReservedSymbolNode,
   SpecialExpressionNode,
   StringNode,
@@ -71,6 +72,9 @@ function evaluateString(node: StringNode): string {
 
 function evaluateReservedSymbol(node: ReservedSymbolNode): Any {
   const reservedName = node[1]
+  if (!['true', 'false', 'null'].includes(reservedName)) {
+    throw new LitsError(`Reserved symbol ${reservedName} cannot be evaluated`, node[2])
+  }
   const value = reservedSymbolRecord[reservedName]
   return asNonUndefined(value, node[2])
 }
@@ -79,7 +83,8 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
   const sourceCodeInfo = node[2]
   const paramNodes: Node[] = node[1][1]
   const params: Arr = []
-  paramNodes.forEach((paramNode) => {
+  const placeholders: number[] = []
+  paramNodes.forEach((paramNode, index) => {
     if (isSpreadNode(paramNode)) {
       const spreadValue = evaluateNode(paramNode[1], contextStack)
       if (Array.isArray(spreadValue)) {
@@ -89,12 +94,27 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
         throw new LitsError(`Spread operator requires an array, got ${valueToString(paramNode)}`, paramNode[2])
       }
     }
+    else if (paramNode[0] === NodeTypes.ReservedSymbol && paramNode[1] === '_') {
+      placeholders.push(index)
+    }
     else {
       params.push(evaluateNode(paramNode, contextStack))
     }
   })
   if (isNormalExpressionNodeWithName(node)) {
     const nameSymbol = node[1][0]
+    if (placeholders.length > 0) {
+      const fn = evaluateNode(nameSymbol, contextStack)
+      const partialFunction: PartialFunction = {
+        '^^fn^^': true,
+        'function': asFunctionLike(fn, sourceCodeInfo),
+        'functionType': 'Partial',
+        params,
+        placeholders,
+        sourceCodeInfo,
+      }
+      return partialFunction
+    }
 
     if (isNormalBuiltinSymbolNode(nameSymbol)) {
       const type = nameSymbol[1]
@@ -112,6 +132,17 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
   else {
     const fnNode: Node = node[1][0]
     const fn = asFunctionLike(evaluateNode(fnNode, contextStack), sourceCodeInfo)
+    if (placeholders.length > 0) {
+      const partialFunction: PartialFunction = {
+        '^^fn^^': true,
+        'function': asFunctionLike(fn, sourceCodeInfo),
+        'functionType': 'Partial',
+        params,
+        placeholders,
+        sourceCodeInfo,
+      }
+      return partialFunction
+    }
     return executeFunction(fn, params, contextStack, sourceCodeInfo)
   }
 }
