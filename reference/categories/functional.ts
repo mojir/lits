@@ -2,6 +2,32 @@ import { type FunctionalApiName, getOperatorArgs } from '../api'
 import type { FunctionReference } from '..'
 
 export const functionalReference: Record<FunctionalApiName, FunctionReference<'Functional'>> = {
+  '|>': {
+    title: '|>',
+    category: 'Functional',
+    linkName: '-or-gt',
+    returns: {
+      type: 'any',
+    },
+    args: {
+      ...getOperatorArgs('any', 'function'),
+    },
+    variants: [
+      { argumentNames: ['a', 'b'] },
+    ],
+    description: 'Takes a value $a and a function $b, and returns the result of applying $b to $a.',
+    examples: [
+      `
+1 |> inc |> inc`,
+      `range(10)
+  |> map(_, -> $ ^ 2) // [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+  |> filter(_, odd?)  // [1, 9, 25, 49, 81]
+  |> reduce(_, +, 0)  // 165
+  |> sqrt             // 12.84523257866513
+  |> round(_, 2)`,
+    ],
+  },
+
   'apply': {
     title: 'apply',
     category: 'Functional',

@@ -1,18 +1,57 @@
 import type { ContextStack } from '../../../evaluator/ContextStack'
 import type { ExecuteFunction } from '../../../evaluator/interface'
-import type { Any, Arr, Coll, Obj } from '../../../interface'
+import type { Any, Arr, Coll, Obj, Seq } from '../../../interface'
 import type { SourceCodeInfo } from '../../../tokenizer/token'
 import { cloneColl, collHasKey, deepEqual, toAny, toNonNegativeInteger } from '../../../utils'
-import { asAny, asColl, assertAny, assertColl, assertFunctionLike, assertObj, isColl, isObj, isSeq } from '../../../typeGuards/lits'
+import { asAny, asColl, asFunctionLike, assertAny, assertColl, assertFunctionLike, assertObj, assertSeq, isColl, isObj, isSeq } from '../../../typeGuards/lits'
 import type { BuiltinNormalExpressions } from '../../interface'
 import { assertArray } from '../../../typeGuards/array'
 import { assertNumber, isNumber } from '../../../typeGuards/number'
 import { asString, asStringOrNumber, assertString, assertStringOrNumber, isString, isStringOrNumber } from '../../../typeGuards/string'
 import type { FunctionLike } from '../../../parser/types'
+import { LitsError } from '../../../errors'
 
 interface CollMeta {
   coll: Coll
   parent: Obj | Arr
+}
+
+function mapObjects({
+  colls,
+  contextStack,
+  executeFunction,
+  fn,
+  sourceCodeInfo,
+}: {
+  colls: unknown[]
+  fn: FunctionLike
+  sourceCodeInfo: SourceCodeInfo | undefined
+  contextStack: ContextStack
+  executeFunction: ExecuteFunction
+}): Obj {
+  assertObj(colls[0], sourceCodeInfo)
+  const keys = Object.keys(colls[0])
+  const params: Record<string, unknown[]> = {}
+  colls.forEach((obj) => {
+    assertObj(obj, sourceCodeInfo)
+    const objKeys = Object.keys(obj)
+    if (objKeys.length !== keys.length) {
+      throw new LitsError(`All objects must have the same keys. Expected: ${keys.join(', ')}. Found: ${objKeys.join(', ')}`, sourceCodeInfo)
+    }
+    if (!objKeys.every(key => keys.includes(key))) {
+      throw new LitsError(`All objects must have the same keys. Expected: ${keys.join(', ')}. Found: ${objKeys.join(', ')}`, sourceCodeInfo)
+    }
+    Object.entries(obj).forEach(([key, value]) => {
+      if (!params[key])
+        params[key] = []
+      params[key].push(value)
+    })
+  })
+
+  return keys.reduce((result: Obj, key) => {
+    result[key] = executeFunction(fn, params[key]!, contextStack, sourceCodeInfo)
+    return result
+  }, {})
 }
 
 function cloneAndGetMeta(
@@ -137,6 +176,187 @@ function assoc(coll: Coll, key: string | number, value: Any, sourceCodeInfo?: So
 }
 
 export const collectionNormalExpression: BuiltinNormalExpressions = {
+  'filter': {
+    evaluate: ([coll, fn]: Arr, sourceCodeInfo, contextStack, { executeFunction }): Coll => {
+      assertColl(coll, sourceCodeInfo)
+      assertFunctionLike(fn, sourceCodeInfo)
+      if (Array.isArray(coll)) {
+        const result = coll.filter(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo))
+        return result
+      }
+      if (isString(coll)) {
+        return coll
+          .split('')
+          .filter(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo))
+          .join('')
+      }
+      return Object.entries(coll)
+        .filter(([, value]) => executeFunction(fn, [value], contextStack, sourceCodeInfo))
+        .reduce((result: Obj, [key, value]) => {
+          result[key] = value
+          return result
+        }, {})
+    },
+    paramCount: 2,
+  },
+  'map': {
+    evaluate: (params, sourceCodeInfo, contextStack, { executeFunction }) => {
+      const fn = asFunctionLike(params.at(-1), sourceCodeInfo)
+
+      if (isObj(params[0])) {
+        return mapObjects({
+          colls: params.slice(0, -1),
+          fn,
+          sourceCodeInfo,
+          contextStack,
+          executeFunction,
+        })
+      }
+
+      const seqs = params.slice(0, -1) as Seq[]
+      assertSeq(seqs[0], sourceCodeInfo)
+
+      const isStr = typeof seqs[0] === 'string'
+      let len = seqs[0].length
+      seqs.slice(1).forEach((seq) => {
+        if (isStr) {
+          assertString(seq, sourceCodeInfo)
+        }
+        else {
+          assertArray(seq, sourceCodeInfo)
+        }
+        len = Math.min(len, seq.length)
+      })
+
+      const paramArray: unknown[][] = []
+      for (let i = 0; i < len; i++) {
+        paramArray.push(seqs.map(seq => seq[i]))
+      }
+
+      const mapped = paramArray.map(p => executeFunction(fn, p, contextStack, sourceCodeInfo))
+
+      if (!isStr) {
+        return mapped
+      }
+      mapped.forEach(char => assertString(char, sourceCodeInfo))
+      return mapped.join('')
+    },
+    paramCount: { min: 2 },
+  },
+  'reduce': {
+    evaluate: ([coll, fn, initial], sourceCodeInfo, contextStack, { executeFunction }): Any => {
+      assertColl(coll, sourceCodeInfo)
+      assertFunctionLike(fn, sourceCodeInfo)
+      assertAny(initial, sourceCodeInfo)
+
+      if (typeof coll === 'string') {
+        assertString(initial, sourceCodeInfo)
+        if (coll.length === 0)
+          return initial
+
+        return coll.split('').reduce((result: Any, elem) => {
+          return executeFunction(fn, [result, elem], contextStack, sourceCodeInfo)
+        }, initial)
+      }
+      else if (Array.isArray(coll)) {
+        if (coll.length === 0)
+          return initial
+
+        return coll.reduce((result: Any, elem) => {
+          return executeFunction(fn, [result, elem], contextStack, sourceCodeInfo)
+        }, initial)
+      }
+      else {
+        if (Object.keys(coll).length === 0)
+          return initial
+
+        return Object.entries(coll).reduce((result: Any, [, elem]) => {
+          return executeFunction(fn, [result, elem], contextStack, sourceCodeInfo)
+        }, initial)
+      }
+    },
+    paramCount: 3,
+  },
+  'reduce-right': {
+    evaluate: ([coll, fn, initial], sourceCodeInfo, contextStack, { executeFunction }): Any => {
+      assertColl(coll, sourceCodeInfo)
+      assertFunctionLike(fn, sourceCodeInfo)
+      assertAny(initial, sourceCodeInfo)
+
+      if (typeof coll === 'string') {
+        if (coll.length === 0)
+          return initial
+
+        return coll.split('').reduceRight((result: Any, elem) => {
+          return executeFunction(fn, [result, elem], contextStack, sourceCodeInfo)
+        }, initial)
+      }
+      else if (Array.isArray(coll)) {
+        if (coll.length === 0)
+          return initial
+
+        return coll.reduceRight((result: Any, elem) => {
+          return executeFunction(fn, [result, elem], contextStack, sourceCodeInfo)
+        }, initial)
+      }
+      else {
+        if (Object.keys(coll).length === 0)
+          return initial
+
+        return Object.entries(coll).reduceRight((result: Any, [, elem]) => {
+          return executeFunction(fn, [result, elem], contextStack, sourceCodeInfo)
+        }, initial)
+      }
+    },
+    paramCount: 3,
+  },
+  'reductions': {
+    evaluate: ([coll, fn, initial], sourceCodeInfo, contextStack, { executeFunction }): Any => {
+      assertColl(coll, sourceCodeInfo)
+      assertFunctionLike(fn, sourceCodeInfo)
+      assertAny(initial, sourceCodeInfo)
+
+      assertAny(initial, sourceCodeInfo)
+      if (typeof coll === 'string') {
+        assertString(initial, sourceCodeInfo)
+        if (coll.length === 0)
+          return [initial]
+
+        const resultArray: Any[] = [initial]
+        coll.split('').reduce((result: Any, elem) => {
+          const newVal = executeFunction(fn, [result, elem], contextStack, sourceCodeInfo)
+          resultArray.push(newVal)
+          return newVal
+        }, initial)
+        return resultArray
+      }
+      else if (Array.isArray(coll)) {
+        if (coll.length === 0)
+          return [initial]
+
+        const resultArray: Any[] = [initial]
+        coll.reduce((result: Any, elem) => {
+          const newVal = executeFunction(fn, [result, elem], contextStack, sourceCodeInfo)
+          resultArray.push(newVal)
+          return newVal
+        }, initial)
+        return resultArray
+      }
+      else {
+        if (Object.keys(coll).length === 0)
+          return [initial]
+
+        const resultArray: Any[] = [initial]
+        Object.entries(coll).reduce((result: Any, [, elem]) => {
+          const newVal = executeFunction(fn, [result, elem], contextStack, sourceCodeInfo)
+          resultArray.push(newVal)
+          return newVal
+        }, initial)
+        return resultArray
+      }
+    },
+    paramCount: 3,
+  },
   'get': {
     evaluate: (params, sourceCodeInfo) => {
       const [coll, key] = params

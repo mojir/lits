@@ -1,9 +1,179 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../src/Lits/Lits'
+import { LitsError } from '../../../src/errors'
 
 const lits = new Lits()
 
 describe('collection functions', () => {
+  describe('filter', () => {
+    it('samples', () => {
+      expect(lits.run('filter([1, "2", 3], number?)')).toEqual([1, 3])
+      expect(lits.run('filter([], number?)')).toEqual([])
+      expect(lits.run('filter([1, "2", 3], null?)')).toEqual([])
+      expect(lits.run('filter([0, 1, 2, 3, 4, 5, 6, 7], -> zero?($ mod 3))')).toEqual([0, 3, 6])
+      expect(lits.run('filter("aAbBcC", -> $ >= "a")')).toBe('abc')
+      expect(lits.run('filter({ a := 1, b := 2 }, odd?)')).toEqual({ a: 1 })
+      expect(() => lits.run('filter(+)')).toThrow()
+      expect(() => lits.run('filter()')).toThrow()
+      expect(() => lits.run('filter([1], number? 2)')).toThrow()
+    })
+  })
+
+  describe('map', () => {
+    it('samples', () => {
+      expect(lits.run('map([1, "2", 3], number?)')).toEqual([true, false, true])
+      expect(lits.run('map([], number?)')).toEqual([])
+      expect(lits.run('map([1, 2, 3], -> 2 * $)')).toEqual([2, 4, 6])
+      expect(lits.run('map("ABCDE", "12345", ++)')).toBe('A1B2C3D4E5')
+      expect(lits.run('map([1, 2, 3], [1, 2], +)')).toEqual([2, 4])
+      expect(lits.run('map("AaBbCc", -> if $ >= "a" then "-" else "+" end)')).toBe('+-+-+-')
+      expect(() => lits.run('map("AaBbCc", -> if $ >= "a" then 0 else 1 end)')).toThrow()
+      expect(lits.run('map([1, "2", 3], null?)')).toEqual([false, false, false])
+      expect(lits.run('map([0, 1, 2, 3, 4, 5, 6, 7], -> zero?($ mod 3))')).toEqual([
+        true,
+        false,
+        false,
+        true,
+        false,
+        false,
+        true,
+        false,
+      ])
+      expect(lits.run('map([0, 1, 2, 3, 4, 5, 6, 7], inc)')).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
+      expect(lits.run('map({ a := 1, b := 2 }, inc)')).toEqual({ a: 2, b: 3 })
+      expect(lits.run('map({ a := 1, b := 2 }, { a := 10, b := 20 }, +)')).toEqual({ a: 11, b: 22 })
+      expect(() => lits.run('map({ a := 1, b := 2 }, { c := 10, b := 20 }, +)')).toThrow(LitsError)
+      expect(() => lits.run('map({ a := 1, b := 2 }, { b := 20 }, +)')).toThrow(LitsError)
+      expect(() => lits.run('map(+)')).toThrow()
+      expect(() => lits.run('map()')).toThrow()
+      expect(() => lits.run('map(1 number?)')).toThrow()
+    })
+  })
+
+  describe('reduce', () => {
+    it('samples', () => {
+      let program = `
+      function countChars(stringArray)
+        reduce(
+          stringArray,
+          (sum, s) -> sum + count(s),
+          0
+        )
+      end;
+
+      countChars(["First", "Second", "Third"])
+      `
+      expect(lits.run(program)).toBe(16)
+
+      program = `
+      function longestLength(stringArray)
+        reduce(
+          stringArray,
+          (sum, s) ->
+            if sum > count(s) then
+              sum
+            else
+              count(s)
+            end,
+          0
+        )
+      end;
+
+      longestLength(["First", "Second", "Third"])
+      // `
+      expect(lits.run(program)).toBe(6)
+
+      expect(lits.run('reduce([1, 2, 3, 4, 5], +, 0)')).toBe(15)
+      expect(lits.run('reduce([], +, 0)')).toBe(0)
+      expect(lits.run('reduce([1], +, 0)')).toBe(1)
+      expect(lits.run('reduce([1, 2], +, 0)')).toBe(3)
+      expect(lits.run('reduce([], +, 1)')).toBe(1)
+      expect(lits.run('reduce([2, 3], +, 1)')).toBe(6)
+      expect(lits.run('reduce([1, 2, 3], +, 0)')).toBe(6)
+      expect(lits.run('reduce([], +, 0)')).toBe(0)
+      expect(lits.run('reduce([], +, 1)')).toBe(1)
+
+      expect(lits.run('reduce("Albert", (x, y) -> concat(x, "-", y), "")')).toBe('-A-l-b-e-r-t')
+      expect(lits.run('reduce("Albert", (x, y) -> concat(x, "-", y), ">")')).toBe('>-A-l-b-e-r-t')
+      expect(lits.run('reduce("", (x, y) -> concat(x, "-", y), ">")')).toBe('>')
+
+      expect(lits.run('reduce({ a := 1, b := 2 }, +, 0)')).toBe(3)
+      expect(lits.run('reduce({}, +, 0)')).toBe(0)
+
+      expect(() => lits.run('reduce([1, 2, 3], +)')).toThrow()
+      expect(() => lits.run('reduce(+)')).toThrow()
+      expect(() => lits.run('reduce()')).toThrow()
+      expect(() => lits.run('reduce(1, +2)')).toThrow()
+    })
+  })
+
+  describe('reduce-right', () => {
+    it('samples', () => {
+      expect(lits.run('reduce-right([1, 2, 3, 4, 5], +, 0)')).toBe(15)
+      expect(lits.run('reduce-right([], +, 0)')).toBe(0)
+      expect(lits.run('reduce-right([1], +, 0)')).toBe(1)
+      expect(lits.run('reduce-right([1, 2], +, 0)')).toBe(3)
+      expect(lits.run('reduce-right([1, 2, 3], +, 0)')).toBe(6)
+      expect(lits.run('reduce-right([], +, 0)')).toBe(0)
+      expect(lits.run('reduce-right([], +, 0)')).toBe(0)
+      expect(lits.run('reduce-right(["1", "2", "3"], str, "")')).toBe('321')
+
+      expect(lits.run('reduce-right("Albert", (x, y) -> concat(x, "-", y), "")')).toBe('-t-r-e-b-l-A')
+      expect(lits.run('reduce-right("Albert", (x, y) -> concat(x, "-", y), ">")')).toBe('>-t-r-e-b-l-A')
+      expect(lits.run('reduce-right("", (x, y) -> concat(x, "-", y), ">")')).toBe('>')
+
+      expect(lits.run('reduce-right({ a := 1, b := 2 }, +, 0)')).toBe(3)
+      expect(lits.run('reduce-right({}, +, 0)')).toBe(0)
+
+      expect(() => lits.run('reduce-right(+)')).toThrow()
+      expect(() => lits.run('reduce-right()')).toThrow()
+      expect(() => lits.run('reduce-right(1, +, 2)')).toThrow()
+      expect(() => lits.run('reduce-right([1, 2], +)')).toThrow()
+    })
+  })
+
+  describe('reductions', () => {
+    it('samples', () => {
+      expect(lits.run('reductions([1, 2, 3, 4, 5], +, 0)')).toEqual([0, 1, 3, 6, 10, 15])
+      expect(lits.run('reductions([], +, 0)')).toEqual([0])
+      expect(lits.run('reductions([1], +, 0)')).toEqual([0, 1])
+      expect(lits.run('reductions([1, 2], +, 0)')).toEqual([0, 1, 3])
+      expect(lits.run('reductions([], +, 1)')).toEqual([1])
+      expect(lits.run('reductions([2, 3], +, 1)')).toEqual([1, 3, 6])
+      expect(lits.run('reductions([1, 2, 3], +, 0)')).toEqual([0, 1, 3, 6])
+      expect(lits.run('reductions([], +, 0)')).toEqual([0])
+      expect(lits.run('reductions([], +, 1)')).toEqual([1])
+
+      expect(lits.run('reductions("Albert", (x, y) -> concat(x, "-", y), "")')).toEqual([
+        '',
+        '-A',
+        '-A-l',
+        '-A-l-b',
+        '-A-l-b-e',
+        '-A-l-b-e-r',
+        '-A-l-b-e-r-t',
+      ])
+      expect(lits.run('reductions("Albert", (x, y) -> concat(x, "-", y), ">")')).toEqual([
+        '>',
+        '>-A',
+        '>-A-l',
+        '>-A-l-b',
+        '>-A-l-b-e',
+        '>-A-l-b-e-r',
+        '>-A-l-b-e-r-t',
+      ])
+      expect(lits.run('reductions("", (x, y) -> concat(x, "-", y), ">")')).toEqual(['>'])
+
+      expect(lits.run('reductions({ a := 1, b := 2 }, +, 0)')).toEqual([0, 1, 3])
+      expect(lits.run('reductions({}, +, 0)')).toEqual([0])
+
+      expect(() => lits.run('reductions(null +)')).toThrow()
+      expect(() => lits.run('reductions(+)')).toThrow()
+      expect(() => lits.run('reductions()')).toThrow()
+      expect(() => lits.run('reductions(1, +, 2)')).toThrow()
+    })
+  })
+
   describe('count', () => {
     it('samples', () => {
       expect(lits.run('count([])')).toBe(0)

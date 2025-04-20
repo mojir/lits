@@ -2,6 +2,171 @@ import { type CollectionApiName, getOperatorArgs } from '../api'
 import type { FunctionReference } from '..'
 
 export const collectionReference: Record<CollectionApiName, FunctionReference<'Collection'>> = {
+  'filter': {
+    title: 'filter',
+    category: 'Collection',
+    linkName: 'filter',
+    returns: {
+      type: 'collection',
+    },
+    args: {
+      ...getOperatorArgs('collection', 'function'),
+      coll: {
+        type: 'collection',
+      },
+      fun: {
+        type: 'function',
+      },
+    },
+    variants: [
+      { argumentNames: ['coll', 'fun'] },
+    ],
+    description: 'Creates a new collection with all elements that pass the test implemented by $fun.',
+    examples: [
+      `
+filter(
+  ["Albert", "Mojir", 160, [1, 2]],
+  string?
+)`,
+      `
+filter(
+  [5, 10, 15, 20],
+  -> $ > 10
+)`,
+      `
+filter(
+  { a := 1, b := 2 },
+  odd?
+)`,
+    ],
+  },
+  'map': {
+    title: 'map',
+    category: 'Collection',
+    linkName: 'map',
+    returns: {
+      type: 'collection',
+    },
+    args: {
+      ...getOperatorArgs('collection', 'function'),
+      colls: {
+        type: 'collection',
+        rest: true,
+        description: 'At least one.',
+      },
+      fun: {
+        type: 'function',
+      },
+    },
+    variants: [
+      { argumentNames: ['colls', 'fun'] },
+    ],
+    description: 'Creates a new collection populated with the results of calling $fun on every element in $colls.',
+    examples: [
+      '[1, 2, 3] map -',
+      '[1, 2, 3] map -> -($)',
+      'map(["Albert", "Mojir", 42], str)',
+      'map([1, 2, 3], inc)',
+      'map([1, 2, 3], [1, 10, 100], *)',
+      'map({ a := 1, b := 2 }, inc)',
+      'map({ a := 1, b := 2 }, { a := 10, b := 20 }, +)',
+    ],
+  },
+  'reduce': {
+    title: 'reduce',
+    category: 'Collection',
+    linkName: 'reduce',
+    returns: {
+      type: 'any',
+    },
+    args: {
+      fun: {
+        type: 'function',
+      },
+      coll: {
+        type: 'collection',
+      },
+      initial: {
+        type: 'any',
+      },
+    },
+    variants: [
+      { argumentNames: ['coll', 'fun', 'initial'] },
+    ],
+    description: 'Runs $fun function on each element of the $coll, passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $coll is a single value.',
+    examples: [
+      'reduce([1, 2, 3], +, 0)',
+      'reduce([], +, 0)',
+      'reduce({ a := 1, b := 2 }, +, 0)',
+      `
+reduce(
+  [1, 2, 3, 4, 5, 6, 7, 8, 9],
+  (result, value) -> result + if even?(value) then value else 0 end,
+  0)`,
+    ],
+  },
+  'reduce-right': {
+    title: 'reduce-right',
+    category: 'Collection',
+    linkName: 'reduce-right',
+    returns: {
+      type: 'any',
+    },
+    args: {
+      fun: {
+        type: 'function',
+      },
+      coll: {
+        type: 'collection',
+      },
+      initial: {
+        type: 'any',
+      },
+    },
+    variants: [
+      { argumentNames: ['coll', 'fun', 'initial'] },
+    ],
+    description: 'Runs $fun function on each element of the $coll (starting from the last item), passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $coll is a single value.',
+    examples: [
+      'reduce-right(["A", "B", "C"], str, "")',
+      'reduce-right({ a := 1, b := 2 }, +, 0)',
+    ],
+  },
+  'reductions': {
+    title: 'reductions',
+    category: 'Collection',
+    linkName: 'reductions',
+    returns: {
+      type: 'any',
+    },
+    args: {
+      fun: {
+        type: 'function',
+      },
+      coll: {
+        type: 'collection',
+      },
+      initial: {
+        type: 'any',
+      },
+    },
+    variants: [
+      { argumentNames: ['coll', 'fun', 'initial'] },
+    ],
+    description: 'Returns an array of the intermediate values of the reduction (see `reduce`) of $coll by $fun.',
+    examples: [
+      'reductions([1, 2, 3], +, 0)',
+      'reductions([1, 2, 3], +, 10)',
+      'reductions([], +, 0)',
+      'reductions({ a := 1, b := 2 }, +, 0)',
+      `
+reductions(
+  [1, 2, 3, 4, 5, 6, 7, 8, 9],
+  (result, value) -> result + if even?(value) then value else 0 end,
+  0
+)`,
+    ],
+  },
   'count': {
     title: 'count',
     category: 'Collection',

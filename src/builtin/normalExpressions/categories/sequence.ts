@@ -1,7 +1,7 @@
 import type { Any, Arr, Obj, Seq } from '../../../interface'
 import type { SourceCodeInfo } from '../../../tokenizer/token'
 import { asArray, assertArray, assertCharArray } from '../../../typeGuards/array'
-import { asAny, asFunctionLike, asSeq, assertAny, assertFunctionLike, assertSeq } from '../../../typeGuards/lits'
+import { asAny, asSeq, assertAny, assertFunctionLike, assertSeq } from '../../../typeGuards/lits'
 import { asNumber, assertNumber } from '../../../typeGuards/number'
 import { assertString, assertStringOrNumber } from '../../../typeGuards/string'
 import { collHasKey, compare, deepEqual, toAny, toNonNegativeInteger } from '../../../utils'
@@ -29,22 +29,6 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 2, max: 3 },
   },
-  'filter': {
-    evaluate: ([seq, fn]: Arr, sourceCodeInfo, contextStack, { executeFunction }): Seq => {
-      assertSeq(seq, sourceCodeInfo)
-      assertFunctionLike(fn, sourceCodeInfo)
-      if (Array.isArray(seq)) {
-        const result = seq.filter(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo))
-        return result
-      }
-
-      return seq
-        .split('')
-        .filter(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo))
-        .join('')
-    },
-    paramCount: 2,
-  },
   'first': {
     evaluate: ([array], sourceCodeInfo): Any => {
       if (array === null)
@@ -68,38 +52,6 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       return result
     },
     paramCount: 1,
-  },
-  'map': {
-    evaluate: (params, sourceCodeInfo, contextStack, { executeFunction }) => {
-      const fn = asFunctionLike(params.at(-1), sourceCodeInfo)
-      const seqs = params.slice(0, -1) as Seq[]
-      assertSeq(seqs[0], sourceCodeInfo)
-      const isString = typeof seqs[0] === 'string'
-      let len = seqs[0].length
-      seqs.slice(1).forEach((seq) => {
-        if (isString) {
-          assertString(seq, sourceCodeInfo)
-        }
-        else {
-          assertArray(seq, sourceCodeInfo)
-        }
-        len = Math.min(len, seq.length)
-      })
-
-      const paramArray: unknown[][] = []
-      for (let i = 0; i < len; i++) {
-        paramArray.push(seqs.map(seq => seq[i]))
-      }
-
-      const mapped = paramArray.map(p => executeFunction(fn, p, contextStack, sourceCodeInfo))
-
-      if (!isString) {
-        return mapped
-      }
-      mapped.forEach(char => assertString(char, sourceCodeInfo))
-      return mapped.join('')
-    },
-    paramCount: { min: 2 },
   },
   'pop': {
     evaluate: ([seq], sourceCodeInfo): Seq => {
@@ -180,181 +132,6 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       }
     },
     paramCount: { min: 2 },
-  },
-  'reductions': {
-    evaluate: (params: Arr, sourceCodeInfo, contextStack, { executeFunction }): Any[] => {
-      const [seq, fn] = params
-      assertSeq(seq, sourceCodeInfo)
-      assertFunctionLike(fn, sourceCodeInfo)
-
-      if (params.length === 2) {
-        if (seq.length === 0)
-          return [executeFunction(fn, [], contextStack, sourceCodeInfo)]
-        else if (seq.length === 1)
-          return [toAny(seq[0])]
-
-        if (typeof seq === 'string') {
-          const chars = seq.split('')
-          const resultArray: Any[] = [asAny(chars[0], sourceCodeInfo)]
-          chars.slice(1).reduce(
-            (result: Any, elem) => {
-              const newVal = executeFunction(fn, [result, elem], contextStack, sourceCodeInfo)
-              resultArray.push(newVal)
-              return newVal
-            },
-            asAny(chars[0], sourceCodeInfo),
-          )
-          return resultArray
-        }
-        else {
-          const resultArray: Any[] = [toAny(seq[0])]
-          seq.slice(1).reduce((result: Any, elem) => {
-            const newVal = executeFunction(fn, [result, elem], contextStack, sourceCodeInfo)
-            resultArray.push(newVal)
-            return newVal
-          }, toAny(seq[0]))
-          return resultArray
-        }
-      }
-      else {
-        const val = params[2]
-        assertAny(val, sourceCodeInfo)
-        if (typeof seq === 'string') {
-          assertString(val, sourceCodeInfo)
-          if (seq.length === 0)
-            return [val]
-
-          const resultArray: Any[] = [val]
-          seq.split('').reduce((result: Any, elem) => {
-            const newVal = executeFunction(fn, [result, elem], contextStack, sourceCodeInfo)
-            resultArray.push(newVal)
-            return newVal
-          }, val)
-          return resultArray
-        }
-        else {
-          if (seq.length === 0)
-            return [val]
-
-          const resultArray: Any[] = [val]
-          seq.reduce((result: Any, elem) => {
-            const newVal = executeFunction(fn, [result, elem], contextStack, sourceCodeInfo)
-            resultArray.push(newVal)
-            return newVal
-          }, val)
-          return resultArray
-        }
-      }
-    },
-    paramCount: { min: 2, max: 3 },
-  },
-  'reduce': {
-    evaluate: (params: Arr, sourceCodeInfo, contextStack, { executeFunction }): Any => {
-      const [seq, fn] = params
-      assertSeq(seq, sourceCodeInfo)
-      assertFunctionLike(fn, sourceCodeInfo)
-
-      if (params.length === 2) {
-        if (seq.length === 0)
-          return executeFunction(fn, [], contextStack, sourceCodeInfo)
-        else if (seq.length === 1)
-          return toAny(seq[0])
-
-        if (typeof seq === 'string') {
-          const chars = seq.split('')
-          return chars.slice(1).reduce(
-            (result: Any, elem) => {
-              const val = executeFunction(fn, [result, elem], contextStack, sourceCodeInfo)
-              return val
-            },
-            asAny(chars[0], sourceCodeInfo),
-          )
-        }
-        else {
-          return seq.slice(1).reduce((result: Any, elem) => {
-            return executeFunction(fn, [result, elem], contextStack, sourceCodeInfo)
-          }, toAny(seq[0]))
-        }
-      }
-      else {
-        const val = params[2]
-        assertAny(val, sourceCodeInfo)
-        if (typeof seq === 'string') {
-          assertString(val, sourceCodeInfo)
-          if (seq.length === 0)
-            return val
-
-          return seq.split('').reduce((result: Any, elem) => {
-            return executeFunction(fn, [result, elem], contextStack, sourceCodeInfo)
-          }, val)
-        }
-        else {
-          if (seq.length === 0)
-            return val
-
-          return seq.reduce((result: Any, elem) => {
-            return executeFunction(fn, [result, elem], contextStack, sourceCodeInfo)
-          }, val)
-        }
-      }
-    },
-    paramCount: { min: 2, max: 3 },
-  },
-  'reduce-right': {
-    evaluate: (params: Arr, sourceCodeInfo, contextStack, { executeFunction }): Any => {
-      const [seq, fn] = params
-      assertSeq(seq, sourceCodeInfo)
-      assertFunctionLike(fn, sourceCodeInfo)
-
-      if (params.length === 2) {
-        if (seq.length === 0)
-          return executeFunction(fn, [], contextStack, sourceCodeInfo)
-        else if (seq.length === 1)
-          return toAny(seq[0])
-
-        if (typeof seq === 'string') {
-          const chars = seq.split('')
-          return chars.slice(0, chars.length - 1).reduceRight(
-            (result, elem) => {
-              const newVal = executeFunction(fn, [result, elem], contextStack, sourceCodeInfo)
-              assertString(newVal, sourceCodeInfo)
-              return newVal
-            },
-            chars[chars.length - 1] as string,
-          )
-        }
-        else {
-          return seq.slice(0, seq.length - 1).reduceRight(
-            (result: Any, elem) => {
-              return executeFunction(fn, [result, elem], contextStack, sourceCodeInfo)
-            },
-            asAny(seq[seq.length - 1], sourceCodeInfo),
-          )
-        }
-      }
-      else {
-        const val = params[2]
-        assertAny(val, sourceCodeInfo)
-        assertSeq(seq, sourceCodeInfo)
-        if (typeof seq === 'string') {
-          if (seq.length === 0)
-            return val
-
-          return seq.split('').reduceRight((result: Any, elem) => {
-            return executeFunction(fn, [result, elem], contextStack, sourceCodeInfo)
-          }, val)
-        }
-        else {
-          if (seq.length === 0)
-            return val
-
-          return seq.reduceRight((result: Any, elem) => {
-            return executeFunction(fn, [result, elem], contextStack, sourceCodeInfo)
-          }, val)
-        }
-      }
-    },
-    paramCount: { min: 2, max: 3 },
   },
   'rest': {
     evaluate: ([seq], sourceCodeInfo): Arr | string => {

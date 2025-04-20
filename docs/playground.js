@@ -2859,6 +2859,32 @@ var Playground = (function (exports) {
             throw getAssertionError('array of strings', value, sourceCodeInfo);
     }
 
+    function mapObjects(_a) {
+        var colls = _a.colls, contextStack = _a.contextStack, executeFunction = _a.executeFunction, fn = _a.fn, sourceCodeInfo = _a.sourceCodeInfo;
+        assertObj(colls[0], sourceCodeInfo);
+        var keys = Object.keys(colls[0]);
+        var params = {};
+        colls.forEach(function (obj) {
+            assertObj(obj, sourceCodeInfo);
+            var objKeys = Object.keys(obj);
+            if (objKeys.length !== keys.length) {
+                throw new LitsError("All objects must have the same keys. Expected: ".concat(keys.join(', '), ". Found: ").concat(objKeys.join(', ')), sourceCodeInfo);
+            }
+            if (!objKeys.every(function (key) { return keys.includes(key); })) {
+                throw new LitsError("All objects must have the same keys. Expected: ".concat(keys.join(', '), ". Found: ").concat(objKeys.join(', ')), sourceCodeInfo);
+            }
+            Object.entries(obj).forEach(function (_a) {
+                var _b = __read(_a, 2), key = _b[0], value = _b[1];
+                if (!params[key])
+                    params[key] = [];
+                params[key].push(value);
+            });
+        });
+        return keys.reduce(function (result, key) {
+            result[key] = executeFunction(fn, params[key], contextStack, sourceCodeInfo);
+            return result;
+        }, {});
+    }
     function cloneAndGetMeta(originalColl, keys, sourceCodeInfo) {
         var coll = cloneColl(originalColl);
         var butLastKeys = keys.slice(0, keys.length - 1);
@@ -2951,6 +2977,188 @@ var Playground = (function (exports) {
         return copy;
     }
     var collectionNormalExpression = {
+        'filter': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var _c = __read(_a, 2), coll = _c[0], fn = _c[1];
+                var executeFunction = _b.executeFunction;
+                assertColl(coll, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
+                if (Array.isArray(coll)) {
+                    var result = coll.filter(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
+                    return result;
+                }
+                if (isString(coll)) {
+                    return coll
+                        .split('')
+                        .filter(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); })
+                        .join('');
+                }
+                return Object.entries(coll)
+                    .filter(function (_a) {
+                    var _b = __read(_a, 2), value = _b[1];
+                    return executeFunction(fn, [value], contextStack, sourceCodeInfo);
+                })
+                    .reduce(function (result, _a) {
+                    var _b = __read(_a, 2), key = _b[0], value = _b[1];
+                    result[key] = value;
+                    return result;
+                }, {});
+            },
+            paramCount: 2,
+        },
+        'map': {
+            evaluate: function (params, sourceCodeInfo, contextStack, _a) {
+                var executeFunction = _a.executeFunction;
+                var fn = asFunctionLike(params.at(-1), sourceCodeInfo);
+                if (isObj(params[0])) {
+                    return mapObjects({
+                        colls: params.slice(0, -1),
+                        fn: fn,
+                        sourceCodeInfo: sourceCodeInfo,
+                        contextStack: contextStack,
+                        executeFunction: executeFunction,
+                    });
+                }
+                var seqs = params.slice(0, -1);
+                assertSeq(seqs[0], sourceCodeInfo);
+                var isStr = typeof seqs[0] === 'string';
+                var len = seqs[0].length;
+                seqs.slice(1).forEach(function (seq) {
+                    if (isStr) {
+                        assertString(seq, sourceCodeInfo);
+                    }
+                    else {
+                        assertArray(seq, sourceCodeInfo);
+                    }
+                    len = Math.min(len, seq.length);
+                });
+                var paramArray = [];
+                var _loop_1 = function (i) {
+                    paramArray.push(seqs.map(function (seq) { return seq[i]; }));
+                };
+                for (var i = 0; i < len; i++) {
+                    _loop_1(i);
+                }
+                var mapped = paramArray.map(function (p) { return executeFunction(fn, p, contextStack, sourceCodeInfo); });
+                if (!isStr) {
+                    return mapped;
+                }
+                mapped.forEach(function (char) { return assertString(char, sourceCodeInfo); });
+                return mapped.join('');
+            },
+            paramCount: { min: 2 },
+        },
+        'reduce': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var _c = __read(_a, 3), coll = _c[0], fn = _c[1], initial = _c[2];
+                var executeFunction = _b.executeFunction;
+                assertColl(coll, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
+                assertAny(initial, sourceCodeInfo);
+                if (typeof coll === 'string') {
+                    assertString(initial, sourceCodeInfo);
+                    if (coll.length === 0)
+                        return initial;
+                    return coll.split('').reduce(function (result, elem) {
+                        return executeFunction(fn, [result, elem], contextStack, sourceCodeInfo);
+                    }, initial);
+                }
+                else if (Array.isArray(coll)) {
+                    if (coll.length === 0)
+                        return initial;
+                    return coll.reduce(function (result, elem) {
+                        return executeFunction(fn, [result, elem], contextStack, sourceCodeInfo);
+                    }, initial);
+                }
+                else {
+                    if (Object.keys(coll).length === 0)
+                        return initial;
+                    return Object.entries(coll).reduce(function (result, _a) {
+                        var _b = __read(_a, 2), elem = _b[1];
+                        return executeFunction(fn, [result, elem], contextStack, sourceCodeInfo);
+                    }, initial);
+                }
+            },
+            paramCount: 3,
+        },
+        'reduce-right': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var _c = __read(_a, 3), coll = _c[0], fn = _c[1], initial = _c[2];
+                var executeFunction = _b.executeFunction;
+                assertColl(coll, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
+                assertAny(initial, sourceCodeInfo);
+                if (typeof coll === 'string') {
+                    if (coll.length === 0)
+                        return initial;
+                    return coll.split('').reduceRight(function (result, elem) {
+                        return executeFunction(fn, [result, elem], contextStack, sourceCodeInfo);
+                    }, initial);
+                }
+                else if (Array.isArray(coll)) {
+                    if (coll.length === 0)
+                        return initial;
+                    return coll.reduceRight(function (result, elem) {
+                        return executeFunction(fn, [result, elem], contextStack, sourceCodeInfo);
+                    }, initial);
+                }
+                else {
+                    if (Object.keys(coll).length === 0)
+                        return initial;
+                    return Object.entries(coll).reduceRight(function (result, _a) {
+                        var _b = __read(_a, 2), elem = _b[1];
+                        return executeFunction(fn, [result, elem], contextStack, sourceCodeInfo);
+                    }, initial);
+                }
+            },
+            paramCount: 3,
+        },
+        'reductions': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var _c = __read(_a, 3), coll = _c[0], fn = _c[1], initial = _c[2];
+                var executeFunction = _b.executeFunction;
+                assertColl(coll, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
+                assertAny(initial, sourceCodeInfo);
+                assertAny(initial, sourceCodeInfo);
+                if (typeof coll === 'string') {
+                    assertString(initial, sourceCodeInfo);
+                    if (coll.length === 0)
+                        return [initial];
+                    var resultArray_1 = [initial];
+                    coll.split('').reduce(function (result, elem) {
+                        var newVal = executeFunction(fn, [result, elem], contextStack, sourceCodeInfo);
+                        resultArray_1.push(newVal);
+                        return newVal;
+                    }, initial);
+                    return resultArray_1;
+                }
+                else if (Array.isArray(coll)) {
+                    if (coll.length === 0)
+                        return [initial];
+                    var resultArray_2 = [initial];
+                    coll.reduce(function (result, elem) {
+                        var newVal = executeFunction(fn, [result, elem], contextStack, sourceCodeInfo);
+                        resultArray_2.push(newVal);
+                        return newVal;
+                    }, initial);
+                    return resultArray_2;
+                }
+                else {
+                    if (Object.keys(coll).length === 0)
+                        return [initial];
+                    var resultArray_3 = [initial];
+                    Object.entries(coll).reduce(function (result, _a) {
+                        var _b = __read(_a, 2), elem = _b[1];
+                        var newVal = executeFunction(fn, [result, elem], contextStack, sourceCodeInfo);
+                        resultArray_3.push(newVal);
+                        return newVal;
+                    }, initial);
+                    return resultArray_3;
+                }
+            },
+            paramCount: 3,
+        },
         'get': {
             evaluate: function (params, sourceCodeInfo) {
                 var _a = __read(params, 2), coll = _a[0], key = _a[1];
@@ -3293,23 +3501,6 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 2, max: 3 },
         },
-        'filter': {
-            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
-                var _c = __read(_a, 2), seq = _c[0], fn = _c[1];
-                var executeFunction = _b.executeFunction;
-                assertSeq(seq, sourceCodeInfo);
-                assertFunctionLike(fn, sourceCodeInfo);
-                if (Array.isArray(seq)) {
-                    var result = seq.filter(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
-                    return result;
-                }
-                return seq
-                    .split('')
-                    .filter(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); })
-                    .join('');
-            },
-            paramCount: 2,
-        },
         'first': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), array = _b[0];
@@ -3331,39 +3522,6 @@ var Playground = (function (exports) {
                 return result;
             },
             paramCount: 1,
-        },
-        'map': {
-            evaluate: function (params, sourceCodeInfo, contextStack, _a) {
-                var executeFunction = _a.executeFunction;
-                var fn = asFunctionLike(params.at(-1), sourceCodeInfo);
-                var seqs = params.slice(0, -1);
-                assertSeq(seqs[0], sourceCodeInfo);
-                var isString = typeof seqs[0] === 'string';
-                var len = seqs[0].length;
-                seqs.slice(1).forEach(function (seq) {
-                    if (isString) {
-                        assertString(seq, sourceCodeInfo);
-                    }
-                    else {
-                        assertArray(seq, sourceCodeInfo);
-                    }
-                    len = Math.min(len, seq.length);
-                });
-                var paramArray = [];
-                var _loop_1 = function (i) {
-                    paramArray.push(seqs.map(function (seq) { return seq[i]; }));
-                };
-                for (var i = 0; i < len; i++) {
-                    _loop_1(i);
-                }
-                var mapped = paramArray.map(function (p) { return executeFunction(fn, p, contextStack, sourceCodeInfo); });
-                if (!isString) {
-                    return mapped;
-                }
-                mapped.forEach(function (char) { return assertString(char, sourceCodeInfo); });
-                return mapped.join('');
-            },
-            paramCount: { min: 2 },
         },
         'pop': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3446,160 +3604,6 @@ var Playground = (function (exports) {
                 }
             },
             paramCount: { min: 2 },
-        },
-        'reductions': {
-            evaluate: function (params, sourceCodeInfo, contextStack, _a) {
-                var executeFunction = _a.executeFunction;
-                var _b = __read(params, 2), seq = _b[0], fn = _b[1];
-                assertSeq(seq, sourceCodeInfo);
-                assertFunctionLike(fn, sourceCodeInfo);
-                if (params.length === 2) {
-                    if (seq.length === 0)
-                        return [executeFunction(fn, [], contextStack, sourceCodeInfo)];
-                    else if (seq.length === 1)
-                        return [toAny(seq[0])];
-                    if (typeof seq === 'string') {
-                        var chars = seq.split('');
-                        var resultArray_1 = [asAny(chars[0], sourceCodeInfo)];
-                        chars.slice(1).reduce(function (result, elem) {
-                            var newVal = executeFunction(fn, [result, elem], contextStack, sourceCodeInfo);
-                            resultArray_1.push(newVal);
-                            return newVal;
-                        }, asAny(chars[0], sourceCodeInfo));
-                        return resultArray_1;
-                    }
-                    else {
-                        var resultArray_2 = [toAny(seq[0])];
-                        seq.slice(1).reduce(function (result, elem) {
-                            var newVal = executeFunction(fn, [result, elem], contextStack, sourceCodeInfo);
-                            resultArray_2.push(newVal);
-                            return newVal;
-                        }, toAny(seq[0]));
-                        return resultArray_2;
-                    }
-                }
-                else {
-                    var val = params[2];
-                    assertAny(val, sourceCodeInfo);
-                    if (typeof seq === 'string') {
-                        assertString(val, sourceCodeInfo);
-                        if (seq.length === 0)
-                            return [val];
-                        var resultArray_3 = [val];
-                        seq.split('').reduce(function (result, elem) {
-                            var newVal = executeFunction(fn, [result, elem], contextStack, sourceCodeInfo);
-                            resultArray_3.push(newVal);
-                            return newVal;
-                        }, val);
-                        return resultArray_3;
-                    }
-                    else {
-                        if (seq.length === 0)
-                            return [val];
-                        var resultArray_4 = [val];
-                        seq.reduce(function (result, elem) {
-                            var newVal = executeFunction(fn, [result, elem], contextStack, sourceCodeInfo);
-                            resultArray_4.push(newVal);
-                            return newVal;
-                        }, val);
-                        return resultArray_4;
-                    }
-                }
-            },
-            paramCount: { min: 2, max: 3 },
-        },
-        'reduce': {
-            evaluate: function (params, sourceCodeInfo, contextStack, _a) {
-                var executeFunction = _a.executeFunction;
-                var _b = __read(params, 2), seq = _b[0], fn = _b[1];
-                assertSeq(seq, sourceCodeInfo);
-                assertFunctionLike(fn, sourceCodeInfo);
-                if (params.length === 2) {
-                    if (seq.length === 0)
-                        return executeFunction(fn, [], contextStack, sourceCodeInfo);
-                    else if (seq.length === 1)
-                        return toAny(seq[0]);
-                    if (typeof seq === 'string') {
-                        var chars = seq.split('');
-                        return chars.slice(1).reduce(function (result, elem) {
-                            var val = executeFunction(fn, [result, elem], contextStack, sourceCodeInfo);
-                            return val;
-                        }, asAny(chars[0], sourceCodeInfo));
-                    }
-                    else {
-                        return seq.slice(1).reduce(function (result, elem) {
-                            return executeFunction(fn, [result, elem], contextStack, sourceCodeInfo);
-                        }, toAny(seq[0]));
-                    }
-                }
-                else {
-                    var val = params[2];
-                    assertAny(val, sourceCodeInfo);
-                    if (typeof seq === 'string') {
-                        assertString(val, sourceCodeInfo);
-                        if (seq.length === 0)
-                            return val;
-                        return seq.split('').reduce(function (result, elem) {
-                            return executeFunction(fn, [result, elem], contextStack, sourceCodeInfo);
-                        }, val);
-                    }
-                    else {
-                        if (seq.length === 0)
-                            return val;
-                        return seq.reduce(function (result, elem) {
-                            return executeFunction(fn, [result, elem], contextStack, sourceCodeInfo);
-                        }, val);
-                    }
-                }
-            },
-            paramCount: { min: 2, max: 3 },
-        },
-        'reduce-right': {
-            evaluate: function (params, sourceCodeInfo, contextStack, _a) {
-                var executeFunction = _a.executeFunction;
-                var _b = __read(params, 2), seq = _b[0], fn = _b[1];
-                assertSeq(seq, sourceCodeInfo);
-                assertFunctionLike(fn, sourceCodeInfo);
-                if (params.length === 2) {
-                    if (seq.length === 0)
-                        return executeFunction(fn, [], contextStack, sourceCodeInfo);
-                    else if (seq.length === 1)
-                        return toAny(seq[0]);
-                    if (typeof seq === 'string') {
-                        var chars = seq.split('');
-                        return chars.slice(0, chars.length - 1).reduceRight(function (result, elem) {
-                            var newVal = executeFunction(fn, [result, elem], contextStack, sourceCodeInfo);
-                            assertString(newVal, sourceCodeInfo);
-                            return newVal;
-                        }, chars[chars.length - 1]);
-                    }
-                    else {
-                        return seq.slice(0, seq.length - 1).reduceRight(function (result, elem) {
-                            return executeFunction(fn, [result, elem], contextStack, sourceCodeInfo);
-                        }, asAny(seq[seq.length - 1], sourceCodeInfo));
-                    }
-                }
-                else {
-                    var val = params[2];
-                    assertAny(val, sourceCodeInfo);
-                    assertSeq(seq, sourceCodeInfo);
-                    if (typeof seq === 'string') {
-                        if (seq.length === 0)
-                            return val;
-                        return seq.split('').reduceRight(function (result, elem) {
-                            return executeFunction(fn, [result, elem], contextStack, sourceCodeInfo);
-                        }, val);
-                    }
-                    else {
-                        if (seq.length === 0)
-                            return val;
-                        return seq.reduceRight(function (result, elem) {
-                            return executeFunction(fn, [result, elem], contextStack, sourceCodeInfo);
-                        }, val);
-                    }
-                }
-            },
-            paramCount: { min: 2, max: 3 },
         },
         'rest': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3919,7 +3923,7 @@ var Playground = (function (exports) {
                 assertSeq(input, sourceCodeInfo);
                 if (Array.isArray(input)) {
                     var result = [];
-                    var _loop_2 = function (item) {
+                    var _loop_1 = function (item) {
                         assertAny(item, sourceCodeInfo);
                         if (!result.some(function (existingItem) { return deepEqual(existingItem, item, sourceCodeInfo); })) {
                             result.push(item);
@@ -3928,7 +3932,7 @@ var Playground = (function (exports) {
                     try {
                         for (var input_1 = __values(input), input_1_1 = input_1.next(); !input_1_1.done; input_1_1 = input_1.next()) {
                             var item = input_1_1.value;
-                            _loop_2(item);
+                            _loop_1(item);
                         }
                     }
                     catch (e_2_1) { e_2 = { error: e_2_1 }; }
@@ -13930,6 +13934,11 @@ var Playground = (function (exports) {
     }
     var api = {
         collection: [
+            'filter',
+            'map',
+            'reduce',
+            'reduce-right',
+            'reductions',
             'count',
             'get',
             'get-in',
@@ -13959,11 +13968,6 @@ var Playground = (function (exports) {
             'shift',
             'slice',
             'splice',
-            'reductions',
-            'reduce',
-            'reduce-right',
-            'map',
-            'filter',
             'position',
             'index-of',
             'last-index-of',
@@ -14036,6 +14040,7 @@ var Playground = (function (exports) {
             'atanh',
         ],
         functional: [
+            '|>',
             'apply',
             'identity',
             'comp',
@@ -15129,6 +15134,142 @@ var Playground = (function (exports) {
     };
 
     var collectionReference = {
+        'filter': {
+            title: 'filter',
+            category: 'Collection',
+            linkName: 'filter',
+            returns: {
+                type: 'collection',
+            },
+            args: __assign(__assign({}, getOperatorArgs('collection', 'function')), { coll: {
+                    type: 'collection',
+                }, fun: {
+                    type: 'function',
+                } }),
+            variants: [
+                { argumentNames: ['coll', 'fun'] },
+            ],
+            description: 'Creates a new collection with all elements that pass the test implemented by $fun.',
+            examples: [
+                "\nfilter(\n  [\"Albert\", \"Mojir\", 160, [1, 2]],\n  string?\n)",
+                "\nfilter(\n  [5, 10, 15, 20],\n  -> $ > 10\n)",
+                "\nfilter(\n  { a := 1, b := 2 },\n  odd?\n)",
+            ],
+        },
+        'map': {
+            title: 'map',
+            category: 'Collection',
+            linkName: 'map',
+            returns: {
+                type: 'collection',
+            },
+            args: __assign(__assign({}, getOperatorArgs('collection', 'function')), { colls: {
+                    type: 'collection',
+                    rest: true,
+                    description: 'At least one.',
+                }, fun: {
+                    type: 'function',
+                } }),
+            variants: [
+                { argumentNames: ['colls', 'fun'] },
+            ],
+            description: 'Creates a new collection populated with the results of calling $fun on every element in $colls.',
+            examples: [
+                '[1, 2, 3] map -',
+                '[1, 2, 3] map -> -($)',
+                'map(["Albert", "Mojir", 42], str)',
+                'map([1, 2, 3], inc)',
+                'map([1, 2, 3], [1, 10, 100], *)',
+                'map({ a := 1, b := 2 }, inc)',
+                'map({ a := 1, b := 2 }, { a := 10, b := 20 }, +)',
+            ],
+        },
+        'reduce': {
+            title: 'reduce',
+            category: 'Collection',
+            linkName: 'reduce',
+            returns: {
+                type: 'any',
+            },
+            args: {
+                fun: {
+                    type: 'function',
+                },
+                coll: {
+                    type: 'collection',
+                },
+                initial: {
+                    type: 'any',
+                },
+            },
+            variants: [
+                { argumentNames: ['coll', 'fun', 'initial'] },
+            ],
+            description: 'Runs $fun function on each element of the $coll, passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $coll is a single value.',
+            examples: [
+                'reduce([1, 2, 3], +, 0)',
+                'reduce([], +, 0)',
+                'reduce({ a := 1, b := 2 }, +, 0)',
+                "\nreduce(\n  [1, 2, 3, 4, 5, 6, 7, 8, 9],\n  (result, value) -> result + if even?(value) then value else 0 end,\n  0)",
+            ],
+        },
+        'reduce-right': {
+            title: 'reduce-right',
+            category: 'Collection',
+            linkName: 'reduce-right',
+            returns: {
+                type: 'any',
+            },
+            args: {
+                fun: {
+                    type: 'function',
+                },
+                coll: {
+                    type: 'collection',
+                },
+                initial: {
+                    type: 'any',
+                },
+            },
+            variants: [
+                { argumentNames: ['coll', 'fun', 'initial'] },
+            ],
+            description: 'Runs $fun function on each element of the $coll (starting from the last item), passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $coll is a single value.',
+            examples: [
+                'reduce-right(["A", "B", "C"], str, "")',
+                'reduce-right({ a := 1, b := 2 }, +, 0)',
+            ],
+        },
+        'reductions': {
+            title: 'reductions',
+            category: 'Collection',
+            linkName: 'reductions',
+            returns: {
+                type: 'any',
+            },
+            args: {
+                fun: {
+                    type: 'function',
+                },
+                coll: {
+                    type: 'collection',
+                },
+                initial: {
+                    type: 'any',
+                },
+            },
+            variants: [
+                { argumentNames: ['coll', 'fun', 'initial'] },
+            ],
+            description: 'Returns an array of the intermediate values of the reduction (see `reduce`) of $coll by $fun.',
+            examples: [
+                'reductions([1, 2, 3], +, 0)',
+                'reductions([1, 2, 3], +, 10)',
+                'reductions([], +, 0)',
+                'reductions({ a := 1, b := 2 }, +, 0)',
+                "\nreductions(\n  [1, 2, 3, 4, 5, 6, 7, 8, 9],\n  (result, value) -> result + if even?(value) then value else 0 end,\n  0\n)",
+            ],
+        },
         'count': {
             title: 'count',
             category: 'Collection',
@@ -15512,6 +15653,23 @@ var Playground = (function (exports) {
     };
 
     var functionalReference = {
+        '|>': {
+            title: '|>',
+            category: 'Functional',
+            linkName: '-or-gt',
+            returns: {
+                type: 'any',
+            },
+            args: __assign({}, getOperatorArgs('any', 'function')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            description: 'Takes a value $a and a function $b, and returns the result of applying $b to $a.',
+            examples: [
+                "\n1 |> inc |> inc",
+                "range(10)\n  |> map(_, -> $ ^ 2) // [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]\n  |> filter(_, odd?)  // [1, 9, 25, 49, 81]\n  |> reduce(_, +, 0)  // 165\n  |> sqrt             // 12.84523257866513\n  |> round(_, 2)",
+            ],
+        },
         'apply': {
             title: 'apply',
             category: 'Functional',
@@ -23861,134 +24019,6 @@ var Playground = (function (exports) {
                 'splice([1, 2, 3, 4, 5], 2, 2, "x")',
                 'splice([1, 2, 3, 4, 5], -2, 1, "x")',
                 'splice("Albert", 2, 2, "fo")',
-            ],
-        },
-        'reductions': {
-            title: 'reductions',
-            category: 'Sequence',
-            linkName: 'reductions',
-            returns: {
-                type: 'any',
-                rest: true,
-            },
-            args: __assign(__assign({}, getOperatorArgs('sequence', 'function')), { fun: {
-                    type: 'function',
-                }, seq: {
-                    type: 'sequence',
-                    rest: true,
-                }, start: {
-                    type: 'any',
-                } }),
-            variants: [
-                { argumentNames: ['seq', 'fun'] },
-                { argumentNames: ['seq', 'fun', 'start'] },
-            ],
-            description: 'Returns an array of the intermediate values of the reduction (see `reduce`) of $seq by $fun.',
-            examples: [
-                '[1, 2, 3] reductions +',
-                'reductions([1, 2, 3], +)',
-                'reductions([1, 2, 3], +, 10)',
-                'reductions([], +, 0)',
-                "\nreductions(\n  [1, 2, 3, 4, 5, 6, 7, 8, 9],\n  (result, value) -> result + if even?(value) then value else 0 end,\n  0\n)",
-            ],
-        },
-        'reduce': {
-            title: 'reduce',
-            category: 'Sequence',
-            linkName: 'reduce',
-            returns: {
-                type: 'any',
-            },
-            args: __assign(__assign({}, getOperatorArgs('sequence', 'function')), { fun: {
-                    type: 'function',
-                }, seq: {
-                    type: 'sequence',
-                }, start: {
-                    type: 'any',
-                } }),
-            variants: [
-                { argumentNames: ['seq', 'fun'] },
-                { argumentNames: ['seq', 'fun', 'start'] },
-            ],
-            description: 'Runs $fun function on each element of the $seq, passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $seq is a single value.',
-            examples: [
-                '[1, 2, 3] reduce +',
-                'reduce([1, 2, 3], +)',
-                'reduce([1, 2, 3], +, 0)',
-                'reduce([], +, 0)',
-                "\nreduce(\n  [1, 2, 3, 4, 5, 6, 7, 8, 9],\n  (result, value) -> result + if even?(value) then value else 0 end,\n  0)",
-            ],
-        },
-        'reduce-right': {
-            title: 'reduce-right',
-            category: 'Sequence',
-            linkName: 'reduce-right',
-            returns: {
-                type: 'sequence',
-            },
-            args: __assign(__assign({}, getOperatorArgs('sequence', 'function')), { fun: {
-                    type: 'function',
-                }, seq: {
-                    type: 'sequence',
-                }, start: {
-                    type: 'any',
-                } }),
-            variants: [
-                { argumentNames: ['seq', 'fun'] },
-                { argumentNames: ['seq', 'fun', 'start'] },
-            ],
-            description: 'Runs $fun function on each element of the $seq (starting from the last item), passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $seq is a single value.',
-            examples: [
-                'range(1, 10) reduce-right *',
-                'reduce-right(["A", "B", "C"], str, "")',
-            ],
-        },
-        'map': {
-            title: 'map',
-            category: 'Sequence',
-            linkName: 'map',
-            returns: {
-                type: 'any',
-                rest: true,
-            },
-            args: __assign(__assign({}, getOperatorArgs('sequence', 'function')), { seqs: {
-                    type: 'sequence',
-                    rest: true,
-                    description: 'At least one.',
-                }, fun: {
-                    type: 'function',
-                } }),
-            variants: [
-                { argumentNames: ['seqs', 'fun'] },
-            ],
-            description: 'Creates a new array populated with the results of calling $fun on every element in $seqs.',
-            examples: [
-                '[1, 2, 3] map -',
-                '[1, 2, 3] map -> -($)',
-                'map(["Albert", "Mojir", 42], str)',
-                'map([1, 2, 3], inc)',
-                'map([1, 2, 3], [1, 10, 100], *)',
-            ],
-        },
-        'filter': {
-            title: 'filter',
-            category: 'Sequence',
-            linkName: 'filter',
-            returns: {
-                type: 'sequence',
-            },
-            args: __assign(__assign({}, getOperatorArgs('sequence', 'function')), { seq: {
-                    type: 'sequence',
-                }, fun: {
-                    type: 'function',
-                } }),
-            variants: [
-                { argumentNames: ['seq', 'fun'] },
-            ],
-            description: 'Creates a new array with all elements that pass the test implemented by $fun.',
-            examples: [
-                "\nfilter(\n  [\"Albert\", \"Mojir\", 160, [1, 2]],\n  string?\n)",
-                "\nfilter(\n  [5, 10, 15, 20],\n  -> $ > 10\n)",
             ],
         },
         'position': {

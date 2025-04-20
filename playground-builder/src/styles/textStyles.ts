@@ -39,7 +39,7 @@ export function getTextStyles(css: CssTemplateFunction) {
     font-family: 'Roboto', sans-serif;
   `,
     'font-mono': css`
-    font-family: 'Fira Code', monospace;
+    font-family: monospace;
   `,
     'font-serif': css`
     font-family: 'Merriweather', serif;

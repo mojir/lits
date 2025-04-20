@@ -34,6 +34,7 @@ const csvApi = Object.values(apiReference)
   .join('\n')
 
 console.log(`Namespace;Title;Description\n${csvApi}`)
+console.log(Object.keys(apiReference))
 
 const getLits: (forceDebug?: 'debug') => Lits = (() => {
   const lits = new Lits({ debug: true })

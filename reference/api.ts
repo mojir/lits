@@ -10,6 +10,11 @@ function getVectorReductionNames<T extends string>(name: T): [`vec:${T}`, `vec:m
 
 export const api = {
   collection: [
+    'filter',
+    'map',
+    'reduce',
+    'reduce-right',
+    'reductions',
     'count',
     'get',
     'get-in',
@@ -39,11 +44,6 @@ export const api = {
     'shift',
     'slice',
     'splice',
-    'reductions',
-    'reduce',
-    'reduce-right',
-    'map',
-    'filter',
     'position',
     'index-of',
     'last-index-of',
@@ -116,6 +116,7 @@ export const api = {
     'atanh',
   ] as const,
   functional: [
+    '|>',
     'apply',
     'identity',
     'comp',
