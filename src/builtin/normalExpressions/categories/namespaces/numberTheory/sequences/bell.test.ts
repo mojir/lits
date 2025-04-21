@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../../../../Lits/Lits'
+import { LitsError } from '../../../../../../errors'
 
 const lits = new Lits()
 describe('bell', () => {
@@ -32,8 +33,8 @@ describe('bell', () => {
       474869816156751,
       4506715738447323,
     ])
-    expect(() => lits.run('nth:bell-seq(0)')).toThrow()
-    expect(() => lits.run('nth:bell-seq(23)')).toThrow()
+    expect(() => lits.run('nth:bell-seq(0)')).toThrow(LitsError)
+    expect(() => lits.run('nth:bell-seq(23)')).toThrow(LitsError)
   })
 
   it('should return the correct nth term', () => {

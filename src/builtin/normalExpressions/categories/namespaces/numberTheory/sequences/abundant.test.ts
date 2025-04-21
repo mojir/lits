@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../../../../Lits/Lits'
+import { LitsError } from '../../../../../../errors'
 
 const lits = new Lits()
 describe('abundant', () => {
@@ -8,7 +9,7 @@ describe('abundant', () => {
     expect(lits.run('nth:abundant-seq(2)')).toEqual([12, 18])
     expect(lits.run('nth:abundant-seq(3)')).toEqual([12, 18, 20])
     expect(lits.run('nth:abundant-seq(21)')).toEqual([12, 18, 20, 24, 30, 36, 40, 42, 48, 54, 56, 60, 66, 70, 72, 78, 80, 84, 88, 90, 96])
-    expect(() => lits.run('nth:abundant-seq(0)')).toThrow()
+    expect(() => lits.run('nth:abundant-seq(0)')).toThrow(LitsError)
   })
 
   it('should return the correct nth term', () => {

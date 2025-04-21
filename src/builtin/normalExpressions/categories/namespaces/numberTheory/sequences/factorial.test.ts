@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../../../../Lits/Lits'
+import { LitsError } from '../../../../../../errors'
 
 const lits = new Lits()
 describe('factorial', () => {
@@ -29,8 +30,8 @@ describe('factorial', () => {
       355687428096000,
       6402373705728000,
     ])
-    expect(() => lits.run('nth:factorial-seq(0)')).toThrow()
-    expect(() => lits.run('nth:factorial-seq(20)')).toThrow()
+    expect(() => lits.run('nth:factorial-seq(0)')).toThrow(LitsError)
+    expect(() => lits.run('nth:factorial-seq(20)')).toThrow(LitsError)
   })
 
   it('should return the correct nth term', () => {

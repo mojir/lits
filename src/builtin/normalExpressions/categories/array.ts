@@ -1,6 +1,6 @@
 import type { Arr } from '../../../interface'
 import { assertArray } from '../../../typeGuards/array'
-import { assertNumber } from '../../../typeGuards/number'
+import { asNumber, assertNumber } from '../../../typeGuards/number'
 import type { BuiltinNormalExpressions } from '../../interface'
 import { assertFunctionLike } from '../../../typeGuards/lits'
 
@@ -61,13 +61,16 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
   },
 
   flatten: {
-    evaluate: ([seq]): Arr => {
-      if (!Array.isArray(seq))
-        return []
+    evaluate: ([seq, depth], sourceCodeInfo): Arr => {
+      assertArray(seq, sourceCodeInfo)
 
-      return seq.flat(Number.POSITIVE_INFINITY)
+      const actualDepth = depth === undefined || depth === Number.POSITIVE_INFINITY
+        ? Number.POSITIVE_INFINITY
+        : asNumber(depth, sourceCodeInfo, { integer: true, nonNegative: true })
+
+      return seq.flat(actualDepth)
     },
-    paramCount: 1,
+    paramCount: { min: 1, max: 2 },
   },
   mapcat: {
     evaluate: ([arr, fn], sourceCodeInfo, contextStack, { executeFunction }): Arr | string => {

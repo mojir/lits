@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../../../../Lits/Lits'
+import { LitsError } from '../../../../../../errors'
 
 const lits = new Lits()
 describe('sylvester', () => {
@@ -10,8 +11,8 @@ describe('sylvester', () => {
     expect(lits.run('nth:sylvester-seq(4)')).toEqual([2, 6, 42, 1806])
     expect(lits.run('nth:sylvester-seq(5)')).toEqual([2, 6, 42, 1806, 3263442])
     expect(lits.run('nth:sylvester-seq(6)')).toEqual([2, 6, 42, 1806, 3263442, 10650056950806])
-    expect(() => lits.run('nth:sylvester-seq(0)')).toThrow()
-    expect(() => lits.run('nth:sylvester-seq(7)')).toThrow()
+    expect(() => lits.run('nth:sylvester-seq(0)')).toThrow(LitsError)
+    expect(() => lits.run('nth:sylvester-seq(7)')).toThrow(LitsError)
   })
 
   it('should return the correct nth term', () => {
@@ -21,8 +22,8 @@ describe('sylvester', () => {
     expect(lits.run('nth:sylvester-nth(4)')).toEqual(1806)
     expect(lits.run('nth:sylvester-nth(5)')).toEqual(3263442)
     expect(lits.run('nth:sylvester-nth(6)')).toEqual(10650056950806)
-    expect(() => lits.run('nth:sylvester-nth(0)')).toThrow()
-    expect(() => lits.run('nth:sylvester-nth(7)')).toThrow()
+    expect(() => lits.run('nth:sylvester-nth(0)')).toThrow(LitsError)
+    expect(() => lits.run('nth:sylvester-nth(7)')).toThrow(LitsError)
   })
 
   it('should return the correct takeWhile sequence', () => {

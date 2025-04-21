@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../../../../Lits/Lits'
+import { LitsError } from '../../../../../../errors'
 
 const lits = new Lits()
 describe('prime', () => {
@@ -178,7 +179,7 @@ describe('prime', () => {
       991,
       997,
     ])
-    expect(() => lits.run('nth:prime-seq(0)')).toThrow()
+    expect(() => lits.run('nth:prime-seq(0)')).toThrow(LitsError)
   })
 
   it('should return the correct nth term', () => {

@@ -193,8 +193,13 @@ export class Parser {
     private parseState: ParseState,
   ) {}
 
-  private peek(): Token {
-    return this.tokenStream.tokens[this.parseState.position]!
+  private peek(): Token | undefined {
+    return this.tokenStream.tokens[this.parseState.position]
+  }
+
+  private peekSourceCodeInfo(): SourceCodeInfo | undefined {
+    const currentToken = this.peek()
+    return currentToken ? currentToken[2] : this.tokenStream.tokens.at(-1)?.[2]
   }
 
   private peekAhead(count: number): Token {
@@ -214,7 +219,7 @@ export class Parser {
       }
       else {
         if (!this.isAtEnd()) {
-          throw new LitsError('Expected ;', this.peek()[2])
+          throw new LitsError('Expected ;', this.peekSourceCodeInfo())
         }
       }
     }
@@ -310,15 +315,22 @@ export class Parser {
     return left
   }
 
+  asToken(token: Token | undefined): Token {
+    if (!token) {
+      throw new LitsError('Unexpected end of input', this.peekSourceCodeInfo())
+    }
+    return token
+  }
+
   private parseOperand(): Node {
     let operand = this.parseOperandPart()
     let token = this.peek()
     while (isOperatorToken(token, '.') || isLBracketToken(token) || isLParenToken(token)) {
       if (token[1] === '.') {
         this.advance()
-        const symbolToken = this.peek()
+        const symbolToken = this.asToken(this.peek())
         if (!isSymbolToken(symbolToken)) {
-          throw new LitsError('Expected symbol', this.peek()[2])
+          throw new LitsError('Expected symbol', this.peekSourceCodeInfo())
         }
         const stringNode: StringNode = withSourceCodeInfo([NodeTypes.String, symbolToken[1]], symbolToken[2])
         operand = createAccessorNode(operand, stringNode, token[2])
@@ -329,7 +341,7 @@ export class Parser {
         this.advance()
         const expression = this.parseExpression()
         if (!isRBracketToken(this.peek())) {
-          throw new LitsError('Expected closing bracket', this.peek()[2])
+          throw new LitsError('Expected closing bracket', this.peekSourceCodeInfo())
         }
         operand = createAccessorNode(operand, expression, token[2])
         this.advance()
@@ -344,7 +356,7 @@ export class Parser {
   }
 
   private parseOperandPart(): Node {
-    const token = this.peek()
+    const token = this.asToken(this.peek())
 
     // Parentheses
     if (isLParenToken(token)) {
@@ -357,7 +369,7 @@ export class Parser {
       this.advance()
       const expression = this.parseExpression()
       if (!isRParenToken(this.peek())) {
-        throw new LitsError('Expected closing parenthesis', this.peek()[2])
+        throw new LitsError('Expected closing parenthesis', this.peekSourceCodeInfo())
       }
       this.advance()
       return expression
@@ -438,7 +450,7 @@ export class Parser {
     while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
       if (isOperatorToken(this.peek(), '...')) {
         this.advance()
-        params.push(withSourceCodeInfo([NodeTypes.Spread, this.parseExpression()], this.peek()[2]))
+        params.push(withSourceCodeInfo([NodeTypes.Spread, this.parseExpression()], this.peekSourceCodeInfo()))
       }
       else {
         const token = this.peek()
@@ -454,7 +466,7 @@ export class Parser {
           this.advance()
         }
         else {
-          throw new LitsError('Expected key to be a symbol or a string', this.peek()[2])
+          throw new LitsError('Expected key to be a symbol or a string', this.peekSourceCodeInfo())
         }
 
         assertOperatorToken(this.peek(), ':=')
@@ -464,7 +476,7 @@ export class Parser {
       }
       const nextToken = this.peek()
       if (!isOperatorToken(nextToken, ',') && !isRBraceToken(nextToken)) {
-        throw new LitsError('Expected comma or closing brace', this.peek()[2])
+        throw new LitsError('Expected comma or closing brace', this.peekSourceCodeInfo())
       }
 
       if (isOperatorToken(nextToken, ',')) {
@@ -485,14 +497,14 @@ export class Parser {
     while (!this.isAtEnd() && !isRBracketToken(this.peek())) {
       if (isOperatorToken(this.peek(), '...')) {
         this.advance()
-        params.push(withSourceCodeInfo([NodeTypes.Spread, this.parseExpression()], this.peek()[2]))
+        params.push(withSourceCodeInfo([NodeTypes.Spread, this.parseExpression()], this.peekSourceCodeInfo()))
       }
       else {
         params.push(this.parseExpression())
       }
       const nextToken = this.peek()
       if (!isOperatorToken(nextToken, ',') && !isRBracketToken(nextToken)) {
-        throw new LitsError('Expected comma or closing parenthesis', this.peek()[2])
+        throw new LitsError('Expected comma or closing parenthesis', this.peekSourceCodeInfo())
       }
       if (isOperatorToken(nextToken, ',')) {
         this.advance()
@@ -512,21 +524,21 @@ export class Parser {
     while (!this.isAtEnd() && !isRParenToken(this.peek())) {
       if (isOperatorToken(this.peek(), '...')) {
         this.advance()
-        params.push(withSourceCodeInfo([NodeTypes.Spread, this.parseExpression()], this.peek()[2]))
+        params.push(withSourceCodeInfo([NodeTypes.Spread, this.parseExpression()], this.peekSourceCodeInfo()))
       }
       else {
         params.push(this.parseExpression())
       }
       const nextToken = this.peek()
       if (!isOperatorToken(nextToken, ',') && !isRParenToken(nextToken)) {
-        throw new LitsError('Expected comma or closing parenthesis', this.peek()[2])
+        throw new LitsError('Expected comma or closing parenthesis', this.peek()?.[2])
       }
       if (isOperatorToken(nextToken, ',')) {
         this.advance()
       }
     }
     if (!isRParenToken(this.peek())) {
-      throw new LitsError('Expected closing parenthesis', this.peek()[2])
+      throw new LitsError('Expected closing parenthesis', this.peekSourceCodeInfo())
     }
     this.advance()
 
@@ -599,7 +611,7 @@ export class Parser {
   }
 
   parseLambdaFunction(): FnNode | null {
-    const firstToken = this.peek()
+    const firstToken = this.asToken(this.peek())
 
     if (isLParenToken(firstToken)
       && isSymbolToken(this.peekAhead(1))
@@ -641,7 +653,7 @@ export class Parser {
     const functionArguments: BindingTarget[] = []
     while (!this.isAtEnd() && !isRParenToken(this.peek()) && !isSymbolToken(this.peek(), 'let')) {
       if (rest) {
-        throw new LitsError('Rest argument must be last', this.peek()[2])
+        throw new LitsError('Rest argument must be last', this.peekSourceCodeInfo())
       }
       const bindingTarget = this.parseBindingTarget()
       if (bindingTarget[1][1] !== undefined) {
@@ -651,12 +663,12 @@ export class Parser {
         rest = true
       }
       if (defaults && !bindingTarget[1][1]) {
-        throw new LitsError('Default arguments must be last', this.peek()[2])
+        throw new LitsError('Default arguments must be last', this.peekSourceCodeInfo())
       }
       functionArguments.push(bindingTarget)
 
       if (!isOperatorToken(this.peek(), ',') && !isRParenToken(this.peek()) && !isSymbolToken(this.peek(), 'let')) {
-        throw new LitsError('Expected comma or closing parenthesis', this.peek()[2])
+        throw new LitsError('Expected comma or closing parenthesis', this.peekSourceCodeInfo())
       }
       if (isOperatorToken(this.peek(), ',')) {
         this.advance()
@@ -664,7 +676,7 @@ export class Parser {
     }
 
     if (!isRParenToken(this.peek())) {
-      throw new LitsError('Expected closing parenthesis', this.peek()[2])
+      throw new LitsError('Expected closing parenthesis', this.peekSourceCodeInfo())
     }
 
     this.advance()
@@ -673,7 +685,7 @@ export class Parser {
   }
 
   private parseShorthandLamdaFunction(): FnNode {
-    const firstToken = this.peek()
+    const firstToken = this.asToken(this.peek())
     this.advance()
     const startPos = this.parseState.position
     const exprNode = this.parseExpression()
@@ -741,7 +753,7 @@ export class Parser {
 
       const defaultValue = this.parseOptionalDefaulValue()
       if (requireDefaultValue && !defaultValue) {
-        throw new LitsError('Expected assignment', this.peek()[2])
+        throw new LitsError('Expected assignment', this.peekSourceCodeInfo())
       }
 
       return withSourceCodeInfo([bindingTargetTypes.symbol, [symbol, defaultValue]], firstToken[2])
@@ -755,7 +767,7 @@ export class Parser {
       this.advance()
       const symbol = asUserDefinedSymbolNode(this.parseSymbol())
       if (isOperatorToken(this.peek(), ':=')) {
-        throw new LitsError('Rest argument can not have default value', this.peek()[2])
+        throw new LitsError('Rest argument can not have default value', this.peekSourceCodeInfo())
       }
       return withSourceCodeInfo([bindingTargetTypes.rest, [symbol[1], undefined]], firstToken[2])
     }
@@ -764,7 +776,8 @@ export class Parser {
     if (isLBracketToken(firstToken)) {
       this.advance()
       const elements: (BindingTarget | null)[] = []
-      let token = this.peek()
+      let token = this.asToken(this.peek())
+
       let rest = false
       while (!isRBracketToken(token)) {
         if (rest) {
@@ -773,7 +786,7 @@ export class Parser {
         if (isOperatorToken(token, ',')) {
           elements.push(null)
           this.advance()
-          token = this.peek()
+          token = this.asToken(this.peek())
           continue
         }
 
@@ -784,19 +797,19 @@ export class Parser {
         }
 
         elements.push(target)
-        token = this.peek()
+        token = this.asToken(this.peek())
 
         if (!isRBracketToken(token)) {
           assertOperatorToken(token, ',')
           this.advance()
         }
-        token = this.peek()
+        token = this.asToken(this.peek())
       }
       this.advance()
 
       const defaultValue = this.parseOptionalDefaulValue()
       if (requireDefaultValue && !defaultValue) {
-        throw new LitsError('Expected assignment', this.peek()[2])
+        throw new LitsError('Expected assignment', this.peekSourceCodeInfo())
       }
 
       return withSourceCodeInfo([bindingTargetTypes.array, [elements, defaultValue]], firstToken[2])
@@ -806,7 +819,7 @@ export class Parser {
     if (isLBraceToken(firstToken)) {
       this.advance()
       const elements: Record<string, BindingTarget> = {}
-      let token = this.peek()
+      let token = this.asToken(this.peek())
       let rest = false
       while (!isRBraceToken(token)) {
         if (rest) {
@@ -817,7 +830,7 @@ export class Parser {
           this.advance()
         }
         const key = asUserDefinedSymbolNode(this.parseSymbol())
-        token = this.peek()
+        token = this.asToken(this.peek())
         if (isReservedSymbolToken(token, 'as')) {
           if (rest) {
             throw new LitsError('Rest argument can not have alias', token[2])
@@ -834,7 +847,7 @@ export class Parser {
             throw new LitsError(`Duplicate binding name: ${key}`, token[2])
           }
           if (rest && isOperatorToken(this.peek(), ':=')) {
-            throw new LitsError('Rest argument can not have default value', this.peek()[2])
+            throw new LitsError('Rest argument can not have default value', this.peekSourceCodeInfo())
           }
 
           elements[key[1]] = rest
@@ -850,10 +863,11 @@ export class Parser {
           assertOperatorToken(this.peek(), ',')
           this.advance()
         }
-        token = this.peek()
+        token = this.asToken(this.peek())
       }
       this.advance()
-      token = this.peek()
+      token = this.asToken(this.peek())
+
       const defaultValue = this.parseOptionalDefaulValue()
       if (requireDefaultValue && !defaultValue) {
         throw new LitsError('Expected assignment', token[2])
@@ -862,7 +876,7 @@ export class Parser {
       return withSourceCodeInfo([bindingTargetTypes.object, [elements, defaultValue]], firstToken[2])
     }
 
-    throw new LitsError('Expected symbol', this.peek()[2])
+    throw new LitsError('Expected symbol', this.peekSourceCodeInfo())
   }
 
   private parseLet(token: SymbolToken, optionalSemicolon = false): LetNode {
@@ -890,7 +904,7 @@ export class Parser {
         this.advance()
       }
       else if (!isReservedSymbolToken(this.peek(), 'end')) {
-        throw new LitsError('Expected ;', this.peek()[2])
+        throw new LitsError('Expected ;', this.peekSourceCodeInfo())
       }
     }
     assertReservedSymbolToken(this.peek(), 'end')
@@ -919,7 +933,7 @@ export class Parser {
       token = this.peek()
     }
     if (bindingNodes.length === 0) {
-      throw new LitsError('Expected binding', this.peek()[2])
+      throw new LitsError('Expected binding', this.peekSourceCodeInfo())
     }
 
     assertSymbolToken(token, 'do')
@@ -932,7 +946,7 @@ export class Parser {
         this.advance()
       }
       else if (!isReservedSymbolToken(this.peek(), 'end')) {
-        throw new LitsError('Expected ;', this.peek()[2])
+        throw new LitsError('Expected ;', this.peekSourceCodeInfo())
       }
     }
     assertReservedSymbolToken(this.peek(), 'end')
@@ -950,7 +964,7 @@ export class Parser {
         this.advance()
       }
       else if (!isReservedSymbolToken(this.peek(), 'catch')) {
-        throw new LitsError('Expected ;', this.peek()[2])
+        throw new LitsError('Expected ;', this.peekSourceCodeInfo())
       }
     }
 
@@ -976,7 +990,7 @@ export class Parser {
         this.advance()
       }
       else if (!isReservedSymbolToken(this.peek(), 'end')) {
-        throw new LitsError('Expected ;', this.peek()[2])
+        throw new LitsError('Expected ;', this.peekSourceCodeInfo())
       }
     }
 
@@ -1017,7 +1031,7 @@ export class Parser {
         this.advance()
       }
       else if (!isReservedSymbolToken(this.peek(), 'end')) {
-        throw new LitsError('Expected ;', this.peek()[2])
+        throw new LitsError('Expected ;', this.peekSourceCodeInfo())
       }
     }
 
@@ -1037,14 +1051,14 @@ export class Parser {
     const bindingNode = this.parseBinding()
 
     const modifiers: Array<'&let' | '&when' | '&while'> = []
-    let token = this.peek()
+    let token = this.asToken(this.peek())
 
     if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this.peek(), 'each') && !isOperatorToken(token, ',')) {
       throw new LitsError('Expected do, each or comma', token[2])
     }
     if (isOperatorToken(token, ',')) {
       this.advance()
-      token = this.peek()
+      token = this.asToken(this.peek())
     }
 
     if (!isSymbolToken(token, 'let')
@@ -1068,14 +1082,14 @@ export class Parser {
         }
 
         letBindings.push(letNode[1][1])
-        token = this.peek()
+        token = this.asToken(this.peek())
         if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this.peek(), 'each') && !isOperatorToken(token, ',')) {
           throw new LitsError('Expected do, each or comma', token[2])
         }
         if (isOperatorToken(token, ',')) {
           this.advance()
         }
-        token = this.peek()
+        token = this.asToken(this.peek())
       }
     }
 
@@ -1101,14 +1115,14 @@ export class Parser {
         modifiers.push('&while')
         whileNode = this.parseExpression()
       }
-      token = this.peek()
+      token = this.asToken(this.peek())
       if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this.peek(), 'each') && !isOperatorToken(token, ',')) {
         throw new LitsError('Expected do or comma', token[2])
       }
       if (isOperatorToken(token, ',')) {
         this.advance()
       }
-      token = this.peek()
+      token = this.asToken(this.peek())
     }
 
     if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this.peek(), 'each')) {
@@ -1157,7 +1171,7 @@ export class Parser {
         this.advance()
       }
       else if (!isReservedSymbolToken(this.peek(), 'else') && !isReservedSymbolToken(this.peek(), 'end')) {
-        throw new LitsError('Expected ;', this.peek()[2])
+        throw new LitsError('Expected ;', this.peekSourceCodeInfo())
       }
     }
 
@@ -1175,7 +1189,7 @@ export class Parser {
           this.advance()
         }
         else if (!isReservedSymbolToken(this.peek(), 'end')) {
-          throw new LitsError('Expected ;', this.peek()[2])
+          throw new LitsError('Expected ;', this.peekSourceCodeInfo())
         }
       }
 
@@ -1217,7 +1231,7 @@ export class Parser {
           this.advance()
         }
         else if (!isReservedSymbolToken(this.peek(), 'case') && !isReservedSymbolToken(this.peek(), 'end')) {
-          throw new LitsError('Expected ;', this.peek()[2])
+          throw new LitsError('Expected ;', this.peekSourceCodeInfo())
         }
       }
 
@@ -1259,7 +1273,7 @@ export class Parser {
           this.advance()
         }
         else if (!isReservedSymbolToken(this.peek(), 'case') && !isReservedSymbolToken(this.peek(), 'end')) {
-          throw new LitsError('Expected ;', this.peek()[2])
+          throw new LitsError('Expected ;', this.peekSourceCodeInfo())
         }
       }
 
@@ -1293,7 +1307,7 @@ export class Parser {
         this.advance()
       }
       else if (!isReservedSymbolToken(this.peek(), 'end')) {
-        throw new LitsError('Expected ;', this.peek()[2])
+        throw new LitsError('Expected ;', this.peekSourceCodeInfo())
       }
     }
     assertReservedSymbolToken(this.peek(), 'end')
@@ -1344,7 +1358,7 @@ export class Parser {
           this.advance()
         }
         else if (!isReservedSymbolToken(this.peek(), 'end')) {
-          throw new LitsError('Expected ;', this.peek()[2])
+          throw new LitsError('Expected ;', this.peekSourceCodeInfo())
         }
       }
       assertReservedSymbolToken(this.peek(), 'end')
@@ -1355,7 +1369,7 @@ export class Parser {
       ]]], token[2]) satisfies DefnNode
     }
     else {
-      throw new LitsError('Expected let or function', this.peek()[2])
+      throw new LitsError('Expected let or function', this.peekSourceCodeInfo())
     }
   }
 
@@ -1391,7 +1405,7 @@ export class Parser {
   }
 
   private parseSymbol(): SymbolNode | NormalBuiltinSymbolNode | SpecialBuiltinSymbolNode {
-    const token = this.peek()
+    const token = this.asToken(this.peek())
     this.advance()
     if (!isSymbolToken(token)) {
       throw new LitsError(`Expected symbol token, got ${token[0]}`, token[2])
@@ -1416,7 +1430,7 @@ export class Parser {
   }
 
   private parseNumber(): NumberNode {
-    const token = this.peek()
+    const token = this.asToken(this.peek())
     this.advance()
 
     const value = token[1]
@@ -1426,7 +1440,7 @@ export class Parser {
   }
 
   private parseString(): StringNode {
-    const token = this.peek()
+    const token = this.asToken(this.peek())
     this.advance()
     const value = token[1].substring(1, token[1].length - 1)
       .replace(
@@ -1473,7 +1487,7 @@ export class Parser {
   }
 
   private parseRegexpShorthand(): NormalExpressionNodeWithName {
-    const token = this.peek()
+    const token = this.asToken(this.peek())
     this.advance()
 
     const endStringPosition = token[1].lastIndexOf('"')

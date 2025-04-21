@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'vitest'
 import { Lits } from '../src/Lits/Lits'
+import { LitsError } from '../src/errors'
 
 const lits = new Lits()
 
@@ -127,7 +128,7 @@ describe('lits Destructuring', () => {
       expect(() => lits.run(`
         let { user { name }} := {};
         name
-      `)).toThrow()
+      `)).toThrow(LitsError)
     })
   })
 

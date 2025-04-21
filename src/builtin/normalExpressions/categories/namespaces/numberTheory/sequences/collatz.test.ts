@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../../../../Lits/Lits'
+import { LitsError } from '../../../../../../errors'
 
 const lits = new Lits()
 describe('collatz', () => {
@@ -21,6 +22,6 @@ describe('collatz', () => {
       2,
       1,
     ])
-    expect(() => lits.run('nth:collatz-seq(0)')).toThrow()
+    expect(() => lits.run('nth:collatz-seq(0)')).toThrow(LitsError)
   })
 })

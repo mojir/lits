@@ -1,3 +1,4 @@
+import { LitsError } from '../../../../../errors'
 import { assertNumber } from '../../../../../typeGuards/number'
 import type { BuiltinNormalExpressions } from '../../../../interface'
 import { partitionNumbers } from './sequences/partition'
@@ -45,7 +46,7 @@ export const partitionsNormalExpressions: BuiltinNormalExpressions = {
         return 1
 
       if (n > partitionNumbers.length) {
-        throw new Error(`n is too large. The maximum value is ${partitionNumbers.length - 1}.`)
+        throw new LitsError(`n is too large. The maximum value is ${partitionNumbers.length - 1}.`, sourceCodeInfo)
       }
 
       return partitionNumbers[n - 1]!

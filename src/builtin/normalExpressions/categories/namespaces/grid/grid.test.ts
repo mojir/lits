@@ -245,8 +245,8 @@ describe('grid', () => {
       expect(lits.run(`grid:map(${exampleGrid3}, ${exampleGrid3}, +)`)).toEqual([[2, 4], [6, 8]])
     })
     it('should throw on different dimensions', () => {
-      expect(() => lits.run(`grid:map(${exampleGrid3}, [[1], [2]], +)`)).toThrow()
-      expect(() => lits.run(`grid:map(${exampleGrid3}, [[1, 2]], +)`)).toThrow()
+      expect(() => lits.run(`grid:map(${exampleGrid3}, [[1], [2]], +)`)).toThrow(LitsError)
+      expect(() => lits.run(`grid:map(${exampleGrid3}, [[1, 2]], +)`)).toThrow(LitsError)
     })
   })
   describe('grid:mapi', () => {

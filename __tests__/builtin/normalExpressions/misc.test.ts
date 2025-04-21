@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import { afterEach, beforeEach, describe, expect, it, vitest } from 'vitest'
 import { Lits } from '../../../src/Lits/Lits'
+import { LitsError } from '../../../src/errors'
 
 describe('misc functions', () => {
   let oldLog: () => void
@@ -29,11 +30,11 @@ describe('misc functions', () => {
         expect(lits.run('epoch->iso-date(0)')).toBe('1970-01-01T00:00:00.000Z')
         expect(lits.run('epoch->iso-date(0.999)')).toBe('1970-01-01T00:00:00.000Z')
         expect(lits.run('epoch->iso-date(0.999)')).toBe('1970-01-01T00:00:00.000Z')
-        expect(() => lits.run('epoch->iso-date(1649756230899 1649756230899)')).toThrow()
-        expect(() => lits.run('epoch->iso-date()')).toThrow()
-        expect(() => lits.run('epoch->iso-date("1649756230899")')).toThrow()
-        expect(() => lits.run('epoch->iso-date(null)')).toThrow()
-        expect(() => lits.run('epoch->iso-date(true)')).toThrow()
+        expect(() => lits.run('epoch->iso-date(1649756230899 1649756230899)')).toThrow(LitsError)
+        expect(() => lits.run('epoch->iso-date()')).toThrow(LitsError)
+        expect(() => lits.run('epoch->iso-date("1649756230899")')).toThrow(LitsError)
+        expect(() => lits.run('epoch->iso-date(null)')).toThrow(LitsError)
+        expect(() => lits.run('epoch->iso-date(true)')).toThrow(LitsError)
       })
     })
 
@@ -44,12 +45,12 @@ describe('misc functions', () => {
         expect(() =>
           lits.run('iso-date->epoch("2022-04-12T09:37:10.899Z", "2022-04-12T09:37:10.899Z")'),
         ).toThrow()
-        expect(() => lits.run('iso-date->epoch()')).toThrow()
-        expect(() => lits.run('iso-date->epoch(1649756230899)')).toThrow()
-        expect(() => lits.run('iso-date->epoch(null)')).toThrow()
-        expect(() => lits.run('iso-date->epoch(true)')).toThrow()
-        expect(() => lits.run('iso-date->epoch("2022-04-1X")')).toThrow()
-        expect(() => lits.run('iso-date->epoch("")')).toThrow()
+        expect(() => lits.run('iso-date->epoch()')).toThrow(LitsError)
+        expect(() => lits.run('iso-date->epoch(1649756230899)')).toThrow(LitsError)
+        expect(() => lits.run('iso-date->epoch(null)')).toThrow(LitsError)
+        expect(() => lits.run('iso-date->epoch(true)')).toThrow(LitsError)
+        expect(() => lits.run('iso-date->epoch("2022-04-1X")')).toThrow(LitsError)
+        expect(() => lits.run('iso-date->epoch("")')).toThrow(LitsError)
       })
     })
 
@@ -71,7 +72,7 @@ describe('misc functions', () => {
         expect(lits.run('!=(null, 0)')).toBe(!lits.run('=(null, 0)'))
         expect(lits.run('!=(1, true, 3)')).toBe(!lits.run('=(1, true, 3)'))
         expect(lits.run('!=(1, false, 3)')).toBe(!lits.run('=(1, false, 3)'))
-        expect(() => lits.run('!=()')).toThrow()
+        expect(() => lits.run('!=()')).toThrow(LitsError)
         expect(lits.run('!=([1, 2, { a := 10, b := [null]}], [1, 2, { b := [null], a := 10}])')).toBe(!lits.run('=([1, 2, { a := 10, b := [null]}], [1, 2, { b := [null], a := 10}])'))
         expect(lits.run('!=([1, 2, { a := 10, b := [null]}], [1, 2, { b := [0], a := 10}])')).toBe(!lits.run('=([1, 2, { a := 10, b := [null]}], [1, 2, { b := [0], a := 10}])'))
         expect(lits.run('!=({ a := 10, b := 20}, { b := 20, a := 10})')).toBe(!lits.run('=({ a := 10, b := 20}, { b := 20, a := 10})'))
@@ -95,7 +96,7 @@ describe('misc functions', () => {
         expect(lits.run('identical?(null, 0)')).toBe(false)
         expect(lits.run('identical?([1], [1])')).toBe(false)
         expect(lits.run('identical?({}, {})')).toBe(false)
-        expect(() => lits.run('identical?()')).toThrow()
+        expect(() => lits.run('identical?()')).toThrow(LitsError)
       })
     })
 
@@ -130,7 +131,7 @@ describe('misc functions', () => {
         expect(lits.run('=({ a := 10, b := [1, 2, { b := 20}]}, { b := [1, 2, { b := 21}], a := 10})')).toBe(false)
         expect(lits.run('=([1, 2, 3], [1, 2, 3, 4])')).toBe(false)
         expect(lits.run('=({ a := 10}, { a := 10, b := 20})')).toBe(false)
-        expect(() => lits.run('=()')).toThrow()
+        expect(() => lits.run('=()')).toThrow(LitsError)
       })
     })
 
@@ -158,8 +159,8 @@ describe('misc functions', () => {
         expect(lits.run('>("2", "1")')).toBe(true)
         expect(lits.run('>("2", "1", "2")')).toBe(false)
 
-        expect(() => lits.run('1 > "a"')).toThrow()
-        expect(() => lits.run('>()')).toThrow()
+        expect(() => lits.run('1 > "a"')).toThrow(LitsError)
+        expect(() => lits.run('>()')).toThrow(LitsError)
       })
     })
 
@@ -187,8 +188,8 @@ describe('misc functions', () => {
         expect(lits.run('<("2", "1")')).toBe(false)
         expect(lits.run('<("1", "2", "1")')).toBe(false)
 
-        expect(() => lits.run('1 < "a"')).toThrow()
-        expect(() => lits.run('<()')).toThrow()
+        expect(() => lits.run('1 < "a"')).toThrow(LitsError)
+        expect(() => lits.run('<()')).toThrow(LitsError)
       })
     })
 
@@ -217,7 +218,7 @@ describe('misc functions', () => {
         expect(lits.run('>=("2", "1", "2")')).toBe(false)
         expect(lits.run('>=("2", "1", "1")')).toBe(true)
 
-        expect(() => lits.run('>=()')).toThrow()
+        expect(() => lits.run('>=()')).toThrow(LitsError)
       })
     })
 
@@ -246,7 +247,7 @@ describe('misc functions', () => {
         expect(lits.run('<=("1", "2", "1")')).toBe(false)
         expect(lits.run('<=("1", "2", "2")')).toBe(true)
 
-        expect(() => lits.run('<=()')).toThrow()
+        expect(() => lits.run('<=()')).toThrow(LitsError)
       })
     })
 
@@ -261,8 +262,8 @@ describe('misc functions', () => {
         expect(lits.run('!(false)')).toBe(true)
         expect(lits.run('!(true)')).toBe(false)
         expect(lits.run('!(null)')).toBe(true)
-        expect(() => lits.run('!(0, 1)')).toThrow()
-        expect(() => lits.run('!()')).toThrow()
+        expect(() => lits.run('!(0, 1)')).toThrow(LitsError)
+        expect(() => lits.run('!()')).toThrow(LitsError)
       })
     })
 
@@ -295,8 +296,8 @@ describe('misc functions', () => {
         expect(lits.run('boolean(null)')).toBe(false)
         expect(lits.run('boolean([])')).toBe(true)
         expect(lits.run('boolean({})')).toBe(true)
-        expect(() => lits.run('boolean()')).toThrow()
-        expect(() => lits.run('boolean(2, 3)')).toThrow()
+        expect(() => lits.run('boolean()')).toThrow(LitsError)
+        expect(() => lits.run('boolean(2, 3)')).toThrow(LitsError)
       })
     })
 

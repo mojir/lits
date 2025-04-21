@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../../../../Lits/Lits'
+import { LitsError } from '../../../../../../errors'
 
 const lits = new Lits()
 describe('deficient', () => {
@@ -8,7 +9,7 @@ describe('deficient', () => {
     expect(lits.run('nth:deficient-seq(2)')).toEqual([1, 2])
     expect(lits.run('nth:deficient-seq(3)')).toEqual([1, 2, 3])
     expect(lits.run('nth:deficient-seq(18)')).toEqual([1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 19, 21, 22])
-    expect(() => lits.run('nth:deficient-seq(0)')).toThrow()
+    expect(() => lits.run('nth:deficient-seq(0)')).toThrow(LitsError)
   })
 
   it('should return the correct nth term', () => {

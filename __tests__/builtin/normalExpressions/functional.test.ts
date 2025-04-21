@@ -22,8 +22,8 @@ describe('functional functions.', () => {
         expect(lits.run('apply(+, [1, 2, 3, 4])')).toBe(10)
         expect(lits.run('+ apply [1, 2, 3, 4]')).toBe(10)
         expect(lits.run('apply(+, 1, 2, [3, 4])')).toBe(10)
-        expect(() => lits.run('apply(+)')).toThrow()
-        expect(() => lits.run('apply(+, 2, 3)')).toThrow()
+        expect(() => lits.run('apply(+)')).toThrow(LitsError)
+        expect(() => lits.run('apply(+, 2, 3)')).toThrow(LitsError)
       })
     })
 
@@ -36,8 +36,8 @@ describe('functional functions.', () => {
         expect(lits.run('identity(true)')).toBe(true)
         expect(lits.run('identity({ a := 1 })')).toEqual({ a: 1 })
         expect(lits.run('identity([1, 2, 3])')).toEqual([1, 2, 3])
-        expect(() => lits.run('identity()')).toThrow()
-        expect(() => lits.run('identity(1, 2)')).toThrow()
+        expect(() => lits.run('identity()')).toThrow(LitsError)
+        expect(() => lits.run('identity(1, 2)')).toThrow(LitsError)
       })
     })
 
@@ -47,8 +47,8 @@ describe('functional functions.', () => {
         expect(lits.run('+(1, _, _)(2, _)(2)')).toBe(5)
         expect(lits.run('+(_, _)(2, _)(2)')).toBe(4)
         expect(lits.run('+(_, _)(2, 2)')).toBe(4)
-        expect(() => lits.run('+(_, _)(2)')).toThrow()
-        expect(() => lits.run('+(_, _)(2, 2, 2)')).toThrow()
+        expect(() => lits.run('+(_, _)(2)')).toThrow(LitsError)
+        expect(() => lits.run('+(_, _)(2, 2, 2)')).toThrow(LitsError)
       })
     })
 
@@ -88,16 +88,16 @@ describe('functional functions.', () => {
         expect(lits.run(`
 let foo := comp(!, odd?);
 [2, 3, 4, 5] filter foo`)).toEqual([2, 4])
-        expect(() => lits.run('comp()(1, 2)')).toThrow()
-        expect(() => lits.run('comp(true)()')).toThrow()
+        expect(() => lits.run('comp()(1, 2)')).toThrow(LitsError)
+        expect(() => lits.run('comp(true)()')).toThrow(LitsError)
       })
     })
 
     describe('constanty.', () => {
       it('samples.', () => {
         expect(lits.run('constantly(10)(12, null, "x")')).toBe(10)
-        expect(() => lits.run('constanty()')).toThrow()
-        expect(() => lits.run('constanty(10, 20)')).toThrow()
+        expect(() => lits.run('constanty()')).toThrow(LitsError)
+        expect(() => lits.run('constanty(10, 20)')).toThrow(LitsError)
       })
     })
 
@@ -106,7 +106,7 @@ let foo := comp(!, odd?);
         expect(lits.run('juxt(+, *, min, max)(3, 4, 6)')).toEqual([13, 72, 3, 6])
         expect(lits.run('juxt("a", "b")({ a := 1, b := 2, c := 3, d := 4})')).toEqual([1, 2])
         expect(lits.run('apply(juxt(+, *, min, max), range(1, 5))')).toEqual([10, 24, 1, 4])
-        expect(() => lits.run('juxt()')).toThrow()
+        expect(() => lits.run('juxt()')).toThrow(LitsError)
       })
     })
 
@@ -114,8 +114,8 @@ let foo := comp(!, odd?);
       it('samples.', () => {
         expect(lits.run('complement(>)(4, 6)')).toBe(true)
         expect(lits.run('complement(=)(3, 3)')).toBe(false)
-        expect(() => lits.run('complement()')).toThrow()
-        expect(() => lits.run('complement(>, <)')).toThrow()
+        expect(() => lits.run('complement()')).toThrow(LitsError)
+        expect(() => lits.run('complement(>, <)')).toThrow(LitsError)
       })
     })
 
@@ -125,7 +125,7 @@ let foo := comp(!, odd?);
         expect(lits.run('every-pred(string?, -> count($1) > 3)("Albert", "Mojir")')).toBe(true)
         expect(lits.run('every-pred(string?, -> count($1) > 3)("Albert", "L", "Mojir")')).toBe(false)
         expect(lits.run('every-pred(string?, -> count($1) > 3)("Albert", [1, 2, 3, 4])')).toBe(false)
-        expect(() => lits.run('every-pred()')).toThrow()
+        expect(() => lits.run('every-pred()')).toThrow(LitsError)
       })
     })
 
@@ -135,7 +135,7 @@ let foo := comp(!, odd?);
         expect(lits.run('some-pred(string?, -> count($1) > 3)("A", "M")')).toBe(true)
         expect(lits.run('some-pred(string?, -> count($1) > 3)([10, 20], [20, 10])')).toBe(false)
         expect(lits.run('some-pred(string?, -> count($1) > 3)("Albert", [10, 20])')).toBe(true)
-        expect(() => lits.run('some-pred()')).toThrow()
+        expect(() => lits.run('some-pred()')).toThrow(LitsError)
       })
     })
 
@@ -145,8 +145,8 @@ let foo := comp(!, odd?);
         expect(lits.run('fnull(+, 1, 2)(null, 0)')).toBe(1)
         expect(lits.run('fnull(+, 1, 2)(0, null)')).toBe(2)
         expect(lits.run('fnull(+, 1, 2)(null, null)')).toBe(3)
-        expect(() => lits.run('fnull()')).toThrow()
-        expect(() => lits.run('fnull(+)')).toThrow()
+        expect(() => lits.run('fnull()')).toThrow(LitsError)
+        expect(() => lits.run('fnull(+)')).toThrow(LitsError)
       })
     })
 
@@ -158,7 +158,7 @@ let params := [1, 2, 3];
       })
       expect(() => lits.run(`
 let params := {};
-+(...params)`)).toThrow()
++(...params)`)).toThrow(LitsError)
     })
 
     describe('special expressions as normal expressions.', () => {

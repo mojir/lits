@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { UndefinedSymbolError } from '../../src/errors'
+import { LitsError, UndefinedSymbolError } from '../../src/errors'
 import { Cache } from '../../src/Lits/Cache'
 import type { LazyValue } from '../../src/Lits/Lits'
 import { Lits } from '../../src/Lits/Lits'
@@ -127,11 +127,11 @@ describe('all tests', () => {
     })
 
     it('a function with a built in normal expression name', () => {
-      expect(() => lits.context('function inc(x) x + 1 end')).toThrow()
+      expect(() => lits.context('function inc(x) x + 1 end')).toThrow(LitsError)
     })
 
     it('a function with a built in special expression name', () => {
-      expect(() => lits.context('function and(x) x + 1 end')).toThrow()
+      expect(() => lits.context('function and(x) x + 1 end')).toThrow(LitsError)
     })
 
     it('a variable twice', () => {

@@ -3,6 +3,7 @@ import { ContextStackImpl } from '../src/evaluator/ContextStack'
 import type { Obj } from '../src/interface'
 import { isRegularExpression } from '../src/typeGuards/lits'
 import type { Context } from '../src/evaluator/interface'
+import { LitsError } from '../src/errors'
 
 export interface TypeGuardTestData {
   valid: unknown[]
@@ -26,9 +27,9 @@ export function testTypeGuars(
       expect(is(validData)).toBe(false)
 
     // eslint-disable-next-line ts/no-unsafe-return
-    expect(() => assert(validData)).toThrow()
+    expect(() => assert(validData)).toThrow(LitsError)
     // eslint-disable-next-line ts/no-unsafe-return
-    expect(() => as(validData)).toThrow()
+    expect(() => as(validData)).toThrow(LitsError)
   })
 }
 

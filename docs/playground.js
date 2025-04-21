@@ -3462,13 +3462,15 @@ var Playground = (function (exports) {
             paramCount: 2,
         },
         flatten: {
-            evaluate: function (_a) {
-                var _b = __read(_a, 1), seq = _b[0];
-                if (!Array.isArray(seq))
-                    return [];
-                return seq.flat(Number.POSITIVE_INFINITY);
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), seq = _b[0], depth = _b[1];
+                assertArray(seq, sourceCodeInfo);
+                var actualDepth = depth === undefined || depth === Number.POSITIVE_INFINITY
+                    ? Number.POSITIVE_INFINITY
+                    : asNumber(depth, sourceCodeInfo, { integer: true, nonNegative: true });
+                return seq.flat(actualDepth);
             },
-            paramCount: 1,
+            paramCount: { min: 1, max: 2 },
         },
         mapcat: {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -5767,6 +5769,13 @@ var Playground = (function (exports) {
                 assertString(sourceArg, sourceCodeInfo);
                 var source = sourceArg || '(?:)';
                 var flags = typeof flagsArg === 'string' ? flagsArg : '';
+                try {
+                    // eslint-disable-next-line no-new
+                    new RegExp(source, flags); // Throws if invalid regexp
+                }
+                catch (e) {
+                    throw new LitsError("Invalid regular expression: ".concat(source, " ").concat(flags), sourceCodeInfo);
+                }
                 return _b = {},
                     _b[REGEXP_SYMBOL] = true,
                     _b.sourceCodeInfo = sourceCodeInfo,
@@ -8873,10 +8882,10 @@ var Playground = (function (exports) {
                 assertVector(vectorA, sourceCodeInfo);
                 assertVector(vectorB, sourceCodeInfo);
                 if (vectorA.length < 2) {
-                    throw new Error('Vectors must have at least 2 elements');
+                    throw new LitsError('Vectors must have at least 2 elements', sourceCodeInfo);
                 }
                 if (vectorA.length !== vectorB.length) {
-                    throw new Error('Vectors must be of the same length');
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
                 }
                 assertNumber(lag, sourceCodeInfo, {
                     integer: true,
@@ -10128,7 +10137,7 @@ var Playground = (function (exports) {
                 if (n === 0)
                     return 1;
                 if (n > partitionNumbers.length) {
-                    throw new Error("n is too large. The maximum value is ".concat(partitionNumbers.length - 1, "."));
+                    throw new LitsError("n is too large. The maximum value is ".concat(partitionNumbers.length - 1, "."), sourceCodeInfo);
                 }
                 return partitionNumbers[n - 1];
             },
@@ -12267,7 +12276,12 @@ var Playground = (function (exports) {
                 var _b = __read(_a, 2), a = _b[0], m = _b[1];
                 assertNumber(a, sourceCodeInfo, { integer: true, positive: true });
                 assertNumber(m, sourceCodeInfo, { integer: true, positive: true });
-                return modInverse(a, m);
+                try {
+                    return modInverse(a, m);
+                }
+                catch (error) {
+                    throw new LitsError(error, sourceCodeInfo);
+                }
             },
             paramCount: 2,
         },
@@ -12286,7 +12300,7 @@ var Playground = (function (exports) {
                 assertVector(remainders, sourceCodeInfo);
                 assertVector(moduli, sourceCodeInfo);
                 if (remainders.length !== moduli.length) {
-                    throw new Error('Remainders and moduli must have the same length.');
+                    throw new LitsError('Remainders and moduli must have the same length.', sourceCodeInfo);
                 }
                 try {
                     return chineseRemainder(remainders, moduli);
@@ -13795,7 +13809,11 @@ var Playground = (function (exports) {
                 }
                 else {
                     var key = evaluateNode(keyNode, contextStack);
-                    var value = evaluateNode(params[i + 1], contextStack);
+                    var valueNode = params[i + 1];
+                    if (valueNode === undefined) {
+                        throw new LitsError('Missing value for key', keyNode[2]);
+                    }
+                    var value = evaluateNode(valueNode, contextStack);
                     assertString(key, keyNode[2]);
                     result[key] = value;
                 }
@@ -14467,7 +14485,6 @@ var Playground = (function (exports) {
             examples: [
                 'flatten([1, 2, [3, 4], 5])',
                 "\nlet foo := \"bar\";\nflatten([\n  1,\n  \" 2 A \",\n  [foo, [4, [\"ABC\"]]],\n  6,\n])",
-                'flatten(12)',
             ],
             noOperatorDocumentation: true,
         },
@@ -31102,21 +31119,30 @@ var Playground = (function (exports) {
             var char = input[i];
             if (char === '_') {
                 if (!decimalNumberRegExp.test(input[i - 1]) || !decimalNumberRegExp.test(input[i + 1])) {
-                    return NO_MATCH;
+                    if (i === start) {
+                        return NO_MATCH;
+                    }
+                    throw new LitsError("Invalid number format at position ".concat(i, "."), undefined);
                 }
             }
             else if (char === '.') {
-                if (i === start || hasDecimalPoint || hasExponent) {
+                if (i === start) {
                     return NO_MATCH;
+                }
+                if (hasDecimalPoint || hasExponent) {
+                    throw new LitsError("Invalid number format at position ".concat(i, "."), undefined);
                 }
                 hasDecimalPoint = true;
             }
             else if (char === 'e' || char === 'E') {
-                if (i === start || hasExponent) {
+                if (i === start) {
                     return NO_MATCH;
                 }
+                if (hasExponent) {
+                    throw new LitsError("Invalid number format at position ".concat(i, "."), undefined);
+                }
                 if (input[i - 1] === '.' || input[i - 1] === '+' || input[i - 1] === '-') {
-                    return NO_MATCH;
+                    throw new LitsError("Invalid number format at position ".concat(i, "."), undefined);
                 }
                 if (input[i + 1] === '+' || input[i + 1] === '-') {
                     i += 1;
@@ -31136,7 +31162,7 @@ var Playground = (function (exports) {
         }
         var nextChar = input[i];
         if (nextChar && !postNumberRegExp.test(nextChar)) {
-            return NO_MATCH;
+            throw new LitsError("Invalid number format at position ".concat(i, "."), undefined);
         }
         return [length, ['Number', input.substring(position, i)]];
     };
@@ -31302,10 +31328,10 @@ var Playground = (function (exports) {
             hasDebugData: debug,
         };
         while (position < input.length) {
-            var tokenDescriptor = getCurrentToken(input, position);
             var sourceCodeInfo = debug
                 ? createSourceCodeInfo(input, position, filePath)
                 : undefined;
+            var tokenDescriptor = getCurrentToken(input, position);
             if (!tokenDescriptor) {
                 throw new LitsError("Unrecognized character '".concat(input[position], "'."), sourceCodeInfo);
             }
@@ -31415,9 +31441,6 @@ var Playground = (function (exports) {
     }
     function assertOperatorToken(token, operatorName) {
         if (!isOperatorToken(token, operatorName)) {
-            if (operatorName) {
-                throw new LitsError("Unexpected token: ".concat(token, ", expected operator ").concat(operatorName), token[2]);
-            }
             throwUnexpectedToken('Operator', operatorName, token);
         }
     }
@@ -31487,8 +31510,8 @@ var Playground = (function (exports) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'Operator' && isBinaryOperator(token[1]);
     }
     function throwUnexpectedToken(expected, expectedValue, actual) {
-        var actualOutput = "".concat(actual[0], " '").concat(actual[1], "'");
-        throw new LitsError("Unexpected token: ".concat(actualOutput, ", expected ").concat(expected).concat(expectedValue ? " '".concat(expectedValue, "'") : ''), actual[2]);
+        var actualOutput = actual ? "".concat(actual[0], " '").concat(actual[1], "'") : 'end of input';
+        throw new LitsError("Unexpected token: ".concat(actualOutput, ", expected ").concat(expected).concat(expectedValue ? " '".concat(expectedValue, "'") : ''), actual === null || actual === void 0 ? void 0 : actual[2]);
     }
 
     function minifyTokenStream(tokenStream, _a) {
@@ -31636,6 +31659,11 @@ var Playground = (function (exports) {
         Parser.prototype.peek = function () {
             return this.tokenStream.tokens[this.parseState.position];
         };
+        Parser.prototype.peekSourceCodeInfo = function () {
+            var _a;
+            var currentToken = this.peek();
+            return currentToken ? currentToken[2] : (_a = this.tokenStream.tokens.at(-1)) === null || _a === void 0 ? void 0 : _a[2];
+        };
         Parser.prototype.peekAhead = function (count) {
             return this.tokenStream.tokens[this.parseState.position + count];
         };
@@ -31651,7 +31679,7 @@ var Playground = (function (exports) {
                 }
                 else {
                     if (!this.isAtEnd()) {
-                        throw new LitsError('Expected ;', this.peek()[2]);
+                        throw new LitsError('Expected ;', this.peekSourceCodeInfo());
                     }
                 }
             }
@@ -31740,15 +31768,21 @@ var Playground = (function (exports) {
             }
             return left;
         };
+        Parser.prototype.asToken = function (token) {
+            if (!token) {
+                throw new LitsError('Unexpected end of input', this.peekSourceCodeInfo());
+            }
+            return token;
+        };
         Parser.prototype.parseOperand = function () {
             var operand = this.parseOperandPart();
             var token = this.peek();
             while (isOperatorToken(token, '.') || isLBracketToken(token) || isLParenToken(token)) {
                 if (token[1] === '.') {
                     this.advance();
-                    var symbolToken = this.peek();
+                    var symbolToken = this.asToken(this.peek());
                     if (!isSymbolToken(symbolToken)) {
-                        throw new LitsError('Expected symbol', this.peek()[2]);
+                        throw new LitsError('Expected symbol', this.peekSourceCodeInfo());
                     }
                     var stringNode = withSourceCodeInfo([NodeTypes.String, symbolToken[1]], symbolToken[2]);
                     operand = createAccessorNode(operand, stringNode, token[2]);
@@ -31759,7 +31793,7 @@ var Playground = (function (exports) {
                     this.advance();
                     var expression = this.parseExpression();
                     if (!isRBracketToken(this.peek())) {
-                        throw new LitsError('Expected closing bracket', this.peek()[2]);
+                        throw new LitsError('Expected closing bracket', this.peekSourceCodeInfo());
                     }
                     operand = createAccessorNode(operand, expression, token[2]);
                     this.advance();
@@ -31773,7 +31807,7 @@ var Playground = (function (exports) {
             return operand;
         };
         Parser.prototype.parseOperandPart = function () {
-            var token = this.peek();
+            var token = this.asToken(this.peek());
             // Parentheses
             if (isLParenToken(token)) {
                 var positionBefore = this.parseState.position;
@@ -31785,7 +31819,7 @@ var Playground = (function (exports) {
                 this.advance();
                 var expression = this.parseExpression();
                 if (!isRParenToken(this.peek())) {
-                    throw new LitsError('Expected closing parenthesis', this.peek()[2]);
+                    throw new LitsError('Expected closing parenthesis', this.peekSourceCodeInfo());
                 }
                 this.advance();
                 return expression;
@@ -31845,7 +31879,7 @@ var Playground = (function (exports) {
             while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
                 if (isOperatorToken(this.peek(), '...')) {
                     this.advance();
-                    params.push(withSourceCodeInfo([NodeTypes.Spread, this.parseExpression()], this.peek()[2]));
+                    params.push(withSourceCodeInfo([NodeTypes.Spread, this.parseExpression()], this.peekSourceCodeInfo()));
                 }
                 else {
                     var token = this.peek();
@@ -31861,7 +31895,7 @@ var Playground = (function (exports) {
                         this.advance();
                     }
                     else {
-                        throw new LitsError('Expected key to be a symbol or a string', this.peek()[2]);
+                        throw new LitsError('Expected key to be a symbol or a string', this.peekSourceCodeInfo());
                     }
                     assertOperatorToken(this.peek(), ':=');
                     this.advance();
@@ -31869,7 +31903,7 @@ var Playground = (function (exports) {
                 }
                 var nextToken = this.peek();
                 if (!isOperatorToken(nextToken, ',') && !isRBraceToken(nextToken)) {
-                    throw new LitsError('Expected comma or closing brace', this.peek()[2]);
+                    throw new LitsError('Expected comma or closing brace', this.peekSourceCodeInfo());
                 }
                 if (isOperatorToken(nextToken, ',')) {
                     this.advance();
@@ -31886,14 +31920,14 @@ var Playground = (function (exports) {
             while (!this.isAtEnd() && !isRBracketToken(this.peek())) {
                 if (isOperatorToken(this.peek(), '...')) {
                     this.advance();
-                    params.push(withSourceCodeInfo([NodeTypes.Spread, this.parseExpression()], this.peek()[2]));
+                    params.push(withSourceCodeInfo([NodeTypes.Spread, this.parseExpression()], this.peekSourceCodeInfo()));
                 }
                 else {
                     params.push(this.parseExpression());
                 }
                 var nextToken = this.peek();
                 if (!isOperatorToken(nextToken, ',') && !isRBracketToken(nextToken)) {
-                    throw new LitsError('Expected comma or closing parenthesis', this.peek()[2]);
+                    throw new LitsError('Expected comma or closing parenthesis', this.peekSourceCodeInfo());
                 }
                 if (isOperatorToken(nextToken, ',')) {
                     this.advance();
@@ -31904,26 +31938,27 @@ var Playground = (function (exports) {
             return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.array, params]], firstToken[2]);
         };
         Parser.prototype.parseFunctionCall = function (symbol) {
+            var _a;
             this.advance();
             var params = [];
             while (!this.isAtEnd() && !isRParenToken(this.peek())) {
                 if (isOperatorToken(this.peek(), '...')) {
                     this.advance();
-                    params.push(withSourceCodeInfo([NodeTypes.Spread, this.parseExpression()], this.peek()[2]));
+                    params.push(withSourceCodeInfo([NodeTypes.Spread, this.parseExpression()], this.peekSourceCodeInfo()));
                 }
                 else {
                     params.push(this.parseExpression());
                 }
                 var nextToken = this.peek();
                 if (!isOperatorToken(nextToken, ',') && !isRParenToken(nextToken)) {
-                    throw new LitsError('Expected comma or closing parenthesis', this.peek()[2]);
+                    throw new LitsError('Expected comma or closing parenthesis', (_a = this.peek()) === null || _a === void 0 ? void 0 : _a[2]);
                 }
                 if (isOperatorToken(nextToken, ',')) {
                     this.advance();
                 }
             }
             if (!isRParenToken(this.peek())) {
-                throw new LitsError('Expected closing parenthesis', this.peek()[2]);
+                throw new LitsError('Expected closing parenthesis', this.peekSourceCodeInfo());
             }
             this.advance();
             if (isSpecialBuiltinSymbolNode(symbol)) { // Named function
@@ -31953,14 +31988,14 @@ var Playground = (function (exports) {
                         if (params.length !== 1) {
                             throw new LitsError('Expected exactly one parameter', symbol[2]);
                         }
-                        var _a = __read(params, 1), param = _a[0];
+                        var _b = __read(params, 1), param = _b[0];
                         return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, param]], symbol[2]);
                     }
                     case specialExpressionTypes.throw: {
                         if (params.length !== 1) {
                             throw new LitsError('Expected exactly one parameter', symbol[2]);
                         }
-                        var _b = __read(params, 1), param = _b[0];
+                        var _c = __read(params, 1), param = _c[0];
                         return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, param]], symbol[2]);
                     }
                     case specialExpressionTypes['0_fn']:
@@ -31980,7 +32015,7 @@ var Playground = (function (exports) {
             }
         };
         Parser.prototype.parseLambdaFunction = function () {
-            var firstToken = this.peek();
+            var firstToken = this.asToken(this.peek());
             if (isLParenToken(firstToken)
                 && isSymbolToken(this.peekAhead(1))
                 && isOperatorToken(this.peekAhead(2), '->')) {
@@ -32014,7 +32049,7 @@ var Playground = (function (exports) {
             var functionArguments = [];
             while (!this.isAtEnd() && !isRParenToken(this.peek()) && !isSymbolToken(this.peek(), 'let')) {
                 if (rest) {
-                    throw new LitsError('Rest argument must be last', this.peek()[2]);
+                    throw new LitsError('Rest argument must be last', this.peekSourceCodeInfo());
                 }
                 var bindingTarget = this.parseBindingTarget();
                 if (bindingTarget[1][1] !== undefined) {
@@ -32024,25 +32059,25 @@ var Playground = (function (exports) {
                     rest = true;
                 }
                 if (defaults && !bindingTarget[1][1]) {
-                    throw new LitsError('Default arguments must be last', this.peek()[2]);
+                    throw new LitsError('Default arguments must be last', this.peekSourceCodeInfo());
                 }
                 functionArguments.push(bindingTarget);
                 if (!isOperatorToken(this.peek(), ',') && !isRParenToken(this.peek()) && !isSymbolToken(this.peek(), 'let')) {
-                    throw new LitsError('Expected comma or closing parenthesis', this.peek()[2]);
+                    throw new LitsError('Expected comma or closing parenthesis', this.peekSourceCodeInfo());
                 }
                 if (isOperatorToken(this.peek(), ',')) {
                     this.advance();
                 }
             }
             if (!isRParenToken(this.peek())) {
-                throw new LitsError('Expected closing parenthesis', this.peek()[2]);
+                throw new LitsError('Expected closing parenthesis', this.peekSourceCodeInfo());
             }
             this.advance();
             return functionArguments;
         };
         Parser.prototype.parseShorthandLamdaFunction = function () {
             var _a;
-            var firstToken = this.peek();
+            var firstToken = this.asToken(this.peek());
             this.advance();
             var startPos = this.parseState.position;
             var exprNode = this.parseExpression();
@@ -32100,7 +32135,7 @@ var Playground = (function (exports) {
                 }
                 var defaultValue = this.parseOptionalDefaulValue();
                 if (requireDefaultValue && !defaultValue) {
-                    throw new LitsError('Expected assignment', this.peek()[2]);
+                    throw new LitsError('Expected assignment', this.peekSourceCodeInfo());
                 }
                 return withSourceCodeInfo([bindingTargetTypes.symbol, [symbol, defaultValue]], firstToken[2]);
             }
@@ -32112,7 +32147,7 @@ var Playground = (function (exports) {
                 this.advance();
                 var symbol = asUserDefinedSymbolNode(this.parseSymbol());
                 if (isOperatorToken(this.peek(), ':=')) {
-                    throw new LitsError('Rest argument can not have default value', this.peek()[2]);
+                    throw new LitsError('Rest argument can not have default value', this.peekSourceCodeInfo());
                 }
                 return withSourceCodeInfo([bindingTargetTypes.rest, [symbol[1], undefined]], firstToken[2]);
             }
@@ -32120,7 +32155,7 @@ var Playground = (function (exports) {
             if (isLBracketToken(firstToken)) {
                 this.advance();
                 var elements = [];
-                var token = this.peek();
+                var token = this.asToken(this.peek());
                 var rest = false;
                 while (!isRBracketToken(token)) {
                     if (rest) {
@@ -32129,7 +32164,7 @@ var Playground = (function (exports) {
                     if (isOperatorToken(token, ',')) {
                         elements.push(null);
                         this.advance();
-                        token = this.peek();
+                        token = this.asToken(this.peek());
                         continue;
                     }
                     var target = this.parseBindingTarget();
@@ -32137,17 +32172,17 @@ var Playground = (function (exports) {
                         rest = true;
                     }
                     elements.push(target);
-                    token = this.peek();
+                    token = this.asToken(this.peek());
                     if (!isRBracketToken(token)) {
                         assertOperatorToken(token, ',');
                         this.advance();
                     }
-                    token = this.peek();
+                    token = this.asToken(this.peek());
                 }
                 this.advance();
                 var defaultValue = this.parseOptionalDefaulValue();
                 if (requireDefaultValue && !defaultValue) {
-                    throw new LitsError('Expected assignment', this.peek()[2]);
+                    throw new LitsError('Expected assignment', this.peekSourceCodeInfo());
                 }
                 return withSourceCodeInfo([bindingTargetTypes.array, [elements, defaultValue]], firstToken[2]);
             }
@@ -32155,7 +32190,7 @@ var Playground = (function (exports) {
             if (isLBraceToken(firstToken)) {
                 this.advance();
                 var elements = {};
-                var token = this.peek();
+                var token = this.asToken(this.peek());
                 var rest = false;
                 while (!isRBraceToken(token)) {
                     if (rest) {
@@ -32166,7 +32201,7 @@ var Playground = (function (exports) {
                         this.advance();
                     }
                     var key = asUserDefinedSymbolNode(this.parseSymbol());
-                    token = this.peek();
+                    token = this.asToken(this.peek());
                     if (isReservedSymbolToken(token, 'as')) {
                         if (rest) {
                             throw new LitsError('Rest argument can not have alias', token[2]);
@@ -32183,7 +32218,7 @@ var Playground = (function (exports) {
                             throw new LitsError("Duplicate binding name: ".concat(key), token[2]);
                         }
                         if (rest && isOperatorToken(this.peek(), ':=')) {
-                            throw new LitsError('Rest argument can not have default value', this.peek()[2]);
+                            throw new LitsError('Rest argument can not have default value', this.peekSourceCodeInfo());
                         }
                         elements[key[1]] = rest
                             ? withSourceCodeInfo([bindingTargetTypes.rest, [key[1], this.parseOptionalDefaulValue()]], firstToken[2])
@@ -32196,17 +32231,17 @@ var Playground = (function (exports) {
                         assertOperatorToken(this.peek(), ',');
                         this.advance();
                     }
-                    token = this.peek();
+                    token = this.asToken(this.peek());
                 }
                 this.advance();
-                token = this.peek();
+                token = this.asToken(this.peek());
                 var defaultValue = this.parseOptionalDefaulValue();
                 if (requireDefaultValue && !defaultValue) {
                     throw new LitsError('Expected assignment', token[2]);
                 }
                 return withSourceCodeInfo([bindingTargetTypes.object, [elements, defaultValue]], firstToken[2]);
             }
-            throw new LitsError('Expected symbol', this.peek()[2]);
+            throw new LitsError('Expected symbol', this.peekSourceCodeInfo());
         };
         Parser.prototype.parseLet = function (token, optionalSemicolon) {
             if (optionalSemicolon === void 0) { optionalSemicolon = false; }
@@ -32229,7 +32264,7 @@ var Playground = (function (exports) {
                     this.advance();
                 }
                 else if (!isReservedSymbolToken(this.peek(), 'end')) {
-                    throw new LitsError('Expected ;', this.peek()[2]);
+                    throw new LitsError('Expected ;', this.peekSourceCodeInfo());
                 }
             }
             assertReservedSymbolToken(this.peek(), 'end');
@@ -32253,7 +32288,7 @@ var Playground = (function (exports) {
                 token = this.peek();
             }
             if (bindingNodes.length === 0) {
-                throw new LitsError('Expected binding', this.peek()[2]);
+                throw new LitsError('Expected binding', this.peekSourceCodeInfo());
             }
             assertSymbolToken(token, 'do');
             this.advance();
@@ -32264,7 +32299,7 @@ var Playground = (function (exports) {
                     this.advance();
                 }
                 else if (!isReservedSymbolToken(this.peek(), 'end')) {
-                    throw new LitsError('Expected ;', this.peek()[2]);
+                    throw new LitsError('Expected ;', this.peekSourceCodeInfo());
                 }
             }
             assertReservedSymbolToken(this.peek(), 'end');
@@ -32280,7 +32315,7 @@ var Playground = (function (exports) {
                     this.advance();
                 }
                 else if (!isReservedSymbolToken(this.peek(), 'catch')) {
-                    throw new LitsError('Expected ;', this.peek()[2]);
+                    throw new LitsError('Expected ;', this.peekSourceCodeInfo());
                 }
             }
             var tryExpression = tryExpressions.length === 1
@@ -32302,7 +32337,7 @@ var Playground = (function (exports) {
                     this.advance();
                 }
                 else if (!isReservedSymbolToken(this.peek(), 'end')) {
-                    throw new LitsError('Expected ;', this.peek()[2]);
+                    throw new LitsError('Expected ;', this.peekSourceCodeInfo());
                 }
             }
             assertReservedSymbolToken(this.peek(), 'end');
@@ -32338,7 +32373,7 @@ var Playground = (function (exports) {
                     this.advance();
                 }
                 else if (!isReservedSymbolToken(this.peek(), 'end')) {
-                    throw new LitsError('Expected ;', this.peek()[2]);
+                    throw new LitsError('Expected ;', this.peekSourceCodeInfo());
                 }
             }
             assertReservedSymbolToken(this.peek(), 'end');
@@ -32352,13 +32387,13 @@ var Playground = (function (exports) {
             this.advance();
             var bindingNode = this.parseBinding();
             var modifiers = [];
-            var token = this.peek();
+            var token = this.asToken(this.peek());
             if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this.peek(), 'each') && !isOperatorToken(token, ',')) {
                 throw new LitsError('Expected do, each or comma', token[2]);
             }
             if (isOperatorToken(token, ',')) {
                 this.advance();
-                token = this.peek();
+                token = this.asToken(this.peek());
             }
             if (!isSymbolToken(token, 'let')
                 && !isReservedSymbolToken(token, 'when')
@@ -32378,14 +32413,14 @@ var Playground = (function (exports) {
                         throw new LitsError('Duplicate binding', letNode[1][1][2]);
                     }
                     letBindings.push(letNode[1][1]);
-                    token = this_2.peek();
+                    token = this_2.asToken(this_2.peek());
                     if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this_2.peek(), 'each') && !isOperatorToken(token, ',')) {
                         throw new LitsError('Expected do, each or comma', token[2]);
                     }
                     if (isOperatorToken(token, ',')) {
                         this_2.advance();
                     }
-                    token = this_2.peek();
+                    token = this_2.asToken(this_2.peek());
                 };
                 var this_2 = this;
                 while (isSymbolToken(token, 'let')) {
@@ -32411,14 +32446,14 @@ var Playground = (function (exports) {
                     modifiers.push('&while');
                     whileNode = this.parseExpression();
                 }
-                token = this.peek();
+                token = this.asToken(this.peek());
                 if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this.peek(), 'each') && !isOperatorToken(token, ',')) {
                     throw new LitsError('Expected do or comma', token[2]);
                 }
                 if (isOperatorToken(token, ',')) {
                     this.advance();
                 }
-                token = this.peek();
+                token = this.asToken(this.peek());
             }
             if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this.peek(), 'each')) {
                 throw new LitsError('Expected do or each', token[2]);
@@ -32455,7 +32490,7 @@ var Playground = (function (exports) {
                     this.advance();
                 }
                 else if (!isReservedSymbolToken(this.peek(), 'else') && !isReservedSymbolToken(this.peek(), 'end')) {
-                    throw new LitsError('Expected ;', this.peek()[2]);
+                    throw new LitsError('Expected ;', this.peekSourceCodeInfo());
                 }
             }
             var thenExpression = thenExpressions.length === 1
@@ -32471,7 +32506,7 @@ var Playground = (function (exports) {
                         this.advance();
                     }
                     else if (!isReservedSymbolToken(this.peek(), 'end')) {
-                        throw new LitsError('Expected ;', this.peek()[2]);
+                        throw new LitsError('Expected ;', this.peekSourceCodeInfo());
                     }
                 }
                 elseExpression = elseExpressions.length === 1
@@ -32502,7 +32537,7 @@ var Playground = (function (exports) {
                         this.advance();
                     }
                     else if (!isReservedSymbolToken(this.peek(), 'case') && !isReservedSymbolToken(this.peek(), 'end')) {
-                        throw new LitsError('Expected ;', this.peek()[2]);
+                        throw new LitsError('Expected ;', this.peekSourceCodeInfo());
                     }
                 }
                 var thenExpression = expressions.length === 1
@@ -32537,7 +32572,7 @@ var Playground = (function (exports) {
                         this.advance();
                     }
                     else if (!isReservedSymbolToken(this.peek(), 'case') && !isReservedSymbolToken(this.peek(), 'end')) {
-                        throw new LitsError('Expected ;', this.peek()[2]);
+                        throw new LitsError('Expected ;', this.peekSourceCodeInfo());
                     }
                 }
                 var thenExpression = expressions.length === 1
@@ -32564,7 +32599,7 @@ var Playground = (function (exports) {
                     this.advance();
                 }
                 else if (!isReservedSymbolToken(this.peek(), 'end')) {
-                    throw new LitsError('Expected ;', this.peek()[2]);
+                    throw new LitsError('Expected ;', this.peekSourceCodeInfo());
                 }
             }
             assertReservedSymbolToken(this.peek(), 'end');
@@ -32608,7 +32643,7 @@ var Playground = (function (exports) {
                         this.advance();
                     }
                     else if (!isReservedSymbolToken(this.peek(), 'end')) {
-                        throw new LitsError('Expected ;', this.peek()[2]);
+                        throw new LitsError('Expected ;', this.peekSourceCodeInfo());
                     }
                 }
                 assertReservedSymbolToken(this.peek(), 'end');
@@ -32619,7 +32654,7 @@ var Playground = (function (exports) {
                         ]]], token[2]);
             }
             else {
-                throw new LitsError('Expected let or function', this.peek()[2]);
+                throw new LitsError('Expected let or function', this.peekSourceCodeInfo());
             }
         };
         Parser.prototype.stringToSymbolNode = function (value, sourceCodeInfo) {
@@ -32644,7 +32679,7 @@ var Playground = (function (exports) {
             });
         };
         Parser.prototype.parseSymbol = function () {
-            var token = this.peek();
+            var token = this.asToken(this.peek());
             this.advance();
             if (!isSymbolToken(token)) {
                 throw new LitsError("Expected symbol token, got ".concat(token[0]), token[2]);
@@ -32666,7 +32701,7 @@ var Playground = (function (exports) {
             return withSourceCodeInfo([NodeTypes.ReservedSymbol, token[1]], token[2]);
         };
         Parser.prototype.parseNumber = function () {
-            var token = this.peek();
+            var token = this.asToken(this.peek());
             this.advance();
             var value = token[1];
             var negative = value[0] === '-';
@@ -32674,7 +32709,7 @@ var Playground = (function (exports) {
             return withSourceCodeInfo([NodeTypes.Number, negative ? -Number(numberString) : Number(numberString)], token[2]);
         };
         Parser.prototype.parseString = function () {
-            var token = this.peek();
+            var token = this.asToken(this.peek());
             this.advance();
             var value = token[1].substring(1, token[1].length - 1)
                 .replace(/(\\{2})|(\\")|(\\n)|(\\t)|(\\r)|(\\b)|(\\f)|\\(.)/g, function (_, backslash, doubleQuote, newline, tab, carriageReturn, backspace, formFeed, normalChar) {
@@ -32706,7 +32741,7 @@ var Playground = (function (exports) {
             return withSourceCodeInfo([NodeTypes.String, value], token[2]);
         };
         Parser.prototype.parseRegexpShorthand = function () {
-            var token = this.peek();
+            var token = this.asToken(this.peek());
             this.advance();
             var endStringPosition = token[1].lastIndexOf('"');
             var regexpString = token[1].substring(2, endStringPosition);

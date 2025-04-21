@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../../../../Lits/Lits'
+import { LitsError } from '../../../../../../errors'
 
 const lits = new Lits()
 describe('perfect-cube', () => {
@@ -8,7 +9,7 @@ describe('perfect-cube', () => {
     expect(lits.run('nth:perfect-cube-seq(2)')).toEqual([1, 8])
     expect(lits.run('nth:perfect-cube-seq(3)')).toEqual([1, 8, 27])
     expect(lits.run('nth:perfect-cube-seq(4)')).toEqual([1, 8, 27, 64])
-    expect(() => lits.run('nth:perfect-cube-seq(0)')).toThrow()
+    expect(() => lits.run('nth:perfect-cube-seq(0)')).toThrow(LitsError)
   })
 
   it('should return the correct nth term', () => {

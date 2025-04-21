@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../../../../Lits/Lits'
+import { LitsError } from '../../../../../../errors'
 
 const lits = new Lits()
 describe('fibonacci', () => {
@@ -89,8 +90,8 @@ describe('fibonacci', () => {
       5527939700884757,
       8944394323791464,
     ])
-    expect(() => lits.run('nth:fibonacci-seq(0)')).toThrow()
-    expect(() => lits.run('nth:fibonacci-seq(80)')).toThrow()
+    expect(() => lits.run('nth:fibonacci-seq(0)')).toThrow(LitsError)
+    expect(() => lits.run('nth:fibonacci-seq(80)')).toThrow(LitsError)
   })
 
   it('should return the correct nth term', () => {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../src/Lits/Lits'
-import { AssertionError } from '../../../src/errors'
+import { AssertionError, LitsError } from '../../../src/errors'
 
 describe('assert functions', () => {
   for (const lits of [new Lits(), new Lits({ debug: true })]) {
@@ -144,24 +144,24 @@ describe('assert functions', () => {
 
     describe('assert-throws', () => {
       it('samples', () => {
-        expect(() => lits.run('assert-throws(-> identity("X")) "Should throw")')).toThrow()
+        expect(() => lits.run('assert-throws(-> identity("X")) "Should throw")')).toThrow(LitsError)
         expect(() => lits.run('assert-throws(-> throw("X"))')).not.toThrow()
         expect(() => lits.run('assert-throws(-> throw("X"), "I knew it")')).not.toThrow()
-        expect(() => lits.run('assert-throws(-> throw("X"), 10)')).toThrow()
+        expect(() => lits.run('assert-throws(-> throw("X"), 10)')).toThrow(LitsError)
       })
     })
 
     describe('assert-not-throws', () => {
       it('samples', () => {
         expect(() => lits.run('assert-not-throws(-> identity("X"), "Should not throw")')).not.toThrow()
-        expect(() => lits.run('assert-not-throws(-> throw("X"))')).toThrow()
+        expect(() => lits.run('assert-not-throws(-> throw("X"))')).toThrow(LitsError)
       })
     })
 
     describe('assert-throws-error', () => {
       it('samples', () => {
-        expect(() => lits.run('assert-throws-error(-> identity("X"), "X", "Should throw X")')).toThrow()
-        expect(() => lits.run('assert-throws-error(-> throw("Y"), "X")')).toThrow()
+        expect(() => lits.run('assert-throws-error(-> identity("X"), "X", "Should throw X")')).toThrow(LitsError)
+        expect(() => lits.run('assert-throws-error(-> throw("Y"), "X")')).toThrow(LitsError)
         expect(() => lits.run('assert-throws-error(-> throw("X"), "X")')).not.toThrow()
       })
     })

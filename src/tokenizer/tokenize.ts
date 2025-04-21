@@ -18,11 +18,11 @@ export function tokenize(input: string, debug: boolean, filePath: FilePathParams
   }
 
   while (position < input.length) {
-    const tokenDescriptor = getCurrentToken(input, position)
-
     const sourceCodeInfo: SourceCodeInfo | undefined = debug
       ? createSourceCodeInfo(input, position, filePath)
       : undefined
+
+    const tokenDescriptor = getCurrentToken(input, position)
 
     if (!tokenDescriptor) {
       throw new LitsError(`Unrecognized character '${input[position]}'.`, sourceCodeInfo)

@@ -87,8 +87,6 @@ flatten([
   [foo, [4, ["ABC"]]],
   6,
 ])`,
-
-      'flatten(12)',
     ],
     noOperatorDocumentation: true,
   },

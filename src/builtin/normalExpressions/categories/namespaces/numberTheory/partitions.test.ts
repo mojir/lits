@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../../../Lits/Lits'
+import { LitsError } from '../../../../../errors'
 
 const lits = new Lits()
 describe('partitions', () => {
@@ -35,7 +36,7 @@ describe('partitions', () => {
       expect(lits.run('nth:count-partitions(4)')).toEqual(5)
       expect(lits.run('nth:count-partitions(5)')).toEqual(7)
       expect(lits.run('nth:count-partitions(6)')).toEqual(11)
-      expect(() => lits.run('nth:count-partitions(300)')).toThrow()
+      expect(() => lits.run('nth:count-partitions(300)')).toThrow(LitsError)
     })
   })
 })

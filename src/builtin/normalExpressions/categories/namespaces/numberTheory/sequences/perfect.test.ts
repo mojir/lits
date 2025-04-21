@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../../../../Lits/Lits'
+import { LitsError } from '../../../../../../errors'
 
 const lits = new Lits()
 describe('perfect', () => {
@@ -10,8 +11,8 @@ describe('perfect', () => {
     expect(lits.run('nth:perfect-seq(4)')).toEqual([6, 28, 496, 8128])
     expect(lits.run('nth:perfect-seq(7)')).toEqual([6, 28, 496, 8128, 33550336, 8589869056, 137438691328])
     expect(lits.run('nth:perfect-seq()')).toEqual([6, 28, 496, 8128, 33550336, 8589869056, 137438691328])
-    expect(() => lits.run('nth:perfect-seq(0)')).toThrow()
-    expect(() => lits.run('nth:perfect-seq(20)')).toThrow()
+    expect(() => lits.run('nth:perfect-seq(0)')).toThrow(LitsError)
+    expect(() => lits.run('nth:perfect-seq(20)')).toThrow(LitsError)
   })
 
   it('should return the correct nth term', () => {

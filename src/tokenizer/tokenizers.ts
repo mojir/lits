@@ -156,24 +156,34 @@ export const tokenizeNumber: Tokenizer<NumberToken> = (input, position) => {
 
     if (char === '_') {
       if (!decimalNumberRegExp.test(input[i - 1]!) || !decimalNumberRegExp.test(input[i + 1]!)) {
-        return NO_MATCH
+        if (i === start) {
+          return NO_MATCH
+        }
+        throw new LitsError(`Invalid number format at position ${i}.`, undefined)
       }
     }
 
     else if (char === '.') {
-      if (i === start || hasDecimalPoint || hasExponent) {
+      if (i === start) {
         return NO_MATCH
+      }
+      if (hasDecimalPoint || hasExponent) {
+        throw new LitsError(`Invalid number format at position ${i}.`, undefined)
       }
       hasDecimalPoint = true
     }
 
     else if (char === 'e' || char === 'E') {
-      if (i === start || hasExponent) {
+      if (i === start) {
         return NO_MATCH
       }
 
+      if (hasExponent) {
+        throw new LitsError(`Invalid number format at position ${i}.`, undefined)
+      }
+
       if (input[i - 1] === '.' || input[i - 1] === '+' || input[i - 1] === '-') {
-        return NO_MATCH
+        throw new LitsError(`Invalid number format at position ${i}.`, undefined)
       }
 
       if (input[i + 1] === '+' || input[i + 1] === '-') {
@@ -199,7 +209,7 @@ export const tokenizeNumber: Tokenizer<NumberToken> = (input, position) => {
 
   const nextChar = input[i]
   if (nextChar && !postNumberRegExp.test(nextChar)) {
-    return NO_MATCH
+    throw new LitsError(`Invalid number format at position ${i}.`, undefined)
   }
 
   return [length, ['Number', input.substring(position, i)]]

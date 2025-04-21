@@ -75,7 +75,7 @@ export interface SourceCodeInfo {
   filePath?: string
 }
 
-export function isSymbolToken<T extends string>(token: Token, symbolName?: T): token is SymbolToken<T> {
+export function isSymbolToken<T extends string>(token: Token | undefined | undefined, symbolName?: T): token is SymbolToken<T> {
   if (token?.[0] !== 'Symbol') {
     return false
   }
@@ -85,17 +85,17 @@ export function isSymbolToken<T extends string>(token: Token, symbolName?: T): t
   return true
 }
 
-export function assertSymbolToken<T extends string>(token: Token, symbolName?: T): asserts token is SymbolToken<T> {
+export function assertSymbolToken<T extends string>(token: Token | undefined | undefined, symbolName?: T): asserts token is SymbolToken<T> {
   if (!isSymbolToken(token, symbolName)) {
     throwUnexpectedToken('Symbol', undefined, token)
   }
 }
-export function asSymbolToken<T extends string>(token: Token, symbolName?: T): SymbolToken<T> {
+export function asSymbolToken<T extends string>(token: Token | undefined | undefined, symbolName?: T): SymbolToken<T> {
   assertSymbolToken(token, symbolName)
   return token
 }
 
-export function isReservedSymbolToken<T extends ValidReservedSymbol>(token: Token, symbolName?: T): token is ReservedSymbolToken<T> {
+export function isReservedSymbolToken<T extends ValidReservedSymbol>(token: Token | undefined | undefined, symbolName?: T): token is ReservedSymbolToken<T> {
   if (token?.[0] !== 'ReservedSymbol') {
     return false
   }
@@ -104,43 +104,43 @@ export function isReservedSymbolToken<T extends ValidReservedSymbol>(token: Toke
   }
   return true
 }
-export function assertReservedSymbolToken<T extends ValidReservedSymbol>(token: Token, symbolName?: T): asserts token is ReservedSymbolToken<T> {
+export function assertReservedSymbolToken<T extends ValidReservedSymbol>(token: Token | undefined | undefined, symbolName?: T): asserts token is ReservedSymbolToken<T> {
   if (!isReservedSymbolToken(token, symbolName)) {
     throwUnexpectedToken('ReservedSymbol', symbolName, token)
   }
 }
-export function asReservedSymbolToken<T extends ValidReservedSymbol>(token: Token, symbolName?: T): ReservedSymbolToken<T> {
+export function asReservedSymbolToken<T extends ValidReservedSymbol>(token: Token | undefined | undefined, symbolName?: T): ReservedSymbolToken<T> {
   assertReservedSymbolToken(token, symbolName)
   return token
 }
 
-export function isSingleLineCommentToken(token: Token): token is SingleLineCommentToken {
+export function isSingleLineCommentToken(token: Token | undefined): token is SingleLineCommentToken {
   return token?.[0] === 'SingleLineComment'
 }
-export function assertSingleLineCommentToken(token: Token): asserts token is SingleLineCommentToken {
+export function assertSingleLineCommentToken(token: Token | undefined): asserts token is SingleLineCommentToken {
   if (!isSingleLineCommentToken(token)) {
     throwUnexpectedToken('SingleLineComment', undefined, token)
   }
 }
-export function asSingleLineCommentToken(token: Token): SingleLineCommentToken {
+export function asSingleLineCommentToken(token: Token | undefined): SingleLineCommentToken {
   assertSingleLineCommentToken(token)
   return token
 }
 
-export function isMultiLineCommentToken(token: Token): token is MultiLineCommentToken {
+export function isMultiLineCommentToken(token: Token | undefined): token is MultiLineCommentToken {
   return token?.[0] === 'MultiLineComment'
 }
-export function assertMultiLineCommentToken(token: Token): asserts token is MultiLineCommentToken {
+export function assertMultiLineCommentToken(token: Token | undefined): asserts token is MultiLineCommentToken {
   if (!isMultiLineCommentToken(token)) {
     throwUnexpectedToken('MultiLineComment', undefined, token)
   }
 }
-export function asMultiLineCommentToken(token: Token): MultiLineCommentToken {
+export function asMultiLineCommentToken(token: Token | undefined): MultiLineCommentToken {
   assertMultiLineCommentToken(token)
   return token
 }
 
-export function isOperatorToken<T extends SymbolicOperator>(token: Token, operatorName?: T): token is OperatorToken<T> {
+export function isOperatorToken<T extends SymbolicOperator>(token: Token | undefined | undefined, operatorName?: T): token is OperatorToken<T> {
   if (token?.[0] !== 'Operator') {
     return false
   }
@@ -149,176 +149,173 @@ export function isOperatorToken<T extends SymbolicOperator>(token: Token, operat
   }
   return true
 }
-export function assertOperatorToken<T extends SymbolicOperator>(token: Token, operatorName?: T): asserts token is OperatorToken<T> {
+export function assertOperatorToken<T extends SymbolicOperator>(token: Token | undefined | undefined, operatorName?: T): asserts token is OperatorToken<T> {
   if (!isOperatorToken(token, operatorName)) {
-    if (operatorName) {
-      throw new LitsError(`Unexpected token: ${token}, expected operator ${operatorName}`, token[2])
-    }
     throwUnexpectedToken('Operator', operatorName, token)
   }
 }
-export function asOperatorToken<T extends SymbolicOperator>(token: Token, operatorName?: T): OperatorToken<T> {
+export function asOperatorToken<T extends SymbolicOperator>(token: Token | undefined | undefined, operatorName?: T): OperatorToken<T> {
   assertOperatorToken(token, operatorName)
   return token
 }
 
-export function isWhitespaceToken(token: Token): token is WhitespaceToken {
+export function isWhitespaceToken(token: Token | undefined): token is WhitespaceToken {
   return token?.[0] === 'Whitespace'
 }
-export function assertWhitespaceToken(token: Token): asserts token is WhitespaceToken {
+export function assertWhitespaceToken(token: Token | undefined): asserts token is WhitespaceToken {
   if (!isWhitespaceToken(token)) {
     throwUnexpectedToken('Whitespace', undefined, token)
   }
 }
-export function asWhitespaceToken(token: Token): WhitespaceToken {
+export function asWhitespaceToken(token: Token | undefined): WhitespaceToken {
   assertWhitespaceToken(token)
   return token
 }
 
-export function isNumberToken(token: Token): token is NumberToken {
+export function isNumberToken(token: Token | undefined): token is NumberToken {
   return token?.[0] === 'Number'
 }
-export function assertNumberToken(token: Token): asserts token is NumberToken {
+export function assertNumberToken(token: Token | undefined): asserts token is NumberToken {
   if (!isNumberToken(token)) {
     throwUnexpectedToken('Number', undefined, token)
   }
 }
-export function asNumberToken(token: Token): NumberToken {
+export function asNumberToken(token: Token | undefined): NumberToken {
   assertNumberToken(token)
   return token
 }
 
-export function isBasePrefixedNumberToken(token: Token): token is BasePrefixedNumberToken {
+export function isBasePrefixedNumberToken(token: Token | undefined): token is BasePrefixedNumberToken {
   return token?.[0] === 'BasePrefixedNumber'
 }
-export function assertBasePrefixedNumberToken(token: Token): asserts token is BasePrefixedNumberToken {
+export function assertBasePrefixedNumberToken(token: Token | undefined): asserts token is BasePrefixedNumberToken {
   if (!isBasePrefixedNumberToken(token)) {
     throwUnexpectedToken('BasePrefixedNumber', undefined, token)
   }
 }
-export function asBasePrefixedNumberToken(token: Token): BasePrefixedNumberToken {
+export function asBasePrefixedNumberToken(token: Token | undefined): BasePrefixedNumberToken {
   assertBasePrefixedNumberToken(token)
   return token
 }
 
-export function isLParenToken(token: Token): token is LParenToken {
+export function isLParenToken(token: Token | undefined): token is LParenToken {
   return token?.[0] === 'LParen'
 }
-export function assertLParenToken(token: Token): asserts token is LParenToken {
+export function assertLParenToken(token: Token | undefined): asserts token is LParenToken {
   if (!isLParenToken(token)) {
     throwUnexpectedToken('LParen', undefined, token)
   }
 }
-export function asLParenToken(token: Token): LParenToken {
+export function asLParenToken(token: Token | undefined): LParenToken {
   assertLParenToken(token)
   return token
 }
 
-export function isRParenToken(token: Token): token is RParenToken {
+export function isRParenToken(token: Token | undefined): token is RParenToken {
   return token?.[0] === 'RParen'
 }
-export function assertRParenToken(token: Token): asserts token is RParenToken {
+export function assertRParenToken(token: Token | undefined): asserts token is RParenToken {
   if (!isRParenToken(token)) {
     throwUnexpectedToken('RParen', undefined, token)
   }
 }
-export function asRParenToken(token: Token): RParenToken {
+export function asRParenToken(token: Token | undefined): RParenToken {
   assertRParenToken(token)
   return token
 }
 
-export function isLBracketToken(token: Token): token is LBracketToken {
+export function isLBracketToken(token: Token | undefined): token is LBracketToken {
   return token?.[0] === 'LBracket'
 }
-export function assertLBracketToken(token: Token): asserts token is LBracketToken {
+export function assertLBracketToken(token: Token | undefined): asserts token is LBracketToken {
   if (!isLBracketToken(token)) {
     throwUnexpectedToken('LBracket', undefined, token)
   }
 }
-export function asLBracketToken(token: Token): LBracketToken {
+export function asLBracketToken(token: Token | undefined): LBracketToken {
   assertLBracketToken(token)
   return token
 }
 
-export function isRBracketToken(token: Token): token is RBracketToken {
+export function isRBracketToken(token: Token | undefined): token is RBracketToken {
   return token?.[0] === 'RBracket'
 }
-export function assertRBracketToken(token: Token): asserts token is RBracketToken {
+export function assertRBracketToken(token: Token | undefined): asserts token is RBracketToken {
   if (!isRBracketToken(token)) {
     throwUnexpectedToken('RBracket', undefined, token)
   }
 }
-export function asRBracketToken(token: Token): RBracketToken {
+export function asRBracketToken(token: Token | undefined): RBracketToken {
   assertRBracketToken(token)
   return token
 }
 
-export function isLBraceToken(token: Token): token is LBraceToken {
+export function isLBraceToken(token: Token | undefined): token is LBraceToken {
   return token?.[0] === 'LBrace'
 }
-export function assertLBraceToken(token: Token): asserts token is LBraceToken {
+export function assertLBraceToken(token: Token | undefined): asserts token is LBraceToken {
   if (!isLBraceToken(token)) {
     throwUnexpectedToken('LBrace', undefined, token)
   }
 }
-export function asLBraceToken(token: Token): LBraceToken {
+export function asLBraceToken(token: Token | undefined): LBraceToken {
   assertLBraceToken(token)
   return token
 }
 
-export function isRBraceToken(token: Token): token is RBraceToken {
+export function isRBraceToken(token: Token | undefined): token is RBraceToken {
   return token?.[0] === 'RBrace'
 }
-export function assertRBraceToken(token: Token): asserts token is RBraceToken {
+export function assertRBraceToken(token: Token | undefined): asserts token is RBraceToken {
   if (!isRBraceToken(token)) {
     throwUnexpectedToken('RBrace', undefined, token)
   }
 }
-export function asRBraceToken(token: Token): RBraceToken {
+export function asRBraceToken(token: Token | undefined): RBraceToken {
   assertRBraceToken(token)
   return token
 }
 
-export function isStringToken(token: Token): token is StringToken {
+export function isStringToken(token: Token | undefined): token is StringToken {
   return token?.[0] === 'String'
 }
-export function assertStringToken(token: Token): asserts token is StringToken {
+export function assertStringToken(token: Token | undefined): asserts token is StringToken {
   if (!isStringToken(token)) {
     throwUnexpectedToken('String', undefined, token)
   }
 }
-export function asStringToken(token: Token): StringToken {
+export function asStringToken(token: Token | undefined): StringToken {
   assertStringToken(token)
   return token
 }
 
-export function isRegexpShorthandToken(token: Token): token is RegexpShorthandToken {
+export function isRegexpShorthandToken(token: Token | undefined): token is RegexpShorthandToken {
   return token?.[0] === 'RegexpShorthand'
 }
-export function assertRegexpShorthandToken(token: Token): asserts token is RegexpShorthandToken {
+export function assertRegexpShorthandToken(token: Token | undefined): asserts token is RegexpShorthandToken {
   if (!isRegexpShorthandToken(token)) {
     throwUnexpectedToken('RegexpShorthand', undefined, token)
   }
 }
-export function asRegexpShorthandToken(token: Token): RegexpShorthandToken {
+export function asRegexpShorthandToken(token: Token | undefined): RegexpShorthandToken {
   assertRegexpShorthandToken(token)
   return token
 }
 
-export function isA_BinaryOperatorToken(token: Token): token is OperatorToken<SymbolicBinaryOperator> {
+export function isA_BinaryOperatorToken(token: Token | undefined): token is OperatorToken<SymbolicBinaryOperator> {
   return token?.[0] === 'Operator' && isBinaryOperator(token[1])
 }
-export function assertA_BinaryOperatorToken(token: Token): asserts token is OperatorToken<SymbolicBinaryOperator> {
+export function assertA_BinaryOperatorToken(token: Token | undefined): asserts token is OperatorToken<SymbolicBinaryOperator> {
   if (!isA_BinaryOperatorToken(token)) {
     throwUnexpectedToken('Operator', undefined, token)
   }
 }
-export function asA_BinaryOperatorToken(token: Token): OperatorToken<SymbolicBinaryOperator> {
+export function asA_BinaryOperatorToken(token: Token | undefined): OperatorToken<SymbolicBinaryOperator> {
   assertA_BinaryOperatorToken(token)
   return token
 }
 
-function throwUnexpectedToken(expected: TokenType, expectedValue: string | undefined, actual: Token): never {
-  const actualOutput = `${actual[0]} '${actual[1]}'`
-  throw new LitsError(`Unexpected token: ${actualOutput}, expected ${expected}${expectedValue ? ` '${expectedValue}'` : ''}`, actual[2])
+function throwUnexpectedToken(expected: TokenType, expectedValue: string | undefined, actual: Token | undefined): never {
+  const actualOutput = actual ? `${actual[0]} '${actual[1]}'` : 'end of input'
+  throw new LitsError(`Unexpected token: ${actualOutput}, expected ${expected}${expectedValue ? ` '${expectedValue}'` : ''}`, actual?.[2])
 }

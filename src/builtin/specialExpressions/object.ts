@@ -27,7 +27,11 @@ export const objectSpecialExpression: BuiltinSpecialExpression<Any, ObjectNode> 
       }
       else {
         const key = evaluateNode(keyNode, contextStack)
-        const value = evaluateNode(params[i + 1]!, contextStack)
+        const valueNode = params[i + 1]
+        if (valueNode === undefined) {
+          throw new LitsError('Missing value for key', keyNode[2])
+        }
+        const value = evaluateNode(valueNode, contextStack)
         assertString(key, keyNode[2])
         result[key] = value
       }

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../../../../Lits/Lits'
+import { LitsError } from '../../../../../../errors'
 
 const lits = new Lits()
 describe('composite', () => {
@@ -8,7 +9,7 @@ describe('composite', () => {
     expect(lits.run('nth:composite-seq(2)')).toEqual([4, 6])
     expect(lits.run('nth:composite-seq(3)')).toEqual([4, 6, 8])
     expect(lits.run('nth:composite-seq(4)')).toEqual([4, 6, 8, 9])
-    expect(() => lits.run('nth:composite-seq(0)')).toThrow()
+    expect(() => lits.run('nth:composite-seq(0)')).toThrow(LitsError)
   })
 
   it('should return the correct nth term', () => {

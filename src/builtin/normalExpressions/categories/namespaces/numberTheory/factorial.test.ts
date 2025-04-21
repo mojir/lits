@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../../../Lits/Lits'
+import { LitsError } from '../../../../../errors'
 import { factorialOf } from './factorial'
 
 const lits = new Lits()
@@ -24,6 +25,6 @@ describe('nth:factorial', () => {
     expect(lits.run('nth:factorial(9)')).toEqual(362880)
     expect(lits.run('nth:factorial(10)')).toEqual(3628800)
     expect(lits.run('nth:factorial(20)')).toEqual(2432902008176640000)
-    expect(() => lits.run('nth:factorial(171)')).toThrow()
+    expect(() => lits.run('nth:factorial(171)')).toThrow(LitsError)
   })
 })

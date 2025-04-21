@@ -346,7 +346,12 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
       assertNumber(a, sourceCodeInfo, { integer: true, positive: true })
       assertNumber(m, sourceCodeInfo, { integer: true, positive: true })
 
-      return modInverse(a, m)
+      try {
+        return modInverse(a, m)
+      }
+      catch (error) {
+        throw new LitsError(error, sourceCodeInfo)
+      }
     },
     paramCount: 2,
   },
@@ -364,7 +369,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
       assertVector(remainders, sourceCodeInfo)
       assertVector(moduli, sourceCodeInfo)
       if (remainders.length !== moduli.length) {
-        throw new Error('Remainders and moduli must have the same length.')
+        throw new LitsError('Remainders and moduli must have the same length.', sourceCodeInfo)
       }
       try {
         return chineseRemainder(remainders, moduli)

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../../../../Lits/Lits'
+import { LitsError } from '../../../../../../errors'
 
 const lits = new Lits()
 describe('partition', () => {
@@ -309,8 +310,8 @@ describe('partition', () => {
       8030248384943040,
       8620496275465025,
     ])
-    expect(() => lits.run('nth:partition-seq(0)')).toThrow()
-    expect(() => lits.run('nth:partition-seq(300)')).toThrow()
+    expect(() => lits.run('nth:partition-seq(0)')).toThrow(LitsError)
+    expect(() => lits.run('nth:partition-seq(300)')).toThrow(LitsError)
   })
 
   it('should return the correct nth term', () => {

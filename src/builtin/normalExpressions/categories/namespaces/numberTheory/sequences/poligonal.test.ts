@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../../../../Lits/Lits'
+import { LitsError } from '../../../../../../errors'
 
 const lits = new Lits()
 describe('polygonal', () => {
@@ -8,8 +9,8 @@ describe('polygonal', () => {
     expect(lits.run('nth:polygonal-seq(4, 2)')).toEqual([1, 4])
     expect(lits.run('nth:polygonal-seq(5, 3)')).toEqual([1, 5, 12])
     expect(lits.run('nth:polygonal-seq(6, 5)')).toEqual([1, 6, 15, 28, 45])
-    expect(() => lits.run('nth:polygonal-seq(2, 1)')).toThrow()
-    expect(() => lits.run('nth:polygonal-seq(3, 0)')).toThrow()
+    expect(() => lits.run('nth:polygonal-seq(2, 1)')).toThrow(LitsError)
+    expect(() => lits.run('nth:polygonal-seq(3, 0)')).toThrow(LitsError)
   })
 
   it('should return the correct nth term', () => {

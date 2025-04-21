@@ -550,11 +550,11 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
       assertVector(vectorB, sourceCodeInfo)
 
       if (vectorA.length < 2) {
-        throw new Error('Vectors must have at least 2 elements')
+        throw new LitsError('Vectors must have at least 2 elements', sourceCodeInfo)
       }
 
       if (vectorA.length !== vectorB.length) {
-        throw new Error('Vectors must be of the same length')
+        throw new LitsError('Vectors must be of the same length', sourceCodeInfo)
       }
 
       assertNumber(lag, sourceCodeInfo, {

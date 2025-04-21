@@ -32,76 +32,81 @@ describe('parser', () => {
   })
 
   test('random samples0', () => {
-    expect(() => litsDebug.getUndefinedSymbols('let { x, ...x } := {};')).toThrow()
+    expect(() => litsDebug.getUndefinedSymbols('let { x, ...x } := {};')).toThrow(LitsError)
   })
 
   test('random samples', () => {
-    expect(() => litsDebug.run('let { x, ...x } := {};')).toThrow()
-    expect(() => litsDebug.run('let [ x as y ] := [];')).toThrow()
-    expect(() => litsDebug.run('let { ...x as y } := {};')).toThrow()
-    expect(() => litsDebug.run('let { ...x, y } := {};')).toThrow()
-    expect(() => litsDebug.run('let [x, y];')).toThrow()
-    expect(() => litsDebug.run('let [...x, y] := [];')).toThrow()
-    expect(() => litsDebug.run('let ...x := 1;')).toThrow()
-    expect(() => litsDebug.run('let { a, ...x := y } := {};')).toThrow()
-    expect(() => litsDebug.run('let x;')).toThrow()
-    expect(() => litsDebug.getUndefinedSymbols('function foo([,,a,...a]) a end; foo([1, 2, 3])')).toThrow()
-    expect(() => litsDebug.getUndefinedSymbols('function foo([,,a,...a]) a end; foo([1, 2, 3])')).toThrow()
-    expect(() => litsDebug.getUndefinedSymbols('function foo([,,a,a]) a end; foo([1, 2, 3])')).toThrow()
+    expect(() => litsDebug.run('let { x, ...x } := {};')).toThrow(LitsError)
+    expect(() => litsDebug.run('let [ x as y ] := [];')).toThrow(LitsError)
+    expect(() => litsDebug.run('let { ...x as y } := {};')).toThrow(LitsError)
+    expect(() => litsDebug.run('let { ...x, y } := {};')).toThrow(LitsError)
+    expect(() => litsDebug.run('let [x, y];')).toThrow(LitsError)
+    expect(() => litsDebug.run('let [...x, y] := [];')).toThrow(LitsError)
+    expect(() => litsDebug.run('let ...x := 1;')).toThrow(LitsError)
+    expect(() => litsDebug.run('let { a, ...x := y } := {};')).toThrow(LitsError)
+    expect(() => litsDebug.run('let x;')).toThrow(LitsError)
+    expect(() => litsDebug.run('0..1')).toThrow(LitsError)
+    expect(() => litsDebug.run('1e2e2')).toThrow(LitsError)
+    expect(() => litsDebug.run('match("Albert", #"as(d")')).toThrow(LitsError)
+    expect(() => litsDebug.run('let _0 := 0;')).not.toThrow()
+    expect(() => litsDebug.getUndefinedSymbols('function foo([,,a,...a]) a end; foo([1, 2, 3])')).toThrow(LitsError)
+    expect(() => litsDebug.getUndefinedSymbols('function foo([,,a,...a]) a end; foo([1, 2, 3])')).toThrow(LitsError)
+    expect(() => litsDebug.getUndefinedSymbols('function foo([,,a,a]) a end; foo([1, 2, 3])')).toThrow(LitsError)
     expect(() => litsDebug.getUndefinedSymbols('function foo([,,a]) a end; foo([1, 2, 3])')).not.toThrow()
     expect(() => litsDebug.run('function foo([,,a]) a end; foo([1, 2, 3])')).not.toThrow()
     expect(() => litsDebug.run('function foo({a}) a end; foo({})')).not.toThrow()
-    expect(() => litsDebug.run('function foo({a, [a]}) a end;')).toThrow()
-    expect(() => litsDebug.run('function foo({a a}) a end;')).toThrow()
-    expect(() => litsDebug.run('function foo({a, a}) a end;')).toThrow()
-    expect(() => litsDebug.run('function foo({a, b as a}) a end;')).toThrow()
-    expect(() => litsDebug.run('function foo(let a := 1;) 1 end')).toThrow()
+    expect(() => litsDebug.run('function foo({a, [a]}) a end;')).toThrow(LitsError)
+    expect(() => litsDebug.run('function foo({a a}) a end;')).toThrow(LitsError)
+    expect(() => litsDebug.run('function foo({a, a}) a end;')).toThrow(LitsError)
+    expect(() => litsDebug.run('function foo({a, b as a}) a end;')).toThrow(LitsError)
+    expect(() => litsDebug.run('function foo(let a := 1;) 1 end')).toThrow(LitsError)
     expect(() => litsDebug.run('"\\t\\r\\n\\b\\f"')).not.toThrow()
     expect(() => litsDebug.run('E')).not.toThrow()
     expect(() => litsDebug.run('123')).not.toThrow()
     expect(() => litsDebug.run('let \'a\\\\b\' := 1;')).not.toThrow()
     expect(() => litsDebug.run('let \'a\\\'b\' := 1;')).not.toThrow()
     expect(() => litsDebug.run('let \'a\\ab\' := 1;')).not.toThrow()
-    expect(() => litsDebug.run('export fun a(b) 1, end')).toThrow()
-    expect(() => litsDebug.run('export function a(b) 1, end')).toThrow()
+    expect(() => litsDebug.run('`')).toThrow(LitsError)
+    expect(() => litsDebug.run('export fun a(b) 1, end')).toThrow(LitsError)
+    expect(() => litsDebug.run('export function a(b) 1, end')).toThrow(LitsError)
     expect(() => litsDebug.run('export function a(b) 1; 2 end')).not.toThrow()
-    expect(() => litsDebug.run('function a(b) 1, end')).toThrow()
+    expect(() => litsDebug.run('function a(b) 1, end')).toThrow(LitsError)
     expect(() => litsDebug.run('switch 1 case 1 then 1; 2 end')).not.toThrow()
-    expect(() => litsDebug.run('switch 1 case 1 then 1, end')).toThrow()
+    expect(() => litsDebug.run('switch 1 case 1 then 1, end')).toThrow(LitsError)
     expect(() => litsDebug.run('cond case 1 then 1; 2 end')).not.toThrow()
-    expect(() => litsDebug.run('cond case 1 then 1, end')).toThrow()
+    expect(() => litsDebug.run('cond case 1 then 1, end')).toThrow(LitsError)
     expect(() => litsDebug.run('if true then 1 else 1; 2 end')).not.toThrow()
-    expect(() => litsDebug.run('if true then 1 else 1, end')).toThrow()
+    expect(() => litsDebug.run('if true then 1 else 1, end')).toThrow(LitsError)
     expect(() => litsDebug.run('if true then 1; 2 end')).not.toThrow()
-    expect(() => litsDebug.run('if true then 1; 2, end')).toThrow()
-    expect(() => litsDebug.run('for each a in [1, 2], when a = 2, when a = 1 do 1 end')).toThrow()
-    expect(() => litsDebug.run('for each a in [1, 2], while a = 2, while a = 1 do 1 end')).toThrow()
-    expect(() => litsDebug.run('for each a in [1, 2], let a := 2; 2 do 1 end')).toThrow()
+    expect(() => litsDebug.run('if true then 1; 2, end')).toThrow(LitsError)
+    expect(() => litsDebug.run('for each a in [1, 2], when a = 2, when a = 1 do 1 end')).toThrow(LitsError)
+    expect(() => litsDebug.run('for each a in [1, 2], while a = 2, while a = 1 do 1 end')).toThrow(LitsError)
+    expect(() => litsDebug.run('for each a in [1, 2], let a := 2; 2 do 1 end')).toThrow(LitsError)
     expect(() => litsDebug.run('for each a in [1, 2] do 1; 2 end')).not.toThrow()
-    expect(() => litsDebug.run('for each a in [1, 2], when a = 1, end')).toThrow()
-    expect(() => litsDebug.run('for each a in [1, 2] do 1, end')).toThrow()
-    expect(() => litsDebug.run('for each a in [1, 2] 2 do 1 end')).toThrow()
-    expect(() => litsDebug.run('for each a in [1, 2], 2 do 1 end')).toThrow()
+    expect(() => litsDebug.run('for each a in [1, 2], when a = 1, end')).toThrow(LitsError)
+    expect(() => litsDebug.run('for each a in [1, 2] do 1, end')).toThrow(LitsError)
+    expect(() => litsDebug.run('for each a in [1, 2] 2 do 1 end')).toThrow(LitsError)
+    expect(() => litsDebug.run('for each a in [1, 2], 2 do 1 end')).toThrow(LitsError)
     expect(() => litsDebug.run('try 1; 2 catch 2; 3 end')).not.toThrow()
-    expect(() => litsDebug.run('try 1; 2 catch 2, end')).toThrow()
+    expect(() => litsDebug.run('try 1; 2 catch 2, end')).toThrow(LitsError)
     expect(() => lits.getUndefinedSymbols('loop let [,x] := [1, 2] do 1 end')).not.toThrow()
     expect(() => litsDebug.run('loop let [,x] := [1, 2] do 1 end')).not.toThrow()
-    expect(() => litsDebug.run('loop let x := 2 do 1, end')).toThrow()
-    expect(() => litsDebug.run('loop do 1 end')).toThrow()
-    expect(() => litsDebug.run('do 1, end')).toThrow()
+    expect(() => litsDebug.run('loop let x := 2 do 1, end')).toThrow(LitsError)
+    expect(() => litsDebug.run('loop do 1 end')).toThrow(LitsError)
+    expect(() => litsDebug.run('do 1, end')).toThrow(LitsError)
     expect(() => litsDebug.run('do 1 end')).not.toThrow()
     expect(() => litsDebug.run('null ?? 1')).not.toThrow()
-    expect(() => litsDebug.run('-> $ + $1')).toThrow()
-    expect(() => litsDebug.run('-> $ + $21')).toThrow()
+    expect(() => litsDebug.run('-> $ + $1')).toThrow(LitsError)
+    expect(() => litsDebug.run('-> $ + $21')).toThrow(LitsError)
     expect(() => litsDebug.run('(a) -> a')).not.toThrow()
-    expect(() => litsDebug.run('(...a, ...b) -> a')).toThrow()
-    expect(() => litsDebug.run('(...a, let a := 1;) -> a')).toThrow()
-    expect(() => litsDebug.run('(...a, let a := 1,,) -> a')).toThrow()
+    expect(() => litsDebug.run('(...a, ...b) -> a')).toThrow(LitsError)
+    expect(() => litsDebug.run('(...a, let a := 1;) -> a')).toThrow(LitsError)
+    expect(() => litsDebug.run('(...a, let a := 1,,) -> a')).toThrow(LitsError)
     expect(litsDebug.run('{ a := 1 }.a')).toBe(1)
-    expect(() => litsDebug.run('fn()')).toThrow()
-    expect(() => litsDebug.run('{ a := 1; b := 2 }')).toThrow()
-    expect(() => litsDebug.run('{ a := 1 }.1')).toThrow()
-    expect(() => lits.run('do export let a := 1; end')).toThrow()
+    expect(() => litsDebug.run('fn()')).toThrow(LitsError)
+    expect(() => litsDebug.run('{ a := 1; b := 2 }')).toThrow(LitsError)
+    expect(() => litsDebug.run('{ a := 1 }.1')).toThrow(LitsError)
+    expect(() => lits.run('do export let a := 1; end')).toThrow(LitsError)
   })
 
   describe('const MAX_SAFE_INTEGER', () => {
@@ -125,7 +130,7 @@ describe('parser', () => {
   describe('const MIN_VALUE', () => {
     it('samples', () => {
       expect(lits.run('MIN_VALUE')).toBe(Number.MIN_VALUE)
-      expect(() => lits.run('(min_value :1)')).toThrow()
+      expect(() => lits.run('(min_value :1)')).toThrow(LitsError)
     })
   })
 
@@ -510,16 +515,16 @@ describe('parser', () => {
     })
   })
 
-  describe('errors', () => {
+  describe('errors.', () => {
     test('unknown operator', () => {
-      expect(() => lits.run('2 # 3')).toThrow()
-      expect(() => lits.run('(1 + 2]')).toThrow()
-      expect(() => lits.run('abs 2')).toThrow()
-      expect(() => lits.run('{ 2 := 1 }')).toThrow()
-      expect(() => lits.run('{ x := 1 y := 2 }')).toThrow()
-      expect(() => lits.run('[1 2]')).toThrow()
-      expect(() => lits.run('if(1)')).toThrow() // To few parameters
-      expect(() => lits.run(']')).toThrow()
+      expect(() => lits.run('2 # 3')).toThrow(LitsError)
+      expect(() => lits.run('(1 + 2]')).toThrow(LitsError)
+      expect(() => lits.run('abs 2')).toThrow(LitsError)
+      expect(() => lits.run('{ 2 := 1 }')).toThrow(LitsError)
+      expect(() => lits.run('{ x := 1 y := 2 }')).toThrow(LitsError)
+      expect(() => lits.run('[1 2]')).toThrow(LitsError)
+      expect(() => lits.run('if(1)')).toThrow(LitsError) // To few parameters
+      expect(() => lits.run(']')).toThrow(LitsError)
     })
   })
 
@@ -664,7 +669,7 @@ describe('parser', () => {
         end;
         foo()`)).toBe(10)
     })
-    expect(() => lits.run('export let a := 10; let a := 2;')).toThrow()
+    expect(() => lits.run('export let a := 10; let a := 2;')).toThrow(LitsError)
   })
 
   test('multinine comment', () => {
@@ -696,7 +701,7 @@ describe('parser', () => {
       do
         let a := 2;
       end;
-      a`)).toThrow() // a is not defined
+      a`)).toThrow(LitsError) // a is not defined
     })
   })
 
@@ -716,6 +721,7 @@ describe('parser', () => {
       expect(lits.run('{ a := 10, b := 20 }')).toEqual({ a: 10, b: 20 })
       expect(lits.run('{}')).toEqual({})
       expect(lits.run('{ x := 1 + 1, y := 2 * 3 }')).toEqual({ x: 2, y: 6 })
+      expect(() => lits.run('{ 1 := 1 + 1, y := 2 * 3 }')).toThrow(LitsError)
     })
 
     it('supports nested objects', () => {
@@ -827,8 +833,8 @@ end;
 foo(1, 2)`)).toBe(3)
     })
     test('errors', () => {
-      expect(() => lits.run('function foo(...rest := 1) rest end')).toThrow()
-      expect(() => lits.run('function foo(a := 1, b) rest end')).toThrow()
+      expect(() => lits.run('function foo(...rest := 1) rest end')).toThrow(LitsError)
+      expect(() => lits.run('function foo(a := 1, b) rest end')).toThrow(LitsError)
     })
   })
 
@@ -884,6 +890,14 @@ foo(1, 2)`)).toBe(3)
 
   describe('for', () => {
     test('empty collections', () => {
+      expect(() => lits.run(`
+        for each x in [] 1 do
+          x
+        end`)).toThrow(LitsError)
+      expect(() => lits.run(`
+          for each x in [1, 2, 3], while x < 1 1 do
+            x
+          end`)).toThrow(LitsError)
       expect(lits.run(`
         for each x in [] do
           x
@@ -1223,8 +1237,8 @@ foo(1, 2)`)).toBe(3)
       ])
     })
     test('error cases', () => {
-      expect(() => lits.run('for each x in [0, 1, 2, 3, 4, 5], let y := x * 3, while even?(y)  y end')).toThrow()
-      expect(() => lits.run('for each x in [0, 1, 2, 3, 4, 5], let { x := 10 } do y')).toThrow()
+      expect(() => lits.run('for each x in [0, 1, 2, 3, 4, 5], let y := x * 3, while even?(y)  y end')).toThrow(LitsError)
+      expect(() => lits.run('for each x in [0, 1, 2, 3, 4, 5], let { x := 10 } do y')).toThrow(LitsError)
     })
   })
 
@@ -1275,8 +1289,8 @@ foo(1, 2)`)).toBe(3)
 
   describe('error handling', () => {
     it('throws on invalid syntax', () => {
-      expect(() => lits.run('4 + ')).toThrow()
-      expect(() => lits.run('(4 + 5')).toThrow()
+      expect(() => lits.run('4 + ')).toThrow(LitsError)
+      expect(() => lits.run('(4 + 5')).toThrow(LitsError)
     })
   })
 

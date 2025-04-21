@@ -332,7 +332,7 @@ describe('vector functions', () => {
       expect(lits.run('vec:ecdf([1, 2, 2, 3, 2, 6, 4, 3, 2, 4, 1, 3, 2, 9, 10, 12], 5)')).toEqual(0.75)
       expect(lits.run('vec:ecdf([1], 3)')).toEqual(1)
       expect(lits.run('vec:ecdf([1], 0)')).toEqual(0)
-      expect(() => lits.run('vec:ecdf([], 1)')).toThrow()
+      expect(() => lits.run('vec:ecdf([], 1)')).toThrow(LitsError)
     })
   })
   describe('vec:outliers?', () => {

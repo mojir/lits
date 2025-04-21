@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../../../../Lits/Lits'
+import { LitsError } from '../../../../../../errors'
 
 const lits = new Lits()
 describe('juggler', () => {
@@ -14,7 +15,7 @@ describe('juggler', () => {
       2,
       1,
     ])
-    expect(() => lits.run('nth:juggler-seq(0)')).toThrow()
-    expect(() => lits.run('nth:juggler-seq(58025)')).toThrow()
+    expect(() => lits.run('nth:juggler-seq(0)')).toThrow(LitsError)
+    expect(() => lits.run('nth:juggler-seq(58025)')).toThrow(LitsError)
   })
 })

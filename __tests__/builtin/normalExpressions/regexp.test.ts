@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../src/Lits/Lits'
 import { regexpEquals } from '../../testUtils'
+import { LitsError } from '../../../src/errors'
 
 describe('regexp functions', () => {
   for (const lits of [new Lits(), new Lits({ debug: true })]) {
@@ -12,17 +13,17 @@ describe('regexp functions', () => {
         expect(regexpEquals(lits.run('regexp("^abc$", "ig")'), /^abc$/gi)).toBe(true)
         // eslint-disable-next-line prefer-regex-literals
         expect(regexpEquals(lits.run('regexp("")'), new RegExp(''))).toBe(true)
-        expect(() => lits.run('regexp("(")')).toThrow()
-        expect(() => lits.run('regexp()')).toThrow()
-        expect(() => lits.run('regexp(1)')).toThrow()
-        expect(() => lits.run('regexp(null)')).toThrow()
-        expect(() => lits.run('regexp(undefined)')).toThrow()
-        expect(() => lits.run('regexp(true)')).toThrow()
-        expect(() => lits.run('regexp(false)')).toThrow()
-        expect(() => lits.run('regexp([])')).toThrow()
-        expect(() => lits.run('regexp(object())')).toThrow()
-        expect(() => lits.run('regexp("" "ab")')).toThrow()
-        expect(() => lits.run('regexp("abc" "g" "extra")')).toThrow()
+        expect(() => lits.run('regexp("(")')).toThrow(LitsError)
+        expect(() => lits.run('regexp()')).toThrow(LitsError)
+        expect(() => lits.run('regexp(1)')).toThrow(LitsError)
+        expect(() => lits.run('regexp(null)')).toThrow(LitsError)
+        expect(() => lits.run('regexp(undefined)')).toThrow(LitsError)
+        expect(() => lits.run('regexp(true)')).toThrow(LitsError)
+        expect(() => lits.run('regexp(false)')).toThrow(LitsError)
+        expect(() => lits.run('regexp([])')).toThrow(LitsError)
+        expect(() => lits.run('regexp(object())')).toThrow(LitsError)
+        expect(() => lits.run('regexp("" "ab")')).toThrow(LitsError)
+        expect(() => lits.run('regexp("abc" "g" "extra")')).toThrow(LitsError)
       })
 
       it('email regexp', () => {
@@ -67,9 +68,9 @@ describe('regexp functions', () => {
         expect(lits.run('match([], regexp("^abc$"))')).toBeNull()
         expect(lits.run('match(object(), regexp("^abc$"))')).toBeNull()
 
-        expect(() => lits.run('match(regexp("^abc$"))')).toThrow()
-        expect(() => lits.run('match("asd")')).toThrow()
-        expect(() => lits.run('match("x" regexp("^abc$") "x")')).toThrow()
+        expect(() => lits.run('match(regexp("^abc$"))')).toThrow(LitsError)
+        expect(() => lits.run('match("asd")')).toThrow(LitsError)
+        expect(() => lits.run('match("x" regexp("^abc$") "x")')).toThrow(LitsError)
       })
     })
 
@@ -80,12 +81,12 @@ describe('regexp functions', () => {
         expect(lits.run('replace-all("abcabcABCABC", regexp("a"), "A")')).toEqual('AbcAbcABCABC')
         expect(lits.run('replace-all("abcabcABCABC", regexp("a", "g"), "A")')).toEqual('AbcAbcABCABC')
         expect(lits.run('replace-all("abcabcABCABC", regexp("a", "gi"), "-")')).toEqual('-bc-bc-BC-BC')
-        expect(() => lits.run('replace-all("abcabcABCABC", regexp("^abc$"), 1)')).toThrow()
-        expect(() => lits.run('replace-all("abcabcABCABC", regexp("^abc$"), null)')).toThrow()
-        expect(() => lits.run('replace-all("abcabcABCABC", regexp("^abc$"), true)')).toThrow()
-        expect(() => lits.run('replace-all("abcabcABCABC", regexp("^abc$"), false)')).toThrow()
-        expect(() => lits.run('replace-all("abcabcABCABC", regexp("^abc$"), [])')).toThrow()
-        expect(() => lits.run('replace-all("abcabcABCABC", regexp("^abc$"), {})')).toThrow()
+        expect(() => lits.run('replace-all("abcabcABCABC", regexp("^abc$"), 1)')).toThrow(LitsError)
+        expect(() => lits.run('replace-all("abcabcABCABC", regexp("^abc$"), null)')).toThrow(LitsError)
+        expect(() => lits.run('replace-all("abcabcABCABC", regexp("^abc$"), true)')).toThrow(LitsError)
+        expect(() => lits.run('replace-all("abcabcABCABC", regexp("^abc$"), false)')).toThrow(LitsError)
+        expect(() => lits.run('replace-all("abcabcABCABC", regexp("^abc$"), [])')).toThrow(LitsError)
+        expect(() => lits.run('replace-all("abcabcABCABC", regexp("^abc$"), {})')).toThrow(LitsError)
       })
     })
     describe('replace', () => {
@@ -95,13 +96,13 @@ describe('regexp functions', () => {
         expect(lits.run('replace("abcabcABCABC", regexp("a"), "A")')).toEqual('AbcabcABCABC')
         expect(lits.run('replace("abcabcABCABC", regexp("a", "g"), "A")')).toEqual('AbcAbcABCABC')
         expect(lits.run('replace("abcabcABCABC", regexp("a", "gi"), "-")')).toEqual('-bc-bc-BC-BC')
-        expect(() => lits.run('replace("abcabcABCABC", regexp("^abc$") 1)')).toThrow()
-        expect(() => lits.run('replace("abcabcABCABC", regexp("^abc$") null)')).toThrow()
-        expect(() => lits.run('replace("abcabcABCABC", regexp("^abc$") undefined)')).toThrow()
-        expect(() => lits.run('replace("abcabcABCABC", regexp("^abc$") true)')).toThrow()
-        expect(() => lits.run('replace("abcabcABCABC", regexp("^abc$") false)')).toThrow()
-        expect(() => lits.run('replace("abcabcABCABC", regexp("^abc$") [])')).toThrow()
-        expect(() => lits.run('replace("abcabcABCABC", regexp("^abc$") object())')).toThrow()
+        expect(() => lits.run('replace("abcabcABCABC", regexp("^abc$") 1)')).toThrow(LitsError)
+        expect(() => lits.run('replace("abcabcABCABC", regexp("^abc$") null)')).toThrow(LitsError)
+        expect(() => lits.run('replace("abcabcABCABC", regexp("^abc$") undefined)')).toThrow(LitsError)
+        expect(() => lits.run('replace("abcabcABCABC", regexp("^abc$") true)')).toThrow(LitsError)
+        expect(() => lits.run('replace("abcabcABCABC", regexp("^abc$") false)')).toThrow(LitsError)
+        expect(() => lits.run('replace("abcabcABCABC", regexp("^abc$") [])')).toThrow(LitsError)
+        expect(() => lits.run('replace("abcabcABCABC", regexp("^abc$") object())')).toThrow(LitsError)
       })
     })
   }

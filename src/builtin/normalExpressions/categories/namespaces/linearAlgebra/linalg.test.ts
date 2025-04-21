@@ -142,7 +142,7 @@ describe('linalg functions', () => {
       // Single element array
       expect(lits.run('lin:normalize-log([42])')).toEqual([0])
 
-      expect(() => lits.run('lin:normalize-log([-42])')).toThrow()
+      expect(() => lits.run('lin:normalize-log([-42])')).toThrow(LitsError)
     })
   })
   describe('lin:angle', () => {
@@ -628,8 +628,8 @@ describe('linalg functions', () => {
       expect(lits.run('lin:cross-correlation([1, 2, 3, 4, 5], [1, 2, 3, 4, 5], -1)')).toBeCloseTo(1)
       expect(lits.run('lin:cross-correlation([1, 2, 3, 4, 5], [5, 4, 3, 2, 1], -1)')).toBeCloseTo(-1)
 
-      expect(() => lits.run('lin:cross-correlation([1, 2, 3, 4, 5, 6], [5, 4, 3, 2, 1], -1)')).toThrow()
-      expect(() => lits.run('lin:cross-correlation([1], [5], -1)')).toThrow()
+      expect(() => lits.run('lin:cross-correlation([1, 2, 3, 4, 5, 6], [5, 4, 3, 2, 1], -1)')).toThrow(LitsError)
+      expect(() => lits.run('lin:cross-correlation([1], [5], -1)')).toThrow(LitsError)
     })
   })
   describe('lin:rref', () => {
@@ -684,7 +684,7 @@ describe('linalg functions', () => {
       // Small values / precision test
       expect(lits.run('lin:solve([[1, 1], [2, 2]], [5, 7])')).toBeNull()
 
-      expect(() => lits.run('lin:solve([[1, 1], [2, 2]], [5, 7, 3])')).toThrow()
+      expect(() => lits.run('lin:solve([[1, 1], [2, 2]], [5, 7, 3])')).toThrow(LitsError)
 
       // Larger system (4×4)
       expect(lits.run(`lin:solve([

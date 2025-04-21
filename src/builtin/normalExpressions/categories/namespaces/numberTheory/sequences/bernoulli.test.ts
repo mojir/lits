@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../../../../Lits/Lits'
+import { LitsError } from '../../../../../../errors'
 
 const lits = new Lits()
 describe('bernoulli', () => {
@@ -11,7 +12,7 @@ describe('bernoulli', () => {
     expect((lits.run('nth:bernoulli-seq(7)') as number[])[4]).toBeCloseTo(-1 / 30, 10)
     expect((lits.run('nth:bernoulli-seq(7)') as number[])[5]).toBe(0)
     expect((lits.run('nth:bernoulli-seq(7)') as number[])[6]).toBeCloseTo(1 / 42, 10)
-    expect(() => lits.run('nth:bernoulli-seq(0)')).toThrow()
+    expect(() => lits.run('nth:bernoulli-seq(0)')).toThrow(LitsError)
   })
 
   it('should return the correct nth term', () => {

@@ -9,7 +9,7 @@ describe('vec:gini-coefficient', () => {
     expect(lits.run('vec:gini-coefficient([1, 2, 3])')).toEqual(0.22222222222222232)
     expect(lits.run('vec:gini-coefficient([1, 1, 3])')).toEqual(0.26666666666666683)
     expect(lits.run('vec:gini-coefficient([0, 0, 0])')).toEqual(0)
-    expect(() => lits.run('vec:gini-coefficient([-1, 0, 0])')).toThrow()
+    expect(() => lits.run('vec:gini-coefficient([-1, 0, 0])')).toThrow(LitsError)
     expect(() => lits.run('vec:gini-coefficient([])')).toThrowError(LitsError)
   })
   it('should calculate the moving gini-coefficient of a vector', () => {

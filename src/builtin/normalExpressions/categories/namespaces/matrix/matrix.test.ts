@@ -9,7 +9,7 @@ describe('matrix', () => {
       expect(lits.run('mat:mul([[1, 2], [3, 4]], [[5, 6], [7, 8]])')).toEqual([[19, 22], [43, 50]])
       expect(lits.run('mat:mul([[1, 2, 3], [4, 5, 6]], [[7, 8], [9, 10], [11, 12]])')).toEqual([[58, 64], [139, 154]])
       expect(lits.run('mat:mul([[2]], [[3]])')).toEqual([[6]])
-      expect(() => lits.run('mat:mul([[2, 1]], [[3, 4]])')).toThrow()
+      expect(() => lits.run('mat:mul([[2, 1]], [[3, 4]])')).toThrow(LitsError)
     })
   })
   describe('mat:det', () => {
@@ -24,7 +24,7 @@ describe('matrix', () => {
       expect(lits.run('mat:inv([[2, 3], [5, 7]])')).toEqual([[-7, 3], [5, -2]])
     })
     it('should throw an error for non-invertible matrices', () => {
-      expect(() => lits.run('mat:inv([[1, 2], [2, 4]])')).toThrow()
+      expect(() => lits.run('mat:inv([[1, 2], [2, 4]])')).toThrow(LitsError)
     })
   })
   describe('mat:adj', () => {
@@ -183,8 +183,8 @@ describe('matrix', () => {
       ])
     })
     it('should throw an error for non-positive integer sizes', () => {
-      expect(() => lits.run('mat:hilbert(-1)')).toThrow()
-      expect(() => lits.run('mat:hilbert(0)')).toThrow()
+      expect(() => lits.run('mat:hilbert(-1)')).toThrow(LitsError)
+      expect(() => lits.run('mat:hilbert(0)')).toThrow(LitsError)
     })
   })
   describe('mat:vandermonde', () => {
@@ -200,8 +200,8 @@ describe('matrix', () => {
       ])
     })
     it('should throw an error for non-positive integer sizes', () => {
-      expect(() => lits.run('mat:vandermonde(-1)')).toThrow()
-      expect(() => lits.run('mat:vandermonde(0)')).toThrow()
+      expect(() => lits.run('mat:vandermonde(-1)')).toThrow(LitsError)
+      expect(() => lits.run('mat:vandermonde(0)')).toThrow(LitsError)
     })
   })
   describe('mat:band', () => {
@@ -219,12 +219,12 @@ describe('matrix', () => {
       ])
     })
     it('should throw an error for non-positive integer sizes', () => {
-      expect(() => lits.run('mat:band(-1)')).toThrow()
-      expect(() => lits.run('mat:band(0)')).toThrow()
+      expect(() => lits.run('mat:band(-1)')).toThrow(LitsError)
+      expect(() => lits.run('mat:band(0)')).toThrow(LitsError)
     })
     it('should throw an error for invalid bands', () => {
-      expect(() => lits.run('mat:band(3, -1)')).toThrow()
-      expect(() => lits.run('mat:band(3, 4)')).toThrow()
+      expect(() => lits.run('mat:band(3, -1)')).toThrow(LitsError)
+      expect(() => lits.run('mat:band(3, 4)')).toThrow(LitsError)
     })
   })
   describe('mat:banded?', () => {

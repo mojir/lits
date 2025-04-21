@@ -1,3 +1,4 @@
+import { LitsError } from '../../../errors'
 import type { RegularExpression } from '../../../parser/types'
 import { assertRegularExpression, assertStringOrRegularExpression, isRegularExpression } from '../../../typeGuards/lits'
 import { assertString, isString } from '../../../typeGuards/string'
@@ -10,8 +11,14 @@ export const regexpNormalExpression: BuiltinNormalExpressions = {
       assertString(sourceArg, sourceCodeInfo)
       const source = sourceArg || '(?:)'
       const flags = typeof flagsArg === 'string' ? flagsArg : ''
-      // eslint-disable-next-line no-new
-      new RegExp(source, flags) // Throws if invalid regexp
+
+      try {
+        // eslint-disable-next-line no-new
+        new RegExp(source, flags) // Throws if invalid regexp
+      }
+      catch (e) {
+        throw new LitsError(`Invalid regular expression: ${source} ${flags}`, sourceCodeInfo)
+      }
       return {
         [REGEXP_SYMBOL]: true,
         sourceCodeInfo,
@@ -28,7 +35,6 @@ export const regexpNormalExpression: BuiltinNormalExpressions = {
         return null
 
       const regExp = new RegExp(regexp.s, regexp.f)
-
       const match = regExp.exec(text)
       if (match)
         return [...match]
@@ -54,7 +60,6 @@ export const regexpNormalExpression: BuiltinNormalExpressions = {
       assertStringOrRegularExpression(regexp, sourceCodeInfo)
       assertString(value, sourceCodeInfo)
       const matcher = isRegularExpression(regexp) ? new RegExp(regexp.s, `${regexp.f.includes('g') ? regexp.f : `${regexp.f}g`}`) : regexp
-
       return str.replaceAll(matcher, value)
     },
     paramCount: 3,
