@@ -171,6 +171,7 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
       return transpose(grid)
     },
     paramCount: 1,
+    aliases: ['grid:tr'],
   },
   'grid:flip-h': {
     evaluate: ([grid], sourceCodeInfo): Any[][] => {

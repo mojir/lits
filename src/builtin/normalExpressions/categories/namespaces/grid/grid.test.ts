@@ -122,7 +122,7 @@ describe('grid', () => {
         ['father', 'mother', 'son'],
         [10, 20, 30],
       ])
-      expect(lits.run(`grid:transpose(${exampleGrid2})`)).toEqual([
+      expect(lits.run(`grid:tr(${exampleGrid2})`)).toEqual([
         ['Albert', 'Nina', 'Kian'],
         ['father', 'mother', 'son'],
       ])

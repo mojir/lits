@@ -272,6 +272,7 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
       `grid:transpose(${exampleGrid2})`,
       `grid:transpose(${exampleGrid3})`,
     ],
+    aliases: ['grid:tr'],
   },
   'grid:flip-h': {
     title: 'grid:flip-h',

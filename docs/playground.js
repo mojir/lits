@@ -6504,6 +6504,7 @@ var Playground = (function (exports) {
                 return transpose(grid);
             },
             paramCount: 1,
+            aliases: ['grid:tr'],
         },
         'grid:flip-h': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -18202,6 +18203,7 @@ var Playground = (function (exports) {
                 "grid:transpose(".concat(exampleGrid2, ")"),
                 "grid:transpose(".concat(exampleGrid3, ")"),
             ],
+            aliases: ['grid:tr'],
         },
         'grid:flip-h': {
             title: 'grid:flip-h',
