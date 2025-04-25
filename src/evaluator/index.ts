@@ -27,6 +27,7 @@ import { assertNumber, isNumber } from '../typeGuards/number'
 import { assertString } from '../typeGuards/string'
 import { toAny } from '../utils'
 import { valueToString } from '../utils/debug/debugTools'
+import { FUNCTION_SYMBOL } from '../utils/symbols'
 import type { ContextStack } from './ContextStack'
 import { functionExecutors } from './functionExecutors'
 
@@ -106,7 +107,7 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
     if (placeholders.length > 0) {
       const fn = evaluateNode(nameSymbol, contextStack)
       const partialFunction: PartialFunction = {
-        '^^fn^^': true,
+        [FUNCTION_SYMBOL]: true,
         'function': asFunctionLike(fn, sourceCodeInfo),
         'functionType': 'Partial',
         params,
@@ -134,7 +135,7 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
     const fn = asFunctionLike(evaluateNode(fnNode, contextStack), sourceCodeInfo)
     if (placeholders.length > 0) {
       const partialFunction: PartialFunction = {
-        '^^fn^^': true,
+        [FUNCTION_SYMBOL]: true,
         'function': asFunctionLike(fn, sourceCodeInfo),
         'functionType': 'Partial',
         params,

@@ -93,6 +93,15 @@ describe('grid', () => {
       expect(lits.run(`grid:shape(${exampleGrid3})`)).toEqual([2, 2])
     })
   })
+  describe('grid:fill', () => {
+    it('should fill the grid with the given value', () => {
+      expect(lits.run(`grid:fill(3, 3, 0)`)).toEqual([
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0],
+      ])
+    })
+  })
   describe('grid:generate', () => {
     it('should generate a grid of the given shape', () => {
       expect(lits.run('grid:generate(3, 3, -> 0)')).toEqual([

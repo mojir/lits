@@ -122,6 +122,23 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
+  'grid:fill': {
+    evaluate: ([rows, cols, value], sourceCodeInfo): Any[][] => {
+      assertNumber(rows, sourceCodeInfo, { integer: true, positive: true })
+      assertNumber(cols, sourceCodeInfo, { integer: true, positive: true })
+      assertAny(value, sourceCodeInfo)
+      const result: Any[][] = []
+      for (let i = 0; i < rows; i += 1) {
+        const row: Any[] = []
+        for (let j = 0; j < cols; j += 1) {
+          row.push(value)
+        }
+        result.push(row)
+      }
+      return result
+    },
+    paramCount: 3,
+  },
   'grid:generate': {
     evaluate: ([rows, cols, generator], sourceCodeInfo, contextStack, { executeFunction }): Any[][] => {
       assertNumber(rows, sourceCodeInfo, { integer: true, positive: true })

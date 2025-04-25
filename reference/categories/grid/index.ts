@@ -203,6 +203,36 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
       `grid:shape(${exampleGrid3})`,
     ],
   },
+  'grid:fill': {
+    title: 'grid:fill',
+    category: 'Grid',
+    linkName: 'grid-colon-fill',
+    returns: {
+      type: 'grid',
+    },
+    args: {
+      rows: {
+        type: 'integer',
+        description: 'The number of rows in the grid.',
+      },
+      cols: {
+        type: 'integer',
+        description: 'The number of columns in the grid.',
+      },
+      value: {
+        type: 'any',
+        description: 'The value to fill the grid with.',
+      },
+    },
+    variants: [
+      { argumentNames: ['rows', 'cols', 'value'] },
+    ],
+    description: 'Creates a grid of the specified size, filled with the specified value.',
+    examples: [
+      'grid:fill(2, 3, 0)',
+      'grid:fill(2, 3, "x")',
+    ],
+  },
   'grid:generate': {
     title: 'grid:generate',
     category: 'Grid',
