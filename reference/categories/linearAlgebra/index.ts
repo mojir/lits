@@ -2,6 +2,150 @@ import type { FunctionReference } from '../..'
 import { type LinAlgApiName, getOperatorArgs } from '../../api'
 
 export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Algebra'>> = {
+  'lin:reflect': {
+    title: 'lin:reflect',
+    category: 'Linear Algebra',
+    description: 'Reflects a vector across a given axis.',
+    linkName: 'lin-colon-reflect',
+    returns: {
+      type: 'vector',
+    },
+    args: {
+      a: {
+        type: 'vector',
+        description: 'Vector to reflect.',
+      },
+      b: {
+        type: 'vector',
+        description: 'Axis of reflection.',
+      },
+    },
+    variants: [
+      { argumentNames: ['a', 'b'] },
+    ],
+    examples: [
+      'lin:reflect([1, 2], [0, 1])',
+      'lin:reflect([1, 2, 3], [0, 0, 1])',
+    ],
+  },
+  'lin:refract': {
+    title: 'lin:refract',
+    category: 'Linear Algebra',
+    description: 'Refracts a vector across a given axis.',
+    linkName: 'lin-colon-refract',
+    returns: {
+      type: 'vector',
+    },
+    args: {
+      vector: {
+        type: 'vector',
+        description: 'Vector to refract.',
+      },
+      axis: {
+        type: 'vector',
+        description: 'Axis of refraction.',
+      },
+      eta: {
+        type: 'number',
+        description: 'Refraction index.',
+      },
+    },
+    variants: [
+      { argumentNames: ['vector', 'axis', 'eta'] },
+    ],
+    examples: [
+      'lin:refract([1, 2], [0, 1], 1.5)',
+      'lin:refract([1, 2, 3], [0, 0, 1], 1.5)',
+    ],
+  },
+  'lin:lerp': {
+    title: 'lin:lerp',
+    category: 'Linear Algebra',
+    description: 'Performs linear interpolation between two vectors.',
+    linkName: 'lin-colon-lerp',
+    returns: {
+      type: 'vector',
+    },
+    args: {
+      a: {
+        type: 'vector',
+        description: 'Start vector.',
+      },
+      b: {
+        type: 'vector',
+        description: 'End vector.',
+      },
+      t: {
+        type: 'number',
+        description: 'Interpolation factor (0 to 1).',
+      },
+    },
+    variants: [
+      { argumentNames: ['a', 'b', 't'] },
+    ],
+    examples: [
+      'lin:lerp([1, 2], [3, 4], 0.5)',
+      'lin:lerp([1, 2], [3, 4], 2)',
+      'lin:lerp([1, 2], [3, 4], -1)',
+      'lin:lerp([1, 2, 3], [4, 5, 6], 0.25)',
+    ],
+  },
+  'lin:rotate2d': {
+    title: 'lin:rotate2d',
+    category: 'Linear Algebra',
+    description: 'Rotates a 2D vector by a given angle in radians.',
+    linkName: 'lin-colon-rotate2d',
+    returns: {
+      type: 'vector',
+    },
+    args: {
+      a: {
+        type: 'vector',
+        description: 'Vector to rotate.',
+      },
+      b: {
+        type: 'number',
+        description: 'Angle in b.',
+      },
+    },
+    variants: [
+      { argumentNames: ['a', 'b'] },
+    ],
+    examples: [
+      'lin:rotate2d([1, 0], PI / 2)',
+      'lin:rotate2d([0, 1], PI)',
+    ],
+  },
+  'lin:rotate3d': {
+    title: 'lin:rotate3d',
+    category: 'Linear Algebra',
+    description: 'Rotates a 3D vector around a given axis by a given angle in radians.',
+    linkName: 'lin-colon-rotate3d',
+    returns: {
+      type: 'vector',
+    },
+    args: {
+      v: {
+        type: 'vector',
+        description: 'Vector to rotate.',
+      },
+      axis: {
+        type: 'vector',
+        description: 'Axis of rotation.',
+      },
+      radians: {
+        type: 'number',
+        description: 'Angle in radians.',
+      },
+    },
+    variants: [
+      { argumentNames: ['v', 'axis', 'radians'] },
+    ],
+    examples: [
+      'lin:rotate3d([1, 0, 0], [0, 1, 0], PI / 2)',
+      'lin:rotate3d([0, 1, 0], [1, 0, 0], PI)',
+    ],
+  },
   'lin:dot': {
     title: 'lin:dot',
     category: 'Linear Algebra',
@@ -176,10 +320,15 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     ],
     examples: [
       'lin:normalize-l2([1, 2, 3])',
+      'lin:unit([1, 2, 3])',
       'lin:normalize-l2([1, 2, -3])',
       'lin:normalize-l2([1, 2, 3, 4])',
       'lin:normalize-l2([1, 2, -3, 4])',
       'lin:normalize-l2([1, 2, 3, 40, 50])',
+    ],
+    aliases: [
+      'lin:unit',
+      'lin:normalize',
     ],
   },
   'lin:normalize-log': {
@@ -372,7 +521,7 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     ],
     aliases: [
       'lin:l2-norm',
-      'lin:magnitude',
+      'lin:length',
     ],
   },
   'lin:manhattan-distance': {

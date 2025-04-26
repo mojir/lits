@@ -2389,6 +2389,28 @@ var Playground = (function (exports) {
             throw new LitsError("Expected a vector, but got ".concat(vector), sourceCodeInfo);
         }
     }
+    function is2dVector(vector) {
+        if (!isVector(vector)) {
+            return false;
+        }
+        return vector.length === 2;
+    }
+    function assert2dVector(vector, sourceCodeInfo) {
+        if (!is2dVector(vector)) {
+            throw new LitsError("Expected a 2d vector, but got ".concat(vector), sourceCodeInfo);
+        }
+    }
+    function is3dVector(vector) {
+        if (!isVector(vector)) {
+            return false;
+        }
+        return vector.length === 3;
+    }
+    function assert3dVector(vector, sourceCodeInfo) {
+        if (!is3dVector(vector)) {
+            throw new LitsError("Expected a 3d vector, but got ".concat(vector), sourceCodeInfo);
+        }
+    }
     function assertNonEmptyVector(vector, sourceCodeInfo) {
         assertVector(vector, sourceCodeInfo);
         if (vector.length === 0) {
@@ -2741,7 +2763,7 @@ var Playground = (function (exports) {
         if (a === b)
             return true;
         if (typeof a === 'number' && typeof b === 'number')
-            return Math.abs(a - b) < Number.EPSILON;
+            return Math.abs(a - b) < 1e-10;
         if (Array.isArray(a) && Array.isArray(b)) {
             if (a.length !== b.length)
                 return false;
@@ -2760,7 +2782,7 @@ var Playground = (function (exports) {
                 return false;
             for (var i = 0; i < aKeys.length; i += 1) {
                 var key = asString(aKeys[i], sourceCodeInfo);
-                if (!deepEqual(toAny(a[key]), toAny(b[key]), sourceCodeInfo))
+                if (!deepEqual(a[key], b[key], sourceCodeInfo))
                     return false;
             }
             return true;
@@ -6454,6 +6476,24 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
+        'grid:fill': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), rows = _b[0], cols = _b[1], value = _b[2];
+                assertNumber(rows, sourceCodeInfo, { integer: true, positive: true });
+                assertNumber(cols, sourceCodeInfo, { integer: true, positive: true });
+                assertAny(value, sourceCodeInfo);
+                var result = [];
+                for (var i = 0; i < rows; i += 1) {
+                    var row = [];
+                    for (var j = 0; j < cols; j += 1) {
+                        row.push(value);
+                    }
+                    result.push(row);
+                }
+                return result;
+            },
+            paramCount: 3,
+        },
         'grid:generate': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 3), rows = _c[0], cols = _c[1], generator = _c[2];
@@ -8398,7 +8438,137 @@ var Playground = (function (exports) {
         return [segmentA, segmentB];
     }
 
+    function getUnit(value, sourceCodeInfo) {
+        if (value.length === 0) {
+            return value;
+        }
+        var length = Math.sqrt(value.reduce(function (acc, item) { return acc + Math.pow(item, 2); }, 0));
+        if (approxZero(length)) {
+            throw new LitsError('The vector must not be zero', sourceCodeInfo);
+        }
+        return value.map(function (item) { return item / length; });
+    }
+
+    function dot(vector1, vector2) {
+        return vector1.reduce(function (acc, item, index) { return acc + item * vector2[index]; }, 0);
+    }
+
+    function subtract(vector1, vector2) {
+        return vector1.map(function (item, index) { return item - vector2[index]; });
+    }
+
+    function scale(vector, scalar) {
+        return vector.map(function (item) { return item * scalar; });
+    }
+
     var linearAlgebraNormalExpression = {
+        'lin:rotate2d': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], radians = _b[1];
+                assert2dVector(vector, sourceCodeInfo);
+                if (isZeroVector(vector)) {
+                    return vector;
+                }
+                assertNumber(radians, sourceCodeInfo, { finite: true });
+                var cosTheta = Math.cos(radians);
+                var sinTheta = Math.sin(radians);
+                return [
+                    vector[0] * cosTheta - vector[1] * sinTheta,
+                    vector[0] * sinTheta + vector[1] * cosTheta,
+                ];
+            },
+            paramCount: 2,
+        },
+        'lin:rotate3d': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), vector = _b[0], axis = _b[1], radians = _b[2];
+                assert3dVector(vector, sourceCodeInfo);
+                if (isZeroVector(vector)) {
+                    return vector;
+                }
+                assertNumber(radians, sourceCodeInfo, { finite: true });
+                assert3dVector(axis, sourceCodeInfo);
+                if (isZeroVector(axis)) {
+                    throw new LitsError('Rotation axis must not be zero', sourceCodeInfo);
+                }
+                var cosTheta = Math.cos(radians);
+                var sinTheta = Math.sin(radians);
+                var _c = __read(getUnit(axis, sourceCodeInfo), 3), u = _c[0], v = _c[1], w = _c[2];
+                var dotProduct = vector[0] * u + vector[1] * v + vector[2] * w;
+                return [
+                    dotProduct * u * (1 - cosTheta) + vector[0] * cosTheta + (-w * vector[1] + v * vector[2]) * sinTheta,
+                    dotProduct * v * (1 - cosTheta) + vector[1] * cosTheta + (w * vector[0] - u * vector[2]) * sinTheta,
+                    dotProduct * w * (1 - cosTheta) + vector[2] * cosTheta + (-v * vector[0] + u * vector[1]) * sinTheta,
+                ];
+            },
+            paramCount: 3,
+        },
+        'lin:reflect': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), vector = _b[0], normal = _b[1];
+                assertVector(vector, sourceCodeInfo);
+                assertVector(normal, sourceCodeInfo);
+                if (vector.length !== normal.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                if (isZeroVector(normal)) {
+                    throw new LitsError('Reflection normal must not be zero', sourceCodeInfo);
+                }
+                if (isZeroVector(vector)) {
+                    return vector;
+                }
+                var unitNormal = getUnit(normal, sourceCodeInfo);
+                var doubleDot = 2 * dot(vector, unitNormal);
+                return subtract(vector, scale(unitNormal, doubleDot));
+            },
+            paramCount: 2,
+        },
+        'lin:refract': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), vector = _b[0], normal = _b[1], eta = _b[2];
+                assertVector(vector, sourceCodeInfo);
+                assertVector(normal, sourceCodeInfo);
+                assertNumber(eta, sourceCodeInfo, { finite: true, positive: true });
+                if (vector.length !== normal.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                if (isZeroVector(normal)) {
+                    throw new LitsError('Refraction normal must not be zero', sourceCodeInfo);
+                }
+                if (isZeroVector(vector)) {
+                    return vector;
+                }
+                // Make sure vectors are normalized
+                var normalizedV = getUnit(vector, sourceCodeInfo);
+                var normalizedNormal = getUnit(normal, sourceCodeInfo);
+                // Calculate dot product between incident vector and normal
+                var dotProduct = dot(normalizedV, normalizedNormal);
+                // Calculate discriminant
+                var discriminant = 1 - eta * eta * (1 - dotProduct * dotProduct);
+                // Check for total internal reflection
+                if (discriminant < 0) {
+                    return vector; // Total internal reflection occurs
+                }
+                // Calculate the refracted vector
+                var scaledIncident = scale(normalizedV, eta);
+                var scaledNormal = scale(normalizedNormal, eta * dotProduct + Math.sqrt(discriminant));
+                return subtract(scaledIncident, scaledNormal);
+            },
+            paramCount: 3,
+        },
+        'lin:lerp': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), vectorA = _b[0], vectorB = _b[1], t = _b[2];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                assertNumber(t, sourceCodeInfo, { finite: true });
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                return vectorA.map(function (val, i) { return val + (vectorB[i] - val) * t; });
+            },
+            paramCount: 3,
+        },
         'lin:dot': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];
@@ -8407,7 +8577,7 @@ var Playground = (function (exports) {
                 if (vectorA.length !== vectorB.length) {
                     throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
                 }
-                return vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
+                return dot(vectorA, vectorB);
             },
             paramCount: 2,
         },
@@ -8488,16 +8658,10 @@ var Playground = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
-                if (vector.length === 0) {
-                    return [];
-                }
-                var norm = Math.sqrt(vector.reduce(function (acc, val) { return acc + Math.pow(val, 2); }, 0));
-                if (norm === 0) {
-                    return vector.map(function () { return 0; });
-                }
-                return vector.map(function (val) { return val / norm; });
+                return getUnit(vector, sourceCodeInfo);
             },
             paramCount: 1,
+            aliases: ['lin:unit', 'lin:normalize'],
         },
         'lin:normalize-log': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -8624,7 +8788,7 @@ var Playground = (function (exports) {
                 return Math.sqrt(vector.reduce(function (acc, val) { return acc + val * val; }, 0));
             },
             paramCount: 1,
-            aliases: ['lin:l2-norm', 'lin:magnitude'],
+            aliases: ['lin:l2-norm', 'lin:length'],
         },
         'lin:manhattan-distance': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -14199,6 +14363,7 @@ var Playground = (function (exports) {
             'grid:row',
             'grid:col',
             'grid:shape',
+            'grid:fill',
             'grid:generate',
             'grid:reshape',
             'grid:transpose',
@@ -14290,6 +14455,11 @@ var Playground = (function (exports) {
             'vec:smape'
         ], __read(getVectorReductionNames('mean')), false), __read(getVectorReductionNames('median')), false), __read(getVectorReductionNames('variance')), false), __read(getVectorReductionNames('sample-variance')), false), __read(getVectorReductionNames('sum')), false), __read(getVectorReductionNames('prod')), false), __read(getVectorReductionNames('min')), false), __read(getVectorReductionNames('max')), false), __read(getVectorReductionNames('stdev')), false), __read(getVectorReductionNames('sample-stdev')), false), __read(getVectorReductionNames('iqr')), false), __read(getVectorReductionNames('span')), false), __read(getVectorReductionNames('geometric-mean')), false), __read(getVectorReductionNames('harmonic-mean')), false), __read(getVectorReductionNames('skewness')), false), __read(getVectorReductionNames('sample-skewness')), false), __read(getVectorReductionNames('kurtosis')), false), __read(getVectorReductionNames('sample-kurtosis')), false), __read(getVectorReductionNames('excess-kurtosis')), false), __read(getVectorReductionNames('sample-excess-kurtosis')), false), __read(getVectorReductionNames('rms')), false), __read(getVectorReductionNames('mad')), false), __read(getVectorReductionNames('medad')), false), __read(getVectorReductionNames('gini-coefficient')), false), __read(getVectorReductionNames('entropy')), false), __read(getVectorReductionNames('skewness')), false),
         linAlg: [
+            'lin:reflect',
+            'lin:refract',
+            'lin:lerp',
+            'lin:rotate2d',
+            'lin:rotate3d',
             'lin:dot',
             'lin:cross',
             'lin:normalize-minmax',
@@ -18134,6 +18304,36 @@ var Playground = (function (exports) {
                 "grid:shape(".concat(exampleGrid1, ")"),
                 "grid:shape(".concat(exampleGrid2, ")"),
                 "grid:shape(".concat(exampleGrid3, ")"),
+            ],
+        },
+        'grid:fill': {
+            title: 'grid:fill',
+            category: 'Grid',
+            linkName: 'grid-colon-fill',
+            returns: {
+                type: 'grid',
+            },
+            args: {
+                rows: {
+                    type: 'integer',
+                    description: 'The number of rows in the grid.',
+                },
+                cols: {
+                    type: 'integer',
+                    description: 'The number of columns in the grid.',
+                },
+                value: {
+                    type: 'any',
+                    description: 'The value to fill the grid with.',
+                },
+            },
+            variants: [
+                { argumentNames: ['rows', 'cols', 'value'] },
+            ],
+            description: 'Creates a grid of the specified size, filled with the specified value.',
+            examples: [
+                'grid:fill(2, 3, 0)',
+                'grid:fill(2, 3, "x")',
             ],
         },
         'grid:generate': {
@@ -22358,6 +22558,150 @@ var Playground = (function (exports) {
         } });
 
     var linAlgReference = {
+        'lin:reflect': {
+            title: 'lin:reflect',
+            category: 'Linear Algebra',
+            description: 'Reflects a vector across a given axis.',
+            linkName: 'lin-colon-reflect',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                a: {
+                    type: 'vector',
+                    description: 'Vector to reflect.',
+                },
+                b: {
+                    type: 'vector',
+                    description: 'Axis of reflection.',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                'lin:reflect([1, 2], [0, 1])',
+                'lin:reflect([1, 2, 3], [0, 0, 1])',
+            ],
+        },
+        'lin:refract': {
+            title: 'lin:refract',
+            category: 'Linear Algebra',
+            description: 'Refracts a vector across a given axis.',
+            linkName: 'lin-colon-refract',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'Vector to refract.',
+                },
+                axis: {
+                    type: 'vector',
+                    description: 'Axis of refraction.',
+                },
+                eta: {
+                    type: 'number',
+                    description: 'Refraction index.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector', 'axis', 'eta'] },
+            ],
+            examples: [
+                'lin:refract([1, 2], [0, 1], 1.5)',
+                'lin:refract([1, 2, 3], [0, 0, 1], 1.5)',
+            ],
+        },
+        'lin:lerp': {
+            title: 'lin:lerp',
+            category: 'Linear Algebra',
+            description: 'Performs linear interpolation between two vectors.',
+            linkName: 'lin-colon-lerp',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                a: {
+                    type: 'vector',
+                    description: 'Start vector.',
+                },
+                b: {
+                    type: 'vector',
+                    description: 'End vector.',
+                },
+                t: {
+                    type: 'number',
+                    description: 'Interpolation factor (0 to 1).',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b', 't'] },
+            ],
+            examples: [
+                'lin:lerp([1, 2], [3, 4], 0.5)',
+                'lin:lerp([1, 2], [3, 4], 2)',
+                'lin:lerp([1, 2], [3, 4], -1)',
+                'lin:lerp([1, 2, 3], [4, 5, 6], 0.25)',
+            ],
+        },
+        'lin:rotate2d': {
+            title: 'lin:rotate2d',
+            category: 'Linear Algebra',
+            description: 'Rotates a 2D vector by a given angle in radians.',
+            linkName: 'lin-colon-rotate2d',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                a: {
+                    type: 'vector',
+                    description: 'Vector to rotate.',
+                },
+                b: {
+                    type: 'number',
+                    description: 'Angle in b.',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                'lin:rotate2d([1, 0], PI / 2)',
+                'lin:rotate2d([0, 1], PI)',
+            ],
+        },
+        'lin:rotate3d': {
+            title: 'lin:rotate3d',
+            category: 'Linear Algebra',
+            description: 'Rotates a 3D vector around a given axis by a given angle in radians.',
+            linkName: 'lin-colon-rotate3d',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                v: {
+                    type: 'vector',
+                    description: 'Vector to rotate.',
+                },
+                axis: {
+                    type: 'vector',
+                    description: 'Axis of rotation.',
+                },
+                radians: {
+                    type: 'number',
+                    description: 'Angle in radians.',
+                },
+            },
+            variants: [
+                { argumentNames: ['v', 'axis', 'radians'] },
+            ],
+            examples: [
+                'lin:rotate3d([1, 0, 0], [0, 1, 0], PI / 2)',
+                'lin:rotate3d([0, 1, 0], [1, 0, 0], PI)',
+            ],
+        },
         'lin:dot': {
             title: 'lin:dot',
             category: 'Linear Algebra',
@@ -22532,10 +22876,15 @@ var Playground = (function (exports) {
             ],
             examples: [
                 'lin:normalize-l2([1, 2, 3])',
+                'lin:unit([1, 2, 3])',
                 'lin:normalize-l2([1, 2, -3])',
                 'lin:normalize-l2([1, 2, 3, 4])',
                 'lin:normalize-l2([1, 2, -3, 4])',
                 'lin:normalize-l2([1, 2, 3, 40, 50])',
+            ],
+            aliases: [
+                'lin:unit',
+                'lin:normalize',
             ],
         },
         'lin:normalize-log': {
@@ -22714,7 +23063,7 @@ var Playground = (function (exports) {
             ],
             aliases: [
                 'lin:l2-norm',
-                'lin:magnitude',
+                'lin:length',
             ],
         },
         'lin:manhattan-distance': {
@@ -30648,6 +30997,7 @@ var Playground = (function (exports) {
         return asNonUndefined(value, node[2]);
     }
     function evaluateNormalExpression(node, contextStack) {
+        var _a, _b;
         var sourceCodeInfo = node[2];
         var paramNodes = node[1][1];
         var params = [];
@@ -30673,14 +31023,14 @@ var Playground = (function (exports) {
             var nameSymbol = node[1][0];
             if (placeholders.length > 0) {
                 var fn = evaluateNode(nameSymbol, contextStack);
-                var partialFunction = {
-                    '^^fn^^': true,
-                    'function': asFunctionLike(fn, sourceCodeInfo),
-                    'functionType': 'Partial',
-                    params: params,
-                    placeholders: placeholders,
-                    sourceCodeInfo: sourceCodeInfo,
-                };
+                var partialFunction = (_a = {},
+                    _a[FUNCTION_SYMBOL] = true,
+                    _a.function = asFunctionLike(fn, sourceCodeInfo),
+                    _a.functionType = 'Partial',
+                    _a.params = params,
+                    _a.placeholders = placeholders,
+                    _a.sourceCodeInfo = sourceCodeInfo,
+                    _a);
                 return partialFunction;
             }
             if (isNormalBuiltinSymbolNode(nameSymbol)) {
@@ -30700,14 +31050,14 @@ var Playground = (function (exports) {
             var fnNode = node[1][0];
             var fn = asFunctionLike(evaluateNode(fnNode, contextStack), sourceCodeInfo);
             if (placeholders.length > 0) {
-                var partialFunction = {
-                    '^^fn^^': true,
-                    'function': asFunctionLike(fn, sourceCodeInfo),
-                    'functionType': 'Partial',
-                    params: params,
-                    placeholders: placeholders,
-                    sourceCodeInfo: sourceCodeInfo,
-                };
+                var partialFunction = (_b = {},
+                    _b[FUNCTION_SYMBOL] = true,
+                    _b.function = asFunctionLike(fn, sourceCodeInfo),
+                    _b.functionType = 'Partial',
+                    _b.params = params,
+                    _b.placeholders = placeholders,
+                    _b.sourceCodeInfo = sourceCodeInfo,
+                    _b);
                 return partialFunction;
             }
             return executeFunction(fn, params, contextStack, sourceCodeInfo);

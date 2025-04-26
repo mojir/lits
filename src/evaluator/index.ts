@@ -108,8 +108,8 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
       const fn = evaluateNode(nameSymbol, contextStack)
       const partialFunction: PartialFunction = {
         [FUNCTION_SYMBOL]: true,
-        'function': asFunctionLike(fn, sourceCodeInfo),
-        'functionType': 'Partial',
+        function: asFunctionLike(fn, sourceCodeInfo),
+        functionType: 'Partial',
         params,
         placeholders,
         sourceCodeInfo,
@@ -136,8 +136,8 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
     if (placeholders.length > 0) {
       const partialFunction: PartialFunction = {
         [FUNCTION_SYMBOL]: true,
-        'function': asFunctionLike(fn, sourceCodeInfo),
-        'functionType': 'Partial',
+        function: asFunctionLike(fn, sourceCodeInfo),
+        functionType: 'Partial',
         params,
         placeholders,
         sourceCodeInfo,

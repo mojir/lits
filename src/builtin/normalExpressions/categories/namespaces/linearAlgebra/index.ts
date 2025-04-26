@@ -1,5 +1,5 @@
 import { LitsError } from '../../../../../errors'
-import { assertMatrix, assertNonEmptyVector, assertSquareMatrix, assertVector } from '../../../../../typeGuards/annotatedArrays'
+import { assert2dVector, assert3dVector, assertMatrix, assertNonEmptyVector, assertSquareMatrix, assertVector } from '../../../../../typeGuards/annotatedArrays'
 import { assertNumber } from '../../../../../typeGuards/number'
 import type { BuiltinNormalExpressions } from '../../../../interface'
 import { calcMean } from '../vector/calcMean'
@@ -15,8 +15,122 @@ import { calcFractionalRanks } from './helpers/calcFractionalRanks'
 import { kendallTau } from './helpers/kendallTau'
 import { calcCovariance } from './helpers/covariance'
 import { calcCorrelation, extractOverlappingSegments } from './helpers/corrleation'
+import { getUnit } from './helpers/getUnit'
+import { dot } from './helpers/dot'
+import { subtract } from './helpers/subtract'
+import { scale } from './helpers/scale'
 
 export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
+  'lin:rotate2d': {
+    evaluate: ([vector, radians], sourceCodeInfo): number[] => {
+      assert2dVector(vector, sourceCodeInfo)
+      if (isZeroVector(vector)) {
+        return vector
+      }
+      assertNumber(radians, sourceCodeInfo, { finite: true })
+      const cosTheta = Math.cos(radians)
+      const sinTheta = Math.sin(radians)
+      return [
+        vector[0] * cosTheta - vector[1] * sinTheta,
+        vector[0] * sinTheta + vector[1] * cosTheta,
+      ]
+    },
+    paramCount: 2,
+  },
+  'lin:rotate3d': {
+    evaluate: ([vector, axis, radians], sourceCodeInfo): number[] => {
+      assert3dVector(vector, sourceCodeInfo)
+      if (isZeroVector(vector)) {
+        return vector
+      }
+      assertNumber(radians, sourceCodeInfo, { finite: true })
+      assert3dVector(axis, sourceCodeInfo)
+      if (isZeroVector(axis)) {
+        throw new LitsError('Rotation axis must not be zero', sourceCodeInfo)
+      }
+      const cosTheta = Math.cos(radians)
+      const sinTheta = Math.sin(radians)
+      const [u, v, w] = getUnit(axis, sourceCodeInfo)
+      const dotProduct = vector[0] * u + vector[1] * v + vector[2] * w
+      return [
+        dotProduct * u * (1 - cosTheta) + vector[0] * cosTheta + (-w * vector[1] + v * vector[2]) * sinTheta,
+        dotProduct * v * (1 - cosTheta) + vector[1] * cosTheta + (w * vector[0] - u * vector[2]) * sinTheta,
+        dotProduct * w * (1 - cosTheta) + vector[2] * cosTheta + (-v * vector[0] + u * vector[1]) * sinTheta,
+      ]
+    },
+    paramCount: 3,
+  },
+  'lin:reflect': {
+    evaluate: ([vector, normal], sourceCodeInfo): number[] => {
+      assertVector(vector, sourceCodeInfo)
+      assertVector(normal, sourceCodeInfo)
+      if (vector.length !== normal.length) {
+        throw new LitsError('Vectors must be of the same length', sourceCodeInfo)
+      }
+      if (isZeroVector(normal)) {
+        throw new LitsError('Reflection normal must not be zero', sourceCodeInfo)
+      }
+      if (isZeroVector(vector)) {
+        return vector
+      }
+      const unitNormal = getUnit(normal, sourceCodeInfo)
+      const doubleDot = 2 * dot(vector, unitNormal)
+      return subtract(vector, scale(unitNormal, doubleDot))
+    },
+    paramCount: 2,
+  },
+  'lin:refract': {
+    evaluate: ([vector, normal, eta], sourceCodeInfo): number[] => {
+      assertVector(vector, sourceCodeInfo)
+      assertVector(normal, sourceCodeInfo)
+      assertNumber(eta, sourceCodeInfo, { finite: true, positive: true })
+      if (vector.length !== normal.length) {
+        throw new LitsError('Vectors must be of the same length', sourceCodeInfo)
+      }
+      if (isZeroVector(normal)) {
+        throw new LitsError('Refraction normal must not be zero', sourceCodeInfo)
+      }
+      if (isZeroVector(vector)) {
+        return vector
+      }
+      // Make sure vectors are normalized
+      const normalizedV = getUnit(vector, sourceCodeInfo)
+      const normalizedNormal = getUnit(normal, sourceCodeInfo)
+
+      // Calculate dot product between incident vector and normal
+      const dotProduct = dot(normalizedV, normalizedNormal)
+
+      // Calculate discriminant
+      const discriminant = 1 - eta * eta * (1 - dotProduct * dotProduct)
+
+      // Check for total internal reflection
+      if (discriminant < 0) {
+        return vector // Total internal reflection occurs
+      }
+
+      // Calculate the refracted vector
+      const scaledIncident = scale(normalizedV, eta)
+      const scaledNormal = scale(
+        normalizedNormal,
+        eta * dotProduct + Math.sqrt(discriminant),
+      )
+
+      return subtract(scaledIncident, scaledNormal)
+    },
+    paramCount: 3,
+  },
+  'lin:lerp': {
+    evaluate: ([vectorA, vectorB, t], sourceCodeInfo): number[] => {
+      assertVector(vectorA, sourceCodeInfo)
+      assertVector(vectorB, sourceCodeInfo)
+      assertNumber(t, sourceCodeInfo, { finite: true })
+      if (vectorA.length !== vectorB.length) {
+        throw new LitsError('Vectors must be of the same length', sourceCodeInfo)
+      }
+      return vectorA.map((val, i) => val + (vectorB[i]! - val) * t)
+    },
+    paramCount: 3,
+  },
   'lin:dot': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
       assertVector(vectorA, sourceCodeInfo)
@@ -26,7 +140,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
         throw new LitsError('Vectors must be of the same length', sourceCodeInfo)
       }
 
-      return vectorA.reduce((acc, val, i) => acc + val * vectorB[i]!, 0)
+      return dot(vectorA, vectorB)
     },
     paramCount: 2,
   },
@@ -114,18 +228,10 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
   'lin:normalize-l2': {
     evaluate: ([vector], sourceCodeInfo): number[] => {
       assertVector(vector, sourceCodeInfo)
-      if (vector.length === 0) {
-        return []
-      }
-      const norm = Math.sqrt(vector.reduce((acc, val) => acc + val ** 2, 0))
-
-      if (norm === 0) {
-        return vector.map(() => 0)
-      }
-
-      return vector.map(val => val / norm)
+      return getUnit(vector, sourceCodeInfo)
     },
     paramCount: 1,
+    aliases: ['lin:unit', 'lin:normalize'],
   },
   'lin:normalize-log': {
     evaluate: ([vector], sourceCodeInfo): number[] => {
@@ -265,7 +371,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
       return Math.sqrt(vector.reduce((acc, val) => acc + val * val, 0))
     },
     paramCount: 1,
-    aliases: ['lin:l2-norm', 'lin:magnitude'],
+    aliases: ['lin:l2-norm', 'lin:length'],
   },
   'lin:manhattan-distance': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {

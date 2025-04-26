@@ -1,9 +1,158 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../../../Lits/Lits'
 import { LitsError } from '../../../../../errors'
+import { deepEqual } from '../../../../../utils'
+import { getUnit } from './helpers/getUnit'
 
 const lits = new Lits()
 describe('linalg functions', () => {
+  describe('lin:rotate2d', () => {
+    it('should rotate a 2D vector by a given angle', () => {
+      // Basic case
+      expect(deepEqual(lits.run('lin:rotate2d([1, 0], PI / 2)'), [0, 1])).toBeTruthy()
+      // Case with negative angle
+      expect(deepEqual(lits.run('lin:rotate2d([1, 0], -PI / 2)'), [0, -1])).toBeTruthy()
+      // zero vector
+      expect(deepEqual(lits.run('lin:rotate2d([0, 0], -PI / 2)'), [0, 0])).toBeTruthy()
+      // Case with zero angle
+      expect(lits.run('lin:rotate2d([1, 0], 0)')).toEqual([1, 0])
+      // Case with empty vector (should throw an error)
+      expect(() => lits.run('lin:rotate2d([], PI / 2)')).toThrowError(LitsError)
+      // Case with single element vector (should throw an error)
+      expect(() => lits.run('lin:rotate2d([42], PI / 2)')).toThrowError(LitsError)
+      // Case with 3D vector (should throw an error)
+      expect(() => lits.run('lin:rotate2d([1, 0, 0], PI / 2)')).toThrowError(LitsError)
+    })
+  })
+  describe('lin:rotate3d', () => {
+    it('should rotate a 3D vector by a given angle around a given axis', () => {
+      // Basic case
+      expect(deepEqual(lits.run('lin:rotate3d([1, 0, 0], [0, 1, 0], PI / 2)'), [0, 0, -1])).toBeTruthy()
+      // Case with negative angle
+      expect(deepEqual(lits.run('lin:rotate3d([1, 0, 0], [0, 1, 0], -PI / 2)'), [0, 0, 1])).toBeTruthy()
+      // Case with zero angle
+      expect(lits.run('lin:rotate3d([1, 0, 0], [0, 1, 0], 0)')).toEqual([1, 0, 0])
+      // Case with zero vector
+      expect(lits.run('lin:rotate3d([0, 0, 0], [0, 1, 0], PI)')).toEqual([0, 0, 0])
+      // Case with zero axis (should throw an error)
+      expect(() => lits.run('lin:rotate3d([1, 1, 1], [0, 0, 0], PI / 2)')).toThrowError(LitsError)
+      // Case with empty vector (should throw an error)
+      expect(() => lits.run('lin:rotate3d([], [0, 1, 0], PI / 2)')).toThrowError(LitsError)
+      // Case with single element vector (should throw an error)
+      expect(() => lits.run('lin:rotate3d([42], [0, 1, 0], PI / 2)')).toThrowError(LitsError)
+      // Case with non-3D vector (should throw an error)
+      expect(() => lits.run('lin:rotate3d([1, 2], [0, 1, 0], PI / 2)')).toThrowError(LitsError)
+    })
+  })
+  describe('lin:lerp', () => {
+    it('should linearly interpolate between two vectors', () => {
+      // Basic case - interpolate halfway between
+      expect(deepEqual(lits.run('lin:lerp([0, 0], [10, 10], 0.5)'), [5, 5])).toBeTruthy()
+
+      // Start of interpolation (t=0)
+      expect(deepEqual(lits.run('lin:lerp([5, 10], [20, 30], 0)'), [5, 10])).toBeTruthy()
+
+      // End of interpolation (t=1)
+      expect(deepEqual(lits.run('lin:lerp([5, 10], [20, 30], 1)'), [20, 30])).toBeTruthy()
+
+      // Extrapolation beyond end (t>1)
+      expect(deepEqual(lits.run('lin:lerp([0, 0], [10, 10], 2)'), [20, 20])).toBeTruthy()
+
+      // Extrapolation before start (t<0)
+      expect(deepEqual(lits.run('lin:lerp([10, 10], [20, 20], -1)'), [0, 0])).toBeTruthy()
+
+      // 3D vectors
+      expect(deepEqual(lits.run('lin:lerp([0, 0, 0], [10, 20, 30], 0.5)'), [5, 10, 15])).toBeTruthy()
+
+      // 1D vectors
+      expect(deepEqual(lits.run('lin:lerp([5], [10], 0.5)'), [7.5])).toBeTruthy()
+
+      // Empty vectors (should still work with empty arrays)
+      expect(deepEqual(lits.run('lin:lerp([], [], 0.5)'), [])).toBeTruthy()
+
+      // Different dimensions (should throw an error)
+      expect(() => lits.run('lin:lerp([1, 2], [1, 2, 3], 0.5)')).toThrowError(LitsError)
+    })
+  })
+
+  describe('lin:reflect', () => {
+    it('should reflect a vector about a normal vector', () => {
+      // Basic case - reflection in 2D
+      expect(deepEqual(lits.run('lin:reflect([1, -1], [0, 1])'), [1, 1])).toBeTruthy()
+
+      // 3D reflection
+      expect(deepEqual(lits.run('lin:reflect([1, 2, 3], [0, 1, 0])'), [1, -2, 3])).toBeTruthy()
+
+      // Reflection with unnormalized normal vector
+      expect(deepEqual(lits.run('lin:reflect([1, 0], [0, 2])'), [1, 0])).toBeTruthy()
+
+      // 45-degree reflection
+      const normal45 = 'lin:normalize([1, 1])'
+      expect(deepEqual(lits.run('lin:reflect([1, 0], [1, 1])'), [0, -1])).toBeTruthy()
+      // expect(lits.run('lin:reflect([1, 0], [1, 1])')).toEqual([0, -1])
+      expect(deepEqual(lits.run(`lin:reflect([1, 0], ${normal45})`), [0, -1])).toBeTruthy()
+
+      // 1D reflection
+      expect(deepEqual(lits.run('lin:reflect([5], [1])'), [-5])).toBeTruthy()
+      expect(deepEqual(lits.run('lin:reflect([5], [-1])'), [-5])).toBeTruthy()
+
+      // Reflection of zero vector
+      expect(deepEqual(lits.run('lin:reflect([0, 0, 0], [0, 1, 0])'), [0, 0, 0])).toBeTruthy()
+
+      // Empty vectors (should throw an error)
+      expect(() => lits.run('lin:reflect([], [0, 1])')).toThrowError(LitsError)
+
+      // Different dimensions (should throw an error)
+      expect(() => lits.run('lin:reflect([1, 2], [0, 1, 0])')).toThrowError(LitsError)
+
+      // Zero normal vector (should throw an error because normalization fails)
+      expect(() => lits.run('lin:reflect([1, 2], [0, 0])')).toThrowError(LitsError)
+    })
+  })
+
+  describe('lin:refract', () => {
+    it('should refract a vector through a surface with a normal and refractive index ratio', () => {
+      // Basic case - refraction in 2D
+      // Angle of incidence is 45 degrees, normal is [0, 1], eta is 0.75 (air to water)
+      expect(deepEqual(lits.run('lin:refract([1, -1], [0, 1], 0.75)'), [0.5303300858899106, -0.8477912478906585])).toBeTruthy()
+
+      // 3D refraction
+      expect(deepEqual(lits.run('lin:refract([1, -1, 0], [0, 1, 0], 0.8)'), [0.565685424949238, -0.8246211251235321, 0])).toBeTruthy()
+
+      // Total internal reflection (entering from denser medium)
+      // With eta = 1.5 (water to air) and a steep enough angle
+      expect(deepEqual(lits.run('lin:refract([2, -1, 0], [0, 1, 0], 1.5)'), [2, -1, 0])).toBeTruthy()
+
+      // zero vector
+      expect(deepEqual(lits.run('lin:refract([0, 0, 0], [0, 1, 0], 0.75)'), [0, 0, 0])).toBeTruthy()
+
+      // Zero refraction (perpendicular incidence)
+      expect(deepEqual(lits.run('lin:refract([0, -1, 0], [0, 1, 0], 0.75)'), [0, -1, 0])).toBeTruthy()
+
+      // Eta = 0 (non-physical)
+      expect(() => deepEqual(lits.run('lin:refract([1, -1, 0], [0, 1, 0], 0)'), [0, -1, 0])).toThrowError(LitsError)
+
+      // Eta = 1 (no change in medium)
+      const norm = 'lin:normalize([1, -1, 0])'
+      expect(deepEqual(lits.run(`lin:refract(${norm}, [0, 1, 0], 1)`), getUnit([1, -1, 0], undefined))).toBeTruthy()
+
+      // 1D refraction
+      expect(deepEqual(lits.run('lin:refract([1], [1], 0.5)'), [-1])).toBeTruthy()
+
+      // Empty vectors (should throw an error)
+      expect(() => lits.run('lin:refract([1, 1], [0, 0], 1.5)')).toThrowError(LitsError)
+
+      // Empty vectors (should throw an error)
+      expect(() => lits.run('lin:refract([], [0, 1], 1.5)')).toThrowError(LitsError)
+
+      // Different dimensions (should throw an error)
+      expect(() => lits.run('lin:refract([1, 2], [0, 1, 0], 1.5)')).toThrowError(LitsError)
+
+      // Zero normal vector (should throw an error because normalization fails)
+      expect(() => lits.run('lin:refract([1, 2], [0, 0], 1.5)')).toThrowError(LitsError)
+    })
+  })
+
   describe('lin:dot', () => {
     it('should calculate the dot product of two vectors', () => {
       // Basic case
@@ -125,7 +274,7 @@ describe('linalg functions', () => {
       // Single element array
       expect(lits.run('lin:normalize-l2([42])')).toEqual([1])
 
-      expect(lits.run('lin:normalize-l2([0, 0, 0, 0])')).toEqual([0, 0, 0, 0])
+      expect(() => lits.run('lin:normalize-l2([0, 0, 0, 0])')).toThrow(LitsError)
     })
   })
   describe('lin:normalize-log', () => {
@@ -283,13 +432,13 @@ describe('linalg functions', () => {
       // Basic case
       expect(lits.run('lin:euclidean-norm([3, 4])')).toEqual(5)
       // Case with negative numbers
-      expect(lits.run('lin:magnitude([-3, -4])')).toEqual(5)
+      expect(lits.run('lin:length([-3, -4])')).toEqual(5)
       // Case with mixed numbers
       expect(lits.run('lin:l2-norm([3, -4])')).toEqual(5)
       // Case with single element vector
-      expect(lits.run('lin:magnitude([42])')).toEqual(42)
+      expect(lits.run('lin:length([42])')).toEqual(42)
       // Case with empty vector
-      expect(() => lits.run('lin:magnitude([])')).toThrowError(LitsError)
+      expect(() => lits.run('lin:length([])')).toThrowError(LitsError)
     })
   })
   describe('lin:manhattan-distance', () => {

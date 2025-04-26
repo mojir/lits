@@ -34,12 +34,12 @@ export function compare<T extends string | number>(a: T, b: T, sourceCodeInfo: S
   throw new LitsError(`Cannot compare values of different types: ${typeof a} and ${typeof b}`, sourceCodeInfo)
 }
 
-export function deepEqual(a: Any, b: Any, sourceCodeInfo?: SourceCodeInfo): boolean {
+export function deepEqual(a: unknown, b: unknown, sourceCodeInfo?: SourceCodeInfo): boolean {
   if (a === b)
     return true
 
   if (typeof a === 'number' && typeof b === 'number')
-    return Math.abs(a - b) < Number.EPSILON
+    return Math.abs(a - b) < 1e-10
 
   if (Array.isArray(a) && Array.isArray(b)) {
     if (a.length !== b.length)
@@ -62,7 +62,7 @@ export function deepEqual(a: Any, b: Any, sourceCodeInfo?: SourceCodeInfo): bool
 
     for (let i = 0; i < aKeys.length; i += 1) {
       const key = asString(aKeys[i], sourceCodeInfo)
-      if (!deepEqual(toAny(a[key]), toAny(b[key]), sourceCodeInfo))
+      if (!deepEqual(a[key], b[key], sourceCodeInfo))
         return false
     }
     return true

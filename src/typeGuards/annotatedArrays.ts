@@ -45,6 +45,30 @@ export function assertVector(vector: unknown, sourceCodeInfo: SourceCodeInfo | u
   }
 }
 
+export function is2dVector(vector: unknown): vector is [number, number] {
+  if (!isVector(vector)) {
+    return false
+  }
+  return vector.length === 2
+}
+export function assert2dVector(vector: unknown, sourceCodeInfo: SourceCodeInfo | undefined): asserts vector is [number, number] {
+  if (!is2dVector(vector)) {
+    throw new LitsError(`Expected a 2d vector, but got ${vector}`, sourceCodeInfo)
+  }
+}
+
+export function is3dVector(vector: unknown): vector is [number, number, number] {
+  if (!isVector(vector)) {
+    return false
+  }
+  return vector.length === 3
+}
+export function assert3dVector(vector: unknown, sourceCodeInfo: SourceCodeInfo | undefined): asserts vector is [number, number, number] {
+  if (!is3dVector(vector)) {
+    throw new LitsError(`Expected a 3d vector, but got ${vector}`, sourceCodeInfo)
+  }
+}
+
 export function assertNonEmptyVector(vector: unknown, sourceCodeInfo: SourceCodeInfo | undefined): asserts vector is number[] {
   assertVector(vector, sourceCodeInfo)
   if (vector.length === 0) {

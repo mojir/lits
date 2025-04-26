@@ -95,7 +95,7 @@ describe('grid', () => {
   })
   describe('grid:fill', () => {
     it('should fill the grid with the given value', () => {
-      expect(lits.run(`grid:fill(3, 3, 0)`)).toEqual([
+      expect(lits.run('grid:fill(3, 3, 0)')).toEqual([
         [0, 0, 0],
         [0, 0, 0],
         [0, 0, 0],
