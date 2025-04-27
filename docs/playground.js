@@ -8474,92 +8474,6 @@ var Playground = (function (exports) {
         return Math.sqrt(vector.reduce(function (acc, item) { return acc + Math.pow(item, 2); }, 0));
     }
 
-    function add(vector1, vector2) {
-        return vector1.map(function (item, index) { return item + vector2[index]; });
-    }
-
-    /**
-     * Creates a perpendicular vector to the given vector
-     */
-    function createPerpendicularVector(v) {
-        if (is3dVector(v)) {
-            // For 3D vectors
-            if (Math.abs(v[0]) < Math.abs(v[1]) && Math.abs(v[0]) < Math.abs(v[2])) {
-                return [0, -v[2], v[1]];
-            }
-            else if (Math.abs(v[1]) < Math.abs(v[2])) {
-                return [-v[2], 0, v[0]];
-            }
-            else {
-                return [-v[1], v[0], 0];
-            }
-        }
-        else {
-            // For 2D vectors, create a perpendicular vector by swapping components and negating one
-            return [-v[1], v[0]];
-        }
-    }
-    /**
-     * Performs spherical linear interpolation between two vectors.
-     * Works for any value of t (interpolation for 0≤t≤1, extrapolation for t<0 or t>1)
-     * Compatible with both 2D and 3D vectors (but both must be the same dimension)
-     *
-     * @param v1 - The first vector (2D or 3D)
-     * @param v2 - The second vector (must be same dimension as v1)
-     * @param t - The interpolation/extrapolation parameter (any real number)
-     * @returns The interpolated/extrapolated vector
-     */
-    function slerp(v1, v2, t, sourceCodeInfo) {
-        // Handle zero vectors special case
-        if (length(v1) === 0) {
-            return scale(v2, t);
-        }
-        if (length(v2) === 0) {
-            return scale(v1, 1 - t);
-        }
-        // Normalize both vectors
-        var v1Norm = getUnit(v1, sourceCodeInfo);
-        var v2Norm = getUnit(v2, sourceCodeInfo);
-        // Calculate the dot product between the normalized vectors
-        var dotProduct = dot(v1Norm, v2Norm);
-        // Clamp the dot product to the valid range [-1, 1]
-        dotProduct = Math.max(-1, Math.min(1, dotProduct));
-        // Calculate the angle between the vectors
-        var theta = Math.acos(dotProduct);
-        // If the vectors are very close, perform linear interpolation instead
-        if (Math.abs(theta) < 1e-6) {
-            var result = add(scale(v1, 1 - t), scale(v2, t));
-            return scale(result, 1 / length(result)); // Renormalize
-        }
-        // If vectors are exactly opposite, we need a different approach
-        if (Math.abs(Math.abs(dotProduct) - 1) < 1e-6 && dotProduct < 0) {
-            // Find an arbitrary perpendicular vector
-            var perpVector = createPerpendicularVector(v1Norm);
-            perpVector = getUnit(perpVector, sourceCodeInfo);
-            // Perform slerp with this perpendicular vector
-            var angleToPerp = Math.PI / 2;
-            var sin1_1 = Math.sin((1 - t) * angleToPerp);
-            var sin2_1 = Math.sin(t * angleToPerp);
-            var sinTheta_1 = Math.sin(angleToPerp);
-            var scaledV1_1 = scale(v1Norm, sin1_1 / sinTheta_1);
-            var scaledPerp = scale(perpVector, sin2_1 / sinTheta_1);
-            return scale(add(scaledV1_1, scaledPerp), length(v1));
-        }
-        // Calculate the sin of the angle
-        var sinTheta = Math.sin(theta);
-        // Calculate the sin of the scaled angles
-        var sin1 = Math.sin((1 - t) * theta);
-        var sin2 = Math.sin(t * theta);
-        // Calculate the interpolated vector
-        var scaledV1 = scale(v1Norm, sin1 / sinTheta);
-        var scaledV2 = scale(v2Norm, sin2 / sinTheta);
-        // Get the interpolated direction
-        var direction = add(scaledV1, scaledV2);
-        // Scale the result to maintain the length based on interpolation
-        var resultMagnitude = length(v1) * (1 - t) + length(v2) * t;
-        return scale(direction, resultMagnitude);
-    }
-
     var linearAlgebraNormalExpression = {
         'lin:rotate2d': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -9214,22 +9128,6 @@ var Playground = (function (exports) {
                 return [r * Math.cos(theta), r * Math.sin(theta)];
             },
             paramCount: 1,
-        },
-        'lin:slerp': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), vectorA = _b[0], vectorB = _b[1], t = _b[2];
-                assertVector(vectorA, sourceCodeInfo);
-                assertVector(vectorB, sourceCodeInfo);
-                if (vectorA.length < 2 || vectorA.length > 3) {
-                    throw new LitsError('SLERP is only defined for 2D and 3D vectors', sourceCodeInfo);
-                }
-                if (vectorA.length !== vectorB.length) {
-                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
-                }
-                assertNumber(t, sourceCodeInfo, { finite: true });
-                return slerp(vectorA, vectorB, t, sourceCodeInfo);
-            },
-            paramCount: 3,
         },
     };
 
@@ -14597,7 +14495,6 @@ var Playground = (function (exports) {
             'lin:reflect',
             'lin:refract',
             'lin:lerp',
-            'lin:slerp',
             'lin:rotate2d',
             'lin:rotate3d',
             'lin:dot',
@@ -22813,38 +22710,6 @@ var Playground = (function (exports) {
                 'lin:lerp([1, 2], [3, 4], 2)',
                 'lin:lerp([1, 2], [3, 4], -1)',
                 'lin:lerp([1, 2, 3], [4, 5, 6], 0.25)',
-            ],
-        },
-        'lin:slerp': {
-            title: 'lin:slerp',
-            category: 'Linear Algebra',
-            description: 'Performs spherical linear interpolation between two vectors.',
-            linkName: 'lin-colon-slerp',
-            returns: {
-                type: 'vector',
-            },
-            args: {
-                a: {
-                    type: 'vector',
-                    description: 'Start vector.',
-                },
-                b: {
-                    type: 'vector',
-                    description: 'End vector.',
-                },
-                t: {
-                    type: 'number',
-                    description: 'Interpolation factor (0 to 1).',
-                },
-            },
-            variants: [
-                { argumentNames: ['a', 'b', 't'] },
-            ],
-            examples: [
-                'lin:slerp([1, 2], [3, 4], 0.5)',
-                'lin:slerp([1, 2], [3, 4], 2)',
-                'lin:slerp([1, 2], [3, 4], -1)',
-                'lin:slerp([1, 2, 3], [4, 5, 6], 0.25)',
             ],
         },
         'lin:rotate2d': {
