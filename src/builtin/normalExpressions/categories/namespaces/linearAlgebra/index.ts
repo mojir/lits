@@ -19,6 +19,7 @@ import { getUnit } from './helpers/getUnit'
 import { dot } from './helpers/dot'
 import { subtract } from './helpers/subtract'
 import { scale } from './helpers/scale'
+import { length } from './helpers/length'
 
 export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
   'lin:rotate2d': {
@@ -368,7 +369,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([vector], sourceCodeInfo): number => {
       assertNonEmptyVector(vector, sourceCodeInfo)
 
-      return Math.sqrt(vector.reduce((acc, val) => acc + val * val, 0))
+      return length(vector)
     },
     paramCount: 1,
     aliases: ['lin:l2-norm', 'lin:length'],
@@ -702,5 +703,28 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
       return solve(matrix, vector)
     },
     paramCount: 2,
+  },
+  'lin:to-polar': {
+    evaluate: ([vector], sourceCodeInfo): number[] => {
+      assert2dVector(vector, sourceCodeInfo)
+      if (isZeroVector(vector)) {
+        return [0, 0]
+      }
+      const r = Math.sqrt(vector[0] ** 2 + vector[1] ** 2)
+      const theta = Math.atan2(vector[1], vector[0])
+      return [r, theta]
+    },
+    paramCount: 1,
+  },
+  'lin:from-polar': {
+    evaluate: ([polar], sourceCodeInfo): number[] => {
+      assert2dVector(polar, sourceCodeInfo)
+      const [r, theta] = polar
+      if (r === 0) {
+        return [0, 0]
+      }
+      return [r * Math.cos(theta), r * Math.sin(theta)]
+    },
+    paramCount: 1,
   },
 }

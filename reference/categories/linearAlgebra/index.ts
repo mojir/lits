@@ -918,4 +918,49 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       'lin:solve([[2, 3], [1, -1]], [8, 2])',
     ],
   },
+  'lin:to-polar': {
+    title: 'lin:to-polar',
+    category: 'Linear Algebra',
+    description: 'Converts a 2D vector to polar coordinates.',
+    linkName: 'lin-colon-to-polar',
+    returns: {
+      type: 'vector',
+    },
+    args: {
+      vector: {
+        type: 'vector',
+        description: '2D Vector to convert.',
+      },
+    },
+    variants: [
+      { argumentNames: ['vector'] },
+    ],
+    examples: [
+      'lin:to-polar([1, 2])',
+      'lin:to-polar([3, 4])',
+    ],
+  },
+  'lin:from-polar': {
+    title: 'lin:from-polar',
+    category: 'Linear Algebra',
+    description: 'Converts polar coordinates to a 2D vector.',
+    linkName: 'lin-colon-from-polar',
+    returns: {
+      type: 'vector',
+    },
+    args: {
+      polar: {
+        type: 'vector',
+        description: 'Polar coordinates to convert.',
+      },
+    },
+    variants: [
+      { argumentNames: ['polar'] },
+    ],
+    examples: [
+      'lin:from-polar([1, PI / 4])',
+      'lin:from-polar([1, 0])',
+      'lin:from-polar([1, -PI / 2])',
+    ],
+  },
 }

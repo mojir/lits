@@ -1,6 +1,6 @@
-export function scale(
-  vector: number[],
+export function scale<T extends number[]>(
+  vector: T,
   scalar: number,
-): number[] {
-  return vector.map(item => item * scalar)
+): T {
+  return vector.map(item => item * scalar) as T
 }

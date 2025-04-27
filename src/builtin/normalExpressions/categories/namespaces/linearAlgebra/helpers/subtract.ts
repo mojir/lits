@@ -1,6 +1,6 @@
-export function subtract(
-  vector1: number[],
-  vector2: number[],
-): number[] {
-  return vector1.map((item, index) => item - vector2[index]!)
+export function subtract<T extends number[]>(
+  vector1: T,
+  vector2: T,
+): T {
+  return vector1.map((item, index) => item - vector2[index]!) as T
 }

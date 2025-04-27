@@ -172,23 +172,6 @@ describe('math functions', () => {
     })
   })
 
-  describe('~', () => {
-    it('should check for approximate equality', () => {
-      expect(lits.run('~(0.1, 0.1)')).toBe(true)
-      expect(lits.run('~(0.1, 0.10000000000001)')).toBe(true)
-      expect(lits.run('~(0.1, 0.2)')).toBe(false)
-      expect(lits.run('~(0.1, 0.101, 0.1)')).toBe(true)
-
-      expect(lits.run('~([1, 2, 3], [1.00000000000001, 2.00000000000001, 3.00000000000001])')).toBe(true)
-      expect(lits.run('~([1, 2, 3], [1.1, 2.1, 3.1])')).toBe(false)
-
-      expect(lits.run('~([[1, 2, 3], [1, 2, 3]], [[1.01, 2.01, 3.01], [1.01, 2.01, 3.01]], 0.1)')).toBe(true)
-
-      expect(() => lits.run('~()')).toThrow(LitsError)
-      expect(() => lits.run('~(1, 2, 3, 4)')).toThrow(LitsError)
-    })
-  })
-
   describe('sqrt', () => {
     it('samples', () => {
       expect(() => lits.run('sqrt()')).toThrow(LitsError)
@@ -818,6 +801,47 @@ describe('math functions', () => {
       expect(lits.run('%([[1, 2], [3, 4]], 2)')).toEqual([[1, 0], [1, 0]])
       expect(lits.run('%([[1, 2], [3, 4]], [[4, 3], [2, 1]])')).toEqual([[1, 2], [1, 0]])
       expect(lits.run('%([[1], [2]], 2)')).toEqual([[1], [0]])
+    })
+  })
+  describe('to-rad', () => {
+    it('samples', () => {
+      expect(lits.run('to-rad(0)')).toBe(0)
+      expect(lits.run('to-rad(1)')).toBe(Math.PI / 180)
+      expect(lits.run('to-rad(90)')).toBe(Math.PI / 2)
+      expect(lits.run('to-rad(180)')).toBe(Math.PI)
+      expect(lits.run('to-rad(360)')).toBe(2 * Math.PI)
+      expect(lits.run('to-rad(720)')).toBe(4 * Math.PI)
+      expect(lits.run('to-rad(-720)')).toBe(-4 * Math.PI)
+      expect(() => lits.run('to-rad()')).toThrow(LitsError)
+      expect(() => lits.run('to-rad(1, 2)')).toThrow(LitsError)
+    })
+    it('should convert a vector to radians', () => {
+      expect(lits.run('to-rad([0, 1, 90])')).toEqual([0, Math.PI / 180, Math.PI / 2])
+      expect(lits.run('to-rad([])')).toEqual([])
+    })
+    it('should convert a matrix to radians', () => {
+      expect(lits.run('to-rad([[0, 1], [90, 180]])')).toEqual([[0, Math.PI / 180], [Math.PI / 2, Math.PI]])
+      expect(lits.run('to-rad([[0]])')).toEqual([[0]])
+    })
+  })
+  describe('to-deg', () => {
+    it('samples', () => {
+      expect(lits.run('to-deg(0)')).toBe(0)
+      expect(lits.run('to-deg(1)')).toBe(1 * (180 / Math.PI))
+      expect(lits.run('to-deg(PI / 2)')).toBe(90)
+      expect(lits.run('to-deg(PI)')).toBe(180)
+      expect(lits.run('to-deg(2 * PI)')).toBe(360)
+      expect(lits.run('to-deg(-2 * PI)')).toBe(-360)
+      expect(() => lits.run('to-deg()')).toThrow(LitsError)
+      expect(() => lits.run('to-deg(1, 2)')).toThrow(LitsError)
+    })
+    it('should convert a vector to degrees', () => {
+      expect(lits.run('to-deg([0, 1, PI])')).toEqual([0, 1 * (180 / Math.PI), 180])
+      expect(lits.run('to-deg([])')).toEqual([])
+    })
+    it('should convert a matrix to degrees', () => {
+      expect(lits.run('to-deg([[0, 1], [PI, 2 * PI]])')).toEqual([[0, 1 * (180 / Math.PI)], [180, 360]])
+      expect(lits.run('to-deg([[0]])')).toEqual([[0]])
     })
   })
 })

@@ -844,4 +844,43 @@ describe('linalg functions', () => {
       ], [5, 10, 2, 17])`)).toEqual([1.519607843137255, -0.17647058823529416, -0.5294117647058822, 1.6078431372549018])
     })
   })
+  describe('lin:to-polar', () => {
+    it('should convert Cartesian coordinates to polar coordinates', () => {
+      // Basic case
+      expect(lits.run('lin:to-polar([3, 4])')).toEqual([5, 0.9272952180016122])
+      // Case with negative numbers
+      expect(lits.run('lin:to-polar([-3, -4])')).toEqual([5, -2.214297435588181])
+      // Case with mixed numbers
+      expect(lits.run('lin:to-polar([3, -4])')).toEqual([5, -0.9272952180016122])
+
+      expect(lits.run('lin:to-polar([0, 0])')).toEqual([0, 0])
+      // Case with single element vector (should throw an error)
+      expect(() => lits.run('lin:to-polar([42])')).toThrowError(LitsError)
+      // Case with empty vector (should throw an error)
+      expect(() => lits.run('lin:to-polar([])')).toThrowError(LitsError)
+    })
+  })
+  describe('lin:from-polar', () => {
+    it('should convert polar coordinates to Cartesian coordinates', () => {
+      // Basic case
+      expect(lits.run('lin:from-polar([5, PI / 4])')).toEqual([
+        3.5355339059327378,
+        3.5355339059327373,
+      ])
+      // Case with negative numbers
+      expect(lits.run('lin:from-polar([5, -PI / 8])')).toEqual([
+        4.619397662556434,
+        -1.913417161825449,
+      ])
+
+      expect(lits.run('lin:from-polar([0, -PI / 8])')).toEqual([
+        0,
+        0,
+      ])
+      // Case with single element vector (should throw an error)
+      expect(() => lits.run('lin:from-polar([42])')).toThrowError(LitsError)
+      // Case with empty vector (should throw an error)
+      expect(() => lits.run('lin:from-polar([])')).toThrowError(LitsError)
+    })
+  })
 })

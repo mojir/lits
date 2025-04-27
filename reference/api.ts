@@ -82,7 +82,6 @@ export const api = {
     '-',
     '*',
     '/',
-    '~',
     'mod',
     'rem',
     'quot',
@@ -114,6 +113,8 @@ export const api = {
     'asinh',
     'acosh',
     'atanh',
+    'to-rad',
+    'to-deg',
   ] as const,
   functional: [
     '|>',
@@ -412,6 +413,8 @@ export const api = {
     'lin:cross-correlation',
     'lin:rref',
     'lin:solve',
+    'lin:to-polar',
+    'lin:from-polar',
   ] as const,
   numberTheory: [
     ...getNumberTheorySequenceNames('abundant'),

@@ -2,7 +2,6 @@ import { LitsError } from '../../../errors'
 import type { SourceCodeInfo } from '../../../tokenizer/token'
 import { isMatrix, isVector } from '../../../typeGuards/annotatedArrays'
 import { assertNumber, isNumber } from '../../../typeGuards/number'
-import { approxEqual } from '../../../utils'
 import type { BuiltinNormalExpressions } from '../../interface'
 
 type NumberVectorOrMatrix = number | number[] | number[][]
@@ -98,7 +97,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-
   'dec': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
       const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
@@ -116,7 +114,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-
   '+': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
       if (params.length === 0) {
@@ -141,7 +138,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: {},
   },
-
   '*': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
       if (params.length === 0) {
@@ -167,7 +163,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     aliases: ['·'],
     paramCount: {},
   },
-
   '/': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
       if (params.length === 0) {
@@ -198,7 +193,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: {},
   },
-
   '-': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
       if (params.length === 0) {
@@ -229,29 +223,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: {},
   },
-  '~': {
-    evaluate: (params, sourceCodeInfo): boolean => {
-      const [operation, operands] = getNumberVectorOrMatrixOperation([params[0], params[1]], sourceCodeInfo)
-      const eplsilon = params[2] ?? 1e-10
-      assertNumber(eplsilon, sourceCodeInfo, { positive: true, finite: true })
-      if (operation === 'number') {
-        const [first, second] = operands
-        return approxEqual(first!, second!, eplsilon)
-      }
-      else if (operation === 'vector') {
-        const firstVector = operands[0]!
-        const secondVector = operands[1]!
-        return firstVector.every((val, i) => approxEqual(val, secondVector[i]!, eplsilon))
-      }
-      else {
-        const firstMatrix = operands[0]!
-        const secondMatrix = operands[1]!
-        return firstMatrix.every((row, i) => row.every((val, j) => approxEqual(val, secondMatrix[i]![j]!, eplsilon)))
-      }
-    },
-    paramCount: { min: 2, max: 3 },
-    aliases: ['≈'],
-  },
   'quot': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
       const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
@@ -272,7 +243,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-
   'mod': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
       const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
@@ -301,7 +271,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-
   '%': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
       const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
@@ -323,7 +292,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     paramCount: 2,
     aliases: ['rem'],
   },
-
   'sqrt': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
       const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
@@ -342,7 +310,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     paramCount: 1,
     aliases: ['√'],
   },
-
   'cbrt': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
       const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
@@ -361,7 +328,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     paramCount: 1,
     aliases: ['∛'],
   },
-
   '^': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
       const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
@@ -381,7 +347,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-
   'round': {
     evaluate: ([value, decimals], sourceCodeInfo): NumberVectorOrMatrix => {
       const [operation, operands] = getNumberVectorOrMatrixOperation([value], sourceCodeInfo)
@@ -420,7 +385,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 1, max: 2 },
   },
-
   'trunc': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
       const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
@@ -438,7 +402,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-
   'floor': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
       const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
@@ -456,7 +419,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-
   'ceil': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
       const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
@@ -474,7 +436,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-
   'min': {
     evaluate: ([first, ...rest], sourceCodeInfo): number => {
       assertNumber(first, sourceCodeInfo)
@@ -488,7 +449,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 1 },
   },
-
   'max': {
     evaluate: ([first, ...rest], sourceCodeInfo): number => {
       assertNumber(first, sourceCodeInfo)
@@ -502,7 +462,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 1 },
   },
-
   'abs': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
       const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
@@ -520,7 +479,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-
   'sign': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
       const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
@@ -538,7 +496,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-
   'ln': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
       const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
@@ -556,7 +513,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-
   'log2': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
       const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
@@ -575,7 +531,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     paramCount: 1,
     aliases: ['log₂'],
   },
-
   'log10': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
       const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
@@ -594,7 +549,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     paramCount: 1,
     aliases: ['log₁₀'],
   },
-
   'sin': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
       const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
@@ -612,7 +566,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-
   'asin': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
       const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
@@ -630,7 +583,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-
   'sinh': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
       const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
@@ -648,7 +600,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-
   'asinh': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
       const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
@@ -666,7 +617,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-
   'cos': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
       const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
@@ -684,7 +634,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-
   'acos': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
       const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
@@ -702,7 +651,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-
   'cosh': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
       const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
@@ -720,7 +668,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-
   'acosh': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
       const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
@@ -738,7 +685,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-
   'tan': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
       const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
@@ -756,7 +702,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-
   'atan': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
       const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
@@ -774,7 +719,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-
   'tanh': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
       const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
@@ -792,7 +736,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-
   'atanh': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
       const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
@@ -806,6 +749,40 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       else {
         const matrix = operands[0]!
         return matrix.map(row => row.map(val => Math.atanh(val)))
+      }
+    },
+    paramCount: 1,
+  },
+  'to-rad': {
+    evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
+      const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
+      if (operation === 'number') {
+        return (operands[0]! * Math.PI) / 180
+      }
+      else if (operation === 'vector') {
+        const vector = operands[0]!
+        return vector.map(val => (val * Math.PI) / 180)
+      }
+      else {
+        const matrix = operands[0]!
+        return matrix.map(row => row.map(val => (val * Math.PI) / 180))
+      }
+    },
+    paramCount: 1,
+  },
+  'to-deg': {
+    evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
+      const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
+      if (operation === 'number') {
+        return (operands[0]! * 180) / Math.PI
+      }
+      else if (operation === 'vector') {
+        const vector = operands[0]!
+        return vector.map(val => (val * 180) / Math.PI)
+      }
+      else {
+        const matrix = operands[0]!
+        return matrix.map(row => row.map(val => (val * 180) / Math.PI))
       }
     },
     paramCount: 1,

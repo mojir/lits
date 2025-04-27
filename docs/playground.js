@@ -2763,7 +2763,7 @@ var Playground = (function (exports) {
         if (a === b)
             return true;
         if (typeof a === 'number' && typeof b === 'number')
-            return Math.abs(a - b) < 1e-10;
+            return approxEqual(a, b);
         if (Array.isArray(a) && Array.isArray(b)) {
             if (a.length !== b.length)
                 return false;
@@ -2852,9 +2852,8 @@ var Playground = (function (exports) {
         // Use relative error for larger values
         return diff / (absA + absB) < epsilon;
     }
-    function approxZero(value, epsilon) {
-        if (epsilon === void 0) { epsilon = EPSILON; }
-        return Math.abs(value) < epsilon;
+    function approxZero(value) {
+        return Math.abs(value) < EPSILON;
     }
 
     // isArray not needed, use Array.isArary
@@ -4442,30 +4441,6 @@ var Playground = (function (exports) {
             },
             paramCount: {},
         },
-        '~': {
-            evaluate: function (params, sourceCodeInfo) {
-                var _a;
-                var _b = __read(getNumberVectorOrMatrixOperation([params[0], params[1]], sourceCodeInfo), 2), operation = _b[0], operands = _b[1];
-                var eplsilon = (_a = params[2]) !== null && _a !== void 0 ? _a : 1e-10;
-                assertNumber(eplsilon, sourceCodeInfo, { positive: true, finite: true });
-                if (operation === 'number') {
-                    var _c = __read(operands, 2), first = _c[0], second = _c[1];
-                    return approxEqual(first, second, eplsilon);
-                }
-                else if (operation === 'vector') {
-                    var firstVector = operands[0];
-                    var secondVector_1 = operands[1];
-                    return firstVector.every(function (val, i) { return approxEqual(val, secondVector_1[i], eplsilon); });
-                }
-                else {
-                    var firstMatrix = operands[0];
-                    var secondMatrix_1 = operands[1];
-                    return firstMatrix.every(function (row, i) { return row.every(function (val, j) { return approxEqual(val, secondMatrix_1[i][j], eplsilon); }); });
-                }
-            },
-            paramCount: { min: 2, max: 3 },
-            aliases: ['≈'],
-        },
         'quot': {
             evaluate: function (params, sourceCodeInfo) {
                 var _a = __read(getNumberVectorOrMatrixOperation(params, sourceCodeInfo), 2), operation = _a[0], operands = _a[1];
@@ -4474,13 +4449,13 @@ var Playground = (function (exports) {
                 }
                 else if (operation === 'vector') {
                     var firstVector = operands[0];
-                    var secondVector_2 = operands[1];
-                    return firstVector.map(function (val, i) { return Math.trunc(val / secondVector_2[i]); });
+                    var secondVector_1 = operands[1];
+                    return firstVector.map(function (val, i) { return Math.trunc(val / secondVector_1[i]); });
                 }
                 else {
                     var firstMatrix = operands[0];
-                    var secondMatrix_2 = operands[1];
-                    return firstMatrix.map(function (row, i) { return row.map(function (val, j) { return Math.trunc(val / secondMatrix_2[i][j]); }); });
+                    var secondMatrix_1 = operands[1];
+                    return firstMatrix.map(function (row, i) { return row.map(function (val, j) { return Math.trunc(val / secondMatrix_1[i][j]); }); });
                 }
             },
             paramCount: 2,
@@ -4494,19 +4469,19 @@ var Playground = (function (exports) {
                 }
                 else if (operation === 'vector') {
                     var firstVector = operands[0];
-                    var secondVector_3 = operands[1];
+                    var secondVector_2 = operands[1];
                     return firstVector.map(function (dividend, i) {
-                        var divisor = secondVector_3[i];
+                        var divisor = secondVector_2[i];
                         var quotient = Math.floor(dividend / divisor);
                         return dividend - divisor * quotient;
                     });
                 }
                 else {
                     var firstMatrix = operands[0];
-                    var secondMatrix_3 = operands[1];
+                    var secondMatrix_2 = operands[1];
                     return firstMatrix.map(function (row, i) { return row.map(function (val, j) {
-                        var quotient = Math.floor(val / secondMatrix_3[i][j]);
-                        return val - secondMatrix_3[i][j] * quotient;
+                        var quotient = Math.floor(val / secondMatrix_2[i][j]);
+                        return val - secondMatrix_2[i][j] * quotient;
                     }); });
                 }
             },
@@ -4520,13 +4495,13 @@ var Playground = (function (exports) {
                 }
                 else if (operation === 'vector') {
                     var firstVector = operands[0];
-                    var secondVector_4 = operands[1];
-                    return firstVector.map(function (dividend, i) { return dividend % secondVector_4[i]; });
+                    var secondVector_3 = operands[1];
+                    return firstVector.map(function (dividend, i) { return dividend % secondVector_3[i]; });
                 }
                 else {
                     var firstMatrix = operands[0];
-                    var secondMatrix_4 = operands[1];
-                    return firstMatrix.map(function (row, i) { return row.map(function (dividend, j) { return dividend % secondMatrix_4[i][j]; }); });
+                    var secondMatrix_3 = operands[1];
+                    return firstMatrix.map(function (row, i) { return row.map(function (dividend, j) { return dividend % secondMatrix_3[i][j]; }); });
                 }
             },
             paramCount: 2,
@@ -4576,13 +4551,13 @@ var Playground = (function (exports) {
                 }
                 else if (operation === 'vector') {
                     var firstVector = operands[0];
-                    var secondVector_5 = operands[1];
-                    return firstVector.map(function (base, i) { return Math.pow(base, secondVector_5[i]); });
+                    var secondVector_4 = operands[1];
+                    return firstVector.map(function (base, i) { return Math.pow(base, secondVector_4[i]); });
                 }
                 else {
                     var firstMatrix = operands[0];
-                    var secondMatrix_5 = operands[1];
-                    return firstMatrix.map(function (row, i) { return row.map(function (base, j) { return Math.pow(base, secondMatrix_5[i][j]); }); });
+                    var secondMatrix_4 = operands[1];
+                    return firstMatrix.map(function (row, i) { return row.map(function (base, j) { return Math.pow(base, secondMatrix_4[i][j]); }); });
                 }
             },
             paramCount: 2,
@@ -4990,6 +4965,40 @@ var Playground = (function (exports) {
                 else {
                     var matrix = operands[0];
                     return matrix.map(function (row) { return row.map(function (val) { return Math.atanh(val); }); });
+                }
+            },
+            paramCount: 1,
+        },
+        'to-rad': {
+            evaluate: function (params, sourceCodeInfo) {
+                var _a = __read(getNumberVectorOrMatrixOperation(params, sourceCodeInfo), 2), operation = _a[0], operands = _a[1];
+                if (operation === 'number') {
+                    return (operands[0] * Math.PI) / 180;
+                }
+                else if (operation === 'vector') {
+                    var vector = operands[0];
+                    return vector.map(function (val) { return (val * Math.PI) / 180; });
+                }
+                else {
+                    var matrix = operands[0];
+                    return matrix.map(function (row) { return row.map(function (val) { return (val * Math.PI) / 180; }); });
+                }
+            },
+            paramCount: 1,
+        },
+        'to-deg': {
+            evaluate: function (params, sourceCodeInfo) {
+                var _a = __read(getNumberVectorOrMatrixOperation(params, sourceCodeInfo), 2), operation = _a[0], operands = _a[1];
+                if (operation === 'number') {
+                    return (operands[0] * 180) / Math.PI;
+                }
+                else if (operation === 'vector') {
+                    var vector = operands[0];
+                    return vector.map(function (val) { return (val * 180) / Math.PI; });
+                }
+                else {
+                    var matrix = operands[0];
+                    return matrix.map(function (row) { return row.map(function (val) { return (val * 180) / Math.PI; }); });
                 }
             },
             paramCount: 1,
@@ -5613,9 +5622,9 @@ var Playground = (function (exports) {
         },
         'zero?': {
             evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), first = _b[0];
-                assertNumber(first, sourceCodeInfo, { finite: true });
-                return first === 0;
+                var _b = __read(_a, 1), value = _b[0];
+                assertNumber(value, sourceCodeInfo, { finite: true });
+                return Math.abs(value) < EPSILON;
             },
             paramCount: 1,
         },
@@ -8461,6 +8470,96 @@ var Playground = (function (exports) {
         return vector.map(function (item) { return item * scalar; });
     }
 
+    function length(vector) {
+        return Math.sqrt(vector.reduce(function (acc, item) { return acc + Math.pow(item, 2); }, 0));
+    }
+
+    function add(vector1, vector2) {
+        return vector1.map(function (item, index) { return item + vector2[index]; });
+    }
+
+    /**
+     * Creates a perpendicular vector to the given vector
+     */
+    function createPerpendicularVector(v) {
+        if (is3dVector(v)) {
+            // For 3D vectors
+            if (Math.abs(v[0]) < Math.abs(v[1]) && Math.abs(v[0]) < Math.abs(v[2])) {
+                return [0, -v[2], v[1]];
+            }
+            else if (Math.abs(v[1]) < Math.abs(v[2])) {
+                return [-v[2], 0, v[0]];
+            }
+            else {
+                return [-v[1], v[0], 0];
+            }
+        }
+        else {
+            // For 2D vectors, create a perpendicular vector by swapping components and negating one
+            return [-v[1], v[0]];
+        }
+    }
+    /**
+     * Performs spherical linear interpolation between two vectors.
+     * Works for any value of t (interpolation for 0≤t≤1, extrapolation for t<0 or t>1)
+     * Compatible with both 2D and 3D vectors (but both must be the same dimension)
+     *
+     * @param v1 - The first vector (2D or 3D)
+     * @param v2 - The second vector (must be same dimension as v1)
+     * @param t - The interpolation/extrapolation parameter (any real number)
+     * @returns The interpolated/extrapolated vector
+     */
+    function slerp(v1, v2, t, sourceCodeInfo) {
+        // Handle zero vectors special case
+        if (length(v1) === 0) {
+            return scale(v2, t);
+        }
+        if (length(v2) === 0) {
+            return scale(v1, 1 - t);
+        }
+        // Normalize both vectors
+        var v1Norm = getUnit(v1, sourceCodeInfo);
+        var v2Norm = getUnit(v2, sourceCodeInfo);
+        // Calculate the dot product between the normalized vectors
+        var dotProduct = dot(v1Norm, v2Norm);
+        // Clamp the dot product to the valid range [-1, 1]
+        dotProduct = Math.max(-1, Math.min(1, dotProduct));
+        // Calculate the angle between the vectors
+        var theta = Math.acos(dotProduct);
+        // If the vectors are very close, perform linear interpolation instead
+        if (Math.abs(theta) < 1e-6) {
+            var result = add(scale(v1, 1 - t), scale(v2, t));
+            return scale(result, 1 / length(result)); // Renormalize
+        }
+        // If vectors are exactly opposite, we need a different approach
+        if (Math.abs(Math.abs(dotProduct) - 1) < 1e-6 && dotProduct < 0) {
+            // Find an arbitrary perpendicular vector
+            var perpVector = createPerpendicularVector(v1Norm);
+            perpVector = getUnit(perpVector, sourceCodeInfo);
+            // Perform slerp with this perpendicular vector
+            var angleToPerp = Math.PI / 2;
+            var sin1_1 = Math.sin((1 - t) * angleToPerp);
+            var sin2_1 = Math.sin(t * angleToPerp);
+            var sinTheta_1 = Math.sin(angleToPerp);
+            var scaledV1_1 = scale(v1Norm, sin1_1 / sinTheta_1);
+            var scaledPerp = scale(perpVector, sin2_1 / sinTheta_1);
+            return scale(add(scaledV1_1, scaledPerp), length(v1));
+        }
+        // Calculate the sin of the angle
+        var sinTheta = Math.sin(theta);
+        // Calculate the sin of the scaled angles
+        var sin1 = Math.sin((1 - t) * theta);
+        var sin2 = Math.sin(t * theta);
+        // Calculate the interpolated vector
+        var scaledV1 = scale(v1Norm, sin1 / sinTheta);
+        var scaledV2 = scale(v2Norm, sin2 / sinTheta);
+        // Get the interpolated direction
+        var direction = add(scaledV1, scaledV2);
+        // Scale the result to maintain the length based on interpolation
+        var resultMagnitude = length(v1) * (1 - t) + length(v2) * t;
+        return scale(direction, resultMagnitude);
+    }
+
     var linearAlgebraNormalExpression = {
         'lin:rotate2d': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -8785,7 +8884,7 @@ var Playground = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertNonEmptyVector(vector, sourceCodeInfo);
-                return Math.sqrt(vector.reduce(function (acc, val) { return acc + val * val; }, 0));
+                return length(vector);
             },
             paramCount: 1,
             aliases: ['lin:l2-norm', 'lin:length'],
@@ -9090,6 +9189,47 @@ var Playground = (function (exports) {
                 return solve(matrix, vector);
             },
             paramCount: 2,
+        },
+        'lin:to-polar': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), vector = _b[0];
+                assert2dVector(vector, sourceCodeInfo);
+                if (isZeroVector(vector)) {
+                    return [0, 0];
+                }
+                var r = Math.sqrt(Math.pow(vector[0], 2) + Math.pow(vector[1], 2));
+                var theta = Math.atan2(vector[1], vector[0]);
+                return [r, theta];
+            },
+            paramCount: 1,
+        },
+        'lin:from-polar': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), polar = _b[0];
+                assert2dVector(polar, sourceCodeInfo);
+                var _c = __read(polar, 2), r = _c[0], theta = _c[1];
+                if (r === 0) {
+                    return [0, 0];
+                }
+                return [r * Math.cos(theta), r * Math.sin(theta)];
+            },
+            paramCount: 1,
+        },
+        'lin:slerp': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), vectorA = _b[0], vectorB = _b[1], t = _b[2];
+                assertVector(vectorA, sourceCodeInfo);
+                assertVector(vectorB, sourceCodeInfo);
+                if (vectorA.length < 2 || vectorA.length > 3) {
+                    throw new LitsError('SLERP is only defined for 2D and 3D vectors', sourceCodeInfo);
+                }
+                if (vectorA.length !== vectorB.length) {
+                    throw new LitsError('Vectors must be of the same length', sourceCodeInfo);
+                }
+                assertNumber(t, sourceCodeInfo, { finite: true });
+                return slerp(vectorA, vectorB, t, sourceCodeInfo);
+            },
+            paramCount: 3,
         },
     };
 
@@ -14056,8 +14196,6 @@ var Playground = (function (exports) {
         '=', // equal
         '!=', // not equal
         '≠', // not equal
-        '~', // approximate
-        '≈', // approximate
         '&', // bitwise AND
         'xor', // bitwise XOR
         '|', // bitwise OR
@@ -14189,7 +14327,6 @@ var Playground = (function (exports) {
             '-',
             '*',
             '/',
-            '~',
             'mod',
             'rem',
             'quot',
@@ -14221,6 +14358,8 @@ var Playground = (function (exports) {
             'asinh',
             'acosh',
             'atanh',
+            'to-rad',
+            'to-deg',
         ],
         functional: [
             '|>',
@@ -14458,6 +14597,7 @@ var Playground = (function (exports) {
             'lin:reflect',
             'lin:refract',
             'lin:lerp',
+            'lin:slerp',
             'lin:rotate2d',
             'lin:rotate3d',
             'lin:dot',
@@ -14493,6 +14633,8 @@ var Playground = (function (exports) {
             'lin:cross-correlation',
             'lin:rref',
             'lin:solve',
+            'lin:to-polar',
+            'lin:from-polar',
         ],
         numberTheory: __spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray([], __read(getNumberTheorySequenceNames('abundant')), false), __read(getNumberTheorySequenceNames('bell')), false), __read(getNumberTheorySequenceNames('catalan')), false), __read(getNumberTheorySequenceNames('composite')), false), __read(getNumberTheorySequenceNames('factorial')), false), __read(getNumberTheorySequenceNames('fibonacci')), false), __read(getNumberTheorySequenceNames('geometric')), false), __read(getNumberTheorySequenceNames('golomb')), false), __read(getNumberTheorySequenceNames('happy')), false), __read(getNumberTheorySequenceNames('look-and-say')), false), __read(getNumberTheorySequenceNames('lucas')), false), __read(getNumberTheorySequenceNames('lucky')), false), __read(getNumberTheorySequenceNames('mersenne')), false), __read(getNumberTheorySequenceNames('padovan')), false), __read(getNumberTheorySequenceNames('partition')), false), __read(getNumberTheorySequenceNames('pell')), false), __read(getNumberTheorySequenceNames('perfect')), false), __read(getNumberTheorySequenceNames('perfect-cube')), false), __read(getNumberTheorySequenceNames('perfect-power')), false), __read(getNumberTheorySequenceNames('perfect-square')), false), __read(getNumberTheorySequenceNames('polygonal')), false), __read(getNumberTheorySequenceNames('prime')), false), __read(getNumberTheorySequenceNames('recaman')), false), __read(getNumberTheorySequenceNames('sylvester')), false), __read(getNumberTheorySequenceNames('thue-morse')), false), __read(getNumberTheorySequenceNames('tribonacci')), false), [
             'nth:collatz-seq',
@@ -16178,29 +16320,6 @@ var Playground = (function (exports) {
                 '[[1, 2, 3], [4, 5, 6]] / 2',
             ],
         },
-        '~': {
-            title: '~',
-            category: 'Math',
-            linkName: '-tilde',
-            returns: {
-                type: ['number', 'vector', 'matrix'],
-            },
-            args: __assign({}, mixedOperatorArgs),
-            variants: [
-                { argumentNames: ['a, b'] },
-            ],
-            description: 'The `~` checks for approximately equal values, returning `true` if the absolute difference between the two numbers is less than or equal to a small threshold (default: `1e-10`). It works on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it checks each element for approximate equality.',
-            examples: [
-                '~(0.1, 0.1)',
-                '~(0.1, 0.10000000000001)',
-                '~(0.1, 0.2)',
-                '~(0.1, 0.101, 0.1)',
-                '~([1, 2, 3], [1.00000000000001, 2.00000000000001, 3.00000000000001])',
-                '~([1, 2, 3], [1.1, 2.1, 3.1])',
-                '~([[1, 2, 3], [1, 2, 3]], [[1.01, 2.01, 3.01], [1.01, 2.01, 3.01]], 0.1)',
-            ],
-            aliases: ['≈'],
-        },
         'mod': {
             title: 'mod',
             category: 'Math',
@@ -16976,6 +17095,56 @@ var Playground = (function (exports) {
                 'atanh(-0.5)',
                 'atanh([0.1, 0.2, 0.3])',
                 'atanh([[0.1, 0.2], [0.3, 0.4]])',
+            ],
+        },
+        'to-rad': {
+            title: 'to-rad',
+            category: 'Math',
+            linkName: 'to-rad',
+            returns: {
+                type: ['number', 'vector', 'matrix'],
+            },
+            args: {
+                x: {
+                    type: ['number', 'vector', 'matrix'],
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'The `to-rad` function converts an angle from degrees to radians, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it converts each element while preserving the original structure.',
+            examples: [
+                'to-rad(0)',
+                'to-rad(90)',
+                'to-rad(180)',
+                'to-rad(360)',
+                'to-rad([0, 90, 180])',
+                'to-rad([[0, 90], [180, 360]])',
+            ],
+        },
+        'to-deg': {
+            title: 'to-deg',
+            category: 'Math',
+            linkName: 'to-deg',
+            returns: {
+                type: ['number', 'vector', 'matrix'],
+            },
+            args: {
+                x: {
+                    type: ['number', 'vector', 'matrix'],
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'The `to-deg` function converts an angle from radians to degrees, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it converts each element while preserving the original structure.',
+            examples: [
+                'to-deg(0)',
+                'to-deg(PI)',
+                'to-deg(PI / 2)',
+                'to-deg(3 * PI / 2)',
+                'to-deg([0, PI, PI / 2])',
+                'to-deg([[0, PI], [PI / 2, 3 * PI / 2]])',
             ],
         },
     };
@@ -22646,6 +22815,38 @@ var Playground = (function (exports) {
                 'lin:lerp([1, 2, 3], [4, 5, 6], 0.25)',
             ],
         },
+        'lin:slerp': {
+            title: 'lin:slerp',
+            category: 'Linear Algebra',
+            description: 'Performs spherical linear interpolation between two vectors.',
+            linkName: 'lin-colon-slerp',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                a: {
+                    type: 'vector',
+                    description: 'Start vector.',
+                },
+                b: {
+                    type: 'vector',
+                    description: 'End vector.',
+                },
+                t: {
+                    type: 'number',
+                    description: 'Interpolation factor (0 to 1).',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b', 't'] },
+            ],
+            examples: [
+                'lin:slerp([1, 2], [3, 4], 0.5)',
+                'lin:slerp([1, 2], [3, 4], 2)',
+                'lin:slerp([1, 2], [3, 4], -1)',
+                'lin:slerp([1, 2, 3], [4, 5, 6], 0.25)',
+            ],
+        },
         'lin:rotate2d': {
             title: 'lin:rotate2d',
             category: 'Linear Algebra',
@@ -23429,6 +23630,51 @@ var Playground = (function (exports) {
                 "lin:solve([\n  [2, 1, -1, 1], \n  [4, 5, -3, 2], \n  [6, -2, 5, -3], \n  [8, 3, 2, 4]\n], [5, 10, 2, 17])",
                 'lin:solve([[2, 0, 0], [3, 1, 0], [4, 5, 6]], [4, 5, 38])',
                 'lin:solve([[2, 3], [1, -1]], [8, 2])',
+            ],
+        },
+        'lin:to-polar': {
+            title: 'lin:to-polar',
+            category: 'Linear Algebra',
+            description: 'Converts a 2D vector to polar coordinates.',
+            linkName: 'lin-colon-to-polar',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: '2D Vector to convert.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'lin:to-polar([1, 2])',
+                'lin:to-polar([3, 4])',
+            ],
+        },
+        'lin:from-polar': {
+            title: 'lin:from-polar',
+            category: 'Linear Algebra',
+            description: 'Converts polar coordinates to a 2D vector.',
+            linkName: 'lin-colon-from-polar',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                polar: {
+                    type: 'vector',
+                    description: 'Polar coordinates to convert.',
+                },
+            },
+            variants: [
+                { argumentNames: ['polar'] },
+            ],
+            examples: [
+                'lin:from-polar([1, PI / 4])',
+                'lin:from-polar([1, 0])',
+                'lin:from-polar([1, -PI / 2])',
             ],
         },
     };
@@ -31928,8 +32174,6 @@ var Playground = (function (exports) {
             case '=': // equal
             case '!=': // not equal
             case '≠': // not equal
-            case '~': // approximate
-            case '≈': // approximate
                 return 5;
             case '&': // bitwise AND
             case 'xor': // bitwise XOR
@@ -31983,8 +32227,6 @@ var Playground = (function (exports) {
             case '&':
             case 'xor':
             case '|':
-            case '~':
-            case '≈':
             case '|>':
                 return createNamedNormalExpressionNode(symbolNode, [left, right], sourceCodeInfo);
             case '&&':

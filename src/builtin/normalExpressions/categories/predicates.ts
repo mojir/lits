@@ -3,6 +3,7 @@ import { assertColl, isColl, isObj, isRegularExpression, isSeq } from '../../../
 import { assertNumber, isNumber } from '../../../typeGuards/number'
 import type { BuiltinNormalExpressions } from '../../interface'
 import { isGrid, isMatrix, isVector } from '../../../typeGuards/annotatedArrays'
+import { EPSILON } from '../../../utils'
 
 export const predicatesNormalExpression: BuiltinNormalExpressions = {
   'function?': {
@@ -36,9 +37,9 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
   },
 
   'zero?': {
-    evaluate: ([first], sourceCodeInfo): boolean => {
-      assertNumber(first, sourceCodeInfo, { finite: true })
-      return first === 0
+    evaluate: ([value], sourceCodeInfo): boolean => {
+      assertNumber(value, sourceCodeInfo, { finite: true })
+      return Math.abs(value) < EPSILON
     },
     paramCount: 1,
   },

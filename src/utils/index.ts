@@ -39,7 +39,7 @@ export function deepEqual(a: unknown, b: unknown, sourceCodeInfo?: SourceCodeInf
     return true
 
   if (typeof a === 'number' && typeof b === 'number')
-    return Math.abs(a - b) < 1e-10
+    return approxEqual(a, b)
 
   if (Array.isArray(a) && Array.isArray(b)) {
     if (a.length !== b.length)
@@ -120,7 +120,7 @@ export function addToSet<T>(target: Set<T>, source: Set<T>): void {
   source.forEach(symbol => target.add(symbol))
 }
 
-const EPSILON = 1e-10
+export const EPSILON = 1e-10
 
 export function approxEqual(a: number, b: number, epsilon: number = EPSILON): boolean {
   if (a === b) {
@@ -140,6 +140,6 @@ export function approxEqual(a: number, b: number, epsilon: number = EPSILON): bo
   return diff / (absA + absB) < epsilon
 }
 
-export function approxZero(value: number, epsilon: number = EPSILON): boolean {
-  return Math.abs(value) < epsilon
+export function approxZero(value: number): boolean {
+  return Math.abs(value) < EPSILON
 }

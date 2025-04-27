@@ -100,8 +100,6 @@ function getPrecedence(operatorSign: SymbolicBinaryOperator, sourceCodeInfo: Sou
     case '=': // equal
     case '!=': // not equal
     case '≠': // not equal
-    case '~': // approximate
-    case '≈': // approximate
       return 5
 
     case '&': // bitwise AND
@@ -165,8 +163,6 @@ function fromBinaryOperatorToNode(operator: OperatorToken, symbolNode: SymbolNod
     case '&':
     case 'xor':
     case '|':
-    case '~':
-    case '≈':
     case '|>':
       return createNamedNormalExpressionNode(symbolNode as NormalBuiltinSymbolNode, [left, right], sourceCodeInfo)
     case '&&':
