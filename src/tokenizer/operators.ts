@@ -39,6 +39,8 @@ const binaryOperators = [
 ] as const
 
 const otherOperators = [
+  '?', // conditional operator
+  ':', // conditional operator
   '->', // lambda
   '...', // rest
   '.', // property accessor
@@ -53,17 +55,12 @@ const symbolicOperators = [
 ] as const
 
 const nonFunctionOperators = [
-  '??',
-  '&&',
-  '||',
   'comment',
   'cond',
   'def',
   'defined?',
-  // 'defn',
   'do',
   'doseq',
-  // 'fn',
   'if',
   'let',
   'loop',

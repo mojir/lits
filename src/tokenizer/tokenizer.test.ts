@@ -36,6 +36,7 @@ describe('tokenizers', () => {
   })
   describe('tokenizeOperator', () => {
     it('should tokenize operator', () => {
+      expect(tokenizeOperator('?', 0)).toEqual([1, ['Operator', '?']])
       expect(tokenizeOperator('>>>', 0)).toEqual([3, ['Operator', '>>>']])
       expect(tokenizeOperator('<=', 0)).toEqual([2, ['Operator', '<=']])
       expect(tokenizeOperator('...', 4)).toEqual(NO_MATCH)

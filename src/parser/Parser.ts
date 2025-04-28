@@ -56,8 +56,9 @@ import { assertNumberOfParams } from '../typeGuards'
 import { asUserDefinedSymbolNode, isNormalBuiltinSymbolNode, isSpecialBuiltinSymbolNode, isUserDefinedSymbolNode } from '../typeGuards/astNode'
 import { type BindingNode, type BindingTarget, type Node, type NormalBuiltinSymbolNode, type NormalExpressionNodeExpression, type NormalExpressionNodeWithName, type NumberNode, type ParseState, type ReservedSymbolNode, type SpecialBuiltinSymbolNode, type StringNode, type SymbolNode, type UserDefinedSymbolNode, bindingTargetTypes } from './types'
 
-const exponentiationPrecedence = 11
-const binaryFunctionalOperatorPrecedence = 2
+const exponentiationPrecedence = 12
+const binaryFunctionalOperatorPrecedence = 3
+const conditionalOperatorPrecedence = 1
 const placeholderRegexp = /^\$([1-9]\d?)?$/
 
 function withSourceCodeInfo<T extends Node | BindingTarget>(node: T, sourceCodeInfo: SourceCodeInfo | undefined): T {
@@ -75,19 +76,19 @@ function getPrecedence(operatorSign: SymbolicBinaryOperator, sourceCodeInfo: Sou
     case '*': // multiplication
     case '/': // division
     case '%': // remainder
-      return 10
+      return 11
 
     case '+': // addition
     case '-': // subtraction
-      return 9
+      return 10
 
     case '<<': // left shift
     case '>>': // signed right shift
     case '>>>': // unsigned right shift
-      return 8
+      return 9
 
     case '++': // string concatenation
-      return 7
+      return 8
 
     case '<': // less than
     case '<=': // less than or equal
@@ -95,27 +96,30 @@ function getPrecedence(operatorSign: SymbolicBinaryOperator, sourceCodeInfo: Sou
     case '>': // greater than
     case '>=': // greater than or equal
     case '≥': // greater than or equal
-      return 6
+      return 7
 
     case '=': // equal
     case '!=': // not equal
     case '≠': // not equal
-      return 5
+      return 6
 
     case '&': // bitwise AND
     case 'xor': // bitwise XOR
     case '|': // bitwise OR
-      return 4
+      return 5
 
     case '&&': // logical AND
     case '||': // logical OR
     case '??': // nullish coalescing
-      return 3
+      return 4
+
+      // leave room for binaryFunctionalOperatorPrecedence = 3
 
     case '|>': // pipe
-      return 1
+      return 2
 
-    // leave room for binaryFunctionalOperatorPrecedence = 2
+      // leave room for conditionalOperatorPrecedence = 1
+
     /* v8 ignore next 2 */
     default:
       throw new LitsError(`Unknown binary operator: ${operatorSign satisfies never}`, sourceCodeInfo)
@@ -169,15 +173,16 @@ function fromBinaryOperatorToNode(operator: OperatorToken, symbolNode: SymbolNod
     case '||':
     case '??':
       return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes[operatorName], [left, right]]] as AndNode, sourceCodeInfo)
-    /* v8 ignore next 10 */
+    /* v8 ignore next 11 */
     case '.':
     case ';':
     case ':=':
     case ',':
     case '->':
     case '...':
+    case '?':
+    case ':':
       throw new LitsError(`Unknown binary operator: ${operatorName}`, sourceCodeInfo)
-
     default:
       throw new LitsError(`Unknown binary operator: ${operatorName satisfies never}`, sourceCodeInfo)
   }
@@ -300,6 +305,19 @@ export class Parser {
           throw new LitsError('Special expressions are not allowed in binary functional operators', operatorSymbol[2])
         }
         left = createNamedNormalExpressionNode(operatorSymbol, [left, right], operator[2])
+      }
+      else if (operator?.[1] === '?') {
+        if (conditionalOperatorPrecedence <= precedence) {
+          break
+        }
+        this.advance()
+        const trueNode = this.parseExpression()
+        if (!isOperatorToken(this.peek(), ':')) {
+          throw new LitsError('Expected :', this.peekSourceCodeInfo())
+        }
+        this.advance()
+        const falseNode = this.parseExpression()
+        left = withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.if, [left, trueNode, falseNode]]], left[2]) satisfies IfNode
       }
       else {
         break

@@ -14103,6 +14103,8 @@ var Playground = (function (exports) {
         '|>', // pipe
     ];
     var otherOperators = [
+        '?', // conditional operator
+        ':', // conditional operator
         '->', // lambda
         '...', // rest
         '.', // property accessor
@@ -14112,17 +14114,12 @@ var Playground = (function (exports) {
     ];
     var symbolicOperators = __spreadArray(__spreadArray([], __read(binaryOperators), false), __read(otherOperators), false);
     var nonFunctionOperators = [
-        '??',
-        '&&',
-        '||',
         'comment',
         'cond',
         'def',
         'defined?',
-        // 'defn',
         'do',
         'doseq',
-        // 'fn',
         'if',
         'let',
         'loop',
@@ -32003,8 +32000,9 @@ var Playground = (function (exports) {
         }, '');
     }
 
-    var exponentiationPrecedence = 11;
-    var binaryFunctionalOperatorPrecedence = 2;
+    var exponentiationPrecedence = 12;
+    var binaryFunctionalOperatorPrecedence = 3;
+    var conditionalOperatorPrecedence = 1;
     var placeholderRegexp = /^\$([1-9]\d?)?$/;
     function withSourceCodeInfo(node, sourceCodeInfo) {
         if (sourceCodeInfo) {
@@ -32019,38 +32017,39 @@ var Playground = (function (exports) {
             case '*': // multiplication
             case '/': // division
             case '%': // remainder
-                return 10;
+                return 11;
             case '+': // addition
             case '-': // subtraction
-                return 9;
+                return 10;
             case '<<': // left shift
             case '>>': // signed right shift
             case '>>>': // unsigned right shift
-                return 8;
+                return 9;
             case '++': // string concatenation
-                return 7;
+                return 8;
             case '<': // less than
             case '<=': // less than or equal
             case '≤': // less than or equal
             case '>': // greater than
             case '>=': // greater than or equal
             case '≥': // greater than or equal
-                return 6;
+                return 7;
             case '=': // equal
             case '!=': // not equal
             case '≠': // not equal
-                return 5;
+                return 6;
             case '&': // bitwise AND
             case 'xor': // bitwise XOR
             case '|': // bitwise OR
-                return 4;
+                return 5;
             case '&&': // logical AND
             case '||': // logical OR
             case '??': // nullish coalescing
-                return 3;
+                return 4;
+            // leave room for binaryFunctionalOperatorPrecedence = 3
             case '|>': // pipe
-                return 1;
-            // leave room for binaryFunctionalOperatorPrecedence = 2
+                return 2;
+            // leave room for conditionalOperatorPrecedence = 1
             /* v8 ignore next 2 */
             default:
                 throw new LitsError("Unknown binary operator: ".concat(operatorSign), sourceCodeInfo);
@@ -32098,13 +32097,15 @@ var Playground = (function (exports) {
             case '||':
             case '??':
                 return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes[operatorName], [left, right]]], sourceCodeInfo);
-            /* v8 ignore next 10 */
+            /* v8 ignore next 11 */
             case '.':
             case ';':
             case ':=':
             case ',':
             case '->':
             case '...':
+            case '?':
+            case ':':
                 throw new LitsError("Unknown binary operator: ".concat(operatorName), sourceCodeInfo);
             default:
                 throw new LitsError("Unknown binary operator: ".concat(operatorName), sourceCodeInfo);
@@ -32219,6 +32220,19 @@ var Playground = (function (exports) {
                         throw new LitsError('Special expressions are not allowed in binary functional operators', operatorSymbol[2]);
                     }
                     left = createNamedNormalExpressionNode(operatorSymbol, [left, right], operator[2]);
+                }
+                else if ((operator === null || operator === void 0 ? void 0 : operator[1]) === '?') {
+                    if (conditionalOperatorPrecedence <= precedence) {
+                        break;
+                    }
+                    this.advance();
+                    var trueNode = this.parseExpression();
+                    if (!isOperatorToken(this.peek(), ':')) {
+                        throw new LitsError('Expected :', this.peekSourceCodeInfo());
+                    }
+                    this.advance();
+                    var falseNode = this.parseExpression();
+                    left = withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.if, [left, trueNode, falseNode]]], left[2]);
                 }
                 else {
                     break;

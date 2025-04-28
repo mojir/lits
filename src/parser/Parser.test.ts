@@ -7,6 +7,67 @@ const lits = new Lits()
 const litsDebug = new Lits({ debug: true })
 
 describe('parser', () => {
+  describe('conditional operator', () => {
+    test('? should work', () => {
+      expect(lits.run('1 ? 2 : 3')).toBe(2)
+      expect(lits.run('1 |> (1 ? inc : dec)')).toBe(2)
+      expect(lits.run('1 |> (0 ? inc : dec)')).toBe(0)
+      expect(lits.run('0 ? 2 : 3')).toBe(3)
+      expect(lits.run('1 ? 2 : 3 ? 4 : 5')).toBe(2)
+      expect(lits.run('0 ? 2 : 3 ? 4 : 5')).toBe(4)
+
+      // Test ternary with arithmetic operators
+      expect(lits.run('1 + 2 ? 3 : 4')).toBe(3) // (1 + 2) ? 3 : 4
+      expect(lits.run('0 + 0 ? 3 : 4')).toBe(4) // (0 + 0) ? 3 : 4
+      expect(lits.run('1 ? 2 + 3 : 4')).toBe(5) // 1 ? (2 + 3) : 4
+      expect(lits.run('0 ? 2 : 3 + 4')).toBe(7) // 0 ? 2 : (3 + 4)
+
+      // Test ternary with comparison operators
+      expect(lits.run('1 < 2 ? "less" : "not less"')).toBe('less')
+      expect(lits.run('2 = 2 ? "equal" : "not equal"')).toBe('equal')
+      expect(lits.run('3 > 2 ? 3 * 2 : 3 / 2')).toBe(6)
+
+      // Test ternary with logical operators
+      expect(lits.run('true && false ? "and" : "not and"')).toBe('not and')
+      expect(lits.run('true || false ? "or" : "not or"')).toBe('or')
+      expect(lits.run('1 ? true && false : true')).toBe(false)
+      expect(lits.run('0 ? true : true || false')).toBe(true)
+
+      // Test ternary with nullish coalescing
+      expect(lits.run('null ?? 5 ? "exists" : "null"')).toBe('exists')
+      expect(lits.run('1 ? null ?? "default" : "falsy"')).toBe('default')
+
+      // Test nested ternary expressions
+      expect(lits.run('1 ? 2 ? 3 : 4 : 5')).toBe(3)
+      expect(lits.run('1 ? 0 ? 3 : 4 : 5')).toBe(4)
+      expect(lits.run('0 ? 2 : 0 ? 3 : 4')).toBe(4)
+
+      // Test ternary with function calls
+      expect(lits.run('even?(2) ? "even" : "odd"')).toBe('even')
+      expect(lits.run('1 ? inc(2) : dec(2)')).toBe(3)
+
+      // Test ternary with bitwise operators
+      expect(lits.run('1 & 1 ? "bitwise" : "not bitwise"')).toBe('bitwise')
+      expect(lits.run('1 | 0 ? "bitwise or" : "not bitwise or"')).toBe('bitwise or')
+
+      // Test ternary with string concatenation
+      expect(lits.run('"a" ++ "b" ? "concat" : "no concat"')).toBe('concat')
+      expect(lits.run('1 ? "a" ++ "b" : "c"')).toBe('ab')
+
+      // Test ternary with multiple operators (complex precedence testing)
+      expect(lits.run('1 + 2 * 3 ? 4 + 5 : 6 + 7')).toBe(9)
+      expect(lits.run('1 + 2 > 3 * 4 ? 5 - 6 : 7 * 8')).toBe(56)
+      expect(lits.run('1 && 0 || 1 ? "complex1" : "complex2"')).toBe('complex1')
+      expect(lits.run('(1 && 0) || 1 ? "parentheses" : "no parentheses"')).toBe('parentheses')
+      expect(lits.run('1 && (0 || 1) ? "logical group" : "no group"')).toBe('logical group')
+
+      // Test ternary with pipe and functional operators (low precedence interactions)
+      expect(lits.run('[1, 2, 3] |> empty? ? "empty" : "not empty"')).toBe('not empty')
+      expect(lits.run('[1, 2, 3] |> count |> even? ? "even count" : "odd count"')).toBe('odd count')
+      expect(lits.run('1 ? [1, 2, 3] filter even? : [4, 5, 6]')).toEqual([2])
+    })
+  })
+
   describe('reserved symbol _', () => {
     it('should parse reserved symbol _', () => {
       expect(lits.parse(lits.tokenize('as'))).toEqual({
@@ -36,6 +97,9 @@ describe('parser', () => {
   })
 
   test('random samples', () => {
+    expect(() => lits.run('1 ? 2 ; 3')).toThrow(LitsError)
+    expect(() => lits.run('1 ? 2')).toThrow(LitsError)
+    expect(() => lits.run('1 ? 2 :')).toThrow(LitsError)
     expect(() => litsDebug.run('let { x, ...x } := {};')).toThrow(LitsError)
     expect(() => litsDebug.run('let [ x as y ] := [];')).toThrow(LitsError)
     expect(() => litsDebug.run('let { ...x as y } := {};')).toThrow(LitsError)
