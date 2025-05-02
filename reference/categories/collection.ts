@@ -40,6 +40,32 @@ filter(
 )`,
     ],
   },
+  'filteri': {
+    title: 'filteri',
+    category: 'Collection',
+    linkName: 'filteri',
+    returns: {
+      type: 'collection',
+    },
+    args: {
+      a: {
+        type: 'collection',
+      },
+      b: {
+        type: 'function',
+        description: 'The function to call for each element in the collection. The function should take two arguments: the element itself and the index.',
+      },
+    },
+    variants: [
+      { argumentNames: ['a', 'b'] },
+    ],
+    description: 'Creates a new collection with all elements that pass the test implemented by $b. The function is called for each element in the collection, and it should take two arguments: the element itself and the index.',
+    examples: [
+      'filteri([1, 2, 3], (x, i) -> i % 2 = 0)',
+      'filteri([1, 2, 3], (x, i) -> x % 2 = 0)',
+      'filteri([1, 2, 3], (x, i) -> x + i > 3)',
+    ],
+  },
   'map': {
     title: 'map',
     category: 'Collection',
@@ -70,6 +96,34 @@ filter(
       'map([1, 2, 3], [1, 10, 100], *)',
       'map({ a := 1, b := 2 }, inc)',
       'map({ a := 1, b := 2 }, { a := 10, b := 20 }, +)',
+    ],
+  },
+  'mapi': {
+    title: 'mapi',
+    category: 'Collection',
+    linkName: 'mapi',
+    returns: {
+      type: 'collection',
+    },
+    args: {
+      a: {
+        type: 'collection',
+      },
+      b: {
+        type: 'function',
+        description: 'The function to call for each element in the collection. The function should take two arguments: the element itself and the index.',
+      },
+    },
+    variants: [
+      { argumentNames: ['a', 'b'] },
+    ],
+    description: 'Creates a new collection populated with the results of calling $b on every element in $a. The function is called for each element in the collection, and it should take two arguments: the element itself and the index.',
+    examples: [
+      'mapi([1, 2, 3], (x, i) -> x + i)',
+      'mapi([1, 2, 3], (x, i) -> x * i)',
+      'mapi([1, 2, 3], (x, i) -> x - i)',
+      'mapi([1, 2, 3], (x, i) -> x / i)',
+      'mapi([1, 2, 3], (x, i) -> x % inc(i))',
     ],
   },
   'reduce': {
@@ -132,12 +186,73 @@ reduce(
       'reduce-right({ a := 1, b := 2 }, +, 0)',
     ],
   },
+  'reducei-right': {
+    title: 'reducei-right',
+    category: 'Collection',
+    linkName: 'reducei-right',
+    returns: {
+      type: 'any',
+    },
+    args: {
+      coll: {
+        type: 'collection',
+      },
+      fun: {
+        type: 'function',
+        description: 'The function to call for each element in the collection. The function should take three arguments: the accumulator, the element itself, and the index.',
+      },
+      initial: {
+        type: 'any',
+        description: 'The initial value to use as the accumulator.',
+      },
+    },
+    variants: [
+      { argumentNames: ['coll', 'fun', 'initial'] },
+    ],
+    description: 'Runs $fun function on each element of the $coll (starting from the last item), passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $coll is a single value. The function is called for each element in the collection, and it should take three arguments: the accumulator, the element itself, and the index.',
+    examples: [
+      'reducei-right([1, 2, 3], (acc, x, i) -> acc + x + i, 0)',
+      'reducei-right("Albert", (acc, x, i) -> acc ++ x ++ i, "")',
+      'reducei-right({ a := 1, b := 2 }, -> $1 ++ $3, "")',
+    ],
+  },
+  'reducei': {
+    title: 'reducei',
+    category: 'Collection',
+    linkName: 'reducei',
+    returns: {
+      type: 'any',
+    },
+    args: {
+      coll: {
+        type: 'collection',
+      },
+      fun: {
+        type: 'function',
+        description: 'The function to call for each element in the collection. The function should take three arguments: the accumulator, the element itself, and the index.',
+      },
+      initial: {
+        type: 'any',
+        description: 'The initial value to use as the accumulator.',
+      },
+    },
+    variants: [
+      { argumentNames: ['coll', 'fun', 'initial'] },
+    ],
+    description: 'Runs $fun function on each element of the $coll, passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $coll is a single value. The function is called for each element in the collection, and it should take three arguments: the accumulator, the element itself, and the index.',
+    examples: [
+      'reducei([1, 2, 3], (acc, x, i) -> acc + x + i, 0)',
+      'reducei("Albert", (acc, x, i) -> acc ++ x ++ i, "")',
+      'reducei({ a := 1, b := 2 }, -> $1 ++ $3, "")',
+    ],
+  },
   'reductions': {
     title: 'reductions',
     category: 'Collection',
     linkName: 'reductions',
     returns: {
       type: 'any',
+      array: true,
     },
     args: {
       fun: {
@@ -165,6 +280,37 @@ reductions(
   (result, value) -> result + if even?(value) then value else 0 end,
   0
 )`,
+    ],
+  },
+  'reductionsi': {
+    title: 'reductionsi',
+    category: 'Collection',
+    linkName: 'reductionsi',
+    returns: {
+      type: 'any',
+      array: true,
+    },
+    args: {
+      coll: {
+        type: 'collection',
+      },
+      fun: {
+        type: 'function',
+        description: 'The function to call for each element in the collection. The function should take three arguments: the accumulator, the element itself, and the index.',
+      },
+      initial: {
+        type: 'any',
+        description: 'The initial value to use as the accumulator.',
+      },
+    },
+    variants: [
+      { argumentNames: ['coll', 'fun', 'initial'] },
+    ],
+    description: 'Returns an array of the intermediate values of the reduction (see `reduce`) of $coll by $fun. The function is called for each element in the collection, and it should take three arguments: the accumulator, the element itself, and the index.',
+    examples: [
+      'reductionsi([1, 2, 3], (acc, x, i) -> acc + x + i, 0)',
+      'reductionsi("Albert", (acc, x, i) -> acc ++ x ++ i, "")',
+      'reductionsi({ a := 1, b := 2 }, -> $1 ++ $3, "")',
     ],
   },
   'count': {

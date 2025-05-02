@@ -199,6 +199,29 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
+  'filteri': {
+    evaluate: ([coll, fn], sourceCodeInfo, contextStack, { executeFunction }): Coll => {
+      assertColl(coll, sourceCodeInfo)
+      assertFunctionLike(fn, sourceCodeInfo)
+      if (Array.isArray(coll)) {
+        const result = coll.filter((elem, index) => executeFunction(fn, [elem, index], contextStack, sourceCodeInfo))
+        return result
+      }
+      if (isString(coll)) {
+        return coll
+          .split('')
+          .filter((elem, index) => executeFunction(fn, [elem, index], contextStack, sourceCodeInfo))
+          .join('')
+      }
+      return Object.entries(coll)
+        .filter(([key, value]) => executeFunction(fn, [value, key], contextStack, sourceCodeInfo))
+        .reduce((result: Obj, [key, value]) => {
+          result[key] = value
+          return result
+        }, {})
+    },
+    paramCount: 2,
+  },
   'map': {
     evaluate: (params, sourceCodeInfo, contextStack, { executeFunction }) => {
       const fn = asFunctionLike(params.at(-1), sourceCodeInfo)
@@ -243,6 +266,28 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 2 },
   },
+  'mapi': {
+    evaluate: ([coll, fn], sourceCodeInfo, contextStack, { executeFunction }) => {
+      assertColl(coll, sourceCodeInfo)
+      assertFunctionLike(fn, sourceCodeInfo)
+
+      if (Array.isArray(coll)) {
+        return coll.map((elem, index) => executeFunction(fn, [elem, index], contextStack, sourceCodeInfo))
+      }
+      if (isString(coll)) {
+        return coll
+          .split('')
+          .map((elem, index) => executeFunction(fn, [elem, index], contextStack, sourceCodeInfo))
+          .join('')
+      }
+      return Object.entries(coll)
+        .reduce((acc: Obj, [key, value]) => {
+          acc[key] = executeFunction(fn, [value, key], contextStack, sourceCodeInfo)
+          return acc
+        }, {})
+    },
+    paramCount: 2,
+  },
   'reduce': {
     evaluate: ([coll, fn, initial], sourceCodeInfo, contextStack, { executeFunction }): Any => {
       assertColl(coll, sourceCodeInfo)
@@ -277,6 +322,40 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 3,
   },
+  'reducei': {
+    evaluate: ([coll, fn, initial], sourceCodeInfo, contextStack, { executeFunction }): Any => {
+      assertColl(coll, sourceCodeInfo)
+      assertFunctionLike(fn, sourceCodeInfo)
+      assertAny(initial, sourceCodeInfo)
+
+      if (typeof coll === 'string') {
+        assertString(initial, sourceCodeInfo)
+        if (coll.length === 0)
+          return initial
+
+        return coll.split('').reduce((result: Any, elem, index) => {
+          return executeFunction(fn, [result, elem, index], contextStack, sourceCodeInfo)
+        }, initial)
+      }
+      else if (Array.isArray(coll)) {
+        if (coll.length === 0)
+          return initial
+
+        return coll.reduce((result: Any, elem, index) => {
+          return executeFunction(fn, [result, elem, index], contextStack, sourceCodeInfo)
+        }, initial)
+      }
+      else {
+        if (Object.keys(coll).length === 0)
+          return initial
+
+        return Object.entries(coll).reduce((result: Any, [key, elem]) => {
+          return executeFunction(fn, [result, elem, key], contextStack, sourceCodeInfo)
+        }, initial)
+      }
+    },
+    paramCount: 3,
+  },
   'reduce-right': {
     evaluate: ([coll, fn, initial], sourceCodeInfo, contextStack, { executeFunction }): Any => {
       assertColl(coll, sourceCodeInfo)
@@ -305,6 +384,39 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
 
         return Object.entries(coll).reduceRight((result: Any, [, elem]) => {
           return executeFunction(fn, [result, elem], contextStack, sourceCodeInfo)
+        }, initial)
+      }
+    },
+    paramCount: 3,
+  },
+  'reducei-right': {
+    evaluate: ([coll, fn, initial], sourceCodeInfo, contextStack, { executeFunction }): Any => {
+      assertColl(coll, sourceCodeInfo)
+      assertFunctionLike(fn, sourceCodeInfo)
+      assertAny(initial, sourceCodeInfo)
+
+      if (typeof coll === 'string') {
+        if (coll.length === 0)
+          return initial
+
+        return coll.split('').reduceRight((result: Any, elem, index) => {
+          return executeFunction(fn, [result, elem, index], contextStack, sourceCodeInfo)
+        }, initial)
+      }
+      else if (Array.isArray(coll)) {
+        if (coll.length === 0)
+          return initial
+
+        return coll.reduceRight((result: Any, elem, index) => {
+          return executeFunction(fn, [result, elem, index], contextStack, sourceCodeInfo)
+        }, initial)
+      }
+      else {
+        if (Object.keys(coll).length === 0)
+          return initial
+
+        return Object.entries(coll).reduceRight((result: Any, [key, elem]) => {
+          return executeFunction(fn, [result, elem, key], contextStack, sourceCodeInfo)
         }, initial)
       }
     },
@@ -349,6 +461,53 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
         const resultArray: Any[] = [initial]
         Object.entries(coll).reduce((result: Any, [, elem]) => {
           const newVal = executeFunction(fn, [result, elem], contextStack, sourceCodeInfo)
+          resultArray.push(newVal)
+          return newVal
+        }, initial)
+        return resultArray
+      }
+    },
+    paramCount: 3,
+  },
+  'reductionsi': {
+    evaluate: ([coll, fn, initial], sourceCodeInfo, contextStack, { executeFunction }): Any => {
+      assertColl(coll, sourceCodeInfo)
+      assertFunctionLike(fn, sourceCodeInfo)
+      assertAny(initial, sourceCodeInfo)
+
+      assertAny(initial, sourceCodeInfo)
+      if (typeof coll === 'string') {
+        assertString(initial, sourceCodeInfo)
+        if (coll.length === 0)
+          return [initial]
+
+        const resultArray: Any[] = [initial]
+        coll.split('').reduce((result: Any, elem, index) => {
+          const newVal = executeFunction(fn, [result, elem, index], contextStack, sourceCodeInfo)
+          resultArray.push(newVal)
+          return newVal
+        }, initial)
+        return resultArray
+      }
+      else if (Array.isArray(coll)) {
+        if (coll.length === 0)
+          return [initial]
+
+        const resultArray: Any[] = [initial]
+        coll.reduce((result: Any, elem, index) => {
+          const newVal = executeFunction(fn, [result, elem, index], contextStack, sourceCodeInfo)
+          resultArray.push(newVal)
+          return newVal
+        }, initial)
+        return resultArray
+      }
+      else {
+        if (Object.keys(coll).length === 0)
+          return [initial]
+
+        const resultArray: Any[] = [initial]
+        Object.entries(coll).reduce((result: Any, [key, elem]) => {
+          const newVal = executeFunction(fn, [result, elem, key], contextStack, sourceCodeInfo)
           resultArray.push(newVal)
           return newVal
         }, initial)

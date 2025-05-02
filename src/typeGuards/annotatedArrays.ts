@@ -31,7 +31,7 @@ export function isVector(vector: unknown): vector is number[] {
     return true
   }
 
-  if (vector.every(elem => isNumber(elem, { finite: true }))) {
+  if (vector.every(elem => isNumber(elem))) {
     annotatedArrays.add(vector)
     vectors.add(vector)
     return true
@@ -133,7 +133,7 @@ export function isMatrix(matrix: unknown): matrix is number[][] {
     if (row.length !== nbrOfCols) {
       return false
     }
-    if (row.some(cell => !isNumber(cell, { finite: true }))) {
+    if (row.some(cell => !isNumber(cell))) {
       return false
     }
   }

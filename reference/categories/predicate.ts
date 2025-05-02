@@ -418,30 +418,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
       'finite?(1.0)',
       'finite?(1 / 0)',
       'finite?(-1 / 0)',
-      'finite?(sqrt(-1))',
-    ],
-  },
-  'nan?': {
-    title: 'nan?',
-    category: 'Predicate',
-    linkName: 'nan-question',
-    returns: {
-      type: 'boolean',
-    },
-    args: {
-      x: {
-        type: 'number',
-      },
-    },
-    variants: [
-      { argumentNames: ['x'] },
-    ],
-    description: 'Returns `true` if $x is NaN (! a number), otherwise `false`.',
-    examples: [
-      'nan?(1.0)',
-      'nan?(1 / 0)',
-      'nan?(-1 / 0)',
-      'nan?(sqrt(-1))',
     ],
   },
   'negative-infinity?': {
@@ -464,7 +440,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
       'negative-infinity?(1.0)',
       'negative-infinity?(1 / 0)',
       'negative-infinity?(-1 / 0)',
-      'negative-infinity?(sqrt(-1))',
     ],
   },
   'positive-infinity?': {
@@ -487,7 +462,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
       'positive-infinity?(1.0)',
       'positive-infinity?(1 / 0)',
       'positive-infinity?(-1 / 0)',
-      'positive-infinity?(sqrt(-1))',
     ],
   },
   'false?': {

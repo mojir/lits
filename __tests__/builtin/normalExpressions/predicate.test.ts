@@ -335,17 +335,7 @@ describe('predicates', () => {
         expect(lits.run('finite?(0)')).toBe(true)
         expect(lits.run('finite?(1 / 0)')).toBe(false)
         expect(lits.run('finite?(-1 / 0)')).toBe(false)
-        expect(lits.run('finite?(sqrt(-1))')).toBe(false)
-      })
-    })
-
-    describe('nan?', () => {
-      it('samples', () => {
-        expect(lits.run('nan?(1)')).toBe(false)
-        expect(lits.run('nan?(0)')).toBe(false)
-        expect(lits.run('nan?(1 / 0)')).toBe(false)
-        expect(lits.run('nan?(-1 / 0)')).toBe(false)
-        expect(lits.run('nan?(sqrt(-1))')).toBe(true)
+        expect(() => lits.run('finite?(sqrt(-1))')).toThrow(LitsError)
       })
     })
 
@@ -355,7 +345,7 @@ describe('predicates', () => {
         expect(lits.run('positive-infinity?(0)')).toBe(false)
         expect(lits.run('positive-infinity?(1 / 0)')).toBe(true)
         expect(lits.run('positive-infinity?(-1 / 0)')).toBe(false)
-        expect(lits.run('positive-infinity?(sqrt(-1))')).toBe(false)
+        expect(() => lits.run('positive-infinity?(sqrt(-1))')).toThrow(LitsError)
       })
     })
 
@@ -365,7 +355,7 @@ describe('predicates', () => {
         expect(lits.run('negative-infinity?(0)')).toBe(false)
         expect(lits.run('negative-infinity?(1 / 0)')).toBe(false)
         expect(lits.run('negative-infinity?(-1 / 0)')).toBe(true)
-        expect(lits.run('negative-infinity?(sqrt(-1))')).toBe(false)
+        expect(() => lits.run('negative-infinity?(sqrt(-1))')).toThrow(LitsError)
       })
     })
 

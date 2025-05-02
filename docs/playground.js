@@ -1947,6 +1947,12 @@ var Playground = (function (exports) {
      * @returns A string containing the symbolic representation
      */
     function prettyPi(num, config = {}) {
+        if (isNaN(num)) {
+            return "NaN";
+        }
+        if (!isFinite(num)) {
+            return num > 0 ? "∞" : "-∞";
+        }
         setConfig(config);
         const parser = new ExpressionParser();
         const exprTree = parser.parseNumber(num);
@@ -2315,6 +2321,8 @@ var Playground = (function (exports) {
         if (options === void 0) { options = {}; }
         if (typeof value !== 'number')
             return false;
+        if (Number.isNaN(value))
+            return false;
         if (options.integer && !Number.isInteger(value))
             return false;
         if (options.finite && !Number.isFinite(value))
@@ -2377,7 +2385,7 @@ var Playground = (function (exports) {
         if (vectors.has(vector)) {
             return true;
         }
-        if (vector.every(function (elem) { return isNumber(elem, { finite: true }); })) {
+        if (vector.every(function (elem) { return isNumber(elem); })) {
             annotatedArrays.add(vector);
             vectors.add(vector);
             return true;
@@ -2486,7 +2494,7 @@ var Playground = (function (exports) {
                 if (row.length !== nbrOfCols) {
                     return false;
                 }
-                if (row.some(function (cell) { return !isNumber(cell, { finite: true }); })) {
+                if (row.some(function (cell) { return !isNumber(cell); })) {
                     return false;
                 }
             }
@@ -2542,10 +2550,6 @@ var Playground = (function (exports) {
             return value.toString();
         if (typeof value === 'object' && value instanceof RegExp)
             return "".concat(value);
-        if (value === Number.POSITIVE_INFINITY)
-            return "".concat(Number.POSITIVE_INFINITY);
-        if (value === Number.NEGATIVE_INFINITY)
-            return "".concat(Number.NEGATIVE_INFINITY);
         if (typeof value === 'number') {
             return prettyPi(value);
         }
@@ -2569,7 +2573,37 @@ var Playground = (function (exports) {
                 }).join(', '), "]");
             }
         }
-        return JSON.stringify(value, null, 2);
+        return JSON.stringify(replaceInfinities(value), null, 2);
+    }
+    function replaceInfinities(value) {
+        var e_1, _a;
+        if (value === Number.POSITIVE_INFINITY) {
+            return '∞';
+        }
+        if (value === Number.NEGATIVE_INFINITY) {
+            return '-∞';
+        }
+        if (Array.isArray(value)) {
+            return value.map(replaceInfinities);
+        }
+        if (typeof value === 'object' && value !== null) {
+            var result = {};
+            try {
+                for (var _b = __values(Object.entries(value)), _c = _b.next(); !_c.done; _c = _b.next()) {
+                    var _d = __read(_c.value, 2), key = _d[0], val = _d[1];
+                    result[key] = replaceInfinities(val);
+                }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+                }
+                finally { if (e_1) throw e_1.error; }
+            }
+            return result;
+        }
+        return value;
     }
     function prettyIfNumber(value) {
         if (typeof value === 'number') {
@@ -3027,6 +3061,35 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
+        'filteri': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var _c = __read(_a, 2), coll = _c[0], fn = _c[1];
+                var executeFunction = _b.executeFunction;
+                assertColl(coll, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
+                if (Array.isArray(coll)) {
+                    var result = coll.filter(function (elem, index) { return executeFunction(fn, [elem, index], contextStack, sourceCodeInfo); });
+                    return result;
+                }
+                if (isString(coll)) {
+                    return coll
+                        .split('')
+                        .filter(function (elem, index) { return executeFunction(fn, [elem, index], contextStack, sourceCodeInfo); })
+                        .join('');
+                }
+                return Object.entries(coll)
+                    .filter(function (_a) {
+                    var _b = __read(_a, 2), key = _b[0], value = _b[1];
+                    return executeFunction(fn, [value, key], contextStack, sourceCodeInfo);
+                })
+                    .reduce(function (result, _a) {
+                    var _b = __read(_a, 2), key = _b[0], value = _b[1];
+                    result[key] = value;
+                    return result;
+                }, {});
+            },
+            paramCount: 2,
+        },
         'map': {
             evaluate: function (params, sourceCodeInfo, contextStack, _a) {
                 var executeFunction = _a.executeFunction;
@@ -3069,6 +3132,30 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 2 },
         },
+        'mapi': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var _c = __read(_a, 2), coll = _c[0], fn = _c[1];
+                var executeFunction = _b.executeFunction;
+                assertColl(coll, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
+                if (Array.isArray(coll)) {
+                    return coll.map(function (elem, index) { return executeFunction(fn, [elem, index], contextStack, sourceCodeInfo); });
+                }
+                if (isString(coll)) {
+                    return coll
+                        .split('')
+                        .map(function (elem, index) { return executeFunction(fn, [elem, index], contextStack, sourceCodeInfo); })
+                        .join('');
+                }
+                return Object.entries(coll)
+                    .reduce(function (acc, _a) {
+                    var _b = __read(_a, 2), key = _b[0], value = _b[1];
+                    acc[key] = executeFunction(fn, [value, key], contextStack, sourceCodeInfo);
+                    return acc;
+                }, {});
+            },
+            paramCount: 2,
+        },
         'reduce': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 3), coll = _c[0], fn = _c[1], initial = _c[2];
@@ -3102,6 +3189,39 @@ var Playground = (function (exports) {
             },
             paramCount: 3,
         },
+        'reducei': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var _c = __read(_a, 3), coll = _c[0], fn = _c[1], initial = _c[2];
+                var executeFunction = _b.executeFunction;
+                assertColl(coll, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
+                assertAny(initial, sourceCodeInfo);
+                if (typeof coll === 'string') {
+                    assertString(initial, sourceCodeInfo);
+                    if (coll.length === 0)
+                        return initial;
+                    return coll.split('').reduce(function (result, elem, index) {
+                        return executeFunction(fn, [result, elem, index], contextStack, sourceCodeInfo);
+                    }, initial);
+                }
+                else if (Array.isArray(coll)) {
+                    if (coll.length === 0)
+                        return initial;
+                    return coll.reduce(function (result, elem, index) {
+                        return executeFunction(fn, [result, elem, index], contextStack, sourceCodeInfo);
+                    }, initial);
+                }
+                else {
+                    if (Object.keys(coll).length === 0)
+                        return initial;
+                    return Object.entries(coll).reduce(function (result, _a) {
+                        var _b = __read(_a, 2), key = _b[0], elem = _b[1];
+                        return executeFunction(fn, [result, elem, key], contextStack, sourceCodeInfo);
+                    }, initial);
+                }
+            },
+            paramCount: 3,
+        },
         'reduce-right': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 3), coll = _c[0], fn = _c[1], initial = _c[2];
@@ -3129,6 +3249,38 @@ var Playground = (function (exports) {
                     return Object.entries(coll).reduceRight(function (result, _a) {
                         var _b = __read(_a, 2), elem = _b[1];
                         return executeFunction(fn, [result, elem], contextStack, sourceCodeInfo);
+                    }, initial);
+                }
+            },
+            paramCount: 3,
+        },
+        'reducei-right': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var _c = __read(_a, 3), coll = _c[0], fn = _c[1], initial = _c[2];
+                var executeFunction = _b.executeFunction;
+                assertColl(coll, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
+                assertAny(initial, sourceCodeInfo);
+                if (typeof coll === 'string') {
+                    if (coll.length === 0)
+                        return initial;
+                    return coll.split('').reduceRight(function (result, elem, index) {
+                        return executeFunction(fn, [result, elem, index], contextStack, sourceCodeInfo);
+                    }, initial);
+                }
+                else if (Array.isArray(coll)) {
+                    if (coll.length === 0)
+                        return initial;
+                    return coll.reduceRight(function (result, elem, index) {
+                        return executeFunction(fn, [result, elem, index], contextStack, sourceCodeInfo);
+                    }, initial);
+                }
+                else {
+                    if (Object.keys(coll).length === 0)
+                        return initial;
+                    return Object.entries(coll).reduceRight(function (result, _a) {
+                        var _b = __read(_a, 2), key = _b[0], elem = _b[1];
+                        return executeFunction(fn, [result, elem, key], contextStack, sourceCodeInfo);
                     }, initial);
                 }
             },
@@ -3176,6 +3328,52 @@ var Playground = (function (exports) {
                         return newVal;
                     }, initial);
                     return resultArray_3;
+                }
+            },
+            paramCount: 3,
+        },
+        'reductionsi': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var _c = __read(_a, 3), coll = _c[0], fn = _c[1], initial = _c[2];
+                var executeFunction = _b.executeFunction;
+                assertColl(coll, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
+                assertAny(initial, sourceCodeInfo);
+                assertAny(initial, sourceCodeInfo);
+                if (typeof coll === 'string') {
+                    assertString(initial, sourceCodeInfo);
+                    if (coll.length === 0)
+                        return [initial];
+                    var resultArray_4 = [initial];
+                    coll.split('').reduce(function (result, elem, index) {
+                        var newVal = executeFunction(fn, [result, elem, index], contextStack, sourceCodeInfo);
+                        resultArray_4.push(newVal);
+                        return newVal;
+                    }, initial);
+                    return resultArray_4;
+                }
+                else if (Array.isArray(coll)) {
+                    if (coll.length === 0)
+                        return [initial];
+                    var resultArray_5 = [initial];
+                    coll.reduce(function (result, elem, index) {
+                        var newVal = executeFunction(fn, [result, elem, index], contextStack, sourceCodeInfo);
+                        resultArray_5.push(newVal);
+                        return newVal;
+                    }, initial);
+                    return resultArray_5;
+                }
+                else {
+                    if (Object.keys(coll).length === 0)
+                        return [initial];
+                    var resultArray_6 = [initial];
+                    Object.entries(coll).reduce(function (result, _a) {
+                        var _b = __read(_a, 2), key = _b[0], elem = _b[1];
+                        var newVal = executeFunction(fn, [result, elem, key], contextStack, sourceCodeInfo);
+                        resultArray_6.push(newVal);
+                        return newVal;
+                    }, initial);
+                    return resultArray_6;
                 }
             },
             paramCount: 3,
@@ -3433,7 +3631,7 @@ var Playground = (function (exports) {
     };
 
     var arrayNormalExpression = {
-        range: {
+        'range': {
             evaluate: function (params, sourceCodeInfo) {
                 var _a = __read(params, 3), first = _a[0], second = _a[1], third = _a[2];
                 var from;
@@ -3471,7 +3669,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 1, max: 3 },
         },
-        repeat: {
+        'repeat': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), value = _b[0], count = _b[1];
                 assertNumber(count, sourceCodeInfo, { integer: true, nonNegative: true });
@@ -3482,7 +3680,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        flatten: {
+        'flatten': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), seq = _b[0], depth = _b[1];
                 assertArray(seq, sourceCodeInfo);
@@ -3493,13 +3691,45 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 1, max: 2 },
         },
-        mapcat: {
+        'mapcat': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 2), arr = _c[0], fn = _c[1];
                 var executeFunction = _b.executeFunction;
                 assertArray(arr, sourceCodeInfo);
                 assertFunctionLike(fn, sourceCodeInfo);
                 return arr.map(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); }).flat(1);
+            },
+            paramCount: 2,
+        },
+        'moving-fn': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var _c = __read(_a, 3), arr = _c[0], windowSize = _c[1], fn = _c[2];
+                var executeFunction = _b.executeFunction;
+                assertArray(arr, sourceCodeInfo);
+                assertNumber(windowSize, sourceCodeInfo, { integer: true, lte: arr.length });
+                assertFunctionLike(fn, sourceCodeInfo);
+                var result = [];
+                for (var i = 0; i <= arr.length - windowSize; i++) {
+                    var window_1 = arr.slice(i, i + windowSize);
+                    var value = executeFunction(fn, [window_1], contextStack, sourceCodeInfo);
+                    result.push(value);
+                }
+                return result;
+            },
+            paramCount: 3,
+        },
+        'running-fn': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var _c = __read(_a, 2), arr = _c[0], fn = _c[1];
+                var executeFunction = _b.executeFunction;
+                assertArray(arr, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
+                var result = [];
+                for (var i = 0; i < arr.length; i += 1) {
+                    var subArr = arr.slice(0, i + 1);
+                    result.push(executeFunction(fn, [subArr], contextStack, sourceCodeInfo));
+                }
+                return result;
             },
             paramCount: 2,
         },
@@ -5700,14 +5930,6 @@ var Playground = (function (exports) {
                 var _b = __read(_a, 1), value = _b[0];
                 assertNumber(value, sourceCodeInfo);
                 return Number.isFinite(value);
-            },
-            paramCount: 1,
-        },
-        'nan?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), value = _b[0];
-                assertNumber(value, sourceCodeInfo);
-                return Number.isNaN(value);
             },
             paramCount: 1,
         },
@@ -14151,10 +14373,15 @@ var Playground = (function (exports) {
     var api = {
         collection: [
             'filter',
+            'filteri',
             'map',
+            'mapi',
             'reduce',
+            'reducei',
             'reduce-right',
+            'reducei-right',
             'reductions',
+            'reductionsi',
             'count',
             'get',
             'get-in',
@@ -14175,6 +14402,8 @@ var Playground = (function (exports) {
             'repeat',
             'flatten',
             'mapcat',
+            'moving-fn',
+            'running-fn',
         ],
         sequence: [
             'nth',
@@ -14314,7 +14543,6 @@ var Playground = (function (exports) {
             'even?',
             'odd?',
             'finite?',
-            'nan?',
             'negative-infinity?',
             'positive-infinity?',
             'false?',
@@ -14627,7 +14855,7 @@ var Playground = (function (exports) {
     }
 
     var arrayReference = {
-        range: {
+        'range': {
             title: 'range',
             category: 'Array',
             linkName: 'range',
@@ -14652,7 +14880,7 @@ var Playground = (function (exports) {
                 "\nrange(\n  0.25, // start value\n  1,    // end value (exclusive)\n  0.25, // step value\n)",
             ],
         },
-        repeat: {
+        'repeat': {
             title: 'repeat',
             category: 'Array',
             linkName: 'repeat',
@@ -14671,7 +14899,7 @@ var Playground = (function (exports) {
                 '"Albert" repeat 5',
             ],
         },
-        flatten: {
+        'flatten': {
             title: 'flatten',
             category: 'Array',
             linkName: 'flatten',
@@ -14695,7 +14923,7 @@ var Playground = (function (exports) {
             ],
             noOperatorDocumentation: true,
         },
-        mapcat: {
+        'mapcat': {
             title: 'mapcat',
             category: 'Array',
             linkName: 'mapcat',
@@ -14718,6 +14946,60 @@ var Playground = (function (exports) {
                 '[[3, 2, 1, 0,], [6, 5, 4,], [9, 8, 7]] mapcat reverse',
                 "\nfunction foo(n)\n  [n - 1, n, n + 1]\nend;\n[1, 2, 3] mapcat foo",
                 "\nmapcat(\n  [[1, 2], [2, 2], [2, 3]],\n  -> $ remove even?\n)",
+            ],
+        },
+        'moving-fn': {
+            title: 'moving-fn',
+            category: 'Array',
+            linkName: 'moving-fn',
+            returns: {
+                type: 'array',
+            },
+            args: {
+                arr: {
+                    type: 'array',
+                },
+                windowSize: {
+                    type: 'number',
+                    description: 'The size of the moving window.',
+                },
+                fn: {
+                    type: 'function',
+                },
+            },
+            variants: [{
+                    argumentNames: ['arr', 'windowSize', 'fn'],
+                }],
+            description: 'Returns the result of applying $fn to each moving window of size $windowSize in $arr.',
+            examples: [
+                'moving-fn([1, 2, 3], 2, vec:sum)',
+                'moving-fn([1, 2, 3], 1, vec:sum)',
+                'moving-fn([1, 2, 3], 3, vec:sum)',
+            ],
+        },
+        'running-fn': {
+            title: 'running-fn',
+            category: 'Array',
+            linkName: 'running-fn',
+            returns: {
+                type: 'array',
+            },
+            args: {
+                a: {
+                    type: 'array',
+                },
+                b: {
+                    type: 'function',
+                },
+            },
+            variants: [{
+                    argumentNames: ['a', 'b'],
+                }],
+            description: 'Returns the result of applying $b to each element of $a.',
+            examples: [
+                'running-fn([1, 2, 3], vec:sum)',
+                'running-fn([1, 2, 3], vec:max)',
+                'running-fn([1, 2, 3], vec:min)',
             ],
         },
     };
@@ -15380,6 +15662,32 @@ var Playground = (function (exports) {
                 "\nfilter(\n  { a := 1, b := 2 },\n  odd?\n)",
             ],
         },
+        'filteri': {
+            title: 'filteri',
+            category: 'Collection',
+            linkName: 'filteri',
+            returns: {
+                type: 'collection',
+            },
+            args: {
+                a: {
+                    type: 'collection',
+                },
+                b: {
+                    type: 'function',
+                    description: 'The function to call for each element in the collection. The function should take two arguments: the element itself and the index.',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            description: 'Creates a new collection with all elements that pass the test implemented by $b. The function is called for each element in the collection, and it should take two arguments: the element itself and the index.',
+            examples: [
+                'filteri([1, 2, 3], (x, i) -> i % 2 = 0)',
+                'filteri([1, 2, 3], (x, i) -> x % 2 = 0)',
+                'filteri([1, 2, 3], (x, i) -> x + i > 3)',
+            ],
+        },
         'map': {
             title: 'map',
             category: 'Collection',
@@ -15406,6 +15714,34 @@ var Playground = (function (exports) {
                 'map([1, 2, 3], [1, 10, 100], *)',
                 'map({ a := 1, b := 2 }, inc)',
                 'map({ a := 1, b := 2 }, { a := 10, b := 20 }, +)',
+            ],
+        },
+        'mapi': {
+            title: 'mapi',
+            category: 'Collection',
+            linkName: 'mapi',
+            returns: {
+                type: 'collection',
+            },
+            args: {
+                a: {
+                    type: 'collection',
+                },
+                b: {
+                    type: 'function',
+                    description: 'The function to call for each element in the collection. The function should take two arguments: the element itself and the index.',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            description: 'Creates a new collection populated with the results of calling $b on every element in $a. The function is called for each element in the collection, and it should take two arguments: the element itself and the index.',
+            examples: [
+                'mapi([1, 2, 3], (x, i) -> x + i)',
+                'mapi([1, 2, 3], (x, i) -> x * i)',
+                'mapi([1, 2, 3], (x, i) -> x - i)',
+                'mapi([1, 2, 3], (x, i) -> x / i)',
+                'mapi([1, 2, 3], (x, i) -> x % inc(i))',
             ],
         },
         'reduce': {
@@ -15464,12 +15800,73 @@ var Playground = (function (exports) {
                 'reduce-right({ a := 1, b := 2 }, +, 0)',
             ],
         },
+        'reducei-right': {
+            title: 'reducei-right',
+            category: 'Collection',
+            linkName: 'reducei-right',
+            returns: {
+                type: 'any',
+            },
+            args: {
+                coll: {
+                    type: 'collection',
+                },
+                fun: {
+                    type: 'function',
+                    description: 'The function to call for each element in the collection. The function should take three arguments: the accumulator, the element itself, and the index.',
+                },
+                initial: {
+                    type: 'any',
+                    description: 'The initial value to use as the accumulator.',
+                },
+            },
+            variants: [
+                { argumentNames: ['coll', 'fun', 'initial'] },
+            ],
+            description: 'Runs $fun function on each element of the $coll (starting from the last item), passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $coll is a single value. The function is called for each element in the collection, and it should take three arguments: the accumulator, the element itself, and the index.',
+            examples: [
+                'reducei-right([1, 2, 3], (acc, x, i) -> acc + x + i, 0)',
+                'reducei-right("Albert", (acc, x, i) -> acc ++ x ++ i, "")',
+                'reducei-right({ a := 1, b := 2 }, -> $1 ++ $3, "")',
+            ],
+        },
+        'reducei': {
+            title: 'reducei',
+            category: 'Collection',
+            linkName: 'reducei',
+            returns: {
+                type: 'any',
+            },
+            args: {
+                coll: {
+                    type: 'collection',
+                },
+                fun: {
+                    type: 'function',
+                    description: 'The function to call for each element in the collection. The function should take three arguments: the accumulator, the element itself, and the index.',
+                },
+                initial: {
+                    type: 'any',
+                    description: 'The initial value to use as the accumulator.',
+                },
+            },
+            variants: [
+                { argumentNames: ['coll', 'fun', 'initial'] },
+            ],
+            description: 'Runs $fun function on each element of the $coll, passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $coll is a single value. The function is called for each element in the collection, and it should take three arguments: the accumulator, the element itself, and the index.',
+            examples: [
+                'reducei([1, 2, 3], (acc, x, i) -> acc + x + i, 0)',
+                'reducei("Albert", (acc, x, i) -> acc ++ x ++ i, "")',
+                'reducei({ a := 1, b := 2 }, -> $1 ++ $3, "")',
+            ],
+        },
         'reductions': {
             title: 'reductions',
             category: 'Collection',
             linkName: 'reductions',
             returns: {
                 type: 'any',
+                array: true,
             },
             args: {
                 fun: {
@@ -15492,6 +15889,37 @@ var Playground = (function (exports) {
                 'reductions([], +, 0)',
                 'reductions({ a := 1, b := 2 }, +, 0)',
                 "\nreductions(\n  [1, 2, 3, 4, 5, 6, 7, 8, 9],\n  (result, value) -> result + if even?(value) then value else 0 end,\n  0\n)",
+            ],
+        },
+        'reductionsi': {
+            title: 'reductionsi',
+            category: 'Collection',
+            linkName: 'reductionsi',
+            returns: {
+                type: 'any',
+                array: true,
+            },
+            args: {
+                coll: {
+                    type: 'collection',
+                },
+                fun: {
+                    type: 'function',
+                    description: 'The function to call for each element in the collection. The function should take three arguments: the accumulator, the element itself, and the index.',
+                },
+                initial: {
+                    type: 'any',
+                    description: 'The initial value to use as the accumulator.',
+                },
+            },
+            variants: [
+                { argumentNames: ['coll', 'fun', 'initial'] },
+            ],
+            description: 'Returns an array of the intermediate values of the reduction (see `reduce`) of $coll by $fun. The function is called for each element in the collection, and it should take three arguments: the accumulator, the element itself, and the index.',
+            examples: [
+                'reductionsi([1, 2, 3], (acc, x, i) -> acc + x + i, 0)',
+                'reductionsi("Albert", (acc, x, i) -> acc ++ x ++ i, "")',
+                'reductionsi({ a := 1, b := 2 }, -> $1 ++ $3, "")',
             ],
         },
         'count': {
@@ -23958,30 +24386,6 @@ var Playground = (function (exports) {
                 'finite?(1.0)',
                 'finite?(1 / 0)',
                 'finite?(-1 / 0)',
-                'finite?(sqrt(-1))',
-            ],
-        },
-        'nan?': {
-            title: 'nan?',
-            category: 'Predicate',
-            linkName: 'nan-question',
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                x: {
-                    type: 'number',
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'Returns `true` if $x is NaN (! a number), otherwise `false`.',
-            examples: [
-                'nan?(1.0)',
-                'nan?(1 / 0)',
-                'nan?(-1 / 0)',
-                'nan?(sqrt(-1))',
             ],
         },
         'negative-infinity?': {
@@ -24004,7 +24408,6 @@ var Playground = (function (exports) {
                 'negative-infinity?(1.0)',
                 'negative-infinity?(1 / 0)',
                 'negative-infinity?(-1 / 0)',
-                'negative-infinity?(sqrt(-1))',
             ],
         },
         'positive-infinity?': {
@@ -24027,7 +24430,6 @@ var Playground = (function (exports) {
                 'positive-infinity?(1.0)',
                 'positive-infinity?(1 / 0)',
                 'positive-infinity?(-1 / 0)',
-                'positive-infinity?(sqrt(-1))',
             ],
         },
         'false?': {
@@ -29859,7 +30261,6 @@ var Playground = (function (exports) {
                 '12 nth:lcm  8',
                 'nth:lcm(100, 25)',
                 'nth:lcm(37, 1)',
-                'nth:lcm(0, 0)',
                 'nth:lcm(0, 5)',
                 'nth:lcm(5, 0)',
             ],
@@ -31081,8 +31482,13 @@ var Playground = (function (exports) {
                 return contextStack.evaluateSymbol(node);
             case NodeTypes.ReservedSymbol:
                 return evaluateReservedSymbol(node);
-            case NodeTypes.NormalExpression:
-                return annotate(evaluateNormalExpression(node, contextStack));
+            case NodeTypes.NormalExpression: {
+                var result = evaluateNormalExpression(node, contextStack);
+                if (typeof result === 'number' && Number.isNaN(result)) {
+                    throw new LitsError('Number is NaN', node[2]);
+                }
+                return annotate(result);
+            }
             case NodeTypes.SpecialExpression:
                 return annotate(evaluateSpecialExpression(node, contextStack));
             /* v8 ignore next 2 */

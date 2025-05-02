@@ -11,10 +11,15 @@ function getVectorReductionNames<T extends string>(name: T): [`vec:${T}`, `vec:m
 export const api = {
   collection: [
     'filter',
+    'filteri',
     'map',
+    'mapi',
     'reduce',
+    'reducei',
     'reduce-right',
+    'reducei-right',
     'reductions',
+    'reductionsi',
     'count',
     'get',
     'get-in',
@@ -35,6 +40,8 @@ export const api = {
     'repeat',
     'flatten',
     'mapcat',
+    'moving-fn',
+    'running-fn',
   ] as const,
   sequence: [
     'nth',
@@ -174,7 +181,6 @@ export const api = {
     'even?',
     'odd?',
     'finite?',
-    'nan?',
     'negative-infinity?',
     'positive-infinity?',
     'false?',

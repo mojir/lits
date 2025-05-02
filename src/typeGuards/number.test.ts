@@ -166,7 +166,7 @@ describe('number type guards', () => {
 
   it('isNumber', () => {
     expect(isNumber(1 / 0)).toBe(true)
-    expect(isNumber(Number('abc'))).toBe(true)
+    expect(isNumber(Number('abc'))).toBe(false)
     expect(isNumber(0.12)).toBe(true)
     expect(isNumber(undefined)).toBe(false)
     expect(isNumber('undefined')).toBe(false)
@@ -196,7 +196,7 @@ describe('number type guards', () => {
 
   it('assertNumber', () => {
     expect(() => assertNumber(1 / 0, undefined)).not.toThrow()
-    expect(() => assertNumber(Number('abc'), undefined)).not.toThrow()
+    expect(() => assertNumber(Number('abc'), undefined)).toThrow()
     expect(() => assertNumber(0.12, undefined)).not.toThrow()
     expect(() => assertNumber(undefined, undefined)).toThrow(LitsError)
     expect(() => assertNumber('undefined', undefined)).toThrow(LitsError)

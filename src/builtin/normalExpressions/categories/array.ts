@@ -5,7 +5,7 @@ import type { BuiltinNormalExpressions } from '../../interface'
 import { assertFunctionLike } from '../../../typeGuards/lits'
 
 export const arrayNormalExpression: BuiltinNormalExpressions = {
-  range: {
+  'range': {
     evaluate: (params, sourceCodeInfo): Arr => {
       const [first, second, third] = params
       let from: number
@@ -48,7 +48,7 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
     paramCount: { min: 1, max: 3 },
   },
 
-  repeat: {
+  'repeat': {
     evaluate: ([value, count], sourceCodeInfo): Arr => {
       assertNumber(count, sourceCodeInfo, { integer: true, nonNegative: true })
       const result: Arr = []
@@ -60,7 +60,7 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
     paramCount: 2,
   },
 
-  flatten: {
+  'flatten': {
     evaluate: ([seq, depth], sourceCodeInfo): Arr => {
       assertArray(seq, sourceCodeInfo)
 
@@ -72,11 +72,41 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 1, max: 2 },
   },
-  mapcat: {
+  'mapcat': {
     evaluate: ([arr, fn], sourceCodeInfo, contextStack, { executeFunction }): Arr | string => {
       assertArray(arr, sourceCodeInfo)
       assertFunctionLike(fn, sourceCodeInfo)
       return arr.map(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo)).flat(1)
+    },
+    paramCount: 2,
+  },
+  'moving-fn': {
+    evaluate: ([arr, windowSize, fn], sourceCodeInfo, contextStack, { executeFunction }): Arr => {
+      assertArray(arr, sourceCodeInfo)
+      assertNumber(windowSize, sourceCodeInfo, { integer: true, lte: arr.length })
+      assertFunctionLike(fn, sourceCodeInfo)
+
+      const result = []
+      for (let i = 0; i <= arr.length - windowSize; i++) {
+        const window = arr.slice(i, i + windowSize)
+        const value = executeFunction(fn, [window], contextStack, sourceCodeInfo)
+        result.push(value)
+      }
+      return result
+    },
+    paramCount: 3,
+  },
+  'running-fn': {
+    evaluate: ([arr, fn], sourceCodeInfo, contextStack, { executeFunction }): Arr => {
+      assertArray(arr, sourceCodeInfo)
+      assertFunctionLike(fn, sourceCodeInfo)
+
+      const result = []
+      for (let i = 0; i < arr.length; i += 1) {
+        const subArr = arr.slice(0, i + 1)
+        result.push(executeFunction(fn, [subArr], contextStack, sourceCodeInfo))
+      }
+      return result
     },
     paramCount: 2,
   },

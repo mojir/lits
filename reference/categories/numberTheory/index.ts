@@ -624,7 +624,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       '12 nth:lcm  8',
       'nth:lcm(100, 25)',
       'nth:lcm(37, 1)',
-      'nth:lcm(0, 0)',
       'nth:lcm(0, 5)',
       'nth:lcm(5, 0)',
     ],

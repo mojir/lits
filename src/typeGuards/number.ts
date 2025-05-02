@@ -128,6 +128,9 @@ export function isNumber(value: unknown, options: NumberOptions = {}): value is 
   if (typeof value !== 'number')
     return false
 
+  if (Number.isNaN(value))
+    return false
+
   if (options.integer && !Number.isInteger(value))
     return false
 

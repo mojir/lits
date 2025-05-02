@@ -22,12 +22,6 @@ export function stringifyValue(value: unknown, html: boolean): string {
   if (typeof value === 'object' && value instanceof RegExp)
     return `${value}`
 
-  if (value === Number.POSITIVE_INFINITY)
-    return `${Number.POSITIVE_INFINITY}`
-
-  if (value === Number.NEGATIVE_INFINITY)
-    return `${Number.NEGATIVE_INFINITY}`
-
   if (typeof value === 'number') {
     return prettyPi(value)
   }
@@ -57,7 +51,27 @@ export function stringifyValue(value: unknown, html: boolean): string {
     }
   }
 
-  return JSON.stringify(value, null, 2)
+  return JSON.stringify(replaceInfinities(value), null, 2)
+}
+
+function replaceInfinities(value: unknown): unknown {
+  if (value === Number.POSITIVE_INFINITY) {
+    return '∞'
+  }
+  if (value === Number.NEGATIVE_INFINITY) {
+    return '-∞'
+  }
+  if (Array.isArray(value)) {
+    return value.map(replaceInfinities)
+  }
+  if (typeof value === 'object' && value !== null) {
+    const result: Record<string, unknown> = {}
+    for (const [key, val] of Object.entries(value)) {
+      result[key] = replaceInfinities(val)
+    }
+    return result
+  }
+  return value
 }
 
 function prettyIfNumber(value: unknown): string {

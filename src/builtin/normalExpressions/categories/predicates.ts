@@ -115,14 +115,6 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     paramCount: 1,
   },
 
-  'nan?': {
-    evaluate: ([value], sourceCodeInfo): boolean => {
-      assertNumber(value, sourceCodeInfo)
-      return Number.isNaN(value)
-    },
-    paramCount: 1,
-  },
-
   'positive-infinity?': {
     evaluate: ([value], sourceCodeInfo): boolean => {
       assertNumber(value, sourceCodeInfo)

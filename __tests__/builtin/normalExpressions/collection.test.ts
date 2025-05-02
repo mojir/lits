@@ -19,6 +19,18 @@ describe('collection functions', () => {
     })
   })
 
+  describe('filteri', () => {
+    it('samples', () => {
+      expect(lits.run('filteri([1, "2", 3], -> odd?($2))')).toEqual(['2'])
+      expect(lits.run('filteri([], -> odd?($2))')).toEqual([])
+      expect(lits.run('filteri("Albert", -> odd?($2))')).toEqual('let')
+      expect(lits.run('filteri({ a := 1, b := 2 }, -> $2 = "a")')).toEqual({ a: 1 })
+      expect(() => lits.run('filteri(+)')).toThrow(LitsError)
+      expect(() => lits.run('filteri()')).toThrow(LitsError)
+      expect(() => lits.run('filteri([1], number? 2)')).toThrow(LitsError)
+    })
+  })
+
   describe('map', () => {
     it('samples', () => {
       expect(lits.run('map([1, "2", 3], number?)')).toEqual([true, false, true])
@@ -47,6 +59,20 @@ describe('collection functions', () => {
       expect(() => lits.run('map(+)')).toThrow(LitsError)
       expect(() => lits.run('map()')).toThrow(LitsError)
       expect(() => lits.run('map(1 number?)')).toThrow(LitsError)
+    })
+  })
+
+  describe('mapi', () => {
+    it('samples', () => {
+      expect(lits.run('mapi([1, "2", 3], -> $2)')).toEqual([0, 1, 2])
+      expect(lits.run('mapi([], number?)')).toEqual([])
+      expect(lits.run('mapi([1, 2, 3], -> $1 + $2)')).toEqual([1, 3, 5])
+      expect(lits.run('mapi("ABCDE", -> $2 ++ $1)')).toBe('0A1B2C3D4E')
+      expect(lits.run('mapi({ a := 1, b := 2 }, -> $2 ++ $1)')).toEqual({ a: 'a1', b: 'b2' })
+      expect(() => lits.run('mapi({ a := 1, b := 2 }, { b := 20 }, +)')).toThrow(LitsError)
+      expect(() => lits.run('mapi(+)')).toThrow(LitsError)
+      expect(() => lits.run('mapi()')).toThrow(LitsError)
+      expect(() => lits.run('mapi(1 number?)')).toThrow(LitsError)
     })
   })
 
@@ -107,6 +133,22 @@ describe('collection functions', () => {
     })
   })
 
+  describe('reducei', () => {
+    it('samples', () => {
+      expect(lits.run('reducei([1, 2, 3, 4, 5], -> $1 + $3, 0)')).toBe(10)
+      expect(lits.run('reducei([], -> $1 + $3, 0)')).toBe(0)
+      expect(lits.run('reducei("Albert", (acc, char, index) -> acc ++ index ++ char, "")')).toBe('0A1l2b3e4r5t')
+      expect(lits.run('reducei("", (acc, char, index) -> acc ++ index ++ char, "")')).toBe('')
+      expect(lits.run('reducei({ a := 1, b := 2 }, -> $1 ++ $3, "")')).toBe('ab')
+      expect(lits.run('reducei({}, -> $1 ++ $3, "")')).toBe('')
+
+      expect(() => lits.run('reducei([1, 2, 3], +)')).toThrow(LitsError)
+      expect(() => lits.run('reducei(+)')).toThrow(LitsError)
+      expect(() => lits.run('reducei()')).toThrow(LitsError)
+      expect(() => lits.run('reducei(1, +2)')).toThrow(LitsError)
+    })
+  })
+
   describe('reduce-right', () => {
     it('samples', () => {
       expect(lits.run('reduce-right([1, 2, 3, 4, 5], +, 0)')).toBe(15)
@@ -129,6 +171,22 @@ describe('collection functions', () => {
       expect(() => lits.run('reduce-right()')).toThrow(LitsError)
       expect(() => lits.run('reduce-right(1, +, 2)')).toThrow(LitsError)
       expect(() => lits.run('reduce-right([1, 2], +)')).toThrow(LitsError)
+    })
+  })
+
+  describe('reducei-right', () => {
+    it('samples', () => {
+      expect(lits.run('reducei-right([1, 2, 3, 4, 5], -> $1 + $3, 0)')).toBe(10)
+      expect(lits.run('reducei-right([], -> $1 + $3, 0)')).toBe(0)
+      expect(lits.run('reducei-right("Albert", (acc, char, index) -> acc ++ index ++ char, "")')).toBe('5t4r3e2b1l0A')
+      expect(lits.run('reducei-right("", (acc, char, index) -> acc ++ index ++ char, "")')).toBe('')
+      expect(lits.run('reducei-right({ a := 1, b := 2 }, -> $1 ++ $3, "")')).toBe('ba')
+      expect(lits.run('reducei-right({}, -> $1 ++ $3, "")')).toBe('')
+
+      expect(() => lits.run('reducei-right([1, 2, 3], +)')).toThrow(LitsError)
+      expect(() => lits.run('reducei-right(+)')).toThrow(LitsError)
+      expect(() => lits.run('reducei-right()')).toThrow(LitsError)
+      expect(() => lits.run('reducei-right(1, +2)')).toThrow(LitsError)
     })
   })
 
@@ -171,6 +229,25 @@ describe('collection functions', () => {
       expect(() => lits.run('reductions(+)')).toThrow(LitsError)
       expect(() => lits.run('reductions()')).toThrow(LitsError)
       expect(() => lits.run('reductions(1, +, 2)')).toThrow(LitsError)
+    })
+  })
+
+  describe('reductionsi', () => {
+    it('samples', () => {
+      expect(lits.run('reductionsi([1, 2, 3, 4, 5], -> $1 + $3, 0)')).toEqual([0, 0, 1, 3, 6, 10])
+      expect(lits.run('reductionsi([], -> $1 + $3, 0)')).toEqual([0])
+      expect(lits.run('reductionsi("Albert", (x, v, i) -> x ++ i ++ v, "")')).toEqual([
+        '',
+        '0A',
+        '0A1l',
+        '0A1l2b',
+        '0A1l2b3e',
+        '0A1l2b3e4r',
+        '0A1l2b3e4r5t',
+      ])
+      expect(lits.run('reductionsi("", (x, v, i) -> x ++ i ++ v, "")')).toEqual([''])
+      expect(lits.run('reductionsi({ a := 1, b := 2 }, -> $ ++ $3, "")')).toEqual(['', 'a', 'ab'])
+      expect(lits.run('reductionsi({}, -> $ ++ $3, "")')).toEqual([''])
     })
   })
 

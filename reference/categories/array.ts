@@ -2,7 +2,7 @@ import { type ArrayApiName, getOperatorArgs } from '../api'
 import type { FunctionReference } from '..'
 
 export const arrayReference: Record<ArrayApiName, FunctionReference<'Array'>> = {
-  range: {
+  'range': {
     title: 'range',
     category: 'Array',
     linkName: 'range',
@@ -38,7 +38,7 @@ range(
 )`,
     ],
   },
-  repeat: {
+  'repeat': {
     title: 'repeat',
     category: 'Array',
     linkName: 'repeat',
@@ -59,7 +59,7 @@ range(
       '"Albert" repeat 5',
     ],
   },
-  flatten: {
+  'flatten': {
     title: 'flatten',
     category: 'Array',
     linkName: 'flatten',
@@ -90,7 +90,7 @@ flatten([
     ],
     noOperatorDocumentation: true,
   },
-  mapcat: {
+  'mapcat': {
     title: 'mapcat',
     category: 'Array',
     linkName: 'mapcat',
@@ -125,6 +125,60 @@ mapcat(
   [[1, 2], [2, 2], [2, 3]],
   -> $ remove even?
 )`,
+    ],
+  },
+  'moving-fn': {
+    title: 'moving-fn',
+    category: 'Array',
+    linkName: 'moving-fn',
+    returns: {
+      type: 'array',
+    },
+    args: {
+      arr: {
+        type: 'array',
+      },
+      windowSize: {
+        type: 'number',
+        description: 'The size of the moving window.',
+      },
+      fn: {
+        type: 'function',
+      },
+    },
+    variants: [{
+      argumentNames: ['arr', 'windowSize', 'fn'],
+    }],
+    description: 'Returns the result of applying $fn to each moving window of size $windowSize in $arr.',
+    examples: [
+      'moving-fn([1, 2, 3], 2, vec:sum)',
+      'moving-fn([1, 2, 3], 1, vec:sum)',
+      'moving-fn([1, 2, 3], 3, vec:sum)',
+    ],
+  },
+  'running-fn': {
+    title: 'running-fn',
+    category: 'Array',
+    linkName: 'running-fn',
+    returns: {
+      type: 'array',
+    },
+    args: {
+      a: {
+        type: 'array',
+      },
+      b: {
+        type: 'function',
+      },
+    },
+    variants: [{
+      argumentNames: ['a', 'b'],
+    }],
+    description: 'Returns the result of applying $b to each element of $a.',
+    examples: [
+      'running-fn([1, 2, 3], vec:sum)',
+      'running-fn([1, 2, 3], vec:max)',
+      'running-fn([1, 2, 3], vec:min)',
     ],
   },
 }

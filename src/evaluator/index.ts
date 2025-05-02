@@ -53,8 +53,13 @@ export function evaluateNode(node: Node, contextStack: ContextStack): Any {
       return contextStack.evaluateSymbol(node as SymbolNode)
     case NodeTypes.ReservedSymbol:
       return evaluateReservedSymbol(node as ReservedSymbolNode)
-    case NodeTypes.NormalExpression:
-      return annotate(evaluateNormalExpression(node as NormalExpressionNode, contextStack))
+    case NodeTypes.NormalExpression: {
+      const result = evaluateNormalExpression(node as NormalExpressionNode, contextStack)
+      if (typeof result === 'number' && Number.isNaN(result)) {
+        throw new LitsError('Number is NaN', node[2])
+      }
+      return annotate(result)
+    }
     case NodeTypes.SpecialExpression:
       return annotate(evaluateSpecialExpression(node as SpecialExpressionNode, contextStack))
     /* v8 ignore next 2 */
