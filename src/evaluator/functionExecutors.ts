@@ -50,10 +50,7 @@ function checkParams(
 export const functionExecutors: FunctionExecutors = {
   NativeJsFunction: (fn: NativeJsFunction, params, sourceCodeInfo) => {
     try {
-      // eslint-disable-next-line ts/no-unsafe-assignment
-      const clonedParams = JSON.parse(JSON.stringify(params))
-      // eslint-disable-next-line ts/no-unsafe-argument
-      return toAny(fn.nativeFn.fn(...clonedParams))
+      return toAny(fn.nativeFn.fn(...params))
     }
     catch (error) {
       const message

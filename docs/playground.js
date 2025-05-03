@@ -31229,10 +31229,7 @@ var Playground = (function (exports) {
         NativeJsFunction: function (fn, params, sourceCodeInfo) {
             var _a;
             try {
-                // eslint-disable-next-line ts/no-unsafe-assignment
-                var clonedParams = JSON.parse(JSON.stringify(params));
-                // eslint-disable-next-line ts/no-unsafe-argument
-                return toAny((_a = fn.nativeFn).fn.apply(_a, __spreadArray([], __read(clonedParams), false)));
+                return toAny((_a = fn.nativeFn).fn.apply(_a, __spreadArray([], __read(params), false)));
             }
             catch (error) {
                 var message = typeof error === 'string'
