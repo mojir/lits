@@ -71,4 +71,14 @@ describe('nativeJsFunction', () => {
   it('nested nativeJsFunction', () => {
     expect(lits.run('obj.square(9)', { values })).toBe(81)
   })
+  it('infinity', () => {
+    const fn = vitest.fn()
+    const funs: Record<string, JsFunction> = {
+      stuff: {
+        fn,
+      },
+    }
+    lits.run('stuff(1 / 0)', { jsFunctions: funs })
+    expect(fn).toHaveBeenCalledWith(Number.POSITIVE_INFINITY)
+  })
 })
