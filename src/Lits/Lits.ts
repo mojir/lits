@@ -19,11 +19,6 @@ export interface LitsRuntimeInfo {
   debug: boolean
 }
 
-export interface LazyValue {
-  read: () => unknown
-  [key: string]: unknown
-}
-
 export interface JsFunction {
   fn: (...args: any[]) => unknown
 }
@@ -32,8 +27,8 @@ export interface ContextParams {
   globalContext?: Context
   contexts?: Context[]
   values?: Record<string, unknown>
-  lazyValues?: Record<string, LazyValue>
   jsFunctions?: Record<string, JsFunction>
+  globalModuleScope?: boolean
 }
 
 export interface MinifyParams {

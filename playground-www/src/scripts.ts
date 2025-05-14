@@ -964,7 +964,7 @@ function updateCSS() {
   elements.litsPanelDebugInfo.style.display = debug ? 'flex' : 'none'
 
   elements.litsCodeTitle.style.color = (getState('focused-panel') === 'lits-code') ? 'white' : ''
-  elements.litsCodeTitleString.textContent = 'Lisp Code'
+  elements.litsCodeTitleString.textContent = 'Lits Code'
   elements.contextTitle.style.color = (getState('focused-panel') === 'context') ? 'white' : ''
 }
 

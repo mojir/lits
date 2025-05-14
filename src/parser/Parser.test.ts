@@ -739,7 +739,7 @@ describe('parser', () => {
   test('multinine comment', () => {
     expect(lits.run(`
 /*******************************************
- *         Simple Lisp expression          *
+ *         Simple Lits program             *
  ******************************************/
 
 10 + 20`)).toBe(30)

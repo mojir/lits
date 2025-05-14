@@ -12,7 +12,7 @@ export interface Example {
 export const examples: Example[] = [
   {
     id: 'default',
-    name: 'Simple Lisp expression',
+    name: 'Simple Lits program',
     description: 'A super simple example.',
     code: `
 10 + 20

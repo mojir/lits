@@ -1,13 +1,12 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, test } from 'vitest'
 import { LitsError, UndefinedSymbolError } from '../../src/errors'
 import { Cache } from '../../src/Lits/Cache'
-import type { LazyValue } from '../../src/Lits/Lits'
 import { Lits } from '../../src/Lits/Lits'
 import { assertLitsFunction } from '../../src/typeGuards/litsFunction'
-import { FUNCTION_SYMBOL } from '../../src/utils/symbols'
-import type { Ast, NormalExpressionNodeWithName, UserDefinedFunction } from '../../src/parser/types'
+import type { Ast, NormalExpressionNodeWithName } from '../../src/parser/types'
 import { NodeTypes } from '../../src/constants/constants'
 import { normalExpressionTypes } from '../../src/builtin/normalExpressions'
+import type { Context } from '../../src/evaluator/interface'
 
 describe('all tests', () => {
   describe('tEST', () => {
@@ -30,29 +29,6 @@ describe('all tests', () => {
       const fn = lits.run('-> $1 + $2 + x')
       assertLitsFunction(fn)
       expect(lits.apply(fn, [2, 3], { contexts: [{ x: { value: 1 } }] })).toBe(6)
-    })
-  })
-
-  describe('lazy host values as function', () => {
-    it('that it works', () => {
-      const lits = new Lits()
-      const lazyHostValues: Record<string, LazyValue> = {
-        x: {
-          read: () => 42,
-        },
-        foo: {
-          read: () => ({
-            [FUNCTION_SYMBOL]: true,
-            name: undefined,
-            functionType: 'UserDefined',
-            evaluatedfunction: [[], [[NodeTypes.Number, 42]], {}],
-          } satisfies UserDefinedFunction),
-        },
-      }
-
-      expect(lits.run('x', { lazyValues: lazyHostValues })).toBe(42)
-      expect(lits.run('foo()', { lazyValues: lazyHostValues })).toBe(42)
-      expect(lits.run('z', { lazyValues: { z: { read: () => 12 } } })).toBe(12)
     })
   })
 
@@ -137,6 +113,29 @@ describe('all tests', () => {
     it('a variable twice', () => {
       const contexts = [lits.context('export let magicNumber := 42; export function getMagic() 42 end;')]
       lits.context('export let magicNumber := 42; export function getMagic() 42 end;', { contexts })
+    })
+
+    test('global context 1', () => {
+      const globalContext: Context = {}
+      lits.run('export let magicNumber := 42; let double := magicNumber * 2;', { globalContext })
+      expect(globalContext).toEqual({
+        magicNumber: {
+          value: 42,
+        },
+      })
+    })
+
+    test('global context 2', () => {
+      const globalContext: Context = {}
+      lits.run('export let magicNumber := 42; let double := magicNumber * 2;', { globalContext, globalModuleScope: true })
+      expect(globalContext).toEqual({
+        magicNumber: {
+          value: 42,
+        },
+        double: {
+          value: 84,
+        },
+      })
     })
 
     it('more than one', () => {
@@ -229,15 +228,14 @@ describe('all tests', () => {
     beforeEach(() => {
       lits = new Lits({ debug: true })
     })
-    it.skip('sourceCodeInfo', () => {
+    it('sourceCodeInfo', () => {
       try {
-        lits.run('let n := 3 write!(n)') // Missing semi
+        lits.run('let n := 3; write!(m)') // Missing semi
       }
       catch (error) {
-      // eslint-disable-next-line ts/no-unsafe-member-access
-        expect((error as any).sourceCodeInfo.position.line).toBe(3)
-        // eslint-disable-next-line ts/no-unsafe-member-access
-        expect((error as any).sourceCodeInfo.position.column).toBe(7)
+        expect((error as LitsError).sourceCodeInfo?.position.line).toBe(1)
+
+        expect((error as LitsError).sourceCodeInfo?.position.column).toBe(20)
       }
     })
     it('name not recognized', () => {

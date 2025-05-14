@@ -123,7 +123,7 @@ not ok 2 sub
 `)
   })
 
-  it.skip('broken include', () => {
+  it('broken include', () => {
     const testResult = runTest({
       testPath: path.join(__dirname, 'broken-include.test.lits'),
     })
@@ -133,11 +133,11 @@ not ok 2 sub
 not ok 1 add
   ---
   error: "UndefinedSymbolError"
-  message: "Undefined symbol '--'."
-  location: "${path.resolve(__dirname, 'broken-plus-lib.lits')}:1:18"
+  message: "Undefined symbol 'ADD'."
+  location: "${path.resolve(__dirname, 'broken-plus-lib.lits')}:1:28"
   code:
-    - "(defn plus [a b] (-- a b))"
-    - "                 ^        "
+    - "export function plus(a, b) ADD(a, b) end;"
+    - "                           ^             "
   ...
 ok 2 sub
 `)

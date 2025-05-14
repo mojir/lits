@@ -2,7 +2,7 @@ import { normalExpressionKeys, specialExpressionKeys } from '../builtin'
 import { specialExpressionTypes } from '../builtin/specialExpressionTypes'
 import { LitsError, UndefinedSymbolError } from '../errors'
 import type { Any } from '../interface'
-import type { ContextParams, LazyValue } from '../Lits/Lits'
+import type { ContextParams } from '../Lits/Lits'
 import type { NativeJsFunction, NormalBuiltinFunction, SymbolNode, UserDefinedSymbolNode } from '../parser/types'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { asNonUndefined } from '../typeGuards'
@@ -18,23 +18,19 @@ export class ContextStackImpl {
   private contexts: Context[]
   public globalContext: Context
   private values?: Record<string, unknown>
-  private lazyValues?: Record<string, LazyValue>
   private nativeJsFunctions?: Record<string, NativeJsFunction>
   constructor({
     contexts,
     values: hostValues,
-    lazyValues: lazyHostValues,
     nativeJsFunctions,
   }: {
     contexts: Context[]
     values?: Record<string, unknown>
-    lazyValues?: Record<string, LazyValue>
     nativeJsFunctions?: Record<string, NativeJsFunction>
   }) {
     this.globalContext = asNonUndefined(contexts[0])
     this.contexts = contexts
     this.values = hostValues
-    this.lazyValues = lazyHostValues
     this.nativeJsFunctions = nativeJsFunctions
   }
 
@@ -43,7 +39,6 @@ export class ContextStackImpl {
     const contextStack = new ContextStackImpl({
       contexts: [context, ...this.contexts],
       values: this.values,
-      lazyValues: this.lazyValues,
       nativeJsFunctions: this.nativeJsFunctions,
     })
     contextStack.globalContext = globalContext
@@ -69,7 +64,9 @@ export class ContextStackImpl {
       }
       this.globalContext[name] = { value }
     }
-    this.addValues(values, sourceCodeInfo)
+    if (this.contexts[0] !== this.globalContext) {
+      this.addValues(values, sourceCodeInfo)
+    }
   }
 
   public addValues(values: Record<string, Any>, sourceCodeInfo: SourceCodeInfo | undefined) {
@@ -94,9 +91,6 @@ export class ContextStackImpl {
       if (contextEntry)
         return contextEntry.value
     }
-    const lazyHostValue = this.lazyValues?.[name]
-    if (lazyHostValue)
-      return lazyHostValue.read()
 
     const nativeJsFunction = this.nativeJsFunctions?.[name]
     if (nativeJsFunction)
@@ -107,18 +101,11 @@ export class ContextStackImpl {
 
   public lookUp(node: UserDefinedSymbolNode): LookUpResult {
     const value = node[1]
-    // const sourceCodeInfo = node[2]
 
     for (const context of this.contexts) {
       const contextEntry = context[value]
       if (contextEntry)
         return contextEntry
-    }
-    const lazyHostValue = this.lazyValues?.[value]
-    if (lazyHostValue !== undefined) {
-      return {
-        value: toAny(lazyHostValue.read()),
-      }
     }
     const hostValue = this.values?.[value]
     if (hostValue !== undefined) {
@@ -184,7 +171,6 @@ export function createContextStack(params: ContextParams = {}): ContextStack {
   const contextStack = new ContextStackImpl({
     contexts,
     values: params.values,
-    lazyValues: params.lazyValues,
     nativeJsFunctions:
       params.jsFunctions
       && Object.entries(params.jsFunctions).reduce((acc: Record<string, NativeJsFunction>, [name, jsFunction]) => {
@@ -205,5 +191,5 @@ export function createContextStack(params: ContextParams = {}): ContextStack {
         return acc
       }, {}),
   })
-  return contextStack.create({})
+  return params.globalModuleScope ? contextStack : contextStack.create({})
 }

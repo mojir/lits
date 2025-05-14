@@ -31634,11 +31634,10 @@ var Playground = (function (exports) {
 
     var ContextStackImpl = /** @class */ (function () {
         function ContextStackImpl(_a) {
-            var contexts = _a.contexts, hostValues = _a.values, lazyHostValues = _a.lazyValues, nativeJsFunctions = _a.nativeJsFunctions;
+            var contexts = _a.contexts, hostValues = _a.values, nativeJsFunctions = _a.nativeJsFunctions;
             this.globalContext = asNonUndefined(contexts[0]);
             this.contexts = contexts;
             this.values = hostValues;
-            this.lazyValues = lazyHostValues;
             this.nativeJsFunctions = nativeJsFunctions;
         }
         ContextStackImpl.prototype.create = function (context) {
@@ -31646,7 +31645,6 @@ var Playground = (function (exports) {
             var contextStack = new ContextStackImpl({
                 contexts: __spreadArray([context], __read(this.contexts), false),
                 values: this.values,
-                lazyValues: this.lazyValues,
                 nativeJsFunctions: this.nativeJsFunctions,
             });
             contextStack.globalContext = globalContext;
@@ -31680,7 +31678,9 @@ var Playground = (function (exports) {
                 }
                 finally { if (e_1) throw e_1.error; }
             }
-            this.addValues(values, sourceCodeInfo);
+            if (this.contexts[0] !== this.globalContext) {
+                this.addValues(values, sourceCodeInfo);
+            }
         };
         ContextStackImpl.prototype.addValues = function (values, sourceCodeInfo) {
             var e_2, _a;
@@ -31710,10 +31710,10 @@ var Playground = (function (exports) {
         };
         ContextStackImpl.prototype.getValue = function (name) {
             var e_3, _a;
-            var _b, _c, _d;
+            var _b, _c;
             try {
-                for (var _e = __values(this.contexts), _f = _e.next(); !_f.done; _f = _e.next()) {
-                    var context = _f.value;
+                for (var _d = __values(this.contexts), _e = _d.next(); !_e.done; _e = _d.next()) {
+                    var context = _e.value;
                     var contextEntry = context[name];
                     if (contextEntry)
                         return contextEntry.value;
@@ -31722,26 +31722,22 @@ var Playground = (function (exports) {
             catch (e_3_1) { e_3 = { error: e_3_1 }; }
             finally {
                 try {
-                    if (_f && !_f.done && (_a = _e.return)) _a.call(_e);
+                    if (_e && !_e.done && (_a = _d.return)) _a.call(_d);
                 }
                 finally { if (e_3) throw e_3.error; }
             }
-            var lazyHostValue = (_b = this.lazyValues) === null || _b === void 0 ? void 0 : _b[name];
-            if (lazyHostValue)
-                return lazyHostValue.read();
-            var nativeJsFunction = (_c = this.nativeJsFunctions) === null || _c === void 0 ? void 0 : _c[name];
+            var nativeJsFunction = (_b = this.nativeJsFunctions) === null || _b === void 0 ? void 0 : _b[name];
             if (nativeJsFunction)
                 return nativeJsFunction;
-            return (_d = this.values) === null || _d === void 0 ? void 0 : _d[name];
+            return (_c = this.values) === null || _c === void 0 ? void 0 : _c[name];
         };
         ContextStackImpl.prototype.lookUp = function (node) {
             var e_4, _a;
-            var _b, _c, _d;
+            var _b, _c;
             var value = node[1];
             try {
-                // const sourceCodeInfo = node[2]
-                for (var _e = __values(this.contexts), _f = _e.next(); !_f.done; _f = _e.next()) {
-                    var context = _f.value;
+                for (var _d = __values(this.contexts), _e = _d.next(); !_e.done; _e = _d.next()) {
+                    var context = _e.value;
                     var contextEntry = context[value];
                     if (contextEntry)
                         return contextEntry;
@@ -31750,23 +31746,17 @@ var Playground = (function (exports) {
             catch (e_4_1) { e_4 = { error: e_4_1 }; }
             finally {
                 try {
-                    if (_f && !_f.done && (_a = _e.return)) _a.call(_e);
+                    if (_e && !_e.done && (_a = _d.return)) _a.call(_d);
                 }
                 finally { if (e_4) throw e_4.error; }
             }
-            var lazyHostValue = (_b = this.lazyValues) === null || _b === void 0 ? void 0 : _b[value];
-            if (lazyHostValue !== undefined) {
-                return {
-                    value: toAny(lazyHostValue.read()),
-                };
-            }
-            var hostValue = (_c = this.values) === null || _c === void 0 ? void 0 : _c[value];
+            var hostValue = (_b = this.values) === null || _b === void 0 ? void 0 : _b[value];
             if (hostValue !== undefined) {
                 return {
                     value: toAny(hostValue),
                 };
             }
-            var nativeJsFunction = (_d = this.nativeJsFunctions) === null || _d === void 0 ? void 0 : _d[value];
+            var nativeJsFunction = (_c = this.nativeJsFunctions) === null || _c === void 0 ? void 0 : _c[value];
             if (nativeJsFunction) {
                 return {
                     value: nativeJsFunction,
@@ -31822,7 +31812,6 @@ var Playground = (function (exports) {
         var contextStack = new ContextStackImpl({
             contexts: contexts,
             values: params.values,
-            lazyValues: params.lazyValues,
             nativeJsFunctions: params.jsFunctions
                 && Object.entries(params.jsFunctions).reduce(function (acc, _a) {
                     var _b;
@@ -31845,7 +31834,7 @@ var Playground = (function (exports) {
                     return acc;
                 }, {}),
         });
-        return contextStack.create({});
+        return params.globalModuleScope ? contextStack : contextStack.create({});
     }
 
     var illegalSymbolCharacters = [
@@ -34602,7 +34591,7 @@ var Playground = (function (exports) {
         elements.toggleDebugMenuLabel.textContent = debug ? 'Debug: ON' : 'Debug: OFF';
         elements.litsPanelDebugInfo.style.display = debug ? 'flex' : 'none';
         elements.litsCodeTitle.style.color = (getState('focused-panel') === 'lits-code') ? 'white' : '';
-        elements.litsCodeTitleString.textContent = 'Lisp Code';
+        elements.litsCodeTitleString.textContent = 'Lits Code';
         elements.contextTitle.style.color = (getState('focused-panel') === 'context') ? 'white' : '';
     }
     function showPage(id, scroll, historyEvent) {
