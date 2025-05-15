@@ -5275,7 +5275,7 @@ var Playground = (function (exports) {
         return true;
     }
     var miscNormalExpression = {
-        '=': {
+        '==': {
             evaluate: function (params, sourceCodeInfo) {
                 return isEqual(params, sourceCodeInfo);
             },
@@ -13894,13 +13894,12 @@ var Playground = (function (exports) {
         var bindingIndices = loopBindings.map(function () { return 0; });
         var abort = false;
         var _loop_1 = function () {
-            var e_2, _b;
             var context = {};
             var newContextStack = contextStack.create(context);
             var skip = false;
             bindingsLoop: for (var bindingIndex = 0; bindingIndex < loopBindings.length; bindingIndex += 1) {
-                var _c = __read(loopBindings[bindingIndex], 4), bindingNode = _c[0], letBindings = _c[1], whenNode = _c[2], whileNode = _c[3];
-                var _d = __read(bindingNode[1], 2), targetNode = _d[0], valueNode = _d[1];
+                var _b = __read(loopBindings[bindingIndex], 4), bindingNode = _b[0], letBindings = _b[1], whenNode = _b[2], whileNode = _b[3];
+                var _c = __read(bindingNode[1], 2), targetNode = _c[0], valueNode = _c[1];
                 var coll = asColl(evaluateNode(valueNode, newContextStack), sourceCodeInfo);
                 var seq = isSeq(coll) ? coll : Object.entries(coll);
                 if (seq.length === 0) {
@@ -13940,20 +13939,7 @@ var Playground = (function (exports) {
                 }
             }
             if (!skip) {
-                var value = null;
-                try {
-                    for (var body_1 = (e_2 = void 0, __values(body)), body_1_1 = body_1.next(); !body_1_1.done; body_1_1 = body_1.next()) {
-                        var form = body_1_1.value;
-                        value = evaluateNode(form, newContextStack);
-                    }
-                }
-                catch (e_2_1) { e_2 = { error: e_2_1 }; }
-                finally {
-                    try {
-                        if (body_1_1 && !body_1_1.done && (_b = body_1.return)) _b.call(body_1);
-                    }
-                    finally { if (e_2) throw e_2.error; }
-                }
+                var value = evaluateNode(body, newContextStack);
                 if (returnResult)
                     result.push(value);
                 if (bindingIndices.length > 0)
@@ -13996,7 +13982,7 @@ var Playground = (function (exports) {
                 });
             }
         });
-        getUndefinedSymbols(body, contextStack.create(newContext), builtin, evaluateNode).forEach(function (symbol) {
+        getUndefinedSymbols([body], contextStack.create(newContext), builtin, evaluateNode).forEach(function (symbol) {
             return result.add(symbol);
         });
         return result;
@@ -14313,7 +14299,7 @@ var Playground = (function (exports) {
         '>', // greater than
         '>=', // greater than or equal
         '≥', // greater than or equal
-        '=', // equal
+        '==', // equal
         '!=', // not equal
         '≠', // not equal
         '&', // bitwise AND
@@ -14331,7 +14317,8 @@ var Playground = (function (exports) {
         '...', // rest
         '.', // property accessor
         ',', // item separator
-        ':=', // property assignment
+        '=', // assignment
+        ':', // property assignment
         ';', // statement terminator
     ];
     var symbolicOperators = __spreadArray(__spreadArray([], __read(binaryOperators), false), __read(otherOperators), false);
@@ -14498,8 +14485,8 @@ var Playground = (function (exports) {
             'fnull',
         ],
         misc: [
-            '≠',
-            '=',
+            '≠', // TODO
+            '==',
             '<',
             '>',
             '≤',
@@ -14919,7 +14906,7 @@ var Playground = (function (exports) {
             description: 'Takes a nested array $x and flattens it.',
             examples: [
                 'flatten([1, 2, [3, 4], 5])',
-                "\nlet foo := \"bar\";\nflatten([\n  1,\n  \" 2 A \",\n  [foo, [4, [\"ABC\"]]],\n  6,\n])",
+                "\nlet foo = \"bar\";\nflatten([\n  1,\n  \" 2 A \",\n  [foo, [4, [\"ABC\"]]],\n  6,\n])",
             ],
             noOperatorDocumentation: true,
         },
@@ -14944,7 +14931,7 @@ var Playground = (function (exports) {
                 '[[3, 2, 1, 0], [6, 5, 4], [9, 8, 7]] mapcat reverse',
                 'mapcat([[3, 2, 1, 0], [6, 5, 4], [9, 8, 7]], reverse)',
                 '[[3, 2, 1, 0,], [6, 5, 4,], [9, 8, 7]] mapcat reverse',
-                "\nfunction foo(n)\n  [n - 1, n, n + 1]\nend;\n[1, 2, 3] mapcat foo",
+                "\nfunction foo(n) {\n  [n - 1, n, n + 1]\n};\n[1, 2, 3] mapcat foo",
                 "\nmapcat(\n  [[1, 2], [2, 2], [2, 3]],\n  -> $ remove even?\n)",
             ],
         },
@@ -15025,7 +15012,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['value', 'message'] },
             ],
             description: 'If $value is falsy it throws `AssertionError` with $message. If no $message is provided, message is set to $value.',
-            examples: ['try assert(0, "Expected a positive value") catch (e) e.message end'],
+            examples: ['try { assert(0, "Expected a positive value") } catch (e) { e.message }'],
             noOperatorDocumentation: true,
         },
         'assert!=': {
@@ -15044,10 +15031,10 @@ var Playground = (function (exports) {
             ],
             description: 'If $a is the same as $b it throws `AssertionError`.',
             examples: [
-                'try assert!=(0, 0, "Expected different values") catch (e) e.message end',
-                'try assert!=(0, 0) catch (e) e.message end',
-                'try 0 assert!= 0 catch (e) e.message end',
-                'try assert!=(0, 1) catch (e) e.message end',
+                'try { assert!=(0, 0, "Expected different values") } catch (e) { e.message }',
+                'try { assert!=(0, 0) } catch (e) { e.message }',
+                'try { 0 assert!= 0 } catch (e) { e.message }',
+                'try { assert!=(0, 1) } catch (e) { e.message }',
             ],
             noOperatorDocumentation: true,
         },
@@ -15067,9 +15054,9 @@ var Playground = (function (exports) {
             ],
             description: 'If $a is not structural equal to $b it throws `AssertionError`.',
             examples: [
-                'try assert=({ "a" := 1 }, { "a" := 2 }, "Expected equal values") catch (e) e.message end',
-                'try assert=({ "a" := 1 }, { "a" := 2 }) catch (e) e.message end',
-                'try assert=({ "a" := 1 }, { "a" := 1 }) catch (e) e.message end',
+                'try { assert=({ "a": 1 }, { "a": 2 }, "Expected equal values") } catch (e) { e.message }',
+                'try { assert=({ "a": 1 }, { "a": 2 }) } catch (e) { e.message }',
+                'try { assert=({ "a": 1 }, { "a": 1 }) } catch (e) { e.message }',
             ],
             noOperatorDocumentation: true,
         },
@@ -15089,9 +15076,9 @@ var Playground = (function (exports) {
             ],
             description: 'If $a is not greater than $b it throws `AssertionError`.',
             examples: [
-                'try assert-gt(0, 1, "Expected greater value") catch (e) e.message end',
-                'try assert-gt(0, 0) catch (e) e.message end',
-                'try assert-gt(1, 0) catch (e) e.message end',
+                'try { assert-gt(0, 1, "Expected greater value") } catch (e) { e.message }',
+                'try { assert-gt(0, 0) } catch (e) { e.message }',
+                'try { assert-gt(1, 0) } catch (e) { e.message }',
             ],
             noOperatorDocumentation: true,
         },
@@ -15111,9 +15098,9 @@ var Playground = (function (exports) {
             ],
             description: 'If $a is not less than $b it throws `AssertionError`.',
             examples: [
-                'try assert-lte(1, 0, "Expected smaller value value") catch (e) e.message end',
-                'try assert-lte(1, 1) catch (e) e.message end',
-                'try assert-lte(0, 1) catch (e) e.message end',
+                'try { assert-lte(1, 0, "Expected smaller value value") } catch (e) { e.message }',
+                'try { assert-lte(1, 1) } catch (e) { e.message }',
+                'try { assert-lte(0, 1) } catch (e) { e.message }',
             ],
             noOperatorDocumentation: true,
         },
@@ -15133,9 +15120,9 @@ var Playground = (function (exports) {
             ],
             description: 'If $a is less than $b it throws `AssertionError`.',
             examples: [
-                'try assert-gte(0, 1, "Expected greater value") catch (e) e.message end',
-                'try assert-gte(0, 1) catch (e) e.message end',
-                'try assert-gte(1, 1) catch (e) e.message end',
+                'try { assert-gte(0, 1, "Expected greater value") } catch (e) { e.message }',
+                'try { assert-gte(0, 1) } catch (e) { e.message }',
+                'try { assert-gte(1, 1) } catch (e) { e.message }',
             ],
             noOperatorDocumentation: true,
         },
@@ -15155,9 +15142,9 @@ var Playground = (function (exports) {
             ],
             description: 'If $a is grater than $b it throws `AssertionError`.',
             examples: [
-                'try assert-lte(1, 0, "Expected smaller value value") catch (e) e.message end',
-                'try assert-lte(1, 0) catch (e) e.message end',
-                'try assert-lte(1, 1) catch (e) e.message end',
+                'try { assert-lte(1, 0, "Expected smaller value value") } catch (e) { e.message }',
+                'try { assert-lte(1, 0) } catch (e) { e.message }',
+                'try { assert-lte(1, 1) } catch (e) { e.message }',
             ],
             noOperatorDocumentation: true,
         },
@@ -15182,9 +15169,9 @@ var Playground = (function (exports) {
             ],
             description: 'If $value is not `true` it throws `AssertionError`.',
             examples: [
-                'try assert-true(false, "Expected true") catch (e) e.message end',
-                'try assert-true(false) catch (e) e.message end',
-                'try assert-true(true) catch (e) e.message end',
+                'try { assert-true(false, "Expected true") } catch (e) { e.message }',
+                'try { assert-true(false) } catch (e) { e.message }',
+                'try { assert-true(true) } catch (e) { e.message }',
             ],
             noOperatorDocumentation: true,
         },
@@ -15209,9 +15196,9 @@ var Playground = (function (exports) {
             ],
             description: 'If $value is not `false` it throws `AssertionError`.',
             examples: [
-                'try assert-false(true, "Expected false") catch (e) e.message end',
-                'try assert-false(true) catch (e) e.message end',
-                'try assert-false(false) catch (e) e.message end',
+                'try { assert-false(true, "Expected false") } catch (e) { e.message }',
+                'try { assert-false(true) } catch (e) { e.message }',
+                'try { assert-false(false) } catch (e) { e.message }',
             ],
             noOperatorDocumentation: true,
         },
@@ -15236,16 +15223,16 @@ var Playground = (function (exports) {
             ],
             description: 'If $value is not `truthy` it throws `AssertionError`.',
             examples: [
-                'try assert-truthy(false, "Expected truthy") catch (e) e.message end',
-                'try assert-truthy(false) catch (e) e.message end',
-                'try assert-truthy(0) catch (e) e.message end',
-                'try assert-truthy(null) catch (e) e.message end',
-                'try assert-truthy("") catch (e) e.message end',
-                'try assert-truthy(true) catch (e) e.message end',
-                'try assert-truthy(1) catch (e) e.message end',
-                'try assert-truthy("x") catch (e) e.message end',
-                'try assert-truthy([]) catch (e) e.message end',
-                'try assert-truthy({}) catch (e) e.message end',
+                'try { assert-truthy(false, "Expected truthy") } catch (e) { e.message }',
+                'try { assert-truthy(false) } catch (e) { e.message }',
+                'try { assert-truthy(0) } catch (e) { e.message }',
+                'try { assert-truthy(null) } catch (e) { e.message }',
+                'try { assert-truthy("") } catch (e) { e.message }',
+                'try { assert-truthy(true) } catch (e) { e.message }',
+                'try { assert-truthy(1) } catch (e) { e.message }',
+                'try { assert-truthy("x") } catch (e) { e.message }',
+                'try { assert-truthy([]) } catch (e) { e.message }',
+                'try { assert-truthy({}) } catch (e) { e.message }',
             ],
             noOperatorDocumentation: true,
         },
@@ -15270,15 +15257,15 @@ var Playground = (function (exports) {
             ],
             description: 'If $value is not `falsy` it throws `AssertionError`.',
             examples: [
-                'try assert-falsy(true, "Expected falsy") catch (e) e.message end',
-                'try assert-falsy("x") catch (e) e.message end',
-                'try assert-falsy([]) catch (e) e.message end',
-                'try assert-falsy({}) catch (e) e.message end',
-                'try assert-falsy(1) catch (e) e.message end',
-                'try assert-falsy(false) catch (e) e.message end',
-                'try assert-falsy(0) catch (e) e.message end',
-                'try assert-falsy(null) catch (e) e.message end',
-                'try assert-falsy("") catch (e) e.message end',
+                'try { assert-falsy(true, "Expected falsy") } catch (e) { e.message }',
+                'try { assert-falsy("x") } catch (e) { e.message }',
+                'try { assert-falsy([]) } catch (e) { e.message }',
+                'try { assert-falsy({}) } catch (e) { e.message }',
+                'try { assert-falsy(1) } catch (e) { e.message }',
+                'try { assert-falsy(false) } catch (e) { e.message }',
+                'try { assert-falsy(0) } catch (e) { e.message }',
+                'try { assert-falsy(null) } catch (e) { e.message }',
+                'try { assert-falsy("") } catch (e) { e.message }',
             ],
             noOperatorDocumentation: true,
         },
@@ -15303,15 +15290,15 @@ var Playground = (function (exports) {
             ],
             description: 'If $value is not `null` it throws `AssertionError`.',
             examples: [
-                'try assert-null(null) catch (e) e.message end',
-                'try assert-null(true, "Expected null") catch (e) e.message end',
-                'try assert-null("x") catch (e) e.message end',
-                'try assert-null([]) catch (e) e.message end',
-                'try assert-null({}) catch (e) e.message end',
-                'try assert-null(1) catch (e) e.message end',
-                'try assert-null(false) catch (e) e.message end',
-                'try assert-null(0) catch (e) e.message end',
-                'try assert-null("") catch (e) e.message end',
+                'try { assert-null(null) } catch (e) { e.message }',
+                'try { assert-null(true, "Expected null") } catch (e) { e.message }',
+                'try { assert-null("x") } catch (e) { e.message }',
+                'try { assert-null([]) } catch (e) { e.message }',
+                'try { assert-null({}) } catch (e) { e.message }',
+                'try { assert-null(1) } catch (e) { e.message }',
+                'try { assert-null(false) } catch (e) { e.message }',
+                'try { assert-null(0) } catch (e) { e.message }',
+                'try { assert-null("") } catch (e) { e.message }',
             ],
             noOperatorDocumentation: true,
         },
@@ -15337,7 +15324,7 @@ var Playground = (function (exports) {
             description: 'If $fun does not throw, it throws `AssertionError`.',
             examples: [
                 'assert-throws(-> throw("Error"))',
-                'try assert-throws(-> identity("Error")) catch (e) e.message end',
+                'try { assert-throws(-> identity("Error")) } catch (e) { e.message }',
             ],
             noOperatorDocumentation: true,
         },
@@ -15365,8 +15352,8 @@ var Playground = (function (exports) {
             ],
             description: 'If $fun does not throw $error-message, it throws `AssertionError`.',
             examples: [
-                'try assert-throws-error(-> throw("Error"), "Error") catch (e) e.message end',
-                'try assert-throws-error(-> identity("Error"), "Error") catch (e) e.message end',
+                'try { assert-throws-error(-> throw("Error"), "Error") } catch (e) { e.message }',
+                'try { assert-throws-error(-> identity("Error"), "Error") } catch (e) { e.message }',
             ],
             noOperatorDocumentation: true,
         },
@@ -15391,8 +15378,8 @@ var Playground = (function (exports) {
             ],
             description: 'If $fun throws, it throws `AssertionError`.',
             examples: [
-                'try assert-not-throws(-> identity("Error")) catch (e) e.message end',
-                'try assert-not-throws(-> throw("Error")) catch (e) e.message end',
+                'try { assert-not-throws(-> identity("Error")) } catch (e) { e.message }',
+                'try { assert-not-throws(-> throw("Error")) } catch (e) { e.message }',
             ],
             noOperatorDocumentation: true,
         },
@@ -15659,7 +15646,7 @@ var Playground = (function (exports) {
             examples: [
                 "\nfilter(\n  [\"Albert\", \"Mojir\", 160, [1, 2]],\n  string?\n)",
                 "\nfilter(\n  [5, 10, 15, 20],\n  -> $ > 10\n)",
-                "\nfilter(\n  { a := 1, b := 2 },\n  odd?\n)",
+                "\nfilter(\n  { a: 1, b: 2 },\n  odd?\n)",
             ],
         },
         'filteri': {
@@ -15683,8 +15670,8 @@ var Playground = (function (exports) {
             ],
             description: 'Creates a new collection with all elements that pass the test implemented by $b. The function is called for each element in the collection, and it should take two arguments: the element itself and the index.',
             examples: [
-                'filteri([1, 2, 3], (x, i) -> i % 2 = 0)',
-                'filteri([1, 2, 3], (x, i) -> x % 2 = 0)',
+                'filteri([1, 2, 3], (x, i) -> i % 2 == 0)',
+                'filteri([1, 2, 3], (x, i) -> x % 2 == 0)',
                 'filteri([1, 2, 3], (x, i) -> x + i > 3)',
             ],
         },
@@ -15712,8 +15699,8 @@ var Playground = (function (exports) {
                 'map(["Albert", "Mojir", 42], str)',
                 'map([1, 2, 3], inc)',
                 'map([1, 2, 3], [1, 10, 100], *)',
-                'map({ a := 1, b := 2 }, inc)',
-                'map({ a := 1, b := 2 }, { a := 10, b := 20 }, +)',
+                'map({ a: 1, b: 2 }, inc)',
+                'map({ a: 1, b: 2 }, { a: 10, b: 20 }, +)',
             ],
         },
         'mapi': {
@@ -15769,8 +15756,8 @@ var Playground = (function (exports) {
             examples: [
                 'reduce([1, 2, 3], +, 0)',
                 'reduce([], +, 0)',
-                'reduce({ a := 1, b := 2 }, +, 0)',
-                "\nreduce(\n  [1, 2, 3, 4, 5, 6, 7, 8, 9],\n  (result, value) -> result + if even?(value) then value else 0 end,\n  0)",
+                'reduce({ a: 1, b: 2 }, +, 0)',
+                "\nreduce(\n  [1, 2, 3, 4, 5, 6, 7, 8, 9],\n  (result, value) -> result + (even?(value) ? value : 0),\n  0)",
             ],
         },
         'reduce-right': {
@@ -15797,7 +15784,7 @@ var Playground = (function (exports) {
             description: 'Runs $fun function on each element of the $coll (starting from the last item), passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $coll is a single value.',
             examples: [
                 'reduce-right(["A", "B", "C"], str, "")',
-                'reduce-right({ a := 1, b := 2 }, +, 0)',
+                'reduce-right({ a: 1, b: 2 }, +, 0)',
             ],
         },
         'reducei-right': {
@@ -15827,7 +15814,7 @@ var Playground = (function (exports) {
             examples: [
                 'reducei-right([1, 2, 3], (acc, x, i) -> acc + x + i, 0)',
                 'reducei-right("Albert", (acc, x, i) -> acc ++ x ++ i, "")',
-                'reducei-right({ a := 1, b := 2 }, -> $1 ++ $3, "")',
+                'reducei-right({ a: 1, b: 2 }, -> $1 ++ $3, "")',
             ],
         },
         'reducei': {
@@ -15857,7 +15844,7 @@ var Playground = (function (exports) {
             examples: [
                 'reducei([1, 2, 3], (acc, x, i) -> acc + x + i, 0)',
                 'reducei("Albert", (acc, x, i) -> acc ++ x ++ i, "")',
-                'reducei({ a := 1, b := 2 }, -> $1 ++ $3, "")',
+                'reducei({ a: 1, b: 2 }, -> $1 ++ $3, "")',
             ],
         },
         'reductions': {
@@ -15887,8 +15874,8 @@ var Playground = (function (exports) {
                 'reductions([1, 2, 3], +, 0)',
                 'reductions([1, 2, 3], +, 10)',
                 'reductions([], +, 0)',
-                'reductions({ a := 1, b := 2 }, +, 0)',
-                "\nreductions(\n  [1, 2, 3, 4, 5, 6, 7, 8, 9],\n  (result, value) -> result + if even?(value) then value else 0 end,\n  0\n)",
+                'reductions({ a: 1, b: 2 }, +, 0)',
+                "\nreductions(\n  [1, 2, 3, 4, 5, 6, 7, 8, 9],\n  (result, value) -> result + (even?(value) ? value : 0),\n  0\n)",
             ],
         },
         'reductionsi': {
@@ -15919,7 +15906,7 @@ var Playground = (function (exports) {
             examples: [
                 'reductionsi([1, 2, 3], (acc, x, i) -> acc + x + i, 0)',
                 'reductionsi("Albert", (acc, x, i) -> acc ++ x ++ i, "")',
-                'reductionsi({ a := 1, b := 2 }, -> $1 ++ $3, "")',
+                'reductionsi({ a: 1, b: 2 }, -> $1 ++ $3, "")',
             ],
         },
         'count': {
@@ -15941,7 +15928,7 @@ var Playground = (function (exports) {
             examples: [
                 'count([1, 2, 3])',
                 'count([])',
-                'count({ a := 1 })',
+                'count({ a: 1 })',
                 'count("")',
                 'count("Albert")',
                 'count(null)',
@@ -15965,14 +15952,14 @@ var Playground = (function (exports) {
             description: 'Returns value in $a mapped at $b.',
             examples: [
                 '[1, 2, 3] get 1',
-                '{ a := 1 } get "a"',
+                '{ a: 1 } get "a"',
                 '"Albert" get "3"',
                 "\nget(\n  [1, 2, 3],\n  1, // Optional comma after last argument\n)",
                 "\nget(\n  [],\n  1\n)",
                 "\nget(\n  [],\n  1,\n  \"default\"\n)",
-                "\nget(\n  { a := 1 },\n  \"a\"\n)",
-                "\nget(\n  { a := 1 },\n  \"b\"\n)",
-                "\nget(\n  { a := 1 },\n  \"b\",\n  \"default\"\n)",
+                "\nget(\n  { a: 1 },\n  \"a\"\n)",
+                "\nget(\n  { a: 1 },\n  \"b\"\n)",
+                "\nget(\n  { a: 1 },\n  \"b\",\n  \"default\"\n)",
                 "\nget(\n  null,\n  \"a\"\n)",
                 "\nget(\n  null,\n  \"b\",\n  \"default\"\n)",
             ],
@@ -15993,9 +15980,9 @@ var Playground = (function (exports) {
             ],
             description: 'Returns the value in a nested collection, where $b is an array of keys. Returns $not-found if the key is not present. If $not-found is not set, `null` is returned.',
             examples: [
-                "\nget-in(\n  [[1, 2, 3], [4, { a := \"Kalle\" }, 6]],\n  [1, 1, \"a\", 0]\n)",
-                "\nget-in(\n  [[1, 2, 3], [4, { a := \"Kalle\" }, 6]],\n  [1, 1, \"b\", 0]\n)",
-                "\nget-in(\n  [[1, 2, 3], [4, { a := \"Kalle\" }, 6]],\n  [1, 1, \"b\", 0],\n  \"Lisa\"\n)",
+                "\nget-in(\n  [[1, 2, 3], [4, { a: \"Kalle\" }, 6]],\n  [1, 1, \"a\", 0]\n)",
+                "\nget-in(\n  [[1, 2, 3], [4, { a: \"Kalle\" }, 6]],\n  [1, 1, \"b\", 0]\n)",
+                "\nget-in(\n  [[1, 2, 3], [4, { a: \"Kalle\" }, 6]],\n  [1, 1, \"b\", 0],\n  \"Lisa\"\n)",
             ],
         },
         'contains?': {
@@ -16013,12 +16000,12 @@ var Playground = (function (exports) {
             examples: [
                 '[1, 2, 3] contains? 1',
                 'null contains? 1',
-                '{ a := 1, b := 2 } contains? "a"',
+                '{ a: 1, b: 2 } contains? "a"',
                 "\ncontains?(\n  [],\n  1\n)",
                 "\ncontains?(\n  [1],\n  1\n)",
                 "\ncontains?(\n  [1, 2, 3],\n  1\n)",
                 "\ncontains?(\n  {},\n  \"a\"\n)",
-                "\ncontains?(\n  { a := 1, b := 2 },\n  \"a\"\n)",
+                "\ncontains?(\n  { a: 1, b: 2 },\n  \"a\"\n)",
             ],
         },
         'assoc': {
@@ -16052,8 +16039,8 @@ var Playground = (function (exports) {
             examples: [
                 "\nassoc(\n  [1, 2, 3],\n  1,\n  \"Two\"\n)",
                 "\nassoc(\n  [1, 2, 3],\n  3,\n  \"Four\"\n)",
-                "\nassoc(\n  { a := 1, b := 2 },\n  \"a\",\n  \"One\")",
-                "\nassoc(\n  { a := 1, b := 2 },\n  \"c\",\n  \"Three\")",
+                "\nassoc(\n  { a: 1, b: 2 },\n  \"a\",\n  \"One\")",
+                "\nassoc(\n  { a: 1, b: 2 },\n  \"c\",\n  \"Three\")",
                 "\nassoc(\n  \"Albert\",\n  6,\n  \"a\")",
             ],
         },
@@ -16083,7 +16070,7 @@ var Playground = (function (exports) {
             examples: [
                 "\nassoc-in(\n  {},\n  [\"a\", \"b\", \"c\"],\n  \"Albert\"\n)",
                 "\nassoc-in(\n  [1, 2, [1, 2, 3]],\n  [2, 1],\n  \"Albert\"\n)",
-                "\nassoc-in(\n  [1, 2, { name := \"albert\" }],\n  [2, \"name\", 0],\n  \"A\"\n)",
+                "\nassoc-in(\n  [1, 2, { name: \"albert\" }],\n  [2, \"name\", 0],\n  \"A\"\n)",
             ],
         },
         '++': {
@@ -16115,8 +16102,8 @@ var Playground = (function (exports) {
                 'concat([1, 2], [])',
                 'concat([1, 2], [3, 4], [5, 6])',
                 'concat([])',
-                'concat({ a := 1, b := 2 }, { b := 1, c := 2 })',
-                'concat({}, { a := 1 })',
+                'concat({ a: 1, b: 2 }, { b: 1, c: 2 })',
+                'concat({}, { a: 1 })',
             ],
             aliases: ['concat'],
         },
@@ -16140,7 +16127,7 @@ var Playground = (function (exports) {
                 'not-empty([])',
                 'not-empty([1, 2, 3])',
                 'not-empty({})',
-                'not-empty({ a := 2 })',
+                'not-empty({ a: 2 })',
                 'not-empty("")',
                 'not-empty("Albert")',
                 'not-empty(null)',
@@ -16166,8 +16153,8 @@ var Playground = (function (exports) {
                 "\nevery?(\n  [],\n  number?\n)",
                 "\nevery?(\n  \"\",\n  number?\n)",
                 "\nevery?(\n  {},\n  number?\n)",
-                "\nevery?(\n  { a := 2, b := 4},\n  -> even?(second($))\n)",
-                "\nevery?(\n  { a := 2, b := 3 },\n  -> even?(second($))\n)",
+                "\nevery?(\n  { a: 2, b: 4},\n  -> even?(second($))\n)",
+                "\nevery?(\n  { a: 2, b: 3 },\n  -> even?(second($))\n)",
             ],
         },
         'not-every?': {
@@ -16188,8 +16175,8 @@ var Playground = (function (exports) {
                 "\nnot-every?(\n  [],\n  number?\n)",
                 "\nnot-every?(\n  \"\",\n  number?\n)",
                 "\nnot-every?(\n  {},\n  number?\n)",
-                "\nnot-every?(\n  { a := 2, b := 4 },\n  -> even?(second($))\n)",
-                "\nnot-every?(\n  { a := 2, b := 3 },\n  -> even?(second($))\n)",
+                "\nnot-every?(\n  { a: 2, b: 4 },\n  -> even?(second($))\n)",
+                "\nnot-every?(\n  { a: 2, b: 3 },\n  -> even?(second($))\n)",
             ],
         },
         'any?': {
@@ -16210,8 +16197,8 @@ var Playground = (function (exports) {
                 "\nany?(\n  [],\n  number?\n)",
                 "\nany?(\n  \"\",\n  number?\n)",
                 "\nany?(\n  {},\n  number?\n)",
-                "\nany?(\n  { a := 2, b := 3 },\n  -> even?(second($))\n)",
-                "\nany?(\n  { a := 1, b := 3 },\n  -> even?(second($))\n)",
+                "\nany?(\n  { a: 2, b: 3 },\n  -> even?(second($))\n)",
+                "\nany?(\n  { a: 1, b: 3 },\n  -> even?(second($))\n)",
             ],
         },
         'not-any?': {
@@ -16232,8 +16219,8 @@ var Playground = (function (exports) {
                 "\nnot-any?(\n  [],\n  number?\n)",
                 "\nnot-any?(\n  \"\",\n  number?\n)",
                 "\nnot-any?(\n  {},\n  number?\n)",
-                "\nnot-any?(\n  { a := 2, b := 3 },\n  -> even?(second($))\n)",
-                "\nnot-any?(\n  { a := 1, b := 3 },\n  -> even?(second($))\n)",
+                "\nnot-any?(\n  { a: 2, b: 3 },\n  -> even?(second($))\n)",
+                "\nnot-any?(\n  { a: 1, b: 3 },\n  -> even?(second($))\n)",
             ],
         },
         'update': {
@@ -16264,8 +16251,8 @@ var Playground = (function (exports) {
             ],
             description: "\nUpdates a value in the $coll collection, where $key is a key. $fun is a function\nthat will take the old value and any supplied $fun-args and\nreturn the new value.\nIf the key does not exist, `null` is passed as the old value.",
             examples: [
-                "\nlet x := { a := 1, b := 2 };\nupdate(x, \"a\", inc)",
-                "\nlet x := { a := 1, b := 2 };\nupdate(\n  x,\n  \"c\",\n  val -> if null?(val) then 0 else inc(val) end\n)",
+                "\nlet x = { a: 1, b: 2 };\nupdate(x, \"a\", inc)",
+                "\nlet x = { a: 1, b: 2 };\nupdate(\n  x,\n  \"c\",\n  val -> null?(val) ? 0 : inc(val)\n)",
             ],
         },
         'update-in': {
@@ -16296,10 +16283,10 @@ var Playground = (function (exports) {
             ],
             description: "Updates a value in the $coll collection, where $ks is an array of\nkeys and $fun is a function that will take the old value and\nany supplied $fun-args and return the new value. If any levels do not exist,\nobjects will be created - and the corresponding keys must be of type string.",
             examples: [
-                "\nupdate-in(\n  { a := [1, 2, 3] },\n  [\"a\", 1],\n  -> if null?($) then 0 end\n)",
-                "\nupdate-in(\n  { a := { foo := \"bar\"} },\n  [\"a\", \"foo\"],\n  -> if null?($) then \"?\" else \"!\" end\n)",
-                "\nupdate-in(\n  { a := { foo := \"bar\"} },\n  [\"a\", \"baz\"],\n  -> if null?($) then \"?\" else \"!\" end\n)",
-                "\nupdate-in(\n  { a := [1, 2, 3] },\n  [\"a\", 1],\n  *,\n  10,\n  10,\n  10,\n)",
+                "\nupdate-in(\n  { a: [1, 2, 3] },\n  [\"a\", 1],\n  -> null?($) ? 0 : inc($)\n)",
+                "\nupdate-in(\n  { a: { foo: \"bar\"} },\n  [\"a\", \"foo\"],\n  -> null?($) ? \"?\" : \"!\"\n)",
+                "\nupdate-in(\n  { a: { foo: \"bar\"} },\n  [\"a\", \"baz\"],\n  -> null?($) ? \"?\" : \"!\"\n)",
+                "\nupdate-in(\n  { a: [1, 2, 3] },\n  [\"a\", 1],\n  *,\n  10,\n  10,\n  10,\n)",
             ],
         },
     };
@@ -16360,7 +16347,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['x'] },
             ],
             description: 'Returns $x.',
-            examples: ['identity(1)', 'identity("Albert")', 'identity({ a := 1 })', 'identity(null)'],
+            examples: ['identity(1)', 'identity("Albert")', 'identity({ a: 1 })', 'identity(null)'],
         },
         'comp': {
             title: 'comp',
@@ -16378,8 +16365,8 @@ var Playground = (function (exports) {
             ],
             description: "Takes a variable number of functions and returns a function that is the composition of those.\n\n  The returned function takes a variable number of arguments,\n  applies the rightmost function to the args,\n  the next function (right-to-left) to the result, etc.",
             examples: [
-                "\nlet negative-quotient := comp(-, /);\nnegative-quotient(9, 3)",
-                "\nlet x := { bar := { foo := 42 } };\ncomp(\"foo\", \"bar\")(x)",
+                "\nlet negative-quotient = comp(-, /);\nnegative-quotient(9, 3)",
+                "\nlet x = { bar: { foo: 42 } };\ncomp(\"foo\", \"bar\")(x)",
             ],
         },
         'constantly': {
@@ -16399,7 +16386,7 @@ var Playground = (function (exports) {
             ],
             description: 'Returns a function that takes any number of arguments and always returns $x.',
             examples: [
-                "\nlet always-true := constantly(true);\nalways-true(9, 3)",
+                "\nlet always-true = constantly(true);\nalways-true(9, 3)",
             ],
         },
         'juxt': {
@@ -16422,7 +16409,7 @@ var Playground = (function (exports) {
             description: "Takes one or many function and returns a function that is the juxtaposition of those functions.  \nThe returned function takes a variable number of args,\nand returns a vector containing the result of applying each function to the args (left-to-right).",
             examples: [
                 "\njuxt(+, *, min, max)(\n  3,\n  4,\n  6,\n)",
-                "\njuxt(\"a\", \"b\")(\n  {\n    a := 1,\n    b := 2,\n    c := 3,\n    d := 4\n  }\n)",
+                "\njuxt(\"a\", \"b\")(\n  {\n    a: 1,\n    b: 2,\n    c: 3,\n    d: 4\n  }\n)",
                 "\njuxt(+, *, min, max) apply range(1, 11)",
             ],
         },
@@ -17500,10 +17487,10 @@ var Playground = (function (exports) {
             ],
             aliases: ['!='],
         },
-        '=': {
-            title: '=',
+        '==': {
+            title: '==',
             category: 'Misc',
-            linkName: '-equal',
+            linkName: '-equal-equal',
             returns: {
                 type: 'boolean',
             },
@@ -17519,16 +17506,16 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if all `values` are structaul equal to each other, otherwise result is `false`.',
             examples: [
-                '1 = 1',
-                '[1, 2] = [1, 2]',
-                "\n{\n a := 1,\n b := 2,\n} = {\n b := 2,\n a := 1,\n}",
-                '=(1, 1)',
-                '=(1.01, 1)',
-                '=("1", 1)',
-                '=("2", "2", "2", "2")',
-                '=(2, 2, 1, 2)',
-                '=([1, 2], [1, 2])',
-                '=({ a := 1, b := 2 }, { b := 2, a := 1 })',
+                '1 == 1',
+                '[1, 2] == [1, 2]',
+                "\n{\n a: 1,\n b: 2,\n} == {\n b: 2,\n a: 1,\n}",
+                '==(1, 1)',
+                '==(1.01, 1)',
+                '==("1", 1)',
+                '==("2", "2", "2", "2")',
+                '==(2, 2, 1, 2)',
+                '==([1, 2], [1, 2])',
+                '==({ a: 1, b: 2 }, { b: 2, a: 1 })',
             ],
         },
         '<': {
@@ -17790,7 +17777,7 @@ var Playground = (function (exports) {
             ],
             description: 'Returns true if $a and $b are referential equal.',
             examples: [
-                'identical?({ a := 10, b := 20 }, { b := 20, a := 10 })',
+                'identical?({ a: 10, b: 20 }, { b: 20, a: 10 })',
                 'identical?([1, true, null], [1, true, null])',
                 'identical?(0.3, 0.1 + 0.2)',
             ],
@@ -17838,7 +17825,7 @@ var Playground = (function (exports) {
             description: 'Returns `JSON.stringify(`$x`)`. If second argument is provided, returns `JSON.stringify(`$x`, null, `$indent`)`.',
             examples: [
                 'json-stringify([1, 2, 3])',
-                'json-stringify({ a := { b := 10 }}, 2)',
+                'json-stringify({ a: { b: 10 }}, 2)',
             ],
             noOperatorDocumentation: true,
         },
@@ -17862,10 +17849,10 @@ var Playground = (function (exports) {
             ],
             description: 'Return shallow copy of $obj with $key deleted.',
             examples: [
-                '{ x := 10, y := 20 } dissoc "y"',
-                'dissoc({ x := 10, y := 20 }, "x")',
-                'dissoc({ x := 10 }, "y")',
-                "\nlet o := { a := 5 };\ndissoc(o, \"a\");\no",
+                '{ x: 10, y: 20 } dissoc "y"',
+                'dissoc({ x: 10, y: 20 }, "x")',
+                'dissoc({ x: 10 }, "y")',
+                "\nlet o = { a: 5 };\ndissoc(o, \"a\");\no",
             ],
         },
         'keys': {
@@ -17887,7 +17874,7 @@ var Playground = (function (exports) {
             description: 'Returns array of all keys in $obj.',
             examples: [
                 'keys({})',
-                'keys({ x := 10, y := true, z := "A string" })',
+                'keys({ x: 10, y: true, z: "A string" })',
                 'keys(object("x", 10, "y", true, "z", "A string"))',
             ],
         },
@@ -17910,7 +17897,7 @@ var Playground = (function (exports) {
             description: 'Returns array of all values in $obj.',
             examples: [
                 'vals({})',
-                'vals({ x := 10, y := true, z := "A string" })',
+                'vals({ x: 10, y: true, z: "A string" })',
                 'vals(object("x", 10, "y", true, "z", "A string"))',
             ],
         },
@@ -17932,7 +17919,7 @@ var Playground = (function (exports) {
             description: 'Returns nested array of all key - value pairs in $obj.',
             examples: [
                 'entries({})',
-                'entries({ x := 10, y := true, z := "A string" })',
+                'entries({ x: 10, y: true, z: "A string" })',
                 'entries(object("x", 10, "y", true, "z", "A string"))',
             ],
         },
@@ -17953,7 +17940,7 @@ var Playground = (function (exports) {
             ],
             description: 'Returns entry (key-value pair) for $key, or `null` if $key not present in $obj.',
             examples: [
-                '{ a := 1, "b" := 2 } find "a"',
+                '{ a: 1, "b": 2 } find "a"',
                 'find(object("a", 1, "b", 2), "b")',
                 'find(object("a", 1, "b", 2), "c")',
             ],
@@ -17974,7 +17961,7 @@ var Playground = (function (exports) {
             ],
             description: "Returns a new object created by merging together all arguments.\n\nIf two keys appears in more than one object the value from the last object is used.  \nIf no arguments are provided `null` is returned.",
             examples: [
-                '{ x := 10 } merge { y := 20 }',
+                '{ x: 10 } merge { y: 20 }',
                 'merge(object("x", 10), object("y", 20))',
                 'merge(object("x", 10), object("x", 15, "y", 20))',
             ],
@@ -18002,7 +17989,7 @@ var Playground = (function (exports) {
             examples: [
                 'merge-with(object("x", 10), object("y", 20), +)',
                 'merge-with(object("x", 10), object("x", 15, "y", 20), +)',
-                'merge-with({ x := 10 }, { x := 20 }, { x := 30 }, { x := 40 }, -)',
+                'merge-with({ x: 10 }, { x: 20 }, { x: 30 }, { x: 40 }, -)',
             ],
             noOperatorDocumentation: true,
         },
@@ -18038,9 +18025,9 @@ var Playground = (function (exports) {
             ],
             description: 'Returns an object containing only those entries in $a whose key is in $b.',
             examples: [
-                '{ a := 1, b := 2, c := 3 } select-keys ["a", "b"]',
-                'select-keys({ a := 1, b := 2, c := 3 }, ["a", "b"])',
-                'select-keys({ a := 1 }, ["a", "b"])',
+                '{ a: 1, b: 2, c: 3 } select-keys ["a", "b"]',
+                'select-keys({ a: 1, b: 2, c: 3 }, ["a", "b"])',
+                'select-keys({ a: 1 }, ["a", "b"])',
             ],
         },
     };
@@ -24062,7 +24049,7 @@ var Playground = (function (exports) {
             examples: [
                 'string?("")',
                 'string?("A string")',
-                'string?(if true then "A string" else false end)',
+                'string?(true ? "A string" : false)',
                 'string?(false)',
                 'string?([1, 2, 3])',
                 'string?(100)',
@@ -24498,7 +24485,7 @@ var Playground = (function (exports) {
                 'empty?([])',
                 'empty?([1, 2, 3])',
                 'empty?({})',
-                'empty?({ a := 2 })',
+                'empty?({ a: 2 })',
                 'empty?("")',
                 'empty?("Albert")',
                 'empty?(null)',
@@ -24524,7 +24511,7 @@ var Playground = (function (exports) {
                 'not-empty?([])',
                 'not-empty?([1, 2, 3])',
                 'not-empty?({})',
-                'not-empty?({ a := 2 })',
+                'not-empty?({ a: 2 })',
                 'not-empty?("")',
                 'not-empty?("Albert")',
                 'not-empty?(null)',
@@ -24766,7 +24753,7 @@ var Playground = (function (exports) {
                 '"Albert" push "!"',
                 'push([1, 2, 3], 4)',
                 'push([1, 2, 3], 4, 5, 6)',
-                "\nlet l := [1, 2, 3];\npush(l, 4);\nl",
+                "\nlet l = [1, 2, 3];\npush(l, 4);\nl",
             ],
         },
         'pop': {
@@ -24812,7 +24799,7 @@ var Playground = (function (exports) {
                 '[1, 2, 3] unshift 4',
                 'unshift([1, 2, 3], 4)',
                 'unshift([1, 2, 3], 4, 5, 6)',
-                "\nlet l := [1, 2, 3];\nunshift(l, 4);\nl",
+                "\nlet l = [1, 2, 3];\nunshift(l, 4);\nl",
             ],
         },
         'shift': {
@@ -25290,8 +25277,8 @@ var Playground = (function (exports) {
             examples: [
                 '[3, 1, 2] sort (a, b) -> b - a',
                 'sort([3, 1, 2])',
-                "\nsort(\n  [3, 1, 2],\n  (a, b) -> cond case a < b then -1 case a > b then 1 case true then -1 end\n)",
-                "\nsort(\n  [3, 1, 2],\n  (a, b) -> cond case a > b then -1 case a < b then 1 case true then -1 end\n)",
+                "\nsort(\n  [3, 1, 2],\n  (a, b) -> cond { case a < b: -1 case a > b: 1 case true: -1 }\n)",
+                "\nsort(\n  [3, 1, 2],\n  (a, b) -> cond { case a > b: -1 case a < b: 1 case true: -1 }\n)",
             ],
         },
         'sort-by': {
@@ -25473,9 +25460,9 @@ var Playground = (function (exports) {
             ],
             description: 'Returns an object of the elements of $seq keyed by the result of $fun on each element. The value at each key will be an array of the corresponding elements.',
             examples: [
-                '[{ name := "Albert" }, { name := "Albert" }, { name := "Mojir" }] group-by "name"',
-                'group-by([{name := "Albert"}, {name := "Albert"}, {name := "Mojir"}], "name")',
-                'group-by("Albert Mojir", -> if "aoueiAOUEI" contains? $ then "vowel" else "other" end)',
+                '[{ name: "Albert" }, { name: "Albert" }, { name: "Mojir" }] group-by "name"',
+                'group-by([{name: "Albert"}, {name: "Albert"}, {name: "Mojir"}], "name")',
+                'group-by("Albert Mojir", -> "aoueiAOUEI" contains? $ ? "vowel" : "other")',
             ],
         },
         'partition': {
@@ -25516,7 +25503,7 @@ var Playground = (function (exports) {
                 'partition([1, 2, 3, 4], 10, 10, null)',
                 'partition("superfragilistic", 5)',
                 'partition("superfragilistic", 5, 5, null)',
-                'let foo := [5, 6, 7, 8]; partition(foo, 2, 1, foo)',
+                'let foo = [5, 6, 7, 8]; partition(foo, 2, 1, foo)',
             ],
         },
         'partition-all': {
@@ -25563,7 +25550,7 @@ var Playground = (function (exports) {
             description: 'Applies $fun to each value in $seq, splitting it each time $fun returns a new value. Returns an array of sequences.',
             examples: [
                 '[1, 2, 3, 4, 5] partition-by odd?',
-                'partition-by([1, 2, 3, 4, 5], -> $ = 3)',
+                'partition-by([1, 2, 3, 4, 5], -> $ == 3)',
                 'partition-by([1, 1, 1, 2, 2, 3, 3], odd?)',
                 'partition-by("Leeeeeerrroyyy", identity)',
             ],
@@ -25719,10 +25706,10 @@ var Playground = (function (exports) {
             description: 'Constructs a new object. Object members are created from the $kvps key-value pairs. Requires an even number of arguments.',
             examples: [
                 'object()',
-                "\nlet default := {\n  type := \"Person\",\n  name := \"John Doe\",\n  age := 42\n};\n\n{\n  ...default,\n  name := \"Lisa\"\n}",
+                "\nlet default = {\n  type: \"Person\",\n  name: \"John Doe\",\n  age: 42\n};\n\n{\n  ...default,\n  name: \"Lisa\"\n}",
                 'object("x", 10, "y", true, "z", "A string")',
                 '{}',
-                '{ a := 1, b := 2 }',
+                '{ a: 1, b: 2 }',
             ],
             noOperatorDocumentation: true,
         },
@@ -25780,13 +25767,13 @@ var Playground = (function (exports) {
             title: 'let',
             category: 'Special expression',
             linkName: 'let',
-            customVariants: ['let s := value;'],
+            customVariants: ['let s = value;'],
             details: [
                 ['s', 'symbol', 'The name of the variable to bind.'],
                 ['value', 'any', 'The value to bind to the variable.'],
             ],
             description: "\n  Binds local variables s to `value`. `value` can be any expression. The scope of the variables is the body of the let expression.",
-            examples: ["\nlet a := 1 + 2 + 3 + 4;\nlet b := -> $ * ( $ + 1 );\nwrite!(\"a\", a, \"b\", b)"],
+            examples: ["\nlet a = 1 + 2 + 3 + 4;\nlet b = -> $ * ( $ + 1 );\nwrite!(\"a\", a, \"b\", b)"],
         },
         'function': {
             title: 'function',
@@ -25795,7 +25782,7 @@ var Playground = (function (exports) {
             customVariants: ['function name(...arg, ...let-binding) body end;'],
             details: [
                 ['name', 'symbol', 'The name of the function.'],
-                ['arg', '[...]arg-name [:= value]', 'Arguments of the function.'],
+                ['arg', '[...]arg-name [: value]', 'Arguments of the function.'],
                 ['...', 'rest-symbol', 'Optional. The rest argument of the function.'],
                 ['arg-name', 'symbol', 'The name of the argument.'],
                 ['value', 'any', 'Optional. The default value of the argument.'],
@@ -25804,9 +25791,9 @@ var Playground = (function (exports) {
             ],
             description: 'Creates a named function. When called, evaluation of the last expression in the body is returned.',
             examples: [
-                "\nfunction hyp (a, b)\n  sqrt(a * a + b * b)\nend;\n\nhyp(3, 4)",
-                "\nfunction sumOfSquares(...s)\n  apply(\n    +,\n    map(s, -> $ ^ 2)\n  )\nend;\n\nsumOfSquares(1, 2, 3, 4, 5)",
-                "\nfunction withOptional(a, b := 42)\n  a + b\nend;\n\nwrite!(withOptional(1), withOptional(1, 2))",
+                "\nfunction hyp (a, b) {\n  sqrt(a * a + b * b)\n};\n\nhyp(3, 4)",
+                "\nfunction sumOfSquares(...s) {\n  apply(\n    +,\n    map(s, -> $ ^ 2)\n  )\n};\n\nsumOfSquares(1, 2, 3, 4, 5)",
+                "\nfunction withOptional(a, b = 42) {\n  a + b\n};\n\nwrite!(withOptional(1), withOptional(1, 2))",
             ],
         },
         'try': {
@@ -25821,9 +25808,9 @@ var Playground = (function (exports) {
             ],
             description: 'Executes `try-body`. If that throws, the `catch-body` gets executed. See examples for details.',
             examples: [
-                "\ntry\n  2 / 4\ncatch\n  \"Oops!\"\nend",
-                "\ntry\n  foo()\ncatch(error)\n  \"Error: \" ++ error.message\nend",
-                "\ntry\n  foo()\ncatch\n  42\nend",
+                "\ntry {\n  2 / 4\n} catch {\n  \"Oops!\"\n}",
+                "\ntry {\n  foo()\n} catch(error) {\n  \"Error: \" ++ error.message\n}",
+                "\ntry {\n  foo()\n} catch {\n  42\n}",
             ],
         },
         'throw': {
@@ -25843,8 +25830,8 @@ var Playground = (function (exports) {
             ],
             description: 'Throws `UserDefinedError` with message set to $expr evaluated. $expr must evaluate to a string.',
             examples: [
-                'try throw("You shall not pass!") catch(error) "Error: " ++ error.message end',
-                'try throw(slice("You shall not pass!", 0, 3)) catch(error) "Error: " ++ error.message end',
+                'try { throw("You shall not pass!") } catch(error) { "Error: " ++ error.message }',
+                'try { throw(slice("You shall not pass!", 0, 3)) } catch(error) { "Error: " ++ error.message }',
             ],
         },
         'if': {
@@ -25859,10 +25846,10 @@ var Playground = (function (exports) {
             ],
             description: 'Either `then-expr` or `else-expr` branch is taken. `then-expr` is selected when $test is truthy. If $test is falsy `else-expr` is executed, if no `else-expr` exists, `null` is returned.',
             examples: [
-                "\nif true then\n  write!(\"TRUE\")\nelse\n  write!(\"FALSE\")\nend",
-                'if false then write!("TRUE") else write!("FALSE") end',
-                'if true then write!("TRUE") end',
-                'if false then write!("TRUE") end',
+                "\nif (true) {\n  write!(\"TRUE\")\n} else {\n  write!(\"FALSE\")\n}",
+                'if (false) { write!("TRUE") } else { write!("FALSE") }',
+                'if (true) { write!("TRUE") }',
+                'if (false) { write!("TRUE") }',
             ],
         },
         'unless': {
@@ -25877,10 +25864,10 @@ var Playground = (function (exports) {
             ],
             description: 'Either `then-expr` or `else-expr` branch is taken. `then-expr` is selected when $test is falsy. If $test is truthy `else-expr` is executed, if no `else-expr` exists, `null` is returned.',
             examples: [
-                "\nunless true then\n  write!(\"TRUE\")\nelse\n  write!(\"FALSE\")\nend",
-                'unless false then write!("TRUE") else write!("FALSE") end',
-                'unless true then write!("TRUE") end',
-                'unless false then write!("TRUE") end',
+                "\nunless (true) {\n  write!(\"TRUE\")\n} else {\n  write!(\"FALSE\")\n}",
+                'unless (false) { write!("TRUE") } else { write!("FALSE") }',
+                'unless (true) { write!("TRUE") }',
+                'unless (false) { write!("TRUE") }',
             ],
         },
         'cond': {
@@ -25895,9 +25882,9 @@ var Playground = (function (exports) {
             ],
             description: 'Used for branching. `cond-branches` are tested sequentially from the top. If no branch is tested truthy, `null` is returned.',
             examples: [
-                "\ncond\n  case false then write!(\"FALSE\")\n  case true then write!(\"TRUE\")\nend\n  ",
-                "\ncond\n  case false then write!(\"FALSE\")\n  case null then write!(\"null\")\n end ?? write!(\"TRUE\")",
-                "\ncond\n  case false then write!(\"FALSE\")\n  case null then write!(\"null\")\nend",
+                "\ncond {\n  case false: write!(\"FALSE\")\n  case true: write!(\"TRUE\")\n}",
+                "\ncond {\n  case false: write!(\"FALSE\")\n  case null: write!(\"null\")\n} ?? write!(\"TRUE\")",
+                "\ncond {\n  case false: write!(\"FALSE\")\n  case null: write!(\"null\")\n} ?? write!(\"TRUE\")",
             ],
         },
         'switch': {
@@ -25913,9 +25900,9 @@ var Playground = (function (exports) {
             ],
             description: 'Used for branching. `switch-branches` are tested sequentially from the top against `value`. If no branch is tested truthy, `null` is returned.',
             examples: [
-                "\nswitch 1\n  case 1 then write!(\"One\")\n  case 2 then write!(\"Two\")\nend",
-                "\nswitch 2\n  case 1 then write!(\"One\")\n  case 2 then write!(\"Two\")\nend",
-                "\nswitch 3\n  case 1 then write!(\"One\")\n  case 2 then write!(\"Two\")\nend",
+                "\nswitch (1) {\n  case 1: write!(\"One\")\n  case 2: write!(\"Two\")\n}",
+                "\nswitch (2) {\n  case 1: write!(\"One\")\n  case 2: write!(\"Two\")\n}",
+                "\nswitch (3) {\n  case 1: write!(\"One\")\n  case 2: write!(\"Two\")\n}",
             ],
         },
         'do': {
@@ -25928,7 +25915,7 @@ var Playground = (function (exports) {
             ],
             description: 'Evaluates `body`. Resulting value is the value of the last expression.',
             examples: [
-                "\ndo\n  let a := 1 + 2 + 3 + 4;\n  let b := -> $ * ( $ + 1 );\n  b(a)\nend",
+                "\n{\n  let a = 1 + 2 + 3 + 4;\n  let b = -> $ * ( $ + 1 );\n  b(a)\n}",
             ],
         },
         'recur': {
@@ -25938,205 +25925,11 @@ var Playground = (function (exports) {
             customVariants: ['recur(...recur-args)'],
             description: 'Recursevly calls enclosing function or loop with its evaluated `recur-args`.',
             examples: [
-                "\nfunction foo(n)\n  write!(n);\n  if !(zero?(n)) then\n    recur(n - 1)\n  end\nend;\nfoo(3)",
-                "\n(n -> do\n  write!(n);\n  if !(zero?(n)) then\n    recur(n - 1)\n  end\nend)(3)",
-                "\nloop let n := 3 do\n  write!(n);\n  if !(zero?(n)) then\n    recur(n - 1)\n  end\nend",
+                "\nfunction foo(n) {\n  write!(n);\n  if (!(zero?(n))) {\n    recur(n - 1)\n  }\n};\nfoo(3)",
+                "\n(n -> {\n  write!(n);\n  if (!(zero?(n))) {\n    recur(n - 1)\n  }\n})(3)",
+                "\nloop (n = 3) {\n  write!(n);\n  if (!(zero?(n))) {\n    recur(n - 1)\n  }\n}",
             ],
         },
-        //   'loop': {
-        //     title: 'loop',
-        //     category: 'Special expression',
-        //     linkName: 'loop',
-        //     returns: {
-        //       type: 'any',
-        //     },
-        //     args: {
-        //       bindings: {
-        //         type: '*binding',
-        //         rest: true,
-        //       },
-        //       expressions: {
-        //         type: '*expression',
-        //         rest: true,
-        //       },
-        //     },
-        //     variants: [
-        //       { argumentNames: ['bindings', 'expressions'] },
-        //     ],
-        //     description: 'Executes $expressions with initial $bindings. The $bindings will be replaced with the recur parameters for subsequent recursions.',
-        //     examples: [
-        //       `
-        // (loop [n 3]
-        //   write!(n)
-        //   (if
-        //     (! (zero? n))
-        //     (recur (dec n))))`,
-        //       `
-        // (loop [n 3]
-        //   write!(n)
-        //   (if
-        //     (! (zero? n))
-        //     (recur (dec n))
-        //     n))`,
-        //     ],
-        //   },
-        //   'doseq': {
-        //     title: 'doseq',
-        //     category: 'Special expression',
-        //     linkName: 'doseq',
-        //     returns: {
-        //       type: 'null',
-        //     },
-        //     args: {
-        //       bindings: {
-        //         type: '*for-binding',
-        //         rest: true,
-        //       },
-        //       expr: {
-        //         type: '*expression',
-        //       },
-        //     },
-        //     variants: [
-        //       { argumentNames: ['vars', 'expr'] },
-        //     ],
-        //     description: 'Same syntax as `for`, but returns `null`. Use for side effects. Consumes less memory than `for`.',
-        //     examples: ['(doseq [x [1 2 4]] write!(x))'],
-        //   },
-        //   'for': {
-        //     title: 'for',
-        //     category: 'Special expression',
-        //     linkName: 'for',
-        //     returns: {
-        //       type: 'any',
-        //       array: true,
-        //     },
-        //     args: {
-        //       bindings: {
-        //         type: '*for-binding',
-        //         rest: true,
-        //       },
-        //       expr: {
-        //         type: '*expression',
-        //       },
-        //     },
-        //     variants: [
-        //       { argumentNames: ['vars', 'expr'] },
-        //     ],
-        //     description: `List comprehension. Takes one or more $bindings, each followed by zero or more modifiers, and returns an array of evaluations of $expr.
-        //   Collections are iterated in a nested fashion, rightmost fastest. Supported modifiers are: &let &while and &when.`,
-        //     examples: [
-        //       `
-        // (for [x "Al" y [1 2]]
-        //   (repeat y x))`,
-        //       `
-        // (for [x {:a 10 :b 20} y [1 2]]
-        //   (repeat y x))`,
-        //       `
-        // (for [x [1 2] y [1 10]]
-        //   (* x y))`,
-        //       `
-        // (for
-        //   [x [1 2]
-        //   &let [z (* x x x)]]
-        //   z)`,
-        //       `
-        // (for
-        //   [x [0 1 2 3 4 5]
-        //   &let [y (* x 3)]
-        //   &when (even? y)]
-        //   y)`,
-        //       `
-        // (for
-        //   [x [0 1 2 3 4 5]
-        //   &let [y (* x 3)]
-        //   &while (even? y)]
-        //   y)`,
-        //       `
-        // (for
-        //   [x [0 1 2 3 4 5]
-        //   &let [y (* x 3)]
-        //   &while (odd? y)]
-        //   y)`,
-        //       `
-        // (for
-        //   [x [1 2 3] y [1 2 3]
-        //   &while (<= x y)
-        //   z [1 2 3]]
-        //   [x y z])`,
-        //       `
-        // (for
-        //   [x [1 2 3] y [1 2 3] z [1 2 3]
-        //   &while (<= x y)]
-        //   [x y z])`,
-        //     ],
-        //   },
-        //   'defined?': {
-        //     title: 'defined?',
-        //     category: 'Special expression',
-        //     linkName: 'defined-question',
-        //     returns: {
-        //       type: 'boolean',
-        //     },
-        //     args: {
-        //       n: {
-        //         type: '*name',
-        //       },
-        //     },
-        //     variants: [
-        //       { argumentNames: ['n'] },
-        //     ],
-        //     description: 'Returns `true` if $n is a declared variable or a builtin function, otherwise `false`.',
-        //     examples: [
-        //       '(defined? foo)',
-        //       `
-        // (def foo :foo)
-        // (defined? foo)`,
-        //       '(defined? +)',
-        //       `
-        // (def foo null)
-        // (defined? foo)`,
-        //       '(defined? if)',
-        //     ],
-        //   },
-        //   '??': {
-        //     title: '??',
-        //     category: 'Special expression',
-        //     linkName: '-question-question',
-        //     returns: {
-        //       type: 'any',
-        //     },
-        //     args: {
-        //       test: {
-        //         type: '*expression',
-        //       },
-        //       default: {
-        //         type: '*expression',
-        //       },
-        //     },
-        //     variants: [
-        //       { argumentNames: ['test'] },
-        //       { argumentNames: ['test', 'default'] },
-        //     ],
-        //     description: 'If $test is declared and evaluated to non `null` value $test is result, else $default is returned. If $default is not provided, `null` is returned.',
-        //     examples: [
-        //       '(?? foo)',
-        //       `
-        // (def foo :foo)
-        // (?? foo)`,
-        //       '(?? +)',
-        //       `
-        // (def foo null)
-        // (?? foo)`,
-        //       `
-        // (def foo null)
-        // (?? foo :bar)`,
-        //       '(?? foo 1)',
-        //       '(?? "")',
-        //       '(?? 0)',
-        //       '(?? 0 1)',
-        //       '(?? 2 1)',
-        //     ],
-        //   },
     };
 
     var stringReference = {
@@ -26183,7 +25976,7 @@ var Playground = (function (exports) {
                 'str("A string", ", and another string", " ...and more")',
                 'str("Just one string")',
                 'str()',
-                'str(0, false, true, null, #"^kalle", [1, 2, 3], {a := "a"})',
+                'str(0, false, true, null, #"^kalle", [1, 2, 3], {a: "a"})',
             ],
             noOperatorDocumentation: true,
         },
@@ -26684,7 +26477,7 @@ var Playground = (function (exports) {
             description: 'An `object`, a collection of key-value pairs where keys are `strings`',
             examples: [
                 '{}',
-                '{ a := 1, b := 2}',
+                '{ a: 1, b: 2}',
             ],
         },
         '-type-array': {
@@ -26799,7 +26592,7 @@ var Playground = (function (exports) {
             linkName: '-type-collection',
             description: 'A collection, an `object`, an `array` or a `string`',
             examples: [
-                '{ foo := 42 }',
+                '{ foo: 42 }',
                 '[1, 2, 3]',
                 '"hello"',
             ],
@@ -26832,7 +26625,7 @@ var Playground = (function (exports) {
             category: 'Datatype',
             linkName: '-type-never',
             description: 'A value that can never be created',
-            examples: ["\n// throw(\"error\") will never return a value\ntry throw(\"error\") catch \"never\" end",
+            examples: ["\n// throw(\"error\") will never return a value\ntry { throw(\"error\") } catch { \"never\" }",
             ],
         },
     };
@@ -32013,7 +31806,7 @@ var Playground = (function (exports) {
             return NO_MATCH;
         }
         var nextChar = input[i];
-        if (nextChar && !postNumberRegExp.test(nextChar)) {
+        if (nextChar && nextChar !== ':' && !postNumberRegExp.test(nextChar)) {
             throw new LitsError("Invalid number format at position ".concat(i, "."), undefined);
         }
         return [length, ['Number', input.substring(position, i)]];
@@ -32090,7 +31883,10 @@ var Playground = (function (exports) {
                 position += 1;
                 char = input[position];
             }
-            return [position - initialPosition, ['Symbol', value]];
+            // : can be used as symbol character, but it must not be the last character
+            return value.endsWith(':')
+                ? [position - initialPosition - 1, ['Symbol', value.slice(0, -1)]]
+                : [position - initialPosition, ['Symbol', value]];
         }
         return NO_MATCH;
     };
@@ -32426,7 +32222,7 @@ var Playground = (function (exports) {
             case '>=': // greater than or equal
             case '≥': // greater than or equal
                 return 7;
-            case '=': // equal
+            case '==': // equal
             case '!=': // not equal
             case '≠': // not equal
                 return 6;
@@ -32477,7 +32273,7 @@ var Playground = (function (exports) {
             case '>':
             case '>=':
             case '≥':
-            case '=':
+            case '==':
             case '!=':
             case '≠':
             case '&':
@@ -32492,12 +32288,12 @@ var Playground = (function (exports) {
             /* v8 ignore next 11 */
             case '.':
             case ';':
-            case ':=':
+            case ':':
+            case '=':
             case ',':
             case '->':
             case '...':
             case '?':
-            case ':':
                 throw new LitsError("Unknown binary operator: ".concat(operatorName), sourceCodeInfo);
             default:
                 throw new LitsError("Unknown binary operator: ".concat(operatorName), sourceCodeInfo);
@@ -32560,9 +32356,9 @@ var Playground = (function (exports) {
                     case 'doseq':
                         left = this.parseForOrDoseq(firstToken);
                         break;
-                    case 'do':
-                        left = this.parseDo(firstToken);
-                        break;
+                    // cas:
+                    //   left = this.parseDo(firstToken)
+                    //   break
                     case 'loop':
                         left = this.parseLoop(firstToken);
                         break;
@@ -32705,9 +32501,17 @@ var Playground = (function (exports) {
                     throw new LitsError("Illegal operator: ".concat(operatorName), token[2]);
                 }
             }
-            // Object litteral, e.g. {a=1, b=2}
+            // Object litteral, e.g. {a: 1, b: 2}
+            // Or block.
             if (isLBraceToken(token)) {
-                return this.parseObject();
+                var positionBefore = this.parseState.position;
+                try {
+                    return this.parseObject();
+                }
+                catch (_a) {
+                    this.parseState.position = positionBefore;
+                    return this.parseBlock();
+                }
             }
             // Array litteral, e.g. [1, 2]
             if (isLBracketToken(token)) {
@@ -32762,7 +32566,7 @@ var Playground = (function (exports) {
                     else {
                         throw new LitsError('Expected key to be a symbol or a string', this.peekSourceCodeInfo());
                     }
-                    assertOperatorToken(this.peek(), ':=');
+                    assertOperatorToken(this.peek(), ':');
                     this.advance();
                     params.push(this.parseExpression());
                 }
@@ -32983,7 +32787,7 @@ var Playground = (function (exports) {
             return node;
         };
         Parser.prototype.parseOptionalDefaulValue = function () {
-            if (isOperatorToken(this.peek(), ':=')) {
+            if (isOperatorToken(this.peek(), '=')) {
                 this.advance();
                 return this.parseExpression();
             }
@@ -33011,7 +32815,7 @@ var Playground = (function (exports) {
                 }
                 this.advance();
                 var symbol = asUserDefinedSymbolNode(this.parseSymbol());
-                if (isOperatorToken(this.peek(), ':=')) {
+                if (isOperatorToken(this.peek(), '=')) {
                     throw new LitsError('Rest argument can not have default value', this.peekSourceCodeInfo());
                 }
                 return withSourceCodeInfo([bindingTargetTypes.rest, [symbol[1], undefined]], firstToken[2]);
@@ -33078,11 +32882,11 @@ var Playground = (function (exports) {
                         }
                         elements[key[1]] = withSourceCodeInfo([bindingTargetTypes.symbol, [name_2, this.parseOptionalDefaulValue()]], firstToken[2]);
                     }
-                    else if (isRBraceToken(token) || isOperatorToken(token, ',') || isOperatorToken(token, ':=')) {
+                    else if (isRBraceToken(token) || isOperatorToken(token, ',') || isOperatorToken(token, '=')) {
                         if (elements[key[1]]) {
                             throw new LitsError("Duplicate binding name: ".concat(key), token[2]);
                         }
-                        if (rest && isOperatorToken(this.peek(), ':=')) {
+                        if (rest && isOperatorToken(this.peek(), '=')) {
                             throw new LitsError('Rest argument can not have default value', this.peekSourceCodeInfo());
                         }
                         elements[key[1]] = rest
@@ -33120,33 +32924,37 @@ var Playground = (function (exports) {
             var bindingTarget = withSourceCodeInfo([NodeTypes.Binding, [target, value]], token[2]);
             return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.let, bindingTarget]], token[2]);
         };
-        Parser.prototype.parseDo = function (token) {
+        Parser.prototype.parseBlock = function () {
+            var token = asLBraceToken(this.peek());
             this.advance();
             var expressions = [];
-            while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
+            while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
                 expressions.push(this.parseExpression());
                 if (isOperatorToken(this.peek(), ';')) {
                     this.advance();
                 }
-                else if (!isReservedSymbolToken(this.peek(), 'end')) {
-                    throw new LitsError('Expected ;', this.peekSourceCodeInfo());
+                else if (!isRBraceToken(this.peek())) {
+                    throw new LitsError('Expected }', this.peekSourceCodeInfo());
                 }
             }
-            assertReservedSymbolToken(this.peek(), 'end');
+            if (expressions.length === 0) {
+                expressions.push(withSourceCodeInfo([NodeTypes.ReservedSymbol, 'null'], token[2]));
+            }
+            assertRBraceToken(this.peek());
             this.advance();
             return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.do, expressions]], token[2]);
         };
         Parser.prototype.parseLoop = function (firstToken) {
             this.advance();
+            assertLParenToken(this.peek());
+            this.advance();
             var bindingNodes = [];
             var token = this.peek();
-            while (!this.isAtEnd() && !isSymbolToken(token, 'do')) {
-                assertSymbolToken(token, 'let');
-                this.advance();
+            while (!this.isAtEnd() && !isRParenToken(token)) {
                 var target = this.parseBindingTarget({ requireDefaultValue: true, noRest: true });
                 var value = target[1][1];
                 target[1][1] = undefined;
-                bindingNodes.push(withSourceCodeInfo([NodeTypes.Binding, [target, value]], token[2]));
+                bindingNodes.push(withSourceCodeInfo([NodeTypes.Binding, [target, value]], target[2]));
                 if (isOperatorToken(this.peek(), ',')) {
                     this.advance();
                 }
@@ -33155,37 +32963,27 @@ var Playground = (function (exports) {
             if (bindingNodes.length === 0) {
                 throw new LitsError('Expected binding', this.peekSourceCodeInfo());
             }
-            assertSymbolToken(token, 'do');
+            assertRParenToken(token);
+            this.advance();
+            assertLBraceToken(this.peek());
             this.advance();
             var params = [];
-            while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
+            while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
                 params.push(this.parseExpression());
                 if (isOperatorToken(this.peek(), ';')) {
                     this.advance();
                 }
-                else if (!isReservedSymbolToken(this.peek(), 'end')) {
+                else if (!isRBraceToken(this.peek())) {
                     throw new LitsError('Expected ;', this.peekSourceCodeInfo());
                 }
             }
-            assertReservedSymbolToken(this.peek(), 'end');
+            assertRBraceToken(this.peek());
             this.advance();
             return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.loop, bindingNodes, params]], firstToken[2]);
         };
         Parser.prototype.parseTry = function (token) {
             this.advance();
-            var tryExpressions = [];
-            while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'catch')) {
-                tryExpressions.push(this.parseExpression());
-                if (isOperatorToken(this.peek(), ';')) {
-                    this.advance();
-                }
-                else if (!isReservedSymbolToken(this.peek(), 'catch')) {
-                    throw new LitsError('Expected ;', this.peekSourceCodeInfo());
-                }
-            }
-            var tryExpression = tryExpressions.length === 1
-                ? tryExpressions[0]
-                : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.do, tryExpressions]], token[2]);
+            var tryExpression = this.parseBlock();
             assertReservedSymbolToken(this.peek(), 'catch');
             this.advance();
             var errorSymbol;
@@ -33195,25 +32993,13 @@ var Playground = (function (exports) {
                 assertRParenToken(this.peek());
                 this.advance();
             }
-            var catchExpressions = [];
-            while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
-                catchExpressions.push(this.parseExpression());
-                if (isOperatorToken(this.peek(), ';')) {
-                    this.advance();
-                }
-                else if (!isReservedSymbolToken(this.peek(), 'end')) {
-                    throw new LitsError('Expected ;', this.peekSourceCodeInfo());
-                }
-            }
-            assertReservedSymbolToken(this.peek(), 'end');
-            this.advance();
-            var catchExpression = catchExpressions.length === 1
-                ? catchExpressions[0]
-                : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.do, catchExpressions]], token[2]);
+            var catchExpression = this.parseBlock();
             return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.try, tryExpression, errorSymbol, catchExpression]], token[2]);
         };
         Parser.prototype.parseForOrDoseq = function (firstToken) {
             var isDoseq = firstToken[1] === 'doseq';
+            this.advance();
+            assertLParenToken(this.peek());
             this.advance();
             var forLoopBindings = [];
             var _loop_1 = function () {
@@ -33224,37 +33010,27 @@ var Playground = (function (exports) {
                     throw new LitsError('Duplicate binding', loopBinding[0][2]);
                 }
                 forLoopBindings.push(loopBinding);
+                if (isOperatorToken(this_1.peek(), ';')) {
+                    this_1.advance();
+                }
             };
             var this_1 = this;
-            while (!this.isAtEnd() && !isSymbolToken(this.peek(), 'do')) {
+            while (!this.isAtEnd() && !isRParenToken(this.peek())) {
                 _loop_1();
             }
-            assertSymbolToken(this.peek(), 'do');
+            assertRParenToken(this.peek());
             this.advance();
-            var expressions = [];
-            while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
-                expressions.push(this.parseExpression());
-                if (isOperatorToken(this.peek(), ';')) {
-                    this.advance();
-                }
-                else if (!isReservedSymbolToken(this.peek(), 'end')) {
-                    throw new LitsError('Expected ;', this.peekSourceCodeInfo());
-                }
-            }
-            assertReservedSymbolToken(this.peek(), 'end');
-            this.advance();
+            var expression = this.parseExpression();
             return isDoseq
-                ? withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.doseq, forLoopBindings, expressions]], firstToken[2])
-                : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.for, forLoopBindings, expressions]], firstToken[2]);
+                ? withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.doseq, forLoopBindings, expression]], firstToken[2])
+                : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.for, forLoopBindings, expression]], firstToken[2]);
         };
         Parser.prototype.parseForLoopBinding = function () {
-            assertReservedSymbolToken(this.peek(), 'each');
-            this.advance();
             var bindingNode = this.parseBinding();
             var modifiers = [];
             var token = this.asToken(this.peek());
-            if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this.peek(), 'each') && !isOperatorToken(token, ',')) {
-                throw new LitsError('Expected do, each or comma', token[2]);
+            if (!isRParenToken(token) && !isOperatorToken(this.peek(), ';') && !isOperatorToken(token, ',')) {
+                throw new LitsError('Expected ")", ";" or ","', token[2]);
             }
             if (isOperatorToken(token, ',')) {
                 this.advance();
@@ -33263,9 +33039,9 @@ var Playground = (function (exports) {
             if (!isSymbolToken(token, 'let')
                 && !isReservedSymbolToken(token, 'when')
                 && !isReservedSymbolToken(token, 'while')
-                && !isSymbolToken(token, 'do')
-                && !isReservedSymbolToken(token, 'each')) {
-                throw new LitsError('Expected symbol each, do, let, when or while', token[2]);
+                && !isRParenToken(token)
+                && !isOperatorToken(token, ';')) {
+                throw new LitsError('Expected symbol ";", ")", let, when or while', token[2]);
             }
             var letBindings = [];
             if (token[1] === 'let') {
@@ -33279,8 +33055,8 @@ var Playground = (function (exports) {
                     }
                     letBindings.push(letNode[1][1]);
                     token = this_2.asToken(this_2.peek());
-                    if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this_2.peek(), 'each') && !isOperatorToken(token, ',')) {
-                        throw new LitsError('Expected do, each or comma', token[2]);
+                    if (!isRParenToken(token) && !isOperatorToken(token, ';') && !isOperatorToken(token, ',')) {
+                        throw new LitsError('Expected ")", ";" or ","', token[2]);
                     }
                     if (isOperatorToken(token, ',')) {
                         this_2.advance();
@@ -33312,7 +33088,7 @@ var Playground = (function (exports) {
                     whileNode = this.parseExpression();
                 }
                 token = this.asToken(this.peek());
-                if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this.peek(), 'each') && !isOperatorToken(token, ',')) {
+                if (!isRParenToken(token) && !isOperatorToken(token, ';') && !isOperatorToken(token, ',')) {
                     throw new LitsError('Expected do or comma', token[2]);
                 }
                 if (isOperatorToken(token, ',')) {
@@ -33320,8 +33096,8 @@ var Playground = (function (exports) {
                 }
                 token = this.asToken(this.peek());
             }
-            if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this.peek(), 'each')) {
-                throw new LitsError('Expected do or each', token[2]);
+            if (!isRParenToken(token) && !isOperatorToken(token, ';')) {
+                throw new LitsError('Expected "{" or ";"', token[2]);
             }
             return [bindingNode, letBindings, whenNode, whileNode];
         };
@@ -33343,65 +33119,41 @@ var Playground = (function (exports) {
         Parser.prototype.parseIfOrUnless = function (token) {
             var isUnless = token[1] === 'unless';
             this.advance();
-            var condition = this.parseExpression();
-            assertReservedSymbolToken(this.peek(), 'then');
+            assertLParenToken(this.peek());
             this.advance();
-            var thenExpressions = [];
-            while (!this.isAtEnd()
-                && !isReservedSymbolToken(this.peek(), 'else')
-                && !isReservedSymbolToken(this.peek(), 'end')) {
-                thenExpressions.push(this.parseExpression());
-                if (isOperatorToken(this.peek(), ';')) {
-                    this.advance();
-                }
-                else if (!isReservedSymbolToken(this.peek(), 'else') && !isReservedSymbolToken(this.peek(), 'end')) {
-                    throw new LitsError('Expected ;', this.peekSourceCodeInfo());
-                }
-            }
-            var thenExpression = thenExpressions.length === 1
-                ? thenExpressions[0]
-                : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.do, thenExpressions]], token[2]);
+            var condition = this.parseExpression();
+            assertRParenToken(this.peek());
+            this.advance();
+            var thenExpression = this.parseExpression();
             var elseExpression;
             if (isReservedSymbolToken(this.peek(), 'else')) {
                 this.advance();
-                var elseExpressions = [];
-                while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
-                    elseExpressions.push(this.parseExpression());
-                    if (isOperatorToken(this.peek(), ';')) {
-                        this.advance();
-                    }
-                    else if (!isReservedSymbolToken(this.peek(), 'end')) {
-                        throw new LitsError('Expected ;', this.peekSourceCodeInfo());
-                    }
-                }
-                elseExpression = elseExpressions.length === 1
-                    ? elseExpressions[0]
-                    : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.do, elseExpressions]], token[2]);
+                elseExpression = this.parseExpression();
             }
-            assertReservedSymbolToken(this.peek(), 'end');
-            this.advance();
             return isUnless
                 ? withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.unless, [condition, thenExpression, elseExpression]]], token[2])
                 : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.if, [condition, thenExpression, elseExpression]]], token[2]);
         };
         Parser.prototype.parseCond = function (token) {
             this.advance();
+            assertLBraceToken(this.peek());
+            this.advance();
             var params = [];
-            while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
+            while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
                 assertReservedSymbolToken(this.peek(), 'case');
                 this.advance();
                 var caseExpression = this.parseExpression();
-                assertReservedSymbolToken(this.peek(), 'then');
+                assertOperatorToken(this.peek(), ':');
                 this.advance();
                 var expressions = [];
                 while (!this.isAtEnd()
                     && !isReservedSymbolToken(this.peek(), 'case')
-                    && !isReservedSymbolToken(this.peek(), 'end')) {
+                    && !isRBraceToken(this.peek())) {
                     expressions.push(this.parseExpression());
                     if (isOperatorToken(this.peek(), ';')) {
                         this.advance();
                     }
-                    else if (!isReservedSymbolToken(this.peek(), 'case') && !isReservedSymbolToken(this.peek(), 'end')) {
+                    else if (!isReservedSymbolToken(this.peek(), 'case') && !isRBraceToken(this.peek())) {
                         throw new LitsError('Expected ;', this.peekSourceCodeInfo());
                     }
                 }
@@ -33409,34 +33161,40 @@ var Playground = (function (exports) {
                     ? expressions[0]
                     : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.do, expressions]], token[2]);
                 params.push([caseExpression, thenExpression]);
-                if (isReservedSymbolToken(this.peek(), 'end')) {
+                if (isRBraceToken(this.peek())) {
                     break;
                 }
                 assertReservedSymbolToken(this.peek(), 'case');
             }
-            assertReservedSymbolToken(this.peek(), 'end');
+            assertRBraceToken(this.peek());
             this.advance();
             return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.cond, params]], token[2]);
         };
         Parser.prototype.parseSwitch = function (token) {
             this.advance();
+            assertLParenToken(this.peek());
+            this.advance();
             var valueExpression = this.parseExpression();
+            assertRParenToken(this.peek());
+            this.advance();
+            assertLBraceToken(this.peek());
+            this.advance();
             var params = [];
-            while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
+            while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
                 assertReservedSymbolToken(this.peek(), 'case');
                 this.advance();
                 var caseExpression = this.parseExpression();
-                assertReservedSymbolToken(this.peek(), 'then');
+                assertOperatorToken(this.peek(), ':');
                 this.advance();
                 var expressions = [];
                 while (!this.isAtEnd()
                     && !isReservedSymbolToken(this.peek(), 'case')
-                    && !isReservedSymbolToken(this.peek(), 'end')) {
+                    && !isRBraceToken(this.peek())) {
                     expressions.push(this.parseExpression());
                     if (isOperatorToken(this.peek(), ';')) {
                         this.advance();
                     }
-                    else if (!isReservedSymbolToken(this.peek(), 'case') && !isReservedSymbolToken(this.peek(), 'end')) {
+                    else if (!isReservedSymbolToken(this.peek(), 'case') && !isRBraceToken(this.peek())) {
                         throw new LitsError('Expected ;', this.peekSourceCodeInfo());
                     }
                 }
@@ -33444,12 +33202,12 @@ var Playground = (function (exports) {
                     ? expressions[0]
                     : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.do, expressions]], token[2]);
                 params.push([caseExpression, thenExpression]);
-                if (isReservedSymbolToken(this.peek(), 'end')) {
+                if (isRBraceToken(this.peek())) {
                     break;
                 }
                 assertReservedSymbolToken(this.peek(), 'case');
             }
-            assertReservedSymbolToken(this.peek(), 'end');
+            assertRBraceToken(this.peek());
             this.advance();
             return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.switch, valueExpression, params]], token[2]);
         };
@@ -33457,22 +33215,11 @@ var Playground = (function (exports) {
             this.advance();
             var symbol = this.parseSymbol();
             var functionArguments = this.parseFunctionArguments();
-            var body = [];
-            while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
-                body.push(this.parseExpression());
-                if (isOperatorToken(this.peek(), ';')) {
-                    this.advance();
-                }
-                else if (!isReservedSymbolToken(this.peek(), 'end')) {
-                    throw new LitsError('Expected ;', this.peekSourceCodeInfo());
-                }
-            }
-            assertReservedSymbolToken(this.peek(), 'end');
-            this.advance();
+            var block = this.parseBlock();
             assertOperatorToken(this.peek(), ';');
             return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.function, symbol, [
                         functionArguments,
-                        body,
+                        block[1][1],
                     ]]], token[2]);
         };
         Parser.prototype.isAtEnd = function () {
@@ -33484,39 +33231,24 @@ var Playground = (function (exports) {
             }
             var token = this.peek();
             if (isOperatorToken(token)) {
-                return [';', ',', ':='].includes(token[1]);
+                return [';', ',', ':'].includes(token[1]);
             }
             if (isReservedSymbolToken(token)) {
-                return ['else', 'when', 'while', 'then', 'end', 'case', 'catch'].includes(token[1]);
+                return ['else', 'when', 'while', 'case', 'catch'].includes(token[1]);
             }
             return false;
         };
-        Parser.prototype.parseExport = function (token) {
+        Parser.prototype.parseExport = function (exportToken) {
             this.advance();
-            if (isSymbolToken(this.peek(), 'let')) {
-                var letNode = this.parseLet(asSymbolToken(this.peek()));
-                return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes['0_def'], letNode[1][1]]], token[2]);
+            var token = this.peek();
+            if (isSymbolToken(token, 'let')) {
+                var letNode = this.parseLet(asSymbolToken(token));
+                return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes['0_def'], letNode[1][1]]], exportToken[2]);
             }
-            else if (isReservedSymbolToken(this.peek(), 'function')) {
-                this.advance();
-                var symbol = this.parseSymbol();
-                var functionArguments = this.parseFunctionArguments();
-                var body = [];
-                while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
-                    body.push(this.parseExpression());
-                    if (isOperatorToken(this.peek(), ';')) {
-                        this.advance();
-                    }
-                    else if (!isReservedSymbolToken(this.peek(), 'end')) {
-                        throw new LitsError('Expected ;', this.peekSourceCodeInfo());
-                    }
-                }
-                assertReservedSymbolToken(this.peek(), 'end');
-                this.advance();
-                return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes['0_defn'], symbol, [
-                            functionArguments,
-                            body,
-                        ]]], token[2]);
+            else if (isReservedSymbolToken(token, 'function')) {
+                var functionNode = this.parseFunction(token);
+                functionNode[1][0] = specialExpressionTypes['0_defn'];
+                return functionNode;
             }
             else {
                 throw new LitsError('Expected let or function', this.peekSourceCodeInfo());

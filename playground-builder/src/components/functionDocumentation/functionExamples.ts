@@ -20,7 +20,7 @@ export function getFunctionExamples(reference: Reference) {
           console.warn = function () {}
           const encodedUriExample = btoa(encodeURIComponent(example))
           try {
-            const result = lits.run(`try ${example} catch(e) e end`)
+            const result = lits.run(`try { ${example} } catch(e) { e }`)
             const stringifiedResult = stringifyValue(result, true)
 
             const formattedExample = formatLitsExpression(example)

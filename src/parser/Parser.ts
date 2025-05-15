@@ -177,6 +177,7 @@ function fromBinaryOperatorToNode(operator: OperatorToken, symbolNode: SymbolNod
     case '.':
     case ';':
     case ':':
+    case '=':
     case ',':
     case '->':
     case '...':
