@@ -23,7 +23,7 @@ const binaryOperators = [
   '>=', // greater than or equal
   '≥', // greater than or equal
 
-  '=', // equal
+  '==', // equal
   '!=', // not equal
   '≠', // not equal
 
@@ -45,7 +45,8 @@ const otherOperators = [
   '...', // rest
   '.', // property accessor
   ',', // item separator
-  ':=', // property assignment
+  '=', // assignment
+  ':', // property assignment
   ';', // statement terminator
 ] as const
 

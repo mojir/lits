@@ -52,19 +52,19 @@ export const specialExpressionsReference: Record<SpecialExpressionsApiName, Func
     examples: [
       'object()',
       `
-let default := {
-  type := "Person",
-  name := "John Doe",
-  age := 42
+let default = {
+  type: "Person",
+  name: "John Doe",
+  age: 42
 };
 
 {
   ...default,
-  name := "Lisa"
+  name: "Lisa"
 }`,
       'object("x", 10, "y", true, "z", "A string")',
       '{}',
-      '{ a := 1, b := 2 }',
+      '{ a: 1, b: 2 }',
     ],
     noOperatorDocumentation: true,
   },
@@ -137,7 +137,7 @@ If all expressions evaluate to truthy values, the value of the last expression i
     title: 'let',
     category: 'Special expression',
     linkName: 'let',
-    customVariants: ['let s := value;'],
+    customVariants: ['let s = value;'],
     details: [
       ['s', 'symbol', 'The name of the variable to bind.'],
       ['value', 'any', 'The value to bind to the variable.'],
@@ -145,8 +145,8 @@ If all expressions evaluate to truthy values, the value of the last expression i
     description: `
   Binds local variables s to \`value\`. \`value\` can be any expression. The scope of the variables is the body of the let expression.`,
     examples: [`
-let a := 1 + 2 + 3 + 4;
-let b := -> $ * ( $ + 1 );
+let a = 1 + 2 + 3 + 4;
+let b = -> $ * ( $ + 1 );
 write!("a", a, "b", b)`],
   },
   'function': {
@@ -156,7 +156,7 @@ write!("a", a, "b", b)`],
     customVariants: ['function name(...arg, ...let-binding) body end;'],
     details: [
       ['name', 'symbol', 'The name of the function.'],
-      ['arg', '[...]arg-name [:= value]', 'Arguments of the function.'],
+      ['arg', '[...]arg-name [: value]', 'Arguments of the function.'],
       ['...', 'rest-symbol', 'Optional. The rest argument of the function.'],
       ['arg-name', 'symbol', 'The name of the argument.'],
       ['value', 'any', 'Optional. The default value of the argument.'],
@@ -181,7 +181,7 @@ function sumOfSquares(...s) {
 
 sumOfSquares(1, 2, 3, 4, 5)`,
       `
-function withOptional(a, b := 42) {
+function withOptional(a, b = 42) {
   a + b
 };
 
@@ -301,18 +301,18 @@ unless (true) {
     examples: [
       `
 cond {
-  case false then write!("FALSE")
-  case true then write!("TRUE")
+  case false: write!("FALSE")
+  case true: write!("TRUE")
 }`,
       `
 cond {
-  case false then write!("FALSE")
-  case null then write!("null")
+  case false: write!("FALSE")
+  case null: write!("null")
 } ?? write!("TRUE")`,
       `
 cond {
-  case false then write!("FALSE")
-  case null then write!("null")
+  case false: write!("FALSE")
+  case null: write!("null")
 } ?? write!("TRUE")`,
     ],
   },
@@ -331,18 +331,18 @@ cond {
     examples: [
       `
 switch (1) {
-  case 1 then write!("One")
-  case 2 then write!("Two")
+  case 1: write!("One")
+  case 2: write!("Two")
 }`,
       `
 switch (2) {
-  case 1 then write!("One")
-  case 2 then write!("Two")
+  case 1: write!("One")
+  case 2: write!("Two")
 }`,
       `
 switch (3) {
-  case 1 then write!("One")
-  case 2 then write!("Two")
+  case 1: write!("One")
+  case 2: write!("Two")
 }`,
     ],
   },
@@ -358,8 +358,8 @@ switch (3) {
     examples: [
       `
 {
-  let a := 1 + 2 + 3 + 4;
-  let b := -> $ * ( $ + 1 );
+  let a = 1 + 2 + 3 + 4;
+  let b = -> $ * ( $ + 1 );
   b(a)
 }`,
     ],
@@ -387,7 +387,7 @@ foo(3)`,
   }
 })(3)`,
       `
-loop (n := 3) {
+loop (n = 3) {
   write!(n);
   if (!(zero?(n))) {
     recur(n - 1)

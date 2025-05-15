@@ -54,7 +54,7 @@ describe('nativeJsFunction', () => {
   const lits = new Lits()
   it('samples', () => {
     expect(lits.run('tripple(9)', { jsFunctions })).toBe(27)
-    expect(lits.run('let a := tripple; a(9)', { jsFunctions })).toBe(27)
+    expect(lits.run('let a = tripple; a(9)', { jsFunctions })).toBe(27)
     expect(() => lits.run('throwError()', { jsFunctions })).toThrowError(LitsError)
     expect(() => lits.run('throwString()', { jsFunctions })).toThrowError(LitsError)
     expect(() => lits.run('throwNumber()', { jsFunctions })).toThrowError(LitsError)

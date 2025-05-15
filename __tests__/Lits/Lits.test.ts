@@ -88,7 +88,7 @@ describe('all tests', () => {
     })
 
     it('a variable.', () => {
-      const contexts = [lits.context('export let magicNumber := 42;')]
+      const contexts = [lits.context('export let magicNumber = 42;')]
       expect(lits.run('magicNumber', { contexts })).toBe(42)
     })
 
@@ -96,7 +96,7 @@ describe('all tests', () => {
       const contexts = [
         lits.context(`
     export function zip?(input) { boolean(match(input, #"^\\d{5}$")) };
-    export let NAME_LENGTH := 100;
+    export let NAME_LENGTH = 100;
     `),
       ]
       expect(lits.run('NAME_LENGTH', { contexts })).toBe(100)
@@ -111,13 +111,13 @@ describe('all tests', () => {
     })
 
     it('a variable twice', () => {
-      const contexts = [lits.context('export let magicNumber := 42; export function getMagic() { 42 };')]
-      lits.context('export let magicNumber := 42; export function getMagic() { 42 };', { contexts })
+      const contexts = [lits.context('export let magicNumber = 42; export function getMagic() { 42 };')]
+      lits.context('export let magicNumber = 42; export function getMagic() { 42 };', { contexts })
     })
 
     test('global context 1', () => {
       const globalContext: Context = {}
-      lits.run('export let magicNumber := 42; let double := magicNumber * 2;', { globalContext })
+      lits.run('export let magicNumber = 42; let double = magicNumber * 2;', { globalContext })
       expect(globalContext).toEqual({
         magicNumber: {
           value: 42,
@@ -127,7 +127,7 @@ describe('all tests', () => {
 
     test('global context 2', () => {
       const globalContext: Context = {}
-      lits.run('export let magicNumber := 42; let double := magicNumber * 2;', { globalContext, globalModuleScope: true })
+      lits.run('export let magicNumber = 42; let double = magicNumber * 2;', { globalContext, globalModuleScope: true })
       expect(globalContext).toEqual({
         magicNumber: {
           value: 42,
@@ -139,7 +139,7 @@ describe('all tests', () => {
     })
 
     it('more than one', () => {
-      const contexts = [lits.context('export function tripple(x) { x * 3 };'), lits.context('export let magicNumber := 42;')]
+      const contexts = [lits.context('export function tripple(x) { x * 3 };'), lits.context('export let magicNumber = 42;')]
       expect(lits.run('tripple(magicNumber)', { contexts })).toBe(126)
     })
   })
@@ -230,12 +230,12 @@ describe('all tests', () => {
     })
     it('sourceCodeInfo', () => {
       try {
-        lits.run('let n := 3; write!(m)') // Missing semi
+        lits.run('let n = 3; write!(m)') // Missing semi
       }
       catch (error) {
         expect((error as LitsError).sourceCodeInfo?.position.line).toBe(1)
 
-        expect((error as LitsError).sourceCodeInfo?.position.column).toBe(20)
+        expect((error as LitsError).sourceCodeInfo?.position.column).toBe(19)
       }
     })
     it('name not recognized', () => {

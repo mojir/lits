@@ -157,7 +157,7 @@ describe('math functions', () => {
       expect(() => lits.run('"1" - 2')).toThrow(LitsError)
     })
     it('strange bug', () => {
-      expect(lits.run('let a := 0; let b := 2; a - b')).toBe(-2)
+      expect(lits.run('let a = 0; let b = 2; a - b')).toBe(-2)
     })
     it('should subtract vectors', () => {
       expect(lits.run('-([1, 2, 3], [4, 5, 6])')).toEqual([-3, -3, -3])

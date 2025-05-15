@@ -208,7 +208,7 @@ export const tokenizeNumber: Tokenizer<NumberToken> = (input, position) => {
   }
 
   const nextChar = input[i]
-  if (nextChar && !postNumberRegExp.test(nextChar)) {
+  if (nextChar && nextChar !== ':' && !postNumberRegExp.test(nextChar)) {
     throw new LitsError(`Invalid number format at position ${i}.`, undefined)
   }
 
@@ -299,7 +299,11 @@ export const tokenizeSymbol: Tokenizer<SymbolToken> = (input, position) => {
       position += 1
       char = input[position]
     }
-    return [position - initialPosition, ['Symbol', value]]
+
+    // : can be used as symbol character, but it must not be the last character
+    return value.endsWith(':')
+      ? [position - initialPosition - 1, ['Symbol', value.slice(0, -1)]]
+      : [position - initialPosition, ['Symbol', value]]
   }
 
   return NO_MATCH

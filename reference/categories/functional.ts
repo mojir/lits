@@ -76,7 +76,7 @@ apply(
       { argumentNames: ['x'] },
     ],
     description: 'Returns $x.',
-    examples: ['identity(1)', 'identity("Albert")', 'identity({ a := 1 })', 'identity(null)'],
+    examples: ['identity(1)', 'identity("Albert")', 'identity({ a: 1 })', 'identity(null)'],
   },
   'comp': {
     title: 'comp',
@@ -102,10 +102,10 @@ apply(
   the next function (right-to-left) to the result, etc.`,
     examples: [
       `
-let negative-quotient := comp(-, /);
+let negative-quotient = comp(-, /);
 negative-quotient(9, 3)`,
       `
-let x := { bar := { foo := 42 } };
+let x = { bar: { foo: 42 } };
 comp("foo", "bar")(x)`,
     ],
   },
@@ -127,7 +127,7 @@ comp("foo", "bar")(x)`,
     description: 'Returns a function that takes any number of arguments and always returns $x.',
     examples: [
       `
-let always-true := constantly(true);
+let always-true = constantly(true);
 always-true(9, 3)`,
     ],
   },
@@ -166,10 +166,10 @@ juxt(+, *, min, max)(
       `
 juxt("a", "b")(
   {
-    a := 1,
-    b := 2,
-    c := 3,
-    d := 4
+    a: 1,
+    b: 2,
+    c: 3,
+    d: 4
   }
 )`,
       `

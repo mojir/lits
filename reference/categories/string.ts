@@ -49,7 +49,7 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       'str("A string", ", and another string", " ...and more")',
       'str("Just one string")',
       'str()',
-      'str(0, false, true, null, #"^kalle", [1, 2, 3], {a := "a"})',
+      'str(0, false, true, null, #"^kalle", [1, 2, 3], {a: "a"})',
     ],
     noOperatorDocumentation: true,
   },

@@ -94,7 +94,7 @@ describe('sequence functions', () => {
       expect(lits.run('position(null, number?)')).toBeNull()
       expect(lits.run('position([1, 2, 3, 4, 5, 6, 7], -> zero?($ mod 3))')).toEqual(2)
       expect(lits.run('position("Aa", -> $ >= "a")')).toBe(1)
-      expect(lits.run('position("Aa", -> $ = "z")')).toBeNull()
+      expect(lits.run('position("Aa", -> $ == "z")')).toBeNull()
       expect(() => lits.run('position(+)')).toThrow(LitsError)
       expect(() => lits.run('position()')).toThrow(LitsError)
       expect(() => lits.run('position([1], number? 2)')).toThrow(LitsError)
@@ -133,7 +133,7 @@ describe('sequence functions', () => {
 
   describe('some', () => {
     it('samples', () => {
-      expect(lits.run('some("Albert", -> "l" = $)')).toBe('l')
+      expect(lits.run('some("Albert", -> "l" == $)')).toBe('l')
 
       expect(lits.run('some(null, number?)')).toBeNull()
       expect(lits.run('some(["1", "2", 3], number?)')).toBe(3)
@@ -210,7 +210,7 @@ describe('sequence functions', () => {
     })
     it('returns a new array instance', () => {
       const program = `
-        let l := [1, 2, 3];
+        let l = [1, 2, 3];
         !(l identical? reverse(l))
       `
       expect(lits.run(program)).toBe(true)
@@ -278,8 +278,8 @@ describe('sequence functions', () => {
     it('samples', () => {
       expect(lits.run('push([1, 2, 3], 0)')).toEqual([1, 2, 3, 0])
       expect(lits.run('push([1, 2, 3], 1, "2")')).toEqual([1, 2, 3, 1, '2'])
-      expect(lits.run('let l := [1, 2, 3]; push(l, 1, "2")')).toEqual([1, 2, 3, 1, '2'])
-      expect(lits.run('let l := [1, 2, 3]; push(l, 1, "2"); l')).toEqual([1, 2, 3])
+      expect(lits.run('let l = [1, 2, 3]; push(l, 1, "2")')).toEqual([1, 2, 3, 1, '2'])
+      expect(lits.run('let l = [1, 2, 3]; push(l, 1, "2"); l')).toEqual([1, 2, 3])
       expect(lits.run('push("Albert", "!")')).toBe('Albert!')
       expect(lits.run('push("Albert", "!", "?")')).toBe('Albert!?')
       expect(lits.run('push("", "!", "?")')).toBe('!?')
@@ -301,9 +301,9 @@ describe('sequence functions', () => {
     it('samples', () => {
       expect(lits.run('pop([1, 2, 3])')).toEqual([1, 2])
       expect(lits.run('pop([])')).toEqual([])
-      expect(lits.run('let l := [1, 2, 3]; pop(l); l')).toEqual([1, 2, 3])
-      expect(lits.run('let l := [1, 2, 3]; pop(l)')).toEqual([1, 2])
-      expect(lits.run('let l := []; pop(l); l')).toEqual([])
+      expect(lits.run('let l = [1, 2, 3]; pop(l); l')).toEqual([1, 2, 3])
+      expect(lits.run('let l = [1, 2, 3]; pop(l)')).toEqual([1, 2])
+      expect(lits.run('let l = []; pop(l); l')).toEqual([])
       expect(lits.run('pop("Albert")')).toBe('Alber')
       expect(lits.run('pop("1")')).toBe('')
       expect(lits.run('pop("")')).toBe('')
@@ -321,8 +321,8 @@ describe('sequence functions', () => {
     it('samples', () => {
       expect(lits.run('unshift([1, 2, 3], 0)')).toEqual([0, 1, 2, 3])
       expect(lits.run('unshift([1, 2, 3], 1, "2")')).toEqual([1, '2', 1, 2, 3])
-      expect(lits.run('let l := [1, 2, 3]; unshift(l, 1, "2"); l')).toEqual([1, 2, 3])
-      expect(lits.run('let l := [1, 2, 3]; unshift(l, 1, "2")')).toEqual([1, '2', 1, 2, 3])
+      expect(lits.run('let l = [1, 2, 3]; unshift(l, 1, "2"); l')).toEqual([1, 2, 3])
+      expect(lits.run('let l = [1, 2, 3]; unshift(l, 1, "2")')).toEqual([1, '2', 1, 2, 3])
       expect(lits.run('unshift("lbert", "A")')).toBe('Albert')
 
       expect(() => lits.run('unshift([1, 2, 3])')).toThrow(LitsError)
@@ -341,9 +341,9 @@ describe('sequence functions', () => {
     it('samples', () => {
       expect(lits.run('shift([1, 2, 3])')).toEqual([2, 3])
       expect(lits.run('shift([])')).toEqual([])
-      expect(lits.run('let l := [1, 2, 3]; shift(l); l')).toEqual([1, 2, 3])
-      expect(lits.run('let l := [1, 2, 3]; shift(l)')).toEqual([2, 3])
-      expect(lits.run('let l := []; shift(l); l')).toEqual([])
+      expect(lits.run('let l = [1, 2, 3]; shift(l); l')).toEqual([1, 2, 3])
+      expect(lits.run('let l = [1, 2, 3]; shift(l)')).toEqual([2, 3])
+      expect(lits.run('let l = []; shift(l); l')).toEqual([])
       expect(lits.run('shift("Albert")')).toBe('lbert')
       expect(lits.run('shift("1")')).toBe('')
       expect(lits.run('shift("")')).toBe('')
@@ -378,8 +378,8 @@ describe('sequence functions', () => {
 
     it('new array created', () => {
       const program = `
-        let l1 := [1, 2, 3];
-        let l2 := take(l1, 2);
+        let l1 = [1, 2, 3];
+        let l2 = take(l1, 2);
         l1 != l2
       `
       expect(lits.run(program)).toBe(true)
@@ -405,8 +405,8 @@ describe('sequence functions', () => {
 
     it('new array created', () => {
       const program = `
-        let l1 := [1, 2, 3];
-        let l2 := take-last(l1, 2);
+        let l1 = [1, 2, 3];
+        let l2 = take-last(l1, 2);
         l1 != l2
       `
       expect(lits.run(program)).toBe(true)
@@ -430,8 +430,8 @@ describe('sequence functions', () => {
     })
     it('new array created', () => {
       const program = `
-        let l1 := [1, 2, 3];
-        let l2 := take-while(l1, -> $ < 3);
+        let l1 = [1, 2, 3];
+        let l2 = take-while(l1, -> $ < 3);
         l1 != l2
       `
       expect(lits.run(program)).toBe(true)
@@ -459,8 +459,8 @@ describe('sequence functions', () => {
 
     it('new array created', () => {
       const program = `
-        let l1 := [1, 2, 3];
-        let l2 := drop(l1, 2);
+        let l1 = [1, 2, 3];
+        let l2 = drop(l1, 2);
         l1 != l2
       `
       expect(lits.run(program)).toBe(true)
@@ -504,8 +504,8 @@ describe('sequence functions', () => {
     })
     it('new array created', () => {
       const program = `
-        let l1 := [1, 2, 3];
-        let l2 := take-while(l1, -> $ < 3);
+        let l1 = [1, 2, 3];
+        let l2 = take-while(l1, -> $ < 3);
         l1 != l2
       `
       expect(lits.run(program)).toBe(true)
@@ -514,16 +514,16 @@ describe('sequence functions', () => {
 
   describe('sort', () => {
     it('samples', () => {
-      expect(lits.run('sort([3, 1, 2], (a, b) -> cond { case a < b then -1 case a > b then 1 case true then 0 })')).toEqual([1, 2, 3])
-      expect(lits.run('sort([3, 1, 2], (a, b) -> cond { case a > b then -1 case a < b then 1 case true then 0 })')).toEqual([3, 2, 1])
-      expect(lits.run('sort([], (a, b) -> cond { case a > b then -1 case a < b then 1 case true then 0 })')).toEqual([])
+      expect(lits.run('sort([3, 1, 2], (a, b) -> cond { case a < b: -1 case a > b: 1 case true: 0 })')).toEqual([1, 2, 3])
+      expect(lits.run('sort([3, 1, 2], (a, b) -> cond { case a > b: -1 case a < b: 1 case true: 0 })')).toEqual([3, 2, 1])
+      expect(lits.run('sort([], (a, b) -> cond { case a > b: -1 case a < b: 1 case true: 0 })')).toEqual([])
 
-      expect(lits.run('sort("Albert", (a, b) -> cond { case a < b then 1 case a > b then -1 case true then 0 })')).toBe('trlebA')
+      expect(lits.run('sort("Albert", (a, b) -> cond { case a < b: 1 case a > b: -1 case true: 0 })')).toBe('trlebA')
 
       expect(lits.run('sort("Albert")')).toBe('Abelrt')
 
-      expect(() => lits.run('sort(10, (a, b) -> cond { case a > b then -1 case a < b then 1 case true then -1 })')).toThrow(LitsError)
-      expect(() => lits.run('sort((a, b) -> cond { case a > b then -1 case a < b then 1 case true then -1 })')).toThrow(LitsError)
+      expect(() => lits.run('sort(10, (a, b) -> cond { case a > b: -1 case a < b: 1 case true: -1 })')).toThrow(LitsError)
+      expect(() => lits.run('sort((a, b) -> cond { case a > b: -1 case a < b: 1 case true: -1 })')).toThrow(LitsError)
       expect(() => lits.run('sort()')).toThrow(LitsError)
     })
   })
@@ -649,7 +649,7 @@ describe('sequence functions', () => {
 
   describe('group-by', () => {
     it('samples', () => {
-      expect(lits.run('group-by([{name := "Albert"}, {name := "Albert"}, {name := "Mojir"}], "name")')).toEqual({
+      expect(lits.run('group-by([{name: "Albert"}, {name: "Albert"}, {name: "Mojir"}], "name")')).toEqual({
         Albert: [{ name: 'Albert' }, { name: 'Albert' }],
         Mojir: [{ name: 'Mojir' }],
       })
@@ -743,7 +743,7 @@ describe('sequence functions', () => {
       expect(lits.run('partition([1, 2, 3, 4], 10, 10, null)')).toEqual([[1, 2, 3, 4]])
       expect(lits.run('partition("superfragilistic", 5)')).toEqual(['super', 'fragi', 'listi'])
       expect(lits.run('partition("superfragilistic", 5, 5, null)')).toEqual(['super', 'fragi', 'listi', 'c'])
-      expect(lits.run('let foo := [5, 6, 7, 8]; partition(foo, 2, 1, foo)')).toEqual([
+      expect(lits.run('let foo = [5, 6, 7, 8]; partition(foo, 2, 1, foo)')).toEqual([
         [5, 6],
         [6, 7],
         [7, 8],
@@ -774,7 +774,7 @@ describe('sequence functions', () => {
 
   describe('partition-by', () => {
     it('samples', () => {
-      expect(lits.run('partition-by([1, 2, 3, 4, 5], -> 3 = $1)')).toEqual([[1, 2], [3], [4, 5]])
+      expect(lits.run('partition-by([1, 2, 3, 4, 5], -> 3 == $1)')).toEqual([[1, 2], [3], [4, 5]])
       expect(lits.run('partition-by([1, 1, 1, 2, 2, 3, 3], odd?)')).toEqual([
         [1, 1, 1],
         [2, 2],

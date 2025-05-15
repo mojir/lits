@@ -98,7 +98,7 @@ function getPrecedence(operatorSign: SymbolicBinaryOperator, sourceCodeInfo: Sou
     case '≥': // greater than or equal
       return 7
 
-    case '=': // equal
+    case '==': // equal
     case '!=': // not equal
     case '≠': // not equal
       return 6
@@ -161,7 +161,7 @@ function fromBinaryOperatorToNode(operator: OperatorToken, symbolNode: SymbolNod
     case '>':
     case '>=':
     case '≥':
-    case '=':
+    case '==':
     case '!=':
     case '≠':
     case '&':
@@ -176,12 +176,11 @@ function fromBinaryOperatorToNode(operator: OperatorToken, symbolNode: SymbolNod
     /* v8 ignore next 11 */
     case '.':
     case ';':
-    case ':=':
+    case ':':
     case ',':
     case '->':
     case '...':
     case '?':
-    case ':':
       throw new LitsError(`Unknown binary operator: ${operatorName}`, sourceCodeInfo)
     default:
       throw new LitsError(`Unknown binary operator: ${operatorName satisfies never}`, sourceCodeInfo)
@@ -407,7 +406,7 @@ export class Parser {
       }
     }
 
-    // Object litteral, e.g. {a :=1, b=2}
+    // Object litteral, e.g. {a: 1, b: 2}
     // Or block.
     if (isLBraceToken(token)) {
       const positionBefore = this.parseState.position
@@ -492,7 +491,7 @@ export class Parser {
           throw new LitsError('Expected key to be a symbol or a string', this.peekSourceCodeInfo())
         }
 
-        assertOperatorToken(this.peek(), ':=')
+        assertOperatorToken(this.peek(), ':')
         this.advance()
 
         params.push(this.parseExpression())
@@ -757,7 +756,7 @@ export class Parser {
   }
 
   private parseOptionalDefaulValue(): Node | undefined {
-    if (isOperatorToken(this.peek(), ':=')) {
+    if (isOperatorToken(this.peek(), '=')) {
       this.advance()
       return this.parseExpression()
     }
@@ -789,7 +788,7 @@ export class Parser {
       }
       this.advance()
       const symbol = asUserDefinedSymbolNode(this.parseSymbol())
-      if (isOperatorToken(this.peek(), ':=')) {
+      if (isOperatorToken(this.peek(), '=')) {
         throw new LitsError('Rest argument can not have default value', this.peekSourceCodeInfo())
       }
       return withSourceCodeInfo([bindingTargetTypes.rest, [symbol[1], undefined]], firstToken[2])
@@ -865,11 +864,11 @@ export class Parser {
           }
           elements[key[1]] = withSourceCodeInfo([bindingTargetTypes.symbol, [name, this.parseOptionalDefaulValue()]], firstToken[2])
         }
-        else if (isRBraceToken(token) || isOperatorToken(token, ',') || isOperatorToken(token, ':=')) {
+        else if (isRBraceToken(token) || isOperatorToken(token, ',') || isOperatorToken(token, '=')) {
           if (elements[key[1]]) {
             throw new LitsError(`Duplicate binding name: ${key}`, token[2])
           }
-          if (rest && isOperatorToken(this.peek(), ':=')) {
+          if (rest && isOperatorToken(this.peek(), '=')) {
             throw new LitsError('Rest argument can not have default value', this.peekSourceCodeInfo())
           }
 
@@ -1177,7 +1176,7 @@ export class Parser {
       assertReservedSymbolToken(this.peek(), 'case')
       this.advance()
       const caseExpression = this.parseExpression()
-      assertReservedSymbolToken(this.peek(), 'then')
+      assertOperatorToken(this.peek(), ':')
       this.advance()
       const expressions: Node[] = []
       while (
@@ -1225,7 +1224,7 @@ export class Parser {
       assertReservedSymbolToken(this.peek(), 'case')
       this.advance()
       const caseExpression = this.parseExpression()
-      assertReservedSymbolToken(this.peek(), 'then')
+      assertOperatorToken(this.peek(), ':')
       this.advance()
       const expressions: Node[] = []
       while (
@@ -1263,7 +1262,7 @@ export class Parser {
     const symbol = this.parseSymbol()
     const functionArguments = this.parseFunctionArguments()
 
-    const block = this.parseBlock(true)
+    const block = this.parseBlock()
     assertOperatorToken(this.peek(), ';')
 
     return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.function, symbol, [
@@ -1282,10 +1281,10 @@ export class Parser {
     }
     const token = this.peek()
     if (isOperatorToken(token)) {
-      return [';', ',', ':='].includes(token[1])
+      return [';', ',', ':'].includes(token[1])
     }
     if (isReservedSymbolToken(token)) {
-      return ['else', 'when', 'while', 'then', 'case', 'catch'].includes(token[1])
+      return ['else', 'when', 'while', 'case', 'catch'].includes(token[1])
     }
     return false
   }

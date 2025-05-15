@@ -20,19 +20,19 @@ describe('assert functions', () => {
     describe('assert=', () => {
       it('samples', () => {
         expect(() => lits.run('assert=(1, 0)')).toThrowError(AssertionError)
-        expect(() => lits.run('assert=({ a := 1 }, { a := 2 })')).toThrowError(AssertionError)
-        expect(() => lits.run('assert=({ a := 1 }, { a := 2 }, "Expected deep equal")')).toThrowError(AssertionError)
-        expect(lits.run('assert=({ a := 1 }, { a := 1 })')).toBeNull()
+        expect(() => lits.run('assert=({ a: 1 }, { a: 2 })')).toThrowError(AssertionError)
+        expect(() => lits.run('assert=({ a: 1 }, { a: 2 }, "Expected deep equal")')).toThrowError(AssertionError)
+        expect(lits.run('assert=({ a: 1 }, { a: 1 })')).toBeNull()
       })
     })
     describe('assert!=', () => {
       it('samples', () => {
         expect(() => lits.run('assert!=(0, 0)')).toThrowError(AssertionError)
-        expect(() => lits.run('assert!=({ a := 2 }, { a := 2 })')).toThrowError(AssertionError)
-        expect(() => lits.run('assert!=({ a := 2 }, { a := 2 }, "Expected not deep equal")')).toThrowError(
+        expect(() => lits.run('assert!=({ a: 2 }, { a: 2 })')).toThrowError(AssertionError)
+        expect(() => lits.run('assert!=({ a: 2 }, { a: 2 }, "Expected not deep equal")')).toThrowError(
           AssertionError,
         )
-        expect(lits.run('assert!=({ a := 2 }, { a := 1 })')).toBeNull()
+        expect(lits.run('assert!=({ a: 2 }, { a: 1 })')).toBeNull()
       })
     })
     describe('assert-gt', () => {

@@ -20,17 +20,17 @@ function matrixMultiply(matrixA, matrixB) {
   unless (array?(first(matrixB))) throw("Second input must be a 2D array");
 
   // Get dimensions
-  let rowsA := count(matrixA);
-  let colsA := count(first(matrixA));
-  let rowsB := count(matrixB);
-  let colsB := count(first(matrixB));
+  let rowsA = count(matrixA);
+  let colsA = count(first(matrixA));
+  let rowsB = count(matrixB);
+  let colsB = count(first(matrixB));
 
   // Check if all rows have consistent length
-  unless (every?(matrixA, row -> array?(row) && count(row) = colsA)) throw("First matrix has inconsistent row lengths");
-  unless (every?(matrixB, row -> array?(row) && count(row) = colsB)) throw("Second matrix has inconsistent row lengths");
+  unless (every?(matrixA, row -> array?(row) && count(row) == colsA)) throw("First matrix has inconsistent row lengths");
+  unless (every?(matrixB, row -> array?(row) && count(row) == colsB)) throw("Second matrix has inconsistent row lengths");
 
   // Check if matrices can be multiplied
-  unless (colsA = rowsB) throw("Matrix dimensions mismatch: first matrix columns must equal second matrix rows");
+  unless (colsA == rowsB) throw("Matrix dimensions mismatch: first matrix columns must equal second matrix rows");
 
   // Create a row of the result matrix
   function createRow(rowIndex) {
@@ -38,8 +38,8 @@ function matrixMultiply(matrixA, matrixB) {
       reduce(
         range(colsA),
         (sum, k) -> {
-          let aValue := matrixA[rowIndex][k];
-          let bValue := matrixB[k][j];
+          let aValue = matrixA[rowIndex][k];
+          let bValue = matrixB[k][j];
           sum + (aValue * bValue);
         },
         0
@@ -53,12 +53,12 @@ function matrixMultiply(matrixA, matrixB) {
   }
 };
 
-let matrixA := [
+let matrixA = [
   [1, 2, 3],
   [4, 5, 6]
 ];
 
-let matrixB := [
+let matrixB = [
   [7, 8],
   [9, 10],
   [11, 12]

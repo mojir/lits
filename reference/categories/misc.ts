@@ -34,10 +34,10 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
     ],
     aliases: ['!='],
   },
-  '=': {
-    title: '=',
+  '==': {
+    title: '==',
     category: 'Misc',
-    linkName: '-equal',
+    linkName: '-equal-equal',
     returns: {
       type: 'boolean',
     },
@@ -57,23 +57,23 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
     ],
     description: 'Returns `true` if all `values` are structaul equal to each other, otherwise result is `false`.',
     examples: [
-      '1 = 1',
-      '[1, 2] = [1, 2]',
+      '1 == 1',
+      '[1, 2] == [1, 2]',
       `
 {
- a := 1,
- b := 2,
-} = {
- b := 2,
- a := 1,
+ a: 1,
+ b: 2,
+} == {
+ b: 2,
+ a: 1,
 }`,
-      '=(1, 1)',
-      '=(1.01, 1)',
-      '=("1", 1)',
-      '=("2", "2", "2", "2")',
-      '=(2, 2, 1, 2)',
-      '=([1, 2], [1, 2])',
-      '=({ a := 1, b := 2 }, { b := 2, a := 1 })',
+      '==(1, 1)',
+      '==(1.01, 1)',
+      '==("1", 1)',
+      '==("2", "2", "2", "2")',
+      '==(2, 2, 1, 2)',
+      '==([1, 2], [1, 2])',
+      '==({ a: 1, b: 2 }, { b: 2, a: 1 })',
     ],
   },
   '<': {
@@ -355,7 +355,7 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
     ],
     description: 'Returns true if $a and $b are referential equal.',
     examples: [
-      'identical?({ a := 10, b := 20 }, { b := 20, a := 10 })',
+      'identical?({ a: 10, b: 20 }, { b: 20, a: 10 })',
       'identical?([1, true, null], [1, true, null])',
       'identical?(0.3, 0.1 + 0.2)',
     ],
@@ -403,7 +403,7 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
     description: 'Returns `JSON.stringify(`$x`)`. If second argument is provided, returns `JSON.stringify(`$x`, null, `$indent`)`.',
     examples: [
       'json-stringify([1, 2, 3])',
-      'json-stringify({ a := { b := 10 }}, 2)',
+      'json-stringify({ a: { b: 10 }}, 2)',
     ],
     noOperatorDocumentation: true,
   },

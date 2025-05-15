@@ -2,7 +2,7 @@
 // @include success-program-using-plus.lits
 
 // Setup code
-export let one := 1;
+export let one = 1;
 
 // @test add
 assert=(add(one, 2), 3);

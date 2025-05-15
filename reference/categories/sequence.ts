@@ -69,7 +69,7 @@ export const sequenceReference: Record<SequenceApiName, FunctionReference<'Seque
       'push([1, 2, 3], 4)',
       'push([1, 2, 3], 4, 5, 6)',
       `
-let l := [1, 2, 3];
+let l = [1, 2, 3];
 push(l, 4);
 l`,
     ],
@@ -122,7 +122,7 @@ l`,
       'unshift([1, 2, 3], 4)',
       'unshift([1, 2, 3], 4, 5, 6)',
       `
-let l := [1, 2, 3];
+let l = [1, 2, 3];
 unshift(l, 4);
 l`,
     ],
@@ -708,12 +708,12 @@ drop-while(
       `
 sort(
   [3, 1, 2],
-  (a, b) -> cond { case a < b then -1 case a > b then 1 case true then -1 }
+  (a, b) -> cond { case a < b: -1 case a > b: 1 case true: -1 }
 )`,
       `
 sort(
   [3, 1, 2],
-  (a, b) -> cond { case a > b then -1 case a < b then 1 case true then -1 }
+  (a, b) -> cond { case a > b: -1 case a < b: 1 case true: -1 }
 )`,
     ],
   },
@@ -921,8 +921,8 @@ sort(
     ],
     description: 'Returns an object of the elements of $seq keyed by the result of $fun on each element. The value at each key will be an array of the corresponding elements.',
     examples: [
-      '[{ name := "Albert" }, { name := "Albert" }, { name := "Mojir" }] group-by "name"',
-      'group-by([{name := "Albert"}, {name := "Albert"}, {name := "Mojir"}], "name")',
+      '[{ name: "Albert" }, { name: "Albert" }, { name: "Mojir" }] group-by "name"',
+      'group-by([{name: "Albert"}, {name: "Albert"}, {name: "Mojir"}], "name")',
       'group-by("Albert Mojir", -> "aoueiAOUEI" contains? $ ? "vowel" : "other")',
     ],
   },
@@ -970,7 +970,7 @@ sort(
       'partition([1, 2, 3, 4], 10, 10, null)',
       'partition("superfragilistic", 5)',
       'partition("superfragilistic", 5, 5, null)',
-      'let foo := [5, 6, 7, 8]; partition(foo, 2, 1, foo)',
+      'let foo = [5, 6, 7, 8]; partition(foo, 2, 1, foo)',
     ],
   },
   'partition-all': {
@@ -1026,7 +1026,7 @@ sort(
     description: 'Applies $fun to each value in $seq, splitting it each time $fun returns a new value. Returns an array of sequences.',
     examples: [
       '[1, 2, 3, 4, 5] partition-by odd?',
-      'partition-by([1, 2, 3, 4, 5], -> $ = 3)',
+      'partition-by([1, 2, 3, 4, 5], -> $ == 3)',
       'partition-by([1, 1, 1, 2, 2, 3, 3], odd?)',
       'partition-by("Leeeeeerrroyyy", identity)',
     ],

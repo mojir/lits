@@ -88,7 +88,7 @@ describe('object functions', () => {
       })
       it('delete atribute', () => {
         const program = `
-        let obj := { x := 10 };
+        let obj = { x: 10 };
         dissoc(obj, "x");
         obj
       `
@@ -97,7 +97,7 @@ describe('object functions', () => {
 
       it('delete unexisting attribute', () => {
         const program = `
-        let obj := { x := 10 };
+        let obj = { x: 10 };
         dissoc(obj, "y");
         obj
       `
@@ -110,7 +110,7 @@ describe('object functions', () => {
         expect(lits.run('merge(object("x", 10))')).toEqual({ x: 10 })
         expect(lits.run('merge(object("x", 10), object("y", 20))')).toEqual({ x: 10, y: 20 })
         expect(lits.run('merge(object("x", 10), object("x", 5))')).toEqual({ x: 5 })
-        expect(lits.run('merge({}, { x := 10 }, { y := 10 }, { z := 10 })')).toEqual({
+        expect(lits.run('merge({}, { x: 10 }, { y: 10 }, { z: 10 })')).toEqual({
           x: 10,
           y: 10,
           z: 10,
@@ -146,8 +146,8 @@ describe('object functions', () => {
 
       it('merge returns new object', () => {
         const program = `
-        let obj1 := object("x", 10);
-        let obj2 := merge(obj1);
+        let obj1 = object("x", 10);
+        let obj2 = merge(obj1);
         identical?(obj1, obj2)
       `
         expect(lits.run(program)).toBe(false)
@@ -171,11 +171,11 @@ describe('object functions', () => {
 
     describe('select-keys', () => {
       it('samples', () => {
-        expect(lits.run('select-keys({a := 1, b := 2, c := 3}, ["a", "b"])')).toEqual({ a: 1, b: 2 })
-        expect(lits.run('select-keys({a := 1}, ["a", "b"])')).toEqual({ a: 1 })
-        expect(() => lits.run('select-keys({a := 1})')).toThrow(LitsError)
-        expect(() => lits.run('select-keys({a := 1}, "a")')).toThrow(LitsError)
-        expect(() => lits.run('select-keys({a := 1}, ["a"], ["a"])')).toThrow(LitsError)
+        expect(lits.run('select-keys({a: 1, b: 2, c: 3}, ["a", "b"])')).toEqual({ a: 1, b: 2 })
+        expect(lits.run('select-keys({a: 1}, ["a", "b"])')).toEqual({ a: 1 })
+        expect(() => lits.run('select-keys({a: 1})')).toThrow(LitsError)
+        expect(() => lits.run('select-keys({a: 1}, "a")')).toThrow(LitsError)
+        expect(() => lits.run('select-keys({a: 1}, ["a"], ["a"])')).toThrow(LitsError)
       })
     })
   }

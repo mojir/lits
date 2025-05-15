@@ -6,39 +6,39 @@ describe('specialFunctions', () => {
   for (const lits of [new Lits(), new Lits({ debug: true })]) {
     describe('string as function', () => {
       it('samples', () => {
-        expect(lits.run('let person := { firstName := "Albert", lastName := "Mojir" }; "firstName"(person)')).toBe('Albert')
-        expect(lits.run('"firstName"({ firstName := "Albert", lastName := "Mojir" })')).toBe('Albert')
-        expect(lits.run('"lastName"({ firstName := "Albert", lastName := "Mojir" })')).toBe('Mojir')
-        expect(lits.run('"x"({ firstName := "Albert", lastName := "Mojir" })')).toBeNull()
+        expect(lits.run('let person = { firstName: "Albert", lastName: "Mojir" }; "firstName"(person)')).toBe('Albert')
+        expect(lits.run('"firstName"({ firstName: "Albert", lastName: "Mojir" })')).toBe('Albert')
+        expect(lits.run('"lastName"({ firstName: "Albert", lastName: "Mojir" })')).toBe('Mojir')
+        expect(lits.run('"x"({ firstName: "Albert", lastName: "Mojir" })')).toBeNull()
         expect(lits.run('"Albert"(2)')).toBe('b')
         expect(lits.run('"Albert"(12)')).toBeNull()
-        expect(() => lits.run('"firstName"({ firstName := "Albert", lastName := "Mojir" }, 1)')).toThrow(LitsError)
-        expect(() => lits.run('{ firstName := "Albert", lastName := "Mojir" }()')).toThrow(LitsError)
-        expect(() => lits.run('0({ firstName := "Albert", lastName := "Mojir" })')).toThrow(LitsError)
-        expect(() => lits.run('{}({ firstName := "Albert", lastName := "Mojir" })')).toThrow(LitsError)
-        expect(() => lits.run('[]({ firstName := "Albert", lastName := "Mojir" })')).toThrow(LitsError)
+        expect(() => lits.run('"firstName"({ firstName: "Albert", lastName: "Mojir" }, 1)')).toThrow(LitsError)
+        expect(() => lits.run('{ firstName: "Albert", lastName: "Mojir" }()')).toThrow(LitsError)
+        expect(() => lits.run('0({ firstName: "Albert", lastName: "Mojir" })')).toThrow(LitsError)
+        expect(() => lits.run('{}({ firstName: "Albert", lastName: "Mojir" })')).toThrow(LitsError)
+        expect(() => lits.run('[]({ firstName: "Albert", lastName: "Mojir" })')).toThrow(LitsError)
       })
     })
 
     describe('object as function', () => {
       it('samples', () => {
-        expect(lits.run('let person := { firstName := "Albert", lastName := "Mojir" }; person("firstName")')).toBe('Albert')
-        expect(lits.run('{ firstName := "Albert", lastName := "Mojir" }("firstName")')).toBe('Albert')
-        expect(lits.run('{ firstName := "Albert", lastName := "Mojir" }("lastName")')).toBe('Mojir')
-        expect(lits.run('{ firstName := "Albert", lastName := "Mojir" }("x")')).toBeNull()
-        expect(() => lits.run('{ firstName := "Albert", lastName := "Mojir" }()')).toThrow(LitsError)
-        expect(() => lits.run('{ firstName := "Albert", lastName := "Mojir" }(1)')).toThrow(LitsError)
-        expect(() => lits.run('{ firstName := "Albert", lastName := "Mojir" }(null)')).toThrow(LitsError)
-        expect(() => lits.run('{ firstName := "Albert", lastName := "Mojir" }(true)')).toThrow(LitsError)
-        expect(() => lits.run('{ firstName := "Albert", lastName := "Mojir" }(false)')).toThrow(LitsError)
-        expect(() => lits.run('{ firstName := "Albert", lastName := "Mojir" }({})')).toThrow(LitsError)
-        expect(() => lits.run('{ firstName := "Albert", lastName := "Mojir" }([])')).toThrow(LitsError)
+        expect(lits.run('let person = { firstName: "Albert", lastName: "Mojir" }; person("firstName")')).toBe('Albert')
+        expect(lits.run('{ firstName: "Albert", lastName: "Mojir" }("firstName")')).toBe('Albert')
+        expect(lits.run('{ firstName: "Albert", lastName: "Mojir" }("lastName")')).toBe('Mojir')
+        expect(lits.run('{ firstName: "Albert", lastName: "Mojir" }("x")')).toBeNull()
+        expect(() => lits.run('{ firstName: "Albert", lastName: "Mojir" }()')).toThrow(LitsError)
+        expect(() => lits.run('{ firstName: "Albert", lastName: "Mojir" }(1)')).toThrow(LitsError)
+        expect(() => lits.run('{ firstName: "Albert", lastName: "Mojir" }(null)')).toThrow(LitsError)
+        expect(() => lits.run('{ firstName: "Albert", lastName: "Mojir" }(true)')).toThrow(LitsError)
+        expect(() => lits.run('{ firstName: "Albert", lastName: "Mojir" }(false)')).toThrow(LitsError)
+        expect(() => lits.run('{ firstName: "Albert", lastName: "Mojir" }({})')).toThrow(LitsError)
+        expect(() => lits.run('{ firstName: "Albert", lastName: "Mojir" }([])')).toThrow(LitsError)
       })
     })
 
     describe('array as function', () => {
       it('samples', () => {
-        expect(lits.run('let name-array := ["Albert", "Mojir"]; name-array(0)')).toBe('Albert')
+        expect(lits.run('let name-array = ["Albert", "Mojir"]; name-array(0)')).toBe('Albert')
         expect(lits.run('["Albert", "Mojir"](0)')).toBe('Albert')
         expect(lits.run('unshift([2, 3], 1)(1)')).toBe(2)
         expect(lits.run('"Albert"(0)')).toBe('A')
@@ -51,7 +51,7 @@ describe('specialFunctions', () => {
 
     describe('number as function', () => {
       it('samples', () => {
-        expect(lits.run('let name-array := ["Albert", "Mojir"]; 0(name-array)')).toBe('Albert')
+        expect(lits.run('let name-array = ["Albert", "Mojir"]; 0(name-array)')).toBe('Albert')
         expect(lits.run('0(["Albert", "Mojir"])')).toBe('Albert')
         expect(lits.run('3(["Albert", "Mojir"])')).toBeNull()
         expect(lits.run('1(unshift([2, 3], 1))')).toBe(2)

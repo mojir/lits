@@ -20,7 +20,7 @@ describe('string functions', () => {
         expect(lits.run('str(null)')).toBe('')
         expect(lits.run('str([])')).toBe('[]')
         expect(lits.run('str([1, 2, 3])')).toBe('[1,2,3]')
-        expect(lits.run('str({a := 1})')).toBe('{"a":1}')
+        expect(lits.run('str({a: 1})')).toBe('{"a":1}')
       })
 
       it('regressions', () => {

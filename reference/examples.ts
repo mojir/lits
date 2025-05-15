@@ -26,17 +26,17 @@ export const examples: Example[] = [
 // Access object properies with .
 // Access string and array elements with []
 
-let data := {
-  numbers := [1, 2, 3],
-  chars := ["a", "b", "c"],
-  string := "Albert"
+let data: {
+  numbers: [1, 2, 3],
+  chars: ["a", "b", "c"],
+  string: "Albert"
 };
 
 write!(data.numbers[0]);
 write!(data.chars[2]);
 write!(data.string[0]);
 
-write!({a := 1, b := 2, c := 3}.b);
+write!({a: 1, b: 2, c: 3}.b);
 write!("Albert"[3]);
 write!([1, 2, 3][2]);
     `.trim(),
@@ -67,55 +67,55 @@ write!([1, 2, 3][2]);
 // Functional Text Adventure Game in Lits
 
 // Define locations
-let locations := {
-  forest := {
-    description := "You are in a dense forest. Light filters through the leaves above.",
-    exits := { north := "cave", east := "river", south := "meadow" }
+let locations: {
+  forest: {
+    description: "You are in a dense forest. Light filters through the leaves above.",
+    exits: { north: "cave", east: "river", south: "meadow" }
   },
-  cave := {
-    description := "You stand in a dark cave. Water drips from stalactites overhead.",
-    exits := { south := "forest", east := "tunnel" },
-    items := ["torch"]
+  cave: {
+    description: "You stand in a dark cave. Water drips from stalactites overhead.",
+    exits: { south: "forest", east: "tunnel" },
+    items: ["torch"]
   },
-  river := {
-    description := "A swift river flows from the mountains. The water is crystal clear.",
-    exits := { west := "forest", north := "waterfall" },
-    items := ["fishing rod"]
+  river: {
+    description: "A swift river flows from the mountains. The water is crystal clear.",
+    exits: { west: "forest", north: "waterfall" },
+    items: ["fishing rod"]
   },
-  meadow := {
-    description := "A peaceful meadow stretches before you, filled with wildflowers.",
-    exits := { north := "forest", east := "cottage" },
-    items := ["flowers"]
+  meadow: {
+    description: "A peaceful meadow stretches before you, filled with wildflowers.",
+    exits: { north: "forest", east: "cottage" },
+    items: ["flowers"]
   },
-  waterfall := {
-    description := "A magnificent waterfall cascades down from high cliffs.",
-    exits := { south := "river" },
-    items := ["shiny stone"]
+  waterfall: {
+    description: "A magnificent waterfall cascades down from high cliffs.",
+    exits: { south: "river" },
+    items: ["shiny stone"]
   },
-  tunnel := {
-    description := "A narrow tunnel leads deeper into the mountain.",
-    exits := { west := "cave", east := "treasure room" }
+  tunnel: {
+    description: "A narrow tunnel leads deeper into the mountain.",
+    exits: { west: "cave", east: "treasure room" }
   },
-  "treasure room" := {
-    description := "A small chamber glittering with treasure!",
-    exits := { west := "tunnel" },
-    items := ["gold key", "ancient map", "jeweled crown"]
+  "treasure room": {
+    description: "A small chamber glittering with treasure!",
+    exits: { west: "tunnel" },
+    items: ["gold key", "ancient map", "jeweled crown"]
   },
-  cottage := {
-    description := "A cozy cottage with a smoking chimney stands here.",
-    exits := { west := "meadow" },
-    items := ["bread"]
+  cottage: {
+    description: "A cozy cottage with a smoking chimney stands here.",
+    exits: { west: "meadow" },
+    items: ["bread"]
   }
 };
 
 // Define game state
-let initial-state := {
-  current-location := "forest",
-  inventory := [],
-  visited := {},
-  game-over := false,
-  moves := 0,
-  light-source := false
+let initial-state: {
+  current-location: "forest",
+  inventory: [],
+  visited: {},
+  game-over: false,
+  moves: 0,
+  light-source: false
 };
 
 // Helper functions
@@ -128,54 +128,54 @@ function location-has-item?(location, item)
 end;
 
 function describe-location(state)
-  let location := get(locations, state.current-location);
-  let description := location.description;
+  let location: get(locations, state.current-location);
+  let description: location.description;
 
   // Add visited status
-  let visited-status := if get(state.visited, state.current-location, 0) > 1 then
+  let visited-status: if get(state.visited, state.current-location, 0) > 1 then
     "You've been here before."
   else
     "This is your first time here."
   end;
 
   // Check if location has items
-  let items-desc := if !(empty?(get(location, "items", []))) then
+  let items-desc: if !(empty?(get(location, "items", []))) then
     "You see: " ++ join(location.items, ", ")
   end;
 
   // Describe exits
-  let exits := keys(location.exits) join ", ";
-  let exits-desc := "Exits: " ++ exits;
+  let exits: keys(location.exits) join ", ";
+  let exits-desc: "Exits: " ++ exits;
 
   // Join all descriptions
   filter([description, visited-status, items-desc, exits-desc], -> !(empty?($))) join "\\n"
 end;
 
 function get-location-items(state)
-  let location := get(locations, state.current-location);
+  let location: get(locations, state.current-location);
   get(location, "items", [])
 end;
 
 // Game actions
 function move(state, direction)
-  let location := get(locations, state.current-location);
-  let exits := get(location, "exits", {});
+  let location: get(locations, state.current-location);
+  let exits: get(location, "exits", {});
 
   // Check if direction is valid
   if contains?(exits, direction) then
-    let new-location := get(exits, direction);
-    let is-dark := new-location = "tunnel" || new-location = "treasure room";
+    let new-location: get(exits, direction);
+    let is-dark: new-location = "tunnel" || new-location = "treasure room";
 
     // Check if player has light source for dark areas
     if is-dark && !(state.light-source) then
       [state, "It's too dark to go that way without a light source."]
     else
-      let new-visited := assoc(
+      let new-visited: assoc(
         state.visited,
         new-location,
         inc(state.visited["new-location"] ?? 0)
       );
-      let new-state := assoc(
+      let new-state: assoc(
         assoc(
           assoc(state, "current-location", new-location),
           "visited",
@@ -193,26 +193,26 @@ function move(state, direction)
 end;
 
 function take!(state, item)
-  let items := get-location-items(state);
+  let items: get-location-items(state);
 
   if contains?(items, item) then
-    let location := get(locations, state.current-location);
-    let new-location-items := filter(items, -> $ ≠ item);
-    let new-inventory := push(state.inventory, item);
+    let location: get(locations, state.current-location);
+    let new-location-items: filter(items, -> $ ≠ item);
+    let new-inventory: push(state.inventory, item);
 
     // Update game state
-    let new-locations := assoc(
+    let new-locations: assoc(
       locations, 
       state.current-location,
       assoc(location, "items", new-location-items)
     );
 
     // Special case for torch
-    let has-light := item = "torch" || state.light-source;
+    let has-light: item = "torch" || state.light-source;
 
     // Update locations and state
-    let locations := new-locations;
-    let new-state := assoc(
+    let locations: new-locations;
+    let new-state: assoc(
       assoc(
         assoc(state, "inventory", new-inventory),
         "light-source", has-light
@@ -228,19 +228,19 @@ end;
 
 function drop!(state, item)
   if has-item?(state, item) then
-    let location := get(locations, state.current-location);
-    let location-items := get(location, "items", []);
-    let new-location-items := push(location-items, item);
-    let new-inventory := filter(-> $ ≠ item, state.inventory);
+    let location: get(locations, state.current-location);
+    let location-items: get(location, "items", []);
+    let new-location-items: push(location-items, item);
+    let new-inventory: filter(-> $ ≠ item, state.inventory);
 
     // Special case for torch
-    let still-has-light := !(item = "torch") || contains?(new-inventory, "torch");
+    let still-has-light: !(item = "torch") || contains?(new-inventory, "torch");
 
     // Update locations and state
-    let new-location := assoc(location, "items", new-location-items);
-    let locations := assoc(locations, state.current-location, new-location);
+    let new-location: assoc(location, "items", new-location-items);
+    let locations: assoc(locations, state.current-location, new-location);
 
-    let new-state := assoc(
+    let new-state: assoc(
       assoc(
         assoc(
           state, "inventory", new-inventory),
@@ -296,7 +296,7 @@ function use(state, item)
       end
     case "bread" then
       if has-item?(state, item) then
-        let new-inventory := filter(state.inventory, -> $ ≠ item);
+        let new-inventory: filter(state.inventory, -> $ ≠ item);
         [
           assoc(
             assoc(state, "inventory", new-inventory),
@@ -349,11 +349,11 @@ end;
 
 // Command parser
 function parse-command(state, input)
-  let tokens := lower-case(input) split " ";
-  let command := first(tokens);
-  let args := rest(tokens) join " ";
+  let tokens: lower-case(input) split " ";
+  let command: first(tokens);
+  let args: rest(tokens) join " ";
 
-  let result := switch command
+  let result: switch command
     case "go" then
       move(state, args)
     case "north" then
@@ -389,10 +389,10 @@ end;
 function game-loop(state)
   alert!(describe-location(state) ++ "\\nWhat do you do? ");
 
-  let input := read-line!();
-  let command_result := parse-command(state, input);
-  let new-state := first(command_result);
-  let message := second(command_result);
+  let input: read-line!();
+  let command_result: parse-command(state, input);
+  let new-state: first(command_result);
+  let message: second(command_result);
 
   alert!("\\n" ++ message ++ "\\n");
 
@@ -431,17 +431,17 @@ function determinant(matrix)
     throw("Matrix cannot be empty");
   end;
 
-  let rows := count(matrix);
+  let rows: count(matrix);
   
   // Get first row to check column count
-  let firstRow := first(matrix);
+  let firstRow: first(matrix);
   
   // Check if first row is an array
   unless array?(firstRow) then
     throw("Input must be a 2D array");
   end;
   
-  let cols := count(firstRow);
+  let cols: count(firstRow);
   
   // Ensure matrix is square
   if rows ≠ cols then
@@ -454,10 +454,10 @@ function determinant(matrix)
   else
     // Base case: 2x2 matrix
     if rows = 2 then
-      let a := matrix[0][0];
-      let b := matrix[0][1];
-      let c := matrix[1][0];
-      let d := matrix[1][1];
+      let a: matrix[0][0];
+      let b: matrix[0][1];
+      let c: matrix[1][0];
+      let d: matrix[1][1];
       
       a * d - b * c;
     else
@@ -466,10 +466,10 @@ function determinant(matrix)
       reduce(
         range(cols),
         (acc, j) -> do
-          let minor := getMinor(matrix, 0, j);
-          let cofactor := determinant(minor);
-          let signFactor := if even?(j) then 1 else -1 end;
-          let term := signFactor * matrix[0][j] * cofactor;
+          let minor: getMinor(matrix, 0, j);
+          let cofactor: determinant(minor);
+          let signFactor: if even?(j): 1 else -1 end;
+          let term: signFactor * matrix[0][j] * cofactor;
           
           acc + term;
         end,
@@ -488,12 +488,12 @@ function getMinor(matrix, rowToRemove, colToRemove)
       if i = rowToRemove then
         null; // This will be filtered out
       else
-        let row := get(matrix, i);
+        let row: get(matrix, i);
         // Filter out the column to remove
         map(
           range(count(row)),
           j -> do
-            if j = colToRemove then null else get(row, j) end;
+            if j = colToRemove: null else get(row, j) end;
           end
         ) filter (item -> item ≠ null);
       end;
@@ -502,7 +502,7 @@ function getMinor(matrix, rowToRemove, colToRemove)
 end;
   
 // 4x4 invertible matrix
-let matrix4x4 := [
+let matrix4x4: [
   [4,  3,  2,  2],
   [0,  1, -3,  3],
   [0, -1,  3,  3],
@@ -519,21 +519,21 @@ determinant(matrix4x4);
 // Matrix multiplication with correct syntax
 function matrixMultiply(matrixA, matrixB)
   // Check if inputs are arrays
-  unless array?(matrixA) then throw("First input must be an array") end;
-  unless array?(matrixB) then throw("Second input must be an array") end;
+  unless array?(matrixA): throw("First input must be an array") end;
+  unless array?(matrixB): throw("Second input must be an array") end;
 
   // Check if matrices are not empty
-  if empty?(matrixA) || empty?(matrixB) then throw("Matrices cannot be empty") end;
+  if empty?(matrixA) || empty?(matrixB): throw("Matrices cannot be empty") end;
 
   // Check if matrices are 2D arrays
-  unless array?(first(matrixA)) then throw("First input must be a 2D array") end;
-  unless array?(first(matrixB)) then throw("Second input must be a 2D array") end;
+  unless array?(first(matrixA)): throw("First input must be a 2D array") end;
+  unless array?(first(matrixB)): throw("Second input must be a 2D array") end;
 
   // Get dimensions
-  let rowsA := count(matrixA);
-  let colsA := count(first(matrixA));
-  let rowsB := count(matrixB);
-  let colsB := count(first(matrixB));
+  let rowsA: count(matrixA);
+  let colsA: count(first(matrixA));
+  let rowsB: count(matrixB);
+  let colsB: count(first(matrixB));
 
   // Check if all rows have consistent length
   unless every?(matrixA, row -> array?(row) && count(row) = colsA) then
@@ -554,8 +554,8 @@ function matrixMultiply(matrixA, matrixB)
       reduce(
         range(colsA),
         (sum, k) -> do
-          let aValue := matrixA[rowIndex][k];
-          let bValue := matrixB[k][j];
+          let aValue: matrixA[rowIndex][k];
+          let bValue: matrixB[k][j];
           sum + (aValue * bValue);
         end,
         0
@@ -569,12 +569,12 @@ function matrixMultiply(matrixA, matrixB)
   end;
 end;
 
-let matrixA := [
+let matrixA: [
   [1, 2, 3],
   [4, 5, 6]
 ];
 
-let matrixB := [
+let matrixB: [
   [7, 8],
   [9, 10],
   [11, 12]
@@ -590,14 +590,14 @@ matrixMultiply(matrixA, matrixB);
     code: `
 function formatPhoneNumber(data)
   if string?(data) then
-    let phoneNumber :=
+    let phoneNumber :
       if data[0] = "+" then
         data slice 2
       else
         data
       end;
 
-    let length := count(phoneNumber);
+    let length: count(phoneNumber);
 
     cond
       case length > 6 then
@@ -643,11 +643,11 @@ factorial(5)
     name: 'Sort',
     description: 'Sort an array of numbers.',
     code: `
-let l := [7, 39, 45, 0, 23, 1, 50, 100, 12, -5];
+let l: [7, 39, 45, 0, 23, 1, 50, 100, 12, -5];
 function numberComparer(a, b)
   cond
-    case a < b then -1
-    case a > b then 1
+    case a < b: -1
+    case a > b: 1
   end ?? 0
 end;
 
@@ -660,13 +660,13 @@ sort(l, numberComparer)
     description: 'Check if string is formatted as an ISO date string.',
     code: `
 function isoDateString?(data)
-  let m := data match #"^(\\d{4})-(\\d{2})-(\\d{2})$";
+  let m: data match #"^(\\d{4})-(\\d{2})-(\\d{2})$";
 
   if m then
-    let [year, month, day] := slice(m, 1) map number;
-    let leapYear := zero?(year mod 4) && (!zero?(year mod 100) || zero?(year mod 400));
+    let [year, month, day]: slice(m, 1) map number;
+    let leapYear: zero?(year mod 4) && (!zero?(year mod 100) || zero?(year mod 400));
 
-    let invalid := 
+    let invalid: 
       (year < 1900 || year > 2100)
       || (month < 1 || month > 12)
       || (day < 1 || day > 31)
@@ -690,7 +690,7 @@ write!(isoDateString?("197-12-21"));
     description: 'Find label to corresponding value in array of { label, value }-objects.',
     code: `
 function label-from-value(items, value)
-  let entry := items some (-> value = $["value"]);
+  let entry: items some (-> value = $["value"]);
   if entry = null then
     null
   else
@@ -699,9 +699,9 @@ function label-from-value(items, value)
 end;
 
 
-let items := [
-  { label := "Name", value := "name" },
-  { label := "Age", value := "age" }
+let items: [
+  { label: "Name", value: "name" },
+  { label: "Age", value: "age" }
 ];
 
 label-from-value(items, "name");
@@ -716,8 +716,8 @@ label-from-value(items, "name");
 function labels-from-values($array, $values)
   for
     each value in $values,
-      let label := do
-        let entry := $array some -> value = $["value"];
+      let label: do
+        let entry: $array some -> value = $["value"];
         if entry = null then
           value
         else
@@ -729,10 +729,10 @@ function labels-from-values($array, $values)
   end
 end;
 
-let arr := [
-  { label := "Name", value := "name" },
-  { label := "Age", value := "age" },
-  { label := "Email", value := "email" },
+let arr: [
+  { label: "Name", value: "name" },
+  { label: "Age", value: "age" },
+  { label: "Email", value: "email" },
 ];
 
 labels-from-values(arr, ["name", "age"])

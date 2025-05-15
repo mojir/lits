@@ -34,7 +34,7 @@ describe('functional functions.', () => {
         expect(lits.run('identity(null)')).toBe(null)
         expect(lits.run('identity(false)')).toBe(false)
         expect(lits.run('identity(true)')).toBe(true)
-        expect(lits.run('identity({ a := 1 })')).toEqual({ a: 1 })
+        expect(lits.run('identity({ a: 1 })')).toEqual({ a: 1 })
         expect(lits.run('identity([1, 2, 3])')).toEqual([1, 2, 3])
         expect(() => lits.run('identity()')).toThrow(LitsError)
         expect(() => lits.run('identity(1, 2)')).toThrow(LitsError)
@@ -67,7 +67,7 @@ describe('functional functions.', () => {
 
     describe('comp.', () => {
       it('samples.', () => {
-        expect(lits.run('let negative-quotient := comp(-, /); negative-quotient(9, 3)')).toBe(-3)
+        expect(lits.run('let negative-quotient = comp(-, /); negative-quotient(9, 3)')).toBe(-3)
         expect(
           lits.run(`
         (
@@ -79,14 +79,14 @@ describe('functional functions.', () => {
         )([1, 2, 3, 4, 5, 6, 7], 3)
       `),
         ).toBe(4)
-        expect(lits.run('let x := { bar := { foo := 42 }}; comp("foo", "bar")(x)')).toBe(42)
+        expect(lits.run('let x = { bar: { foo: 42 }}; comp("foo", "bar")(x)')).toBe(42)
 
         expect(lits.run('comp()(10)')).toBe(10)
         expect(lits.run('comp()(null)')).toBe(null)
-        expect(lits.run('comp()({ "a" := 10 })')).toEqual({ a: 10 })
+        expect(lits.run('comp()({ "a": 10 })')).toEqual({ a: 10 })
         expect(lits.run('comp()(["x", 10, null])')).toEqual(['x', 10, null])
         expect(lits.run(`
-let foo := comp(!, odd?);
+let foo = comp(!, odd?);
 [2, 3, 4, 5] filter foo`)).toEqual([2, 4])
         expect(() => lits.run('comp()(1, 2)')).toThrow(LitsError)
         expect(() => lits.run('comp(true)()')).toThrow(LitsError)
@@ -104,7 +104,7 @@ let foo := comp(!, odd?);
     describe('juxt.', () => {
       it('samples.', () => {
         expect(lits.run('juxt(+, *, min, max)(3, 4, 6)')).toEqual([13, 72, 3, 6])
-        expect(lits.run('juxt("a", "b")({ a := 1, b := 2, c := 3, d := 4})')).toEqual([1, 2])
+        expect(lits.run('juxt("a", "b")({ a: 1, b: 2, c: 3, d: 4})')).toEqual([1, 2])
         expect(lits.run('apply(juxt(+, *, min, max), range(1, 5))')).toEqual([10, 24, 1, 4])
         expect(() => lits.run('juxt()')).toThrow(LitsError)
       })
@@ -113,7 +113,7 @@ let foo := comp(!, odd?);
     describe('complement.', () => {
       it('samples.', () => {
         expect(lits.run('complement(>)(4, 6)')).toBe(true)
-        expect(lits.run('complement(=)(3, 3)')).toBe(false)
+        expect(lits.run('complement(==)(3, 3)')).toBe(false)
         expect(() => lits.run('complement()')).toThrow(LitsError)
         expect(() => lits.run('complement(>, <)')).toThrow(LitsError)
       })
@@ -153,49 +153,49 @@ let foo := comp(!, odd?);
     describe('spread.', () => {
       it('samples.', () => {
         expect(lits.run(`
-let params := [1, 2, 3];
+let params = [1, 2, 3];
 +(...params)`)).toBe(6)
       })
       expect(() => lits.run(`
-let params := {};
+let params = {};
 +(...params)`)).toThrow(LitsError)
     })
 
     describe('special expressions as normal expressions.', () => {
       test('samples.', () => {
         expect(lits.run(`
-let and := &&;
+let and = &&;
 true and false`)).toBe(false)
         expect(lits.run(`
-let or := ||;
+let or = ||;
 true or false`)).toBe(true)
         expect(lits.run(`
-let obj := object;
+let obj = object;
 obj("a", 1, "b", 2)`)).toEqual({ a: 1, b: 2 })
         expect(lits.run(`
-let obj := object;
+let obj = object;
 obj("a", 1, "b")`)).toEqual({ a: 1, b: null })
         expect(lits.run(`
-let arr := array;
+let arr = array;
 arr(1, 2, 3)`)).toEqual([1, 2, 3])
         expect(lits.run(`
-let qq := ??;
+let qq = ??;
 null qq 0`)).toBe(0)
         expect(lits.run(`
-let qq := ??;
+let qq = ??;
 0 qq 1`)).toBe(0)
         expect(lits.run(`
-let qq := ??;
+let qq = ??;
 qq(null)`)).toBe(null)
         expect(() => lits.run(`
-let r := recur;
+let r = recur;
 r(1)`)).toThrow(RecurSignal)
       })
       expect(() => lits.run(`
-let t := throw;
+let t = throw;
 t("error")`)).toThrow(UserDefinedError)
-      expect(() => lits.run('let t := \'if\';')).toThrow(LitsError)
-      expect(() => lits.run('let d := defined?; d(+)')).toThrow(LitsError)
+      expect(() => lits.run('let t = \'if\';')).toThrow(LitsError)
+      expect(() => lits.run('let d = defined?; d(+)')).toThrow(LitsError)
     })
   }
 })

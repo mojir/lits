@@ -32,7 +32,7 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
     description: 'An `object`, a collection of key-value pairs where keys are `strings`',
     examples: [
       '{}',
-      '{ a := 1, b := 2}',
+      '{ a: 1, b: 2}',
     ],
   },
   '-type-array': {
@@ -147,7 +147,7 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
     linkName: '-type-collection',
     description: 'A collection, an `object`, an `array` or a `string`',
     examples: [
-      '{ foo := 42 }',
+      '{ foo: 42 }',
       '[1, 2, 3]',
       '"hello"',
     ],

@@ -136,8 +136,8 @@ export const api = {
     'fnull',
   ] as const,
   misc: [
-    '≠',
-    '=',
+    '≠', // TODO
+    '==',
     '<',
     '>',
     '≤',

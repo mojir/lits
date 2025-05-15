@@ -1,6 +1,6 @@
 
 // Setup code
-let one := 1;
+let one = 1;
 // @include success-program.lits
 
 // @test add

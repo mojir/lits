@@ -70,9 +70,9 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
     ],
     description: 'If $a is not structural equal to $b it throws `AssertionError`.',
     examples: [
-      'try { assert=({ "a" := 1 }, { "a" := 2 }, "Expected equal values") } catch (e) { e.message }',
-      'try { assert=({ "a" := 1 }, { "a" := 2 }) } catch (e) { e.message }',
-      'try { assert=({ "a" := 1 }, { "a" := 1 }) } catch (e) { e.message }',
+      'try { assert=({ "a": 1 }, { "a": 2 }, "Expected equal values") } catch (e) { e.message }',
+      'try { assert=({ "a": 1 }, { "a": 2 }) } catch (e) { e.message }',
+      'try { assert=({ "a": 1 }, { "a": 1 }) } catch (e) { e.message }',
     ],
     noOperatorDocumentation: true,
   },

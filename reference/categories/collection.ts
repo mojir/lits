@@ -35,7 +35,7 @@ filter(
 )`,
       `
 filter(
-  { a := 1, b := 2 },
+  { a: 1, b: 2 },
   odd?
 )`,
     ],
@@ -61,8 +61,8 @@ filter(
     ],
     description: 'Creates a new collection with all elements that pass the test implemented by $b. The function is called for each element in the collection, and it should take two arguments: the element itself and the index.',
     examples: [
-      'filteri([1, 2, 3], (x, i) -> i % 2 = 0)',
-      'filteri([1, 2, 3], (x, i) -> x % 2 = 0)',
+      'filteri([1, 2, 3], (x, i) -> i % 2 == 0)',
+      'filteri([1, 2, 3], (x, i) -> x % 2 == 0)',
       'filteri([1, 2, 3], (x, i) -> x + i > 3)',
     ],
   },
@@ -94,8 +94,8 @@ filter(
       'map(["Albert", "Mojir", 42], str)',
       'map([1, 2, 3], inc)',
       'map([1, 2, 3], [1, 10, 100], *)',
-      'map({ a := 1, b := 2 }, inc)',
-      'map({ a := 1, b := 2 }, { a := 10, b := 20 }, +)',
+      'map({ a: 1, b: 2 }, inc)',
+      'map({ a: 1, b: 2 }, { a: 10, b: 20 }, +)',
     ],
   },
   'mapi': {
@@ -151,7 +151,7 @@ filter(
     examples: [
       'reduce([1, 2, 3], +, 0)',
       'reduce([], +, 0)',
-      'reduce({ a := 1, b := 2 }, +, 0)',
+      'reduce({ a: 1, b: 2 }, +, 0)',
       `
 reduce(
   [1, 2, 3, 4, 5, 6, 7, 8, 9],
@@ -183,7 +183,7 @@ reduce(
     description: 'Runs $fun function on each element of the $coll (starting from the last item), passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $coll is a single value.',
     examples: [
       'reduce-right(["A", "B", "C"], str, "")',
-      'reduce-right({ a := 1, b := 2 }, +, 0)',
+      'reduce-right({ a: 1, b: 2 }, +, 0)',
     ],
   },
   'reducei-right': {
@@ -213,7 +213,7 @@ reduce(
     examples: [
       'reducei-right([1, 2, 3], (acc, x, i) -> acc + x + i, 0)',
       'reducei-right("Albert", (acc, x, i) -> acc ++ x ++ i, "")',
-      'reducei-right({ a := 1, b := 2 }, -> $1 ++ $3, "")',
+      'reducei-right({ a: 1, b: 2 }, -> $1 ++ $3, "")',
     ],
   },
   'reducei': {
@@ -243,7 +243,7 @@ reduce(
     examples: [
       'reducei([1, 2, 3], (acc, x, i) -> acc + x + i, 0)',
       'reducei("Albert", (acc, x, i) -> acc ++ x ++ i, "")',
-      'reducei({ a := 1, b := 2 }, -> $1 ++ $3, "")',
+      'reducei({ a: 1, b: 2 }, -> $1 ++ $3, "")',
     ],
   },
   'reductions': {
@@ -273,7 +273,7 @@ reduce(
       'reductions([1, 2, 3], +, 0)',
       'reductions([1, 2, 3], +, 10)',
       'reductions([], +, 0)',
-      'reductions({ a := 1, b := 2 }, +, 0)',
+      'reductions({ a: 1, b: 2 }, +, 0)',
       `
 reductions(
   [1, 2, 3, 4, 5, 6, 7, 8, 9],
@@ -310,7 +310,7 @@ reductions(
     examples: [
       'reductionsi([1, 2, 3], (acc, x, i) -> acc + x + i, 0)',
       'reductionsi("Albert", (acc, x, i) -> acc ++ x ++ i, "")',
-      'reductionsi({ a := 1, b := 2 }, -> $1 ++ $3, "")',
+      'reductionsi({ a: 1, b: 2 }, -> $1 ++ $3, "")',
     ],
   },
   'count': {
@@ -332,7 +332,7 @@ reductions(
     examples: [
       'count([1, 2, 3])',
       'count([])',
-      'count({ a := 1 })',
+      'count({ a: 1 })',
       'count("")',
       'count("Albert")',
       'count(null)',
@@ -359,7 +359,7 @@ reductions(
     description: 'Returns value in $a mapped at $b.',
     examples: [
       '[1, 2, 3] get 1',
-      '{ a := 1 } get "a"',
+      '{ a: 1 } get "a"',
       '"Albert" get "3"',
       `
 get(
@@ -379,17 +379,17 @@ get(
 )`,
       `
 get(
-  { a := 1 },
+  { a: 1 },
   "a"
 )`,
       `
 get(
-  { a := 1 },
+  { a: 1 },
   "b"
 )`,
       `
 get(
-  { a := 1 },
+  { a: 1 },
   "b",
   "default"
 )`,
@@ -427,17 +427,17 @@ get(
     examples: [
       `
 get-in(
-  [[1, 2, 3], [4, { a := "Kalle" }, 6]],
+  [[1, 2, 3], [4, { a: "Kalle" }, 6]],
   [1, 1, "a", 0]
 )`,
       `
 get-in(
-  [[1, 2, 3], [4, { a := "Kalle" }, 6]],
+  [[1, 2, 3], [4, { a: "Kalle" }, 6]],
   [1, 1, "b", 0]
 )`,
       `
 get-in(
-  [[1, 2, 3], [4, { a := "Kalle" }, 6]],
+  [[1, 2, 3], [4, { a: "Kalle" }, 6]],
   [1, 1, "b", 0],
   "Lisa"
 )`,
@@ -460,7 +460,7 @@ get-in(
     examples: [
       '[1, 2, 3] contains? 1',
       'null contains? 1',
-      '{ a := 1, b := 2 } contains? "a"',
+      '{ a: 1, b: 2 } contains? "a"',
       `
 contains?(
   [],
@@ -483,7 +483,7 @@ contains?(
 )`,
       `
 contains?(
-  { a := 1, b := 2 },
+  { a: 1, b: 2 },
   "a"
 )`,
     ],
@@ -533,12 +533,12 @@ assoc(
 )`,
       `
 assoc(
-  { a := 1, b := 2 },
+  { a: 1, b: 2 },
   "a",
   "One")`,
       `
 assoc(
-  { a := 1, b := 2 },
+  { a: 1, b: 2 },
   "c",
   "Three")`,
       `
@@ -589,7 +589,7 @@ assoc-in(
 )`,
       `
 assoc-in(
-  [1, 2, { name := "albert" }],
+  [1, 2, { name: "albert" }],
   [2, "name", 0],
   "A"
 )`,
@@ -630,8 +630,8 @@ assoc-in(
       'concat([1, 2], [])',
       'concat([1, 2], [3, 4], [5, 6])',
       'concat([])',
-      'concat({ a := 1, b := 2 }, { b := 1, c := 2 })',
-      'concat({}, { a := 1 })',
+      'concat({ a: 1, b: 2 }, { b: 1, c: 2 })',
+      'concat({}, { a: 1 })',
     ],
     aliases: ['concat'],
   },
@@ -655,7 +655,7 @@ assoc-in(
       'not-empty([])',
       'not-empty([1, 2, 3])',
       'not-empty({})',
-      'not-empty({ a := 2 })',
+      'not-empty({ a: 2 })',
       'not-empty("")',
       'not-empty("Albert")',
       'not-empty(null)',
@@ -705,12 +705,12 @@ every?(
 )`,
       `
 every?(
-  { a := 2, b := 4},
+  { a: 2, b: 4},
   -> even?(second($))
 )`,
       `
 every?(
-  { a := 2, b := 3 },
+  { a: 2, b: 3 },
   -> even?(second($))
 )`,
     ],
@@ -757,12 +757,12 @@ not-every?(
 )`,
       `
 not-every?(
-  { a := 2, b := 4 },
+  { a: 2, b: 4 },
   -> even?(second($))
 )`,
       `
 not-every?(
-  { a := 2, b := 3 },
+  { a: 2, b: 3 },
   -> even?(second($))
 )`,
     ],
@@ -809,12 +809,12 @@ any?(
 )`,
       `
 any?(
-  { a := 2, b := 3 },
+  { a: 2, b: 3 },
   -> even?(second($))
 )`,
       `
 any?(
-  { a := 1, b := 3 },
+  { a: 1, b: 3 },
   -> even?(second($))
 )`,
     ],
@@ -861,12 +861,12 @@ not-any?(
 )`,
       `
 not-any?(
-  { a := 2, b := 3 },
+  { a: 2, b: 3 },
   -> even?(second($))
 )`,
       `
 not-any?(
-  { a := 1, b := 3 },
+  { a: 1, b: 3 },
   -> even?(second($))
 )`,
     ],
@@ -904,10 +904,10 @@ return the new value.
 If the key does not exist, \`null\` is passed as the old value.`,
     examples: [
       `
-let x := { a := 1, b := 2 };
+let x = { a: 1, b: 2 };
 update(x, "a", inc)`,
       `
-let x := { a := 1, b := 2 };
+let x = { a: 1, b: 2 };
 update(
   x,
   "c",
@@ -948,25 +948,25 @@ objects will be created - and the corresponding keys must be of type string.`,
     examples: [
       `
 update-in(
-  { a := [1, 2, 3] },
+  { a: [1, 2, 3] },
   ["a", 1],
   -> null?($) ? 0 : inc($)
 )`,
       `
 update-in(
-  { a := { foo := "bar"} },
+  { a: { foo: "bar"} },
   ["a", "foo"],
   -> null?($) ? "?" : "!"
 )`,
       `
 update-in(
-  { a := { foo := "bar"} },
+  { a: { foo: "bar"} },
   ["a", "baz"],
   -> null?($) ? "?" : "!"
 )`,
       `
 update-in(
-  { a := [1, 2, 3] },
+  { a: [1, 2, 3] },
   ["a", 1],
   *,
   10,

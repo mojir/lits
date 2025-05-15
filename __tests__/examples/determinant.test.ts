@@ -17,17 +17,17 @@ function determinant(matrix) {
     throw("Matrix cannot be empty");
   };
 
-  let rows := count(matrix);
+  let rows = count(matrix);
   
   // Get first row to check column count
-  let firstRow := first(matrix);
+  let firstRow = first(matrix);
   
   // Check if first row is an array
   if (!(array?(firstRow))) {
     throw("Input must be a 2D array");
   };
   
-  let cols := count(firstRow);
+  let cols = count(firstRow);
   
   // Ensure matrix is square
   if (rows ≠ cols) {
@@ -35,15 +35,15 @@ function determinant(matrix) {
   };
   
   // Base case: 1x1 matrix
-  if (rows = 1) {
+  if (rows == 1) {
     get(get(matrix, 0), 0);
   } else {
     // Base case: 2x2 matrix
-    if (rows = 2) {
-      let a := matrix[0][0];
-      let b := matrix[0][1];
-      let c := matrix[1][0];
-      let d := matrix[1][1];
+    if (rows == 2) {
+      let a = matrix[0][0];
+      let b = matrix[0][1];
+      let c = matrix[1][0];
+      let d = matrix[1][1];
       
       a * d - b * c;
     } else {
@@ -52,14 +52,14 @@ function determinant(matrix) {
       reduce(
         range(cols),
         (acc, j) -> {
-          let minor := getMinor(matrix, 0, j);
-          let cofactor := determinant(minor);
-          let signFactor := if (even?(j)) {
+          let minor = getMinor(matrix, 0, j);
+          let cofactor = determinant(minor);
+          let signFactor = if (even?(j)) {
             1;
           } else {
             -1;
           };
-          let term := signFactor * get(get(matrix, 0), j) * cofactor;
+          let term = signFactor * get(get(matrix, 0), j) * cofactor;
           
           acc + term;
         },
@@ -75,15 +75,15 @@ function getMinor(matrix, rowToRemove, colToRemove) {
   map(
     range(count(matrix)),
     i -> {
-      if (i = rowToRemove) {
+      if (i == rowToRemove) {
         null; // This will be filtered out
       } else {
-        let row := get(matrix, i);
+        let row = get(matrix, i);
         // Filter out the column to remove
         map(
           range(count(row)),
           j -> {
-            if (j = colToRemove) {
+            if (j == colToRemove) {
               null; // This will be filtered out
             } else {
               get(row, j);
@@ -96,7 +96,7 @@ function getMinor(matrix, rowToRemove, colToRemove) {
 };
   
 // 3x3 invertible matrix
-let matrix4 := [[2, 3, 4], [1, 2, 3], [3, 4, 1]];
+let matrix4 = [[2, 3, 4], [1, 2, 3], [3, 4, 1]];
 determinant(matrix4);
    `)).toBe(-4)
   })
