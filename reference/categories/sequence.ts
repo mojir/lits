@@ -708,12 +708,12 @@ drop-while(
       `
 sort(
   [3, 1, 2],
-  (a, b) -> cond case a < b then -1 case a > b then 1 case true then -1 end
+  (a, b) -> cond { case a < b then -1 case a > b then 1 case true then -1 }
 )`,
       `
 sort(
   [3, 1, 2],
-  (a, b) -> cond case a > b then -1 case a < b then 1 case true then -1 end
+  (a, b) -> cond { case a > b then -1 case a < b then 1 case true then -1 }
 )`,
     ],
   },
@@ -923,7 +923,7 @@ sort(
     examples: [
       '[{ name := "Albert" }, { name := "Albert" }, { name := "Mojir" }] group-by "name"',
       'group-by([{name := "Albert"}, {name := "Albert"}, {name := "Mojir"}], "name")',
-      'group-by("Albert Mojir", -> if "aoueiAOUEI" contains? $ then "vowel" else "other" end)',
+      'group-by("Albert Mojir", -> "aoueiAOUEI" contains? $ ? "vowel" : "other")',
     ],
   },
   'partition': {

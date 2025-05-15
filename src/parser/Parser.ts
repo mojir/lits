@@ -32,13 +32,13 @@ import {
   asLBracketToken,
   asReservedSymbolToken,
   asSymbolToken,
+  assertLBraceToken,
   assertLParenToken,
   assertOperatorToken,
   assertRBraceToken,
   assertRBracketToken,
   assertRParenToken,
   assertReservedSymbolToken,
-  assertSymbolToken,
   isA_BinaryOperatorToken,
   isLBraceToken,
   isLBracketToken,
@@ -250,9 +250,9 @@ export class Parser {
         case 'doseq':
           left = this.parseForOrDoseq(firstToken)
           break
-        case 'do':
-          left = this.parseDo(firstToken)
-          break
+        // cas:
+        //   left = this.parseDo(firstToken)
+        //   break
         case 'loop':
           left = this.parseLoop(firstToken)
           break
@@ -407,9 +407,17 @@ export class Parser {
       }
     }
 
-    // Object litteral, e.g. {a=1, b=2}
+    // Object litteral, e.g. {a :=1, b=2}
+    // Or block.
     if (isLBraceToken(token)) {
-      return this.parseObject()
+      const positionBefore = this.parseState.position
+      try {
+        return this.parseObject()
+      }
+      catch {
+        this.parseState.position = positionBefore
+        return this.parseBlock()
+      }
     }
 
     // Array litteral, e.g. [1, 2]
@@ -458,7 +466,8 @@ export class Parser {
   }
 
   private parseObject(): ObjectNode {
-    const firstToken = asLBraceToken(this.peek())
+    const
+      firstToken = asLBraceToken(this.peek())
     this.advance()
     const params: Node[] = []
     while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
@@ -909,19 +918,23 @@ export class Parser {
     return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.let, bindingTarget]], token[2]) satisfies LetNode
   }
 
-  private parseDo(token: SymbolToken): DoNode {
+  private parseBlock(): DoNode {
+    const token = asLBraceToken(this.peek())
     this.advance()
     const expressions: Node[] = []
-    while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
+    while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
       expressions.push(this.parseExpression())
       if (isOperatorToken(this.peek(), ';')) {
         this.advance()
       }
-      else if (!isReservedSymbolToken(this.peek(), 'end')) {
-        throw new LitsError('Expected ;', this.peekSourceCodeInfo())
+      else if (!isRBraceToken(this.peek())) {
+        throw new LitsError('Expected }', this.peekSourceCodeInfo())
       }
     }
-    assertReservedSymbolToken(this.peek(), 'end')
+    if (expressions.length === 0) {
+      expressions.push(withSourceCodeInfo([NodeTypes.ReservedSymbol, 'null'], token[2]))
+    }
+    assertRBraceToken(this.peek())
     this.advance()
     return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.do, expressions]], token[2]) satisfies DoNode
   }
@@ -929,17 +942,17 @@ export class Parser {
   private parseLoop(firstToken: SymbolToken): LoopNode {
     this.advance()
 
+    assertLParenToken(this.peek())
+    this.advance()
+
     const bindingNodes: BindingNode[] = []
     let token = this.peek()
-    while (!this.isAtEnd() && !isSymbolToken(token, 'do')) {
-      assertSymbolToken(token, 'let')
-      this.advance()
-
+    while (!this.isAtEnd() && !isRParenToken(token)) {
       const target = this.parseBindingTarget({ requireDefaultValue: true, noRest: true })
       const value = target[1][1]!
       target[1][1] = undefined
 
-      bindingNodes.push(withSourceCodeInfo([NodeTypes.Binding, [target, value]], token[2]) satisfies BindingNode)
+      bindingNodes.push(withSourceCodeInfo([NodeTypes.Binding, [target, value]], target[2]) satisfies BindingNode)
 
       if (isOperatorToken(this.peek(), ',')) {
         this.advance()
@@ -950,20 +963,23 @@ export class Parser {
       throw new LitsError('Expected binding', this.peekSourceCodeInfo())
     }
 
-    assertSymbolToken(token, 'do')
+    assertRParenToken(token)
+    this.advance()
+
+    assertLBraceToken(this.peek())
     this.advance()
 
     const params: Node[] = []
-    while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
+    while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
       params.push(this.parseExpression())
       if (isOperatorToken(this.peek(), ';')) {
         this.advance()
       }
-      else if (!isReservedSymbolToken(this.peek(), 'end')) {
+      else if (!isRBraceToken(this.peek())) {
         throw new LitsError('Expected ;', this.peekSourceCodeInfo())
       }
     }
-    assertReservedSymbolToken(this.peek(), 'end')
+    assertRBraceToken(this.peek())
     this.advance()
 
     return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.loop, bindingNodes, params]], firstToken[2]) satisfies LoopNode
@@ -971,20 +987,7 @@ export class Parser {
 
   private parseTry(token: SymbolToken): TryNode {
     this.advance()
-    const tryExpressions: Node[] = []
-    while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'catch')) {
-      tryExpressions.push(this.parseExpression())
-      if (isOperatorToken(this.peek(), ';')) {
-        this.advance()
-      }
-      else if (!isReservedSymbolToken(this.peek(), 'catch')) {
-        throw new LitsError('Expected ;', this.peekSourceCodeInfo())
-      }
-    }
-
-    const tryExpression = tryExpressions.length === 1
-      ? tryExpressions[0]!
-      : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.do, tryExpressions]], token[2]) satisfies DoNode
+    const tryExpression = this.parseBlock()
 
     assertReservedSymbolToken(this.peek(), 'catch')
     this.advance()
@@ -997,23 +1000,7 @@ export class Parser {
       this.advance()
     }
 
-    const catchExpressions: Node[] = []
-    while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
-      catchExpressions.push(this.parseExpression())
-      if (isOperatorToken(this.peek(), ';')) {
-        this.advance()
-      }
-      else if (!isReservedSymbolToken(this.peek(), 'end')) {
-        throw new LitsError('Expected ;', this.peekSourceCodeInfo())
-      }
-    }
-
-    assertReservedSymbolToken(this.peek(), 'end')
-    this.advance()
-
-    const catchExpression = catchExpressions.length === 1
-      ? catchExpressions[0]!
-      : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.do, catchExpressions]], token[2]) satisfies DoNode
+    const catchExpression = this.parseBlock()
 
     return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.try, tryExpression, errorSymbol, catchExpression]], token[2]) satisfies TryNode
   }
@@ -1022,9 +1009,12 @@ export class Parser {
     const isDoseq = firstToken[1] === 'doseq'
     this.advance()
 
+    assertLParenToken(this.peek())
+    this.advance()
+
     const forLoopBindings: LoopBindingNode[] = []
 
-    while (!this.isAtEnd() && !isSymbolToken(this.peek(), 'do')) {
+    while (!this.isAtEnd() && !isRParenToken(this.peek())) {
       const loopBinding = this.parseForLoopBinding()
       const existingBoundNames = forLoopBindings.flatMap(b => Object.keys(getAllBindingTargetNames(b[0][1][0])))
       const newBoundNames = getAllBindingTargetNames(loopBinding[0][1][0])
@@ -1032,43 +1022,29 @@ export class Parser {
         throw new LitsError('Duplicate binding', loopBinding[0][2])
       }
       forLoopBindings.push(loopBinding)
-    }
-
-    assertSymbolToken(this.peek(), 'do')
-    this.advance()
-
-    const expressions: Node[] = []
-
-    while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
-      expressions.push(this.parseExpression())
       if (isOperatorToken(this.peek(), ';')) {
         this.advance()
       }
-      else if (!isReservedSymbolToken(this.peek(), 'end')) {
-        throw new LitsError('Expected ;', this.peekSourceCodeInfo())
-      }
     }
 
-    assertReservedSymbolToken(this.peek(), 'end')
+    assertRParenToken(this.peek())
     this.advance()
 
+    const expression = this.parseExpression()
+
     return isDoseq
-      ? withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.doseq, forLoopBindings, expressions]], firstToken[2]) satisfies DoSeqNode
-      : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.for, forLoopBindings, expressions]], firstToken[2]) satisfies ForNode
+      ? withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.doseq, forLoopBindings, expression]], firstToken[2]) satisfies DoSeqNode
+      : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.for, forLoopBindings, expression]], firstToken[2]) satisfies ForNode
   }
 
   private parseForLoopBinding(): LoopBindingNode {
-    assertReservedSymbolToken(this.peek(), 'each')
-
-    this.advance()
-
     const bindingNode = this.parseBinding()
 
     const modifiers: Array<'&let' | '&when' | '&while'> = []
     let token = this.asToken(this.peek())
 
-    if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this.peek(), 'each') && !isOperatorToken(token, ',')) {
-      throw new LitsError('Expected do, each or comma', token[2])
+    if (!isRParenToken(token) && !isOperatorToken(this.peek(), ';') && !isOperatorToken(token, ',')) {
+      throw new LitsError('Expected ")", ";" or ","', token[2])
     }
     if (isOperatorToken(token, ',')) {
       this.advance()
@@ -1078,10 +1054,10 @@ export class Parser {
     if (!isSymbolToken(token, 'let')
       && !isReservedSymbolToken(token, 'when')
       && !isReservedSymbolToken(token, 'while')
-      && !isSymbolToken(token, 'do')
-      && !isReservedSymbolToken(token, 'each')
+      && !isRParenToken(token)
+      && !isOperatorToken(token, ';')
     ) {
-      throw new LitsError('Expected symbol each, do, let, when or while', token[2])
+      throw new LitsError('Expected symbol ";", ")", let, when or while', token[2])
     }
 
     const letBindings: BindingNode[] = []
@@ -1097,8 +1073,8 @@ export class Parser {
 
         letBindings.push(letNode[1][1])
         token = this.asToken(this.peek())
-        if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this.peek(), 'each') && !isOperatorToken(token, ',')) {
-          throw new LitsError('Expected do, each or comma', token[2])
+        if (!isRParenToken(token) && !isOperatorToken(token, ';') && !isOperatorToken(token, ',')) {
+          throw new LitsError('Expected ")", ";" or ","', token[2])
         }
         if (isOperatorToken(token, ',')) {
           this.advance()
@@ -1130,7 +1106,7 @@ export class Parser {
         whileNode = this.parseExpression()
       }
       token = this.asToken(this.peek())
-      if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this.peek(), 'each') && !isOperatorToken(token, ',')) {
+      if (!isRParenToken(token) && !isOperatorToken(token, ';') && !isOperatorToken(token, ',')) {
         throw new LitsError('Expected do or comma', token[2])
       }
       if (isOperatorToken(token, ',')) {
@@ -1139,8 +1115,8 @@ export class Parser {
       token = this.asToken(this.peek())
     }
 
-    if (!isSymbolToken(token, 'do') && !isReservedSymbolToken(this.peek(), 'each')) {
-      throw new LitsError('Expected do or each', token[2])
+    if (!isRParenToken(token) && !isOperatorToken(token, ';')) {
+      throw new LitsError('Expected "{" or ";"', token[2])
     }
 
     return [bindingNode, letBindings, whenNode, whileNode] satisfies LoopBindingNode
@@ -1171,53 +1147,17 @@ export class Parser {
   parseIfOrUnless(token: SymbolToken): IfNode | UnlessNode {
     const isUnless = token[1] === 'unless'
     this.advance()
-    const condition = this.parseExpression()
-    assertReservedSymbolToken(this.peek(), 'then')
+    assertLParenToken(this.peek())
     this.advance()
-    const thenExpressions: Node[] = []
-    while (
-      !this.isAtEnd()
-      && !isReservedSymbolToken(this.peek(), 'else')
-      && !isReservedSymbolToken(this.peek(), 'end')
-    ) {
-      thenExpressions.push(this.parseExpression())
-      if (isOperatorToken(this.peek(), ';')) {
-        this.advance()
-      }
-      else if (!isReservedSymbolToken(this.peek(), 'else') && !isReservedSymbolToken(this.peek(), 'end')) {
-        throw new LitsError('Expected ;', this.peekSourceCodeInfo())
-      }
-    }
-
-    const thenExpression = thenExpressions.length === 1
-      ? thenExpressions[0]!
-      : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.do, thenExpressions]], token[2]) satisfies DoNode
+    const condition = this.parseExpression()
+    assertRParenToken(this.peek())
+    this.advance()
+    const thenExpression = this.parseExpression()
 
     let elseExpression: Node | undefined
     if (isReservedSymbolToken(this.peek(), 'else')) {
       this.advance()
-      const elseExpressions: Node[] = []
-      while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
-        elseExpressions.push(this.parseExpression())
-        if (isOperatorToken(this.peek(), ';')) {
-          this.advance()
-        }
-        else if (!isReservedSymbolToken(this.peek(), 'end')) {
-          throw new LitsError('Expected ;', this.peekSourceCodeInfo())
-        }
-      }
-
-      elseExpression = elseExpressions.length === 1
-        ? elseExpressions[0]
-        : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.do, elseExpressions]], token[2]) satisfies DoNode
-    }
-
-    assertReservedSymbolToken(this.peek(), 'end')
-    this.advance()
-
-    const params = [condition, thenExpression]
-    if (elseExpression) {
-      params.push(elseExpression)
+      elseExpression = this.parseExpression()
     }
 
     return isUnless
@@ -1227,9 +1167,13 @@ export class Parser {
 
   parseCond(token: SymbolToken): CondNode {
     this.advance()
+
+    assertLBraceToken(this.peek())
+    this.advance()
+
     const params: [Node, Node][] = []
 
-    while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
+    while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
       assertReservedSymbolToken(this.peek(), 'case')
       this.advance()
       const caseExpression = this.parseExpression()
@@ -1239,12 +1183,12 @@ export class Parser {
       while (
         !this.isAtEnd()
         && !isReservedSymbolToken(this.peek(), 'case')
-        && !isReservedSymbolToken(this.peek(), 'end')) {
+        && !isRBraceToken(this.peek())) {
         expressions.push(this.parseExpression())
         if (isOperatorToken(this.peek(), ';')) {
           this.advance()
         }
-        else if (!isReservedSymbolToken(this.peek(), 'case') && !isReservedSymbolToken(this.peek(), 'end')) {
+        else if (!isReservedSymbolToken(this.peek(), 'case') && !isRBraceToken(this.peek())) {
           throw new LitsError('Expected ;', this.peekSourceCodeInfo())
         }
       }
@@ -1254,13 +1198,13 @@ export class Parser {
         : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.do, expressions]], token[2]) satisfies DoNode
 
       params.push([caseExpression, thenExpression])
-      if (isReservedSymbolToken(this.peek(), 'end')) {
+      if (isRBraceToken(this.peek())) {
         break
       }
       assertReservedSymbolToken(this.peek(), 'case')
     }
 
-    assertReservedSymbolToken(this.peek(), 'end')
+    assertRBraceToken(this.peek())
     this.advance()
 
     return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.cond, params]], token[2]) satisfies CondNode
@@ -1268,10 +1212,16 @@ export class Parser {
 
   parseSwitch(token: SymbolToken): SwitchNode {
     this.advance()
+    assertLParenToken(this.peek())
+    this.advance()
     const valueExpression = this.parseExpression()
+    assertRParenToken(this.peek())
+    this.advance()
+    assertLBraceToken(this.peek())
+    this.advance()
     const params: [Node, Node][] = []
 
-    while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
+    while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
       assertReservedSymbolToken(this.peek(), 'case')
       this.advance()
       const caseExpression = this.parseExpression()
@@ -1281,12 +1231,12 @@ export class Parser {
       while (
         !this.isAtEnd()
         && !isReservedSymbolToken(this.peek(), 'case')
-        && !isReservedSymbolToken(this.peek(), 'end')) {
+        && !isRBraceToken(this.peek())) {
         expressions.push(this.parseExpression())
         if (isOperatorToken(this.peek(), ';')) {
           this.advance()
         }
-        else if (!isReservedSymbolToken(this.peek(), 'case') && !isReservedSymbolToken(this.peek(), 'end')) {
+        else if (!isReservedSymbolToken(this.peek(), 'case') && !isRBraceToken(this.peek())) {
           throw new LitsError('Expected ;', this.peekSourceCodeInfo())
         }
       }
@@ -1296,13 +1246,13 @@ export class Parser {
         : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.do, expressions]], token[2]) satisfies DoNode
 
       params.push([caseExpression, thenExpression])
-      if (isReservedSymbolToken(this.peek(), 'end')) {
+      if (isRBraceToken(this.peek())) {
         break
       }
       assertReservedSymbolToken(this.peek(), 'case')
     }
 
-    assertReservedSymbolToken(this.peek(), 'end')
+    assertRBraceToken(this.peek())
     this.advance()
 
     return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.switch, valueExpression, params]], token[2]) satisfies SwitchNode
@@ -1313,24 +1263,12 @@ export class Parser {
     const symbol = this.parseSymbol()
     const functionArguments = this.parseFunctionArguments()
 
-    const body: Node[] = []
-
-    while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
-      body.push(this.parseExpression())
-      if (isOperatorToken(this.peek(), ';')) {
-        this.advance()
-      }
-      else if (!isReservedSymbolToken(this.peek(), 'end')) {
-        throw new LitsError('Expected ;', this.peekSourceCodeInfo())
-      }
-    }
-    assertReservedSymbolToken(this.peek(), 'end')
-    this.advance()
+    const block = this.parseBlock(true)
     assertOperatorToken(this.peek(), ';')
 
     return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.function, symbol, [
       functionArguments,
-      body,
+      block[1][1],
     ]]], token[2]) satisfies FunctionNode
   }
 
@@ -1347,40 +1285,22 @@ export class Parser {
       return [';', ',', ':='].includes(token[1])
     }
     if (isReservedSymbolToken(token)) {
-      return ['else', 'when', 'while', 'then', 'end', 'case', 'catch'].includes(token[1])
+      return ['else', 'when', 'while', 'then', 'case', 'catch'].includes(token[1])
     }
     return false
   }
 
-  private parseExport(token: ReservedSymbolToken<'export'>): DefNode | DefnNode {
+  private parseExport(exportToken: ReservedSymbolToken<'export'>): DefNode | DefnNode {
     this.advance()
-    if (isSymbolToken(this.peek(), 'let')) {
-      const letNode = this.parseLet(asSymbolToken(this.peek()))
-      return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes['0_def'], letNode[1][1]]], token[2]) satisfies DefNode
+    const token = this.peek()
+    if (isSymbolToken(token, 'let')) {
+      const letNode = this.parseLet(asSymbolToken(token))
+      return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes['0_def'], letNode[1][1]]], exportToken[2]) satisfies DefNode
     }
-    else if (isReservedSymbolToken(this.peek(), 'function')) {
-      this.advance()
-      const symbol = this.parseSymbol()
-
-      const functionArguments = this.parseFunctionArguments()
-
-      const body: Node[] = []
-
-      while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
-        body.push(this.parseExpression())
-        if (isOperatorToken(this.peek(), ';')) {
-          this.advance()
-        }
-        else if (!isReservedSymbolToken(this.peek(), 'end')) {
-          throw new LitsError('Expected ;', this.peekSourceCodeInfo())
-        }
-      }
-      assertReservedSymbolToken(this.peek(), 'end')
-      this.advance()
-      return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes['0_defn'], symbol, [
-        functionArguments,
-        body,
-      ]]], token[2]) satisfies DefnNode
+    else if (isReservedSymbolToken(token, 'function')) {
+      const functionNode = this.parseFunction(token) as unknown as DefnNode
+      functionNode[1][0] = specialExpressionTypes['0_defn']
+      return functionNode
     }
     else {
       throw new LitsError('Expected let or function', this.peekSourceCodeInfo())

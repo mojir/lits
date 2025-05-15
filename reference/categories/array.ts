@@ -116,9 +116,9 @@ flatten([
       'mapcat([[3, 2, 1, 0], [6, 5, 4], [9, 8, 7]], reverse)',
       '[[3, 2, 1, 0,], [6, 5, 4,], [9, 8, 7]] mapcat reverse',
       `
-function foo(n)
+function foo(n) {
   [n - 1, n, n + 1]
-end;
+};
 [1, 2, 3] mapcat foo`,
       `
 mapcat(

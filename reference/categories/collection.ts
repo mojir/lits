@@ -155,7 +155,7 @@ filter(
       `
 reduce(
   [1, 2, 3, 4, 5, 6, 7, 8, 9],
-  (result, value) -> result + if even?(value) then value else 0 end,
+  (result, value) -> result + (even?(value) ? value : 0),
   0)`,
     ],
   },
@@ -277,7 +277,7 @@ reduce(
       `
 reductions(
   [1, 2, 3, 4, 5, 6, 7, 8, 9],
-  (result, value) -> result + if even?(value) then value else 0 end,
+  (result, value) -> result + (even?(value) ? value : 0),
   0
 )`,
     ],
@@ -911,7 +911,7 @@ let x := { a := 1, b := 2 };
 update(
   x,
   "c",
-  val -> if null?(val) then 0 else inc(val) end
+  val -> null?(val) ? 0 : inc(val)
 )`,
     ],
   },
@@ -950,19 +950,19 @@ objects will be created - and the corresponding keys must be of type string.`,
 update-in(
   { a := [1, 2, 3] },
   ["a", 1],
-  -> if null?($) then 0 end
+  -> null?($) ? 0 : inc($)
 )`,
       `
 update-in(
   { a := { foo := "bar"} },
   ["a", "foo"],
-  -> if null?($) then "?" else "!" end
+  -> null?($) ? "?" : "!"
 )`,
       `
 update-in(
   { a := { foo := "bar"} },
   ["a", "baz"],
-  -> if null?($) then "?" else "!" end
+  -> null?($) ? "?" : "!"
 )`,
       `
 update-in(

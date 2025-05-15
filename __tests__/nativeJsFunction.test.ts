@@ -64,7 +64,7 @@ describe('nativeJsFunction', () => {
     console.warn = vitest.fn()
     expect(lits.run('+(1, 2, 3)', { jsFunctions: stupidJsFunctions })).toBe(6)
     expect(console.warn).toHaveBeenCalledTimes(2)
-    expect(lits.run('if true then false else true end', { jsFunctions: stupidJsFunctions })).toBe(false)
+    expect(lits.run('if (true) false else true', { jsFunctions: stupidJsFunctions })).toBe(false)
     expect(console.warn).toHaveBeenCalledTimes(4)
     console.warn = warn
   })

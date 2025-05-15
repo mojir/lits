@@ -54,13 +54,13 @@ describe('all tests', () => {
     })
     it('a function.', () => {
       lits = new Lits({ astCacheSize: 10 })
-      const contexts = [lits.context('export function tripple(x) x * 3 end;')]
+      const contexts = [lits.context('export function tripple(x) { x * 3 };')]
       expect(lits.run('tripple(10)', { contexts })).toBe(30)
       expect(lits.run('tripple(10)', { contexts })).toBe(30)
     })
     it('a function with ast.', () => {
       lits = new Lits({ astCacheSize: 10 })
-      const parseResult = lits.parse(lits.tokenize('export function tripple(x) x * 3 end;'))
+      const parseResult = lits.parse(lits.tokenize('export function tripple(x) { x * 3 };'))
       const contexts = [lits.context(parseResult)]
       expect(lits.run('tripple(10)', { contexts })).toBe(30)
       expect(lits.run('tripple(10)', { contexts })).toBe(30)
@@ -68,7 +68,7 @@ describe('all tests', () => {
 
     it('a function - no cache', () => {
       lits = new Lits({ debug: true })
-      const contexts = [lits.context('export function tripple(x) x * 3 end;', {})]
+      const contexts = [lits.context('export function tripple(x) { x * 3 };', {})]
       expect(lits.run('tripple(10)', { contexts })).toBe(30)
       expect(lits.run('tripple(10)', { contexts })).toBe(30)
     })
@@ -95,7 +95,7 @@ describe('all tests', () => {
     it('a variable - again.', () => {
       const contexts = [
         lits.context(`
-    export function zip?(input) boolean(match(input, #"^\\d{5}$")) end;
+    export function zip?(input) { boolean(match(input, #"^\\d{5}$")) };
     export let NAME_LENGTH := 100;
     `),
       ]
@@ -111,8 +111,8 @@ describe('all tests', () => {
     })
 
     it('a variable twice', () => {
-      const contexts = [lits.context('export let magicNumber := 42; export function getMagic() 42 end;')]
-      lits.context('export let magicNumber := 42; export function getMagic() 42 end;', { contexts })
+      const contexts = [lits.context('export let magicNumber := 42; export function getMagic() { 42 };')]
+      lits.context('export let magicNumber := 42; export function getMagic() { 42 };', { contexts })
     })
 
     test('global context 1', () => {
@@ -139,7 +139,7 @@ describe('all tests', () => {
     })
 
     it('more than one', () => {
-      const contexts = [lits.context('export function tripple(x) x * 3 end;'), lits.context('export let magicNumber := 42;')]
+      const contexts = [lits.context('export function tripple(x) { x * 3 };'), lits.context('export let magicNumber := 42;')]
       expect(lits.run('tripple(magicNumber)', { contexts })).toBe(126)
     })
   })

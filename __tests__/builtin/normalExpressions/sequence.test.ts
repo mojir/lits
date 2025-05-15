@@ -514,16 +514,16 @@ describe('sequence functions', () => {
 
   describe('sort', () => {
     it('samples', () => {
-      expect(lits.run('sort([3, 1, 2], (a, b) -> cond case a < b then -1 case a > b then 1 case true then 0 end)')).toEqual([1, 2, 3])
-      expect(lits.run('sort([3, 1, 2], (a, b) -> cond case a > b then -1 case a < b then 1 case true then 0 end)')).toEqual([3, 2, 1])
-      expect(lits.run('sort([], (a, b) -> cond case a > b then -1 case a < b then 1 case true then 0 end)')).toEqual([])
+      expect(lits.run('sort([3, 1, 2], (a, b) -> cond { case a < b then -1 case a > b then 1 case true then 0 })')).toEqual([1, 2, 3])
+      expect(lits.run('sort([3, 1, 2], (a, b) -> cond { case a > b then -1 case a < b then 1 case true then 0 })')).toEqual([3, 2, 1])
+      expect(lits.run('sort([], (a, b) -> cond { case a > b then -1 case a < b then 1 case true then 0 })')).toEqual([])
 
-      expect(lits.run('sort("Albert", (a, b) -> cond case a < b then 1 case a > b then -1 case true then 0 end)')).toBe('trlebA')
+      expect(lits.run('sort("Albert", (a, b) -> cond { case a < b then 1 case a > b then -1 case true then 0 })')).toBe('trlebA')
 
       expect(lits.run('sort("Albert")')).toBe('Abelrt')
 
-      expect(() => lits.run('sort(10, (a, b) -> cond case a > b then -1 case a < b then 1 case true then -1 end)')).toThrow(LitsError)
-      expect(() => lits.run('sort((a, b) -> cond case a > b then -1 case a < b then 1 case true then -1 end)')).toThrow(LitsError)
+      expect(() => lits.run('sort(10, (a, b) -> cond { case a > b then -1 case a < b then 1 case true then -1 })')).toThrow(LitsError)
+      expect(() => lits.run('sort((a, b) -> cond { case a > b then -1 case a < b then 1 case true then -1 })')).toThrow(LitsError)
       expect(() => lits.run('sort()')).toThrow(LitsError)
     })
   })
@@ -653,7 +653,7 @@ describe('sequence functions', () => {
         Albert: [{ name: 'Albert' }, { name: 'Albert' }],
         Mojir: [{ name: 'Mojir' }],
       })
-      expect(lits.run('group-by("Albert Mojir", -> if "aoueiAOUEI" contains? $ then "vowel" else "other" end)')).toEqual({
+      expect(lits.run('group-by("Albert Mojir", -> if ("aoueiAOUEI" contains? $1) "vowel" else "other")')).toEqual({
         other: ['l', 'b', 'r', 't', ' ', 'M', 'j', 'r'],
         vowel: ['A', 'e', 'o', 'i'],
       })

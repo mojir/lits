@@ -94,7 +94,7 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
     examples: [
       'string?("")',
       'string?("A string")',
-      'string?(if true then "A string" else false end)',
+      'string?(true ? "A string" : false)',
       'string?(false)',
       'string?([1, 2, 3])',
       'string?(100)',

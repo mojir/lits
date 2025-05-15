@@ -1,1 +1,1 @@
-export function plus(a, b) a + b end;
+export function plus(a, b) { a + b };

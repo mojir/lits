@@ -1,21 +1,21 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../src/Lits/Lits'
 
-const lits = new Lits()
+const lits = new Lits({ debug: true })
 describe('determinant.', () => {
   it('should compile', () => {
     expect(lits.run(`
 // Determinant function for square matrices
-function determinant(matrix)
+function determinant(matrix) {
   // Check if input is an array
-  if !(array?(matrix)) then
+  if (!(array?(matrix))) {
     throw("Input must be an array");
-  end;
+  };
 
   // Check if matrix is empty
-  if empty?(matrix) then
+  if (empty?(matrix)) {
     throw("Matrix cannot be empty");
-  end;
+  };
 
   let rows := count(matrix);
   
@@ -23,69 +23,77 @@ function determinant(matrix)
   let firstRow := first(matrix);
   
   // Check if first row is an array
-  if !(array?(firstRow)) then
+  if (!(array?(firstRow))) {
     throw("Input must be a 2D array");
-  end;
+  };
   
   let cols := count(firstRow);
   
   // Ensure matrix is square
-  if rows ≠ cols then
+  if (rows ≠ cols) {
     throw("Matrix must be square");
-  end;
+  };
   
   // Base case: 1x1 matrix
-  if rows = 1 then
+  if (rows = 1) {
     get(get(matrix, 0), 0);
-  else
+  } else {
     // Base case: 2x2 matrix
-    if rows = 2 then
+    if (rows = 2) {
       let a := matrix[0][0];
       let b := matrix[0][1];
       let c := matrix[1][0];
       let d := matrix[1][1];
       
       a * d - b * c;
-    else
+    } else {
       // For larger matrices, use cofactor expansion along first row
       // Use reduce to calculate the determinant without mutating variables
       reduce(
         range(cols),
-        (acc, j) -> do
+        (acc, j) -> {
           let minor := getMinor(matrix, 0, j);
           let cofactor := determinant(minor);
-          let signFactor := if even?(j) then 1 else -1 end;
+          let signFactor := if (even?(j)) {
+            1;
+          } else {
+            -1;
+          };
           let term := signFactor * get(get(matrix, 0), j) * cofactor;
           
           acc + term;
-        end,
+        },
         0,
       );
-    end;
-  end;
-end;
+    }
+  }
+};
 
 // Helper function to get minor (submatrix) by removing specific row and column
-function getMinor(matrix, rowToRemove, colToRemove)
+function getMinor(matrix, rowToRemove, colToRemove) {
   // Use map with filter to create the new matrix without mutating
   map(
     range(count(matrix)),
-    i -> do
-      if i = rowToRemove then
+    i -> {
+      if (i = rowToRemove) {
         null; // This will be filtered out
-      else
+      } else {
         let row := get(matrix, i);
         // Filter out the column to remove
         map(
           range(count(row)),
-          j -> do
-            if j = colToRemove then null else get(row, j) end;
-          end
+          j -> {
+            if (j = colToRemove) {
+              null; // This will be filtered out
+            } else {
+              get(row, j);
+            };
+          },
         ) filter (item -> item ≠ null);
-      end;
-    end
+      };
+    },
   ) filter (row -> row ≠ null);
-end;
+};
   
 // 3x3 invertible matrix
 let matrix4 := [[2, 3, 4], [1, 2, 3], [3, 4, 1]];

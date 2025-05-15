@@ -239,46 +239,46 @@ describe('lits Destructuring', () => {
   describe('destructuring in function parameters', () => {
     test('basic parameter destructuring', () => {
       expect(lits.run(`
-        function greet({ name })
-          "Hello, " ++ name
-        end;
-        greet({ name := "Pat" })
+        function greet({ name }) {
+          "Hello, " ++ name;
+        };
+        greet({ name := "Pat" });
       `)).toBe('Hello, Pat')
     })
 
     test('parameter with default', () => {
       expect(lits.run(`
-        function greet({ name := "friend" })
-          "Hello, " ++ name
-        end;
-        greet({})
+        function greet({ name := "friend" }) {
+          "Hello, " ++ name;
+        };
+        greet({});
       `)).toBe('Hello, friend')
     })
 
     test('parameter with rename', () => {
       expect(lits.run(`
-        function foo({ a as b := 10 })
-          b
-        end;
-        foo({ b := 1 })
+        function foo({ a as b := 10 }) {
+          b;
+        };
+        foo({ b := 1 });
       `)).toBe(10)
     })
 
     test('nested parameter destructuring', () => {
       expect(lits.run(`
-        function processUser({ profile { name, age }})
-          name ++ " is " ++ str(age)
-        end;
-        processUser({ profile := { name := "Quinn", age := 29 }})
+        function processUser({ profile { name, age }}) {
+          name ++ " is " ++ str(age);
+        };
+        processUser({ profile := { name := "Quinn", age := 29 }});
       `)).toBe('Quinn is 29')
     })
 
     test('array parameter destructuring', () => {
       expect(lits.run(`
-        function processCoords([x, y])
-          x + y
-        end;
-        processCoords([3, 4])
+        function processCoords([x, y]) {
+          x + y;
+        };
+        processCoords([3, 4]);
       `)).toBe(7)
     })
   })
@@ -287,22 +287,22 @@ describe('lits Destructuring', () => {
   describe('edge cases', () => {
     test('destructuring a number should fail gracefully', () => {
       expect(lits.run(`
-        try
+        try {
           let { value } := 42;
-          "Should not reach here"
-        catch (e)
-          "Error caught"
-        end
+          "Should not reach here";
+        } catch (e) {
+          "Error caught";
+        };
       `)).toBe('Error caught')
     })
 
     test('destructuring shadowing', () => {
       expect(lits.run(`
         let name := "outer";
-        let result := do
+        let result := {
           let { name } := { name := "inner" };
-          name
-        end;
+          name;
+        };
         [name, result]
       `)).toEqual(['outer', 'inner'])
     })

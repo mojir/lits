@@ -11,8 +11,8 @@ import type { specialExpressionTypes } from '../specialExpressionTypes'
 
 export type LoopBindingNode = [BindingNode, BindingNode[], Node?, Node?] // Binding, Let-Bindings, When, While
 
-export type ForNode = SpecialExpressionNode<[typeof specialExpressionTypes['for'], LoopBindingNode[], Node[]]> // LoopBindings, body
-export type DoSeqNode = SpecialExpressionNode<[typeof specialExpressionTypes['doseq'], LoopBindingNode[], Node[]]> // LoopBindings, body
+export type ForNode = SpecialExpressionNode<[typeof specialExpressionTypes['for'], LoopBindingNode[], Node]> // LoopBindings, body
+export type DoSeqNode = SpecialExpressionNode<[typeof specialExpressionTypes['doseq'], LoopBindingNode[], Node]> // LoopBindings, body
 
 type LoopNode = ForNode | DoSeqNode
 
@@ -96,10 +96,7 @@ function evaluateLoop(
       }
     }
     if (!skip) {
-      let value: Any = null
-      for (const form of body) {
-        value = evaluateNode(form, newContextStack)
-      }
+      const value: Any = evaluateNode(body, newContextStack)
       if (returnResult)
         result.push(value)
 
@@ -149,7 +146,7 @@ function analyze(
       )
     }
   })
-  getUndefinedSymbols(body, contextStack.create(newContext), builtin, evaluateNode).forEach(symbol =>
+  getUndefinedSymbols([body], contextStack.create(newContext), builtin, evaluateNode).forEach(symbol =>
     result.add(symbol),
   )
   return result
