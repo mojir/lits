@@ -6,7 +6,6 @@ export const medianReference: VectorReductionReference<'median'> = {
     title: 'vec:median',
     category: 'Vector',
     description: 'Returns the `median` of all elements in the `vector`.',
-    linkName: 'vec-colon-median',
     returns: {
       type: 'number',
     },
@@ -28,7 +27,6 @@ export const medianReference: VectorReductionReference<'median'> = {
     title: 'vec:moving-median',
     category: 'Vector',
     description: 'Returns the **moving median` of the `vector** with a given window size.',
-    linkName: 'vec-colon-moving-median',
     returns: {
       type: 'vector',
     },
@@ -55,7 +53,6 @@ export const medianReference: VectorReductionReference<'median'> = {
     title: 'vec:centered-moving-median',
     category: 'Vector',
     description: 'Returns the **centered moving median` of the `vector** with a given window size.',
-    linkName: 'vec-colon-centered-moving-median',
     returns: {
       type: 'array',
     },
@@ -93,7 +90,6 @@ export const medianReference: VectorReductionReference<'median'> = {
     title: 'vec:running-median',
     category: 'Vector',
     description: 'Returns the **running median` of the `vector**.',
-    linkName: 'vec-colon-running-median',
     returns: {
       type: 'vector',
     },

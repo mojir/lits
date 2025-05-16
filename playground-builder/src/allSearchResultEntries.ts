@@ -1,4 +1,4 @@
-import { type Reference, apiReference, isFunctionReference } from '../../reference'
+import { type Reference, apiReference, getLinkName, isFunctionReference } from '../../reference'
 import { formatDescription } from './components/functionDocumentation/description'
 import { getFunctionSignature } from './components/functionDocumentation/functionSignature'
 import { styles } from './styles'
@@ -31,7 +31,7 @@ function getHtml(description: string, reference: Reference) {
   const title = escapeTitle(reference.title)
 
   return `
-    <div onclick="Playground.showPage('${reference.linkName}', 'smooth')" class="search-entry" ${styles('w-full', 'flex', 'flex-col', 'p-4', 'scroll-my-4', 'cursor-pointer', 'min-height: 12rem;')}>
+    <div onclick="Playground.showPage('${getLinkName(reference)}', 'smooth')" class="search-entry" ${styles('w-full', 'flex', 'flex-col', 'p-4', 'scroll-my-4', 'cursor-pointer', 'min-height: 12rem;')}>
       <div ${styles('mb-4', 'flex', 'justify-between', 'items-baseline')}>
         <div ${styles('text-2xl', 'font-bold', 'text-color-gray-300')}>${title}</div>
         <div ${styles('text-base', 'text-color-gray-400')}>${reference.category}</div>

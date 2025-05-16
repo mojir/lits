@@ -5,7 +5,6 @@ export const regularExpressionReference: Record<RegularExpressionApiName, Functi
   'regexp': {
     title: 'regexp',
     category: 'Regular expression',
-    linkName: 'regexp',
     returns: {
       type: 'regexp',
     },
@@ -34,7 +33,6 @@ export const regularExpressionReference: Record<RegularExpressionApiName, Functi
   'match': {
     title: 'match',
     category: 'Regular expression',
-    linkName: 'match',
     returns: {
       type: 'any',
       array: true,
@@ -60,7 +58,6 @@ If $b is a string and matches the regular expression, a \`match\`-array is retur
   'replace': {
     title: 'replace',
     category: 'Regular expression',
-    linkName: 'replace',
     returns: {
       type: 'any',
       array: true,
@@ -87,7 +84,6 @@ If $b is a string and matches the regular expression, a \`match\`-array is retur
   'replace-all': {
     title: 'replace-all',
     category: 'Regular expression',
-    linkName: 'replace-all',
     returns: {
       type: 'any',
       array: true,

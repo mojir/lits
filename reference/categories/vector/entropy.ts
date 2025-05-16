@@ -6,7 +6,6 @@ export const entropyReference: VectorReductionReference<'entropy'> = {
     title: 'vec:entropy',
     category: 'Vector',
     description: 'Calculates the **entropy** of a `vector`. The entropy is a measure of the uncertainty associated with a random variable.',
-    linkName: 'vec-colon-entropy',
     returns: {
       type: 'number',
     },
@@ -32,7 +31,6 @@ export const entropyReference: VectorReductionReference<'entropy'> = {
     title: 'vec:moving-entropy',
     category: 'Vector',
     description: 'Calculates the **moving entropy** of a `vector` with a given window size.',
-    linkName: 'vec-colon-moving-entropy',
     returns: {
       type: 'vector',
     },
@@ -60,7 +58,6 @@ export const entropyReference: VectorReductionReference<'entropy'> = {
     title: 'vec:centered-moving-entropy',
     category: 'Vector',
     description: 'Calculates the **centered moving entropy** of a `vector` with a given window size.',
-    linkName: 'vec-colon-centered-moving-entropy',
     returns: {
       type: 'vector',
     },
@@ -98,7 +95,6 @@ export const entropyReference: VectorReductionReference<'entropy'> = {
     title: 'vec:running-entropy',
     category: 'Vector',
     description: 'Calculates the **running entropy** of a `vector`.',
-    linkName: 'vec-colon-running-entropy',
     returns: {
       type: 'vector',
     },

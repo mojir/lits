@@ -6,7 +6,6 @@ export const meanReference: VectorReductionReference<'mean'> = {
     title: 'vec:mean',
     category: 'Vector',
     description: 'Returns the `mean` of all elements in the `vector`.',
-    linkName: 'vec-colon-mean',
     returns: {
       type: 'number',
     },
@@ -28,7 +27,6 @@ export const meanReference: VectorReductionReference<'mean'> = {
     title: 'vec:moving-mean',
     category: 'Vector',
     description: 'Returns the **moving mean` of the `vector** with a given window size.',
-    linkName: 'vec-colon-moving-mean',
     returns: {
       type: 'vector',
     },
@@ -55,7 +53,6 @@ export const meanReference: VectorReductionReference<'mean'> = {
     title: 'vec:centered-moving-mean',
     category: 'Vector',
     description: 'Returns the **centered moving mean` of the `vector** with a given window size.',
-    linkName: 'vec-colon-centered-moving-mean',
     returns: {
       type: 'array',
     },
@@ -93,7 +90,6 @@ export const meanReference: VectorReductionReference<'mean'> = {
     title: 'vec:running-mean',
     category: 'Vector',
     description: 'Returns the **running mean` of the `vector**.',
-    linkName: 'vec-colon-running-mean',
     returns: {
       type: 'vector',
     },
@@ -117,7 +113,6 @@ export const geometricMeanReference: VectorReductionReference<'geometric-mean'> 
     title: 'vec:geometric-mean',
     category: 'Vector',
     description: 'Returns the `geometric mean` of all elements in the `vector`.',
-    linkName: 'vec-colon-geometric-mean',
     returns: {
       type: 'number',
     },
@@ -139,7 +134,6 @@ export const geometricMeanReference: VectorReductionReference<'geometric-mean'> 
     title: 'vec:moving-geometric-mean',
     category: 'Vector',
     description: 'Returns the **moving geometric mean` of the `vector** with a given window size.',
-    linkName: 'vec-colon-moving-geometric-mean',
     returns: {
       type: 'vector',
     },
@@ -166,7 +160,6 @@ export const geometricMeanReference: VectorReductionReference<'geometric-mean'> 
     title: 'vec:centered-moving-geometric-mean',
     category: 'Vector',
     description: 'Returns the **centered moving geometric mean` of the `vector** with a given window size.',
-    linkName: 'vec-colon-centered-moving-geometric-mean',
     returns: {
       type: 'array',
     },
@@ -204,7 +197,6 @@ export const geometricMeanReference: VectorReductionReference<'geometric-mean'> 
     title: 'vec:running-geometric-mean',
     category: 'Vector',
     description: 'Returns the **running geometric mean` of the `vector**.',
-    linkName: 'vec-colon-running-geometric-mean',
     returns: {
       type: 'vector',
     },
@@ -228,7 +220,6 @@ export const harmonicMeanReference: VectorReductionReference<'harmonic-mean'> = 
     title: 'vec:harmonic-mean',
     category: 'Vector',
     description: 'Returns the `harmonic mean` of all elements in the `vector`.',
-    linkName: 'vec-colon-harmonic-mean',
     returns: {
       type: 'number',
     },
@@ -250,7 +241,6 @@ export const harmonicMeanReference: VectorReductionReference<'harmonic-mean'> = 
     title: 'vec:moving-harmonic-mean',
     category: 'Vector',
     description: 'Returns the **moving harmonic mean` of the `vector** with a given window size.',
-    linkName: 'vec-colon-moving-harmonic-mean',
     returns: {
       type: 'vector',
     },
@@ -277,7 +267,6 @@ export const harmonicMeanReference: VectorReductionReference<'harmonic-mean'> = 
     title: 'vec:centered-moving-harmonic-mean',
     category: 'Vector',
     description: 'Returns the **centered moving harmonic mean` of the `vector** with a given window size.',
-    linkName: 'vec-colon-centered-moving-harmonic-mean',
     returns: {
       type: 'array',
     },
@@ -315,7 +304,6 @@ export const harmonicMeanReference: VectorReductionReference<'harmonic-mean'> = 
     title: 'vec:running-harmonic-mean',
     category: 'Vector',
     description: 'Returns the **running harmonic mean` of the `vector**.',
-    linkName: 'vec-colon-running-harmonic-mean',
     returns: {
       type: 'vector',
     },

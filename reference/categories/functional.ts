@@ -5,7 +5,6 @@ export const functionalReference: Record<FunctionalApiName, FunctionReference<'F
   '|>': {
     title: '|>',
     category: 'Functional',
-    linkName: '-or-gt',
     returns: {
       type: 'any',
     },
@@ -31,7 +30,6 @@ export const functionalReference: Record<FunctionalApiName, FunctionReference<'F
   'apply': {
     title: 'apply',
     category: 'Functional',
-    linkName: 'apply',
     returns: {
       type: 'any',
     },
@@ -63,7 +61,6 @@ apply(
   'identity': {
     title: 'identity',
     category: 'Functional',
-    linkName: 'identity',
     returns: {
       type: 'any',
     },
@@ -81,7 +78,6 @@ apply(
   'comp': {
     title: 'comp',
     category: 'Functional',
-    linkName: 'comp',
     returns: {
       type: 'function',
     },
@@ -112,7 +108,6 @@ comp("foo", "bar")(x)`,
   'constantly': {
     title: 'constantly',
     category: 'Functional',
-    linkName: 'constantly',
     returns: {
       type: 'function',
     },
@@ -135,7 +130,6 @@ always-true(9, 3)`,
   'juxt': {
     title: 'juxt',
     category: 'Functional',
-    linkName: 'juxt',
     returns: {
       type: 'function',
     },
@@ -179,7 +173,6 @@ juxt(+, *, min, max) apply range(1, 11)`,
   'complement': {
     title: 'complement',
     category: 'Functional',
-    linkName: 'complement',
     returns: {
       type: 'function',
     },
@@ -202,7 +195,6 @@ juxt(+, *, min, max) apply range(1, 11)`,
   'every-pred': {
     title: 'every-pred',
     category: 'Functional',
-    linkName: 'every-pred',
     returns: {
       type: 'function',
     },
@@ -239,7 +231,6 @@ every-pred(string?, -> count($) > 3)(
   'some-pred': {
     title: 'some-pred',
     category: 'Functional',
-    linkName: 'some-pred',
     returns: {
       type: 'function',
     },
@@ -268,7 +259,6 @@ every-pred(string?, -> count($) > 3)(
   'fnull': {
     title: 'fnull',
     category: 'Functional',
-    linkName: 'fnull',
     returns: {
       type: 'function',
     },

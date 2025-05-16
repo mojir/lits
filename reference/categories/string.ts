@@ -5,7 +5,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
   'string-repeat': {
     title: 'string-repeat',
     category: 'String',
-    linkName: 'string-repeat',
     returns: {
       type: 'number',
     },
@@ -31,7 +30,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
   'str': {
     title: 'str',
     category: 'String',
-    linkName: 'str',
     returns: {
       type: 'string',
     },
@@ -56,7 +54,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
   'number': {
     title: 'number',
     category: 'String',
-    linkName: 'number',
     returns: {
       type: 'number',
     },
@@ -78,7 +75,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
   'lower-case': {
     title: 'lower-case',
     category: 'String',
-    linkName: 'lower-case',
     returns: {
       type: 'string',
     },
@@ -99,7 +95,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
   'upper-case': {
     title: 'upper-case',
     category: 'String',
-    linkName: 'upper-case',
     returns: {
       type: 'string',
     },
@@ -120,7 +115,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
   'trim': {
     title: 'trim',
     category: 'String',
-    linkName: 'trim',
     returns: {
       type: 'string',
     },
@@ -142,7 +136,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
   'trim-left': {
     title: 'trim-left',
     category: 'String',
-    linkName: 'trim-left',
     returns: {
       type: 'string',
     },
@@ -164,7 +157,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
   'trim-right': {
     title: 'trim-right',
     category: 'String',
-    linkName: 'trim-right',
     returns: {
       type: 'string',
     },
@@ -186,7 +178,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
   'pad-left': {
     title: 'pad-left',
     category: 'String',
-    linkName: 'pad-left',
     returns: {
       type: 'string',
     },
@@ -218,7 +209,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
   'pad-right': {
     title: 'pad-right',
     category: 'String',
-    linkName: 'pad-right',
     returns: {
       type: 'string',
     },
@@ -250,7 +240,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
   'split': {
     title: 'split',
     category: 'String',
-    linkName: 'split',
     returns: {
       type: 'string',
     },
@@ -282,7 +271,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
   'split-lines': {
     title: 'split-lines',
     category: 'String',
-    linkName: 'split-lines',
     returns: {
       type: 'string',
     },
@@ -305,7 +293,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
   'template': {
     title: 'template',
     category: 'String',
-    linkName: 'template',
     returns: {
       type: 'string',
     },
@@ -342,7 +329,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
   'to-char-code': {
     title: 'to-char-code',
     category: 'String',
-    linkName: 'to-char-code',
     returns: {
       type: 'number',
     },
@@ -363,7 +349,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
   'from-char-code': {
     title: 'from-char-code',
     category: 'String',
-    linkName: 'from-char-code',
     returns: {
       type: 'string',
     },
@@ -384,7 +369,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
   'encode-base64': {
     title: 'encode-base64',
     category: 'String',
-    linkName: 'encode-base64',
     returns: {
       type: 'string',
     },
@@ -404,7 +388,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
   'decode-base64': {
     title: 'decode-base64',
     category: 'String',
-    linkName: 'decode-base64',
     returns: {
       type: 'string',
     },
@@ -424,7 +407,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
   'encode-uri-component': {
     title: 'encode-uri-component',
     category: 'String',
-    linkName: 'encode-uri-component',
     returns: {
       type: 'string',
     },
@@ -444,7 +426,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
   'decode-uri-component': {
     title: 'decode-uri-component',
     category: 'String',
-    linkName: 'decode-uri-component',
     returns: {
       type: 'string',
     },
@@ -465,7 +446,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
   'join': {
     title: 'join',
     category: 'String',
-    linkName: 'join',
     returns: {
       type: 'string',
     },
@@ -493,7 +473,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
   'capitalize': {
     title: 'capitalize',
     category: 'String',
-    linkName: 'capitalize',
     returns: {
       type: 'string',
     },
@@ -516,7 +495,6 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
   'blank?': {
     title: 'blank?',
     category: 'String',
-    linkName: 'blank-question',
     returns: {
       type: 'boolean',
     },

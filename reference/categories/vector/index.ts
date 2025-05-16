@@ -53,7 +53,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:monotonic?',
     category: 'Vector',
     description: 'Checks if a vector is monotonic.',
-    linkName: 'vec-colon-monotonic-question',
     returns: {
       type: 'boolean',
     },
@@ -80,7 +79,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:strictly-monotonic?',
     category: 'Vector',
     description: 'Checks if a vector is strictly monotonic.',
-    linkName: 'vec-colon-strictly-monotonic-question',
     returns: {
       type: 'boolean',
     },
@@ -107,7 +105,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:increasing?',
     category: 'Vector',
     description: 'Checks if a vector is increasing.',
-    linkName: 'vec-colon-increasing-question',
     returns: {
       type: 'boolean',
     },
@@ -134,7 +131,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:decreasing?',
     category: 'Vector',
     description: 'Checks if a vector is decreasing.',
-    linkName: 'vec-colon-decreasing-question',
     returns: {
       type: 'boolean',
     },
@@ -161,7 +157,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:strictly-increasing?',
     category: 'Vector',
     description: 'Checks if a vector is strictly increasing.',
-    linkName: 'vec-colon-strictly-increasing-question',
     returns: {
       type: 'boolean',
     },
@@ -188,7 +183,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:strictly-decreasing?',
     category: 'Vector',
     description: 'Checks if a vector is strictly decreasing.',
-    linkName: 'vec-colon-strictly-decreasing-question',
     returns: {
       type: 'boolean',
     },
@@ -215,7 +209,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:sum',
     category: 'Vector',
     description: 'Returns the sum of all elements in the vector.',
-    linkName: 'vec-colon-sum',
     returns: {
       type: 'number',
     },
@@ -237,7 +230,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:median',
     category: 'Vector',
     description: 'Returns the median of all elements in the vector.',
-    linkName: 'vec-colon-median',
     returns: {
       type: 'number',
     },
@@ -261,7 +253,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:mode',
     category: 'Vector',
     description: 'Returns the mode of all elements in the vector.',
-    linkName: 'vec-colon-mode',
     returns: {
       type: 'number',
     },
@@ -286,7 +277,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:sample-variance',
     category: 'Vector',
     description: 'Returns the sample variance of all elements in the vector.',
-    linkName: 'vec-colon-sample-variance',
     returns: {
       type: 'number',
     },
@@ -311,7 +301,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:stdev',
     category: 'Vector',
     description: 'Returns the standard deviation of all elements in the vector.',
-    linkName: 'vec-colon-stdev',
     returns: {
       type: 'number',
     },
@@ -336,7 +325,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:sample-stdev',
     category: 'Vector',
     description: 'Returns the sample standard deviation of all elements in the vector.',
-    linkName: 'vec-colon-sample-stdev',
     returns: {
       type: 'number',
     },
@@ -361,7 +349,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:min',
     category: 'Vector',
     description: 'Returns the minimum value of all elements in the vector.',
-    linkName: 'vec-colon-min',
     returns: {
       type: 'number',
     },
@@ -386,7 +373,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:max',
     category: 'Vector',
     description: 'Returns the maximum value of all elements in the vector.',
-    linkName: 'vec-colon-max',
     returns: {
       type: 'number',
     },
@@ -411,7 +397,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:min-index',
     category: 'Vector',
     description: 'Returns the index of the minimum value of all elements in the vector.',
-    linkName: 'vec-colon-min-index',
     returns: {
       type: 'integer',
     },
@@ -436,7 +421,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:max-index',
     category: 'Vector',
     description: 'Returns the index of the maximum value of all elements in the vector.',
-    linkName: 'vec-colon-max-index',
     returns: {
       type: 'integer',
     },
@@ -461,7 +445,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:sort-indices',
     category: 'Vector',
     description: 'Returns the indices of the elements in the vector sorted in ascending order.',
-    linkName: 'vec-colon-sort-indices',
     returns: {
       type: 'vector',
     },
@@ -486,7 +469,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:count-values',
     category: 'Vector',
     description: 'Counts the number of occurrences of each value in the vector.',
-    linkName: 'vec-colon-count-values',
     returns: {
       type: 'number',
       array: true,
@@ -511,7 +493,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:linspace',
     category: 'Vector',
     description: 'Generates a vector of evenly spaced numbers between two values.',
-    linkName: 'vec-colon-linspace',
     returns: {
       type: 'number',
       array: true,
@@ -542,7 +523,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:ones',
     category: 'Vector',
     description: 'Generates a vector of ones.',
-    linkName: 'vec-colon-ones',
     returns: {
       type: 'number',
       array: true,
@@ -566,7 +546,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:zeros',
     category: 'Vector',
     description: 'Generates a vector of zeros.',
-    linkName: 'vec-colon-zeros',
     returns: {
       type: 'number',
       array: true,
@@ -590,7 +569,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:fill',
     category: 'Vector',
     description: 'Generates a vector filled with a number.',
-    linkName: 'vec-colon-fill',
     returns: {
       type: 'number',
       array: true,
@@ -618,7 +596,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:generate',
     category: 'Vector',
     description: 'Generates a vector of numbers based on a function.',
-    linkName: 'vec-colon-generate',
     returns: {
       type: 'number',
       array: true,
@@ -647,7 +624,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:cumsum',
     category: 'Vector',
     description: 'Calculates the cumulative sum of a vector.',
-    linkName: 'vec-colon-cumsum',
     returns: {
       type: 'number',
       array: true,
@@ -671,7 +647,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:cumprod',
     category: 'Vector',
     description: 'Calculates the cumulative product of a vector.',
-    linkName: 'vec-colon-cumprod',
     returns: {
       type: 'number',
       array: true,
@@ -695,7 +670,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:quartiles',
     category: 'Vector',
     description: 'Calculates the quartiles of a vector. Returns an array containing the first, second (median), and third quartiles.',
-    linkName: 'vec-colon-quartiles',
     returns: {
       type: 'number',
       array: true,
@@ -721,7 +695,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:percentile',
     category: 'Vector',
     description: 'Calculates the percentile of a vector. Returns the value at the specified percentile.',
-    linkName: 'vec-colon-percentile',
     returns: {
       type: 'number',
     },
@@ -758,7 +731,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:quantile',
     category: 'Vector',
     description: 'Calculates the quantile of a vector. Returns the value at the specified quantile.',
-    linkName: 'vec-colon-quantile',
     returns: {
       type: 'number',
     },
@@ -795,7 +767,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:span',
     category: 'Vector',
     description: 'Returns the difference between the maximum and minimum values in a vector.',
-    linkName: 'vec-colon-span',
     returns: {
       type: 'number',
     },
@@ -818,7 +789,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:histogram',
     category: 'Vector',
     description: 'Creates a histogram from a numeric `array` by dividing the data range into the specified number of bins. Returns an `array` of `[binStart, binEnd, count]` tuples representing each bin\'s range and the number of values within it. Handles empty arrays, identical values, and properly places maximum values in the last bin.',
-    linkName: 'vec-colon-histogram',
     returns: {
       type: 'array',
       array: true,
@@ -848,7 +818,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:ecdf',
     category: 'Vector',
     description: 'Calculates the empirical cumulative distribution function value for a given threshold in a non empty dataset. Returns the proportion of values in the `array` that are less than or equal to the specified threshold.',
-    linkName: 'vec-colon-ecdf',
     returns: {
       type: 'number',
     },
@@ -878,7 +847,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:outliers?',
     category: 'Vector',
     description: 'Checks if the `vector` contains outliers based on the interquartile range (IQR) method. Returns `true` if outliers are present, `false` otherwise.',
-    linkName: 'vec-colon-outliers-question',
     returns: {
       type: 'boolean',
     },
@@ -901,7 +869,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:outliers',
     category: 'Vector',
     description: 'Identifies outliers in the `vector` based on the interquartile range (IQR) method. Returns an array of outlier values.',
-    linkName: 'vec-colon-outliers',
     returns: {
       type: 'number',
       array: true,
@@ -925,7 +892,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:bincount',
     category: 'Vector',
     description: 'counts occurrences of each `integer` in a vector, returning an array where index `i` contains the count of value `i`, with optional **minimum size** and **weights parameters**.',
-    linkName: 'vec-colon-bincount',
     returns: {
       type: 'vector',
     },
@@ -959,7 +925,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:winsorize',
     category: 'Vector',
     description: 'Limits extreme values in a `vector` by replacing values below the **lower quantile** and above the **upper quantile** with the values at those quantiles. The function takes a `vector` of values and **quantile thresholds** (between 0 and 1), with the upper quantile. Winsorization reduces the influence of outliers while preserving the overall distribution shape, making statistical analyses more robust.',
-    linkName: 'vec-colon-winsorize',
     returns: {
       type: 'vector',
     },
@@ -992,7 +957,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:mse',
     category: 'Vector',
     description: 'Calculates the **Mean Squared Error (MSE)** between two vectors. Returns the average of the squared differences between corresponding elements.',
-    linkName: 'vec-colon-mse',
     returns: {
       type: 'number',
     },
@@ -1021,7 +985,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:rmse',
     category: 'Vector',
     description: 'Calculates the **Root Mean Squared Error (RMSE)** between two vectors. Returns the square root of the average of the squared differences between corresponding elements.',
-    linkName: 'vec-colon-rmse',
     returns: {
       type: 'number',
     },
@@ -1050,7 +1013,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:mae',
     category: 'Vector',
     description: 'Calculates the **Mean Absolute Error (MAE)** between two vectors. Returns the average of the absolute differences between corresponding elements.',
-    linkName: 'vec-colon-mae',
     returns: {
       type: 'number',
     },
@@ -1079,7 +1041,6 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
     title: 'vec:smape',
     category: 'Vector',
     description: 'Calculates the **Symmetric Mean Absolute Percentage Error (SMAPE)** between two vectors. Returns the average of the absolute percentage differences between corresponding elements.',
-    linkName: 'vec-colon-smape',
     returns: {
       type: 'number',
     },

@@ -5,7 +5,6 @@ export const geometricReference: NumberTheorySequenceReference<'geometric'> = {
     title: 'nth:geometric-seq',
     category: 'Number Theory',
     description: 'Generates the geometric sequence for a given $start, $ratio, and $length.',
-    linkName: 'nth-colon-geometric-seq',
     returns: {
       type: 'integer',
       array: true,
@@ -38,7 +37,6 @@ export const geometricReference: NumberTheorySequenceReference<'geometric'> = {
     title: 'nth:geometric-take-while',
     category: 'Number Theory',
     description: 'Generates the geometric sequence while a condition is met.',
-    linkName: 'nth-colon-geometric-take-while',
     returns: {
       type: 'integer',
       array: true,
@@ -68,7 +66,6 @@ export const geometricReference: NumberTheorySequenceReference<'geometric'> = {
     title: 'nth:geometric-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the geometric sequence.',
-    linkName: 'nth-colon-geometric-nth',
     returns: {
       type: 'integer',
     },
@@ -100,7 +97,6 @@ export const geometricReference: NumberTheorySequenceReference<'geometric'> = {
     title: 'nth:geometric?',
     category: 'Number Theory',
     description: 'Checks if a number is in the geometric sequence.',
-    linkName: 'nth-colon-geometric-question',
     returns: {
       type: 'boolean',
     },

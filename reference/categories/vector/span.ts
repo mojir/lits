@@ -6,7 +6,6 @@ export const spanReference: VectorReductionReference<'span'> = {
     title: 'vec:span',
     category: 'Vector',
     description: 'Calculates the **span** of a `vector`. Returns the difference between the maximum and minimum values.',
-    linkName: 'vec-colon-span',
     returns: {
       type: 'number',
     },
@@ -31,7 +30,6 @@ export const spanReference: VectorReductionReference<'span'> = {
     title: 'vec:moving-span',
     category: 'Vector',
     description: 'Calculates the **moving span** of a `vector` with a given window size.',
-    linkName: 'vec-colon-moving-span',
     returns: {
       type: 'vector',
     },
@@ -59,7 +57,6 @@ export const spanReference: VectorReductionReference<'span'> = {
     title: 'vec:centered-moving-span',
     category: 'Vector',
     description: 'Calculates the **centered moving span** of a `vector` with a given window size. The result is padded with `leftPadding` on the left and right.',
-    linkName: 'vec-colon-centered-moving-span',
     returns: {
       type: 'array',
     },
@@ -96,7 +93,6 @@ export const spanReference: VectorReductionReference<'span'> = {
     title: 'vec:running-span',
     category: 'Vector',
     description: 'Calculates the **running span** of a `vector` with a given window size.',
-    linkName: 'vec-colon-running-span',
     returns: {
       type: 'vector',
     },

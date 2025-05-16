@@ -5,7 +5,6 @@ export const abundantReference: NumberTheorySequenceReference<'abundant'> = {
     title: 'nth:abundant-seq',
     category: 'Number Theory',
     description: 'Generates the abundant numbers up to a specified length.',
-    linkName: 'nth-colon-abundant-seq',
     returns: {
       type: 'integer',
       array: true,
@@ -28,7 +27,6 @@ export const abundantReference: NumberTheorySequenceReference<'abundant'> = {
     title: 'nth:abundant-take-while',
     category: 'Number Theory',
     description: 'Generates the abundant numbers while a condition is met.',
-    linkName: 'nth-colon-abundant-take-while',
     returns: {
       type: 'integer',
       array: true,
@@ -50,7 +48,6 @@ export const abundantReference: NumberTheorySequenceReference<'abundant'> = {
     title: 'nth:abundant-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the abundant numbers.',
-    linkName: 'nth-colon-abundant-nth',
     returns: {
       type: 'integer',
     },
@@ -72,7 +69,6 @@ export const abundantReference: NumberTheorySequenceReference<'abundant'> = {
     title: 'nth:abundant?',
     category: 'Number Theory',
     description: 'Checks if a number is abundant.',
-    linkName: 'nth-colon-abundant-question',
     returns: {
       type: 'boolean',
     },

@@ -5,7 +5,6 @@ export const specialExpressionsReference: Record<SpecialExpressionsApiName, Func
   'array': {
     title: 'array',
     category: 'Special expression',
-    linkName: 'array',
     returns: {
       type: 'any',
       array: true,
@@ -34,7 +33,6 @@ export const specialExpressionsReference: Record<SpecialExpressionsApiName, Func
   'object': {
     title: 'object',
     category: 'Special expression',
-    linkName: 'object',
     returns: {
       type: 'object',
     },
@@ -71,7 +69,6 @@ let default = {
   '&&': {
     title: '&&',
     category: 'Special expression',
-    linkName: '-and-and',
     returns: {
       type: 'any',
     },
@@ -104,7 +101,6 @@ If all expressions evaluate to truthy values, the value of the last expression i
   '||': {
     title: '||',
     category: 'Special expression',
-    linkName: '-or-or',
     returns: {
       type: 'boolean',
     },
@@ -136,7 +132,6 @@ If all expressions evaluate to truthy values, the value of the last expression i
   'let': {
     title: 'let',
     category: 'Special expression',
-    linkName: 'let',
     customVariants: ['let s = value;'],
     details: [
       ['s', 'symbol', 'The name of the variable to bind.'],
@@ -152,7 +147,6 @@ write!("a", a, "b", b)`],
   'function': {
     title: 'function',
     category: 'Special expression',
-    linkName: 'function',
     customVariants: ['function name(...arg) { body }'],
     details: [
       ['name', 'symbol', 'The name of the function.'],
@@ -191,7 +185,6 @@ write!(withOptional(1), withOptional(1, 2))`,
   'try': {
     title: 'try',
     category: 'Special expression',
-    linkName: 'try',
     customVariants: ['try { try-body } catch { catch-body }', 'try { try-body } catch(error) { catch-body }'],
     details: [
       ['try-body', 'expressions', 'The expressions to try.'],
@@ -223,7 +216,6 @@ try {
   'throw': {
     title: 'throw',
     category: 'Special expression',
-    linkName: 'throw',
     returns: {
       type: 'never',
     },
@@ -244,7 +236,6 @@ try {
   'if': {
     title: 'if',
     category: 'Special expression',
-    linkName: 'if',
     customVariants: ['if (test) true-expr else false-expr', 'if (test) true-expr'],
     details: [
       ['test', 'expression', 'The condition to test.'],
@@ -267,7 +258,6 @@ if (true) {
   'unless': {
     title: 'unless',
     category: 'Special expression',
-    linkName: 'unless',
     customVariants: ['unless (test) true-expr else false-expr end', 'unless test true-expr end'],
     details: [
       ['test', 'expression', 'The condition to test.'],
@@ -290,7 +280,6 @@ unless (true) {
   'cond': {
     title: 'cond',
     category: 'Special expression',
-    linkName: 'cond',
     customVariants: ['cond { cond-branch cond-branch ... }'],
     details: [
       ['cond-branch', 'case test then body', 'A branch of the cond expression.'],
@@ -319,7 +308,6 @@ cond {
   'switch': {
     title: 'switch',
     category: 'Special expression',
-    linkName: 'switch',
     customVariants: ['switch (value) { switch-branch switch-branch ... }'],
     details: [
       ['value', 'any', 'The value to test.'],
@@ -349,7 +337,6 @@ switch (3) {
   'block': {
     title: 'block',
     category: 'Special expression',
-    linkName: 'block',
     customVariants: ['{ body }'],
     details: [
       ['body', 'expressions', 'The expressions to evaluate.'],
@@ -367,7 +354,6 @@ switch (3) {
   'recur': {
     title: 'recur',
     category: 'Special expression',
-    linkName: 'recur',
     customVariants: ['recur(...recur-args)'],
     description: 'Recursevly calls enclosing function or loop with its evaluated `recur-args`.',
     examples: [

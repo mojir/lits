@@ -5,7 +5,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   'assert': {
     title: 'assert',
     category: 'Assert',
-    linkName: 'assert',
     returns: {
       type: 'any',
     },
@@ -28,7 +27,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   'assert!=': {
     title: 'assert!=',
     category: 'Assert',
-    linkName: 'assert-exclamation-equal',
     returns: {
       type: 'null',
     },
@@ -54,7 +52,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   'assert=': {
     title: 'assert=',
     category: 'Assert',
-    linkName: 'assert-equal',
     returns: {
       type: 'null',
     },
@@ -79,7 +76,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   'assert-gt': {
     title: 'assert-gt',
     category: 'Assert',
-    linkName: 'assert-gt',
     returns: {
       type: 'null',
     },
@@ -104,7 +100,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   'assert-lt': {
     title: 'assert-lt',
     category: 'Assert',
-    linkName: 'assert-lt',
     returns: {
       type: 'null',
     },
@@ -129,7 +124,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   'assert-gte': {
     title: 'assert-gte',
     category: 'Assert',
-    linkName: 'assert-gte',
     returns: {
       type: 'null',
     },
@@ -154,7 +148,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   'assert-lte': {
     title: 'assert-lte',
     category: 'Assert',
-    linkName: 'assert-lte',
     returns: {
       type: 'null',
     },
@@ -179,7 +172,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   'assert-true': {
     title: 'assert-true',
     category: 'Assert',
-    linkName: 'assert-true',
     returns: {
       type: 'null',
     },
@@ -206,7 +198,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   'assert-false': {
     title: 'assert-false',
     category: 'Assert',
-    linkName: 'assert-false',
     returns: {
       type: 'null',
     },
@@ -233,7 +224,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   'assert-truthy': {
     title: 'assert-truthy',
     category: 'Assert',
-    linkName: 'assert-truthy',
     returns: {
       type: 'null',
     },
@@ -267,7 +257,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   'assert-falsy': {
     title: 'assert-falsy',
     category: 'Assert',
-    linkName: 'assert-falsy',
     returns: {
       type: 'null',
     },
@@ -300,7 +289,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   'assert-null': {
     title: 'assert-null',
     category: 'Assert',
-    linkName: 'assert-null',
     returns: {
       type: 'null',
     },
@@ -333,7 +321,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   'assert-throws': {
     title: 'assert-throws',
     category: 'Assert',
-    linkName: 'assert-throws',
     returns: {
       type: 'null',
     },
@@ -359,7 +346,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   'assert-throws-error': {
     title: 'assert-throws-error',
     category: 'Assert',
-    linkName: 'assert-throws-error',
     returns: {
       type: 'null',
     },
@@ -388,7 +374,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   'assert-not-throws': {
     title: 'assert-not-throws',
     category: 'Assert',
-    linkName: 'assert-not-throws',
     returns: {
       type: 'null',
     },

@@ -5,7 +5,6 @@ export const arrayReference: Record<ArrayApiName, FunctionReference<'Array'>> = 
   'range': {
     title: 'range',
     category: 'Array',
-    linkName: 'range',
     returns: {
       type: 'number',
       array: true,
@@ -41,7 +40,6 @@ range(
   'repeat': {
     title: 'repeat',
     category: 'Array',
-    linkName: 'repeat',
     returns: {
       type: 'any',
       array: true,
@@ -62,7 +60,6 @@ range(
   'flatten': {
     title: 'flatten',
     category: 'Array',
-    linkName: 'flatten',
     returns: {
       type: 'any',
       array: true,
@@ -93,7 +90,6 @@ flatten([
   'mapcat': {
     title: 'mapcat',
     category: 'Array',
-    linkName: 'mapcat',
     returns: {
       type: 'collection',
     },
@@ -130,7 +126,6 @@ mapcat(
   'moving-fn': {
     title: 'moving-fn',
     category: 'Array',
-    linkName: 'moving-fn',
     returns: {
       type: 'array',
     },
@@ -159,7 +154,6 @@ mapcat(
   'running-fn': {
     title: 'running-fn',
     category: 'Array',
-    linkName: 'running-fn',
     returns: {
       type: 'array',
     },

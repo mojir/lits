@@ -1,5 +1,5 @@
 import type { Reference } from '../../../reference'
-import { apiReference, isFunctionReference } from '../../../reference'
+import { apiReference, getLinkName, isFunctionReference } from '../../../reference'
 import { categories } from '../../../reference/api'
 import { homeIcon, lampIcon, searchIcon } from '../icons'
 import { styles } from '../styles'
@@ -54,7 +54,7 @@ export function getSideBar() {
                         return (a.title < b.title ? -1 : a.title > b.title ? 1 : 0)
                       })
                       .map((obj) => {
-                        const linkName = obj.linkName
+                        const linkName = getLinkName(obj)
                         const aliases = isFunctionReference(obj) ? obj.aliases : undefined
                         const name = `${escape(obj.title)}${aliases ? `, ${aliases.join(', ')}` : ''}`
                         return `<a id="${linkName}_link" ${styles('scroll-my-2', 'pl-2')} onclick="Playground.showPage('${linkName}', 'smooth')">${name}</a>`

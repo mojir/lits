@@ -46,7 +46,6 @@ interface Variant {
 export interface CommonReference<T extends Category> {
   title: string
   category: T
-  linkName: string
   examples: string[]
   description: string
   seeAlso?: ApiName[]
@@ -68,12 +67,10 @@ export type CustomReference<T extends Category = Category> = CommonReference<T> 
 
 export interface ShorthandReference extends CommonReference<'Shorthand'> {
   shorthand: true
-  linkName: `-short-${string}`
 }
 
 export interface DatatypeReference extends CommonReference<'Datatype'> {
   datatype: true
-  linkName: `-type-${string}`
 }
 
 export type Reference<T extends Category = Category> = FunctionReference<T> | CustomReference<T> | ShorthandReference | DatatypeReference
@@ -147,3 +144,7 @@ export const apiReference: Record<ApiName, Reference> = { ...functionReference, 
 Object.values(apiReference).forEach((ref) => {
   ref.title = ref.title.replace(/"/g, '&quot;')
 })
+
+export function getLinkName(reference: Reference): string {
+  return encodeURIComponent(`${reference.category}-${reference.title}`)
+}

@@ -6,7 +6,6 @@ export const medianAbsoluteDeviationReference: VectorReductionReference<'medad'>
     title: 'vec:medad',
     category: 'Vector',
     description: 'Returns the `median absolute deviation` of all elements in the `vector`.',
-    linkName: 'vec-colon-medad',
     returns: {
       type: 'number',
     },
@@ -28,7 +27,6 @@ export const medianAbsoluteDeviationReference: VectorReductionReference<'medad'>
     title: 'vec:moving-medad',
     category: 'Vector',
     description: 'Returns the `moving median absolute deviation` of the `vector` with a given window size.',
-    linkName: 'vec-colon-moving-medad',
     returns: {
       type: 'vector',
     },
@@ -55,7 +53,6 @@ export const medianAbsoluteDeviationReference: VectorReductionReference<'medad'>
     title: 'vec:centered-moving-medad',
     category: 'Vector',
     description: 'Returns the `centered moving median absolute deviation` of the `vector` with a given window size.',
-    linkName: 'vec-colon-centered-moving-medad',
     returns: {
       type: 'array',
     },
@@ -92,7 +89,6 @@ export const medianAbsoluteDeviationReference: VectorReductionReference<'medad'>
     title: 'vec:running-medad',
     category: 'Vector',
     description: 'Returns the `running median absolute deviation` of the `vector`.',
-    linkName: 'vec-colon-running-medad',
     returns: {
       type: 'vector',
     },

@@ -5,7 +5,6 @@ export const perfectReference: NumberTheorySequenceReference<'perfect'> = {
     title: 'nth:perfect-seq',
     category: 'Number Theory',
     description: 'Generates the perfect numbers up to a specified length.',
-    linkName: 'nth-colon-perfect-seq',
     returns: {
       type: 'integer',
       array: true,
@@ -30,7 +29,6 @@ export const perfectReference: NumberTheorySequenceReference<'perfect'> = {
     title: 'nth:perfect-take-while',
     category: 'Number Theory',
     description: 'Generates the perfect numbers while a condition is met.',
-    linkName: 'nth-colon-perfect-take-while',
     returns: {
       type: 'integer',
       array: true,
@@ -52,7 +50,6 @@ export const perfectReference: NumberTheorySequenceReference<'perfect'> = {
     title: 'nth:perfect-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the perfect numbers.',
-    linkName: 'nth-colon-perfect-nth',
     returns: {
       type: 'integer',
     },
@@ -74,7 +71,6 @@ export const perfectReference: NumberTheorySequenceReference<'perfect'> = {
     title: 'nth:perfect?',
     category: 'Number Theory',
     description: 'Checks if a number is in the perfect numbers.',
-    linkName: 'nth-colon-perfect-question',
     returns: {
       type: 'boolean',
     },

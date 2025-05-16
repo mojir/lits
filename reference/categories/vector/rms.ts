@@ -6,7 +6,6 @@ export const rootMeanSquareReference: VectorReductionReference<'rms'> = {
     title: 'vec:rms',
     category: 'Vector',
     description: 'Calculates the **root mean square** of a `vector`. Returns the square root of the average of the squares of the elements.',
-    linkName: 'vec-colon-rms',
     returns: {
       type: 'number',
     },
@@ -31,7 +30,6 @@ export const rootMeanSquareReference: VectorReductionReference<'rms'> = {
     title: 'vec:moving-rms',
     category: 'Vector',
     description: 'Calculates the **moving root mean square** of a `vector` with a given window size.',
-    linkName: 'vec-colon-moving-rms',
     returns: {
       type: 'vector',
     },
@@ -59,7 +57,6 @@ export const rootMeanSquareReference: VectorReductionReference<'rms'> = {
     title: 'vec:centered-moving-rms',
     category: 'Vector',
     description: 'Calculates the **centered moving root mean square** of a `vector` with a given window size and padding value.',
-    linkName: 'vec-colon-centered-moving-rms',
     returns: {
       type: 'vector',
     },
@@ -97,7 +94,6 @@ export const rootMeanSquareReference: VectorReductionReference<'rms'> = {
     title: 'vec:running-rms',
     category: 'Vector',
     description: 'Calculates the **running root mean square** of a `vector`.',
-    linkName: 'vec-colon-running-rms',
     returns: {
       type: 'vector',
     },

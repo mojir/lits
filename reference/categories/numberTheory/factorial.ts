@@ -5,7 +5,6 @@ export const factorialReference: NumberTheorySequenceReference<'factorial'> = {
     title: 'nth:factorial-seq',
     category: 'Number Theory',
     description: 'Generates the factorial sequence up to a specified length.',
-    linkName: 'nth-colon-factorial-seq',
     returns: {
       type: 'integer',
       array: true,
@@ -33,7 +32,6 @@ export const factorialReference: NumberTheorySequenceReference<'factorial'> = {
     title: 'nth:factorial-take-while',
     category: 'Number Theory',
     description: 'Generates the factorial sequence while a condition is met.',
-    linkName: 'nth-colon-factorial-take-while',
     returns: {
       type: 'integer',
       array: true,
@@ -55,7 +53,6 @@ export const factorialReference: NumberTheorySequenceReference<'factorial'> = {
     title: 'nth:factorial-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the factorial sequence.',
-    linkName: 'nth-colon-factorial-nth',
     returns: {
       type: 'integer',
     },
@@ -81,7 +78,6 @@ export const factorialReference: NumberTheorySequenceReference<'factorial'> = {
     title: 'nth:factorial?',
     category: 'Number Theory',
     description: 'Checks if a number is in the factorial sequence.',
-    linkName: 'nth-colon-factorial-question',
     returns: {
       type: 'boolean',
     },

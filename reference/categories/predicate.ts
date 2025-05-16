@@ -5,7 +5,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
   'boolean?': {
     title: 'boolean?',
     category: 'Predicate',
-    linkName: 'boolean-question',
     returns: {
       type: 'boolean',
     },
@@ -29,7 +28,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
   'null?': {
     title: 'null?',
     category: 'Predicate',
-    linkName: 'null-question',
     returns: {
       type: 'boolean',
     },
@@ -53,7 +51,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
   'number?': {
     title: 'number?',
     category: 'Predicate',
-    linkName: 'number-question',
     returns: {
       type: 'boolean',
     },
@@ -78,7 +75,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
   'string?': {
     title: 'string?',
     category: 'Predicate',
-    linkName: 'string-question',
     returns: {
       type: 'boolean',
     },
@@ -103,7 +99,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
   'function?': {
     title: 'function?',
     category: 'Predicate',
-    linkName: 'function-question',
     returns: {
       type: 'boolean',
     },
@@ -128,7 +123,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
   'integer?': {
     title: 'integer?',
     category: 'Predicate',
-    linkName: 'integer-question',
     returns: {
       type: 'boolean',
     },
@@ -155,7 +149,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
   'array?': {
     title: 'array?',
     category: 'Predicate',
-    linkName: 'array-question',
     returns: {
       type: 'boolean',
     },
@@ -180,7 +173,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
   'object?': {
     title: 'object?',
     category: 'Predicate',
-    linkName: 'object-question',
     returns: {
       type: 'boolean',
     },
@@ -206,7 +198,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
   'coll?': {
     title: 'coll?',
     category: 'Predicate',
-    linkName: 'coll-question',
     returns: {
       type: 'boolean',
     },
@@ -232,7 +223,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
   'seq?': {
     title: 'seq?',
     category: 'Predicate',
-    linkName: 'seq-question',
     returns: {
       type: 'boolean',
     },
@@ -258,7 +248,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
   'regexp?': {
     title: 'regexp?',
     category: 'Predicate',
-    linkName: 'regexp-question',
     returns: {
       type: 'boolean',
     },
@@ -286,7 +275,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
   'zero?': {
     title: 'zero?',
     category: 'Predicate',
-    linkName: 'zero-question',
     returns: {
       type: 'boolean',
     },
@@ -309,7 +297,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
   'pos?': {
     title: 'pos?',
     category: 'Predicate',
-    linkName: 'pos-question',
     returns: {
       type: 'boolean',
     },
@@ -332,7 +319,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
   'neg?': {
     title: 'neg?',
     category: 'Predicate',
-    linkName: 'neg-question',
     returns: {
       type: 'boolean',
     },
@@ -355,7 +341,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
   'even?': {
     title: 'even?',
     category: 'Predicate',
-    linkName: 'even-question',
     returns: {
       type: 'boolean',
     },
@@ -378,7 +363,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
   'odd?': {
     title: 'odd?',
     category: 'Predicate',
-    linkName: 'odd-question',
     returns: {
       type: 'boolean',
     },
@@ -401,7 +385,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
   'finite?': {
     title: 'finite?',
     category: 'Predicate',
-    linkName: 'finite-question',
     returns: {
       type: 'boolean',
     },
@@ -423,7 +406,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
   'negative-infinity?': {
     title: 'negative-infinity?',
     category: 'Predicate',
-    linkName: 'negative-infinity-question',
     returns: {
       type: 'boolean',
     },
@@ -445,7 +427,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
   'positive-infinity?': {
     title: 'positive-infinity?',
     category: 'Predicate',
-    linkName: 'positive-infinity-question',
     returns: {
       type: 'boolean',
     },
@@ -467,7 +448,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
   'false?': {
     title: 'false?',
     category: 'Predicate',
-    linkName: 'false-question',
     returns: {
       type: 'boolean',
     },
@@ -490,7 +470,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
   'true?': {
     title: 'true?',
     category: 'Predicate',
-    linkName: 'true-question',
     returns: {
       type: 'boolean',
     },
@@ -513,7 +492,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
   'empty?': {
     title: 'empty?',
     category: 'Predicate',
-    linkName: 'empty-question',
     returns: {
       type: 'boolean',
     },
@@ -539,7 +517,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
   'not-empty?': {
     title: 'not-empty?',
     category: 'Predicate',
-    linkName: 'not-empty-question',
     returns: {
       type: 'boolean',
     },
@@ -566,7 +543,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
     title: 'vector?',
     category: 'Predicate',
     description: 'Checks if a value is a `vector`. A `vector` is an array of `numbers`.',
-    linkName: 'vector-question',
     returns: {
       type: 'boolean',
     },
@@ -589,7 +565,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
     title: 'matrix?',
     category: 'Predicate',
     description: 'Checks if a value is a `matrix`. A `matrix` is an array of arrays of `numbers`.',
-    linkName: 'matrix-question',
     returns: {
       type: 'boolean',
     },
@@ -614,7 +589,6 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
     title: 'grid?',
     category: 'Predicate',
     description: 'Checks if a `value` is a `grid`. A `grid` is an `array` of `arrays` where all inner `arrays` have the same length.',
-    linkName: 'grid-question',
     returns: {
       type: 'boolean',
     },

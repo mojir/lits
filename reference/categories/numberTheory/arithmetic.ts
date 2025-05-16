@@ -5,7 +5,6 @@ export const arithmeticReference: NumberTheorySequenceReference<'arithmetic'> = 
     title: 'nth:arithmetic-seq',
     category: 'Number Theory',
     description: 'Generates the arithmetic sequence for a given $start, $step, and $length.',
-    linkName: 'nth-colon-arithmetic-seq',
     returns: {
       type: 'integer',
       array: true,
@@ -38,7 +37,6 @@ export const arithmeticReference: NumberTheorySequenceReference<'arithmetic'> = 
     title: 'nth:arithmetic-take-while',
     category: 'Number Theory',
     description: 'Generates the arithmetic sequence while a condition is met.',
-    linkName: 'nth-colon-arithmetic-take-while',
     returns: {
       type: 'integer',
       array: true,
@@ -68,7 +66,6 @@ export const arithmeticReference: NumberTheorySequenceReference<'arithmetic'> = 
     title: 'nth:arithmetic-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the arithmetic sequence.',
-    linkName: 'nth-colon-arithmetic-nth',
     returns: {
       type: 'integer',
     },
@@ -100,7 +97,6 @@ export const arithmeticReference: NumberTheorySequenceReference<'arithmetic'> = 
     title: 'nth:arithmetic?',
     category: 'Number Theory',
     description: 'Checks if a number is part of the arithmetic sequence.',
-    linkName: 'nth-colon-arithmetic-question',
     returns: {
       type: 'boolean',
     },

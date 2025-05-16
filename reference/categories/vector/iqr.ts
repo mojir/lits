@@ -6,7 +6,6 @@ export const interquartileRangeReference: VectorReductionReference<'iqr'> = {
     title: 'vec:iqr',
     category: 'Vector',
     description: 'Calculates the **interquartile range** of a `vector`. Returns the difference between the third and first quartiles.',
-    linkName: 'vec-colon-iqr',
     returns: {
       type: 'number',
     },
@@ -32,7 +31,6 @@ export const interquartileRangeReference: VectorReductionReference<'iqr'> = {
     title: 'vec:moving-iqr',
     category: 'Vector',
     description: 'Calculates the **moving interquartile range** of a `vector` with a given window size.',
-    linkName: 'vec-colon-moving-iqr',
     returns: {
       type: 'vector',
     },
@@ -60,7 +58,6 @@ export const interquartileRangeReference: VectorReductionReference<'iqr'> = {
     title: 'vec:centered-moving-iqr',
     category: 'Vector',
     description: 'Calculates the **centered moving interquartile range** of a `vector` with a given window size.',
-    linkName: 'vec-colon-centered-moving-iqr',
     returns: {
       type: 'array',
     },
@@ -97,7 +94,6 @@ export const interquartileRangeReference: VectorReductionReference<'iqr'> = {
     title: 'vec:running-iqr',
     category: 'Vector',
     description: 'Calculates the **running interquartile range** of a `vector`. First three element in result is `null` since **running interquartile range** is not defined for less than four elements.',
-    linkName: 'vec-colon-running-iqr',
     returns: {
       type: 'vector',
     },

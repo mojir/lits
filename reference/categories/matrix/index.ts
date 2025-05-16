@@ -5,7 +5,6 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
   'mat:mul': {
     title: 'mat:mul',
     category: 'Matrix',
-    linkName: 'mat-colon-mul',
     returns: {
       type: 'matrix',
     },
@@ -24,7 +23,6 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
   'mat:det': {
     title: 'mat:det',
     category: 'Matrix',
-    linkName: 'mat-colon-det',
     returns: {
       type: 'number',
     },
@@ -46,7 +44,6 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
   'mat:inv': {
     title: 'mat:inv',
     category: 'Matrix',
-    linkName: 'mat-colon-inv',
     returns: {
       type: 'matrix',
     },
@@ -68,7 +65,6 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
   'mat:adj': {
     title: 'mat:adj',
     category: 'Matrix',
-    linkName: 'mat-colon-adj',
     returns: {
       type: 'matrix',
     },
@@ -92,7 +88,6 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
   'mat:cofactor': {
     title: 'mat:cofactor',
     category: 'Matrix',
-    linkName: 'mat-colon-cofactor',
     returns: {
       type: 'matrix',
     },
@@ -116,7 +111,6 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
   'mat:minor': {
     title: 'mat:minor',
     category: 'Matrix',
-    linkName: 'mat-colon-minor',
     returns: {
       type: 'matrix',
     },
@@ -146,7 +140,6 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
   'mat:trace': {
     title: 'mat:trace',
     category: 'Matrix',
-    linkName: 'mat-colon-trace',
     returns: {
       type: 'number',
     },
@@ -168,7 +161,6 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
   'mat:symmetric?': {
     title: 'mat:symmetric?',
     category: 'Matrix',
-    linkName: 'mat-colon-symmetric-question',
     returns: {
       type: 'boolean',
     },
@@ -190,7 +182,6 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
   'mat:triangular?': {
     title: 'mat:triangular?',
     category: 'Matrix',
-    linkName: 'mat-colon-triangular-question',
     returns: {
       type: 'boolean',
     },
@@ -212,7 +203,6 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
   'mat:upper-triangular?': {
     title: 'mat:upper-triangular?',
     category: 'Matrix',
-    linkName: 'mat-colon-upper-triangular-question',
     returns: {
       type: 'boolean',
     },
@@ -234,7 +224,6 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
   'mat:lower-triangular?': {
     title: 'mat:lower-triangular?',
     category: 'Matrix',
-    linkName: 'mat-colon-lower-triangular-question',
     returns: {
       type: 'boolean',
     },
@@ -256,7 +245,6 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
   'mat:diagonal?': {
     title: 'mat:diagonal?',
     category: 'Matrix',
-    linkName: 'mat-colon-diagonal-question',
     returns: {
       type: 'boolean',
     },
@@ -279,7 +267,6 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
   'mat:square?': {
     title: 'mat:square?',
     category: 'Matrix',
-    linkName: 'mat-colon-square-question',
     returns: {
       type: 'boolean',
     },
@@ -302,7 +289,6 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
   'mat:orthogonal?': {
     title: 'mat:orthogonal?',
     category: 'Matrix',
-    linkName: 'mat-colon-orthogonal-question',
     returns: {
       type: 'boolean',
     },
@@ -325,7 +311,6 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
   'mat:identity?': {
     title: 'mat:identity?',
     category: 'Matrix',
-    linkName: 'mat-colon-identity-question',
     returns: {
       type: 'boolean',
     },
@@ -348,7 +333,6 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
   'mat:invertible?': {
     title: 'mat:invertible?',
     category: 'Matrix',
-    linkName: 'mat-colon-invertible-question',
     returns: {
       type: 'boolean',
     },
@@ -371,7 +355,6 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
   'mat:hilbert': {
     title: 'mat:hilbert',
     category: 'Matrix',
-    linkName: 'mat-colon-hilbert',
     returns: {
       type: 'matrix',
     },
@@ -393,7 +376,6 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
   'mat:vandermonde': {
     title: 'mat:vandermonde',
     category: 'Matrix',
-    linkName: 'mat-colon-vandermonde',
     returns: {
       type: 'matrix',
     },
@@ -415,7 +397,6 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
   'mat:band': {
     title: 'mat:band',
     category: 'Matrix',
-    linkName: 'mat-colon-band',
     returns: {
       type: 'matrix',
     },
@@ -445,7 +426,6 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
   'mat:banded?': {
     title: 'mat:banded?',
     category: 'Matrix',
-    linkName: 'mat-colon-banded-question',
     returns: {
       type: 'boolean',
     },
@@ -485,7 +465,6 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
   'mat:rank': {
     title: 'mat:rank',
     category: 'Matrix',
-    linkName: 'mat-colon-rank',
     returns: {
       type: 'number',
     },
@@ -508,7 +487,6 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
   'mat:frobenius-norm': {
     title: 'mat:frobenius-norm',
     category: 'Matrix',
-    linkName: 'mat-colon-frobenius-norm',
     returns: {
       type: 'number',
     },
@@ -530,7 +508,6 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
   'mat:1-norm': {
     title: 'mat:1-norm',
     category: 'Matrix',
-    linkName: 'mat-colon-1-norm',
     returns: {
       type: 'number',
     },
@@ -552,7 +529,6 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
   'mat:inf-norm': {
     title: 'mat:inf-norm',
     category: 'Matrix',
-    linkName: 'mat-colon-inf-norm',
     returns: {
       type: 'number',
     },
@@ -575,7 +551,6 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
   'mat:max-norm': {
     title: 'mat:max-norm',
     category: 'Matrix',
-    linkName: 'mat-colon-max-norm',
     returns: {
       type: 'number',
     },

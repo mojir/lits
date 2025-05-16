@@ -22,7 +22,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:every?': {
     title: 'grid:every?',
     category: 'Grid',
-    linkName: 'grid-colon-every-question',
     returns: {
       type: 'boolean',
     },
@@ -42,7 +41,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:some?': {
     title: 'grid:some?',
     category: 'Grid',
-    linkName: 'grid-colon-some-question',
     returns: {
       type: 'boolean',
     },
@@ -62,7 +60,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:every-row?': {
     title: 'grid:every-row?',
     category: 'Grid',
-    linkName: 'grid-colon-every-row-question',
     returns: {
       type: 'boolean',
     },
@@ -83,7 +80,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:some-row?': {
     title: 'grid:some-row?',
     category: 'Grid',
-    linkName: 'grid-colon-some-row-question',
     returns: {
       type: 'boolean',
     },
@@ -103,7 +99,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:every-col?': {
     title: 'grid:every-col?',
     category: 'Grid',
-    linkName: 'grid-colon-every-col-question',
     returns: {
       type: 'boolean',
     },
@@ -123,7 +118,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:some-col?': {
     title: 'grid:some-col?',
     category: 'Grid',
-    linkName: 'grid-colon-some-col-question',
     returns: {
       type: 'boolean',
     },
@@ -143,7 +137,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:row': {
     title: 'grid:row',
     category: 'Grid',
-    linkName: 'grid-colon-row',
     returns: {
       type: 'any',
     },
@@ -163,7 +156,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:col': {
     title: 'grid:col',
     category: 'Grid',
-    linkName: 'grid-colon-col',
     returns: {
       type: 'any',
     },
@@ -183,7 +175,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:shape': {
     title: 'grid:shape',
     category: 'Grid',
-    linkName: 'grid-colon-shape',
     returns: {
       type: 'vector',
     },
@@ -206,7 +197,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:fill': {
     title: 'grid:fill',
     category: 'Grid',
-    linkName: 'grid-colon-fill',
     returns: {
       type: 'grid',
     },
@@ -236,7 +226,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:generate': {
     title: 'grid:generate',
     category: 'Grid',
-    linkName: 'grid-colon-generate',
     returns: {
       type: 'grid',
     },
@@ -265,7 +254,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:reshape': {
     title: 'grid:reshape',
     category: 'Grid',
-    linkName: 'grid-colon-reshape',
     returns: {
       type: 'grid',
     },
@@ -283,7 +271,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:transpose': {
     title: 'grid:transpose',
     category: 'Grid',
-    linkName: 'grid-colon-transpose',
     returns: {
       type: 'grid',
     },
@@ -307,7 +294,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:flip-h': {
     title: 'grid:flip-h',
     category: 'Grid',
-    linkName: 'grid-colon-flip-h',
     returns: {
       type: 'grid',
     },
@@ -330,7 +316,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:flip-v': {
     title: 'grid:flip-v',
     category: 'Grid',
-    linkName: 'grid-colon-flip-v',
     returns: {
       type: 'grid',
     },
@@ -353,7 +338,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:rotate': {
     title: 'grid:rotate',
     category: 'Grid',
-    linkName: 'grid-colon-rotate',
     returns: {
       type: 'grid',
     },
@@ -377,7 +361,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:reverse-rows': {
     title: 'grid:reverse-rows',
     category: 'Grid',
-    linkName: 'grid-colon-reverse-rows',
     returns: {
       type: 'grid',
     },
@@ -400,7 +383,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:reverse-cols': {
     title: 'grid:reverse-cols',
     category: 'Grid',
-    linkName: 'grid-colon-reverse-cols',
     returns: {
       type: 'grid',
     },
@@ -423,7 +405,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:slice': {
     title: 'grid:slice',
     category: 'Grid',
-    linkName: 'grid-colon-slice',
     returns: {
       type: 'grid',
     },
@@ -455,7 +436,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:slice-rows': {
     title: 'grid:slice-rows',
     category: 'Grid',
-    linkName: 'grid-colon-slice-rows',
     returns: {
       type: 'grid',
     },
@@ -487,7 +467,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:slice-cols': {
     title: 'grid:slice-cols',
     category: 'Grid',
-    linkName: 'grid-colon-slice-cols',
     returns: {
       type: 'grid',
     },
@@ -519,7 +498,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:splice-rows': {
     title: 'grid:splice-rows',
     category: 'Grid',
-    linkName: 'grid-colon-splice-rows',
     returns: {
       type: 'grid',
     },
@@ -556,7 +534,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:splice-cols': {
     title: 'grid:splice-cols',
     category: 'Grid',
-    linkName: 'grid-colon-splice-cols',
     returns: {
       type: 'grid',
     },
@@ -593,7 +570,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:concat-rows': {
     title: 'grid:concat-rows',
     category: 'Grid',
-    linkName: 'grid-colon-concat-rows',
     returns: {
       type: 'grid',
     },
@@ -611,7 +587,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:concat-cols': {
     title: 'grid:concat-cols',
     category: 'Grid',
-    linkName: 'grid-colon-concat-cols',
     returns: {
       type: 'grid',
     },
@@ -629,7 +604,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:map': {
     title: 'grid:map',
     category: 'Grid',
-    linkName: 'grid-colon-map',
     returns: {
       type: 'grid',
     },
@@ -647,7 +621,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:mapi': {
     title: 'grid:mapi',
     category: 'Grid',
-    linkName: 'grid-colon-mapi',
     returns: {
       type: 'grid',
     },
@@ -665,7 +638,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:reduce': {
     title: 'grid:reduce',
     category: 'Grid',
-    linkName: 'grid-colon-reduce',
     returns: {
       type: 'any',
     },
@@ -694,7 +666,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:reducei': {
     title: 'grid:reducei',
     category: 'Grid',
-    linkName: 'grid-colon-reducei',
     returns: {
       type: 'any',
     },
@@ -723,7 +694,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:push-rows': {
     title: 'grid:push-rows',
     category: 'Grid',
-    linkName: 'grid-colon-push-rows',
     returns: {
       type: 'grid',
     },
@@ -750,7 +720,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:unshift-rows': {
     title: 'grid:unshift-rows',
     category: 'Grid',
-    linkName: 'grid-colon-unshift-rows',
     returns: {
       type: 'grid',
     },
@@ -777,7 +746,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:pop-row': {
     title: 'grid:pop-row',
     category: 'Grid',
-    linkName: 'grid-colon-pop-row',
     returns: {
       type: 'grid',
     },
@@ -798,7 +766,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:shift-row': {
     title: 'grid:shift-row',
     category: 'Grid',
-    linkName: 'grid-colon-shift-row',
     returns: {
       type: 'grid',
     },
@@ -819,7 +786,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:push-cols': {
     title: 'grid:push-cols',
     category: 'Grid',
-    linkName: 'grid-colon-push-cols',
     returns: {
       type: 'grid',
     },
@@ -846,7 +812,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:unshift-cols': {
     title: 'grid:unshift-cols',
     category: 'Grid',
-    linkName: 'grid-colon-unshift-cols',
     returns: {
       type: 'grid',
     },
@@ -873,7 +838,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:pop-col': {
     title: 'grid:pop-col',
     category: 'Grid',
-    linkName: 'grid-colon-pop-col',
     returns: {
       type: 'grid',
     },
@@ -894,7 +858,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:shift-col': {
     title: 'grid:shift-col',
     category: 'Grid',
-    linkName: 'grid-colon-shift-col',
     returns: {
       type: 'grid',
     },
@@ -915,7 +878,6 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
   'grid:from-array': {
     title: 'grid:from-array',
     category: 'Grid',
-    linkName: 'grid-colon-from-array',
     returns: {
       type: 'grid',
     },

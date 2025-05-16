@@ -5,7 +5,6 @@ export const collectionReference: Record<CollectionApiName, FunctionReference<'C
   'filter': {
     title: 'filter',
     category: 'Collection',
-    linkName: 'filter',
     returns: {
       type: 'collection',
     },
@@ -43,7 +42,6 @@ filter(
   'filteri': {
     title: 'filteri',
     category: 'Collection',
-    linkName: 'filteri',
     returns: {
       type: 'collection',
     },
@@ -69,7 +67,6 @@ filter(
   'map': {
     title: 'map',
     category: 'Collection',
-    linkName: 'map',
     returns: {
       type: 'collection',
     },
@@ -101,7 +98,6 @@ filter(
   'mapi': {
     title: 'mapi',
     category: 'Collection',
-    linkName: 'mapi',
     returns: {
       type: 'collection',
     },
@@ -129,7 +125,6 @@ filter(
   'reduce': {
     title: 'reduce',
     category: 'Collection',
-    linkName: 'reduce',
     returns: {
       type: 'any',
     },
@@ -162,7 +157,6 @@ reduce(
   'reduce-right': {
     title: 'reduce-right',
     category: 'Collection',
-    linkName: 'reduce-right',
     returns: {
       type: 'any',
     },
@@ -189,7 +183,6 @@ reduce(
   'reducei-right': {
     title: 'reducei-right',
     category: 'Collection',
-    linkName: 'reducei-right',
     returns: {
       type: 'any',
     },
@@ -219,7 +212,6 @@ reduce(
   'reducei': {
     title: 'reducei',
     category: 'Collection',
-    linkName: 'reducei',
     returns: {
       type: 'any',
     },
@@ -249,7 +241,6 @@ reduce(
   'reductions': {
     title: 'reductions',
     category: 'Collection',
-    linkName: 'reductions',
     returns: {
       type: 'any',
       array: true,
@@ -285,7 +276,6 @@ reductions(
   'reductionsi': {
     title: 'reductionsi',
     category: 'Collection',
-    linkName: 'reductionsi',
     returns: {
       type: 'any',
       array: true,
@@ -316,7 +306,6 @@ reductions(
   'count': {
     title: 'count',
     category: 'Collection',
-    linkName: 'count',
     returns: {
       type: 'number',
     },
@@ -341,7 +330,6 @@ reductions(
   'get': {
     title: 'get',
     category: 'Collection',
-    linkName: 'get',
     returns: {
       type: 'any',
     },
@@ -409,7 +397,6 @@ get(
   'get-in': {
     title: 'get-in',
     category: 'Collection',
-    linkName: 'get-in',
     returns: {
       type: 'any',
     },
@@ -446,7 +433,6 @@ get-in(
   'contains?': {
     title: 'contains?',
     category: 'Collection',
-    linkName: 'contains-question',
     returns: {
       type: 'boolean',
     },
@@ -491,7 +477,6 @@ contains?(
   'assoc': {
     title: 'assoc',
     category: 'Collection',
-    linkName: 'assoc',
     returns: {
       type: 'collection',
     },
@@ -551,7 +536,6 @@ assoc(
   'assoc-in': {
     title: 'assoc-in',
     category: 'Collection',
-    linkName: 'assoc-in',
     returns: {
       type: 'collection',
     },
@@ -598,7 +582,6 @@ assoc-in(
   '++': {
     title: '++',
     category: 'Collection',
-    linkName: '-plus-plus',
     returns: {
       type: 'collection',
     },
@@ -638,7 +621,6 @@ assoc-in(
   'not-empty': {
     title: 'not-empty',
     category: 'Collection',
-    linkName: 'not-empty',
     returns: {
       type: 'boolean',
     },
@@ -664,7 +646,6 @@ assoc-in(
   'every?': {
     title: 'every?',
     category: 'Collection',
-    linkName: 'every-question',
     returns: {
       type: 'boolean',
     },
@@ -718,7 +699,6 @@ every?(
   'not-every?': {
     title: 'not-every?',
     category: 'Collection',
-    linkName: 'not-every-question',
     returns: {
       type: 'boolean',
     },
@@ -770,7 +750,6 @@ not-every?(
   'any?': {
     title: 'any?',
     category: 'Collection',
-    linkName: 'any-question',
     returns: {
       type: 'boolean',
     },
@@ -822,7 +801,6 @@ any?(
   'not-any?': {
     title: 'not-any?',
     category: 'Collection',
-    linkName: 'not-any-question',
     returns: {
       type: 'boolean',
     },
@@ -874,7 +852,6 @@ not-any?(
   'update': {
     title: 'update',
     category: 'Collection',
-    linkName: 'update',
     returns: {
       type: 'collection',
     },
@@ -918,7 +895,6 @@ update(
   'update-in': {
     title: 'update-in',
     category: 'Collection',
-    linkName: 'update-in',
     returns: {
       type: 'collection',
     },

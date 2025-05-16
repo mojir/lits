@@ -5,7 +5,6 @@ export const lookAndSayReference: NumberTheorySequenceReference<'look-and-say'> 
     title: 'nth:look-and-say-seq',
     category: 'Number Theory',
     description: 'Generates the Look-and-Say sequence up to a specified length.',
-    linkName: 'nth-colon-look-and-say-seq',
     returns: {
       type: 'string',
       array: true,
@@ -27,7 +26,6 @@ export const lookAndSayReference: NumberTheorySequenceReference<'look-and-say'> 
     title: 'nth:look-and-say-take-while',
     category: 'Number Theory',
     description: 'Generates the Look-and-Say sequence while a condition is met.',
-    linkName: 'nth-colon-look-and-say-take-while',
     returns: {
       type: 'string',
       array: true,
@@ -50,7 +48,6 @@ export const lookAndSayReference: NumberTheorySequenceReference<'look-and-say'> 
     title: 'nth:look-and-say-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Look-and-Say sequence.',
-    linkName: 'nth-colon-look-and-say-nth',
     returns: {
       type: 'string',
     },
@@ -71,7 +68,6 @@ export const lookAndSayReference: NumberTheorySequenceReference<'look-and-say'> 
     title: 'nth:look-and-say?',
     category: 'Number Theory',
     description: 'Checks if a string is a valid Look-and-Say term.',
-    linkName: 'nth-colon-look-and-say-question',
     returns: {
       type: 'boolean',
     },

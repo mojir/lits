@@ -6,7 +6,6 @@ export const prodReference: VectorReductionReference<'prod'> = {
     title: 'vec:prod',
     category: 'Vector',
     description: 'Returns the `product` of all elements in the `vector`.',
-    linkName: 'vec-colon-prod',
     returns: {
       type: 'number',
     },
@@ -28,7 +27,6 @@ export const prodReference: VectorReductionReference<'prod'> = {
     title: 'vec:moving-prod',
     category: 'Vector',
     description: 'Returns the **moving product` of the `vector** with a given window size.',
-    linkName: 'vec-colon-moving-prod',
     returns: {
       type: 'vector',
     },
@@ -55,7 +53,6 @@ export const prodReference: VectorReductionReference<'prod'> = {
     title: 'vec:centered-moving-prod',
     category: 'Vector',
     description: 'Returns the **centered moving product` of the `vector** with a given window size.',
-    linkName: 'vec-colon-centered-moving-prod',
     returns: {
       type: 'array',
     },
@@ -92,7 +89,6 @@ export const prodReference: VectorReductionReference<'prod'> = {
     title: 'vec:running-prod',
     category: 'Vector',
     description: 'Returns the **running product` of the `vector**.',
-    linkName: 'vec-colon-running-prod',
     returns: {
       type: 'vector',
     },

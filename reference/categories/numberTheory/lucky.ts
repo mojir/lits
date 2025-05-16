@@ -5,7 +5,6 @@ export const luckyReference: NumberTheorySequenceReference<'lucky'> = {
     title: 'nth:lucky-seq',
     category: 'Number Theory',
     description: 'Generates the lucky sequence up to a specified length.',
-    linkName: 'nth-colon-lucky-seq',
     returns: {
       type: 'integer',
       array: true,
@@ -29,7 +28,6 @@ export const luckyReference: NumberTheorySequenceReference<'lucky'> = {
     title: 'nth:lucky-take-while',
     category: 'Number Theory',
     description: 'Generates the lucky sequence while a condition is met.',
-    linkName: 'nth-colon-lucky-take-while',
     returns: {
       type: 'integer',
       array: true,
@@ -51,7 +49,6 @@ export const luckyReference: NumberTheorySequenceReference<'lucky'> = {
     title: 'nth:lucky-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the lucky sequence.',
-    linkName: 'nth-colon-lucky-nth',
     returns: {
       type: 'integer',
     },
@@ -74,7 +71,6 @@ export const luckyReference: NumberTheorySequenceReference<'lucky'> = {
     title: 'nth:lucky?',
     category: 'Number Theory',
     description: 'Checks if a number is a lucky number.',
-    linkName: 'nth-colon-lucky-question',
     returns: {
       type: 'boolean',
     },

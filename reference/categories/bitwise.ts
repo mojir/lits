@@ -5,7 +5,6 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
   '<<': {
     title: '<<',
     category: 'Bitwise',
-    linkName: '-lt-lt',
     returns: {
       type: 'integer',
     },
@@ -25,7 +24,6 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
   '>>': {
     title: '>>',
     category: 'Bitwise',
-    linkName: '-gt-gt',
     returns: {
       type: 'integer',
     },
@@ -46,7 +44,6 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
   '>>>': {
     title: '>>>',
     category: 'Bitwise',
-    linkName: '-gt-gt-gt',
     returns: {
       type: 'integer',
     },
@@ -68,7 +65,6 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
   'bit-not': {
     title: 'bit-not',
     category: 'Bitwise',
-    linkName: 'bit-not',
     returns: {
       type: 'integer',
     },
@@ -89,7 +85,6 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
   '&': {
     title: '&',
     category: 'Bitwise',
-    linkName: '-and',
     returns: {
       type: 'integer',
     },
@@ -114,7 +109,6 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
   'bit-and-not': {
     title: 'bit-and-not',
     category: 'Bitwise',
-    linkName: 'bit-and-not',
     returns: {
       type: 'integer',
     },
@@ -139,7 +133,6 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
   '|': {
     title: '|',
     category: 'Bitwise',
-    linkName: '-or',
     returns: {
       type: 'integer',
     },
@@ -164,7 +157,6 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
   'xor': {
     title: 'xor',
     category: 'Bitwise',
-    linkName: 'xor',
     returns: {
       type: 'integer',
     },
@@ -189,7 +181,6 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
   'bit-flip': {
     title: 'bit-flip',
     category: 'Bitwise',
-    linkName: 'bit-flip',
     returns: {
       type: 'integer',
     },
@@ -209,7 +200,6 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
   'bit-clear': {
     title: 'bit-clear',
     category: 'Bitwise',
-    linkName: 'bit-clear',
     returns: {
       type: 'integer',
     },
@@ -229,7 +219,6 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
   'bit-set': {
     title: 'bit-set',
     category: 'Bitwise',
-    linkName: 'bit-set',
     returns: {
       type: 'integer',
     },
@@ -249,7 +238,6 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
   'bit-test': {
     title: 'bit-test',
     category: 'Bitwise',
-    linkName: 'bit-test',
     returns: {
       type: 'boolean',
     },

@@ -5,7 +5,6 @@ export const perfectPowerReference: NumberTheorySequenceReference<'perfect-power
     title: 'nth:perfect-power-seq',
     category: 'Number Theory',
     description: 'Generates the perfect power numbers up to a specified length.',
-    linkName: 'nth-colon-perfect-power-seq',
     returns: {
       type: 'integer',
       array: true,
@@ -28,7 +27,6 @@ export const perfectPowerReference: NumberTheorySequenceReference<'perfect-power
     title: 'nth:perfect-power-take-while',
     category: 'Number Theory',
     description: 'Generates the perfect power numbers while a condition is met.',
-    linkName: 'nth-colon-perfect-power-take-while',
     returns: {
       type: 'integer',
       array: true,
@@ -50,7 +48,6 @@ export const perfectPowerReference: NumberTheorySequenceReference<'perfect-power
     title: 'nth:perfect-power-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the perfect power numbers.',
-    linkName: 'nth-colon-perfect-power-nth',
     returns: {
       type: 'integer',
     },
@@ -72,7 +69,6 @@ export const perfectPowerReference: NumberTheorySequenceReference<'perfect-power
     title: 'nth:perfect-power?',
     category: 'Number Theory',
     description: 'Checks if a number is in the perfect power numbers.',
-    linkName: 'nth-colon-perfect-power-question',
     returns: {
       type: 'boolean',
     },

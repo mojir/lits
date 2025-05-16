@@ -6,7 +6,6 @@ export const meanAbsoluteDeviationReference: VectorReductionReference<'mad'> = {
     title: 'vec:mad',
     category: 'Vector',
     description: 'Returns the `mean absolute deviation` of all elements in the `vector`.',
-    linkName: 'vec-colon-mad',
     returns: {
       type: 'number',
     },
@@ -28,7 +27,6 @@ export const meanAbsoluteDeviationReference: VectorReductionReference<'mad'> = {
     title: 'vec:moving-mad',
     category: 'Vector',
     description: 'Returns the `moving mean absolute deviation` of the `vector` with a given window size.',
-    linkName: 'vec-colon-moving-mad',
     returns: {
       type: 'vector',
     },
@@ -55,7 +53,6 @@ export const meanAbsoluteDeviationReference: VectorReductionReference<'mad'> = {
     title: 'vec:centered-moving-mad',
     category: 'Vector',
     description: 'Returns the `centered moving mean absolute deviation` of the `vector` with a given window size.',
-    linkName: 'vec-colon-centered-moving-mad',
     returns: {
       type: 'array',
     },
@@ -92,7 +89,6 @@ export const meanAbsoluteDeviationReference: VectorReductionReference<'mad'> = {
     title: 'vec:running-mad',
     category: 'Vector',
     description: 'Returns the `running mean absolute deviation` of the `vector`.',
-    linkName: 'vec-colon-running-mad',
     returns: {
       type: 'vector',
     },

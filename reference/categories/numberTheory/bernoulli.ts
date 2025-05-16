@@ -5,7 +5,6 @@ export const bernoulliReference: Omit<NumberTheorySequenceReference<'bernoulli'>
     title: 'nth:bernoulli-seq',
     category: 'Number Theory',
     description: 'Generates the Bernoulli sequence up to a specified length.',
-    linkName: 'nth-colon-bernoulli-seq',
     returns: {
       type: 'number',
       array: true,
@@ -28,7 +27,6 @@ export const bernoulliReference: Omit<NumberTheorySequenceReference<'bernoulli'>
     title: 'nth:bernoulli-take-while',
     category: 'Number Theory',
     description: 'Generates the Bernoulli sequence while a condition is met.',
-    linkName: 'nth-colon-bernoulli-take-while',
     returns: {
       type: 'number',
       array: true,
@@ -50,7 +48,6 @@ export const bernoulliReference: Omit<NumberTheorySequenceReference<'bernoulli'>
     title: 'nth:bernoulli-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Bernoulli sequence.',
-    linkName: 'nth-colon-bernoulli-nth',
     returns: {
       type: 'number',
     },

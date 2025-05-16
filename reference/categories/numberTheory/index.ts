@@ -80,7 +80,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:count-combinations',
     category: 'Number Theory',
     description: 'Calculates the number of combinations of n items taken k at a time.',
-    linkName: 'nth-colon-count-combinations',
     returns: {
       type: 'integer',
     },
@@ -100,7 +99,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:combinations',
     category: 'Number Theory',
     description: 'Generates all possible combinations of a specified size from a collection.',
-    linkName: 'nth-colon-combinations',
     returns: {
       type: 'array',
       array: true,
@@ -132,7 +130,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:count-derangements',
     category: 'Number Theory',
     description: 'Calculates the number of derangements (permutations where no element appears in its original position) of n items.',
-    linkName: 'nth-colon-count-derangements',
     returns: {
       type: 'integer',
     },
@@ -154,7 +151,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:derangements',
     category: 'Number Theory',
     description: 'Generates all derangements (permutations where no element appears in its original position) of a set.',
-    linkName: 'nth-colon-derangements',
     returns: {
       type: 'array',
       array: true,
@@ -178,7 +174,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:divisors',
     category: 'Number Theory',
     description: 'Returns the divisors of a number.',
-    linkName: 'nth-colon-divisors',
     returns: {
       type: 'integer',
       array: true,
@@ -202,7 +197,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:count-divisors',
     category: 'Number Theory',
     description: 'Returns the number of divisors of a number.',
-    linkName: 'nth-colon-count-divisors',
     returns: {
       type: 'integer',
     },
@@ -225,7 +219,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:proper-divisors',
     category: 'Number Theory',
     description: 'Returns the proper divisors of a number.',
-    linkName: 'nth-colon-proper-divisors',
     returns: {
       type: 'integer',
       array: true,
@@ -249,7 +242,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:count-proper-divisors',
     category: 'Number Theory',
     description: 'Returns the number of proper divisors of a number.',
-    linkName: 'nth-colon-count-proper-divisors',
     returns: {
       type: 'integer',
     },
@@ -272,7 +264,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:factorial',
     category: 'Number Theory',
     description: 'Calculates the factorial of a number.',
-    linkName: 'nth-colon-factorial',
     returns: {
       type: 'integer',
     },
@@ -297,7 +288,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:partitions',
     category: 'Number Theory',
     description: 'Generates all partitions of a number.',
-    linkName: 'nth-colon-partitions',
     returns: {
       type: 'array',
       array: true,
@@ -320,7 +310,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:count-partitions',
     category: 'Number Theory',
     description: 'Returns the number of partitions of a number.',
-    linkName: 'nth-colon-count-partitions',
     returns: {
       type: 'integer',
     },
@@ -343,7 +332,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:permutations',
     category: 'Number Theory',
     description: 'Generates all permutations of a collection.',
-    linkName: 'nth-colon-permutations',
     returns: {
       type: 'array',
       array: true,
@@ -371,7 +359,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:count-permutations',
     category: 'Number Theory',
     description: 'Returns the number of permutations of n items taken k at a time.',
-    linkName: 'nth-colon-count-permutations',
     returns: {
       type: 'integer',
     },
@@ -393,7 +380,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:power-set',
     category: 'Number Theory',
     description: 'Generates the power set of a collection.',
-    linkName: 'nth-colon-power-set',
     returns: {
       type: 'array',
       array: true,
@@ -419,7 +405,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:count-power-set',
     category: 'Number Theory',
     description: 'Returns the number of subsets of a set.',
-    linkName: 'nth-colon-count-power-set',
     returns: {
       type: 'integer',
     },
@@ -442,7 +427,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:prime-factors',
     category: 'Number Theory',
     description: 'Returns the prime factors of a number.',
-    linkName: 'nth-colon-prime-factors',
     returns: {
       type: 'integer',
       array: true,
@@ -466,7 +450,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:count-prime-factors',
     category: 'Number Theory',
     description: 'Returns the number of prime factors of a number.',
-    linkName: 'nth-colon-count-prime-factors',
     returns: {
       type: 'integer',
     },
@@ -489,7 +472,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:distinct-prime-factors',
     category: 'Number Theory',
     description: 'Returns the distinct prime factors of a number.',
-    linkName: 'nth-colon-distinct-prime-factors',
     returns: {
       type: 'integer',
       array: true,
@@ -513,7 +495,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:count-distinct-prime-factors',
     category: 'Number Theory',
     description: 'Returns the number of distinct prime factors of a number.',
-    linkName: 'nth-colon-count-distinct-prime-factors',
     returns: {
       type: 'integer',
     },
@@ -536,7 +517,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:coprime?',
     category: 'Number Theory',
     description: 'Checks if two numbers are coprime (i.e., their GCD is 1).',
-    linkName: 'nth-colon-coprime-question',
     returns: {
       type: 'boolean',
     },
@@ -563,7 +543,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:divisible-by?',
     category: 'Number Theory',
     description: 'Checks if a number is divisible by another number.',
-    linkName: 'nth-colon-divisible-by-question',
     returns: {
       type: 'boolean',
     },
@@ -587,7 +566,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:gcd',
     category: 'Number Theory',
     description: 'Calculates the greatest common divisor (GCD) of two numbers.',
-    linkName: 'nth-colon-gcd',
     returns: {
       type: 'integer',
     },
@@ -610,7 +588,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:lcm',
     category: 'Number Theory',
     description: 'Calculates the least common multiple (LCM) of two numbers.',
-    linkName: 'nth-colon-lcm',
     returns: {
       type: 'integer',
     },
@@ -632,7 +609,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:multinomial',
     category: 'Number Theory',
     description: 'Calculates the multinomial coefficient from of a list of numbers representing the sizes of each group.',
-    linkName: 'nth-colon-multinomial',
     returns: {
       type: 'integer',
     },
@@ -656,7 +632,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:amicable?',
     category: 'Number Theory',
     description: 'Checks if two numbers are amicable (i.e., the sum of the proper divisors of each number equals the other number).',
-    linkName: 'nth-colon-amicable-question',
     returns: {
       type: 'boolean',
     },
@@ -678,7 +653,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:euler-totient',
     category: 'Number Theory',
     description: 'Calculates the Euler\'s totient function (φ(n)) of a number, which counts the integers up to n that are coprime to n.',
-    linkName: 'nth-colon-euler-totient',
     returns: {
       type: 'integer',
     },
@@ -702,7 +676,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:mobius',
     category: 'Number Theory',
     description: 'Calculates the Möbius function (μ(n)) of a number, which is used in number theory.',
-    linkName: 'nth-colon-mobius',
     returns: {
       type: 'integer',
     },
@@ -730,7 +703,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:mertens',
     category: 'Number Theory',
     description: 'Calculates the Mertens function (M(n)) of a number, which is the sum of the Möbius function up to n.',
-    linkName: 'nth-colon-mertens',
     returns: {
       type: 'integer',
     },
@@ -757,7 +729,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:sigma',
     category: 'Number Theory',
     description: 'Calculates the sum of divisors function (σ(n)) of a number, which is the sum of all positive divisors of n.',
-    linkName: 'nth-colon-sigma',
     returns: {
       type: 'integer',
     },
@@ -784,7 +755,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:carmichael-lambda',
     category: 'Number Theory',
     description: 'Calculates the Carmichael function (λ(n)) of a number, which is the smallest positive integer m such that a^m ≡ 1 (mod n) for all integers a coprime to n.',
-    linkName: 'nth-colon-carmichael-lambda',
     returns: {
       type: 'integer',
     },
@@ -811,7 +781,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:cartesian-product',
     category: 'Number Theory',
     description: 'Calculates the Cartesian product of two or more sets.',
-    linkName: 'nth-colon-cartesian-product',
     returns: {
       type: 'array',
       array: true,
@@ -837,7 +806,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:perfect-power',
     category: 'Number Theory',
     description: 'Returns a tuple of the base and exponent if the number is a perfect power, otherwise returns null.',
-    linkName: 'nth-colon-perfect-power',
     returns: {
       type: 'array',
       array: true,
@@ -865,7 +833,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:mod-exp',
     category: 'Number Theory',
     description: 'Calculates the modular exponentiation of a base raised to an exponent modulo a modulus.',
-    linkName: 'nth-colon-mod-exp',
     returns: {
       type: 'integer',
     },
@@ -894,7 +861,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:mod-inv',
     category: 'Number Theory',
     description: 'Calculates the modular multiplicative inverse of a number modulo another number.',
-    linkName: 'nth-colon-mod-inv',
     returns: {
       type: 'integer',
     },
@@ -915,7 +881,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:extended-gcd',
     category: 'Number Theory',
     description: 'Calculates the extended greatest common divisor (GCD) of two numbers, returning the GCD and the coefficients of Bézout\'s identity.',
-    linkName: 'nth-colon-extended-gcd',
     returns: {
       type: 'integer',
       array: true,
@@ -937,7 +902,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:chinese-remainder',
     category: 'Number Theory',
     description: 'Solves a system of simultaneous congruences using the Chinese Remainder Theorem.',
-    linkName: 'nth-colon-chinese-remainder',
     returns: {
       type: 'integer',
     },
@@ -968,7 +932,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:stirling-first',
     category: 'Number Theory',
     description: 'Calculates the Stirling numbers of the first kind, which count the number of permutations of n elements with k cycles.',
-    linkName: 'nth-colon-stirling-first',
     returns: {
       type: 'integer',
     },
@@ -997,7 +960,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     title: 'nth:stirling-second',
     category: 'Number Theory',
     description: 'Calculates the Stirling numbers of the second kind, which count the number of ways to partition n elements into k non-empty subsets.',
-    linkName: 'nth-colon-stirling-second',
     returns: {
       type: 'integer',
     },

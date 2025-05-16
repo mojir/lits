@@ -1,4 +1,4 @@
-import { apiReference, isCustomReference, isFunctionReference } from '../../../../reference'
+import { apiReference, getLinkName, isCustomReference, isFunctionReference } from '../../../../reference'
 import type { CustomReference, FunctionReference, Reference } from '../../../../reference'
 import { styles } from '../../styles'
 import { formatLitsExpression } from '../../formatter/rules'
@@ -16,17 +16,16 @@ export function getAllDocumentationItems() {
 }
 
 function getDocumentation(reference: Reference) {
-  const { linkName, category } = reference
   const aliases = isFunctionReference(reference) ? reference.aliases : undefined
-  const title = `${escapeTitle(reference.title)}${aliases ? `, ${aliases.join(', ')}` : ''}`
+  const docTitle = `${escapeTitle(reference.title)}${aliases ? `, ${aliases.join(', ')}` : ''}`
 
   const functionReferences = reference.seeAlso?.map(apiName => apiReference[apiName])
 
   return `
-  <div id="${linkName}" class="content function">
+  <div id="${getLinkName(reference)}" class="content function">
     <div ${styles('flex', 'justify-between', 'text-2xl', 'items-center', 'bg-gray-700', 'p-2', 'px-4')}">
-      <div ${styles('text-color-gray-200', 'font-mono')}><a onclick="Playground.showPage('${reference.linkName}', 'smooth')">${title}</a></div>
-      <div ${styles('text-color-gray-400')}>${category}</div>
+      <div ${styles('text-color-gray-200', 'font-mono')}><a onclick="Playground.showPage('${getLinkName(reference)}', 'smooth')">${docTitle}</a></div>
+      <div ${styles('text-color-gray-400')}>${reference.category}</div>
     </div>
 
     ${isFunctionReference(reference)
@@ -88,7 +87,7 @@ function getCustomSignatureSection(reference: CustomReference) {
 function getSeeAlsoLinks(references: Reference[]) {
   return `<div ${styles('flex', 'flex-col')}>
     ${references.map((reference) => {
-      return `<a onclick="Playground.showPage('${reference.linkName}', 'smooth')"><span>${escapeTitle(reference.title)}</span></a>`
+      return `<a onclick="Playground.showPage('${getLinkName(reference)}', 'smooth')"><span>${escapeTitle(reference.title)}</span></a>`
     }).join('')}
   </div>`
 }

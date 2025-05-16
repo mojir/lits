@@ -5,7 +5,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
   '!=': {
     title: '!=',
     category: 'Misc',
-    linkName: '-exclamation-equal',
     returns: {
       type: 'boolean',
     },
@@ -37,7 +36,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
   '==': {
     title: '==',
     category: 'Misc',
-    linkName: '-equal-equal',
     returns: {
       type: 'boolean',
     },
@@ -79,7 +77,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
   '<': {
     title: '<',
     category: 'Misc',
-    linkName: '-lt',
     returns: {
       type: 'boolean',
     },
@@ -109,7 +106,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
   '>': {
     title: '>',
     category: 'Misc',
-    linkName: '-gt',
     returns: {
       type: 'boolean',
     },
@@ -139,7 +135,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
   '≤': {
     title: '≤',
     category: 'Misc',
-    linkName: '-lte',
     returns: {
       type: 'boolean',
     },
@@ -171,7 +166,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
   '≥': {
     title: '≥',
     category: 'Misc',
-    linkName: '-gte',
     returns: {
       type: 'boolean',
     },
@@ -204,7 +198,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
   '!': {
     title: '!',
     category: 'Misc',
-    linkName: '-exclamation',
     returns: {
       type: 'boolean',
     },
@@ -230,7 +223,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
   'write!': {
     title: 'write!',
     category: 'Misc',
-    linkName: 'write-exclamation',
     returns: {
       type: 'any',
     },
@@ -257,7 +249,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
   'iso-date->epoch': {
     title: 'iso-date->epoch',
     category: 'Misc',
-    linkName: 'iso-date--gtepoch',
     returns: {
       type: 'number',
     },
@@ -278,7 +269,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
   'epoch->iso-date': {
     title: 'epoch->iso-date',
     category: 'Misc',
-    linkName: 'epoch--gtiso-date',
     returns: {
       type: 'string',
     },
@@ -299,7 +289,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
   'boolean': {
     title: 'boolean',
     category: 'Misc',
-    linkName: 'boolean',
     returns: {
       type: 'boolean',
     },
@@ -322,7 +311,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
   'compare': {
     title: 'compare',
     category: 'Misc',
-    linkName: 'compare',
     returns: {
       type: 'number',
     },
@@ -343,7 +331,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
   'identical?': {
     title: 'identical?',
     category: 'Misc',
-    linkName: 'identical-question',
     returns: {
       type: 'boolean',
     },
@@ -363,7 +350,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
   'json-parse': {
     title: 'json-parse',
     category: 'Misc',
-    linkName: 'json-parse',
     returns: {
       type: 'any',
     },
@@ -383,7 +369,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
   'json-stringify': {
     title: 'json-stringify',
     category: 'Misc',
-    linkName: 'json-stringify',
     returns: {
       type: 'string',
     },

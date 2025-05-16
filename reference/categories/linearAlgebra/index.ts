@@ -6,7 +6,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:reflect',
     category: 'Linear Algebra',
     description: 'Reflects a vector across a given axis.',
-    linkName: 'lin-colon-reflect',
     returns: {
       type: 'vector',
     },
@@ -32,7 +31,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:refract',
     category: 'Linear Algebra',
     description: 'Refracts a vector across a given axis.',
-    linkName: 'lin-colon-refract',
     returns: {
       type: 'vector',
     },
@@ -62,7 +60,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:lerp',
     category: 'Linear Algebra',
     description: 'Performs linear interpolation between two vectors.',
-    linkName: 'lin-colon-lerp',
     returns: {
       type: 'vector',
     },
@@ -94,7 +91,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:rotate2d',
     category: 'Linear Algebra',
     description: 'Rotates a 2D vector by a given angle in radians.',
-    linkName: 'lin-colon-rotate2d',
     returns: {
       type: 'vector',
     },
@@ -120,7 +116,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:rotate3d',
     category: 'Linear Algebra',
     description: 'Rotates a 3D vector around a given axis by a given angle in radians.',
-    linkName: 'lin-colon-rotate3d',
     returns: {
       type: 'vector',
     },
@@ -150,7 +145,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:dot',
     category: 'Linear Algebra',
     description: 'Calculates the dot product of two vectors. The result is a scalar.',
-    linkName: 'lin-colon-dot',
     returns: {
       type: 'number',
     },
@@ -176,7 +170,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:cross',
     category: 'Linear Algebra',
     description: 'Calculates the cross product of two 3D vectors. The result is a vector perpendicular to both input vectors.',
-    linkName: 'lin-colon-cross',
     returns: {
       type: 'vector',
     },
@@ -205,7 +198,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:normalize-minmax',
     category: 'Linear Algebra',
     description: 'Normalizes the vector using min-max normalization. The result is a vector with values between 0 and 1.',
-    linkName: 'lin-colon-normalize-minmax',
     returns: {
       type: 'number',
     },
@@ -230,7 +222,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:normalize-zscore',
     category: 'Linear Algebra',
     description: 'Normalizes the vector using z-score normalization. The result is a vector with mean 0 and standard deviation 1.',
-    linkName: 'lin-colon-normalize-zscore',
     returns: {
       type: 'number',
     },
@@ -255,7 +246,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:normalize-robust',
     category: 'Linear Algebra',
     description: 'Normalizes the vector using robust normalization. The result is a vector with median 0 and median absolute deviation 1.',
-    linkName: 'lin-colon-normalize-robust',
     returns: {
       type: 'number',
     },
@@ -280,7 +270,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:normalize-l1',
     category: 'Linear Algebra',
     description: 'Normalizes the vector using L1 normalization. The result is a vector with L1 norm equal to 1.',
-    linkName: 'lin-colon-normalize-l1',
     returns: {
       type: 'number',
     },
@@ -305,7 +294,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:normalize-l2',
     category: 'Linear Algebra',
     description: 'Normalizes the vector using L2 normalization. The result is a vector with L2 norm equal to 1.',
-    linkName: 'lin-colon-normalize-l2',
     returns: {
       type: 'number',
     },
@@ -335,7 +323,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:normalize-log',
     category: 'Linear Algebra',
     description: 'Normalizes the vector using natural log normalization. The result is a vector with log-transformed values.',
-    linkName: 'lin-colon-normalize-log',
     returns: {
       type: 'number',
     },
@@ -358,7 +345,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:angle',
     category: 'Linear Algebra',
     description: 'Calculates the `angle` between two vectors in radians.',
-    linkName: 'lin-colon-angle',
     returns: {
       type: 'number',
     },
@@ -377,7 +363,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:projection',
     category: 'Linear Algebra',
     description: 'Calculates the **projection** of vector `a` onto vector `b`.',
-    linkName: 'lin-colon-projection',
     returns: {
       type: 'vector',
     },
@@ -396,7 +381,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:collinear?',
     category: 'Linear Algebra',
     description: 'Checks if two vectors are **collinear**.',
-    linkName: 'lin-colon-collinear-question',
     returns: {
       type: 'boolean',
     },
@@ -416,7 +400,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:parallel?',
     category: 'Linear Algebra',
     description: 'Checks if two vectors are **parallel**.',
-    linkName: 'lin-colon-parallel-question',
     returns: {
       type: 'boolean',
     },
@@ -436,7 +419,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
   'lin:orthogonal?': {
     title: 'lin:orthogonal?',
     category: 'Linear Algebra',
-    linkName: 'lin-colon-orthogonal-question',
     returns: {
       type: 'boolean',
     },
@@ -457,7 +439,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:cosine-similarity',
     category: 'Linear Algebra',
     description: 'Calculates the **cosine similarity** between two vectors. The result is a value between -1 and 1.',
-    linkName: 'lin-colon-cosine-similarity',
     returns: {
       type: 'number',
     },
@@ -477,7 +458,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:euclidean-distance',
     category: 'Linear Algebra',
     description: 'Calculates the **Euclidean distance** between two vectors. The result is a non-negative number.',
-    linkName: 'lin-colon-euclidean-distance',
     returns: {
       type: 'number',
     },
@@ -501,7 +481,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:euclidean-norm',
     category: 'Linear Algebra',
     description: 'Calculates the **Euclidean norm** (L2 norm) of a vector. The result is a non-negative number.',
-    linkName: 'lin-colon-euclidean-norm',
     returns: {
       type: 'number',
     },
@@ -528,7 +507,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:manhattan-distance',
     category: 'Linear Algebra',
     description: 'Calculates the **Manhattan distance** between two vectors. The result is a non-negative number.',
-    linkName: 'lin-colon-manhattan-distance',
     returns: {
       type: 'number',
     },
@@ -552,7 +530,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:manhattan-norm',
     category: 'Linear Algebra',
     description: 'Calculates the **Manhattan norm** (L1 norm) of a vector. The result is a non-negative number.',
-    linkName: 'lin-colon-manhattan-norm',
     returns: {
       type: 'number',
     },
@@ -579,7 +556,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:hamming-distance',
     category: 'Linear Algebra',
     description: 'Calculates the **Hamming distance** between two vectors. The result is a non-negative integer.',
-    linkName: 'lin-colon-hamming-distance',
     returns: {
       type: 'integer',
     },
@@ -599,7 +575,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:hamming-norm',
     category: 'Linear Algebra',
     description: 'Calculates the **Hamming norm** of a vector. The result is a non-negative integer.',
-    linkName: 'lin-colon-hamming-norm',
     returns: {
       type: 'integer',
     },
@@ -622,7 +597,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:chebyshev-distance',
     category: 'Linear Algebra',
     description: 'Calculates the **Chebyshev distance** between two vectors. The result is a non-negative number.',
-    linkName: 'lin-colon-chebyshev-distance',
     returns: {
       type: 'number',
     },
@@ -642,7 +616,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:chebyshev-norm',
     category: 'Linear Algebra',
     description: 'Calculates the **Chebyshev norm** of a vector. The result is a non-negative number.',
-    linkName: 'lin-colon-chebyshev-norm',
     returns: {
       type: 'number',
     },
@@ -665,7 +638,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:minkowski-distance',
     category: 'Linear Algebra',
     description: 'Calculates the **Minkowski distance** between two vectors. The result is a non-negative number.',
-    linkName: 'lin-colon-minkowski-distance',
     returns: {
       type: 'number',
     },
@@ -689,7 +661,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:minkowski-norm',
     category: 'Linear Algebra',
     description: 'Calculates the **Minkowski norm** of a vector. The result is a non-negative number.',
-    linkName: 'lin-colon-minkowski-norm',
     returns: {
       type: 'number',
     },
@@ -716,7 +687,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:cov',
     category: 'Linear Algebra',
     description: 'Calculates the **covariance** between two vectors. The result is a number.',
-    linkName: 'lin-colon-cov',
     returns: {
       type: 'number',
     },
@@ -736,7 +706,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:corr',
     category: 'Linear Algebra',
     description: 'Calculates the **correlation** between two vectors. The result is a number between -1 and 1.',
-    linkName: 'lin-colon-corr',
     returns: {
       type: 'number',
     },
@@ -756,7 +725,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:spearman-corr',
     category: 'Linear Algebra',
     description: 'Calculates the **Spearman rank correlation** between two vectors. The result is a number between -1 and 1.',
-    linkName: 'lin-colon-spearman-corr',
     returns: {
       type: 'number',
     },
@@ -777,7 +745,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:pearson-corr',
     category: 'Linear Algebra',
     description: 'Calculates the **Pearson correlation** between two vectors. The result is a number between -1 and 1.',
-    linkName: 'lin-colon-pearson-corr',
     returns: {
       type: 'number',
     },
@@ -797,7 +764,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:kendall-tau',
     category: 'Linear Algebra',
     description: 'Calculates the **Kendall Tau** rank correlation coefficient between two vectors. The result is a number between -1 and 1.',
-    linkName: 'lin-colon-kendall-tau',
     returns: {
       type: 'number',
     },
@@ -817,7 +783,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:autocorrelation',
     category: 'Linear Algebra',
     description: 'Calculates the **autocorrelation** of a vector. The result is a vector of autocorrelation coefficients.',
-    linkName: 'lin-colon-autocorrelation',
     returns: {
       type: 'vector',
     },
@@ -847,7 +812,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:cross-correlation',
     category: 'Linear Algebra',
     description: 'Calculates the **cross-correlation** between two vectors. The result is a vector of cross-correlation coefficients.',
-    linkName: 'lin-colon-cross-correlation',
     returns: {
       type: 'vector',
     },
@@ -874,7 +838,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:rref',
     category: 'Linear Algebra',
     description: 'Calculates the **Reduced Row Echelon Form** (RREF) of a matrix.',
-    linkName: 'lin-colon-rref',
     returns: {
       type: 'matrix',
     },
@@ -897,7 +860,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:solve',
     category: 'Linear Algebra',
     description: 'Solves a system of linear equations represented by a matrix and a vector.',
-    linkName: 'lin-colon-solve',
     returns: {
       type: 'vector',
     },
@@ -922,7 +884,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:to-polar',
     category: 'Linear Algebra',
     description: 'Converts a 2D vector to polar coordinates.',
-    linkName: 'lin-colon-to-polar',
     returns: {
       type: 'vector',
     },
@@ -944,7 +905,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     title: 'lin:from-polar',
     category: 'Linear Algebra',
     description: 'Converts polar coordinates to a 2D vector.',
-    linkName: 'lin-colon-from-polar',
     returns: {
       type: 'vector',
     },

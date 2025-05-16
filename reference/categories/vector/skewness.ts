@@ -6,7 +6,6 @@ export const skewnessReference: VectorReductionReference<'skewness'> = {
     title: 'vec:skewness',
     category: 'Vector',
     description: 'Calculates the **skewness** of a `vector`. Returns the third standardized moment.',
-    linkName: 'vec-colon-skewness',
     returns: {
       type: 'number',
     },
@@ -28,7 +27,6 @@ export const skewnessReference: VectorReductionReference<'skewness'> = {
     title: 'vec:moving-skewness',
     category: 'Vector',
     description: 'Calculates the **moving skewness** of a `vector` with a given window size.',
-    linkName: 'vec-colon-moving-skewness',
     returns: {
       type: 'vector',
     },
@@ -55,7 +53,6 @@ export const skewnessReference: VectorReductionReference<'skewness'> = {
     title: 'vec:centered-moving-skewness',
     category: 'Vector',
     description: 'Calculates the **centered moving skewness** of a `vector` with a given window size and padding.',
-    linkName: 'vec-colon-centered-moving-skewness',
     returns: {
       type: 'array',
     },
@@ -92,7 +89,6 @@ export const skewnessReference: VectorReductionReference<'skewness'> = {
     title: 'vec:running-skewness',
     category: 'Vector',
     description: 'Calculates the **running skewness** of a `vector` with a given window size. First two element in result is `null` since **running skewness** is not defined for less than three elements.',
-    linkName: 'vec-colon-running-skewness',
     returns: {
       type: 'array',
     },
@@ -116,7 +112,6 @@ export const sampleSkewnessReference: VectorReductionReference<'sample-skewness'
     title: 'vec:sample-skewness',
     category: 'Vector',
     description: 'Calculates the **sample skewness** of a `vector`. Returns the third standardized moment.',
-    linkName: 'vec-colon-sample-skewness',
     returns: {
       type: 'number',
     },
@@ -138,7 +133,6 @@ export const sampleSkewnessReference: VectorReductionReference<'sample-skewness'
     title: 'vec:moving-sample-skewness',
     category: 'Vector',
     description: 'Calculates the **moving sample skewness** of a `vector` with a given window size.',
-    linkName: 'vec-colon-moving-sample-skewness',
     returns: {
       type: 'vector',
     },
@@ -165,7 +159,6 @@ export const sampleSkewnessReference: VectorReductionReference<'sample-skewness'
     title: 'vec:centered-moving-sample-skewness',
     category: 'Vector',
     description: 'Calculates the **centered moving sample skewness** of a `vector` with a given window size and padding.',
-    linkName: 'vec-colon-centered-moving-sample-skewness',
     returns: {
       type: 'array',
     },
@@ -202,7 +195,6 @@ export const sampleSkewnessReference: VectorReductionReference<'sample-skewness'
     title: 'vec:running-sample-skewness',
     category: 'Vector',
     description: 'Calculates the **running sample skewness** of a `vector` with a given window size. First two element in result is `null` since **running sample skewness** is not defined for less than three elements.',
-    linkName: 'vec-colon-running-sample-skewness',
     returns: {
       type: 'array',
     },

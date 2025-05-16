@@ -6,7 +6,6 @@ export const minReference: VectorReductionReference<'min'> = {
     title: 'vec:min',
     category: 'Vector',
     description: 'Returns the `minimum` of all elements in the `vector`.',
-    linkName: 'vec-colon-min',
     returns: {
       type: 'number',
     },
@@ -28,7 +27,6 @@ export const minReference: VectorReductionReference<'min'> = {
     title: 'vec:moving-min',
     category: 'Vector',
     description: 'Returns the **moving minimum` of the `vector** with a given window size.',
-    linkName: 'vec-colon-moving-min',
     returns: {
       type: 'vector',
     },
@@ -55,7 +53,6 @@ export const minReference: VectorReductionReference<'min'> = {
     title: 'vec:centered-moving-min',
     category: 'Vector',
     description: 'Returns the **centered moving minimum` of the `vector** with a given window size.',
-    linkName: 'vec-colon-centered-moving-min',
     returns: {
       type: 'array',
     },
@@ -93,7 +90,6 @@ export const minReference: VectorReductionReference<'min'> = {
     title: 'vec:running-min',
     category: 'Vector',
     description: 'Returns the **running minimum` of the `vector**.',
-    linkName: 'vec-colon-running-min',
     returns: {
       type: 'vector',
     },

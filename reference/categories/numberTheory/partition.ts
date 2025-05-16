@@ -5,7 +5,6 @@ export const partitionReference: NumberTheorySequenceReference<'partition'> = {
     title: 'nth:partition-seq',
     category: 'Number Theory',
     description: 'Generates the partition numbers up to a specified length. If no length is provided, it defaults to 299 (the maximum length of the pre-calculated partition numbers).',
-    linkName: 'nth-colon-partition-seq',
     returns: {
       type: 'integer',
       array: true,
@@ -30,7 +29,6 @@ export const partitionReference: NumberTheorySequenceReference<'partition'> = {
     title: 'nth:partition-take-while',
     category: 'Number Theory',
     description: 'Generates the partition numbers while a condition is met.',
-    linkName: 'nth-colon-partition-take-while',
     returns: {
       type: 'integer',
       array: true,
@@ -52,7 +50,6 @@ export const partitionReference: NumberTheorySequenceReference<'partition'> = {
     title: 'nth:partition-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the partition numbers.',
-    linkName: 'nth-colon-partition-nth',
     returns: {
       type: 'integer',
     },
@@ -74,7 +71,6 @@ export const partitionReference: NumberTheorySequenceReference<'partition'> = {
     title: 'nth:partition?',
     category: 'Number Theory',
     description: 'Checks if a number is in the partition numbers.',
-    linkName: 'nth-colon-partition-question',
     returns: {
       type: 'boolean',
     },

@@ -14839,7 +14839,6 @@ var Playground = (function (exports) {
         'range': {
             title: 'range',
             category: 'Array',
-            linkName: 'range',
             returns: {
                 type: 'number',
                 array: true,
@@ -14864,7 +14863,6 @@ var Playground = (function (exports) {
         'repeat': {
             title: 'repeat',
             category: 'Array',
-            linkName: 'repeat',
             returns: {
                 type: 'any',
                 array: true,
@@ -14883,7 +14881,6 @@ var Playground = (function (exports) {
         'flatten': {
             title: 'flatten',
             category: 'Array',
-            linkName: 'flatten',
             returns: {
                 type: 'any',
                 array: true,
@@ -14907,7 +14904,6 @@ var Playground = (function (exports) {
         'mapcat': {
             title: 'mapcat',
             category: 'Array',
-            linkName: 'mapcat',
             returns: {
                 type: 'collection',
             },
@@ -14932,7 +14928,6 @@ var Playground = (function (exports) {
         'moving-fn': {
             title: 'moving-fn',
             category: 'Array',
-            linkName: 'moving-fn',
             returns: {
                 type: 'array',
             },
@@ -14961,7 +14956,6 @@ var Playground = (function (exports) {
         'running-fn': {
             title: 'running-fn',
             category: 'Array',
-            linkName: 'running-fn',
             returns: {
                 type: 'array',
             },
@@ -14989,7 +14983,6 @@ var Playground = (function (exports) {
         'assert': {
             title: 'assert',
             category: 'Assert',
-            linkName: 'assert',
             returns: {
                 type: 'any',
             },
@@ -15012,7 +15005,6 @@ var Playground = (function (exports) {
         'assert!=': {
             title: 'assert!=',
             category: 'Assert',
-            linkName: 'assert-exclamation-equal',
             returns: {
                 type: 'null',
             },
@@ -15035,7 +15027,6 @@ var Playground = (function (exports) {
         'assert=': {
             title: 'assert=',
             category: 'Assert',
-            linkName: 'assert-equal',
             returns: {
                 type: 'null',
             },
@@ -15057,7 +15048,6 @@ var Playground = (function (exports) {
         'assert-gt': {
             title: 'assert-gt',
             category: 'Assert',
-            linkName: 'assert-gt',
             returns: {
                 type: 'null',
             },
@@ -15079,7 +15069,6 @@ var Playground = (function (exports) {
         'assert-lt': {
             title: 'assert-lt',
             category: 'Assert',
-            linkName: 'assert-lt',
             returns: {
                 type: 'null',
             },
@@ -15101,7 +15090,6 @@ var Playground = (function (exports) {
         'assert-gte': {
             title: 'assert-gte',
             category: 'Assert',
-            linkName: 'assert-gte',
             returns: {
                 type: 'null',
             },
@@ -15123,7 +15111,6 @@ var Playground = (function (exports) {
         'assert-lte': {
             title: 'assert-lte',
             category: 'Assert',
-            linkName: 'assert-lte',
             returns: {
                 type: 'null',
             },
@@ -15145,7 +15132,6 @@ var Playground = (function (exports) {
         'assert-true': {
             title: 'assert-true',
             category: 'Assert',
-            linkName: 'assert-true',
             returns: {
                 type: 'null',
             },
@@ -15172,7 +15158,6 @@ var Playground = (function (exports) {
         'assert-false': {
             title: 'assert-false',
             category: 'Assert',
-            linkName: 'assert-false',
             returns: {
                 type: 'null',
             },
@@ -15199,7 +15184,6 @@ var Playground = (function (exports) {
         'assert-truthy': {
             title: 'assert-truthy',
             category: 'Assert',
-            linkName: 'assert-truthy',
             returns: {
                 type: 'null',
             },
@@ -15233,7 +15217,6 @@ var Playground = (function (exports) {
         'assert-falsy': {
             title: 'assert-falsy',
             category: 'Assert',
-            linkName: 'assert-falsy',
             returns: {
                 type: 'null',
             },
@@ -15266,7 +15249,6 @@ var Playground = (function (exports) {
         'assert-null': {
             title: 'assert-null',
             category: 'Assert',
-            linkName: 'assert-null',
             returns: {
                 type: 'null',
             },
@@ -15299,7 +15281,6 @@ var Playground = (function (exports) {
         'assert-throws': {
             title: 'assert-throws',
             category: 'Assert',
-            linkName: 'assert-throws',
             returns: {
                 type: 'null',
             },
@@ -15325,7 +15306,6 @@ var Playground = (function (exports) {
         'assert-throws-error': {
             title: 'assert-throws-error',
             category: 'Assert',
-            linkName: 'assert-throws-error',
             returns: {
                 type: 'null',
             },
@@ -15354,7 +15334,6 @@ var Playground = (function (exports) {
         'assert-not-throws': {
             title: 'assert-not-throws',
             category: 'Assert',
-            linkName: 'assert-not-throws',
             returns: {
                 type: 'null',
             },
@@ -15383,7 +15362,6 @@ var Playground = (function (exports) {
         '<<': {
             title: '<<',
             category: 'Bitwise',
-            linkName: '-lt-lt',
             returns: {
                 type: 'integer',
             },
@@ -15401,7 +15379,6 @@ var Playground = (function (exports) {
         '>>': {
             title: '>>',
             category: 'Bitwise',
-            linkName: '-gt-gt',
             returns: {
                 type: 'integer',
             },
@@ -15420,7 +15397,6 @@ var Playground = (function (exports) {
         '>>>': {
             title: '>>>',
             category: 'Bitwise',
-            linkName: '-gt-gt-gt',
             returns: {
                 type: 'integer',
             },
@@ -15440,7 +15416,6 @@ var Playground = (function (exports) {
         'bit-not': {
             title: 'bit-not',
             category: 'Bitwise',
-            linkName: 'bit-not',
             returns: {
                 type: 'integer',
             },
@@ -15461,7 +15436,6 @@ var Playground = (function (exports) {
         '&': {
             title: '&',
             category: 'Bitwise',
-            linkName: '-and',
             returns: {
                 type: 'integer',
             },
@@ -15483,7 +15457,6 @@ var Playground = (function (exports) {
         'bit-and-not': {
             title: 'bit-and-not',
             category: 'Bitwise',
-            linkName: 'bit-and-not',
             returns: {
                 type: 'integer',
             },
@@ -15505,7 +15478,6 @@ var Playground = (function (exports) {
         '|': {
             title: '|',
             category: 'Bitwise',
-            linkName: '-or',
             returns: {
                 type: 'integer',
             },
@@ -15527,7 +15499,6 @@ var Playground = (function (exports) {
         'xor': {
             title: 'xor',
             category: 'Bitwise',
-            linkName: 'xor',
             returns: {
                 type: 'integer',
             },
@@ -15549,7 +15520,6 @@ var Playground = (function (exports) {
         'bit-flip': {
             title: 'bit-flip',
             category: 'Bitwise',
-            linkName: 'bit-flip',
             returns: {
                 type: 'integer',
             },
@@ -15567,7 +15537,6 @@ var Playground = (function (exports) {
         'bit-clear': {
             title: 'bit-clear',
             category: 'Bitwise',
-            linkName: 'bit-clear',
             returns: {
                 type: 'integer',
             },
@@ -15585,7 +15554,6 @@ var Playground = (function (exports) {
         'bit-set': {
             title: 'bit-set',
             category: 'Bitwise',
-            linkName: 'bit-set',
             returns: {
                 type: 'integer',
             },
@@ -15603,7 +15571,6 @@ var Playground = (function (exports) {
         'bit-test': {
             title: 'bit-test',
             category: 'Bitwise',
-            linkName: 'bit-test',
             returns: {
                 type: 'boolean',
             },
@@ -15624,7 +15591,6 @@ var Playground = (function (exports) {
         'filter': {
             title: 'filter',
             category: 'Collection',
-            linkName: 'filter',
             returns: {
                 type: 'collection',
             },
@@ -15646,7 +15612,6 @@ var Playground = (function (exports) {
         'filteri': {
             title: 'filteri',
             category: 'Collection',
-            linkName: 'filteri',
             returns: {
                 type: 'collection',
             },
@@ -15672,7 +15637,6 @@ var Playground = (function (exports) {
         'map': {
             title: 'map',
             category: 'Collection',
-            linkName: 'map',
             returns: {
                 type: 'collection',
             },
@@ -15700,7 +15664,6 @@ var Playground = (function (exports) {
         'mapi': {
             title: 'mapi',
             category: 'Collection',
-            linkName: 'mapi',
             returns: {
                 type: 'collection',
             },
@@ -15728,7 +15691,6 @@ var Playground = (function (exports) {
         'reduce': {
             title: 'reduce',
             category: 'Collection',
-            linkName: 'reduce',
             returns: {
                 type: 'any',
             },
@@ -15757,7 +15719,6 @@ var Playground = (function (exports) {
         'reduce-right': {
             title: 'reduce-right',
             category: 'Collection',
-            linkName: 'reduce-right',
             returns: {
                 type: 'any',
             },
@@ -15784,7 +15745,6 @@ var Playground = (function (exports) {
         'reducei-right': {
             title: 'reducei-right',
             category: 'Collection',
-            linkName: 'reducei-right',
             returns: {
                 type: 'any',
             },
@@ -15814,7 +15774,6 @@ var Playground = (function (exports) {
         'reducei': {
             title: 'reducei',
             category: 'Collection',
-            linkName: 'reducei',
             returns: {
                 type: 'any',
             },
@@ -15844,7 +15803,6 @@ var Playground = (function (exports) {
         'reductions': {
             title: 'reductions',
             category: 'Collection',
-            linkName: 'reductions',
             returns: {
                 type: 'any',
                 array: true,
@@ -15875,7 +15833,6 @@ var Playground = (function (exports) {
         'reductionsi': {
             title: 'reductionsi',
             category: 'Collection',
-            linkName: 'reductionsi',
             returns: {
                 type: 'any',
                 array: true,
@@ -15906,7 +15863,6 @@ var Playground = (function (exports) {
         'count': {
             title: 'count',
             category: 'Collection',
-            linkName: 'count',
             returns: {
                 type: 'number',
             },
@@ -15931,7 +15887,6 @@ var Playground = (function (exports) {
         'get': {
             title: 'get',
             category: 'Collection',
-            linkName: 'get',
             returns: {
                 type: 'any',
             },
@@ -15961,7 +15916,6 @@ var Playground = (function (exports) {
         'get-in': {
             title: 'get-in',
             category: 'Collection',
-            linkName: 'get-in',
             returns: {
                 type: 'any',
             },
@@ -15982,7 +15936,6 @@ var Playground = (function (exports) {
         'contains?': {
             title: 'contains?',
             category: 'Collection',
-            linkName: 'contains-question',
             returns: {
                 type: 'boolean',
             },
@@ -16005,7 +15958,6 @@ var Playground = (function (exports) {
         'assoc': {
             title: 'assoc',
             category: 'Collection',
-            linkName: 'assoc',
             returns: {
                 type: 'collection',
             },
@@ -16041,7 +15993,6 @@ var Playground = (function (exports) {
         'assoc-in': {
             title: 'assoc-in',
             category: 'Collection',
-            linkName: 'assoc-in',
             returns: {
                 type: 'collection',
             },
@@ -16070,7 +16021,6 @@ var Playground = (function (exports) {
         '++': {
             title: '++',
             category: 'Collection',
-            linkName: '-plus-plus',
             returns: {
                 type: 'collection',
             },
@@ -16104,7 +16054,6 @@ var Playground = (function (exports) {
         'not-empty': {
             title: 'not-empty',
             category: 'Collection',
-            linkName: 'not-empty',
             returns: {
                 type: 'boolean',
             },
@@ -16130,7 +16079,6 @@ var Playground = (function (exports) {
         'every?': {
             title: 'every?',
             category: 'Collection',
-            linkName: 'every-question',
             returns: {
                 type: 'boolean',
             },
@@ -16154,7 +16102,6 @@ var Playground = (function (exports) {
         'not-every?': {
             title: 'not-every?',
             category: 'Collection',
-            linkName: 'not-every-question',
             returns: {
                 type: 'boolean',
             },
@@ -16176,7 +16123,6 @@ var Playground = (function (exports) {
         'any?': {
             title: 'any?',
             category: 'Collection',
-            linkName: 'any-question',
             returns: {
                 type: 'boolean',
             },
@@ -16198,7 +16144,6 @@ var Playground = (function (exports) {
         'not-any?': {
             title: 'not-any?',
             category: 'Collection',
-            linkName: 'not-any-question',
             returns: {
                 type: 'boolean',
             },
@@ -16220,7 +16165,6 @@ var Playground = (function (exports) {
         'update': {
             title: 'update',
             category: 'Collection',
-            linkName: 'update',
             returns: {
                 type: 'collection',
             },
@@ -16252,7 +16196,6 @@ var Playground = (function (exports) {
         'update-in': {
             title: 'update-in',
             category: 'Collection',
-            linkName: 'update-in',
             returns: {
                 type: 'collection',
             },
@@ -16289,7 +16232,6 @@ var Playground = (function (exports) {
         '|>': {
             title: '|>',
             category: 'Functional',
-            linkName: '-or-gt',
             returns: {
                 type: 'any',
             },
@@ -16306,7 +16248,6 @@ var Playground = (function (exports) {
         'apply': {
             title: 'apply',
             category: 'Functional',
-            linkName: 'apply',
             returns: {
                 type: 'any',
             },
@@ -16328,7 +16269,6 @@ var Playground = (function (exports) {
         'identity': {
             title: 'identity',
             category: 'Functional',
-            linkName: 'identity',
             returns: {
                 type: 'any',
             },
@@ -16346,7 +16286,6 @@ var Playground = (function (exports) {
         'comp': {
             title: 'comp',
             category: 'Functional',
-            linkName: 'comp',
             returns: {
                 type: 'function',
             },
@@ -16366,7 +16305,6 @@ var Playground = (function (exports) {
         'constantly': {
             title: 'constantly',
             category: 'Functional',
-            linkName: 'constantly',
             returns: {
                 type: 'function',
             },
@@ -16386,7 +16324,6 @@ var Playground = (function (exports) {
         'juxt': {
             title: 'juxt',
             category: 'Functional',
-            linkName: 'juxt',
             returns: {
                 type: 'function',
             },
@@ -16410,7 +16347,6 @@ var Playground = (function (exports) {
         'complement': {
             title: 'complement',
             category: 'Functional',
-            linkName: 'complement',
             returns: {
                 type: 'function',
             },
@@ -16433,7 +16369,6 @@ var Playground = (function (exports) {
         'every-pred': {
             title: 'every-pred',
             category: 'Functional',
-            linkName: 'every-pred',
             returns: {
                 type: 'function',
             },
@@ -16460,7 +16395,6 @@ var Playground = (function (exports) {
         'some-pred': {
             title: 'some-pred',
             category: 'Functional',
-            linkName: 'some-pred',
             returns: {
                 type: 'function',
             },
@@ -16489,7 +16423,6 @@ var Playground = (function (exports) {
         'fnull': {
             title: 'fnull',
             category: 'Functional',
-            linkName: 'fnull',
             returns: {
                 type: 'function',
             },
@@ -16527,7 +16460,6 @@ var Playground = (function (exports) {
         '+': {
             title: '+',
             category: 'Math',
-            linkName: '-plus',
             returns: {
                 type: ['number', 'vector', 'matrix'],
             },
@@ -16551,7 +16483,6 @@ var Playground = (function (exports) {
         '-': {
             title: '-',
             category: 'Math',
-            linkName: '-minus',
             returns: {
                 type: ['number', 'vector', 'matrix'],
             },
@@ -16575,7 +16506,6 @@ var Playground = (function (exports) {
         '*': {
             title: '*',
             category: 'Math',
-            linkName: '-star',
             returns: {
                 type: ['number', 'vector', 'matrix'],
             },
@@ -16601,7 +16531,6 @@ var Playground = (function (exports) {
         '/': {
             title: '/',
             category: 'Math',
-            linkName: '-slash',
             returns: {
                 type: ['number', 'vector', 'matrix'],
             },
@@ -16626,7 +16555,6 @@ var Playground = (function (exports) {
         'mod': {
             title: 'mod',
             category: 'Math',
-            linkName: 'mod',
             returns: {
                 type: ['number', 'vector', 'matrix'],
             },
@@ -16651,7 +16579,6 @@ var Playground = (function (exports) {
         'rem': {
             title: 'rem',
             category: 'Math',
-            linkName: 'rem',
             returns: {
                 type: ['number', 'vector', 'matrix'],
             },
@@ -16680,7 +16607,6 @@ var Playground = (function (exports) {
         'quot': {
             title: 'quot',
             category: 'Math',
-            linkName: 'quot',
             returns: {
                 type: ['number', 'vector', 'matrix'],
             },
@@ -16708,7 +16634,6 @@ var Playground = (function (exports) {
         'inc': {
             title: 'inc',
             category: 'Math',
-            linkName: 'inc',
             returns: {
                 type: 'number',
             },
@@ -16732,7 +16657,6 @@ var Playground = (function (exports) {
         'dec': {
             title: 'dec',
             category: 'Math',
-            linkName: 'dec',
             returns: {
                 type: ['number', 'vector', 'matrix'],
             },
@@ -16756,7 +16680,6 @@ var Playground = (function (exports) {
         'sqrt': {
             title: 'sqrt',
             category: 'Math',
-            linkName: 'sqrt',
             returns: {
                 type: ['number', 'vector', 'matrix'],
             },
@@ -16784,7 +16707,6 @@ var Playground = (function (exports) {
         'cbrt': {
             title: 'cbrt',
             category: 'Math',
-            linkName: 'cbrt',
             returns: {
                 type: ['number', 'vector', 'matrix'],
             },
@@ -16814,7 +16736,6 @@ var Playground = (function (exports) {
         '^': {
             title: '^',
             category: 'Math',
-            linkName: '-caret',
             returns: {
                 type: ['number', 'vector', 'matrix'],
             },
@@ -16839,7 +16760,6 @@ var Playground = (function (exports) {
         'round': {
             title: 'round',
             category: 'Math',
-            linkName: 'round',
             returns: {
                 type: ['number', 'vector', 'matrix'],
             },
@@ -16867,7 +16787,6 @@ var Playground = (function (exports) {
         'trunc': {
             title: 'trunc',
             category: 'Math',
-            linkName: 'trunc',
             returns: {
                 type: ['integer', 'vector', 'matrix'],
             },
@@ -16894,7 +16813,6 @@ var Playground = (function (exports) {
         'floor': {
             title: 'floor',
             category: 'Math',
-            linkName: 'floor',
             returns: {
                 type: ['integer', 'vector', 'matrix'],
             },
@@ -16921,7 +16839,6 @@ var Playground = (function (exports) {
         'ceil': {
             title: 'ceil',
             category: 'Math',
-            linkName: 'ceil',
             returns: {
                 type: ['integer', 'vector', 'matrix'],
             },
@@ -16948,7 +16865,6 @@ var Playground = (function (exports) {
         'min': {
             title: 'min',
             category: 'Math',
-            linkName: 'min',
             returns: {
                 type: 'number',
             },
@@ -16971,7 +16887,6 @@ var Playground = (function (exports) {
         'max': {
             title: 'max',
             category: 'Math',
-            linkName: 'max',
             returns: {
                 type: 'number',
             },
@@ -16994,7 +16909,6 @@ var Playground = (function (exports) {
         'abs': {
             title: 'abs',
             category: 'Math',
-            linkName: 'abs',
             returns: {
                 type: ['number', 'vector', 'matrix'],
             },
@@ -17018,7 +16932,6 @@ var Playground = (function (exports) {
         'sign': {
             title: 'sign',
             category: 'Math',
-            linkName: 'sign',
             returns: {
                 type: ['number', 'vector', 'matrix'],
             },
@@ -17043,7 +16956,6 @@ var Playground = (function (exports) {
         'ln': {
             title: 'ln',
             category: 'Math',
-            linkName: 'ln',
             returns: {
                 type: ['number', 'vector', 'matrix'],
             },
@@ -17067,7 +16979,6 @@ var Playground = (function (exports) {
         'log2': {
             title: 'log2',
             category: 'Math',
-            linkName: 'log2',
             returns: {
                 type: ['number', 'vector', 'matrix'],
             },
@@ -17092,7 +17003,6 @@ var Playground = (function (exports) {
         'log10': {
             title: 'log10',
             category: 'Math',
-            linkName: 'log10',
             returns: {
                 type: ['number', 'vector', 'matrix'],
             },
@@ -17117,7 +17027,6 @@ var Playground = (function (exports) {
         'sin': {
             title: 'sin',
             category: 'Math',
-            linkName: 'sin',
             returns: {
                 type: ['number', 'vector', 'matrix'],
             },
@@ -17142,7 +17051,6 @@ var Playground = (function (exports) {
         'cos': {
             title: 'cos',
             category: 'Math',
-            linkName: 'cos',
             returns: {
                 type: ['number', 'vector', 'matrix'],
             },
@@ -17167,7 +17075,6 @@ var Playground = (function (exports) {
         'tan': {
             title: 'tan',
             category: 'Math',
-            linkName: 'tan',
             returns: {
                 type: ['number', 'vector', 'matrix'],
             },
@@ -17192,7 +17099,6 @@ var Playground = (function (exports) {
         'asin': {
             title: 'asin',
             category: 'Math',
-            linkName: 'asin',
             returns: {
                 type: ['number', 'vector', 'matrix'],
             },
@@ -17216,7 +17122,6 @@ var Playground = (function (exports) {
         'acos': {
             title: 'acos',
             category: 'Math',
-            linkName: 'acos',
             returns: {
                 type: ['number', 'vector', 'matrix'],
             },
@@ -17240,7 +17145,6 @@ var Playground = (function (exports) {
         'atan': {
             title: 'atan',
             category: 'Math',
-            linkName: 'atan',
             returns: {
                 type: ['number', 'vector', 'matrix'],
             },
@@ -17264,7 +17168,6 @@ var Playground = (function (exports) {
         'sinh': {
             title: 'sinh',
             category: 'Math',
-            linkName: 'sinh',
             returns: {
                 type: ['number', 'vector', 'matrix'],
             },
@@ -17288,7 +17191,6 @@ var Playground = (function (exports) {
         'cosh': {
             title: 'cosh',
             category: 'Math',
-            linkName: 'cosh',
             returns: {
                 type: ['number', 'vector', 'matrix'],
             },
@@ -17312,7 +17214,6 @@ var Playground = (function (exports) {
         'tanh': {
             title: 'tanh',
             category: 'Math',
-            linkName: 'tanh',
             returns: {
                 type: ['number', 'vector', 'matrix'],
             },
@@ -17330,7 +17231,6 @@ var Playground = (function (exports) {
         'asinh': {
             title: 'asinh',
             category: 'Math',
-            linkName: 'asinh',
             returns: {
                 type: ['number', 'vector', 'matrix'],
             },
@@ -17354,7 +17254,6 @@ var Playground = (function (exports) {
         'acosh': {
             title: 'acosh',
             category: 'Math',
-            linkName: 'acosh',
             returns: {
                 type: ['number', 'vector', 'matrix'],
             },
@@ -17379,7 +17278,6 @@ var Playground = (function (exports) {
         'atanh': {
             title: 'atanh',
             category: 'Math',
-            linkName: 'atanh',
             returns: {
                 type: ['number', 'vector', 'matrix'],
             },
@@ -17403,7 +17301,6 @@ var Playground = (function (exports) {
         'to-rad': {
             title: 'to-rad',
             category: 'Math',
-            linkName: 'to-rad',
             returns: {
                 type: ['number', 'vector', 'matrix'],
             },
@@ -17428,7 +17325,6 @@ var Playground = (function (exports) {
         'to-deg': {
             title: 'to-deg',
             category: 'Math',
-            linkName: 'to-deg',
             returns: {
                 type: ['number', 'vector', 'matrix'],
             },
@@ -17456,7 +17352,6 @@ var Playground = (function (exports) {
         '!=': {
             title: '!=',
             category: 'Misc',
-            linkName: '-exclamation-equal',
             returns: {
                 type: 'boolean',
             },
@@ -17484,7 +17379,6 @@ var Playground = (function (exports) {
         '==': {
             title: '==',
             category: 'Misc',
-            linkName: '-equal-equal',
             returns: {
                 type: 'boolean',
             },
@@ -17515,7 +17409,6 @@ var Playground = (function (exports) {
         '<': {
             title: '<',
             category: 'Misc',
-            linkName: '-lt',
             returns: {
                 type: 'boolean',
             },
@@ -17541,7 +17434,6 @@ var Playground = (function (exports) {
         '>': {
             title: '>',
             category: 'Misc',
-            linkName: '-gt',
             returns: {
                 type: 'boolean',
             },
@@ -17567,7 +17459,6 @@ var Playground = (function (exports) {
         '≤': {
             title: '≤',
             category: 'Misc',
-            linkName: '-lte',
             returns: {
                 type: 'boolean',
             },
@@ -17595,7 +17486,6 @@ var Playground = (function (exports) {
         '≥': {
             title: '≥',
             category: 'Misc',
-            linkName: '-gte',
             returns: {
                 type: 'boolean',
             },
@@ -17624,7 +17514,6 @@ var Playground = (function (exports) {
         '!': {
             title: '!',
             category: 'Misc',
-            linkName: '-exclamation',
             returns: {
                 type: 'boolean',
             },
@@ -17650,7 +17539,6 @@ var Playground = (function (exports) {
         'write!': {
             title: 'write!',
             category: 'Misc',
-            linkName: 'write-exclamation',
             returns: {
                 type: 'any',
             },
@@ -17677,7 +17565,6 @@ var Playground = (function (exports) {
         'iso-date->epoch': {
             title: 'iso-date->epoch',
             category: 'Misc',
-            linkName: 'iso-date--gtepoch',
             returns: {
                 type: 'number',
             },
@@ -17698,7 +17585,6 @@ var Playground = (function (exports) {
         'epoch->iso-date': {
             title: 'epoch->iso-date',
             category: 'Misc',
-            linkName: 'epoch--gtiso-date',
             returns: {
                 type: 'string',
             },
@@ -17719,7 +17605,6 @@ var Playground = (function (exports) {
         'boolean': {
             title: 'boolean',
             category: 'Misc',
-            linkName: 'boolean',
             returns: {
                 type: 'boolean',
             },
@@ -17742,7 +17627,6 @@ var Playground = (function (exports) {
         'compare': {
             title: 'compare',
             category: 'Misc',
-            linkName: 'compare',
             returns: {
                 type: 'number',
             },
@@ -17761,7 +17645,6 @@ var Playground = (function (exports) {
         'identical?': {
             title: 'identical?',
             category: 'Misc',
-            linkName: 'identical-question',
             returns: {
                 type: 'boolean',
             },
@@ -17779,7 +17662,6 @@ var Playground = (function (exports) {
         'json-parse': {
             title: 'json-parse',
             category: 'Misc',
-            linkName: 'json-parse',
             returns: {
                 type: 'any',
             },
@@ -17799,7 +17681,6 @@ var Playground = (function (exports) {
         'json-stringify': {
             title: 'json-stringify',
             category: 'Misc',
-            linkName: 'json-stringify',
             returns: {
                 type: 'string',
             },
@@ -17829,7 +17710,6 @@ var Playground = (function (exports) {
         'dissoc': {
             title: 'dissoc',
             category: 'Object',
-            linkName: 'dissoc',
             returns: {
                 type: 'object',
             },
@@ -17852,7 +17732,6 @@ var Playground = (function (exports) {
         'keys': {
             title: 'keys',
             category: 'Object',
-            linkName: 'keys',
             returns: {
                 type: 'any',
                 array: true,
@@ -17875,7 +17754,6 @@ var Playground = (function (exports) {
         'vals': {
             title: 'vals',
             category: 'Object',
-            linkName: 'vals',
             returns: {
                 type: 'any',
                 array: true,
@@ -17898,7 +17776,6 @@ var Playground = (function (exports) {
         'entries': {
             title: 'entries',
             category: 'Object',
-            linkName: 'entries',
             returns: {
                 type: 'array',
             },
@@ -17920,7 +17797,6 @@ var Playground = (function (exports) {
         'find': {
             title: 'find',
             category: 'Object',
-            linkName: 'find',
             returns: {
                 type: ['array', 'null'],
             },
@@ -17942,7 +17818,6 @@ var Playground = (function (exports) {
         'merge': {
             title: 'merge',
             category: 'Object',
-            linkName: 'merge',
             returns: {
                 type: 'object',
             },
@@ -17963,7 +17838,6 @@ var Playground = (function (exports) {
         'merge-with': {
             title: 'merge-with',
             category: 'Object',
-            linkName: 'merge-with',
             returns: {
                 type: 'object',
             },
@@ -17990,7 +17864,6 @@ var Playground = (function (exports) {
         'zipmap': {
             title: 'zipmap',
             category: 'Object',
-            linkName: 'zipmap',
             returns: {
                 type: 'object',
             },
@@ -18009,7 +17882,6 @@ var Playground = (function (exports) {
         'select-keys': {
             title: 'select-keys',
             category: 'Object',
-            linkName: 'select-keys',
             returns: {
                 type: 'object',
             },
@@ -18030,7 +17902,6 @@ var Playground = (function (exports) {
         'mat:mul': {
             title: 'mat:mul',
             category: 'Matrix',
-            linkName: 'mat-colon-mul',
             returns: {
                 type: 'matrix',
             },
@@ -18047,7 +17918,6 @@ var Playground = (function (exports) {
         'mat:det': {
             title: 'mat:det',
             category: 'Matrix',
-            linkName: 'mat-colon-det',
             returns: {
                 type: 'number',
             },
@@ -18069,7 +17939,6 @@ var Playground = (function (exports) {
         'mat:inv': {
             title: 'mat:inv',
             category: 'Matrix',
-            linkName: 'mat-colon-inv',
             returns: {
                 type: 'matrix',
             },
@@ -18091,7 +17960,6 @@ var Playground = (function (exports) {
         'mat:adj': {
             title: 'mat:adj',
             category: 'Matrix',
-            linkName: 'mat-colon-adj',
             returns: {
                 type: 'matrix',
             },
@@ -18114,7 +17982,6 @@ var Playground = (function (exports) {
         'mat:cofactor': {
             title: 'mat:cofactor',
             category: 'Matrix',
-            linkName: 'mat-colon-cofactor',
             returns: {
                 type: 'matrix',
             },
@@ -18137,7 +18004,6 @@ var Playground = (function (exports) {
         'mat:minor': {
             title: 'mat:minor',
             category: 'Matrix',
-            linkName: 'mat-colon-minor',
             returns: {
                 type: 'matrix',
             },
@@ -18167,7 +18033,6 @@ var Playground = (function (exports) {
         'mat:trace': {
             title: 'mat:trace',
             category: 'Matrix',
-            linkName: 'mat-colon-trace',
             returns: {
                 type: 'number',
             },
@@ -18189,7 +18054,6 @@ var Playground = (function (exports) {
         'mat:symmetric?': {
             title: 'mat:symmetric?',
             category: 'Matrix',
-            linkName: 'mat-colon-symmetric-question',
             returns: {
                 type: 'boolean',
             },
@@ -18211,7 +18075,6 @@ var Playground = (function (exports) {
         'mat:triangular?': {
             title: 'mat:triangular?',
             category: 'Matrix',
-            linkName: 'mat-colon-triangular-question',
             returns: {
                 type: 'boolean',
             },
@@ -18233,7 +18096,6 @@ var Playground = (function (exports) {
         'mat:upper-triangular?': {
             title: 'mat:upper-triangular?',
             category: 'Matrix',
-            linkName: 'mat-colon-upper-triangular-question',
             returns: {
                 type: 'boolean',
             },
@@ -18255,7 +18117,6 @@ var Playground = (function (exports) {
         'mat:lower-triangular?': {
             title: 'mat:lower-triangular?',
             category: 'Matrix',
-            linkName: 'mat-colon-lower-triangular-question',
             returns: {
                 type: 'boolean',
             },
@@ -18277,7 +18138,6 @@ var Playground = (function (exports) {
         'mat:diagonal?': {
             title: 'mat:diagonal?',
             category: 'Matrix',
-            linkName: 'mat-colon-diagonal-question',
             returns: {
                 type: 'boolean',
             },
@@ -18300,7 +18160,6 @@ var Playground = (function (exports) {
         'mat:square?': {
             title: 'mat:square?',
             category: 'Matrix',
-            linkName: 'mat-colon-square-question',
             returns: {
                 type: 'boolean',
             },
@@ -18323,7 +18182,6 @@ var Playground = (function (exports) {
         'mat:orthogonal?': {
             title: 'mat:orthogonal?',
             category: 'Matrix',
-            linkName: 'mat-colon-orthogonal-question',
             returns: {
                 type: 'boolean',
             },
@@ -18346,7 +18204,6 @@ var Playground = (function (exports) {
         'mat:identity?': {
             title: 'mat:identity?',
             category: 'Matrix',
-            linkName: 'mat-colon-identity-question',
             returns: {
                 type: 'boolean',
             },
@@ -18369,7 +18226,6 @@ var Playground = (function (exports) {
         'mat:invertible?': {
             title: 'mat:invertible?',
             category: 'Matrix',
-            linkName: 'mat-colon-invertible-question',
             returns: {
                 type: 'boolean',
             },
@@ -18392,7 +18248,6 @@ var Playground = (function (exports) {
         'mat:hilbert': {
             title: 'mat:hilbert',
             category: 'Matrix',
-            linkName: 'mat-colon-hilbert',
             returns: {
                 type: 'matrix',
             },
@@ -18414,7 +18269,6 @@ var Playground = (function (exports) {
         'mat:vandermonde': {
             title: 'mat:vandermonde',
             category: 'Matrix',
-            linkName: 'mat-colon-vandermonde',
             returns: {
                 type: 'matrix',
             },
@@ -18436,7 +18290,6 @@ var Playground = (function (exports) {
         'mat:band': {
             title: 'mat:band',
             category: 'Matrix',
-            linkName: 'mat-colon-band',
             returns: {
                 type: 'matrix',
             },
@@ -18466,7 +18319,6 @@ var Playground = (function (exports) {
         'mat:banded?': {
             title: 'mat:banded?',
             category: 'Matrix',
-            linkName: 'mat-colon-banded-question',
             returns: {
                 type: 'boolean',
             },
@@ -18496,7 +18348,6 @@ var Playground = (function (exports) {
         'mat:rank': {
             title: 'mat:rank',
             category: 'Matrix',
-            linkName: 'mat-colon-rank',
             returns: {
                 type: 'number',
             },
@@ -18519,7 +18370,6 @@ var Playground = (function (exports) {
         'mat:frobenius-norm': {
             title: 'mat:frobenius-norm',
             category: 'Matrix',
-            linkName: 'mat-colon-frobenius-norm',
             returns: {
                 type: 'number',
             },
@@ -18541,7 +18391,6 @@ var Playground = (function (exports) {
         'mat:1-norm': {
             title: 'mat:1-norm',
             category: 'Matrix',
-            linkName: 'mat-colon-1-norm',
             returns: {
                 type: 'number',
             },
@@ -18563,7 +18412,6 @@ var Playground = (function (exports) {
         'mat:inf-norm': {
             title: 'mat:inf-norm',
             category: 'Matrix',
-            linkName: 'mat-colon-inf-norm',
             returns: {
                 type: 'number',
             },
@@ -18586,7 +18434,6 @@ var Playground = (function (exports) {
         'mat:max-norm': {
             title: 'mat:max-norm',
             category: 'Matrix',
-            linkName: 'mat-colon-max-norm',
             returns: {
                 type: 'number',
             },
@@ -18614,7 +18461,6 @@ var Playground = (function (exports) {
         'grid:every?': {
             title: 'grid:every?',
             category: 'Grid',
-            linkName: 'grid-colon-every-question',
             returns: {
                 type: 'boolean',
             },
@@ -18632,7 +18478,6 @@ var Playground = (function (exports) {
         'grid:some?': {
             title: 'grid:some?',
             category: 'Grid',
-            linkName: 'grid-colon-some-question',
             returns: {
                 type: 'boolean',
             },
@@ -18650,7 +18495,6 @@ var Playground = (function (exports) {
         'grid:every-row?': {
             title: 'grid:every-row?',
             category: 'Grid',
-            linkName: 'grid-colon-every-row-question',
             returns: {
                 type: 'boolean',
             },
@@ -18668,7 +18512,6 @@ var Playground = (function (exports) {
         'grid:some-row?': {
             title: 'grid:some-row?',
             category: 'Grid',
-            linkName: 'grid-colon-some-row-question',
             returns: {
                 type: 'boolean',
             },
@@ -18686,7 +18529,6 @@ var Playground = (function (exports) {
         'grid:every-col?': {
             title: 'grid:every-col?',
             category: 'Grid',
-            linkName: 'grid-colon-every-col-question',
             returns: {
                 type: 'boolean',
             },
@@ -18704,7 +18546,6 @@ var Playground = (function (exports) {
         'grid:some-col?': {
             title: 'grid:some-col?',
             category: 'Grid',
-            linkName: 'grid-colon-some-col-question',
             returns: {
                 type: 'boolean',
             },
@@ -18722,7 +18563,6 @@ var Playground = (function (exports) {
         'grid:row': {
             title: 'grid:row',
             category: 'Grid',
-            linkName: 'grid-colon-row',
             returns: {
                 type: 'any',
             },
@@ -18740,7 +18580,6 @@ var Playground = (function (exports) {
         'grid:col': {
             title: 'grid:col',
             category: 'Grid',
-            linkName: 'grid-colon-col',
             returns: {
                 type: 'any',
             },
@@ -18758,7 +18597,6 @@ var Playground = (function (exports) {
         'grid:shape': {
             title: 'grid:shape',
             category: 'Grid',
-            linkName: 'grid-colon-shape',
             returns: {
                 type: 'vector',
             },
@@ -18781,7 +18619,6 @@ var Playground = (function (exports) {
         'grid:fill': {
             title: 'grid:fill',
             category: 'Grid',
-            linkName: 'grid-colon-fill',
             returns: {
                 type: 'grid',
             },
@@ -18811,7 +18648,6 @@ var Playground = (function (exports) {
         'grid:generate': {
             title: 'grid:generate',
             category: 'Grid',
-            linkName: 'grid-colon-generate',
             returns: {
                 type: 'grid',
             },
@@ -18840,7 +18676,6 @@ var Playground = (function (exports) {
         'grid:reshape': {
             title: 'grid:reshape',
             category: 'Grid',
-            linkName: 'grid-colon-reshape',
             returns: {
                 type: 'grid',
             },
@@ -18856,7 +18691,6 @@ var Playground = (function (exports) {
         'grid:transpose': {
             title: 'grid:transpose',
             category: 'Grid',
-            linkName: 'grid-colon-transpose',
             returns: {
                 type: 'grid',
             },
@@ -18880,7 +18714,6 @@ var Playground = (function (exports) {
         'grid:flip-h': {
             title: 'grid:flip-h',
             category: 'Grid',
-            linkName: 'grid-colon-flip-h',
             returns: {
                 type: 'grid',
             },
@@ -18903,7 +18736,6 @@ var Playground = (function (exports) {
         'grid:flip-v': {
             title: 'grid:flip-v',
             category: 'Grid',
-            linkName: 'grid-colon-flip-v',
             returns: {
                 type: 'grid',
             },
@@ -18926,7 +18758,6 @@ var Playground = (function (exports) {
         'grid:rotate': {
             title: 'grid:rotate',
             category: 'Grid',
-            linkName: 'grid-colon-rotate',
             returns: {
                 type: 'grid',
             },
@@ -18948,7 +18779,6 @@ var Playground = (function (exports) {
         'grid:reverse-rows': {
             title: 'grid:reverse-rows',
             category: 'Grid',
-            linkName: 'grid-colon-reverse-rows',
             returns: {
                 type: 'grid',
             },
@@ -18971,7 +18801,6 @@ var Playground = (function (exports) {
         'grid:reverse-cols': {
             title: 'grid:reverse-cols',
             category: 'Grid',
-            linkName: 'grid-colon-reverse-cols',
             returns: {
                 type: 'grid',
             },
@@ -18994,7 +18823,6 @@ var Playground = (function (exports) {
         'grid:slice': {
             title: 'grid:slice',
             category: 'Grid',
-            linkName: 'grid-colon-slice',
             returns: {
                 type: 'grid',
             },
@@ -19026,7 +18854,6 @@ var Playground = (function (exports) {
         'grid:slice-rows': {
             title: 'grid:slice-rows',
             category: 'Grid',
-            linkName: 'grid-colon-slice-rows',
             returns: {
                 type: 'grid',
             },
@@ -19058,7 +18885,6 @@ var Playground = (function (exports) {
         'grid:slice-cols': {
             title: 'grid:slice-cols',
             category: 'Grid',
-            linkName: 'grid-colon-slice-cols',
             returns: {
                 type: 'grid',
             },
@@ -19090,7 +18916,6 @@ var Playground = (function (exports) {
         'grid:splice-rows': {
             title: 'grid:splice-rows',
             category: 'Grid',
-            linkName: 'grid-colon-splice-rows',
             returns: {
                 type: 'grid',
             },
@@ -19127,7 +18952,6 @@ var Playground = (function (exports) {
         'grid:splice-cols': {
             title: 'grid:splice-cols',
             category: 'Grid',
-            linkName: 'grid-colon-splice-cols',
             returns: {
                 type: 'grid',
             },
@@ -19164,7 +18988,6 @@ var Playground = (function (exports) {
         'grid:concat-rows': {
             title: 'grid:concat-rows',
             category: 'Grid',
-            linkName: 'grid-colon-concat-rows',
             returns: {
                 type: 'grid',
             },
@@ -19180,7 +19003,6 @@ var Playground = (function (exports) {
         'grid:concat-cols': {
             title: 'grid:concat-cols',
             category: 'Grid',
-            linkName: 'grid-colon-concat-cols',
             returns: {
                 type: 'grid',
             },
@@ -19196,7 +19018,6 @@ var Playground = (function (exports) {
         'grid:map': {
             title: 'grid:map',
             category: 'Grid',
-            linkName: 'grid-colon-map',
             returns: {
                 type: 'grid',
             },
@@ -19212,7 +19033,6 @@ var Playground = (function (exports) {
         'grid:mapi': {
             title: 'grid:mapi',
             category: 'Grid',
-            linkName: 'grid-colon-mapi',
             returns: {
                 type: 'grid',
             },
@@ -19228,7 +19048,6 @@ var Playground = (function (exports) {
         'grid:reduce': {
             title: 'grid:reduce',
             category: 'Grid',
-            linkName: 'grid-colon-reduce',
             returns: {
                 type: 'any',
             },
@@ -19257,7 +19076,6 @@ var Playground = (function (exports) {
         'grid:reducei': {
             title: 'grid:reducei',
             category: 'Grid',
-            linkName: 'grid-colon-reducei',
             returns: {
                 type: 'any',
             },
@@ -19286,7 +19104,6 @@ var Playground = (function (exports) {
         'grid:push-rows': {
             title: 'grid:push-rows',
             category: 'Grid',
-            linkName: 'grid-colon-push-rows',
             returns: {
                 type: 'grid',
             },
@@ -19313,7 +19130,6 @@ var Playground = (function (exports) {
         'grid:unshift-rows': {
             title: 'grid:unshift-rows',
             category: 'Grid',
-            linkName: 'grid-colon-unshift-rows',
             returns: {
                 type: 'grid',
             },
@@ -19340,7 +19156,6 @@ var Playground = (function (exports) {
         'grid:pop-row': {
             title: 'grid:pop-row',
             category: 'Grid',
-            linkName: 'grid-colon-pop-row',
             returns: {
                 type: 'grid',
             },
@@ -19361,7 +19176,6 @@ var Playground = (function (exports) {
         'grid:shift-row': {
             title: 'grid:shift-row',
             category: 'Grid',
-            linkName: 'grid-colon-shift-row',
             returns: {
                 type: 'grid',
             },
@@ -19382,7 +19196,6 @@ var Playground = (function (exports) {
         'grid:push-cols': {
             title: 'grid:push-cols',
             category: 'Grid',
-            linkName: 'grid-colon-push-cols',
             returns: {
                 type: 'grid',
             },
@@ -19409,7 +19222,6 @@ var Playground = (function (exports) {
         'grid:unshift-cols': {
             title: 'grid:unshift-cols',
             category: 'Grid',
-            linkName: 'grid-colon-unshift-cols',
             returns: {
                 type: 'grid',
             },
@@ -19436,7 +19248,6 @@ var Playground = (function (exports) {
         'grid:pop-col': {
             title: 'grid:pop-col',
             category: 'Grid',
-            linkName: 'grid-colon-pop-col',
             returns: {
                 type: 'grid',
             },
@@ -19457,7 +19268,6 @@ var Playground = (function (exports) {
         'grid:shift-col': {
             title: 'grid:shift-col',
             category: 'Grid',
-            linkName: 'grid-colon-shift-col',
             returns: {
                 type: 'grid',
             },
@@ -19478,7 +19288,6 @@ var Playground = (function (exports) {
         'grid:from-array': {
             title: 'grid:from-array',
             category: 'Grid',
-            linkName: 'grid-colon-from-array',
             returns: {
                 type: 'grid',
             },
@@ -19499,7 +19308,6 @@ var Playground = (function (exports) {
             title: 'vec:mean',
             category: 'Vector',
             description: 'Returns the `mean` of all elements in the `vector`.',
-            linkName: 'vec-colon-mean',
             returns: {
                 type: 'number',
             },
@@ -19521,7 +19329,6 @@ var Playground = (function (exports) {
             title: 'vec:moving-mean',
             category: 'Vector',
             description: 'Returns the **moving mean` of the `vector** with a given window size.',
-            linkName: 'vec-colon-moving-mean',
             returns: {
                 type: 'vector',
             },
@@ -19544,7 +19351,6 @@ var Playground = (function (exports) {
             title: 'vec:centered-moving-mean',
             category: 'Vector',
             description: 'Returns the **centered moving mean` of the `vector** with a given window size.',
-            linkName: 'vec-colon-centered-moving-mean',
             returns: {
                 type: 'array',
             },
@@ -19576,7 +19382,6 @@ var Playground = (function (exports) {
             title: 'vec:running-mean',
             category: 'Vector',
             description: 'Returns the **running mean` of the `vector**.',
-            linkName: 'vec-colon-running-mean',
             returns: {
                 type: 'vector',
             },
@@ -19599,7 +19404,6 @@ var Playground = (function (exports) {
             title: 'vec:geometric-mean',
             category: 'Vector',
             description: 'Returns the `geometric mean` of all elements in the `vector`.',
-            linkName: 'vec-colon-geometric-mean',
             returns: {
                 type: 'number',
             },
@@ -19621,7 +19425,6 @@ var Playground = (function (exports) {
             title: 'vec:moving-geometric-mean',
             category: 'Vector',
             description: 'Returns the **moving geometric mean` of the `vector** with a given window size.',
-            linkName: 'vec-colon-moving-geometric-mean',
             returns: {
                 type: 'vector',
             },
@@ -19644,7 +19447,6 @@ var Playground = (function (exports) {
             title: 'vec:centered-moving-geometric-mean',
             category: 'Vector',
             description: 'Returns the **centered moving geometric mean` of the `vector** with a given window size.',
-            linkName: 'vec-colon-centered-moving-geometric-mean',
             returns: {
                 type: 'array',
             },
@@ -19676,7 +19478,6 @@ var Playground = (function (exports) {
             title: 'vec:running-geometric-mean',
             category: 'Vector',
             description: 'Returns the **running geometric mean` of the `vector**.',
-            linkName: 'vec-colon-running-geometric-mean',
             returns: {
                 type: 'vector',
             },
@@ -19699,7 +19500,6 @@ var Playground = (function (exports) {
             title: 'vec:harmonic-mean',
             category: 'Vector',
             description: 'Returns the `harmonic mean` of all elements in the `vector`.',
-            linkName: 'vec-colon-harmonic-mean',
             returns: {
                 type: 'number',
             },
@@ -19721,7 +19521,6 @@ var Playground = (function (exports) {
             title: 'vec:moving-harmonic-mean',
             category: 'Vector',
             description: 'Returns the **moving harmonic mean` of the `vector** with a given window size.',
-            linkName: 'vec-colon-moving-harmonic-mean',
             returns: {
                 type: 'vector',
             },
@@ -19744,7 +19543,6 @@ var Playground = (function (exports) {
             title: 'vec:centered-moving-harmonic-mean',
             category: 'Vector',
             description: 'Returns the **centered moving harmonic mean` of the `vector** with a given window size.',
-            linkName: 'vec-colon-centered-moving-harmonic-mean',
             returns: {
                 type: 'array',
             },
@@ -19776,7 +19574,6 @@ var Playground = (function (exports) {
             title: 'vec:running-harmonic-mean',
             category: 'Vector',
             description: 'Returns the **running harmonic mean` of the `vector**.',
-            linkName: 'vec-colon-running-harmonic-mean',
             returns: {
                 type: 'vector',
             },
@@ -19800,7 +19597,6 @@ var Playground = (function (exports) {
             title: 'vec:median',
             category: 'Vector',
             description: 'Returns the `median` of all elements in the `vector`.',
-            linkName: 'vec-colon-median',
             returns: {
                 type: 'number',
             },
@@ -19822,7 +19618,6 @@ var Playground = (function (exports) {
             title: 'vec:moving-median',
             category: 'Vector',
             description: 'Returns the **moving median` of the `vector** with a given window size.',
-            linkName: 'vec-colon-moving-median',
             returns: {
                 type: 'vector',
             },
@@ -19845,7 +19640,6 @@ var Playground = (function (exports) {
             title: 'vec:centered-moving-median',
             category: 'Vector',
             description: 'Returns the **centered moving median` of the `vector** with a given window size.',
-            linkName: 'vec-colon-centered-moving-median',
             returns: {
                 type: 'array',
             },
@@ -19877,7 +19671,6 @@ var Playground = (function (exports) {
             title: 'vec:running-median',
             category: 'Vector',
             description: 'Returns the **running median` of the `vector**.',
-            linkName: 'vec-colon-running-median',
             returns: {
                 type: 'vector',
             },
@@ -19901,7 +19694,6 @@ var Playground = (function (exports) {
             title: 'vec:variance',
             category: 'Vector',
             description: 'Returns the `variance` of all elements in the `vector`.',
-            linkName: 'vec-colon-variance',
             returns: {
                 type: 'number',
             },
@@ -19923,7 +19715,6 @@ var Playground = (function (exports) {
             title: 'vec:moving-variance',
             category: 'Vector',
             description: 'Returns the **moving variance` of the `vector** with a given window size.',
-            linkName: 'vec-colon-moving-variance',
             returns: {
                 type: 'vector',
             },
@@ -19946,7 +19737,6 @@ var Playground = (function (exports) {
             title: 'vec:centered-moving-variance',
             category: 'Vector',
             description: 'Returns the **centered moving variance` of the `vector** with a given window size.',
-            linkName: 'vec-colon-centered-moving-variance',
             returns: {
                 type: 'array',
             },
@@ -19980,7 +19770,6 @@ var Playground = (function (exports) {
             title: 'vec:running-variance',
             category: 'Vector',
             description: 'Returns the **running variance` of the `vector**.',
-            linkName: 'vec-colon-running-variance',
             returns: {
                 type: 'vector',
             },
@@ -20003,7 +19792,6 @@ var Playground = (function (exports) {
             title: 'vec:sample-variance',
             category: 'Vector',
             description: 'Returns the `variance` of all elements in the `vector`.',
-            linkName: 'vec-colon-variance',
             returns: {
                 type: 'number',
             },
@@ -20025,7 +19813,6 @@ var Playground = (function (exports) {
             title: 'vec:moving-sample-variance',
             category: 'Vector',
             description: 'Returns the **moving sample variance` of the `vector** with a given window size.',
-            linkName: 'vec-colon-moving-sample-variance',
             returns: {
                 type: 'vector',
             },
@@ -20048,7 +19835,6 @@ var Playground = (function (exports) {
             title: 'vec:centered-moving-sample-variance',
             category: 'Vector',
             description: 'Returns the **centered moving sample variance` of the `vector** with a given window size.',
-            linkName: 'vec-colon-centered-moving-sample-variance',
             returns: {
                 type: 'array',
             },
@@ -20082,7 +19868,6 @@ var Playground = (function (exports) {
             title: 'vec:running-sample-variance',
             category: 'Vector',
             description: 'Returns the **running sample variance` of the `vector**.',
-            linkName: 'vec-colon-running-sample-variance',
             returns: {
                 type: 'array',
             },
@@ -20106,7 +19891,6 @@ var Playground = (function (exports) {
             title: 'vec:stdev',
             category: 'Vector',
             description: 'Returns the **standard deviation` of the `vector**.',
-            linkName: 'vec-colon-stdev',
             returns: {
                 type: 'number',
             },
@@ -20128,7 +19912,6 @@ var Playground = (function (exports) {
             title: 'vec:moving-stdev',
             category: 'Vector',
             description: 'Returns the **moving standard deviation` of the `vector** with a given window size.',
-            linkName: 'vec-colon-moving-stdev',
             returns: {
                 type: 'vector',
             },
@@ -20151,7 +19934,6 @@ var Playground = (function (exports) {
             title: 'vec:centered-moving-stdev',
             category: 'Vector',
             description: 'Returns the **centered moving standard deviation` of the `vector** with a given window size.',
-            linkName: 'vec-colon-centered-moving-stdev',
             returns: {
                 type: 'array',
             },
@@ -20185,7 +19967,6 @@ var Playground = (function (exports) {
             title: 'vec:running-stdev',
             category: 'Vector',
             description: 'Returns the **running standard deviation` of the `vector**.',
-            linkName: 'vec-colon-running-stdev',
             returns: {
                 type: 'vector',
             },
@@ -20208,7 +19989,6 @@ var Playground = (function (exports) {
             title: 'vec:sample-stdev',
             category: 'Vector',
             description: 'Returns the **sample standard deviation` of the `vector**.',
-            linkName: 'vec-colon-sample-stdev',
             returns: {
                 type: 'number',
             },
@@ -20230,7 +20010,6 @@ var Playground = (function (exports) {
             title: 'vec:moving-sample-stdev',
             category: 'Vector',
             description: 'Returns the **moving sample standard deviation` of the `vector** with a given window size.',
-            linkName: 'vec-colon-moving-sample-stdev',
             returns: {
                 type: 'vector',
             },
@@ -20253,7 +20032,6 @@ var Playground = (function (exports) {
             title: 'vec:centered-moving-sample-stdev',
             category: 'Vector',
             description: 'Returns the **centered moving sample standard deviation` of the `vector** with a given window size.',
-            linkName: 'vec-colon-centered-moving-sample-stdev',
             returns: {
                 type: 'array',
             },
@@ -20287,7 +20065,6 @@ var Playground = (function (exports) {
             title: 'vec:running-sample-stdev',
             category: 'Vector',
             description: 'Returns the **running sample standard deviation` of the `vector**.',
-            linkName: 'vec-colon-running-sample-stdev',
             returns: {
                 type: 'array',
             },
@@ -20311,7 +20088,6 @@ var Playground = (function (exports) {
             title: 'vec:skewness',
             category: 'Vector',
             description: 'Calculates the **skewness** of a `vector`. Returns the third standardized moment.',
-            linkName: 'vec-colon-skewness',
             returns: {
                 type: 'number',
             },
@@ -20333,7 +20109,6 @@ var Playground = (function (exports) {
             title: 'vec:moving-skewness',
             category: 'Vector',
             description: 'Calculates the **moving skewness** of a `vector` with a given window size.',
-            linkName: 'vec-colon-moving-skewness',
             returns: {
                 type: 'vector',
             },
@@ -20356,7 +20131,6 @@ var Playground = (function (exports) {
             title: 'vec:centered-moving-skewness',
             category: 'Vector',
             description: 'Calculates the **centered moving skewness** of a `vector` with a given window size and padding.',
-            linkName: 'vec-colon-centered-moving-skewness',
             returns: {
                 type: 'array',
             },
@@ -20387,7 +20161,6 @@ var Playground = (function (exports) {
             title: 'vec:running-skewness',
             category: 'Vector',
             description: 'Calculates the **running skewness** of a `vector` with a given window size. First two element in result is `null` since **running skewness** is not defined for less than three elements.',
-            linkName: 'vec-colon-running-skewness',
             returns: {
                 type: 'array',
             },
@@ -20410,7 +20183,6 @@ var Playground = (function (exports) {
             title: 'vec:sample-skewness',
             category: 'Vector',
             description: 'Calculates the **sample skewness** of a `vector`. Returns the third standardized moment.',
-            linkName: 'vec-colon-sample-skewness',
             returns: {
                 type: 'number',
             },
@@ -20432,7 +20204,6 @@ var Playground = (function (exports) {
             title: 'vec:moving-sample-skewness',
             category: 'Vector',
             description: 'Calculates the **moving sample skewness** of a `vector` with a given window size.',
-            linkName: 'vec-colon-moving-sample-skewness',
             returns: {
                 type: 'vector',
             },
@@ -20455,7 +20226,6 @@ var Playground = (function (exports) {
             title: 'vec:centered-moving-sample-skewness',
             category: 'Vector',
             description: 'Calculates the **centered moving sample skewness** of a `vector` with a given window size and padding.',
-            linkName: 'vec-colon-centered-moving-sample-skewness',
             returns: {
                 type: 'array',
             },
@@ -20486,7 +20256,6 @@ var Playground = (function (exports) {
             title: 'vec:running-sample-skewness',
             category: 'Vector',
             description: 'Calculates the **running sample skewness** of a `vector` with a given window size. First two element in result is `null` since **running sample skewness** is not defined for less than three elements.',
-            linkName: 'vec-colon-running-sample-skewness',
             returns: {
                 type: 'array',
             },
@@ -20510,7 +20279,6 @@ var Playground = (function (exports) {
             title: 'vec:iqr',
             category: 'Vector',
             description: 'Calculates the **interquartile range** of a `vector`. Returns the difference between the third and first quartiles.',
-            linkName: 'vec-colon-iqr',
             returns: {
                 type: 'number',
             },
@@ -20535,7 +20303,6 @@ var Playground = (function (exports) {
             title: 'vec:moving-iqr',
             category: 'Vector',
             description: 'Calculates the **moving interquartile range** of a `vector` with a given window size.',
-            linkName: 'vec-colon-moving-iqr',
             returns: {
                 type: 'vector',
             },
@@ -20559,7 +20326,6 @@ var Playground = (function (exports) {
             title: 'vec:centered-moving-iqr',
             category: 'Vector',
             description: 'Calculates the **centered moving interquartile range** of a `vector` with a given window size.',
-            linkName: 'vec-colon-centered-moving-iqr',
             returns: {
                 type: 'array',
             },
@@ -20590,7 +20356,6 @@ var Playground = (function (exports) {
             title: 'vec:running-iqr',
             category: 'Vector',
             description: 'Calculates the **running interquartile range** of a `vector`. First three element in result is `null` since **running interquartile range** is not defined for less than four elements.',
-            linkName: 'vec-colon-running-iqr',
             returns: {
                 type: 'vector',
             },
@@ -20615,7 +20380,6 @@ var Playground = (function (exports) {
             title: 'vec:sum',
             category: 'Vector',
             description: 'Returns the `sum` of all elements in the `vector`.',
-            linkName: 'vec-colon-sum',
             returns: {
                 type: 'number',
             },
@@ -20637,7 +20401,6 @@ var Playground = (function (exports) {
             title: 'vec:moving-sum',
             category: 'Vector',
             description: 'Returns the **moving sum` of the `vector** with a given window size.',
-            linkName: 'vec-colon-moving-sum',
             returns: {
                 type: 'vector',
             },
@@ -20660,7 +20423,6 @@ var Playground = (function (exports) {
             title: 'vec:centered-moving-sum',
             category: 'Vector',
             description: 'Returns the **centered moving sum` of the `vector** with a given window size.',
-            linkName: 'vec-colon-centered-moving-sum',
             returns: {
                 type: 'array',
             },
@@ -20692,7 +20454,6 @@ var Playground = (function (exports) {
             title: 'vec:running-sum',
             category: 'Vector',
             description: 'Returns the **running sum` of the `vector**.',
-            linkName: 'vec-colon-running-sum',
             returns: {
                 type: 'vector',
             },
@@ -20717,7 +20478,6 @@ var Playground = (function (exports) {
             title: 'vec:prod',
             category: 'Vector',
             description: 'Returns the `product` of all elements in the `vector`.',
-            linkName: 'vec-colon-prod',
             returns: {
                 type: 'number',
             },
@@ -20739,7 +20499,6 @@ var Playground = (function (exports) {
             title: 'vec:moving-prod',
             category: 'Vector',
             description: 'Returns the **moving product` of the `vector** with a given window size.',
-            linkName: 'vec-colon-moving-prod',
             returns: {
                 type: 'vector',
             },
@@ -20762,7 +20521,6 @@ var Playground = (function (exports) {
             title: 'vec:centered-moving-prod',
             category: 'Vector',
             description: 'Returns the **centered moving product` of the `vector** with a given window size.',
-            linkName: 'vec-colon-centered-moving-prod',
             returns: {
                 type: 'array',
             },
@@ -20793,7 +20551,6 @@ var Playground = (function (exports) {
             title: 'vec:running-prod',
             category: 'Vector',
             description: 'Returns the **running product` of the `vector**.',
-            linkName: 'vec-colon-running-prod',
             returns: {
                 type: 'vector',
             },
@@ -20818,7 +20575,6 @@ var Playground = (function (exports) {
             title: 'vec:min',
             category: 'Vector',
             description: 'Returns the `minimum` of all elements in the `vector`.',
-            linkName: 'vec-colon-min',
             returns: {
                 type: 'number',
             },
@@ -20840,7 +20596,6 @@ var Playground = (function (exports) {
             title: 'vec:moving-min',
             category: 'Vector',
             description: 'Returns the **moving minimum` of the `vector** with a given window size.',
-            linkName: 'vec-colon-moving-min',
             returns: {
                 type: 'vector',
             },
@@ -20863,7 +20618,6 @@ var Playground = (function (exports) {
             title: 'vec:centered-moving-min',
             category: 'Vector',
             description: 'Returns the **centered moving minimum` of the `vector** with a given window size.',
-            linkName: 'vec-colon-centered-moving-min',
             returns: {
                 type: 'array',
             },
@@ -20895,7 +20649,6 @@ var Playground = (function (exports) {
             title: 'vec:running-min',
             category: 'Vector',
             description: 'Returns the **running minimum` of the `vector**.',
-            linkName: 'vec-colon-running-min',
             returns: {
                 type: 'vector',
             },
@@ -20920,7 +20673,6 @@ var Playground = (function (exports) {
             title: 'vec:max',
             category: 'Vector',
             description: 'Returns the `maximum` of all elements in the `vector`.',
-            linkName: 'vec-colon-max',
             returns: {
                 type: 'number',
             },
@@ -20942,7 +20694,6 @@ var Playground = (function (exports) {
             title: 'vec:moving-max',
             category: 'Vector',
             description: 'Returns the **moving maximum` of the `vector** with a given window size.',
-            linkName: 'vec-colon-moving-max',
             returns: {
                 type: 'vector',
             },
@@ -20965,7 +20716,6 @@ var Playground = (function (exports) {
             title: 'vec:centered-moving-max',
             category: 'Vector',
             description: 'Returns the **centered moving maximum` of the `vector** with a given window size.',
-            linkName: 'vec-colon-centered-moving-max',
             returns: {
                 type: 'array',
             },
@@ -20997,7 +20747,6 @@ var Playground = (function (exports) {
             title: 'vec:running-max',
             category: 'Vector',
             description: 'Returns the **running maximum` of the `vector**.',
-            linkName: 'vec-colon-running-max',
             returns: {
                 type: 'vector',
             },
@@ -21022,7 +20771,6 @@ var Playground = (function (exports) {
             title: 'vec:span',
             category: 'Vector',
             description: 'Calculates the **span** of a `vector`. Returns the difference between the maximum and minimum values.',
-            linkName: 'vec-colon-span',
             returns: {
                 type: 'number',
             },
@@ -21046,7 +20794,6 @@ var Playground = (function (exports) {
             title: 'vec:moving-span',
             category: 'Vector',
             description: 'Calculates the **moving span** of a `vector` with a given window size.',
-            linkName: 'vec-colon-moving-span',
             returns: {
                 type: 'vector',
             },
@@ -21070,7 +20817,6 @@ var Playground = (function (exports) {
             title: 'vec:centered-moving-span',
             category: 'Vector',
             description: 'Calculates the **centered moving span** of a `vector` with a given window size. The result is padded with `leftPadding` on the left and right.',
-            linkName: 'vec-colon-centered-moving-span',
             returns: {
                 type: 'array',
             },
@@ -21101,7 +20847,6 @@ var Playground = (function (exports) {
             title: 'vec:running-span',
             category: 'Vector',
             description: 'Calculates the **running span** of a `vector` with a given window size.',
-            linkName: 'vec-colon-running-span',
             returns: {
                 type: 'vector',
             },
@@ -21125,7 +20870,6 @@ var Playground = (function (exports) {
             title: 'vec:kurtosis',
             category: 'Vector',
             description: 'Calculates the **kurtosis** of a `vector`. Returns the third standardized moment.',
-            linkName: 'vec-colon-kurtosis',
             returns: {
                 type: 'number',
             },
@@ -21147,7 +20891,6 @@ var Playground = (function (exports) {
             title: 'vec:moving-kurtosis',
             category: 'Vector',
             description: 'Calculates the **moving kurtosis** of a `vector` with a given window size.',
-            linkName: 'vec-colon-moving-kurtosis',
             returns: {
                 type: 'vector',
             },
@@ -21170,7 +20913,6 @@ var Playground = (function (exports) {
             title: 'vec:centered-moving-kurtosis',
             category: 'Vector',
             description: 'Calculates the **centered moving kurtosis** of a `vector` with a given window size and padding.',
-            linkName: 'vec-colon-centered-moving-kurtosis',
             returns: {
                 type: 'array',
             },
@@ -21201,7 +20943,6 @@ var Playground = (function (exports) {
             title: 'vec:running-kurtosis',
             category: 'Vector',
             description: 'Calculates the **running kurtosis** of a `vector` with a given window size. First two element in result is `null` since **running kurtosis** is not defined for less than three elements.',
-            linkName: 'vec-colon-running-kurtosis',
             returns: {
                 type: 'array',
             },
@@ -21224,7 +20965,6 @@ var Playground = (function (exports) {
             title: 'vec:sample-kurtosis',
             category: 'Vector',
             description: 'Calculates the **sample kurtosis** of a `vector`. Returns the third standardized moment.',
-            linkName: 'vec-colon-sample-kurtosis',
             returns: {
                 type: 'number',
             },
@@ -21246,7 +20986,6 @@ var Playground = (function (exports) {
             title: 'vec:moving-sample-kurtosis',
             category: 'Vector',
             description: 'Calculates the **moving sample kurtosis** of a `vector` with a given window size.',
-            linkName: 'vec-colon-moving-sample-kurtosis',
             returns: {
                 type: 'vector',
             },
@@ -21269,7 +21008,6 @@ var Playground = (function (exports) {
             title: 'vec:centered-moving-sample-kurtosis',
             category: 'Vector',
             description: 'Calculates the **centered moving sample kurtosis** of a `vector` with a given window size and padding.',
-            linkName: 'vec-colon-centered-moving-sample-kurtosis',
             returns: {
                 type: 'array',
             },
@@ -21300,7 +21038,6 @@ var Playground = (function (exports) {
             title: 'vec:running-sample-kurtosis',
             category: 'Vector',
             description: 'Calculates the **running sample kurtosis** of a `vector` with a given window size. First two element in result is `null` since **running sample kurtosis** is not defined for less than three elements.',
-            linkName: 'vec-colon-running-sample-kurtosis',
             returns: {
                 type: 'array',
             },
@@ -21323,7 +21060,6 @@ var Playground = (function (exports) {
             title: 'vec:excess-kurtosis',
             category: 'Vector',
             description: 'Calculates the **excess kurtosis** of a `vector`. Returns the third standardized moment.',
-            linkName: 'vec-colon-excess-kurtosis',
             returns: {
                 type: 'number',
             },
@@ -21345,7 +21081,6 @@ var Playground = (function (exports) {
             title: 'vec:moving-excess-kurtosis',
             category: 'Vector',
             description: 'Calculates the **moving excess kurtosis** of a `vector` with a given window size.',
-            linkName: 'vec-colon-moving-excess-kurtosis',
             returns: {
                 type: 'vector',
             },
@@ -21368,7 +21103,6 @@ var Playground = (function (exports) {
             title: 'vec:centered-moving-excess-kurtosis',
             category: 'Vector',
             description: 'Calculates the **centered moving excess kurtosis** of a `vector` with a given window size and padding.',
-            linkName: 'vec-colon-centered-moving-excess-kurtosis',
             returns: {
                 type: 'array',
             },
@@ -21399,7 +21133,6 @@ var Playground = (function (exports) {
             title: 'vec:running-excess-kurtosis',
             category: 'Vector',
             description: 'Calculates the **running excess kurtosis** of a `vector` with a given window size. First two element in result is `null` since **running excess kurtosis** is not defined for less than three elements.',
-            linkName: 'vec-colon-running-excess-kurtosis',
             returns: {
                 type: 'array',
             },
@@ -21422,7 +21155,6 @@ var Playground = (function (exports) {
             title: 'vec:sample-excess-kurtosis',
             category: 'Vector',
             description: 'Calculates the **sample excess kurtosis** of a `vector`. Returns the third standardized moment.',
-            linkName: 'vec-colon-sample-excess-kurtosis',
             returns: {
                 type: 'number',
             },
@@ -21444,7 +21176,6 @@ var Playground = (function (exports) {
             title: 'vec:moving-sample-excess-kurtosis',
             category: 'Vector',
             description: 'Calculates the **moving sample excess kurtosis** of a `vector` with a given window size.',
-            linkName: 'vec-colon-moving-sample-excess-kurtosis',
             returns: {
                 type: 'vector',
             },
@@ -21467,7 +21198,6 @@ var Playground = (function (exports) {
             title: 'vec:centered-moving-sample-excess-kurtosis',
             category: 'Vector',
             description: 'Calculates the **centered moving sample excess kurtosis** of a `vector` with a given window size and padding.',
-            linkName: 'vec-colon-centered-moving-sample-excess-kurtosis',
             returns: {
                 type: 'array',
             },
@@ -21498,7 +21228,6 @@ var Playground = (function (exports) {
             title: 'vec:running-sample-excess-kurtosis',
             category: 'Vector',
             description: 'Calculates the **running sample excess kurtosis** of a `vector` with a given window size. First two element in result is `null` since **running sample excess kurtosis** is not defined for less than three elements.',
-            linkName: 'vec-colon-running-sample-excess-kurtosis',
             returns: {
                 type: 'array',
             },
@@ -21522,7 +21251,6 @@ var Playground = (function (exports) {
             title: 'vec:rms',
             category: 'Vector',
             description: 'Calculates the **root mean square** of a `vector`. Returns the square root of the average of the squares of the elements.',
-            linkName: 'vec-colon-rms',
             returns: {
                 type: 'number',
             },
@@ -21547,7 +21275,6 @@ var Playground = (function (exports) {
             title: 'vec:moving-rms',
             category: 'Vector',
             description: 'Calculates the **moving root mean square** of a `vector` with a given window size.',
-            linkName: 'vec-colon-moving-rms',
             returns: {
                 type: 'vector',
             },
@@ -21571,7 +21298,6 @@ var Playground = (function (exports) {
             title: 'vec:centered-moving-rms',
             category: 'Vector',
             description: 'Calculates the **centered moving root mean square** of a `vector` with a given window size and padding value.',
-            linkName: 'vec-colon-centered-moving-rms',
             returns: {
                 type: 'vector',
             },
@@ -21603,7 +21329,6 @@ var Playground = (function (exports) {
             title: 'vec:running-rms',
             category: 'Vector',
             description: 'Calculates the **running root mean square** of a `vector`.',
-            linkName: 'vec-colon-running-rms',
             returns: {
                 type: 'vector',
             },
@@ -21630,7 +21355,6 @@ var Playground = (function (exports) {
             title: 'vec:mad',
             category: 'Vector',
             description: 'Returns the `mean absolute deviation` of all elements in the `vector`.',
-            linkName: 'vec-colon-mad',
             returns: {
                 type: 'number',
             },
@@ -21652,7 +21376,6 @@ var Playground = (function (exports) {
             title: 'vec:moving-mad',
             category: 'Vector',
             description: 'Returns the `moving mean absolute deviation` of the `vector` with a given window size.',
-            linkName: 'vec-colon-moving-mad',
             returns: {
                 type: 'vector',
             },
@@ -21675,7 +21398,6 @@ var Playground = (function (exports) {
             title: 'vec:centered-moving-mad',
             category: 'Vector',
             description: 'Returns the `centered moving mean absolute deviation` of the `vector` with a given window size.',
-            linkName: 'vec-colon-centered-moving-mad',
             returns: {
                 type: 'array',
             },
@@ -21706,7 +21428,6 @@ var Playground = (function (exports) {
             title: 'vec:running-mad',
             category: 'Vector',
             description: 'Returns the `running mean absolute deviation` of the `vector`.',
-            linkName: 'vec-colon-running-mad',
             returns: {
                 type: 'vector',
             },
@@ -21731,7 +21452,6 @@ var Playground = (function (exports) {
             title: 'vec:medad',
             category: 'Vector',
             description: 'Returns the `median absolute deviation` of all elements in the `vector`.',
-            linkName: 'vec-colon-medad',
             returns: {
                 type: 'number',
             },
@@ -21753,7 +21473,6 @@ var Playground = (function (exports) {
             title: 'vec:moving-medad',
             category: 'Vector',
             description: 'Returns the `moving median absolute deviation` of the `vector` with a given window size.',
-            linkName: 'vec-colon-moving-medad',
             returns: {
                 type: 'vector',
             },
@@ -21776,7 +21495,6 @@ var Playground = (function (exports) {
             title: 'vec:centered-moving-medad',
             category: 'Vector',
             description: 'Returns the `centered moving median absolute deviation` of the `vector` with a given window size.',
-            linkName: 'vec-colon-centered-moving-medad',
             returns: {
                 type: 'array',
             },
@@ -21807,7 +21525,6 @@ var Playground = (function (exports) {
             title: 'vec:running-medad',
             category: 'Vector',
             description: 'Returns the `running median absolute deviation` of the `vector`.',
-            linkName: 'vec-colon-running-medad',
             returns: {
                 type: 'vector',
             },
@@ -21832,7 +21549,6 @@ var Playground = (function (exports) {
             title: 'vec:gini-coefficient',
             category: 'Vector',
             description: 'Returns the **gini coefficient** of all elements in the `vector`.',
-            linkName: 'vec-colon-gini-coefficient',
             returns: {
                 type: 'number',
             },
@@ -21854,7 +21570,6 @@ var Playground = (function (exports) {
             title: 'vec:moving-gini-coefficient',
             category: 'Vector',
             description: 'Returns the **moving gini coefficient** of the `vector` with a given window size.',
-            linkName: 'vec-colon-moving-gini-coefficient',
             returns: {
                 type: 'vector',
             },
@@ -21877,7 +21592,6 @@ var Playground = (function (exports) {
             title: 'vec:centered-moving-gini-coefficient',
             category: 'Vector',
             description: 'Returns the **centered moving gini coefficient** of the `vector` with a given window size.',
-            linkName: 'vec-colon-centered-moving-gini-coefficient',
             returns: {
                 type: 'array',
             },
@@ -21908,7 +21622,6 @@ var Playground = (function (exports) {
             title: 'vec:running-gini-coefficient',
             category: 'Vector',
             description: 'Returns the **running gini coefficient** of the `vector`.',
-            linkName: 'vec-colon-running-gini-coefficient',
             returns: {
                 type: 'array',
             },
@@ -21933,7 +21646,6 @@ var Playground = (function (exports) {
             title: 'vec:entropy',
             category: 'Vector',
             description: 'Calculates the **entropy** of a `vector`. The entropy is a measure of the uncertainty associated with a random variable.',
-            linkName: 'vec-colon-entropy',
             returns: {
                 type: 'number',
             },
@@ -21959,7 +21671,6 @@ var Playground = (function (exports) {
             title: 'vec:moving-entropy',
             category: 'Vector',
             description: 'Calculates the **moving entropy** of a `vector` with a given window size.',
-            linkName: 'vec-colon-moving-entropy',
             returns: {
                 type: 'vector',
             },
@@ -21983,7 +21694,6 @@ var Playground = (function (exports) {
             title: 'vec:centered-moving-entropy',
             category: 'Vector',
             description: 'Calculates the **centered moving entropy** of a `vector` with a given window size.',
-            linkName: 'vec-colon-centered-moving-entropy',
             returns: {
                 type: 'vector',
             },
@@ -22015,7 +21725,6 @@ var Playground = (function (exports) {
             title: 'vec:running-entropy',
             category: 'Vector',
             description: 'Calculates the **running entropy** of a `vector`.',
-            linkName: 'vec-colon-running-entropy',
             returns: {
                 type: 'vector',
             },
@@ -22039,7 +21748,6 @@ var Playground = (function (exports) {
             title: 'vec:monotonic?',
             category: 'Vector',
             description: 'Checks if a vector is monotonic.',
-            linkName: 'vec-colon-monotonic-question',
             returns: {
                 type: 'boolean',
             },
@@ -22065,7 +21773,6 @@ var Playground = (function (exports) {
             title: 'vec:strictly-monotonic?',
             category: 'Vector',
             description: 'Checks if a vector is strictly monotonic.',
-            linkName: 'vec-colon-strictly-monotonic-question',
             returns: {
                 type: 'boolean',
             },
@@ -22091,7 +21798,6 @@ var Playground = (function (exports) {
             title: 'vec:increasing?',
             category: 'Vector',
             description: 'Checks if a vector is increasing.',
-            linkName: 'vec-colon-increasing-question',
             returns: {
                 type: 'boolean',
             },
@@ -22117,7 +21823,6 @@ var Playground = (function (exports) {
             title: 'vec:decreasing?',
             category: 'Vector',
             description: 'Checks if a vector is decreasing.',
-            linkName: 'vec-colon-decreasing-question',
             returns: {
                 type: 'boolean',
             },
@@ -22143,7 +21848,6 @@ var Playground = (function (exports) {
             title: 'vec:strictly-increasing?',
             category: 'Vector',
             description: 'Checks if a vector is strictly increasing.',
-            linkName: 'vec-colon-strictly-increasing-question',
             returns: {
                 type: 'boolean',
             },
@@ -22169,7 +21873,6 @@ var Playground = (function (exports) {
             title: 'vec:strictly-decreasing?',
             category: 'Vector',
             description: 'Checks if a vector is strictly decreasing.',
-            linkName: 'vec-colon-strictly-decreasing-question',
             returns: {
                 type: 'boolean',
             },
@@ -22195,7 +21898,6 @@ var Playground = (function (exports) {
             title: 'vec:sum',
             category: 'Vector',
             description: 'Returns the sum of all elements in the vector.',
-            linkName: 'vec-colon-sum',
             returns: {
                 type: 'number',
             },
@@ -22216,7 +21918,6 @@ var Playground = (function (exports) {
             title: 'vec:median',
             category: 'Vector',
             description: 'Returns the median of all elements in the vector.',
-            linkName: 'vec-colon-median',
             returns: {
                 type: 'number',
             },
@@ -22239,7 +21940,6 @@ var Playground = (function (exports) {
             title: 'vec:mode',
             category: 'Vector',
             description: 'Returns the mode of all elements in the vector.',
-            linkName: 'vec-colon-mode',
             returns: {
                 type: 'number',
             },
@@ -22263,7 +21963,6 @@ var Playground = (function (exports) {
             title: 'vec:sample-variance',
             category: 'Vector',
             description: 'Returns the sample variance of all elements in the vector.',
-            linkName: 'vec-colon-sample-variance',
             returns: {
                 type: 'number',
             },
@@ -22287,7 +21986,6 @@ var Playground = (function (exports) {
             title: 'vec:stdev',
             category: 'Vector',
             description: 'Returns the standard deviation of all elements in the vector.',
-            linkName: 'vec-colon-stdev',
             returns: {
                 type: 'number',
             },
@@ -22311,7 +22009,6 @@ var Playground = (function (exports) {
             title: 'vec:sample-stdev',
             category: 'Vector',
             description: 'Returns the sample standard deviation of all elements in the vector.',
-            linkName: 'vec-colon-sample-stdev',
             returns: {
                 type: 'number',
             },
@@ -22335,7 +22032,6 @@ var Playground = (function (exports) {
             title: 'vec:min',
             category: 'Vector',
             description: 'Returns the minimum value of all elements in the vector.',
-            linkName: 'vec-colon-min',
             returns: {
                 type: 'number',
             },
@@ -22359,7 +22055,6 @@ var Playground = (function (exports) {
             title: 'vec:max',
             category: 'Vector',
             description: 'Returns the maximum value of all elements in the vector.',
-            linkName: 'vec-colon-max',
             returns: {
                 type: 'number',
             },
@@ -22383,7 +22078,6 @@ var Playground = (function (exports) {
             title: 'vec:min-index',
             category: 'Vector',
             description: 'Returns the index of the minimum value of all elements in the vector.',
-            linkName: 'vec-colon-min-index',
             returns: {
                 type: 'integer',
             },
@@ -22407,7 +22101,6 @@ var Playground = (function (exports) {
             title: 'vec:max-index',
             category: 'Vector',
             description: 'Returns the index of the maximum value of all elements in the vector.',
-            linkName: 'vec-colon-max-index',
             returns: {
                 type: 'integer',
             },
@@ -22431,7 +22124,6 @@ var Playground = (function (exports) {
             title: 'vec:sort-indices',
             category: 'Vector',
             description: 'Returns the indices of the elements in the vector sorted in ascending order.',
-            linkName: 'vec-colon-sort-indices',
             returns: {
                 type: 'vector',
             },
@@ -22455,7 +22147,6 @@ var Playground = (function (exports) {
             title: 'vec:count-values',
             category: 'Vector',
             description: 'Counts the number of occurrences of each value in the vector.',
-            linkName: 'vec-colon-count-values',
             returns: {
                 type: 'number',
                 array: true,
@@ -22479,7 +22170,6 @@ var Playground = (function (exports) {
             title: 'vec:linspace',
             category: 'Vector',
             description: 'Generates a vector of evenly spaced numbers between two values.',
-            linkName: 'vec-colon-linspace',
             returns: {
                 type: 'number',
                 array: true,
@@ -22509,7 +22199,6 @@ var Playground = (function (exports) {
             title: 'vec:ones',
             category: 'Vector',
             description: 'Generates a vector of ones.',
-            linkName: 'vec-colon-ones',
             returns: {
                 type: 'number',
                 array: true,
@@ -22532,7 +22221,6 @@ var Playground = (function (exports) {
             title: 'vec:zeros',
             category: 'Vector',
             description: 'Generates a vector of zeros.',
-            linkName: 'vec-colon-zeros',
             returns: {
                 type: 'number',
                 array: true,
@@ -22555,7 +22243,6 @@ var Playground = (function (exports) {
             title: 'vec:fill',
             category: 'Vector',
             description: 'Generates a vector filled with a number.',
-            linkName: 'vec-colon-fill',
             returns: {
                 type: 'number',
                 array: true,
@@ -22578,7 +22265,6 @@ var Playground = (function (exports) {
             title: 'vec:generate',
             category: 'Vector',
             description: 'Generates a vector of numbers based on a function.',
-            linkName: 'vec-colon-generate',
             returns: {
                 type: 'number',
                 array: true,
@@ -22602,7 +22288,6 @@ var Playground = (function (exports) {
             title: 'vec:cumsum',
             category: 'Vector',
             description: 'Calculates the cumulative sum of a vector.',
-            linkName: 'vec-colon-cumsum',
             returns: {
                 type: 'number',
                 array: true,
@@ -22625,7 +22310,6 @@ var Playground = (function (exports) {
             title: 'vec:cumprod',
             category: 'Vector',
             description: 'Calculates the cumulative product of a vector.',
-            linkName: 'vec-colon-cumprod',
             returns: {
                 type: 'number',
                 array: true,
@@ -22648,7 +22332,6 @@ var Playground = (function (exports) {
             title: 'vec:quartiles',
             category: 'Vector',
             description: 'Calculates the quartiles of a vector. Returns an array containing the first, second (median), and third quartiles.',
-            linkName: 'vec-colon-quartiles',
             returns: {
                 type: 'number',
                 array: true,
@@ -22673,7 +22356,6 @@ var Playground = (function (exports) {
             title: 'vec:percentile',
             category: 'Vector',
             description: 'Calculates the percentile of a vector. Returns the value at the specified percentile.',
-            linkName: 'vec-colon-percentile',
             returns: {
                 type: 'number',
             },
@@ -22705,7 +22387,6 @@ var Playground = (function (exports) {
             title: 'vec:quantile',
             category: 'Vector',
             description: 'Calculates the quantile of a vector. Returns the value at the specified quantile.',
-            linkName: 'vec-colon-quantile',
             returns: {
                 type: 'number',
             },
@@ -22737,7 +22418,6 @@ var Playground = (function (exports) {
             title: 'vec:span',
             category: 'Vector',
             description: 'Returns the difference between the maximum and minimum values in a vector.',
-            linkName: 'vec-colon-span',
             returns: {
                 type: 'number',
             },
@@ -22759,7 +22439,6 @@ var Playground = (function (exports) {
             title: 'vec:histogram',
             category: 'Vector',
             description: 'Creates a histogram from a numeric `array` by dividing the data range into the specified number of bins. Returns an `array` of `[binStart, binEnd, count]` tuples representing each bin\'s range and the number of values within it. Handles empty arrays, identical values, and properly places maximum values in the last bin.',
-            linkName: 'vec-colon-histogram',
             returns: {
                 type: 'array',
                 array: true,
@@ -22784,7 +22463,6 @@ var Playground = (function (exports) {
             title: 'vec:ecdf',
             category: 'Vector',
             description: 'Calculates the empirical cumulative distribution function value for a given threshold in a non empty dataset. Returns the proportion of values in the `array` that are less than or equal to the specified threshold.',
-            linkName: 'vec-colon-ecdf',
             returns: {
                 type: 'number',
             },
@@ -22809,7 +22487,6 @@ var Playground = (function (exports) {
             title: 'vec:outliers?',
             category: 'Vector',
             description: 'Checks if the `vector` contains outliers based on the interquartile range (IQR) method. Returns `true` if outliers are present, `false` otherwise.',
-            linkName: 'vec-colon-outliers-question',
             returns: {
                 type: 'boolean',
             },
@@ -22831,7 +22508,6 @@ var Playground = (function (exports) {
             title: 'vec:outliers',
             category: 'Vector',
             description: 'Identifies outliers in the `vector` based on the interquartile range (IQR) method. Returns an array of outlier values.',
-            linkName: 'vec-colon-outliers',
             returns: {
                 type: 'number',
                 array: true,
@@ -22854,7 +22530,6 @@ var Playground = (function (exports) {
             title: 'vec:bincount',
             category: 'Vector',
             description: 'counts occurrences of each `integer` in a vector, returning an array where index `i` contains the count of value `i`, with optional **minimum size** and **weights parameters**.',
-            linkName: 'vec-colon-bincount',
             returns: {
                 type: 'vector',
             },
@@ -22887,7 +22562,6 @@ var Playground = (function (exports) {
             title: 'vec:winsorize',
             category: 'Vector',
             description: 'Limits extreme values in a `vector` by replacing values below the **lower quantile** and above the **upper quantile** with the values at those quantiles. The function takes a `vector` of values and **quantile thresholds** (between 0 and 1), with the upper quantile. Winsorization reduces the influence of outliers while preserving the overall distribution shape, making statistical analyses more robust.',
-            linkName: 'vec-colon-winsorize',
             returns: {
                 type: 'vector',
             },
@@ -22919,7 +22593,6 @@ var Playground = (function (exports) {
             title: 'vec:mse',
             category: 'Vector',
             description: 'Calculates the **Mean Squared Error (MSE)** between two vectors. Returns the average of the squared differences between corresponding elements.',
-            linkName: 'vec-colon-mse',
             returns: {
                 type: 'number',
             },
@@ -22947,7 +22620,6 @@ var Playground = (function (exports) {
             title: 'vec:rmse',
             category: 'Vector',
             description: 'Calculates the **Root Mean Squared Error (RMSE)** between two vectors. Returns the square root of the average of the squared differences between corresponding elements.',
-            linkName: 'vec-colon-rmse',
             returns: {
                 type: 'number',
             },
@@ -22975,7 +22647,6 @@ var Playground = (function (exports) {
             title: 'vec:mae',
             category: 'Vector',
             description: 'Calculates the **Mean Absolute Error (MAE)** between two vectors. Returns the average of the absolute differences between corresponding elements.',
-            linkName: 'vec-colon-mae',
             returns: {
                 type: 'number',
             },
@@ -23003,7 +22674,6 @@ var Playground = (function (exports) {
             title: 'vec:smape',
             category: 'Vector',
             description: 'Calculates the **Symmetric Mean Absolute Percentage Error (SMAPE)** between two vectors. Returns the average of the absolute percentage differences between corresponding elements.',
-            linkName: 'vec-colon-smape',
             returns: {
                 type: 'number',
             },
@@ -23034,7 +22704,6 @@ var Playground = (function (exports) {
             title: 'lin:reflect',
             category: 'Linear Algebra',
             description: 'Reflects a vector across a given axis.',
-            linkName: 'lin-colon-reflect',
             returns: {
                 type: 'vector',
             },
@@ -23060,7 +22729,6 @@ var Playground = (function (exports) {
             title: 'lin:refract',
             category: 'Linear Algebra',
             description: 'Refracts a vector across a given axis.',
-            linkName: 'lin-colon-refract',
             returns: {
                 type: 'vector',
             },
@@ -23090,7 +22758,6 @@ var Playground = (function (exports) {
             title: 'lin:lerp',
             category: 'Linear Algebra',
             description: 'Performs linear interpolation between two vectors.',
-            linkName: 'lin-colon-lerp',
             returns: {
                 type: 'vector',
             },
@@ -23122,7 +22789,6 @@ var Playground = (function (exports) {
             title: 'lin:rotate2d',
             category: 'Linear Algebra',
             description: 'Rotates a 2D vector by a given angle in radians.',
-            linkName: 'lin-colon-rotate2d',
             returns: {
                 type: 'vector',
             },
@@ -23148,7 +22814,6 @@ var Playground = (function (exports) {
             title: 'lin:rotate3d',
             category: 'Linear Algebra',
             description: 'Rotates a 3D vector around a given axis by a given angle in radians.',
-            linkName: 'lin-colon-rotate3d',
             returns: {
                 type: 'vector',
             },
@@ -23178,7 +22843,6 @@ var Playground = (function (exports) {
             title: 'lin:dot',
             category: 'Linear Algebra',
             description: 'Calculates the dot product of two vectors. The result is a scalar.',
-            linkName: 'lin-colon-dot',
             returns: {
                 type: 'number',
             },
@@ -23204,7 +22868,6 @@ var Playground = (function (exports) {
             title: 'lin:cross',
             category: 'Linear Algebra',
             description: 'Calculates the cross product of two 3D vectors. The result is a vector perpendicular to both input vectors.',
-            linkName: 'lin-colon-cross',
             returns: {
                 type: 'vector',
             },
@@ -23233,7 +22896,6 @@ var Playground = (function (exports) {
             title: 'lin:normalize-minmax',
             category: 'Linear Algebra',
             description: 'Normalizes the vector using min-max normalization. The result is a vector with values between 0 and 1.',
-            linkName: 'lin-colon-normalize-minmax',
             returns: {
                 type: 'number',
             },
@@ -23258,7 +22920,6 @@ var Playground = (function (exports) {
             title: 'lin:normalize-zscore',
             category: 'Linear Algebra',
             description: 'Normalizes the vector using z-score normalization. The result is a vector with mean 0 and standard deviation 1.',
-            linkName: 'lin-colon-normalize-zscore',
             returns: {
                 type: 'number',
             },
@@ -23283,7 +22944,6 @@ var Playground = (function (exports) {
             title: 'lin:normalize-robust',
             category: 'Linear Algebra',
             description: 'Normalizes the vector using robust normalization. The result is a vector with median 0 and median absolute deviation 1.',
-            linkName: 'lin-colon-normalize-robust',
             returns: {
                 type: 'number',
             },
@@ -23308,7 +22968,6 @@ var Playground = (function (exports) {
             title: 'lin:normalize-l1',
             category: 'Linear Algebra',
             description: 'Normalizes the vector using L1 normalization. The result is a vector with L1 norm equal to 1.',
-            linkName: 'lin-colon-normalize-l1',
             returns: {
                 type: 'number',
             },
@@ -23333,7 +22992,6 @@ var Playground = (function (exports) {
             title: 'lin:normalize-l2',
             category: 'Linear Algebra',
             description: 'Normalizes the vector using L2 normalization. The result is a vector with L2 norm equal to 1.',
-            linkName: 'lin-colon-normalize-l2',
             returns: {
                 type: 'number',
             },
@@ -23363,7 +23021,6 @@ var Playground = (function (exports) {
             title: 'lin:normalize-log',
             category: 'Linear Algebra',
             description: 'Normalizes the vector using natural log normalization. The result is a vector with log-transformed values.',
-            linkName: 'lin-colon-normalize-log',
             returns: {
                 type: 'number',
             },
@@ -23386,7 +23043,6 @@ var Playground = (function (exports) {
             title: 'lin:angle',
             category: 'Linear Algebra',
             description: 'Calculates the `angle` between two vectors in radians.',
-            linkName: 'lin-colon-angle',
             returns: {
                 type: 'number',
             },
@@ -23403,7 +23059,6 @@ var Playground = (function (exports) {
             title: 'lin:projection',
             category: 'Linear Algebra',
             description: 'Calculates the **projection** of vector `a` onto vector `b`.',
-            linkName: 'lin-colon-projection',
             returns: {
                 type: 'vector',
             },
@@ -23420,7 +23075,6 @@ var Playground = (function (exports) {
             title: 'lin:collinear?',
             category: 'Linear Algebra',
             description: 'Checks if two vectors are **collinear**.',
-            linkName: 'lin-colon-collinear-question',
             returns: {
                 type: 'boolean',
             },
@@ -23438,7 +23092,6 @@ var Playground = (function (exports) {
             title: 'lin:parallel?',
             category: 'Linear Algebra',
             description: 'Checks if two vectors are **parallel**.',
-            linkName: 'lin-colon-parallel-question',
             returns: {
                 type: 'boolean',
             },
@@ -23456,7 +23109,6 @@ var Playground = (function (exports) {
         'lin:orthogonal?': {
             title: 'lin:orthogonal?',
             category: 'Linear Algebra',
-            linkName: 'lin-colon-orthogonal-question',
             returns: {
                 type: 'boolean',
             },
@@ -23475,7 +23127,6 @@ var Playground = (function (exports) {
             title: 'lin:cosine-similarity',
             category: 'Linear Algebra',
             description: 'Calculates the **cosine similarity** between two vectors. The result is a value between -1 and 1.',
-            linkName: 'lin-colon-cosine-similarity',
             returns: {
                 type: 'number',
             },
@@ -23493,7 +23144,6 @@ var Playground = (function (exports) {
             title: 'lin:euclidean-distance',
             category: 'Linear Algebra',
             description: 'Calculates the **Euclidean distance** between two vectors. The result is a non-negative number.',
-            linkName: 'lin-colon-euclidean-distance',
             returns: {
                 type: 'number',
             },
@@ -23515,7 +23165,6 @@ var Playground = (function (exports) {
             title: 'lin:euclidean-norm',
             category: 'Linear Algebra',
             description: 'Calculates the **Euclidean norm** (L2 norm) of a vector. The result is a non-negative number.',
-            linkName: 'lin-colon-euclidean-norm',
             returns: {
                 type: 'number',
             },
@@ -23542,7 +23191,6 @@ var Playground = (function (exports) {
             title: 'lin:manhattan-distance',
             category: 'Linear Algebra',
             description: 'Calculates the **Manhattan distance** between two vectors. The result is a non-negative number.',
-            linkName: 'lin-colon-manhattan-distance',
             returns: {
                 type: 'number',
             },
@@ -23564,7 +23212,6 @@ var Playground = (function (exports) {
             title: 'lin:manhattan-norm',
             category: 'Linear Algebra',
             description: 'Calculates the **Manhattan norm** (L1 norm) of a vector. The result is a non-negative number.',
-            linkName: 'lin-colon-manhattan-norm',
             returns: {
                 type: 'number',
             },
@@ -23591,7 +23238,6 @@ var Playground = (function (exports) {
             title: 'lin:hamming-distance',
             category: 'Linear Algebra',
             description: 'Calculates the **Hamming distance** between two vectors. The result is a non-negative integer.',
-            linkName: 'lin-colon-hamming-distance',
             returns: {
                 type: 'integer',
             },
@@ -23609,7 +23255,6 @@ var Playground = (function (exports) {
             title: 'lin:hamming-norm',
             category: 'Linear Algebra',
             description: 'Calculates the **Hamming norm** of a vector. The result is a non-negative integer.',
-            linkName: 'lin-colon-hamming-norm',
             returns: {
                 type: 'integer',
             },
@@ -23632,7 +23277,6 @@ var Playground = (function (exports) {
             title: 'lin:chebyshev-distance',
             category: 'Linear Algebra',
             description: 'Calculates the **Chebyshev distance** between two vectors. The result is a non-negative number.',
-            linkName: 'lin-colon-chebyshev-distance',
             returns: {
                 type: 'number',
             },
@@ -23650,7 +23294,6 @@ var Playground = (function (exports) {
             title: 'lin:chebyshev-norm',
             category: 'Linear Algebra',
             description: 'Calculates the **Chebyshev norm** of a vector. The result is a non-negative number.',
-            linkName: 'lin-colon-chebyshev-norm',
             returns: {
                 type: 'number',
             },
@@ -23673,7 +23316,6 @@ var Playground = (function (exports) {
             title: 'lin:minkowski-distance',
             category: 'Linear Algebra',
             description: 'Calculates the **Minkowski distance** between two vectors. The result is a non-negative number.',
-            linkName: 'lin-colon-minkowski-distance',
             returns: {
                 type: 'number',
             },
@@ -23694,7 +23336,6 @@ var Playground = (function (exports) {
             title: 'lin:minkowski-norm',
             category: 'Linear Algebra',
             description: 'Calculates the **Minkowski norm** of a vector. The result is a non-negative number.',
-            linkName: 'lin-colon-minkowski-norm',
             returns: {
                 type: 'number',
             },
@@ -23721,7 +23362,6 @@ var Playground = (function (exports) {
             title: 'lin:cov',
             category: 'Linear Algebra',
             description: 'Calculates the **covariance** between two vectors. The result is a number.',
-            linkName: 'lin-colon-cov',
             returns: {
                 type: 'number',
             },
@@ -23739,7 +23379,6 @@ var Playground = (function (exports) {
             title: 'lin:corr',
             category: 'Linear Algebra',
             description: 'Calculates the **correlation** between two vectors. The result is a number between -1 and 1.',
-            linkName: 'lin-colon-corr',
             returns: {
                 type: 'number',
             },
@@ -23757,7 +23396,6 @@ var Playground = (function (exports) {
             title: 'lin:spearman-corr',
             category: 'Linear Algebra',
             description: 'Calculates the **Spearman rank correlation** between two vectors. The result is a number between -1 and 1.',
-            linkName: 'lin-colon-spearman-corr',
             returns: {
                 type: 'number',
             },
@@ -23776,7 +23414,6 @@ var Playground = (function (exports) {
             title: 'lin:pearson-corr',
             category: 'Linear Algebra',
             description: 'Calculates the **Pearson correlation** between two vectors. The result is a number between -1 and 1.',
-            linkName: 'lin-colon-pearson-corr',
             returns: {
                 type: 'number',
             },
@@ -23794,7 +23431,6 @@ var Playground = (function (exports) {
             title: 'lin:kendall-tau',
             category: 'Linear Algebra',
             description: 'Calculates the **Kendall Tau** rank correlation coefficient between two vectors. The result is a number between -1 and 1.',
-            linkName: 'lin-colon-kendall-tau',
             returns: {
                 type: 'number',
             },
@@ -23812,7 +23448,6 @@ var Playground = (function (exports) {
             title: 'lin:autocorrelation',
             category: 'Linear Algebra',
             description: 'Calculates the **autocorrelation** of a vector. The result is a vector of autocorrelation coefficients.',
-            linkName: 'lin-colon-autocorrelation',
             returns: {
                 type: 'vector',
             },
@@ -23842,7 +23477,6 @@ var Playground = (function (exports) {
             title: 'lin:cross-correlation',
             category: 'Linear Algebra',
             description: 'Calculates the **cross-correlation** between two vectors. The result is a vector of cross-correlation coefficients.',
-            linkName: 'lin-colon-cross-correlation',
             returns: {
                 type: 'vector',
             },
@@ -23866,7 +23500,6 @@ var Playground = (function (exports) {
             title: 'lin:rref',
             category: 'Linear Algebra',
             description: 'Calculates the **Reduced Row Echelon Form** (RREF) of a matrix.',
-            linkName: 'lin-colon-rref',
             returns: {
                 type: 'matrix',
             },
@@ -23889,7 +23522,6 @@ var Playground = (function (exports) {
             title: 'lin:solve',
             category: 'Linear Algebra',
             description: 'Solves a system of linear equations represented by a matrix and a vector.',
-            linkName: 'lin-colon-solve',
             returns: {
                 type: 'vector',
             },
@@ -23907,7 +23539,6 @@ var Playground = (function (exports) {
             title: 'lin:to-polar',
             category: 'Linear Algebra',
             description: 'Converts a 2D vector to polar coordinates.',
-            linkName: 'lin-colon-to-polar',
             returns: {
                 type: 'vector',
             },
@@ -23929,7 +23560,6 @@ var Playground = (function (exports) {
             title: 'lin:from-polar',
             category: 'Linear Algebra',
             description: 'Converts polar coordinates to a 2D vector.',
-            linkName: 'lin-colon-from-polar',
             returns: {
                 type: 'vector',
             },
@@ -23954,7 +23584,6 @@ var Playground = (function (exports) {
         'boolean?': {
             title: 'boolean?',
             category: 'Predicate',
-            linkName: 'boolean-question',
             returns: {
                 type: 'boolean',
             },
@@ -23978,7 +23607,6 @@ var Playground = (function (exports) {
         'null?': {
             title: 'null?',
             category: 'Predicate',
-            linkName: 'null-question',
             returns: {
                 type: 'boolean',
             },
@@ -24002,7 +23630,6 @@ var Playground = (function (exports) {
         'number?': {
             title: 'number?',
             category: 'Predicate',
-            linkName: 'number-question',
             returns: {
                 type: 'boolean',
             },
@@ -24027,7 +23654,6 @@ var Playground = (function (exports) {
         'string?': {
             title: 'string?',
             category: 'Predicate',
-            linkName: 'string-question',
             returns: {
                 type: 'boolean',
             },
@@ -24052,7 +23678,6 @@ var Playground = (function (exports) {
         'function?': {
             title: 'function?',
             category: 'Predicate',
-            linkName: 'function-question',
             returns: {
                 type: 'boolean',
             },
@@ -24077,7 +23702,6 @@ var Playground = (function (exports) {
         'integer?': {
             title: 'integer?',
             category: 'Predicate',
-            linkName: 'integer-question',
             returns: {
                 type: 'boolean',
             },
@@ -24104,7 +23728,6 @@ var Playground = (function (exports) {
         'array?': {
             title: 'array?',
             category: 'Predicate',
-            linkName: 'array-question',
             returns: {
                 type: 'boolean',
             },
@@ -24129,7 +23752,6 @@ var Playground = (function (exports) {
         'object?': {
             title: 'object?',
             category: 'Predicate',
-            linkName: 'object-question',
             returns: {
                 type: 'boolean',
             },
@@ -24155,7 +23777,6 @@ var Playground = (function (exports) {
         'coll?': {
             title: 'coll?',
             category: 'Predicate',
-            linkName: 'coll-question',
             returns: {
                 type: 'boolean',
             },
@@ -24181,7 +23802,6 @@ var Playground = (function (exports) {
         'seq?': {
             title: 'seq?',
             category: 'Predicate',
-            linkName: 'seq-question',
             returns: {
                 type: 'boolean',
             },
@@ -24207,7 +23827,6 @@ var Playground = (function (exports) {
         'regexp?': {
             title: 'regexp?',
             category: 'Predicate',
-            linkName: 'regexp-question',
             returns: {
                 type: 'boolean',
             },
@@ -24235,7 +23854,6 @@ var Playground = (function (exports) {
         'zero?': {
             title: 'zero?',
             category: 'Predicate',
-            linkName: 'zero-question',
             returns: {
                 type: 'boolean',
             },
@@ -24258,7 +23876,6 @@ var Playground = (function (exports) {
         'pos?': {
             title: 'pos?',
             category: 'Predicate',
-            linkName: 'pos-question',
             returns: {
                 type: 'boolean',
             },
@@ -24281,7 +23898,6 @@ var Playground = (function (exports) {
         'neg?': {
             title: 'neg?',
             category: 'Predicate',
-            linkName: 'neg-question',
             returns: {
                 type: 'boolean',
             },
@@ -24304,7 +23920,6 @@ var Playground = (function (exports) {
         'even?': {
             title: 'even?',
             category: 'Predicate',
-            linkName: 'even-question',
             returns: {
                 type: 'boolean',
             },
@@ -24327,7 +23942,6 @@ var Playground = (function (exports) {
         'odd?': {
             title: 'odd?',
             category: 'Predicate',
-            linkName: 'odd-question',
             returns: {
                 type: 'boolean',
             },
@@ -24350,7 +23964,6 @@ var Playground = (function (exports) {
         'finite?': {
             title: 'finite?',
             category: 'Predicate',
-            linkName: 'finite-question',
             returns: {
                 type: 'boolean',
             },
@@ -24372,7 +23985,6 @@ var Playground = (function (exports) {
         'negative-infinity?': {
             title: 'negative-infinity?',
             category: 'Predicate',
-            linkName: 'negative-infinity-question',
             returns: {
                 type: 'boolean',
             },
@@ -24394,7 +24006,6 @@ var Playground = (function (exports) {
         'positive-infinity?': {
             title: 'positive-infinity?',
             category: 'Predicate',
-            linkName: 'positive-infinity-question',
             returns: {
                 type: 'boolean',
             },
@@ -24416,7 +24027,6 @@ var Playground = (function (exports) {
         'false?': {
             title: 'false?',
             category: 'Predicate',
-            linkName: 'false-question',
             returns: {
                 type: 'boolean',
             },
@@ -24439,7 +24049,6 @@ var Playground = (function (exports) {
         'true?': {
             title: 'true?',
             category: 'Predicate',
-            linkName: 'true-question',
             returns: {
                 type: 'boolean',
             },
@@ -24462,7 +24071,6 @@ var Playground = (function (exports) {
         'empty?': {
             title: 'empty?',
             category: 'Predicate',
-            linkName: 'empty-question',
             returns: {
                 type: 'boolean',
             },
@@ -24488,7 +24096,6 @@ var Playground = (function (exports) {
         'not-empty?': {
             title: 'not-empty?',
             category: 'Predicate',
-            linkName: 'not-empty-question',
             returns: {
                 type: 'boolean',
             },
@@ -24515,7 +24122,6 @@ var Playground = (function (exports) {
             title: 'vector?',
             category: 'Predicate',
             description: 'Checks if a value is a `vector`. A `vector` is an array of `numbers`.',
-            linkName: 'vector-question',
             returns: {
                 type: 'boolean',
             },
@@ -24538,7 +24144,6 @@ var Playground = (function (exports) {
             title: 'matrix?',
             category: 'Predicate',
             description: 'Checks if a value is a `matrix`. A `matrix` is an array of arrays of `numbers`.',
-            linkName: 'matrix-question',
             returns: {
                 type: 'boolean',
             },
@@ -24563,7 +24168,6 @@ var Playground = (function (exports) {
             title: 'grid?',
             category: 'Predicate',
             description: 'Checks if a `value` is a `grid`. A `grid` is an `array` of `arrays` where all inner `arrays` have the same length.',
-            linkName: 'grid-question',
             returns: {
                 type: 'boolean',
             },
@@ -24590,7 +24194,6 @@ var Playground = (function (exports) {
         'regexp': {
             title: 'regexp',
             category: 'Regular expression',
-            linkName: 'regexp',
             returns: {
                 type: 'regexp',
             },
@@ -24619,7 +24222,6 @@ var Playground = (function (exports) {
         'match': {
             title: 'match',
             category: 'Regular expression',
-            linkName: 'match',
             returns: {
                 type: 'any',
                 array: true,
@@ -24642,7 +24244,6 @@ var Playground = (function (exports) {
         'replace': {
             title: 'replace',
             category: 'Regular expression',
-            linkName: 'replace',
             returns: {
                 type: 'any',
                 array: true,
@@ -24666,7 +24267,6 @@ var Playground = (function (exports) {
         'replace-all': {
             title: 'replace-all',
             category: 'Regular expression',
-            linkName: 'replace-all',
             returns: {
                 type: 'any',
                 array: true,
@@ -24693,7 +24293,6 @@ var Playground = (function (exports) {
         'nth': {
             title: 'nth',
             category: 'Sequence',
-            linkName: 'nth',
             returns: {
                 type: 'any',
             },
@@ -24727,7 +24326,6 @@ var Playground = (function (exports) {
         'push': {
             title: 'push',
             category: 'Sequence',
-            linkName: 'push',
             returns: {
                 type: 'sequence',
             },
@@ -24753,7 +24351,6 @@ var Playground = (function (exports) {
         'pop': {
             title: 'pop',
             category: 'Sequence',
-            linkName: 'pop',
             returns: {
                 type: ['sequence', 'null'],
                 rest: true,
@@ -24775,7 +24372,6 @@ var Playground = (function (exports) {
         'unshift': {
             title: 'unshift',
             category: 'Sequence',
-            linkName: 'unshift',
             returns: {
                 type: 'sequence',
             },
@@ -24799,7 +24395,6 @@ var Playground = (function (exports) {
         'shift': {
             title: 'shift',
             category: 'Sequence',
-            linkName: 'shift',
             returns: {
                 type: ['sequence', 'null'],
             },
@@ -24820,7 +24415,6 @@ var Playground = (function (exports) {
         'slice': {
             title: 'slice',
             category: 'Sequence',
-            linkName: 'slice',
             returns: {
                 type: 'sequence',
             },
@@ -24849,7 +24443,6 @@ var Playground = (function (exports) {
         'splice': {
             title: 'splice',
             category: 'Sequence',
-            linkName: 'splice',
             returns: {
                 type: 'sequence',
             },
@@ -24883,7 +24476,6 @@ var Playground = (function (exports) {
         'position': {
             title: 'position',
             category: 'Sequence',
-            linkName: 'position',
             returns: {
                 type: ['number', 'null'],
             },
@@ -24906,7 +24498,6 @@ var Playground = (function (exports) {
         'index-of': {
             title: 'index-of',
             category: 'Sequence',
-            linkName: 'index-of',
             returns: {
                 type: ['number', 'null'],
             },
@@ -24930,7 +24521,6 @@ var Playground = (function (exports) {
         'last-index-of': {
             title: 'last-index-of',
             category: 'Sequence',
-            linkName: 'last-index-of',
             returns: {
                 type: ['number', 'null'],
             },
@@ -24954,7 +24544,6 @@ var Playground = (function (exports) {
         'some': {
             title: 'some',
             category: 'Sequence',
-            linkName: 'some',
             returns: {
                 type: 'any',
             },
@@ -24978,7 +24567,6 @@ var Playground = (function (exports) {
         'reverse': {
             title: 'reverse',
             category: 'Sequence',
-            linkName: 'reverse',
             returns: {
                 type: ['sequence', 'null'],
             },
@@ -25001,7 +24589,6 @@ var Playground = (function (exports) {
         'first': {
             title: 'first',
             category: 'Sequence',
-            linkName: 'first',
             returns: {
                 type: 'any',
             },
@@ -25023,7 +24610,6 @@ var Playground = (function (exports) {
         'second': {
             title: 'second',
             category: 'Sequence',
-            linkName: 'second',
             returns: {
                 type: 'any',
             },
@@ -25046,7 +24632,6 @@ var Playground = (function (exports) {
         'last': {
             title: 'last',
             category: 'Sequence',
-            linkName: 'last',
             returns: {
                 type: 'any',
             },
@@ -25070,7 +24655,6 @@ var Playground = (function (exports) {
         'rest': {
             title: 'rest',
             category: 'Sequence',
-            linkName: 'rest',
             returns: {
                 type: ['sequence', 'null'],
             },
@@ -25095,7 +24679,6 @@ var Playground = (function (exports) {
         'next': {
             title: 'next',
             category: 'Sequence',
-            linkName: 'next',
             returns: {
                 type: ['sequence', 'null'],
             },
@@ -25120,7 +24703,6 @@ var Playground = (function (exports) {
         'take': {
             title: 'take',
             category: 'Sequence',
-            linkName: 'take',
             returns: {
                 type: 'sequence',
             },
@@ -25144,7 +24726,6 @@ var Playground = (function (exports) {
         'take-last': {
             title: 'take-last',
             category: 'Sequence',
-            linkName: 'take-last',
             returns: {
                 type: 'sequence',
             },
@@ -25166,7 +24747,6 @@ var Playground = (function (exports) {
         'take-while': {
             title: 'take-while',
             category: 'Sequence',
-            linkName: 'take-while',
             returns: {
                 type: 'sequence',
             },
@@ -25187,7 +24767,6 @@ var Playground = (function (exports) {
         'drop': {
             title: 'drop',
             category: 'Sequence',
-            linkName: 'drop',
             returns: {
                 type: 'sequence',
             },
@@ -25210,7 +24789,6 @@ var Playground = (function (exports) {
         'drop-last': {
             title: 'drop-last',
             category: 'Sequence',
-            linkName: 'drop-last',
             returns: {
                 type: 'sequence',
             },
@@ -25232,7 +24810,6 @@ var Playground = (function (exports) {
         'drop-while': {
             title: 'drop-while',
             category: 'Sequence',
-            linkName: 'drop-while',
             returns: {
                 type: 'sequence',
             },
@@ -25253,7 +24830,6 @@ var Playground = (function (exports) {
         'sort': {
             title: 'sort',
             category: 'Sequence',
-            linkName: 'sort',
             returns: {
                 type: 'any',
                 rest: true,
@@ -25278,7 +24854,6 @@ var Playground = (function (exports) {
         'sort-by': {
             title: 'sort-by',
             category: 'Sequence',
-            linkName: 'sort-by',
             returns: {
                 type: 'any',
                 rest: true,
@@ -25304,7 +24879,6 @@ var Playground = (function (exports) {
         'distinct': {
             title: 'distinct',
             category: 'Sequence',
-            linkName: 'distinct',
             returns: {
                 type: 'sequence',
             },
@@ -25328,7 +24902,6 @@ var Playground = (function (exports) {
         'remove': {
             title: 'remove',
             category: 'Sequence',
-            linkName: 'remove',
             returns: {
                 type: 'sequence',
             },
@@ -25350,7 +24923,6 @@ var Playground = (function (exports) {
         'remove-at': {
             title: 'remove-at',
             category: 'Sequence',
-            linkName: 'remove-at',
             returns: {
                 type: 'sequence',
             },
@@ -25374,7 +24946,6 @@ var Playground = (function (exports) {
         'split-at': {
             title: 'split-at',
             category: 'Sequence',
-            linkName: 'split-at',
             returns: {
                 type: 'sequence',
             },
@@ -25397,7 +24968,6 @@ var Playground = (function (exports) {
         'split-with': {
             title: 'split-with',
             category: 'Sequence',
-            linkName: 'split-with',
             returns: {
                 type: 'sequence',
             },
@@ -25419,7 +24989,6 @@ var Playground = (function (exports) {
         'frequencies': {
             title: 'frequencies',
             category: 'Sequence',
-            linkName: 'frequencies',
             returns: {
                 type: 'object',
             },
@@ -25440,7 +25009,6 @@ var Playground = (function (exports) {
         'group-by': {
             title: 'group-by',
             category: 'Sequence',
-            linkName: 'group-by',
             returns: {
                 type: 'object',
             },
@@ -25462,7 +25030,6 @@ var Playground = (function (exports) {
         'partition': {
             title: 'partition',
             category: 'Sequence',
-            linkName: 'partition',
             returns: {
                 type: 'sequence',
             },
@@ -25503,7 +25070,6 @@ var Playground = (function (exports) {
         'partition-all': {
             title: 'partition-all',
             category: 'Sequence',
-            linkName: 'partition-all',
             returns: {
                 type: 'sequence',
             },
@@ -25529,7 +25095,6 @@ var Playground = (function (exports) {
         'partition-by': {
             title: 'partition-by',
             category: 'Sequence',
-            linkName: 'partition-by',
             returns: {
                 type: 'sequence',
             },
@@ -25552,7 +25117,6 @@ var Playground = (function (exports) {
         'starts-with?': {
             title: 'starts-with?',
             category: 'Sequence',
-            linkName: 'starts-with-question',
             returns: {
                 type: 'boolean',
             },
@@ -25576,7 +25140,6 @@ var Playground = (function (exports) {
         'ends-with?': {
             title: 'ends-with?',
             category: 'Sequence',
-            linkName: 'ends-with-question',
             returns: {
                 type: 'boolean',
             },
@@ -25601,7 +25164,6 @@ var Playground = (function (exports) {
         'interleave': {
             title: 'interleave',
             category: 'Sequence',
-            linkName: 'interleave',
             returns: {
                 type: 'sequence',
             },
@@ -25628,7 +25190,6 @@ var Playground = (function (exports) {
         'interpose': {
             title: 'interpose',
             category: 'Sequence',
-            linkName: 'interpose',
             returns: {
                 type: 'sequence',
             },
@@ -25654,7 +25215,6 @@ var Playground = (function (exports) {
         'array': {
             title: 'array',
             category: 'Special expression',
-            linkName: 'array',
             returns: {
                 type: 'any',
                 array: true,
@@ -25683,7 +25243,6 @@ var Playground = (function (exports) {
         'object': {
             title: 'object',
             category: 'Special expression',
-            linkName: 'object',
             returns: {
                 type: 'object',
             },
@@ -25710,7 +25269,6 @@ var Playground = (function (exports) {
         '&&': {
             title: '&&',
             category: 'Special expression',
-            linkName: '-and-and',
             returns: {
                 type: 'any',
             },
@@ -25735,7 +25293,6 @@ var Playground = (function (exports) {
         '||': {
             title: '||',
             category: 'Special expression',
-            linkName: '-or-or',
             returns: {
                 type: 'boolean',
             },
@@ -25760,7 +25317,6 @@ var Playground = (function (exports) {
         'let': {
             title: 'let',
             category: 'Special expression',
-            linkName: 'let',
             customVariants: ['let s = value;'],
             details: [
                 ['s', 'symbol', 'The name of the variable to bind.'],
@@ -25772,7 +25328,6 @@ var Playground = (function (exports) {
         'function': {
             title: 'function',
             category: 'Special expression',
-            linkName: 'function',
             customVariants: ['function name(...arg) { body }'],
             details: [
                 ['name', 'symbol', 'The name of the function.'],
@@ -25793,7 +25348,6 @@ var Playground = (function (exports) {
         'try': {
             title: 'try',
             category: 'Special expression',
-            linkName: 'try',
             customVariants: ['try { try-body } catch { catch-body }', 'try { try-body } catch(error) { catch-body }'],
             details: [
                 ['try-body', 'expressions', 'The expressions to try.'],
@@ -25810,7 +25364,6 @@ var Playground = (function (exports) {
         'throw': {
             title: 'throw',
             category: 'Special expression',
-            linkName: 'throw',
             returns: {
                 type: 'never',
             },
@@ -25831,7 +25384,6 @@ var Playground = (function (exports) {
         'if': {
             title: 'if',
             category: 'Special expression',
-            linkName: 'if',
             customVariants: ['if (test) true-expr else false-expr', 'if (test) true-expr'],
             details: [
                 ['test', 'expression', 'The condition to test.'],
@@ -25849,7 +25401,6 @@ var Playground = (function (exports) {
         'unless': {
             title: 'unless',
             category: 'Special expression',
-            linkName: 'unless',
             customVariants: ['unless (test) true-expr else false-expr end', 'unless test true-expr end'],
             details: [
                 ['test', 'expression', 'The condition to test.'],
@@ -25867,7 +25418,6 @@ var Playground = (function (exports) {
         'cond': {
             title: 'cond',
             category: 'Special expression',
-            linkName: 'cond',
             customVariants: ['cond { cond-branch cond-branch ... }'],
             details: [
                 ['cond-branch', 'case test then body', 'A branch of the cond expression.'],
@@ -25884,7 +25434,6 @@ var Playground = (function (exports) {
         'switch': {
             title: 'switch',
             category: 'Special expression',
-            linkName: 'switch',
             customVariants: ['switch (value) { switch-branch switch-branch ... }'],
             details: [
                 ['value', 'any', 'The value to test.'],
@@ -25902,7 +25451,6 @@ var Playground = (function (exports) {
         'block': {
             title: 'block',
             category: 'Special expression',
-            linkName: 'block',
             customVariants: ['{ body }'],
             details: [
                 ['body', 'expressions', 'The expressions to evaluate.'],
@@ -25915,7 +25463,6 @@ var Playground = (function (exports) {
         'recur': {
             title: 'recur',
             category: 'Special expression',
-            linkName: 'recur',
             customVariants: ['recur(...recur-args)'],
             description: 'Recursevly calls enclosing function or loop with its evaluated `recur-args`.',
             examples: [
@@ -25930,7 +25477,6 @@ var Playground = (function (exports) {
         'string-repeat': {
             title: 'string-repeat',
             category: 'String',
-            linkName: 'string-repeat',
             returns: {
                 type: 'number',
             },
@@ -25952,7 +25498,6 @@ var Playground = (function (exports) {
         'str': {
             title: 'str',
             category: 'String',
-            linkName: 'str',
             returns: {
                 type: 'string',
             },
@@ -25977,7 +25522,6 @@ var Playground = (function (exports) {
         'number': {
             title: 'number',
             category: 'String',
-            linkName: 'number',
             returns: {
                 type: 'number',
             },
@@ -25999,7 +25543,6 @@ var Playground = (function (exports) {
         'lower-case': {
             title: 'lower-case',
             category: 'String',
-            linkName: 'lower-case',
             returns: {
                 type: 'string',
             },
@@ -26020,7 +25563,6 @@ var Playground = (function (exports) {
         'upper-case': {
             title: 'upper-case',
             category: 'String',
-            linkName: 'upper-case',
             returns: {
                 type: 'string',
             },
@@ -26041,7 +25583,6 @@ var Playground = (function (exports) {
         'trim': {
             title: 'trim',
             category: 'String',
-            linkName: 'trim',
             returns: {
                 type: 'string',
             },
@@ -26063,7 +25604,6 @@ var Playground = (function (exports) {
         'trim-left': {
             title: 'trim-left',
             category: 'String',
-            linkName: 'trim-left',
             returns: {
                 type: 'string',
             },
@@ -26085,7 +25625,6 @@ var Playground = (function (exports) {
         'trim-right': {
             title: 'trim-right',
             category: 'String',
-            linkName: 'trim-right',
             returns: {
                 type: 'string',
             },
@@ -26107,7 +25646,6 @@ var Playground = (function (exports) {
         'pad-left': {
             title: 'pad-left',
             category: 'String',
-            linkName: 'pad-left',
             returns: {
                 type: 'string',
             },
@@ -26134,7 +25672,6 @@ var Playground = (function (exports) {
         'pad-right': {
             title: 'pad-right',
             category: 'String',
-            linkName: 'pad-right',
             returns: {
                 type: 'string',
             },
@@ -26161,7 +25698,6 @@ var Playground = (function (exports) {
         'split': {
             title: 'split',
             category: 'String',
-            linkName: 'split',
             returns: {
                 type: 'string',
             },
@@ -26188,7 +25724,6 @@ var Playground = (function (exports) {
         'split-lines': {
             title: 'split-lines',
             category: 'String',
-            linkName: 'split-lines',
             returns: {
                 type: 'string',
             },
@@ -26211,7 +25746,6 @@ var Playground = (function (exports) {
         'template': {
             title: 'template',
             category: 'String',
-            linkName: 'template',
             returns: {
                 type: 'string',
             },
@@ -26248,7 +25782,6 @@ var Playground = (function (exports) {
         'to-char-code': {
             title: 'to-char-code',
             category: 'String',
-            linkName: 'to-char-code',
             returns: {
                 type: 'number',
             },
@@ -26269,7 +25802,6 @@ var Playground = (function (exports) {
         'from-char-code': {
             title: 'from-char-code',
             category: 'String',
-            linkName: 'from-char-code',
             returns: {
                 type: 'string',
             },
@@ -26290,7 +25822,6 @@ var Playground = (function (exports) {
         'encode-base64': {
             title: 'encode-base64',
             category: 'String',
-            linkName: 'encode-base64',
             returns: {
                 type: 'string',
             },
@@ -26310,7 +25841,6 @@ var Playground = (function (exports) {
         'decode-base64': {
             title: 'decode-base64',
             category: 'String',
-            linkName: 'decode-base64',
             returns: {
                 type: 'string',
             },
@@ -26330,7 +25860,6 @@ var Playground = (function (exports) {
         'encode-uri-component': {
             title: 'encode-uri-component',
             category: 'String',
-            linkName: 'encode-uri-component',
             returns: {
                 type: 'string',
             },
@@ -26350,7 +25879,6 @@ var Playground = (function (exports) {
         'decode-uri-component': {
             title: 'decode-uri-component',
             category: 'String',
-            linkName: 'decode-uri-component',
             returns: {
                 type: 'string',
             },
@@ -26370,7 +25898,6 @@ var Playground = (function (exports) {
         'join': {
             title: 'join',
             category: 'String',
-            linkName: 'join',
             returns: {
                 type: 'string',
             },
@@ -26394,7 +25921,6 @@ var Playground = (function (exports) {
         'capitalize': {
             title: 'capitalize',
             category: 'String',
-            linkName: 'capitalize',
             returns: {
                 type: 'string',
             },
@@ -26417,7 +25943,6 @@ var Playground = (function (exports) {
         'blank?': {
             title: 'blank?',
             category: 'String',
-            linkName: 'blank-question',
             returns: {
                 type: 'boolean',
             },
@@ -26445,7 +25970,6 @@ var Playground = (function (exports) {
             datatype: true,
             title: 'number',
             category: 'Datatype',
-            linkName: '-type-number',
             description: 'A `number`',
             examples: [
                 '42',
@@ -26456,7 +25980,6 @@ var Playground = (function (exports) {
             datatype: true,
             title: 'string',
             category: 'Datatype',
-            linkName: '-type-string',
             description: 'A `string`',
             examples: [
                 '"hello"',
@@ -26467,7 +25990,6 @@ var Playground = (function (exports) {
             datatype: true,
             title: 'object',
             category: 'Datatype',
-            linkName: '-type-object',
             description: 'An `object`, a collection of key-value pairs where keys are `strings`',
             examples: [
                 '{}',
@@ -26478,7 +26000,6 @@ var Playground = (function (exports) {
             datatype: true,
             title: 'array',
             category: 'Datatype',
-            linkName: '-type-array',
             description: 'An `array`',
             examples: [
                 '[]',
@@ -26488,9 +26009,8 @@ var Playground = (function (exports) {
         },
         '-type-vector': {
             datatype: true,
-            title: 'array',
+            title: 'vector',
             category: 'Datatype',
-            linkName: '-type-vector',
             description: 'An `array` of `numbers`',
             examples: [
                 '[]',
@@ -26501,7 +26021,6 @@ var Playground = (function (exports) {
             datatype: true,
             title: 'matrix',
             category: 'Datatype',
-            linkName: '-type-matrix',
             description: 'A `matrix`, a two-dimensional `array` with `numbers` where each row has the same number of columns. A `matrix` is also a `grid`.',
             examples: [
                 '[[]]',
@@ -26513,7 +26032,6 @@ var Playground = (function (exports) {
             datatype: true,
             title: 'grid',
             category: 'Datatype',
-            linkName: '-type-grid',
             description: 'A `grid`, a two-dimensional `array` where each row has the same number of columns',
             examples: [
                 '[[]]',
@@ -26525,7 +26043,6 @@ var Playground = (function (exports) {
             datatype: true,
             title: 'boolean',
             category: 'Datatype',
-            linkName: '-type-boolean',
             description: 'A `boolean`',
             examples: [
                 'true',
@@ -26536,7 +26053,6 @@ var Playground = (function (exports) {
             datatype: true,
             title: 'function',
             category: 'Datatype',
-            linkName: '-type-function',
             description: 'A `function`',
             examples: [
                 'x -> x + 1',
@@ -26549,7 +26065,6 @@ var Playground = (function (exports) {
             datatype: true,
             title: 'integer',
             category: 'Datatype',
-            linkName: '-type-integer',
             description: 'An `integer`',
             examples: [
                 '42',
@@ -26560,7 +26075,6 @@ var Playground = (function (exports) {
             datatype: true,
             title: 'any',
             category: 'Datatype',
-            linkName: '-type-any',
             description: '`Any` value',
             examples: [
                 '42',
@@ -26573,7 +26087,6 @@ var Playground = (function (exports) {
             datatype: true,
             title: 'null',
             category: 'Datatype',
-            linkName: '-type-null',
             description: 'The value `null`',
             examples: [
                 'null',
@@ -26583,7 +26096,6 @@ var Playground = (function (exports) {
             datatype: true,
             title: 'collection',
             category: 'Datatype',
-            linkName: '-type-collection',
             description: 'A collection, an `object`, an `array` or a `string`',
             examples: [
                 '{ foo: 42 }',
@@ -26595,7 +26107,6 @@ var Playground = (function (exports) {
             datatype: true,
             title: 'sequence',
             category: 'Datatype',
-            linkName: '-type-sequence',
             description: 'A sequence, an `array` or a `string`',
             examples: [
                 '[1, 2, 3]',
@@ -26606,7 +26117,6 @@ var Playground = (function (exports) {
             datatype: true,
             title: 'regexp',
             category: 'Datatype',
-            linkName: '-type-regexp',
             description: 'A regular expression',
             examples: [
                 'regexp("^\\\\s*(.*)$")',
@@ -26617,7 +26127,6 @@ var Playground = (function (exports) {
             datatype: true,
             title: 'never',
             category: 'Datatype',
-            linkName: '-type-never',
             description: 'A value that can never be created',
             examples: ["\n// throw(\"error\") will never return a value\ntry { throw(\"error\") } catch { \"never\" }",
             ],
@@ -26629,7 +26138,6 @@ var Playground = (function (exports) {
             shorthand: true,
             title: '#"pattern"',
             category: 'Shorthand',
-            linkName: '-short-regexp',
             description: 'Shorthand for `regexp(pattern)`. Only difference is that escaping is not needed.',
             examples: [
                 '#"^\\s*(.*)$"',
@@ -26641,7 +26149,6 @@ var Playground = (function (exports) {
             shorthand: true,
             title: '-> expression',
             category: 'Shorthand',
-            linkName: '-short-fn',
             description: "\nShorthand for `(args, ...) -> expression`.\n`$1, $2, $3, ...` are shorthand for the first, second, third, ... argument.\n\nYou can reference the first argument using either `$1` or `$`.\nHowever, please note that `$1` and `$` are mutually exclusive and cannot be used simultaneously.\nE.g. `#(* $ $1)` is not valid.",
             examples: [
                 '-> $1 + $2',
@@ -26655,7 +26162,6 @@ var Playground = (function (exports) {
             title: 'nth:abundant-seq',
             category: 'Number Theory',
             description: 'Generates the abundant numbers up to a specified length.',
-            linkName: 'nth-colon-abundant-seq',
             returns: {
                 type: 'integer',
                 array: true,
@@ -26678,7 +26184,6 @@ var Playground = (function (exports) {
             title: 'nth:abundant-take-while',
             category: 'Number Theory',
             description: 'Generates the abundant numbers while a condition is met.',
-            linkName: 'nth-colon-abundant-take-while',
             returns: {
                 type: 'integer',
                 array: true,
@@ -26700,7 +26205,6 @@ var Playground = (function (exports) {
             title: 'nth:abundant-nth',
             category: 'Number Theory',
             description: 'Generates the nth term of the abundant numbers.',
-            linkName: 'nth-colon-abundant-nth',
             returns: {
                 type: 'integer',
             },
@@ -26722,7 +26226,6 @@ var Playground = (function (exports) {
             title: 'nth:abundant?',
             category: 'Number Theory',
             description: 'Checks if a number is abundant.',
-            linkName: 'nth-colon-abundant-question',
             returns: {
                 type: 'boolean',
             },
@@ -26747,7 +26250,6 @@ var Playground = (function (exports) {
             title: 'nth:arithmetic-seq',
             category: 'Number Theory',
             description: 'Generates the arithmetic sequence for a given $start, $step, and $length.',
-            linkName: 'nth-colon-arithmetic-seq',
             returns: {
                 type: 'integer',
                 array: true,
@@ -26780,7 +26282,6 @@ var Playground = (function (exports) {
             title: 'nth:arithmetic-take-while',
             category: 'Number Theory',
             description: 'Generates the arithmetic sequence while a condition is met.',
-            linkName: 'nth-colon-arithmetic-take-while',
             returns: {
                 type: 'integer',
                 array: true,
@@ -26810,7 +26311,6 @@ var Playground = (function (exports) {
             title: 'nth:arithmetic-nth',
             category: 'Number Theory',
             description: 'Generates the nth term of the arithmetic sequence.',
-            linkName: 'nth-colon-arithmetic-nth',
             returns: {
                 type: 'integer',
             },
@@ -26842,7 +26342,6 @@ var Playground = (function (exports) {
             title: 'nth:arithmetic?',
             category: 'Number Theory',
             description: 'Checks if a number is part of the arithmetic sequence.',
-            linkName: 'nth-colon-arithmetic-question',
             returns: {
                 type: 'boolean',
             },
@@ -26877,7 +26376,6 @@ var Playground = (function (exports) {
             title: 'nth:bell-seq',
             category: 'Number Theory',
             description: 'Generates the Bell sequence up to a specified length.',
-            linkName: 'nth-colon-bell-seq',
             returns: {
                 type: 'integer',
                 array: true,
@@ -26902,7 +26400,6 @@ var Playground = (function (exports) {
             title: 'nth:bell-take-while',
             category: 'Number Theory',
             description: 'Generates the Bell sequence while a condition is met.',
-            linkName: 'nth-colon-bell-take-while',
             returns: {
                 type: 'integer',
                 array: true,
@@ -26924,7 +26421,6 @@ var Playground = (function (exports) {
             title: 'nth:bell-nth',
             category: 'Number Theory',
             description: 'Generates the nth term of the Bell sequence.',
-            linkName: 'nth-colon-bell-nth',
             returns: {
                 type: 'integer',
             },
@@ -26946,7 +26442,6 @@ var Playground = (function (exports) {
             title: 'nth:bell?',
             category: 'Number Theory',
             description: 'Checks if a number is in the Bell sequence.',
-            linkName: 'nth-colon-bell-question',
             returns: {
                 type: 'boolean',
             },
@@ -26972,7 +26467,6 @@ var Playground = (function (exports) {
             title: 'nth:bernoulli-seq',
             category: 'Number Theory',
             description: 'Generates the Bernoulli sequence up to a specified length.',
-            linkName: 'nth-colon-bernoulli-seq',
             returns: {
                 type: 'number',
                 array: true,
@@ -26995,7 +26489,6 @@ var Playground = (function (exports) {
             title: 'nth:bernoulli-take-while',
             category: 'Number Theory',
             description: 'Generates the Bernoulli sequence while a condition is met.',
-            linkName: 'nth-colon-bernoulli-take-while',
             returns: {
                 type: 'number',
                 array: true,
@@ -27017,7 +26510,6 @@ var Playground = (function (exports) {
             title: 'nth:bernoulli-nth',
             category: 'Number Theory',
             description: 'Generates the nth term of the Bernoulli sequence.',
-            linkName: 'nth-colon-bernoulli-nth',
             returns: {
                 type: 'number',
             },
@@ -27043,7 +26535,6 @@ var Playground = (function (exports) {
             title: 'nth:catalan-seq',
             category: 'Number Theory',
             description: 'Generates the Catalan sequence up to a specified length.',
-            linkName: 'nth-colon-catalan-seq',
             returns: {
                 type: 'integer',
                 array: true,
@@ -27068,7 +26559,6 @@ var Playground = (function (exports) {
             title: 'nth:catalan-take-while',
             category: 'Number Theory',
             description: 'Generates the Catalan sequence while a condition is met.',
-            linkName: 'nth-colon-catalan-take-while',
             returns: {
                 type: 'integer',
                 array: true,
@@ -27090,7 +26580,6 @@ var Playground = (function (exports) {
             title: 'nth:catalan-nth',
             category: 'Number Theory',
             description: 'Generates the nth term of the Catalan sequence.',
-            linkName: 'nth-colon-catalan-nth',
             returns: {
                 type: 'integer',
             },
@@ -27112,7 +26601,6 @@ var Playground = (function (exports) {
             title: 'nth:catalan?',
             category: 'Number Theory',
             description: 'Determines if a number is in the Catalan sequence.',
-            linkName: 'nth-colon-catalan-question',
             returns: {
                 type: 'boolean',
             },
@@ -27137,7 +26625,6 @@ var Playground = (function (exports) {
             title: 'nth:collatz-seq',
             category: 'Number Theory',
             description: 'Generates the collatz sequence starting from a given integer.',
-            linkName: 'nth-colon-collatz-seq',
             returns: {
                 type: 'integer',
                 array: true,
@@ -27163,7 +26650,6 @@ var Playground = (function (exports) {
             title: 'nth:composite-seq',
             category: 'Number Theory',
             description: 'Generates the composite sequence up to a specified length.',
-            linkName: 'nth-colon-composite-seq',
             returns: {
                 type: 'integer',
                 array: true,
@@ -27187,7 +26673,6 @@ var Playground = (function (exports) {
             title: 'nth:composite-take-while',
             category: 'Number Theory',
             description: 'Generates the composite sequence while a condition is met.',
-            linkName: 'nth-colon-composite-take-while',
             returns: {
                 type: 'integer',
                 array: true,
@@ -27209,7 +26694,6 @@ var Playground = (function (exports) {
             title: 'nth:composite-nth',
             category: 'Number Theory',
             description: 'Generates the nth term of the composite sequence.',
-            linkName: 'nth-colon-composite-nth',
             returns: {
                 type: 'integer',
             },
@@ -27232,7 +26716,6 @@ var Playground = (function (exports) {
             title: 'nth:composite?',
             category: 'Number Theory',
             description: 'Determines if a number is composite.',
-            linkName: 'nth-colon-composite-question',
             returns: {
                 type: 'boolean',
             },
@@ -27258,7 +26741,6 @@ var Playground = (function (exports) {
             title: 'nth:factorial-seq',
             category: 'Number Theory',
             description: 'Generates the factorial sequence up to a specified length.',
-            linkName: 'nth-colon-factorial-seq',
             returns: {
                 type: 'integer',
                 array: true,
@@ -27286,7 +26768,6 @@ var Playground = (function (exports) {
             title: 'nth:factorial-take-while',
             category: 'Number Theory',
             description: 'Generates the factorial sequence while a condition is met.',
-            linkName: 'nth-colon-factorial-take-while',
             returns: {
                 type: 'integer',
                 array: true,
@@ -27308,7 +26789,6 @@ var Playground = (function (exports) {
             title: 'nth:factorial-nth',
             category: 'Number Theory',
             description: 'Generates the nth term of the factorial sequence.',
-            linkName: 'nth-colon-factorial-nth',
             returns: {
                 type: 'integer',
             },
@@ -27334,7 +26814,6 @@ var Playground = (function (exports) {
             title: 'nth:factorial?',
             category: 'Number Theory',
             description: 'Checks if a number is in the factorial sequence.',
-            linkName: 'nth-colon-factorial-question',
             returns: {
                 type: 'boolean',
             },
@@ -27367,7 +26846,6 @@ var Playground = (function (exports) {
             title: 'nth:fibonacci-seq',
             category: 'Number Theory',
             description: 'Generates the fibonacci sequence up to a specified length.',
-            linkName: 'nth-colon-fibonacci-seq',
             returns: {
                 type: 'integer',
                 array: true,
@@ -27392,7 +26870,6 @@ var Playground = (function (exports) {
             title: 'nth:fibonacci-take-while',
             category: 'Number Theory',
             description: 'Generates the fibonacci sequence while a condition is met.',
-            linkName: 'nth-colon-fibonacci-take-while',
             returns: {
                 type: 'integer',
                 array: true,
@@ -27414,7 +26891,6 @@ var Playground = (function (exports) {
             title: 'nth:fibonacci-nth',
             category: 'Number Theory',
             description: 'Generates the nth term of the fibonacci sequence.',
-            linkName: 'nth-colon-fibonacci-nth',
             returns: {
                 type: 'integer',
             },
@@ -27436,7 +26912,6 @@ var Playground = (function (exports) {
             title: 'nth:fibonacci?',
             category: 'Number Theory',
             description: 'Determines if a number is in the fibonacci sequence.',
-            linkName: 'nth-colon-fibonacci-question',
             returns: {
                 type: 'boolean',
             },
@@ -27469,7 +26944,6 @@ var Playground = (function (exports) {
             title: 'nth:geometric-seq',
             category: 'Number Theory',
             description: 'Generates the geometric sequence for a given $start, $ratio, and $length.',
-            linkName: 'nth-colon-geometric-seq',
             returns: {
                 type: 'integer',
                 array: true,
@@ -27502,7 +26976,6 @@ var Playground = (function (exports) {
             title: 'nth:geometric-take-while',
             category: 'Number Theory',
             description: 'Generates the geometric sequence while a condition is met.',
-            linkName: 'nth-colon-geometric-take-while',
             returns: {
                 type: 'integer',
                 array: true,
@@ -27532,7 +27005,6 @@ var Playground = (function (exports) {
             title: 'nth:geometric-nth',
             category: 'Number Theory',
             description: 'Generates the nth term of the geometric sequence.',
-            linkName: 'nth-colon-geometric-nth',
             returns: {
                 type: 'integer',
             },
@@ -27564,7 +27036,6 @@ var Playground = (function (exports) {
             title: 'nth:geometric?',
             category: 'Number Theory',
             description: 'Checks if a number is in the geometric sequence.',
-            linkName: 'nth-colon-geometric-question',
             returns: {
                 type: 'boolean',
             },
@@ -27600,7 +27071,6 @@ var Playground = (function (exports) {
             title: 'nth:golomb-seq',
             category: 'Number Theory',
             description: 'Generates the Golomb sequence up to a specified length.',
-            linkName: 'nth-colon-golomb-seq',
             returns: {
                 type: 'integer',
                 array: true,
@@ -27623,7 +27093,6 @@ var Playground = (function (exports) {
             title: 'nth:golomb-take-while',
             category: 'Number Theory',
             description: 'Generates the Golomb sequence while a condition is met.',
-            linkName: 'nth-colon-golomb-take-while',
             returns: {
                 type: 'integer',
                 array: true,
@@ -27645,7 +27114,6 @@ var Playground = (function (exports) {
             title: 'nth:golomb-nth',
             category: 'Number Theory',
             description: 'Generates the nth term of the Golomb sequence.',
-            linkName: 'nth-colon-golomb-nth',
             returns: {
                 type: 'integer',
             },
@@ -27667,7 +27135,6 @@ var Playground = (function (exports) {
             title: 'nth:golomb?',
             category: 'Number Theory',
             description: 'Checks if a number is in the Golomb sequence.',
-            linkName: 'nth-colon-golomb-question',
             returns: {
                 type: 'boolean',
             },
@@ -27694,7 +27161,6 @@ var Playground = (function (exports) {
             title: 'nth:happy-seq',
             category: 'Number Theory',
             description: 'Generates the happy sequence up to a specified length.',
-            linkName: 'nth-colon-happy-seq',
             returns: {
                 type: 'integer',
                 array: true,
@@ -27719,7 +27185,6 @@ var Playground = (function (exports) {
             title: 'nth:happy-take-while',
             category: 'Number Theory',
             description: 'Generates the happy sequence while a condition is met.',
-            linkName: 'nth-colon-happy-take-while',
             returns: {
                 type: 'integer',
                 array: true,
@@ -27741,7 +27206,6 @@ var Playground = (function (exports) {
             title: 'nth:happy-nth',
             category: 'Number Theory',
             description: 'Generates the nth term of the happy sequence.',
-            linkName: 'nth-colon-happy-nth',
             returns: {
                 type: 'integer',
             },
@@ -27764,7 +27228,6 @@ var Playground = (function (exports) {
             title: 'nth:happy?',
             category: 'Number Theory',
             description: 'Determines if a number is a happy number.',
-            linkName: 'nth-colon-happy-question',
             returns: {
                 type: 'boolean',
             },
@@ -27790,7 +27253,6 @@ var Playground = (function (exports) {
             title: 'nth:juggler-seq',
             category: 'Number Theory',
             description: 'Generates the Juggler sequence starting from a given integer.',
-            linkName: 'nth-colon-juggler-seq',
             returns: {
                 type: 'integer',
                 array: true,
@@ -27816,7 +27278,6 @@ var Playground = (function (exports) {
             title: 'nth:look-and-say-seq',
             category: 'Number Theory',
             description: 'Generates the Look-and-Say sequence up to a specified length.',
-            linkName: 'nth-colon-look-and-say-seq',
             returns: {
                 type: 'string',
                 array: true,
@@ -27838,7 +27299,6 @@ var Playground = (function (exports) {
             title: 'nth:look-and-say-take-while',
             category: 'Number Theory',
             description: 'Generates the Look-and-Say sequence while a condition is met.',
-            linkName: 'nth-colon-look-and-say-take-while',
             returns: {
                 type: 'string',
                 array: true,
@@ -27861,7 +27321,6 @@ var Playground = (function (exports) {
             title: 'nth:look-and-say-nth',
             category: 'Number Theory',
             description: 'Generates the nth term of the Look-and-Say sequence.',
-            linkName: 'nth-colon-look-and-say-nth',
             returns: {
                 type: 'string',
             },
@@ -27882,7 +27341,6 @@ var Playground = (function (exports) {
             title: 'nth:look-and-say?',
             category: 'Number Theory',
             description: 'Checks if a string is a valid Look-and-Say term.',
-            linkName: 'nth-colon-look-and-say-question',
             returns: {
                 type: 'boolean',
             },
@@ -27907,7 +27365,6 @@ var Playground = (function (exports) {
             title: 'nth:lucas-seq',
             category: 'Number Theory',
             description: 'Generates the lucas sequence up to a specified length.',
-            linkName: 'nth-colon-lucas-seq',
             returns: {
                 type: 'integer',
                 array: true,
@@ -27932,7 +27389,6 @@ var Playground = (function (exports) {
             title: 'nth:lucas-take-while',
             category: 'Number Theory',
             description: 'Generates the lucas sequence while a condition is met.',
-            linkName: 'nth-colon-lucas-take-while',
             returns: {
                 type: 'integer',
                 array: true,
@@ -27954,7 +27410,6 @@ var Playground = (function (exports) {
             title: 'nth:lucas-nth',
             category: 'Number Theory',
             description: 'Generates the nth term of the lucas sequence.',
-            linkName: 'nth-colon-lucas-nth',
             returns: {
                 type: 'integer',
             },
@@ -27977,7 +27432,6 @@ var Playground = (function (exports) {
             title: 'nth:lucas?',
             category: 'Number Theory',
             description: 'Determines if a number is in the lucas sequence.',
-            linkName: 'nth-colon-lucas-question',
             returns: {
                 type: 'boolean',
             },
@@ -28003,7 +27457,6 @@ var Playground = (function (exports) {
             title: 'nth:lucky-seq',
             category: 'Number Theory',
             description: 'Generates the lucky sequence up to a specified length.',
-            linkName: 'nth-colon-lucky-seq',
             returns: {
                 type: 'integer',
                 array: true,
@@ -28027,7 +27480,6 @@ var Playground = (function (exports) {
             title: 'nth:lucky-take-while',
             category: 'Number Theory',
             description: 'Generates the lucky sequence while a condition is met.',
-            linkName: 'nth-colon-lucky-take-while',
             returns: {
                 type: 'integer',
                 array: true,
@@ -28049,7 +27501,6 @@ var Playground = (function (exports) {
             title: 'nth:lucky-nth',
             category: 'Number Theory',
             description: 'Generates the nth term of the lucky sequence.',
-            linkName: 'nth-colon-lucky-nth',
             returns: {
                 type: 'integer',
             },
@@ -28072,7 +27523,6 @@ var Playground = (function (exports) {
             title: 'nth:lucky?',
             category: 'Number Theory',
             description: 'Checks if a number is a lucky number.',
-            linkName: 'nth-colon-lucky-question',
             returns: {
                 type: 'boolean',
             },
@@ -28098,7 +27548,6 @@ var Playground = (function (exports) {
             title: 'nth:mersenne-seq',
             category: 'Number Theory',
             description: 'Generates the Mersenne sequence up to a specified length.',
-            linkName: 'nth-colon-mersenne-seq',
             returns: {
                 type: 'integer',
                 array: true,
@@ -28123,7 +27572,6 @@ var Playground = (function (exports) {
             title: 'nth:mersenne-take-while',
             category: 'Number Theory',
             description: 'Generates the Mersenne sequence while a condition is met.',
-            linkName: 'nth-colon-mersenne-take-while',
             returns: {
                 type: 'integer',
                 array: true,
@@ -28145,7 +27593,6 @@ var Playground = (function (exports) {
             title: 'nth:mersenne-nth',
             category: 'Number Theory',
             description: 'Generates the nth term of the Mersenne sequence.',
-            linkName: 'nth-colon-mersenne-nth',
             returns: {
                 type: 'integer',
             },
@@ -28167,7 +27614,6 @@ var Playground = (function (exports) {
             title: 'nth:mersenne?',
             category: 'Number Theory',
             description: 'Checks if a number is in the Mersenne sequence.',
-            linkName: 'nth-colon-mersenne-question',
             returns: {
                 type: 'boolean',
             },
@@ -28193,7 +27639,6 @@ var Playground = (function (exports) {
             title: 'nth:padovan-seq',
             category: 'Number Theory',
             description: 'Generates the Padovan sequence up to a specified length.',
-            linkName: 'nth-colon-padovan-seq',
             returns: {
                 type: 'integer',
                 array: true,
@@ -28217,7 +27662,6 @@ var Playground = (function (exports) {
             title: 'nth:padovan-take-while',
             category: 'Number Theory',
             description: 'Generates the Padovan sequence while a condition is met.',
-            linkName: 'nth-colon-padovan-take-while',
             returns: {
                 type: 'integer',
                 array: true,
@@ -28239,7 +27683,6 @@ var Playground = (function (exports) {
             title: 'nth:padovan-nth',
             category: 'Number Theory',
             description: 'Generates the nth term of the Padovan sequence.',
-            linkName: 'nth-colon-padovan-nth',
             returns: {
                 type: 'integer',
             },
@@ -28262,7 +27705,6 @@ var Playground = (function (exports) {
             title: 'nth:padovan?',
             category: 'Number Theory',
             description: 'Checks if a number is in the Padovan sequence.',
-            linkName: 'nth-colon-padovan-question',
             returns: {
                 type: 'boolean',
             },
@@ -28288,7 +27730,6 @@ var Playground = (function (exports) {
             title: 'nth:partition-seq',
             category: 'Number Theory',
             description: 'Generates the partition numbers up to a specified length. If no length is provided, it defaults to 299 (the maximum length of the pre-calculated partition numbers).',
-            linkName: 'nth-colon-partition-seq',
             returns: {
                 type: 'integer',
                 array: true,
@@ -28313,7 +27754,6 @@ var Playground = (function (exports) {
             title: 'nth:partition-take-while',
             category: 'Number Theory',
             description: 'Generates the partition numbers while a condition is met.',
-            linkName: 'nth-colon-partition-take-while',
             returns: {
                 type: 'integer',
                 array: true,
@@ -28335,7 +27775,6 @@ var Playground = (function (exports) {
             title: 'nth:partition-nth',
             category: 'Number Theory',
             description: 'Generates the nth term of the partition numbers.',
-            linkName: 'nth-colon-partition-nth',
             returns: {
                 type: 'integer',
             },
@@ -28357,7 +27796,6 @@ var Playground = (function (exports) {
             title: 'nth:partition?',
             category: 'Number Theory',
             description: 'Checks if a number is in the partition numbers.',
-            linkName: 'nth-colon-partition-question',
             returns: {
                 type: 'boolean',
             },
@@ -28386,7 +27824,6 @@ var Playground = (function (exports) {
             title: 'nth:pell-seq',
             category: 'Number Theory',
             description: 'Generates the Pell sequence up to a specified length.',
-            linkName: 'nth-colon-pell-seq',
             returns: {
                 type: 'integer',
                 array: true,
@@ -28411,7 +27848,6 @@ var Playground = (function (exports) {
             title: 'nth:pell-take-while',
             category: 'Number Theory',
             description: 'Generates the Pell sequence while a condition is met.',
-            linkName: 'nth-colon-pell-take-while',
             returns: {
                 type: 'integer',
                 array: true,
@@ -28433,7 +27869,6 @@ var Playground = (function (exports) {
             title: 'nth:pell-nth',
             category: 'Number Theory',
             description: 'Generates the nth term of the Pell sequence.',
-            linkName: 'nth-colon-pell-nth',
             returns: {
                 type: 'integer',
             },
@@ -28456,7 +27891,6 @@ var Playground = (function (exports) {
             title: 'nth:pell?',
             category: 'Number Theory',
             description: 'Checks if a number is a Pell number.',
-            linkName: 'nth-colon-pell-question',
             returns: {
                 type: 'boolean',
             },
@@ -28482,7 +27916,6 @@ var Playground = (function (exports) {
             title: 'nth:perfect-seq',
             category: 'Number Theory',
             description: 'Generates the perfect numbers up to a specified length.',
-            linkName: 'nth-colon-perfect-seq',
             returns: {
                 type: 'integer',
                 array: true,
@@ -28507,7 +27940,6 @@ var Playground = (function (exports) {
             title: 'nth:perfect-take-while',
             category: 'Number Theory',
             description: 'Generates the perfect numbers while a condition is met.',
-            linkName: 'nth-colon-perfect-take-while',
             returns: {
                 type: 'integer',
                 array: true,
@@ -28529,7 +27961,6 @@ var Playground = (function (exports) {
             title: 'nth:perfect-nth',
             category: 'Number Theory',
             description: 'Generates the nth term of the perfect numbers.',
-            linkName: 'nth-colon-perfect-nth',
             returns: {
                 type: 'integer',
             },
@@ -28551,7 +27982,6 @@ var Playground = (function (exports) {
             title: 'nth:perfect?',
             category: 'Number Theory',
             description: 'Checks if a number is in the perfect numbers.',
-            linkName: 'nth-colon-perfect-question',
             returns: {
                 type: 'boolean',
             },
@@ -28584,7 +28014,6 @@ var Playground = (function (exports) {
             title: 'nth:perfect-square-seq',
             category: 'Number Theory',
             description: 'Generates the perfect square numbers up to a specified length.',
-            linkName: 'nth-colon-perfect-square-seq',
             returns: {
                 type: 'integer',
                 array: true,
@@ -28607,7 +28036,6 @@ var Playground = (function (exports) {
             title: 'nth:perfect-square-take-while',
             category: 'Number Theory',
             description: 'Generates the perfect square numbers while a condition is met.',
-            linkName: 'nth-colon-perfect-square-take-while',
             returns: {
                 type: 'integer',
                 array: true,
@@ -28629,7 +28057,6 @@ var Playground = (function (exports) {
             title: 'nth:perfect-square-nth',
             category: 'Number Theory',
             description: 'Generates the nth term of the perfect square numbers.',
-            linkName: 'nth-colon-perfect-square-nth',
             returns: {
                 type: 'integer',
             },
@@ -28651,7 +28078,6 @@ var Playground = (function (exports) {
             title: 'nth:perfect-square?',
             category: 'Number Theory',
             description: 'Checks if a number is a perfect square.',
-            linkName: 'nth-colon-perfect-square-question',
             returns: {
                 type: 'boolean',
             },
@@ -28676,7 +28102,6 @@ var Playground = (function (exports) {
             title: 'nth:perfect-cube-seq',
             category: 'Number Theory',
             description: 'Generates the perfect cube numbers up to a specified length.',
-            linkName: 'nth-colon-perfect-cube-seq',
             returns: {
                 type: 'integer',
                 array: true,
@@ -28699,7 +28124,6 @@ var Playground = (function (exports) {
             title: 'nth:perfect-cube-take-while',
             category: 'Number Theory',
             description: 'Generates the perfect cube numbers while a condition is met.',
-            linkName: 'nth-colon-perfect-cube-take-while',
             returns: {
                 type: 'integer',
                 array: true,
@@ -28721,7 +28145,6 @@ var Playground = (function (exports) {
             title: 'nth:perfect-cube-nth',
             category: 'Number Theory',
             description: 'Generates the nth term of the perfect cube numbers.',
-            linkName: 'nth-colon-perfect-cube-nth',
             returns: {
                 type: 'integer',
             },
@@ -28743,7 +28166,6 @@ var Playground = (function (exports) {
             title: 'nth:perfect-cube?',
             category: 'Number Theory',
             description: 'Checks if a number is in the perfect cube numbers.',
-            linkName: 'nth-colon-perfect-cube-question',
             returns: {
                 type: 'boolean',
             },
@@ -28769,7 +28191,6 @@ var Playground = (function (exports) {
             title: 'nth:perfect-power-seq',
             category: 'Number Theory',
             description: 'Generates the perfect power numbers up to a specified length.',
-            linkName: 'nth-colon-perfect-power-seq',
             returns: {
                 type: 'integer',
                 array: true,
@@ -28792,7 +28213,6 @@ var Playground = (function (exports) {
             title: 'nth:perfect-power-take-while',
             category: 'Number Theory',
             description: 'Generates the perfect power numbers while a condition is met.',
-            linkName: 'nth-colon-perfect-power-take-while',
             returns: {
                 type: 'integer',
                 array: true,
@@ -28814,7 +28234,6 @@ var Playground = (function (exports) {
             title: 'nth:perfect-power-nth',
             category: 'Number Theory',
             description: 'Generates the nth term of the perfect power numbers.',
-            linkName: 'nth-colon-perfect-power-nth',
             returns: {
                 type: 'integer',
             },
@@ -28836,7 +28255,6 @@ var Playground = (function (exports) {
             title: 'nth:perfect-power?',
             category: 'Number Theory',
             description: 'Checks if a number is in the perfect power numbers.',
-            linkName: 'nth-colon-perfect-power-question',
             returns: {
                 type: 'boolean',
             },
@@ -28863,7 +28281,6 @@ var Playground = (function (exports) {
             title: 'nth:polygonal-seq',
             category: 'Number Theory',
             description: 'Generates the polygonal sequence for a given number of sides and length.',
-            linkName: 'nth-colon-polygonal-seq',
             returns: {
                 type: 'integer',
                 array: true,
@@ -28890,7 +28307,6 @@ var Playground = (function (exports) {
             title: 'nth:polygonal-take-while',
             category: 'Number Theory',
             description: 'Generates the polygonal sequence while a condition is met.',
-            linkName: 'nth-colon-polygonal-take-while',
             returns: {
                 type: 'integer',
                 array: true,
@@ -28913,7 +28329,6 @@ var Playground = (function (exports) {
             title: 'nth:polygonal-nth',
             category: 'Number Theory',
             description: 'Generates the nth term of the polygonal sequence.',
-            linkName: 'nth-colon-polygonal-nth',
             returns: {
                 type: 'integer',
             },
@@ -28937,7 +28352,6 @@ var Playground = (function (exports) {
             title: 'nth:polygonal?',
             category: 'Number Theory',
             description: 'Checks if a number is in the polygonal sequence.',
-            linkName: 'nth-colon-polygonal-question',
             returns: {
                 type: 'boolean',
             },
@@ -28966,7 +28380,6 @@ var Playground = (function (exports) {
             title: 'nth:prime-seq',
             category: 'Number Theory',
             description: 'Generates the prime sequence up to a specified length.',
-            linkName: 'nth-colon-prime-seq',
             returns: {
                 type: 'integer',
                 array: true,
@@ -28990,7 +28403,6 @@ var Playground = (function (exports) {
             title: 'nth:prime-take-while',
             category: 'Number Theory',
             description: 'Generates the prime sequence while a condition is met.',
-            linkName: 'nth-colon-prime-take-while',
             returns: {
                 type: 'integer',
                 array: true,
@@ -29012,7 +28424,6 @@ var Playground = (function (exports) {
             title: 'nth:prime-nth',
             category: 'Number Theory',
             description: 'Generates the nth term of the prime sequence.',
-            linkName: 'nth-colon-prime-nth',
             returns: {
                 type: 'integer',
             },
@@ -29035,7 +28446,6 @@ var Playground = (function (exports) {
             title: 'nth:prime?',
             category: 'Number Theory',
             description: 'Determines if a number is prime.',
-            linkName: 'nth-colon-prime-question',
             returns: {
                 type: 'boolean',
             },
@@ -29064,7 +28474,6 @@ var Playground = (function (exports) {
             title: 'nth:recaman-seq',
             category: 'Number Theory',
             description: 'Generates the Recaman sequence up to a specified length.',
-            linkName: 'nth-colon-recaman-seq',
             returns: {
                 type: 'integer',
                 array: true,
@@ -29088,7 +28497,6 @@ var Playground = (function (exports) {
             title: 'nth:recaman-take-while',
             category: 'Number Theory',
             description: 'Generates the Recaman sequence while a condition is met.',
-            linkName: 'nth-colon-recaman-take-while',
             returns: {
                 type: 'integer',
                 array: true,
@@ -29110,7 +28518,6 @@ var Playground = (function (exports) {
             title: 'nth:recaman-nth',
             category: 'Number Theory',
             description: 'Generates the nth term of the Recaman sequence.',
-            linkName: 'nth-colon-recaman-nth',
             returns: {
                 type: 'integer',
             },
@@ -29133,7 +28540,6 @@ var Playground = (function (exports) {
             title: 'nth:recaman?',
             category: 'Number Theory',
             description: 'Checks if a number is in the Recaman sequence.',
-            linkName: 'nth-colon-recaman-question',
             returns: {
                 type: 'boolean',
             },
@@ -29159,7 +28565,6 @@ var Playground = (function (exports) {
             title: 'nth:sylvester-seq',
             category: 'Number Theory',
             description: 'Generates the Sylvester sequence up to a specified length.',
-            linkName: 'nth-colon-sylvester-seq',
             returns: {
                 type: 'integer',
                 array: true,
@@ -29184,7 +28589,6 @@ var Playground = (function (exports) {
             title: 'nth:sylvester-take-while',
             category: 'Number Theory',
             description: 'Generates the Sylvester sequence while a condition is met.',
-            linkName: 'nth-colon-sylvester-take-while',
             returns: {
                 type: 'integer',
                 array: true,
@@ -29206,7 +28610,6 @@ var Playground = (function (exports) {
             title: 'nth:sylvester-nth',
             category: 'Number Theory',
             description: 'Generates the nth term of the Sylvester sequence.',
-            linkName: 'nth-colon-sylvester-nth',
             returns: {
                 type: 'integer',
             },
@@ -29228,7 +28631,6 @@ var Playground = (function (exports) {
             title: 'nth:sylvester?',
             category: 'Number Theory',
             description: 'Checks if a number is in the Sylvester sequence.',
-            linkName: 'nth-colon-sylvester-question',
             returns: {
                 type: 'boolean',
             },
@@ -29254,7 +28656,6 @@ var Playground = (function (exports) {
             title: 'nth:thue-morse-seq',
             category: 'Number Theory',
             description: 'Generates the Thue-Morse sequence up to a specified length.',
-            linkName: 'nth-colon-thue-morse-seq',
             returns: {
                 type: 'integer',
                 array: true,
@@ -29278,7 +28679,6 @@ var Playground = (function (exports) {
             title: 'nth:thue-morse-take-while',
             category: 'Number Theory',
             description: 'Generates the Thue-Morse sequence while a condition is met.',
-            linkName: 'nth-colon-thue-morse-take-while',
             returns: {
                 type: 'integer',
                 array: true,
@@ -29300,7 +28700,6 @@ var Playground = (function (exports) {
             title: 'nth:thue-morse-nth',
             category: 'Number Theory',
             description: 'Generates the nth term of the Thue-Morse sequence.',
-            linkName: 'nth-colon-thue-morse-nth',
             returns: {
                 type: 'integer',
             },
@@ -29323,7 +28722,6 @@ var Playground = (function (exports) {
             title: 'nth:thue-morse?',
             category: 'Number Theory',
             description: 'Checks if a number is part of the Thue-Morse sequence.',
-            linkName: 'nth-colon-thue-morse-question',
             returns: {
                 type: 'boolean',
             },
@@ -29348,7 +28746,6 @@ var Playground = (function (exports) {
             title: 'nth:tribonacci-seq',
             category: 'Number Theory',
             description: 'Generates the tribonacci sequence up to a specified length.',
-            linkName: 'nth-colon-tribonacci-seq',
             returns: {
                 type: 'integer',
                 array: true,
@@ -29372,7 +28769,6 @@ var Playground = (function (exports) {
             title: 'nth:tribonacci-take-while',
             category: 'Number Theory',
             description: 'Generates the tribonacci sequence while a condition is met.',
-            linkName: 'nth-colon-tribonacci-take-while',
             returns: {
                 type: 'integer',
                 array: true,
@@ -29394,7 +28790,6 @@ var Playground = (function (exports) {
             title: 'nth:tribonacci-nth',
             category: 'Number Theory',
             description: 'Generates the nth term of the tribonacci sequence.',
-            linkName: 'nth-colon-tribonacci-nth',
             returns: {
                 type: 'integer',
             },
@@ -29417,7 +28812,6 @@ var Playground = (function (exports) {
             title: 'nth:tribonacci?',
             category: 'Number Theory',
             description: 'Determines if a number is in the tribonacci sequence.',
-            linkName: 'nth-colon-tribonacci-question',
             returns: {
                 type: 'boolean',
             },
@@ -29451,7 +28845,6 @@ var Playground = (function (exports) {
             title: 'nth:deficient-seq',
             category: 'Number Theory',
             description: 'Generates the deficient numbers up to a specified length.',
-            linkName: 'nth-colon-deficient-seq',
             returns: {
                 type: 'integer',
                 array: true,
@@ -29474,7 +28867,6 @@ var Playground = (function (exports) {
             title: 'nth:deficient-take-while',
             category: 'Number Theory',
             description: 'Generates the deficient numbers while a condition is met.',
-            linkName: 'nth-colon-deficient-take-while',
             returns: {
                 type: 'integer',
                 array: true,
@@ -29496,7 +28888,6 @@ var Playground = (function (exports) {
             title: 'nth:deficient-nth',
             category: 'Number Theory',
             description: 'Generates the nth term of the deficient numbers.',
-            linkName: 'nth-colon-deficient-nth',
             returns: {
                 type: 'integer',
             },
@@ -29518,7 +28909,6 @@ var Playground = (function (exports) {
             title: 'nth:deficient?',
             category: 'Number Theory',
             description: 'Checks if a number is deficient.',
-            linkName: 'nth-colon-deficient-question',
             returns: {
                 type: 'boolean',
             },
@@ -29542,7 +28932,6 @@ var Playground = (function (exports) {
             title: 'nth:count-combinations',
             category: 'Number Theory',
             description: 'Calculates the number of combinations of n items taken k at a time.',
-            linkName: 'nth-colon-count-combinations',
             returns: {
                 type: 'integer',
             },
@@ -29559,7 +28948,6 @@ var Playground = (function (exports) {
             title: 'nth:combinations',
             category: 'Number Theory',
             description: 'Generates all possible combinations of a specified size from a collection.',
-            linkName: 'nth-colon-combinations',
             returns: {
                 type: 'array',
                 array: true,
@@ -29586,7 +28974,6 @@ var Playground = (function (exports) {
             title: 'nth:count-derangements',
             category: 'Number Theory',
             description: 'Calculates the number of derangements (permutations where no element appears in its original position) of n items.',
-            linkName: 'nth-colon-count-derangements',
             returns: {
                 type: 'integer',
             },
@@ -29607,7 +28994,6 @@ var Playground = (function (exports) {
             title: 'nth:derangements',
             category: 'Number Theory',
             description: 'Generates all derangements (permutations where no element appears in its original position) of a set.',
-            linkName: 'nth-colon-derangements',
             returns: {
                 type: 'array',
                 array: true,
@@ -29630,7 +29016,6 @@ var Playground = (function (exports) {
             title: 'nth:divisors',
             category: 'Number Theory',
             description: 'Returns the divisors of a number.',
-            linkName: 'nth-colon-divisors',
             returns: {
                 type: 'integer',
                 array: true,
@@ -29653,7 +29038,6 @@ var Playground = (function (exports) {
             title: 'nth:count-divisors',
             category: 'Number Theory',
             description: 'Returns the number of divisors of a number.',
-            linkName: 'nth-colon-count-divisors',
             returns: {
                 type: 'integer',
             },
@@ -29675,7 +29059,6 @@ var Playground = (function (exports) {
             title: 'nth:proper-divisors',
             category: 'Number Theory',
             description: 'Returns the proper divisors of a number.',
-            linkName: 'nth-colon-proper-divisors',
             returns: {
                 type: 'integer',
                 array: true,
@@ -29698,7 +29081,6 @@ var Playground = (function (exports) {
             title: 'nth:count-proper-divisors',
             category: 'Number Theory',
             description: 'Returns the number of proper divisors of a number.',
-            linkName: 'nth-colon-count-proper-divisors',
             returns: {
                 type: 'integer',
             },
@@ -29720,7 +29102,6 @@ var Playground = (function (exports) {
             title: 'nth:factorial',
             category: 'Number Theory',
             description: 'Calculates the factorial of a number.',
-            linkName: 'nth-colon-factorial',
             returns: {
                 type: 'integer',
             },
@@ -29744,7 +29125,6 @@ var Playground = (function (exports) {
             title: 'nth:partitions',
             category: 'Number Theory',
             description: 'Generates all partitions of a number.',
-            linkName: 'nth-colon-partitions',
             returns: {
                 type: 'array',
                 array: true,
@@ -29766,7 +29146,6 @@ var Playground = (function (exports) {
             title: 'nth:count-partitions',
             category: 'Number Theory',
             description: 'Returns the number of partitions of a number.',
-            linkName: 'nth-colon-count-partitions',
             returns: {
                 type: 'integer',
             },
@@ -29788,7 +29167,6 @@ var Playground = (function (exports) {
             title: 'nth:permutations',
             category: 'Number Theory',
             description: 'Generates all permutations of a collection.',
-            linkName: 'nth-colon-permutations',
             returns: {
                 type: 'array',
                 array: true,
@@ -29815,7 +29193,6 @@ var Playground = (function (exports) {
             title: 'nth:count-permutations',
             category: 'Number Theory',
             description: 'Returns the number of permutations of n items taken k at a time.',
-            linkName: 'nth-colon-count-permutations',
             returns: {
                 type: 'integer',
             },
@@ -29834,7 +29211,6 @@ var Playground = (function (exports) {
             title: 'nth:power-set',
             category: 'Number Theory',
             description: 'Generates the power set of a collection.',
-            linkName: 'nth-colon-power-set',
             returns: {
                 type: 'array',
                 array: true,
@@ -29859,7 +29235,6 @@ var Playground = (function (exports) {
             title: 'nth:count-power-set',
             category: 'Number Theory',
             description: 'Returns the number of subsets of a set.',
-            linkName: 'nth-colon-count-power-set',
             returns: {
                 type: 'integer',
             },
@@ -29881,7 +29256,6 @@ var Playground = (function (exports) {
             title: 'nth:prime-factors',
             category: 'Number Theory',
             description: 'Returns the prime factors of a number.',
-            linkName: 'nth-colon-prime-factors',
             returns: {
                 type: 'integer',
                 array: true,
@@ -29904,7 +29278,6 @@ var Playground = (function (exports) {
             title: 'nth:count-prime-factors',
             category: 'Number Theory',
             description: 'Returns the number of prime factors of a number.',
-            linkName: 'nth-colon-count-prime-factors',
             returns: {
                 type: 'integer',
             },
@@ -29926,7 +29299,6 @@ var Playground = (function (exports) {
             title: 'nth:distinct-prime-factors',
             category: 'Number Theory',
             description: 'Returns the distinct prime factors of a number.',
-            linkName: 'nth-colon-distinct-prime-factors',
             returns: {
                 type: 'integer',
                 array: true,
@@ -29949,7 +29321,6 @@ var Playground = (function (exports) {
             title: 'nth:count-distinct-prime-factors',
             category: 'Number Theory',
             description: 'Returns the number of distinct prime factors of a number.',
-            linkName: 'nth-colon-count-distinct-prime-factors',
             returns: {
                 type: 'integer',
             },
@@ -29971,7 +29342,6 @@ var Playground = (function (exports) {
             title: 'nth:coprime?',
             category: 'Number Theory',
             description: 'Checks if two numbers are coprime (i.e., their GCD is 1).',
-            linkName: 'nth-colon-coprime-question',
             returns: {
                 type: 'boolean',
             },
@@ -29995,7 +29365,6 @@ var Playground = (function (exports) {
             title: 'nth:divisible-by?',
             category: 'Number Theory',
             description: 'Checks if a number is divisible by another number.',
-            linkName: 'nth-colon-divisible-by-question',
             returns: {
                 type: 'boolean',
             },
@@ -30016,7 +29385,6 @@ var Playground = (function (exports) {
             title: 'nth:gcd',
             category: 'Number Theory',
             description: 'Calculates the greatest common divisor (GCD) of two numbers.',
-            linkName: 'nth-colon-gcd',
             returns: {
                 type: 'integer',
             },
@@ -30036,7 +29404,6 @@ var Playground = (function (exports) {
             title: 'nth:lcm',
             category: 'Number Theory',
             description: 'Calculates the least common multiple (LCM) of two numbers.',
-            linkName: 'nth-colon-lcm',
             returns: {
                 type: 'integer',
             },
@@ -30055,7 +29422,6 @@ var Playground = (function (exports) {
             title: 'nth:multinomial',
             category: 'Number Theory',
             description: 'Calculates the multinomial coefficient from of a list of numbers representing the sizes of each group.',
-            linkName: 'nth-colon-multinomial',
             returns: {
                 type: 'integer',
             },
@@ -30078,7 +29444,6 @@ var Playground = (function (exports) {
             title: 'nth:amicable?',
             category: 'Number Theory',
             description: 'Checks if two numbers are amicable (i.e., the sum of the proper divisors of each number equals the other number).',
-            linkName: 'nth-colon-amicable-question',
             returns: {
                 type: 'boolean',
             },
@@ -30097,7 +29462,6 @@ var Playground = (function (exports) {
             title: 'nth:euler-totient',
             category: 'Number Theory',
             description: 'Calculates the Euler\'s totient function (φ(n)) of a number, which counts the integers up to n that are coprime to n.',
-            linkName: 'nth-colon-euler-totient',
             returns: {
                 type: 'integer',
             },
@@ -30120,7 +29484,6 @@ var Playground = (function (exports) {
             title: 'nth:mobius',
             category: 'Number Theory',
             description: 'Calculates the Möbius function (μ(n)) of a number, which is used in number theory.',
-            linkName: 'nth-colon-mobius',
             returns: {
                 type: 'integer',
             },
@@ -30147,7 +29510,6 @@ var Playground = (function (exports) {
             title: 'nth:mertens',
             category: 'Number Theory',
             description: 'Calculates the Mertens function (M(n)) of a number, which is the sum of the Möbius function up to n.',
-            linkName: 'nth-colon-mertens',
             returns: {
                 type: 'integer',
             },
@@ -30173,7 +29535,6 @@ var Playground = (function (exports) {
             title: 'nth:sigma',
             category: 'Number Theory',
             description: 'Calculates the sum of divisors function (σ(n)) of a number, which is the sum of all positive divisors of n.',
-            linkName: 'nth-colon-sigma',
             returns: {
                 type: 'integer',
             },
@@ -30199,7 +29560,6 @@ var Playground = (function (exports) {
             title: 'nth:carmichael-lambda',
             category: 'Number Theory',
             description: 'Calculates the Carmichael function (λ(n)) of a number, which is the smallest positive integer m such that a^m ≡ 1 (mod n) for all integers a coprime to n.',
-            linkName: 'nth-colon-carmichael-lambda',
             returns: {
                 type: 'integer',
             },
@@ -30225,7 +29585,6 @@ var Playground = (function (exports) {
             title: 'nth:cartesian-product',
             category: 'Number Theory',
             description: 'Calculates the Cartesian product of two or more sets.',
-            linkName: 'nth-colon-cartesian-product',
             returns: {
                 type: 'array',
                 array: true,
@@ -30247,7 +29606,6 @@ var Playground = (function (exports) {
             title: 'nth:perfect-power',
             category: 'Number Theory',
             description: 'Returns a tuple of the base and exponent if the number is a perfect power, otherwise returns null.',
-            linkName: 'nth-colon-perfect-power',
             returns: {
                 type: 'array',
                 array: true,
@@ -30274,7 +29632,6 @@ var Playground = (function (exports) {
             title: 'nth:mod-exp',
             category: 'Number Theory',
             description: 'Calculates the modular exponentiation of a base raised to an exponent modulo a modulus.',
-            linkName: 'nth-colon-mod-exp',
             returns: {
                 type: 'integer',
             },
@@ -30302,7 +29659,6 @@ var Playground = (function (exports) {
             title: 'nth:mod-inv',
             category: 'Number Theory',
             description: 'Calculates the modular multiplicative inverse of a number modulo another number.',
-            linkName: 'nth-colon-mod-inv',
             returns: {
                 type: 'integer',
             },
@@ -30320,7 +29676,6 @@ var Playground = (function (exports) {
             title: 'nth:extended-gcd',
             category: 'Number Theory',
             description: 'Calculates the extended greatest common divisor (GCD) of two numbers, returning the GCD and the coefficients of Bézout\'s identity.',
-            linkName: 'nth-colon-extended-gcd',
             returns: {
                 type: 'integer',
                 array: true,
@@ -30339,7 +29694,6 @@ var Playground = (function (exports) {
             title: 'nth:chinese-remainder',
             category: 'Number Theory',
             description: 'Solves a system of simultaneous congruences using the Chinese Remainder Theorem.',
-            linkName: 'nth-colon-chinese-remainder',
             returns: {
                 type: 'integer',
             },
@@ -30365,7 +29719,6 @@ var Playground = (function (exports) {
             title: 'nth:stirling-first',
             category: 'Number Theory',
             description: 'Calculates the Stirling numbers of the first kind, which count the number of permutations of n elements with k cycles.',
-            linkName: 'nth-colon-stirling-first',
             returns: {
                 type: 'integer',
             },
@@ -30393,7 +29746,6 @@ var Playground = (function (exports) {
             title: 'nth:stirling-second',
             category: 'Number Theory',
             description: 'Calculates the Stirling numbers of the second kind, which count the number of ways to partition n elements into k non-empty subsets.',
-            linkName: 'nth-colon-stirling-second',
             returns: {
                 type: 'integer',
             },
@@ -30423,7 +29775,6 @@ var Playground = (function (exports) {
         '!:random': {
             title: '!:random',
             category: 'Random',
-            linkName: '-exclamation-colon-random',
             returns: {
                 type: 'number',
             },
@@ -30439,7 +29790,6 @@ var Playground = (function (exports) {
         '!:random-int': {
             title: '!:random-int',
             category: 'Random',
-            linkName: '-exclamation-colon-random-int',
             returns: {
                 type: 'integer',
             },
@@ -30465,7 +29815,6 @@ var Playground = (function (exports) {
         '!:random-int-inclusive': {
             title: '!:random-int-inclusive',
             category: 'Random',
-            linkName: '-exclamation-colon-random-int-inclusive',
             returns: {
                 type: 'integer',
             },
@@ -30490,7 +29839,6 @@ var Playground = (function (exports) {
         '!:random-float': {
             title: '!:random-float',
             category: 'Random',
-            linkName: '-exclamation-colon-random-float',
             returns: {
                 type: 'number',
             },
@@ -30516,7 +29864,6 @@ var Playground = (function (exports) {
         '!:random-boolean': {
             title: '!:random-boolean',
             category: 'Random',
-            linkName: '-exclamation-colon-random-boolean',
             returns: {
                 type: 'boolean',
             },
@@ -30538,7 +29885,6 @@ var Playground = (function (exports) {
         '!:random-item': {
             title: '!:random-item',
             category: 'Random',
-            linkName: '-exclamation-colon-random-item',
             returns: {
                 type: 'any',
             },
@@ -30560,7 +29906,6 @@ var Playground = (function (exports) {
         '!:random-sample-unique': {
             title: '!:random-sample-unique',
             category: 'Random',
-            linkName: '-exclamation-colon-random-sample-unique',
             returns: {
                 type: 'array',
             },
@@ -30586,7 +29931,6 @@ var Playground = (function (exports) {
         '!:random-sample': {
             title: '!:random-sample',
             category: 'Random',
-            linkName: '-exclamation-colon-random-sample',
             returns: {
                 type: 'array',
             },
@@ -30612,7 +29956,6 @@ var Playground = (function (exports) {
         '!:shuffle': {
             title: '!:shuffle',
             category: 'Random',
-            linkName: '-exclamation-colon-shuffle',
             returns: {
                 type: 'array',
             },
@@ -30634,7 +29977,6 @@ var Playground = (function (exports) {
         '!:random-normal': {
             title: '!:random-normal',
             category: 'Random',
-            linkName: '-exclamation-colon-random-normal',
             returns: {
                 type: 'number',
             },
@@ -30661,7 +30003,6 @@ var Playground = (function (exports) {
         '!:random-exponential': {
             title: '!:random-exponential',
             category: 'Random',
-            linkName: '-exclamation-colon-random-exponential',
             returns: {
                 type: 'number',
             },
@@ -30683,7 +30024,6 @@ var Playground = (function (exports) {
         '!:random-binomial': {
             title: '!:random-binomial',
             category: 'Random',
-            linkName: '-exclamation-colon-random-binomial',
             returns: {
                 type: 'integer',
             },
@@ -30710,7 +30050,6 @@ var Playground = (function (exports) {
         '!:random-poisson': {
             title: '!:random-poisson',
             category: 'Random',
-            linkName: '-exclamation-colon-random-poisson',
             returns: {
                 type: 'integer',
             },
@@ -30732,7 +30071,6 @@ var Playground = (function (exports) {
         '!:random-gamma': {
             title: '!:random-gamma',
             category: 'Random',
-            linkName: '-exclamation-colon-random-gamma',
             returns: {
                 type: 'number',
             },
@@ -30759,7 +30097,6 @@ var Playground = (function (exports) {
         '!:random-pareto': {
             title: '!:random-pareto',
             category: 'Random',
-            linkName: '-exclamation-colon-random-pareto',
             returns: {
                 type: 'number',
             },
@@ -30781,7 +30118,6 @@ var Playground = (function (exports) {
         '!:uuid': {
             title: '!:uuid',
             category: 'Random',
-            linkName: '-exclamation-colon-uuid',
             returns: {
                 type: 'string',
             },
@@ -30797,7 +30133,6 @@ var Playground = (function (exports) {
         '!:random-char': {
             title: '!:random-char',
             category: 'Random',
-            linkName: '-exclamation-colon-random-char',
             returns: {
                 type: 'string',
             },
@@ -30819,7 +30154,6 @@ var Playground = (function (exports) {
         '!:random-string': {
             title: '!:random-string',
             category: 'Random',
-            linkName: '-exclamation-colon-random-string',
             returns: {
                 type: 'string',
             },
@@ -30846,7 +30180,6 @@ var Playground = (function (exports) {
         '!:random-id': {
             title: '!:random-id',
             category: 'Random',
-            linkName: '-exclamation-colon-random-id',
             returns: {
                 type: 'string',
             },
@@ -30868,7 +30201,6 @@ var Playground = (function (exports) {
         '!:random-color': {
             title: '!:random-color',
             category: 'Random',
-            linkName: '-exclamation-colon-random-color',
             returns: {
                 type: 'string',
             },

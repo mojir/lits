@@ -5,7 +5,6 @@ export const padovanReference: NumberTheorySequenceReference<'padovan'> = {
     title: 'nth:padovan-seq',
     category: 'Number Theory',
     description: 'Generates the Padovan sequence up to a specified length.',
-    linkName: 'nth-colon-padovan-seq',
     returns: {
       type: 'integer',
       array: true,
@@ -29,7 +28,6 @@ export const padovanReference: NumberTheorySequenceReference<'padovan'> = {
     title: 'nth:padovan-take-while',
     category: 'Number Theory',
     description: 'Generates the Padovan sequence while a condition is met.',
-    linkName: 'nth-colon-padovan-take-while',
     returns: {
       type: 'integer',
       array: true,
@@ -51,7 +49,6 @@ export const padovanReference: NumberTheorySequenceReference<'padovan'> = {
     title: 'nth:padovan-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Padovan sequence.',
-    linkName: 'nth-colon-padovan-nth',
     returns: {
       type: 'integer',
     },
@@ -74,7 +71,6 @@ export const padovanReference: NumberTheorySequenceReference<'padovan'> = {
     title: 'nth:padovan?',
     category: 'Number Theory',
     description: 'Checks if a number is in the Padovan sequence.',
-    linkName: 'nth-colon-padovan-question',
     returns: {
       type: 'boolean',
     },

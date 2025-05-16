@@ -5,7 +5,6 @@ export const mersenneReference: NumberTheorySequenceReference<'mersenne'> = {
     title: 'nth:mersenne-seq',
     category: 'Number Theory',
     description: 'Generates the Mersenne sequence up to a specified length.',
-    linkName: 'nth-colon-mersenne-seq',
     returns: {
       type: 'integer',
       array: true,
@@ -30,7 +29,6 @@ export const mersenneReference: NumberTheorySequenceReference<'mersenne'> = {
     title: 'nth:mersenne-take-while',
     category: 'Number Theory',
     description: 'Generates the Mersenne sequence while a condition is met.',
-    linkName: 'nth-colon-mersenne-take-while',
     returns: {
       type: 'integer',
       array: true,
@@ -52,7 +50,6 @@ export const mersenneReference: NumberTheorySequenceReference<'mersenne'> = {
     title: 'nth:mersenne-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Mersenne sequence.',
-    linkName: 'nth-colon-mersenne-nth',
     returns: {
       type: 'integer',
     },
@@ -74,7 +71,6 @@ export const mersenneReference: NumberTheorySequenceReference<'mersenne'> = {
     title: 'nth:mersenne?',
     category: 'Number Theory',
     description: 'Checks if a number is in the Mersenne sequence.',
-    linkName: 'nth-colon-mersenne-question',
     returns: {
       type: 'boolean',
     },

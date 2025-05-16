@@ -5,7 +5,6 @@ export const tribonacciReference: NumberTheorySequenceReference<'tribonacci'> = 
     title: 'nth:tribonacci-seq',
     category: 'Number Theory',
     description: 'Generates the tribonacci sequence up to a specified length.',
-    linkName: 'nth-colon-tribonacci-seq',
     returns: {
       type: 'integer',
       array: true,
@@ -29,7 +28,6 @@ export const tribonacciReference: NumberTheorySequenceReference<'tribonacci'> = 
     title: 'nth:tribonacci-take-while',
     category: 'Number Theory',
     description: 'Generates the tribonacci sequence while a condition is met.',
-    linkName: 'nth-colon-tribonacci-take-while',
     returns: {
       type: 'integer',
       array: true,
@@ -51,7 +49,6 @@ export const tribonacciReference: NumberTheorySequenceReference<'tribonacci'> = 
     title: 'nth:tribonacci-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the tribonacci sequence.',
-    linkName: 'nth-colon-tribonacci-nth',
     returns: {
       type: 'integer',
     },
@@ -74,7 +71,6 @@ export const tribonacciReference: NumberTheorySequenceReference<'tribonacci'> = 
     title: 'nth:tribonacci?',
     category: 'Number Theory',
     description: 'Determines if a number is in the tribonacci sequence.',
-    linkName: 'nth-colon-tribonacci-question',
     returns: {
       type: 'boolean',
     },

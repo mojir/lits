@@ -10,7 +10,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   '+': {
     title: '+',
     category: 'Math',
-    linkName: '-plus',
     returns: {
       type: ['number', 'vector', 'matrix'],
     },
@@ -37,7 +36,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   '-': {
     title: '-',
     category: 'Math',
-    linkName: '-minus',
     returns: {
       type: ['number', 'vector', 'matrix'],
     },
@@ -64,7 +62,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   '*': {
     title: '*',
     category: 'Math',
-    linkName: '-star',
     returns: {
       type: ['number', 'vector', 'matrix'],
     },
@@ -93,7 +90,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   '/': {
     title: '/',
     category: 'Math',
-    linkName: '-slash',
     returns: {
       type: ['number', 'vector', 'matrix'],
     },
@@ -121,7 +117,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   'mod': {
     title: 'mod',
     category: 'Math',
-    linkName: 'mod',
     returns: {
       type: ['number', 'vector', 'matrix'],
     },
@@ -148,7 +143,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   'rem': {
     title: 'rem',
     category: 'Math',
-    linkName: 'rem',
     returns: {
       type: ['number', 'vector', 'matrix'],
     },
@@ -179,7 +173,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   'quot': {
     title: 'quot',
     category: 'Math',
-    linkName: 'quot',
     returns: {
       type: ['number', 'vector', 'matrix'],
     },
@@ -209,7 +202,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   'inc': {
     title: 'inc',
     category: 'Math',
-    linkName: 'inc',
     returns: {
       type: 'number',
     },
@@ -233,7 +225,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   'dec': {
     title: 'dec',
     category: 'Math',
-    linkName: 'dec',
     returns: {
       type: ['number', 'vector', 'matrix'],
     },
@@ -257,7 +248,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   'sqrt': {
     title: 'sqrt',
     category: 'Math',
-    linkName: 'sqrt',
     returns: {
       type: ['number', 'vector', 'matrix'],
     },
@@ -285,7 +275,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   'cbrt': {
     title: 'cbrt',
     category: 'Math',
-    linkName: 'cbrt',
     returns: {
       type: ['number', 'vector', 'matrix'],
     },
@@ -315,7 +304,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   '^': {
     title: '^',
     category: 'Math',
-    linkName: '-caret',
     returns: {
       type: ['number', 'vector', 'matrix'],
     },
@@ -342,7 +330,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   'round': {
     title: 'round',
     category: 'Math',
-    linkName: 'round',
     returns: {
       type: ['number', 'vector', 'matrix'],
     },
@@ -372,7 +359,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   'trunc': {
     title: 'trunc',
     category: 'Math',
-    linkName: 'trunc',
     returns: {
       type: ['integer', 'vector', 'matrix'],
     },
@@ -399,7 +385,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   'floor': {
     title: 'floor',
     category: 'Math',
-    linkName: 'floor',
     returns: {
       type: ['integer', 'vector', 'matrix'],
     },
@@ -426,7 +411,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   'ceil': {
     title: 'ceil',
     category: 'Math',
-    linkName: 'ceil',
     returns: {
       type: ['integer', 'vector', 'matrix'],
     },
@@ -453,7 +437,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   'min': {
     title: 'min',
     category: 'Math',
-    linkName: 'min',
     returns: {
       type: 'number',
     },
@@ -479,7 +462,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   'max': {
     title: 'max',
     category: 'Math',
-    linkName: 'max',
     returns: {
       type: 'number',
     },
@@ -505,7 +487,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   'abs': {
     title: 'abs',
     category: 'Math',
-    linkName: 'abs',
     returns: {
       type: ['number', 'vector', 'matrix'],
     },
@@ -529,7 +510,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   'sign': {
     title: 'sign',
     category: 'Math',
-    linkName: 'sign',
     returns: {
       type: ['number', 'vector', 'matrix'],
     },
@@ -554,7 +534,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   'ln': {
     title: 'ln',
     category: 'Math',
-    linkName: 'ln',
     returns: {
       type: ['number', 'vector', 'matrix'],
     },
@@ -578,7 +557,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   'log2': {
     title: 'log2',
     category: 'Math',
-    linkName: 'log2',
     returns: {
       type: ['number', 'vector', 'matrix'],
     },
@@ -603,7 +581,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   'log10': {
     title: 'log10',
     category: 'Math',
-    linkName: 'log10',
     returns: {
       type: ['number', 'vector', 'matrix'],
     },
@@ -628,7 +605,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   'sin': {
     title: 'sin',
     category: 'Math',
-    linkName: 'sin',
     returns: {
       type: ['number', 'vector', 'matrix'],
     },
@@ -653,7 +629,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   'cos': {
     title: 'cos',
     category: 'Math',
-    linkName: 'cos',
     returns: {
       type: ['number', 'vector', 'matrix'],
     },
@@ -678,7 +653,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   'tan': {
     title: 'tan',
     category: 'Math',
-    linkName: 'tan',
     returns: {
       type: ['number', 'vector', 'matrix'],
     },
@@ -703,7 +677,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   'asin': {
     title: 'asin',
     category: 'Math',
-    linkName: 'asin',
     returns: {
       type: ['number', 'vector', 'matrix'],
     },
@@ -727,7 +700,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   'acos': {
     title: 'acos',
     category: 'Math',
-    linkName: 'acos',
     returns: {
       type: ['number', 'vector', 'matrix'],
     },
@@ -751,7 +723,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   'atan': {
     title: 'atan',
     category: 'Math',
-    linkName: 'atan',
     returns: {
       type: ['number', 'vector', 'matrix'],
     },
@@ -775,7 +746,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   'sinh': {
     title: 'sinh',
     category: 'Math',
-    linkName: 'sinh',
     returns: {
       type: ['number', 'vector', 'matrix'],
     },
@@ -799,7 +769,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   'cosh': {
     title: 'cosh',
     category: 'Math',
-    linkName: 'cosh',
     returns: {
       type: ['number', 'vector', 'matrix'],
     },
@@ -823,7 +792,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   'tanh': {
     title: 'tanh',
     category: 'Math',
-    linkName: 'tanh',
     returns: {
       type: ['number', 'vector', 'matrix'],
     },
@@ -841,7 +809,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   'asinh': {
     title: 'asinh',
     category: 'Math',
-    linkName: 'asinh',
     returns: {
       type: ['number', 'vector', 'matrix'],
     },
@@ -865,7 +832,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   'acosh': {
     title: 'acosh',
     category: 'Math',
-    linkName: 'acosh',
     returns: {
       type: ['number', 'vector', 'matrix'],
     },
@@ -890,7 +856,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   'atanh': {
     title: 'atanh',
     category: 'Math',
-    linkName: 'atanh',
     returns: {
       type: ['number', 'vector', 'matrix'],
     },
@@ -914,7 +879,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   'to-rad': {
     title: 'to-rad',
     category: 'Math',
-    linkName: 'to-rad',
     returns: {
       type: ['number', 'vector', 'matrix'],
     },
@@ -939,7 +903,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   'to-deg': {
     title: 'to-deg',
     category: 'Math',
-    linkName: 'to-deg',
     returns: {
       type: ['number', 'vector', 'matrix'],
     },

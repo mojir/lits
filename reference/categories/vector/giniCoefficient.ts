@@ -6,7 +6,6 @@ export const giniCoefficientReference: VectorReductionReference<'gini-coefficien
     title: 'vec:gini-coefficient',
     category: 'Vector',
     description: 'Returns the **gini coefficient** of all elements in the `vector`.',
-    linkName: 'vec-colon-gini-coefficient',
     returns: {
       type: 'number',
     },
@@ -28,7 +27,6 @@ export const giniCoefficientReference: VectorReductionReference<'gini-coefficien
     title: 'vec:moving-gini-coefficient',
     category: 'Vector',
     description: 'Returns the **moving gini coefficient** of the `vector` with a given window size.',
-    linkName: 'vec-colon-moving-gini-coefficient',
     returns: {
       type: 'vector',
     },
@@ -55,7 +53,6 @@ export const giniCoefficientReference: VectorReductionReference<'gini-coefficien
     title: 'vec:centered-moving-gini-coefficient',
     category: 'Vector',
     description: 'Returns the **centered moving gini coefficient** of the `vector` with a given window size.',
-    linkName: 'vec-colon-centered-moving-gini-coefficient',
     returns: {
       type: 'array',
     },
@@ -92,7 +89,6 @@ export const giniCoefficientReference: VectorReductionReference<'gini-coefficien
     title: 'vec:running-gini-coefficient',
     category: 'Vector',
     description: 'Returns the **running gini coefficient** of the `vector`.',
-    linkName: 'vec-colon-running-gini-coefficient',
     returns: {
       type: 'array',
     },

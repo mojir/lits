@@ -5,7 +5,6 @@ export const happyReference: NumberTheorySequenceReference<'happy'> = {
     title: 'nth:happy-seq',
     category: 'Number Theory',
     description: 'Generates the happy sequence up to a specified length.',
-    linkName: 'nth-colon-happy-seq',
     returns: {
       type: 'integer',
       array: true,
@@ -30,7 +29,6 @@ export const happyReference: NumberTheorySequenceReference<'happy'> = {
     title: 'nth:happy-take-while',
     category: 'Number Theory',
     description: 'Generates the happy sequence while a condition is met.',
-    linkName: 'nth-colon-happy-take-while',
     returns: {
       type: 'integer',
       array: true,
@@ -52,7 +50,6 @@ export const happyReference: NumberTheorySequenceReference<'happy'> = {
     title: 'nth:happy-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the happy sequence.',
-    linkName: 'nth-colon-happy-nth',
     returns: {
       type: 'integer',
     },
@@ -75,7 +72,6 @@ export const happyReference: NumberTheorySequenceReference<'happy'> = {
     title: 'nth:happy?',
     category: 'Number Theory',
     description: 'Determines if a number is a happy number.',
-    linkName: 'nth-colon-happy-question',
     returns: {
       type: 'boolean',
     },

@@ -5,7 +5,6 @@ export const sequenceReference: Record<SequenceApiName, FunctionReference<'Seque
   'nth': {
     title: 'nth',
     category: 'Sequence',
-    linkName: 'nth',
     returns: {
       type: 'any',
     },
@@ -44,7 +43,6 @@ export const sequenceReference: Record<SequenceApiName, FunctionReference<'Seque
   'push': {
     title: 'push',
     category: 'Sequence',
-    linkName: 'push',
     returns: {
       type: 'sequence',
     },
@@ -77,7 +75,6 @@ l`,
   'pop': {
     title: 'pop',
     category: 'Sequence',
-    linkName: 'pop',
     returns: {
       type: ['sequence', 'null'],
       rest: true,
@@ -99,7 +96,6 @@ l`,
   'unshift': {
     title: 'unshift',
     category: 'Sequence',
-    linkName: 'unshift',
     returns: {
       type: 'sequence',
     },
@@ -130,7 +126,6 @@ l`,
   'shift': {
     title: 'shift',
     category: 'Sequence',
-    linkName: 'shift',
     returns: {
       type: ['sequence', 'null'],
     },
@@ -151,7 +146,6 @@ l`,
   'slice': {
     title: 'slice',
     category: 'Sequence',
-    linkName: 'slice',
     returns: {
       type: 'sequence',
     },
@@ -185,7 +179,6 @@ l`,
   'splice': {
     title: 'splice',
     category: 'Sequence',
-    linkName: 'splice',
     returns: {
       type: 'sequence',
     },
@@ -219,7 +212,6 @@ l`,
   'position': {
     title: 'position',
     category: 'Sequence',
-    linkName: 'position',
     returns: {
       type: ['number', 'null'],
     },
@@ -262,7 +254,6 @@ position(
   'index-of': {
     title: 'index-of',
     category: 'Sequence',
-    linkName: 'index-of',
     returns: {
       type: ['number', 'null'],
     },
@@ -290,7 +281,6 @@ position(
   'last-index-of': {
     title: 'last-index-of',
     category: 'Sequence',
-    linkName: 'last-index-of',
     returns: {
       type: ['number', 'null'],
     },
@@ -318,7 +308,6 @@ position(
   'some': {
     title: 'some',
     category: 'Sequence',
-    linkName: 'some',
     returns: {
       type: 'any',
     },
@@ -366,7 +355,6 @@ some(
   'reverse': {
     title: 'reverse',
     category: 'Sequence',
-    linkName: 'reverse',
     returns: {
       type: ['sequence', 'null'],
     },
@@ -389,7 +377,6 @@ some(
   'first': {
     title: 'first',
     category: 'Sequence',
-    linkName: 'first',
     returns: {
       type: 'any',
     },
@@ -411,7 +398,6 @@ some(
   'second': {
     title: 'second',
     category: 'Sequence',
-    linkName: 'second',
     returns: {
       type: 'any',
     },
@@ -434,7 +420,6 @@ some(
   'last': {
     title: 'last',
     category: 'Sequence',
-    linkName: 'last',
     returns: {
       type: 'any',
     },
@@ -458,7 +443,6 @@ some(
   'rest': {
     title: 'rest',
     category: 'Sequence',
-    linkName: 'rest',
     returns: {
       type: ['sequence', 'null'],
     },
@@ -485,7 +469,6 @@ For string $seq returns all but the first characters in $seq.`,
   'next': {
     title: 'next',
     category: 'Sequence',
-    linkName: 'next',
     returns: {
       type: ['sequence', 'null'],
     },
@@ -510,7 +493,6 @@ For string $seq returns all but the first characters in $seq.`,
   'take': {
     title: 'take',
     category: 'Sequence',
-    linkName: 'take',
     returns: {
       type: 'sequence',
     },
@@ -538,7 +520,6 @@ For string $seq returns all but the first characters in $seq.`,
   'take-last': {
     title: 'take-last',
     category: 'Sequence',
-    linkName: 'take-last',
     returns: {
       type: 'sequence',
     },
@@ -564,7 +545,6 @@ For string $seq returns all but the first characters in $seq.`,
   'take-while': {
     title: 'take-while',
     category: 'Sequence',
-    linkName: 'take-while',
     returns: {
       type: 'sequence',
     },
@@ -597,7 +577,6 @@ take-while(
   'drop': {
     title: 'drop',
     category: 'Sequence',
-    linkName: 'drop',
     returns: {
       type: 'sequence',
     },
@@ -624,7 +603,6 @@ take-while(
   'drop-last': {
     title: 'drop-last',
     category: 'Sequence',
-    linkName: 'drop-last',
     returns: {
       type: 'sequence',
     },
@@ -650,7 +628,6 @@ take-while(
   'drop-while': {
     title: 'drop-while',
     category: 'Sequence',
-    linkName: 'drop-while',
     returns: {
       type: 'sequence',
     },
@@ -683,7 +660,6 @@ drop-while(
   'sort': {
     title: 'sort',
     category: 'Sequence',
-    linkName: 'sort',
     returns: {
       type: 'any',
       rest: true,
@@ -720,7 +696,6 @@ sort(
   'sort-by': {
     title: 'sort-by',
     category: 'Sequence',
-    linkName: 'sort-by',
     returns: {
       type: 'any',
       rest: true,
@@ -751,7 +726,6 @@ sort(
   'distinct': {
     title: 'distinct',
     category: 'Sequence',
-    linkName: 'distinct',
     returns: {
       type: 'sequence',
     },
@@ -775,7 +749,6 @@ sort(
   'remove': {
     title: 'remove',
     category: 'Sequence',
-    linkName: 'remove',
     returns: {
       type: 'sequence',
     },
@@ -801,7 +774,6 @@ sort(
   'remove-at': {
     title: 'remove-at',
     category: 'Sequence',
-    linkName: 'remove-at',
     returns: {
       type: 'sequence',
     },
@@ -829,7 +801,6 @@ sort(
   'split-at': {
     title: 'split-at',
     category: 'Sequence',
-    linkName: 'split-at',
     returns: {
       type: 'sequence',
     },
@@ -856,7 +827,6 @@ sort(
   'split-with': {
     title: 'split-with',
     category: 'Sequence',
-    linkName: 'split-with',
     returns: {
       type: 'sequence',
     },
@@ -882,7 +852,6 @@ sort(
   'frequencies': {
     title: 'frequencies',
     category: 'Sequence',
-    linkName: 'frequencies',
     returns: {
       type: 'object',
     },
@@ -903,7 +872,6 @@ sort(
   'group-by': {
     title: 'group-by',
     category: 'Sequence',
-    linkName: 'group-by',
     returns: {
       type: 'object',
     },
@@ -929,7 +897,6 @@ sort(
   'partition': {
     title: 'partition',
     category: 'Sequence',
-    linkName: 'partition',
     returns: {
       type: 'sequence',
     },
@@ -976,7 +943,6 @@ sort(
   'partition-all': {
     title: 'partition-all',
     category: 'Sequence',
-    linkName: 'partition-all',
     returns: {
       type: 'sequence',
     },
@@ -1007,7 +973,6 @@ sort(
   'partition-by': {
     title: 'partition-by',
     category: 'Sequence',
-    linkName: 'partition-by',
     returns: {
       type: 'sequence',
     },
@@ -1034,7 +999,6 @@ sort(
   'starts-with?': {
     title: 'starts-with?',
     category: 'Sequence',
-    linkName: 'starts-with-question',
     returns: {
       type: 'boolean',
     },
@@ -1062,7 +1026,6 @@ sort(
   'ends-with?': {
     title: 'ends-with?',
     category: 'Sequence',
-    linkName: 'ends-with-question',
     returns: {
       type: 'boolean',
     },
@@ -1091,7 +1054,6 @@ sort(
   'interleave': {
     title: 'interleave',
     category: 'Sequence',
-    linkName: 'interleave',
     returns: {
       type: 'sequence',
     },
@@ -1121,7 +1083,6 @@ sort(
   'interpose': {
     title: 'interpose',
     category: 'Sequence',
-    linkName: 'interpose',
     returns: {
       type: 'sequence',
     },

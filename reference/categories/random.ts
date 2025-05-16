@@ -5,7 +5,6 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
   '!:random': {
     title: '!:random',
     category: 'Random',
-    linkName: '-exclamation-colon-random',
     returns: {
       type: 'number',
     },
@@ -21,7 +20,6 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
   '!:random-int': {
     title: '!:random-int',
     category: 'Random',
-    linkName: '-exclamation-colon-random-int',
     returns: {
       type: 'integer',
     },
@@ -47,7 +45,6 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
   '!:random-int-inclusive': {
     title: '!:random-int-inclusive',
     category: 'Random',
-    linkName: '-exclamation-colon-random-int-inclusive',
     returns: {
       type: 'integer',
     },
@@ -72,7 +69,6 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
   '!:random-float': {
     title: '!:random-float',
     category: 'Random',
-    linkName: '-exclamation-colon-random-float',
     returns: {
       type: 'number',
     },
@@ -98,7 +94,6 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
   '!:random-boolean': {
     title: '!:random-boolean',
     category: 'Random',
-    linkName: '-exclamation-colon-random-boolean',
     returns: {
       type: 'boolean',
     },
@@ -120,7 +115,6 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
   '!:random-item': {
     title: '!:random-item',
     category: 'Random',
-    linkName: '-exclamation-colon-random-item',
     returns: {
       type: 'any',
     },
@@ -142,7 +136,6 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
   '!:random-sample-unique': {
     title: '!:random-sample-unique',
     category: 'Random',
-    linkName: '-exclamation-colon-random-sample-unique',
     returns: {
       type: 'array',
     },
@@ -168,7 +161,6 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
   '!:random-sample': {
     title: '!:random-sample',
     category: 'Random',
-    linkName: '-exclamation-colon-random-sample',
     returns: {
       type: 'array',
     },
@@ -194,7 +186,6 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
   '!:shuffle': {
     title: '!:shuffle',
     category: 'Random',
-    linkName: '-exclamation-colon-shuffle',
     returns: {
       type: 'array',
     },
@@ -216,7 +207,6 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
   '!:random-normal': {
     title: '!:random-normal',
     category: 'Random',
-    linkName: '-exclamation-colon-random-normal',
     returns: {
       type: 'number',
     },
@@ -243,7 +233,6 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
   '!:random-exponential': {
     title: '!:random-exponential',
     category: 'Random',
-    linkName: '-exclamation-colon-random-exponential',
     returns: {
       type: 'number',
     },
@@ -265,7 +254,6 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
   '!:random-binomial': {
     title: '!:random-binomial',
     category: 'Random',
-    linkName: '-exclamation-colon-random-binomial',
     returns: {
       type: 'integer',
     },
@@ -292,7 +280,6 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
   '!:random-poisson': {
     title: '!:random-poisson',
     category: 'Random',
-    linkName: '-exclamation-colon-random-poisson',
     returns: {
       type: 'integer',
     },
@@ -314,7 +301,6 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
   '!:random-gamma': {
     title: '!:random-gamma',
     category: 'Random',
-    linkName: '-exclamation-colon-random-gamma',
     returns: {
       type: 'number',
     },
@@ -341,7 +327,6 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
   '!:random-pareto': {
     title: '!:random-pareto',
     category: 'Random',
-    linkName: '-exclamation-colon-random-pareto',
     returns: {
       type: 'number',
     },
@@ -363,7 +348,6 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
   '!:uuid': {
     title: '!:uuid',
     category: 'Random',
-    linkName: '-exclamation-colon-uuid',
     returns: {
       type: 'string',
     },
@@ -379,7 +363,6 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
   '!:random-char': {
     title: '!:random-char',
     category: 'Random',
-    linkName: '-exclamation-colon-random-char',
     returns: {
       type: 'string',
     },
@@ -401,7 +384,6 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
   '!:random-string': {
     title: '!:random-string',
     category: 'Random',
-    linkName: '-exclamation-colon-random-string',
     returns: {
       type: 'string',
     },
@@ -428,7 +410,6 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
   '!:random-id': {
     title: '!:random-id',
     category: 'Random',
-    linkName: '-exclamation-colon-random-id',
     returns: {
       type: 'string',
     },
@@ -450,7 +431,6 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
   '!:random-color': {
     title: '!:random-color',
     category: 'Random',
-    linkName: '-exclamation-colon-random-color',
     returns: {
       type: 'string',
     },

@@ -6,7 +6,6 @@ export const standardDeviationReference: VectorReductionReference<'stdev'> = {
     title: 'vec:stdev',
     category: 'Vector',
     description: 'Returns the **standard deviation` of the `vector**.',
-    linkName: 'vec-colon-stdev',
     returns: {
       type: 'number',
     },
@@ -28,7 +27,6 @@ export const standardDeviationReference: VectorReductionReference<'stdev'> = {
     title: 'vec:moving-stdev',
     category: 'Vector',
     description: 'Returns the **moving standard deviation` of the `vector** with a given window size.',
-    linkName: 'vec-colon-moving-stdev',
     returns: {
       type: 'vector',
     },
@@ -55,7 +53,6 @@ export const standardDeviationReference: VectorReductionReference<'stdev'> = {
     title: 'vec:centered-moving-stdev',
     category: 'Vector',
     description: 'Returns the **centered moving standard deviation` of the `vector** with a given window size.',
-    linkName: 'vec-colon-centered-moving-stdev',
     returns: {
       type: 'array',
     },
@@ -95,7 +92,6 @@ export const standardDeviationReference: VectorReductionReference<'stdev'> = {
     title: 'vec:running-stdev',
     category: 'Vector',
     description: 'Returns the **running standard deviation` of the `vector**.',
-    linkName: 'vec-colon-running-stdev',
     returns: {
       type: 'vector',
     },
@@ -119,7 +115,6 @@ export const sampleStandardDeviationReference: VectorReductionReference<'sample-
     title: 'vec:sample-stdev',
     category: 'Vector',
     description: 'Returns the **sample standard deviation` of the `vector**.',
-    linkName: 'vec-colon-sample-stdev',
     returns: {
       type: 'number',
     },
@@ -141,7 +136,6 @@ export const sampleStandardDeviationReference: VectorReductionReference<'sample-
     title: 'vec:moving-sample-stdev',
     category: 'Vector',
     description: 'Returns the **moving sample standard deviation` of the `vector** with a given window size.',
-    linkName: 'vec-colon-moving-sample-stdev',
     returns: {
       type: 'vector',
     },
@@ -168,7 +162,6 @@ export const sampleStandardDeviationReference: VectorReductionReference<'sample-
     title: 'vec:centered-moving-sample-stdev',
     category: 'Vector',
     description: 'Returns the **centered moving sample standard deviation` of the `vector** with a given window size.',
-    linkName: 'vec-colon-centered-moving-sample-stdev',
     returns: {
       type: 'array',
     },
@@ -208,7 +201,6 @@ export const sampleStandardDeviationReference: VectorReductionReference<'sample-
     title: 'vec:running-sample-stdev',
     category: 'Vector',
     description: 'Returns the **running sample standard deviation` of the `vector**.',
-    linkName: 'vec-colon-running-sample-stdev',
     returns: {
       type: 'array',
     },

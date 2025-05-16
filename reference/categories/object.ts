@@ -5,7 +5,6 @@ export const objectReference: Record<ObjectApiName, FunctionReference<'Object'>>
   'dissoc': {
     title: 'dissoc',
     category: 'Object',
-    linkName: 'dissoc',
     returns: {
       type: 'object',
     },
@@ -35,7 +34,6 @@ o`,
   'keys': {
     title: 'keys',
     category: 'Object',
-    linkName: 'keys',
     returns: {
       type: 'any',
       array: true,
@@ -58,7 +56,6 @@ o`,
   'vals': {
     title: 'vals',
     category: 'Object',
-    linkName: 'vals',
     returns: {
       type: 'any',
       array: true,
@@ -81,7 +78,6 @@ o`,
   'entries': {
     title: 'entries',
     category: 'Object',
-    linkName: 'entries',
     returns: {
       type: 'array',
     },
@@ -103,7 +99,6 @@ o`,
   'find': {
     title: 'find',
     category: 'Object',
-    linkName: 'find',
     returns: {
       type: ['array', 'null'],
     },
@@ -129,7 +124,6 @@ o`,
   'merge': {
     title: 'merge',
     category: 'Object',
-    linkName: 'merge',
     returns: {
       type: 'object',
     },
@@ -156,7 +150,6 @@ If no arguments are provided \`null\` is returned.`,
   'merge-with': {
     title: 'merge-with',
     category: 'Object',
-    linkName: 'merge-with',
     returns: {
       type: 'object',
     },
@@ -187,7 +180,6 @@ If no arguments are provided \`null\` is returned.`,
   'zipmap': {
     title: 'zipmap',
     category: 'Object',
-    linkName: 'zipmap',
     returns: {
       type: 'object',
     },
@@ -208,7 +200,6 @@ If no arguments are provided \`null\` is returned.`,
   'select-keys': {
     title: 'select-keys',
     category: 'Object',
-    linkName: 'select-keys',
     returns: {
       type: 'object',
     },

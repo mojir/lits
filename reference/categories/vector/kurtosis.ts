@@ -6,7 +6,6 @@ export const kurtosisReference: VectorReductionReference<'kurtosis'> = {
     title: 'vec:kurtosis',
     category: 'Vector',
     description: 'Calculates the **kurtosis** of a `vector`. Returns the third standardized moment.',
-    linkName: 'vec-colon-kurtosis',
     returns: {
       type: 'number',
     },
@@ -28,7 +27,6 @@ export const kurtosisReference: VectorReductionReference<'kurtosis'> = {
     title: 'vec:moving-kurtosis',
     category: 'Vector',
     description: 'Calculates the **moving kurtosis** of a `vector` with a given window size.',
-    linkName: 'vec-colon-moving-kurtosis',
     returns: {
       type: 'vector',
     },
@@ -55,7 +53,6 @@ export const kurtosisReference: VectorReductionReference<'kurtosis'> = {
     title: 'vec:centered-moving-kurtosis',
     category: 'Vector',
     description: 'Calculates the **centered moving kurtosis** of a `vector` with a given window size and padding.',
-    linkName: 'vec-colon-centered-moving-kurtosis',
     returns: {
       type: 'array',
     },
@@ -92,7 +89,6 @@ export const kurtosisReference: VectorReductionReference<'kurtosis'> = {
     title: 'vec:running-kurtosis',
     category: 'Vector',
     description: 'Calculates the **running kurtosis** of a `vector` with a given window size. First two element in result is `null` since **running kurtosis** is not defined for less than three elements.',
-    linkName: 'vec-colon-running-kurtosis',
     returns: {
       type: 'array',
     },
@@ -116,7 +112,6 @@ export const sampleKurtosisReference: VectorReductionReference<'sample-kurtosis'
     title: 'vec:sample-kurtosis',
     category: 'Vector',
     description: 'Calculates the **sample kurtosis** of a `vector`. Returns the third standardized moment.',
-    linkName: 'vec-colon-sample-kurtosis',
     returns: {
       type: 'number',
     },
@@ -138,7 +133,6 @@ export const sampleKurtosisReference: VectorReductionReference<'sample-kurtosis'
     title: 'vec:moving-sample-kurtosis',
     category: 'Vector',
     description: 'Calculates the **moving sample kurtosis** of a `vector` with a given window size.',
-    linkName: 'vec-colon-moving-sample-kurtosis',
     returns: {
       type: 'vector',
     },
@@ -165,7 +159,6 @@ export const sampleKurtosisReference: VectorReductionReference<'sample-kurtosis'
     title: 'vec:centered-moving-sample-kurtosis',
     category: 'Vector',
     description: 'Calculates the **centered moving sample kurtosis** of a `vector` with a given window size and padding.',
-    linkName: 'vec-colon-centered-moving-sample-kurtosis',
     returns: {
       type: 'array',
     },
@@ -202,7 +195,6 @@ export const sampleKurtosisReference: VectorReductionReference<'sample-kurtosis'
     title: 'vec:running-sample-kurtosis',
     category: 'Vector',
     description: 'Calculates the **running sample kurtosis** of a `vector` with a given window size. First two element in result is `null` since **running sample kurtosis** is not defined for less than three elements.',
-    linkName: 'vec-colon-running-sample-kurtosis',
     returns: {
       type: 'array',
     },
@@ -226,7 +218,6 @@ export const excessKurtoisReference: VectorReductionReference<'excess-kurtosis'>
     title: 'vec:excess-kurtosis',
     category: 'Vector',
     description: 'Calculates the **excess kurtosis** of a `vector`. Returns the third standardized moment.',
-    linkName: 'vec-colon-excess-kurtosis',
     returns: {
       type: 'number',
     },
@@ -248,7 +239,6 @@ export const excessKurtoisReference: VectorReductionReference<'excess-kurtosis'>
     title: 'vec:moving-excess-kurtosis',
     category: 'Vector',
     description: 'Calculates the **moving excess kurtosis** of a `vector` with a given window size.',
-    linkName: 'vec-colon-moving-excess-kurtosis',
     returns: {
       type: 'vector',
     },
@@ -275,7 +265,6 @@ export const excessKurtoisReference: VectorReductionReference<'excess-kurtosis'>
     title: 'vec:centered-moving-excess-kurtosis',
     category: 'Vector',
     description: 'Calculates the **centered moving excess kurtosis** of a `vector` with a given window size and padding.',
-    linkName: 'vec-colon-centered-moving-excess-kurtosis',
     returns: {
       type: 'array',
     },
@@ -312,7 +301,6 @@ export const excessKurtoisReference: VectorReductionReference<'excess-kurtosis'>
     title: 'vec:running-excess-kurtosis',
     category: 'Vector',
     description: 'Calculates the **running excess kurtosis** of a `vector` with a given window size. First two element in result is `null` since **running excess kurtosis** is not defined for less than three elements.',
-    linkName: 'vec-colon-running-excess-kurtosis',
     returns: {
       type: 'array',
     },
@@ -336,7 +324,6 @@ export const sampleExcessKurtosisReference: VectorReductionReference<'sample-exc
     title: 'vec:sample-excess-kurtosis',
     category: 'Vector',
     description: 'Calculates the **sample excess kurtosis** of a `vector`. Returns the third standardized moment.',
-    linkName: 'vec-colon-sample-excess-kurtosis',
     returns: {
       type: 'number',
     },
@@ -358,7 +345,6 @@ export const sampleExcessKurtosisReference: VectorReductionReference<'sample-exc
     title: 'vec:moving-sample-excess-kurtosis',
     category: 'Vector',
     description: 'Calculates the **moving sample excess kurtosis** of a `vector` with a given window size.',
-    linkName: 'vec-colon-moving-sample-excess-kurtosis',
     returns: {
       type: 'vector',
     },
@@ -385,7 +371,6 @@ export const sampleExcessKurtosisReference: VectorReductionReference<'sample-exc
     title: 'vec:centered-moving-sample-excess-kurtosis',
     category: 'Vector',
     description: 'Calculates the **centered moving sample excess kurtosis** of a `vector` with a given window size and padding.',
-    linkName: 'vec-colon-centered-moving-sample-excess-kurtosis',
     returns: {
       type: 'array',
     },
@@ -422,7 +407,6 @@ export const sampleExcessKurtosisReference: VectorReductionReference<'sample-exc
     title: 'vec:running-sample-excess-kurtosis',
     category: 'Vector',
     description: 'Calculates the **running sample excess kurtosis** of a `vector` with a given window size. First two element in result is `null` since **running sample excess kurtosis** is not defined for less than three elements.',
-    linkName: 'vec-colon-running-sample-excess-kurtosis',
     returns: {
       type: 'array',
     },

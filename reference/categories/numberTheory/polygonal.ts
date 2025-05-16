@@ -6,7 +6,6 @@ export const polygonalReference: NumberTheorySequenceReference<'polygonal'> = {
     title: 'nth:polygonal-seq',
     category: 'Number Theory',
     description: 'Generates the polygonal sequence for a given number of sides and length.',
-    linkName: 'nth-colon-polygonal-seq',
     returns: {
       type: 'integer',
       array: true,
@@ -37,7 +36,6 @@ export const polygonalReference: NumberTheorySequenceReference<'polygonal'> = {
     title: 'nth:polygonal-take-while',
     category: 'Number Theory',
     description: 'Generates the polygonal sequence while a condition is met.',
-    linkName: 'nth-colon-polygonal-take-while',
     returns: {
       type: 'integer',
       array: true,
@@ -64,7 +62,6 @@ export const polygonalReference: NumberTheorySequenceReference<'polygonal'> = {
     title: 'nth:polygonal-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the polygonal sequence.',
-    linkName: 'nth-colon-polygonal-nth',
     returns: {
       type: 'integer',
     },
@@ -92,7 +89,6 @@ export const polygonalReference: NumberTheorySequenceReference<'polygonal'> = {
     title: 'nth:polygonal?',
     category: 'Number Theory',
     description: 'Checks if a number is in the polygonal sequence.',
-    linkName: 'nth-colon-polygonal-question',
     returns: {
       type: 'boolean',
     },
