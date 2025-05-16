@@ -597,13 +597,7 @@ matrixMultiply(matrixA, matrixB);
     code: `
 function formatPhoneNumber(data) {
   if (string?(data)) {
-    let phoneNumber =
-      if (data[0] == "+") {
-        data slice 2
-      } else {
-        data
-      };
-
+    let phoneNumber = data[0] == "+" ? data slice 2 : data;
     let length = count(phoneNumber);
 
     cond {
