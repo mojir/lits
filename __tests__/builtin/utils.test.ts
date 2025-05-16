@@ -13,7 +13,7 @@ describe('builtin utils', () => {
     expect(() => assertNameNotDefined('b', contextStack, builtin)).not.toThrow()
     expect(() => assertNameNotDefined('a', contextStack, builtin)).toThrow(LitsError)
     expect(() => assertNameNotDefined('true', contextStack, builtin)).toThrow(LitsError)
-    expect(() => assertNameNotDefined('do', contextStack, builtin)).toThrow(LitsError)
+    expect(() => assertNameNotDefined('block', contextStack, builtin)).toThrow(LitsError)
     expect(() => assertNameNotDefined('+', contextStack, builtin)).toThrow(LitsError)
   })
 })

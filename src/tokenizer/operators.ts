@@ -60,7 +60,7 @@ const nonFunctionOperators = [
   'cond',
   'def',
   'defined?',
-  'do',
+  'block',
   'doseq',
   'if',
   'let',

@@ -2,10 +2,10 @@ import type { FunctionReference } from '..'
 import { type MiscApiName, getOperatorArgs } from '../api'
 
 export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
-  '≠': {
-    title: '≠',
+  '!=': {
+    title: '!=',
     category: 'Misc',
-    linkName: '-ne',
+    linkName: '-exclamation-equal',
     returns: {
       type: 'boolean',
     },
@@ -32,7 +32,7 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       '≠("3", "2", "1", "0",)',
       '!=(0, -0)',
     ],
-    aliases: ['!='],
+    aliases: ['≠'],
   },
   '==': {
     title: '==',

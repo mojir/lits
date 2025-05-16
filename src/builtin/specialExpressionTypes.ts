@@ -7,7 +7,7 @@ export const specialExpressionTypes = {
   '0_def': 5,
   'defined?': 6,
   '0_defn': 7,
-  'do': 8,
+  'block': 8,
   'doseq': 9,
   '0_fn': 10,
   'for': 11,

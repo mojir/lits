@@ -1,5 +1,5 @@
 import type { Builtin } from '../builtin/interface'
-import type { DoNode } from '../builtin/specialExpressions/do'
+import type { DoNode } from '../builtin/specialExpressions/block'
 import { specialExpressionTypes } from '../builtin/specialExpressionTypes'
 import { NodeTypes } from '../constants/constants'
 import { LitsError } from '../errors'
@@ -13,7 +13,7 @@ export type UndefinedSymbols = Set<string>
 export const getUndefinedSymbols: GetUndefinedSymbols = (ast, contextStack, builtin, evaluateNode) => {
   const nodes: Node[] = Array.isArray(ast)
     ? ast
-    : [[NodeTypes.SpecialExpression, [specialExpressionTypes.do, ast.body]] satisfies DoNode]
+    : [[NodeTypes.SpecialExpression, [specialExpressionTypes.block, ast.body]] satisfies DoNode]
 
   const unresolvedSymbols = new Set<string>()
 

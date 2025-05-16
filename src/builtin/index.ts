@@ -5,7 +5,7 @@ import { condSpecialExpression } from './specialExpressions/cond'
 import { switchSpecialExpression } from './specialExpressions/switch'
 import { definedSpecialExpression } from './specialExpressions/defined'
 import { defSpecialExpression } from './specialExpressions/def'
-import { doSpecialExpression } from './specialExpressions/do'
+import { doSpecialExpression } from './specialExpressions/block'
 import { defnSpecialExpression, fnSpecialExpression, functionSpecialExpression } from './specialExpressions/functions'
 import { ifSpecialExpression } from './specialExpressions/if'
 import { unlessSpecialExpression } from './specialExpressions/unless'
@@ -55,7 +55,7 @@ export type CommonSpecialExpressionType = [
   | typeof specialExpressionTypes['cond']
   | typeof specialExpressionTypes['switch']
   | typeof specialExpressionTypes['defined?']
-  | typeof specialExpressionTypes['do']
+  | typeof specialExpressionTypes['block']
   | typeof specialExpressionTypes['if']
   | typeof specialExpressionTypes['unless']
   | typeof specialExpressionTypes['||']

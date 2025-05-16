@@ -93,12 +93,6 @@ PHI   // => 1.618033988749895 (Golden ratio)
 -PHI  // => -1.618033988749895
 -φ    // => -1.618033988749895
 
-// Epsilon/Delta (smallest representable number)
-DELTA // => 2.220446049250313e-16
-δ     // => 2.220446049250313e-16 (Unicode alternative)
--DELTA // => -2.220446049250313e-16
--δ    // => -2.220446049250313e-16
-
 // Infinity values
 POSITIVE_INFINITY // => Infinity
 ∞     // => Infinity (Unicode alternative)

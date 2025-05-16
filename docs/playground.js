@@ -13458,7 +13458,7 @@ var Playground = (function (exports) {
             var bindingValue = evaluateNode(value, contextStack);
             var values = evalueateBindingNodeValues(target, bindingValue, function (Node) { return evaluateNode(Node, contextStack); });
             contextStack.exportValues(values, target[2]);
-            return null;
+            return bindingValue;
         },
         getUndefinedSymbols: function (node, contextStack, _a) {
             var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateNode = _a.evaluateNode;
@@ -13507,9 +13507,7 @@ var Playground = (function (exports) {
         true: true,
         false: false,
         null: null,
-        then: null,
         else: null,
-        end: null,
         case: null,
         each: null,
         in: null,
@@ -13543,10 +13541,6 @@ var Playground = (function (exports) {
         'MIN_SAFE_INTEGER': Number.MIN_SAFE_INTEGER,
         'MAX_VALUE': Number.MAX_VALUE,
         'MIN_VALUE': Number.MIN_VALUE,
-        'DELTA': Number.EPSILON, // TODO use DELTA instead of DELTA δ
-        '-DELTA': -Number.EPSILON,
-        'δ': Number.EPSILON, // TODO use DELTA instead of DELTA δ
-        '-δ': -Number.EPSILON,
         'NaN': Number.NaN,
     };
     var reservedSymbolRecord = __assign(__assign({}, nonNumberReservedSymbolRecord), numberReservedSymbolRecord);
@@ -13567,7 +13561,7 @@ var Playground = (function (exports) {
         '0_def': 5,
         'defined?': 6,
         '0_defn': 7,
-        'do': 8,
+        'block': 8,
         'doseq': 9,
         '0_fn': 10,
         'for': 11,
@@ -13614,7 +13608,7 @@ var Playground = (function (exports) {
                 _b.evaluatedfunction = evaluatedFunction,
                 _b);
             contextStack.addValues((_c = {}, _c[functionSymbol[1]] = litsFunction, _c), functionSymbol[2]);
-            return null;
+            return litsFunction;
         },
         getUndefinedSymbols: function (node, contextStack, _a) {
             var _b, _c;
@@ -13642,7 +13636,7 @@ var Playground = (function (exports) {
                 _b.evaluatedfunction = evaluatedFunctionOverloades,
                 _b);
             contextStack.exportValues((_c = {}, _c[functionSymbol[1]] = litsFunction, _c), functionSymbol[2]);
-            return null;
+            return litsFunction;
         },
         getUndefinedSymbols: function (node, contextStack, _a) {
             var _b, _c;
@@ -13762,7 +13756,7 @@ var Playground = (function (exports) {
             var bindingValue = evaluateNode(value, contextStack);
             var values = evalueateBindingNodeValues(target, bindingValue, function (Node) { return evaluateNode(Node, contextStack); });
             contextStack.addValues(values, target[2]);
-            return null;
+            return bindingValue;
         },
         getUndefinedSymbols: function (node, contextStack, _a) {
             var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateNode = _a.evaluateNode;
@@ -14327,7 +14321,7 @@ var Playground = (function (exports) {
         'cond',
         'def',
         'defined?',
-        'do',
+        'block',
         'doseq',
         'if',
         'let',
@@ -14485,7 +14479,7 @@ var Playground = (function (exports) {
             'fnull',
         ],
         misc: [
-            '≠', // TODO
+            '!=', // TODO
             '==',
             '<',
             '>',
@@ -17459,10 +17453,10 @@ var Playground = (function (exports) {
     };
 
     var miscReference = {
-        '≠': {
-            title: '≠',
+        '!=': {
+            title: '!=',
             category: 'Misc',
-            linkName: '-ne',
+            linkName: '-exclamation-equal',
             returns: {
                 type: 'boolean',
             },
@@ -17485,7 +17479,7 @@ var Playground = (function (exports) {
                 '≠("3", "2", "1", "0",)',
                 '!=(0, -0)',
             ],
-            aliases: ['!='],
+            aliases: ['≠'],
         },
         '==': {
             title: '==',
@@ -25779,10 +25773,10 @@ var Playground = (function (exports) {
             title: 'function',
             category: 'Special expression',
             linkName: 'function',
-            customVariants: ['function name(...arg, ...let-binding) body end;'],
+            customVariants: ['function name(...arg) { body }'],
             details: [
                 ['name', 'symbol', 'The name of the function.'],
-                ['arg', '[...]arg-name [: value]', 'Arguments of the function.'],
+                ['arg', '[...]arg-name [= value]', 'Arguments of the function.'],
                 ['...', 'rest-symbol', 'Optional. The rest argument of the function.'],
                 ['arg-name', 'symbol', 'The name of the argument.'],
                 ['value', 'any', 'Optional. The default value of the argument.'],
@@ -25800,7 +25794,7 @@ var Playground = (function (exports) {
             title: 'try',
             category: 'Special expression',
             linkName: 'try',
-            customVariants: ['try try-body catch catch-body end', 'try try-body catch(error) catch-body end'],
+            customVariants: ['try { try-body } catch { catch-body }', 'try { try-body } catch(error) { catch-body }'],
             details: [
                 ['try-body', 'expressions', 'The expressions to try.'],
                 ['error', 'symbol', 'The error variable to bind.'],
@@ -25838,43 +25832,43 @@ var Playground = (function (exports) {
             title: 'if',
             category: 'Special expression',
             linkName: 'if',
-            customVariants: ['if test then-body else else-body end', 'if test then-body end'],
+            customVariants: ['if (test) true-expr else false-expr', 'if (test) true-expr'],
             details: [
                 ['test', 'expression', 'The condition to test.'],
-                ['then-body', 'expressions', 'The expressions to evaluate if the test is truthy.'],
-                ['else-body', 'expressions', 'The expressions to evaluate if the test is falsy.'],
+                ['true-expr', 'expression', 'The expression to evaluate if the test is truthy.'],
+                ['false-expr', 'expression', 'The expression to evaluate if the test is falsy.'],
             ],
-            description: 'Either `then-expr` or `else-expr` branch is taken. `then-expr` is selected when $test is truthy. If $test is falsy `else-expr` is executed, if no `else-expr` exists, `null` is returned.',
+            description: 'Either `true-expr` or `false-expr` branch is taken. `true-expr` is selected when $test is truthy. If $test is falsy `false-expr` is executed, if no `false-expr` exists, `null` is returned.',
             examples: [
                 "\nif (true) {\n  write!(\"TRUE\")\n} else {\n  write!(\"FALSE\")\n}",
-                'if (false) { write!("TRUE") } else { write!("FALSE") }',
-                'if (true) { write!("TRUE") }',
-                'if (false) { write!("TRUE") }',
+                'if (false) write!("TRUE") else write!("FALSE")',
+                'if (true) write!("TRUE")',
+                'if (false) write!("TRUE")',
             ],
         },
         'unless': {
             title: 'unless',
             category: 'Special expression',
             linkName: 'unless',
-            customVariants: ['unless test then-body else else-body end', 'unless test then-body end'],
+            customVariants: ['unless (test) true-expr else false-expr end', 'unless test true-expr end'],
             details: [
                 ['test', 'expression', 'The condition to test.'],
-                ['then-body', 'expressions', 'The expressions to evaluate if the test is falsy.'],
-                ['else-body', 'expressions', 'The expressions to evaluate if the test is truthy.'],
+                ['true-expr', 'expression', 'The expressions to evaluate if the test is falsy.'],
+                ['false-expr', 'expression', 'The expressions to evaluate if the test is truthy.'],
             ],
-            description: 'Either `then-expr` or `else-expr` branch is taken. `then-expr` is selected when $test is falsy. If $test is truthy `else-expr` is executed, if no `else-expr` exists, `null` is returned.',
+            description: 'Either `true-expr` or `false-expr` branch is taken. `true-expr` is selected when $test is falsy. If $test is truthy `false-expr` is executed, if no `false-expr` exists, `null` is returned.',
             examples: [
                 "\nunless (true) {\n  write!(\"TRUE\")\n} else {\n  write!(\"FALSE\")\n}",
-                'unless (false) { write!("TRUE") } else { write!("FALSE") }',
-                'unless (true) { write!("TRUE") }',
-                'unless (false) { write!("TRUE") }',
+                'unless (false) write!("TRUE") else write!("FALSE")',
+                'unless (true) write!("TRUE")',
+                'unless (false) write!("TRUE")',
             ],
         },
         'cond': {
             title: 'cond',
             category: 'Special expression',
             linkName: 'cond',
-            customVariants: ['cond cond-branch cond-branch ... end'],
+            customVariants: ['cond { cond-branch cond-branch ... }'],
             details: [
                 ['cond-branch', 'case test then body', 'A branch of the cond expression.'],
                 ['test', 'expression', 'The condition to test.'],
@@ -25891,7 +25885,7 @@ var Playground = (function (exports) {
             title: 'switch',
             category: 'Special expression',
             linkName: 'switch',
-            customVariants: ['switch value switch-branch switch-branch ... end'],
+            customVariants: ['switch (value) { switch-branch switch-branch ... }'],
             details: [
                 ['value', 'any', 'The value to test.'],
                 ['switch-branch', 'case test then body', 'A branch of the switch expression.'],
@@ -25905,11 +25899,11 @@ var Playground = (function (exports) {
                 "\nswitch (3) {\n  case 1: write!(\"One\")\n  case 2: write!(\"Two\")\n}",
             ],
         },
-        'do': {
-            title: 'do',
+        'block': {
+            title: 'block',
             category: 'Special expression',
-            linkName: 'do',
-            customVariants: ['do body end'],
+            linkName: 'block',
+            customVariants: ['{ body }'],
             details: [
                 ['body', 'expressions', 'The expressions to evaluate.'],
             ],
@@ -30927,7 +30921,7 @@ var Playground = (function (exports) {
         var _b;
         var nodes = Array.isArray(ast)
             ? ast
-            : [[NodeTypes.SpecialExpression, [specialExpressionTypes.do, ast.body]]];
+            : [[NodeTypes.SpecialExpression, [specialExpressionTypes.block, ast.body]]];
         var unresolvedSymbols = new Set();
         try {
             for (var nodes_1 = __values(nodes), nodes_1_1 = nodes_1.next(); !nodes_1_1.done; nodes_1_1 = nodes_1.next()) {
@@ -32912,15 +32906,11 @@ var Playground = (function (exports) {
             }
             throw new LitsError('Expected symbol', this.peekSourceCodeInfo());
         };
-        Parser.prototype.parseLet = function (token, optionalSemicolon) {
-            if (optionalSemicolon === void 0) { optionalSemicolon = false; }
+        Parser.prototype.parseLet = function (token) {
             this.advance();
             var target = this.parseBindingTarget({ requireDefaultValue: true, noRest: true });
             var value = target[1][1];
             target[1][1] = undefined;
-            if (!optionalSemicolon) {
-                assertOperatorToken(this.peek(), ';');
-            }
             var bindingTarget = withSourceCodeInfo([NodeTypes.Binding, [target, value]], token[2]);
             return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.let, bindingTarget]], token[2]);
         };
@@ -32942,7 +32932,7 @@ var Playground = (function (exports) {
             }
             assertRBraceToken(this.peek());
             this.advance();
-            return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.do, expressions]], token[2]);
+            return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.block, expressions]], token[2]);
         };
         Parser.prototype.parseLoop = function (firstToken) {
             this.advance();
@@ -33047,7 +33037,7 @@ var Playground = (function (exports) {
             if (token[1] === 'let') {
                 modifiers.push('&let');
                 var _loop_2 = function () {
-                    var letNode = this_2.parseLet(token, true);
+                    var letNode = this_2.parseLet(token);
                     var existingBoundNames = letBindings.flatMap(function (b) { return Object.keys(getAllBindingTargetNames(b[1][0])); });
                     var newBoundNames = Object.keys(getAllBindingTargetNames(letNode[1][1][1][0]));
                     if (newBoundNames.some(function (n) { return existingBoundNames.includes(n); })) {
@@ -33159,7 +33149,7 @@ var Playground = (function (exports) {
                 }
                 var thenExpression = expressions.length === 1
                     ? expressions[0]
-                    : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.do, expressions]], token[2]);
+                    : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.block, expressions]], token[2]);
                 params.push([caseExpression, thenExpression]);
                 if (isRBraceToken(this.peek())) {
                     break;
@@ -33200,7 +33190,7 @@ var Playground = (function (exports) {
                 }
                 var thenExpression = expressions.length === 1
                     ? expressions[0]
-                    : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.do, expressions]], token[2]);
+                    : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.block, expressions]], token[2]);
                 params.push([caseExpression, thenExpression]);
                 if (isRBraceToken(this.peek())) {
                     break;
@@ -33216,7 +33206,6 @@ var Playground = (function (exports) {
             var symbol = this.parseSymbol();
             var functionArguments = this.parseFunctionArguments();
             var block = this.parseBlock();
-            assertOperatorToken(this.peek(), ';');
             return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.function, symbol, [
                         functionArguments,
                         block[1][1],

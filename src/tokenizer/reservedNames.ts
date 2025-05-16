@@ -4,9 +4,7 @@ const nonNumberReservedSymbolRecord = {
   true: true,
   false: false,
   null: null,
-  then: null,
   else: null,
-  end: null,
   case: null,
   each: null,
   in: null,
@@ -41,10 +39,6 @@ export const numberReservedSymbolRecord = {
   'MIN_SAFE_INTEGER': Number.MIN_SAFE_INTEGER,
   'MAX_VALUE': Number.MAX_VALUE,
   'MIN_VALUE': Number.MIN_VALUE,
-  'DELTA': Number.EPSILON, // TODO use DELTA instead of DELTA δ
-  '-DELTA': -Number.EPSILON,
-  'δ': Number.EPSILON, // TODO use DELTA instead of DELTA δ
-  '-δ': -Number.EPSILON,
   'NaN': Number.NaN,
 } as const satisfies Record<string, number>
 

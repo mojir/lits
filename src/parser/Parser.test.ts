@@ -201,12 +201,6 @@ describe('parser', () => {
     })
   })
 
-  describe('const DELTA', () => {
-    it('samples', () => {
-      expect(lits.run('DELTA')).toBe(Number.EPSILON)
-    })
-  })
-
   describe('const NaN', () => {
     it('samples', () => {
       expect(lits.run('NaN')).toBeNaN()
@@ -752,7 +746,7 @@ describe('parser', () => {
 10 + 20`)).toBe(30)
   })
 
-  describe('do', () => {
+  describe('block', () => {
     test('as operand', () => {
       expect(lits.run(`
         {

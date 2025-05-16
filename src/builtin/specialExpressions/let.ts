@@ -16,7 +16,7 @@ export const letSpecialExpression: BuiltinSpecialExpression<Any, LetNode> = {
     const bindingValue = evaluateNode(value, contextStack)
     const values = evalueateBindingNodeValues(target, bindingValue, Node => evaluateNode(Node, contextStack))
     contextStack.addValues(values, target[2])
-    return null
+    return bindingValue
   },
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => {
     const bindingNode = node[1][1]

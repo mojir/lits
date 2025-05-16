@@ -7,7 +7,7 @@ import type { ArrayNode } from '../builtin/specialExpressions/array'
 import type { CondNode } from '../builtin/specialExpressions/cond'
 import type { DefinedNode } from '../builtin/specialExpressions/defined'
 import type { DefNode } from '../builtin/specialExpressions/def'
-import type { DoNode } from '../builtin/specialExpressions/do'
+import type { DoNode } from '../builtin/specialExpressions/block'
 import type { DefnNode, FnNode, FunctionNode } from '../builtin/specialExpressions/functions'
 import type { IfNode } from '../builtin/specialExpressions/if'
 import type { LetNode } from '../builtin/specialExpressions/let'
@@ -339,6 +339,7 @@ export class Parser {
   private parseOperand(): Node {
     let operand = this.parseOperandPart()
     let token = this.peek()
+
     while (isOperatorToken(token, '.') || isLBracketToken(token) || isLParenToken(token)) {
       if (token[1] === '.') {
         this.advance()
@@ -575,7 +576,7 @@ export class Parser {
         | typeof specialExpressionTypes.cond
         | typeof specialExpressionTypes.switch
         | typeof specialExpressionTypes.let
-        | typeof specialExpressionTypes.do
+        | typeof specialExpressionTypes.block
         | typeof specialExpressionTypes.loop
         | typeof specialExpressionTypes.try
         | typeof specialExpressionTypes.doseq
@@ -902,17 +903,13 @@ export class Parser {
     throw new LitsError('Expected symbol', this.peekSourceCodeInfo())
   }
 
-  private parseLet(token: SymbolToken, optionalSemicolon = false): LetNode {
+  private parseLet(token: SymbolToken): LetNode {
     this.advance()
 
     const target = this.parseBindingTarget({ requireDefaultValue: true, noRest: true })
 
     const value = target[1][1]!
     target[1][1] = undefined
-
-    if (!optionalSemicolon) {
-      assertOperatorToken(this.peek(), ';')
-    }
 
     const bindingTarget: BindingNode = withSourceCodeInfo([NodeTypes.Binding, [target, value]], token[2])
     return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.let, bindingTarget]], token[2]) satisfies LetNode
@@ -936,7 +933,7 @@ export class Parser {
     }
     assertRBraceToken(this.peek())
     this.advance()
-    return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.do, expressions]], token[2]) satisfies DoNode
+    return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.block, expressions]], token[2]) satisfies DoNode
   }
 
   private parseLoop(firstToken: SymbolToken): LoopNode {
@@ -1064,7 +1061,7 @@ export class Parser {
     if (token[1] === 'let') {
       modifiers.push('&let')
       while (isSymbolToken(token, 'let')) {
-        const letNode = this.parseLet(token, true)
+        const letNode = this.parseLet(token)
         const existingBoundNames = letBindings.flatMap(b => Object.keys(getAllBindingTargetNames(b[1][0])))
         const newBoundNames = Object.keys(getAllBindingTargetNames(letNode[1][1][1][0]))
         if (newBoundNames.some(n => existingBoundNames.includes(n))) {
@@ -1195,7 +1192,7 @@ export class Parser {
 
       const thenExpression = expressions.length === 1
         ? expressions[0]!
-        : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.do, expressions]], token[2]) satisfies DoNode
+        : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.block, expressions]], token[2]) satisfies DoNode
 
       params.push([caseExpression, thenExpression])
       if (isRBraceToken(this.peek())) {
@@ -1243,7 +1240,7 @@ export class Parser {
 
       const thenExpression = expressions.length === 1
         ? expressions[0]!
-        : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.do, expressions]], token[2]) satisfies DoNode
+        : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.block, expressions]], token[2]) satisfies DoNode
 
       params.push([caseExpression, thenExpression])
       if (isRBraceToken(this.peek())) {
@@ -1264,7 +1261,6 @@ export class Parser {
     const functionArguments = this.parseFunctionArguments()
 
     const block = this.parseBlock()
-    assertOperatorToken(this.peek(), ';')
 
     return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.function, symbol, [
       functionArguments,

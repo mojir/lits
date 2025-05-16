@@ -153,10 +153,10 @@ write!("a", a, "b", b)`],
     title: 'function',
     category: 'Special expression',
     linkName: 'function',
-    customVariants: ['function name(...arg, ...let-binding) body end;'],
+    customVariants: ['function name(...arg) { body }'],
     details: [
       ['name', 'symbol', 'The name of the function.'],
-      ['arg', '[...]arg-name [: value]', 'Arguments of the function.'],
+      ['arg', '[...]arg-name [= value]', 'Arguments of the function.'],
       ['...', 'rest-symbol', 'Optional. The rest argument of the function.'],
       ['arg-name', 'symbol', 'The name of the argument.'],
       ['value', 'any', 'Optional. The default value of the argument.'],
@@ -192,7 +192,7 @@ write!(withOptional(1), withOptional(1, 2))`,
     title: 'try',
     category: 'Special expression',
     linkName: 'try',
-    customVariants: ['try try-body catch catch-body end', 'try try-body catch(error) catch-body end'],
+    customVariants: ['try { try-body } catch { catch-body }', 'try { try-body } catch(error) { catch-body }'],
     details: [
       ['try-body', 'expressions', 'The expressions to try.'],
       ['error', 'symbol', 'The error variable to bind.'],
@@ -245,13 +245,13 @@ try {
     title: 'if',
     category: 'Special expression',
     linkName: 'if',
-    customVariants: ['if test then-body else else-body end', 'if test then-body end'],
+    customVariants: ['if (test) true-expr else false-expr', 'if (test) true-expr'],
     details: [
       ['test', 'expression', 'The condition to test.'],
-      ['then-body', 'expressions', 'The expressions to evaluate if the test is truthy.'],
-      ['else-body', 'expressions', 'The expressions to evaluate if the test is falsy.'],
+      ['true-expr', 'expression', 'The expression to evaluate if the test is truthy.'],
+      ['false-expr', 'expression', 'The expression to evaluate if the test is falsy.'],
     ],
-    description: 'Either `then-expr` or `else-expr` branch is taken. `then-expr` is selected when $test is truthy. If $test is falsy `else-expr` is executed, if no `else-expr` exists, `null` is returned.',
+    description: 'Either `true-expr` or `false-expr` branch is taken. `true-expr` is selected when $test is truthy. If $test is falsy `false-expr` is executed, if no `false-expr` exists, `null` is returned.',
     examples: [
       `
 if (true) {
@@ -259,22 +259,22 @@ if (true) {
 } else {
   write!("FALSE")
 }`,
-      'if (false) { write!("TRUE") } else { write!("FALSE") }',
-      'if (true) { write!("TRUE") }',
-      'if (false) { write!("TRUE") }',
+      'if (false) write!("TRUE") else write!("FALSE")',
+      'if (true) write!("TRUE")',
+      'if (false) write!("TRUE")',
     ],
   },
   'unless': {
     title: 'unless',
     category: 'Special expression',
     linkName: 'unless',
-    customVariants: ['unless test then-body else else-body end', 'unless test then-body end'],
+    customVariants: ['unless (test) true-expr else false-expr end', 'unless test true-expr end'],
     details: [
       ['test', 'expression', 'The condition to test.'],
-      ['then-body', 'expressions', 'The expressions to evaluate if the test is falsy.'],
-      ['else-body', 'expressions', 'The expressions to evaluate if the test is truthy.'],
+      ['true-expr', 'expression', 'The expressions to evaluate if the test is falsy.'],
+      ['false-expr', 'expression', 'The expressions to evaluate if the test is truthy.'],
     ],
-    description: 'Either `then-expr` or `else-expr` branch is taken. `then-expr` is selected when $test is falsy. If $test is truthy `else-expr` is executed, if no `else-expr` exists, `null` is returned.',
+    description: 'Either `true-expr` or `false-expr` branch is taken. `true-expr` is selected when $test is falsy. If $test is truthy `false-expr` is executed, if no `false-expr` exists, `null` is returned.',
     examples: [
       `
 unless (true) {
@@ -282,16 +282,16 @@ unless (true) {
 } else {
   write!("FALSE")
 }`,
-      'unless (false) { write!("TRUE") } else { write!("FALSE") }',
-      'unless (true) { write!("TRUE") }',
-      'unless (false) { write!("TRUE") }',
+      'unless (false) write!("TRUE") else write!("FALSE")',
+      'unless (true) write!("TRUE")',
+      'unless (false) write!("TRUE")',
     ],
   },
   'cond': {
     title: 'cond',
     category: 'Special expression',
     linkName: 'cond',
-    customVariants: ['cond cond-branch cond-branch ... end'],
+    customVariants: ['cond { cond-branch cond-branch ... }'],
     details: [
       ['cond-branch', 'case test then body', 'A branch of the cond expression.'],
       ['test', 'expression', 'The condition to test.'],
@@ -320,7 +320,7 @@ cond {
     title: 'switch',
     category: 'Special expression',
     linkName: 'switch',
-    customVariants: ['switch value switch-branch switch-branch ... end'],
+    customVariants: ['switch (value) { switch-branch switch-branch ... }'],
     details: [
       ['value', 'any', 'The value to test.'],
       ['switch-branch', 'case test then body', 'A branch of the switch expression.'],
@@ -346,11 +346,11 @@ switch (3) {
 }`,
     ],
   },
-  'do': {
-    title: 'do',
+  'block': {
+    title: 'block',
     category: 'Special expression',
-    linkName: 'do',
-    customVariants: ['do body end'],
+    linkName: 'block',
+    customVariants: ['{ body }'],
     details: [
       ['body', 'expressions', 'The expressions to evaluate.'],
     ],

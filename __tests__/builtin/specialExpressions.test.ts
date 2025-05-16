@@ -549,7 +549,7 @@ function foo(a) {
     })
   })
 
-  describe('do', () => {
+  describe('block', () => {
     it('samples', () => {
       expect(lits.run('{ [1, 2, 3]; "[1]"; 1 + 2 }')).toBe(3)
     })

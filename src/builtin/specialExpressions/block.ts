@@ -4,7 +4,7 @@ import type { Node, SpecialExpressionNode } from '../../parser/types'
 import type { BuiltinSpecialExpression } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 
-export type DoNode = SpecialExpressionNode<[typeof specialExpressionTypes['do'], Node[]]>
+export type DoNode = SpecialExpressionNode<[typeof specialExpressionTypes['block'], Node[]]>
 
 export const doSpecialExpression: BuiltinSpecialExpression<Any, DoNode> = {
   paramCount: {},

@@ -21,7 +21,7 @@ export type DefnNode = SpecialExpressionNode<[typeof specialExpressionTypes['0_d
 export type FunctionNode = SpecialExpressionNode<[typeof specialExpressionTypes['function'], SymbolNode, Function]>
 export type FnNode = SpecialExpressionNode<[typeof specialExpressionTypes['0_fn'], Function]>
 
-export const functionSpecialExpression: BuiltinSpecialExpression<null, FunctionNode> = {
+export const functionSpecialExpression: BuiltinSpecialExpression<LitsFunction, FunctionNode> = {
   paramCount: {},
   evaluate: (node, contextStack, { builtin, getUndefinedSymbols, evaluateNode }) => {
     const [, functionSymbol, fn] = node[1]
@@ -40,7 +40,7 @@ export const functionSpecialExpression: BuiltinSpecialExpression<null, FunctionN
     }
 
     contextStack.addValues({ [functionSymbol[1]]: litsFunction }, functionSymbol[2])
-    return null
+    return litsFunction
   },
 
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => {
@@ -51,7 +51,7 @@ export const functionSpecialExpression: BuiltinSpecialExpression<null, FunctionN
   },
 }
 
-export const defnSpecialExpression: BuiltinSpecialExpression<null, DefnNode> = {
+export const defnSpecialExpression: BuiltinSpecialExpression<LitsFunction, DefnNode> = {
   paramCount: {},
   evaluate: (node, contextStack, { builtin, getUndefinedSymbols, evaluateNode }) => {
     const [, functionSymbol, fn] = node[1]
@@ -70,7 +70,7 @@ export const defnSpecialExpression: BuiltinSpecialExpression<null, DefnNode> = {
     }
 
     contextStack.exportValues({ [functionSymbol[1]]: litsFunction }, functionSymbol[2])
-    return null
+    return litsFunction
   },
 
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => {
