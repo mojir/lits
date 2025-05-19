@@ -1,6 +1,6 @@
 {
   "name": "@mojir/lits",
-  "version": "2.1.15",
+  "version": "2.1.16",
   "description": "Lits is a Lisp dialect implemented in TypeScript",
   "author": "Albert Mojir",
   "license": "MIT",
@@ -50,7 +50,7 @@
     "lcov": "open-cli ./coverage/index.html"
   },
   "dependencies": {
-    "@mojir/pretty-pi": "0.0.9"
+    "@mojir/pretty-pi": "0.0.12"
   },
   "devDependencies": {
     "@antfu/eslint-config": "2.21.1",
