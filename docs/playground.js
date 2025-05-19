@@ -32678,6 +32678,97 @@ var Playground = (function (exports) {
         return Parser;
     }());
 
+    var autoCompleteTokenTypes = [
+        'Operator',
+        'ReservedSymbol',
+        'Symbol',
+    ];
+    var litsCommands = new Set(__spreadArray(__spreadArray([], __read(normalExpressionKeys), false), __read(specialExpressionKeys), false));
+    // TODO: replace with get suggestions function
+    var AutoCompleter = /** @class */ (function () {
+        function AutoCompleter(tokenStream, params) {
+            this.searchPattern = '';
+            this.suggestions = [];
+            this.suggestionIndex = null;
+            if (!tokenStream) {
+                return;
+            }
+            var lastToken = tokenStream.tokens.at(-1);
+            if (!lastToken) {
+                return;
+            }
+            var _a = __read(lastToken, 2), tokenType = _a[0], tokenValue = _a[1];
+            if (!autoCompleteTokenTypes.includes(tokenType)) {
+                return;
+            }
+            this.searchPattern = tokenValue.toLowerCase();
+            this.suggestions = this.getAllSuggestions(params);
+        }
+        AutoCompleter.prototype.getNextSuggestion = function () {
+            if (this.suggestions.length === 0) {
+                return null;
+            }
+            if (this.suggestionIndex === null) {
+                this.suggestionIndex = 0;
+            }
+            else {
+                this.suggestionIndex += 1;
+                if (this.suggestionIndex >= this.suggestions.length) {
+                    this.suggestionIndex = 0;
+                }
+            }
+            return {
+                suggestion: this.suggestions[this.suggestionIndex],
+                searchPattern: this.searchPattern,
+            };
+        };
+        AutoCompleter.prototype.getPreviousSuggestion = function () {
+            if (this.suggestions.length === 0) {
+                return null;
+            }
+            if (this.suggestionIndex === null) {
+                this.suggestionIndex = this.suggestions.length - 1;
+            }
+            else {
+                this.suggestionIndex -= 1;
+                if (this.suggestionIndex < 0) {
+                    this.suggestionIndex = this.suggestions.length - 1;
+                }
+            }
+            return {
+                suggestion: this.suggestions[this.suggestionIndex],
+                searchPattern: this.searchPattern,
+            };
+        };
+        AutoCompleter.prototype.getAllSuggestions = function (params) {
+            var _this = this;
+            var _a, _b, _c, _d, _e;
+            var suggestions = new Set();
+            litsCommands.forEach(function (name) {
+                if (name.toLowerCase().startsWith(_this.searchPattern)) {
+                    suggestions.add(name);
+                }
+            });
+            Object.keys((_b = (_a = params.globalContext) === null || _a === void 0 ? void 0 : _a.values) !== null && _b !== void 0 ? _b : {})
+                .filter(function (name) { return name.toLowerCase().startsWith(_this.searchPattern); })
+                .forEach(function (name) { return suggestions.add(name); });
+            (_c = params.contexts) === null || _c === void 0 ? void 0 : _c.forEach(function (context) {
+                var _a;
+                Object.keys((_a = context.values) !== null && _a !== void 0 ? _a : {})
+                    .filter(function (name) { return name.toLowerCase().startsWith(_this.searchPattern); })
+                    .forEach(function (name) { return suggestions.add(name); });
+            });
+            Object.keys((_d = params.jsFunctions) !== null && _d !== void 0 ? _d : {})
+                .filter(function (name) { return name.toLowerCase().startsWith(_this.searchPattern); })
+                .forEach(function (name) { return suggestions.add(name); });
+            Object.keys((_e = params.values) !== null && _e !== void 0 ? _e : {})
+                .filter(function (name) { return name.toLowerCase().startsWith(_this.searchPattern); })
+                .forEach(function (name) { return suggestions.add(name); });
+            return __spreadArray([], __read(suggestions), false).sort(function (a, b) { return a.toLowerCase().localeCompare(b.toLowerCase()); });
+        };
+        return AutoCompleter;
+    }());
+
     var Cache = /** @class */ (function () {
         function Cache(maxSize) {
             this.cache = {};
@@ -32852,6 +32943,16 @@ var Playground = (function (exports) {
             var ast = this.parse(tokenStream);
             (_a = this.astCache) === null || _a === void 0 ? void 0 : _a.set(program, ast);
             return ast;
+        };
+        Lits.prototype.getAutoCompleter = function (partialProgram, params) {
+            if (params === void 0) { params = {}; }
+            try {
+                var tokenStream = this.tokenize(partialProgram);
+                return new AutoCompleter(tokenStream, params);
+            }
+            catch (_a) {
+                return new AutoCompleter(null, params);
+            }
         };
         return Lits;
     }());

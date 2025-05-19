@@ -11,6 +11,7 @@ import { transformSymbolTokens } from '../transformer'
 import { untokenize } from '../untokenizer'
 import { builtin } from '../builtin'
 import { Parser } from '../parser/Parser'
+import { AutoCompleter } from '../AutoCompleter'
 import { Cache } from './Cache'
 
 export interface LitsRuntimeInfo {
@@ -164,5 +165,15 @@ export class Lits {
     const ast: Ast = this.parse(tokenStream)
     this.astCache?.set(program, ast)
     return ast
+  }
+
+  public getAutoCompleter(partialProgram: string, params: ContextParams = {}): AutoCompleter {
+    try {
+      const tokenStream = this.tokenize(partialProgram)
+      return new AutoCompleter(tokenStream, params)
+    }
+    catch {
+      return new AutoCompleter(null, params)
+    }
   }
 }

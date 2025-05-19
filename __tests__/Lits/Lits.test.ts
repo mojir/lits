@@ -9,6 +9,22 @@ import { normalExpressionTypes } from '../../src/builtin/normalExpressions'
 import type { Context } from '../../src/evaluator/interface'
 
 describe('all tests', () => {
+  describe('auto completer', () => {
+    it('should return empty array if no token stream', () => {
+      const lits = new Lits()
+      const autoCompleter = lits.getAutoCompleter('')
+      expect(autoCompleter.getNextSuggestion()).toBeNull()
+    })
+    it('should return xxx', () => {
+      const lits = new Lits()
+      const autoCompleter = lits.getAutoCompleter('1 +xx', { values: { xxx: 1 } })
+      expect(autoCompleter.getNextSuggestion()).toEqual({
+        suggestion: 'xxx',
+        searchPattern: 'xx',
+      })
+    })
+  })
+
   describe('tEST', () => {
     let lits: Lits
     beforeEach(() => {
