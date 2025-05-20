@@ -26,3 +26,4 @@ export type { Argument, CommonReference, DatatypeReference, FunctionReference, R
 export type { ApiName, FunctionName, ShorthandName, DatatypeName } from '../reference/api'
 export { isApiName, isDataType } from '../reference/api'
 export { isGrid, isMatrix, isVector } from './typeGuards/annotatedArrays'
+export type { AutoCompleter } from './AutoCompleter/AutoCompleter'
