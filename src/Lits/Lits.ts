@@ -11,7 +11,7 @@ import { transformSymbolTokens } from '../transformer'
 import { untokenize } from '../untokenizer'
 import { builtin } from '../builtin'
 import { Parser } from '../parser/Parser'
-import { AutoCompleter } from '../AutoCompleter'
+import { AutoCompleter } from '../AutoCompleter/AutoCompleter'
 import { Cache } from './Cache'
 
 export interface LitsRuntimeInfo {

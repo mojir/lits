@@ -15,6 +15,11 @@ describe('all tests', () => {
       const autoCompleter = lits.getAutoCompleter('')
       expect(autoCompleter.getNextSuggestion()).toBeNull()
     })
+    it('should return empty array if invalid token stream', () => {
+      const lits = new Lits()
+      const autoCompleter = lits.getAutoCompleter('12s')
+      expect(autoCompleter.getNextSuggestion()).toBeNull()
+    })
     it('should return xxx', () => {
       const lits = new Lits()
       const autoCompleter = lits.getAutoCompleter('1 +xx', { values: { xxx: 1 } })

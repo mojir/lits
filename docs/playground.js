@@ -32687,7 +32687,7 @@ var Playground = (function (exports) {
     // TODO: replace with get suggestions function
     var AutoCompleter = /** @class */ (function () {
         function AutoCompleter(tokenStream, params) {
-            this.searchPattern = '';
+            this.searchPrefix = '';
             this.suggestions = [];
             this.suggestionIndex = null;
             if (!tokenStream) {
@@ -32701,8 +32701,8 @@ var Playground = (function (exports) {
             if (!autoCompleteTokenTypes.includes(tokenType)) {
                 return;
             }
-            this.searchPattern = tokenValue.toLowerCase();
-            this.suggestions = this.getAllSuggestions(params);
+            this.searchPrefix = tokenValue.toLowerCase();
+            this.generateSuggestions(params);
         }
         AutoCompleter.prototype.getNextSuggestion = function () {
             if (this.suggestions.length === 0) {
@@ -32719,7 +32719,7 @@ var Playground = (function (exports) {
             }
             return {
                 suggestion: this.suggestions[this.suggestionIndex],
-                searchPattern: this.searchPattern,
+                searchPattern: this.searchPrefix,
             };
         };
         AutoCompleter.prototype.getPreviousSuggestion = function () {
@@ -32737,34 +32737,39 @@ var Playground = (function (exports) {
             }
             return {
                 suggestion: this.suggestions[this.suggestionIndex],
-                searchPattern: this.searchPattern,
+                searchPattern: this.searchPrefix,
             };
         };
-        AutoCompleter.prototype.getAllSuggestions = function (params) {
+        AutoCompleter.prototype.getSuggestions = function () {
+            return __spreadArray([], __read(this.suggestions), false);
+        };
+        AutoCompleter.prototype.getSearchPrefix = function () {
+            return this.searchPrefix;
+        };
+        AutoCompleter.prototype.generateSuggestions = function (params) {
             var _this = this;
-            var _a, _b, _c, _d, _e;
+            var _a, _b, _c, _d;
             var suggestions = new Set();
             litsCommands.forEach(function (name) {
-                if (name.toLowerCase().startsWith(_this.searchPattern)) {
+                if (name.toLowerCase().startsWith(_this.searchPrefix)) {
                     suggestions.add(name);
                 }
             });
-            Object.keys((_b = (_a = params.globalContext) === null || _a === void 0 ? void 0 : _a.values) !== null && _b !== void 0 ? _b : {})
-                .filter(function (name) { return name.toLowerCase().startsWith(_this.searchPattern); })
+            Object.keys((_a = params.globalContext) !== null && _a !== void 0 ? _a : {})
+                .filter(function (name) { return name.toLowerCase().startsWith(_this.searchPrefix); })
                 .forEach(function (name) { return suggestions.add(name); });
-            (_c = params.contexts) === null || _c === void 0 ? void 0 : _c.forEach(function (context) {
-                var _a;
-                Object.keys((_a = context.values) !== null && _a !== void 0 ? _a : {})
-                    .filter(function (name) { return name.toLowerCase().startsWith(_this.searchPattern); })
+            (_b = params.contexts) === null || _b === void 0 ? void 0 : _b.forEach(function (context) {
+                Object.keys(context)
+                    .filter(function (name) { return name.toLowerCase().startsWith(_this.searchPrefix); })
                     .forEach(function (name) { return suggestions.add(name); });
             });
-            Object.keys((_d = params.jsFunctions) !== null && _d !== void 0 ? _d : {})
-                .filter(function (name) { return name.toLowerCase().startsWith(_this.searchPattern); })
+            Object.keys((_c = params.jsFunctions) !== null && _c !== void 0 ? _c : {})
+                .filter(function (name) { return name.toLowerCase().startsWith(_this.searchPrefix); })
                 .forEach(function (name) { return suggestions.add(name); });
-            Object.keys((_e = params.values) !== null && _e !== void 0 ? _e : {})
-                .filter(function (name) { return name.toLowerCase().startsWith(_this.searchPattern); })
+            Object.keys((_d = params.values) !== null && _d !== void 0 ? _d : {})
+                .filter(function (name) { return name.toLowerCase().startsWith(_this.searchPrefix); })
                 .forEach(function (name) { return suggestions.add(name); });
-            return __spreadArray([], __read(suggestions), false).sort(function (a, b) { return a.toLowerCase().localeCompare(b.toLowerCase()); });
+            this.suggestions = __spreadArray([], __read(suggestions), false).sort(function (a, b) { return a.toLowerCase().localeCompare(b.toLowerCase()); });
         };
         return AutoCompleter;
     }());
