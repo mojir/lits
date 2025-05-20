@@ -32701,7 +32701,7 @@ var Playground = (function (exports) {
             if (!autoCompleteTokenTypes.includes(tokenType)) {
                 return;
             }
-            this.searchPrefix = tokenValue.toLowerCase();
+            this.searchPrefix = tokenValue;
             this.generateSuggestions(params);
         }
         AutoCompleter.prototype.getNextSuggestion = function () {
@@ -32751,25 +32751,25 @@ var Playground = (function (exports) {
             var _a, _b, _c, _d;
             var suggestions = new Set();
             litsCommands.forEach(function (name) {
-                if (name.toLowerCase().startsWith(_this.searchPrefix)) {
+                if (name.startsWith(_this.searchPrefix)) {
                     suggestions.add(name);
                 }
             });
             Object.keys((_a = params.globalContext) !== null && _a !== void 0 ? _a : {})
-                .filter(function (name) { return name.toLowerCase().startsWith(_this.searchPrefix); })
+                .filter(function (name) { return name.startsWith(_this.searchPrefix); })
                 .forEach(function (name) { return suggestions.add(name); });
             (_b = params.contexts) === null || _b === void 0 ? void 0 : _b.forEach(function (context) {
                 Object.keys(context)
-                    .filter(function (name) { return name.toLowerCase().startsWith(_this.searchPrefix); })
+                    .filter(function (name) { return name.startsWith(_this.searchPrefix); })
                     .forEach(function (name) { return suggestions.add(name); });
             });
             Object.keys((_c = params.jsFunctions) !== null && _c !== void 0 ? _c : {})
-                .filter(function (name) { return name.toLowerCase().startsWith(_this.searchPrefix); })
+                .filter(function (name) { return name.startsWith(_this.searchPrefix); })
                 .forEach(function (name) { return suggestions.add(name); });
             Object.keys((_d = params.values) !== null && _d !== void 0 ? _d : {})
-                .filter(function (name) { return name.toLowerCase().startsWith(_this.searchPrefix); })
+                .filter(function (name) { return name.startsWith(_this.searchPrefix); })
                 .forEach(function (name) { return suggestions.add(name); });
-            this.suggestions = __spreadArray([], __read(suggestions), false).sort(function (a, b) { return a.toLowerCase().localeCompare(b.toLowerCase()); });
+            this.suggestions = __spreadArray([], __read(suggestions), false).sort(function (a, b) { return a.localeCompare(b); });
         };
         return AutoCompleter;
     }());

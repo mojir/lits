@@ -37,7 +37,7 @@ export class AutoCompleter {
       return
     }
 
-    this.searchPrefix = tokenValue.toLowerCase()
+    this.searchPrefix = tokenValue
     this.generateSuggestions(params)
   }
 
@@ -95,29 +95,29 @@ export class AutoCompleter {
     const suggestions = new Set<string>()
 
     litsCommands.forEach((name) => {
-      if (name.toLowerCase().startsWith(this.searchPrefix)) {
+      if (name.startsWith(this.searchPrefix)) {
         suggestions.add(name)
       }
     })
 
     Object.keys(params.globalContext ?? {})
-      .filter(name => name.toLowerCase().startsWith(this.searchPrefix))
+      .filter(name => name.startsWith(this.searchPrefix))
       .forEach(name => suggestions.add(name))
 
     params.contexts?.forEach((context) => {
       Object.keys(context)
-        .filter(name => name.toLowerCase().startsWith(this.searchPrefix))
+        .filter(name => name.startsWith(this.searchPrefix))
         .forEach(name => suggestions.add(name))
     })
 
     Object.keys(params.jsFunctions ?? {})
-      .filter(name => name.toLowerCase().startsWith(this.searchPrefix))
+      .filter(name => name.startsWith(this.searchPrefix))
       .forEach(name => suggestions.add(name))
 
     Object.keys(params.values ?? {})
-      .filter(name => name.toLowerCase().startsWith(this.searchPrefix))
+      .filter(name => name.startsWith(this.searchPrefix))
       .forEach(name => suggestions.add(name))
 
-    this.suggestions = [...suggestions].sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
+    this.suggestions = [...suggestions].sort((a, b) => a.localeCompare(b))
   }
 }

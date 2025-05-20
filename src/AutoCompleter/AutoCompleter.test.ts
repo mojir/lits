@@ -36,13 +36,13 @@ describe('autoCompleter', () => {
 
   describe('initialization', () => {
     test('should initialize with no params', () => {
-      const tokenStream = createMockTokenStream('Fun')
+      const tokenStream = createMockTokenStream('fun')
       const completer = new AutoCompleter(tokenStream, {})
       expect(completer.getSearchPrefix()).toBe('fun')
     })
 
     test('should initialize with valid token stream', () => {
-      const tokenStream = createMockTokenStream('Fun')
+      const tokenStream = createMockTokenStream('fun')
       const params = createMockContextParams()
       const completer = new AutoCompleter(tokenStream, params)
       expect(completer.getSearchPrefix()).toBe('fun')
