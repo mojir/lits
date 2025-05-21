@@ -47,16 +47,10 @@ export const reservedSymbolRecord = {
   ...numberReservedSymbolRecord,
 } as const
 
-export const validReservedSymbolRecord = {
-  ...nonNumberReservedSymbolRecord,
-  ...numberReservedSymbolRecord,
-} as const
-
-export type ValidReservedSymbol = keyof typeof validReservedSymbolRecord
 export type ReservedSymbol = keyof typeof reservedSymbolRecord
 
-export function isReservedSymbol(symbol: string): symbol is keyof typeof validReservedSymbolRecord {
-  return symbol in validReservedSymbolRecord
+export function isReservedSymbol(symbol: string): symbol is keyof typeof reservedSymbolRecord {
+  return symbol in reservedSymbolRecord
 }
 
 export function isNumberReservedSymbol(symbol: string): symbol is keyof typeof numberReservedSymbolRecord {

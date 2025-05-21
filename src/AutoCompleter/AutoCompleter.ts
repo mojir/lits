@@ -1,5 +1,6 @@
 import { normalExpressionKeys, specialExpressionKeys } from '../builtin'
 import type { ContextParams, Lits } from '../Lits/Lits'
+import { reservedSymbolRecord } from '../tokenizer/reservedNames'
 import type { TokenStream } from '../tokenizer/tokenize'
 
 export type AutoCompleteSuggestion = {
@@ -7,7 +8,7 @@ export type AutoCompleteSuggestion = {
   position: number
 }
 
-const litsCommands = new Set([...normalExpressionKeys, ...specialExpressionKeys])
+const litsCommands = new Set([...normalExpressionKeys, ...specialExpressionKeys, ...Object.keys(reservedSymbolRecord)])
 
 // TODO: replace with get suggestions function
 export class AutoCompleter {

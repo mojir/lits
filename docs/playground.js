@@ -13644,9 +13644,8 @@ var Playground = (function (exports) {
         'NaN': Number.NaN,
     };
     var reservedSymbolRecord = __assign(__assign({}, nonNumberReservedSymbolRecord), numberReservedSymbolRecord);
-    var validReservedSymbolRecord = __assign(__assign({}, nonNumberReservedSymbolRecord), numberReservedSymbolRecord);
     function isReservedSymbol(symbol) {
-        return symbol in validReservedSymbolRecord;
+        return symbol in reservedSymbolRecord;
     }
     function isNumberReservedSymbol(symbol) {
         return symbol in numberReservedSymbolRecord;
@@ -16760,7 +16759,7 @@ var Playground = (function (exports) {
         return Parser;
     }());
 
-    var litsCommands = new Set(__spreadArray(__spreadArray([], __read(normalExpressionKeys), false), __read(specialExpressionKeys), false));
+    var litsCommands = new Set(__spreadArray(__spreadArray(__spreadArray([], __read(normalExpressionKeys), false), __read(specialExpressionKeys), false), __read(Object.keys(reservedSymbolRecord)), false));
     // TODO: replace with get suggestions function
     var AutoCompleter = /** @class */ (function () {
         function AutoCompleter(originalProgram, originalPosition, lits, params) {

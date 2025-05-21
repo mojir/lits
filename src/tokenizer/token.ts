@@ -1,5 +1,5 @@
 import { LitsError } from '../errors'
-import type { ValidReservedSymbol } from './reservedNames'
+import type { ReservedSymbol } from './reservedNames'
 import { type SymbolicBinaryOperator, type SymbolicOperator, isBinaryOperator } from './operators'
 
 export const tokenTypes = [
@@ -40,7 +40,7 @@ export type MultiLineCommentToken = GenericToken<'MultiLineComment'>
 export type NumberToken = GenericToken<'Number'>
 export type OperatorToken<T extends SymbolicOperator = SymbolicOperator> = GenericToken<'Operator', T>
 export type RegexpShorthandToken = GenericToken<'RegexpShorthand'>
-export type ReservedSymbolToken<T extends ValidReservedSymbol = ValidReservedSymbol> = GenericToken<'ReservedSymbol', T>
+export type ReservedSymbolToken<T extends ReservedSymbol = ReservedSymbol> = GenericToken<'ReservedSymbol', T>
 export type SingleLineCommentToken = GenericToken<'SingleLineComment'>
 export type StringToken = GenericToken<'String'>
 export type SymbolToken<T extends string = string> = GenericToken<'Symbol', T>
@@ -95,7 +95,7 @@ export function asSymbolToken<T extends string>(token: Token | undefined | undef
   return token
 }
 
-export function isReservedSymbolToken<T extends ValidReservedSymbol>(token: Token | undefined | undefined, symbolName?: T): token is ReservedSymbolToken<T> {
+export function isReservedSymbolToken<T extends ReservedSymbol>(token: Token | undefined | undefined, symbolName?: T): token is ReservedSymbolToken<T> {
   if (token?.[0] !== 'ReservedSymbol') {
     return false
   }
@@ -104,12 +104,12 @@ export function isReservedSymbolToken<T extends ValidReservedSymbol>(token: Toke
   }
   return true
 }
-export function assertReservedSymbolToken<T extends ValidReservedSymbol>(token: Token | undefined | undefined, symbolName?: T): asserts token is ReservedSymbolToken<T> {
+export function assertReservedSymbolToken<T extends ReservedSymbol>(token: Token | undefined | undefined, symbolName?: T): asserts token is ReservedSymbolToken<T> {
   if (!isReservedSymbolToken(token, symbolName)) {
     throwUnexpectedToken('ReservedSymbol', symbolName, token)
   }
 }
-export function asReservedSymbolToken<T extends ValidReservedSymbol>(token: Token | undefined | undefined, symbolName?: T): ReservedSymbolToken<T> {
+export function asReservedSymbolToken<T extends ReservedSymbol>(token: Token | undefined | undefined, symbolName?: T): ReservedSymbolToken<T> {
   assertReservedSymbolToken(token, symbolName)
   return token
 }

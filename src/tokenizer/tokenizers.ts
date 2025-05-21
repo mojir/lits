@@ -1,7 +1,7 @@
 import { LitsError } from '../errors'
 import { isSymbolicOperator } from './operators'
 import type { BasePrefixedNumberToken, LBraceToken, LBracketToken, LParenToken, MultiLineCommentToken, NumberToken, OperatorToken, RBraceToken, RBracketToken, RParenToken, RegexpShorthandToken, ReservedSymbolToken, SingleLineCommentToken, StringToken, SymbolToken, Token, TokenDescriptor, WhitespaceToken } from './token'
-import type { ReservedSymbol, ValidReservedSymbol } from './reservedNames'
+import type { ReservedSymbol } from './reservedNames'
 import { reservedSymbolRecord } from './reservedNames'
 
 export type Tokenizer<T extends Token> = (input: string, position: number) => TokenDescriptor<T>
@@ -321,7 +321,7 @@ export const tokenizeReservedSymbolToken: Tokenizer<ReservedSymbolToken> = (inpu
   if (info === undefined) {
     return NO_MATCH
   }
-  return [symbolMeta[0], ['ReservedSymbol', symbolName as ValidReservedSymbol]]
+  return [symbolMeta[0], ['ReservedSymbol', symbolName as ReservedSymbol]]
 }
 
 export const tokenizeOperator: Tokenizer<OperatorToken> = (input, position) => {
