@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 import { stringifyValue } from '../../common/utils'
 import type { Example } from '../../reference/examples'
-import { apiReference } from '../../reference'
 import type { UnknownRecord } from '../../src/interface'
 import { type ContextParams, type JsFunction, Lits } from '../../src/Lits/Lits'
 import { asUnknownRecord } from '../../src/typeGuards'
