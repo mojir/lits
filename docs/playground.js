@@ -33017,6 +33017,7 @@ var Playground = (function (exports) {
         litsCodeTitleString: document.getElementById('lits-code-title-string'),
     };
     var moveParams = null;
+    var autoCompleter = null;
     var ignoreSelectionChange = false;
     function calculateDimensions() {
         return {
@@ -33500,19 +33501,46 @@ var Playground = (function (exports) {
         }
     }
     function keydownHandler(evt, onChange) {
-        if (['Tab', 'Backspace', 'Enter', 'Delete'].includes(evt.key)) {
-            var target = evt.target;
-            var start = target.selectionStart;
-            var end = target.selectionEnd;
+        console.log(evt);
+        if ((!['Shift', 'Control', 'Meta', 'Alt', 'Escape'].includes(evt.key) && evt.code !== 'Space')
+            || (evt.code === 'Space' && !evt.altKey)) {
+            autoCompleter = null;
+        }
+        var target = evt.target;
+        var start = target.selectionStart;
+        var end = target.selectionEnd;
+        if (evt.code === 'Space' && evt.altKey) {
+            evt.preventDefault();
+            if (!autoCompleter) {
+                autoCompleter = getLits().getAutoCompleter(target.value, start, getLitsParamsFromContext());
+            }
+            var suggestion = evt.shiftKey ? autoCompleter.getPreviousSuggestion() : autoCompleter.getNextSuggestion();
+            if (suggestion) {
+                target.value = suggestion.program;
+                target.selectionStart = target.selectionEnd = suggestion.position;
+                onChange();
+            }
+            return;
+        }
+        if (['Tab', 'Backspace', 'Enter', 'Delete', 'Escape'].includes(evt.key)) {
             var indexOfReturn = target.value.lastIndexOf('\n', start - 1);
             var rowLength = start - indexOfReturn - 1;
             var onTabStop = rowLength % 2 === 0;
-            switch (evt.key) {
+            switch (evt.code) {
                 case 'Tab':
                     evt.preventDefault();
                     if (!evt.shiftKey) {
                         target.value = target.value.substring(0, start) + (onTabStop ? '  ' : ' ') + target.value.substring(end);
                         target.selectionStart = target.selectionEnd = start + (onTabStop ? 2 : 1);
+                        onChange();
+                    }
+                    break;
+                case 'Escape':
+                    evt.preventDefault();
+                    if (autoCompleter) {
+                        target.value = autoCompleter.originalProgram;
+                        target.selectionStart = target.selectionEnd = autoCompleter.originalPosition;
+                        autoCompleter = null;
                         onChange();
                     }
                     break;

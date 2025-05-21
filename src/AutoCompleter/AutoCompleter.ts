@@ -17,7 +17,7 @@ export class AutoCompleter {
   private suggestions: string[] = []
   private suggestionIndex: null | number = null
 
-  constructor(private originalProgram: string, private originalPosition: number, lits: Lits, params: ContextParams) {
+  constructor(public readonly originalProgram: string, public readonly originalPosition: number, lits: Lits, params: ContextParams) {
     const partialProgram = this.originalProgram.slice(0, this.originalPosition)
     let tokenStream: TokenStream | null = null
     try {

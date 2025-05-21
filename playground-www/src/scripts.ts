@@ -5,6 +5,7 @@ import { apiReference } from '../../reference'
 import type { UnknownRecord } from '../../src/interface'
 import { type ContextParams, type JsFunction, Lits } from '../../src/Lits/Lits'
 import { asUnknownRecord } from '../../src/typeGuards'
+import type { AutoCompleter } from '../../src/AutoCompleter/AutoCompleter'
 import { Search } from './Search'
 import {
   applyEncodedState,
@@ -21,20 +22,6 @@ import {
   undoLitsCode,
 } from './state'
 import { isMac, throttle } from './utils'
-
-const csvApi = Object.values(apiReference)
-  .map((ref) => {
-    const title = ref.title
-    const description = ref.description.replaceAll(';', ':')
-    const titleParts = title.split(':')
-    const namespace = titleParts.length > 1 ? titleParts[0] : 'core'
-
-    return `${namespace};${title};${description}`
-  })
-  .join('\n')
-
-console.log(`Namespace;Title;Description\n${csvApi}`)
-console.log(Object.keys(apiReference))
 
 const getLits: (forceDebug?: 'debug') => Lits = (() => {
   const lits = new Lits({ debug: true })
@@ -94,6 +81,7 @@ type OutputType =
   | 'warn'
 
 let moveParams: MoveParams | null = null
+let autoCompleter: AutoCompleter | null = null
 let ignoreSelectionChange = false
 
 function calculateDimensions() {
@@ -655,50 +643,78 @@ function getDataFromUrl() {
 }
 
 function keydownHandler(evt: KeyboardEvent, onChange: () => void): void {
-  if (['Tab', 'Backspace', 'Enter', 'Delete'].includes(evt.key)) {
-    const target = evt.target as HTMLTextAreaElement
-    const start = target.selectionStart
-    const end = target.selectionEnd
+  const target = evt.target as HTMLTextAreaElement
+  const start = target.selectionStart
+  const end = target.selectionEnd
+  const indexOfReturn = target.value.lastIndexOf('\n', start - 1)
+  const rowLength = start - indexOfReturn - 1
+  const onTabStop = rowLength % 2 === 0
 
-    const indexOfReturn = target.value.lastIndexOf('\n', start - 1)
-    const rowLength = start - indexOfReturn - 1
-    const onTabStop = rowLength % 2 === 0
-    switch (evt.key) {
-      case 'Tab':
-        evt.preventDefault()
-        if (!evt.shiftKey) {
-          target.value = target.value.substring(0, start) + (onTabStop ? '  ' : ' ') + target.value.substring(end)
-          target.selectionStart = target.selectionEnd = start + (onTabStop ? 2 : 1)
-          onChange()
-        }
-        break
-      case 'Backspace':
-        if (onTabStop && start === end && target.value.substring(start - 2, start + 2) === '  ') {
-          evt.preventDefault()
-          target.value = target.value.substring(0, start - 2) + target.value.substring(end)
-          target.selectionStart = target.selectionEnd = start - 2
-          onChange()
-        }
-        break
-      case 'Enter': {
-        evt.preventDefault()
-        // eslint-disable-next-line regexp/optimal-quantifier-concatenation
-        const spaceCount = target.value.substring(indexOfReturn + 1, start).replace(/^( *).*/, '$1').length
-        target.value = `${target.value.substring(0, start)}\n${' '.repeat(spaceCount)}${target.value.substring(end)}`
-        target.selectionStart = target.selectionEnd = start + 1 + spaceCount
-        onChange()
-        break
-      }
+  if (
+    (!['Shift', 'Control', 'Meta', 'Alt', 'Escape'].includes(evt.key) && evt.code !== 'Space')
+    || (evt.code === 'Space' && !evt.altKey)
+  ) {
+    autoCompleter = null
+  }
 
-      case 'Delete':
-        if (onTabStop && start === end && target.value.substring(start, start + 2) === '  ') {
-          evt.preventDefault()
-          target.value = target.value.substring(0, start) + target.value.substring(end + 2)
-          target.selectionStart = target.selectionEnd = start
-          onChange()
-        }
-        break
+  if (evt.code === 'Space' && evt.altKey) {
+    evt.preventDefault()
+    if (!autoCompleter) {
+      autoCompleter = getLits().getAutoCompleter(target.value, start, getLitsParamsFromContext())
     }
+    const suggestion = evt.shiftKey ? autoCompleter.getPreviousSuggestion() : autoCompleter.getNextSuggestion()
+    if (suggestion) {
+      target.value = suggestion.program
+      target.selectionStart = target.selectionEnd = suggestion.position
+      onChange()
+    }
+    return
+  }
+
+  switch (evt.code) {
+    case 'Tab':
+      evt.preventDefault()
+      if (!evt.shiftKey) {
+        target.value = target.value.substring(0, start) + (onTabStop ? '  ' : ' ') + target.value.substring(end)
+        target.selectionStart = target.selectionEnd = start + (onTabStop ? 2 : 1)
+        onChange()
+      }
+      break
+    case 'Escape':
+      evt.preventDefault()
+      if (autoCompleter) {
+        target.value = autoCompleter.originalProgram
+        target.selectionStart = target.selectionEnd = autoCompleter.originalPosition
+        autoCompleter = null
+        onChange()
+      }
+      break
+    case 'Backspace':
+      if (onTabStop && start === end && target.value.substring(start - 2, start + 2) === '  ') {
+        evt.preventDefault()
+        target.value = target.value.substring(0, start - 2) + target.value.substring(end)
+        target.selectionStart = target.selectionEnd = start - 2
+        onChange()
+      }
+      break
+    case 'Enter': {
+      evt.preventDefault()
+      // eslint-disable-next-line regexp/optimal-quantifier-concatenation
+      const spaceCount = target.value.substring(indexOfReturn + 1, start).replace(/^( *).*/, '$1').length
+      target.value = `${target.value.substring(0, start)}\n${' '.repeat(spaceCount)}${target.value.substring(end)}`
+      target.selectionStart = target.selectionEnd = start + 1 + spaceCount
+      onChange()
+      break
+    }
+
+    case 'Delete':
+      if (onTabStop && start === end && target.value.substring(start, start + 2) === '  ') {
+        evt.preventDefault()
+        target.value = target.value.substring(0, start) + target.value.substring(end + 2)
+        target.selectionStart = target.selectionEnd = start
+        onChange()
+      }
+      break
   }
 }
 
