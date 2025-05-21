@@ -167,13 +167,7 @@ export class Lits {
     return ast
   }
 
-  public getAutoCompleter(partialProgram: string, params: ContextParams = {}): AutoCompleter {
-    try {
-      const tokenStream = this.tokenize(partialProgram)
-      return new AutoCompleter(tokenStream, params)
-    }
-    catch {
-      return new AutoCompleter(null, params)
-    }
+  public getAutoCompleter(program: string, position: number, params: ContextParams = {}): AutoCompleter {
+    return new AutoCompleter(program, position, this, params)
   }
 }

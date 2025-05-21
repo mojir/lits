@@ -1,111 +1,111 @@
-import { describe, expect, test } from 'vitest'
-import type { ContextParams } from '../Lits/Lits'
-import type { TokenStream } from '../tokenizer/tokenize'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { Lits } from '../Lits/Lits'
+import type { ContextParams } from '../Lits/Lits'
+import type { LitsFunction } from '../parser/types'
+import { FUNCTION_SYMBOL } from '../utils/symbols'
 import { AutoCompleter } from './AutoCompleter'
 
 describe('autoCompleter', () => {
-  function createMockTokenStream(program: string): TokenStream {
-    return new Lits().tokenize(program)
-  }
+  let lits: Lits
+  let params: ContextParams
 
-  function createMockContextParams(): ContextParams {
-    return {
+  beforeEach(() => {
+    lits = new Lits()
+    const testFunction: LitsFunction = {
+      [FUNCTION_SYMBOL]: true,
+      functionType: 'UserDefined',
+      name: 'testFunction',
+      evaluatedfunction: [[], [], {}],
+    }
+    const localFunction: LitsFunction = {
+      [FUNCTION_SYMBOL]: true,
+      functionType: 'UserDefined',
+      name: 'localFunction',
+      evaluatedfunction: [[], [], {}],
+    }
+    params = {
       globalContext: {
-        fooGlobal1: { value: 1 },
-        fooGlobal2: { value: 2 },
+        globalVar: { value: 'value' },
+        testFunction: { value: testFunction },
       },
-      contexts: [{
-        fooContext3: { value: 1 },
-        fooContext4: { value: 2 },
-      }],
+      contexts: [
+        {
+          localVar: { value: 'value' },
+          localFunction: { value: localFunction },
+        },
+      ],
       jsFunctions: {
-        fun1: {
-          fn: () => {},
-        },
-        fun2: {
-          fn: () => {},
-        },
+        jsFunc: { fn: () => 42 },
       },
       values: {
-        fooValue5: 1,
-        fooValue6: 2,
+        value_1: 1,
+        value_2: 'test',
       },
     }
-  }
+  })
 
-  describe('initialization', () => {
-    test('should initialize with no params', () => {
-      const tokenStream = createMockTokenStream('fun')
-      const completer = new AutoCompleter(tokenStream, {})
-      expect(completer.getSearchPrefix()).toBe('fun')
+  describe('constructor', () => {
+    it('should initialize with valid input', () => {
+      const completer = new AutoCompleter('(def', 4, lits, params)
+      expect(completer.getSearchString()).toBe('def')
+      expect(completer.getSuggestions()).toContain('defined?')
     })
 
-    test('should initialize with valid token stream', () => {
-      const tokenStream = createMockTokenStream('fun')
-      const params = createMockContextParams()
-      const completer = new AutoCompleter(tokenStream, params)
-      expect(completer.getSearchPrefix()).toBe('fun')
+    it('should initialize with no params', () => {
+      const completer = new AutoCompleter('(def', 4, lits, {})
+      expect(completer.getSearchString()).toBe('def')
+      expect(completer.getSuggestions()).toContain('defined?')
     })
 
-    test('should not initialize with null token stream', () => {
-      const params = createMockContextParams()
-      const completer = new AutoCompleter(null, params)
-      expect(completer.getSuggestions()).toEqual([])
+    it('should handle empty input', () => {
+      const completer = new AutoCompleter('', 0, lits, params)
+      expect(completer.getSearchString()).toBe('')
+      expect(completer.getSuggestions().length).toBe(0)
     })
 
-    test('should not initialize with non-matching token type', () => {
-      const tokenStream = createMockTokenStream('123')
-      const params = createMockContextParams()
-      const completer = new AutoCompleter(tokenStream, params)
-      expect(completer.getSuggestions()).toEqual([])
+    it('should handle invalid token stream', () => {
+      const completer = new AutoCompleter('123a', 4, lits, params)
+      expect(completer.getSearchString()).toBe('')
+      expect(completer.getSuggestions().length).toBe(0)
     })
   })
 
-  describe('suggestions', () => {
-    test('should generate suggestions from all contexts', () => {
-      const tokenStream = createMockTokenStream('f')
-      const params = createMockContextParams()
-      const completer = new AutoCompleter(tokenStream, params)
+  describe('suggestion generation', () => {
+    it('should generate suggestions from litsCommands', () => {
+      const completer = new AutoCompleter('(def', 4, lits, params)
       const suggestions = completer.getSuggestions()
-
-      expect(suggestions).toContain('fooGlobal1')
-      expect(suggestions).toContain('fooGlobal2')
-      expect(suggestions).toContain('fooContext3')
-      expect(suggestions).toContain('fooContext4')
-      expect(suggestions).toContain('fooValue5')
-      expect(suggestions).toContain('fooValue6')
-      expect(suggestions).toContain('fun1')
-      expect(suggestions).toContain('fun2')
-      // built-in functions
-      expect(suggestions).toContain('filter')
+      expect(suggestions).toContain('defined?')
     })
 
-    test('should filter suggestions based on search prefix', () => {
-      const tokenStream = createMockTokenStream('fooGlo')
-      const params = createMockContextParams()
-      const completer = new AutoCompleter(tokenStream, params)
+    it('should generate suggestions from globalContext', () => {
+      const completer = new AutoCompleter('(global', 7, lits, params)
       const suggestions = completer.getSuggestions()
-
-      expect(suggestions).toContain('fooGlobal1')
-      expect(suggestions).toContain('fooGlobal2')
-      expect(suggestions).not.toContain('fooContext3')
+      expect(suggestions).toContain('globalVar')
     })
 
-    test('should return empty suggestions when no matches found', () => {
-      const tokenStream = createMockTokenStream('xyz')
-      const params = createMockContextParams()
-      const completer = new AutoCompleter(tokenStream, params)
-      expect(completer.getSuggestions()).toEqual([])
+    it('should generate suggestions from contexts', () => {
+      const completer = new AutoCompleter('(local', 6, lits, params)
+      const suggestions = completer.getSuggestions()
+      expect(suggestions).toContain('localVar')
+    })
+
+    it('should generate suggestions from jsFunctions', () => {
+      const completer = new AutoCompleter('(js', 3, lits, params)
+      const suggestions = completer.getSuggestions()
+      expect(suggestions).toContain('jsFunc')
+    })
+
+    it('should generate suggestions from values', () => {
+      const completer = new AutoCompleter('(value', 6, lits, params)
+      const suggestions = completer.getSuggestions()
+      expect(suggestions).toContain('value_1')
+      expect(suggestions).toContain('value_2')
     })
   })
 
   describe('suggestion navigation', () => {
-    test('should cycle through suggestions forward', () => {
-      const tokenStream = createMockTokenStream('fooValue')
-      const params = createMockContextParams()
-      const completer = new AutoCompleter(tokenStream, params)
-
+    it('should cycle through suggestions forward', () => {
+      const completer = new AutoCompleter('(value_', 7, lits, params)
       const first = completer.getNextSuggestion()
       const second = completer.getNextSuggestion()
       const third = completer.getNextSuggestion()
@@ -113,15 +113,12 @@ describe('autoCompleter', () => {
       expect(first).not.toBeNull()
       expect(second).not.toBeNull()
       expect(third).not.toBeNull()
-      expect(first?.suggestion).not.toBe(second?.suggestion)
-      expect(second?.suggestion).not.toBe(third?.suggestion)
+      expect(first?.program).not.toBe(second?.program)
+      expect(second?.program).not.toBe(third?.program)
     })
 
-    test('should cycle through suggestions backward', () => {
-      const tokenStream = createMockTokenStream('fooValue')
-      const params = createMockContextParams()
-      const completer = new AutoCompleter(tokenStream, params)
-
+    it('should cycle through suggestions backward', () => {
+      const completer = new AutoCompleter('(value_', 7, lits, params)
       const first = completer.getPreviousSuggestion()
       const second = completer.getPreviousSuggestion()
       const third = completer.getPreviousSuggestion()
@@ -129,17 +126,25 @@ describe('autoCompleter', () => {
       expect(first).not.toBeNull()
       expect(second).not.toBeNull()
       expect(third).not.toBeNull()
-      expect(first?.suggestion).not.toBe(second?.suggestion)
-      expect(second?.suggestion).not.toBe(third?.suggestion)
+      expect(first?.program).not.toBe(second?.program)
+      expect(second?.program).not.toBe(third?.program)
     })
 
-    test('should return null when no suggestions available', () => {
-      const tokenStream = createMockTokenStream('xyz')
-      const params = createMockContextParams()
-      const completer = new AutoCompleter(tokenStream, params)
-
+    it('should return null when no suggestions are available', () => {
+      const completer = new AutoCompleter('(nonexistent', 12, lits, params)
       expect(completer.getNextSuggestion()).toBeNull()
       expect(completer.getPreviousSuggestion()).toBeNull()
+    })
+  })
+
+  describe('suggestion result format', () => {
+    it('should return correct program and position', () => {
+      const completer = new AutoCompleter('(def s)', 4, lits, params)
+      const suggestion = completer.getNextSuggestion()
+
+      expect(suggestion).not.toBeNull()
+      expect(suggestion?.program).toBe('(defined? s)')
+      expect(suggestion?.position).toBe(9)
     })
   })
 })

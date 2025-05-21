@@ -12,20 +12,20 @@ describe('all tests', () => {
   describe('auto completer', () => {
     it('should return empty array if no token stream', () => {
       const lits = new Lits()
-      const autoCompleter = lits.getAutoCompleter('')
+      const autoCompleter = lits.getAutoCompleter('', 0)
       expect(autoCompleter.getNextSuggestion()).toBeNull()
     })
     it('should return empty array if invalid token stream', () => {
       const lits = new Lits()
-      const autoCompleter = lits.getAutoCompleter('12s')
+      const autoCompleter = lits.getAutoCompleter('12s', 3)
       expect(autoCompleter.getNextSuggestion()).toBeNull()
     })
     it('should return xxx', () => {
       const lits = new Lits()
-      const autoCompleter = lits.getAutoCompleter('1 +xx', { values: { xxx: 1 } })
+      const autoCompleter = lits.getAutoCompleter('1 + xx + 2', 6, { values: { xxx: 1 } })
       expect(autoCompleter.getNextSuggestion()).toEqual({
-        suggestion: 'xxx',
-        searchPattern: 'xx',
+        program: '1 + xxx + 2',
+        position: 7,
       })
     })
   })

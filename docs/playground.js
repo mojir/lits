@@ -32678,18 +32678,25 @@ var Playground = (function (exports) {
         return Parser;
     }());
 
-    var autoCompleteTokenTypes = [
-        'Operator',
-        'ReservedSymbol',
-        'Symbol',
-    ];
     var litsCommands = new Set(__spreadArray(__spreadArray([], __read(normalExpressionKeys), false), __read(specialExpressionKeys), false));
     // TODO: replace with get suggestions function
     var AutoCompleter = /** @class */ (function () {
-        function AutoCompleter(tokenStream, params) {
-            this.searchPrefix = '';
+        function AutoCompleter(originalProgram, originalPosition, lits, params) {
+            this.originalProgram = originalProgram;
+            this.originalPosition = originalPosition;
+            this.prefixProgram = '';
+            this.suffixProgram = '';
+            this.searchString = '';
             this.suggestions = [];
             this.suggestionIndex = null;
+            var partialProgram = this.originalProgram.slice(0, this.originalPosition);
+            var tokenStream = null;
+            try {
+                tokenStream = lits.tokenize(partialProgram);
+            }
+            catch (_a) {
+                // do nothing
+            }
             if (!tokenStream) {
                 return;
             }
@@ -32697,14 +32704,28 @@ var Playground = (function (exports) {
             if (!lastToken) {
                 return;
             }
-            var _a = __read(lastToken, 2), tokenType = _a[0], tokenValue = _a[1];
-            if (!autoCompleteTokenTypes.includes(tokenType)) {
-                return;
-            }
-            this.searchPrefix = tokenValue;
-            this.generateSuggestions(params);
+            this.searchString = lastToken[1];
+            this.prefixProgram = this.originalProgram.slice(0, this.originalPosition - this.searchString.length);
+            this.suffixProgram = this.originalProgram.slice(this.prefixProgram.length + this.searchString.length);
+            this.originalProgram.slice(this.prefixProgram.length + this.searchString.length);
+            this.suggestions = this.generateSuggestions(params);
         }
         AutoCompleter.prototype.getNextSuggestion = function () {
+            return this.getAutoCompleteSuggestionResult(this.getNextSuggestionSymbol());
+        };
+        AutoCompleter.prototype.getPreviousSuggestion = function () {
+            return this.getAutoCompleteSuggestionResult(this.getPreviousSuggestionSymbol());
+        };
+        AutoCompleter.prototype.getAutoCompleteSuggestionResult = function (suggestion) {
+            if (suggestion === null) {
+                return null;
+            }
+            return {
+                program: this.prefixProgram + suggestion + this.suffixProgram,
+                position: this.prefixProgram.length + suggestion.length,
+            };
+        };
+        AutoCompleter.prototype.getNextSuggestionSymbol = function () {
             if (this.suggestions.length === 0) {
                 return null;
             }
@@ -32717,12 +32738,9 @@ var Playground = (function (exports) {
                     this.suggestionIndex = 0;
                 }
             }
-            return {
-                suggestion: this.suggestions[this.suggestionIndex],
-                searchPattern: this.searchPrefix,
-            };
+            return this.suggestions[this.suggestionIndex];
         };
-        AutoCompleter.prototype.getPreviousSuggestion = function () {
+        AutoCompleter.prototype.getPreviousSuggestionSymbol = function () {
             if (this.suggestions.length === 0) {
                 return null;
             }
@@ -32735,41 +32753,38 @@ var Playground = (function (exports) {
                     this.suggestionIndex = this.suggestions.length - 1;
                 }
             }
-            return {
-                suggestion: this.suggestions[this.suggestionIndex],
-                searchPattern: this.searchPrefix,
-            };
+            return this.suggestions[this.suggestionIndex];
         };
         AutoCompleter.prototype.getSuggestions = function () {
             return __spreadArray([], __read(this.suggestions), false);
         };
-        AutoCompleter.prototype.getSearchPrefix = function () {
-            return this.searchPrefix;
+        AutoCompleter.prototype.getSearchString = function () {
+            return this.searchString;
         };
         AutoCompleter.prototype.generateSuggestions = function (params) {
             var _this = this;
             var _a, _b, _c, _d;
             var suggestions = new Set();
             litsCommands.forEach(function (name) {
-                if (name.startsWith(_this.searchPrefix)) {
+                if (name.startsWith(_this.searchString)) {
                     suggestions.add(name);
                 }
             });
             Object.keys((_a = params.globalContext) !== null && _a !== void 0 ? _a : {})
-                .filter(function (name) { return name.startsWith(_this.searchPrefix); })
+                .filter(function (name) { return name.startsWith(_this.searchString); })
                 .forEach(function (name) { return suggestions.add(name); });
             (_b = params.contexts) === null || _b === void 0 ? void 0 : _b.forEach(function (context) {
                 Object.keys(context)
-                    .filter(function (name) { return name.startsWith(_this.searchPrefix); })
+                    .filter(function (name) { return name.startsWith(_this.searchString); })
                     .forEach(function (name) { return suggestions.add(name); });
             });
             Object.keys((_c = params.jsFunctions) !== null && _c !== void 0 ? _c : {})
-                .filter(function (name) { return name.startsWith(_this.searchPrefix); })
+                .filter(function (name) { return name.startsWith(_this.searchString); })
                 .forEach(function (name) { return suggestions.add(name); });
             Object.keys((_d = params.values) !== null && _d !== void 0 ? _d : {})
-                .filter(function (name) { return name.startsWith(_this.searchPrefix); })
+                .filter(function (name) { return name.startsWith(_this.searchString); })
                 .forEach(function (name) { return suggestions.add(name); });
-            this.suggestions = __spreadArray([], __read(suggestions), false).sort(function (a, b) { return a.localeCompare(b); });
+            return __spreadArray([], __read(suggestions), false).sort(function (a, b) { return a.localeCompare(b); });
         };
         return AutoCompleter;
     }());
@@ -32949,15 +32964,9 @@ var Playground = (function (exports) {
             (_a = this.astCache) === null || _a === void 0 ? void 0 : _a.set(program, ast);
             return ast;
         };
-        Lits.prototype.getAutoCompleter = function (partialProgram, params) {
+        Lits.prototype.getAutoCompleter = function (program, position, params) {
             if (params === void 0) { params = {}; }
-            try {
-                var tokenStream = this.tokenize(partialProgram);
-                return new AutoCompleter(tokenStream, params);
-            }
-            catch (_a) {
-                return new AutoCompleter(null, params);
-            }
+            return new AutoCompleter(program, position, this, params);
         };
         return Lits;
     }());
