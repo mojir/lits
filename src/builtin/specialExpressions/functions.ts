@@ -1,11 +1,12 @@
 import type { ContextStack } from '../../evaluator/ContextStack'
 import type { Context, EvaluateNode } from '../../evaluator/interface'
 import type { GetUndefinedSymbols, UndefinedSymbols } from '../../getUndefinedSymbols'
-import type {
-  EvaluatedFunction,
-  LitsFunction,
-  SpecialExpressionNode,
-  SymbolNode,
+import {
+  type EvaluatedFunction,
+  type LitsFunction,
+  type SpecialExpressionNode,
+  type SymbolNode,
+  bindingTargetTypes,
 } from '../../parser/types'
 import { isAny } from '../../typeGuards/lits'
 import { addToSet } from '../../utils'
@@ -31,12 +32,17 @@ export const functionSpecialExpression: BuiltinSpecialExpression<LitsFunction, F
 
     const evaluatedFunction = evaluateFunction(fn, contextStack, builtin, getUndefinedSymbols, evaluateNode)
 
+    const min = evaluatedFunction[0].filter(arg => arg[0] !== bindingTargetTypes.rest && arg[1][1] === undefined).length
+    const max = evaluatedFunction[0].some(arg => arg[0] === bindingTargetTypes.rest) ? undefined : evaluatedFunction[0].length
+    const paramCount = min === max ? min : { min, max }
+
     const litsFunction: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
       sourceCodeInfo: node[2],
       functionType: 'UserDefined',
       name: functionSymbol[1],
       evaluatedfunction: evaluatedFunction,
+      paramCount,
     }
 
     contextStack.addValues({ [functionSymbol[1]]: litsFunction }, functionSymbol[2])
@@ -59,14 +65,19 @@ export const defnSpecialExpression: BuiltinSpecialExpression<LitsFunction, DefnN
     assertUserDefinedSymbolNode(functionSymbol, node[2])
     assertNameNotDefined(functionSymbol[1], contextStack, builtin, node[2])
 
-    const evaluatedFunctionOverloades = evaluateFunction(fn, contextStack, builtin, getUndefinedSymbols, evaluateNode)
+    const evaluatedFunction = evaluateFunction(fn, contextStack, builtin, getUndefinedSymbols, evaluateNode)
+
+    const min = evaluatedFunction[0].filter(arg => arg[0] !== bindingTargetTypes.rest && arg[1][1] === undefined).length
+    const max = evaluatedFunction[0].some(arg => arg[0] === bindingTargetTypes.rest) ? undefined : evaluatedFunction[0].length
+    const paramCount = min === max ? min : { min, max }
 
     const litsFunction: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
       sourceCodeInfo: node[2],
       functionType: 'UserDefined',
       name: functionSymbol[1],
-      evaluatedfunction: evaluatedFunctionOverloades,
+      evaluatedfunction: evaluatedFunction,
+      paramCount,
     }
 
     contextStack.exportValues({ [functionSymbol[1]]: litsFunction }, functionSymbol[2])
@@ -88,12 +99,17 @@ export const fnSpecialExpression: BuiltinSpecialExpression<LitsFunction, FnNode>
     const fn = node[1][1]
     const evaluatedFunction = evaluateFunction(fn, contextStack, builtin, getUndefinedSymbols, evaluateNode)
 
+    const min = evaluatedFunction[0].filter(arg => arg[0] !== bindingTargetTypes.rest && arg[1][1] === undefined).length
+    const max = evaluatedFunction[0].some(arg => arg[0] === bindingTargetTypes.rest) ? undefined : evaluatedFunction[0].length
+    const paramCount = min === max ? min : { min, max }
+
     const litsFunction: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
       sourceCodeInfo: node[2],
       functionType: 'UserDefined',
       name: undefined,
       evaluatedfunction: evaluatedFunction,
+      paramCount,
     }
 
     return litsFunction

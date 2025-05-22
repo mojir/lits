@@ -8,7 +8,7 @@ import type {
 import type { SourceCodeInfo } from '../tokenizer/token'
 import type { SpecialExpressions } from '.'
 
-export type Count = number | { min?: number, max?: number, even?: true, odd?: true }
+export type ParamCount = number | { min?: number, max?: number, even?: true, odd?: true }
 
 export type NormalExpressionEvaluator<T> = (
   params: Arr,
@@ -19,7 +19,7 @@ export type NormalExpressionEvaluator<T> = (
 
 export interface BuiltinNormalExpression<T> {
   evaluate: NormalExpressionEvaluator<T>
-  paramCount: Count
+  paramCount: ParamCount
   aliases?: string[]
 }
 
@@ -34,7 +34,7 @@ export interface EvaluateHelpers {
 export interface BuiltinSpecialExpression<T, N extends SpecialExpressionNode> {
   evaluate: (node: N, contextStack: ContextStack, helpers: EvaluateHelpers) => T
   evaluateAsNormalExpression?: NormalExpressionEvaluator<T>
-  paramCount: Count
+  paramCount: ParamCount
   getUndefinedSymbols: (
     node: N,
     contextStack: ContextStack,

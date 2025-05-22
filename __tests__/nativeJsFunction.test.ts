@@ -43,6 +43,7 @@ const nativeJsFunction: NativeJsFunction = {
   name: 'square',
   functionType: 'NativeJsFunction',
   [FUNCTION_SYMBOL]: true,
+  paramCount: 1,
 }
 const values = {
   obj: {

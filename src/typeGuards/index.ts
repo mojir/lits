@@ -1,4 +1,4 @@
-import type { Count } from '../builtin/interface'
+import type { ParamCount } from '../builtin/interface'
 import { getNodeTypeName } from '../constants/constants'
 import { LitsError } from '../errors'
 import type { UnknownRecord } from '../interface'
@@ -7,7 +7,7 @@ import type { SourceCodeInfo } from '../tokenizer/token'
 import { valueToString } from '../utils/debug/debugTools'
 import { getSourceCodeInfo } from '../utils/debug/getSourceCodeInfo'
 
-export function assertNumberOfParams(count: Count, node: NormalExpressionNodeWithName): void {
+export function assertNumberOfParams(count: ParamCount, node: NormalExpressionNodeWithName): void {
   const length = node[1][1].length
   if (typeof count === 'number') {
     if (length !== count) {
@@ -90,7 +90,7 @@ export function asUnknownRecord(value: unknown, sourceCodeInfo?: SourceCodeInfo)
   return value
 }
 
-export function canBeOperator(count: Count): boolean {
+export function canBeOperator(count: ParamCount): boolean {
   if (typeof count === 'number') {
     return count === 2
   }

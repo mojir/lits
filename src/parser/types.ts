@@ -1,5 +1,6 @@
 import type { JsFunction } from '../Lits/Lits'
 import type { SpecialExpressionType } from '../builtin'
+import type { ParamCount } from '../builtin/interface'
 import type { specialExpressionTypes } from '../builtin/specialExpressionTypes'
 import type { FunctionType, NodeType, NodeTypes } from '../constants/constants'
 import type { Context } from '../evaluator/interface'
@@ -18,6 +19,7 @@ interface GenericLitsFunction {
   [FUNCTION_SYMBOL]: true
   sourceCodeInfo?: SourceCodeInfo
   functionType: FunctionType
+  paramCount: ParamCount
 }
 
 export interface RegularExpression {
@@ -150,10 +152,10 @@ export type BindingTargetType = typeof bindingTargetTypes[keyof typeof bindingTa
 
 type GenericTarget<T extends BindingTargetType, Payload extends unknown[]> = [T, Payload] | [T, Payload, SourceCodeInfo]
 
-export type SymbolBindingTarget = GenericTarget<typeof bindingTargetTypes.symbol, [SymbolNode, Node | undefined]>
-export type RestBindingTarget = GenericTarget<typeof bindingTargetTypes.rest, [string, Node | undefined]>
-export type ObjectBindingTarget = GenericTarget<typeof bindingTargetTypes.object, [Record<string, BindingTarget>, Node | undefined]>
-export type ArrayBindingTarget = GenericTarget<typeof bindingTargetTypes.array, [(BindingTarget | null)[], Node | undefined]>
+export type SymbolBindingTarget = GenericTarget<typeof bindingTargetTypes.symbol, [SymbolNode, Node | undefined /* default value */]>
+export type RestBindingTarget = GenericTarget<typeof bindingTargetTypes.rest, [string, Node | undefined /* default value */]>
+export type ObjectBindingTarget = GenericTarget<typeof bindingTargetTypes.object, [Record<string, BindingTarget>, Node | undefined /* default value */]>
+export type ArrayBindingTarget = GenericTarget<typeof bindingTargetTypes.array, [(BindingTarget | null)[], Node | undefined /* default value */]>
 
 export type BindingTarget = SymbolBindingTarget | RestBindingTarget | ObjectBindingTarget | ArrayBindingTarget
 

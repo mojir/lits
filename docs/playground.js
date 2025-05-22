@@ -3029,6 +3029,91 @@ var Playground = (function (exports) {
     function approxZero(value) {
         return Math.abs(value) < EPSILON;
     }
+    function paramCountAccepts(paramsCount, nbrOfParams) {
+        if (typeof paramsCount === 'number') {
+            return paramsCount === nbrOfParams;
+        }
+        var min = paramsCount.min, max = paramsCount.max, even = paramsCount.even, odd = paramsCount.odd;
+        if (even && nbrOfParams % 2 !== 0) {
+            return false;
+        }
+        if (odd && nbrOfParams % 2 !== 1) {
+            return false;
+        }
+        if (typeof min === 'number' && nbrOfParams < min) {
+            return false;
+        }
+        if (typeof max === 'number' && nbrOfParams > max) {
+            return false;
+        }
+        return true;
+    }
+    function paramCountAcceptsMin(paramsCount, nbrOfParams) {
+        if (typeof paramsCount === 'number') {
+            return nbrOfParams >= paramsCount;
+        }
+        var min = paramsCount.min;
+        if (typeof min === 'number' && nbrOfParams < min) {
+            return false;
+        }
+        return true;
+    }
+    function getCommonParamCount(params) {
+        return params.reduce(function (acc, param) {
+            if (acc === null) {
+                return null;
+            }
+            var paramCount = (typeof param === 'number' || isColl(param)) ? 1 : param.paramCount;
+            if (typeof acc === 'number' && typeof paramCount === 'number') {
+                return acc === paramCount ? acc : null;
+            }
+            if (typeof paramCount === 'number') {
+                if (paramCountAccepts(acc, paramCount)) {
+                    return paramCount;
+                }
+                return null;
+            }
+            if (typeof acc === 'number') {
+                if (paramCountAccepts(paramCount, acc)) {
+                    return acc;
+                }
+                return null;
+            }
+            var aMin = paramCount.min, aMax = paramCount.max, aEven = paramCount.even, aOdd = paramCount.odd;
+            var bMin = acc.min, bMax = acc.max, bEven = acc.even, bOdd = acc.odd;
+            var min = typeof aMin === 'number' && typeof bMin === 'number'
+                ? Math.max(aMin, bMin)
+                : typeof aMin === 'number' ? aMin : typeof bMin === 'number' ? bMin : undefined;
+            var max = typeof aMax === 'number' && typeof bMax === 'number'
+                ? Math.min(aMax, bMax)
+                : typeof aMax === 'number' ? aMax : typeof bMax === 'number' ? bMax : undefined;
+            var even = aEven !== null && aEven !== void 0 ? aEven : bEven;
+            var odd = aOdd !== null && aOdd !== void 0 ? aOdd : bOdd;
+            if (min !== undefined && max !== undefined && min > max) {
+                return null;
+            }
+            if (even && odd) {
+                return null;
+            }
+            if (odd && min !== undefined && min < 1) {
+                return null;
+            }
+            return { min: min, max: max, even: even, odd: odd };
+        }, {});
+    }
+    function getParamCount(param) {
+        return (typeof param === 'number' || isColl(param)) ? 1 : param.paramCount;
+    }
+    function paramCountMinus(paramCount, count) {
+        if (typeof paramCount === 'number') {
+            return paramCount - count;
+        }
+        var min = paramCount.min === undefined ? undefined : paramCount.min - count;
+        var max = paramCount.max === undefined ? undefined : paramCount.max - count;
+        var even = paramCount.even === undefined ? undefined : count % 2 === 0 ? true : undefined;
+        var odd = paramCount.odd === undefined ? undefined : count % 2 === 0 ? true : undefined;
+        return { min: min, max: max, even: even, odd: odd };
+    }
 
     // isArray not needed, use Array.isArary
     function asArray(value, sourceCodeInfo) {
@@ -6519,11 +6604,13 @@ var Playground = (function (exports) {
         'comp': {
             evaluate: function (params, sourceCodeInfo) {
                 var _a;
+                params.forEach(function (param) { return assertFunctionLike(param, sourceCodeInfo); });
                 return _a = {},
                     _a[FUNCTION_SYMBOL] = true,
                     _a.sourceCodeInfo = sourceCodeInfo,
                     _a.functionType = 'Comp',
                     _a.params = params,
+                    _a.paramCount = params.length > 0 ? getParamCount(params.at(-1)) : 1,
                     _a;
             },
             paramCount: {},
@@ -6537,6 +6624,7 @@ var Playground = (function (exports) {
                     _b.sourceCodeInfo = sourceCodeInfo,
                     _b.functionType = 'Constantly',
                     _b.value = toAny(value),
+                    _b.paramCount = {},
                     _b;
             },
             paramCount: 1,
@@ -6544,11 +6632,17 @@ var Playground = (function (exports) {
         'juxt': {
             evaluate: function (params, sourceCodeInfo) {
                 var _a;
+                params.forEach(function (param) { return assertFunctionLike(param, sourceCodeInfo); });
+                var paramCount = getCommonParamCount(params);
+                if (paramCount === null) {
+                    throw new LitsError('All functions must accept the same number of arguments', sourceCodeInfo);
+                }
                 return _a = {},
                     _a[FUNCTION_SYMBOL] = true,
                     _a.sourceCodeInfo = sourceCodeInfo,
                     _a.functionType = 'Juxt',
                     _a.params = params,
+                    _a.paramCount = paramCount,
                     _a;
             },
             paramCount: { min: 1 },
@@ -6557,11 +6651,13 @@ var Playground = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b;
                 var _c = __read(_a, 1), fn = _c[0];
+                var fun = asFunctionLike(fn, sourceCodeInfo);
                 return _b = {},
                     _b[FUNCTION_SYMBOL] = true,
                     _b.sourceCodeInfo = sourceCodeInfo,
                     _b.functionType = 'Complement',
-                    _b.function = asFunctionLike(fn, sourceCodeInfo),
+                    _b.function = fun,
+                    _b.paramCount = getParamCount(fun),
                     _b;
             },
             paramCount: 1,
@@ -6574,6 +6670,7 @@ var Playground = (function (exports) {
                     _a.sourceCodeInfo = sourceCodeInfo,
                     _a.functionType = 'EveryPred',
                     _a.params = params,
+                    _a.paramCount = 1,
                     _a;
             },
             paramCount: { min: 1 },
@@ -6586,6 +6683,7 @@ var Playground = (function (exports) {
                     _a.sourceCodeInfo = sourceCodeInfo,
                     _a.functionType = 'SomePred',
                     _a.params = params,
+                    _a.paramCount = 1,
                     _a;
             },
             paramCount: { min: 1 },
@@ -6594,12 +6692,14 @@ var Playground = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b;
                 var _c = __read(_a), fn = _c[0], params = _c.slice(1);
+                var fun = asFunctionLike(fn, sourceCodeInfo);
                 return _b = {},
                     _b[FUNCTION_SYMBOL] = true,
                     _b.sourceCodeInfo = sourceCodeInfo,
                     _b.functionType = 'Fnull',
-                    _b.function = asFunctionLike(fn, sourceCodeInfo),
+                    _b.function = fun,
                     _b.params = params,
+                    _b.paramCount = getParamCount(fun),
                     _b;
             },
             paramCount: { min: 2 },
@@ -13674,12 +13774,16 @@ var Playground = (function (exports) {
             assertUserDefinedSymbolNode(functionSymbol, node[2]);
             assertNameNotDefined(functionSymbol[1], contextStack, builtin, node[2]);
             var evaluatedFunction = evaluateFunction(fn, contextStack, builtin, getUndefinedSymbols, evaluateNode);
+            var min = evaluatedFunction[0].filter(function (arg) { return arg[0] !== bindingTargetTypes.rest && arg[1][1] === undefined; }).length;
+            var max = evaluatedFunction[0].some(function (arg) { return arg[0] === bindingTargetTypes.rest; }) ? undefined : evaluatedFunction[0].length;
+            var paramCount = min === max ? min : { min: min, max: max };
             var litsFunction = (_b = {},
                 _b[FUNCTION_SYMBOL] = true,
                 _b.sourceCodeInfo = node[2],
                 _b.functionType = 'UserDefined',
                 _b.name = functionSymbol[1],
                 _b.evaluatedfunction = evaluatedFunction,
+                _b.paramCount = paramCount,
                 _b);
             contextStack.addValues((_c = {}, _c[functionSymbol[1]] = litsFunction, _c), functionSymbol[2]);
             return litsFunction;
@@ -13701,13 +13805,17 @@ var Playground = (function (exports) {
             var _d = __read(node[1], 3), functionSymbol = _d[1], fn = _d[2];
             assertUserDefinedSymbolNode(functionSymbol, node[2]);
             assertNameNotDefined(functionSymbol[1], contextStack, builtin, node[2]);
-            var evaluatedFunctionOverloades = evaluateFunction(fn, contextStack, builtin, getUndefinedSymbols, evaluateNode);
+            var evaluatedFunction = evaluateFunction(fn, contextStack, builtin, getUndefinedSymbols, evaluateNode);
+            var min = evaluatedFunction[0].filter(function (arg) { return arg[0] !== bindingTargetTypes.rest && arg[1][1] === undefined; }).length;
+            var max = evaluatedFunction[0].some(function (arg) { return arg[0] === bindingTargetTypes.rest; }) ? undefined : evaluatedFunction[0].length;
+            var paramCount = min === max ? min : { min: min, max: max };
             var litsFunction = (_b = {},
                 _b[FUNCTION_SYMBOL] = true,
                 _b.sourceCodeInfo = node[2],
                 _b.functionType = 'UserDefined',
                 _b.name = functionSymbol[1],
-                _b.evaluatedfunction = evaluatedFunctionOverloades,
+                _b.evaluatedfunction = evaluatedFunction,
+                _b.paramCount = paramCount,
                 _b);
             contextStack.exportValues((_c = {}, _c[functionSymbol[1]] = litsFunction, _c), functionSymbol[2]);
             return litsFunction;
@@ -13729,12 +13837,16 @@ var Playground = (function (exports) {
             var builtin = _a.builtin, getUndefinedSymbols = _a.getUndefinedSymbols, evaluateNode = _a.evaluateNode;
             var fn = node[1][1];
             var evaluatedFunction = evaluateFunction(fn, contextStack, builtin, getUndefinedSymbols, evaluateNode);
+            var min = evaluatedFunction[0].filter(function (arg) { return arg[0] !== bindingTargetTypes.rest && arg[1][1] === undefined; }).length;
+            var max = evaluatedFunction[0].some(function (arg) { return arg[0] === bindingTargetTypes.rest; }) ? undefined : evaluatedFunction[0].length;
+            var paramCount = min === max ? min : { min: min, max: max };
             var litsFunction = (_b = {},
                 _b[FUNCTION_SYMBOL] = true,
                 _b.sourceCodeInfo = node[2],
                 _b.functionType = 'UserDefined',
                 _b.name = undefined,
                 _b.evaluatedfunction = evaluatedFunction,
+                _b.paramCount = paramCount,
                 _b);
             return litsFunction;
         },
@@ -14350,12 +14462,6 @@ var Playground = (function (exports) {
     // TODO, remove
     // console.log('builtin', [...specialExpressionKeys, ...normalExpressionKeys].length)
 
-    function checkParams(evaluatedFunction, nbrOfParams, sourceCodeInfo) {
-        var minArity = evaluatedFunction[0].filter(function (arg) { return arg[0] !== bindingTargetTypes.rest && arg[1][1] === undefined; }).length;
-        if (nbrOfParams < minArity) {
-            throw new LitsError("Unexpected number of arguments. Expected at least ".concat(minArity, ", got ").concat(nbrOfParams, "."), sourceCodeInfo);
-        }
-    }
     var functionExecutors = {
         NativeJsFunction: function (fn, params, sourceCodeInfo) {
             var _a;
@@ -14375,7 +14481,10 @@ var Playground = (function (exports) {
             var evaluateNode = _a.evaluateNode;
             var _loop_1 = function () {
                 var e_1, _b;
-                checkParams(fn.evaluatedfunction, params.length, sourceCodeInfo);
+                if (!paramCountAcceptsMin(fn.paramCount, params.length)) {
+                    throw new LitsError("Expected ".concat(fn.paramCount, " arguments, got ").concat(params.length, "."), sourceCodeInfo);
+                }
+                // checkParams(fn.evaluatedfunction, params.length, sourceCodeInfo)
                 var evaluatedFunction = fn.evaluatedfunction;
                 var args = evaluatedFunction[0];
                 var nbrOfNonRestArgs = args.filter(function (arg) { return arg[0] !== bindingTargetTypes.rest; }).length;
@@ -14672,6 +14781,7 @@ var Playground = (function (exports) {
                     _a.params = params,
                     _a.placeholders = placeholders,
                     _a.sourceCodeInfo = sourceCodeInfo,
+                    _a.paramCount = paramCountMinus(getParamCount(fn), params.length),
                     _a);
                 return partialFunction;
             }
@@ -14694,11 +14804,12 @@ var Playground = (function (exports) {
             if (placeholders.length > 0) {
                 var partialFunction = (_b = {},
                     _b[FUNCTION_SYMBOL] = true,
-                    _b.function = asFunctionLike(fn, sourceCodeInfo),
+                    _b.function = fn,
                     _b.functionType = 'Partial',
                     _b.params = params,
                     _b.placeholders = placeholders,
                     _b.sourceCodeInfo = sourceCodeInfo,
+                    _b.paramCount = paramCountMinus(getParamCount(fn), params.length),
                     _b);
                 return partialFunction;
             }
@@ -14920,11 +15031,13 @@ var Playground = (function (exports) {
             }
             if (isNormalBuiltinSymbolNode(node)) {
                 var type = node[1];
+                var normalExpression = allNormalExpressions[type];
                 return _b = {},
                     _b[FUNCTION_SYMBOL] = true,
                     _b.functionType = 'Builtin',
                     _b.normalBuitinSymbolType = type,
                     _b.sourceCodeInfo = node[2],
+                    _b.paramCount = normalExpression.paramCount,
                     _b;
             }
             var lookUpResult = this.lookUp(node);
@@ -14961,6 +15074,7 @@ var Playground = (function (exports) {
                             name: name
                         },
                         _b[FUNCTION_SYMBOL] = true,
+                        _b.paramCount = {},
                         _b);
                     return acc;
                 }, {}),

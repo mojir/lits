@@ -25,7 +25,7 @@ import { asFunctionLike, assertSeq, isObj } from '../typeGuards/lits'
 import { isLitsFunction } from '../typeGuards/litsFunction'
 import { assertNumber, isNumber } from '../typeGuards/number'
 import { assertString } from '../typeGuards/string'
-import { toAny } from '../utils'
+import { getParamCount, paramCountMinus, toAny } from '../utils'
 import { valueToString } from '../utils/debug/debugTools'
 import { FUNCTION_SYMBOL } from '../utils/symbols'
 import type { ContextStack } from './ContextStack'
@@ -118,6 +118,7 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
         params,
         placeholders,
         sourceCodeInfo,
+        paramCount: paramCountMinus(getParamCount(fn as FunctionLike), params.length),
       }
       return partialFunction
     }
@@ -141,11 +142,12 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
     if (placeholders.length > 0) {
       const partialFunction: PartialFunction = {
         [FUNCTION_SYMBOL]: true,
-        function: asFunctionLike(fn, sourceCodeInfo),
+        function: fn,
         functionType: 'Partial',
         params,
         placeholders,
         sourceCodeInfo,
+        paramCount: paramCountMinus(getParamCount(fn), params.length),
       }
       return partialFunction
     }

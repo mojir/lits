@@ -7,7 +7,6 @@ import type {
   CompFunction,
   ComplementFunction,
   ConstantlyFunction,
-  EvaluatedFunction,
   EveryPredFunction,
   FNullFunction,
   JuxtFunction,
@@ -23,7 +22,7 @@ import { bindingTargetTypes } from '../parser/types'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { asNonUndefined, isUnknownRecord } from '../typeGuards'
 import { asAny, asFunctionLike } from '../typeGuards/lits'
-import { toAny } from '../utils'
+import { paramCountAcceptsMin, toAny } from '../utils'
 import { valueToString } from '../utils/debug/debugTools'
 import type { ContextStack } from './ContextStack'
 import type { Context, EvaluateNode, ExecuteFunction } from './interface'
@@ -35,17 +34,6 @@ type FunctionExecutors = Record<LitsFunctionType, (
   contextStack: ContextStack,
   helpers: { evaluateNode: EvaluateNode, executeFunction: ExecuteFunction },
 ) => Any>
-
-function checkParams(
-  evaluatedFunction: EvaluatedFunction,
-  nbrOfParams: number,
-  sourceCodeInfo?: SourceCodeInfo,
-) {
-  const minArity = evaluatedFunction[0].filter(arg => arg[0] !== bindingTargetTypes.rest && arg[1][1] === undefined).length
-  if (nbrOfParams < minArity) {
-    throw new LitsError(`Unexpected number of arguments. Expected at least ${minArity}, got ${nbrOfParams}.`, sourceCodeInfo)
-  }
-}
 
 export const functionExecutors: FunctionExecutors = {
   NativeJsFunction: (fn: NativeJsFunction, params, sourceCodeInfo) => {
@@ -64,7 +52,10 @@ export const functionExecutors: FunctionExecutors = {
   },
   UserDefined: (fn: UserDefinedFunction, params, sourceCodeInfo, contextStack, { evaluateNode }) => {
     for (;;) {
-      checkParams(fn.evaluatedfunction, params.length, sourceCodeInfo)
+      if (!paramCountAcceptsMin(fn.paramCount, params.length)) {
+        throw new LitsError(`Expected ${fn.paramCount} arguments, got ${params.length}.`, sourceCodeInfo)
+      }
+      // checkParams(fn.evaluatedfunction, params.length, sourceCodeInfo)
       const evaluatedFunction = fn.evaluatedfunction
       const args = evaluatedFunction[0]
       const nbrOfNonRestArgs: number = args.filter(arg => arg[0] !== bindingTargetTypes.rest).length

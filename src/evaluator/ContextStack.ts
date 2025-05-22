@@ -1,4 +1,5 @@
 import { normalExpressionKeys, specialExpressionKeys } from '../builtin'
+import { allNormalExpressions } from '../builtin/normalExpressions'
 import { specialExpressionTypes } from '../builtin/specialExpressionTypes'
 import { LitsError, UndefinedSymbolError } from '../errors'
 import type { Any } from '../interface'
@@ -148,11 +149,13 @@ export class ContextStackImpl {
     }
     if (isNormalBuiltinSymbolNode(node)) {
       const type = node[1]
+      const normalExpression = allNormalExpressions[type]!
       return {
         [FUNCTION_SYMBOL]: true,
         functionType: 'Builtin',
         normalBuitinSymbolType: type,
         sourceCodeInfo: node[2],
+        paramCount: normalExpression.paramCount,
       } satisfies NormalBuiltinFunction
     }
     const lookUpResult = this.lookUp(node)
@@ -187,6 +190,7 @@ export function createContextStack(params: ContextParams = {}): ContextStack {
           nativeFn: jsFunction,
           name,
           [FUNCTION_SYMBOL]: true,
+          paramCount: {},
         }
         return acc
       }, {}),

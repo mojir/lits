@@ -5,14 +5,16 @@ import type {
   ConstantlyFunction,
   EveryPredFunction,
   FNullFunction,
+  FunctionLike,
   JuxtFunction,
   SomePredFunction,
 } from '../../../parser/types'
-import { toAny } from '../../../utils'
+import { getCommonParamCount, getParamCount, toAny } from '../../../utils'
 import { FUNCTION_SYMBOL } from '../../../utils/symbols'
 import type { BuiltinNormalExpressions } from '../../interface'
 import { assertArray } from '../../../typeGuards/array'
 import { asFunctionLike, assertFunctionLike } from '../../../typeGuards/lits'
+import { LitsError } from '../../../errors'
 
 export const functionalNormalExpression: BuiltinNormalExpressions = {
   '|>': {
@@ -43,11 +45,13 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
 
   'comp': {
     evaluate: (params, sourceCodeInfo): CompFunction => {
+      params.forEach(param => assertFunctionLike(param, sourceCodeInfo))
       return {
         [FUNCTION_SYMBOL]: true,
         sourceCodeInfo,
         functionType: 'Comp',
         params,
+        paramCount: params.length > 0 ? getParamCount(params.at(-1) as FunctionLike) : 1,
       }
     },
     paramCount: {},
@@ -60,6 +64,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         sourceCodeInfo,
         functionType: 'Constantly',
         value: toAny(value),
+        paramCount: {},
       }
     },
     paramCount: 1,
@@ -67,11 +72,17 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
 
   'juxt': {
     evaluate: (params, sourceCodeInfo): JuxtFunction => {
+      params.forEach(param => assertFunctionLike(param, sourceCodeInfo))
+      const paramCount = getCommonParamCount(params as FunctionLike[])
+      if (paramCount === null) {
+        throw new LitsError('All functions must accept the same number of arguments', sourceCodeInfo)
+      }
       return {
         [FUNCTION_SYMBOL]: true,
         sourceCodeInfo,
         functionType: 'Juxt',
         params,
+        paramCount,
       }
     },
     paramCount: { min: 1 },
@@ -79,11 +90,13 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
 
   'complement': {
     evaluate: ([fn], sourceCodeInfo): ComplementFunction => {
+      const fun = asFunctionLike(fn, sourceCodeInfo)
       return {
         [FUNCTION_SYMBOL]: true,
         sourceCodeInfo,
         functionType: 'Complement',
-        function: asFunctionLike(fn, sourceCodeInfo),
+        function: fun,
+        paramCount: getParamCount(fun),
       }
     },
     paramCount: 1,
@@ -96,6 +109,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         sourceCodeInfo,
         functionType: 'EveryPred',
         params,
+        paramCount: 1,
       }
     },
     paramCount: { min: 1 },
@@ -108,6 +122,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         sourceCodeInfo,
         functionType: 'SomePred',
         params,
+        paramCount: 1,
       }
     },
     paramCount: { min: 1 },
@@ -115,12 +130,14 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
 
   'fnull': {
     evaluate: ([fn, ...params], sourceCodeInfo): FNullFunction => {
+      const fun = asFunctionLike(fn, sourceCodeInfo)
       return {
         [FUNCTION_SYMBOL]: true,
         sourceCodeInfo,
         functionType: 'Fnull',
-        function: asFunctionLike(fn, sourceCodeInfo),
+        function: fun,
         params,
+        paramCount: getParamCount(fun),
       }
     },
     paramCount: { min: 2 },
