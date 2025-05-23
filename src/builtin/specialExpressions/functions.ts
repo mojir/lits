@@ -68,8 +68,7 @@ export const defnSpecialExpression: BuiltinSpecialExpression<LitsFunction, DefnN
     const evaluatedFunction = evaluateFunction(fn, contextStack, builtin, getUndefinedSymbols, evaluateNode)
 
     const min = evaluatedFunction[0].filter(arg => arg[0] !== bindingTargetTypes.rest && arg[1][1] === undefined).length
-    const max = evaluatedFunction[0].some(arg => arg[0] === bindingTargetTypes.rest) ? undefined : evaluatedFunction[0].length
-    const paramCount = min === max ? min : { min, max }
+    const paramCount = { min }
 
     const litsFunction: LitsFunction = {
       [FUNCTION_SYMBOL]: true,

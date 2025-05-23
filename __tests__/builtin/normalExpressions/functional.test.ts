@@ -106,6 +106,9 @@ let foo = comp(!, odd?);
         expect(lits.run('juxt(+, *, min, max)(3, 4, 6)')).toEqual([13, 72, 3, 6])
         expect(lits.run('juxt("a", "b")({ a: 1, b: 2, c: 3, d: 4})')).toEqual([1, 2])
         expect(lits.run('apply(juxt(+, *, min, max), range(1, 5))')).toEqual([10, 24, 1, 4])
+        expect(() => lits.run('juxt(-> $, -> $2)')).toThrow() // Must accept same number of params
+        // eslint-disable-next-line ts/no-unsafe-member-access
+        expect((lits.run('juxt((x) -> x, (x, y = 1) -> x + y, (...c) -> 0)') as any).paramCount).toEqual(1)
         expect(() => lits.run('juxt()')).toThrow(LitsError)
       })
     })

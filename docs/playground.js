@@ -3029,91 +3029,6 @@ var Playground = (function (exports) {
     function approxZero(value) {
         return Math.abs(value) < EPSILON;
     }
-    function paramCountAccepts(paramsCount, nbrOfParams) {
-        if (typeof paramsCount === 'number') {
-            return paramsCount === nbrOfParams;
-        }
-        var min = paramsCount.min, max = paramsCount.max, even = paramsCount.even, odd = paramsCount.odd;
-        if (even && nbrOfParams % 2 !== 0) {
-            return false;
-        }
-        if (odd && nbrOfParams % 2 !== 1) {
-            return false;
-        }
-        if (typeof min === 'number' && nbrOfParams < min) {
-            return false;
-        }
-        if (typeof max === 'number' && nbrOfParams > max) {
-            return false;
-        }
-        return true;
-    }
-    function paramCountAcceptsMin(paramsCount, nbrOfParams) {
-        if (typeof paramsCount === 'number') {
-            return nbrOfParams >= paramsCount;
-        }
-        var min = paramsCount.min;
-        if (typeof min === 'number' && nbrOfParams < min) {
-            return false;
-        }
-        return true;
-    }
-    function getCommonParamCount(params) {
-        return params.reduce(function (acc, param) {
-            if (acc === null) {
-                return null;
-            }
-            var paramCount = (typeof param === 'number' || isColl(param)) ? 1 : param.paramCount;
-            if (typeof acc === 'number' && typeof paramCount === 'number') {
-                return acc === paramCount ? acc : null;
-            }
-            if (typeof paramCount === 'number') {
-                if (paramCountAccepts(acc, paramCount)) {
-                    return paramCount;
-                }
-                return null;
-            }
-            if (typeof acc === 'number') {
-                if (paramCountAccepts(paramCount, acc)) {
-                    return acc;
-                }
-                return null;
-            }
-            var aMin = paramCount.min, aMax = paramCount.max, aEven = paramCount.even, aOdd = paramCount.odd;
-            var bMin = acc.min, bMax = acc.max, bEven = acc.even, bOdd = acc.odd;
-            var min = typeof aMin === 'number' && typeof bMin === 'number'
-                ? Math.max(aMin, bMin)
-                : typeof aMin === 'number' ? aMin : typeof bMin === 'number' ? bMin : undefined;
-            var max = typeof aMax === 'number' && typeof bMax === 'number'
-                ? Math.min(aMax, bMax)
-                : typeof aMax === 'number' ? aMax : typeof bMax === 'number' ? bMax : undefined;
-            var even = aEven !== null && aEven !== void 0 ? aEven : bEven;
-            var odd = aOdd !== null && aOdd !== void 0 ? aOdd : bOdd;
-            if (min !== undefined && max !== undefined && min > max) {
-                return null;
-            }
-            if (even && odd) {
-                return null;
-            }
-            if (odd && min !== undefined && min < 1) {
-                return null;
-            }
-            return { min: min, max: max, even: even, odd: odd };
-        }, {});
-    }
-    function getParamCount(param) {
-        return (typeof param === 'number' || isColl(param)) ? 1 : param.paramCount;
-    }
-    function paramCountMinus(paramCount, count) {
-        if (typeof paramCount === 'number') {
-            return paramCount - count;
-        }
-        var min = paramCount.min === undefined ? undefined : paramCount.min - count;
-        var max = paramCount.max === undefined ? undefined : paramCount.max - count;
-        var even = paramCount.even === undefined ? undefined : count % 2 === 0 ? true : undefined;
-        var odd = paramCount.odd === undefined ? undefined : count % 2 === 0 ? true : undefined;
-        return { min: min, max: max, even: even, odd: odd };
-    }
 
     // isArray not needed, use Array.isArary
     function asArray(value, sourceCodeInfo) {
@@ -6571,6 +6486,98 @@ var Playground = (function (exports) {
         return templateString;
     }
 
+    function paramCountAccepts(paramsCount, nbrOfParams) {
+        if (typeof paramsCount === 'number') {
+            return paramsCount === nbrOfParams;
+        }
+        var min = paramsCount.min, max = paramsCount.max, even = paramsCount.even, odd = paramsCount.odd;
+        if (even && nbrOfParams % 2 !== 0) {
+            return false;
+        }
+        if (odd && nbrOfParams % 2 !== 1) {
+            return false;
+        }
+        if (typeof min === 'number' && nbrOfParams < min) {
+            return false;
+        }
+        if (typeof max === 'number' && nbrOfParams > max) {
+            return false;
+        }
+        return true;
+    }
+    function paramCountAcceptsMin(paramsCount, nbrOfParams) {
+        if (typeof paramsCount === 'number') {
+            return nbrOfParams >= paramsCount;
+        }
+        var min = paramsCount.min;
+        if (typeof min === 'number' && nbrOfParams < min) {
+            return false;
+        }
+        return true;
+    }
+    function getCommonParamCountFromFunctions(params) {
+        return params.reduce(function (acc, param) {
+            if (acc === null) {
+                return null;
+            }
+            var paramCount = (typeof param === 'number' || isColl(param)) ? 1 : param.paramCount;
+            if (typeof acc === 'number' && typeof paramCount === 'number') {
+                return acc === paramCount ? acc : null;
+            }
+            if (typeof paramCount === 'number') {
+                if (paramCountAccepts(acc, paramCount)) {
+                    return paramCount;
+                }
+                return null;
+            }
+            if (typeof acc === 'number') {
+                if (paramCountAccepts(paramCount, acc)) {
+                    return acc;
+                }
+                return null;
+            }
+            var aMin = paramCount.min, aMax = paramCount.max, aEven = paramCount.even, aOdd = paramCount.odd;
+            var bMin = acc.min, bMax = acc.max, bEven = acc.even, bOdd = acc.odd;
+            var min = typeof aMin === 'number' && typeof bMin === 'number'
+                ? Math.max(aMin, bMin)
+                : typeof aMin === 'number' ? aMin : typeof bMin === 'number' ? bMin : undefined;
+            var max = typeof aMax === 'number' && typeof bMax === 'number'
+                ? Math.min(aMax, bMax)
+                : typeof aMax === 'number' ? aMax : typeof bMax === 'number' ? bMax : undefined;
+            var even = aEven !== null && aEven !== void 0 ? aEven : bEven;
+            var odd = aOdd !== null && aOdd !== void 0 ? aOdd : bOdd;
+            if (even && odd) {
+                return null;
+            }
+            if (even) {
+                if (typeof min === 'number' && min % 2 !== 0) {
+                    min += 1;
+                }
+                if (typeof max === 'number' && max % 2 !== 0) {
+                    max -= 1;
+                }
+            }
+            if (odd) {
+                if (typeof min === 'number' && min % 2 === 0) {
+                    min += 1;
+                }
+                if (typeof max === 'number' && max % 2 === 0) {
+                    max -= 1;
+                }
+            }
+            if (typeof min === 'number' && typeof max === 'number' && min > max) {
+                return null;
+            }
+            if (typeof min === 'number' && min === max) {
+                return min;
+            }
+            return { min: min, max: max, even: even, odd: odd };
+        }, {});
+    }
+    function getParamCountFromFunction(param) {
+        return (typeof param === 'number' || isColl(param)) ? 1 : param.paramCount;
+    }
+
     var functionalNormalExpression = {
         '|>': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -6610,7 +6617,7 @@ var Playground = (function (exports) {
                     _a.sourceCodeInfo = sourceCodeInfo,
                     _a.functionType = 'Comp',
                     _a.params = params,
-                    _a.paramCount = params.length > 0 ? getParamCount(params.at(-1)) : 1,
+                    _a.paramCount = params.length > 0 ? getParamCountFromFunction(params.at(-1)) : 1,
                     _a;
             },
             paramCount: {},
@@ -6633,7 +6640,7 @@ var Playground = (function (exports) {
             evaluate: function (params, sourceCodeInfo) {
                 var _a;
                 params.forEach(function (param) { return assertFunctionLike(param, sourceCodeInfo); });
-                var paramCount = getCommonParamCount(params);
+                var paramCount = getCommonParamCountFromFunctions(params);
                 if (paramCount === null) {
                     throw new LitsError('All functions must accept the same number of arguments', sourceCodeInfo);
                 }
@@ -6657,7 +6664,7 @@ var Playground = (function (exports) {
                     _b.sourceCodeInfo = sourceCodeInfo,
                     _b.functionType = 'Complement',
                     _b.function = fun,
-                    _b.paramCount = getParamCount(fun),
+                    _b.paramCount = getParamCountFromFunction(fun),
                     _b;
             },
             paramCount: 1,
@@ -6699,7 +6706,7 @@ var Playground = (function (exports) {
                     _b.functionType = 'Fnull',
                     _b.function = fun,
                     _b.params = params,
-                    _b.paramCount = getParamCount(fun),
+                    _b.paramCount = getParamCountFromFunction(fun),
                     _b;
             },
             paramCount: { min: 2 },
@@ -13807,8 +13814,7 @@ var Playground = (function (exports) {
             assertNameNotDefined(functionSymbol[1], contextStack, builtin, node[2]);
             var evaluatedFunction = evaluateFunction(fn, contextStack, builtin, getUndefinedSymbols, evaluateNode);
             var min = evaluatedFunction[0].filter(function (arg) { return arg[0] !== bindingTargetTypes.rest && arg[1][1] === undefined; }).length;
-            var max = evaluatedFunction[0].some(function (arg) { return arg[0] === bindingTargetTypes.rest; }) ? undefined : evaluatedFunction[0].length;
-            var paramCount = min === max ? min : { min: min, max: max };
+            var paramCount = { min: min };
             var litsFunction = (_b = {},
                 _b[FUNCTION_SYMBOL] = true,
                 _b.sourceCodeInfo = node[2],
@@ -14781,7 +14787,7 @@ var Playground = (function (exports) {
                     _a.params = params,
                     _a.placeholders = placeholders,
                     _a.sourceCodeInfo = sourceCodeInfo,
-                    _a.paramCount = paramCountMinus(getParamCount(fn), params.length),
+                    _a.paramCount = placeholders.length,
                     _a);
                 return partialFunction;
             }
@@ -14809,7 +14815,7 @@ var Playground = (function (exports) {
                     _b.params = params,
                     _b.placeholders = placeholders,
                     _b.sourceCodeInfo = sourceCodeInfo,
-                    _b.paramCount = paramCountMinus(getParamCount(fn), params.length),
+                    _b.paramCount = placeholders.length,
                     _b);
                 return partialFunction;
             }
@@ -15059,7 +15065,8 @@ var Playground = (function (exports) {
             nativeJsFunctions: params.jsFunctions
                 && Object.entries(params.jsFunctions).reduce(function (acc, _a) {
                     var _b;
-                    var _c = __read(_a, 2), name = _c[0], jsFunction = _c[1];
+                    var _c;
+                    var _d = __read(_a, 2), name = _d[0], jsFunction = _d[1];
                     if (specialExpressionKeys.includes(name)) {
                         console.warn("Cannot shadow special expression \"".concat(name, "\", ignoring."));
                         return acc;
@@ -15074,7 +15081,7 @@ var Playground = (function (exports) {
                             name: name
                         },
                         _b[FUNCTION_SYMBOL] = true,
-                        _b.paramCount = {},
+                        _b.paramCount = (_c = jsFunction.paramCount) !== null && _c !== void 0 ? _c : {},
                         _b);
                     return acc;
                 }, {}),

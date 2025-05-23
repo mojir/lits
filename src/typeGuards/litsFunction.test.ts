@@ -1,9 +1,7 @@
 import { describe, expect, it, test } from 'vitest'
 import { testTypeGuars } from '../../__tests__/testUtils'
-import type { LitsFunction } from '../parser/types'
-import { createNativeJsFunction } from '../utils'
+import type { LitsFunction, NativeJsFunction } from '../parser/types'
 import { FUNCTION_SYMBOL } from '../utils/symbols'
-
 import { normalExpressionTypes } from '../builtin/normalExpressions'
 import {
   asLitsFunction,
@@ -17,6 +15,18 @@ import {
   isNativeJsFunction,
   isUserDefinedFunction,
 } from './litsFunction'
+
+function createNativeJsFunction(fn: (...args: any[]) => unknown, name?: string): NativeJsFunction {
+  return {
+    [FUNCTION_SYMBOL]: true,
+    nativeFn: {
+      fn,
+    },
+    name,
+    functionType: 'NativeJsFunction',
+    paramCount: {},
+  }
+}
 
 describe('litsFunction type guards', () => {
   const lf1: LitsFunction = {

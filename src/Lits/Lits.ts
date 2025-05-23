@@ -12,6 +12,7 @@ import { untokenize } from '../untokenizer'
 import { builtin } from '../builtin'
 import { Parser } from '../parser/Parser'
 import { AutoCompleter } from '../AutoCompleter/AutoCompleter'
+import type { ParamCount } from '../builtin/interface'
 import { Cache } from './Cache'
 
 export interface LitsRuntimeInfo {
@@ -22,6 +23,7 @@ export interface LitsRuntimeInfo {
 
 export interface JsFunction {
   fn: (...args: any[]) => unknown
+  paramCount?: ParamCount
 }
 
 export interface ContextParams {

@@ -9,7 +9,8 @@ import type {
   JuxtFunction,
   SomePredFunction,
 } from '../../../parser/types'
-import { getCommonParamCount, getParamCount, toAny } from '../../../utils'
+import { toAny } from '../../../utils'
+import { getCommonParamCountFromFunctions, getParamCountFromFunction } from '../../../utils/paramCount'
 import { FUNCTION_SYMBOL } from '../../../utils/symbols'
 import type { BuiltinNormalExpressions } from '../../interface'
 import { assertArray } from '../../../typeGuards/array'
@@ -51,7 +52,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         sourceCodeInfo,
         functionType: 'Comp',
         params,
-        paramCount: params.length > 0 ? getParamCount(params.at(-1) as FunctionLike) : 1,
+        paramCount: params.length > 0 ? getParamCountFromFunction(params.at(-1) as FunctionLike) : 1,
       }
     },
     paramCount: {},
@@ -73,7 +74,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
   'juxt': {
     evaluate: (params, sourceCodeInfo): JuxtFunction => {
       params.forEach(param => assertFunctionLike(param, sourceCodeInfo))
-      const paramCount = getCommonParamCount(params as FunctionLike[])
+      const paramCount = getCommonParamCountFromFunctions(params as FunctionLike[])
       if (paramCount === null) {
         throw new LitsError('All functions must accept the same number of arguments', sourceCodeInfo)
       }
@@ -96,7 +97,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         sourceCodeInfo,
         functionType: 'Complement',
         function: fun,
-        paramCount: getParamCount(fun),
+        paramCount: getParamCountFromFunction(fun),
       }
     },
     paramCount: 1,
@@ -137,7 +138,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         functionType: 'Fnull',
         function: fun,
         params,
-        paramCount: getParamCount(fun),
+        paramCount: getParamCountFromFunction(fun),
       }
     },
     paramCount: { min: 2 },

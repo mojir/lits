@@ -190,7 +190,7 @@ export function createContextStack(params: ContextParams = {}): ContextStack {
           nativeFn: jsFunction,
           name,
           [FUNCTION_SYMBOL]: true,
-          paramCount: {},
+          paramCount: jsFunction.paramCount ?? {},
         }
         return acc
       }, {}),
