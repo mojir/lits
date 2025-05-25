@@ -137,8 +137,7 @@ function createNamedNormalExpressionNode(symbolNode: NormalBuiltinSymbolNode | U
 }
 
 function createAccessorNode(left: Node, right: Node, sourceCodeInfo: SourceCodeInfo | undefined): NormalExpressionNodeExpression {
-  // Unnamed normal expression
-  return withSourceCodeInfo([NodeTypes.NormalExpression, [left, [right]]], sourceCodeInfo)
+  return withSourceCodeInfo([NodeTypes.NormalExpression, [[NodeTypes.NormalBuiltinSymbol, normalExpressionTypes.get], [left, right]]], sourceCodeInfo)
 }
 
 function fromBinaryOperatorToNode(operator: OperatorToken, symbolNode: SymbolNode, left: Node, right: Node, sourceCodeInfo: SourceCodeInfo | undefined): Node {

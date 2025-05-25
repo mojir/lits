@@ -15779,8 +15779,7 @@ var Playground = (function (exports) {
         return node;
     }
     function createAccessorNode(left, right, sourceCodeInfo) {
-        // Unnamed normal expression
-        return withSourceCodeInfo([NodeTypes.NormalExpression, [left, [right]]], sourceCodeInfo);
+        return withSourceCodeInfo([NodeTypes.NormalExpression, [[NodeTypes.NormalBuiltinSymbol, normalExpressionTypes.get], [left, right]]], sourceCodeInfo);
     }
     function fromBinaryOperatorToNode(operator, symbolNode, left, right, sourceCodeInfo) {
         var operatorName = operator[1];

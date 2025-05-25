@@ -399,6 +399,26 @@ switch (2) {
   })
 
   describe('function', () => {
+    test('accessing property on function', () => {
+      expect(() => lits.run(`
+        function foo() {
+          10
+        };
+
+        foo.bar
+        `)).toThrow()
+    })
+
+    test('accessing number on function', () => {
+      expect(() => lits.run(`
+        function foo() {
+          10
+        };
+
+        foo[1]
+        `)).toThrow()
+    })
+
     test('lexical scoping', () => {
       expect(lits.run(`
       let bar = {
