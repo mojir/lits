@@ -20,6 +20,7 @@ interface GenericLitsFunction {
   sourceCodeInfo?: SourceCodeInfo
   functionType: FunctionType
   paramCount: ParamCount
+  docString: string // documentation string
 }
 
 export interface RegularExpression {

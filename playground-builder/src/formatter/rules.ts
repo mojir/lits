@@ -111,6 +111,8 @@ function getStylesFromToken(token: Token): string {
   switch (tokenType) {
     case 'String':
       return styles('text-color-Pink')
+    case 'DocString':
+      return styles('text-color-Pink')
     case 'RegexpShorthand':
       return styles('text-color-Pink')
     case 'Symbol':

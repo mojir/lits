@@ -24,6 +24,7 @@ export interface LitsRuntimeInfo {
 export interface JsFunction {
   fn: (...args: any[]) => unknown
   paramCount?: ParamCount
+  docString?: string
 }
 
 export interface ContextParams {

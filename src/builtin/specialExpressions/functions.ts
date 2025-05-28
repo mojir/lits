@@ -18,14 +18,14 @@ import { assertNameNotDefined } from '../utils'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 import { assertUserDefinedSymbolNode } from '../../typeGuards/astNode'
 
-export type DefnNode = SpecialExpressionNode<[typeof specialExpressionTypes['0_defn'], SymbolNode, Function]>
-export type FunctionNode = SpecialExpressionNode<[typeof specialExpressionTypes['function'], SymbolNode, Function]>
+export type DefnNode = SpecialExpressionNode<[typeof specialExpressionTypes['0_defn'], SymbolNode, Function, string]> // last string is docString
+export type FunctionNode = SpecialExpressionNode<[typeof specialExpressionTypes['function'], SymbolNode, Function, string]> // last string is docString
 export type FnNode = SpecialExpressionNode<[typeof specialExpressionTypes['0_fn'], Function]>
 
 export const functionSpecialExpression: BuiltinSpecialExpression<LitsFunction, FunctionNode> = {
   paramCount: {},
   evaluate: (node, contextStack, { builtin, getUndefinedSymbols, evaluateNode }) => {
-    const [, functionSymbol, fn] = node[1]
+    const [, functionSymbol, fn, docString] = node[1]
 
     assertUserDefinedSymbolNode(functionSymbol, node[2])
     assertNameNotDefined(functionSymbol[1], contextStack, builtin, node[2])
@@ -43,6 +43,7 @@ export const functionSpecialExpression: BuiltinSpecialExpression<LitsFunction, F
       name: functionSymbol[1],
       evaluatedfunction: evaluatedFunction,
       paramCount,
+      docString,
     }
 
     contextStack.addValues({ [functionSymbol[1]]: litsFunction }, functionSymbol[2])
@@ -60,7 +61,7 @@ export const functionSpecialExpression: BuiltinSpecialExpression<LitsFunction, F
 export const defnSpecialExpression: BuiltinSpecialExpression<LitsFunction, DefnNode> = {
   paramCount: {},
   evaluate: (node, contextStack, { builtin, getUndefinedSymbols, evaluateNode }) => {
-    const [, functionSymbol, fn] = node[1]
+    const [, functionSymbol, fn, docString] = node[1]
 
     assertUserDefinedSymbolNode(functionSymbol, node[2])
     assertNameNotDefined(functionSymbol[1], contextStack, builtin, node[2])
@@ -77,6 +78,7 @@ export const defnSpecialExpression: BuiltinSpecialExpression<LitsFunction, DefnN
       name: functionSymbol[1],
       evaluatedfunction: evaluatedFunction,
       paramCount,
+      docString,
     }
 
     contextStack.exportValues({ [functionSymbol[1]]: litsFunction }, functionSymbol[2])
@@ -109,6 +111,7 @@ export const fnSpecialExpression: BuiltinSpecialExpression<LitsFunction, FnNode>
       name: undefined,
       evaluatedfunction: evaluatedFunction,
       paramCount,
+      docString: '',
     }
 
     return litsFunction

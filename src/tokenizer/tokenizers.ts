@@ -1,6 +1,6 @@
 import { LitsError } from '../errors'
 import { isSymbolicOperator } from './operators'
-import type { BasePrefixedNumberToken, LBraceToken, LBracketToken, LParenToken, MultiLineCommentToken, NumberToken, OperatorToken, RBraceToken, RBracketToken, RParenToken, RegexpShorthandToken, ReservedSymbolToken, SingleLineCommentToken, StringToken, SymbolToken, Token, TokenDescriptor, WhitespaceToken } from './token'
+import type { BasePrefixedNumberToken, DocStringToken, LBraceToken, LBracketToken, LParenToken, MultiLineCommentToken, NumberToken, OperatorToken, RBraceToken, RBracketToken, RParenToken, RegexpShorthandToken, ReservedSymbolToken, SingleLineCommentToken, StringToken, SymbolToken, Token, TokenDescriptor, WhitespaceToken } from './token'
 import type { ReservedSymbol } from './reservedNames'
 import { reservedSymbolRecord } from './reservedNames'
 
@@ -57,6 +57,40 @@ const tokenizeLBrace: Tokenizer<LBraceToken> = (input, position) =>
 const tokenizeRBrace: Tokenizer<RBraceToken> = (input, position) =>
   tokenizeToken('RBrace', '}', input, position)
 
+const tokenizeDocString: Tokenizer<DocStringToken> = (input, position) => {
+  if (input[position] !== '"' || input[position + 1] !== '"' || input[position + 2] !== '"')
+    return NO_MATCH
+
+  let value = '"""'
+  let length = 3
+  let char = input[position + length]
+  let nextThreeChars = input.slice(position + length, position + length + 3)
+  let escaping = false
+  while (char && nextThreeChars !== '"""' || escaping) {
+    if (char === undefined)
+      throw new LitsError(`Unclosed doc string at position ${position}.`, undefined)
+
+    length += 1
+    if (escaping) {
+      escaping = false
+      value += char
+    }
+    else {
+      if (char === '\\') {
+        escaping = true
+      }
+      value += char
+    }
+    char = input[position + length]
+    nextThreeChars = input.slice(position + length, position + length + 3)
+  }
+  if (!char) {
+    throw new LitsError(`Unclosed doc string at position ${position}.`, undefined)
+  }
+  value += '"""' // closing quote
+  return [length + 3, ['DocString', value]]
+}
+
 const tokenizeString: Tokenizer<StringToken> = (input, position) => {
   if (input[position] !== '"')
     return NO_MATCH
@@ -65,7 +99,7 @@ const tokenizeString: Tokenizer<StringToken> = (input, position) => {
   let length = 1
   let char = input[position + length]
   let escaping = false
-  while (char !== '"' || escaping) {
+  while (char && char !== '"' || escaping) {
     if (char === undefined)
       throw new LitsError(`Unclosed string at position ${position}.`, undefined)
 
@@ -81,6 +115,9 @@ const tokenizeString: Tokenizer<StringToken> = (input, position) => {
       value += char
     }
     char = input[position + length]
+  }
+  if (!char) {
+    throw new LitsError(`Unclosed string at position ${position}.`, undefined)
   }
   value += '"' // closing quote
   return [length + 1, ['String', value]]
@@ -387,6 +424,7 @@ export const tokenizers = [
   tokenizeRBracket,
   tokenizeLBrace,
   tokenizeRBrace,
+  tokenizeDocString,
   tokenizeString,
   tokenizeRegexpShorthand,
   tokenizeBasePrefixedNumber,

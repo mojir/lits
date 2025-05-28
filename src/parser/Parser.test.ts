@@ -480,10 +480,10 @@ describe('parser', () => {
 
   describe('try', () => {
     test('samples', () => {
-      expect(lits.run('try { 1 + 2 } catch { 0 }')).toBe(3)
-      expect(lits.run('try { 1 + "2" } catch { 0 }')).toBe(0)
-      expect(lits.run('try { 1 + "2" } catch {}')).toBe(null)
-      expect(lits.run('try {} catch {}')).toBe(null)
+      expect(lits.run('try 1 + 2 catch { 0 }')).toBe(3)
+      expect(lits.run('try 1 + "2" catch 0')).toBe(0)
+      expect(lits.run('try { 1 + "2" } catch {}')).toEqual({})
+      expect(lits.run('try {} catch {}')).toEqual({})
       expect(lits.run(`
         try {
           let x = "2";
@@ -858,6 +858,13 @@ function foo() {
 
 foo()`)).toBe(42)
     })
+
+    test('empty block', () => {
+      expect(lits.run(`
+function foo() {};
+
+foo()`)).toBeNull()
+    })
     test('with rest arguments///', () => {
       expect(lits.run(`
 function foo(...x) {
@@ -1063,17 +1070,17 @@ foo(1, 2)`)).toBe(3)
           foo({ b: 1})
         `)).toBe(10)
         expect(lits.run(`
-          let { children [{ age as firstChildAge }] } = an-object;
+          let { children: [{ age as firstChildAge }] } = an-object;
           firstChildAge
         `, { values })).toBe(10)
 
         expect(lits.run(`
-          let { children [{ age as firstChildAge, name }] } = an-object;
+          let { children: [{ age as firstChildAge, name }] } = an-object;
           [firstChildAge, name]
         `, { values })).toEqual([10, 'Alice'])
 
         expect(lits.run(`
-          let { children [, { age, name }] } = an-object;
+          let { children: [, { age, name }] } = an-object;
           [age, name]
         `, { values })).toEqual([7, 'Bob'])
 

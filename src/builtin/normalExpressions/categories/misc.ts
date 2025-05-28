@@ -5,6 +5,7 @@ import { asAny, assertAny } from '../../../typeGuards/lits'
 import { assertNumber } from '../../../typeGuards/number'
 import { asStringOrNumber, assertString, assertStringOrNumber } from '../../../typeGuards/string'
 import type { SourceCodeInfo } from '../../../tokenizer/token'
+import { assertLitsFunction } from '../../../typeGuards/litsFunction'
 
 function isEqual([first, ...rest]: unknown[], sourceCodeInfo: SourceCodeInfo | undefined) {
   const firstAny = asAny(first, sourceCodeInfo)
@@ -20,7 +21,6 @@ function isIdentical([first, ...rest]: unknown[]) {
     if (param !== first)
       return false
   }
-
   return true
 }
 
@@ -163,5 +163,12 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       return JSON.stringify(first, null, second)
     },
     paramCount: { min: 1, max: 2 },
+  },
+  'doc': {
+    evaluate: ([fn], sourceCodeInfo): string => {
+      assertLitsFunction(fn, sourceCodeInfo)
+      return fn.docString
+    },
+    paramCount: 1,
   },
 }

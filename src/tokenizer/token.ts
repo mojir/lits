@@ -10,6 +10,7 @@ export const tokenTypes = [
   'LParen',
   'RParen',
   'BasePrefixedNumber',
+  'DocString',
   'MultiLineComment',
   'Number',
   'Operator',
@@ -43,6 +44,7 @@ export type RegexpShorthandToken = GenericToken<'RegexpShorthand'>
 export type ReservedSymbolToken<T extends ReservedSymbol = ReservedSymbol> = GenericToken<'ReservedSymbol', T>
 export type SingleLineCommentToken = GenericToken<'SingleLineComment'>
 export type StringToken = GenericToken<'String'>
+export type DocStringToken = GenericToken<'DocString'>
 export type SymbolToken<T extends string = string> = GenericToken<'Symbol', T>
 export type WhitespaceToken = GenericToken<'Whitespace'>
 
@@ -54,6 +56,7 @@ export type Token =
   | RBracketToken
   | RParenToken
   | BasePrefixedNumberToken
+  | DocStringToken
   | MultiLineCommentToken
   | NumberToken
   | OperatorToken
@@ -287,6 +290,10 @@ export function assertStringToken(token: Token | undefined): asserts token is St
 export function asStringToken(token: Token | undefined): StringToken {
   assertStringToken(token)
   return token
+}
+
+export function isDocStringToken(token: Token | undefined): token is DocStringToken {
+  return token?.[0] === 'DocString'
 }
 
 export function isRegexpShorthandToken(token: Token | undefined): token is RegexpShorthandToken {

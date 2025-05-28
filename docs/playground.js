@@ -2183,6 +2183,10 @@ var Playground = (function (exports) {
             return false;
         return !!value[FUNCTION_SYMBOL];
     }
+    function assertLitsFunction(value, sourceCodeInfo) {
+        if (!isLitsFunction(value))
+            throw getAssertionError('LitsFunction', value, sourceCodeInfo);
+    }
 
     function isAny(value) {
         // TODO weak test
@@ -5603,6 +5607,14 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 1, max: 2 },
         },
+        'doc': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), fn = _b[0];
+                assertLitsFunction(fn, sourceCodeInfo);
+                return fn.docString;
+            },
+            paramCount: 1,
+        },
     };
 
     var assertNormalExpression = {
@@ -6618,6 +6630,7 @@ var Playground = (function (exports) {
                     _a.functionType = 'Comp',
                     _a.params = params,
                     _a.paramCount = params.length > 0 ? getParamCountFromFunction(params.at(-1)) : 1,
+                    _a.docString = '',
                     _a;
             },
             paramCount: {},
@@ -6632,6 +6645,7 @@ var Playground = (function (exports) {
                     _b.functionType = 'Constantly',
                     _b.value = toAny(value),
                     _b.paramCount = {},
+                    _b.docString = '',
                     _b;
             },
             paramCount: 1,
@@ -6650,6 +6664,7 @@ var Playground = (function (exports) {
                     _a.functionType = 'Juxt',
                     _a.params = params,
                     _a.paramCount = paramCount,
+                    _a.docString = '',
                     _a;
             },
             paramCount: { min: 1 },
@@ -6665,6 +6680,7 @@ var Playground = (function (exports) {
                     _b.functionType = 'Complement',
                     _b.function = fun,
                     _b.paramCount = getParamCountFromFunction(fun),
+                    _b.docString = '',
                     _b;
             },
             paramCount: 1,
@@ -6678,6 +6694,7 @@ var Playground = (function (exports) {
                     _a.functionType = 'EveryPred',
                     _a.params = params,
                     _a.paramCount = 1,
+                    _a.docString = '',
                     _a;
             },
             paramCount: { min: 1 },
@@ -6691,6 +6708,7 @@ var Playground = (function (exports) {
                     _a.functionType = 'SomePred',
                     _a.params = params,
                     _a.paramCount = 1,
+                    _a.docString = '',
                     _a;
             },
             paramCount: { min: 1 },
@@ -6707,6 +6725,7 @@ var Playground = (function (exports) {
                     _b.function = fun,
                     _b.params = params,
                     _b.paramCount = getParamCountFromFunction(fun),
+                    _b.docString = '',
                     _b;
             },
             paramCount: { min: 2 },
@@ -13777,7 +13796,7 @@ var Playground = (function (exports) {
         evaluate: function (node, contextStack, _a) {
             var _b, _c;
             var builtin = _a.builtin, getUndefinedSymbols = _a.getUndefinedSymbols, evaluateNode = _a.evaluateNode;
-            var _d = __read(node[1], 3), functionSymbol = _d[1], fn = _d[2];
+            var _d = __read(node[1], 4), functionSymbol = _d[1], fn = _d[2], docString = _d[3];
             assertUserDefinedSymbolNode(functionSymbol, node[2]);
             assertNameNotDefined(functionSymbol[1], contextStack, builtin, node[2]);
             var evaluatedFunction = evaluateFunction(fn, contextStack, builtin, getUndefinedSymbols, evaluateNode);
@@ -13791,6 +13810,7 @@ var Playground = (function (exports) {
                 _b.name = functionSymbol[1],
                 _b.evaluatedfunction = evaluatedFunction,
                 _b.paramCount = paramCount,
+                _b.docString = docString,
                 _b);
             contextStack.addValues((_c = {}, _c[functionSymbol[1]] = litsFunction, _c), functionSymbol[2]);
             return litsFunction;
@@ -13809,7 +13829,7 @@ var Playground = (function (exports) {
         evaluate: function (node, contextStack, _a) {
             var _b, _c;
             var builtin = _a.builtin, getUndefinedSymbols = _a.getUndefinedSymbols, evaluateNode = _a.evaluateNode;
-            var _d = __read(node[1], 3), functionSymbol = _d[1], fn = _d[2];
+            var _d = __read(node[1], 4), functionSymbol = _d[1], fn = _d[2], docString = _d[3];
             assertUserDefinedSymbolNode(functionSymbol, node[2]);
             assertNameNotDefined(functionSymbol[1], contextStack, builtin, node[2]);
             var evaluatedFunction = evaluateFunction(fn, contextStack, builtin, getUndefinedSymbols, evaluateNode);
@@ -13822,6 +13842,7 @@ var Playground = (function (exports) {
                 _b.name = functionSymbol[1],
                 _b.evaluatedfunction = evaluatedFunction,
                 _b.paramCount = paramCount,
+                _b.docString = docString,
                 _b);
             contextStack.exportValues((_c = {}, _c[functionSymbol[1]] = litsFunction, _c), functionSymbol[2]);
             return litsFunction;
@@ -13853,6 +13874,7 @@ var Playground = (function (exports) {
                 _b.name = undefined,
                 _b.evaluatedfunction = evaluatedFunction,
                 _b.paramCount = paramCount,
+                _b.docString = '',
                 _b);
             return litsFunction;
         },
@@ -14788,6 +14810,7 @@ var Playground = (function (exports) {
                     _a.placeholders = placeholders,
                     _a.sourceCodeInfo = sourceCodeInfo,
                     _a.paramCount = placeholders.length,
+                    _a.docString = '',
                     _a);
                 return partialFunction;
             }
@@ -14816,6 +14839,7 @@ var Playground = (function (exports) {
                     _b.placeholders = placeholders,
                     _b.sourceCodeInfo = sourceCodeInfo,
                     _b.paramCount = placeholders.length,
+                    _b.docString = '',
                     _b);
                 return partialFunction;
             }
@@ -15044,6 +15068,7 @@ var Playground = (function (exports) {
                     _b.normalBuitinSymbolType = type,
                     _b.sourceCodeInfo = node[2],
                     _b.paramCount = normalExpression.paramCount,
+                    _b.docString = 'Builtin function',
                     _b;
             }
             var lookUpResult = this.lookUp(node);
@@ -15065,8 +15090,8 @@ var Playground = (function (exports) {
             nativeJsFunctions: params.jsFunctions
                 && Object.entries(params.jsFunctions).reduce(function (acc, _a) {
                     var _b;
-                    var _c;
-                    var _d = __read(_a, 2), name = _d[0], jsFunction = _d[1];
+                    var _c, _d;
+                    var _e = __read(_a, 2), name = _e[0], jsFunction = _e[1];
                     if (specialExpressionKeys.includes(name)) {
                         console.warn("Cannot shadow special expression \"".concat(name, "\", ignoring."));
                         return acc;
@@ -15082,6 +15107,7 @@ var Playground = (function (exports) {
                         },
                         _b[FUNCTION_SYMBOL] = true,
                         _b.paramCount = (_c = jsFunction.paramCount) !== null && _c !== void 0 ? _c : {},
+                        _b.docString = (_d = jsFunction.docString) !== null && _d !== void 0 ? _d : '',
                         _b);
                     return acc;
                 }, {}),
@@ -15210,6 +15236,37 @@ var Playground = (function (exports) {
     var tokenizeRBrace = function (input, position) {
         return tokenizeToken('RBrace', '}', input, position);
     };
+    var tokenizeDocString = function (input, position) {
+        if (input[position] !== '"' || input[position + 1] !== '"' || input[position + 2] !== '"')
+            return NO_MATCH;
+        var value = '"""';
+        var length = 3;
+        var char = input[position + length];
+        var nextThreeChars = input.slice(position + length, position + length + 3);
+        var escaping = false;
+        while (char && nextThreeChars !== '"""' || escaping) {
+            if (char === undefined)
+                throw new LitsError("Unclosed doc string at position ".concat(position, "."), undefined);
+            length += 1;
+            if (escaping) {
+                escaping = false;
+                value += char;
+            }
+            else {
+                if (char === '\\') {
+                    escaping = true;
+                }
+                value += char;
+            }
+            char = input[position + length];
+            nextThreeChars = input.slice(position + length, position + length + 3);
+        }
+        if (!char) {
+            throw new LitsError("Unclosed doc string at position ".concat(position, "."), undefined);
+        }
+        value += '"""'; // closing quote
+        return [length + 3, ['DocString', value]];
+    };
     var tokenizeString = function (input, position) {
         if (input[position] !== '"')
             return NO_MATCH;
@@ -15217,7 +15274,7 @@ var Playground = (function (exports) {
         var length = 1;
         var char = input[position + length];
         var escaping = false;
-        while (char !== '"' || escaping) {
+        while (char && char !== '"' || escaping) {
             if (char === undefined)
                 throw new LitsError("Unclosed string at position ".concat(position, "."), undefined);
             length += 1;
@@ -15232,6 +15289,9 @@ var Playground = (function (exports) {
                 value += char;
             }
             char = input[position + length];
+        }
+        if (!char) {
+            throw new LitsError("Unclosed string at position ".concat(position, "."), undefined);
         }
         value += '"'; // closing quote
         return [length + 1, ['String', value]];
@@ -15488,6 +15548,7 @@ var Playground = (function (exports) {
         tokenizeRBracket,
         tokenizeLBrace,
         tokenizeRBrace,
+        tokenizeDocString,
         tokenizeString,
         tokenizeRegexpShorthand,
         tokenizeBasePrefixedNumber,
@@ -15681,6 +15742,9 @@ var Playground = (function (exports) {
     }
     function isStringToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'String';
+    }
+    function isDocStringToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'DocString';
     }
     function isA_BinaryOperatorToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'Operator' && isBinaryOperator(token[1]);
@@ -16037,7 +16101,7 @@ var Playground = (function (exports) {
                 }
                 catch (_a) {
                     this.parseState.position = positionBefore;
-                    return this.parseBlock();
+                    return this.parseBlock()[0];
                 }
             }
             // Array litteral, e.g. [1, 2]
@@ -16050,7 +16114,7 @@ var Playground = (function (exports) {
                 case 'BasePrefixedNumber':
                     return this.parseNumber();
                 case 'String':
-                    return this.parseString();
+                    return this.parseString(token);
                 case 'Symbol': {
                     var positionBefore = this.parseState.position;
                     var lamdaFunction = this.parseLambdaFunction();
@@ -16080,7 +16144,7 @@ var Playground = (function (exports) {
                 else {
                     var token = this.peek();
                     if (isStringToken(token)) {
-                        var stringNode = this.parseString();
+                        var stringNode = this.parseString(token);
                         params.push(withSourceCodeInfo([NodeTypes.String, stringNode[1]], token[2]));
                     }
                     else if (isSymbolToken(token)) {
@@ -16420,7 +16484,12 @@ var Playground = (function (exports) {
                             ? withSourceCodeInfo([bindingTargetTypes.rest, [key[1], this.parseOptionalDefaulValue()]], firstToken[2])
                             : withSourceCodeInfo([bindingTargetTypes.symbol, [key, this.parseOptionalDefaulValue()]], firstToken[2]);
                     }
-                    else if (isLBraceToken(token) || isLBracketToken(token)) {
+                    else if (isOperatorToken(token, ':')) {
+                        this.advance();
+                        token = this.asToken(this.peek());
+                        if (!isLBraceToken(token) && !isLBracketToken(token)) {
+                            throw new LitsError('Expected object or array', token[2]);
+                        }
                         elements[key[1]] = this.parseBindingTarget();
                     }
                     if (!isRBraceToken(this.peek())) {
@@ -16447,9 +16516,14 @@ var Playground = (function (exports) {
             var bindingTarget = withSourceCodeInfo([NodeTypes.Binding, [target, value]], token[2]);
             return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.let, bindingTarget]], token[2]);
         };
-        Parser.prototype.parseBlock = function () {
+        Parser.prototype.parseBlock = function (allowDocString) {
+            if (allowDocString === void 0) { allowDocString = false; }
             var token = asLBraceToken(this.peek());
             this.advance();
+            var docString = '';
+            if (allowDocString && isDocStringToken(this.peek())) {
+                docString = this.parseDocString();
+            }
             var expressions = [];
             while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
                 expressions.push(this.parseExpression());
@@ -16465,7 +16539,10 @@ var Playground = (function (exports) {
             }
             assertRBraceToken(this.peek());
             this.advance();
-            return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.block, expressions]], token[2]);
+            return [
+                withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.block, expressions]], token[2]),
+                docString,
+            ];
         };
         Parser.prototype.parseLoop = function (firstToken) {
             this.advance();
@@ -16506,7 +16583,7 @@ var Playground = (function (exports) {
         };
         Parser.prototype.parseTry = function (token) {
             this.advance();
-            var tryExpression = this.parseBlock();
+            var tryExpression = this.parseExpression();
             assertReservedSymbolToken(this.peek(), 'catch');
             this.advance();
             var errorSymbol;
@@ -16516,7 +16593,7 @@ var Playground = (function (exports) {
                 assertRParenToken(this.peek());
                 this.advance();
             }
-            var catchExpression = this.parseBlock();
+            var catchExpression = this.parseExpression();
             return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.try, tryExpression, errorSymbol, catchExpression]], token[2]);
         };
         Parser.prototype.parseForOrDoseq = function (firstToken) {
@@ -16738,11 +16815,19 @@ var Playground = (function (exports) {
             this.advance();
             var symbol = this.parseSymbol();
             var functionArguments = this.parseFunctionArguments();
-            var block = this.parseBlock();
-            return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.function, symbol, [
+            var _a = __read(this.parseBlock(true), 2), block = _a[0], docString = _a[1];
+            return withSourceCodeInfo([
+                NodeTypes.SpecialExpression,
+                [
+                    specialExpressionTypes.function,
+                    symbol,
+                    [
                         functionArguments,
                         block[1][1],
-                    ]]], token[2]);
+                    ],
+                    docString,
+                ],
+            ], token[2]);
         };
         Parser.prototype.isAtEnd = function () {
             return this.parseState.position >= this.tokenStream.tokens.length;
@@ -16827,8 +16912,29 @@ var Playground = (function (exports) {
             var numberString = (negative ? value.substring(1) : value).replace(/_/g, '');
             return withSourceCodeInfo([NodeTypes.Number, negative ? -Number(numberString) : Number(numberString)], token[2]);
         };
-        Parser.prototype.parseString = function () {
+        Parser.prototype.smartTrim = function (str) {
+            var _a, _b;
+            var lines = str.split('\n');
+            while ((_a = lines[0]) === null || _a === void 0 ? void 0 : _a.match(/^\s*$/)) {
+                lines.shift(); // Remove leading empty lines
+            }
+            while ((_b = lines[lines.length - 1]) === null || _b === void 0 ? void 0 : _b.match(/^\s*$/)) {
+                lines.pop(); // Remove trailing empty lines
+            }
+            var indent = lines.reduce(function (minIndent, line) {
+                var _a, _b, _c;
+                var lineIndent = (_c = (_b = (_a = line.match(/^\s*/)) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.length) !== null && _c !== void 0 ? _c : 0;
+                return Math.min(minIndent, lineIndent);
+            }, Infinity);
+            return lines.map(function (line) { return line.slice(indent); }).join('\n').trimEnd();
+        };
+        Parser.prototype.parseDocString = function () {
             var token = this.asToken(this.peek());
+            var stringToken = token[2] ? ['String', token[1].slice(2, -2), token[2]] : ['String', token[1].slice(2, -2)];
+            var stringNode = this.parseString(stringToken);
+            return this.smartTrim(stringNode[1]); // Extract the string value from the StringNode
+        };
+        Parser.prototype.parseString = function (token) {
             this.advance();
             var value = token[1].substring(1, token[1].length - 1)
                 .replace(/(\\{2})|(\\")|(\\n)|(\\t)|(\\r)|(\\b)|(\\f)|\\(.)/g, function (_, backslash, doubleQuote, newline, tab, carriageReturn, backspace, formFeed, normalChar) {

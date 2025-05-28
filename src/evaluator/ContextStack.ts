@@ -156,6 +156,7 @@ export class ContextStackImpl {
         normalBuitinSymbolType: type,
         sourceCodeInfo: node[2],
         paramCount: normalExpression.paramCount,
+        docString: 'Builtin function', // TODO: Get docString from normalExpression
       } satisfies NormalBuiltinFunction
     }
     const lookUpResult = this.lookUp(node)
@@ -191,6 +192,7 @@ export function createContextStack(params: ContextParams = {}): ContextStack {
           name,
           [FUNCTION_SYMBOL]: true,
           paramCount: jsFunction.paramCount ?? {},
+          docString: jsFunction.docString ?? '',
         }
         return acc
       }, {}),

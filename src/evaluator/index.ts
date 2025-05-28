@@ -119,6 +119,7 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
         placeholders,
         sourceCodeInfo,
         paramCount: placeholders.length,
+        docString: '',
       }
       return partialFunction
     }
@@ -148,6 +149,7 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
         placeholders,
         sourceCodeInfo,
         paramCount: placeholders.length,
+        docString: '',
       }
       return partialFunction
     }

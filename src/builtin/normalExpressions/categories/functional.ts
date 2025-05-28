@@ -53,6 +53,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         functionType: 'Comp',
         params,
         paramCount: params.length > 0 ? getParamCountFromFunction(params.at(-1) as FunctionLike) : 1,
+        docString: '',
       }
     },
     paramCount: {},
@@ -66,6 +67,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         functionType: 'Constantly',
         value: toAny(value),
         paramCount: {},
+        docString: '',
       }
     },
     paramCount: 1,
@@ -84,6 +86,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         functionType: 'Juxt',
         params,
         paramCount,
+        docString: '',
       }
     },
     paramCount: { min: 1 },
@@ -98,6 +101,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         functionType: 'Complement',
         function: fun,
         paramCount: getParamCountFromFunction(fun),
+        docString: '',
       }
     },
     paramCount: 1,
@@ -111,6 +115,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         functionType: 'EveryPred',
         params,
         paramCount: 1,
+        docString: '',
       }
     },
     paramCount: { min: 1 },
@@ -124,6 +129,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         functionType: 'SomePred',
         params,
         paramCount: 1,
+        docString: '',
       }
     },
     paramCount: { min: 1 },
@@ -139,6 +145,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         function: fun,
         params,
         paramCount: getParamCountFromFunction(fun),
+        docString: '',
       }
     },
     paramCount: { min: 2 },

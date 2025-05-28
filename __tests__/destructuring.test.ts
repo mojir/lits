@@ -105,28 +105,28 @@ describe('lits Destructuring', () => {
   describe('nested destructuring', () => {
     test('basic nested property', () => {
       expect(lits.run(`
-        let { user { name }} = { user: { name: "Ian" }};
+        let { user: { name }} = { user: { name: "Ian" }};
         name
       `)).toBe('Ian')
     })
 
     test('multiple nested properties', () => {
       expect(lits.run(`
-        let { user { name, age }} = { user: { name: "Jane", age: 27 }};
+        let { user: { name, age }} = { user: { name: "Jane", age: 27 }};
         name ++ ":" ++ str(age)
       `)).toBe('Jane:27')
     })
 
     test('deeply nested properties', () => {
       expect(lits.run(`
-        let { user { profile { email }}} = { user: { profile: { email: "kevin@example.com" }}};
+        let { user: { profile: { email }}} = { user: { profile: { email: "kevin@example.com" }}};
         email
       `)).toBe('kevin@example.com')
     })
 
     test('nested property from missing parent throws', () => {
       expect(() => lits.run(`
-        let { user { name }}: {};
+        let { user: { name }}: {};
         name
       `)).toThrow(LitsError)
     })
@@ -136,7 +136,7 @@ describe('lits Destructuring', () => {
   describe('defaults in nested structures', () => {
     test('default for nested property', () => {
       expect(lits.run(`
-        let { user { name = "Anonymous" }} = { user: {}};
+        let { user: { name = "Anonymous" }} = { user: {}};
         name
       `)).toBe('Anonymous')
     })
@@ -150,7 +150,7 @@ describe('lits Destructuring', () => {
 
     test('default for nested structure pattern', () => {
       expect(lits.run(`
-        let { user { name } = { name: "Default" }} = {};
+        let { user: { name } = { name: "Default" }} = {};
         name
       `)).toBe('Default')
     })
@@ -266,7 +266,7 @@ describe('lits Destructuring', () => {
 
     test('nested parameter destructuring', () => {
       expect(lits.run(`
-        function processUser({ profile { name, age }}) {
+        function processUser({ profile: { name, age }}) {
           name ++ " is " ++ str(age);
         };
         processUser({ profile: { name: "Quinn", age: 29 }});
@@ -328,9 +328,9 @@ describe('lits Destructuring', () => {
       expect(lits.run(`
         let { 
           name as userName = "Guest",
-          profile { 
+          profile: { 
             age = 0,
-            contact { email as userEmail = "none" }
+            contact: { email as userEmail = "none" }
           },
           settings = { theme: "light" },
           scores as userScores = [],
@@ -350,7 +350,7 @@ describe('lits Destructuring', () => {
 
     test('object with array property', () => {
       expect(lits.run(`
-        let { name, scores [one, two] } = { name: "Uma", scores: [85, 92] };
+        let { name, scores: [one, two] } = { name: "Uma", scores: [85, 92] };
         name ++ ": " ++ str(one + two)
       `)).toBe('Uma: 177')
     })

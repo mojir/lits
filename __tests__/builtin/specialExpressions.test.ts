@@ -538,7 +538,6 @@ function foo(a) {
       expect(() => lits.run('try { 2 / 4 } 1)')).toThrow(LitsError)
       expect(() => lits.run('try { 2 / 4 } (1))')).toThrow(LitsError)
       expect(() => lits.run('try 2 / 4 catch ("error") { 1 }')).toThrow(LitsError)
-      expect(() => lits.run('try 2 / 4 catch (error) { 1 }')).toThrow(LitsError)
     })
 
     describe('unresolvedIdentifiers', () => {

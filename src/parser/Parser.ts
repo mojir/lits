@@ -26,7 +26,7 @@ import { NodeTypes } from '../constants/constants'
 import { LitsError } from '../errors'
 import { type SymbolicBinaryOperator, isBinaryOperator, isFunctionOperator } from '../tokenizer/operators'
 import { isNumberReservedSymbol, numberReservedSymbolRecord } from '../tokenizer/reservedNames'
-import type { OperatorToken, ReservedSymbolToken, SourceCodeInfo, SymbolToken, Token, TokenType } from '../tokenizer/token'
+import type { OperatorToken, ReservedSymbolToken, SourceCodeInfo, StringToken, SymbolToken, Token, TokenType } from '../tokenizer/token'
 import {
   asLBraceToken,
   asLBracketToken,
@@ -40,6 +40,7 @@ import {
   assertRParenToken,
   assertReservedSymbolToken,
   isA_BinaryOperatorToken,
+  isDocStringToken,
   isLBraceToken,
   isLBracketToken,
   isLParenToken,
@@ -416,7 +417,7 @@ export class Parser {
       }
       catch {
         this.parseState.position = positionBefore
-        return this.parseBlock()
+        return this.parseBlock()[0]
       }
     }
 
@@ -445,7 +446,7 @@ export class Parser {
       case 'BasePrefixedNumber':
         return this.parseNumber()
       case 'String':
-        return this.parseString()
+        return this.parseString(token as StringToken)
       case 'Symbol': {
         const positionBefore = this.parseState.position
         const lamdaFunction = this.parseLambdaFunction()
@@ -478,7 +479,7 @@ export class Parser {
       else {
         const token = this.peek()
         if (isStringToken(token)) {
-          const stringNode = this.parseString()
+          const stringNode = this.parseString(token)
           params.push(withSourceCodeInfo([NodeTypes.String, stringNode[1]], token[2]))
         }
         else if (isSymbolToken(token)) {
@@ -877,8 +878,12 @@ export class Parser {
             ? withSourceCodeInfo([bindingTargetTypes.rest, [key[1], this.parseOptionalDefaulValue()]], firstToken[2])
             : withSourceCodeInfo([bindingTargetTypes.symbol, [key, this.parseOptionalDefaulValue()]], firstToken[2])
         }
-
-        else if (isLBraceToken(token) || isLBracketToken(token)) {
+        else if (isOperatorToken(token, ':')) {
+          this.advance()
+          token = this.asToken(this.peek())
+          if (!isLBraceToken(token) && !isLBracketToken(token)) {
+            throw new LitsError('Expected object or array', token[2])
+          }
           elements[key[1]] = this.parseBindingTarget()
         }
 
@@ -914,9 +919,14 @@ export class Parser {
     return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.let, bindingTarget]], token[2]) satisfies LetNode
   }
 
-  private parseBlock(): DoNode {
+  private parseBlock(allowDocString = false): [DoNode, string] {
     const token = asLBraceToken(this.peek())
     this.advance()
+    let docString: string = ''
+    if (allowDocString && isDocStringToken(this.peek())) {
+      docString = this.parseDocString()
+    }
+
     const expressions: Node[] = []
     while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
       expressions.push(this.parseExpression())
@@ -932,7 +942,10 @@ export class Parser {
     }
     assertRBraceToken(this.peek())
     this.advance()
-    return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.block, expressions]], token[2]) satisfies DoNode
+    return [
+      withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.block, expressions]], token[2]) satisfies DoNode,
+      docString,
+    ]
   }
 
   private parseLoop(firstToken: SymbolToken): LoopNode {
@@ -983,7 +996,7 @@ export class Parser {
 
   private parseTry(token: SymbolToken): TryNode {
     this.advance()
-    const tryExpression = this.parseBlock()
+    const tryExpression = this.parseExpression()
 
     assertReservedSymbolToken(this.peek(), 'catch')
     this.advance()
@@ -996,7 +1009,7 @@ export class Parser {
       this.advance()
     }
 
-    const catchExpression = this.parseBlock()
+    const catchExpression = this.parseExpression()
 
     return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.try, tryExpression, errorSymbol, catchExpression]], token[2]) satisfies TryNode
   }
@@ -1259,12 +1272,20 @@ export class Parser {
     const symbol = this.parseSymbol()
     const functionArguments = this.parseFunctionArguments()
 
-    const block = this.parseBlock()
+    const [block, docString] = this.parseBlock(true)
 
-    return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.function, symbol, [
-      functionArguments,
-      block[1][1],
-    ]]], token[2]) satisfies FunctionNode
+    return withSourceCodeInfo([
+      NodeTypes.SpecialExpression,
+      [
+        specialExpressionTypes.function,
+        symbol,
+        [
+          functionArguments,
+          block[1][1],
+        ],
+        docString,
+      ],
+    ], token[2]) satisfies FunctionNode
   }
 
   private isAtEnd(): boolean {
@@ -1368,8 +1389,29 @@ export class Parser {
     return withSourceCodeInfo([NodeTypes.Number, negative ? -Number(numberString) : Number(numberString)], token[2]) satisfies NumberNode
   }
 
-  private parseString(): StringNode {
+  private smartTrim(str: string): string {
+    const lines = str.split('\n')
+    while (lines[0]?.match(/^\s*$/)) {
+      lines.shift() // Remove leading empty lines
+    }
+    while (lines[lines.length - 1]?.match(/^\s*$/)) {
+      lines.pop() // Remove trailing empty lines
+    }
+    const indent = lines.reduce((minIndent, line) => {
+      const lineIndent = line.match(/^\s*/)?.[0]?.length ?? 0
+      return Math.min(minIndent, lineIndent)
+    }, Infinity)
+    return lines.map(line => line.slice(indent)).join('\n').trimEnd()
+  }
+
+  private parseDocString(): string {
     const token = this.asToken(this.peek())
+    const stringToken: StringToken = token[2] ? ['String', token[1].slice(2, -2), token[2]] : ['String', token[1].slice(2, -2)]
+    const stringNode = this.parseString(stringToken)
+    return this.smartTrim(stringNode[1]) // Extract the string value from the StringNode
+  }
+
+  private parseString(token: StringToken): StringNode {
     this.advance()
     const value = token[1].substring(1, token[1].length - 1)
       .replace(
