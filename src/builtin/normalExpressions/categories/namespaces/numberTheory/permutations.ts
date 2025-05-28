@@ -1,6 +1,7 @@
 import type { Arr } from '../../../../../interface'
 import { assertArray } from '../../../../../typeGuards/array'
 import { assertNumber } from '../../../../../typeGuards/number'
+import { toFixedArity } from '../../../../../utils/arity'
 import type { BuiltinNormalExpressions } from '../../../../interface'
 import { factorialOf } from './factorial'
 
@@ -43,7 +44,7 @@ export const permutationsNormalExpressions: BuiltinNormalExpressions = {
       assertArray(set, sourceCodeInfo)
       return permutations(set)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'nth:count-permutations': {
     evaluate: ([n, k], sourceCodeInfo): number => {
@@ -51,6 +52,6 @@ export const permutationsNormalExpressions: BuiltinNormalExpressions = {
       assertNumber(k, sourceCodeInfo, { integer: true, nonNegative: true, lte: n })
       return factorialOf(n) / factorialOf(n - k)
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
 }

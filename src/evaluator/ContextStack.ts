@@ -1,10 +1,11 @@
-import { normalExpressionKeys, specialExpressionKeys } from '../builtin'
+import type { SpecialExpression } from '../builtin'
+import { builtin, normalExpressionKeys, specialExpressionKeys } from '../builtin'
 import { allNormalExpressions } from '../builtin/normalExpressions'
 import { specialExpressionTypes } from '../builtin/specialExpressionTypes'
 import { LitsError, UndefinedSymbolError } from '../errors'
 import type { Any } from '../interface'
 import type { ContextParams } from '../Lits/Lits'
-import type { NativeJsFunction, NormalBuiltinFunction, SymbolNode, UserDefinedSymbolNode } from '../parser/types'
+import type { NativeJsFunction, NormalBuiltinFunction, SpecialBuiltinFunction, SymbolNode, UserDefinedSymbolNode } from '../parser/types'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { asNonUndefined } from '../typeGuards'
 import { isNormalBuiltinSymbolNode, isSpecialBuiltinSymbolNode } from '../typeGuards/astNode'
@@ -136,13 +137,17 @@ export class ContextStackImpl {
         case specialExpressionTypes['defined?']:
         case specialExpressionTypes.recur:
         case specialExpressionTypes.throw:
-        case specialExpressionTypes['??']:
+        case specialExpressionTypes['??']: {
+          const specialExpression: SpecialExpression = asNonUndefined(builtin.specialExpressions[functionType], node[2])
           return {
             [FUNCTION_SYMBOL]: true,
             functionType: 'SpecialBuiltin',
             specialBuiltinSymbolType: functionType,
             sourceCodeInfo: node[2],
-          }
+            arity: specialExpression.arity,
+            docString: 'Special builtin function',
+          } satisfies SpecialBuiltinFunction
+        }
         default:
           throw new LitsError(`Unknown special builtin symbol type: ${functionType}`, node[2])
       }
@@ -155,7 +160,7 @@ export class ContextStackImpl {
         functionType: 'Builtin',
         normalBuitinSymbolType: type,
         sourceCodeInfo: node[2],
-        paramCount: normalExpression.paramCount,
+        arity: normalExpression.arity,
         docString: 'Builtin function', // TODO: Get docString from normalExpression
       } satisfies NormalBuiltinFunction
     }
@@ -191,7 +196,7 @@ export function createContextStack(params: ContextParams = {}): ContextStack {
           nativeFn: jsFunction,
           name,
           [FUNCTION_SYMBOL]: true,
-          paramCount: jsFunction.paramCount ?? {},
+          arity: jsFunction.arity ?? {},
           docString: jsFunction.docString ?? '',
         }
         return acc

@@ -1,5 +1,6 @@
 import { LitsError } from '../../../../../errors'
 import { assertNumber } from '../../../../../typeGuards/number'
+import { toFixedArity } from '../../../../../utils/arity'
 import type { BuiltinNormalExpressions } from '../../../../interface'
 import { partitionNumbers } from './sequences/partition'
 
@@ -37,7 +38,7 @@ export const partitionsNormalExpressions: BuiltinNormalExpressions = {
       assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true })
       return partitions(n)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'nth:count-partitions': {
     evaluate: ([n], sourceCodeInfo): number => {
@@ -51,6 +52,6 @@ export const partitionsNormalExpressions: BuiltinNormalExpressions = {
 
       return partitionNumbers[n - 1]!
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 }

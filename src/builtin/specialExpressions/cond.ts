@@ -6,7 +6,7 @@ import type { specialExpressionTypes } from '../specialExpressionTypes'
 export type CondNode = SpecialExpressionNode<[typeof specialExpressionTypes['cond'], [Node, Node][]]>
 
 export const condSpecialExpression: BuiltinSpecialExpression<Any, CondNode> = {
-  paramCount: { even: true },
+  arity: {},
   evaluate: (node, contextStack, { evaluateNode }) => {
     const params = node[1][1]
     for (const [test, form] of params) {

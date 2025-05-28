@@ -136,12 +136,12 @@ export const api = {
     'fnull',
   ] as const,
   misc: [
-    '!=', // TODO
+    '!=',
     '==',
     '<',
     '>',
-    '≤',
-    '≥',
+    '<=',
+    '>=',
     '!',
     'write!',
     'iso-date->epoch',
@@ -151,6 +151,8 @@ export const api = {
     'identical?',
     'json-parse',
     'json-stringify',
+    'doc',
+    'arity',
   ] as const,
   object: [
     'dissoc',

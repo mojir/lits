@@ -6,7 +6,7 @@ import type { specialExpressionTypes } from '../specialExpressionTypes'
 export type UnlessNode = SpecialExpressionNode<[typeof specialExpressionTypes['unless'], [Node, Node, Node?]]>
 
 export const unlessSpecialExpression: BuiltinSpecialExpression<Any, UnlessNode> = {
-  paramCount: { min: 2, max: 3 },
+  arity: {},
   evaluate: (node, contextStack, { evaluateNode }) => {
     const [conditionNode, trueNode, falseNode] = node[1][1]
     if (!evaluateNode(conditionNode, contextStack)) {

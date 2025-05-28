@@ -1,6 +1,7 @@
 import type { Arr } from '../../../../../interface'
 import { assertArray } from '../../../../../typeGuards/array'
 import { assertNumber } from '../../../../../typeGuards/number'
+import { toFixedArity } from '../../../../../utils/arity'
 import type { BuiltinNormalExpressions } from '../../../../interface'
 
 function getAllDerangements(arr: Arr): Arr[] {
@@ -55,13 +56,13 @@ export const derangementsNormalExpressions: BuiltinNormalExpressions = {
       assertArray(set, sourceCodeInfo)
       return getAllDerangements(set)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'nth:count-derangements': {
     evaluate: ([n], sourceCodeInfo): number => {
       assertNumber(n, sourceCodeInfo, { finite: true, integer: true, positive: true })
       return countDerangements(n)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 }

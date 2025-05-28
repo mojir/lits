@@ -9,7 +9,7 @@ import type { specialExpressionTypes } from '../specialExpressionTypes'
 export type ArrayNode = SpecialExpressionNode<[typeof specialExpressionTypes['array'], Node[]]>
 
 export const arraySpecialExpression: BuiltinSpecialExpression<Any, ArrayNode> = {
-  paramCount: {},
+  arity: {},
   evaluate: (node, contextStack, { evaluateNode }) => {
     const result: Arr = []
 

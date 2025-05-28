@@ -11,7 +11,7 @@ export {
   asNativeJsFunction,
   assertNativeJsFunction,
 } from './typeGuards/litsFunction'
-export { type ParamCount } from './builtin/interface'
+export { type Arity } from './builtin/interface'
 export { type LitsFunction, type NativeJsFunction } from './parser/types'
 export type { Context } from './evaluator/interface'
 export type { Ast } from './parser/types'

@@ -5,6 +5,7 @@ import { asAny, asSeq, assertAny, assertFunctionLike, assertSeq } from '../../..
 import { asNumber, assertNumber } from '../../../typeGuards/number'
 import { assertString, assertStringOrNumber } from '../../../typeGuards/string'
 import { collHasKey, compare, deepEqual, toAny, toNonNegativeInteger } from '../../../utils'
+import { toFixedArity } from '../../../utils/arity'
 import type { BuiltinNormalExpressions } from '../../interface'
 
 export const sequenceNormalExpression: BuiltinNormalExpressions = {
@@ -27,7 +28,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
         return defaultValue
       }
     },
-    paramCount: { min: 2, max: 3 },
+    arity: { min: 2, max: 3 },
   },
   'first': {
     evaluate: ([array], sourceCodeInfo): Any => {
@@ -39,7 +40,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
 
       return result
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'last': {
     evaluate: ([array], sourceCodeInfo): Any => {
@@ -51,7 +52,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
 
       return result
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'pop': {
     evaluate: ([seq], sourceCodeInfo): Seq => {
@@ -62,7 +63,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
 
       return seq.slice(0, seq.length - 1)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'position': {
     evaluate: ([seq, fn]: Arr, sourceCodeInfo, contextStack, { executeFunction }): number | null => {
@@ -80,7 +81,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
         return index !== -1 ? index : null
       }
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'index-of': {
     evaluate: ([seq, value], sourceCodeInfo): number | null => {
@@ -99,7 +100,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
         return index !== -1 ? index : null
       }
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'last-index-of': {
     evaluate: ([seq, value], sourceCodeInfo): number | null => {
@@ -118,7 +119,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
         return index !== -1 ? index : null
       }
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'push': {
     evaluate: ([seq, ...values], sourceCodeInfo): Seq => {
@@ -131,7 +132,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
         return [...seq, ...values]
       }
     },
-    paramCount: { min: 2 },
+    arity: { min: 2 },
   },
   'rest': {
     evaluate: ([seq], sourceCodeInfo): Arr | string => {
@@ -144,7 +145,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       }
       return seq.substring(1)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'next': {
     evaluate: ([seq], sourceCodeInfo): Arr | string | null => {
@@ -160,7 +161,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
 
       return seq.substring(1)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'reverse': {
     evaluate: ([seq], sourceCodeInfo): Any => {
@@ -174,7 +175,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
 
       return seq.split('').reverse().join('')
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'second': {
     evaluate: ([seq], sourceCodeInfo): Any => {
@@ -184,7 +185,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       assertSeq(seq, sourceCodeInfo)
       return toAny(seq[1])
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'shift': {
     evaluate: ([seq], sourceCodeInfo): Any => {
@@ -196,7 +197,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       copy.shift()
       return copy
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'slice': {
     evaluate: (params, sourceCodeInfo): Any => {
@@ -217,7 +218,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       }
       return seq.slice(from, to)
     },
-    paramCount: { min: 2, max: 3 },
+    arity: { min: 2, max: 3 },
   },
   'splice': {
     evaluate: (params, sourceCodeInfo): Any => {
@@ -235,7 +236,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       rest.forEach(elem => assertString(elem, sourceCodeInfo))
       return `${seq.substring(0, from)}${rest.join('')}${seq.substring(from + deleteCount)}`
     },
-    paramCount: { min: 3 },
+    arity: { min: 3 },
   },
   'some': {
     evaluate: ([seq, fn]: Arr, sourceCodeInfo, contextStack, { executeFunction }): Any => {
@@ -253,7 +254,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
 
       return toAny(seq.find(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo)))
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'sort': {
     evaluate: (params: Arr, sourceCodeInfo, contextStack, { executeFunction }): Seq => {
@@ -296,7 +297,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       }
       return result
     },
-    paramCount: { min: 1, max: 2 },
+    arity: { min: 1, max: 2 },
   },
   'sort-by': {
     evaluate: (params: Arr, sourceCodeInfo, contextStack, { executeFunction }): Seq => {
@@ -353,7 +354,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       }
       return result
     },
-    paramCount: { min: 2, max: 3 },
+    arity: { min: 2, max: 3 },
   },
   'take': {
     evaluate: ([input, n], sourceCodeInfo): Seq => {
@@ -362,7 +363,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       const num = Math.max(Math.ceil(n), 0)
       return input.slice(0, num)
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'take-last': {
     evaluate: ([array, n], sourceCodeInfo): Seq => {
@@ -372,7 +373,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       const from = array.length - num
       return array.slice(from)
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'take-while': {
     evaluate: ([seq, fn]: Arr, sourceCodeInfo, contextStack, { executeFunction }): Any => {
@@ -388,7 +389,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       }
       return typeof seq === 'string' ? result.join('') : result
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'drop': {
     evaluate: ([input, n], sourceCodeInfo): Seq => {
@@ -397,7 +398,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       assertSeq(input, sourceCodeInfo)
       return input.slice(num)
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'drop-last': {
     evaluate: ([array, n], sourceCodeInfo): Seq => {
@@ -408,7 +409,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       const from = array.length - num
       return array.slice(0, from)
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'drop-while': {
     evaluate: ([seq, fn]: Arr, sourceCodeInfo, contextStack, { executeFunction }): Any => {
@@ -423,7 +424,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       const from = charArray.findIndex(elem => !executeFunction(fn, [elem], contextStack, sourceCodeInfo))
       return charArray.slice(from).join('')
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'unshift': {
     evaluate: ([seq, ...values], sourceCodeInfo): Seq => {
@@ -436,7 +437,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       copy.unshift(...values)
       return copy
     },
-    paramCount: { min: 2 },
+    arity: { min: 2 },
   },
   'distinct': {
     evaluate: ([input], sourceCodeInfo): Seq => {
@@ -455,7 +456,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
 
       return Array.from(new Set(input.split(''))).join('')
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'remove': {
     evaluate: ([input, fn], sourceCodeInfo, contextStack, { executeFunction }): Seq => {
@@ -469,7 +470,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
         .filter(elem => !executeFunction(fn, [elem], contextStack, sourceCodeInfo))
         .join('')
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'remove-at': {
     evaluate: ([input, index], sourceCodeInfo): Seq => {
@@ -485,7 +486,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       }
       return `${input.substring(0, at)}${input.substring(at + 1)}`
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'split-at': {
     evaluate: ([seq, pos], sourceCodeInfo): Seq => {
@@ -495,7 +496,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       const at = pos < 0 ? seq.length + pos : pos
       return [seq.slice(0, at), seq.slice(at)]
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
 
   'split-with': {
@@ -510,7 +511,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
 
       return [seq.slice(0, index), seq.slice(index)]
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
 
   'frequencies': {
@@ -529,7 +530,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
         return result
       }, {})
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'group-by': {
@@ -548,7 +549,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
         return result
       }, {})
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
 
   'partition': {
@@ -562,7 +563,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
 
       return partition(n, step, seq, pad, sourceCodeInfo)
     },
-    paramCount: { min: 2, max: 4 },
+    arity: { min: 2, max: 4 },
   },
 
   'partition-all': {
@@ -573,7 +574,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
 
       return partition(n, step, seq, [], sourceCodeInfo)
     },
-    paramCount: { min: 2, max: 3 },
+    arity: { min: 2, max: 3 },
   },
 
   'partition-by': {
@@ -595,7 +596,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
 
       return isStringSeq ? result.map(elem => (elem as Arr).join('')) : result
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'ends-with?': {
     evaluate: ([str, search], sourceCodeInfo): boolean => {
@@ -608,7 +609,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
 
       return deepEqual(asAny(str.at(-1), sourceCodeInfo), asAny(search, sourceCodeInfo), sourceCodeInfo)
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'starts-with?': {
     evaluate: ([seq, search], sourceCodeInfo): boolean => {
@@ -621,7 +622,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
 
       return deepEqual(asAny(seq[0], sourceCodeInfo), asAny(search, sourceCodeInfo), sourceCodeInfo)
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'interleave': {
     evaluate: ([...seqs], sourceCodeInfo): Seq => {
@@ -647,7 +648,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       }
       return isStringSeq ? result.join('') : result
     },
-    paramCount: { min: 1 },
+    arity: { min: 1 },
   },
   'interpose': {
     evaluate: ([seq, separator], sourceCodeInfo): Seq => {
@@ -667,7 +668,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       result.push(seq[seq.length - 1])
       return result
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
 
 }

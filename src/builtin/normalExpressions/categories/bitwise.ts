@@ -1,4 +1,5 @@
 import { assertNumber } from '../../../typeGuards/number'
+import { toFixedArity } from '../../../utils/arity'
 import type { BuiltinNormalExpressions } from '../../interface'
 
 export const bitwiseNormalExpression: BuiltinNormalExpressions = {
@@ -9,7 +10,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
 
       return num << count
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   '>>': {
     evaluate: ([num, count], sourceCodeInfo): number => {
@@ -18,7 +19,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
 
       return num >> count
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   '>>>': {
     evaluate: ([num, count], sourceCodeInfo): number => {
@@ -27,14 +28,14 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
 
       return num >>> count
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'bit-not': {
     evaluate: ([num], sourceCodeInfo): number => {
       assertNumber(num, sourceCodeInfo, { integer: true })
       return ~num
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   '&': {
     evaluate: ([first, ...rest], sourceCodeInfo): number => {
@@ -45,7 +46,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
         return result & value
       }, first)
     },
-    paramCount: { min: 2 },
+    arity: { min: 2 },
   },
   'bit-and-not': {
     evaluate: ([first, ...rest], sourceCodeInfo): number => {
@@ -56,7 +57,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
         return result & ~value
       }, first)
     },
-    paramCount: { min: 2 },
+    arity: { min: 2 },
   },
   '|': {
     evaluate: ([first, ...rest], sourceCodeInfo): number => {
@@ -67,7 +68,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
         return result | value
       }, first)
     },
-    paramCount: { min: 2 },
+    arity: { min: 2 },
   },
   'xor': {
     evaluate: ([first, ...rest], sourceCodeInfo): number => {
@@ -78,7 +79,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
         return result ^ value
       }, first)
     },
-    paramCount: { min: 2 },
+    arity: { min: 2 },
   },
   'bit-flip': {
     evaluate: ([num, index], sourceCodeInfo): number => {
@@ -88,7 +89,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
       const mask = 1 << index
       return (num ^= mask)
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'bit-set': {
     evaluate: ([num, index], sourceCodeInfo): number => {
@@ -98,7 +99,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
       const mask = 1 << index
       return (num |= mask)
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'bit-clear': {
     evaluate: ([num, index], sourceCodeInfo): number => {
@@ -108,7 +109,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
       const mask = 1 << index
       return (num &= ~mask)
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'bit-test': {
     evaluate: ([num, index], sourceCodeInfo): boolean => {
@@ -118,6 +119,6 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
       const mask = 1 << index
       return !!(num & mask)
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
 }

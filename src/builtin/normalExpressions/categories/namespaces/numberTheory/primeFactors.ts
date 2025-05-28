@@ -1,4 +1,5 @@
 import { assertNumber } from '../../../../../typeGuards/number'
+import { toFixedArity } from '../../../../../utils/arity'
 import type { BuiltinNormalExpressions } from '../../../../interface'
 
 /**
@@ -42,7 +43,7 @@ export const primeFactorsNormalExpressions: BuiltinNormalExpressions = {
       assertNumber(number, sourceCodeInfo, { finite: true, integer: true, positive: true })
       return primeFactors(number)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'nth:distinct-prime-factors': {
     evaluate: ([n], sourceCodeInfo): number[] => {
@@ -51,14 +52,14 @@ export const primeFactorsNormalExpressions: BuiltinNormalExpressions = {
       const distinctFactors = new Set(factors)
       return Array.from(distinctFactors)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'nth:count-prime-factors': {
     evaluate: ([n], sourceCodeInfo): number => {
       assertNumber(n, sourceCodeInfo, { finite: true, integer: true, positive: true })
       return primeFactors(n).length
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'nth:count-distinct-prime-factors': {
     evaluate: ([n], sourceCodeInfo): number => {
@@ -67,6 +68,6 @@ export const primeFactorsNormalExpressions: BuiltinNormalExpressions = {
       const distinctFactors = new Set(factors)
       return distinctFactors.size
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 }

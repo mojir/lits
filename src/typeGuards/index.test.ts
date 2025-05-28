@@ -1,27 +1,17 @@
 import { describe, expect, it, test } from 'vitest'
 import { testTypeGuars } from '../../__tests__/testUtils'
-import type { Node, NormalExpressionNodeWithName } from '../parser/types'
-import { NodeTypes } from '../constants/constants'
-import { normalExpressionTypes } from '../builtin/normalExpressions'
 import { LitsError } from '../errors'
+import { assertNumberOfParams, canBeOperator } from '../utils/arity'
 import {
   asNonUndefined,
   asUnknownRecord,
   assertNonUndefined,
-  assertNumberOfParams,
   assertUnknownRecord,
-  canBeOperator,
   isUnknownRecord,
 } from '.'
 
-function toNormalExpressionNode(arr: number[]): NormalExpressionNodeWithName {
-  const nodes: Node[] = arr.map(n => [NodeTypes.Number, n])
-  return [NodeTypes.NormalExpression, [[NodeTypes.NormalBuiltinSymbol, normalExpressionTypes['+'] as number], nodes]]
-}
-
 describe('typeGuards index file', () => {
   test('canBeOperator', () => {
-    expect(canBeOperator({ odd: true })).toBe(false)
     expect(canBeOperator({ max: 1 })).toBe(false)
   })
 
@@ -43,62 +33,42 @@ describe('typeGuards index file', () => {
     expect(() => assertNonUndefined(0)).not.toThrow()
     expect(() => assertNonUndefined({})).not.toThrow()
   })
-  it('assertLengthEven', () => {
-    expect(() => assertNumberOfParams({ even: true }, toNormalExpressionNode([]))).not.toThrow()
-    expect(() => assertNumberOfParams({ even: true }, toNormalExpressionNode([0]))).toThrow(LitsError)
-    expect(() => assertNumberOfParams({ even: true }, toNormalExpressionNode([0, 1]))).not.toThrow()
-    expect(() => assertNumberOfParams({ even: true }, toNormalExpressionNode([0, 1, 2]))).toThrow(LitsError)
-    expect(() => assertNumberOfParams({ even: true }, toNormalExpressionNode([0, 1, 2, 3]))).not.toThrow()
-    expect(() => assertNumberOfParams({ even: true }, toNormalExpressionNode([0, 1, 2, 3, 4]))).toThrow(LitsError)
-    expect(() => assertNumberOfParams({ even: true }, toNormalExpressionNode([0, 1, 2, 3, 4, 5]))).not.toThrow()
-  })
-
-  it('assertLengthOdd', () => {
-    expect(() => assertNumberOfParams({ odd: true }, toNormalExpressionNode([]))).toThrow(LitsError)
-    expect(() => assertNumberOfParams({ odd: true }, toNormalExpressionNode([0]))).not.toThrow()
-    expect(() => assertNumberOfParams({ odd: true }, toNormalExpressionNode([0, 1]))).toThrow(LitsError)
-    expect(() => assertNumberOfParams({ odd: true }, toNormalExpressionNode([0, 1, 2]))).not.toThrow()
-    expect(() => assertNumberOfParams({ odd: true }, toNormalExpressionNode([0, 1, 2, 3]))).toThrow(LitsError)
-    expect(() => assertNumberOfParams({ odd: true }, toNormalExpressionNode([0, 1, 2, 3, 4]))).not.toThrow()
-    expect(() => assertNumberOfParams({ odd: true }, toNormalExpressionNode([0, 1, 2, 3, 4, 5]))).toThrow(LitsError)
-  })
-
   it('assertLength', () => {
-    expect(() => assertNumberOfParams(0, toNormalExpressionNode([]))).not.toThrow()
-    expect(() => assertNumberOfParams(0, toNormalExpressionNode([1]))).toThrow(LitsError)
-    expect(() => assertNumberOfParams(1, toNormalExpressionNode([1]))).not.toThrow()
-    expect(() => assertNumberOfParams(1, toNormalExpressionNode([]))).toThrow(LitsError)
-    expect(() => assertNumberOfParams(1, toNormalExpressionNode([1, 2]))).toThrow(LitsError)
-    expect(() => assertNumberOfParams(2, toNormalExpressionNode([1, 2]))).not.toThrow()
-    expect(() => assertNumberOfParams(2, toNormalExpressionNode([1]))).toThrow(LitsError)
-    expect(() => assertNumberOfParams(2, toNormalExpressionNode([1, 2, 3]))).toThrow(LitsError)
-    expect(() => assertNumberOfParams({}, toNormalExpressionNode([]))).not.toThrow()
-    expect(() => assertNumberOfParams({ min: 1 }, toNormalExpressionNode([1, 2, 3, 4, 5]))).not.toThrow()
-    expect(() => assertNumberOfParams({ min: 1 }, toNormalExpressionNode([1, 2, 3, 4]))).not.toThrow()
-    expect(() => assertNumberOfParams({ min: 1 }, toNormalExpressionNode([1, 2, 3]))).not.toThrow()
-    expect(() => assertNumberOfParams({ min: 1 }, toNormalExpressionNode([1, 2]))).not.toThrow()
-    expect(() => assertNumberOfParams({ min: 1 }, toNormalExpressionNode([1]))).not.toThrow()
-    expect(() => assertNumberOfParams({ min: 1 }, toNormalExpressionNode([]))).toThrow(LitsError)
-    expect(() => assertNumberOfParams({ max: 3 }, toNormalExpressionNode([1, 2, 3, 4, 5]))).toThrow(LitsError)
-    expect(() => assertNumberOfParams({ max: 3 }, toNormalExpressionNode([1, 2, 3, 4]))).toThrow(LitsError)
-    expect(() => assertNumberOfParams({ max: 3 }, toNormalExpressionNode([1, 2, 3]))).not.toThrow()
-    expect(() => assertNumberOfParams({ max: 3 }, toNormalExpressionNode([1, 2]))).not.toThrow()
-    expect(() => assertNumberOfParams({ max: 3 }, toNormalExpressionNode([1]))).not.toThrow()
-    expect(() => assertNumberOfParams({ max: 3 }, toNormalExpressionNode([]))).not.toThrow()
-    expect(() => assertNumberOfParams({ min: 1, max: 3 }, toNormalExpressionNode([]))).toThrow(LitsError)
-    expect(() => assertNumberOfParams({ min: 1, max: 3 }, toNormalExpressionNode([1]))).not.toThrow()
-    expect(() => assertNumberOfParams({ min: 1, max: 3 }, toNormalExpressionNode([1, 2]))).not.toThrow()
-    expect(() => assertNumberOfParams({ min: 1, max: 3 }, toNormalExpressionNode([1, 2, 3]))).not.toThrow()
-    expect(() => assertNumberOfParams({ min: 1, max: 3 }, toNormalExpressionNode([1, 2, 3, 4]))).toThrow(LitsError)
-    expect(() => assertNumberOfParams({ min: 1, max: 3 }, toNormalExpressionNode([1, 2, 3, 4, 5]))).toThrow(LitsError)
-    expect(() => assertNumberOfParams({ min: 1, max: 3 }, toNormalExpressionNode([1, 2, 3, 4, 5, 6]))).toThrow(LitsError)
-    expect(() => assertNumberOfParams({ min: 3, max: 1 }, toNormalExpressionNode([]))).toThrow(LitsError)
-    expect(() => assertNumberOfParams({ min: 3, max: 1 }, toNormalExpressionNode([1]))).toThrow(LitsError)
-    expect(() => assertNumberOfParams({ min: 3, max: 1 }, toNormalExpressionNode([1, 2]))).toThrow(LitsError)
-    expect(() => assertNumberOfParams({ min: 3, max: 1 }, toNormalExpressionNode([1, 2, 3]))).toThrow(LitsError)
-    expect(() => assertNumberOfParams({ min: 3, max: 1 }, toNormalExpressionNode([1, 2, 3, 4]))).toThrow(LitsError)
-    expect(() => assertNumberOfParams({ min: 3, max: 1 }, toNormalExpressionNode([1, 2, 3, 4, 5]))).toThrow(LitsError)
-    expect(() => assertNumberOfParams({ min: 3, max: 1 }, toNormalExpressionNode([1, 2, 3, 4, 5, 6]))).toThrow(LitsError)
+    expect(() => assertNumberOfParams({ min: 0, max: 0 }, 0, undefined)).not.toThrow()
+    expect(() => assertNumberOfParams({ min: 0, max: 0 }, 1, undefined)).toThrow(LitsError)
+    expect(() => assertNumberOfParams({ min: 1, max: 1 }, 1, undefined)).not.toThrow()
+    expect(() => assertNumberOfParams({ min: 1, max: 1 }, 0, undefined)).toThrow(LitsError)
+    expect(() => assertNumberOfParams({ min: 1, max: 1 }, 2, undefined)).toThrow(LitsError)
+    expect(() => assertNumberOfParams({ min: 2, max: 2 }, 2, undefined)).not.toThrow()
+    expect(() => assertNumberOfParams({ min: 2, max: 2 }, 1, undefined)).toThrow(LitsError)
+    expect(() => assertNumberOfParams({ min: 2, max: 2 }, 3, undefined)).toThrow(LitsError)
+    expect(() => assertNumberOfParams({}, 0, undefined)).not.toThrow()
+    expect(() => assertNumberOfParams({ min: 1 }, 5, undefined)).not.toThrow()
+    expect(() => assertNumberOfParams({ min: 1 }, 4, undefined)).not.toThrow()
+    expect(() => assertNumberOfParams({ min: 1 }, 3, undefined)).not.toThrow()
+    expect(() => assertNumberOfParams({ min: 1 }, 2, undefined)).not.toThrow()
+    expect(() => assertNumberOfParams({ min: 1 }, 1, undefined)).not.toThrow()
+    expect(() => assertNumberOfParams({ min: 1 }, 0, undefined)).toThrow(LitsError)
+    expect(() => assertNumberOfParams({ max: 3 }, 5, undefined)).toThrow(LitsError)
+    expect(() => assertNumberOfParams({ max: 3 }, 4, undefined)).toThrow(LitsError)
+    expect(() => assertNumberOfParams({ max: 3 }, 3, undefined)).not.toThrow()
+    expect(() => assertNumberOfParams({ max: 3 }, 2, undefined)).not.toThrow()
+    expect(() => assertNumberOfParams({ max: 3 }, 1, undefined)).not.toThrow()
+    expect(() => assertNumberOfParams({ max: 3 }, 0, undefined)).not.toThrow()
+    expect(() => assertNumberOfParams({ min: 1, max: 3 }, 0, undefined)).toThrow(LitsError)
+    expect(() => assertNumberOfParams({ min: 1, max: 3 }, 1, undefined)).not.toThrow()
+    expect(() => assertNumberOfParams({ min: 1, max: 3 }, 2, undefined)).not.toThrow()
+    expect(() => assertNumberOfParams({ min: 1, max: 3 }, 3, undefined)).not.toThrow()
+    expect(() => assertNumberOfParams({ min: 1, max: 3 }, 4, undefined)).toThrow(LitsError)
+    expect(() => assertNumberOfParams({ min: 1, max: 3 }, 5, undefined)).toThrow(LitsError)
+    expect(() => assertNumberOfParams({ min: 1, max: 3 }, 6, undefined)).toThrow(LitsError)
+    expect(() => assertNumberOfParams({ min: 3, max: 1 }, 0, undefined)).toThrow(LitsError)
+    expect(() => assertNumberOfParams({ min: 3, max: 1 }, 1, undefined)).toThrow(LitsError)
+    expect(() => assertNumberOfParams({ min: 3, max: 1 }, 2, undefined)).toThrow(LitsError)
+    expect(() => assertNumberOfParams({ min: 3, max: 1 }, 3, undefined)).toThrow(LitsError)
+    expect(() => assertNumberOfParams({ min: 3, max: 1 }, 4, undefined)).toThrow(LitsError)
+    expect(() => assertNumberOfParams({ min: 3, max: 1 }, 5, undefined)).toThrow(LitsError)
+    expect(() => assertNumberOfParams({ min: 3, max: 1 }, 6, undefined)).toThrow(LitsError)
   })
 
   it('unknownRecord', () => {

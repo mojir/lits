@@ -1,6 +1,7 @@
 import { assertFunctionLike } from '../../../../../../typeGuards/lits'
 import { assertNumber } from '../../../../../../typeGuards/number'
 import { approxEqual } from '../../../../../../utils'
+import { toFixedArity } from '../../../../../../utils/arity'
 import type { SequenceNormalExpressions } from '.'
 
 /**
@@ -48,7 +49,7 @@ export const arithmeticNormalExpressions: SequenceNormalExpressions<'arithmetic'
 
       return Array.from({ length }, (_, i) => start + i * step)
     },
-    paramCount: 3,
+    arity: toFixedArity(3),
   },
   'nth:arithmetic-take-while': {
     evaluate: ([start, step, fn], sourceCodeInfo, contextStack, { executeFunction }): number[] => {
@@ -66,7 +67,7 @@ export const arithmeticNormalExpressions: SequenceNormalExpressions<'arithmetic'
       }
       return arithmetic
     },
-    paramCount: 3,
+    arity: toFixedArity(3),
   },
   'nth:arithmetic-nth': {
     evaluate: ([start, step, n], sourceCodeInfo): number => {
@@ -75,7 +76,7 @@ export const arithmeticNormalExpressions: SequenceNormalExpressions<'arithmetic'
       assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
       return start + (n - 1) * step
     },
-    paramCount: 3,
+    arity: toFixedArity(3),
   },
   'nth:arithmetic?': {
     evaluate: ([start, step, n], sourceCodeInfo): boolean => {
@@ -85,6 +86,6 @@ export const arithmeticNormalExpressions: SequenceNormalExpressions<'arithmetic'
 
       return isInArithmeticSequence(start, step, n)
     },
-    paramCount: 3,
+    arity: toFixedArity(3),
   },
 }

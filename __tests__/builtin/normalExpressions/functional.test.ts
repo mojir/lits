@@ -108,7 +108,7 @@ let foo = comp(!, odd?);
         expect(lits.run('apply(juxt(+, *, min, max), range(1, 5))')).toEqual([10, 24, 1, 4])
         expect(() => lits.run('juxt(-> $, -> $2)')).toThrow() // Must accept same number of params
         // eslint-disable-next-line ts/no-unsafe-member-access
-        expect((lits.run('juxt((x) -> x, (x, y = 1) -> x + y, (...c) -> 0)') as any).paramCount).toEqual(1)
+        expect((lits.run('juxt((x) -> x, (x, y = 1) -> x + y, (...c) -> 0)') as any).arity).toEqual({ min: 1, max: 1 })
         expect(() => lits.run('juxt()')).toThrow(LitsError)
       })
     })

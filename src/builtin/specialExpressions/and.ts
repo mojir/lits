@@ -7,7 +7,7 @@ import type { specialExpressionTypes } from '../specialExpressionTypes'
 export type AndNode = SpecialExpressionNode<[typeof specialExpressionTypes['&&'], Node[]]>
 
 export const andSpecialExpression: BuiltinSpecialExpression<Any, AndNode> = {
-  paramCount: {},
+  arity: {},
   evaluate: (node, contextStack, { evaluateNode }) => {
     let value: Any = true
 

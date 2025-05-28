@@ -16,14 +16,16 @@ describe('autoCompleter', () => {
       functionType: 'UserDefined',
       name: 'testFunction',
       evaluatedfunction: [[], [], {}],
-      paramCount: 0,
+      arity: {},
+      docString: '',
     }
     const localFunction: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
       functionType: 'UserDefined',
       name: 'localFunction',
       evaluatedfunction: [[], [], {}],
-      paramCount: 0,
+      arity: {},
+      docString: '',
     }
     params = {
       globalContext: {

@@ -2122,38 +2122,6 @@ var Playground = (function (exports) {
         return new LitsError("Expected ".concat(typeName, ", got ").concat(valueToString(value), "."), getSourceCodeInfo(value, sourceCodeInfo));
     }
 
-    function assertNumberOfParams(count, node) {
-        var length = node[1][1].length;
-        if (typeof count === 'number') {
-            if (length !== count) {
-                var name_1 = getNodeTypeName(node[0]);
-                throw new LitsError("Wrong number of arguments to \"".concat(name_1, "\", expected ").concat(count, ", got ").concat(valueToString(length), "."), node[2]);
-            }
-        }
-        else {
-            var min = count.min, max = count.max, even = count.even, odd = count.odd;
-            if (even) {
-                var name_2 = getNodeTypeName(node[0]);
-                if (length % 2 !== 0) {
-                    throw new LitsError("Wrong number of arguments to \"".concat(name_2, "\",, expected an even number, got ").concat(valueToString(length), "."), node[2]);
-                }
-            }
-            if (odd) {
-                if (length % 2 !== 1) {
-                    var name_3 = getNodeTypeName(node[0]);
-                    throw new LitsError("Wrong number of arguments to \"".concat(name_3, "\",, expected an odd number, got ").concat(valueToString(length), "."), node[2]);
-                }
-            }
-            if (typeof min === 'number' && length < min) {
-                var name_4 = getNodeTypeName(node[0]);
-                throw new LitsError("Wrong number of arguments to \"".concat(name_4, "\", expected at least ").concat(min, ", got ").concat(valueToString(length), "."), node[2]);
-            }
-            if (typeof max === 'number' && length > max) {
-                var name_5 = getNodeTypeName(node[0]);
-                throw new LitsError("Wrong number of arguments to \"".concat(name_5, "\", expected at most ").concat(max, ", got ").concat(valueToString(length), "."), node[2]);
-            }
-        }
-    }
     function isNonUndefined(value) {
         return value !== undefined;
     }
@@ -2182,10 +2150,6 @@ var Playground = (function (exports) {
         if (value === null || typeof value !== 'object')
             return false;
         return !!value[FUNCTION_SYMBOL];
-    }
-    function assertLitsFunction(value, sourceCodeInfo) {
-        if (!isLitsFunction(value))
-            throw getAssertionError('LitsFunction', value, sourceCodeInfo);
     }
 
     function isAny(value) {
@@ -2761,6 +2725,49 @@ var Playground = (function (exports) {
         }
     }
 
+    function arityAcceptsMin(arity, nbrOfParams) {
+        var min = arity.min;
+        if (typeof min === 'number' && nbrOfParams < min) {
+            return false;
+        }
+        return true;
+    }
+    function getCommonArityFromFunctions(params) {
+        return params.reduce(function (acc, param) {
+            if (acc === null) {
+                return null;
+            }
+            var arity = (typeof param === 'number' || isColl(param)) ? toFixedArity(1) : param.arity;
+            var aMin = arity.min, aMax = arity.max;
+            var bMin = acc.min, bMax = acc.max;
+            var min = typeof aMin === 'number' && typeof bMin === 'number'
+                ? Math.max(aMin, bMin)
+                : typeof aMin === 'number' ? aMin : typeof bMin === 'number' ? bMin : undefined;
+            var max = typeof aMax === 'number' && typeof bMax === 'number'
+                ? Math.min(aMax, bMax)
+                : typeof aMax === 'number' ? aMax : typeof bMax === 'number' ? bMax : undefined;
+            if (typeof min === 'number' && typeof max === 'number' && min > max) {
+                return null;
+            }
+            return { min: min, max: max };
+        }, {});
+    }
+    function getArityFromFunction(param) {
+        return (typeof param === 'number' || isColl(param)) ? toFixedArity(1) : param.arity;
+    }
+    function assertNumberOfParams(arity, length, sourceCodeInfo) {
+        var min = arity.min, max = arity.max;
+        if (typeof min === 'number' && length < min) {
+            throw new LitsError("Wrong number of arguments, expected at least ".concat(min, ", got ").concat(valueToString(length), "."), sourceCodeInfo);
+        }
+        if (typeof max === 'number' && length > max) {
+            throw new LitsError("Wrong number of arguments, expected at most ".concat(max, ", got ").concat(valueToString(length), "."), sourceCodeInfo);
+        }
+    }
+    function toFixedArity(arity) {
+        return { min: arity, max: arity };
+    }
+
     var bitwiseNormalExpression = {
         '<<': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2769,7 +2776,7 @@ var Playground = (function (exports) {
                 assertNumber(count, sourceCodeInfo, { integer: true, nonNegative: true });
                 return num << count;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         '>>': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2778,7 +2785,7 @@ var Playground = (function (exports) {
                 assertNumber(count, sourceCodeInfo, { integer: true, nonNegative: true });
                 return num >> count;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         '>>>': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2787,7 +2794,7 @@ var Playground = (function (exports) {
                 assertNumber(count, sourceCodeInfo, { integer: true, nonNegative: true });
                 return num >>> count;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'bit-not': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2795,7 +2802,7 @@ var Playground = (function (exports) {
                 assertNumber(num, sourceCodeInfo, { integer: true });
                 return ~num;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         '&': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2806,7 +2813,7 @@ var Playground = (function (exports) {
                     return result & value;
                 }, first);
             },
-            paramCount: { min: 2 },
+            arity: { min: 2 },
         },
         'bit-and-not': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2817,7 +2824,7 @@ var Playground = (function (exports) {
                     return result & ~value;
                 }, first);
             },
-            paramCount: { min: 2 },
+            arity: { min: 2 },
         },
         '|': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2828,7 +2835,7 @@ var Playground = (function (exports) {
                     return result | value;
                 }, first);
             },
-            paramCount: { min: 2 },
+            arity: { min: 2 },
         },
         'xor': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2839,7 +2846,7 @@ var Playground = (function (exports) {
                     return result ^ value;
                 }, first);
             },
-            paramCount: { min: 2 },
+            arity: { min: 2 },
         },
         'bit-flip': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2849,7 +2856,7 @@ var Playground = (function (exports) {
                 var mask = 1 << index;
                 return (num ^= mask);
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'bit-set': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2859,7 +2866,7 @@ var Playground = (function (exports) {
                 var mask = 1 << index;
                 return (num |= mask);
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'bit-clear': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2869,7 +2876,7 @@ var Playground = (function (exports) {
                 var mask = 1 << index;
                 return (num &= ~mask);
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'bit-test': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2879,7 +2886,7 @@ var Playground = (function (exports) {
                 var mask = 1 << index;
                 return !!(num & mask);
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
     };
 
@@ -3032,6 +3039,21 @@ var Playground = (function (exports) {
     }
     function approxZero(value) {
         return Math.abs(value) < EPSILON;
+    }
+    function smartTrim(str) {
+        var _a, _b;
+        var lines = str.split('\n');
+        while ((_a = lines[0]) === null || _a === void 0 ? void 0 : _a.match(/^\s*$/)) {
+            lines.shift(); // Remove leading empty lines
+        }
+        while ((_b = lines[lines.length - 1]) === null || _b === void 0 ? void 0 : _b.match(/^\s*$/)) {
+            lines.pop(); // Remove trailing empty lines
+        }
+        var indent = lines.reduce(function (minIndent, line) {
+            var lineIndent = line.match(/^\s*/)[0].length;
+            return Math.min(minIndent, lineIndent);
+        }, Infinity);
+        return lines.map(function (line) { return line.slice(indent); }).join('\n').trimEnd();
     }
 
     // isArray not needed, use Array.isArary
@@ -3203,7 +3225,7 @@ var Playground = (function (exports) {
                     return result;
                 }, {});
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'filteri': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -3232,7 +3254,7 @@ var Playground = (function (exports) {
                     return result;
                 }, {});
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'map': {
             evaluate: function (params, sourceCodeInfo, contextStack, _a) {
@@ -3274,7 +3296,7 @@ var Playground = (function (exports) {
                 mapped.forEach(function (char) { return assertString(char, sourceCodeInfo); });
                 return mapped.join('');
             },
-            paramCount: { min: 2 },
+            arity: { min: 2 },
         },
         'mapi': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -3298,7 +3320,7 @@ var Playground = (function (exports) {
                     return acc;
                 }, {});
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'reduce': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -3331,7 +3353,7 @@ var Playground = (function (exports) {
                     }, initial);
                 }
             },
-            paramCount: 3,
+            arity: toFixedArity(3),
         },
         'reducei': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -3364,7 +3386,7 @@ var Playground = (function (exports) {
                     }, initial);
                 }
             },
-            paramCount: 3,
+            arity: toFixedArity(3),
         },
         'reduce-right': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -3396,7 +3418,7 @@ var Playground = (function (exports) {
                     }, initial);
                 }
             },
-            paramCount: 3,
+            arity: toFixedArity(3),
         },
         'reducei-right': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -3428,7 +3450,7 @@ var Playground = (function (exports) {
                     }, initial);
                 }
             },
-            paramCount: 3,
+            arity: toFixedArity(3),
         },
         'reductions': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -3474,7 +3496,7 @@ var Playground = (function (exports) {
                     return resultArray_3;
                 }
             },
-            paramCount: 3,
+            arity: toFixedArity(3),
         },
         'reductionsi': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -3520,7 +3542,7 @@ var Playground = (function (exports) {
                     return resultArray_6;
                 }
             },
-            paramCount: 3,
+            arity: toFixedArity(3),
         },
         'get': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3533,7 +3555,7 @@ var Playground = (function (exports) {
                 var result = get(coll, key);
                 return result === undefined ? defaultValue : result;
             },
-            paramCount: { min: 2, max: 3 },
+            arity: { min: 2, max: 3 },
         },
         'get-in': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3568,7 +3590,7 @@ var Playground = (function (exports) {
                 }
                 return coll;
             },
-            paramCount: { min: 2, max: 3 },
+            arity: { min: 2, max: 3 },
         },
         'count': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3582,7 +3604,7 @@ var Playground = (function (exports) {
                     return coll.length;
                 return Object.keys(coll).length;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'contains?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3601,7 +3623,7 @@ var Playground = (function (exports) {
                 assertString(key, sourceCodeInfo);
                 return key in coll;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'assoc': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3611,7 +3633,7 @@ var Playground = (function (exports) {
                 assertAny(value, sourceCodeInfo);
                 return assoc(coll, key, value, sourceCodeInfo);
             },
-            paramCount: 3,
+            arity: toFixedArity(3),
         },
         'assoc-in': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3636,7 +3658,7 @@ var Playground = (function (exports) {
                 }
                 return coll;
             },
-            paramCount: 3,
+            arity: toFixedArity(3),
         },
         'update': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -3647,7 +3669,7 @@ var Playground = (function (exports) {
                 assertFunctionLike(fn, sourceCodeInfo);
                 return update(coll, key, fn, params, contextStack, executeFunction, sourceCodeInfo);
             },
-            paramCount: { min: 3 },
+            arity: { min: 3 },
         },
         'update-in': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -3673,7 +3695,7 @@ var Playground = (function (exports) {
                 }
                 return coll;
             },
-            paramCount: { min: 3 },
+            arity: { min: 3 },
         },
         '++': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3699,7 +3721,7 @@ var Playground = (function (exports) {
                     }, {});
                 }
             },
-            paramCount: { min: 1 },
+            arity: { min: 1 },
             aliases: ['concat'],
         },
         'not-empty': {
@@ -3714,7 +3736,7 @@ var Playground = (function (exports) {
                     return coll.length > 0 ? coll : null;
                 return Object.keys(coll).length > 0 ? coll : null;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'every?': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -3728,7 +3750,7 @@ var Playground = (function (exports) {
                     return coll.split('').every(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
                 return Object.entries(coll).every(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'any?': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -3742,7 +3764,7 @@ var Playground = (function (exports) {
                     return coll.split('').some(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
                 return Object.entries(coll).some(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'not-any?': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -3756,7 +3778,7 @@ var Playground = (function (exports) {
                     return !coll.split('').some(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
                 return !Object.entries(coll).some(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'not-every?': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -3770,7 +3792,7 @@ var Playground = (function (exports) {
                     return !coll.split('').every(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
                 return !Object.entries(coll).every(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
     };
 
@@ -3811,7 +3833,7 @@ var Playground = (function (exports) {
                     result.push(i);
                 return result;
             },
-            paramCount: { min: 1, max: 3 },
+            arity: { min: 1, max: 3 },
         },
         'repeat': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3822,7 +3844,7 @@ var Playground = (function (exports) {
                     result.push(value);
                 return result;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'flatten': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3833,7 +3855,7 @@ var Playground = (function (exports) {
                     : asNumber(depth, sourceCodeInfo, { integer: true, nonNegative: true });
                 return seq.flat(actualDepth);
             },
-            paramCount: { min: 1, max: 2 },
+            arity: { min: 1, max: 2 },
         },
         'mapcat': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -3843,7 +3865,7 @@ var Playground = (function (exports) {
                 assertFunctionLike(fn, sourceCodeInfo);
                 return arr.map(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); }).flat(1);
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'moving-fn': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -3860,7 +3882,7 @@ var Playground = (function (exports) {
                 }
                 return result;
             },
-            paramCount: 3,
+            arity: toFixedArity(3),
         },
         'running-fn': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -3875,7 +3897,7 @@ var Playground = (function (exports) {
                 }
                 return result;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
     };
 
@@ -3896,7 +3918,7 @@ var Playground = (function (exports) {
                     return defaultValue;
                 }
             },
-            paramCount: { min: 2, max: 3 },
+            arity: { min: 2, max: 3 },
         },
         'first': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3907,7 +3929,7 @@ var Playground = (function (exports) {
                 var result = toAny(array[0]);
                 return result;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'last': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3918,7 +3940,7 @@ var Playground = (function (exports) {
                 var result = toAny(array.at(-1));
                 return result;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'pop': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3929,7 +3951,7 @@ var Playground = (function (exports) {
                 }
                 return seq.slice(0, seq.length - 1);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'position': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -3948,7 +3970,7 @@ var Playground = (function (exports) {
                     return index !== -1 ? index : null;
                 }
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'index-of': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3967,7 +3989,7 @@ var Playground = (function (exports) {
                     return index !== -1 ? index : null;
                 }
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'last-index-of': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3986,7 +4008,7 @@ var Playground = (function (exports) {
                     return index !== -1 ? index : null;
                 }
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'push': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4000,7 +4022,7 @@ var Playground = (function (exports) {
                     return __spreadArray(__spreadArray([], __read(seq), false), __read(values), false);
                 }
             },
-            paramCount: { min: 2 },
+            arity: { min: 2 },
         },
         'rest': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4013,7 +4035,7 @@ var Playground = (function (exports) {
                 }
                 return seq.substring(1);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'next': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4028,7 +4050,7 @@ var Playground = (function (exports) {
                     return null;
                 return seq.substring(1);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'reverse': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4041,7 +4063,7 @@ var Playground = (function (exports) {
                 }
                 return seq.split('').reverse().join('');
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'second': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4051,7 +4073,7 @@ var Playground = (function (exports) {
                 assertSeq(seq, sourceCodeInfo);
                 return toAny(seq[1]);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'shift': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4063,7 +4085,7 @@ var Playground = (function (exports) {
                 copy.shift();
                 return copy;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'slice': {
             evaluate: function (params, sourceCodeInfo) {
@@ -4082,7 +4104,7 @@ var Playground = (function (exports) {
                 }
                 return seq.slice(from, to);
             },
-            paramCount: { min: 2, max: 3 },
+            arity: { min: 2, max: 3 },
         },
         'splice': {
             evaluate: function (params, sourceCodeInfo) {
@@ -4097,7 +4119,7 @@ var Playground = (function (exports) {
                 rest.forEach(function (elem) { return assertString(elem, sourceCodeInfo); });
                 return "".concat(seq.substring(0, from)).concat(rest.join('')).concat(seq.substring(from + deleteCount));
             },
-            paramCount: { min: 3 },
+            arity: { min: 3 },
         },
         'some': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -4114,7 +4136,7 @@ var Playground = (function (exports) {
                     return (_c = seq.split('').find(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); })) !== null && _c !== void 0 ? _c : null;
                 return toAny(seq.find(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); }));
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'sort': {
             evaluate: function (params, sourceCodeInfo, contextStack, _a) {
@@ -4156,7 +4178,7 @@ var Playground = (function (exports) {
                 }
                 return result;
             },
-            paramCount: { min: 1, max: 2 },
+            arity: { min: 1, max: 2 },
         },
         'sort-by': {
             evaluate: function (params, sourceCodeInfo, contextStack, _a) {
@@ -4211,7 +4233,7 @@ var Playground = (function (exports) {
                 }
                 return result;
             },
-            paramCount: { min: 2, max: 3 },
+            arity: { min: 2, max: 3 },
         },
         'take': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4221,7 +4243,7 @@ var Playground = (function (exports) {
                 var num = Math.max(Math.ceil(n), 0);
                 return input.slice(0, num);
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'take-last': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4232,7 +4254,7 @@ var Playground = (function (exports) {
                 var from = array.length - num;
                 return array.slice(from);
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'take-while': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -4260,7 +4282,7 @@ var Playground = (function (exports) {
                 }
                 return typeof seq === 'string' ? result.join('') : result;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'drop': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4270,7 +4292,7 @@ var Playground = (function (exports) {
                 assertSeq(input, sourceCodeInfo);
                 return input.slice(num);
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'drop-last': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4281,7 +4303,7 @@ var Playground = (function (exports) {
                 var from = array.length - num;
                 return array.slice(0, from);
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'drop-while': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -4297,7 +4319,7 @@ var Playground = (function (exports) {
                 var from = charArray.findIndex(function (elem) { return !executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
                 return charArray.slice(from).join('');
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'unshift': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4311,7 +4333,7 @@ var Playground = (function (exports) {
                 copy.unshift.apply(copy, __spreadArray([], __read(values), false));
                 return copy;
             },
-            paramCount: { min: 2 },
+            arity: { min: 2 },
         },
         'distinct': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4343,7 +4365,7 @@ var Playground = (function (exports) {
                 }
                 return Array.from(new Set(input.split(''))).join('');
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'remove': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -4358,7 +4380,7 @@ var Playground = (function (exports) {
                     .filter(function (elem) { return !executeFunction(fn, [elem], contextStack, sourceCodeInfo); })
                     .join('');
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'remove-at': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4373,7 +4395,7 @@ var Playground = (function (exports) {
                 }
                 return "".concat(input.substring(0, at)).concat(input.substring(at + 1));
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'split-at': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4383,7 +4405,7 @@ var Playground = (function (exports) {
                 var at = pos < 0 ? seq.length + pos : pos;
                 return [seq.slice(0, at), seq.slice(at)];
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'split-with': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -4398,7 +4420,7 @@ var Playground = (function (exports) {
                     return [seq, seqIsArray ? [] : ''];
                 return [seq.slice(0, index), seq.slice(index)];
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'frequencies': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4414,7 +4436,7 @@ var Playground = (function (exports) {
                     return result;
                 }, {});
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'group-by': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -4432,7 +4454,7 @@ var Playground = (function (exports) {
                     return result;
                 }, {});
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'partition': {
             evaluate: function (params, sourceCodeInfo) {
@@ -4444,7 +4466,7 @@ var Playground = (function (exports) {
                     : undefined;
                 return partition(n, step, seq, pad, sourceCodeInfo);
             },
-            paramCount: { min: 2, max: 4 },
+            arity: { min: 2, max: 4 },
         },
         'partition-all': {
             evaluate: function (params, sourceCodeInfo) {
@@ -4453,7 +4475,7 @@ var Playground = (function (exports) {
                 var step = params.length === 3 ? toNonNegativeInteger(asNumber(params[2], sourceCodeInfo)) : n;
                 return partition(n, step, seq, [], sourceCodeInfo);
             },
-            paramCount: { min: 2, max: 3 },
+            arity: { min: 2, max: 3 },
         },
         'partition-by': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -4474,7 +4496,7 @@ var Playground = (function (exports) {
                 }, []);
                 return isStringSeq ? result.map(function (elem) { return elem.join(''); }) : result;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'ends-with?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4486,7 +4508,7 @@ var Playground = (function (exports) {
                 }
                 return deepEqual(asAny(str.at(-1), sourceCodeInfo), asAny(search, sourceCodeInfo), sourceCodeInfo);
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'starts-with?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4498,7 +4520,7 @@ var Playground = (function (exports) {
                 }
                 return deepEqual(asAny(seq[0], sourceCodeInfo), asAny(search, sourceCodeInfo), sourceCodeInfo);
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'interleave': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4534,7 +4556,7 @@ var Playground = (function (exports) {
                 }
                 return isStringSeq ? result.join('') : result;
             },
-            paramCount: { min: 1 },
+            arity: { min: 1 },
         },
         'interpose': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4553,7 +4575,7 @@ var Playground = (function (exports) {
                 result.push(seq[seq.length - 1]);
                 return result;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
     };
     function partition(n, step, seq, pad, sourceCodeInfo) {
@@ -4696,7 +4718,7 @@ var Playground = (function (exports) {
                     return firstMatrix.map(function (row) { return row.map(function (val) { return val + 1; }); });
                 }
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'dec': {
             evaluate: function (params, sourceCodeInfo) {
@@ -4713,7 +4735,7 @@ var Playground = (function (exports) {
                     return firstMatrix.map(function (row) { return row.map(function (val) { return val - 1; }); });
                 }
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         '+': {
             evaluate: function (params, sourceCodeInfo) {
@@ -4735,7 +4757,7 @@ var Playground = (function (exports) {
                     return restMatrices.reduce(function (acc, matrix) { return acc.map(function (row, i) { return row.map(function (val, j) { return val + matrix[i][j]; }); }); }, firstMatrix);
                 }
             },
-            paramCount: {},
+            arity: {},
         },
         '*': {
             evaluate: function (params, sourceCodeInfo) {
@@ -4758,7 +4780,7 @@ var Playground = (function (exports) {
                 }
             },
             aliases: ['·'],
-            paramCount: {},
+            arity: {},
         },
         '/': {
             evaluate: function (params, sourceCodeInfo) {
@@ -4786,7 +4808,7 @@ var Playground = (function (exports) {
                     return restMatrices.reduce(function (acc, matrix) { return acc.map(function (row, i) { return row.map(function (val, j) { return val / matrix[i][j]; }); }); }, firstMatrix);
                 }
             },
-            paramCount: {},
+            arity: {},
         },
         '-': {
             evaluate: function (params, sourceCodeInfo) {
@@ -4813,7 +4835,7 @@ var Playground = (function (exports) {
                     return restMatrices.reduce(function (acc, matrix) { return acc.map(function (row, i) { return row.map(function (val, j) { return val - matrix[i][j]; }); }); }, firstMatrix);
                 }
             },
-            paramCount: {},
+            arity: {},
         },
         'quot': {
             evaluate: function (params, sourceCodeInfo) {
@@ -4832,7 +4854,7 @@ var Playground = (function (exports) {
                     return firstMatrix.map(function (row, i) { return row.map(function (val, j) { return Math.trunc(val / secondMatrix_1[i][j]); }); });
                 }
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'mod': {
             evaluate: function (params, sourceCodeInfo) {
@@ -4859,7 +4881,7 @@ var Playground = (function (exports) {
                     }); });
                 }
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         '%': {
             evaluate: function (params, sourceCodeInfo) {
@@ -4878,7 +4900,7 @@ var Playground = (function (exports) {
                     return firstMatrix.map(function (row, i) { return row.map(function (dividend, j) { return dividend % secondMatrix_3[i][j]; }); });
                 }
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
             aliases: ['rem'],
         },
         'sqrt': {
@@ -4896,7 +4918,7 @@ var Playground = (function (exports) {
                     return firstMatrix.map(function (row) { return row.map(function (val) { return Math.sqrt(val); }); });
                 }
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
             aliases: ['√'],
         },
         'cbrt': {
@@ -4914,7 +4936,7 @@ var Playground = (function (exports) {
                     return firstMatrix.map(function (row) { return row.map(function (val) { return Math.cbrt(val); }); });
                 }
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
             aliases: ['∛'],
         },
         '^': {
@@ -4934,7 +4956,7 @@ var Playground = (function (exports) {
                     return firstMatrix.map(function (row, i) { return row.map(function (base, j) { return Math.pow(base, secondMatrix_4[i][j]); }); });
                 }
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'round': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4973,7 +4995,7 @@ var Playground = (function (exports) {
                     }
                 }
             },
-            paramCount: { min: 1, max: 2 },
+            arity: { min: 1, max: 2 },
         },
         'trunc': {
             evaluate: function (params, sourceCodeInfo) {
@@ -4990,7 +5012,7 @@ var Playground = (function (exports) {
                     return matrix.map(function (row) { return row.map(function (val) { return Math.trunc(val); }); });
                 }
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'floor': {
             evaluate: function (params, sourceCodeInfo) {
@@ -5007,7 +5029,7 @@ var Playground = (function (exports) {
                     return matrix.map(function (row) { return row.map(function (val) { return Math.floor(val); }); });
                 }
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'ceil': {
             evaluate: function (params, sourceCodeInfo) {
@@ -5024,7 +5046,7 @@ var Playground = (function (exports) {
                     return matrix.map(function (row) { return row.map(function (val) { return Math.ceil(val); }); });
                 }
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'min': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -5037,7 +5059,7 @@ var Playground = (function (exports) {
                     return Math.min(min, value);
                 }, first);
             },
-            paramCount: { min: 1 },
+            arity: { min: 1 },
         },
         'max': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -5050,7 +5072,7 @@ var Playground = (function (exports) {
                     return Math.max(min, value);
                 }, first);
             },
-            paramCount: { min: 1 },
+            arity: { min: 1 },
         },
         'abs': {
             evaluate: function (params, sourceCodeInfo) {
@@ -5067,7 +5089,7 @@ var Playground = (function (exports) {
                     return matrix.map(function (row) { return row.map(function (val) { return Math.abs(val); }); });
                 }
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'sign': {
             evaluate: function (params, sourceCodeInfo) {
@@ -5084,7 +5106,7 @@ var Playground = (function (exports) {
                     return matrix.map(function (row) { return row.map(function (val) { return Math.sign(val); }); });
                 }
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'ln': {
             evaluate: function (params, sourceCodeInfo) {
@@ -5101,7 +5123,7 @@ var Playground = (function (exports) {
                     return matrix.map(function (row) { return row.map(function (val) { return Math.log(val); }); });
                 }
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'log2': {
             evaluate: function (params, sourceCodeInfo) {
@@ -5118,7 +5140,7 @@ var Playground = (function (exports) {
                     return matrix.map(function (row) { return row.map(function (val) { return Math.log2(val); }); });
                 }
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
             aliases: ['log₂'],
         },
         'log10': {
@@ -5136,7 +5158,7 @@ var Playground = (function (exports) {
                     return matrix.map(function (row) { return row.map(function (val) { return Math.log10(val); }); });
                 }
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
             aliases: ['log₁₀'],
         },
         'sin': {
@@ -5154,7 +5176,7 @@ var Playground = (function (exports) {
                     return matrix.map(function (row) { return row.map(function (val) { return Math.sin(val); }); });
                 }
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'asin': {
             evaluate: function (params, sourceCodeInfo) {
@@ -5171,7 +5193,7 @@ var Playground = (function (exports) {
                     return matrix.map(function (row) { return row.map(function (val) { return Math.asin(val); }); });
                 }
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'sinh': {
             evaluate: function (params, sourceCodeInfo) {
@@ -5188,7 +5210,7 @@ var Playground = (function (exports) {
                     return matrix.map(function (row) { return row.map(function (val) { return Math.sinh(val); }); });
                 }
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'asinh': {
             evaluate: function (params, sourceCodeInfo) {
@@ -5205,7 +5227,7 @@ var Playground = (function (exports) {
                     return matrix.map(function (row) { return row.map(function (val) { return Math.asinh(val); }); });
                 }
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'cos': {
             evaluate: function (params, sourceCodeInfo) {
@@ -5222,7 +5244,7 @@ var Playground = (function (exports) {
                     return matrix.map(function (row) { return row.map(function (val) { return Math.cos(val); }); });
                 }
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'acos': {
             evaluate: function (params, sourceCodeInfo) {
@@ -5239,7 +5261,7 @@ var Playground = (function (exports) {
                     return matrix.map(function (row) { return row.map(function (val) { return Math.acos(val); }); });
                 }
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'cosh': {
             evaluate: function (params, sourceCodeInfo) {
@@ -5256,7 +5278,7 @@ var Playground = (function (exports) {
                     return matrix.map(function (row) { return row.map(function (val) { return Math.cosh(val); }); });
                 }
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'acosh': {
             evaluate: function (params, sourceCodeInfo) {
@@ -5273,7 +5295,7 @@ var Playground = (function (exports) {
                     return matrix.map(function (row) { return row.map(function (val) { return Math.acosh(val); }); });
                 }
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'tan': {
             evaluate: function (params, sourceCodeInfo) {
@@ -5290,7 +5312,7 @@ var Playground = (function (exports) {
                     return matrix.map(function (row) { return row.map(function (val) { return Math.tan(val); }); });
                 }
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'atan': {
             evaluate: function (params, sourceCodeInfo) {
@@ -5307,7 +5329,7 @@ var Playground = (function (exports) {
                     return matrix.map(function (row) { return row.map(function (val) { return Math.atan(val); }); });
                 }
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'tanh': {
             evaluate: function (params, sourceCodeInfo) {
@@ -5324,7 +5346,7 @@ var Playground = (function (exports) {
                     return matrix.map(function (row) { return row.map(function (val) { return Math.tanh(val); }); });
                 }
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'atanh': {
             evaluate: function (params, sourceCodeInfo) {
@@ -5341,7 +5363,7 @@ var Playground = (function (exports) {
                     return matrix.map(function (row) { return row.map(function (val) { return Math.atanh(val); }); });
                 }
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'to-rad': {
             evaluate: function (params, sourceCodeInfo) {
@@ -5358,7 +5380,7 @@ var Playground = (function (exports) {
                     return matrix.map(function (row) { return row.map(function (val) { return (val * Math.PI) / 180; }); });
                 }
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'to-deg': {
             evaluate: function (params, sourceCodeInfo) {
@@ -5375,7 +5397,7 @@ var Playground = (function (exports) {
                     return matrix.map(function (row) { return row.map(function (val) { return (val * 180) / Math.PI; }); });
                 }
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
     };
 
@@ -5423,20 +5445,20 @@ var Playground = (function (exports) {
             evaluate: function (params, sourceCodeInfo) {
                 return isEqual(params, sourceCodeInfo);
             },
-            paramCount: { min: 1 },
+            arity: { min: 1 },
         },
         '≠': {
             evaluate: function (params, sourceCodeInfo) {
                 return !isEqual(params, sourceCodeInfo);
             },
-            paramCount: { min: 1 },
+            arity: { min: 1 },
             aliases: ['!='],
         },
         'identical?': {
             evaluate: function (params) {
                 return isIdentical(params);
             },
-            paramCount: { min: 1 },
+            arity: { min: 1 },
         },
         '>': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -5460,7 +5482,7 @@ var Playground = (function (exports) {
                 }
                 return true;
             },
-            paramCount: { min: 1 },
+            arity: { min: 1 },
         },
         '<': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -5484,9 +5506,9 @@ var Playground = (function (exports) {
                 }
                 return true;
             },
-            paramCount: { min: 1 },
+            arity: { min: 1 },
         },
-        '≥': {
+        '>=': {
             evaluate: function (_a, sourceCodeInfo) {
                 var e_5, _b;
                 var _c = __read(_a), first = _c[0], rest = _c.slice(1);
@@ -5508,10 +5530,10 @@ var Playground = (function (exports) {
                 }
                 return true;
             },
-            paramCount: { min: 1 },
-            aliases: ['>='],
+            arity: { min: 1 },
+            aliases: ['≥'],
         },
-        '≤': {
+        '<=': {
             evaluate: function (_a, sourceCodeInfo) {
                 var e_6, _b;
                 var _c = __read(_a), first = _c[0], rest = _c.slice(1);
@@ -5533,15 +5555,15 @@ var Playground = (function (exports) {
                 }
                 return true;
             },
-            paramCount: { min: 1 },
-            aliases: ['<='],
+            arity: { min: 1 },
+            aliases: ['≤'],
         },
         '!': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), first = _b[0];
                 return !first;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'epoch->iso-date': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -5549,7 +5571,7 @@ var Playground = (function (exports) {
                 assertNumber(ms, sourceCodeInfo);
                 return new Date(ms).toISOString();
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'iso-date->epoch': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -5559,7 +5581,7 @@ var Playground = (function (exports) {
                 assertNumber(ms, sourceCodeInfo, { finite: true });
                 return ms;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'write!': {
             evaluate: function (params, sourceCodeInfo) {
@@ -5569,14 +5591,14 @@ var Playground = (function (exports) {
                     return asAny(params[params.length - 1], sourceCodeInfo);
                 return null;
             },
-            paramCount: {},
+            arity: {},
         },
         'boolean': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), value = _b[0];
                 return !!value;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'compare': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -5585,7 +5607,7 @@ var Playground = (function (exports) {
                 assertStringOrNumber(b, sourceCodeInfo);
                 return compare(a, b, sourceCodeInfo);
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'json-parse': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -5594,7 +5616,7 @@ var Playground = (function (exports) {
                 // eslint-disable-next-line ts/no-unsafe-return
                 return JSON.parse(first);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'json-stringify': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -5605,15 +5627,23 @@ var Playground = (function (exports) {
                 assertNumber(second, sourceCodeInfo);
                 return JSON.stringify(first, null, second);
             },
-            paramCount: { min: 1, max: 2 },
+            arity: { min: 1, max: 2 },
         },
         'doc': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), fn = _b[0];
-                assertLitsFunction(fn, sourceCodeInfo);
-                return fn.docString;
+                assertFunctionLike(fn, sourceCodeInfo);
+                return isLitsFunction(fn) ? fn.docString : '';
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
+        },
+        'arity': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), fn = _b[0];
+                assertFunctionLike(fn, sourceCodeInfo);
+                return isLitsFunction(fn) ? fn.arity : toFixedArity(1);
+            },
+            arity: toFixedArity(1),
         },
     };
 
@@ -5627,7 +5657,7 @@ var Playground = (function (exports) {
                     throw new AssertionError(message, sourceCodeInfo);
                 return asAny(value, sourceCodeInfo);
             },
-            paramCount: { min: 1, max: 2 },
+            arity: { min: 1, max: 2 },
         },
         'assert=': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -5641,7 +5671,7 @@ var Playground = (function (exports) {
                 }
                 return null;
             },
-            paramCount: { min: 2, max: 3 },
+            arity: { min: 2, max: 3 },
         },
         'assert!=': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -5655,7 +5685,7 @@ var Playground = (function (exports) {
                 }
                 return null;
             },
-            paramCount: { min: 2, max: 3 },
+            arity: { min: 2, max: 3 },
         },
         'assert-gt': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -5670,7 +5700,7 @@ var Playground = (function (exports) {
                     throw new AssertionError("Expected ".concat(first, " to be grater than ").concat(second, ".").concat(message), sourceCodeInfo);
                 return null;
             },
-            paramCount: { min: 2, max: 3 },
+            arity: { min: 2, max: 3 },
         },
         'assert-gte': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -5685,7 +5715,7 @@ var Playground = (function (exports) {
                     throw new AssertionError("Expected ".concat(first, " to be grater than or equal to ").concat(second, ".").concat(message), sourceCodeInfo);
                 return null;
             },
-            paramCount: { min: 2, max: 3 },
+            arity: { min: 2, max: 3 },
         },
         'assert-lt': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -5700,7 +5730,7 @@ var Playground = (function (exports) {
                     throw new AssertionError("Expected ".concat(first, " to be less than ").concat(second, ".").concat(message), sourceCodeInfo);
                 return null;
             },
-            paramCount: { min: 2, max: 3 },
+            arity: { min: 2, max: 3 },
         },
         'assert-lte': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -5715,7 +5745,7 @@ var Playground = (function (exports) {
                     throw new AssertionError("Expected ".concat(first, " to be less than or equal to ").concat(second, ".").concat(message), sourceCodeInfo);
                 return null;
             },
-            paramCount: { min: 2, max: 3 },
+            arity: { min: 2, max: 3 },
         },
         'assert-true': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -5728,7 +5758,7 @@ var Playground = (function (exports) {
                     throw new AssertionError("Expected ".concat(first, " to be true.").concat(message), sourceCodeInfo);
                 return null;
             },
-            paramCount: { min: 1, max: 2 },
+            arity: { min: 1, max: 2 },
         },
         'assert-false': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -5741,7 +5771,7 @@ var Playground = (function (exports) {
                     throw new AssertionError("Expected ".concat(first, " to be false.").concat(message), sourceCodeInfo);
                 return null;
             },
-            paramCount: { min: 1, max: 2 },
+            arity: { min: 1, max: 2 },
         },
         'assert-truthy': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -5754,7 +5784,7 @@ var Playground = (function (exports) {
                     throw new AssertionError("Expected ".concat(first, " to be truthy.").concat(message), sourceCodeInfo);
                 return null;
             },
-            paramCount: { min: 1, max: 2 },
+            arity: { min: 1, max: 2 },
         },
         'assert-falsy': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -5767,7 +5797,7 @@ var Playground = (function (exports) {
                     throw new AssertionError("Expected ".concat(first, " to be falsy.").concat(message), sourceCodeInfo);
                 return null;
             },
-            paramCount: { min: 1, max: 2 },
+            arity: { min: 1, max: 2 },
         },
         'assert-null': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -5780,7 +5810,7 @@ var Playground = (function (exports) {
                     throw new AssertionError("Expected ".concat(first, " to be null.").concat(message), sourceCodeInfo);
                 return null;
             },
-            paramCount: { min: 1, max: 2 },
+            arity: { min: 1, max: 2 },
         },
         'assert-throws': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -5799,7 +5829,7 @@ var Playground = (function (exports) {
                 }
                 throw new AssertionError("Expected function to throw.".concat(message), sourceCodeInfo);
             },
-            paramCount: { min: 1, max: 2 },
+            arity: { min: 1, max: 2 },
         },
         'assert-throws-error': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -5823,7 +5853,7 @@ var Playground = (function (exports) {
                 }
                 throw new AssertionError("Expected function to throw \"".concat(throwMessage, "\".").concat(message), sourceCodeInfo);
             },
-            paramCount: { min: 2, max: 3 },
+            arity: { min: 2, max: 3 },
         },
         'assert-not-throws': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -5842,7 +5872,7 @@ var Playground = (function (exports) {
                 }
                 return null;
             },
-            paramCount: { min: 1, max: 2 },
+            arity: { min: 1, max: 2 },
         },
     };
 
@@ -5853,7 +5883,7 @@ var Playground = (function (exports) {
                 assertObj(obj, sourceCodeInfo);
                 return Object.keys(obj);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'vals': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -5861,7 +5891,7 @@ var Playground = (function (exports) {
                 assertObj(obj, sourceCodeInfo);
                 return Object.values(obj);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'entries': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -5869,7 +5899,7 @@ var Playground = (function (exports) {
                 assertObj(obj, sourceCodeInfo);
                 return Object.entries(obj);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'find': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -5880,7 +5910,7 @@ var Playground = (function (exports) {
                     return [key, obj[key]];
                 return null;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'dissoc': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -5891,7 +5921,7 @@ var Playground = (function (exports) {
                 delete newObj[key];
                 return newObj;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'merge': {
             evaluate: function (params, sourceCodeInfo) {
@@ -5904,7 +5934,7 @@ var Playground = (function (exports) {
                     return __assign(__assign({}, result), obj);
                 }, __assign({}, first));
             },
-            paramCount: { min: 0 },
+            arity: { min: 0 },
         },
         'merge-with': {
             evaluate: function (params, sourceCodeInfo, contextStack, _a) {
@@ -5927,7 +5957,7 @@ var Playground = (function (exports) {
                     return result;
                 }, __assign({}, first));
             },
-            paramCount: { min: 2 },
+            arity: { min: 2 },
         },
         'zipmap': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -5942,7 +5972,7 @@ var Playground = (function (exports) {
                 }
                 return result;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'select-keys': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -5955,7 +5985,7 @@ var Playground = (function (exports) {
                     return result;
                 }, {});
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
     };
 
@@ -5965,42 +5995,42 @@ var Playground = (function (exports) {
                 var _b = __read(_a, 1), first = _b[0];
                 return isLitsFunction(first);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'string?': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), first = _b[0];
                 return typeof first === 'string';
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'number?': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), first = _b[0];
                 return typeof first === 'number';
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'integer?': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), first = _b[0];
                 return typeof first === 'number' && isNumber(first, { integer: true });
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'boolean?': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), first = _b[0];
                 return typeof first === 'boolean';
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'null?': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), first = _b[0];
                 return first === null || first === undefined;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'zero?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6008,7 +6038,7 @@ var Playground = (function (exports) {
                 assertNumber(value, sourceCodeInfo, { finite: true });
                 return Math.abs(value) < EPSILON;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'pos?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6016,7 +6046,7 @@ var Playground = (function (exports) {
                 assertNumber(first, sourceCodeInfo, { finite: true });
                 return first > 0;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'neg?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6024,7 +6054,7 @@ var Playground = (function (exports) {
                 assertNumber(first, sourceCodeInfo, { finite: true });
                 return first < 0;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'even?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6032,7 +6062,7 @@ var Playground = (function (exports) {
                 assertNumber(first, sourceCodeInfo, { finite: true });
                 return first % 2 === 0;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'odd?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6040,42 +6070,42 @@ var Playground = (function (exports) {
                 assertNumber(first, sourceCodeInfo, { finite: true });
                 return isNumber(first, { integer: true }) && first % 2 !== 0;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'array?': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), first = _b[0];
                 return Array.isArray(first);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'coll?': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), first = _b[0];
                 return isColl(first);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'seq?': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), first = _b[0];
                 return isSeq(first);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'object?': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), first = _b[0];
                 return isObj(first);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'regexp?': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), value = _b[0];
                 return isRegularExpression(value);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'finite?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6083,7 +6113,7 @@ var Playground = (function (exports) {
                 assertNumber(value, sourceCodeInfo);
                 return Number.isFinite(value);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'positive-infinity?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6091,7 +6121,7 @@ var Playground = (function (exports) {
                 assertNumber(value, sourceCodeInfo);
                 return value === Number.POSITIVE_INFINITY;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'negative-infinity?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6099,21 +6129,21 @@ var Playground = (function (exports) {
                 assertNumber(value, sourceCodeInfo);
                 return value === Number.NEGATIVE_INFINITY;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'true?': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), value = _b[0];
                 return value === true;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'false?': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), value = _b[0];
                 return value === false;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'empty?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6127,7 +6157,7 @@ var Playground = (function (exports) {
                     return coll.length === 0;
                 return Object.keys(coll).length === 0;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'not-empty?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6141,28 +6171,28 @@ var Playground = (function (exports) {
                     return coll.length > 0;
                 return Object.keys(coll).length > 0;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'vector?': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), vector = _b[0];
                 return isVector(vector);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'matrix?': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), matrix = _b[0];
                 return isMatrix(matrix);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'grid?': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), table = _b[0];
                 return isGrid(table);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
     };
 
@@ -6188,7 +6218,7 @@ var Playground = (function (exports) {
                     _b.f = flags,
                     _b;
             },
-            paramCount: { min: 1, max: 2 },
+            arity: { min: 1, max: 2 },
         },
         'match': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6202,7 +6232,7 @@ var Playground = (function (exports) {
                     return __spreadArray([], __read(match), false);
                 return null;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'replace': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6213,7 +6243,7 @@ var Playground = (function (exports) {
                 var matcher = isRegularExpression(regexp) ? new RegExp(regexp.s, "".concat(regexp.f)) : regexp;
                 return str.replace(matcher, value);
             },
-            paramCount: 3,
+            arity: toFixedArity(3),
         },
         'replace-all': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6224,7 +6254,7 @@ var Playground = (function (exports) {
                 var matcher = isRegularExpression(regexp) ? new RegExp(regexp.s, "".concat(regexp.f.includes('g') ? regexp.f : "".concat(regexp.f, "g"))) : regexp;
                 return str.replaceAll(matcher, value);
             },
-            paramCount: 3,
+            arity: toFixedArity(3),
         },
     };
 
@@ -6237,7 +6267,7 @@ var Playground = (function (exports) {
                 assertNumber(count, sourceCodeInfo, { integer: true, nonNegative: true });
                 return str.repeat(count);
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'str': {
             evaluate: function (params) {
@@ -6252,7 +6282,7 @@ var Playground = (function (exports) {
                     return result + paramStr;
                 }, '');
             },
-            paramCount: {},
+            arity: {},
         },
         'number': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6263,7 +6293,7 @@ var Playground = (function (exports) {
                     throw new LitsError("Could not convert '".concat(str, "' to a number."), sourceCodeInfo);
                 return number;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'from-char-code': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6277,7 +6307,7 @@ var Playground = (function (exports) {
                     throw new LitsError(error, sourceCodeInfo);
                 }
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'to-char-code': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6285,7 +6315,7 @@ var Playground = (function (exports) {
                 assertString(str, sourceCodeInfo, { nonEmpty: true });
                 return asNonUndefined(str.codePointAt(0), sourceCodeInfo);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'lower-case': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6293,7 +6323,7 @@ var Playground = (function (exports) {
                 assertString(str, sourceCodeInfo);
                 return str.toLowerCase();
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'upper-case': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6301,7 +6331,7 @@ var Playground = (function (exports) {
                 assertString(str, sourceCodeInfo);
                 return str.toUpperCase();
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'trim': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6309,7 +6339,7 @@ var Playground = (function (exports) {
                 assertString(str, sourceCodeInfo);
                 return str.trim();
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'trim-left': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6317,7 +6347,7 @@ var Playground = (function (exports) {
                 assertString(str, sourceCodeInfo);
                 return str.replace(/^\s+/, '');
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'trim-right': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6325,7 +6355,7 @@ var Playground = (function (exports) {
                 assertString(str, sourceCodeInfo);
                 return str.replace(/\s+$/, '');
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'join': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6335,7 +6365,7 @@ var Playground = (function (exports) {
                 assertString(delimiter, sourceCodeInfo);
                 return stringList.join(delimiter);
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'split': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6349,7 +6379,7 @@ var Playground = (function (exports) {
                     : new RegExp(stringOrRegExpValue.s, stringOrRegExpValue.f);
                 return str.split(delimiter, limit);
             },
-            paramCount: { min: 2, max: 3 },
+            arity: { min: 2, max: 3 },
         },
         'split-lines': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6357,7 +6387,7 @@ var Playground = (function (exports) {
                 assertString(str, sourceCodeInfo);
                 return str.split((/\r\n|\n|\r/)).filter(function (line) { return line !== ''; });
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'pad-left': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6368,7 +6398,7 @@ var Playground = (function (exports) {
                     assertString(padString, sourceCodeInfo);
                 return str.padStart(length, padString);
             },
-            paramCount: { min: 2, max: 3 },
+            arity: { min: 2, max: 3 },
         },
         'pad-right': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6379,7 +6409,7 @@ var Playground = (function (exports) {
                     assertString(padString, sourceCodeInfo);
                 return str.padEnd(length, padString);
             },
-            paramCount: { min: 2, max: 3 },
+            arity: { min: 2, max: 3 },
         },
         'template': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6410,7 +6440,7 @@ var Playground = (function (exports) {
                     }
                 }
             },
-            paramCount: { min: 1, max: 10 },
+            arity: { min: 1, max: 10 },
         },
         'encode-base64': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6421,7 +6451,7 @@ var Playground = (function (exports) {
                     return String.fromCharCode(Number.parseInt(p1, 16));
                 }));
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'decode-base64': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6439,7 +6469,7 @@ var Playground = (function (exports) {
                     throw new LitsError(error, sourceCodeInfo);
                 }
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'encode-uri-component': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6447,7 +6477,7 @@ var Playground = (function (exports) {
                 assertString(value, sourceCodeInfo);
                 return encodeURIComponent(value);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'decode-uri-component': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6460,7 +6490,7 @@ var Playground = (function (exports) {
                     throw new LitsError(error, sourceCodeInfo);
                 }
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'blank?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6471,7 +6501,7 @@ var Playground = (function (exports) {
                 assertString(value, sourceCodeInfo);
                 return blankRegexp.test(value);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'capitalize': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6479,7 +6509,7 @@ var Playground = (function (exports) {
                 assertString(str, sourceCodeInfo);
                 return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
     };
     var doubleDollarRegexp = /\$\$/g;
@@ -6498,98 +6528,6 @@ var Playground = (function (exports) {
         return templateString;
     }
 
-    function paramCountAccepts(paramsCount, nbrOfParams) {
-        if (typeof paramsCount === 'number') {
-            return paramsCount === nbrOfParams;
-        }
-        var min = paramsCount.min, max = paramsCount.max, even = paramsCount.even, odd = paramsCount.odd;
-        if (even && nbrOfParams % 2 !== 0) {
-            return false;
-        }
-        if (odd && nbrOfParams % 2 !== 1) {
-            return false;
-        }
-        if (typeof min === 'number' && nbrOfParams < min) {
-            return false;
-        }
-        if (typeof max === 'number' && nbrOfParams > max) {
-            return false;
-        }
-        return true;
-    }
-    function paramCountAcceptsMin(paramsCount, nbrOfParams) {
-        if (typeof paramsCount === 'number') {
-            return nbrOfParams >= paramsCount;
-        }
-        var min = paramsCount.min;
-        if (typeof min === 'number' && nbrOfParams < min) {
-            return false;
-        }
-        return true;
-    }
-    function getCommonParamCountFromFunctions(params) {
-        return params.reduce(function (acc, param) {
-            if (acc === null) {
-                return null;
-            }
-            var paramCount = (typeof param === 'number' || isColl(param)) ? 1 : param.paramCount;
-            if (typeof acc === 'number' && typeof paramCount === 'number') {
-                return acc === paramCount ? acc : null;
-            }
-            if (typeof paramCount === 'number') {
-                if (paramCountAccepts(acc, paramCount)) {
-                    return paramCount;
-                }
-                return null;
-            }
-            if (typeof acc === 'number') {
-                if (paramCountAccepts(paramCount, acc)) {
-                    return acc;
-                }
-                return null;
-            }
-            var aMin = paramCount.min, aMax = paramCount.max, aEven = paramCount.even, aOdd = paramCount.odd;
-            var bMin = acc.min, bMax = acc.max, bEven = acc.even, bOdd = acc.odd;
-            var min = typeof aMin === 'number' && typeof bMin === 'number'
-                ? Math.max(aMin, bMin)
-                : typeof aMin === 'number' ? aMin : typeof bMin === 'number' ? bMin : undefined;
-            var max = typeof aMax === 'number' && typeof bMax === 'number'
-                ? Math.min(aMax, bMax)
-                : typeof aMax === 'number' ? aMax : typeof bMax === 'number' ? bMax : undefined;
-            var even = aEven !== null && aEven !== void 0 ? aEven : bEven;
-            var odd = aOdd !== null && aOdd !== void 0 ? aOdd : bOdd;
-            if (even && odd) {
-                return null;
-            }
-            if (even) {
-                if (typeof min === 'number' && min % 2 !== 0) {
-                    min += 1;
-                }
-                if (typeof max === 'number' && max % 2 !== 0) {
-                    max -= 1;
-                }
-            }
-            if (odd) {
-                if (typeof min === 'number' && min % 2 === 0) {
-                    min += 1;
-                }
-                if (typeof max === 'number' && max % 2 === 0) {
-                    max -= 1;
-                }
-            }
-            if (typeof min === 'number' && typeof max === 'number' && min > max) {
-                return null;
-            }
-            if (typeof min === 'number' && min === max) {
-                return min;
-            }
-            return { min: min, max: max, even: even, odd: odd };
-        }, {});
-    }
-    function getParamCountFromFunction(param) {
-        return (typeof param === 'number' || isColl(param)) ? 1 : param.paramCount;
-    }
-
     var functionalNormalExpression = {
         '|>': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -6598,7 +6536,7 @@ var Playground = (function (exports) {
                 assertFunctionLike(func, sourceCodeInfo);
                 return executeFunction(func, [value], contextStack, sourceCodeInfo);
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'apply': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -6611,14 +6549,14 @@ var Playground = (function (exports) {
                 var applyArray = __spreadArray(__spreadArray([], __read(params.slice(0, -1)), false), __read(last), false);
                 return executeFunction(func, applyArray, contextStack, sourceCodeInfo);
             },
-            paramCount: { min: 2 },
+            arity: { min: 2 },
         },
         'identity': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), value = _b[0];
                 return toAny(value);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'comp': {
             evaluate: function (params, sourceCodeInfo) {
@@ -6629,11 +6567,11 @@ var Playground = (function (exports) {
                     _a.sourceCodeInfo = sourceCodeInfo,
                     _a.functionType = 'Comp',
                     _a.params = params,
-                    _a.paramCount = params.length > 0 ? getParamCountFromFunction(params.at(-1)) : 1,
+                    _a.arity = params.length > 0 ? getArityFromFunction(params.at(-1)) : { min: 1, max: 1 },
                     _a.docString = '',
                     _a;
             },
-            paramCount: {},
+            arity: {},
         },
         'constantly': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6644,18 +6582,18 @@ var Playground = (function (exports) {
                     _b.sourceCodeInfo = sourceCodeInfo,
                     _b.functionType = 'Constantly',
                     _b.value = toAny(value),
-                    _b.paramCount = {},
+                    _b.arity = {},
                     _b.docString = '',
                     _b;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'juxt': {
             evaluate: function (params, sourceCodeInfo) {
                 var _a;
                 params.forEach(function (param) { return assertFunctionLike(param, sourceCodeInfo); });
-                var paramCount = getCommonParamCountFromFunctions(params);
-                if (paramCount === null) {
+                var arity = getCommonArityFromFunctions(params);
+                if (arity === null) {
                     throw new LitsError('All functions must accept the same number of arguments', sourceCodeInfo);
                 }
                 return _a = {},
@@ -6663,11 +6601,11 @@ var Playground = (function (exports) {
                     _a.sourceCodeInfo = sourceCodeInfo,
                     _a.functionType = 'Juxt',
                     _a.params = params,
-                    _a.paramCount = paramCount,
+                    _a.arity = arity,
                     _a.docString = '',
                     _a;
             },
-            paramCount: { min: 1 },
+            arity: { min: 1 },
         },
         'complement': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6679,11 +6617,11 @@ var Playground = (function (exports) {
                     _b.sourceCodeInfo = sourceCodeInfo,
                     _b.functionType = 'Complement',
                     _b.function = fun,
-                    _b.paramCount = getParamCountFromFunction(fun),
+                    _b.arity = getArityFromFunction(fun),
                     _b.docString = '',
                     _b;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'every-pred': {
             evaluate: function (params, sourceCodeInfo) {
@@ -6693,11 +6631,11 @@ var Playground = (function (exports) {
                     _a.sourceCodeInfo = sourceCodeInfo,
                     _a.functionType = 'EveryPred',
                     _a.params = params,
-                    _a.paramCount = 1,
+                    _a.arity = { min: 1, max: 1 },
                     _a.docString = '',
                     _a;
             },
-            paramCount: { min: 1 },
+            arity: { min: 1 },
         },
         'some-pred': {
             evaluate: function (params, sourceCodeInfo) {
@@ -6707,11 +6645,11 @@ var Playground = (function (exports) {
                     _a.sourceCodeInfo = sourceCodeInfo,
                     _a.functionType = 'SomePred',
                     _a.params = params,
-                    _a.paramCount = 1,
+                    _a.arity = { min: 1, max: 1 },
                     _a.docString = '',
                     _a;
             },
-            paramCount: { min: 1 },
+            arity: { min: 1 },
         },
         'fnull': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6724,11 +6662,11 @@ var Playground = (function (exports) {
                     _b.functionType = 'Fnull',
                     _b.function = fun,
                     _b.params = params,
-                    _b.paramCount = getParamCountFromFunction(fun),
+                    _b.arity = getArityFromFunction(fun),
                     _b.docString = '',
                     _b;
             },
-            paramCount: { min: 2 },
+            arity: { min: 2 },
         },
     };
 
@@ -6801,7 +6739,7 @@ var Playground = (function (exports) {
                 }
                 return true;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'grid:some?': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -6839,7 +6777,7 @@ var Playground = (function (exports) {
                 }
                 return false;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'grid:every-row?': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -6865,7 +6803,7 @@ var Playground = (function (exports) {
                 }
                 return true;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'grid:some-row?': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -6891,7 +6829,7 @@ var Playground = (function (exports) {
                 }
                 return false;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'grid:every-col?': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -6918,7 +6856,7 @@ var Playground = (function (exports) {
                 }
                 return true;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'grid:some-col?': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -6945,7 +6883,7 @@ var Playground = (function (exports) {
                 }
                 return false;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'grid:row': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6954,7 +6892,7 @@ var Playground = (function (exports) {
                 assertNumber(row, sourceCodeInfo, { integer: true, nonNegative: true, lt: grid.length });
                 return grid[row];
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'grid:col': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6963,7 +6901,7 @@ var Playground = (function (exports) {
                 assertNumber(col, sourceCodeInfo, { integer: true, nonNegative: true, lt: grid[0].length });
                 return grid.map(function (row) { return row[col]; });
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'grid:shape': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6971,7 +6909,7 @@ var Playground = (function (exports) {
                 assertGrid(grid, sourceCodeInfo);
                 return [grid.length, grid[0].length];
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'grid:fill': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6989,7 +6927,7 @@ var Playground = (function (exports) {
                 }
                 return result;
             },
-            paramCount: 3,
+            arity: toFixedArity(3),
         },
         'grid:generate': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -7010,7 +6948,7 @@ var Playground = (function (exports) {
                 }
                 return result;
             },
-            paramCount: 3,
+            arity: toFixedArity(3),
         },
         'grid:reshape': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -7032,7 +6970,7 @@ var Playground = (function (exports) {
                 }
                 return result;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'grid:transpose': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -7040,7 +6978,7 @@ var Playground = (function (exports) {
                 assertGrid(grid, sourceCodeInfo);
                 return transpose(grid);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
             aliases: ['grid:tr'],
         },
         'grid:flip-h': {
@@ -7049,7 +6987,7 @@ var Playground = (function (exports) {
                 assertGrid(grid, sourceCodeInfo);
                 return grid.map(function (row) { return row.reverse(); });
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'grid:flip-v': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -7057,7 +6995,7 @@ var Playground = (function (exports) {
                 assertGrid(grid, sourceCodeInfo);
                 return grid.reverse();
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'grid:rotate': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -7101,7 +7039,7 @@ var Playground = (function (exports) {
                 }
                 return result;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'grid:reverse-rows': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -7109,7 +7047,7 @@ var Playground = (function (exports) {
                 assertGrid(grid, sourceCodeInfo);
                 return grid.reverse();
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'grid:reverse-cols': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -7117,7 +7055,7 @@ var Playground = (function (exports) {
                 assertGrid(grid, sourceCodeInfo);
                 return grid.map(function (row) { return row.reverse(); });
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'grid:slice': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -7148,7 +7086,7 @@ var Playground = (function (exports) {
                 }
                 return result;
             },
-            paramCount: { min: 2, max: 3 },
+            arity: { min: 2, max: 3 },
         },
         'grid:slice-rows': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -7167,7 +7105,7 @@ var Playground = (function (exports) {
                 assertNumber(rowEnd, sourceCodeInfo, { gt: rowStart, lte: grid.length });
                 return grid.slice(rowStart, rowEnd);
             },
-            paramCount: { min: 2, max: 3 },
+            arity: { min: 2, max: 3 },
         },
         'grid:slice-cols': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -7187,7 +7125,7 @@ var Playground = (function (exports) {
                 assertNumber(colEnd, sourceCodeInfo, { gt: colStart, lte: trMatrix.length });
                 return transpose(trMatrix.slice(colStart, colEnd));
             },
-            paramCount: { min: 2, max: 3 },
+            arity: { min: 2, max: 3 },
         },
         'grid:splice-rows': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -7217,7 +7155,7 @@ var Playground = (function (exports) {
                 }
                 return result;
             },
-            paramCount: { min: 3 },
+            arity: { min: 3 },
         },
         'grid:splice-cols': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -7246,7 +7184,7 @@ var Playground = (function (exports) {
                 }
                 return transpose(result);
             },
-            paramCount: { min: 3 },
+            arity: { min: 3 },
         },
         'grid:concat-rows': {
             evaluate: function (params, sourceCodeInfo) {
@@ -7267,7 +7205,7 @@ var Playground = (function (exports) {
                 });
                 return result;
             },
-            paramCount: { min: 1 },
+            arity: { min: 1 },
         },
         'grid:concat-cols': {
             evaluate: function (params, sourceCodeInfo) {
@@ -7293,7 +7231,7 @@ var Playground = (function (exports) {
                 }
                 return result;
             },
-            paramCount: { min: 1 },
+            arity: { min: 1 },
         },
         'grid:map': {
             evaluate: function (params, sourceCodeInfo, contextStack, _a) {
@@ -7329,7 +7267,7 @@ var Playground = (function (exports) {
                 }
                 return result;
             },
-            paramCount: { min: 2 },
+            arity: { min: 2 },
         },
         'grid:mapi': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -7349,7 +7287,7 @@ var Playground = (function (exports) {
                 }
                 return result;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'grid:reduce': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -7386,7 +7324,7 @@ var Playground = (function (exports) {
                 }
                 return accumulator;
             },
-            paramCount: 3,
+            arity: toFixedArity(3),
         },
         'grid:reducei': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -7402,7 +7340,7 @@ var Playground = (function (exports) {
                 }
                 return accumulator;
             },
-            paramCount: 3,
+            arity: toFixedArity(3),
         },
         'grid:push-rows': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -7414,7 +7352,7 @@ var Playground = (function (exports) {
                 }
                 return __spreadArray(__spreadArray([], __read(grid), false), __read(rows), false);
             },
-            paramCount: { min: 2 },
+            arity: { min: 2 },
         },
         'grid:unshift-rows': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -7426,7 +7364,7 @@ var Playground = (function (exports) {
                 }
                 return __spreadArray(__spreadArray([], __read(rows), false), __read(grid), false);
             },
-            paramCount: { min: 2 },
+            arity: { min: 2 },
         },
         'grid:pop-row': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -7437,7 +7375,7 @@ var Playground = (function (exports) {
                 }
                 return grid.slice(0, -1);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'grid:shift-row': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -7448,7 +7386,7 @@ var Playground = (function (exports) {
                 }
                 return grid.slice(1);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'grid:push-cols': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -7472,7 +7410,7 @@ var Playground = (function (exports) {
                 }
                 return result;
             },
-            paramCount: { min: 2 },
+            arity: { min: 2 },
         },
         'grid:unshift-cols': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -7496,7 +7434,7 @@ var Playground = (function (exports) {
                 }
                 return result;
             },
-            paramCount: { min: 2 },
+            arity: { min: 2 },
         },
         'grid:pop-col': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -7507,7 +7445,7 @@ var Playground = (function (exports) {
                 }
                 return grid.map(function (row) { return row.slice(0, -1); });
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'grid:shift-col': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -7518,7 +7456,7 @@ var Playground = (function (exports) {
                 }
                 return grid.map(function (row) { return row.slice(1); });
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'grid:from-array': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -7530,7 +7468,7 @@ var Playground = (function (exports) {
                 }
                 return fromArray(array, rows);
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
     };
 
@@ -8178,7 +8116,7 @@ var Playground = (function (exports) {
                     throw new LitsError(error, sourceCodeInfo);
                 }
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         };
     }
     function createMovingNormalExpression(reductionFunction, minLength) {
@@ -8204,7 +8142,7 @@ var Playground = (function (exports) {
                     throw new LitsError(error, sourceCodeInfo);
                 }
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         };
     }
     function createCenteredMovingNormalExpression(reductionFunction, minLength, padding) {
@@ -8243,7 +8181,7 @@ var Playground = (function (exports) {
                 result.push.apply(result, __spreadArray([], __read(Array(vector.length - end).fill(null)), false));
                 return result;
             },
-            paramCount: { min: 2, max: 4 },
+            arity: { min: 2, max: 4 },
         };
     }
     function createRunningNormalExpression(reductionFunction, minLength) {
@@ -8269,7 +8207,7 @@ var Playground = (function (exports) {
                     throw new LitsError(error, sourceCodeInfo);
                 }
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         };
     }
 
@@ -8281,7 +8219,7 @@ var Playground = (function (exports) {
                 return vector.every(function (val, i) { return i === 0 || val >= vector[i - 1]; })
                     || vector.every(function (val, i) { return i === 0 || val <= vector[i - 1]; });
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'vec:strictly-monotonic?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -8290,7 +8228,7 @@ var Playground = (function (exports) {
                 return vector.every(function (val, i) { return i === 0 || val > vector[i - 1]; })
                     || vector.every(function (val, i) { return i === 0 || val < vector[i - 1]; });
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'vec:increasing?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -8298,7 +8236,7 @@ var Playground = (function (exports) {
                 assertVector(vector, sourceCodeInfo);
                 return vector.every(function (val, i) { return i === 0 || val >= vector[i - 1]; });
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'vec:decreasing?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -8306,7 +8244,7 @@ var Playground = (function (exports) {
                 assertVector(vector, sourceCodeInfo);
                 return vector.every(function (val, i) { return i === 0 || val <= vector[i - 1]; });
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'vec:strictly-increasing?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -8314,7 +8252,7 @@ var Playground = (function (exports) {
                 assertVector(vector, sourceCodeInfo);
                 return vector.every(function (val, i) { return i === 0 || val > vector[i - 1]; });
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'vec:strictly-decreasing?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -8322,7 +8260,7 @@ var Playground = (function (exports) {
                 assertVector(vector, sourceCodeInfo);
                 return vector.every(function (val, i) { return i === 0 || val < vector[i - 1]; });
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'vec:mode': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -8330,7 +8268,7 @@ var Playground = (function (exports) {
                 assertNonEmptyVector(vector, sourceCodeInfo);
                 return mode(vector);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'vec:min-index': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -8338,7 +8276,7 @@ var Playground = (function (exports) {
                 assertNonEmptyVector(vector, sourceCodeInfo);
                 return vector.reduce(function (acc, val, i) { return (val < vector[acc] ? i : acc); }, 0);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'vec:max-index': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -8346,7 +8284,7 @@ var Playground = (function (exports) {
                 assertNonEmptyVector(vector, sourceCodeInfo);
                 return vector.reduce(function (acc, val, i) { return (val > vector[acc] ? i : acc); }, 0);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'vec:sort-indices': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -8354,7 +8292,7 @@ var Playground = (function (exports) {
                 assertVector(vector, sourceCodeInfo);
                 return __spreadArray([], __read(vector.keys()), false).sort(function (a, b) { return vector[a] - vector[b]; });
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'vec:count-values': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -8384,7 +8322,7 @@ var Playground = (function (exports) {
                     return a[0] - b[0];
                 });
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'vec:linspace': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -8401,7 +8339,7 @@ var Playground = (function (exports) {
                 var step = (end - start) / (numPoints - 1);
                 return Array.from({ length: numPoints }, function (_, i) { return start + i * step; });
             },
-            paramCount: 3,
+            arity: toFixedArity(3),
         },
         'vec:ones': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -8409,7 +8347,7 @@ var Playground = (function (exports) {
                 assertNumber(length, sourceCodeInfo, { integer: true, nonNegative: true });
                 return Array.from({ length: length }, function () { return 1; });
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'vec:zeros': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -8417,7 +8355,7 @@ var Playground = (function (exports) {
                 assertNumber(length, sourceCodeInfo, { integer: true, nonNegative: true });
                 return Array.from({ length: length }, function () { return 0; });
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'vec:fill': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -8425,7 +8363,7 @@ var Playground = (function (exports) {
                 assertNumber(length, sourceCodeInfo, { integer: true, nonNegative: true });
                 return Array.from({ length: length }, function () { return value; });
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'vec:generate': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -8439,7 +8377,7 @@ var Playground = (function (exports) {
                     return value;
                 });
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'vec:cumsum': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -8452,7 +8390,7 @@ var Playground = (function (exports) {
                     return acc;
                 }, []);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'vec:cumprod': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -8465,7 +8403,7 @@ var Playground = (function (exports) {
                     return acc;
                 }, []);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'vec:quartiles': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -8476,7 +8414,7 @@ var Playground = (function (exports) {
                 }
                 return quartiles(vector);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'vec:percentile': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -8485,7 +8423,7 @@ var Playground = (function (exports) {
                 assertNumber(percentile, sourceCodeInfo, { finite: true, nonNegative: true, lte: 100 });
                 return calcPercentile(vector, percentile);
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'vec:quantile': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -8494,7 +8432,7 @@ var Playground = (function (exports) {
                 assertNumber(quantile, sourceCodeInfo, { finite: true, nonNegative: true, lte: 1 });
                 return calcPercentile(vector, quantile * 100);
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'vec:histogram': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -8503,7 +8441,7 @@ var Playground = (function (exports) {
                 assertNumber(bins, sourceCodeInfo, { integer: true, positive: true });
                 return calcHistogram(vector, bins);
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'vec:ecdf': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -8514,7 +8452,7 @@ var Playground = (function (exports) {
                 var index = sorted.findIndex(function (val) { return val > value; });
                 return index === -1 ? 1 : index / sorted.length;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'vec:outliers?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -8522,7 +8460,7 @@ var Playground = (function (exports) {
                 assertVector(vector, sourceCodeInfo);
                 return hasOutliers(vector);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'vec:outliers': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -8530,7 +8468,7 @@ var Playground = (function (exports) {
                 assertVector(vector, sourceCodeInfo);
                 return outliers(vector);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'vec:bincount': {
             evaluate: function (params, sourceCodeInfo) {
@@ -8550,7 +8488,7 @@ var Playground = (function (exports) {
                 }
                 return bincount(vector, minSize, weights);
             },
-            paramCount: { min: 1, max: 3 },
+            arity: { min: 1, max: 3 },
         },
         'vec:winsorize': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -8568,7 +8506,7 @@ var Playground = (function (exports) {
                 var upperBound = sorted[upperIndex];
                 return vector.map(function (val) { return Math.max(lowerBound, Math.min(val, upperBound)); });
             },
-            paramCount: { min: 2, max: 3 },
+            arity: { min: 2, max: 3 },
         },
         'vec:mse': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -8580,7 +8518,7 @@ var Playground = (function (exports) {
                 }
                 return vectorA.reduce(function (acc, val, i) { return acc + Math.pow((val - vectorB[i]), 2); }, 0) / vectorA.length;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'vec:rmse': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -8592,7 +8530,7 @@ var Playground = (function (exports) {
                 }
                 return Math.sqrt(vectorA.reduce(function (acc, val, i) { return acc + Math.pow((val - vectorB[i]), 2); }, 0) / vectorA.length);
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'vec:mae': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -8604,7 +8542,7 @@ var Playground = (function (exports) {
                 }
                 return vectorA.reduce(function (acc, val, i) { return acc + Math.abs(val - vectorB[i]); }, 0) / vectorA.length;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'vec:smape': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -8620,7 +8558,7 @@ var Playground = (function (exports) {
                     return acc + (denom === 0 ? 0 : diff / denom);
                 }, 0) / vectorA.length;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
     };
     addReductionFunctions(reductionFunctionNormalExpressions);
@@ -8978,7 +8916,7 @@ var Playground = (function (exports) {
                     vector[0] * sinTheta + vector[1] * cosTheta,
                 ];
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'lin:rotate3d': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -9002,7 +8940,7 @@ var Playground = (function (exports) {
                     dotProduct * w * (1 - cosTheta) + vector[2] * cosTheta + (-v * vector[0] + u * vector[1]) * sinTheta,
                 ];
             },
-            paramCount: 3,
+            arity: toFixedArity(3),
         },
         'lin:reflect': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -9022,7 +8960,7 @@ var Playground = (function (exports) {
                 var doubleDot = 2 * dot(vector, unitNormal);
                 return subtract(vector, scale(unitNormal, doubleDot));
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'lin:refract': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -9055,7 +8993,7 @@ var Playground = (function (exports) {
                 var scaledNormal = scale(normalizedNormal, eta * dotProduct + Math.sqrt(discriminant));
                 return subtract(scaledIncident, scaledNormal);
             },
-            paramCount: 3,
+            arity: toFixedArity(3),
         },
         'lin:lerp': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -9068,7 +9006,7 @@ var Playground = (function (exports) {
                 }
                 return vectorA.map(function (val, i) { return val + (vectorB[i] - val) * t; });
             },
-            paramCount: 3,
+            arity: toFixedArity(3),
         },
         'lin:dot': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -9080,7 +9018,7 @@ var Playground = (function (exports) {
                 }
                 return dot(vectorA, vectorB);
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'lin:cross': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -9096,7 +9034,7 @@ var Playground = (function (exports) {
                     vectorA[0] * vectorB[1] - vectorA[1] * vectorB[0],
                 ];
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'lin:normalize-minmax': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -9109,7 +9047,7 @@ var Playground = (function (exports) {
                 }
                 return vector.map(function (val) { return (val - min) / (max - min); });
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'lin:normalize-robust': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -9125,7 +9063,7 @@ var Playground = (function (exports) {
                 }
                 return vector.map(function (val) { return (val - median) / medad; });
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'lin:normalize-zscore': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -9138,7 +9076,7 @@ var Playground = (function (exports) {
                 }
                 return vector.map(function (val) { return (val - mean) / stdDev; });
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'lin:normalize-l1': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -9153,7 +9091,7 @@ var Playground = (function (exports) {
                 }
                 return vector.map(function (val) { return val / norm; });
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'lin:normalize-l2': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -9161,7 +9099,7 @@ var Playground = (function (exports) {
                 assertVector(vector, sourceCodeInfo);
                 return getUnit(vector, sourceCodeInfo);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
             aliases: ['lin:unit', 'lin:normalize'],
         },
         'lin:normalize-log': {
@@ -9177,7 +9115,7 @@ var Playground = (function (exports) {
                 }
                 return vector.map(function (val) { return Math.log(val / min); });
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'lin:angle': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -9195,7 +9133,7 @@ var Playground = (function (exports) {
                 var magnitudeB = Math.sqrt(vectorB.reduce(function (acc, val) { return acc + val * val; }, 0));
                 return Math.acos(dotProduct / (magnitudeA * magnitudeB));
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'lin:projection': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -9212,7 +9150,7 @@ var Playground = (function (exports) {
                 var magnitudeB = Math.sqrt(vectorB.reduce(function (acc, val) { return acc + val * val; }, 0));
                 return vectorB.map(function (val) { return (dotProduct / (Math.pow(magnitudeB, 2))) * val; });
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'lin:orthogonal?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -9225,7 +9163,7 @@ var Playground = (function (exports) {
                 var dotProduct = vectorA.reduce(function (acc, val, i) { return acc + val * vectorB[i]; }, 0);
                 return dotProduct === 0;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'lin:parallel?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -9237,7 +9175,7 @@ var Playground = (function (exports) {
                 }
                 return areVectorsParallel(vectorA, vectorB);
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'lin:collinear?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -9249,7 +9187,7 @@ var Playground = (function (exports) {
                 }
                 return areVectorsCollinear(vectorA, vectorB);
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'lin:cosine-similarity': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -9267,7 +9205,7 @@ var Playground = (function (exports) {
                 var magnitudeB = Math.sqrt(vectorB.reduce(function (acc, val) { return acc + val * val; }, 0));
                 return dotProduct / (magnitudeA * magnitudeB);
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'lin:euclidean-distance': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -9280,7 +9218,7 @@ var Playground = (function (exports) {
                 return Math.sqrt(vectorA.reduce(function (acc, val, i) { return acc + Math.pow((val - vectorB[i]), 2); }, 0));
             },
             aliases: ['lin:distance', 'lin:l2-distance'],
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'lin:euclidean-norm': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -9288,7 +9226,7 @@ var Playground = (function (exports) {
                 assertNonEmptyVector(vector, sourceCodeInfo);
                 return length(vector);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
             aliases: ['lin:l2-norm', 'lin:length'],
         },
         'lin:manhattan-distance': {
@@ -9301,7 +9239,7 @@ var Playground = (function (exports) {
                 }
                 return vectorA.reduce(function (acc, val, i) { return acc + Math.abs(val - vectorB[i]); }, 0);
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
             aliases: ['lin:l1-distance', 'lin:cityblock-distance'],
         },
         'lin:manhattan-norm': {
@@ -9310,7 +9248,7 @@ var Playground = (function (exports) {
                 assertNonEmptyVector(vector, sourceCodeInfo);
                 return vector.reduce(function (acc, val) { return acc + Math.abs(val); }, 0);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
             aliases: ['lin:l1-norm', 'lin:cityblock-norm'],
         },
         'lin:hamming-distance': {
@@ -9323,7 +9261,7 @@ var Playground = (function (exports) {
                 }
                 return vectorA.reduce(function (acc, val, i) { return acc + (val !== vectorB[i] ? 1 : 0); }, 0);
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'lin:hamming-norm': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -9331,7 +9269,7 @@ var Playground = (function (exports) {
                 assertNonEmptyVector(vector, sourceCodeInfo);
                 return vector.reduce(function (acc, val) { return acc + (val !== 0 ? 1 : 0); }, 0);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'lin:chebyshev-distance': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -9343,7 +9281,7 @@ var Playground = (function (exports) {
                 }
                 return Math.max.apply(Math, __spreadArray([], __read(vectorA.map(function (val, i) { return Math.abs(val - vectorB[i]); })), false));
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'lin:chebyshev-norm': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -9351,7 +9289,7 @@ var Playground = (function (exports) {
                 assertNonEmptyVector(vector, sourceCodeInfo);
                 return Math.max.apply(Math, __spreadArray([], __read(vector.map(function (val) { return Math.abs(val); })), false));
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'lin:minkowski-distance': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -9364,7 +9302,7 @@ var Playground = (function (exports) {
                 }
                 return Math.pow(vectorA.reduce(function (acc, val, i) { return acc + Math.pow(Math.abs(val - vectorB[i]), p); }, 0), (1 / p));
             },
-            paramCount: 3,
+            arity: toFixedArity(3),
         },
         'lin:minkowski-norm': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -9373,7 +9311,7 @@ var Playground = (function (exports) {
                 assertNumber(p, sourceCodeInfo, { finite: true, positive: true });
                 return Math.pow(vector.reduce(function (acc, val) { return acc + Math.pow(Math.abs(val), p); }, 0), (1 / p));
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         // TODO consider for Set namespace. E.g. 'set:jaccard-distance'
         // 'lin:jaccard-distance': {
@@ -9384,7 +9322,7 @@ var Playground = (function (exports) {
         //     const union = new Set([...vectorA, ...vectorB]).size
         //     return 1 - intersection / union
         //   },
-        //   paramCount: 2,
+        //   arity: 2,
         // },
         // TODO consider for Set namespace. E.g. 'set:dice-coefficient'
         // 'lin:dice-coefficient': {
@@ -9394,13 +9332,13 @@ var Playground = (function (exports) {
         //     const intersection = vectorA.filter(val => vectorB.includes(val)).length
         //     return (2 * intersection) / (vectorA.length + vectorB.length)
         //   },
-        //   paramCount: 2,
+        //   arity: 2,
         // },
         // TODO consider for String namespace. E.g. 'str:levenshtein-distance'
         // 'lin:levenshtein-distance': {
         //   evaluate: ([stringA, stringB], sourceCodeInfo): number => {
         //   },
-        //   paramCount: 2,
+        //   arity: 2,
         // },
         'lin:cov': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -9415,7 +9353,7 @@ var Playground = (function (exports) {
                 }
                 return calcCovariance(vectorA, vectorB);
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'lin:corr': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -9434,7 +9372,7 @@ var Playground = (function (exports) {
                 var denominator = Math.sqrt(vectorA.reduce(function (acc, val) { return acc + Math.pow((val - meanA), 2); }, 0) * vectorB.reduce(function (acc, val) { return acc + Math.pow((val - meanB), 2); }, 0));
                 return numerator / denominator;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'lin:spearman-corr': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -9456,7 +9394,7 @@ var Playground = (function (exports) {
                     throw new LitsError(error, sourceCodeInfo);
                 }
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
             aliases: ['lin:spearman-rho'],
         },
         'lin:pearson-corr': {
@@ -9477,7 +9415,7 @@ var Playground = (function (exports) {
                     throw new LitsError(error, sourceCodeInfo);
                 }
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'lin:kendall-tau': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -9497,7 +9435,7 @@ var Playground = (function (exports) {
                     throw new LitsError(error, sourceCodeInfo);
                 }
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'lin:autocorrelation': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -9539,7 +9477,7 @@ var Playground = (function (exports) {
                 // Return the autocorrelation coefficient
                 return numerator / denominator;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
             aliases: ['lin:acf'],
         },
         'lin:cross-correlation': {
@@ -9567,7 +9505,7 @@ var Playground = (function (exports) {
                 var _c = __read(extractOverlappingSegments(vectorA, vectorB, lag), 2), segmentA = _c[0], segmentB = _c[1];
                 return calcCorrelation(segmentA, segmentB);
             },
-            paramCount: 3,
+            arity: toFixedArity(3),
             aliases: ['lin:ccf'],
         },
         'lin:rref': {
@@ -9578,7 +9516,7 @@ var Playground = (function (exports) {
                 var _c = __read(gaussJordanElimination(matrix), 1), rref = _c[0];
                 return rref;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'lin:solve': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -9590,7 +9528,7 @@ var Playground = (function (exports) {
                 }
                 return solve(matrix, vector);
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'lin:to-polar': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -9603,7 +9541,7 @@ var Playground = (function (exports) {
                 var theta = Math.atan2(vector[1], vector[0]);
                 return [r, theta];
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'lin:from-polar': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -9615,7 +9553,7 @@ var Playground = (function (exports) {
                 }
                 return [r * Math.cos(theta), r * Math.sin(theta)];
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
     };
 
@@ -10025,7 +9963,7 @@ var Playground = (function (exports) {
                     throw new LitsError("The number of columns in the first matrix must be equal to the number of rows in the second matrix, but got ".concat(matrix1[0].length, " and ").concat(matrix2.length), sourceCodeInfo);
                 }
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'mat:det': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -10033,7 +9971,7 @@ var Playground = (function (exports) {
                 assertSquareMatrix(matrix, sourceCodeInfo);
                 return determinant(matrix);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'mat:inv': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -10045,7 +9983,7 @@ var Playground = (function (exports) {
                 }
                 return result;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'mat:adj': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -10053,7 +9991,7 @@ var Playground = (function (exports) {
                 assertSquareMatrix(matrix, sourceCodeInfo);
                 return adjugate(matrix);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'mat:cofactor': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -10061,7 +9999,7 @@ var Playground = (function (exports) {
                 assertSquareMatrix(matrix, sourceCodeInfo);
                 return cofactor(matrix);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'mat:minor': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -10071,7 +10009,7 @@ var Playground = (function (exports) {
                 assertNumber(col, sourceCodeInfo, { integer: true, nonNegative: true, lte: matrix[0].length });
                 return minor(matrix, row, col);
             },
-            paramCount: 3,
+            arity: toFixedArity(3),
         },
         'mat:trace': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -10079,7 +10017,7 @@ var Playground = (function (exports) {
                 assertSquareMatrix(matrix, sourceCodeInfo);
                 return trace(matrix);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'mat:symmetric?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -10087,7 +10025,7 @@ var Playground = (function (exports) {
                 assertMatrix(matrix, sourceCodeInfo);
                 return isSymetric(matrix);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'mat:triangular?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -10095,7 +10033,7 @@ var Playground = (function (exports) {
                 assertMatrix(matrix, sourceCodeInfo);
                 return isTriangular(matrix);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'mat:upper-triangular?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -10103,7 +10041,7 @@ var Playground = (function (exports) {
                 assertMatrix(matrix, sourceCodeInfo);
                 return isTriangularUpper(matrix);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'mat:lower-triangular?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -10111,7 +10049,7 @@ var Playground = (function (exports) {
                 assertMatrix(matrix, sourceCodeInfo);
                 return isTriangularLower(matrix);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'mat:diagonal?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -10119,7 +10057,7 @@ var Playground = (function (exports) {
                 assertMatrix(matrix, sourceCodeInfo);
                 return isDiagonal(matrix);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'mat:square?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -10127,7 +10065,7 @@ var Playground = (function (exports) {
                 assertMatrix(matrix, sourceCodeInfo);
                 return isSquare(matrix);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'mat:orthogonal?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -10135,7 +10073,7 @@ var Playground = (function (exports) {
                 assertMatrix(matrix, sourceCodeInfo);
                 return isOrthogonal(matrix);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'mat:identity?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -10143,7 +10081,7 @@ var Playground = (function (exports) {
                 assertMatrix(matrix, sourceCodeInfo);
                 return isIdentity(matrix);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'mat:invertible?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -10154,7 +10092,7 @@ var Playground = (function (exports) {
                 }
                 return !approxZero(determinant(matrix));
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'mat:hilbert': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -10170,7 +10108,7 @@ var Playground = (function (exports) {
                 }
                 return result;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'mat:vandermonde': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -10186,7 +10124,7 @@ var Playground = (function (exports) {
                 }
                 return result;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'mat:band': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -10196,7 +10134,7 @@ var Playground = (function (exports) {
                 assertNumber(uband, sourceCodeInfo, { integer: true, nonNegative: true, lte: n });
                 return band(n, lband, uband);
             },
-            paramCount: 3,
+            arity: toFixedArity(3),
         },
         'mat:banded?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -10207,7 +10145,7 @@ var Playground = (function (exports) {
                 assertNumber(uband, sourceCodeInfo, { integer: true, nonNegative: true, lt: maxBand });
                 return isBanded(matrix, lband, uband);
             },
-            paramCount: 3,
+            arity: toFixedArity(3),
         },
         'mat:rank': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -10216,7 +10154,7 @@ var Playground = (function (exports) {
                 var _c = __read(gaussJordanElimination(matrix), 2), result = _c[1];
                 return result;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         // Frobenius norm
         'mat:frobenius-norm': {
@@ -10225,7 +10163,7 @@ var Playground = (function (exports) {
                 assertMatrix(matrix, sourceCodeInfo);
                 return Math.sqrt(matrix.reduce(function (sum, row) { return sum + row.reduce(function (rowSum, cell) { return rowSum + cell * cell; }, 0); }, 0));
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         // 1-norm
         'mat:1-norm': {
@@ -10234,7 +10172,7 @@ var Playground = (function (exports) {
                 assertMatrix(matrix, sourceCodeInfo);
                 return norm1(matrix);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         // Infinity norm
         'mat:inf-norm': {
@@ -10243,7 +10181,7 @@ var Playground = (function (exports) {
                 assertMatrix(matrix, sourceCodeInfo);
                 return matrix.reduce(function (max, row) { return Math.max(max, row.reduce(function (sum, cell) { return sum + Math.abs(cell); }, 0)); }, 0);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
             aliases: ['mat:row-norm'],
         },
         // Max norm
@@ -10256,7 +10194,7 @@ var Playground = (function (exports) {
                     return Math.max(maxVal, rowMax);
                 }, 0);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
     };
 
@@ -10315,7 +10253,7 @@ var Playground = (function (exports) {
                     return [[]];
                 return combinations(set, n);
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'nth:count-combinations': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -10325,7 +10263,7 @@ var Playground = (function (exports) {
                 return binomialCoefficient(n, k);
             },
             aliases: ['nth:binomial'],
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
     };
 
@@ -10373,7 +10311,7 @@ var Playground = (function (exports) {
                 assertArray(set, sourceCodeInfo);
                 return getAllDerangements(set);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'nth:count-derangements': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -10381,7 +10319,7 @@ var Playground = (function (exports) {
                 assertNumber(n, sourceCodeInfo, { finite: true, integer: true, positive: true });
                 return countDerangements(n);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
     };
 
@@ -10412,7 +10350,7 @@ var Playground = (function (exports) {
                 assertNumber(number, sourceCodeInfo, { finite: true, integer: true, positive: true });
                 return getDivisors(number);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'nth:count-divisors': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -10420,7 +10358,7 @@ var Playground = (function (exports) {
                 assertNumber(number, sourceCodeInfo, { finite: true, integer: true, positive: true });
                 return calcUnsortedDivisors(number).length;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'nth:proper-divisors': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -10428,7 +10366,7 @@ var Playground = (function (exports) {
                 assertNumber(number, sourceCodeInfo, { finite: true, integer: true, positive: true });
                 return getProperDivisors(number);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'nth:count-proper-divisors': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -10436,7 +10374,7 @@ var Playground = (function (exports) {
                 assertNumber(number, sourceCodeInfo, { finite: true, integer: true, positive: true });
                 return calcUnsortedDivisors(number).length - 1; // Exclude the number itself
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
     };
 
@@ -10483,7 +10421,7 @@ var Playground = (function (exports) {
                 return factorialOf(n);
             },
             aliases: ['nth:!'],
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
     };
 
@@ -10819,7 +10757,7 @@ var Playground = (function (exports) {
                 assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true });
                 return partitions(n);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'nth:count-partitions': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -10832,7 +10770,7 @@ var Playground = (function (exports) {
                 }
                 return partitionNumbers[n - 1];
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
     };
 
@@ -10880,7 +10818,7 @@ var Playground = (function (exports) {
                 assertArray(set, sourceCodeInfo);
                 return permutations(set);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'nth:count-permutations': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -10889,7 +10827,7 @@ var Playground = (function (exports) {
                 assertNumber(k, sourceCodeInfo, { integer: true, nonNegative: true, lte: n });
                 return factorialOf(n) / factorialOf(n - k);
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
     };
 
@@ -10922,7 +10860,7 @@ var Playground = (function (exports) {
                 assertArray(set, sourceCodeInfo);
                 return powerSet(set);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'nth:count-power-set': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -10934,7 +10872,7 @@ var Playground = (function (exports) {
                 }
                 return Math.pow(2, n);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
     };
 
@@ -10976,7 +10914,7 @@ var Playground = (function (exports) {
                 assertNumber(number, sourceCodeInfo, { finite: true, integer: true, positive: true });
                 return primeFactors(number);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'nth:distinct-prime-factors': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -10986,7 +10924,7 @@ var Playground = (function (exports) {
                 var distinctFactors = new Set(factors);
                 return Array.from(distinctFactors);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'nth:count-prime-factors': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -10994,7 +10932,7 @@ var Playground = (function (exports) {
                 assertNumber(n, sourceCodeInfo, { finite: true, integer: true, positive: true });
                 return primeFactors(n).length;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'nth:count-distinct-prime-factors': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11004,7 +10942,7 @@ var Playground = (function (exports) {
                 var distinctFactors = new Set(factors);
                 return distinctFactors.size;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
     };
 
@@ -11076,7 +11014,7 @@ var Playground = (function (exports) {
                 assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
                 return Array.from({ length: length }, function (_, i) { return start + i * step; });
             },
-            paramCount: 3,
+            arity: toFixedArity(3),
         },
         'nth:arithmetic-take-while': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -11095,7 +11033,7 @@ var Playground = (function (exports) {
                 }
                 return arithmetic;
             },
-            paramCount: 3,
+            arity: toFixedArity(3),
         },
         'nth:arithmetic-nth': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11105,7 +11043,7 @@ var Playground = (function (exports) {
                 assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
                 return start + (n - 1) * step;
             },
-            paramCount: 3,
+            arity: toFixedArity(3),
         },
         'nth:arithmetic?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11115,7 +11053,7 @@ var Playground = (function (exports) {
                 assertNumber(step, sourceCodeInfo, { finite: true });
                 return isInArithmeticSequence(start, step, n);
             },
-            paramCount: 3,
+            arity: toFixedArity(3),
         },
     };
 
@@ -11191,7 +11129,7 @@ var Playground = (function (exports) {
                 assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
                 return getBernoulliSeq(length);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'nth:bernoulli-nth': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11200,7 +11138,7 @@ var Playground = (function (exports) {
                 var bernoulli = getBernoulliSeq(n);
                 return bernoulli[n - 1];
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'nth:bernoulli-take-while': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -11210,7 +11148,7 @@ var Playground = (function (exports) {
                 var bernoulli = generateBernoulli(function (value, index) { return !!executeFunction(fn, [value, index], contextStack); });
                 return bernoulli;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
     };
 
@@ -11527,7 +11465,7 @@ var Playground = (function (exports) {
                 assertNumber(length, sourceCodeInfo, { integer: true, positive: true });
                 return Array.from({ length: length }, function (_, i) { return start * Math.pow(ratio, i); });
             },
-            paramCount: 3,
+            arity: toFixedArity(3),
         },
         'nth:geometric-take-while': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -11546,7 +11484,7 @@ var Playground = (function (exports) {
                 }
                 return geometric;
             },
-            paramCount: 3,
+            arity: toFixedArity(3),
         },
         'nth:geometric-nth': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11556,7 +11494,7 @@ var Playground = (function (exports) {
                 assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
                 return start * Math.pow(ratio, (n - 1));
             },
-            paramCount: 3,
+            arity: toFixedArity(3),
         },
         'nth:geometric?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11566,7 +11504,7 @@ var Playground = (function (exports) {
                 assertNumber(ratio, sourceCodeInfo, { finite: true });
                 return isInGeometricSequence(start, ratio, n);
             },
-            paramCount: 3,
+            arity: toFixedArity(3),
         },
     };
 
@@ -12248,7 +12186,7 @@ var Playground = (function (exports) {
                 }
                 return polygonal;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'nth:polygonal-take-while': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -12266,7 +12204,7 @@ var Playground = (function (exports) {
                 }
                 return polygonal;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'nth:polygonal-nth': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -12275,7 +12213,7 @@ var Playground = (function (exports) {
                 assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
                 return (n * n * (sides - 2) - n * (sides - 4)) / 2;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'nth:polygonal?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -12300,7 +12238,7 @@ var Playground = (function (exports) {
                 // x must be a positive integer
                 return Number.isInteger(x) && x > 0;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
     };
 
@@ -12579,7 +12517,7 @@ var Playground = (function (exports) {
                 }
                 return result;
             },
-            paramCount: typeof maxLength === 'number' ? { max: 1 } : 1,
+            arity: typeof maxLength === 'number' ? { max: 1 } : toFixedArity(1),
         };
     }
     function createTakeWhileNormalExpression(takeWhileFunction, maxLength) {
@@ -12597,7 +12535,7 @@ var Playground = (function (exports) {
                 }
                 return result;
             },
-            paramCount: typeof maxLength === 'number' ? { max: 1 } : 1,
+            arity: typeof maxLength === 'number' ? { max: 1 } : toFixedArity(1),
         };
     }
     function createNthNormalExpression(seqFunction, maxLength) {
@@ -12614,7 +12552,7 @@ var Playground = (function (exports) {
                 }
                 return sequence[n - 1];
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         };
     }
     function createNumberPredNormalExpression(predFunction) {
@@ -12624,7 +12562,7 @@ var Playground = (function (exports) {
                 assertNumber(value, sourceCodeInfo);
                 return predFunction(value, sourceCodeInfo);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         };
     }
     function createStringPredNormalExpression(predFunction) {
@@ -12634,7 +12572,7 @@ var Playground = (function (exports) {
                 assertString(value, sourceCodeInfo);
                 return predFunction(value, sourceCodeInfo);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         };
     }
 
@@ -12753,7 +12691,7 @@ var Playground = (function (exports) {
                 assertNumber(b, sourceCodeInfo, { integer: true });
                 return gcd(a, b) === 1;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'nth:divisible-by?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -12764,7 +12702,7 @@ var Playground = (function (exports) {
                     return false;
                 return value % divisor === 0;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'nth:gcd': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -12773,7 +12711,7 @@ var Playground = (function (exports) {
                 assertNumber(b, sourceCodeInfo);
                 return gcd(a, b);
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'nth:lcm': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -12782,7 +12720,7 @@ var Playground = (function (exports) {
                 assertNumber(b, sourceCodeInfo);
                 return lcm(a, b);
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'nth:multinomial': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -12794,7 +12732,7 @@ var Playground = (function (exports) {
                 }, 0);
                 return factorialOf(sum) / args.reduce(function (acc, curr) { return acc * factorialOf(curr); }, 1);
             },
-            paramCount: { min: 1 },
+            arity: { min: 1 },
         },
         'nth:amicable?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -12805,7 +12743,7 @@ var Playground = (function (exports) {
                 var sumB = getProperDivisors(b).reduce(function (acc, curr) { return acc + curr; }, 0);
                 return sumA === b && sumB === a && a !== b;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'nth:euler-totient': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -12823,7 +12761,7 @@ var Playground = (function (exports) {
                     result -= result / n;
                 return result;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'nth:mobius': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -12840,7 +12778,7 @@ var Playground = (function (exports) {
                 // If square-free with odd number of prime factors: return -1
                 return factors.length % 2 === 0 ? 1 : -1;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
             aliases: ['nth:möbius'],
         },
         'nth:mertens': {
@@ -12856,7 +12794,7 @@ var Playground = (function (exports) {
                 }
                 return result;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
             aliases: ['nth:mertens'],
         },
         'nth:sigma': {
@@ -12865,7 +12803,7 @@ var Playground = (function (exports) {
                 assertNumber(n, sourceCodeInfo, { integer: true, positive: true });
                 return getDivisors(n).reduce(function (acc, curr) { return acc + curr; }, 0);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'nth:carmichael-lambda': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -12923,7 +12861,7 @@ var Playground = (function (exports) {
                 // Find LCM of all lambda values
                 return lambdaValues.reduce(function (acc, val) { return lcm(acc, val); }, 1);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'nth:cartesian-product': {
             evaluate: function (params, sourceCodeInfo) {
@@ -12941,7 +12879,7 @@ var Playground = (function (exports) {
                     return result;
                 }, [[]]);
             },
-            paramCount: { min: 1 },
+            arity: { min: 1 },
         },
         'nth:perfect-power': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -12950,7 +12888,7 @@ var Playground = (function (exports) {
                 var result = perfectPower(n);
                 return result || null;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         'nth:mod-exp': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -12960,7 +12898,7 @@ var Playground = (function (exports) {
                 assertNumber(modulus, sourceCodeInfo, { integer: true, positive: true });
                 return modExp(base, exponent, modulus);
             },
-            paramCount: 3,
+            arity: toFixedArity(3),
         },
         'nth:mod-inv': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -12974,7 +12912,7 @@ var Playground = (function (exports) {
                     throw new LitsError(error, sourceCodeInfo);
                 }
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'nth:extended-gcd': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -12983,7 +12921,7 @@ var Playground = (function (exports) {
                 assertNumber(b, sourceCodeInfo, { integer: true });
                 return extendedGcd(a, b);
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'nth:chinese-remainder': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -13000,7 +12938,7 @@ var Playground = (function (exports) {
                     throw new LitsError(error.message, sourceCodeInfo);
                 }
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'nth:stirling-first': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -13019,7 +12957,7 @@ var Playground = (function (exports) {
                 }
                 return dp[n][k];
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         'nth:stirling-second': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -13043,7 +12981,7 @@ var Playground = (function (exports) {
                 }
                 return dp[n][k];
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
     };
     addSequences(sequenceNormalExpressions);
@@ -13101,7 +13039,7 @@ var Playground = (function (exports) {
             evaluate: function () {
                 return Math.random();
             },
-            paramCount: 0,
+            arity: toFixedArity(0),
         },
         '!:random-int': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -13110,7 +13048,7 @@ var Playground = (function (exports) {
                 assertNumber(max, sourceCodeInfo, { integer: true, gt: min });
                 return Math.floor(Math.random() * (max - min)) + min;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         '!:random-int-inclusive': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -13119,7 +13057,7 @@ var Playground = (function (exports) {
                 assertNumber(max, sourceCodeInfo, { integer: true, gte: min });
                 return Math.floor(Math.random() * (max - min + 1)) + min;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         '!:random-float': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -13128,7 +13066,7 @@ var Playground = (function (exports) {
                 assertNumber(max, sourceCodeInfo, { gt: min });
                 return Math.random() * (max - min) + min;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         '!:random-boolean': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -13137,7 +13075,7 @@ var Playground = (function (exports) {
                 assertNumber(probability, sourceCodeInfo, { gte: 0, lte: 1 });
                 return Math.random() < probability;
             },
-            paramCount: { min: 0, max: 1 },
+            arity: { min: 0, max: 1 },
         },
         '!:random-item': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -13146,7 +13084,7 @@ var Playground = (function (exports) {
                 var index = Math.floor(Math.random() * array.length);
                 return asAny(array[index]);
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         '!:random-sample': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -13165,7 +13103,7 @@ var Playground = (function (exports) {
                 }
                 return result;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         '!:random-sample-unique': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -13187,7 +13125,7 @@ var Playground = (function (exports) {
                 }
                 return result;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         '!:shuffle': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -13201,7 +13139,7 @@ var Playground = (function (exports) {
                 }
                 return shuffledArray;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         '!:random-normal': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -13213,7 +13151,7 @@ var Playground = (function (exports) {
                 var z0 = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
                 return z0 * stdDev + mean;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         '!:random-exponential': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -13222,7 +13160,7 @@ var Playground = (function (exports) {
                 var u = Math.random();
                 return -Math.log(u) / lambda;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         '!:random-binomial': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -13237,7 +13175,7 @@ var Playground = (function (exports) {
                 }
                 return k;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         '!:random-poisson': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -13252,7 +13190,7 @@ var Playground = (function (exports) {
                 } while (p > L);
                 return k - 1;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         '!:random-gamma': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -13261,7 +13199,7 @@ var Playground = (function (exports) {
                 assertNumber(scale, sourceCodeInfo, { gt: 0 });
                 return randomGamma(shape, scale);
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         '!:random-pareto': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -13270,7 +13208,7 @@ var Playground = (function (exports) {
                 var u = Math.random();
                 return Math.pow((1 / u), (1 / alpha));
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         '!:uuid': {
             evaluate: function () {
@@ -13280,7 +13218,7 @@ var Playground = (function (exports) {
                     return value.toString(16);
                 });
             },
-            paramCount: 0,
+            arity: toFixedArity(0),
         },
         '!:random-char': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -13292,7 +13230,7 @@ var Playground = (function (exports) {
                 var randomIndex = Math.floor(Math.random() * charSet.length);
                 return charSet[randomIndex];
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         '!:random-string': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -13309,7 +13247,7 @@ var Playground = (function (exports) {
                 }
                 return result;
             },
-            paramCount: 2,
+            arity: toFixedArity(2),
         },
         '!:random-id': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -13323,14 +13261,14 @@ var Playground = (function (exports) {
                 }
                 return result;
             },
-            paramCount: 1,
+            arity: toFixedArity(1),
         },
         '!:random-color': {
             evaluate: function () {
                 var randomColor = Math.floor(Math.random() * 0x1000000).toString(16);
                 return "#".concat(randomColor.padStart(6, '0'));
             },
-            paramCount: 0,
+            arity: toFixedArity(0),
         },
     };
     /**
@@ -13397,7 +13335,7 @@ var Playground = (function (exports) {
     });
 
     var andSpecialExpression = {
-        paramCount: {},
+        arity: {},
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
             var evaluateNode = _a.evaluateNode;
@@ -13446,7 +13384,7 @@ var Playground = (function (exports) {
     };
 
     var condSpecialExpression = {
-        paramCount: { even: true },
+        arity: {},
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
             var evaluateNode = _a.evaluateNode;
@@ -13476,7 +13414,7 @@ var Playground = (function (exports) {
     };
 
     var switchSpecialExpression = {
-        paramCount: { odd: true },
+        arity: {},
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
             var evaluateNode = _a.evaluateNode;
@@ -13507,7 +13445,7 @@ var Playground = (function (exports) {
     };
 
     var definedSpecialExpression = {
-        paramCount: 1,
+        arity: toFixedArity(1),
         evaluate: function (node, contextStack) {
             var symbolNode = node[1][1];
             assertSymbolNode(symbolNode);
@@ -13675,7 +13613,7 @@ var Playground = (function (exports) {
     }
 
     var defSpecialExpression = {
-        paramCount: 2,
+        arity: {},
         evaluate: function (node, contextStack, _a) {
             var evaluateNode = _a.evaluateNode;
             var bindingNode = node[1][1];
@@ -13701,7 +13639,7 @@ var Playground = (function (exports) {
     };
 
     var doSpecialExpression = {
-        paramCount: {},
+        arity: {},
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
             var evaluateNode = _a.evaluateNode;
@@ -13792,7 +13730,7 @@ var Playground = (function (exports) {
     }
 
     var functionSpecialExpression = {
-        paramCount: {},
+        arity: {},
         evaluate: function (node, contextStack, _a) {
             var _b, _c;
             var builtin = _a.builtin, getUndefinedSymbols = _a.getUndefinedSymbols, evaluateNode = _a.evaluateNode;
@@ -13802,14 +13740,14 @@ var Playground = (function (exports) {
             var evaluatedFunction = evaluateFunction(fn, contextStack, builtin, getUndefinedSymbols, evaluateNode);
             var min = evaluatedFunction[0].filter(function (arg) { return arg[0] !== bindingTargetTypes.rest && arg[1][1] === undefined; }).length;
             var max = evaluatedFunction[0].some(function (arg) { return arg[0] === bindingTargetTypes.rest; }) ? undefined : evaluatedFunction[0].length;
-            var paramCount = min === max ? min : { min: min, max: max };
+            var arity = { min: min > 0 ? min : undefined, max: max };
             var litsFunction = (_b = {},
                 _b[FUNCTION_SYMBOL] = true,
                 _b.sourceCodeInfo = node[2],
                 _b.functionType = 'UserDefined',
                 _b.name = functionSymbol[1],
                 _b.evaluatedfunction = evaluatedFunction,
-                _b.paramCount = paramCount,
+                _b.arity = arity,
                 _b.docString = docString,
                 _b);
             contextStack.addValues((_c = {}, _c[functionSymbol[1]] = litsFunction, _c), functionSymbol[2]);
@@ -13825,7 +13763,7 @@ var Playground = (function (exports) {
         },
     };
     var defnSpecialExpression = {
-        paramCount: {},
+        arity: {},
         evaluate: function (node, contextStack, _a) {
             var _b, _c;
             var builtin = _a.builtin, getUndefinedSymbols = _a.getUndefinedSymbols, evaluateNode = _a.evaluateNode;
@@ -13834,14 +13772,14 @@ var Playground = (function (exports) {
             assertNameNotDefined(functionSymbol[1], contextStack, builtin, node[2]);
             var evaluatedFunction = evaluateFunction(fn, contextStack, builtin, getUndefinedSymbols, evaluateNode);
             var min = evaluatedFunction[0].filter(function (arg) { return arg[0] !== bindingTargetTypes.rest && arg[1][1] === undefined; }).length;
-            var paramCount = { min: min };
+            var arity = { min: min };
             var litsFunction = (_b = {},
                 _b[FUNCTION_SYMBOL] = true,
                 _b.sourceCodeInfo = node[2],
                 _b.functionType = 'UserDefined',
                 _b.name = functionSymbol[1],
                 _b.evaluatedfunction = evaluatedFunction,
-                _b.paramCount = paramCount,
+                _b.arity = arity,
                 _b.docString = docString,
                 _b);
             contextStack.exportValues((_c = {}, _c[functionSymbol[1]] = litsFunction, _c), functionSymbol[2]);
@@ -13858,7 +13796,7 @@ var Playground = (function (exports) {
         },
     };
     var fnSpecialExpression = {
-        paramCount: {},
+        arity: {},
         evaluate: function (node, contextStack, _a) {
             var _b;
             var builtin = _a.builtin, getUndefinedSymbols = _a.getUndefinedSymbols, evaluateNode = _a.evaluateNode;
@@ -13866,14 +13804,14 @@ var Playground = (function (exports) {
             var evaluatedFunction = evaluateFunction(fn, contextStack, builtin, getUndefinedSymbols, evaluateNode);
             var min = evaluatedFunction[0].filter(function (arg) { return arg[0] !== bindingTargetTypes.rest && arg[1][1] === undefined; }).length;
             var max = evaluatedFunction[0].some(function (arg) { return arg[0] === bindingTargetTypes.rest; }) ? undefined : evaluatedFunction[0].length;
-            var paramCount = min === max ? min : { min: min, max: max };
+            var arity = { min: min > 0 ? min : undefined, max: max };
             var litsFunction = (_b = {},
                 _b[FUNCTION_SYMBOL] = true,
                 _b.sourceCodeInfo = node[2],
                 _b.functionType = 'UserDefined',
                 _b.name = undefined,
                 _b.evaluatedfunction = evaluatedFunction,
-                _b.paramCount = paramCount,
+                _b.arity = arity,
                 _b.docString = '',
                 _b);
             return litsFunction;
@@ -13923,7 +13861,7 @@ var Playground = (function (exports) {
     }
 
     var ifSpecialExpression = {
-        paramCount: { min: 2, max: 3 },
+        arity: { min: 2, max: 3 },
         evaluate: function (node, contextStack, _a) {
             var evaluateNode = _a.evaluateNode;
             var _b = __read(node[1][1], 3), conditionNode = _b[0], trueNode = _b[1], falseNode = _b[2];
@@ -13942,7 +13880,7 @@ var Playground = (function (exports) {
     };
 
     var unlessSpecialExpression = {
-        paramCount: { min: 2, max: 3 },
+        arity: {},
         evaluate: function (node, contextStack, _a) {
             var evaluateNode = _a.evaluateNode;
             var _b = __read(node[1][1], 3), conditionNode = _b[0], trueNode = _b[1], falseNode = _b[2];
@@ -13961,7 +13899,7 @@ var Playground = (function (exports) {
     };
 
     var letSpecialExpression = {
-        paramCount: 0,
+        arity: toFixedArity(0),
         evaluate: function (node, contextStack, _a) {
             var evaluateNode = _a.evaluateNode;
             var bindingNode = node[1][1];
@@ -13987,7 +13925,7 @@ var Playground = (function (exports) {
     };
 
     var loopSpecialExpression = {
-        paramCount: {},
+        arity: {},
         evaluate: function (node, contextStack, _a) {
             var evaluateNode = _a.evaluateNode;
             var bindingNodes = node[1][1];
@@ -14196,7 +14134,7 @@ var Playground = (function (exports) {
         return result;
     }
     var forSpecialExpression = {
-        paramCount: 1,
+        arity: toFixedArity(1),
         evaluate: function (node, contextStack, helpers) { return evaluateLoop(true, node, contextStack, helpers.evaluateNode); },
         getUndefinedSymbols: function (node, contextStack, _a) {
             var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateNode = _a.evaluateNode;
@@ -14204,7 +14142,7 @@ var Playground = (function (exports) {
         },
     };
     var doseqSpecialExpression = {
-        paramCount: 1,
+        arity: toFixedArity(1),
         evaluate: function (node, contextStack, helpers) {
             evaluateLoop(false, node, contextStack, helpers.evaluateNode);
             return null;
@@ -14216,7 +14154,7 @@ var Playground = (function (exports) {
     };
 
     var orSpecialExpression = {
-        paramCount: {},
+        arity: {},
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
             var evaluateNode = _a.evaluateNode;
@@ -14265,7 +14203,7 @@ var Playground = (function (exports) {
     };
 
     var qqSpecialExpression = {
-        paramCount: { min: 1, max: 2 },
+        arity: { min: 1, max: 2 },
         evaluate: function (node, contextStack, _a) {
             var evaluateNode = _a.evaluateNode;
             var _b = __read(node[1][1], 2), firstNode = _b[0], secondNode = _b[1];
@@ -14288,7 +14226,7 @@ var Playground = (function (exports) {
     };
 
     var recurSpecialExpression = {
-        paramCount: {},
+        arity: {},
         evaluate: function (node, contextStack, _a) {
             var evaluateNode = _a.evaluateNode;
             var params = node[1][1];
@@ -14305,7 +14243,7 @@ var Playground = (function (exports) {
     };
 
     var throwSpecialExpression = {
-        paramCount: 1,
+        arity: toFixedArity(1),
         evaluate: function (node, contextStack, _a) {
             var evaluateNode = _a.evaluateNode;
             var message = asString(evaluateNode(node[1][1], contextStack), node[2], {
@@ -14326,7 +14264,7 @@ var Playground = (function (exports) {
     };
 
     var trySpecialExpression = {
-        paramCount: 1,
+        arity: {},
         evaluate: function (node, contextStack, _a) {
             var _b;
             var evaluateNode = _a.evaluateNode;
@@ -14357,7 +14295,7 @@ var Playground = (function (exports) {
     };
 
     var arraySpecialExpression = {
-        paramCount: {},
+        arity: {},
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
             var evaluateNode = _a.evaluateNode;
@@ -14411,7 +14349,7 @@ var Playground = (function (exports) {
     };
 
     var objectSpecialExpression = {
-        paramCount: {},
+        arity: {},
         evaluate: function (node, contextStack, _a) {
             var evaluateNode = _a.evaluateNode;
             var result = {};
@@ -14509,8 +14447,8 @@ var Playground = (function (exports) {
             var evaluateNode = _a.evaluateNode;
             var _loop_1 = function () {
                 var e_1, _b;
-                if (!paramCountAcceptsMin(fn.paramCount, params.length)) {
-                    throw new LitsError("Expected ".concat(fn.paramCount, " arguments, got ").concat(params.length, "."), sourceCodeInfo);
+                if (!arityAcceptsMin(fn.arity, params.length)) {
+                    throw new LitsError("Expected ".concat(fn.arity, " arguments, got ").concat(params.length, "."), sourceCodeInfo);
                 }
                 // checkParams(fn.evaluatedfunction, params.length, sourceCodeInfo)
                 var evaluatedFunction = fn.evaluatedfunction;
@@ -14809,7 +14747,7 @@ var Playground = (function (exports) {
                     _a.params = params,
                     _a.placeholders = placeholders,
                     _a.sourceCodeInfo = sourceCodeInfo,
-                    _a.paramCount = placeholders.length,
+                    _a.arity = toFixedArity(placeholders.length),
                     _a.docString = '',
                     _a);
                 return partialFunction;
@@ -14838,7 +14776,7 @@ var Playground = (function (exports) {
                     _b.params = params,
                     _b.placeholders = placeholders,
                     _b.sourceCodeInfo = sourceCodeInfo,
-                    _b.paramCount = placeholders.length,
+                    _b.arity = toFixedArity(placeholders.length),
                     _b.docString = '',
                     _b);
                 return partialFunction;
@@ -15048,13 +14986,17 @@ var Playground = (function (exports) {
                     case specialExpressionTypes['defined?']:
                     case specialExpressionTypes.recur:
                     case specialExpressionTypes.throw:
-                    case specialExpressionTypes['??']:
+                    case specialExpressionTypes['??']: {
+                        var specialExpression = asNonUndefined(builtin.specialExpressions[functionType], node[2]);
                         return _a = {},
                             _a[FUNCTION_SYMBOL] = true,
                             _a.functionType = 'SpecialBuiltin',
                             _a.specialBuiltinSymbolType = functionType,
                             _a.sourceCodeInfo = node[2],
+                            _a.arity = specialExpression.arity,
+                            _a.docString = 'Special builtin function',
                             _a;
+                    }
                     default:
                         throw new LitsError("Unknown special builtin symbol type: ".concat(functionType), node[2]);
                 }
@@ -15067,7 +15009,7 @@ var Playground = (function (exports) {
                     _b.functionType = 'Builtin',
                     _b.normalBuitinSymbolType = type,
                     _b.sourceCodeInfo = node[2],
-                    _b.paramCount = normalExpression.paramCount,
+                    _b.arity = normalExpression.arity,
                     _b.docString = 'Builtin function',
                     _b;
             }
@@ -15106,7 +15048,7 @@ var Playground = (function (exports) {
                             name: name
                         },
                         _b[FUNCTION_SYMBOL] = true,
-                        _b.paramCount = (_c = jsFunction.paramCount) !== null && _c !== void 0 ? _c : {},
+                        _b.arity = (_c = jsFunction.arity) !== null && _c !== void 0 ? _c : {},
                         _b.docString = (_d = jsFunction.docString) !== null && _d !== void 0 ? _d : '',
                         _b);
                     return acc;
@@ -15244,9 +15186,7 @@ var Playground = (function (exports) {
         var char = input[position + length];
         var nextThreeChars = input.slice(position + length, position + length + 3);
         var escaping = false;
-        while (char && nextThreeChars !== '"""' || escaping) {
-            if (char === undefined)
-                throw new LitsError("Unclosed doc string at position ".concat(position, "."), undefined);
+        while (char && (nextThreeChars !== '"""' || escaping)) {
             length += 1;
             if (escaping) {
                 escaping = false;
@@ -15274,9 +15214,7 @@ var Playground = (function (exports) {
         var length = 1;
         var char = input[position + length];
         var escaping = false;
-        while (char && char !== '"' || escaping) {
-            if (char === undefined)
-                throw new LitsError("Unclosed string at position ".concat(position, "."), undefined);
+        while (char && (char !== '"' || escaping)) {
             length += 1;
             if (escaping) {
                 escaping = false;
@@ -15838,7 +15776,7 @@ var Playground = (function (exports) {
     function createNamedNormalExpressionNode(symbolNode, params, sourceCodeInfo) {
         var node = withSourceCodeInfo([NodeTypes.NormalExpression, [symbolNode, params]], sourceCodeInfo);
         if (isNormalBuiltinSymbolNode(symbolNode)) {
-            assertNumberOfParams(allNormalExpressions[symbolNode[1]].paramCount, node);
+            assertNumberOfParams(allNormalExpressions[symbolNode[1]].arity, node[1][1].length, sourceCodeInfo);
         }
         return node;
     }
@@ -16224,6 +16162,8 @@ var Playground = (function (exports) {
             if (isSpecialBuiltinSymbolNode(symbol)) { // Named function
                 var specialExpressionType = symbol[1];
                 var type = specialExpressionType;
+                var specialExpression = builtin.specialExpressions[type];
+                assertNumberOfParams(specialExpression.arity, params.length, symbol[2]);
                 switch (type) {
                     case specialExpressionTypes['||']:
                         return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, params]], symbol[2]);
@@ -16239,22 +16179,15 @@ var Playground = (function (exports) {
                         if (params.length === 1) {
                             return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, [params[0], undefined]]], symbol[2]);
                         }
-                        if (params.length === 2) {
+                        else {
                             return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, [params[0], params[1]]]], symbol[2]);
                         }
-                        throw new LitsError('Expected exactly two parameters', symbol[2]);
                     }
                     case specialExpressionTypes['defined?']: {
-                        if (params.length !== 1) {
-                            throw new LitsError('Expected exactly one parameter', symbol[2]);
-                        }
                         var _b = __read(params, 1), param = _b[0];
                         return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, param]], symbol[2]);
                     }
                     case specialExpressionTypes.throw: {
-                        if (params.length !== 1) {
-                            throw new LitsError('Expected exactly one parameter', symbol[2]);
-                        }
                         var _c = __read(params, 1), param = _c[0];
                         return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, param]], symbol[2]);
                     }
@@ -16912,27 +16845,11 @@ var Playground = (function (exports) {
             var numberString = (negative ? value.substring(1) : value).replace(/_/g, '');
             return withSourceCodeInfo([NodeTypes.Number, negative ? -Number(numberString) : Number(numberString)], token[2]);
         };
-        Parser.prototype.smartTrim = function (str) {
-            var _a, _b;
-            var lines = str.split('\n');
-            while ((_a = lines[0]) === null || _a === void 0 ? void 0 : _a.match(/^\s*$/)) {
-                lines.shift(); // Remove leading empty lines
-            }
-            while ((_b = lines[lines.length - 1]) === null || _b === void 0 ? void 0 : _b.match(/^\s*$/)) {
-                lines.pop(); // Remove trailing empty lines
-            }
-            var indent = lines.reduce(function (minIndent, line) {
-                var _a, _b, _c;
-                var lineIndent = (_c = (_b = (_a = line.match(/^\s*/)) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.length) !== null && _c !== void 0 ? _c : 0;
-                return Math.min(minIndent, lineIndent);
-            }, Infinity);
-            return lines.map(function (line) { return line.slice(indent); }).join('\n').trimEnd();
-        };
         Parser.prototype.parseDocString = function () {
             var token = this.asToken(this.peek());
             var stringToken = token[2] ? ['String', token[1].slice(2, -2), token[2]] : ['String', token[1].slice(2, -2)];
             var stringNode = this.parseString(stringToken);
-            return this.smartTrim(stringNode[1]); // Extract the string value from the StringNode
+            return smartTrim(stringNode[1]); // Extract the string value from the StringNode
         };
         Parser.prototype.parseString = function (token) {
             this.advance();

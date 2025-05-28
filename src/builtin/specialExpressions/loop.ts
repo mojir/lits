@@ -12,7 +12,7 @@ import type { specialExpressionTypes } from '../specialExpressionTypes'
 export type LoopNode = SpecialExpressionNode<[typeof specialExpressionTypes['loop'], BindingNode[], Node[]]> // bindings, body
 
 export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
-  paramCount: {},
+  arity: {},
   evaluate: (node, contextStack, { evaluateNode }) => {
     const bindingNodes = node[1][1]
     const bindingContext: Context = bindingNodes.reduce((result: Context, bindingNode) => {

@@ -8,7 +8,7 @@ import type { specialExpressionTypes } from '../specialExpressionTypes'
 export type DefNode = SpecialExpressionNode<[typeof specialExpressionTypes['0_def'], BindingNode]> // binding, value
 
 export const defSpecialExpression: BuiltinSpecialExpression<Any, DefNode> = {
-  paramCount: 2,
+  arity: {},
   evaluate: (node, contextStack, { evaluateNode }) => {
     const bindingNode: BindingNode = node[1][1]
     const target = bindingNode[1][0]

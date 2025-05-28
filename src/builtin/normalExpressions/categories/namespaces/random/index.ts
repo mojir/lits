@@ -4,6 +4,7 @@ import { assertArray } from '../../../../../typeGuards/array'
 import { asAny } from '../../../../../typeGuards/lits'
 import { assertNumber } from '../../../../../typeGuards/number'
 import { assertString } from '../../../../../typeGuards/string'
+import { toFixedArity } from '../../../../../utils/arity'
 import type { BuiltinNormalExpressions } from '../../../../interface'
 
 export const randomNormalExpression: BuiltinNormalExpressions = {
@@ -11,7 +12,7 @@ export const randomNormalExpression: BuiltinNormalExpressions = {
     evaluate: (): number => {
       return Math.random()
     },
-    paramCount: 0,
+    arity: toFixedArity(0),
   },
   '!:random-int': {
     evaluate: ([min, max], sourceCodeInfo): number => {
@@ -19,7 +20,7 @@ export const randomNormalExpression: BuiltinNormalExpressions = {
       assertNumber(max, sourceCodeInfo, { integer: true, gt: min })
       return Math.floor(Math.random() * (max - min)) + min
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   '!:random-int-inclusive': {
     evaluate: ([min, max], sourceCodeInfo): number => {
@@ -27,7 +28,7 @@ export const randomNormalExpression: BuiltinNormalExpressions = {
       assertNumber(max, sourceCodeInfo, { integer: true, gte: min })
       return Math.floor(Math.random() * (max - min + 1)) + min
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   '!:random-float': {
     evaluate: ([min, max], sourceCodeInfo): number => {
@@ -35,7 +36,7 @@ export const randomNormalExpression: BuiltinNormalExpressions = {
       assertNumber(max, sourceCodeInfo, { gt: min })
       return Math.random() * (max - min) + min
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   '!:random-boolean': {
     evaluate: ([prob], sourceCodeInfo): boolean => {
@@ -43,7 +44,7 @@ export const randomNormalExpression: BuiltinNormalExpressions = {
       assertNumber(probability, sourceCodeInfo, { gte: 0, lte: 1 })
       return Math.random() < probability
     },
-    paramCount: { min: 0, max: 1 },
+    arity: { min: 0, max: 1 },
   },
   '!:random-item': {
     evaluate: ([array], sourceCodeInfo): Any => {
@@ -51,7 +52,7 @@ export const randomNormalExpression: BuiltinNormalExpressions = {
       const index = Math.floor(Math.random() * array.length)
       return asAny(array[index])
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   '!:random-sample': {
     evaluate: ([array, n], sourceCodeInfo): Arr => {
@@ -72,7 +73,7 @@ export const randomNormalExpression: BuiltinNormalExpressions = {
 
       return result
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   '!:random-sample-unique': {
     evaluate: ([array, n], sourceCodeInfo): Arr => {
@@ -95,7 +96,7 @@ export const randomNormalExpression: BuiltinNormalExpressions = {
 
       return result
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   '!:shuffle': {
     evaluate: ([array], sourceCodeInfo): Arr => {
@@ -107,7 +108,7 @@ export const randomNormalExpression: BuiltinNormalExpressions = {
       }
       return shuffledArray
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   '!:random-normal': {
     evaluate: ([mean, stdDev], sourceCodeInfo): number => {
@@ -118,7 +119,7 @@ export const randomNormalExpression: BuiltinNormalExpressions = {
       const z0 = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2)
       return z0 * stdDev + mean
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   '!:random-exponential': {
     evaluate: ([lambda], sourceCodeInfo): number => {
@@ -126,7 +127,7 @@ export const randomNormalExpression: BuiltinNormalExpressions = {
       const u = Math.random()
       return -Math.log(u) / lambda
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   '!:random-binomial': {
     evaluate: ([n, p], sourceCodeInfo): number => {
@@ -140,7 +141,7 @@ export const randomNormalExpression: BuiltinNormalExpressions = {
       }
       return k
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   '!:random-poisson': {
     evaluate: ([lambda], sourceCodeInfo): number => {
@@ -157,7 +158,7 @@ export const randomNormalExpression: BuiltinNormalExpressions = {
 
       return k - 1
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   '!:random-gamma': {
     evaluate: ([shape, scale], sourceCodeInfo): number => {
@@ -165,7 +166,7 @@ export const randomNormalExpression: BuiltinNormalExpressions = {
       assertNumber(scale, sourceCodeInfo, { gt: 0 })
       return randomGamma(shape, scale)
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   '!:random-pareto': {
     evaluate: ([alpha], sourceCodeInfo): number => {
@@ -173,7 +174,7 @@ export const randomNormalExpression: BuiltinNormalExpressions = {
       const u = Math.random()
       return (1 / u) ** (1 / alpha)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   '!:uuid': {
     evaluate: (): string => {
@@ -183,7 +184,7 @@ export const randomNormalExpression: BuiltinNormalExpressions = {
         return value.toString(16)
       })
     },
-    paramCount: 0,
+    arity: toFixedArity(0),
   },
   '!:random-char': {
     evaluate: ([charSet], sourceCodeInfo): string => {
@@ -194,7 +195,7 @@ export const randomNormalExpression: BuiltinNormalExpressions = {
       const randomIndex = Math.floor(Math.random() * charSet.length)
       return charSet[randomIndex]!
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   '!:random-string': {
     evaluate: ([length, charSet], sourceCodeInfo): string => {
@@ -210,7 +211,7 @@ export const randomNormalExpression: BuiltinNormalExpressions = {
       }
       return result
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   '!:random-id': {
     evaluate: ([length], sourceCodeInfo): string => {
@@ -223,14 +224,14 @@ export const randomNormalExpression: BuiltinNormalExpressions = {
       }
       return result
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   '!:random-color': {
     evaluate: (): string => {
       const randomColor = Math.floor(Math.random() * 0x1000000).toString(16)
       return `#${randomColor.padStart(6, '0')}`
     },
-    paramCount: 0,
+    arity: toFixedArity(0),
   },
 }
 

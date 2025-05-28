@@ -2,6 +2,7 @@ import { LitsError } from '../../../../../../errors'
 import { assertVector } from '../../../../../../typeGuards/annotatedArrays'
 import { assertNumber } from '../../../../../../typeGuards/number'
 import type { BuiltinNormalExpression, BuiltinNormalExpressions } from '../../../../../interface'
+import { toFixedArity } from '../../../../../../utils/arity'
 import { maxReductionFunction } from './max'
 import { geometricMeanReductionFunction, harmonicMeanReductionFunction, meanReductionFunction } from './mean'
 import { medianReductionFunction } from './median'
@@ -101,7 +102,7 @@ function createReductionNormalExpression(
         throw new LitsError(error, sourceCodeInfo)
       }
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   }
 }
 
@@ -130,7 +131,7 @@ function createMovingNormalExpression(
         throw new LitsError(error, sourceCodeInfo)
       }
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   }
 }
 
@@ -186,7 +187,7 @@ function createCenteredMovingNormalExpression(
       result.push(...Array<null>(vector.length - end).fill(null))
       return result
     },
-    paramCount: { min: 2, max: 4 },
+    arity: { min: 2, max: 4 },
   }
 }
 
@@ -218,6 +219,6 @@ function createRunningNormalExpression(
         throw new LitsError(error, sourceCodeInfo)
       }
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   }
 }

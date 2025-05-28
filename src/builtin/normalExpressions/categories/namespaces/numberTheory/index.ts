@@ -3,6 +3,7 @@ import type { Arr } from '../../../../../interface'
 import { assertVector } from '../../../../../typeGuards/annotatedArrays'
 import { assertArray } from '../../../../../typeGuards/array'
 import { assertNumber } from '../../../../../typeGuards/number'
+import { toFixedArity } from '../../../../../utils/arity'
 import type { BuiltinNormalExpressions } from '../../../../interface'
 import { combinationsNormalExpressions } from './combinations'
 import { derangementsNormalExpressions } from './derangements'
@@ -155,7 +156,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
       assertNumber(b, sourceCodeInfo, { integer: true })
       return gcd(a, b) === 1
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'nth:divisible-by?': {
     evaluate: ([value, divisor], sourceCodeInfo): boolean => {
@@ -165,7 +166,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
         return false
       return value % divisor === 0
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'nth:gcd': {
     evaluate: ([a, b], sourceCodeInfo): number => {
@@ -173,7 +174,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
       assertNumber(b, sourceCodeInfo)
       return gcd(a, b)
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'nth:lcm': {
     evaluate: ([a, b], sourceCodeInfo): number => {
@@ -181,7 +182,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
       assertNumber(b, sourceCodeInfo)
       return lcm(a, b)
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
 
   'nth:multinomial': {
@@ -193,7 +194,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
       }, 0)
       return factorialOf(sum) / args.reduce((acc, curr) => acc * factorialOf(curr), 1)
     },
-    paramCount: { min: 1 },
+    arity: { min: 1 },
   },
   'nth:amicable?': {
     evaluate: ([a, b], sourceCodeInfo): boolean => {
@@ -203,7 +204,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
       const sumB = getProperDivisors(b).reduce((acc, curr) => acc + curr, 0)
       return sumA === b && sumB === a && a !== b
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'nth:euler-totient': {
     evaluate: ([n], sourceCodeInfo): number => {
@@ -220,7 +221,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
         result -= result / n
       return result
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'nth:mobius': {
     evaluate: ([n], sourceCodeInfo): number => {
@@ -239,7 +240,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
       // If square-free with odd number of prime factors: return -1
       return factors.length % 2 === 0 ? 1 : -1
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
     aliases: ['nth:möbius'],
   },
   'nth:mertens': {
@@ -254,7 +255,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
       }
       return result
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
     aliases: ['nth:mertens'],
   },
   'nth:sigma': {
@@ -262,7 +263,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
       assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
       return getDivisors(n).reduce((acc, curr) => acc + curr, 0)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'nth:carmichael-lambda': {
     evaluate: ([n], sourceCodeInfo): number => {
@@ -303,7 +304,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
       // Find LCM of all lambda values
       return lambdaValues.reduce((acc, val) => lcm(acc, val), 1)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'nth:cartesian-product': {
     evaluate: (params, sourceCodeInfo): Arr[] => {
@@ -321,7 +322,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
         return result
       }, [[]])
     },
-    paramCount: { min: 1 },
+    arity: { min: 1 },
   },
   'nth:perfect-power': {
     evaluate: ([n], sourceCodeInfo): [number, number] | null => {
@@ -329,7 +330,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
       const result = perfectPower(n)
       return result || null
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'nth:mod-exp': {
     evaluate: ([base, exponent, modulus], sourceCodeInfo): number => {
@@ -339,7 +340,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
 
       return modExp(base, exponent, modulus)
     },
-    paramCount: 3,
+    arity: toFixedArity(3),
   },
   'nth:mod-inv': {
     evaluate: ([a, m], sourceCodeInfo): number => {
@@ -353,7 +354,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
         throw new LitsError(error, sourceCodeInfo)
       }
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'nth:extended-gcd': {
     evaluate: ([a, b], sourceCodeInfo): [number, number, number] => {
@@ -362,7 +363,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
 
       return extendedGcd(a, b)
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'nth:chinese-remainder': {
     evaluate: ([remainders, moduli], sourceCodeInfo): number => {
@@ -378,7 +379,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
         throw new LitsError((error as Error).message, sourceCodeInfo)
       }
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'nth:stirling-first': {
     evaluate: ([n, k], sourceCodeInfo): number => {
@@ -400,7 +401,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
 
       return dp[n]![k]!
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'nth:stirling-second': {
     evaluate: ([n, k], sourceCodeInfo): number => {
@@ -427,7 +428,7 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
 
       return dp[n]![k]!
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
 }
 

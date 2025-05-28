@@ -1,4 +1,5 @@
 import { assertNumber } from '../../../../../typeGuards/number'
+import { toFixedArity } from '../../../../../utils/arity'
 import type { BuiltinNormalExpressions } from '../../../../interface'
 import { factorialNumbers } from './sequences/factorial'
 
@@ -26,6 +27,6 @@ export const factorialNormalExpressions: BuiltinNormalExpressions = {
       return factorialOf(n)
     },
     aliases: ['nth:!'],
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 }

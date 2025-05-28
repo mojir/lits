@@ -97,6 +97,7 @@ describe('parser', () => {
   })
 
   test('random samples', () => {
+    expect(() => lits.run('"a" object 1')).toThrow(LitsError)
     expect(() => lits.run('[1, 2, 3].1')).toThrow(LitsError)
     expect(() => lits.run('1 ? 2 ; 3')).toThrow(LitsError)
     expect(() => lits.run('1 ? 2')).toThrow(LitsError)

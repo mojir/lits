@@ -130,3 +130,18 @@ export function approxEqual(a: number, b: number, epsilon: number = EPSILON): bo
 export function approxZero(value: number): boolean {
   return Math.abs(value) < EPSILON
 }
+
+export function smartTrim(str: string): string {
+  const lines = str.split('\n')
+  while (lines[0]?.match(/^\s*$/)) {
+    lines.shift() // Remove leading empty lines
+  }
+  while (lines[lines.length - 1]?.match(/^\s*$/)) {
+    lines.pop() // Remove trailing empty lines
+  }
+  const indent = lines.reduce((minIndent, line) => {
+    const lineIndent = line.match(/^\s*/)![0].length
+    return Math.min(minIndent, lineIndent)
+  }, Infinity)
+  return lines.map(line => line.slice(indent)).join('\n').trimEnd()
+}

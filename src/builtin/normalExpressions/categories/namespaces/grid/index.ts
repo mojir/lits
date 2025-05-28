@@ -4,6 +4,7 @@ import { assertGrid, assertVector } from '../../../../../typeGuards/annotatedArr
 import { assertArray } from '../../../../../typeGuards/array'
 import { asAny, asFunctionLike, assertAny, assertFunctionLike } from '../../../../../typeGuards/lits'
 import { assertNumber } from '../../../../../typeGuards/number'
+import { toFixedArity } from '../../../../../utils/arity'
 import type { BuiltinNormalExpressions } from '../../../../interface'
 import { fromArray } from './fromArray'
 import { transpose } from './transpose'
@@ -23,7 +24,7 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
       }
       return true
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'grid:some?': {
     evaluate: ([grid, predicate], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
@@ -39,7 +40,7 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
       }
       return false
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'grid:every-row?': {
     evaluate: ([grid, predicate], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
@@ -53,7 +54,7 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
       }
       return true
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'grid:some-row?': {
     evaluate: ([grid, predicate], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
@@ -67,7 +68,7 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
       }
       return false
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'grid:every-col?': {
     evaluate: ([grid, predicate], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
@@ -82,7 +83,7 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
       }
       return true
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'grid:some-col?': {
     evaluate: ([grid, predicate], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
@@ -97,7 +98,7 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
       }
       return false
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'grid:row': {
     evaluate: ([grid, row], sourceCodeInfo): Any[] => {
@@ -105,7 +106,7 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
       assertNumber(row, sourceCodeInfo, { integer: true, nonNegative: true, lt: grid.length })
       return grid[row]!
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'grid:col': {
     evaluate: ([grid, col], sourceCodeInfo): Any[] => {
@@ -113,14 +114,14 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
       assertNumber(col, sourceCodeInfo, { integer: true, nonNegative: true, lt: grid[0]!.length })
       return grid.map(row => row[col]!)
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'grid:shape': {
     evaluate: ([grid], sourceCodeInfo): Any[] => {
       assertGrid(grid, sourceCodeInfo)
       return [grid.length, grid[0]!.length]
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'grid:fill': {
     evaluate: ([rows, cols, value], sourceCodeInfo): Any[][] => {
@@ -137,7 +138,7 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
       }
       return result
     },
-    paramCount: 3,
+    arity: toFixedArity(3),
   },
   'grid:generate': {
     evaluate: ([rows, cols, generator], sourceCodeInfo, contextStack, { executeFunction }): Any[][] => {
@@ -157,7 +158,7 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
       }
       return result
     },
-    paramCount: 3,
+    arity: toFixedArity(3),
   },
   'grid:reshape': {
     evaluate: ([grid, rows], sourceCodeInfo): Any[][] => {
@@ -180,14 +181,14 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
       }
       return result
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'grid:transpose': {
     evaluate: ([grid], sourceCodeInfo): Any[][] => {
       assertGrid(grid, sourceCodeInfo)
       return transpose(grid)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
     aliases: ['grid:tr'],
   },
   'grid:flip-h': {
@@ -195,14 +196,14 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
       assertGrid(grid, sourceCodeInfo)
       return grid.map(row => row.reverse())
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'grid:flip-v': {
     evaluate: ([grid], sourceCodeInfo): Any[][] => {
       assertGrid(grid, sourceCodeInfo)
       return grid.reverse()
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'grid:rotate': {
     evaluate: ([grid, times], sourceCodeInfo): Any[][] => {
@@ -252,21 +253,21 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
 
       return result!
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'grid:reverse-rows': {
     evaluate: ([grid], sourceCodeInfo): Any[][] => {
       assertGrid(grid, sourceCodeInfo)
       return grid.reverse()
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'grid:reverse-cols': {
     evaluate: ([grid], sourceCodeInfo): Any[][] => {
       assertGrid(grid, sourceCodeInfo)
       return grid.map(row => row.reverse())
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'grid:slice': {
     evaluate: ([grid, start, end], sourceCodeInfo): Any[][] => {
@@ -298,7 +299,7 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
       }
       return result
     },
-    paramCount: { min: 2, max: 3 },
+    arity: { min: 2, max: 3 },
   },
   'grid:slice-rows': {
     evaluate: ([grid, rowStart, rowEnd], sourceCodeInfo): Any[][] => {
@@ -319,7 +320,7 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
 
       return grid.slice(rowStart, rowEnd)
     },
-    paramCount: { min: 2, max: 3 },
+    arity: { min: 2, max: 3 },
   },
   'grid:slice-cols': {
     evaluate: ([grid, colStart, colEnd], sourceCodeInfo): Any[][] => {
@@ -341,7 +342,7 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
 
       return transpose(trMatrix.slice(colStart, colEnd))
     },
-    paramCount: { min: 2, max: 3 },
+    arity: { min: 2, max: 3 },
   },
   'grid:splice-rows': {
     evaluate: ([grid, rowStart, rowDeleteCount, ...rows], sourceCodeInfo): Any[][] => {
@@ -371,7 +372,7 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
       }
       return result
     },
-    paramCount: { min: 3 },
+    arity: { min: 3 },
   },
   'grid:splice-cols': {
     evaluate: ([grid, colStart, colDeleteCount, ...cols], sourceCodeInfo): Any[][] => {
@@ -401,7 +402,7 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
       }
       return transpose(result)
     },
-    paramCount: { min: 3 },
+    arity: { min: 3 },
   },
   'grid:concat-rows': {
     evaluate: (params, sourceCodeInfo): Any[][] => {
@@ -423,7 +424,7 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
       })
       return result
     },
-    paramCount: { min: 1 },
+    arity: { min: 1 },
   },
   'grid:concat-cols': {
     evaluate: (params, sourceCodeInfo): Any[][] => {
@@ -447,7 +448,7 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
       }
       return result
     },
-    paramCount: { min: 1 },
+    arity: { min: 1 },
   },
   'grid:map': {
     evaluate: (params, sourceCodeInfo, contextStack, { executeFunction }): Any[][] => {
@@ -477,7 +478,7 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
       }
       return result
     },
-    paramCount: { min: 2 },
+    arity: { min: 2 },
   },
   'grid:mapi': {
     evaluate: ([grid, fn], sourceCodeInfo, contextStack, { executeFunction }): Any[][] => {
@@ -497,7 +498,7 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
       }
       return result
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'grid:reduce': {
     evaluate: ([grid, fn, initialValue], sourceCodeInfo, contextStack, { executeFunction }): Any => {
@@ -512,7 +513,7 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
       }
       return accumulator
     },
-    paramCount: 3,
+    arity: toFixedArity(3),
   },
   'grid:reducei': {
     evaluate: ([grid, fn, initialValue], sourceCodeInfo, contextStack, { executeFunction }): Any => {
@@ -527,7 +528,7 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
       }
       return accumulator
     },
-    paramCount: 3,
+    arity: toFixedArity(3),
   },
   'grid:push-rows': {
     evaluate: ([grid, ...rows], sourceCodeInfo): Any[][] => {
@@ -538,7 +539,7 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
       }
       return [...grid, ...rows]
     },
-    paramCount: { min: 2 },
+    arity: { min: 2 },
   },
   'grid:unshift-rows': {
     evaluate: ([grid, ...rows], sourceCodeInfo): Any[][] => {
@@ -549,7 +550,7 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
       }
       return [...rows, ...grid]
     },
-    paramCount: { min: 2 },
+    arity: { min: 2 },
   },
   'grid:pop-row': {
     evaluate: ([grid], sourceCodeInfo): Any[][] | null => {
@@ -559,7 +560,7 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
       }
       return grid.slice(0, -1)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
 
   },
   'grid:shift-row': {
@@ -570,7 +571,7 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
       }
       return grid.slice(1)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'grid:push-cols': {
     evaluate: ([grid, ...cols], sourceCodeInfo): Any[][] => {
@@ -592,7 +593,7 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
       }
       return result
     },
-    paramCount: { min: 2 },
+    arity: { min: 2 },
   },
   'grid:unshift-cols': {
     evaluate: ([grid, ...cols], sourceCodeInfo): Any[][] => {
@@ -614,7 +615,7 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
       }
       return result
     },
-    paramCount: { min: 2 },
+    arity: { min: 2 },
   },
   'grid:pop-col': {
     evaluate: ([grid], sourceCodeInfo): Any[][] | null => {
@@ -624,7 +625,7 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
       }
       return grid.map(row => row.slice(0, -1))
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'grid:shift-col': {
     evaluate: ([grid], sourceCodeInfo): Any[][] | null => {
@@ -634,7 +635,7 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
       }
       return grid.map(row => row.slice(1))
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'grid:from-array': {
     evaluate: ([array, rows], sourceCodeInfo): unknown[][] => {
@@ -645,6 +646,6 @@ export const gridNormalExpression: BuiltinNormalExpressions = {
       }
       return fromArray(array, rows)
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
 }

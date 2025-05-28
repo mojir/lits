@@ -4,36 +4,37 @@ import { assertNumber, isNumber } from '../../../typeGuards/number'
 import type { BuiltinNormalExpressions } from '../../interface'
 import { isGrid, isMatrix, isVector } from '../../../typeGuards/annotatedArrays'
 import { EPSILON } from '../../../utils'
+import { toFixedArity } from '../../../utils/arity'
 
 export const predicatesNormalExpression: BuiltinNormalExpressions = {
   'function?': {
     evaluate: ([first]): boolean => isLitsFunction(first),
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'string?': {
     evaluate: ([first]): boolean => typeof first === 'string',
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'number?': {
     evaluate: ([first]): boolean => typeof first === 'number',
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'integer?': {
     evaluate: ([first]): boolean => typeof first === 'number' && isNumber(first, { integer: true }),
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'boolean?': {
     evaluate: ([first]): boolean => typeof first === 'boolean',
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'null?': {
     evaluate: ([first]): boolean => first === null || first === undefined,
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'zero?': {
@@ -41,7 +42,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       assertNumber(value, sourceCodeInfo, { finite: true })
       return Math.abs(value) < EPSILON
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'pos?': {
@@ -49,7 +50,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       assertNumber(first, sourceCodeInfo, { finite: true })
       return first > 0
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'neg?': {
@@ -57,7 +58,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       assertNumber(first, sourceCodeInfo, { finite: true })
       return first < 0
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'even?': {
@@ -65,7 +66,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       assertNumber(first, sourceCodeInfo, { finite: true })
       return first % 2 === 0
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'odd?': {
@@ -73,38 +74,38 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       assertNumber(first, sourceCodeInfo, { finite: true })
       return isNumber(first, { integer: true }) && first % 2 !== 0
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'array?': {
     evaluate: ([first]): boolean => {
       return Array.isArray(first)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'coll?': {
     evaluate: ([first]): boolean => {
       return isColl(first)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'seq?': {
     evaluate: ([first]): boolean => {
       return isSeq(first)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'object?': {
     evaluate: ([first]): boolean => isObj(first),
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'regexp?': {
     evaluate: ([value]): boolean => isRegularExpression(value),
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'finite?': {
@@ -112,7 +113,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       assertNumber(value, sourceCodeInfo)
       return Number.isFinite(value)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'positive-infinity?': {
@@ -120,7 +121,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       assertNumber(value, sourceCodeInfo)
       return value === Number.POSITIVE_INFINITY
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'negative-infinity?': {
@@ -128,21 +129,21 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       assertNumber(value, sourceCodeInfo)
       return value === Number.NEGATIVE_INFINITY
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'true?': {
     evaluate: ([value]): boolean => {
       return value === true
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'false?': {
     evaluate: ([value]): boolean => {
       return value === false
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'empty?': {
@@ -159,7 +160,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
 
       return Object.keys(coll).length === 0
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'not-empty?': {
     evaluate: ([coll], sourceCodeInfo): boolean => {
@@ -175,19 +176,19 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
 
       return Object.keys(coll).length > 0
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'vector?': {
     evaluate: ([vector]): boolean => isVector(vector),
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'matrix?': {
     evaluate: ([matrix]): boolean => isMatrix(matrix),
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'grid?': {
     evaluate: ([table]): boolean => isGrid(table),
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
 }

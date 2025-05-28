@@ -10,6 +10,7 @@ import { assertNumber, isNumber } from '../../../typeGuards/number'
 import { asString, asStringOrNumber, assertString, assertStringOrNumber, isString, isStringOrNumber } from '../../../typeGuards/string'
 import type { FunctionLike } from '../../../parser/types'
 import { LitsError } from '../../../errors'
+import { toFixedArity } from '../../../utils/arity'
 
 interface CollMeta {
   coll: Coll
@@ -197,7 +198,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
           return result
         }, {})
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'filteri': {
     evaluate: ([coll, fn], sourceCodeInfo, contextStack, { executeFunction }): Coll => {
@@ -220,7 +221,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
           return result
         }, {})
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'map': {
     evaluate: (params, sourceCodeInfo, contextStack, { executeFunction }) => {
@@ -264,7 +265,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       mapped.forEach(char => assertString(char, sourceCodeInfo))
       return mapped.join('')
     },
-    paramCount: { min: 2 },
+    arity: { min: 2 },
   },
   'mapi': {
     evaluate: ([coll, fn], sourceCodeInfo, contextStack, { executeFunction }) => {
@@ -286,7 +287,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
           return acc
         }, {})
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'reduce': {
     evaluate: ([coll, fn, initial], sourceCodeInfo, contextStack, { executeFunction }): Any => {
@@ -320,7 +321,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
         }, initial)
       }
     },
-    paramCount: 3,
+    arity: toFixedArity(3),
   },
   'reducei': {
     evaluate: ([coll, fn, initial], sourceCodeInfo, contextStack, { executeFunction }): Any => {
@@ -354,7 +355,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
         }, initial)
       }
     },
-    paramCount: 3,
+    arity: toFixedArity(3),
   },
   'reduce-right': {
     evaluate: ([coll, fn, initial], sourceCodeInfo, contextStack, { executeFunction }): Any => {
@@ -387,7 +388,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
         }, initial)
       }
     },
-    paramCount: 3,
+    arity: toFixedArity(3),
   },
   'reducei-right': {
     evaluate: ([coll, fn, initial], sourceCodeInfo, contextStack, { executeFunction }): Any => {
@@ -420,7 +421,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
         }, initial)
       }
     },
-    paramCount: 3,
+    arity: toFixedArity(3),
   },
   'reductions': {
     evaluate: ([coll, fn, initial], sourceCodeInfo, contextStack, { executeFunction }): Any => {
@@ -467,7 +468,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
         return resultArray
       }
     },
-    paramCount: 3,
+    arity: toFixedArity(3),
   },
   'reductionsi': {
     evaluate: ([coll, fn, initial], sourceCodeInfo, contextStack, { executeFunction }): Any => {
@@ -514,7 +515,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
         return resultArray
       }
     },
-    paramCount: 3,
+    arity: toFixedArity(3),
   },
   'get': {
     evaluate: (params, sourceCodeInfo) => {
@@ -528,7 +529,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       const result = get(coll, key)
       return result === undefined ? defaultValue : result
     },
-    paramCount: { min: 2, max: 3 },
+    arity: { min: 2, max: 3 },
   },
   'get-in': {
     evaluate: (params, sourceCodeInfo): Any => {
@@ -551,7 +552,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       }
       return coll
     },
-    paramCount: { min: 2, max: 3 },
+    arity: { min: 2, max: 3 },
   },
   'count': {
     evaluate: ([coll], sourceCodeInfo): number => {
@@ -567,7 +568,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
 
       return Object.keys(coll).length
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'contains?': {
     evaluate: ([coll, key], sourceCodeInfo): boolean => {
@@ -586,7 +587,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       assertString(key, sourceCodeInfo)
       return key in coll
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'assoc': {
     evaluate: ([coll, key, value], sourceCodeInfo): Coll => {
@@ -595,7 +596,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       assertAny(value, sourceCodeInfo)
       return assoc(coll, key, value, sourceCodeInfo)
     },
-    paramCount: 3,
+    arity: toFixedArity(3),
   },
   'assoc-in': {
     evaluate: ([originalColl, keys, value], sourceCodeInfo): Coll => {
@@ -624,7 +625,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
 
       return coll
     },
-    paramCount: 3,
+    arity: toFixedArity(3),
   },
   'update': {
     evaluate: ([coll, key, fn, ...params], sourceCodeInfo, contextStack, { executeFunction }): Coll => {
@@ -633,7 +634,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       assertFunctionLike(fn, sourceCodeInfo)
       return update(coll, key, fn, params, contextStack, executeFunction, sourceCodeInfo)
     },
-    paramCount: { min: 3 },
+    arity: { min: 3 },
   },
   'update-in': {
     evaluate: ([originalColl, keys, fn, ...params], sourceCodeInfo, contextStack, { executeFunction }): Coll => {
@@ -678,7 +679,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
 
       return coll
     },
-    paramCount: { min: 3 },
+    arity: { min: 3 },
   },
   '++': {
     evaluate: (params, sourceCodeInfo): Any => {
@@ -704,7 +705,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
         }, {})
       }
     },
-    paramCount: { min: 1 },
+    arity: { min: 1 },
     aliases: ['concat'],
   },
   'not-empty': {
@@ -721,7 +722,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
 
       return Object.keys(coll).length > 0 ? coll : null
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'every?': {
     evaluate: ([coll, fn], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
@@ -736,7 +737,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
 
       return Object.entries(coll).every(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo))
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'any?': {
     evaluate: ([coll, fn], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
@@ -751,7 +752,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
 
       return Object.entries(coll).some(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo))
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'not-any?': {
     evaluate: ([coll, fn], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
@@ -766,7 +767,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
 
       return !Object.entries(coll).some(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo))
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'not-every?': {
     evaluate: ([coll, fn], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
@@ -781,6 +782,6 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
 
       return !Object.entries(coll).every(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo))
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
 }

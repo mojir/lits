@@ -2,6 +2,7 @@ import { LitsError } from '../../../errors'
 import type { RegularExpression } from '../../../parser/types'
 import { assertRegularExpression, assertStringOrRegularExpression, isRegularExpression } from '../../../typeGuards/lits'
 import { assertString, isString } from '../../../typeGuards/string'
+import { toFixedArity } from '../../../utils/arity'
 import { REGEXP_SYMBOL } from '../../../utils/symbols'
 import type { BuiltinNormalExpressions } from '../../interface'
 
@@ -26,7 +27,7 @@ export const regexpNormalExpression: BuiltinNormalExpressions = {
         f: flags,
       }
     },
-    paramCount: { min: 1, max: 2 },
+    arity: { min: 1, max: 2 },
   },
   'match': {
     evaluate: ([text, regexp], sourceCodeInfo): string[] | null => {
@@ -41,7 +42,7 @@ export const regexpNormalExpression: BuiltinNormalExpressions = {
 
       return null
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'replace': {
     evaluate: ([str, regexp, value], sourceCodeInfo): string => {
@@ -52,7 +53,7 @@ export const regexpNormalExpression: BuiltinNormalExpressions = {
       const matcher = isRegularExpression(regexp) ? new RegExp(regexp.s, `${regexp.f}`) : regexp
       return str.replace(matcher, value)
     },
-    paramCount: 3,
+    arity: toFixedArity(3),
   },
   'replace-all': {
     evaluate: ([str, regexp, value], sourceCodeInfo): string => {
@@ -62,6 +63,6 @@ export const regexpNormalExpression: BuiltinNormalExpressions = {
       const matcher = isRegularExpression(regexp) ? new RegExp(regexp.s, `${regexp.f.includes('g') ? regexp.f : `${regexp.f}g`}`) : regexp
       return str.replaceAll(matcher, value)
     },
-    paramCount: 3,
+    arity: toFixedArity(3),
   },
 }

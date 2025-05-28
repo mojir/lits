@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { NO_MATCH, tokenizeBasePrefixedNumber, tokenizeMultiLineComment, tokenizeNumber, tokenizeOperator, tokenizeReservedSymbolToken, tokenizeSingleLineComment, tokenizeSymbol } from './tokenizers'
+import { LitsError } from '../errors'
+import { NO_MATCH, tokenizeBasePrefixedNumber, tokenizeDocString, tokenizeMultiLineComment, tokenizeNumber, tokenizeOperator, tokenizeReservedSymbolToken, tokenizeSingleLineComment, tokenizeSymbol } from './tokenizers'
 
 describe('tokenizers', () => {
   describe('tokenizeSingleLineComment', () => {
@@ -53,6 +54,16 @@ describe('tokenizers', () => {
       expect(tokenizeNumber('-1.12', 0)).toEqual([5, ['Number', '-1.12']])
       expect(tokenizeNumber('1_000', 0)).toEqual([5, ['Number', '1_000']])
       expect(tokenizeNumber('.12', 0)).toEqual([0])
+    })
+  })
+  describe('tokenizeDocString', () => {
+    it('should tokenize doc string', () => {
+      expect(tokenizeDocString('"""This is a doc string"""', 0)).toEqual([26, ['DocString', '"""This is a doc string"""']])
+      expect(tokenizeDocString('... """This is a doc string"""', 4)).toEqual([26, ['DocString', '"""This is a doc string"""']])
+      expect(tokenizeDocString('... """This is a doc \n string"""', 4)).toEqual([28, ['DocString', '"""This is a doc \n string"""']])
+      expect(tokenizeDocString('""""""', 0)).toEqual([6, ['DocString', '""""""']])
+      expect(tokenizeDocString('""" \\""" """', 0)).toEqual([12, ['DocString', '""" \\""" """']])
+      expect(() => tokenizeDocString('""" ""', 0)).toThrow(LitsError)
     })
   })
 })

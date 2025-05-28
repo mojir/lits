@@ -10,7 +10,7 @@ import type { specialExpressionTypes } from '../specialExpressionTypes'
 export type ObjectNode = SpecialExpressionNode<[typeof specialExpressionTypes['object'], Node[]]>
 
 export const objectSpecialExpression: BuiltinSpecialExpression<Any, ObjectNode> = {
-  paramCount: {},
+  arity: {},
   evaluate: (node, contextStack, { evaluateNode }) => {
     const result: Obj = {}
 

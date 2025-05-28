@@ -6,7 +6,7 @@ import type { specialExpressionTypes } from '../specialExpressionTypes'
 export type IfNode = SpecialExpressionNode<[typeof specialExpressionTypes['if'], [Node, Node, Node?]]>
 
 export const ifSpecialExpression: BuiltinSpecialExpression<Any, IfNode> = {
-  paramCount: { min: 2, max: 3 },
+  arity: { min: 2, max: 3 },
   evaluate: (node, contextStack, { evaluateNode }) => {
     const [conditionNode, trueNode, falseNode] = node[1][1]
     if (evaluateNode(conditionNode, contextStack)) {

@@ -1,6 +1,7 @@
 import type { Arr } from '../../../../../interface'
 import { assertArray } from '../../../../../typeGuards/array'
 import { assertNumber } from '../../../../../typeGuards/number'
+import { toFixedArity } from '../../../../../utils/arity'
 import type { BuiltinNormalExpressions } from '../../../../interface'
 
 function powerSet(set: Arr): Arr[] {
@@ -20,7 +21,7 @@ export const powerSetNormalExpressions: BuiltinNormalExpressions = {
       assertArray(set, sourceCodeInfo)
       return powerSet(set)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'nth:count-power-set': {
     evaluate: ([n], sourceCodeInfo): number => {
@@ -32,6 +33,6 @@ export const powerSetNormalExpressions: BuiltinNormalExpressions = {
 
       return 2 ** n
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 }

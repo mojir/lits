@@ -1,6 +1,7 @@
 import type { Any } from '../../interface'
 import type { BindingNode, SpecialExpressionNode } from '../../parser/types'
 import { addToSet } from '../../utils'
+import { toFixedArity } from '../../utils/arity'
 import { evalueateBindingNodeValues, getAllBindingTargetNames, walkDefaults } from '../bindingNode'
 import type { BuiltinSpecialExpression } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
@@ -8,7 +9,7 @@ import type { specialExpressionTypes } from '../specialExpressionTypes'
 export type LetNode = SpecialExpressionNode<[typeof specialExpressionTypes['let'], BindingNode]>
 
 export const letSpecialExpression: BuiltinSpecialExpression<Any, LetNode> = {
-  paramCount: 0,
+  arity: toFixedArity(0),
   evaluate: (node, contextStack, { evaluateNode }) => {
     const bindingNode = node[1][1]
     const target = bindingNode[1][0]

@@ -10,7 +10,7 @@ import type {
   SomePredFunction,
 } from '../../../parser/types'
 import { toAny } from '../../../utils'
-import { getCommonParamCountFromFunctions, getParamCountFromFunction } from '../../../utils/paramCount'
+import { getArityFromFunction, getCommonArityFromFunctions, toFixedArity } from '../../../utils/arity'
 import { FUNCTION_SYMBOL } from '../../../utils/symbols'
 import type { BuiltinNormalExpressions } from '../../interface'
 import { assertArray } from '../../../typeGuards/array'
@@ -23,7 +23,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
       assertFunctionLike(func, sourceCodeInfo)
       return executeFunction(func, [value], contextStack, sourceCodeInfo)
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'apply': {
     evaluate: ([func, ...params]: Arr, sourceCodeInfo, contextStack, { executeFunction }): Any => {
@@ -34,14 +34,14 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
       const applyArray = [...params.slice(0, -1), ...last]
       return executeFunction(func, applyArray, contextStack, sourceCodeInfo)
     },
-    paramCount: { min: 2 },
+    arity: { min: 2 },
   },
 
   'identity': {
     evaluate: ([value]): Any => {
       return toAny(value)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'comp': {
@@ -52,11 +52,11 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         sourceCodeInfo,
         functionType: 'Comp',
         params,
-        paramCount: params.length > 0 ? getParamCountFromFunction(params.at(-1) as FunctionLike) : 1,
+        arity: params.length > 0 ? getArityFromFunction(params.at(-1) as FunctionLike) : { min: 1, max: 1 },
         docString: '',
       }
     },
-    paramCount: {},
+    arity: {},
   },
 
   'constantly': {
@@ -66,18 +66,18 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         sourceCodeInfo,
         functionType: 'Constantly',
         value: toAny(value),
-        paramCount: {},
+        arity: {},
         docString: '',
       }
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'juxt': {
     evaluate: (params, sourceCodeInfo): JuxtFunction => {
       params.forEach(param => assertFunctionLike(param, sourceCodeInfo))
-      const paramCount = getCommonParamCountFromFunctions(params as FunctionLike[])
-      if (paramCount === null) {
+      const arity = getCommonArityFromFunctions(params as FunctionLike[])
+      if (arity === null) {
         throw new LitsError('All functions must accept the same number of arguments', sourceCodeInfo)
       }
       return {
@@ -85,11 +85,11 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         sourceCodeInfo,
         functionType: 'Juxt',
         params,
-        paramCount,
+        arity,
         docString: '',
       }
     },
-    paramCount: { min: 1 },
+    arity: { min: 1 },
   },
 
   'complement': {
@@ -100,11 +100,11 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         sourceCodeInfo,
         functionType: 'Complement',
         function: fun,
-        paramCount: getParamCountFromFunction(fun),
+        arity: getArityFromFunction(fun),
         docString: '',
       }
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'every-pred': {
@@ -114,11 +114,11 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         sourceCodeInfo,
         functionType: 'EveryPred',
         params,
-        paramCount: 1,
+        arity: { min: 1, max: 1 },
         docString: '',
       }
     },
-    paramCount: { min: 1 },
+    arity: { min: 1 },
   },
 
   'some-pred': {
@@ -128,11 +128,11 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         sourceCodeInfo,
         functionType: 'SomePred',
         params,
-        paramCount: 1,
+        arity: { min: 1, max: 1 },
         docString: '',
       }
     },
-    paramCount: { min: 1 },
+    arity: { min: 1 },
   },
 
   'fnull': {
@@ -144,10 +144,10 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         functionType: 'Fnull',
         function: fun,
         params,
-        paramCount: getParamCountFromFunction(fun),
+        arity: getArityFromFunction(fun),
         docString: '',
       }
     },
-    paramCount: { min: 2 },
+    arity: { min: 2 },
   },
 }

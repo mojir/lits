@@ -1,4 +1,5 @@
 import { assertNumber } from '../../../../../typeGuards/number'
+import { toFixedArity } from '../../../../../utils/arity'
 import type { BuiltinNormalExpressions } from '../../../../interface'
 
 function calcUnsortedDivisors(number: number): number[] {
@@ -30,27 +31,27 @@ export const divisorsNormalExpressions: BuiltinNormalExpressions = {
       assertNumber(number, sourceCodeInfo, { finite: true, integer: true, positive: true })
       return getDivisors(number)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'nth:count-divisors': {
     evaluate: ([number], sourceCodeInfo): number => {
       assertNumber(number, sourceCodeInfo, { finite: true, integer: true, positive: true })
       return calcUnsortedDivisors(number).length
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'nth:proper-divisors': {
     evaluate: ([number], sourceCodeInfo): number[] => {
       assertNumber(number, sourceCodeInfo, { finite: true, integer: true, positive: true })
       return getProperDivisors(number)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'nth:count-proper-divisors': {
     evaluate: ([number], sourceCodeInfo): number => {
       assertNumber(number, sourceCodeInfo, { finite: true, integer: true, positive: true })
       return calcUnsortedDivisors(number).length - 1 // Exclude the number itself
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 }

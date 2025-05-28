@@ -1,6 +1,7 @@
 import type { Arr } from '../../../../../interface'
 import { assertArray } from '../../../../../typeGuards/array'
 import { assertNumber } from '../../../../../typeGuards/number'
+import { toFixedArity } from '../../../../../utils/arity'
 import type { BuiltinNormalExpressions } from '../../../../interface'
 import { binomialCoefficient } from './binomialCefficient'
 
@@ -47,7 +48,7 @@ export const combinationsNormalExpressions: BuiltinNormalExpressions = {
         return [[]]
       return combinations(set, n)
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'nth:count-combinations': {
     evaluate: ([n, k], sourceCodeInfo): number => {
@@ -56,6 +57,6 @@ export const combinationsNormalExpressions: BuiltinNormalExpressions = {
       return binomialCoefficient(n, k)
     },
     aliases: ['nth:binomial'],
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
 }

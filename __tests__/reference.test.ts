@@ -1,7 +1,8 @@
 import { describe, expect, it, test } from 'vitest'
 import { apiReference, getLinkName, isFunctionReference, normalExpressionReference } from '../reference'
 import { normalExpressionKeys, specialExpressionKeys } from '../src/builtin'
-import { canBeOperator, isUnknownRecord } from '../src/typeGuards'
+import { isUnknownRecord } from '../src/typeGuards'
+import { canBeOperator } from '../src/utils/arity'
 import { normalExpressions } from '../src/builtin/normalExpressions'
 import { isReservedSymbol } from '../src/tokenizer/reservedNames'
 import { Lits } from '../src/Lits/Lits'
@@ -98,8 +99,8 @@ describe('apiReference', () => {
     Object.entries(normalExpressionReference)
       .forEach(([key, obj]) => {
         test(key, () => {
-          const paramCount = normalExpressions[key]!.paramCount
-          if (canBeOperator(paramCount) && !obj.noOperatorDocumentation) {
+          const arity = normalExpressions[key]!.arity
+          if (canBeOperator(arity) && !obj.noOperatorDocumentation) {
             expect(obj.args.a, `${obj.category} - ${key} is missing "a" arg`).toBeDefined()
             expect(obj.args.b, `${obj.category} - ${key} is missing "b" arg`).toBeDefined()
           }

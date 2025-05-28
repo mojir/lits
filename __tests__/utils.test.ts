@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { RegularExpression, SymbolNode } from '../src/parser/types'
-import { cloneColl, collHasKey, deepEqual, toNonNegativeInteger } from '../src/utils'
+import { cloneColl, collHasKey, deepEqual, smartTrim, toNonNegativeInteger } from '../src/utils'
 import { REGEXP_SYMBOL } from '../src/utils/symbols'
 import { valueToString } from '../src/utils/debug/debugTools'
 import { NodeTypes } from '../src/constants/constants'
@@ -99,6 +99,56 @@ describe('utils', () => {
     it('valueToString', () => {
       expect(valueToString(new Error('An error'))).toBe('Error: An error')
       expect(valueToString(n)).toBe('UserDefinedSymbol-node')
+    })
+  })
+
+  describe('smartTrim', () => {
+    it('smartTrim', () => {
+      // Removes leading and trailing empty lines and trims common indentation
+      expect(
+        smartTrim(`
+      line1
+        line2
+      line3
+    `),
+      ).toBe(`
+line1
+  line2
+line3`.trim())
+
+      // Handles no indentation
+      expect(
+        smartTrim(`
+line1
+line2
+line3
+`),
+      ).toBe('line1\nline2\nline3')
+
+      // Handles only whitespace lines
+      expect(
+        smartTrim(`
+
+      
+    `),
+      ).toBe('')
+
+      // Handles single line
+      expect(smartTrim('  single line  ')).toBe('single line')
+
+      // Handles mixed indentation
+      expect(
+        smartTrim(`
+        a
+      b
+        c
+    `),
+      ).toBe(`  a
+b
+  c`)
+
+      // Handles no leading/trailing whitespace
+      expect(smartTrim('foo\nbar')).toBe('foo\nbar')
     })
   })
 })

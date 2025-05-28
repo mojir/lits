@@ -6,6 +6,7 @@ import { calcMean } from '../vector/calcMean'
 import { calcMedad } from '../vector/calcMedad'
 import { calcMedian } from '../vector/calcMedian'
 import { calcStdDev } from '../vector/calcStdDev'
+import { toFixedArity } from '../../../../../utils/arity'
 import { gaussJordanElimination } from './helpers/gaussJordanElimination'
 import { solve } from './helpers/solve'
 import { areVectorsCollinear, areVectorsParallel } from './helpers/collinear'
@@ -36,7 +37,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
         vector[0] * sinTheta + vector[1] * cosTheta,
       ]
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'lin:rotate3d': {
     evaluate: ([vector, axis, radians], sourceCodeInfo): number[] => {
@@ -59,7 +60,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
         dotProduct * w * (1 - cosTheta) + vector[2] * cosTheta + (-v * vector[0] + u * vector[1]) * sinTheta,
       ]
     },
-    paramCount: 3,
+    arity: toFixedArity(3),
   },
   'lin:reflect': {
     evaluate: ([vector, normal], sourceCodeInfo): number[] => {
@@ -78,7 +79,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
       const doubleDot = 2 * dot(vector, unitNormal)
       return subtract(vector, scale(unitNormal, doubleDot))
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'lin:refract': {
     evaluate: ([vector, normal, eta], sourceCodeInfo): number[] => {
@@ -118,7 +119,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
 
       return subtract(scaledIncident, scaledNormal)
     },
-    paramCount: 3,
+    arity: toFixedArity(3),
   },
   'lin:lerp': {
     evaluate: ([vectorA, vectorB, t], sourceCodeInfo): number[] => {
@@ -130,7 +131,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
       }
       return vectorA.map((val, i) => val + (vectorB[i]! - val) * t)
     },
-    paramCount: 3,
+    arity: toFixedArity(3),
   },
   'lin:dot': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
@@ -143,7 +144,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
 
       return dot(vectorA, vectorB)
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'lin:cross': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number[] => {
@@ -160,7 +161,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
         vectorA[0]! * vectorB[1]! - vectorA[1]! * vectorB[0]!,
       ] as number[]
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'lin:normalize-minmax': {
     evaluate: ([vector], sourceCodeInfo): number[] => {
@@ -175,7 +176,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
 
       return vector.map(val => (val - min) / (max - min))
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'lin:normalize-robust': {
     evaluate: ([vector], sourceCodeInfo): number[] => {
@@ -193,7 +194,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
       }
       return vector.map(val => (val - median) / medad)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'lin:normalize-zscore': {
     evaluate: ([vector], sourceCodeInfo): number[] => {
@@ -208,7 +209,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
 
       return vector.map(val => (val - mean) / stdDev)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'lin:normalize-l1': {
     evaluate: ([vector], sourceCodeInfo): number[] => {
@@ -224,14 +225,14 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
 
       return vector.map(val => val / norm)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'lin:normalize-l2': {
     evaluate: ([vector], sourceCodeInfo): number[] => {
       assertVector(vector, sourceCodeInfo)
       return getUnit(vector, sourceCodeInfo)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
     aliases: ['lin:unit', 'lin:normalize'],
   },
   'lin:normalize-log': {
@@ -250,7 +251,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
 
       return vector.map(val => Math.log(val / min))
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'lin:angle': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
@@ -270,7 +271,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
 
       return Math.acos(dotProduct / (magnitudeA * magnitudeB))
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'lin:projection': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number[] => {
@@ -289,7 +290,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
 
       return vectorB.map(val => (dotProduct / (magnitudeB ** 2)) * val)
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'lin:orthogonal?': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): boolean => {
@@ -303,7 +304,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
       const dotProduct = vectorA.reduce((acc, val, i) => acc + val * vectorB[i]!, 0)
       return dotProduct === 0
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'lin:parallel?': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): boolean => {
@@ -316,7 +317,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
 
       return areVectorsParallel(vectorA, vectorB)
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'lin:collinear?': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): boolean => {
@@ -329,7 +330,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
 
       return areVectorsCollinear(vectorA, vectorB)
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'lin:cosine-similarity': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
@@ -349,7 +350,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
 
       return dotProduct / (magnitudeA * magnitudeB)
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'lin:euclidean-distance': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
@@ -363,7 +364,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
       return Math.sqrt(vectorA.reduce((acc, val, i) => acc + (val - vectorB[i]!) ** 2, 0))
     },
     aliases: ['lin:distance', 'lin:l2-distance'],
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'lin:euclidean-norm': {
     evaluate: ([vector], sourceCodeInfo): number => {
@@ -371,7 +372,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
 
       return length(vector)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
     aliases: ['lin:l2-norm', 'lin:length'],
   },
   'lin:manhattan-distance': {
@@ -385,7 +386,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
 
       return vectorA.reduce((acc, val, i) => acc + Math.abs(val - vectorB[i]!), 0)
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
     aliases: ['lin:l1-distance', 'lin:cityblock-distance'],
   },
   'lin:manhattan-norm': {
@@ -394,7 +395,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
 
       return vector.reduce((acc, val) => acc + Math.abs(val), 0)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
     aliases: ['lin:l1-norm', 'lin:cityblock-norm'],
   },
   'lin:hamming-distance': {
@@ -408,14 +409,14 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
 
       return vectorA.reduce((acc, val, i) => acc + (val !== vectorB[i]! ? 1 : 0), 0)
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'lin:hamming-norm': {
     evaluate: ([vector], sourceCodeInfo): number => {
       assertNonEmptyVector(vector, sourceCodeInfo)
       return vector.reduce((acc, val) => acc + (val !== 0 ? 1 : 0), 0)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'lin:chebyshev-distance': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
@@ -428,14 +429,14 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
 
       return Math.max(...vectorA.map((val, i) => Math.abs(val - vectorB[i]!)))
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'lin:chebyshev-norm': {
     evaluate: ([vector], sourceCodeInfo): number => {
       assertNonEmptyVector(vector, sourceCodeInfo)
       return Math.max(...vector.map(val => Math.abs(val)))
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'lin:minkowski-distance': {
     evaluate: ([vectorA, vectorB, p], sourceCodeInfo): number => {
@@ -449,7 +450,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
 
       return vectorA.reduce((acc, val, i) => acc + Math.abs(val - vectorB[i]!) ** p, 0) ** (1 / p)
     },
-    paramCount: 3,
+    arity: toFixedArity(3),
   },
   'lin:minkowski-norm': {
     evaluate: ([vector, p], sourceCodeInfo): number => {
@@ -457,7 +458,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
       assertNumber(p, sourceCodeInfo, { finite: true, positive: true })
       return vector.reduce((acc, val) => acc + Math.abs(val) ** p, 0) ** (1 / p)
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   // TODO consider for Set namespace. E.g. 'set:jaccard-distance'
   // 'lin:jaccard-distance': {
@@ -470,7 +471,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
 
   //     return 1 - intersection / union
   //   },
-  //   paramCount: 2,
+  //   arity: 2,
   // },
   // TODO consider for Set namespace. E.g. 'set:dice-coefficient'
   // 'lin:dice-coefficient': {
@@ -481,13 +482,13 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
   //     const intersection = vectorA.filter(val => vectorB.includes(val)).length
   //     return (2 * intersection) / (vectorA.length + vectorB.length)
   //   },
-  //   paramCount: 2,
+  //   arity: 2,
   // },
   // TODO consider for String namespace. E.g. 'str:levenshtein-distance'
   // 'lin:levenshtein-distance': {
   //   evaluate: ([stringA, stringB], sourceCodeInfo): number => {
   //   },
-  //   paramCount: 2,
+  //   arity: 2,
   // },
   'lin:cov': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
@@ -503,7 +504,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
 
       return calcCovariance(vectorA, vectorB)
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'lin:corr': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
@@ -528,7 +529,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
 
       return numerator / denominator
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'lin:spearman-corr': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
@@ -553,7 +554,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
         throw new LitsError(error, sourceCodeInfo)
       }
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
     aliases: ['lin:spearman-rho'],
   },
   'lin:pearson-corr': {
@@ -576,7 +577,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
         throw new LitsError(error, sourceCodeInfo)
       }
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'lin:kendall-tau': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
@@ -598,7 +599,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
         throw new LitsError(error, sourceCodeInfo)
       }
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'lin:autocorrelation': {
     evaluate: ([vector, lag], sourceCodeInfo): number => {
@@ -647,7 +648,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
       // Return the autocorrelation coefficient
       return numerator / denominator
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
     aliases: ['lin:acf'],
   },
 
@@ -680,7 +681,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
       const [segmentA, segmentB] = extractOverlappingSegments(vectorA, vectorB, lag)
       return calcCorrelation(segmentA, segmentB)
     },
-    paramCount: 3,
+    arity: toFixedArity(3),
     aliases: ['lin:ccf'],
   },
   'lin:rref': {
@@ -691,7 +692,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
       const [rref] = gaussJordanElimination(matrix)
       return rref
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'lin:solve': {
     evaluate: ([matrix, vector], sourceCodeInfo): number[] | null => {
@@ -702,7 +703,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
       }
       return solve(matrix, vector)
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'lin:to-polar': {
     evaluate: ([vector], sourceCodeInfo): number[] => {
@@ -714,7 +715,7 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
       const theta = Math.atan2(vector[1], vector[0])
       return [r, theta]
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'lin:from-polar': {
     evaluate: ([polar], sourceCodeInfo): number[] => {
@@ -725,6 +726,6 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
       }
       return [r * Math.cos(theta), r * Math.sin(theta)]
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 }

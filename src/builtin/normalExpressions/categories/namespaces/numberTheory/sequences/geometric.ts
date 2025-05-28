@@ -1,6 +1,7 @@
 import { assertFunctionLike } from '../../../../../../typeGuards/lits'
 import { assertNumber } from '../../../../../../typeGuards/number'
 import { approxEqual } from '../../../../../../utils'
+import { toFixedArity } from '../../../../../../utils/arity'
 import type { SequenceNormalExpressions } from '.'
 
 /**
@@ -87,7 +88,7 @@ export const geometricNormalExpressions: SequenceNormalExpressions<'geometric'> 
 
       return Array.from({ length }, (_, i) => start * ratio ** i)
     },
-    paramCount: 3,
+    arity: toFixedArity(3),
   },
   'nth:geometric-take-while': {
     evaluate: ([start, ratio, fn], sourceCodeInfo, contextStack, { executeFunction }): number[] => {
@@ -105,7 +106,7 @@ export const geometricNormalExpressions: SequenceNormalExpressions<'geometric'> 
       }
       return geometric
     },
-    paramCount: 3,
+    arity: toFixedArity(3),
   },
   'nth:geometric-nth': {
     evaluate: ([start, ratio, n], sourceCodeInfo): number => {
@@ -114,7 +115,7 @@ export const geometricNormalExpressions: SequenceNormalExpressions<'geometric'> 
       assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
       return start * ratio ** (n - 1)
     },
-    paramCount: 3,
+    arity: toFixedArity(3),
   },
   'nth:geometric?': {
     evaluate: ([start, ratio, n], sourceCodeInfo): boolean => {
@@ -124,6 +125,6 @@ export const geometricNormalExpressions: SequenceNormalExpressions<'geometric'> 
 
       return isInGeometricSequence(start, ratio, n)
     },
-    paramCount: 3,
+    arity: toFixedArity(3),
   },
 }

@@ -23,7 +23,7 @@ import type { SourceCodeInfo } from '../tokenizer/token'
 import { asNonUndefined, isUnknownRecord } from '../typeGuards'
 import { asAny, asFunctionLike } from '../typeGuards/lits'
 import { toAny } from '../utils'
-import { paramCountAcceptsMin } from '../utils/paramCount'
+import { arityAcceptsMin } from '../utils/arity'
 import { valueToString } from '../utils/debug/debugTools'
 import type { ContextStack } from './ContextStack'
 import type { Context, EvaluateNode, ExecuteFunction } from './interface'
@@ -53,8 +53,8 @@ export const functionExecutors: FunctionExecutors = {
   },
   UserDefined: (fn: UserDefinedFunction, params, sourceCodeInfo, contextStack, { evaluateNode }) => {
     for (;;) {
-      if (!paramCountAcceptsMin(fn.paramCount, params.length)) {
-        throw new LitsError(`Expected ${fn.paramCount} arguments, got ${params.length}.`, sourceCodeInfo)
+      if (!arityAcceptsMin(fn.arity, params.length)) {
+        throw new LitsError(`Expected ${fn.arity} arguments, got ${params.length}.`, sourceCodeInfo)
       }
       // checkParams(fn.evaluatedfunction, params.length, sourceCodeInfo)
       const evaluatedFunction = fn.evaluatedfunction

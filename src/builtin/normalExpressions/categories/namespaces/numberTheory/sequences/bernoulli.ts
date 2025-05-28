@@ -1,6 +1,7 @@
 import { assertFunctionLike } from '../../../../../../typeGuards/lits'
 import { assertNumber } from '../../../../../../typeGuards/number'
 import { binomialCoefficient } from '../binomialCefficient'
+import { toFixedArity } from '../../../../../../utils/arity'
 import type { SequenceNormalExpressions } from '.'
 
 function getBernoulliSeq(length: number): number[] {
@@ -57,7 +58,7 @@ export const bernoulliNormalExpressions: Omit<SequenceNormalExpressions<'bernoul
       assertNumber(length, sourceCodeInfo, { integer: true, positive: true })
       return getBernoulliSeq(length)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'nth:bernoulli-nth': {
     evaluate: ([n], sourceCodeInfo): number => {
@@ -65,7 +66,7 @@ export const bernoulliNormalExpressions: Omit<SequenceNormalExpressions<'bernoul
       const bernoulli = getBernoulliSeq(n)
       return bernoulli[n - 1]!
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'nth:bernoulli-take-while': {
     evaluate: ([fn], sourceCodeInfo, contextStack, { executeFunction }): number[] => {
@@ -73,6 +74,6 @@ export const bernoulliNormalExpressions: Omit<SequenceNormalExpressions<'bernoul
       const bernoulli = generateBernoulli((value, index) => !!executeFunction(fn, [value, index], contextStack))
       return bernoulli
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 }

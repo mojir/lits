@@ -2,6 +2,7 @@ import { LitsError } from '../../../../../errors'
 import { assertNonEmptyVector, assertVector } from '../../../../../typeGuards/annotatedArrays'
 import { assertFunctionLike } from '../../../../../typeGuards/lits'
 import { assertNumber } from '../../../../../typeGuards/number'
+import { toFixedArity } from '../../../../../utils/arity'
 import type { BuiltinNormalExpressions } from '../../../../interface'
 import { bincount } from './bincount'
 import { calcHistogram } from './histogram'
@@ -18,7 +19,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
       return vector.every((val, i) => i === 0 || val >= vector[i - 1]!)
         || vector.every((val, i) => i === 0 || val <= vector[i - 1]!)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'vec:strictly-monotonic?': {
     evaluate: ([vector], sourceCodeInfo): boolean => {
@@ -26,42 +27,42 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
       return vector.every((val, i) => i === 0 || val > vector[i - 1]!)
         || vector.every((val, i) => i === 0 || val < vector[i - 1]!)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'vec:increasing?': {
     evaluate: ([vector], sourceCodeInfo): boolean => {
       assertVector(vector, sourceCodeInfo)
       return vector.every((val, i) => i === 0 || val >= vector[i - 1]!)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'vec:decreasing?': {
     evaluate: ([vector], sourceCodeInfo): boolean => {
       assertVector(vector, sourceCodeInfo)
       return vector.every((val, i) => i === 0 || val <= vector[i - 1]!)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'vec:strictly-increasing?': {
     evaluate: ([vector], sourceCodeInfo): boolean => {
       assertVector(vector, sourceCodeInfo)
       return vector.every((val, i) => i === 0 || val > vector[i - 1]!)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'vec:strictly-decreasing?': {
     evaluate: ([vector], sourceCodeInfo): boolean => {
       assertVector(vector, sourceCodeInfo)
       return vector.every((val, i) => i === 0 || val < vector[i - 1]!)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'vec:mode': {
     evaluate: ([vector], sourceCodeInfo): number[] => {
       assertNonEmptyVector(vector, sourceCodeInfo)
       return mode(vector)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'vec:min-index': {
     evaluate: ([vector], sourceCodeInfo): number => {
@@ -69,7 +70,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
 
       return vector.reduce((acc, val, i) => (val < vector[acc]! ? i : acc), 0)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'vec:max-index': {
     evaluate: ([vector], sourceCodeInfo): number => {
@@ -77,7 +78,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
 
       return vector.reduce((acc, val, i) => (val > vector[acc]! ? i : acc), 0)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'vec:sort-indices': {
     evaluate: ([vector], sourceCodeInfo): number[] => {
@@ -85,7 +86,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
 
       return [...vector.keys()].sort((a, b) => vector[a]! - vector[b]!)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'vec:count-values': {
     evaluate: ([vector], sourceCodeInfo): [number, number][] => {
@@ -104,7 +105,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
         return a[0] - b[0]
       })
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'vec:linspace': {
     evaluate: ([start, end, numPoints], sourceCodeInfo): number[] => {
@@ -121,28 +122,28 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
       const step = (end - start) / (numPoints - 1)
       return Array.from({ length: numPoints }, (_, i) => start + i * step)
     },
-    paramCount: 3,
+    arity: toFixedArity(3),
   },
   'vec:ones': {
     evaluate: ([length], sourceCodeInfo): number[] => {
       assertNumber(length, sourceCodeInfo, { integer: true, nonNegative: true })
       return Array.from({ length }, () => 1)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'vec:zeros': {
     evaluate: ([length], sourceCodeInfo): number[] => {
       assertNumber(length, sourceCodeInfo, { integer: true, nonNegative: true })
       return Array.from({ length }, () => 0)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'vec:fill': {
     evaluate: ([length, value], sourceCodeInfo): number[] => {
       assertNumber(length, sourceCodeInfo, { integer: true, nonNegative: true })
       return Array.from({ length }, () => value) as number[]
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'vec:generate': {
     evaluate: ([length, generator], sourceCodeInfo, contextStack, { executeFunction }): number[] => {
@@ -155,7 +156,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
         return value
       })
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'vec:cumsum': {
     evaluate: ([vector], sourceCodeInfo): number[] => {
@@ -167,7 +168,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
         return acc
       }, [] as number[])
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'vec:cumprod': {
     evaluate: ([vector], sourceCodeInfo): number[] => {
@@ -179,7 +180,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
         return acc
       }, [] as number[])
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'vec:quartiles': {
     evaluate: ([vector], sourceCodeInfo): [number, number, number] => {
@@ -189,7 +190,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
       }
       return quartiles(vector)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'vec:percentile': {
     evaluate: ([vector, percentile], sourceCodeInfo): number => {
@@ -197,7 +198,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
       assertNumber(percentile, sourceCodeInfo, { finite: true, nonNegative: true, lte: 100 })
       return calcPercentile(vector, percentile)
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'vec:quantile': {
     evaluate: ([vector, quantile], sourceCodeInfo): number => {
@@ -205,7 +206,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
       assertNumber(quantile, sourceCodeInfo, { finite: true, nonNegative: true, lte: 1 })
       return calcPercentile(vector, quantile * 100)
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'vec:histogram': {
     evaluate: ([vector, bins], sourceCodeInfo): [number, number, number][] => {
@@ -214,7 +215,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
 
       return calcHistogram(vector, bins)
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'vec:ecdf': {
     evaluate: ([vector, value], sourceCodeInfo): number => {
@@ -226,21 +227,21 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
 
       return index === -1 ? 1 : index / sorted.length
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'vec:outliers?': {
     evaluate: ([vector], sourceCodeInfo): boolean => {
       assertVector(vector, sourceCodeInfo)
       return hasOutliers(vector)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'vec:outliers': {
     evaluate: ([vector], sourceCodeInfo): number[] => {
       assertVector(vector, sourceCodeInfo)
       return outliers(vector)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'vec:bincount': {
     evaluate: (params, sourceCodeInfo): number[] => {
@@ -262,7 +263,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
 
       return bincount(vector, minSize, weights)
     },
-    paramCount: { min: 1, max: 3 },
+    arity: { min: 1, max: 3 },
   },
   'vec:winsorize': {
     evaluate: ([vector, lowerQuantile, upperQuantile], sourceCodeInfo): number[] => {
@@ -284,7 +285,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
 
       return vector.map(val => Math.max(lowerBound, Math.min(val, upperBound)))
     },
-    paramCount: { min: 2, max: 3 },
+    arity: { min: 2, max: 3 },
   },
   'vec:mse': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
@@ -295,7 +296,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
       }
       return vectorA.reduce((acc, val, i) => acc + (val - vectorB[i]!) ** 2, 0) / vectorA.length
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'vec:rmse': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
@@ -306,7 +307,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
       }
       return Math.sqrt(vectorA.reduce((acc, val, i) => acc + (val - vectorB[i]!) ** 2, 0) / vectorA.length)
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'vec:mae': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
@@ -317,7 +318,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
       }
       return vectorA.reduce((acc, val, i) => acc + Math.abs(val - vectorB[i]!), 0) / vectorA.length
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'vec:smape': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
@@ -332,7 +333,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
         return acc + (denom === 0 ? 0 : diff / denom)
       }, 0) / vectorA.length
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
 
 }

@@ -8,6 +8,7 @@ import { asAny, asColl, isSeq } from '../../typeGuards/lits'
 import type { Builtin, BuiltinSpecialExpression } from '../interface'
 import { evalueateBindingNodeValues, getAllBindingTargetNames } from '../bindingNode'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
+import { toFixedArity } from '../../utils/arity'
 
 export type LoopBindingNode = [BindingNode, BindingNode[], Node?, Node?] // Binding, Let-Bindings, When, While
 
@@ -153,13 +154,13 @@ function analyze(
 }
 
 export const forSpecialExpression: BuiltinSpecialExpression<Any, ForNode> = {
-  paramCount: 1,
+  arity: toFixedArity(1),
   evaluate: (node, contextStack, helpers) => evaluateLoop(true, node, contextStack, helpers.evaluateNode),
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => analyze(node, contextStack, getUndefinedSymbols, builtin, evaluateNode),
 }
 
 export const doseqSpecialExpression: BuiltinSpecialExpression<null, DoSeqNode> = {
-  paramCount: 1,
+  arity: toFixedArity(1),
   evaluate: (node, contextStack, helpers) => {
     evaluateLoop(false, node, contextStack, helpers.evaluateNode)
     return null

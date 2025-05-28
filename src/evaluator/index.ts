@@ -27,6 +27,7 @@ import { assertNumber, isNumber } from '../typeGuards/number'
 import { assertString } from '../typeGuards/string'
 import { toAny } from '../utils'
 import { valueToString } from '../utils/debug/debugTools'
+import { toFixedArity } from '../utils/arity'
 import { FUNCTION_SYMBOL } from '../utils/symbols'
 import type { ContextStack } from './ContextStack'
 import { functionExecutors } from './functionExecutors'
@@ -118,7 +119,7 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
         params,
         placeholders,
         sourceCodeInfo,
-        paramCount: placeholders.length,
+        arity: toFixedArity(placeholders.length),
         docString: '',
       }
       return partialFunction
@@ -148,7 +149,7 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
         params,
         placeholders,
         sourceCodeInfo,
-        paramCount: placeholders.length,
+        arity: toFixedArity(placeholders.length),
         docString: '',
       }
       return partialFunction

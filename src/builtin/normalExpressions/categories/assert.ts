@@ -17,7 +17,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
 
       return asAny(value, sourceCodeInfo)
     },
-    paramCount: { min: 1, max: 2 },
+    arity: { min: 1, max: 2 },
   },
   'assert=': {
     evaluate: ([first, second, message], sourceCodeInfo): null => {
@@ -33,7 +33,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
       }
       return null
     },
-    paramCount: { min: 2, max: 3 },
+    arity: { min: 2, max: 3 },
   },
   'assert!=': {
     evaluate: ([first, second, message], sourceCodeInfo): null => {
@@ -49,7 +49,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
       }
       return null
     },
-    paramCount: { min: 2, max: 3 },
+    arity: { min: 2, max: 3 },
   },
   'assert-gt': {
     evaluate: ([first, second, message], sourceCodeInfo): null => {
@@ -64,7 +64,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
 
       return null
     },
-    paramCount: { min: 2, max: 3 },
+    arity: { min: 2, max: 3 },
   },
   'assert-gte': {
     evaluate: ([first, second, message], sourceCodeInfo): null => {
@@ -79,7 +79,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
 
       return null
     },
-    paramCount: { min: 2, max: 3 },
+    arity: { min: 2, max: 3 },
   },
   'assert-lt': {
     evaluate: ([first, second, message], sourceCodeInfo): null => {
@@ -94,7 +94,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
 
       return null
     },
-    paramCount: { min: 2, max: 3 },
+    arity: { min: 2, max: 3 },
   },
   'assert-lte': {
     evaluate: ([first, second, message], sourceCodeInfo): null => {
@@ -109,7 +109,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
 
       return null
     },
-    paramCount: { min: 2, max: 3 },
+    arity: { min: 2, max: 3 },
   },
   'assert-true': {
     evaluate: ([first, message], sourceCodeInfo): null => {
@@ -122,7 +122,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
 
       return null
     },
-    paramCount: { min: 1, max: 2 },
+    arity: { min: 1, max: 2 },
   },
   'assert-false': {
     evaluate: ([first, message], sourceCodeInfo): null => {
@@ -135,7 +135,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
 
       return null
     },
-    paramCount: { min: 1, max: 2 },
+    arity: { min: 1, max: 2 },
   },
   'assert-truthy': {
     evaluate: ([first, message], sourceCodeInfo): null => {
@@ -148,7 +148,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
 
       return null
     },
-    paramCount: { min: 1, max: 2 },
+    arity: { min: 1, max: 2 },
   },
   'assert-falsy': {
     evaluate: ([first, message], sourceCodeInfo): null => {
@@ -161,7 +161,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
 
       return null
     },
-    paramCount: { min: 1, max: 2 },
+    arity: { min: 1, max: 2 },
   },
   'assert-null': {
     evaluate: ([first, message], sourceCodeInfo): null => {
@@ -174,7 +174,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
 
       return null
     },
-    paramCount: { min: 1, max: 2 },
+    arity: { min: 1, max: 2 },
   },
   'assert-throws': {
     evaluate: ([func, message], sourceCodeInfo, contextStack, { executeFunction }): null => {
@@ -191,7 +191,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
       }
       throw new AssertionError(`Expected function to throw.${message}`, sourceCodeInfo)
     },
-    paramCount: { min: 1, max: 2 },
+    arity: { min: 1, max: 2 },
   },
   'assert-throws-error': {
     evaluate: ([func, throwMessage, message], sourceCodeInfo, contextStack, { executeFunction }): null => {
@@ -216,7 +216,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
       }
       throw new AssertionError(`Expected function to throw "${throwMessage}".${message}`, sourceCodeInfo)
     },
-    paramCount: { min: 2, max: 3 },
+    arity: { min: 2, max: 3 },
   },
   'assert-not-throws': {
     evaluate: ([func, message], sourceCodeInfo, contextStack, { executeFunction }): null => {
@@ -233,6 +233,6 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
       }
       return null
     },
-    paramCount: { min: 1, max: 2 },
+    arity: { min: 1, max: 2 },
   },
 }

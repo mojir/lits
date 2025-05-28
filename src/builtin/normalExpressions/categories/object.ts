@@ -3,6 +3,7 @@ import { assertArray, assertStringArray } from '../../../typeGuards/array'
 import { assertFunctionLike, assertObj } from '../../../typeGuards/lits'
 import { asString, assertString } from '../../../typeGuards/string'
 import { collHasKey, toAny } from '../../../utils'
+import { toFixedArity } from '../../../utils/arity'
 import type { BuiltinNormalExpressions } from '../../interface'
 
 export const objectNormalExpression: BuiltinNormalExpressions = {
@@ -11,7 +12,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
       assertObj(obj, sourceCodeInfo)
       return Object.keys(obj)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'vals': {
@@ -19,7 +20,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
       assertObj(obj, sourceCodeInfo)
       return Object.values(obj)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'entries': {
@@ -27,7 +28,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
       assertObj(obj, sourceCodeInfo)
       return Object.entries(obj)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'find': {
@@ -39,7 +40,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
 
       return null
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
 
   'dissoc': {
@@ -50,7 +51,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
       delete newObj[key]
       return newObj
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
 
   'merge': {
@@ -69,7 +70,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
         { ...first },
       )
     },
-    paramCount: { min: 0 },
+    arity: { min: 0 },
   },
 
   'merge-with': {
@@ -97,7 +98,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
         { ...first },
       )
     },
-    paramCount: { min: 2 },
+    arity: { min: 2 },
   },
 
   'zipmap': {
@@ -115,7 +116,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
       }
       return result
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
 
   'select-keys': {
@@ -130,6 +131,6 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
         return result
       }, {})
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
 }

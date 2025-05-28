@@ -1,6 +1,6 @@
 import type { JsFunction } from '../Lits/Lits'
 import type { SpecialExpressionType } from '../builtin'
-import type { ParamCount } from '../builtin/interface'
+import type { Arity } from '../builtin/interface'
 import type { specialExpressionTypes } from '../builtin/specialExpressionTypes'
 import type { FunctionType, NodeType, NodeTypes } from '../constants/constants'
 import type { Context } from '../evaluator/interface'
@@ -19,7 +19,7 @@ interface GenericLitsFunction {
   [FUNCTION_SYMBOL]: true
   sourceCodeInfo?: SourceCodeInfo
   functionType: FunctionType
-  paramCount: ParamCount
+  arity: Arity
   docString: string // documentation string
 }
 

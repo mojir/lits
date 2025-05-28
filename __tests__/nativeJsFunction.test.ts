@@ -43,7 +43,8 @@ const nativeJsFunction: NativeJsFunction = {
   name: 'square',
   functionType: 'NativeJsFunction',
   [FUNCTION_SYMBOL]: true,
-  paramCount: 1,
+  arity: { min: 1, max: 1 },
+  docString: 'Squares a number',
 }
 const values = {
   obj: {

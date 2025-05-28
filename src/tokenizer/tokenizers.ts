@@ -57,7 +57,7 @@ const tokenizeLBrace: Tokenizer<LBraceToken> = (input, position) =>
 const tokenizeRBrace: Tokenizer<RBraceToken> = (input, position) =>
   tokenizeToken('RBrace', '}', input, position)
 
-const tokenizeDocString: Tokenizer<DocStringToken> = (input, position) => {
+export const tokenizeDocString: Tokenizer<DocStringToken> = (input, position) => {
   if (input[position] !== '"' || input[position + 1] !== '"' || input[position + 2] !== '"')
     return NO_MATCH
 
@@ -66,10 +66,7 @@ const tokenizeDocString: Tokenizer<DocStringToken> = (input, position) => {
   let char = input[position + length]
   let nextThreeChars = input.slice(position + length, position + length + 3)
   let escaping = false
-  while (char && nextThreeChars !== '"""' || escaping) {
-    if (char === undefined)
-      throw new LitsError(`Unclosed doc string at position ${position}.`, undefined)
-
+  while (char && (nextThreeChars !== '"""' || escaping)) {
     length += 1
     if (escaping) {
       escaping = false
@@ -99,10 +96,7 @@ const tokenizeString: Tokenizer<StringToken> = (input, position) => {
   let length = 1
   let char = input[position + length]
   let escaping = false
-  while (char && char !== '"' || escaping) {
-    if (char === undefined)
-      throw new LitsError(`Unclosed string at position ${position}.`, undefined)
-
+  while (char && (char !== '"' || escaping)) {
     length += 1
     if (escaping) {
       escaping = false

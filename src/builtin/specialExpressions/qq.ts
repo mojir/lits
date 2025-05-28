@@ -8,7 +8,7 @@ import type { specialExpressionTypes } from '../specialExpressionTypes'
 export type QqNode = SpecialExpressionNode<[typeof specialExpressionTypes['??'], [Node, Node | undefined]]>
 
 export const qqSpecialExpression: BuiltinSpecialExpression<Any, QqNode> = {
-  paramCount: { min: 1, max: 2 },
+  arity: { min: 1, max: 2 },
   evaluate: (node, contextStack, { evaluateNode }) => {
     const [firstNode, secondNode] = node[1][1]
 

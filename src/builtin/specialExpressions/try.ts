@@ -8,7 +8,7 @@ import type { specialExpressionTypes } from '../specialExpressionTypes'
 export type TryNode = SpecialExpressionNode<[typeof specialExpressionTypes['try'], Node, SymbolNode | undefined, Node]>
 
 export const trySpecialExpression: BuiltinSpecialExpression<Any, TryNode> = {
-  paramCount: 1,
+  arity: {},
   evaluate: (node, contextStack, { evaluateNode }) => {
     const [, tryExpression, errorSymbol, catchExpression] = node[1]
     try {

@@ -7,6 +7,7 @@ import { assertStringOrRegularExpression, isObj } from '../../../typeGuards/lits
 import { assertNumber } from '../../../typeGuards/number'
 import { asStringOrNumber, assertString, assertStringOrNumber } from '../../../typeGuards/string'
 import { toNonNegativeInteger } from '../../../utils'
+import { toFixedArity } from '../../../utils/arity'
 import type { BuiltinNormalExpressions } from '../../interface'
 
 const blankRegexp = /^\s*$/
@@ -18,7 +19,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
 
       return str.repeat(count)
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
 
   'str': {
@@ -35,7 +36,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
         return result + paramStr
       }, '')
     },
-    paramCount: {},
+    arity: {},
   },
 
   'number': {
@@ -47,7 +48,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
 
       return number
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'from-char-code': {
@@ -61,7 +62,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
         throw new LitsError(error as Error, sourceCodeInfo)
       }
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'to-char-code': {
@@ -69,7 +70,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       assertString(str, sourceCodeInfo, { nonEmpty: true })
       return asNonUndefined(str.codePointAt(0), sourceCodeInfo)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'lower-case': {
@@ -77,7 +78,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       assertString(str, sourceCodeInfo)
       return str.toLowerCase()
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'upper-case': {
@@ -85,7 +86,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       assertString(str, sourceCodeInfo)
       return str.toUpperCase()
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'trim': {
@@ -93,7 +94,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       assertString(str, sourceCodeInfo)
       return str.trim()
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'trim-left': {
@@ -101,7 +102,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       assertString(str, sourceCodeInfo)
       return str.replace(/^\s+/, '')
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'trim-right': {
@@ -109,7 +110,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       assertString(str, sourceCodeInfo)
       return str.replace(/\s+$/, '')
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'join': {
@@ -119,7 +120,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       assertString(delimiter, sourceCodeInfo)
       return stringList.join(delimiter)
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
 
   'split': {
@@ -135,14 +136,14 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
           : new RegExp(stringOrRegExpValue.s, stringOrRegExpValue.f)
       return str.split(delimiter, limit)
     },
-    paramCount: { min: 2, max: 3 },
+    arity: { min: 2, max: 3 },
   },
   'split-lines': {
     evaluate: ([str], sourceCodeInfo): string[] => {
       assertString(str, sourceCodeInfo)
       return str.split((/\r\n|\n|\r/)).filter(line => line !== '')
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'pad-left': {
@@ -155,7 +156,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
 
       return str.padStart(length, padString)
     },
-    paramCount: { min: 2, max: 3 },
+    arity: { min: 2, max: 3 },
   },
 
   'pad-right': {
@@ -168,7 +169,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
 
       return str.padEnd(length, padString)
     },
-    paramCount: { min: 2, max: 3 },
+    arity: { min: 2, max: 3 },
   },
 
   'template': {
@@ -201,7 +202,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
         }
       }
     },
-    paramCount: { min: 1, max: 10 },
+    arity: { min: 1, max: 10 },
   },
 
   'encode-base64': {
@@ -214,7 +215,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
         }),
       )
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'decode-base64': {
@@ -234,7 +235,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
         throw new LitsError(error as Error, sourceCodeInfo)
       }
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'encode-uri-component': {
@@ -242,7 +243,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       assertString(value, sourceCodeInfo)
       return encodeURIComponent(value)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 
   'decode-uri-component': {
@@ -255,7 +256,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
         throw new LitsError(error as Error, sourceCodeInfo)
       }
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'blank?': {
     evaluate: ([value], sourceCodeInfo): boolean => {
@@ -265,14 +266,14 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       assertString(value, sourceCodeInfo)
       return blankRegexp.test(value)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'capitalize': {
     evaluate: ([str], sourceCodeInfo): string => {
       assertString(str, sourceCodeInfo)
       return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 }
 

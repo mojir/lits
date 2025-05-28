@@ -23,7 +23,7 @@ export type FunctionNode = SpecialExpressionNode<[typeof specialExpressionTypes[
 export type FnNode = SpecialExpressionNode<[typeof specialExpressionTypes['0_fn'], Function]>
 
 export const functionSpecialExpression: BuiltinSpecialExpression<LitsFunction, FunctionNode> = {
-  paramCount: {},
+  arity: {},
   evaluate: (node, contextStack, { builtin, getUndefinedSymbols, evaluateNode }) => {
     const [, functionSymbol, fn, docString] = node[1]
 
@@ -34,7 +34,7 @@ export const functionSpecialExpression: BuiltinSpecialExpression<LitsFunction, F
 
     const min = evaluatedFunction[0].filter(arg => arg[0] !== bindingTargetTypes.rest && arg[1][1] === undefined).length
     const max = evaluatedFunction[0].some(arg => arg[0] === bindingTargetTypes.rest) ? undefined : evaluatedFunction[0].length
-    const paramCount = min === max ? min : { min, max }
+    const arity = { min: min > 0 ? min : undefined, max }
 
     const litsFunction: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
@@ -42,7 +42,7 @@ export const functionSpecialExpression: BuiltinSpecialExpression<LitsFunction, F
       functionType: 'UserDefined',
       name: functionSymbol[1],
       evaluatedfunction: evaluatedFunction,
-      paramCount,
+      arity,
       docString,
     }
 
@@ -59,7 +59,7 @@ export const functionSpecialExpression: BuiltinSpecialExpression<LitsFunction, F
 }
 
 export const defnSpecialExpression: BuiltinSpecialExpression<LitsFunction, DefnNode> = {
-  paramCount: {},
+  arity: {},
   evaluate: (node, contextStack, { builtin, getUndefinedSymbols, evaluateNode }) => {
     const [, functionSymbol, fn, docString] = node[1]
 
@@ -69,7 +69,7 @@ export const defnSpecialExpression: BuiltinSpecialExpression<LitsFunction, DefnN
     const evaluatedFunction = evaluateFunction(fn, contextStack, builtin, getUndefinedSymbols, evaluateNode)
 
     const min = evaluatedFunction[0].filter(arg => arg[0] !== bindingTargetTypes.rest && arg[1][1] === undefined).length
-    const paramCount = { min }
+    const arity = { min }
 
     const litsFunction: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
@@ -77,7 +77,7 @@ export const defnSpecialExpression: BuiltinSpecialExpression<LitsFunction, DefnN
       functionType: 'UserDefined',
       name: functionSymbol[1],
       evaluatedfunction: evaluatedFunction,
-      paramCount,
+      arity,
       docString,
     }
 
@@ -95,14 +95,14 @@ export const defnSpecialExpression: BuiltinSpecialExpression<LitsFunction, DefnN
 }
 
 export const fnSpecialExpression: BuiltinSpecialExpression<LitsFunction, FnNode> = {
-  paramCount: {},
+  arity: {},
   evaluate: (node, contextStack, { builtin, getUndefinedSymbols, evaluateNode }) => {
     const fn = node[1][1]
     const evaluatedFunction = evaluateFunction(fn, contextStack, builtin, getUndefinedSymbols, evaluateNode)
 
     const min = evaluatedFunction[0].filter(arg => arg[0] !== bindingTargetTypes.rest && arg[1][1] === undefined).length
     const max = evaluatedFunction[0].some(arg => arg[0] === bindingTargetTypes.rest) ? undefined : evaluatedFunction[0].length
-    const paramCount = min === max ? min : { min, max }
+    const arity = { min: min > 0 ? min : undefined, max }
 
     const litsFunction: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
@@ -110,7 +110,7 @@ export const fnSpecialExpression: BuiltinSpecialExpression<LitsFunction, FnNode>
       functionType: 'UserDefined',
       name: undefined,
       evaluatedfunction: evaluatedFunction,
-      paramCount,
+      arity,
       docString: '',
     }
 

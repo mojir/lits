@@ -1,5 +1,6 @@
 import { assertFunctionLike } from '../../../../../../typeGuards/lits'
 import { assertNumber } from '../../../../../../typeGuards/number'
+import { toFixedArity } from '../../../../../../utils/arity'
 import type { SequenceNormalExpressions } from '.'
 
 export const poligonalNormalExpressions: SequenceNormalExpressions<'polygonal'> = {
@@ -14,7 +15,7 @@ export const poligonalNormalExpressions: SequenceNormalExpressions<'polygonal'> 
       }
       return polygonal
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'nth:polygonal-take-while': {
     evaluate: ([sides, fn], sourceCodeInfo, contextStack, { executeFunction }): number[] => {
@@ -31,7 +32,7 @@ export const poligonalNormalExpressions: SequenceNormalExpressions<'polygonal'> 
       }
       return polygonal
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'nth:polygonal-nth': {
     evaluate: ([sides, n], sourceCodeInfo): number => {
@@ -39,7 +40,7 @@ export const poligonalNormalExpressions: SequenceNormalExpressions<'polygonal'> 
       assertNumber(n, sourceCodeInfo, { integer: true, positive: true })
       return (n * n * (sides - 2) - n * (sides - 4)) / 2
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'nth:polygonal?': {
     evaluate: ([sides, n], sourceCodeInfo): boolean => {
@@ -70,6 +71,6 @@ export const poligonalNormalExpressions: SequenceNormalExpressions<'polygonal'> 
       // x must be a positive integer
       return Number.isInteger(x) && x > 0
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
 }

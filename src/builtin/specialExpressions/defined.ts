@@ -1,12 +1,13 @@
 import type { SpecialExpressionNode, SymbolNode } from '../../parser/types'
 import { assertSymbolNode, isUserDefinedSymbolNode } from '../../typeGuards/astNode'
+import { toFixedArity } from '../../utils/arity'
 import type { BuiltinSpecialExpression } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 
 export type DefinedNode = SpecialExpressionNode<[typeof specialExpressionTypes['defined?'], SymbolNode]>
 
 export const definedSpecialExpression: BuiltinSpecialExpression<boolean, DefinedNode> = {
-  paramCount: 1,
+  arity: toFixedArity(1),
   evaluate: (node, contextStack) => {
     const symbolNode = node[1][1]
     assertSymbolNode(symbolNode)

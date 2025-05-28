@@ -1,5 +1,5 @@
 import type { NormalExpressionName } from '../../reference/api'
-import type { SpecialExpressionName, SpecialExpressionType } from '../builtin'
+import { type SpecialExpression, type SpecialExpressionName, type SpecialExpressionType, builtin } from '../builtin'
 import { getAllBindingTargetNames } from '../builtin/bindingNode'
 import { allNormalExpressions, normalExpressionTypes } from '../builtin/normalExpressions'
 import type { AndNode } from '../builtin/specialExpressions/and'
@@ -53,8 +53,9 @@ import {
   isSymbolToken,
 } from '../tokenizer/token'
 import type { TokenStream } from '../tokenizer/tokenize'
-import { assertNumberOfParams } from '../typeGuards'
 import { asUserDefinedSymbolNode, isNormalBuiltinSymbolNode, isSpecialBuiltinSymbolNode, isUserDefinedSymbolNode } from '../typeGuards/astNode'
+import { smartTrim } from '../utils'
+import { assertNumberOfParams } from '../utils/arity'
 import { type BindingNode, type BindingTarget, type Node, type NormalBuiltinSymbolNode, type NormalExpressionNodeExpression, type NormalExpressionNodeWithName, type NumberNode, type ParseState, type ReservedSymbolNode, type SpecialBuiltinSymbolNode, type StringNode, type SymbolNode, type UserDefinedSymbolNode, bindingTargetTypes } from './types'
 
 const exponentiationPrecedence = 12
@@ -131,7 +132,7 @@ function createNamedNormalExpressionNode(symbolNode: NormalBuiltinSymbolNode | U
   const node: NormalExpressionNodeWithName = withSourceCodeInfo([NodeTypes.NormalExpression, [symbolNode, params]], sourceCodeInfo)
 
   if (isNormalBuiltinSymbolNode(symbolNode)) {
-    assertNumberOfParams(allNormalExpressions[symbolNode[1]]!.paramCount, node)
+    assertNumberOfParams(allNormalExpressions[symbolNode[1]]!.arity, node[1][1].length, sourceCodeInfo)
   }
 
   return node
@@ -568,6 +569,7 @@ export class Parser {
 
     if (isSpecialBuiltinSymbolNode(symbol)) { // Named function
       const specialExpressionType = symbol[1]
+
       const type = specialExpressionType as Exclude<
         SpecialExpressionType,
         | typeof specialExpressionTypes.for
@@ -582,6 +584,8 @@ export class Parser {
         | typeof specialExpressionTypes.doseq
         | typeof specialExpressionTypes.function
       >
+      const specialExpression: SpecialExpression = builtin.specialExpressions[type]
+      assertNumberOfParams(specialExpression.arity, params.length, symbol[2])
       switch (type) {
         case specialExpressionTypes['||']:
           return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, params]], symbol[2]) satisfies OrNode
@@ -597,22 +601,15 @@ export class Parser {
           if (params.length === 1) {
             return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, [params[0]!, undefined]]], symbol[2]) satisfies QqNode
           }
-          if (params.length === 2) {
+          else {
             return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, [params[0]!, params[1]!]]], symbol[2]) satisfies QqNode
           }
-          throw new LitsError('Expected exactly two parameters', symbol[2])
         }
         case specialExpressionTypes['defined?']: {
-          if (params.length !== 1) {
-            throw new LitsError('Expected exactly one parameter', symbol[2])
-          }
           const [param] = params
           return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, param as SymbolNode]], symbol[2]) satisfies DefinedNode
         }
         case specialExpressionTypes.throw: {
-          if (params.length !== 1) {
-            throw new LitsError('Expected exactly one parameter', symbol[2])
-          }
           const [param] = params
           return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, param!]], symbol[2]) satisfies ThrowNode
         }
@@ -1389,26 +1386,11 @@ export class Parser {
     return withSourceCodeInfo([NodeTypes.Number, negative ? -Number(numberString) : Number(numberString)], token[2]) satisfies NumberNode
   }
 
-  private smartTrim(str: string): string {
-    const lines = str.split('\n')
-    while (lines[0]?.match(/^\s*$/)) {
-      lines.shift() // Remove leading empty lines
-    }
-    while (lines[lines.length - 1]?.match(/^\s*$/)) {
-      lines.pop() // Remove trailing empty lines
-    }
-    const indent = lines.reduce((minIndent, line) => {
-      const lineIndent = line.match(/^\s*/)?.[0]?.length ?? 0
-      return Math.min(minIndent, lineIndent)
-    }, Infinity)
-    return lines.map(line => line.slice(indent)).join('\n').trimEnd()
-  }
-
   private parseDocString(): string {
     const token = this.asToken(this.peek())
     const stringToken: StringToken = token[2] ? ['String', token[1].slice(2, -2), token[2]] : ['String', token[1].slice(2, -2)]
     const stringNode = this.parseString(stringToken)
-    return this.smartTrim(stringNode[1]) // Extract the string value from the StringNode
+    return smartTrim(stringNode[1]) // Extract the string value from the StringNode
   }
 
   private parseString(token: StringToken): StringNode {

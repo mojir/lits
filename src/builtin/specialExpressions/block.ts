@@ -7,7 +7,7 @@ import type { specialExpressionTypes } from '../specialExpressionTypes'
 export type DoNode = SpecialExpressionNode<[typeof specialExpressionTypes['block'], Node[]]>
 
 export const doSpecialExpression: BuiltinSpecialExpression<Any, DoNode> = {
-  paramCount: {},
+  arity: {},
   evaluate: (node, contextStack, { evaluateNode }) => {
     const newContext: Context = {}
 

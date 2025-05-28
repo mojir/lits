@@ -7,7 +7,7 @@ import type { specialExpressionTypes } from '../specialExpressionTypes'
 export type OrNode = SpecialExpressionNode<[typeof specialExpressionTypes['||'], Node[]]>
 
 export const orSpecialExpression: BuiltinSpecialExpression<Any, OrNode> = {
-  paramCount: {},
+  arity: {},
   evaluate: (node, contextStack, { evaluateNode }) => {
     let value: Any = false
 

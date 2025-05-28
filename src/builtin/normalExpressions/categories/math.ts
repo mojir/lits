@@ -2,6 +2,7 @@ import { LitsError } from '../../../errors'
 import type { SourceCodeInfo } from '../../../tokenizer/token'
 import { isMatrix, isVector } from '../../../typeGuards/annotatedArrays'
 import { assertNumber, isNumber } from '../../../typeGuards/number'
+import { toFixedArity } from '../../../utils/arity'
 import type { BuiltinNormalExpressions } from '../../interface'
 
 type NumberVectorOrMatrix = number | number[] | number[][]
@@ -95,7 +96,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return firstMatrix.map(row => row.map(val => val + 1))
       }
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'dec': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -112,7 +113,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return firstMatrix.map(row => row.map(val => val - 1))
       }
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   '+': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -136,7 +137,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return restMatrices.reduce((acc, matrix) => acc.map((row, i) => row.map((val, j) => val + matrix[i]![j]!)), firstMatrix)
       }
     },
-    paramCount: {},
+    arity: {},
   },
   '*': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -161,7 +162,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     aliases: ['·'],
-    paramCount: {},
+    arity: {},
   },
   '/': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -191,7 +192,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return restMatrices.reduce((acc, matrix) => acc.map((row, i) => row.map((val, j) => val / matrix[i]![j]!)), firstMatrix)
       }
     },
-    paramCount: {},
+    arity: {},
   },
   '-': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -221,7 +222,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return restMatrices.reduce((acc, matrix) => acc.map((row, i) => row.map((val, j) => val - matrix[i]![j]!)), firstMatrix)
       }
     },
-    paramCount: {},
+    arity: {},
   },
   'quot': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -241,7 +242,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return firstMatrix.map((row, i) => row.map((val, j) => Math.trunc(val / secondMatrix[i]![j]!)))
       }
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'mod': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -269,7 +270,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         }))
       }
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   '%': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -289,7 +290,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return firstMatrix.map((row, i) => row.map((dividend, j) => dividend % secondMatrix[i]![j]!))
       }
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
     aliases: ['rem'],
   },
   'sqrt': {
@@ -307,7 +308,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return firstMatrix.map(row => row.map(val => Math.sqrt(val)))
       }
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
     aliases: ['√'],
   },
   'cbrt': {
@@ -325,7 +326,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return firstMatrix.map(row => row.map(val => Math.cbrt(val)))
       }
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
     aliases: ['∛'],
   },
   '^': {
@@ -345,7 +346,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return firstMatrix.map((row, i) => row.map((base, j) => base ** secondMatrix[i]![j]!))
       }
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'round': {
     evaluate: ([value, decimals], sourceCodeInfo): NumberVectorOrMatrix => {
@@ -383,7 +384,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         }
       }
     },
-    paramCount: { min: 1, max: 2 },
+    arity: { min: 1, max: 2 },
   },
   'trunc': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -400,7 +401,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return matrix.map(row => row.map(val => Math.trunc(val)))
       }
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'floor': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -417,7 +418,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return matrix.map(row => row.map(val => Math.floor(val)))
       }
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'ceil': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -434,7 +435,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return matrix.map(row => row.map(val => Math.ceil(val)))
       }
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'min': {
     evaluate: ([first, ...rest], sourceCodeInfo): number => {
@@ -447,7 +448,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return Math.min(min, value)
       }, first)
     },
-    paramCount: { min: 1 },
+    arity: { min: 1 },
   },
   'max': {
     evaluate: ([first, ...rest], sourceCodeInfo): number => {
@@ -460,7 +461,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return Math.max(min, value)
       }, first)
     },
-    paramCount: { min: 1 },
+    arity: { min: 1 },
   },
   'abs': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -477,7 +478,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return matrix.map(row => row.map(val => Math.abs(val)))
       }
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'sign': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -494,7 +495,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return matrix.map(row => row.map(val => Math.sign(val)))
       }
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'ln': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -511,7 +512,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return matrix.map(row => row.map(val => Math.log(val)))
       }
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'log2': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -528,7 +529,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return matrix.map(row => row.map(val => Math.log2(val)))
       }
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
     aliases: ['log₂'],
   },
   'log10': {
@@ -546,7 +547,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return matrix.map(row => row.map(val => Math.log10(val)))
       }
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
     aliases: ['log₁₀'],
   },
   'sin': {
@@ -564,7 +565,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return matrix.map(row => row.map(val => Math.sin(val)))
       }
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'asin': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -581,7 +582,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return matrix.map(row => row.map(val => Math.asin(val)))
       }
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'sinh': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -598,7 +599,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return matrix.map(row => row.map(val => Math.sinh(val)))
       }
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'asinh': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -615,7 +616,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return matrix.map(row => row.map(val => Math.asinh(val)))
       }
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'cos': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -632,7 +633,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return matrix.map(row => row.map(val => Math.cos(val)))
       }
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'acos': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -649,7 +650,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return matrix.map(row => row.map(val => Math.acos(val)))
       }
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'cosh': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -666,7 +667,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return matrix.map(row => row.map(val => Math.cosh(val)))
       }
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'acosh': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -683,7 +684,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return matrix.map(row => row.map(val => Math.acosh(val)))
       }
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'tan': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -700,7 +701,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return matrix.map(row => row.map(val => Math.tan(val)))
       }
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'atan': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -717,7 +718,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return matrix.map(row => row.map(val => Math.atan(val)))
       }
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'tanh': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -734,7 +735,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return matrix.map(row => row.map(val => Math.tanh(val)))
       }
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'atanh': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -751,7 +752,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return matrix.map(row => row.map(val => Math.atanh(val)))
       }
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'to-rad': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -768,7 +769,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return matrix.map(row => row.map(val => (val * Math.PI) / 180))
       }
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
   'to-deg': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -785,6 +786,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return matrix.map(row => row.map(val => (val * 180) / Math.PI))
       }
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   },
 }

@@ -3,6 +3,7 @@ import type { SourceCodeInfo } from '../../../../../../tokenizer/token'
 import { assertFunctionLike } from '../../../../../../typeGuards/lits'
 import { assertNumber } from '../../../../../../typeGuards/number'
 import { assertString } from '../../../../../../typeGuards/string'
+import { toFixedArity } from '../../../../../../utils/arity'
 import type { BuiltinNormalExpression, BuiltinNormalExpressions } from '../../../../../interface'
 import { abundantSequence } from './abundant'
 import { arithmeticNormalExpressions } from './arithmetic'
@@ -180,7 +181,7 @@ function createSeqNormalExpression<Type extends number | string>(
       }
       return result
     },
-    paramCount: typeof maxLength === 'number' ? { max: 1 } : 1,
+    arity: typeof maxLength === 'number' ? { max: 1 } : toFixedArity(1),
   }
 }
 
@@ -201,7 +202,7 @@ function createTakeWhileNormalExpression<Type extends number | string>(
       }
       return result
     },
-    paramCount: typeof maxLength === 'number' ? { max: 1 } : 1,
+    arity: typeof maxLength === 'number' ? { max: 1 } : toFixedArity(1),
   }
 }
 
@@ -222,7 +223,7 @@ function createNthNormalExpression<Type extends number | string>(
       }
       return sequence[n - 1]!
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   }
 }
 
@@ -235,7 +236,7 @@ function createNumberPredNormalExpression(
       assertNumber(value, sourceCodeInfo)
       return predFunction(value, sourceCodeInfo)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   }
 }
 
@@ -248,6 +249,6 @@ function createStringPredNormalExpression(
       assertString(value, sourceCodeInfo)
       return predFunction(value, sourceCodeInfo)
     },
-    paramCount: 1,
+    arity: toFixedArity(1),
   }
 }

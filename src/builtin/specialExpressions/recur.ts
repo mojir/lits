@@ -6,7 +6,7 @@ import type { specialExpressionTypes } from '../specialExpressionTypes'
 export type RecurNode = SpecialExpressionNode<[typeof specialExpressionTypes['recur'], Node[]]>
 
 export const recurSpecialExpression: BuiltinSpecialExpression<null, RecurNode> = {
-  paramCount: {},
+  arity: {},
   evaluate: (node, contextStack, { evaluateNode }) => {
     const params = node[1][1]
     const evaluatedParams = params.map(paramNode => evaluateNode(paramNode, contextStack))

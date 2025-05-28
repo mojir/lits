@@ -3,6 +3,7 @@ import { assertArray } from '../../../typeGuards/array'
 import { asNumber, assertNumber } from '../../../typeGuards/number'
 import type { BuiltinNormalExpressions } from '../../interface'
 import { assertFunctionLike } from '../../../typeGuards/lits'
+import { toFixedArity } from '../../../utils/arity'
 
 export const arrayNormalExpression: BuiltinNormalExpressions = {
   'range': {
@@ -45,7 +46,7 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
 
       return result
     },
-    paramCount: { min: 1, max: 3 },
+    arity: { min: 1, max: 3 },
   },
 
   'repeat': {
@@ -57,7 +58,7 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
 
       return result
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
 
   'flatten': {
@@ -70,7 +71,7 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
 
       return seq.flat(actualDepth)
     },
-    paramCount: { min: 1, max: 2 },
+    arity: { min: 1, max: 2 },
   },
   'mapcat': {
     evaluate: ([arr, fn], sourceCodeInfo, contextStack, { executeFunction }): Arr | string => {
@@ -78,7 +79,7 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
       assertFunctionLike(fn, sourceCodeInfo)
       return arr.map(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo)).flat(1)
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
   'moving-fn': {
     evaluate: ([arr, windowSize, fn], sourceCodeInfo, contextStack, { executeFunction }): Arr => {
@@ -94,7 +95,7 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
       }
       return result
     },
-    paramCount: 3,
+    arity: toFixedArity(3),
   },
   'running-fn': {
     evaluate: ([arr, fn], sourceCodeInfo, contextStack, { executeFunction }): Arr => {
@@ -108,6 +109,6 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
       }
       return result
     },
-    paramCount: 2,
+    arity: toFixedArity(2),
   },
 }

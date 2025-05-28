@@ -24,7 +24,8 @@ function createNativeJsFunction(fn: (...args: any[]) => unknown, name?: string):
     },
     name,
     functionType: 'NativeJsFunction',
-    paramCount: {},
+    arity: {},
+    docString: '',
   }
 }
 
@@ -34,25 +35,29 @@ describe('litsFunction type guards', () => {
     functionType: 'UserDefined',
     name: undefined,
     evaluatedfunction: [[], [], {}],
-    paramCount: {},
+    arity: {},
+    docString: '',
   }
   const lf2: LitsFunction = {
     [FUNCTION_SYMBOL]: true,
     functionType: 'Builtin',
     normalBuitinSymbolType: normalExpressionTypes['+'] as number,
-    paramCount: {},
+    arity: {},
+    docString: '',
   }
   const lf4: LitsFunction = {
     [FUNCTION_SYMBOL]: true,
     functionType: 'Comp',
     params: ['x'],
-    paramCount: {},
+    arity: {},
+    docString: '',
   }
   const lf5: LitsFunction = {
     [FUNCTION_SYMBOL]: true,
     functionType: 'Constantly',
     value: 10,
-    paramCount: {},
+    arity: {},
+    docString: '',
   }
   const lf6 = createNativeJsFunction(() => undefined)
   const lf7 = createNativeJsFunction(() => undefined, 'native')

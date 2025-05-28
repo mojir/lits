@@ -3,7 +3,7 @@ import { specialExpressions } from '../src/builtin'
 import { normalExpressions } from '../src/builtin/normalExpressions'
 import { specialExpressionTypes } from '../src/builtin/specialExpressionTypes'
 import { isSymbolicOperator } from '../src/tokenizer/operators'
-import { canBeOperator } from '../src/typeGuards'
+import { canBeOperator } from '../src/utils/arity'
 import type { ApiName, Category, DataType, NormalExpressionName } from './api'
 import { arrayReference } from './categories/array'
 import { assertReference } from './categories/assert'
@@ -116,8 +116,8 @@ Object.entries(normalExpressionReference).forEach(([key, obj]) => {
   if (!normalExpressions[key]) {
     throw new Error(`Missing normal expression ${key} in normalExpressions`)
   }
-  const paramCount = normalExpressions[key].paramCount
-  if (!obj.noOperatorDocumentation && canBeOperator(paramCount)) {
+  const arity = normalExpressions[key].arity
+  if (!obj.noOperatorDocumentation && canBeOperator(arity)) {
     obj._isOperator = true
     if (isSymbolicOperator(key)) {
       obj._prefereOperator = true
@@ -127,8 +127,8 @@ Object.entries(normalExpressionReference).forEach(([key, obj]) => {
 
 Object.entries(specialExpressionsReference).forEach(([key, obj]) => {
   if (isFunctionReference(obj)) {
-    const paramCount = specialExpressions[specialExpressionTypes[key as SpecialExpressionName]]?.paramCount
-    if (paramCount && canBeOperator(paramCount)) {
+    const arity = specialExpressions[specialExpressionTypes[key as SpecialExpressionName]]?.arity
+    if (arity && canBeOperator(arity)) {
       obj._isOperator = true
     }
   }

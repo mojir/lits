@@ -6,7 +6,7 @@ import type { specialExpressionTypes } from '../specialExpressionTypes'
 export type SwitchNode = SpecialExpressionNode<[typeof specialExpressionTypes['switch'], Node, [Node, Node][]]>
 
 export const switchSpecialExpression: BuiltinSpecialExpression<Any, SwitchNode> = {
-  paramCount: { odd: true },
+  arity: {},
   evaluate: (node, contextStack, { evaluateNode }) => {
     const [, switchValueNode, cases] = node[1]
     const switchValue = evaluateNode(switchValueNode, contextStack)
