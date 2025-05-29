@@ -29438,7 +29438,7 @@ var Playground = (function (exports) {
         'vec:moving-mean': {
             title: 'vec:moving-mean',
             category: 'Vector',
-            description: 'Returns the **moving mean` of the `vector** with a given window size.',
+            description: 'Returns the **moving mean** of the `vector` with a given window size.',
             returns: {
                 type: 'vector',
             },
@@ -29460,7 +29460,7 @@ var Playground = (function (exports) {
         'vec:centered-moving-mean': {
             title: 'vec:centered-moving-mean',
             category: 'Vector',
-            description: 'Returns the **centered moving mean` of the `vector** with a given window size.',
+            description: 'Returns the **centered moving mean** of the `vector` with a given window size.',
             returns: {
                 type: 'array',
             },
@@ -29491,7 +29491,7 @@ var Playground = (function (exports) {
         'vec:running-mean': {
             title: 'vec:running-mean',
             category: 'Vector',
-            description: 'Returns the **running mean` of the `vector**.',
+            description: 'Returns the **running mean** of the `vector`.',
             returns: {
                 type: 'vector',
             },
@@ -29534,7 +29534,7 @@ var Playground = (function (exports) {
         'vec:moving-geometric-mean': {
             title: 'vec:moving-geometric-mean',
             category: 'Vector',
-            description: 'Returns the **moving geometric mean` of the `vector** with a given window size.',
+            description: 'Returns the **moving geometric mean** of the `vector` with a given window size.',
             returns: {
                 type: 'vector',
             },
@@ -29556,7 +29556,7 @@ var Playground = (function (exports) {
         'vec:centered-moving-geometric-mean': {
             title: 'vec:centered-moving-geometric-mean',
             category: 'Vector',
-            description: 'Returns the **centered moving geometric mean` of the `vector** with a given window size.',
+            description: 'Returns the **centered moving geometric mean** of the `vector` with a given window size.',
             returns: {
                 type: 'array',
             },
@@ -29587,7 +29587,7 @@ var Playground = (function (exports) {
         'vec:running-geometric-mean': {
             title: 'vec:running-geometric-mean',
             category: 'Vector',
-            description: 'Returns the **running geometric mean` of the `vector**.',
+            description: 'Returns the **running geometric mean** of the `vector`.',
             returns: {
                 type: 'vector',
             },
@@ -29630,7 +29630,7 @@ var Playground = (function (exports) {
         'vec:moving-harmonic-mean': {
             title: 'vec:moving-harmonic-mean',
             category: 'Vector',
-            description: 'Returns the **moving harmonic mean` of the `vector** with a given window size.',
+            description: 'Returns the **moving harmonic mean** of the `vector` with a given window size.',
             returns: {
                 type: 'vector',
             },
@@ -29652,7 +29652,7 @@ var Playground = (function (exports) {
         'vec:centered-moving-harmonic-mean': {
             title: 'vec:centered-moving-harmonic-mean',
             category: 'Vector',
-            description: 'Returns the **centered moving harmonic mean` of the `vector** with a given window size.',
+            description: 'Returns the **centered moving harmonic mean** of the `vector` with a given window size.',
             returns: {
                 type: 'array',
             },
@@ -29683,7 +29683,7 @@ var Playground = (function (exports) {
         'vec:running-harmonic-mean': {
             title: 'vec:running-harmonic-mean',
             category: 'Vector',
-            description: 'Returns the **running harmonic mean` of the `vector**.',
+            description: 'Returns the **running harmonic mean** of the `vector`.',
             returns: {
                 type: 'vector',
             },
@@ -29727,7 +29727,7 @@ var Playground = (function (exports) {
         'vec:moving-median': {
             title: 'vec:moving-median',
             category: 'Vector',
-            description: 'Returns the **moving median` of the `vector** with a given window size.',
+            description: 'Returns the **moving median** of the `vector` with a given window size.',
             returns: {
                 type: 'vector',
             },
@@ -29749,7 +29749,7 @@ var Playground = (function (exports) {
         'vec:centered-moving-median': {
             title: 'vec:centered-moving-median',
             category: 'Vector',
-            description: 'Returns the **centered moving median` of the `vector** with a given window size.',
+            description: 'Returns the **centered moving median** of the `vector` with a given window size.',
             returns: {
                 type: 'array',
             },
@@ -29780,7 +29780,7 @@ var Playground = (function (exports) {
         'vec:running-median': {
             title: 'vec:running-median',
             category: 'Vector',
-            description: 'Returns the **running median` of the `vector**.',
+            description: 'Returns the **running median** of the `vector`.',
             returns: {
                 type: 'vector',
             },
@@ -29824,7 +29824,7 @@ var Playground = (function (exports) {
         'vec:moving-variance': {
             title: 'vec:moving-variance',
             category: 'Vector',
-            description: 'Returns the **moving variance` of the `vector** with a given window size.',
+            description: 'Returns the **moving variance** of the `vector` with a given window size.',
             returns: {
                 type: 'vector',
             },
@@ -29846,7 +29846,7 @@ var Playground = (function (exports) {
         'vec:centered-moving-variance': {
             title: 'vec:centered-moving-variance',
             category: 'Vector',
-            description: 'Returns the **centered moving variance` of the `vector** with a given window size.',
+            description: 'Returns the **centered moving variance** of the `vector` with a given window size.',
             returns: {
                 type: 'array',
             },
@@ -29879,7 +29879,7 @@ var Playground = (function (exports) {
         'vec:running-variance': {
             title: 'vec:running-variance',
             category: 'Vector',
-            description: 'Returns the **running variance` of the `vector**.',
+            description: 'Returns the **running variance** of the `vector`.',
             returns: {
                 type: 'vector',
             },
@@ -29922,7 +29922,7 @@ var Playground = (function (exports) {
         'vec:moving-sample-variance': {
             title: 'vec:moving-sample-variance',
             category: 'Vector',
-            description: 'Returns the **moving sample variance` of the `vector** with a given window size.',
+            description: 'Returns the **moving sample variance** of the `vector` with a given window size.',
             returns: {
                 type: 'vector',
             },
@@ -29944,7 +29944,7 @@ var Playground = (function (exports) {
         'vec:centered-moving-sample-variance': {
             title: 'vec:centered-moving-sample-variance',
             category: 'Vector',
-            description: 'Returns the **centered moving sample variance` of the `vector** with a given window size.',
+            description: 'Returns the **centered moving sample variance** of the `vector` with a given window size.',
             returns: {
                 type: 'array',
             },
@@ -29977,14 +29977,14 @@ var Playground = (function (exports) {
         'vec:running-sample-variance': {
             title: 'vec:running-sample-variance',
             category: 'Vector',
-            description: 'Returns the **running sample variance` of the `vector**.',
+            description: 'Returns the **running sample variance** of the `vector`.',
             returns: {
                 type: 'array',
             },
             args: {
                 vector: {
                     type: 'vector',
-                    description: 'The `vector` to calculate the **running sample variance` of. First element in result is `null` since `sample variance** is not defined for a single element.',
+                    description: 'The `vector` to calculate the **running sample variance** of. First element in result is `null` since **sample variance** is not defined for a single element.',
                 },
             },
             variants: [
@@ -30000,7 +30000,7 @@ var Playground = (function (exports) {
         'vec:stdev': {
             title: 'vec:stdev',
             category: 'Vector',
-            description: 'Returns the **standard deviation` of the `vector**.',
+            description: 'Returns the **standard deviation** of the `vector`.',
             returns: {
                 type: 'number',
             },
@@ -30021,7 +30021,7 @@ var Playground = (function (exports) {
         'vec:moving-stdev': {
             title: 'vec:moving-stdev',
             category: 'Vector',
-            description: 'Returns the **moving standard deviation` of the `vector** with a given window size.',
+            description: 'Returns the **moving standard deviation** of the `vector` with a given window size.',
             returns: {
                 type: 'vector',
             },
@@ -30043,7 +30043,7 @@ var Playground = (function (exports) {
         'vec:centered-moving-stdev': {
             title: 'vec:centered-moving-stdev',
             category: 'Vector',
-            description: 'Returns the **centered moving standard deviation` of the `vector** with a given window size.',
+            description: 'Returns the **centered moving standard deviation** of the `vector` with a given window size.',
             returns: {
                 type: 'array',
             },
@@ -30076,7 +30076,7 @@ var Playground = (function (exports) {
         'vec:running-stdev': {
             title: 'vec:running-stdev',
             category: 'Vector',
-            description: 'Returns the **running standard deviation` of the `vector**.',
+            description: 'Returns the **running standard deviation** of the `vector`.',
             returns: {
                 type: 'vector',
             },
@@ -30098,7 +30098,7 @@ var Playground = (function (exports) {
         'vec:sample-stdev': {
             title: 'vec:sample-stdev',
             category: 'Vector',
-            description: 'Returns the **sample standard deviation` of the `vector**.',
+            description: 'Returns the **sample standard deviation** of the `vector`.',
             returns: {
                 type: 'number',
             },
@@ -30119,7 +30119,7 @@ var Playground = (function (exports) {
         'vec:moving-sample-stdev': {
             title: 'vec:moving-sample-stdev',
             category: 'Vector',
-            description: 'Returns the **moving sample standard deviation` of the `vector** with a given window size.',
+            description: 'Returns the **moving sample standard deviation** of the `vector` with a given window size.',
             returns: {
                 type: 'vector',
             },
@@ -30141,7 +30141,7 @@ var Playground = (function (exports) {
         'vec:centered-moving-sample-stdev': {
             title: 'vec:centered-moving-sample-stdev',
             category: 'Vector',
-            description: 'Returns the **centered moving sample standard deviation` of the `vector** with a given window size.',
+            description: 'Returns the **centered moving sample standard deviation** of the `vector` with a given window size.',
             returns: {
                 type: 'array',
             },
@@ -30174,14 +30174,14 @@ var Playground = (function (exports) {
         'vec:running-sample-stdev': {
             title: 'vec:running-sample-stdev',
             category: 'Vector',
-            description: 'Returns the **running sample standard deviation` of the `vector**.',
+            description: 'Returns the **running sample standard deviation** of the `vector`.',
             returns: {
                 type: 'array',
             },
             args: {
                 vector: {
                     type: 'vector',
-                    description: 'The `vector` to calculate the **running sample standard deviation` of. First element in result is `null` since `sample standard deviation** is not defined for a single element.',
+                    description: 'The `vector` to calculate the **running sample standard deviation** of. First element in result is `null` since **sample standard deviation** is not defined for a single element.',
                 },
             },
             variants: [
@@ -30510,7 +30510,7 @@ var Playground = (function (exports) {
         'vec:moving-sum': {
             title: 'vec:moving-sum',
             category: 'Vector',
-            description: 'Returns the **moving sum` of the `vector** with a given window size.',
+            description: 'Returns the **moving sum** of the `vector` with a given window size.',
             returns: {
                 type: 'vector',
             },
@@ -30532,7 +30532,7 @@ var Playground = (function (exports) {
         'vec:centered-moving-sum': {
             title: 'vec:centered-moving-sum',
             category: 'Vector',
-            description: 'Returns the **centered moving sum` of the `vector** with a given window size.',
+            description: 'Returns the **centered moving sum** of the `vector` with a given window size.',
             returns: {
                 type: 'array',
             },
@@ -30563,7 +30563,7 @@ var Playground = (function (exports) {
         'vec:running-sum': {
             title: 'vec:running-sum',
             category: 'Vector',
-            description: 'Returns the **running sum` of the `vector**.',
+            description: 'Returns the **running sum** of the `vector`.',
             returns: {
                 type: 'vector',
             },
@@ -30608,7 +30608,7 @@ var Playground = (function (exports) {
         'vec:moving-prod': {
             title: 'vec:moving-prod',
             category: 'Vector',
-            description: 'Returns the **moving product` of the `vector** with a given window size.',
+            description: 'Returns the **moving product** of the `vector` with a given window size.',
             returns: {
                 type: 'vector',
             },
@@ -30630,7 +30630,7 @@ var Playground = (function (exports) {
         'vec:centered-moving-prod': {
             title: 'vec:centered-moving-prod',
             category: 'Vector',
-            description: 'Returns the **centered moving product` of the `vector** with a given window size.',
+            description: 'Returns the **centered moving product** of the `vector` with a given window size.',
             returns: {
                 type: 'array',
             },
@@ -30660,7 +30660,7 @@ var Playground = (function (exports) {
         'vec:running-prod': {
             title: 'vec:running-prod',
             category: 'Vector',
-            description: 'Returns the **running product` of the `vector**.',
+            description: 'Returns the **running product** of the `vector`.',
             returns: {
                 type: 'vector',
             },
@@ -30705,7 +30705,7 @@ var Playground = (function (exports) {
         'vec:moving-min': {
             title: 'vec:moving-min',
             category: 'Vector',
-            description: 'Returns the **moving minimum` of the `vector** with a given window size.',
+            description: 'Returns the **moving minimum** of the `vector` with a given window size.',
             returns: {
                 type: 'vector',
             },
@@ -30727,7 +30727,7 @@ var Playground = (function (exports) {
         'vec:centered-moving-min': {
             title: 'vec:centered-moving-min',
             category: 'Vector',
-            description: 'Returns the **centered moving minimum` of the `vector** with a given window size.',
+            description: 'Returns the **centered moving minimum** of the `vector` with a given window size.',
             returns: {
                 type: 'array',
             },
@@ -30758,7 +30758,7 @@ var Playground = (function (exports) {
         'vec:running-min': {
             title: 'vec:running-min',
             category: 'Vector',
-            description: 'Returns the **running minimum` of the `vector**.',
+            description: 'Returns the **running minimum** of the `vector`.',
             returns: {
                 type: 'vector',
             },
@@ -30803,7 +30803,7 @@ var Playground = (function (exports) {
         'vec:moving-max': {
             title: 'vec:moving-max',
             category: 'Vector',
-            description: 'Returns the **moving maximum` of the `vector** with a given window size.',
+            description: 'Returns the **moving maximum** of the `vector` with a given window size.',
             returns: {
                 type: 'vector',
             },
@@ -30825,7 +30825,7 @@ var Playground = (function (exports) {
         'vec:centered-moving-max': {
             title: 'vec:centered-moving-max',
             category: 'Vector',
-            description: 'Returns the **centered moving maximum` of the `vector** with a given window size.',
+            description: 'Returns the **centered moving maximum** of the `vector` with a given window size.',
             returns: {
                 type: 'array',
             },
@@ -30856,7 +30856,7 @@ var Playground = (function (exports) {
         'vec:running-max': {
             title: 'vec:running-max',
             category: 'Vector',
-            description: 'Returns the **running maximum` of the `vector**.',
+            description: 'Returns the **running maximum** of the `vector`.',
             returns: {
                 type: 'vector',
             },
