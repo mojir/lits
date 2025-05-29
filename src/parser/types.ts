@@ -20,7 +20,6 @@ interface GenericLitsFunction {
   sourceCodeInfo?: SourceCodeInfo
   functionType: FunctionType
   arity: Arity
-  docString: string // documentation string
 }
 
 export interface RegularExpression {
@@ -34,12 +33,14 @@ export interface NativeJsFunction extends GenericLitsFunction {
   functionType: 'NativeJsFunction'
   name: string | undefined // name
   nativeFn: JsFunction
+  docString: string // documentation string
 }
 
 export interface UserDefinedFunction extends GenericLitsFunction {
   functionType: 'UserDefined'
   name: string | undefined // name
   evaluatedfunction: EvaluatedFunction
+  docString: string // documentation string
 }
 
 export interface PartialFunction extends GenericLitsFunction {
@@ -88,6 +89,7 @@ export interface FNullFunction extends GenericLitsFunction {
 export interface NormalBuiltinFunction extends GenericLitsFunction {
   functionType: 'Builtin'
   normalBuitinSymbolType: number
+  name: string
 }
 
 export interface SpecialBuiltinFunction extends GenericLitsFunction {

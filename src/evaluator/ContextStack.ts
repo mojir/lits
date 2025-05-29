@@ -145,7 +145,6 @@ export class ContextStackImpl {
             specialBuiltinSymbolType: functionType,
             sourceCodeInfo: node[2],
             arity: specialExpression.arity,
-            docString: 'Special builtin function',
           } satisfies SpecialBuiltinFunction
         }
         default:
@@ -155,13 +154,14 @@ export class ContextStackImpl {
     if (isNormalBuiltinSymbolNode(node)) {
       const type = node[1]
       const normalExpression = allNormalExpressions[type]!
+      const name = normalExpression.name!
       return {
         [FUNCTION_SYMBOL]: true,
         functionType: 'Builtin',
         normalBuitinSymbolType: type,
         sourceCodeInfo: node[2],
         arity: normalExpression.arity,
-        docString: 'Builtin function', // TODO: Get docString from normalExpression
+        name,
       } satisfies NormalBuiltinFunction
     }
     const lookUpResult = this.lookUp(node)

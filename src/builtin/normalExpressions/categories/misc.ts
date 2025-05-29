@@ -1,12 +1,11 @@
 import type { Any } from '../../../interface'
-import { compare, deepEqual } from '../../../utils'
-import type { Arity, BuiltinNormalExpressions } from '../../interface'
-import { asAny, assertAny, assertFunctionLike } from '../../../typeGuards/lits'
+import type { SourceCodeInfo } from '../../../tokenizer/token'
+import { asAny, assertAny } from '../../../typeGuards/lits'
 import { assertNumber } from '../../../typeGuards/number'
 import { asStringOrNumber, assertString, assertStringOrNumber } from '../../../typeGuards/string'
-import type { SourceCodeInfo } from '../../../tokenizer/token'
-import { isLitsFunction } from '../../../typeGuards/litsFunction'
+import { compare, deepEqual } from '../../../utils'
 import { toFixedArity } from '../../../utils/arity'
+import type { BuiltinNormalExpressions } from '../../interface'
 
 function isEqual([first, ...rest]: unknown[], sourceCodeInfo: SourceCodeInfo | undefined) {
   const firstAny = asAny(first, sourceCodeInfo)
@@ -164,19 +163,5 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       return JSON.stringify(first, null, second)
     },
     arity: { min: 1, max: 2 },
-  },
-  'doc': {
-    evaluate: ([fn], sourceCodeInfo): string => {
-      assertFunctionLike(fn, sourceCodeInfo)
-      return isLitsFunction(fn) ? fn.docString : ''
-    },
-    arity: toFixedArity(1),
-  },
-  'arity': {
-    evaluate: ([fn], sourceCodeInfo): Arity => {
-      assertFunctionLike(fn, sourceCodeInfo)
-      return isLitsFunction(fn) ? fn.arity : toFixedArity(1)
-    },
-    arity: toFixedArity(1),
   },
 }

@@ -13,7 +13,12 @@ import { builtin } from '../builtin'
 import { Parser } from '../parser/Parser'
 import { AutoCompleter } from '../AutoCompleter/AutoCompleter'
 import type { Arity } from '../builtin/interface'
+
+import { normalExpressionReference } from '../../reference/index'
+import { setNormalExpressionReference } from '../builtin/normalExpressions'
 import { Cache } from './Cache'
+
+setNormalExpressionReference(normalExpressionReference)
 
 export interface LitsRuntimeInfo {
   astCache: Cache | null

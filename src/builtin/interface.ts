@@ -19,6 +19,7 @@ export type NormalExpressionEvaluator<T> = (
 
 export interface BuiltinNormalExpression<T> {
   evaluate: NormalExpressionEvaluator<T>
+  name?: string
   arity: Arity
   aliases?: string[]
 }

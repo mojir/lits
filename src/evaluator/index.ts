@@ -120,7 +120,6 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
         placeholders,
         sourceCodeInfo,
         arity: toFixedArity(placeholders.length),
-        docString: '',
       }
       return partialFunction
     }
@@ -150,7 +149,6 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
         placeholders,
         sourceCodeInfo,
         arity: toFixedArity(placeholders.length),
-        docString: '',
       }
       return partialFunction
     }

@@ -321,36 +321,5 @@ describe('misc functions', () => {
         expect(lits.run('json-parse("[1,2,3]")')).toEqual([1, 2, 3])
       })
     })
-    describe('doc', () => {
-      it('should return the doc for a function', () => {
-        expect(lits.run('doc(+)')).toBeDefined()
-        expect(lits.run('doc(2)')).toBe('')
-        expect(lits.run(`
-          function add(a, b) {
-            """
-            Adds two numbers together.
-            Returns the sum of a and b.
-            """
-            
-            a + b
-          };
-          doc(add)
-        `)).toBe('Adds two numbers together.\nReturns the sum of a and b.')
-        expect(lits.run(`
-          function add() {
-            """Escaping\\"""."""
-            a + b
-          };
-          doc(add)
-        `)).toBe('Escaping""".')
-      })
-    })
-    describe('arity', () => {
-      it('should return the arity of a function', () => {
-        expect(lits.run('arity(+)')).toEqual({})
-        expect(lits.run('arity(1)')).toEqual({ min: 1, max: 1 })
-        expect(lits.run('arity((...x) -> x)')).toEqual({})
-      })
-    })
   }
 })

@@ -131,7 +131,7 @@ export function approxZero(value: number): boolean {
   return Math.abs(value) < EPSILON
 }
 
-export function smartTrim(str: string): string {
+export function smartTrim(str: string, minIndent = 0): string {
   const lines = str.split('\n')
   while (lines[0]?.match(/^\s*$/)) {
     lines.shift() // Remove leading empty lines
@@ -139,9 +139,11 @@ export function smartTrim(str: string): string {
   while (lines[lines.length - 1]?.match(/^\s*$/)) {
     lines.pop() // Remove trailing empty lines
   }
-  const indent = lines.reduce((minIndent, line) => {
+  const indent = lines.reduce((acc, line) => {
+    if (line.match(/^\s*$/))
+      return acc // Skip empty lines
     const lineIndent = line.match(/^\s*/)![0].length
-    return Math.min(minIndent, lineIndent)
+    return Math.min(acc, lineIndent)
   }, Infinity)
-  return lines.map(line => line.slice(indent)).join('\n').trimEnd()
+  return lines.map(line => ' '.repeat(minIndent) + line.slice(indent)).join('\n').trimEnd()
 }

@@ -43,21 +43,19 @@ describe('litsFunction type guards', () => {
     functionType: 'Builtin',
     normalBuitinSymbolType: normalExpressionTypes['+'] as number,
     arity: {},
-    docString: '',
+    name: '+',
   }
   const lf4: LitsFunction = {
     [FUNCTION_SYMBOL]: true,
     functionType: 'Comp',
     params: ['x'],
     arity: {},
-    docString: '',
   }
   const lf5: LitsFunction = {
     [FUNCTION_SYMBOL]: true,
     functionType: 'Constantly',
     value: 10,
     arity: {},
-    docString: '',
   }
   const lf6 = createNativeJsFunction(() => undefined)
   const lf7 = createNativeJsFunction(() => undefined, 'native')

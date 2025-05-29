@@ -1,5 +1,7 @@
 import type { BuiltinNormalExpression, BuiltinNormalExpressions } from '../interface'
 import type { Any } from '../../interface'
+import type { FunctionReference } from '../../../reference'
+import type { NormalExpressionName } from '../../../reference/api'
 import { bitwiseNormalExpression } from './categories/bitwise'
 import { collectionNormalExpression } from './categories/collection'
 import { arrayNormalExpression } from './categories/array'
@@ -18,6 +20,13 @@ import { linearAlgebraNormalExpression } from './categories/namespaces/linearAlg
 import { matrixNormalExpression } from './categories/namespaces/matrix'
 import { combinatoricalNormalExpression } from './categories/namespaces/numberTheory'
 import { randomNormalExpression } from './categories/namespaces/random'
+import { getMetaNormalExpression } from './categories/meta'
+
+const normalExpressionReference: Record<string, FunctionReference> = {}
+
+export function setNormalExpressionReference(reference: Record<NormalExpressionName, FunctionReference>) {
+  Object.assign(normalExpressionReference, reference)
+}
 
 const expressions: BuiltinNormalExpressions = {
   ...bitwiseNormalExpression,
@@ -25,6 +34,7 @@ const expressions: BuiltinNormalExpressions = {
   ...arrayNormalExpression,
   ...sequenceNormalExpression,
   ...mathNormalExpression,
+  ...getMetaNormalExpression(normalExpressionReference),
   ...miscNormalExpression,
   ...assertNormalExpression,
   ...objectNormalExpression,
@@ -39,6 +49,10 @@ const expressions: BuiltinNormalExpressions = {
   ...combinatoricalNormalExpression,
   ...randomNormalExpression,
 }
+
+Object.entries(expressions).forEach(([name, expression]) => {
+  expression.name = name
+})
 
 const aliases: BuiltinNormalExpressions = {}
 

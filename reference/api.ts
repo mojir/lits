@@ -135,6 +135,10 @@ export const api = {
     'some-pred',
     'fnull',
   ] as const,
+  meta: [
+    'doc',
+    'arity',
+  ] as const,
   misc: [
     '!=',
     '==',
@@ -151,8 +155,6 @@ export const api = {
     'identical?',
     'json-parse',
     'json-stringify',
-    'doc',
-    'arity',
   ] as const,
   object: [
     'dissoc',
@@ -547,6 +549,7 @@ export type SequenceApiName = typeof api.sequence[number]
 export type MathApiName = typeof api.math[number]
 export type FunctionalApiName = typeof api.functional[number]
 export type MiscApiName = typeof api.misc[number]
+export type MetaApiName = typeof api.meta[number]
 export type ObjectApiName = typeof api.object[number]
 export type PredicateApiName = typeof api.predicate[number]
 export type RegularExpressionApiName = typeof api.regularExpression[number]
@@ -567,6 +570,7 @@ export type NormalExpressionName =
   | SequenceApiName
   | MathApiName
   | FunctionalApiName
+  | MetaApiName
   | MiscApiName
   | ObjectApiName
   | PredicateApiName
@@ -595,6 +599,7 @@ const apiFunctionNames = [
   ...api.sequence,
   ...api.math,
   ...api.functional,
+  ...api.meta,
   ...api.misc,
   ...api.object,
   ...api.predicate,
@@ -635,6 +640,7 @@ export const categoryRecord = {
   'Regular expression': true,
   'Bitwise': true,
   'Misc': true,
+  'Meta': true,
   'Assert': true,
   'Vector': true,
   'Linear Algebra': true,

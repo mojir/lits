@@ -10,22 +10,23 @@ import { assertReference } from './categories/assert'
 import { bitwiseReference } from './categories/bitwise'
 import { collectionReference } from './categories/collection'
 import { functionalReference } from './categories/functional'
-import { mathReference } from './categories/math'
-import { miscReference } from './categories/misc'
-import { objectReference } from './categories/object'
-import { matrixReference } from './categories/matrix'
 import { gridReference } from './categories/grid'
-import { vectorReference } from './categories/vector'
 import { linAlgReference } from './categories/linearAlgebra'
+import { mathReference } from './categories/math'
+import { matrixReference } from './categories/matrix'
+import { metaReference } from './categories/meta'
+import { miscReference } from './categories/misc'
+import { numberTheoryReference } from './categories/numberTheory'
+import { objectReference } from './categories/object'
 import { predicateReference } from './categories/predicate'
+import { randomReference } from './categories/random'
 import { regularExpressionReference } from './categories/regularExpression'
 import { sequenceReference } from './categories/sequence'
 import { specialExpressionsReference } from './categories/specialExpressions'
 import { stringReference } from './categories/string'
+import { vectorReference } from './categories/vector'
 import { datatype } from './datatype'
 import { shorthand } from './shorthand'
-import { numberTheoryReference } from './categories/numberTheory'
-import { randomReference } from './categories/random'
 
 export interface TypedValue {
   type: DataType[] | DataType
@@ -97,6 +98,7 @@ export const normalExpressionReference: Record<NormalExpressionName, FunctionRef
   ...sequenceReference,
   ...mathReference,
   ...functionalReference,
+  ...metaReference,
   ...miscReference,
   ...objectReference,
   ...predicateReference,

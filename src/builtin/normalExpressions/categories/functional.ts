@@ -53,7 +53,6 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         functionType: 'Comp',
         params,
         arity: params.length > 0 ? getArityFromFunction(params.at(-1) as FunctionLike) : { min: 1, max: 1 },
-        docString: '',
       }
     },
     arity: {},
@@ -67,7 +66,6 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         functionType: 'Constantly',
         value: toAny(value),
         arity: {},
-        docString: '',
       }
     },
     arity: toFixedArity(1),
@@ -86,7 +84,6 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         functionType: 'Juxt',
         params,
         arity,
-        docString: '',
       }
     },
     arity: { min: 1 },
@@ -101,7 +98,6 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         functionType: 'Complement',
         function: fun,
         arity: getArityFromFunction(fun),
-        docString: '',
       }
     },
     arity: toFixedArity(1),
@@ -115,7 +111,6 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         functionType: 'EveryPred',
         params,
         arity: { min: 1, max: 1 },
-        docString: '',
       }
     },
     arity: { min: 1 },
@@ -129,7 +124,6 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         functionType: 'SomePred',
         params,
         arity: { min: 1, max: 1 },
-        docString: '',
       }
     },
     arity: { min: 1 },
@@ -145,7 +139,6 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         function: fun,
         params,
         arity: getArityFromFunction(fun),
-        docString: '',
       }
     },
     arity: { min: 2 },
