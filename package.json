@@ -1,6 +1,6 @@
 {
   "name": "@mojir/lits",
-  "version": "2.1.24",
+  "version": "2.1.25",
   "description": "Lits is a Lisp dialect implemented in TypeScript",
   "author": "Albert Mojir",
   "license": "MIT",
