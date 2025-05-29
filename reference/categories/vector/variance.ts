@@ -26,7 +26,7 @@ export const varianceReference: VectorReductionReference<'variance'> = {
   'vec:moving-variance': {
     title: 'vec:moving-variance',
     category: 'Vector',
-    description: 'Returns the **moving variance` of the `vector** with a given window size.',
+    description: 'Returns the **moving variance** of the `vector` with a given window size.',
     returns: {
       type: 'vector',
     },
@@ -52,7 +52,7 @@ export const varianceReference: VectorReductionReference<'variance'> = {
   'vec:centered-moving-variance': {
     title: 'vec:centered-moving-variance',
     category: 'Vector',
-    description: 'Returns the **centered moving variance` of the `vector** with a given window size.',
+    description: 'Returns the **centered moving variance** of the `vector` with a given window size.',
     returns: {
       type: 'array',
     },
@@ -91,7 +91,7 @@ export const varianceReference: VectorReductionReference<'variance'> = {
   'vec:running-variance': {
     title: 'vec:running-variance',
     category: 'Vector',
-    description: 'Returns the **running variance` of the `vector**.',
+    description: 'Returns the **running variance** of the `vector`.',
     returns: {
       type: 'vector',
     },
@@ -135,7 +135,7 @@ export const sampleVarianceReference: VectorReductionReference<'sample-variance'
   'vec:moving-sample-variance': {
     title: 'vec:moving-sample-variance',
     category: 'Vector',
-    description: 'Returns the **moving sample variance` of the `vector** with a given window size.',
+    description: 'Returns the **moving sample variance** of the `vector` with a given window size.',
     returns: {
       type: 'vector',
     },
@@ -161,7 +161,7 @@ export const sampleVarianceReference: VectorReductionReference<'sample-variance'
   'vec:centered-moving-sample-variance': {
     title: 'vec:centered-moving-sample-variance',
     category: 'Vector',
-    description: 'Returns the **centered moving sample variance` of the `vector** with a given window size.',
+    description: 'Returns the **centered moving sample variance** of the `vector` with a given window size.',
     returns: {
       type: 'array',
     },
@@ -200,14 +200,14 @@ export const sampleVarianceReference: VectorReductionReference<'sample-variance'
   'vec:running-sample-variance': {
     title: 'vec:running-sample-variance',
     category: 'Vector',
-    description: 'Returns the **running sample variance` of the `vector**.',
+    description: 'Returns the **running sample variance** of the `vector`.',
     returns: {
       type: 'array',
     },
     args: {
       vector: {
         type: 'vector',
-        description: 'The `vector` to calculate the **running sample variance` of. First element in result is `null` since `sample variance** is not defined for a single element.',
+        description: 'The `vector` to calculate the **running sample variance** of. First element in result is `null` since **sample variance** is not defined for a single element.',
       },
     },
     variants: [

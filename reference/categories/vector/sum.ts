@@ -26,7 +26,7 @@ export const sumReference: VectorReductionReference<'sum'> = {
   'vec:moving-sum': {
     title: 'vec:moving-sum',
     category: 'Vector',
-    description: 'Returns the **moving sum` of the `vector** with a given window size.',
+    description: 'Returns the **moving sum** of the `vector` with a given window size.',
     returns: {
       type: 'vector',
     },
@@ -52,7 +52,7 @@ export const sumReference: VectorReductionReference<'sum'> = {
   'vec:centered-moving-sum': {
     title: 'vec:centered-moving-sum',
     category: 'Vector',
-    description: 'Returns the **centered moving sum` of the `vector** with a given window size.',
+    description: 'Returns the **centered moving sum** of the `vector` with a given window size.',
     returns: {
       type: 'array',
     },
@@ -89,7 +89,7 @@ export const sumReference: VectorReductionReference<'sum'> = {
   'vec:running-sum': {
     title: 'vec:running-sum',
     category: 'Vector',
-    description: 'Returns the **running sum` of the `vector**.',
+    description: 'Returns the **running sum** of the `vector`.',
     returns: {
       type: 'vector',
     },

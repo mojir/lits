@@ -6,8 +6,10 @@ export function generateDocString(reference: FunctionReference): string {
     ${reference.title}${getAliases(reference)}
 
     ${reference.description
-        .replace(/`(.*?)`/g, '$1')
+        .replace(/`(.+?)`/g, '$1')
         .replace(/\$(\w+)/g, '$1')
+        .replace(/\*\*\*(.+)\*\*\*/g, '$1')
+        .replace(/\*\*\$(.+)\*\*/g, '$1')
     }
 
     Signature:

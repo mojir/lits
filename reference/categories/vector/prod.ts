@@ -26,7 +26,7 @@ export const prodReference: VectorReductionReference<'prod'> = {
   'vec:moving-prod': {
     title: 'vec:moving-prod',
     category: 'Vector',
-    description: 'Returns the **moving product` of the `vector** with a given window size.',
+    description: 'Returns the **moving product** of the `vector` with a given window size.',
     returns: {
       type: 'vector',
     },
@@ -52,7 +52,7 @@ export const prodReference: VectorReductionReference<'prod'> = {
   'vec:centered-moving-prod': {
     title: 'vec:centered-moving-prod',
     category: 'Vector',
-    description: 'Returns the **centered moving product` of the `vector** with a given window size.',
+    description: 'Returns the **centered moving product** of the `vector` with a given window size.',
     returns: {
       type: 'array',
     },
@@ -88,7 +88,7 @@ export const prodReference: VectorReductionReference<'prod'> = {
   'vec:running-prod': {
     title: 'vec:running-prod',
     category: 'Vector',
-    description: 'Returns the **running product` of the `vector**.',
+    description: 'Returns the **running product** of the `vector`.',
     returns: {
       type: 'vector',
     },

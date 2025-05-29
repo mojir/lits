@@ -5,7 +5,7 @@ export const standardDeviationReference: VectorReductionReference<'stdev'> = {
   'vec:stdev': {
     title: 'vec:stdev',
     category: 'Vector',
-    description: 'Returns the **standard deviation` of the `vector**.',
+    description: 'Returns the **standard deviation** of the `vector`.',
     returns: {
       type: 'number',
     },
@@ -26,7 +26,7 @@ export const standardDeviationReference: VectorReductionReference<'stdev'> = {
   'vec:moving-stdev': {
     title: 'vec:moving-stdev',
     category: 'Vector',
-    description: 'Returns the **moving standard deviation` of the `vector** with a given window size.',
+    description: 'Returns the **moving standard deviation** of the `vector` with a given window size.',
     returns: {
       type: 'vector',
     },
@@ -52,7 +52,7 @@ export const standardDeviationReference: VectorReductionReference<'stdev'> = {
   'vec:centered-moving-stdev': {
     title: 'vec:centered-moving-stdev',
     category: 'Vector',
-    description: 'Returns the **centered moving standard deviation` of the `vector** with a given window size.',
+    description: 'Returns the **centered moving standard deviation** of the `vector` with a given window size.',
     returns: {
       type: 'array',
     },
@@ -91,7 +91,7 @@ export const standardDeviationReference: VectorReductionReference<'stdev'> = {
   'vec:running-stdev': {
     title: 'vec:running-stdev',
     category: 'Vector',
-    description: 'Returns the **running standard deviation` of the `vector**.',
+    description: 'Returns the **running standard deviation** of the `vector`.',
     returns: {
       type: 'vector',
     },
@@ -114,7 +114,7 @@ export const sampleStandardDeviationReference: VectorReductionReference<'sample-
   'vec:sample-stdev': {
     title: 'vec:sample-stdev',
     category: 'Vector',
-    description: 'Returns the **sample standard deviation` of the `vector**.',
+    description: 'Returns the **sample standard deviation** of the `vector`.',
     returns: {
       type: 'number',
     },
@@ -135,7 +135,7 @@ export const sampleStandardDeviationReference: VectorReductionReference<'sample-
   'vec:moving-sample-stdev': {
     title: 'vec:moving-sample-stdev',
     category: 'Vector',
-    description: 'Returns the **moving sample standard deviation` of the `vector** with a given window size.',
+    description: 'Returns the **moving sample standard deviation** of the `vector` with a given window size.',
     returns: {
       type: 'vector',
     },
@@ -161,7 +161,7 @@ export const sampleStandardDeviationReference: VectorReductionReference<'sample-
   'vec:centered-moving-sample-stdev': {
     title: 'vec:centered-moving-sample-stdev',
     category: 'Vector',
-    description: 'Returns the **centered moving sample standard deviation` of the `vector** with a given window size.',
+    description: 'Returns the **centered moving sample standard deviation** of the `vector` with a given window size.',
     returns: {
       type: 'array',
     },
@@ -200,14 +200,14 @@ export const sampleStandardDeviationReference: VectorReductionReference<'sample-
   'vec:running-sample-stdev': {
     title: 'vec:running-sample-stdev',
     category: 'Vector',
-    description: 'Returns the **running sample standard deviation` of the `vector**.',
+    description: 'Returns the **running sample standard deviation** of the `vector`.',
     returns: {
       type: 'array',
     },
     args: {
       vector: {
         type: 'vector',
-        description: 'The `vector` to calculate the **running sample standard deviation` of. First element in result is `null` since `sample standard deviation** is not defined for a single element.',
+        description: 'The `vector` to calculate the **running sample standard deviation** of. First element in result is `null` since **sample standard deviation** is not defined for a single element.',
       },
     },
     variants: [
