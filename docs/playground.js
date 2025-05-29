@@ -13311,7 +13311,7 @@ var Playground = (function (exports) {
             .replace(/`(.+?)`/g, '$1')
             .replace(/\$(\w+)/g, '$1')
             .replace(/\*\*\*(.+)\*\*\*/g, '$1')
-            .replace(/\*\*\$(.+)\*\*/g, '$1'), "\n\n    Signature:\n    ").concat(signature(reference).join('\n    '), "\n\n    Arguments:\n      ").concat(argStrings(reference).join('\n      '), "\n  \n    Examples:\n").concat(reference.examples.map(function (example) { return smartTrim(example, 4); }).join('\n\n')));
+            .replace(/\*\*(.+)\*\*/g, '$1'), "\n\n    Signature:\n    ").concat(signature(reference).join('\n    '), "\n\n    Arguments:\n      ").concat(argStrings(reference).join('\n      '), "\n  \n    Examples:\n").concat(reference.examples.map(function (example) { return smartTrim(example, 4); }).join('\n\n')));
     }
     function signature(_a) {
         var title = _a.title, variants = _a.variants, args = _a.args, returns = _a.returns, _isOperator = _a._isOperator;

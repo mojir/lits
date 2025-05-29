@@ -9,7 +9,7 @@ export function generateDocString(reference: FunctionReference): string {
         .replace(/`(.+?)`/g, '$1')
         .replace(/\$(\w+)/g, '$1')
         .replace(/\*\*\*(.+)\*\*\*/g, '$1')
-        .replace(/\*\*\$(.+)\*\*/g, '$1')
+        .replace(/\*\*(.+)\*\*/g, '$1')
     }
 
     Signature:
