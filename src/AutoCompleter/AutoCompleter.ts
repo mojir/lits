@@ -108,31 +108,53 @@ export class AutoCompleter {
   }
 
   private generateSuggestions(params: ContextParams): string[] {
+    const blacklist = new Set<string>(['0_def', '0_defn', '0_fn'])
+
+    const startsWithCaseSensitive = this.generateWithPredicate(params, suggestion =>
+      !blacklist.has(suggestion) && suggestion.startsWith(this.searchString))
+    startsWithCaseSensitive.forEach(suggestion => blacklist.add(suggestion))
+
+    const startsWithCaseInsensitive = this.generateWithPredicate(params, suggestion =>
+      !blacklist.has(suggestion) && suggestion.toLowerCase().startsWith(this.searchString.toLowerCase()))
+    startsWithCaseInsensitive.forEach(suggestion => blacklist.add(suggestion))
+
+    const includesCaseSensitive = this.generateWithPredicate(params, suggestion =>
+      !blacklist.has(suggestion) && suggestion.includes(this.searchString))
+    includesCaseSensitive.forEach(suggestion => blacklist.add(suggestion))
+
+    const includesCaseInsensitive = this.generateWithPredicate(params, suggestion =>
+      !blacklist.has(suggestion) && suggestion.includes(this.searchString.toLowerCase()))
+    includesCaseInsensitive.forEach(suggestion => blacklist.add(suggestion))
+
+    return [...startsWithCaseSensitive, ...startsWithCaseInsensitive, ...includesCaseSensitive, ...includesCaseInsensitive]
+  }
+
+  private generateWithPredicate(params: ContextParams, shouldInclude: (suggestion: string) => boolean): string[] {
     const suggestions = new Set<string>()
 
-    litsCommands.forEach((name) => {
-      if (name.startsWith(this.searchString)) {
-        suggestions.add(name)
+    litsCommands.forEach((suggestion) => {
+      if (shouldInclude(suggestion)) {
+        suggestions.add(suggestion)
       }
     })
 
     Object.keys(params.globalContext ?? {})
-      .filter(name => name.startsWith(this.searchString))
-      .forEach(name => suggestions.add(name))
+      .filter(shouldInclude)
+      .forEach(suggestion => suggestions.add(suggestion))
 
     params.contexts?.forEach((context) => {
       Object.keys(context)
-        .filter(name => name.startsWith(this.searchString))
-        .forEach(name => suggestions.add(name))
+        .filter(shouldInclude)
+        .forEach(suggestion => suggestions.add(suggestion))
     })
 
     Object.keys(params.jsFunctions ?? {})
-      .filter(name => name.startsWith(this.searchString))
-      .forEach(name => suggestions.add(name))
+      .filter(shouldInclude)
+      .forEach(suggestion => suggestions.add(suggestion))
 
     Object.keys(params.values ?? {})
-      .filter(name => name.startsWith(this.searchString))
-      .forEach(name => suggestions.add(name))
+      .filter(shouldInclude)
+      .forEach(suggestion => suggestions.add(suggestion))
 
     return [...suggestions].sort((a, b) => a.localeCompare(b))
   }

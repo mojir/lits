@@ -17056,27 +17056,47 @@ var Playground = (function (exports) {
         };
         AutoCompleter.prototype.generateSuggestions = function (params) {
             var _this = this;
+            var blacklist = new Set(['0_def', '0_defn', '0_fn']);
+            var startsWithCaseSensitive = this.generateWithPredicate(params, function (suggestion) {
+                return !blacklist.has(suggestion) && suggestion.startsWith(_this.searchString);
+            });
+            startsWithCaseSensitive.forEach(function (suggestion) { return blacklist.add(suggestion); });
+            var startsWithCaseInsensitive = this.generateWithPredicate(params, function (suggestion) {
+                return !blacklist.has(suggestion) && suggestion.toLowerCase().startsWith(_this.searchString.toLowerCase());
+            });
+            startsWithCaseInsensitive.forEach(function (suggestion) { return blacklist.add(suggestion); });
+            var includesCaseSensitive = this.generateWithPredicate(params, function (suggestion) {
+                return !blacklist.has(suggestion) && suggestion.includes(_this.searchString);
+            });
+            includesCaseSensitive.forEach(function (suggestion) { return blacklist.add(suggestion); });
+            var includesCaseInsensitive = this.generateWithPredicate(params, function (suggestion) {
+                return !blacklist.has(suggestion) && suggestion.includes(_this.searchString.toLowerCase());
+            });
+            includesCaseInsensitive.forEach(function (suggestion) { return blacklist.add(suggestion); });
+            return __spreadArray(__spreadArray(__spreadArray(__spreadArray([], __read(startsWithCaseSensitive), false), __read(startsWithCaseInsensitive), false), __read(includesCaseSensitive), false), __read(includesCaseInsensitive), false);
+        };
+        AutoCompleter.prototype.generateWithPredicate = function (params, shouldInclude) {
             var _a, _b, _c, _d;
             var suggestions = new Set();
-            litsCommands.forEach(function (name) {
-                if (name.startsWith(_this.searchString)) {
-                    suggestions.add(name);
+            litsCommands.forEach(function (suggestion) {
+                if (shouldInclude(suggestion)) {
+                    suggestions.add(suggestion);
                 }
             });
             Object.keys((_a = params.globalContext) !== null && _a !== void 0 ? _a : {})
-                .filter(function (name) { return name.startsWith(_this.searchString); })
-                .forEach(function (name) { return suggestions.add(name); });
+                .filter(shouldInclude)
+                .forEach(function (suggestion) { return suggestions.add(suggestion); });
             (_b = params.contexts) === null || _b === void 0 ? void 0 : _b.forEach(function (context) {
                 Object.keys(context)
-                    .filter(function (name) { return name.startsWith(_this.searchString); })
-                    .forEach(function (name) { return suggestions.add(name); });
+                    .filter(shouldInclude)
+                    .forEach(function (suggestion) { return suggestions.add(suggestion); });
             });
             Object.keys((_c = params.jsFunctions) !== null && _c !== void 0 ? _c : {})
-                .filter(function (name) { return name.startsWith(_this.searchString); })
-                .forEach(function (name) { return suggestions.add(name); });
+                .filter(shouldInclude)
+                .forEach(function (suggestion) { return suggestions.add(suggestion); });
             Object.keys((_d = params.values) !== null && _d !== void 0 ? _d : {})
-                .filter(function (name) { return name.startsWith(_this.searchString); })
-                .forEach(function (name) { return suggestions.add(name); });
+                .filter(shouldInclude)
+                .forEach(function (suggestion) { return suggestions.add(suggestion); });
             return __spreadArray([], __read(suggestions), false).sort(function (a, b) { return a.localeCompare(b); });
         };
         return AutoCompleter;

@@ -55,6 +55,12 @@ describe('autoCompleter', () => {
       expect(completer.getSuggestions()).toContain('defined?')
     })
 
+    it('should initialize with valid input 2', () => {
+      const completer = new AutoCompleter('(efin', 5, lits, params)
+      expect(completer.getSearchString()).toBe('efin')
+      expect(completer.getSuggestions()).toContain('defined?')
+    })
+
     it('should initialize with no params', () => {
       const completer = new AutoCompleter('(def', 4, lits, {})
       expect(completer.getSearchString()).toBe('def')
