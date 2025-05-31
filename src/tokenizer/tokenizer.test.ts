@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest'
-import { LitsError } from '../errors'
 import { NO_MATCH, tokenizeBasePrefixedNumber, tokenizeDocString, tokenizeMultiLineComment, tokenizeNumber, tokenizeOperator, tokenizeReservedSymbolToken, tokenizeSingleLineComment, tokenizeSymbol } from './tokenizers'
 
 describe('tokenizers', () => {
@@ -63,7 +62,7 @@ describe('tokenizers', () => {
       expect(tokenizeDocString('... """This is a doc \n string"""', 4)).toEqual([28, ['DocString', '"""This is a doc \n string"""']])
       expect(tokenizeDocString('""""""', 0)).toEqual([6, ['DocString', '""""""']])
       expect(tokenizeDocString('""" \\""" """', 0)).toEqual([12, ['DocString', '""" \\""" """']])
-      expect(() => tokenizeDocString('""" ""', 0)).toThrow(LitsError)
+      expect(tokenizeDocString('""" ""', 0)).toEqual([6, ['Error', '""" ""', undefined, 'Unclosed doc string at position 0']])
     })
   })
 })

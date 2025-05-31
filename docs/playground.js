@@ -15271,7 +15271,7 @@ var Playground = (function (exports) {
             nextThreeChars = input.slice(position + length, position + length + 3);
         }
         if (!char) {
-            throw new LitsError("Unclosed doc string at position ".concat(position, "."), undefined);
+            return [length, ['Error', value, undefined, "Unclosed doc string at position ".concat(position)]];
         }
         value += '"""'; // closing quote
         return [length + 3, ['DocString', value]];
@@ -15298,7 +15298,7 @@ var Playground = (function (exports) {
             char = input[position + length];
         }
         if (!char) {
-            throw new LitsError("Unclosed string at position ".concat(position, "."), undefined);
+            return [length, ['Error', value, undefined, "Unclosed string at position ".concat(position)]];
         }
         value += '"'; // closing quote
         return [length + 1, ['String', value]];
@@ -15309,16 +15309,20 @@ var Playground = (function (exports) {
         var _a = __read(tokenizeString(input, position + 1), 2), stringLength = _a[0], token = _a[1];
         if (!token)
             return NO_MATCH;
+        if (token[0] === 'Error') {
+            var errorToken = ['Error', "#".concat(token[1]), undefined, "Unclosed regexp at position ".concat(position)];
+            return [stringLength + 1, errorToken];
+        }
         position += stringLength + 1;
         var length = stringLength + 1;
         var options = '';
         while (input[position] === 'g' || input[position] === 'i') {
-            if (options.includes(input[position])) {
-                throw new LitsError("Duplicated regexp option \"".concat(input[position], "\" at position ").concat(position, "."), undefined);
-            }
             options += input[position];
             length += 1;
             position += 1;
+            if (options.includes(input[position])) {
+                return [length, ['Error', "#".concat(token[1]).concat(options), undefined, "Duplicated regexp option \"".concat(input[position], "\"")]];
+            }
         }
         return [length, ['RegexpShorthand', "#".concat(token[1]).concat(options)]];
     };
@@ -15362,7 +15366,7 @@ var Playground = (function (exports) {
                     if (i === start) {
                         return NO_MATCH;
                     }
-                    throw new LitsError("Invalid number format at position ".concat(i, "."), undefined);
+                    return [i - position + 1, ['Error', input.substring(position, i + 1), undefined, "Invalid number format at position ".concat(i + 1)]];
                 }
             }
             else if (char === '.') {
@@ -15370,7 +15374,7 @@ var Playground = (function (exports) {
                     return NO_MATCH;
                 }
                 if (hasDecimalPoint || hasExponent) {
-                    throw new LitsError("Invalid number format at position ".concat(i, "."), undefined);
+                    return [i - position + 1, ['Error', input.substring(position, i + 1), undefined, "Invalid number format at position ".concat(i + 1)]];
                 }
                 hasDecimalPoint = true;
             }
@@ -15379,10 +15383,10 @@ var Playground = (function (exports) {
                     return NO_MATCH;
                 }
                 if (hasExponent) {
-                    throw new LitsError("Invalid number format at position ".concat(i, "."), undefined);
+                    return [i - position + 1, ['Error', input.substring(position, i + 1), undefined, "Invalid number format at position ".concat(i + 1)]];
                 }
                 if (input[i - 1] === '.' || input[i - 1] === '+' || input[i - 1] === '-') {
-                    throw new LitsError("Invalid number format at position ".concat(i, "."), undefined);
+                    return [i - position + 1, ['Error', input.substring(position, i + 1), undefined, "Invalid number format at position ".concat(i + 1)]];
                 }
                 if (input[i + 1] === '+' || input[i + 1] === '-') {
                     i += 1;
@@ -15402,7 +15406,7 @@ var Playground = (function (exports) {
         }
         var nextChar = input[i];
         if (nextChar && nextChar !== ':' && !postNumberRegExp.test(nextChar)) {
-            throw new LitsError("Invalid number format at position ".concat(i, "."), undefined);
+            return [i - position + 1, ['Error', input.substring(position, i + 1), undefined, "Invalid number format at position ".concat(i + 1)]];
         }
         return [length, ['Number', input.substring(position, i)]];
     };
@@ -15452,7 +15456,7 @@ var Playground = (function (exports) {
             var escaping = false;
             while (char !== '\'' || escaping) {
                 if (char === undefined)
-                    throw new LitsError("Unclosed string at position ".concat(position, "."), undefined);
+                    return [length_1, ['Error', value, undefined, "Unclosed quoted symbol at position ".concat(position)]];
                 length_1 += 1;
                 if (escaping) {
                     escaping = false;
@@ -15523,7 +15527,7 @@ var Playground = (function (exports) {
                 length_2 += 1;
             }
             if (position + length_2 + 1 >= input.length) {
-                throw new LitsError('Comment not closed', undefined);
+                return [length_2, ['Error', value, undefined, "Unclosed multi-line comment at position ".concat(position)]];
             }
             value += '*/';
             length_2 += 2;
@@ -15576,9 +15580,6 @@ var Playground = (function (exports) {
                 ? createSourceCodeInfo(input, position, filePath)
                 : undefined;
             var tokenDescriptor = getCurrentToken(input, position);
-            if (!tokenDescriptor) {
-                throw new LitsError("Unrecognized character '".concat(input[position], "'."), sourceCodeInfo);
-            }
             var _a = __read(tokenDescriptor, 2), count = _a[0], token = _a[1];
             position += count;
             if (token) {
@@ -15629,7 +15630,7 @@ var Playground = (function (exports) {
             }
             finally { if (e_1) throw e_1.error; }
         }
-        return null;
+        return [1, ['Error', input[initialPosition], undefined, 'Unrecognized character']];
     }
 
     function isSymbolToken(token, symbolName) {
@@ -15917,6 +15918,11 @@ var Playground = (function (exports) {
             this.parseState.position += 1;
         };
         Parser.prototype.parse = function () {
+            this.tokenStream.tokens.forEach(function (token) {
+                if (token[0] === 'Error') {
+                    throw new LitsError(token[3], token[2]);
+                }
+            });
             var nodes = [];
             while (!this.isAtEnd()) {
                 nodes.push(this.parseExpression(0, true));
@@ -16983,18 +16989,12 @@ var Playground = (function (exports) {
             this.suggestions = [];
             this.suggestionIndex = null;
             var partialProgram = this.originalProgram.slice(0, this.originalPosition);
-            var tokenStream = null;
-            try {
-                tokenStream = lits.tokenize(partialProgram);
-            }
-            catch (_a) {
-                // do nothing
-            }
-            if (!tokenStream) {
-                return;
-            }
+            var tokenStream = lits.tokenize(partialProgram);
             var lastToken = tokenStream.tokens.at(-1);
             if (!lastToken) {
+                return;
+            }
+            if (lastToken[0] === 'Error') {
                 return;
             }
             this.searchString = lastToken[1];

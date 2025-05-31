@@ -213,6 +213,12 @@ export class Parser {
   }
 
   public parse(): Node[] {
+    this.tokenStream.tokens.forEach((token) => {
+      if (token[0] === 'Error') {
+        throw new LitsError(token[3], token[2])
+      }
+    })
+
     const nodes: Node[] = []
     while (!this.isAtEnd()) {
       nodes.push(this.parseExpression(0, true))

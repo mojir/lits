@@ -11,6 +11,7 @@ export const tokenTypes = [
   'RParen',
   'BasePrefixedNumber',
   'DocString',
+  'Error',
   'MultiLineComment',
   'Number',
   'Operator',
@@ -28,6 +29,8 @@ const modifierNames = ['&rest', '&let', '&when', '&while'] as const
 export type ModifierName = typeof modifierNames[number]
 
 type GenericToken<T extends TokenType, V extends string = string> = [T, V] | [T, V, SourceCodeInfo]
+
+export type ErrorToken = ['Error', string, SourceCodeInfo | undefined, string]
 
 export type LBraceToken = GenericToken<'LBrace', '{'>
 export type LBracketToken = GenericToken<'LBracket', '['>
@@ -57,6 +60,7 @@ export type Token =
   | RParenToken
   | BasePrefixedNumberToken
   | DocStringToken
+  | ErrorToken
   | MultiLineCommentToken
   | NumberToken
   | OperatorToken

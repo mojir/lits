@@ -1,4 +1,3 @@
-import { LitsError } from '../errors'
 import type { FilePathParams } from '../Lits/Lits'
 import { tokenizers } from './tokenizers'
 import type { SourceCodeInfo, Token, TokenDescriptor } from './token'
@@ -23,10 +22,6 @@ export function tokenize(input: string, debug: boolean, filePath: FilePathParams
       : undefined
 
     const tokenDescriptor = getCurrentToken(input, position)
-
-    if (!tokenDescriptor) {
-      throw new LitsError(`Unrecognized character '${input[position]}'.`, sourceCodeInfo)
-    }
 
     const [count, token] = tokenDescriptor
 
@@ -64,7 +59,7 @@ function createSourceCodeInfo(input: string, position: number, filePath?: string
   }
 }
 
-function getCurrentToken(input: string, position: number): TokenDescriptor<Token> | null {
+function getCurrentToken(input: string, position: number): TokenDescriptor<Token> {
   const initialPosition = position
 
   for (const tokenizer of tokenizers) {
@@ -76,5 +71,5 @@ function getCurrentToken(input: string, position: number): TokenDescriptor<Token
 
     return [position - initialPosition, token]
   }
-  return null
+  return [1, ['Error', input[initialPosition], undefined, 'Unrecognized character']] as TokenDescriptor<Token>
 }

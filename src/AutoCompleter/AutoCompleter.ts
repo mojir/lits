@@ -1,7 +1,6 @@
 import { normalExpressionKeys, specialExpressionKeys } from '../builtin'
 import type { ContextParams, Lits } from '../Lits/Lits'
 import { reservedSymbolRecord } from '../tokenizer/reservedNames'
-import type { TokenStream } from '../tokenizer/tokenize'
 
 export type AutoCompleteSuggestion = {
   program: string
@@ -20,20 +19,14 @@ export class AutoCompleter {
 
   constructor(public readonly originalProgram: string, public readonly originalPosition: number, lits: Lits, params: ContextParams) {
     const partialProgram = this.originalProgram.slice(0, this.originalPosition)
-    let tokenStream: TokenStream | null = null
-    try {
-      tokenStream = lits.tokenize(partialProgram)
-    }
-    catch {
-      // do nothing
-    }
-
-    if (!tokenStream) {
-      return
-    }
+    const tokenStream = lits.tokenize(partialProgram)
 
     const lastToken = tokenStream.tokens.at(-1)
     if (!lastToken) {
+      return
+    }
+
+    if (lastToken[0] === 'Error') {
       return
     }
 

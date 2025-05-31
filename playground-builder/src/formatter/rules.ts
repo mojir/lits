@@ -133,6 +133,8 @@ function getStylesFromToken(token: Token): string {
       return styles('text-color-BrightYellow')
     case 'Whitespace':
       return ''
+    case 'Error':
+      return styles('text-color-Crimson')
     case 'LBrace':
     case 'RBrace':
     case 'LBracket':

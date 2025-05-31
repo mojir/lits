@@ -1,10 +1,9 @@
-import { LitsError } from '../errors'
 import { isSymbolicOperator } from './operators'
-import type { BasePrefixedNumberToken, DocStringToken, LBraceToken, LBracketToken, LParenToken, MultiLineCommentToken, NumberToken, OperatorToken, RBraceToken, RBracketToken, RParenToken, RegexpShorthandToken, ReservedSymbolToken, SingleLineCommentToken, StringToken, SymbolToken, Token, TokenDescriptor, WhitespaceToken } from './token'
+import type { BasePrefixedNumberToken, DocStringToken, ErrorToken, LBraceToken, LBracketToken, LParenToken, MultiLineCommentToken, NumberToken, OperatorToken, RBraceToken, RBracketToken, RParenToken, RegexpShorthandToken, ReservedSymbolToken, SingleLineCommentToken, StringToken, SymbolToken, Token, TokenDescriptor, WhitespaceToken } from './token'
 import type { ReservedSymbol } from './reservedNames'
 import { reservedSymbolRecord } from './reservedNames'
 
-export type Tokenizer<T extends Token> = (input: string, position: number) => TokenDescriptor<T>
+export type Tokenizer<T extends Token> = (input: string, position: number) => TokenDescriptor<T | ErrorToken>
 
 const illegalSymbolCharacters = [
   '(',
@@ -82,7 +81,7 @@ export const tokenizeDocString: Tokenizer<DocStringToken> = (input, position) =>
     nextThreeChars = input.slice(position + length, position + length + 3)
   }
   if (!char) {
-    throw new LitsError(`Unclosed doc string at position ${position}.`, undefined)
+    return [length, ['Error', value, undefined, `Unclosed doc string at position ${position}`]]
   }
   value += '"""' // closing quote
   return [length + 3, ['DocString', value]]
@@ -111,7 +110,7 @@ const tokenizeString: Tokenizer<StringToken> = (input, position) => {
     char = input[position + length]
   }
   if (!char) {
-    throw new LitsError(`Unclosed string at position ${position}.`, undefined)
+    return [length, ['Error', value, undefined, `Unclosed string at position ${position}`]]
   }
   value += '"' // closing quote
   return [length + 1, ['String', value]]
@@ -125,17 +124,22 @@ const tokenizeRegexpShorthand: Tokenizer<RegexpShorthandToken> = (input, positio
   if (!token)
     return NO_MATCH
 
+  if (token[0] === 'Error') {
+    const errorToken: ErrorToken = ['Error', `#${token[1]}`, undefined, `Unclosed regexp at position ${position}`]
+    return [stringLength + 1, errorToken]
+  }
+
   position += stringLength + 1
   let length = stringLength + 1
 
   let options = ''
   while (input[position] === 'g' || input[position] === 'i') {
-    if (options.includes(input[position]!)) {
-      throw new LitsError(`Duplicated regexp option "${input[position]}" at position ${position}.`, undefined)
-    }
     options += input[position]!
     length += 1
     position += 1
+    if (options.includes(input[position]!)) {
+      return [length, ['Error', `#${token[1]}${options}`, undefined, `Duplicated regexp option "${input[position]}"`]]
+    }
   }
 
   return [length, ['RegexpShorthand', `#${token[1]}${options}`]]
@@ -190,7 +194,7 @@ export const tokenizeNumber: Tokenizer<NumberToken> = (input, position) => {
         if (i === start) {
           return NO_MATCH
         }
-        throw new LitsError(`Invalid number format at position ${i}.`, undefined)
+        return [i - position + 1, ['Error', input.substring(position, i + 1), undefined, `Invalid number format at position ${i + 1}`]]
       }
     }
 
@@ -199,7 +203,7 @@ export const tokenizeNumber: Tokenizer<NumberToken> = (input, position) => {
         return NO_MATCH
       }
       if (hasDecimalPoint || hasExponent) {
-        throw new LitsError(`Invalid number format at position ${i}.`, undefined)
+        return [i - position + 1, ['Error', input.substring(position, i + 1), undefined, `Invalid number format at position ${i + 1}`]]
       }
       hasDecimalPoint = true
     }
@@ -210,11 +214,11 @@ export const tokenizeNumber: Tokenizer<NumberToken> = (input, position) => {
       }
 
       if (hasExponent) {
-        throw new LitsError(`Invalid number format at position ${i}.`, undefined)
+        return [i - position + 1, ['Error', input.substring(position, i + 1), undefined, `Invalid number format at position ${i + 1}`]]
       }
 
       if (input[i - 1] === '.' || input[i - 1] === '+' || input[i - 1] === '-') {
-        throw new LitsError(`Invalid number format at position ${i}.`, undefined)
+        return [i - position + 1, ['Error', input.substring(position, i + 1), undefined, `Invalid number format at position ${i + 1}`]]
       }
 
       if (input[i + 1] === '+' || input[i + 1] === '-') {
@@ -240,7 +244,7 @@ export const tokenizeNumber: Tokenizer<NumberToken> = (input, position) => {
 
   const nextChar = input[i]
   if (nextChar && nextChar !== ':' && !postNumberRegExp.test(nextChar)) {
-    throw new LitsError(`Invalid number format at position ${i}.`, undefined)
+    return [i - position + 1, ['Error', input.substring(position, i + 1), undefined, `Invalid number format at position ${i + 1}`]]
   }
 
   return [length, ['Number', input.substring(position, i)]]
@@ -301,7 +305,7 @@ export const tokenizeSymbol: Tokenizer<SymbolToken> = (input, position) => {
     let escaping = false
     while (char !== '\'' || escaping) {
       if (char === undefined)
-        throw new LitsError(`Unclosed string at position ${position}.`, undefined)
+        return [length, ['Error', value, undefined, `Unclosed quoted symbol at position ${position}`]]
 
       length += 1
       if (escaping) {
@@ -382,7 +386,7 @@ export const tokenizeMultiLineComment: Tokenizer<MultiLineCommentToken> = (input
       length += 1
     }
     if (position + length + 1 >= input.length) {
-      throw new LitsError('Comment not closed', undefined)
+      return [length, ['Error', value, undefined, `Unclosed multi-line comment at position ${position}`]]
     }
     value += '*/'
     length += 2
