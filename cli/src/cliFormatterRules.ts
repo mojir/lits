@@ -1,6 +1,6 @@
 import { type TextFormatter, createFormatter } from '../../common/createFormatter'
 import { polishSymbolCharacterClass, polishSymbolFirstCharacterClass } from '../../src/symbolPatterns'
-import { ColorEnum, type Colorizer } from './colorizer'
+import { type Colorizer, Colors } from './colorizer'
 
 export type FormatterRule = (text: string, index: number, formatter: TextFormatter) => {
   count: number
@@ -56,8 +56,8 @@ export const getNumberRule: (cli: Colorizer) => FormatterRule = fmt => (text, in
 const operatorRule = createRule({
   name: 'string',
   startPattern: /^[<>\-+/*=?.,():]+/,
-  startTag: `${ColorEnum.Bright}${ColorEnum.FgWhite}`,
-  endTag: ColorEnum.Reset,
+  startTag: `${Colors.Bright}${Colors.FgWhite}`,
+  endTag: Colors.Reset,
   keepPatterns: true,
   formatPatterns: true,
   stopRecursion: true,
@@ -67,8 +67,8 @@ const stringRule = createRule({
   name: 'string',
   startPattern: /^"/,
   endPattern: /^"/,
-  startTag: ColorEnum.FgRed,
-  endTag: ColorEnum.Reset,
+  startTag: Colors.FgRed,
+  endTag: Colors.Reset,
   keepPatterns: true,
   formatPatterns: true,
   stopRecursion: true,
@@ -77,8 +77,8 @@ const stringRule = createRule({
 const shortcutStringRule = createRule({
   name: 'string',
   startPattern: new RegExp(`^:${polishSymbolCharacterClass}+`),
-  startTag: ColorEnum.FgRed,
-  endTag: ColorEnum.Reset,
+  startTag: Colors.FgRed,
+  endTag: Colors.Reset,
   keepPatterns: true,
   formatPatterns: true,
   stopRecursion: true,
@@ -88,8 +88,8 @@ const functionNameRule = createRule({
   name: 'functionName',
   startPattern: new RegExp(`^\\((?=${polishSymbolCharacterClass}+)`),
   endPattern: /^[) \n]/,
-  startTag: ColorEnum.FgBlue,
-  endTag: ColorEnum.Reset,
+  startTag: Colors.FgBlue,
+  endTag: Colors.Reset,
   keepPatterns: true,
   formatPatterns: false,
   stopRecursion: true,
@@ -98,8 +98,8 @@ const functionNameRule = createRule({
 const nameRule = createRule({
   name: 'functionName',
   startPattern: new RegExp(`^${polishSymbolCharacterClass}+`),
-  startTag: `${ColorEnum.Bright}${ColorEnum.FgBlue}`,
-  endTag: ColorEnum.Reset,
+  startTag: `${Colors.Bright}${Colors.FgBlue}`,
+  endTag: Colors.Reset,
   keepPatterns: true,
   formatPatterns: true,
   stopRecursion: true,
@@ -108,8 +108,8 @@ const nameRule = createRule({
 const commentRule = createRule({
   name: 'comment',
   startPattern: /^;.*/,
-  startTag: `${ColorEnum.FgGray}${ColorEnum.Italic}`,
-  endTag: ColorEnum.Reset,
+  startTag: `${Colors.FgGray}${Colors.Italic}`,
+  endTag: Colors.Reset,
   keepPatterns: true,
   formatPatterns: true,
   stopRecursion: true,
@@ -118,8 +118,8 @@ const commentRule = createRule({
 const litsKeywordRule = createRule({
   name: 'functionName',
   startPattern: /^(null|true|false)\b/,
-  startTag: `${ColorEnum.Bright}${ColorEnum.FgGray}`,
-  endTag: ColorEnum.Reset,
+  startTag: `${Colors.Bright}${Colors.FgGray}`,
+  endTag: Colors.Reset,
   keepPatterns: true,
   formatPatterns: true,
   stopRecursion: true,
@@ -128,8 +128,8 @@ const litsKeywordRule = createRule({
 const inlineCodeKeywordRule = createRule({
   name: 'inlineCodeKeywordRule',
   startPattern: /^(null|true|false|falsy|truthy)\b/,
-  startTag: `${ColorEnum.Bright}${ColorEnum.FgGray}`,
-  endTag: ColorEnum.Reset,
+  startTag: `${Colors.Bright}${Colors.FgGray}`,
+  endTag: Colors.Reset,
   keepPatterns: true,
   formatPatterns: true,
   stopRecursion: true,
@@ -206,16 +206,16 @@ const italicRule = createRule({
   name: 'italic',
   startPattern: /^\*\*\*/,
   endPattern: /^\*\*\*/,
-  startTag: ColorEnum.Italic,
-  endTag: ColorEnum.Reset,
+  startTag: Colors.Italic,
+  endTag: Colors.Reset,
 })
 
 const boldRule = createRule({
   name: 'bold',
   startPattern: /^\*\*/,
   endPattern: /^\*\*/,
-  startTag: ColorEnum.Bright,
-  endTag: ColorEnum.Reset,
+  startTag: Colors.Bright,
+  endTag: Colors.Reset,
 })
 
 export function getMdRules(fmt: Colorizer): FormatterRule[] {

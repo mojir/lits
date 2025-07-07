@@ -14,13 +14,14 @@ import { polishSymbolCharacterClass, polishSymbolFirstCharacterClass } from '../
 import type { Context } from '../../src/evaluator/interface'
 import { Lits } from '../../src/Lits/Lits'
 import { normalExpressionKeys, specialExpressionKeys } from '../../src/builtin'
-import { ColorEnum, createColorizer } from './colorizer'
+import { Colors, createColorizer } from './colorizer'
 import { getCliFunctionSignature } from './cliDocumentation/getCliFunctionSignature'
 import { getCliDocumentation } from './cliDocumentation/getCliDocumentation'
 import { getInlineCodeFormatter } from './cliFormatterRules'
 import { createReadlineInterface } from './createReadlineInterface'
 
-const fmt = createColorizer()
+const useColor = !process.env.NO_COLOR
+const fmt = createColorizer(useColor)
 
 const HIST_SIZE = 1000
 const PROMPT = fmt.bright.gray('> ')
@@ -309,7 +310,7 @@ Type ${fmt.italic('`help')} for more information.`)
           rl.close()
           break
         default:
-          printErrorMessage(`Unrecognized command ${ColorEnum.Italic}${line}${ColorEnum.ResetItalic}, try ${ColorEnum.Italic}\`help${ColorEnum.ResetItalic}`)
+          printErrorMessage(`Unrecognized command ${Colors.Italic}${line}${Colors.ResetItalic}, try ${Colors.Italic}\`help${Colors.ResetItalic}`)
       }
     }
     else if (line) {

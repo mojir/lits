@@ -1,4 +1,3 @@
-import { prettyPi } from '@mojir/pretty-pi'
 import type { UnknownRecord } from '../src/interface'
 import { isRegularExpression } from '../src/typeGuards/lits'
 import { isLitsFunction } from '../src/typeGuards/litsFunction'
@@ -23,7 +22,7 @@ export function stringifyValue(value: unknown, html: boolean): string {
     return `${value}`
 
   if (typeof value === 'number') {
-    return prettyPi(value)
+    return `${value}`
   }
 
   if (isRegularExpression(value))
@@ -41,12 +40,12 @@ export function stringifyValue(value: unknown, html: boolean): string {
 
     if (value.length > 8) {
       return `[\n  ${value.map((cell) => {
-        return prettyPi(cell)
+        return cell
       }).join(',\n  ')}\n]`
     }
     else {
       return `[${value.map((cell) => {
-        return prettyPi(cell)
+        return cell
       }).join(', ')}]`
     }
   }
@@ -74,47 +73,11 @@ function replaceInfinities(value: unknown): unknown {
   return value
 }
 
-function prettyIfNumber(value: unknown): string {
-  if (typeof value === 'number') {
-    return prettyPi(value)
-  }
-  return `${value}`
-}
-
 function stringifyMatrix(matrix: (null | number | string | boolean)[][]): string {
-  const padding = matrix.flat().reduce((max: number, cell) => Math.max(max, prettyIfNumber(cell).length), 0) + 1
-  const rows = matrix.map(row => `[${row.map(cell => prettyIfNumber(cell).padStart(padding)).join(' ')} ]`)
+  const padding = matrix.flat().reduce((max: number, cell) => Math.max(max, `${cell}`.length), 0) + 1
+  const rows = matrix.map(row => `[${row.map(cell => `${cell}`.padStart(padding)).join(' ')} ]`)
   return rows.join('\n')
 }
-
-// function isMatrix(value: unknown): value is (null | number | string | boolean)[][] {
-//   if (!Array.isArray(value)) {
-//     return false
-//   }
-//   if (!value.every(row => Array.isArray(row))) {
-//     return false
-//   }
-//   let cols = -1
-//   for (const row of value) {
-//     if (cols === -1) {
-//       cols = row.length
-//       if (cols === 0) {
-//         return false
-//       }
-//     }
-//     else {
-//       if (row.length !== cols) {
-//         return false
-//       }
-//     }
-//     for (const cell of row) {
-//       if (typeof cell !== 'number' && typeof cell !== 'string' && typeof cell !== 'boolean' && cell !== null) {
-//         return false
-//       }
-//     }
-//   }
-//   return true
-// }
 
 export function findAllOccurrences(input: string, pattern: RegExp): Set<string> {
   const matches = [...input.matchAll(pattern)]

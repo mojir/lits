@@ -1,6 +1,6 @@
 {
   "name": "@mojir/lits",
-  "version": "2.1.29",
+  "version": "2.1.32",
   "description": "Lits is a Lisp dialect implemented in TypeScript",
   "author": "Albert Mojir",
   "license": "MIT",
@@ -46,7 +46,7 @@
     "build-playground": "npm run clean-playground && rollup -c rollup.config.playground-builder.js && rollup -c rollup.config.playground-www.js && node ./playground-builder/build/buildPlaygroundSite.js",
     "build-cli": "rollup -c rollup.config.cli.js",
     "lits": "node ./dist/cli/cli.js",
-    "playground": "open-cli ./docs/index.html",
+    "dev": "npx serve docs -p 9901",
     "lcov": "open-cli ./coverage/index.html"
   },
   "dependencies": {
@@ -61,6 +61,7 @@
     "@vitest/coverage-v8": "1.6.0",
     "open-cli": "8.0.0",
     "rollup": "4.18.0",
+    "serve": "^14.2.4",
     "tslib": "2.6.3",
     "typescript": "5.5.2",
     "vitest": "1.6.0"
