@@ -116,17 +116,17 @@ describe('parser', () => {
     expect(() => litsDebug.run('1e2e2')).toThrow(LitsError)
     expect(() => litsDebug.run('match("Albert", #"as(d")')).toThrow(LitsError)
     expect(() => litsDebug.run('let _0 = 0;')).not.toThrow()
-    expect(() => litsDebug.getUndefinedSymbols('function foo([,,a,...a]) { a }; foo([1, 2, 3])')).toThrow(LitsError)
-    expect(() => litsDebug.getUndefinedSymbols('function foo([,,a,...a]) { a }; foo([1, 2, 3])')).toThrow(LitsError)
-    expect(() => litsDebug.getUndefinedSymbols('function foo([,,a,a]) { a }; foo([1, 2, 3])')).toThrow(LitsError)
-    expect(() => litsDebug.getUndefinedSymbols('function foo([,,a]) { a }; foo([1, 2, 3])')).not.toThrow()
-    expect(() => litsDebug.run('function foo([,,a]) { a }; foo([1, 2, 3])')).not.toThrow()
-    expect(() => litsDebug.run('function foo({a}) { a }; foo({})')).not.toThrow()
-    expect(() => litsDebug.run('function foo({a, [a]}) { a };')).toThrow(LitsError)
-    expect(() => litsDebug.run('function foo({a a}) { a };')).toThrow(LitsError)
-    expect(() => litsDebug.run('function foo({a, a}) { a };')).toThrow(LitsError)
-    expect(() => litsDebug.run('function foo({a, b as a}) { a };')).toThrow(LitsError)
-    expect(() => litsDebug.run('function foo(let a = 1;) { 1 }')).toThrow(LitsError)
+    expect(() => litsDebug.getUndefinedSymbols('let foo = ([,,a,...a]) -> a; foo([1, 2, 3])')).toThrow(LitsError)
+    expect(() => litsDebug.getUndefinedSymbols('let foo = ([,,a,...a]) -> a; foo([1, 2, 3])')).toThrow(LitsError)
+    expect(() => litsDebug.getUndefinedSymbols('let foo = ([,,a,a]) -> a; foo([1, 2, 3])')).toThrow(LitsError)
+    expect(() => litsDebug.getUndefinedSymbols('let foo = ([,,a]) -> a; foo([1, 2, 3])')).not.toThrow()
+    expect(() => litsDebug.run('let foo = ([,,a]) -> a; foo([1, 2, 3])')).not.toThrow()
+    expect(() => litsDebug.run('let foo = ({a}) -> a; foo({})')).not.toThrow()
+    expect(() => litsDebug.run('let foo = ({a, [a]}) -> a;')).toThrow(LitsError)
+    expect(() => litsDebug.run('let foo = ({a a}) -> a;')).toThrow(LitsError)
+    expect(() => litsDebug.run('let foo = ({a, a}) -> a;')).toThrow(LitsError)
+    expect(() => litsDebug.run('let foo = ({a, b as a}) -> a;')).toThrow(LitsError)
+    expect(() => litsDebug.run('let foo = (let a = 1;) -> 1')).toThrow(LitsError)
     expect(() => litsDebug.run('"\\t\\r\\n\\b\\f"')).not.toThrow()
     expect(() => litsDebug.run('E')).not.toThrow()
     expect(() => litsDebug.run('123')).not.toThrow()
@@ -135,9 +135,9 @@ describe('parser', () => {
     expect(() => litsDebug.run('let \'a\\ab\' = 1;')).not.toThrow()
     expect(() => litsDebug.run('`')).toThrow(LitsError)
     expect(() => litsDebug.run('export fun a(b) 1, end')).toThrow(LitsError)
-    expect(() => litsDebug.run('export function a(b) { 1, };')).toThrow(LitsError)
-    expect(() => litsDebug.run('export function a(b) { 1; 2 };')).not.toThrow()
-    expect(() => litsDebug.run('function a(b) { 1, };')).toThrow(LitsError)
+    expect(() => litsDebug.run('export let a = (b) -> { 1, };')).toThrow(LitsError)
+    expect(() => litsDebug.run('export let a = (b) -> { 1; 2 };')).not.toThrow()
+    expect(() => litsDebug.run('let a = (b) -> { 1, };')).toThrow(LitsError)
     expect(() => litsDebug.run('switch (1) { case 1: 1; 2 }')).not.toThrow()
     expect(() => litsDebug.run('switch (1) { case 1: 1, end }')).toThrow(LitsError)
     expect(() => litsDebug.run('cond { case 1: 1; 2 }')).not.toThrow()
@@ -730,7 +730,7 @@ describe('parser', () => {
     test('samples', () => {
       expect(lits.run('export let a = 10; a')).toBe(10)
       expect(lits.run(`
-        export function foo() {
+        export let foo = () -> {
           11
         };
         foo()`)).toBe(11)
@@ -853,7 +853,7 @@ describe('parser', () => {
   describe('function', () => {
     test('basic', () => {
       expect(lits.run(`
-function foo() {
+let foo = () -> {
   42
 };
 
@@ -862,13 +862,13 @@ foo()`)).toBe(42)
 
     test('empty block', () => {
       expect(lits.run(`
-function foo() {};
+let foo = () -> {};
 
 foo()`)).toBeNull()
     })
     test('with rest arguments///', () => {
       expect(lits.run(`
-function foo(...x) {
+let foo = (...x) -> {
   '+' apply (x filter -> $ > 0)
 };
 
@@ -877,7 +877,7 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
 
     test('with default arguments', () => {
       expect(lits.run(`
-function foo(a = 10, b = 20) {
+let foo = (a = 10, b = 20) -> {
   a + b
 };
 
@@ -886,7 +886,7 @@ foo()`)).toBe(30)
 
     test('with default arguments 1', () => {
       expect(lits.run(`
-function foo(a = 10, b = 20) {
+let foo = (a = 10, b = 20) -> {
   a + b
 };
 
@@ -895,7 +895,7 @@ foo(0)`)).toBe(20)
 
     test('with default arguments 2', () => {
       expect(lits.run(`
-function foo(a = 10, b = 20) {
+let foo = (a = 10, b = 20) -> {
   a + b
 };
 
@@ -1064,7 +1064,7 @@ foo(1, 2)`)).toBe(3)
       }
       test('samples.', () => {
         expect(lits.run(`
-          function foo({ a as b = 10 }) {
+          let foo = ({ a as b = 10 }) -> {
             b
           };
 
@@ -1086,7 +1086,7 @@ foo(1, 2)`)).toBe(3)
         `, { values })).toEqual([7, 'Bob'])
 
         expect(lits.run(`
-          function foo([a, b] = [1, 2]) {
+          let foo = ([a, b] = [1, 2]) -> {
             a + b
           };
 
@@ -1094,7 +1094,7 @@ foo(1, 2)`)).toBe(3)
         `, { values })).toEqual(3)
 
         expect(lits.run(`
-          function foo([{ value as a }, { value as b }] = [{ value: 1 }, { value: 2 }]) {
+          let foo = ([{ value as a }, { value as b }] = [{ value: 1 }, { value: 2 }]) -> {
             a + b
           };
 
@@ -1102,7 +1102,7 @@ foo(1, 2)`)).toBe(3)
           `, { values })).toEqual(3)
 
         expect(lits.run(`
-          function foo([{ value as a } = { value: 10 }, { value as b } = { value: 20 }] = [{ value: 1 }, { value: 2 }]) {
+          let foo = ([{ value as a } = { value: 10 }, { value as b } = { value: 20 }] = [{ value: 1 }, { value: 2 }]) -> {
             a + b
           };
 
@@ -1110,7 +1110,7 @@ foo(1, 2)`)).toBe(3)
             `, { values })).toEqual(30)
 
         expect(lits.run(`
-          function foo({ value = 10 }) {
+          let foo = ({ value = 10 }) -> {
             value
           };
 
@@ -1118,7 +1118,7 @@ foo(1, 2)`)).toBe(3)
           `, { values })).toEqual(10)
 
         expect(lits.run(`
-          function foo([{ value as a } = { value: 10 }, { value as b = 200 } = { value: 20 }] = [{ value: 1 }, { value: 2 }]) {
+          let foo = ([{ value as a } = { value: 10 }, { value as b = 200 } = { value: 20 }] = [{ value: 1 }, { value: 2 }]) -> {
             a + b
           };
 
@@ -1126,7 +1126,7 @@ foo(1, 2)`)).toBe(3)
             `, { values })).toEqual(21)
 
         expect(lits.run(`
-          function foo([{ value as a } = { value: 10 }, { value as b = 200 } = { value: 20 }] = [{ value: 1 }, { value: 2 }]) {
+          let foo = ([{ value as a } = { value: 10 }, { value as b = 200 } = { value: 20 }] = [{ value: 1 }, { value: 2 }]) -> {
             a + b
           };
 
@@ -1338,6 +1338,19 @@ foo(1, 2)`)).toBe(3)
       expect(lits.run('((x, y) -> x + y)(10, -5)')).toBe(5)
     })
 
+    it('supports recursion via self', () => {
+      expect(lits.run(`
+        let fib = (n, a = 0, b = 1) -> {
+          if (n == 0)
+            a
+          else if (n == 1)
+            b
+          else
+            self(n - 1, b, a + b)
+        };
+
+        fib(10)`)).toBe(55)
+    })
     it('supports single argument without parentheses', () => {
       expect(lits.run('(x -> x + 1)(1)')).toBe(2)
       expect(lits.run('((x) -> x + 1)(1)')).toBe(2)
@@ -1347,7 +1360,7 @@ foo(1, 2)`)).toBe(3)
     // Testing the provided lambda function example
       expect(lits.run('(-> 1)()')).toBe(1)
       expect(lits.run('(-> $)(1)')).toBe(1)
-      expect(lits.run('(-> $1 + $2)(3, 4)')).toBe(7)
+      expect(lits.run('(-> { $1 + $2 })(3, 4)')).toBe(7)
     })
 
     it('supports lambda functions with no parameters', () => {

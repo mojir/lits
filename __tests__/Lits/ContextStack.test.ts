@@ -34,4 +34,14 @@ describe('contextStack', () => {
 
     expect(() => contextStack.addValues({ reduce: 'bar' }, undefined)).toThrow()
   })
+  it('should throw if exporting self', () => {
+    const contextStack = createContextStack()
+
+    expect(() => contextStack.exportValues({ self: 'bar' }, undefined)).toThrow()
+  })
+  it('should throw if storing self', () => {
+    const contextStack = createContextStack()
+
+    expect(() => contextStack.addValues({ self: 'bar' }, undefined)).toThrow()
+  })
 })

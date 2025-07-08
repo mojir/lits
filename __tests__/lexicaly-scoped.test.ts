@@ -10,7 +10,7 @@ describe('lits Lexical Scoping', () => {
       expect(lits.run(`
         let bar = {
           let x = 10;
-          function foo(a) { a * x };
+          let foo = (a) -> { a * x };
           foo;
         };
         
@@ -22,8 +22,8 @@ describe('lits Lexical Scoping', () => {
       expect(lits.run(`
         let outer = 5;
         
-        function makeMultiplier() {
-          function multiply(n) { n * outer };
+        let makeMultiplier = () -> {
+          let multiply = (n) -> { n * outer };
           multiply;
         };
         
@@ -75,9 +75,9 @@ describe('lits Lexical Scoping', () => {
   describe('closure behavior', () => {
     test('closures capture the lexical environment', () => {
       expect(lits.run(`
-        function makeCounter() {
+        let makeCounter = () -> {
           let counter = 0;
-          function increment() {
+          let increment = () -> {
             let counter = counter + 1;
             counter;
           };
@@ -91,9 +91,9 @@ describe('lits Lexical Scoping', () => {
 
     test('multiple closure instances maintain separate state', () => {
       expect(lits.run(`
-        function makeCounter() {
+        let makeCounter = () -> {
           let counter = 0;
-          function increment() {
+          let increment = () -> {
             let counter = counter + 1;
             counter;
           };
@@ -154,11 +154,11 @@ describe('lits Lexical Scoping', () => {
   describe('recursive functions', () => {
     test('recursive functions work with lexical scope', () => {
       expect(lits.run(`
-        function factorial(n) {
+        let factorial = (n) -> {
           if (n <= 1) {
             1
           } else {
-            n * factorial(n - 1)
+            n * self(n - 1)
           }
         };
         
@@ -173,7 +173,7 @@ describe('lits Lexical Scoping', () => {
       expect(lits.run(`
         let x = 10;
         
-        function test(x) {
+        let test = (x) -> {
           x;  // Should use parameter x, not outer x
         };
         

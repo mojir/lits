@@ -30,7 +30,7 @@ describe('regexp functions', () => {
         expect(
           lits.run(
             `
-          function email?(string) {
+          let email? = (string) -> {
             boolean(
               match(
                 string,
@@ -45,7 +45,7 @@ describe('regexp functions', () => {
         expect(
           lits.run(
             `
-          function dot?(string) {
+          let dot? = (string) -> {
             boolean(match(string, #"^\\.$"))
           };
           [dot?("."), dot?(",")];

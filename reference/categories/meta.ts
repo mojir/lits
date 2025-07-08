@@ -20,7 +20,7 @@ export const metaReference: Record<MetaApiName, FunctionReference<'Meta'>> = {
     examples: [
       'doc(+)',
       `
-function add(x, y) {
+let add = (x, y) -> {
   """
   Adds two numbers.
   Args:
@@ -54,13 +54,13 @@ doc(add)`,
       'arity(+)',
       'arity(defined?)',
       `
-function add(x, y = 0) {
+let add = (x, y = 0) -> {
   x + y;
 };
 
 arity(add)`,
       `
-function foo(k, ...x) {
+let foo = (k, ...x) -> {
   k + x;
 };
   arity(foo)`,

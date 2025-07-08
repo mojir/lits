@@ -144,44 +144,6 @@ let a = 1 + 2 + 3 + 4;
 let b = -> $ * ( $ + 1 );
 write!("a", a, "b", b)`],
   },
-  'function': {
-    title: 'function',
-    category: 'Special expression',
-    customVariants: ['function name(...arg) { body }'],
-    details: [
-      ['name', 'symbol', 'The name of the function.'],
-      ['arg', '[...]arg-name [= value]', 'Arguments of the function.'],
-      ['...', 'rest-symbol', 'Optional. The rest argument of the function.'],
-      ['arg-name', 'symbol', 'The name of the argument.'],
-      ['value', 'any', 'Optional. The default value of the argument.'],
-      ['let-binding', 'symbol', 'Optional. The let bindings of the function.'],
-      ['body', 'one or more expressions', 'The body of the function.'],
-    ],
-    description: 'Creates a named function. When called, evaluation of the last expression in the body is returned.',
-    examples: [
-      `
-function hyp (a, b) {
-  sqrt(a * a + b * b)
-};
-
-hyp(3, 4)`,
-      `
-function sumOfSquares(...s) {
-  apply(
-    +,
-    map(s, -> $ ^ 2)
-  )
-};
-
-sumOfSquares(1, 2, 3, 4, 5)`,
-      `
-function withOptional(a, b = 42) {
-  a + b
-};
-
-write!(withOptional(1), withOptional(1, 2))`,
-    ],
-  },
   'try': {
     title: 'try',
     category: 'Special expression',
@@ -358,7 +320,7 @@ switch (3) {
     description: 'Recursevly calls enclosing function or loop with its evaluated `recur-args`.',
     examples: [
       `
-function foo(n) {
+let foo = (n) -> {
   write!(n);
   if (!(zero?(n))) {
     recur(n - 1)

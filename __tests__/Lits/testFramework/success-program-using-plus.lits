@@ -1,5 +1,5 @@
 // @include plus-lib.lits
 
-export function add(a, b) { plus(a, b) };
-export function sub(a, b) { -(a, b) };
+export let add = (a, b) -> plus(a, b);
+export let sub = (a, b) -> -(a, b);
 assert(plus);

@@ -64,6 +64,9 @@ export class ContextStackImpl {
       if (normalExpressionKeys.includes(name)) {
         throw new LitsError(`Cannot shadow builtin function "${name}"`, sourceCodeInfo)
       }
+      if (name === 'self') {
+        throw new LitsError(`Cannot shadow builtin value "${name}"`, sourceCodeInfo)
+      }
       this.globalContext[name] = { value }
     }
     if (this.contexts[0] !== this.globalContext) {
@@ -82,6 +85,9 @@ export class ContextStackImpl {
       }
       if (normalExpressionKeys.includes(name)) {
         throw new LitsError(`Cannot shadow builtin function "${name}"`, sourceCodeInfo)
+      }
+      if (name === 'self') {
+        throw new LitsError(`Cannot shadow builtin value "${name}"`, sourceCodeInfo)
       }
       currentContext[name] = { value: toAny(value) }
     }

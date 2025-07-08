@@ -72,8 +72,8 @@ describe('specialExpressions', () => {
       expect(litsDebug.getUndefinedSymbols('[1, ...[...[x], y]]')).toEqual(new Set(['x', 'y']))
       expect(litsDebug.getUndefinedSymbols('let {a = b} = {};')).toEqual(new Set(['b']))
       expect(litsDebug.getUndefinedSymbols('export let {a = b} = {};')).toEqual(new Set(['b']))
-      expect(litsDebug.getUndefinedSymbols('function foo({a = b} = {}) { a };')).toEqual(new Set(['b']))
-      expect(litsDebug.getUndefinedSymbols('export function foo({a = b} = {}) { a };')).toEqual(new Set(['b']))
+      expect(litsDebug.getUndefinedSymbols('let foo = ({a = b} = {}) -> { a };')).toEqual(new Set(['b']))
+      expect(litsDebug.getUndefinedSymbols('export let foo = ({a = b} = {}) -> { a };')).toEqual(new Set(['b']))
     })
   })
 
@@ -151,6 +151,7 @@ describe('specialExpressions', () => {
       write!(x)        // A - global variable x
       `
       lits.run(program)
+      console.log('logSpy', logSpy.mock.calls)
       expect(logSpy).toHaveBeenNthCalledWith(1, 'A')
       expect(logSpy).toHaveBeenNthCalledWith(2, 'B')
       expect(logSpy).toHaveBeenNthCalledWith(3, 'A')
@@ -401,7 +402,7 @@ switch (2) {
   describe('function', () => {
     test('accessing property on function', () => {
       expect(() => lits.run(`
-        function foo() {
+        let foo = () -> {
           10
         };
 
@@ -411,7 +412,7 @@ switch (2) {
 
     test('accessing number on function', () => {
       expect(() => lits.run(`
-        function foo() {
+        let foo = () -> {
           10
         };
 
@@ -423,7 +424,7 @@ switch (2) {
       expect(lits.run(`
       let bar = {
         let x = 10;
-        function foo(a) { a * x };
+        let foo = (a) -> { a * x };
         foo;
       };
       
@@ -433,40 +434,40 @@ switch (2) {
 
     it('samples', () => {
       expect(lits.run(`
-function add(a, b) {
+let add = (a, b) -> {
   a + b
 };
 add(1, 2)`)).toBe(3)
-      expect(lits.run('function add() { 10 }; add()')).toBe(10)
-      expect(() => lits.run('function add(...x = []) { x };')).toThrow(LitsError)
-      expect(() => lits.run('function \'0_fn\'() { 10 };')).toThrow(LitsError)
+      expect(lits.run('let add = () -> { 10 }; add()')).toBe(10)
+      expect(() => lits.run('let add = (...x = []) -> { x };')).toThrow(LitsError)
+      expect(() => lits.run('let \' = 0_fn\'() -> { 10 };')).toThrow(LitsError)
       expect(() => lits.run('\'0_fn\'();')).toThrow(LitsError)
     })
 
     test('default argument', () => {
       expect(lits.run(`
-function foo(a, b = 10) {
+let foo = (a, b = 10) -> {
   a + b
 };
 
 foo(1)`)).toBe(11)
 
       expect(lits.run(`
-  function foo(a, b = a + 1) {
+  let foo = (a, b = a + 1) -> {
     a + b
   };
   
   foo(1)`)).toBe(3)
 
       expect(lits.run(`
-    function foo(a, b = a + 1) {
+    let foo = (a, b = a + 1) -> {
       a + b
     };
     
     foo(1, 1)`)).toBe(2)
 
       expect(lits.run(`
-      function foo(a, b = a + 1, c = a + b) {
+      let foo = (a, b = a + 1, c = a + b) -> {
         a + b + c
       };
       
@@ -475,7 +476,7 @@ foo(1)`)).toBe(11)
 
     it('call function', () => {
       expect(lits.run(`
-function sum-one-to-n(n) {
+let sum-one-to-n = (n) -> {
   if (n <= 1) {
     n
   } else {
@@ -485,7 +486,7 @@ function sum-one-to-n(n) {
 
 sum-one-to-n(10)`)).toBe(55)
       expect(lits.run(`
-function applyWithVal(fun, val) {
+let applyWithVal = (fun, val) -> {
   fun(val)
 };
 
@@ -494,20 +495,20 @@ applyWithVal(inc, 10)`)).toBe(11)
     describe('unresolvedIdentifiers', () => {
       it('samples', () => {
         expect((lits.getUndefinedSymbols(`
-function foo(a) {
+let foo = (a) -> {
   if (a == 1) {
     1
   } else {
-    a + foo(a - 1)
+    a + self(a - 1)
   }
 };`))).toEqual(
           new Set(),
         )
-        expect((lits.getUndefinedSymbols('export function foo(a, b) { str(a, b, c) };'))).toEqual(new Set(['c']))
-        expect((lits.getUndefinedSymbols('function foo(a, b) { str(a, b, c) }; foo(x, y)'))).toEqual(
+        expect((lits.getUndefinedSymbols('export let foo = (a, b) -> { str(a, b, c) };'))).toEqual(new Set(['c']))
+        expect((lits.getUndefinedSymbols('let foo = (a, b) -> { str(a, b, c) }; foo(x, y)'))).toEqual(
           new Set(['c', 'x', 'y']),
         )
-        expect((lits.getUndefinedSymbols('function add(a, b, ...the-rest) { a + b; [a](10) };'))).toEqual(new Set())
+        expect((lits.getUndefinedSymbols('let add = (a, b, ...the-rest) -> { a + b; [a](10) };'))).toEqual(new Set())
       })
     })
   })
@@ -583,7 +584,7 @@ function foo(a) {
   describe('recur', () => {
     it('should work with function', () => {
       lits.run(`
-function foo(n) {
+let foo = (n) -> {
   write!(n);
   if (!(zero?(n))) {
     recur(n - 1)
@@ -596,10 +597,10 @@ foo(3)`)
       expect(logSpy).toHaveBeenNthCalledWith(4, 0)
     })
     it('recur must be called with the right number of parameters', () => {
-      expect(() => lits.run('function foo(n) { if (!(zero?(n))) recur() }; foo(3)')).toThrow(LitsError)
-      expect(() => lits.run('function foo(n) { if (!(zero?(n))) recur(n - 1) }; foo(3)')).not.toThrow()
+      expect(() => lits.run('let foo = (n) -> { if (!(zero?(n))) recur() }; foo(3)')).toThrow(LitsError)
+      expect(() => lits.run('let foo = (n) -> { if (!(zero?(n))) recur(n - 1) }; foo(3)')).not.toThrow()
       // Too many parameters ok
-      expect(() => lits.run('function foo(n) { if (!(zero?(n))) recur(n - 1, 1) }; foo(3)')).not.toThrow()
+      expect(() => lits.run('let foo = (n) -> { if (!(zero?(n))) recur(n - 1, 1) }; foo(3)')).not.toThrow()
       expect(() => lits.run('((n) -> { if (!(zero?(n))) recur() };)(3)')).toThrow(LitsError)
       expect(() => lits.run('((n) -> if (!(zero?(n))) recur(n - 1))(3)')).not.toThrow()
       expect(() => lits.run('((n) -> if (!(zero?(n)) recur(n - 1 1))(3)')).toThrow(LitsError)
@@ -774,7 +775,7 @@ foo(3)`)
   describe('passing special expression as arguments', () => {
     test('samples', () => {
       expect(lits.run(`
-function foo(a, b, c) { a(b, c) };
+let foo = (a, b, c) -> { a(b, c) };
 foo(&&, true, false)`)).toBe(false)
     })
   })

@@ -7,7 +7,7 @@ describe('determinant.', () => {
     expect(lits.run(`
 
 // Matrix multiplication with correct syntax
-function matrixMultiply(matrixA, matrixB) {
+let matrixMultiply = (matrixA, matrixB) -> {
   // Check if inputs are arrays
   unless (array?(matrixA)) throw("First input must be an array");
   unless (array?(matrixB)) throw("Second input must be an array");
@@ -33,7 +33,7 @@ function matrixMultiply(matrixA, matrixB) {
   unless (colsA == rowsB) throw("Matrix dimensions mismatch: first matrix columns must equal second matrix rows");
 
   // Create a row of the result matrix
-  function createRow(rowIndex) {
+  let createRow = (rowIndex) -> {
     for (j in range(colsB)) {
       reduce(
         range(colsA),

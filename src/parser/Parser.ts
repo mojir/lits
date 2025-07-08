@@ -8,7 +8,7 @@ import type { CondNode } from '../builtin/specialExpressions/cond'
 import type { DefinedNode } from '../builtin/specialExpressions/defined'
 import type { DefNode } from '../builtin/specialExpressions/def'
 import type { DoNode } from '../builtin/specialExpressions/block'
-import type { DefnNode, FnNode, FunctionNode } from '../builtin/specialExpressions/functions'
+import type { FnNode } from '../builtin/specialExpressions/functions'
 import type { IfNode } from '../builtin/specialExpressions/if'
 import type { LetNode } from '../builtin/specialExpressions/let'
 import type { LoopNode } from '../builtin/specialExpressions/loop'
@@ -267,9 +267,6 @@ export class Parser {
           left = this.parseTry(firstToken)
           break
       }
-    }
-    else if (isReservedSymbolToken(firstToken, 'function')) {
-      return this.parseFunction(firstToken)
     }
     else if (isReservedSymbolToken(firstToken, 'export')) {
       if (!moduleScope) {
@@ -588,7 +585,6 @@ export class Parser {
         | typeof specialExpressionTypes.loop
         | typeof specialExpressionTypes.try
         | typeof specialExpressionTypes.doseq
-        | typeof specialExpressionTypes.function
       >
       const specialExpression: SpecialExpression = builtin.specialExpressions[type]
       assertNumberOfParams(specialExpression.arity, params.length, symbol[2])
@@ -621,7 +617,6 @@ export class Parser {
         }
         case specialExpressionTypes['0_fn']:
         case specialExpressionTypes['0_def']:
-        case specialExpressionTypes['0_defn']:
           throw new LitsError(`${type} is not allowed`, symbol[2])
           /* v8 ignore next 2 */
         default:
@@ -653,13 +648,28 @@ export class Parser {
         return null
       }
       this.advance()
+      let nodes: Node[] | undefined
+      let docString = ''
+      if (isLBraceToken(this.peek())) {
+        const parsedBlock = this.parseBlock(true)
+        docString = parsedBlock[1]
+        nodes = parsedBlock[0][1][1]
+      }
+      else {
+        nodes = [this.parseExpression()]
+      }
 
-      const body = this.parseExpression()
-
-      return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes['0_fn'], [
-        functionArguments,
-        [body],
-      ]]], firstToken[2]) satisfies FnNode
+      return withSourceCodeInfo([
+        NodeTypes.SpecialExpression,
+        [
+          specialExpressionTypes['0_fn'],
+          [
+            functionArguments,
+            nodes,
+          ],
+          docString,
+        ],
+      ], firstToken[2]) satisfies FnNode
     }
     catch {
       return null
@@ -715,7 +725,18 @@ export class Parser {
     const firstToken = this.asToken(this.peek())
     this.advance()
     const startPos = this.parseState.position
-    const exprNode = this.parseExpression()
+
+    let nodes: Node[] | undefined
+    let docString = ''
+    if (isLBraceToken(this.peek())) {
+      const parsedBlock = this.parseBlock(true)
+      docString = parsedBlock[1]
+      nodes = parsedBlock[0][1][1]
+    }
+    else {
+      nodes = [this.parseExpression()]
+    }
+
     const endPos = this.parseState.position - 1
 
     let arity = 0
@@ -754,8 +775,8 @@ export class Parser {
 
     const node: FnNode = withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes['0_fn'], [
       functionArguments,
-      [exprNode],
-    ]]], firstToken[2])
+      nodes,
+    ], docString]], firstToken[2])
 
     return node
   }
@@ -1270,27 +1291,6 @@ export class Parser {
     return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.switch, valueExpression, params]], token[2]) satisfies SwitchNode
   }
 
-  parseFunction(token: ReservedSymbolToken<'function'>): FunctionNode {
-    this.advance()
-    const symbol = this.parseSymbol()
-    const functionArguments = this.parseFunctionArguments()
-
-    const [block, docString] = this.parseBlock(true)
-
-    return withSourceCodeInfo([
-      NodeTypes.SpecialExpression,
-      [
-        specialExpressionTypes.function,
-        symbol,
-        [
-          functionArguments,
-          block[1][1],
-        ],
-        docString,
-      ],
-    ], token[2]) satisfies FunctionNode
-  }
-
   private isAtEnd(): boolean {
     return this.parseState.position >= this.tokenStream.tokens.length
   }
@@ -1309,20 +1309,15 @@ export class Parser {
     return false
   }
 
-  private parseExport(exportToken: ReservedSymbolToken<'export'>): DefNode | DefnNode {
+  private parseExport(exportToken: ReservedSymbolToken<'export'>): DefNode {
     this.advance()
     const token = this.peek()
     if (isSymbolToken(token, 'let')) {
       const letNode = this.parseLet(asSymbolToken(token))
       return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes['0_def'], letNode[1][1]]], exportToken[2]) satisfies DefNode
     }
-    else if (isReservedSymbolToken(token, 'function')) {
-      const functionNode = this.parseFunction(token) as unknown as DefnNode
-      functionNode[1][0] = specialExpressionTypes['0_defn']
-      return functionNode
-    }
     else {
-      throw new LitsError('Expected let or function', this.peekSourceCodeInfo())
+      throw new LitsError('Expected let', this.peekSourceCodeInfo())
     }
   }
 

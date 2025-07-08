@@ -5,7 +5,6 @@ import {
   type EvaluatedFunction,
   type LitsFunction,
   type SpecialExpressionNode,
-  type SymbolNode,
   bindingTargetTypes,
 } from '../../parser/types'
 import { isAny } from '../../typeGuards/lits'
@@ -14,90 +13,92 @@ import { FUNCTION_SYMBOL } from '../../utils/symbols'
 import { getAllBindingTargetNames, walkDefaults } from '../bindingNode'
 import type { Builtin, BuiltinSpecialExpression } from '../interface'
 import type { Function } from '../utils'
-import { assertNameNotDefined } from '../utils'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 import { assertUserDefinedSymbolNode } from '../../typeGuards/astNode'
 
-export type DefnNode = SpecialExpressionNode<[typeof specialExpressionTypes['0_defn'], SymbolNode, Function, string]> // last string is docString
-export type FunctionNode = SpecialExpressionNode<[typeof specialExpressionTypes['function'], SymbolNode, Function, string]> // last string is docString
-export type FnNode = SpecialExpressionNode<[typeof specialExpressionTypes['0_fn'], Function]>
+export type FnNode = SpecialExpressionNode<[typeof specialExpressionTypes['0_fn'], Function, string]>
 
-export const functionSpecialExpression: BuiltinSpecialExpression<LitsFunction, FunctionNode> = {
-  arity: {},
-  evaluate: (node, contextStack, { builtin, getUndefinedSymbols, evaluateNode }) => {
-    const [, functionSymbol, fn, docString] = node[1]
+// export const functionSpecialExpression: BuiltinSpecialExpression<LitsFunction, FunctionNode> = {
+//   arity: {},
+//   evaluate: (node, contextStack, { builtin, getUndefinedSymbols, evaluateNode }) => {
+//     const [, functionSymbol, fn, docString] = node[1]
+//
+//     assertUserDefinedSymbolNode(functionSymbol, node[2])
+//     assertNameNotDefined(functionSymbol[1], contextStack, builtin, node[2])
+//
+//     const evaluatedFunction = evaluateFunction(fn, contextStack, builtin, getUndefinedSymbols, evaluateNode)
+//
+//     const min = evaluatedFunction[0].filter(arg => arg[0] !== bindingTargetTypes.rest && arg[1][1] === undefined).length
+//     const max = evaluatedFunction[0].some(arg => arg[0] === bindingTargetTypes.rest) ? undefined : evaluatedFunction[0].length
+//     const arity = { min: min > 0 ? min : undefined, max }
+//
+//     const litsFunction: LitsFunction = {
+//       [FUNCTION_SYMBOL]: true,
+//       sourceCodeInfo: node[2],
+//       functionType: 'UserDefined',
+//       name: functionSymbol[1],
+//       evaluatedfunction: evaluatedFunction,
+//       arity,
+//       docString,
+//     }
+//
+//     evaluatedFunction[2].self = { value: litsFunction }
+//
+//     contextStack.addValues({ [functionSymbol[1]]: litsFunction }, functionSymbol[2])
+//     return litsFunction
+//   },
+//
+//   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => {
+//     const functionName = node[1][1][1]
+//     contextStack.addValues({ [functionName]: true }, node[1][1][2])
+//     const newContext: Context = { [functionName]: { value: true } }
+//     return getFunctionUnresolvedSymbols(node[1][2], contextStack, getUndefinedSymbols, builtin, evaluateNode, newContext)
+//   },
+// }
+//
+// export const defnSpecialExpression: BuiltinSpecialExpression<LitsFunction, DefnNode> = {
+//   arity: {},
+//   evaluate: (node, contextStack, { builtin, getUndefinedSymbols, evaluateNode }) => {
+//     const [, functionSymbol, fn, docString] = node[1]
+//
+//     assertUserDefinedSymbolNode(functionSymbol, node[2])
+//     assertNameNotDefined(functionSymbol[1], contextStack, builtin, node[2])
+//
+//     const evaluatedFunction = evaluateFunction(fn, contextStack, builtin, getUndefinedSymbols, evaluateNode)
+//
+//     const min = evaluatedFunction[0].filter(arg => arg[0] !== bindingTargetTypes.rest && arg[1][1] === undefined).length
+//     const arity = { min }
+//
+//     const litsFunction: LitsFunction = {
+//       [FUNCTION_SYMBOL]: true,
+//       sourceCodeInfo: node[2],
+//       functionType: 'UserDefined',
+//       name: functionSymbol[1],
+//       evaluatedfunction: evaluatedFunction,
+//       arity,
+//       docString,
+//     }
+//
+//     evaluatedFunction[2].self = { value: litsFunction }
+//
+//     contextStack.exportValues({ [functionSymbol[1]]: litsFunction }, functionSymbol[2])
+//     return litsFunction
+//   },
+//
+//   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => {
+//     const functionName = node[1][1][1]
+//     const fn = node[1][2]
+//     contextStack.exportValues({ [functionName]: true }, node[1][1][2])
+//     const newContext: Context = { [functionName]: { value: true } }
+//     return getFunctionUnresolvedSymbols(fn, contextStack, getUndefinedSymbols, builtin, evaluateNode, newContext)
+//   },
+// }
 
-    assertUserDefinedSymbolNode(functionSymbol, node[2])
-    assertNameNotDefined(functionSymbol[1], contextStack, builtin, node[2])
-
-    const evaluatedFunction = evaluateFunction(fn, contextStack, builtin, getUndefinedSymbols, evaluateNode)
-
-    const min = evaluatedFunction[0].filter(arg => arg[0] !== bindingTargetTypes.rest && arg[1][1] === undefined).length
-    const max = evaluatedFunction[0].some(arg => arg[0] === bindingTargetTypes.rest) ? undefined : evaluatedFunction[0].length
-    const arity = { min: min > 0 ? min : undefined, max }
-
-    const litsFunction: LitsFunction = {
-      [FUNCTION_SYMBOL]: true,
-      sourceCodeInfo: node[2],
-      functionType: 'UserDefined',
-      name: functionSymbol[1],
-      evaluatedfunction: evaluatedFunction,
-      arity,
-      docString,
-    }
-
-    contextStack.addValues({ [functionSymbol[1]]: litsFunction }, functionSymbol[2])
-    return litsFunction
-  },
-
-  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => {
-    const functionName = node[1][1][1]
-    contextStack.addValues({ [functionName]: true }, node[1][1][2])
-    const newContext: Context = { [functionName]: { value: true } }
-    return getFunctionUnresolvedSymbols(node[1][2], contextStack, getUndefinedSymbols, builtin, evaluateNode, newContext)
-  },
-}
-
-export const defnSpecialExpression: BuiltinSpecialExpression<LitsFunction, DefnNode> = {
-  arity: {},
-  evaluate: (node, contextStack, { builtin, getUndefinedSymbols, evaluateNode }) => {
-    const [, functionSymbol, fn, docString] = node[1]
-
-    assertUserDefinedSymbolNode(functionSymbol, node[2])
-    assertNameNotDefined(functionSymbol[1], contextStack, builtin, node[2])
-
-    const evaluatedFunction = evaluateFunction(fn, contextStack, builtin, getUndefinedSymbols, evaluateNode)
-
-    const min = evaluatedFunction[0].filter(arg => arg[0] !== bindingTargetTypes.rest && arg[1][1] === undefined).length
-    const arity = { min }
-
-    const litsFunction: LitsFunction = {
-      [FUNCTION_SYMBOL]: true,
-      sourceCodeInfo: node[2],
-      functionType: 'UserDefined',
-      name: functionSymbol[1],
-      evaluatedfunction: evaluatedFunction,
-      arity,
-      docString,
-    }
-
-    contextStack.exportValues({ [functionSymbol[1]]: litsFunction }, functionSymbol[2])
-    return litsFunction
-  },
-
-  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => {
-    const functionName = node[1][1][1]
-    const fn = node[1][2]
-    contextStack.exportValues({ [functionName]: true }, node[1][1][2])
-    const newContext: Context = { [functionName]: { value: true } }
-    return getFunctionUnresolvedSymbols(fn, contextStack, getUndefinedSymbols, builtin, evaluateNode, newContext)
-  },
-}
-
-export const fnSpecialExpression: BuiltinSpecialExpression<LitsFunction, FnNode> = {
+export const lambdaSpecialExpression: BuiltinSpecialExpression<LitsFunction, FnNode> = {
   arity: {},
   evaluate: (node, contextStack, { builtin, getUndefinedSymbols, evaluateNode }) => {
     const fn = node[1][1]
+    const docString = node[1][2]
     const evaluatedFunction = evaluateFunction(fn, contextStack, builtin, getUndefinedSymbols, evaluateNode)
 
     const min = evaluatedFunction[0].filter(arg => arg[0] !== bindingTargetTypes.rest && arg[1][1] === undefined).length
@@ -111,8 +112,10 @@ export const fnSpecialExpression: BuiltinSpecialExpression<LitsFunction, FnNode>
       name: undefined,
       evaluatedfunction: evaluatedFunction,
       arity,
-      docString: '',
+      docString,
     }
+
+    evaluatedFunction[2].self = { value: litsFunction }
 
     return litsFunction
   },
@@ -161,12 +164,9 @@ function getFunctionUnresolvedSymbols(
   getUndefinedSymbols: GetUndefinedSymbols,
   builtin: Builtin,
   evaluateNode: EvaluateNode,
-  functionNameContext?: Context,
 ): UndefinedSymbols {
   const result = new Set<string>()
-
-  const contextStackWithFunctionName = functionNameContext ? contextStack.create(functionNameContext) : contextStack
-  const newContext: Context = {}
+  const newContext: Context = { self: { value: null } }
 
   fn[0].forEach((arg) => {
     Object.assign(newContext, getAllBindingTargetNames(arg))
@@ -176,7 +176,7 @@ function getFunctionUnresolvedSymbols(
     })
   })
 
-  const newContextStack = contextStackWithFunctionName.create(newContext)
+  const newContextStack = contextStack.create(newContext)
   const overloadResult = getUndefinedSymbols(fn[1], newContextStack, builtin, evaluateNode)
   addToSet(result, overloadResult)
   return result

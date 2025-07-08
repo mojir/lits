@@ -79,7 +79,7 @@ describe('collection functions', () => {
   describe('reduce', () => {
     it('samples', () => {
       let program = `
-      function countChars(stringArray) {
+      let countChars = (stringArray) -> {
         reduce(
           stringArray,
           (sum, s) -> sum + count(s),
@@ -92,7 +92,7 @@ describe('collection functions', () => {
       expect(lits.run(program)).toBe(16)
 
       program = `
-      function longestLength(stringArray) {
+      let longestLength = (stringArray) -> {
         reduce(
           stringArray,
           (sum, s) ->

@@ -6,7 +6,7 @@ describe('determinant.', () => {
   it('should compile', () => {
     expect(lits.run(`
 // Determinant function for square matrices
-function determinant(matrix) {
+let determinant = (matrix) -> {
   // Check if input is an array
   if (!(array?(matrix))) {
     throw("Input must be an array");
@@ -70,7 +70,7 @@ function determinant(matrix) {
 };
 
 // Helper function to get minor (submatrix) by removing specific row and column
-function getMinor(matrix, rowToRemove, colToRemove) {
+let getMinor = (matrix, rowToRemove, colToRemove) -> {
   // Use map with filter to create the new matrix without mutating
   map(
     range(count(matrix)),

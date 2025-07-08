@@ -239,7 +239,7 @@ describe('lits Destructuring', () => {
   describe('destructuring in function parameters', () => {
     test('basic parameter destructuring', () => {
       expect(lits.run(`
-        function greet({ name }) {
+        let greet = ({ name }) -> {
           "Hello, " ++ name;
         };
         greet({ name: "Pat" });
@@ -248,7 +248,7 @@ describe('lits Destructuring', () => {
 
     test('parameter with default', () => {
       expect(lits.run(`
-        function greet({ name = "friend" }) {
+        let greet = ({ name = "friend" }) -> {
           "Hello, " ++ name;
         };
         greet({});
@@ -257,7 +257,7 @@ describe('lits Destructuring', () => {
 
     test('parameter with rename', () => {
       expect(lits.run(`
-        function foo({ a as b = 10 }) {
+        let foo = ({ a as b = 10 }) -> {
           b;
         };
         foo({ b: 1 });
@@ -266,7 +266,7 @@ describe('lits Destructuring', () => {
 
     test('nested parameter destructuring', () => {
       expect(lits.run(`
-        function processUser({ profile: { name, age }}) {
+        let processUser = ({ profile: { name, age }}) -> {
           name ++ " is " ++ str(age);
         };
         processUser({ profile: { name: "Quinn", age: 29 }});
@@ -275,7 +275,7 @@ describe('lits Destructuring', () => {
 
     test('array parameter destructuring', () => {
       expect(lits.run(`
-        function processCoords([x, y]) {
+        let processCoords = ([x, y]) -> {
           x + y;
         };
         processCoords([3, 4]);

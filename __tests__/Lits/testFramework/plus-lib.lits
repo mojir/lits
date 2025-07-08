@@ -1,1 +1,1 @@
-export function plus(a, b) { a + b };
+export let plus = (a, b) -> a + b;
