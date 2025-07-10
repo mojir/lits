@@ -142,10 +142,10 @@ describe('parser', () => {
     expect(() => litsDebug.run('switch (1) { case 1: 1, end }')).toThrow(LitsError)
     expect(() => litsDebug.run('cond { case 1: 1; 2 }')).not.toThrow()
     expect(() => litsDebug.run('cond { case 1: 1, end }')).toThrow(LitsError)
-    expect(() => litsDebug.run('if (true) 1 else 1; 2')).not.toThrow()
-    expect(() => litsDebug.run('if (true) 1 else 1,')).toThrow(LitsError)
-    expect(() => litsDebug.run('if (true) 1; 2')).not.toThrow()
-    expect(() => litsDebug.run('if (true) 1; 2,')).toThrow(LitsError)
+    expect(() => litsDebug.run('if true then 1 else 1; 2')).not.toThrow()
+    expect(() => litsDebug.run('if true then 1 else 1,')).toThrow(LitsError)
+    expect(() => litsDebug.run('if true then 1; 2')).not.toThrow()
+    expect(() => litsDebug.run('if true then 1; 2,')).toThrow(LitsError)
     expect(() => litsDebug.run('for (a in [1, 2], when a == 2, when b == 1) { 1 }')).toThrow(LitsError)
     expect(() => litsDebug.run('for (a in [1, 2], while a == 2, while a == 1) { 1 }')).toThrow(LitsError)
     expect(() => litsDebug.run('for (a in [1, 2], let a = 2; 2) { 1 }')).toThrow(LitsError)
@@ -464,18 +464,18 @@ describe('parser', () => {
 
   describe('if expression', () => {
     test('samples', () => {
-      expect(lits.run('if (1 > 2) 2')).toBe(null)
-      expect(lits.run('if (1 < 2) 2')).toBe(2)
-      expect(lits.run('if (1 > 2) 1 else 2')).toBe(2)
-      expect(lits.run('if (1 < 2) 1 else 2')).toBe(1)
+      expect(lits.run('if 1 > 2 then 2')).toBe(null)
+      expect(lits.run('if 1 < 2 then 2')).toBe(2)
+      expect(lits.run('if 1 > 2 then 1 else 2')).toBe(2)
+      expect(lits.run('if 1 < 2 then 1 else 2')).toBe(1)
     })
   })
 
   describe('unless expression', () => {
     test('samples', () => {
-      expect(lits.run('unless (1 < 2) 1 else 2')).toBe(2)
-      expect(lits.run('unless (1 < 2) 1')).toBe(null)
-      expect(lits.run('unless (1 > 2) 1 else 2')).toBe(1)
+      expect(lits.run('unless 1 < 2 then 1 else 2')).toBe(2)
+      expect(lits.run('unless 1 < 2 then 1')).toBe(null)
+      expect(lits.run('unless 1 > 2 then 1 else 2')).toBe(1)
     })
   })
 
@@ -587,7 +587,7 @@ describe('parser', () => {
       expect(() => lits.run('{ 2: 1 }')).toThrow(LitsError)
       expect(() => lits.run('{ x: 1 y: 2 }')).toThrow(LitsError)
       expect(() => lits.run('[1 2]')).toThrow(LitsError)
-      expect(() => lits.run('if(1)')).toThrow(LitsError) // To few parameters
+      expect(() => lits.run('if 1 then')).toThrow(LitsError) // To few parameters
       expect(() => lits.run(']')).toThrow(LitsError)
     })
   })
@@ -842,7 +842,7 @@ describe('parser', () => {
     it('supports loop expressions', () => {
       expect(lits.run(`
         loop(n = 10, sum = 0) {
-          if (n == 0)
+          if n == 0 then
             sum
           else
             recur(n - 1, sum + n)
@@ -1341,9 +1341,9 @@ foo(1, 2)`)).toBe(3)
     it('supports recursion via self', () => {
       expect(lits.run(`
         let fib = (n, a = 0, b = 1) -> {
-          if (n == 0)
+          if n == 0 then
             a
-          else if (n == 1)
+          else if n == 1 then
             b
           else
             self(n - 1, b, a + b)
@@ -1385,8 +1385,8 @@ foo(1, 2)`)).toBe(3)
     })
 
     it('supports lambda functions as return values', () => {
-      expect(lits.run('((op) -> if (op == "add") ((x, y) -> x + y) else ((x, y) -> x - y))("add")(5, 3)')).toBe(8)
-      expect(lits.run('((op) -> if (op == "add") ((x, y) -> x + y) else ((x, y) -> x - y))("subtract")(5, 3)')).toBe(2)
+      expect(lits.run('((op) -> if op == "add" then ((x, y) -> x + y) else ((x, y) -> x - y))("add")(5, 3)')).toBe(8)
+      expect(lits.run('((op) -> if op == "add" then ((x, y) -> x + y) else ((x, y) -> x - y))("subtract")(5, 3)')).toBe(2)
     })
   })
 })

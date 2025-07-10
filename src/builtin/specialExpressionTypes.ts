@@ -9,7 +9,7 @@ export const specialExpressionTypes = {
   // '0_defn': 7,
   'block': 7,
   'doseq': 8,
-  '0_fn': 9,
+  '0_lambda': 9,
   'for': 10,
   // 'function': 10,
   'if': 11,

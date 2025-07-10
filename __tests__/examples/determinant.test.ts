@@ -8,12 +8,12 @@ describe('determinant.', () => {
 // Determinant function for square matrices
 let determinant = (matrix) -> {
   // Check if input is an array
-  if (!(array?(matrix))) {
+  if !(array?(matrix)) then {
     throw("Input must be an array");
   };
 
   // Check if matrix is empty
-  if (empty?(matrix)) {
+  if empty?(matrix) then {
     throw("Matrix cannot be empty");
   };
 
@@ -23,23 +23,23 @@ let determinant = (matrix) -> {
   let firstRow = first(matrix);
   
   // Check if first row is an array
-  if (!(array?(firstRow))) {
+  if !(array?(firstRow)) then {
     throw("Input must be a 2D array");
   };
   
   let cols = count(firstRow);
   
   // Ensure matrix is square
-  if (rows ≠ cols) {
+  if rows ≠ cols then {
     throw("Matrix must be square");
   };
   
   // Base case: 1x1 matrix
-  if (rows == 1) {
+  if rows == 1 then {
     get(get(matrix, 0), 0);
   } else {
     // Base case: 2x2 matrix
-    if (rows == 2) {
+    if rows == 2 then {
       let a = matrix[0][0];
       let b = matrix[0][1];
       let c = matrix[1][0];
@@ -54,7 +54,7 @@ let determinant = (matrix) -> {
         (acc, j) -> {
           let minor = getMinor(matrix, 0, j);
           let cofactor = determinant(minor);
-          let signFactor = if (even?(j)) {
+          let signFactor = if even?(j) then {
             1;
           } else {
             -1;
@@ -75,7 +75,7 @@ let getMinor = (matrix, rowToRemove, colToRemove) -> {
   map(
     range(count(matrix)),
     i -> {
-      if (i == rowToRemove) {
+      if i == rowToRemove then {
         null; // This will be filtered out
       } else {
         let row = get(matrix, i);
@@ -83,7 +83,7 @@ let getMinor = (matrix, rowToRemove, colToRemove) -> {
         map(
           range(count(row)),
           j -> {
-            if (j == colToRemove) {
+            if j == colToRemove then {
               null; // This will be filtered out
             } else {
               get(row, j);

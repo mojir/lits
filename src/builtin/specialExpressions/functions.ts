@@ -15,9 +15,9 @@ import type { Builtin, BuiltinSpecialExpression } from '../interface'
 import type { Function } from '../utils'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 
-export type FnNode = SpecialExpressionNode<[typeof specialExpressionTypes['0_fn'], Function, string]>
+export type LambdaNode = SpecialExpressionNode<[typeof specialExpressionTypes['0_lambda'], Function, string]>
 
-export const lambdaSpecialExpression: BuiltinSpecialExpression<LitsFunction, FnNode> = {
+export const lambdaSpecialExpression: BuiltinSpecialExpression<LitsFunction, LambdaNode> = {
   arity: {},
   evaluate: (node, contextStack, { builtin, getUndefinedSymbols, evaluateNode }) => {
     const fn = node[1][1]

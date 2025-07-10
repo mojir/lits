@@ -38,7 +38,7 @@ describe('collection functions', () => {
       expect(lits.run('map([1, 2, 3], -> 2 * $)')).toEqual([2, 4, 6])
       expect(lits.run('map("ABCDE", "12345", ++)')).toBe('A1B2C3D4E5')
       expect(lits.run('map([1, 2, 3], [1, 2], +)')).toEqual([2, 4])
-      expect(lits.run('map("AaBbCc", -> if ($1 >= "a") "-" else "+")')).toBe('+-+-+-')
+      expect(lits.run('map("AaBbCc", -> if $1 >= "a" then "-" else "+")')).toBe('+-+-+-')
       expect(() => lits.run('map("AaBbCc", -> if $1 >= "a" 0 else 1)')).toThrow(LitsError)
       expect(lits.run('map([1, "2", 3], null?)')).toEqual([false, false, false])
       expect(lits.run('map([0, 1, 2, 3, 4, 5, 6, 7], -> zero?($ mod 3))')).toEqual([
@@ -96,7 +96,7 @@ describe('collection functions', () => {
         reduce(
           stringArray,
           (sum, s) ->
-            if (sum > count(s))
+            if sum > count(s) then
               sum
             else
               count(s),
@@ -607,12 +607,12 @@ describe('collection functions', () => {
     it('samples', () => {
       expect(
         lits.run(
-          'let x = "Albert"; update(x, 3, val -> if (null?(val)) "!" else from-char-code(inc(to-char-code(val))))',
+          'let x = "Albert"; update(x, 3, val -> if null?(val) then "!" else from-char-code(inc(to-char-code(val))))',
         ),
       ).toEqual('Albfrt')
       expect(
         lits.run(
-          'let x = "Albert"; update(x, 6, val -> if (null?(val)) "!" else from-char-code(inc(to-char-code(val))))',
+          'let x = "Albert"; update(x, 6, val -> if null?(val) then "!" else from-char-code(inc(to-char-code(val))))',
         ),
       ).toEqual('Albert!')
 
@@ -621,13 +621,13 @@ describe('collection functions', () => {
 
       expect(lits.run('let x = {a: 1, b: 2}; update(x, "a", inc)')).toEqual({ a: 2, b: 2 })
       expect(lits.run('let x = {a: 1, b: 2}; update(x, "a", +, 10)')).toEqual({ a: 11, b: 2 })
-      expect(lits.run('let x = {a: 1, b: 2}; update(x, "a", val -> if (even?(val)) 0 else inc(val))')).toEqual({
+      expect(lits.run('let x = {a: 1, b: 2}; update(x, "a", val -> if even?(val) then 0 else inc(val))')).toEqual({
         a: 2,
         b: 2,
       })
       expect(lits.run('let x = {a: 1, b: 2}; "c"(x)')).toEqual(null)
-      expect(lits.run('update({}, "a", val -> if (null?(val)) 0)')).toEqual({ a: 0 })
-      expect(lits.run('let x = {a: 1, b: 2}; update(x, "c", val -> if (null?(val)) 0 else inc(val))')).toEqual({
+      expect(lits.run('update({}, "a", val -> if null?(val) then 0)')).toEqual({ a: 0 })
+      expect(lits.run('let x = {a: 1, b: 2}; update(x, "c", val -> if null?(val) then 0 else inc(val))')).toEqual({
         a: 1,
         b: 2,
         c: 0,
@@ -640,12 +640,12 @@ describe('collection functions', () => {
     it('samples', () => {
       expect(
         lits.run(
-          'let x = "Albert"; update-in(x, [3], val -> if (null?(val)) "!" else from-char-code(inc(to-char-code(val))))',
+          'let x = "Albert"; update-in(x, [3], val -> if null?(val) then "!" else from-char-code(inc(to-char-code(val))))',
         ),
       ).toEqual('Albfrt')
       expect(
         lits.run(
-          'let x = "Albert"; update-in(x, [6], val -> if (null?(val)) "!" else from-char-code(inc(to-char-code(val))))',
+          'let x = "Albert"; update-in(x, [6], val -> if null?(val) then "!" else from-char-code(inc(to-char-code(val))))',
         ),
       ).toEqual('Albert!')
 
@@ -654,26 +654,26 @@ describe('collection functions', () => {
 
       expect(lits.run('let x = {a: 1, b: 2}; update-in(x, ["a"], inc)')).toEqual({ a: 2, b: 2 })
       expect(lits.run('let x = {a: 1, b: 2}; update-in(x, ["a"], +, 10)')).toEqual({ a: 11, b: 2 })
-      expect(lits.run('let x = {a: 1, b: 2}; update-in(x, ["a"], val -> if (even?(val)) 0 else inc(val))')).toEqual({
+      expect(lits.run('let x = {a: 1, b: 2}; update-in(x, ["a"], val -> if even?(val) then 0 else inc(val))')).toEqual({
         a: 2,
         b: 2,
       })
-      expect(lits.run('update-in({}, ["a"], val -> if (null?(val)) 0)')).toEqual({ a: 0 })
-      expect(lits.run('let x = {a: 1, b: 2}; update-in(x, ["c"], val -> if (null?(val)) 0 else inc(val))')).toEqual({
+      expect(lits.run('update-in({}, ["a"], val -> if null?(val) then 0)')).toEqual({ a: 0 })
+      expect(lits.run('let x = {a: 1, b: 2}; update-in(x, ["c"], val -> if null?(val) then 0 else inc(val))')).toEqual({
         a: 1,
         b: 2,
         c: 0,
       })
-      expect(lits.run('update-in({a: [1, 2, 3]}, ["a", 1], val -> if (null?(val)) 0)')).toEqual({
+      expect(lits.run('update-in({a: [1, 2, 3]}, ["a", 1], val -> if null?(val) then 0)')).toEqual({
         a: [1, null, 3],
       })
-      expect(lits.run('update-in({a: [1, null, 3]}, ["a", 1], val -> if (null?(val)) 0)')).toEqual({
+      expect(lits.run('update-in({a: [1, null, 3]}, ["a", 1], val -> if null?(val) then 0)')).toEqual({
         a: [1, 0, 3],
       })
-      expect(lits.run('update-in({a: [1, "Albert", 3]}, ["a", 1, 0], val -> if (null?(val)) "?" else "!")')).toEqual({
+      expect(lits.run('update-in({a: [1, "Albert", 3]}, ["a", 1, 0], val -> if null?(val) then "?" else "!")')).toEqual({
         a: [1, '!lbert', 3],
       })
-      expect(lits.run('update-in({a: [1, "", 3]}, ["a", 1, 0], val -> if (null?(val)) "?" else "!")')).toEqual({
+      expect(lits.run('update-in({a: [1, "", 3]}, ["a", 1, 0], val -> if null?(val) then "?" else "!")')).toEqual({
         a: [1, '?', 3],
       })
     })

@@ -198,7 +198,7 @@ try {
   'if': {
     title: 'if',
     category: 'Special expression',
-    customVariants: ['if (test) true-expr else false-expr', 'if (test) true-expr'],
+    customVariants: ['if test then true-expr else false-expr', 'if test then true-expr'],
     details: [
       ['test', 'expression', 'The condition to test.'],
       ['true-expr', 'expression', 'The expression to evaluate if the test is truthy.'],
@@ -207,20 +207,20 @@ try {
     description: 'Either `true-expr` or `false-expr` branch is taken. `true-expr` is selected when $test is truthy. If $test is falsy `false-expr` is executed, if no `false-expr` exists, `null` is returned.',
     examples: [
       `
-if (true) {
+if true then {
   write!("TRUE")
 } else {
   write!("FALSE")
 }`,
-      'if (false) write!("TRUE") else write!("FALSE")',
-      'if (true) write!("TRUE")',
-      'if (false) write!("TRUE")',
+      'if false then write!("TRUE") else write!("FALSE")',
+      'if true then write!("TRUE")',
+      'if false then write!("TRUE")',
     ],
   },
   'unless': {
     title: 'unless',
     category: 'Special expression',
-    customVariants: ['unless (test) true-expr else false-expr end', 'unless test true-expr end'],
+    customVariants: ['unless test then true-expr else false-expr end', 'unless test true-expr end'],
     details: [
       ['test', 'expression', 'The condition to test.'],
       ['true-expr', 'expression', 'The expressions to evaluate if the test is falsy.'],
@@ -229,14 +229,14 @@ if (true) {
     description: 'Either `true-expr` or `false-expr` branch is taken. `true-expr` is selected when $test is falsy. If $test is truthy `false-expr` is executed, if no `false-expr` exists, `null` is returned.',
     examples: [
       `
-unless (true) {
+unless true then {
   write!("TRUE")
 } else {
   write!("FALSE")
 }`,
-      'unless (false) write!("TRUE") else write!("FALSE")',
-      'unless (true) write!("TRUE")',
-      'unless (false) write!("TRUE")',
+      'unless false then write!("TRUE") else write!("FALSE")',
+      'unless true then write!("TRUE")',
+      'unless false then write!("TRUE")',
     ],
   },
   'cond': {
@@ -322,7 +322,7 @@ switch (3) {
       `
 let foo = (n) -> {
   write!(n);
-  if (!(zero?(n))) {
+  if !(zero?(n)) then {
     recur(n - 1)
   }
 };
@@ -330,14 +330,14 @@ foo(3)`,
       `
 (n -> {
   write!(n);
-  if (!(zero?(n))) {
+  if !(zero?(n)) then {
     recur(n - 1)
   }
 })(3)`,
       `
 loop (n = 3) {
   write!(n);
-  if (!(zero?(n))) {
+  if !(zero?(n)) then {
     recur(n - 1)
   }
 }`,

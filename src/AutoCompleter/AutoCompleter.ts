@@ -101,7 +101,7 @@ export class AutoCompleter {
   }
 
   private generateSuggestions(params: ContextParams): string[] {
-    const blacklist = new Set<string>(['0_def', '0_defn', '0_fn'])
+    const blacklist = new Set<string>(['0_def', '0_defn', '0_lambda'])
 
     const startsWithCaseSensitive = this.generateWithPredicate(params, suggestion =>
       !blacklist.has(suggestion) && suggestion.startsWith(this.searchString))

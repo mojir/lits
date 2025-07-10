@@ -8,7 +8,7 @@ import type { CondNode } from '../builtin/specialExpressions/cond'
 import type { DefinedNode } from '../builtin/specialExpressions/defined'
 import type { DefNode } from '../builtin/specialExpressions/def'
 import type { DoNode } from '../builtin/specialExpressions/block'
-import type { FnNode } from '../builtin/specialExpressions/functions'
+import type { LambdaNode } from '../builtin/specialExpressions/functions'
 import type { IfNode } from '../builtin/specialExpressions/if'
 import type { LetNode } from '../builtin/specialExpressions/let'
 import type { LoopNode } from '../builtin/specialExpressions/loop'
@@ -615,7 +615,7 @@ export class Parser {
           const [param] = params
           return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, param!]], symbol[2]) satisfies ThrowNode
         }
-        case specialExpressionTypes['0_fn']:
+        case specialExpressionTypes['0_lambda']:
         case specialExpressionTypes['0_def']:
           throw new LitsError(`${type} is not allowed`, symbol[2])
           /* v8 ignore next 2 */
@@ -632,7 +632,7 @@ export class Parser {
     }
   }
 
-  parseLambdaFunction(): FnNode | null {
+  parseLambdaFunction(): LambdaNode | null {
     const firstToken = this.asToken(this.peek())
 
     if (isLParenToken(firstToken)
@@ -662,14 +662,14 @@ export class Parser {
       return withSourceCodeInfo([
         NodeTypes.SpecialExpression,
         [
-          specialExpressionTypes['0_fn'],
+          specialExpressionTypes['0_lambda'],
           [
             functionArguments,
             nodes,
           ],
           docString,
         ],
-      ], firstToken[2]) satisfies FnNode
+      ], firstToken[2]) satisfies LambdaNode
     }
     catch {
       return null
@@ -721,7 +721,7 @@ export class Parser {
     return functionArguments
   }
 
-  private parseShorthandLamdaFunction(): FnNode {
+  private parseShorthandLamdaFunction(): LambdaNode {
     const firstToken = this.asToken(this.peek())
     this.advance()
     const startPos = this.parseState.position
@@ -773,7 +773,7 @@ export class Parser {
       }
     }
 
-    const node: FnNode = withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes['0_fn'], [
+    const node: LambdaNode = withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes['0_lambda'], [
       functionArguments,
       nodes,
     ], docString]], firstToken[2])
@@ -1180,10 +1180,8 @@ export class Parser {
   parseIfOrUnless(token: SymbolToken): IfNode | UnlessNode {
     const isUnless = token[1] === 'unless'
     this.advance()
-    assertLParenToken(this.peek())
-    this.advance()
     const condition = this.parseExpression()
-    assertRParenToken(this.peek())
+    assertReservedSymbolToken(this.peek(), 'then')
     this.advance()
     const thenExpression = this.parseExpression()
 

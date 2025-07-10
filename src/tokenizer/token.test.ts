@@ -50,6 +50,7 @@ describe('token', () => {
       expect(() => asA_BinaryOperatorToken(['Operator', '+'])).not.toThrow()
       expect(() => asA_BinaryOperatorToken(['Operator', '...'])).toThrow(LitsError)
       expect(() => asA_BinaryOperatorToken(['Whitespace', ' '])).toThrow(LitsError)
+      expect(() => asA_BinaryOperatorToken(undefined)).toThrow(LitsError)
     })
 
     test('asLParenToken', () => {

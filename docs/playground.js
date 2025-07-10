@@ -1199,7 +1199,7 @@ var Playground = (function (exports) {
         // '0_defn': 7,
         'block': 7,
         'doseq': 8,
-        '0_fn': 9,
+        '0_lambda': 9,
         'for': 10,
         // 'function': 10,
         'if': 11,
@@ -13004,6 +13004,7 @@ var Playground = (function (exports) {
         function: null,
         export: null,
         as: null,
+        then: null,
         end: null,
         _: null,
     };
@@ -14806,7 +14807,7 @@ var Playground = (function (exports) {
                         var _c = __read(params, 1), param = _c[0];
                         return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, param]], symbol[2]);
                     }
-                    case specialExpressionTypes['0_fn']:
+                    case specialExpressionTypes['0_lambda']:
                     case specialExpressionTypes['0_def']:
                         throw new LitsError("".concat(type, " is not allowed"), symbol[2]);
                     /* v8 ignore next 2 */
@@ -14847,7 +14848,7 @@ var Playground = (function (exports) {
                 return withSourceCodeInfo([
                     NodeTypes.SpecialExpression,
                     [
-                        specialExpressionTypes['0_fn'],
+                        specialExpressionTypes['0_lambda'],
                         [
                             functionArguments,
                             nodes,
@@ -14943,7 +14944,7 @@ var Playground = (function (exports) {
                     functionArguments.push(withSourceCodeInfo([bindingTargetTypes.symbol, [[NodeTypes.UserDefinedSymbol, "$".concat(i)], undefined]], firstToken[2]));
                 }
             }
-            var node = withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes['0_fn'], [
+            var node = withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes['0_lambda'], [
                         functionArguments,
                         nodes,
                     ], docString]], firstToken[2]);
@@ -15291,10 +15292,8 @@ var Playground = (function (exports) {
         Parser.prototype.parseIfOrUnless = function (token) {
             var isUnless = token[1] === 'unless';
             this.advance();
-            assertLParenToken(this.peek());
-            this.advance();
             var condition = this.parseExpression();
-            assertRParenToken(this.peek());
+            assertReservedSymbolToken(this.peek(), 'then');
             this.advance();
             var thenExpression = this.parseExpression();
             var elseExpression;
@@ -15597,7 +15596,7 @@ var Playground = (function (exports) {
         };
         AutoCompleter.prototype.generateSuggestions = function (params) {
             var _this = this;
-            var blacklist = new Set(['0_def', '0_defn', '0_fn']);
+            var blacklist = new Set(['0_def', '0_defn', '0_lambda']);
             var startsWithCaseSensitive = this.generateWithPredicate(params, function (suggestion) {
                 return !blacklist.has(suggestion) && suggestion.startsWith(_this.searchString);
             });
@@ -27373,7 +27372,7 @@ var Playground = (function (exports) {
         'if': {
             title: 'if',
             category: 'Special expression',
-            customVariants: ['if (test) true-expr else false-expr', 'if (test) true-expr'],
+            customVariants: ['if test then true-expr else false-expr', 'if test then true-expr'],
             details: [
                 ['test', 'expression', 'The condition to test.'],
                 ['true-expr', 'expression', 'The expression to evaluate if the test is truthy.'],
@@ -27381,16 +27380,16 @@ var Playground = (function (exports) {
             ],
             description: 'Either `true-expr` or `false-expr` branch is taken. `true-expr` is selected when $test is truthy. If $test is falsy `false-expr` is executed, if no `false-expr` exists, `null` is returned.',
             examples: [
-                "\nif (true) {\n  write!(\"TRUE\")\n} else {\n  write!(\"FALSE\")\n}",
-                'if (false) write!("TRUE") else write!("FALSE")',
-                'if (true) write!("TRUE")',
-                'if (false) write!("TRUE")',
+                "\nif true then {\n  write!(\"TRUE\")\n} else {\n  write!(\"FALSE\")\n}",
+                'if false then write!("TRUE") else write!("FALSE")',
+                'if true then write!("TRUE")',
+                'if false then write!("TRUE")',
             ],
         },
         'unless': {
             title: 'unless',
             category: 'Special expression',
-            customVariants: ['unless (test) true-expr else false-expr end', 'unless test true-expr end'],
+            customVariants: ['unless test then true-expr else false-expr end', 'unless test true-expr end'],
             details: [
                 ['test', 'expression', 'The condition to test.'],
                 ['true-expr', 'expression', 'The expressions to evaluate if the test is falsy.'],
@@ -27398,10 +27397,10 @@ var Playground = (function (exports) {
             ],
             description: 'Either `true-expr` or `false-expr` branch is taken. `true-expr` is selected when $test is falsy. If $test is truthy `false-expr` is executed, if no `false-expr` exists, `null` is returned.',
             examples: [
-                "\nunless (true) {\n  write!(\"TRUE\")\n} else {\n  write!(\"FALSE\")\n}",
-                'unless (false) write!("TRUE") else write!("FALSE")',
-                'unless (true) write!("TRUE")',
-                'unless (false) write!("TRUE")',
+                "\nunless true then {\n  write!(\"TRUE\")\n} else {\n  write!(\"FALSE\")\n}",
+                'unless false then write!("TRUE") else write!("FALSE")',
+                'unless true then write!("TRUE")',
+                'unless false then write!("TRUE")',
             ],
         },
         'cond': {
@@ -27455,9 +27454,9 @@ var Playground = (function (exports) {
             customVariants: ['recur(...recur-args)'],
             description: 'Recursevly calls enclosing function or loop with its evaluated `recur-args`.',
             examples: [
-                "\nlet foo = (n) -> {\n  write!(n);\n  if (!(zero?(n))) {\n    recur(n - 1)\n  }\n};\nfoo(3)",
-                "\n(n -> {\n  write!(n);\n  if (!(zero?(n))) {\n    recur(n - 1)\n  }\n})(3)",
-                "\nloop (n = 3) {\n  write!(n);\n  if (!(zero?(n))) {\n    recur(n - 1)\n  }\n}",
+                "\nlet foo = (n) -> {\n  write!(n);\n  if !(zero?(n)) then {\n    recur(n - 1)\n  }\n};\nfoo(3)",
+                "\n(n -> {\n  write!(n);\n  if !(zero?(n)) then {\n    recur(n - 1)\n  }\n})(3)",
+                "\nloop (n = 3) {\n  write!(n);\n  if !(zero?(n)) then {\n    recur(n - 1)\n  }\n}",
             ],
         },
     };

@@ -653,7 +653,7 @@ describe('sequence functions', () => {
         Albert: [{ name: 'Albert' }, { name: 'Albert' }],
         Mojir: [{ name: 'Mojir' }],
       })
-      expect(lits.run('group-by("Albert Mojir", -> if ("aoueiAOUEI" contains? $1) "vowel" else "other")')).toEqual({
+      expect(lits.run('group-by("Albert Mojir", -> if "aoueiAOUEI" contains? $1 then "vowel" else "other")')).toEqual({
         other: ['l', 'b', 'r', 't', ' ', 'M', 'j', 'r'],
         vowel: ['A', 'e', 'o', 'i'],
       })
