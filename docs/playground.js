@@ -1196,21 +1196,21 @@ var Playground = (function (exports) {
         'cond': 4,
         '0_def': 5,
         'defined?': 6,
-        '0_defn': 7,
-        'block': 8,
-        'doseq': 9,
-        '0_fn': 10,
-        'for': 11,
-        'function': 12,
-        'if': 13,
-        'let': 14,
-        'loop': 15,
-        'object': 16,
-        'recur': 17,
-        'switch': 18,
-        'throw': 19,
-        'try': 20,
-        'unless': 21,
+        // '0_defn': 7,
+        'block': 7,
+        'doseq': 8,
+        '0_fn': 9,
+        'for': 10,
+        // 'function': 10,
+        'if': 11,
+        'let': 12,
+        'loop': 13,
+        'object': 14,
+        'recur': 15,
+        'switch': 16,
+        'throw': 17,
+        'try': 18,
+        'unless': 19,
     };
 
     function isSymbolNode(node) {
@@ -12356,140 +12356,13 @@ var Playground = (function (exports) {
         },
     };
 
-    var nonNumberReservedSymbolRecord = {
-        true: true,
-        false: false,
-        null: null,
-        else: null,
-        case: null,
-        each: null,
-        in: null,
-        when: null,
-        while: null,
-        catch: null,
-        function: null,
-        export: null,
-        as: null,
-        _: null,
-    };
-    var phi = (1 + Math.sqrt(5)) / 2;
-    var numberReservedSymbolRecord = {
-        'E': Math.E,
-        '-E': -Math.E,
-        'ε': Math.E,
-        '-ε': -Math.E,
-        'PI': Math.PI,
-        '-PI': -Math.PI,
-        'π': Math.PI,
-        '-π': -Math.PI,
-        'PHI': phi,
-        '-PHI': -phi,
-        'φ': phi,
-        '-φ': -phi,
-        'POSITIVE_INFINITY': Number.POSITIVE_INFINITY,
-        '∞': Number.POSITIVE_INFINITY,
-        'NEGATIVE_INFINITY': Number.NEGATIVE_INFINITY,
-        '-∞': Number.NEGATIVE_INFINITY,
-        'MAX_SAFE_INTEGER': Number.MAX_SAFE_INTEGER,
-        'MIN_SAFE_INTEGER': Number.MIN_SAFE_INTEGER,
-        'MAX_VALUE': Number.MAX_VALUE,
-        'MIN_VALUE': Number.MIN_VALUE,
-        'NaN': Number.NaN,
-    };
-    var reservedSymbolRecord = __assign(__assign({}, nonNumberReservedSymbolRecord), numberReservedSymbolRecord);
-    function isReservedSymbol(symbol) {
-        return symbol in reservedSymbolRecord;
-    }
-    function isNumberReservedSymbol(symbol) {
-        return symbol in numberReservedSymbolRecord;
-    }
-
-    function assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo) {
-        if (typeof name !== 'string')
-            return;
-        // TODO only subset of special expressions are necessary to check (CommonSpecialExpressionType)
-        if (specialExpressionTypes[name])
-            throw new LitsError("Cannot define variable ".concat(name, ", it's a special expression."), sourceCodeInfo);
-        if (builtin.normalExpressions[name])
-            throw new LitsError("Cannot define variable ".concat(name, ", it's a builtin function."), sourceCodeInfo);
-        if (isReservedSymbol(name))
-            throw new LitsError("Cannot define variable ".concat(name, ", it's a reserved name."), sourceCodeInfo);
-        if (contextStack.globalContext[name])
-            throw new LitsError("Name already defined \"".concat(name, "\"."), sourceCodeInfo);
-    }
-
-    var functionSpecialExpression = {
-        arity: {},
-        evaluate: function (node, contextStack, _a) {
-            var _b, _c;
-            var builtin = _a.builtin, getUndefinedSymbols = _a.getUndefinedSymbols, evaluateNode = _a.evaluateNode;
-            var _d = __read(node[1], 4), functionSymbol = _d[1], fn = _d[2], docString = _d[3];
-            assertUserDefinedSymbolNode(functionSymbol, node[2]);
-            assertNameNotDefined(functionSymbol[1], contextStack, builtin, node[2]);
-            var evaluatedFunction = evaluateFunction(fn, contextStack, builtin, getUndefinedSymbols, evaluateNode);
-            var min = evaluatedFunction[0].filter(function (arg) { return arg[0] !== bindingTargetTypes.rest && arg[1][1] === undefined; }).length;
-            var max = evaluatedFunction[0].some(function (arg) { return arg[0] === bindingTargetTypes.rest; }) ? undefined : evaluatedFunction[0].length;
-            var arity = { min: min > 0 ? min : undefined, max: max };
-            var litsFunction = (_b = {},
-                _b[FUNCTION_SYMBOL] = true,
-                _b.sourceCodeInfo = node[2],
-                _b.functionType = 'UserDefined',
-                _b.name = functionSymbol[1],
-                _b.evaluatedfunction = evaluatedFunction,
-                _b.arity = arity,
-                _b.docString = docString,
-                _b);
-            contextStack.addValues((_c = {}, _c[functionSymbol[1]] = litsFunction, _c), functionSymbol[2]);
-            return litsFunction;
-        },
-        getUndefinedSymbols: function (node, contextStack, _a) {
-            var _b, _c;
-            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateNode = _a.evaluateNode;
-            var functionName = node[1][1][1];
-            contextStack.addValues((_b = {}, _b[functionName] = true, _b), node[1][1][2]);
-            var newContext = (_c = {}, _c[functionName] = { value: true }, _c);
-            return getFunctionUnresolvedSymbols(node[1][2], contextStack, getUndefinedSymbols, builtin, evaluateNode, newContext);
-        },
-    };
-    var defnSpecialExpression = {
-        arity: {},
-        evaluate: function (node, contextStack, _a) {
-            var _b, _c;
-            var builtin = _a.builtin, getUndefinedSymbols = _a.getUndefinedSymbols, evaluateNode = _a.evaluateNode;
-            var _d = __read(node[1], 4), functionSymbol = _d[1], fn = _d[2], docString = _d[3];
-            assertUserDefinedSymbolNode(functionSymbol, node[2]);
-            assertNameNotDefined(functionSymbol[1], contextStack, builtin, node[2]);
-            var evaluatedFunction = evaluateFunction(fn, contextStack, builtin, getUndefinedSymbols, evaluateNode);
-            var min = evaluatedFunction[0].filter(function (arg) { return arg[0] !== bindingTargetTypes.rest && arg[1][1] === undefined; }).length;
-            var arity = { min: min };
-            var litsFunction = (_b = {},
-                _b[FUNCTION_SYMBOL] = true,
-                _b.sourceCodeInfo = node[2],
-                _b.functionType = 'UserDefined',
-                _b.name = functionSymbol[1],
-                _b.evaluatedfunction = evaluatedFunction,
-                _b.arity = arity,
-                _b.docString = docString,
-                _b);
-            contextStack.exportValues((_c = {}, _c[functionSymbol[1]] = litsFunction, _c), functionSymbol[2]);
-            return litsFunction;
-        },
-        getUndefinedSymbols: function (node, contextStack, _a) {
-            var _b, _c;
-            var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateNode = _a.evaluateNode;
-            var functionName = node[1][1][1];
-            var fn = node[1][2];
-            contextStack.exportValues((_b = {}, _b[functionName] = true, _b), node[1][1][2]);
-            var newContext = (_c = {}, _c[functionName] = { value: true }, _c);
-            return getFunctionUnresolvedSymbols(fn, contextStack, getUndefinedSymbols, builtin, evaluateNode, newContext);
-        },
-    };
-    var fnSpecialExpression = {
+    var lambdaSpecialExpression = {
         arity: {},
         evaluate: function (node, contextStack, _a) {
             var _b;
             var builtin = _a.builtin, getUndefinedSymbols = _a.getUndefinedSymbols, evaluateNode = _a.evaluateNode;
             var fn = node[1][1];
+            var docString = node[1][2];
             var evaluatedFunction = evaluateFunction(fn, contextStack, builtin, getUndefinedSymbols, evaluateNode);
             var min = evaluatedFunction[0].filter(function (arg) { return arg[0] !== bindingTargetTypes.rest && arg[1][1] === undefined; }).length;
             var max = evaluatedFunction[0].some(function (arg) { return arg[0] === bindingTargetTypes.rest; }) ? undefined : evaluatedFunction[0].length;
@@ -12501,8 +12374,9 @@ var Playground = (function (exports) {
                 _b.name = undefined,
                 _b.evaluatedfunction = evaluatedFunction,
                 _b.arity = arity,
-                _b.docString = '',
+                _b.docString = docString,
                 _b);
+            evaluatedFunction[2].self = { value: litsFunction };
             return litsFunction;
         },
         getUndefinedSymbols: function (node, contextStack, _a) {
@@ -12533,17 +12407,16 @@ var Playground = (function (exports) {
         ];
         return evaluatedFunction;
     }
-    function getFunctionUnresolvedSymbols(fn, contextStack, getUndefinedSymbols, builtin, evaluateNode, functionNameContext) {
+    function getFunctionUnresolvedSymbols(fn, contextStack, getUndefinedSymbols, builtin, evaluateNode) {
         var result = new Set();
-        var contextStackWithFunctionName = functionNameContext ? contextStack.create(functionNameContext) : contextStack;
-        var newContext = {};
+        var newContext = { self: { value: null } };
         fn[0].forEach(function (arg) {
             Object.assign(newContext, getAllBindingTargetNames(arg));
             walkDefaults(arg, function (defaultNode) {
                 addToSet(result, getUndefinedSymbols([defaultNode], contextStack, builtin, evaluateNode));
             });
         });
-        var newContextStack = contextStackWithFunctionName.create(newContext);
+        var newContextStack = contextStack.create(newContext);
         var overloadResult = getUndefinedSymbols(fn[1], newContextStack, builtin, evaluateNode);
         addToSet(result, overloadResult);
         return result;
@@ -13090,12 +12963,12 @@ var Playground = (function (exports) {
         condSpecialExpression,
         defSpecialExpression,
         definedSpecialExpression,
-        defnSpecialExpression,
+        // defnSpecialExpression,
         doSpecialExpression,
         doseqSpecialExpression,
-        fnSpecialExpression,
+        lambdaSpecialExpression,
         forSpecialExpression,
-        functionSpecialExpression,
+        // functionSpecialExpression,
         ifSpecialExpression,
         letSpecialExpression,
         loopSpecialExpression,
@@ -13116,6 +12989,52 @@ var Playground = (function (exports) {
     new Set(specialExpressionKeys);
     // TODO, remove
     // console.log('builtin', [...specialExpressionKeys, ...normalExpressionKeys].length)
+
+    var nonNumberReservedSymbolRecord = {
+        true: true,
+        false: false,
+        null: null,
+        else: null,
+        case: null,
+        each: null,
+        in: null,
+        when: null,
+        while: null,
+        catch: null,
+        function: null,
+        export: null,
+        as: null,
+        end: null,
+        _: null,
+    };
+    var phi = (1 + Math.sqrt(5)) / 2;
+    var numberReservedSymbolRecord = {
+        'E': Math.E,
+        '-E': -Math.E,
+        'ε': Math.E,
+        '-ε': -Math.E,
+        'PI': Math.PI,
+        '-PI': -Math.PI,
+        'π': Math.PI,
+        '-π': -Math.PI,
+        'PHI': phi,
+        '-PHI': -phi,
+        'φ': phi,
+        '-φ': -phi,
+        'POSITIVE_INFINITY': Number.POSITIVE_INFINITY,
+        '∞': Number.POSITIVE_INFINITY,
+        'NEGATIVE_INFINITY': Number.NEGATIVE_INFINITY,
+        '-∞': Number.NEGATIVE_INFINITY,
+        'MAX_SAFE_INTEGER': Number.MAX_SAFE_INTEGER,
+        'MIN_SAFE_INTEGER': Number.MIN_SAFE_INTEGER,
+        'MAX_VALUE': Number.MAX_VALUE,
+        'MIN_VALUE': Number.MIN_VALUE,
+        'NaN': Number.NaN,
+    };
+    var reservedSymbolRecord = __assign(__assign({}, nonNumberReservedSymbolRecord), numberReservedSymbolRecord);
+    function isNumberReservedSymbol(symbol) {
+        return symbol in numberReservedSymbolRecord;
+    }
 
     var functionExecutors = {
         NativeJsFunction: function (fn, params, sourceCodeInfo) {
@@ -13565,6 +13484,9 @@ var Playground = (function (exports) {
                     if (normalExpressionKeys.includes(name_1)) {
                         throw new LitsError("Cannot shadow builtin function \"".concat(name_1, "\""), sourceCodeInfo);
                     }
+                    if (name_1 === 'self') {
+                        throw new LitsError("Cannot shadow builtin value \"".concat(name_1, "\""), sourceCodeInfo);
+                    }
                     this.globalContext[name_1] = { value: value };
                 }
             }
@@ -13593,6 +13515,9 @@ var Playground = (function (exports) {
                     }
                     if (normalExpressionKeys.includes(name_2)) {
                         throw new LitsError("Cannot shadow builtin function \"".concat(name_2, "\""), sourceCodeInfo);
+                    }
+                    if (name_2 === 'self') {
+                        throw new LitsError("Cannot shadow builtin value \"".concat(name_2, "\""), sourceCodeInfo);
                     }
                     currentContext[name_2] = { value: toAny(value) };
                 }
@@ -14589,9 +14514,6 @@ var Playground = (function (exports) {
                         break;
                 }
             }
-            else if (isReservedSymbolToken(firstToken, 'function')) {
-                return this.parseFunction(firstToken);
-            }
             else if (isReservedSymbolToken(firstToken, 'export')) {
                 if (!moduleScope) {
                     throw new LitsError('export is only allowed in module scope', firstToken[2]);
@@ -14886,7 +14808,6 @@ var Playground = (function (exports) {
                     }
                     case specialExpressionTypes['0_fn']:
                     case specialExpressionTypes['0_def']:
-                    case specialExpressionTypes['0_defn']:
                         throw new LitsError("".concat(type, " is not allowed"), symbol[2]);
                     /* v8 ignore next 2 */
                     default:
@@ -14913,11 +14834,27 @@ var Playground = (function (exports) {
                     return null;
                 }
                 this.advance();
-                var body = this.parseExpression();
-                return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes['0_fn'], [
+                var nodes = void 0;
+                var docString = '';
+                if (isLBraceToken(this.peek())) {
+                    var parsedBlock = this.parseBlock(true);
+                    docString = parsedBlock[1];
+                    nodes = parsedBlock[0][1][1];
+                }
+                else {
+                    nodes = [this.parseExpression()];
+                }
+                return withSourceCodeInfo([
+                    NodeTypes.SpecialExpression,
+                    [
+                        specialExpressionTypes['0_fn'],
+                        [
                             functionArguments,
-                            [body],
-                        ]]], firstToken[2]);
+                            nodes,
+                        ],
+                        docString,
+                    ],
+                ], firstToken[2]);
             }
             catch (_a) {
                 return null;
@@ -14966,7 +14903,16 @@ var Playground = (function (exports) {
             var firstToken = this.asToken(this.peek());
             this.advance();
             var startPos = this.parseState.position;
-            var exprNode = this.parseExpression();
+            var nodes;
+            var docString = '';
+            if (isLBraceToken(this.peek())) {
+                var parsedBlock = this.parseBlock(true);
+                docString = parsedBlock[1];
+                nodes = parsedBlock[0][1][1];
+            }
+            else {
+                nodes = [this.parseExpression()];
+            }
             var endPos = this.parseState.position - 1;
             var arity = 0;
             var dollar1 = 'NOT_SET'; // referring to argument bindings. $ = NAKED, $1, $2, $3, etc = WITH_1
@@ -14999,8 +14945,8 @@ var Playground = (function (exports) {
             }
             var node = withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes['0_fn'], [
                         functionArguments,
-                        [exprNode],
-                    ]]], firstToken[2]);
+                        nodes,
+                    ], docString]], firstToken[2]);
             return node;
         };
         Parser.prototype.parseOptionalDefaulValue = function () {
@@ -15437,24 +15383,6 @@ var Playground = (function (exports) {
             this.advance();
             return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.switch, valueExpression, params]], token[2]);
         };
-        Parser.prototype.parseFunction = function (token) {
-            this.advance();
-            var symbol = this.parseSymbol();
-            var functionArguments = this.parseFunctionArguments();
-            var _a = __read(this.parseBlock(true), 2), block = _a[0], docString = _a[1];
-            return withSourceCodeInfo([
-                NodeTypes.SpecialExpression,
-                [
-                    specialExpressionTypes.function,
-                    symbol,
-                    [
-                        functionArguments,
-                        block[1][1],
-                    ],
-                    docString,
-                ],
-            ], token[2]);
-        };
         Parser.prototype.isAtEnd = function () {
             return this.parseState.position >= this.tokenStream.tokens.length;
         };
@@ -15478,13 +15406,8 @@ var Playground = (function (exports) {
                 var letNode = this.parseLet(asSymbolToken(token));
                 return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes['0_def'], letNode[1][1]]], exportToken[2]);
             }
-            else if (isReservedSymbolToken(token, 'function')) {
-                var functionNode = this.parseFunction(token);
-                functionNode[1][0] = specialExpressionTypes['0_defn'];
-                return functionNode;
-            }
             else {
-                throw new LitsError('Expected let or function', this.peekSourceCodeInfo());
+                throw new LitsError('Expected let', this.peekSourceCodeInfo());
             }
         };
         Parser.prototype.stringToSymbolNode = function (value, sourceCodeInfo) {
@@ -16300,7 +16223,7 @@ var Playground = (function (exports) {
                 '[[3, 2, 1, 0], [6, 5, 4], [9, 8, 7]] mapcat reverse',
                 'mapcat([[3, 2, 1, 0], [6, 5, 4], [9, 8, 7]], reverse)',
                 '[[3, 2, 1, 0,], [6, 5, 4,], [9, 8, 7]] mapcat reverse',
-                "\nfunction foo(n) {\n  [n - 1, n, n + 1]\n};\n[1, 2, 3] mapcat foo",
+                "\nlet foo = (n) -> {\n  [n - 1, n, n + 1]\n};\n[1, 2, 3] mapcat foo",
                 "\nmapcat(\n  [[1, 2], [2, 2], [2, 3]],\n  -> $ remove even?\n)",
             ],
         },
@@ -21031,7 +20954,7 @@ var Playground = (function (exports) {
             description: 'Returns documentation string of the $fun.',
             examples: [
                 'doc(+)',
-                "\nfunction add(x, y) {\n  \"\"\"\n  Adds two numbers.\n  Args:\n    x: First number.\n    y: Second number.\n  Returns:\n    Sum of x and y.\n  \"\"\"\n  x + y;\n};\n\ndoc(add)",
+                "\nlet add = (x, y) -> {\n  \"\"\"\n  Adds two numbers.\n  Args:\n    x: First number.\n    y: Second number.\n  Returns:\n    Sum of x and y.\n  \"\"\"\n  x + y;\n};\n\ndoc(add)",
             ],
         },
         arity: {
@@ -21052,8 +20975,8 @@ var Playground = (function (exports) {
             examples: [
                 'arity(+)',
                 'arity(defined?)',
-                "\nfunction add(x, y = 0) {\n  x + y;\n};\n\narity(add)",
-                "\nfunction foo(k, ...x) {\n  k + x;\n};\n  arity(foo)",
+                "\nlet add = (x, y = 0) -> {\n  x + y;\n};\n\narity(add)",
+                "\nlet foo = (k, ...x) -> {\n  k + x;\n};\n  arity(foo)",
             ],
         },
     };
@@ -27411,26 +27334,6 @@ var Playground = (function (exports) {
             description: "\n  Binds local variables s to `value`. `value` can be any expression. The scope of the variables is the body of the let expression.",
             examples: ["\nlet a = 1 + 2 + 3 + 4;\nlet b = -> $ * ( $ + 1 );\nwrite!(\"a\", a, \"b\", b)"],
         },
-        'function': {
-            title: 'function',
-            category: 'Special expression',
-            customVariants: ['function name(...arg) { body }'],
-            details: [
-                ['name', 'symbol', 'The name of the function.'],
-                ['arg', '[...]arg-name [= value]', 'Arguments of the function.'],
-                ['...', 'rest-symbol', 'Optional. The rest argument of the function.'],
-                ['arg-name', 'symbol', 'The name of the argument.'],
-                ['value', 'any', 'Optional. The default value of the argument.'],
-                ['let-binding', 'symbol', 'Optional. The let bindings of the function.'],
-                ['body', 'one or more expressions', 'The body of the function.'],
-            ],
-            description: 'Creates a named function. When called, evaluation of the last expression in the body is returned.',
-            examples: [
-                "\nfunction hyp (a, b) {\n  sqrt(a * a + b * b)\n};\n\nhyp(3, 4)",
-                "\nfunction sumOfSquares(...s) {\n  apply(\n    +,\n    map(s, -> $ ^ 2)\n  )\n};\n\nsumOfSquares(1, 2, 3, 4, 5)",
-                "\nfunction withOptional(a, b = 42) {\n  a + b\n};\n\nwrite!(withOptional(1), withOptional(1, 2))",
-            ],
-        },
         'try': {
             title: 'try',
             category: 'Special expression',
@@ -27552,7 +27455,7 @@ var Playground = (function (exports) {
             customVariants: ['recur(...recur-args)'],
             description: 'Recursevly calls enclosing function or loop with its evaluated `recur-args`.',
             examples: [
-                "\nfunction foo(n) {\n  write!(n);\n  if (!(zero?(n))) {\n    recur(n - 1)\n  }\n};\nfoo(3)",
+                "\nlet foo = (n) -> {\n  write!(n);\n  if (!(zero?(n))) {\n    recur(n - 1)\n  }\n};\nfoo(3)",
                 "\n(n -> {\n  write!(n);\n  if (!(zero?(n))) {\n    recur(n - 1)\n  }\n})(3)",
                 "\nloop (n = 3) {\n  write!(n);\n  if (!(zero?(n))) {\n    recur(n - 1)\n  }\n}",
             ],

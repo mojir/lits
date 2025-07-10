@@ -119,15 +119,15 @@ let initial-state = {
 };
 
 // Helper functions
-function has-item?(state, item) {
+let has-item? = (state, item) -> {
   contains?(state.inventory, item);
 };
 
-function location-has-item?(location, item) {
+let location-has-item? = (location, item) -> {
   contains?(get(location, "items", []), item);
 };
 
-function describe-location(state) {
+let describe-location = (state) -> {
   let location = get(locations, state.current-location);
   let description = location.description;
 
@@ -153,13 +153,13 @@ function describe-location(state) {
   filter([description, visited-status, items-desc, exits-desc], -> !(empty?($))) join "\\n"
 };
 
-function get-location-items(state) {
+let get-location-items = (state) -> {
   let location = get(locations, state.current-location);
   get(location, "items", [])
 };
 
 // Game actions
-function move(state, direction) {
+let move = (state, direction) -> {
   let location = get(locations, state.current-location);
   let exits = get(location, "exits", {});
 
@@ -194,7 +194,7 @@ function move(state, direction) {
   }
 };
 
-function take!(state, item) {
+let take! = (state, item) -> {
   let items = get-location-items(state);
 
   if (contains?(items, item)) {
@@ -228,7 +228,7 @@ function take!(state, item) {
   }
 };
 
-function drop!(state, item) {
+let drop! = (state, item) -> {
   if (has-item?(state, item)) {
     let location = get(locations, state.current-location);
     let location-items = get(location, "items", []);
@@ -258,7 +258,7 @@ function drop!(state, item) {
   }
 };
 
-function inventory(state) {
+let inventory = (state) -> {
   if (empty?(state.inventory)) {
     [state, "Your inventory is empty."]
   } else {
@@ -266,7 +266,7 @@ function inventory(state) {
   }
 };
 
-function use(state, item) {
+let use = (state, item) -> {
   switch (item) {
     case "fishing rod":
       if (state.current-location == "river") {
@@ -350,7 +350,7 @@ function use(state, item) {
 };
 
 // Command parser
-function parse-command(state, input) {
+let parse-command = (state, input) -> {
   let tokens = lower-case(input) split " ";
   let command = first(tokens);
   let args = rest(tokens) join " ";
@@ -388,7 +388,7 @@ function parse-command(state, input) {
 };
 
 // Game loop
-function game-loop(state) {
+let game-loop = (state) -> {
   alert!(describe-location(state) ++ "\\nWhat do you do? ");
 
   let input = read-line!();
@@ -407,7 +407,7 @@ function game-loop(state) {
 };
 
 // Start game
-function start-game() {
+let start-game = () -> {
   alert!("=== Lits Adventure Game ===\\n" ++ "Type 'help' for a list of commands.\\n\\n");
   game-loop(initial-state)
 };
@@ -422,7 +422,7 @@ start-game()
     description: 'Determinant function for square matrices.',
     code: `
 // Determinant function for square matrices
-function determinant(matrix) {
+let determinant = (matrix) -> {
   // Check if input is an array
   unless (array?(matrix)) {
     throw("Input must be an array");
@@ -482,7 +482,7 @@ function determinant(matrix) {
 };
 
 // Helper function to get minor (submatrix) by removing specific row and column
-function getMinor(matrix, rowToRemove, colToRemove) {
+let getMinor = (matrix, rowToRemove, colToRemove) -> {
   // Use map with filter to create the new matrix without mutating
   map(
     range(count(matrix)),
@@ -523,7 +523,7 @@ determinant(matrix4x4);
     description: 'Matrix multiplication with correct syntax.',
     code: `
 // Matrix multiplication with correct syntax
-function matrixMultiply(matrixA, matrixB) {
+let matrixMultiply = (matrixA, matrixB) -> {
   // Check if inputs are arrays
   unless (array?(matrixA)) throw("First input must be an array");
   unless (array?(matrixB)) throw("Second input must be an array");
@@ -556,7 +556,7 @@ function matrixMultiply(matrixA, matrixB) {
   };
 
   // Create a row of the result matrix
-  function createRow(rowIndex) {
+  let createRow = (rowIndex) -> {
     for (j in range(colsB)) {
       reduce(
         range(colsA),
@@ -595,7 +595,7 @@ matrixMultiply(matrixA, matrixB);
     name: 'Phone number formatter',
     description: 'Pretty prints a US phone number.',
     code: `
-function formatPhoneNumber(data) {
+let formatPhoneNumber = (data) -> {
   if (string?(data)) {
     let phoneNumber = data[0] == "+" ? data slice 2 : data;
     let length = count(phoneNumber);
@@ -627,11 +627,11 @@ write!(formatPhoneNumber("+11232343456"));
     name: 'Factorial',
     description: 'A recursive implementation of the factorial function.',
     code: `
-function factorial(x) {
+let factorial = (x) -> {
   if (x == 1) {
     1
   } else {
-    x * factorial(x - 1)
+    x * self(x - 1)
   }
 };
 
@@ -645,7 +645,7 @@ factorial(5)
     description: 'Sort an array of numbers.',
     code: `
 let l = [7, 39, 45, 0, 23, 1, 50, 100, 12, -5];
-function numberComparer(a, b) {
+let numberComparer = (a, b) -> {
   cond {
     case a < b: -1
     case a > b: 1
@@ -660,7 +660,7 @@ sort(l, numberComparer)
     name: 'Is ISO date string',
     description: 'Check if string is formatted as an ISO date string.',
     code: `
-function isoDateString?(data) {
+let isoDateString? = (data) -> {
   let m = data match #"^(\\d{4})-(\\d{2})-(\\d{2})$";
 
   if (m) {
@@ -690,7 +690,7 @@ write!(isoDateString?("197-12-21"));
     name: 'label-from-value',
     description: 'Find label to corresponding value in array of { label, value }-objects.',
     code: `
-function label-from-value(items, value) {
+let label-from-value = (items, value) -> {
   let entry = items some (-> value == $["value"]);
   if (entry == null) {
     null
@@ -714,7 +714,7 @@ label-from-value(items, "name");
     name: 'labels-from-values',
     description: 'Find labels to corresponding values in array of { label, value }-objects.',
     code: `
-function labels-from-values($array, $values) {
+let labels-from-values = ($array, $values) -> {
   for (value in $values,
       let label = {
         let entry = $array some -> value == $["value"];
