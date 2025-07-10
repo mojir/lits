@@ -684,12 +684,12 @@ drop-while(
       `
 sort(
   [3, 1, 2],
-  (a, b) -> cond { case a < b: -1 case a > b: 1 case true: -1 }
+  (a, b) -> cond case a < b then -1 case a > b then 1 case true then -1 end
 )`,
       `
 sort(
   [3, 1, 2],
-  (a, b) -> cond { case a > b: -1 case a < b: 1 case true: -1 }
+  (a, b) -> cond case a > b then -1 case a < b then 1 case true then -1 end
 )`,
     ],
   },

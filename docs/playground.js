@@ -15307,78 +15307,70 @@ var Playground = (function (exports) {
         };
         Parser.prototype.parseCond = function (token) {
             this.advance();
-            assertLBraceToken(this.peek());
-            this.advance();
             var params = [];
-            while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
+            while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
                 assertReservedSymbolToken(this.peek(), 'case');
                 this.advance();
                 var caseExpression = this.parseExpression();
-                assertOperatorToken(this.peek(), ':');
+                assertReservedSymbolToken(this.peek(), 'then');
                 this.advance();
                 var expressions = [];
                 while (!this.isAtEnd()
                     && !isReservedSymbolToken(this.peek(), 'case')
-                    && !isRBraceToken(this.peek())) {
+                    && !isReservedSymbolToken(this.peek(), 'end')) {
                     expressions.push(this.parseExpression());
                     if (isOperatorToken(this.peek(), ';')) {
                         this.advance();
                     }
-                    else if (!isReservedSymbolToken(this.peek(), 'case') && !isRBraceToken(this.peek())) {
-                        throw new LitsError('Expected ;', this.peekSourceCodeInfo());
+                    else if (!isReservedSymbolToken(this.peek(), 'case') && !isReservedSymbolToken(this.peek(), 'end')) {
+                        throw new LitsError('Expected case or end', this.peekSourceCodeInfo());
                     }
                 }
                 var thenExpression = expressions.length === 1
                     ? expressions[0]
                     : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.block, expressions]], token[2]);
                 params.push([caseExpression, thenExpression]);
-                if (isRBraceToken(this.peek())) {
+                if (isReservedSymbolToken(this.peek(), 'end')) {
                     break;
                 }
                 assertReservedSymbolToken(this.peek(), 'case');
             }
-            assertRBraceToken(this.peek());
+            assertReservedSymbolToken(this.peek());
             this.advance();
             return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.cond, params]], token[2]);
         };
         Parser.prototype.parseSwitch = function (token) {
             this.advance();
-            assertLParenToken(this.peek());
-            this.advance();
             var valueExpression = this.parseExpression();
-            assertRParenToken(this.peek());
-            this.advance();
-            assertLBraceToken(this.peek());
-            this.advance();
             var params = [];
-            while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
+            while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
                 assertReservedSymbolToken(this.peek(), 'case');
                 this.advance();
                 var caseExpression = this.parseExpression();
-                assertOperatorToken(this.peek(), ':');
+                assertReservedSymbolToken(this.peek(), 'then');
                 this.advance();
                 var expressions = [];
                 while (!this.isAtEnd()
                     && !isReservedSymbolToken(this.peek(), 'case')
-                    && !isRBraceToken(this.peek())) {
+                    && !isReservedSymbolToken(this.peek(), 'end')) {
                     expressions.push(this.parseExpression());
                     if (isOperatorToken(this.peek(), ';')) {
                         this.advance();
                     }
-                    else if (!isReservedSymbolToken(this.peek(), 'case') && !isRBraceToken(this.peek())) {
-                        throw new LitsError('Expected ;', this.peekSourceCodeInfo());
+                    else if (!isReservedSymbolToken(this.peek(), 'case') && !isReservedSymbolToken(this.peek(), 'end')) {
+                        throw new LitsError('Expected case or end', this.peekSourceCodeInfo());
                     }
                 }
                 var thenExpression = expressions.length === 1
                     ? expressions[0]
                     : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.block, expressions]], token[2]);
                 params.push([caseExpression, thenExpression]);
-                if (isRBraceToken(this.peek())) {
+                if (isReservedSymbolToken(this.peek(), 'end')) {
                     break;
                 }
                 assertReservedSymbolToken(this.peek(), 'case');
             }
-            assertRBraceToken(this.peek());
+            assertReservedSymbolToken(this.peek(), 'end');
             this.advance();
             return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.switch, valueExpression, params]], token[2]);
         };
@@ -26855,8 +26847,8 @@ var Playground = (function (exports) {
             examples: [
                 '[3, 1, 2] sort (a, b) -> b - a',
                 'sort([3, 1, 2])',
-                "\nsort(\n  [3, 1, 2],\n  (a, b) -> cond { case a < b: -1 case a > b: 1 case true: -1 }\n)",
-                "\nsort(\n  [3, 1, 2],\n  (a, b) -> cond { case a > b: -1 case a < b: 1 case true: -1 }\n)",
+                "\nsort(\n  [3, 1, 2],\n  (a, b) -> cond case a < b then -1 case a > b then 1 case true then -1 end\n)",
+                "\nsort(\n  [3, 1, 2],\n  (a, b) -> cond case a > b then -1 case a < b then 1 case true then -1 end\n)",
             ],
         },
         'sort-by': {
@@ -27406,7 +27398,7 @@ var Playground = (function (exports) {
         'cond': {
             title: 'cond',
             category: 'Special expression',
-            customVariants: ['cond { cond-branch cond-branch ... }'],
+            customVariants: ['cond cond-branch cond-branch ... end'],
             details: [
                 ['cond-branch', 'case test then body', 'A branch of the cond expression.'],
                 ['test', 'expression', 'The condition to test.'],
@@ -27414,15 +27406,15 @@ var Playground = (function (exports) {
             ],
             description: 'Used for branching. `cond-branches` are tested sequentially from the top. If no branch is tested truthy, `null` is returned.',
             examples: [
-                "\ncond {\n  case false: write!(\"FALSE\")\n  case true: write!(\"TRUE\")\n}",
-                "\ncond {\n  case false: write!(\"FALSE\")\n  case null: write!(\"null\")\n} ?? write!(\"TRUE\")",
-                "\ncond {\n  case false: write!(\"FALSE\")\n  case null: write!(\"null\")\n} ?? write!(\"TRUE\")",
+                "\ncond\n  case false then write!(\"FALSE\")\n  case true then write!(\"TRUE\")\nend",
+                "\ncond\n  case false then write!(\"FALSE\")\n  case null then write!(\"null\")\nend ?? write!(\"TRUE\")",
+                "\ncond\n  case false then write!(\"FALSE\")\n  case null then write!(\"null\")\nend ?? write!(\"TRUE\")",
             ],
         },
         'switch': {
             title: 'switch',
             category: 'Special expression',
-            customVariants: ['switch (value) { switch-branch switch-branch ... }'],
+            customVariants: ['switch value switch-branch switch-branch ... end'],
             details: [
                 ['value', 'any', 'The value to test.'],
                 ['switch-branch', 'case test then body', 'A branch of the switch expression.'],
@@ -27431,9 +27423,9 @@ var Playground = (function (exports) {
             ],
             description: 'Used for branching. `switch-branches` are tested sequentially from the top against `value`. If no branch is tested truthy, `null` is returned.',
             examples: [
-                "\nswitch (1) {\n  case 1: write!(\"One\")\n  case 2: write!(\"Two\")\n}",
-                "\nswitch (2) {\n  case 1: write!(\"One\")\n  case 2: write!(\"Two\")\n}",
-                "\nswitch (3) {\n  case 1: write!(\"One\")\n  case 2: write!(\"Two\")\n}",
+                "\nswitch 1\n  case 1 then write!(\"One\")\n  case 2 then write!(\"Two\")\nend",
+                "\nswitch 2\n  case 1 then write!(\"One\")\n  case 2 then write!(\"Two\")\nend",
+                "\nswitch 3\n  case 1 then write!(\"One\")\n  case 2 then write!(\"Two\")\nend",
             ],
         },
         'block': {

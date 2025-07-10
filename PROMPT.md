@@ -117,20 +117,20 @@ catch  // without binding error
 
 ### switch
 ```
-switch (x) {
-  case 0: "zero"
-  case 1: "one"
-  case 2: "two"
-} // returns null if no match - there is no such thing as default
+switch x
+  case 0 then "zero"
+  case 1 then "one"
+  case 2 then "two"
+end // returns null if no match - there is no such thing as default
 ```
 
 ### cond
 ```
-cond {
-  case val < 5: "S"
-  case val < 10: "M"
-  case val < 15: "L"
-} ?? "No match"
+cond
+  case val < 5 then "S"
+  case val < 10 then "M"
+  case val < 15 then "L"
+end ?? "No match"
 ```
 
 ### for - list comprehension
@@ -1074,14 +1074,14 @@ function inventory(state) {
 };
 
 function use(state, item) {
-  switch (item) {
-    case "fishing rod":
+  switch item
+    case "fishing rod" then
       if (state.current-location == "river") {
         [assoc(state, "moves", state.moves + 1), "You catch a small fish, but it slips away."]
       } else {
         [state, "There's no place to use a fishing rod here."]
       }
-    case "torch":
+    case "torch" then
       if (has-item?(state, item)) {
         [
           assoc(assoc(state, "light-source", true), "moves", state.moves + 1),
@@ -1090,7 +1090,7 @@ function use(state, item) {
       } else {
         [state, "You don't have a torch."]
       }
-    case "gold key":
+    case "gold key" then
       if (has-item?(state, item) && state.current-location == "treasure room") {
         [
           assoc(
@@ -1103,7 +1103,7 @@ function use(state, item) {
       } else {
         [state, "The key doesn't fit anything here."]
       }
-    case "bread":
+    case "bread" then
       if (has-item?(state, item)) {
         let new-inventory = filter(state.inventory, -> $ ≠ item);
         [
@@ -1117,7 +1117,7 @@ function use(state, item) {
       } else {
         [state, "You don't have any bread."]
       }
-    case "shiny stone":
+    case "shiny stone" then
       if (has-item?(state, item)) {
         [
           assoc(state, "moves", state.moves + 1),
@@ -1126,7 +1126,7 @@ function use(state, item) {
       } else {
         [state, "You don't have a shiny stone."]
       }
-    case "flowers":
+    case "flowers" then
       if (has-item?(state, item)) {
         [
           assoc(state, "moves", state.moves + 1),
@@ -1135,7 +1135,7 @@ function use(state, item) {
       } else {
         [state, "You don't have any flowers."]
       }
-    case "ancient map":
+    case "ancient map" then
       if (has-item?(state, item)) {
         [
           assoc(state, "moves", state.moves + 1),
@@ -1144,7 +1144,7 @@ function use(state, item) {
       } else {
         [state, "You don't have a map."]
       }
-    case "jeweled crown":
+    case "jeweled crown" then
       if (has-item?(state, item)) {
         [
           assoc(state, "moves", state.moves + 1),
@@ -1153,7 +1153,7 @@ function use(state, item) {
       } else {
         [state, "You don't have a crown."]
       }
-  } ?? [state, "You can't use that."]
+  end ?? [state, "You can't use that."]
 };
 
 // Command parser
@@ -1162,34 +1162,34 @@ function parse-command(state, input) {
   let command = first(tokens);
   let args = rest(tokens) join " ";
 
-  let result = switch (command) {
-    case "go":
+  let result = switch command
+    case "go" then
       move(state, args)
-    case "north":
+    case "north" then
       move(state, "north")
-    case "south":
+    case "south" then
       move(state, "south")
-    case "east":
+    case "east" then
       move(state, "east")
-    case "west":
+    case "west" then
       move(state, "west")
-    case "take":
+    case "take" then
       take!(state, args)
-    case "drop":
+    case "drop" then
       drop!(state, args)
-    case "inventory":
+    case "inventory" then
       inventory(state)
-    case "i":
+    case "i" then
       inventory(state)
-    case "look":
+    case "look" then
       [assoc(state, "moves", state.moves + 1), describe-location(state)]
-    case "use":
+    case "use" then
       use(state, args)
-    case "help":
-      [state, "Commands: go [direction], north, south, east, west, take [item], drop [item], inventory, look, use [item], help, quit"]
-    case "quit":
+    case "help" then
+      [state, "Commands then go [direction], north, south, east, west, take [item], drop [item], inventory, look, use [item], help, quit"]
+    case "quit" then
       [assoc(state, "game-over", true), "Thanks for playing!"]
-  } ?? [state, "I don't understand that command. Type 'help' for a list of commands."];
+  end ?? [state, "I don't understand that command. Type 'help' for a list of commands."];
 
   result
 };

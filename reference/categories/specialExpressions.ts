@@ -242,7 +242,7 @@ unless true then {
   'cond': {
     title: 'cond',
     category: 'Special expression',
-    customVariants: ['cond { cond-branch cond-branch ... }'],
+    customVariants: ['cond cond-branch cond-branch ... end'],
     details: [
       ['cond-branch', 'case test then body', 'A branch of the cond expression.'],
       ['test', 'expression', 'The condition to test.'],
@@ -251,26 +251,26 @@ unless true then {
     description: 'Used for branching. `cond-branches` are tested sequentially from the top. If no branch is tested truthy, `null` is returned.',
     examples: [
       `
-cond {
-  case false: write!("FALSE")
-  case true: write!("TRUE")
-}`,
+cond
+  case false then write!("FALSE")
+  case true then write!("TRUE")
+end`,
       `
-cond {
-  case false: write!("FALSE")
-  case null: write!("null")
-} ?? write!("TRUE")`,
+cond
+  case false then write!("FALSE")
+  case null then write!("null")
+end ?? write!("TRUE")`,
       `
-cond {
-  case false: write!("FALSE")
-  case null: write!("null")
-} ?? write!("TRUE")`,
+cond
+  case false then write!("FALSE")
+  case null then write!("null")
+end ?? write!("TRUE")`,
     ],
   },
   'switch': {
     title: 'switch',
     category: 'Special expression',
-    customVariants: ['switch (value) { switch-branch switch-branch ... }'],
+    customVariants: ['switch value switch-branch switch-branch ... end'],
     details: [
       ['value', 'any', 'The value to test.'],
       ['switch-branch', 'case test then body', 'A branch of the switch expression.'],
@@ -280,20 +280,20 @@ cond {
     description: 'Used for branching. `switch-branches` are tested sequentially from the top against `value`. If no branch is tested truthy, `null` is returned.',
     examples: [
       `
-switch (1) {
-  case 1: write!("One")
-  case 2: write!("Two")
-}`,
+switch 1
+  case 1 then write!("One")
+  case 2 then write!("Two")
+end`,
       `
-switch (2) {
-  case 1: write!("One")
-  case 2: write!("Two")
-}`,
+switch 2
+  case 1 then write!("One")
+  case 2 then write!("Two")
+end`,
       `
-switch (3) {
-  case 1: write!("One")
-  case 2: write!("Two")
-}`,
+switch 3
+  case 1 then write!("One")
+  case 2 then write!("Two")
+end`,
     ],
   },
   'block': {

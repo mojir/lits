@@ -332,38 +332,38 @@ describe('specialExpressions', () => {
   describe('cond', () => {
     it('samples', () => {
       expect(lits.run(`
-cond {
-  case true: 10
-  case true: 20
-}`)).toBe(10)
+cond
+  case true then 10
+  case true then 20
+end`)).toBe(10)
       expect(lits.run(`
-cond {
-  case false: 10
-  case false: 20
-}`)).toBeNull()
-      expect(lits.run('cond { case true: 10 }')).toBe(10)
-      expect(lits.run('cond { case false: 20 case true: 5 + 5 }')).toBe(10)
+cond
+  case false then 10
+  case false then 20
+end`)).toBeNull()
+      expect(lits.run('cond case true then 10 end')).toBe(10)
+      expect(lits.run('cond case false then 20 case true then 5 + 5 end')).toBe(10)
       expect(lits.run(`
-cond {
-  case 5 > 10: 20
-  case 10 > 10: 5 + 5
-  case 10 >= 10: 5 + 5 + 5
-}`)).toBe(15)
+cond
+  case 5 > 10 then 20
+  case 10 > 10 then 5 + 5
+  case 10 >= 10 then 5 + 5 + 5
+end`)).toBe(15)
     })
     it('middle condition true', () => {
       expect(
         lits.run(`
-cond {
-  case 5 > 10: 20
-  case 10 >= 10: 5 + 5
-  case 10 > 10: 5 + 5 + 5
-}`),
+cond
+  case 5 > 10 then 20
+  case 10 >= 10 then 5 + 5
+  case 10 > 10 then 5 + 5 + 5
+end`),
       ).toBe(10)
       expect(logSpy).not.toHaveBeenCalled()
     })
     describe('unresolvedIdentifiers', () => {
       it('samples', () => {
-        expect((lits.getUndefinedSymbols('cond { case true: a case false: b case a > 1: c case true: d }'))).toEqual(
+        expect((lits.getUndefinedSymbols('cond case true then a case false then b case a > 1 then c case true then d end'))).toEqual(
           new Set(['a', 'b', 'c', 'd']),
         )
       })
@@ -374,25 +374,25 @@ cond {
     it('samples', () => {
       expect(lits.run(`
 let x = "-";
-switch (x) {
-  case "-": 5 + 5
-  case 2: 20
-}`)).toBe(10)
-      expect(lits.run('switch (true) { case true: 10 }')).toBe(10)
-      expect(lits.run('switch (true) { case false: 10 }')).toBeNull()
-      expect(lits.run('switch (true) { case false: 20 case true: 10 }')).toBe(10)
+switch x
+  case "-" then 5 + 5
+  case 2 then 20
+end`)).toBe(10)
+      expect(lits.run('switch true case true then 10 end')).toBe(10)
+      expect(lits.run('switch true case false then 10 end')).toBeNull()
+      expect(lits.run('switch true case false then 20 case true then 10 end')).toBe(10)
       expect(
         lits.run(`
-switch (2) {
-  case 0: 20
-  case 1: 10
-  case 2: 15
-}`),
+switch 2
+  case 0 then 20
+  case 1 then 10
+  case 2 then 15
+end`),
       ).toBe(15)
     })
     describe('unresolvedIdentifiers', () => {
       it('samples', () => {
-        expect((lits.getUndefinedSymbols('switch (foo) { case true: a case false: b case a > 1: c case true: d }'))).toEqual(
+        expect((lits.getUndefinedSymbols('switch foo case true then a case false then b case a > 1 then c case true then d end'))).toEqual(
           new Set(['foo', 'a', 'b', 'c', 'd']),
         )
       })

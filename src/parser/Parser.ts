@@ -1199,28 +1199,25 @@ export class Parser {
   parseCond(token: SymbolToken): CondNode {
     this.advance()
 
-    assertLBraceToken(this.peek())
-    this.advance()
-
     const params: [Node, Node][] = []
 
-    while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
+    while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
       assertReservedSymbolToken(this.peek(), 'case')
       this.advance()
       const caseExpression = this.parseExpression()
-      assertOperatorToken(this.peek(), ':')
+      assertReservedSymbolToken(this.peek(), 'then')
       this.advance()
       const expressions: Node[] = []
       while (
         !this.isAtEnd()
         && !isReservedSymbolToken(this.peek(), 'case')
-        && !isRBraceToken(this.peek())) {
+        && !isReservedSymbolToken(this.peek(), 'end')) {
         expressions.push(this.parseExpression())
         if (isOperatorToken(this.peek(), ';')) {
           this.advance()
         }
-        else if (!isReservedSymbolToken(this.peek(), 'case') && !isRBraceToken(this.peek())) {
-          throw new LitsError('Expected ;', this.peekSourceCodeInfo())
+        else if (!isReservedSymbolToken(this.peek(), 'case') && !isReservedSymbolToken(this.peek(), 'end')) {
+          throw new LitsError('Expected case or end', this.peekSourceCodeInfo())
         }
       }
 
@@ -1229,13 +1226,13 @@ export class Parser {
         : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.block, expressions]], token[2]) satisfies DoNode
 
       params.push([caseExpression, thenExpression])
-      if (isRBraceToken(this.peek())) {
+      if (isReservedSymbolToken(this.peek(), 'end')) {
         break
       }
       assertReservedSymbolToken(this.peek(), 'case')
     }
 
-    assertRBraceToken(this.peek())
+    assertReservedSymbolToken(this.peek())
     this.advance()
 
     return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.cond, params]], token[2]) satisfies CondNode
@@ -1243,32 +1240,26 @@ export class Parser {
 
   parseSwitch(token: SymbolToken): SwitchNode {
     this.advance()
-    assertLParenToken(this.peek())
-    this.advance()
     const valueExpression = this.parseExpression()
-    assertRParenToken(this.peek())
-    this.advance()
-    assertLBraceToken(this.peek())
-    this.advance()
     const params: [Node, Node][] = []
 
-    while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
+    while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
       assertReservedSymbolToken(this.peek(), 'case')
       this.advance()
       const caseExpression = this.parseExpression()
-      assertOperatorToken(this.peek(), ':')
+      assertReservedSymbolToken(this.peek(), 'then')
       this.advance()
       const expressions: Node[] = []
       while (
         !this.isAtEnd()
         && !isReservedSymbolToken(this.peek(), 'case')
-        && !isRBraceToken(this.peek())) {
+        && !isReservedSymbolToken(this.peek(), 'end')) {
         expressions.push(this.parseExpression())
         if (isOperatorToken(this.peek(), ';')) {
           this.advance()
         }
-        else if (!isReservedSymbolToken(this.peek(), 'case') && !isRBraceToken(this.peek())) {
-          throw new LitsError('Expected ;', this.peekSourceCodeInfo())
+        else if (!isReservedSymbolToken(this.peek(), 'case') && !isReservedSymbolToken(this.peek(), 'end')) {
+          throw new LitsError('Expected case or end', this.peekSourceCodeInfo())
         }
       }
 
@@ -1277,13 +1268,13 @@ export class Parser {
         : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.block, expressions]], token[2]) satisfies DoNode
 
       params.push([caseExpression, thenExpression])
-      if (isRBraceToken(this.peek())) {
+      if (isReservedSymbolToken(this.peek(), 'end')) {
         break
       }
       assertReservedSymbolToken(this.peek(), 'case')
     }
 
-    assertRBraceToken(this.peek())
+    assertReservedSymbolToken(this.peek(), 'end')
     this.advance()
 
     return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.switch, valueExpression, params]], token[2]) satisfies SwitchNode

@@ -138,10 +138,10 @@ describe('parser', () => {
     expect(() => litsDebug.run('export let a = (b) -> { 1, };')).toThrow(LitsError)
     expect(() => litsDebug.run('export let a = (b) -> { 1; 2 };')).not.toThrow()
     expect(() => litsDebug.run('let a = (b) -> { 1, };')).toThrow(LitsError)
-    expect(() => litsDebug.run('switch (1) { case 1: 1; 2 }')).not.toThrow()
-    expect(() => litsDebug.run('switch (1) { case 1: 1, end }')).toThrow(LitsError)
-    expect(() => litsDebug.run('cond { case 1: 1; 2 }')).not.toThrow()
-    expect(() => litsDebug.run('cond { case 1: 1, end }')).toThrow(LitsError)
+    expect(() => litsDebug.run('switch 1 case 1 then 1; 2 end')).not.toThrow()
+    expect(() => litsDebug.run('switch 1 case 1 then 1, end end')).toThrow(LitsError)
+    expect(() => litsDebug.run('cond case 1 then 1; 2 end')).not.toThrow()
+    expect(() => litsDebug.run('cond case 1 then 1, end end')).toThrow(LitsError)
     expect(() => litsDebug.run('if true then 1 else 1; 2')).not.toThrow()
     expect(() => litsDebug.run('if true then 1 else 1,')).toThrow(LitsError)
     expect(() => litsDebug.run('if true then 1; 2')).not.toThrow()
@@ -911,40 +911,40 @@ foo(1, 2)`)).toBe(3)
     expect(lits.run(`
       let val = 8;
 
-      cond {
-        case val < 5: "S"
-        case val < 10: "M"
-        case val < 15: "L"
-      } ?? "No match"`)).toBe('M')
+      cond
+        case val < 5 then "S"
+        case val < 10 then "M"
+        case val < 15 then "L"
+      end ?? "No match"`)).toBe('M')
 
     expect(lits.run(`
         let val = 20;
 
-        cond {
-          case val < 5: "S"
-          case val < 10: "M"
-          case val < 15: "L"
-        } ?? "No match"`)).toBe('No match')
+        cond
+          case val < 5 then "S"
+          case val < 10 then "M"
+          case val < 15 then "L"
+        end ?? "No match"`)).toBe('No match')
   })
   test('switch expression', () => {
     expect(lits.run(`
-    switch ("-") {
-      case "-": 1
-    }`)).toBe(1)
+    switch "-"
+      case "-" then 1
+    end`)).toBe(1)
     expect(lits.run(`
       let x = 1;
-      switch (x) {
-        case 0: "zero"
-        case 1: "one"
-        case 2: "two"
-      }`)).toBe('one')
+      switch x
+        case 0 then "zero"
+        case 1 then "one"
+        case 2 then "two"
+      end`)).toBe('one')
     expect(lits.run(`
       let x = 10;
-      switch (x) {
-        case 0: "zero"
-        case 1: "one"
-        case 2: "two"
-      }`)).toBe(null)
+      switch x
+        case 0 then "zero"
+        case 1 then "one"
+        case 2 then "two"
+      end`)).toBe(null)
   })
 
   test('simple doseq.', () => {
