@@ -12503,22 +12503,9 @@ var Playground = (function (exports) {
             var newContextStack = contextStack.create(bindingContext);
             var body = node[1][2];
             var _loop_1 = function () {
-                var e_1, _b;
                 var result = null;
                 try {
-                    try {
-                        for (var body_1 = (e_1 = void 0, __values(body)), body_1_1 = body_1.next(); !body_1_1.done; body_1_1 = body_1.next()) {
-                            var form = body_1_1.value;
-                            result = evaluateNode(form, newContextStack);
-                        }
-                    }
-                    catch (e_1_1) { e_1 = { error: e_1_1 }; }
-                    finally {
-                        try {
-                            if (body_1_1 && !body_1_1.done && (_b = body_1.return)) _b.call(body_1);
-                        }
-                        finally { if (e_1) throw e_1.error; }
-                    }
+                    result = evaluateNode(body, newContextStack);
                 }
                 catch (error) {
                     if (error instanceof RecurSignal) {
@@ -12527,20 +12514,20 @@ var Playground = (function (exports) {
                             throw new LitsError("recur expected ".concat(bindingNodes.length, " parameters, got ").concat(valueToString(params_1.length)), node[2]);
                         }
                         bindingNodes.forEach(function (bindingNode, index) {
-                            var e_2, _a;
+                            var e_1, _a;
                             var valueRecord = evalueateBindingNodeValues(bindingNode[1][0], asAny(params_1[index]), function (Node) { return evaluateNode(Node, contextStack); });
                             try {
-                                for (var _b = (e_2 = void 0, __values(Object.entries(valueRecord))), _c = _b.next(); !_c.done; _c = _b.next()) {
+                                for (var _b = (e_1 = void 0, __values(Object.entries(valueRecord))), _c = _b.next(); !_c.done; _c = _b.next()) {
                                     var _d = __read(_c.value, 2), name_1 = _d[0], value = _d[1];
                                     bindingContext[name_1].value = value;
                                 }
                             }
-                            catch (e_2_1) { e_2 = { error: e_2_1 }; }
+                            catch (e_1_1) { e_1 = { error: e_1_1 }; }
                             finally {
                                 try {
                                     if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
                                 }
-                                finally { if (e_2) throw e_2.error; }
+                                finally { if (e_1) throw e_1.error; }
                             }
                         });
                         return "continue";
@@ -12568,7 +12555,7 @@ var Playground = (function (exports) {
             }, {});
             var bindingValueNodes = bindingNodes.map(function (bindingNode) { return bindingNode[1][1]; });
             var bindingsResult = getUndefinedSymbols(bindingValueNodes, contextStack, builtin, evaluateNode);
-            var paramsResult = getUndefinedSymbols(node[1][2], contextStack.create(newContext), builtin, evaluateNode);
+            var paramsResult = getUndefinedSymbols([node[1][2]], contextStack.create(newContext), builtin, evaluateNode);
             return joinSets(bindingsResult, paramsResult);
         },
     };
@@ -15138,21 +15125,10 @@ var Playground = (function (exports) {
             }
             assertRParenToken(token);
             this.advance();
-            assertLBraceToken(this.peek());
+            assertOperatorToken(this.peek(), '->');
             this.advance();
-            var params = [];
-            while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
-                params.push(this.parseExpression());
-                if (isOperatorToken(this.peek(), ';')) {
-                    this.advance();
-                }
-                else if (!isRBraceToken(this.peek())) {
-                    throw new LitsError('Expected ;', this.peekSourceCodeInfo());
-                }
-            }
-            assertRBraceToken(this.peek());
-            this.advance();
-            return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.loop, bindingNodes, params]], firstToken[2]);
+            var expression = this.parseExpression();
+            return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.loop, bindingNodes, expression]], firstToken[2]);
         };
         Parser.prototype.parseTry = function (token) {
             this.advance();
@@ -15183,7 +15159,7 @@ var Playground = (function (exports) {
                     throw new LitsError('Duplicate binding', loopBinding[0][2]);
                 }
                 forLoopBindings.push(loopBinding);
-                if (isOperatorToken(this_1.peek(), ';')) {
+                if (isOperatorToken(this_1.peek(), ',')) {
                     this_1.advance();
                 }
             };
@@ -15192,6 +15168,8 @@ var Playground = (function (exports) {
                 _loop_1();
             }
             assertRParenToken(this.peek());
+            this.advance();
+            assertOperatorToken(this.peek(), '->');
             this.advance();
             var expression = this.parseExpression();
             return isDoseq
@@ -15202,20 +15180,7 @@ var Playground = (function (exports) {
             var bindingNode = this.parseBinding();
             var modifiers = [];
             var token = this.asToken(this.peek());
-            if (!isRParenToken(token) && !isOperatorToken(this.peek(), ';') && !isOperatorToken(token, ',')) {
-                throw new LitsError('Expected ")", ";" or ","', token[2]);
-            }
-            if (isOperatorToken(token, ',')) {
-                this.advance();
-                token = this.asToken(this.peek());
-            }
-            if (!isSymbolToken(token, 'let')
-                && !isReservedSymbolToken(token, 'when')
-                && !isReservedSymbolToken(token, 'while')
-                && !isRParenToken(token)
-                && !isOperatorToken(token, ';')) {
-                throw new LitsError('Expected symbol ";", ")", let, when or while', token[2]);
-            }
+            this.assertInternalLoopBindingDelimiter(token, ['let', 'when', 'while']);
             var letBindings = [];
             if (token[1] === 'let') {
                 modifiers.push('&let');
@@ -15228,12 +15193,7 @@ var Playground = (function (exports) {
                     }
                     letBindings.push(letNode[1][1]);
                     token = this_2.asToken(this_2.peek());
-                    if (!isRParenToken(token) && !isOperatorToken(token, ';') && !isOperatorToken(token, ',')) {
-                        throw new LitsError('Expected ")", ";" or ","', token[2]);
-                    }
-                    if (isOperatorToken(token, ',')) {
-                        this_2.advance();
-                    }
+                    this_2.assertInternalLoopBindingDelimiter(token, ['let', 'when', 'while']);
                     token = this_2.asToken(this_2.peek());
                 };
                 var this_2 = this;
@@ -15247,32 +15207,56 @@ var Playground = (function (exports) {
                 || isReservedSymbolToken(token, 'while')) {
                 this.advance();
                 if (token[1] === 'when') {
-                    if (modifiers.includes('&when')) {
-                        throw new LitsError('Multiple when modifiers in for loop', token[2]);
-                    }
                     modifiers.push('&when');
                     whenNode = this.parseExpression();
                 }
                 else {
-                    if (modifiers.includes('&while')) {
-                        throw new LitsError('Multiple while modifiers in for loop', token[2]);
-                    }
                     modifiers.push('&while');
                     whileNode = this.parseExpression();
                 }
                 token = this.asToken(this.peek());
-                if (!isRParenToken(token) && !isOperatorToken(token, ';') && !isOperatorToken(token, ',')) {
-                    throw new LitsError('Expected do or comma', token[2]);
-                }
-                if (isOperatorToken(token, ',')) {
-                    this.advance();
-                }
+                var symbols = modifiers.includes('&when') && modifiers.includes('&while')
+                    ? []
+                    : modifiers.includes('&when')
+                        ? ['while']
+                        : ['when'];
+                this.assertInternalLoopBindingDelimiter(token, symbols);
                 token = this.asToken(this.peek());
             }
-            if (!isRParenToken(token) && !isOperatorToken(token, ';')) {
-                throw new LitsError('Expected "{" or ";"', token[2]);
-            }
+            this.assertInternalLoopBindingDelimiter(token, []);
             return [bindingNode, letBindings, whenNode, whileNode];
+        };
+        Parser.prototype.assertInternalLoopBindingDelimiter = function (token, symbols) {
+            if (!this.isInternalLoopBindingDelimiter(token, symbols)) {
+                var symbolsString = "".concat(__spreadArray(__spreadArray([], __read(symbols), false), [','], false).map(function (symbol) { return "\"".concat(symbol, "\""); }).join(', '), " or \")\"");
+                throw new LitsError("Expected symbol ".concat(symbolsString), token[2]);
+            }
+        };
+        Parser.prototype.isInternalLoopBindingDelimiter = function (token, symbols) {
+            var e_1, _a;
+            // end of loop binding
+            if (isOperatorToken(token, ',') || isRParenToken(token)) {
+                return true;
+            }
+            try {
+                for (var symbols_1 = __values(symbols), symbols_1_1 = symbols_1.next(); !symbols_1_1.done; symbols_1_1 = symbols_1.next()) {
+                    var symbol = symbols_1_1.value;
+                    if (symbol === 'let' && isSymbolToken(token, 'let')) {
+                        return true;
+                    }
+                    if (['when', 'while'].includes(symbol) && isReservedSymbolToken(token, symbol)) {
+                        return true;
+                    }
+                }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (symbols_1_1 && !symbols_1_1.done && (_a = symbols_1.return)) _a.call(symbols_1);
+                }
+                finally { if (e_1) throw e_1.error; }
+            }
+            return false;
         };
         Parser.prototype.parseBinding = function () {
             var firstToken = asSymbolToken(this.peek());
@@ -15386,7 +15370,7 @@ var Playground = (function (exports) {
                 return [';', ',', ':'].includes(token[1]);
             }
             if (isReservedSymbolToken(token)) {
-                return ['else', 'when', 'while', 'case', 'catch'].includes(token[1]);
+                return ['else', 'when', 'while', 'case', 'catch', 'let', 'then'].includes(token[1]);
             }
             return false;
         };
@@ -27448,7 +27432,7 @@ var Playground = (function (exports) {
             examples: [
                 "\nlet foo = (n) -> {\n  write!(n);\n  if !(zero?(n)) then {\n    recur(n - 1)\n  }\n};\nfoo(3)",
                 "\n(n -> {\n  write!(n);\n  if !(zero?(n)) then {\n    recur(n - 1)\n  }\n})(3)",
-                "\nloop (n = 3) {\n  write!(n);\n  if !(zero?(n)) then {\n    recur(n - 1)\n  }\n}",
+                "\nloop (n = 3) -> {\n  write!(n);\n  if !(zero?(n)) then {\n    recur(n - 1)\n  }\n}",
             ],
         },
     };

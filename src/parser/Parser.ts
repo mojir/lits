@@ -32,7 +32,6 @@ import {
   asLBracketToken,
   asReservedSymbolToken,
   asSymbolToken,
-  assertLBraceToken,
   assertLParenToken,
   assertOperatorToken,
   assertRBraceToken,
@@ -999,23 +998,12 @@ export class Parser {
     assertRParenToken(token)
     this.advance()
 
-    assertLBraceToken(this.peek())
+    assertOperatorToken(this.peek(), '->')
     this.advance()
 
-    const params: Node[] = []
-    while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
-      params.push(this.parseExpression())
-      if (isOperatorToken(this.peek(), ';')) {
-        this.advance()
-      }
-      else if (!isRBraceToken(this.peek())) {
-        throw new LitsError('Expected ;', this.peekSourceCodeInfo())
-      }
-    }
-    assertRBraceToken(this.peek())
-    this.advance()
+    const expression = this.parseExpression()
 
-    return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.loop, bindingNodes, params]], firstToken[2]) satisfies LoopNode
+    return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.loop, bindingNodes, expression]], firstToken[2]) satisfies LoopNode
   }
 
   private parseTry(token: SymbolToken): TryNode {
@@ -1055,12 +1043,15 @@ export class Parser {
         throw new LitsError('Duplicate binding', loopBinding[0][2])
       }
       forLoopBindings.push(loopBinding)
-      if (isOperatorToken(this.peek(), ';')) {
+      if (isOperatorToken(this.peek(), ',')) {
         this.advance()
       }
     }
 
     assertRParenToken(this.peek())
+    this.advance()
+
+    assertOperatorToken(this.peek(), '->')
     this.advance()
 
     const expression = this.parseExpression()
@@ -1076,22 +1067,7 @@ export class Parser {
     const modifiers: Array<'&let' | '&when' | '&while'> = []
     let token = this.asToken(this.peek())
 
-    if (!isRParenToken(token) && !isOperatorToken(this.peek(), ';') && !isOperatorToken(token, ',')) {
-      throw new LitsError('Expected ")", ";" or ","', token[2])
-    }
-    if (isOperatorToken(token, ',')) {
-      this.advance()
-      token = this.asToken(this.peek())
-    }
-
-    if (!isSymbolToken(token, 'let')
-      && !isReservedSymbolToken(token, 'when')
-      && !isReservedSymbolToken(token, 'while')
-      && !isRParenToken(token)
-      && !isOperatorToken(token, ';')
-    ) {
-      throw new LitsError('Expected symbol ";", ")", let, when or while', token[2])
-    }
+    this.assertInternalLoopBindingDelimiter(token, ['let', 'when', 'while'])
 
     const letBindings: BindingNode[] = []
     if (token[1] === 'let') {
@@ -1106,12 +1082,7 @@ export class Parser {
 
         letBindings.push(letNode[1][1])
         token = this.asToken(this.peek())
-        if (!isRParenToken(token) && !isOperatorToken(token, ';') && !isOperatorToken(token, ',')) {
-          throw new LitsError('Expected ")", ";" or ","', token[2])
-        }
-        if (isOperatorToken(token, ',')) {
-          this.advance()
-        }
+        this.assertInternalLoopBindingDelimiter(token, ['let', 'when', 'while'])
         token = this.asToken(this.peek())
       }
     }
@@ -1125,34 +1096,51 @@ export class Parser {
       this.advance()
 
       if (token[1] === 'when') {
-        if (modifiers.includes('&when')) {
-          throw new LitsError('Multiple when modifiers in for loop', token[2])
-        }
         modifiers.push('&when')
         whenNode = this.parseExpression()
       }
       else {
-        if (modifiers.includes('&while')) {
-          throw new LitsError('Multiple while modifiers in for loop', token[2])
-        }
         modifiers.push('&while')
         whileNode = this.parseExpression()
       }
       token = this.asToken(this.peek())
-      if (!isRParenToken(token) && !isOperatorToken(token, ';') && !isOperatorToken(token, ',')) {
-        throw new LitsError('Expected do or comma', token[2])
-      }
-      if (isOperatorToken(token, ',')) {
-        this.advance()
-      }
+
+      const symbols: ('when' | 'while')[] = modifiers.includes('&when') && modifiers.includes('&while')
+        ? []
+        : modifiers.includes('&when')
+          ? ['while']
+          : ['when']
+
+      this.assertInternalLoopBindingDelimiter(token, symbols)
       token = this.asToken(this.peek())
     }
 
-    if (!isRParenToken(token) && !isOperatorToken(token, ';')) {
-      throw new LitsError('Expected "{" or ";"', token[2])
-    }
+    this.assertInternalLoopBindingDelimiter(token, [])
 
     return [bindingNode, letBindings, whenNode, whileNode] satisfies LoopBindingNode
+  }
+
+  assertInternalLoopBindingDelimiter(token: Token, symbols: ('let' | 'when' | 'while')[]): void {
+    if (!this.isInternalLoopBindingDelimiter(token, symbols)) {
+      const symbolsString = `${[...symbols, ','].map(symbol => `"${symbol}"`).join(', ')} or ")"`
+      throw new LitsError(`Expected symbol ${symbolsString}`, token[2])
+    }
+  }
+
+  isInternalLoopBindingDelimiter(token: Token, symbols: ('let' | 'when' | 'while')[]): boolean {
+    // end of loop binding
+    if (isOperatorToken(token, ',') || isRParenToken(token)) {
+      return true
+    }
+    for (const symbol of symbols) {
+      if (symbol === 'let' && isSymbolToken(token, 'let')) {
+        return true
+      }
+      if (['when', 'while'].includes(symbol) && isReservedSymbolToken(token, symbol as 'when' | 'while')) {
+        return true
+      }
+    }
+    return false
   }
 
   private parseBinding(): BindingNode {
@@ -1293,7 +1281,7 @@ export class Parser {
       return [';', ',', ':'].includes(token[1])
     }
     if (isReservedSymbolToken(token)) {
-      return ['else', 'when', 'while', 'case', 'catch'].includes(token[1])
+      return ['else', 'when', 'while', 'case', 'catch', 'let', 'then'].includes(token[1])
     }
     return false
   }

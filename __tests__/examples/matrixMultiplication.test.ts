@@ -34,7 +34,7 @@ let matrixMultiply = (matrixA, matrixB) -> {
 
   // Create a row of the result matrix
   let createRow = (rowIndex) -> {
-    for (j in range(colsB)) {
+    for (j in range(colsB)) -> {
       reduce(
         range(colsA),
         (sum, k) -> {
@@ -48,9 +48,7 @@ let matrixMultiply = (matrixA, matrixB) -> {
   };
 
   // Create the result matrix row by row
-  for (i in range(rowsA)) {
-    createRow(i);
-  }
+  for (i in range(rowsA)) -> createRow(i);
 };
 
 let matrixA = [

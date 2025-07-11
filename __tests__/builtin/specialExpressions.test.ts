@@ -621,7 +621,7 @@ foo(3)`)
     describe('loop expressions', () => {
       it('supports loop expressions', () => {
         expect(lits.run(`
-          loop(n = 10, sum = 0) {
+          loop(n = 10, sum = 0) -> {
             if n == 0 then
               sum
             else
@@ -631,33 +631,33 @@ foo(3)`)
     })
 
     it('should work with recur', () => {
-      lits.run('loop (n = 3) { write!(n); if !(zero?(n)) then recur(n - 1)}')
+      lits.run('loop (n = 3) -> { write!(n); if !(zero?(n)) then recur(n - 1)}')
       expect(logSpy).toHaveBeenNthCalledWith(1, 3)
       expect(logSpy).toHaveBeenNthCalledWith(2, 2)
       expect(logSpy).toHaveBeenNthCalledWith(3, 1)
       expect(logSpy).toHaveBeenNthCalledWith(4, 0)
     })
     it('recur must be called with right number of parameters', () => {
-      expect(() => litsDebug.run('loop (n = 3) { if !(zero?(n)) then recur() }')).toThrow(LitsError)
-      expect(() => lits.run('loop (n = 3) { if !(zero?(n)) then recur(n - 1) }')).not.toThrow()
-      expect(() => lits.run('loop (n = 3) { if !(zero?(n)) then recur(n - 1, 2) }')).toThrow(LitsError)
-      expect(() => lits.run('loop () { if !(zero?(n)) then recur() }')).toThrow(LitsError)
-      expect(() => lits.run('loop (n = 3) { if !(zero?(n)) then recur(throw(1)) }')).toThrow(LitsError)
+      expect(() => litsDebug.run('loop (n = 3) -> if !(zero?(n)) then recur()')).toThrow(LitsError)
+      expect(() => lits.run('loop (n = 3) -> if !(zero?(n)) then recur(n - 1)')).not.toThrow()
+      expect(() => lits.run('loop (n = 3) -> if !(zero?(n)) then recur(n - 1, 2)')).toThrow(LitsError)
+      expect(() => lits.run('loop () -> if !(zero?(n)) then recur()')).toThrow(LitsError)
+      expect(() => lits.run('loop (n = 3) -> if !(zero?(n)) then recur(throw(1))')).toThrow(LitsError)
     })
     it('throw should work', () => {
-      expect(() => lits.run('loop (n = 3) { if !(zero?(n)) then throw(recur(n - 1, 2)) }')).toThrow(LitsError)
-      expect(() => lits.run('loop (n) { if !(zero?(n)) then recur(n - 1) }')).toThrow(LitsError)
+      expect(() => lits.run('loop (n = 3) -> if !(zero?(n)) then throw(recur(n - 1, 2))')).toThrow(LitsError)
+      expect(() => lits.run('loop (n) -> if !(zero?(n)) then recur(n - 1)')).toThrow(LitsError)
     })
 
     describe('unresolvedIdentifiers', () => {
       it('samples', () => {
         expect(
-          (litsDebug.getUndefinedSymbols('loop (n = 3) { write!(n); if !(zero?(n)) then recur(n - 1) }')),
+          (litsDebug.getUndefinedSymbols('loop (n = 3) -> { write!(n); if !(zero?(n)) then recur(n - 1) }')),
         ).toEqual(new Set())
         expect(
-          (lits.getUndefinedSymbols('loop (n = 3) { write!(x); if !(zero?(n)) then recur(n - 1) }')),
+          (lits.getUndefinedSymbols('loop (n = 3) -> { write!(x); if !(zero?(n)) then recur(n - 1) }')),
         ).toEqual(new Set(['x']))
-        expect(lits.getUndefinedSymbols('loop (n = 3 + y) { write!(n); if !(zero?(x)) then recur(n - 1) }'))
+        expect(lits.getUndefinedSymbols('loop (n = 3 + y) -> { write!(n); if !(zero?(x)) then recur(n - 1) }'))
           .toEqual(new Set(['x', 'y']))
       })
     })
@@ -665,13 +665,13 @@ foo(3)`)
 
   describe('for', () => {
     it('samples', () => {
-      expect(litsDebug.run('for (x in []) { x }')).toEqual([])
-      expect(lits.run('for (x in [1, 2, 3]; y in []) x')).toEqual([])
-      expect(lits.run('for (x in []; y in [1, 2, 3]) x')).toEqual([])
+      expect(litsDebug.run('for (x in []) -> x')).toEqual([])
+      expect(lits.run('for (x in [1, 2, 3], y in []) -> x')).toEqual([])
+      expect(lits.run('for (x in [], y in [1, 2, 3]) -> x')).toEqual([])
 
-      expect(lits.run('for (x in "Al"; y in [1, 2]) repeat(x, y)'))
+      expect(lits.run('for (x in "Al", y in [1, 2]) -> repeat(x, y)'))
         .toEqual([['A'], ['A', 'A'], ['l'], ['l', 'l']])
-      expect(lits.run('for (x in { a: 10, b: 20 }; y in [1, 2], let z = y) { repeat(x, z) }')).toEqual([
+      expect(lits.run('for (x in { a: 10, b: 20 }, y in [1, 2] let z = y) -> { repeat(x, z) }')).toEqual([
         [['a', 10]],
         [
           ['a', 10],
@@ -683,23 +683,23 @@ foo(3)`)
           ['b', 20],
         ],
       ])
-      expect(() => lits.run('for (x in { a: 10, b: 20 }; y in [1, 2], let z = y, let z = y) repeat(x, z)')).toThrow(LitsError)
-      expect(() => lits.run('for (x in { a: 10, b: 20 }; x in [1, 2]) x')).toThrow(LitsError)
+      expect(() => lits.run('for (x in { a: 10, b: 20 }, y in [1, 2] let z = y let z = y) -> repeat(x, z)')).toThrow(LitsError)
+      expect(() => lits.run('for (x in { a: 10, b: 20 }, x in [1, 2]) -> x')).toThrow(LitsError)
     })
 
     describe('unresolvedIdentifiers', () => {
       it('samples', () => {
         expect(
-          (lits.getUndefinedSymbols('for (x in [0, 1, 2, 3, 4, 5], let y = x * 3, when even?(y)) y')),
+          (lits.getUndefinedSymbols('for (x in [0, 1, 2, 3, 4, 5] let y = x * 3 when even?(y)) -> y')),
         ).toEqual(new Set())
         expect(
-          (lits.getUndefinedSymbols('for (x in [0, 1, 2, 3, 4, 5], let y = x * 3, while even?(y)) y')),
+          (lits.getUndefinedSymbols('for (x in [0, 1, 2, 3, 4, 5] let y = x * 3 while even?(y)) -> y')),
         ).toEqual(new Set())
         expect(
-          (lits.getUndefinedSymbols('for (x in [0, 1, 2, 3, 4, a], let y = x * b, when even?(c)) d')),
+          (lits.getUndefinedSymbols('for (x in [0, 1, 2, 3, 4, a] let y = x * b when even?(c)) -> d')),
         ).toEqual(new Set(['a', 'b', 'c', 'd']))
         expect(
-          (lits.getUndefinedSymbols('for (x in [0, 1, 2, 3, 4, a], let y = x * b, while even?(c)) d')),
+          (lits.getUndefinedSymbols('for (x in [0, 1, 2, 3, 4, a] let y = x * b while even?(c)) -> d')),
         ).toEqual(new Set(['a', 'b', 'c', 'd']))
       })
     })
@@ -707,25 +707,25 @@ foo(3)`)
 
   describe('doseq', () => {
     it('samples', () => {
-      expect(lits.run('doseq (x in []) x')).toBeNull()
-      expect(lits.run('doseq (x in [1, 2, 3]; y in []) x')).toBeNull()
-      expect(lits.run('doseq (x in []; y in [1, 2, 3]) x')).toBeNull()
+      expect(lits.run('doseq (x in []) -> x')).toBeNull()
+      expect(lits.run('doseq (x in [1, 2, 3], y in []) -> x')).toBeNull()
+      expect(lits.run('doseq (x in [], y in [1, 2, 3]) -> x')).toBeNull()
 
-      expect(lits.run('doseq (x in "Al"; y in [1, 2]) { repeat(x, y) }'))
+      expect(lits.run('doseq (x in "Al", y in [1, 2]) -> { repeat(x, y) }'))
         .toBeNull()
-      expect(lits.run('doseq (x in { a: 10, b: 20 }; y in [1, 2]) repeat(x, y)')).toBeNull()
+      expect(lits.run('doseq (x in { a: 10, b: 20 }, y in [1, 2]) -> repeat(x, y)')).toBeNull()
     })
 
     describe('unresolvedIdentifiers', () => {
       it('samples', () => {
         expect(
-          (lits.getUndefinedSymbols('doseq (x in [0, 1, 2, 3, 4, 5], let y = x * 3, when even?(y)) y')),
+          (lits.getUndefinedSymbols('doseq (x in [0, 1, 2, 3, 4, 5] let y = x * 3 when even?(y)) -> y')),
         ).toEqual(new Set())
         expect(
-          (lits.getUndefinedSymbols('doseq (x in [0, 1, 2, 3, 4, 5], let y = x * 3, while even?(y)) y')),
+          (lits.getUndefinedSymbols('doseq (x in [0, 1, 2, 3, 4, 5] let y = x * 3 while even?(y)) -> y')),
         ).toEqual(new Set())
         expect(
-          (lits.getUndefinedSymbols('doseq (x in [0, 1, 2, 3, 4, a], let y = x * b, when even?(c)) d')),
+          (lits.getUndefinedSymbols('doseq (x in [0, 1, 2, 3, 4, a] let y = x * b when even?(c)) -> d')),
         ).toEqual(new Set(['a', 'b', 'c', 'd']))
       })
     })

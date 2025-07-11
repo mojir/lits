@@ -335,7 +335,7 @@ foo(3)`,
   }
 })(3)`,
       `
-loop (n = 3) {
+loop (n = 3) -> {
   write!(n);
   if !(zero?(n)) then {
     recur(n - 1)

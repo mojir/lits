@@ -216,7 +216,7 @@ describe('lits Lexical Scoping', () => {
       expect(lits.run(`
         let x = "outer";
         
-        let result = for (x in ["inner1", "inner2"]) {
+        let result = for (x in ["inner1", "inner2"]) -> {
           x;  // Should use loop variable x, not outer x
         };
         

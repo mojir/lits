@@ -9,7 +9,7 @@ import { evalueateBindingNodeValues, getAllBindingTargetNames } from '../binding
 import type { BuiltinSpecialExpression } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 
-export type LoopNode = SpecialExpressionNode<[typeof specialExpressionTypes['loop'], BindingNode[], Node[]]> // bindings, body
+export type LoopNode = SpecialExpressionNode<[typeof specialExpressionTypes['loop'], BindingNode[], Node]> // bindings, body
 
 export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
   arity: {},
@@ -29,9 +29,7 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
     for (;;) {
       let result: Any = null
       try {
-        for (const form of body) {
-          result = evaluateNode(form, newContextStack)
-        }
+        result = evaluateNode(body, newContextStack)
       }
       catch (error) {
         if (error instanceof RecurSignal) {
@@ -70,7 +68,7 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
 
     const bindingValueNodes = bindingNodes.map(bindingNode => bindingNode[1][1])
     const bindingsResult = getUndefinedSymbols(bindingValueNodes, contextStack, builtin, evaluateNode)
-    const paramsResult = getUndefinedSymbols(node[1][2], contextStack.create(newContext), builtin, evaluateNode)
+    const paramsResult = getUndefinedSymbols([node[1][2]], contextStack.create(newContext), builtin, evaluateNode)
     return joinSets(bindingsResult, paramsResult)
   },
 }

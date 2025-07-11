@@ -557,7 +557,7 @@ let matrixMultiply = (matrixA, matrixB) -> {
 
   // Create a row of the result matrix
   let createRow = (rowIndex) -> {
-    for (j in range(colsB)) {
+    for (j in range(colsB)) -> {
       reduce(
         range(colsA),
         (sum, k) -> {
@@ -571,9 +571,7 @@ let matrixMultiply = (matrixA, matrixB) -> {
   };
 
   // Create the result matrix row by row
-  for (i in range(rowsA)) {
-    createRow(i);
-  }
+  for (i in range(rowsA)) -> createRow(i);
 };
 
 let matrixA = [
@@ -715,18 +713,17 @@ label-from-value(items, "name");
     description: 'Find labels to corresponding values in array of { label, value }-objects.',
     code: `
 let labels-from-values = ($array, $values) -> {
-  for (value in $values,
-      let label = {
-        let entry = $array some -> value == $["value"];
-        if entry == null then {
-          value
-        } else {
-          entry["label"]
-        }
+  for (
+    value in $values
+    let label = {
+      let entry = $array some -> value == $["value"];
+      if entry == null then {
+        value
+      } else {
+        entry["label"]
       }
-  ) {
-    label
-  }
+    }
+  ) -> label
 };
 
 let arr = [
