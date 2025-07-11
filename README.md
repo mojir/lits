@@ -10,7 +10,6 @@ Try it in the [Lits Playground](https://mojir.github.io/lits/).
 - **JavaScript interoperability** - JavaScript values and functions can easily be exposed in Lits
 - **First-class functions** - Functions are treated as values that can be passed to other functions
 - **Algebraic notation** - All operators can be used as functions, and functions that take two parameters can be used as operators
-- **Clojure-inspired functions** - Most core functions are inspired by Clojure
 - **Comprehensive standard library** - Rich set of functions for collections, math, strings, and more
 - **Structural equality** - Objects are compared by value, not by reference
 - **Destructuring** - Extract values from complex data structures with ease
@@ -25,20 +24,18 @@ Here's a simple example to get you started:
 
 ```
 // Defining a function
-function square(x)
-  x * x
-end;
+square = x -> x * x;
 
 // Using the function
-let result := square(5);
+let result = square(5);
 // => 25
 
 // Using function as an operator
-let squares := [1, 2, 3, 4, 5] map square;
+let squares = [1, 2, 3, 4, 5] map square;
 // => [1, 4, 9, 16, 25]
 
 // Using operator as a function
-let sum := +([1, 2, 3, 4, 5]);
+let sum = +([1, 2, 3, 4, 5]);
 // => 15
 ```
 
@@ -69,7 +66,7 @@ null
 [1, 2, 3, 4]
 
 // Objects
-{ name := "John", age := 30 }
+{ name: "John", age: 30 }
 ```
 
 ### Builtin Number Symbols
@@ -117,15 +114,15 @@ These constants can be used anywhere a number value is expected and help make ma
 
 ```
 // Let expression
-let x := 10;
+let x = 10;
 // => 10
 
 // Variables are immutable
-let x := 20; // Error: x is already defined
+let x = 20; // Error: x is already defined
 
 // But can be shadowed in inner scopes
-let y := do
-  let x := 20;
+let y = do
+  let x = 20;
   x
 end;
 // => 20, outer x is still 10
@@ -134,20 +131,15 @@ end;
 ### Functions
 
 ```
-// Standard function definition
-function add(a, b)
-  a + b
-end;
-
 // Lambda functions
-let add := (a, b) -> a + b;
+let add = (a, b) -> a + b;
 
 // Short form with positional arguments
-let add := -> $1 + $2;
+let add = -> $1 + $2;
 
 // Single argument short form
-let cube := x -> x ** 3;
-let fourth := -> $ ** 4;
+let cube = x -> x ** 3;
+let fourth = -> $ ** 4;
 ```
 
 ### Control Flow
@@ -158,7 +150,6 @@ if x > 10 then
   "large"
 else
   "small"
-end;
 // => "large" (if x > 10) or "small" (if x <= 10)
 
 // Unless expression (reversed if)
@@ -166,7 +157,6 @@ unless x > 10 then
   "small"
 else
   "large"
-end;
 // => "small" (if x <= 10) or "large" (if x > 10)
 
 // Switch expression
@@ -190,7 +180,6 @@ try
   riskyOperation()
 catch (error)
   "Error: " ++ error.message
-end;
 // => result of riskyOperation() or error message if an exception occurs
 ```
 
@@ -198,45 +187,27 @@ end;
 
 ```
 // Simple for comprehension
-for
-  each x of [0, 1, 2, 3, 4, 5], let y := x * 3, while even?(y)
-do
-  y
-end;
-// => [0, 6, 12]
-
-// Multiple generators
-for (
-  each x of [1, 2, 3]
-  each y of [1, 2, 3], when x <= y
-  z of [1, 2, 3]
-)
-  [x, y, z]
-end;
-// => [[1, 1, 1], [1, 1, 2], [1, 1, 3], [1, 2, 1], [1, 2, 2], [1, 2, 3], [1, 3, 1], [1, 3, 2], [1, 3, 3], 
-//     [2, 2, 1], [2, 2, 2], [2, 2, 3], [2, 3, 1], [2, 3, 2], [2, 3, 3], 
-//     [3, 3, 1], [3, 3, 2], [3, 3, 3]]
+TODO
 ```
 
 ### Destructuring
 
 ```
 // Object destructuring
-let { name, age } := { name := "John", age := 30 };
+let { name, age } = { name: "John", age: 30 };
 // name => "John"
 // age => 30
 
 // Array destructuring
-let [nbr1, nbr2] := [1, 2, 3, 4];
+let [nbr1, nbr2] = [1, 2, 3, 4];
 // nbr1 => 1
 // nbr2 => 2
 
 // Destructuring in function parameters
-function displayPerson({name, age})
-  name ++ " is " ++ str(age) ++ " years old"
-end;
+let displayPerson = ({name, age}) ->
+  name ++ " is " ++ str(age) ++ " years old";
 
-displayPerson({ name := "John", age := 30 });
+displayPerson({ name: "John", age: 30 });
 // => "John is 30 years old"
 ```
 
@@ -270,14 +241,14 @@ All operators can be used as functions:
 
 ### Parameter Order
 
-Unlike Clojure, Lits favors subject-first parameter order:
+Lits favors subject-first parameter order:
 
 ```
 // Lits
 filter([1, 2, 3, 4], odd?);
 // => [1, 3]
 
-// Equivalent Clojure
+// Unlike for example Clojure
 // (filter odd? [1 2 3 4])
 ```
 
@@ -331,13 +302,11 @@ You can export definitions to make them available to other modules:
 
 ```
 // Exporting variables
-export let magic-number := 42;
+export let magic-number = 42;
 // => 42
 
 // Exporting functions
-export function square(x)
-  x * x
-end;
+export let square = x -> x * x;
 ```
 
 ## API
@@ -364,13 +333,11 @@ interface Lits {
 ### Factorial Function
 
 ```
-function factorial(n)
+let factorial = (n) ->
   if n <= 1 then
     1
   else
-    n * factorial(n - 1)
-  end
-end;
+    n * self(n - 1);
 
 factorial(5);
 // => 120
@@ -379,13 +346,11 @@ factorial(5);
 ### Fibonacci Sequence
 
 ```
-function fib(n)
+let fib = n -> 
   if n < 2 then
     n
   else
-    fib(n - 1) + fib(n - 2)
-  end
-end;
+    self(n - 1) + fib(n - 2)
 
 // Generate the first 10 Fibonacci numbers
 range(10) map fib;
@@ -395,11 +360,11 @@ range(10) map fib;
 ### Working with Collections
 
 ```
-let people := [
-  { name := "Alice", age := 25 },
-  { name := "Bob", age := 30 },
-  { name := "Charlie", age := 35 },
-  { name := "Diana", age := 40 }
+let people = [
+  { name: "Alice", age: 25 },
+  { name: "Bob", age: 30 },
+  { name: "Charlie", age: 35 },
+  { name: "Diana", age: 40 }
 ];
 
 // Get all names
@@ -408,7 +373,7 @@ people map (p -> p.name);
 
 // Get people older than 30
 people filter (p -> p.age > 30);
-// => [{ name := "Charlie", age := 35 }, { name := "Diana", age := 40 }]
+// => [{ name: "Charlie", age: 35 }, { name: "Diana", age: 40 }]
 
 // Calculate average age
 (people map (p -> p.age) reduce +) / count(people);
