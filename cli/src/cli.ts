@@ -50,13 +50,14 @@ const expressions = [...normalExpressionKeys, ...specialExpressionKeys]
 const config = processArguments(process.argv.slice(2))
 
 if (config.eval) {
-  execute(config.eval)
-  process.exit(0)
+  const success = execute(config.eval)
+  process.exit(success ? 0 : 1)
 }
 else if (config.evalFilename) {
   const content = fs.readFileSync(config.evalFilename, { encoding: 'utf-8' })
-  execute(content)
-  process.exit(0)
+
+  const success = execute(content)
+  process.exit(success ? 0 : 1)
 }
 else if (config.loadFilename) {
   const content = fs.readFileSync(config.loadFilename, { encoding: 'utf-8' })
@@ -89,7 +90,7 @@ function runLitsTest(testPath: string, testNamePattern: Maybe<string>) {
     process.exit(1)
 }
 
-function execute(expression: string) {
+function execute(expression: string): boolean {
   try {
     const result = lits.run(expression, {
       globalContext: config.context ?? undefined,
@@ -100,10 +101,12 @@ function execute(expression: string) {
 
     setReplHistoryVariables()
     console.log(formatValue(stringifyValue(result, false)))
+    return true
   }
   catch (error) {
     printErrorMessage(`${error}`)
     config.context['*e*'] = { value: getErrorMessage(error) }
+    return false
   }
 }
 
