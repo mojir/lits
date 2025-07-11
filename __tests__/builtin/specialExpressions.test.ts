@@ -170,74 +170,74 @@ describe('specialExpressions', () => {
 
   describe('if', () => {
     it('samples', () => {
-      expect(litsDebug.run('if true then "A" else "B"')).toBe('A')
-      expect(lits.run('if false then "A" else "B"')).toBe('B')
-      expect(lits.run('if null then "A" else "B"')).toBe('B')
-      expect(lits.run('if true then "A"')).toBe('A')
-      expect(lits.run('if false then "A"')).toBeNull()
-      expect(lits.run('if null then "A"')).toBeNull()
-      expect(lits.run('if "" then "A" else "B"')).toBe('B')
-      expect(lits.run('if "x" then "A" else "B"')).toBe('A')
-      expect(lits.run('if 0 then "A" else "B"')).toBe('B')
-      expect(lits.run('if 1 then "A" else "B"')).toBe('A')
-      expect(lits.run('if -1 then "A" else "B"')).toBe('A')
-      expect(lits.run('if [] then "A" else "B"')).toBe('A')
-      expect(lits.run('if {} then "A" else "B"')).toBe('A')
+      expect(litsDebug.run('if true then "A" else "B" end')).toBe('A')
+      expect(lits.run('if false then "A" else "B" end')).toBe('B')
+      expect(lits.run('if null then "A" else "B" end')).toBe('B')
+      expect(lits.run('if true then "A" end')).toBe('A')
+      expect(lits.run('if false then "A" end')).toBeNull()
+      expect(lits.run('if null then "A" end')).toBeNull()
+      expect(lits.run('if "" then "A" else "B" end')).toBe('B')
+      expect(lits.run('if "x" then "A" else "B" end')).toBe('A')
+      expect(lits.run('if 0 then "A" else "B" end')).toBe('B')
+      expect(lits.run('if 1 then "A" else "B" end')).toBe('A')
+      expect(lits.run('if -1 then "A" else "B" end')).toBe('A')
+      expect(lits.run('if [] then "A" else "B" end')).toBe('A')
+      expect(lits.run('if {} then "A" else "B" end')).toBe('A')
       expect(() => lits.run('if')).toThrow(LitsError)
-      expect(() => lits.run('if true then')).toThrow(LitsError)
+      expect(() => lits.run('if true then end')).toThrow(LitsError)
     })
     it('that special form \'if\' only evaluate the correct path (true)', () => {
-      lits.run('if true then write!("A") else write!("B")')
+      lits.run('if true then write!("A") else write!("B") end')
       expect(logSpy).toHaveBeenCalledWith('A')
       expect(logSpy).not.toHaveBeenCalledWith('B')
     })
     it('that special form \'if\' only evaluate the correct path (false)', () => {
-      lits.run('if false then write!("A") else write!("B")')
+      lits.run('if false then write!("A") else write!("B") end')
       expect(logSpy).not.toHaveBeenCalledWith('A')
       expect(logSpy).toHaveBeenCalledWith('B')
     })
 
     describe('unresolvedIdentifiers', () => {
       it('samples', () => {
-        expect((litsDebug.getUndefinedSymbols('if a > b then a else b'))).toEqual(new Set(['a', 'b']))
-        expect((lits.getUndefinedSymbols('if a > b then c else d'))).toEqual(new Set(['a', 'b', 'c', 'd']))
+        expect((litsDebug.getUndefinedSymbols('if a > b then a else b end'))).toEqual(new Set(['a', 'b']))
+        expect((lits.getUndefinedSymbols('if a > b then c else d end'))).toEqual(new Set(['a', 'b', 'c', 'd']))
       })
     })
   })
 
   describe('unless', () => {
     it('samples', () => {
-      expect(litsDebug.run('unless true then "A" else "B"')).toBe('B')
-      expect(litsDebug.run('unless false then "A" else "B"')).toBe('A')
-      expect(lits.run('unless null then "A" else "B"')).toBe('A')
-      expect(lits.run('unless true then "A"')).toBeNull()
-      expect(lits.run('unless false then "A"')).toBe('A')
-      expect(lits.run('unless null then "A"')).toBe('A')
-      expect(lits.run('unless "" then "A" else "B"')).toBe('A')
-      expect(lits.run('unless "x" then "A" else "B"')).toBe('B')
-      expect(lits.run('unless 0 then "A" else "B"')).toBe('A')
-      expect(lits.run('unless 1 then "A" else "B"')).toBe('B')
-      expect(lits.run('unless -1 then "A" else "B"')).toBe('B')
-      expect(lits.run('unless [] then "A" else "B"')).toBe('B')
-      expect(lits.run('unless object() then "A" else "B"')).toBe('B')
+      expect(litsDebug.run('unless true then "A" else "B" end')).toBe('B')
+      expect(litsDebug.run('unless false then "A" else "B" end')).toBe('A')
+      expect(lits.run('unless null then "A" else "B" end')).toBe('A')
+      expect(lits.run('unless true then "A" end')).toBeNull()
+      expect(lits.run('unless false then "A" end')).toBe('A')
+      expect(lits.run('unless null then "A" end')).toBe('A')
+      expect(lits.run('unless "" then "A" else "B" end')).toBe('A')
+      expect(lits.run('unless "x" then "A" else "B" end')).toBe('B')
+      expect(lits.run('unless 0 then "A" else "B" end')).toBe('A')
+      expect(lits.run('unless 1 then "A" else "B" end')).toBe('B')
+      expect(lits.run('unless -1 then "A" else "B" end')).toBe('B')
+      expect(lits.run('unless [] then "A" else "B" end')).toBe('B')
+      expect(lits.run('unless object() then "A" else "B" end')).toBe('B')
       expect(() => lits.run('unless')).toThrow(LitsError)
-      expect(() => lits.run('unless true then')).toThrow(LitsError)
+      expect(() => lits.run('unless true then end')).toThrow(LitsError)
     })
     it('that special form \'unless\' only evaluate the correct path (true)', () => {
-      lits.run('unless true then write!("A") else write!("B")')
+      lits.run('unless true then write!("A") else write!("B") end')
       expect(logSpy).toHaveBeenCalledWith('B')
       expect(logSpy).not.toHaveBeenCalledWith('A')
     })
     it('that special form \'unless\' only evaluate the correct path (false)', () => {
-      lits.run('unless false then write!("A") else write!("B")')
+      lits.run('unless false then write!("A") else write!("B") end')
       expect(logSpy).not.toHaveBeenCalledWith('B')
       expect(logSpy).toHaveBeenCalledWith('A')
     })
 
     describe('unresolvedIdentifiers', () => {
       it('samples', () => {
-        expect((lits.getUndefinedSymbols('unless a > b then a else b'))).toEqual(new Set(['a', 'b']))
-        expect((lits.getUndefinedSymbols('unless a > b then c else d'))).toEqual(new Set(['a', 'b', 'c', 'd']))
+        expect((lits.getUndefinedSymbols('unless a > b then a else b end'))).toEqual(new Set(['a', 'b']))
+        expect((lits.getUndefinedSymbols('unless a > b then c else d end'))).toEqual(new Set(['a', 'b', 'c', 'd']))
       })
     })
   })
@@ -477,11 +477,11 @@ foo(1)`)).toBe(11)
     it('call function', () => {
       expect(lits.run(`
 let sum-one-to-n = (n) -> {
-  if n <= 1 then {
+  if n <= 1 then
     n
-  } else {
+  else
     n + sum-one-to-n(n - 1)
-  }
+  end
 };
 
 sum-one-to-n(10)`)).toBe(55)
@@ -496,11 +496,11 @@ applyWithVal(inc, 10)`)).toBe(11)
       it('samples', () => {
         expect((lits.getUndefinedSymbols(`
 let foo = (a) -> {
-  if a == 1 then {
+  if a == 1 then
     1
-  } else {
+  else
     a + self(a - 1)
-  }
+  end
 };`))).toEqual(
           new Set(),
         )
@@ -515,8 +515,8 @@ let foo = (a) -> {
 
   it('shorthand lambda', () => {
     expect(lits.run('(-> $1 + $2 + $3)(2, 4, 6)')).toBe(12)
-    expect(lits.run('(-> if $1 then $2 else $3)(2, 4, 6)')).toBe(4)
-    expect(lits.run('((a, b, c) -> if a then b else c)(0, 4, 6)')).toBe(6)
+    expect(lits.run('(-> if $1 then $2 else $3 end)(2, 4, 6)')).toBe(4)
+    expect(lits.run('((a, b, c) -> if a then b else c end)(0, 4, 6)')).toBe(6)
   })
 
   describe('unresolvedIdentifiers', () => {
@@ -586,9 +586,9 @@ let foo = (a) -> {
       lits.run(`
 let foo = (n) -> {
   write!(n);
-  if !(zero?(n)) then {
+  if !(zero?(n)) then
     recur(n - 1)
-  }
+  end
 };
 foo(3)`)
       expect(logSpy).toHaveBeenNthCalledWith(1, 3)
@@ -597,21 +597,21 @@ foo(3)`)
       expect(logSpy).toHaveBeenNthCalledWith(4, 0)
     })
     it('recur must be called with the right number of parameters', () => {
-      expect(() => lits.run('let foo = (n) -> { if !(zero?(n)) then recur() }; foo(3)')).toThrow(LitsError)
-      expect(() => lits.run('let foo = (n) -> { if !(zero?(n)) then recur(n - 1) }; foo(3)')).not.toThrow()
+      expect(() => lits.run('let foo = (n) -> { if !(zero?(n)) then recur() end }; foo(3)')).toThrow(LitsError)
+      expect(() => lits.run('let foo = (n) -> { if !(zero?(n)) then recur(n - 1) end }; foo(3)')).not.toThrow()
       // Too many parameters ok
-      expect(() => lits.run('let foo = (n) -> { if !(zero?(n)) then recur(n - 1, 1) }; foo(3)')).not.toThrow()
-      expect(() => lits.run('((n) -> { if !(zero?(n)) then recur() };)(3)')).toThrow(LitsError)
-      expect(() => lits.run('((n) -> if !(zero?(n)) then recur(n - 1))(3)')).not.toThrow()
-      expect(() => lits.run('((n) -> if !(zero?(n)) recur(n - 1 1) then(3)')).toThrow(LitsError)
-      expect(() => lits.run('((n) -> if !(zero?(n)) recur(n - 1 1, 2) then(3)')).toThrow(LitsError)
+      expect(() => lits.run('let foo = (n) -> { if !(zero?(n)) then recur(n - 1, 1) end }; foo(3)')).not.toThrow()
+      expect(() => lits.run('((n) -> { if !(zero?(n)) then recur() end };)(3)')).toThrow(LitsError)
+      expect(() => lits.run('((n) -> if !(zero?(n)) then recur(n - 1) end)(3)')).not.toThrow()
+      expect(() => lits.run('((n) -> if !(zero?(n)) recur(n - 1 1) then(3) end')).toThrow(LitsError)
+      expect(() => lits.run('((n) -> if !(zero?(n)) recur(n - 1 1, 2) then(3) end')).toThrow(LitsError)
     })
 
     describe('unresolvedIdentifiers', () => {
       it('samples', () => {
-        expect((lits.getUndefinedSymbols('(-> if !(zero?($)) then recur($ - 1))(3)')))
+        expect((lits.getUndefinedSymbols('(-> if !(zero?($)) then recur($ - 1) end)(3)')))
           .toEqual(new Set())
-        expect((lits.getUndefinedSymbols('(-> if !(zero?($)) then recur($ - a))(3)')))
+        expect((lits.getUndefinedSymbols('(-> if !(zero?($)) then recur($ - a) end)(3)')))
           .toEqual(new Set('a'))
       })
     })
@@ -626,38 +626,39 @@ foo(3)`)
               sum
             else
               recur(n - 1, sum + n)
+            end
           }`)).toBe(55)
       })
     })
 
     it('should work with recur', () => {
-      lits.run('loop (n = 3) -> { write!(n); if !(zero?(n)) then recur(n - 1)}')
+      lits.run('loop (n = 3) -> { write!(n); if !(zero?(n)) then recur(n - 1) end}')
       expect(logSpy).toHaveBeenNthCalledWith(1, 3)
       expect(logSpy).toHaveBeenNthCalledWith(2, 2)
       expect(logSpy).toHaveBeenNthCalledWith(3, 1)
       expect(logSpy).toHaveBeenNthCalledWith(4, 0)
     })
     it('recur must be called with right number of parameters', () => {
-      expect(() => litsDebug.run('loop (n = 3) -> if !(zero?(n)) then recur()')).toThrow(LitsError)
-      expect(() => lits.run('loop (n = 3) -> if !(zero?(n)) then recur(n - 1)')).not.toThrow()
-      expect(() => lits.run('loop (n = 3) -> if !(zero?(n)) then recur(n - 1, 2)')).toThrow(LitsError)
-      expect(() => lits.run('loop () -> if !(zero?(n)) then recur()')).toThrow(LitsError)
-      expect(() => lits.run('loop (n = 3) -> if !(zero?(n)) then recur(throw(1))')).toThrow(LitsError)
+      expect(() => litsDebug.run('loop (n = 3) -> if !(zero?(n)) then recur() end')).toThrow(LitsError)
+      expect(() => lits.run('loop (n = 3) -> if !(zero?(n)) then recur(n - 1) end')).not.toThrow()
+      expect(() => lits.run('loop (n = 3) -> if !(zero?(n)) then recur(n - 1, 2) end')).toThrow(LitsError)
+      expect(() => lits.run('loop () -> if !(zero?(n)) then recur() end')).toThrow(LitsError)
+      expect(() => lits.run('loop (n = 3) -> if !(zero?(n)) then recur(throw(1)) end')).toThrow(LitsError)
     })
     it('throw should work', () => {
-      expect(() => lits.run('loop (n = 3) -> if !(zero?(n)) then throw(recur(n - 1, 2))')).toThrow(LitsError)
-      expect(() => lits.run('loop (n) -> if !(zero?(n)) then recur(n - 1)')).toThrow(LitsError)
+      expect(() => lits.run('loop (n = 3) -> if !(zero?(n)) then throw(recur(n - 1, 2)) end')).toThrow(LitsError)
+      expect(() => lits.run('loop (n) -> if !(zero?(n)) then recur(n - 1) end')).toThrow(LitsError)
     })
 
     describe('unresolvedIdentifiers', () => {
       it('samples', () => {
         expect(
-          (litsDebug.getUndefinedSymbols('loop (n = 3) -> { write!(n); if !(zero?(n)) then recur(n - 1) }')),
+          (litsDebug.getUndefinedSymbols('loop (n = 3) -> { write!(n); if !(zero?(n)) then recur(n - 1) end}')),
         ).toEqual(new Set())
         expect(
-          (lits.getUndefinedSymbols('loop (n = 3) -> { write!(x); if !(zero?(n)) then recur(n - 1) }')),
+          (lits.getUndefinedSymbols('loop (n = 3) -> { write!(x); if !(zero?(n)) then recur(n - 1) end }')),
         ).toEqual(new Set(['x']))
-        expect(lits.getUndefinedSymbols('loop (n = 3 + y) -> { write!(n); if !(zero?(x)) then recur(n - 1) }'))
+        expect(lits.getUndefinedSymbols('loop (n = 3 + y) -> { write!(n); if !(zero?(x)) then recur(n - 1) end }'))
           .toEqual(new Set(['x', 'y']))
       })
     })

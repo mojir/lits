@@ -155,11 +155,11 @@ describe('lits Lexical Scoping', () => {
     test('recursive functions work with lexical scope', () => {
       expect(lits.run(`
         let factorial = (n) -> {
-          if n <= 1 then {
+          if n <= 1 then
             1
-          } else {
+          else
             n * self(n - 1)
-          }
+          end
         };
         
         factorial(5)
@@ -203,12 +203,12 @@ describe('lits Lexical Scoping', () => {
       expect(lits.run(`
         let x = 10;
         
-        if true then {
+        if true then
           let x = 20;
           x;  // Should return inner x
-        } else {
+        else
           x;  // Should return outer x
-        }
+        end
       `)).toBe(20)
     })
 

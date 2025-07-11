@@ -207,14 +207,14 @@ try {
     description: 'Either `true-expr` or `false-expr` branch is taken. `true-expr` is selected when $test is truthy. If $test is falsy `false-expr` is executed, if no `false-expr` exists, `null` is returned.',
     examples: [
       `
-if true then {
+if true then
   write!("TRUE")
-} else {
+else
   write!("FALSE")
-}`,
-      'if false then write!("TRUE") else write!("FALSE")',
-      'if true then write!("TRUE")',
-      'if false then write!("TRUE")',
+end`,
+      'if false then write!("TRUE") else write!("FALSE") end',
+      'if true then write!("TRUE") end',
+      'if false then write!("TRUE") end',
     ],
   },
   'unless': {
@@ -229,14 +229,14 @@ if true then {
     description: 'Either `true-expr` or `false-expr` branch is taken. `true-expr` is selected when $test is falsy. If $test is truthy `false-expr` is executed, if no `false-expr` exists, `null` is returned.',
     examples: [
       `
-unless true then {
+unless true then
   write!("TRUE")
-} else {
+else
   write!("FALSE")
-}`,
-      'unless false then write!("TRUE") else write!("FALSE")',
-      'unless true then write!("TRUE")',
-      'unless false then write!("TRUE")',
+end`,
+      'unless false then write!("TRUE") else write!("FALSE") end',
+      'unless true then write!("TRUE") end',
+      'unless false then write!("TRUE") end',
     ],
   },
   'cond': {
@@ -322,24 +322,24 @@ end`,
       `
 let foo = (n) -> {
   write!(n);
-  if !(zero?(n)) then {
+  if !(zero?(n)) then
     recur(n - 1)
-  }
+  end
 };
 foo(3)`,
       `
 (n -> {
   write!(n);
-  if !(zero?(n)) then {
+  if !(zero?(n)) then
     recur(n - 1)
-  }
+  end
 })(3)`,
       `
 loop (n = 3) -> {
   write!(n);
-  if !(zero?(n)) then {
+  if !(zero?(n)) then
     recur(n - 1)
-  }
+  end
 }`,
     ],
   },

@@ -132,18 +132,18 @@ let describe-location = (state) -> {
   let description = location.description;
 
   // Add visited status
-  let visited-status = if get(state.visited, state.current-location, 0) > 1 then {
+  let visited-status = if get(state.visited, state.current-location, 0) > 1 then
     "You've been here before."
-  } else {
+  else
     "This is your first time here."
-  };
+  end;
 
   // Check if location has items
-  let items-desc = if !(empty?(get(location, "items", []))) then {
+  let items-desc = if !(empty?(get(location, "items", []))) then
     "You see: " ++ join(location.items, ", ")
-  } else {
+  else
     ""
-  };
+  end;
 
   // Describe exits
   let exits = keys(location.exits) join ", ";
@@ -164,14 +164,14 @@ let move = (state, direction) -> {
   let exits = get(location, "exits", {});
 
   // Check if direction is valid
-  if contains?(exits, direction) then {
+  if contains?(exits, direction) then
     let new-location = get(exits, direction);
     let is-dark = new-location == "tunnel" || new-location == "treasure room";
 
     // Check if player has light source for dark areas
-    if is-dark && !(state.light-source) then {
+    if is-dark && !(state.light-source) then
       [state, "It's too dark to go that way without a light source."]
-    } else {
+    else
       let new-visited = assoc(
         state.visited,
         new-location,
@@ -188,16 +188,16 @@ let move = (state, direction) -> {
       );
 
       [new-state, "You move " ++ direction ++ " to the " ++ new-location ++ "."]
-    }
-  } else {
+    end
+  else
     [state, "You can't go that way."]
-  }
+  end
 };
 
 let take! = (state, item) -> {
   let items = get-location-items(state);
 
-  if contains?(items, item) then {
+  if contains?(items, item) then
     let location = get(locations, state.current-location);
     let new-location-items = filter(items, -> $ ≠ item);
     let new-inventory = push(state.inventory, item);
@@ -223,13 +223,13 @@ let take! = (state, item) -> {
       state.moves + 1
     );
     [new-state, "You take the " ++ item ++ "."]
-  } else {
+  else
     [state, "There is no " ++ item ++ " here."]
-  }
+  end
 };
 
 let drop! = (state, item) -> {
-  if has-item?(state, item) then {
+  if has-item?(state, item) then
     let location = get(locations, state.current-location);
     let location-items = get(location, "items", []);
     let new-location-items = push(location-items, item);
@@ -253,38 +253,38 @@ let drop! = (state, item) -> {
         state.moves + 1
       );
     [new-state, "You drop the " ++ item ++ "."]
-  } else {
+  else
     [state, "You don't have a " ++ item ++ " in your inventory."]
-  }
+  end
 };
 
 let inventory = (state) -> {
-  if empty?(state.inventory) then {
+  if empty?(state.inventory) then
     [state, "Your inventory is empty."]
-  } else {
+  else
     [state, "Inventory: " ++ join(state.inventory, ", ")]
-  }
+  end
 };
 
 let use = (state, item) -> {
   switch item
     case "fishing rod" then
-      if state.current-location == "river" then {
+      if state.current-location == "river" then
         [assoc(state, "moves", state.moves + 1), "You catch a small fish, but it slips away."]
-      } else {
+      else
         [state, "There's no place to use a fishing rod here."]
-      }
+      end
     case "torch" then
-      if has-item?(state, item) then {
+      if has-item?(state, item) then
         [
           assoc(assoc(state, "light-source", true), "moves", state.moves + 1),
           "The torch illuminates the area with a warm glow."
         ]
-      } else {
+      else
         [state, "You don't have a torch."]
-      }
+      end
     case "gold key" then
-      if has-item?(state, item) && state.current-location == "treasure room" then {
+      if has-item?(state, item) && state.current-location == "treasure room" then
         [
           assoc(
             assoc(state, "game-over", true),
@@ -293,11 +293,11 @@ let use = (state, item) -> {
           ),
          "You use the gold key to unlock a secret compartment, revealing a fabulous diamond! You win!"
         ]
-      } else {
+      else
         [state, "The key doesn't fit anything here."]
-      }
+      end
     case "bread" then
-      if has-item?(state, item) then {
+      if has-item?(state, item) then
         let new-inventory = filter(state.inventory, -> $ ≠ item);
         [
           assoc(
@@ -307,45 +307,45 @@ let use = (state, item) -> {
           ),
           "You eat the bread. It's delicious and nourishing."
         ]
-      } else {
+      else
         [state, "You don't have any bread."]
-      }
+      end
     case "shiny stone" then
-      if has-item?(state, item) then {
+      if has-item?(state, item) then
         [
           assoc(state, "moves", state.moves + 1),
           "The stone glows with a faint blue light. It seems magical but you're not sure how to use it yet."
         ]
-      } else {
+      else
         [state, "You don't have a shiny stone."]
-      }
+      end
     case "flowers" then
-      if has-item?(state, item) then {
+      if has-item?(state, item) then
         [
           assoc(state, "moves", state.moves + 1),
           "You smell the flowers. They have a sweet, calming fragrance."
         ]
-      } else {
+      else
         [state, "You don't have any flowers."]
-      }
+      end
     case "ancient map" then
-      if has-item?(state, item) then {
+      if has-item?(state, item) then
         [
           assoc(state, "moves", state.moves + 1),
           "The map shows the layout of the area. All locations are now marked as visited."
         ]
-      } else {
+      else
         [state, "You don't have a map."]
-      }
+      end
     case "jeweled crown" then
-      if has-item?(state, item) then {
+      if has-item?(state, item) then
         [
           assoc(state, "moves", state.moves + 1),
           "You place the crown on your head. You feel very regal."
         ]
-      } else {
+      else
         [state, "You don't have a crown."]
-      }
+      end
   end ?? [state, "You can't use that."]
 };
 
@@ -398,12 +398,12 @@ let game-loop = (state) -> {
 
   alert!("\\n" ++ message ++ "\\n");
 
-  if new-state.game-over then {
+  if new-state.game-over then
     alert!("\\nGame over! You made " ++ str(new-state.moves) ++ " moves.");
     new-state
-  } else {
+  else
     game-loop(new-state)
-  }
+  end
 };
 
 // Start game
@@ -424,14 +424,14 @@ start-game()
 // Determinant function for square matrices
 let determinant = (matrix) -> {
   // Check if input is an array
-  unless array?(matrix) then {
+  unless array?(matrix) then
     throw("Input must be an array");
-  };
+  end;
 
   // Check if matrix is empty
-  if empty?(matrix) then {
+  if empty?(matrix) then
     throw("Matrix cannot be empty");
-  };
+  end;
 
   let rows = count(matrix);
   
@@ -439,30 +439,30 @@ let determinant = (matrix) -> {
   let firstRow = first(matrix);
   
   // Check if first row is an array
-  unless array?(firstRow) then {
+  unless array?(firstRow) then
     throw("Input must be a 2D array");
-  };
+  end;
   
   let cols = count(firstRow);
   
   // Ensure matrix is square
-  if rows ≠ cols then {
+  if rows ≠ cols then
     throw("Matrix must be square");
-  };
+  end;
   
   // Base case: 1x1 matrix
-  if rows == 1 then {
+  if rows == 1 then
     matrix[0][0];
-  } else {
+  else
     // Base case: 2x2 matrix
-    if rows == 2 then {
+    if rows == 2 then
       let a = matrix[0][0];
       let b = matrix[0][1];
       let c = matrix[1][0];
       let d = matrix[1][1];
       
       a * d - b * c;
-    } else {
+    else
       // For larger matrices, use cofactor expansion along first row
       // Use reduce to calculate the determinant without mutating variables
       reduce(
@@ -477,8 +477,8 @@ let determinant = (matrix) -> {
         },
         0,
       );
-    }
-  }
+    end
+  end
 };
 
 // Helper function to get minor (submatrix) by removing specific row and column
@@ -487,22 +487,22 @@ let getMinor = (matrix, rowToRemove, colToRemove) -> {
   map(
     range(count(matrix)),
     i -> {
-      if i == rowToRemove then {
+      if i == rowToRemove then
         null; // This will be filtered out
-      } else {
+      else
         let row = get(matrix, i);
         // Filter out the column to remove
         map(
           range(count(row)),
           j -> {
-            if j == colToRemove then {
+            if j == colToRemove then
               null; // This will be filtered out
-            } else {
+            else
               get(row, j)
-            }
+            end
           }
         ) filter (item -> item ≠ null);
-      }
+      end
     }
   ) filter (row -> row ≠ null);
 };
@@ -525,15 +525,15 @@ determinant(matrix4x4);
 // Matrix multiplication with correct syntax
 let matrixMultiply = (matrixA, matrixB) -> {
   // Check if inputs are arrays
-  unless array?(matrixA) then throw("First input must be an array");
-  unless array?(matrixB) then throw("Second input must be an array");
+  unless array?(matrixA) then throw("First input must be an array") end;
+  unless array?(matrixB) then throw("Second input must be an array") end;
 
   // Check if matrices are not empty
-  if empty?(matrixA) || empty?(matrixB) then throw("Matrices cannot be empty");
+  if empty?(matrixA) || empty?(matrixB) then throw("Matrices cannot be empty") end;
 
   // Check if matrices are 2D arrays
-  unless array?(first(matrixA)) then throw("First input must be a 2D array");
-  unless array?(first(matrixB)) then throw("Second input must be a 2D array");
+  unless array?(first(matrixA)) then throw("First input must be a 2D array") end;
+  unless array?(first(matrixB)) then throw("Second input must be a 2D array") end;
 
   // Get dimensions
   let rowsA = count(matrixA);
@@ -542,18 +542,18 @@ let matrixMultiply = (matrixA, matrixB) -> {
   let colsB = count(first(matrixB));
 
   // Check if all rows have consistent length
-  unless every?(matrixA, row -> array?(row) && count(row) == colsA) then {
+  unless every?(matrixA, row -> array?(row) && count(row) == colsA) then
     throw("First matrix has inconsistent row lengths")
-  };
+  end;
   
-  unless every?(matrixB, row -> array?(row) && count(row) == colsB) then {
+  unless every?(matrixB, row -> array?(row) && count(row) == colsB) then
     throw("Second matrix has inconsistent row lengths")
-  };
+  end;
 
   // Check if matrices can be multiplied
-  unless colsA == rowsB then {
+  unless colsA == rowsB then
     throw("Matrix dimensions mismatch: first matrix columns must equal second matrix rows");
-  };
+  end;
 
   // Create a row of the result matrix
   let createRow = (rowIndex) -> {
@@ -594,7 +594,7 @@ matrixMultiply(matrixA, matrixB);
     description: 'Pretty prints a US phone number.',
     code: `
 let formatPhoneNumber = (data) -> {
-  if string?(data) then {
+  if string?(data) then
     let phoneNumber = data[0] == "+" ? data slice 2 : data;
     let length = count(phoneNumber);
 
@@ -606,9 +606,9 @@ let formatPhoneNumber = (data) -> {
       case length > 0 then
         "(" ++ slice(phoneNumber, 0)
     end ?? ""
-  } else {
+  else
     ""
-  }
+  end
 };
 
 
@@ -626,11 +626,11 @@ write!(formatPhoneNumber("+11232343456"));
     description: 'A recursive implementation of the factorial function.',
     code: `
 let factorial = (x) -> {
-  if x == 1 then {
+  if x == 1 then
     1
-  } else {
+  else
     x * self(x - 1)
-  }
+  end
 };
 
 factorial(5)
@@ -661,7 +661,7 @@ sort(l, numberComparer)
 let isoDateString? = (data) -> {
   let m = data match #"^(\\d{4})-(\\d{2})-(\\d{2})$";
 
-  if m then {
+  if m then
     let [year, month, day] = slice(m, 1) map number;
     let leapYear = zero?(year mod 4) && (!zero?(year mod 100) || zero?(year mod 400));
 
@@ -673,9 +673,9 @@ let isoDateString? = (data) -> {
       || month == 2 && (leapYear && day > 29 || !leapYear && day > 28);
 
     !(invalid)
-  } else {
+  else
     false
-  }
+  end
 };
 
 write!(isoDateString?("1978-12-21"));
@@ -690,11 +690,11 @@ write!(isoDateString?("197-12-21"));
     code: `
 let label-from-value = (items, value) -> {
   let entry = items some (-> value == $["value"]);
-  if entry == null then {
+  if entry == null then
     null
-  } else {
+  else
     entry["label"]
-  }
+  end
 };
 
 
@@ -717,11 +717,11 @@ let labels-from-values = ($array, $values) -> {
     value in $values
     let label = {
       let entry = $array some -> value == $["value"];
-      if entry == null then {
+      if entry == null then
         value
-      } else {
+      else
         entry["label"]
-      }
+      end
     }
   ) -> label
 };

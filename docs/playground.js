@@ -15104,6 +15104,48 @@ var Playground = (function (exports) {
                 docString,
             ];
         };
+        Parser.prototype.parseImplicitBlock = function (ends) {
+            var nodes = [];
+            while (!this.isAtEnd() && !this.isImplicitBlockEnd(ends)) {
+                if (isOperatorToken(this.peek(), ';')) {
+                    this.advance();
+                }
+                else {
+                    nodes.push(this.parseExpression());
+                }
+            }
+            this.assertImplicitBlockEnd(ends);
+            if (nodes.length === 0) {
+                throw new LitsError('Expected expression', this.peekSourceCodeInfo());
+            }
+            return nodes.length === 1
+                ? nodes[0]
+                : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.block, nodes]], this.peekSourceCodeInfo());
+        };
+        Parser.prototype.assertImplicitBlockEnd = function (ends) {
+            if (!this.isImplicitBlockEnd(ends)) {
+                throw new LitsError("Expected ".concat(ends.map(function (e) { return e[1]; }).join(' or ')), this.peekSourceCodeInfo());
+            }
+        };
+        Parser.prototype.isImplicitBlockEnd = function (ends) {
+            var e_1, _a;
+            try {
+                for (var ends_1 = __values(ends), ends_1_1 = ends_1.next(); !ends_1_1.done; ends_1_1 = ends_1.next()) {
+                    var end = ends_1_1.value;
+                    if (isReservedSymbolToken(this.peek(), end)) {
+                        return true;
+                    }
+                }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (ends_1_1 && !ends_1_1.done && (_a = ends_1.return)) _a.call(ends_1);
+                }
+                finally { if (e_1) throw e_1.error; }
+            }
+            return false;
+        };
         Parser.prototype.parseLoop = function (firstToken) {
             this.advance();
             assertLParenToken(this.peek());
@@ -15233,7 +15275,7 @@ var Playground = (function (exports) {
             }
         };
         Parser.prototype.isInternalLoopBindingDelimiter = function (token, symbols) {
-            var e_1, _a;
+            var e_2, _a;
             // end of loop binding
             if (isOperatorToken(token, ',') || isRParenToken(token)) {
                 return true;
@@ -15249,12 +15291,12 @@ var Playground = (function (exports) {
                     }
                 }
             }
-            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            catch (e_2_1) { e_2 = { error: e_2_1 }; }
             finally {
                 try {
                     if (symbols_1_1 && !symbols_1_1.done && (_a = symbols_1.return)) _a.call(symbols_1);
                 }
-                finally { if (e_1) throw e_1.error; }
+                finally { if (e_2) throw e_2.error; }
             }
             return false;
         };
@@ -15279,12 +15321,13 @@ var Playground = (function (exports) {
             var condition = this.parseExpression();
             assertReservedSymbolToken(this.peek(), 'then');
             this.advance();
-            var thenExpression = this.parseExpression();
+            var thenExpression = this.parseImplicitBlock(['else', 'end']);
             var elseExpression;
             if (isReservedSymbolToken(this.peek(), 'else')) {
                 this.advance();
-                elseExpression = this.parseExpression();
+                elseExpression = this.parseImplicitBlock(['end']);
             }
+            this.advance();
             return isUnless
                 ? withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.unless, [condition, thenExpression, elseExpression]]], token[2])
                 : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.if, [condition, thenExpression, elseExpression]]], token[2]);
@@ -15298,26 +15341,11 @@ var Playground = (function (exports) {
                 var caseExpression = this.parseExpression();
                 assertReservedSymbolToken(this.peek(), 'then');
                 this.advance();
-                var expressions = [];
-                while (!this.isAtEnd()
-                    && !isReservedSymbolToken(this.peek(), 'case')
-                    && !isReservedSymbolToken(this.peek(), 'end')) {
-                    expressions.push(this.parseExpression());
-                    if (isOperatorToken(this.peek(), ';')) {
-                        this.advance();
-                    }
-                    else if (!isReservedSymbolToken(this.peek(), 'case') && !isReservedSymbolToken(this.peek(), 'end')) {
-                        throw new LitsError('Expected case or end', this.peekSourceCodeInfo());
-                    }
-                }
-                var thenExpression = expressions.length === 1
-                    ? expressions[0]
-                    : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.block, expressions]], token[2]);
+                var thenExpression = this.parseImplicitBlock(['case', 'end']);
                 params.push([caseExpression, thenExpression]);
                 if (isReservedSymbolToken(this.peek(), 'end')) {
                     break;
                 }
-                assertReservedSymbolToken(this.peek(), 'case');
             }
             assertReservedSymbolToken(this.peek());
             this.advance();
@@ -15333,26 +15361,11 @@ var Playground = (function (exports) {
                 var caseExpression = this.parseExpression();
                 assertReservedSymbolToken(this.peek(), 'then');
                 this.advance();
-                var expressions = [];
-                while (!this.isAtEnd()
-                    && !isReservedSymbolToken(this.peek(), 'case')
-                    && !isReservedSymbolToken(this.peek(), 'end')) {
-                    expressions.push(this.parseExpression());
-                    if (isOperatorToken(this.peek(), ';')) {
-                        this.advance();
-                    }
-                    else if (!isReservedSymbolToken(this.peek(), 'case') && !isReservedSymbolToken(this.peek(), 'end')) {
-                        throw new LitsError('Expected case or end', this.peekSourceCodeInfo());
-                    }
-                }
-                var thenExpression = expressions.length === 1
-                    ? expressions[0]
-                    : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.block, expressions]], token[2]);
+                var thenExpression = this.parseImplicitBlock(['case', 'end']);
                 params.push([caseExpression, thenExpression]);
                 if (isReservedSymbolToken(this.peek(), 'end')) {
                     break;
                 }
-                assertReservedSymbolToken(this.peek(), 'case');
             }
             assertReservedSymbolToken(this.peek(), 'end');
             this.advance();
@@ -27356,10 +27369,10 @@ var Playground = (function (exports) {
             ],
             description: 'Either `true-expr` or `false-expr` branch is taken. `true-expr` is selected when $test is truthy. If $test is falsy `false-expr` is executed, if no `false-expr` exists, `null` is returned.',
             examples: [
-                "\nif true then {\n  write!(\"TRUE\")\n} else {\n  write!(\"FALSE\")\n}",
-                'if false then write!("TRUE") else write!("FALSE")',
-                'if true then write!("TRUE")',
-                'if false then write!("TRUE")',
+                "\nif true then\n  write!(\"TRUE\")\nelse\n  write!(\"FALSE\")\nend",
+                'if false then write!("TRUE") else write!("FALSE") end',
+                'if true then write!("TRUE") end',
+                'if false then write!("TRUE") end',
             ],
         },
         'unless': {
@@ -27373,10 +27386,10 @@ var Playground = (function (exports) {
             ],
             description: 'Either `true-expr` or `false-expr` branch is taken. `true-expr` is selected when $test is falsy. If $test is truthy `false-expr` is executed, if no `false-expr` exists, `null` is returned.',
             examples: [
-                "\nunless true then {\n  write!(\"TRUE\")\n} else {\n  write!(\"FALSE\")\n}",
-                'unless false then write!("TRUE") else write!("FALSE")',
-                'unless true then write!("TRUE")',
-                'unless false then write!("TRUE")',
+                "\nunless true then\n  write!(\"TRUE\")\nelse\n  write!(\"FALSE\")\nend",
+                'unless false then write!("TRUE") else write!("FALSE") end',
+                'unless true then write!("TRUE") end',
+                'unless false then write!("TRUE") end',
             ],
         },
         'cond': {
@@ -27430,9 +27443,9 @@ var Playground = (function (exports) {
             customVariants: ['recur(...recur-args)'],
             description: 'Recursevly calls enclosing function or loop with its evaluated `recur-args`.',
             examples: [
-                "\nlet foo = (n) -> {\n  write!(n);\n  if !(zero?(n)) then {\n    recur(n - 1)\n  }\n};\nfoo(3)",
-                "\n(n -> {\n  write!(n);\n  if !(zero?(n)) then {\n    recur(n - 1)\n  }\n})(3)",
-                "\nloop (n = 3) -> {\n  write!(n);\n  if !(zero?(n)) then {\n    recur(n - 1)\n  }\n}",
+                "\nlet foo = (n) -> {\n  write!(n);\n  if !(zero?(n)) then\n    recur(n - 1)\n  end\n};\nfoo(3)",
+                "\n(n -> {\n  write!(n);\n  if !(zero?(n)) then\n    recur(n - 1)\n  end\n})(3)",
+                "\nloop (n = 3) -> {\n  write!(n);\n  if !(zero?(n)) then\n    recur(n - 1)\n  end\n}",
             ],
         },
     };

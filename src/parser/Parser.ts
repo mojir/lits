@@ -57,6 +57,9 @@ import { smartTrim } from '../utils'
 import { assertNumberOfParams } from '../utils/arity'
 import { type BindingNode, type BindingTarget, type Node, type NormalBuiltinSymbolNode, type NormalExpressionNodeExpression, type NormalExpressionNodeWithName, type NumberNode, type ParseState, type ReservedSymbolNode, type SpecialBuiltinSymbolNode, type StringNode, type SymbolNode, type UserDefinedSymbolNode, bindingTargetTypes } from './types'
 
+type InternalLoopBindingDelimiter = 'let' | 'when' | 'while'
+type ImplicitBlockEnd = 'end' | 'else' | 'catch' | 'case'
+
 const exponentiationPrecedence = 12
 const binaryFunctionalOperatorPrecedence = 3
 const conditionalOperatorPrecedence = 1
@@ -971,6 +974,42 @@ export class Parser {
     ]
   }
 
+  private parseImplicitBlock(ends: ImplicitBlockEnd[]): Node {
+    const nodes: Node[] = []
+    while (!this.isAtEnd() && !this.isImplicitBlockEnd(ends)) {
+      if (isOperatorToken(this.peek(), ';')) {
+        this.advance()
+      }
+      else {
+        nodes.push(this.parseExpression())
+      }
+    }
+    this.assertImplicitBlockEnd(ends)
+
+    if (nodes.length === 0) {
+      throw new LitsError('Expected expression', this.peekSourceCodeInfo())
+    }
+
+    return nodes.length === 1
+      ? nodes[0]!
+      : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.block, nodes]], this.peekSourceCodeInfo()) satisfies DoNode
+  }
+
+  private assertImplicitBlockEnd(ends: ImplicitBlockEnd[]): void {
+    if (!this.isImplicitBlockEnd(ends)) {
+      throw new LitsError(`Expected ${ends.map(e => e[1]).join(' or ')}`, this.peekSourceCodeInfo())
+    }
+  }
+
+  private isImplicitBlockEnd(ends: ImplicitBlockEnd[]): boolean {
+    for (const end of ends) {
+      if (isReservedSymbolToken(this.peek(), end)) {
+        return true
+      }
+    }
+    return false
+  }
+
   private parseLoop(firstToken: SymbolToken): LoopNode {
     this.advance()
 
@@ -1120,14 +1159,14 @@ export class Parser {
     return [bindingNode, letBindings, whenNode, whileNode] satisfies LoopBindingNode
   }
 
-  assertInternalLoopBindingDelimiter(token: Token, symbols: ('let' | 'when' | 'while')[]): void {
+  assertInternalLoopBindingDelimiter(token: Token, symbols: InternalLoopBindingDelimiter[]): void {
     if (!this.isInternalLoopBindingDelimiter(token, symbols)) {
       const symbolsString = `${[...symbols, ','].map(symbol => `"${symbol}"`).join(', ')} or ")"`
       throw new LitsError(`Expected symbol ${symbolsString}`, token[2])
     }
   }
 
-  isInternalLoopBindingDelimiter(token: Token, symbols: ('let' | 'when' | 'while')[]): boolean {
+  isInternalLoopBindingDelimiter(token: Token, symbols: InternalLoopBindingDelimiter[]): boolean {
     // end of loop binding
     if (isOperatorToken(token, ',') || isRParenToken(token)) {
       return true
@@ -1171,13 +1210,15 @@ export class Parser {
     const condition = this.parseExpression()
     assertReservedSymbolToken(this.peek(), 'then')
     this.advance()
-    const thenExpression = this.parseExpression()
+    const thenExpression = this.parseImplicitBlock(['else', 'end'])
 
     let elseExpression: Node | undefined
     if (isReservedSymbolToken(this.peek(), 'else')) {
       this.advance()
-      elseExpression = this.parseExpression()
+      elseExpression = this.parseImplicitBlock(['end'])
     }
+
+    this.advance()
 
     return isUnless
       ? withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.unless, [condition, thenExpression, elseExpression]]], token[2]) satisfies UnlessNode
@@ -1195,29 +1236,12 @@ export class Parser {
       const caseExpression = this.parseExpression()
       assertReservedSymbolToken(this.peek(), 'then')
       this.advance()
-      const expressions: Node[] = []
-      while (
-        !this.isAtEnd()
-        && !isReservedSymbolToken(this.peek(), 'case')
-        && !isReservedSymbolToken(this.peek(), 'end')) {
-        expressions.push(this.parseExpression())
-        if (isOperatorToken(this.peek(), ';')) {
-          this.advance()
-        }
-        else if (!isReservedSymbolToken(this.peek(), 'case') && !isReservedSymbolToken(this.peek(), 'end')) {
-          throw new LitsError('Expected case or end', this.peekSourceCodeInfo())
-        }
-      }
-
-      const thenExpression = expressions.length === 1
-        ? expressions[0]!
-        : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.block, expressions]], token[2]) satisfies DoNode
+      const thenExpression = this.parseImplicitBlock(['case', 'end'])
 
       params.push([caseExpression, thenExpression])
       if (isReservedSymbolToken(this.peek(), 'end')) {
         break
       }
-      assertReservedSymbolToken(this.peek(), 'case')
     }
 
     assertReservedSymbolToken(this.peek())
@@ -1237,29 +1261,12 @@ export class Parser {
       const caseExpression = this.parseExpression()
       assertReservedSymbolToken(this.peek(), 'then')
       this.advance()
-      const expressions: Node[] = []
-      while (
-        !this.isAtEnd()
-        && !isReservedSymbolToken(this.peek(), 'case')
-        && !isReservedSymbolToken(this.peek(), 'end')) {
-        expressions.push(this.parseExpression())
-        if (isOperatorToken(this.peek(), ';')) {
-          this.advance()
-        }
-        else if (!isReservedSymbolToken(this.peek(), 'case') && !isReservedSymbolToken(this.peek(), 'end')) {
-          throw new LitsError('Expected case or end', this.peekSourceCodeInfo())
-        }
-      }
-
-      const thenExpression = expressions.length === 1
-        ? expressions[0]!
-        : withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.block, expressions]], token[2]) satisfies DoNode
+      const thenExpression = this.parseImplicitBlock(['case', 'end'])
 
       params.push([caseExpression, thenExpression])
       if (isReservedSymbolToken(this.peek(), 'end')) {
         break
       }
-      assertReservedSymbolToken(this.peek(), 'case')
     }
 
     assertReservedSymbolToken(this.peek(), 'end')
