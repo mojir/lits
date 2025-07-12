@@ -78,31 +78,31 @@ let sum = +([1, 2, 3, 4, 5]);
 
 ```lits
 // Numbers
-42          // integer
-3.14        // float
-0xFFFF      // hexadecimal
-0b1100      // binary
-0o77        // octal
--2.3e-2     // scientific notation
+42;          // integer
+3.14;        // float
+0xFFFF;      // hexadecimal
+0b1100;      // binary
+0o77;        // octal
+-2.3e-2;     // scientific notation
 
 // Strings
-"Hello, world!"
+"Hello, world!";
 
 // Booleans
-true
-false
+true;
+false;
 
 // Null
-null
+null;
 
 // Arrays
-[1, 2, 3, 4]
+[1, 2, 3, 4];
 
 // Objects
-{ name: "John", age: 30 }
+{ name: "John", age: 30 };
 
 // Regular expressions
-#"pattern"
+#"pattern";
 ```
 
 ### Mathematical Constants
@@ -110,26 +110,23 @@ null
 Lits provides predefined mathematical constants:
 
 ```lits
-PI    // => 3.141592653589793
-π     // => 3.141592653589793 (Unicode alternative)
-E     // => 2.718281828459045 (Euler's number)
-ε     // => 2.718281828459045 (Unicode alternative)
-PHI   // => 1.618033988749895 (Golden ratio)
-φ     // => 1.618033988749895 (Unicode alternative)
+PI;    // => 3.141592653589793
+π;     // => 3.141592653589793 (Unicode alternative)
+E;     // => 2.718281828459045 (Euler's number)
+ε;     // => 2.718281828459045 (Unicode alternative)
+PHI;   // => 1.618033988749895 (Golden ratio)
+φ;     // => 1.618033988749895 (Unicode alternative)
 
 // Infinity values
-POSITIVE_INFINITY // => Infinity
-∞     // => Infinity (Unicode alternative)
-NEGATIVE_INFINITY // => -Infinity
+POSITIVE_INFINITY; // => Infinity
+∞;                 // => Infinity (Unicode alternative)
+NEGATIVE_INFINITY; // => -Infinity
 
 // Integer and float limits
-MAX_SAFE_INTEGER  // => 9007199254740991
-MIN_SAFE_INTEGER  // => -9007199254740991
-MAX_VALUE         // => 1.7976931348623157e+308
-MIN_VALUE         // => 5e-324
-
-// Not a Number
-NaN  // => NaN
+MAX_SAFE_INTEGER;  // => 9007199254740991
+MIN_SAFE_INTEGER;  // => -9007199254740991
+MAX_VALUE;         // => 1.7976931348623157e+308
+MIN_VALUE;         // => 5e-324
 ```
 
 ## Special Expressions
@@ -144,7 +141,7 @@ let x = 10;
 // => 10
 
 // Variables are immutable
-let x = 20; // Error: x is already defined
+// let x = 20; // Error: x is already defined
 
 // Shadowing in inner scopes
 let y = {
@@ -160,19 +157,27 @@ let y = {
 // Object destructuring
 let { name, age } = { name: "John", age: 30 };
 // name => "John", age => 30
+```
 
+```lits
 // Array destructuring
-let [first, second] = [1, 2, 3, 4];
-// first => 1, second => 2
+let [a, b] = [1, 2, 3, 4];
+// a => 1, b => 2
+```
 
+```lits
 // With default values
 let { name = "Unknown", age = 0 } = { name: "John" };
 // name => "John", age => 0
+```
 
+```lits
 // Rest patterns
 let [head, ...tail] = [1, 2, 3, 4];
 // head => 1, tail => [2, 3, 4]
+```
 
+```lits
 // Destructuring in function parameters
 let displayPerson = ({name, age}) ->
   name ++ " is " ++ str(age) ++ " years old";
@@ -196,10 +201,10 @@ let square = x -> x * x;
 let constant = () -> 42;
 
 // Positional arguments
-let add = -> $1 + $2;
+let add-v2 = -> $1 + $2;
 
 // Single positional argument
-let square = -> $ * $;
+let square-v2 = -> $ * $;
 
 // Self-reference for recursion
 let factorial = n ->
@@ -216,15 +221,17 @@ let factorial = n ->
 
 ```lits
 // If expression
+let x = !:random-int(0, 20); // Random number between 0 and 19
+
 if x > 10 then
   "large"
 else
   "small"
-end
+end;
 // => "large" (if x > 10) or "small" (if x <= 10)
 
 // If without else returns null
-if false then "never" end
+if false then "never" end;
 // => null
 
 // Unless (inverted if)
@@ -232,13 +239,15 @@ unless x > 10 then
   "small"
 else
   "large"
-end
+end;
 // => "small" (if x <= 10) or "large" (if x > 10)
 ```
 
 #### Cond
 
 ```lits
+let x = !:random-int(0, 20); // Random number between 0 and 19
+
 // Multi-branch conditional
 cond
   case x < 5 then "small"
@@ -251,6 +260,8 @@ end ?? "extra large"
 #### Switch
 
 ```lits
+let x = !:random-int(0, 3); // Random number between 0 and 2
+
 // Switch on value
 switch x
   case 0 then "zero"
@@ -266,27 +277,27 @@ end
 
 ```lits
 // Simple iteration
-for (x in [1, 2, 3, 4]) -> x * 2
+for (x in [1, 2, 3, 4]) -> x * 2;
 // => [2, 4, 6, 8]
 
 // With filtering
-for (x in [1, 2, 3, 4] when odd?(x)) -> x * 2
+for (x in [1, 2, 3, 4] when odd?(x)) -> x * 2;
 // => [2, 6]
 
 // With while condition
-for (x in [1, 2, 3, 4] while x < 3) -> x * 2
+for (x in [1, 2, 3, 4] while x < 3) -> x * 2;
 // => [2, 4]
 
 // With let bindings
-for (x in [1, 2, 3] let doubled = x * 2) -> doubled + 1
+for (x in [1, 2, 3] let doubled = x * 2) -> doubled + 1;
 // => [3, 5, 7]
 
 // Multiple iterators
-for (x in [1, 2], y in [10, 20]) -> x + y
+for (x in [1, 2], y in [10, 20]) -> x + y;
 // => [11, 21, 12, 22]
 
 // Object iteration
-for ([key, value] in { a: 1, b: 2 }) -> key ++ ":" ++ str(value)
+for (entry in { a: 1, b: 2 } let [key, value] = entry) -> key ++ ":" ++ str(value);
 // => ["a:1", "b:2"]
 ```
 
@@ -318,25 +329,29 @@ loop (n = 5, acc = 1) -> {
 
 ```lits
 // Basic try/catch
-try
+try {
   riskyOperation()
-catch
+} catch {
   "Something went wrong"
-end
+};
 
 // With error binding
-try
+try {
   riskyOperation()
-catch (error)
+} catch (error) {
   "Error: " ++ error.message
-end
+};
 ```
 
 #### Throw
 
 ```lits
 // Throwing errors
-throw("Custom error message")
+try {
+  throw("Custom error message");
+} catch {
+  "Caught an error"
+};
 
 // In context
 let divide = (a, b) ->
@@ -353,27 +368,27 @@ let divide = (a, b) ->
 
 ```lits
 // Logical AND (short-circuit)
-true && "second value"   // => "second value"
-false && "never reached" // => false
+true && "second value";   // => "second value"
+false && "never reached"; // => false
 
 // Logical OR (short-circuit)
-false || "default value" // => "default value"
-true || "never reached"  // => true
+false || "default value"; // => "default value"
+true || "never reached";  // => true
 
 // Multiple arguments
-&&(true, true, "all true") // => "all true"
-||(false, false, "found")  // => "found"
+&&(true, true, "all true"); // => "all true"
+||(false, false, "found");  // => "found"
 ```
 
 #### Null Coalescing
 
 ```lits
 // Null coalescing operator
-null ?? "default"     // => "default"
-undefined ?? "default" // => "default"
-0 ?? "default"        // => 0 (only null/undefined are coalesced)
-false ?? "default"    // => false
-"" ?? "default"       // => ""
+null ?? "default";     // => "default"
+undefined ?? "default"; // => "default"
+0 ?? "default";        // => 0 (only null/undefined are coalesced)
+false ?? "default";    // => false
+"" ?? "default";       // => ""
 ```
 
 ### Blocks
@@ -394,24 +409,25 @@ false ?? "default"    // => false
 
 ```lits
 // Array literal
-[1, 2, 3, 4]
+[1, 2, 3, 4];
 
 // Array function
-array(1, 2, 3, 4)
+array(1, 2, 3, 4);
 
 // With spread
-[1, 2, ...[3, 4, 5], 6]
-// => [1, 2, 3, 4, 5, 6]
+let small-set = [3, 4, 5];
+[1, 2, ...small-set, 6];
+// => [1, 2, 3, 4, 5, 6];
 ```
 
 #### Object Construction
 
 ```lits
 // Object literal
-{ name: "John", age: 30 }
+{ name: "John", age: 30 };
 
 // Object function
-object("name", "John", "age", 30)
+object("name", "John", "age", 30);
 
 // With spread
 let defaults = { type: "Person", active: true };
@@ -419,7 +435,7 @@ let defaults = { type: "Person", active: true };
   ...defaults,
   name: "John",
   age: 30
-}
+};
 // => { type: "Person", active: true, name: "John", age: 30 }
 ```
 
@@ -448,35 +464,35 @@ All functions that take two parameters can be used as operators:
 
 ```lits
 // As a function
-max(5, 10)    // => 10
+max(5, 10);    // => 10
 
 // As an operator
-5 max 10      // => 10
+5 max 10;      // => 10
 ```
 
 All operators can be used as functions:
 
 ```lits
 // As an operator
-5 + 3         // => 8
+5 + 3;         // => 8
 
 // As a function
-+(5, 3)       // => 8
++(5, 3);       // => 8
 
 // Partial application with underscore placeholder
 let add5 = +(5, _);
-add5(3)       // => 8
+add5(3);       // => 8
 
 // Multiple placeholders
-let subtractAndDivide = /(-(_, _), 2);
-subtractAndDivide(10, 3)  // => 3.5 (10 - 3 = 7, then 7 / 2 = 3.5)
+let subtractTwoValues = -(100, _, _);
+subtractTwoValues(4, 3);  // => 93
 
 // Single placeholder in different positions
 let subtract = -(_, 2);
-subtract(10)  // => 8
+subtract(10);  // => 8
 
 let divide = /(10, _);
-divide(2)     // => 5
+divide(2);     // => 5
 ```
 
 ### Parameter Order
@@ -485,17 +501,10 @@ Lits favors subject-first parameter order for better operator chaining:
 
 ```lits
 // Function style
-filter([1, 2, 3, 4], odd?)  // => [1, 3]
+filter([1, 2, 3, 4], odd?);  // => [1, 3]
 
 // Operator style (more readable)
-[1, 2, 3, 4] filter odd?    // => [1, 3]
-
-// Chaining
-[1, 2, 3, 4, 5, 6]
-  filter odd?
-  map square
-  reduce +
-// => 35
+[1, 2, 3, 4] filter odd?;    // => [1, 3]
 ```
 
 ### Pipe Operator
@@ -504,13 +513,13 @@ The pipe operator `|>` passes the result of the left expression as the first arg
 
 ```lits
 // Without pipe operator
-reduce(map(filter([1, 2, 3, 4, 5, 6], odd?), square), +)
+reduce(map(filter([1, 2, 3, 4, 5, 6], odd?), -> $ + $), +, 0);
 
 // With pipe operator (much more readable)
 [1, 2, 3, 4, 5, 6]
   |> filter(_, odd?)
-  |> map(_, square)
-  |> reduce(_, +)
+  |> map(_, -> $ * $)
+  |> reduce(_, +, 0);
 // => 35
 
 // Simple transformations
@@ -518,14 +527,14 @@ reduce(map(filter([1, 2, 3, 4, 5, 6], odd?), square), +)
   |> upper-case
   |> split(_, " ")
   |> reverse
-  |> join(_, "-")
+  |> join(_, "-");
 // => "WORLD-HELLO"
 
 // Mathematical operations
 10
   |> +(_, 5)
   |> *(_, 2)
-  |> /(_, 3)
+  |> /(_, 3);
 // => 10 (10 + 5 = 15, 15 * 2 = 30, 30 / 3 = 10)
 
 // Data processing pipeline
@@ -533,7 +542,7 @@ reduce(map(filter([1, 2, 3, 4, 5, 6], odd?), square), +)
   |> get(_, "numbers")
   |> filter(_, even?)
   |> map(_, *(_, 3))
-  |> reduce(_, +)
+  |> reduce(_, +, 0);
 // => 18 (even numbers [2, 4] -> [6, 12] -> sum = 18)
 ```
 
@@ -557,7 +566,7 @@ For a complete reference of all available functions with examples, visit the [Li
 
 ```lits
 // Export variables and functions
-export let PI = 3.14159;
+export let pi = 3.14159;
 export let square = x -> x * x;
 
 // Exported values become available to other modules
@@ -585,14 +594,14 @@ let numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 // Get even numbers squared
 let evenSquares = numbers
-  filter even?
-  map square;
+  |> filter(_, even?)
+  |> map(_, -> $ * $);
 // => [4, 16, 36, 64, 100]
 
 // Sum of odd numbers
 let oddSum = numbers
-  filter odd?
-  reduce +;
+  |> filter(_, odd?)
+  |> reduce(_, +, 0);
 // => 25
 ```
 
@@ -626,8 +635,8 @@ let gradeToLetter = grade ->
     case 60 then "D"
   end ?? "F";
 
-gradeToLetter(80)  // => "B"
-gradeToLetter(55)  // => "F"
+gradeToLetter(80);  // => "B"
+gradeToLetter(55);  // => "F"
 
 // HTTP status code handling
 let statusMessage = code ->
@@ -649,8 +658,8 @@ let describe = x ->
     case array?(x) then "list of " ++ str(count(x)) ++ " items"
   end ?? "unknown type";
 
-describe(42)     // => "a number: 42"
-describe([1,2,3]) // => "list of 3 items"
+describe(42);      // => "a number: 42"
+describe([1,2,3]); // => "list of 3 items"
 
 // Grade ranges
 let gradeToLetter = score ->
@@ -661,8 +670,8 @@ let gradeToLetter = score ->
     case score >= 60 then "D"
   end ?? "F";
 
-gradeToLetter(85)  // => "B"
-gradeToLetter(55)  // => "F"
+gradeToLetter(85);  // => "B"
+gradeToLetter(55);  // => "F"
 ```
 
 ## JavaScript Interoperability
