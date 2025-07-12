@@ -166,7 +166,7 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
     description: 'A value that can never be created',
     examples: [`
 // throw("error") will never return a value
-try { throw("error") } catch { "never" }`,
+try throw("error") catch "never" end`,
     ],
   },
 }

@@ -15174,8 +15174,7 @@ var Playground = (function (exports) {
         };
         Parser.prototype.parseTry = function (token) {
             this.advance();
-            var tryExpression = this.parseExpression();
-            assertReservedSymbolToken(this.peek(), 'catch');
+            var tryExpression = this.parseImplicitBlock(['catch']);
             this.advance();
             var errorSymbol;
             if (isLParenToken(this.peek())) {
@@ -15184,7 +15183,8 @@ var Playground = (function (exports) {
                 assertRParenToken(this.peek());
                 this.advance();
             }
-            var catchExpression = this.parseExpression();
+            var catchExpression = this.parseImplicitBlock(['end']);
+            this.advance();
             return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.try, tryExpression, errorSymbol, catchExpression]], token[2]);
         };
         Parser.prototype.parseForOrDoseq = function (firstToken) {
@@ -16289,7 +16289,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['value', 'message'] },
             ],
             description: 'If $value is falsy it throws `AssertionError` with $message. If no $message is provided, message is set to $value.',
-            examples: ['try { assert(0, "Expected a positive value") } catch (e) { e.message }'],
+            examples: ['try assert(0, "Expected a positive value") catch (e) e.message end'],
             noOperatorDocumentation: true,
         },
         'assert!=': {
@@ -16307,10 +16307,10 @@ var Playground = (function (exports) {
             ],
             description: 'If $a is the same as $b it throws `AssertionError`.',
             examples: [
-                'try { assert!=(0, 0, "Expected different values") } catch (e) { e.message }',
-                'try { assert!=(0, 0) } catch (e) { e.message }',
-                'try { 0 assert!= 0 } catch (e) { e.message }',
-                'try { assert!=(0, 1) } catch (e) { e.message }',
+                'try assert!=(0, 0, "Expected different values") catch (e) e.message end',
+                'try assert!=(0, 0) catch (e) e.message end',
+                'try 0 assert!= 0 catch (e) e.message end',
+                'try assert!=(0, 1) catch (e) e.message end',
             ],
             noOperatorDocumentation: true,
         },
@@ -16329,9 +16329,9 @@ var Playground = (function (exports) {
             ],
             description: 'If $a is not structural equal to $b it throws `AssertionError`.',
             examples: [
-                'try { assert=({ "a": 1 }, { "a": 2 }, "Expected equal values") } catch (e) { e.message }',
-                'try { assert=({ "a": 1 }, { "a": 2 }) } catch (e) { e.message }',
-                'try { assert=({ "a": 1 }, { "a": 1 }) } catch (e) { e.message }',
+                'try assert=({ "a": 1 }, { "a": 2 }, "Expected equal values") catch (e) e.message end',
+                'try assert=({ "a": 1 }, { "a": 2 }) catch (e) e.message end',
+                'try assert=({ "a": 1 }, { "a": 1 }) catch (e) e.message end',
             ],
             noOperatorDocumentation: true,
         },
@@ -16350,9 +16350,9 @@ var Playground = (function (exports) {
             ],
             description: 'If $a is not greater than $b it throws `AssertionError`.',
             examples: [
-                'try { assert-gt(0, 1, "Expected greater value") } catch (e) { e.message }',
-                'try { assert-gt(0, 0) } catch (e) { e.message }',
-                'try { assert-gt(1, 0) } catch (e) { e.message }',
+                'try assert-gt(0, 1, "Expected greater value") catch (e) e.message end',
+                'try assert-gt(0, 0) catch (e) e.message end',
+                'try assert-gt(1, 0) catch (e) e.message end',
             ],
             noOperatorDocumentation: true,
         },
@@ -16371,9 +16371,9 @@ var Playground = (function (exports) {
             ],
             description: 'If $a is not less than $b it throws `AssertionError`.',
             examples: [
-                'try { assert-lte(1, 0, "Expected smaller value value") } catch (e) { e.message }',
-                'try { assert-lte(1, 1) } catch (e) { e.message }',
-                'try { assert-lte(0, 1) } catch (e) { e.message }',
+                'try assert-lte(1, 0, "Expected smaller value value") catch (e) e.message end',
+                'try assert-lte(1, 1) catch (e) e.message end',
+                'try assert-lte(0, 1) catch (e) e.message end',
             ],
             noOperatorDocumentation: true,
         },
@@ -16392,9 +16392,9 @@ var Playground = (function (exports) {
             ],
             description: 'If $a is less than $b it throws `AssertionError`.',
             examples: [
-                'try { assert-gte(0, 1, "Expected greater value") } catch (e) { e.message }',
-                'try { assert-gte(0, 1) } catch (e) { e.message }',
-                'try { assert-gte(1, 1) } catch (e) { e.message }',
+                'try assert-gte(0, 1, "Expected greater value") catch (e) e.message end',
+                'try assert-gte(0, 1) catch (e) e.message end',
+                'try assert-gte(1, 1) catch (e) e.message end',
             ],
             noOperatorDocumentation: true,
         },
@@ -16413,9 +16413,9 @@ var Playground = (function (exports) {
             ],
             description: 'If $a is grater than $b it throws `AssertionError`.',
             examples: [
-                'try { assert-lte(1, 0, "Expected smaller value value") } catch (e) { e.message }',
-                'try { assert-lte(1, 0) } catch (e) { e.message }',
-                'try { assert-lte(1, 1) } catch (e) { e.message }',
+                'try assert-lte(1, 0, "Expected smaller value value") catch (e) e.message end',
+                'try assert-lte(1, 0) catch (e) e.message end',
+                'try assert-lte(1, 1) catch (e) e.message end',
             ],
             noOperatorDocumentation: true,
         },
@@ -16439,9 +16439,9 @@ var Playground = (function (exports) {
             ],
             description: 'If $value is not `true` it throws `AssertionError`.',
             examples: [
-                'try { assert-true(false, "Expected true") } catch (e) { e.message }',
-                'try { assert-true(false) } catch (e) { e.message }',
-                'try { assert-true(true) } catch (e) { e.message }',
+                'try assert-true(false, "Expected true") catch (e) e.message end',
+                'try assert-true(false) catch (e) e.message end',
+                'try assert-true(true) catch (e) e.message end',
             ],
             noOperatorDocumentation: true,
         },
@@ -16465,9 +16465,9 @@ var Playground = (function (exports) {
             ],
             description: 'If $value is not `false` it throws `AssertionError`.',
             examples: [
-                'try { assert-false(true, "Expected false") } catch (e) { e.message }',
-                'try { assert-false(true) } catch (e) { e.message }',
-                'try { assert-false(false) } catch (e) { e.message }',
+                'try assert-false(true, "Expected false") catch (e) e.message end',
+                'try assert-false(true) catch (e) e.message end',
+                'try assert-false(false) catch (e) e.message end',
             ],
             noOperatorDocumentation: true,
         },
@@ -16491,16 +16491,16 @@ var Playground = (function (exports) {
             ],
             description: 'If $value is not `truthy` it throws `AssertionError`.',
             examples: [
-                'try { assert-truthy(false, "Expected truthy") } catch (e) { e.message }',
-                'try { assert-truthy(false) } catch (e) { e.message }',
-                'try { assert-truthy(0) } catch (e) { e.message }',
-                'try { assert-truthy(null) } catch (e) { e.message }',
-                'try { assert-truthy("") } catch (e) { e.message }',
-                'try { assert-truthy(true) } catch (e) { e.message }',
-                'try { assert-truthy(1) } catch (e) { e.message }',
-                'try { assert-truthy("x") } catch (e) { e.message }',
-                'try { assert-truthy([]) } catch (e) { e.message }',
-                'try { assert-truthy({}) } catch (e) { e.message }',
+                'try assert-truthy(false, "Expected truthy") catch (e) e.message end',
+                'try assert-truthy(false) catch (e) e.message end',
+                'try assert-truthy(0) catch (e) e.message end',
+                'try assert-truthy(null) catch (e) e.message end',
+                'try assert-truthy("") catch (e) e.message end',
+                'try assert-truthy(true) catch (e) e.message end',
+                'try assert-truthy(1) catch (e) e.message end',
+                'try assert-truthy("x") catch (e) e.message end',
+                'try assert-truthy([]) catch (e) e.message end',
+                'try assert-truthy(nd) catch (e) e.message end',
             ],
             noOperatorDocumentation: true,
         },
@@ -16524,15 +16524,15 @@ var Playground = (function (exports) {
             ],
             description: 'If $value is not `falsy` it throws `AssertionError`.',
             examples: [
-                'try { assert-falsy(true, "Expected falsy") } catch (e) { e.message }',
-                'try { assert-falsy("x") } catch (e) { e.message }',
-                'try { assert-falsy([]) } catch (e) { e.message }',
-                'try { assert-falsy({}) } catch (e) { e.message }',
-                'try { assert-falsy(1) } catch (e) { e.message }',
-                'try { assert-falsy(false) } catch (e) { e.message }',
-                'try { assert-falsy(0) } catch (e) { e.message }',
-                'try { assert-falsy(null) } catch (e) { e.message }',
-                'try { assert-falsy("") } catch (e) { e.message }',
+                'try assert-falsy(true, "Expected falsy") catch (e) e.message end',
+                'try assert-falsy("x") catch (e) e.message end',
+                'try assert-falsy([]) catch (e) e.message end',
+                'try assert-falsy(nd) catch (e) e.message end',
+                'try assert-falsy(1) catch (e) e.message end',
+                'try assert-falsy(false) catch (e) e.message end',
+                'try assert-falsy(0) catch (e) e.message end',
+                'try assert-falsy(null) catch (e) e.message end',
+                'try assert-falsy("") catch (e) e.message end',
             ],
             noOperatorDocumentation: true,
         },
@@ -16556,15 +16556,15 @@ var Playground = (function (exports) {
             ],
             description: 'If $value is not `null` it throws `AssertionError`.',
             examples: [
-                'try { assert-null(null) } catch (e) { e.message }',
-                'try { assert-null(true, "Expected null") } catch (e) { e.message }',
-                'try { assert-null("x") } catch (e) { e.message }',
-                'try { assert-null([]) } catch (e) { e.message }',
-                'try { assert-null({}) } catch (e) { e.message }',
-                'try { assert-null(1) } catch (e) { e.message }',
-                'try { assert-null(false) } catch (e) { e.message }',
-                'try { assert-null(0) } catch (e) { e.message }',
-                'try { assert-null("") } catch (e) { e.message }',
+                'try assert-null(null) catch (e) e.message end',
+                'try assert-null(true, "Expected null") catch (e) e.message end',
+                'try assert-null("x") catch (e) e.message end',
+                'try assert-null([]) catch (e) e.message end',
+                'try assert-null(nd) catch (e) e.message end',
+                'try assert-null(1) catch (e) e.message end',
+                'try assert-null(false) catch (e) e.message end',
+                'try assert-null(0) catch (e) e.message end',
+                'try assert-null("") catch (e) e.message end',
             ],
             noOperatorDocumentation: true,
         },
@@ -16589,7 +16589,7 @@ var Playground = (function (exports) {
             description: 'If $fun does not throw, it throws `AssertionError`.',
             examples: [
                 'assert-throws(-> throw("Error"))',
-                'try { assert-throws(-> identity("Error")) } catch (e) { e.message }',
+                'try assert-throws(-> identity("Error")) catch (e) e.message end',
             ],
             noOperatorDocumentation: true,
         },
@@ -16616,8 +16616,8 @@ var Playground = (function (exports) {
             ],
             description: 'If $fun does not throw $error-message, it throws `AssertionError`.',
             examples: [
-                'try { assert-throws-error(-> throw("Error"), "Error") } catch (e) { e.message }',
-                'try { assert-throws-error(-> identity("Error"), "Error") } catch (e) { e.message }',
+                'try assert-throws-error(-> throw("Error"), "Error") catch (e) e.message end',
+                'try assert-throws-error(-> identity("Error"), "Error") catch (e) e.message end',
             ],
             noOperatorDocumentation: true,
         },
@@ -16641,8 +16641,8 @@ var Playground = (function (exports) {
             ],
             description: 'If $fun throws, it throws `AssertionError`.',
             examples: [
-                'try { assert-not-throws(-> identity("Error")) } catch (e) { e.message }',
-                'try { assert-not-throws(-> throw("Error")) } catch (e) { e.message }',
+                'try assert-not-throws(-> identity("Error")) catch (e) e.message end',
+                'try assert-not-throws(-> throw("Error")) catch (e) e.message end',
             ],
             noOperatorDocumentation: true,
         },
@@ -27333,9 +27333,9 @@ var Playground = (function (exports) {
             ],
             description: 'Executes `try-body`. If that throws, the `catch-body` gets executed. See examples for details.',
             examples: [
-                "\ntry {\n  2 / 4\n} catch {\n  \"Oops!\"\n}",
-                "\ntry {\n  foo()\n} catch(error) {\n  \"Error: \" ++ error.message\n}",
-                "\ntry {\n  foo()\n} catch {\n  42\n}",
+                "\ntry\n  2 / 4\ncatch\n  \"Oops!\"\nend",
+                "\ntry\n  foo()\ncatch(error)\n  \"Error: \" ++ error.message\nend",
+                "\ntry\n  foo()\ncatch\n  42\nend",
             ],
         },
         'throw': {
@@ -27354,8 +27354,8 @@ var Playground = (function (exports) {
             ],
             description: 'Throws `UserDefinedError` with message set to $expr evaluated. $expr must evaluate to a string.',
             examples: [
-                'try { throw("You shall not pass!") } catch(error) { "Error: " ++ error.message }',
-                'try { throw(slice("You shall not pass!", 0, 3)) } catch(error) { "Error: " ++ error.message }',
+                'try throw("You shall not pass!") catch(error) "Error: " ++ error.message end',
+                'try throw(slice("You shall not pass!", 0, 3)) catch(error) "Error: " ++ error.message end',
             ],
         },
         'if': {
@@ -31501,7 +31501,7 @@ var Playground = (function (exports) {
             title: 'never',
             category: 'Datatype',
             description: 'A value that can never be created',
-            examples: ["\n// throw(\"error\") will never return a value\ntry { throw(\"error\") } catch { \"never\" }",
+            examples: ["\n// throw(\"error\") will never return a value\ntry throw(\"error\") catch \"never\" end",
             ],
         },
     };

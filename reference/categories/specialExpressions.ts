@@ -156,23 +156,23 @@ write!("a", a, "b", b)`],
     description: 'Executes `try-body`. If that throws, the `catch-body` gets executed. See examples for details.',
     examples: [
       `
-try {
+try
   2 / 4
-} catch {
+catch
   "Oops!"
-}`,
+end`,
       `
-try {
+try
   foo()
-} catch(error) {
+catch(error)
   "Error: " ++ error.message
-}`,
+end`,
       `
-try {
+try
   foo()
-} catch {
+catch
   42
-}`,
+end`,
     ],
   },
   'throw': {
@@ -191,8 +191,8 @@ try {
     ],
     description: 'Throws `UserDefinedError` with message set to $expr evaluated. $expr must evaluate to a string.',
     examples: [
-      'try { throw("You shall not pass!") } catch(error) { "Error: " ++ error.message }',
-      'try { throw(slice("You shall not pass!", 0, 3)) } catch(error) { "Error: " ++ error.message }',
+      'try throw("You shall not pass!") catch(error) "Error: " ++ error.message end',
+      'try throw(slice("You shall not pass!", 0, 3)) catch(error) "Error: " ++ error.message end',
     ],
   },
   'if': {

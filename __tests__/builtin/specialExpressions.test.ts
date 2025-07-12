@@ -531,22 +531,22 @@ let foo = (a) -> {
 
   describe('try', () => {
     it('samples', () => {
-      expect(lits.run('try { 2 / 4 } catch (error) { 1 }')).toBe(0.5)
-      expect(lits.run('try { 2 / 4 } catch { 1 }')).toBe(0.5)
-      expect(litsDebug.run('try { throw("oops") } catch (error) { 1 }')).toBe(1)
-      expect(litsDebug.run('try { throw("oops") } catch { 1 }')).toBe(1)
-      expect(lits.run('try { throw("oops") } catch (error) { error }')).toBeInstanceOf(Error)
-      expect(() => lits.run('try { 2 / 4 } 1)')).toThrow(LitsError)
-      expect(() => lits.run('try { 2 / 4 } (1))')).toThrow(LitsError)
-      expect(() => lits.run('try 2 / 4 catch ("error") { 1 }')).toThrow(LitsError)
+      expect(lits.run('try 2 / 4 catch (error) 1 end')).toBe(0.5)
+      expect(lits.run('try 2 / 4 catch 1 end')).toBe(0.5)
+      expect(litsDebug.run('try throw("oops") catch (error) 1 end')).toBe(1)
+      expect(litsDebug.run('try throw("oops") catch 1 end')).toBe(1)
+      expect(lits.run('try throw("oops") catch (error) error end')).toBeInstanceOf(Error)
+      expect(() => lits.run('try 2 / 4 1 end)')).toThrow(LitsError)
+      expect(() => lits.run('try 2 / 4 end (1))')).toThrow(LitsError)
+      expect(() => lits.run('try 2 / 4 catch ("error") 1 end')).toThrow(LitsError)
     })
 
     describe('unresolvedIdentifiers', () => {
       it('samples', () => {
-        expect((lits.getUndefinedSymbols('try { a / b } catch (error) { str(error, x) }'))).toEqual(
+        expect((lits.getUndefinedSymbols('try a / b catch (error) str(error, x) end'))).toEqual(
           new Set(['a', 'b', 'x']),
         )
-        expect((lits.getUndefinedSymbols('try { a / b } catch { str(error, x) }'))).toEqual(
+        expect((lits.getUndefinedSymbols('try a / b catch str(error, x) end'))).toEqual(
           new Set(['a', 'b', 'x', 'error']),
         )
       })

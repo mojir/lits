@@ -156,8 +156,8 @@ describe('parser', () => {
     expect(() => litsDebug.run('for (a in [1, 2]) -> { 1, }')).toThrow(LitsError)
     expect(() => litsDebug.run('for (a in [1, 2] 2) -> { 1 }')).toThrow(LitsError)
     expect(() => litsDebug.run('for (a in [1, 2], 2) -> { 1 }')).toThrow(LitsError)
-    expect(() => litsDebug.run('try {1; 2} catch {2; 3 }')).not.toThrow()
-    expect(() => litsDebug.run('try {1; 2} catch {2, }')).toThrow(LitsError)
+    expect(() => litsDebug.run('try 1; 2 catch 2; 3 end')).not.toThrow()
+    expect(() => litsDebug.run('try 1; 2 catch 2, end')).toThrow(LitsError)
     expect(() => lits.getUndefinedSymbols('loop ([,x] = [1, 2]) -> { 1 }')).not.toThrow()
     expect(() => litsDebug.run('loop ([,x] = [1, 2]) -> { 1 }')).not.toThrow()
     expect(() => litsDebug.run('loop (x = 2) -> { 1, }')).toThrow(LitsError)
@@ -483,17 +483,17 @@ describe('parser', () => {
 
   describe('try', () => {
     test('samples', () => {
-      expect(lits.run('try 1 + 2 catch { 0 }')).toBe(3)
-      expect(lits.run('try 1 + "2" catch 0')).toBe(0)
-      expect(lits.run('try { 1 + "2" } catch {}')).toEqual({})
-      expect(lits.run('try {} catch {}')).toEqual({})
+      expect(lits.run('try 1 + 2 catch 0 end')).toBe(3)
+      expect(lits.run('try 1 + "2" catch 0 end')).toBe(0)
+      expect(lits.run('try 1 + "2" catch {} end')).toEqual({})
+      expect(lits.run('try {} catch {} end')).toEqual({})
       expect(lits.run(`
-        try {
+        try
           let x = "2";
           1 + x
-        } catch (error) {
+        catch (error)
           error
-        }
+        end
       `)).toBeInstanceOf(Error)
     })
   })

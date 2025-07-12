@@ -287,12 +287,12 @@ describe('lits Destructuring', () => {
   describe('edge cases', () => {
     test('destructuring a number should fail gracefully', () => {
       expect(lits.run(`
-        try {
+        try
           let { value } = 42;
           "Should not reach here";
-        } catch (e) {
+        catch (e)
           "Error caught";
-        };
+        end;
       `)).toBe('Error caught')
     })
 

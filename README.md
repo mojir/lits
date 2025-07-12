@@ -329,29 +329,29 @@ loop (n = 5, acc = 1) -> {
 
 ```lits
 // Basic try/catch
-try {
+try
   riskyOperation()
-} catch {
+catch
   "Something went wrong"
-};
+end;
 
 // With error binding
-try {
+try
   riskyOperation()
-} catch (error) {
+catch (error)
   "Error: " ++ error.message
-};
+end;
 ```
 
 #### Throw
 
 ```lits
 // Throwing errors
-try {
+try
   throw("Custom error message");
-} catch {
+catch
   "Caught an error"
-};
+end;
 
 // In context
 let divide = (a, b) ->

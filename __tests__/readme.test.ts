@@ -3,7 +3,6 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../src/Lits/Lits'
-import { isLitsFunction } from '../src/typeGuards/litsFunction'
 
 function extractLitsCodeBlocks(): Array<{ code: string, lineNumber: number, blockIndex: number }> {
   const readmeContent = readFileSync(join(process.cwd(), 'README.md'), 'utf-8')
@@ -16,7 +15,7 @@ function extractLitsCodeBlocks(): Array<{ code: string, lineNumber: number, bloc
   let blockIndex = 0
 
   for (let i = 0; i < lines.length; i++) {
-    const line = lines[i]
+    const line = lines[i]!
 
     if (line.trim() === '```lits' || line.trim().startsWith('```lits ')) {
       inLitsBlock = true

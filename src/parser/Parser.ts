@@ -1047,9 +1047,8 @@ export class Parser {
 
   private parseTry(token: SymbolToken): TryNode {
     this.advance()
-    const tryExpression = this.parseExpression()
+    const tryExpression = this.parseImplicitBlock(['catch'])
 
-    assertReservedSymbolToken(this.peek(), 'catch')
     this.advance()
 
     let errorSymbol: SymbolNode | undefined
@@ -1060,7 +1059,9 @@ export class Parser {
       this.advance()
     }
 
-    const catchExpression = this.parseExpression()
+    const catchExpression = this.parseImplicitBlock(['end'])
+
+    this.advance()
 
     return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.try, tryExpression, errorSymbol, catchExpression]], token[2]) satisfies TryNode
   }
