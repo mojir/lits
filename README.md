@@ -68,7 +68,7 @@ let squares = [1, 2, 3, 4, 5] map square;
 // => [1, 4, 9, 16, 25]
 
 // Using operator as a function
-let sum = +([1, 2, 3, 4, 5]);
+let sum = +(1, 2, 3, 4, 5);
 // => 15
 ```
 
@@ -161,8 +161,8 @@ let { name, age } = { name: "John", age: 30 };
 
 ```lits
 // Array destructuring
-let [a, b] = [1, 2, 3, 4];
-// a => 1, b => 2
+let [, , a, b] = [1, 2, 3, 4];
+// a => 3, b => 4
 ```
 
 ```lits
@@ -384,11 +384,11 @@ true || "never reached";  // => true
 
 ```lits
 // Null coalescing operator
-null ?? "default";     // => "default"
-undefined ?? "default"; // => "default"
-0 ?? "default";        // => 0 (only null/undefined are coalesced)
-false ?? "default";    // => false
-"" ?? "default";       // => ""
+null ?? "default";          // => "default"
+undefined-var ?? "default"; // => "default"
+0 ?? "default";             // => 0 (only null/undefined are coalesced)
+false ?? "default";         // => false
+"" ?? "default";            // => ""
 ```
 
 ### Blocks
@@ -669,10 +669,10 @@ reduce(map(filter([1, 2, 3, 4, 5, 6], odd?), -> $ + $), +, 0);
 
 // Data processing pipeline
 { numbers: [1, 2, 3, 4, 5], multiplier: 3 }
-  |> get(_, "numbers")
+  |> "numbers"
   |> filter(_, even?)
   |> map(_, *(_, 3))
-  |> reduce(_, +, 0);
+  |> vec:sum;
 // => 18 (even numbers [2, 4] -> [6, 12] -> sum = 18)
 ```
 
@@ -786,12 +786,7 @@ export let square = x -> x * x;
 ### Factorial
 
 ```lits
-let factorial = n ->
-  if n <= 1 then
-    1
-  else
-    n * self(n - 1)
-  end;
+let factorial = n -> n <= 1 ? 1 : n * self(n - 1);
 
 factorial(5)  // => 120
 ```
@@ -810,7 +805,7 @@ let evenSquares = numbers
 // Sum of odd numbers
 let oddSum = numbers
   |> filter(_, odd?)
-  |> reduce(_, +, 0);
+  |> vec:sum;
 // => 25
 ```
 
