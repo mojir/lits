@@ -509,6 +509,122 @@ let divide = /(10, _);
 divide(2);     // => 5
 ```
 
+### Data Types as Functions
+
+Lits allows arrays, objects, numbers, and strings to be used as functions. This creates elegant, flexible code where data structures become accessors.
+
+#### Arrays and Numbers as Index Accessors
+
+Arrays can be called with an index to get an element, and numbers can be called with collections to access that index:
+
+```lits
+let arr = [10, 20, 30, 40];
+
+// Array as function (accessing by index)
+arr(0);          // => 10
+arr(2);          // => 30
+
+// Number as function (accessing array at that index)
+2(arr);          // => 30 (same as arr(2))
+0(arr);          // => 10 (same as arr(0))
+```
+
+#### Strings and Numbers for Character Access
+
+Similar to arrays, strings support indexed access in both directions:
+
+```lits
+let name = "Albert";
+
+// String as function (accessing character by index)
+name(0);         // => "A"
+name(2);         // => "b"
+
+// Number as function (accessing string at that index)  
+2(name);         // => "b" (same as name(2))
+4(name);         // => "r" (same as name(4))
+```
+
+#### Objects and Strings as Property Accessors
+
+Objects can be called with property names, and strings can be called with objects to access properties:
+
+```lits
+let person = { foo: 1, bar: 2, name: "John" };
+
+// Object as function (accessing property by key)
+person("foo");   // => 1
+person("name");  // => "John"
+
+// String as function (accessing object property)
+"foo"(person);   // => 1 (same as person("foo"))
+"bar"(person);   // => 2 (same as person("bar"))
+```
+
+#### Powerful Higher-Order Function Applications
+
+This feature makes higher-order functions incredibly flexible. You can pass data directly as accessor functions:
+
+```lits
+let data = [
+  { name: "Alice", score: 95 },
+  { name: "Bob", score: 87 },
+  { name: "Carol", score: 92 }
+];
+
+// Extract names using string as function
+data map "name";
+// => ["Alice", "Bob", "Carol"]
+
+// Extract scores using string as function  
+data map "score";
+// => [95, 87, 92]
+
+// Get second element of multiple arrays using number as function
+let arrays = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
+arrays map 1;
+// => [2, 5, 8]
+
+// Access nested data
+let records = [
+  { values: [10, 20, 30] },
+  { values: [40, 50, 60] },
+  { values: [70, 80, 90] }
+];
+
+// Get first value from each record's values array
+records map "values" map 0;
+// => [10, 40, 70]
+```
+
+#### Practical Examples
+
+```lits
+// Matrix column extraction
+let matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
+matrix map 1;        // => [2, 5, 8] (second column)
+
+// Object property extraction
+let users = [
+  { id: 1, active: true },
+  { id: 2, active: false },
+  { id: 3, active: true }
+];
+users map "active";  // => [true, false, true]
+
+// String character extraction
+let words = ["hello", "world", "test"];
+words map 0;         // => ["h", "w", "t"] (first characters)
+
+// Complex data navigation
+let sales = [
+  { quarter: "Q1", regions: { north: 100, south: 200 } },
+  { quarter: "Q2", regions: { north: 150, south: 180 } }
+];
+sales map "regions" map "north";  // => [100, 150]
+```
+
+This feature eliminates the need for verbose accessor functions and makes data transformation pipelines more concise and readable.
 ### Parameter Order
 
 Lits favors subject-first parameter order for better operator chaining:
