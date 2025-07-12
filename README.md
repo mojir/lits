@@ -423,8 +423,13 @@ let small-set = [3, 4, 5];
 #### Object Construction
 
 ```lits
-// Object literal
+// Object literal with static keys
 { name: "John", age: 30 };
+
+// Object literal with dynamic keys using bracket notation
+let keyName = "dynamic";
+{ [keyName]: "value", ["computed" ++ "Key"]: 42 };
+// => { dynamic: "value", computedKey: 42 }
 
 // Object function
 object("name", "John", "age", 30);
@@ -437,6 +442,15 @@ let defaults = { type: "Person", active: true };
   age: 30
 };
 // => { type: "Person", active: true, name: "John", age: 30 }
+
+// Combining static and dynamic keys
+let propName = "score";
+{
+  id: 123,
+  [propName]: 95,
+  ["level" ++ "Number"]: 5
+};
+// => { id: 123, score: 95, levelNumber: 5 }
 ```
 
 ### Recursion
@@ -544,6 +558,85 @@ reduce(map(filter([1, 2, 3, 4, 5, 6], odd?), -> $ + $), +, 0);
   |> map(_, *(_, 3))
   |> reduce(_, +, 0);
 // => 18 (even numbers [2, 4] -> [6, 12] -> sum = 18)
+```
+
+### Operator Precedence
+
+Lits follows a specific operator precedence order that determines how expressions are evaluated. Operators with higher precedence are evaluated first. When operators have the same precedence, they are evaluated left-to-right.
+
+Here's the complete precedence table, from highest to lowest:
+
+| Precedence | Operator(s) | Description | Example |
+|------------|-------------|-------------|---------|
+| 12 | `^` | Exponentiation | `2 ^ 3 ^ 2` → `2 ^ (3 ^ 2)` → `512` |
+| 11 | `*` `/` `%` | Multiplication, Division, Remainder | `6 + 4 * 2` → `6 + 8` → `14` |
+| 10 | `+` `-` | Addition, Subtraction | `10 - 3 + 2` → `7 + 2` → `9` |
+| 9 | `<<` `>>` `>>>` | Bit shift operations | `8 >> 1 + 1` → `8 >> 2` → `2` |
+| 8 | `++` | String concatenation | `"a" ++ "b" ++ "c"` → `"abc"` |
+| 7 | `<` `<=` `≤` `>` `>=` `≥` | Comparison operators | `3 + 2 > 4` → `5 > 4` → `true` |
+| 6 | `==` `!=` `≠` | Equality operators | `2 * 3 == 6` → `6 == 6` → `true` |
+| 5 | `&` `xor` `\|` | Bitwise operations | `4 \| 2 & 1` → `4 \| 0` → `4` |
+| 4 | `&&` `\|\|` `??` | Logical operations | `true && false \|\| true` → `false \|\| true` → `true` |
+| 3 | *function operators* | Binary functions used as operators | `5 max 3 + 2` → `5 max 5` → `5` |
+| 2 | `\|>` | Pipe operator | `[1,2] \|> map(_, inc) \|> sum` |
+| 1 | `?` `:` | Conditional (ternary) operator | `true ? 1 + 2 : 3` → `true ? 3 : 3` → `3` |
+
+#### Examples of Precedence in Action
+
+```lits
+// Exponentiation has highest precedence
+2 + 3 ^ 2;           // => 2 + 9 = 11 (not 5^2 = 25)
+
+// Multiplication before addition
+2 + 3 * 4;           // => 2 + 12 = 14 (not 5*4 = 20)
+
+// String concatenation before comparison
+"a" ++ "b" == "ab";  // => "ab" == "ab" = true
+
+// Comparison before logical AND
+3 > 2 && 1 < 2;      // => true && true = true
+
+// Pipe has very low precedence
+[1, 2, 3] |> map(_, inc) |> vec:sum;  // Evaluates left to right
+
+// Conditional has lowest precedence
+true ? 2 + 3 : 4 + 5;             // => true ? 5 : 9 = 5
+```
+
+#### Using Parentheses
+
+When in doubt, or to make your intent clear, use parentheses to override precedence:
+
+```lits
+// Without parentheses (follows precedence)
+2 + 3 * 4;          // => 14
+
+// With parentheses (explicit grouping)
+(2 + 3) * 4;        // => 20
+
+// Complex expression with explicit grouping
+let a = 2;
+let b = 3;
+let c = 4;
+let d = true;
+let e = false;
+let f = 10;
+let g = 5;
+((a + b) * c) > (d && e ? f : g);  // => (5 * 4) > (false ? 10 : 5) = 20 > 5 = true
+```
+
+#### Associativity
+
+Most operators are left-associative, meaning they evaluate from left to right when they have the same precedence:
+
+```lits
+10 - 5 - 2;         // => (10 - 5) - 2 = 3 (not 10 - (5 - 2) = 7)
+"a" ++ "b" ++ "c";  // => ("a" ++ "b") ++ "c" = "abc"
+```
+
+**Exception**: Exponentiation (`^`) is right-associative:
+```lits
+2 ^ 3 ^ 2;          // => 2 ^ (3 ^ 2) = 2 ^ 9 = 512 (not (2 ^ 3) ^ 2 = 64)
 ```
 
 ## Built-in Functions
