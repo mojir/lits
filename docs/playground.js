@@ -14491,9 +14491,6 @@ var Playground = (function (exports) {
                     case 'doseq':
                         left = this.parseForOrDoseq(firstToken);
                         break;
-                    // cas:
-                    //   left = this.parseDo(firstToken)
-                    //   break
                     case 'loop':
                         left = this.parseLoop(firstToken);
                         break;
@@ -14693,6 +14690,12 @@ var Playground = (function (exports) {
                             ? this.stringFromQuotedSymbol(token[1])
                             : token[1];
                         params.push(withSourceCodeInfo([NodeTypes.String, value], token[2]));
+                        this.advance();
+                    }
+                    else if (isLBracketToken(token)) {
+                        this.advance();
+                        params.push(this.parseExpression());
+                        assertRBracketToken(this.peek());
                         this.advance();
                     }
                     else {
@@ -27209,6 +27212,50 @@ var Playground = (function (exports) {
     };
 
     var specialExpressionsReference = {
+        'doseq': {
+            title: 'doseq',
+            category: 'Special expression',
+            customVariants: ['doseq (...binding) -> body'],
+            details: [
+                ['binding', 'loop-var in collection [...let-binding] [where whereExpr] [while whileExp]', 'A doseq loop binding'],
+                ['loop-var', 'symbol', 'The name of the loop variable.'],
+                ['collection', 'any', 'The collection to iterate over.'],
+                ['let-binding', 'let binding', 'A let binding to create a local variable.'],
+                ['whereExpr', 'expression', 'An expression that must evaluate to truthy for the loop body to be executed.'],
+                ['whileExp', 'expression', 'An expression that must evaluate to truthy for the loop to continue.'],
+                ['body', 'expressions', 'The expressions to evaluate for each iteration of the loop.'],
+            ],
+            returns: {
+                type: 'null',
+            },
+            description: 'Iterates over `bindings`, evaluates `body` for each `binding` and returns `null`. This is useful for side effects.',
+            examples: [
+                "\ndoseq (i in [1, 2, 3]) -> write!(i * 2)\n      ",
+            ],
+        },
+        'for': {
+            title: 'for',
+            category: 'Special expression',
+            customVariants: ['for (...binding) -> body'],
+            details: [
+                ['binding', 'loop-var in collection [...let-binding] [where whereExpr] [while whileExp]', 'A for loop binding'],
+                ['loop-var', 'symbol', 'The name of the loop variable.'],
+                ['collection', 'any', 'The collection to iterate over.'],
+                ['let-binding', 'let binding', 'A let binding to create a local variable.'],
+                ['whereExpr', 'expression', 'An expression that must evaluate to truthy for the loop body to be executed.'],
+                ['whileExp', 'expression', 'An expression that must evaluate to truthy for the loop to continue.'],
+                ['body', 'expressions', 'The expressions to evaluate for each iteration of the loop.'],
+            ],
+            returns: {
+                type: 'any',
+                array: true,
+            },
+            description: 'Iterates over `bindings`, evaluates `body` for each `binding` and returns an `array` of results.',
+            examples: [
+                "\nfor (i in [1, 2, 3]) -> i * 2\n      ",
+                "\nfor (\n  i in range(10) let ii = i ^ 2 while ii < 40 when ii % 3 == 0,\n  j in range(10) when j % 2 == 1\n) -> ii + j\n      ",
+            ],
+        },
         'array': {
             title: 'array',
             category: 'Special expression',

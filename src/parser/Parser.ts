@@ -259,9 +259,6 @@ export class Parser {
         case 'doseq':
           left = this.parseForOrDoseq(firstToken)
           break
-        // cas:
-        //   left = this.parseDo(firstToken)
-        //   break
         case 'loop':
           left = this.parseLoop(firstToken)
           break
@@ -493,6 +490,12 @@ export class Parser {
             ? this.stringFromQuotedSymbol(token[1])
             : token[1]
           params.push(withSourceCodeInfo([NodeTypes.String, value], token[2]))
+          this.advance()
+        }
+        else if (isLBracketToken(token)) {
+          this.advance()
+          params.push(this.parseExpression())
+          assertRBracketToken(this.peek())
           this.advance()
         }
         else {

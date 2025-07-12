@@ -89,6 +89,7 @@ describe('specialExpressions', () => {
       expect(() => lits.run('{ a: 10, ...[] }')).toThrow(LitsError)
     })
     it('samples', () => {
+      expect(lits.run('let foo = "foo"; { [foo]: "bar" }')).toEqual({ foo: 'bar' })
       expect(lits.run('object()')).toEqual({})
       expect(lits.run('object("x", 1)')).toEqual({ x: 1 })
       expect(lits.run('object("x", null)')).toEqual({ x: null })
@@ -103,6 +104,8 @@ describe('specialExpressions', () => {
         e: { x: [] },
       })
       expect(lits.run('let a = "a"; object(a, 1)')).toEqual({ a: 1 })
+      expect(() => lits.run('{ [10]: "bar" }')).toThrow(LitsError)
+      expect(() => lits.run('{ ["x"]: "bar" }')).not.toThrow(LitsError)
       expect(() => lits.run('object("x")')).toThrow(LitsError)
       expect(() => lits.run('object("x")')).toThrow(LitsError)
       expect(() => lits.run('object("x", 1, "y")')).toThrow(LitsError)
@@ -114,6 +117,7 @@ describe('specialExpressions', () => {
       expect(() => lits.run('object(object(), 1)')).toThrow(LitsError)
     })
     test('findUnresolvedIdentifiers', () => {
+      expect(litsDebug.getUndefinedSymbols('{ [foo]: bar }')).toEqual(new Set(['foo', 'bar']))
       expect(litsDebug.getUndefinedSymbols('object("x", 1, a, b)')).toEqual(new Set(['a', 'b']))
       expect(litsDebug.getUndefinedSymbols('object("x", 1, 2, 3)')).toEqual(new Set())
       expect(litsDebug.getUndefinedSymbols('{ x: 1, ...y }')).toEqual(new Set('y'))
