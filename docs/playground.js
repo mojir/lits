@@ -14828,9 +14828,17 @@ var Playground = (function (exports) {
                 var nodes = void 0;
                 var docString = '';
                 if (isLBraceToken(this.peek())) {
-                    var parsedBlock = this.parseBlock(true);
-                    docString = parsedBlock[1];
-                    nodes = parsedBlock[0][1][1];
+                    var positionBefore = this.parseState.position;
+                    try {
+                        var objectNode = this.parseObject();
+                        nodes = [objectNode];
+                    }
+                    catch (_a) {
+                        this.parseState.position = positionBefore;
+                        var parsedBlock = this.parseBlock(true);
+                        docString = parsedBlock[1];
+                        nodes = parsedBlock[0][1][1];
+                    }
                 }
                 else {
                     nodes = [this.parseExpression()];
@@ -14847,7 +14855,7 @@ var Playground = (function (exports) {
                     ],
                 ], firstToken[2]);
             }
-            catch (_a) {
+            catch (_b) {
                 return null;
             }
         };
@@ -14897,9 +14905,17 @@ var Playground = (function (exports) {
             var nodes;
             var docString = '';
             if (isLBraceToken(this.peek())) {
-                var parsedBlock = this.parseBlock(true);
-                docString = parsedBlock[1];
-                nodes = parsedBlock[0][1][1];
+                var positionBefore = this.parseState.position;
+                try {
+                    var objectNode = this.parseObject();
+                    nodes = [objectNode];
+                }
+                catch (_b) {
+                    this.parseState.position = positionBefore;
+                    var parsedBlock = this.parseBlock(true);
+                    docString = parsedBlock[1];
+                    nodes = parsedBlock[0][1][1];
+                }
             }
             else {
                 nodes = [this.parseExpression()];
@@ -15096,9 +15112,6 @@ var Playground = (function (exports) {
                 else if (!isRBraceToken(this.peek())) {
                     throw new LitsError('Expected }', this.peekSourceCodeInfo());
                 }
-            }
-            if (expressions.length === 0) {
-                expressions.push(withSourceCodeInfo([NodeTypes.ReservedSymbol, 'null'], token[2]));
             }
             assertRBraceToken(this.peek());
             this.advance();
