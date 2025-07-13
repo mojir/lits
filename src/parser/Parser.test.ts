@@ -857,11 +857,11 @@ let foo = () -> {
 foo()`)).toBe(42)
     })
 
-    test('empty block', () => {
+    test('empty block, no it is an object', () => {
       expect(lits.run(`
 let foo = () -> {};
 
-foo()`)).toBeNull()
+foo()`)).toEqual({})
     })
     test('with rest arguments///', () => {
       expect(lits.run(`

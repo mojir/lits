@@ -153,16 +153,12 @@ let y = {
 
 #### Destructuring
 
+##### Basic Object Destructuring
+
 ```lits
 // Object destructuring
 let { name, age } = { name: "John", age: 30 };
 // name => "John", age => 30
-```
-
-```lits
-// Array destructuring
-let [, , a, b] = [1, 2, 3, 4];
-// a => 3, b => 4
 ```
 
 ```lits
@@ -172,18 +168,101 @@ let { name = "Unknown", age = 0 } = { name: "John" };
 ```
 
 ```lits
-// Rest patterns
-let [head, ...tail] = [1, 2, 3, 4];
-// head => 1, tail => [2, 3, 4]
+// Renaming with 'as'
+let { name as userName } = { name: "Dave" };
+// userName => "Dave"
 ```
 
 ```lits
-// Destructuring in function parameters
-let displayPerson = ({name, age}) ->
-  name ++ " is " ++ str(age) ++ " years old";
+// Multiple renames
+let { firstName as name, age as years } = { firstName: "Eve", age: 28 };
+// name => "Eve", years => 28
+```
 
-displayPerson({ name: "John", age: 30 });
-// => "John is 30 years old"
+##### Advanced Destructuring Patterns
+
+```lits
+// Complex nested destructuring with defaults and renaming
+let { 
+  name as userName = "Guest",
+  profile: { 
+    age = 0,
+    contact: { email as userEmail = "none" }
+  },
+  settings = { theme: "light" },
+  scores as userScores = [],
+  ...others
+} = { name: "Sam", profile: { contact: {} }};
+// userName => "Sam", age => 0, userEmail => "none", etc.
+```
+
+```lits
+// Combining array and object destructuring
+let [{ name }, { age }] = [{ name: "Tina" }, { age: 33 }];
+// name => "Tina", age => 33
+```
+
+```lits
+// Object with array property destructuring
+let { name, scores: [one, two] } = { name: "Uma", scores: [85, 92] };
+// name => "Uma", one => 85, two => 92
+```
+
+##### Array Destructuring
+
+```lits
+// Array destructuring
+let [, , a, b] = [1, 2, 3, 4];
+// a => 3, b => 4
+
+// Array destructuring with defaults
+let [one, two = 2] = [1];
+// one => 1, two => 2
+
+// Skipping elements
+let [x, , z] = [1, 2, 3];
+// x => 1, z => 3
+```
+
+##### Rest Patterns
+
+```lits
+// Array rest pattern
+let [head, ...tail] = [1, 2, 3, 4];
+// head => 1, tail => [2, 3, 4]
+
+// Object rest pattern  
+let { name, ...otherProps } = { name: "John", age: 30, city: "NYC" };
+// name => "John", otherProps => { age: 30, city: "NYC" }
+
+// Empty rest patterns
+let [only, ...empty] = [1];
+// only => 1, empty => []
+```
+
+##### Function Parameter Destructuring
+
+```lits
+// Basic parameter destructuring
+let greet = ({ name }) -> "Hello, " ++ name;
+greet({ name: "Pat" });
+// => "Hello, Pat"
+
+// With defaults in parameters
+let greet2 = ({ name = "friend" }) -> "Hello, " ++ name;
+greet2({});
+// => "Hello, friend"
+
+// Nested parameter destructuring
+let processUser = ({ profile: { name, age }}) -> 
+  name ++ " is " ++ str(age);
+processUser({ profile: { name: "Quinn", age: 29 }});
+// => "Quinn is 29"
+
+// Array parameter destructuring
+let processCoords = ([x, y]) -> x + y;
+processCoords([3, 4]);
+// => 7
 ```
 
 ### Functions
@@ -220,7 +299,6 @@ let factorial = n ->
 #### If/Unless
 
 ```lits
-// If expression
 let x = !:random-int(0, 20); // Random number between 0 and 19
 
 if x > 10 then
@@ -235,12 +313,13 @@ if false then "never" end;
 // => null
 
 // Unless (inverted if)
-unless x > 10 then
+let y = !:random-int(0, 20);
+unless y > 10 then
   "small"
 else
   "large"
 end;
-// => "small" (if x <= 10) or "large" (if x > 10)
+// => "small" (if y <= 10) or "large" (if y > 10)
 ```
 
 #### Cond
@@ -253,8 +332,17 @@ cond
   case x < 5 then "small"
   case x < 10 then "medium"
   case x < 15 then "large"
-end ?? "extra large"
+end ?? "extra large";
 // Tests conditions sequentially, returns first truthy match
+
+// Cond with complex conditions
+let urgent = !:random-int(0, 2) == 1;
+let important = !:random-int(0, 2) == 1;
+let priority = cond
+  case urgent && important then "critical"
+  case urgent then "high"
+  case important then "medium"
+end ?? "low";
 ```
 
 #### Switch
@@ -267,8 +355,20 @@ switch x
   case 0 then "zero"
   case 1 then "one"
   case 2 then "two"
-end
+end;
 // => "zero" (if x = 0), "one" (if x = 1), etc., or null if no match
+
+// Switch with multiple cases
+let userInput = "help";
+let exit = -> "exiting";
+let showHelp = -> "showing help";
+let saveData = -> "saving data";
+
+switch userInput
+  case "quit" then exit()
+  case "help" then showHelp()
+  case "save" then saveData()
+end;
 ```
 
 ### Loops and Iteration
@@ -280,21 +380,35 @@ end
 for (x in [1, 2, 3, 4]) -> x * 2;
 // => [2, 4, 6, 8]
 
-// With filtering
+// With filtering (when clause)
 for (x in [1, 2, 3, 4] when odd?(x)) -> x * 2;
 // => [2, 6]
 
-// With while condition
+// With early termination (while clause)
 for (x in [1, 2, 3, 4] while x < 3) -> x * 2;
 // => [2, 4]
 
-// With let bindings
+// With let bindings for intermediate calculations
 for (x in [1, 2, 3] let doubled = x * 2) -> doubled + 1;
 // => [3, 5, 7]
 
 // Multiple iterators
 for (x in [1, 2], y in [10, 20]) -> x + y;
 // => [11, 21, 12, 22]
+
+// Complex for comprehensions with multiple conditions
+for (
+  i in range(10) 
+  let ii = i ^ 2 
+  while ii < 40 
+  when ii % 3 == 0,
+  j in range(10) 
+  when j % 2 == 1
+) -> ii + j;
+
+// Using previous bindings in subsequent iterations
+for (x in [1, 2], y in [x, 2 * x]) -> x * y;
+// => [1, 2, 4, 8]
 
 // Object iteration
 for (entry in { a: 1, b: 2 } let [key, value] = entry) -> key ++ ":" ++ str(value);
@@ -319,8 +433,41 @@ loop (n = 5, acc = 1) -> {
   else
     recur(n - 1, acc * n)
   end
-}
+};
 // => 120 (factorial of 5)
+
+// Complex loop with multiple variables
+loop (items = [1, 2, 3, 4, 5], sum = 0, cnt = 0) -> {
+  if empty?(items) then
+    { sum: sum, average: sum / cnt }
+  else
+    recur(rest(items), sum + first(items), cnt + 1)
+  end
+};
+```
+
+### Recursion with Recur
+
+#### Function Recursion
+
+```lits
+// Simple recursive function with recur
+let factorial = (n) -> {
+  if n <= 1 then
+    1
+  else
+    n * recur(n - 1)
+  end
+};
+
+// Tail-recursive function
+let sumToN = (n, acc = 0) -> {
+  if zero?(n) then
+    acc
+  else
+    recur(n - 1, acc + n)
+  end
+};
 ```
 
 ### Error Handling
@@ -329,6 +476,7 @@ loop (n = 5, acc = 1) -> {
 
 ```lits
 // Basic try/catch
+let riskyOperation = () -> throw("Something went wrong");
 try
   riskyOperation()
 catch
@@ -341,6 +489,16 @@ try
 catch (error)
   "Error: " ++ error.message
 end;
+
+// Try-catch for graceful degradation
+let parseData = () -> { value: 42 };
+let process = (val) -> val * 2;
+try
+  let { value } = parseData();
+  process(value);
+catch
+  "Using default value"
+end;
 ```
 
 #### Throw
@@ -348,18 +506,99 @@ end;
 ```lits
 // Throwing errors
 try
-  throw("Custom error message");
+  throw("Custom error message")
 catch
   "Caught an error"
 end;
 
-// In context
+// Custom error messages in functions
 let divide = (a, b) ->
   if zero?(b) then
-    throw("Division by zero")
+    throw("Cannot divide by zero")
   else
     a / b
   end;
+
+// Conditional error throwing
+let validateAge = (age) ->
+  cond
+    case age < 0 then throw("Age cannot be negative")
+    case age > 150 then throw("Age seems unrealistic")
+    case true then age
+  end;
+```
+
+### Block Expressions
+
+```lits
+// Block for grouping expressions
+let computeX = () -> 5;
+let computeY = () -> 10;
+let processResult = (z) -> z * 2;
+
+let result = {
+  let x = computeX();
+  let y = computeY();
+  let z = x * y;
+  processResult(z)
+};
+
+// Block with side effects
+let loadData = () -> [1, 2, 3];
+let processData = (data) -> data map -> $ * 2;
+
+{
+  write!("Starting process...");
+  let data = loadData();
+  let processed = processData(data);
+  write!("Process completed");
+  processed
+};
+```
+
+### Array and Object Spread
+
+#### Array Spread
+
+```lits
+// Spread in array literals
+let combined = [1, 2, ...[3, 4, 5], 6];
+// => [1, 2, 3, 4, 5, 6]
+
+// Multiple spreads
+let start = [1, 2];
+let middle = [3, 4];
+let stop = [5, 6];
+let result = [...start, ...middle, ...stop];
+```
+
+#### Object Spread
+
+```lits
+// Object spread for merging
+let person = {
+  name: "John",
+  age: 30
+};
+
+let employee = {
+  ...person,
+  id: "E123",
+  department: "Engineering"
+};
+// => { name: "John", age: 30, id: "E123", department: "Engineering" }
+
+// Spread with override
+let defaults = {
+  name: "Default Name",
+  theme: "light",
+  active: true
+};
+
+let updated = {
+  ...defaults,
+  name: "Custom Name"  // Override defaults.name
+};
 ```
 
 ### Logical Operators
@@ -391,368 +630,53 @@ false ?? "default";         // => false
 "" ?? "default";            // => ""
 ```
 
-### Blocks
+### Ternary Operator
 
 ```lits
-// Block expressions
-{
-  let a = 1 + 2 + 3;
-  let b = x -> x * x;
-  b(a)
-}
-// => 36 (returns value of last expression)
+// Conditional expression
+let age = !:random-int(10, 60);
+let result = age >= 18 ? "adult" : "minor";
+
+// Nested ternary
+let score = !:random-int(0, 100);
+let category = score >= 90 ? "A" : score >= 80 ? "B" : "C";
+
+// With complex expressions
+let isLoggedIn = () -> true;
+let hasPermission = () -> true;
+let status = isLoggedIn() && hasPermission() ? "authorized" : "unauthorized";
 ```
 
-### Arrays and Objects
+## Operators and Precedence
 
-#### Array Construction
+Lits follows a clear operator precedence hierarchy. Understanding precedence helps you write expressions that behave as expected:
 
-```lits
-// Array literal
-[1, 2, 3, 4];
+### Precedence Table (Highest to Lowest)
 
-// Array function
-array(1, 2, 3, 4);
+1. **Function calls** - `fn(args)`
+2. **Array/Object access** - `arr[index]`, `obj.property`
+3. **Unary operators** - `not`, `!`, `-` (negation)
+4. **Exponentiation** - `^` (right-associative)
+5. **Multiplication, Division, Modulo** - `*`, `/`, `%`
+6. **Addition, Subtraction** - `+`, `-`
+7. **String concatenation** - `++`
+8. **Comparison operators** - `<`, `>`, `<=`, `>=`
+9. **Equality operators** - `==`, `!=`, `identical?`
+10. **Logical AND** - `&&`
+11. **Logical OR** - `||`
+12. **Null coalescing** - `??`
+13. **Ternary conditional** - `condition ? true-value : false-value`
 
-// With spread
-let small-set = [3, 4, 5];
-[1, 2, ...small-set, 6];
-// => [1, 2, 3, 4, 5, 6];
-```
-
-#### Object Construction
-
-```lits
-// Object literal with static keys
-{ name: "John", age: 30 };
-
-// Object literal with dynamic keys using bracket notation
-let keyName = "dynamic";
-{ [keyName]: "value", ["computed" ++ "Key"]: 42 };
-// => { dynamic: "value", computedKey: 42 }
-
-// Object function
-object("name", "John", "age", 30);
-
-// With spread
-let defaults = { type: "Person", active: true };
-{
-  ...defaults,
-  name: "John",
-  age: 30
-};
-// => { type: "Person", active: true, name: "John", age: 30 }
-
-// Combining static and dynamic keys
-let propName = "score";
-{
-  id: 123,
-  [propName]: 95,
-  ["level" ++ "Number"]: 5
-};
-// => { id: 123, score: 95, levelNumber: 5 }
-```
-
-### Recursion
-
-#### Recur
+### Examples
 
 ```lits
-// Tail recursion with recur
-let countdown = n -> {
-  write!(n);
-  if pos?(n) then
-    recur(n - 1)
-  end
-};
-
-countdown(3)
-// Prints: 3 2 1 0
-```
-
-## Operators and Functions
-
-### Algebraic Notation
-
-All functions that take two parameters can be used as operators:
-
-```lits
-// As a function
-max(5, 10);    // => 10
-
-// As an operator
-5 max 10;      // => 10
-```
-
-All operators can be used as functions:
-
-```lits
-// As an operator
-5 + 3;         // => 8
-
-// As a function
-+(5, 3);       // => 8
-
-// Partial application with underscore placeholder
-let add5 = +(5, _);
-add5(3);       // => 8
-
-// Multiple placeholders
-let subtractTwoValues = -(100, _, _);
-subtractTwoValues(4, 3);  // => 93
-
-// Single placeholder in different positions
-let subtract = -(_, 2);
-subtract(10);  // => 8
-
-let divide = /(10, _);
-divide(2);     // => 5
-```
-
-### Data Types as Functions
-
-Lits allows arrays, objects, numbers, and strings to be used as functions. This creates elegant, flexible code where data structures become accessors.
-
-#### Arrays and Numbers as Index Accessors
-
-Arrays can be called with an index to get an element, and numbers can be called with collections to access that index:
-
-```lits
-let arr = [10, 20, 30, 40];
-
-// Array as function (accessing by index)
-arr(0);          // => 10
-arr(2);          // => 30
-
-// Number as function (accessing array at that index)
-2(arr);          // => 30 (same as arr(2))
-0(arr);          // => 10 (same as arr(0))
-```
-
-#### Strings and Numbers for Character Access
-
-Similar to arrays, strings support indexed access in both directions:
-
-```lits
-let name = "Albert";
-
-// String as function (accessing character by index)
-name(0);         // => "A"
-name(2);         // => "b"
-
-// Number as function (accessing string at that index)  
-2(name);         // => "b" (same as name(2))
-4(name);         // => "r" (same as name(4))
-```
-
-#### Objects and Strings as Property Accessors
-
-Objects can be called with property names, and strings can be called with objects to access properties:
-
-```lits
-let person = { foo: 1, bar: 2, name: "John" };
-
-// Object as function (accessing property by key)
-person("foo");   // => 1
-person("name");  // => "John"
-
-// String as function (accessing object property)
-"foo"(person);   // => 1 (same as person("foo"))
-"bar"(person);   // => 2 (same as person("bar"))
-```
-
-#### Powerful Higher-Order Function Applications
-
-This feature makes higher-order functions incredibly flexible. You can pass data directly as accessor functions:
-
-```lits
-let data = [
-  { name: "Alice", score: 95 },
-  { name: "Bob", score: 87 },
-  { name: "Carol", score: 92 }
-];
-
-// Extract names using string as function
-data map "name";
-// => ["Alice", "Bob", "Carol"]
-
-// Extract scores using string as function  
-data map "score";
-// => [95, 87, 92]
-
-// Get second element of multiple arrays using number as function
-let arrays = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
-arrays map 1;
-// => [2, 5, 8]
-
-// Access nested data
-let records = [
-  { values: [10, 20, 30] },
-  { values: [40, 50, 60] },
-  { values: [70, 80, 90] }
-];
-
-// Get first value from each record's values array
-records map "values" map 0;
-// => [10, 40, 70]
-```
-
-#### Practical Examples
-
-```lits
-// Matrix column extraction
-let matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
-matrix map 1;        // => [2, 5, 8] (second column)
-
-// Object property extraction
-let users = [
-  { id: 1, active: true },
-  { id: 2, active: false },
-  { id: 3, active: true }
-];
-users map "active";  // => [true, false, true]
-
-// String character extraction
-let words = ["hello", "world", "test"];
-words map 0;         // => ["h", "w", "t"] (first characters)
-
-// Complex data navigation
-let sales = [
-  { quarter: "Q1", regions: { north: 100, south: 200 } },
-  { quarter: "Q2", regions: { north: 150, south: 180 } }
-];
-sales map "regions" map "north";  // => [100, 150]
-```
-
-This feature eliminates the need for verbose accessor functions and makes data transformation pipelines more concise and readable.
-### Parameter Order
-
-Lits favors subject-first parameter order for better operator chaining:
-
-```lits
-// Function style
-filter([1, 2, 3, 4], odd?);  // => [1, 3]
-
-// Operator style (more readable)
-[1, 2, 3, 4] filter odd?;    // => [1, 3]
-```
-
-### Pipe Operator
-
-The pipe operator `|>` passes the result of the left expression as the first argument to the right function:
-
-```lits
-// Without pipe operator
-reduce(map(filter([1, 2, 3, 4, 5, 6], odd?), -> $ + $), +, 0);
-
-// With pipe operator (much more readable)
-[1, 2, 3, 4, 5, 6]
-  |> filter(_, odd?)
-  |> map(_, -> $ * $)
-  |> reduce(_, +, 0);
-// => 35
-
-// Simple transformations
-"hello world"
-  |> upper-case
-  |> split(_, " ")
-  |> reverse
-  |> join(_, "-");
-// => "WORLD-HELLO"
-
-// Mathematical operations
-10
-  |> +(_, 5)
-  |> *(_, 2)
-  |> /(_, 3);
-// => 10 (10 + 5 = 15, 15 * 2 = 30, 30 / 3 = 10)
-
-// Data processing pipeline
-{ numbers: [1, 2, 3, 4, 5], multiplier: 3 }
-  |> "numbers"
-  |> filter(_, even?)
-  |> map(_, *(_, 3))
-  |> vec:sum;
-// => 18 (even numbers [2, 4] -> [6, 12] -> sum = 18)
-```
-
-### Operator Precedence
-
-Lits follows a specific operator precedence order that determines how expressions are evaluated. Operators with higher precedence are evaluated first. When operators have the same precedence, they are evaluated left-to-right.
-
-Here's the complete precedence table, from highest to lowest:
-
-| Precedence | Operator(s) | Description | Example |
-|------------|-------------|-------------|---------|
-| 12 | `^` | Exponentiation | `2 ^ 3 ^ 2` → `2 ^ (3 ^ 2)` → `512` |
-| 11 | `*` `/` `%` | Multiplication, Division, Remainder | `6 + 4 * 2` → `6 + 8` → `14` |
-| 10 | `+` `-` | Addition, Subtraction | `10 - 3 + 2` → `7 + 2` → `9` |
-| 9 | `<<` `>>` `>>>` | Bit shift operations | `8 >> 1 + 1` → `8 >> 2` → `2` |
-| 8 | `++` | String concatenation | `"a" ++ "b" ++ "c"` → `"abc"` |
-| 7 | `<` `<=` `≤` `>` `>=` `≥` | Comparison operators | `3 + 2 > 4` → `5 > 4` → `true` |
-| 6 | `==` `!=` `≠` | Equality operators | `2 * 3 == 6` → `6 == 6` → `true` |
-| 5 | `&` `xor` `\|` | Bitwise operations | `4 \| 2 & 1` → `4 \| 0` → `4` |
-| 4 | `&&` `\|\|` `??` | Logical operations | `true && false \|\| true` → `false \|\| true` → `true` |
-| 3 | *function operators* | Binary functions used as operators | `5 max 3 + 2` → `5 max 5` → `5` |
-| 2 | `\|>` | Pipe operator | `[1,2] \|> map(_, inc) \|> sum` |
-| 1 | `?` `:` | Conditional (ternary) operator | `true ? 1 + 2 : 3` → `true ? 3 : 3` → `3` |
-
-#### Examples of Precedence in Action
-
-```lits
-// Exponentiation has highest precedence
-2 + 3 ^ 2;           // => 2 + 9 = 11 (not 5^2 = 25)
-
-// Multiplication before addition
-2 + 3 * 4;           // => 2 + 12 = 14 (not 5*4 = 20)
-
-// String concatenation before comparison
-"a" ++ "b" == "ab";  // => "ab" == "ab" = true
-
-// Comparison before logical AND
-3 > 2 && 1 < 2;      // => true && true = true
-
-// Pipe has very low precedence
-[1, 2, 3] |> map(_, inc) |> vec:sum;  // Evaluates left to right
-
-// Conditional has lowest precedence
-true ? 2 + 3 : 4 + 5;             // => true ? 5 : 9 = 5
-```
-
-#### Using Parentheses
-
-When in doubt, or to make your intent clear, use parentheses to override precedence:
-
-```lits
-// Without parentheses (follows precedence)
-2 + 3 * 4;          // => 14
-
-// With parentheses (explicit grouping)
-(2 + 3) * 4;        // => 20
-
-// Complex expression with explicit grouping
-let a = 2;
-let b = 3;
-let c = 4;
-let d = true;
-let e = false;
-let f = 10;
-let g = 5;
-((a + b) * c) > (d && e ? f : g);  // => (5 * 4) > (false ? 10 : 5) = 20 > 5 = true
-```
-
-#### Associativity
-
-Most operators are left-associative, meaning they evaluate from left to right when they have the same precedence:
-
-```lits
-10 - 5 - 2;         // => (10 - 5) - 2 = 3 (not 10 - (5 - 2) = 7)
-"a" ++ "b" ++ "c";  // => ("a" ++ "b") ++ "c" = "abc"
-```
-
-**Exception**: Exponentiation (`^`) is right-associative:
-```lits
-2 ^ 3 ^ 2;          // => 2 ^ (3 ^ 2) = 2 ^ 9 = 512 (not (2 ^ 3) ^ 2 = 64)
+// Comparison and logical operators
+5 > 3 && 2 < 4;          // => true
+5 > 3 || 2 > 4;          // => true
+
+// Ternary has low precedence
+let x = !:random-int(0, 10);
+x + 3 > 4 ? 1 : 0;       // => (x + 3) > 4 ? 1 : 0
 ```
 
 ## Built-in Functions
@@ -805,103 +729,71 @@ let evenSquares = numbers
 // Sum of odd numbers
 let oddSum = numbers
   |> filter(_, odd?)
-  |> vec:sum;
+  |> reduce(_, +, 0);
 // => 25
 ```
 
-### Object Manipulation
+### String Processing
 
 ```lits
-let person = { name: "John", age: 30, city: "New York" };
+let text = "Hello, World! How are you today?";
 
-// Update age
-let older = assoc(person, "age", 31);
+// Word count
+let wordCount = text
+  |> split(_, #"\s+")
+  |> count(_);
+// => 6
 
-// Add new field
-let withJob = assoc(older, "job", "Developer");
-
-// Using pipe operator for chaining
-let updated = person
-  |> assoc(_, "age", 31)
-  |> assoc(_, "job", "Developer");
+// Uppercase words longer than 4 characters
+let longWords = text
+  |> split(_, #"\s+")
+  |> filter(_, -> count($) > 4)
+  |> map(_, upper-case);
+// => ["HELLO,", "WORLD!", "TODAY?"]
 ```
 
-### Pattern Matching Examples
-
-#### Switch (for matching against a single value)
+### Data Transformation
 
 ```lits
-let gradeToLetter = grade ->
-  switch grade
-    case 90 then "A"
-    case 80 then "B" 
-    case 70 then "C"
-    case 60 then "D"
-  end ?? "F";
+let users = [
+  { name: "Alice", age: 30, department: "Engineering" },
+  { name: "Bob", age: 25, department: "Marketing" },
+  { name: "Charlie", age: 35, department: "Engineering" }
+];
 
-gradeToLetter(80);  // => "B"
-gradeToLetter(55);  // => "F"
-
-// HTTP status code handling
-let statusMessage = code ->
-  switch code
-    case 200 then "OK"
-    case 404 then "Not Found"
-    case 500 then "Internal Server Error"
-  end ?? "Unknown Status";
-```
-
-#### Cond (for testing different conditions)
-
-```lits
-let describe = x ->
-  cond
-    case null?(x) then "nothing"
-    case number?(x) then "a number: " ++ str(x)
-    case string?(x) then "text: " ++ x
-    case array?(x) then "list of " ++ str(count(x)) ++ " items"
-  end ?? "unknown type";
-
-describe(42);      // => "a number: 42"
-describe([1,2,3]); // => "list of 3 items"
-
-// Grade ranges
-let gradeToLetter = score ->
-  cond
-    case score >= 90 then "A"
-    case score >= 80 then "B"
-    case score >= 70 then "C"
-    case score >= 60 then "D"
-  end ?? "F";
-
-gradeToLetter(85);  // => "B"
-gradeToLetter(55);  // => "F"
+// Group by department and get average age
+let grouped = users |> group-by(_, "department");
+let departmentAges = grouped
+  |> entries(_)
+  |> map(_, ([dept, people]) -> {
+       let ages = people |> map(_, "age");
+       let total = ages |> reduce(_, +, 0);
+       [dept, total / count(ages)]
+     })
+  |> (pairs -> zipmap(map(pairs, 0), map(pairs, 1)));
+// => { "Engineering": 32.5, "Marketing": 25 }
 ```
 
 ## JavaScript Interoperability
 
-Lits provides a comprehensive JavaScript API for embedding and integration:
+### Using Lits in JavaScript
 
 ```javascript
-import { Lits } from 'lits';
+import { Lits } from '@mojir/lits';
 
-// Create a Lits instance
 const lits = new Lits();
 
-// Run Lits code
-const result = lits.run('+(5, 3)');
-console.log(result); // 8
+// Basic usage
+const result1 = lits.run('+(1, 2, 3)');
+console.log(result1); // 6
 
-// Pass JavaScript values to Lits
+// Provide JavaScript values
 const result2 = lits.run('name ++ " is " ++ str(age)', {
-  values: {
-    name: "John",
-    age: 30
-  }
+  values: { name: 'John', age: 30 }
 });
 console.log(result2); // "John is 30"
 
-// Expose JavaScript functions to Lits
+// Expose JavaScript functions
 const result3 = lits.run('myAlert("Hello from Lits!")', {
   jsFunctions: {
     myAlert: {

@@ -656,9 +656,17 @@ export class Parser {
       let nodes: Node[] | undefined
       let docString = ''
       if (isLBraceToken(this.peek())) {
-        const parsedBlock = this.parseBlock(true)
-        docString = parsedBlock[1]
-        nodes = parsedBlock[0][1][1]
+        const positionBefore = this.parseState.position
+        try {
+          const objectNode = this.parseObject()
+          nodes = [objectNode]
+        }
+        catch {
+          this.parseState.position = positionBefore
+          const parsedBlock = this.parseBlock(true)
+          docString = parsedBlock[1]
+          nodes = parsedBlock[0][1][1]
+        }
       }
       else {
         nodes = [this.parseExpression()]
@@ -734,9 +742,17 @@ export class Parser {
     let nodes: Node[] | undefined
     let docString = ''
     if (isLBraceToken(this.peek())) {
-      const parsedBlock = this.parseBlock(true)
-      docString = parsedBlock[1]
-      nodes = parsedBlock[0][1][1]
+      const positionBefore = this.parseState.position
+      try {
+        const objectNode = this.parseObject()
+        nodes = [objectNode]
+      }
+      catch {
+        this.parseState.position = positionBefore
+        const parsedBlock = this.parseBlock(true)
+        docString = parsedBlock[1]
+        nodes = parsedBlock[0][1][1]
+      }
     }
     else {
       nodes = [this.parseExpression()]
@@ -965,9 +981,6 @@ export class Parser {
       else if (!isRBraceToken(this.peek())) {
         throw new LitsError('Expected }', this.peekSourceCodeInfo())
       }
-    }
-    if (expressions.length === 0) {
-      expressions.push(withSourceCodeInfo([NodeTypes.ReservedSymbol, 'null'], token[2]))
     }
     assertRBraceToken(this.peek())
     this.advance()
