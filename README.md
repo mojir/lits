@@ -1419,7 +1419,7 @@ let text = "Hello, World! How are you today?";
 // Word count
 let wordCount = text
   |> split(_, #"\s+")
-  |> count(_);
+  |> count;
 // => 6
 
 // Uppercase words longer than 4 characters
