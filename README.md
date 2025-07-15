@@ -944,6 +944,112 @@ let hasPermission = () -> true;
 let status = isLoggedIn() && hasPermission() ? "authorized" : "unauthorized";
 ```
 
+## Variable Names
+
+Lits is generous with variable naming conventions, allowing a wide range of characters that would be invalid in many other programming languages.
+
+### Basic Rules
+
+Variable names in Lits can contain almost any character except for a small set of reserved symbols. The only restrictions are:
+
+**Illegal characters anywhere in a variable name:**
+- Parentheses: `(` `)`
+- Brackets: `[` `]`
+- Braces: `{` `}`
+- Quotes: `'` `"` `` ` ``
+- Punctuation: `,` `.` `;`
+- Whitespace: spaces, newlines, tabs
+
+**Additional restrictions for the first character:**
+- Cannot start with digits `0-9`
+
+### Unicode and Emoji Support
+
+Beyond these minimal restrictions, Lits supports Unicode characters, including emojis, in variable names:
+
+```lits
+// Unicode characters are welcome
+let résultat = 42;
+let naïve = "simple approach";
+let coöperation = "working together";
+
+// Emojis work too!
+let 😅 = "grinning face with sweat";
+let 🚀 = "rocket ship";
+let result = 😅 ++ " " ++ 🚀;
+// => "grinning face with sweat rocket ship"
+```
+
+### Quoted Variable Names
+
+For cases where you need to use the normally illegal characters in variable names, Lits supports quoted variable names using single quotes:
+
+```lits
+// Variables with spaces and special characters
+let 'A strange variable' = 42;
+let 'user.name' = "John Doe";
+let 'data[0]' = "first element";
+let 'function()' = "callable";
+
+// Access them the same way
+'A strange variable' + 8;
+// => 50
+```
+
+### Practical Examples
+
+Here are some examples showcasing the flexibility of Lits variable naming:
+
+```lits
+// Mathematical notation with Greek letters (avoiding reserved symbols)
+let α = 0.5;
+let β = 1.2;
+let γ = 2.0;
+let Δ = β - α;
+
+// Descriptive names with special characters
+let user-name = "alice";
+let is-valid? = true;
+let counter! = 0;
+
+// Mixed styles
+let dataSet₁ = [1, 2, 3];
+let dataSet₂ = [4, 5, 6];
+let 🔧config = { debug: true };
+```
+
+### Important: Operator Spacing
+
+Due to Lits' flexible variable naming, **operators must be separated by whitespace**. This is crucial to understand:
+
+```lits
+// This is a variable name, NOT addition!
+let x+1 = 42;
+let result1 = x+1;  // => 42
+
+// To perform addition, use spaces
+let x = 5;
+let result2 = x + 1;  // => 6
+
+// More examples of what looks like operations but are actually variable names
+let a-b = "subtraction variable";
+let c*d = "multiplication variable"; 
+let e/f = "division variable";
+let g<h = "comparison variable";
+
+// To use these as actual operations, add spaces
+let a = 10;
+let b = 3;
+let a-sum = a + b;      // Addition
+let a-diff = a - b;     // Subtraction
+let a-prod = a * b;     // Multiplication
+let a-quot = a / b;     // Division
+let a-comp = a < b;     // Comparison
+```
+
+Without whitespace, Lits treats the entire sequence as a single variable identifier. This applies to all operators, including comparison operators, logical operators, and arithmetic operators.
+
+This flexibility allows for expressive and readable code while maintaining the functional programming paradigm that Lits embodies.
 ## Operators and Functions
 
 ### Algebraic Notation
