@@ -7,6 +7,8 @@ Try it in the [Lits Playground](https://mojir.github.io/lits/).
 ## Features
 
 - **Pure functional language** - Variables cannot be changed, ensuring predictable behavior and easier reasoning about code
+- **Expression-based syntax** - Everything in Lits is an expression that returns a value; there are no statements, making the language highly composable and consistent
+- **Fully serializable** - Every value returned from Lits evaluation, including functions and regexps, is serializable as JSON
 - **JavaScript interoperability** - JavaScript values and functions can easily be exposed in Lits
 - **First-class functions** - Functions are treated as values that can be passed to other functions
 - **Algebraic notation** - All operators can be used as functions, and functions that take two parameters can be used as operators
@@ -56,7 +58,7 @@ The REPL provides an interactive environment where you can experiment with Lits 
 Here's a simple example to get you started:
 
 ```lits
-// Defining a function
+// Defining a function - note that everything returns a value
 let square = x -> x * x;
 
 // Using the function
@@ -71,6 +73,29 @@ let squares = [1, 2, 3, 4, 5] map square;
 +(1, 2, 3, 4, 5);
 // => 15
 ```
+
+## Expression-Based Language
+
+In Lits, everything is an expression that evaluates to a value. This means:
+
+```lits
+// Conditional expressions always return a value
+let a = 10;
+let result = if a > 0 then "positive" else "non-positive" end;
+
+// Function definitions are expressions that return the function
+let add = (a, b) -> a + b;
+
+// Even variable bindings return the bound value
+let x = let y = 5;  // x becomes 5
+
+// Blocks are expressions - they return the last expression's value
+let value = {
+  let temp = 42;
+  temp * 2 + 1 // => 85
+};
+```
+This expression-based design makes Lits highly composable and eliminates the statement/expression distinction found in many other languages.
 
 ## Basic Syntax
 
@@ -87,23 +112,230 @@ let squares = [1, 2, 3, 4, 5] map square;
 
 // Strings
 "Hello, world!";
+"String with \"escapes\"";
 
 // Booleans
 true;
 false;
 
-// Null
-null;
-
-// Arrays
-[1, 2, 3, 4];
-
-// Objects
-{ name: "John", age: 30 };
+// Functions
+(x -> x * 2);                  // Anonymous function
+let add = (a, b) -> a + b;     // Named function
 
 // Regular expressions
-#"^pattern";
+#"[a-z]+";
+#"\d{3}-\d{3}-\d{4}";
+
+// null
+null;
 ```
+
+#### Arrays (General Collections)
+
+Arrays are the primary collection type in Lits, supporting mixed data types:
+
+```lits
+// Basic arrays
+[1, 2, 3, 4, 5];
+["apple", "banana", "orange"];
+[true, 42, "mixed types"];
+
+// Nested arrays
+[[1, 2], [3, 4], [5, 6]];
+[{name: "Alice"}, {name: "Bob"}];
+
+// Array operations
+let numbers = [1, 2, 3, 4, 5];
+numbers[0];                    // => 1 (indexing)
+count(numbers);                // => 5 (length)
+first(numbers);                // => 1
+last(numbers);                 // => 5
+rest(numbers);                 // => [2, 3, 4, 5]
+
+// Functional array operations
+numbers map -> $ * 2;      // => [2, 4, 6, 8, 10]
+numbers filter odd?;           // => [1, 3, 5]
+```
+
+#### Vectors (Number Arrays)
+
+A vector is simply a non-empty array containing only numbers. The `vec:` namespace provides mathematical operations specifically for these number arrays:
+
+```lits
+// Vectors are just number arrays
+[1, 2, 3, 4, 5];              // This is a vector
+[3.14, 2.71, 1.41];           // This is also a vector
+[1, "hello", 3];               // This is NOT a vector (mixed types)
+[];                            // This is NOT a vector (empty)
+
+// Vector creation functions
+vec:zeros(5);                  // => [0, 0, 0, 0, 0]
+vec:ones(3);                   // => [1, 1, 1]
+vec:linspace(0, 10, 5);        // => [0, 2.5, 5, 7.5, 10]
+vec:fill(4, 3.14);             // => [3.14, 3.14, 3.14, 3.14]
+vec:generate(5, -> $ * 2);     // => [0, 2, 4, 6, 8]
+
+// Vector mathematical operations (use lin: namespace for vector math)
+lin:dot([1, 2, 3], [4, 5, 6]);      // => 32 (dot product)
+lin:euclidean-norm([3, 4]);         // => 5.0 (Euclidean norm/magnitude)
+lin:normalize([3, 4]);              // => [0.6, 0.8] (unit vector)
+lin:euclidean-distance([0, 0], [3, 4]); // => 5.0 (Euclidean distance)
+
+// Vector statistical operations
+vec:sum([1, 2, 3, 4]);         // => 10
+vec:mean([1, 2, 3, 4]);        // => 2.5
+vec:median([1, 2, 3, 4, 5]);   // => 3
+vec:stdev([1, 2, 3, 4]);       // => 1.29... (standard deviation)
+vec:variance([1, 2, 3, 4]);    // => 1.67... (variance)
+
+// Vector analysis
+vec:min([3, 1, 4, 1, 5]);      // => 1
+vec:max([3, 1, 4, 1, 5]);      // => 5
+vec:min-index([3, 1, 4]);      // => 1 (index of minimum)
+vec:max-index([3, 1, 4]);      // => 2 (index of maximum)
+
+// Cumulative operations
+vec:cumsum([1, 2, 3, 4]);      // => [1, 3, 6, 10]
+vec:cumprod([1, 2, 3, 4]);     // => [1, 2, 6, 24]
+
+// Vector predicates
+vec:increasing?([1, 1, 2, 3, 4]);          // => true
+vec:strictly-increasing?([1, 1, 2, 3, 4]); // => true
+
+// Structural equality works with all vectors
+[1, 2, 3] == [1, 2, 3];       // => true
+[1, 2] == [1, 2, 3];          // => false
+```
+
+#### Matrices (2D Vectors)
+
+A matrix is a 2D array where each row is a vector (non-empty array of numbers) and all rows have the same length. The `mat:` namespace provides linear algebra operations for these structures:
+
+```lits
+// Matrices are 2D number arrays with consistent row lengths
+[[1, 2], [3, 4]];              // This is a 2x2 matrix
+[[1, 2, 3], [4, 5, 6]];        // This is a 2x3 matrix
+[[1, 2], [3, 4, 5]];           // This is NOT a matrix (inconsistent row length)
+[[1, "hello"], [3, 4]];        // This is NOT a matrix (contains non-numbers)
+[[]];                          // This is NOT a matrix (contains empty row)
+
+// Basic matrix operations
+let matrixA = [[1, 2], [3, 4]];
+let matrixB = [[5, 6], [7, 8]];
+
+mat:mul(matrixA, matrixB);     // => [[19, 22], [43, 50]] (multiplication)
+mat:det(matrixA);              // => -2 (determinant)
+mat:inv(matrixA);              // => [[-2, 1], [1.5, -0.5]] (inverse)
+mat:trace(matrixA);            // => 5 (trace - sum of diagonal)
+
+// Matrix construction
+mat:hilbert(3);                // => 3x3 Hilbert matrix
+mat:vandermonde([1, 2, 3]);    // => Vandermonde matrix from vector
+mat:band(4, 1, 1);             // => 4x4 band matrix
+
+// Matrix properties and predicates
+mat:symmetric?([[1, 2], [2, 1]]);    // => true
+mat:invertible?([[1, 2], [3, 4]]);   // => true
+mat:square?([[1, 2], [3, 4]]);       // => true
+mat:diagonal?([[1, 0], [0, 2]]);     // => true
+mat:identity?([[1, 0], [0, 1]]);     // => true
+
+// Advanced matrix operations
+mat:adj(matrixA);              // => [[4, -2], [-3, 1]] (adjugate)
+mat:cofactor(matrixA);         // => cofactor matrix
+mat:minor(matrixA, 0, 1);      // => minor by removing row 0, col 1
+mat:frobenius-norm(matrixA);   // => Frobenius norm
+mat:1-norm(matrixA);           // => 1-norm (max column sum)
+mat:inf-norm(matrixA);         // => infinity norm (max row sum)
+mat:max-norm(matrixA);         // => max norm (largest absolute element)
+
+// Matrix analysis
+mat:rank(matrixA);             // => matrix rank
+```
+
+#### Objects (Maps)
+
+Objects store key-value pairs:
+
+```lits
+// Object creation
+{ name: "John", age: 30 };
+{ "key with spaces": "value", count: 42 };
+
+// Nested objects
+{
+  person: { name: "Alice", age: 25 },
+  scores: [95, 87, 92],
+  active: true
+};
+
+// Object operations
+let user = { name: "Bob", age: 30, city: "NYC" };
+get(user, "name");             // => "Bob"
+assoc(user, "age", 31);        // => new object with age updated
+dissoc(user, "city");          // => new object without city
+keys(user);                    // => ["name", "age", "city"]
+vals(user);                  // => ["Bob", 30, "NYC"]
+```
+
+#### Type Predicates
+
+Lits provides predicate functions to check data types at runtime:
+
+```lits
+// Basic type predicates
+number?(42);                   // => true
+string?("hello");              // => true
+boolean?(true);                // => true
+function?(x -> x * 2);         // => true
+regexp?(#"[a-z]+");            // => true
+array?([1, 2, 3]);             // => true
+object?({name: "Alice"});      // => true
+null?(null);                   // => true
+
+// Specialized array predicates
+vector?([1, 2, 3]);            // => true (non-empty number array)
+vector?([1, "hello", 3]);      // => false (mixed types)
+vector?([]);                   // => false (empty)
+
+matrix?([[1, 2], [3, 4]]);     // => true (2D number array, consistent rows)
+matrix?([[1, 2], [3]]);        // => false (inconsistent row lengths)
+matrix?([[]]);                 // => false (contains empty row)
+
+// Collection predicates
+seq?([1, 2, 3]);               // => true (sequences: strings and arrays)
+seq?("hello");                 // => true
+seq?({a: 1});                  // => false
+
+coll?([1, 2, 3]);              // => true (collections: strings, arrays, objects)
+coll?("hello");                // => true
+coll?({a: 1});                 // => true
+coll?(42);                     // => false
+```
+
+#### Type Hierarchy
+
+The type predicates follow a logical hierarchy:
+
+```lits
+// If something is a matrix, it's also a vector and an array
+let mat = [[1, 2], [3, 4]];
+matrix?(mat);                  // => true
+vector?(mat);                  // => true (matrix is a special vector)
+array?(mat);                   // => true (vector is a special array)
+
+// If something is a vector, it's also an array
+let vec = [1, 2, 3];
+vector?(vec);                  // => true
+array?(vec);                   // => true
+
+// But not all arrays are vectors
+let arr = [1, "hello", 3];
+array?(arr);                   // => true
+vector?(arr);                  // => false (contains non-numbers)
+```
+
+Each data type is immutable by design - operations return new values rather than modifying existing ones, ensuring predictable behavior and easier reasoning about code.
 
 ### Mathematical Constants
 
@@ -1013,6 +1245,28 @@ Lits comes with a comprehensive standard library of functions for:
 - **Assertions**: Testing and validation utilities
 
 For a complete reference of all available functions with examples, visit the [Lits Playground](https://mojir.github.io/lits/) where you can explore the interactive documentation and try functions in real-time.
+
+## Serialization
+
+A unique feature of Lits is that every result from evaluation is fully serializable as JSON, including functions and regular expressions:
+
+```lits
+// Functions are serializable
+let myFunction = x -> x * 2;
+
+// Regular expressions are serializable  
+let myRegex = #"[a-z]+";
+
+// Complex data structures with functions are serializable
+let config = {
+  transform: x -> x * 3,
+  pattern: #"\d+",
+  data: [1, 2, 3]
+};
+
+// All of these can be serialized to JSON and later deserialized
+// back into working Lits values, preserving their functionality
+```
 
 ## Modules and Exports
 
