@@ -396,6 +396,20 @@ export const tokenizeMultiLineComment: Tokenizer<MultiLineCommentToken> = (input
   return NO_MATCH
 }
 
+export const tokenizeShebang: Tokenizer<SingleLineCommentToken> = (input, position) => {
+  if (input[position] === '#' && input[position + 1] === '!') {
+    let length = 2
+    let value = '#!'
+    while (input[position + length] !== '\n' && position + length < input.length) {
+      value += input[position + length]
+      length += 1
+    }
+
+    return [length, ['SingleLineComment', value]]
+  }
+  return NO_MATCH
+}
+
 export const tokenizeSingleLineComment: Tokenizer<SingleLineCommentToken> = (input, position) => {
   if (input[position] === '/' && input[position + 1] === '/') {
     let length = 2

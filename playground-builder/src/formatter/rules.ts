@@ -124,6 +124,7 @@ function getStylesFromToken(token: Token): string {
     case 'BasePrefixedNumber':
     case 'Number':
       return styles('text-color-Viola')
+    case 'Shebang':
     case 'SingleLineComment':
     case 'MultiLineComment':
       return styles('text-color-gray-500', 'italic')

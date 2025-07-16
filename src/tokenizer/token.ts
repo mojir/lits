@@ -18,6 +18,7 @@ export const tokenTypes = [
   'RegexpShorthand',
   'ReservedSymbol',
   'SingleLineComment',
+  'Shebang',
   'String',
   'Symbol',
   'Whitespace',
@@ -46,6 +47,7 @@ export type OperatorToken<T extends SymbolicOperator = SymbolicOperator> = Gener
 export type RegexpShorthandToken = GenericToken<'RegexpShorthand'>
 export type ReservedSymbolToken<T extends ReservedSymbol = ReservedSymbol> = GenericToken<'ReservedSymbol', T>
 export type SingleLineCommentToken = GenericToken<'SingleLineComment'>
+export type ShebangToken = GenericToken<'Shebang'>
 export type StringToken = GenericToken<'String'>
 export type DocStringToken = GenericToken<'DocString'>
 export type SymbolToken<T extends string = string> = GenericToken<'Symbol', T>
@@ -67,6 +69,7 @@ export type Token =
   | RegexpShorthandToken
   | ReservedSymbolToken
   | SingleLineCommentToken
+  | ShebangToken
   | StringToken
   | SymbolToken
   | WhitespaceToken
@@ -119,6 +122,10 @@ export function assertReservedSymbolToken<T extends ReservedSymbol>(token: Token
 export function asReservedSymbolToken<T extends ReservedSymbol>(token: Token | undefined | undefined, symbolName?: T): ReservedSymbolToken<T> {
   assertReservedSymbolToken(token, symbolName)
   return token
+}
+
+export function isShebangToken(token: Token | undefined): token is SingleLineCommentToken {
+  return token?.[0] === 'Shebang'
 }
 
 export function isSingleLineCommentToken(token: Token | undefined): token is SingleLineCommentToken {

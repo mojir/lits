@@ -14107,15 +14107,27 @@ var Playground = (function (exports) {
         }
         return NO_MATCH;
     };
-    var tokenizeSingleLineComment = function (input, position) {
-        if (input[position] === '/' && input[position + 1] === '/') {
+    var tokenizeShebang = function (input, position) {
+        if (input[position] === '#' && input[position + 1] === '!') {
             var length_3 = 2;
-            var value = '//';
+            var value = '#!';
             while (input[position + length_3] !== '\n' && position + length_3 < input.length) {
                 value += input[position + length_3];
                 length_3 += 1;
             }
             return [length_3, ['SingleLineComment', value]];
+        }
+        return NO_MATCH;
+    };
+    var tokenizeSingleLineComment = function (input, position) {
+        if (input[position] === '/' && input[position + 1] === '/') {
+            var length_4 = 2;
+            var value = '//';
+            while (input[position + length_4] !== '\n' && position + length_4 < input.length) {
+                value += input[position + length_4];
+                length_4 += 1;
+            }
+            return [length_4, ['SingleLineComment', value]];
         }
         return NO_MATCH;
     };
@@ -14184,10 +14196,17 @@ var Playground = (function (exports) {
     function getCurrentToken(input, position) {
         var e_1, _a;
         var initialPosition = position;
+        if (position === 0) {
+            var _b = __read(tokenizeShebang(input, position), 2), nbrOfCharacters = _b[0], token = _b[1];
+            position += nbrOfCharacters;
+            if (nbrOfCharacters > 0) {
+                return [position - initialPosition, token];
+            }
+        }
         try {
             for (var tokenizers_1 = __values(tokenizers), tokenizers_1_1 = tokenizers_1.next(); !tokenizers_1_1.done; tokenizers_1_1 = tokenizers_1.next()) {
                 var tokenizer = tokenizers_1_1.value;
-                var _b = __read(tokenizer(input, position), 2), nbrOfCharacters = _b[0], token = _b[1];
+                var _c = __read(tokenizer(input, position), 2), nbrOfCharacters = _c[0], token = _c[1];
                 position += nbrOfCharacters;
                 if (nbrOfCharacters === 0) {
                     continue;
@@ -14240,6 +14259,9 @@ var Playground = (function (exports) {
     function asReservedSymbolToken(token, symbolName) {
         assertReservedSymbolToken(token, symbolName);
         return token;
+    }
+    function isShebangToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'Shebang';
     }
     function isSingleLineCommentToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'SingleLineComment';
@@ -14340,6 +14362,7 @@ var Playground = (function (exports) {
             .filter(function (token) {
             if (isSingleLineCommentToken(token)
                 || isMultiLineCommentToken(token)
+                || isShebangToken(token)
                 || (removeWhiteSpace && isWhitespaceToken(token))) {
                 return false;
             }

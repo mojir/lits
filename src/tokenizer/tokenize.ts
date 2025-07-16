@@ -1,5 +1,5 @@
 import type { FilePathParams } from '../Lits/Lits'
-import { tokenizers } from './tokenizers'
+import { tokenizeShebang, tokenizers } from './tokenizers'
 import type { SourceCodeInfo, Token, TokenDescriptor } from './token'
 
 export interface TokenStream {
@@ -61,6 +61,14 @@ function createSourceCodeInfo(input: string, position: number, filePath?: string
 
 function getCurrentToken(input: string, position: number): TokenDescriptor<Token> {
   const initialPosition = position
+
+  if (position === 0) {
+    const [nbrOfCharacters, token] = tokenizeShebang(input, position)
+    position += nbrOfCharacters
+    if (nbrOfCharacters > 0) {
+      return [position - initialPosition, token]
+    }
+  }
 
   for (const tokenizer of tokenizers) {
     const [nbrOfCharacters, token] = tokenizer(input, position)
