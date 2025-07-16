@@ -5,7 +5,7 @@ import { specialExpressionTypes } from '../builtin/specialExpressionTypes'
 import { LitsError, UndefinedSymbolError } from '../errors'
 import type { Any } from '../interface'
 import type { ContextParams } from '../Lits/Lits'
-import type { NativeJsFunction, NormalBuiltinFunction, SpecialBuiltinFunction, SymbolNode, UserDefinedSymbolNode } from '../parser/types'
+import type { NativeJsFunction, NativeJsNamespace, NormalBuiltinFunction, SpecialBuiltinFunction, SymbolNode, UserDefinedSymbolNode } from '../parser/types'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { asNonUndefined } from '../typeGuards'
 import { isNormalBuiltinSymbolNode, isSpecialBuiltinSymbolNode } from '../typeGuards/astNode'
@@ -20,7 +20,7 @@ export class ContextStackImpl {
   private contexts: Context[]
   public globalContext: Context
   private values?: Record<string, unknown>
-  private nativeJsFunctions?: Record<string, NativeJsFunction>
+  private nativeJsFunctions?: NativeJsNamespace
   constructor({
     contexts,
     values: hostValues,
@@ -28,7 +28,7 @@ export class ContextStackImpl {
   }: {
     contexts: Context[]
     values?: Record<string, unknown>
-    nativeJsFunctions?: Record<string, NativeJsFunction>
+    nativeJsFunctions?: NativeJsNamespace
   }) {
     this.globalContext = asNonUndefined(contexts[0])
     this.contexts = contexts
@@ -179,6 +179,22 @@ export class ContextStackImpl {
   }
 }
 
+function checkNotDefined(name: string): boolean {
+  if (specialExpressionKeys.includes(name)) {
+    console.warn(`Cannot shadow special expression "${name}", ignoring.`)
+    return false
+  }
+  if (normalExpressionKeys.includes(name)) {
+    console.warn(`Cannot shadow builtin function "${name}", ignoring.`)
+    return false
+  }
+  if (name === 'self') {
+    console.warn(`Cannot shadow builtin value "${name}", ignoring.`)
+    return false
+  }
+  return true
+}
+
 export function createContextStack(params: ContextParams = {}): ContextStack {
   const globalContext = params.globalContext ?? {}
   // Contexts are checked from left to right
@@ -188,23 +204,42 @@ export function createContextStack(params: ContextParams = {}): ContextStack {
     values: params.values,
     nativeJsFunctions:
       params.jsFunctions
-      && Object.entries(params.jsFunctions).reduce((acc: Record<string, NativeJsFunction>, [name, jsFunction]) => {
-        if (specialExpressionKeys.includes(name)) {
-          console.warn(`Cannot shadow special expression "${name}", ignoring.`)
+      && Object.entries(params.jsFunctions).reduce((acc: NativeJsNamespace, [identifier, entry]) => {
+        const identifierParts = identifier.split('.')
+        const name = identifierParts.pop()!
+        if (/^[A-Z]/.test(name)) {
+          console.warn(`Invalid identifier "${identifier}" in jsFunctions, function name must not start with an uppercase letter`, undefined)
           return acc
         }
-        if (normalExpressionKeys.includes(name)) {
-          console.warn(`Cannot shadow builtin function "${name}", ignoring.`)
-          return acc
+        let scope: NativeJsNamespace = acc
+        for (const part of identifierParts) {
+          if (part.length === 0) {
+            console.warn(`Invalid empty identifier "${identifier}" in nativeJsFunctions`, undefined)
+            return acc
+          }
+          if (!/^[A-Z]/.test(part)) {
+            console.warn(`Invalid identifier "${identifier}" in jsFunctions, namespace must start with an uppercase letter`, undefined)
+            return acc
+          }
+          if (!scope[part]) {
+            scope[part] = {}
+          }
+          scope = scope[part] as NativeJsNamespace
         }
-        acc[name] = {
+
+        const natifeFn: NativeJsFunction = {
           functionType: 'NativeJsFunction',
-          nativeFn: jsFunction,
+          nativeFn: entry,
           name,
           [FUNCTION_SYMBOL]: true,
-          arity: jsFunction.arity ?? {},
-          docString: jsFunction.docString ?? '',
+          arity: entry.arity ?? {},
+          docString: entry.docString ?? '',
         }
+
+        if (scope === acc && !checkNotDefined(name)) {
+          return acc
+        }
+        scope[name] = natifeFn
         return acc
       }, {}),
   })

@@ -19,6 +19,7 @@ import { getCliFunctionSignature } from './cliDocumentation/getCliFunctionSignat
 import { getCliDocumentation } from './cliDocumentation/getCliDocumentation'
 import { getInlineCodeFormatter } from './cliFormatterRules'
 import { createReadlineInterface } from './createReadlineInterface'
+import { jsFunctions } from './modules'
 
 const useColor = !process.env.NO_COLOR
 const fmt = createColorizer(useColor)
@@ -35,10 +36,10 @@ interface Config {
   loadFilename: Maybe<string>
   context: Context
   eval: Maybe<string>
+  printResult: boolean
 }
 
 const historyResults: unknown[] = []
-const lits = new Lits({ debug: true })
 const formatValue = getInlineCodeFormatter(fmt)
 
 const commands = ['`help', '`quit', '`builtins', '`context']
@@ -49,21 +50,41 @@ const expressions = [...normalExpressionKeys, ...specialExpressionKeys]
 
 const config = processArguments(process.argv.slice(2))
 
-if (config.eval) {
-  const success = execute(config.eval)
-  process.exit(success ? 0 : 1)
-}
-else if (config.evalFilename) {
-  const content = fs.readFileSync(config.evalFilename, { encoding: 'utf-8' })
+const lits = (() => {
+  const _lits = new Lits({ debug: true })
+  return {
+    run: (program: string) =>
+      _lits.run(program, {
+        globalContext: config.context ?? undefined,
+        jsFunctions,
+        globalModuleScope: true,
+      }),
+    context: (program: string) =>
+      _lits.context(program, {
+        globalContext: config.context ?? undefined,
+        jsFunctions,
+        globalModuleScope: true,
+      }),
+  }
+})()
 
-  const success = execute(content)
-  process.exit(success ? 0 : 1)
+if (config.eval || config.evalFilename) {
+  try {
+    const program = config.eval || fs.readFileSync(config.evalFilename!, { encoding: 'utf-8' })
+    const result = lits.run(program)
+    if (config.printResult) {
+      console.log(result)
+    }
+    process.exit(0)
+  }
+  catch (error) {
+    printErrorMessage(`${error}`)
+    process.exit(1)
+  }
 }
 else if (config.loadFilename) {
   const content = fs.readFileSync(config.loadFilename, { encoding: 'utf-8' })
-  config.context = lits.context(content, {
-    globalContext: config.context ?? undefined,
-  })
+  config.context = lits.context(content)
   runREPL()
 }
 else if (config.testFilename) {
@@ -92,15 +113,14 @@ function runLitsTest(testPath: string, testNamePattern: Maybe<string>) {
 
 function execute(expression: string): boolean {
   try {
-    const result = lits.run(expression, {
-      globalContext: config.context ?? undefined,
-    })
+    const result = lits.run(expression)
     historyResults.unshift(result)
-    if (historyResults.length > 9)
+    if (historyResults.length > 9) {
       historyResults.length = 9
+    }
 
     setReplHistoryVariables()
-    console.log(formatValue(stringifyValue(result, false)))
+    console.log(stringifyValue(result, false))
     return true
   }
   catch (error) {
@@ -135,6 +155,9 @@ function setReplHistoryVariables() {
 function parseOption(args: string[], i: number) {
   const option = args[i]!
 
+  if (option === '-p') {
+    return { option, argument: null, count: 1 }
+  }
   if (/^-[a-z]$/i.test(option))
     return { option, argument: args[i + 1], count: 2 }
 
@@ -152,6 +175,7 @@ function processArguments(args: string[]): Config {
     loadFilename: null,
     context: {},
     eval: null,
+    printResult: false,
   }
   let i = 0
   while (i < args.length) {
@@ -165,7 +189,6 @@ function processArguments(args: string[]): Config {
     i += count
 
     switch (option) {
-      case '-t':
       case '--test':
         if (!argument) {
           printErrorMessage(`Missing filename after ${option}`)
@@ -173,7 +196,6 @@ function processArguments(args: string[]): Config {
         }
         defaultConfig.testFilename = argument
         break
-      case '-p':
       case '--test-pattern':
         if (!argument) {
           printErrorMessage(`Missing test name pattern after ${option}`)
@@ -229,6 +251,10 @@ function processArguments(args: string[]): Config {
           printErrorMessage(`Couldn\`t parse context: ${getErrorMessage(e)}`)
           process.exit(1)
         }
+        break
+      case '-p':
+      case '--print-result':
+        defaultConfig.printResult = true
         break
       case '-e':
       case '--eval':
@@ -362,8 +388,9 @@ Options:
   -C, --context-file=...          Context file (.json file)
   -e, --eval=...                  Evaluate Lits expression
   -f, --file=...                  Evaluate .lits file
-  -p, --test-pattern=...          Test name pattern, used together with --test
-  -t, --test=...                  Test .test.lits file
+      --test-pattern=...          Test name pattern, used together with --test
+      --test=...                  Test .test.lits file
+  -p  --print-result              Test .test.lits file
   --help                          Show this help
   --version                       Print lits version
 `.trim())

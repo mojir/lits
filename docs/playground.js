@@ -12376,7 +12376,6 @@ var Playground = (function (exports) {
                 _b.arity = arity,
                 _b.docString = docString,
                 _b);
-            evaluatedFunction[2].self = { value: litsFunction };
             return litsFunction;
         },
         getUndefinedSymbols: function (node, contextStack, _a) {
@@ -13051,13 +13050,13 @@ var Playground = (function (exports) {
                 var args = evaluatedFunction[0];
                 var nbrOfNonRestArgs = args.filter(function (arg) { return arg[0] !== bindingTargetTypes.rest; }).length;
                 var newContextStack = contextStack.create(fn.evaluatedfunction[2]);
-                var newContext = {};
+                var newContext = { self: { value: fn } };
                 var rest = [];
                 for (var i = 0; i < params.length; i += 1) {
                     if (i < nbrOfNonRestArgs) {
                         var param = toAny(params[i]);
-                        var valueRecord = evalueateBindingNodeValues(args[i], param, function (Node) {
-                            return evaluateNode(Node, newContextStack.create(newContext));
+                        var valueRecord = evalueateBindingNodeValues(args[i], param, function (node) {
+                            return evaluateNode(node, newContextStack.create(newContext));
                         });
                         Object.entries(valueRecord).forEach(function (_a) {
                             var _b = __read(_a, 2), key = _b[0], value = _b[1];
@@ -13071,8 +13070,8 @@ var Playground = (function (exports) {
                 for (var i = params.length; i < nbrOfNonRestArgs; i++) {
                     var arg = args[i];
                     var defaultValue = evaluateNode(arg[1][1], contextStack.create(newContext));
-                    var valueRecord = evalueateBindingNodeValues(arg, defaultValue, function (Node) {
-                        return evaluateNode(Node, contextStack.create(newContext));
+                    var valueRecord = evalueateBindingNodeValues(arg, defaultValue, function (node) {
+                        return evaluateNode(node, contextStack.create(newContext));
                     });
                     Object.entries(valueRecord).forEach(function (_a) {
                         var _b = __read(_a, 2), key = _b[0], value = _b[1];
@@ -13081,7 +13080,7 @@ var Playground = (function (exports) {
                 }
                 var restArgument = args.find(function (arg) { return arg[0] === bindingTargetTypes.rest; });
                 if (restArgument !== undefined) {
-                    var valueRecord = evalueateBindingNodeValues(restArgument, rest, function (Node) { return evaluateNode(Node, contextStack.create(newContext)); });
+                    var valueRecord = evalueateBindingNodeValues(restArgument, rest, function (node) { return evaluateNode(node, contextStack.create(newContext)); });
                     Object.entries(valueRecord).forEach(function (_a) {
                         var _b = __read(_a, 2), key = _b[0], value = _b[1];
                         newContext[key] = { value: value };
@@ -13620,6 +13619,21 @@ var Playground = (function (exports) {
         };
         return ContextStackImpl;
     }());
+    function checkNotDefined(name) {
+        if (specialExpressionKeys.includes(name)) {
+            console.warn("Cannot shadow special expression \"".concat(name, "\", ignoring."));
+            return false;
+        }
+        if (normalExpressionKeys.includes(name)) {
+            console.warn("Cannot shadow builtin function \"".concat(name, "\", ignoring."));
+            return false;
+        }
+        if (name === 'self') {
+            console.warn("Cannot shadow builtin value \"".concat(name, "\", ignoring."));
+            return false;
+        }
+        return true;
+    }
     function createContextStack(params) {
         var _a;
         if (params === void 0) { params = {}; }
@@ -13631,26 +13645,53 @@ var Playground = (function (exports) {
             values: params.values,
             nativeJsFunctions: params.jsFunctions
                 && Object.entries(params.jsFunctions).reduce(function (acc, _a) {
-                    var _b;
-                    var _c, _d;
-                    var _e = __read(_a, 2), name = _e[0], jsFunction = _e[1];
-                    if (specialExpressionKeys.includes(name)) {
-                        console.warn("Cannot shadow special expression \"".concat(name, "\", ignoring."));
+                    var e_5, _b, _c;
+                    var _d, _e;
+                    var _f = __read(_a, 2), identifier = _f[0], entry = _f[1];
+                    var identifierParts = identifier.split('.');
+                    var name = identifierParts.pop();
+                    if (/^[A-Z]/.test(name)) {
+                        console.warn("Invalid identifier \"".concat(identifier, "\" in jsFunctions, function name must not start with an uppercase letter"), undefined);
                         return acc;
                     }
-                    if (normalExpressionKeys.includes(name)) {
-                        console.warn("Cannot shadow builtin function \"".concat(name, "\", ignoring."));
-                        return acc;
+                    var scope = acc;
+                    try {
+                        for (var identifierParts_1 = __values(identifierParts), identifierParts_1_1 = identifierParts_1.next(); !identifierParts_1_1.done; identifierParts_1_1 = identifierParts_1.next()) {
+                            var part = identifierParts_1_1.value;
+                            if (part.length === 0) {
+                                console.warn("Invalid empty identifier \"".concat(identifier, "\" in nativeJsFunctions"), undefined);
+                                return acc;
+                            }
+                            if (!/^[A-Z]/.test(part)) {
+                                console.warn("Invalid identifier \"".concat(identifier, "\" in jsFunctions, namespace must start with an uppercase letter"), undefined);
+                                return acc;
+                            }
+                            if (!scope[part]) {
+                                scope[part] = {};
+                            }
+                            scope = scope[part];
+                        }
                     }
-                    acc[name] = (_b = {
+                    catch (e_5_1) { e_5 = { error: e_5_1 }; }
+                    finally {
+                        try {
+                            if (identifierParts_1_1 && !identifierParts_1_1.done && (_b = identifierParts_1.return)) _b.call(identifierParts_1);
+                        }
+                        finally { if (e_5) throw e_5.error; }
+                    }
+                    var natifeFn = (_c = {
                             functionType: 'NativeJsFunction',
-                            nativeFn: jsFunction,
+                            nativeFn: entry,
                             name: name
                         },
-                        _b[FUNCTION_SYMBOL] = true,
-                        _b.arity = (_c = jsFunction.arity) !== null && _c !== void 0 ? _c : {},
-                        _b.docString = (_d = jsFunction.docString) !== null && _d !== void 0 ? _d : '',
-                        _b);
+                        _c[FUNCTION_SYMBOL] = true,
+                        _c.arity = (_d = entry.arity) !== null && _d !== void 0 ? _d : {},
+                        _c.docString = (_e = entry.docString) !== null && _e !== void 0 ? _e : '',
+                        _c);
+                    if (scope === acc && !checkNotDefined(name)) {
+                        return acc;
+                    }
+                    scope[name] = natifeFn;
                     return acc;
                 }, {}),
         });

@@ -36,6 +36,10 @@ export interface NativeJsFunction extends GenericLitsFunction {
   docString: string // documentation string
 }
 
+export interface NativeJsNamespace {
+  [key: string]: NativeJsFunction | NativeJsNamespace
+}
+
 export interface UserDefinedFunction extends GenericLitsFunction {
   functionType: 'UserDefined'
   name: string | undefined // name

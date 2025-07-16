@@ -5,21 +5,24 @@ import type { NativeJsFunction } from '../src/parser/types'
 import { FUNCTION_SYMBOL } from '../src/utils/symbols'
 
 const jsFunctions: Record<string, JsFunction> = {
-  tripple: {
+  'Foo.foo': {
     fn: (value: number) => value * 3,
   },
-  throwError: {
+  'tripple': {
+    fn: (value: number) => value * 3,
+  },
+  'throwError': {
     fn: () => {
       throw new Error('An error')
     },
   },
-  throwNumber: {
+  'throwNumber': {
     fn: () => {
       // eslint-disable-next-line ts/no-throw-literal
       throw 1
     },
   },
-  throwString: {
+  'throwString': {
     fn: () => {
       // eslint-disable-next-line ts/no-throw-literal
       throw 'An error'
@@ -32,6 +35,18 @@ const stupidJsFunctions: Record<string, JsFunction> = {
     fn: (value: number) => value * 3,
   },
   'if': {
+    fn: () => true,
+  },
+  'self': {
+    fn: () => true,
+  },
+  'Foo': {
+    fn: () => true,
+  },
+  'foo.bar': {
+    fn: () => true,
+  },
+  '.bar': {
     fn: () => true,
   },
 }
@@ -55,6 +70,7 @@ const values = {
 describe('nativeJsFunction', () => {
   const lits = new Lits()
   it('samples', () => {
+    expect(lits.run('Foo.foo(9)', { jsFunctions })).toBe(27)
     expect(lits.run('tripple(9)', { jsFunctions })).toBe(27)
     expect(lits.run('let a = tripple; a(9)', { jsFunctions })).toBe(27)
     expect(() => lits.run('throwError()', { jsFunctions })).toThrowError(LitsError)
@@ -65,9 +81,9 @@ describe('nativeJsFunction', () => {
     const warn = console.warn
     console.warn = vitest.fn()
     expect(lits.run('+(1, 2, 3)', { jsFunctions: stupidJsFunctions })).toBe(6)
-    expect(console.warn).toHaveBeenCalledTimes(2)
+    expect(console.warn).toHaveBeenCalledTimes(6)
     expect(lits.run('if true then false else true end', { jsFunctions: stupidJsFunctions })).toBe(false)
-    expect(console.warn).toHaveBeenCalledTimes(4)
+    expect(console.warn).toHaveBeenCalledTimes(12)
     console.warn = warn
   })
   it('nested nativeJsFunction', () => {

@@ -62,14 +62,14 @@ export const functionExecutors: FunctionExecutors = {
       const nbrOfNonRestArgs: number = args.filter(arg => arg[0] !== bindingTargetTypes.rest).length
 
       const newContextStack = contextStack.create(fn.evaluatedfunction[2])
-      const newContext: Context = {}
+      const newContext: Context = { self: { value: fn } }
 
       const rest: Arr = []
       for (let i = 0; i < params.length; i += 1) {
         if (i < nbrOfNonRestArgs) {
           const param = toAny(params[i])
-          const valueRecord = evalueateBindingNodeValues(args[i]!, param, Node =>
-            evaluateNode(Node, newContextStack.create(newContext)))
+          const valueRecord = evalueateBindingNodeValues(args[i]!, param, node =>
+            evaluateNode(node, newContextStack.create(newContext)))
           Object.entries(valueRecord).forEach(([key, value]) => {
             newContext[key] = { value }
           })
@@ -82,8 +82,8 @@ export const functionExecutors: FunctionExecutors = {
       for (let i = params.length; i < nbrOfNonRestArgs; i++) {
         const arg = args[i]!
         const defaultValue = evaluateNode(arg[1][1]!, contextStack.create(newContext))
-        const valueRecord = evalueateBindingNodeValues(arg, defaultValue, Node =>
-          evaluateNode(Node, contextStack.create(newContext)))
+        const valueRecord = evalueateBindingNodeValues(arg, defaultValue, node =>
+          evaluateNode(node, contextStack.create(newContext)))
         Object.entries(valueRecord).forEach(([key, value]) => {
           newContext[key] = { value }
         })
@@ -91,7 +91,7 @@ export const functionExecutors: FunctionExecutors = {
 
       const restArgument = args.find(arg => arg[0] === bindingTargetTypes.rest)
       if (restArgument !== undefined) {
-        const valueRecord = evalueateBindingNodeValues(restArgument, rest, Node => evaluateNode(Node, contextStack.create(newContext)))
+        const valueRecord = evalueateBindingNodeValues(restArgument, rest, node => evaluateNode(node, contextStack.create(newContext)))
         Object.entries(valueRecord).forEach(([key, value]) => {
           newContext[key] = { value }
         })

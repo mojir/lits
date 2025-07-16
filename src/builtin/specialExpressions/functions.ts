@@ -38,8 +38,6 @@ export const lambdaSpecialExpression: BuiltinSpecialExpression<LitsFunction, Lam
       docString,
     }
 
-    evaluatedFunction[2].self = { value: litsFunction }
-
     return litsFunction
   },
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => {
