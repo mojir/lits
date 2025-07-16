@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
 import { LitsError } from '../errors'
-import { asA_BinaryOperatorToken, asBasePrefixedNumberToken, asLBraceToken, asLBracketToken, asLParenToken, asMultiLineCommentToken, asNumberToken, asOperatorToken, asRBraceToken, asRBracketToken, asRParenToken, asRegexpShorthandToken, asReservedSymbolToken, asSingleLineCommentToken, asStringToken, asSymbolToken, asWhitespaceToken } from './token'
+import { asA_BinaryOperatorToken, asBasePrefixedNumberToken, asLBraceToken, asLBracketToken, asLParenToken, asNumberToken, asOperatorToken, asRBraceToken, asRBracketToken, asRParenToken, asRegexpShorthandToken, asReservedSymbolToken, asStringToken, asSymbolToken, asWhitespaceToken } from './token'
 
 describe('token', () => {
   describe('guards', () => {
@@ -11,14 +11,6 @@ describe('token', () => {
     test('asReservedSymbolToken', () => {
       expect(() => asReservedSymbolToken(['ReservedSymbol', 'null'])).not.toThrow()
       expect(() => asReservedSymbolToken(['Number', '1'])).toThrow(LitsError)
-    })
-    test('asSingleLineCommentToken', () => {
-      expect(() => asSingleLineCommentToken(['SingleLineComment', '// foo'])).not.toThrow()
-      expect(() => asSingleLineCommentToken(['Number', '1'])).toThrow(LitsError)
-    })
-    test('asMultiLineCommentToken', () => {
-      expect(() => asMultiLineCommentToken(['MultiLineComment', '/* foo */'])).not.toThrow()
-      expect(() => asMultiLineCommentToken(['Number', '1'])).toThrow(LitsError)
     })
     test('asOperatorToken', () => {
       expect(() => asOperatorToken(['Operator', '*'])).not.toThrow()

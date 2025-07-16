@@ -131,27 +131,9 @@ export function isShebangToken(token: Token | undefined): token is SingleLineCom
 export function isSingleLineCommentToken(token: Token | undefined): token is SingleLineCommentToken {
   return token?.[0] === 'SingleLineComment'
 }
-export function assertSingleLineCommentToken(token: Token | undefined): asserts token is SingleLineCommentToken {
-  if (!isSingleLineCommentToken(token)) {
-    throwUnexpectedToken('SingleLineComment', undefined, token)
-  }
-}
-export function asSingleLineCommentToken(token: Token | undefined): SingleLineCommentToken {
-  assertSingleLineCommentToken(token)
-  return token
-}
 
 export function isMultiLineCommentToken(token: Token | undefined): token is MultiLineCommentToken {
   return token?.[0] === 'MultiLineComment'
-}
-export function assertMultiLineCommentToken(token: Token | undefined): asserts token is MultiLineCommentToken {
-  if (!isMultiLineCommentToken(token)) {
-    throwUnexpectedToken('MultiLineComment', undefined, token)
-  }
-}
-export function asMultiLineCommentToken(token: Token | undefined): MultiLineCommentToken {
-  assertMultiLineCommentToken(token)
-  return token
 }
 
 export function isOperatorToken<T extends SymbolicOperator>(token: Token | undefined | undefined, operatorName?: T): token is OperatorToken<T> {
