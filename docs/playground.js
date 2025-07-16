@@ -31786,7 +31786,13 @@ var Playground = (function (exports) {
         Lits.prototype.run = function (program, params) {
             if (params === void 0) { params = {}; }
             var ast = this.generateAst(program, params);
-            return this.evaluate(ast, params);
+            var result = this.evaluate(ast, params);
+            // const stringifiedResult = JSON.stringify(result)
+            // const parsedResult = JSON.parse(stringifiedResult) as unknown
+            // if (!deepEqual(result, parsedResult)) {
+            //   throw new Error(`Result is not serializable: ${result} != ${parsedResult}\nstringifiedResult: ${stringifiedResult}\nprogram: ${program}`)
+            // }
+            return result;
         };
         Lits.prototype.context = function (programOrAst, params) {
             if (params === void 0) { params = {}; }
