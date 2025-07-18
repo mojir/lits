@@ -37,7 +37,7 @@ export interface ContextParams {
   globalContext?: Context
   contexts?: Context[]
   values?: Record<string, unknown>
-  jsFunctions?: Record<string, JsFunction>
+  jsFunctions?: Record<string, unknown>
   globalModuleScope?: boolean
 }
 

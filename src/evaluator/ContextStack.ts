@@ -5,7 +5,7 @@ import { specialExpressionTypes } from '../builtin/specialExpressionTypes'
 import { LitsError, UndefinedSymbolError } from '../errors'
 import type { Any } from '../interface'
 import type { ContextParams } from '../Lits/Lits'
-import type { NativeJsFunction, NativeJsNamespace, NormalBuiltinFunction, SpecialBuiltinFunction, SymbolNode, UserDefinedSymbolNode } from '../parser/types'
+import { type NativeJsFunction, type NativeJsModule, type NormalBuiltinFunction, type SpecialBuiltinFunction, type SymbolNode, type UserDefinedSymbolNode, assertJsFunction } from '../parser/types'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { asNonUndefined } from '../typeGuards'
 import { isNormalBuiltinSymbolNode, isSpecialBuiltinSymbolNode } from '../typeGuards/astNode'
@@ -20,7 +20,7 @@ export class ContextStackImpl {
   private contexts: Context[]
   public globalContext: Context
   private values?: Record<string, unknown>
-  private nativeJsFunctions?: NativeJsNamespace
+  private nativeJsFunctions?: NativeJsModule
   constructor({
     contexts,
     values: hostValues,
@@ -28,7 +28,7 @@ export class ContextStackImpl {
   }: {
     contexts: Context[]
     values?: Record<string, unknown>
-    nativeJsFunctions?: NativeJsNamespace
+    nativeJsFunctions?: NativeJsModule
   }) {
     this.globalContext = asNonUndefined(contexts[0])
     this.contexts = contexts
@@ -204,29 +204,30 @@ export function createContextStack(params: ContextParams = {}): ContextStack {
     values: params.values,
     nativeJsFunctions:
       params.jsFunctions
-      && Object.entries(params.jsFunctions).reduce((acc: NativeJsNamespace, [identifier, entry]) => {
+      && Object.entries(params.jsFunctions).reduce((acc: NativeJsModule, [identifier, entry]) => {
         const identifierParts = identifier.split('.')
         const name = identifierParts.pop()!
         if (/^[A-Z]/.test(name)) {
           console.warn(`Invalid identifier "${identifier}" in jsFunctions, function name must not start with an uppercase letter`, undefined)
           return acc
         }
-        let scope: NativeJsNamespace = acc
+        let scope: NativeJsModule = acc
         for (const part of identifierParts) {
           if (part.length === 0) {
             console.warn(`Invalid empty identifier "${identifier}" in nativeJsFunctions`, undefined)
             return acc
           }
           if (!/^[A-Z]/.test(part)) {
-            console.warn(`Invalid identifier "${identifier}" in jsFunctions, namespace must start with an uppercase letter`, undefined)
+            console.warn(`Invalid identifier "${identifier}" in jsFunctions, module name must start with an uppercase letter`, undefined)
             return acc
           }
           if (!scope[part]) {
             scope[part] = {}
           }
-          scope = scope[part] as NativeJsNamespace
+          scope = scope[part] as NativeJsModule
         }
 
+        assertJsFunction(entry)
         const natifeFn: NativeJsFunction = {
           functionType: 'NativeJsFunction',
           nativeFn: entry,

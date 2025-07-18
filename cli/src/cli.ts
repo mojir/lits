@@ -19,7 +19,7 @@ import { getCliFunctionSignature } from './cliDocumentation/getCliFunctionSignat
 import { getCliDocumentation } from './cliDocumentation/getCliDocumentation'
 import { getInlineCodeFormatter } from './cliFormatterRules'
 import { createReadlineInterface } from './createReadlineInterface'
-import { jsFunctions } from './modules'
+import { cliModule } from './cli-module'
 
 const useColor = !process.env.NO_COLOR
 const fmt = createColorizer(useColor)
@@ -56,13 +56,13 @@ const lits = (() => {
     run: (program: string) =>
       _lits.run(program, {
         globalContext: config.context ?? undefined,
-        jsFunctions,
+        jsFunctions: cliModule,
         globalModuleScope: true,
       }),
     context: (program: string) =>
       _lits.context(program, {
         globalContext: config.context ?? undefined,
-        jsFunctions,
+        jsFunctions: cliModule,
         globalModuleScope: true,
       }),
   }

@@ -12150,6 +12150,14 @@ var Playground = (function (exports) {
         },
     };
 
+    function isJsFunction(fn) {
+        return typeof fn === 'object' && fn !== null && 'fn' in fn && typeof fn.fn === 'function';
+    }
+    function assertJsFunction(fn) {
+        if (!isJsFunction(fn)) {
+            throw new TypeError('Expected a NativeJsFunction');
+        }
+    }
     var bindingTargetTypes = {
         symbol: 11,
         rest: 12,
@@ -13663,7 +13671,7 @@ var Playground = (function (exports) {
                                 return acc;
                             }
                             if (!/^[A-Z]/.test(part)) {
-                                console.warn("Invalid identifier \"".concat(identifier, "\" in jsFunctions, namespace must start with an uppercase letter"), undefined);
+                                console.warn("Invalid identifier \"".concat(identifier, "\" in jsFunctions, module name must start with an uppercase letter"), undefined);
                                 return acc;
                             }
                             if (!scope[part]) {
@@ -13679,6 +13687,7 @@ var Playground = (function (exports) {
                         }
                         finally { if (e_5) throw e_5.error; }
                     }
+                    assertJsFunction(entry);
                     var natifeFn = (_c = {
                             functionType: 'NativeJsFunction',
                             nativeFn: entry,
