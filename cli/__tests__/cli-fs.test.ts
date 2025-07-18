@@ -172,6 +172,57 @@ describe('the Cli.Fs Integration Tests', () => {
       const exists = fs.existsSync(path.join(testDir, 'nested'))
       expect(exists).toBe(false)
     })
+    test('should copy file', () => {
+      runLits('Cli.Fs.copy("test.txt", "test_copy.txt")')
+
+      const exists = fs.existsSync(path.join(testDir, 'test_copy.txt'))
+      expect(exists).toBe(true)
+
+      const content = fs.readFileSync(path.join(testDir, 'test_copy.txt'), 'utf8')
+      expect(content).toBe('Hello, World!')
+    })
+    test('should copy directory recursively', () => {
+      runLits('Cli.Fs.copy("subdir", "subdir_copy")')
+
+      const exists = fs.existsSync(path.join(testDir, 'subdir_copy', 'nested.txt'))
+      expect(exists).toBe(true)
+      const content = fs.readFileSync(path.join(testDir, 'subdir_copy', 'nested.txt'), 'utf8')
+      expect(content).toBe('Nested content')
+    })
+    test('should move file', () => {
+      runLits('Cli.Fs.move("test.txt", "test_moved.txt")')
+
+      const exists = fs.existsSync(path.join(testDir, 'test_moved.txt'))
+      expect(exists).toBe(true)
+
+      const content = fs.readFileSync(path.join(testDir, 'test_moved.txt'), 'utf8')
+      expect(content).toBe('Hello, World!')
+
+      // Ensure original file no longer exists
+      const originalExists = fs.existsSync(path.join(testDir, 'test.txt'))
+      expect(originalExists).toBe(false)
+    })
+    test('should move directory recursively', () => {
+      runLits('Cli.Fs.move("subdir", "subdir_moved")')
+
+      const exists = fs.existsSync(path.join(testDir, 'subdir_moved', 'nested.txt'))
+      expect(exists).toBe(true)
+      const content = fs.readFileSync(path.join(testDir, 'subdir_moved', 'nested.txt'), 'utf8')
+      expect(content).toBe('Nested content')
+      // Ensure original directory no longer exists
+      const originalExists = fs.existsSync(path.join(testDir, 'subdir'))
+      expect(originalExists).toBe(false)
+    })
+    test('should get stats', () => {
+      const result = runLits('Cli.Fs.stats("test.txt") |> json-stringify(_, 2)')
+      const stats = JSON.parse(result)
+
+      expect(stats).toHaveProperty('size')
+      expect(stats.size).toBeGreaterThan(0)
+      expect(stats).toHaveProperty('mtime')
+      expect(stats).toHaveProperty('ctime')
+      expect(stats).toHaveProperty('atime')
+    })
   })
 
   // describe('complex File Operations', () => {
