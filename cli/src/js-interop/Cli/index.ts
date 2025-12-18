@@ -4,6 +4,6 @@ import { getProcModule } from './Proc/index.js'
 export function getCliModule() {
   return {
     ...getFsModule(['Cli', 'Fs']),
-    ...getProcModule(['Cli', 'Fs']),
+    ...getProcModule(['Cli', 'Proc']),
   }
 }

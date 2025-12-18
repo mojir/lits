@@ -4,7 +4,6 @@ import { execSync } from 'node:child_process'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from 'vitest'
-import { } from '../src/cli'
 
 describe('the Cli.Fs Integration Tests', () => {
   const testDir = path.join(__dirname, 'test_temp')
@@ -104,7 +103,7 @@ describe('the Cli.Fs Integration Tests', () => {
 
   describe('directory Operations', () => {
     test('should list directory contents', () => {
-      const result = runLits('Cli.Fs.list(".") |> json-stringify')
+      const result = runLits('Cli.Fs.list-dir(".") |> json-stringify')
       const files = JSON.parse(result)
 
       expect(files).toEqual(expect.arrayContaining([
@@ -214,7 +213,7 @@ describe('the Cli.Fs Integration Tests', () => {
       expect(originalExists).toBe(false)
     })
     test('should get stats', () => {
-      const result = runLits('Cli.Fs.stats("test.txt") |> json-stringify(_, 2)')
+      const result = runLits('Cli.Fs.get-stats("test.txt") |> json-stringify(_, 2)')
       const stats = JSON.parse(result)
 
       expect(stats).toHaveProperty('size')

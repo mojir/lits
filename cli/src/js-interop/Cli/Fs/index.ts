@@ -1,7 +1,40 @@
 /* eslint-disable ts/no-unsafe-member-access */
 import fs from 'node:fs'
+import process from 'node:process'
+import os from 'node:os'
+import path from 'node:path'
 import type { GetFsModule } from '../../utils'
 import type { JsFunction } from '../../../../../src'
+
+let initiated = false
+const tempFiles: string[] = []
+const tempDirs: string[] = []
+function init() {
+  if (initiated) {
+    return
+  }
+  initiated = true
+
+  process.on('exit', () => {
+    // Clean up temporary files and directories on process exit
+    tempFiles.forEach((file) => {
+      try {
+        fs.unlinkSync(file)
+      }
+      catch (error) {
+        console.error(`Failed to delete temporary file ${file}:`, error)
+      }
+    })
+    tempDirs.forEach((dir) => {
+      try {
+        fs.rmSync(dir, { recursive: true, force: true })
+      }
+      catch (error) {
+        console.error(`Failed to delete temporary directory ${dir}:`, error)
+      }
+    })
+  })
+}
 
 const readFile: JsFunction = {
   fn: (filePath: string): string => {
@@ -130,7 +163,7 @@ Parameters:
   arity: { min: 1, max: 1 },
 }
 
-const list: JsFunction = {
+const listDir: JsFunction = {
   fn: (directoryPath: string): string[] => {
     return fs.readdirSync(directoryPath, { encoding: 'utf8' })
   },
@@ -305,7 +338,81 @@ const touch = {
   arity: { min: 1, max: 1 },
 }
 
+type TempOptions = {
+  prefix?: string
+  suffix?: string
+  dir?: string
+}
+
+function validateTempOptions(options: TempOptions): void {
+  const { dir, suffix, prefix } = options
+  if (prefix && prefix.includes(path.sep)) {
+    throw new Error(`Prefix "${prefix}" cannot contain path separators.`)
+  }
+  if (suffix && suffix.includes(path.sep)) {
+    throw new Error(`Suffix "${suffix}" cannot contain path separators.`)
+  }
+  if (options.dir && fs.existsSync(options.dir) && !fs.statSync(options.dir).isDirectory()) {
+    throw new Error(`Specified directory "${dir}" is not a valid directory.`)
+  }
+}
+
+const createTempFile = {
+  fn: (options: TempOptions = {}): string => {
+    validateTempOptions(options)
+    const { prefix = '', suffix = '', dir = os.tmpdir() } = options
+    const timestamp = Date.now()
+    const random = Math.random().toString(36).substring(2, 8)
+    const filename = `${prefix}-temp-${timestamp}-${random}${suffix}`
+    const tempPath = path.join(dir, filename)
+    fs.writeFileSync(tempPath, '', { encoding: 'utf8' }) // Create an empty file
+    tempFiles.push(tempPath) // Track the temporary file for cleanup
+    return tempPath
+  },
+  docString: `
+Creates a temporary file with a unique name.
+
+Parameters:
+- options: An object with optional properties:
+  - prefix: A string to prepend to the filename (default: '').
+  - suffix: A string to append to the filename (default: '').
+  - dir: The directory where the temporary file will be created (default: system's temp directory).
+
+Returns:
+- The path to the created temporary file.
+`,
+  arity: { min: 0, max: 1 },
+}
+
+const createTempDir = {
+  fn: (options: TempOptions = {}): string => {
+    validateTempOptions(options)
+    const { prefix = '', suffix = '', dir = os.tmpdir() } = options
+    const timestamp = Date.now()
+    const random = Math.random().toString(36).substring(2, 8)
+    const dirname = `${prefix}-temp-${timestamp}-${random}${suffix}`
+    const tempPath = path.join(dir, dirname)
+    fs.mkdirSync(tempPath, { recursive: true }) // Create the directory
+    tempDirs.push(tempPath) // Track the temporary directory for cleanup
+    return tempPath
+  },
+  docString: `
+Creates a temporary directory with a unique name.
+
+Parameters:
+- options: An object with optional properties:
+  - prefix: A string to prepend to the directory name (default: '').
+  - suffix: A string to append to the directory name (default: '').
+  - dir: The directory where the temporary directory will be created (default: system's temp directory).
+
+Returns:
+- The path to the created temporary directory.
+`,
+  arity: { min: 0, max: 1 },
+}
+
 export const getFsModule: GetFsModule = (modulePath) => {
+  init()
   const prefix = modulePath.join('.')
   return {
     [`${prefix}.read-file`]: readFile,
@@ -316,13 +423,15 @@ export const getFsModule: GetFsModule = (modulePath) => {
     [`${prefix}.exists?`]: exists,
     [`${prefix}.file?`]: isFile,
     [`${prefix}.directory?`]: isDirectory,
-    [`${prefix}.list`]: list,
+    [`${prefix}.list-dir`]: listDir,
     [`${prefix}.mkdir`]: mkdir,
     [`${prefix}.remove`]: remove,
     [`${prefix}.copy`]: copy,
     [`${prefix}.move`]: move,
-    [`${prefix}.stats`]: stats,
+    [`${prefix}.get-stats`]: stats,
     [`${prefix}.chmod`]: chmod,
     [`${prefix}.touch`]: touch,
+    [`${prefix}.create-temp-file`]: createTempFile,
+    [`${prefix}.create-temp-dir`]: createTempDir,
   }
 }
