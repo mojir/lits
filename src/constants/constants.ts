@@ -37,6 +37,7 @@ const functionTypes = [
   'Builtin',
   'SpecialBuiltin',
   'NativeJsFunction',
+  'Namespace',
 ] as const
 
 const functionTypeSet = new Set(functionTypes)

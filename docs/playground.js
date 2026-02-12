@@ -702,6 +702,7 @@ var Playground = (function (exports) {
         'Builtin',
         'SpecialBuiltin',
         'NativeJsFunction',
+        'Namespace',
     ];
     var functionTypeSet = new Set(functionTypes);
     function isFunctionType(type) {
@@ -969,6 +970,11 @@ var Playground = (function (exports) {
         }
         return false;
     }
+    function assertVector(vector, sourceCodeInfo) {
+        if (!isVector(vector)) {
+            throw new LitsError("Expected a vector, but got ".concat(vector), sourceCodeInfo);
+        }
+    }
     function isGrid(grid) {
         var e_1, _a;
         if (!Array.isArray(grid)) {
@@ -1005,6 +1011,11 @@ var Playground = (function (exports) {
         annotatedArrays.add(grid);
         grids.add(grid);
         return true;
+    }
+    function assertGrid(grid, sourceCodeInfo) {
+        if (!isGrid(grid)) {
+            throw new LitsError("Expected a grid, but got ".concat(grid), sourceCodeInfo);
+        }
     }
     function isMatrix(matrix) {
         var e_2, _a;
@@ -3968,6 +3979,842 @@ var Playground = (function (exports) {
         },
     };
 
+    /**
+     * Global registry for Lits namespaces.
+     * Namespaces are registered here and can be imported via import("namespaceName")
+     */
+    var namespaceRegistry = new Map();
+    /**
+     * Register a namespace so it can be imported in Lits code.
+     * @param namespace The namespace to register
+     */
+    function registerNamespace(namespace) {
+        if (namespaceRegistry.has(namespace.name)) {
+            throw new Error("Namespace '".concat(namespace.name, "' is already registered"));
+        }
+        namespaceRegistry.set(namespace.name, namespace);
+    }
+    /**
+     * Get a registered namespace by name.
+     * @param name The namespace name
+     * @returns The namespace or undefined if not found
+     */
+    function getNamespace(name) {
+        return namespaceRegistry.get(name);
+    }
+
+    /**
+     * Creates a grid from a flat array with specified dimensions
+     *
+     * @param flatArray The flat array of values
+     * @param rows Number of rows in the resulting grid
+     * @returns A 2D array representing the grid
+     */
+    function fromArray(flatArray, rows) {
+        // Create the grid
+        var grid = [];
+        var cols = flatArray.length / rows;
+        // Reshape the flat array into rows and columns
+        for (var i = 0; i < rows; i++) {
+            var start = i * cols;
+            var end = start + cols;
+            grid.push(flatArray.slice(start, end));
+        }
+        return grid;
+    }
+
+    function transpose(grid) {
+        var result = [];
+        for (var i = 0; i < grid[0].length; i += 1) {
+            var row = [];
+            for (var j = 0; j < grid.length; j += 1) {
+                row.push(grid[j][i]);
+            }
+            result.push(row);
+        }
+        return result;
+    }
+
+    var gridFunctions = {
+        'every?': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var e_1, _c, e_2, _d;
+                var _e = __read(_a, 2), grid = _e[0], predicate = _e[1];
+                var executeFunction = _b.executeFunction;
+                assertGrid(grid, sourceCodeInfo);
+                assertFunctionLike(predicate, sourceCodeInfo);
+                try {
+                    for (var grid_1 = __values(grid), grid_1_1 = grid_1.next(); !grid_1_1.done; grid_1_1 = grid_1.next()) {
+                        var row = grid_1_1.value;
+                        try {
+                            for (var row_1 = (e_2 = void 0, __values(row)), row_1_1 = row_1.next(); !row_1_1.done; row_1_1 = row_1.next()) {
+                                var cell = row_1_1.value;
+                                if (!executeFunction(predicate, [cell], contextStack, sourceCodeInfo)) {
+                                    return false;
+                                }
+                            }
+                        }
+                        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+                        finally {
+                            try {
+                                if (row_1_1 && !row_1_1.done && (_d = row_1.return)) _d.call(row_1);
+                            }
+                            finally { if (e_2) throw e_2.error; }
+                        }
+                    }
+                }
+                catch (e_1_1) { e_1 = { error: e_1_1 }; }
+                finally {
+                    try {
+                        if (grid_1_1 && !grid_1_1.done && (_c = grid_1.return)) _c.call(grid_1);
+                    }
+                    finally { if (e_1) throw e_1.error; }
+                }
+                return true;
+            },
+            arity: toFixedArity(2),
+        },
+        'some?': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var e_3, _c, e_4, _d;
+                var _e = __read(_a, 2), grid = _e[0], predicate = _e[1];
+                var executeFunction = _b.executeFunction;
+                assertGrid(grid, sourceCodeInfo);
+                assertFunctionLike(predicate, sourceCodeInfo);
+                try {
+                    for (var grid_2 = __values(grid), grid_2_1 = grid_2.next(); !grid_2_1.done; grid_2_1 = grid_2.next()) {
+                        var row = grid_2_1.value;
+                        try {
+                            for (var row_2 = (e_4 = void 0, __values(row)), row_2_1 = row_2.next(); !row_2_1.done; row_2_1 = row_2.next()) {
+                                var cell = row_2_1.value;
+                                if (executeFunction(predicate, [cell], contextStack, sourceCodeInfo)) {
+                                    return true;
+                                }
+                            }
+                        }
+                        catch (e_4_1) { e_4 = { error: e_4_1 }; }
+                        finally {
+                            try {
+                                if (row_2_1 && !row_2_1.done && (_d = row_2.return)) _d.call(row_2);
+                            }
+                            finally { if (e_4) throw e_4.error; }
+                        }
+                    }
+                }
+                catch (e_3_1) { e_3 = { error: e_3_1 }; }
+                finally {
+                    try {
+                        if (grid_2_1 && !grid_2_1.done && (_c = grid_2.return)) _c.call(grid_2);
+                    }
+                    finally { if (e_3) throw e_3.error; }
+                }
+                return false;
+            },
+            arity: toFixedArity(2),
+        },
+        'every-row?': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var e_5, _c;
+                var _d = __read(_a, 2), grid = _d[0], predicate = _d[1];
+                var executeFunction = _b.executeFunction;
+                assertGrid(grid, sourceCodeInfo);
+                assertFunctionLike(predicate, sourceCodeInfo);
+                try {
+                    for (var grid_3 = __values(grid), grid_3_1 = grid_3.next(); !grid_3_1.done; grid_3_1 = grid_3.next()) {
+                        var row = grid_3_1.value;
+                        if (!executeFunction(predicate, [row], contextStack, sourceCodeInfo)) {
+                            return false;
+                        }
+                    }
+                }
+                catch (e_5_1) { e_5 = { error: e_5_1 }; }
+                finally {
+                    try {
+                        if (grid_3_1 && !grid_3_1.done && (_c = grid_3.return)) _c.call(grid_3);
+                    }
+                    finally { if (e_5) throw e_5.error; }
+                }
+                return true;
+            },
+            arity: toFixedArity(2),
+        },
+        'some-row?': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var e_6, _c;
+                var _d = __read(_a, 2), grid = _d[0], predicate = _d[1];
+                var executeFunction = _b.executeFunction;
+                assertGrid(grid, sourceCodeInfo);
+                assertFunctionLike(predicate, sourceCodeInfo);
+                try {
+                    for (var grid_4 = __values(grid), grid_4_1 = grid_4.next(); !grid_4_1.done; grid_4_1 = grid_4.next()) {
+                        var row = grid_4_1.value;
+                        if (executeFunction(predicate, [row], contextStack, sourceCodeInfo)) {
+                            return true;
+                        }
+                    }
+                }
+                catch (e_6_1) { e_6 = { error: e_6_1 }; }
+                finally {
+                    try {
+                        if (grid_4_1 && !grid_4_1.done && (_c = grid_4.return)) _c.call(grid_4);
+                    }
+                    finally { if (e_6) throw e_6.error; }
+                }
+                return false;
+            },
+            arity: toFixedArity(2),
+        },
+        'every-col?': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var e_7, _c;
+                var _d = __read(_a, 2), grid = _d[0], predicate = _d[1];
+                var executeFunction = _b.executeFunction;
+                assertGrid(grid, sourceCodeInfo);
+                assertFunctionLike(predicate, sourceCodeInfo);
+                var transposed = transpose(grid);
+                try {
+                    for (var transposed_1 = __values(transposed), transposed_1_1 = transposed_1.next(); !transposed_1_1.done; transposed_1_1 = transposed_1.next()) {
+                        var row = transposed_1_1.value;
+                        if (!executeFunction(predicate, [row], contextStack, sourceCodeInfo)) {
+                            return false;
+                        }
+                    }
+                }
+                catch (e_7_1) { e_7 = { error: e_7_1 }; }
+                finally {
+                    try {
+                        if (transposed_1_1 && !transposed_1_1.done && (_c = transposed_1.return)) _c.call(transposed_1);
+                    }
+                    finally { if (e_7) throw e_7.error; }
+                }
+                return true;
+            },
+            arity: toFixedArity(2),
+        },
+        'some-col?': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var e_8, _c;
+                var _d = __read(_a, 2), grid = _d[0], predicate = _d[1];
+                var executeFunction = _b.executeFunction;
+                assertGrid(grid, sourceCodeInfo);
+                assertFunctionLike(predicate, sourceCodeInfo);
+                var transposed = transpose(grid);
+                try {
+                    for (var transposed_2 = __values(transposed), transposed_2_1 = transposed_2.next(); !transposed_2_1.done; transposed_2_1 = transposed_2.next()) {
+                        var row = transposed_2_1.value;
+                        if (executeFunction(predicate, [row], contextStack, sourceCodeInfo)) {
+                            return true;
+                        }
+                    }
+                }
+                catch (e_8_1) { e_8 = { error: e_8_1 }; }
+                finally {
+                    try {
+                        if (transposed_2_1 && !transposed_2_1.done && (_c = transposed_2.return)) _c.call(transposed_2);
+                    }
+                    finally { if (e_8) throw e_8.error; }
+                }
+                return false;
+            },
+            arity: toFixedArity(2),
+        },
+        'row': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), grid = _b[0], row = _b[1];
+                assertGrid(grid, sourceCodeInfo);
+                assertNumber(row, sourceCodeInfo, { integer: true, nonNegative: true, lt: grid.length });
+                return grid[row];
+            },
+            arity: toFixedArity(2),
+        },
+        'col': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), grid = _b[0], col = _b[1];
+                assertGrid(grid, sourceCodeInfo);
+                assertNumber(col, sourceCodeInfo, { integer: true, nonNegative: true, lt: grid[0].length });
+                return grid.map(function (row) { return row[col]; });
+            },
+            arity: toFixedArity(2),
+        },
+        'shape': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), grid = _b[0];
+                assertGrid(grid, sourceCodeInfo);
+                return [grid.length, grid[0].length];
+            },
+            arity: toFixedArity(1),
+        },
+        'fill': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), rows = _b[0], cols = _b[1], value = _b[2];
+                assertNumber(rows, sourceCodeInfo, { integer: true, positive: true });
+                assertNumber(cols, sourceCodeInfo, { integer: true, positive: true });
+                assertAny(value, sourceCodeInfo);
+                var result = [];
+                for (var i = 0; i < rows; i += 1) {
+                    var row = [];
+                    for (var j = 0; j < cols; j += 1) {
+                        row.push(value);
+                    }
+                    result.push(row);
+                }
+                return result;
+            },
+            arity: toFixedArity(3),
+        },
+        'generate': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var _c = __read(_a, 3), rows = _c[0], cols = _c[1], generator = _c[2];
+                var executeFunction = _b.executeFunction;
+                assertNumber(rows, sourceCodeInfo, { integer: true, positive: true });
+                assertNumber(cols, sourceCodeInfo, { integer: true, positive: true });
+                assertFunctionLike(generator, sourceCodeInfo);
+                var result = [];
+                for (var i = 0; i < rows; i += 1) {
+                    var row = [];
+                    for (var j = 0; j < cols; j += 1) {
+                        var value = executeFunction(generator, [i, j], contextStack, sourceCodeInfo);
+                        assertAny(value, sourceCodeInfo);
+                        row.push(value);
+                    }
+                    result.push(row);
+                }
+                return result;
+            },
+            arity: toFixedArity(3),
+        },
+        'reshape': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), grid = _b[0], rows = _b[1];
+                assertGrid(grid, sourceCodeInfo);
+                assertNumber(rows, sourceCodeInfo, { integer: true, positive: true });
+                var flatTable = grid.flat();
+                if (flatTable.length % rows !== 0) {
+                    throw new LitsError("The number of elements in the grid must be divisible by rows, but got ".concat(flatTable.length, " and ").concat(rows), sourceCodeInfo);
+                }
+                var cols = flatTable.length / rows;
+                var result = [];
+                for (var i = 0; i < rows; i += 1) {
+                    var row = [];
+                    for (var j = 0; j < cols; j += 1) {
+                        row.push(flatTable[i * cols + j]);
+                    }
+                    result.push(row);
+                }
+                return result;
+            },
+            arity: toFixedArity(2),
+        },
+        'transpose': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), grid = _b[0];
+                assertGrid(grid, sourceCodeInfo);
+                return transpose(grid);
+            },
+            arity: toFixedArity(1),
+            aliases: ['tr'],
+        },
+        'flip-h': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), grid = _b[0];
+                assertGrid(grid, sourceCodeInfo);
+                return grid.map(function (row) { return row.reverse(); });
+            },
+            arity: toFixedArity(1),
+        },
+        'flip-v': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), grid = _b[0];
+                assertGrid(grid, sourceCodeInfo);
+                return grid.reverse();
+            },
+            arity: toFixedArity(1),
+        },
+        'rotate': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), grid = _b[0], times = _b[1];
+                assertGrid(grid, sourceCodeInfo);
+                assertNumber(times, sourceCodeInfo, { integer: true });
+                // Normalize times to be between 0 and 3
+                times = ((times % 4) + 4) % 4;
+                // If times is 0, return the original grid
+                if (times === 0 || grid.length === 0) {
+                    return grid.map(function (row) { return __spreadArray([], __read(row), false); });
+                }
+                var height = grid.length;
+                var width = grid[0].length;
+                var result;
+                switch (times) {
+                    case 1: // 90 degrees clockwise
+                        result = Array(width).fill(null).map(function () { return Array(height).fill(null); });
+                        for (var y = 0; y < height; y++) {
+                            for (var x = 0; x < width; x++) {
+                                result[x][height - 1 - y] = grid[y][x];
+                            }
+                        }
+                        break;
+                    case 2: // 180 degrees
+                        result = Array(height).fill(null).map(function () { return Array(width).fill(null); });
+                        for (var y = 0; y < height; y++) {
+                            for (var x = 0; x < width; x++) {
+                                result[height - 1 - y][width - 1 - x] = grid[y][x];
+                            }
+                        }
+                        break;
+                    case 3: // 270 degrees clockwise (or 90 degrees counter-clockwise)
+                        result = Array(width).fill(null).map(function () { return Array(height).fill(null); });
+                        for (var y = 0; y < height; y++) {
+                            for (var x = 0; x < width; x++) {
+                                result[width - 1 - x][y] = grid[y][x];
+                            }
+                        }
+                        break;
+                }
+                return result;
+            },
+            arity: toFixedArity(2),
+        },
+        'reverse-rows': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), grid = _b[0];
+                assertGrid(grid, sourceCodeInfo);
+                return grid.reverse();
+            },
+            arity: toFixedArity(1),
+        },
+        'reverse-cols': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), grid = _b[0];
+                assertGrid(grid, sourceCodeInfo);
+                return grid.map(function (row) { return row.reverse(); });
+            },
+            arity: toFixedArity(1),
+        },
+        'slice': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), grid = _b[0], start = _b[1], end = _b[2];
+                assertGrid(grid, sourceCodeInfo);
+                assertVector(start, sourceCodeInfo);
+                if (start.length !== 2) {
+                    throw new LitsError("The start vector must have 2 elements, but got ".concat(start.length), sourceCodeInfo);
+                }
+                var _c = __read(start, 2), rowStart = _c[0], colStart = _c[1];
+                assertNumber(rowStart, sourceCodeInfo, { integer: true, nonNegative: true, lt: grid.length });
+                assertNumber(colStart, sourceCodeInfo, { integer: true, nonNegative: true, lt: grid[0].length });
+                end !== null && end !== void 0 ? end : (end = [grid.length, grid[0].length]);
+                assertVector(end, sourceCodeInfo);
+                if (end.length !== 2) {
+                    throw new LitsError("The end vector must have 2 elements, but got ".concat(end.length), sourceCodeInfo);
+                }
+                var _d = __read(end, 2), rowEnd = _d[0], colEnd = _d[1];
+                assertNumber(rowEnd, sourceCodeInfo, { gt: rowStart, lte: grid.length });
+                assertNumber(colEnd, sourceCodeInfo, { gt: colStart, lte: grid[0].length });
+                var result = [];
+                for (var i = rowStart; i < rowEnd; i += 1) {
+                    var row = [];
+                    for (var j = colStart; j < colEnd; j += 1) {
+                        row.push(grid[i][j]);
+                    }
+                    result.push(row);
+                }
+                return result;
+            },
+            arity: { min: 2, max: 3 },
+        },
+        'slice-rows': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), grid = _b[0], rowStart = _b[1], rowEnd = _b[2];
+                assertGrid(grid, sourceCodeInfo);
+                if (typeof rowEnd === 'undefined') {
+                    assertNumber(rowStart, sourceCodeInfo, { integer: true, lte: grid.length, gte: -grid.length });
+                    if (rowStart < 0) {
+                        return grid.slice(grid.length + rowStart);
+                    }
+                    return grid.slice(rowStart);
+                }
+                assertNumber(rowStart, sourceCodeInfo, { integer: true, nonNegative: true, lte: grid.length });
+                assertNumber(rowEnd, sourceCodeInfo, { integer: true });
+                rowEnd = rowEnd < 0 ? grid.length + rowEnd : rowEnd;
+                assertNumber(rowEnd, sourceCodeInfo, { gt: rowStart, lte: grid.length });
+                return grid.slice(rowStart, rowEnd);
+            },
+            arity: { min: 2, max: 3 },
+        },
+        'slice-cols': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), grid = _b[0], colStart = _b[1], colEnd = _b[2];
+                assertGrid(grid, sourceCodeInfo);
+                var trMatrix = transpose(grid);
+                if (typeof colEnd === 'undefined') {
+                    assertNumber(colStart, sourceCodeInfo, { integer: true, lte: trMatrix.length, gte: -trMatrix.length });
+                    if (colStart < 0) {
+                        return transpose(trMatrix.slice(trMatrix.length + colStart));
+                    }
+                    return transpose(trMatrix.slice(colStart));
+                }
+                assertNumber(colStart, sourceCodeInfo, { integer: true, nonNegative: true, lte: trMatrix.length });
+                assertNumber(colEnd, sourceCodeInfo, { integer: true });
+                colEnd = colEnd < 0 ? trMatrix.length + colEnd : colEnd;
+                assertNumber(colEnd, sourceCodeInfo, { gt: colStart, lte: trMatrix.length });
+                return transpose(trMatrix.slice(colStart, colEnd));
+            },
+            arity: { min: 2, max: 3 },
+        },
+        'splice-rows': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a), grid = _b[0], rowStart = _b[1], rowDeleteCount = _b[2], rows = _b.slice(3);
+                assertGrid(grid, sourceCodeInfo);
+                assertNumber(rowStart, sourceCodeInfo, { integer: true, nonNegative: true, lte: grid.length });
+                assertNumber(rowDeleteCount, sourceCodeInfo, { integer: true, nonNegative: true });
+                if (rows.length !== 0) {
+                    assertGrid(rows, sourceCodeInfo);
+                    rows.every(function (row) {
+                        assertArray(row, sourceCodeInfo);
+                        if (grid[0].length !== row.length) {
+                            throw new LitsError("All rows must have the same length as the number of columns in grid, but got ".concat(row.length), sourceCodeInfo);
+                        }
+                        return true;
+                    });
+                }
+                var result = [];
+                for (var i = 0; i < rowStart; i += 1) {
+                    result.push(grid[i]);
+                }
+                if (rows.length > 0) {
+                    result.push.apply(result, __spreadArray([], __read(rows), false));
+                }
+                for (var i = rowStart + rowDeleteCount; i < grid.length; i += 1) {
+                    result.push(grid[i]);
+                }
+                return result;
+            },
+            arity: { min: 3 },
+        },
+        'splice-cols': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a), grid = _b[0], colStart = _b[1], colDeleteCount = _b[2], cols = _b.slice(3);
+                assertGrid(grid, sourceCodeInfo);
+                var trMatrix = transpose(grid);
+                assertNumber(colStart, sourceCodeInfo, { integer: true, nonNegative: true, lte: trMatrix.length });
+                assertNumber(colDeleteCount, sourceCodeInfo, { integer: true, nonNegative: true });
+                if (cols.length !== 0) {
+                    assertGrid(cols, sourceCodeInfo);
+                    cols.every(function (row) {
+                        assertArray(row, sourceCodeInfo);
+                        if (trMatrix[0].length !== row.length) {
+                            throw new LitsError("All rows must have the same length as the number of rows in grid, but got ".concat(row.length), sourceCodeInfo);
+                        }
+                        return true;
+                    });
+                }
+                var result = [];
+                for (var i = 0; i < colStart; i += 1) {
+                    result.push(trMatrix[i]);
+                }
+                result.push.apply(result, __spreadArray([], __read(cols), false));
+                for (var i = colStart + colDeleteCount; i < trMatrix.length; i += 1) {
+                    result.push(trMatrix[i]);
+                }
+                return transpose(result);
+            },
+            arity: { min: 3 },
+        },
+        'concat-rows': {
+            evaluate: function (params, sourceCodeInfo) {
+                assertArray(params, sourceCodeInfo);
+                params.every(function (grid) { return assertGrid(grid, sourceCodeInfo); });
+                var cols = params[0][0].length;
+                params.slice(1).every(function (grid) {
+                    if (grid[0].length !== cols) {
+                        throw new LitsError("All matrices must have the same number of columns, but got ".concat(cols, " and ").concat(grid[0].length), sourceCodeInfo);
+                    }
+                    return true;
+                });
+                var result = [];
+                params.forEach(function (grid) {
+                    grid.forEach(function (row) {
+                        result.push(row);
+                    });
+                });
+                return result;
+            },
+            arity: { min: 1 },
+        },
+        'concat-cols': {
+            evaluate: function (params, sourceCodeInfo) {
+                assertArray(params, sourceCodeInfo);
+                params.every(function (grid) { return assertGrid(grid, sourceCodeInfo); });
+                var rows = params[0].length;
+                params.slice(1).every(function (grid) {
+                    if (grid.length !== rows) {
+                        throw new LitsError("All matrices must have the same number of rows, but got ".concat(rows, " and ").concat(grid.length), sourceCodeInfo);
+                    }
+                    return true;
+                });
+                var result = [];
+                var _loop_1 = function (i) {
+                    var row = [];
+                    params.forEach(function (grid) {
+                        row.push.apply(row, __spreadArray([], __read(grid[i]), false));
+                    });
+                    result.push(row);
+                };
+                for (var i = 0; i < rows; i += 1) {
+                    _loop_1(i);
+                }
+                return result;
+            },
+            arity: { min: 1 },
+        },
+        'map': {
+            evaluate: function (params, sourceCodeInfo, contextStack, _a) {
+                var executeFunction = _a.executeFunction;
+                var fn = asFunctionLike(params.at(-1), sourceCodeInfo);
+                var grids = params.slice(0, -1);
+                assertGrid(grids[0], sourceCodeInfo);
+                var rows = grids[0].length;
+                var cols = grids[0][0].length;
+                grids.slice(1).forEach(function (grid) {
+                    assertGrid(grid, sourceCodeInfo);
+                    if (grid.length !== rows) {
+                        throw new LitsError("All matrices must have the same number of rows, but got ".concat(rows, " and ").concat(grid.length), sourceCodeInfo);
+                    }
+                    if (grid[0].length !== cols) {
+                        throw new LitsError("All matrices must have the same number of columns, but got ".concat(cols, " and ").concat(grid[0].length), sourceCodeInfo);
+                    }
+                });
+                var result = [];
+                var _loop_2 = function (i) {
+                    var row = [];
+                    var _loop_3 = function (j) {
+                        var args = grids.map(function (grid) { return grid[i][j]; });
+                        row.push(asAny(executeFunction(fn, args, contextStack, sourceCodeInfo)));
+                    };
+                    for (var j = 0; j < cols; j += 1) {
+                        _loop_3(j);
+                    }
+                    result.push(row);
+                };
+                for (var i = 0; i < rows; i += 1) {
+                    _loop_2(i);
+                }
+                return result;
+            },
+            arity: { min: 2 },
+        },
+        'mapi': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var _c = __read(_a, 2), grid = _c[0], fn = _c[1];
+                var executeFunction = _b.executeFunction;
+                assertGrid(grid, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
+                var rows = grid.length;
+                var cols = grid[0].length;
+                var result = [];
+                for (var i = 0; i < rows; i += 1) {
+                    var row = [];
+                    for (var j = 0; j < cols; j += 1) {
+                        row.push(asAny(executeFunction(fn, [grid[i][j], i, j], contextStack, sourceCodeInfo)));
+                    }
+                    result.push(row);
+                }
+                return result;
+            },
+            arity: toFixedArity(2),
+        },
+        'reduce': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var e_9, _c, e_10, _d;
+                var _e = __read(_a, 3), grid = _e[0], fn = _e[1], initialValue = _e[2];
+                var executeFunction = _b.executeFunction;
+                assertGrid(grid, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
+                var accumulator = asAny(initialValue);
+                try {
+                    for (var grid_5 = __values(grid), grid_5_1 = grid_5.next(); !grid_5_1.done; grid_5_1 = grid_5.next()) {
+                        var row = grid_5_1.value;
+                        try {
+                            for (var row_3 = (e_10 = void 0, __values(row)), row_3_1 = row_3.next(); !row_3_1.done; row_3_1 = row_3.next()) {
+                                var cell = row_3_1.value;
+                                accumulator = executeFunction(fn, [accumulator, cell], contextStack, sourceCodeInfo);
+                            }
+                        }
+                        catch (e_10_1) { e_10 = { error: e_10_1 }; }
+                        finally {
+                            try {
+                                if (row_3_1 && !row_3_1.done && (_d = row_3.return)) _d.call(row_3);
+                            }
+                            finally { if (e_10) throw e_10.error; }
+                        }
+                    }
+                }
+                catch (e_9_1) { e_9 = { error: e_9_1 }; }
+                finally {
+                    try {
+                        if (grid_5_1 && !grid_5_1.done && (_c = grid_5.return)) _c.call(grid_5);
+                    }
+                    finally { if (e_9) throw e_9.error; }
+                }
+                return accumulator;
+            },
+            arity: toFixedArity(3),
+        },
+        'reducei': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var _c = __read(_a, 3), grid = _c[0], fn = _c[1], initialValue = _c[2];
+                var executeFunction = _b.executeFunction;
+                assertGrid(grid, sourceCodeInfo);
+                assertFunctionLike(fn, sourceCodeInfo);
+                var accumulator = asAny(initialValue);
+                for (var i = 0; i < grid.length; i += 1) {
+                    for (var j = 0; j < grid[i].length; j += 1) {
+                        accumulator = executeFunction(fn, [accumulator, grid[i][j], i, j], contextStack, sourceCodeInfo);
+                    }
+                }
+                return accumulator;
+            },
+            arity: toFixedArity(3),
+        },
+        'push-rows': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a), grid = _b[0], rows = _b.slice(1);
+                assertGrid(grid, sourceCodeInfo);
+                assertGrid(rows, sourceCodeInfo);
+                if (grid[0].length !== rows[0].length) {
+                    throw new LitsError("All rows must have the same length as the number of columns in grid, but got ".concat(grid[0].length, " and ").concat(rows[0].length), sourceCodeInfo);
+                }
+                return __spreadArray(__spreadArray([], __read(grid), false), __read(rows), false);
+            },
+            arity: { min: 2 },
+        },
+        'unshift-rows': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a), grid = _b[0], rows = _b.slice(1);
+                assertGrid(grid, sourceCodeInfo);
+                assertGrid(rows, sourceCodeInfo);
+                if (grid[0].length !== rows[0].length) {
+                    throw new LitsError("All rows must have the same length as the number of columns in grid, but got ".concat(grid[0].length, " and ").concat(rows[0].length), sourceCodeInfo);
+                }
+                return __spreadArray(__spreadArray([], __read(rows), false), __read(grid), false);
+            },
+            arity: { min: 2 },
+        },
+        'pop-row': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), grid = _b[0];
+                assertGrid(grid, sourceCodeInfo);
+                if (grid.length === 1) {
+                    return null;
+                }
+                return grid.slice(0, -1);
+            },
+            arity: toFixedArity(1),
+        },
+        'shift-row': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), grid = _b[0];
+                assertGrid(grid, sourceCodeInfo);
+                if (grid.length === 1) {
+                    return null;
+                }
+                return grid.slice(1);
+            },
+            arity: toFixedArity(1),
+        },
+        'push-cols': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a), grid = _b[0], cols = _b.slice(1);
+                assertGrid(grid, sourceCodeInfo);
+                assertGrid(cols, sourceCodeInfo);
+                if (grid.length !== cols[0].length) {
+                    throw new LitsError("All columns must have the same length as the number of rows in grid, but got ".concat(cols.length), sourceCodeInfo);
+                }
+                var result = [];
+                var _loop_4 = function (i) {
+                    var row = [];
+                    row.push.apply(row, __spreadArray([], __read(grid[i]), false));
+                    cols.forEach(function (col) {
+                        row.push(col[i]);
+                    });
+                    result.push(row);
+                };
+                for (var i = 0; i < grid.length; i += 1) {
+                    _loop_4(i);
+                }
+                return result;
+            },
+            arity: { min: 2 },
+        },
+        'unshift-cols': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a), grid = _b[0], cols = _b.slice(1);
+                assertGrid(grid, sourceCodeInfo);
+                assertGrid(cols, sourceCodeInfo);
+                if (grid.length !== cols[0].length) {
+                    throw new LitsError("All columns must have the same length as the number of rows in grid, but got ".concat(cols.length), sourceCodeInfo);
+                }
+                var result = [];
+                var _loop_5 = function (i) {
+                    var row = [];
+                    cols.forEach(function (col) {
+                        row.push(col[i]);
+                    });
+                    row.push.apply(row, __spreadArray([], __read(grid[i]), false));
+                    result.push(row);
+                };
+                for (var i = 0; i < grid.length; i += 1) {
+                    _loop_5(i);
+                }
+                return result;
+            },
+            arity: { min: 2 },
+        },
+        'pop-col': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), grid = _b[0];
+                assertGrid(grid, sourceCodeInfo);
+                if (grid[0].length === 1) {
+                    return null;
+                }
+                return grid.map(function (row) { return row.slice(0, -1); });
+            },
+            arity: toFixedArity(1),
+        },
+        'shift-col': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), grid = _b[0];
+                assertGrid(grid, sourceCodeInfo);
+                if (grid[0].length === 1) {
+                    return null;
+                }
+                return grid.map(function (row) { return row.slice(1); });
+            },
+            arity: toFixedArity(1),
+        },
+        'from-array': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), array = _b[0], rows = _b[1];
+                assertArray(array, sourceCodeInfo);
+                assertNumber(rows, sourceCodeInfo, { integer: true, positive: true });
+                if (array.length % rows !== 0) {
+                    throw new LitsError("The number of elements in the array must be divisible by rows, but got ".concat(array.length, " and ").concat(rows), sourceCodeInfo);
+                }
+                return fromArray(array, rows);
+            },
+            arity: toFixedArity(2),
+        },
+    };
+    /**
+     * The grid namespace containing 2D array manipulation functions.
+     */
+    var gridNamespace = {
+        name: 'grid',
+        functions: gridFunctions,
+    };
+
+    // Export registry functions
+    registerNamespace(gridNamespace);
+
     function isEqual(_a, sourceCodeInfo) {
         var e_1, _b;
         var _c = __read(_a), first = _c[0], rest = _c.slice(1);
@@ -4195,6 +5042,64 @@ var Playground = (function (exports) {
                 return JSON.stringify(first, null, second);
             },
             arity: { min: 1, max: 2 },
+        },
+        'import': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var e_7, _b, _c, e_8, _d, _e;
+                var _f = __read(_a, 1), namespaceName = _f[0];
+                assertString(namespaceName, sourceCodeInfo);
+                var namespace = getNamespace(namespaceName);
+                if (!namespace) {
+                    throw new LitsError("Unknown namespace: '".concat(namespaceName, "'"), sourceCodeInfo);
+                }
+                // Create an object where each key is a function name and value is a NamespaceFunction
+                var result = {};
+                try {
+                    for (var _g = __values(Object.entries(namespace.functions)), _h = _g.next(); !_h.done; _h = _g.next()) {
+                        var _j = __read(_h.value, 2), functionName = _j[0], expression = _j[1];
+                        result[functionName] = (_c = {},
+                            _c[FUNCTION_SYMBOL] = true,
+                            _c.sourceCodeInfo = sourceCodeInfo,
+                            _c.functionType = 'Namespace',
+                            _c.namespaceName = namespaceName,
+                            _c.functionName = functionName,
+                            _c.arity = expression.arity,
+                            _c);
+                        // Also add aliases
+                        if (expression.aliases) {
+                            try {
+                                for (var _k = (e_8 = void 0, __values(expression.aliases)), _l = _k.next(); !_l.done; _l = _k.next()) {
+                                    var alias = _l.value;
+                                    result[alias] = (_e = {},
+                                        _e[FUNCTION_SYMBOL] = true,
+                                        _e.sourceCodeInfo = sourceCodeInfo,
+                                        _e.functionType = 'Namespace',
+                                        _e.namespaceName = namespaceName,
+                                        _e.functionName = functionName,
+                                        _e.arity = expression.arity,
+                                        _e);
+                                }
+                            }
+                            catch (e_8_1) { e_8 = { error: e_8_1 }; }
+                            finally {
+                                try {
+                                    if (_l && !_l.done && (_d = _k.return)) _d.call(_k);
+                                }
+                                finally { if (e_8) throw e_8.error; }
+                            }
+                        }
+                    }
+                }
+                catch (e_7_1) { e_7 = { error: e_7_1 }; }
+                finally {
+                    try {
+                        if (_h && !_h.done && (_b = _g.return)) _b.call(_g);
+                    }
+                    finally { if (e_7) throw e_7.error; }
+                }
+                return result;
+            },
+            arity: toFixedArity(1),
         },
     };
 
@@ -6553,6 +7458,18 @@ var Playground = (function (exports) {
             else {
                 throw new LitsError("Special builtin function ".concat(fn.specialBuiltinSymbolType, " is not supported as normal expression."), sourceCodeInfo);
             }
+        },
+        Namespace: function (fn, params, sourceCodeInfo, contextStack, _a) {
+            var executeFunction = _a.executeFunction;
+            var namespace = getNamespace(fn.namespaceName);
+            if (!namespace) {
+                throw new LitsError("Namespace '".concat(fn.namespaceName, "' not found."), sourceCodeInfo);
+            }
+            var expression = namespace.functions[fn.functionName];
+            if (!expression) {
+                throw new LitsError("Function '".concat(fn.functionName, "' not found in namespace '").concat(fn.namespaceName, "'."), sourceCodeInfo);
+            }
+            return expression.evaluate(params, sourceCodeInfo, contextStack, { executeFunction: executeFunction });
         },
     };
 

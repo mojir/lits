@@ -119,11 +119,18 @@ export interface SpecialBuiltinFunction extends GenericLitsFunction {
     | typeof specialExpressionTypes['??']
 }
 
+export interface NamespaceFunction extends GenericLitsFunction {
+  functionType: 'Namespace'
+  namespaceName: string
+  functionName: string
+}
+
 export type LitsFunction =
   | NativeJsFunction
   | UserDefinedFunction
   | NormalBuiltinFunction
   | SpecialBuiltinFunction
+  | NamespaceFunction
   | PartialFunction
   | CompFunction
   | ConstantlyFunction

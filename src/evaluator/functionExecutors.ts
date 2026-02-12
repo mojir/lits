@@ -3,6 +3,8 @@ import { evalueateBindingNodeValues } from '../builtin/bindingNode'
 import { allNormalExpressions } from '../builtin/normalExpressions'
 import { LitsError, RecurSignal } from '../errors'
 import type { Any, Arr } from '../interface'
+// Import from index to ensure namespaces are registered
+import { getNamespace } from '../namespaces'
 import type {
   CompFunction,
   ComplementFunction,
@@ -11,6 +13,7 @@ import type {
   FNullFunction,
   JuxtFunction,
   LitsFunctionType,
+  NamespaceFunction,
   NativeJsFunction,
   NormalBuiltinFunction,
   PartialFunction,
@@ -186,5 +189,16 @@ export const functionExecutors: FunctionExecutors = {
     else {
       throw new LitsError(`Special builtin function ${fn.specialBuiltinSymbolType} is not supported as normal expression.`, sourceCodeInfo)
     }
+  },
+  Namespace: (fn: NamespaceFunction, params, sourceCodeInfo, contextStack, { executeFunction }) => {
+    const namespace = getNamespace(fn.namespaceName)
+    if (!namespace) {
+      throw new LitsError(`Namespace '${fn.namespaceName}' not found.`, sourceCodeInfo)
+    }
+    const expression = namespace.functions[fn.functionName]
+    if (!expression) {
+      throw new LitsError(`Function '${fn.functionName}' not found in namespace '${fn.namespaceName}'.`, sourceCodeInfo)
+    }
+    return expression.evaluate(params, sourceCodeInfo, contextStack, { executeFunction })
   },
 }

@@ -1,4 +1,4 @@
-import { transpose } from '../../grid/transpose'
+import { transpose } from '../../../../../../namespaces/grid/transpose'
 import { matrixMultiply } from './matrixMultiply'
 import { isIdentity } from './isIdentity'
 import { isSquare } from './isSquare'

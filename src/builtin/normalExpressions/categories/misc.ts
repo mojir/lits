@@ -1,10 +1,15 @@
+import { LitsError } from '../../../errors'
 import type { Any } from '../../../interface'
+// Import from index to ensure namespaces are registered
+import { getNamespace } from '../../../namespaces'
+import type { NamespaceFunction } from '../../../parser/types'
 import type { SourceCodeInfo } from '../../../tokenizer/token'
 import { asAny, assertAny } from '../../../typeGuards/lits'
 import { assertNumber } from '../../../typeGuards/number'
 import { asStringOrNumber, assertString, assertStringOrNumber } from '../../../typeGuards/string'
 import { compare, deepEqual } from '../../../utils'
 import { toFixedArity } from '../../../utils/arity'
+import { FUNCTION_SYMBOL } from '../../../utils/symbols'
 import type { BuiltinNormalExpressions } from '../../interface'
 
 function isEqual([first, ...rest]: unknown[], sourceCodeInfo: SourceCodeInfo | undefined) {
@@ -163,5 +168,42 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       return JSON.stringify(first, null, second)
     },
     arity: { min: 1, max: 2 },
+  },
+  'import': {
+    evaluate: ([namespaceName], sourceCodeInfo): Record<string, NamespaceFunction> => {
+      assertString(namespaceName, sourceCodeInfo)
+      const namespace = getNamespace(namespaceName)
+      if (!namespace) {
+        throw new LitsError(`Unknown namespace: '${namespaceName}'`, sourceCodeInfo)
+      }
+
+      // Create an object where each key is a function name and value is a NamespaceFunction
+      const result: Record<string, NamespaceFunction> = {}
+      for (const [functionName, expression] of Object.entries(namespace.functions)) {
+        result[functionName] = {
+          [FUNCTION_SYMBOL]: true,
+          sourceCodeInfo,
+          functionType: 'Namespace',
+          namespaceName,
+          functionName,
+          arity: expression.arity,
+        }
+        // Also add aliases
+        if (expression.aliases) {
+          for (const alias of expression.aliases) {
+            result[alias] = {
+              [FUNCTION_SYMBOL]: true,
+              sourceCodeInfo,
+              functionType: 'Namespace',
+              namespaceName,
+              functionName, // Point to the original function
+              arity: expression.arity,
+            }
+          }
+        }
+      }
+      return result
+    },
+    arity: toFixedArity(1),
   },
 }
