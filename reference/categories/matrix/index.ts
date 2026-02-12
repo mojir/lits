@@ -16,8 +16,8 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Multiplies two `matrices` using standard `matrix` multiplication based on **dot products** of rows and columns.',
     examples: [
-      'mat.mul([[1, 2], [3, 4]], [[5, 6], [7, 8]])',
-      'mat.mul([[1, 2, 3], [4, 5, 6]], [[7, 8], [9, 10], [11, 12]])',
+      'let mat = import("mat");\nmat.mul([[1, 2], [3, 4]], [[5, 6], [7, 8]])',
+      'let mat = import("mat");\nmat.mul([[1, 2, 3], [4, 5, 6]], [[7, 8], [9, 10], [11, 12]])',
     ],
   },
   'mat.det': {
@@ -37,8 +37,8 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Calculates the **determinant** of a square matrix.',
     examples: [
-      'mat.det([[1, 2], [3, 4]])',
-      'mat.det([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+      'let mat = import("mat");\nmat.det([[1, 2], [3, 4]])',
+      'let mat = import("mat");\nmat.det([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
     ],
   },
   'mat.inv': {
@@ -58,8 +58,8 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Calculates the **inverse** of a square matrix.',
     examples: [
-      'mat.inv([[1, 2], [3, 4]])',
-      'mat.inv([[1, 2, 3], [4, 5, 7], [7, 8, 10]])',
+      'let mat = import("mat");\nmat.inv([[1, 2], [3, 4]])',
+      'let mat = import("mat");\nmat.inv([[1, 2, 3], [4, 5, 7], [7, 8, 10]])',
     ],
   },
   'mat.adj': {
@@ -79,9 +79,9 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Calculates the **adjugate** of a square matrix.',
     examples: [
-      'mat.adj([[1, 2], [3, 4]])',
-      'mat.adj([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
-      'mat.adj([[1, 2, 3], [7, 8, 9], [4, 5, 6]])',
+      'let mat = import("mat");\nmat.adj([[1, 2], [3, 4]])',
+      'let mat = import("mat");\nmat.adj([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+      'let mat = import("mat");\nmat.adj([[1, 2, 3], [7, 8, 9], [4, 5, 6]])',
 
     ],
   },
@@ -102,9 +102,9 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Calculates the **cofactor** of a square matrix.',
     examples: [
-      'mat.cofactor([[1, 2], [3, 4]])',
-      'mat.cofactor([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
-      'mat.cofactor([[1, 2, 3], [7, 8, 9], [4, 5, 6]])',
+      'let mat = import("mat");\nmat.cofactor([[1, 2], [3, 4]])',
+      'let mat = import("mat");\nmat.cofactor([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+      'let mat = import("mat");\nmat.cofactor([[1, 2, 3], [7, 8, 9], [4, 5, 6]])',
 
     ],
   },
@@ -133,8 +133,8 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Calculates the **minor** of a square matrix.',
     examples: [
-      'mat.minor([[1, 2], [3, 4]], 0, 1)',
-      'mat.minor([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 1, 1)',
+      'let mat = import("mat");\nmat.minor([[1, 2], [3, 4]], 0, 1)',
+      'let mat = import("mat");\nmat.minor([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 1, 1)',
     ],
   },
   'mat.trace': {
@@ -154,8 +154,8 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Calculates the **trace** of a square matrix.',
     examples: [
-      'mat.trace([[1, 2], [3, 4]])',
-      'mat.trace([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+      'let mat = import("mat");\nmat.trace([[1, 2], [3, 4]])',
+      'let mat = import("mat");\nmat.trace([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
     ],
   },
   'mat.symmetric?': {
@@ -175,8 +175,8 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Checks if a `matrix` is **symmetric**.',
     examples: [
-      'mat.symmetric?([[1, 2], [2, 1]])',
-      'mat.symmetric?([[1, 2, 3], [2, 1, 4], [3, 4, 1]])',
+      'let mat = import("mat");\nmat.symmetric?([[1, 2], [2, 1]])',
+      'let mat = import("mat");\nmat.symmetric?([[1, 2, 3], [2, 1, 4], [3, 4, 1]])',
     ],
   },
   'mat.triangular?': {
@@ -196,8 +196,8 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Checks if a `matrix` is **triangular**.',
     examples: [
-      'mat.triangular?([[2, 0], [0, 1]])',
-      'mat.triangular?([[1, 2, 3], [0, 4, 5], [0, 0, 6]])',
+      'let mat = import("mat");\nmat.triangular?([[2, 0], [0, 1]])',
+      'let mat = import("mat");\nmat.triangular?([[1, 2, 3], [0, 4, 5], [0, 0, 6]])',
     ],
   },
   'mat.upper-triangular?': {
@@ -217,8 +217,8 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Checks if a `matrix` is **upper triangular**.',
     examples: [
-      'mat.upper-triangular?([[1, 2], [0, 3]])',
-      'mat.upper-triangular?([[1, 2, 3], [0, 4, 5], [0, 0, 6]])',
+      'let mat = import("mat");\nmat.upper-triangular?([[1, 2], [0, 3]])',
+      'let mat = import("mat");\nmat.upper-triangular?([[1, 2, 3], [0, 4, 5], [0, 0, 6]])',
     ],
   },
   'mat.lower-triangular?': {
@@ -238,8 +238,8 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Checks if a `matrix` is **lower triangular**.',
     examples: [
-      'mat.lower-triangular?([[1, 0], [2, 3]])',
-      'mat.lower-triangular?([[1, 0, 0], [2, 3, 0], [4, 5, 6]])',
+      'let mat = import("mat");\nmat.lower-triangular?([[1, 0], [2, 3]])',
+      'let mat = import("mat");\nmat.lower-triangular?([[1, 0, 0], [2, 3, 0], [4, 5, 6]])',
     ],
   },
   'mat.diagonal?': {
@@ -259,9 +259,9 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Checks if a `matrix` is **diagonal**.',
     examples: [
-      'mat.diagonal?([[1, 0], [0, 2]])',
-      'mat.diagonal?([[1, 0, 0], [0, 2, 0], [0, 0, 3]])',
-      'mat.diagonal?([[1, 0, 0], [2, 2, 2], [0, 0, 3]])',
+      'let mat = import("mat");\nmat.diagonal?([[1, 0], [0, 2]])',
+      'let mat = import("mat");\nmat.diagonal?([[1, 0, 0], [0, 2, 0], [0, 0, 3]])',
+      'let mat = import("mat");\nmat.diagonal?([[1, 0, 0], [2, 2, 2], [0, 0, 3]])',
     ],
   },
   'mat.square?': {
@@ -281,9 +281,9 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Checks if a `matrix` is **square**.',
     examples: [
-      'mat.square?([[1, 2], [3, 4]])',
-      'mat.square?([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
-      'mat.square?([[1, 2, 3], [4, 5, 6]])',
+      'let mat = import("mat");\nmat.square?([[1, 2], [3, 4]])',
+      'let mat = import("mat");\nmat.square?([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+      'let mat = import("mat");\nmat.square?([[1, 2, 3], [4, 5, 6]])',
     ],
   },
   'mat.orthogonal?': {
@@ -303,9 +303,9 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Checks if a `matrix` is **orthogonal**.',
     examples: [
-      'mat.orthogonal?([[1, 0], [0, 1]])',
-      'mat.orthogonal?([[1, 0], [0, -1]])',
-      'mat.orthogonal?([[1, 2], [3, 4]])',
+      'let mat = import("mat");\nmat.orthogonal?([[1, 0], [0, 1]])',
+      'let mat = import("mat");\nmat.orthogonal?([[1, 0], [0, -1]])',
+      'let mat = import("mat");\nmat.orthogonal?([[1, 2], [3, 4]])',
     ],
   },
   'mat.identity?': {
@@ -325,9 +325,9 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Checks if a `matrix` is an **identity matrix**.',
     examples: [
-      'mat.identity?([[1, 0], [0, 1]])',
-      'mat.identity?([[1, 0, 0], [0, 1, 0], [0, 0, 1]])',
-      'mat.identity?([[1, 0, 0], [0, 1, 0], [0, 0, 0]])',
+      'let mat = import("mat");\nmat.identity?([[1, 0], [0, 1]])',
+      'let mat = import("mat");\nmat.identity?([[1, 0, 0], [0, 1, 0], [0, 0, 1]])',
+      'let mat = import("mat");\nmat.identity?([[1, 0, 0], [0, 1, 0], [0, 0, 0]])',
     ],
   },
   'mat.invertible?': {
@@ -347,9 +347,9 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Checks if a `matrix` is **invertible**.',
     examples: [
-      'mat.invertible?([[1, 2], [3, 4]])',
-      'mat.invertible?([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
-      'mat.invertible?([[1, 2], [2, 4]])',
+      'let mat = import("mat");\nmat.invertible?([[1, 2], [3, 4]])',
+      'let mat = import("mat");\nmat.invertible?([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+      'let mat = import("mat");\nmat.invertible?([[1, 2], [2, 4]])',
     ],
   },
   'mat.hilbert': {
@@ -369,8 +369,8 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Generates a **Hilbert matrix** of size `n`.',
     examples: [
-      'mat.hilbert(3)',
-      'mat.hilbert(4)',
+      'let mat = import("mat");\nmat.hilbert(3)',
+      'let mat = import("mat");\nmat.hilbert(4)',
     ],
   },
   'mat.vandermonde': {
@@ -390,8 +390,8 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Generates a **Vandermonde matrix** from a vector.',
     examples: [
-      'mat.vandermonde([1, 2, 3])',
-      'mat.vandermonde([1, 0, 1])',
+      'let mat = import("mat");\nmat.vandermonde([1, 2, 3])',
+      'let mat = import("mat");\nmat.vandermonde([1, 0, 1])',
     ],
   },
   'mat.band': {
@@ -419,8 +419,8 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Generates a **banded matrix** of size `n` with lower band index `lband` and upper band index `uband`.',
     examples: [
-      'mat.band(3, 1, 1)',
-      'mat.band(4, 1, 2)',
+      'let mat = import("mat");\nmat.band(3, 1, 1)',
+      'let mat = import("mat");\nmat.band(4, 1, 2)',
     ],
   },
   'mat.banded?': {
@@ -479,9 +479,9 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Calculates the **rank** of a matrix using **Gaussian elimination**.',
     examples: [
-      'mat.rank([[1, 0, 0], [0, 1, 0], [0, 0, 1]])',
-      'mat.rank([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
-      'mat.rank([[2, 4, 6], [3, 6, 9], [4, 8, 12]])',
+      'let mat = import("mat");\nmat.rank([[1, 0, 0], [0, 1, 0], [0, 0, 1]])',
+      'let mat = import("mat");\nmat.rank([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+      'let mat = import("mat");\nmat.rank([[2, 4, 6], [3, 6, 9], [4, 8, 12]])',
     ],
   },
   'mat.frobenius-norm': {
@@ -501,8 +501,8 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Calculates the **Frobenius norm** of a matrix.',
     examples: [
-      'mat.frobenius-norm([[1, 2], [3, 4]])',
-      'mat.frobenius-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+      'let mat = import("mat");\nmat.frobenius-norm([[1, 2], [3, 4]])',
+      'let mat = import("mat");\nmat.frobenius-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
     ],
   },
   'mat.1-norm': {
@@ -522,8 +522,8 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Calculates the **1-norm** of a matrix.',
     examples: [
-      'mat.1-norm([[1, 2], [3, 4]])',
-      'mat.1-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+      'let mat = import("mat");\nmat.1-norm([[1, 2], [3, 4]])',
+      'let mat = import("mat");\nmat.1-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
     ],
   },
   'mat.inf-norm': {
@@ -543,8 +543,8 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Calculates the **infinity norm** of a matrix.',
     examples: [
-      'mat.inf-norm([[1, 2], [3, 4]])',
-      'mat.inf-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+      'let mat = import("mat");\nmat.inf-norm([[1, 2], [3, 4]])',
+      'let mat = import("mat");\nmat.inf-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
     ],
     aliases: ['mat.row-norm'],
   },
@@ -565,8 +565,8 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Calculates the **max norm** of a matrix.',
     examples: [
-      'mat.max-norm([[1, 2], [3, 4]])',
-      'mat.max-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+      'let mat = import("mat");\nmat.max-norm([[1, 2], [3, 4]])',
+      'let mat = import("mat");\nmat.max-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
     ],
   },
 }

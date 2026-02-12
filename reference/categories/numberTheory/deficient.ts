@@ -19,8 +19,8 @@ export const deficientReference: NumberTheorySequenceReference<'deficient'> = {
       { argumentNames: ['length'] },
     ],
     examples: [
-      'nth.deficient-seq(1)',
-      'nth.deficient-seq(5)',
+      'let nt = import("nth");\nnt.deficient-seq(1)',
+      'let nt = import("nth");\nnt.deficient-seq(5)',
     ],
   },
   'nth.deficient-take-while': {
@@ -41,7 +41,7 @@ export const deficientReference: NumberTheorySequenceReference<'deficient'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'nth.deficient-take-while(-> $ < 100)',
+      'let nt = import("nth");\nnt.deficient-take-while(-> $ < 100)',
     ],
   },
   'nth.deficient-nth': {
@@ -61,8 +61,8 @@ export const deficientReference: NumberTheorySequenceReference<'deficient'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth.deficient-nth(5)',
-      'nth.deficient-nth(12)',
+      'let nt = import("nth");\nnt.deficient-nth(5)',
+      'let nt = import("nth");\nnt.deficient-nth(12)',
     ],
   },
   'nth.deficient?': {
@@ -82,8 +82,8 @@ export const deficientReference: NumberTheorySequenceReference<'deficient'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth.deficient?(12)',
-      'nth.deficient?(15)',
+      'let nt = import("nth");\nnt.deficient?(12)',
+      'let nt = import("nth");\nnt.deficient?(15)',
     ],
   },
 }

@@ -19,10 +19,10 @@ export const spanReference: VectorReductionReference<'span'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec.span([1, 2, 3, 4])',
-      'vec.span([1, 2, 3, 4, 5])',
-      'vec.span([1])',
-      'vec.span([])',
+      'let vec = import("vec");\nvec.span([1, 2, 3, 4])',
+      'let vec = import("vec");\nvec.span([1, 2, 3, 4, 5])',
+      'let vec = import("vec");\nvec.span([1])',
+      'let vec = import("vec");\nvec.span([])',
     ],
   },
 
@@ -48,9 +48,9 @@ export const spanReference: VectorReductionReference<'span'> = {
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'vec.moving-span([1, 2, 4, 7, 11, 16], 4)',
-      'vec.moving-span([1, 2, 4, 7, 11, 16], 5)',
-      'vec.moving-span([1, 2, 4, 7, 11, 16], 6)',
+      'let vec = import("vec");\nvec.moving-span([1, 2, 4, 7, 11, 16], 4)',
+      'let vec = import("vec");\nvec.moving-span([1, 2, 4, 7, 11, 16], 5)',
+      'let vec = import("vec");\nvec.moving-span([1, 2, 4, 7, 11, 16], 6)',
     ],
   },
   'vec.centered-moving-span': {
@@ -85,8 +85,8 @@ export const spanReference: VectorReductionReference<'span'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'vec.centered-moving-span([1, 2, 4, 7, 11, 16], 4)',
-      'vec.centered-moving-span([1, 2, 4, 7, 11, 16], 3, 0, 100)',
+      'let vec = import("vec");\nvec.centered-moving-span([1, 2, 4, 7, 11, 16], 4)',
+      'let vec = import("vec");\nvec.centered-moving-span([1, 2, 4, 7, 11, 16], 3, 0, 100)',
     ],
   },
   'vec.running-span': {
@@ -106,7 +106,7 @@ export const spanReference: VectorReductionReference<'span'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec.running-span([1, 2, 4])',
+      'let vec = import("vec");\nvec.running-span([1, 2, 4])',
     ],
   },
 }

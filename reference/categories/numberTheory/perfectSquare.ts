@@ -19,8 +19,8 @@ export const perfectSquareReference: NumberTheorySequenceReference<'perfect-squa
       { argumentNames: ['length'] },
     ],
     examples: [
-      'nth.perfect-square-seq(5)',
-      'nth.perfect-square-seq(20)',
+      'let nt = import("nth");\nnt.perfect-square-seq(5)',
+      'let nt = import("nth");\nnt.perfect-square-seq(20)',
     ],
   },
   'nth.perfect-square-take-while': {
@@ -41,7 +41,7 @@ export const perfectSquareReference: NumberTheorySequenceReference<'perfect-squa
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'nth.perfect-square-take-while(-> $ <= 100)',
+      'let nt = import("nth");\nnt.perfect-square-take-while(-> $ <= 100)',
     ],
   },
   'nth.perfect-square-nth': {
@@ -61,8 +61,8 @@ export const perfectSquareReference: NumberTheorySequenceReference<'perfect-squa
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth.perfect-square-nth(1)',
-      'nth.perfect-square-nth(5)',
+      'let nt = import("nth");\nnt.perfect-square-nth(1)',
+      'let nt = import("nth");\nnt.perfect-square-nth(5)',
     ],
   },
   'nth.perfect-square?': {
@@ -82,8 +82,8 @@ export const perfectSquareReference: NumberTheorySequenceReference<'perfect-squa
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth.perfect-square?(16)',
-      'nth.perfect-square?(20)',
+      'let nt = import("nth");\nnt.perfect-square?(16)',
+      'let nt = import("nth");\nnt.perfect-square?(20)',
     ],
   },
 }

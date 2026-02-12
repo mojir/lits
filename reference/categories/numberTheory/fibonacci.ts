@@ -20,9 +20,9 @@ export const fibonacciReference: NumberTheorySequenceReference<'fibonacci'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'nth.fibonacci-seq(1)',
-      'nth.fibonacci-seq(2)',
-      'nth.fibonacci-seq()',
+      'let nt = import("nth");\nnt.fibonacci-seq(1)',
+      'let nt = import("nth");\nnt.fibonacci-seq(2)',
+      'let nt = import("nth");\nnt.fibonacci-seq()',
     ],
   },
   'nth.fibonacci-take-while': {
@@ -43,7 +43,7 @@ export const fibonacciReference: NumberTheorySequenceReference<'fibonacci'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'nth.fibonacci-take-while(-> $ < 100)',
+      'let nt = import("nth");\nnt.fibonacci-take-while(-> $ < 100)',
     ],
   },
   'nth.fibonacci-nth': {
@@ -63,8 +63,8 @@ export const fibonacciReference: NumberTheorySequenceReference<'fibonacci'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth.fibonacci-nth(5)',
-      'nth.fibonacci-nth(50)',
+      'let nt = import("nth");\nnt.fibonacci-nth(5)',
+      'let nt = import("nth");\nnt.fibonacci-nth(50)',
     ],
   },
   'nth.fibonacci?': {
@@ -84,16 +84,16 @@ export const fibonacciReference: NumberTheorySequenceReference<'fibonacci'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth.fibonacci?(0)',
-      'nth.fibonacci?(1)',
-      'nth.fibonacci?(2)',
-      'nth.fibonacci?(3)',
-      'nth.fibonacci?(4)',
-      'nth.fibonacci?(5)',
-      'nth.fibonacci?(6)',
-      'nth.fibonacci?(7)',
-      'nth.fibonacci?(8)',
-      'nth.fibonacci?(9)',
+      'let nt = import("nth");\nnt.fibonacci?(0)',
+      'let nt = import("nth");\nnt.fibonacci?(1)',
+      'let nt = import("nth");\nnt.fibonacci?(2)',
+      'let nt = import("nth");\nnt.fibonacci?(3)',
+      'let nt = import("nth");\nnt.fibonacci?(4)',
+      'let nt = import("nth");\nnt.fibonacci?(5)',
+      'let nt = import("nth");\nnt.fibonacci?(6)',
+      'let nt = import("nth");\nnt.fibonacci?(7)',
+      'let nt = import("nth");\nnt.fibonacci?(8)',
+      'let nt = import("nth");\nnt.fibonacci?(9)',
     ],
   },
 }

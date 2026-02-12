@@ -19,8 +19,8 @@ export const minReference: VectorReductionReference<'min'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec.min([1, 2, 3])',
-      'vec.min([1, 2, -3])',
+      'let vec = import("vec");\nvec.min([1, 2, 3])',
+      'let vec = import("vec");\nvec.min([1, 2, -3])',
     ],
   },
   'vec.moving-min': {
@@ -45,8 +45,8 @@ export const minReference: VectorReductionReference<'min'> = {
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'vec.moving-min([1, 2, 3, 4, 5], 3)',
-      'vec.moving-min([1, 2, 3, 4, 5], 5)',
+      'let vec = import("vec");\nvec.moving-min([1, 2, 3, 4, 5], 3)',
+      'let vec = import("vec");\nvec.moving-min([1, 2, 3, 4, 5], 5)',
     ],
   },
   'vec.centered-moving-min': {
@@ -81,9 +81,9 @@ export const minReference: VectorReductionReference<'min'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'vec.centered-moving-min([1, 2, 3, 4, 5], 3)',
-      'vec.centered-moving-min([1, 2, 3, 4, 5], 3, 0, 100)',
-      'vec.centered-moving-min([1, 2, 3, 4, 5], 3, 0)',
+      'let vec = import("vec");\nvec.centered-moving-min([1, 2, 3, 4, 5], 3)',
+      'let vec = import("vec");\nvec.centered-moving-min([1, 2, 3, 4, 5], 3, 0, 100)',
+      'let vec = import("vec");\nvec.centered-moving-min([1, 2, 3, 4, 5], 3, 0)',
     ],
   },
   'vec.running-min': {
@@ -103,8 +103,8 @@ export const minReference: VectorReductionReference<'min'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec.running-min([1, 2, 3])',
-      'vec.running-min([1, -2, -3])',
+      'let vec = import("vec");\nvec.running-min([1, 2, 3])',
+      'let vec = import("vec");\nvec.running-min([1, -2, -3])',
     ],
   },
 }

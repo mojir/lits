@@ -19,8 +19,8 @@ export const perfectPowerReference: NumberTheorySequenceReference<'perfect-power
       { argumentNames: ['length'] },
     ],
     examples: [
-      'nth.perfect-power-seq(5)',
-      'nth.perfect-power-seq(20)',
+      'let nt = import("nth");\nnt.perfect-power-seq(5)',
+      'let nt = import("nth");\nnt.perfect-power-seq(20)',
     ],
   },
   'nth.perfect-power-take-while': {
@@ -41,7 +41,7 @@ export const perfectPowerReference: NumberTheorySequenceReference<'perfect-power
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'nth.perfect-power-take-while(-> $ <= 100)',
+      'let nt = import("nth");\nnt.perfect-power-take-while(-> $ <= 100)',
     ],
   },
   'nth.perfect-power-nth': {
@@ -61,8 +61,8 @@ export const perfectPowerReference: NumberTheorySequenceReference<'perfect-power
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth.perfect-power-nth(3)',
-      'nth.perfect-power-nth(15)',
+      'let nt = import("nth");\nnt.perfect-power-nth(3)',
+      'let nt = import("nth");\nnt.perfect-power-nth(15)',
     ],
   },
   'nth.perfect-power?': {
@@ -82,10 +82,10 @@ export const perfectPowerReference: NumberTheorySequenceReference<'perfect-power
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth.perfect-power?(7)',
-      'nth.perfect-power?(8)',
-      'nth.perfect-power?(9)',
-      'nth.perfect-power?(10)',
+      'let nt = import("nth");\nnt.perfect-power?(7)',
+      'let nt = import("nth");\nnt.perfect-power?(8)',
+      'let nt = import("nth");\nnt.perfect-power?(9)',
+      'let nt = import("nth");\nnt.perfect-power?(10)',
     ],
   },
 }

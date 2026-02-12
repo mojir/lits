@@ -19,11 +19,11 @@ export const interquartileRangeReference: VectorReductionReference<'iqr'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec.iqr([1, 2, 3, 4])',
-      'vec.iqr([5, 4, 3, 2, 1, 2, 3, 4, 5])',
-      'vec.iqr(range(1, 1000))',
-      'vec.iqr(vec.generate(1000, -> 1e6 / ($ + 1) ^ 2))',
-      'vec.iqr(vec.generate(1000, -> ln($ + 1)))',
+      'let vec = import("vec");\nvec.iqr([1, 2, 3, 4])',
+      'let vec = import("vec");\nvec.iqr([5, 4, 3, 2, 1, 2, 3, 4, 5])',
+      'let vec = import("vec");\nvec.iqr(range(1, 1000))',
+      'let vec = import("vec");\nvec.iqr(vec.generate(1000, -> 1e6 / ($ + 1) ^ 2))',
+      'let vec = import("vec");\nvec.iqr(vec.generate(1000, -> ln($ + 1)))',
     ],
   },
 
@@ -49,9 +49,9 @@ export const interquartileRangeReference: VectorReductionReference<'iqr'> = {
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'vec.moving-iqr([1, 2, 4, 7, 11, 16], 4)',
-      'vec.moving-iqr([1, 2, 4, 7, 11, 16], 5)',
-      'vec.moving-iqr([1, 2, 4, 7, 11, 16], 6)',
+      'let vec = import("vec");\nvec.moving-iqr([1, 2, 4, 7, 11, 16], 4)',
+      'let vec = import("vec");\nvec.moving-iqr([1, 2, 4, 7, 11, 16], 5)',
+      'let vec = import("vec");\nvec.moving-iqr([1, 2, 4, 7, 11, 16], 6)',
     ],
   },
   'vec.centered-moving-iqr': {
@@ -86,8 +86,8 @@ export const interquartileRangeReference: VectorReductionReference<'iqr'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'vec.centered-moving-iqr([1, 2, 4, 7, 11, 16], 4)',
-      'vec.centered-moving-iqr([1, 2, 4, 7, 11, 16], 4, 0, 0)',
+      'let vec = import("vec");\nvec.centered-moving-iqr([1, 2, 4, 7, 11, 16], 4)',
+      'let vec = import("vec");\nvec.centered-moving-iqr([1, 2, 4, 7, 11, 16], 4, 0, 0)',
     ],
   },
   'vec.running-iqr': {
@@ -107,8 +107,8 @@ export const interquartileRangeReference: VectorReductionReference<'iqr'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec.running-iqr([1, 2, 3, 4, 5, 6])',
-      'vec.running-iqr([-1, -2, -3, 1, 2, 3])',
+      'let vec = import("vec");\nvec.running-iqr([1, 2, 3, 4, 5, 6])',
+      'let vec = import("vec");\nvec.running-iqr([-1, -2, -3, 1, 2, 3])',
     ],
   },
 }

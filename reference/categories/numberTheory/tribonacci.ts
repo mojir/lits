@@ -19,9 +19,9 @@ export const tribonacciReference: NumberTheorySequenceReference<'tribonacci'> = 
       { argumentNames: ['length'] },
     ],
     examples: [
-      'nth.tribonacci-seq(1)',
-      'nth.tribonacci-seq(2)',
-      'nth.tribonacci-seq(10)',
+      'let nt = import("nth");\nnt.tribonacci-seq(1)',
+      'let nt = import("nth");\nnt.tribonacci-seq(2)',
+      'let nt = import("nth");\nnt.tribonacci-seq(10)',
     ],
   },
   'nth.tribonacci-take-while': {
@@ -42,7 +42,7 @@ export const tribonacciReference: NumberTheorySequenceReference<'tribonacci'> = 
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'nth.tribonacci-take-while(-> $ < 100)',
+      'let nt = import("nth");\nnt.tribonacci-take-while(-> $ < 100)',
     ],
   },
   'nth.tribonacci-nth': {
@@ -62,9 +62,9 @@ export const tribonacciReference: NumberTheorySequenceReference<'tribonacci'> = 
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth.tribonacci-nth(1)',
-      'nth.tribonacci-nth(2)',
-      'nth.tribonacci-nth(10)',
+      'let nt = import("nth");\nnt.tribonacci-nth(1)',
+      'let nt = import("nth");\nnt.tribonacci-nth(2)',
+      'let nt = import("nth");\nnt.tribonacci-nth(10)',
     ],
   },
   'nth.tribonacci?': {
@@ -84,17 +84,17 @@ export const tribonacciReference: NumberTheorySequenceReference<'tribonacci'> = 
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth.tribonacci?(0)',
-      'nth.tribonacci?(1)',
-      'nth.tribonacci?(2)',
-      'nth.tribonacci?(3)',
-      'nth.tribonacci?(4)',
-      'nth.tribonacci?(5)',
-      'nth.tribonacci?(6)',
-      'nth.tribonacci?(7)',
-      'nth.tribonacci?(8)',
-      'nth.tribonacci?(9)',
-      'nth.tribonacci?(10)',
+      'let nt = import("nth");\nnt.tribonacci?(0)',
+      'let nt = import("nth");\nnt.tribonacci?(1)',
+      'let nt = import("nth");\nnt.tribonacci?(2)',
+      'let nt = import("nth");\nnt.tribonacci?(3)',
+      'let nt = import("nth");\nnt.tribonacci?(4)',
+      'let nt = import("nth");\nnt.tribonacci?(5)',
+      'let nt = import("nth");\nnt.tribonacci?(6)',
+      'let nt = import("nth");\nnt.tribonacci?(7)',
+      'let nt = import("nth");\nnt.tribonacci?(8)',
+      'let nt = import("nth");\nnt.tribonacci?(9)',
+      'let nt = import("nth");\nnt.tribonacci?(10)',
     ],
   },
 }

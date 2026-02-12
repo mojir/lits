@@ -21,9 +21,9 @@ export const catalanReference: NumberTheorySequenceReference<'catalan'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'nth.catalan-seq(5)',
-      'nth.catalan-seq(10)',
-      'nth.catalan-seq()',
+      'let nt = import("nth");\nnt.catalan-seq(5)',
+      'let nt = import("nth");\nnt.catalan-seq(10)',
+      'let nt = import("nth");\nnt.catalan-seq()',
     ],
   },
   'nth.catalan-take-while': {
@@ -44,7 +44,7 @@ export const catalanReference: NumberTheorySequenceReference<'catalan'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'nth.catalan-take-while(-> $ < 1000)',
+      'let nt = import("nth");\nnt.catalan-take-while(-> $ < 1000)',
     ],
   },
   'nth.catalan-nth': {
@@ -64,8 +64,8 @@ export const catalanReference: NumberTheorySequenceReference<'catalan'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth.catalan-nth(5)',
-      'nth.catalan-nth(10)',
+      'let nt = import("nth");\nnt.catalan-nth(5)',
+      'let nt = import("nth");\nnt.catalan-nth(10)',
     ],
   },
   'nth.catalan?': {
@@ -85,8 +85,8 @@ export const catalanReference: NumberTheorySequenceReference<'catalan'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth.catalan?(5)',
-      'nth.catalan?(10)',
+      'let nt = import("nth");\nnt.catalan?(5)',
+      'let nt = import("nth");\nnt.catalan?(10)',
     ],
   },
 }

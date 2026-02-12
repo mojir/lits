@@ -19,7 +19,7 @@ export const lookAndSayReference: NumberTheorySequenceReference<'look-and-say'> 
       { argumentNames: ['length'] },
     ],
     examples: [
-      'nth.look-and-say-seq(5)',
+      'let nt = import("nth");\nnt.look-and-say-seq(5)',
     ],
   },
   'nth.look-and-say-take-while': {
@@ -40,8 +40,8 @@ export const lookAndSayReference: NumberTheorySequenceReference<'look-and-say'> 
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'nth.look-and-say-take-while((term, index) -> count(term) < 10)',
-      'nth.look-and-say-take-while(-> $2 <= 10)',
+      'let nt = import("nth");\nnt.look-and-say-take-while((term, index) -> count(term) < 10)',
+      'let nt = import("nth");\nnt.look-and-say-take-while(-> $2 <= 10)',
     ],
   },
   'nth.look-and-say-nth': {
@@ -61,7 +61,7 @@ export const lookAndSayReference: NumberTheorySequenceReference<'look-and-say'> 
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth.look-and-say-nth(5)',
+      'let nt = import("nth");\nnt.look-and-say-nth(5)',
     ],
   },
   'nth.look-and-say?': {
@@ -81,8 +81,8 @@ export const lookAndSayReference: NumberTheorySequenceReference<'look-and-say'> 
       { argumentNames: ['term'] },
     ],
     examples: [
-      'nth.look-and-say?("111221")',
-      'nth.look-and-say?("123")',
+      'let nt = import("nth");\nnt.look-and-say?("111221")',
+      'let nt = import("nth");\nnt.look-and-say?("123")',
     ],
   },
 }

@@ -19,12 +19,12 @@ export const entropyReference: VectorReductionReference<'entropy'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec.entropy([1, 1, 2, 3, 3, 3])',
-      'vec.entropy([1, 2, 3])',
-      'vec.entropy([1, 2, 2, 3])',
-      'vec.entropy([0])',
-      'vec.entropy([1])',
-      'vec.entropy([1, 2])',
+      'let vec = import("vec");\nvec.entropy([1, 1, 2, 3, 3, 3])',
+      'let vec = import("vec");\nvec.entropy([1, 2, 3])',
+      'let vec = import("vec");\nvec.entropy([1, 2, 2, 3])',
+      'let vec = import("vec");\nvec.entropy([0])',
+      'let vec = import("vec");\nvec.entropy([1])',
+      'let vec = import("vec");\nvec.entropy([1, 2])',
     ],
   },
   'vec.moving-entropy': {
@@ -49,9 +49,9 @@ export const entropyReference: VectorReductionReference<'entropy'> = {
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'vec.moving-entropy([1, 1, 2, 3, 3, 3], 4)',
-      'vec.moving-entropy([1, 1, 2, 3, 3, 3], 3)',
-      'vec.moving-entropy([1, 2], 2)',
+      'let vec = import("vec");\nvec.moving-entropy([1, 1, 2, 3, 3, 3], 4)',
+      'let vec = import("vec");\nvec.moving-entropy([1, 1, 2, 3, 3, 3], 3)',
+      'let vec = import("vec");\nvec.moving-entropy([1, 2], 2)',
     ],
   },
   'vec.centered-moving-entropy': {
@@ -86,9 +86,9 @@ export const entropyReference: VectorReductionReference<'entropy'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'vec.centered-moving-entropy([1, 1, 2, 3, 3, 3], 4)',
-      'vec.centered-moving-entropy([1, 1, 2, 3, 3, 3], 3)',
-      'vec.centered-moving-entropy([1, 2], 2)',
+      'let vec = import("vec");\nvec.centered-moving-entropy([1, 1, 2, 3, 3, 3], 4)',
+      'let vec = import("vec");\nvec.centered-moving-entropy([1, 1, 2, 3, 3, 3], 3)',
+      'let vec = import("vec");\nvec.centered-moving-entropy([1, 2], 2)',
     ],
   },
   'vec.running-entropy': {
@@ -108,8 +108,8 @@ export const entropyReference: VectorReductionReference<'entropy'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec.running-entropy([1, 1, 2, 3, 3, 3])',
-      'vec.running-entropy([1, 2])',
+      'let vec = import("vec");\nvec.running-entropy([1, 1, 2, 3, 3, 3])',
+      'let vec = import("vec");\nvec.running-entropy([1, 2])',
     ],
   },
 }

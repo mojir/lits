@@ -19,8 +19,8 @@ export const meanReference: VectorReductionReference<'mean'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec.mean([1, 2, 3])',
-      'vec.mean([1, 2, -3])',
+      'let vec = import("vec");\nvec.mean([1, 2, 3])',
+      'let vec = import("vec");\nvec.mean([1, 2, -3])',
     ],
   },
   'vec.moving-mean': {
@@ -45,8 +45,8 @@ export const meanReference: VectorReductionReference<'mean'> = {
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'vec.moving-mean([1, 2, 3, 4, 5], 3)',
-      'vec.moving-mean([1, 2, 3, 4, 5], 5)',
+      'let vec = import("vec");\nvec.moving-mean([1, 2, 3, 4, 5], 3)',
+      'let vec = import("vec");\nvec.moving-mean([1, 2, 3, 4, 5], 5)',
     ],
   },
   'vec.centered-moving-mean': {
@@ -81,9 +81,9 @@ export const meanReference: VectorReductionReference<'mean'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'vec.centered-moving-mean([1, 2, 3, 4, 5], 3)',
-      'vec.centered-moving-mean([1, 2, 3, 4, 5], 3, 0, 10)',
-      'vec.centered-moving-mean([1, 2, 3, 4, 5], 3, 10)',
+      'let vec = import("vec");\nvec.centered-moving-mean([1, 2, 3, 4, 5], 3)',
+      'let vec = import("vec");\nvec.centered-moving-mean([1, 2, 3, 4, 5], 3, 0, 10)',
+      'let vec = import("vec");\nvec.centered-moving-mean([1, 2, 3, 4, 5], 3, 10)',
     ],
   },
   'vec.running-mean': {
@@ -103,7 +103,7 @@ export const meanReference: VectorReductionReference<'mean'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec.running-mean([1, 2, 3, 4, 5])',
+      'let vec = import("vec");\nvec.running-mean([1, 2, 3, 4, 5])',
     ],
   },
 }
@@ -126,8 +126,8 @@ export const geometricMeanReference: VectorReductionReference<'geometric-mean'> 
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec.geometric-mean([1, 2, 3])',
-      'vec.geometric-mean([1, 2, 9])',
+      'let vec = import("vec");\nvec.geometric-mean([1, 2, 3])',
+      'let vec = import("vec");\nvec.geometric-mean([1, 2, 9])',
     ],
   },
   'vec.moving-geometric-mean': {
@@ -152,8 +152,8 @@ export const geometricMeanReference: VectorReductionReference<'geometric-mean'> 
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'vec.moving-geometric-mean([1, 2, 3, 4, 5], 3)',
-      'vec.moving-geometric-mean([1, 2, 3, 4, 5], 5)',
+      'let vec = import("vec");\nvec.moving-geometric-mean([1, 2, 3, 4, 5], 3)',
+      'let vec = import("vec");\nvec.moving-geometric-mean([1, 2, 3, 4, 5], 5)',
     ],
   },
   'vec.centered-moving-geometric-mean': {
@@ -188,9 +188,9 @@ export const geometricMeanReference: VectorReductionReference<'geometric-mean'> 
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'vec.centered-moving-geometric-mean([1, 2, 3, 4, 5], 3)',
-      'vec.centered-moving-geometric-mean([1, 2, 3, 4, 5], 3, 0, 10)',
-      'vec.centered-moving-geometric-mean([1, 2, 3, 4, 5], 3, 10)',
+      'let vec = import("vec");\nvec.centered-moving-geometric-mean([1, 2, 3, 4, 5], 3)',
+      'let vec = import("vec");\nvec.centered-moving-geometric-mean([1, 2, 3, 4, 5], 3, 0, 10)',
+      'let vec = import("vec");\nvec.centered-moving-geometric-mean([1, 2, 3, 4, 5], 3, 10)',
     ],
   },
   'vec.running-geometric-mean': {
@@ -210,7 +210,7 @@ export const geometricMeanReference: VectorReductionReference<'geometric-mean'> 
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec.running-geometric-mean([1, 2, 3, 4, 5])',
+      'let vec = import("vec");\nvec.running-geometric-mean([1, 2, 3, 4, 5])',
     ],
   },
 }
@@ -233,8 +233,8 @@ export const harmonicMeanReference: VectorReductionReference<'harmonic-mean'> = 
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec.harmonic-mean([1, 2, 3])',
-      'vec.harmonic-mean([1, 2, 9])',
+      'let vec = import("vec");\nvec.harmonic-mean([1, 2, 3])',
+      'let vec = import("vec");\nvec.harmonic-mean([1, 2, 9])',
     ],
   },
   'vec.moving-harmonic-mean': {
@@ -259,8 +259,8 @@ export const harmonicMeanReference: VectorReductionReference<'harmonic-mean'> = 
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'vec.moving-harmonic-mean([1, 2, 3, 4, 5], 3)',
-      'vec.moving-harmonic-mean([1, 2, 3, 4, 5], 5)',
+      'let vec = import("vec");\nvec.moving-harmonic-mean([1, 2, 3, 4, 5], 3)',
+      'let vec = import("vec");\nvec.moving-harmonic-mean([1, 2, 3, 4, 5], 5)',
     ],
   },
   'vec.centered-moving-harmonic-mean': {
@@ -295,9 +295,9 @@ export const harmonicMeanReference: VectorReductionReference<'harmonic-mean'> = 
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'vec.centered-moving-harmonic-mean([1, 2, 3, 4, 5], 3)',
-      'vec.centered-moving-harmonic-mean([1, 2, 3, 4, 5], 3, 0, 10)',
-      'vec.centered-moving-harmonic-mean([1, 2, 3, 4, 5], 3, 10)',
+      'let vec = import("vec");\nvec.centered-moving-harmonic-mean([1, 2, 3, 4, 5], 3)',
+      'let vec = import("vec");\nvec.centered-moving-harmonic-mean([1, 2, 3, 4, 5], 3, 0, 10)',
+      'let vec = import("vec");\nvec.centered-moving-harmonic-mean([1, 2, 3, 4, 5], 3, 10)',
     ],
   },
   'vec.running-harmonic-mean': {
@@ -317,7 +317,7 @@ export const harmonicMeanReference: VectorReductionReference<'harmonic-mean'> = 
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec.running-harmonic-mean([1, 2, 3, 4, 5])',
+      'let vec = import("vec");\nvec.running-harmonic-mean([1, 2, 3, 4, 5])',
     ],
   },
 }

@@ -19,8 +19,8 @@ export const meanAbsoluteDeviationReference: VectorReductionReference<'mad'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec.mad([1, 2, 3])',
-      'vec.mad([1, 2, -3])',
+      'let vec = import("vec");\nvec.mad([1, 2, 3])',
+      'let vec = import("vec");\nvec.mad([1, 2, -3])',
     ],
   },
   'vec.moving-mad': {
@@ -45,8 +45,8 @@ export const meanAbsoluteDeviationReference: VectorReductionReference<'mad'> = {
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'vec.moving-mad([1, 2, 3, 4, 5], 3)',
-      'vec.moving-mad([1, 2, 3, 4, 5], 5)',
+      'let vec = import("vec");\nvec.moving-mad([1, 2, 3, 4, 5], 3)',
+      'let vec = import("vec");\nvec.moving-mad([1, 2, 3, 4, 5], 5)',
     ],
   },
   'vec.centered-moving-mad': {
@@ -81,8 +81,8 @@ export const meanAbsoluteDeviationReference: VectorReductionReference<'mad'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'vec.centered-moving-mad([1, 2, 3, 4, 5], 3)',
-      'vec.centered-moving-mad([1, 2, 3, 4, 5], 5)',
+      'let vec = import("vec");\nvec.centered-moving-mad([1, 2, 3, 4, 5], 3)',
+      'let vec = import("vec");\nvec.centered-moving-mad([1, 2, 3, 4, 5], 5)',
     ],
   },
   'vec.running-mad': {
@@ -102,8 +102,8 @@ export const meanAbsoluteDeviationReference: VectorReductionReference<'mad'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec.running-mad([1, 2, 3])',
-      'vec.running-mad([1, 2, -3])',
+      'let vec = import("vec");\nvec.running-mad([1, 2, 3])',
+      'let vec = import("vec");\nvec.running-mad([1, 2, -3])',
     ],
   },
 }

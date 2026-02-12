@@ -19,8 +19,8 @@ export const jugglerReference: Omit<NumberTheorySequenceReference<'juggler'>, 'n
       { argumentNames: ['start'] },
     ],
     examples: [
-      'nth.juggler-seq(3)',
-      'nth.juggler-seq(5)',
+      'let nt = import("nth");\nnt.juggler-seq(3)',
+      'let nt = import("nth");\nnt.juggler-seq(5)',
     ],
   },
 }

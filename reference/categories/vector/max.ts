@@ -19,8 +19,8 @@ export const maxReference: VectorReductionReference<'max'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec.max([1, 2, 3])',
-      'vec.max([1, 2, -3])',
+      'let vec = import("vec");\nvec.max([1, 2, 3])',
+      'let vec = import("vec");\nvec.max([1, 2, -3])',
     ],
   },
   'vec.moving-max': {
@@ -45,8 +45,8 @@ export const maxReference: VectorReductionReference<'max'> = {
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'vec.moving-max([1, 2, 3, 4, 5], 3)',
-      'vec.moving-max([1, 2, 3, 4, 5], 5)',
+      'let vec = import("vec");\nvec.moving-max([1, 2, 3, 4, 5], 3)',
+      'let vec = import("vec");\nvec.moving-max([1, 2, 3, 4, 5], 5)',
     ],
   },
   'vec.centered-moving-max': {
@@ -81,9 +81,9 @@ export const maxReference: VectorReductionReference<'max'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'vec.centered-moving-max([1, 2, 3, 4, 5], 3)',
-      'vec.centered-moving-max([1, 2, 3, 4, 5], 3, 0, 100)',
-      'vec.centered-moving-max([1, 2, 3, 4, 5], 3, 0)',
+      'let vec = import("vec");\nvec.centered-moving-max([1, 2, 3, 4, 5], 3)',
+      'let vec = import("vec");\nvec.centered-moving-max([1, 2, 3, 4, 5], 3, 0, 100)',
+      'let vec = import("vec");\nvec.centered-moving-max([1, 2, 3, 4, 5], 3, 0)',
     ],
   },
   'vec.running-max': {
@@ -103,8 +103,8 @@ export const maxReference: VectorReductionReference<'max'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec.running-max([1, 2, 3])',
-      'vec.running-max([1, -2, -3])',
+      'let vec = import("vec");\nvec.running-max([1, 2, 3])',
+      'let vec = import("vec");\nvec.running-max([1, -2, -3])',
     ],
   },
 }

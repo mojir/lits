@@ -25,11 +25,11 @@ export const polygonalReference: NumberTheorySequenceReference<'polygonal'> = {
       { argumentNames: ['sides', 'length'] },
     ],
     examples: [
-      'nth.polygonal-seq(3, 2)',
-      'nth.polygonal-seq(4, 2)',
-      'nth.polygonal-seq(5, 3)',
-      'nth.polygonal-seq(6, 5)',
-      'nth.polygonal-seq(100, 10)',
+      'let nt = import("nth");\nnt.polygonal-seq(3, 2)',
+      'let nt = import("nth");\nnt.polygonal-seq(4, 2)',
+      'let nt = import("nth");\nnt.polygonal-seq(5, 3)',
+      'let nt = import("nth");\nnt.polygonal-seq(6, 5)',
+      'let nt = import("nth");\nnt.polygonal-seq(100, 10)',
     ],
   },
   'nth.polygonal-take-while': {
@@ -55,7 +55,7 @@ export const polygonalReference: NumberTheorySequenceReference<'polygonal'> = {
       { argumentNames: ['sides', 'takeWhile'] },
     ],
     examples: [
-      'nth.polygonal-take-while(15, -> $ < 1000)',
+      'let nt = import("nth");\nnt.polygonal-take-while(15, -> $ < 1000)',
     ],
   },
   'nth.polygonal-nth': {
@@ -80,9 +80,9 @@ export const polygonalReference: NumberTheorySequenceReference<'polygonal'> = {
       { argumentNames: ['sides', 'n'] },
     ],
     examples: [
-      'nth.polygonal-nth(3, 9)',
-      'nth.polygonal-nth(4, 5)',
-      'nth.polygonal-nth(5, 5)',
+      'let nt = import("nth");\nnt.polygonal-nth(3, 9)',
+      'let nt = import("nth");\nnt.polygonal-nth(4, 5)',
+      'let nt = import("nth");\nnt.polygonal-nth(5, 5)',
     ],
   },
   'nth.polygonal?': {
@@ -107,11 +107,11 @@ export const polygonalReference: NumberTheorySequenceReference<'polygonal'> = {
       { argumentNames: ['sides', 'n'] },
     ],
     examples: [
-      'nth.polygonal?(3, 10)',
-      'nth.polygonal?(3, 9)',
-      'nth.polygonal?(4, 10000)',
-      'nth.polygonal?(4, 1000)',
-      'nth.polygonal?(6, 45)',
+      'let nt = import("nth");\nnt.polygonal?(3, 10)',
+      'let nt = import("nth");\nnt.polygonal?(3, 9)',
+      'let nt = import("nth");\nnt.polygonal?(4, 10000)',
+      'let nt = import("nth");\nnt.polygonal?(4, 1000)',
+      'let nt = import("nth");\nnt.polygonal?(6, 45)',
     ],
   },
 }

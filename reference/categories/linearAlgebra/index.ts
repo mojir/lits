@@ -23,8 +23,8 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin.reflect([1, 2], [0, 1])',
-      'lin.reflect([1, 2, 3], [0, 0, 1])',
+      'let lin = import("lin");\nlin.reflect([1, 2], [0, 1])',
+      'let lin = import("lin");\nlin.reflect([1, 2, 3], [0, 0, 1])',
     ],
   },
   'lin.refract': {
@@ -52,8 +52,8 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['vector', 'axis', 'eta'] },
     ],
     examples: [
-      'lin.refract([1, 2], [0, 1], 1.5)',
-      'lin.refract([1, 2, 3], [0, 0, 1], 1.5)',
+      'let lin = import("lin");\nlin.refract([1, 2], [0, 1], 1.5)',
+      'let lin = import("lin");\nlin.refract([1, 2, 3], [0, 0, 1], 1.5)',
     ],
   },
   'lin.lerp': {
@@ -81,10 +81,10 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b', 't'] },
     ],
     examples: [
-      'lin.lerp([1, 2], [3, 4], 0.5)',
-      'lin.lerp([1, 2], [3, 4], 2)',
-      'lin.lerp([1, 2], [3, 4], -1)',
-      'lin.lerp([1, 2, 3], [4, 5, 6], 0.25)',
+      'let lin = import("lin");\nlin.lerp([1, 2], [3, 4], 0.5)',
+      'let lin = import("lin");\nlin.lerp([1, 2], [3, 4], 2)',
+      'let lin = import("lin");\nlin.lerp([1, 2], [3, 4], -1)',
+      'let lin = import("lin");\nlin.lerp([1, 2, 3], [4, 5, 6], 0.25)',
     ],
   },
   'lin.rotate2d': {
@@ -108,8 +108,8 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin.rotate2d([1, 0], PI / 2)',
-      'lin.rotate2d([0, 1], PI)',
+      'let lin = import("lin");\nlin.rotate2d([1, 0], PI / 2)',
+      'let lin = import("lin");\nlin.rotate2d([0, 1], PI)',
     ],
   },
   'lin.rotate3d': {
@@ -137,8 +137,8 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['v', 'axis', 'radians'] },
     ],
     examples: [
-      'lin.rotate3d([1, 0, 0], [0, 1, 0], PI / 2)',
-      'lin.rotate3d([0, 1, 0], [1, 0, 0], PI)',
+      'let lin = import("lin");\nlin.rotate3d([1, 0, 0], [0, 1, 0], PI / 2)',
+      'let lin = import("lin");\nlin.rotate3d([0, 1, 0], [1, 0, 0], PI)',
     ],
   },
   'lin.dot': {
@@ -162,8 +162,8 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin.dot([1, 2], [3, 4])',
-      'lin.dot([1, 2, 3], [4, 5, 6])',
+      'let lin = import("lin");\nlin.dot([1, 2], [3, 4])',
+      'let lin = import("lin");\nlin.dot([1, 2, 3], [4, 5, 6])',
     ],
   },
   'lin.cross': {
@@ -187,11 +187,11 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin.cross([1, 2, 3], [4, 5, 6])',
-      'lin.cross([1, 0, 0], [0, 1, 0])',
-      'lin.cross([0, 0, 1], [1, 0, 0])',
-      'lin.cross([1, 2, 3], [0, 0, 0])',
-      'lin.cross([0, 0, 0], [1, 2, 3])',
+      'let lin = import("lin");\nlin.cross([1, 2, 3], [4, 5, 6])',
+      'let lin = import("lin");\nlin.cross([1, 0, 0], [0, 1, 0])',
+      'let lin = import("lin");\nlin.cross([0, 0, 1], [1, 0, 0])',
+      'let lin = import("lin");\nlin.cross([1, 2, 3], [0, 0, 0])',
+      'let lin = import("lin");\nlin.cross([0, 0, 0], [1, 2, 3])',
     ],
   },
   'lin.normalize-minmax': {
@@ -211,11 +211,11 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['v'] },
     ],
     examples: [
-      'lin.normalize-minmax([1, 2, 3])',
-      'lin.normalize-minmax([1, 2, -3])',
-      'lin.normalize-minmax([1, 2, 3, 4])',
-      'lin.normalize-minmax([1, 2, -3, 4])',
-      'lin.normalize-minmax([1, 2, 3, 40, 50])',
+      'let lin = import("lin");\nlin.normalize-minmax([1, 2, 3])',
+      'let lin = import("lin");\nlin.normalize-minmax([1, 2, -3])',
+      'let lin = import("lin");\nlin.normalize-minmax([1, 2, 3, 4])',
+      'let lin = import("lin");\nlin.normalize-minmax([1, 2, -3, 4])',
+      'let lin = import("lin");\nlin.normalize-minmax([1, 2, 3, 40, 50])',
     ],
   },
   'lin.normalize-zscore': {
@@ -235,11 +235,11 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['v'] },
     ],
     examples: [
-      'lin.normalize-zscore([1, 2, 3])',
-      'lin.normalize-zscore([1, 2, -3])',
-      'lin.normalize-zscore([1, 2, 3, 4])',
-      'lin.normalize-zscore([1, 2, -3, 4])',
-      'lin.normalize-zscore([1, 2, 3, 40, 50])',
+      'let lin = import("lin");\nlin.normalize-zscore([1, 2, 3])',
+      'let lin = import("lin");\nlin.normalize-zscore([1, 2, -3])',
+      'let lin = import("lin");\nlin.normalize-zscore([1, 2, 3, 4])',
+      'let lin = import("lin");\nlin.normalize-zscore([1, 2, -3, 4])',
+      'let lin = import("lin");\nlin.normalize-zscore([1, 2, 3, 40, 50])',
     ],
   },
   'lin.normalize-robust': {
@@ -259,11 +259,11 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['v'] },
     ],
     examples: [
-      'lin.normalize-robust([1, 2, 3])',
-      'lin.normalize-robust([1, 2, -3])',
-      'lin.normalize-robust([1, 2, 3, 4])',
-      'lin.normalize-robust([1, 2, -3, 4])',
-      'lin.normalize-robust([1, 2, 3, 40, 50])',
+      'let lin = import("lin");\nlin.normalize-robust([1, 2, 3])',
+      'let lin = import("lin");\nlin.normalize-robust([1, 2, -3])',
+      'let lin = import("lin");\nlin.normalize-robust([1, 2, 3, 4])',
+      'let lin = import("lin");\nlin.normalize-robust([1, 2, -3, 4])',
+      'let lin = import("lin");\nlin.normalize-robust([1, 2, 3, 40, 50])',
     ],
   },
   'lin.normalize-l1': {
@@ -283,11 +283,11 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['v'] },
     ],
     examples: [
-      'lin.normalize-l1([1, 2, 3])',
-      'lin.normalize-l1([1, 2, -3])',
-      'lin.normalize-l1([1, 2, 3, 4])',
-      'lin.normalize-l1([1, 2, -3, 4])',
-      'lin.normalize-l1([1, 2, 3, 40, 50])',
+      'let lin = import("lin");\nlin.normalize-l1([1, 2, 3])',
+      'let lin = import("lin");\nlin.normalize-l1([1, 2, -3])',
+      'let lin = import("lin");\nlin.normalize-l1([1, 2, 3, 4])',
+      'let lin = import("lin");\nlin.normalize-l1([1, 2, -3, 4])',
+      'let lin = import("lin");\nlin.normalize-l1([1, 2, 3, 40, 50])',
     ],
   },
   'lin.normalize-l2': {
@@ -307,12 +307,12 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['v'] },
     ],
     examples: [
-      'lin.normalize-l2([1, 2, 3])',
-      'lin.unit([1, 2, 3])',
-      'lin.normalize-l2([1, 2, -3])',
-      'lin.normalize-l2([1, 2, 3, 4])',
-      'lin.normalize-l2([1, 2, -3, 4])',
-      'lin.normalize-l2([1, 2, 3, 40, 50])',
+      'let lin = import("lin");\nlin.normalize-l2([1, 2, 3])',
+      'let lin = import("lin");\nlin.unit([1, 2, 3])',
+      'let lin = import("lin");\nlin.normalize-l2([1, 2, -3])',
+      'let lin = import("lin");\nlin.normalize-l2([1, 2, 3, 4])',
+      'let lin = import("lin");\nlin.normalize-l2([1, 2, -3, 4])',
+      'let lin = import("lin");\nlin.normalize-l2([1, 2, 3, 40, 50])',
     ],
     aliases: [
       'lin.unit',
@@ -336,9 +336,9 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['v'] },
     ],
     examples: [
-      'lin.normalize-log([1, 2, 3])',
-      'lin.normalize-log([1, 2, 3, 4])',
-      'lin.normalize-log([1, 2, 3, 40, 50])',
+      'let lin = import("lin");\nlin.normalize-log([1, 2, 3])',
+      'let lin = import("lin");\nlin.normalize-log([1, 2, 3, 4])',
+      'let lin = import("lin");\nlin.normalize-log([1, 2, 3, 40, 50])',
     ],
   },
   'lin.angle': {
@@ -355,8 +355,8 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin.angle([1, 0], [0, 1])',
-      'lin.angle([1, 0, 1], [0, 1, 0])',
+      'let lin = import("lin");\nlin.angle([1, 0], [0, 1])',
+      'let lin = import("lin");\nlin.angle([1, 0, 1], [0, 1, 0])',
     ],
   },
   'lin.projection': {
@@ -373,8 +373,8 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin.projection([1, 2], [3, 4])',
-      'lin.projection([1, 2, 3], [4, 5, 6])',
+      'let lin = import("lin");\nlin.projection([1, 2], [3, 4])',
+      'let lin = import("lin");\nlin.projection([1, 2, 3], [4, 5, 6])',
     ],
   },
   'lin.collinear?': {
@@ -391,9 +391,9 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin.collinear?([1, 2], [2, 4])',
-      'lin.collinear?([1, 2], [-2, -4])',
-      'lin.collinear?([1, 2, 3], [2, 4, 6])',
+      'let lin = import("lin");\nlin.collinear?([1, 2], [2, 4])',
+      'let lin = import("lin");\nlin.collinear?([1, 2], [-2, -4])',
+      'let lin = import("lin");\nlin.collinear?([1, 2, 3], [2, 4, 6])',
     ],
   },
   'lin.parallel?': {
@@ -410,10 +410,10 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin.parallel?([1, 2], [2, 4])',
-      'lin.parallel?([1, 2], [-2, -4])',
-      'lin.parallel?([1, 2, 3], [2, 4, 6])',
-      'lin.parallel?([1, 2], [3, 4])',
+      'let lin = import("lin");\nlin.parallel?([1, 2], [2, 4])',
+      'let lin = import("lin");\nlin.parallel?([1, 2], [-2, -4])',
+      'let lin = import("lin");\nlin.parallel?([1, 2, 3], [2, 4, 6])',
+      'let lin = import("lin");\nlin.parallel?([1, 2], [3, 4])',
     ],
   },
   'lin.orthogonal?': {
@@ -430,9 +430,9 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     ],
     description: 'Checks if two vectors are **orthogonal**.',
     examples: [
-      'lin.orthogonal?([1, 0], [0, 1])',
-      'lin.orthogonal?([1, 0, 1], [0, 1, 0])',
-      'lin.orthogonal?([1, 2], [2, -1])',
+      'let lin = import("lin");\nlin.orthogonal?([1, 0], [0, 1])',
+      'let lin = import("lin");\nlin.orthogonal?([1, 0, 1], [0, 1, 0])',
+      'let lin = import("lin");\nlin.orthogonal?([1, 2], [2, -1])',
     ],
   },
   'lin.cosine-similarity': {
@@ -449,9 +449,9 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin.cosine-similarity([1, 2], [3, 4])',
-      'lin.cosine-similarity([1, 2, 3], [4, 5, 6])',
-      'lin.cosine-similarity([1, 0], [0, 1])',
+      'let lin = import("lin");\nlin.cosine-similarity([1, 2], [3, 4])',
+      'let lin = import("lin");\nlin.cosine-similarity([1, 2, 3], [4, 5, 6])',
+      'let lin = import("lin");\nlin.cosine-similarity([1, 0], [0, 1])',
     ],
   },
   'lin.euclidean-distance': {
@@ -468,9 +468,9 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin.euclidean-distance([1, 2], [3, 4])',
-      'lin.euclidean-distance([1, 2, 3], [4, 5, 6])',
-      'lin.euclidean-distance([1, 0], [0, 1])',
+      'let lin = import("lin");\nlin.euclidean-distance([1, 2], [3, 4])',
+      'let lin = import("lin");\nlin.euclidean-distance([1, 2, 3], [4, 5, 6])',
+      'let lin = import("lin");\nlin.euclidean-distance([1, 0], [0, 1])',
     ],
     aliases: [
       'lin.distance',
@@ -494,9 +494,9 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['v'] },
     ],
     examples: [
-      'lin.euclidean-norm([1, 2])',
-      'lin.euclidean-norm([3, 4])',
-      'lin.euclidean-norm([1, 2, 3])',
+      'let lin = import("lin");\nlin.euclidean-norm([1, 2])',
+      'let lin = import("lin");\nlin.euclidean-norm([3, 4])',
+      'let lin = import("lin");\nlin.euclidean-norm([1, 2, 3])',
     ],
     aliases: [
       'lin.l2-norm',
@@ -517,9 +517,9 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin.manhattan-distance([1, 2], [3, 4])',
-      'lin.manhattan-distance([1, 2, 3], [4, 5, 6])',
-      'lin.manhattan-distance([1, 0], [0, 1])',
+      'let lin = import("lin");\nlin.manhattan-distance([1, 2], [3, 4])',
+      'let lin = import("lin");\nlin.manhattan-distance([1, 2, 3], [4, 5, 6])',
+      'let lin = import("lin");\nlin.manhattan-distance([1, 0], [0, 1])',
     ],
     aliases: [
       'lin.l1-distance',
@@ -543,9 +543,9 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['v'] },
     ],
     examples: [
-      'lin.manhattan-norm([1, 2])',
-      'lin.manhattan-norm([3, 4])',
-      'lin.manhattan-norm([1, 2, 3])',
+      'let lin = import("lin");\nlin.manhattan-norm([1, 2])',
+      'let lin = import("lin");\nlin.manhattan-norm([3, 4])',
+      'let lin = import("lin");\nlin.manhattan-norm([1, 2, 3])',
     ],
     aliases: [
       'lin.l1-norm',
@@ -566,9 +566,9 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin.hamming-distance([1, 2], [3, 4])',
-      'lin.hamming-distance([1, 2, 3], [4, 5, 6])',
-      'lin.hamming-distance([1, 0], [0, 1])',
+      'let lin = import("lin");\nlin.hamming-distance([1, 2], [3, 4])',
+      'let lin = import("lin");\nlin.hamming-distance([1, 2, 3], [4, 5, 6])',
+      'let lin = import("lin");\nlin.hamming-distance([1, 0], [0, 1])',
     ],
   },
   'lin.hamming-norm': {
@@ -588,9 +588,9 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['v'] },
     ],
     examples: [
-      'lin.hamming-norm([1, 2])',
-      'lin.hamming-norm([3, 4])',
-      'lin.hamming-norm([1, 2, 3])',
+      'let lin = import("lin");\nlin.hamming-norm([1, 2])',
+      'let lin = import("lin");\nlin.hamming-norm([3, 4])',
+      'let lin = import("lin");\nlin.hamming-norm([1, 2, 3])',
     ],
   },
   'lin.chebyshev-distance': {
@@ -607,9 +607,9 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin.chebyshev-distance([1, 2], [3, 4])',
-      'lin.chebyshev-distance([1, 2, 3], [4, 5, 6])',
-      'lin.chebyshev-distance([1, 0], [0, 1])',
+      'let lin = import("lin");\nlin.chebyshev-distance([1, 2], [3, 4])',
+      'let lin = import("lin");\nlin.chebyshev-distance([1, 2, 3], [4, 5, 6])',
+      'let lin = import("lin");\nlin.chebyshev-distance([1, 0], [0, 1])',
     ],
   },
   'lin.chebyshev-norm': {
@@ -629,9 +629,9 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['v'] },
     ],
     examples: [
-      'lin.chebyshev-norm([1, 2])',
-      'lin.chebyshev-norm([3, 4])',
-      'lin.chebyshev-norm([1, 2, 3])',
+      'let lin = import("lin");\nlin.chebyshev-norm([1, 2])',
+      'let lin = import("lin");\nlin.chebyshev-norm([3, 4])',
+      'let lin = import("lin");\nlin.chebyshev-norm([1, 2, 3])',
     ],
   },
   'lin.minkowski-distance': {
@@ -652,9 +652,9 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b', 'p'] },
     ],
     examples: [
-      'lin.minkowski-distance([1, 2], [3, 4], 2)',
-      'lin.minkowski-distance([1, 2, 3], [4, 5, 6], 3)',
-      'lin.minkowski-distance([1, 0], [0, 1], 1)',
+      'let lin = import("lin");\nlin.minkowski-distance([1, 2], [3, 4], 2)',
+      'let lin = import("lin");\nlin.minkowski-distance([1, 2, 3], [4, 5, 6], 3)',
+      'let lin = import("lin");\nlin.minkowski-distance([1, 0], [0, 1], 1)',
     ],
   },
   'lin.minkowski-norm': {
@@ -678,9 +678,9 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin.minkowski-norm([1, 2], 2)',
-      'lin.minkowski-norm([3, 4], 3)',
-      'lin.minkowski-norm([1, 2, 3], 4)',
+      'let lin = import("lin");\nlin.minkowski-norm([1, 2], 2)',
+      'let lin = import("lin");\nlin.minkowski-norm([3, 4], 3)',
+      'let lin = import("lin");\nlin.minkowski-norm([1, 2, 3], 4)',
     ],
   },
   'lin.cov': {
@@ -697,9 +697,9 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin.cov([1, 2], [3, 4])',
-      'lin.cov([1, 2, 3], [4, 5, 6])',
-      'lin.cov([1, 0], [0, 1])',
+      'let lin = import("lin");\nlin.cov([1, 2], [3, 4])',
+      'let lin = import("lin");\nlin.cov([1, 2, 3], [4, 5, 6])',
+      'let lin = import("lin");\nlin.cov([1, 0], [0, 1])',
     ],
   },
   'lin.corr': {
@@ -716,9 +716,9 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin.corr([1, 2], [3, 4])',
-      'lin.corr([1, 2, 3], [4, 5, 6])',
-      'lin.corr([1, 0], [0, 1])',
+      'let lin = import("lin");\nlin.corr([1, 2], [3, 4])',
+      'let lin = import("lin");\nlin.corr([1, 2, 3], [4, 5, 6])',
+      'let lin = import("lin");\nlin.corr([1, 0], [0, 1])',
     ],
   },
   'lin.spearman-corr': {
@@ -735,9 +735,9 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin.spearman-corr([1, 2], [3, 4])',
-      'lin.spearman-corr([1, 2, 3], [4, 5, 6])',
-      'lin.spearman-corr([1, 0], [0, 1])',
+      'let lin = import("lin");\nlin.spearman-corr([1, 2], [3, 4])',
+      'let lin = import("lin");\nlin.spearman-corr([1, 2, 3], [4, 5, 6])',
+      'let lin = import("lin");\nlin.spearman-corr([1, 0], [0, 1])',
     ],
     aliases: ['lin.spearman-rho'],
   },
@@ -755,9 +755,9 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin.pearson-corr([1, 2], [3, 4])',
-      'lin.pearson-corr([1, 2, 3], [4, 5, 6])',
-      'lin.pearson-corr([1, 0], [0, 1])',
+      'let lin = import("lin");\nlin.pearson-corr([1, 2], [3, 4])',
+      'let lin = import("lin");\nlin.pearson-corr([1, 2, 3], [4, 5, 6])',
+      'let lin = import("lin");\nlin.pearson-corr([1, 0], [0, 1])',
     ],
   },
   'lin.kendall-tau': {
@@ -774,9 +774,9 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin.kendall-tau([1, 2], [3, 4])',
-      'lin.kendall-tau([1, 2, 3], [4, 5, 6])',
-      'lin.kendall-tau([1, 0], [0, 1])',
+      'let lin = import("lin");\nlin.kendall-tau([1, 2], [3, 4])',
+      'let lin = import("lin");\nlin.kendall-tau([1, 2, 3], [4, 5, 6])',
+      'let lin = import("lin");\nlin.kendall-tau([1, 0], [0, 1])',
     ],
   },
   'lin.autocorrelation': {
@@ -800,11 +800,11 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin.autocorrelation([1, 2, 3], -2)',
-      'lin.autocorrelation([1, 2, 3], -1)',
-      'lin.autocorrelation([1, 2, 3], 0)',
-      'lin.autocorrelation([1, 2, 3], 1)',
-      'lin.autocorrelation([1, 2, 3], 2)',
+      'let lin = import("lin");\nlin.autocorrelation([1, 2, 3], -2)',
+      'let lin = import("lin");\nlin.autocorrelation([1, 2, 3], -1)',
+      'let lin = import("lin");\nlin.autocorrelation([1, 2, 3], 0)',
+      'let lin = import("lin");\nlin.autocorrelation([1, 2, 3], 1)',
+      'let lin = import("lin");\nlin.autocorrelation([1, 2, 3], 2)',
     ],
     aliases: ['lin.acf'],
   },
@@ -826,11 +826,11 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b', 'lag'] },
     ],
     examples: [
-      'lin.cross-correlation([1, 2, 3], [4, 5, 6], -2)',
-      'lin.cross-correlation([1, 2, 3], [4, 5, 6], -1)',
-      'lin.cross-correlation([1, 2, 3], [4, 5, 6], 0)',
-      'lin.cross-correlation([1, 2, 3], [4, 5, 6], 1)',
-      'lin.cross-correlation([1, 2, 3], [4, 5, 6], 2)',
+      'let lin = import("lin");\nlin.cross-correlation([1, 2, 3], [4, 5, 6], -2)',
+      'let lin = import("lin");\nlin.cross-correlation([1, 2, 3], [4, 5, 6], -1)',
+      'let lin = import("lin");\nlin.cross-correlation([1, 2, 3], [4, 5, 6], 0)',
+      'let lin = import("lin");\nlin.cross-correlation([1, 2, 3], [4, 5, 6], 1)',
+      'let lin = import("lin");\nlin.cross-correlation([1, 2, 3], [4, 5, 6], 2)',
     ],
     aliases: ['lin.ccf'],
   },
@@ -851,9 +851,9 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['m'] },
     ],
     examples: [
-      'lin.rref([[1, 2], [3, 4]])',
-      'lin.rref([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
-      'lin.rref([[1, 2, 3], [7, 8, 9], [4, 5, 7]])',
+      'let lin = import("lin");\nlin.rref([[1, 2], [3, 4]])',
+      'let lin = import("lin");\nlin.rref([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+      'let lin = import("lin");\nlin.rref([[1, 2, 3], [7, 8, 9], [4, 5, 7]])',
     ],
   },
   'lin.solve': {
@@ -897,8 +897,8 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'lin.to-polar([1, 2])',
-      'lin.to-polar([3, 4])',
+      'let lin = import("lin");\nlin.to-polar([1, 2])',
+      'let lin = import("lin");\nlin.to-polar([3, 4])',
     ],
   },
   'lin.from-polar': {
@@ -918,9 +918,9 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['polar'] },
     ],
     examples: [
-      'lin.from-polar([1, PI / 4])',
-      'lin.from-polar([1, 0])',
-      'lin.from-polar([1, -PI / 2])',
+      'let lin = import("lin");\nlin.from-polar([1, PI / 4])',
+      'let lin = import("lin");\nlin.from-polar([1, 0])',
+      'let lin = import("lin");\nlin.from-polar([1, -PI / 2])',
     ],
   },
 }

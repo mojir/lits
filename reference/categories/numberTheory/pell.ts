@@ -20,9 +20,9 @@ export const pellReference: NumberTheorySequenceReference<'pell'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'nth.pell-seq(5)',
-      'nth.pell-seq(10)',
-      'nth.pell-seq()',
+      'let nt = import("nth");\nnt.pell-seq(5)',
+      'let nt = import("nth");\nnt.pell-seq(10)',
+      'let nt = import("nth");\nnt.pell-seq()',
     ],
   },
   'nth.pell-take-while': {
@@ -43,7 +43,7 @@ export const pellReference: NumberTheorySequenceReference<'pell'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'nth.pell-take-while(-> $ < 1000)',
+      'let nt = import("nth");\nnt.pell-take-while(-> $ < 1000)',
     ],
   },
   'nth.pell-nth': {
@@ -63,9 +63,9 @@ export const pellReference: NumberTheorySequenceReference<'pell'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth.pell-nth(5)',
-      'nth.pell-nth(10)',
-      'nth.pell-nth(20)',
+      'let nt = import("nth");\nnt.pell-nth(5)',
+      'let nt = import("nth");\nnt.pell-nth(10)',
+      'let nt = import("nth");\nnt.pell-nth(20)',
     ],
   },
   'nth.pell?': {
@@ -85,9 +85,9 @@ export const pellReference: NumberTheorySequenceReference<'pell'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth.pell?(1)',
-      'nth.pell?(470832)',
-      'nth.pell?(10)',
+      'let nt = import("nth");\nnt.pell?(1)',
+      'let nt = import("nth");\nnt.pell?(470832)',
+      'let nt = import("nth");\nnt.pell?(10)',
     ],
   },
 }

@@ -19,9 +19,9 @@ export const primeReference: NumberTheorySequenceReference<'prime'> = {
       { argumentNames: ['length'] },
     ],
     examples: [
-      'nth.prime-seq(1)',
-      'nth.prime-seq(2)',
-      'nth.prime-seq(10)',
+      'let nt = import("nth");\nnt.prime-seq(1)',
+      'let nt = import("nth");\nnt.prime-seq(2)',
+      'let nt = import("nth");\nnt.prime-seq(10)',
     ],
   },
   'nth.prime-take-while': {
@@ -42,7 +42,7 @@ export const primeReference: NumberTheorySequenceReference<'prime'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'nth.prime-take-while(-> $ < 50)',
+      'let nt = import("nth");\nnt.prime-take-while(-> $ < 50)',
     ],
   },
   'nth.prime-nth': {
@@ -62,9 +62,9 @@ export const primeReference: NumberTheorySequenceReference<'prime'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth.prime-nth(1)',
-      'nth.prime-nth(2)',
-      'nth.prime-nth(10)',
+      'let nt = import("nth");\nnt.prime-nth(1)',
+      'let nt = import("nth");\nnt.prime-nth(2)',
+      'let nt = import("nth");\nnt.prime-nth(10)',
     ],
   },
   'nth.prime?': {
@@ -84,12 +84,12 @@ export const primeReference: NumberTheorySequenceReference<'prime'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth.prime?(1)',
-      'nth.prime?(2)',
-      'nth.prime?(3)',
-      'nth.prime?(4)',
-      'nth.prime?(997)',
-      'nth.prime?(1001)',
+      'let nt = import("nth");\nnt.prime?(1)',
+      'let nt = import("nth");\nnt.prime?(2)',
+      'let nt = import("nth");\nnt.prime?(3)',
+      'let nt = import("nth");\nnt.prime?(4)',
+      'let nt = import("nth");\nnt.prime?(997)',
+      'let nt = import("nth");\nnt.prime?(1001)',
     ],
   },
 }

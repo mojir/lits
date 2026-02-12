@@ -19,8 +19,8 @@ export const golombReference: NumberTheorySequenceReference<'golomb'> = {
       { argumentNames: ['length'] },
     ],
     examples: [
-      'nth.golomb-seq(5)',
-      'nth.golomb-seq(20)',
+      'let nt = import("nth");\nnt.golomb-seq(5)',
+      'let nt = import("nth");\nnt.golomb-seq(20)',
     ],
   },
   'nth.golomb-take-while': {
@@ -41,7 +41,7 @@ export const golombReference: NumberTheorySequenceReference<'golomb'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'nth.golomb-take-while(-> $ <= 10)',
+      'let nt = import("nth");\nnt.golomb-take-while(-> $ <= 10)',
     ],
   },
   'nth.golomb-nth': {
@@ -61,8 +61,8 @@ export const golombReference: NumberTheorySequenceReference<'golomb'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth.golomb-nth(5)',
-      'nth.golomb-nth(1000)',
+      'let nt = import("nth");\nnt.golomb-nth(5)',
+      'let nt = import("nth");\nnt.golomb-nth(1000)',
     ],
   },
   'nth.golomb?': {
@@ -82,10 +82,10 @@ export const golombReference: NumberTheorySequenceReference<'golomb'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth.golomb?(1)',
-      'nth.golomb?(2)',
-      'nth.golomb?(3345)',
-      'nth.golomb?(67867864)',
+      'let nt = import("nth");\nnt.golomb?(1)',
+      'let nt = import("nth");\nnt.golomb?(2)',
+      'let nt = import("nth");\nnt.golomb?(3345)',
+      'let nt = import("nth");\nnt.golomb?(67867864)',
     ],
   },
 }

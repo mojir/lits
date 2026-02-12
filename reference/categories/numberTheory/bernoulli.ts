@@ -19,8 +19,8 @@ export const bernoulliReference: Omit<NumberTheorySequenceReference<'bernoulli'>
       { argumentNames: ['length'] },
     ],
     examples: [
-      'nth.bernoulli-seq(5)',
-      'nth.bernoulli-seq(10)',
+      'let nt = import("nth");\nnt.bernoulli-seq(5)',
+      'let nt = import("nth");\nnt.bernoulli-seq(10)',
     ],
   },
   'nth.bernoulli-take-while': {
@@ -41,7 +41,7 @@ export const bernoulliReference: Omit<NumberTheorySequenceReference<'bernoulli'>
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'nth.bernoulli-take-while(-> abs($) < 100)',
+      'let nt = import("nth");\nnt.bernoulli-take-while(-> abs($) < 100)',
     ],
   },
   'nth.bernoulli-nth': {
@@ -61,9 +61,9 @@ export const bernoulliReference: Omit<NumberTheorySequenceReference<'bernoulli'>
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth.bernoulli-nth(5)',
-      'nth.bernoulli-nth(10)',
-      'nth.bernoulli-nth(23)',
+      'let nt = import("nth");\nnt.bernoulli-nth(5)',
+      'let nt = import("nth");\nnt.bernoulli-nth(10)',
+      'let nt = import("nth");\nnt.bernoulli-nth(23)',
     ],
   },
 }

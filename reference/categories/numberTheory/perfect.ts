@@ -20,9 +20,9 @@ export const perfectReference: NumberTheorySequenceReference<'perfect'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'nth.perfect-seq(1)',
-      'nth.perfect-seq(5)',
-      'nth.perfect-seq()',
+      'let nt = import("nth");\nnt.perfect-seq(1)',
+      'let nt = import("nth");\nnt.perfect-seq(5)',
+      'let nt = import("nth");\nnt.perfect-seq()',
     ],
   },
   'nth.perfect-take-while': {
@@ -43,7 +43,7 @@ export const perfectReference: NumberTheorySequenceReference<'perfect'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'nth.perfect-take-while(-> $ < 1000)',
+      'let nt = import("nth");\nnt.perfect-take-while(-> $ < 1000)',
     ],
   },
   'nth.perfect-nth': {
@@ -63,8 +63,8 @@ export const perfectReference: NumberTheorySequenceReference<'perfect'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth.perfect-nth(1)',
-      'nth.perfect-nth(5)',
+      'let nt = import("nth");\nnt.perfect-nth(1)',
+      'let nt = import("nth");\nnt.perfect-nth(5)',
     ],
   },
   'nth.perfect?': {
@@ -84,16 +84,16 @@ export const perfectReference: NumberTheorySequenceReference<'perfect'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth.perfect?(0)',
-      'nth.perfect?(1)',
-      'nth.perfect?(2)',
-      'nth.perfect?(3)',
-      'nth.perfect?(4)',
-      'nth.perfect?(5)',
-      'nth.perfect?(6)',
-      'nth.perfect?(7)',
-      'nth.perfect?(8)',
-      'nth.perfect?(9)',
+      'let nt = import("nth");\nnt.perfect?(0)',
+      'let nt = import("nth");\nnt.perfect?(1)',
+      'let nt = import("nth");\nnt.perfect?(2)',
+      'let nt = import("nth");\nnt.perfect?(3)',
+      'let nt = import("nth");\nnt.perfect?(4)',
+      'let nt = import("nth");\nnt.perfect?(5)',
+      'let nt = import("nth");\nnt.perfect?(6)',
+      'let nt = import("nth");\nnt.perfect?(7)',
+      'let nt = import("nth");\nnt.perfect?(8)',
+      'let nt = import("nth");\nnt.perfect?(9)',
     ],
   },
 }

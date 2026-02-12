@@ -19,8 +19,8 @@ export const perfectCubeReference: NumberTheorySequenceReference<'perfect-cube'>
       { argumentNames: ['length'] },
     ],
     examples: [
-      'nth.perfect-cube-seq(5)',
-      'nth.perfect-cube-seq(20)',
+      'let nt = import("nth");\nnt.perfect-cube-seq(5)',
+      'let nt = import("nth");\nnt.perfect-cube-seq(20)',
     ],
   },
   'nth.perfect-cube-take-while': {
@@ -41,7 +41,7 @@ export const perfectCubeReference: NumberTheorySequenceReference<'perfect-cube'>
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'nth.perfect-cube-take-while(-> $ <= 100)',
+      'let nt = import("nth");\nnt.perfect-cube-take-while(-> $ <= 100)',
     ],
   },
   'nth.perfect-cube-nth': {
@@ -61,8 +61,8 @@ export const perfectCubeReference: NumberTheorySequenceReference<'perfect-cube'>
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth.perfect-cube-nth(1)',
-      'nth.perfect-cube-nth(5)',
+      'let nt = import("nth");\nnt.perfect-cube-nth(1)',
+      'let nt = import("nth");\nnt.perfect-cube-nth(5)',
     ],
   },
   'nth.perfect-cube?': {
@@ -82,9 +82,9 @@ export const perfectCubeReference: NumberTheorySequenceReference<'perfect-cube'>
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth.perfect-cube?(7)',
-      'nth.perfect-cube?(8)',
-      'nth.perfect-cube?(9)',
+      'let nt = import("nth");\nnt.perfect-cube?(7)',
+      'let nt = import("nth");\nnt.perfect-cube?(8)',
+      'let nt = import("nth");\nnt.perfect-cube?(9)',
     ],
   },
 }

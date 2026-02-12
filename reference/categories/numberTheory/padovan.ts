@@ -19,9 +19,9 @@ export const padovanReference: NumberTheorySequenceReference<'padovan'> = {
       { argumentNames: ['length'] },
     ],
     examples: [
-      'nth.padovan-seq(5)',
-      'nth.padovan-seq(10)',
-      'nth.padovan-seq(20)',
+      'let nt = import("nth");\nnt.padovan-seq(5)',
+      'let nt = import("nth");\nnt.padovan-seq(10)',
+      'let nt = import("nth");\nnt.padovan-seq(20)',
     ],
   },
   'nth.padovan-take-while': {
@@ -42,7 +42,7 @@ export const padovanReference: NumberTheorySequenceReference<'padovan'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'nth.padovan-take-while(-> $ < 1000)',
+      'let nt = import("nth");\nnt.padovan-take-while(-> $ < 1000)',
     ],
   },
   'nth.padovan-nth': {
@@ -62,9 +62,9 @@ export const padovanReference: NumberTheorySequenceReference<'padovan'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth.padovan-nth(5)',
-      'nth.padovan-nth(10)',
-      'nth.padovan-nth(20)',
+      'let nt = import("nth");\nnt.padovan-nth(5)',
+      'let nt = import("nth");\nnt.padovan-nth(10)',
+      'let nt = import("nth");\nnt.padovan-nth(20)',
     ],
   },
   'nth.padovan?': {
@@ -84,9 +84,9 @@ export const padovanReference: NumberTheorySequenceReference<'padovan'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth.padovan?(1)',
-      'nth.padovan?(265)',
-      'nth.padovan?(6)',
+      'let nt = import("nth");\nnt.padovan?(1)',
+      'let nt = import("nth");\nnt.padovan?(265)',
+      'let nt = import("nth");\nnt.padovan?(6)',
     ],
   },
 }

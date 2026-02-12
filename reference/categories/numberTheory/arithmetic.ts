@@ -27,10 +27,10 @@ export const arithmeticReference: NumberTheorySequenceReference<'arithmetic'> = 
       { argumentNames: ['start', 'step', 'length'] },
     ],
     examples: [
-      'nth.arithmetic-seq(3, 2, 2)',
-      'nth.arithmetic-seq(2, 3, 2)',
-      'nth.arithmetic-seq(1, 2, 2)',
-      'nth.arithmetic-seq(1, 1.5, 12)',
+      'let nt = import("nth");\nnt.arithmetic-seq(3, 2, 2)',
+      'let nt = import("nth");\nnt.arithmetic-seq(2, 3, 2)',
+      'let nt = import("nth");\nnt.arithmetic-seq(1, 2, 2)',
+      'let nt = import("nth");\nnt.arithmetic-seq(1, 1.5, 12)',
     ],
   },
   'nth.arithmetic-take-while': {
@@ -59,7 +59,7 @@ export const arithmeticReference: NumberTheorySequenceReference<'arithmetic'> = 
       { argumentNames: ['start', 'step', 'takeWhile'] },
     ],
     examples: [
-      'nth.arithmetic-take-while(1, 0.25, -> $ < 3)',
+      'let nt = import("nth");\nnt.arithmetic-take-while(1, 0.25, -> $ < 3)',
     ],
   },
   'nth.arithmetic-nth': {
@@ -87,10 +87,10 @@ export const arithmeticReference: NumberTheorySequenceReference<'arithmetic'> = 
       { argumentNames: ['start', 'step', 'n'] },
     ],
     examples: [
-      'nth.arithmetic-nth(3, 2, 2)',
-      'nth.arithmetic-nth(2, 3, 2)',
-      'nth.arithmetic-nth(1, 2, 2)',
-      'nth.arithmetic-nth(1, 1.5, 12)',
+      'let nt = import("nth");\nnt.arithmetic-nth(3, 2, 2)',
+      'let nt = import("nth");\nnt.arithmetic-nth(2, 3, 2)',
+      'let nt = import("nth");\nnt.arithmetic-nth(1, 2, 2)',
+      'let nt = import("nth");\nnt.arithmetic-nth(1, 1.5, 12)',
     ],
   },
   'nth.arithmetic?': {
@@ -118,10 +118,10 @@ export const arithmeticReference: NumberTheorySequenceReference<'arithmetic'> = 
       { argumentNames: ['start', 'step', 'n'] },
     ],
     examples: [
-      'nth.arithmetic?(3, 2, 2)',
-      'nth.arithmetic?(2, 3, 2)',
-      'nth.arithmetic?(1, 2, 2)',
-      'nth.arithmetic?(1, 1.5, 12)',
+      'let nt = import("nth");\nnt.arithmetic?(3, 2, 2)',
+      'let nt = import("nth");\nnt.arithmetic?(2, 3, 2)',
+      'let nt = import("nth");\nnt.arithmetic?(1, 2, 2)',
+      'let nt = import("nth");\nnt.arithmetic?(1, 1.5, 12)',
     ],
   },
 }

@@ -27,10 +27,10 @@ export const geometricReference: NumberTheorySequenceReference<'geometric'> = {
       { argumentNames: ['start', 'ratio', 'length'] },
     ],
     examples: [
-      'nth.geometric-seq(3, 2, 2)',
-      'nth.geometric-seq(2, 3, 2)',
-      'nth.geometric-seq(1, 2, 2)',
-      'nth.geometric-seq(1, 1.5, 12)',
+      'let nt = import("nth");\nnt.geometric-seq(3, 2, 2)',
+      'let nt = import("nth");\nnt.geometric-seq(2, 3, 2)',
+      'let nt = import("nth");\nnt.geometric-seq(1, 2, 2)',
+      'let nt = import("nth");\nnt.geometric-seq(1, 1.5, 12)',
     ],
   },
   'nth.geometric-take-while': {
@@ -59,7 +59,7 @@ export const geometricReference: NumberTheorySequenceReference<'geometric'> = {
       { argumentNames: ['start', 'ratio', 'takeWhile'] },
     ],
     examples: [
-      'nth.geometric-take-while(1, 1.5, -> $ < 10)',
+      'let nt = import("nth");\nnt.geometric-take-while(1, 1.5, -> $ < 10)',
     ],
   },
   'nth.geometric-nth': {
@@ -87,10 +87,10 @@ export const geometricReference: NumberTheorySequenceReference<'geometric'> = {
       { argumentNames: ['start', 'ratio', 'n'] },
     ],
     examples: [
-      'nth.geometric-nth(3, 2, 2)',
-      'nth.geometric-nth(2, 3, 2)',
-      'nth.geometric-nth(1, 2, 2)',
-      'nth.geometric-nth(1, 1.5, 4)',
+      'let nt = import("nth");\nnt.geometric-nth(3, 2, 2)',
+      'let nt = import("nth");\nnt.geometric-nth(2, 3, 2)',
+      'let nt = import("nth");\nnt.geometric-nth(1, 2, 2)',
+      'let nt = import("nth");\nnt.geometric-nth(1, 1.5, 4)',
     ],
   },
   'nth.geometric?': {
@@ -118,11 +118,11 @@ export const geometricReference: NumberTheorySequenceReference<'geometric'> = {
       { argumentNames: ['start', 'ratio', 'n'] },
     ],
     examples: [
-      'nth.geometric?(1, 2, 1)',
-      'nth.geometric?(2, 3, 2)',
-      'nth.geometric?(3, 2, 2)',
-      'nth.geometric?(1, 1.5, 2.25)',
-      'nth.geometric?(1, 1.5, -4)',
+      'let nt = import("nth");\nnt.geometric?(1, 2, 1)',
+      'let nt = import("nth");\nnt.geometric?(2, 3, 2)',
+      'let nt = import("nth");\nnt.geometric?(3, 2, 2)',
+      'let nt = import("nth");\nnt.geometric?(1, 1.5, 2.25)',
+      'let nt = import("nth");\nnt.geometric?(1, 1.5, -4)',
     ],
   },
 }

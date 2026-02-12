@@ -63,8 +63,7 @@ export function getSideBar() {
         </div>
         <div 
           id="ns-content-${categoryKey.replace(/\s+/g, '-')}" 
-          ${styles('flex', 'flex-col', 'ml-2', 'text-color-gray-400', 'text-base')}
-          style="display: none;"
+          ${styles('flex-col', 'ml-2', 'text-color-gray-400', 'text-base', 'display: none;')}
         >
           ${
             namespaceCategoryCollections[categoryKey]

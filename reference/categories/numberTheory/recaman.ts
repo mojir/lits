@@ -19,9 +19,9 @@ export const recamanReference: NumberTheorySequenceReference<'recaman'> = {
       { argumentNames: ['length'] },
     ],
     examples: [
-      'nth.recaman-seq(5)',
-      'nth.recaman-seq(10)',
-      'nth.recaman-seq(20)',
+      'let nt = import("nth");\nnt.recaman-seq(5)',
+      'let nt = import("nth");\nnt.recaman-seq(10)',
+      'let nt = import("nth");\nnt.recaman-seq(20)',
     ],
   },
   'nth.recaman-take-while': {
@@ -42,7 +42,7 @@ export const recamanReference: NumberTheorySequenceReference<'recaman'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'nth.recaman-take-while(-> $ < 10)',
+      'let nt = import("nth");\nnt.recaman-take-while(-> $ < 10)',
     ],
   },
   'nth.recaman-nth': {
@@ -62,9 +62,9 @@ export const recamanReference: NumberTheorySequenceReference<'recaman'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth.recaman-nth(5)',
-      'nth.recaman-nth(10)',
-      'nth.recaman-nth(20)',
+      'let nt = import("nth");\nnt.recaman-nth(5)',
+      'let nt = import("nth");\nnt.recaman-nth(10)',
+      'let nt = import("nth");\nnt.recaman-nth(20)',
     ],
   },
   'nth.recaman?': {
@@ -84,9 +84,9 @@ export const recamanReference: NumberTheorySequenceReference<'recaman'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth.recaman?(5)',
-      'nth.recaman?(10)',
-      'nth.recaman?(20)',
+      'let nt = import("nth");\nnt.recaman?(5)',
+      'let nt = import("nth");\nnt.recaman?(10)',
+      'let nt = import("nth");\nnt.recaman?(20)',
     ],
   },
 }

@@ -19,8 +19,8 @@ export const prodReference: VectorReductionReference<'prod'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec.prod([1, 2, 3])',
-      'vec.prod([1, 2, -3])',
+      'let vec = import("vec");\nvec.prod([1, 2, 3])',
+      'let vec = import("vec");\nvec.prod([1, 2, -3])',
     ],
   },
   'vec.moving-prod': {
@@ -45,8 +45,8 @@ export const prodReference: VectorReductionReference<'prod'> = {
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'vec.moving-prod([1, 2, 3, 4, 5], 3)',
-      'vec.moving-prod([1, 2, 3, 4, 5], 5)',
+      'let vec = import("vec");\nvec.moving-prod([1, 2, 3, 4, 5], 3)',
+      'let vec = import("vec");\nvec.moving-prod([1, 2, 3, 4, 5], 5)',
     ],
   },
   'vec.centered-moving-prod': {
@@ -81,8 +81,8 @@ export const prodReference: VectorReductionReference<'prod'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'vec.centered-moving-prod([1, 2, 3, 4, 5], 3)',
-      'vec.centered-moving-prod([1, 2, 3, 4, 5], 3, 0, 0)',
+      'let vec = import("vec");\nvec.centered-moving-prod([1, 2, 3, 4, 5], 3)',
+      'let vec = import("vec");\nvec.centered-moving-prod([1, 2, 3, 4, 5], 3, 0, 0)',
     ],
   },
   'vec.running-prod': {
@@ -102,8 +102,8 @@ export const prodReference: VectorReductionReference<'prod'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec.running-prod([1, 2, 3, 4, 5])',
-      'vec.running-prod([1, -2, -3])',
+      'let vec = import("vec");\nvec.running-prod([1, 2, 3, 4, 5])',
+      'let vec = import("vec");\nvec.running-prod([1, -2, -3])',
     ],
   },
 }

@@ -19,8 +19,8 @@ export const medianReference: VectorReductionReference<'median'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec.median([1, 2, 3])',
-      'vec.median([1, 2, -3])',
+      'let vec = import("vec");\nvec.median([1, 2, 3])',
+      'let vec = import("vec");\nvec.median([1, 2, -3])',
     ],
   },
   'vec.moving-median': {
@@ -45,8 +45,8 @@ export const medianReference: VectorReductionReference<'median'> = {
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'vec.moving-median([1, 2, 3, 4, 5], 3)',
-      'vec.moving-median([1, 2, 3, 4, 5], 5)',
+      'let vec = import("vec");\nvec.moving-median([1, 2, 3, 4, 5], 3)',
+      'let vec = import("vec");\nvec.moving-median([1, 2, 3, 4, 5], 5)',
     ],
   },
   'vec.centered-moving-median': {
@@ -81,9 +81,9 @@ export const medianReference: VectorReductionReference<'median'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'vec.centered-moving-median([1, 2, 3, 4, 5], 3)',
-      'vec.centered-moving-median([1, 2, 3, 4, 5], 3, 0, 10)',
-      'vec.centered-moving-median([1, 2, 3, 4, 5], 3, 10)',
+      'let vec = import("vec");\nvec.centered-moving-median([1, 2, 3, 4, 5], 3)',
+      'let vec = import("vec");\nvec.centered-moving-median([1, 2, 3, 4, 5], 3, 0, 10)',
+      'let vec = import("vec");\nvec.centered-moving-median([1, 2, 3, 4, 5], 3, 10)',
     ],
   },
   'vec.running-median': {
@@ -103,7 +103,7 @@ export const medianReference: VectorReductionReference<'median'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec.running-median([1, 2, 3, 4, 5])',
+      'let vec = import("vec");\nvec.running-median([1, 2, 3, 4, 5])',
     ],
   },
 }

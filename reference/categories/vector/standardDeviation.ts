@@ -19,8 +19,8 @@ export const standardDeviationReference: VectorReductionReference<'stdev'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec.variance([1, 2, 3])',
-      'vec.variance([1, 2, -3])',
+      'let vec = import("vec");\nvec.variance([1, 2, 3])',
+      'let vec = import("vec");\nvec.variance([1, 2, -3])',
     ],
   },
   'vec.moving-stdev': {
@@ -45,8 +45,8 @@ export const standardDeviationReference: VectorReductionReference<'stdev'> = {
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'vec.moving-stdev([1, 2, 3, 4, 5], 3)',
-      'vec.moving-stdev([1, 2, 3, 4, 5], 5)',
+      'let vec = import("vec");\nvec.moving-stdev([1, 2, 3, 4, 5], 3)',
+      'let vec = import("vec");\nvec.moving-stdev([1, 2, 3, 4, 5], 5)',
     ],
   },
   'vec.centered-moving-stdev': {
@@ -81,10 +81,10 @@ export const standardDeviationReference: VectorReductionReference<'stdev'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'vec.centered-moving-stdev([1, 2, 3, 4, 5], 3)',
-      'vec.centered-moving-stdev([1, 2, 3, 4, 5], 3, 1)',
-      'vec.centered-moving-stdev([1, 2, 3, 4, 5], 3, 1, 5)',
-      'vec.centered-moving-stdev([1, 2, 3, 4, 5], 3, 0, 6)',
+      'let vec = import("vec");\nvec.centered-moving-stdev([1, 2, 3, 4, 5], 3)',
+      'let vec = import("vec");\nvec.centered-moving-stdev([1, 2, 3, 4, 5], 3, 1)',
+      'let vec = import("vec");\nvec.centered-moving-stdev([1, 2, 3, 4, 5], 3, 1, 5)',
+      'let vec = import("vec");\nvec.centered-moving-stdev([1, 2, 3, 4, 5], 3, 0, 6)',
     ],
   },
   'vec.running-stdev': {
@@ -104,7 +104,7 @@ export const standardDeviationReference: VectorReductionReference<'stdev'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec.running-stdev([1, 2, 3, 4, 5])',
+      'let vec = import("vec");\nvec.running-stdev([1, 2, 3, 4, 5])',
     ],
   },
 }
@@ -127,8 +127,8 @@ export const sampleStandardDeviationReference: VectorReductionReference<'sample-
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec.variance([1, 2, 3])',
-      'vec.variance([1, 2, -3])',
+      'let vec = import("vec");\nvec.variance([1, 2, 3])',
+      'let vec = import("vec");\nvec.variance([1, 2, -3])',
     ],
   },
   'vec.moving-sample-stdev': {
@@ -153,8 +153,8 @@ export const sampleStandardDeviationReference: VectorReductionReference<'sample-
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'vec.moving-sample-stdev([1, 2, 3, 4, 5], 3)',
-      'vec.moving-sample-stdev([1, 2, 3, 4, 5], 5)',
+      'let vec = import("vec");\nvec.moving-sample-stdev([1, 2, 3, 4, 5], 3)',
+      'let vec = import("vec");\nvec.moving-sample-stdev([1, 2, 3, 4, 5], 5)',
     ],
   },
   'vec.centered-moving-sample-stdev': {
@@ -189,10 +189,10 @@ export const sampleStandardDeviationReference: VectorReductionReference<'sample-
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'vec.centered-moving-sample-stdev([1, 2, 3, 4, 5], 3)',
-      'vec.centered-moving-sample-stdev([1, 2, 3, 4, 5], 3, 1)',
-      'vec.centered-moving-sample-stdev([1, 2, 3, 4, 5], 3, 1, 5)',
-      'vec.centered-moving-sample-stdev([1, 2, 3, 4, 5], 3, 0, 6)',
+      'let vec = import("vec");\nvec.centered-moving-sample-stdev([1, 2, 3, 4, 5], 3)',
+      'let vec = import("vec");\nvec.centered-moving-sample-stdev([1, 2, 3, 4, 5], 3, 1)',
+      'let vec = import("vec");\nvec.centered-moving-sample-stdev([1, 2, 3, 4, 5], 3, 1, 5)',
+      'let vec = import("vec");\nvec.centered-moving-sample-stdev([1, 2, 3, 4, 5], 3, 0, 6)',
     ],
   },
   'vec.running-sample-stdev': {
@@ -212,7 +212,7 @@ export const sampleStandardDeviationReference: VectorReductionReference<'sample-
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec.running-sample-stdev([1, 2, 3, 4, 5])',
+      'let vec = import("vec");\nvec.running-sample-stdev([1, 2, 3, 4, 5])',
     ],
   },
 }

@@ -20,9 +20,9 @@ export const partitionReference: NumberTheorySequenceReference<'partition'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'nth.partition-seq(1)',
-      'nth.partition-seq(10)',
-      'nth.partition-seq()',
+      'let nt = import("nth");\nnt.partition-seq(1)',
+      'let nt = import("nth");\nnt.partition-seq(10)',
+      'let nt = import("nth");\nnt.partition-seq()',
     ],
   },
   'nth.partition-take-while': {
@@ -43,7 +43,7 @@ export const partitionReference: NumberTheorySequenceReference<'partition'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'nth.partition-take-while(-> $ < 1000)',
+      'let nt = import("nth");\nnt.partition-take-while(-> $ < 1000)',
     ],
   },
   'nth.partition-nth': {
@@ -63,8 +63,8 @@ export const partitionReference: NumberTheorySequenceReference<'partition'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth.partition-nth(1)',
-      'nth.partition-nth(5)',
+      'let nt = import("nth");\nnt.partition-nth(1)',
+      'let nt = import("nth");\nnt.partition-nth(5)',
     ],
   },
   'nth.partition?': {
@@ -84,12 +84,12 @@ export const partitionReference: NumberTheorySequenceReference<'partition'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth.partition?(0)',
-      'nth.partition?(1)',
-      'nth.partition?(2)',
-      'nth.partition?(3)',
-      'nth.partition?(4)',
-      'nth.partition?(5)',
+      'let nt = import("nth");\nnt.partition?(0)',
+      'let nt = import("nth");\nnt.partition?(1)',
+      'let nt = import("nth");\nnt.partition?(2)',
+      'let nt = import("nth");\nnt.partition?(3)',
+      'let nt = import("nth");\nnt.partition?(4)',
+      'let nt = import("nth");\nnt.partition?(5)',
     ],
   },
 }

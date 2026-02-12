@@ -19,8 +19,8 @@ export const kurtosisReference: VectorReductionReference<'kurtosis'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec.kurtosis([1, 2, 3, 6, 20])',
-      'vec.kurtosis([1, 2, 2, 3])',
+      'let vec = import("vec");\nvec.kurtosis([1, 2, 3, 6, 20])',
+      'let vec = import("vec");\nvec.kurtosis([1, 2, 2, 3])',
     ],
   },
   'vec.moving-kurtosis': {
@@ -45,8 +45,8 @@ export const kurtosisReference: VectorReductionReference<'kurtosis'> = {
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'vec.moving-kurtosis([1, 2, 4, 7, 11, 16], 4)',
-      'vec.moving-kurtosis([1, 2, 4, 7, 11, 16], 5)',
+      'let vec = import("vec");\nvec.moving-kurtosis([1, 2, 4, 7, 11, 16], 4)',
+      'let vec = import("vec");\nvec.moving-kurtosis([1, 2, 4, 7, 11, 16], 5)',
     ],
   },
   'vec.centered-moving-kurtosis': {
@@ -81,8 +81,8 @@ export const kurtosisReference: VectorReductionReference<'kurtosis'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'vec.centered-moving-kurtosis([1, 2, 4, 7, 11, 16], 4)',
-      'vec.centered-moving-kurtosis([1, 2, 4, 7, 11, 16], 4, 0, 0)',
+      'let vec = import("vec");\nvec.centered-moving-kurtosis([1, 2, 4, 7, 11, 16], 4)',
+      'let vec = import("vec");\nvec.centered-moving-kurtosis([1, 2, 4, 7, 11, 16], 4, 0, 0)',
     ],
   },
   'vec.running-kurtosis': {
@@ -102,7 +102,7 @@ export const kurtosisReference: VectorReductionReference<'kurtosis'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec.running-kurtosis([1, 2, 4, 7, 11])',
+      'let vec = import("vec");\nvec.running-kurtosis([1, 2, 4, 7, 11])',
     ],
   },
 }
@@ -125,8 +125,8 @@ export const sampleKurtosisReference: VectorReductionReference<'sample-kurtosis'
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec.sample-kurtosis([1, 2, 3, 6, 20])',
-      'vec.sample-kurtosis([1, 2, 2, 3])',
+      'let vec = import("vec");\nvec.sample-kurtosis([1, 2, 3, 6, 20])',
+      'let vec = import("vec");\nvec.sample-kurtosis([1, 2, 2, 3])',
     ],
   },
   'vec.moving-sample-kurtosis': {
@@ -151,8 +151,8 @@ export const sampleKurtosisReference: VectorReductionReference<'sample-kurtosis'
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'vec.moving-sample-kurtosis([1, 2, 4, 7, 11, 16], 4)',
-      'vec.moving-sample-kurtosis([1, 2, 4, 7, 11, 16], 5)',
+      'let vec = import("vec");\nvec.moving-sample-kurtosis([1, 2, 4, 7, 11, 16], 4)',
+      'let vec = import("vec");\nvec.moving-sample-kurtosis([1, 2, 4, 7, 11, 16], 5)',
     ],
   },
   'vec.centered-moving-sample-kurtosis': {
@@ -187,8 +187,8 @@ export const sampleKurtosisReference: VectorReductionReference<'sample-kurtosis'
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'vec.centered-moving-sample-kurtosis([1, 2, 4, 7, 11, 16], 4)',
-      'vec.centered-moving-sample-kurtosis([1, 2, 4, 7, 11, 16], 4, 0, 100)',
+      'let vec = import("vec");\nvec.centered-moving-sample-kurtosis([1, 2, 4, 7, 11, 16], 4)',
+      'let vec = import("vec");\nvec.centered-moving-sample-kurtosis([1, 2, 4, 7, 11, 16], 4, 0, 100)',
     ],
   },
   'vec.running-sample-kurtosis': {
@@ -208,7 +208,7 @@ export const sampleKurtosisReference: VectorReductionReference<'sample-kurtosis'
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec.running-sample-kurtosis([1, 2, 4, 7, 11])',
+      'let vec = import("vec");\nvec.running-sample-kurtosis([1, 2, 4, 7, 11])',
     ],
   },
 }
@@ -231,8 +231,8 @@ export const excessKurtoisReference: VectorReductionReference<'excess-kurtosis'>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec.excess-kurtosis([1, 2, 3, 6, 20])',
-      'vec.excess-kurtosis([1, 2, 2, 3])',
+      'let vec = import("vec");\nvec.excess-kurtosis([1, 2, 3, 6, 20])',
+      'let vec = import("vec");\nvec.excess-kurtosis([1, 2, 2, 3])',
     ],
   },
   'vec.moving-excess-kurtosis': {
@@ -257,8 +257,8 @@ export const excessKurtoisReference: VectorReductionReference<'excess-kurtosis'>
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'vec.moving-excess-kurtosis([1, 2, 4, 7, 11, 16], 4)',
-      'vec.moving-excess-kurtosis([1, 2, 4, 7, 11, 16], 5)',
+      'let vec = import("vec");\nvec.moving-excess-kurtosis([1, 2, 4, 7, 11, 16], 4)',
+      'let vec = import("vec");\nvec.moving-excess-kurtosis([1, 2, 4, 7, 11, 16], 5)',
     ],
   },
   'vec.centered-moving-excess-kurtosis': {
@@ -293,8 +293,8 @@ export const excessKurtoisReference: VectorReductionReference<'excess-kurtosis'>
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'vec.centered-moving-excess-kurtosis([1, 2, 4, 7, 11, 16], 4)',
-      'vec.centered-moving-excess-kurtosis([1, 2, 4, 7, 11, 16], 4, 0, 0)',
+      'let vec = import("vec");\nvec.centered-moving-excess-kurtosis([1, 2, 4, 7, 11, 16], 4)',
+      'let vec = import("vec");\nvec.centered-moving-excess-kurtosis([1, 2, 4, 7, 11, 16], 4, 0, 0)',
     ],
   },
   'vec.running-excess-kurtosis': {
@@ -314,7 +314,7 @@ export const excessKurtoisReference: VectorReductionReference<'excess-kurtosis'>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec.running-excess-kurtosis([1, 2, 4, 7, 11])',
+      'let vec = import("vec");\nvec.running-excess-kurtosis([1, 2, 4, 7, 11])',
     ],
   },
 }
@@ -337,8 +337,8 @@ export const sampleExcessKurtosisReference: VectorReductionReference<'sample-exc
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec.sample-excess-kurtosis([1, 2, 3, 6, 20])',
-      'vec.sample-excess-kurtosis([1, 2, 2, 3])',
+      'let vec = import("vec");\nvec.sample-excess-kurtosis([1, 2, 3, 6, 20])',
+      'let vec = import("vec");\nvec.sample-excess-kurtosis([1, 2, 2, 3])',
     ],
   },
   'vec.moving-sample-excess-kurtosis': {
@@ -363,8 +363,8 @@ export const sampleExcessKurtosisReference: VectorReductionReference<'sample-exc
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'vec.moving-sample-excess-kurtosis([1, 2, 4, 7, 11, 16], 4)',
-      'vec.moving-sample-excess-kurtosis([1, 2, 4, 7, 11, 16], 5)',
+      'let vec = import("vec");\nvec.moving-sample-excess-kurtosis([1, 2, 4, 7, 11, 16], 4)',
+      'let vec = import("vec");\nvec.moving-sample-excess-kurtosis([1, 2, 4, 7, 11, 16], 5)',
     ],
   },
   'vec.centered-moving-sample-excess-kurtosis': {
@@ -399,8 +399,8 @@ export const sampleExcessKurtosisReference: VectorReductionReference<'sample-exc
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'vec.centered-moving-sample-excess-kurtosis([1, 2, 4, 7, 11, 16], 4)',
-      'vec.centered-moving-sample-excess-kurtosis([1, 2, 4, 7, 11, 16], 4, 0, 100)',
+      'let vec = import("vec");\nvec.centered-moving-sample-excess-kurtosis([1, 2, 4, 7, 11, 16], 4)',
+      'let vec = import("vec");\nvec.centered-moving-sample-excess-kurtosis([1, 2, 4, 7, 11, 16], 4, 0, 100)',
     ],
   },
   'vec.running-sample-excess-kurtosis': {
@@ -420,7 +420,7 @@ export const sampleExcessKurtosisReference: VectorReductionReference<'sample-exc
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec.running-sample-excess-kurtosis([1, 2, 4, 7, 11])',
+      'let vec = import("vec");\nvec.running-sample-excess-kurtosis([1, 2, 4, 7, 11])',
     ],
   },
 }

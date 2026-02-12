@@ -20,9 +20,9 @@ export const sylvesterReference: NumberTheorySequenceReference<'sylvester'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'nth.sylvester-seq(5)',
-      'nth.sylvester-seq()',
-      'nth.sylvester-seq()',
+      'let nt = import("nth");\nnt.sylvester-seq(5)',
+      'let nt = import("nth");\nnt.sylvester-seq()',
+      'let nt = import("nth");\nnt.sylvester-seq()',
     ],
   },
   'nth.sylvester-take-while': {
@@ -43,7 +43,7 @@ export const sylvesterReference: NumberTheorySequenceReference<'sylvester'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'nth.sylvester-take-while(-> $ < 100000)',
+      'let nt = import("nth");\nnt.sylvester-take-while(-> $ < 100000)',
     ],
   },
   'nth.sylvester-nth': {
@@ -63,8 +63,8 @@ export const sylvesterReference: NumberTheorySequenceReference<'sylvester'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth.sylvester-nth(1)',
-      'nth.sylvester-nth(5)',
+      'let nt = import("nth");\nnt.sylvester-nth(1)',
+      'let nt = import("nth");\nnt.sylvester-nth(5)',
     ],
   },
   'nth.sylvester?': {
@@ -84,9 +84,9 @@ export const sylvesterReference: NumberTheorySequenceReference<'sylvester'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth.sylvester?(2)',
-      'nth.sylvester?(3)',
-      'nth.sylvester?(6)',
+      'let nt = import("nth");\nnt.sylvester?(2)',
+      'let nt = import("nth");\nnt.sylvester?(3)',
+      'let nt = import("nth");\nnt.sylvester?(6)',
     ],
   },
 }

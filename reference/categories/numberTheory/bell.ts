@@ -20,9 +20,9 @@ export const bellReference: NumberTheorySequenceReference<'bell'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'nth.bell-seq(5)',
-      'nth.bell-seq(10)',
-      'nth.bell-seq()',
+      'let nt = import("nth");\nnt.bell-seq(5)',
+      'let nt = import("nth");\nnt.bell-seq(10)',
+      'let nt = import("nth");\nnt.bell-seq()',
     ],
   },
   'nth.bell-take-while': {
@@ -43,7 +43,7 @@ export const bellReference: NumberTheorySequenceReference<'bell'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'nth.bell-take-while(-> $ < 1000)',
+      'let nt = import("nth");\nnt.bell-take-while(-> $ < 1000)',
     ],
   },
   'nth.bell-nth': {
@@ -63,8 +63,8 @@ export const bellReference: NumberTheorySequenceReference<'bell'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth.bell-nth(5)',
-      'nth.bell-nth(10)',
+      'let nt = import("nth");\nnt.bell-nth(5)',
+      'let nt = import("nth");\nnt.bell-nth(10)',
     ],
   },
   'nth.bell?': {
@@ -84,9 +84,9 @@ export const bellReference: NumberTheorySequenceReference<'bell'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth.bell?(1)',
-      'nth.bell?(27644437)',
-      'nth.bell?(27644436)',
+      'let nt = import("nth");\nnt.bell?(1)',
+      'let nt = import("nth");\nnt.bell?(27644437)',
+      'let nt = import("nth");\nnt.bell?(27644436)',
     ],
   },
 }
