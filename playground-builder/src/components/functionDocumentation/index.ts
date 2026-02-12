@@ -1,6 +1,5 @@
-import { apiReference, getLinkName, isCustomReference, isFunctionReference } from '../../../../reference'
+import { allReference, getLinkName, isCustomReference, isFunctionReference } from '../../../../reference'
 import type { CustomReference, FunctionReference, Reference } from '../../../../reference'
-import { isCoreApiName } from '../../../../reference/api'
 import { styles } from '../../styles'
 import { formatLitsExpression } from '../../formatter/rules'
 import { formatDescription } from './description'
@@ -11,7 +10,7 @@ import { getFunctionSignature } from './functionSignature'
 import { getCustomSignature } from './customSignature'
 
 export function getAllDocumentationItems() {
-  return Object.values(apiReference)
+  return Object.values(allReference)
     .map(obj => getDocumentation(obj))
     .join('\n')
 }
@@ -20,10 +19,10 @@ function getDocumentation(reference: Reference) {
   const aliases = isFunctionReference(reference) ? reference.aliases : undefined
   const docTitle = `${escapeTitle(reference.title)}${aliases ? `, ${aliases.join(', ')}` : ''}`
 
-  // Filter out namespace references that aren't available in core
+  // Get all references for seeAlso (including namespace references)
   const functionReferences = reference.seeAlso
-    ?.filter(apiName => isCoreApiName(apiName))
-    .map(apiName => apiReference[apiName])
+    ?.map(apiName => allReference[apiName])
+    .filter((ref): ref is Reference => ref !== undefined)
 
   return `
   <div id="${getLinkName(reference)}" class="content function">

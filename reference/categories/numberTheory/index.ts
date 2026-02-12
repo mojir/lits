@@ -553,7 +553,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      '12 nth.divisible-by? 4',
       'nth.divisible-by?(12, 4)',
       'nth.divisible-by?(12, 5)',
       'nth.divisible-by?(37, 1)',
@@ -576,7 +575,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      '12 nth.gcd  8',
       'nth.gcd(100, 25)',
       'nth.gcd(37, 1)',
       'nth.gcd(0, 0)',
@@ -598,7 +596,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      '12 nth.lcm  8',
       'nth.lcm(100, 25)',
       'nth.lcm(37, 1)',
       'nth.lcm(0, 5)',

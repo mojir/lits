@@ -1,4 +1,4 @@
-import { type Reference, apiReference, getLinkName, isFunctionReference } from '../../reference'
+import { type Reference, allReference, getLinkName, isFunctionReference } from '../../reference'
 import { formatDescription } from './components/functionDocumentation/description'
 import { getFunctionSignature } from './components/functionDocumentation/functionSignature'
 import { styles } from './styles'
@@ -11,7 +11,7 @@ export interface SearchResultEntry {
 }
 
 const searchables: Reference[] = Object
-  .values(apiReference)
+  .values(allReference)
   .sort((a, b) => a.title.localeCompare(b.title))
 
 export const allSearchResultEntries: SearchResultEntry[] = searchables.map((reference) => {

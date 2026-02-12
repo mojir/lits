@@ -16420,6 +16420,35 @@ var Playground = (function (exports) {
     // Core API names (core functions + shorthand + datatype)
     __spreadArray(__spreadArray(__spreadArray([], __read(coreApiFunctionNames), false), __read(api.shorthand), false), __read(api.datatype), false);
     __spreadArray(__spreadArray(__spreadArray([], __read(apiFunctionNames), false), __read(api.shorthand), false), __read(api.datatype), false);
+    var categoryRecord = {
+        'Special expression': true,
+        'Predicate': true,
+        'Sequence': true,
+        'Collection': true,
+        'Array': true,
+        'Object': true,
+        'String': true,
+        'Math': true,
+        'Functional': true,
+        'Regular expression': true,
+        'Bitwise': true,
+        'Misc': true,
+        'Meta': true,
+        'Assert': true,
+        'Vector': true,
+        'Linear Algebra': true,
+        'Matrix': true,
+        'Grid': true,
+        'Number Theory': true,
+        'Random': true,
+        'Shorthand': true,
+        'Datatype': true,
+    };
+    var categories = Object.keys(categoryRecord);
+    // Categories that are namespaces (require import)
+    var namespaceCategories = ['Vector', 'Linear Algebra', 'Matrix', 'Grid', 'Number Theory', 'Random'];
+    // Core categories (always available)
+    categories.filter(function (c) { return !namespaceCategories.includes(c); });
     function getOperatorArgs(a, b) {
         return { a: { type: a }, b: { type: b } };
     }
@@ -22155,10 +22184,9745 @@ var Playground = (function (exports) {
         },
     };
 
+    var exampleGrid1 = "[\n  [\"Albert\", \"father\", 10],\n  [\"Nina\", \"mother\", 20],\n  [\"Kian\", \"son\", 30],\n]";
+    var exampleGrid2 = "[\n  [\"Albert\", \"father\"],\n  [\"Nina\", \"mother\"],\n  [\"Kian\", \"son\"],\n]";
+    var exampleGrid3 = "[\n  [1, 2],\n  [3, 4],\n]";
+    var gridReference = {
+        'grid.every?': {
+            title: 'grid.every?',
+            category: 'Grid',
+            returns: {
+                type: 'boolean',
+            },
+            args: __assign({}, getOperatorArgs('grid', 'function')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            description: 'Checks if all elements in a grid satisfy a predicate. Returns true only if the predicate returns true for every element in the grid.',
+            examples: [
+                "grid.every?(".concat(exampleGrid1, ", string?)"),
+                "grid.every?(".concat(exampleGrid2, ", string?)"),
+                "grid.every?(".concat(exampleGrid3, ", string?)"),
+            ],
+        },
+        'grid.some?': {
+            title: 'grid.some?',
+            category: 'Grid',
+            returns: {
+                type: 'boolean',
+            },
+            args: __assign({}, getOperatorArgs('grid', 'function')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            description: 'Checks if any element in a grid satisfies a predicate. Returns true if the predicate returns true for at least one element in the grid.',
+            examples: [
+                "grid.some?(".concat(exampleGrid1, ", string?)"),
+                "grid.some?(".concat(exampleGrid2, ", string?)"),
+                "grid.some?(".concat(exampleGrid3, ", string?)"),
+            ],
+        },
+        'grid.every-row?': {
+            title: 'grid.every-row?',
+            category: 'Grid',
+            returns: {
+                type: 'boolean',
+            },
+            args: __assign({}, getOperatorArgs('grid', 'function')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            description: 'Checks if all rows in a grid satisfy a predicate. Returns true only if the predicate returns true for every row in the grid.',
+            examples: [
+                "grid.every-row?(".concat(exampleGrid1, ", -> string?($[0]))"),
+                "grid.every-row?(".concat(exampleGrid2, ", -> string?($[0]))"),
+                "grid.every-row?(".concat(exampleGrid3, ", -> string?($[0]))"),
+            ],
+        },
+        'grid.some-row?': {
+            title: 'grid.some-row?',
+            category: 'Grid',
+            returns: {
+                type: 'boolean',
+            },
+            args: __assign({}, getOperatorArgs('grid', 'function')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            description: 'Checks if any row in a grid satisfies a predicate. Returns true if the predicate returns true for at least one row in the grid.',
+            examples: [
+                "grid.some-row?(".concat(exampleGrid1, ", -> $ contains? \"Albert\")"),
+                "grid.some-row?(".concat(exampleGrid2, ", -> $ contains? \"Albert\")"),
+                "grid.some-row?(".concat(exampleGrid3, ", -> $ contains? \"Albert\")"),
+            ],
+        },
+        'grid.every-col?': {
+            title: 'grid.every-col?',
+            category: 'Grid',
+            returns: {
+                type: 'boolean',
+            },
+            args: __assign({}, getOperatorArgs('grid', 'function')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            description: 'Checks if all columns in a grid satisfy a predicate. Returns true only if the predicate returns true for every column in the grid.',
+            examples: [
+                "grid.every-col?(".concat(exampleGrid1, ", -> string?($[0]))"),
+                "grid.every-col?(".concat(exampleGrid2, ", -> string?($[0]))"),
+                "grid.every-col?(".concat(exampleGrid3, ", -> string?($[0]))"),
+            ],
+        },
+        'grid.some-col?': {
+            title: 'grid.some-col?',
+            category: 'Grid',
+            returns: {
+                type: 'boolean',
+            },
+            args: __assign({}, getOperatorArgs('grid', 'function')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            description: 'Checks if any column in a grid satisfies a predicate. Returns true if the predicate returns true for at least one column in the grid.',
+            examples: [
+                "grid.some-col?(".concat(exampleGrid1, ", -> $ contains? \"Albert\")"),
+                "grid.some-col?(".concat(exampleGrid2, ", -> $ contains? \"Albert\")"),
+                "grid.some-col?(".concat(exampleGrid3, ", -> $ contains? \"Albert\")"),
+            ],
+        },
+        'grid.row': {
+            title: 'grid.row',
+            category: 'Grid',
+            returns: {
+                type: 'any',
+            },
+            args: __assign({}, getOperatorArgs('grid', 'number')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            description: 'Returns the row at index $a in the grid $b.',
+            examples: [
+                "grid.row(".concat(exampleGrid1, ", 0)"),
+                "grid.row(".concat(exampleGrid1, ", 1)"),
+                "grid.row(".concat(exampleGrid1, ", 2)"),
+            ],
+        },
+        'grid.col': {
+            title: 'grid.col',
+            category: 'Grid',
+            returns: {
+                type: 'any',
+            },
+            args: __assign({}, getOperatorArgs('grid', 'number')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            description: 'Returns the column at index $a in the grid $b.',
+            examples: [
+                "grid.col(".concat(exampleGrid1, ", 0)"),
+                "grid.col(".concat(exampleGrid1, ", 1)"),
+                "grid.col(".concat(exampleGrid1, ", 2)"),
+            ],
+        },
+        'grid.shape': {
+            title: 'grid.shape',
+            category: 'Grid',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                g: {
+                    type: 'grid',
+                    description: 'The grid to get the shape of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['g'] },
+            ],
+            description: 'Returns the shape of the grid `g` as a `vector` of two numbers, where the first number is the number of rows and the second number is the number of columns.',
+            examples: [
+                "grid.shape(".concat(exampleGrid1, ")"),
+                "grid.shape(".concat(exampleGrid2, ")"),
+                "grid.shape(".concat(exampleGrid3, ")"),
+            ],
+        },
+        'grid.fill': {
+            title: 'grid.fill',
+            category: 'Grid',
+            returns: {
+                type: 'grid',
+            },
+            args: {
+                rows: {
+                    type: 'integer',
+                    description: 'The number of rows in the grid.',
+                },
+                cols: {
+                    type: 'integer',
+                    description: 'The number of columns in the grid.',
+                },
+                value: {
+                    type: 'any',
+                    description: 'The value to fill the grid with.',
+                },
+            },
+            variants: [
+                { argumentNames: ['rows', 'cols', 'value'] },
+            ],
+            description: 'Creates a grid of the specified size, filled with the specified value.',
+            examples: [
+                'grid.fill(2, 3, 0)',
+                'grid.fill(2, 3, "x")',
+            ],
+        },
+        'grid.generate': {
+            title: 'grid.generate',
+            category: 'Grid',
+            returns: {
+                type: 'grid',
+            },
+            args: {
+                rows: {
+                    type: 'number',
+                    description: 'The number of rows in the grid.',
+                },
+                cols: {
+                    type: 'number',
+                    description: 'The number of columns in the grid.',
+                },
+                fn: {
+                    type: 'function',
+                    description: 'The function to generate the grid. It takes two arguments: the row index and the column index.',
+                },
+            },
+            variants: [
+                { argumentNames: ['rows', 'cols', 'fn'] },
+            ],
+            description: 'Generates a grid of the specified size, where each element is generated by the provided function.',
+            examples: [
+                'grid.generate(3, 3, (i, j) -> i + j)',
+            ],
+        },
+        'grid.reshape': {
+            title: 'grid.reshape',
+            category: 'Grid',
+            returns: {
+                type: 'grid',
+            },
+            args: __assign({}, getOperatorArgs('grid', 'number')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            description: 'Reshapes the grid `a` into a new grid with the specified number of rows `b`. The number of columns is automatically calculated based on the total number of elements in the grid.',
+            examples: [
+                "grid.reshape(".concat(exampleGrid2, ", 2)"),
+            ],
+        },
+        'grid.transpose': {
+            title: 'grid.transpose',
+            category: 'Grid',
+            returns: {
+                type: 'grid',
+            },
+            args: {
+                g: {
+                    type: 'grid',
+                    description: 'The grid to transpose.',
+                },
+            },
+            variants: [
+                { argumentNames: ['g'] },
+            ],
+            description: 'Transposes the grid `g`, swapping its rows and columns.',
+            examples: [
+                "grid.transpose(".concat(exampleGrid1, ")"),
+                "grid.transpose(".concat(exampleGrid2, ")"),
+                "grid.transpose(".concat(exampleGrid3, ")"),
+            ],
+            aliases: ['grid.tr'],
+        },
+        'grid.flip-h': {
+            title: 'grid.flip-h',
+            category: 'Grid',
+            returns: {
+                type: 'grid',
+            },
+            args: {
+                g: {
+                    type: 'grid',
+                    description: 'The grid to flip horizontally.',
+                },
+            },
+            variants: [
+                { argumentNames: ['g'] },
+            ],
+            description: 'Flips the grid `g` horizontally.',
+            examples: [
+                "grid.flip-h(".concat(exampleGrid1, ")"),
+                "grid.flip-h(".concat(exampleGrid2, ")"),
+                "grid.flip-h(".concat(exampleGrid3, ")"),
+            ],
+        },
+        'grid.flip-v': {
+            title: 'grid.flip-v',
+            category: 'Grid',
+            returns: {
+                type: 'grid',
+            },
+            args: {
+                g: {
+                    type: 'grid',
+                    description: 'The grid to flip vertically.',
+                },
+            },
+            variants: [
+                { argumentNames: ['g'] },
+            ],
+            description: 'Flips the grid `g` vertically.',
+            examples: [
+                "grid.flip-v(".concat(exampleGrid1, ")"),
+                "grid.flip-v(".concat(exampleGrid2, ")"),
+                "grid.flip-v(".concat(exampleGrid3, ")"),
+            ],
+        },
+        'grid.rotate': {
+            title: 'grid.rotate',
+            category: 'Grid',
+            returns: {
+                type: 'grid',
+            },
+            args: __assign({}, getOperatorArgs('grid', 'integer')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            description: 'Rotates the grid `g` by the specified angle. The angle is given in terms of 90-degree rotations. Positive values rotate the grid clockwise, while negative values rotate it counterclockwise.',
+            examples: [
+                "grid.rotate(".concat(exampleGrid3, ", 1)"),
+                "grid.rotate(".concat(exampleGrid3, ", 2)"),
+                "grid.rotate(".concat(exampleGrid3, ", 3)"),
+                "grid.rotate(".concat(exampleGrid3, ", 4)"),
+                "grid.rotate(".concat(exampleGrid3, ", -1)"),
+                "grid.rotate(".concat(exampleGrid3, ", -2)"),
+                "grid.rotate(".concat(exampleGrid3, ", -3)"),
+            ],
+        },
+        'grid.reverse-rows': {
+            title: 'grid.reverse-rows',
+            category: 'Grid',
+            returns: {
+                type: 'grid',
+            },
+            args: {
+                g: {
+                    type: 'grid',
+                    description: 'The grid to reverse rows.',
+                },
+            },
+            variants: [
+                { argumentNames: ['g'] },
+            ],
+            description: 'Reverses the order of rows in the grid `g`.',
+            examples: [
+                "grid.reverse-rows(".concat(exampleGrid1, ")"),
+                "grid.reverse-rows(".concat(exampleGrid2, ")"),
+                "grid.reverse-rows(".concat(exampleGrid3, ")"),
+            ],
+        },
+        'grid.reverse-cols': {
+            title: 'grid.reverse-cols',
+            category: 'Grid',
+            returns: {
+                type: 'grid',
+            },
+            args: {
+                g: {
+                    type: 'grid',
+                    description: 'The grid to reverse columns.',
+                },
+            },
+            variants: [
+                { argumentNames: ['g'] },
+            ],
+            description: 'Reverses the order of columns in the grid `g`.',
+            examples: [
+                "grid.reverse-cols(".concat(exampleGrid1, ")"),
+                "grid.reverse-cols(".concat(exampleGrid2, ")"),
+                "grid.reverse-cols(".concat(exampleGrid3, ")"),
+            ],
+        },
+        'grid.slice': {
+            title: 'grid.slice',
+            category: 'Grid',
+            returns: {
+                type: 'grid',
+            },
+            args: {
+                g: {
+                    type: 'grid',
+                    description: 'The grid to slice.',
+                },
+                begin: {
+                    type: 'vector',
+                    description: 'The starting index of the slice as a vector of two numbers: `[row, col]`.',
+                },
+                stop: {
+                    type: 'vector',
+                    description: 'Optional ending index of the slice as a vector of two numbers: `[row, col]`.',
+                },
+            },
+            variants: [
+                { argumentNames: ['g', 'begin'] },
+                { argumentNames: ['g', 'begin', 'stop'] },
+            ],
+            description: 'Slices the grid `g` from the starting index `begin` to the optional ending index `stop`. The slice is inclusive of the starting index and exclusive of the ending index.',
+            examples: [
+                "grid.slice(".concat(exampleGrid1, ", [1, 1], [2, 2])"),
+                "grid.slice(".concat(exampleGrid1, ", [1, 1])"),
+            ],
+            noOperatorDocumentation: true,
+        },
+        'grid.slice-rows': {
+            title: 'grid.slice-rows',
+            category: 'Grid',
+            returns: {
+                type: 'grid',
+            },
+            args: {
+                g: {
+                    type: 'grid',
+                    description: 'The grid to slice.',
+                },
+                begin: {
+                    type: 'number',
+                    description: 'The starting index of the slice.',
+                },
+                stop: {
+                    type: 'number',
+                    description: 'Optional ending index of the slice.',
+                },
+            },
+            variants: [
+                { argumentNames: ['g', 'begin'] },
+                { argumentNames: ['g', 'begin', 'stop'] },
+            ],
+            description: 'Slices rows of the grid `g` from the starting index `begin` to the optional ending index `stop`. The slice is inclusive of the starting index and exclusive of the ending index.',
+            examples: [
+                "grid.slice-rows(".concat(exampleGrid1, ", 1, 2)"),
+                "grid.slice-rows(".concat(exampleGrid1, ", 1)"),
+            ],
+            noOperatorDocumentation: true,
+        },
+        'grid.slice-cols': {
+            title: 'grid.slice-cols',
+            category: 'Grid',
+            returns: {
+                type: 'grid',
+            },
+            args: {
+                g: {
+                    type: 'grid',
+                    description: 'The grid to slice.',
+                },
+                begin: {
+                    type: 'number',
+                    description: 'The starting index of the slice.',
+                },
+                stop: {
+                    type: 'number',
+                    description: 'Optional ending index of the slice.',
+                },
+            },
+            variants: [
+                { argumentNames: ['g', 'begin'] },
+                { argumentNames: ['g', 'begin', 'stop'] },
+            ],
+            description: 'Slices columns of the grid `g` from the starting index `begin` to the optional ending index `stop`. The slice is inclusive of the starting index and exclusive of the ending index.',
+            examples: [
+                "grid.slice-cols(".concat(exampleGrid1, ", 1, 2)"),
+                "grid.slice-cols(".concat(exampleGrid1, ", 1)"),
+            ],
+            noOperatorDocumentation: true,
+        },
+        'grid.splice-rows': {
+            title: 'grid.splice-rows',
+            category: 'Grid',
+            returns: {
+                type: 'grid',
+            },
+            args: {
+                g: {
+                    type: 'grid',
+                    description: 'The grid to splice.',
+                },
+                begin: {
+                    type: 'number',
+                    description: 'The starting index of the splice.',
+                },
+                deleteCount: {
+                    type: 'number',
+                    description: 'The number of rows to delete.',
+                },
+                items: {
+                    type: 'array',
+                    rest: true,
+                    description: 'The rows to insert.',
+                },
+            },
+            variants: [
+                { argumentNames: ['g', 'begin', 'deleteCount'] },
+                { argumentNames: ['g', 'begin', 'deleteCount', 'items'] },
+            ],
+            description: 'Splices rows of the grid `g` starting from the index `begin`. Deletes `deleteCount` rows and inserts the specified `items` at that position.',
+            examples: [
+                "grid.splice-rows(".concat(exampleGrid1, ", 1, 2)"),
+                "grid.splice-rows(".concat(exampleGrid1, ", 1, 1, [\"Nazanin\", \"mother\", 40])"),
+            ],
+            noOperatorDocumentation: true,
+        },
+        'grid.splice-cols': {
+            title: 'grid.splice-cols',
+            category: 'Grid',
+            returns: {
+                type: 'grid',
+            },
+            args: {
+                g: {
+                    type: 'grid',
+                    description: 'The grid to splice.',
+                },
+                begin: {
+                    type: 'number',
+                    description: 'The starting index of the splice.',
+                },
+                deleteCount: {
+                    type: 'number',
+                    description: 'The number of columns to delete.',
+                },
+                items: {
+                    type: 'array',
+                    rest: true,
+                    description: 'The columns to insert.',
+                },
+            },
+            variants: [
+                { argumentNames: ['g', 'begin', 'deleteCount'] },
+                { argumentNames: ['g', 'begin', 'deleteCount', 'items'] },
+            ],
+            description: 'Splices columns of the grid `g` starting from the index `begin`. Deletes `deleteCount` columns and inserts the specified `items` at that position.',
+            examples: [
+                "grid.splice-cols(".concat(exampleGrid1, ", 1, 2)"),
+                "grid.splice-cols(".concat(exampleGrid1, ", 1, 1, [\"f\", \"m\", \"s\"])"),
+            ],
+            noOperatorDocumentation: true,
+        },
+        'grid.concat-rows': {
+            title: 'grid.concat-rows',
+            category: 'Grid',
+            returns: {
+                type: 'grid',
+            },
+            args: __assign({}, getOperatorArgs('grid', 'grid')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            description: 'Concatenates two grids `a` and `b` by rows. The number of columns in both grids must be the same.',
+            examples: [
+                "grid.concat-rows(".concat(exampleGrid2, ", ").concat(exampleGrid3, ")"),
+            ],
+        },
+        'grid.concat-cols': {
+            title: 'grid.concat-cols',
+            category: 'Grid',
+            returns: {
+                type: 'grid',
+            },
+            args: __assign({}, getOperatorArgs('grid', 'grid')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            description: 'Concatenates two grids `a` and `b` by columns. The number of rows in both grids must be the same.',
+            examples: [
+                "grid.concat-cols(".concat(exampleGrid1, ", ").concat(exampleGrid2, ")"),
+            ],
+        },
+        'grid.map': {
+            title: 'grid.map',
+            category: 'Grid',
+            returns: {
+                type: 'grid',
+            },
+            args: __assign({}, getOperatorArgs('grid', 'function')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            description: 'Maps a function `a` over each element of the grid `b`, returning a new grid with the results.',
+            examples: [
+                "grid.map(".concat(exampleGrid1, ", str)"),
+            ],
+        },
+        'grid.mapi': {
+            title: 'grid.mapi',
+            category: 'Grid',
+            returns: {
+                type: 'grid',
+            },
+            args: __assign({}, getOperatorArgs('grid', 'function')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            description: 'Maps a function `a` over each element of the grid `b`, passing the row and column index as additional arguments to the function.',
+            examples: [
+                "grid.mapi(".concat(exampleGrid1, ", -> $1 ++ \"(\" ++ $2 ++ \", \" ++ $3 ++ \")\")"),
+            ],
+        },
+        'grid.reduce': {
+            title: 'grid.reduce',
+            category: 'Grid',
+            returns: {
+                type: 'any',
+            },
+            args: {
+                'g': {
+                    type: 'grid',
+                    description: 'The grid to reduce.',
+                },
+                'fn': {
+                    type: 'function',
+                    description: 'The function to reduce the grid. It takes two arguments: the accumulator and the current element.',
+                },
+                'initial-value': {
+                    type: 'any',
+                    description: 'The initial value for the accumulator.',
+                },
+            },
+            variants: [
+                { argumentNames: ['g', 'fn', 'initial-value'] },
+            ],
+            description: 'Reduces the grid `a` using the function `b`, returning a single value.',
+            examples: [
+                "grid.reduce(".concat(exampleGrid1, ", ++, \"\")"),
+            ],
+        },
+        'grid.reducei': {
+            title: 'grid.reducei',
+            category: 'Grid',
+            returns: {
+                type: 'any',
+            },
+            args: {
+                'g': {
+                    type: 'grid',
+                    description: 'The grid to reduce.',
+                },
+                'fn': {
+                    type: 'function',
+                    description: 'The function to reduce the grid. It takes four arguments: the accumulator, the current element, the row index, and the column index.',
+                },
+                'initial-value': {
+                    type: 'any',
+                    description: 'The initial value for the accumulator.',
+                },
+            },
+            variants: [
+                { argumentNames: ['g', 'fn', 'initial-value'] },
+            ],
+            description: 'Reduces the grid `a` using the function `b`, passing the row and column indices as additional arguments to the function.',
+            examples: [
+                "grid.reducei(".concat(exampleGrid1, ", ++, \"\")"),
+            ],
+        },
+        'grid.push-rows': {
+            title: 'grid.push-rows',
+            category: 'Grid',
+            returns: {
+                type: 'grid',
+            },
+            args: {
+                g: {
+                    type: 'grid',
+                    description: 'The grid to push rows into.',
+                },
+                rows: {
+                    type: 'array',
+                    rest: true,
+                    description: 'The rows to push into the grid.',
+                },
+            },
+            variants: [
+                { argumentNames: ['g', 'rows'] },
+            ],
+            description: 'Pushes the specified rows into the grid `g` and returns the new grid.',
+            examples: [
+                "grid.push-rows(".concat(exampleGrid1, ", [\"Nazanin\", \"mother\", 40])"),
+            ],
+            noOperatorDocumentation: true,
+        },
+        'grid.unshift-rows': {
+            title: 'grid.unshift-rows',
+            category: 'Grid',
+            returns: {
+                type: 'grid',
+            },
+            args: {
+                g: {
+                    type: 'grid',
+                    description: 'The grid to unshift rows into.',
+                },
+                rows: {
+                    type: 'array',
+                    rest: true,
+                    description: 'The rows to unshift into the grid.',
+                },
+            },
+            variants: [
+                { argumentNames: ['g', 'rows'] },
+            ],
+            description: 'Unshifts the specified rows into the grid `g` and returns the new grid.',
+            examples: [
+                "grid.unshift-rows(".concat(exampleGrid1, ", [\"Nazanin\", \"mother\", 40])"),
+            ],
+            noOperatorDocumentation: true,
+        },
+        'grid.pop-row': {
+            title: 'grid.pop-row',
+            category: 'Grid',
+            returns: {
+                type: 'grid',
+            },
+            args: {
+                g: {
+                    type: 'grid',
+                    description: 'The grid to pop a row from.',
+                },
+            },
+            variants: [
+                { argumentNames: ['g'] },
+            ],
+            description: 'Pops the last row from the grid `g` and returns the new grid.',
+            examples: [
+                "grid.pop-row(".concat(exampleGrid1, ")"),
+            ],
+        },
+        'grid.shift-row': {
+            title: 'grid.shift-row',
+            category: 'Grid',
+            returns: {
+                type: 'grid',
+            },
+            args: {
+                g: {
+                    type: 'grid',
+                    description: 'The grid to shift a row from.',
+                },
+            },
+            variants: [
+                { argumentNames: ['g'] },
+            ],
+            description: 'Shifts the first row from the grid `g` and returns the new grid.',
+            examples: [
+                "grid.shift-row(".concat(exampleGrid1, ")"),
+            ],
+        },
+        'grid.push-cols': {
+            title: 'grid.push-cols',
+            category: 'Grid',
+            returns: {
+                type: 'grid',
+            },
+            args: {
+                g: {
+                    type: 'grid',
+                    description: 'The grid to push columns into.',
+                },
+                cols: {
+                    type: 'array',
+                    rest: true,
+                    description: 'The columns to push into the grid.',
+                },
+            },
+            variants: [
+                { argumentNames: ['g', 'cols'] },
+            ],
+            description: 'Pushes the specified columns into the grid `g` and returns the new grid.',
+            examples: [
+                "grid.push-cols(".concat(exampleGrid1, ", [\"f\", \"m\", \"s\"])"),
+            ],
+            noOperatorDocumentation: true,
+        },
+        'grid.unshift-cols': {
+            title: 'grid.unshift-cols',
+            category: 'Grid',
+            returns: {
+                type: 'grid',
+            },
+            args: {
+                g: {
+                    type: 'grid',
+                    description: 'The grid to unshift columns into.',
+                },
+                cols: {
+                    type: 'array',
+                    rest: true,
+                    description: 'The columns to unshift into the grid.',
+                },
+            },
+            variants: [
+                { argumentNames: ['g', 'cols'] },
+            ],
+            description: 'Unshifts the specified columns into the grid `g` and returns the new grid.',
+            examples: [
+                "grid.unshift-cols(".concat(exampleGrid1, ", [\"f\", \"m\", \"s\"])"),
+            ],
+            noOperatorDocumentation: true,
+        },
+        'grid.pop-col': {
+            title: 'grid.pop-col',
+            category: 'Grid',
+            returns: {
+                type: 'grid',
+            },
+            args: {
+                g: {
+                    type: 'grid',
+                    description: 'The grid to pop a column from.',
+                },
+            },
+            variants: [
+                { argumentNames: ['g'] },
+            ],
+            description: 'Pops the last column from the grid `g` and returns the new grid.',
+            examples: [
+                "grid.pop-col(".concat(exampleGrid1, ")"),
+            ],
+        },
+        'grid.shift-col': {
+            title: 'grid.shift-col',
+            category: 'Grid',
+            returns: {
+                type: 'grid',
+            },
+            args: {
+                g: {
+                    type: 'grid',
+                    description: 'The grid to shift a column from.',
+                },
+            },
+            variants: [
+                { argumentNames: ['g'] },
+            ],
+            description: 'Shifts the first column from the grid `g` and returns the new grid.',
+            examples: [
+                "grid.shift-col(".concat(exampleGrid1, ")"),
+            ],
+        },
+        'grid.from-array': {
+            title: 'grid.from-array',
+            category: 'Grid',
+            returns: {
+                type: 'grid',
+            },
+            args: __assign({}, getOperatorArgs('array', 'number')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            description: 'Creates a grid from a flat array with specified dimensions. The array is reshaped into the specified number of rows, and the number of columns is automatically calculated based on the total number of elements in the array.',
+            examples: [
+                'grid.from-array([1, 2, 3, 4], 2)',
+                'grid.from-array([1, 2, 3, 4], 4)',
+            ],
+        },
+    };
+
+    var linAlgReference = {
+        'lin.reflect': {
+            title: 'lin.reflect',
+            category: 'Linear Algebra',
+            description: 'Reflects a vector across a given axis.',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                a: {
+                    type: 'vector',
+                    description: 'Vector to reflect.',
+                },
+                b: {
+                    type: 'vector',
+                    description: 'Axis of reflection.',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                'lin.reflect([1, 2], [0, 1])',
+                'lin.reflect([1, 2, 3], [0, 0, 1])',
+            ],
+        },
+        'lin.refract': {
+            title: 'lin.refract',
+            category: 'Linear Algebra',
+            description: 'Refracts a vector across a given axis.',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'Vector to refract.',
+                },
+                axis: {
+                    type: 'vector',
+                    description: 'Axis of refraction.',
+                },
+                eta: {
+                    type: 'number',
+                    description: 'Refraction index.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector', 'axis', 'eta'] },
+            ],
+            examples: [
+                'lin.refract([1, 2], [0, 1], 1.5)',
+                'lin.refract([1, 2, 3], [0, 0, 1], 1.5)',
+            ],
+        },
+        'lin.lerp': {
+            title: 'lin.lerp',
+            category: 'Linear Algebra',
+            description: 'Performs linear interpolation between two vectors.',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                a: {
+                    type: 'vector',
+                    description: 'Start vector.',
+                },
+                b: {
+                    type: 'vector',
+                    description: 'End vector.',
+                },
+                t: {
+                    type: 'number',
+                    description: 'Interpolation factor (0 to 1).',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b', 't'] },
+            ],
+            examples: [
+                'lin.lerp([1, 2], [3, 4], 0.5)',
+                'lin.lerp([1, 2], [3, 4], 2)',
+                'lin.lerp([1, 2], [3, 4], -1)',
+                'lin.lerp([1, 2, 3], [4, 5, 6], 0.25)',
+            ],
+        },
+        'lin.rotate2d': {
+            title: 'lin.rotate2d',
+            category: 'Linear Algebra',
+            description: 'Rotates a 2D vector by a given angle in radians.',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                a: {
+                    type: 'vector',
+                    description: 'Vector to rotate.',
+                },
+                b: {
+                    type: 'number',
+                    description: 'Angle in b.',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                'lin.rotate2d([1, 0], PI / 2)',
+                'lin.rotate2d([0, 1], PI)',
+            ],
+        },
+        'lin.rotate3d': {
+            title: 'lin.rotate3d',
+            category: 'Linear Algebra',
+            description: 'Rotates a 3D vector around a given axis by a given angle in radians.',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                v: {
+                    type: 'vector',
+                    description: 'Vector to rotate.',
+                },
+                axis: {
+                    type: 'vector',
+                    description: 'Axis of rotation.',
+                },
+                radians: {
+                    type: 'number',
+                    description: 'Angle in radians.',
+                },
+            },
+            variants: [
+                { argumentNames: ['v', 'axis', 'radians'] },
+            ],
+            examples: [
+                'lin.rotate3d([1, 0, 0], [0, 1, 0], PI / 2)',
+                'lin.rotate3d([0, 1, 0], [1, 0, 0], PI)',
+            ],
+        },
+        'lin.dot': {
+            title: 'lin.dot',
+            category: 'Linear Algebra',
+            description: 'Calculates the dot product of two vectors. The result is a scalar.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                a: {
+                    type: 'vector',
+                    description: 'First vector.',
+                },
+                b: {
+                    type: 'vector',
+                    description: 'Second vector.',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                'lin.dot([1, 2], [3, 4])',
+                'lin.dot([1, 2, 3], [4, 5, 6])',
+            ],
+        },
+        'lin.cross': {
+            title: 'lin.cross',
+            category: 'Linear Algebra',
+            description: 'Calculates the cross product of two 3D vectors. The result is a vector perpendicular to both input vectors.',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                a: {
+                    type: 'vector',
+                    description: 'First vector (3D).',
+                },
+                b: {
+                    type: 'vector',
+                    description: 'Second vector (3D).',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                'lin.cross([1, 2, 3], [4, 5, 6])',
+                'lin.cross([1, 0, 0], [0, 1, 0])',
+                'lin.cross([0, 0, 1], [1, 0, 0])',
+                'lin.cross([1, 2, 3], [0, 0, 0])',
+                'lin.cross([0, 0, 0], [1, 2, 3])',
+            ],
+        },
+        'lin.normalize-minmax': {
+            title: 'lin.normalize-minmax',
+            category: 'Linear Algebra',
+            description: 'Normalizes the vector using min-max normalization. The result is a vector with values between 0 and 1.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                v: {
+                    type: 'vector',
+                    description: 'Vector to normalize.',
+                },
+            },
+            variants: [
+                { argumentNames: ['v'] },
+            ],
+            examples: [
+                'lin.normalize-minmax([1, 2, 3])',
+                'lin.normalize-minmax([1, 2, -3])',
+                'lin.normalize-minmax([1, 2, 3, 4])',
+                'lin.normalize-minmax([1, 2, -3, 4])',
+                'lin.normalize-minmax([1, 2, 3, 40, 50])',
+            ],
+        },
+        'lin.normalize-zscore': {
+            title: 'lin.normalize-zscore',
+            category: 'Linear Algebra',
+            description: 'Normalizes the vector using z-score normalization. The result is a vector with mean 0 and standard deviation 1.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                v: {
+                    type: 'vector',
+                    description: 'Vector to normalize.',
+                },
+            },
+            variants: [
+                { argumentNames: ['v'] },
+            ],
+            examples: [
+                'lin.normalize-zscore([1, 2, 3])',
+                'lin.normalize-zscore([1, 2, -3])',
+                'lin.normalize-zscore([1, 2, 3, 4])',
+                'lin.normalize-zscore([1, 2, -3, 4])',
+                'lin.normalize-zscore([1, 2, 3, 40, 50])',
+            ],
+        },
+        'lin.normalize-robust': {
+            title: 'lin.normalize-robust',
+            category: 'Linear Algebra',
+            description: 'Normalizes the vector using robust normalization. The result is a vector with median 0 and median absolute deviation 1.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                v: {
+                    type: 'vector',
+                    description: 'Vector to normalize.',
+                },
+            },
+            variants: [
+                { argumentNames: ['v'] },
+            ],
+            examples: [
+                'lin.normalize-robust([1, 2, 3])',
+                'lin.normalize-robust([1, 2, -3])',
+                'lin.normalize-robust([1, 2, 3, 4])',
+                'lin.normalize-robust([1, 2, -3, 4])',
+                'lin.normalize-robust([1, 2, 3, 40, 50])',
+            ],
+        },
+        'lin.normalize-l1': {
+            title: 'lin.normalize-l1',
+            category: 'Linear Algebra',
+            description: 'Normalizes the vector using L1 normalization. The result is a vector with L1 norm equal to 1.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                v: {
+                    type: 'vector',
+                    description: 'Vector to normalize.',
+                },
+            },
+            variants: [
+                { argumentNames: ['v'] },
+            ],
+            examples: [
+                'lin.normalize-l1([1, 2, 3])',
+                'lin.normalize-l1([1, 2, -3])',
+                'lin.normalize-l1([1, 2, 3, 4])',
+                'lin.normalize-l1([1, 2, -3, 4])',
+                'lin.normalize-l1([1, 2, 3, 40, 50])',
+            ],
+        },
+        'lin.normalize-l2': {
+            title: 'lin.normalize-l2',
+            category: 'Linear Algebra',
+            description: 'Normalizes the vector using L2 normalization. The result is a vector with L2 norm equal to 1.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                v: {
+                    type: 'vector',
+                    description: 'Vector to normalize.',
+                },
+            },
+            variants: [
+                { argumentNames: ['v'] },
+            ],
+            examples: [
+                'lin.normalize-l2([1, 2, 3])',
+                'lin.unit([1, 2, 3])',
+                'lin.normalize-l2([1, 2, -3])',
+                'lin.normalize-l2([1, 2, 3, 4])',
+                'lin.normalize-l2([1, 2, -3, 4])',
+                'lin.normalize-l2([1, 2, 3, 40, 50])',
+            ],
+            aliases: [
+                'lin.unit',
+                'lin.normalize',
+            ],
+        },
+        'lin.normalize-log': {
+            title: 'lin.normalize-log',
+            category: 'Linear Algebra',
+            description: 'Normalizes the vector using natural log normalization. The result is a vector with log-transformed values.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                v: {
+                    type: 'vector',
+                    description: 'Vector to normalize.',
+                },
+            },
+            variants: [
+                { argumentNames: ['v'] },
+            ],
+            examples: [
+                'lin.normalize-log([1, 2, 3])',
+                'lin.normalize-log([1, 2, 3, 4])',
+                'lin.normalize-log([1, 2, 3, 40, 50])',
+            ],
+        },
+        'lin.angle': {
+            title: 'lin.angle',
+            category: 'Linear Algebra',
+            description: 'Calculates the `angle` between two vectors in radians.',
+            returns: {
+                type: 'number',
+            },
+            args: __assign({}, getOperatorArgs('vector', 'vector')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                'lin.angle([1, 0], [0, 1])',
+                'lin.angle([1, 0, 1], [0, 1, 0])',
+            ],
+        },
+        'lin.projection': {
+            title: 'lin.projection',
+            category: 'Linear Algebra',
+            description: 'Calculates the **projection** of vector `a` onto vector `b`.',
+            returns: {
+                type: 'vector',
+            },
+            args: __assign({}, getOperatorArgs('vector', 'vector')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                'lin.projection([1, 2], [3, 4])',
+                'lin.projection([1, 2, 3], [4, 5, 6])',
+            ],
+        },
+        'lin.collinear?': {
+            title: 'lin.collinear?',
+            category: 'Linear Algebra',
+            description: 'Checks if two vectors are **collinear**.',
+            returns: {
+                type: 'boolean',
+            },
+            args: __assign({}, getOperatorArgs('vector', 'vector')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                'lin.collinear?([1, 2], [2, 4])',
+                'lin.collinear?([1, 2], [-2, -4])',
+                'lin.collinear?([1, 2, 3], [2, 4, 6])',
+            ],
+        },
+        'lin.parallel?': {
+            title: 'lin.parallel?',
+            category: 'Linear Algebra',
+            description: 'Checks if two vectors are **parallel**.',
+            returns: {
+                type: 'boolean',
+            },
+            args: __assign({}, getOperatorArgs('vector', 'vector')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                'lin.parallel?([1, 2], [2, 4])',
+                'lin.parallel?([1, 2], [-2, -4])',
+                'lin.parallel?([1, 2, 3], [2, 4, 6])',
+                'lin.parallel?([1, 2], [3, 4])',
+            ],
+        },
+        'lin.orthogonal?': {
+            title: 'lin.orthogonal?',
+            category: 'Linear Algebra',
+            returns: {
+                type: 'boolean',
+            },
+            args: __assign({}, getOperatorArgs('vector', 'vector')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            description: 'Checks if two vectors are **orthogonal**.',
+            examples: [
+                'lin.orthogonal?([1, 0], [0, 1])',
+                'lin.orthogonal?([1, 0, 1], [0, 1, 0])',
+                'lin.orthogonal?([1, 2], [2, -1])',
+            ],
+        },
+        'lin.cosine-similarity': {
+            title: 'lin.cosine-similarity',
+            category: 'Linear Algebra',
+            description: 'Calculates the **cosine similarity** between two vectors. The result is a value between -1 and 1.',
+            returns: {
+                type: 'number',
+            },
+            args: __assign({}, getOperatorArgs('vector', 'vector')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                'lin.cosine-similarity([1, 2], [3, 4])',
+                'lin.cosine-similarity([1, 2, 3], [4, 5, 6])',
+                'lin.cosine-similarity([1, 0], [0, 1])',
+            ],
+        },
+        'lin.euclidean-distance': {
+            title: 'lin.euclidean-distance',
+            category: 'Linear Algebra',
+            description: 'Calculates the **Euclidean distance** between two vectors. The result is a non-negative number.',
+            returns: {
+                type: 'number',
+            },
+            args: __assign({}, getOperatorArgs('vector', 'vector')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                'lin.euclidean-distance([1, 2], [3, 4])',
+                'lin.euclidean-distance([1, 2, 3], [4, 5, 6])',
+                'lin.euclidean-distance([1, 0], [0, 1])',
+            ],
+            aliases: [
+                'lin.distance',
+                'lin.l2-distance',
+            ],
+        },
+        'lin.euclidean-norm': {
+            title: 'lin.euclidean-norm',
+            category: 'Linear Algebra',
+            description: 'Calculates the **Euclidean norm** (L2 norm) of a vector. The result is a non-negative number.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                v: {
+                    type: 'vector',
+                    description: 'Vector to calculate the norm for.',
+                },
+            },
+            variants: [
+                { argumentNames: ['v'] },
+            ],
+            examples: [
+                'lin.euclidean-norm([1, 2])',
+                'lin.euclidean-norm([3, 4])',
+                'lin.euclidean-norm([1, 2, 3])',
+            ],
+            aliases: [
+                'lin.l2-norm',
+                'lin.length',
+            ],
+        },
+        'lin.manhattan-distance': {
+            title: 'lin.manhattan-distance',
+            category: 'Linear Algebra',
+            description: 'Calculates the **Manhattan distance** between two vectors. The result is a non-negative number.',
+            returns: {
+                type: 'number',
+            },
+            args: __assign({}, getOperatorArgs('vector', 'vector')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                'lin.manhattan-distance([1, 2], [3, 4])',
+                'lin.manhattan-distance([1, 2, 3], [4, 5, 6])',
+                'lin.manhattan-distance([1, 0], [0, 1])',
+            ],
+            aliases: [
+                'lin.l1-distance',
+                'lin.cityblock-distance',
+            ],
+        },
+        'lin.manhattan-norm': {
+            title: 'lin.manhattan-norm',
+            category: 'Linear Algebra',
+            description: 'Calculates the **Manhattan norm** (L1 norm) of a vector. The result is a non-negative number.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                v: {
+                    type: 'vector',
+                    description: 'Vector to calculate the norm for.',
+                },
+            },
+            variants: [
+                { argumentNames: ['v'] },
+            ],
+            examples: [
+                'lin.manhattan-norm([1, 2])',
+                'lin.manhattan-norm([3, 4])',
+                'lin.manhattan-norm([1, 2, 3])',
+            ],
+            aliases: [
+                'lin.l1-norm',
+                'lin.cityblock-norm',
+            ],
+        },
+        'lin.hamming-distance': {
+            title: 'lin.hamming-distance',
+            category: 'Linear Algebra',
+            description: 'Calculates the **Hamming distance** between two vectors. The result is a non-negative integer.',
+            returns: {
+                type: 'integer',
+            },
+            args: __assign({}, getOperatorArgs('vector', 'vector')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                'lin.hamming-distance([1, 2], [3, 4])',
+                'lin.hamming-distance([1, 2, 3], [4, 5, 6])',
+                'lin.hamming-distance([1, 0], [0, 1])',
+            ],
+        },
+        'lin.hamming-norm': {
+            title: 'lin.hamming-norm',
+            category: 'Linear Algebra',
+            description: 'Calculates the **Hamming norm** of a vector. The result is a non-negative integer.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                v: {
+                    type: 'vector',
+                    description: 'Vector to calculate the norm for.',
+                },
+            },
+            variants: [
+                { argumentNames: ['v'] },
+            ],
+            examples: [
+                'lin.hamming-norm([1, 2])',
+                'lin.hamming-norm([3, 4])',
+                'lin.hamming-norm([1, 2, 3])',
+            ],
+        },
+        'lin.chebyshev-distance': {
+            title: 'lin.chebyshev-distance',
+            category: 'Linear Algebra',
+            description: 'Calculates the **Chebyshev distance** between two vectors. The result is a non-negative number.',
+            returns: {
+                type: 'number',
+            },
+            args: __assign({}, getOperatorArgs('vector', 'vector')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                'lin.chebyshev-distance([1, 2], [3, 4])',
+                'lin.chebyshev-distance([1, 2, 3], [4, 5, 6])',
+                'lin.chebyshev-distance([1, 0], [0, 1])',
+            ],
+        },
+        'lin.chebyshev-norm': {
+            title: 'lin.chebyshev-norm',
+            category: 'Linear Algebra',
+            description: 'Calculates the **Chebyshev norm** of a vector. The result is a non-negative number.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                v: {
+                    type: 'vector',
+                    description: 'Vector to calculate the norm for.',
+                },
+            },
+            variants: [
+                { argumentNames: ['v'] },
+            ],
+            examples: [
+                'lin.chebyshev-norm([1, 2])',
+                'lin.chebyshev-norm([3, 4])',
+                'lin.chebyshev-norm([1, 2, 3])',
+            ],
+        },
+        'lin.minkowski-distance': {
+            title: 'lin.minkowski-distance',
+            category: 'Linear Algebra',
+            description: 'Calculates the **Minkowski distance** between two vectors. The result is a non-negative number.',
+            returns: {
+                type: 'number',
+            },
+            args: __assign(__assign({}, getOperatorArgs('vector', 'vector')), { p: {
+                    type: 'number',
+                    description: 'Order of the norm (p).',
+                } }),
+            variants: [
+                { argumentNames: ['a', 'b', 'p'] },
+            ],
+            examples: [
+                'lin.minkowski-distance([1, 2], [3, 4], 2)',
+                'lin.minkowski-distance([1, 2, 3], [4, 5, 6], 3)',
+                'lin.minkowski-distance([1, 0], [0, 1], 1)',
+            ],
+        },
+        'lin.minkowski-norm': {
+            title: 'lin.minkowski-norm',
+            category: 'Linear Algebra',
+            description: 'Calculates the **Minkowski norm** of a vector. The result is a non-negative number.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                a: {
+                    type: 'vector',
+                    description: 'Vector to calculate the norm for.',
+                },
+                b: {
+                    type: 'number',
+                    description: 'Order of the norm (p).',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                'lin.minkowski-norm([1, 2], 2)',
+                'lin.minkowski-norm([3, 4], 3)',
+                'lin.minkowski-norm([1, 2, 3], 4)',
+            ],
+        },
+        'lin.cov': {
+            title: 'lin.cov',
+            category: 'Linear Algebra',
+            description: 'Calculates the **covariance** between two vectors. The result is a number.',
+            returns: {
+                type: 'number',
+            },
+            args: __assign({}, getOperatorArgs('vector', 'vector')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                'lin.cov([1, 2], [3, 4])',
+                'lin.cov([1, 2, 3], [4, 5, 6])',
+                'lin.cov([1, 0], [0, 1])',
+            ],
+        },
+        'lin.corr': {
+            title: 'lin.corr',
+            category: 'Linear Algebra',
+            description: 'Calculates the **correlation** between two vectors. The result is a number between -1 and 1.',
+            returns: {
+                type: 'number',
+            },
+            args: __assign({}, getOperatorArgs('vector', 'vector')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                'lin.corr([1, 2], [3, 4])',
+                'lin.corr([1, 2, 3], [4, 5, 6])',
+                'lin.corr([1, 0], [0, 1])',
+            ],
+        },
+        'lin.spearman-corr': {
+            title: 'lin.spearman-corr',
+            category: 'Linear Algebra',
+            description: 'Calculates the **Spearman rank correlation** between two vectors. The result is a number between -1 and 1.',
+            returns: {
+                type: 'number',
+            },
+            args: __assign({}, getOperatorArgs('vector', 'vector')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                'lin.spearman-corr([1, 2], [3, 4])',
+                'lin.spearman-corr([1, 2, 3], [4, 5, 6])',
+                'lin.spearman-corr([1, 0], [0, 1])',
+            ],
+            aliases: ['lin.spearman-rho'],
+        },
+        'lin.pearson-corr': {
+            title: 'lin.pearson-corr',
+            category: 'Linear Algebra',
+            description: 'Calculates the **Pearson correlation** between two vectors. The result is a number between -1 and 1.',
+            returns: {
+                type: 'number',
+            },
+            args: __assign({}, getOperatorArgs('vector', 'vector')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                'lin.pearson-corr([1, 2], [3, 4])',
+                'lin.pearson-corr([1, 2, 3], [4, 5, 6])',
+                'lin.pearson-corr([1, 0], [0, 1])',
+            ],
+        },
+        'lin.kendall-tau': {
+            title: 'lin.kendall-tau',
+            category: 'Linear Algebra',
+            description: 'Calculates the **Kendall Tau** rank correlation coefficient between two vectors. The result is a number between -1 and 1.',
+            returns: {
+                type: 'number',
+            },
+            args: __assign({}, getOperatorArgs('vector', 'vector')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                'lin.kendall-tau([1, 2], [3, 4])',
+                'lin.kendall-tau([1, 2, 3], [4, 5, 6])',
+                'lin.kendall-tau([1, 0], [0, 1])',
+            ],
+        },
+        'lin.autocorrelation': {
+            title: 'lin.autocorrelation',
+            category: 'Linear Algebra',
+            description: 'Calculates the **autocorrelation** of a vector. The result is a vector of autocorrelation coefficients.',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                a: {
+                    type: 'vector',
+                    description: 'Vector to calculate the autocorrelation for.',
+                },
+                b: {
+                    type: 'integer',
+                    description: 'Lag value for the autocorrelation.',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                'lin.autocorrelation([1, 2, 3], -2)',
+                'lin.autocorrelation([1, 2, 3], -1)',
+                'lin.autocorrelation([1, 2, 3], 0)',
+                'lin.autocorrelation([1, 2, 3], 1)',
+                'lin.autocorrelation([1, 2, 3], 2)',
+            ],
+            aliases: ['lin.acf'],
+        },
+        'lin.cross-correlation': {
+            title: 'lin.cross-correlation',
+            category: 'Linear Algebra',
+            description: 'Calculates the **cross-correlation** between two vectors. The result is a vector of cross-correlation coefficients.',
+            returns: {
+                type: 'vector',
+            },
+            args: __assign(__assign({}, getOperatorArgs('vector', 'vector')), { lag: {
+                    type: 'integer',
+                    description: 'Lag value for the cross-correlation.',
+                } }),
+            variants: [
+                { argumentNames: ['a', 'b', 'lag'] },
+            ],
+            examples: [
+                'lin.cross-correlation([1, 2, 3], [4, 5, 6], -2)',
+                'lin.cross-correlation([1, 2, 3], [4, 5, 6], -1)',
+                'lin.cross-correlation([1, 2, 3], [4, 5, 6], 0)',
+                'lin.cross-correlation([1, 2, 3], [4, 5, 6], 1)',
+                'lin.cross-correlation([1, 2, 3], [4, 5, 6], 2)',
+            ],
+            aliases: ['lin.ccf'],
+        },
+        'lin.rref': {
+            title: 'lin.rref',
+            category: 'Linear Algebra',
+            description: 'Calculates the **Reduced Row Echelon Form** (RREF) of a matrix.',
+            returns: {
+                type: 'matrix',
+            },
+            args: {
+                m: {
+                    type: 'matrix',
+                    description: 'Matrix to calculate the RREF for.',
+                },
+            },
+            variants: [
+                { argumentNames: ['m'] },
+            ],
+            examples: [
+                'lin.rref([[1, 2], [3, 4]])',
+                'lin.rref([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+                'lin.rref([[1, 2, 3], [7, 8, 9], [4, 5, 7]])',
+            ],
+        },
+        'lin.solve': {
+            title: 'lin.solve',
+            category: 'Linear Algebra',
+            description: 'Solves a system of linear equations represented by a matrix and a vector.',
+            returns: {
+                type: 'vector',
+            },
+            args: __assign({}, getOperatorArgs('matrix', 'vector')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                "lin.solve([\n  [2, 1, -1, 1], \n  [4, 5, -3, 2], \n  [6, -2, 5, -3], \n  [8, 3, 2, 4]\n], [5, 10, 2, 17])",
+                'lin.solve([[2, 0, 0], [3, 1, 0], [4, 5, 6]], [4, 5, 38])',
+                'lin.solve([[2, 3], [1, -1]], [8, 2])',
+            ],
+        },
+        'lin.to-polar': {
+            title: 'lin.to-polar',
+            category: 'Linear Algebra',
+            description: 'Converts a 2D vector to polar coordinates.',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: '2D Vector to convert.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'lin.to-polar([1, 2])',
+                'lin.to-polar([3, 4])',
+            ],
+        },
+        'lin.from-polar': {
+            title: 'lin.from-polar',
+            category: 'Linear Algebra',
+            description: 'Converts polar coordinates to a 2D vector.',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                polar: {
+                    type: 'vector',
+                    description: 'Polar coordinates to convert.',
+                },
+            },
+            variants: [
+                { argumentNames: ['polar'] },
+            ],
+            examples: [
+                'lin.from-polar([1, PI / 4])',
+                'lin.from-polar([1, 0])',
+                'lin.from-polar([1, -PI / 2])',
+            ],
+        },
+    };
+
+    var matrixReference = {
+        'mat.mul': {
+            title: 'mat.mul',
+            category: 'Matrix',
+            returns: {
+                type: 'matrix',
+            },
+            args: __assign({}, getOperatorArgs('matrix', 'matrix')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            description: 'Multiplies two `matrices` using standard `matrix` multiplication based on **dot products** of rows and columns.',
+            examples: [
+                'mat.mul([[1, 2], [3, 4]], [[5, 6], [7, 8]])',
+                'mat.mul([[1, 2, 3], [4, 5, 6]], [[7, 8], [9, 10], [11, 12]])',
+            ],
+        },
+        'mat.det': {
+            title: 'mat.det',
+            category: 'Matrix',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                m: {
+                    type: 'matrix',
+                    description: 'The `matrix` to calculate the determinant of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['m'] },
+            ],
+            description: 'Calculates the **determinant** of a square matrix.',
+            examples: [
+                'mat.det([[1, 2], [3, 4]])',
+                'mat.det([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+            ],
+        },
+        'mat.inv': {
+            title: 'mat.inv',
+            category: 'Matrix',
+            returns: {
+                type: 'matrix',
+            },
+            args: {
+                m: {
+                    type: 'matrix',
+                    description: 'The `matrix` to calculate the inverse of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['m'] },
+            ],
+            description: 'Calculates the **inverse** of a square matrix.',
+            examples: [
+                'mat.inv([[1, 2], [3, 4]])',
+                'mat.inv([[1, 2, 3], [4, 5, 7], [7, 8, 10]])',
+            ],
+        },
+        'mat.adj': {
+            title: 'mat.adj',
+            category: 'Matrix',
+            returns: {
+                type: 'matrix',
+            },
+            args: {
+                m: {
+                    type: 'matrix',
+                    description: 'The `matrix` to calculate the adjugate of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['m'] },
+            ],
+            description: 'Calculates the **adjugate** of a square matrix.',
+            examples: [
+                'mat.adj([[1, 2], [3, 4]])',
+                'mat.adj([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+                'mat.adj([[1, 2, 3], [7, 8, 9], [4, 5, 6]])',
+            ],
+        },
+        'mat.cofactor': {
+            title: 'mat.cofactor',
+            category: 'Matrix',
+            returns: {
+                type: 'matrix',
+            },
+            args: {
+                m: {
+                    type: 'matrix',
+                    description: 'The `matrix` to calculate the cofactor of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['m'] },
+            ],
+            description: 'Calculates the **cofactor** of a square matrix.',
+            examples: [
+                'mat.cofactor([[1, 2], [3, 4]])',
+                'mat.cofactor([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+                'mat.cofactor([[1, 2, 3], [7, 8, 9], [4, 5, 6]])',
+            ],
+        },
+        'mat.minor': {
+            title: 'mat.minor',
+            category: 'Matrix',
+            returns: {
+                type: 'matrix',
+            },
+            args: {
+                m: {
+                    type: 'matrix',
+                    description: 'The `matrix` to calculate the minor of.',
+                },
+                row: {
+                    type: 'integer',
+                    description: 'The row index of the element to calculate the minor for.',
+                },
+                col: {
+                    type: 'integer',
+                    description: 'The column index of the element to calculate the minor for.',
+                },
+            },
+            variants: [
+                { argumentNames: ['m', 'row', 'col'] },
+            ],
+            description: 'Calculates the **minor** of a square matrix.',
+            examples: [
+                'mat.minor([[1, 2], [3, 4]], 0, 1)',
+                'mat.minor([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 1, 1)',
+            ],
+        },
+        'mat.trace': {
+            title: 'mat.trace',
+            category: 'Matrix',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                m: {
+                    type: 'matrix',
+                    description: 'The `matrix` to calculate the trace of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['m'] },
+            ],
+            description: 'Calculates the **trace** of a square matrix.',
+            examples: [
+                'mat.trace([[1, 2], [3, 4]])',
+                'mat.trace([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+            ],
+        },
+        'mat.symmetric?': {
+            title: 'mat.symmetric?',
+            category: 'Matrix',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                m: {
+                    type: 'matrix',
+                    description: 'The `matrix` to check for symmetry.',
+                },
+            },
+            variants: [
+                { argumentNames: ['m'] },
+            ],
+            description: 'Checks if a `matrix` is **symmetric**.',
+            examples: [
+                'mat.symmetric?([[1, 2], [2, 1]])',
+                'mat.symmetric?([[1, 2, 3], [2, 1, 4], [3, 4, 1]])',
+            ],
+        },
+        'mat.triangular?': {
+            title: 'mat.triangular?',
+            category: 'Matrix',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                m: {
+                    type: 'matrix',
+                    description: 'The `matrix` to check for triangularity.',
+                },
+            },
+            variants: [
+                { argumentNames: ['m'] },
+            ],
+            description: 'Checks if a `matrix` is **triangular**.',
+            examples: [
+                'mat.triangular?([[2, 0], [0, 1]])',
+                'mat.triangular?([[1, 2, 3], [0, 4, 5], [0, 0, 6]])',
+            ],
+        },
+        'mat.upper-triangular?': {
+            title: 'mat.upper-triangular?',
+            category: 'Matrix',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                m: {
+                    type: 'matrix',
+                    description: 'The `matrix` to check for upper triangularity.',
+                },
+            },
+            variants: [
+                { argumentNames: ['m'] },
+            ],
+            description: 'Checks if a `matrix` is **upper triangular**.',
+            examples: [
+                'mat.upper-triangular?([[1, 2], [0, 3]])',
+                'mat.upper-triangular?([[1, 2, 3], [0, 4, 5], [0, 0, 6]])',
+            ],
+        },
+        'mat.lower-triangular?': {
+            title: 'mat.lower-triangular?',
+            category: 'Matrix',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                m: {
+                    type: 'matrix',
+                    description: 'The `matrix` to check for lower triangularity.',
+                },
+            },
+            variants: [
+                { argumentNames: ['m'] },
+            ],
+            description: 'Checks if a `matrix` is **lower triangular**.',
+            examples: [
+                'mat.lower-triangular?([[1, 0], [2, 3]])',
+                'mat.lower-triangular?([[1, 0, 0], [2, 3, 0], [4, 5, 6]])',
+            ],
+        },
+        'mat.diagonal?': {
+            title: 'mat.diagonal?',
+            category: 'Matrix',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                m: {
+                    type: 'matrix',
+                    description: 'The `matrix` to check for diagonal property.',
+                },
+            },
+            variants: [
+                { argumentNames: ['m'] },
+            ],
+            description: 'Checks if a `matrix` is **diagonal**.',
+            examples: [
+                'mat.diagonal?([[1, 0], [0, 2]])',
+                'mat.diagonal?([[1, 0, 0], [0, 2, 0], [0, 0, 3]])',
+                'mat.diagonal?([[1, 0, 0], [2, 2, 2], [0, 0, 3]])',
+            ],
+        },
+        'mat.square?': {
+            title: 'mat.square?',
+            category: 'Matrix',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                m: {
+                    type: 'matrix',
+                    description: 'The `matrix` to check for square property.',
+                },
+            },
+            variants: [
+                { argumentNames: ['m'] },
+            ],
+            description: 'Checks if a `matrix` is **square**.',
+            examples: [
+                'mat.square?([[1, 2], [3, 4]])',
+                'mat.square?([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+                'mat.square?([[1, 2, 3], [4, 5, 6]])',
+            ],
+        },
+        'mat.orthogonal?': {
+            title: 'mat.orthogonal?',
+            category: 'Matrix',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                m: {
+                    type: 'matrix',
+                    description: 'The `matrix` to check for **orthogonality**.',
+                },
+            },
+            variants: [
+                { argumentNames: ['m'] },
+            ],
+            description: 'Checks if a `matrix` is **orthogonal**.',
+            examples: [
+                'mat.orthogonal?([[1, 0], [0, 1]])',
+                'mat.orthogonal?([[1, 0], [0, -1]])',
+                'mat.orthogonal?([[1, 2], [3, 4]])',
+            ],
+        },
+        'mat.identity?': {
+            title: 'mat.identity?',
+            category: 'Matrix',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                m: {
+                    type: 'matrix',
+                    description: 'The `matrix` to check for identity property.',
+                },
+            },
+            variants: [
+                { argumentNames: ['m'] },
+            ],
+            description: 'Checks if a `matrix` is an **identity matrix**.',
+            examples: [
+                'mat.identity?([[1, 0], [0, 1]])',
+                'mat.identity?([[1, 0, 0], [0, 1, 0], [0, 0, 1]])',
+                'mat.identity?([[1, 0, 0], [0, 1, 0], [0, 0, 0]])',
+            ],
+        },
+        'mat.invertible?': {
+            title: 'mat.invertible?',
+            category: 'Matrix',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                m: {
+                    type: 'matrix',
+                    description: 'The `matrix` to check for invertibility.',
+                },
+            },
+            variants: [
+                { argumentNames: ['m'] },
+            ],
+            description: 'Checks if a `matrix` is **invertible**.',
+            examples: [
+                'mat.invertible?([[1, 2], [3, 4]])',
+                'mat.invertible?([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+                'mat.invertible?([[1, 2], [2, 4]])',
+            ],
+        },
+        'mat.hilbert': {
+            title: 'mat.hilbert',
+            category: 'Matrix',
+            returns: {
+                type: 'matrix',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The size of the Hilbert matrix.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            description: 'Generates a **Hilbert matrix** of size `n`.',
+            examples: [
+                'mat.hilbert(3)',
+                'mat.hilbert(4)',
+            ],
+        },
+        'mat.vandermonde': {
+            title: 'mat.vandermonde',
+            category: 'Matrix',
+            returns: {
+                type: 'matrix',
+            },
+            args: {
+                v: {
+                    type: 'vector',
+                    description: 'The vector to generate the Vandermonde matrix from.',
+                },
+            },
+            variants: [
+                { argumentNames: ['v'] },
+            ],
+            description: 'Generates a **Vandermonde matrix** from a vector.',
+            examples: [
+                'mat.vandermonde([1, 2, 3])',
+                'mat.vandermonde([1, 0, 1])',
+            ],
+        },
+        'mat.band': {
+            title: 'mat.band',
+            category: 'Matrix',
+            returns: {
+                type: 'matrix',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The size of the banded matrix.',
+                },
+                lband: {
+                    type: 'integer',
+                    description: 'The lower band index.',
+                },
+                uband: {
+                    type: 'integer',
+                    description: 'The upper band index.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n', 'lband', 'uband'] },
+            ],
+            description: 'Generates a **banded matrix** of size `n` with lower band index `lband` and upper band index `uband`.',
+            examples: [
+                'mat.band(3, 1, 1)',
+                'mat.band(4, 1, 2)',
+            ],
+        },
+        'mat.banded?': {
+            title: 'mat.banded?',
+            category: 'Matrix',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                m: {
+                    type: 'matrix',
+                    description: 'The `matrix` to check for **banded** property.',
+                },
+                lband: {
+                    type: 'integer',
+                    description: 'The lower band index.',
+                },
+                uband: {
+                    type: 'integer',
+                    description: 'The upper band index.',
+                },
+            },
+            variants: [
+                { argumentNames: ['m', 'lband', 'uband'] },
+            ],
+            description: 'Checks if a `matrix` is **banded** with lower band index `lband` and upper band index `uband`.',
+            examples: [
+                "mat.banded?([\n  [1, 1, 1, 0],\n  [1, 1, 1, 1],\n  [1, 1, 1, 1],\n  [0, 1, 1, 1],\n], 2, 2)",
+                "mat.banded?([\n  [1, 1, 1, 0],\n  [1, 1, 1, 1],\n  [1, 1, 1, 1],\n  [0, 1, 1, 1],\n], 1, 1)",
+            ],
+        },
+        'mat.rank': {
+            title: 'mat.rank',
+            category: 'Matrix',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                m: {
+                    type: 'matrix',
+                    description: 'The `matrix` to calculate the rank of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['m'] },
+            ],
+            description: 'Calculates the **rank** of a matrix using **Gaussian elimination**.',
+            examples: [
+                'mat.rank([[1, 0, 0], [0, 1, 0], [0, 0, 1]])',
+                'mat.rank([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+                'mat.rank([[2, 4, 6], [3, 6, 9], [4, 8, 12]])',
+            ],
+        },
+        'mat.frobenius-norm': {
+            title: 'mat.frobenius-norm',
+            category: 'Matrix',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                m: {
+                    type: 'matrix',
+                    description: 'The `matrix` to calculate the Frobenius norm of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['m'] },
+            ],
+            description: 'Calculates the **Frobenius norm** of a matrix.',
+            examples: [
+                'mat.frobenius-norm([[1, 2], [3, 4]])',
+                'mat.frobenius-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+            ],
+        },
+        'mat.1-norm': {
+            title: 'mat.1-norm',
+            category: 'Matrix',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                m: {
+                    type: 'matrix',
+                    description: 'The `matrix` to calculate the 1-norm of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['m'] },
+            ],
+            description: 'Calculates the **1-norm** of a matrix.',
+            examples: [
+                'mat.1-norm([[1, 2], [3, 4]])',
+                'mat.1-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+            ],
+        },
+        'mat.inf-norm': {
+            title: 'mat.inf-norm',
+            category: 'Matrix',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                m: {
+                    type: 'matrix',
+                    description: 'The `matrix` to calculate the infinity norm of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['m'] },
+            ],
+            description: 'Calculates the **infinity norm** of a matrix.',
+            examples: [
+                'mat.inf-norm([[1, 2], [3, 4]])',
+                'mat.inf-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+            ],
+            aliases: ['mat.row-norm'],
+        },
+        'mat.max-norm': {
+            title: 'mat.max-norm',
+            category: 'Matrix',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                m: {
+                    type: 'matrix',
+                    description: 'The `matrix` to calculate the max norm of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['m'] },
+            ],
+            description: 'Calculates the **max norm** of a matrix.',
+            examples: [
+                'mat.max-norm([[1, 2], [3, 4]])',
+                'mat.max-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+            ],
+        },
+    };
+
+    var abundantReference = {
+        'nth.abundant-seq': {
+            title: 'nth.abundant-seq',
+            category: 'Number Theory',
+            description: 'Generates the abundant numbers up to a specified length.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                length: {
+                    type: 'integer',
+                    description: 'The length of the sequence to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['length'] },
+            ],
+            examples: [
+                'nth.abundant-seq(1)',
+                'nth.abundant-seq(5)',
+            ],
+        },
+        'nth.abundant-take-while': {
+            title: 'nth.abundant-take-while',
+            category: 'Number Theory',
+            description: 'Generates the abundant numbers while a condition is met.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                takeWhile: {
+                    type: 'function',
+                    description: 'A function that takes an integer and an index and returns a boolean.',
+                },
+            },
+            variants: [
+                { argumentNames: ['takeWhile'] },
+            ],
+            examples: [
+                'nth.abundant-take-while(-> $ < 100)',
+            ],
+        },
+        'nth.abundant-nth': {
+            title: 'nth.abundant-nth',
+            category: 'Number Theory',
+            description: 'Generates the nth term of the abundant numbers.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The index of the number in the sequence.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.abundant-nth(1)',
+                'nth.abundant-nth(5)',
+            ],
+        },
+        'nth.abundant?': {
+            title: 'nth.abundant?',
+            category: 'Number Theory',
+            description: 'Checks if a number is abundant.',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to check.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.abundant?(12)',
+                'nth.abundant?(15)',
+            ],
+        },
+    };
+
+    var arithmeticReference = {
+        'nth.arithmetic-seq': {
+            title: 'nth.arithmetic-seq',
+            category: 'Number Theory',
+            description: 'Generates the arithmetic sequence for a given $start, $step, and $length.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                start: {
+                    type: 'number',
+                    description: 'The starting term of the sequence.',
+                },
+                step: {
+                    type: 'number',
+                    description: 'The common difference of the sequence.',
+                },
+                length: {
+                    type: 'integer',
+                    description: 'The length of the sequence to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['start', 'step', 'length'] },
+            ],
+            examples: [
+                'nth.arithmetic-seq(3, 2, 2)',
+                'nth.arithmetic-seq(2, 3, 2)',
+                'nth.arithmetic-seq(1, 2, 2)',
+                'nth.arithmetic-seq(1, 1.5, 12)',
+            ],
+        },
+        'nth.arithmetic-take-while': {
+            title: 'nth.arithmetic-take-while',
+            category: 'Number Theory',
+            description: 'Generates the arithmetic sequence while a condition is met.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                start: {
+                    type: 'number',
+                    description: 'The starting term of the sequence.',
+                },
+                step: {
+                    type: 'number',
+                    description: 'The common difference of the sequence.',
+                },
+                takeWhile: {
+                    type: 'function',
+                    description: 'A function that takes a number and an index and returns a boolean.',
+                },
+            },
+            variants: [
+                { argumentNames: ['start', 'step', 'takeWhile'] },
+            ],
+            examples: [
+                'nth.arithmetic-take-while(1, 0.25, -> $ < 3)',
+            ],
+        },
+        'nth.arithmetic-nth': {
+            title: 'nth.arithmetic-nth',
+            category: 'Number Theory',
+            description: 'Generates the nth term of the arithmetic sequence.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                start: {
+                    type: 'number',
+                    description: 'The starting term of the sequence.',
+                },
+                step: {
+                    type: 'number',
+                    description: 'The common difference of the sequence.',
+                },
+                n: {
+                    type: 'integer',
+                    description: 'The index of the term to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['start', 'step', 'n'] },
+            ],
+            examples: [
+                'nth.arithmetic-nth(3, 2, 2)',
+                'nth.arithmetic-nth(2, 3, 2)',
+                'nth.arithmetic-nth(1, 2, 2)',
+                'nth.arithmetic-nth(1, 1.5, 12)',
+            ],
+        },
+        'nth.arithmetic?': {
+            title: 'nth.arithmetic?',
+            category: 'Number Theory',
+            description: 'Checks if a number is part of the arithmetic sequence.',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                start: {
+                    type: 'number',
+                    description: 'The starting term of the sequence.',
+                },
+                step: {
+                    type: 'number',
+                    description: 'The common difference of the sequence.',
+                },
+                n: {
+                    type: 'integer',
+                    description: 'The number to check.',
+                },
+            },
+            variants: [
+                { argumentNames: ['start', 'step', 'n'] },
+            ],
+            examples: [
+                'nth.arithmetic?(3, 2, 2)',
+                'nth.arithmetic?(2, 3, 2)',
+                'nth.arithmetic?(1, 2, 2)',
+                'nth.arithmetic?(1, 1.5, 12)',
+            ],
+        },
+    };
+
+    var bellReference = {
+        'nth.bell-seq': {
+            title: 'nth.bell-seq',
+            category: 'Number Theory',
+            description: 'Generates the Bell sequence up to a specified length.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                length: {
+                    type: 'integer',
+                    description: 'The length of the sequence to generate. If not provided, the default is 22 (the maximum length of the pre-calculated bell numbers).',
+                },
+            },
+            variants: [
+                { argumentNames: ['length'] },
+                { argumentNames: [] },
+            ],
+            examples: [
+                'nth.bell-seq(5)',
+                'nth.bell-seq(10)',
+                'nth.bell-seq()',
+            ],
+        },
+        'nth.bell-take-while': {
+            title: 'nth.bell-take-while',
+            category: 'Number Theory',
+            description: 'Generates the Bell sequence while a condition is met.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                takeWhile: {
+                    type: 'function',
+                    description: 'A function that takes an integer and an index and returns a boolean.',
+                },
+            },
+            variants: [
+                { argumentNames: ['takeWhile'] },
+            ],
+            examples: [
+                'nth.bell-take-while(-> $ < 1000)',
+            ],
+        },
+        'nth.bell-nth': {
+            title: 'nth.bell-nth',
+            category: 'Number Theory',
+            description: 'Generates the nth term of the Bell sequence.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The index of the term to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.bell-nth(5)',
+                'nth.bell-nth(10)',
+            ],
+        },
+        'nth.bell?': {
+            title: 'nth.bell?',
+            category: 'Number Theory',
+            description: 'Checks if a number is in the Bell sequence.',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to check.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.bell?(1)',
+                'nth.bell?(27644437)',
+                'nth.bell?(27644436)',
+            ],
+        },
+    };
+
+    var bernoulliReference = {
+        'nth.bernoulli-seq': {
+            title: 'nth.bernoulli-seq',
+            category: 'Number Theory',
+            description: 'Generates the Bernoulli sequence up to a specified length.',
+            returns: {
+                type: 'number',
+                array: true,
+            },
+            args: {
+                length: {
+                    type: 'integer',
+                    description: 'The length of the sequence to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['length'] },
+            ],
+            examples: [
+                'nth.bernoulli-seq(5)',
+                'nth.bernoulli-seq(10)',
+            ],
+        },
+        'nth.bernoulli-take-while': {
+            title: 'nth.bernoulli-take-while',
+            category: 'Number Theory',
+            description: 'Generates the Bernoulli sequence while a condition is met.',
+            returns: {
+                type: 'number',
+                array: true,
+            },
+            args: {
+                takeWhile: {
+                    type: 'function',
+                    description: 'A function that takes an integer and an index and returns a boolean.',
+                },
+            },
+            variants: [
+                { argumentNames: ['takeWhile'] },
+            ],
+            examples: [
+                'nth.bernoulli-take-while(-> abs($) < 100)',
+            ],
+        },
+        'nth.bernoulli-nth': {
+            title: 'nth.bernoulli-nth',
+            category: 'Number Theory',
+            description: 'Generates the nth term of the Bernoulli sequence.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The index of the term to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.bernoulli-nth(5)',
+                'nth.bernoulli-nth(10)',
+                'nth.bernoulli-nth(23)',
+            ],
+        },
+    };
+
+    var catalanReference = {
+        'nth.catalan-seq': {
+            title: 'nth.catalan-seq',
+            category: 'Number Theory',
+            description: 'Generates the Catalan sequence up to a specified length.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                length: {
+                    type: 'integer',
+                    description: 'The length of the sequence to generate. If not provided, the default is 30 (the maximum length of the pre-calculated catalan numbers).',
+                },
+            },
+            variants: [
+                { argumentNames: ['length'] },
+                { argumentNames: [] },
+            ],
+            examples: [
+                'nth.catalan-seq(5)',
+                'nth.catalan-seq(10)',
+                'nth.catalan-seq()',
+            ],
+        },
+        'nth.catalan-take-while': {
+            title: 'nth.catalan-take-while',
+            category: 'Number Theory',
+            description: 'Generates the Catalan sequence while a condition is met.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                takeWhile: {
+                    type: 'function',
+                    description: 'A function that takes an integer and an index and returns a boolean.',
+                },
+            },
+            variants: [
+                { argumentNames: ['takeWhile'] },
+            ],
+            examples: [
+                'nth.catalan-take-while(-> $ < 1000)',
+            ],
+        },
+        'nth.catalan-nth': {
+            title: 'nth.catalan-nth',
+            category: 'Number Theory',
+            description: 'Generates the nth term of the Catalan sequence.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The index of the term to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.catalan-nth(5)',
+                'nth.catalan-nth(10)',
+            ],
+        },
+        'nth.catalan?': {
+            title: 'nth.catalan?',
+            category: 'Number Theory',
+            description: 'Determines if a number is in the Catalan sequence.',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to check.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.catalan?(5)',
+                'nth.catalan?(10)',
+            ],
+        },
+    };
+
+    var collatzReference = {
+        'nth.collatz-seq': {
+            title: 'nth.collatz-seq',
+            category: 'Number Theory',
+            description: 'Generates the collatz sequence starting from a given integer.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                start: {
+                    type: 'integer',
+                    description: 'The starting integer for the collatz sequence.',
+                },
+            },
+            variants: [
+                { argumentNames: ['start'] },
+            ],
+            examples: [
+                'nth.collatz-seq(3)',
+                'nth.collatz-seq(11)',
+            ],
+        },
+    };
+
+    var compositeReference = {
+        'nth.composite-seq': {
+            title: 'nth.composite-seq',
+            category: 'Number Theory',
+            description: 'Generates the composite sequence up to a specified length.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                length: {
+                    type: 'integer',
+                    description: 'The length of the sequence to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['length'] },
+            ],
+            examples: [
+                'nth.composite-seq(1)',
+                'nth.composite-seq(2)',
+                'nth.composite-seq(10)',
+            ],
+        },
+        'nth.composite-take-while': {
+            title: 'nth.composite-take-while',
+            category: 'Number Theory',
+            description: 'Generates the composite sequence while a condition is met.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                takeWhile: {
+                    type: 'function',
+                    description: 'A function that takes an integer and an index and returns a boolean.',
+                },
+            },
+            variants: [
+                { argumentNames: ['takeWhile'] },
+            ],
+            examples: [
+                'nth.composite-take-while(-> $ < 50)',
+            ],
+        },
+        'nth.composite-nth': {
+            title: 'nth.composite-nth',
+            category: 'Number Theory',
+            description: 'Generates the nth term of the composite sequence.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The index of the composite number to retrieve.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.composite-nth(1)',
+                'nth.composite-nth(2)',
+                'nth.composite-nth(10)',
+            ],
+        },
+        'nth.composite?': {
+            title: 'nth.composite?',
+            category: 'Number Theory',
+            description: 'Determines if a number is composite.',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to check.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.composite?(4)',
+                'nth.composite?(5)',
+                'nth.composite?(11)',
+            ],
+        },
+    };
+
+    var factorialReference = {
+        'nth.factorial-seq': {
+            title: 'nth.factorial-seq',
+            category: 'Number Theory',
+            description: 'Generates the factorial sequence up to a specified length.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                length: {
+                    type: 'integer',
+                    description: 'The length of the sequence to generate. If not provided, the default is 19 (the maximum length of the pre-calculated factorial numbers).',
+                },
+            },
+            variants: [
+                { argumentNames: ['length'] },
+                { argumentNames: [] },
+            ],
+            examples: [
+                'nth.factorial-seq(1)',
+                'nth.factorial-seq(2)',
+                'nth.factorial-seq(3)',
+                'nth.factorial-seq(4)',
+                'nth.factorial-seq(5)',
+                'nth.factorial-seq(10)',
+            ],
+        },
+        'nth.factorial-take-while': {
+            title: 'nth.factorial-take-while',
+            category: 'Number Theory',
+            description: 'Generates the factorial sequence while a condition is met.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                takeWhile: {
+                    type: 'function',
+                    description: 'A function that takes an integer and an index and returns a boolean.',
+                },
+            },
+            variants: [
+                { argumentNames: ['takeWhile'] },
+            ],
+            examples: [
+                'nth.factorial-take-while(-> $ < 1000)',
+            ],
+        },
+        'nth.factorial-nth': {
+            title: 'nth.factorial-nth',
+            category: 'Number Theory',
+            description: 'Generates the nth term of the factorial sequence.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The index of the term to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.factorial-nth(1)',
+                'nth.factorial-nth(2)',
+                'nth.factorial-nth(3)',
+                'nth.factorial-nth(4)',
+                'nth.factorial-nth(5)',
+                'nth.factorial-nth(10)',
+            ],
+        },
+        'nth.factorial?': {
+            title: 'nth.factorial?',
+            category: 'Number Theory',
+            description: 'Checks if a number is in the factorial sequence.',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to check.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.factorial?(1)',
+                'nth.factorial?(2)',
+                'nth.factorial?(3)',
+                'nth.factorial?(4)',
+                'nth.factorial?(5)',
+                'nth.factorial?(6)',
+                'nth.factorial?(7)',
+                'nth.factorial?(8)',
+                'nth.factorial?(9)',
+                'nth.factorial?(3628800)',
+            ],
+        },
+    };
+
+    var fibonacciReference = {
+        'nth.fibonacci-seq': {
+            title: 'nth.fibonacci-seq',
+            category: 'Number Theory',
+            description: 'Generates the fibonacci sequence up to a specified length.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                length: {
+                    type: 'integer',
+                    description: 'The length of the sequence to generate. If not provided, the default is 79 (the maximum length of the pre-calculated Fibonacci numbers).',
+                },
+            },
+            variants: [
+                { argumentNames: ['length'] },
+                { argumentNames: [] },
+            ],
+            examples: [
+                'nth.fibonacci-seq(1)',
+                'nth.fibonacci-seq(2)',
+                'nth.fibonacci-seq()',
+            ],
+        },
+        'nth.fibonacci-take-while': {
+            title: 'nth.fibonacci-take-while',
+            category: 'Number Theory',
+            description: 'Generates the fibonacci sequence while a condition is met.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                takeWhile: {
+                    type: 'function',
+                    description: 'A function that takes an integer and an index and returns a boolean.',
+                },
+            },
+            variants: [
+                { argumentNames: ['takeWhile'] },
+            ],
+            examples: [
+                'nth.fibonacci-take-while(-> $ < 100)',
+            ],
+        },
+        'nth.fibonacci-nth': {
+            title: 'nth.fibonacci-nth',
+            category: 'Number Theory',
+            description: 'Generates the nth term of the fibonacci sequence.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The index of the term to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.fibonacci-nth(5)',
+                'nth.fibonacci-nth(50)',
+            ],
+        },
+        'nth.fibonacci?': {
+            title: 'nth.fibonacci?',
+            category: 'Number Theory',
+            description: 'Determines if a number is in the fibonacci sequence.',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to check.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.fibonacci?(0)',
+                'nth.fibonacci?(1)',
+                'nth.fibonacci?(2)',
+                'nth.fibonacci?(3)',
+                'nth.fibonacci?(4)',
+                'nth.fibonacci?(5)',
+                'nth.fibonacci?(6)',
+                'nth.fibonacci?(7)',
+                'nth.fibonacci?(8)',
+                'nth.fibonacci?(9)',
+            ],
+        },
+    };
+
+    var geometricReference = {
+        'nth.geometric-seq': {
+            title: 'nth.geometric-seq',
+            category: 'Number Theory',
+            description: 'Generates the geometric sequence for a given $start, $ratio, and $length.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                start: {
+                    type: 'number',
+                    description: 'The starting term of the sequence.',
+                },
+                ratio: {
+                    type: 'number',
+                    description: 'The common ratio of the sequence.',
+                },
+                length: {
+                    type: 'integer',
+                    description: 'The length of the sequence to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['start', 'ratio', 'length'] },
+            ],
+            examples: [
+                'nth.geometric-seq(3, 2, 2)',
+                'nth.geometric-seq(2, 3, 2)',
+                'nth.geometric-seq(1, 2, 2)',
+                'nth.geometric-seq(1, 1.5, 12)',
+            ],
+        },
+        'nth.geometric-take-while': {
+            title: 'nth.geometric-take-while',
+            category: 'Number Theory',
+            description: 'Generates the geometric sequence while a condition is met.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                start: {
+                    type: 'number',
+                    description: 'The starting term of the sequence.',
+                },
+                ratio: {
+                    type: 'number',
+                    description: 'The common ratio of the sequence.',
+                },
+                takeWhile: {
+                    type: 'function',
+                    description: 'A function that takes a number and an index and returns a boolean.',
+                },
+            },
+            variants: [
+                { argumentNames: ['start', 'ratio', 'takeWhile'] },
+            ],
+            examples: [
+                'nth.geometric-take-while(1, 1.5, -> $ < 10)',
+            ],
+        },
+        'nth.geometric-nth': {
+            title: 'nth.geometric-nth',
+            category: 'Number Theory',
+            description: 'Generates the nth term of the geometric sequence.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                start: {
+                    type: 'number',
+                    description: 'The starting term of the sequence.',
+                },
+                ratio: {
+                    type: 'number',
+                    description: 'The common ratio of the sequence.',
+                },
+                n: {
+                    type: 'integer',
+                    description: 'The index of the term to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['start', 'ratio', 'n'] },
+            ],
+            examples: [
+                'nth.geometric-nth(3, 2, 2)',
+                'nth.geometric-nth(2, 3, 2)',
+                'nth.geometric-nth(1, 2, 2)',
+                'nth.geometric-nth(1, 1.5, 4)',
+            ],
+        },
+        'nth.geometric?': {
+            title: 'nth.geometric?',
+            category: 'Number Theory',
+            description: 'Checks if a number is in the geometric sequence.',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                start: {
+                    type: 'number',
+                    description: 'The starting term of the sequence.',
+                },
+                ratio: {
+                    type: 'number',
+                    description: 'The common ratio of the sequence.',
+                },
+                n: {
+                    type: 'number',
+                    description: 'The number to check.',
+                },
+            },
+            variants: [
+                { argumentNames: ['start', 'ratio', 'n'] },
+            ],
+            examples: [
+                'nth.geometric?(1, 2, 1)',
+                'nth.geometric?(2, 3, 2)',
+                'nth.geometric?(3, 2, 2)',
+                'nth.geometric?(1, 1.5, 2.25)',
+                'nth.geometric?(1, 1.5, -4)',
+            ],
+        },
+    };
+
+    var golombReference = {
+        'nth.golomb-seq': {
+            title: 'nth.golomb-seq',
+            category: 'Number Theory',
+            description: 'Generates the Golomb sequence up to a specified length.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                length: {
+                    type: 'integer',
+                    description: 'The length of the sequence to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['length'] },
+            ],
+            examples: [
+                'nth.golomb-seq(5)',
+                'nth.golomb-seq(20)',
+            ],
+        },
+        'nth.golomb-take-while': {
+            title: 'nth.golomb-take-while',
+            category: 'Number Theory',
+            description: 'Generates the Golomb sequence while a condition is met.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                takeWhile: {
+                    type: 'function',
+                    description: 'A function that takes an integer and an index and returns a boolean.',
+                },
+            },
+            variants: [
+                { argumentNames: ['takeWhile'] },
+            ],
+            examples: [
+                'nth.golomb-take-while(-> $ <= 10)',
+            ],
+        },
+        'nth.golomb-nth': {
+            title: 'nth.golomb-nth',
+            category: 'Number Theory',
+            description: 'Generates the nth term of the Golomb sequence.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The index of the term to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.golomb-nth(5)',
+                'nth.golomb-nth(1000)',
+            ],
+        },
+        'nth.golomb?': {
+            title: 'nth.golomb?',
+            category: 'Number Theory',
+            description: 'Checks if a number is in the Golomb sequence.',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to check.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.golomb?(1)',
+                'nth.golomb?(2)',
+                'nth.golomb?(3345)',
+                'nth.golomb?(67867864)',
+            ],
+        },
+    };
+
+    var happyReference = {
+        'nth.happy-seq': {
+            title: 'nth.happy-seq',
+            category: 'Number Theory',
+            description: 'Generates the happy sequence up to a specified length.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                length: {
+                    type: 'integer',
+                    description: 'The length of the sequence to generate. If not provided, the default is 20 (the maximum length of the pre-calculated happy numbers).',
+                },
+            },
+            variants: [
+                { argumentNames: ['length'] },
+                { argumentNames: [] },
+            ],
+            examples: [
+                'nth.happy-seq(1)',
+                'nth.happy-seq(2)',
+                'nth.happy-seq(20)',
+            ],
+        },
+        'nth.happy-take-while': {
+            title: 'nth.happy-take-while',
+            category: 'Number Theory',
+            description: 'Generates the happy sequence while a condition is met.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                takeWhile: {
+                    type: 'function',
+                    description: 'A function that takes an integer and an index and returns a boolean.',
+                },
+            },
+            variants: [
+                { argumentNames: ['takeWhile'] },
+            ],
+            examples: [
+                'nth.happy-take-while(-> $ < 100)',
+            ],
+        },
+        'nth.happy-nth': {
+            title: 'nth.happy-nth',
+            category: 'Number Theory',
+            description: 'Generates the nth term of the happy sequence.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The index of the happy number to return.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.happy-nth(1)',
+                'nth.happy-nth(2)',
+                'nth.happy-nth(20)',
+            ],
+        },
+        'nth.happy?': {
+            title: 'nth.happy?',
+            category: 'Number Theory',
+            description: 'Determines if a number is a happy number.',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to check.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.happy?(1)',
+                'nth.happy?(2)',
+                'nth.happy?(100)',
+            ],
+        },
+    };
+
+    var jugglerReference = {
+        'nth.juggler-seq': {
+            title: 'nth.juggler-seq',
+            category: 'Number Theory',
+            description: 'Generates the Juggler sequence starting from a given integer.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                start: {
+                    type: 'integer',
+                    description: 'The starting integer for the Juggler sequence.',
+                },
+            },
+            variants: [
+                { argumentNames: ['start'] },
+            ],
+            examples: [
+                'nth.juggler-seq(3)',
+                'nth.juggler-seq(5)',
+            ],
+        },
+    };
+
+    var lookAndSayReference = {
+        'nth.look-and-say-seq': {
+            title: 'nth.look-and-say-seq',
+            category: 'Number Theory',
+            description: 'Generates the Look-and-Say sequence up to a specified length.',
+            returns: {
+                type: 'string',
+                array: true,
+            },
+            args: {
+                length: {
+                    type: 'integer',
+                    description: 'The length of the sequence to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['length'] },
+            ],
+            examples: [
+                'nth.look-and-say-seq(5)',
+            ],
+        },
+        'nth.look-and-say-take-while': {
+            title: 'nth.look-and-say-take-while',
+            category: 'Number Theory',
+            description: 'Generates the Look-and-Say sequence while a condition is met.',
+            returns: {
+                type: 'string',
+                array: true,
+            },
+            args: {
+                takeWhile: {
+                    type: 'function',
+                    description: 'A function that takes a string and an index and returns a boolean.',
+                },
+            },
+            variants: [
+                { argumentNames: ['takeWhile'] },
+            ],
+            examples: [
+                'nth.look-and-say-take-while((term, index) -> count(term) < 10)',
+                'nth.look-and-say-take-while(-> $2 <= 10)',
+            ],
+        },
+        'nth.look-and-say-nth': {
+            title: 'nth.look-and-say-nth',
+            category: 'Number Theory',
+            description: 'Generates the nth term of the Look-and-Say sequence.',
+            returns: {
+                type: 'string',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The index of the term in the sequence.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.look-and-say-nth(5)',
+            ],
+        },
+        'nth.look-and-say?': {
+            title: 'nth.look-and-say?',
+            category: 'Number Theory',
+            description: 'Checks if a string is a valid Look-and-Say term.',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                term: {
+                    type: 'string',
+                    description: 'The term to check.',
+                },
+            },
+            variants: [
+                { argumentNames: ['term'] },
+            ],
+            examples: [
+                'nth.look-and-say?("111221")',
+                'nth.look-and-say?("123")',
+            ],
+        },
+    };
+
+    var lucasReference = {
+        'nth.lucas-seq': {
+            title: 'nth.lucas-seq',
+            category: 'Number Theory',
+            description: 'Generates the lucas sequence up to a specified length.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                length: {
+                    type: 'integer',
+                    description: 'The length of the sequence to generate. If not provided, the default is 77 (the maximum length of the pre-calculated Lucas numbers).',
+                },
+            },
+            variants: [
+                { argumentNames: ['length'] },
+                { argumentNames: [] },
+            ],
+            examples: [
+                'nth.lucas-seq(1)',
+                'nth.lucas-seq(2)',
+                'nth.lucas-seq()',
+            ],
+        },
+        'nth.lucas-take-while': {
+            title: 'nth.lucas-take-while',
+            category: 'Number Theory',
+            description: 'Generates the lucas sequence while a condition is met.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                takeWhile: {
+                    type: 'function',
+                    description: 'A function that takes an integer and an index and returns a boolean.',
+                },
+            },
+            variants: [
+                { argumentNames: ['takeWhile'] },
+            ],
+            examples: [
+                'nth.lucas-take-while(-> $ < 100)',
+            ],
+        },
+        'nth.lucas-nth': {
+            title: 'nth.lucas-nth',
+            category: 'Number Theory',
+            description: 'Generates the nth term of the lucas sequence.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The index of the term to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.lucas-nth(1)',
+                'nth.lucas-nth(2)',
+                'nth.lucas-nth(10)',
+            ],
+        },
+        'nth.lucas?': {
+            title: 'nth.lucas?',
+            category: 'Number Theory',
+            description: 'Determines if a number is in the lucas sequence.',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to check.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.lucas?(1)',
+                'nth.lucas?(2)',
+                'nth.lucas?(10)',
+            ],
+        },
+    };
+
+    var luckyReference = {
+        'nth.lucky-seq': {
+            title: 'nth.lucky-seq',
+            category: 'Number Theory',
+            description: 'Generates the lucky sequence up to a specified length.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                length: {
+                    type: 'integer',
+                    description: 'The length of the sequence to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['length'] },
+            ],
+            examples: [
+                'nth.lucky-seq(1)',
+                'nth.lucky-seq(2)',
+                'nth.lucky-seq(20)',
+            ],
+        },
+        'nth.lucky-take-while': {
+            title: 'nth.lucky-take-while',
+            category: 'Number Theory',
+            description: 'Generates the lucky sequence while a condition is met.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                takeWhile: {
+                    type: 'function',
+                    description: 'A function that takes an integer and an index and returns a boolean.',
+                },
+            },
+            variants: [
+                { argumentNames: ['takeWhile'] },
+            ],
+            examples: [
+                'nth.lucky-take-while(-> $ < 100)',
+            ],
+        },
+        'nth.lucky-nth': {
+            title: 'nth.lucky-nth',
+            category: 'Number Theory',
+            description: 'Generates the nth term of the lucky sequence.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The position in the sequence.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.lucky-nth(1)',
+                'nth.lucky-nth(2)',
+                'nth.lucky-nth(20)',
+            ],
+        },
+        'nth.lucky?': {
+            title: 'nth.lucky?',
+            category: 'Number Theory',
+            description: 'Checks if a number is a lucky number.',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to check.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.lucky?(4)',
+                'nth.lucky?(7)',
+                'nth.lucky?(33)',
+            ],
+        },
+    };
+
+    var mersenneReference = {
+        'nth.mersenne-seq': {
+            title: 'nth.mersenne-seq',
+            category: 'Number Theory',
+            description: 'Generates the Mersenne sequence up to a specified length.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                length: {
+                    type: 'integer',
+                    description: 'The length of the sequence to generate. If not provided, the default is 9 (the maximum length of the pre-calculated mersenne numbers).',
+                },
+            },
+            variants: [
+                { argumentNames: ['length'] },
+                { argumentNames: [] },
+            ],
+            examples: [
+                'nth.mersenne-seq(1)',
+                'nth.mersenne-seq(5)',
+                'nth.mersenne-seq()',
+            ],
+        },
+        'nth.mersenne-take-while': {
+            title: 'nth.mersenne-take-while',
+            category: 'Number Theory',
+            description: 'Generates the Mersenne sequence while a condition is met.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                takeWhile: {
+                    type: 'function',
+                    description: 'A function that takes an integer and an index and returns a boolean.',
+                },
+            },
+            variants: [
+                { argumentNames: ['takeWhile'] },
+            ],
+            examples: [
+                'nth.mersenne-take-while(-> $ < 1000)',
+            ],
+        },
+        'nth.mersenne-nth': {
+            title: 'nth.mersenne-nth',
+            category: 'Number Theory',
+            description: 'Generates the nth term of the Mersenne sequence.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The index of the term to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.mersenne-nth(1)',
+                'nth.mersenne-nth(5)',
+            ],
+        },
+        'nth.mersenne?': {
+            title: 'nth.mersenne?',
+            category: 'Number Theory',
+            description: 'Checks if a number is in the Mersenne sequence.',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to check.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.mersenne?(3)',
+                'nth.mersenne?(4)',
+                'nth.mersenne?(7)',
+            ],
+        },
+    };
+
+    var padovanReference = {
+        'nth.padovan-seq': {
+            title: 'nth.padovan-seq',
+            category: 'Number Theory',
+            description: 'Generates the Padovan sequence up to a specified length.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                length: {
+                    type: 'integer',
+                    description: 'The length of the sequence to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['length'] },
+            ],
+            examples: [
+                'nth.padovan-seq(5)',
+                'nth.padovan-seq(10)',
+                'nth.padovan-seq(20)',
+            ],
+        },
+        'nth.padovan-take-while': {
+            title: 'nth.padovan-take-while',
+            category: 'Number Theory',
+            description: 'Generates the Padovan sequence while a condition is met.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                takeWhile: {
+                    type: 'function',
+                    description: 'A function that takes an integer and an index and returns a boolean.',
+                },
+            },
+            variants: [
+                { argumentNames: ['takeWhile'] },
+            ],
+            examples: [
+                'nth.padovan-take-while(-> $ < 1000)',
+            ],
+        },
+        'nth.padovan-nth': {
+            title: 'nth.padovan-nth',
+            category: 'Number Theory',
+            description: 'Generates the nth term of the Padovan sequence.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The index of the term to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.padovan-nth(5)',
+                'nth.padovan-nth(10)',
+                'nth.padovan-nth(20)',
+            ],
+        },
+        'nth.padovan?': {
+            title: 'nth.padovan?',
+            category: 'Number Theory',
+            description: 'Checks if a number is in the Padovan sequence.',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to check.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.padovan?(1)',
+                'nth.padovan?(265)',
+                'nth.padovan?(6)',
+            ],
+        },
+    };
+
+    var partitionReference = {
+        'nth.partition-seq': {
+            title: 'nth.partition-seq',
+            category: 'Number Theory',
+            description: 'Generates the partition numbers up to a specified length. If no length is provided, it defaults to 299 (the maximum length of the pre-calculated partition numbers).',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                length: {
+                    type: 'integer',
+                    description: 'The length of the sequence to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['length'] },
+                { argumentNames: [] },
+            ],
+            examples: [
+                'nth.partition-seq(1)',
+                'nth.partition-seq(10)',
+                'nth.partition-seq()',
+            ],
+        },
+        'nth.partition-take-while': {
+            title: 'nth.partition-take-while',
+            category: 'Number Theory',
+            description: 'Generates the partition numbers while a condition is met.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                takeWhile: {
+                    type: 'function',
+                    description: 'A function that takes an integer and an index and returns a boolean.',
+                },
+            },
+            variants: [
+                { argumentNames: ['takeWhile'] },
+            ],
+            examples: [
+                'nth.partition-take-while(-> $ < 1000)',
+            ],
+        },
+        'nth.partition-nth': {
+            title: 'nth.partition-nth',
+            category: 'Number Theory',
+            description: 'Generates the nth term of the partition numbers.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The index of the partition number to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.partition-nth(1)',
+                'nth.partition-nth(5)',
+            ],
+        },
+        'nth.partition?': {
+            title: 'nth.partition?',
+            category: 'Number Theory',
+            description: 'Checks if a number is in the partition numbers.',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to check.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.partition?(0)',
+                'nth.partition?(1)',
+                'nth.partition?(2)',
+                'nth.partition?(3)',
+                'nth.partition?(4)',
+                'nth.partition?(5)',
+            ],
+        },
+    };
+
+    var pellReference = {
+        'nth.pell-seq': {
+            title: 'nth.pell-seq',
+            category: 'Number Theory',
+            description: 'Generates the Pell sequence up to a specified length.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                length: {
+                    type: 'integer',
+                    description: 'The length of the sequence to generate. If not provided, the default is 42 (the maximum length of the pre-calculated Pell numbers).',
+                },
+            },
+            variants: [
+                { argumentNames: ['length'] },
+                { argumentNames: [] },
+            ],
+            examples: [
+                'nth.pell-seq(5)',
+                'nth.pell-seq(10)',
+                'nth.pell-seq()',
+            ],
+        },
+        'nth.pell-take-while': {
+            title: 'nth.pell-take-while',
+            category: 'Number Theory',
+            description: 'Generates the Pell sequence while a condition is met.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                takeWhile: {
+                    type: 'function',
+                    description: 'A function that takes an integer and an index and returns a boolean.',
+                },
+            },
+            variants: [
+                { argumentNames: ['takeWhile'] },
+            ],
+            examples: [
+                'nth.pell-take-while(-> $ < 1000)',
+            ],
+        },
+        'nth.pell-nth': {
+            title: 'nth.pell-nth',
+            category: 'Number Theory',
+            description: 'Generates the nth term of the Pell sequence.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The index of the term to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.pell-nth(5)',
+                'nth.pell-nth(10)',
+                'nth.pell-nth(20)',
+            ],
+        },
+        'nth.pell?': {
+            title: 'nth.pell?',
+            category: 'Number Theory',
+            description: 'Checks if a number is a Pell number.',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to check.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.pell?(1)',
+                'nth.pell?(470832)',
+                'nth.pell?(10)',
+            ],
+        },
+    };
+
+    var perfectReference = {
+        'nth.perfect-seq': {
+            title: 'nth.perfect-seq',
+            category: 'Number Theory',
+            description: 'Generates the perfect numbers up to a specified length.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                length: {
+                    type: 'integer',
+                    description: 'The length of the sequence to generate. If no length is provided, it defaults to 7 (the maximum length of the pre-calculated perfect numbers).',
+                },
+            },
+            variants: [
+                { argumentNames: ['length'] },
+                { argumentNames: [] },
+            ],
+            examples: [
+                'nth.perfect-seq(1)',
+                'nth.perfect-seq(5)',
+                'nth.perfect-seq()',
+            ],
+        },
+        'nth.perfect-take-while': {
+            title: 'nth.perfect-take-while',
+            category: 'Number Theory',
+            description: 'Generates the perfect numbers while a condition is met.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                takeWhile: {
+                    type: 'function',
+                    description: 'A function that takes an integer and an index and returns a boolean.',
+                },
+            },
+            variants: [
+                { argumentNames: ['takeWhile'] },
+            ],
+            examples: [
+                'nth.perfect-take-while(-> $ < 1000)',
+            ],
+        },
+        'nth.perfect-nth': {
+            title: 'nth.perfect-nth',
+            category: 'Number Theory',
+            description: 'Generates the nth term of the perfect numbers.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The index of the perfect number to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.perfect-nth(1)',
+                'nth.perfect-nth(5)',
+            ],
+        },
+        'nth.perfect?': {
+            title: 'nth.perfect?',
+            category: 'Number Theory',
+            description: 'Checks if a number is in the perfect numbers.',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to check.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.perfect?(0)',
+                'nth.perfect?(1)',
+                'nth.perfect?(2)',
+                'nth.perfect?(3)',
+                'nth.perfect?(4)',
+                'nth.perfect?(5)',
+                'nth.perfect?(6)',
+                'nth.perfect?(7)',
+                'nth.perfect?(8)',
+                'nth.perfect?(9)',
+            ],
+        },
+    };
+
+    var perfectSquareReference = {
+        'nth.perfect-square-seq': {
+            title: 'nth.perfect-square-seq',
+            category: 'Number Theory',
+            description: 'Generates the perfect square numbers up to a specified length.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                length: {
+                    type: 'integer',
+                    description: 'The length of the sequence to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['length'] },
+            ],
+            examples: [
+                'nth.perfect-square-seq(5)',
+                'nth.perfect-square-seq(20)',
+            ],
+        },
+        'nth.perfect-square-take-while': {
+            title: 'nth.perfect-square-take-while',
+            category: 'Number Theory',
+            description: 'Generates the perfect square numbers while a condition is met.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                takeWhile: {
+                    type: 'function',
+                    description: 'A function that takes an integer and an index and returns a boolean.',
+                },
+            },
+            variants: [
+                { argumentNames: ['takeWhile'] },
+            ],
+            examples: [
+                'nth.perfect-square-take-while(-> $ <= 100)',
+            ],
+        },
+        'nth.perfect-square-nth': {
+            title: 'nth.perfect-square-nth',
+            category: 'Number Theory',
+            description: 'Generates the nth term of the perfect square numbers.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The index of the term to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.perfect-square-nth(1)',
+                'nth.perfect-square-nth(5)',
+            ],
+        },
+        'nth.perfect-square?': {
+            title: 'nth.perfect-square?',
+            category: 'Number Theory',
+            description: 'Checks if a number is a perfect square.',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to check.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.perfect-square?(16)',
+                'nth.perfect-square?(20)',
+            ],
+        },
+    };
+
+    var perfectCubeReference = {
+        'nth.perfect-cube-seq': {
+            title: 'nth.perfect-cube-seq',
+            category: 'Number Theory',
+            description: 'Generates the perfect cube numbers up to a specified length.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                length: {
+                    type: 'integer',
+                    description: 'The length of the sequence to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['length'] },
+            ],
+            examples: [
+                'nth.perfect-cube-seq(5)',
+                'nth.perfect-cube-seq(20)',
+            ],
+        },
+        'nth.perfect-cube-take-while': {
+            title: 'nth.perfect-cube-take-while',
+            category: 'Number Theory',
+            description: 'Generates the perfect cube numbers while a condition is met.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                takeWhile: {
+                    type: 'function',
+                    description: 'A function that takes an integer and an index and returns a boolean.',
+                },
+            },
+            variants: [
+                { argumentNames: ['takeWhile'] },
+            ],
+            examples: [
+                'nth.perfect-cube-take-while(-> $ <= 100)',
+            ],
+        },
+        'nth.perfect-cube-nth': {
+            title: 'nth.perfect-cube-nth',
+            category: 'Number Theory',
+            description: 'Generates the nth term of the perfect cube numbers.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The index of the term to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.perfect-cube-nth(1)',
+                'nth.perfect-cube-nth(5)',
+            ],
+        },
+        'nth.perfect-cube?': {
+            title: 'nth.perfect-cube?',
+            category: 'Number Theory',
+            description: 'Checks if a number is in the perfect cube numbers.',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to check.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.perfect-cube?(7)',
+                'nth.perfect-cube?(8)',
+                'nth.perfect-cube?(9)',
+            ],
+        },
+    };
+
+    var perfectPowerReference = {
+        'nth.perfect-power-seq': {
+            title: 'nth.perfect-power-seq',
+            category: 'Number Theory',
+            description: 'Generates the perfect power numbers up to a specified length.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                length: {
+                    type: 'integer',
+                    description: 'The length of the sequence to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['length'] },
+            ],
+            examples: [
+                'nth.perfect-power-seq(5)',
+                'nth.perfect-power-seq(20)',
+            ],
+        },
+        'nth.perfect-power-take-while': {
+            title: 'nth.perfect-power-take-while',
+            category: 'Number Theory',
+            description: 'Generates the perfect power numbers while a condition is met.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                takeWhile: {
+                    type: 'function',
+                    description: 'A function that takes an integer and an index and returns a boolean.',
+                },
+            },
+            variants: [
+                { argumentNames: ['takeWhile'] },
+            ],
+            examples: [
+                'nth.perfect-power-take-while(-> $ <= 100)',
+            ],
+        },
+        'nth.perfect-power-nth': {
+            title: 'nth.perfect-power-nth',
+            category: 'Number Theory',
+            description: 'Generates the nth term of the perfect power numbers.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The index of the term to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.perfect-power-nth(3)',
+                'nth.perfect-power-nth(15)',
+            ],
+        },
+        'nth.perfect-power?': {
+            title: 'nth.perfect-power?',
+            category: 'Number Theory',
+            description: 'Checks if a number is in the perfect power numbers.',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to check.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.perfect-power?(7)',
+                'nth.perfect-power?(8)',
+                'nth.perfect-power?(9)',
+                'nth.perfect-power?(10)',
+            ],
+        },
+    };
+
+    var polygonalReference = {
+        'nth.polygonal-seq': {
+            title: 'nth.polygonal-seq',
+            category: 'Number Theory',
+            description: 'Generates the polygonal sequence for a given number of sides and length.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: __assign({ sides: {
+                    type: 'integer',
+                    description: 'The number of sides of the polygon.',
+                }, length: {
+                    type: 'integer',
+                    description: 'The length of the sequence to generate.',
+                } }, getOperatorArgs('integer', 'integer')),
+            variants: [
+                { argumentNames: ['sides', 'length'] },
+            ],
+            examples: [
+                'nth.polygonal-seq(3, 2)',
+                'nth.polygonal-seq(4, 2)',
+                'nth.polygonal-seq(5, 3)',
+                'nth.polygonal-seq(6, 5)',
+                'nth.polygonal-seq(100, 10)',
+            ],
+        },
+        'nth.polygonal-take-while': {
+            title: 'nth.polygonal-take-while',
+            category: 'Number Theory',
+            description: 'Generates the polygonal sequence while a condition is met.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: __assign({ sides: {
+                    type: 'integer',
+                    description: 'The number of sides of the polygon.',
+                }, takeWhile: {
+                    type: 'function',
+                    description: 'A function that takes an integer and an index and returns a boolean.',
+                } }, getOperatorArgs('integer', 'function')),
+            variants: [
+                { argumentNames: ['sides', 'takeWhile'] },
+            ],
+            examples: [
+                'nth.polygonal-take-while(15, -> $ < 1000)',
+            ],
+        },
+        'nth.polygonal-nth': {
+            title: 'nth.polygonal-nth',
+            category: 'Number Theory',
+            description: 'Generates the nth term of the polygonal sequence.',
+            returns: {
+                type: 'integer',
+            },
+            args: __assign({ sides: {
+                    type: 'integer',
+                    description: 'The number of sides of the polygon.',
+                }, n: {
+                    type: 'integer',
+                    description: 'The index of the term to generate.',
+                } }, getOperatorArgs('integer', 'integer')),
+            variants: [
+                { argumentNames: ['sides', 'n'] },
+            ],
+            examples: [
+                'nth.polygonal-nth(3, 9)',
+                'nth.polygonal-nth(4, 5)',
+                'nth.polygonal-nth(5, 5)',
+            ],
+        },
+        'nth.polygonal?': {
+            title: 'nth.polygonal?',
+            category: 'Number Theory',
+            description: 'Checks if a number is in the polygonal sequence.',
+            returns: {
+                type: 'boolean',
+            },
+            args: __assign({ sides: {
+                    type: 'integer',
+                    description: 'The number of sides of the polygon.',
+                }, n: {
+                    type: 'integer',
+                    description: 'The number to check.',
+                } }, getOperatorArgs('integer', 'integer')),
+            variants: [
+                { argumentNames: ['sides', 'n'] },
+            ],
+            examples: [
+                'nth.polygonal?(3, 10)',
+                'nth.polygonal?(3, 9)',
+                'nth.polygonal?(4, 10000)',
+                'nth.polygonal?(4, 1000)',
+                'nth.polygonal?(6, 45)',
+            ],
+        },
+    };
+
+    var primeReference = {
+        'nth.prime-seq': {
+            title: 'nth.prime-seq',
+            category: 'Number Theory',
+            description: 'Generates the prime sequence up to a specified length.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                length: {
+                    type: 'integer',
+                    description: 'The length of the sequence to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['length'] },
+            ],
+            examples: [
+                'nth.prime-seq(1)',
+                'nth.prime-seq(2)',
+                'nth.prime-seq(10)',
+            ],
+        },
+        'nth.prime-take-while': {
+            title: 'nth.prime-take-while',
+            category: 'Number Theory',
+            description: 'Generates the prime sequence while a condition is met.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                takeWhile: {
+                    type: 'function',
+                    description: 'A function that takes an integer and an index and returns a boolean.',
+                },
+            },
+            variants: [
+                { argumentNames: ['takeWhile'] },
+            ],
+            examples: [
+                'nth.prime-take-while(-> $ < 50)',
+            ],
+        },
+        'nth.prime-nth': {
+            title: 'nth.prime-nth',
+            category: 'Number Theory',
+            description: 'Generates the nth term of the prime sequence.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The index of the term to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.prime-nth(1)',
+                'nth.prime-nth(2)',
+                'nth.prime-nth(10)',
+            ],
+        },
+        'nth.prime?': {
+            title: 'nth.prime?',
+            category: 'Number Theory',
+            description: 'Determines if a number is prime.',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to check.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.prime?(1)',
+                'nth.prime?(2)',
+                'nth.prime?(3)',
+                'nth.prime?(4)',
+                'nth.prime?(997)',
+                'nth.prime?(1001)',
+            ],
+        },
+    };
+
+    var recamanReference = {
+        'nth.recaman-seq': {
+            title: 'nth.recaman-seq',
+            category: 'Number Theory',
+            description: 'Generates the Recaman sequence up to a specified length.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                length: {
+                    type: 'integer',
+                    description: 'The length of the sequence to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['length'] },
+            ],
+            examples: [
+                'nth.recaman-seq(5)',
+                'nth.recaman-seq(10)',
+                'nth.recaman-seq(20)',
+            ],
+        },
+        'nth.recaman-take-while': {
+            title: 'nth.recaman-take-while',
+            category: 'Number Theory',
+            description: 'Generates the Recaman sequence while a condition is met.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                takeWhile: {
+                    type: 'function',
+                    description: 'A function that takes an integer and an index and returns a boolean.',
+                },
+            },
+            variants: [
+                { argumentNames: ['takeWhile'] },
+            ],
+            examples: [
+                'nth.recaman-take-while(-> $ < 10)',
+            ],
+        },
+        'nth.recaman-nth': {
+            title: 'nth.recaman-nth',
+            category: 'Number Theory',
+            description: 'Generates the nth term of the Recaman sequence.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The index of the term to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.recaman-nth(5)',
+                'nth.recaman-nth(10)',
+                'nth.recaman-nth(20)',
+            ],
+        },
+        'nth.recaman?': {
+            title: 'nth.recaman?',
+            category: 'Number Theory',
+            description: 'Checks if a number is in the Recaman sequence.',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to check.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.recaman?(5)',
+                'nth.recaman?(10)',
+                'nth.recaman?(20)',
+            ],
+        },
+    };
+
+    var sylvesterReference = {
+        'nth.sylvester-seq': {
+            title: 'nth.sylvester-seq',
+            category: 'Number Theory',
+            description: 'Generates the Sylvester sequence up to a specified length.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                length: {
+                    type: 'integer',
+                    description: 'The length of the sequence to generate. If not provided, the default is 6 (the maximum length of the pre-calculated Sylvester numbers).',
+                },
+            },
+            variants: [
+                { argumentNames: ['length'] },
+                { argumentNames: [] },
+            ],
+            examples: [
+                'nth.sylvester-seq(5)',
+                'nth.sylvester-seq()',
+                'nth.sylvester-seq()',
+            ],
+        },
+        'nth.sylvester-take-while': {
+            title: 'nth.sylvester-take-while',
+            category: 'Number Theory',
+            description: 'Generates the Sylvester sequence while a condition is met.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                takeWhile: {
+                    type: 'function',
+                    description: 'A function that takes an integer and an index and returns a boolean.',
+                },
+            },
+            variants: [
+                { argumentNames: ['takeWhile'] },
+            ],
+            examples: [
+                'nth.sylvester-take-while(-> $ < 100000)',
+            ],
+        },
+        'nth.sylvester-nth': {
+            title: 'nth.sylvester-nth',
+            category: 'Number Theory',
+            description: 'Generates the nth term of the Sylvester sequence.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The index of the term to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.sylvester-nth(1)',
+                'nth.sylvester-nth(5)',
+            ],
+        },
+        'nth.sylvester?': {
+            title: 'nth.sylvester?',
+            category: 'Number Theory',
+            description: 'Checks if a number is in the Sylvester sequence.',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to check.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.sylvester?(2)',
+                'nth.sylvester?(3)',
+                'nth.sylvester?(6)',
+            ],
+        },
+    };
+
+    var thueMorseReference = {
+        'nth.thue-morse-seq': {
+            title: 'nth.thue-morse-seq',
+            category: 'Number Theory',
+            description: 'Generates the Thue-Morse sequence up to a specified length.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                length: {
+                    type: 'integer',
+                    description: 'The length of the sequence to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['length'] },
+            ],
+            examples: [
+                'nth.thue-morse-seq(5)',
+                'nth.thue-morse-seq(10)',
+                'nth.thue-morse-seq(20)',
+            ],
+        },
+        'nth.thue-morse-take-while': {
+            title: 'nth.thue-morse-take-while',
+            category: 'Number Theory',
+            description: 'Generates the Thue-Morse sequence while a condition is met.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                takeWhile: {
+                    type: 'function',
+                    description: 'A function that takes an integer and an index and returns a boolean.',
+                },
+            },
+            variants: [
+                { argumentNames: ['takeWhile'] },
+            ],
+            examples: [
+                'nth.thue-morse-take-while(-> $2 < 10)',
+            ],
+        },
+        'nth.thue-morse-nth': {
+            title: 'nth.thue-morse-nth',
+            category: 'Number Theory',
+            description: 'Generates the nth term of the Thue-Morse sequence.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The index of the term in the sequence.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.thue-morse-nth(5)',
+                'nth.thue-morse-nth(10)',
+                'nth.thue-morse-nth(20)',
+            ],
+        },
+        'nth.thue-morse?': {
+            title: 'nth.thue-morse?',
+            category: 'Number Theory',
+            description: 'Checks if a number is part of the Thue-Morse sequence.',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to check.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.thue-morse?(1)',
+                'nth.thue-morse?(2)',
+            ],
+        },
+    };
+
+    var tribonacciReference = {
+        'nth.tribonacci-seq': {
+            title: 'nth.tribonacci-seq',
+            category: 'Number Theory',
+            description: 'Generates the tribonacci sequence up to a specified length.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                length: {
+                    type: 'integer',
+                    description: 'The length of the sequence to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['length'] },
+            ],
+            examples: [
+                'nth.tribonacci-seq(1)',
+                'nth.tribonacci-seq(2)',
+                'nth.tribonacci-seq(10)',
+            ],
+        },
+        'nth.tribonacci-take-while': {
+            title: 'nth.tribonacci-take-while',
+            category: 'Number Theory',
+            description: 'Generates the tribonacci sequence while a condition is met.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                takeWhile: {
+                    type: 'function',
+                    description: 'A function that takes an integer and an index and returns a boolean.',
+                },
+            },
+            variants: [
+                { argumentNames: ['takeWhile'] },
+            ],
+            examples: [
+                'nth.tribonacci-take-while(-> $ < 100)',
+            ],
+        },
+        'nth.tribonacci-nth': {
+            title: 'nth.tribonacci-nth',
+            category: 'Number Theory',
+            description: 'Generates the nth term of the tribonacci sequence.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The index of the term to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.tribonacci-nth(1)',
+                'nth.tribonacci-nth(2)',
+                'nth.tribonacci-nth(10)',
+            ],
+        },
+        'nth.tribonacci?': {
+            title: 'nth.tribonacci?',
+            category: 'Number Theory',
+            description: 'Determines if a number is in the tribonacci sequence.',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to check.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.tribonacci?(0)',
+                'nth.tribonacci?(1)',
+                'nth.tribonacci?(2)',
+                'nth.tribonacci?(3)',
+                'nth.tribonacci?(4)',
+                'nth.tribonacci?(5)',
+                'nth.tribonacci?(6)',
+                'nth.tribonacci?(7)',
+                'nth.tribonacci?(8)',
+                'nth.tribonacci?(9)',
+                'nth.tribonacci?(10)',
+            ],
+        },
+    };
+
+    var deficientReference = {
+        'nth.deficient-seq': {
+            title: 'nth.deficient-seq',
+            category: 'Number Theory',
+            description: 'Generates the deficient numbers up to a specified length.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                length: {
+                    type: 'integer',
+                    description: 'The length of the sequence to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['length'] },
+            ],
+            examples: [
+                'nth.deficient-seq(1)',
+                'nth.deficient-seq(5)',
+            ],
+        },
+        'nth.deficient-take-while': {
+            title: 'nth.deficient-take-while',
+            category: 'Number Theory',
+            description: 'Generates the deficient numbers while a condition is met.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                takeWhile: {
+                    type: 'function',
+                    description: 'A function that takes an integer and an index and returns a boolean.',
+                },
+            },
+            variants: [
+                { argumentNames: ['takeWhile'] },
+            ],
+            examples: [
+                'nth.deficient-take-while(-> $ < 100)',
+            ],
+        },
+        'nth.deficient-nth': {
+            title: 'nth.deficient-nth',
+            category: 'Number Theory',
+            description: 'Generates the nth term of the deficient numbers.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The index of the number in the sequence.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.deficient-nth(5)',
+                'nth.deficient-nth(12)',
+            ],
+        },
+        'nth.deficient?': {
+            title: 'nth.deficient?',
+            category: 'Number Theory',
+            description: 'Checks if a number is deficient.',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to check.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.deficient?(12)',
+                'nth.deficient?(15)',
+            ],
+        },
+    };
+
+    var numberTheoryReference = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, abundantReference), arithmeticReference), bellReference), bernoulliReference), catalanReference), collatzReference), compositeReference), deficientReference), factorialReference), fibonacciReference), geometricReference), golombReference), happyReference), jugglerReference), lookAndSayReference), lucasReference), luckyReference), mersenneReference), padovanReference), partitionReference), pellReference), perfectReference), perfectSquareReference), perfectCubeReference), perfectPowerReference), polygonalReference), primeReference), recamanReference), sylvesterReference), thueMorseReference), tribonacciReference), { 'nth.count-combinations': {
+            title: 'nth.count-combinations',
+            category: 'Number Theory',
+            description: 'Calculates the number of combinations of n items taken k at a time.',
+            returns: {
+                type: 'integer',
+            },
+            args: __assign({}, getOperatorArgs('integer', 'integer')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                'nth.count-combinations(5, 3)',
+                'nth.binomial(10, 2)',
+            ],
+            aliases: ['nth.binomial'],
+        }, 'nth.combinations': {
+            title: 'nth.combinations',
+            category: 'Number Theory',
+            description: 'Generates all possible combinations of a specified size from a collection.',
+            returns: {
+                type: 'array',
+                array: true,
+            },
+            args: __assign({ set: {
+                    type: 'array',
+                    array: true,
+                    description: 'The input collection to generate combinations from.',
+                }, n: {
+                    type: 'integer',
+                    description: 'The size of each combination.',
+                } }, getOperatorArgs('array', 'integer')),
+            variants: [
+                { argumentNames: ['set', 'n'] },
+            ],
+            examples: [
+                'nth.combinations([1, 2, 3], 2)',
+                'nth.combinations(["a", "b", "c"], 2)',
+                'nth.combinations([1, 2, 3], 0)',
+                'nth.combinations([1, 2, 3], 1)',
+                'nth.combinations([1, 2, 3], 3)',
+            ],
+        }, 'nth.count-derangements': {
+            title: 'nth.count-derangements',
+            category: 'Number Theory',
+            description: 'Calculates the number of derangements (permutations where no element appears in its original position) of n items.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The total number of items.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.count-derangements(4)',
+                'nth.count-derangements(5)',
+            ],
+        }, 'nth.derangements': {
+            title: 'nth.derangements',
+            category: 'Number Theory',
+            description: 'Generates all derangements (permutations where no element appears in its original position) of a set.',
+            returns: {
+                type: 'array',
+                array: true,
+            },
+            args: {
+                set: {
+                    type: 'array',
+                    array: true,
+                    description: 'The input collection to generate derangements from.',
+                },
+            },
+            variants: [
+                { argumentNames: ['set'] },
+            ],
+            examples: [
+                'nth.derangements([1, 2, 3, 4])',
+                'nth.derangements(["a", "b", "c"])',
+            ],
+        }, 'nth.divisors': {
+            title: 'nth.divisors',
+            category: 'Number Theory',
+            description: 'Returns the divisors of a number.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to find divisors for.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.divisors(12)',
+                'nth.divisors(100)',
+                'nth.divisors(37)',
+            ],
+        }, 'nth.count-divisors': {
+            title: 'nth.count-divisors',
+            category: 'Number Theory',
+            description: 'Returns the number of divisors of a number.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to count divisors for.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.count-divisors(12)',
+                'nth.count-divisors(100)',
+                'nth.count-divisors(37)',
+            ],
+        }, 'nth.proper-divisors': {
+            title: 'nth.proper-divisors',
+            category: 'Number Theory',
+            description: 'Returns the proper divisors of a number.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to find proper divisors for.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.proper-divisors(12)',
+                'nth.proper-divisors(100)',
+                'nth.proper-divisors(37)',
+            ],
+        }, 'nth.count-proper-divisors': {
+            title: 'nth.count-proper-divisors',
+            category: 'Number Theory',
+            description: 'Returns the number of proper divisors of a number.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to count proper divisors for.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.count-proper-divisors(12)',
+                'nth.count-proper-divisors(100)',
+                'nth.count-proper-divisors(37)',
+            ],
+        }, 'nth.factorial': {
+            title: 'nth.factorial',
+            category: 'Number Theory',
+            description: 'Calculates the factorial of a number.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to calculate the factorial for.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.factorial(5)',
+                'nth.factorial(0)',
+                'nth.!(10)',
+                'nth.!(20)',
+            ],
+            aliases: ['nth.!'],
+        }, 'nth.partitions': {
+            title: 'nth.partitions',
+            category: 'Number Theory',
+            description: 'Generates all partitions of a number.',
+            returns: {
+                type: 'array',
+                array: true,
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to partition.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.partitions(4)',
+                'nth.partitions(8)',
+            ],
+        }, 'nth.count-partitions': {
+            title: 'nth.count-partitions',
+            category: 'Number Theory',
+            description: 'Returns the number of partitions of a number.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to count partitions for.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.count-partitions(4)',
+                'nth.count-partitions(8)',
+                'nth.count-partitions(15)',
+            ],
+        }, 'nth.permutations': {
+            title: 'nth.permutations',
+            category: 'Number Theory',
+            description: 'Generates all permutations of a collection.',
+            returns: {
+                type: 'array',
+                array: true,
+            },
+            args: {
+                set: {
+                    type: 'array',
+                    array: true,
+                    description: 'The input collection to generate permutations from.',
+                },
+            },
+            variants: [
+                { argumentNames: ['set'] },
+            ],
+            examples: [
+                'nth.permutations([1, 2, 3])',
+                'nth.permutations(["a", "b", "c"])',
+                'nth.permutations([1, 2, 3, 4])',
+                'nth.permutations([1, 2])',
+                'nth.permutations([1])',
+                'nth.permutations([])',
+            ],
+        }, 'nth.count-permutations': {
+            title: 'nth.count-permutations',
+            category: 'Number Theory',
+            description: 'Returns the number of permutations of n items taken k at a time.',
+            returns: {
+                type: 'integer',
+            },
+            args: __assign({}, getOperatorArgs('integer', 'integer')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                'nth.count-permutations(5, 3)',
+                'nth.count-permutations(10, 2)',
+                'nth.count-permutations(10, 10)',
+                'nth.count-permutations(10, 0)',
+                'nth.count-permutations(10, 1)',
+            ],
+        }, 'nth.power-set': {
+            title: 'nth.power-set',
+            category: 'Number Theory',
+            description: 'Generates the power set of a collection.',
+            returns: {
+                type: 'array',
+                array: true,
+            },
+            args: {
+                set: {
+                    type: 'any',
+                    array: true,
+                    description: 'The input collection to generate the power set from.',
+                },
+            },
+            variants: [
+                { argumentNames: ['set'] },
+            ],
+            examples: [
+                'nth.power-set(["a", "b", "c"])',
+                'nth.power-set([1, 2])',
+                'nth.power-set([1])',
+                'nth.power-set([])',
+            ],
+        }, 'nth.count-power-set': {
+            title: 'nth.count-power-set',
+            category: 'Number Theory',
+            description: 'Returns the number of subsets of a set.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The size of the set.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.count-power-set(3)',
+                'nth.count-power-set(5)',
+                'nth.count-power-set(10)',
+            ],
+        }, 'nth.prime-factors': {
+            title: 'nth.prime-factors',
+            category: 'Number Theory',
+            description: 'Returns the prime factors of a number.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to factor.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.prime-factors(12)',
+                'nth.prime-factors(100)',
+                'nth.prime-factors(37)',
+            ],
+        }, 'nth.count-prime-factors': {
+            title: 'nth.count-prime-factors',
+            category: 'Number Theory',
+            description: 'Returns the number of prime factors of a number.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to count prime factors for.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.count-prime-factors(12)',
+                'nth.count-prime-factors(100)',
+                'nth.count-prime-factors(37)',
+            ],
+        }, 'nth.distinct-prime-factors': {
+            title: 'nth.distinct-prime-factors',
+            category: 'Number Theory',
+            description: 'Returns the distinct prime factors of a number.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to find distinct prime factors for.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.distinct-prime-factors(12)',
+                'nth.distinct-prime-factors(100)',
+                'nth.distinct-prime-factors(37)',
+            ],
+        }, 'nth.count-distinct-prime-factors': {
+            title: 'nth.count-distinct-prime-factors',
+            category: 'Number Theory',
+            description: 'Returns the number of distinct prime factors of a number.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to count distinct prime factors for.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.count-distinct-prime-factors(12)',
+                'nth.count-distinct-prime-factors(100)',
+                'nth.count-distinct-prime-factors(37)',
+            ],
+        }, 'nth.coprime?': {
+            title: 'nth.coprime?',
+            category: 'Number Theory',
+            description: 'Checks if two numbers are coprime (i.e., their GCD is 1).',
+            returns: {
+                type: 'boolean',
+            },
+            args: __assign({}, getOperatorArgs('integer', 'integer')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                'nth.coprime?(12, 8)',
+                'nth.coprime?(12, 5)',
+                'nth.coprime?(37, 1)',
+                'nth.coprime?(0, 0)',
+                'nth.coprime?(0, 5)',
+                'nth.coprime?(5, 0)',
+                'nth.coprime?(1, 0)',
+                'nth.coprime?(0, 1)',
+                'nth.coprime?(1, 1)',
+                'nth.coprime?(2, 3)',
+            ],
+        }, 'nth.divisible-by?': {
+            title: 'nth.divisible-by?',
+            category: 'Number Theory',
+            description: 'Checks if a number is divisible by another number.',
+            returns: {
+                type: 'boolean',
+            },
+            args: __assign({}, getOperatorArgs('integer', 'integer')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                'nth.divisible-by?(12, 4)',
+                'nth.divisible-by?(12, 5)',
+                'nth.divisible-by?(37, 1)',
+                'nth.divisible-by?(0, 0)',
+                'nth.divisible-by?(0, 5)',
+                'nth.divisible-by?(5, 0)',
+            ],
+        }, 'nth.gcd': {
+            title: 'nth.gcd',
+            category: 'Number Theory',
+            description: 'Calculates the greatest common divisor (GCD) of two numbers.',
+            returns: {
+                type: 'integer',
+            },
+            args: __assign({}, getOperatorArgs('integer', 'integer')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                'nth.gcd(100, 25)',
+                'nth.gcd(37, 1)',
+                'nth.gcd(0, 0)',
+                'nth.gcd(0, 5)',
+                'nth.gcd(5, 0)',
+            ],
+        }, 'nth.lcm': {
+            title: 'nth.lcm',
+            category: 'Number Theory',
+            description: 'Calculates the least common multiple (LCM) of two numbers.',
+            returns: {
+                type: 'integer',
+            },
+            args: __assign({}, getOperatorArgs('integer', 'integer')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                'nth.lcm(100, 25)',
+                'nth.lcm(37, 1)',
+                'nth.lcm(0, 5)',
+                'nth.lcm(5, 0)',
+            ],
+        }, 'nth.multinomial': {
+            title: 'nth.multinomial',
+            category: 'Number Theory',
+            description: 'Calculates the multinomial coefficient from of a list of numbers representing the sizes of each group.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                args: {
+                    type: 'integer',
+                    rest: true,
+                    description: 'The numbers representing the sizes of each group.',
+                },
+            },
+            variants: [
+                { argumentNames: ['args'] },
+            ],
+            examples: [
+                'nth.multinomial(5, 2, 3)',
+                'nth.multinomial(10, 2, 3, 5)',
+            ],
+            noOperatorDocumentation: true,
+        }, 'nth.amicable?': {
+            title: 'nth.amicable?',
+            category: 'Number Theory',
+            description: 'Checks if two numbers are amicable (i.e., the sum of the proper divisors of each number equals the other number).',
+            returns: {
+                type: 'boolean',
+            },
+            args: __assign({}, getOperatorArgs('integer', 'integer')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                'nth.amicable?(220, 284)',
+                'nth.amicable?(1184, 1210)',
+                'nth.amicable?(2620, 2924)',
+                'nth.amicable?(5020, 5564)',
+                'nth.amicable?(6232, 6368)',
+            ],
+        }, 'nth.euler-totient': {
+            title: 'nth.euler-totient',
+            category: 'Number Theory',
+            description: 'Calculates the Euler\'s totient function (φ(n)) of a number, which counts the integers up to n that are coprime to n.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to calculate the totient for.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.euler-totient(1)',
+                'nth.euler-totient(2)',
+                'nth.euler-totient(10)',
+                'nth.euler-totient(20)',
+            ],
+        }, 'nth.mobius': {
+            title: 'nth.mobius',
+            category: 'Number Theory',
+            description: 'Calculates the Möbius function (μ(n)) of a number, which is used in number theory.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to calculate the Möbius function for.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.mobius(1)',
+                'nth.mobius(2)',
+                'nth.mobius(3)',
+                'nth.mobius(4)',
+                'nth.mobius(6)',
+                'nth.mobius(12)',
+                'nth.mobius(30)',
+            ],
+            aliases: ['nth.möbius'],
+        }, 'nth.mertens': {
+            title: 'nth.mertens',
+            category: 'Number Theory',
+            description: 'Calculates the Mertens function (M(n)) of a number, which is the sum of the Möbius function up to n.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to calculate the Mertens function for.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.mobius(1)',
+                'nth.mobius(2)',
+                'nth.mobius(3)',
+                'nth.mobius(4)',
+                'nth.mobius(6)',
+                'nth.mobius(12)',
+                'nth.mobius(30)',
+            ],
+        }, 'nth.sigma': {
+            title: 'nth.sigma',
+            category: 'Number Theory',
+            description: 'Calculates the sum of divisors function (σ(n)) of a number, which is the sum of all positive divisors of n.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to calculate the sum of divisors for.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.sigma(1)',
+                'nth.sigma(2)',
+                'nth.sigma(3)',
+                'nth.sigma(4)',
+                'nth.sigma(6)',
+                'nth.sigma(12)',
+                'nth.sigma(30)',
+            ],
+        }, 'nth.carmichael-lambda': {
+            title: 'nth.carmichael-lambda',
+            category: 'Number Theory',
+            description: 'Calculates the Carmichael function (λ(n)) of a number, which is the smallest positive integer m such that a^m ≡ 1 (mod n) for all integers a coprime to n.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to calculate the Carmichael function for.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.carmichael-lambda(1)',
+                'nth.carmichael-lambda(2)',
+                'nth.carmichael-lambda(3)',
+                'nth.carmichael-lambda(4)',
+                'nth.carmichael-lambda(6)',
+                'nth.carmichael-lambda(12)',
+                'nth.carmichael-lambda(30)',
+            ],
+        }, 'nth.cartesian-product': {
+            title: 'nth.cartesian-product',
+            category: 'Number Theory',
+            description: 'Calculates the Cartesian product of two or more sets.',
+            returns: {
+                type: 'array',
+                array: true,
+            },
+            args: __assign({ sets: {
+                    type: 'array',
+                    array: true,
+                    description: 'The input collections to calculate the Cartesian product from.',
+                } }, getOperatorArgs('array', 'array')),
+            variants: [
+                { argumentNames: ['sets'] },
+            ],
+            examples: [
+                'nth.cartesian-product([1, 2], ["a", "b"])',
+                'nth.cartesian-product([1, 2], ["a", "b"], [true, false])',
+                'nth.cartesian-product([1, 2, 3], ["x", "y", "z"])',
+            ],
+        }, 'nth.perfect-power': {
+            title: 'nth.perfect-power',
+            category: 'Number Theory',
+            description: 'Returns a tuple of the base and exponent if the number is a perfect power, otherwise returns null.',
+            returns: {
+                type: 'array',
+                array: true,
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number to check.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            examples: [
+                'nth.perfect-power(1)',
+                'nth.perfect-power(2)',
+                'nth.perfect-power(4)',
+                'nth.perfect-power(8)',
+                'nth.perfect-power(9)',
+                'nth.perfect-power(16)',
+                'nth.perfect-power(19)',
+            ],
+        }, 'nth.mod-exp': {
+            title: 'nth.mod-exp',
+            category: 'Number Theory',
+            description: 'Calculates the modular exponentiation of a base raised to an exponent modulo a modulus.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                base: {
+                    type: 'integer',
+                },
+                exponent: {
+                    type: 'integer',
+                },
+                modulus: {
+                    type: 'integer',
+                },
+            },
+            variants: [
+                { argumentNames: ['base', 'exponent', 'modulus'] },
+            ],
+            examples: [
+                'nth.mod-exp(2, 3, 5)',
+                'nth.mod-exp(3, 4, 7)',
+                'nth.mod-exp(5, 6, 11)',
+                'nth.mod-exp(7, 8, 13)',
+            ],
+        }, 'nth.mod-inv': {
+            title: 'nth.mod-inv',
+            category: 'Number Theory',
+            description: 'Calculates the modular multiplicative inverse of a number modulo another number.',
+            returns: {
+                type: 'integer',
+            },
+            args: __assign({}, getOperatorArgs('integer', 'integer')),
+            variants: [
+                { argumentNames: ['a', 'm'] },
+            ],
+            examples: [
+                'nth.mod-inv(3, 11)',
+                'nth.mod-inv(10, 17)',
+                'nth.mod-inv(5, 13)',
+                'nth.mod-inv(7, 19)',
+            ],
+        }, 'nth.extended-gcd': {
+            title: 'nth.extended-gcd',
+            category: 'Number Theory',
+            description: 'Calculates the extended greatest common divisor (GCD) of two numbers, returning the GCD and the coefficients of Bézout\'s identity.',
+            returns: {
+                type: 'integer',
+                array: true,
+            },
+            args: __assign({}, getOperatorArgs('integer', 'integer')),
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                'nth.extended-gcd(30, 12)',
+                'nth.extended-gcd(56, 98)',
+                'nth.extended-gcd(101, 10)',
+                'nth.extended-gcd(17, 13)',
+            ],
+        }, 'nth.chinese-remainder': {
+            title: 'nth.chinese-remainder',
+            category: 'Number Theory',
+            description: 'Solves a system of simultaneous congruences using the Chinese Remainder Theorem.',
+            returns: {
+                type: 'integer',
+            },
+            args: __assign({ remainders: {
+                    type: 'integer',
+                    array: true,
+                    description: 'The remainders of the congruences.',
+                }, moduli: {
+                    type: 'integer',
+                    array: true,
+                    description: 'The moduli of the congruences.',
+                } }, getOperatorArgs('array', 'array')),
+            variants: [
+                { argumentNames: ['remainders', 'moduli'] },
+            ],
+            examples: [
+                'nth.chinese-remainder([2, 3], [3, 5])',
+                'nth.chinese-remainder([1, 2], [3, 4])',
+                'nth.chinese-remainder([0, 1], [2, 3])',
+                'nth.chinese-remainder([1, 2, 3], [4, 5, 7])',
+            ],
+        }, 'nth.stirling-first': {
+            title: 'nth.stirling-first',
+            category: 'Number Theory',
+            description: 'Calculates the Stirling numbers of the first kind, which count the number of permutations of n elements with k cycles.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                a: {
+                    type: 'integer',
+                    description: 'The number of elements.',
+                },
+                b: {
+                    type: 'integer',
+                    description: 'The number of cycles.',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                'nth.stirling-first(5, 2)',
+                'nth.stirling-first(4, 3)',
+                'nth.stirling-first(6, 1)',
+                'nth.stirling-first(7, 4)',
+                'nth.stirling-first(8, 5)',
+            ],
+        }, 'nth.stirling-second': {
+            title: 'nth.stirling-second',
+            category: 'Number Theory',
+            description: 'Calculates the Stirling numbers of the second kind, which count the number of ways to partition n elements into k non-empty subsets.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                a: {
+                    type: 'integer',
+                    description: 'The number of elements.',
+                },
+                b: {
+                    type: 'integer',
+                    description: 'The number of subsets.',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                'nth.stirling-second(5, 2)',
+                'nth.stirling-second(4, 3)',
+                'nth.stirling-second(6, 1)',
+                'nth.stirling-second(7, 4)',
+                'nth.stirling-second(8, 5)',
+            ],
+        } });
+
+    var meanReference = {
+        'vec.mean': {
+            title: 'vec.mean',
+            category: 'Vector',
+            description: 'Returns the `mean` of all elements in the `vector`.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the `mean` of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.mean([1, 2, 3])',
+                'vec.mean([1, 2, -3])',
+            ],
+        },
+        'vec.moving-mean': {
+            title: 'vec.moving-mean',
+            category: 'Vector',
+            description: 'Returns the **moving mean** of the `vector` with a given window size.',
+            returns: {
+                type: 'vector',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **moving mean** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+            ],
+            examples: [
+                'vec.moving-mean([1, 2, 3, 4, 5], 3)',
+                'vec.moving-mean([1, 2, 3, 4, 5], 5)',
+            ],
+        },
+        'vec.centered-moving-mean': {
+            title: 'vec.centered-moving-mean',
+            category: 'Vector',
+            description: 'Returns the **centered moving mean** of the `vector` with a given window size.',
+            returns: {
+                type: 'array',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **centered moving mean** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the centered moving window.',
+                }, leftPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for padding. Default is `null`.',
+                }, rightPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for right padding. Default is `null`.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
+            ],
+            examples: [
+                'vec.centered-moving-mean([1, 2, 3, 4, 5], 3)',
+                'vec.centered-moving-mean([1, 2, 3, 4, 5], 3, 0, 10)',
+                'vec.centered-moving-mean([1, 2, 3, 4, 5], 3, 10)',
+            ],
+        },
+        'vec.running-mean': {
+            title: 'vec.running-mean',
+            category: 'Vector',
+            description: 'Returns the **running mean** of the `vector`.',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **running mean** of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.running-mean([1, 2, 3, 4, 5])',
+            ],
+        },
+    };
+    var geometricMeanReference = {
+        'vec.geometric-mean': {
+            title: 'vec.geometric-mean',
+            category: 'Vector',
+            description: 'Returns the `geometric mean` of all elements in the `vector`.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the `geometric mean` of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.geometric-mean([1, 2, 3])',
+                'vec.geometric-mean([1, 2, 9])',
+            ],
+        },
+        'vec.moving-geometric-mean': {
+            title: 'vec.moving-geometric-mean',
+            category: 'Vector',
+            description: 'Returns the **moving geometric mean** of the `vector` with a given window size.',
+            returns: {
+                type: 'vector',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **moving geometric mean** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+            ],
+            examples: [
+                'vec.moving-geometric-mean([1, 2, 3, 4, 5], 3)',
+                'vec.moving-geometric-mean([1, 2, 3, 4, 5], 5)',
+            ],
+        },
+        'vec.centered-moving-geometric-mean': {
+            title: 'vec.centered-moving-geometric-mean',
+            category: 'Vector',
+            description: 'Returns the **centered moving geometric mean** of the `vector` with a given window size.',
+            returns: {
+                type: 'array',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **centered moving geometric mean** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the centered moving window.',
+                }, leftPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for padding. Default is `null`.',
+                }, rightPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for right padding. Default is `null`.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
+            ],
+            examples: [
+                'vec.centered-moving-geometric-mean([1, 2, 3, 4, 5], 3)',
+                'vec.centered-moving-geometric-mean([1, 2, 3, 4, 5], 3, 0, 10)',
+                'vec.centered-moving-geometric-mean([1, 2, 3, 4, 5], 3, 10)',
+            ],
+        },
+        'vec.running-geometric-mean': {
+            title: 'vec.running-geometric-mean',
+            category: 'Vector',
+            description: 'Returns the **running geometric mean** of the `vector`.',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **running geometric mean** of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.running-geometric-mean([1, 2, 3, 4, 5])',
+            ],
+        },
+    };
+    var harmonicMeanReference = {
+        'vec.harmonic-mean': {
+            title: 'vec.harmonic-mean',
+            category: 'Vector',
+            description: 'Returns the `harmonic mean` of all elements in the `vector`.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the `harmonic mean` of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.harmonic-mean([1, 2, 3])',
+                'vec.harmonic-mean([1, 2, 9])',
+            ],
+        },
+        'vec.moving-harmonic-mean': {
+            title: 'vec.moving-harmonic-mean',
+            category: 'Vector',
+            description: 'Returns the **moving harmonic mean** of the `vector` with a given window size.',
+            returns: {
+                type: 'vector',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **moving harmonic mean** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+            ],
+            examples: [
+                'vec.moving-harmonic-mean([1, 2, 3, 4, 5], 3)',
+                'vec.moving-harmonic-mean([1, 2, 3, 4, 5], 5)',
+            ],
+        },
+        'vec.centered-moving-harmonic-mean': {
+            title: 'vec.centered-moving-harmonic-mean',
+            category: 'Vector',
+            description: 'Returns the **centered moving harmonic mean** of the `vector` with a given window size.',
+            returns: {
+                type: 'array',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **centered moving harmonic mean** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the centered moving window.',
+                }, leftPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for padding. Default is `null`.',
+                }, rightPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for right padding. Default is `null`.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
+            ],
+            examples: [
+                'vec.centered-moving-harmonic-mean([1, 2, 3, 4, 5], 3)',
+                'vec.centered-moving-harmonic-mean([1, 2, 3, 4, 5], 3, 0, 10)',
+                'vec.centered-moving-harmonic-mean([1, 2, 3, 4, 5], 3, 10)',
+            ],
+        },
+        'vec.running-harmonic-mean': {
+            title: 'vec.running-harmonic-mean',
+            category: 'Vector',
+            description: 'Returns the **running harmonic mean** of the `vector`.',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **running harmonic mean** of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.running-harmonic-mean([1, 2, 3, 4, 5])',
+            ],
+        },
+    };
+
+    var medianReference = {
+        'vec.median': {
+            title: 'vec.median',
+            category: 'Vector',
+            description: 'Returns the `median` of all elements in the `vector`.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The vector to calculate the `median` of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.median([1, 2, 3])',
+                'vec.median([1, 2, -3])',
+            ],
+        },
+        'vec.moving-median': {
+            title: 'vec.moving-median',
+            category: 'Vector',
+            description: 'Returns the **moving median** of the `vector` with a given window size.',
+            returns: {
+                type: 'vector',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **moving median** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+            ],
+            examples: [
+                'vec.moving-median([1, 2, 3, 4, 5], 3)',
+                'vec.moving-median([1, 2, 3, 4, 5], 5)',
+            ],
+        },
+        'vec.centered-moving-median': {
+            title: 'vec.centered-moving-median',
+            category: 'Vector',
+            description: 'Returns the **centered moving median** of the `vector` with a given window size.',
+            returns: {
+                type: 'array',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **centered moving median** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the centered moving window.',
+                }, leftPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for padding. Default is `null`.',
+                }, rightPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for right padding. Default is `null`.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
+            ],
+            examples: [
+                'vec.centered-moving-median([1, 2, 3, 4, 5], 3)',
+                'vec.centered-moving-median([1, 2, 3, 4, 5], 3, 0, 10)',
+                'vec.centered-moving-median([1, 2, 3, 4, 5], 3, 10)',
+            ],
+        },
+        'vec.running-median': {
+            title: 'vec.running-median',
+            category: 'Vector',
+            description: 'Returns the **running median** of the `vector`.',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **running median** of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.running-median([1, 2, 3, 4, 5])',
+            ],
+        },
+    };
+
+    var varianceReference = {
+        'vec.variance': {
+            title: 'vec.variance',
+            category: 'Vector',
+            description: 'Returns the `variance` of all elements in the `vector`.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the `variance` of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.variance([1, 2, 3])',
+                'vec.variance([1, 2, -3])',
+            ],
+        },
+        'vec.moving-variance': {
+            title: 'vec.moving-variance',
+            category: 'Vector',
+            description: 'Returns the **moving variance** of the `vector` with a given window size.',
+            returns: {
+                type: 'vector',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **moving variance** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+            ],
+            examples: [
+                'vec.moving-variance([1, 2, 3, 4, 5], 3)',
+                'vec.moving-variance([1, 2, 3, 4, 5], 5)',
+            ],
+        },
+        'vec.centered-moving-variance': {
+            title: 'vec.centered-moving-variance',
+            category: 'Vector',
+            description: 'Returns the **centered moving variance** of the `vector` with a given window size.',
+            returns: {
+                type: 'array',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **centered moving variance** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the centered moving window.',
+                }, leftPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for padding. Default is `null`.',
+                }, rightPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for right padding. Default is `null`.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
+            ],
+            examples: [
+                'vec.centered-moving-variance([1, 2, 3, 4, 5], 3)',
+                'vec.centered-moving-variance([1, 2, 3, 4, 5], 3, 1)',
+                'vec.centered-moving-variance([1, 2, 3, 4, 5], 3, 1, 5)',
+                'vec.centered-moving-variance([1, 2, 3, 4, 5], 3, 0, 6)',
+            ],
+        },
+        'vec.running-variance': {
+            title: 'vec.running-variance',
+            category: 'Vector',
+            description: 'Returns the **running variance** of the `vector`.',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **running variance** of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.running-variance([1, 2, 3, 4, 5])',
+            ],
+        },
+    };
+    var sampleVarianceReference = {
+        'vec.sample-variance': {
+            title: 'vec.sample-variance',
+            category: 'Vector',
+            description: 'Returns the `variance` of all elements in the `vector`.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the variance of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.sample-variance([1, 2, 3])',
+                'vec.sample-variance([1, 2, -3])',
+            ],
+        },
+        'vec.moving-sample-variance': {
+            title: 'vec.moving-sample-variance',
+            category: 'Vector',
+            description: 'Returns the **moving sample variance** of the `vector` with a given window size.',
+            returns: {
+                type: 'vector',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **moving sample variance** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+            ],
+            examples: [
+                'vec.moving-sample-variance([1, 2, 3, 4, 5], 3)',
+                'vec.moving-sample-variance([1, 2, 3, 4, 5], 5)',
+            ],
+        },
+        'vec.centered-moving-sample-variance': {
+            title: 'vec.centered-moving-sample-variance',
+            category: 'Vector',
+            description: 'Returns the **centered moving sample variance** of the `vector` with a given window size.',
+            returns: {
+                type: 'array',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **centered moving sample variance** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the centered moving window.',
+                }, leftPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for padding. Default is `null`.',
+                }, rightPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for right padding. Default is `null`.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
+            ],
+            examples: [
+                'vec.centered-moving-sample-variance([1, 2, 3, 4, 5], 3)',
+                'vec.centered-moving-sample-variance([1, 2, 3, 4, 5], 3, 1)',
+                'vec.centered-moving-sample-variance([1, 2, 3, 4, 5], 3, 1, 5)',
+                'vec.centered-moving-sample-variance([1, 2, 3, 4, 5], 3, 0, 6)',
+            ],
+        },
+        'vec.running-sample-variance': {
+            title: 'vec.running-sample-variance',
+            category: 'Vector',
+            description: 'Returns the **running sample variance** of the `vector`.',
+            returns: {
+                type: 'array',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **running sample variance** of. First element in result is `null` since **sample variance** is not defined for a single element.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.running-sample-variance([1, 2, 3, 4, 5])',
+            ],
+        },
+    };
+
+    var standardDeviationReference = {
+        'vec.stdev': {
+            title: 'vec.stdev',
+            category: 'Vector',
+            description: 'Returns the **standard deviation** of the `vector`.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **standard deviation** of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.variance([1, 2, 3])',
+                'vec.variance([1, 2, -3])',
+            ],
+        },
+        'vec.moving-stdev': {
+            title: 'vec.moving-stdev',
+            category: 'Vector',
+            description: 'Returns the **moving standard deviation** of the `vector` with a given window size.',
+            returns: {
+                type: 'vector',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **moving standard deviation** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+            ],
+            examples: [
+                'vec.moving-stdev([1, 2, 3, 4, 5], 3)',
+                'vec.moving-stdev([1, 2, 3, 4, 5], 5)',
+            ],
+        },
+        'vec.centered-moving-stdev': {
+            title: 'vec.centered-moving-stdev',
+            category: 'Vector',
+            description: 'Returns the **centered moving standard deviation** of the `vector` with a given window size.',
+            returns: {
+                type: 'array',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **centered moving standard deviation** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the centered moving window.',
+                }, leftPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for padding. Default is `null`.',
+                }, rightPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for right padding. Default is `null`.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
+            ],
+            examples: [
+                'vec.centered-moving-stdev([1, 2, 3, 4, 5], 3)',
+                'vec.centered-moving-stdev([1, 2, 3, 4, 5], 3, 1)',
+                'vec.centered-moving-stdev([1, 2, 3, 4, 5], 3, 1, 5)',
+                'vec.centered-moving-stdev([1, 2, 3, 4, 5], 3, 0, 6)',
+            ],
+        },
+        'vec.running-stdev': {
+            title: 'vec.running-stdev',
+            category: 'Vector',
+            description: 'Returns the **running standard deviation** of the `vector`.',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **running standard deviation** of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.running-stdev([1, 2, 3, 4, 5])',
+            ],
+        },
+    };
+    var sampleStandardDeviationReference = {
+        'vec.sample-stdev': {
+            title: 'vec.sample-stdev',
+            category: 'Vector',
+            description: 'Returns the **sample standard deviation** of the `vector`.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **sample standard deviation** of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.variance([1, 2, 3])',
+                'vec.variance([1, 2, -3])',
+            ],
+        },
+        'vec.moving-sample-stdev': {
+            title: 'vec.moving-sample-stdev',
+            category: 'Vector',
+            description: 'Returns the **moving sample standard deviation** of the `vector` with a given window size.',
+            returns: {
+                type: 'vector',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **moving sample standard deviation** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+            ],
+            examples: [
+                'vec.moving-sample-stdev([1, 2, 3, 4, 5], 3)',
+                'vec.moving-sample-stdev([1, 2, 3, 4, 5], 5)',
+            ],
+        },
+        'vec.centered-moving-sample-stdev': {
+            title: 'vec.centered-moving-sample-stdev',
+            category: 'Vector',
+            description: 'Returns the **centered moving sample standard deviation** of the `vector` with a given window size.',
+            returns: {
+                type: 'array',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **centered moving sample standard deviation** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the centered moving window.',
+                }, leftPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for padding. Default is `null`.',
+                }, rightPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for right padding. Default is `null`.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
+            ],
+            examples: [
+                'vec.centered-moving-sample-stdev([1, 2, 3, 4, 5], 3)',
+                'vec.centered-moving-sample-stdev([1, 2, 3, 4, 5], 3, 1)',
+                'vec.centered-moving-sample-stdev([1, 2, 3, 4, 5], 3, 1, 5)',
+                'vec.centered-moving-sample-stdev([1, 2, 3, 4, 5], 3, 0, 6)',
+            ],
+        },
+        'vec.running-sample-stdev': {
+            title: 'vec.running-sample-stdev',
+            category: 'Vector',
+            description: 'Returns the **running sample standard deviation** of the `vector`.',
+            returns: {
+                type: 'array',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **running sample standard deviation** of. First element in result is `null` since **sample standard deviation** is not defined for a single element.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.running-sample-stdev([1, 2, 3, 4, 5])',
+            ],
+        },
+    };
+
+    var skewnessReference = {
+        'vec.skewness': {
+            title: 'vec.skewness',
+            category: 'Vector',
+            description: 'Calculates the **skewness** of a `vector`. Returns the third standardized moment.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **skewness** of. Minimum length is 3.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.skewness([1, 2, 3, 6, 20])',
+                'vec.skewness([1, 2, 2, 3])',
+            ],
+        },
+        'vec.moving-skewness': {
+            title: 'vec.moving-skewness',
+            category: 'Vector',
+            description: 'Calculates the **moving skewness** of a `vector` with a given window size.',
+            returns: {
+                type: 'vector',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **moving skewness** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+            ],
+            examples: [
+                'vec.moving-skewness([1, 2, 4, 7, 11, 16], 4)',
+                'vec.moving-skewness([1, 2, 4, 7, 11, 16], 5)',
+            ],
+        },
+        'vec.centered-moving-skewness': {
+            title: 'vec.centered-moving-skewness',
+            category: 'Vector',
+            description: 'Calculates the **centered moving skewness** of a `vector` with a given window size and padding.',
+            returns: {
+                type: 'array',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **centered moving skewness** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                }, leftPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for padding. Default is `null`.',
+                }, rightPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for right padding. Default is `null`.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
+            ],
+            examples: [
+                'vec.centered-moving-skewness([1, 2, 4, 7, 11, 16], 4)',
+                'vec.centered-moving-skewness([1, 2, 4, 7, 11, 16], 4, 0, 0)',
+            ],
+        },
+        'vec.running-skewness': {
+            title: 'vec.running-skewness',
+            category: 'Vector',
+            description: 'Calculates the **running skewness** of a `vector` with a given window size. First two element in result is `null` since **running skewness** is not defined for less than three elements.',
+            returns: {
+                type: 'array',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **running skewness** of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.running-skewness([1, 2, 4, 7, 11])',
+            ],
+        },
+    };
+    var sampleSkewnessReference = {
+        'vec.sample-skewness': {
+            title: 'vec.sample-skewness',
+            category: 'Vector',
+            description: 'Calculates the **sample skewness** of a `vector`. Returns the third standardized moment.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **sample skewness** of. Minimum length is 3.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.sample-skewness([1, 2, 3, 6, 20])',
+                'vec.sample-skewness([1, 2, 2, 3])',
+            ],
+        },
+        'vec.moving-sample-skewness': {
+            title: 'vec.moving-sample-skewness',
+            category: 'Vector',
+            description: 'Calculates the **moving sample skewness** of a `vector` with a given window size.',
+            returns: {
+                type: 'vector',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **moving sample skewness** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+            ],
+            examples: [
+                'vec.moving-sample-skewness([1, 2, 4, 7, 11, 16], 4)',
+                'vec.moving-sample-skewness([1, 2, 4, 7, 11, 16], 5)',
+            ],
+        },
+        'vec.centered-moving-sample-skewness': {
+            title: 'vec.centered-moving-sample-skewness',
+            category: 'Vector',
+            description: 'Calculates the **centered moving sample skewness** of a `vector` with a given window size and padding.',
+            returns: {
+                type: 'array',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **centered moving sample skewness** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                }, leftPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for padding. Default is `null`.',
+                }, rightPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for right padding. Default is `null`.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
+            ],
+            examples: [
+                'vec.centered-moving-sample-skewness([1, 2, 4, 7, 11, 16], 4)',
+                'vec.centered-moving-sample-skewness([1, 2, 4, 7, 11, 16], 3, 0, 100)',
+            ],
+        },
+        'vec.running-sample-skewness': {
+            title: 'vec.running-sample-skewness',
+            category: 'Vector',
+            description: 'Calculates the **running sample skewness** of a `vector` with a given window size. First two element in result is `null` since **running sample skewness** is not defined for less than three elements.',
+            returns: {
+                type: 'array',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **running sample skewness** of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.running-sample-skewness([1, 2, 4, 7, 11])',
+            ],
+        },
+    };
+
+    var interquartileRangeReference = {
+        'vec.iqr': {
+            title: 'vec.iqr',
+            category: 'Vector',
+            description: 'Calculates the **interquartile range** of a `vector`. Returns the difference between the third and first quartiles.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **interquartile range** of. Minimum length is 4.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.iqr([1, 2, 3, 4])',
+                'vec.iqr([5, 4, 3, 2, 1, 2, 3, 4, 5])',
+                'vec.iqr(range(1, 1000))',
+                'vec.iqr(vec.generate(1000, -> 1e6 / ($ + 1) ^ 2))',
+                'vec.iqr(vec.generate(1000, -> ln($ + 1)))',
+            ],
+        },
+        'vec.moving-iqr': {
+            title: 'vec.moving-iqr',
+            category: 'Vector',
+            description: 'Calculates the **moving interquartile range** of a `vector` with a given window size.',
+            returns: {
+                type: 'vector',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **moving interquartile range** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+            ],
+            examples: [
+                'vec.moving-iqr([1, 2, 4, 7, 11, 16], 4)',
+                'vec.moving-iqr([1, 2, 4, 7, 11, 16], 5)',
+                'vec.moving-iqr([1, 2, 4, 7, 11, 16], 6)',
+            ],
+        },
+        'vec.centered-moving-iqr': {
+            title: 'vec.centered-moving-iqr',
+            category: 'Vector',
+            description: 'Calculates the **centered moving interquartile range** of a `vector` with a given window size.',
+            returns: {
+                type: 'array',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **centered moving interquartile range** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                }, leftPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for padding. Default is `null`.',
+                }, rightPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for right padding. Default is `null`.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
+            ],
+            examples: [
+                'vec.centered-moving-iqr([1, 2, 4, 7, 11, 16], 4)',
+                'vec.centered-moving-iqr([1, 2, 4, 7, 11, 16], 4, 0, 0)',
+            ],
+        },
+        'vec.running-iqr': {
+            title: 'vec.running-iqr',
+            category: 'Vector',
+            description: 'Calculates the **running interquartile range** of a `vector`. First three element in result is `null` since **running interquartile range** is not defined for less than four elements.',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **running interquartile range** of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.running-iqr([1, 2, 3, 4, 5, 6])',
+                'vec.running-iqr([-1, -2, -3, 1, 2, 3])',
+            ],
+        },
+    };
+
+    var sumReference = {
+        'vec.sum': {
+            title: 'vec.sum',
+            category: 'Vector',
+            description: 'Returns the `sum` of all elements in the `vector`.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the `sum` of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.sum([1, 2, 3])',
+                'vec.sum([1, 2, -3])',
+            ],
+        },
+        'vec.moving-sum': {
+            title: 'vec.moving-sum',
+            category: 'Vector',
+            description: 'Returns the **moving sum** of the `vector` with a given window size.',
+            returns: {
+                type: 'vector',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **moving sum** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+            ],
+            examples: [
+                'vec.moving-sum([1, 2, 3, 4, 5], 3)',
+                'vec.moving-sum([1, 2, 3, 4, 5], 5)',
+            ],
+        },
+        'vec.centered-moving-sum': {
+            title: 'vec.centered-moving-sum',
+            category: 'Vector',
+            description: 'Returns the **centered moving sum** of the `vector` with a given window size.',
+            returns: {
+                type: 'array',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **centered moving sum** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the centered moving window.',
+                }, leftPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for padding. Default is `null`.',
+                }, rightPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for right padding. Default is `null`.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
+            ],
+            examples: [
+                'vec.centered-moving-sum([1, 2, 3, 4, 5], 3)',
+                'vec.centered-moving-sum([1, 2, 3, 4, 5], 3, 0, 0)',
+                'vec.centered-moving-sum([1, 2, 3, 4, 5], 3, 10)',
+            ],
+        },
+        'vec.running-sum': {
+            title: 'vec.running-sum',
+            category: 'Vector',
+            description: 'Returns the **running sum** of the `vector`.',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **running sum** of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.running-sum([1, 2, 3])',
+                'vec.running-sum([1, -2, -3])',
+            ],
+        },
+    };
+
+    var prodReference = {
+        'vec.prod': {
+            title: 'vec.prod',
+            category: 'Vector',
+            description: 'Returns the `product` of all elements in the `vector`.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the `product` of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.prod([1, 2, 3])',
+                'vec.prod([1, 2, -3])',
+            ],
+        },
+        'vec.moving-prod': {
+            title: 'vec.moving-prod',
+            category: 'Vector',
+            description: 'Returns the **moving product** of the `vector` with a given window size.',
+            returns: {
+                type: 'vector',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **moving product** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+            ],
+            examples: [
+                'vec.moving-prod([1, 2, 3, 4, 5], 3)',
+                'vec.moving-prod([1, 2, 3, 4, 5], 5)',
+            ],
+        },
+        'vec.centered-moving-prod': {
+            title: 'vec.centered-moving-prod',
+            category: 'Vector',
+            description: 'Returns the **centered moving product** of the `vector` with a given window size.',
+            returns: {
+                type: 'array',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **centered moving product** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                }, leftPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for padding. Default is `null`.',
+                }, rightPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for right padding. Default is `null`.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
+            ],
+            examples: [
+                'vec.centered-moving-prod([1, 2, 3, 4, 5], 3)',
+                'vec.centered-moving-prod([1, 2, 3, 4, 5], 3, 0, 0)',
+            ],
+        },
+        'vec.running-prod': {
+            title: 'vec.running-prod',
+            category: 'Vector',
+            description: 'Returns the **running product** of the `vector`.',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **running product** of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.running-prod([1, 2, 3, 4, 5])',
+                'vec.running-prod([1, -2, -3])',
+            ],
+        },
+    };
+
+    var minReference = {
+        'vec.min': {
+            title: 'vec.min',
+            category: 'Vector',
+            description: 'Returns the `minimum` of all elements in the `vector`.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the `minimum` of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.min([1, 2, 3])',
+                'vec.min([1, 2, -3])',
+            ],
+        },
+        'vec.moving-min': {
+            title: 'vec.moving-min',
+            category: 'Vector',
+            description: 'Returns the **moving minimum** of the `vector` with a given window size.',
+            returns: {
+                type: 'vector',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **moving minimum** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+            ],
+            examples: [
+                'vec.moving-min([1, 2, 3, 4, 5], 3)',
+                'vec.moving-min([1, 2, 3, 4, 5], 5)',
+            ],
+        },
+        'vec.centered-moving-min': {
+            title: 'vec.centered-moving-min',
+            category: 'Vector',
+            description: 'Returns the **centered moving minimum** of the `vector` with a given window size.',
+            returns: {
+                type: 'array',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **centered moving minimum** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                }, leftPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for padding. Default is `null`.',
+                }, rightPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for right padding. Default is `null`.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
+            ],
+            examples: [
+                'vec.centered-moving-min([1, 2, 3, 4, 5], 3)',
+                'vec.centered-moving-min([1, 2, 3, 4, 5], 3, 0, 100)',
+                'vec.centered-moving-min([1, 2, 3, 4, 5], 3, 0)',
+            ],
+        },
+        'vec.running-min': {
+            title: 'vec.running-min',
+            category: 'Vector',
+            description: 'Returns the **running minimum** of the `vector`.',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **running minimum** of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.running-min([1, 2, 3])',
+                'vec.running-min([1, -2, -3])',
+            ],
+        },
+    };
+
+    var maxReference = {
+        'vec.max': {
+            title: 'vec.max',
+            category: 'Vector',
+            description: 'Returns the `maximum` of all elements in the `vector`.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the `maximum` of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.max([1, 2, 3])',
+                'vec.max([1, 2, -3])',
+            ],
+        },
+        'vec.moving-max': {
+            title: 'vec.moving-max',
+            category: 'Vector',
+            description: 'Returns the **moving maximum** of the `vector` with a given window size.',
+            returns: {
+                type: 'vector',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **moving maximum** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+            ],
+            examples: [
+                'vec.moving-max([1, 2, 3, 4, 5], 3)',
+                'vec.moving-max([1, 2, 3, 4, 5], 5)',
+            ],
+        },
+        'vec.centered-moving-max': {
+            title: 'vec.centered-moving-max',
+            category: 'Vector',
+            description: 'Returns the **centered moving maximum** of the `vector` with a given window size.',
+            returns: {
+                type: 'array',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **centered moving maximum** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                }, leftPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for padding. Default is `null`.',
+                }, rightPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for right padding. Default is `null`.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
+            ],
+            examples: [
+                'vec.centered-moving-max([1, 2, 3, 4, 5], 3)',
+                'vec.centered-moving-max([1, 2, 3, 4, 5], 3, 0, 100)',
+                'vec.centered-moving-max([1, 2, 3, 4, 5], 3, 0)',
+            ],
+        },
+        'vec.running-max': {
+            title: 'vec.running-max',
+            category: 'Vector',
+            description: 'Returns the **running maximum** of the `vector`.',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **running maximum** of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.running-max([1, 2, 3])',
+                'vec.running-max([1, -2, -3])',
+            ],
+        },
+    };
+
+    var spanReference = {
+        'vec.span': {
+            title: 'vec.span',
+            category: 'Vector',
+            description: 'Calculates the **span** of a `vector`. Returns the difference between the maximum and minimum values.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **span** of. Minimum length is 0.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.span([1, 2, 3, 4])',
+                'vec.span([1, 2, 3, 4, 5])',
+                'vec.span([1])',
+                'vec.span([])',
+            ],
+        },
+        'vec.moving-span': {
+            title: 'vec.moving-span',
+            category: 'Vector',
+            description: 'Calculates the **moving span** of a `vector` with a given window size.',
+            returns: {
+                type: 'vector',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **moving span** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+            ],
+            examples: [
+                'vec.moving-span([1, 2, 4, 7, 11, 16], 4)',
+                'vec.moving-span([1, 2, 4, 7, 11, 16], 5)',
+                'vec.moving-span([1, 2, 4, 7, 11, 16], 6)',
+            ],
+        },
+        'vec.centered-moving-span': {
+            title: 'vec.centered-moving-span',
+            category: 'Vector',
+            description: 'Calculates the **centered moving span** of a `vector` with a given window size. The result is padded with `leftPadding` on the left and right.',
+            returns: {
+                type: 'array',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **centered moving span** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                }, leftPadding: {
+                    type: 'number',
+                    description: 'The value to pad the result with on the left.',
+                }, rightPadding: {
+                    type: 'number',
+                    description: 'The value to pad the result with on the right.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
+            ],
+            examples: [
+                'vec.centered-moving-span([1, 2, 4, 7, 11, 16], 4)',
+                'vec.centered-moving-span([1, 2, 4, 7, 11, 16], 3, 0, 100)',
+            ],
+        },
+        'vec.running-span': {
+            title: 'vec.running-span',
+            category: 'Vector',
+            description: 'Calculates the **running span** of a `vector` with a given window size.',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **running span** of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.running-span([1, 2, 4])',
+            ],
+        },
+    };
+
+    var kurtosisReference = {
+        'vec.kurtosis': {
+            title: 'vec.kurtosis',
+            category: 'Vector',
+            description: 'Calculates the **kurtosis** of a `vector`. Returns the third standardized moment.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **kurtosis** of. Minimum length is 3.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.kurtosis([1, 2, 3, 6, 20])',
+                'vec.kurtosis([1, 2, 2, 3])',
+            ],
+        },
+        'vec.moving-kurtosis': {
+            title: 'vec.moving-kurtosis',
+            category: 'Vector',
+            description: 'Calculates the **moving kurtosis** of a `vector` with a given window size.',
+            returns: {
+                type: 'vector',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **moving kurtosis** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+            ],
+            examples: [
+                'vec.moving-kurtosis([1, 2, 4, 7, 11, 16], 4)',
+                'vec.moving-kurtosis([1, 2, 4, 7, 11, 16], 5)',
+            ],
+        },
+        'vec.centered-moving-kurtosis': {
+            title: 'vec.centered-moving-kurtosis',
+            category: 'Vector',
+            description: 'Calculates the **centered moving kurtosis** of a `vector` with a given window size and padding.',
+            returns: {
+                type: 'array',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **centered moving kurtosis** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                }, leftPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for padding. Default is `null`.',
+                }, rightPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for right padding. Default is `null`.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
+            ],
+            examples: [
+                'vec.centered-moving-kurtosis([1, 2, 4, 7, 11, 16], 4)',
+                'vec.centered-moving-kurtosis([1, 2, 4, 7, 11, 16], 4, 0, 0)',
+            ],
+        },
+        'vec.running-kurtosis': {
+            title: 'vec.running-kurtosis',
+            category: 'Vector',
+            description: 'Calculates the **running kurtosis** of a `vector` with a given window size. First two element in result is `null` since **running kurtosis** is not defined for less than three elements.',
+            returns: {
+                type: 'array',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **running kurtosis** of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.running-kurtosis([1, 2, 4, 7, 11])',
+            ],
+        },
+    };
+    var sampleKurtosisReference = {
+        'vec.sample-kurtosis': {
+            title: 'vec.sample-kurtosis',
+            category: 'Vector',
+            description: 'Calculates the **sample kurtosis** of a `vector`. Returns the third standardized moment.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **sample kurtosis** of. Minimum length is 3.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.sample-kurtosis([1, 2, 3, 6, 20])',
+                'vec.sample-kurtosis([1, 2, 2, 3])',
+            ],
+        },
+        'vec.moving-sample-kurtosis': {
+            title: 'vec.moving-sample-kurtosis',
+            category: 'Vector',
+            description: 'Calculates the **moving sample kurtosis** of a `vector` with a given window size.',
+            returns: {
+                type: 'vector',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **moving sample kurtosis** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+            ],
+            examples: [
+                'vec.moving-sample-kurtosis([1, 2, 4, 7, 11, 16], 4)',
+                'vec.moving-sample-kurtosis([1, 2, 4, 7, 11, 16], 5)',
+            ],
+        },
+        'vec.centered-moving-sample-kurtosis': {
+            title: 'vec.centered-moving-sample-kurtosis',
+            category: 'Vector',
+            description: 'Calculates the **centered moving sample kurtosis** of a `vector` with a given window size and padding.',
+            returns: {
+                type: 'array',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **centered moving sample kurtosis** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                }, leftPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for padding. Default is `null`.',
+                }, rightPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for right padding. Default is `null`.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
+            ],
+            examples: [
+                'vec.centered-moving-sample-kurtosis([1, 2, 4, 7, 11, 16], 4)',
+                'vec.centered-moving-sample-kurtosis([1, 2, 4, 7, 11, 16], 4, 0, 100)',
+            ],
+        },
+        'vec.running-sample-kurtosis': {
+            title: 'vec.running-sample-kurtosis',
+            category: 'Vector',
+            description: 'Calculates the **running sample kurtosis** of a `vector` with a given window size. First two element in result is `null` since **running sample kurtosis** is not defined for less than three elements.',
+            returns: {
+                type: 'array',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **running sample kurtosis** of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.running-sample-kurtosis([1, 2, 4, 7, 11])',
+            ],
+        },
+    };
+    var excessKurtoisReference = {
+        'vec.excess-kurtosis': {
+            title: 'vec.excess-kurtosis',
+            category: 'Vector',
+            description: 'Calculates the **excess kurtosis** of a `vector`. Returns the third standardized moment.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **excess kurtosis** of. Minimum length is 3.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.excess-kurtosis([1, 2, 3, 6, 20])',
+                'vec.excess-kurtosis([1, 2, 2, 3])',
+            ],
+        },
+        'vec.moving-excess-kurtosis': {
+            title: 'vec.moving-excess-kurtosis',
+            category: 'Vector',
+            description: 'Calculates the **moving excess kurtosis** of a `vector` with a given window size.',
+            returns: {
+                type: 'vector',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **moving excess kurtosis** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+            ],
+            examples: [
+                'vec.moving-excess-kurtosis([1, 2, 4, 7, 11, 16], 4)',
+                'vec.moving-excess-kurtosis([1, 2, 4, 7, 11, 16], 5)',
+            ],
+        },
+        'vec.centered-moving-excess-kurtosis': {
+            title: 'vec.centered-moving-excess-kurtosis',
+            category: 'Vector',
+            description: 'Calculates the **centered moving excess kurtosis** of a `vector` with a given window size and padding.',
+            returns: {
+                type: 'array',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **centered moving excess kurtosis** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                }, leftPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for padding. Default is `null`.',
+                }, rightPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for right padding. Default is `null`.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
+            ],
+            examples: [
+                'vec.centered-moving-excess-kurtosis([1, 2, 4, 7, 11, 16], 4)',
+                'vec.centered-moving-excess-kurtosis([1, 2, 4, 7, 11, 16], 4, 0, 0)',
+            ],
+        },
+        'vec.running-excess-kurtosis': {
+            title: 'vec.running-excess-kurtosis',
+            category: 'Vector',
+            description: 'Calculates the **running excess kurtosis** of a `vector` with a given window size. First two element in result is `null` since **running excess kurtosis** is not defined for less than three elements.',
+            returns: {
+                type: 'array',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **running excess kurtosis** of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.running-excess-kurtosis([1, 2, 4, 7, 11])',
+            ],
+        },
+    };
+    var sampleExcessKurtosisReference = {
+        'vec.sample-excess-kurtosis': {
+            title: 'vec.sample-excess-kurtosis',
+            category: 'Vector',
+            description: 'Calculates the **sample excess kurtosis** of a `vector`. Returns the third standardized moment.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **sample excess kurtosis** of. Minimum length is 3.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.sample-excess-kurtosis([1, 2, 3, 6, 20])',
+                'vec.sample-excess-kurtosis([1, 2, 2, 3])',
+            ],
+        },
+        'vec.moving-sample-excess-kurtosis': {
+            title: 'vec.moving-sample-excess-kurtosis',
+            category: 'Vector',
+            description: 'Calculates the **moving sample excess kurtosis** of a `vector` with a given window size.',
+            returns: {
+                type: 'vector',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **moving sample excess kurtosis** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+            ],
+            examples: [
+                'vec.moving-sample-excess-kurtosis([1, 2, 4, 7, 11, 16], 4)',
+                'vec.moving-sample-excess-kurtosis([1, 2, 4, 7, 11, 16], 5)',
+            ],
+        },
+        'vec.centered-moving-sample-excess-kurtosis': {
+            title: 'vec.centered-moving-sample-excess-kurtosis',
+            category: 'Vector',
+            description: 'Calculates the **centered moving sample excess kurtosis** of a `vector` with a given window size and padding.',
+            returns: {
+                type: 'array',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **centered moving sample excess kurtosis** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                }, leftPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for padding. Default is `null`.',
+                }, rightPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for right padding. Default is `null`.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
+            ],
+            examples: [
+                'vec.centered-moving-sample-excess-kurtosis([1, 2, 4, 7, 11, 16], 4)',
+                'vec.centered-moving-sample-excess-kurtosis([1, 2, 4, 7, 11, 16], 4, 0, 100)',
+            ],
+        },
+        'vec.running-sample-excess-kurtosis': {
+            title: 'vec.running-sample-excess-kurtosis',
+            category: 'Vector',
+            description: 'Calculates the **running sample excess kurtosis** of a `vector` with a given window size. First two element in result is `null` since **running sample excess kurtosis** is not defined for less than three elements.',
+            returns: {
+                type: 'array',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **running sample excess kurtosis** of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.running-sample-excess-kurtosis([1, 2, 4, 7, 11])',
+            ],
+        },
+    };
+
+    var rootMeanSquareReference = {
+        'vec.rms': {
+            title: 'vec.rms',
+            category: 'Vector',
+            description: 'Calculates the **root mean square** of a `vector`. Returns the square root of the average of the squares of the elements.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **root mean square** of. Minimum length is 1.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.rms([1, 2, 3, 4])',
+                'vec.rms([5, 4, 3, 2, 1])',
+                'vec.rms(range(1, 1000))',
+                'vec.rms(vec.generate(1000, -> 1e6 / ($ + 1) ^ 2))',
+                'vec.rms(vec.generate(1000, -> ln($ + 1)))',
+            ],
+        },
+        'vec.moving-rms': {
+            title: 'vec.moving-rms',
+            category: 'Vector',
+            description: 'Calculates the **moving root mean square** of a `vector` with a given window size.',
+            returns: {
+                type: 'vector',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **moving root mean square** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+            ],
+            examples: [
+                'vec.moving-rms([1, 2, 4, 7, 11, 16], 4)',
+                'vec.moving-rms([1, 2, 4, 7, 11, 16], 5)',
+                'vec.moving-rms([1, 2, 4, 7, 11, 16], 6)',
+            ],
+        },
+        'vec.centered-moving-rms': {
+            title: 'vec.centered-moving-rms',
+            category: 'Vector',
+            description: 'Calculates the **centered moving root mean square** of a `vector` with a given window size and padding value.',
+            returns: {
+                type: 'vector',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **centered moving root mean square** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                }, leftPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for padding. Default is `null`.',
+                }, rightPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for right padding. Default is `null`.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
+            ],
+            examples: [
+                'vec.centered-moving-rms([1, 2, 4, 7, 11, 16], 4)',
+                'vec.centered-moving-rms([1, 2, 4, 7, 11, 16], 5, 0)',
+                'vec.centered-moving-rms([1, 2, 4, 7, 11, 16], 6, 0, 0)',
+            ],
+        },
+        'vec.running-rms': {
+            title: 'vec.running-rms',
+            category: 'Vector',
+            description: 'Calculates the **running root mean square** of a `vector`.',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **running root mean square** of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.running-rms([1, 2, 3, 4, 5, 6])',
+                'vec.running-rms([1, -3, 2])',
+                'vec.running-rms([-1, -2, -3])',
+                'vec.running-rms([0])',
+            ],
+        },
+    };
+
+    var meanAbsoluteDeviationReference = {
+        'vec.mad': {
+            title: 'vec.mad',
+            category: 'Vector',
+            description: 'Returns the `mean absolute deviation` of all elements in the `vector`.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the `mean absolute deviation` of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.mad([1, 2, 3])',
+                'vec.mad([1, 2, -3])',
+            ],
+        },
+        'vec.moving-mad': {
+            title: 'vec.moving-mad',
+            category: 'Vector',
+            description: 'Returns the `moving mean absolute deviation` of the `vector` with a given window size.',
+            returns: {
+                type: 'vector',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the `moving mean absolute deviation` of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+            ],
+            examples: [
+                'vec.moving-mad([1, 2, 3, 4, 5], 3)',
+                'vec.moving-mad([1, 2, 3, 4, 5], 5)',
+            ],
+        },
+        'vec.centered-moving-mad': {
+            title: 'vec.centered-moving-mad',
+            category: 'Vector',
+            description: 'Returns the `centered moving mean absolute deviation` of the `vector` with a given window size.',
+            returns: {
+                type: 'array',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the `centered moving mean absolute deviation` of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                }, leftPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for padding. Default is `null`.',
+                }, rightPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for right padding. Default is `null`.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
+            ],
+            examples: [
+                'vec.centered-moving-mad([1, 2, 3, 4, 5], 3)',
+                'vec.centered-moving-mad([1, 2, 3, 4, 5], 5)',
+            ],
+        },
+        'vec.running-mad': {
+            title: 'vec.running-mad',
+            category: 'Vector',
+            description: 'Returns the `running mean absolute deviation` of the `vector`.',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the `running mean absolute deviation` of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.running-mad([1, 2, 3])',
+                'vec.running-mad([1, 2, -3])',
+            ],
+        },
+    };
+
+    var medianAbsoluteDeviationReference = {
+        'vec.medad': {
+            title: 'vec.medad',
+            category: 'Vector',
+            description: 'Returns the `median absolute deviation` of all elements in the `vector`.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the `median absolute deviation` of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.medad([1, 2, 3])',
+                'vec.medad([1, 2, -3])',
+            ],
+        },
+        'vec.moving-medad': {
+            title: 'vec.moving-medad',
+            category: 'Vector',
+            description: 'Returns the `moving median absolute deviation` of the `vector` with a given window size.',
+            returns: {
+                type: 'vector',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the `moving median absolute deviation` of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+            ],
+            examples: [
+                'vec.moving-medad([1, 2, 3, 4, 5], 3)',
+                'vec.moving-medad([1, 2, 3, 4, 5], 5)',
+            ],
+        },
+        'vec.centered-moving-medad': {
+            title: 'vec.centered-moving-medad',
+            category: 'Vector',
+            description: 'Returns the `centered moving median absolute deviation` of the `vector` with a given window size.',
+            returns: {
+                type: 'array',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the `centered moving median absolute deviation` of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                }, leftPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for padding. Default is `null`.',
+                }, rightPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for right padding. Default is `null`.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
+            ],
+            examples: [
+                'vec.centered-moving-medad([1, 2, 3, 4, 5], 3)',
+                'vec.centered-moving-medad([1, 2, 3, 4, 5], 5)',
+            ],
+        },
+        'vec.running-medad': {
+            title: 'vec.running-medad',
+            category: 'Vector',
+            description: 'Returns the `running median absolute deviation` of the `vector`.',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the `running median absolute deviation` of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.running-medad([1, 2, 3])',
+                'vec.running-medad([1, 2, -3])',
+            ],
+        },
+    };
+
+    var giniCoefficientReference = {
+        'vec.gini-coefficient': {
+            title: 'vec.gini-coefficient',
+            category: 'Vector',
+            description: 'Returns the **gini coefficient** of all elements in the `vector`.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **gini coefficient** of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.gini-coefficient([1, 2, 3])',
+                'vec.gini-coefficient([1, 1, 3])',
+            ],
+        },
+        'vec.moving-gini-coefficient': {
+            title: 'vec.moving-gini-coefficient',
+            category: 'Vector',
+            description: 'Returns the **moving gini coefficient** of the `vector` with a given window size.',
+            returns: {
+                type: 'vector',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **moving gini coefficient** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+            ],
+            examples: [
+                'vec.moving-gini-coefficient([1, 2, 3], 2)',
+                'vec.moving-gini-coefficient([1, 1, 3], 2)',
+            ],
+        },
+        'vec.centered-moving-gini-coefficient': {
+            title: 'vec.centered-moving-gini-coefficient',
+            category: 'Vector',
+            description: 'Returns the **centered moving gini coefficient** of the `vector` with a given window size.',
+            returns: {
+                type: 'array',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **centered moving gini coefficient** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                }, leftPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for padding. Default is `null`.',
+                }, rightPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for right padding. Default is `null`.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
+            ],
+            examples: [
+                'vec.centered-moving-gini-coefficient([1, 2, 3], 2)',
+                'vec.centered-moving-gini-coefficient([1, 1, 3], 2)',
+            ],
+        },
+        'vec.running-gini-coefficient': {
+            title: 'vec.running-gini-coefficient',
+            category: 'Vector',
+            description: 'Returns the **running gini coefficient** of the `vector`.',
+            returns: {
+                type: 'array',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **running gini coefficient** of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.running-gini-coefficient([1, 2, 3])',
+                'vec.running-gini-coefficient([1, 1, 3])',
+            ],
+        },
+    };
+
+    var entropyReference = {
+        'vec.entropy': {
+            title: 'vec.entropy',
+            category: 'Vector',
+            description: 'Calculates the **entropy** of a `vector`. The entropy is a measure of the uncertainty associated with a random variable.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **entropy** of. Minimum length is 1.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.entropy([1, 1, 2, 3, 3, 3])',
+                'vec.entropy([1, 2, 3])',
+                'vec.entropy([1, 2, 2, 3])',
+                'vec.entropy([0])',
+                'vec.entropy([1])',
+                'vec.entropy([1, 2])',
+            ],
+        },
+        'vec.moving-entropy': {
+            title: 'vec.moving-entropy',
+            category: 'Vector',
+            description: 'Calculates the **moving entropy** of a `vector` with a given window size.',
+            returns: {
+                type: 'vector',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **moving entropy** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+            ],
+            examples: [
+                'vec.moving-entropy([1, 1, 2, 3, 3, 3], 4)',
+                'vec.moving-entropy([1, 1, 2, 3, 3, 3], 3)',
+                'vec.moving-entropy([1, 2], 2)',
+            ],
+        },
+        'vec.centered-moving-entropy': {
+            title: 'vec.centered-moving-entropy',
+            category: 'Vector',
+            description: 'Calculates the **centered moving entropy** of a `vector` with a given window size.',
+            returns: {
+                type: 'vector',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **centered moving entropy** of.',
+                }, windowSize: {
+                    type: 'integer',
+                    description: 'The size of the moving window.',
+                }, leftPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for padding. Default is `null`.',
+                }, rightPadding: {
+                    type: 'number',
+                    description: 'Optional value to use for right padding. Default is `null`.',
+                } }, getOperatorArgs('vector', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'windowSize'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding'] },
+                { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
+            ],
+            examples: [
+                'vec.centered-moving-entropy([1, 1, 2, 3, 3, 3], 4)',
+                'vec.centered-moving-entropy([1, 1, 2, 3, 3, 3], 3)',
+                'vec.centered-moving-entropy([1, 2], 2)',
+            ],
+        },
+        'vec.running-entropy': {
+            title: 'vec.running-entropy',
+            category: 'Vector',
+            description: 'Calculates the **running entropy** of a `vector`.',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to calculate the **running entropy** of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.running-entropy([1, 1, 2, 3, 3, 3])',
+                'vec.running-entropy([1, 2])',
+            ],
+        },
+    };
+
+    var vectorReference = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, meanReference), geometricMeanReference), harmonicMeanReference), medianReference), varianceReference), sampleVarianceReference), standardDeviationReference), sampleStandardDeviationReference), interquartileRangeReference), sumReference), prodReference), minReference), maxReference), spanReference), skewnessReference), sampleSkewnessReference), excessKurtoisReference), kurtosisReference), sampleExcessKurtosisReference), sampleKurtosisReference), rootMeanSquareReference), meanAbsoluteDeviationReference), medianAbsoluteDeviationReference), giniCoefficientReference), entropyReference), { 'vec.monotonic?': {
+            title: 'vec.monotonic?',
+            category: 'Vector',
+            description: 'Checks if a vector is monotonic.',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The vector to check.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.monotonic?([1, 2, 3])',
+                'vec.monotonic?([1, 2, 2, 3])',
+                'vec.monotonic?([3, 2, 1])',
+                'vec.monotonic?([3, 2, 1, 1])',
+                'vec.monotonic?([3, 2, 1, 2])',
+                'vec.monotonic?([1])',
+                'vec.monotonic?([])',
+            ],
+        }, 'vec.strictly-monotonic?': {
+            title: 'vec.strictly-monotonic?',
+            category: 'Vector',
+            description: 'Checks if a vector is strictly monotonic.',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The vector to check.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.strictly-monotonic?([1, 2, 3])',
+                'vec.strictly-monotonic?([1, 2, 2, 3])',
+                'vec.strictly-monotonic?([3, 2, 1])',
+                'vec.strictly-monotonic?([3, 2, 1, 1])',
+                'vec.strictly-monotonic?([3, 2, 1, 2])',
+                'vec.strictly-monotonic?([1])',
+                'vec.strictly-monotonic?([])',
+            ],
+        }, 'vec.increasing?': {
+            title: 'vec.increasing?',
+            category: 'Vector',
+            description: 'Checks if a vector is increasing.',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The vector to check.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.increasing?([1, 2, 3])',
+                'vec.increasing?([1, 2, 2, 3])',
+                'vec.increasing?([3, 2, 1])',
+                'vec.increasing?([3, 2, 1, 1])',
+                'vec.increasing?([3, 2, 1, 2])',
+                'vec.increasing?([1])',
+                'vec.increasing?([])',
+            ],
+        }, 'vec.decreasing?': {
+            title: 'vec.decreasing?',
+            category: 'Vector',
+            description: 'Checks if a vector is decreasing.',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The vector to check.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.decreasing?([1, 2, 3])',
+                'vec.decreasing?([1, 2, 2, 3])',
+                'vec.decreasing?([3, 2, 1])',
+                'vec.decreasing?([3, 2, 1, 1])',
+                'vec.decreasing?([3, 2, 1, 2])',
+                'vec.decreasing?([1])',
+                'vec.decreasing?([])',
+            ],
+        }, 'vec.strictly-increasing?': {
+            title: 'vec.strictly-increasing?',
+            category: 'Vector',
+            description: 'Checks if a vector is strictly increasing.',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The vector to check.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.strictly-increasing?([1, 2, 3])',
+                'vec.strictly-increasing?([1, 2, 2, 3])',
+                'vec.strictly-increasing?([3, 2, 1])',
+                'vec.strictly-increasing?([3, 2, 1, 1])',
+                'vec.strictly-increasing?([3, 2, 1, 2])',
+                'vec.strictly-increasing?([1])',
+                'vec.strictly-increasing?([])',
+            ],
+        }, 'vec.strictly-decreasing?': {
+            title: 'vec.strictly-decreasing?',
+            category: 'Vector',
+            description: 'Checks if a vector is strictly decreasing.',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The vector to check.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.strictly-decreasing?([1, 2, 3])',
+                'vec.strictly-decreasing?([1, 2, 2, 3])',
+                'vec.strictly-decreasing?([3, 2, 1])',
+                'vec.strictly-decreasing?([3, 2, 1, 1])',
+                'vec.strictly-decreasing?([3, 2, 1, 2])',
+                'vec.strictly-decreasing?([1])',
+                'vec.strictly-decreasing?([])',
+            ],
+        }, 'vec.sum': {
+            title: 'vec.sum',
+            category: 'Vector',
+            description: 'Returns the sum of all elements in the vector.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The vector to sum.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.sum([1, 2, 3])',
+                'vec.sum([1, 2, -3])',
+            ],
+        }, 'vec.median': {
+            title: 'vec.median',
+            category: 'Vector',
+            description: 'Returns the median of all elements in the vector.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The vector to calculate the median of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.median([1, 2, 3])',
+                'vec.median([1, 2, -3])',
+                'vec.median([1, 2, 3, 4])',
+                'vec.median([1, 2, -3, 4])',
+            ],
+        }, 'vec.mode': {
+            title: 'vec.mode',
+            category: 'Vector',
+            description: 'Returns the mode of all elements in the vector.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The vector to calculate the mode of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.mode([1, 2, 3])',
+                'vec.mode([1, 2, -3, 1])',
+                'vec.mode([2, 2, 3, 3, 4])',
+                'vec.mode([2, 2, 3, 3])',
+                'vec.mode([1, 2, 3, 2, 1, 2])',
+            ],
+        }, 'vec.sample-variance': {
+            title: 'vec.sample-variance',
+            category: 'Vector',
+            description: 'Returns the sample variance of all elements in the vector.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'Non emtpy vector to calculate the sample variance of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.sample-variance([1, 2, 3])',
+                'vec.sample-variance([1, 2, -3])',
+                'vec.sample-variance([1, 2, 3, 4])',
+                'vec.sample-variance([1, 2, -3, 4])',
+                'vec.sample-variance([1, 2, 3, 40, 50])',
+            ],
+        }, 'vec.stdev': {
+            title: 'vec.stdev',
+            category: 'Vector',
+            description: 'Returns the standard deviation of all elements in the vector.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'Non emtpy vector to calculate the standard deviation of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.stdev([1, 2, 3])',
+                'vec.stdev([1, 2, -3])',
+                'vec.stdev([1, 2, 3, 4])',
+                'vec.stdev([1, 2, -3, 4])',
+                'vec.stdev([1, 2, 3, 40, 50])',
+            ],
+        }, 'vec.sample-stdev': {
+            title: 'vec.sample-stdev',
+            category: 'Vector',
+            description: 'Returns the sample standard deviation of all elements in the vector.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'Non emtpy vector to calculate the sample standard deviation of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.sample-stdev([1, 2, 3])',
+                'vec.sample-stdev([1, 2, -3])',
+                'vec.sample-stdev([1, 2, 3, 4])',
+                'vec.sample-stdev([1, 2, -3, 4])',
+                'vec.sample-stdev([1, 2, 3, 40, 50])',
+            ],
+        }, 'vec.min': {
+            title: 'vec.min',
+            category: 'Vector',
+            description: 'Returns the minimum value of all elements in the vector.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'Non emtpy vector to calculate the minimum of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.min([1, 2, 3])',
+                'vec.min([1, 1, 2, 3, 3])',
+                'vec.min([1, 2, -3])',
+                'vec.min([1, 2, 3, 4])',
+                'vec.min([1, 2, -3, 4])',
+            ],
+        }, 'vec.max': {
+            title: 'vec.max',
+            category: 'Vector',
+            description: 'Returns the maximum value of all elements in the vector.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'Non emtpy vector to calculate the maximum of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.max([1, 2, 3])',
+                'vec.max([1, 1, 2, 3, 3])',
+                'vec.max([1, 2, -3])',
+                'vec.max([1, 2, 3, 4])',
+                'vec.max([1, 2, -3, 4])',
+            ],
+        }, 'vec.min-index': {
+            title: 'vec.min-index',
+            category: 'Vector',
+            description: 'Returns the index of the minimum value of all elements in the vector.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'Non emtpy vector to calculate the minimum index of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.min-index([1, 2, 3])',
+                'vec.min-index([1, 1, 2, 3, 3])',
+                'vec.min-index([1, 2, -3])',
+                'vec.min-index([1, 2, 3, 4])',
+                'vec.min-index([1, 2, -3, 4])',
+            ],
+        }, 'vec.max-index': {
+            title: 'vec.max-index',
+            category: 'Vector',
+            description: 'Returns the index of the maximum value of all elements in the vector.',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'Non emtpy vector to calculate the maximum index of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.max-index([1, 2, 3])',
+                'vec.max-index([1, 1, 2, 3, 3])',
+                'vec.max-index([1, 2, -3])',
+                'vec.max-index([1, 2, 3, 4])',
+                'vec.max-index([1, 2, -3, 4])',
+            ],
+        }, 'vec.sort-indices': {
+            title: 'vec.sort-indices',
+            category: 'Vector',
+            description: 'Returns the indices of the elements in the vector sorted in ascending order.',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'Non emtpy vector to calculate the sorted indices of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.sort-indices([1, 2, 3])',
+                'vec.sort-indices([1, 1, 2, 3, 3])',
+                'vec.sort-indices([1, 2, -3])',
+                'vec.sort-indices([1, 2, 3, 4])',
+                'vec.sort-indices([1, 2, -3, 4])',
+            ],
+        }, 'vec.count-values': {
+            title: 'vec.count-values',
+            category: 'Vector',
+            description: 'Counts the number of occurrences of each value in the vector.',
+            returns: {
+                type: 'number',
+                array: true,
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'Vector to count the values of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.count-values([1, 2, 3])',
+                'vec.count-values([1, 1, 2, 3, 3])',
+                'vec.count-values([1, 2, -3])',
+                'vec.count-values([1, 2, 2, 1, 3, 2, 4, 2, 1, 2, 2, 1, 3, 2, 4])',
+            ],
+        }, 'vec.linspace': {
+            title: 'vec.linspace',
+            category: 'Vector',
+            description: 'Generates a vector of evenly spaced numbers between two values.',
+            returns: {
+                type: 'number',
+                array: true,
+            },
+            args: {
+                start: {
+                    type: 'number',
+                    description: 'The starting value.',
+                },
+                stop: {
+                    type: 'number',
+                    description: 'The ending value.',
+                },
+                n: {
+                    type: 'integer',
+                    description: 'The number of values to generate.',
+                },
+            },
+            variants: [
+                { argumentNames: ['start', 'stop', 'n'] },
+            ],
+            examples: [
+                'vec.linspace(0, 10, 6)',
+                'vec.linspace(10, 20, 25)',
+            ],
+        }, 'vec.ones': {
+            title: 'vec.ones',
+            category: 'Vector',
+            description: 'Generates a vector of ones.',
+            returns: {
+                type: 'number',
+                array: true,
+            },
+            args: {
+                length: {
+                    type: 'integer',
+                    description: 'The length of the vector.',
+                },
+            },
+            variants: [
+                { argumentNames: ['length'] },
+            ],
+            examples: [
+                'vec.ones(5)',
+                'vec.ones(10)',
+                'vec.ones(0)',
+            ],
+        }, 'vec.zeros': {
+            title: 'vec.zeros',
+            category: 'Vector',
+            description: 'Generates a vector of zeros.',
+            returns: {
+                type: 'number',
+                array: true,
+            },
+            args: {
+                length: {
+                    type: 'integer',
+                    description: 'The length of the vector.',
+                },
+            },
+            variants: [
+                { argumentNames: ['length'] },
+            ],
+            examples: [
+                'vec.zeros(5)',
+                'vec.zeros(10)',
+                'vec.zeros(0)',
+            ],
+        }, 'vec.fill': {
+            title: 'vec.fill',
+            category: 'Vector',
+            description: 'Generates a vector filled with a number.',
+            returns: {
+                type: 'number',
+                array: true,
+            },
+            args: __assign({ length: {
+                    type: 'integer',
+                    description: 'The length of the vector.',
+                }, value: {
+                    type: 'number',
+                    description: 'The value to fill the vector with.',
+                } }, getOperatorArgs('number', 'integer')),
+            variants: [
+                { argumentNames: ['length', 'value'] },
+            ],
+            examples: [
+                'vec.fill(5, PI)',
+                'vec.fill(10, -1)',
+            ],
+        }, 'vec.generate': {
+            title: 'vec.generate',
+            category: 'Vector',
+            description: 'Generates a vector of numbers based on a function.',
+            returns: {
+                type: 'number',
+                array: true,
+            },
+            args: __assign({ length: {
+                    type: 'integer',
+                    description: 'The length of the vector.',
+                }, func: {
+                    type: 'function',
+                    description: 'A function that takes an index and returns a number.',
+                } }, getOperatorArgs('number', 'integer')),
+            variants: [
+                { argumentNames: ['length', 'func'] },
+            ],
+            examples: [
+                'vec.generate(5, -> $ * 2)',
+                'vec.generate(10, -> $ + 1)',
+                'vec.generate(0, -> $ + 1)',
+            ],
+        }, 'vec.cumsum': {
+            title: 'vec.cumsum',
+            category: 'Vector',
+            description: 'Calculates the cumulative sum of a vector.',
+            returns: {
+                type: 'number',
+                array: true,
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The vector to calculate the cumulative sum of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.cumsum([1, 2, 3])',
+                'vec.cumsum([1, 2, -3])',
+                'vec.cumsum([])',
+            ],
+        }, 'vec.cumprod': {
+            title: 'vec.cumprod',
+            category: 'Vector',
+            description: 'Calculates the cumulative product of a vector.',
+            returns: {
+                type: 'number',
+                array: true,
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The vector to calculate the cumulative product of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.cumprod([1, 2, 3])',
+                'vec.cumprod([1, 2, -3, 0, 10])',
+                'vec.cumprod([])',
+            ],
+        }, 'vec.quartiles': {
+            title: 'vec.quartiles',
+            category: 'Vector',
+            description: 'Calculates the quartiles of a vector. Returns an array containing the first, second (median), and third quartiles.',
+            returns: {
+                type: 'number',
+                array: true,
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The vector to calculate the quartiles of. Minimum length is 4.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.quartiles([1, 2, 3, 4])',
+                'vec.quartiles([5, 4, 3, 2, 1, 2, 3, 4, 5])',
+                'vec.quartiles(range(1, 1000))',
+                'vec.quartiles(vec.generate(1000, -> 1e6 / ($ + 1) ^ 2))',
+                'vec.quartiles(vec.generate(1000, -> ln($ + 1)))',
+            ],
+        }, 'vec.percentile': {
+            title: 'vec.percentile',
+            category: 'Vector',
+            description: 'Calculates the percentile of a vector. Returns the value at the specified percentile.',
+            returns: {
+                type: 'number',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The non empty vector to calculate the percentile of.',
+                }, percentile: {
+                    type: 'number',
+                    description: 'The percentile to calculate. Must be between 0 and 1.',
+                } }, getOperatorArgs('number', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'percentile'] },
+            ],
+            examples: [
+                'vec.percentile([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 35)',
+                'vec.percentile(range(100) ^ 0.5, 0)',
+                'vec.percentile(range(100) ^ 0.5, 10)',
+                'vec.percentile(range(100) ^ 0.5, 20)',
+                'vec.percentile(range(100) ^ 0.5, 30)',
+                'vec.percentile(range(100) ^ 0.5, 40)',
+                'vec.percentile(range(100) ^ 0.5, 50)',
+                'vec.percentile(range(100) ^ 0.5, 60)',
+                'vec.percentile(range(100) ^ 0.5, 70)',
+                'vec.percentile(range(100) ^ 0.5, 80)',
+                'vec.percentile(range(100) ^ 0.5, 90)',
+                'vec.percentile(range(100) ^ 0.5, 100)',
+            ],
+        }, 'vec.quantile': {
+            title: 'vec.quantile',
+            category: 'Vector',
+            description: 'Calculates the quantile of a vector. Returns the value at the specified quantile.',
+            returns: {
+                type: 'number',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The non empty vector to calculate the quantile of.',
+                }, quantile: {
+                    type: 'number',
+                    description: 'The quantile to calculate. Must be between 0 and 1.',
+                } }, getOperatorArgs('number', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'quantile'] },
+            ],
+            examples: [
+                'vec.quantile([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 0.35)',
+                'vec.quantile(range(100) ^ 0.5, 0)',
+                'vec.quantile(range(100) ^ 0.5, 0.1)',
+                'vec.quantile(range(100) ^ 0.5, 0.2)',
+                'vec.quantile(range(100) ^ 0.5, 0.3)',
+                'vec.quantile(range(100) ^ 0.5, 0.4)',
+                'vec.quantile(range(100) ^ 0.5, 0.5)',
+                'vec.quantile(range(100) ^ 0.5, 0.6)',
+                'vec.quantile(range(100) ^ 0.5, 0.7)',
+                'vec.quantile(range(100) ^ 0.5, 0.8)',
+                'vec.quantile(range(100) ^ 0.5, 0.9)',
+                'vec.quantile(range(100) ^ 0.5, 1)',
+            ],
+        }, 'vec.span': {
+            title: 'vec.span',
+            category: 'Vector',
+            description: 'Returns the difference between the maximum and minimum values in a vector.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The vector to calculate the span of.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.span([1, 2, 3])',
+                'vec.span([1, 1, 2, 3, 3])',
+                'vec.span([1, 2, -3])',
+            ],
+        }, 'vec.histogram': {
+            title: 'vec.histogram',
+            category: 'Vector',
+            description: 'Creates a histogram from a numeric `array` by dividing the data range into the specified number of bins. Returns an `array` of `[binStart, binEnd, count]` tuples representing each bin\'s range and the number of values within it. Handles empty arrays, identical values, and properly places maximum values in the last bin.',
+            returns: {
+                type: 'array',
+                array: true,
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The numeric array to create a histogram from.',
+                }, bins: {
+                    type: 'integer',
+                    description: 'The number of bins to divide the data range into.',
+                } }, getOperatorArgs('number', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'bins'] },
+            ],
+            examples: [
+                'vec.histogram([1, 2, 2, 3, 2, 6, 4, 3, 2, 4, 1, 3, 2, 9], 3)',
+                'vec.histogram([1, 2, 3, 4, 5], 5)',
+                'vec.histogram([1, 2, 3, 4, 5], 10)',
+                'vec.histogram([1, 2, 3, 4, 5], 1)',
+            ],
+        }, 'vec.ecdf': {
+            title: 'vec.ecdf',
+            category: 'Vector',
+            description: 'Calculates the empirical cumulative distribution function value for a given threshold in a non empty dataset. Returns the proportion of values in the `array` that are less than or equal to the specified threshold.',
+            returns: {
+                type: 'number',
+            },
+            args: __assign({ vector: {
+                    type: 'vector',
+                    description: 'The numeric array to calculate the ECDF from.',
+                }, threshold: {
+                    type: 'number',
+                    description: 'The threshold value to calculate the ECDF for.',
+                } }, getOperatorArgs('number', 'integer')),
+            variants: [
+                { argumentNames: ['vector', 'threshold'] },
+            ],
+            examples: [
+                'vec.ecdf([1, 2, 2, 3, 2, 6, 4, 3, 2, 4, 1, 3, 2, 9, 10, 12], 5)',
+                'vec.ecdf([1, 2, 3, 4, 5], 3)',
+                'vec.ecdf([1, 2, 3, 4, 5], 0)',
+                'vec.ecdf([1, 2, 3, 4, 5], 10)',
+                'vec.ecdf([1, 2, 3, 4, 5], 2)',
+            ],
+        }, 'vec.outliers?': {
+            title: 'vec.outliers?',
+            category: 'Vector',
+            description: 'Checks if the `vector` contains outliers based on the interquartile range (IQR) method. Returns `true` if outliers are present, `false` otherwise.',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to check for outliers.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.outliers?([1, 2, 3])',
+                'vec.outliers?([1, 2, -3])',
+                'vec.outliers?([1, 2, 3, 2, 4, 120])',
+            ],
+        }, 'vec.outliers': {
+            title: 'vec.outliers',
+            category: 'Vector',
+            description: 'Identifies outliers in the `vector` based on the interquartile range (IQR) method. Returns an array of outlier values.',
+            returns: {
+                type: 'number',
+                array: true,
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The `vector` to check for outliers.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+            ],
+            examples: [
+                'vec.outliers([1, 2, 3])',
+                'vec.outliers([1, 2, -3])',
+                'vec.outliers([1, 2, 3, 2, 4, 120])',
+            ],
+        }, 'vec.bincount': {
+            title: 'vec.bincount',
+            category: 'Vector',
+            description: 'counts occurrences of each `integer` in a vector, returning an array where index `i` contains the count of value `i`, with optional **minimum size** and **weights parameters**.',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                vector: {
+                    type: 'vector',
+                    description: 'The vector to count occurrences in.',
+                },
+                minSize: {
+                    type: 'integer',
+                    description: 'Optional minimum size of the output array.',
+                },
+                weights: {
+                    type: 'number',
+                    array: true,
+                    description: 'Optional weights for each element in the vector.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector'] },
+                { argumentNames: ['vector', 'minSize'] },
+                { argumentNames: ['vector', 'minSize', 'weights'] },
+            ],
+            examples: [
+                'vec.bincount([1, 2, 3])',
+                'vec.bincount([1, 2, 2, 3, 3])',
+            ],
+            noOperatorDocumentation: true,
+        }, 'vec.winsorize': {
+            title: 'vec.winsorize',
+            category: 'Vector',
+            description: 'Limits extreme values in a `vector` by replacing values below the **lower quantile** and above the **upper quantile** with the values at those quantiles. The function takes a `vector` of values and **quantile thresholds** (between 0 and 1), with the upper quantile. Winsorization reduces the influence of outliers while preserving the overall distribution shape, making statistical analyses more robust.',
+            returns: {
+                type: 'vector',
+            },
+            args: {
+                'vector': {
+                    type: 'vector',
+                    description: 'The vector to winsorize.',
+                },
+                'lower-quantile': {
+                    type: 'number',
+                    description: 'The lower quantile threshold (between 0 and 1).',
+                },
+                'upper-quantile': {
+                    type: 'number',
+                    description: 'Optional Upper quantile threshold (between 0 and 1). Defaults to `(1 - lower-quantile)` if `lower-quantile <= 0.5` otherwise `1`.',
+                },
+            },
+            variants: [
+                { argumentNames: ['vector', 'lower-quantile'] },
+                { argumentNames: ['vector', 'lower-quantile', 'upper-quantile'] },
+            ],
+            examples: [
+                'vec.winsorize([2, 5, 8, 10, 15, 18, 20, 35, 60, 100], 0.25)',
+                'vec.winsorize([2, 5, 8, 10, 15, 18, 20, 35, 60, 100], 0.25, 0.75)',
+                'vec.winsorize([2, 5, 8, 10, 15, 18, 20, 35, 60, 100], 0.25, 0.5)',
+            ],
+            noOperatorDocumentation: true,
+        }, 'vec.mse': {
+            title: 'vec.mse',
+            category: 'Vector',
+            description: 'Calculates the **Mean Squared Error (MSE)** between two vectors. Returns the average of the squared differences between corresponding elements.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                a: {
+                    type: 'vector',
+                    description: 'The first vector.',
+                },
+                b: {
+                    type: 'vector',
+                    description: 'The second vector.',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                'vec.mse([1, 2, 3], [1, 2, 3])',
+                'vec.mse([1, 2, 3], [4, 5, 6])',
+                'vec.mse([1, 2, 3], [2, 2, 2])',
+                'vec.mse([1, 2], [3, 3])',
+                'vec.mse([1], [3])',
+            ],
+        }, 'vec.rmse': {
+            title: 'vec.rmse',
+            category: 'Vector',
+            description: 'Calculates the **Root Mean Squared Error (RMSE)** between two vectors. Returns the square root of the average of the squared differences between corresponding elements.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                a: {
+                    type: 'vector',
+                    description: 'The first vector.',
+                },
+                b: {
+                    type: 'vector',
+                    description: 'The second vector.',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                'vec.rmse([1, 2, 3], [1, 2, 3])',
+                'vec.rmse([1, 2, 3], [4, 5, 6])',
+                'vec.rmse([1, 2, 3], [2, 2, 2])',
+                'vec.rmse([1, 2], [3, 3])',
+                'vec.rmse([1], [3])',
+            ],
+        }, 'vec.mae': {
+            title: 'vec.mae',
+            category: 'Vector',
+            description: 'Calculates the **Mean Absolute Error (MAE)** between two vectors. Returns the average of the absolute differences between corresponding elements.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                a: {
+                    type: 'vector',
+                    description: 'The first vector.',
+                },
+                b: {
+                    type: 'vector',
+                    description: 'The second vector.',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                'vec.mae([1, 2, 3], [1, 2, 3])',
+                'vec.mae([1, 2, 3], [4, 5, 6])',
+                'vec.mae([1, 2, 3], [2, 2, 2])',
+                'vec.mae([1, 2], [3, 3])',
+                'vec.mae([1], [3])',
+            ],
+        }, 'vec.smape': {
+            title: 'vec.smape',
+            category: 'Vector',
+            description: 'Calculates the **Symmetric Mean Absolute Percentage Error (SMAPE)** between two vectors. Returns the average of the absolute percentage differences between corresponding elements.',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                a: {
+                    type: 'vector',
+                    description: 'The first vector.',
+                },
+                b: {
+                    type: 'vector',
+                    description: 'The second vector.',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            examples: [
+                'vec.smape([1, 2, 3], [1, 2, 3])',
+                'vec.smape([1, 2, 3], [4, 5, 6])',
+                'vec.smape([1, 2, 3], [2, 2, 2])',
+                'vec.smape([1, 2], [3, 3])',
+                'vec.smape([1], [3])',
+            ],
+        } });
+
+    var randomReference = {
+        '!:random': {
+            title: '!:random',
+            category: 'Random',
+            returns: {
+                type: 'number',
+            },
+            args: {},
+            variants: [
+                { argumentNames: [] },
+            ],
+            description: 'Returns a random number between 0 and 1.',
+            examples: [
+                '!:random()',
+            ],
+        },
+        '!:random-int': {
+            title: '!:random-int',
+            category: 'Random',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                a: {
+                    type: 'integer',
+                    description: 'The minimum value.',
+                },
+                b: {
+                    type: 'integer',
+                    description: 'The maximum value (exclusive).',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            description: 'Returns a random integer between min and max (exclusive).',
+            examples: [
+                '!:random-int(0, 10)',
+                '!:random-int(1, 100)',
+            ],
+        },
+        '!:random-int-inclusive': {
+            title: '!:random-int-inclusive',
+            category: 'Random',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                a: {
+                    type: 'integer',
+                    description: 'The minimum value.',
+                },
+                b: {
+                    type: 'integer',
+                    description: 'The maximum value (inclusive).',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            description: 'Returns a random integer between min and max (inclusive).',
+            examples: [
+                '!:random-int-inclusive(0, 10)',
+            ],
+        },
+        '!:random-float': {
+            title: '!:random-float',
+            category: 'Random',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                a: {
+                    type: 'number',
+                    description: 'The minimum value.',
+                },
+                b: {
+                    type: 'number',
+                    description: 'The maximum value.',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            description: 'Returns a random float between min and max.',
+            examples: [
+                '!:random-float(0, 10)',
+                '!:random-float(1, 100)',
+            ],
+        },
+        '!:random-boolean': {
+            title: '!:random-boolean',
+            category: 'Random',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                prob: {
+                    type: 'number',
+                    description: 'The probability of returning true (between 0 and 1).',
+                },
+            },
+            variants: [
+                { argumentNames: ['prob'] },
+            ],
+            description: 'Returns a random boolean.',
+            examples: [
+                '!:random-boolean()',
+                '!:random-boolean(0.99)',
+            ],
+        },
+        '!:random-item': {
+            title: '!:random-item',
+            category: 'Random',
+            returns: {
+                type: 'any',
+            },
+            args: {
+                a: {
+                    type: 'array',
+                    description: 'The array to sample from.',
+                },
+            },
+            variants: [
+                { argumentNames: ['a'] },
+            ],
+            description: 'Returns a random item from the array.',
+            examples: [
+                '!:random-item([1, 2, 3, 4, 5])',
+                '!:random-item(["apple", "banana", "cherry"])',
+            ],
+        },
+        '!:random-sample-unique': {
+            title: '!:random-sample-unique',
+            category: 'Random',
+            returns: {
+                type: 'array',
+            },
+            args: {
+                a: {
+                    type: 'array',
+                    description: 'The array to sample from.',
+                },
+                b: {
+                    type: 'integer',
+                    description: 'The number of items to sample.',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            description: 'Returns a random sample of n unique items from the array.',
+            examples: [
+                '!:random-sample-unique([1, 2, 3, 4, 5], 3)',
+                '!:random-sample-unique(["apple", "banana", "cherry"], 2)',
+            ],
+        },
+        '!:random-sample': {
+            title: '!:random-sample',
+            category: 'Random',
+            returns: {
+                type: 'array',
+            },
+            args: {
+                a: {
+                    type: 'array',
+                    description: 'The array to sample from.',
+                },
+                b: {
+                    type: 'integer',
+                    description: 'The number of items to sample.',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            description: 'Returns a random sample of n items from the array.',
+            examples: [
+                '!:random-sample([1, 2, 3, 4, 5], 3)',
+                '!:random-sample(["apple", "banana", "cherry"], 10)',
+            ],
+        },
+        '!:shuffle': {
+            title: '!:shuffle',
+            category: 'Random',
+            returns: {
+                type: 'array',
+            },
+            args: {
+                a: {
+                    type: 'array',
+                    description: 'The array to shuffle.',
+                },
+            },
+            variants: [
+                { argumentNames: ['a'] },
+            ],
+            description: 'Returns a shuffled version of the array.',
+            examples: [
+                '!:shuffle([1, 2, 3, 4, 5])',
+                '!:shuffle(["apple", "banana", "cherry"])',
+            ],
+        },
+        '!:random-normal': {
+            title: '!:random-normal',
+            category: 'Random',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                mean: {
+                    type: 'number',
+                    description: 'The mean of the normal distribution.',
+                },
+                stdDev: {
+                    type: 'number',
+                    description: 'The standard deviation of the normal distribution.',
+                },
+            },
+            variants: [
+                { argumentNames: ['mean', 'stdDev'] },
+            ],
+            description: 'Returns a random number from a normal distribution with the given mean and standard deviation.',
+            examples: [
+                '!:random-normal(0, 1)',
+                '!:random-normal(5, 2)',
+            ],
+            noOperatorDocumentation: true,
+        },
+        '!:random-exponential': {
+            title: '!:random-exponential',
+            category: 'Random',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                lambda: {
+                    type: 'number',
+                    description: 'The rate parameter of the exponential distribution.',
+                },
+            },
+            variants: [
+                { argumentNames: ['lambda'] },
+            ],
+            description: 'Returns a random number from an exponential distribution with the given rate parameter.',
+            examples: [
+                '!:random-exponential(1)',
+                '!:random-exponential(0.5)',
+            ],
+        },
+        '!:random-binomial': {
+            title: '!:random-binomial',
+            category: 'Random',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                    description: 'The number of trials.',
+                },
+                p: {
+                    type: 'number',
+                    description: 'The probability of success on each trial.',
+                },
+            },
+            variants: [
+                { argumentNames: ['n', 'p'] },
+            ],
+            description: 'Returns a random number from a binomial distribution with the given number of trials and probability of success.',
+            examples: [
+                '!:random-binomial(10, 0.5)',
+                '!:random-binomial(20, 0.3)',
+            ],
+            noOperatorDocumentation: true,
+        },
+        '!:random-poisson': {
+            title: '!:random-poisson',
+            category: 'Random',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                lambda: {
+                    type: 'number',
+                    description: 'The rate parameter of the Poisson distribution.',
+                },
+            },
+            variants: [
+                { argumentNames: ['lambda'] },
+            ],
+            description: 'Returns a random number from a Poisson distribution with the given rate parameter.',
+            examples: [
+                '!:random-poisson(1)',
+                '!:random-poisson(5)',
+            ],
+        },
+        '!:random-gamma': {
+            title: '!:random-gamma',
+            category: 'Random',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                shape: {
+                    type: 'number',
+                    description: 'The shape parameter of the gamma distribution.',
+                },
+                scale: {
+                    type: 'number',
+                    description: 'The scale parameter of the gamma distribution.',
+                },
+            },
+            variants: [
+                { argumentNames: ['shape', 'scale'] },
+            ],
+            description: 'Returns a random number from a gamma distribution with the given shape and scale parameters.',
+            examples: [
+                '!:random-gamma(2, 2)',
+                '!:random-gamma(5, 1)',
+            ],
+            noOperatorDocumentation: true,
+        },
+        '!:random-pareto': {
+            title: '!:random-pareto',
+            category: 'Random',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                alpha: {
+                    type: 'number',
+                    description: 'The shape parameter of the Pareto distribution.',
+                },
+            },
+            variants: [
+                { argumentNames: ['alpha'] },
+            ],
+            description: 'Returns a random number from a Pareto distribution with the given shape parameter.',
+            examples: [
+                '!:random-pareto(1)',
+                '!:random-pareto(2)',
+            ],
+        },
+        '!:uuid': {
+            title: '!:uuid',
+            category: 'Random',
+            returns: {
+                type: 'string',
+            },
+            args: {},
+            variants: [
+                { argumentNames: [] },
+            ],
+            description: 'Returns a random UUID v4 (Universally Unique Identifier).',
+            examples: [
+                '!:uuid()',
+            ],
+        },
+        '!:random-char': {
+            title: '!:random-char',
+            category: 'Random',
+            returns: {
+                type: 'string',
+            },
+            args: {
+                charSet: {
+                    type: 'string',
+                    description: 'The string to sample from.',
+                },
+            },
+            variants: [
+                { argumentNames: ['charSet'] },
+            ],
+            description: 'Returns a random character from the given string.',
+            examples: [
+                '!:random-char("abcde")',
+                '!:random-char("ABCDEFGHIJKLMNOPQRSTUVWXYZ")',
+            ],
+        },
+        '!:random-string': {
+            title: '!:random-string',
+            category: 'Random',
+            returns: {
+                type: 'string',
+            },
+            args: {
+                length: {
+                    type: 'integer',
+                    description: 'The length of the random string.',
+                },
+                charSet: {
+                    type: 'string',
+                    description: 'The string to sample from.',
+                },
+            },
+            variants: [
+                { argumentNames: ['length', 'charSet'] },
+            ],
+            description: 'Returns a random string of the given length from the given string.',
+            examples: [
+                '!:random-string(10, "abcde")',
+                '!:random-string(5, "ABCDEFGHIJKLMNOPQRSTUVWXYZ")',
+            ],
+            noOperatorDocumentation: true,
+        },
+        '!:random-id': {
+            title: '!:random-id',
+            category: 'Random',
+            returns: {
+                type: 'string',
+            },
+            args: {
+                length: {
+                    type: 'integer',
+                    description: 'The length of the random ID.',
+                },
+            },
+            variants: [
+                { argumentNames: ['length'] },
+            ],
+            description: 'Returns a random ID of the given length.',
+            examples: [
+                '!:random-id(10)',
+                '!:random-id(5)',
+            ],
+        },
+        '!:random-color': {
+            title: '!:random-color',
+            category: 'Random',
+            returns: {
+                type: 'string',
+            },
+            args: {},
+            variants: [
+                { argumentNames: [] },
+            ],
+            description: 'Returns a random color in hex format.',
+            examples: [
+                '!:random-color()',
+            ],
+        },
+    };
+
     function isFunctionReference(ref) {
         return 'returns' in ref && 'args' in ref && 'variants' in ref;
     }
     var normalExpressionReference = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, bitwiseReference), collectionReference), arrayReference), sequenceReference), mathReference), functionalReference), metaReference), miscReference), assertReference), objectReference), predicateReference), regularExpressionReference), stringReference);
+    // Namespace functions - require import() to use
+    var namespaceReference = __assign(__assign(__assign(__assign(__assign(__assign({}, vectorReference), linAlgReference), matrixReference), numberTheoryReference), gridReference), randomReference);
     Object.entries(normalExpressionReference).forEach(function (_a) {
         var _b = __read(_a, 2), key = _b[0], obj = _b[1];
         if (!normalExpressions[key]) {
@@ -22183,8 +31947,11 @@ var Playground = (function (exports) {
         }
     });
     var functionReference = __assign(__assign({}, normalExpressionReference), specialExpressionsReference);
+    // Core API reference (always available)
     var apiReference = __assign(__assign(__assign({}, functionReference), shorthand), datatype);
-    Object.values(apiReference).forEach(function (ref) {
+    // All references including namespaces (for search and full documentation)
+    var allReference = __assign(__assign({}, apiReference), namespaceReference);
+    Object.values(allReference).forEach(function (ref) {
         ref.title = ref.title.replace(/"/g, '&quot;');
     });
 
@@ -22425,6 +32192,24 @@ var Playground = (function (exports) {
     }
     function closeMoreMenu() {
         elements.moreMenu.style.display = 'none';
+    }
+    var expandedNamespaces = new Set();
+    function toggleNamespaceCategory(categoryKey) {
+        var sanitizedKey = categoryKey.replace(/\s+/g, '-');
+        var chevron = document.getElementById("ns-chevron-".concat(sanitizedKey));
+        var content = document.getElementById("ns-content-".concat(sanitizedKey));
+        if (!chevron || !content)
+            return;
+        if (expandedNamespaces.has(categoryKey)) {
+            expandedNamespaces.delete(categoryKey);
+            content.style.display = 'none';
+            chevron.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M10 6L8.59 7.41L13.17 12l-4.58 4.59L10 18l6-6z"/></svg>';
+        }
+        else {
+            expandedNamespaces.add(categoryKey);
+            content.style.display = 'flex';
+            chevron.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6l-6-6z"/></svg>';
+        }
     }
     function openAddContextMenu() {
         elements.newContextName.value = getState('new-context-name');
@@ -23299,6 +33084,7 @@ var Playground = (function (exports) {
     exports.share = share;
     exports.showPage = showPage;
     exports.toggleDebug = toggleDebug;
+    exports.toggleNamespaceCategory = toggleNamespaceCategory;
     exports.tokenize = tokenize;
     exports.undoContextHistory = undoContextHistory;
     exports.undoLitsCodeHistory = undoLitsCodeHistory;

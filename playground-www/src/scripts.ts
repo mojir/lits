@@ -98,6 +98,28 @@ export function closeMoreMenu() {
   elements.moreMenu.style.display = 'none'
 }
 
+const expandedNamespaces = new Set<string>()
+
+export function toggleNamespaceCategory(categoryKey: string) {
+  const sanitizedKey = categoryKey.replace(/\s+/g, '-')
+  const chevron = document.getElementById(`ns-chevron-${sanitizedKey}`)
+  const content = document.getElementById(`ns-content-${sanitizedKey}`)
+
+  if (!chevron || !content)
+    return
+
+  if (expandedNamespaces.has(categoryKey)) {
+    expandedNamespaces.delete(categoryKey)
+    content.style.display = 'none'
+    chevron.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M10 6L8.59 7.41L13.17 12l-4.58 4.59L10 18l6-6z"/></svg>'
+  }
+  else {
+    expandedNamespaces.add(categoryKey)
+    content.style.display = 'flex'
+    chevron.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6l-6-6z"/></svg>'
+  }
+}
+
 export function openAddContextMenu() {
   elements.newContextName.value = getState('new-context-name')
   elements.newContextValue.value = getState('new-context-value')

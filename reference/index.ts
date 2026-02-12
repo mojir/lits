@@ -4,7 +4,7 @@ import { normalExpressions } from '../src/builtin/normalExpressions'
 import { specialExpressionTypes } from '../src/builtin/specialExpressionTypes'
 import { isSymbolicOperator } from '../src/tokenizer/operators'
 import { canBeOperator } from '../src/utils/arity'
-import type { ApiName, Category, CoreApiName, CoreNormalExpressionName, DataType } from './api'
+import type { ApiName, Category, CoreApiName, CoreNormalExpressionName, DataType, NamespaceExpressionName } from './api'
 
 // Core categories
 import { arrayReference } from './categories/array'
@@ -24,14 +24,13 @@ import { stringReference } from './categories/string'
 import { datatype } from './datatype'
 import { shorthand } from './shorthand'
 
-// TODO: Phase 1 - Namespaces commented out for refactoring
-// These will require import() to use
-// import { gridReference } from './categories/grid'
-// import { linAlgReference } from './categories/linearAlgebra'
-// import { matrixReference } from './categories/matrix'
-// import { numberTheoryReference } from './categories/numberTheory'
-// import { vectorReference } from './categories/vector'
-// import { randomReference } from './categories/random'
+// Namespace categories - require import() to use
+import { gridReference } from './categories/grid'
+import { linAlgReference } from './categories/linearAlgebra'
+import { matrixReference } from './categories/matrix'
+import { numberTheoryReference } from './categories/numberTheory'
+import { vectorReference } from './categories/vector'
+import { randomReference } from './categories/random'
 
 export interface TypedValue {
   type: DataType[] | DataType
@@ -112,15 +111,16 @@ export const normalExpressionReference: Record<CoreNormalExpressionName, Functio
   ...predicateReference,
   ...regularExpressionReference,
   ...stringReference,
+}
 
-  // TODO: Phase 1 - Namespaces commented out for refactoring
-  // These will require import() to use
-  // ...vectorReference,
-  // ...linAlgReference,
-  // ...matrixReference,
-  // ...numberTheoryReference,
-  // ...gridReference,
-  // ...randomReference,
+// Namespace functions - require import() to use
+export const namespaceReference: Record<NamespaceExpressionName, FunctionReference> = {
+  ...vectorReference,
+  ...linAlgReference,
+  ...matrixReference,
+  ...numberTheoryReference,
+  ...gridReference,
+  ...randomReference,
 }
 
 Object.entries(normalExpressionReference).forEach(([key, obj]) => {
@@ -150,9 +150,13 @@ export const functionReference = {
   ...specialExpressionsReference,
 }
 
+// Core API reference (always available)
 export const apiReference: Record<CoreApiName, Reference> = { ...functionReference, ...shorthand, ...datatype }
 
-Object.values(apiReference).forEach((ref) => {
+// All references including namespaces (for search and full documentation)
+export const allReference: Record<ApiName, Reference> = { ...apiReference, ...namespaceReference }
+
+Object.values(allReference).forEach((ref) => {
   ref.title = ref.title.replace(/"/g, '&quot;')
 })
 

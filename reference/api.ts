@@ -689,6 +689,22 @@ export type Category = keyof typeof categoryRecord
 
 export const categories = Object.keys(categoryRecord) as Category[]
 
+// Categories that are namespaces (require import)
+export const namespaceCategories: Category[] = ['Vector', 'Linear Algebra', 'Matrix', 'Grid', 'Number Theory', 'Random']
+
+// Core categories (always available)
+export const coreCategories = categories.filter(c => !namespaceCategories.includes(c))
+
+// Map from category to namespace import name
+export const categoryToNamespace: Partial<Record<Category, string>> = {
+  'Vector': 'vec',
+  'Linear Algebra': 'lin',
+  'Matrix': 'mat',
+  'Grid': 'grid',
+  'Number Theory': 'nth',
+  'Random': 'rand',
+}
+
 const dataTypes = [
   'number',
   'string',

@@ -81,7 +81,6 @@ export const varianceReference: VectorReductionReference<'variance'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      '[1, 2, 3, 4, 5] vec.centered-moving-variance 3',
       'vec.centered-moving-variance([1, 2, 3, 4, 5], 3)',
       'vec.centered-moving-variance([1, 2, 3, 4, 5], 3, 1)',
       'vec.centered-moving-variance([1, 2, 3, 4, 5], 3, 1, 5)',
@@ -190,7 +189,6 @@ export const sampleVarianceReference: VectorReductionReference<'sample-variance'
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      '[1, 2, 3, 4, 5] vec.centered-moving-sample-variance 3',
       'vec.centered-moving-sample-variance([1, 2, 3, 4, 5], 3)',
       'vec.centered-moving-sample-variance([1, 2, 3, 4, 5], 3, 1)',
       'vec.centered-moving-sample-variance([1, 2, 3, 4, 5], 3, 1, 5)',

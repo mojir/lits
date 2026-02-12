@@ -81,7 +81,6 @@ export const standardDeviationReference: VectorReductionReference<'stdev'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      '[1, 2, 3, 4, 5] vec.centered-moving-stdev 3',
       'vec.centered-moving-stdev([1, 2, 3, 4, 5], 3)',
       'vec.centered-moving-stdev([1, 2, 3, 4, 5], 3, 1)',
       'vec.centered-moving-stdev([1, 2, 3, 4, 5], 3, 1, 5)',
@@ -190,7 +189,6 @@ export const sampleStandardDeviationReference: VectorReductionReference<'sample-
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      '[1, 2, 3, 4, 5] vec.centered-moving-sample-stdev 3',
       'vec.centered-moving-sample-stdev([1, 2, 3, 4, 5], 3)',
       'vec.centered-moving-sample-stdev([1, 2, 3, 4, 5], 3, 1)',
       'vec.centered-moving-sample-stdev([1, 2, 3, 4, 5], 3, 1, 5)',
