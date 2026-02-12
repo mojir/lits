@@ -352,7 +352,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
     category: 'Misc',
     returns: {
       type: 'any',
-      description: 'Returns an object containing namespace functions when given a namespace name, or a single function when given a fully qualified function name.',
     },
     args: {
       path: {

@@ -1,5 +1,5 @@
 import type { FunctionReference } from '../..'
-import type { VectorReductionKeys } from '../../../src/builtin/normalExpressions/categories/namespaces/vector/reductionFunctions'
+import type { VectorReductionKeys } from '../../../src/namespaces/vector/reductionFunctions'
 import { type VectorApiName, getOperatorArgs } from '../../api'
 import { geometricMeanReference, harmonicMeanReference, meanReference } from './mean'
 import { medianReference } from './median'

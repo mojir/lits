@@ -159,9 +159,13 @@ numbers filter odd?;           // => [1, 3, 5]
 
 #### Vectors (Number Arrays)
 
-A vector is simply a non-empty array containing only numbers. The `vec:` namespace provides mathematical operations specifically for these number arrays:
+A vector is simply a non-empty array containing only numbers. The `vec` namespace provides mathematical operations specifically for these number arrays:
 
 ```lits
+// Import vector and linear algebra namespaces
+let vec = import("vec");
+let lin = import("lin");
+
 // Vectors are just number arrays
 [1, 2, 3, 4, 5];              // This is a vector
 [3.14, 2.71, 1.41];           // This is also a vector
@@ -169,38 +173,38 @@ A vector is simply a non-empty array containing only numbers. The `vec:` namespa
 [];                            // This is NOT a vector (empty)
 
 // Vector creation functions
-vec:zeros(5);                  // => [0, 0, 0, 0, 0]
-vec:ones(3);                   // => [1, 1, 1]
-vec:linspace(0, 10, 5);        // => [0, 2.5, 5, 7.5, 10]
-vec:fill(4, 3.14);             // => [3.14, 3.14, 3.14, 3.14]
-vec:generate(5, -> $ * 2);     // => [0, 2, 4, 6, 8]
+vec.zeros(5);                  // => [0, 0, 0, 0, 0]
+vec.ones(3);                   // => [1, 1, 1]
+vec.linspace(0, 10, 5);        // => [0, 2.5, 5, 7.5, 10]
+vec.fill(4, 3.14);             // => [3.14, 3.14, 3.14, 3.14]
+vec.generate(5, -> $ * 2);     // => [0, 2, 4, 6, 8]
 
-// Vector mathematical operations (use lin: namespace for vector math)
-lin:dot([1, 2, 3], [4, 5, 6]);      // => 32 (dot product)
-lin:euclidean-norm([3, 4]);         // => 5.0 (Euclidean norm/magnitude)
-lin:normalize([3, 4]);              // => [0.6, 0.8] (unit vector)
-lin:euclidean-distance([0, 0], [3, 4]); // => 5.0 (Euclidean distance)
+// Vector mathematical operations (use lin namespace for vector math)
+lin.dot([1, 2, 3], [4, 5, 6]);      // => 32 (dot product)
+lin.euclidean-norm([3, 4]);         // => 5.0 (Euclidean norm/magnitude)
+lin.normalize([3, 4]);              // => [0.6, 0.8] (unit vector)
+lin.euclidean-distance([0, 0], [3, 4]); // => 5.0 (Euclidean distance)
 
 // Vector statistical operations
-vec:sum([1, 2, 3, 4]);         // => 10
-vec:mean([1, 2, 3, 4]);        // => 2.5
-vec:median([1, 2, 3, 4, 5]);   // => 3
-vec:stdev([1, 2, 3, 4]);       // => 1.29... (standard deviation)
-vec:variance([1, 2, 3, 4]);    // => 1.67... (variance)
+vec.sum([1, 2, 3, 4]);         // => 10
+vec.mean([1, 2, 3, 4]);        // => 2.5
+vec.median([1, 2, 3, 4, 5]);   // => 3
+vec.stdev([1, 2, 3, 4]);       // => 1.29... (standard deviation)
+vec.variance([1, 2, 3, 4]);    // => 1.67... (variance)
 
 // Vector analysis
-vec:min([3, 1, 4, 1, 5]);      // => 1
-vec:max([3, 1, 4, 1, 5]);      // => 5
-vec:min-index([3, 1, 4]);      // => 1 (index of minimum)
-vec:max-index([3, 1, 4]);      // => 2 (index of maximum)
+vec.min([3, 1, 4, 1, 5]);      // => 1
+vec.max([3, 1, 4, 1, 5]);      // => 5
+vec.min-index([3, 1, 4]);      // => 1 (index of minimum)
+vec.max-index([3, 1, 4]);      // => 2 (index of maximum)
 
 // Cumulative operations
-vec:cumsum([1, 2, 3, 4]);      // => [1, 3, 6, 10]
-vec:cumprod([1, 2, 3, 4]);     // => [1, 2, 6, 24]
+vec.cumsum([1, 2, 3, 4]);      // => [1, 3, 6, 10]
+vec.cumprod([1, 2, 3, 4]);     // => [1, 2, 6, 24]
 
 // Vector predicates
-vec:increasing?([1, 1, 2, 3, 4]);          // => true
-vec:strictly-increasing?([1, 1, 2, 3, 4]); // => true
+vec.increasing?([1, 1, 2, 3, 4]);          // => true
+vec.strictly-increasing?([1, 1, 2, 3, 4]); // => true
 
 // Structural equality works with all vectors
 [1, 2, 3] == [1, 2, 3];       // => true
@@ -209,9 +213,12 @@ vec:strictly-increasing?([1, 1, 2, 3, 4]); // => true
 
 #### Matrices (2D Vectors)
 
-A matrix is a 2D array where each row is a vector (non-empty array of numbers) and all rows have the same length. The `mat:` namespace provides linear algebra operations for these structures:
+A matrix is a 2D array where each row is a vector (non-empty array of numbers) and all rows have the same length. The `mat` namespace provides linear algebra operations for these structures:
 
 ```lits
+// Import matrix namespace
+let mat = import("mat");
+
 // Matrices are 2D number arrays with consistent row lengths
 [[1, 2], [3, 4]];              // This is a 2x2 matrix
 [[1, 2, 3], [4, 5, 6]];        // This is a 2x3 matrix
@@ -223,34 +230,35 @@ A matrix is a 2D array where each row is a vector (non-empty array of numbers) a
 let matrixA = [[1, 2], [3, 4]];
 let matrixB = [[5, 6], [7, 8]];
 
-mat:mul(matrixA, matrixB);     // => [[19, 22], [43, 50]] (multiplication)
-mat:det(matrixA);              // => -2 (determinant)
-mat:inv(matrixA);              // => [[-2, 1], [1.5, -0.5]] (inverse)
-mat:trace(matrixA);            // => 5 (trace - sum of diagonal)
+mat.mul(matrixA, matrixB);     // => [[19, 22], [43, 50]] (multiplication)
+mat.det(matrixA);              // => -2 (determinant)
+mat.inv(matrixA);              // => [[-2, 1], [1.5, -0.5]] (inverse)
+mat.trace(matrixA);            // => 5 (trace - sum of diagonal)
 
 // Matrix construction
-mat:hilbert(3);                // => 3x3 Hilbert matrix
-mat:vandermonde([1, 2, 3]);    // => Vandermonde matrix from vector
-mat:band(4, 1, 1);             // => 4x4 band matrix
+mat.hilbert(3);                // => 3x3 Hilbert matrix
+mat.vandermonde([1, 2, 3]);    // => Vandermonde matrix from vector
+mat.band(4, 1, 1);             // => 4x4 band matrix
 
 // Matrix properties and predicates
-mat:symmetric?([[1, 2], [2, 1]]);    // => true
-mat:invertible?([[1, 2], [3, 4]]);   // => true
-mat:square?([[1, 2], [3, 4]]);       // => true
-mat:diagonal?([[1, 0], [0, 2]]);     // => true
-mat:identity?([[1, 0], [0, 1]]);     // => true
+mat.symmetric?([[1, 2], [2, 1]]);    // => true
+mat.invertible?([[1, 2], [3, 4]]);   // => true
+mat.square?([[1, 2], [3, 4]]);       // => true
+mat.diagonal?([[1, 0], [0, 2]]);     // => true
+mat.identity?([[1, 0], [0, 1]]);     // => true
 
 // Advanced matrix operations
-mat:adj(matrixA);              // => [[4, -2], [-3, 1]] (adjugate)
-mat:cofactor(matrixA);         // => cofactor matrix
-mat:minor(matrixA, 0, 1);      // => minor by removing row 0, col 1
-mat:frobenius-norm(matrixA);   // => Frobenius norm
-mat:1-norm(matrixA);           // => 1-norm (max column sum)
-mat:inf-norm(matrixA);         // => infinity norm (max row sum)
-mat:max-norm(matrixA);         // => max norm (largest absolute element)
+mat.adj(matrixA);              // => [[4, -2], [-3, 1]] (adjugate)
+mat.cofactor(matrixA);         // => cofactor matrix
+mat.minor(matrixA, 0, 1);      // => minor by removing row 0, col 1
+mat.frobenius-norm(matrixA);   // => Frobenius norm
+let norm1fn = get(mat, "1-norm");
+norm1fn(matrixA);              // => 1-norm (max column sum)
+mat.inf-norm(matrixA);         // => infinity norm (max row sum)
+mat.max-norm(matrixA);         // => max norm (largest absolute element)
 
 // Matrix analysis
-mat:rank(matrixA);             // => matrix rank
+mat.rank(matrixA);             // => matrix rank
 ```
 
 #### Objects (Maps)
@@ -1294,7 +1302,8 @@ Here's the complete precedence table, from highest to lowest:
 3 > 2 && 1 < 2;      // => true && true = true
 
 // Pipe has very low precedence
-[1, 2, 3] |> map(_, inc) |> vec:sum;  // Evaluates left to right
+let vec = import("vec");
+[1, 2, 3] |> map(_, inc) |> vec.sum;  // Evaluates left to right
 
 // Conditional has lowest precedence
 true ? 2 + 3 : 4 + 5;             // => true ? 5 : 9 = 5
