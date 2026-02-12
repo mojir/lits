@@ -5045,9 +5045,59 @@ var Playground = (function (exports) {
         },
         'import': {
             evaluate: function (_a, sourceCodeInfo) {
-                var e_7, _b, _c, e_8, _d, _e;
-                var _f = __read(_a, 1), namespaceName = _f[0];
-                assertString(namespaceName, sourceCodeInfo);
+                var e_7, _b, _c, e_8, _d, _e, e_9, _f, _g;
+                var _h;
+                var _j = __read(_a, 1), importPath = _j[0];
+                assertString(importPath, sourceCodeInfo);
+                // Check if importing a specific function (e.g., "grid.row")
+                var dotIndex = importPath.indexOf('.');
+                if (dotIndex !== -1) {
+                    var namespaceName_1 = importPath.substring(0, dotIndex);
+                    var functionName = importPath.substring(dotIndex + 1);
+                    var namespace_1 = getNamespace(namespaceName_1);
+                    if (!namespace_1) {
+                        throw new LitsError("Unknown namespace: '".concat(namespaceName_1, "'"), sourceCodeInfo);
+                    }
+                    // Look for the function by name or alias
+                    var targetFunctionName = void 0;
+                    var expression = namespace_1.functions[functionName];
+                    if (expression) {
+                        targetFunctionName = functionName;
+                    }
+                    else {
+                        try {
+                            // Check if it's an alias
+                            for (var _k = __values(Object.entries(namespace_1.functions)), _l = _k.next(); !_l.done; _l = _k.next()) {
+                                var _m = __read(_l.value, 2), fnName = _m[0], expr = _m[1];
+                                if ((_h = expr.aliases) === null || _h === void 0 ? void 0 : _h.includes(functionName)) {
+                                    targetFunctionName = fnName;
+                                    expression = expr;
+                                    break;
+                                }
+                            }
+                        }
+                        catch (e_7_1) { e_7 = { error: e_7_1 }; }
+                        finally {
+                            try {
+                                if (_l && !_l.done && (_b = _k.return)) _b.call(_k);
+                            }
+                            finally { if (e_7) throw e_7.error; }
+                        }
+                    }
+                    if (!expression || !targetFunctionName) {
+                        throw new LitsError("Function '".concat(functionName, "' not found in namespace '").concat(namespaceName_1, "'"), sourceCodeInfo);
+                    }
+                    return _c = {},
+                        _c[FUNCTION_SYMBOL] = true,
+                        _c.sourceCodeInfo = sourceCodeInfo,
+                        _c.functionType = 'Namespace',
+                        _c.namespaceName = namespaceName_1,
+                        _c.functionName = targetFunctionName,
+                        _c.arity = expression.arity,
+                        _c;
+                }
+                // Import entire namespace
+                var namespaceName = importPath;
                 var namespace = getNamespace(namespaceName);
                 if (!namespace) {
                     throw new LitsError("Unknown namespace: '".concat(namespaceName, "'"), sourceCodeInfo);
@@ -5055,47 +5105,47 @@ var Playground = (function (exports) {
                 // Create an object where each key is a function name and value is a NamespaceFunction
                 var result = {};
                 try {
-                    for (var _g = __values(Object.entries(namespace.functions)), _h = _g.next(); !_h.done; _h = _g.next()) {
-                        var _j = __read(_h.value, 2), functionName = _j[0], expression = _j[1];
-                        result[functionName] = (_c = {},
-                            _c[FUNCTION_SYMBOL] = true,
-                            _c.sourceCodeInfo = sourceCodeInfo,
-                            _c.functionType = 'Namespace',
-                            _c.namespaceName = namespaceName,
-                            _c.functionName = functionName,
-                            _c.arity = expression.arity,
-                            _c);
+                    for (var _o = __values(Object.entries(namespace.functions)), _p = _o.next(); !_p.done; _p = _o.next()) {
+                        var _q = __read(_p.value, 2), functionName = _q[0], expression = _q[1];
+                        result[functionName] = (_e = {},
+                            _e[FUNCTION_SYMBOL] = true,
+                            _e.sourceCodeInfo = sourceCodeInfo,
+                            _e.functionType = 'Namespace',
+                            _e.namespaceName = namespaceName,
+                            _e.functionName = functionName,
+                            _e.arity = expression.arity,
+                            _e);
                         // Also add aliases
                         if (expression.aliases) {
                             try {
-                                for (var _k = (e_8 = void 0, __values(expression.aliases)), _l = _k.next(); !_l.done; _l = _k.next()) {
-                                    var alias = _l.value;
-                                    result[alias] = (_e = {},
-                                        _e[FUNCTION_SYMBOL] = true,
-                                        _e.sourceCodeInfo = sourceCodeInfo,
-                                        _e.functionType = 'Namespace',
-                                        _e.namespaceName = namespaceName,
-                                        _e.functionName = functionName,
-                                        _e.arity = expression.arity,
-                                        _e);
+                                for (var _r = (e_9 = void 0, __values(expression.aliases)), _s = _r.next(); !_s.done; _s = _r.next()) {
+                                    var alias = _s.value;
+                                    result[alias] = (_g = {},
+                                        _g[FUNCTION_SYMBOL] = true,
+                                        _g.sourceCodeInfo = sourceCodeInfo,
+                                        _g.functionType = 'Namespace',
+                                        _g.namespaceName = namespaceName,
+                                        _g.functionName = functionName,
+                                        _g.arity = expression.arity,
+                                        _g);
                                 }
                             }
-                            catch (e_8_1) { e_8 = { error: e_8_1 }; }
+                            catch (e_9_1) { e_9 = { error: e_9_1 }; }
                             finally {
                                 try {
-                                    if (_l && !_l.done && (_d = _k.return)) _d.call(_k);
+                                    if (_s && !_s.done && (_f = _r.return)) _f.call(_r);
                                 }
-                                finally { if (e_8) throw e_8.error; }
+                                finally { if (e_9) throw e_9.error; }
                             }
                         }
                     }
                 }
-                catch (e_7_1) { e_7 = { error: e_7_1 }; }
+                catch (e_8_1) { e_8 = { error: e_8_1 }; }
                 finally {
                     try {
-                        if (_h && !_h.done && (_b = _g.return)) _b.call(_g);
+                        if (_p && !_p.done && (_d = _o.return)) _d.call(_o);
                     }
-                    finally { if (e_7) throw e_7.error; }
+                    finally { if (e_8) throw e_8.error; }
                 }
                 return result;
             },

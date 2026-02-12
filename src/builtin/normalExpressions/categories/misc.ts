@@ -170,8 +170,54 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     arity: { min: 1, max: 2 },
   },
   'import': {
-    evaluate: ([namespaceName], sourceCodeInfo): Record<string, NamespaceFunction> => {
-      assertString(namespaceName, sourceCodeInfo)
+    evaluate: ([importPath], sourceCodeInfo): NamespaceFunction | Record<string, NamespaceFunction> => {
+      assertString(importPath, sourceCodeInfo)
+
+      // Check if importing a specific function (e.g., "grid.row")
+      const dotIndex = importPath.indexOf('.')
+      if (dotIndex !== -1) {
+        const namespaceName = importPath.substring(0, dotIndex)
+        const functionName = importPath.substring(dotIndex + 1)
+
+        const namespace = getNamespace(namespaceName)
+        if (!namespace) {
+          throw new LitsError(`Unknown namespace: '${namespaceName}'`, sourceCodeInfo)
+        }
+
+        // Look for the function by name or alias
+        let targetFunctionName: string | undefined
+        let expression = namespace.functions[functionName]
+
+        if (expression) {
+          targetFunctionName = functionName
+        }
+        else {
+          // Check if it's an alias
+          for (const [fnName, expr] of Object.entries(namespace.functions)) {
+            if (expr.aliases?.includes(functionName)) {
+              targetFunctionName = fnName
+              expression = expr
+              break
+            }
+          }
+        }
+
+        if (!expression || !targetFunctionName) {
+          throw new LitsError(`Function '${functionName}' not found in namespace '${namespaceName}'`, sourceCodeInfo)
+        }
+
+        return {
+          [FUNCTION_SYMBOL]: true,
+          sourceCodeInfo,
+          functionType: 'Namespace',
+          namespaceName,
+          functionName: targetFunctionName,
+          arity: expression.arity,
+        }
+      }
+
+      // Import entire namespace
+      const namespaceName = importPath
       const namespace = getNamespace(namespaceName)
       if (!namespace) {
         throw new LitsError(`Unknown namespace: '${namespaceName}'`, sourceCodeInfo)

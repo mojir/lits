@@ -1,7 +1,7 @@
 {
   "name": "@mojir/lits",
   "version": "2.1.39",
-  "description": "Lits is a Lisp dialect implemented in TypeScript",
+  "description": "Lits is a pure functional programming language implemented in TypeScript",
   "author": "Albert Mojir",
   "license": "MIT",
   "repository": {
@@ -10,7 +10,6 @@
   },
   "keywords": [
     "Lits",
-    "Lisp",
     "Functional",
     "Pure",
     "Typescript",
