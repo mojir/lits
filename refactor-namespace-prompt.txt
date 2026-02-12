@@ -29,96 +29,162 @@ if a > 0 then "positive" else "negative" end;
 Refactor the builtin function architecture to support:
 
 1. **Core functions** - Always available without import (minimal bundle)
-2. **Namespace modules** - Must be imported explicitly
+2. **Namespace modules** - Must be imported explicitly via `import()`
 
-### Decided Design
+---
 
-**Import as a normal expression** (not special expression, no new syntax):
+## COMPLETED WORK
+
+### Phase 1-3: DONE ✅
+
+The `import()` system is fully implemented for the `grid` namespace.
+
+**Working syntax:**
 ```lits
 // Import entire namespace - returns object with all functions
 let grid = import("grid");
 grid.transpose([[1, 2], [3, 4]]);
 
-// Import single function (enables tree-shaking)
+// Import single function directly (callable)
 let transpose = import("grid.transpose");
 transpose([[1, 2], [3, 4]]);
 
-// Destructuring works too
+// Import by alias
+let tr = import("grid.tr");  // "tr" is alias for "transpose"
+tr([[1, 2], [3, 4]]);
+
+// Destructuring works
 let { transpose, rotate } = import("grid");
 ```
 
-**JavaScript API:**
+### Key Implementation Details
+
+**New type: `NamespaceFunction`** (in `src/parser/types.ts`):
+```typescript
+interface NamespaceFunction {
+  functionType: 'Namespace'
+  namespaceName: string
+  functionName: string
+  arity: Arity
+}
+```
+
+**Registry pattern** (in `src/namespaces/registry.ts`):
+- `registerNamespace(namespace)` - Register a namespace
+- `getNamespace(name)` - Get namespace by name
+- `hasNamespace(name)` - Check if namespace exists
+- `getNamespaceNames()` - List all registered namespaces
+
+**`import()` function** (in `src/builtin/normalExpressions/categories/misc.ts`):
+- `import("grid")` → Returns object with `NamespaceFunction` values for all functions + aliases
+- `import("grid.row")` → Returns single `NamespaceFunction` directly (callable)
+- Supports aliases (e.g., `import("grid.tr")` returns transpose function)
+
+**Executor** (in `src/evaluator/functionExecutors.ts`):
+- `Namespace` case looks up the namespace and function, then evaluates
+
+### Current Codebase Structure
+
+```
+src/namespaces/                    # NEW - Namespace system
+  index.ts                         # Exports & auto-registers grid
+  interface.ts                     # LitsNamespace interface
+  registry.ts                      # Namespace registry (Map-based)
+  grid/                            # Grid namespace (MIGRATED)
+    index.ts                       # Namespace definition with all functions
+    grid.test.ts                   # Tests (52 passing)
+    transpose.ts                   # Shared helper
+    fromArray.ts                   # Shared helper
+
+src/builtin/normalExpressions/categories/
+  misc.ts                          # Contains import() function
+  namespaces/                      # OLD location - namespaces to migrate
+    linearAlgebra/                 # TODO: Migrate
+    matrix/                        # TODO: Migrate
+    numberTheory/                  # TODO: Migrate
+    random/                        # TODO: Migrate
+    vector/                        # TODO: Migrate
+
+src/parser/types.ts                # NamespaceFunction type
+src/constants/constants.ts         # 'Namespace' in LitsFunctionType
+src/evaluator/functionExecutors.ts # Namespace executor
+```
+
+### Tests Status
+
+- Grid namespace: **52 tests passing** (including 5 new dot-notation import tests)
+- All tests run via: `npm test -- --run src/namespaces/grid/grid.test.ts`
+
+---
+
+## REMAINING WORK
+
+### Phase 4: Migrate Other Namespaces
+
+For each namespace in `src/builtin/normalExpressions/categories/namespaces/`:
+
+1. **Create new folder**: `src/namespaces/<name>/`
+2. **Create `index.ts`** with namespace definition (copy pattern from `grid/index.ts`)
+3. **Move tests** to new location
+4. **Update imports** in `src/namespaces/index.ts` to register the namespace
+5. **Delete old folder** from `src/builtin/normalExpressions/categories/namespaces/`
+6. **Fix any cross-references** (e.g., matrix uses grid's transpose)
+
+**Namespaces to migrate:**
+- `matrix` - Matrix operations (depends on grid.transpose)
+- `vector` - Vector/statistics operations  
+- `linearAlgebra` - Linear algebra operations
+- `numberTheory` - Number theory (primes, sequences, etc.)
+- `random` - Random number generation
+
+### Phase 5: Remove Old Infrastructure
+
+- Delete `src/builtin/normalExpressions/categories/namespaces/` folder entirely
+- Remove any namespace-related code from `src/builtin/normalExpressions/index.ts`
+- Clean up unused imports
+
+### Phase 6: JavaScript API (Future)
+
+Implement `lits.registerNamespace()` for runtime namespace registration:
 ```typescript
 import { Lits } from '@lits/core'
 import { grid } from '@lits/grid'
 
 const lits = new Lits()
-lits.registerNamespace(grid)  // Makes it available to import()
-
-lits.run(`
-  let grid = import("grid");
-  grid.transpose([[1, 2], [3, 4]])
-`)
+lits.registerNamespace(grid)
 ```
 
-### Implementation Plan
+---
 
-**Phase 1:** Reduce builtin functions to minimal core
-- Keep all special expressions
-- Keep ~20-30 essential normal expressions
-- Comment out everything else (tests will fail, that's OK)
+## Key Files Reference
 
-**Phase 2:** Create namespace structure
-- Move `grid` functions to a proper namespace module
-- Define `LitsNamespace` interface
+**Namespace system:**
+- `src/namespaces/registry.ts` - Registry implementation
+- `src/namespaces/interface.ts` - `LitsNamespace` interface
+- `src/namespaces/index.ts` - Exports and auto-registration
+- `src/namespaces/grid/index.ts` - Example namespace (use as template)
 
-**Phase 3:** Bundle namespace statically (no `registerNamespace` yet)
-- Namespace is bundled but not globally available
-- Only accessible via `import("grid")`
+**Import function:**
+- `src/builtin/normalExpressions/categories/misc.ts` - `import()` implementation
 
-**Phase 4:** Implement `import` normal expression
-- Takes string argument
-- `"grid"` returns object with all functions
-- `"grid:transpose"` returns single function
+**Type definitions:**
+- `src/parser/types.ts` - `NamespaceFunction` interface
+- `src/constants/constants.ts` - `LitsFunctionType` union
 
-**Phase 5:** Full implementation and testing
+**Executor:**
+- `src/evaluator/functionExecutors.ts` - `Namespace` executor case
 
-**Phase 6:** Implement `registerNamespace` JavaScript API (future project)
+---
 
-### Core Function Categories (Reference)
+## Quick Commands
 
-**Always in core:**
-- All special expressions: `if`, `let`, `def`, `fn`/`->`, `loop`, `recur`, `cond`, `&&`, `||`, `throw`, `try`, `block`, `for`, `doseq`, `??`, `switch`, `array`, `object`, `defined?`
-- Basic operators: `+`, `-`, `*`, `/`, `mod`, `=`, `not=`, `<`, `>`, `<=`, `>=`
-- Predicates: `nil?`, `number?`, `string?`, `array?`, `object?`, `function?`, `boolean?`
-- Core collection: `count`, `get`, `first`, `rest`, `nth`, `cons`, `conj`
-- Functional: `apply`, `identity`, `not`
+```bash
+# Run all tests
+npm test
 
-**Move to namespaces:**
-- `grid:*`, `mat:*`, `vec:*`, `lin:*` (already namespaced)
-- String manipulation, regex, bitwise, advanced math (future)
+# Run grid namespace tests only
+npm test -- --run src/namespaces/grid/grid.test.ts
 
-### Current Codebase Structure
-
+# Type check
+npm run typecheck
 ```
-src/builtin/
-  index.ts                    # Exports builtin
-  interface.ts                # Types
-  specialExpressions/         # Always in core
-  normalExpressions/
-    index.ts                  # Aggregates all normal expressions
-    categories/
-      math.ts, string.ts, array.ts, ...  # Core candidates
-      namespaces/
-        grid/                 # Namespace candidate
-        matrix/
-        vector/
-        ...
-```
-
-### Key Files
-
-- src/builtin/index.ts - Main builtin export
-- src/builtin/normalExpressions/index.ts - Normal expression aggregation
-- src/Lits/Lits.ts - Main Lits class
-- src/evaluator/index.ts - Expression evaluation
