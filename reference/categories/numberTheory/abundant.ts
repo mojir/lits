@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const abundantReference: NumberTheorySequenceReference<'abundant'> = {
-  'nth:abundant-seq': {
-    title: 'nth:abundant-seq',
+  'nth.abundant-seq': {
+    title: 'nth.abundant-seq',
     category: 'Number Theory',
     description: 'Generates the abundant numbers up to a specified length.',
     returns: {
@@ -19,12 +19,12 @@ export const abundantReference: NumberTheorySequenceReference<'abundant'> = {
       { argumentNames: ['length'] },
     ],
     examples: [
-      'nth:abundant-seq(1)',
-      'nth:abundant-seq(5)',
+      'nth.abundant-seq(1)',
+      'nth.abundant-seq(5)',
     ],
   },
-  'nth:abundant-take-while': {
-    title: 'nth:abundant-take-while',
+  'nth.abundant-take-while': {
+    title: 'nth.abundant-take-while',
     category: 'Number Theory',
     description: 'Generates the abundant numbers while a condition is met.',
     returns: {
@@ -41,11 +41,11 @@ export const abundantReference: NumberTheorySequenceReference<'abundant'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'nth:abundant-take-while(-> $ < 100)',
+      'nth.abundant-take-while(-> $ < 100)',
     ],
   },
-  'nth:abundant-nth': {
-    title: 'nth:abundant-nth',
+  'nth.abundant-nth': {
+    title: 'nth.abundant-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the abundant numbers.',
     returns: {
@@ -61,12 +61,12 @@ export const abundantReference: NumberTheorySequenceReference<'abundant'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth:abundant-nth(1)',
-      'nth:abundant-nth(5)',
+      'nth.abundant-nth(1)',
+      'nth.abundant-nth(5)',
     ],
   },
-  'nth:abundant?': {
-    title: 'nth:abundant?',
+  'nth.abundant?': {
+    title: 'nth.abundant?',
     category: 'Number Theory',
     description: 'Checks if a number is abundant.',
     returns: {
@@ -82,8 +82,8 @@ export const abundantReference: NumberTheorySequenceReference<'abundant'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth:abundant?(12)',
-      'nth:abundant?(15)',
+      'nth.abundant?(12)',
+      'nth.abundant?(15)',
     ],
   },
 }

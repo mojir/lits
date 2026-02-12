@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const lucasReference: NumberTheorySequenceReference<'lucas'> = {
-  'nth:lucas-seq': {
-    title: 'nth:lucas-seq',
+  'nth.lucas-seq': {
+    title: 'nth.lucas-seq',
     category: 'Number Theory',
     description: 'Generates the lucas sequence up to a specified length.',
     returns: {
@@ -20,13 +20,13 @@ export const lucasReference: NumberTheorySequenceReference<'lucas'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'nth:lucas-seq(1)',
-      'nth:lucas-seq(2)',
-      'nth:lucas-seq()',
+      'nth.lucas-seq(1)',
+      'nth.lucas-seq(2)',
+      'nth.lucas-seq()',
     ],
   },
-  'nth:lucas-take-while': {
-    title: 'nth:lucas-take-while',
+  'nth.lucas-take-while': {
+    title: 'nth.lucas-take-while',
     category: 'Number Theory',
     description: 'Generates the lucas sequence while a condition is met.',
     returns: {
@@ -43,11 +43,11 @@ export const lucasReference: NumberTheorySequenceReference<'lucas'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'nth:lucas-take-while(-> $ < 100)',
+      'nth.lucas-take-while(-> $ < 100)',
     ],
   },
-  'nth:lucas-nth': {
-    title: 'nth:lucas-nth',
+  'nth.lucas-nth': {
+    title: 'nth.lucas-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the lucas sequence.',
     returns: {
@@ -63,13 +63,13 @@ export const lucasReference: NumberTheorySequenceReference<'lucas'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth:lucas-nth(1)',
-      'nth:lucas-nth(2)',
-      'nth:lucas-nth(10)',
+      'nth.lucas-nth(1)',
+      'nth.lucas-nth(2)',
+      'nth.lucas-nth(10)',
     ],
   },
-  'nth:lucas?': {
-    title: 'nth:lucas?',
+  'nth.lucas?': {
+    title: 'nth.lucas?',
     category: 'Number Theory',
     description: 'Determines if a number is in the lucas sequence.',
     returns: {
@@ -85,9 +85,9 @@ export const lucasReference: NumberTheorySequenceReference<'lucas'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth:lucas?(1)',
-      'nth:lucas?(2)',
-      'nth:lucas?(10)',
+      'nth.lucas?(1)',
+      'nth.lucas?(2)',
+      'nth.lucas?(10)',
     ],
   },
 }

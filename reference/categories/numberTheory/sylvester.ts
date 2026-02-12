@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const sylvesterReference: NumberTheorySequenceReference<'sylvester'> = {
-  'nth:sylvester-seq': {
-    title: 'nth:sylvester-seq',
+  'nth.sylvester-seq': {
+    title: 'nth.sylvester-seq',
     category: 'Number Theory',
     description: 'Generates the Sylvester sequence up to a specified length.',
     returns: {
@@ -20,13 +20,13 @@ export const sylvesterReference: NumberTheorySequenceReference<'sylvester'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'nth:sylvester-seq(5)',
-      'nth:sylvester-seq()',
-      'nth:sylvester-seq()',
+      'nth.sylvester-seq(5)',
+      'nth.sylvester-seq()',
+      'nth.sylvester-seq()',
     ],
   },
-  'nth:sylvester-take-while': {
-    title: 'nth:sylvester-take-while',
+  'nth.sylvester-take-while': {
+    title: 'nth.sylvester-take-while',
     category: 'Number Theory',
     description: 'Generates the Sylvester sequence while a condition is met.',
     returns: {
@@ -43,11 +43,11 @@ export const sylvesterReference: NumberTheorySequenceReference<'sylvester'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'nth:sylvester-take-while(-> $ < 100000)',
+      'nth.sylvester-take-while(-> $ < 100000)',
     ],
   },
-  'nth:sylvester-nth': {
-    title: 'nth:sylvester-nth',
+  'nth.sylvester-nth': {
+    title: 'nth.sylvester-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Sylvester sequence.',
     returns: {
@@ -63,12 +63,12 @@ export const sylvesterReference: NumberTheorySequenceReference<'sylvester'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth:sylvester-nth(1)',
-      'nth:sylvester-nth(5)',
+      'nth.sylvester-nth(1)',
+      'nth.sylvester-nth(5)',
     ],
   },
-  'nth:sylvester?': {
-    title: 'nth:sylvester?',
+  'nth.sylvester?': {
+    title: 'nth.sylvester?',
     category: 'Number Theory',
     description: 'Checks if a number is in the Sylvester sequence.',
     returns: {
@@ -84,9 +84,9 @@ export const sylvesterReference: NumberTheorySequenceReference<'sylvester'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth:sylvester?(2)',
-      'nth:sylvester?(3)',
-      'nth:sylvester?(6)',
+      'nth.sylvester?(2)',
+      'nth.sylvester?(3)',
+      'nth.sylvester?(6)',
     ],
   },
 }

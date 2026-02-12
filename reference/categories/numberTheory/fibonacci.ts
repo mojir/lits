@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const fibonacciReference: NumberTheorySequenceReference<'fibonacci'> = {
-  'nth:fibonacci-seq': {
-    title: 'nth:fibonacci-seq',
+  'nth.fibonacci-seq': {
+    title: 'nth.fibonacci-seq',
     category: 'Number Theory',
     description: 'Generates the fibonacci sequence up to a specified length.',
     returns: {
@@ -20,13 +20,13 @@ export const fibonacciReference: NumberTheorySequenceReference<'fibonacci'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'nth:fibonacci-seq(1)',
-      'nth:fibonacci-seq(2)',
-      'nth:fibonacci-seq()',
+      'nth.fibonacci-seq(1)',
+      'nth.fibonacci-seq(2)',
+      'nth.fibonacci-seq()',
     ],
   },
-  'nth:fibonacci-take-while': {
-    title: 'nth:fibonacci-take-while',
+  'nth.fibonacci-take-while': {
+    title: 'nth.fibonacci-take-while',
     category: 'Number Theory',
     description: 'Generates the fibonacci sequence while a condition is met.',
     returns: {
@@ -43,11 +43,11 @@ export const fibonacciReference: NumberTheorySequenceReference<'fibonacci'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'nth:fibonacci-take-while(-> $ < 100)',
+      'nth.fibonacci-take-while(-> $ < 100)',
     ],
   },
-  'nth:fibonacci-nth': {
-    title: 'nth:fibonacci-nth',
+  'nth.fibonacci-nth': {
+    title: 'nth.fibonacci-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the fibonacci sequence.',
     returns: {
@@ -63,12 +63,12 @@ export const fibonacciReference: NumberTheorySequenceReference<'fibonacci'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth:fibonacci-nth(5)',
-      'nth:fibonacci-nth(50)',
+      'nth.fibonacci-nth(5)',
+      'nth.fibonacci-nth(50)',
     ],
   },
-  'nth:fibonacci?': {
-    title: 'nth:fibonacci?',
+  'nth.fibonacci?': {
+    title: 'nth.fibonacci?',
     category: 'Number Theory',
     description: 'Determines if a number is in the fibonacci sequence.',
     returns: {
@@ -84,16 +84,16 @@ export const fibonacciReference: NumberTheorySequenceReference<'fibonacci'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth:fibonacci?(0)',
-      'nth:fibonacci?(1)',
-      'nth:fibonacci?(2)',
-      'nth:fibonacci?(3)',
-      'nth:fibonacci?(4)',
-      'nth:fibonacci?(5)',
-      'nth:fibonacci?(6)',
-      'nth:fibonacci?(7)',
-      'nth:fibonacci?(8)',
-      'nth:fibonacci?(9)',
+      'nth.fibonacci?(0)',
+      'nth.fibonacci?(1)',
+      'nth.fibonacci?(2)',
+      'nth.fibonacci?(3)',
+      'nth.fibonacci?(4)',
+      'nth.fibonacci?(5)',
+      'nth.fibonacci?(6)',
+      'nth.fibonacci?(7)',
+      'nth.fibonacci?(8)',
+      'nth.fibonacci?(9)',
     ],
   },
 }

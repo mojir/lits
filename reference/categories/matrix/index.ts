@@ -2,8 +2,8 @@ import type { FunctionReference } from '../..'
 import { type MatrixApiName, getOperatorArgs } from '../../api'
 
 export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>> = {
-  'mat:mul': {
-    title: 'mat:mul',
+  'mat.mul': {
+    title: 'mat.mul',
     category: 'Matrix',
     returns: {
       type: 'matrix',
@@ -16,12 +16,12 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Multiplies two `matrices` using standard `matrix` multiplication based on **dot products** of rows and columns.',
     examples: [
-      'mat:mul([[1, 2], [3, 4]], [[5, 6], [7, 8]])',
-      'mat:mul([[1, 2, 3], [4, 5, 6]], [[7, 8], [9, 10], [11, 12]])',
+      'mat.mul([[1, 2], [3, 4]], [[5, 6], [7, 8]])',
+      'mat.mul([[1, 2, 3], [4, 5, 6]], [[7, 8], [9, 10], [11, 12]])',
     ],
   },
-  'mat:det': {
-    title: 'mat:det',
+  'mat.det': {
+    title: 'mat.det',
     category: 'Matrix',
     returns: {
       type: 'number',
@@ -37,12 +37,12 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Calculates the **determinant** of a square matrix.',
     examples: [
-      'mat:det([[1, 2], [3, 4]])',
-      'mat:det([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+      'mat.det([[1, 2], [3, 4]])',
+      'mat.det([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
     ],
   },
-  'mat:inv': {
-    title: 'mat:inv',
+  'mat.inv': {
+    title: 'mat.inv',
     category: 'Matrix',
     returns: {
       type: 'matrix',
@@ -58,12 +58,12 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Calculates the **inverse** of a square matrix.',
     examples: [
-      'mat:inv([[1, 2], [3, 4]])',
-      'mat:inv([[1, 2, 3], [4, 5, 7], [7, 8, 10]])',
+      'mat.inv([[1, 2], [3, 4]])',
+      'mat.inv([[1, 2, 3], [4, 5, 7], [7, 8, 10]])',
     ],
   },
-  'mat:adj': {
-    title: 'mat:adj',
+  'mat.adj': {
+    title: 'mat.adj',
     category: 'Matrix',
     returns: {
       type: 'matrix',
@@ -79,14 +79,14 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Calculates the **adjugate** of a square matrix.',
     examples: [
-      'mat:adj([[1, 2], [3, 4]])',
-      'mat:adj([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
-      'mat:adj([[1, 2, 3], [7, 8, 9], [4, 5, 6]])',
+      'mat.adj([[1, 2], [3, 4]])',
+      'mat.adj([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+      'mat.adj([[1, 2, 3], [7, 8, 9], [4, 5, 6]])',
 
     ],
   },
-  'mat:cofactor': {
-    title: 'mat:cofactor',
+  'mat.cofactor': {
+    title: 'mat.cofactor',
     category: 'Matrix',
     returns: {
       type: 'matrix',
@@ -102,14 +102,14 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Calculates the **cofactor** of a square matrix.',
     examples: [
-      'mat:cofactor([[1, 2], [3, 4]])',
-      'mat:cofactor([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
-      'mat:cofactor([[1, 2, 3], [7, 8, 9], [4, 5, 6]])',
+      'mat.cofactor([[1, 2], [3, 4]])',
+      'mat.cofactor([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+      'mat.cofactor([[1, 2, 3], [7, 8, 9], [4, 5, 6]])',
 
     ],
   },
-  'mat:minor': {
-    title: 'mat:minor',
+  'mat.minor': {
+    title: 'mat.minor',
     category: 'Matrix',
     returns: {
       type: 'matrix',
@@ -133,12 +133,12 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Calculates the **minor** of a square matrix.',
     examples: [
-      'mat:minor([[1, 2], [3, 4]], 0, 1)',
-      'mat:minor([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 1, 1)',
+      'mat.minor([[1, 2], [3, 4]], 0, 1)',
+      'mat.minor([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 1, 1)',
     ],
   },
-  'mat:trace': {
-    title: 'mat:trace',
+  'mat.trace': {
+    title: 'mat.trace',
     category: 'Matrix',
     returns: {
       type: 'number',
@@ -154,12 +154,12 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Calculates the **trace** of a square matrix.',
     examples: [
-      'mat:trace([[1, 2], [3, 4]])',
-      'mat:trace([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+      'mat.trace([[1, 2], [3, 4]])',
+      'mat.trace([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
     ],
   },
-  'mat:symmetric?': {
-    title: 'mat:symmetric?',
+  'mat.symmetric?': {
+    title: 'mat.symmetric?',
     category: 'Matrix',
     returns: {
       type: 'boolean',
@@ -175,12 +175,12 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Checks if a `matrix` is **symmetric**.',
     examples: [
-      'mat:symmetric?([[1, 2], [2, 1]])',
-      'mat:symmetric?([[1, 2, 3], [2, 1, 4], [3, 4, 1]])',
+      'mat.symmetric?([[1, 2], [2, 1]])',
+      'mat.symmetric?([[1, 2, 3], [2, 1, 4], [3, 4, 1]])',
     ],
   },
-  'mat:triangular?': {
-    title: 'mat:triangular?',
+  'mat.triangular?': {
+    title: 'mat.triangular?',
     category: 'Matrix',
     returns: {
       type: 'boolean',
@@ -196,12 +196,12 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Checks if a `matrix` is **triangular**.',
     examples: [
-      'mat:triangular?([[2, 0], [0, 1]])',
-      'mat:triangular?([[1, 2, 3], [0, 4, 5], [0, 0, 6]])',
+      'mat.triangular?([[2, 0], [0, 1]])',
+      'mat.triangular?([[1, 2, 3], [0, 4, 5], [0, 0, 6]])',
     ],
   },
-  'mat:upper-triangular?': {
-    title: 'mat:upper-triangular?',
+  'mat.upper-triangular?': {
+    title: 'mat.upper-triangular?',
     category: 'Matrix',
     returns: {
       type: 'boolean',
@@ -217,12 +217,12 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Checks if a `matrix` is **upper triangular**.',
     examples: [
-      'mat:upper-triangular?([[1, 2], [0, 3]])',
-      'mat:upper-triangular?([[1, 2, 3], [0, 4, 5], [0, 0, 6]])',
+      'mat.upper-triangular?([[1, 2], [0, 3]])',
+      'mat.upper-triangular?([[1, 2, 3], [0, 4, 5], [0, 0, 6]])',
     ],
   },
-  'mat:lower-triangular?': {
-    title: 'mat:lower-triangular?',
+  'mat.lower-triangular?': {
+    title: 'mat.lower-triangular?',
     category: 'Matrix',
     returns: {
       type: 'boolean',
@@ -238,12 +238,12 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Checks if a `matrix` is **lower triangular**.',
     examples: [
-      'mat:lower-triangular?([[1, 0], [2, 3]])',
-      'mat:lower-triangular?([[1, 0, 0], [2, 3, 0], [4, 5, 6]])',
+      'mat.lower-triangular?([[1, 0], [2, 3]])',
+      'mat.lower-triangular?([[1, 0, 0], [2, 3, 0], [4, 5, 6]])',
     ],
   },
-  'mat:diagonal?': {
-    title: 'mat:diagonal?',
+  'mat.diagonal?': {
+    title: 'mat.diagonal?',
     category: 'Matrix',
     returns: {
       type: 'boolean',
@@ -259,13 +259,13 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Checks if a `matrix` is **diagonal**.',
     examples: [
-      'mat:diagonal?([[1, 0], [0, 2]])',
-      'mat:diagonal?([[1, 0, 0], [0, 2, 0], [0, 0, 3]])',
-      'mat:diagonal?([[1, 0, 0], [2, 2, 2], [0, 0, 3]])',
+      'mat.diagonal?([[1, 0], [0, 2]])',
+      'mat.diagonal?([[1, 0, 0], [0, 2, 0], [0, 0, 3]])',
+      'mat.diagonal?([[1, 0, 0], [2, 2, 2], [0, 0, 3]])',
     ],
   },
-  'mat:square?': {
-    title: 'mat:square?',
+  'mat.square?': {
+    title: 'mat.square?',
     category: 'Matrix',
     returns: {
       type: 'boolean',
@@ -281,13 +281,13 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Checks if a `matrix` is **square**.',
     examples: [
-      'mat:square?([[1, 2], [3, 4]])',
-      'mat:square?([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
-      'mat:square?([[1, 2, 3], [4, 5, 6]])',
+      'mat.square?([[1, 2], [3, 4]])',
+      'mat.square?([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+      'mat.square?([[1, 2, 3], [4, 5, 6]])',
     ],
   },
-  'mat:orthogonal?': {
-    title: 'mat:orthogonal?',
+  'mat.orthogonal?': {
+    title: 'mat.orthogonal?',
     category: 'Matrix',
     returns: {
       type: 'boolean',
@@ -303,13 +303,13 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Checks if a `matrix` is **orthogonal**.',
     examples: [
-      'mat:orthogonal?([[1, 0], [0, 1]])',
-      'mat:orthogonal?([[1, 0], [0, -1]])',
-      'mat:orthogonal?([[1, 2], [3, 4]])',
+      'mat.orthogonal?([[1, 0], [0, 1]])',
+      'mat.orthogonal?([[1, 0], [0, -1]])',
+      'mat.orthogonal?([[1, 2], [3, 4]])',
     ],
   },
-  'mat:identity?': {
-    title: 'mat:identity?',
+  'mat.identity?': {
+    title: 'mat.identity?',
     category: 'Matrix',
     returns: {
       type: 'boolean',
@@ -325,13 +325,13 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Checks if a `matrix` is an **identity matrix**.',
     examples: [
-      'mat:identity?([[1, 0], [0, 1]])',
-      'mat:identity?([[1, 0, 0], [0, 1, 0], [0, 0, 1]])',
-      'mat:identity?([[1, 0, 0], [0, 1, 0], [0, 0, 0]])',
+      'mat.identity?([[1, 0], [0, 1]])',
+      'mat.identity?([[1, 0, 0], [0, 1, 0], [0, 0, 1]])',
+      'mat.identity?([[1, 0, 0], [0, 1, 0], [0, 0, 0]])',
     ],
   },
-  'mat:invertible?': {
-    title: 'mat:invertible?',
+  'mat.invertible?': {
+    title: 'mat.invertible?',
     category: 'Matrix',
     returns: {
       type: 'boolean',
@@ -347,13 +347,13 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Checks if a `matrix` is **invertible**.',
     examples: [
-      'mat:invertible?([[1, 2], [3, 4]])',
-      'mat:invertible?([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
-      'mat:invertible?([[1, 2], [2, 4]])',
+      'mat.invertible?([[1, 2], [3, 4]])',
+      'mat.invertible?([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+      'mat.invertible?([[1, 2], [2, 4]])',
     ],
   },
-  'mat:hilbert': {
-    title: 'mat:hilbert',
+  'mat.hilbert': {
+    title: 'mat.hilbert',
     category: 'Matrix',
     returns: {
       type: 'matrix',
@@ -369,12 +369,12 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Generates a **Hilbert matrix** of size `n`.',
     examples: [
-      'mat:hilbert(3)',
-      'mat:hilbert(4)',
+      'mat.hilbert(3)',
+      'mat.hilbert(4)',
     ],
   },
-  'mat:vandermonde': {
-    title: 'mat:vandermonde',
+  'mat.vandermonde': {
+    title: 'mat.vandermonde',
     category: 'Matrix',
     returns: {
       type: 'matrix',
@@ -390,12 +390,12 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Generates a **Vandermonde matrix** from a vector.',
     examples: [
-      'mat:vandermonde([1, 2, 3])',
-      'mat:vandermonde([1, 0, 1])',
+      'mat.vandermonde([1, 2, 3])',
+      'mat.vandermonde([1, 0, 1])',
     ],
   },
-  'mat:band': {
-    title: 'mat:band',
+  'mat.band': {
+    title: 'mat.band',
     category: 'Matrix',
     returns: {
       type: 'matrix',
@@ -419,12 +419,12 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Generates a **banded matrix** of size `n` with lower band index `lband` and upper band index `uband`.',
     examples: [
-      'mat:band(3, 1, 1)',
-      'mat:band(4, 1, 2)',
+      'mat.band(3, 1, 1)',
+      'mat.band(4, 1, 2)',
     ],
   },
-  'mat:banded?': {
-    title: 'mat:banded?',
+  'mat.banded?': {
+    title: 'mat.banded?',
     category: 'Matrix',
     returns: {
       type: 'boolean',
@@ -448,13 +448,13 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Checks if a `matrix` is **banded** with lower band index `lband` and upper band index `uband`.',
     examples: [
-      `mat:banded?([
+      `mat.banded?([
   [1, 1, 1, 0],
   [1, 1, 1, 1],
   [1, 1, 1, 1],
   [0, 1, 1, 1],
 ], 2, 2)`,
-      `mat:banded?([
+      `mat.banded?([
   [1, 1, 1, 0],
   [1, 1, 1, 1],
   [1, 1, 1, 1],
@@ -462,8 +462,8 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
 ], 1, 1)`,
     ],
   },
-  'mat:rank': {
-    title: 'mat:rank',
+  'mat.rank': {
+    title: 'mat.rank',
     category: 'Matrix',
     returns: {
       type: 'number',
@@ -479,13 +479,13 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Calculates the **rank** of a matrix using **Gaussian elimination**.',
     examples: [
-      'mat:rank([[1, 0, 0], [0, 1, 0], [0, 0, 1]])',
-      'mat:rank([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
-      'mat:rank([[2, 4, 6], [3, 6, 9], [4, 8, 12]])',
+      'mat.rank([[1, 0, 0], [0, 1, 0], [0, 0, 1]])',
+      'mat.rank([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+      'mat.rank([[2, 4, 6], [3, 6, 9], [4, 8, 12]])',
     ],
   },
-  'mat:frobenius-norm': {
-    title: 'mat:frobenius-norm',
+  'mat.frobenius-norm': {
+    title: 'mat.frobenius-norm',
     category: 'Matrix',
     returns: {
       type: 'number',
@@ -501,12 +501,12 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Calculates the **Frobenius norm** of a matrix.',
     examples: [
-      'mat:frobenius-norm([[1, 2], [3, 4]])',
-      'mat:frobenius-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+      'mat.frobenius-norm([[1, 2], [3, 4]])',
+      'mat.frobenius-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
     ],
   },
-  'mat:1-norm': {
-    title: 'mat:1-norm',
+  'mat.1-norm': {
+    title: 'mat.1-norm',
     category: 'Matrix',
     returns: {
       type: 'number',
@@ -522,12 +522,12 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Calculates the **1-norm** of a matrix.',
     examples: [
-      'mat:1-norm([[1, 2], [3, 4]])',
-      'mat:1-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+      'mat.1-norm([[1, 2], [3, 4]])',
+      'mat.1-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
     ],
   },
-  'mat:inf-norm': {
-    title: 'mat:inf-norm',
+  'mat.inf-norm': {
+    title: 'mat.inf-norm',
     category: 'Matrix',
     returns: {
       type: 'number',
@@ -543,13 +543,13 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Calculates the **infinity norm** of a matrix.',
     examples: [
-      'mat:inf-norm([[1, 2], [3, 4]])',
-      'mat:inf-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+      'mat.inf-norm([[1, 2], [3, 4]])',
+      'mat.inf-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
     ],
-    aliases: ['mat:row-norm'],
+    aliases: ['mat.row-norm'],
   },
-  'mat:max-norm': {
-    title: 'mat:max-norm',
+  'mat.max-norm': {
+    title: 'mat.max-norm',
     category: 'Matrix',
     returns: {
       type: 'number',
@@ -565,8 +565,8 @@ export const matrixReference: Record<MatrixApiName, FunctionReference<'Matrix'>>
     ],
     description: 'Calculates the **max norm** of a matrix.',
     examples: [
-      'mat:max-norm([[1, 2], [3, 4]])',
-      'mat:max-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+      'mat.max-norm([[1, 2], [3, 4]])',
+      'mat.max-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
     ],
   },
 }

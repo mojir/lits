@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const geometricReference: NumberTheorySequenceReference<'geometric'> = {
-  'nth:geometric-seq': {
-    title: 'nth:geometric-seq',
+  'nth.geometric-seq': {
+    title: 'nth.geometric-seq',
     category: 'Number Theory',
     description: 'Generates the geometric sequence for a given $start, $ratio, and $length.',
     returns: {
@@ -27,14 +27,14 @@ export const geometricReference: NumberTheorySequenceReference<'geometric'> = {
       { argumentNames: ['start', 'ratio', 'length'] },
     ],
     examples: [
-      'nth:geometric-seq(3, 2, 2)',
-      'nth:geometric-seq(2, 3, 2)',
-      'nth:geometric-seq(1, 2, 2)',
-      'nth:geometric-seq(1, 1.5, 12)',
+      'nth.geometric-seq(3, 2, 2)',
+      'nth.geometric-seq(2, 3, 2)',
+      'nth.geometric-seq(1, 2, 2)',
+      'nth.geometric-seq(1, 1.5, 12)',
     ],
   },
-  'nth:geometric-take-while': {
-    title: 'nth:geometric-take-while',
+  'nth.geometric-take-while': {
+    title: 'nth.geometric-take-while',
     category: 'Number Theory',
     description: 'Generates the geometric sequence while a condition is met.',
     returns: {
@@ -59,11 +59,11 @@ export const geometricReference: NumberTheorySequenceReference<'geometric'> = {
       { argumentNames: ['start', 'ratio', 'takeWhile'] },
     ],
     examples: [
-      'nth:geometric-take-while(1, 1.5, -> $ < 10)',
+      'nth.geometric-take-while(1, 1.5, -> $ < 10)',
     ],
   },
-  'nth:geometric-nth': {
-    title: 'nth:geometric-nth',
+  'nth.geometric-nth': {
+    title: 'nth.geometric-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the geometric sequence.',
     returns: {
@@ -87,14 +87,14 @@ export const geometricReference: NumberTheorySequenceReference<'geometric'> = {
       { argumentNames: ['start', 'ratio', 'n'] },
     ],
     examples: [
-      'nth:geometric-nth(3, 2, 2)',
-      'nth:geometric-nth(2, 3, 2)',
-      'nth:geometric-nth(1, 2, 2)',
-      'nth:geometric-nth(1, 1.5, 4)',
+      'nth.geometric-nth(3, 2, 2)',
+      'nth.geometric-nth(2, 3, 2)',
+      'nth.geometric-nth(1, 2, 2)',
+      'nth.geometric-nth(1, 1.5, 4)',
     ],
   },
-  'nth:geometric?': {
-    title: 'nth:geometric?',
+  'nth.geometric?': {
+    title: 'nth.geometric?',
     category: 'Number Theory',
     description: 'Checks if a number is in the geometric sequence.',
     returns: {
@@ -118,11 +118,11 @@ export const geometricReference: NumberTheorySequenceReference<'geometric'> = {
       { argumentNames: ['start', 'ratio', 'n'] },
     ],
     examples: [
-      'nth:geometric?(1, 2, 1)',
-      'nth:geometric?(2, 3, 2)',
-      'nth:geometric?(3, 2, 2)',
-      'nth:geometric?(1, 1.5, 2.25)',
-      'nth:geometric?(1, 1.5, -4)',
+      'nth.geometric?(1, 2, 1)',
+      'nth.geometric?(2, 3, 2)',
+      'nth.geometric?(3, 2, 2)',
+      'nth.geometric?(1, 1.5, 2.25)',
+      'nth.geometric?(1, 1.5, -4)',
     ],
   },
 }

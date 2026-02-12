@@ -2,8 +2,8 @@ import { getOperatorArgs } from '../../api'
 import type { VectorReductionReference } from '.'
 
 export const minReference: VectorReductionReference<'min'> = {
-  'vec:min': {
-    title: 'vec:min',
+  'vec.min': {
+    title: 'vec.min',
     category: 'Vector',
     description: 'Returns the `minimum` of all elements in the `vector`.',
     returns: {
@@ -19,12 +19,12 @@ export const minReference: VectorReductionReference<'min'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:min([1, 2, 3])',
-      'vec:min([1, 2, -3])',
+      'vec.min([1, 2, 3])',
+      'vec.min([1, 2, -3])',
     ],
   },
-  'vec:moving-min': {
-    title: 'vec:moving-min',
+  'vec.moving-min': {
+    title: 'vec.moving-min',
     category: 'Vector',
     description: 'Returns the **moving minimum** of the `vector` with a given window size.',
     returns: {
@@ -45,12 +45,12 @@ export const minReference: VectorReductionReference<'min'> = {
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'vec:moving-min([1, 2, 3, 4, 5], 3)',
-      'vec:moving-min([1, 2, 3, 4, 5], 5)',
+      'vec.moving-min([1, 2, 3, 4, 5], 3)',
+      'vec.moving-min([1, 2, 3, 4, 5], 5)',
     ],
   },
-  'vec:centered-moving-min': {
-    title: 'vec:centered-moving-min',
+  'vec.centered-moving-min': {
+    title: 'vec.centered-moving-min',
     category: 'Vector',
     description: 'Returns the **centered moving minimum** of the `vector` with a given window size.',
     returns: {
@@ -81,13 +81,13 @@ export const minReference: VectorReductionReference<'min'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'vec:centered-moving-min([1, 2, 3, 4, 5], 3)',
-      'vec:centered-moving-min([1, 2, 3, 4, 5], 3, 0, 100)',
-      'vec:centered-moving-min([1, 2, 3, 4, 5], 3, 0)',
+      'vec.centered-moving-min([1, 2, 3, 4, 5], 3)',
+      'vec.centered-moving-min([1, 2, 3, 4, 5], 3, 0, 100)',
+      'vec.centered-moving-min([1, 2, 3, 4, 5], 3, 0)',
     ],
   },
-  'vec:running-min': {
-    title: 'vec:running-min',
+  'vec.running-min': {
+    title: 'vec.running-min',
     category: 'Vector',
     description: 'Returns the **running minimum** of the `vector`.',
     returns: {
@@ -103,8 +103,8 @@ export const minReference: VectorReductionReference<'min'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:running-min([1, 2, 3])',
-      'vec:running-min([1, -2, -3])',
+      'vec.running-min([1, 2, 3])',
+      'vec.running-min([1, -2, -3])',
     ],
   },
 }

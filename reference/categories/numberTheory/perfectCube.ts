@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const perfectCubeReference: NumberTheorySequenceReference<'perfect-cube'> = {
-  'nth:perfect-cube-seq': {
-    title: 'nth:perfect-cube-seq',
+  'nth.perfect-cube-seq': {
+    title: 'nth.perfect-cube-seq',
     category: 'Number Theory',
     description: 'Generates the perfect cube numbers up to a specified length.',
     returns: {
@@ -19,12 +19,12 @@ export const perfectCubeReference: NumberTheorySequenceReference<'perfect-cube'>
       { argumentNames: ['length'] },
     ],
     examples: [
-      'nth:perfect-cube-seq(5)',
-      'nth:perfect-cube-seq(20)',
+      'nth.perfect-cube-seq(5)',
+      'nth.perfect-cube-seq(20)',
     ],
   },
-  'nth:perfect-cube-take-while': {
-    title: 'nth:perfect-cube-take-while',
+  'nth.perfect-cube-take-while': {
+    title: 'nth.perfect-cube-take-while',
     category: 'Number Theory',
     description: 'Generates the perfect cube numbers while a condition is met.',
     returns: {
@@ -41,11 +41,11 @@ export const perfectCubeReference: NumberTheorySequenceReference<'perfect-cube'>
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'nth:perfect-cube-take-while(-> $ <= 100)',
+      'nth.perfect-cube-take-while(-> $ <= 100)',
     ],
   },
-  'nth:perfect-cube-nth': {
-    title: 'nth:perfect-cube-nth',
+  'nth.perfect-cube-nth': {
+    title: 'nth.perfect-cube-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the perfect cube numbers.',
     returns: {
@@ -61,12 +61,12 @@ export const perfectCubeReference: NumberTheorySequenceReference<'perfect-cube'>
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth:perfect-cube-nth(1)',
-      'nth:perfect-cube-nth(5)',
+      'nth.perfect-cube-nth(1)',
+      'nth.perfect-cube-nth(5)',
     ],
   },
-  'nth:perfect-cube?': {
-    title: 'nth:perfect-cube?',
+  'nth.perfect-cube?': {
+    title: 'nth.perfect-cube?',
     category: 'Number Theory',
     description: 'Checks if a number is in the perfect cube numbers.',
     returns: {
@@ -82,9 +82,9 @@ export const perfectCubeReference: NumberTheorySequenceReference<'perfect-cube'>
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth:perfect-cube?(7)',
-      'nth:perfect-cube?(8)',
-      'nth:perfect-cube?(9)',
+      'nth.perfect-cube?(7)',
+      'nth.perfect-cube?(8)',
+      'nth.perfect-cube?(9)',
     ],
   },
 }

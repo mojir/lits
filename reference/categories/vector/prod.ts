@@ -2,8 +2,8 @@ import { getOperatorArgs } from '../../api'
 import type { VectorReductionReference } from '.'
 
 export const prodReference: VectorReductionReference<'prod'> = {
-  'vec:prod': {
-    title: 'vec:prod',
+  'vec.prod': {
+    title: 'vec.prod',
     category: 'Vector',
     description: 'Returns the `product` of all elements in the `vector`.',
     returns: {
@@ -19,12 +19,12 @@ export const prodReference: VectorReductionReference<'prod'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:prod([1, 2, 3])',
-      'vec:prod([1, 2, -3])',
+      'vec.prod([1, 2, 3])',
+      'vec.prod([1, 2, -3])',
     ],
   },
-  'vec:moving-prod': {
-    title: 'vec:moving-prod',
+  'vec.moving-prod': {
+    title: 'vec.moving-prod',
     category: 'Vector',
     description: 'Returns the **moving product** of the `vector` with a given window size.',
     returns: {
@@ -45,12 +45,12 @@ export const prodReference: VectorReductionReference<'prod'> = {
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'vec:moving-prod([1, 2, 3, 4, 5], 3)',
-      'vec:moving-prod([1, 2, 3, 4, 5], 5)',
+      'vec.moving-prod([1, 2, 3, 4, 5], 3)',
+      'vec.moving-prod([1, 2, 3, 4, 5], 5)',
     ],
   },
-  'vec:centered-moving-prod': {
-    title: 'vec:centered-moving-prod',
+  'vec.centered-moving-prod': {
+    title: 'vec.centered-moving-prod',
     category: 'Vector',
     description: 'Returns the **centered moving product** of the `vector` with a given window size.',
     returns: {
@@ -81,12 +81,12 @@ export const prodReference: VectorReductionReference<'prod'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'vec:centered-moving-prod([1, 2, 3, 4, 5], 3)',
-      'vec:centered-moving-prod([1, 2, 3, 4, 5], 3, 0, 0)',
+      'vec.centered-moving-prod([1, 2, 3, 4, 5], 3)',
+      'vec.centered-moving-prod([1, 2, 3, 4, 5], 3, 0, 0)',
     ],
   },
-  'vec:running-prod': {
-    title: 'vec:running-prod',
+  'vec.running-prod': {
+    title: 'vec.running-prod',
     category: 'Vector',
     description: 'Returns the **running product** of the `vector`.',
     returns: {
@@ -102,8 +102,8 @@ export const prodReference: VectorReductionReference<'prod'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:running-prod([1, 2, 3, 4, 5])',
-      'vec:running-prod([1, -2, -3])',
+      'vec.running-prod([1, 2, 3, 4, 5])',
+      'vec.running-prod([1, -2, -3])',
     ],
   },
 }

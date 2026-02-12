@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const pellReference: NumberTheorySequenceReference<'pell'> = {
-  'nth:pell-seq': {
-    title: 'nth:pell-seq',
+  'nth.pell-seq': {
+    title: 'nth.pell-seq',
     category: 'Number Theory',
     description: 'Generates the Pell sequence up to a specified length.',
     returns: {
@@ -20,13 +20,13 @@ export const pellReference: NumberTheorySequenceReference<'pell'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'nth:pell-seq(5)',
-      'nth:pell-seq(10)',
-      'nth:pell-seq()',
+      'nth.pell-seq(5)',
+      'nth.pell-seq(10)',
+      'nth.pell-seq()',
     ],
   },
-  'nth:pell-take-while': {
-    title: 'nth:pell-take-while',
+  'nth.pell-take-while': {
+    title: 'nth.pell-take-while',
     category: 'Number Theory',
     description: 'Generates the Pell sequence while a condition is met.',
     returns: {
@@ -43,11 +43,11 @@ export const pellReference: NumberTheorySequenceReference<'pell'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'nth:pell-take-while(-> $ < 1000)',
+      'nth.pell-take-while(-> $ < 1000)',
     ],
   },
-  'nth:pell-nth': {
-    title: 'nth:pell-nth',
+  'nth.pell-nth': {
+    title: 'nth.pell-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Pell sequence.',
     returns: {
@@ -63,13 +63,13 @@ export const pellReference: NumberTheorySequenceReference<'pell'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth:pell-nth(5)',
-      'nth:pell-nth(10)',
-      'nth:pell-nth(20)',
+      'nth.pell-nth(5)',
+      'nth.pell-nth(10)',
+      'nth.pell-nth(20)',
     ],
   },
-  'nth:pell?': {
-    title: 'nth:pell?',
+  'nth.pell?': {
+    title: 'nth.pell?',
     category: 'Number Theory',
     description: 'Checks if a number is a Pell number.',
     returns: {
@@ -85,9 +85,9 @@ export const pellReference: NumberTheorySequenceReference<'pell'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth:pell?(1)',
-      'nth:pell?(470832)',
-      'nth:pell?(10)',
+      'nth.pell?(1)',
+      'nth.pell?(470832)',
+      'nth.pell?(10)',
     ],
   },
 }

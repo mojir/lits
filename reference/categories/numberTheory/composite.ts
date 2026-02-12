@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const compositeReference: NumberTheorySequenceReference<'composite'> = {
-  'nth:composite-seq': {
-    title: 'nth:composite-seq',
+  'nth.composite-seq': {
+    title: 'nth.composite-seq',
     category: 'Number Theory',
     description: 'Generates the composite sequence up to a specified length.',
     returns: {
@@ -19,13 +19,13 @@ export const compositeReference: NumberTheorySequenceReference<'composite'> = {
       { argumentNames: ['length'] },
     ],
     examples: [
-      'nth:composite-seq(1)',
-      'nth:composite-seq(2)',
-      'nth:composite-seq(10)',
+      'nth.composite-seq(1)',
+      'nth.composite-seq(2)',
+      'nth.composite-seq(10)',
     ],
   },
-  'nth:composite-take-while': {
-    title: 'nth:composite-take-while',
+  'nth.composite-take-while': {
+    title: 'nth.composite-take-while',
     category: 'Number Theory',
     description: 'Generates the composite sequence while a condition is met.',
     returns: {
@@ -42,11 +42,11 @@ export const compositeReference: NumberTheorySequenceReference<'composite'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'nth:composite-take-while(-> $ < 50)',
+      'nth.composite-take-while(-> $ < 50)',
     ],
   },
-  'nth:composite-nth': {
-    title: 'nth:composite-nth',
+  'nth.composite-nth': {
+    title: 'nth.composite-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the composite sequence.',
     returns: {
@@ -62,13 +62,13 @@ export const compositeReference: NumberTheorySequenceReference<'composite'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth:composite-nth(1)',
-      'nth:composite-nth(2)',
-      'nth:composite-nth(10)',
+      'nth.composite-nth(1)',
+      'nth.composite-nth(2)',
+      'nth.composite-nth(10)',
     ],
   },
-  'nth:composite?': {
-    title: 'nth:composite?',
+  'nth.composite?': {
+    title: 'nth.composite?',
     category: 'Number Theory',
     description: 'Determines if a number is composite.',
     returns: {
@@ -84,9 +84,9 @@ export const compositeReference: NumberTheorySequenceReference<'composite'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth:composite?(4)',
-      'nth:composite?(5)',
-      'nth:composite?(11)',
+      'nth.composite?(4)',
+      'nth.composite?(5)',
+      'nth.composite?(11)',
     ],
   },
 }

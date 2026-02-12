@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const happyReference: NumberTheorySequenceReference<'happy'> = {
-  'nth:happy-seq': {
-    title: 'nth:happy-seq',
+  'nth.happy-seq': {
+    title: 'nth.happy-seq',
     category: 'Number Theory',
     description: 'Generates the happy sequence up to a specified length.',
     returns: {
@@ -20,13 +20,13 @@ export const happyReference: NumberTheorySequenceReference<'happy'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'nth:happy-seq(1)',
-      'nth:happy-seq(2)',
-      'nth:happy-seq(20)',
+      'nth.happy-seq(1)',
+      'nth.happy-seq(2)',
+      'nth.happy-seq(20)',
     ],
   },
-  'nth:happy-take-while': {
-    title: 'nth:happy-take-while',
+  'nth.happy-take-while': {
+    title: 'nth.happy-take-while',
     category: 'Number Theory',
     description: 'Generates the happy sequence while a condition is met.',
     returns: {
@@ -43,11 +43,11 @@ export const happyReference: NumberTheorySequenceReference<'happy'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'nth:happy-take-while(-> $ < 100)',
+      'nth.happy-take-while(-> $ < 100)',
     ],
   },
-  'nth:happy-nth': {
-    title: 'nth:happy-nth',
+  'nth.happy-nth': {
+    title: 'nth.happy-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the happy sequence.',
     returns: {
@@ -63,13 +63,13 @@ export const happyReference: NumberTheorySequenceReference<'happy'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth:happy-nth(1)',
-      'nth:happy-nth(2)',
-      'nth:happy-nth(20)',
+      'nth.happy-nth(1)',
+      'nth.happy-nth(2)',
+      'nth.happy-nth(20)',
     ],
   },
-  'nth:happy?': {
-    title: 'nth:happy?',
+  'nth.happy?': {
+    title: 'nth.happy?',
     category: 'Number Theory',
     description: 'Determines if a number is a happy number.',
     returns: {
@@ -85,9 +85,9 @@ export const happyReference: NumberTheorySequenceReference<'happy'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth:happy?(1)',
-      'nth:happy?(2)',
-      'nth:happy?(100)',
+      'nth.happy?(1)',
+      'nth.happy?(2)',
+      'nth.happy?(100)',
     ],
   },
 }

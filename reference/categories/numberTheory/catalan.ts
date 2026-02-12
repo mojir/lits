@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const catalanReference: NumberTheorySequenceReference<'catalan'> = {
-  'nth:catalan-seq': {
-    title: 'nth:catalan-seq',
+  'nth.catalan-seq': {
+    title: 'nth.catalan-seq',
     category: 'Number Theory',
     description: 'Generates the Catalan sequence up to a specified length.',
     returns: {
@@ -21,13 +21,13 @@ export const catalanReference: NumberTheorySequenceReference<'catalan'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'nth:catalan-seq(5)',
-      'nth:catalan-seq(10)',
-      'nth:catalan-seq()',
+      'nth.catalan-seq(5)',
+      'nth.catalan-seq(10)',
+      'nth.catalan-seq()',
     ],
   },
-  'nth:catalan-take-while': {
-    title: 'nth:catalan-take-while',
+  'nth.catalan-take-while': {
+    title: 'nth.catalan-take-while',
     category: 'Number Theory',
     description: 'Generates the Catalan sequence while a condition is met.',
     returns: {
@@ -44,11 +44,11 @@ export const catalanReference: NumberTheorySequenceReference<'catalan'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'nth:catalan-take-while(-> $ < 1000)',
+      'nth.catalan-take-while(-> $ < 1000)',
     ],
   },
-  'nth:catalan-nth': {
-    title: 'nth:catalan-nth',
+  'nth.catalan-nth': {
+    title: 'nth.catalan-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Catalan sequence.',
     returns: {
@@ -64,12 +64,12 @@ export const catalanReference: NumberTheorySequenceReference<'catalan'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth:catalan-nth(5)',
-      'nth:catalan-nth(10)',
+      'nth.catalan-nth(5)',
+      'nth.catalan-nth(10)',
     ],
   },
-  'nth:catalan?': {
-    title: 'nth:catalan?',
+  'nth.catalan?': {
+    title: 'nth.catalan?',
     category: 'Number Theory',
     description: 'Determines if a number is in the Catalan sequence.',
     returns: {
@@ -85,8 +85,8 @@ export const catalanReference: NumberTheorySequenceReference<'catalan'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth:catalan?(5)',
-      'nth:catalan?(10)',
+      'nth.catalan?(5)',
+      'nth.catalan?(10)',
     ],
   },
 }

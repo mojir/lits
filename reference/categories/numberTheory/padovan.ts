@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const padovanReference: NumberTheorySequenceReference<'padovan'> = {
-  'nth:padovan-seq': {
-    title: 'nth:padovan-seq',
+  'nth.padovan-seq': {
+    title: 'nth.padovan-seq',
     category: 'Number Theory',
     description: 'Generates the Padovan sequence up to a specified length.',
     returns: {
@@ -19,13 +19,13 @@ export const padovanReference: NumberTheorySequenceReference<'padovan'> = {
       { argumentNames: ['length'] },
     ],
     examples: [
-      'nth:padovan-seq(5)',
-      'nth:padovan-seq(10)',
-      'nth:padovan-seq(20)',
+      'nth.padovan-seq(5)',
+      'nth.padovan-seq(10)',
+      'nth.padovan-seq(20)',
     ],
   },
-  'nth:padovan-take-while': {
-    title: 'nth:padovan-take-while',
+  'nth.padovan-take-while': {
+    title: 'nth.padovan-take-while',
     category: 'Number Theory',
     description: 'Generates the Padovan sequence while a condition is met.',
     returns: {
@@ -42,11 +42,11 @@ export const padovanReference: NumberTheorySequenceReference<'padovan'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'nth:padovan-take-while(-> $ < 1000)',
+      'nth.padovan-take-while(-> $ < 1000)',
     ],
   },
-  'nth:padovan-nth': {
-    title: 'nth:padovan-nth',
+  'nth.padovan-nth': {
+    title: 'nth.padovan-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Padovan sequence.',
     returns: {
@@ -62,13 +62,13 @@ export const padovanReference: NumberTheorySequenceReference<'padovan'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth:padovan-nth(5)',
-      'nth:padovan-nth(10)',
-      'nth:padovan-nth(20)',
+      'nth.padovan-nth(5)',
+      'nth.padovan-nth(10)',
+      'nth.padovan-nth(20)',
     ],
   },
-  'nth:padovan?': {
-    title: 'nth:padovan?',
+  'nth.padovan?': {
+    title: 'nth.padovan?',
     category: 'Number Theory',
     description: 'Checks if a number is in the Padovan sequence.',
     returns: {
@@ -84,9 +84,9 @@ export const padovanReference: NumberTheorySequenceReference<'padovan'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth:padovan?(1)',
-      'nth:padovan?(265)',
-      'nth:padovan?(6)',
+      'nth.padovan?(1)',
+      'nth.padovan?(265)',
+      'nth.padovan?(6)',
     ],
   },
 }

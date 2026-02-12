@@ -1,5 +1,4 @@
 import type { FunctionReference } from '../..'
-import type { VectorReductionKeys } from '../../../src/namespaces/vector/reductionFunctions'
 import { type VectorApiName, getOperatorArgs } from '../../api'
 import { geometricMeanReference, harmonicMeanReference, meanReference } from './mean'
 import { medianReference } from './median'
@@ -18,6 +17,12 @@ import { meanAbsoluteDeviationReference } from './mad'
 import { medianAbsoluteDeviationReference } from './medad'
 import { giniCoefficientReference } from './giniCoefficient'
 import { entropyReference } from './entropy'
+
+type VectorReductionKey<T extends string> = `vec.${T}`
+type VectorMovingWindowKey<T extends string> = `vec.moving-${T}`
+type VectorCenteredMovingWindowKey<T extends string> = `vec.centered-moving-${T}`
+type VectorRunningKey<T extends string> = `vec.running-${T}`
+type VectorReductionKeys<T extends string> = VectorReductionKey<T> | VectorMovingWindowKey<T> | VectorCenteredMovingWindowKey<T> | VectorRunningKey<T>
 
 export type VectorReductionReference<T extends string> = {
   [key in VectorReductionKeys<T>]: FunctionReference<'Vector'>
@@ -49,8 +54,8 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
   ...medianAbsoluteDeviationReference,
   ...giniCoefficientReference,
   ...entropyReference,
-  'vec:monotonic?': {
-    title: 'vec:monotonic?',
+  'vec.monotonic?': {
+    title: 'vec.monotonic?',
     category: 'Vector',
     description: 'Checks if a vector is monotonic.',
     returns: {
@@ -66,17 +71,17 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:monotonic?([1, 2, 3])',
-      'vec:monotonic?([1, 2, 2, 3])',
-      'vec:monotonic?([3, 2, 1])',
-      'vec:monotonic?([3, 2, 1, 1])',
-      'vec:monotonic?([3, 2, 1, 2])',
-      'vec:monotonic?([1])',
-      'vec:monotonic?([])',
+      'vec.monotonic?([1, 2, 3])',
+      'vec.monotonic?([1, 2, 2, 3])',
+      'vec.monotonic?([3, 2, 1])',
+      'vec.monotonic?([3, 2, 1, 1])',
+      'vec.monotonic?([3, 2, 1, 2])',
+      'vec.monotonic?([1])',
+      'vec.monotonic?([])',
     ],
   },
-  'vec:strictly-monotonic?': {
-    title: 'vec:strictly-monotonic?',
+  'vec.strictly-monotonic?': {
+    title: 'vec.strictly-monotonic?',
     category: 'Vector',
     description: 'Checks if a vector is strictly monotonic.',
     returns: {
@@ -92,17 +97,17 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:strictly-monotonic?([1, 2, 3])',
-      'vec:strictly-monotonic?([1, 2, 2, 3])',
-      'vec:strictly-monotonic?([3, 2, 1])',
-      'vec:strictly-monotonic?([3, 2, 1, 1])',
-      'vec:strictly-monotonic?([3, 2, 1, 2])',
-      'vec:strictly-monotonic?([1])',
-      'vec:strictly-monotonic?([])',
+      'vec.strictly-monotonic?([1, 2, 3])',
+      'vec.strictly-monotonic?([1, 2, 2, 3])',
+      'vec.strictly-monotonic?([3, 2, 1])',
+      'vec.strictly-monotonic?([3, 2, 1, 1])',
+      'vec.strictly-monotonic?([3, 2, 1, 2])',
+      'vec.strictly-monotonic?([1])',
+      'vec.strictly-monotonic?([])',
     ],
   },
-  'vec:increasing?': {
-    title: 'vec:increasing?',
+  'vec.increasing?': {
+    title: 'vec.increasing?',
     category: 'Vector',
     description: 'Checks if a vector is increasing.',
     returns: {
@@ -118,17 +123,17 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:increasing?([1, 2, 3])',
-      'vec:increasing?([1, 2, 2, 3])',
-      'vec:increasing?([3, 2, 1])',
-      'vec:increasing?([3, 2, 1, 1])',
-      'vec:increasing?([3, 2, 1, 2])',
-      'vec:increasing?([1])',
-      'vec:increasing?([])',
+      'vec.increasing?([1, 2, 3])',
+      'vec.increasing?([1, 2, 2, 3])',
+      'vec.increasing?([3, 2, 1])',
+      'vec.increasing?([3, 2, 1, 1])',
+      'vec.increasing?([3, 2, 1, 2])',
+      'vec.increasing?([1])',
+      'vec.increasing?([])',
     ],
   },
-  'vec:decreasing?': {
-    title: 'vec:decreasing?',
+  'vec.decreasing?': {
+    title: 'vec.decreasing?',
     category: 'Vector',
     description: 'Checks if a vector is decreasing.',
     returns: {
@@ -144,17 +149,17 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:decreasing?([1, 2, 3])',
-      'vec:decreasing?([1, 2, 2, 3])',
-      'vec:decreasing?([3, 2, 1])',
-      'vec:decreasing?([3, 2, 1, 1])',
-      'vec:decreasing?([3, 2, 1, 2])',
-      'vec:decreasing?([1])',
-      'vec:decreasing?([])',
+      'vec.decreasing?([1, 2, 3])',
+      'vec.decreasing?([1, 2, 2, 3])',
+      'vec.decreasing?([3, 2, 1])',
+      'vec.decreasing?([3, 2, 1, 1])',
+      'vec.decreasing?([3, 2, 1, 2])',
+      'vec.decreasing?([1])',
+      'vec.decreasing?([])',
     ],
   },
-  'vec:strictly-increasing?': {
-    title: 'vec:strictly-increasing?',
+  'vec.strictly-increasing?': {
+    title: 'vec.strictly-increasing?',
     category: 'Vector',
     description: 'Checks if a vector is strictly increasing.',
     returns: {
@@ -170,17 +175,17 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:strictly-increasing?([1, 2, 3])',
-      'vec:strictly-increasing?([1, 2, 2, 3])',
-      'vec:strictly-increasing?([3, 2, 1])',
-      'vec:strictly-increasing?([3, 2, 1, 1])',
-      'vec:strictly-increasing?([3, 2, 1, 2])',
-      'vec:strictly-increasing?([1])',
-      'vec:strictly-increasing?([])',
+      'vec.strictly-increasing?([1, 2, 3])',
+      'vec.strictly-increasing?([1, 2, 2, 3])',
+      'vec.strictly-increasing?([3, 2, 1])',
+      'vec.strictly-increasing?([3, 2, 1, 1])',
+      'vec.strictly-increasing?([3, 2, 1, 2])',
+      'vec.strictly-increasing?([1])',
+      'vec.strictly-increasing?([])',
     ],
   },
-  'vec:strictly-decreasing?': {
-    title: 'vec:strictly-decreasing?',
+  'vec.strictly-decreasing?': {
+    title: 'vec.strictly-decreasing?',
     category: 'Vector',
     description: 'Checks if a vector is strictly decreasing.',
     returns: {
@@ -196,17 +201,17 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:strictly-decreasing?([1, 2, 3])',
-      'vec:strictly-decreasing?([1, 2, 2, 3])',
-      'vec:strictly-decreasing?([3, 2, 1])',
-      'vec:strictly-decreasing?([3, 2, 1, 1])',
-      'vec:strictly-decreasing?([3, 2, 1, 2])',
-      'vec:strictly-decreasing?([1])',
-      'vec:strictly-decreasing?([])',
+      'vec.strictly-decreasing?([1, 2, 3])',
+      'vec.strictly-decreasing?([1, 2, 2, 3])',
+      'vec.strictly-decreasing?([3, 2, 1])',
+      'vec.strictly-decreasing?([3, 2, 1, 1])',
+      'vec.strictly-decreasing?([3, 2, 1, 2])',
+      'vec.strictly-decreasing?([1])',
+      'vec.strictly-decreasing?([])',
     ],
   },
-  'vec:sum': {
-    title: 'vec:sum',
+  'vec.sum': {
+    title: 'vec.sum',
     category: 'Vector',
     description: 'Returns the sum of all elements in the vector.',
     returns: {
@@ -222,12 +227,12 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:sum([1, 2, 3])',
-      'vec:sum([1, 2, -3])',
+      'vec.sum([1, 2, 3])',
+      'vec.sum([1, 2, -3])',
     ],
   },
-  'vec:median': {
-    title: 'vec:median',
+  'vec.median': {
+    title: 'vec.median',
     category: 'Vector',
     description: 'Returns the median of all elements in the vector.',
     returns: {
@@ -243,14 +248,14 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:median([1, 2, 3])',
-      'vec:median([1, 2, -3])',
-      'vec:median([1, 2, 3, 4])',
-      'vec:median([1, 2, -3, 4])',
+      'vec.median([1, 2, 3])',
+      'vec.median([1, 2, -3])',
+      'vec.median([1, 2, 3, 4])',
+      'vec.median([1, 2, -3, 4])',
     ],
   },
-  'vec:mode': {
-    title: 'vec:mode',
+  'vec.mode': {
+    title: 'vec.mode',
     category: 'Vector',
     description: 'Returns the mode of all elements in the vector.',
     returns: {
@@ -266,15 +271,15 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:mode([1, 2, 3])',
-      'vec:mode([1, 2, -3, 1])',
-      'vec:mode([2, 2, 3, 3, 4])',
-      'vec:mode([2, 2, 3, 3])',
-      'vec:mode([1, 2, 3, 2, 1, 2])',
+      'vec.mode([1, 2, 3])',
+      'vec.mode([1, 2, -3, 1])',
+      'vec.mode([2, 2, 3, 3, 4])',
+      'vec.mode([2, 2, 3, 3])',
+      'vec.mode([1, 2, 3, 2, 1, 2])',
     ],
   },
-  'vec:sample-variance': {
-    title: 'vec:sample-variance',
+  'vec.sample-variance': {
+    title: 'vec.sample-variance',
     category: 'Vector',
     description: 'Returns the sample variance of all elements in the vector.',
     returns: {
@@ -290,15 +295,15 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:sample-variance([1, 2, 3])',
-      'vec:sample-variance([1, 2, -3])',
-      'vec:sample-variance([1, 2, 3, 4])',
-      'vec:sample-variance([1, 2, -3, 4])',
-      'vec:sample-variance([1, 2, 3, 40, 50])',
+      'vec.sample-variance([1, 2, 3])',
+      'vec.sample-variance([1, 2, -3])',
+      'vec.sample-variance([1, 2, 3, 4])',
+      'vec.sample-variance([1, 2, -3, 4])',
+      'vec.sample-variance([1, 2, 3, 40, 50])',
     ],
   },
-  'vec:stdev': {
-    title: 'vec:stdev',
+  'vec.stdev': {
+    title: 'vec.stdev',
     category: 'Vector',
     description: 'Returns the standard deviation of all elements in the vector.',
     returns: {
@@ -314,15 +319,15 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:stdev([1, 2, 3])',
-      'vec:stdev([1, 2, -3])',
-      'vec:stdev([1, 2, 3, 4])',
-      'vec:stdev([1, 2, -3, 4])',
-      'vec:stdev([1, 2, 3, 40, 50])',
+      'vec.stdev([1, 2, 3])',
+      'vec.stdev([1, 2, -3])',
+      'vec.stdev([1, 2, 3, 4])',
+      'vec.stdev([1, 2, -3, 4])',
+      'vec.stdev([1, 2, 3, 40, 50])',
     ],
   },
-  'vec:sample-stdev': {
-    title: 'vec:sample-stdev',
+  'vec.sample-stdev': {
+    title: 'vec.sample-stdev',
     category: 'Vector',
     description: 'Returns the sample standard deviation of all elements in the vector.',
     returns: {
@@ -338,15 +343,15 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:sample-stdev([1, 2, 3])',
-      'vec:sample-stdev([1, 2, -3])',
-      'vec:sample-stdev([1, 2, 3, 4])',
-      'vec:sample-stdev([1, 2, -3, 4])',
-      'vec:sample-stdev([1, 2, 3, 40, 50])',
+      'vec.sample-stdev([1, 2, 3])',
+      'vec.sample-stdev([1, 2, -3])',
+      'vec.sample-stdev([1, 2, 3, 4])',
+      'vec.sample-stdev([1, 2, -3, 4])',
+      'vec.sample-stdev([1, 2, 3, 40, 50])',
     ],
   },
-  'vec:min': {
-    title: 'vec:min',
+  'vec.min': {
+    title: 'vec.min',
     category: 'Vector',
     description: 'Returns the minimum value of all elements in the vector.',
     returns: {
@@ -362,15 +367,15 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:min([1, 2, 3])',
-      'vec:min([1, 1, 2, 3, 3])',
-      'vec:min([1, 2, -3])',
-      'vec:min([1, 2, 3, 4])',
-      'vec:min([1, 2, -3, 4])',
+      'vec.min([1, 2, 3])',
+      'vec.min([1, 1, 2, 3, 3])',
+      'vec.min([1, 2, -3])',
+      'vec.min([1, 2, 3, 4])',
+      'vec.min([1, 2, -3, 4])',
     ],
   },
-  'vec:max': {
-    title: 'vec:max',
+  'vec.max': {
+    title: 'vec.max',
     category: 'Vector',
     description: 'Returns the maximum value of all elements in the vector.',
     returns: {
@@ -386,15 +391,15 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:max([1, 2, 3])',
-      'vec:max([1, 1, 2, 3, 3])',
-      'vec:max([1, 2, -3])',
-      'vec:max([1, 2, 3, 4])',
-      'vec:max([1, 2, -3, 4])',
+      'vec.max([1, 2, 3])',
+      'vec.max([1, 1, 2, 3, 3])',
+      'vec.max([1, 2, -3])',
+      'vec.max([1, 2, 3, 4])',
+      'vec.max([1, 2, -3, 4])',
     ],
   },
-  'vec:min-index': {
-    title: 'vec:min-index',
+  'vec.min-index': {
+    title: 'vec.min-index',
     category: 'Vector',
     description: 'Returns the index of the minimum value of all elements in the vector.',
     returns: {
@@ -410,15 +415,15 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:min-index([1, 2, 3])',
-      'vec:min-index([1, 1, 2, 3, 3])',
-      'vec:min-index([1, 2, -3])',
-      'vec:min-index([1, 2, 3, 4])',
-      'vec:min-index([1, 2, -3, 4])',
+      'vec.min-index([1, 2, 3])',
+      'vec.min-index([1, 1, 2, 3, 3])',
+      'vec.min-index([1, 2, -3])',
+      'vec.min-index([1, 2, 3, 4])',
+      'vec.min-index([1, 2, -3, 4])',
     ],
   },
-  'vec:max-index': {
-    title: 'vec:max-index',
+  'vec.max-index': {
+    title: 'vec.max-index',
     category: 'Vector',
     description: 'Returns the index of the maximum value of all elements in the vector.',
     returns: {
@@ -434,15 +439,15 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:max-index([1, 2, 3])',
-      'vec:max-index([1, 1, 2, 3, 3])',
-      'vec:max-index([1, 2, -3])',
-      'vec:max-index([1, 2, 3, 4])',
-      'vec:max-index([1, 2, -3, 4])',
+      'vec.max-index([1, 2, 3])',
+      'vec.max-index([1, 1, 2, 3, 3])',
+      'vec.max-index([1, 2, -3])',
+      'vec.max-index([1, 2, 3, 4])',
+      'vec.max-index([1, 2, -3, 4])',
     ],
   },
-  'vec:sort-indices': {
-    title: 'vec:sort-indices',
+  'vec.sort-indices': {
+    title: 'vec.sort-indices',
     category: 'Vector',
     description: 'Returns the indices of the elements in the vector sorted in ascending order.',
     returns: {
@@ -458,15 +463,15 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:sort-indices([1, 2, 3])',
-      'vec:sort-indices([1, 1, 2, 3, 3])',
-      'vec:sort-indices([1, 2, -3])',
-      'vec:sort-indices([1, 2, 3, 4])',
-      'vec:sort-indices([1, 2, -3, 4])',
+      'vec.sort-indices([1, 2, 3])',
+      'vec.sort-indices([1, 1, 2, 3, 3])',
+      'vec.sort-indices([1, 2, -3])',
+      'vec.sort-indices([1, 2, 3, 4])',
+      'vec.sort-indices([1, 2, -3, 4])',
     ],
   },
-  'vec:count-values': {
-    title: 'vec:count-values',
+  'vec.count-values': {
+    title: 'vec.count-values',
     category: 'Vector',
     description: 'Counts the number of occurrences of each value in the vector.',
     returns: {
@@ -483,14 +488,14 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:count-values([1, 2, 3])',
-      'vec:count-values([1, 1, 2, 3, 3])',
-      'vec:count-values([1, 2, -3])',
-      'vec:count-values([1, 2, 2, 1, 3, 2, 4, 2, 1, 2, 2, 1, 3, 2, 4])',
+      'vec.count-values([1, 2, 3])',
+      'vec.count-values([1, 1, 2, 3, 3])',
+      'vec.count-values([1, 2, -3])',
+      'vec.count-values([1, 2, 2, 1, 3, 2, 4, 2, 1, 2, 2, 1, 3, 2, 4])',
     ],
   },
-  'vec:linspace': {
-    title: 'vec:linspace',
+  'vec.linspace': {
+    title: 'vec.linspace',
     category: 'Vector',
     description: 'Generates a vector of evenly spaced numbers between two values.',
     returns: {
@@ -515,12 +520,12 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['start', 'stop', 'n'] },
     ],
     examples: [
-      'vec:linspace(0, 10, 6)',
-      'vec:linspace(10, 20, 25)',
+      'vec.linspace(0, 10, 6)',
+      'vec.linspace(10, 20, 25)',
     ],
   },
-  'vec:ones': {
-    title: 'vec:ones',
+  'vec.ones': {
+    title: 'vec.ones',
     category: 'Vector',
     description: 'Generates a vector of ones.',
     returns: {
@@ -537,13 +542,13 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['length'] },
     ],
     examples: [
-      'vec:ones(5)',
-      'vec:ones(10)',
-      'vec:ones(0)',
+      'vec.ones(5)',
+      'vec.ones(10)',
+      'vec.ones(0)',
     ],
   },
-  'vec:zeros': {
-    title: 'vec:zeros',
+  'vec.zeros': {
+    title: 'vec.zeros',
     category: 'Vector',
     description: 'Generates a vector of zeros.',
     returns: {
@@ -560,13 +565,13 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['length'] },
     ],
     examples: [
-      'vec:zeros(5)',
-      'vec:zeros(10)',
-      'vec:zeros(0)',
+      'vec.zeros(5)',
+      'vec.zeros(10)',
+      'vec.zeros(0)',
     ],
   },
-  'vec:fill': {
-    title: 'vec:fill',
+  'vec.fill': {
+    title: 'vec.fill',
     category: 'Vector',
     description: 'Generates a vector filled with a number.',
     returns: {
@@ -588,12 +593,12 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['length', 'value'] },
     ],
     examples: [
-      'vec:fill(5, PI)',
-      'vec:fill(10, -1)',
+      'vec.fill(5, PI)',
+      'vec.fill(10, -1)',
     ],
   },
-  'vec:generate': {
-    title: 'vec:generate',
+  'vec.generate': {
+    title: 'vec.generate',
     category: 'Vector',
     description: 'Generates a vector of numbers based on a function.',
     returns: {
@@ -615,13 +620,13 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['length', 'func'] },
     ],
     examples: [
-      'vec:generate(5, -> $ * 2)',
-      'vec:generate(10, -> $ + 1)',
-      'vec:generate(0, -> $ + 1)',
+      'vec.generate(5, -> $ * 2)',
+      'vec.generate(10, -> $ + 1)',
+      'vec.generate(0, -> $ + 1)',
     ],
   },
-  'vec:cumsum': {
-    title: 'vec:cumsum',
+  'vec.cumsum': {
+    title: 'vec.cumsum',
     category: 'Vector',
     description: 'Calculates the cumulative sum of a vector.',
     returns: {
@@ -638,13 +643,13 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:cumsum([1, 2, 3])',
-      'vec:cumsum([1, 2, -3])',
-      'vec:cumsum([])',
+      'vec.cumsum([1, 2, 3])',
+      'vec.cumsum([1, 2, -3])',
+      'vec.cumsum([])',
     ],
   },
-  'vec:cumprod': {
-    title: 'vec:cumprod',
+  'vec.cumprod': {
+    title: 'vec.cumprod',
     category: 'Vector',
     description: 'Calculates the cumulative product of a vector.',
     returns: {
@@ -661,13 +666,13 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:cumprod([1, 2, 3])',
-      'vec:cumprod([1, 2, -3, 0, 10])',
-      'vec:cumprod([])',
+      'vec.cumprod([1, 2, 3])',
+      'vec.cumprod([1, 2, -3, 0, 10])',
+      'vec.cumprod([])',
     ],
   },
-  'vec:quartiles': {
-    title: 'vec:quartiles',
+  'vec.quartiles': {
+    title: 'vec.quartiles',
     category: 'Vector',
     description: 'Calculates the quartiles of a vector. Returns an array containing the first, second (median), and third quartiles.',
     returns: {
@@ -684,15 +689,15 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:quartiles([1, 2, 3, 4])',
-      'vec:quartiles([5, 4, 3, 2, 1, 2, 3, 4, 5])',
-      'vec:quartiles(range(1, 1000))',
-      'vec:quartiles(vec:generate(1000, -> 1e6 / ($ + 1) ^ 2))',
-      'vec:quartiles(vec:generate(1000, -> ln($ + 1)))',
+      'vec.quartiles([1, 2, 3, 4])',
+      'vec.quartiles([5, 4, 3, 2, 1, 2, 3, 4, 5])',
+      'vec.quartiles(range(1, 1000))',
+      'vec.quartiles(vec.generate(1000, -> 1e6 / ($ + 1) ^ 2))',
+      'vec.quartiles(vec.generate(1000, -> ln($ + 1)))',
     ],
   },
-  'vec:percentile': {
-    title: 'vec:percentile',
+  'vec.percentile': {
+    title: 'vec.percentile',
     category: 'Vector',
     description: 'Calculates the percentile of a vector. Returns the value at the specified percentile.',
     returns: {
@@ -713,22 +718,22 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector', 'percentile'] },
     ],
     examples: [
-      'vec:percentile([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 35)',
-      'vec:percentile(range(100) ^ 0.5, 0)',
-      'vec:percentile(range(100) ^ 0.5, 10)',
-      'vec:percentile(range(100) ^ 0.5, 20)',
-      'vec:percentile(range(100) ^ 0.5, 30)',
-      'vec:percentile(range(100) ^ 0.5, 40)',
-      'vec:percentile(range(100) ^ 0.5, 50)',
-      'vec:percentile(range(100) ^ 0.5, 60)',
-      'vec:percentile(range(100) ^ 0.5, 70)',
-      'vec:percentile(range(100) ^ 0.5, 80)',
-      'vec:percentile(range(100) ^ 0.5, 90)',
-      'vec:percentile(range(100) ^ 0.5, 100)',
+      'vec.percentile([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 35)',
+      'vec.percentile(range(100) ^ 0.5, 0)',
+      'vec.percentile(range(100) ^ 0.5, 10)',
+      'vec.percentile(range(100) ^ 0.5, 20)',
+      'vec.percentile(range(100) ^ 0.5, 30)',
+      'vec.percentile(range(100) ^ 0.5, 40)',
+      'vec.percentile(range(100) ^ 0.5, 50)',
+      'vec.percentile(range(100) ^ 0.5, 60)',
+      'vec.percentile(range(100) ^ 0.5, 70)',
+      'vec.percentile(range(100) ^ 0.5, 80)',
+      'vec.percentile(range(100) ^ 0.5, 90)',
+      'vec.percentile(range(100) ^ 0.5, 100)',
     ],
   },
-  'vec:quantile': {
-    title: 'vec:quantile',
+  'vec.quantile': {
+    title: 'vec.quantile',
     category: 'Vector',
     description: 'Calculates the quantile of a vector. Returns the value at the specified quantile.',
     returns: {
@@ -749,22 +754,22 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector', 'quantile'] },
     ],
     examples: [
-      'vec:quantile([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 0.35)',
-      'vec:quantile(range(100) ^ 0.5, 0)',
-      'vec:quantile(range(100) ^ 0.5, 0.1)',
-      'vec:quantile(range(100) ^ 0.5, 0.2)',
-      'vec:quantile(range(100) ^ 0.5, 0.3)',
-      'vec:quantile(range(100) ^ 0.5, 0.4)',
-      'vec:quantile(range(100) ^ 0.5, 0.5)',
-      'vec:quantile(range(100) ^ 0.5, 0.6)',
-      'vec:quantile(range(100) ^ 0.5, 0.7)',
-      'vec:quantile(range(100) ^ 0.5, 0.8)',
-      'vec:quantile(range(100) ^ 0.5, 0.9)',
-      'vec:quantile(range(100) ^ 0.5, 1)',
+      'vec.quantile([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 0.35)',
+      'vec.quantile(range(100) ^ 0.5, 0)',
+      'vec.quantile(range(100) ^ 0.5, 0.1)',
+      'vec.quantile(range(100) ^ 0.5, 0.2)',
+      'vec.quantile(range(100) ^ 0.5, 0.3)',
+      'vec.quantile(range(100) ^ 0.5, 0.4)',
+      'vec.quantile(range(100) ^ 0.5, 0.5)',
+      'vec.quantile(range(100) ^ 0.5, 0.6)',
+      'vec.quantile(range(100) ^ 0.5, 0.7)',
+      'vec.quantile(range(100) ^ 0.5, 0.8)',
+      'vec.quantile(range(100) ^ 0.5, 0.9)',
+      'vec.quantile(range(100) ^ 0.5, 1)',
     ],
   },
-  'vec:span': {
-    title: 'vec:span',
+  'vec.span': {
+    title: 'vec.span',
     category: 'Vector',
     description: 'Returns the difference between the maximum and minimum values in a vector.',
     returns: {
@@ -780,13 +785,13 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:span([1, 2, 3])',
-      'vec:span([1, 1, 2, 3, 3])',
-      'vec:span([1, 2, -3])',
+      'vec.span([1, 2, 3])',
+      'vec.span([1, 1, 2, 3, 3])',
+      'vec.span([1, 2, -3])',
     ],
   },
-  'vec:histogram': {
-    title: 'vec:histogram',
+  'vec.histogram': {
+    title: 'vec.histogram',
     category: 'Vector',
     description: 'Creates a histogram from a numeric `array` by dividing the data range into the specified number of bins. Returns an `array` of `[binStart, binEnd, count]` tuples representing each bin\'s range and the number of values within it. Handles empty arrays, identical values, and properly places maximum values in the last bin.',
     returns: {
@@ -808,14 +813,14 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector', 'bins'] },
     ],
     examples: [
-      'vec:histogram([1, 2, 2, 3, 2, 6, 4, 3, 2, 4, 1, 3, 2, 9], 3)',
-      'vec:histogram([1, 2, 3, 4, 5], 5)',
-      'vec:histogram([1, 2, 3, 4, 5], 10)',
-      'vec:histogram([1, 2, 3, 4, 5], 1)',
+      'vec.histogram([1, 2, 2, 3, 2, 6, 4, 3, 2, 4, 1, 3, 2, 9], 3)',
+      'vec.histogram([1, 2, 3, 4, 5], 5)',
+      'vec.histogram([1, 2, 3, 4, 5], 10)',
+      'vec.histogram([1, 2, 3, 4, 5], 1)',
     ],
   },
-  'vec:ecdf': {
-    title: 'vec:ecdf',
+  'vec.ecdf': {
+    title: 'vec.ecdf',
     category: 'Vector',
     description: 'Calculates the empirical cumulative distribution function value for a given threshold in a non empty dataset. Returns the proportion of values in the `array` that are less than or equal to the specified threshold.',
     returns: {
@@ -836,15 +841,15 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector', 'threshold'] },
     ],
     examples: [
-      'vec:ecdf([1, 2, 2, 3, 2, 6, 4, 3, 2, 4, 1, 3, 2, 9, 10, 12], 5)',
-      'vec:ecdf([1, 2, 3, 4, 5], 3)',
-      'vec:ecdf([1, 2, 3, 4, 5], 0)',
-      'vec:ecdf([1, 2, 3, 4, 5], 10)',
-      'vec:ecdf([1, 2, 3, 4, 5], 2)',
+      'vec.ecdf([1, 2, 2, 3, 2, 6, 4, 3, 2, 4, 1, 3, 2, 9, 10, 12], 5)',
+      'vec.ecdf([1, 2, 3, 4, 5], 3)',
+      'vec.ecdf([1, 2, 3, 4, 5], 0)',
+      'vec.ecdf([1, 2, 3, 4, 5], 10)',
+      'vec.ecdf([1, 2, 3, 4, 5], 2)',
     ],
   },
-  'vec:outliers?': {
-    title: 'vec:outliers?',
+  'vec.outliers?': {
+    title: 'vec.outliers?',
     category: 'Vector',
     description: 'Checks if the `vector` contains outliers based on the interquartile range (IQR) method. Returns `true` if outliers are present, `false` otherwise.',
     returns: {
@@ -860,13 +865,13 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:outliers?([1, 2, 3])',
-      'vec:outliers?([1, 2, -3])',
-      'vec:outliers?([1, 2, 3, 2, 4, 120])',
+      'vec.outliers?([1, 2, 3])',
+      'vec.outliers?([1, 2, -3])',
+      'vec.outliers?([1, 2, 3, 2, 4, 120])',
     ],
   },
-  'vec:outliers': {
-    title: 'vec:outliers',
+  'vec.outliers': {
+    title: 'vec.outliers',
     category: 'Vector',
     description: 'Identifies outliers in the `vector` based on the interquartile range (IQR) method. Returns an array of outlier values.',
     returns: {
@@ -883,13 +888,13 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:outliers([1, 2, 3])',
-      'vec:outliers([1, 2, -3])',
-      'vec:outliers([1, 2, 3, 2, 4, 120])',
+      'vec.outliers([1, 2, 3])',
+      'vec.outliers([1, 2, -3])',
+      'vec.outliers([1, 2, 3, 2, 4, 120])',
     ],
   },
-  'vec:bincount': {
-    title: 'vec:bincount',
+  'vec.bincount': {
+    title: 'vec.bincount',
     category: 'Vector',
     description: 'counts occurrences of each `integer` in a vector, returning an array where index `i` contains the count of value `i`, with optional **minimum size** and **weights parameters**.',
     returns: {
@@ -916,13 +921,13 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector', 'minSize', 'weights'] },
     ],
     examples: [
-      'vec:bincount([1, 2, 3])',
-      'vec:bincount([1, 2, 2, 3, 3])',
+      'vec.bincount([1, 2, 3])',
+      'vec.bincount([1, 2, 2, 3, 3])',
     ],
     noOperatorDocumentation: true,
   },
-  'vec:winsorize': {
-    title: 'vec:winsorize',
+  'vec.winsorize': {
+    title: 'vec.winsorize',
     category: 'Vector',
     description: 'Limits extreme values in a `vector` by replacing values below the **lower quantile** and above the **upper quantile** with the values at those quantiles. The function takes a `vector` of values and **quantile thresholds** (between 0 and 1), with the upper quantile. Winsorization reduces the influence of outliers while preserving the overall distribution shape, making statistical analyses more robust.',
     returns: {
@@ -947,14 +952,14 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector', 'lower-quantile', 'upper-quantile'] },
     ],
     examples: [
-      'vec:winsorize([2, 5, 8, 10, 15, 18, 20, 35, 60, 100], 0.25)',
-      'vec:winsorize([2, 5, 8, 10, 15, 18, 20, 35, 60, 100], 0.25, 0.75)',
-      'vec:winsorize([2, 5, 8, 10, 15, 18, 20, 35, 60, 100], 0.25, 0.5)',
+      'vec.winsorize([2, 5, 8, 10, 15, 18, 20, 35, 60, 100], 0.25)',
+      'vec.winsorize([2, 5, 8, 10, 15, 18, 20, 35, 60, 100], 0.25, 0.75)',
+      'vec.winsorize([2, 5, 8, 10, 15, 18, 20, 35, 60, 100], 0.25, 0.5)',
     ],
     noOperatorDocumentation: true,
   },
-  'vec:mse': {
-    title: 'vec:mse',
+  'vec.mse': {
+    title: 'vec.mse',
     category: 'Vector',
     description: 'Calculates the **Mean Squared Error (MSE)** between two vectors. Returns the average of the squared differences between corresponding elements.',
     returns: {
@@ -974,15 +979,15 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'vec:mse([1, 2, 3], [1, 2, 3])',
-      'vec:mse([1, 2, 3], [4, 5, 6])',
-      'vec:mse([1, 2, 3], [2, 2, 2])',
-      'vec:mse([1, 2], [3, 3])',
-      'vec:mse([1], [3])',
+      'vec.mse([1, 2, 3], [1, 2, 3])',
+      'vec.mse([1, 2, 3], [4, 5, 6])',
+      'vec.mse([1, 2, 3], [2, 2, 2])',
+      'vec.mse([1, 2], [3, 3])',
+      'vec.mse([1], [3])',
     ],
   },
-  'vec:rmse': {
-    title: 'vec:rmse',
+  'vec.rmse': {
+    title: 'vec.rmse',
     category: 'Vector',
     description: 'Calculates the **Root Mean Squared Error (RMSE)** between two vectors. Returns the square root of the average of the squared differences between corresponding elements.',
     returns: {
@@ -1002,15 +1007,15 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'vec:rmse([1, 2, 3], [1, 2, 3])',
-      'vec:rmse([1, 2, 3], [4, 5, 6])',
-      'vec:rmse([1, 2, 3], [2, 2, 2])',
-      'vec:rmse([1, 2], [3, 3])',
-      'vec:rmse([1], [3])',
+      'vec.rmse([1, 2, 3], [1, 2, 3])',
+      'vec.rmse([1, 2, 3], [4, 5, 6])',
+      'vec.rmse([1, 2, 3], [2, 2, 2])',
+      'vec.rmse([1, 2], [3, 3])',
+      'vec.rmse([1], [3])',
     ],
   },
-  'vec:mae': {
-    title: 'vec:mae',
+  'vec.mae': {
+    title: 'vec.mae',
     category: 'Vector',
     description: 'Calculates the **Mean Absolute Error (MAE)** between two vectors. Returns the average of the absolute differences between corresponding elements.',
     returns: {
@@ -1030,15 +1035,15 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'vec:mae([1, 2, 3], [1, 2, 3])',
-      'vec:mae([1, 2, 3], [4, 5, 6])',
-      'vec:mae([1, 2, 3], [2, 2, 2])',
-      'vec:mae([1, 2], [3, 3])',
-      'vec:mae([1], [3])',
+      'vec.mae([1, 2, 3], [1, 2, 3])',
+      'vec.mae([1, 2, 3], [4, 5, 6])',
+      'vec.mae([1, 2, 3], [2, 2, 2])',
+      'vec.mae([1, 2], [3, 3])',
+      'vec.mae([1], [3])',
     ],
   },
-  'vec:smape': {
-    title: 'vec:smape',
+  'vec.smape': {
+    title: 'vec.smape',
     category: 'Vector',
     description: 'Calculates the **Symmetric Mean Absolute Percentage Error (SMAPE)** between two vectors. Returns the average of the absolute percentage differences between corresponding elements.',
     returns: {
@@ -1058,11 +1063,11 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'vec:smape([1, 2, 3], [1, 2, 3])',
-      'vec:smape([1, 2, 3], [4, 5, 6])',
-      'vec:smape([1, 2, 3], [2, 2, 2])',
-      'vec:smape([1, 2], [3, 3])',
-      'vec:smape([1], [3])',
+      'vec.smape([1, 2, 3], [1, 2, 3])',
+      'vec.smape([1, 2, 3], [4, 5, 6])',
+      'vec.smape([1, 2, 3], [2, 2, 2])',
+      'vec.smape([1, 2], [3, 3])',
+      'vec.smape([1], [3])',
     ],
   },
 }

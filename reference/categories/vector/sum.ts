@@ -2,8 +2,8 @@ import { getOperatorArgs } from '../../api'
 import type { VectorReductionReference } from '.'
 
 export const sumReference: VectorReductionReference<'sum'> = {
-  'vec:sum': {
-    title: 'vec:sum',
+  'vec.sum': {
+    title: 'vec.sum',
     category: 'Vector',
     description: 'Returns the `sum` of all elements in the `vector`.',
     returns: {
@@ -19,12 +19,12 @@ export const sumReference: VectorReductionReference<'sum'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:sum([1, 2, 3])',
-      'vec:sum([1, 2, -3])',
+      'vec.sum([1, 2, 3])',
+      'vec.sum([1, 2, -3])',
     ],
   },
-  'vec:moving-sum': {
-    title: 'vec:moving-sum',
+  'vec.moving-sum': {
+    title: 'vec.moving-sum',
     category: 'Vector',
     description: 'Returns the **moving sum** of the `vector` with a given window size.',
     returns: {
@@ -45,12 +45,12 @@ export const sumReference: VectorReductionReference<'sum'> = {
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'vec:moving-sum([1, 2, 3, 4, 5], 3)',
-      'vec:moving-sum([1, 2, 3, 4, 5], 5)',
+      'vec.moving-sum([1, 2, 3, 4, 5], 3)',
+      'vec.moving-sum([1, 2, 3, 4, 5], 5)',
     ],
   },
-  'vec:centered-moving-sum': {
-    title: 'vec:centered-moving-sum',
+  'vec.centered-moving-sum': {
+    title: 'vec.centered-moving-sum',
     category: 'Vector',
     description: 'Returns the **centered moving sum** of the `vector` with a given window size.',
     returns: {
@@ -81,13 +81,13 @@ export const sumReference: VectorReductionReference<'sum'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'vec:centered-moving-sum([1, 2, 3, 4, 5], 3)',
-      'vec:centered-moving-sum([1, 2, 3, 4, 5], 3, 0, 0)',
-      'vec:centered-moving-sum([1, 2, 3, 4, 5], 3, 10)',
+      'vec.centered-moving-sum([1, 2, 3, 4, 5], 3)',
+      'vec.centered-moving-sum([1, 2, 3, 4, 5], 3, 0, 0)',
+      'vec.centered-moving-sum([1, 2, 3, 4, 5], 3, 10)',
     ],
   },
-  'vec:running-sum': {
-    title: 'vec:running-sum',
+  'vec.running-sum': {
+    title: 'vec.running-sum',
     category: 'Vector',
     description: 'Returns the **running sum** of the `vector`.',
     returns: {
@@ -103,8 +103,8 @@ export const sumReference: VectorReductionReference<'sum'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:running-sum([1, 2, 3])',
-      'vec:running-sum([1, -2, -3])',
+      'vec.running-sum([1, 2, 3])',
+      'vec.running-sum([1, -2, -3])',
     ],
   },
 }

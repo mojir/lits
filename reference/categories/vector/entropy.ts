@@ -2,8 +2,8 @@ import { getOperatorArgs } from '../../api'
 import type { VectorReductionReference } from '.'
 
 export const entropyReference: VectorReductionReference<'entropy'> = {
-  'vec:entropy': {
-    title: 'vec:entropy',
+  'vec.entropy': {
+    title: 'vec.entropy',
     category: 'Vector',
     description: 'Calculates the **entropy** of a `vector`. The entropy is a measure of the uncertainty associated with a random variable.',
     returns: {
@@ -19,16 +19,16 @@ export const entropyReference: VectorReductionReference<'entropy'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:entropy([1, 1, 2, 3, 3, 3])',
-      'vec:entropy([1, 2, 3])',
-      'vec:entropy([1, 2, 2, 3])',
-      'vec:entropy([0])',
-      'vec:entropy([1])',
-      'vec:entropy([1, 2])',
+      'vec.entropy([1, 1, 2, 3, 3, 3])',
+      'vec.entropy([1, 2, 3])',
+      'vec.entropy([1, 2, 2, 3])',
+      'vec.entropy([0])',
+      'vec.entropy([1])',
+      'vec.entropy([1, 2])',
     ],
   },
-  'vec:moving-entropy': {
-    title: 'vec:moving-entropy',
+  'vec.moving-entropy': {
+    title: 'vec.moving-entropy',
     category: 'Vector',
     description: 'Calculates the **moving entropy** of a `vector` with a given window size.',
     returns: {
@@ -49,13 +49,13 @@ export const entropyReference: VectorReductionReference<'entropy'> = {
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'vec:moving-entropy([1, 1, 2, 3, 3, 3], 4)',
-      'vec:moving-entropy([1, 1, 2, 3, 3, 3], 3)',
-      'vec:moving-entropy([1, 2], 2)',
+      'vec.moving-entropy([1, 1, 2, 3, 3, 3], 4)',
+      'vec.moving-entropy([1, 1, 2, 3, 3, 3], 3)',
+      'vec.moving-entropy([1, 2], 2)',
     ],
   },
-  'vec:centered-moving-entropy': {
-    title: 'vec:centered-moving-entropy',
+  'vec.centered-moving-entropy': {
+    title: 'vec.centered-moving-entropy',
     category: 'Vector',
     description: 'Calculates the **centered moving entropy** of a `vector` with a given window size.',
     returns: {
@@ -86,13 +86,13 @@ export const entropyReference: VectorReductionReference<'entropy'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'vec:centered-moving-entropy([1, 1, 2, 3, 3, 3], 4)',
-      'vec:centered-moving-entropy([1, 1, 2, 3, 3, 3], 3)',
-      'vec:centered-moving-entropy([1, 2], 2)',
+      'vec.centered-moving-entropy([1, 1, 2, 3, 3, 3], 4)',
+      'vec.centered-moving-entropy([1, 1, 2, 3, 3, 3], 3)',
+      'vec.centered-moving-entropy([1, 2], 2)',
     ],
   },
-  'vec:running-entropy': {
-    title: 'vec:running-entropy',
+  'vec.running-entropy': {
+    title: 'vec.running-entropy',
     category: 'Vector',
     description: 'Calculates the **running entropy** of a `vector`.',
     returns: {
@@ -108,8 +108,8 @@ export const entropyReference: VectorReductionReference<'entropy'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:running-entropy([1, 1, 2, 3, 3, 3])',
-      'vec:running-entropy([1, 2])',
+      'vec.running-entropy([1, 1, 2, 3, 3, 3])',
+      'vec.running-entropy([1, 2])',
     ],
   },
 }

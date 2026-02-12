@@ -19,8 +19,8 @@ const exampleGrid3 = `[
 ]`
 
 export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
-  'grid:every?': {
-    title: 'grid:every?',
+  'grid.every?': {
+    title: 'grid.every?',
     category: 'Grid',
     returns: {
       type: 'boolean',
@@ -33,13 +33,13 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Checks if all elements in a grid satisfy a predicate. Returns true only if the predicate returns true for every element in the grid.',
     examples: [
-      `grid:every?(${exampleGrid1}, string?)`,
-      `grid:every?(${exampleGrid2}, string?)`,
-      `grid:every?(${exampleGrid3}, string?)`,
+      `grid.every?(${exampleGrid1}, string?)`,
+      `grid.every?(${exampleGrid2}, string?)`,
+      `grid.every?(${exampleGrid3}, string?)`,
     ],
   },
-  'grid:some?': {
-    title: 'grid:some?',
+  'grid.some?': {
+    title: 'grid.some?',
     category: 'Grid',
     returns: {
       type: 'boolean',
@@ -52,13 +52,13 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Checks if any element in a grid satisfies a predicate. Returns true if the predicate returns true for at least one element in the grid.',
     examples: [
-      `grid:some?(${exampleGrid1}, string?)`,
-      `grid:some?(${exampleGrid2}, string?)`,
-      `grid:some?(${exampleGrid3}, string?)`,
+      `grid.some?(${exampleGrid1}, string?)`,
+      `grid.some?(${exampleGrid2}, string?)`,
+      `grid.some?(${exampleGrid3}, string?)`,
     ],
   },
-  'grid:every-row?': {
-    title: 'grid:every-row?',
+  'grid.every-row?': {
+    title: 'grid.every-row?',
     category: 'Grid',
     returns: {
       type: 'boolean',
@@ -71,14 +71,14 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Checks if all rows in a grid satisfy a predicate. Returns true only if the predicate returns true for every row in the grid.',
     examples: [
-      `grid:every-row?(${exampleGrid1}, -> string?($[0]))`,
-      `grid:every-row?(${exampleGrid2}, -> string?($[0]))`,
-      `grid:every-row?(${exampleGrid3}, -> string?($[0]))`,
+      `grid.every-row?(${exampleGrid1}, -> string?($[0]))`,
+      `grid.every-row?(${exampleGrid2}, -> string?($[0]))`,
+      `grid.every-row?(${exampleGrid3}, -> string?($[0]))`,
     ],
   },
 
-  'grid:some-row?': {
-    title: 'grid:some-row?',
+  'grid.some-row?': {
+    title: 'grid.some-row?',
     category: 'Grid',
     returns: {
       type: 'boolean',
@@ -91,13 +91,13 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Checks if any row in a grid satisfies a predicate. Returns true if the predicate returns true for at least one row in the grid.',
     examples: [
-      `grid:some-row?(${exampleGrid1}, -> $ contains? "Albert")`,
-      `grid:some-row?(${exampleGrid2}, -> $ contains? "Albert")`,
-      `grid:some-row?(${exampleGrid3}, -> $ contains? "Albert")`,
+      `grid.some-row?(${exampleGrid1}, -> $ contains? "Albert")`,
+      `grid.some-row?(${exampleGrid2}, -> $ contains? "Albert")`,
+      `grid.some-row?(${exampleGrid3}, -> $ contains? "Albert")`,
     ],
   },
-  'grid:every-col?': {
-    title: 'grid:every-col?',
+  'grid.every-col?': {
+    title: 'grid.every-col?',
     category: 'Grid',
     returns: {
       type: 'boolean',
@@ -110,13 +110,13 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Checks if all columns in a grid satisfy a predicate. Returns true only if the predicate returns true for every column in the grid.',
     examples: [
-      `grid:every-col?(${exampleGrid1}, -> string?($[0]))`,
-      `grid:every-col?(${exampleGrid2}, -> string?($[0]))`,
-      `grid:every-col?(${exampleGrid3}, -> string?($[0]))`,
+      `grid.every-col?(${exampleGrid1}, -> string?($[0]))`,
+      `grid.every-col?(${exampleGrid2}, -> string?($[0]))`,
+      `grid.every-col?(${exampleGrid3}, -> string?($[0]))`,
     ],
   },
-  'grid:some-col?': {
-    title: 'grid:some-col?',
+  'grid.some-col?': {
+    title: 'grid.some-col?',
     category: 'Grid',
     returns: {
       type: 'boolean',
@@ -129,13 +129,13 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Checks if any column in a grid satisfies a predicate. Returns true if the predicate returns true for at least one column in the grid.',
     examples: [
-      `grid:some-col?(${exampleGrid1}, -> $ contains? "Albert")`,
-      `grid:some-col?(${exampleGrid2}, -> $ contains? "Albert")`,
-      `grid:some-col?(${exampleGrid3}, -> $ contains? "Albert")`,
+      `grid.some-col?(${exampleGrid1}, -> $ contains? "Albert")`,
+      `grid.some-col?(${exampleGrid2}, -> $ contains? "Albert")`,
+      `grid.some-col?(${exampleGrid3}, -> $ contains? "Albert")`,
     ],
   },
-  'grid:row': {
-    title: 'grid:row',
+  'grid.row': {
+    title: 'grid.row',
     category: 'Grid',
     returns: {
       type: 'any',
@@ -148,13 +148,13 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Returns the row at index $a in the grid $b.',
     examples: [
-      `grid:row(${exampleGrid1}, 0)`,
-      `grid:row(${exampleGrid1}, 1)`,
-      `grid:row(${exampleGrid1}, 2)`,
+      `grid.row(${exampleGrid1}, 0)`,
+      `grid.row(${exampleGrid1}, 1)`,
+      `grid.row(${exampleGrid1}, 2)`,
     ],
   },
-  'grid:col': {
-    title: 'grid:col',
+  'grid.col': {
+    title: 'grid.col',
     category: 'Grid',
     returns: {
       type: 'any',
@@ -167,13 +167,13 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Returns the column at index $a in the grid $b.',
     examples: [
-      `grid:col(${exampleGrid1}, 0)`,
-      `grid:col(${exampleGrid1}, 1)`,
-      `grid:col(${exampleGrid1}, 2)`,
+      `grid.col(${exampleGrid1}, 0)`,
+      `grid.col(${exampleGrid1}, 1)`,
+      `grid.col(${exampleGrid1}, 2)`,
     ],
   },
-  'grid:shape': {
-    title: 'grid:shape',
+  'grid.shape': {
+    title: 'grid.shape',
     category: 'Grid',
     returns: {
       type: 'vector',
@@ -189,13 +189,13 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Returns the shape of the grid `g` as a `vector` of two numbers, where the first number is the number of rows and the second number is the number of columns.',
     examples: [
-      `grid:shape(${exampleGrid1})`,
-      `grid:shape(${exampleGrid2})`,
-      `grid:shape(${exampleGrid3})`,
+      `grid.shape(${exampleGrid1})`,
+      `grid.shape(${exampleGrid2})`,
+      `grid.shape(${exampleGrid3})`,
     ],
   },
-  'grid:fill': {
-    title: 'grid:fill',
+  'grid.fill': {
+    title: 'grid.fill',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -219,12 +219,12 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Creates a grid of the specified size, filled with the specified value.',
     examples: [
-      'grid:fill(2, 3, 0)',
-      'grid:fill(2, 3, "x")',
+      'grid.fill(2, 3, 0)',
+      'grid.fill(2, 3, "x")',
     ],
   },
-  'grid:generate': {
-    title: 'grid:generate',
+  'grid.generate': {
+    title: 'grid.generate',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -248,11 +248,11 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Generates a grid of the specified size, where each element is generated by the provided function.',
     examples: [
-      'grid:generate(3, 3, (i, j) -> i + j)',
+      'grid.generate(3, 3, (i, j) -> i + j)',
     ],
   },
-  'grid:reshape': {
-    title: 'grid:reshape',
+  'grid.reshape': {
+    title: 'grid.reshape',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -265,11 +265,11 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Reshapes the grid `a` into a new grid with the specified number of rows `b`. The number of columns is automatically calculated based on the total number of elements in the grid.',
     examples: [
-      `grid:reshape(${exampleGrid2}, 2)`,
+      `grid.reshape(${exampleGrid2}, 2)`,
     ],
   },
-  'grid:transpose': {
-    title: 'grid:transpose',
+  'grid.transpose': {
+    title: 'grid.transpose',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -285,14 +285,14 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Transposes the grid `g`, swapping its rows and columns.',
     examples: [
-      `grid:transpose(${exampleGrid1})`,
-      `grid:transpose(${exampleGrid2})`,
-      `grid:transpose(${exampleGrid3})`,
+      `grid.transpose(${exampleGrid1})`,
+      `grid.transpose(${exampleGrid2})`,
+      `grid.transpose(${exampleGrid3})`,
     ],
-    aliases: ['grid:tr'],
+    aliases: ['grid.tr'],
   },
-  'grid:flip-h': {
-    title: 'grid:flip-h',
+  'grid.flip-h': {
+    title: 'grid.flip-h',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -308,13 +308,13 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Flips the grid `g` horizontally.',
     examples: [
-      `grid:flip-h(${exampleGrid1})`,
-      `grid:flip-h(${exampleGrid2})`,
-      `grid:flip-h(${exampleGrid3})`,
+      `grid.flip-h(${exampleGrid1})`,
+      `grid.flip-h(${exampleGrid2})`,
+      `grid.flip-h(${exampleGrid3})`,
     ],
   },
-  'grid:flip-v': {
-    title: 'grid:flip-v',
+  'grid.flip-v': {
+    title: 'grid.flip-v',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -330,13 +330,13 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Flips the grid `g` vertically.',
     examples: [
-      `grid:flip-v(${exampleGrid1})`,
-      `grid:flip-v(${exampleGrid2})`,
-      `grid:flip-v(${exampleGrid3})`,
+      `grid.flip-v(${exampleGrid1})`,
+      `grid.flip-v(${exampleGrid2})`,
+      `grid.flip-v(${exampleGrid3})`,
     ],
   },
-  'grid:rotate': {
-    title: 'grid:rotate',
+  'grid.rotate': {
+    title: 'grid.rotate',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -349,17 +349,17 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Rotates the grid `g` by the specified angle. The angle is given in terms of 90-degree rotations. Positive values rotate the grid clockwise, while negative values rotate it counterclockwise.',
     examples: [
-      `grid:rotate(${exampleGrid3}, 1)`,
-      `grid:rotate(${exampleGrid3}, 2)`,
-      `grid:rotate(${exampleGrid3}, 3)`,
-      `grid:rotate(${exampleGrid3}, 4)`,
-      `grid:rotate(${exampleGrid3}, -1)`,
-      `grid:rotate(${exampleGrid3}, -2)`,
-      `grid:rotate(${exampleGrid3}, -3)`,
+      `grid.rotate(${exampleGrid3}, 1)`,
+      `grid.rotate(${exampleGrid3}, 2)`,
+      `grid.rotate(${exampleGrid3}, 3)`,
+      `grid.rotate(${exampleGrid3}, 4)`,
+      `grid.rotate(${exampleGrid3}, -1)`,
+      `grid.rotate(${exampleGrid3}, -2)`,
+      `grid.rotate(${exampleGrid3}, -3)`,
     ],
   },
-  'grid:reverse-rows': {
-    title: 'grid:reverse-rows',
+  'grid.reverse-rows': {
+    title: 'grid.reverse-rows',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -375,13 +375,13 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Reverses the order of rows in the grid `g`.',
     examples: [
-      `grid:reverse-rows(${exampleGrid1})`,
-      `grid:reverse-rows(${exampleGrid2})`,
-      `grid:reverse-rows(${exampleGrid3})`,
+      `grid.reverse-rows(${exampleGrid1})`,
+      `grid.reverse-rows(${exampleGrid2})`,
+      `grid.reverse-rows(${exampleGrid3})`,
     ],
   },
-  'grid:reverse-cols': {
-    title: 'grid:reverse-cols',
+  'grid.reverse-cols': {
+    title: 'grid.reverse-cols',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -397,13 +397,13 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Reverses the order of columns in the grid `g`.',
     examples: [
-      `grid:reverse-cols(${exampleGrid1})`,
-      `grid:reverse-cols(${exampleGrid2})`,
-      `grid:reverse-cols(${exampleGrid3})`,
+      `grid.reverse-cols(${exampleGrid1})`,
+      `grid.reverse-cols(${exampleGrid2})`,
+      `grid.reverse-cols(${exampleGrid3})`,
     ],
   },
-  'grid:slice': {
-    title: 'grid:slice',
+  'grid.slice': {
+    title: 'grid.slice',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -428,13 +428,13 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Slices the grid `g` from the starting index `begin` to the optional ending index `stop`. The slice is inclusive of the starting index and exclusive of the ending index.',
     examples: [
-      `grid:slice(${exampleGrid1}, [1, 1], [2, 2])`,
-      `grid:slice(${exampleGrid1}, [1, 1])`,
+      `grid.slice(${exampleGrid1}, [1, 1], [2, 2])`,
+      `grid.slice(${exampleGrid1}, [1, 1])`,
     ],
     noOperatorDocumentation: true,
   },
-  'grid:slice-rows': {
-    title: 'grid:slice-rows',
+  'grid.slice-rows': {
+    title: 'grid.slice-rows',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -459,13 +459,13 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Slices rows of the grid `g` from the starting index `begin` to the optional ending index `stop`. The slice is inclusive of the starting index and exclusive of the ending index.',
     examples: [
-      `grid:slice-rows(${exampleGrid1}, 1, 2)`,
-      `grid:slice-rows(${exampleGrid1}, 1)`,
+      `grid.slice-rows(${exampleGrid1}, 1, 2)`,
+      `grid.slice-rows(${exampleGrid1}, 1)`,
     ],
     noOperatorDocumentation: true,
   },
-  'grid:slice-cols': {
-    title: 'grid:slice-cols',
+  'grid.slice-cols': {
+    title: 'grid.slice-cols',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -490,13 +490,13 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Slices columns of the grid `g` from the starting index `begin` to the optional ending index `stop`. The slice is inclusive of the starting index and exclusive of the ending index.',
     examples: [
-      `grid:slice-cols(${exampleGrid1}, 1, 2)`,
-      `grid:slice-cols(${exampleGrid1}, 1)`,
+      `grid.slice-cols(${exampleGrid1}, 1, 2)`,
+      `grid.slice-cols(${exampleGrid1}, 1)`,
     ],
     noOperatorDocumentation: true,
   },
-  'grid:splice-rows': {
-    title: 'grid:splice-rows',
+  'grid.splice-rows': {
+    title: 'grid.splice-rows',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -526,13 +526,13 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Splices rows of the grid `g` starting from the index `begin`. Deletes `deleteCount` rows and inserts the specified `items` at that position.',
     examples: [
-      `grid:splice-rows(${exampleGrid1}, 1, 2)`,
-      `grid:splice-rows(${exampleGrid1}, 1, 1, ["Nazanin", "mother", 40])`,
+      `grid.splice-rows(${exampleGrid1}, 1, 2)`,
+      `grid.splice-rows(${exampleGrid1}, 1, 1, ["Nazanin", "mother", 40])`,
     ],
     noOperatorDocumentation: true,
   },
-  'grid:splice-cols': {
-    title: 'grid:splice-cols',
+  'grid.splice-cols': {
+    title: 'grid.splice-cols',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -562,13 +562,13 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Splices columns of the grid `g` starting from the index `begin`. Deletes `deleteCount` columns and inserts the specified `items` at that position.',
     examples: [
-      `grid:splice-cols(${exampleGrid1}, 1, 2)`,
-      `grid:splice-cols(${exampleGrid1}, 1, 1, ["f", "m", "s"])`,
+      `grid.splice-cols(${exampleGrid1}, 1, 2)`,
+      `grid.splice-cols(${exampleGrid1}, 1, 1, ["f", "m", "s"])`,
     ],
     noOperatorDocumentation: true,
   },
-  'grid:concat-rows': {
-    title: 'grid:concat-rows',
+  'grid.concat-rows': {
+    title: 'grid.concat-rows',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -581,11 +581,11 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Concatenates two grids `a` and `b` by rows. The number of columns in both grids must be the same.',
     examples: [
-      `grid:concat-rows(${exampleGrid2}, ${exampleGrid3})`,
+      `grid.concat-rows(${exampleGrid2}, ${exampleGrid3})`,
     ],
   },
-  'grid:concat-cols': {
-    title: 'grid:concat-cols',
+  'grid.concat-cols': {
+    title: 'grid.concat-cols',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -598,11 +598,11 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Concatenates two grids `a` and `b` by columns. The number of rows in both grids must be the same.',
     examples: [
-      `grid:concat-cols(${exampleGrid1}, ${exampleGrid2})`,
+      `grid.concat-cols(${exampleGrid1}, ${exampleGrid2})`,
     ],
   },
-  'grid:map': {
-    title: 'grid:map',
+  'grid.map': {
+    title: 'grid.map',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -615,11 +615,11 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Maps a function `a` over each element of the grid `b`, returning a new grid with the results.',
     examples: [
-      `grid:map(${exampleGrid1}, str)`,
+      `grid.map(${exampleGrid1}, str)`,
     ],
   },
-  'grid:mapi': {
-    title: 'grid:mapi',
+  'grid.mapi': {
+    title: 'grid.mapi',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -632,11 +632,11 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Maps a function `a` over each element of the grid `b`, passing the row and column index as additional arguments to the function.',
     examples: [
-      `grid:mapi(${exampleGrid1}, -> $1 ++ "(" ++ $2 ++ ", " ++ $3 ++ ")")`,
+      `grid.mapi(${exampleGrid1}, -> $1 ++ "(" ++ $2 ++ ", " ++ $3 ++ ")")`,
     ],
   },
-  'grid:reduce': {
-    title: 'grid:reduce',
+  'grid.reduce': {
+    title: 'grid.reduce',
     category: 'Grid',
     returns: {
       type: 'any',
@@ -660,11 +660,11 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Reduces the grid `a` using the function `b`, returning a single value.',
     examples: [
-      `grid:reduce(${exampleGrid1}, ++, "")`,
+      `grid.reduce(${exampleGrid1}, ++, "")`,
     ],
   },
-  'grid:reducei': {
-    title: 'grid:reducei',
+  'grid.reducei': {
+    title: 'grid.reducei',
     category: 'Grid',
     returns: {
       type: 'any',
@@ -688,11 +688,11 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Reduces the grid `a` using the function `b`, passing the row and column indices as additional arguments to the function.',
     examples: [
-      `grid:reducei(${exampleGrid1}, ++, "")`,
+      `grid.reducei(${exampleGrid1}, ++, "")`,
     ],
   },
-  'grid:push-rows': {
-    title: 'grid:push-rows',
+  'grid.push-rows': {
+    title: 'grid.push-rows',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -713,12 +713,12 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Pushes the specified rows into the grid `g` and returns the new grid.',
     examples: [
-      `grid:push-rows(${exampleGrid1}, ["Nazanin", "mother", 40])`,
+      `grid.push-rows(${exampleGrid1}, ["Nazanin", "mother", 40])`,
     ],
     noOperatorDocumentation: true,
   },
-  'grid:unshift-rows': {
-    title: 'grid:unshift-rows',
+  'grid.unshift-rows': {
+    title: 'grid.unshift-rows',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -739,12 +739,12 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Unshifts the specified rows into the grid `g` and returns the new grid.',
     examples: [
-      `grid:unshift-rows(${exampleGrid1}, ["Nazanin", "mother", 40])`,
+      `grid.unshift-rows(${exampleGrid1}, ["Nazanin", "mother", 40])`,
     ],
     noOperatorDocumentation: true,
   },
-  'grid:pop-row': {
-    title: 'grid:pop-row',
+  'grid.pop-row': {
+    title: 'grid.pop-row',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -760,11 +760,11 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Pops the last row from the grid `g` and returns the new grid.',
     examples: [
-      `grid:pop-row(${exampleGrid1})`,
+      `grid.pop-row(${exampleGrid1})`,
     ],
   },
-  'grid:shift-row': {
-    title: 'grid:shift-row',
+  'grid.shift-row': {
+    title: 'grid.shift-row',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -780,11 +780,11 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Shifts the first row from the grid `g` and returns the new grid.',
     examples: [
-      `grid:shift-row(${exampleGrid1})`,
+      `grid.shift-row(${exampleGrid1})`,
     ],
   },
-  'grid:push-cols': {
-    title: 'grid:push-cols',
+  'grid.push-cols': {
+    title: 'grid.push-cols',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -805,12 +805,12 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Pushes the specified columns into the grid `g` and returns the new grid.',
     examples: [
-      `grid:push-cols(${exampleGrid1}, ["f", "m", "s"])`,
+      `grid.push-cols(${exampleGrid1}, ["f", "m", "s"])`,
     ],
     noOperatorDocumentation: true,
   },
-  'grid:unshift-cols': {
-    title: 'grid:unshift-cols',
+  'grid.unshift-cols': {
+    title: 'grid.unshift-cols',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -831,12 +831,12 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Unshifts the specified columns into the grid `g` and returns the new grid.',
     examples: [
-      `grid:unshift-cols(${exampleGrid1}, ["f", "m", "s"])`,
+      `grid.unshift-cols(${exampleGrid1}, ["f", "m", "s"])`,
     ],
     noOperatorDocumentation: true,
   },
-  'grid:pop-col': {
-    title: 'grid:pop-col',
+  'grid.pop-col': {
+    title: 'grid.pop-col',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -852,11 +852,11 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Pops the last column from the grid `g` and returns the new grid.',
     examples: [
-      `grid:pop-col(${exampleGrid1})`,
+      `grid.pop-col(${exampleGrid1})`,
     ],
   },
-  'grid:shift-col': {
-    title: 'grid:shift-col',
+  'grid.shift-col': {
+    title: 'grid.shift-col',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -872,11 +872,11 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Shifts the first column from the grid `g` and returns the new grid.',
     examples: [
-      `grid:shift-col(${exampleGrid1})`,
+      `grid.shift-col(${exampleGrid1})`,
     ],
   },
-  'grid:from-array': {
-    title: 'grid:from-array',
+  'grid.from-array': {
+    title: 'grid.from-array',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -889,8 +889,8 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Creates a grid from a flat array with specified dimensions. The array is reshaped into the specified number of rows, and the number of columns is automatically calculated based on the total number of elements in the array.',
     examples: [
-      'grid:from-array([1, 2, 3, 4], 2)',
-      'grid:from-array([1, 2, 3, 4], 4)',
+      'grid.from-array([1, 2, 3, 4], 2)',
+      'grid.from-array([1, 2, 3, 4], 4)',
     ],
   },
 }

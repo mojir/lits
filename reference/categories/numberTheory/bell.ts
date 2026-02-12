@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const bellReference: NumberTheorySequenceReference<'bell'> = {
-  'nth:bell-seq': {
-    title: 'nth:bell-seq',
+  'nth.bell-seq': {
+    title: 'nth.bell-seq',
     category: 'Number Theory',
     description: 'Generates the Bell sequence up to a specified length.',
     returns: {
@@ -20,13 +20,13 @@ export const bellReference: NumberTheorySequenceReference<'bell'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'nth:bell-seq(5)',
-      'nth:bell-seq(10)',
-      'nth:bell-seq()',
+      'nth.bell-seq(5)',
+      'nth.bell-seq(10)',
+      'nth.bell-seq()',
     ],
   },
-  'nth:bell-take-while': {
-    title: 'nth:bell-take-while',
+  'nth.bell-take-while': {
+    title: 'nth.bell-take-while',
     category: 'Number Theory',
     description: 'Generates the Bell sequence while a condition is met.',
     returns: {
@@ -43,11 +43,11 @@ export const bellReference: NumberTheorySequenceReference<'bell'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'nth:bell-take-while(-> $ < 1000)',
+      'nth.bell-take-while(-> $ < 1000)',
     ],
   },
-  'nth:bell-nth': {
-    title: 'nth:bell-nth',
+  'nth.bell-nth': {
+    title: 'nth.bell-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Bell sequence.',
     returns: {
@@ -63,12 +63,12 @@ export const bellReference: NumberTheorySequenceReference<'bell'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth:bell-nth(5)',
-      'nth:bell-nth(10)',
+      'nth.bell-nth(5)',
+      'nth.bell-nth(10)',
     ],
   },
-  'nth:bell?': {
-    title: 'nth:bell?',
+  'nth.bell?': {
+    title: 'nth.bell?',
     category: 'Number Theory',
     description: 'Checks if a number is in the Bell sequence.',
     returns: {
@@ -84,9 +84,9 @@ export const bellReference: NumberTheorySequenceReference<'bell'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth:bell?(1)',
-      'nth:bell?(27644437)',
-      'nth:bell?(27644436)',
+      'nth.bell?(1)',
+      'nth.bell?(27644437)',
+      'nth.bell?(27644436)',
     ],
   },
 }

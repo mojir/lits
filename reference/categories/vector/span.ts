@@ -2,8 +2,8 @@ import { getOperatorArgs } from '../../api'
 import type { VectorReductionReference } from '.'
 
 export const spanReference: VectorReductionReference<'span'> = {
-  'vec:span': {
-    title: 'vec:span',
+  'vec.span': {
+    title: 'vec.span',
     category: 'Vector',
     description: 'Calculates the **span** of a `vector`. Returns the difference between the maximum and minimum values.',
     returns: {
@@ -19,15 +19,15 @@ export const spanReference: VectorReductionReference<'span'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:span([1, 2, 3, 4])',
-      'vec:span([1, 2, 3, 4, 5])',
-      'vec:span([1])',
-      'vec:span([])',
+      'vec.span([1, 2, 3, 4])',
+      'vec.span([1, 2, 3, 4, 5])',
+      'vec.span([1])',
+      'vec.span([])',
     ],
   },
 
-  'vec:moving-span': {
-    title: 'vec:moving-span',
+  'vec.moving-span': {
+    title: 'vec.moving-span',
     category: 'Vector',
     description: 'Calculates the **moving span** of a `vector` with a given window size.',
     returns: {
@@ -48,13 +48,13 @@ export const spanReference: VectorReductionReference<'span'> = {
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'vec:moving-span([1, 2, 4, 7, 11, 16], 4)',
-      'vec:moving-span([1, 2, 4, 7, 11, 16], 5)',
-      'vec:moving-span([1, 2, 4, 7, 11, 16], 6)',
+      'vec.moving-span([1, 2, 4, 7, 11, 16], 4)',
+      'vec.moving-span([1, 2, 4, 7, 11, 16], 5)',
+      'vec.moving-span([1, 2, 4, 7, 11, 16], 6)',
     ],
   },
-  'vec:centered-moving-span': {
-    title: 'vec:centered-moving-span',
+  'vec.centered-moving-span': {
+    title: 'vec.centered-moving-span',
     category: 'Vector',
     description: 'Calculates the **centered moving span** of a `vector` with a given window size. The result is padded with `leftPadding` on the left and right.',
     returns: {
@@ -85,12 +85,12 @@ export const spanReference: VectorReductionReference<'span'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'vec:centered-moving-span([1, 2, 4, 7, 11, 16], 4)',
-      'vec:centered-moving-span([1, 2, 4, 7, 11, 16], 3, 0, 100)',
+      'vec.centered-moving-span([1, 2, 4, 7, 11, 16], 4)',
+      'vec.centered-moving-span([1, 2, 4, 7, 11, 16], 3, 0, 100)',
     ],
   },
-  'vec:running-span': {
-    title: 'vec:running-span',
+  'vec.running-span': {
+    title: 'vec.running-span',
     category: 'Vector',
     description: 'Calculates the **running span** of a `vector` with a given window size.',
     returns: {
@@ -106,7 +106,7 @@ export const spanReference: VectorReductionReference<'span'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:running-span([1, 2, 4])',
+      'vec.running-span([1, 2, 4])',
     ],
   },
 }

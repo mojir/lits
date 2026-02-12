@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const golombReference: NumberTheorySequenceReference<'golomb'> = {
-  'nth:golomb-seq': {
-    title: 'nth:golomb-seq',
+  'nth.golomb-seq': {
+    title: 'nth.golomb-seq',
     category: 'Number Theory',
     description: 'Generates the Golomb sequence up to a specified length.',
     returns: {
@@ -19,12 +19,12 @@ export const golombReference: NumberTheorySequenceReference<'golomb'> = {
       { argumentNames: ['length'] },
     ],
     examples: [
-      'nth:golomb-seq(5)',
-      'nth:golomb-seq(20)',
+      'nth.golomb-seq(5)',
+      'nth.golomb-seq(20)',
     ],
   },
-  'nth:golomb-take-while': {
-    title: 'nth:golomb-take-while',
+  'nth.golomb-take-while': {
+    title: 'nth.golomb-take-while',
     category: 'Number Theory',
     description: 'Generates the Golomb sequence while a condition is met.',
     returns: {
@@ -41,11 +41,11 @@ export const golombReference: NumberTheorySequenceReference<'golomb'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'nth:golomb-take-while(-> $ <= 10)',
+      'nth.golomb-take-while(-> $ <= 10)',
     ],
   },
-  'nth:golomb-nth': {
-    title: 'nth:golomb-nth',
+  'nth.golomb-nth': {
+    title: 'nth.golomb-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Golomb sequence.',
     returns: {
@@ -61,12 +61,12 @@ export const golombReference: NumberTheorySequenceReference<'golomb'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth:golomb-nth(5)',
-      'nth:golomb-nth(1000)',
+      'nth.golomb-nth(5)',
+      'nth.golomb-nth(1000)',
     ],
   },
-  'nth:golomb?': {
-    title: 'nth:golomb?',
+  'nth.golomb?': {
+    title: 'nth.golomb?',
     category: 'Number Theory',
     description: 'Checks if a number is in the Golomb sequence.',
     returns: {
@@ -82,10 +82,10 @@ export const golombReference: NumberTheorySequenceReference<'golomb'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth:golomb?(1)',
-      'nth:golomb?(2)',
-      'nth:golomb?(3345)',
-      'nth:golomb?(67867864)',
+      'nth.golomb?(1)',
+      'nth.golomb?(2)',
+      'nth.golomb?(3345)',
+      'nth.golomb?(67867864)',
     ],
   },
 }

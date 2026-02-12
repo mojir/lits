@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const recamanReference: NumberTheorySequenceReference<'recaman'> = {
-  'nth:recaman-seq': {
-    title: 'nth:recaman-seq',
+  'nth.recaman-seq': {
+    title: 'nth.recaman-seq',
     category: 'Number Theory',
     description: 'Generates the Recaman sequence up to a specified length.',
     returns: {
@@ -19,13 +19,13 @@ export const recamanReference: NumberTheorySequenceReference<'recaman'> = {
       { argumentNames: ['length'] },
     ],
     examples: [
-      'nth:recaman-seq(5)',
-      'nth:recaman-seq(10)',
-      'nth:recaman-seq(20)',
+      'nth.recaman-seq(5)',
+      'nth.recaman-seq(10)',
+      'nth.recaman-seq(20)',
     ],
   },
-  'nth:recaman-take-while': {
-    title: 'nth:recaman-take-while',
+  'nth.recaman-take-while': {
+    title: 'nth.recaman-take-while',
     category: 'Number Theory',
     description: 'Generates the Recaman sequence while a condition is met.',
     returns: {
@@ -42,11 +42,11 @@ export const recamanReference: NumberTheorySequenceReference<'recaman'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'nth:recaman-take-while(-> $ < 10)',
+      'nth.recaman-take-while(-> $ < 10)',
     ],
   },
-  'nth:recaman-nth': {
-    title: 'nth:recaman-nth',
+  'nth.recaman-nth': {
+    title: 'nth.recaman-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Recaman sequence.',
     returns: {
@@ -62,13 +62,13 @@ export const recamanReference: NumberTheorySequenceReference<'recaman'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth:recaman-nth(5)',
-      'nth:recaman-nth(10)',
-      'nth:recaman-nth(20)',
+      'nth.recaman-nth(5)',
+      'nth.recaman-nth(10)',
+      'nth.recaman-nth(20)',
     ],
   },
-  'nth:recaman?': {
-    title: 'nth:recaman?',
+  'nth.recaman?': {
+    title: 'nth.recaman?',
     category: 'Number Theory',
     description: 'Checks if a number is in the Recaman sequence.',
     returns: {
@@ -84,9 +84,9 @@ export const recamanReference: NumberTheorySequenceReference<'recaman'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth:recaman?(5)',
-      'nth:recaman?(10)',
-      'nth:recaman?(20)',
+      'nth.recaman?(5)',
+      'nth.recaman?(10)',
+      'nth.recaman?(20)',
     ],
   },
 }

@@ -2,8 +2,8 @@ import { getOperatorArgs } from '../../api'
 import type { VectorReductionReference } from '.'
 
 export const medianReference: VectorReductionReference<'median'> = {
-  'vec:median': {
-    title: 'vec:median',
+  'vec.median': {
+    title: 'vec.median',
     category: 'Vector',
     description: 'Returns the `median` of all elements in the `vector`.',
     returns: {
@@ -19,12 +19,12 @@ export const medianReference: VectorReductionReference<'median'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:median([1, 2, 3])',
-      'vec:median([1, 2, -3])',
+      'vec.median([1, 2, 3])',
+      'vec.median([1, 2, -3])',
     ],
   },
-  'vec:moving-median': {
-    title: 'vec:moving-median',
+  'vec.moving-median': {
+    title: 'vec.moving-median',
     category: 'Vector',
     description: 'Returns the **moving median** of the `vector` with a given window size.',
     returns: {
@@ -45,12 +45,12 @@ export const medianReference: VectorReductionReference<'median'> = {
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'vec:moving-median([1, 2, 3, 4, 5], 3)',
-      'vec:moving-median([1, 2, 3, 4, 5], 5)',
+      'vec.moving-median([1, 2, 3, 4, 5], 3)',
+      'vec.moving-median([1, 2, 3, 4, 5], 5)',
     ],
   },
-  'vec:centered-moving-median': {
-    title: 'vec:centered-moving-median',
+  'vec.centered-moving-median': {
+    title: 'vec.centered-moving-median',
     category: 'Vector',
     description: 'Returns the **centered moving median** of the `vector` with a given window size.',
     returns: {
@@ -81,13 +81,13 @@ export const medianReference: VectorReductionReference<'median'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'vec:centered-moving-median([1, 2, 3, 4, 5], 3)',
-      'vec:centered-moving-median([1, 2, 3, 4, 5], 3, 0, 10)',
-      'vec:centered-moving-median([1, 2, 3, 4, 5], 3, 10)',
+      'vec.centered-moving-median([1, 2, 3, 4, 5], 3)',
+      'vec.centered-moving-median([1, 2, 3, 4, 5], 3, 0, 10)',
+      'vec.centered-moving-median([1, 2, 3, 4, 5], 3, 10)',
     ],
   },
-  'vec:running-median': {
-    title: 'vec:running-median',
+  'vec.running-median': {
+    title: 'vec.running-median',
     category: 'Vector',
     description: 'Returns the **running median** of the `vector`.',
     returns: {
@@ -103,7 +103,7 @@ export const medianReference: VectorReductionReference<'median'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:running-median([1, 2, 3, 4, 5])',
+      'vec.running-median([1, 2, 3, 4, 5])',
     ],
   },
 }

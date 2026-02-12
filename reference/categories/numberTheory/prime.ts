@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const primeReference: NumberTheorySequenceReference<'prime'> = {
-  'nth:prime-seq': {
-    title: 'nth:prime-seq',
+  'nth.prime-seq': {
+    title: 'nth.prime-seq',
     category: 'Number Theory',
     description: 'Generates the prime sequence up to a specified length.',
     returns: {
@@ -19,13 +19,13 @@ export const primeReference: NumberTheorySequenceReference<'prime'> = {
       { argumentNames: ['length'] },
     ],
     examples: [
-      'nth:prime-seq(1)',
-      'nth:prime-seq(2)',
-      'nth:prime-seq(10)',
+      'nth.prime-seq(1)',
+      'nth.prime-seq(2)',
+      'nth.prime-seq(10)',
     ],
   },
-  'nth:prime-take-while': {
-    title: 'nth:prime-take-while',
+  'nth.prime-take-while': {
+    title: 'nth.prime-take-while',
     category: 'Number Theory',
     description: 'Generates the prime sequence while a condition is met.',
     returns: {
@@ -42,11 +42,11 @@ export const primeReference: NumberTheorySequenceReference<'prime'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'nth:prime-take-while(-> $ < 50)',
+      'nth.prime-take-while(-> $ < 50)',
     ],
   },
-  'nth:prime-nth': {
-    title: 'nth:prime-nth',
+  'nth.prime-nth': {
+    title: 'nth.prime-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the prime sequence.',
     returns: {
@@ -62,13 +62,13 @@ export const primeReference: NumberTheorySequenceReference<'prime'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth:prime-nth(1)',
-      'nth:prime-nth(2)',
-      'nth:prime-nth(10)',
+      'nth.prime-nth(1)',
+      'nth.prime-nth(2)',
+      'nth.prime-nth(10)',
     ],
   },
-  'nth:prime?': {
-    title: 'nth:prime?',
+  'nth.prime?': {
+    title: 'nth.prime?',
     category: 'Number Theory',
     description: 'Determines if a number is prime.',
     returns: {
@@ -84,12 +84,12 @@ export const primeReference: NumberTheorySequenceReference<'prime'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth:prime?(1)',
-      'nth:prime?(2)',
-      'nth:prime?(3)',
-      'nth:prime?(4)',
-      'nth:prime?(997)',
-      'nth:prime?(1001)',
+      'nth.prime?(1)',
+      'nth.prime?(2)',
+      'nth.prime?(3)',
+      'nth.prime?(4)',
+      'nth.prime?(997)',
+      'nth.prime?(1001)',
     ],
   },
 }

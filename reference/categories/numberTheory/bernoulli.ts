@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
-export const bernoulliReference: Omit<NumberTheorySequenceReference<'bernoulli'>, 'nth:bernoulli?'> = {
-  'nth:bernoulli-seq': {
-    title: 'nth:bernoulli-seq',
+export const bernoulliReference: Omit<NumberTheorySequenceReference<'bernoulli'>, 'nth.bernoulli?'> = {
+  'nth.bernoulli-seq': {
+    title: 'nth.bernoulli-seq',
     category: 'Number Theory',
     description: 'Generates the Bernoulli sequence up to a specified length.',
     returns: {
@@ -19,12 +19,12 @@ export const bernoulliReference: Omit<NumberTheorySequenceReference<'bernoulli'>
       { argumentNames: ['length'] },
     ],
     examples: [
-      'nth:bernoulli-seq(5)',
-      'nth:bernoulli-seq(10)',
+      'nth.bernoulli-seq(5)',
+      'nth.bernoulli-seq(10)',
     ],
   },
-  'nth:bernoulli-take-while': {
-    title: 'nth:bernoulli-take-while',
+  'nth.bernoulli-take-while': {
+    title: 'nth.bernoulli-take-while',
     category: 'Number Theory',
     description: 'Generates the Bernoulli sequence while a condition is met.',
     returns: {
@@ -41,11 +41,11 @@ export const bernoulliReference: Omit<NumberTheorySequenceReference<'bernoulli'>
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'nth:bernoulli-take-while(-> abs($) < 100)',
+      'nth.bernoulli-take-while(-> abs($) < 100)',
     ],
   },
-  'nth:bernoulli-nth': {
-    title: 'nth:bernoulli-nth',
+  'nth.bernoulli-nth': {
+    title: 'nth.bernoulli-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Bernoulli sequence.',
     returns: {
@@ -61,9 +61,9 @@ export const bernoulliReference: Omit<NumberTheorySequenceReference<'bernoulli'>
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth:bernoulli-nth(5)',
-      'nth:bernoulli-nth(10)',
-      'nth:bernoulli-nth(23)',
+      'nth.bernoulli-nth(5)',
+      'nth.bernoulli-nth(10)',
+      'nth.bernoulli-nth(23)',
     ],
   },
 }

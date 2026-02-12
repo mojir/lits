@@ -2,8 +2,8 @@ import { getOperatorArgs } from '../../api'
 import type { VectorReductionReference } from '.'
 
 export const giniCoefficientReference: VectorReductionReference<'gini-coefficient'> = {
-  'vec:gini-coefficient': {
-    title: 'vec:gini-coefficient',
+  'vec.gini-coefficient': {
+    title: 'vec.gini-coefficient',
     category: 'Vector',
     description: 'Returns the **gini coefficient** of all elements in the `vector`.',
     returns: {
@@ -19,12 +19,12 @@ export const giniCoefficientReference: VectorReductionReference<'gini-coefficien
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:gini-coefficient([1, 2, 3])',
-      'vec:gini-coefficient([1, 1, 3])',
+      'vec.gini-coefficient([1, 2, 3])',
+      'vec.gini-coefficient([1, 1, 3])',
     ],
   },
-  'vec:moving-gini-coefficient': {
-    title: 'vec:moving-gini-coefficient',
+  'vec.moving-gini-coefficient': {
+    title: 'vec.moving-gini-coefficient',
     category: 'Vector',
     description: 'Returns the **moving gini coefficient** of the `vector` with a given window size.',
     returns: {
@@ -45,12 +45,12 @@ export const giniCoefficientReference: VectorReductionReference<'gini-coefficien
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'vec:moving-gini-coefficient([1, 2, 3], 2)',
-      'vec:moving-gini-coefficient([1, 1, 3], 2)',
+      'vec.moving-gini-coefficient([1, 2, 3], 2)',
+      'vec.moving-gini-coefficient([1, 1, 3], 2)',
     ],
   },
-  'vec:centered-moving-gini-coefficient': {
-    title: 'vec:centered-moving-gini-coefficient',
+  'vec.centered-moving-gini-coefficient': {
+    title: 'vec.centered-moving-gini-coefficient',
     category: 'Vector',
     description: 'Returns the **centered moving gini coefficient** of the `vector` with a given window size.',
     returns: {
@@ -81,12 +81,12 @@ export const giniCoefficientReference: VectorReductionReference<'gini-coefficien
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'vec:centered-moving-gini-coefficient([1, 2, 3], 2)',
-      'vec:centered-moving-gini-coefficient([1, 1, 3], 2)',
+      'vec.centered-moving-gini-coefficient([1, 2, 3], 2)',
+      'vec.centered-moving-gini-coefficient([1, 1, 3], 2)',
     ],
   },
-  'vec:running-gini-coefficient': {
-    title: 'vec:running-gini-coefficient',
+  'vec.running-gini-coefficient': {
+    title: 'vec.running-gini-coefficient',
     category: 'Vector',
     description: 'Returns the **running gini coefficient** of the `vector`.',
     returns: {
@@ -102,8 +102,8 @@ export const giniCoefficientReference: VectorReductionReference<'gini-coefficien
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:running-gini-coefficient([1, 2, 3])',
-      'vec:running-gini-coefficient([1, 1, 3])',
+      'vec.running-gini-coefficient([1, 2, 3])',
+      'vec.running-gini-coefficient([1, 1, 3])',
     ],
   },
 }

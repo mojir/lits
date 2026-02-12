@@ -2,8 +2,8 @@ import { getOperatorArgs } from '../../api'
 import type { VectorReductionReference } from '.'
 
 export const maxReference: VectorReductionReference<'max'> = {
-  'vec:max': {
-    title: 'vec:max',
+  'vec.max': {
+    title: 'vec.max',
     category: 'Vector',
     description: 'Returns the `maximum` of all elements in the `vector`.',
     returns: {
@@ -19,12 +19,12 @@ export const maxReference: VectorReductionReference<'max'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:max([1, 2, 3])',
-      'vec:max([1, 2, -3])',
+      'vec.max([1, 2, 3])',
+      'vec.max([1, 2, -3])',
     ],
   },
-  'vec:moving-max': {
-    title: 'vec:moving-max',
+  'vec.moving-max': {
+    title: 'vec.moving-max',
     category: 'Vector',
     description: 'Returns the **moving maximum** of the `vector` with a given window size.',
     returns: {
@@ -45,12 +45,12 @@ export const maxReference: VectorReductionReference<'max'> = {
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'vec:moving-max([1, 2, 3, 4, 5], 3)',
-      'vec:moving-max([1, 2, 3, 4, 5], 5)',
+      'vec.moving-max([1, 2, 3, 4, 5], 3)',
+      'vec.moving-max([1, 2, 3, 4, 5], 5)',
     ],
   },
-  'vec:centered-moving-max': {
-    title: 'vec:centered-moving-max',
+  'vec.centered-moving-max': {
+    title: 'vec.centered-moving-max',
     category: 'Vector',
     description: 'Returns the **centered moving maximum** of the `vector` with a given window size.',
     returns: {
@@ -81,13 +81,13 @@ export const maxReference: VectorReductionReference<'max'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'vec:centered-moving-max([1, 2, 3, 4, 5], 3)',
-      'vec:centered-moving-max([1, 2, 3, 4, 5], 3, 0, 100)',
-      'vec:centered-moving-max([1, 2, 3, 4, 5], 3, 0)',
+      'vec.centered-moving-max([1, 2, 3, 4, 5], 3)',
+      'vec.centered-moving-max([1, 2, 3, 4, 5], 3, 0, 100)',
+      'vec.centered-moving-max([1, 2, 3, 4, 5], 3, 0)',
     ],
   },
-  'vec:running-max': {
-    title: 'vec:running-max',
+  'vec.running-max': {
+    title: 'vec.running-max',
     category: 'Vector',
     description: 'Returns the **running maximum** of the `vector`.',
     returns: {
@@ -103,8 +103,8 @@ export const maxReference: VectorReductionReference<'max'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:running-max([1, 2, 3])',
-      'vec:running-max([1, -2, -3])',
+      'vec.running-max([1, 2, 3])',
+      'vec.running-max([1, -2, -3])',
     ],
   },
 }

@@ -2,8 +2,8 @@ import { getOperatorArgs } from '../../api'
 import type { VectorReductionReference } from '.'
 
 export const varianceReference: VectorReductionReference<'variance'> = {
-  'vec:variance': {
-    title: 'vec:variance',
+  'vec.variance': {
+    title: 'vec.variance',
     category: 'Vector',
     description: 'Returns the `variance` of all elements in the `vector`.',
     returns: {
@@ -19,12 +19,12 @@ export const varianceReference: VectorReductionReference<'variance'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:variance([1, 2, 3])',
-      'vec:variance([1, 2, -3])',
+      'vec.variance([1, 2, 3])',
+      'vec.variance([1, 2, -3])',
     ],
   },
-  'vec:moving-variance': {
-    title: 'vec:moving-variance',
+  'vec.moving-variance': {
+    title: 'vec.moving-variance',
     category: 'Vector',
     description: 'Returns the **moving variance** of the `vector` with a given window size.',
     returns: {
@@ -45,12 +45,12 @@ export const varianceReference: VectorReductionReference<'variance'> = {
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'vec:moving-variance([1, 2, 3, 4, 5], 3)',
-      'vec:moving-variance([1, 2, 3, 4, 5], 5)',
+      'vec.moving-variance([1, 2, 3, 4, 5], 3)',
+      'vec.moving-variance([1, 2, 3, 4, 5], 5)',
     ],
   },
-  'vec:centered-moving-variance': {
-    title: 'vec:centered-moving-variance',
+  'vec.centered-moving-variance': {
+    title: 'vec.centered-moving-variance',
     category: 'Vector',
     description: 'Returns the **centered moving variance** of the `vector` with a given window size.',
     returns: {
@@ -81,15 +81,15 @@ export const varianceReference: VectorReductionReference<'variance'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      '[1, 2, 3, 4, 5] vec:centered-moving-variance 3',
-      'vec:centered-moving-variance([1, 2, 3, 4, 5], 3)',
-      'vec:centered-moving-variance([1, 2, 3, 4, 5], 3, 1)',
-      'vec:centered-moving-variance([1, 2, 3, 4, 5], 3, 1, 5)',
-      'vec:centered-moving-variance([1, 2, 3, 4, 5], 3, 0, 6)',
+      '[1, 2, 3, 4, 5] vec.centered-moving-variance 3',
+      'vec.centered-moving-variance([1, 2, 3, 4, 5], 3)',
+      'vec.centered-moving-variance([1, 2, 3, 4, 5], 3, 1)',
+      'vec.centered-moving-variance([1, 2, 3, 4, 5], 3, 1, 5)',
+      'vec.centered-moving-variance([1, 2, 3, 4, 5], 3, 0, 6)',
     ],
   },
-  'vec:running-variance': {
-    title: 'vec:running-variance',
+  'vec.running-variance': {
+    title: 'vec.running-variance',
     category: 'Vector',
     description: 'Returns the **running variance** of the `vector`.',
     returns: {
@@ -105,14 +105,14 @@ export const varianceReference: VectorReductionReference<'variance'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:running-variance([1, 2, 3, 4, 5])',
+      'vec.running-variance([1, 2, 3, 4, 5])',
     ],
   },
 }
 
 export const sampleVarianceReference: VectorReductionReference<'sample-variance'> = {
-  'vec:sample-variance': {
-    title: 'vec:sample-variance',
+  'vec.sample-variance': {
+    title: 'vec.sample-variance',
     category: 'Vector',
     description: 'Returns the `variance` of all elements in the `vector`.',
     returns: {
@@ -128,12 +128,12 @@ export const sampleVarianceReference: VectorReductionReference<'sample-variance'
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:sample-variance([1, 2, 3])',
-      'vec:sample-variance([1, 2, -3])',
+      'vec.sample-variance([1, 2, 3])',
+      'vec.sample-variance([1, 2, -3])',
     ],
   },
-  'vec:moving-sample-variance': {
-    title: 'vec:moving-sample-variance',
+  'vec.moving-sample-variance': {
+    title: 'vec.moving-sample-variance',
     category: 'Vector',
     description: 'Returns the **moving sample variance** of the `vector` with a given window size.',
     returns: {
@@ -154,12 +154,12 @@ export const sampleVarianceReference: VectorReductionReference<'sample-variance'
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'vec:moving-sample-variance([1, 2, 3, 4, 5], 3)',
-      'vec:moving-sample-variance([1, 2, 3, 4, 5], 5)',
+      'vec.moving-sample-variance([1, 2, 3, 4, 5], 3)',
+      'vec.moving-sample-variance([1, 2, 3, 4, 5], 5)',
     ],
   },
-  'vec:centered-moving-sample-variance': {
-    title: 'vec:centered-moving-sample-variance',
+  'vec.centered-moving-sample-variance': {
+    title: 'vec.centered-moving-sample-variance',
     category: 'Vector',
     description: 'Returns the **centered moving sample variance** of the `vector` with a given window size.',
     returns: {
@@ -190,15 +190,15 @@ export const sampleVarianceReference: VectorReductionReference<'sample-variance'
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      '[1, 2, 3, 4, 5] vec:centered-moving-sample-variance 3',
-      'vec:centered-moving-sample-variance([1, 2, 3, 4, 5], 3)',
-      'vec:centered-moving-sample-variance([1, 2, 3, 4, 5], 3, 1)',
-      'vec:centered-moving-sample-variance([1, 2, 3, 4, 5], 3, 1, 5)',
-      'vec:centered-moving-sample-variance([1, 2, 3, 4, 5], 3, 0, 6)',
+      '[1, 2, 3, 4, 5] vec.centered-moving-sample-variance 3',
+      'vec.centered-moving-sample-variance([1, 2, 3, 4, 5], 3)',
+      'vec.centered-moving-sample-variance([1, 2, 3, 4, 5], 3, 1)',
+      'vec.centered-moving-sample-variance([1, 2, 3, 4, 5], 3, 1, 5)',
+      'vec.centered-moving-sample-variance([1, 2, 3, 4, 5], 3, 0, 6)',
     ],
   },
-  'vec:running-sample-variance': {
-    title: 'vec:running-sample-variance',
+  'vec.running-sample-variance': {
+    title: 'vec.running-sample-variance',
     category: 'Vector',
     description: 'Returns the **running sample variance** of the `vector`.',
     returns: {
@@ -214,7 +214,7 @@ export const sampleVarianceReference: VectorReductionReference<'sample-variance'
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'vec:running-sample-variance([1, 2, 3, 4, 5])',
+      'vec.running-sample-variance([1, 2, 3, 4, 5])',
     ],
   },
 }

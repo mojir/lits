@@ -2,8 +2,8 @@ import type { FunctionReference } from '../..'
 import { type LinAlgApiName, getOperatorArgs } from '../../api'
 
 export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Algebra'>> = {
-  'lin:reflect': {
-    title: 'lin:reflect',
+  'lin.reflect': {
+    title: 'lin.reflect',
     category: 'Linear Algebra',
     description: 'Reflects a vector across a given axis.',
     returns: {
@@ -23,12 +23,12 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin:reflect([1, 2], [0, 1])',
-      'lin:reflect([1, 2, 3], [0, 0, 1])',
+      'lin.reflect([1, 2], [0, 1])',
+      'lin.reflect([1, 2, 3], [0, 0, 1])',
     ],
   },
-  'lin:refract': {
-    title: 'lin:refract',
+  'lin.refract': {
+    title: 'lin.refract',
     category: 'Linear Algebra',
     description: 'Refracts a vector across a given axis.',
     returns: {
@@ -52,12 +52,12 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['vector', 'axis', 'eta'] },
     ],
     examples: [
-      'lin:refract([1, 2], [0, 1], 1.5)',
-      'lin:refract([1, 2, 3], [0, 0, 1], 1.5)',
+      'lin.refract([1, 2], [0, 1], 1.5)',
+      'lin.refract([1, 2, 3], [0, 0, 1], 1.5)',
     ],
   },
-  'lin:lerp': {
-    title: 'lin:lerp',
+  'lin.lerp': {
+    title: 'lin.lerp',
     category: 'Linear Algebra',
     description: 'Performs linear interpolation between two vectors.',
     returns: {
@@ -81,14 +81,14 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b', 't'] },
     ],
     examples: [
-      'lin:lerp([1, 2], [3, 4], 0.5)',
-      'lin:lerp([1, 2], [3, 4], 2)',
-      'lin:lerp([1, 2], [3, 4], -1)',
-      'lin:lerp([1, 2, 3], [4, 5, 6], 0.25)',
+      'lin.lerp([1, 2], [3, 4], 0.5)',
+      'lin.lerp([1, 2], [3, 4], 2)',
+      'lin.lerp([1, 2], [3, 4], -1)',
+      'lin.lerp([1, 2, 3], [4, 5, 6], 0.25)',
     ],
   },
-  'lin:rotate2d': {
-    title: 'lin:rotate2d',
+  'lin.rotate2d': {
+    title: 'lin.rotate2d',
     category: 'Linear Algebra',
     description: 'Rotates a 2D vector by a given angle in radians.',
     returns: {
@@ -108,12 +108,12 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin:rotate2d([1, 0], PI / 2)',
-      'lin:rotate2d([0, 1], PI)',
+      'lin.rotate2d([1, 0], PI / 2)',
+      'lin.rotate2d([0, 1], PI)',
     ],
   },
-  'lin:rotate3d': {
-    title: 'lin:rotate3d',
+  'lin.rotate3d': {
+    title: 'lin.rotate3d',
     category: 'Linear Algebra',
     description: 'Rotates a 3D vector around a given axis by a given angle in radians.',
     returns: {
@@ -137,12 +137,12 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['v', 'axis', 'radians'] },
     ],
     examples: [
-      'lin:rotate3d([1, 0, 0], [0, 1, 0], PI / 2)',
-      'lin:rotate3d([0, 1, 0], [1, 0, 0], PI)',
+      'lin.rotate3d([1, 0, 0], [0, 1, 0], PI / 2)',
+      'lin.rotate3d([0, 1, 0], [1, 0, 0], PI)',
     ],
   },
-  'lin:dot': {
-    title: 'lin:dot',
+  'lin.dot': {
+    title: 'lin.dot',
     category: 'Linear Algebra',
     description: 'Calculates the dot product of two vectors. The result is a scalar.',
     returns: {
@@ -162,12 +162,12 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin:dot([1, 2], [3, 4])',
-      'lin:dot([1, 2, 3], [4, 5, 6])',
+      'lin.dot([1, 2], [3, 4])',
+      'lin.dot([1, 2, 3], [4, 5, 6])',
     ],
   },
-  'lin:cross': {
-    title: 'lin:cross',
+  'lin.cross': {
+    title: 'lin.cross',
     category: 'Linear Algebra',
     description: 'Calculates the cross product of two 3D vectors. The result is a vector perpendicular to both input vectors.',
     returns: {
@@ -187,15 +187,15 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin:cross([1, 2, 3], [4, 5, 6])',
-      'lin:cross([1, 0, 0], [0, 1, 0])',
-      'lin:cross([0, 0, 1], [1, 0, 0])',
-      'lin:cross([1, 2, 3], [0, 0, 0])',
-      'lin:cross([0, 0, 0], [1, 2, 3])',
+      'lin.cross([1, 2, 3], [4, 5, 6])',
+      'lin.cross([1, 0, 0], [0, 1, 0])',
+      'lin.cross([0, 0, 1], [1, 0, 0])',
+      'lin.cross([1, 2, 3], [0, 0, 0])',
+      'lin.cross([0, 0, 0], [1, 2, 3])',
     ],
   },
-  'lin:normalize-minmax': {
-    title: 'lin:normalize-minmax',
+  'lin.normalize-minmax': {
+    title: 'lin.normalize-minmax',
     category: 'Linear Algebra',
     description: 'Normalizes the vector using min-max normalization. The result is a vector with values between 0 and 1.',
     returns: {
@@ -211,15 +211,15 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['v'] },
     ],
     examples: [
-      'lin:normalize-minmax([1, 2, 3])',
-      'lin:normalize-minmax([1, 2, -3])',
-      'lin:normalize-minmax([1, 2, 3, 4])',
-      'lin:normalize-minmax([1, 2, -3, 4])',
-      'lin:normalize-minmax([1, 2, 3, 40, 50])',
+      'lin.normalize-minmax([1, 2, 3])',
+      'lin.normalize-minmax([1, 2, -3])',
+      'lin.normalize-minmax([1, 2, 3, 4])',
+      'lin.normalize-minmax([1, 2, -3, 4])',
+      'lin.normalize-minmax([1, 2, 3, 40, 50])',
     ],
   },
-  'lin:normalize-zscore': {
-    title: 'lin:normalize-zscore',
+  'lin.normalize-zscore': {
+    title: 'lin.normalize-zscore',
     category: 'Linear Algebra',
     description: 'Normalizes the vector using z-score normalization. The result is a vector with mean 0 and standard deviation 1.',
     returns: {
@@ -235,15 +235,15 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['v'] },
     ],
     examples: [
-      'lin:normalize-zscore([1, 2, 3])',
-      'lin:normalize-zscore([1, 2, -3])',
-      'lin:normalize-zscore([1, 2, 3, 4])',
-      'lin:normalize-zscore([1, 2, -3, 4])',
-      'lin:normalize-zscore([1, 2, 3, 40, 50])',
+      'lin.normalize-zscore([1, 2, 3])',
+      'lin.normalize-zscore([1, 2, -3])',
+      'lin.normalize-zscore([1, 2, 3, 4])',
+      'lin.normalize-zscore([1, 2, -3, 4])',
+      'lin.normalize-zscore([1, 2, 3, 40, 50])',
     ],
   },
-  'lin:normalize-robust': {
-    title: 'lin:normalize-robust',
+  'lin.normalize-robust': {
+    title: 'lin.normalize-robust',
     category: 'Linear Algebra',
     description: 'Normalizes the vector using robust normalization. The result is a vector with median 0 and median absolute deviation 1.',
     returns: {
@@ -259,15 +259,15 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['v'] },
     ],
     examples: [
-      'lin:normalize-robust([1, 2, 3])',
-      'lin:normalize-robust([1, 2, -3])',
-      'lin:normalize-robust([1, 2, 3, 4])',
-      'lin:normalize-robust([1, 2, -3, 4])',
-      'lin:normalize-robust([1, 2, 3, 40, 50])',
+      'lin.normalize-robust([1, 2, 3])',
+      'lin.normalize-robust([1, 2, -3])',
+      'lin.normalize-robust([1, 2, 3, 4])',
+      'lin.normalize-robust([1, 2, -3, 4])',
+      'lin.normalize-robust([1, 2, 3, 40, 50])',
     ],
   },
-  'lin:normalize-l1': {
-    title: 'lin:normalize-l1',
+  'lin.normalize-l1': {
+    title: 'lin.normalize-l1',
     category: 'Linear Algebra',
     description: 'Normalizes the vector using L1 normalization. The result is a vector with L1 norm equal to 1.',
     returns: {
@@ -283,15 +283,15 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['v'] },
     ],
     examples: [
-      'lin:normalize-l1([1, 2, 3])',
-      'lin:normalize-l1([1, 2, -3])',
-      'lin:normalize-l1([1, 2, 3, 4])',
-      'lin:normalize-l1([1, 2, -3, 4])',
-      'lin:normalize-l1([1, 2, 3, 40, 50])',
+      'lin.normalize-l1([1, 2, 3])',
+      'lin.normalize-l1([1, 2, -3])',
+      'lin.normalize-l1([1, 2, 3, 4])',
+      'lin.normalize-l1([1, 2, -3, 4])',
+      'lin.normalize-l1([1, 2, 3, 40, 50])',
     ],
   },
-  'lin:normalize-l2': {
-    title: 'lin:normalize-l2',
+  'lin.normalize-l2': {
+    title: 'lin.normalize-l2',
     category: 'Linear Algebra',
     description: 'Normalizes the vector using L2 normalization. The result is a vector with L2 norm equal to 1.',
     returns: {
@@ -307,20 +307,20 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['v'] },
     ],
     examples: [
-      'lin:normalize-l2([1, 2, 3])',
-      'lin:unit([1, 2, 3])',
-      'lin:normalize-l2([1, 2, -3])',
-      'lin:normalize-l2([1, 2, 3, 4])',
-      'lin:normalize-l2([1, 2, -3, 4])',
-      'lin:normalize-l2([1, 2, 3, 40, 50])',
+      'lin.normalize-l2([1, 2, 3])',
+      'lin.unit([1, 2, 3])',
+      'lin.normalize-l2([1, 2, -3])',
+      'lin.normalize-l2([1, 2, 3, 4])',
+      'lin.normalize-l2([1, 2, -3, 4])',
+      'lin.normalize-l2([1, 2, 3, 40, 50])',
     ],
     aliases: [
-      'lin:unit',
-      'lin:normalize',
+      'lin.unit',
+      'lin.normalize',
     ],
   },
-  'lin:normalize-log': {
-    title: 'lin:normalize-log',
+  'lin.normalize-log': {
+    title: 'lin.normalize-log',
     category: 'Linear Algebra',
     description: 'Normalizes the vector using natural log normalization. The result is a vector with log-transformed values.',
     returns: {
@@ -336,13 +336,13 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['v'] },
     ],
     examples: [
-      'lin:normalize-log([1, 2, 3])',
-      'lin:normalize-log([1, 2, 3, 4])',
-      'lin:normalize-log([1, 2, 3, 40, 50])',
+      'lin.normalize-log([1, 2, 3])',
+      'lin.normalize-log([1, 2, 3, 4])',
+      'lin.normalize-log([1, 2, 3, 40, 50])',
     ],
   },
-  'lin:angle': {
-    title: 'lin:angle',
+  'lin.angle': {
+    title: 'lin.angle',
     category: 'Linear Algebra',
     description: 'Calculates the `angle` between two vectors in radians.',
     returns: {
@@ -355,12 +355,12 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin:angle([1, 0], [0, 1])',
-      'lin:angle([1, 0, 1], [0, 1, 0])',
+      'lin.angle([1, 0], [0, 1])',
+      'lin.angle([1, 0, 1], [0, 1, 0])',
     ],
   },
-  'lin:projection': {
-    title: 'lin:projection',
+  'lin.projection': {
+    title: 'lin.projection',
     category: 'Linear Algebra',
     description: 'Calculates the **projection** of vector `a` onto vector `b`.',
     returns: {
@@ -373,12 +373,12 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin:projection([1, 2], [3, 4])',
-      'lin:projection([1, 2, 3], [4, 5, 6])',
+      'lin.projection([1, 2], [3, 4])',
+      'lin.projection([1, 2, 3], [4, 5, 6])',
     ],
   },
-  'lin:collinear?': {
-    title: 'lin:collinear?',
+  'lin.collinear?': {
+    title: 'lin.collinear?',
     category: 'Linear Algebra',
     description: 'Checks if two vectors are **collinear**.',
     returns: {
@@ -391,13 +391,13 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin:collinear?([1, 2], [2, 4])',
-      'lin:collinear?([1, 2], [-2, -4])',
-      'lin:collinear?([1, 2, 3], [2, 4, 6])',
+      'lin.collinear?([1, 2], [2, 4])',
+      'lin.collinear?([1, 2], [-2, -4])',
+      'lin.collinear?([1, 2, 3], [2, 4, 6])',
     ],
   },
-  'lin:parallel?': {
-    title: 'lin:parallel?',
+  'lin.parallel?': {
+    title: 'lin.parallel?',
     category: 'Linear Algebra',
     description: 'Checks if two vectors are **parallel**.',
     returns: {
@@ -410,14 +410,14 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin:parallel?([1, 2], [2, 4])',
-      'lin:parallel?([1, 2], [-2, -4])',
-      'lin:parallel?([1, 2, 3], [2, 4, 6])',
-      'lin:parallel?([1, 2], [3, 4])',
+      'lin.parallel?([1, 2], [2, 4])',
+      'lin.parallel?([1, 2], [-2, -4])',
+      'lin.parallel?([1, 2, 3], [2, 4, 6])',
+      'lin.parallel?([1, 2], [3, 4])',
     ],
   },
-  'lin:orthogonal?': {
-    title: 'lin:orthogonal?',
+  'lin.orthogonal?': {
+    title: 'lin.orthogonal?',
     category: 'Linear Algebra',
     returns: {
       type: 'boolean',
@@ -430,13 +430,13 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     ],
     description: 'Checks if two vectors are **orthogonal**.',
     examples: [
-      'lin:orthogonal?([1, 0], [0, 1])',
-      'lin:orthogonal?([1, 0, 1], [0, 1, 0])',
-      'lin:orthogonal?([1, 2], [2, -1])',
+      'lin.orthogonal?([1, 0], [0, 1])',
+      'lin.orthogonal?([1, 0, 1], [0, 1, 0])',
+      'lin.orthogonal?([1, 2], [2, -1])',
     ],
   },
-  'lin:cosine-similarity': {
-    title: 'lin:cosine-similarity',
+  'lin.cosine-similarity': {
+    title: 'lin.cosine-similarity',
     category: 'Linear Algebra',
     description: 'Calculates the **cosine similarity** between two vectors. The result is a value between -1 and 1.',
     returns: {
@@ -449,13 +449,13 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin:cosine-similarity([1, 2], [3, 4])',
-      'lin:cosine-similarity([1, 2, 3], [4, 5, 6])',
-      'lin:cosine-similarity([1, 0], [0, 1])',
+      'lin.cosine-similarity([1, 2], [3, 4])',
+      'lin.cosine-similarity([1, 2, 3], [4, 5, 6])',
+      'lin.cosine-similarity([1, 0], [0, 1])',
     ],
   },
-  'lin:euclidean-distance': {
-    title: 'lin:euclidean-distance',
+  'lin.euclidean-distance': {
+    title: 'lin.euclidean-distance',
     category: 'Linear Algebra',
     description: 'Calculates the **Euclidean distance** between two vectors. The result is a non-negative number.',
     returns: {
@@ -468,17 +468,17 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin:euclidean-distance([1, 2], [3, 4])',
-      'lin:euclidean-distance([1, 2, 3], [4, 5, 6])',
-      'lin:euclidean-distance([1, 0], [0, 1])',
+      'lin.euclidean-distance([1, 2], [3, 4])',
+      'lin.euclidean-distance([1, 2, 3], [4, 5, 6])',
+      'lin.euclidean-distance([1, 0], [0, 1])',
     ],
     aliases: [
-      'lin:distance',
-      'lin:l2-distance',
+      'lin.distance',
+      'lin.l2-distance',
     ],
   },
-  'lin:euclidean-norm': {
-    title: 'lin:euclidean-norm',
+  'lin.euclidean-norm': {
+    title: 'lin.euclidean-norm',
     category: 'Linear Algebra',
     description: 'Calculates the **Euclidean norm** (L2 norm) of a vector. The result is a non-negative number.',
     returns: {
@@ -494,17 +494,17 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['v'] },
     ],
     examples: [
-      'lin:euclidean-norm([1, 2])',
-      'lin:euclidean-norm([3, 4])',
-      'lin:euclidean-norm([1, 2, 3])',
+      'lin.euclidean-norm([1, 2])',
+      'lin.euclidean-norm([3, 4])',
+      'lin.euclidean-norm([1, 2, 3])',
     ],
     aliases: [
-      'lin:l2-norm',
-      'lin:length',
+      'lin.l2-norm',
+      'lin.length',
     ],
   },
-  'lin:manhattan-distance': {
-    title: 'lin:manhattan-distance',
+  'lin.manhattan-distance': {
+    title: 'lin.manhattan-distance',
     category: 'Linear Algebra',
     description: 'Calculates the **Manhattan distance** between two vectors. The result is a non-negative number.',
     returns: {
@@ -517,17 +517,17 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin:manhattan-distance([1, 2], [3, 4])',
-      'lin:manhattan-distance([1, 2, 3], [4, 5, 6])',
-      'lin:manhattan-distance([1, 0], [0, 1])',
+      'lin.manhattan-distance([1, 2], [3, 4])',
+      'lin.manhattan-distance([1, 2, 3], [4, 5, 6])',
+      'lin.manhattan-distance([1, 0], [0, 1])',
     ],
     aliases: [
-      'lin:l1-distance',
-      'lin:cityblock-distance',
+      'lin.l1-distance',
+      'lin.cityblock-distance',
     ],
   },
-  'lin:manhattan-norm': {
-    title: 'lin:manhattan-norm',
+  'lin.manhattan-norm': {
+    title: 'lin.manhattan-norm',
     category: 'Linear Algebra',
     description: 'Calculates the **Manhattan norm** (L1 norm) of a vector. The result is a non-negative number.',
     returns: {
@@ -543,17 +543,17 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['v'] },
     ],
     examples: [
-      'lin:manhattan-norm([1, 2])',
-      'lin:manhattan-norm([3, 4])',
-      'lin:manhattan-norm([1, 2, 3])',
+      'lin.manhattan-norm([1, 2])',
+      'lin.manhattan-norm([3, 4])',
+      'lin.manhattan-norm([1, 2, 3])',
     ],
     aliases: [
-      'lin:l1-norm',
-      'lin:cityblock-norm',
+      'lin.l1-norm',
+      'lin.cityblock-norm',
     ],
   },
-  'lin:hamming-distance': {
-    title: 'lin:hamming-distance',
+  'lin.hamming-distance': {
+    title: 'lin.hamming-distance',
     category: 'Linear Algebra',
     description: 'Calculates the **Hamming distance** between two vectors. The result is a non-negative integer.',
     returns: {
@@ -566,13 +566,13 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin:hamming-distance([1, 2], [3, 4])',
-      'lin:hamming-distance([1, 2, 3], [4, 5, 6])',
-      'lin:hamming-distance([1, 0], [0, 1])',
+      'lin.hamming-distance([1, 2], [3, 4])',
+      'lin.hamming-distance([1, 2, 3], [4, 5, 6])',
+      'lin.hamming-distance([1, 0], [0, 1])',
     ],
   },
-  'lin:hamming-norm': {
-    title: 'lin:hamming-norm',
+  'lin.hamming-norm': {
+    title: 'lin.hamming-norm',
     category: 'Linear Algebra',
     description: 'Calculates the **Hamming norm** of a vector. The result is a non-negative integer.',
     returns: {
@@ -588,13 +588,13 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['v'] },
     ],
     examples: [
-      'lin:hamming-norm([1, 2])',
-      'lin:hamming-norm([3, 4])',
-      'lin:hamming-norm([1, 2, 3])',
+      'lin.hamming-norm([1, 2])',
+      'lin.hamming-norm([3, 4])',
+      'lin.hamming-norm([1, 2, 3])',
     ],
   },
-  'lin:chebyshev-distance': {
-    title: 'lin:chebyshev-distance',
+  'lin.chebyshev-distance': {
+    title: 'lin.chebyshev-distance',
     category: 'Linear Algebra',
     description: 'Calculates the **Chebyshev distance** between two vectors. The result is a non-negative number.',
     returns: {
@@ -607,13 +607,13 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin:chebyshev-distance([1, 2], [3, 4])',
-      'lin:chebyshev-distance([1, 2, 3], [4, 5, 6])',
-      'lin:chebyshev-distance([1, 0], [0, 1])',
+      'lin.chebyshev-distance([1, 2], [3, 4])',
+      'lin.chebyshev-distance([1, 2, 3], [4, 5, 6])',
+      'lin.chebyshev-distance([1, 0], [0, 1])',
     ],
   },
-  'lin:chebyshev-norm': {
-    title: 'lin:chebyshev-norm',
+  'lin.chebyshev-norm': {
+    title: 'lin.chebyshev-norm',
     category: 'Linear Algebra',
     description: 'Calculates the **Chebyshev norm** of a vector. The result is a non-negative number.',
     returns: {
@@ -629,13 +629,13 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['v'] },
     ],
     examples: [
-      'lin:chebyshev-norm([1, 2])',
-      'lin:chebyshev-norm([3, 4])',
-      'lin:chebyshev-norm([1, 2, 3])',
+      'lin.chebyshev-norm([1, 2])',
+      'lin.chebyshev-norm([3, 4])',
+      'lin.chebyshev-norm([1, 2, 3])',
     ],
   },
-  'lin:minkowski-distance': {
-    title: 'lin:minkowski-distance',
+  'lin.minkowski-distance': {
+    title: 'lin.minkowski-distance',
     category: 'Linear Algebra',
     description: 'Calculates the **Minkowski distance** between two vectors. The result is a non-negative number.',
     returns: {
@@ -652,13 +652,13 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b', 'p'] },
     ],
     examples: [
-      'lin:minkowski-distance([1, 2], [3, 4], 2)',
-      'lin:minkowski-distance([1, 2, 3], [4, 5, 6], 3)',
-      'lin:minkowski-distance([1, 0], [0, 1], 1)',
+      'lin.minkowski-distance([1, 2], [3, 4], 2)',
+      'lin.minkowski-distance([1, 2, 3], [4, 5, 6], 3)',
+      'lin.minkowski-distance([1, 0], [0, 1], 1)',
     ],
   },
-  'lin:minkowski-norm': {
-    title: 'lin:minkowski-norm',
+  'lin.minkowski-norm': {
+    title: 'lin.minkowski-norm',
     category: 'Linear Algebra',
     description: 'Calculates the **Minkowski norm** of a vector. The result is a non-negative number.',
     returns: {
@@ -678,13 +678,13 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin:minkowski-norm([1, 2], 2)',
-      'lin:minkowski-norm([3, 4], 3)',
-      'lin:minkowski-norm([1, 2, 3], 4)',
+      'lin.minkowski-norm([1, 2], 2)',
+      'lin.minkowski-norm([3, 4], 3)',
+      'lin.minkowski-norm([1, 2, 3], 4)',
     ],
   },
-  'lin:cov': {
-    title: 'lin:cov',
+  'lin.cov': {
+    title: 'lin.cov',
     category: 'Linear Algebra',
     description: 'Calculates the **covariance** between two vectors. The result is a number.',
     returns: {
@@ -697,13 +697,13 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin:cov([1, 2], [3, 4])',
-      'lin:cov([1, 2, 3], [4, 5, 6])',
-      'lin:cov([1, 0], [0, 1])',
+      'lin.cov([1, 2], [3, 4])',
+      'lin.cov([1, 2, 3], [4, 5, 6])',
+      'lin.cov([1, 0], [0, 1])',
     ],
   },
-  'lin:corr': {
-    title: 'lin:corr',
+  'lin.corr': {
+    title: 'lin.corr',
     category: 'Linear Algebra',
     description: 'Calculates the **correlation** between two vectors. The result is a number between -1 and 1.',
     returns: {
@@ -716,13 +716,13 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin:corr([1, 2], [3, 4])',
-      'lin:corr([1, 2, 3], [4, 5, 6])',
-      'lin:corr([1, 0], [0, 1])',
+      'lin.corr([1, 2], [3, 4])',
+      'lin.corr([1, 2, 3], [4, 5, 6])',
+      'lin.corr([1, 0], [0, 1])',
     ],
   },
-  'lin:spearman-corr': {
-    title: 'lin:spearman-corr',
+  'lin.spearman-corr': {
+    title: 'lin.spearman-corr',
     category: 'Linear Algebra',
     description: 'Calculates the **Spearman rank correlation** between two vectors. The result is a number between -1 and 1.',
     returns: {
@@ -735,14 +735,14 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin:spearman-corr([1, 2], [3, 4])',
-      'lin:spearman-corr([1, 2, 3], [4, 5, 6])',
-      'lin:spearman-corr([1, 0], [0, 1])',
+      'lin.spearman-corr([1, 2], [3, 4])',
+      'lin.spearman-corr([1, 2, 3], [4, 5, 6])',
+      'lin.spearman-corr([1, 0], [0, 1])',
     ],
-    aliases: ['lin:spearman-rho'],
+    aliases: ['lin.spearman-rho'],
   },
-  'lin:pearson-corr': {
-    title: 'lin:pearson-corr',
+  'lin.pearson-corr': {
+    title: 'lin.pearson-corr',
     category: 'Linear Algebra',
     description: 'Calculates the **Pearson correlation** between two vectors. The result is a number between -1 and 1.',
     returns: {
@@ -755,13 +755,13 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin:pearson-corr([1, 2], [3, 4])',
-      'lin:pearson-corr([1, 2, 3], [4, 5, 6])',
-      'lin:pearson-corr([1, 0], [0, 1])',
+      'lin.pearson-corr([1, 2], [3, 4])',
+      'lin.pearson-corr([1, 2, 3], [4, 5, 6])',
+      'lin.pearson-corr([1, 0], [0, 1])',
     ],
   },
-  'lin:kendall-tau': {
-    title: 'lin:kendall-tau',
+  'lin.kendall-tau': {
+    title: 'lin.kendall-tau',
     category: 'Linear Algebra',
     description: 'Calculates the **Kendall Tau** rank correlation coefficient between two vectors. The result is a number between -1 and 1.',
     returns: {
@@ -774,13 +774,13 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin:kendall-tau([1, 2], [3, 4])',
-      'lin:kendall-tau([1, 2, 3], [4, 5, 6])',
-      'lin:kendall-tau([1, 0], [0, 1])',
+      'lin.kendall-tau([1, 2], [3, 4])',
+      'lin.kendall-tau([1, 2, 3], [4, 5, 6])',
+      'lin.kendall-tau([1, 0], [0, 1])',
     ],
   },
-  'lin:autocorrelation': {
-    title: 'lin:autocorrelation',
+  'lin.autocorrelation': {
+    title: 'lin.autocorrelation',
     category: 'Linear Algebra',
     description: 'Calculates the **autocorrelation** of a vector. The result is a vector of autocorrelation coefficients.',
     returns: {
@@ -800,16 +800,16 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'lin:autocorrelation([1, 2, 3], -2)',
-      'lin:autocorrelation([1, 2, 3], -1)',
-      'lin:autocorrelation([1, 2, 3], 0)',
-      'lin:autocorrelation([1, 2, 3], 1)',
-      'lin:autocorrelation([1, 2, 3], 2)',
+      'lin.autocorrelation([1, 2, 3], -2)',
+      'lin.autocorrelation([1, 2, 3], -1)',
+      'lin.autocorrelation([1, 2, 3], 0)',
+      'lin.autocorrelation([1, 2, 3], 1)',
+      'lin.autocorrelation([1, 2, 3], 2)',
     ],
-    aliases: ['lin:acf'],
+    aliases: ['lin.acf'],
   },
-  'lin:cross-correlation': {
-    title: 'lin:cross-correlation',
+  'lin.cross-correlation': {
+    title: 'lin.cross-correlation',
     category: 'Linear Algebra',
     description: 'Calculates the **cross-correlation** between two vectors. The result is a vector of cross-correlation coefficients.',
     returns: {
@@ -826,16 +826,16 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b', 'lag'] },
     ],
     examples: [
-      'lin:cross-correlation([1, 2, 3], [4, 5, 6], -2)',
-      'lin:cross-correlation([1, 2, 3], [4, 5, 6], -1)',
-      'lin:cross-correlation([1, 2, 3], [4, 5, 6], 0)',
-      'lin:cross-correlation([1, 2, 3], [4, 5, 6], 1)',
-      'lin:cross-correlation([1, 2, 3], [4, 5, 6], 2)',
+      'lin.cross-correlation([1, 2, 3], [4, 5, 6], -2)',
+      'lin.cross-correlation([1, 2, 3], [4, 5, 6], -1)',
+      'lin.cross-correlation([1, 2, 3], [4, 5, 6], 0)',
+      'lin.cross-correlation([1, 2, 3], [4, 5, 6], 1)',
+      'lin.cross-correlation([1, 2, 3], [4, 5, 6], 2)',
     ],
-    aliases: ['lin:ccf'],
+    aliases: ['lin.ccf'],
   },
-  'lin:rref': {
-    title: 'lin:rref',
+  'lin.rref': {
+    title: 'lin.rref',
     category: 'Linear Algebra',
     description: 'Calculates the **Reduced Row Echelon Form** (RREF) of a matrix.',
     returns: {
@@ -851,13 +851,13 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['m'] },
     ],
     examples: [
-      'lin:rref([[1, 2], [3, 4]])',
-      'lin:rref([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
-      'lin:rref([[1, 2, 3], [7, 8, 9], [4, 5, 7]])',
+      'lin.rref([[1, 2], [3, 4]])',
+      'lin.rref([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+      'lin.rref([[1, 2, 3], [7, 8, 9], [4, 5, 7]])',
     ],
   },
-  'lin:solve': {
-    title: 'lin:solve',
+  'lin.solve': {
+    title: 'lin.solve',
     category: 'Linear Algebra',
     description: 'Solves a system of linear equations represented by a matrix and a vector.',
     returns: {
@@ -870,18 +870,18 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      `lin:solve([
+      `lin.solve([
   [2, 1, -1, 1], 
   [4, 5, -3, 2], 
   [6, -2, 5, -3], 
   [8, 3, 2, 4]
 ], [5, 10, 2, 17])`,
-      'lin:solve([[2, 0, 0], [3, 1, 0], [4, 5, 6]], [4, 5, 38])',
-      'lin:solve([[2, 3], [1, -1]], [8, 2])',
+      'lin.solve([[2, 0, 0], [3, 1, 0], [4, 5, 6]], [4, 5, 38])',
+      'lin.solve([[2, 3], [1, -1]], [8, 2])',
     ],
   },
-  'lin:to-polar': {
-    title: 'lin:to-polar',
+  'lin.to-polar': {
+    title: 'lin.to-polar',
     category: 'Linear Algebra',
     description: 'Converts a 2D vector to polar coordinates.',
     returns: {
@@ -897,12 +897,12 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'lin:to-polar([1, 2])',
-      'lin:to-polar([3, 4])',
+      'lin.to-polar([1, 2])',
+      'lin.to-polar([3, 4])',
     ],
   },
-  'lin:from-polar': {
-    title: 'lin:from-polar',
+  'lin.from-polar': {
+    title: 'lin.from-polar',
     category: 'Linear Algebra',
     description: 'Converts polar coordinates to a 2D vector.',
     returns: {
@@ -918,9 +918,9 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['polar'] },
     ],
     examples: [
-      'lin:from-polar([1, PI / 4])',
-      'lin:from-polar([1, 0])',
-      'lin:from-polar([1, -PI / 2])',
+      'lin.from-polar([1, PI / 4])',
+      'lin.from-polar([1, 0])',
+      'lin.from-polar([1, -PI / 2])',
     ],
   },
 }

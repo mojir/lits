@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const mersenneReference: NumberTheorySequenceReference<'mersenne'> = {
-  'nth:mersenne-seq': {
-    title: 'nth:mersenne-seq',
+  'nth.mersenne-seq': {
+    title: 'nth.mersenne-seq',
     category: 'Number Theory',
     description: 'Generates the Mersenne sequence up to a specified length.',
     returns: {
@@ -20,13 +20,13 @@ export const mersenneReference: NumberTheorySequenceReference<'mersenne'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'nth:mersenne-seq(1)',
-      'nth:mersenne-seq(5)',
-      'nth:mersenne-seq()',
+      'nth.mersenne-seq(1)',
+      'nth.mersenne-seq(5)',
+      'nth.mersenne-seq()',
     ],
   },
-  'nth:mersenne-take-while': {
-    title: 'nth:mersenne-take-while',
+  'nth.mersenne-take-while': {
+    title: 'nth.mersenne-take-while',
     category: 'Number Theory',
     description: 'Generates the Mersenne sequence while a condition is met.',
     returns: {
@@ -43,11 +43,11 @@ export const mersenneReference: NumberTheorySequenceReference<'mersenne'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'nth:mersenne-take-while(-> $ < 1000)',
+      'nth.mersenne-take-while(-> $ < 1000)',
     ],
   },
-  'nth:mersenne-nth': {
-    title: 'nth:mersenne-nth',
+  'nth.mersenne-nth': {
+    title: 'nth.mersenne-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Mersenne sequence.',
     returns: {
@@ -63,12 +63,12 @@ export const mersenneReference: NumberTheorySequenceReference<'mersenne'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth:mersenne-nth(1)',
-      'nth:mersenne-nth(5)',
+      'nth.mersenne-nth(1)',
+      'nth.mersenne-nth(5)',
     ],
   },
-  'nth:mersenne?': {
-    title: 'nth:mersenne?',
+  'nth.mersenne?': {
+    title: 'nth.mersenne?',
     category: 'Number Theory',
     description: 'Checks if a number is in the Mersenne sequence.',
     returns: {
@@ -84,9 +84,9 @@ export const mersenneReference: NumberTheorySequenceReference<'mersenne'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'nth:mersenne?(3)',
-      'nth:mersenne?(4)',
-      'nth:mersenne?(7)',
+      'nth.mersenne?(3)',
+      'nth.mersenne?(4)',
+      'nth.mersenne?(7)',
     ],
   },
 }

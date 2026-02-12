@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
-export const jugglerReference: Omit<NumberTheorySequenceReference<'juggler'>, 'nth:juggler-take-while' | 'nth:juggler-nth' | 'nth:juggler?'> = {
-  'nth:juggler-seq': {
-    title: 'nth:juggler-seq',
+export const jugglerReference: Omit<NumberTheorySequenceReference<'juggler'>, 'nth.juggler-take-while' | 'nth.juggler-nth' | 'nth.juggler?'> = {
+  'nth.juggler-seq': {
+    title: 'nth.juggler-seq',
     category: 'Number Theory',
     description: 'Generates the Juggler sequence starting from a given integer.',
     returns: {
@@ -19,8 +19,8 @@ export const jugglerReference: Omit<NumberTheorySequenceReference<'juggler'>, 'n
       { argumentNames: ['start'] },
     ],
     examples: [
-      'nth:juggler-seq(3)',
-      'nth:juggler-seq(5)',
+      'nth.juggler-seq(3)',
+      'nth.juggler-seq(5)',
     ],
   },
 }
