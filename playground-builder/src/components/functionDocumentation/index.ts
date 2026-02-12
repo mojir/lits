@@ -1,5 +1,6 @@
 import { apiReference, getLinkName, isCustomReference, isFunctionReference } from '../../../../reference'
 import type { CustomReference, FunctionReference, Reference } from '../../../../reference'
+import { isCoreApiName } from '../../../../reference/api'
 import { styles } from '../../styles'
 import { formatLitsExpression } from '../../formatter/rules'
 import { formatDescription } from './description'
@@ -19,7 +20,10 @@ function getDocumentation(reference: Reference) {
   const aliases = isFunctionReference(reference) ? reference.aliases : undefined
   const docTitle = `${escapeTitle(reference.title)}${aliases ? `, ${aliases.join(', ')}` : ''}`
 
-  const functionReferences = reference.seeAlso?.map(apiName => apiReference[apiName])
+  // Filter out namespace references that aren't available in core
+  const functionReferences = reference.seeAlso
+    ?.filter(apiName => isCoreApiName(apiName))
+    .map(apiName => apiReference[apiName])
 
   return `
   <div id="${getLinkName(reference)}" class="content function">

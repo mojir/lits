@@ -564,7 +564,8 @@ export type VectorApiName = typeof api.vector[number]
 export type LinAlgApiName = typeof api.linAlg[number]
 export type RandomApiName = typeof api.random[number]
 
-export type NormalExpressionName =
+// Core functions - always available without import
+export type CoreNormalExpressionName =
   | CollectionApiName
   | ArrayApiName
   | SequenceApiName
@@ -578,12 +579,20 @@ export type NormalExpressionName =
   | StringApiName
   | BitwiseApiName
   | AssertApiName
+
+// Namespace functions - require import()
+export type NamespaceExpressionName =
   | MatrixApiName
   | VectorApiName
   | LinAlgApiName
   | GridApiName
   | NumberTheoryApiName
   | RandomApiName
+
+// All normal expression names
+export type NormalExpressionName =
+  | CoreNormalExpressionName
+  | NamespaceExpressionName
 
 export type FunctionName =
   | NormalExpressionName
@@ -593,7 +602,8 @@ export type ShorthandName = typeof api.shorthand[number]
 
 export type DatatypeName = typeof api.datatype[number]
 
-const apiFunctionNames = [
+// Core API function names (always available)
+const coreApiFunctionNames = [
   ...api.collection,
   ...api.array,
   ...api.sequence,
@@ -607,6 +617,10 @@ const apiFunctionNames = [
   ...api.string,
   ...api.bitwise,
   ...api.assert,
+] as const
+
+// Namespace API function names (require import())
+const namespaceApiFunctionNames = [
   ...api.matrix,
   ...api.vector,
   ...api.linAlg,
@@ -615,16 +629,34 @@ const apiFunctionNames = [
   ...api.random,
 ] as const
 
+// All API function names
+const apiFunctionNames = [
+  ...coreApiFunctionNames,
+  ...namespaceApiFunctionNames,
+] as const
+
+// Core API names (core functions + shorthand + datatype)
+const coreApiNames = [
+  ...coreApiFunctionNames,
+  ...api.shorthand,
+  ...api.datatype,
+] as const
+
 const apiNames = [
   ...apiFunctionNames,
   ...api.shorthand,
   ...api.datatype,
 ] as const
 
+export type CoreApiName = typeof coreApiNames[number]
 export type ApiName = typeof apiNames[number]
 
 export function isApiName(arg: string): arg is ApiName {
   return apiNames.includes(arg as ApiName)
+}
+
+export function isCoreApiName(arg: string): arg is CoreApiName {
+  return coreApiNames.includes(arg as CoreApiName)
 }
 
 export const categoryRecord = {

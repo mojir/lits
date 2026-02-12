@@ -4,29 +4,34 @@ import { normalExpressions } from '../src/builtin/normalExpressions'
 import { specialExpressionTypes } from '../src/builtin/specialExpressionTypes'
 import { isSymbolicOperator } from '../src/tokenizer/operators'
 import { canBeOperator } from '../src/utils/arity'
-import type { ApiName, Category, DataType, NormalExpressionName } from './api'
+import type { ApiName, Category, CoreApiName, CoreNormalExpressionName, DataType } from './api'
+
+// Core categories
 import { arrayReference } from './categories/array'
 import { assertReference } from './categories/assert'
 import { bitwiseReference } from './categories/bitwise'
 import { collectionReference } from './categories/collection'
 import { functionalReference } from './categories/functional'
-import { gridReference } from './categories/grid'
-import { linAlgReference } from './categories/linearAlgebra'
 import { mathReference } from './categories/math'
-import { matrixReference } from './categories/matrix'
 import { metaReference } from './categories/meta'
 import { miscReference } from './categories/misc'
-import { numberTheoryReference } from './categories/numberTheory'
 import { objectReference } from './categories/object'
 import { predicateReference } from './categories/predicate'
-import { randomReference } from './categories/random'
 import { regularExpressionReference } from './categories/regularExpression'
 import { sequenceReference } from './categories/sequence'
 import { specialExpressionsReference } from './categories/specialExpressions'
 import { stringReference } from './categories/string'
-import { vectorReference } from './categories/vector'
 import { datatype } from './datatype'
 import { shorthand } from './shorthand'
+
+// TODO: Phase 1 - Namespaces commented out for refactoring
+// These will require import() to use
+// import { gridReference } from './categories/grid'
+// import { linAlgReference } from './categories/linearAlgebra'
+// import { matrixReference } from './categories/matrix'
+// import { numberTheoryReference } from './categories/numberTheory'
+// import { vectorReference } from './categories/vector'
+// import { randomReference } from './categories/random'
 
 export interface TypedValue {
   type: DataType[] | DataType
@@ -92,7 +97,9 @@ export function isDatatypeReference<T extends Category>(ref: Reference<T>): ref 
   return 'datatype' in ref
 }
 
-export const normalExpressionReference: Record<NormalExpressionName, FunctionReference> = {
+export const normalExpressionReference: Record<CoreNormalExpressionName, FunctionReference> = {
+  // Core categories
+  ...bitwiseReference,
   ...collectionReference,
   ...arrayReference,
   ...sequenceReference,
@@ -100,18 +107,20 @@ export const normalExpressionReference: Record<NormalExpressionName, FunctionRef
   ...functionalReference,
   ...metaReference,
   ...miscReference,
+  ...assertReference,
   ...objectReference,
   ...predicateReference,
   ...regularExpressionReference,
   ...stringReference,
-  ...bitwiseReference,
-  ...assertReference,
-  ...vectorReference,
-  ...linAlgReference,
-  ...matrixReference,
-  ...numberTheoryReference,
-  ...gridReference,
-  ...randomReference,
+
+  // TODO: Phase 1 - Namespaces commented out for refactoring
+  // These will require import() to use
+  // ...vectorReference,
+  // ...linAlgReference,
+  // ...matrixReference,
+  // ...numberTheoryReference,
+  // ...gridReference,
+  // ...randomReference,
 }
 
 Object.entries(normalExpressionReference).forEach(([key, obj]) => {
@@ -141,7 +150,7 @@ export const functionReference = {
   ...specialExpressionsReference,
 }
 
-export const apiReference: Record<ApiName, Reference> = { ...functionReference, ...shorthand, ...datatype }
+export const apiReference: Record<CoreApiName, Reference> = { ...functionReference, ...shorthand, ...datatype }
 
 Object.values(apiReference).forEach((ref) => {
   ref.title = ref.title.replace(/"/g, '&quot;')

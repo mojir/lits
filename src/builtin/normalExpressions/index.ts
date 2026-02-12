@@ -1,7 +1,9 @@
 import type { BuiltinNormalExpression, BuiltinNormalExpressions } from '../interface'
 import type { Any } from '../../interface'
 import type { FunctionReference } from '../../../reference'
-import type { NormalExpressionName } from '../../../reference/api'
+import type { CoreNormalExpressionName } from '../../../reference/api'
+
+// Core categories - always available
 import { bitwiseNormalExpression } from './categories/bitwise'
 import { collectionNormalExpression } from './categories/collection'
 import { arrayNormalExpression } from './categories/array'
@@ -14,21 +16,25 @@ import { predicatesNormalExpression } from './categories/predicates'
 import { regexpNormalExpression } from './categories/regexp'
 import { stringNormalExpression } from './categories/string'
 import { functionalNormalExpression } from './categories/functional'
-import { gridNormalExpression } from './categories/namespaces/grid'
-import { vectorNormalExpression } from './categories/namespaces/vector'
-import { linearAlgebraNormalExpression } from './categories/namespaces/linearAlgebra'
-import { matrixNormalExpression } from './categories/namespaces/matrix'
-import { combinatoricalNormalExpression } from './categories/namespaces/numberTheory'
-import { randomNormalExpression } from './categories/namespaces/random'
 import { getMetaNormalExpression } from './categories/meta'
+
+// TODO: Phase 1 - Namespaces commented out for refactoring
+// These will require import() to use
+// import { gridNormalExpression } from './categories/namespaces/grid'
+// import { vectorNormalExpression } from './categories/namespaces/vector'
+// import { linearAlgebraNormalExpression } from './categories/namespaces/linearAlgebra'
+// import { matrixNormalExpression } from './categories/namespaces/matrix'
+// import { combinatoricalNormalExpression } from './categories/namespaces/numberTheory'
+// import { randomNormalExpression } from './categories/namespaces/random'
 
 const normalExpressionReference: Record<string, FunctionReference> = {}
 
-export function setNormalExpressionReference(reference: Record<NormalExpressionName, FunctionReference>) {
+export function setNormalExpressionReference(reference: Record<CoreNormalExpressionName, FunctionReference>) {
   Object.assign(normalExpressionReference, reference)
 }
 
 const expressions: BuiltinNormalExpressions = {
+  // Core categories
   ...bitwiseNormalExpression,
   ...collectionNormalExpression,
   ...arrayNormalExpression,
@@ -42,12 +48,15 @@ const expressions: BuiltinNormalExpressions = {
   ...regexpNormalExpression,
   ...stringNormalExpression,
   ...functionalNormalExpression,
-  ...vectorNormalExpression,
-  ...linearAlgebraNormalExpression,
-  ...gridNormalExpression,
-  ...matrixNormalExpression,
-  ...combinatoricalNormalExpression,
-  ...randomNormalExpression,
+
+  // TODO: Phase 1 - Namespaces commented out for refactoring
+  // These will require import() to use
+  // ...vectorNormalExpression,
+  // ...linearAlgebraNormalExpression,
+  // ...gridNormalExpression,
+  // ...matrixNormalExpression,
+  // ...combinatoricalNormalExpression,
+  // ...randomNormalExpression,
 }
 
 Object.entries(expressions).forEach(([name, expression]) => {

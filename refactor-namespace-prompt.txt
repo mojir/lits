@@ -1,0 +1,124 @@
+## LLM Prompt: Lits Namespace & Import System Design
+
+### Context
+
+**Lits** is a functional programming language with algebraic notation and JavaScript interoperability. It's NOT traditional Lisp - it uses modern syntax with infix operators, arrow functions, and structured control flow.
+
+**Syntax examples:**
+```lits
+// Variables and functions
+let square = x -> x * x;
+let add = (a, b) -> a + b;
+
+// Control flow
+if a > 0 then "positive" else "negative" end;
+
+// Collections
+[1, 2, 3] map -> $ * 2;    // => [2, 4, 6]
+{ name: "Alice", age: 30 };
+
+// Blocks
+{
+  let temp = 42;
+  temp * 2
+};
+```
+
+### Project Goal
+
+Refactor the builtin function architecture to support:
+
+1. **Core functions** - Always available without import (minimal bundle)
+2. **Namespace modules** - Must be imported explicitly
+
+### Decided Design
+
+**Import as a normal expression** (not special expression, no new syntax):
+```lits
+// Import entire namespace - returns object with all functions
+let grid = import("grid");
+grid.transpose([[1, 2], [3, 4]]);
+
+// Import single function (enables tree-shaking)
+let transpose = import("grid.transpose");
+transpose([[1, 2], [3, 4]]);
+
+// Destructuring works too
+let { transpose, rotate } = import("grid");
+```
+
+**JavaScript API:**
+```typescript
+import { Lits } from '@lits/core'
+import { grid } from '@lits/grid'
+
+const lits = new Lits()
+lits.registerNamespace(grid)  // Makes it available to import()
+
+lits.run(`
+  let grid = import("grid");
+  grid.transpose([[1, 2], [3, 4]])
+`)
+```
+
+### Implementation Plan
+
+**Phase 1:** Reduce builtin functions to minimal core
+- Keep all special expressions
+- Keep ~20-30 essential normal expressions
+- Comment out everything else (tests will fail, that's OK)
+
+**Phase 2:** Create namespace structure
+- Move `grid` functions to a proper namespace module
+- Define `LitsNamespace` interface
+
+**Phase 3:** Bundle namespace statically (no `registerNamespace` yet)
+- Namespace is bundled but not globally available
+- Only accessible via `import("grid")`
+
+**Phase 4:** Implement `import` normal expression
+- Takes string argument
+- `"grid"` returns object with all functions
+- `"grid:transpose"` returns single function
+
+**Phase 5:** Full implementation and testing
+
+**Phase 6:** Implement `registerNamespace` JavaScript API (future project)
+
+### Core Function Categories (Reference)
+
+**Always in core:**
+- All special expressions: `if`, `let`, `def`, `fn`/`->`, `loop`, `recur`, `cond`, `&&`, `||`, `throw`, `try`, `block`, `for`, `doseq`, `??`, `switch`, `array`, `object`, `defined?`
+- Basic operators: `+`, `-`, `*`, `/`, `mod`, `=`, `not=`, `<`, `>`, `<=`, `>=`
+- Predicates: `nil?`, `number?`, `string?`, `array?`, `object?`, `function?`, `boolean?`
+- Core collection: `count`, `get`, `first`, `rest`, `nth`, `cons`, `conj`
+- Functional: `apply`, `identity`, `not`
+
+**Move to namespaces:**
+- `grid:*`, `mat:*`, `vec:*`, `lin:*` (already namespaced)
+- String manipulation, regex, bitwise, advanced math (future)
+
+### Current Codebase Structure
+
+```
+src/builtin/
+  index.ts                    # Exports builtin
+  interface.ts                # Types
+  specialExpressions/         # Always in core
+  normalExpressions/
+    index.ts                  # Aggregates all normal expressions
+    categories/
+      math.ts, string.ts, array.ts, ...  # Core candidates
+      namespaces/
+        grid/                 # Namespace candidate
+        matrix/
+        vector/
+        ...
+```
+
+### Key Files
+
+- src/builtin/index.ts - Main builtin export
+- src/builtin/normalExpressions/index.ts - Normal expression aggregation
+- src/Lits/Lits.ts - Main Lits class
+- src/evaluator/index.ts - Expression evaluation
