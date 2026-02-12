@@ -26,7 +26,7 @@ import type { SourceCodeInfo } from '../tokenizer/token'
 import { asNonUndefined, isUnknownRecord } from '../typeGuards'
 import { asAny, asFunctionLike } from '../typeGuards/lits'
 import { toAny } from '../utils'
-import { arityAcceptsMin } from '../utils/arity'
+import { arityAccepts, arityAcceptsMin } from '../utils/arity'
 import { valueToString } from '../utils/debug/debugTools'
 import type { ContextStack } from './ContextStack'
 import type { Context, EvaluateNode, ExecuteFunction } from './interface'
@@ -198,6 +198,9 @@ export const functionExecutors: FunctionExecutors = {
     const expression = namespace.functions[fn.functionName]
     if (!expression) {
       throw new LitsError(`Function '${fn.functionName}' not found in namespace '${fn.namespaceName}'.`, sourceCodeInfo)
+    }
+    if (!arityAccepts(expression.arity, params.length)) {
+      throw new LitsError(`Function '${fn.functionName}' expects ${expression.arity.min}${expression.arity.max === expression.arity.min ? '' : `-${expression.arity.max}`} arguments, got ${params.length}.`, sourceCodeInfo)
     }
     return expression.evaluate(params, sourceCodeInfo, contextStack, { executeFunction })
   },

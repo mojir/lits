@@ -153,6 +153,7 @@ export const api = {
     'boolean',
     'compare',
     'identical?',
+    'import',
     'json-parse',
     'json-stringify',
   ] as const,

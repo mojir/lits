@@ -146,9 +146,9 @@ mapcat(
     }],
     description: 'Returns the result of applying $fn to each moving window of size $windowSize in $arr.',
     examples: [
-      'moving-fn([1, 2, 3], 2, vec:sum)',
-      'moving-fn([1, 2, 3], 1, vec:sum)',
-      'moving-fn([1, 2, 3], 3, vec:sum)',
+      'let v = import("vec"); moving-fn([1, 2, 3], 2, v.sum)',
+      'let v = import("vec"); moving-fn([1, 2, 3], 1, v.sum)',
+      'let v = import("vec"); moving-fn([1, 2, 3], 3, v.sum)',
     ],
   },
   'running-fn': {
@@ -170,9 +170,9 @@ mapcat(
     }],
     description: 'Returns the result of applying $b to each element of $a.',
     examples: [
-      'running-fn([1, 2, 3], vec:sum)',
-      'running-fn([1, 2, 3], vec:max)',
-      'running-fn([1, 2, 3], vec:min)',
+      'let v = import("vec"); running-fn([1, 2, 3], v.sum)',
+      'let v = import("vec"); running-fn([1, 2, 3], v.max)',
+      'let v = import("vec"); running-fn([1, 2, 3], v.min)',
     ],
   },
 }

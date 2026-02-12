@@ -347,6 +347,29 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       'identical?(0.3, 0.1 + 0.2)',
     ],
   },
+  'import': {
+    title: 'import',
+    category: 'Misc',
+    returns: {
+      type: 'any',
+      description: 'Returns an object containing namespace functions when given a namespace name, or a single function when given a fully qualified function name.',
+    },
+    args: {
+      path: {
+        type: 'string',
+        description: 'The namespace path to import. Can be a namespace name (e.g., "vec", "grid") or a fully qualified function name (e.g., "vec.mean", "grid.row").',
+      },
+    },
+    variants: [
+      { argumentNames: ['path'] },
+    ],
+    description: 'Imports namespace functions. Use a namespace name (e.g., "vec") to import all functions as an object, or a fully qualified name (e.g., "vec.mean") to import a single function directly.',
+    examples: [
+      'let v = import("vec"); v.mean([1, 2, 3, 4])',
+      'let sum = import("vec.sum"); sum([1, 2, 3])',
+      'let g = import("grid"); g.row([[1, 2], [3, 4]], 0)',
+    ],
+  },
   'json-parse': {
     title: 'json-parse',
     category: 'Misc',
