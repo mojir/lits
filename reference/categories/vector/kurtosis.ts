@@ -19,8 +19,8 @@ export const kurtosisReference: VectorReductionReference<'kurtosis'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.kurtosis([1, 2, 3, 6, 20])',
-      'let vec = import("vec");\nvec.kurtosis([1, 2, 2, 3])',
+      'let { kurtosis } = import("vec");\nkurtosis([1, 2, 3, 6, 20])',
+      'let { kurtosis } = import("vec");\nkurtosis([1, 2, 2, 3])',
     ],
   },
   'vec.moving-kurtosis': {

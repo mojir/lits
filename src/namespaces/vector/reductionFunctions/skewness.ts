@@ -41,8 +41,8 @@ function sampleSkewness(vector: number[]): number {
 }
 
 export const skewnessReductionFunction: ReductionFunctionDefinition<'skewness'> = {
-  'skewness': vector => skewness(vector),
-  'minLength': 3,
+  skewness: vector => skewness(vector),
+  minLength: 3,
 }
 
 export const sampleSkewnessReductionFunction: ReductionFunctionDefinition<'sample-skewness'> = {

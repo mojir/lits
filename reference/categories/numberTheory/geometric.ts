@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const geometricReference: NumberTheorySequenceReference<'geometric'> = {
-  'nth.geometric-seq': {
-    title: 'nth.geometric-seq',
+  'TEMP-nth.geometric-seq': {
+    title: 'TEMP-nth.geometric-seq',
     category: 'Number Theory',
     description: 'Generates the geometric sequence for a given $start, $ratio, and $length.',
     returns: {
@@ -27,14 +27,14 @@ export const geometricReference: NumberTheorySequenceReference<'geometric'> = {
       { argumentNames: ['start', 'ratio', 'length'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.geometric-seq(3, 2, 2)',
-      'let nt = import("nth");\nnt.geometric-seq(2, 3, 2)',
-      'let nt = import("nth");\nnt.geometric-seq(1, 2, 2)',
-      'let nt = import("nth");\nnt.geometric-seq(1, 1.5, 12)',
+      'let nt = import("TEMP-nth");\nnt.geometric-seq(3, 2, 2)',
+      'let nt = import("TEMP-nth");\nnt.geometric-seq(2, 3, 2)',
+      'let nt = import("TEMP-nth");\nnt.geometric-seq(1, 2, 2)',
+      'let nt = import("TEMP-nth");\nnt.geometric-seq(1, 1.5, 12)',
     ],
   },
-  'nth.geometric-take-while': {
-    title: 'nth.geometric-take-while',
+  'TEMP-nth.geometric-take-while': {
+    title: 'TEMP-nth.geometric-take-while',
     category: 'Number Theory',
     description: 'Generates the geometric sequence while a condition is met.',
     returns: {
@@ -59,11 +59,11 @@ export const geometricReference: NumberTheorySequenceReference<'geometric'> = {
       { argumentNames: ['start', 'ratio', 'takeWhile'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.geometric-take-while(1, 1.5, -> $ < 10)',
+      'let nt = import("TEMP-nth");\nnt.geometric-take-while(1, 1.5, -> $ < 10)',
     ],
   },
-  'nth.geometric-nth': {
-    title: 'nth.geometric-nth',
+  'TEMP-nth.geometric-nth': {
+    title: 'TEMP-nth.geometric-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the geometric sequence.',
     returns: {
@@ -87,14 +87,14 @@ export const geometricReference: NumberTheorySequenceReference<'geometric'> = {
       { argumentNames: ['start', 'ratio', 'n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.geometric-nth(3, 2, 2)',
-      'let nt = import("nth");\nnt.geometric-nth(2, 3, 2)',
-      'let nt = import("nth");\nnt.geometric-nth(1, 2, 2)',
-      'let nt = import("nth");\nnt.geometric-nth(1, 1.5, 4)',
+      'let nt = import("TEMP-nth");\nnt.geometric-nth(3, 2, 2)',
+      'let nt = import("TEMP-nth");\nnt.geometric-nth(2, 3, 2)',
+      'let nt = import("TEMP-nth");\nnt.geometric-nth(1, 2, 2)',
+      'let nt = import("TEMP-nth");\nnt.geometric-nth(1, 1.5, 4)',
     ],
   },
-  'nth.geometric?': {
-    title: 'nth.geometric?',
+  'TEMP-nth.geometric?': {
+    title: 'TEMP-nth.geometric?',
     category: 'Number Theory',
     description: 'Checks if a number is in the geometric sequence.',
     returns: {
@@ -118,11 +118,11 @@ export const geometricReference: NumberTheorySequenceReference<'geometric'> = {
       { argumentNames: ['start', 'ratio', 'n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.geometric?(1, 2, 1)',
-      'let nt = import("nth");\nnt.geometric?(2, 3, 2)',
-      'let nt = import("nth");\nnt.geometric?(3, 2, 2)',
-      'let nt = import("nth");\nnt.geometric?(1, 1.5, 2.25)',
-      'let nt = import("nth");\nnt.geometric?(1, 1.5, -4)',
+      'let nt = import("TEMP-nth");\nnt.geometric?(1, 2, 1)',
+      'let nt = import("TEMP-nth");\nnt.geometric?(2, 3, 2)',
+      'let nt = import("TEMP-nth");\nnt.geometric?(3, 2, 2)',
+      'let nt = import("TEMP-nth");\nnt.geometric?(1, 1.5, 2.25)',
+      'let nt = import("TEMP-nth");\nnt.geometric?(1, 1.5, -4)',
     ],
   },
 }

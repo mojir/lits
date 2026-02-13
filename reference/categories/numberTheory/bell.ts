@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const bellReference: NumberTheorySequenceReference<'bell'> = {
-  'nth.bell-seq': {
-    title: 'nth.bell-seq',
+  'TEMP-nth.bell-seq': {
+    title: 'TEMP-nth.bell-seq',
     category: 'Number Theory',
     description: 'Generates the Bell sequence up to a specified length.',
     returns: {
@@ -20,13 +20,13 @@ export const bellReference: NumberTheorySequenceReference<'bell'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.bell-seq(5)',
-      'let nt = import("nth");\nnt.bell-seq(10)',
-      'let nt = import("nth");\nnt.bell-seq()',
+      'let nt = import("TEMP-nth");\nnt.bell-seq(5)',
+      'let nt = import("TEMP-nth");\nnt.bell-seq(10)',
+      'let nt = import("TEMP-nth");\nnt.bell-seq()',
     ],
   },
-  'nth.bell-take-while': {
-    title: 'nth.bell-take-while',
+  'TEMP-nth.bell-take-while': {
+    title: 'TEMP-nth.bell-take-while',
     category: 'Number Theory',
     description: 'Generates the Bell sequence while a condition is met.',
     returns: {
@@ -43,11 +43,11 @@ export const bellReference: NumberTheorySequenceReference<'bell'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.bell-take-while(-> $ < 1000)',
+      'let nt = import("TEMP-nth");\nnt.bell-take-while(-> $ < 1000)',
     ],
   },
-  'nth.bell-nth': {
-    title: 'nth.bell-nth',
+  'TEMP-nth.bell-nth': {
+    title: 'TEMP-nth.bell-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Bell sequence.',
     returns: {
@@ -63,12 +63,12 @@ export const bellReference: NumberTheorySequenceReference<'bell'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.bell-nth(5)',
-      'let nt = import("nth");\nnt.bell-nth(10)',
+      'let nt = import("TEMP-nth");\nnt.bell-nth(5)',
+      'let nt = import("TEMP-nth");\nnt.bell-nth(10)',
     ],
   },
-  'nth.bell?': {
-    title: 'nth.bell?',
+  'TEMP-nth.bell?': {
+    title: 'TEMP-nth.bell?',
     category: 'Number Theory',
     description: 'Checks if a number is in the Bell sequence.',
     returns: {
@@ -84,9 +84,9 @@ export const bellReference: NumberTheorySequenceReference<'bell'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.bell?(1)',
-      'let nt = import("nth");\nnt.bell?(27644437)',
-      'let nt = import("nth");\nnt.bell?(27644436)',
+      'let nt = import("TEMP-nth");\nnt.bell?(1)',
+      'let nt = import("TEMP-nth");\nnt.bell?(27644437)',
+      'let nt = import("TEMP-nth");\nnt.bell?(27644436)',
     ],
   },
 }

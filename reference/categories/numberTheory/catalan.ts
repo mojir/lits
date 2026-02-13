@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const catalanReference: NumberTheorySequenceReference<'catalan'> = {
-  'nth.catalan-seq': {
-    title: 'nth.catalan-seq',
+  'TEMP-nth.catalan-seq': {
+    title: 'TEMP-nth.catalan-seq',
     category: 'Number Theory',
     description: 'Generates the Catalan sequence up to a specified length.',
     returns: {
@@ -21,13 +21,13 @@ export const catalanReference: NumberTheorySequenceReference<'catalan'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.catalan-seq(5)',
-      'let nt = import("nth");\nnt.catalan-seq(10)',
-      'let nt = import("nth");\nnt.catalan-seq()',
+      'let nt = import("TEMP-nth");\nnt.catalan-seq(5)',
+      'let nt = import("TEMP-nth");\nnt.catalan-seq(10)',
+      'let nt = import("TEMP-nth");\nnt.catalan-seq()',
     ],
   },
-  'nth.catalan-take-while': {
-    title: 'nth.catalan-take-while',
+  'TEMP-nth.catalan-take-while': {
+    title: 'TEMP-nth.catalan-take-while',
     category: 'Number Theory',
     description: 'Generates the Catalan sequence while a condition is met.',
     returns: {
@@ -44,11 +44,11 @@ export const catalanReference: NumberTheorySequenceReference<'catalan'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.catalan-take-while(-> $ < 1000)',
+      'let nt = import("TEMP-nth");\nnt.catalan-take-while(-> $ < 1000)',
     ],
   },
-  'nth.catalan-nth': {
-    title: 'nth.catalan-nth',
+  'TEMP-nth.catalan-nth': {
+    title: 'TEMP-nth.catalan-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Catalan sequence.',
     returns: {
@@ -64,12 +64,12 @@ export const catalanReference: NumberTheorySequenceReference<'catalan'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.catalan-nth(5)',
-      'let nt = import("nth");\nnt.catalan-nth(10)',
+      'let nt = import("TEMP-nth");\nnt.catalan-nth(5)',
+      'let nt = import("TEMP-nth");\nnt.catalan-nth(10)',
     ],
   },
-  'nth.catalan?': {
-    title: 'nth.catalan?',
+  'TEMP-nth.catalan?': {
+    title: 'TEMP-nth.catalan?',
     category: 'Number Theory',
     description: 'Determines if a number is in the Catalan sequence.',
     returns: {
@@ -85,8 +85,8 @@ export const catalanReference: NumberTheorySequenceReference<'catalan'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.catalan?(5)',
-      'let nt = import("nth");\nnt.catalan?(10)',
+      'let nt = import("TEMP-nth");\nnt.catalan?(5)',
+      'let nt = import("TEMP-nth");\nnt.catalan?(10)',
     ],
   },
 }

@@ -19,10 +19,10 @@ export const spanReference: VectorReductionReference<'span'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.span([1, 2, 3, 4])',
-      'let vec = import("vec");\nvec.span([1, 2, 3, 4, 5])',
-      'let vec = import("vec");\nvec.span([1])',
-      'let vec = import("vec");\nvec.span([])',
+      'let { span } = import("vec");\nspan([1, 2, 3, 4])',
+      'let { span } = import("vec");\nspan([1, 2, 3, 4, 5])',
+      'let { span } = import("vec");\nspan([1])',
+      'let { span } = import("vec");\nspan([])',
     ],
   },
 

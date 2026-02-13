@@ -19,8 +19,8 @@ export const meanReference: VectorReductionReference<'mean'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.mean([1, 2, 3])',
-      'let vec = import("vec");\nvec.mean([1, 2, -3])',
+      'let { mean } = import("vec");\nmean([1, 2, 3])',
+      'let { mean } = import("vec");\nmean([1, 2, -3])',
     ],
   },
   'vec.moving-mean': {

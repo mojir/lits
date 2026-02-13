@@ -1,9 +1,9 @@
 import { getOperatorArgs } from '../../api'
 import type { VectorReductionReference } from '.'
 
-export const maxReference: VectorReductionReference<'max'> = {
-  'vec.max': {
-    title: 'vec.max',
+export const maxReference: VectorReductionReference<'TEMP-max', 'max'> = {
+  'vec.TEMP-max': {
+    title: 'vec.TEMP-max',
     category: 'Vector',
     description: 'Returns the `maximum` of all elements in the `vector`.',
     returns: {
@@ -19,8 +19,8 @@ export const maxReference: VectorReductionReference<'max'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.max([1, 2, 3])',
-      'let vec = import("vec");\nvec.max([1, 2, -3])',
+      'let vec = import("vec");\nvec.TEMP-max([1, 2, 3])',
+      'let vec = import("vec");\nvec.TEMP-max([1, 2, -3])',
     ],
   },
   'vec.moving-max': {

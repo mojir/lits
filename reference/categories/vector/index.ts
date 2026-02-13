@@ -22,10 +22,10 @@ type VectorReductionKey<T extends string> = `vec.${T}`
 type VectorMovingWindowKey<T extends string> = `vec.moving-${T}`
 type VectorCenteredMovingWindowKey<T extends string> = `vec.centered-moving-${T}`
 type VectorRunningKey<T extends string> = `vec.running-${T}`
-type VectorReductionKeys<T extends string> = VectorReductionKey<T> | VectorMovingWindowKey<T> | VectorCenteredMovingWindowKey<T> | VectorRunningKey<T>
+type VectorReductionKeys<T extends string, B extends string = T> = VectorReductionKey<T> | VectorMovingWindowKey<B> | VectorCenteredMovingWindowKey<B> | VectorRunningKey<B>
 
-export type VectorReductionReference<T extends string> = {
-  [key in VectorReductionKeys<T>]: FunctionReference<'Vector'>
+export type VectorReductionReference<T extends string, B extends string = T> = {
+  [key in VectorReductionKeys<T, B>]: FunctionReference<'Vector'>
 }
 
 export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>> = {
@@ -227,8 +227,8 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.sum([1, 2, 3])',
-      'let vec = import("vec");\nvec.sum([1, 2, -3])',
+      'let { sum } = import("vec");\nsum([1, 2, 3])',
+      'let { sum } = import("vec");\nsum([1, 2, -3])',
     ],
   },
   'vec.median': {
@@ -248,10 +248,10 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.median([1, 2, 3])',
-      'let vec = import("vec");\nvec.median([1, 2, -3])',
-      'let vec = import("vec");\nvec.median([1, 2, 3, 4])',
-      'let vec = import("vec");\nvec.median([1, 2, -3, 4])',
+      'let { median } = import("vec");\nmedian([1, 2, 3])',
+      'let { median } = import("vec");\nmedian([1, 2, -3])',
+      'let { median } = import("vec");\nmedian([1, 2, 3, 4])',
+      'let { median } = import("vec");\nmedian([1, 2, -3, 4])',
     ],
   },
   'vec.mode': {
@@ -271,11 +271,11 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.mode([1, 2, 3])',
-      'let vec = import("vec");\nvec.mode([1, 2, -3, 1])',
-      'let vec = import("vec");\nvec.mode([2, 2, 3, 3, 4])',
-      'let vec = import("vec");\nvec.mode([2, 2, 3, 3])',
-      'let vec = import("vec");\nvec.mode([1, 2, 3, 2, 1, 2])',
+      'let { mode } = import("vec");\nmode([1, 2, 3])',
+      'let { mode } = import("vec");\nmode([1, 2, -3, 1])',
+      'let { mode } = import("vec");\nmode([2, 2, 3, 3, 4])',
+      'let { mode } = import("vec");\nmode([2, 2, 3, 3])',
+      'let { mode } = import("vec");\nmode([1, 2, 3, 2, 1, 2])',
     ],
   },
   'vec.sample-variance': {
@@ -319,11 +319,11 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.stdev([1, 2, 3])',
-      'let vec = import("vec");\nvec.stdev([1, 2, -3])',
-      'let vec = import("vec");\nvec.stdev([1, 2, 3, 4])',
-      'let vec = import("vec");\nvec.stdev([1, 2, -3, 4])',
-      'let vec = import("vec");\nvec.stdev([1, 2, 3, 40, 50])',
+      'let { stdev } = import("vec");\nstdev([1, 2, 3])',
+      'let { stdev } = import("vec");\nstdev([1, 2, -3])',
+      'let { stdev } = import("vec");\nstdev([1, 2, 3, 4])',
+      'let { stdev } = import("vec");\nstdev([1, 2, -3, 4])',
+      'let { stdev } = import("vec");\nstdev([1, 2, 3, 40, 50])',
     ],
   },
   'vec.sample-stdev': {
@@ -350,8 +350,8 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       'let vec = import("vec");\nvec.sample-stdev([1, 2, 3, 40, 50])',
     ],
   },
-  'vec.min': {
-    title: 'vec.min',
+  'vec.TEMP-min': {
+    title: 'vec.TEMP-min',
     category: 'Vector',
     description: 'Returns the minimum value of all elements in the vector.',
     returns: {
@@ -367,15 +367,15 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.min([1, 2, 3])',
-      'let vec = import("vec");\nvec.min([1, 1, 2, 3, 3])',
-      'let vec = import("vec");\nvec.min([1, 2, -3])',
-      'let vec = import("vec");\nvec.min([1, 2, 3, 4])',
-      'let vec = import("vec");\nvec.min([1, 2, -3, 4])',
+      'let vec = import("vec");\nvec.TEMP-min([1, 2, 3])',
+      'let vec = import("vec");\nvec.TEMP-min([1, 1, 2, 3, 3])',
+      'let vec = import("vec");\nvec.TEMP-min([1, 2, -3])',
+      'let vec = import("vec");\nvec.TEMP-min([1, 2, 3, 4])',
+      'let vec = import("vec");\nvec.TEMP-min([1, 2, -3, 4])',
     ],
   },
-  'vec.max': {
-    title: 'vec.max',
+  'vec.TEMP-max': {
+    title: 'vec.TEMP-max',
     category: 'Vector',
     description: 'Returns the maximum value of all elements in the vector.',
     returns: {
@@ -391,11 +391,11 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.max([1, 2, 3])',
-      'let vec = import("vec");\nvec.max([1, 1, 2, 3, 3])',
-      'let vec = import("vec");\nvec.max([1, 2, -3])',
-      'let vec = import("vec");\nvec.max([1, 2, 3, 4])',
-      'let vec = import("vec");\nvec.max([1, 2, -3, 4])',
+      'let vec = import("vec");\nvec.TEMP-max([1, 2, 3])',
+      'let vec = import("vec");\nvec.TEMP-max([1, 1, 2, 3, 3])',
+      'let vec = import("vec");\nvec.TEMP-max([1, 2, -3])',
+      'let vec = import("vec");\nvec.TEMP-max([1, 2, 3, 4])',
+      'let vec = import("vec");\nvec.TEMP-max([1, 2, -3, 4])',
     ],
   },
   'vec.min-index': {
@@ -520,8 +520,8 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['start', 'stop', 'n'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.linspace(0, 10, 6)',
-      'let vec = import("vec");\nvec.linspace(10, 20, 25)',
+      'let { linspace } = import("vec");\nlinspace(0, 10, 6)',
+      'let { linspace } = import("vec");\nlinspace(10, 20, 25)',
     ],
   },
   'vec.ones': {
@@ -542,9 +542,9 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['length'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.ones(5)',
-      'let vec = import("vec");\nvec.ones(10)',
-      'let vec = import("vec");\nvec.ones(0)',
+      'let { ones } = import("vec");\nones(5)',
+      'let { ones } = import("vec");\nones(10)',
+      'let { ones } = import("vec");\nones(0)',
     ],
   },
   'vec.zeros': {
@@ -565,9 +565,9 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['length'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.zeros(5)',
-      'let vec = import("vec");\nvec.zeros(10)',
-      'let vec = import("vec");\nvec.zeros(0)',
+      'let { zeros } = import("vec");\nzeros(5)',
+      'let { zeros } = import("vec");\nzeros(10)',
+      'let { zeros } = import("vec");\nzeros(0)',
     ],
   },
   'vec.fill': {
@@ -593,8 +593,8 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['length', 'value'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.fill(5, PI)',
-      'let vec = import("vec");\nvec.fill(10, -1)',
+      'let { fill } = import("vec");\nfill(5, PI)',
+      'let { fill } = import("vec");\nfill(10, -1)',
     ],
   },
   'vec.generate': {
@@ -620,9 +620,9 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['length', 'func'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.generate(5, -> $ * 2)',
-      'let vec = import("vec");\nvec.generate(10, -> $ + 1)',
-      'let vec = import("vec");\nvec.generate(0, -> $ + 1)',
+      'let { generate } = import("vec");\ngenerate(5, -> $ * 2)',
+      'let { generate } = import("vec");\ngenerate(10, -> $ + 1)',
+      'let { generate } = import("vec");\ngenerate(0, -> $ + 1)',
     ],
   },
   'vec.cumsum': {
@@ -643,9 +643,9 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.cumsum([1, 2, 3])',
-      'let vec = import("vec");\nvec.cumsum([1, 2, -3])',
-      'let vec = import("vec");\nvec.cumsum([])',
+      'let { cumsum } = import("vec");\ncumsum([1, 2, 3])',
+      'let { cumsum } = import("vec");\ncumsum([1, 2, -3])',
+      'let { cumsum } = import("vec");\ncumsum([])',
     ],
   },
   'vec.cumprod': {
@@ -666,9 +666,9 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.cumprod([1, 2, 3])',
-      'let vec = import("vec");\nvec.cumprod([1, 2, -3, 0, 10])',
-      'let vec = import("vec");\nvec.cumprod([])',
+      'let { cumprod } = import("vec");\ncumprod([1, 2, 3])',
+      'let { cumprod } = import("vec");\ncumprod([1, 2, -3, 0, 10])',
+      'let { cumprod } = import("vec");\ncumprod([])',
     ],
   },
   'vec.quartiles': {
@@ -689,11 +689,11 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.quartiles([1, 2, 3, 4])',
-      'let vec = import("vec");\nvec.quartiles([5, 4, 3, 2, 1, 2, 3, 4, 5])',
-      'let vec = import("vec");\nvec.quartiles(range(1, 1000))',
-      'let vec = import("vec");\nvec.quartiles(vec.generate(1000, -> 1e6 / ($ + 1) ^ 2))',
-      'let vec = import("vec");\nvec.quartiles(vec.generate(1000, -> ln($ + 1)))',
+      'let { quartiles } = import("vec");\nquartiles([1, 2, 3, 4])',
+      'let { quartiles } = import("vec");\nquartiles([5, 4, 3, 2, 1, 2, 3, 4, 5])',
+      'let { quartiles } = import("vec");\nquartiles(range(1, 1000))',
+      'let { quartiles } = import("vec");\nquartiles(vec.generate(1000, -> 1e6 / ($ + 1) ^ 2))',
+      'let { quartiles } = import("vec");\nquartiles(vec.generate(1000, -> ln($ + 1)))',
     ],
   },
   'vec.percentile': {
@@ -718,18 +718,18 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector', 'percentile'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.percentile([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 35)',
-      'let vec = import("vec");\nvec.percentile(range(100) ^ 0.5, 0)',
-      'let vec = import("vec");\nvec.percentile(range(100) ^ 0.5, 10)',
-      'let vec = import("vec");\nvec.percentile(range(100) ^ 0.5, 20)',
-      'let vec = import("vec");\nvec.percentile(range(100) ^ 0.5, 30)',
-      'let vec = import("vec");\nvec.percentile(range(100) ^ 0.5, 40)',
-      'let vec = import("vec");\nvec.percentile(range(100) ^ 0.5, 50)',
-      'let vec = import("vec");\nvec.percentile(range(100) ^ 0.5, 60)',
-      'let vec = import("vec");\nvec.percentile(range(100) ^ 0.5, 70)',
-      'let vec = import("vec");\nvec.percentile(range(100) ^ 0.5, 80)',
-      'let vec = import("vec");\nvec.percentile(range(100) ^ 0.5, 90)',
-      'let vec = import("vec");\nvec.percentile(range(100) ^ 0.5, 100)',
+      'let { percentile } = import("vec");\npercentile([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 35)',
+      'let { percentile } = import("vec");\npercentile(range(100) ^ 0.5, 0)',
+      'let { percentile } = import("vec");\npercentile(range(100) ^ 0.5, 10)',
+      'let { percentile } = import("vec");\npercentile(range(100) ^ 0.5, 20)',
+      'let { percentile } = import("vec");\npercentile(range(100) ^ 0.5, 30)',
+      'let { percentile } = import("vec");\npercentile(range(100) ^ 0.5, 40)',
+      'let { percentile } = import("vec");\npercentile(range(100) ^ 0.5, 50)',
+      'let { percentile } = import("vec");\npercentile(range(100) ^ 0.5, 60)',
+      'let { percentile } = import("vec");\npercentile(range(100) ^ 0.5, 70)',
+      'let { percentile } = import("vec");\npercentile(range(100) ^ 0.5, 80)',
+      'let { percentile } = import("vec");\npercentile(range(100) ^ 0.5, 90)',
+      'let { percentile } = import("vec");\npercentile(range(100) ^ 0.5, 100)',
     ],
   },
   'vec.quantile': {
@@ -754,18 +754,18 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector', 'quantile'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.quantile([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 0.35)',
-      'let vec = import("vec");\nvec.quantile(range(100) ^ 0.5, 0)',
-      'let vec = import("vec");\nvec.quantile(range(100) ^ 0.5, 0.1)',
-      'let vec = import("vec");\nvec.quantile(range(100) ^ 0.5, 0.2)',
-      'let vec = import("vec");\nvec.quantile(range(100) ^ 0.5, 0.3)',
-      'let vec = import("vec");\nvec.quantile(range(100) ^ 0.5, 0.4)',
-      'let vec = import("vec");\nvec.quantile(range(100) ^ 0.5, 0.5)',
-      'let vec = import("vec");\nvec.quantile(range(100) ^ 0.5, 0.6)',
-      'let vec = import("vec");\nvec.quantile(range(100) ^ 0.5, 0.7)',
-      'let vec = import("vec");\nvec.quantile(range(100) ^ 0.5, 0.8)',
-      'let vec = import("vec");\nvec.quantile(range(100) ^ 0.5, 0.9)',
-      'let vec = import("vec");\nvec.quantile(range(100) ^ 0.5, 1)',
+      'let { quantile } = import("vec");\nquantile([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 0.35)',
+      'let { quantile } = import("vec");\nquantile(range(100) ^ 0.5, 0)',
+      'let { quantile } = import("vec");\nquantile(range(100) ^ 0.5, 0.1)',
+      'let { quantile } = import("vec");\nquantile(range(100) ^ 0.5, 0.2)',
+      'let { quantile } = import("vec");\nquantile(range(100) ^ 0.5, 0.3)',
+      'let { quantile } = import("vec");\nquantile(range(100) ^ 0.5, 0.4)',
+      'let { quantile } = import("vec");\nquantile(range(100) ^ 0.5, 0.5)',
+      'let { quantile } = import("vec");\nquantile(range(100) ^ 0.5, 0.6)',
+      'let { quantile } = import("vec");\nquantile(range(100) ^ 0.5, 0.7)',
+      'let { quantile } = import("vec");\nquantile(range(100) ^ 0.5, 0.8)',
+      'let { quantile } = import("vec");\nquantile(range(100) ^ 0.5, 0.9)',
+      'let { quantile } = import("vec");\nquantile(range(100) ^ 0.5, 1)',
     ],
   },
   'vec.span': {
@@ -785,9 +785,9 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.span([1, 2, 3])',
-      'let vec = import("vec");\nvec.span([1, 1, 2, 3, 3])',
-      'let vec = import("vec");\nvec.span([1, 2, -3])',
+      'let { span } = import("vec");\nspan([1, 2, 3])',
+      'let { span } = import("vec");\nspan([1, 1, 2, 3, 3])',
+      'let { span } = import("vec");\nspan([1, 2, -3])',
     ],
   },
   'vec.histogram': {
@@ -813,10 +813,10 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector', 'bins'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.histogram([1, 2, 2, 3, 2, 6, 4, 3, 2, 4, 1, 3, 2, 9], 3)',
-      'let vec = import("vec");\nvec.histogram([1, 2, 3, 4, 5], 5)',
-      'let vec = import("vec");\nvec.histogram([1, 2, 3, 4, 5], 10)',
-      'let vec = import("vec");\nvec.histogram([1, 2, 3, 4, 5], 1)',
+      'let { histogram } = import("vec");\nhistogram([1, 2, 2, 3, 2, 6, 4, 3, 2, 4, 1, 3, 2, 9], 3)',
+      'let { histogram } = import("vec");\nhistogram([1, 2, 3, 4, 5], 5)',
+      'let { histogram } = import("vec");\nhistogram([1, 2, 3, 4, 5], 10)',
+      'let { histogram } = import("vec");\nhistogram([1, 2, 3, 4, 5], 1)',
     ],
   },
   'vec.ecdf': {
@@ -841,11 +841,11 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector', 'threshold'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.ecdf([1, 2, 2, 3, 2, 6, 4, 3, 2, 4, 1, 3, 2, 9, 10, 12], 5)',
-      'let vec = import("vec");\nvec.ecdf([1, 2, 3, 4, 5], 3)',
-      'let vec = import("vec");\nvec.ecdf([1, 2, 3, 4, 5], 0)',
-      'let vec = import("vec");\nvec.ecdf([1, 2, 3, 4, 5], 10)',
-      'let vec = import("vec");\nvec.ecdf([1, 2, 3, 4, 5], 2)',
+      'let { ecdf } = import("vec");\necdf([1, 2, 2, 3, 2, 6, 4, 3, 2, 4, 1, 3, 2, 9, 10, 12], 5)',
+      'let { ecdf } = import("vec");\necdf([1, 2, 3, 4, 5], 3)',
+      'let { ecdf } = import("vec");\necdf([1, 2, 3, 4, 5], 0)',
+      'let { ecdf } = import("vec");\necdf([1, 2, 3, 4, 5], 10)',
+      'let { ecdf } = import("vec");\necdf([1, 2, 3, 4, 5], 2)',
     ],
   },
   'vec.outliers?': {
@@ -888,9 +888,9 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.outliers([1, 2, 3])',
-      'let vec = import("vec");\nvec.outliers([1, 2, -3])',
-      'let vec = import("vec");\nvec.outliers([1, 2, 3, 2, 4, 120])',
+      'let { outliers } = import("vec");\noutliers([1, 2, 3])',
+      'let { outliers } = import("vec");\noutliers([1, 2, -3])',
+      'let { outliers } = import("vec");\noutliers([1, 2, 3, 2, 4, 120])',
     ],
   },
   'vec.bincount': {
@@ -921,8 +921,8 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector', 'minSize', 'weights'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.bincount([1, 2, 3])',
-      'let vec = import("vec");\nvec.bincount([1, 2, 2, 3, 3])',
+      'let { bincount } = import("vec");\nbincount([1, 2, 3])',
+      'let { bincount } = import("vec");\nbincount([1, 2, 2, 3, 3])',
     ],
     noOperatorDocumentation: true,
   },
@@ -952,9 +952,9 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector', 'lower-quantile', 'upper-quantile'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.winsorize([2, 5, 8, 10, 15, 18, 20, 35, 60, 100], 0.25)',
-      'let vec = import("vec");\nvec.winsorize([2, 5, 8, 10, 15, 18, 20, 35, 60, 100], 0.25, 0.75)',
-      'let vec = import("vec");\nvec.winsorize([2, 5, 8, 10, 15, 18, 20, 35, 60, 100], 0.25, 0.5)',
+      'let { winsorize } = import("vec");\nwinsorize([2, 5, 8, 10, 15, 18, 20, 35, 60, 100], 0.25)',
+      'let { winsorize } = import("vec");\nwinsorize([2, 5, 8, 10, 15, 18, 20, 35, 60, 100], 0.25, 0.75)',
+      'let { winsorize } = import("vec");\nwinsorize([2, 5, 8, 10, 15, 18, 20, 35, 60, 100], 0.25, 0.5)',
     ],
     noOperatorDocumentation: true,
   },
@@ -979,11 +979,11 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.mse([1, 2, 3], [1, 2, 3])',
-      'let vec = import("vec");\nvec.mse([1, 2, 3], [4, 5, 6])',
-      'let vec = import("vec");\nvec.mse([1, 2, 3], [2, 2, 2])',
-      'let vec = import("vec");\nvec.mse([1, 2], [3, 3])',
-      'let vec = import("vec");\nvec.mse([1], [3])',
+      'let { mse } = import("vec");\nmse([1, 2, 3], [1, 2, 3])',
+      'let { mse } = import("vec");\nmse([1, 2, 3], [4, 5, 6])',
+      'let { mse } = import("vec");\nmse([1, 2, 3], [2, 2, 2])',
+      'let { mse } = import("vec");\nmse([1, 2], [3, 3])',
+      'let { mse } = import("vec");\nmse([1], [3])',
     ],
   },
   'vec.rmse': {
@@ -1007,11 +1007,11 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.rmse([1, 2, 3], [1, 2, 3])',
-      'let vec = import("vec");\nvec.rmse([1, 2, 3], [4, 5, 6])',
-      'let vec = import("vec");\nvec.rmse([1, 2, 3], [2, 2, 2])',
-      'let vec = import("vec");\nvec.rmse([1, 2], [3, 3])',
-      'let vec = import("vec");\nvec.rmse([1], [3])',
+      'let { rmse } = import("vec");\nrmse([1, 2, 3], [1, 2, 3])',
+      'let { rmse } = import("vec");\nrmse([1, 2, 3], [4, 5, 6])',
+      'let { rmse } = import("vec");\nrmse([1, 2, 3], [2, 2, 2])',
+      'let { rmse } = import("vec");\nrmse([1, 2], [3, 3])',
+      'let { rmse } = import("vec");\nrmse([1], [3])',
     ],
   },
   'vec.mae': {
@@ -1035,11 +1035,11 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.mae([1, 2, 3], [1, 2, 3])',
-      'let vec = import("vec");\nvec.mae([1, 2, 3], [4, 5, 6])',
-      'let vec = import("vec");\nvec.mae([1, 2, 3], [2, 2, 2])',
-      'let vec = import("vec");\nvec.mae([1, 2], [3, 3])',
-      'let vec = import("vec");\nvec.mae([1], [3])',
+      'let { mae } = import("vec");\nmae([1, 2, 3], [1, 2, 3])',
+      'let { mae } = import("vec");\nmae([1, 2, 3], [4, 5, 6])',
+      'let { mae } = import("vec");\nmae([1, 2, 3], [2, 2, 2])',
+      'let { mae } = import("vec");\nmae([1, 2], [3, 3])',
+      'let { mae } = import("vec");\nmae([1], [3])',
     ],
   },
   'vec.smape': {
@@ -1063,11 +1063,11 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.smape([1, 2, 3], [1, 2, 3])',
-      'let vec = import("vec");\nvec.smape([1, 2, 3], [4, 5, 6])',
-      'let vec = import("vec");\nvec.smape([1, 2, 3], [2, 2, 2])',
-      'let vec = import("vec");\nvec.smape([1, 2], [3, 3])',
-      'let vec = import("vec");\nvec.smape([1], [3])',
+      'let { smape } = import("vec");\nsmape([1, 2, 3], [1, 2, 3])',
+      'let { smape } = import("vec");\nsmape([1, 2, 3], [4, 5, 6])',
+      'let { smape } = import("vec");\nsmape([1, 2, 3], [2, 2, 2])',
+      'let { smape } = import("vec");\nsmape([1, 2], [3, 3])',
+      'let { smape } = import("vec");\nsmape([1], [3])',
     ],
   },
 }

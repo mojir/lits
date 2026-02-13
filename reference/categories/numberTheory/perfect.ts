@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const perfectReference: NumberTheorySequenceReference<'perfect'> = {
-  'nth.perfect-seq': {
-    title: 'nth.perfect-seq',
+  'TEMP-nth.perfect-seq': {
+    title: 'TEMP-nth.perfect-seq',
     category: 'Number Theory',
     description: 'Generates the perfect numbers up to a specified length.',
     returns: {
@@ -20,13 +20,13 @@ export const perfectReference: NumberTheorySequenceReference<'perfect'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.perfect-seq(1)',
-      'let nt = import("nth");\nnt.perfect-seq(5)',
-      'let nt = import("nth");\nnt.perfect-seq()',
+      'let nt = import("TEMP-nth");\nnt.perfect-seq(1)',
+      'let nt = import("TEMP-nth");\nnt.perfect-seq(5)',
+      'let nt = import("TEMP-nth");\nnt.perfect-seq()',
     ],
   },
-  'nth.perfect-take-while': {
-    title: 'nth.perfect-take-while',
+  'TEMP-nth.perfect-take-while': {
+    title: 'TEMP-nth.perfect-take-while',
     category: 'Number Theory',
     description: 'Generates the perfect numbers while a condition is met.',
     returns: {
@@ -43,11 +43,11 @@ export const perfectReference: NumberTheorySequenceReference<'perfect'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.perfect-take-while(-> $ < 1000)',
+      'let nt = import("TEMP-nth");\nnt.perfect-take-while(-> $ < 1000)',
     ],
   },
-  'nth.perfect-nth': {
-    title: 'nth.perfect-nth',
+  'TEMP-nth.perfect-nth': {
+    title: 'TEMP-nth.perfect-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the perfect numbers.',
     returns: {
@@ -63,12 +63,12 @@ export const perfectReference: NumberTheorySequenceReference<'perfect'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.perfect-nth(1)',
-      'let nt = import("nth");\nnt.perfect-nth(5)',
+      'let nt = import("TEMP-nth");\nnt.perfect-nth(1)',
+      'let nt = import("TEMP-nth");\nnt.perfect-nth(5)',
     ],
   },
-  'nth.perfect?': {
-    title: 'nth.perfect?',
+  'TEMP-nth.perfect?': {
+    title: 'TEMP-nth.perfect?',
     category: 'Number Theory',
     description: 'Checks if a number is in the perfect numbers.',
     returns: {
@@ -84,16 +84,16 @@ export const perfectReference: NumberTheorySequenceReference<'perfect'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.perfect?(0)',
-      'let nt = import("nth");\nnt.perfect?(1)',
-      'let nt = import("nth");\nnt.perfect?(2)',
-      'let nt = import("nth");\nnt.perfect?(3)',
-      'let nt = import("nth");\nnt.perfect?(4)',
-      'let nt = import("nth");\nnt.perfect?(5)',
-      'let nt = import("nth");\nnt.perfect?(6)',
-      'let nt = import("nth");\nnt.perfect?(7)',
-      'let nt = import("nth");\nnt.perfect?(8)',
-      'let nt = import("nth");\nnt.perfect?(9)',
+      'let nt = import("TEMP-nth");\nnt.perfect?(0)',
+      'let nt = import("TEMP-nth");\nnt.perfect?(1)',
+      'let nt = import("TEMP-nth");\nnt.perfect?(2)',
+      'let nt = import("TEMP-nth");\nnt.perfect?(3)',
+      'let nt = import("TEMP-nth");\nnt.perfect?(4)',
+      'let nt = import("TEMP-nth");\nnt.perfect?(5)',
+      'let nt = import("TEMP-nth");\nnt.perfect?(6)',
+      'let nt = import("TEMP-nth");\nnt.perfect?(7)',
+      'let nt = import("TEMP-nth");\nnt.perfect?(8)',
+      'let nt = import("TEMP-nth");\nnt.perfect?(9)',
     ],
   },
 }

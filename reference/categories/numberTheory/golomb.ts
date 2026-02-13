@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const golombReference: NumberTheorySequenceReference<'golomb'> = {
-  'nth.golomb-seq': {
-    title: 'nth.golomb-seq',
+  'TEMP-nth.golomb-seq': {
+    title: 'TEMP-nth.golomb-seq',
     category: 'Number Theory',
     description: 'Generates the Golomb sequence up to a specified length.',
     returns: {
@@ -19,12 +19,12 @@ export const golombReference: NumberTheorySequenceReference<'golomb'> = {
       { argumentNames: ['length'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.golomb-seq(5)',
-      'let nt = import("nth");\nnt.golomb-seq(20)',
+      'let nt = import("TEMP-nth");\nnt.golomb-seq(5)',
+      'let nt = import("TEMP-nth");\nnt.golomb-seq(20)',
     ],
   },
-  'nth.golomb-take-while': {
-    title: 'nth.golomb-take-while',
+  'TEMP-nth.golomb-take-while': {
+    title: 'TEMP-nth.golomb-take-while',
     category: 'Number Theory',
     description: 'Generates the Golomb sequence while a condition is met.',
     returns: {
@@ -41,11 +41,11 @@ export const golombReference: NumberTheorySequenceReference<'golomb'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.golomb-take-while(-> $ <= 10)',
+      'let nt = import("TEMP-nth");\nnt.golomb-take-while(-> $ <= 10)',
     ],
   },
-  'nth.golomb-nth': {
-    title: 'nth.golomb-nth',
+  'TEMP-nth.golomb-nth': {
+    title: 'TEMP-nth.golomb-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Golomb sequence.',
     returns: {
@@ -61,12 +61,12 @@ export const golombReference: NumberTheorySequenceReference<'golomb'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.golomb-nth(5)',
-      'let nt = import("nth");\nnt.golomb-nth(1000)',
+      'let nt = import("TEMP-nth");\nnt.golomb-nth(5)',
+      'let nt = import("TEMP-nth");\nnt.golomb-nth(1000)',
     ],
   },
-  'nth.golomb?': {
-    title: 'nth.golomb?',
+  'TEMP-nth.golomb?': {
+    title: 'TEMP-nth.golomb?',
     category: 'Number Theory',
     description: 'Checks if a number is in the Golomb sequence.',
     returns: {
@@ -82,10 +82,10 @@ export const golombReference: NumberTheorySequenceReference<'golomb'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.golomb?(1)',
-      'let nt = import("nth");\nnt.golomb?(2)',
-      'let nt = import("nth");\nnt.golomb?(3345)',
-      'let nt = import("nth");\nnt.golomb?(67867864)',
+      'let nt = import("TEMP-nth");\nnt.golomb?(1)',
+      'let nt = import("TEMP-nth");\nnt.golomb?(2)',
+      'let nt = import("TEMP-nth");\nnt.golomb?(3345)',
+      'let nt = import("TEMP-nth");\nnt.golomb?(67867864)',
     ],
   },
 }

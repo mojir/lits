@@ -19,8 +19,8 @@ export const skewnessReference: VectorReductionReference<'skewness'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.skewness([1, 2, 3, 6, 20])',
-      'let vec = import("vec");\nvec.skewness([1, 2, 2, 3])',
+      'let { skewness } = import("vec");\nskewness([1, 2, 3, 6, 20])',
+      'let { skewness } = import("vec");\nskewness([1, 2, 2, 3])',
     ],
   },
   'vec.moving-skewness': {

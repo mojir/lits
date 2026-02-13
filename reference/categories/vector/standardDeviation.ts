@@ -19,8 +19,8 @@ export const standardDeviationReference: VectorReductionReference<'stdev'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.variance([1, 2, 3])',
-      'let vec = import("vec");\nvec.variance([1, 2, -3])',
+      'let { variance } = import("vec");\nvariance([1, 2, 3])',
+      'let { variance } = import("vec");\nvariance([1, 2, -3])',
     ],
   },
   'vec.moving-stdev': {
@@ -127,8 +127,8 @@ export const sampleStandardDeviationReference: VectorReductionReference<'sample-
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.variance([1, 2, 3])',
-      'let vec = import("vec");\nvec.variance([1, 2, -3])',
+      'let { variance } = import("vec");\nvariance([1, 2, 3])',
+      'let { variance } = import("vec");\nvariance([1, 2, -3])',
     ],
   },
   'vec.moving-sample-stdev': {

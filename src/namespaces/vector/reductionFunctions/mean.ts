@@ -2,7 +2,7 @@ import { calcMean } from '../calcMean'
 import type { ReductionFunctionDefinition } from '.'
 
 export const meanReductionFunction: ReductionFunctionDefinition<'mean'> = {
-  'mean': vector => calcMean(vector),
+  mean: vector => calcMean(vector),
 }
 
 export const geometricMeanReductionFunction: ReductionFunctionDefinition<'geometric-mean'> = {

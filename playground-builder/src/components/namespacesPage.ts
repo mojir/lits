@@ -92,8 +92,8 @@ let vec = import("vec")
 ; Use vec.sum, vec.mean, etc.
 vec.sum([1, 2, 3, 4, 5])`)}</pre>
       <p ${styles('text-color-gray-400')}>
-        Available namespaces: ${namespaceCategories.map(c => {
-          const ns = categoryToNamespace[c as keyof typeof categoryToNamespace]
+        Available namespaces: ${namespaceCategories.map((c) => {
+          const ns = categoryToNamespace[c]
           return `<code ${styles('bg-gray-700', 'px-1')}>${ns}</code>`
         }).join(', ')}
       </p>

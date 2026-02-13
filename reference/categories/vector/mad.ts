@@ -19,8 +19,8 @@ export const meanAbsoluteDeviationReference: VectorReductionReference<'mad'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.mad([1, 2, 3])',
-      'let vec = import("vec");\nvec.mad([1, 2, -3])',
+      'let { mad } = import("vec");\nmad([1, 2, 3])',
+      'let { mad } = import("vec");\nmad([1, 2, -3])',
     ],
   },
   'vec.moving-mad': {

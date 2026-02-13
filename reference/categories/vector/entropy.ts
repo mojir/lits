@@ -19,12 +19,12 @@ export const entropyReference: VectorReductionReference<'entropy'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.entropy([1, 1, 2, 3, 3, 3])',
-      'let vec = import("vec");\nvec.entropy([1, 2, 3])',
-      'let vec = import("vec");\nvec.entropy([1, 2, 2, 3])',
-      'let vec = import("vec");\nvec.entropy([0])',
-      'let vec = import("vec");\nvec.entropy([1])',
-      'let vec = import("vec");\nvec.entropy([1, 2])',
+      'let { entropy } = import("vec");\nentropy([1, 1, 2, 3, 3, 3])',
+      'let { entropy } = import("vec");\nentropy([1, 2, 3])',
+      'let { entropy } = import("vec");\nentropy([1, 2, 2, 3])',
+      'let { entropy } = import("vec");\nentropy([0])',
+      'let { entropy } = import("vec");\nentropy([1])',
+      'let { entropy } = import("vec");\nentropy([1, 2])',
     ],
   },
   'vec.moving-entropy': {

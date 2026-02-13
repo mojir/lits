@@ -19,11 +19,11 @@ export const rootMeanSquareReference: VectorReductionReference<'rms'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.rms([1, 2, 3, 4])',
-      'let vec = import("vec");\nvec.rms([5, 4, 3, 2, 1])',
-      'let vec = import("vec");\nvec.rms(range(1, 1000))',
-      'let vec = import("vec");\nvec.rms(vec.generate(1000, -> 1e6 / ($ + 1) ^ 2))',
-      'let vec = import("vec");\nvec.rms(vec.generate(1000, -> ln($ + 1)))',
+      'let { rms } = import("vec");\nrms([1, 2, 3, 4])',
+      'let { rms } = import("vec");\nrms([5, 4, 3, 2, 1])',
+      'let { rms } = import("vec");\nrms(range(1, 1000))',
+      'let { rms } = import("vec");\nrms(vec.generate(1000, -> 1e6 / ($ + 1) ^ 2))',
+      'let { rms } = import("vec");\nrms(vec.generate(1000, -> ln($ + 1)))',
     ],
   },
   'vec.moving-rms': {

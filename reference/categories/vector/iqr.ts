@@ -19,11 +19,11 @@ export const interquartileRangeReference: VectorReductionReference<'iqr'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.iqr([1, 2, 3, 4])',
-      'let vec = import("vec");\nvec.iqr([5, 4, 3, 2, 1, 2, 3, 4, 5])',
-      'let vec = import("vec");\nvec.iqr(range(1, 1000))',
-      'let vec = import("vec");\nvec.iqr(vec.generate(1000, -> 1e6 / ($ + 1) ^ 2))',
-      'let vec = import("vec");\nvec.iqr(vec.generate(1000, -> ln($ + 1)))',
+      'let { iqr } = import("vec");\niqr([1, 2, 3, 4])',
+      'let { iqr } = import("vec");\niqr([5, 4, 3, 2, 1, 2, 3, 4, 5])',
+      'let { iqr } = import("vec");\niqr(range(1, 1000))',
+      'let { iqr } = import("vec");\niqr(vec.generate(1000, -> 1e6 / ($ + 1) ^ 2))',
+      'let { iqr } = import("vec");\niqr(vec.generate(1000, -> ln($ + 1)))',
     ],
   },
 

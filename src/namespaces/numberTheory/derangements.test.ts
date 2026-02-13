@@ -4,7 +4,7 @@ import { Lits } from '../../Lits/Lits'
 const lits = new Lits()
 
 function runNth(code: string) {
-  return lits.run(`let nt = import("nth"); ${code.replace(/nth:/g, 'nt.')}`)
+  return lits.run(`let nt = import("TEMP-nth"); ${code.replace(/nth:/g, 'nt.')}`)
 }
 describe('derangements', () => {
   describe('nth:derangements', () => {

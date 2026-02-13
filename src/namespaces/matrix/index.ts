@@ -217,8 +217,8 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
   },
-  // 1-norm
-  '1-norm': {
+  // one-norm (column norm)
+  'one-norm': {
     evaluate: ([matrix], sourceCodeInfo): number => {
       assertMatrix(matrix, sourceCodeInfo)
       return norm1(matrix)

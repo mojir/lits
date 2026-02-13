@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const padovanReference: NumberTheorySequenceReference<'padovan'> = {
-  'nth.padovan-seq': {
-    title: 'nth.padovan-seq',
+  'TEMP-nth.padovan-seq': {
+    title: 'TEMP-nth.padovan-seq',
     category: 'Number Theory',
     description: 'Generates the Padovan sequence up to a specified length.',
     returns: {
@@ -19,13 +19,13 @@ export const padovanReference: NumberTheorySequenceReference<'padovan'> = {
       { argumentNames: ['length'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.padovan-seq(5)',
-      'let nt = import("nth");\nnt.padovan-seq(10)',
-      'let nt = import("nth");\nnt.padovan-seq(20)',
+      'let nt = import("TEMP-nth");\nnt.padovan-seq(5)',
+      'let nt = import("TEMP-nth");\nnt.padovan-seq(10)',
+      'let nt = import("TEMP-nth");\nnt.padovan-seq(20)',
     ],
   },
-  'nth.padovan-take-while': {
-    title: 'nth.padovan-take-while',
+  'TEMP-nth.padovan-take-while': {
+    title: 'TEMP-nth.padovan-take-while',
     category: 'Number Theory',
     description: 'Generates the Padovan sequence while a condition is met.',
     returns: {
@@ -42,11 +42,11 @@ export const padovanReference: NumberTheorySequenceReference<'padovan'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.padovan-take-while(-> $ < 1000)',
+      'let nt = import("TEMP-nth");\nnt.padovan-take-while(-> $ < 1000)',
     ],
   },
-  'nth.padovan-nth': {
-    title: 'nth.padovan-nth',
+  'TEMP-nth.padovan-nth': {
+    title: 'TEMP-nth.padovan-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Padovan sequence.',
     returns: {
@@ -62,13 +62,13 @@ export const padovanReference: NumberTheorySequenceReference<'padovan'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.padovan-nth(5)',
-      'let nt = import("nth");\nnt.padovan-nth(10)',
-      'let nt = import("nth");\nnt.padovan-nth(20)',
+      'let nt = import("TEMP-nth");\nnt.padovan-nth(5)',
+      'let nt = import("TEMP-nth");\nnt.padovan-nth(10)',
+      'let nt = import("TEMP-nth");\nnt.padovan-nth(20)',
     ],
   },
-  'nth.padovan?': {
-    title: 'nth.padovan?',
+  'TEMP-nth.padovan?': {
+    title: 'TEMP-nth.padovan?',
     category: 'Number Theory',
     description: 'Checks if a number is in the Padovan sequence.',
     returns: {
@@ -84,9 +84,9 @@ export const padovanReference: NumberTheorySequenceReference<'padovan'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.padovan?(1)',
-      'let nt = import("nth");\nnt.padovan?(265)',
-      'let nt = import("nth");\nnt.padovan?(6)',
+      'let nt = import("TEMP-nth");\nnt.padovan?(1)',
+      'let nt = import("TEMP-nth");\nnt.padovan?(265)',
+      'let nt = import("TEMP-nth");\nnt.padovan?(6)',
     ],
   },
 }

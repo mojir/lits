@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const pellReference: NumberTheorySequenceReference<'pell'> = {
-  'nth.pell-seq': {
-    title: 'nth.pell-seq',
+  'TEMP-nth.pell-seq': {
+    title: 'TEMP-nth.pell-seq',
     category: 'Number Theory',
     description: 'Generates the Pell sequence up to a specified length.',
     returns: {
@@ -20,13 +20,13 @@ export const pellReference: NumberTheorySequenceReference<'pell'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.pell-seq(5)',
-      'let nt = import("nth");\nnt.pell-seq(10)',
-      'let nt = import("nth");\nnt.pell-seq()',
+      'let nt = import("TEMP-nth");\nnt.pell-seq(5)',
+      'let nt = import("TEMP-nth");\nnt.pell-seq(10)',
+      'let nt = import("TEMP-nth");\nnt.pell-seq()',
     ],
   },
-  'nth.pell-take-while': {
-    title: 'nth.pell-take-while',
+  'TEMP-nth.pell-take-while': {
+    title: 'TEMP-nth.pell-take-while',
     category: 'Number Theory',
     description: 'Generates the Pell sequence while a condition is met.',
     returns: {
@@ -43,11 +43,11 @@ export const pellReference: NumberTheorySequenceReference<'pell'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.pell-take-while(-> $ < 1000)',
+      'let nt = import("TEMP-nth");\nnt.pell-take-while(-> $ < 1000)',
     ],
   },
-  'nth.pell-nth': {
-    title: 'nth.pell-nth',
+  'TEMP-nth.pell-nth': {
+    title: 'TEMP-nth.pell-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Pell sequence.',
     returns: {
@@ -63,13 +63,13 @@ export const pellReference: NumberTheorySequenceReference<'pell'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.pell-nth(5)',
-      'let nt = import("nth");\nnt.pell-nth(10)',
-      'let nt = import("nth");\nnt.pell-nth(20)',
+      'let nt = import("TEMP-nth");\nnt.pell-nth(5)',
+      'let nt = import("TEMP-nth");\nnt.pell-nth(10)',
+      'let nt = import("TEMP-nth");\nnt.pell-nth(20)',
     ],
   },
-  'nth.pell?': {
-    title: 'nth.pell?',
+  'TEMP-nth.pell?': {
+    title: 'TEMP-nth.pell?',
     category: 'Number Theory',
     description: 'Checks if a number is a Pell number.',
     returns: {
@@ -85,9 +85,9 @@ export const pellReference: NumberTheorySequenceReference<'pell'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.pell?(1)',
-      'let nt = import("nth");\nnt.pell?(470832)',
-      'let nt = import("nth");\nnt.pell?(10)',
+      'let nt = import("TEMP-nth");\nnt.pell?(1)',
+      'let nt = import("TEMP-nth");\nnt.pell?(470832)',
+      'let nt = import("TEMP-nth");\nnt.pell?(10)',
     ],
   },
 }

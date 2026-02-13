@@ -464,6 +464,6 @@ function addNormalExpressions(normalExpressions: BuiltinNormalExpressions) {
 }
 
 export const numberTheoryNamespace: LitsNamespace = {
-  name: 'nth',
+  name: 'TEMP-nth',
   functions: combinatoricalNormalExpression,
 }

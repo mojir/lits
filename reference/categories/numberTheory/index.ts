@@ -33,10 +33,10 @@ import { thueMorseReference } from './thueMorse'
 import { tribonacciReference } from './tribonacci'
 import { deficientReference } from './deficient'
 
-type SeqKey<T extends string> = `nth.${T}-seq`
-type TakeWhileKey<T extends string> = `nth.${T}-take-while`
-type NthKey<T extends string> = `nth.${T}-nth`
-type PredKey<T extends string> = `nth.${T}?`
+type SeqKey<T extends string> = `TEMP-nth.${T}-seq`
+type TakeWhileKey<T extends string> = `TEMP-nth.${T}-take-while`
+type NthKey<T extends string> = `TEMP-nth.${T}-nth`
+type PredKey<T extends string> = `TEMP-nth.${T}?`
 
 type SequenceKeys<T extends string> = SeqKey<T> | TakeWhileKey<T> | NthKey<T> | PredKey<T>
 
@@ -76,8 +76,8 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
   ...sylvesterReference,
   ...thueMorseReference,
   ...tribonacciReference,
-  'nth.count-combinations': {
-    title: 'nth.count-combinations',
+  'TEMP-nth.count-combinations': {
+    title: 'TEMP-nth.count-combinations',
     category: 'Number Theory',
     description: 'Calculates the number of combinations of n items taken k at a time.',
     returns: {
@@ -90,13 +90,13 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.count-combinations(5, 3)',
-      'let nt = import("nth");\nnt.binomial(10, 2)',
+      'let nt = import("TEMP-nth");\nnt.count-combinations(5, 3)',
+      'let { binomial } = import("TEMP-nth");\nbinomial(10, 2)',
     ],
-    aliases: ['nth.binomial'],
+    aliases: ['TEMP-nth.binomial'],
   },
-  'nth.combinations': {
-    title: 'nth.combinations',
+  'TEMP-nth.combinations': {
+    title: 'TEMP-nth.combinations',
     category: 'Number Theory',
     description: 'Generates all possible combinations of a specified size from a collection.',
     returns: {
@@ -119,15 +119,15 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['set', 'n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.combinations([1, 2, 3], 2)',
-      'let nt = import("nth");\nnt.combinations(["a", "b", "c"], 2)',
-      'let nt = import("nth");\nnt.combinations([1, 2, 3], 0)',
-      'let nt = import("nth");\nnt.combinations([1, 2, 3], 1)',
-      'let nt = import("nth");\nnt.combinations([1, 2, 3], 3)',
+      'let { combinations } = import("TEMP-nth");\ncombinations([1, 2, 3], 2)',
+      'let { combinations } = import("TEMP-nth");\ncombinations(["a", "b", "c"], 2)',
+      'let { combinations } = import("TEMP-nth");\ncombinations([1, 2, 3], 0)',
+      'let { combinations } = import("TEMP-nth");\ncombinations([1, 2, 3], 1)',
+      'let { combinations } = import("TEMP-nth");\ncombinations([1, 2, 3], 3)',
     ],
   },
-  'nth.count-derangements': {
-    title: 'nth.count-derangements',
+  'TEMP-nth.count-derangements': {
+    title: 'TEMP-nth.count-derangements',
     category: 'Number Theory',
     description: 'Calculates the number of derangements (permutations where no element appears in its original position) of n items.',
     returns: {
@@ -143,12 +143,12 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.count-derangements(4)',
-      'let nt = import("nth");\nnt.count-derangements(5)',
+      'let nt = import("TEMP-nth");\nnt.count-derangements(4)',
+      'let nt = import("TEMP-nth");\nnt.count-derangements(5)',
     ],
   },
-  'nth.derangements': {
-    title: 'nth.derangements',
+  'TEMP-nth.derangements': {
+    title: 'TEMP-nth.derangements',
     category: 'Number Theory',
     description: 'Generates all derangements (permutations where no element appears in its original position) of a set.',
     returns: {
@@ -166,12 +166,12 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['set'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.derangements([1, 2, 3, 4])',
-      'let nt = import("nth");\nnt.derangements(["a", "b", "c"])',
+      'let { derangements } = import("TEMP-nth");\nderangements([1, 2, 3, 4])',
+      'let { derangements } = import("TEMP-nth");\nderangements(["a", "b", "c"])',
     ],
   },
-  'nth.divisors': {
-    title: 'nth.divisors',
+  'TEMP-nth.divisors': {
+    title: 'TEMP-nth.divisors',
     category: 'Number Theory',
     description: 'Returns the divisors of a number.',
     returns: {
@@ -188,13 +188,13 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.divisors(12)',
-      'let nt = import("nth");\nnt.divisors(100)',
-      'let nt = import("nth");\nnt.divisors(37)',
+      'let { divisors } = import("TEMP-nth");\ndivisors(12)',
+      'let { divisors } = import("TEMP-nth");\ndivisors(100)',
+      'let { divisors } = import("TEMP-nth");\ndivisors(37)',
     ],
   },
-  'nth.count-divisors': {
-    title: 'nth.count-divisors',
+  'TEMP-nth.count-divisors': {
+    title: 'TEMP-nth.count-divisors',
     category: 'Number Theory',
     description: 'Returns the number of divisors of a number.',
     returns: {
@@ -210,13 +210,13 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.count-divisors(12)',
-      'let nt = import("nth");\nnt.count-divisors(100)',
-      'let nt = import("nth");\nnt.count-divisors(37)',
+      'let nt = import("TEMP-nth");\nnt.count-divisors(12)',
+      'let nt = import("TEMP-nth");\nnt.count-divisors(100)',
+      'let nt = import("TEMP-nth");\nnt.count-divisors(37)',
     ],
   },
-  'nth.proper-divisors': {
-    title: 'nth.proper-divisors',
+  'TEMP-nth.proper-divisors': {
+    title: 'TEMP-nth.proper-divisors',
     category: 'Number Theory',
     description: 'Returns the proper divisors of a number.',
     returns: {
@@ -233,13 +233,13 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.proper-divisors(12)',
-      'let nt = import("nth");\nnt.proper-divisors(100)',
-      'let nt = import("nth");\nnt.proper-divisors(37)',
+      'let nt = import("TEMP-nth");\nnt.proper-divisors(12)',
+      'let nt = import("TEMP-nth");\nnt.proper-divisors(100)',
+      'let nt = import("TEMP-nth");\nnt.proper-divisors(37)',
     ],
   },
-  'nth.count-proper-divisors': {
-    title: 'nth.count-proper-divisors',
+  'TEMP-nth.count-proper-divisors': {
+    title: 'TEMP-nth.count-proper-divisors',
     category: 'Number Theory',
     description: 'Returns the number of proper divisors of a number.',
     returns: {
@@ -255,13 +255,13 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.count-proper-divisors(12)',
-      'let nt = import("nth");\nnt.count-proper-divisors(100)',
-      'let nt = import("nth");\nnt.count-proper-divisors(37)',
+      'let nt = import("TEMP-nth");\nnt.count-proper-divisors(12)',
+      'let nt = import("TEMP-nth");\nnt.count-proper-divisors(100)',
+      'let nt = import("TEMP-nth");\nnt.count-proper-divisors(37)',
     ],
   },
-  'nth.factorial': {
-    title: 'nth.factorial',
+  'TEMP-nth.factorial': {
+    title: 'TEMP-nth.factorial',
     category: 'Number Theory',
     description: 'Calculates the factorial of a number.',
     returns: {
@@ -277,15 +277,15 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.factorial(5)',
-      'let nt = import("nth");\nnt.factorial(0)',
-      'let nt = import("nth");\nnt.!(10)',
-      'let nt = import("nth");\nnt.!(20)',
+      'let { factorial } = import("TEMP-nth");\nfactorial(5)',
+      'let { factorial } = import("TEMP-nth");\nfactorial(0)',
+      'let nt = import("TEMP-nth");\nnt.!(10)',
+      'let nt = import("TEMP-nth");\nnt.!(20)',
     ],
-    aliases: ['nth.!'],
+    aliases: ['TEMP-nth.!'],
   },
-  'nth.partitions': {
-    title: 'nth.partitions',
+  'TEMP-nth.partitions': {
+    title: 'TEMP-nth.partitions',
     category: 'Number Theory',
     description: 'Generates all partitions of a number.',
     returns: {
@@ -302,12 +302,12 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.partitions(4)',
-      'let nt = import("nth");\nnt.partitions(8)',
+      'let { partitions } = import("TEMP-nth");\npartitions(4)',
+      'let { partitions } = import("TEMP-nth");\npartitions(8)',
     ],
   },
-  'nth.count-partitions': {
-    title: 'nth.count-partitions',
+  'TEMP-nth.count-partitions': {
+    title: 'TEMP-nth.count-partitions',
     category: 'Number Theory',
     description: 'Returns the number of partitions of a number.',
     returns: {
@@ -323,13 +323,13 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.count-partitions(4)',
-      'let nt = import("nth");\nnt.count-partitions(8)',
-      'let nt = import("nth");\nnt.count-partitions(15)',
+      'let nt = import("TEMP-nth");\nnt.count-partitions(4)',
+      'let nt = import("TEMP-nth");\nnt.count-partitions(8)',
+      'let nt = import("TEMP-nth");\nnt.count-partitions(15)',
     ],
   },
-  'nth.permutations': {
-    title: 'nth.permutations',
+  'TEMP-nth.permutations': {
+    title: 'TEMP-nth.permutations',
     category: 'Number Theory',
     description: 'Generates all permutations of a collection.',
     returns: {
@@ -347,16 +347,16 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['set'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.permutations([1, 2, 3])',
-      'let nt = import("nth");\nnt.permutations(["a", "b", "c"])',
-      'let nt = import("nth");\nnt.permutations([1, 2, 3, 4])',
-      'let nt = import("nth");\nnt.permutations([1, 2])',
-      'let nt = import("nth");\nnt.permutations([1])',
-      'let nt = import("nth");\nnt.permutations([])',
+      'let { permutations } = import("TEMP-nth");\npermutations([1, 2, 3])',
+      'let { permutations } = import("TEMP-nth");\npermutations(["a", "b", "c"])',
+      'let { permutations } = import("TEMP-nth");\npermutations([1, 2, 3, 4])',
+      'let { permutations } = import("TEMP-nth");\npermutations([1, 2])',
+      'let { permutations } = import("TEMP-nth");\npermutations([1])',
+      'let { permutations } = import("TEMP-nth");\npermutations([])',
     ],
   },
-  'nth.count-permutations': {
-    title: 'nth.count-permutations',
+  'TEMP-nth.count-permutations': {
+    title: 'TEMP-nth.count-permutations',
     category: 'Number Theory',
     description: 'Returns the number of permutations of n items taken k at a time.',
     returns: {
@@ -369,15 +369,15 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.count-permutations(5, 3)',
-      'let nt = import("nth");\nnt.count-permutations(10, 2)',
-      'let nt = import("nth");\nnt.count-permutations(10, 10)',
-      'let nt = import("nth");\nnt.count-permutations(10, 0)',
-      'let nt = import("nth");\nnt.count-permutations(10, 1)',
+      'let nt = import("TEMP-nth");\nnt.count-permutations(5, 3)',
+      'let nt = import("TEMP-nth");\nnt.count-permutations(10, 2)',
+      'let nt = import("TEMP-nth");\nnt.count-permutations(10, 10)',
+      'let nt = import("TEMP-nth");\nnt.count-permutations(10, 0)',
+      'let nt = import("TEMP-nth");\nnt.count-permutations(10, 1)',
     ],
   },
-  'nth.power-set': {
-    title: 'nth.power-set',
+  'TEMP-nth.power-set': {
+    title: 'TEMP-nth.power-set',
     category: 'Number Theory',
     description: 'Generates the power set of a collection.',
     returns: {
@@ -395,14 +395,14 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['set'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.power-set(["a", "b", "c"])',
-      'let nt = import("nth");\nnt.power-set([1, 2])',
-      'let nt = import("nth");\nnt.power-set([1])',
-      'let nt = import("nth");\nnt.power-set([])',
+      'let nt = import("TEMP-nth");\nnt.power-set(["a", "b", "c"])',
+      'let nt = import("TEMP-nth");\nnt.power-set([1, 2])',
+      'let nt = import("TEMP-nth");\nnt.power-set([1])',
+      'let nt = import("TEMP-nth");\nnt.power-set([])',
     ],
   },
-  'nth.count-power-set': {
-    title: 'nth.count-power-set',
+  'TEMP-nth.count-power-set': {
+    title: 'TEMP-nth.count-power-set',
     category: 'Number Theory',
     description: 'Returns the number of subsets of a set.',
     returns: {
@@ -418,13 +418,13 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.count-power-set(3)',
-      'let nt = import("nth");\nnt.count-power-set(5)',
-      'let nt = import("nth");\nnt.count-power-set(10)',
+      'let nt = import("TEMP-nth");\nnt.count-power-set(3)',
+      'let nt = import("TEMP-nth");\nnt.count-power-set(5)',
+      'let nt = import("TEMP-nth");\nnt.count-power-set(10)',
     ],
   },
-  'nth.prime-factors': {
-    title: 'nth.prime-factors',
+  'TEMP-nth.prime-factors': {
+    title: 'TEMP-nth.prime-factors',
     category: 'Number Theory',
     description: 'Returns the prime factors of a number.',
     returns: {
@@ -441,13 +441,13 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.prime-factors(12)',
-      'let nt = import("nth");\nnt.prime-factors(100)',
-      'let nt = import("nth");\nnt.prime-factors(37)',
+      'let nt = import("TEMP-nth");\nnt.prime-factors(12)',
+      'let nt = import("TEMP-nth");\nnt.prime-factors(100)',
+      'let nt = import("TEMP-nth");\nnt.prime-factors(37)',
     ],
   },
-  'nth.count-prime-factors': {
-    title: 'nth.count-prime-factors',
+  'TEMP-nth.count-prime-factors': {
+    title: 'TEMP-nth.count-prime-factors',
     category: 'Number Theory',
     description: 'Returns the number of prime factors of a number.',
     returns: {
@@ -463,13 +463,13 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.count-prime-factors(12)',
-      'let nt = import("nth");\nnt.count-prime-factors(100)',
-      'let nt = import("nth");\nnt.count-prime-factors(37)',
+      'let nt = import("TEMP-nth");\nnt.count-prime-factors(12)',
+      'let nt = import("TEMP-nth");\nnt.count-prime-factors(100)',
+      'let nt = import("TEMP-nth");\nnt.count-prime-factors(37)',
     ],
   },
-  'nth.distinct-prime-factors': {
-    title: 'nth.distinct-prime-factors',
+  'TEMP-nth.distinct-prime-factors': {
+    title: 'TEMP-nth.distinct-prime-factors',
     category: 'Number Theory',
     description: 'Returns the distinct prime factors of a number.',
     returns: {
@@ -486,13 +486,13 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.distinct-prime-factors(12)',
-      'let nt = import("nth");\nnt.distinct-prime-factors(100)',
-      'let nt = import("nth");\nnt.distinct-prime-factors(37)',
+      'let nt = import("TEMP-nth");\nnt.distinct-prime-factors(12)',
+      'let nt = import("TEMP-nth");\nnt.distinct-prime-factors(100)',
+      'let nt = import("TEMP-nth");\nnt.distinct-prime-factors(37)',
     ],
   },
-  'nth.count-distinct-prime-factors': {
-    title: 'nth.count-distinct-prime-factors',
+  'TEMP-nth.count-distinct-prime-factors': {
+    title: 'TEMP-nth.count-distinct-prime-factors',
     category: 'Number Theory',
     description: 'Returns the number of distinct prime factors of a number.',
     returns: {
@@ -508,13 +508,13 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.count-distinct-prime-factors(12)',
-      'let nt = import("nth");\nnt.count-distinct-prime-factors(100)',
-      'let nt = import("nth");\nnt.count-distinct-prime-factors(37)',
+      'let nt = import("TEMP-nth");\nnt.count-distinct-prime-factors(12)',
+      'let nt = import("TEMP-nth");\nnt.count-distinct-prime-factors(100)',
+      'let nt = import("TEMP-nth");\nnt.count-distinct-prime-factors(37)',
     ],
   },
-  'nth.coprime?': {
-    title: 'nth.coprime?',
+  'TEMP-nth.coprime?': {
+    title: 'TEMP-nth.coprime?',
     category: 'Number Theory',
     description: 'Checks if two numbers are coprime (i.e., their GCD is 1).',
     returns: {
@@ -527,20 +527,20 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.coprime?(12, 8)',
-      'let nt = import("nth");\nnt.coprime?(12, 5)',
-      'let nt = import("nth");\nnt.coprime?(37, 1)',
-      'let nt = import("nth");\nnt.coprime?(0, 0)',
-      'let nt = import("nth");\nnt.coprime?(0, 5)',
-      'let nt = import("nth");\nnt.coprime?(5, 0)',
-      'let nt = import("nth");\nnt.coprime?(1, 0)',
-      'let nt = import("nth");\nnt.coprime?(0, 1)',
-      'let nt = import("nth");\nnt.coprime?(1, 1)',
-      'let nt = import("nth");\nnt.coprime?(2, 3)',
+      'let nt = import("TEMP-nth");\nnt.coprime?(12, 8)',
+      'let nt = import("TEMP-nth");\nnt.coprime?(12, 5)',
+      'let nt = import("TEMP-nth");\nnt.coprime?(37, 1)',
+      'let nt = import("TEMP-nth");\nnt.coprime?(0, 0)',
+      'let nt = import("TEMP-nth");\nnt.coprime?(0, 5)',
+      'let nt = import("TEMP-nth");\nnt.coprime?(5, 0)',
+      'let nt = import("TEMP-nth");\nnt.coprime?(1, 0)',
+      'let nt = import("TEMP-nth");\nnt.coprime?(0, 1)',
+      'let nt = import("TEMP-nth");\nnt.coprime?(1, 1)',
+      'let nt = import("TEMP-nth");\nnt.coprime?(2, 3)',
     ],
   },
-  'nth.divisible-by?': {
-    title: 'nth.divisible-by?',
+  'TEMP-nth.divisible-by?': {
+    title: 'TEMP-nth.divisible-by?',
     category: 'Number Theory',
     description: 'Checks if a number is divisible by another number.',
     returns: {
@@ -553,16 +553,16 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.divisible-by?(12, 4)',
-      'let nt = import("nth");\nnt.divisible-by?(12, 5)',
-      'let nt = import("nth");\nnt.divisible-by?(37, 1)',
-      'let nt = import("nth");\nnt.divisible-by?(0, 0)',
-      'let nt = import("nth");\nnt.divisible-by?(0, 5)',
-      'let nt = import("nth");\nnt.divisible-by?(5, 0)',
+      'let nt = import("TEMP-nth");\nnt.divisible-by?(12, 4)',
+      'let nt = import("TEMP-nth");\nnt.divisible-by?(12, 5)',
+      'let nt = import("TEMP-nth");\nnt.divisible-by?(37, 1)',
+      'let nt = import("TEMP-nth");\nnt.divisible-by?(0, 0)',
+      'let nt = import("TEMP-nth");\nnt.divisible-by?(0, 5)',
+      'let nt = import("TEMP-nth");\nnt.divisible-by?(5, 0)',
     ],
   },
-  'nth.gcd': {
-    title: 'nth.gcd',
+  'TEMP-nth.gcd': {
+    title: 'TEMP-nth.gcd',
     category: 'Number Theory',
     description: 'Calculates the greatest common divisor (GCD) of two numbers.',
     returns: {
@@ -575,15 +575,15 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.gcd(100, 25)',
-      'let nt = import("nth");\nnt.gcd(37, 1)',
-      'let nt = import("nth");\nnt.gcd(0, 0)',
-      'let nt = import("nth");\nnt.gcd(0, 5)',
-      'let nt = import("nth");\nnt.gcd(5, 0)',
+      'let { gcd } = import("TEMP-nth");\ngcd(100, 25)',
+      'let { gcd } = import("TEMP-nth");\ngcd(37, 1)',
+      'let { gcd } = import("TEMP-nth");\ngcd(0, 0)',
+      'let { gcd } = import("TEMP-nth");\ngcd(0, 5)',
+      'let { gcd } = import("TEMP-nth");\ngcd(5, 0)',
     ],
   },
-  'nth.lcm': {
-    title: 'nth.lcm',
+  'TEMP-nth.lcm': {
+    title: 'TEMP-nth.lcm',
     category: 'Number Theory',
     description: 'Calculates the least common multiple (LCM) of two numbers.',
     returns: {
@@ -596,14 +596,14 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.lcm(100, 25)',
-      'let nt = import("nth");\nnt.lcm(37, 1)',
-      'let nt = import("nth");\nnt.lcm(0, 5)',
-      'let nt = import("nth");\nnt.lcm(5, 0)',
+      'let { lcm } = import("TEMP-nth");\nlcm(100, 25)',
+      'let { lcm } = import("TEMP-nth");\nlcm(37, 1)',
+      'let { lcm } = import("TEMP-nth");\nlcm(0, 5)',
+      'let { lcm } = import("TEMP-nth");\nlcm(5, 0)',
     ],
   },
-  'nth.multinomial': {
-    title: 'nth.multinomial',
+  'TEMP-nth.multinomial': {
+    title: 'TEMP-nth.multinomial',
     category: 'Number Theory',
     description: 'Calculates the multinomial coefficient from of a list of numbers representing the sizes of each group.',
     returns: {
@@ -620,13 +620,13 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['args'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.multinomial(5, 2, 3)',
-      'let nt = import("nth");\nnt.multinomial(10, 2, 3, 5)',
+      'let { multinomial } = import("TEMP-nth");\nmultinomial(5, 2, 3)',
+      'let { multinomial } = import("TEMP-nth");\nmultinomial(10, 2, 3, 5)',
     ],
     noOperatorDocumentation: true,
   },
-  'nth.amicable?': {
-    title: 'nth.amicable?',
+  'TEMP-nth.amicable?': {
+    title: 'TEMP-nth.amicable?',
     category: 'Number Theory',
     description: 'Checks if two numbers are amicable (i.e., the sum of the proper divisors of each number equals the other number).',
     returns: {
@@ -639,15 +639,15 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.amicable?(220, 284)',
-      'let nt = import("nth");\nnt.amicable?(1184, 1210)',
-      'let nt = import("nth");\nnt.amicable?(2620, 2924)',
-      'let nt = import("nth");\nnt.amicable?(5020, 5564)',
-      'let nt = import("nth");\nnt.amicable?(6232, 6368)',
+      'let nt = import("TEMP-nth");\nnt.amicable?(220, 284)',
+      'let nt = import("TEMP-nth");\nnt.amicable?(1184, 1210)',
+      'let nt = import("TEMP-nth");\nnt.amicable?(2620, 2924)',
+      'let nt = import("TEMP-nth");\nnt.amicable?(5020, 5564)',
+      'let nt = import("TEMP-nth");\nnt.amicable?(6232, 6368)',
     ],
   },
-  'nth.euler-totient': {
-    title: 'nth.euler-totient',
+  'TEMP-nth.euler-totient': {
+    title: 'TEMP-nth.euler-totient',
     category: 'Number Theory',
     description: 'Calculates the Euler\'s totient function (φ(n)) of a number, which counts the integers up to n that are coprime to n.',
     returns: {
@@ -663,14 +663,14 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.euler-totient(1)',
-      'let nt = import("nth");\nnt.euler-totient(2)',
-      'let nt = import("nth");\nnt.euler-totient(10)',
-      'let nt = import("nth");\nnt.euler-totient(20)',
+      'let nt = import("TEMP-nth");\nnt.euler-totient(1)',
+      'let nt = import("TEMP-nth");\nnt.euler-totient(2)',
+      'let nt = import("TEMP-nth");\nnt.euler-totient(10)',
+      'let nt = import("TEMP-nth");\nnt.euler-totient(20)',
     ],
   },
-  'nth.mobius': {
-    title: 'nth.mobius',
+  'TEMP-nth.mobius': {
+    title: 'TEMP-nth.mobius',
     category: 'Number Theory',
     description: 'Calculates the Möbius function (μ(n)) of a number, which is used in number theory.',
     returns: {
@@ -686,18 +686,18 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.mobius(1)',
-      'let nt = import("nth");\nnt.mobius(2)',
-      'let nt = import("nth");\nnt.mobius(3)',
-      'let nt = import("nth");\nnt.mobius(4)',
-      'let nt = import("nth");\nnt.mobius(6)',
-      'let nt = import("nth");\nnt.mobius(12)',
-      'let nt = import("nth");\nnt.mobius(30)',
+      'let { mobius } = import("TEMP-nth");\nmobius(1)',
+      'let { mobius } = import("TEMP-nth");\nmobius(2)',
+      'let { mobius } = import("TEMP-nth");\nmobius(3)',
+      'let { mobius } = import("TEMP-nth");\nmobius(4)',
+      'let { mobius } = import("TEMP-nth");\nmobius(6)',
+      'let { mobius } = import("TEMP-nth");\nmobius(12)',
+      'let { mobius } = import("TEMP-nth");\nmobius(30)',
     ],
-    aliases: ['nth.möbius'],
+    aliases: ['TEMP-nth.möbius'],
   },
-  'nth.mertens': {
-    title: 'nth.mertens',
+  'TEMP-nth.mertens': {
+    title: 'TEMP-nth.mertens',
     category: 'Number Theory',
     description: 'Calculates the Mertens function (M(n)) of a number, which is the sum of the Möbius function up to n.',
     returns: {
@@ -713,17 +713,17 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.mobius(1)',
-      'let nt = import("nth");\nnt.mobius(2)',
-      'let nt = import("nth");\nnt.mobius(3)',
-      'let nt = import("nth");\nnt.mobius(4)',
-      'let nt = import("nth");\nnt.mobius(6)',
-      'let nt = import("nth");\nnt.mobius(12)',
-      'let nt = import("nth");\nnt.mobius(30)',
+      'let { mobius } = import("TEMP-nth");\nmobius(1)',
+      'let { mobius } = import("TEMP-nth");\nmobius(2)',
+      'let { mobius } = import("TEMP-nth");\nmobius(3)',
+      'let { mobius } = import("TEMP-nth");\nmobius(4)',
+      'let { mobius } = import("TEMP-nth");\nmobius(6)',
+      'let { mobius } = import("TEMP-nth");\nmobius(12)',
+      'let { mobius } = import("TEMP-nth");\nmobius(30)',
     ],
   },
-  'nth.sigma': {
-    title: 'nth.sigma',
+  'TEMP-nth.sigma': {
+    title: 'TEMP-nth.sigma',
     category: 'Number Theory',
     description: 'Calculates the sum of divisors function (σ(n)) of a number, which is the sum of all positive divisors of n.',
     returns: {
@@ -739,17 +739,17 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.sigma(1)',
-      'let nt = import("nth");\nnt.sigma(2)',
-      'let nt = import("nth");\nnt.sigma(3)',
-      'let nt = import("nth");\nnt.sigma(4)',
-      'let nt = import("nth");\nnt.sigma(6)',
-      'let nt = import("nth");\nnt.sigma(12)',
-      'let nt = import("nth");\nnt.sigma(30)',
+      'let { sigma } = import("TEMP-nth");\nsigma(1)',
+      'let { sigma } = import("TEMP-nth");\nsigma(2)',
+      'let { sigma } = import("TEMP-nth");\nsigma(3)',
+      'let { sigma } = import("TEMP-nth");\nsigma(4)',
+      'let { sigma } = import("TEMP-nth");\nsigma(6)',
+      'let { sigma } = import("TEMP-nth");\nsigma(12)',
+      'let { sigma } = import("TEMP-nth");\nsigma(30)',
     ],
   },
-  'nth.carmichael-lambda': {
-    title: 'nth.carmichael-lambda',
+  'TEMP-nth.carmichael-lambda': {
+    title: 'TEMP-nth.carmichael-lambda',
     category: 'Number Theory',
     description: 'Calculates the Carmichael function (λ(n)) of a number, which is the smallest positive integer m such that a^m ≡ 1 (mod n) for all integers a coprime to n.',
     returns: {
@@ -765,17 +765,17 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.carmichael-lambda(1)',
-      'let nt = import("nth");\nnt.carmichael-lambda(2)',
-      'let nt = import("nth");\nnt.carmichael-lambda(3)',
-      'let nt = import("nth");\nnt.carmichael-lambda(4)',
-      'let nt = import("nth");\nnt.carmichael-lambda(6)',
-      'let nt = import("nth");\nnt.carmichael-lambda(12)',
-      'let nt = import("nth");\nnt.carmichael-lambda(30)',
+      'let nt = import("TEMP-nth");\nnt.carmichael-lambda(1)',
+      'let nt = import("TEMP-nth");\nnt.carmichael-lambda(2)',
+      'let nt = import("TEMP-nth");\nnt.carmichael-lambda(3)',
+      'let nt = import("TEMP-nth");\nnt.carmichael-lambda(4)',
+      'let nt = import("TEMP-nth");\nnt.carmichael-lambda(6)',
+      'let nt = import("TEMP-nth");\nnt.carmichael-lambda(12)',
+      'let nt = import("TEMP-nth");\nnt.carmichael-lambda(30)',
     ],
   },
-  'nth.cartesian-product': {
-    title: 'nth.cartesian-product',
+  'TEMP-nth.cartesian-product': {
+    title: 'TEMP-nth.cartesian-product',
     category: 'Number Theory',
     description: 'Calculates the Cartesian product of two or more sets.',
     returns: {
@@ -794,13 +794,13 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['sets'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.cartesian-product([1, 2], ["a", "b"])',
-      'let nt = import("nth");\nnt.cartesian-product([1, 2], ["a", "b"], [true, false])',
-      'let nt = import("nth");\nnt.cartesian-product([1, 2, 3], ["x", "y", "z"])',
+      'let nt = import("TEMP-nth");\nnt.cartesian-product([1, 2], ["a", "b"])',
+      'let nt = import("TEMP-nth");\nnt.cartesian-product([1, 2], ["a", "b"], [true, false])',
+      'let nt = import("TEMP-nth");\nnt.cartesian-product([1, 2, 3], ["x", "y", "z"])',
     ],
   },
-  'nth.perfect-power': {
-    title: 'nth.perfect-power',
+  'TEMP-nth.perfect-power': {
+    title: 'TEMP-nth.perfect-power',
     category: 'Number Theory',
     description: 'Returns a tuple of the base and exponent if the number is a perfect power, otherwise returns null.',
     returns: {
@@ -817,17 +817,17 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.perfect-power(1)',
-      'let nt = import("nth");\nnt.perfect-power(2)',
-      'let nt = import("nth");\nnt.perfect-power(4)',
-      'let nt = import("nth");\nnt.perfect-power(8)',
-      'let nt = import("nth");\nnt.perfect-power(9)',
-      'let nt = import("nth");\nnt.perfect-power(16)',
-      'let nt = import("nth");\nnt.perfect-power(19)',
+      'let nt = import("TEMP-nth");\nnt.perfect-power(1)',
+      'let nt = import("TEMP-nth");\nnt.perfect-power(2)',
+      'let nt = import("TEMP-nth");\nnt.perfect-power(4)',
+      'let nt = import("TEMP-nth");\nnt.perfect-power(8)',
+      'let nt = import("TEMP-nth");\nnt.perfect-power(9)',
+      'let nt = import("TEMP-nth");\nnt.perfect-power(16)',
+      'let nt = import("TEMP-nth");\nnt.perfect-power(19)',
     ],
   },
-  'nth.mod-exp': {
-    title: 'nth.mod-exp',
+  'TEMP-nth.mod-exp': {
+    title: 'TEMP-nth.mod-exp',
     category: 'Number Theory',
     description: 'Calculates the modular exponentiation of a base raised to an exponent modulo a modulus.',
     returns: {
@@ -848,14 +848,14 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['base', 'exponent', 'modulus'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.mod-exp(2, 3, 5)',
-      'let nt = import("nth");\nnt.mod-exp(3, 4, 7)',
-      'let nt = import("nth");\nnt.mod-exp(5, 6, 11)',
-      'let nt = import("nth");\nnt.mod-exp(7, 8, 13)',
+      'let nt = import("TEMP-nth");\nnt.mod-exp(2, 3, 5)',
+      'let nt = import("TEMP-nth");\nnt.mod-exp(3, 4, 7)',
+      'let nt = import("TEMP-nth");\nnt.mod-exp(5, 6, 11)',
+      'let nt = import("TEMP-nth");\nnt.mod-exp(7, 8, 13)',
     ],
   },
-  'nth.mod-inv': {
-    title: 'nth.mod-inv',
+  'TEMP-nth.mod-inv': {
+    title: 'TEMP-nth.mod-inv',
     category: 'Number Theory',
     description: 'Calculates the modular multiplicative inverse of a number modulo another number.',
     returns: {
@@ -868,14 +868,14 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['a', 'm'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.mod-inv(3, 11)',
-      'let nt = import("nth");\nnt.mod-inv(10, 17)',
-      'let nt = import("nth");\nnt.mod-inv(5, 13)',
-      'let nt = import("nth");\nnt.mod-inv(7, 19)',
+      'let nt = import("TEMP-nth");\nnt.mod-inv(3, 11)',
+      'let nt = import("TEMP-nth");\nnt.mod-inv(10, 17)',
+      'let nt = import("TEMP-nth");\nnt.mod-inv(5, 13)',
+      'let nt = import("TEMP-nth");\nnt.mod-inv(7, 19)',
     ],
   },
-  'nth.extended-gcd': {
-    title: 'nth.extended-gcd',
+  'TEMP-nth.extended-gcd': {
+    title: 'TEMP-nth.extended-gcd',
     category: 'Number Theory',
     description: 'Calculates the extended greatest common divisor (GCD) of two numbers, returning the GCD and the coefficients of Bézout\'s identity.',
     returns: {
@@ -889,14 +889,14 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.extended-gcd(30, 12)',
-      'let nt = import("nth");\nnt.extended-gcd(56, 98)',
-      'let nt = import("nth");\nnt.extended-gcd(101, 10)',
-      'let nt = import("nth");\nnt.extended-gcd(17, 13)',
+      'let nt = import("TEMP-nth");\nnt.extended-gcd(30, 12)',
+      'let nt = import("TEMP-nth");\nnt.extended-gcd(56, 98)',
+      'let nt = import("TEMP-nth");\nnt.extended-gcd(101, 10)',
+      'let nt = import("TEMP-nth");\nnt.extended-gcd(17, 13)',
     ],
   },
-  'nth.chinese-remainder': {
-    title: 'nth.chinese-remainder',
+  'TEMP-nth.chinese-remainder': {
+    title: 'TEMP-nth.chinese-remainder',
     category: 'Number Theory',
     description: 'Solves a system of simultaneous congruences using the Chinese Remainder Theorem.',
     returns: {
@@ -919,14 +919,14 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['remainders', 'moduli'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.chinese-remainder([2, 3], [3, 5])',
-      'let nt = import("nth");\nnt.chinese-remainder([1, 2], [3, 4])',
-      'let nt = import("nth");\nnt.chinese-remainder([0, 1], [2, 3])',
-      'let nt = import("nth");\nnt.chinese-remainder([1, 2, 3], [4, 5, 7])',
+      'let nt = import("TEMP-nth");\nnt.chinese-remainder([2, 3], [3, 5])',
+      'let nt = import("TEMP-nth");\nnt.chinese-remainder([1, 2], [3, 4])',
+      'let nt = import("TEMP-nth");\nnt.chinese-remainder([0, 1], [2, 3])',
+      'let nt = import("TEMP-nth");\nnt.chinese-remainder([1, 2, 3], [4, 5, 7])',
     ],
   },
-  'nth.stirling-first': {
-    title: 'nth.stirling-first',
+  'TEMP-nth.stirling-first': {
+    title: 'TEMP-nth.stirling-first',
     category: 'Number Theory',
     description: 'Calculates the Stirling numbers of the first kind, which count the number of permutations of n elements with k cycles.',
     returns: {
@@ -946,15 +946,15 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.stirling-first(5, 2)',
-      'let nt = import("nth");\nnt.stirling-first(4, 3)',
-      'let nt = import("nth");\nnt.stirling-first(6, 1)',
-      'let nt = import("nth");\nnt.stirling-first(7, 4)',
-      'let nt = import("nth");\nnt.stirling-first(8, 5)',
+      'let nt = import("TEMP-nth");\nnt.stirling-first(5, 2)',
+      'let nt = import("TEMP-nth");\nnt.stirling-first(4, 3)',
+      'let nt = import("TEMP-nth");\nnt.stirling-first(6, 1)',
+      'let nt = import("TEMP-nth");\nnt.stirling-first(7, 4)',
+      'let nt = import("TEMP-nth");\nnt.stirling-first(8, 5)',
     ],
   },
-  'nth.stirling-second': {
-    title: 'nth.stirling-second',
+  'TEMP-nth.stirling-second': {
+    title: 'TEMP-nth.stirling-second',
     category: 'Number Theory',
     description: 'Calculates the Stirling numbers of the second kind, which count the number of ways to partition n elements into k non-empty subsets.',
     returns: {
@@ -974,11 +974,11 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.stirling-second(5, 2)',
-      'let nt = import("nth");\nnt.stirling-second(4, 3)',
-      'let nt = import("nth");\nnt.stirling-second(6, 1)',
-      'let nt = import("nth");\nnt.stirling-second(7, 4)',
-      'let nt = import("nth");\nnt.stirling-second(8, 5)',
+      'let nt = import("TEMP-nth");\nnt.stirling-second(5, 2)',
+      'let nt = import("TEMP-nth");\nnt.stirling-second(4, 3)',
+      'let nt = import("TEMP-nth");\nnt.stirling-second(6, 1)',
+      'let nt = import("TEMP-nth");\nnt.stirling-second(7, 4)',
+      'let nt = import("TEMP-nth");\nnt.stirling-second(8, 5)',
     ],
   },
 }

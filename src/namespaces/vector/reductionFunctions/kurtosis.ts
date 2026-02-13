@@ -63,8 +63,8 @@ function sampleExcessKurtosis(vector: number[]): number {
 }
 
 export const kurtosisReductionFunction: ReductionFunctionDefinition<'kurtosis'> = {
-  'kurtosis': vector => kurtosis(vector),
-  'minLength': 4,
+  kurtosis: vector => kurtosis(vector),
+  minLength: 4,
 }
 
 export const eccessKurtosisReductionFunction: ReductionFunctionDefinition<'excess-kurtosis'> = {

@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const abundantReference: NumberTheorySequenceReference<'abundant'> = {
-  'nth.abundant-seq': {
-    title: 'nth.abundant-seq',
+  'TEMP-nth.abundant-seq': {
+    title: 'TEMP-nth.abundant-seq',
     category: 'Number Theory',
     description: 'Generates the abundant numbers up to a specified length.',
     returns: {
@@ -19,12 +19,12 @@ export const abundantReference: NumberTheorySequenceReference<'abundant'> = {
       { argumentNames: ['length'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.abundant-seq(1)',
-      'let nt = import("nth");\nnt.abundant-seq(5)',
+      'let nt = import("TEMP-nth");\nnt.abundant-seq(1)',
+      'let nt = import("TEMP-nth");\nnt.abundant-seq(5)',
     ],
   },
-  'nth.abundant-take-while': {
-    title: 'nth.abundant-take-while',
+  'TEMP-nth.abundant-take-while': {
+    title: 'TEMP-nth.abundant-take-while',
     category: 'Number Theory',
     description: 'Generates the abundant numbers while a condition is met.',
     returns: {
@@ -41,11 +41,11 @@ export const abundantReference: NumberTheorySequenceReference<'abundant'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.abundant-take-while(-> $ < 100)',
+      'let nt = import("TEMP-nth");\nnt.abundant-take-while(-> $ < 100)',
     ],
   },
-  'nth.abundant-nth': {
-    title: 'nth.abundant-nth',
+  'TEMP-nth.abundant-nth': {
+    title: 'TEMP-nth.abundant-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the abundant numbers.',
     returns: {
@@ -61,12 +61,12 @@ export const abundantReference: NumberTheorySequenceReference<'abundant'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.abundant-nth(1)',
-      'let nt = import("nth");\nnt.abundant-nth(5)',
+      'let nt = import("TEMP-nth");\nnt.abundant-nth(1)',
+      'let nt = import("TEMP-nth");\nnt.abundant-nth(5)',
     ],
   },
-  'nth.abundant?': {
-    title: 'nth.abundant?',
+  'TEMP-nth.abundant?': {
+    title: 'TEMP-nth.abundant?',
     category: 'Number Theory',
     description: 'Checks if a number is abundant.',
     returns: {
@@ -82,8 +82,8 @@ export const abundantReference: NumberTheorySequenceReference<'abundant'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.abundant?(12)',
-      'let nt = import("nth");\nnt.abundant?(15)',
+      'let nt = import("TEMP-nth");\nnt.abundant?(12)',
+      'let nt = import("TEMP-nth");\nnt.abundant?(15)',
     ],
   },
 }

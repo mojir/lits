@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
-export const bernoulliReference: Omit<NumberTheorySequenceReference<'bernoulli'>, 'nth.bernoulli?'> = {
-  'nth.bernoulli-seq': {
-    title: 'nth.bernoulli-seq',
+export const bernoulliReference: Omit<NumberTheorySequenceReference<'bernoulli'>, 'TEMP-nth.bernoulli?'> = {
+  'TEMP-nth.bernoulli-seq': {
+    title: 'TEMP-nth.bernoulli-seq',
     category: 'Number Theory',
     description: 'Generates the Bernoulli sequence up to a specified length.',
     returns: {
@@ -19,12 +19,12 @@ export const bernoulliReference: Omit<NumberTheorySequenceReference<'bernoulli'>
       { argumentNames: ['length'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.bernoulli-seq(5)',
-      'let nt = import("nth");\nnt.bernoulli-seq(10)',
+      'let nt = import("TEMP-nth");\nnt.bernoulli-seq(5)',
+      'let nt = import("TEMP-nth");\nnt.bernoulli-seq(10)',
     ],
   },
-  'nth.bernoulli-take-while': {
-    title: 'nth.bernoulli-take-while',
+  'TEMP-nth.bernoulli-take-while': {
+    title: 'TEMP-nth.bernoulli-take-while',
     category: 'Number Theory',
     description: 'Generates the Bernoulli sequence while a condition is met.',
     returns: {
@@ -41,11 +41,11 @@ export const bernoulliReference: Omit<NumberTheorySequenceReference<'bernoulli'>
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.bernoulli-take-while(-> abs($) < 100)',
+      'let nt = import("TEMP-nth");\nnt.bernoulli-take-while(-> abs($) < 100)',
     ],
   },
-  'nth.bernoulli-nth': {
-    title: 'nth.bernoulli-nth',
+  'TEMP-nth.bernoulli-nth': {
+    title: 'TEMP-nth.bernoulli-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Bernoulli sequence.',
     returns: {
@@ -61,9 +61,9 @@ export const bernoulliReference: Omit<NumberTheorySequenceReference<'bernoulli'>
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.bernoulli-nth(5)',
-      'let nt = import("nth");\nnt.bernoulli-nth(10)',
-      'let nt = import("nth");\nnt.bernoulli-nth(23)',
+      'let nt = import("TEMP-nth");\nnt.bernoulli-nth(5)',
+      'let nt = import("TEMP-nth");\nnt.bernoulli-nth(10)',
+      'let nt = import("TEMP-nth");\nnt.bernoulli-nth(23)',
     ],
   },
 }

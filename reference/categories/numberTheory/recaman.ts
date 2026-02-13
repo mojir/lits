@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const recamanReference: NumberTheorySequenceReference<'recaman'> = {
-  'nth.recaman-seq': {
-    title: 'nth.recaman-seq',
+  'TEMP-nth.recaman-seq': {
+    title: 'TEMP-nth.recaman-seq',
     category: 'Number Theory',
     description: 'Generates the Recaman sequence up to a specified length.',
     returns: {
@@ -19,13 +19,13 @@ export const recamanReference: NumberTheorySequenceReference<'recaman'> = {
       { argumentNames: ['length'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.recaman-seq(5)',
-      'let nt = import("nth");\nnt.recaman-seq(10)',
-      'let nt = import("nth");\nnt.recaman-seq(20)',
+      'let nt = import("TEMP-nth");\nnt.recaman-seq(5)',
+      'let nt = import("TEMP-nth");\nnt.recaman-seq(10)',
+      'let nt = import("TEMP-nth");\nnt.recaman-seq(20)',
     ],
   },
-  'nth.recaman-take-while': {
-    title: 'nth.recaman-take-while',
+  'TEMP-nth.recaman-take-while': {
+    title: 'TEMP-nth.recaman-take-while',
     category: 'Number Theory',
     description: 'Generates the Recaman sequence while a condition is met.',
     returns: {
@@ -42,11 +42,11 @@ export const recamanReference: NumberTheorySequenceReference<'recaman'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.recaman-take-while(-> $ < 10)',
+      'let nt = import("TEMP-nth");\nnt.recaman-take-while(-> $ < 10)',
     ],
   },
-  'nth.recaman-nth': {
-    title: 'nth.recaman-nth',
+  'TEMP-nth.recaman-nth': {
+    title: 'TEMP-nth.recaman-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Recaman sequence.',
     returns: {
@@ -62,13 +62,13 @@ export const recamanReference: NumberTheorySequenceReference<'recaman'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.recaman-nth(5)',
-      'let nt = import("nth");\nnt.recaman-nth(10)',
-      'let nt = import("nth");\nnt.recaman-nth(20)',
+      'let nt = import("TEMP-nth");\nnt.recaman-nth(5)',
+      'let nt = import("TEMP-nth");\nnt.recaman-nth(10)',
+      'let nt = import("TEMP-nth");\nnt.recaman-nth(20)',
     ],
   },
-  'nth.recaman?': {
-    title: 'nth.recaman?',
+  'TEMP-nth.recaman?': {
+    title: 'TEMP-nth.recaman?',
     category: 'Number Theory',
     description: 'Checks if a number is in the Recaman sequence.',
     returns: {
@@ -84,9 +84,9 @@ export const recamanReference: NumberTheorySequenceReference<'recaman'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.recaman?(5)',
-      'let nt = import("nth");\nnt.recaman?(10)',
-      'let nt = import("nth");\nnt.recaman?(20)',
+      'let nt = import("TEMP-nth");\nnt.recaman?(5)',
+      'let nt = import("TEMP-nth");\nnt.recaman?(10)',
+      'let nt = import("TEMP-nth");\nnt.recaman?(20)',
     ],
   },
 }

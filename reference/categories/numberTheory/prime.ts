@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const primeReference: NumberTheorySequenceReference<'prime'> = {
-  'nth.prime-seq': {
-    title: 'nth.prime-seq',
+  'TEMP-nth.prime-seq': {
+    title: 'TEMP-nth.prime-seq',
     category: 'Number Theory',
     description: 'Generates the prime sequence up to a specified length.',
     returns: {
@@ -19,13 +19,13 @@ export const primeReference: NumberTheorySequenceReference<'prime'> = {
       { argumentNames: ['length'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.prime-seq(1)',
-      'let nt = import("nth");\nnt.prime-seq(2)',
-      'let nt = import("nth");\nnt.prime-seq(10)',
+      'let nt = import("TEMP-nth");\nnt.prime-seq(1)',
+      'let nt = import("TEMP-nth");\nnt.prime-seq(2)',
+      'let nt = import("TEMP-nth");\nnt.prime-seq(10)',
     ],
   },
-  'nth.prime-take-while': {
-    title: 'nth.prime-take-while',
+  'TEMP-nth.prime-take-while': {
+    title: 'TEMP-nth.prime-take-while',
     category: 'Number Theory',
     description: 'Generates the prime sequence while a condition is met.',
     returns: {
@@ -42,11 +42,11 @@ export const primeReference: NumberTheorySequenceReference<'prime'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.prime-take-while(-> $ < 50)',
+      'let nt = import("TEMP-nth");\nnt.prime-take-while(-> $ < 50)',
     ],
   },
-  'nth.prime-nth': {
-    title: 'nth.prime-nth',
+  'TEMP-nth.prime-nth': {
+    title: 'TEMP-nth.prime-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the prime sequence.',
     returns: {
@@ -62,13 +62,13 @@ export const primeReference: NumberTheorySequenceReference<'prime'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.prime-nth(1)',
-      'let nt = import("nth");\nnt.prime-nth(2)',
-      'let nt = import("nth");\nnt.prime-nth(10)',
+      'let nt = import("TEMP-nth");\nnt.prime-nth(1)',
+      'let nt = import("TEMP-nth");\nnt.prime-nth(2)',
+      'let nt = import("TEMP-nth");\nnt.prime-nth(10)',
     ],
   },
-  'nth.prime?': {
-    title: 'nth.prime?',
+  'TEMP-nth.prime?': {
+    title: 'TEMP-nth.prime?',
     category: 'Number Theory',
     description: 'Determines if a number is prime.',
     returns: {
@@ -84,12 +84,12 @@ export const primeReference: NumberTheorySequenceReference<'prime'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.prime?(1)',
-      'let nt = import("nth");\nnt.prime?(2)',
-      'let nt = import("nth");\nnt.prime?(3)',
-      'let nt = import("nth");\nnt.prime?(4)',
-      'let nt = import("nth");\nnt.prime?(997)',
-      'let nt = import("nth");\nnt.prime?(1001)',
+      'let nt = import("TEMP-nth");\nnt.prime?(1)',
+      'let nt = import("TEMP-nth");\nnt.prime?(2)',
+      'let nt = import("TEMP-nth");\nnt.prime?(3)',
+      'let nt = import("TEMP-nth");\nnt.prime?(4)',
+      'let nt = import("TEMP-nth");\nnt.prime?(997)',
+      'let nt = import("TEMP-nth");\nnt.prime?(1001)',
     ],
   },
 }

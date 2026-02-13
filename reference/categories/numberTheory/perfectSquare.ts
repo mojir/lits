@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const perfectSquareReference: NumberTheorySequenceReference<'perfect-square'> = {
-  'nth.perfect-square-seq': {
-    title: 'nth.perfect-square-seq',
+  'TEMP-nth.perfect-square-seq': {
+    title: 'TEMP-nth.perfect-square-seq',
     category: 'Number Theory',
     description: 'Generates the perfect square numbers up to a specified length.',
     returns: {
@@ -19,12 +19,12 @@ export const perfectSquareReference: NumberTheorySequenceReference<'perfect-squa
       { argumentNames: ['length'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.perfect-square-seq(5)',
-      'let nt = import("nth");\nnt.perfect-square-seq(20)',
+      'let nt = import("TEMP-nth");\nnt.perfect-square-seq(5)',
+      'let nt = import("TEMP-nth");\nnt.perfect-square-seq(20)',
     ],
   },
-  'nth.perfect-square-take-while': {
-    title: 'nth.perfect-square-take-while',
+  'TEMP-nth.perfect-square-take-while': {
+    title: 'TEMP-nth.perfect-square-take-while',
     category: 'Number Theory',
     description: 'Generates the perfect square numbers while a condition is met.',
     returns: {
@@ -41,11 +41,11 @@ export const perfectSquareReference: NumberTheorySequenceReference<'perfect-squa
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.perfect-square-take-while(-> $ <= 100)',
+      'let nt = import("TEMP-nth");\nnt.perfect-square-take-while(-> $ <= 100)',
     ],
   },
-  'nth.perfect-square-nth': {
-    title: 'nth.perfect-square-nth',
+  'TEMP-nth.perfect-square-nth': {
+    title: 'TEMP-nth.perfect-square-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the perfect square numbers.',
     returns: {
@@ -61,12 +61,12 @@ export const perfectSquareReference: NumberTheorySequenceReference<'perfect-squa
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.perfect-square-nth(1)',
-      'let nt = import("nth");\nnt.perfect-square-nth(5)',
+      'let nt = import("TEMP-nth");\nnt.perfect-square-nth(1)',
+      'let nt = import("TEMP-nth");\nnt.perfect-square-nth(5)',
     ],
   },
-  'nth.perfect-square?': {
-    title: 'nth.perfect-square?',
+  'TEMP-nth.perfect-square?': {
+    title: 'TEMP-nth.perfect-square?',
     category: 'Number Theory',
     description: 'Checks if a number is a perfect square.',
     returns: {
@@ -82,8 +82,8 @@ export const perfectSquareReference: NumberTheorySequenceReference<'perfect-squa
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.perfect-square?(16)',
-      'let nt = import("nth");\nnt.perfect-square?(20)',
+      'let nt = import("TEMP-nth");\nnt.perfect-square?(16)',
+      'let nt = import("TEMP-nth");\nnt.perfect-square?(20)',
     ],
   },
 }

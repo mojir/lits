@@ -11,7 +11,7 @@ const lits = new Lits({ debug: false })
 function fixNumericFunctionNames(example: string): string {
   // Match patterns like: varName.1-norm( and replace with (get varName "1-norm")(
   return example.replace(
-    /(\w+)\.(\d[a-zA-Z0-9-]*)\(/g,
+    /(\w+)\.(\d[a-z0-9-]*)\(/gi,
     '(get $1 "$2")(',
   )
 }

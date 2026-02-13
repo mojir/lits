@@ -193,8 +193,8 @@ vec.stdev([1, 2, 3, 4]);       // => 1.29... (standard deviation)
 vec.variance([1, 2, 3, 4]);    // => 1.67... (variance)
 
 // Vector analysis
-vec.min([3, 1, 4, 1, 5]);      // => 1
-vec.max([3, 1, 4, 1, 5]);      // => 5
+vec.TEMP-min([3, 1, 4, 1, 5]); // => 1
+vec.TEMP-max([3, 1, 4, 1, 5]); // => 5
 vec.min-index([3, 1, 4]);      // => 1 (index of minimum)
 vec.max-index([3, 1, 4]);      // => 2 (index of maximum)
 
@@ -252,8 +252,7 @@ mat.adj(matrixA);              // => [[4, -2], [-3, 1]] (adjugate)
 mat.cofactor(matrixA);         // => cofactor matrix
 mat.minor(matrixA, 0, 1);      // => minor by removing row 0, col 1
 mat.frobenius-norm(matrixA);   // => Frobenius norm
-let norm1fn = get(mat, "1-norm");
-norm1fn(matrixA);              // => 1-norm (max column sum)
+mat.one-norm(matrixA);         // => 1-norm (max column sum)
 mat.inf-norm(matrixA);         // => infinity norm (max row sum)
 mat.max-norm(matrixA);         // => max norm (largest absolute element)
 

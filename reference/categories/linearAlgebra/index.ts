@@ -23,8 +23,8 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'let lin = import("lin");\nlin.reflect([1, 2], [0, 1])',
-      'let lin = import("lin");\nlin.reflect([1, 2, 3], [0, 0, 1])',
+      'let { reflect } = import("lin");\nreflect([1, 2], [0, 1])',
+      'let { reflect } = import("lin");\nreflect([1, 2, 3], [0, 0, 1])',
     ],
   },
   'lin.refract': {
@@ -52,8 +52,8 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['vector', 'axis', 'eta'] },
     ],
     examples: [
-      'let lin = import("lin");\nlin.refract([1, 2], [0, 1], 1.5)',
-      'let lin = import("lin");\nlin.refract([1, 2, 3], [0, 0, 1], 1.5)',
+      'let { refract } = import("lin");\nrefract([1, 2], [0, 1], 1.5)',
+      'let { refract } = import("lin");\nrefract([1, 2, 3], [0, 0, 1], 1.5)',
     ],
   },
   'lin.lerp': {
@@ -81,10 +81,10 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b', 't'] },
     ],
     examples: [
-      'let lin = import("lin");\nlin.lerp([1, 2], [3, 4], 0.5)',
-      'let lin = import("lin");\nlin.lerp([1, 2], [3, 4], 2)',
-      'let lin = import("lin");\nlin.lerp([1, 2], [3, 4], -1)',
-      'let lin = import("lin");\nlin.lerp([1, 2, 3], [4, 5, 6], 0.25)',
+      'let { lerp } = import("lin");\nlerp([1, 2], [3, 4], 0.5)',
+      'let { lerp } = import("lin");\nlerp([1, 2], [3, 4], 2)',
+      'let { lerp } = import("lin");\nlerp([1, 2], [3, 4], -1)',
+      'let { lerp } = import("lin");\nlerp([1, 2, 3], [4, 5, 6], 0.25)',
     ],
   },
   'lin.rotate2d': {
@@ -108,8 +108,8 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'let lin = import("lin");\nlin.rotate2d([1, 0], PI / 2)',
-      'let lin = import("lin");\nlin.rotate2d([0, 1], PI)',
+      'let { rotate2d } = import("lin");\nrotate2d([1, 0], PI / 2)',
+      'let { rotate2d } = import("lin");\nrotate2d([0, 1], PI)',
     ],
   },
   'lin.rotate3d': {
@@ -137,8 +137,8 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['v', 'axis', 'radians'] },
     ],
     examples: [
-      'let lin = import("lin");\nlin.rotate3d([1, 0, 0], [0, 1, 0], PI / 2)',
-      'let lin = import("lin");\nlin.rotate3d([0, 1, 0], [1, 0, 0], PI)',
+      'let { rotate3d } = import("lin");\nrotate3d([1, 0, 0], [0, 1, 0], PI / 2)',
+      'let { rotate3d } = import("lin");\nrotate3d([0, 1, 0], [1, 0, 0], PI)',
     ],
   },
   'lin.dot': {
@@ -162,8 +162,8 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'let lin = import("lin");\nlin.dot([1, 2], [3, 4])',
-      'let lin = import("lin");\nlin.dot([1, 2, 3], [4, 5, 6])',
+      'let { dot } = import("lin");\ndot([1, 2], [3, 4])',
+      'let { dot } = import("lin");\ndot([1, 2, 3], [4, 5, 6])',
     ],
   },
   'lin.cross': {
@@ -187,11 +187,11 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'let lin = import("lin");\nlin.cross([1, 2, 3], [4, 5, 6])',
-      'let lin = import("lin");\nlin.cross([1, 0, 0], [0, 1, 0])',
-      'let lin = import("lin");\nlin.cross([0, 0, 1], [1, 0, 0])',
-      'let lin = import("lin");\nlin.cross([1, 2, 3], [0, 0, 0])',
-      'let lin = import("lin");\nlin.cross([0, 0, 0], [1, 2, 3])',
+      'let { cross } = import("lin");\ncross([1, 2, 3], [4, 5, 6])',
+      'let { cross } = import("lin");\ncross([1, 0, 0], [0, 1, 0])',
+      'let { cross } = import("lin");\ncross([0, 0, 1], [1, 0, 0])',
+      'let { cross } = import("lin");\ncross([1, 2, 3], [0, 0, 0])',
+      'let { cross } = import("lin");\ncross([0, 0, 0], [1, 2, 3])',
     ],
   },
   'lin.normalize-minmax': {
@@ -308,7 +308,7 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     ],
     examples: [
       'let lin = import("lin");\nlin.normalize-l2([1, 2, 3])',
-      'let lin = import("lin");\nlin.unit([1, 2, 3])',
+      'let { unit } = import("lin");\nunit([1, 2, 3])',
       'let lin = import("lin");\nlin.normalize-l2([1, 2, -3])',
       'let lin = import("lin");\nlin.normalize-l2([1, 2, 3, 4])',
       'let lin = import("lin");\nlin.normalize-l2([1, 2, -3, 4])',
@@ -355,8 +355,8 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'let lin = import("lin");\nlin.angle([1, 0], [0, 1])',
-      'let lin = import("lin");\nlin.angle([1, 0, 1], [0, 1, 0])',
+      'let { angle } = import("lin");\nangle([1, 0], [0, 1])',
+      'let { angle } = import("lin");\nangle([1, 0, 1], [0, 1, 0])',
     ],
   },
   'lin.projection': {
@@ -373,8 +373,8 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'let lin = import("lin");\nlin.projection([1, 2], [3, 4])',
-      'let lin = import("lin");\nlin.projection([1, 2, 3], [4, 5, 6])',
+      'let { projection } = import("lin");\nprojection([1, 2], [3, 4])',
+      'let { projection } = import("lin");\nprojection([1, 2, 3], [4, 5, 6])',
     ],
   },
   'lin.collinear?': {
@@ -697,9 +697,9 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'let lin = import("lin");\nlin.cov([1, 2], [3, 4])',
-      'let lin = import("lin");\nlin.cov([1, 2, 3], [4, 5, 6])',
-      'let lin = import("lin");\nlin.cov([1, 0], [0, 1])',
+      'let { cov } = import("lin");\ncov([1, 2], [3, 4])',
+      'let { cov } = import("lin");\ncov([1, 2, 3], [4, 5, 6])',
+      'let { cov } = import("lin");\ncov([1, 0], [0, 1])',
     ],
   },
   'lin.corr': {
@@ -716,9 +716,9 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'let lin = import("lin");\nlin.corr([1, 2], [3, 4])',
-      'let lin = import("lin");\nlin.corr([1, 2, 3], [4, 5, 6])',
-      'let lin = import("lin");\nlin.corr([1, 0], [0, 1])',
+      'let { corr } = import("lin");\ncorr([1, 2], [3, 4])',
+      'let { corr } = import("lin");\ncorr([1, 2, 3], [4, 5, 6])',
+      'let { corr } = import("lin");\ncorr([1, 0], [0, 1])',
     ],
   },
   'lin.spearman-corr': {
@@ -800,11 +800,11 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['a', 'b'] },
     ],
     examples: [
-      'let lin = import("lin");\nlin.autocorrelation([1, 2, 3], -2)',
-      'let lin = import("lin");\nlin.autocorrelation([1, 2, 3], -1)',
-      'let lin = import("lin");\nlin.autocorrelation([1, 2, 3], 0)',
-      'let lin = import("lin");\nlin.autocorrelation([1, 2, 3], 1)',
-      'let lin = import("lin");\nlin.autocorrelation([1, 2, 3], 2)',
+      'let { autocorrelation } = import("lin");\nautocorrelation([1, 2, 3], -2)',
+      'let { autocorrelation } = import("lin");\nautocorrelation([1, 2, 3], -1)',
+      'let { autocorrelation } = import("lin");\nautocorrelation([1, 2, 3], 0)',
+      'let { autocorrelation } = import("lin");\nautocorrelation([1, 2, 3], 1)',
+      'let { autocorrelation } = import("lin");\nautocorrelation([1, 2, 3], 2)',
     ],
     aliases: ['lin.acf'],
   },
@@ -851,9 +851,9 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       { argumentNames: ['m'] },
     ],
     examples: [
-      'let lin = import("lin");\nlin.rref([[1, 2], [3, 4]])',
-      'let lin = import("lin");\nlin.rref([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
-      'let lin = import("lin");\nlin.rref([[1, 2, 3], [7, 8, 9], [4, 5, 7]])',
+      'let { rref } = import("lin");\nrref([[1, 2], [3, 4]])',
+      'let { rref } = import("lin");\nrref([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+      'let { rref } = import("lin");\nrref([[1, 2, 3], [7, 8, 9], [4, 5, 7]])',
     ],
   },
   'lin.solve': {

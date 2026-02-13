@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const luckyReference: NumberTheorySequenceReference<'lucky'> = {
-  'nth.lucky-seq': {
-    title: 'nth.lucky-seq',
+  'TEMP-nth.lucky-seq': {
+    title: 'TEMP-nth.lucky-seq',
     category: 'Number Theory',
     description: 'Generates the lucky sequence up to a specified length.',
     returns: {
@@ -19,13 +19,13 @@ export const luckyReference: NumberTheorySequenceReference<'lucky'> = {
       { argumentNames: ['length'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.lucky-seq(1)',
-      'let nt = import("nth");\nnt.lucky-seq(2)',
-      'let nt = import("nth");\nnt.lucky-seq(20)',
+      'let nt = import("TEMP-nth");\nnt.lucky-seq(1)',
+      'let nt = import("TEMP-nth");\nnt.lucky-seq(2)',
+      'let nt = import("TEMP-nth");\nnt.lucky-seq(20)',
     ],
   },
-  'nth.lucky-take-while': {
-    title: 'nth.lucky-take-while',
+  'TEMP-nth.lucky-take-while': {
+    title: 'TEMP-nth.lucky-take-while',
     category: 'Number Theory',
     description: 'Generates the lucky sequence while a condition is met.',
     returns: {
@@ -42,11 +42,11 @@ export const luckyReference: NumberTheorySequenceReference<'lucky'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.lucky-take-while(-> $ < 100)',
+      'let nt = import("TEMP-nth");\nnt.lucky-take-while(-> $ < 100)',
     ],
   },
-  'nth.lucky-nth': {
-    title: 'nth.lucky-nth',
+  'TEMP-nth.lucky-nth': {
+    title: 'TEMP-nth.lucky-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the lucky sequence.',
     returns: {
@@ -62,13 +62,13 @@ export const luckyReference: NumberTheorySequenceReference<'lucky'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.lucky-nth(1)',
-      'let nt = import("nth");\nnt.lucky-nth(2)',
-      'let nt = import("nth");\nnt.lucky-nth(20)',
+      'let nt = import("TEMP-nth");\nnt.lucky-nth(1)',
+      'let nt = import("TEMP-nth");\nnt.lucky-nth(2)',
+      'let nt = import("TEMP-nth");\nnt.lucky-nth(20)',
     ],
   },
-  'nth.lucky?': {
-    title: 'nth.lucky?',
+  'TEMP-nth.lucky?': {
+    title: 'TEMP-nth.lucky?',
     category: 'Number Theory',
     description: 'Checks if a number is a lucky number.',
     returns: {
@@ -84,9 +84,9 @@ export const luckyReference: NumberTheorySequenceReference<'lucky'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.lucky?(4)',
-      'let nt = import("nth");\nnt.lucky?(7)',
-      'let nt = import("nth");\nnt.lucky?(33)',
+      'let nt = import("TEMP-nth");\nnt.lucky?(4)',
+      'let nt = import("TEMP-nth");\nnt.lucky?(7)',
+      'let nt = import("TEMP-nth");\nnt.lucky?(33)',
     ],
   },
 }

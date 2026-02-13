@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const compositeReference: NumberTheorySequenceReference<'composite'> = {
-  'nth.composite-seq': {
-    title: 'nth.composite-seq',
+  'TEMP-nth.composite-seq': {
+    title: 'TEMP-nth.composite-seq',
     category: 'Number Theory',
     description: 'Generates the composite sequence up to a specified length.',
     returns: {
@@ -19,13 +19,13 @@ export const compositeReference: NumberTheorySequenceReference<'composite'> = {
       { argumentNames: ['length'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.composite-seq(1)',
-      'let nt = import("nth");\nnt.composite-seq(2)',
-      'let nt = import("nth");\nnt.composite-seq(10)',
+      'let nt = import("TEMP-nth");\nnt.composite-seq(1)',
+      'let nt = import("TEMP-nth");\nnt.composite-seq(2)',
+      'let nt = import("TEMP-nth");\nnt.composite-seq(10)',
     ],
   },
-  'nth.composite-take-while': {
-    title: 'nth.composite-take-while',
+  'TEMP-nth.composite-take-while': {
+    title: 'TEMP-nth.composite-take-while',
     category: 'Number Theory',
     description: 'Generates the composite sequence while a condition is met.',
     returns: {
@@ -42,11 +42,11 @@ export const compositeReference: NumberTheorySequenceReference<'composite'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.composite-take-while(-> $ < 50)',
+      'let nt = import("TEMP-nth");\nnt.composite-take-while(-> $ < 50)',
     ],
   },
-  'nth.composite-nth': {
-    title: 'nth.composite-nth',
+  'TEMP-nth.composite-nth': {
+    title: 'TEMP-nth.composite-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the composite sequence.',
     returns: {
@@ -62,13 +62,13 @@ export const compositeReference: NumberTheorySequenceReference<'composite'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.composite-nth(1)',
-      'let nt = import("nth");\nnt.composite-nth(2)',
-      'let nt = import("nth");\nnt.composite-nth(10)',
+      'let nt = import("TEMP-nth");\nnt.composite-nth(1)',
+      'let nt = import("TEMP-nth");\nnt.composite-nth(2)',
+      'let nt = import("TEMP-nth");\nnt.composite-nth(10)',
     ],
   },
-  'nth.composite?': {
-    title: 'nth.composite?',
+  'TEMP-nth.composite?': {
+    title: 'TEMP-nth.composite?',
     category: 'Number Theory',
     description: 'Determines if a number is composite.',
     returns: {
@@ -84,9 +84,9 @@ export const compositeReference: NumberTheorySequenceReference<'composite'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.composite?(4)',
-      'let nt = import("nth");\nnt.composite?(5)',
-      'let nt = import("nth");\nnt.composite?(11)',
+      'let nt = import("TEMP-nth");\nnt.composite?(4)',
+      'let nt = import("TEMP-nth");\nnt.composite?(5)',
+      'let nt = import("TEMP-nth");\nnt.composite?(11)',
     ],
   },
 }

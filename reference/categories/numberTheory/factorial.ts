@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const factorialReference: NumberTheorySequenceReference<'factorial'> = {
-  'nth.factorial-seq': {
-    title: 'nth.factorial-seq',
+  'TEMP-nth.factorial-seq': {
+    title: 'TEMP-nth.factorial-seq',
     category: 'Number Theory',
     description: 'Generates the factorial sequence up to a specified length.',
     returns: {
@@ -20,16 +20,16 @@ export const factorialReference: NumberTheorySequenceReference<'factorial'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.factorial-seq(1)',
-      'let nt = import("nth");\nnt.factorial-seq(2)',
-      'let nt = import("nth");\nnt.factorial-seq(3)',
-      'let nt = import("nth");\nnt.factorial-seq(4)',
-      'let nt = import("nth");\nnt.factorial-seq(5)',
-      'let nt = import("nth");\nnt.factorial-seq(10)',
+      'let nt = import("TEMP-nth");\nnt.factorial-seq(1)',
+      'let nt = import("TEMP-nth");\nnt.factorial-seq(2)',
+      'let nt = import("TEMP-nth");\nnt.factorial-seq(3)',
+      'let nt = import("TEMP-nth");\nnt.factorial-seq(4)',
+      'let nt = import("TEMP-nth");\nnt.factorial-seq(5)',
+      'let nt = import("TEMP-nth");\nnt.factorial-seq(10)',
     ],
   },
-  'nth.factorial-take-while': {
-    title: 'nth.factorial-take-while',
+  'TEMP-nth.factorial-take-while': {
+    title: 'TEMP-nth.factorial-take-while',
     category: 'Number Theory',
     description: 'Generates the factorial sequence while a condition is met.',
     returns: {
@@ -46,11 +46,11 @@ export const factorialReference: NumberTheorySequenceReference<'factorial'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.factorial-take-while(-> $ < 1000)',
+      'let nt = import("TEMP-nth");\nnt.factorial-take-while(-> $ < 1000)',
     ],
   },
-  'nth.factorial-nth': {
-    title: 'nth.factorial-nth',
+  'TEMP-nth.factorial-nth': {
+    title: 'TEMP-nth.factorial-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the factorial sequence.',
     returns: {
@@ -66,16 +66,16 @@ export const factorialReference: NumberTheorySequenceReference<'factorial'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.factorial-nth(1)',
-      'let nt = import("nth");\nnt.factorial-nth(2)',
-      'let nt = import("nth");\nnt.factorial-nth(3)',
-      'let nt = import("nth");\nnt.factorial-nth(4)',
-      'let nt = import("nth");\nnt.factorial-nth(5)',
-      'let nt = import("nth");\nnt.factorial-nth(10)',
+      'let nt = import("TEMP-nth");\nnt.factorial-nth(1)',
+      'let nt = import("TEMP-nth");\nnt.factorial-nth(2)',
+      'let nt = import("TEMP-nth");\nnt.factorial-nth(3)',
+      'let nt = import("TEMP-nth");\nnt.factorial-nth(4)',
+      'let nt = import("TEMP-nth");\nnt.factorial-nth(5)',
+      'let nt = import("TEMP-nth");\nnt.factorial-nth(10)',
     ],
   },
-  'nth.factorial?': {
-    title: 'nth.factorial?',
+  'TEMP-nth.factorial?': {
+    title: 'TEMP-nth.factorial?',
     category: 'Number Theory',
     description: 'Checks if a number is in the factorial sequence.',
     returns: {
@@ -91,16 +91,16 @@ export const factorialReference: NumberTheorySequenceReference<'factorial'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.factorial?(1)',
-      'let nt = import("nth");\nnt.factorial?(2)',
-      'let nt = import("nth");\nnt.factorial?(3)',
-      'let nt = import("nth");\nnt.factorial?(4)',
-      'let nt = import("nth");\nnt.factorial?(5)',
-      'let nt = import("nth");\nnt.factorial?(6)',
-      'let nt = import("nth");\nnt.factorial?(7)',
-      'let nt = import("nth");\nnt.factorial?(8)',
-      'let nt = import("nth");\nnt.factorial?(9)',
-      'let nt = import("nth");\nnt.factorial?(3628800)',
+      'let nt = import("TEMP-nth");\nnt.factorial?(1)',
+      'let nt = import("TEMP-nth");\nnt.factorial?(2)',
+      'let nt = import("TEMP-nth");\nnt.factorial?(3)',
+      'let nt = import("TEMP-nth");\nnt.factorial?(4)',
+      'let nt = import("TEMP-nth");\nnt.factorial?(5)',
+      'let nt = import("TEMP-nth");\nnt.factorial?(6)',
+      'let nt = import("TEMP-nth");\nnt.factorial?(7)',
+      'let nt = import("TEMP-nth");\nnt.factorial?(8)',
+      'let nt = import("TEMP-nth");\nnt.factorial?(9)',
+      'let nt = import("TEMP-nth");\nnt.factorial?(3628800)',
     ],
   },
 }

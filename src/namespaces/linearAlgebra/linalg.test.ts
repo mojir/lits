@@ -9,7 +9,7 @@ const lits = new Lits()
 // Helper to run lin namespace functions with the new import syntax
 function runLin(code: string): unknown {
   // Replace all 'lin:functionName(' with 'lin.functionName(' and add import at start
-  const modifiedCode = 'let lin = import("lin"); ' + code.replace(/lin:/g, 'lin.')
+  const modifiedCode = `let lin = import("lin"); ${code.replace(/lin:/g, 'lin.')}`
   return lits.run(modifiedCode)
 }
 

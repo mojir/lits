@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const lucasReference: NumberTheorySequenceReference<'lucas'> = {
-  'nth.lucas-seq': {
-    title: 'nth.lucas-seq',
+  'TEMP-nth.lucas-seq': {
+    title: 'TEMP-nth.lucas-seq',
     category: 'Number Theory',
     description: 'Generates the lucas sequence up to a specified length.',
     returns: {
@@ -20,13 +20,13 @@ export const lucasReference: NumberTheorySequenceReference<'lucas'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.lucas-seq(1)',
-      'let nt = import("nth");\nnt.lucas-seq(2)',
-      'let nt = import("nth");\nnt.lucas-seq()',
+      'let nt = import("TEMP-nth");\nnt.lucas-seq(1)',
+      'let nt = import("TEMP-nth");\nnt.lucas-seq(2)',
+      'let nt = import("TEMP-nth");\nnt.lucas-seq()',
     ],
   },
-  'nth.lucas-take-while': {
-    title: 'nth.lucas-take-while',
+  'TEMP-nth.lucas-take-while': {
+    title: 'TEMP-nth.lucas-take-while',
     category: 'Number Theory',
     description: 'Generates the lucas sequence while a condition is met.',
     returns: {
@@ -43,11 +43,11 @@ export const lucasReference: NumberTheorySequenceReference<'lucas'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.lucas-take-while(-> $ < 100)',
+      'let nt = import("TEMP-nth");\nnt.lucas-take-while(-> $ < 100)',
     ],
   },
-  'nth.lucas-nth': {
-    title: 'nth.lucas-nth',
+  'TEMP-nth.lucas-nth': {
+    title: 'TEMP-nth.lucas-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the lucas sequence.',
     returns: {
@@ -63,13 +63,13 @@ export const lucasReference: NumberTheorySequenceReference<'lucas'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.lucas-nth(1)',
-      'let nt = import("nth");\nnt.lucas-nth(2)',
-      'let nt = import("nth");\nnt.lucas-nth(10)',
+      'let nt = import("TEMP-nth");\nnt.lucas-nth(1)',
+      'let nt = import("TEMP-nth");\nnt.lucas-nth(2)',
+      'let nt = import("TEMP-nth");\nnt.lucas-nth(10)',
     ],
   },
-  'nth.lucas?': {
-    title: 'nth.lucas?',
+  'TEMP-nth.lucas?': {
+    title: 'TEMP-nth.lucas?',
     category: 'Number Theory',
     description: 'Determines if a number is in the lucas sequence.',
     returns: {
@@ -85,9 +85,9 @@ export const lucasReference: NumberTheorySequenceReference<'lucas'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.lucas?(1)',
-      'let nt = import("nth");\nnt.lucas?(2)',
-      'let nt = import("nth");\nnt.lucas?(10)',
+      'let nt = import("TEMP-nth");\nnt.lucas?(1)',
+      'let nt = import("TEMP-nth");\nnt.lucas?(2)',
+      'let nt = import("TEMP-nth");\nnt.lucas?(10)',
     ],
   },
 }

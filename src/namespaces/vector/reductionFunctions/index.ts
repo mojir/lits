@@ -72,9 +72,10 @@ function addReductionFunctions<T extends string>(fns: ReductionFunctionDefinitio
     }
     if (key !== 'minLength' && key !== 'padding' && typeof value === 'function') {
       const reductionFn = value as ReductionFunction
-      const movingKey = `moving-${key}` as VectorMovingWindowKey<T>
-      const centeredMovingKey = `centered-moving-${key}` as VectorCenteredMovingWindowKey<T>
-      const runningKey = `running-${key}` as VectorRunningKey<T>
+      const baseKey = key.replace(/^TEMP-/, '')
+      const movingKey = `moving-${baseKey}` as VectorMovingWindowKey<T>
+      const centeredMovingKey = `centered-moving-${baseKey}` as VectorCenteredMovingWindowKey<T>
+      const runningKey = `running-${baseKey}` as VectorRunningKey<T>
       const minLength = fns.minLength ?? 1
       assertNumber(minLength, undefined, { integer: true, finite: true, gte: 0 })
       reductionFunctionNormalExpressions[key] = createReductionNormalExpression(reductionFn, minLength)

@@ -21,7 +21,7 @@ export function factorialOf(n: number): number {
 }
 
 export const factorialNormalExpressions: BuiltinNormalExpressions = {
-  'factorial': {
+  factorial: {
     evaluate: ([n], sourceCodeInfo): number => {
       assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true, lte: 170 })
       return factorialOf(n)

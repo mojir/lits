@@ -2,8 +2,8 @@ import type { FunctionReference } from '..'
 import { type SequenceApiName, getOperatorArgs } from '../api'
 
 export const sequenceReference: Record<SequenceApiName, FunctionReference<'Sequence'>> = {
-  'nth': {
-    title: 'nth',
+  'TEMP-nth': {
+    title: 'TEMP-nth',
     category: 'Sequence',
     returns: {
       type: 'any',
@@ -26,18 +26,18 @@ export const sequenceReference: Record<SequenceApiName, FunctionReference<'Seque
     ],
     description: 'Accesses element $n of $seq. Accessing out-of-bounds indices returns $not-found, if present, else `null`.',
     examples: [
-      '[1, 2, 3] nth 1',
-      '"A string" nth 3',
-      'nth([1, 2, 3], 1)',
-      'nth([1, 2, 3], 3)',
-      'nth([1, 2, 3], -1)',
-      'nth([1, 2, 3], 3, 99)',
-      'nth("A string", 1)',
-      'nth("A string", 3)',
-      'nth("A string", -3)',
-      'nth("A string", 30, "X")',
-      'nth(null, 1)',
-      'nth(null, 1, "Default value")',
+      '[1, 2, 3] TEMP-nth 1',
+      '"A string" TEMP-nth 3',
+      'TEMP-nth([1, 2, 3], 1)',
+      'TEMP-nth([1, 2, 3], 3)',
+      'TEMP-nth([1, 2, 3], -1)',
+      'TEMP-nth([1, 2, 3], 3, 99)',
+      'TEMP-nth("A string", 1)',
+      'TEMP-nth("A string", 3)',
+      'TEMP-nth("A string", -3)',
+      'TEMP-nth("A string", 30, "X")',
+      'TEMP-nth(null, 1)',
+      'TEMP-nth(null, 1, "Default value")',
     ],
   },
   'push': {

@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const partitionReference: NumberTheorySequenceReference<'partition'> = {
-  'nth.partition-seq': {
-    title: 'nth.partition-seq',
+  'TEMP-nth.partition-seq': {
+    title: 'TEMP-nth.partition-seq',
     category: 'Number Theory',
     description: 'Generates the partition numbers up to a specified length. If no length is provided, it defaults to 299 (the maximum length of the pre-calculated partition numbers).',
     returns: {
@@ -20,13 +20,13 @@ export const partitionReference: NumberTheorySequenceReference<'partition'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.partition-seq(1)',
-      'let nt = import("nth");\nnt.partition-seq(10)',
-      'let nt = import("nth");\nnt.partition-seq()',
+      'let nt = import("TEMP-nth");\nnt.partition-seq(1)',
+      'let nt = import("TEMP-nth");\nnt.partition-seq(10)',
+      'let nt = import("TEMP-nth");\nnt.partition-seq()',
     ],
   },
-  'nth.partition-take-while': {
-    title: 'nth.partition-take-while',
+  'TEMP-nth.partition-take-while': {
+    title: 'TEMP-nth.partition-take-while',
     category: 'Number Theory',
     description: 'Generates the partition numbers while a condition is met.',
     returns: {
@@ -43,11 +43,11 @@ export const partitionReference: NumberTheorySequenceReference<'partition'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.partition-take-while(-> $ < 1000)',
+      'let nt = import("TEMP-nth");\nnt.partition-take-while(-> $ < 1000)',
     ],
   },
-  'nth.partition-nth': {
-    title: 'nth.partition-nth',
+  'TEMP-nth.partition-nth': {
+    title: 'TEMP-nth.partition-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the partition numbers.',
     returns: {
@@ -63,12 +63,12 @@ export const partitionReference: NumberTheorySequenceReference<'partition'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.partition-nth(1)',
-      'let nt = import("nth");\nnt.partition-nth(5)',
+      'let nt = import("TEMP-nth");\nnt.partition-nth(1)',
+      'let nt = import("TEMP-nth");\nnt.partition-nth(5)',
     ],
   },
-  'nth.partition?': {
-    title: 'nth.partition?',
+  'TEMP-nth.partition?': {
+    title: 'TEMP-nth.partition?',
     category: 'Number Theory',
     description: 'Checks if a number is in the partition numbers.',
     returns: {
@@ -84,12 +84,12 @@ export const partitionReference: NumberTheorySequenceReference<'partition'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("nth");\nnt.partition?(0)',
-      'let nt = import("nth");\nnt.partition?(1)',
-      'let nt = import("nth");\nnt.partition?(2)',
-      'let nt = import("nth");\nnt.partition?(3)',
-      'let nt = import("nth");\nnt.partition?(4)',
-      'let nt = import("nth");\nnt.partition?(5)',
+      'let nt = import("TEMP-nth");\nnt.partition?(0)',
+      'let nt = import("TEMP-nth");\nnt.partition?(1)',
+      'let nt = import("TEMP-nth");\nnt.partition?(2)',
+      'let nt = import("TEMP-nth");\nnt.partition?(3)',
+      'let nt = import("TEMP-nth");\nnt.partition?(4)',
+      'let nt = import("TEMP-nth");\nnt.partition?(5)',
     ],
   },
 }

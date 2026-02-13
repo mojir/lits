@@ -19,8 +19,8 @@ export const medianReference: VectorReductionReference<'median'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.median([1, 2, 3])',
-      'let vec = import("vec");\nvec.median([1, 2, -3])',
+      'let { median } = import("vec");\nmedian([1, 2, 3])',
+      'let { median } = import("vec");\nmedian([1, 2, -3])',
     ],
   },
   'vec.moving-median': {

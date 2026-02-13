@@ -251,18 +251,18 @@ describe('grid', () => {
   })
   describe('grid:map', () => {
     it('should map the grid', () => {
-      expect(runGrid(`grid:map(${exampleGrid1}, str)`)).toEqual([
+      expect(runGrid(`grid:TEMP-map(${exampleGrid1}, str)`)).toEqual([
         ['Albert', 'father', '10'],
         ['Nina', 'mother', '20'],
         ['Kian', 'son', '30'],
       ])
     })
     it('should map multiple grids', () => {
-      expect(runGrid(`grid:map(${exampleGrid3}, ${exampleGrid3}, +)`)).toEqual([[2, 4], [6, 8]])
+      expect(runGrid(`grid:TEMP-map(${exampleGrid3}, ${exampleGrid3}, +)`)).toEqual([[2, 4], [6, 8]])
     })
     it('should throw on different dimensions', () => {
-      expect(() => runGrid(`grid:map(${exampleGrid3}, [[1], [2]], +)`)).toThrow(LitsError)
-      expect(() => runGrid(`grid:map(${exampleGrid3}, [[1, 2]], +)`)).toThrow(LitsError)
+      expect(() => runGrid(`grid:TEMP-map(${exampleGrid3}, [[1], [2]], +)`)).toThrow(LitsError)
+      expect(() => runGrid(`grid:TEMP-map(${exampleGrid3}, [[1, 2]], +)`)).toThrow(LitsError)
     })
   })
   describe('grid:mapi', () => {
@@ -276,7 +276,7 @@ describe('grid', () => {
   })
   describe('grid:reduce', () => {
     it('should reduce the grid', () => {
-      expect(runGrid(`grid:reduce(${exampleGrid1}, ++, "")`)).toEqual('Albertfather10Ninamother20Kianson30')
+      expect(runGrid(`grid:TEMP-reduce(${exampleGrid1}, ++, "")`)).toEqual('Albertfather10Ninamother20Kianson30')
     })
   })
   describe('grid:reducei', () => {
@@ -448,20 +448,20 @@ describe('grid', () => {
 
 describe('import with dot notation', () => {
   it('should import a single function directly', () => {
-    expect(lits.run(`let row = import("grid.row"); row([[1, 2], [3, 4]], 0)`)).toEqual([1, 2])
+    expect(lits.run('let row = import("grid.row"); row([[1, 2], [3, 4]], 0)')).toEqual([1, 2])
   })
 
   it('should import function by alias', () => {
     // Test that aliases work with dot notation (transpose has alias "tr")
-    expect(lits.run(`let tp = import("grid.tr"); tp([[1, 2], [3, 4]])`)).toEqual([[1, 3], [2, 4]])
+    expect(lits.run('let tp = import("grid.tr"); tp([[1, 2], [3, 4]])')).toEqual([[1, 3], [2, 4]])
   })
 
   it('should throw for unknown function', () => {
-    expect(() => lits.run(`import("grid.unknown")`)).toThrow(LitsError)
+    expect(() => lits.run('import("grid.unknown")')).toThrow(LitsError)
   })
 
   it('should throw for unknown namespace', () => {
-    expect(() => lits.run(`import("unknown.row")`)).toThrow(LitsError)
+    expect(() => lits.run('import("unknown.row")')).toThrow(LitsError)
   })
 
   it('should work with function composition', () => {

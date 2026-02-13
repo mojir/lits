@@ -299,10 +299,10 @@ describe('matrix', () => {
       expect(runMat('mat:frobenius-norm([[1, 0], [0, 1]])')).toEqual(1.4142135623730951)
     })
   })
-  describe('mat:1-norm', () => {
-    it('should return the 1-norm of a matrix', () => {
-      expect(lits.run('let mat = import("mat"); let f = get(mat, "1-norm"); f([[1, 2], [3, 4]])')).toEqual(6)
-      expect(lits.run('let mat = import("mat"); let f = get(mat, "1-norm"); f([[1, 0], [0, 1]])')).toEqual(1)
+  describe('mat:one-norm', () => {
+    it('should return the one-norm of a matrix', () => {
+      expect(runMat('mat:one-norm([[1, 2], [3, 4]])')).toEqual(6)
+      expect(runMat('mat:one-norm([[1, 0], [0, 1]])')).toEqual(1)
     })
   })
   describe('mat:inf-norm', () => {

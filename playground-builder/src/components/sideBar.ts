@@ -1,7 +1,7 @@
 import type { Reference } from '../../../reference'
 import { apiReference, getLinkName, isFunctionReference, namespaceReference } from '../../../reference'
-import { coreCategories, namespaceCategories, categoryToNamespace } from '../../../reference/api'
-import { homeIcon, lampIcon, searchIcon, chevronRightIcon, packageIcon } from '../icons'
+import { categoryToNamespace, coreCategories, namespaceCategories } from '../../../reference/api'
+import { chevronRightIcon, homeIcon, lampIcon, packageIcon, searchIcon } from '../icons'
 import { styles } from '../styles'
 
 export function getSideBar() {
@@ -80,7 +80,9 @@ export function getSideBar() {
                   .map((obj) => {
                     const linkName = getLinkName(obj)
                     const aliases = isFunctionReference(obj) ? obj.aliases : undefined
-                    const name = `${escape(obj.title)}${aliases ? `, ${aliases.join(', ')}` : ''}`
+                    // Strip namespace prefix (e.g., "vec." from "vec.sum")
+                    const displayName = obj.title.includes('.') ? obj.title.split('.').slice(1).join('.') : obj.title
+                    const name = `${escape(displayName)}${aliases ? `, ${aliases.join(', ')}` : ''}`
                     return `<a id="${linkName}_link" ${styles('scroll-my-2', 'pl-2')} onclick="Playground.showPage('${linkName}', 'smooth')">${name}</a>`
                   })
                   .join('\n')

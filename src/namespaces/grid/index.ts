@@ -451,7 +451,7 @@ const gridFunctions: BuiltinNormalExpressions = {
     },
     arity: { min: 1 },
   },
-  'map': {
+  'TEMP-map': {
     evaluate: (params, sourceCodeInfo, contextStack, { executeFunction }): Any[][] => {
       const fn = asFunctionLike(params.at(-1), sourceCodeInfo)
       const grids = params.slice(0, -1)
@@ -501,7 +501,7 @@ const gridFunctions: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(2),
   },
-  'reduce': {
+  'TEMP-reduce': {
     evaluate: ([grid, fn, initialValue], sourceCodeInfo, contextStack, { executeFunction }): Any => {
       assertGrid(grid, sourceCodeInfo)
       assertFunctionLike(fn, sourceCodeInfo)

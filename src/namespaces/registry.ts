@@ -4,7 +4,7 @@ import type { LitsNamespace } from './interface'
  * Global registry for Lits namespaces.
  * Namespaces are registered here and can be imported via import("namespaceName")
  */
-const namespaceRegistry: Map<string, LitsNamespace> = new Map()
+const namespaceRegistry = new Map<string, LitsNamespace>()
 
 /**
  * Register a namespace so it can be imported in Lits code.

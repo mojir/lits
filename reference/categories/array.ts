@@ -171,8 +171,8 @@ mapcat(
     description: 'Returns the result of applying $b to each element of $a.',
     examples: [
       'let v = import("vec"); running-fn([1, 2, 3], v.sum)',
-      'let v = import("vec"); running-fn([1, 2, 3], v.max)',
-      'let v = import("vec"); running-fn([1, 2, 3], v.min)',
+      'let v = import("vec"); running-fn([1, 2, 3], v.TEMP-max)',
+      'let v = import("vec"); running-fn([1, 2, 3], v.TEMP-min)',
     ],
   },
 }

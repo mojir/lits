@@ -19,8 +19,8 @@ export const prodReference: VectorReductionReference<'prod'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.prod([1, 2, 3])',
-      'let vec = import("vec");\nvec.prod([1, 2, -3])',
+      'let { prod } = import("vec");\nprod([1, 2, 3])',
+      'let { prod } = import("vec");\nprod([1, 2, -3])',
     ],
   },
   'vec.moving-prod': {

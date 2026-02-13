@@ -19,8 +19,8 @@ export const medianAbsoluteDeviationReference: VectorReductionReference<'medad'>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.medad([1, 2, 3])',
-      'let vec = import("vec");\nvec.medad([1, 2, -3])',
+      'let { medad } = import("vec");\nmedad([1, 2, 3])',
+      'let { medad } = import("vec");\nmedad([1, 2, -3])',
     ],
   },
   'vec.moving-medad': {
