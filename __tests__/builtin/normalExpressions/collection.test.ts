@@ -119,9 +119,9 @@ describe('collection functions', () => {
       expect(lits.run('reduce([], +, 0)')).toBe(0)
       expect(lits.run('reduce([], +, 1)')).toBe(1)
 
-      expect(lits.run('reduce("Albert", (x, y) -> concat(x, "-", y), "")')).toBe('-A-l-b-e-r-t')
-      expect(lits.run('reduce("Albert", (x, y) -> concat(x, "-", y), ">")')).toBe('>-A-l-b-e-r-t')
-      expect(lits.run('reduce("", (x, y) -> concat(x, "-", y), ">")')).toBe('>')
+      expect(lits.run('reduce("Albert", (x, y) -> ++(x, "-", y), "")')).toBe('-A-l-b-e-r-t')
+      expect(lits.run('reduce("Albert", (x, y) -> ++(x, "-", y), ">")')).toBe('>-A-l-b-e-r-t')
+      expect(lits.run('reduce("", (x, y) -> ++(x, "-", y), ">")')).toBe('>')
 
       expect(lits.run('reduce({ a: 1, b: 2 }, +, 0)')).toBe(3)
       expect(lits.run('reduce({}, +, 0)')).toBe(0)
@@ -160,9 +160,9 @@ describe('collection functions', () => {
       expect(lits.run('reduce-right([], +, 0)')).toBe(0)
       expect(lits.run('reduce-right(["1", "2", "3"], str, "")')).toBe('321')
 
-      expect(lits.run('reduce-right("Albert", (x, y) -> concat(x, "-", y), "")')).toBe('-t-r-e-b-l-A')
-      expect(lits.run('reduce-right("Albert", (x, y) -> concat(x, "-", y), ">")')).toBe('>-t-r-e-b-l-A')
-      expect(lits.run('reduce-right("", (x, y) -> concat(x, "-", y), ">")')).toBe('>')
+      expect(lits.run('reduce-right("Albert", (x, y) -> ++(x, "-", y), "")')).toBe('-t-r-e-b-l-A')
+      expect(lits.run('reduce-right("Albert", (x, y) -> ++(x, "-", y), ">")')).toBe('>-t-r-e-b-l-A')
+      expect(lits.run('reduce-right("", (x, y) -> ++(x, "-", y), ">")')).toBe('>')
 
       expect(lits.run('reduce-right({ a: 1, b: 2 }, +, 0)')).toBe(3)
       expect(lits.run('reduce-right({}, +, 0)')).toBe(0)
@@ -202,7 +202,7 @@ describe('collection functions', () => {
       expect(lits.run('reductions([], +, 0)')).toEqual([0])
       expect(lits.run('reductions([], +, 1)')).toEqual([1])
 
-      expect(lits.run('reductions("Albert", (x, y) -> concat(x, "-", y), "")')).toEqual([
+      expect(lits.run('reductions("Albert", (x, y) -> ++(x, "-", y), "")')).toEqual([
         '',
         '-A',
         '-A-l',
@@ -211,7 +211,7 @@ describe('collection functions', () => {
         '-A-l-b-e-r',
         '-A-l-b-e-r-t',
       ])
-      expect(lits.run('reductions("Albert", (x, y) -> concat(x, "-", y), ">")')).toEqual([
+      expect(lits.run('reductions("Albert", (x, y) -> ++(x, "-", y), ">")')).toEqual([
         '>',
         '>-A',
         '>-A-l',
@@ -220,7 +220,7 @@ describe('collection functions', () => {
         '>-A-l-b-e-r',
         '>-A-l-b-e-r-t',
       ])
-      expect(lits.run('reductions("", (x, y) -> concat(x, "-", y), ">")')).toEqual(['>'])
+      expect(lits.run('reductions("", (x, y) -> ++(x, "-", y), ">")')).toEqual(['>'])
 
       expect(lits.run('reductions({ a: 1, b: 2 }, +, 0)')).toEqual([0, 1, 3])
       expect(lits.run('reductions({}, +, 0)')).toEqual([0])
@@ -452,7 +452,7 @@ describe('collection functions', () => {
     })
   })
 
-  describe('concat', () => {
+  describe('++', () => {
     it('samples', () => {
       expect(lits.run('"Albert" ++ "Mojir"')).toBe('AlbertMojir')
       expect(lits.run('"Albert" ++ " Mojir"')).toBe('Albert Mojir')
@@ -461,29 +461,29 @@ describe('collection functions', () => {
       expect(lits.run('++("Albert", "Mojir", " and ")')).toBe('AlbertMojir and ')
       expect(lits.run('++("Albert")')).toBe('Albert')
 
-      expect(lits.run('[1, 2] concat [3, 4]')).toEqual([1, 2, 3, 4])
-      expect(lits.run('{ a: 1, b: 2 } concat { b: 20, c: 30 }')).toEqual({ a: 1, b: 20, c: 30 })
-      expect(lits.run('"Al" concat "bert"')).toEqual('Albert')
+      expect(lits.run('[1, 2] ++ [3, 4]')).toEqual([1, 2, 3, 4])
+      expect(lits.run('{ a: 1, b: 2 } ++ { b: 20, c: 30 }')).toEqual({ a: 1, b: 20, c: 30 })
+      expect(lits.run('"Al" ++ "bert"')).toEqual('Albert')
 
-      expect(lits.run('concat([])')).toEqual([])
-      expect(lits.run('concat([1])')).toEqual([1])
-      expect(lits.run('concat([1], [2], [3, 4])')).toEqual([1, 2, 3, 4])
-      expect(lits.run('concat([1, 2, 3], [])')).toEqual([1, 2, 3])
+      expect(lits.run('++([])').toString()).toEqual([].toString())
+      expect(lits.run('++([1])')).toEqual([1])
+      expect(lits.run('++([1], [2], [3, 4])')).toEqual([1, 2, 3, 4])
+      expect(lits.run('++([1, 2, 3], [])')).toEqual([1, 2, 3])
 
-      expect(lits.run('concat({a: 1, b: 2}, {b: 1, c: 2})')).toEqual({ a: 1, b: 1, c: 2 })
-      expect(lits.run('concat({}, {a: 1, b: 2})')).toEqual({ a: 1, b: 2 })
+      expect(lits.run('++({a: 1, b: 2}, {b: 1, c: 2})')).toEqual({ a: 1, b: 1, c: 2 })
+      expect(lits.run('++({}, {a: 1, b: 2})')).toEqual({ a: 1, b: 2 })
 
-      expect(lits.run('concat("1", "23")')).toBe('123')
-      expect(lits.run('concat("1", "")')).toBe('1')
-      expect(lits.run('concat("1")')).toBe('1')
-      expect(lits.run('concat(0)')).toBe('0')
+      expect(lits.run('++("1", "23")')).toBe('123')
+      expect(lits.run('++("1", "")')).toBe('1')
+      expect(lits.run('++("1")')).toBe('1')
+      expect(lits.run('++(0)')).toBe('0')
 
-      expect(() => lits.run('concat()')).toThrow(LitsError)
-      expect(() => lits.run('concat([1], "2")')).toThrow(LitsError)
-      expect(() => lits.run('concat("1", ["2"])')).toThrow(LitsError)
-      expect(() => lits.run('concat(true)')).toThrow(LitsError)
-      expect(() => lits.run('concat("1", false)')).toThrow(LitsError)
-      expect(() => lits.run('concat(null, "m")')).toThrow(LitsError)
+      expect(() => lits.run('++()')).toThrow(LitsError)
+      expect(() => lits.run('++([1], "2")')).toThrow(LitsError)
+      expect(() => lits.run('++("1", ["2"])')).toThrow(LitsError)
+      expect(() => lits.run('++(true)')).toThrow(LitsError)
+      expect(() => lits.run('++("1", false)')).toThrow(LitsError)
+      expect(() => lits.run('++(null, "m")')).toThrow(LitsError)
     })
   })
 

@@ -308,7 +308,7 @@ describe('matrix', () => {
   describe('mat:inf-norm', () => {
     it('should return the infinity norm of a matrix', () => {
       expect(runMat('mat:inf-norm([[1, 2], [3, 4]])')).toEqual(7)
-      expect(runMat('mat:row-norm([[1, 0], [0, 1]])')).toEqual(1)
+      expect(runMat('mat:inf-norm([[1, 0], [0, 1]])')).toEqual(1)
     })
   })
   describe('mat:max-norm', () => {

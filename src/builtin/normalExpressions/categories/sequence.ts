@@ -9,7 +9,7 @@ import { toFixedArity } from '../../../utils/arity'
 import type { BuiltinNormalExpressions } from '../../interface'
 
 export const sequenceNormalExpression: BuiltinNormalExpressions = {
-  'TEMP-nth': {
+  'nth': {
     evaluate: (params, sourceCodeInfo): Any => {
       const [seq, i] = params
       const defaultValue = toAny(params[2])

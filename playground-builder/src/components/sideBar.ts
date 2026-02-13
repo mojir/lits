@@ -1,5 +1,5 @@
 import type { Reference } from '../../../reference'
-import { apiReference, getLinkName, isFunctionReference, namespaceReference } from '../../../reference'
+import { apiReference, getLinkName, namespaceReference } from '../../../reference'
 import { categoryToNamespace, coreCategories, namespaceCategories } from '../../../reference/api'
 import { chevronRightIcon, homeIcon, lampIcon, packageIcon, searchIcon } from '../icons'
 import { styles } from '../styles'
@@ -38,8 +38,7 @@ export function getSideBar() {
                   })
                   .map((obj) => {
                     const linkName = getLinkName(obj)
-                    const aliases = isFunctionReference(obj) ? obj.aliases : undefined
-                    const name = `${escape(obj.title)}${aliases ? `, ${aliases.join(', ')}` : ''}`
+                    const name = `${escape(obj.title)}`
                     return `<a id="${linkName}_link" ${styles('scroll-my-2', 'pl-2')} onclick="Playground.showPage('${linkName}', 'smooth')">${name}</a>`
                   })
                   .join('\n')
@@ -79,11 +78,10 @@ export function getSideBar() {
                   })
                   .map((obj) => {
                     const linkName = getLinkName(obj)
-                    const aliases = isFunctionReference(obj) ? obj.aliases : undefined
                     // Strip namespace prefix (e.g., "Vector." from "Vector.sum")
                     const stripPrefix = (n: string) => n.includes('.') ? n.split('.').slice(1).join('.') : n
                     const displayName = stripPrefix(obj.title)
-                    const name = `${escape(displayName)}${aliases ? `, ${aliases.map(stripPrefix).join(', ')}` : ''}`
+                    const name = `${escape(displayName)}`
                     return `<a id="${linkName}_link" ${styles('scroll-my-2', 'pl-2')} onclick="Playground.showPage('${linkName}', 'smooth')">${name}</a>`
                   })
                   .join('\n')

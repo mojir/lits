@@ -323,7 +323,6 @@ transpose(${exampleGrid2})`,
       `let { transpose } = import("Grid");
 transpose(${exampleGrid3})`,
     ],
-    aliases: ['Grid.tr'],
   },
   'Grid.flip-h': {
     title: 'Grid.flip-h',
@@ -668,8 +667,8 @@ concat-rows(${exampleGrid2}, ${exampleGrid3})`,
 concat-cols(${exampleGrid1}, ${exampleGrid2})`,
     ],
   },
-  'Grid.TEMP-map': {
-    title: 'Grid.TEMP-map',
+  'Grid.map': {
+    title: 'Grid.map',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -682,8 +681,9 @@ concat-cols(${exampleGrid1}, ${exampleGrid2})`,
     ],
     description: 'Maps a function `a` over each element of the grid `b`, returning a new grid with the results.',
     examples: [
-      `let { TEMP-map } = import("Grid");
-TEMP-map(${exampleGrid1}, str)`,
+      `// Using "as" alias because "map" shadows a builtin function
+let { map as grid-map } = import("Grid");
+grid-map(${exampleGrid1}, str)`,
     ],
   },
   'Grid.mapi': {
@@ -705,8 +705,8 @@ let { mapi as grid-mapi } = import("Grid");
 grid-mapi(${exampleGrid1}, -> $1 ++ "(" ++ $2 ++ ", " ++ $3 ++ ")")`,
     ],
   },
-  'Grid.TEMP-reduce': {
-    title: 'Grid.TEMP-reduce',
+  'Grid.reduce': {
+    title: 'Grid.reduce',
     category: 'Grid',
     returns: {
       type: 'any',
@@ -730,8 +730,9 @@ grid-mapi(${exampleGrid1}, -> $1 ++ "(" ++ $2 ++ ", " ++ $3 ++ ")")`,
     ],
     description: 'Reduces the grid `a` using the function `b`, returning a single value.',
     examples: [
-      `let { TEMP-reduce } = import("Grid");
-TEMP-reduce(${exampleGrid1}, ++, "")`,
+      `// Using "as" alias because "reduce" shadows a builtin function
+let { reduce as grid-reduce } = import("Grid");
+grid-reduce(${exampleGrid1}, ++, "")`,
     ],
   },
   'Grid.reducei': {

@@ -72,7 +72,7 @@ function addReductionFunctions<T extends string>(fns: ReductionFunctionDefinitio
     }
     if (key !== 'minLength' && key !== 'padding' && typeof value === 'function') {
       const reductionFn = value as ReductionFunction
-      const baseKey = key.replace(/^TEMP-/, '')
+      const baseKey = key.replace(/^/, '')
       const movingKey = `moving-${baseKey}` as VectorMovingWindowKey<T>
       const centeredMovingKey = `centered-moving-${baseKey}` as VectorCenteredMovingWindowKey<T>
       const runningKey = `running-${baseKey}` as VectorRunningKey<T>

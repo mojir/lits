@@ -13,11 +13,11 @@ function runVec(code: string): unknown {
 
 describe('max', () => {
   it('should calculate max of a vector', () => {
-    expect(runVec('TEMP-max([1, 2, 3])')).toEqual(3)
-    expect(runVec('TEMP-max([1, -2, 3])')).toEqual(3)
-    expect(runVec('TEMP-max([-1, -2, -3])')).toEqual(-1)
-    expect(runVec('TEMP-max([0])')).toEqual(0)
-    expect(() => runVec('TEMP-max([])')).toThrowError(LitsError)
+    expect(runVec('max([1, 2, 3])')).toEqual(3)
+    expect(runVec('max([1, -2, 3])')).toEqual(3)
+    expect(runVec('max([-1, -2, -3])')).toEqual(-1)
+    expect(runVec('max([0])')).toEqual(0)
+    expect(() => runVec('max([])')).toThrowError(LitsError)
   })
   it('should calculate the moving max of a vector', () => {
     expect(runVec('moving-max([1, 2, 3, 4, 5, 6], 1)')).toEqual([1, 2, 3, 4, 5, 6])

@@ -242,7 +242,6 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
       return factors.length % 2 === 0 ? 1 : -1
     },
     arity: toFixedArity(1),
-    aliases: ['möbius'],
   },
   'mertens': {
     evaluate: ([n], sourceCodeInfo): number => {
@@ -257,7 +256,6 @@ export const combinatoricalNormalExpression: BuiltinNormalExpressions = {
       return result
     },
     arity: toFixedArity(1),
-    aliases: ['mertens'],
   },
   'sigma': {
     evaluate: ([n], sourceCodeInfo): number => {

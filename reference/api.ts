@@ -5,7 +5,7 @@ function getNumberTheorySequenceNames<T extends string>(name: T): [`Number-Theor
 }
 
 function getVectorReductionNames<T extends string>(name: T): [`Vector.${T}`, `Vector.moving-${string}`, `Vector.centered-moving-${string}`, `Vector.running-${string}`] {
-  const baseName = name.replace(/^TEMP-/, '')
+  const baseName = name.replace(/^/, '')
   return [`Vector.${name}`, `Vector.moving-${baseName}`, `Vector.centered-moving-${baseName}`, `Vector.running-${baseName}`]
 }
 
@@ -45,7 +45,7 @@ export const api = {
     'running-fn',
   ] as const,
   sequence: [
-    'TEMP-nth',
+    'nth',
     'push',
     'pop',
     'unshift',
@@ -91,7 +91,7 @@ export const api = {
     '*',
     '/',
     'mod',
-    'rem',
+    '%',
     'quot',
     'inc',
     'dec',
@@ -141,7 +141,7 @@ export const api = {
     'arity',
   ] as const,
   misc: [
-    '!=',
+    '≠',
     '==',
     '<',
     '>',
@@ -285,9 +285,9 @@ export const api = {
     'Grid.splice-cols',
     'Grid.concat-rows',
     'Grid.concat-cols',
-    'Grid.TEMP-map',
+    'Grid.map',
     'Grid.mapi',
-    'Grid.TEMP-reduce',
+    'Grid.reduce',
     'Grid.reducei',
     'Grid.push-rows',
     'Grid.unshift-rows',
@@ -365,8 +365,8 @@ export const api = {
     ...getVectorReductionNames('sample-variance'),
     ...getVectorReductionNames('sum'),
     ...getVectorReductionNames('prod'),
-    ...getVectorReductionNames('TEMP-min'),
-    ...getVectorReductionNames('TEMP-max'),
+    ...getVectorReductionNames('min'),
+    ...getVectorReductionNames('max'),
     ...getVectorReductionNames('stdev'),
     ...getVectorReductionNames('sample-stdev'),
     ...getVectorReductionNames('iqr'),

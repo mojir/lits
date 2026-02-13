@@ -11,7 +11,7 @@ import { registerNamespace } from './registry'
 export type { LitsNamespace } from './interface'
 
 // Export registry functions
-export { registerNamespace, getNamespace, getNamespaceAliasMap, hasNamespace, getNamespaceNames } from './registry'
+export { registerNamespace, getNamespace, hasNamespace, getNamespaceNames } from './registry'
 
 // Export individual namespaces
 export { gridNamespace } from './grid'

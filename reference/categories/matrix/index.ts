@@ -548,7 +548,6 @@ banded?([
       'let { inf-norm } = import("Matrix");\ninf-norm([[1, 2], [3, 4]])',
       'let { inf-norm } = import("Matrix");\ninf-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
     ],
-    aliases: ['Matrix.row-norm'],
   },
   'Matrix.max-norm': {
     title: 'Matrix.max-norm',

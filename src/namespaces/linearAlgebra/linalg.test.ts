@@ -95,9 +95,8 @@ describe('linalg functions', () => {
       expect(deepEqual(runLin('lin:reflect([1, 0], [0, 2])'), [1, 0])).toBeTruthy()
 
       // 45-degree reflection
-      const normal45 = 'lin:normalize([1, 1])'
+      const normal45 = 'lin:normalize-l2([1, 1])'
       expect(deepEqual(runLin('lin:reflect([1, 0], [1, 1])'), [0, -1])).toBeTruthy()
-      // expect(runLin('lin:reflect([1, 0], [1, 1])')).toEqual([0, -1])
       expect(deepEqual(runLin(`lin:reflect([1, 0], ${normal45})`), [0, -1])).toBeTruthy()
 
       // 1D reflection
@@ -141,7 +140,7 @@ describe('linalg functions', () => {
       expect(() => deepEqual(runLin('lin:refract([1, -1, 0], [0, 1, 0], 0)'), [0, -1, 0])).toThrowError(LitsError)
 
       // Eta = 1 (no change in medium)
-      const norm = 'lin:normalize([1, -1, 0])'
+      const norm = 'lin:normalize-l2([1, -1, 0])'
       expect(deepEqual(runLin(`lin:refract(${norm}, [0, 1, 0], 1)`), getUnit([1, -1, 0], undefined))).toBeTruthy()
 
       // 1D refraction
@@ -421,18 +420,18 @@ describe('linalg functions', () => {
       // Basic case
       expect(runLin('lin:euclidean-distance([1, 2], [4, 6])')).toEqual(5)
       // Basic case
-      expect(runLin('lin:distance([1, 2], [1, 2])')).toEqual(0)
+      expect(runLin('lin:euclidean-distance([1, 2], [1, 2])')).toEqual(0)
       // Case with negative numbers
-      expect(runLin('lin:l2-distance([-1, -2], [-4, -6])')).toEqual(5)
+      expect(runLin('lin:euclidean-distance([-1, -2], [-4, -6])')).toEqual(5)
       // Case with mixed numbers
       expect(runLin('lin:euclidean-distance([1, -2], [-4, 6])')).toBeCloseTo(9.433981132056603)
       // Case with single element vectors
       expect(runLin('lin:euclidean-distance([42], [1])')).toEqual(41)
       // Case with empty vectors (should throw an error)
       expect(() => runLin('lin:euclidean-distance([], [])')).toThrowError(LitsError)
-      expect(() => runLin('lin:distance([], [])')).toThrowError(LitsError)
+      expect(() => runLin('lin:euclidean-distance([], [])')).toThrowError(LitsError)
 
-      expect(() => runLin('lin:distance([1, 2], [1])')).toThrowError(LitsError)
+      expect(() => runLin('lin:euclidean-distance([1, 2], [1])')).toThrowError(LitsError)
     })
   })
   describe('lin:euclidean-norm', () => {
@@ -440,13 +439,13 @@ describe('linalg functions', () => {
       // Basic case
       expect(runLin('lin:euclidean-norm([3, 4])')).toEqual(5)
       // Case with negative numbers
-      expect(runLin('lin:length([-3, -4])')).toEqual(5)
+      expect(runLin('lin:euclidean-norm([-3, -4])')).toEqual(5)
       // Case with mixed numbers
-      expect(runLin('lin:l2-norm([3, -4])')).toEqual(5)
+      expect(runLin('lin:euclidean-norm([3, -4])')).toEqual(5)
       // Case with single element vector
-      expect(runLin('lin:length([42])')).toEqual(42)
+      expect(runLin('lin:euclidean-norm([42])')).toEqual(42)
       // Case with empty vector
-      expect(() => runLin('lin:length([])')).toThrowError(LitsError)
+      expect(() => runLin('lin:euclidean-norm([])')).toThrowError(LitsError)
     })
   })
   describe('lin:manhattan-distance', () => {
@@ -454,9 +453,9 @@ describe('linalg functions', () => {
       // Basic case
       expect(runLin('lin:manhattan-distance([1, 2], [4, 6])')).toEqual(7)
       // Basic case
-      expect(runLin('lin:l1-distance([1, 2], [1, 2])')).toEqual(0)
+      expect(runLin('lin:manhattan-distance([1, 2], [1, 2])')).toEqual(0)
       // Case with negative numbers
-      expect(runLin('lin:cityblock-distance([-1, -2], [-4, -6])')).toEqual(7)
+      expect(runLin('lin:manhattan-distance([-1, -2], [-4, -6])')).toEqual(7)
       // Case with mixed numbers
       expect(runLin('lin:manhattan-distance([1, -2], [-4, 6])')).toBeCloseTo(13)
       // Case with single element vectors
@@ -470,15 +469,15 @@ describe('linalg functions', () => {
   describe('lin:manhattan-norm', () => {
     it('should calculate the L1 norm of a vector', () => {
       // Basic case
-      expect(runLin('lin:l1-norm([1, 2, 3])')).toEqual(6)
+      expect(runLin('lin:manhattan-norm([1, 2, 3])')).toEqual(6)
       // Case with negative numbers
       expect(runLin('lin:manhattan-norm([-1, -2, -3])')).toEqual(6)
       // Case with mixed numbers
-      expect(runLin('lin:cityblock-norm([1, -2, 3])')).toEqual(6)
+      expect(runLin('lin:manhattan-norm([1, -2, 3])')).toEqual(6)
       // Case with single element vector
-      expect(runLin('lin:l1-norm([42])')).toEqual(42)
+      expect(runLin('lin:manhattan-norm([42])')).toEqual(42)
       // Case with empty vector
-      expect(() => runLin('lin:l1-norm([])')).toThrowError(LitsError)
+      expect(() => runLin('lin:manhattan-norm([])')).toThrowError(LitsError)
     })
   })
   describe('lin:hamming-distance', () => {
@@ -625,9 +624,9 @@ describe('linalg functions', () => {
   describe('lin:spearman-corr', () => {
     it('should calculate the Spearman correlation between two vectors', () => {
       expect(runLin('lin:spearman-corr([1, 2, 3], [4, 5, 6])')).toBeCloseTo(1)
-      expect(runLin('lin:spearman-rho([1, 2, 3, 4, 5], [1, 2, 3, 4, 5])')).toBeCloseTo(1)
+      expect(runLin('lin:spearman-corr([1, 2, 3, 4, 5], [1, 2, 3, 4, 5])')).toBeCloseTo(1)
       expect(runLin('lin:spearman-corr([1, 2, 3, 4, 5], [5, 4, 3, 2, 1])')).toBeCloseTo(-1)
-      expect(runLin('lin:spearman-rho([1, 2, 3, 4, 5], [5, 2, 4, 1, 3])')).toBeCloseTo(-0.5)
+      expect(runLin('lin:spearman-corr([1, 2, 3, 4, 5], [5, 2, 4, 1, 3])')).toBeCloseTo(-0.5)
       expect(runLin('lin:spearman-corr([1, 2, 3, 4, 100], [1, 2, 3, 4, 5])')).toBeCloseTo(1)
 
       // Case with single element vectors (should throw an error)
@@ -733,7 +732,7 @@ describe('linalg functions', () => {
       expect(runLin('lin:autocorrelation([1, 2, 3, 4, 5], -1)')).toBeCloseTo(0.4)
       expect(runLin('lin:autocorrelation([1, 2, 3, 4, 5], 0)')).toBeCloseTo(1)
       expect(runLin('lin:autocorrelation([1, 2, 3, 4, 5], 2)')).toBeCloseTo(-0.1)
-      expect(runLin('lin:acf([1, 2, 3, 4, 5], 3)')).toBeCloseTo(-0.4)
+      expect(runLin('lin:autocorrelation([1, 2, 3, 4, 5], 3)')).toBeCloseTo(-0.4)
       expect(runLin('lin:autocorrelation([1, 2, 3, 4, 5], 4)')).toBeCloseTo(-0.4)
       // Case with negative numbers
       expect(runLin('lin:autocorrelation([-1, -2, -3, -4, -5], 1)')).toBeCloseTo(0.4)

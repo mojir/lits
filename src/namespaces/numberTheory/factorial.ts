@@ -26,7 +26,6 @@ export const factorialNormalExpressions: BuiltinNormalExpressions = {
       assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true, lte: 170 })
       return factorialOf(n)
     },
-    aliases: ['!'],
     arity: toFixedArity(1),
   },
 }

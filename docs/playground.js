@@ -2353,7 +2353,6 @@ var Playground = (function (exports) {
                 }
             },
             arity: { min: 1 },
-            aliases: ['concat'],
         },
         'not-empty': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2533,7 +2532,7 @@ var Playground = (function (exports) {
     };
 
     var sequenceNormalExpression = {
-        'TEMP-nth': {
+        'nth': {
             evaluate: function (params, sourceCodeInfo) {
                 var _a = __read(params, 2), seq = _a[0], i = _a[1];
                 var defaultValue = toAny(params[2]);
@@ -3410,7 +3409,6 @@ var Playground = (function (exports) {
                     return restMatrices.reduce(function (acc, matrix) { return acc.map(function (row, i) { return row.map(function (val, j) { return val * matrix[i][j]; }); }); }, firstMatrix);
                 }
             },
-            aliases: ['·'],
             arity: {},
         },
         '/': {
@@ -3532,7 +3530,6 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(2),
-            aliases: ['rem'],
         },
         'sqrt': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3550,7 +3547,6 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(1),
-            aliases: ['√'],
         },
         'cbrt': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3568,7 +3564,6 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(1),
-            aliases: ['∛'],
         },
         '^': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3772,7 +3767,6 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(1),
-            aliases: ['log₂'],
         },
         'log10': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3790,7 +3784,6 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(1),
-            aliases: ['log₁₀'],
         },
         'sin': {
             evaluate: function (params, sourceCodeInfo) {
@@ -4341,7 +4334,6 @@ var Playground = (function (exports) {
                 return transpose(grid);
             },
             arity: toFixedArity(1),
-            aliases: ['tr'],
         },
         'flip-h': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4595,7 +4587,7 @@ var Playground = (function (exports) {
             },
             arity: { min: 1 },
         },
-        'TEMP-map': {
+        'map': {
             evaluate: function (params, sourceCodeInfo, contextStack, _a) {
                 var executeFunction = _a.executeFunction;
                 var fn = asFunctionLike(params.at(-1), sourceCodeInfo);
@@ -4651,7 +4643,7 @@ var Playground = (function (exports) {
             },
             arity: toFixedArity(2),
         },
-        'TEMP-reduce': {
+        'reduce': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var e_9, _c, e_10, _d;
                 var _e = __read(_a, 3), grid = _e[0], fn = _e[1], initialValue = _e[2];
@@ -5385,7 +5377,7 @@ var Playground = (function (exports) {
     }
 
     var maxReductionFunction = {
-        'TEMP-max': function (vector) { return Math.max.apply(Math, __spreadArray([], __read(vector), false)); },
+        'max': function (vector) { return Math.max.apply(Math, __spreadArray([], __read(vector), false)); },
         'padding': -Number.MAX_VALUE,
     };
 
@@ -5425,7 +5417,7 @@ var Playground = (function (exports) {
     };
 
     var minReductionFunction = {
-        'TEMP-min': function (vector) { return Math.min.apply(Math, __spreadArray([], __read(vector), false)); },
+        'min': function (vector) { return Math.min.apply(Math, __spreadArray([], __read(vector), false)); },
         'padding': Number.MAX_VALUE,
     };
 
@@ -5738,7 +5730,7 @@ var Playground = (function (exports) {
                 }
                 if (key !== 'minLength' && key !== 'padding' && typeof value === 'function') {
                     var reductionFn = value;
-                    var baseKey = key.replace(/^TEMP-/, '');
+                    var baseKey = key.replace(/^/, '');
                     var movingKey = "moving-".concat(baseKey);
                     var centeredMovingKey = "centered-moving-".concat(baseKey);
                     var runningKey = "running-".concat(baseKey);
@@ -6762,7 +6754,6 @@ var Playground = (function (exports) {
                 return getUnit(vector, sourceCodeInfo);
             },
             arity: toFixedArity(1),
-            aliases: ['unit', 'normalize'],
         },
         'normalize-log': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6879,7 +6870,6 @@ var Playground = (function (exports) {
                 }
                 return Math.sqrt(vectorA.reduce(function (acc, val, i) { return acc + Math.pow((val - vectorB[i]), 2); }, 0));
             },
-            aliases: ['distance', 'l2-distance'],
             arity: toFixedArity(2),
         },
         'euclidean-norm': {
@@ -6889,7 +6879,6 @@ var Playground = (function (exports) {
                 return length(vector);
             },
             arity: toFixedArity(1),
-            aliases: ['l2-norm', 'length'],
         },
         'manhattan-distance': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6902,7 +6891,6 @@ var Playground = (function (exports) {
                 return vectorA.reduce(function (acc, val, i) { return acc + Math.abs(val - vectorB[i]); }, 0);
             },
             arity: toFixedArity(2),
-            aliases: ['l1-distance', 'cityblock-distance'],
         },
         'manhattan-norm': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -6911,7 +6899,6 @@ var Playground = (function (exports) {
                 return vector.reduce(function (acc, val) { return acc + Math.abs(val); }, 0);
             },
             arity: toFixedArity(1),
-            aliases: ['l1-norm', 'cityblock-norm'],
         },
         'hamming-distance': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -7057,7 +7044,6 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(2),
-            aliases: ['spearman-rho'],
         },
         'pearson-corr': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -7140,7 +7126,6 @@ var Playground = (function (exports) {
                 return numerator / denominator;
             },
             arity: toFixedArity(2),
-            aliases: ['acf'],
         },
         'cross-correlation': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -7168,7 +7153,6 @@ var Playground = (function (exports) {
                 return calcCorrelation(segmentA, segmentB);
             },
             arity: toFixedArity(3),
-            aliases: ['ccf'],
         },
         'rref': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -7848,7 +7832,6 @@ var Playground = (function (exports) {
                 return matrix.reduce(function (max, row) { return Math.max(max, row.reduce(function (sum, cell) { return sum + Math.abs(cell); }, 0)); }, 0);
             },
             arity: toFixedArity(1),
-            aliases: ['row-norm'],
         },
         // Max norm
         'max-norm': {
@@ -7932,7 +7915,6 @@ var Playground = (function (exports) {
                 assertNumber(k, sourceCodeInfo, { integer: true, nonNegative: true, lte: n });
                 return binomialCoefficient(n, k);
             },
-            aliases: ['binomial'],
             arity: toFixedArity(2),
         },
     };
@@ -8090,7 +8072,6 @@ var Playground = (function (exports) {
                 assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true, lte: 170 });
                 return factorialOf(n);
             },
-            aliases: ['!'],
             arity: toFixedArity(1),
         },
     };
@@ -10449,7 +10430,6 @@ var Playground = (function (exports) {
                 return factors.length % 2 === 0 ? 1 : -1;
             },
             arity: toFixedArity(1),
-            aliases: ['möbius'],
         },
         'mertens': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -10465,7 +10445,6 @@ var Playground = (function (exports) {
                 return result;
             },
             arity: toFixedArity(1),
-            aliases: ['mertens'],
         },
         'sigma': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -10713,45 +10692,15 @@ var Playground = (function (exports) {
      * Namespaces are registered here and can be imported via import("namespaceName")
      */
     var namespaceRegistry = new Map();
-    var aliasMapRegistry = new Map();
     /**
      * Register a namespace so it can be imported in Lits code.
      * @param namespace The namespace to register
      */
     function registerNamespace(namespace) {
-        var e_1, _a, e_2, _b;
-        var _c;
         if (namespaceRegistry.has(namespace.name)) {
             throw new Error("Namespace '".concat(namespace.name, "' is already registered"));
         }
-        var aliasMap = {};
-        try {
-            for (var _d = __values(Object.entries(namespace.functions)), _e = _d.next(); !_e.done; _e = _d.next()) {
-                var _f = __read(_e.value, 2), fnName = _f[0], expr = _f[1];
-                try {
-                    for (var _g = (e_2 = void 0, __values((_c = expr.aliases) !== null && _c !== void 0 ? _c : [])), _h = _g.next(); !_h.done; _h = _g.next()) {
-                        var alias = _h.value;
-                        aliasMap[alias] = fnName;
-                    }
-                }
-                catch (e_2_1) { e_2 = { error: e_2_1 }; }
-                finally {
-                    try {
-                        if (_h && !_h.done && (_b = _g.return)) _b.call(_g);
-                    }
-                    finally { if (e_2) throw e_2.error; }
-                }
-            }
-        }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
-        finally {
-            try {
-                if (_e && !_e.done && (_a = _d.return)) _a.call(_d);
-            }
-            finally { if (e_1) throw e_1.error; }
-        }
         namespaceRegistry.set(namespace.name, namespace);
-        aliasMapRegistry.set(namespace.name, aliasMap);
     }
     /**
      * Get a registered namespace by name.
@@ -10760,14 +10709,6 @@ var Playground = (function (exports) {
      */
     function getNamespace(name) {
         return namespaceRegistry.get(name);
-    }
-    /**
-     * Get the alias map for a registered namespace.
-     * @param name The namespace name
-     * @returns Record mapping alias → canonical function name, or undefined if not found
-     */
-    function getNamespaceAliasMap(name) {
-        return aliasMapRegistry.get(name);
     }
 
     // Export the namespace interface
@@ -10830,7 +10771,6 @@ var Playground = (function (exports) {
                 return !isEqual(params, sourceCodeInfo);
             },
             arity: { min: 1 },
-            aliases: ['!='],
         },
         'identical?': {
             evaluate: function (params) {
@@ -10909,7 +10849,6 @@ var Playground = (function (exports) {
                 return true;
             },
             arity: { min: 1 },
-            aliases: ['≥'],
         },
         '<=': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -10934,7 +10873,6 @@ var Playground = (function (exports) {
                 return true;
             },
             arity: { min: 1 },
-            aliases: ['≤'],
         },
         '!': {
             evaluate: function (_a) {
@@ -11009,8 +10947,8 @@ var Playground = (function (exports) {
         },
         'import': {
             evaluate: function (_a, sourceCodeInfo) {
-                var _b, e_7, _c, _d, e_8, _e, _f;
-                var _g = __read(_a, 1), importPath = _g[0];
+                var _b, e_7, _c, _d;
+                var _e = __read(_a, 1), importPath = _e[0];
                 assertString(importPath, sourceCodeInfo);
                 // Check if importing a specific function (e.g., "Grid.row")
                 var dotIndex = importPath.indexOf('.');
@@ -11021,11 +10959,8 @@ var Playground = (function (exports) {
                     if (!namespace_1) {
                         throw new LitsError("Unknown namespace: '".concat(namespaceName_1, "'"), sourceCodeInfo);
                     }
-                    // Look for the function by name or alias
-                    var aliasMap = getNamespaceAliasMap(namespaceName_1);
-                    var targetFunctionName = namespace_1.functions[functionName] ? functionName : aliasMap === null || aliasMap === void 0 ? void 0 : aliasMap[functionName];
-                    var expression = targetFunctionName ? namespace_1.functions[targetFunctionName] : undefined;
-                    if (!expression || !targetFunctionName) {
+                    var expression = namespace_1.functions[functionName];
+                    if (!expression) {
                         throw new LitsError("Function '".concat(functionName, "' not found in namespace '").concat(namespaceName_1, "'"), sourceCodeInfo);
                     }
                     return _b = {},
@@ -11033,7 +10968,7 @@ var Playground = (function (exports) {
                         _b.sourceCodeInfo = sourceCodeInfo,
                         _b.functionType = 'Namespace',
                         _b.namespaceName = namespaceName_1,
-                        _b.functionName = targetFunctionName,
+                        _b.functionName = functionName,
                         _b.arity = expression.arity,
                         _b;
                 }
@@ -11046,8 +10981,8 @@ var Playground = (function (exports) {
                 // Create an object where each key is a function name and value is a NamespaceFunction
                 var result = {};
                 try {
-                    for (var _h = __values(Object.entries(namespace.functions)), _j = _h.next(); !_j.done; _j = _h.next()) {
-                        var _k = __read(_j.value, 2), functionName = _k[0], expression = _k[1];
+                    for (var _f = __values(Object.entries(namespace.functions)), _g = _f.next(); !_g.done; _g = _f.next()) {
+                        var _h = __read(_g.value, 2), functionName = _h[0], expression = _h[1];
                         result[functionName] = (_d = {},
                             _d[FUNCTION_SYMBOL] = true,
                             _d.sourceCodeInfo = sourceCodeInfo,
@@ -11056,35 +10991,12 @@ var Playground = (function (exports) {
                             _d.functionName = functionName,
                             _d.arity = expression.arity,
                             _d);
-                        // Also add aliases
-                        if (expression.aliases) {
-                            try {
-                                for (var _l = (e_8 = void 0, __values(expression.aliases)), _m = _l.next(); !_m.done; _m = _l.next()) {
-                                    var alias = _m.value;
-                                    result[alias] = (_f = {},
-                                        _f[FUNCTION_SYMBOL] = true,
-                                        _f.sourceCodeInfo = sourceCodeInfo,
-                                        _f.functionType = 'Namespace',
-                                        _f.namespaceName = namespaceName,
-                                        _f.functionName = functionName,
-                                        _f.arity = expression.arity,
-                                        _f);
-                                }
-                            }
-                            catch (e_8_1) { e_8 = { error: e_8_1 }; }
-                            finally {
-                                try {
-                                    if (_m && !_m.done && (_e = _l.return)) _e.call(_l);
-                                }
-                                finally { if (e_8) throw e_8.error; }
-                            }
-                        }
                     }
                 }
                 catch (e_7_1) { e_7 = { error: e_7_1 }; }
                 finally {
                     try {
-                        if (_j && !_j.done && (_c = _h.return)) _c.call(_h);
+                        if (_g && !_g.done && (_c = _f.return)) _c.call(_f);
                     }
                     finally { if (e_7) throw e_7.error; }
                 }
@@ -12111,11 +12023,11 @@ var Playground = (function (exports) {
     };
 
     function generateDocString(reference) {
-        return smartTrim("\n    ".concat(reference.title).concat(getAliases(reference), "\n\n    ").concat(reference.description
+        return smartTrim("\n    ".concat(reference.title, "\n\n    ").concat(reference.description
             .replace(/`(.+?)`/g, '$1')
             .replace(/\$(\w+)/g, '$1')
             .replace(/\*\*\*(.+)\*\*\*/g, '$1')
-            .replace(/\*\*(.+)\*\*/g, '$1'), "\n\n    Signature:\n    ").concat(signature(reference).join('\n    '), "\n\n    Arguments:\n      ").concat(argStrings(reference).join('\n      '), "\n  \n    Examples:\n").concat(reference.examples.map(function (example) { return smartTrim(example, 4); }).join('\n\n')));
+            .replace(/\*\*(.+)\*\*/g, '$1'), "\n\n    Signature:\n    ").concat(signature(reference).join('\n    '), "\n\n    Arguments:\n      ").concat(argStrings(reference).join('\n      '), "\n\n    Examples:\n").concat(reference.examples.map(function (example) { return smartTrim(example, 4); }).join('\n\n')));
     }
     function signature(_a) {
         var title = _a.title, variants = _a.variants, args = _a.args, returns = _a.returns, _isOperator = _a._isOperator;
@@ -12145,11 +12057,6 @@ var Playground = (function (exports) {
             var _b = __read(_a, 2), argName = _b[0], arg = _b[1];
             return "".concat(argName, ": ").concat(type(arg));
         });
-    }
-    function getAliases(reference) {
-        if (!reference.aliases || reference.aliases.length === 0)
-            return '';
-        return "\n\n    Alias:\n      ".concat(reference.aliases.join('\n      '));
     }
 
     function getMetaNormalExpression(normalExpressionReference) {
@@ -12201,14 +12108,7 @@ var Playground = (function (exports) {
         var _b = __read(_a, 2), name = _b[0], expression = _b[1];
         expression.name = name;
     });
-    var aliases = {};
-    Object.values(expressions).forEach(function (normalExpression) {
-        var _a;
-        (_a = normalExpression.aliases) === null || _a === void 0 ? void 0 : _a.forEach(function (alias) {
-            aliases[alias] = normalExpression;
-        });
-    });
-    var normalExpressions = __assign(__assign({}, expressions), aliases);
+    var normalExpressions = __assign({}, expressions);
     var normalExpressionTypes = {};
     var allNormalExpressions = [];
     Object.entries(normalExpressions).forEach(function (_a, index) {
@@ -15962,7 +15862,7 @@ var Playground = (function (exports) {
         return ["Number-Theory.".concat(name, "-seq"), "Number-Theory.".concat(name, "-nth"), "Number-Theory.".concat(name, "-take-while"), "Number-Theory.".concat(name, "?")];
     }
     function getVectorReductionNames(name) {
-        var baseName = name.replace(/^TEMP-/, '');
+        var baseName = name.replace(/^/, '');
         return ["Vector.".concat(name), "Vector.moving-".concat(baseName), "Vector.centered-moving-".concat(baseName), "Vector.running-".concat(baseName)];
     }
     var api = {
@@ -16001,7 +15901,7 @@ var Playground = (function (exports) {
             'running-fn',
         ],
         sequence: [
-            'TEMP-nth',
+            'nth',
             'push',
             'pop',
             'unshift',
@@ -16047,7 +15947,7 @@ var Playground = (function (exports) {
             '*',
             '/',
             'mod',
-            'rem',
+            '%',
             'quot',
             'inc',
             'dec',
@@ -16097,7 +15997,7 @@ var Playground = (function (exports) {
             'arity',
         ],
         misc: [
-            '!=',
+            '≠',
             '==',
             '<',
             '>',
@@ -16241,9 +16141,9 @@ var Playground = (function (exports) {
             'Grid.splice-cols',
             'Grid.concat-rows',
             'Grid.concat-cols',
-            'Grid.TEMP-map',
+            'Grid.map',
             'Grid.mapi',
-            'Grid.TEMP-reduce',
+            'Grid.reduce',
             'Grid.reducei',
             'Grid.push-rows',
             'Grid.unshift-rows',
@@ -16315,7 +16215,7 @@ var Playground = (function (exports) {
             'Vector.mae',
             'Vector.rmse',
             'Vector.smape'
-        ], __read(getVectorReductionNames('mean')), false), __read(getVectorReductionNames('median')), false), __read(getVectorReductionNames('variance')), false), __read(getVectorReductionNames('sample-variance')), false), __read(getVectorReductionNames('sum')), false), __read(getVectorReductionNames('prod')), false), __read(getVectorReductionNames('TEMP-min')), false), __read(getVectorReductionNames('TEMP-max')), false), __read(getVectorReductionNames('stdev')), false), __read(getVectorReductionNames('sample-stdev')), false), __read(getVectorReductionNames('iqr')), false), __read(getVectorReductionNames('span')), false), __read(getVectorReductionNames('geometric-mean')), false), __read(getVectorReductionNames('harmonic-mean')), false), __read(getVectorReductionNames('skewness')), false), __read(getVectorReductionNames('sample-skewness')), false), __read(getVectorReductionNames('kurtosis')), false), __read(getVectorReductionNames('sample-kurtosis')), false), __read(getVectorReductionNames('excess-kurtosis')), false), __read(getVectorReductionNames('sample-excess-kurtosis')), false), __read(getVectorReductionNames('rms')), false), __read(getVectorReductionNames('mad')), false), __read(getVectorReductionNames('medad')), false), __read(getVectorReductionNames('gini-coefficient')), false), __read(getVectorReductionNames('entropy')), false), __read(getVectorReductionNames('skewness')), false),
+        ], __read(getVectorReductionNames('mean')), false), __read(getVectorReductionNames('median')), false), __read(getVectorReductionNames('variance')), false), __read(getVectorReductionNames('sample-variance')), false), __read(getVectorReductionNames('sum')), false), __read(getVectorReductionNames('prod')), false), __read(getVectorReductionNames('min')), false), __read(getVectorReductionNames('max')), false), __read(getVectorReductionNames('stdev')), false), __read(getVectorReductionNames('sample-stdev')), false), __read(getVectorReductionNames('iqr')), false), __read(getVectorReductionNames('span')), false), __read(getVectorReductionNames('geometric-mean')), false), __read(getVectorReductionNames('harmonic-mean')), false), __read(getVectorReductionNames('skewness')), false), __read(getVectorReductionNames('sample-skewness')), false), __read(getVectorReductionNames('kurtosis')), false), __read(getVectorReductionNames('sample-kurtosis')), false), __read(getVectorReductionNames('excess-kurtosis')), false), __read(getVectorReductionNames('sample-excess-kurtosis')), false), __read(getVectorReductionNames('rms')), false), __read(getVectorReductionNames('mad')), false), __read(getVectorReductionNames('medad')), false), __read(getVectorReductionNames('gini-coefficient')), false), __read(getVectorReductionNames('entropy')), false), __read(getVectorReductionNames('skewness')), false),
         linAlg: [
             'Linear-Algebra.reflect',
             'Linear-Algebra.refract',
@@ -16628,8 +16528,8 @@ var Playground = (function (exports) {
             description: 'Returns the result of applying $b to each element of $a.',
             examples: [
                 'let v = import("Vector"); running-fn([1, 2, 3], v.sum)',
-                'let v = import("Vector"); running-fn([1, 2, 3], v.TEMP-max)',
-                'let v = import("Vector"); running-fn([1, 2, 3], v.TEMP-min)',
+                'let v = import("Vector"); running-fn([1, 2, 3], v.max)',
+                'let v = import("Vector"); running-fn([1, 2, 3], v.min)',
             ],
         },
     };
@@ -17691,20 +17591,17 @@ var Playground = (function (exports) {
             examples: [
                 '"Albert" ++ " " ++ "Mojir"',
                 '"Albert" ++ "Mojir"',
-                '"Hi " concat "Albert"',
-                '[1, 2] concat [3, 4]',
                 '++("Albert", "-", "Mojir")',
                 '++("Albert")',
-                'concat("A", "l", "b", "e", "r", "t")',
-                'concat([1, 2], [3, 4])',
-                'concat([], [3, 4])',
-                'concat([1, 2], [])',
-                'concat([1, 2], [3, 4], [5, 6])',
-                'concat([])',
-                'concat({ a: 1, b: 2 }, { b: 1, c: 2 })',
-                'concat({}, { a: 1 })',
+                '++("A", "l", "b", "e", "r", "t")',
+                '++([1, 2], [3, 4])',
+                '++([], [3, 4])',
+                '++([1, 2], [])',
+                '++([1, 2], [3, 4], [5, 6])',
+                '++([])',
+                '++({ a: 1, b: 2 }, { b: 1, c: 2 })',
+                '++({}, { a: 1 })',
             ],
-            aliases: ['concat'],
         },
         'not-empty': {
             title: 'not-empty',
@@ -18181,7 +18078,6 @@ var Playground = (function (exports) {
                 '[[1, 2, 3], [4, 5, 6]] * [[7, 8, 9], [10, 11, 12]]',
                 '[[1, 2, 3], [4, 5, 6]] * 2',
             ],
-            aliases: ['·'],
         },
         '/': {
             title: '/',
@@ -18231,8 +18127,8 @@ var Playground = (function (exports) {
                 'mod([[1, 2, 3], [4, 5, 6]], 2)',
             ],
         },
-        'rem': {
-            title: 'rem',
+        '%': {
+            title: '%',
             category: 'Math',
             returns: {
                 type: ['number', 'vector', 'matrix'],
@@ -18241,23 +18137,19 @@ var Playground = (function (exports) {
             variants: [
                 { argumentNames: ['a', 'b'] },
             ],
-            description: 'The `rem` function computes the remainder of division with the same sign as the dividend, working on `numbers` and element-wise on `vectors` and `matrices` of compatible dimensions. When used with mixed types, it applies the remainder operation between each element of the collection and the scalar.',
+            description: 'The `%` function computes the remainder of division with the same sign as the dividend, working on `numbers` and element-wise on `vectors` and `matrices` of compatible dimensions. When used with mixed types, it applies the remainder operation between each element of the collection and the scalar.',
             examples: [
                 '5 % 3',
                 '5.2 % 3.1',
                 '-5 % 3',
                 '%(5, -3)',
                 '%(-5, -3)',
-                '5 rem -3',
-                '-5 rem -3',
                 '[1, 2, 3] % 2',
                 '2 % [1, 2, 3]',
                 '%([1, 2, 3], [4, 5, 6])',
                 '[[1, 2, 3], [4, 5, 6]] % [[7, 8, 9], [10, 11, 12]]',
                 '%([[1, 2, 3], [4, 5, 6]], 2)',
-                '[[1, 2, 3], [4, 5, 6]] rem [[7, 8, 9], [10, 11, 12]]',
             ],
-            aliases: ['%'],
         },
         'quot': {
             title: 'quot',
@@ -18348,16 +18240,15 @@ var Playground = (function (exports) {
             ],
             description: 'The `sqrt` function calculates the square root of `numbers` and computes element-wise square roots of `vectors` and `matrices`. When applied to collections, it returns the square root of each element while preserving the original structure.',
             examples: [
-                '√(0)',
-                '√(9)',
-                '√(2)',
+                'sqrt(0)',
+                'sqrt(9)',
+                'sqrt(2)',
                 'sqrt(0)',
                 'sqrt(9)',
                 'sqrt(2)',
                 'sqrt([1, 4, 9])',
                 'sqrt([[1, 4], [9, 16]])',
             ],
-            aliases: ['√'],
         },
         'cbrt': {
             title: 'cbrt',
@@ -18375,10 +18266,10 @@ var Playground = (function (exports) {
             ],
             description: 'The `cbrt` function calculates the cube root of `numbers` and computes element-wise cube roots of `vectors` and `matrices`. When applied to collections, it returns the cube root of each element while preserving the original structure.',
             examples: [
-                '∛(0)',
-                '∛(27)',
-                '∛(2)',
-                '∛(1)',
+                'cbrt(0)',
+                'cbrt(27)',
+                'cbrt(2)',
+                'cbrt(1)',
                 'cbrt(0)',
                 'cbrt(27)',
                 'cbrt(2)',
@@ -18386,7 +18277,6 @@ var Playground = (function (exports) {
                 'cbrt([1, 8, 27])',
                 'cbrt([[1, 8], [27, 64]])',
             ],
-            aliases: ['∛'],
         },
         '^': {
             title: '^',
@@ -18653,7 +18543,6 @@ var Playground = (function (exports) {
                 'log2([1, 2, 3])',
                 'log2([[1, 2], [3, 4]])',
             ],
-            aliases: ['log₂'],
         },
         'log10': {
             title: 'log10',
@@ -18661,7 +18550,6 @@ var Playground = (function (exports) {
             returns: {
                 type: ['number', 'vector', 'matrix'],
             },
-            aliases: ['log₁₀'],
             args: {
                 x: {
                     type: ['number', 'vector', 'matrix'],
@@ -19049,8 +18937,8 @@ var Playground = (function (exports) {
     };
 
     var miscReference = {
-        '!=': {
-            title: '!=',
+        '≠': {
+            title: '≠',
             category: 'Misc',
             returns: {
                 type: 'boolean',
@@ -19065,16 +18953,15 @@ var Playground = (function (exports) {
                 { argumentNames: ['x'] },
                 { argumentNames: ['x', 'ys'] },
             ],
-            description: 'Returns `true` if all `values` are not equal to each other, otherwise result is `false`. `(!= a b c)` is same as `(! (== a b c))`.',
+            description: 'Returns `true` if all `values` are not equal to each other, otherwise result is `false`. `(≠ a b c)` is same as `(! (== a b c))`.',
             examples: [
                 '1 ≠ 2',
-                '3 != 3',
+                '3 ≠ 3',
                 '≠(3)',
-                '!=(3, 3, 2)',
+                '≠(3, 3, 2)',
                 '≠("3", "2", "1", "0",)',
-                '!=(0, -0)',
+                '≠(0, -0)',
             ],
-            aliases: ['≠'],
         },
         '==': {
             title: '==',
@@ -19174,14 +19061,13 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if $x and $ys are in non decreasing order, `false` otherwise.',
             examples: [
-                '1 ≤ 1',
+                '1 <= 1',
                 '<=(0, 1)',
-                '≤(1, 1.01)',
+                '<=(1, 1.01)',
                 '<=(1, 1)',
-                '≤(1, 2, 3, 4)',
+                '<=(1, 2, 3, 4)',
                 '<=(1, 2, 2, 3)',
             ],
-            aliases: ['≤'],
         },
         '>=': {
             title: '>=',
@@ -19201,15 +19087,14 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if $x and $ys are in non increasing order, `false` otherwise.',
             examples: [
-                '1 ≥ 1',
-                '0 ≥ 1',
+                '1 >= 1',
+                '0 >= 1',
                 '>=(1, 0)',
-                '≥(1.01, 1)',
+                '>=(1.01, 1)',
                 '>=(1, 1)',
-                '≥(4, 3, 2, 1)',
+                '>=(4, 3, 2, 1)',
                 '>=(3, 2, 2, 1)',
             ],
-            aliases: ['≥'],
         },
         '!': {
             title: '!',
@@ -20330,8 +20215,8 @@ var Playground = (function (exports) {
     };
 
     var sequenceReference = {
-        'TEMP-nth': {
-            title: 'TEMP-nth',
+        'nth': {
+            title: 'nth',
             category: 'Sequence',
             returns: {
                 type: 'any',
@@ -20349,18 +20234,18 @@ var Playground = (function (exports) {
             ],
             description: 'Accesses element $n of $seq. Accessing out-of-bounds indices returns $not-found, if present, else `null`.',
             examples: [
-                '[1, 2, 3] TEMP-nth 1',
-                '"A string" TEMP-nth 3',
-                'TEMP-nth([1, 2, 3], 1)',
-                'TEMP-nth([1, 2, 3], 3)',
-                'TEMP-nth([1, 2, 3], -1)',
-                'TEMP-nth([1, 2, 3], 3, 99)',
-                'TEMP-nth("A string", 1)',
-                'TEMP-nth("A string", 3)',
-                'TEMP-nth("A string", -3)',
-                'TEMP-nth("A string", 30, "X")',
-                'TEMP-nth(null, 1)',
-                'TEMP-nth(null, 1, "Default value")',
+                '[1, 2, 3] nth 1',
+                '"A string" nth 3',
+                'nth([1, 2, 3], 1)',
+                'nth([1, 2, 3], 3)',
+                'nth([1, 2, 3], -1)',
+                'nth([1, 2, 3], 3, 99)',
+                'nth("A string", 1)',
+                'nth("A string", 3)',
+                'nth("A string", -3)',
+                'nth("A string", 30, "X")',
+                'nth(null, 1)',
+                'nth(null, 1, "Default value")',
             ],
         },
         'push': {
@@ -22476,7 +22361,6 @@ var Playground = (function (exports) {
                 "let { transpose } = import(\"Grid\");\ntranspose(".concat(exampleGrid2, ")"),
                 "let { transpose } = import(\"Grid\");\ntranspose(".concat(exampleGrid3, ")"),
             ],
-            aliases: ['Grid.tr'],
         },
         'Grid.flip-h': {
             title: 'Grid.flip-h',
@@ -22782,8 +22666,8 @@ var Playground = (function (exports) {
                 "let { concat-cols } = import(\"Grid\");\nconcat-cols(".concat(exampleGrid1, ", ").concat(exampleGrid2, ")"),
             ],
         },
-        'Grid.TEMP-map': {
-            title: 'Grid.TEMP-map',
+        'Grid.map': {
+            title: 'Grid.map',
             category: 'Grid',
             returns: {
                 type: 'grid',
@@ -22794,7 +22678,7 @@ var Playground = (function (exports) {
             ],
             description: 'Maps a function `a` over each element of the grid `b`, returning a new grid with the results.',
             examples: [
-                "let { TEMP-map } = import(\"Grid\");\nTEMP-map(".concat(exampleGrid1, ", str)"),
+                "// Using \"as\" alias because \"map\" shadows a builtin function\nlet { map as grid-map } = import(\"Grid\");\ngrid-map(".concat(exampleGrid1, ", str)"),
             ],
         },
         'Grid.mapi': {
@@ -22812,8 +22696,8 @@ var Playground = (function (exports) {
                 "// Using \"as\" alias because \"mapi\" shadows a builtin function\nlet { mapi as grid-mapi } = import(\"Grid\");\ngrid-mapi(".concat(exampleGrid1, ", -> $1 ++ \"(\" ++ $2 ++ \", \" ++ $3 ++ \")\")"),
             ],
         },
-        'Grid.TEMP-reduce': {
-            title: 'Grid.TEMP-reduce',
+        'Grid.reduce': {
+            title: 'Grid.reduce',
             category: 'Grid',
             returns: {
                 type: 'any',
@@ -22837,7 +22721,7 @@ var Playground = (function (exports) {
             ],
             description: 'Reduces the grid `a` using the function `b`, returning a single value.',
             examples: [
-                "let { TEMP-reduce } = import(\"Grid\");\nTEMP-reduce(".concat(exampleGrid1, ", ++, \"\")"),
+                "// Using \"as\" alias because \"reduce\" shadows a builtin function\nlet { reduce as grid-reduce } = import(\"Grid\");\ngrid-reduce(".concat(exampleGrid1, ", ++, \"\")"),
             ],
         },
         'Grid.reducei': {
@@ -23377,15 +23261,11 @@ var Playground = (function (exports) {
             ],
             examples: [
                 'let { normalize-l2 } = import("Linear-Algebra");\nnormalize-l2([1, 2, 3])',
-                'let { unit } = import("Linear-Algebra");\nunit([1, 2, 3])',
+                'let { normalize-l2 } = import("Linear-Algebra");\nnormalize-l2([1, 2, 3])',
                 'let { normalize-l2 } = import("Linear-Algebra");\nnormalize-l2([1, 2, -3])',
                 'let { normalize-l2 } = import("Linear-Algebra");\nnormalize-l2([1, 2, 3, 4])',
                 'let { normalize-l2 } = import("Linear-Algebra");\nnormalize-l2([1, 2, -3, 4])',
                 'let { normalize-l2 } = import("Linear-Algebra");\nnormalize-l2([1, 2, 3, 40, 50])',
-            ],
-            aliases: [
-                'Linear-Algebra.unit',
-                'Linear-Algebra.normalize',
             ],
         },
         'Linear-Algebra.normalize-log': {
@@ -23527,10 +23407,6 @@ var Playground = (function (exports) {
                 'let { euclidean-distance } = import("Linear-Algebra");\neuclidean-distance([1, 2, 3], [4, 5, 6])',
                 'let { euclidean-distance } = import("Linear-Algebra");\neuclidean-distance([1, 0], [0, 1])',
             ],
-            aliases: [
-                'Linear-Algebra.distance',
-                'Linear-Algebra.l2-distance',
-            ],
         },
         'Linear-Algebra.euclidean-norm': {
             title: 'Linear-Algebra.euclidean-norm',
@@ -23553,10 +23429,6 @@ var Playground = (function (exports) {
                 'let { euclidean-norm } = import("Linear-Algebra");\neuclidean-norm([3, 4])',
                 'let { euclidean-norm } = import("Linear-Algebra");\neuclidean-norm([1, 2, 3])',
             ],
-            aliases: [
-                'Linear-Algebra.l2-norm',
-                'Linear-Algebra.length',
-            ],
         },
         'Linear-Algebra.manhattan-distance': {
             title: 'Linear-Algebra.manhattan-distance',
@@ -23573,10 +23445,6 @@ var Playground = (function (exports) {
                 'let { manhattan-distance } = import("Linear-Algebra");\nmanhattan-distance([1, 2], [3, 4])',
                 'let { manhattan-distance } = import("Linear-Algebra");\nmanhattan-distance([1, 2, 3], [4, 5, 6])',
                 'let { manhattan-distance } = import("Linear-Algebra");\nmanhattan-distance([1, 0], [0, 1])',
-            ],
-            aliases: [
-                'Linear-Algebra.l1-distance',
-                'Linear-Algebra.cityblock-distance',
             ],
         },
         'Linear-Algebra.manhattan-norm': {
@@ -23599,10 +23467,6 @@ var Playground = (function (exports) {
                 'let { manhattan-norm } = import("Linear-Algebra");\nmanhattan-norm([1, 2])',
                 'let { manhattan-norm } = import("Linear-Algebra");\nmanhattan-norm([3, 4])',
                 'let { manhattan-norm } = import("Linear-Algebra");\nmanhattan-norm([1, 2, 3])',
-            ],
-            aliases: [
-                'Linear-Algebra.l1-norm',
-                'Linear-Algebra.cityblock-norm',
             ],
         },
         'Linear-Algebra.hamming-distance': {
@@ -23779,7 +23643,6 @@ var Playground = (function (exports) {
                 'let { spearman-corr } = import("Linear-Algebra");\nspearman-corr([1, 2, 3], [4, 5, 6])',
                 'let { spearman-corr } = import("Linear-Algebra");\nspearman-corr([1, 0], [0, 1])',
             ],
-            aliases: ['Linear-Algebra.spearman-rho'],
         },
         'Linear-Algebra.pearson-corr': {
             title: 'Linear-Algebra.pearson-corr',
@@ -23842,7 +23705,6 @@ var Playground = (function (exports) {
                 'let { autocorrelation } = import("Linear-Algebra");\nautocorrelation([1, 2, 3], 1)',
                 'let { autocorrelation } = import("Linear-Algebra");\nautocorrelation([1, 2, 3], 2)',
             ],
-            aliases: ['Linear-Algebra.acf'],
         },
         'Linear-Algebra.cross-correlation': {
             title: 'Linear-Algebra.cross-correlation',
@@ -23865,7 +23727,6 @@ var Playground = (function (exports) {
                 'let { cross-correlation } = import("Linear-Algebra");\ncross-correlation([1, 2, 3], [4, 5, 6], 1)',
                 'let { cross-correlation } = import("Linear-Algebra");\ncross-correlation([1, 2, 3], [4, 5, 6], 2)',
             ],
-            aliases: ['Linear-Algebra.ccf'],
         },
         'Linear-Algebra.rref': {
             title: 'Linear-Algebra.rref',
@@ -24482,7 +24343,6 @@ var Playground = (function (exports) {
                 'let { inf-norm } = import("Matrix");\ninf-norm([[1, 2], [3, 4]])',
                 'let { inf-norm } = import("Matrix");\ninf-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
             ],
-            aliases: ['Matrix.row-norm'],
         },
         'Matrix.max-norm': {
             title: 'Matrix.max-norm',
@@ -27291,9 +27151,8 @@ var Playground = (function (exports) {
             ],
             examples: [
                 'let { count-combinations } = import("Number-Theory");\ncount-combinations(5, 3)',
-                'let { binomial } = import("Number-Theory");\nbinomial(10, 2)',
+                'let { count-combinations } = import("Number-Theory");\ncount-combinations(10, 2)',
             ],
-            aliases: ['Number-Theory.binomial'],
         }, 'Number-Theory.combinations': {
             title: 'Number-Theory.combinations',
             category: 'Number Theory',
@@ -27470,7 +27329,6 @@ var Playground = (function (exports) {
                 'let { factorial } = import("Number-Theory");\nfactorial(10)',
                 'let { factorial } = import("Number-Theory");\nfactorial(20)',
             ],
-            aliases: ['Number-Theory.!'],
         }, 'Number-Theory.partitions': {
             title: 'Number-Theory.partitions',
             category: 'Number Theory',
@@ -27852,7 +27710,6 @@ var Playground = (function (exports) {
                 'let { mobius } = import("Number-Theory");\nmobius(12)',
                 'let { mobius } = import("Number-Theory");\nmobius(30)',
             ],
-            aliases: ['Number-Theory.möbius'],
         }, 'Number-Theory.mertens': {
             title: 'Number-Theory.mertens',
             category: 'Number Theory',
@@ -29382,8 +29239,8 @@ var Playground = (function (exports) {
     };
 
     var minReference = {
-        'Vector.TEMP-min': {
-            title: 'Vector.TEMP-min',
+        'Vector.min': {
+            title: 'Vector.min',
             category: 'Vector',
             description: 'Returns the `minimum` of all elements in the `vector`.',
             returns: {
@@ -29399,8 +29256,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let { TEMP-min } = import("Vector");\nTEMP-min([1, 2, 3])',
-                'let { TEMP-min } = import("Vector");\nTEMP-min([1, 2, -3])',
+                '// Using "as" alias because "min" shadows a builtin function\nlet { min as vec-min } = import("Vector");\nvec-min([1, 2, 3])',
+                '// Using "as" alias because "min" shadows a builtin function\nlet { min as vec-min } = import("Vector");\nvec-min([1, 2, -3])',
             ],
         },
         'Vector.moving-min': {
@@ -29480,8 +29337,8 @@ var Playground = (function (exports) {
     };
 
     var maxReference = {
-        'Vector.TEMP-max': {
-            title: 'Vector.TEMP-max',
+        'Vector.max': {
+            title: 'Vector.max',
             category: 'Vector',
             description: 'Returns the `maximum` of all elements in the `vector`.',
             returns: {
@@ -29497,8 +29354,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let { TEMP-max } = import("Vector");\nTEMP-max([1, 2, 3])',
-                'let { TEMP-max } = import("Vector");\nTEMP-max([1, 2, -3])',
+                '// Using "as" alias because "max" shadows a builtin function\nlet { max as vec-max } = import("Vector");\nvec-max([1, 2, 3])',
+                '// Using "as" alias because "max" shadows a builtin function\nlet { max as vec-max } = import("Vector");\nvec-max([1, 2, -3])',
             ],
         },
         'Vector.moving-max': {
@@ -30839,8 +30696,8 @@ var Playground = (function (exports) {
                 'let { sample-stdev } = import("Vector");\nsample-stdev([1, 2, -3, 4])',
                 'let { sample-stdev } = import("Vector");\nsample-stdev([1, 2, 3, 40, 50])',
             ],
-        }, 'Vector.TEMP-min': {
-            title: 'Vector.TEMP-min',
+        }, 'Vector.min': {
+            title: 'Vector.min',
             category: 'Vector',
             description: 'Returns the minimum value of all elements in the vector.',
             returns: {
@@ -30856,14 +30713,14 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let { TEMP-min } = import("Vector");\nTEMP-min([1, 2, 3])',
-                'let { TEMP-min } = import("Vector");\nTEMP-min([1, 1, 2, 3, 3])',
-                'let { TEMP-min } = import("Vector");\nTEMP-min([1, 2, -3])',
-                'let { TEMP-min } = import("Vector");\nTEMP-min([1, 2, 3, 4])',
-                'let { TEMP-min } = import("Vector");\nTEMP-min([1, 2, -3, 4])',
+                '// Using "as" alias because "min" shadows a builtin function\nlet { min as vec-min } = import("Vector");\nvec-min([1, 2, 3])',
+                '// Using "as" alias because "min" shadows a builtin function\nlet { min as vec-min } = import("Vector");\nvec-min([1, 1, 2, 3, 3])',
+                '// Using "as" alias because "min" shadows a builtin function\nlet { min as vec-min } = import("Vector");\nvec-min([1, 2, -3])',
+                '// Using "as" alias because "min" shadows a builtin function\nlet { min as vec-min } = import("Vector");\nvec-min([1, 2, 3, 4])',
+                '// Using "as" alias because "min" shadows a builtin function\nlet { min as vec-min } = import("Vector");\nvec-min([1, 2, -3, 4])',
             ],
-        }, 'Vector.TEMP-max': {
-            title: 'Vector.TEMP-max',
+        }, 'Vector.max': {
+            title: 'Vector.max',
             category: 'Vector',
             description: 'Returns the maximum value of all elements in the vector.',
             returns: {
@@ -30879,11 +30736,11 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let { TEMP-max } = import("Vector");\nTEMP-max([1, 2, 3])',
-                'let { TEMP-max } = import("Vector");\nTEMP-max([1, 1, 2, 3, 3])',
-                'let { TEMP-max } = import("Vector");\nTEMP-max([1, 2, -3])',
-                'let { TEMP-max } = import("Vector");\nTEMP-max([1, 2, 3, 4])',
-                'let { TEMP-max } = import("Vector");\nTEMP-max([1, 2, -3, 4])',
+                '// Using "as" alias because "max" shadows a builtin function\nlet { max as vec-max } = import("Vector");\nvec-max([1, 2, 3])',
+                '// Using "as" alias because "max" shadows a builtin function\nlet { max as vec-max } = import("Vector");\nvec-max([1, 1, 2, 3, 3])',
+                '// Using "as" alias because "max" shadows a builtin function\nlet { max as vec-max } = import("Vector");\nvec-max([1, 2, -3])',
+                '// Using "as" alias because "max" shadows a builtin function\nlet { max as vec-max } = import("Vector");\nvec-max([1, 2, 3, 4])',
+                '// Using "as" alias because "max" shadows a builtin function\nlet { max as vec-max } = import("Vector");\nvec-max([1, 2, -3, 4])',
             ],
         }, 'Vector.min-index': {
             title: 'Vector.min-index',

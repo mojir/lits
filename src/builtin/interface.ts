@@ -21,7 +21,6 @@ export interface BuiltinNormalExpression<T> {
   evaluate: NormalExpressionEvaluator<T>
   name?: string
   arity: Arity
-  aliases?: string[]
 }
 
 export type BuiltinNormalExpressions = Record<string, BuiltinNormalExpression<Any>>

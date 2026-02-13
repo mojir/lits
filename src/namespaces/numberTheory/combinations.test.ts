@@ -34,8 +34,6 @@ describe('combinations', () => {
       expect(runNth('nth:count-combinations(3, 2)')).toEqual(3)
       expect(runNth('nth:count-combinations(4, 2)')).toEqual(6)
       expect(runNth('nth:count-combinations(5, 3)')).toEqual(10)
-      expect(runNth('nth:binomial(6, 4)')).toEqual(15)
-      expect(runNth('nth:binomial(7, 5)')).toEqual(21)
     })
   })
 })

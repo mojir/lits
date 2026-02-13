@@ -1,9 +1,9 @@
 import { getOperatorArgs } from '../../api'
 import type { VectorReductionReference } from '.'
 
-export const minReference: VectorReductionReference<'TEMP-min', 'min'> = {
-  'Vector.TEMP-min': {
-    title: 'Vector.TEMP-min',
+export const minReference: VectorReductionReference<'min', 'min'> = {
+  'Vector.min': {
+    title: 'Vector.min',
     category: 'Vector',
     description: 'Returns the `minimum` of all elements in the `vector`.',
     returns: {
@@ -19,8 +19,8 @@ export const minReference: VectorReductionReference<'TEMP-min', 'min'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let { TEMP-min } = import("Vector");\nTEMP-min([1, 2, 3])',
-      'let { TEMP-min } = import("Vector");\nTEMP-min([1, 2, -3])',
+      '// Using "as" alias because "min" shadows a builtin function\nlet { min as vec-min } = import("Vector");\nvec-min([1, 2, 3])',
+      '// Using "as" alias because "min" shadows a builtin function\nlet { min as vec-min } = import("Vector");\nvec-min([1, 2, -3])',
     ],
   },
   'Vector.moving-min': {

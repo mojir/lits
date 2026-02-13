@@ -59,7 +59,6 @@ export type FunctionReference<T extends Category = Category> = CommonReference<T
   returns: TypedValue
   args: Record<string, Argument>
   variants: Variant[]
-  aliases?: string[]
   noOperatorDocumentation?: true
   _isOperator?: boolean
   _prefereOperator?: boolean

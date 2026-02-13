@@ -91,9 +91,8 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
     ],
     examples: [
       'let { count-combinations } = import("Number-Theory");\ncount-combinations(5, 3)',
-      'let { binomial } = import("Number-Theory");\nbinomial(10, 2)',
+      'let { count-combinations } = import("Number-Theory");\ncount-combinations(10, 2)',
     ],
-    aliases: ['Number-Theory.binomial'],
   },
   'Number-Theory.combinations': {
     title: 'Number-Theory.combinations',
@@ -282,7 +281,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       'let { factorial } = import("Number-Theory");\nfactorial(10)',
       'let { factorial } = import("Number-Theory");\nfactorial(20)',
     ],
-    aliases: ['Number-Theory.!'],
   },
   'Number-Theory.partitions': {
     title: 'Number-Theory.partitions',
@@ -694,7 +692,6 @@ export const numberTheoryReference: Record<NumberTheoryApiName, FunctionReferenc
       'let { mobius } = import("Number-Theory");\nmobius(12)',
       'let { mobius } = import("Number-Theory");\nmobius(30)',
     ],
-    aliases: ['Number-Theory.möbius'],
   },
   'Number-Theory.mertens': {
     title: 'Number-Theory.mertens',

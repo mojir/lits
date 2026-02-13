@@ -17,10 +17,9 @@ export function getAllDocumentationItems() {
 }
 
 function getDocumentation(reference: Reference) {
-  const aliases = isFunctionReference(reference) ? reference.aliases : undefined
   const stripPrefix = (name: string) => name.includes('.') ? name.split('.').slice(1).join('.') : name
   const displayTitle = stripPrefix(reference.title)
-  const docTitle = `${escapeTitle(displayTitle)}${aliases ? `, ${aliases.map(stripPrefix).join(', ')}` : ''}`
+  const docTitle = `${escapeTitle(displayTitle)}`
   const namespaceName = categoryToNamespace[reference.category]
   const importHint = namespaceName
     ? `<div ${styles('font-mono', 'text-xs', 'text-color-gray-400', 'px-4', 'pb-2')}>let { ${displayTitle} } = import("${namespaceName}")</div>`
@@ -80,12 +79,6 @@ export function getDetailsTable(content: [string, string, string | undefined][])
 function getSignature(reference: FunctionReference) {
   return `<div ${styles('mb-6', 'mt-4', 'font-mono', 'text-base')}>
     ${getFunctionSignature(reference)}
-    ${reference.aliases
-      ? `<div ${styles('text-base', 'font-sans', 'mt-3', 'mb-1')}>${reference.aliases.length === 1 ? 'Alias' : 'Aliases'}</div>
-          ${reference.aliases.map(alias =>
-            getFunctionSignature({ ...reference, title: alias }),
-          ).join('')}`
-      : ''}
   </div>`
 }
 

@@ -308,15 +308,11 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
     ],
     examples: [
       'let { normalize-l2 } = import("Linear-Algebra");\nnormalize-l2([1, 2, 3])',
-      'let { unit } = import("Linear-Algebra");\nunit([1, 2, 3])',
+      'let { normalize-l2 } = import("Linear-Algebra");\nnormalize-l2([1, 2, 3])',
       'let { normalize-l2 } = import("Linear-Algebra");\nnormalize-l2([1, 2, -3])',
       'let { normalize-l2 } = import("Linear-Algebra");\nnormalize-l2([1, 2, 3, 4])',
       'let { normalize-l2 } = import("Linear-Algebra");\nnormalize-l2([1, 2, -3, 4])',
       'let { normalize-l2 } = import("Linear-Algebra");\nnormalize-l2([1, 2, 3, 40, 50])',
-    ],
-    aliases: [
-      'Linear-Algebra.unit',
-      'Linear-Algebra.normalize',
     ],
   },
   'Linear-Algebra.normalize-log': {
@@ -472,10 +468,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       'let { euclidean-distance } = import("Linear-Algebra");\neuclidean-distance([1, 2, 3], [4, 5, 6])',
       'let { euclidean-distance } = import("Linear-Algebra");\neuclidean-distance([1, 0], [0, 1])',
     ],
-    aliases: [
-      'Linear-Algebra.distance',
-      'Linear-Algebra.l2-distance',
-    ],
   },
   'Linear-Algebra.euclidean-norm': {
     title: 'Linear-Algebra.euclidean-norm',
@@ -498,10 +490,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       'let { euclidean-norm } = import("Linear-Algebra");\neuclidean-norm([3, 4])',
       'let { euclidean-norm } = import("Linear-Algebra");\neuclidean-norm([1, 2, 3])',
     ],
-    aliases: [
-      'Linear-Algebra.l2-norm',
-      'Linear-Algebra.length',
-    ],
   },
   'Linear-Algebra.manhattan-distance': {
     title: 'Linear-Algebra.manhattan-distance',
@@ -520,10 +508,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       'let { manhattan-distance } = import("Linear-Algebra");\nmanhattan-distance([1, 2], [3, 4])',
       'let { manhattan-distance } = import("Linear-Algebra");\nmanhattan-distance([1, 2, 3], [4, 5, 6])',
       'let { manhattan-distance } = import("Linear-Algebra");\nmanhattan-distance([1, 0], [0, 1])',
-    ],
-    aliases: [
-      'Linear-Algebra.l1-distance',
-      'Linear-Algebra.cityblock-distance',
     ],
   },
   'Linear-Algebra.manhattan-norm': {
@@ -546,10 +530,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       'let { manhattan-norm } = import("Linear-Algebra");\nmanhattan-norm([1, 2])',
       'let { manhattan-norm } = import("Linear-Algebra");\nmanhattan-norm([3, 4])',
       'let { manhattan-norm } = import("Linear-Algebra");\nmanhattan-norm([1, 2, 3])',
-    ],
-    aliases: [
-      'Linear-Algebra.l1-norm',
-      'Linear-Algebra.cityblock-norm',
     ],
   },
   'Linear-Algebra.hamming-distance': {
@@ -739,7 +719,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       'let { spearman-corr } = import("Linear-Algebra");\nspearman-corr([1, 2, 3], [4, 5, 6])',
       'let { spearman-corr } = import("Linear-Algebra");\nspearman-corr([1, 0], [0, 1])',
     ],
-    aliases: ['Linear-Algebra.spearman-rho'],
   },
   'Linear-Algebra.pearson-corr': {
     title: 'Linear-Algebra.pearson-corr',
@@ -806,7 +785,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       'let { autocorrelation } = import("Linear-Algebra");\nautocorrelation([1, 2, 3], 1)',
       'let { autocorrelation } = import("Linear-Algebra");\nautocorrelation([1, 2, 3], 2)',
     ],
-    aliases: ['Linear-Algebra.acf'],
   },
   'Linear-Algebra.cross-correlation': {
     title: 'Linear-Algebra.cross-correlation',
@@ -832,7 +810,6 @@ export const linAlgReference: Record<LinAlgApiName, FunctionReference<'Linear Al
       'let { cross-correlation } = import("Linear-Algebra");\ncross-correlation([1, 2, 3], [4, 5, 6], 1)',
       'let { cross-correlation } = import("Linear-Algebra");\ncross-correlation([1, 2, 3], [4, 5, 6], 2)',
     ],
-    aliases: ['Linear-Algebra.ccf'],
   },
   'Linear-Algebra.rref': {
     title: 'Linear-Algebra.rref',

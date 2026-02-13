@@ -63,17 +63,8 @@ Object.entries(expressions).forEach(([name, expression]) => {
   expression.name = name
 })
 
-const aliases: BuiltinNormalExpressions = {}
-
-Object.values(expressions).forEach((normalExpression) => {
-  normalExpression.aliases?.forEach((alias) => {
-    aliases[alias] = normalExpression
-  })
-})
-
 export const normalExpressions: BuiltinNormalExpressions = {
   ...expressions,
-  ...aliases,
 }
 
 export const normalExpressionTypes: Record<string, number> = {}

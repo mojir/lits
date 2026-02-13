@@ -161,7 +161,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return restMatrices.reduce((acc, matrix) => acc.map((row, i) => row.map((val, j) => val * matrix[i]![j]!)), firstMatrix)
       }
     },
-    aliases: ['·'],
     arity: {},
   },
   '/': {
@@ -291,7 +290,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(2),
-    aliases: ['rem'],
   },
   'sqrt': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -309,7 +307,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(1),
-    aliases: ['√'],
   },
   'cbrt': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -327,7 +324,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(1),
-    aliases: ['∛'],
   },
   '^': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -530,7 +526,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(1),
-    aliases: ['log₂'],
   },
   'log10': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -548,7 +543,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(1),
-    aliases: ['log₁₀'],
   },
   'sin': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {

@@ -28,6 +28,6 @@ describe('bernoulli', () => {
   })
 
   it('should return the correct takeWhile sequence', () => {
-    expect(runNth('nth:bernoulli-take-while(-> $ != 0)')).toEqual([1, -0.5, 1 / 6])
+    expect(runNth('nth:bernoulli-take-while(-> $ ≠ 0)')).toEqual([1, -0.5, 1 / 6])
   })
 })

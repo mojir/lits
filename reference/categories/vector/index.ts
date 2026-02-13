@@ -350,8 +350,8 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       'let { sample-stdev } = import("Vector");\nsample-stdev([1, 2, 3, 40, 50])',
     ],
   },
-  'Vector.TEMP-min': {
-    title: 'Vector.TEMP-min',
+  'Vector.min': {
+    title: 'Vector.min',
     category: 'Vector',
     description: 'Returns the minimum value of all elements in the vector.',
     returns: {
@@ -367,15 +367,15 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let { TEMP-min } = import("Vector");\nTEMP-min([1, 2, 3])',
-      'let { TEMP-min } = import("Vector");\nTEMP-min([1, 1, 2, 3, 3])',
-      'let { TEMP-min } = import("Vector");\nTEMP-min([1, 2, -3])',
-      'let { TEMP-min } = import("Vector");\nTEMP-min([1, 2, 3, 4])',
-      'let { TEMP-min } = import("Vector");\nTEMP-min([1, 2, -3, 4])',
+      '// Using "as" alias because "min" shadows a builtin function\nlet { min as vec-min } = import("Vector");\nvec-min([1, 2, 3])',
+      '// Using "as" alias because "min" shadows a builtin function\nlet { min as vec-min } = import("Vector");\nvec-min([1, 1, 2, 3, 3])',
+      '// Using "as" alias because "min" shadows a builtin function\nlet { min as vec-min } = import("Vector");\nvec-min([1, 2, -3])',
+      '// Using "as" alias because "min" shadows a builtin function\nlet { min as vec-min } = import("Vector");\nvec-min([1, 2, 3, 4])',
+      '// Using "as" alias because "min" shadows a builtin function\nlet { min as vec-min } = import("Vector");\nvec-min([1, 2, -3, 4])',
     ],
   },
-  'Vector.TEMP-max': {
-    title: 'Vector.TEMP-max',
+  'Vector.max': {
+    title: 'Vector.max',
     category: 'Vector',
     description: 'Returns the maximum value of all elements in the vector.',
     returns: {
@@ -391,11 +391,11 @@ export const vectorReference: Record<VectorApiName, FunctionReference<'Vector'>>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let { TEMP-max } = import("Vector");\nTEMP-max([1, 2, 3])',
-      'let { TEMP-max } = import("Vector");\nTEMP-max([1, 1, 2, 3, 3])',
-      'let { TEMP-max } = import("Vector");\nTEMP-max([1, 2, -3])',
-      'let { TEMP-max } = import("Vector");\nTEMP-max([1, 2, 3, 4])',
-      'let { TEMP-max } = import("Vector");\nTEMP-max([1, 2, -3, 4])',
+      '// Using "as" alias because "max" shadows a builtin function\nlet { max as vec-max } = import("Vector");\nvec-max([1, 2, 3])',
+      '// Using "as" alias because "max" shadows a builtin function\nlet { max as vec-max } = import("Vector");\nvec-max([1, 1, 2, 3, 3])',
+      '// Using "as" alias because "max" shadows a builtin function\nlet { max as vec-max } = import("Vector");\nvec-max([1, 2, -3])',
+      '// Using "as" alias because "max" shadows a builtin function\nlet { max as vec-max } = import("Vector");\nvec-max([1, 2, 3, 4])',
+      '// Using "as" alias because "max" shadows a builtin function\nlet { max as vec-max } = import("Vector");\nvec-max([1, 2, -3, 4])',
     ],
   },
   'Vector.min-index': {

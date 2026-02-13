@@ -2,8 +2,8 @@ import type { FunctionReference } from '..'
 import { type MiscApiName, getOperatorArgs } from '../api'
 
 export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
-  '!=': {
-    title: '!=',
+  '≠': {
+    title: '≠',
     category: 'Misc',
     returns: {
       type: 'boolean',
@@ -22,16 +22,15 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       { argumentNames: ['x'] },
       { argumentNames: ['x', 'ys'] },
     ],
-    description: 'Returns `true` if all `values` are not equal to each other, otherwise result is `false`. `(!= a b c)` is same as `(! (== a b c))`.',
+    description: 'Returns `true` if all `values` are not equal to each other, otherwise result is `false`. `(≠ a b c)` is same as `(! (== a b c))`.',
     examples: [
       '1 ≠ 2',
-      '3 != 3',
+      '3 ≠ 3',
       '≠(3)',
-      '!=(3, 3, 2)',
+      '≠(3, 3, 2)',
       '≠("3", "2", "1", "0",)',
-      '!=(0, -0)',
+      '≠(0, -0)',
     ],
-    aliases: ['≠'],
   },
   '==': {
     title: '==',
@@ -154,14 +153,13 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
     ],
     description: 'Returns `true` if $x and $ys are in non decreasing order, `false` otherwise.',
     examples: [
-      '1 ≤ 1',
+      '1 <= 1',
       '<=(0, 1)',
-      '≤(1, 1.01)',
+      '<=(1, 1.01)',
       '<=(1, 1)',
-      '≤(1, 2, 3, 4)',
+      '<=(1, 2, 3, 4)',
       '<=(1, 2, 2, 3)',
     ],
-    aliases: ['≤'],
   },
   '>=': {
     title: '>=',
@@ -185,15 +183,14 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
     ],
     description: 'Returns `true` if $x and $ys are in non increasing order, `false` otherwise.',
     examples: [
-      '1 ≥ 1',
-      '0 ≥ 1',
+      '1 >= 1',
+      '0 >= 1',
       '>=(1, 0)',
-      '≥(1.01, 1)',
+      '>=(1.01, 1)',
       '>=(1, 1)',
-      '≥(4, 3, 2, 1)',
+      '>=(4, 3, 2, 1)',
       '>=(3, 2, 2, 1)',
     ],
-    aliases: ['≥'],
   },
   '!': {
     title: '!',

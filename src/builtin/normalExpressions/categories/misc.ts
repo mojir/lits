@@ -1,7 +1,7 @@
 import { LitsError } from '../../../errors'
 import type { Any } from '../../../interface'
 // Import from index to ensure namespaces are registered
-import { getNamespace, getNamespaceAliasMap } from '../../../namespaces'
+import { getNamespace } from '../../../namespaces'
 import type { NamespaceFunction } from '../../../parser/types'
 import type { SourceCodeInfo } from '../../../tokenizer/token'
 import { asAny, assertAny } from '../../../typeGuards/lits'
@@ -41,7 +41,6 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       return !isEqual(params, sourceCodeInfo)
     },
     arity: { min: 1 },
-    aliases: ['!='],
   },
   'identical?': {
     evaluate: (params): boolean => {
@@ -88,7 +87,6 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       return true
     },
     arity: { min: 1 },
-    aliases: ['≥'],
   },
   '<=': {
     evaluate: ([first, ...rest], sourceCodeInfo): boolean => {
@@ -102,7 +100,6 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       return true
     },
     arity: { min: 1 },
-    aliases: ['≤'],
   },
   '!': {
     evaluate: ([first]): boolean => !first,
@@ -184,12 +181,9 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
           throw new LitsError(`Unknown namespace: '${namespaceName}'`, sourceCodeInfo)
         }
 
-        // Look for the function by name or alias
-        const aliasMap = getNamespaceAliasMap(namespaceName)
-        const targetFunctionName = namespace.functions[functionName] ? functionName : aliasMap?.[functionName]
-        const expression = targetFunctionName ? namespace.functions[targetFunctionName] : undefined
+        const expression = namespace.functions[functionName]
 
-        if (!expression || !targetFunctionName) {
+        if (!expression) {
           throw new LitsError(`Function '${functionName}' not found in namespace '${namespaceName}'`, sourceCodeInfo)
         }
 
@@ -198,7 +192,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
           sourceCodeInfo,
           functionType: 'Namespace',
           namespaceName,
-          functionName: targetFunctionName,
+          functionName,
           arity: expression.arity,
         }
       }
@@ -220,19 +214,6 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
           namespaceName,
           functionName,
           arity: expression.arity,
-        }
-        // Also add aliases
-        if (expression.aliases) {
-          for (const alias of expression.aliases) {
-            result[alias] = {
-              [FUNCTION_SYMBOL]: true,
-              sourceCodeInfo,
-              functionType: 'Namespace',
-              namespaceName,
-              functionName, // Point to the original function
-              arity: expression.arity,
-            }
-          }
         }
       }
       return result

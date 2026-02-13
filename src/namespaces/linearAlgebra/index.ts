@@ -234,7 +234,6 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
       return getUnit(vector, sourceCodeInfo)
     },
     arity: toFixedArity(1),
-    aliases: ['unit', 'normalize'],
   },
   'normalize-log': {
     evaluate: ([vector], sourceCodeInfo): number[] => {
@@ -364,7 +363,6 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
 
       return Math.sqrt(vectorA.reduce((acc, val, i) => acc + (val - vectorB[i]!) ** 2, 0))
     },
-    aliases: ['distance', 'l2-distance'],
     arity: toFixedArity(2),
   },
   'euclidean-norm': {
@@ -374,7 +372,6 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
       return length(vector)
     },
     arity: toFixedArity(1),
-    aliases: ['l2-norm', 'length'],
   },
   'manhattan-distance': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
@@ -388,7 +385,6 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
       return vectorA.reduce((acc, val, i) => acc + Math.abs(val - vectorB[i]!), 0)
     },
     arity: toFixedArity(2),
-    aliases: ['l1-distance', 'cityblock-distance'],
   },
   'manhattan-norm': {
     evaluate: ([vector], sourceCodeInfo): number => {
@@ -397,7 +393,6 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
       return vector.reduce((acc, val) => acc + Math.abs(val), 0)
     },
     arity: toFixedArity(1),
-    aliases: ['l1-norm', 'cityblock-norm'],
   },
   'hamming-distance': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
@@ -556,7 +551,6 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(2),
-    aliases: ['spearman-rho'],
   },
   'pearson-corr': {
     evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
@@ -650,7 +644,6 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
       return numerator / denominator
     },
     arity: toFixedArity(2),
-    aliases: ['acf'],
   },
 
   'cross-correlation': {
@@ -683,7 +676,6 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
       return calcCorrelation(segmentA, segmentB)
     },
     arity: toFixedArity(3),
-    aliases: ['ccf'],
   },
   'rref': {
     evaluate: ([matrix], sourceCodeInfo): number[][] => {

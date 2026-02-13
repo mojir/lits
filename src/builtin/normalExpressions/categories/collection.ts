@@ -706,7 +706,6 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: { min: 1 },
-    aliases: ['concat'],
   },
   'not-empty': {
     evaluate: ([coll], sourceCodeInfo): Coll | null => {

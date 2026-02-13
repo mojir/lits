@@ -85,7 +85,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
       '[[1, 2, 3], [4, 5, 6]] * [[7, 8, 9], [10, 11, 12]]',
       '[[1, 2, 3], [4, 5, 6]] * 2',
     ],
-    aliases: ['·'],
   },
   '/': {
     title: '/',
@@ -140,8 +139,8 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
       'mod([[1, 2, 3], [4, 5, 6]], 2)',
     ],
   },
-  'rem': {
-    title: 'rem',
+  '%': {
+    title: '%',
     category: 'Math',
     returns: {
       type: ['number', 'vector', 'matrix'],
@@ -152,23 +151,19 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     variants: [
       { argumentNames: ['a', 'b'] },
     ],
-    description: 'The `rem` function computes the remainder of division with the same sign as the dividend, working on `numbers` and element-wise on `vectors` and `matrices` of compatible dimensions. When used with mixed types, it applies the remainder operation between each element of the collection and the scalar.',
+    description: 'The `%` function computes the remainder of division with the same sign as the dividend, working on `numbers` and element-wise on `vectors` and `matrices` of compatible dimensions. When used with mixed types, it applies the remainder operation between each element of the collection and the scalar.',
     examples: [
       '5 % 3',
       '5.2 % 3.1',
       '-5 % 3',
       '%(5, -3)',
       '%(-5, -3)',
-      '5 rem -3',
-      '-5 rem -3',
       '[1, 2, 3] % 2',
       '2 % [1, 2, 3]',
       '%([1, 2, 3], [4, 5, 6])',
       '[[1, 2, 3], [4, 5, 6]] % [[7, 8, 9], [10, 11, 12]]',
       '%([[1, 2, 3], [4, 5, 6]], 2)',
-      '[[1, 2, 3], [4, 5, 6]] rem [[7, 8, 9], [10, 11, 12]]',
     ],
-    aliases: ['%'],
   },
   'quot': {
     title: 'quot',
@@ -261,16 +256,15 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     ],
     description: 'The `sqrt` function calculates the square root of `numbers` and computes element-wise square roots of `vectors` and `matrices`. When applied to collections, it returns the square root of each element while preserving the original structure.',
     examples: [
-      '√(0)',
-      '√(9)',
-      '√(2)',
+      'sqrt(0)',
+      'sqrt(9)',
+      'sqrt(2)',
       'sqrt(0)',
       'sqrt(9)',
       'sqrt(2)',
       'sqrt([1, 4, 9])',
       'sqrt([[1, 4], [9, 16]])',
     ],
-    aliases: ['√'],
   },
   'cbrt': {
     title: 'cbrt',
@@ -288,10 +282,10 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     ],
     description: 'The `cbrt` function calculates the cube root of `numbers` and computes element-wise cube roots of `vectors` and `matrices`. When applied to collections, it returns the cube root of each element while preserving the original structure.',
     examples: [
-      '∛(0)',
-      '∛(27)',
-      '∛(2)',
-      '∛(1)',
+      'cbrt(0)',
+      'cbrt(27)',
+      'cbrt(2)',
+      'cbrt(1)',
       'cbrt(0)',
       'cbrt(27)',
       'cbrt(2)',
@@ -299,7 +293,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
       'cbrt([1, 8, 27])',
       'cbrt([[1, 8], [27, 64]])',
     ],
-    aliases: ['∛'],
   },
   '^': {
     title: '^',
@@ -576,7 +569,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
       'log2([1, 2, 3])',
       'log2([[1, 2], [3, 4]])',
     ],
-    aliases: ['log₂'],
   },
   'log10': {
     title: 'log10',
@@ -584,7 +576,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     returns: {
       type: ['number', 'vector', 'matrix'],
     },
-    aliases: ['log₁₀'],
     args: {
       x: {
         type: ['number', 'vector', 'matrix'],

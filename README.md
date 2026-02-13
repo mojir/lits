@@ -182,7 +182,7 @@ vec.generate(5, -> $ * 2);     // => [0, 2, 4, 6, 8]
 // Vector mathematical operations (use lin namespace for vector math)
 lin.dot([1, 2, 3], [4, 5, 6]);      // => 32 (dot product)
 lin.euclidean-norm([3, 4]);         // => 5.0 (Euclidean norm/magnitude)
-lin.normalize([3, 4]);              // => [0.6, 0.8] (unit vector)
+lin.normalize-l2([3, 4]);           // => [0.6, 0.8] (unit vector)
 lin.euclidean-distance([0, 0], [3, 4]); // => 5.0 (Euclidean distance)
 
 // Vector statistical operations
@@ -193,8 +193,8 @@ vec.stdev([1, 2, 3, 4]);       // => 1.29... (standard deviation)
 vec.variance([1, 2, 3, 4]);    // => 1.67... (variance)
 
 // Vector analysis
-vec.TEMP-min([3, 1, 4, 1, 5]); // => 1
-vec.TEMP-max([3, 1, 4, 1, 5]); // => 5
+vec.min([3, 1, 4, 1, 5]); // => 1
+vec.max([3, 1, 4, 1, 5]); // => 5
 vec.min-index([3, 1, 4]);      // => 1 (index of minimum)
 vec.max-index([3, 1, 4]);      // => 2 (index of maximum)
 
@@ -1277,8 +1277,8 @@ Here's the complete precedence table, from highest to lowest:
 | 10 | `+` `-` | Addition, Subtraction | `10 - 3 + 2` → `7 + 2` → `9` |
 | 9 | `<<` `>>` `>>>` | Bit shift operations | `8 >> 1 + 1` → `8 >> 2` → `2` |
 | 8 | `++` | String concatenation | `"a" ++ "b" ++ "c"` → `"abc"` |
-| 7 | `<` `<=` `≤` `>` `>=` `≥` | Comparison operators | `3 + 2 > 4` → `5 > 4` → `true` |
-| 6 | `==` `!=` `≠` | Equality operators | `2 * 3 == 6` → `6 == 6` → `true` |
+| 7 | `<` `<=` `>` `>=` | Comparison operators | `3 + 2 > 4` → `5 > 4` → `true` |
+| 6 | `==` `≠` | Equality operators | `2 * 3 == 6` → `6 == 6` → `true` |
 | 5 | `&` `xor` `\|` | Bitwise operations | `4 \| 2 & 1` → `4 \| 0` → `4` |
 | 4 | `&&` `\|\|` `??` | Logical operations | `true && false \|\| true` → `false \|\| true` → `true` |
 | 3 | *function operators* | Binary functions used as operators | `5 max 3 + 2` → `5 max 5` → `5` |

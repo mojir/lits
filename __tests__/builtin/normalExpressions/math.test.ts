@@ -777,12 +777,12 @@ describe('math functions', () => {
 
   describe('%', () => {
     it('samples', () => {
-      expect(lits.run('13.75 rem 3.25')).toBe(0.75)
+      expect(lits.run('13.75 % 3.25')).toBe(0.75)
       expect(lits.run('-13.75 % 3.25')).toBe(-0.75)
       expect(lits.run('%(13.75, 3.25)')).toBe(0.75)
       expect(lits.run('%(-13.75, 3.25)')).toBe(-0.75)
-      expect(lits.run('rem(-13.75, 3.25)')).toBe(-0.75)
-      expect(lits.run('rem(13.75, -3.25)')).toBe(0.75)
+      expect(lits.run('%(-13.75, 3.25)')).toBe(-0.75)
+      expect(lits.run('%(13.75, -3.25)')).toBe(0.75)
       expect(lits.run('%(-13.75, -3.25)')).toBe(-0.75)
       expect(() => lits.run('%()')).toThrow(LitsError)
       expect(() => lits.run('%(1)')).toThrow(LitsError)

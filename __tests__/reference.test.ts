@@ -9,14 +9,8 @@ import { Lits } from '../src/Lits/Lits'
 
 const lits = new Lits()
 describe('apiReference', () => {
-  const referenceAliases = Object.values(apiReference)
-    .filter(obj => isFunctionReference(obj))
-    .flatMap(obj => obj.aliases ?? [])
-
   Object.entries(apiReference).forEach(([key, obj]) => {
     if (!isFunctionReference(obj))
-      return
-    if (referenceAliases.includes(key))
       return
     it(key, () => {
       expect(obj.title).toBe(key)
@@ -47,13 +41,7 @@ describe('apiReference', () => {
       .filter(([, obj]) => isFunctionReference(obj))
       .map(([key]) => key)
 
-    const duplicate = referenceAliases.find(name => functionReferenceKeys.includes(name))
-    expect(duplicate, `Both alias and reference key: ${duplicate}`).toBeUndefined()
-
-    const duplicateAliases = referenceAliases.filter((item, index) => referenceAliases.indexOf(item) !== index)
-    expect(duplicateAliases.length, `Duplicate aliases found: ${duplicateAliases}`).toBe(0)
-
-    const allReferenceKeys = [...functionReferenceKeys, ...referenceAliases].filter(key => !specialExpressionKeys.includes(key))
+    const allReferenceKeys = functionReferenceKeys.filter(key => !specialExpressionKeys.includes(key))
 
     const builtinKeys = [...normalExpressionKeys]
     const missingReference = allReferenceKeys.find(key => !builtinKeys.includes(key))
@@ -64,11 +52,7 @@ describe('apiReference', () => {
   })
 
   describe('argument names', () => {
-    const allBuiltins = [...normalExpressionKeys
-      .flatMap(key => ([
-        key,
-        ...normalExpressions[key]!.aliases ?? [],
-      ])), ...specialExpressionKeys]
+    const allBuiltins = [...normalExpressionKeys, ...specialExpressionKeys]
     Object.entries(apiReference).forEach(([key, obj]) => {
       if (!isFunctionReference(obj))
         return

@@ -3,7 +3,7 @@ import type { Argument, FunctionReference, TypedValue } from '../../../reference
 
 export function generateDocString(reference: FunctionReference): string {
   return smartTrim(`
-    ${reference.title}${getAliases(reference)}
+    ${reference.title}
 
     ${reference.description
         .replace(/`(.+?)`/g, '$1')
@@ -17,7 +17,7 @@ export function generateDocString(reference: FunctionReference): string {
 
     Arguments:
       ${argStrings(reference).join('\n      ')}
-  
+
     Examples:
 ${reference.examples.map(example => smartTrim(example, 4)).join('\n\n')}`)
 }
@@ -54,11 +54,4 @@ function type(arg: Argument | TypedValue) {
 
 function argStrings(reference: FunctionReference): string[] {
   return Object.entries(reference.args).map(([argName, arg]) => `${argName}: ${type(arg)}`)
-}
-
-function getAliases(reference: FunctionReference): string {
-  if (!reference.aliases || reference.aliases.length === 0)
-    return ''
-
-  return `\n\n    Alias:\n      ${reference.aliases.join('\n      ')}`
 }

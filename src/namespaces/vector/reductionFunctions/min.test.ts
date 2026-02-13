@@ -13,11 +13,11 @@ function runVec(code: string): unknown {
 
 describe('min', () => {
   it('should calculate min of a vector', () => {
-    expect(runVec('TEMP-min([1, 2, 3])')).toEqual(1)
-    expect(runVec('TEMP-min([1, -2, 3])')).toEqual(-2)
-    expect(runVec('TEMP-min([-1, -2, -3])')).toEqual(-3)
-    expect(runVec('TEMP-min([0])')).toEqual(0)
-    expect(() => runVec('TEMP-min([])')).toThrow(LitsError)
+    expect(runVec('min([1, 2, 3])')).toEqual(1)
+    expect(runVec('min([1, -2, 3])')).toEqual(-2)
+    expect(runVec('min([-1, -2, -3])')).toEqual(-3)
+    expect(runVec('min([0])')).toEqual(0)
+    expect(() => runVec('min([])')).toThrow(LitsError)
   })
   it('should calculate the moving min of a vector', () => {
     expect(runVec('moving-min([1, 2, 3, 4, 5, 6], 1)')).toEqual([1, 2, 3, 4, 5, 6])

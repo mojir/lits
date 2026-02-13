@@ -232,7 +232,6 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
       return matrix.reduce((max, row) => Math.max(max, row.reduce((sum, cell) => sum + Math.abs(cell), 0)), 0)
     },
     arity: toFixedArity(1),
-    aliases: ['row-norm'],
   },
   // Max norm
   'max-norm': {

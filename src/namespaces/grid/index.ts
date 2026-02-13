@@ -190,7 +190,6 @@ const gridFunctions: BuiltinNormalExpressions = {
       return transpose(grid)
     },
     arity: toFixedArity(1),
-    aliases: ['tr'],
   },
   'flip-h': {
     evaluate: ([grid], sourceCodeInfo): Any[][] => {
@@ -451,7 +450,7 @@ const gridFunctions: BuiltinNormalExpressions = {
     },
     arity: { min: 1 },
   },
-  'TEMP-map': {
+  'map': {
     evaluate: (params, sourceCodeInfo, contextStack, { executeFunction }): Any[][] => {
       const fn = asFunctionLike(params.at(-1), sourceCodeInfo)
       const grids = params.slice(0, -1)
@@ -501,7 +500,7 @@ const gridFunctions: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(2),
   },
-  'TEMP-reduce': {
+  'reduce': {
     evaluate: ([grid, fn, initialValue], sourceCodeInfo, contextStack, { executeFunction }): Any => {
       assertGrid(grid, sourceCodeInfo)
       assertFunctionLike(fn, sourceCodeInfo)

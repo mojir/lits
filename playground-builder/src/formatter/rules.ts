@@ -3,7 +3,7 @@ import type { TextFormatter } from '../../../common/createFormatter'
 import { polishSymbolCharacterClass, polishSymbolFirstCharacterClass } from '../../../src/symbolPatterns'
 import { Lits } from '../../../src/Lits/Lits'
 import type { Token } from '../../../src/tokenizer/token'
-import { builtin, normalExpressionKeys, specialExpressionKeys } from '../../../src/builtin'
+import { normalExpressionKeys, specialExpressionKeys } from '../../../src/builtin'
 
 export type FormatterRule = (text: string, index: number, formatter: TextFormatter) => {
   count: number
@@ -82,11 +82,7 @@ export type StyleOverride = {
   style: string
 }
 
-const normalExpressionSet = new Set(normalExpressionKeys.flatMap(key => ([
-  key,
-  ...builtin.normalExpressions[key]?.aliases ?? [],
-])))
-
+const normalExpressionSet = new Set(normalExpressionKeys)
 const specialExpressionSet = new Set(specialExpressionKeys)
 
 export function formatLitsExpression(program: string, styleOverride?: StyleOverride): string {
