@@ -2,8 +2,8 @@ import { getOperatorArgs } from '../../api'
 import type { VectorReductionReference } from '.'
 
 export const standardDeviationReference: VectorReductionReference<'stdev'> = {
-  'vec.stdev': {
-    title: 'vec.stdev',
+  'Vector.stdev': {
+    title: 'Vector.stdev',
     category: 'Vector',
     description: 'Returns the **standard deviation** of the `vector`.',
     returns: {
@@ -19,12 +19,12 @@ export const standardDeviationReference: VectorReductionReference<'stdev'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let { variance } = import("vec");\nvariance([1, 2, 3])',
-      'let { variance } = import("vec");\nvariance([1, 2, -3])',
+      'let { variance } = import("Vector");\nvariance([1, 2, 3])',
+      'let { variance } = import("Vector");\nvariance([1, 2, -3])',
     ],
   },
-  'vec.moving-stdev': {
-    title: 'vec.moving-stdev',
+  'Vector.moving-stdev': {
+    title: 'Vector.moving-stdev',
     category: 'Vector',
     description: 'Returns the **moving standard deviation** of the `vector` with a given window size.',
     returns: {
@@ -45,12 +45,12 @@ export const standardDeviationReference: VectorReductionReference<'stdev'> = {
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'let { moving-stdev } = import("vec");\nmoving-stdev([1, 2, 3, 4, 5], 3)',
-      'let { moving-stdev } = import("vec");\nmoving-stdev([1, 2, 3, 4, 5], 5)',
+      'let { moving-stdev } = import("Vector");\nmoving-stdev([1, 2, 3, 4, 5], 3)',
+      'let { moving-stdev } = import("Vector");\nmoving-stdev([1, 2, 3, 4, 5], 5)',
     ],
   },
-  'vec.centered-moving-stdev': {
-    title: 'vec.centered-moving-stdev',
+  'Vector.centered-moving-stdev': {
+    title: 'Vector.centered-moving-stdev',
     category: 'Vector',
     description: 'Returns the **centered moving standard deviation** of the `vector` with a given window size.',
     returns: {
@@ -81,14 +81,14 @@ export const standardDeviationReference: VectorReductionReference<'stdev'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'let { centered-moving-stdev } = import("vec");\ncentered-moving-stdev([1, 2, 3, 4, 5], 3)',
-      'let { centered-moving-stdev } = import("vec");\ncentered-moving-stdev([1, 2, 3, 4, 5], 3, 1)',
-      'let { centered-moving-stdev } = import("vec");\ncentered-moving-stdev([1, 2, 3, 4, 5], 3, 1, 5)',
-      'let { centered-moving-stdev } = import("vec");\ncentered-moving-stdev([1, 2, 3, 4, 5], 3, 0, 6)',
+      'let { centered-moving-stdev } = import("Vector");\ncentered-moving-stdev([1, 2, 3, 4, 5], 3)',
+      'let { centered-moving-stdev } = import("Vector");\ncentered-moving-stdev([1, 2, 3, 4, 5], 3, 1)',
+      'let { centered-moving-stdev } = import("Vector");\ncentered-moving-stdev([1, 2, 3, 4, 5], 3, 1, 5)',
+      'let { centered-moving-stdev } = import("Vector");\ncentered-moving-stdev([1, 2, 3, 4, 5], 3, 0, 6)',
     ],
   },
-  'vec.running-stdev': {
-    title: 'vec.running-stdev',
+  'Vector.running-stdev': {
+    title: 'Vector.running-stdev',
     category: 'Vector',
     description: 'Returns the **running standard deviation** of the `vector`.',
     returns: {
@@ -104,14 +104,14 @@ export const standardDeviationReference: VectorReductionReference<'stdev'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let { running-stdev } = import("vec");\nrunning-stdev([1, 2, 3, 4, 5])',
+      'let { running-stdev } = import("Vector");\nrunning-stdev([1, 2, 3, 4, 5])',
     ],
   },
 }
 
 export const sampleStandardDeviationReference: VectorReductionReference<'sample-stdev'> = {
-  'vec.sample-stdev': {
-    title: 'vec.sample-stdev',
+  'Vector.sample-stdev': {
+    title: 'Vector.sample-stdev',
     category: 'Vector',
     description: 'Returns the **sample standard deviation** of the `vector`.',
     returns: {
@@ -127,12 +127,12 @@ export const sampleStandardDeviationReference: VectorReductionReference<'sample-
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let { variance } = import("vec");\nvariance([1, 2, 3])',
-      'let { variance } = import("vec");\nvariance([1, 2, -3])',
+      'let { variance } = import("Vector");\nvariance([1, 2, 3])',
+      'let { variance } = import("Vector");\nvariance([1, 2, -3])',
     ],
   },
-  'vec.moving-sample-stdev': {
-    title: 'vec.moving-sample-stdev',
+  'Vector.moving-sample-stdev': {
+    title: 'Vector.moving-sample-stdev',
     category: 'Vector',
     description: 'Returns the **moving sample standard deviation** of the `vector` with a given window size.',
     returns: {
@@ -153,12 +153,12 @@ export const sampleStandardDeviationReference: VectorReductionReference<'sample-
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'let { moving-sample-stdev } = import("vec");\nmoving-sample-stdev([1, 2, 3, 4, 5], 3)',
-      'let { moving-sample-stdev } = import("vec");\nmoving-sample-stdev([1, 2, 3, 4, 5], 5)',
+      'let { moving-sample-stdev } = import("Vector");\nmoving-sample-stdev([1, 2, 3, 4, 5], 3)',
+      'let { moving-sample-stdev } = import("Vector");\nmoving-sample-stdev([1, 2, 3, 4, 5], 5)',
     ],
   },
-  'vec.centered-moving-sample-stdev': {
-    title: 'vec.centered-moving-sample-stdev',
+  'Vector.centered-moving-sample-stdev': {
+    title: 'Vector.centered-moving-sample-stdev',
     category: 'Vector',
     description: 'Returns the **centered moving sample standard deviation** of the `vector` with a given window size.',
     returns: {
@@ -189,14 +189,14 @@ export const sampleStandardDeviationReference: VectorReductionReference<'sample-
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'let { centered-moving-sample-stdev } = import("vec");\ncentered-moving-sample-stdev([1, 2, 3, 4, 5], 3)',
-      'let { centered-moving-sample-stdev } = import("vec");\ncentered-moving-sample-stdev([1, 2, 3, 4, 5], 3, 1)',
-      'let { centered-moving-sample-stdev } = import("vec");\ncentered-moving-sample-stdev([1, 2, 3, 4, 5], 3, 1, 5)',
-      'let { centered-moving-sample-stdev } = import("vec");\ncentered-moving-sample-stdev([1, 2, 3, 4, 5], 3, 0, 6)',
+      'let { centered-moving-sample-stdev } = import("Vector");\ncentered-moving-sample-stdev([1, 2, 3, 4, 5], 3)',
+      'let { centered-moving-sample-stdev } = import("Vector");\ncentered-moving-sample-stdev([1, 2, 3, 4, 5], 3, 1)',
+      'let { centered-moving-sample-stdev } = import("Vector");\ncentered-moving-sample-stdev([1, 2, 3, 4, 5], 3, 1, 5)',
+      'let { centered-moving-sample-stdev } = import("Vector");\ncentered-moving-sample-stdev([1, 2, 3, 4, 5], 3, 0, 6)',
     ],
   },
-  'vec.running-sample-stdev': {
-    title: 'vec.running-sample-stdev',
+  'Vector.running-sample-stdev': {
+    title: 'Vector.running-sample-stdev',
     category: 'Vector',
     description: 'Returns the **running sample standard deviation** of the `vector`.',
     returns: {
@@ -212,7 +212,7 @@ export const sampleStandardDeviationReference: VectorReductionReference<'sample-
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let { running-sample-stdev } = import("vec");\nrunning-sample-stdev([1, 2, 3, 4, 5])',
+      'let { running-sample-stdev } = import("Vector");\nrunning-sample-stdev([1, 2, 3, 4, 5])',
     ],
   },
 }

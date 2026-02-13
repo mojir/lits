@@ -655,6 +655,6 @@ const gridFunctions: BuiltinNormalExpressions = {
  * The grid namespace containing 2D array manipulation functions.
  */
 export const gridNamespace: LitsNamespace = {
-  name: 'grid',
+  name: 'Grid',
   functions: gridFunctions,
 }

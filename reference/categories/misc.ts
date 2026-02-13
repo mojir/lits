@@ -356,17 +356,17 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
     args: {
       path: {
         type: 'string',
-        description: 'The namespace path to import. Can be a namespace name (e.g., "vec", "grid") or a fully qualified function name (e.g., "vec.mean", "grid.row").',
+        description: 'The namespace path to import. Can be a namespace name (e.g., "Vector", "Grid") or a fully qualified function name (e.g., "Vector.mean", "Grid.row").',
       },
     },
     variants: [
       { argumentNames: ['path'] },
     ],
-    description: 'Imports namespace functions. Use a namespace name (e.g., "vec") to import all functions as an object, or a fully qualified name (e.g., "vec.mean") to import a single function directly.',
+    description: 'Imports namespace functions. Use a namespace name (e.g., "Vector") to import all functions as an object, or a fully qualified name (e.g., "Vector.mean") to import a single function directly.',
     examples: [
-      'let v = import("vec"); v.mean([1, 2, 3, 4])',
-      'let sum = import("vec.sum"); sum([1, 2, 3])',
-      'let g = import("grid"); g.row([[1, 2], [3, 4]], 0)',
+      'let v = import("Vector"); v.mean([1, 2, 3, 4])',
+      'let sum = import("Vector.sum"); sum([1, 2, 3])',
+      'let g = import("Grid"); g.row([[1, 2], [3, 4]], 0)',
     ],
   },
   'json-parse': {

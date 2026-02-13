@@ -2,8 +2,8 @@ import { getOperatorArgs } from '../../api'
 import type { VectorReductionReference } from '.'
 
 export const rootMeanSquareReference: VectorReductionReference<'rms'> = {
-  'vec.rms': {
-    title: 'vec.rms',
+  'Vector.rms': {
+    title: 'Vector.rms',
     category: 'Vector',
     description: 'Calculates the **root mean square** of a `vector`. Returns the square root of the average of the squares of the elements.',
     returns: {
@@ -19,15 +19,15 @@ export const rootMeanSquareReference: VectorReductionReference<'rms'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let { rms } = import("vec");\nrms([1, 2, 3, 4])',
-      'let { rms } = import("vec");\nrms([5, 4, 3, 2, 1])',
-      'let { rms } = import("vec");\nrms(range(1, 1000))',
-      'let { rms } = import("vec");\nrms(vec.generate(1000, -> 1e6 / ($ + 1) ^ 2))',
-      'let { rms } = import("vec");\nrms(vec.generate(1000, -> ln($ + 1)))',
+      'let { rms } = import("Vector");\nrms([1, 2, 3, 4])',
+      'let { rms } = import("Vector");\nrms([5, 4, 3, 2, 1])',
+      'let { rms } = import("Vector");\nrms(range(1, 1000))',
+      'let { rms, generate } = import("Vector");\nrms(generate(1000, -> 1e6 / ($ + 1) ^ 2))',
+      'let { rms, generate } = import("Vector");\nrms(generate(1000, -> ln($ + 1)))',
     ],
   },
-  'vec.moving-rms': {
-    title: 'vec.moving-rms',
+  'Vector.moving-rms': {
+    title: 'Vector.moving-rms',
     category: 'Vector',
     description: 'Calculates the **moving root mean square** of a `vector` with a given window size.',
     returns: {
@@ -48,13 +48,13 @@ export const rootMeanSquareReference: VectorReductionReference<'rms'> = {
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'let { moving-rms } = import("vec");\nmoving-rms([1, 2, 4, 7, 11, 16], 4)',
-      'let { moving-rms } = import("vec");\nmoving-rms([1, 2, 4, 7, 11, 16], 5)',
-      'let { moving-rms } = import("vec");\nmoving-rms([1, 2, 4, 7, 11, 16], 6)',
+      'let { moving-rms } = import("Vector");\nmoving-rms([1, 2, 4, 7, 11, 16], 4)',
+      'let { moving-rms } = import("Vector");\nmoving-rms([1, 2, 4, 7, 11, 16], 5)',
+      'let { moving-rms } = import("Vector");\nmoving-rms([1, 2, 4, 7, 11, 16], 6)',
     ],
   },
-  'vec.centered-moving-rms': {
-    title: 'vec.centered-moving-rms',
+  'Vector.centered-moving-rms': {
+    title: 'Vector.centered-moving-rms',
     category: 'Vector',
     description: 'Calculates the **centered moving root mean square** of a `vector` with a given window size and padding value.',
     returns: {
@@ -85,13 +85,13 @@ export const rootMeanSquareReference: VectorReductionReference<'rms'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'let { centered-moving-rms } = import("vec");\ncentered-moving-rms([1, 2, 4, 7, 11, 16], 4)',
-      'let { centered-moving-rms } = import("vec");\ncentered-moving-rms([1, 2, 4, 7, 11, 16], 5, 0)',
-      'let { centered-moving-rms } = import("vec");\ncentered-moving-rms([1, 2, 4, 7, 11, 16], 6, 0, 0)',
+      'let { centered-moving-rms } = import("Vector");\ncentered-moving-rms([1, 2, 4, 7, 11, 16], 4)',
+      'let { centered-moving-rms } = import("Vector");\ncentered-moving-rms([1, 2, 4, 7, 11, 16], 5, 0)',
+      'let { centered-moving-rms } = import("Vector");\ncentered-moving-rms([1, 2, 4, 7, 11, 16], 6, 0, 0)',
     ],
   },
-  'vec.running-rms': {
-    title: 'vec.running-rms',
+  'Vector.running-rms': {
+    title: 'Vector.running-rms',
     category: 'Vector',
     description: 'Calculates the **running root mean square** of a `vector`.',
     returns: {
@@ -107,10 +107,10 @@ export const rootMeanSquareReference: VectorReductionReference<'rms'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let { running-rms } = import("vec");\nrunning-rms([1, 2, 3, 4, 5, 6])',
-      'let { running-rms } = import("vec");\nrunning-rms([1, -3, 2])',
-      'let { running-rms } = import("vec");\nrunning-rms([-1, -2, -3])',
-      'let { running-rms } = import("vec");\nrunning-rms([0])',
+      'let { running-rms } = import("Vector");\nrunning-rms([1, 2, 3, 4, 5, 6])',
+      'let { running-rms } = import("Vector");\nrunning-rms([1, -3, 2])',
+      'let { running-rms } = import("Vector");\nrunning-rms([-1, -2, -3])',
+      'let { running-rms } = import("Vector");\nrunning-rms([0])',
     ],
   },
 }

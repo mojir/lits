@@ -1,5 +1,5 @@
 import { describe, expect, it, test } from 'vitest'
-import { apiReference, getLinkName, isFunctionReference, normalExpressionReference } from '../reference'
+import { apiReference, getLinkName, isFunctionReference, namespaceReference, normalExpressionReference } from '../reference'
 import { normalExpressionKeys, specialExpressionKeys } from '../src/builtin'
 import { isUnknownRecord } from '../src/typeGuards'
 import { canBeOperator } from '../src/utils/arity'
@@ -106,5 +106,18 @@ describe('apiReference', () => {
           }
         })
       })
+  })
+})
+
+describe('namespaceReference', () => {
+  describe('examples', () => {
+    Object.entries(namespaceReference).forEach(([key, obj]) => {
+      test(key, () => {
+        obj.examples.forEach((example, index) => {
+          expect(example, `${obj.category}:${key}. Example number ${index + 1} ended with ;`).not.toMatch(/;\s*$/)
+          expect(() => lits.run(example), `${obj.category}:${key}. Example number ${index + 1}`).not.toThrow()
+        })
+      })
+    })
   })
 })

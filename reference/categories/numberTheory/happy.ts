@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const happyReference: NumberTheorySequenceReference<'happy'> = {
-  'TEMP-nth.happy-seq': {
-    title: 'TEMP-nth.happy-seq',
+  'Number-Theory.happy-seq': {
+    title: 'Number-Theory.happy-seq',
     category: 'Number Theory',
     description: 'Generates the happy sequence up to a specified length.',
     returns: {
@@ -20,13 +20,13 @@ export const happyReference: NumberTheorySequenceReference<'happy'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'let { happy-seq } = import("TEMP-nth");\nhappy-seq(1)',
-      'let { happy-seq } = import("TEMP-nth");\nhappy-seq(2)',
-      'let { happy-seq } = import("TEMP-nth");\nhappy-seq(20)',
+      'let { happy-seq } = import("Number-Theory");\nhappy-seq(1)',
+      'let { happy-seq } = import("Number-Theory");\nhappy-seq(2)',
+      'let { happy-seq } = import("Number-Theory");\nhappy-seq(20)',
     ],
   },
-  'TEMP-nth.happy-take-while': {
-    title: 'TEMP-nth.happy-take-while',
+  'Number-Theory.happy-take-while': {
+    title: 'Number-Theory.happy-take-while',
     category: 'Number Theory',
     description: 'Generates the happy sequence while a condition is met.',
     returns: {
@@ -43,11 +43,11 @@ export const happyReference: NumberTheorySequenceReference<'happy'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let { happy-take-while } = import("TEMP-nth");\nhappy-take-while(-> $ < 100)',
+      'let { happy-take-while } = import("Number-Theory");\nhappy-take-while(-> $ < 100)',
     ],
   },
-  'TEMP-nth.happy-nth': {
-    title: 'TEMP-nth.happy-nth',
+  'Number-Theory.happy-nth': {
+    title: 'Number-Theory.happy-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the happy sequence.',
     returns: {
@@ -63,13 +63,13 @@ export const happyReference: NumberTheorySequenceReference<'happy'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let { happy-nth } = import("TEMP-nth");\nhappy-nth(1)',
-      'let { happy-nth } = import("TEMP-nth");\nhappy-nth(2)',
-      'let { happy-nth } = import("TEMP-nth");\nhappy-nth(20)',
+      'let { happy-nth } = import("Number-Theory");\nhappy-nth(1)',
+      'let { happy-nth } = import("Number-Theory");\nhappy-nth(2)',
+      'let { happy-nth } = import("Number-Theory");\nhappy-nth(20)',
     ],
   },
-  'TEMP-nth.happy?': {
-    title: 'TEMP-nth.happy?',
+  'Number-Theory.happy?': {
+    title: 'Number-Theory.happy?',
     category: 'Number Theory',
     description: 'Determines if a number is a happy number.',
     returns: {
@@ -85,9 +85,9 @@ export const happyReference: NumberTheorySequenceReference<'happy'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let { happy? } = import("TEMP-nth");\nhappy?(1)',
-      'let { happy? } = import("TEMP-nth");\nhappy?(2)',
-      'let { happy? } = import("TEMP-nth");\nhappy?(100)',
+      'let { happy? } = import("Number-Theory");\nhappy?(1)',
+      'let { happy? } = import("Number-Theory");\nhappy?(2)',
+      'let { happy? } = import("Number-Theory");\nhappy?(100)',
     ],
   },
 }

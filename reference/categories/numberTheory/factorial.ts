@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const factorialReference: NumberTheorySequenceReference<'factorial'> = {
-  'TEMP-nth.factorial-seq': {
-    title: 'TEMP-nth.factorial-seq',
+  'Number-Theory.factorial-seq': {
+    title: 'Number-Theory.factorial-seq',
     category: 'Number Theory',
     description: 'Generates the factorial sequence up to a specified length.',
     returns: {
@@ -20,16 +20,16 @@ export const factorialReference: NumberTheorySequenceReference<'factorial'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'let { factorial-seq } = import("TEMP-nth");\nfactorial-seq(1)',
-      'let { factorial-seq } = import("TEMP-nth");\nfactorial-seq(2)',
-      'let { factorial-seq } = import("TEMP-nth");\nfactorial-seq(3)',
-      'let { factorial-seq } = import("TEMP-nth");\nfactorial-seq(4)',
-      'let { factorial-seq } = import("TEMP-nth");\nfactorial-seq(5)',
-      'let { factorial-seq } = import("TEMP-nth");\nfactorial-seq(10)',
+      'let { factorial-seq } = import("Number-Theory");\nfactorial-seq(1)',
+      'let { factorial-seq } = import("Number-Theory");\nfactorial-seq(2)',
+      'let { factorial-seq } = import("Number-Theory");\nfactorial-seq(3)',
+      'let { factorial-seq } = import("Number-Theory");\nfactorial-seq(4)',
+      'let { factorial-seq } = import("Number-Theory");\nfactorial-seq(5)',
+      'let { factorial-seq } = import("Number-Theory");\nfactorial-seq(10)',
     ],
   },
-  'TEMP-nth.factorial-take-while': {
-    title: 'TEMP-nth.factorial-take-while',
+  'Number-Theory.factorial-take-while': {
+    title: 'Number-Theory.factorial-take-while',
     category: 'Number Theory',
     description: 'Generates the factorial sequence while a condition is met.',
     returns: {
@@ -46,11 +46,11 @@ export const factorialReference: NumberTheorySequenceReference<'factorial'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let { factorial-take-while } = import("TEMP-nth");\nfactorial-take-while(-> $ < 1000)',
+      'let { factorial-take-while } = import("Number-Theory");\nfactorial-take-while(-> $ < 1000)',
     ],
   },
-  'TEMP-nth.factorial-nth': {
-    title: 'TEMP-nth.factorial-nth',
+  'Number-Theory.factorial-nth': {
+    title: 'Number-Theory.factorial-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the factorial sequence.',
     returns: {
@@ -66,16 +66,16 @@ export const factorialReference: NumberTheorySequenceReference<'factorial'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let { factorial-nth } = import("TEMP-nth");\nfactorial-nth(1)',
-      'let { factorial-nth } = import("TEMP-nth");\nfactorial-nth(2)',
-      'let { factorial-nth } = import("TEMP-nth");\nfactorial-nth(3)',
-      'let { factorial-nth } = import("TEMP-nth");\nfactorial-nth(4)',
-      'let { factorial-nth } = import("TEMP-nth");\nfactorial-nth(5)',
-      'let { factorial-nth } = import("TEMP-nth");\nfactorial-nth(10)',
+      'let { factorial-nth } = import("Number-Theory");\nfactorial-nth(1)',
+      'let { factorial-nth } = import("Number-Theory");\nfactorial-nth(2)',
+      'let { factorial-nth } = import("Number-Theory");\nfactorial-nth(3)',
+      'let { factorial-nth } = import("Number-Theory");\nfactorial-nth(4)',
+      'let { factorial-nth } = import("Number-Theory");\nfactorial-nth(5)',
+      'let { factorial-nth } = import("Number-Theory");\nfactorial-nth(10)',
     ],
   },
-  'TEMP-nth.factorial?': {
-    title: 'TEMP-nth.factorial?',
+  'Number-Theory.factorial?': {
+    title: 'Number-Theory.factorial?',
     category: 'Number Theory',
     description: 'Checks if a number is in the factorial sequence.',
     returns: {
@@ -91,16 +91,16 @@ export const factorialReference: NumberTheorySequenceReference<'factorial'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let { factorial? } = import("TEMP-nth");\nfactorial?(1)',
-      'let { factorial? } = import("TEMP-nth");\nfactorial?(2)',
-      'let { factorial? } = import("TEMP-nth");\nfactorial?(3)',
-      'let { factorial? } = import("TEMP-nth");\nfactorial?(4)',
-      'let { factorial? } = import("TEMP-nth");\nfactorial?(5)',
-      'let { factorial? } = import("TEMP-nth");\nfactorial?(6)',
-      'let { factorial? } = import("TEMP-nth");\nfactorial?(7)',
-      'let { factorial? } = import("TEMP-nth");\nfactorial?(8)',
-      'let { factorial? } = import("TEMP-nth");\nfactorial?(9)',
-      'let { factorial? } = import("TEMP-nth");\nfactorial?(3628800)',
+      'let { factorial? } = import("Number-Theory");\nfactorial?(1)',
+      'let { factorial? } = import("Number-Theory");\nfactorial?(2)',
+      'let { factorial? } = import("Number-Theory");\nfactorial?(3)',
+      'let { factorial? } = import("Number-Theory");\nfactorial?(4)',
+      'let { factorial? } = import("Number-Theory");\nfactorial?(5)',
+      'let { factorial? } = import("Number-Theory");\nfactorial?(6)',
+      'let { factorial? } = import("Number-Theory");\nfactorial?(7)',
+      'let { factorial? } = import("Number-Theory");\nfactorial?(8)',
+      'let { factorial? } = import("Number-Theory");\nfactorial?(9)',
+      'let { factorial? } = import("Number-Theory");\nfactorial?(3628800)',
     ],
   },
 }

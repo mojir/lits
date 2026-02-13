@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const lookAndSayReference: NumberTheorySequenceReference<'look-and-say'> = {
-  'TEMP-nth.look-and-say-seq': {
-    title: 'TEMP-nth.look-and-say-seq',
+  'Number-Theory.look-and-say-seq': {
+    title: 'Number-Theory.look-and-say-seq',
     category: 'Number Theory',
     description: 'Generates the Look-and-Say sequence up to a specified length.',
     returns: {
@@ -19,11 +19,11 @@ export const lookAndSayReference: NumberTheorySequenceReference<'look-and-say'> 
       { argumentNames: ['length'] },
     ],
     examples: [
-      'let { look-and-say-seq } = import("TEMP-nth");\nlook-and-say-seq(5)',
+      'let { look-and-say-seq } = import("Number-Theory");\nlook-and-say-seq(5)',
     ],
   },
-  'TEMP-nth.look-and-say-take-while': {
-    title: 'TEMP-nth.look-and-say-take-while',
+  'Number-Theory.look-and-say-take-while': {
+    title: 'Number-Theory.look-and-say-take-while',
     category: 'Number Theory',
     description: 'Generates the Look-and-Say sequence while a condition is met.',
     returns: {
@@ -40,12 +40,12 @@ export const lookAndSayReference: NumberTheorySequenceReference<'look-and-say'> 
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let { look-and-say-take-while } = import("TEMP-nth");\nlook-and-say-take-while((term, index) -> count(term) < 10)',
-      'let { look-and-say-take-while } = import("TEMP-nth");\nlook-and-say-take-while(-> $2 <= 10)',
+      'let { look-and-say-take-while } = import("Number-Theory");\nlook-and-say-take-while((term, index) -> count(term) < 10)',
+      'let { look-and-say-take-while } = import("Number-Theory");\nlook-and-say-take-while(-> $2 <= 10)',
     ],
   },
-  'TEMP-nth.look-and-say-nth': {
-    title: 'TEMP-nth.look-and-say-nth',
+  'Number-Theory.look-and-say-nth': {
+    title: 'Number-Theory.look-and-say-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Look-and-Say sequence.',
     returns: {
@@ -61,11 +61,11 @@ export const lookAndSayReference: NumberTheorySequenceReference<'look-and-say'> 
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let { look-and-say-nth } = import("TEMP-nth");\nlook-and-say-nth(5)',
+      'let { look-and-say-nth } = import("Number-Theory");\nlook-and-say-nth(5)',
     ],
   },
-  'TEMP-nth.look-and-say?': {
-    title: 'TEMP-nth.look-and-say?',
+  'Number-Theory.look-and-say?': {
+    title: 'Number-Theory.look-and-say?',
     category: 'Number Theory',
     description: 'Checks if a string is a valid Look-and-Say term.',
     returns: {
@@ -81,8 +81,8 @@ export const lookAndSayReference: NumberTheorySequenceReference<'look-and-say'> 
       { argumentNames: ['term'] },
     ],
     examples: [
-      'let { look-and-say? } = import("TEMP-nth");\nlook-and-say?("111221")',
-      'let { look-and-say? } = import("TEMP-nth");\nlook-and-say?("123")',
+      'let { look-and-say? } = import("Number-Theory");\nlook-and-say?("111221")',
+      'let { look-and-say? } = import("Number-Theory");\nlook-and-say?("123")',
     ],
   },
 }

@@ -19,8 +19,8 @@ const exampleGrid3 = `[
 ]`
 
 export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
-  'grid.every?': {
-    title: 'grid.every?',
+  'Grid.every?': {
+    title: 'Grid.every?',
     category: 'Grid',
     returns: {
       type: 'boolean',
@@ -32,14 +32,15 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
       { argumentNames: ['a', 'b'] },
     ],
     description: 'Checks if all elements in a grid satisfy a predicate. Returns true only if the predicate returns true for every element in the grid.',
+    // Use namespace pattern because "every?" shadows a builtin function
     examples: [
-      `grid.every?(${exampleGrid1}, string?)`,
-      `grid.every?(${exampleGrid2}, string?)`,
-      `grid.every?(${exampleGrid3}, string?)`,
+      `let g = import("Grid"); g.every?(${exampleGrid1}, string?)`,
+      `let g = import("Grid"); g.every?(${exampleGrid2}, string?)`,
+      `let g = import("Grid"); g.every?(${exampleGrid3}, string?)`,
     ],
   },
-  'grid.some?': {
-    title: 'grid.some?',
+  'Grid.some?': {
+    title: 'Grid.some?',
     category: 'Grid',
     returns: {
       type: 'boolean',
@@ -52,13 +53,16 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Checks if any element in a grid satisfies a predicate. Returns true if the predicate returns true for at least one element in the grid.',
     examples: [
-      `grid.some?(${exampleGrid1}, string?)`,
-      `grid.some?(${exampleGrid2}, string?)`,
-      `grid.some?(${exampleGrid3}, string?)`,
+      `let { some? } = import("Grid");
+some?(${exampleGrid1}, string?)`,
+      `let { some? } = import("Grid");
+some?(${exampleGrid2}, string?)`,
+      `let { some? } = import("Grid");
+some?(${exampleGrid3}, string?)`,
     ],
   },
-  'grid.every-row?': {
-    title: 'grid.every-row?',
+  'Grid.every-row?': {
+    title: 'Grid.every-row?',
     category: 'Grid',
     returns: {
       type: 'boolean',
@@ -71,14 +75,17 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Checks if all rows in a grid satisfy a predicate. Returns true only if the predicate returns true for every row in the grid.',
     examples: [
-      `grid.every-row?(${exampleGrid1}, -> string?($[0]))`,
-      `grid.every-row?(${exampleGrid2}, -> string?($[0]))`,
-      `grid.every-row?(${exampleGrid3}, -> string?($[0]))`,
+      `let { every-row? } = import("Grid");
+every-row?(${exampleGrid1}, -> string?($[0]))`,
+      `let { every-row? } = import("Grid");
+every-row?(${exampleGrid2}, -> string?($[0]))`,
+      `let { every-row? } = import("Grid");
+every-row?(${exampleGrid3}, -> string?($[0]))`,
     ],
   },
 
-  'grid.some-row?': {
-    title: 'grid.some-row?',
+  'Grid.some-row?': {
+    title: 'Grid.some-row?',
     category: 'Grid',
     returns: {
       type: 'boolean',
@@ -91,13 +98,16 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Checks if any row in a grid satisfies a predicate. Returns true if the predicate returns true for at least one row in the grid.',
     examples: [
-      `grid.some-row?(${exampleGrid1}, -> $ contains? "Albert")`,
-      `grid.some-row?(${exampleGrid2}, -> $ contains? "Albert")`,
-      `grid.some-row?(${exampleGrid3}, -> $ contains? "Albert")`,
+      `let { some-row? } = import("Grid");
+some-row?(${exampleGrid1}, -> $ contains? "Albert")`,
+      `let { some-row? } = import("Grid");
+some-row?(${exampleGrid2}, -> $ contains? "Albert")`,
+      `let { some-row? } = import("Grid");
+some-row?(${exampleGrid3}, -> $ contains? "Albert")`,
     ],
   },
-  'grid.every-col?': {
-    title: 'grid.every-col?',
+  'Grid.every-col?': {
+    title: 'Grid.every-col?',
     category: 'Grid',
     returns: {
       type: 'boolean',
@@ -110,13 +120,16 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Checks if all columns in a grid satisfy a predicate. Returns true only if the predicate returns true for every column in the grid.',
     examples: [
-      `grid.every-col?(${exampleGrid1}, -> string?($[0]))`,
-      `grid.every-col?(${exampleGrid2}, -> string?($[0]))`,
-      `grid.every-col?(${exampleGrid3}, -> string?($[0]))`,
+      `let { every-col? } = import("Grid");
+every-col?(${exampleGrid1}, -> string?($[0]))`,
+      `let { every-col? } = import("Grid");
+every-col?(${exampleGrid2}, -> string?($[0]))`,
+      `let { every-col? } = import("Grid");
+every-col?(${exampleGrid3}, -> string?($[0]))`,
     ],
   },
-  'grid.some-col?': {
-    title: 'grid.some-col?',
+  'Grid.some-col?': {
+    title: 'Grid.some-col?',
     category: 'Grid',
     returns: {
       type: 'boolean',
@@ -129,13 +142,16 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Checks if any column in a grid satisfies a predicate. Returns true if the predicate returns true for at least one column in the grid.',
     examples: [
-      `grid.some-col?(${exampleGrid1}, -> $ contains? "Albert")`,
-      `grid.some-col?(${exampleGrid2}, -> $ contains? "Albert")`,
-      `grid.some-col?(${exampleGrid3}, -> $ contains? "Albert")`,
+      `let { some-col? } = import("Grid");
+some-col?(${exampleGrid1}, -> $ contains? "Albert")`,
+      `let { some-col? } = import("Grid");
+some-col?(${exampleGrid2}, -> $ contains? "Albert")`,
+      `let { some-col? } = import("Grid");
+some-col?(${exampleGrid3}, -> $ contains? "Albert")`,
     ],
   },
-  'grid.row': {
-    title: 'grid.row',
+  'Grid.row': {
+    title: 'Grid.row',
     category: 'Grid',
     returns: {
       type: 'any',
@@ -148,13 +164,16 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Returns the row at index $a in the grid $b.',
     examples: [
-      `grid.row(${exampleGrid1}, 0)`,
-      `grid.row(${exampleGrid1}, 1)`,
-      `grid.row(${exampleGrid1}, 2)`,
+      `let { row } = import("Grid");
+row(${exampleGrid1}, 0)`,
+      `let { row } = import("Grid");
+row(${exampleGrid1}, 1)`,
+      `let { row } = import("Grid");
+row(${exampleGrid1}, 2)`,
     ],
   },
-  'grid.col': {
-    title: 'grid.col',
+  'Grid.col': {
+    title: 'Grid.col',
     category: 'Grid',
     returns: {
       type: 'any',
@@ -167,13 +186,16 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Returns the column at index $a in the grid $b.',
     examples: [
-      `grid.col(${exampleGrid1}, 0)`,
-      `grid.col(${exampleGrid1}, 1)`,
-      `grid.col(${exampleGrid1}, 2)`,
+      `let { col } = import("Grid");
+col(${exampleGrid1}, 0)`,
+      `let { col } = import("Grid");
+col(${exampleGrid1}, 1)`,
+      `let { col } = import("Grid");
+col(${exampleGrid1}, 2)`,
     ],
   },
-  'grid.shape': {
-    title: 'grid.shape',
+  'Grid.shape': {
+    title: 'Grid.shape',
     category: 'Grid',
     returns: {
       type: 'vector',
@@ -189,13 +211,16 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Returns the shape of the grid `g` as a `vector` of two numbers, where the first number is the number of rows and the second number is the number of columns.',
     examples: [
-      `grid.shape(${exampleGrid1})`,
-      `grid.shape(${exampleGrid2})`,
-      `grid.shape(${exampleGrid3})`,
+      `let { shape } = import("Grid");
+shape(${exampleGrid1})`,
+      `let { shape } = import("Grid");
+shape(${exampleGrid2})`,
+      `let { shape } = import("Grid");
+shape(${exampleGrid3})`,
     ],
   },
-  'grid.fill': {
-    title: 'grid.fill',
+  'Grid.fill': {
+    title: 'Grid.fill',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -219,12 +244,12 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Creates a grid of the specified size, filled with the specified value.',
     examples: [
-      'let { fill } = import("grid");\nfill(2, 3, 0)',
-      'let { fill } = import("grid");\nfill(2, 3, "x")',
+      'let { fill } = import("Grid");\nfill(2, 3, 0)',
+      'let { fill } = import("Grid");\nfill(2, 3, "x")',
     ],
   },
-  'grid.generate': {
-    title: 'grid.generate',
+  'Grid.generate': {
+    title: 'Grid.generate',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -248,11 +273,11 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Generates a grid of the specified size, where each element is generated by the provided function.',
     examples: [
-      'let { generate } = import("grid");\ngenerate(3, 3, (i, j) -> i + j)',
+      'let { generate } = import("Grid");\ngenerate(3, 3, (i, j) -> i + j)',
     ],
   },
-  'grid.reshape': {
-    title: 'grid.reshape',
+  'Grid.reshape': {
+    title: 'Grid.reshape',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -265,11 +290,12 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Reshapes the grid `a` into a new grid with the specified number of rows `b`. The number of columns is automatically calculated based on the total number of elements in the grid.',
     examples: [
-      `grid.reshape(${exampleGrid2}, 2)`,
+      `let { reshape } = import("Grid");
+reshape(${exampleGrid2}, 2)`,
     ],
   },
-  'grid.transpose': {
-    title: 'grid.transpose',
+  'Grid.transpose': {
+    title: 'Grid.transpose',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -285,14 +311,17 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Transposes the grid `g`, swapping its rows and columns.',
     examples: [
-      `grid.transpose(${exampleGrid1})`,
-      `grid.transpose(${exampleGrid2})`,
-      `grid.transpose(${exampleGrid3})`,
+      `let { transpose } = import("Grid");
+transpose(${exampleGrid1})`,
+      `let { transpose } = import("Grid");
+transpose(${exampleGrid2})`,
+      `let { transpose } = import("Grid");
+transpose(${exampleGrid3})`,
     ],
-    aliases: ['grid.tr'],
+    aliases: ['Grid.tr'],
   },
-  'grid.flip-h': {
-    title: 'grid.flip-h',
+  'Grid.flip-h': {
+    title: 'Grid.flip-h',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -308,13 +337,16 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Flips the grid `g` horizontally.',
     examples: [
-      `grid.flip-h(${exampleGrid1})`,
-      `grid.flip-h(${exampleGrid2})`,
-      `grid.flip-h(${exampleGrid3})`,
+      `let { flip-h } = import("Grid");
+flip-h(${exampleGrid1})`,
+      `let { flip-h } = import("Grid");
+flip-h(${exampleGrid2})`,
+      `let { flip-h } = import("Grid");
+flip-h(${exampleGrid3})`,
     ],
   },
-  'grid.flip-v': {
-    title: 'grid.flip-v',
+  'Grid.flip-v': {
+    title: 'Grid.flip-v',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -330,13 +362,16 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Flips the grid `g` vertically.',
     examples: [
-      `grid.flip-v(${exampleGrid1})`,
-      `grid.flip-v(${exampleGrid2})`,
-      `grid.flip-v(${exampleGrid3})`,
+      `let { flip-v } = import("Grid");
+flip-v(${exampleGrid1})`,
+      `let { flip-v } = import("Grid");
+flip-v(${exampleGrid2})`,
+      `let { flip-v } = import("Grid");
+flip-v(${exampleGrid3})`,
     ],
   },
-  'grid.rotate': {
-    title: 'grid.rotate',
+  'Grid.rotate': {
+    title: 'Grid.rotate',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -349,17 +384,24 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Rotates the grid `g` by the specified angle. The angle is given in terms of 90-degree rotations. Positive values rotate the grid clockwise, while negative values rotate it counterclockwise.',
     examples: [
-      `grid.rotate(${exampleGrid3}, 1)`,
-      `grid.rotate(${exampleGrid3}, 2)`,
-      `grid.rotate(${exampleGrid3}, 3)`,
-      `grid.rotate(${exampleGrid3}, 4)`,
-      `grid.rotate(${exampleGrid3}, -1)`,
-      `grid.rotate(${exampleGrid3}, -2)`,
-      `grid.rotate(${exampleGrid3}, -3)`,
+      `let { rotate } = import("Grid");
+rotate(${exampleGrid3}, 1)`,
+      `let { rotate } = import("Grid");
+rotate(${exampleGrid3}, 2)`,
+      `let { rotate } = import("Grid");
+rotate(${exampleGrid3}, 3)`,
+      `let { rotate } = import("Grid");
+rotate(${exampleGrid3}, 4)`,
+      `let { rotate } = import("Grid");
+rotate(${exampleGrid3}, -1)`,
+      `let { rotate } = import("Grid");
+rotate(${exampleGrid3}, -2)`,
+      `let { rotate } = import("Grid");
+rotate(${exampleGrid3}, -3)`,
     ],
   },
-  'grid.reverse-rows': {
-    title: 'grid.reverse-rows',
+  'Grid.reverse-rows': {
+    title: 'Grid.reverse-rows',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -375,13 +417,16 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Reverses the order of rows in the grid `g`.',
     examples: [
-      `grid.reverse-rows(${exampleGrid1})`,
-      `grid.reverse-rows(${exampleGrid2})`,
-      `grid.reverse-rows(${exampleGrid3})`,
+      `let { reverse-rows } = import("Grid");
+reverse-rows(${exampleGrid1})`,
+      `let { reverse-rows } = import("Grid");
+reverse-rows(${exampleGrid2})`,
+      `let { reverse-rows } = import("Grid");
+reverse-rows(${exampleGrid3})`,
     ],
   },
-  'grid.reverse-cols': {
-    title: 'grid.reverse-cols',
+  'Grid.reverse-cols': {
+    title: 'Grid.reverse-cols',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -397,13 +442,16 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Reverses the order of columns in the grid `g`.',
     examples: [
-      `grid.reverse-cols(${exampleGrid1})`,
-      `grid.reverse-cols(${exampleGrid2})`,
-      `grid.reverse-cols(${exampleGrid3})`,
+      `let { reverse-cols } = import("Grid");
+reverse-cols(${exampleGrid1})`,
+      `let { reverse-cols } = import("Grid");
+reverse-cols(${exampleGrid2})`,
+      `let { reverse-cols } = import("Grid");
+reverse-cols(${exampleGrid3})`,
     ],
   },
-  'grid.slice': {
-    title: 'grid.slice',
+  'Grid.slice': {
+    title: 'Grid.slice',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -427,14 +475,15 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
       { argumentNames: ['g', 'begin', 'stop'] },
     ],
     description: 'Slices the grid `g` from the starting index `begin` to the optional ending index `stop`. The slice is inclusive of the starting index and exclusive of the ending index.',
+    // Use namespace pattern because "slice" shadows a builtin function
     examples: [
-      `grid.slice(${exampleGrid1}, [1, 1], [2, 2])`,
-      `grid.slice(${exampleGrid1}, [1, 1])`,
+      `let g = import("Grid"); g.slice(${exampleGrid1}, [1, 1], [2, 2])`,
+      `let g = import("Grid"); g.slice(${exampleGrid1}, [1, 1])`,
     ],
     noOperatorDocumentation: true,
   },
-  'grid.slice-rows': {
-    title: 'grid.slice-rows',
+  'Grid.slice-rows': {
+    title: 'Grid.slice-rows',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -459,13 +508,15 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Slices rows of the grid `g` from the starting index `begin` to the optional ending index `stop`. The slice is inclusive of the starting index and exclusive of the ending index.',
     examples: [
-      `grid.slice-rows(${exampleGrid1}, 1, 2)`,
-      `grid.slice-rows(${exampleGrid1}, 1)`,
+      `let { slice-rows } = import("Grid");
+slice-rows(${exampleGrid1}, 1, 2)`,
+      `let { slice-rows } = import("Grid");
+slice-rows(${exampleGrid1}, 1)`,
     ],
     noOperatorDocumentation: true,
   },
-  'grid.slice-cols': {
-    title: 'grid.slice-cols',
+  'Grid.slice-cols': {
+    title: 'Grid.slice-cols',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -490,13 +541,15 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Slices columns of the grid `g` from the starting index `begin` to the optional ending index `stop`. The slice is inclusive of the starting index and exclusive of the ending index.',
     examples: [
-      `grid.slice-cols(${exampleGrid1}, 1, 2)`,
-      `grid.slice-cols(${exampleGrid1}, 1)`,
+      `let { slice-cols } = import("Grid");
+slice-cols(${exampleGrid1}, 1, 2)`,
+      `let { slice-cols } = import("Grid");
+slice-cols(${exampleGrid1}, 1)`,
     ],
     noOperatorDocumentation: true,
   },
-  'grid.splice-rows': {
-    title: 'grid.splice-rows',
+  'Grid.splice-rows': {
+    title: 'Grid.splice-rows',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -526,13 +579,15 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Splices rows of the grid `g` starting from the index `begin`. Deletes `deleteCount` rows and inserts the specified `items` at that position.',
     examples: [
-      `grid.splice-rows(${exampleGrid1}, 1, 2)`,
-      `grid.splice-rows(${exampleGrid1}, 1, 1, ["Nazanin", "mother", 40])`,
+      `let { splice-rows } = import("Grid");
+splice-rows(${exampleGrid1}, 1, 2)`,
+      `let { splice-rows } = import("Grid");
+splice-rows(${exampleGrid1}, 1, 1, ["Nazanin", "mother", 40])`,
     ],
     noOperatorDocumentation: true,
   },
-  'grid.splice-cols': {
-    title: 'grid.splice-cols',
+  'Grid.splice-cols': {
+    title: 'Grid.splice-cols',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -562,13 +617,15 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Splices columns of the grid `g` starting from the index `begin`. Deletes `deleteCount` columns and inserts the specified `items` at that position.',
     examples: [
-      `grid.splice-cols(${exampleGrid1}, 1, 2)`,
-      `grid.splice-cols(${exampleGrid1}, 1, 1, ["f", "m", "s"])`,
+      `let { splice-cols } = import("Grid");
+splice-cols(${exampleGrid1}, 1, 2)`,
+      `let { splice-cols } = import("Grid");
+splice-cols(${exampleGrid1}, 1, 1, ["f", "m", "s"])`,
     ],
     noOperatorDocumentation: true,
   },
-  'grid.concat-rows': {
-    title: 'grid.concat-rows',
+  'Grid.concat-rows': {
+    title: 'Grid.concat-rows',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -581,11 +638,12 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Concatenates two grids `a` and `b` by rows. The number of columns in both grids must be the same.',
     examples: [
-      `grid.concat-rows(${exampleGrid2}, ${exampleGrid3})`,
+      `let { concat-rows } = import("Grid");
+concat-rows(${exampleGrid2}, ${exampleGrid3})`,
     ],
   },
-  'grid.concat-cols': {
-    title: 'grid.concat-cols',
+  'Grid.concat-cols': {
+    title: 'Grid.concat-cols',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -598,11 +656,12 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Concatenates two grids `a` and `b` by columns. The number of rows in both grids must be the same.',
     examples: [
-      `grid.concat-cols(${exampleGrid1}, ${exampleGrid2})`,
+      `let { concat-cols } = import("Grid");
+concat-cols(${exampleGrid1}, ${exampleGrid2})`,
     ],
   },
-  'grid.TEMP-map': {
-    title: 'grid.TEMP-map',
+  'Grid.TEMP-map': {
+    title: 'Grid.TEMP-map',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -615,11 +674,12 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Maps a function `a` over each element of the grid `b`, returning a new grid with the results.',
     examples: [
-      `grid.TEMP-map(${exampleGrid1}, str)`,
+      `let { TEMP-map } = import("Grid");
+TEMP-map(${exampleGrid1}, str)`,
     ],
   },
-  'grid.mapi': {
-    title: 'grid.mapi',
+  'Grid.mapi': {
+    title: 'Grid.mapi',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -631,12 +691,13 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
       { argumentNames: ['a', 'b'] },
     ],
     description: 'Maps a function `a` over each element of the grid `b`, passing the row and column index as additional arguments to the function.',
+    // Use namespace pattern because "mapi" shadows a builtin function
     examples: [
-      `grid.mapi(${exampleGrid1}, -> $1 ++ "(" ++ $2 ++ ", " ++ $3 ++ ")")`,
+      `let g = import("Grid"); g.mapi(${exampleGrid1}, -> $1 ++ "(" ++ $2 ++ ", " ++ $3 ++ ")")`,
     ],
   },
-  'grid.TEMP-reduce': {
-    title: 'grid.TEMP-reduce',
+  'Grid.TEMP-reduce': {
+    title: 'Grid.TEMP-reduce',
     category: 'Grid',
     returns: {
       type: 'any',
@@ -660,11 +721,12 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Reduces the grid `a` using the function `b`, returning a single value.',
     examples: [
-      `grid.TEMP-reduce(${exampleGrid1}, ++, "")`,
+      `let { TEMP-reduce } = import("Grid");
+TEMP-reduce(${exampleGrid1}, ++, "")`,
     ],
   },
-  'grid.reducei': {
-    title: 'grid.reducei',
+  'Grid.reducei': {
+    title: 'Grid.reducei',
     category: 'Grid',
     returns: {
       type: 'any',
@@ -687,12 +749,13 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
       { argumentNames: ['g', 'fn', 'initial-value'] },
     ],
     description: 'Reduces the grid `a` using the function `b`, passing the row and column indices as additional arguments to the function.',
+    // Use namespace pattern because "reducei" shadows a builtin function
     examples: [
-      `grid.reducei(${exampleGrid1}, ++, "")`,
+      `let g = import("Grid"); g.reducei(${exampleGrid1}, ++, "")`,
     ],
   },
-  'grid.push-rows': {
-    title: 'grid.push-rows',
+  'Grid.push-rows': {
+    title: 'Grid.push-rows',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -713,12 +776,13 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Pushes the specified rows into the grid `g` and returns the new grid.',
     examples: [
-      `grid.push-rows(${exampleGrid1}, ["Nazanin", "mother", 40])`,
+      `let { push-rows } = import("Grid");
+push-rows(${exampleGrid1}, ["Nazanin", "mother", 40])`,
     ],
     noOperatorDocumentation: true,
   },
-  'grid.unshift-rows': {
-    title: 'grid.unshift-rows',
+  'Grid.unshift-rows': {
+    title: 'Grid.unshift-rows',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -739,12 +803,13 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Unshifts the specified rows into the grid `g` and returns the new grid.',
     examples: [
-      `grid.unshift-rows(${exampleGrid1}, ["Nazanin", "mother", 40])`,
+      `let { unshift-rows } = import("Grid");
+unshift-rows(${exampleGrid1}, ["Nazanin", "mother", 40])`,
     ],
     noOperatorDocumentation: true,
   },
-  'grid.pop-row': {
-    title: 'grid.pop-row',
+  'Grid.pop-row': {
+    title: 'Grid.pop-row',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -760,11 +825,12 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Pops the last row from the grid `g` and returns the new grid.',
     examples: [
-      `grid.pop-row(${exampleGrid1})`,
+      `let { pop-row } = import("Grid");
+pop-row(${exampleGrid1})`,
     ],
   },
-  'grid.shift-row': {
-    title: 'grid.shift-row',
+  'Grid.shift-row': {
+    title: 'Grid.shift-row',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -780,11 +846,12 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Shifts the first row from the grid `g` and returns the new grid.',
     examples: [
-      `grid.shift-row(${exampleGrid1})`,
+      `let { shift-row } = import("Grid");
+shift-row(${exampleGrid1})`,
     ],
   },
-  'grid.push-cols': {
-    title: 'grid.push-cols',
+  'Grid.push-cols': {
+    title: 'Grid.push-cols',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -805,12 +872,13 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Pushes the specified columns into the grid `g` and returns the new grid.',
     examples: [
-      `grid.push-cols(${exampleGrid1}, ["f", "m", "s"])`,
+      `let { push-cols } = import("Grid");
+push-cols(${exampleGrid1}, ["f", "m", "s"])`,
     ],
     noOperatorDocumentation: true,
   },
-  'grid.unshift-cols': {
-    title: 'grid.unshift-cols',
+  'Grid.unshift-cols': {
+    title: 'Grid.unshift-cols',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -831,12 +899,13 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Unshifts the specified columns into the grid `g` and returns the new grid.',
     examples: [
-      `grid.unshift-cols(${exampleGrid1}, ["f", "m", "s"])`,
+      `let { unshift-cols } = import("Grid");
+unshift-cols(${exampleGrid1}, ["f", "m", "s"])`,
     ],
     noOperatorDocumentation: true,
   },
-  'grid.pop-col': {
-    title: 'grid.pop-col',
+  'Grid.pop-col': {
+    title: 'Grid.pop-col',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -852,11 +921,12 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Pops the last column from the grid `g` and returns the new grid.',
     examples: [
-      `grid.pop-col(${exampleGrid1})`,
+      `let { pop-col } = import("Grid");
+pop-col(${exampleGrid1})`,
     ],
   },
-  'grid.shift-col': {
-    title: 'grid.shift-col',
+  'Grid.shift-col': {
+    title: 'Grid.shift-col',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -872,11 +942,12 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Shifts the first column from the grid `g` and returns the new grid.',
     examples: [
-      `grid.shift-col(${exampleGrid1})`,
+      `let { shift-col } = import("Grid");
+shift-col(${exampleGrid1})`,
     ],
   },
-  'grid.from-array': {
-    title: 'grid.from-array',
+  'Grid.from-array': {
+    title: 'Grid.from-array',
     category: 'Grid',
     returns: {
       type: 'grid',
@@ -889,8 +960,8 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Creates a grid from a flat array with specified dimensions. The array is reshaped into the specified number of rows, and the number of columns is automatically calculated based on the total number of elements in the array.',
     examples: [
-      'let { from-array } = import("grid");\nfrom-array([1, 2, 3, 4], 2)',
-      'let { from-array } = import("grid");\nfrom-array([1, 2, 3, 4], 4)',
+      'let { from-array } = import("Grid");\nfrom-array([1, 2, 3, 4], 2)',
+      'let { from-array } = import("Grid");\nfrom-array([1, 2, 3, 4], 4)',
     ],
   },
 }

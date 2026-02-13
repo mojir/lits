@@ -2,8 +2,8 @@ import { getOperatorArgs } from '../../api'
 import type { VectorReductionReference } from '.'
 
 export const maxReference: VectorReductionReference<'TEMP-max', 'max'> = {
-  'vec.TEMP-max': {
-    title: 'vec.TEMP-max',
+  'Vector.TEMP-max': {
+    title: 'Vector.TEMP-max',
     category: 'Vector',
     description: 'Returns the `maximum` of all elements in the `vector`.',
     returns: {
@@ -19,12 +19,12 @@ export const maxReference: VectorReductionReference<'TEMP-max', 'max'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let { TEMP-max } = import("vec");\nTEMP-max([1, 2, 3])',
-      'let { TEMP-max } = import("vec");\nTEMP-max([1, 2, -3])',
+      'let { TEMP-max } = import("Vector");\nTEMP-max([1, 2, 3])',
+      'let { TEMP-max } = import("Vector");\nTEMP-max([1, 2, -3])',
     ],
   },
-  'vec.moving-max': {
-    title: 'vec.moving-max',
+  'Vector.moving-max': {
+    title: 'Vector.moving-max',
     category: 'Vector',
     description: 'Returns the **moving maximum** of the `vector` with a given window size.',
     returns: {
@@ -45,12 +45,12 @@ export const maxReference: VectorReductionReference<'TEMP-max', 'max'> = {
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'let { moving-max } = import("vec");\nmoving-max([1, 2, 3, 4, 5], 3)',
-      'let { moving-max } = import("vec");\nmoving-max([1, 2, 3, 4, 5], 5)',
+      'let { moving-max } = import("Vector");\nmoving-max([1, 2, 3, 4, 5], 3)',
+      'let { moving-max } = import("Vector");\nmoving-max([1, 2, 3, 4, 5], 5)',
     ],
   },
-  'vec.centered-moving-max': {
-    title: 'vec.centered-moving-max',
+  'Vector.centered-moving-max': {
+    title: 'Vector.centered-moving-max',
     category: 'Vector',
     description: 'Returns the **centered moving maximum** of the `vector` with a given window size.',
     returns: {
@@ -81,13 +81,13 @@ export const maxReference: VectorReductionReference<'TEMP-max', 'max'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'let { centered-moving-max } = import("vec");\ncentered-moving-max([1, 2, 3, 4, 5], 3)',
-      'let { centered-moving-max } = import("vec");\ncentered-moving-max([1, 2, 3, 4, 5], 3, 0, 100)',
-      'let { centered-moving-max } = import("vec");\ncentered-moving-max([1, 2, 3, 4, 5], 3, 0)',
+      'let { centered-moving-max } = import("Vector");\ncentered-moving-max([1, 2, 3, 4, 5], 3)',
+      'let { centered-moving-max } = import("Vector");\ncentered-moving-max([1, 2, 3, 4, 5], 3, 0, 100)',
+      'let { centered-moving-max } = import("Vector");\ncentered-moving-max([1, 2, 3, 4, 5], 3, 0)',
     ],
   },
-  'vec.running-max': {
-    title: 'vec.running-max',
+  'Vector.running-max': {
+    title: 'Vector.running-max',
     category: 'Vector',
     description: 'Returns the **running maximum** of the `vector`.',
     returns: {
@@ -103,8 +103,8 @@ export const maxReference: VectorReductionReference<'TEMP-max', 'max'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let { running-max } = import("vec");\nrunning-max([1, 2, 3])',
-      'let { running-max } = import("vec");\nrunning-max([1, -2, -3])',
+      'let { running-max } = import("Vector");\nrunning-max([1, 2, 3])',
+      'let { running-max } = import("Vector");\nrunning-max([1, -2, -3])',
     ],
   },
 }

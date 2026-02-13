@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const deficientReference: NumberTheorySequenceReference<'deficient'> = {
-  'TEMP-nth.deficient-seq': {
-    title: 'TEMP-nth.deficient-seq',
+  'Number-Theory.deficient-seq': {
+    title: 'Number-Theory.deficient-seq',
     category: 'Number Theory',
     description: 'Generates the deficient numbers up to a specified length.',
     returns: {
@@ -19,12 +19,12 @@ export const deficientReference: NumberTheorySequenceReference<'deficient'> = {
       { argumentNames: ['length'] },
     ],
     examples: [
-      'let { deficient-seq } = import("TEMP-nth");\ndeficient-seq(1)',
-      'let { deficient-seq } = import("TEMP-nth");\ndeficient-seq(5)',
+      'let { deficient-seq } = import("Number-Theory");\ndeficient-seq(1)',
+      'let { deficient-seq } = import("Number-Theory");\ndeficient-seq(5)',
     ],
   },
-  'TEMP-nth.deficient-take-while': {
-    title: 'TEMP-nth.deficient-take-while',
+  'Number-Theory.deficient-take-while': {
+    title: 'Number-Theory.deficient-take-while',
     category: 'Number Theory',
     description: 'Generates the deficient numbers while a condition is met.',
     returns: {
@@ -41,11 +41,11 @@ export const deficientReference: NumberTheorySequenceReference<'deficient'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let { deficient-take-while } = import("TEMP-nth");\ndeficient-take-while(-> $ < 100)',
+      'let { deficient-take-while } = import("Number-Theory");\ndeficient-take-while(-> $ < 100)',
     ],
   },
-  'TEMP-nth.deficient-nth': {
-    title: 'TEMP-nth.deficient-nth',
+  'Number-Theory.deficient-nth': {
+    title: 'Number-Theory.deficient-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the deficient numbers.',
     returns: {
@@ -61,12 +61,12 @@ export const deficientReference: NumberTheorySequenceReference<'deficient'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let { deficient-nth } = import("TEMP-nth");\ndeficient-nth(5)',
-      'let { deficient-nth } = import("TEMP-nth");\ndeficient-nth(12)',
+      'let { deficient-nth } = import("Number-Theory");\ndeficient-nth(5)',
+      'let { deficient-nth } = import("Number-Theory");\ndeficient-nth(12)',
     ],
   },
-  'TEMP-nth.deficient?': {
-    title: 'TEMP-nth.deficient?',
+  'Number-Theory.deficient?': {
+    title: 'Number-Theory.deficient?',
     category: 'Number Theory',
     description: 'Checks if a number is deficient.',
     returns: {
@@ -82,8 +82,8 @@ export const deficientReference: NumberTheorySequenceReference<'deficient'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let { deficient? } = import("TEMP-nth");\ndeficient?(12)',
-      'let { deficient? } = import("TEMP-nth");\ndeficient?(15)',
+      'let { deficient? } = import("Number-Theory");\ndeficient?(12)',
+      'let { deficient? } = import("Number-Theory");\ndeficient?(15)',
     ],
   },
 }

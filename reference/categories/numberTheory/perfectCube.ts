@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const perfectCubeReference: NumberTheorySequenceReference<'perfect-cube'> = {
-  'TEMP-nth.perfect-cube-seq': {
-    title: 'TEMP-nth.perfect-cube-seq',
+  'Number-Theory.perfect-cube-seq': {
+    title: 'Number-Theory.perfect-cube-seq',
     category: 'Number Theory',
     description: 'Generates the perfect cube numbers up to a specified length.',
     returns: {
@@ -19,12 +19,12 @@ export const perfectCubeReference: NumberTheorySequenceReference<'perfect-cube'>
       { argumentNames: ['length'] },
     ],
     examples: [
-      'let { perfect-cube-seq } = import("TEMP-nth");\nperfect-cube-seq(5)',
-      'let { perfect-cube-seq } = import("TEMP-nth");\nperfect-cube-seq(20)',
+      'let { perfect-cube-seq } = import("Number-Theory");\nperfect-cube-seq(5)',
+      'let { perfect-cube-seq } = import("Number-Theory");\nperfect-cube-seq(20)',
     ],
   },
-  'TEMP-nth.perfect-cube-take-while': {
-    title: 'TEMP-nth.perfect-cube-take-while',
+  'Number-Theory.perfect-cube-take-while': {
+    title: 'Number-Theory.perfect-cube-take-while',
     category: 'Number Theory',
     description: 'Generates the perfect cube numbers while a condition is met.',
     returns: {
@@ -41,11 +41,11 @@ export const perfectCubeReference: NumberTheorySequenceReference<'perfect-cube'>
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let { perfect-cube-take-while } = import("TEMP-nth");\nperfect-cube-take-while(-> $ <= 100)',
+      'let { perfect-cube-take-while } = import("Number-Theory");\nperfect-cube-take-while(-> $ <= 100)',
     ],
   },
-  'TEMP-nth.perfect-cube-nth': {
-    title: 'TEMP-nth.perfect-cube-nth',
+  'Number-Theory.perfect-cube-nth': {
+    title: 'Number-Theory.perfect-cube-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the perfect cube numbers.',
     returns: {
@@ -61,12 +61,12 @@ export const perfectCubeReference: NumberTheorySequenceReference<'perfect-cube'>
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let { perfect-cube-nth } = import("TEMP-nth");\nperfect-cube-nth(1)',
-      'let { perfect-cube-nth } = import("TEMP-nth");\nperfect-cube-nth(5)',
+      'let { perfect-cube-nth } = import("Number-Theory");\nperfect-cube-nth(1)',
+      'let { perfect-cube-nth } = import("Number-Theory");\nperfect-cube-nth(5)',
     ],
   },
-  'TEMP-nth.perfect-cube?': {
-    title: 'TEMP-nth.perfect-cube?',
+  'Number-Theory.perfect-cube?': {
+    title: 'Number-Theory.perfect-cube?',
     category: 'Number Theory',
     description: 'Checks if a number is in the perfect cube numbers.',
     returns: {
@@ -82,9 +82,9 @@ export const perfectCubeReference: NumberTheorySequenceReference<'perfect-cube'>
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let { perfect-cube? } = import("TEMP-nth");\nperfect-cube?(7)',
-      'let { perfect-cube? } = import("TEMP-nth");\nperfect-cube?(8)',
-      'let { perfect-cube? } = import("TEMP-nth");\nperfect-cube?(9)',
+      'let { perfect-cube? } = import("Number-Theory");\nperfect-cube?(7)',
+      'let { perfect-cube? } = import("Number-Theory");\nperfect-cube?(8)',
+      'let { perfect-cube? } = import("Number-Theory");\nperfect-cube?(9)',
     ],
   },
 }

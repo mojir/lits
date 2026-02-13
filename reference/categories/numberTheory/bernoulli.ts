@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
-export const bernoulliReference: Omit<NumberTheorySequenceReference<'bernoulli'>, 'TEMP-nth.bernoulli?'> = {
-  'TEMP-nth.bernoulli-seq': {
-    title: 'TEMP-nth.bernoulli-seq',
+export const bernoulliReference: Omit<NumberTheorySequenceReference<'bernoulli'>, 'Number-Theory.bernoulli?'> = {
+  'Number-Theory.bernoulli-seq': {
+    title: 'Number-Theory.bernoulli-seq',
     category: 'Number Theory',
     description: 'Generates the Bernoulli sequence up to a specified length.',
     returns: {
@@ -19,12 +19,12 @@ export const bernoulliReference: Omit<NumberTheorySequenceReference<'bernoulli'>
       { argumentNames: ['length'] },
     ],
     examples: [
-      'let { bernoulli-seq } = import("TEMP-nth");\nbernoulli-seq(5)',
-      'let { bernoulli-seq } = import("TEMP-nth");\nbernoulli-seq(10)',
+      'let { bernoulli-seq } = import("Number-Theory");\nbernoulli-seq(5)',
+      'let { bernoulli-seq } = import("Number-Theory");\nbernoulli-seq(10)',
     ],
   },
-  'TEMP-nth.bernoulli-take-while': {
-    title: 'TEMP-nth.bernoulli-take-while',
+  'Number-Theory.bernoulli-take-while': {
+    title: 'Number-Theory.bernoulli-take-while',
     category: 'Number Theory',
     description: 'Generates the Bernoulli sequence while a condition is met.',
     returns: {
@@ -41,11 +41,11 @@ export const bernoulliReference: Omit<NumberTheorySequenceReference<'bernoulli'>
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let { bernoulli-take-while } = import("TEMP-nth");\nbernoulli-take-while(-> abs($) < 100)',
+      'let { bernoulli-take-while } = import("Number-Theory");\nbernoulli-take-while(-> abs($) < 100)',
     ],
   },
-  'TEMP-nth.bernoulli-nth': {
-    title: 'TEMP-nth.bernoulli-nth',
+  'Number-Theory.bernoulli-nth': {
+    title: 'Number-Theory.bernoulli-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Bernoulli sequence.',
     returns: {
@@ -61,9 +61,9 @@ export const bernoulliReference: Omit<NumberTheorySequenceReference<'bernoulli'>
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let { bernoulli-nth } = import("TEMP-nth");\nbernoulli-nth(5)',
-      'let { bernoulli-nth } = import("TEMP-nth");\nbernoulli-nth(10)',
-      'let { bernoulli-nth } = import("TEMP-nth");\nbernoulli-nth(23)',
+      'let { bernoulli-nth } = import("Number-Theory");\nbernoulli-nth(5)',
+      'let { bernoulli-nth } = import("Number-Theory");\nbernoulli-nth(10)',
+      'let { bernoulli-nth } = import("Number-Theory");\nbernoulli-nth(23)',
     ],
   },
 }

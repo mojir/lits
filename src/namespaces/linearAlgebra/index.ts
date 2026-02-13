@@ -732,6 +732,6 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
 }
 
 export const linearAlgebraNamespace: LitsNamespace = {
-  name: 'lin',
+  name: 'Linear-Algebra',
   functions: linearAlgebraNormalExpression,
 }

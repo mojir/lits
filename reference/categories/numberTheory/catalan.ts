@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const catalanReference: NumberTheorySequenceReference<'catalan'> = {
-  'TEMP-nth.catalan-seq': {
-    title: 'TEMP-nth.catalan-seq',
+  'Number-Theory.catalan-seq': {
+    title: 'Number-Theory.catalan-seq',
     category: 'Number Theory',
     description: 'Generates the Catalan sequence up to a specified length.',
     returns: {
@@ -21,13 +21,13 @@ export const catalanReference: NumberTheorySequenceReference<'catalan'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'let { catalan-seq } = import("TEMP-nth");\ncatalan-seq(5)',
-      'let { catalan-seq } = import("TEMP-nth");\ncatalan-seq(10)',
-      'let { catalan-seq } = import("TEMP-nth");\ncatalan-seq()',
+      'let { catalan-seq } = import("Number-Theory");\ncatalan-seq(5)',
+      'let { catalan-seq } = import("Number-Theory");\ncatalan-seq(10)',
+      'let { catalan-seq } = import("Number-Theory");\ncatalan-seq()',
     ],
   },
-  'TEMP-nth.catalan-take-while': {
-    title: 'TEMP-nth.catalan-take-while',
+  'Number-Theory.catalan-take-while': {
+    title: 'Number-Theory.catalan-take-while',
     category: 'Number Theory',
     description: 'Generates the Catalan sequence while a condition is met.',
     returns: {
@@ -44,11 +44,11 @@ export const catalanReference: NumberTheorySequenceReference<'catalan'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let { catalan-take-while } = import("TEMP-nth");\ncatalan-take-while(-> $ < 1000)',
+      'let { catalan-take-while } = import("Number-Theory");\ncatalan-take-while(-> $ < 1000)',
     ],
   },
-  'TEMP-nth.catalan-nth': {
-    title: 'TEMP-nth.catalan-nth',
+  'Number-Theory.catalan-nth': {
+    title: 'Number-Theory.catalan-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the Catalan sequence.',
     returns: {
@@ -64,12 +64,12 @@ export const catalanReference: NumberTheorySequenceReference<'catalan'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let { catalan-nth } = import("TEMP-nth");\ncatalan-nth(5)',
-      'let { catalan-nth } = import("TEMP-nth");\ncatalan-nth(10)',
+      'let { catalan-nth } = import("Number-Theory");\ncatalan-nth(5)',
+      'let { catalan-nth } = import("Number-Theory");\ncatalan-nth(10)',
     ],
   },
-  'TEMP-nth.catalan?': {
-    title: 'TEMP-nth.catalan?',
+  'Number-Theory.catalan?': {
+    title: 'Number-Theory.catalan?',
     category: 'Number Theory',
     description: 'Determines if a number is in the Catalan sequence.',
     returns: {
@@ -85,8 +85,8 @@ export const catalanReference: NumberTheorySequenceReference<'catalan'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let { catalan? } = import("TEMP-nth");\ncatalan?(5)',
-      'let { catalan? } = import("TEMP-nth");\ncatalan?(10)',
+      'let { catalan? } = import("Number-Theory");\ncatalan?(5)',
+      'let { catalan? } = import("Number-Theory");\ncatalan?(10)',
     ],
   },
 }

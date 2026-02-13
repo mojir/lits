@@ -80,7 +80,7 @@ export function getSideBar() {
                   .map((obj) => {
                     const linkName = getLinkName(obj)
                     const aliases = isFunctionReference(obj) ? obj.aliases : undefined
-                    // Strip namespace prefix (e.g., "vec." from "vec.sum")
+                    // Strip namespace prefix (e.g., "Vector." from "Vector.sum")
                     const stripPrefix = (n: string) => n.includes('.') ? n.split('.').slice(1).join('.') : n
                     const displayName = stripPrefix(obj.title)
                     const name = `${escape(displayName)}${aliases ? `, ${aliases.map(stripPrefix).join(', ')}` : ''}`

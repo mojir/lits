@@ -2,8 +2,8 @@ import { getOperatorArgs } from '../../api'
 import type { VectorReductionReference } from '.'
 
 export const minReference: VectorReductionReference<'TEMP-min', 'min'> = {
-  'vec.TEMP-min': {
-    title: 'vec.TEMP-min',
+  'Vector.TEMP-min': {
+    title: 'Vector.TEMP-min',
     category: 'Vector',
     description: 'Returns the `minimum` of all elements in the `vector`.',
     returns: {
@@ -19,12 +19,12 @@ export const minReference: VectorReductionReference<'TEMP-min', 'min'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let { TEMP-min } = import("vec");\nTEMP-min([1, 2, 3])',
-      'let { TEMP-min } = import("vec");\nTEMP-min([1, 2, -3])',
+      'let { TEMP-min } = import("Vector");\nTEMP-min([1, 2, 3])',
+      'let { TEMP-min } = import("Vector");\nTEMP-min([1, 2, -3])',
     ],
   },
-  'vec.moving-min': {
-    title: 'vec.moving-min',
+  'Vector.moving-min': {
+    title: 'Vector.moving-min',
     category: 'Vector',
     description: 'Returns the **moving minimum** of the `vector` with a given window size.',
     returns: {
@@ -45,12 +45,12 @@ export const minReference: VectorReductionReference<'TEMP-min', 'min'> = {
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'let { moving-min } = import("vec");\nmoving-min([1, 2, 3, 4, 5], 3)',
-      'let { moving-min } = import("vec");\nmoving-min([1, 2, 3, 4, 5], 5)',
+      'let { moving-min } = import("Vector");\nmoving-min([1, 2, 3, 4, 5], 3)',
+      'let { moving-min } = import("Vector");\nmoving-min([1, 2, 3, 4, 5], 5)',
     ],
   },
-  'vec.centered-moving-min': {
-    title: 'vec.centered-moving-min',
+  'Vector.centered-moving-min': {
+    title: 'Vector.centered-moving-min',
     category: 'Vector',
     description: 'Returns the **centered moving minimum** of the `vector` with a given window size.',
     returns: {
@@ -81,13 +81,13 @@ export const minReference: VectorReductionReference<'TEMP-min', 'min'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'let { centered-moving-min } = import("vec");\ncentered-moving-min([1, 2, 3, 4, 5], 3)',
-      'let { centered-moving-min } = import("vec");\ncentered-moving-min([1, 2, 3, 4, 5], 3, 0, 100)',
-      'let { centered-moving-min } = import("vec");\ncentered-moving-min([1, 2, 3, 4, 5], 3, 0)',
+      'let { centered-moving-min } = import("Vector");\ncentered-moving-min([1, 2, 3, 4, 5], 3)',
+      'let { centered-moving-min } = import("Vector");\ncentered-moving-min([1, 2, 3, 4, 5], 3, 0, 100)',
+      'let { centered-moving-min } = import("Vector");\ncentered-moving-min([1, 2, 3, 4, 5], 3, 0)',
     ],
   },
-  'vec.running-min': {
-    title: 'vec.running-min',
+  'Vector.running-min': {
+    title: 'Vector.running-min',
     category: 'Vector',
     description: 'Returns the **running minimum** of the `vector`.',
     returns: {
@@ -103,8 +103,8 @@ export const minReference: VectorReductionReference<'TEMP-min', 'min'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let { running-min } = import("vec");\nrunning-min([1, 2, 3])',
-      'let { running-min } = import("vec");\nrunning-min([1, -2, -3])',
+      'let { running-min } = import("Vector");\nrunning-min([1, 2, 3])',
+      'let { running-min } = import("Vector");\nrunning-min([1, -2, -3])',
     ],
   },
 }

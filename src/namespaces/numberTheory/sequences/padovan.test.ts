@@ -4,7 +4,7 @@ import { Lits } from '../../../Lits/Lits'
 const lits = new Lits()
 
 function runNth(code: string) {
-  return lits.run(`let nt = import("TEMP-nth"); ${code.replace(/nth:/g, 'nt.')}`)
+  return lits.run(`let nt = import("Number-Theory"); ${code.replace(/nth:/g, 'nt.')}`)
 }
 describe('padovan', () => {
   it('should return the correct sequence', () => {

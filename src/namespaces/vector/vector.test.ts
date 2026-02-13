@@ -6,8 +6,8 @@ const lits = new Lits()
 
 // Helper to run vec namespace functions with the new import syntax
 function runVec(code: string): unknown {
-  // Replace 'vec:functionName(' with 'let v = import("vec"); v.functionName('
-  const modifiedCode = code.replace(/vec:(\S+?)\(/g, 'let v = import("vec"); v.$1(')
+  // Replace 'vec:functionName(' with 'let v = import("Vector"); v.functionName('
+  const modifiedCode = code.replace(/vec:(\S+?)\(/g, 'let v = import("Vector"); v.$1(')
   return lits.run(modifiedCode)
 }
 

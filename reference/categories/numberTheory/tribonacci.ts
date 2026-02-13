@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const tribonacciReference: NumberTheorySequenceReference<'tribonacci'> = {
-  'TEMP-nth.tribonacci-seq': {
-    title: 'TEMP-nth.tribonacci-seq',
+  'Number-Theory.tribonacci-seq': {
+    title: 'Number-Theory.tribonacci-seq',
     category: 'Number Theory',
     description: 'Generates the tribonacci sequence up to a specified length.',
     returns: {
@@ -19,13 +19,13 @@ export const tribonacciReference: NumberTheorySequenceReference<'tribonacci'> = 
       { argumentNames: ['length'] },
     ],
     examples: [
-      'let { tribonacci-seq } = import("TEMP-nth");\ntribonacci-seq(1)',
-      'let { tribonacci-seq } = import("TEMP-nth");\ntribonacci-seq(2)',
-      'let { tribonacci-seq } = import("TEMP-nth");\ntribonacci-seq(10)',
+      'let { tribonacci-seq } = import("Number-Theory");\ntribonacci-seq(1)',
+      'let { tribonacci-seq } = import("Number-Theory");\ntribonacci-seq(2)',
+      'let { tribonacci-seq } = import("Number-Theory");\ntribonacci-seq(10)',
     ],
   },
-  'TEMP-nth.tribonacci-take-while': {
-    title: 'TEMP-nth.tribonacci-take-while',
+  'Number-Theory.tribonacci-take-while': {
+    title: 'Number-Theory.tribonacci-take-while',
     category: 'Number Theory',
     description: 'Generates the tribonacci sequence while a condition is met.',
     returns: {
@@ -42,11 +42,11 @@ export const tribonacciReference: NumberTheorySequenceReference<'tribonacci'> = 
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let { tribonacci-take-while } = import("TEMP-nth");\ntribonacci-take-while(-> $ < 100)',
+      'let { tribonacci-take-while } = import("Number-Theory");\ntribonacci-take-while(-> $ < 100)',
     ],
   },
-  'TEMP-nth.tribonacci-nth': {
-    title: 'TEMP-nth.tribonacci-nth',
+  'Number-Theory.tribonacci-nth': {
+    title: 'Number-Theory.tribonacci-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the tribonacci sequence.',
     returns: {
@@ -62,13 +62,13 @@ export const tribonacciReference: NumberTheorySequenceReference<'tribonacci'> = 
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let { tribonacci-nth } = import("TEMP-nth");\ntribonacci-nth(1)',
-      'let { tribonacci-nth } = import("TEMP-nth");\ntribonacci-nth(2)',
-      'let { tribonacci-nth } = import("TEMP-nth");\ntribonacci-nth(10)',
+      'let { tribonacci-nth } = import("Number-Theory");\ntribonacci-nth(1)',
+      'let { tribonacci-nth } = import("Number-Theory");\ntribonacci-nth(2)',
+      'let { tribonacci-nth } = import("Number-Theory");\ntribonacci-nth(10)',
     ],
   },
-  'TEMP-nth.tribonacci?': {
-    title: 'TEMP-nth.tribonacci?',
+  'Number-Theory.tribonacci?': {
+    title: 'Number-Theory.tribonacci?',
     category: 'Number Theory',
     description: 'Determines if a number is in the tribonacci sequence.',
     returns: {
@@ -84,17 +84,17 @@ export const tribonacciReference: NumberTheorySequenceReference<'tribonacci'> = 
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let { tribonacci? } = import("TEMP-nth");\ntribonacci?(0)',
-      'let { tribonacci? } = import("TEMP-nth");\ntribonacci?(1)',
-      'let { tribonacci? } = import("TEMP-nth");\ntribonacci?(2)',
-      'let { tribonacci? } = import("TEMP-nth");\ntribonacci?(3)',
-      'let { tribonacci? } = import("TEMP-nth");\ntribonacci?(4)',
-      'let { tribonacci? } = import("TEMP-nth");\ntribonacci?(5)',
-      'let { tribonacci? } = import("TEMP-nth");\ntribonacci?(6)',
-      'let { tribonacci? } = import("TEMP-nth");\ntribonacci?(7)',
-      'let { tribonacci? } = import("TEMP-nth");\ntribonacci?(8)',
-      'let { tribonacci? } = import("TEMP-nth");\ntribonacci?(9)',
-      'let { tribonacci? } = import("TEMP-nth");\ntribonacci?(10)',
+      'let { tribonacci? } = import("Number-Theory");\ntribonacci?(0)',
+      'let { tribonacci? } = import("Number-Theory");\ntribonacci?(1)',
+      'let { tribonacci? } = import("Number-Theory");\ntribonacci?(2)',
+      'let { tribonacci? } = import("Number-Theory");\ntribonacci?(3)',
+      'let { tribonacci? } = import("Number-Theory");\ntribonacci?(4)',
+      'let { tribonacci? } = import("Number-Theory");\ntribonacci?(5)',
+      'let { tribonacci? } = import("Number-Theory");\ntribonacci?(6)',
+      'let { tribonacci? } = import("Number-Theory");\ntribonacci?(7)',
+      'let { tribonacci? } = import("Number-Theory");\ntribonacci?(8)',
+      'let { tribonacci? } = import("Number-Theory");\ntribonacci?(9)',
+      'let { tribonacci? } = import("Number-Theory");\ntribonacci?(10)',
     ],
   },
 }

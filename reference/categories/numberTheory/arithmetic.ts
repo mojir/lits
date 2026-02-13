@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const arithmeticReference: NumberTheorySequenceReference<'arithmetic'> = {
-  'TEMP-nth.arithmetic-seq': {
-    title: 'TEMP-nth.arithmetic-seq',
+  'Number-Theory.arithmetic-seq': {
+    title: 'Number-Theory.arithmetic-seq',
     category: 'Number Theory',
     description: 'Generates the arithmetic sequence for a given $start, $step, and $length.',
     returns: {
@@ -27,14 +27,14 @@ export const arithmeticReference: NumberTheorySequenceReference<'arithmetic'> = 
       { argumentNames: ['start', 'step', 'length'] },
     ],
     examples: [
-      'let { arithmetic-seq } = import("TEMP-nth");\narithmetic-seq(3, 2, 2)',
-      'let { arithmetic-seq } = import("TEMP-nth");\narithmetic-seq(2, 3, 2)',
-      'let { arithmetic-seq } = import("TEMP-nth");\narithmetic-seq(1, 2, 2)',
-      'let { arithmetic-seq } = import("TEMP-nth");\narithmetic-seq(1, 1.5, 12)',
+      'let { arithmetic-seq } = import("Number-Theory");\narithmetic-seq(3, 2, 2)',
+      'let { arithmetic-seq } = import("Number-Theory");\narithmetic-seq(2, 3, 2)',
+      'let { arithmetic-seq } = import("Number-Theory");\narithmetic-seq(1, 2, 2)',
+      'let { arithmetic-seq } = import("Number-Theory");\narithmetic-seq(1, 1.5, 12)',
     ],
   },
-  'TEMP-nth.arithmetic-take-while': {
-    title: 'TEMP-nth.arithmetic-take-while',
+  'Number-Theory.arithmetic-take-while': {
+    title: 'Number-Theory.arithmetic-take-while',
     category: 'Number Theory',
     description: 'Generates the arithmetic sequence while a condition is met.',
     returns: {
@@ -59,11 +59,11 @@ export const arithmeticReference: NumberTheorySequenceReference<'arithmetic'> = 
       { argumentNames: ['start', 'step', 'takeWhile'] },
     ],
     examples: [
-      'let { arithmetic-take-while } = import("TEMP-nth");\narithmetic-take-while(1, 0.25, -> $ < 3)',
+      'let { arithmetic-take-while } = import("Number-Theory");\narithmetic-take-while(1, 0.25, -> $ < 3)',
     ],
   },
-  'TEMP-nth.arithmetic-nth': {
-    title: 'TEMP-nth.arithmetic-nth',
+  'Number-Theory.arithmetic-nth': {
+    title: 'Number-Theory.arithmetic-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the arithmetic sequence.',
     returns: {
@@ -87,14 +87,14 @@ export const arithmeticReference: NumberTheorySequenceReference<'arithmetic'> = 
       { argumentNames: ['start', 'step', 'n'] },
     ],
     examples: [
-      'let { arithmetic-nth } = import("TEMP-nth");\narithmetic-nth(3, 2, 2)',
-      'let { arithmetic-nth } = import("TEMP-nth");\narithmetic-nth(2, 3, 2)',
-      'let { arithmetic-nth } = import("TEMP-nth");\narithmetic-nth(1, 2, 2)',
-      'let { arithmetic-nth } = import("TEMP-nth");\narithmetic-nth(1, 1.5, 12)',
+      'let { arithmetic-nth } = import("Number-Theory");\narithmetic-nth(3, 2, 2)',
+      'let { arithmetic-nth } = import("Number-Theory");\narithmetic-nth(2, 3, 2)',
+      'let { arithmetic-nth } = import("Number-Theory");\narithmetic-nth(1, 2, 2)',
+      'let { arithmetic-nth } = import("Number-Theory");\narithmetic-nth(1, 1.5, 12)',
     ],
   },
-  'TEMP-nth.arithmetic?': {
-    title: 'TEMP-nth.arithmetic?',
+  'Number-Theory.arithmetic?': {
+    title: 'Number-Theory.arithmetic?',
     category: 'Number Theory',
     description: 'Checks if a number is part of the arithmetic sequence.',
     returns: {
@@ -118,10 +118,10 @@ export const arithmeticReference: NumberTheorySequenceReference<'arithmetic'> = 
       { argumentNames: ['start', 'step', 'n'] },
     ],
     examples: [
-      'let { arithmetic? } = import("TEMP-nth");\narithmetic?(3, 2, 2)',
-      'let { arithmetic? } = import("TEMP-nth");\narithmetic?(2, 3, 2)',
-      'let { arithmetic? } = import("TEMP-nth");\narithmetic?(1, 2, 2)',
-      'let { arithmetic? } = import("TEMP-nth");\narithmetic?(1, 1.5, 12)',
+      'let { arithmetic? } = import("Number-Theory");\narithmetic?(3, 2, 2)',
+      'let { arithmetic? } = import("Number-Theory");\narithmetic?(2, 3, 2)',
+      'let { arithmetic? } = import("Number-Theory");\narithmetic?(1, 2, 2)',
+      'let { arithmetic? } = import("Number-Theory");\narithmetic?(1, 1.5, 12)',
     ],
   },
 }

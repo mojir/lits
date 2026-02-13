@@ -5,7 +5,7 @@ import { LitsError } from '../../errors'
 const lits = new Lits()
 
 function runMat(code: string) {
-  return lits.run(`let mat = import("mat"); ${code.replace(/mat:/g, 'mat.')}`)
+  return lits.run(`let mat = import("Matrix"); ${code.replace(/mat:/g, 'mat.')}`)
 }
 
 describe('matrix', () => {

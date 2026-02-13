@@ -2,8 +2,8 @@ import type { FunctionReference } from '..'
 import type { RandomApiName } from '../api'
 
 export const randomReference: Record<RandomApiName, FunctionReference<'Random'>> = {
-  '!:random': {
-    title: '!:random',
+  'Random.random!': {
+    title: 'Random.random!',
     category: 'Random',
     returns: {
       type: 'number',
@@ -14,11 +14,11 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
     ],
     description: 'Returns a random number between 0 and 1.',
     examples: [
-      '!:random()',
+      'let { random! } = import("Random"); random!()',
     ],
   },
-  '!:random-int': {
-    title: '!:random-int',
+  'Random.random-int!': {
+    title: 'Random.random-int!',
     category: 'Random',
     returns: {
       type: 'integer',
@@ -38,12 +38,12 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
     ],
     description: 'Returns a random integer between min and max (exclusive).',
     examples: [
-      '!:random-int(0, 10)',
-      '!:random-int(1, 100)',
+      'let { random-int! } = import("Random"); random-int!(0, 10)',
+      'let { random-int! } = import("Random"); random-int!(1, 100)',
     ],
   },
-  '!:random-int-inclusive': {
-    title: '!:random-int-inclusive',
+  'Random.random-int-inclusive!': {
+    title: 'Random.random-int-inclusive!',
     category: 'Random',
     returns: {
       type: 'integer',
@@ -63,11 +63,11 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
     ],
     description: 'Returns a random integer between min and max (inclusive).',
     examples: [
-      '!:random-int-inclusive(0, 10)',
+      'let { random-int-inclusive! } = import("Random"); random-int-inclusive!(0, 10)',
     ],
   },
-  '!:random-float': {
-    title: '!:random-float',
+  'Random.random-float!': {
+    title: 'Random.random-float!',
     category: 'Random',
     returns: {
       type: 'number',
@@ -87,12 +87,12 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
     ],
     description: 'Returns a random float between min and max.',
     examples: [
-      '!:random-float(0, 10)',
-      '!:random-float(1, 100)',
+      'let { random-float! } = import("Random"); random-float!(0, 10)',
+      'let { random-float! } = import("Random"); random-float!(1, 100)',
     ],
   },
-  '!:random-boolean': {
-    title: '!:random-boolean',
+  'Random.random-boolean!': {
+    title: 'Random.random-boolean!',
     category: 'Random',
     returns: {
       type: 'boolean',
@@ -108,12 +108,12 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
     ],
     description: 'Returns a random boolean.',
     examples: [
-      '!:random-boolean()',
-      '!:random-boolean(0.99)',
+      'let { random-boolean! } = import("Random"); random-boolean!()',
+      'let { random-boolean! } = import("Random"); random-boolean!(0.99)',
     ],
   },
-  '!:random-item': {
-    title: '!:random-item',
+  'Random.random-item!': {
+    title: 'Random.random-item!',
     category: 'Random',
     returns: {
       type: 'any',
@@ -129,12 +129,12 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
     ],
     description: 'Returns a random item from the array.',
     examples: [
-      '!:random-item([1, 2, 3, 4, 5])',
-      '!:random-item(["apple", "banana", "cherry"])',
+      'let { random-item! } = import("Random"); random-item!([1, 2, 3, 4, 5])',
+      'let { random-item! } = import("Random"); random-item!(["apple", "banana", "cherry"])',
     ],
   },
-  '!:random-sample-unique': {
-    title: '!:random-sample-unique',
+  'Random.random-sample-unique!': {
+    title: 'Random.random-sample-unique!',
     category: 'Random',
     returns: {
       type: 'array',
@@ -154,12 +154,12 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
     ],
     description: 'Returns a random sample of n unique items from the array.',
     examples: [
-      '!:random-sample-unique([1, 2, 3, 4, 5], 3)',
-      '!:random-sample-unique(["apple", "banana", "cherry"], 2)',
+      'let { random-sample-unique! } = import("Random"); random-sample-unique!([1, 2, 3, 4, 5], 3)',
+      'let { random-sample-unique! } = import("Random"); random-sample-unique!(["apple", "banana", "cherry"], 2)',
     ],
   },
-  '!:random-sample': {
-    title: '!:random-sample',
+  'Random.random-sample!': {
+    title: 'Random.random-sample!',
     category: 'Random',
     returns: {
       type: 'array',
@@ -179,12 +179,12 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
     ],
     description: 'Returns a random sample of n items from the array.',
     examples: [
-      '!:random-sample([1, 2, 3, 4, 5], 3)',
-      '!:random-sample(["apple", "banana", "cherry"], 10)',
+      'let { random-sample! } = import("Random"); random-sample!([1, 2, 3, 4, 5], 3)',
+      'let { random-sample! } = import("Random"); random-sample!(["apple", "banana", "cherry"], 10)',
     ],
   },
-  '!:shuffle': {
-    title: '!:shuffle',
+  'Random.shuffle!': {
+    title: 'Random.shuffle!',
     category: 'Random',
     returns: {
       type: 'array',
@@ -200,12 +200,12 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
     ],
     description: 'Returns a shuffled version of the array.',
     examples: [
-      '!:shuffle([1, 2, 3, 4, 5])',
-      '!:shuffle(["apple", "banana", "cherry"])',
+      'let { shuffle! } = import("Random"); shuffle!([1, 2, 3, 4, 5])',
+      'let { shuffle! } = import("Random"); shuffle!(["apple", "banana", "cherry"])',
     ],
   },
-  '!:random-normal': {
-    title: '!:random-normal',
+  'Random.random-normal!': {
+    title: 'Random.random-normal!',
     category: 'Random',
     returns: {
       type: 'number',
@@ -225,13 +225,13 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
     ],
     description: 'Returns a random number from a normal distribution with the given mean and standard deviation.',
     examples: [
-      '!:random-normal(0, 1)',
-      '!:random-normal(5, 2)',
+      'let { random-normal! } = import("Random"); random-normal!(0, 1)',
+      'let { random-normal! } = import("Random"); random-normal!(5, 2)',
     ],
     noOperatorDocumentation: true,
   },
-  '!:random-exponential': {
-    title: '!:random-exponential',
+  'Random.random-exponential!': {
+    title: 'Random.random-exponential!',
     category: 'Random',
     returns: {
       type: 'number',
@@ -247,12 +247,12 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
     ],
     description: 'Returns a random number from an exponential distribution with the given rate parameter.',
     examples: [
-      '!:random-exponential(1)',
-      '!:random-exponential(0.5)',
+      'let { random-exponential! } = import("Random"); random-exponential!(1)',
+      'let { random-exponential! } = import("Random"); random-exponential!(0.5)',
     ],
   },
-  '!:random-binomial': {
-    title: '!:random-binomial',
+  'Random.random-binomial!': {
+    title: 'Random.random-binomial!',
     category: 'Random',
     returns: {
       type: 'integer',
@@ -272,13 +272,13 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
     ],
     description: 'Returns a random number from a binomial distribution with the given number of trials and probability of success.',
     examples: [
-      '!:random-binomial(10, 0.5)',
-      '!:random-binomial(20, 0.3)',
+      'let { random-binomial! } = import("Random"); random-binomial!(10, 0.5)',
+      'let { random-binomial! } = import("Random"); random-binomial!(20, 0.3)',
     ],
     noOperatorDocumentation: true,
   },
-  '!:random-poisson': {
-    title: '!:random-poisson',
+  'Random.random-poisson!': {
+    title: 'Random.random-poisson!',
     category: 'Random',
     returns: {
       type: 'integer',
@@ -294,12 +294,12 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
     ],
     description: 'Returns a random number from a Poisson distribution with the given rate parameter.',
     examples: [
-      '!:random-poisson(1)',
-      '!:random-poisson(5)',
+      'let { random-poisson! } = import("Random"); random-poisson!(1)',
+      'let { random-poisson! } = import("Random"); random-poisson!(5)',
     ],
   },
-  '!:random-gamma': {
-    title: '!:random-gamma',
+  'Random.random-gamma!': {
+    title: 'Random.random-gamma!',
     category: 'Random',
     returns: {
       type: 'number',
@@ -319,13 +319,13 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
     ],
     description: 'Returns a random number from a gamma distribution with the given shape and scale parameters.',
     examples: [
-      '!:random-gamma(2, 2)',
-      '!:random-gamma(5, 1)',
+      'let { random-gamma! } = import("Random"); random-gamma!(2, 2)',
+      'let { random-gamma! } = import("Random"); random-gamma!(5, 1)',
     ],
     noOperatorDocumentation: true,
   },
-  '!:random-pareto': {
-    title: '!:random-pareto',
+  'Random.random-pareto!': {
+    title: 'Random.random-pareto!',
     category: 'Random',
     returns: {
       type: 'number',
@@ -341,12 +341,12 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
     ],
     description: 'Returns a random number from a Pareto distribution with the given shape parameter.',
     examples: [
-      '!:random-pareto(1)',
-      '!:random-pareto(2)',
+      'let { random-pareto! } = import("Random"); random-pareto!(1)',
+      'let { random-pareto! } = import("Random"); random-pareto!(2)',
     ],
   },
-  '!:uuid': {
-    title: '!:uuid',
+  'Random.uuid!': {
+    title: 'Random.uuid!',
     category: 'Random',
     returns: {
       type: 'string',
@@ -357,11 +357,11 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
     ],
     description: 'Returns a random UUID v4 (Universally Unique Identifier).',
     examples: [
-      '!:uuid()',
+      'let { uuid! } = import("Random"); uuid!()',
     ],
   },
-  '!:random-char': {
-    title: '!:random-char',
+  'Random.random-char!': {
+    title: 'Random.random-char!',
     category: 'Random',
     returns: {
       type: 'string',
@@ -377,12 +377,12 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
     ],
     description: 'Returns a random character from the given string.',
     examples: [
-      '!:random-char("abcde")',
-      '!:random-char("ABCDEFGHIJKLMNOPQRSTUVWXYZ")',
+      'let { random-char! } = import("Random"); random-char!("abcde")',
+      'let { random-char! } = import("Random"); random-char!("ABCDEFGHIJKLMNOPQRSTUVWXYZ")',
     ],
   },
-  '!:random-string': {
-    title: '!:random-string',
+  'Random.random-string!': {
+    title: 'Random.random-string!',
     category: 'Random',
     returns: {
       type: 'string',
@@ -402,13 +402,13 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
     ],
     description: 'Returns a random string of the given length from the given string.',
     examples: [
-      '!:random-string(10, "abcde")',
-      '!:random-string(5, "ABCDEFGHIJKLMNOPQRSTUVWXYZ")',
+      'let { random-string! } = import("Random"); random-string!(10, "abcde")',
+      'let { random-string! } = import("Random"); random-string!(5, "ABCDEFGHIJKLMNOPQRSTUVWXYZ")',
     ],
     noOperatorDocumentation: true,
   },
-  '!:random-id': {
-    title: '!:random-id',
+  'Random.random-id!': {
+    title: 'Random.random-id!',
     category: 'Random',
     returns: {
       type: 'string',
@@ -424,12 +424,12 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
     ],
     description: 'Returns a random ID of the given length.',
     examples: [
-      '!:random-id(10)',
-      '!:random-id(5)',
+      'let { random-id! } = import("Random"); random-id!(10)',
+      'let { random-id! } = import("Random"); random-id!(5)',
     ],
   },
-  '!:random-color': {
-    title: '!:random-color',
+  'Random.random-color!': {
+    title: 'Random.random-color!',
     category: 'Random',
     returns: {
       type: 'string',
@@ -440,7 +440,7 @@ export const randomReference: Record<RandomApiName, FunctionReference<'Random'>>
     ],
     description: 'Returns a random color in hex format.',
     examples: [
-      '!:random-color()',
+      'let { random-color! } = import("Random"); random-color!()',
     ],
   },
 }

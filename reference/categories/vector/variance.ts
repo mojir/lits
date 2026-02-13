@@ -2,8 +2,8 @@ import { getOperatorArgs } from '../../api'
 import type { VectorReductionReference } from '.'
 
 export const varianceReference: VectorReductionReference<'variance'> = {
-  'vec.variance': {
-    title: 'vec.variance',
+  'Vector.variance': {
+    title: 'Vector.variance',
     category: 'Vector',
     description: 'Returns the `variance` of all elements in the `vector`.',
     returns: {
@@ -19,12 +19,12 @@ export const varianceReference: VectorReductionReference<'variance'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let { variance } = import("vec");\nvariance([1, 2, 3])',
-      'let { variance } = import("vec");\nvariance([1, 2, -3])',
+      'let { variance } = import("Vector");\nvariance([1, 2, 3])',
+      'let { variance } = import("Vector");\nvariance([1, 2, -3])',
     ],
   },
-  'vec.moving-variance': {
-    title: 'vec.moving-variance',
+  'Vector.moving-variance': {
+    title: 'Vector.moving-variance',
     category: 'Vector',
     description: 'Returns the **moving variance** of the `vector` with a given window size.',
     returns: {
@@ -45,12 +45,12 @@ export const varianceReference: VectorReductionReference<'variance'> = {
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'let { moving-variance } = import("vec");\nmoving-variance([1, 2, 3, 4, 5], 3)',
-      'let { moving-variance } = import("vec");\nmoving-variance([1, 2, 3, 4, 5], 5)',
+      'let { moving-variance } = import("Vector");\nmoving-variance([1, 2, 3, 4, 5], 3)',
+      'let { moving-variance } = import("Vector");\nmoving-variance([1, 2, 3, 4, 5], 5)',
     ],
   },
-  'vec.centered-moving-variance': {
-    title: 'vec.centered-moving-variance',
+  'Vector.centered-moving-variance': {
+    title: 'Vector.centered-moving-variance',
     category: 'Vector',
     description: 'Returns the **centered moving variance** of the `vector` with a given window size.',
     returns: {
@@ -81,14 +81,14 @@ export const varianceReference: VectorReductionReference<'variance'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'let { centered-moving-variance } = import("vec");\ncentered-moving-variance([1, 2, 3, 4, 5], 3)',
-      'let { centered-moving-variance } = import("vec");\ncentered-moving-variance([1, 2, 3, 4, 5], 3, 1)',
-      'let { centered-moving-variance } = import("vec");\ncentered-moving-variance([1, 2, 3, 4, 5], 3, 1, 5)',
-      'let { centered-moving-variance } = import("vec");\ncentered-moving-variance([1, 2, 3, 4, 5], 3, 0, 6)',
+      'let { centered-moving-variance } = import("Vector");\ncentered-moving-variance([1, 2, 3, 4, 5], 3)',
+      'let { centered-moving-variance } = import("Vector");\ncentered-moving-variance([1, 2, 3, 4, 5], 3, 1)',
+      'let { centered-moving-variance } = import("Vector");\ncentered-moving-variance([1, 2, 3, 4, 5], 3, 1, 5)',
+      'let { centered-moving-variance } = import("Vector");\ncentered-moving-variance([1, 2, 3, 4, 5], 3, 0, 6)',
     ],
   },
-  'vec.running-variance': {
-    title: 'vec.running-variance',
+  'Vector.running-variance': {
+    title: 'Vector.running-variance',
     category: 'Vector',
     description: 'Returns the **running variance** of the `vector`.',
     returns: {
@@ -104,14 +104,14 @@ export const varianceReference: VectorReductionReference<'variance'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let { running-variance } = import("vec");\nrunning-variance([1, 2, 3, 4, 5])',
+      'let { running-variance } = import("Vector");\nrunning-variance([1, 2, 3, 4, 5])',
     ],
   },
 }
 
 export const sampleVarianceReference: VectorReductionReference<'sample-variance'> = {
-  'vec.sample-variance': {
-    title: 'vec.sample-variance',
+  'Vector.sample-variance': {
+    title: 'Vector.sample-variance',
     category: 'Vector',
     description: 'Returns the `variance` of all elements in the `vector`.',
     returns: {
@@ -127,12 +127,12 @@ export const sampleVarianceReference: VectorReductionReference<'sample-variance'
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let { sample-variance } = import("vec");\nsample-variance([1, 2, 3])',
-      'let { sample-variance } = import("vec");\nsample-variance([1, 2, -3])',
+      'let { sample-variance } = import("Vector");\nsample-variance([1, 2, 3])',
+      'let { sample-variance } = import("Vector");\nsample-variance([1, 2, -3])',
     ],
   },
-  'vec.moving-sample-variance': {
-    title: 'vec.moving-sample-variance',
+  'Vector.moving-sample-variance': {
+    title: 'Vector.moving-sample-variance',
     category: 'Vector',
     description: 'Returns the **moving sample variance** of the `vector` with a given window size.',
     returns: {
@@ -153,12 +153,12 @@ export const sampleVarianceReference: VectorReductionReference<'sample-variance'
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'let { moving-sample-variance } = import("vec");\nmoving-sample-variance([1, 2, 3, 4, 5], 3)',
-      'let { moving-sample-variance } = import("vec");\nmoving-sample-variance([1, 2, 3, 4, 5], 5)',
+      'let { moving-sample-variance } = import("Vector");\nmoving-sample-variance([1, 2, 3, 4, 5], 3)',
+      'let { moving-sample-variance } = import("Vector");\nmoving-sample-variance([1, 2, 3, 4, 5], 5)',
     ],
   },
-  'vec.centered-moving-sample-variance': {
-    title: 'vec.centered-moving-sample-variance',
+  'Vector.centered-moving-sample-variance': {
+    title: 'Vector.centered-moving-sample-variance',
     category: 'Vector',
     description: 'Returns the **centered moving sample variance** of the `vector` with a given window size.',
     returns: {
@@ -189,14 +189,14 @@ export const sampleVarianceReference: VectorReductionReference<'sample-variance'
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'let { centered-moving-sample-variance } = import("vec");\ncentered-moving-sample-variance([1, 2, 3, 4, 5], 3)',
-      'let { centered-moving-sample-variance } = import("vec");\ncentered-moving-sample-variance([1, 2, 3, 4, 5], 3, 1)',
-      'let { centered-moving-sample-variance } = import("vec");\ncentered-moving-sample-variance([1, 2, 3, 4, 5], 3, 1, 5)',
-      'let { centered-moving-sample-variance } = import("vec");\ncentered-moving-sample-variance([1, 2, 3, 4, 5], 3, 0, 6)',
+      'let { centered-moving-sample-variance } = import("Vector");\ncentered-moving-sample-variance([1, 2, 3, 4, 5], 3)',
+      'let { centered-moving-sample-variance } = import("Vector");\ncentered-moving-sample-variance([1, 2, 3, 4, 5], 3, 1)',
+      'let { centered-moving-sample-variance } = import("Vector");\ncentered-moving-sample-variance([1, 2, 3, 4, 5], 3, 1, 5)',
+      'let { centered-moving-sample-variance } = import("Vector");\ncentered-moving-sample-variance([1, 2, 3, 4, 5], 3, 0, 6)',
     ],
   },
-  'vec.running-sample-variance': {
-    title: 'vec.running-sample-variance',
+  'Vector.running-sample-variance': {
+    title: 'Vector.running-sample-variance',
     category: 'Vector',
     description: 'Returns the **running sample variance** of the `vector`.',
     returns: {
@@ -212,7 +212,7 @@ export const sampleVarianceReference: VectorReductionReference<'sample-variance'
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let { running-sample-variance } = import("vec");\nrunning-sample-variance([1, 2, 3, 4, 5])',
+      'let { running-sample-variance } = import("Vector");\nrunning-sample-variance([1, 2, 3, 4, 5])',
     ],
   },
 }

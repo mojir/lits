@@ -2,8 +2,8 @@ import { getOperatorArgs } from '../../api'
 import type { VectorReductionReference } from '.'
 
 export const medianAbsoluteDeviationReference: VectorReductionReference<'medad'> = {
-  'vec.medad': {
-    title: 'vec.medad',
+  'Vector.medad': {
+    title: 'Vector.medad',
     category: 'Vector',
     description: 'Returns the `median absolute deviation` of all elements in the `vector`.',
     returns: {
@@ -19,12 +19,12 @@ export const medianAbsoluteDeviationReference: VectorReductionReference<'medad'>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let { medad } = import("vec");\nmedad([1, 2, 3])',
-      'let { medad } = import("vec");\nmedad([1, 2, -3])',
+      'let { medad } = import("Vector");\nmedad([1, 2, 3])',
+      'let { medad } = import("Vector");\nmedad([1, 2, -3])',
     ],
   },
-  'vec.moving-medad': {
-    title: 'vec.moving-medad',
+  'Vector.moving-medad': {
+    title: 'Vector.moving-medad',
     category: 'Vector',
     description: 'Returns the `moving median absolute deviation` of the `vector` with a given window size.',
     returns: {
@@ -45,12 +45,12 @@ export const medianAbsoluteDeviationReference: VectorReductionReference<'medad'>
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'let { moving-medad } = import("vec");\nmoving-medad([1, 2, 3, 4, 5], 3)',
-      'let { moving-medad } = import("vec");\nmoving-medad([1, 2, 3, 4, 5], 5)',
+      'let { moving-medad } = import("Vector");\nmoving-medad([1, 2, 3, 4, 5], 3)',
+      'let { moving-medad } = import("Vector");\nmoving-medad([1, 2, 3, 4, 5], 5)',
     ],
   },
-  'vec.centered-moving-medad': {
-    title: 'vec.centered-moving-medad',
+  'Vector.centered-moving-medad': {
+    title: 'Vector.centered-moving-medad',
     category: 'Vector',
     description: 'Returns the `centered moving median absolute deviation` of the `vector` with a given window size.',
     returns: {
@@ -81,12 +81,12 @@ export const medianAbsoluteDeviationReference: VectorReductionReference<'medad'>
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'let { centered-moving-medad } = import("vec");\ncentered-moving-medad([1, 2, 3, 4, 5], 3)',
-      'let { centered-moving-medad } = import("vec");\ncentered-moving-medad([1, 2, 3, 4, 5], 5)',
+      'let { centered-moving-medad } = import("Vector");\ncentered-moving-medad([1, 2, 3, 4, 5], 3)',
+      'let { centered-moving-medad } = import("Vector");\ncentered-moving-medad([1, 2, 3, 4, 5], 5)',
     ],
   },
-  'vec.running-medad': {
-    title: 'vec.running-medad',
+  'Vector.running-medad': {
+    title: 'Vector.running-medad',
     category: 'Vector',
     description: 'Returns the `running median absolute deviation` of the `vector`.',
     returns: {
@@ -102,8 +102,8 @@ export const medianAbsoluteDeviationReference: VectorReductionReference<'medad'>
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let { running-medad } = import("vec");\nrunning-medad([1, 2, 3])',
-      'let { running-medad } = import("vec");\nrunning-medad([1, 2, -3])',
+      'let { running-medad } = import("Vector");\nrunning-medad([1, 2, 3])',
+      'let { running-medad } = import("Vector");\nrunning-medad([1, 2, -3])',
     ],
   },
 }

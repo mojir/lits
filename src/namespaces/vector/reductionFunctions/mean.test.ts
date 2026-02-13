@@ -7,7 +7,7 @@ const lits = new Lits()
 // Helper to run vec namespace functions with the new import syntax
 function runVec(code: string): unknown {
   // Add namespace import prefix to function calls
-  const modifiedCode = `let v = import("vec"); v.${code}`
+  const modifiedCode = `let v = import("Vector"); v.${code}`
   return lits.run(modifiedCode)
 }
 

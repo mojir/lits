@@ -2,8 +2,8 @@ import { getOperatorArgs } from '../../api'
 import type { VectorReductionReference } from '.'
 
 export const meanAbsoluteDeviationReference: VectorReductionReference<'mad'> = {
-  'vec.mad': {
-    title: 'vec.mad',
+  'Vector.mad': {
+    title: 'Vector.mad',
     category: 'Vector',
     description: 'Returns the `mean absolute deviation` of all elements in the `vector`.',
     returns: {
@@ -19,12 +19,12 @@ export const meanAbsoluteDeviationReference: VectorReductionReference<'mad'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let { mad } = import("vec");\nmad([1, 2, 3])',
-      'let { mad } = import("vec");\nmad([1, 2, -3])',
+      'let { mad } = import("Vector");\nmad([1, 2, 3])',
+      'let { mad } = import("Vector");\nmad([1, 2, -3])',
     ],
   },
-  'vec.moving-mad': {
-    title: 'vec.moving-mad',
+  'Vector.moving-mad': {
+    title: 'Vector.moving-mad',
     category: 'Vector',
     description: 'Returns the `moving mean absolute deviation` of the `vector` with a given window size.',
     returns: {
@@ -45,12 +45,12 @@ export const meanAbsoluteDeviationReference: VectorReductionReference<'mad'> = {
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'let { moving-mad } = import("vec");\nmoving-mad([1, 2, 3, 4, 5], 3)',
-      'let { moving-mad } = import("vec");\nmoving-mad([1, 2, 3, 4, 5], 5)',
+      'let { moving-mad } = import("Vector");\nmoving-mad([1, 2, 3, 4, 5], 3)',
+      'let { moving-mad } = import("Vector");\nmoving-mad([1, 2, 3, 4, 5], 5)',
     ],
   },
-  'vec.centered-moving-mad': {
-    title: 'vec.centered-moving-mad',
+  'Vector.centered-moving-mad': {
+    title: 'Vector.centered-moving-mad',
     category: 'Vector',
     description: 'Returns the `centered moving mean absolute deviation` of the `vector` with a given window size.',
     returns: {
@@ -81,12 +81,12 @@ export const meanAbsoluteDeviationReference: VectorReductionReference<'mad'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'let { centered-moving-mad } = import("vec");\ncentered-moving-mad([1, 2, 3, 4, 5], 3)',
-      'let { centered-moving-mad } = import("vec");\ncentered-moving-mad([1, 2, 3, 4, 5], 5)',
+      'let { centered-moving-mad } = import("Vector");\ncentered-moving-mad([1, 2, 3, 4, 5], 3)',
+      'let { centered-moving-mad } = import("Vector");\ncentered-moving-mad([1, 2, 3, 4, 5], 5)',
     ],
   },
-  'vec.running-mad': {
-    title: 'vec.running-mad',
+  'Vector.running-mad': {
+    title: 'Vector.running-mad',
     category: 'Vector',
     description: 'Returns the `running mean absolute deviation` of the `vector`.',
     returns: {
@@ -102,8 +102,8 @@ export const meanAbsoluteDeviationReference: VectorReductionReference<'mad'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let { running-mad } = import("vec");\nrunning-mad([1, 2, 3])',
-      'let { running-mad } = import("vec");\nrunning-mad([1, 2, -3])',
+      'let { running-mad } = import("Vector");\nrunning-mad([1, 2, 3])',
+      'let { running-mad } = import("Vector");\nrunning-mad([1, 2, -3])',
     ],
   },
 }

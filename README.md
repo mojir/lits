@@ -163,8 +163,8 @@ A vector is simply a non-empty array containing only numbers. The `vec` namespac
 
 ```lits
 // Import vector and linear algebra namespaces
-let vec = import("vec");
-let lin = import("lin");
+let vec = import("Vector");
+let lin = import("Linear-Algebra");
 
 // Vectors are just number arrays
 [1, 2, 3, 4, 5];              // This is a vector
@@ -217,7 +217,7 @@ A matrix is a 2D array where each row is a vector (non-empty array of numbers) a
 
 ```lits
 // Import matrix namespace
-let mat = import("mat");
+let mat = import("Matrix");
 
 // Matrices are 2D number arrays with consistent row lengths
 [[1, 2], [3, 4]];              // This is a 2x2 matrix
@@ -1301,7 +1301,7 @@ Here's the complete precedence table, from highest to lowest:
 3 > 2 && 1 < 2;      // => true && true = true
 
 // Pipe has very low precedence
-let vec = import("vec");
+let vec = import("Vector");
 [1, 2, 3] |> map(_, inc) |> vec.sum;  // Evaluates left to right
 
 // Conditional has lowest precedence

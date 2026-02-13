@@ -352,6 +352,6 @@ function addReductionFunctions(sequences: BuiltinNormalExpressions) {
 }
 
 export const vectorNamespace: LitsNamespace = {
-  name: 'vec',
+  name: 'Vector',
   functions: vectorFunctions,
 }

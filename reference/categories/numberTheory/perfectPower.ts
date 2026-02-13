@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const perfectPowerReference: NumberTheorySequenceReference<'perfect-power'> = {
-  'TEMP-nth.perfect-power-seq': {
-    title: 'TEMP-nth.perfect-power-seq',
+  'Number-Theory.perfect-power-seq': {
+    title: 'Number-Theory.perfect-power-seq',
     category: 'Number Theory',
     description: 'Generates the perfect power numbers up to a specified length.',
     returns: {
@@ -19,12 +19,12 @@ export const perfectPowerReference: NumberTheorySequenceReference<'perfect-power
       { argumentNames: ['length'] },
     ],
     examples: [
-      'let { perfect-power-seq } = import("TEMP-nth");\nperfect-power-seq(5)',
-      'let { perfect-power-seq } = import("TEMP-nth");\nperfect-power-seq(20)',
+      'let { perfect-power-seq } = import("Number-Theory");\nperfect-power-seq(5)',
+      'let { perfect-power-seq } = import("Number-Theory");\nperfect-power-seq(20)',
     ],
   },
-  'TEMP-nth.perfect-power-take-while': {
-    title: 'TEMP-nth.perfect-power-take-while',
+  'Number-Theory.perfect-power-take-while': {
+    title: 'Number-Theory.perfect-power-take-while',
     category: 'Number Theory',
     description: 'Generates the perfect power numbers while a condition is met.',
     returns: {
@@ -41,11 +41,11 @@ export const perfectPowerReference: NumberTheorySequenceReference<'perfect-power
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let { perfect-power-take-while } = import("TEMP-nth");\nperfect-power-take-while(-> $ <= 100)',
+      'let { perfect-power-take-while } = import("Number-Theory");\nperfect-power-take-while(-> $ <= 100)',
     ],
   },
-  'TEMP-nth.perfect-power-nth': {
-    title: 'TEMP-nth.perfect-power-nth',
+  'Number-Theory.perfect-power-nth': {
+    title: 'Number-Theory.perfect-power-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the perfect power numbers.',
     returns: {
@@ -61,12 +61,12 @@ export const perfectPowerReference: NumberTheorySequenceReference<'perfect-power
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let { perfect-power-nth } = import("TEMP-nth");\nperfect-power-nth(3)',
-      'let { perfect-power-nth } = import("TEMP-nth");\nperfect-power-nth(15)',
+      'let { perfect-power-nth } = import("Number-Theory");\nperfect-power-nth(3)',
+      'let { perfect-power-nth } = import("Number-Theory");\nperfect-power-nth(15)',
     ],
   },
-  'TEMP-nth.perfect-power?': {
-    title: 'TEMP-nth.perfect-power?',
+  'Number-Theory.perfect-power?': {
+    title: 'Number-Theory.perfect-power?',
     category: 'Number Theory',
     description: 'Checks if a number is in the perfect power numbers.',
     returns: {
@@ -82,10 +82,10 @@ export const perfectPowerReference: NumberTheorySequenceReference<'perfect-power
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let { perfect-power? } = import("TEMP-nth");\nperfect-power?(7)',
-      'let { perfect-power? } = import("TEMP-nth");\nperfect-power?(8)',
-      'let { perfect-power? } = import("TEMP-nth");\nperfect-power?(9)',
-      'let { perfect-power? } = import("TEMP-nth");\nperfect-power?(10)',
+      'let { perfect-power? } = import("Number-Theory");\nperfect-power?(7)',
+      'let { perfect-power? } = import("Number-Theory");\nperfect-power?(8)',
+      'let { perfect-power? } = import("Number-Theory");\nperfect-power?(9)',
+      'let { perfect-power? } = import("Number-Theory");\nperfect-power?(10)',
     ],
   },
 }

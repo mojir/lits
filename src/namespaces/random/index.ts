@@ -9,13 +9,13 @@ import type { BuiltinNormalExpressions } from '../../builtin/interface'
 import type { LitsNamespace } from '../interface'
 
 const randomFunctions: BuiltinNormalExpressions = {
-  'random': {
+  'random!': {
     evaluate: (): number => {
       return Math.random()
     },
     arity: toFixedArity(0),
   },
-  'random-int': {
+  'random-int!': {
     evaluate: ([min, max], sourceCodeInfo): number => {
       assertNumber(min, sourceCodeInfo, { integer: true })
       assertNumber(max, sourceCodeInfo, { integer: true, gt: min })
@@ -23,7 +23,7 @@ const randomFunctions: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(2),
   },
-  'random-int-inclusive': {
+  'random-int-inclusive!': {
     evaluate: ([min, max], sourceCodeInfo): number => {
       assertNumber(min, sourceCodeInfo, { integer: true })
       assertNumber(max, sourceCodeInfo, { integer: true, gte: min })
@@ -31,7 +31,7 @@ const randomFunctions: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(2),
   },
-  'random-float': {
+  'random-float!': {
     evaluate: ([min, max], sourceCodeInfo): number => {
       assertNumber(min, sourceCodeInfo)
       assertNumber(max, sourceCodeInfo, { gt: min })
@@ -39,7 +39,7 @@ const randomFunctions: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(2),
   },
-  'random-boolean': {
+  'random-boolean!': {
     evaluate: ([prob], sourceCodeInfo): boolean => {
       const probability = prob ?? 0.5
       assertNumber(probability, sourceCodeInfo, { gte: 0, lte: 1 })
@@ -47,7 +47,7 @@ const randomFunctions: BuiltinNormalExpressions = {
     },
     arity: { min: 0, max: 1 },
   },
-  'random-item': {
+  'random-item!': {
     evaluate: ([array], sourceCodeInfo): Any => {
       assertArray(array, sourceCodeInfo)
       const index = Math.floor(Math.random() * array.length)
@@ -55,7 +55,7 @@ const randomFunctions: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
   },
-  'random-sample': {
+  'random-sample!': {
     evaluate: ([array, n], sourceCodeInfo): Arr => {
       assertArray(array, sourceCodeInfo)
       assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true })
@@ -76,7 +76,7 @@ const randomFunctions: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(2),
   },
-  'random-sample-unique': {
+  'random-sample-unique!': {
     evaluate: ([array, n], sourceCodeInfo): Arr => {
       assertArray(array, sourceCodeInfo)
       assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true, lte: array.length })
@@ -99,7 +99,7 @@ const randomFunctions: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(2),
   },
-  'shuffle': {
+  'shuffle!': {
     evaluate: ([array], sourceCodeInfo): Arr => {
       assertArray(array, sourceCodeInfo)
       const shuffledArray = [...array]
@@ -111,7 +111,7 @@ const randomFunctions: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
   },
-  'random-normal': {
+  'random-normal!': {
     evaluate: ([mean, stdDev], sourceCodeInfo): number => {
       assertNumber(mean, sourceCodeInfo)
       assertNumber(stdDev, sourceCodeInfo, { gt: 0 })
@@ -122,7 +122,7 @@ const randomFunctions: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(2),
   },
-  'random-exponential': {
+  'random-exponential!': {
     evaluate: ([lambda], sourceCodeInfo): number => {
       assertNumber(lambda, sourceCodeInfo, { gt: 0 })
       const u = Math.random()
@@ -130,7 +130,7 @@ const randomFunctions: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
   },
-  'random-binomial': {
+  'random-binomial!': {
     evaluate: ([n, p], sourceCodeInfo): number => {
       assertNumber(n, sourceCodeInfo, { integer: true, nonNegative: true })
       assertNumber(p, sourceCodeInfo, { gte: 0, lte: 1 })
@@ -144,7 +144,7 @@ const randomFunctions: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(2),
   },
-  'random-poisson': {
+  'random-poisson!': {
     evaluate: ([lambda], sourceCodeInfo): number => {
       assertNumber(lambda, sourceCodeInfo, { gt: 0 })
 
@@ -161,7 +161,7 @@ const randomFunctions: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
   },
-  'random-gamma': {
+  'random-gamma!': {
     evaluate: ([shape, scale], sourceCodeInfo): number => {
       assertNumber(shape, sourceCodeInfo, { gt: 0 })
       assertNumber(scale, sourceCodeInfo, { gt: 0 })
@@ -169,7 +169,7 @@ const randomFunctions: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(2),
   },
-  'random-pareto': {
+  'random-pareto!': {
     evaluate: ([alpha], sourceCodeInfo): number => {
       assertNumber(alpha, sourceCodeInfo, { gt: 0 })
       const u = Math.random()
@@ -177,7 +177,7 @@ const randomFunctions: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
   },
-  'uuid': {
+  'uuid!': {
     evaluate: (): string => {
       return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (char) => {
         const random = Math.random() * 16 | 0
@@ -187,7 +187,7 @@ const randomFunctions: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(0),
   },
-  'random-char': {
+  'random-char!': {
     evaluate: ([charSet], sourceCodeInfo): string => {
       assertString(charSet, sourceCodeInfo)
       if (charSet.length === 0) {
@@ -198,7 +198,7 @@ const randomFunctions: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
   },
-  'random-string': {
+  'random-string!': {
     evaluate: ([length, charSet], sourceCodeInfo): string => {
       assertNumber(length, sourceCodeInfo, { integer: true, positive: true })
       assertString(charSet, sourceCodeInfo)
@@ -214,7 +214,7 @@ const randomFunctions: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(2),
   },
-  'random-id': {
+  'random-id!': {
     evaluate: ([length], sourceCodeInfo): string => {
       assertNumber(length, sourceCodeInfo, { integer: true, positive: true })
       const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -227,7 +227,7 @@ const randomFunctions: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
   },
-  'random-color': {
+  'random-color!': {
     evaluate: (): string => {
       const randomColor = Math.floor(Math.random() * 0x1000000).toString(16)
       return `#${randomColor.padStart(6, '0')}`
@@ -288,6 +288,6 @@ function randn(): number {
 }
 
 export const randomNamespace: LitsNamespace = {
-  name: 'random',
+  name: 'Random',
   functions: randomFunctions,
 }

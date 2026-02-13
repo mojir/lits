@@ -5,7 +5,7 @@ import { LitsError } from '../../../errors'
 const lits = new Lits()
 
 function runNth(code: string) {
-  return lits.run(`let nt = import("TEMP-nth"); ${code.replace(/nth:/g, 'nt.')}`)
+  return lits.run(`let nt = import("Number-Theory"); ${code.replace(/nth:/g, 'nt.')}`)
 }
 describe('polygonal', () => {
   it('should return the correct sequence', () => {

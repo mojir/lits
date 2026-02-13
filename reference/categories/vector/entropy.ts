@@ -2,8 +2,8 @@ import { getOperatorArgs } from '../../api'
 import type { VectorReductionReference } from '.'
 
 export const entropyReference: VectorReductionReference<'entropy'> = {
-  'vec.entropy': {
-    title: 'vec.entropy',
+  'Vector.entropy': {
+    title: 'Vector.entropy',
     category: 'Vector',
     description: 'Calculates the **entropy** of a `vector`. The entropy is a measure of the uncertainty associated with a random variable.',
     returns: {
@@ -19,16 +19,16 @@ export const entropyReference: VectorReductionReference<'entropy'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let { entropy } = import("vec");\nentropy([1, 1, 2, 3, 3, 3])',
-      'let { entropy } = import("vec");\nentropy([1, 2, 3])',
-      'let { entropy } = import("vec");\nentropy([1, 2, 2, 3])',
-      'let { entropy } = import("vec");\nentropy([0])',
-      'let { entropy } = import("vec");\nentropy([1])',
-      'let { entropy } = import("vec");\nentropy([1, 2])',
+      'let { entropy } = import("Vector");\nentropy([1, 1, 2, 3, 3, 3])',
+      'let { entropy } = import("Vector");\nentropy([1, 2, 3])',
+      'let { entropy } = import("Vector");\nentropy([1, 2, 2, 3])',
+      'let { entropy } = import("Vector");\nentropy([0])',
+      'let { entropy } = import("Vector");\nentropy([1])',
+      'let { entropy } = import("Vector");\nentropy([1, 2])',
     ],
   },
-  'vec.moving-entropy': {
-    title: 'vec.moving-entropy',
+  'Vector.moving-entropy': {
+    title: 'Vector.moving-entropy',
     category: 'Vector',
     description: 'Calculates the **moving entropy** of a `vector` with a given window size.',
     returns: {
@@ -49,13 +49,13 @@ export const entropyReference: VectorReductionReference<'entropy'> = {
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'let { moving-entropy } = import("vec");\nmoving-entropy([1, 1, 2, 3, 3, 3], 4)',
-      'let { moving-entropy } = import("vec");\nmoving-entropy([1, 1, 2, 3, 3, 3], 3)',
-      'let { moving-entropy } = import("vec");\nmoving-entropy([1, 2], 2)',
+      'let { moving-entropy } = import("Vector");\nmoving-entropy([1, 1, 2, 3, 3, 3], 4)',
+      'let { moving-entropy } = import("Vector");\nmoving-entropy([1, 1, 2, 3, 3, 3], 3)',
+      'let { moving-entropy } = import("Vector");\nmoving-entropy([1, 2], 2)',
     ],
   },
-  'vec.centered-moving-entropy': {
-    title: 'vec.centered-moving-entropy',
+  'Vector.centered-moving-entropy': {
+    title: 'Vector.centered-moving-entropy',
     category: 'Vector',
     description: 'Calculates the **centered moving entropy** of a `vector` with a given window size.',
     returns: {
@@ -86,13 +86,13 @@ export const entropyReference: VectorReductionReference<'entropy'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'let { centered-moving-entropy } = import("vec");\ncentered-moving-entropy([1, 1, 2, 3, 3, 3], 4)',
-      'let { centered-moving-entropy } = import("vec");\ncentered-moving-entropy([1, 1, 2, 3, 3, 3], 3)',
-      'let { centered-moving-entropy } = import("vec");\ncentered-moving-entropy([1, 2], 2)',
+      'let { centered-moving-entropy } = import("Vector");\ncentered-moving-entropy([1, 1, 2, 3, 3, 3], 4)',
+      'let { centered-moving-entropy } = import("Vector");\ncentered-moving-entropy([1, 1, 2, 3, 3, 3], 3)',
+      'let { centered-moving-entropy } = import("Vector");\ncentered-moving-entropy([1, 2], 2)',
     ],
   },
-  'vec.running-entropy': {
-    title: 'vec.running-entropy',
+  'Vector.running-entropy': {
+    title: 'Vector.running-entropy',
     category: 'Vector',
     description: 'Calculates the **running entropy** of a `vector`.',
     returns: {
@@ -108,8 +108,8 @@ export const entropyReference: VectorReductionReference<'entropy'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let { running-entropy } = import("vec");\nrunning-entropy([1, 1, 2, 3, 3, 3])',
-      'let { running-entropy } = import("vec");\nrunning-entropy([1, 2])',
+      'let { running-entropy } = import("Vector");\nrunning-entropy([1, 1, 2, 3, 3, 3])',
+      'let { running-entropy } = import("Vector");\nrunning-entropy([1, 2])',
     ],
   },
 }

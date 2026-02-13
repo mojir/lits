@@ -2,8 +2,8 @@ import { getOperatorArgs } from '../../api'
 import type { VectorReductionReference } from '.'
 
 export const prodReference: VectorReductionReference<'prod'> = {
-  'vec.prod': {
-    title: 'vec.prod',
+  'Vector.prod': {
+    title: 'Vector.prod',
     category: 'Vector',
     description: 'Returns the `product` of all elements in the `vector`.',
     returns: {
@@ -19,12 +19,12 @@ export const prodReference: VectorReductionReference<'prod'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let { prod } = import("vec");\nprod([1, 2, 3])',
-      'let { prod } = import("vec");\nprod([1, 2, -3])',
+      'let { prod } = import("Vector");\nprod([1, 2, 3])',
+      'let { prod } = import("Vector");\nprod([1, 2, -3])',
     ],
   },
-  'vec.moving-prod': {
-    title: 'vec.moving-prod',
+  'Vector.moving-prod': {
+    title: 'Vector.moving-prod',
     category: 'Vector',
     description: 'Returns the **moving product** of the `vector` with a given window size.',
     returns: {
@@ -45,12 +45,12 @@ export const prodReference: VectorReductionReference<'prod'> = {
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'let { moving-prod } = import("vec");\nmoving-prod([1, 2, 3, 4, 5], 3)',
-      'let { moving-prod } = import("vec");\nmoving-prod([1, 2, 3, 4, 5], 5)',
+      'let { moving-prod } = import("Vector");\nmoving-prod([1, 2, 3, 4, 5], 3)',
+      'let { moving-prod } = import("Vector");\nmoving-prod([1, 2, 3, 4, 5], 5)',
     ],
   },
-  'vec.centered-moving-prod': {
-    title: 'vec.centered-moving-prod',
+  'Vector.centered-moving-prod': {
+    title: 'Vector.centered-moving-prod',
     category: 'Vector',
     description: 'Returns the **centered moving product** of the `vector` with a given window size.',
     returns: {
@@ -81,12 +81,12 @@ export const prodReference: VectorReductionReference<'prod'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'let { centered-moving-prod } = import("vec");\ncentered-moving-prod([1, 2, 3, 4, 5], 3)',
-      'let { centered-moving-prod } = import("vec");\ncentered-moving-prod([1, 2, 3, 4, 5], 3, 0, 0)',
+      'let { centered-moving-prod } = import("Vector");\ncentered-moving-prod([1, 2, 3, 4, 5], 3)',
+      'let { centered-moving-prod } = import("Vector");\ncentered-moving-prod([1, 2, 3, 4, 5], 3, 0, 0)',
     ],
   },
-  'vec.running-prod': {
-    title: 'vec.running-prod',
+  'Vector.running-prod': {
+    title: 'Vector.running-prod',
     category: 'Vector',
     description: 'Returns the **running product** of the `vector`.',
     returns: {
@@ -102,8 +102,8 @@ export const prodReference: VectorReductionReference<'prod'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let { running-prod } = import("vec");\nrunning-prod([1, 2, 3, 4, 5])',
-      'let { running-prod } = import("vec");\nrunning-prod([1, -2, -3])',
+      'let { running-prod } = import("Vector");\nrunning-prod([1, 2, 3, 4, 5])',
+      'let { running-prod } = import("Vector");\nrunning-prod([1, -2, -3])',
     ],
   },
 }

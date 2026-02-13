@@ -248,6 +248,6 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
 }
 
 export const matrixNamespace: LitsNamespace = {
-  name: 'mat',
+  name: 'Matrix',
   functions: matrixNormalExpression,
 }

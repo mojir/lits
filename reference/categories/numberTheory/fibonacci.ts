@@ -1,8 +1,8 @@
 import type { NumberTheorySequenceReference } from '.'
 
 export const fibonacciReference: NumberTheorySequenceReference<'fibonacci'> = {
-  'TEMP-nth.fibonacci-seq': {
-    title: 'TEMP-nth.fibonacci-seq',
+  'Number-Theory.fibonacci-seq': {
+    title: 'Number-Theory.fibonacci-seq',
     category: 'Number Theory',
     description: 'Generates the fibonacci sequence up to a specified length.',
     returns: {
@@ -20,13 +20,13 @@ export const fibonacciReference: NumberTheorySequenceReference<'fibonacci'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'let { fibonacci-seq } = import("TEMP-nth");\nfibonacci-seq(1)',
-      'let { fibonacci-seq } = import("TEMP-nth");\nfibonacci-seq(2)',
-      'let { fibonacci-seq } = import("TEMP-nth");\nfibonacci-seq()',
+      'let { fibonacci-seq } = import("Number-Theory");\nfibonacci-seq(1)',
+      'let { fibonacci-seq } = import("Number-Theory");\nfibonacci-seq(2)',
+      'let { fibonacci-seq } = import("Number-Theory");\nfibonacci-seq()',
     ],
   },
-  'TEMP-nth.fibonacci-take-while': {
-    title: 'TEMP-nth.fibonacci-take-while',
+  'Number-Theory.fibonacci-take-while': {
+    title: 'Number-Theory.fibonacci-take-while',
     category: 'Number Theory',
     description: 'Generates the fibonacci sequence while a condition is met.',
     returns: {
@@ -43,11 +43,11 @@ export const fibonacciReference: NumberTheorySequenceReference<'fibonacci'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let { fibonacci-take-while } = import("TEMP-nth");\nfibonacci-take-while(-> $ < 100)',
+      'let { fibonacci-take-while } = import("Number-Theory");\nfibonacci-take-while(-> $ < 100)',
     ],
   },
-  'TEMP-nth.fibonacci-nth': {
-    title: 'TEMP-nth.fibonacci-nth',
+  'Number-Theory.fibonacci-nth': {
+    title: 'Number-Theory.fibonacci-nth',
     category: 'Number Theory',
     description: 'Generates the nth term of the fibonacci sequence.',
     returns: {
@@ -63,12 +63,12 @@ export const fibonacciReference: NumberTheorySequenceReference<'fibonacci'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let { fibonacci-nth } = import("TEMP-nth");\nfibonacci-nth(5)',
-      'let { fibonacci-nth } = import("TEMP-nth");\nfibonacci-nth(50)',
+      'let { fibonacci-nth } = import("Number-Theory");\nfibonacci-nth(5)',
+      'let { fibonacci-nth } = import("Number-Theory");\nfibonacci-nth(50)',
     ],
   },
-  'TEMP-nth.fibonacci?': {
-    title: 'TEMP-nth.fibonacci?',
+  'Number-Theory.fibonacci?': {
+    title: 'Number-Theory.fibonacci?',
     category: 'Number Theory',
     description: 'Determines if a number is in the fibonacci sequence.',
     returns: {
@@ -84,16 +84,16 @@ export const fibonacciReference: NumberTheorySequenceReference<'fibonacci'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let { fibonacci? } = import("TEMP-nth");\nfibonacci?(0)',
-      'let { fibonacci? } = import("TEMP-nth");\nfibonacci?(1)',
-      'let { fibonacci? } = import("TEMP-nth");\nfibonacci?(2)',
-      'let { fibonacci? } = import("TEMP-nth");\nfibonacci?(3)',
-      'let { fibonacci? } = import("TEMP-nth");\nfibonacci?(4)',
-      'let { fibonacci? } = import("TEMP-nth");\nfibonacci?(5)',
-      'let { fibonacci? } = import("TEMP-nth");\nfibonacci?(6)',
-      'let { fibonacci? } = import("TEMP-nth");\nfibonacci?(7)',
-      'let { fibonacci? } = import("TEMP-nth");\nfibonacci?(8)',
-      'let { fibonacci? } = import("TEMP-nth");\nfibonacci?(9)',
+      'let { fibonacci? } = import("Number-Theory");\nfibonacci?(0)',
+      'let { fibonacci? } = import("Number-Theory");\nfibonacci?(1)',
+      'let { fibonacci? } = import("Number-Theory");\nfibonacci?(2)',
+      'let { fibonacci? } = import("Number-Theory");\nfibonacci?(3)',
+      'let { fibonacci? } = import("Number-Theory");\nfibonacci?(4)',
+      'let { fibonacci? } = import("Number-Theory");\nfibonacci?(5)',
+      'let { fibonacci? } = import("Number-Theory");\nfibonacci?(6)',
+      'let { fibonacci? } = import("Number-Theory");\nfibonacci?(7)',
+      'let { fibonacci? } = import("Number-Theory");\nfibonacci?(8)',
+      'let { fibonacci? } = import("Number-Theory");\nfibonacci?(9)',
     ],
   },
 }

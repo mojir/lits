@@ -2,8 +2,8 @@ import { getOperatorArgs } from '../../api'
 import type { VectorReductionReference } from '.'
 
 export const skewnessReference: VectorReductionReference<'skewness'> = {
-  'vec.skewness': {
-    title: 'vec.skewness',
+  'Vector.skewness': {
+    title: 'Vector.skewness',
     category: 'Vector',
     description: 'Calculates the **skewness** of a `vector`. Returns the third standardized moment.',
     returns: {
@@ -19,12 +19,12 @@ export const skewnessReference: VectorReductionReference<'skewness'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let { skewness } = import("vec");\nskewness([1, 2, 3, 6, 20])',
-      'let { skewness } = import("vec");\nskewness([1, 2, 2, 3])',
+      'let { skewness } = import("Vector");\nskewness([1, 2, 3, 6, 20])',
+      'let { skewness } = import("Vector");\nskewness([1, 2, 2, 3])',
     ],
   },
-  'vec.moving-skewness': {
-    title: 'vec.moving-skewness',
+  'Vector.moving-skewness': {
+    title: 'Vector.moving-skewness',
     category: 'Vector',
     description: 'Calculates the **moving skewness** of a `vector` with a given window size.',
     returns: {
@@ -45,12 +45,12 @@ export const skewnessReference: VectorReductionReference<'skewness'> = {
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'let { moving-skewness } = import("vec");\nmoving-skewness([1, 2, 4, 7, 11, 16], 4)',
-      'let { moving-skewness } = import("vec");\nmoving-skewness([1, 2, 4, 7, 11, 16], 5)',
+      'let { moving-skewness } = import("Vector");\nmoving-skewness([1, 2, 4, 7, 11, 16], 4)',
+      'let { moving-skewness } = import("Vector");\nmoving-skewness([1, 2, 4, 7, 11, 16], 5)',
     ],
   },
-  'vec.centered-moving-skewness': {
-    title: 'vec.centered-moving-skewness',
+  'Vector.centered-moving-skewness': {
+    title: 'Vector.centered-moving-skewness',
     category: 'Vector',
     description: 'Calculates the **centered moving skewness** of a `vector` with a given window size and padding.',
     returns: {
@@ -81,12 +81,12 @@ export const skewnessReference: VectorReductionReference<'skewness'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'let { centered-moving-skewness } = import("vec");\ncentered-moving-skewness([1, 2, 4, 7, 11, 16], 4)',
-      'let { centered-moving-skewness } = import("vec");\ncentered-moving-skewness([1, 2, 4, 7, 11, 16], 4, 0, 0)',
+      'let { centered-moving-skewness } = import("Vector");\ncentered-moving-skewness([1, 2, 4, 7, 11, 16], 4)',
+      'let { centered-moving-skewness } = import("Vector");\ncentered-moving-skewness([1, 2, 4, 7, 11, 16], 4, 0, 0)',
     ],
   },
-  'vec.running-skewness': {
-    title: 'vec.running-skewness',
+  'Vector.running-skewness': {
+    title: 'Vector.running-skewness',
     category: 'Vector',
     description: 'Calculates the **running skewness** of a `vector` with a given window size. First two element in result is `null` since **running skewness** is not defined for less than three elements.',
     returns: {
@@ -102,14 +102,14 @@ export const skewnessReference: VectorReductionReference<'skewness'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let { running-skewness } = import("vec");\nrunning-skewness([1, 2, 4, 7, 11])',
+      'let { running-skewness } = import("Vector");\nrunning-skewness([1, 2, 4, 7, 11])',
     ],
   },
 }
 
 export const sampleSkewnessReference: VectorReductionReference<'sample-skewness'> = {
-  'vec.sample-skewness': {
-    title: 'vec.sample-skewness',
+  'Vector.sample-skewness': {
+    title: 'Vector.sample-skewness',
     category: 'Vector',
     description: 'Calculates the **sample skewness** of a `vector`. Returns the third standardized moment.',
     returns: {
@@ -125,12 +125,12 @@ export const sampleSkewnessReference: VectorReductionReference<'sample-skewness'
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let { sample-skewness } = import("vec");\nsample-skewness([1, 2, 3, 6, 20])',
-      'let { sample-skewness } = import("vec");\nsample-skewness([1, 2, 2, 3])',
+      'let { sample-skewness } = import("Vector");\nsample-skewness([1, 2, 3, 6, 20])',
+      'let { sample-skewness } = import("Vector");\nsample-skewness([1, 2, 2, 3])',
     ],
   },
-  'vec.moving-sample-skewness': {
-    title: 'vec.moving-sample-skewness',
+  'Vector.moving-sample-skewness': {
+    title: 'Vector.moving-sample-skewness',
     category: 'Vector',
     description: 'Calculates the **moving sample skewness** of a `vector` with a given window size.',
     returns: {
@@ -151,12 +151,12 @@ export const sampleSkewnessReference: VectorReductionReference<'sample-skewness'
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'let { moving-sample-skewness } = import("vec");\nmoving-sample-skewness([1, 2, 4, 7, 11, 16], 4)',
-      'let { moving-sample-skewness } = import("vec");\nmoving-sample-skewness([1, 2, 4, 7, 11, 16], 5)',
+      'let { moving-sample-skewness } = import("Vector");\nmoving-sample-skewness([1, 2, 4, 7, 11, 16], 4)',
+      'let { moving-sample-skewness } = import("Vector");\nmoving-sample-skewness([1, 2, 4, 7, 11, 16], 5)',
     ],
   },
-  'vec.centered-moving-sample-skewness': {
-    title: 'vec.centered-moving-sample-skewness',
+  'Vector.centered-moving-sample-skewness': {
+    title: 'Vector.centered-moving-sample-skewness',
     category: 'Vector',
     description: 'Calculates the **centered moving sample skewness** of a `vector` with a given window size and padding.',
     returns: {
@@ -187,12 +187,12 @@ export const sampleSkewnessReference: VectorReductionReference<'sample-skewness'
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'let { centered-moving-sample-skewness } = import("vec");\ncentered-moving-sample-skewness([1, 2, 4, 7, 11, 16], 4)',
-      'let { centered-moving-sample-skewness } = import("vec");\ncentered-moving-sample-skewness([1, 2, 4, 7, 11, 16], 3, 0, 100)',
+      'let { centered-moving-sample-skewness } = import("Vector");\ncentered-moving-sample-skewness([1, 2, 4, 7, 11, 16], 4)',
+      'let { centered-moving-sample-skewness } = import("Vector");\ncentered-moving-sample-skewness([1, 2, 4, 7, 11, 16], 3, 0, 100)',
     ],
   },
-  'vec.running-sample-skewness': {
-    title: 'vec.running-sample-skewness',
+  'Vector.running-sample-skewness': {
+    title: 'Vector.running-sample-skewness',
     category: 'Vector',
     description: 'Calculates the **running sample skewness** of a `vector` with a given window size. First two element in result is `null` since **running sample skewness** is not defined for less than three elements.',
     returns: {
@@ -208,7 +208,7 @@ export const sampleSkewnessReference: VectorReductionReference<'sample-skewness'
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let { running-sample-skewness } = import("vec");\nrunning-sample-skewness([1, 2, 4, 7, 11])',
+      'let { running-sample-skewness } = import("Vector");\nrunning-sample-skewness([1, 2, 4, 7, 11])',
     ],
   },
 }

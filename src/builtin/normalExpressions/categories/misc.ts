@@ -173,7 +173,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([importPath], sourceCodeInfo): NamespaceFunction | Record<string, NamespaceFunction> => {
       assertString(importPath, sourceCodeInfo)
 
-      // Check if importing a specific function (e.g., "grid.row")
+      // Check if importing a specific function (e.g., "Grid.row")
       const dotIndex = importPath.indexOf('.')
       if (dotIndex !== -1) {
         const namespaceName = importPath.substring(0, dotIndex)
