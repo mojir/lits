@@ -355,4 +355,50 @@ describe('lits Destructuring', () => {
       `)).toBe('Uma: 177')
     })
   })
+
+  // Builtin symbol names as property keys
+  describe('builtin symbol names as property keys', () => {
+    test('builtin symbol with "as" alias works', () => {
+      expect(lits.run(`
+        let { slice as my-slice } = { slice: 42 };
+        my-slice
+      `)).toBe(42)
+    })
+
+    test('multiple builtins with aliases', () => {
+      expect(lits.run(`
+        let { slice as s, map as m } = { slice: 1, map: 2 };
+        s + m
+      `)).toBe(3)
+    })
+
+    test('builtin symbol from import with alias works', () => {
+      expect(lits.run(`
+        let { every? as grid-every? } = import("Grid");
+        grid-every?([[1, 2], [3, 4]], number?)
+      `)).toBe(true)
+    })
+
+    test('builtin and user-defined symbols mixed', () => {
+      expect(lits.run(`
+        let { slice as my-slice, foo } = { slice: 10, foo: 20 };
+        my-slice + foo
+      `)).toBe(30)
+    })
+
+    test('builtin symbol without alias should fail', () => {
+      expect(() => lits.run(`
+        let { slice } = { slice: 42 };
+        slice
+      `)).toThrow(LitsError)
+    })
+
+    test('special expression symbol with alias works', () => {
+      // 'if', 'let', etc. are special expressions, but we can use them as keys
+      expect(lits.run(`
+        let { if as my-if } = { if: 99 };
+        my-if
+      `)).toBe(99)
+    })
+  })
 })

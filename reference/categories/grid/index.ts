@@ -32,11 +32,16 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
       { argumentNames: ['a', 'b'] },
     ],
     description: 'Checks if all elements in a grid satisfy a predicate. Returns true only if the predicate returns true for every element in the grid.',
-    // Use namespace pattern because "every?" shadows a builtin function
     examples: [
-      `let g = import("Grid"); g.every?(${exampleGrid1}, string?)`,
-      `let g = import("Grid"); g.every?(${exampleGrid2}, string?)`,
-      `let g = import("Grid"); g.every?(${exampleGrid3}, string?)`,
+      `// Using "as" alias because "every?" shadows a builtin function
+let { every? as grid-every? } = import("Grid");
+grid-every?(${exampleGrid1}, string?)`,
+      `// Using "as" alias because "every?" shadows a builtin function
+let { every? as grid-every? } = import("Grid");
+grid-every?(${exampleGrid2}, string?)`,
+      `// Using "as" alias because "every?" shadows a builtin function
+let { every? as grid-every? } = import("Grid");
+grid-every?(${exampleGrid3}, string?)`,
     ],
   },
   'Grid.some?': {
@@ -475,10 +480,13 @@ reverse-cols(${exampleGrid3})`,
       { argumentNames: ['g', 'begin', 'stop'] },
     ],
     description: 'Slices the grid `g` from the starting index `begin` to the optional ending index `stop`. The slice is inclusive of the starting index and exclusive of the ending index.',
-    // Use namespace pattern because "slice" shadows a builtin function
     examples: [
-      `let g = import("Grid"); g.slice(${exampleGrid1}, [1, 1], [2, 2])`,
-      `let g = import("Grid"); g.slice(${exampleGrid1}, [1, 1])`,
+      `// Using "as" alias because "slice" shadows a builtin function
+let { slice as grid-slice } = import("Grid");
+grid-slice(${exampleGrid1}, [1, 1], [2, 2])`,
+      `// Using "as" alias because "slice" shadows a builtin function
+let { slice as grid-slice } = import("Grid");
+grid-slice(${exampleGrid1}, [1, 1])`,
     ],
     noOperatorDocumentation: true,
   },
@@ -691,9 +699,10 @@ TEMP-map(${exampleGrid1}, str)`,
       { argumentNames: ['a', 'b'] },
     ],
     description: 'Maps a function `a` over each element of the grid `b`, passing the row and column index as additional arguments to the function.',
-    // Use namespace pattern because "mapi" shadows a builtin function
     examples: [
-      `let g = import("Grid"); g.mapi(${exampleGrid1}, -> $1 ++ "(" ++ $2 ++ ", " ++ $3 ++ ")")`,
+      `// Using "as" alias because "mapi" shadows a builtin function
+let { mapi as grid-mapi } = import("Grid");
+grid-mapi(${exampleGrid1}, -> $1 ++ "(" ++ $2 ++ ", " ++ $3 ++ ")")`,
     ],
   },
   'Grid.TEMP-reduce': {
@@ -749,9 +758,10 @@ TEMP-reduce(${exampleGrid1}, ++, "")`,
       { argumentNames: ['g', 'fn', 'initial-value'] },
     ],
     description: 'Reduces the grid `a` using the function `b`, passing the row and column indices as additional arguments to the function.',
-    // Use namespace pattern because "reducei" shadows a builtin function
     examples: [
-      `let g = import("Grid"); g.reducei(${exampleGrid1}, ++, "")`,
+      `// Using "as" alias because "reducei" shadows a builtin function
+let { reducei as grid-reducei } = import("Grid");
+grid-reducei(${exampleGrid1}, ++, "")`,
     ],
   },
   'Grid.push-rows': {

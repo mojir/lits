@@ -14599,6 +14599,33 @@ var Playground = (function (exports) {
         }, '');
     }
 
+    // Reverse lookup tables for getting symbol names from builtin types
+    var normalExpressionNames = Object.entries(normalExpressionTypes).reduce(function (acc, _a) {
+        var _b = __read(_a, 2), name = _b[0], index = _b[1];
+        acc[index] = name;
+        return acc;
+    }, []);
+    var specialExpressionNames = Object.entries(specialExpressionTypes).reduce(function (acc, _a) {
+        var _b = __read(_a, 2), name = _b[0], index = _b[1];
+        acc[index] = name;
+        return acc;
+    }, []);
+    /**
+     * Extract the symbol name from any symbol node type.
+     * UserDefinedSymbolNode: node[1] is the string name
+     * NormalBuiltinSymbolNode: node[1] is an index, need reverse lookup
+     * SpecialBuiltinSymbolNode: node[1] is an index, need reverse lookup
+     */
+    function getSymbolName(symbol) {
+        if (isUserDefinedSymbolNode(symbol)) {
+            return symbol[1];
+        }
+        if (isNormalBuiltinSymbolNode(symbol)) {
+            return normalExpressionNames[symbol[1]];
+        }
+        // SpecialBuiltinSymbolNode
+        return specialExpressionNames[symbol[1]];
+    }
     var exponentiationPrecedence = 12;
     var binaryFunctionalOperatorPrecedence = 3;
     var conditionalOperatorPrecedence = 1;
@@ -15319,7 +15346,9 @@ var Playground = (function (exports) {
                         rest = true;
                         this.advance();
                     }
-                    var key = asUserDefinedSymbolNode(this.parseSymbol());
+                    // Parse the key symbol - can be any symbol type (including builtins) when using 'as' alias
+                    var keySymbol = this.parseSymbol();
+                    var keyName = getSymbolName(keySymbol);
                     token = this.asToken(this.peek());
                     if (isReservedSymbolToken(token, 'as')) {
                         if (rest) {
@@ -15330,9 +15359,11 @@ var Playground = (function (exports) {
                         if (elements[name_2[1]]) {
                             throw new LitsError("Duplicate binding name: ".concat(name_2), token[2]);
                         }
-                        elements[key[1]] = withSourceCodeInfo([bindingTargetTypes.symbol, [name_2, this.parseOptionalDefaulValue()]], firstToken[2]);
+                        elements[keyName] = withSourceCodeInfo([bindingTargetTypes.symbol, [name_2, this.parseOptionalDefaulValue()]], firstToken[2]);
                     }
                     else if (isRBraceToken(token) || isOperatorToken(token, ',') || isOperatorToken(token, '=')) {
+                        // Without 'as' alias, the key becomes the binding name - must be user-defined symbol
+                        var key = asUserDefinedSymbolNode(keySymbol, keySymbol[2]);
                         if (elements[key[1]]) {
                             throw new LitsError("Duplicate binding name: ".concat(key), token[2]);
                         }
@@ -15349,7 +15380,7 @@ var Playground = (function (exports) {
                         if (!isLBraceToken(token) && !isLBracketToken(token)) {
                             throw new LitsError('Expected object or array', token[2]);
                         }
-                        elements[key[1]] = this.parseBindingTarget();
+                        elements[keyName] = this.parseBindingTarget();
                     }
                     if (!isRBraceToken(this.peek())) {
                         assertOperatorToken(this.peek(), ',');
@@ -22205,11 +22236,10 @@ var Playground = (function (exports) {
                 { argumentNames: ['a', 'b'] },
             ],
             description: 'Checks if all elements in a grid satisfy a predicate. Returns true only if the predicate returns true for every element in the grid.',
-            // Use namespace pattern because "every?" shadows a builtin function
             examples: [
-                "let g = import(\"Grid\"); g.every?(".concat(exampleGrid1, ", string?)"),
-                "let g = import(\"Grid\"); g.every?(".concat(exampleGrid2, ", string?)"),
-                "let g = import(\"Grid\"); g.every?(".concat(exampleGrid3, ", string?)"),
+                "// Using \"as\" alias because \"every?\" shadows a builtin function\nlet { every? as grid-every? } = import(\"Grid\");\ngrid-every?(".concat(exampleGrid1, ", string?)"),
+                "// Using \"as\" alias because \"every?\" shadows a builtin function\nlet { every? as grid-every? } = import(\"Grid\");\ngrid-every?(".concat(exampleGrid2, ", string?)"),
+                "// Using \"as\" alias because \"every?\" shadows a builtin function\nlet { every? as grid-every? } = import(\"Grid\");\ngrid-every?(".concat(exampleGrid3, ", string?)"),
             ],
         },
         'Grid.some?': {
@@ -22582,10 +22612,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['g', 'begin', 'stop'] },
             ],
             description: 'Slices the grid `g` from the starting index `begin` to the optional ending index `stop`. The slice is inclusive of the starting index and exclusive of the ending index.',
-            // Use namespace pattern because "slice" shadows a builtin function
             examples: [
-                "let g = import(\"Grid\"); g.slice(".concat(exampleGrid1, ", [1, 1], [2, 2])"),
-                "let g = import(\"Grid\"); g.slice(".concat(exampleGrid1, ", [1, 1])"),
+                "// Using \"as\" alias because \"slice\" shadows a builtin function\nlet { slice as grid-slice } = import(\"Grid\");\ngrid-slice(".concat(exampleGrid1, ", [1, 1], [2, 2])"),
+                "// Using \"as\" alias because \"slice\" shadows a builtin function\nlet { slice as grid-slice } = import(\"Grid\");\ngrid-slice(".concat(exampleGrid1, ", [1, 1])"),
             ],
             noOperatorDocumentation: true,
         },
@@ -22779,9 +22808,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['a', 'b'] },
             ],
             description: 'Maps a function `a` over each element of the grid `b`, passing the row and column index as additional arguments to the function.',
-            // Use namespace pattern because "mapi" shadows a builtin function
             examples: [
-                "let g = import(\"Grid\"); g.mapi(".concat(exampleGrid1, ", -> $1 ++ \"(\" ++ $2 ++ \", \" ++ $3 ++ \")\")"),
+                "// Using \"as\" alias because \"mapi\" shadows a builtin function\nlet { mapi as grid-mapi } = import(\"Grid\");\ngrid-mapi(".concat(exampleGrid1, ", -> $1 ++ \"(\" ++ $2 ++ \", \" ++ $3 ++ \")\")"),
             ],
         },
         'Grid.TEMP-reduce': {
@@ -22836,9 +22864,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['g', 'fn', 'initial-value'] },
             ],
             description: 'Reduces the grid `a` using the function `b`, passing the row and column indices as additional arguments to the function.',
-            // Use namespace pattern because "reducei" shadows a builtin function
             examples: [
-                "let g = import(\"Grid\"); g.reducei(".concat(exampleGrid1, ", ++, \"\")"),
+                "// Using \"as\" alias because \"reducei\" shadows a builtin function\nlet { reducei as grid-reducei } = import(\"Grid\");\ngrid-reducei(".concat(exampleGrid1, ", ++, \"\")"),
             ],
         },
         'Grid.push-rows': {

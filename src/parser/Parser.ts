@@ -57,6 +57,34 @@ import { smartTrim } from '../utils'
 import { assertNumberOfParams } from '../utils/arity'
 import { type BindingNode, type BindingTarget, type Node, type NormalBuiltinSymbolNode, type NormalExpressionNodeExpression, type NormalExpressionNodeWithName, type NumberNode, type ParseState, type ReservedSymbolNode, type SpecialBuiltinSymbolNode, type StringNode, type SymbolNode, type UserDefinedSymbolNode, bindingTargetTypes } from './types'
 
+// Reverse lookup tables for getting symbol names from builtin types
+const normalExpressionNames: string[] = Object.entries(normalExpressionTypes).reduce((acc, [name, index]) => {
+  acc[index] = name
+  return acc
+}, [] as string[])
+
+const specialExpressionNames: string[] = Object.entries(specialExpressionTypes).reduce((acc, [name, index]) => {
+  acc[index] = name
+  return acc
+}, [] as string[])
+
+/**
+ * Extract the symbol name from any symbol node type.
+ * UserDefinedSymbolNode: node[1] is the string name
+ * NormalBuiltinSymbolNode: node[1] is an index, need reverse lookup
+ * SpecialBuiltinSymbolNode: node[1] is an index, need reverse lookup
+ */
+function getSymbolName(symbol: SymbolNode): string {
+  if (isUserDefinedSymbolNode(symbol)) {
+    return symbol[1]
+  }
+  if (isNormalBuiltinSymbolNode(symbol)) {
+    return normalExpressionNames[symbol[1]]!
+  }
+  // SpecialBuiltinSymbolNode
+  return specialExpressionNames[symbol[1]]!
+}
+
 type InternalLoopBindingDelimiter = 'let' | 'when' | 'while'
 type ImplicitBlockEnd = 'end' | 'else' | 'catch' | 'case'
 
@@ -898,7 +926,9 @@ export class Parser {
           rest = true
           this.advance()
         }
-        const key = asUserDefinedSymbolNode(this.parseSymbol())
+        // Parse the key symbol - can be any symbol type (including builtins) when using 'as' alias
+        const keySymbol = this.parseSymbol()
+        const keyName = getSymbolName(keySymbol)
         token = this.asToken(this.peek())
         if (isReservedSymbolToken(token, 'as')) {
           if (rest) {
@@ -909,9 +939,11 @@ export class Parser {
           if (elements[name[1]]) {
             throw new LitsError(`Duplicate binding name: ${name}`, token[2])
           }
-          elements[key[1]] = withSourceCodeInfo([bindingTargetTypes.symbol, [name, this.parseOptionalDefaulValue()]], firstToken[2])
+          elements[keyName] = withSourceCodeInfo([bindingTargetTypes.symbol, [name, this.parseOptionalDefaulValue()]], firstToken[2])
         }
         else if (isRBraceToken(token) || isOperatorToken(token, ',') || isOperatorToken(token, '=')) {
+          // Without 'as' alias, the key becomes the binding name - must be user-defined symbol
+          const key = asUserDefinedSymbolNode(keySymbol, keySymbol[2])
           if (elements[key[1]]) {
             throw new LitsError(`Duplicate binding name: ${key}`, token[2])
           }
@@ -929,7 +961,7 @@ export class Parser {
           if (!isLBraceToken(token) && !isLBracketToken(token)) {
             throw new LitsError('Expected object or array', token[2])
           }
-          elements[key[1]] = this.parseBindingTarget()
+          elements[keyName] = this.parseBindingTarget()
         }
 
         if (!isRBraceToken(this.peek())) {
