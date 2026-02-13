@@ -1,7 +1,7 @@
 import { LitsError } from '../../../errors'
 import type { Any } from '../../../interface'
 // Import from index to ensure namespaces are registered
-import { getNamespace } from '../../../namespaces'
+import { getNamespace, getNamespaceAliasMap } from '../../../namespaces'
 import type { NamespaceFunction } from '../../../parser/types'
 import type { SourceCodeInfo } from '../../../tokenizer/token'
 import { asAny, assertAny } from '../../../typeGuards/lits'
@@ -185,22 +185,9 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
         }
 
         // Look for the function by name or alias
-        let targetFunctionName: string | undefined
-        let expression = namespace.functions[functionName]
-
-        if (expression) {
-          targetFunctionName = functionName
-        }
-        else {
-          // Check if it's an alias
-          for (const [fnName, expr] of Object.entries(namespace.functions)) {
-            if (expr.aliases?.includes(functionName)) {
-              targetFunctionName = fnName
-              expression = expr
-              break
-            }
-          }
-        }
+        const aliasMap = getNamespaceAliasMap(namespaceName)
+        const targetFunctionName = namespace.functions[functionName] ? functionName : aliasMap?.[functionName]
+        const expression = targetFunctionName ? namespace.functions[targetFunctionName] : undefined
 
         if (!expression || !targetFunctionName) {
           throw new LitsError(`Function '${functionName}' not found in namespace '${namespaceName}'`, sourceCodeInfo)

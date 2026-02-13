@@ -5,6 +5,7 @@ import type { LitsNamespace } from './interface'
  * Namespaces are registered here and can be imported via import("namespaceName")
  */
 const namespaceRegistry = new Map<string, LitsNamespace>()
+const aliasMapRegistry = new Map<string, Record<string, string>>()
 
 /**
  * Register a namespace so it can be imported in Lits code.
@@ -14,7 +15,14 @@ export function registerNamespace(namespace: LitsNamespace): void {
   if (namespaceRegistry.has(namespace.name)) {
     throw new Error(`Namespace '${namespace.name}' is already registered`)
   }
+  const aliasMap: Record<string, string> = {}
+  for (const [fnName, expr] of Object.entries(namespace.functions)) {
+    for (const alias of expr.aliases ?? []) {
+      aliasMap[alias] = fnName
+    }
+  }
   namespaceRegistry.set(namespace.name, namespace)
+  aliasMapRegistry.set(namespace.name, aliasMap)
 }
 
 /**
@@ -24,6 +32,15 @@ export function registerNamespace(namespace: LitsNamespace): void {
  */
 export function getNamespace(name: string): LitsNamespace | undefined {
   return namespaceRegistry.get(name)
+}
+
+/**
+ * Get the alias map for a registered namespace.
+ * @param name The namespace name
+ * @returns Record mapping alias → canonical function name, or undefined if not found
+ */
+export function getNamespaceAliasMap(name: string): Record<string, string> | undefined {
+  return aliasMapRegistry.get(name)
 }
 
 /**
