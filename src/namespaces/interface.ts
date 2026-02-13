@@ -7,6 +7,6 @@ import type { BuiltinNormalExpressions } from '../builtin/interface'
 export interface LitsNamespace {
   /** The name of the namespace (e.g., 'grid', 'vec', 'mat') */
   name: string
-  /** The functions provided by this namespace, keyed by their full name (e.g., 'grid:transpose') */
+  /** The functions provided by this namespace, keyed by their short name (e.g., 'transpose') */
   functions: BuiltinNormalExpressions
 }
