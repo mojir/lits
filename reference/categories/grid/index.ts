@@ -889,8 +889,8 @@ export const gridReference: Record<GridApiName, FunctionReference<'Grid'>> = {
     ],
     description: 'Creates a grid from a flat array with specified dimensions. The array is reshaped into the specified number of rows, and the number of columns is automatically calculated based on the total number of elements in the array.',
     examples: [
-      'let grid = import("grid");\ngrid.from-array([1, 2, 3, 4], 2)',
-      'let grid = import("grid");\ngrid.from-array([1, 2, 3, 4], 4)',
+      'let { from-array } = import("grid");\nfrom-array([1, 2, 3, 4], 2)',
+      'let { from-array } = import("grid");\nfrom-array([1, 2, 3, 4], 4)',
     ],
   },
 }

@@ -19,9 +19,9 @@ export const primeReference: NumberTheorySequenceReference<'prime'> = {
       { argumentNames: ['length'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.prime-seq(1)',
-      'let nt = import("TEMP-nth");\nnt.prime-seq(2)',
-      'let nt = import("TEMP-nth");\nnt.prime-seq(10)',
+      'let { prime-seq } = import("TEMP-nth");\nprime-seq(1)',
+      'let { prime-seq } = import("TEMP-nth");\nprime-seq(2)',
+      'let { prime-seq } = import("TEMP-nth");\nprime-seq(10)',
     ],
   },
   'TEMP-nth.prime-take-while': {
@@ -42,7 +42,7 @@ export const primeReference: NumberTheorySequenceReference<'prime'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.prime-take-while(-> $ < 50)',
+      'let { prime-take-while } = import("TEMP-nth");\nprime-take-while(-> $ < 50)',
     ],
   },
   'TEMP-nth.prime-nth': {
@@ -62,9 +62,9 @@ export const primeReference: NumberTheorySequenceReference<'prime'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.prime-nth(1)',
-      'let nt = import("TEMP-nth");\nnt.prime-nth(2)',
-      'let nt = import("TEMP-nth");\nnt.prime-nth(10)',
+      'let { prime-nth } = import("TEMP-nth");\nprime-nth(1)',
+      'let { prime-nth } = import("TEMP-nth");\nprime-nth(2)',
+      'let { prime-nth } = import("TEMP-nth");\nprime-nth(10)',
     ],
   },
   'TEMP-nth.prime?': {
@@ -84,12 +84,12 @@ export const primeReference: NumberTheorySequenceReference<'prime'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.prime?(1)',
-      'let nt = import("TEMP-nth");\nnt.prime?(2)',
-      'let nt = import("TEMP-nth");\nnt.prime?(3)',
-      'let nt = import("TEMP-nth");\nnt.prime?(4)',
-      'let nt = import("TEMP-nth");\nnt.prime?(997)',
-      'let nt = import("TEMP-nth");\nnt.prime?(1001)',
+      'let { prime? } = import("TEMP-nth");\nprime?(1)',
+      'let { prime? } = import("TEMP-nth");\nprime?(2)',
+      'let { prime? } = import("TEMP-nth");\nprime?(3)',
+      'let { prime? } = import("TEMP-nth");\nprime?(4)',
+      'let { prime? } = import("TEMP-nth");\nprime?(997)',
+      'let { prime? } = import("TEMP-nth");\nprime?(1001)',
     ],
   },
 }

@@ -19,8 +19,8 @@ export const golombReference: NumberTheorySequenceReference<'golomb'> = {
       { argumentNames: ['length'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.golomb-seq(5)',
-      'let nt = import("TEMP-nth");\nnt.golomb-seq(20)',
+      'let { golomb-seq } = import("TEMP-nth");\ngolomb-seq(5)',
+      'let { golomb-seq } = import("TEMP-nth");\ngolomb-seq(20)',
     ],
   },
   'TEMP-nth.golomb-take-while': {
@@ -41,7 +41,7 @@ export const golombReference: NumberTheorySequenceReference<'golomb'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.golomb-take-while(-> $ <= 10)',
+      'let { golomb-take-while } = import("TEMP-nth");\ngolomb-take-while(-> $ <= 10)',
     ],
   },
   'TEMP-nth.golomb-nth': {
@@ -61,8 +61,8 @@ export const golombReference: NumberTheorySequenceReference<'golomb'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.golomb-nth(5)',
-      'let nt = import("TEMP-nth");\nnt.golomb-nth(1000)',
+      'let { golomb-nth } = import("TEMP-nth");\ngolomb-nth(5)',
+      'let { golomb-nth } = import("TEMP-nth");\ngolomb-nth(1000)',
     ],
   },
   'TEMP-nth.golomb?': {
@@ -82,10 +82,10 @@ export const golombReference: NumberTheorySequenceReference<'golomb'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.golomb?(1)',
-      'let nt = import("TEMP-nth");\nnt.golomb?(2)',
-      'let nt = import("TEMP-nth");\nnt.golomb?(3345)',
-      'let nt = import("TEMP-nth");\nnt.golomb?(67867864)',
+      'let { golomb? } = import("TEMP-nth");\ngolomb?(1)',
+      'let { golomb? } = import("TEMP-nth");\ngolomb?(2)',
+      'let { golomb? } = import("TEMP-nth");\ngolomb?(3345)',
+      'let { golomb? } = import("TEMP-nth");\ngolomb?(67867864)',
     ],
   },
 }

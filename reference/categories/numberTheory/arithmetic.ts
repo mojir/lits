@@ -27,10 +27,10 @@ export const arithmeticReference: NumberTheorySequenceReference<'arithmetic'> = 
       { argumentNames: ['start', 'step', 'length'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.arithmetic-seq(3, 2, 2)',
-      'let nt = import("TEMP-nth");\nnt.arithmetic-seq(2, 3, 2)',
-      'let nt = import("TEMP-nth");\nnt.arithmetic-seq(1, 2, 2)',
-      'let nt = import("TEMP-nth");\nnt.arithmetic-seq(1, 1.5, 12)',
+      'let { arithmetic-seq } = import("TEMP-nth");\narithmetic-seq(3, 2, 2)',
+      'let { arithmetic-seq } = import("TEMP-nth");\narithmetic-seq(2, 3, 2)',
+      'let { arithmetic-seq } = import("TEMP-nth");\narithmetic-seq(1, 2, 2)',
+      'let { arithmetic-seq } = import("TEMP-nth");\narithmetic-seq(1, 1.5, 12)',
     ],
   },
   'TEMP-nth.arithmetic-take-while': {
@@ -59,7 +59,7 @@ export const arithmeticReference: NumberTheorySequenceReference<'arithmetic'> = 
       { argumentNames: ['start', 'step', 'takeWhile'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.arithmetic-take-while(1, 0.25, -> $ < 3)',
+      'let { arithmetic-take-while } = import("TEMP-nth");\narithmetic-take-while(1, 0.25, -> $ < 3)',
     ],
   },
   'TEMP-nth.arithmetic-nth': {
@@ -87,10 +87,10 @@ export const arithmeticReference: NumberTheorySequenceReference<'arithmetic'> = 
       { argumentNames: ['start', 'step', 'n'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.arithmetic-nth(3, 2, 2)',
-      'let nt = import("TEMP-nth");\nnt.arithmetic-nth(2, 3, 2)',
-      'let nt = import("TEMP-nth");\nnt.arithmetic-nth(1, 2, 2)',
-      'let nt = import("TEMP-nth");\nnt.arithmetic-nth(1, 1.5, 12)',
+      'let { arithmetic-nth } = import("TEMP-nth");\narithmetic-nth(3, 2, 2)',
+      'let { arithmetic-nth } = import("TEMP-nth");\narithmetic-nth(2, 3, 2)',
+      'let { arithmetic-nth } = import("TEMP-nth");\narithmetic-nth(1, 2, 2)',
+      'let { arithmetic-nth } = import("TEMP-nth");\narithmetic-nth(1, 1.5, 12)',
     ],
   },
   'TEMP-nth.arithmetic?': {
@@ -118,10 +118,10 @@ export const arithmeticReference: NumberTheorySequenceReference<'arithmetic'> = 
       { argumentNames: ['start', 'step', 'n'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.arithmetic?(3, 2, 2)',
-      'let nt = import("TEMP-nth");\nnt.arithmetic?(2, 3, 2)',
-      'let nt = import("TEMP-nth");\nnt.arithmetic?(1, 2, 2)',
-      'let nt = import("TEMP-nth");\nnt.arithmetic?(1, 1.5, 12)',
+      'let { arithmetic? } = import("TEMP-nth");\narithmetic?(3, 2, 2)',
+      'let { arithmetic? } = import("TEMP-nth");\narithmetic?(2, 3, 2)',
+      'let { arithmetic? } = import("TEMP-nth");\narithmetic?(1, 2, 2)',
+      'let { arithmetic? } = import("TEMP-nth");\narithmetic?(1, 1.5, 12)',
     ],
   },
 }

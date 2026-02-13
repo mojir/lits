@@ -19,8 +19,8 @@ export const maxReference: VectorReductionReference<'TEMP-max', 'max'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.TEMP-max([1, 2, 3])',
-      'let vec = import("vec");\nvec.TEMP-max([1, 2, -3])',
+      'let { TEMP-max } = import("vec");\nTEMP-max([1, 2, 3])',
+      'let { TEMP-max } = import("vec");\nTEMP-max([1, 2, -3])',
     ],
   },
   'vec.moving-max': {
@@ -45,8 +45,8 @@ export const maxReference: VectorReductionReference<'TEMP-max', 'max'> = {
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.moving-max([1, 2, 3, 4, 5], 3)',
-      'let vec = import("vec");\nvec.moving-max([1, 2, 3, 4, 5], 5)',
+      'let { moving-max } = import("vec");\nmoving-max([1, 2, 3, 4, 5], 3)',
+      'let { moving-max } = import("vec");\nmoving-max([1, 2, 3, 4, 5], 5)',
     ],
   },
   'vec.centered-moving-max': {
@@ -81,9 +81,9 @@ export const maxReference: VectorReductionReference<'TEMP-max', 'max'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.centered-moving-max([1, 2, 3, 4, 5], 3)',
-      'let vec = import("vec");\nvec.centered-moving-max([1, 2, 3, 4, 5], 3, 0, 100)',
-      'let vec = import("vec");\nvec.centered-moving-max([1, 2, 3, 4, 5], 3, 0)',
+      'let { centered-moving-max } = import("vec");\ncentered-moving-max([1, 2, 3, 4, 5], 3)',
+      'let { centered-moving-max } = import("vec");\ncentered-moving-max([1, 2, 3, 4, 5], 3, 0, 100)',
+      'let { centered-moving-max } = import("vec");\ncentered-moving-max([1, 2, 3, 4, 5], 3, 0)',
     ],
   },
   'vec.running-max': {
@@ -103,8 +103,8 @@ export const maxReference: VectorReductionReference<'TEMP-max', 'max'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.running-max([1, 2, 3])',
-      'let vec = import("vec");\nvec.running-max([1, -2, -3])',
+      'let { running-max } = import("vec");\nrunning-max([1, 2, 3])',
+      'let { running-max } = import("vec");\nrunning-max([1, -2, -3])',
     ],
   },
 }

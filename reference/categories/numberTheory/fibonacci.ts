@@ -20,9 +20,9 @@ export const fibonacciReference: NumberTheorySequenceReference<'fibonacci'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.fibonacci-seq(1)',
-      'let nt = import("TEMP-nth");\nnt.fibonacci-seq(2)',
-      'let nt = import("TEMP-nth");\nnt.fibonacci-seq()',
+      'let { fibonacci-seq } = import("TEMP-nth");\nfibonacci-seq(1)',
+      'let { fibonacci-seq } = import("TEMP-nth");\nfibonacci-seq(2)',
+      'let { fibonacci-seq } = import("TEMP-nth");\nfibonacci-seq()',
     ],
   },
   'TEMP-nth.fibonacci-take-while': {
@@ -43,7 +43,7 @@ export const fibonacciReference: NumberTheorySequenceReference<'fibonacci'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.fibonacci-take-while(-> $ < 100)',
+      'let { fibonacci-take-while } = import("TEMP-nth");\nfibonacci-take-while(-> $ < 100)',
     ],
   },
   'TEMP-nth.fibonacci-nth': {
@@ -63,8 +63,8 @@ export const fibonacciReference: NumberTheorySequenceReference<'fibonacci'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.fibonacci-nth(5)',
-      'let nt = import("TEMP-nth");\nnt.fibonacci-nth(50)',
+      'let { fibonacci-nth } = import("TEMP-nth");\nfibonacci-nth(5)',
+      'let { fibonacci-nth } = import("TEMP-nth");\nfibonacci-nth(50)',
     ],
   },
   'TEMP-nth.fibonacci?': {
@@ -84,16 +84,16 @@ export const fibonacciReference: NumberTheorySequenceReference<'fibonacci'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.fibonacci?(0)',
-      'let nt = import("TEMP-nth");\nnt.fibonacci?(1)',
-      'let nt = import("TEMP-nth");\nnt.fibonacci?(2)',
-      'let nt = import("TEMP-nth");\nnt.fibonacci?(3)',
-      'let nt = import("TEMP-nth");\nnt.fibonacci?(4)',
-      'let nt = import("TEMP-nth");\nnt.fibonacci?(5)',
-      'let nt = import("TEMP-nth");\nnt.fibonacci?(6)',
-      'let nt = import("TEMP-nth");\nnt.fibonacci?(7)',
-      'let nt = import("TEMP-nth");\nnt.fibonacci?(8)',
-      'let nt = import("TEMP-nth");\nnt.fibonacci?(9)',
+      'let { fibonacci? } = import("TEMP-nth");\nfibonacci?(0)',
+      'let { fibonacci? } = import("TEMP-nth");\nfibonacci?(1)',
+      'let { fibonacci? } = import("TEMP-nth");\nfibonacci?(2)',
+      'let { fibonacci? } = import("TEMP-nth");\nfibonacci?(3)',
+      'let { fibonacci? } = import("TEMP-nth");\nfibonacci?(4)',
+      'let { fibonacci? } = import("TEMP-nth");\nfibonacci?(5)',
+      'let { fibonacci? } = import("TEMP-nth");\nfibonacci?(6)',
+      'let { fibonacci? } = import("TEMP-nth");\nfibonacci?(7)',
+      'let { fibonacci? } = import("TEMP-nth");\nfibonacci?(8)',
+      'let { fibonacci? } = import("TEMP-nth");\nfibonacci?(9)',
     ],
   },
 }

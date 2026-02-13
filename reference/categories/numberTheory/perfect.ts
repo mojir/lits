@@ -20,9 +20,9 @@ export const perfectReference: NumberTheorySequenceReference<'perfect'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.perfect-seq(1)',
-      'let nt = import("TEMP-nth");\nnt.perfect-seq(5)',
-      'let nt = import("TEMP-nth");\nnt.perfect-seq()',
+      'let { perfect-seq } = import("TEMP-nth");\nperfect-seq(1)',
+      'let { perfect-seq } = import("TEMP-nth");\nperfect-seq(5)',
+      'let { perfect-seq } = import("TEMP-nth");\nperfect-seq()',
     ],
   },
   'TEMP-nth.perfect-take-while': {
@@ -43,7 +43,7 @@ export const perfectReference: NumberTheorySequenceReference<'perfect'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.perfect-take-while(-> $ < 1000)',
+      'let { perfect-take-while } = import("TEMP-nth");\nperfect-take-while(-> $ < 1000)',
     ],
   },
   'TEMP-nth.perfect-nth': {
@@ -63,8 +63,8 @@ export const perfectReference: NumberTheorySequenceReference<'perfect'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.perfect-nth(1)',
-      'let nt = import("TEMP-nth");\nnt.perfect-nth(5)',
+      'let { perfect-nth } = import("TEMP-nth");\nperfect-nth(1)',
+      'let { perfect-nth } = import("TEMP-nth");\nperfect-nth(5)',
     ],
   },
   'TEMP-nth.perfect?': {
@@ -84,16 +84,16 @@ export const perfectReference: NumberTheorySequenceReference<'perfect'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.perfect?(0)',
-      'let nt = import("TEMP-nth");\nnt.perfect?(1)',
-      'let nt = import("TEMP-nth");\nnt.perfect?(2)',
-      'let nt = import("TEMP-nth");\nnt.perfect?(3)',
-      'let nt = import("TEMP-nth");\nnt.perfect?(4)',
-      'let nt = import("TEMP-nth");\nnt.perfect?(5)',
-      'let nt = import("TEMP-nth");\nnt.perfect?(6)',
-      'let nt = import("TEMP-nth");\nnt.perfect?(7)',
-      'let nt = import("TEMP-nth");\nnt.perfect?(8)',
-      'let nt = import("TEMP-nth");\nnt.perfect?(9)',
+      'let { perfect? } = import("TEMP-nth");\nperfect?(0)',
+      'let { perfect? } = import("TEMP-nth");\nperfect?(1)',
+      'let { perfect? } = import("TEMP-nth");\nperfect?(2)',
+      'let { perfect? } = import("TEMP-nth");\nperfect?(3)',
+      'let { perfect? } = import("TEMP-nth");\nperfect?(4)',
+      'let { perfect? } = import("TEMP-nth");\nperfect?(5)',
+      'let { perfect? } = import("TEMP-nth");\nperfect?(6)',
+      'let { perfect? } = import("TEMP-nth");\nperfect?(7)',
+      'let { perfect? } = import("TEMP-nth");\nperfect?(8)',
+      'let { perfect? } = import("TEMP-nth");\nperfect?(9)',
     ],
   },
 }

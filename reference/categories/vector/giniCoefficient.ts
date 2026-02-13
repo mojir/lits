@@ -19,8 +19,8 @@ export const giniCoefficientReference: VectorReductionReference<'gini-coefficien
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.gini-coefficient([1, 2, 3])',
-      'let vec = import("vec");\nvec.gini-coefficient([1, 1, 3])',
+      'let { gini-coefficient } = import("vec");\ngini-coefficient([1, 2, 3])',
+      'let { gini-coefficient } = import("vec");\ngini-coefficient([1, 1, 3])',
     ],
   },
   'vec.moving-gini-coefficient': {
@@ -45,8 +45,8 @@ export const giniCoefficientReference: VectorReductionReference<'gini-coefficien
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.moving-gini-coefficient([1, 2, 3], 2)',
-      'let vec = import("vec");\nvec.moving-gini-coefficient([1, 1, 3], 2)',
+      'let { moving-gini-coefficient } = import("vec");\nmoving-gini-coefficient([1, 2, 3], 2)',
+      'let { moving-gini-coefficient } = import("vec");\nmoving-gini-coefficient([1, 1, 3], 2)',
     ],
   },
   'vec.centered-moving-gini-coefficient': {
@@ -81,8 +81,8 @@ export const giniCoefficientReference: VectorReductionReference<'gini-coefficien
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.centered-moving-gini-coefficient([1, 2, 3], 2)',
-      'let vec = import("vec");\nvec.centered-moving-gini-coefficient([1, 1, 3], 2)',
+      'let { centered-moving-gini-coefficient } = import("vec");\ncentered-moving-gini-coefficient([1, 2, 3], 2)',
+      'let { centered-moving-gini-coefficient } = import("vec");\ncentered-moving-gini-coefficient([1, 1, 3], 2)',
     ],
   },
   'vec.running-gini-coefficient': {
@@ -102,8 +102,8 @@ export const giniCoefficientReference: VectorReductionReference<'gini-coefficien
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.running-gini-coefficient([1, 2, 3])',
-      'let vec = import("vec");\nvec.running-gini-coefficient([1, 1, 3])',
+      'let { running-gini-coefficient } = import("vec");\nrunning-gini-coefficient([1, 2, 3])',
+      'let { running-gini-coefficient } = import("vec");\nrunning-gini-coefficient([1, 1, 3])',
     ],
   },
 }

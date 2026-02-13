@@ -20,9 +20,9 @@ export const mersenneReference: NumberTheorySequenceReference<'mersenne'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.mersenne-seq(1)',
-      'let nt = import("TEMP-nth");\nnt.mersenne-seq(5)',
-      'let nt = import("TEMP-nth");\nnt.mersenne-seq()',
+      'let { mersenne-seq } = import("TEMP-nth");\nmersenne-seq(1)',
+      'let { mersenne-seq } = import("TEMP-nth");\nmersenne-seq(5)',
+      'let { mersenne-seq } = import("TEMP-nth");\nmersenne-seq()',
     ],
   },
   'TEMP-nth.mersenne-take-while': {
@@ -43,7 +43,7 @@ export const mersenneReference: NumberTheorySequenceReference<'mersenne'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.mersenne-take-while(-> $ < 1000)',
+      'let { mersenne-take-while } = import("TEMP-nth");\nmersenne-take-while(-> $ < 1000)',
     ],
   },
   'TEMP-nth.mersenne-nth': {
@@ -63,8 +63,8 @@ export const mersenneReference: NumberTheorySequenceReference<'mersenne'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.mersenne-nth(1)',
-      'let nt = import("TEMP-nth");\nnt.mersenne-nth(5)',
+      'let { mersenne-nth } = import("TEMP-nth");\nmersenne-nth(1)',
+      'let { mersenne-nth } = import("TEMP-nth");\nmersenne-nth(5)',
     ],
   },
   'TEMP-nth.mersenne?': {
@@ -84,9 +84,9 @@ export const mersenneReference: NumberTheorySequenceReference<'mersenne'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.mersenne?(3)',
-      'let nt = import("TEMP-nth");\nnt.mersenne?(4)',
-      'let nt = import("TEMP-nth");\nnt.mersenne?(7)',
+      'let { mersenne? } = import("TEMP-nth");\nmersenne?(3)',
+      'let { mersenne? } = import("TEMP-nth");\nmersenne?(4)',
+      'let { mersenne? } = import("TEMP-nth");\nmersenne?(7)',
     ],
   },
 }

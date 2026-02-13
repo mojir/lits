@@ -19,8 +19,8 @@ export const perfectPowerReference: NumberTheorySequenceReference<'perfect-power
       { argumentNames: ['length'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.perfect-power-seq(5)',
-      'let nt = import("TEMP-nth");\nnt.perfect-power-seq(20)',
+      'let { perfect-power-seq } = import("TEMP-nth");\nperfect-power-seq(5)',
+      'let { perfect-power-seq } = import("TEMP-nth");\nperfect-power-seq(20)',
     ],
   },
   'TEMP-nth.perfect-power-take-while': {
@@ -41,7 +41,7 @@ export const perfectPowerReference: NumberTheorySequenceReference<'perfect-power
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.perfect-power-take-while(-> $ <= 100)',
+      'let { perfect-power-take-while } = import("TEMP-nth");\nperfect-power-take-while(-> $ <= 100)',
     ],
   },
   'TEMP-nth.perfect-power-nth': {
@@ -61,8 +61,8 @@ export const perfectPowerReference: NumberTheorySequenceReference<'perfect-power
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.perfect-power-nth(3)',
-      'let nt = import("TEMP-nth");\nnt.perfect-power-nth(15)',
+      'let { perfect-power-nth } = import("TEMP-nth");\nperfect-power-nth(3)',
+      'let { perfect-power-nth } = import("TEMP-nth");\nperfect-power-nth(15)',
     ],
   },
   'TEMP-nth.perfect-power?': {
@@ -82,10 +82,10 @@ export const perfectPowerReference: NumberTheorySequenceReference<'perfect-power
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.perfect-power?(7)',
-      'let nt = import("TEMP-nth");\nnt.perfect-power?(8)',
-      'let nt = import("TEMP-nth");\nnt.perfect-power?(9)',
-      'let nt = import("TEMP-nth");\nnt.perfect-power?(10)',
+      'let { perfect-power? } = import("TEMP-nth");\nperfect-power?(7)',
+      'let { perfect-power? } = import("TEMP-nth");\nperfect-power?(8)',
+      'let { perfect-power? } = import("TEMP-nth");\nperfect-power?(9)',
+      'let { perfect-power? } = import("TEMP-nth");\nperfect-power?(10)',
     ],
   },
 }

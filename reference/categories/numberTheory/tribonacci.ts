@@ -19,9 +19,9 @@ export const tribonacciReference: NumberTheorySequenceReference<'tribonacci'> = 
       { argumentNames: ['length'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.tribonacci-seq(1)',
-      'let nt = import("TEMP-nth");\nnt.tribonacci-seq(2)',
-      'let nt = import("TEMP-nth");\nnt.tribonacci-seq(10)',
+      'let { tribonacci-seq } = import("TEMP-nth");\ntribonacci-seq(1)',
+      'let { tribonacci-seq } = import("TEMP-nth");\ntribonacci-seq(2)',
+      'let { tribonacci-seq } = import("TEMP-nth");\ntribonacci-seq(10)',
     ],
   },
   'TEMP-nth.tribonacci-take-while': {
@@ -42,7 +42,7 @@ export const tribonacciReference: NumberTheorySequenceReference<'tribonacci'> = 
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.tribonacci-take-while(-> $ < 100)',
+      'let { tribonacci-take-while } = import("TEMP-nth");\ntribonacci-take-while(-> $ < 100)',
     ],
   },
   'TEMP-nth.tribonacci-nth': {
@@ -62,9 +62,9 @@ export const tribonacciReference: NumberTheorySequenceReference<'tribonacci'> = 
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.tribonacci-nth(1)',
-      'let nt = import("TEMP-nth");\nnt.tribonacci-nth(2)',
-      'let nt = import("TEMP-nth");\nnt.tribonacci-nth(10)',
+      'let { tribonacci-nth } = import("TEMP-nth");\ntribonacci-nth(1)',
+      'let { tribonacci-nth } = import("TEMP-nth");\ntribonacci-nth(2)',
+      'let { tribonacci-nth } = import("TEMP-nth");\ntribonacci-nth(10)',
     ],
   },
   'TEMP-nth.tribonacci?': {
@@ -84,17 +84,17 @@ export const tribonacciReference: NumberTheorySequenceReference<'tribonacci'> = 
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.tribonacci?(0)',
-      'let nt = import("TEMP-nth");\nnt.tribonacci?(1)',
-      'let nt = import("TEMP-nth");\nnt.tribonacci?(2)',
-      'let nt = import("TEMP-nth");\nnt.tribonacci?(3)',
-      'let nt = import("TEMP-nth");\nnt.tribonacci?(4)',
-      'let nt = import("TEMP-nth");\nnt.tribonacci?(5)',
-      'let nt = import("TEMP-nth");\nnt.tribonacci?(6)',
-      'let nt = import("TEMP-nth");\nnt.tribonacci?(7)',
-      'let nt = import("TEMP-nth");\nnt.tribonacci?(8)',
-      'let nt = import("TEMP-nth");\nnt.tribonacci?(9)',
-      'let nt = import("TEMP-nth");\nnt.tribonacci?(10)',
+      'let { tribonacci? } = import("TEMP-nth");\ntribonacci?(0)',
+      'let { tribonacci? } = import("TEMP-nth");\ntribonacci?(1)',
+      'let { tribonacci? } = import("TEMP-nth");\ntribonacci?(2)',
+      'let { tribonacci? } = import("TEMP-nth");\ntribonacci?(3)',
+      'let { tribonacci? } = import("TEMP-nth");\ntribonacci?(4)',
+      'let { tribonacci? } = import("TEMP-nth");\ntribonacci?(5)',
+      'let { tribonacci? } = import("TEMP-nth");\ntribonacci?(6)',
+      'let { tribonacci? } = import("TEMP-nth");\ntribonacci?(7)',
+      'let { tribonacci? } = import("TEMP-nth");\ntribonacci?(8)',
+      'let { tribonacci? } = import("TEMP-nth");\ntribonacci?(9)',
+      'let { tribonacci? } = import("TEMP-nth");\ntribonacci?(10)',
     ],
   },
 }

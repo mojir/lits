@@ -49,9 +49,9 @@ export const interquartileRangeReference: VectorReductionReference<'iqr'> = {
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.moving-iqr([1, 2, 4, 7, 11, 16], 4)',
-      'let vec = import("vec");\nvec.moving-iqr([1, 2, 4, 7, 11, 16], 5)',
-      'let vec = import("vec");\nvec.moving-iqr([1, 2, 4, 7, 11, 16], 6)',
+      'let { moving-iqr } = import("vec");\nmoving-iqr([1, 2, 4, 7, 11, 16], 4)',
+      'let { moving-iqr } = import("vec");\nmoving-iqr([1, 2, 4, 7, 11, 16], 5)',
+      'let { moving-iqr } = import("vec");\nmoving-iqr([1, 2, 4, 7, 11, 16], 6)',
     ],
   },
   'vec.centered-moving-iqr': {
@@ -86,8 +86,8 @@ export const interquartileRangeReference: VectorReductionReference<'iqr'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.centered-moving-iqr([1, 2, 4, 7, 11, 16], 4)',
-      'let vec = import("vec");\nvec.centered-moving-iqr([1, 2, 4, 7, 11, 16], 4, 0, 0)',
+      'let { centered-moving-iqr } = import("vec");\ncentered-moving-iqr([1, 2, 4, 7, 11, 16], 4)',
+      'let { centered-moving-iqr } = import("vec");\ncentered-moving-iqr([1, 2, 4, 7, 11, 16], 4, 0, 0)',
     ],
   },
   'vec.running-iqr': {
@@ -107,8 +107,8 @@ export const interquartileRangeReference: VectorReductionReference<'iqr'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.running-iqr([1, 2, 3, 4, 5, 6])',
-      'let vec = import("vec");\nvec.running-iqr([-1, -2, -3, 1, 2, 3])',
+      'let { running-iqr } = import("vec");\nrunning-iqr([1, 2, 3, 4, 5, 6])',
+      'let { running-iqr } = import("vec");\nrunning-iqr([-1, -2, -3, 1, 2, 3])',
     ],
   },
 }

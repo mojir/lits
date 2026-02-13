@@ -45,8 +45,8 @@ export const skewnessReference: VectorReductionReference<'skewness'> = {
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.moving-skewness([1, 2, 4, 7, 11, 16], 4)',
-      'let vec = import("vec");\nvec.moving-skewness([1, 2, 4, 7, 11, 16], 5)',
+      'let { moving-skewness } = import("vec");\nmoving-skewness([1, 2, 4, 7, 11, 16], 4)',
+      'let { moving-skewness } = import("vec");\nmoving-skewness([1, 2, 4, 7, 11, 16], 5)',
     ],
   },
   'vec.centered-moving-skewness': {
@@ -81,8 +81,8 @@ export const skewnessReference: VectorReductionReference<'skewness'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.centered-moving-skewness([1, 2, 4, 7, 11, 16], 4)',
-      'let vec = import("vec");\nvec.centered-moving-skewness([1, 2, 4, 7, 11, 16], 4, 0, 0)',
+      'let { centered-moving-skewness } = import("vec");\ncentered-moving-skewness([1, 2, 4, 7, 11, 16], 4)',
+      'let { centered-moving-skewness } = import("vec");\ncentered-moving-skewness([1, 2, 4, 7, 11, 16], 4, 0, 0)',
     ],
   },
   'vec.running-skewness': {
@@ -102,7 +102,7 @@ export const skewnessReference: VectorReductionReference<'skewness'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.running-skewness([1, 2, 4, 7, 11])',
+      'let { running-skewness } = import("vec");\nrunning-skewness([1, 2, 4, 7, 11])',
     ],
   },
 }
@@ -125,8 +125,8 @@ export const sampleSkewnessReference: VectorReductionReference<'sample-skewness'
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.sample-skewness([1, 2, 3, 6, 20])',
-      'let vec = import("vec");\nvec.sample-skewness([1, 2, 2, 3])',
+      'let { sample-skewness } = import("vec");\nsample-skewness([1, 2, 3, 6, 20])',
+      'let { sample-skewness } = import("vec");\nsample-skewness([1, 2, 2, 3])',
     ],
   },
   'vec.moving-sample-skewness': {
@@ -151,8 +151,8 @@ export const sampleSkewnessReference: VectorReductionReference<'sample-skewness'
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.moving-sample-skewness([1, 2, 4, 7, 11, 16], 4)',
-      'let vec = import("vec");\nvec.moving-sample-skewness([1, 2, 4, 7, 11, 16], 5)',
+      'let { moving-sample-skewness } = import("vec");\nmoving-sample-skewness([1, 2, 4, 7, 11, 16], 4)',
+      'let { moving-sample-skewness } = import("vec");\nmoving-sample-skewness([1, 2, 4, 7, 11, 16], 5)',
     ],
   },
   'vec.centered-moving-sample-skewness': {
@@ -187,8 +187,8 @@ export const sampleSkewnessReference: VectorReductionReference<'sample-skewness'
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.centered-moving-sample-skewness([1, 2, 4, 7, 11, 16], 4)',
-      'let vec = import("vec");\nvec.centered-moving-sample-skewness([1, 2, 4, 7, 11, 16], 3, 0, 100)',
+      'let { centered-moving-sample-skewness } = import("vec");\ncentered-moving-sample-skewness([1, 2, 4, 7, 11, 16], 4)',
+      'let { centered-moving-sample-skewness } = import("vec");\ncentered-moving-sample-skewness([1, 2, 4, 7, 11, 16], 3, 0, 100)',
     ],
   },
   'vec.running-sample-skewness': {
@@ -208,7 +208,7 @@ export const sampleSkewnessReference: VectorReductionReference<'sample-skewness'
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.running-sample-skewness([1, 2, 4, 7, 11])',
+      'let { running-sample-skewness } = import("vec");\nrunning-sample-skewness([1, 2, 4, 7, 11])',
     ],
   },
 }

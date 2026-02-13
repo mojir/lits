@@ -20,9 +20,9 @@ export const sylvesterReference: NumberTheorySequenceReference<'sylvester'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.sylvester-seq(5)',
-      'let nt = import("TEMP-nth");\nnt.sylvester-seq()',
-      'let nt = import("TEMP-nth");\nnt.sylvester-seq()',
+      'let { sylvester-seq } = import("TEMP-nth");\nsylvester-seq(5)',
+      'let { sylvester-seq } = import("TEMP-nth");\nsylvester-seq()',
+      'let { sylvester-seq } = import("TEMP-nth");\nsylvester-seq()',
     ],
   },
   'TEMP-nth.sylvester-take-while': {
@@ -43,7 +43,7 @@ export const sylvesterReference: NumberTheorySequenceReference<'sylvester'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.sylvester-take-while(-> $ < 100000)',
+      'let { sylvester-take-while } = import("TEMP-nth");\nsylvester-take-while(-> $ < 100000)',
     ],
   },
   'TEMP-nth.sylvester-nth': {
@@ -63,8 +63,8 @@ export const sylvesterReference: NumberTheorySequenceReference<'sylvester'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.sylvester-nth(1)',
-      'let nt = import("TEMP-nth");\nnt.sylvester-nth(5)',
+      'let { sylvester-nth } = import("TEMP-nth");\nsylvester-nth(1)',
+      'let { sylvester-nth } = import("TEMP-nth");\nsylvester-nth(5)',
     ],
   },
   'TEMP-nth.sylvester?': {
@@ -84,9 +84,9 @@ export const sylvesterReference: NumberTheorySequenceReference<'sylvester'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.sylvester?(2)',
-      'let nt = import("TEMP-nth");\nnt.sylvester?(3)',
-      'let nt = import("TEMP-nth");\nnt.sylvester?(6)',
+      'let { sylvester? } = import("TEMP-nth");\nsylvester?(2)',
+      'let { sylvester? } = import("TEMP-nth");\nsylvester?(3)',
+      'let { sylvester? } = import("TEMP-nth");\nsylvester?(6)',
     ],
   },
 }

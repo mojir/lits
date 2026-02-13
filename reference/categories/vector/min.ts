@@ -19,8 +19,8 @@ export const minReference: VectorReductionReference<'TEMP-min', 'min'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.TEMP-min([1, 2, 3])',
-      'let vec = import("vec");\nvec.TEMP-min([1, 2, -3])',
+      'let { TEMP-min } = import("vec");\nTEMP-min([1, 2, 3])',
+      'let { TEMP-min } = import("vec");\nTEMP-min([1, 2, -3])',
     ],
   },
   'vec.moving-min': {
@@ -45,8 +45,8 @@ export const minReference: VectorReductionReference<'TEMP-min', 'min'> = {
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.moving-min([1, 2, 3, 4, 5], 3)',
-      'let vec = import("vec");\nvec.moving-min([1, 2, 3, 4, 5], 5)',
+      'let { moving-min } = import("vec");\nmoving-min([1, 2, 3, 4, 5], 3)',
+      'let { moving-min } = import("vec");\nmoving-min([1, 2, 3, 4, 5], 5)',
     ],
   },
   'vec.centered-moving-min': {
@@ -81,9 +81,9 @@ export const minReference: VectorReductionReference<'TEMP-min', 'min'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.centered-moving-min([1, 2, 3, 4, 5], 3)',
-      'let vec = import("vec");\nvec.centered-moving-min([1, 2, 3, 4, 5], 3, 0, 100)',
-      'let vec = import("vec");\nvec.centered-moving-min([1, 2, 3, 4, 5], 3, 0)',
+      'let { centered-moving-min } = import("vec");\ncentered-moving-min([1, 2, 3, 4, 5], 3)',
+      'let { centered-moving-min } = import("vec");\ncentered-moving-min([1, 2, 3, 4, 5], 3, 0, 100)',
+      'let { centered-moving-min } = import("vec");\ncentered-moving-min([1, 2, 3, 4, 5], 3, 0)',
     ],
   },
   'vec.running-min': {
@@ -103,8 +103,8 @@ export const minReference: VectorReductionReference<'TEMP-min', 'min'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.running-min([1, 2, 3])',
-      'let vec = import("vec");\nvec.running-min([1, -2, -3])',
+      'let { running-min } = import("vec");\nrunning-min([1, 2, 3])',
+      'let { running-min } = import("vec");\nrunning-min([1, -2, -3])',
     ],
   },
 }

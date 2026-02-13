@@ -1,5 +1,6 @@
 import { allReference, getLinkName, isCustomReference, isFunctionReference } from '../../../../reference'
 import type { CustomReference, FunctionReference, Reference } from '../../../../reference'
+import { categoryToNamespace } from '../../../../reference/api'
 import { styles } from '../../styles'
 import { formatLitsExpression } from '../../formatter/rules'
 import { formatDescription } from './description'
@@ -20,6 +21,10 @@ function getDocumentation(reference: Reference) {
   const stripPrefix = (name: string) => name.includes('.') ? name.split('.').slice(1).join('.') : name
   const displayTitle = stripPrefix(reference.title)
   const docTitle = `${escapeTitle(displayTitle)}${aliases ? `, ${aliases.map(stripPrefix).join(', ')}` : ''}`
+  const namespaceName = categoryToNamespace[reference.category]
+  const importHint = namespaceName
+    ? `<div ${styles('font-mono', 'text-xs', 'text-color-gray-400', 'px-4', 'pb-2')}>let { ${displayTitle} } = import("${namespaceName}")</div>`
+    : ''
 
   // Get all references for seeAlso (including namespace references)
   const functionReferences = reference.seeAlso
@@ -32,6 +37,7 @@ function getDocumentation(reference: Reference) {
       <div ${styles('text-color-gray-200', 'font-mono')}><a onclick="Playground.showPage('${getLinkName(reference)}', 'smooth')">${docTitle}</a></div>
       <div ${styles('text-color-gray-400')}>${reference.category}</div>
     </div>
+    ${importHint}
 
     ${isFunctionReference(reference)
       ? getSignature(reference)

@@ -19,9 +19,9 @@ export const padovanReference: NumberTheorySequenceReference<'padovan'> = {
       { argumentNames: ['length'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.padovan-seq(5)',
-      'let nt = import("TEMP-nth");\nnt.padovan-seq(10)',
-      'let nt = import("TEMP-nth");\nnt.padovan-seq(20)',
+      'let { padovan-seq } = import("TEMP-nth");\npadovan-seq(5)',
+      'let { padovan-seq } = import("TEMP-nth");\npadovan-seq(10)',
+      'let { padovan-seq } = import("TEMP-nth");\npadovan-seq(20)',
     ],
   },
   'TEMP-nth.padovan-take-while': {
@@ -42,7 +42,7 @@ export const padovanReference: NumberTheorySequenceReference<'padovan'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.padovan-take-while(-> $ < 1000)',
+      'let { padovan-take-while } = import("TEMP-nth");\npadovan-take-while(-> $ < 1000)',
     ],
   },
   'TEMP-nth.padovan-nth': {
@@ -62,9 +62,9 @@ export const padovanReference: NumberTheorySequenceReference<'padovan'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.padovan-nth(5)',
-      'let nt = import("TEMP-nth");\nnt.padovan-nth(10)',
-      'let nt = import("TEMP-nth");\nnt.padovan-nth(20)',
+      'let { padovan-nth } = import("TEMP-nth");\npadovan-nth(5)',
+      'let { padovan-nth } = import("TEMP-nth");\npadovan-nth(10)',
+      'let { padovan-nth } = import("TEMP-nth");\npadovan-nth(20)',
     ],
   },
   'TEMP-nth.padovan?': {
@@ -84,9 +84,9 @@ export const padovanReference: NumberTheorySequenceReference<'padovan'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.padovan?(1)',
-      'let nt = import("TEMP-nth");\nnt.padovan?(265)',
-      'let nt = import("TEMP-nth");\nnt.padovan?(6)',
+      'let { padovan? } = import("TEMP-nth");\npadovan?(1)',
+      'let { padovan? } = import("TEMP-nth");\npadovan?(265)',
+      'let { padovan? } = import("TEMP-nth");\npadovan?(6)',
     ],
   },
 }

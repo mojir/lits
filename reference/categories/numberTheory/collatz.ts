@@ -19,8 +19,8 @@ export const collatzReference: Omit<NumberTheorySequenceReference<'collatz'>, 'T
       { argumentNames: ['start'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.collatz-seq(3)',
-      'let nt = import("TEMP-nth");\nnt.collatz-seq(11)',
+      'let { collatz-seq } = import("TEMP-nth");\ncollatz-seq(3)',
+      'let { collatz-seq } = import("TEMP-nth");\ncollatz-seq(11)',
     ],
   },
 }

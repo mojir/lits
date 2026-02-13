@@ -20,9 +20,9 @@ export const lucasReference: NumberTheorySequenceReference<'lucas'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.lucas-seq(1)',
-      'let nt = import("TEMP-nth");\nnt.lucas-seq(2)',
-      'let nt = import("TEMP-nth");\nnt.lucas-seq()',
+      'let { lucas-seq } = import("TEMP-nth");\nlucas-seq(1)',
+      'let { lucas-seq } = import("TEMP-nth");\nlucas-seq(2)',
+      'let { lucas-seq } = import("TEMP-nth");\nlucas-seq()',
     ],
   },
   'TEMP-nth.lucas-take-while': {
@@ -43,7 +43,7 @@ export const lucasReference: NumberTheorySequenceReference<'lucas'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.lucas-take-while(-> $ < 100)',
+      'let { lucas-take-while } = import("TEMP-nth");\nlucas-take-while(-> $ < 100)',
     ],
   },
   'TEMP-nth.lucas-nth': {
@@ -63,9 +63,9 @@ export const lucasReference: NumberTheorySequenceReference<'lucas'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.lucas-nth(1)',
-      'let nt = import("TEMP-nth");\nnt.lucas-nth(2)',
-      'let nt = import("TEMP-nth");\nnt.lucas-nth(10)',
+      'let { lucas-nth } = import("TEMP-nth");\nlucas-nth(1)',
+      'let { lucas-nth } = import("TEMP-nth");\nlucas-nth(2)',
+      'let { lucas-nth } = import("TEMP-nth");\nlucas-nth(10)',
     ],
   },
   'TEMP-nth.lucas?': {
@@ -85,9 +85,9 @@ export const lucasReference: NumberTheorySequenceReference<'lucas'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.lucas?(1)',
-      'let nt = import("TEMP-nth");\nnt.lucas?(2)',
-      'let nt = import("TEMP-nth");\nnt.lucas?(10)',
+      'let { lucas? } = import("TEMP-nth");\nlucas?(1)',
+      'let { lucas? } = import("TEMP-nth");\nlucas?(2)',
+      'let { lucas? } = import("TEMP-nth");\nlucas?(10)',
     ],
   },
 }

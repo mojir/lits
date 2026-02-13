@@ -48,9 +48,9 @@ export const rootMeanSquareReference: VectorReductionReference<'rms'> = {
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.moving-rms([1, 2, 4, 7, 11, 16], 4)',
-      'let vec = import("vec");\nvec.moving-rms([1, 2, 4, 7, 11, 16], 5)',
-      'let vec = import("vec");\nvec.moving-rms([1, 2, 4, 7, 11, 16], 6)',
+      'let { moving-rms } = import("vec");\nmoving-rms([1, 2, 4, 7, 11, 16], 4)',
+      'let { moving-rms } = import("vec");\nmoving-rms([1, 2, 4, 7, 11, 16], 5)',
+      'let { moving-rms } = import("vec");\nmoving-rms([1, 2, 4, 7, 11, 16], 6)',
     ],
   },
   'vec.centered-moving-rms': {
@@ -85,9 +85,9 @@ export const rootMeanSquareReference: VectorReductionReference<'rms'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.centered-moving-rms([1, 2, 4, 7, 11, 16], 4)',
-      'let vec = import("vec");\nvec.centered-moving-rms([1, 2, 4, 7, 11, 16], 5, 0)',
-      'let vec = import("vec");\nvec.centered-moving-rms([1, 2, 4, 7, 11, 16], 6, 0, 0)',
+      'let { centered-moving-rms } = import("vec");\ncentered-moving-rms([1, 2, 4, 7, 11, 16], 4)',
+      'let { centered-moving-rms } = import("vec");\ncentered-moving-rms([1, 2, 4, 7, 11, 16], 5, 0)',
+      'let { centered-moving-rms } = import("vec");\ncentered-moving-rms([1, 2, 4, 7, 11, 16], 6, 0, 0)',
     ],
   },
   'vec.running-rms': {
@@ -107,10 +107,10 @@ export const rootMeanSquareReference: VectorReductionReference<'rms'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.running-rms([1, 2, 3, 4, 5, 6])',
-      'let vec = import("vec");\nvec.running-rms([1, -3, 2])',
-      'let vec = import("vec");\nvec.running-rms([-1, -2, -3])',
-      'let vec = import("vec");\nvec.running-rms([0])',
+      'let { running-rms } = import("vec");\nrunning-rms([1, 2, 3, 4, 5, 6])',
+      'let { running-rms } = import("vec");\nrunning-rms([1, -3, 2])',
+      'let { running-rms } = import("vec");\nrunning-rms([-1, -2, -3])',
+      'let { running-rms } = import("vec");\nrunning-rms([0])',
     ],
   },
 }

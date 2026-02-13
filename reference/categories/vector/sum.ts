@@ -45,8 +45,8 @@ export const sumReference: VectorReductionReference<'sum'> = {
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.moving-sum([1, 2, 3, 4, 5], 3)',
-      'let vec = import("vec");\nvec.moving-sum([1, 2, 3, 4, 5], 5)',
+      'let { moving-sum } = import("vec");\nmoving-sum([1, 2, 3, 4, 5], 3)',
+      'let { moving-sum } = import("vec");\nmoving-sum([1, 2, 3, 4, 5], 5)',
     ],
   },
   'vec.centered-moving-sum': {
@@ -81,9 +81,9 @@ export const sumReference: VectorReductionReference<'sum'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.centered-moving-sum([1, 2, 3, 4, 5], 3)',
-      'let vec = import("vec");\nvec.centered-moving-sum([1, 2, 3, 4, 5], 3, 0, 0)',
-      'let vec = import("vec");\nvec.centered-moving-sum([1, 2, 3, 4, 5], 3, 10)',
+      'let { centered-moving-sum } = import("vec");\ncentered-moving-sum([1, 2, 3, 4, 5], 3)',
+      'let { centered-moving-sum } = import("vec");\ncentered-moving-sum([1, 2, 3, 4, 5], 3, 0, 0)',
+      'let { centered-moving-sum } = import("vec");\ncentered-moving-sum([1, 2, 3, 4, 5], 3, 10)',
     ],
   },
   'vec.running-sum': {
@@ -103,8 +103,8 @@ export const sumReference: VectorReductionReference<'sum'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.running-sum([1, 2, 3])',
-      'let vec = import("vec");\nvec.running-sum([1, -2, -3])',
+      'let { running-sum } = import("vec");\nrunning-sum([1, 2, 3])',
+      'let { running-sum } = import("vec");\nrunning-sum([1, -2, -3])',
     ],
   },
 }

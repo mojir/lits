@@ -19,9 +19,9 @@ export const thueMorseReference: NumberTheorySequenceReference<'thue-morse'> = {
       { argumentNames: ['length'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.thue-morse-seq(5)',
-      'let nt = import("TEMP-nth");\nnt.thue-morse-seq(10)',
-      'let nt = import("TEMP-nth");\nnt.thue-morse-seq(20)',
+      'let { thue-morse-seq } = import("TEMP-nth");\nthue-morse-seq(5)',
+      'let { thue-morse-seq } = import("TEMP-nth");\nthue-morse-seq(10)',
+      'let { thue-morse-seq } = import("TEMP-nth");\nthue-morse-seq(20)',
     ],
   },
   'TEMP-nth.thue-morse-take-while': {
@@ -42,7 +42,7 @@ export const thueMorseReference: NumberTheorySequenceReference<'thue-morse'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.thue-morse-take-while(-> $2 < 10)',
+      'let { thue-morse-take-while } = import("TEMP-nth");\nthue-morse-take-while(-> $2 < 10)',
     ],
   },
   'TEMP-nth.thue-morse-nth': {
@@ -62,9 +62,9 @@ export const thueMorseReference: NumberTheorySequenceReference<'thue-morse'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.thue-morse-nth(5)',
-      'let nt = import("TEMP-nth");\nnt.thue-morse-nth(10)',
-      'let nt = import("TEMP-nth");\nnt.thue-morse-nth(20)',
+      'let { thue-morse-nth } = import("TEMP-nth");\nthue-morse-nth(5)',
+      'let { thue-morse-nth } = import("TEMP-nth");\nthue-morse-nth(10)',
+      'let { thue-morse-nth } = import("TEMP-nth");\nthue-morse-nth(20)',
     ],
   },
   'TEMP-nth.thue-morse?': {
@@ -84,8 +84,8 @@ export const thueMorseReference: NumberTheorySequenceReference<'thue-morse'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.thue-morse?(1)',
-      'let nt = import("TEMP-nth");\nnt.thue-morse?(2)',
+      'let { thue-morse? } = import("TEMP-nth");\nthue-morse?(1)',
+      'let { thue-morse? } = import("TEMP-nth");\nthue-morse?(2)',
     ],
   },
 }

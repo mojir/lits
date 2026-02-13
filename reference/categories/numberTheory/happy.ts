@@ -20,9 +20,9 @@ export const happyReference: NumberTheorySequenceReference<'happy'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.happy-seq(1)',
-      'let nt = import("TEMP-nth");\nnt.happy-seq(2)',
-      'let nt = import("TEMP-nth");\nnt.happy-seq(20)',
+      'let { happy-seq } = import("TEMP-nth");\nhappy-seq(1)',
+      'let { happy-seq } = import("TEMP-nth");\nhappy-seq(2)',
+      'let { happy-seq } = import("TEMP-nth");\nhappy-seq(20)',
     ],
   },
   'TEMP-nth.happy-take-while': {
@@ -43,7 +43,7 @@ export const happyReference: NumberTheorySequenceReference<'happy'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.happy-take-while(-> $ < 100)',
+      'let { happy-take-while } = import("TEMP-nth");\nhappy-take-while(-> $ < 100)',
     ],
   },
   'TEMP-nth.happy-nth': {
@@ -63,9 +63,9 @@ export const happyReference: NumberTheorySequenceReference<'happy'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.happy-nth(1)',
-      'let nt = import("TEMP-nth");\nnt.happy-nth(2)',
-      'let nt = import("TEMP-nth");\nnt.happy-nth(20)',
+      'let { happy-nth } = import("TEMP-nth");\nhappy-nth(1)',
+      'let { happy-nth } = import("TEMP-nth");\nhappy-nth(2)',
+      'let { happy-nth } = import("TEMP-nth");\nhappy-nth(20)',
     ],
   },
   'TEMP-nth.happy?': {
@@ -85,9 +85,9 @@ export const happyReference: NumberTheorySequenceReference<'happy'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.happy?(1)',
-      'let nt = import("TEMP-nth");\nnt.happy?(2)',
-      'let nt = import("TEMP-nth");\nnt.happy?(100)',
+      'let { happy? } = import("TEMP-nth");\nhappy?(1)',
+      'let { happy? } = import("TEMP-nth");\nhappy?(2)',
+      'let { happy? } = import("TEMP-nth");\nhappy?(100)',
     ],
   },
 }

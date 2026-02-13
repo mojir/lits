@@ -19,9 +19,9 @@ export const compositeReference: NumberTheorySequenceReference<'composite'> = {
       { argumentNames: ['length'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.composite-seq(1)',
-      'let nt = import("TEMP-nth");\nnt.composite-seq(2)',
-      'let nt = import("TEMP-nth");\nnt.composite-seq(10)',
+      'let { composite-seq } = import("TEMP-nth");\ncomposite-seq(1)',
+      'let { composite-seq } = import("TEMP-nth");\ncomposite-seq(2)',
+      'let { composite-seq } = import("TEMP-nth");\ncomposite-seq(10)',
     ],
   },
   'TEMP-nth.composite-take-while': {
@@ -42,7 +42,7 @@ export const compositeReference: NumberTheorySequenceReference<'composite'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.composite-take-while(-> $ < 50)',
+      'let { composite-take-while } = import("TEMP-nth");\ncomposite-take-while(-> $ < 50)',
     ],
   },
   'TEMP-nth.composite-nth': {
@@ -62,9 +62,9 @@ export const compositeReference: NumberTheorySequenceReference<'composite'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.composite-nth(1)',
-      'let nt = import("TEMP-nth");\nnt.composite-nth(2)',
-      'let nt = import("TEMP-nth");\nnt.composite-nth(10)',
+      'let { composite-nth } = import("TEMP-nth");\ncomposite-nth(1)',
+      'let { composite-nth } = import("TEMP-nth");\ncomposite-nth(2)',
+      'let { composite-nth } = import("TEMP-nth");\ncomposite-nth(10)',
     ],
   },
   'TEMP-nth.composite?': {
@@ -84,9 +84,9 @@ export const compositeReference: NumberTheorySequenceReference<'composite'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.composite?(4)',
-      'let nt = import("TEMP-nth");\nnt.composite?(5)',
-      'let nt = import("TEMP-nth");\nnt.composite?(11)',
+      'let { composite? } = import("TEMP-nth");\ncomposite?(4)',
+      'let { composite? } = import("TEMP-nth");\ncomposite?(5)',
+      'let { composite? } = import("TEMP-nth");\ncomposite?(11)',
     ],
   },
 }

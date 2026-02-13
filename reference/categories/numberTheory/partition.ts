@@ -20,9 +20,9 @@ export const partitionReference: NumberTheorySequenceReference<'partition'> = {
       { argumentNames: [] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.partition-seq(1)',
-      'let nt = import("TEMP-nth");\nnt.partition-seq(10)',
-      'let nt = import("TEMP-nth");\nnt.partition-seq()',
+      'let { partition-seq } = import("TEMP-nth");\npartition-seq(1)',
+      'let { partition-seq } = import("TEMP-nth");\npartition-seq(10)',
+      'let { partition-seq } = import("TEMP-nth");\npartition-seq()',
     ],
   },
   'TEMP-nth.partition-take-while': {
@@ -43,7 +43,7 @@ export const partitionReference: NumberTheorySequenceReference<'partition'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.partition-take-while(-> $ < 1000)',
+      'let { partition-take-while } = import("TEMP-nth");\npartition-take-while(-> $ < 1000)',
     ],
   },
   'TEMP-nth.partition-nth': {
@@ -63,8 +63,8 @@ export const partitionReference: NumberTheorySequenceReference<'partition'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.partition-nth(1)',
-      'let nt = import("TEMP-nth");\nnt.partition-nth(5)',
+      'let { partition-nth } = import("TEMP-nth");\npartition-nth(1)',
+      'let { partition-nth } = import("TEMP-nth");\npartition-nth(5)',
     ],
   },
   'TEMP-nth.partition?': {
@@ -84,12 +84,12 @@ export const partitionReference: NumberTheorySequenceReference<'partition'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.partition?(0)',
-      'let nt = import("TEMP-nth");\nnt.partition?(1)',
-      'let nt = import("TEMP-nth");\nnt.partition?(2)',
-      'let nt = import("TEMP-nth");\nnt.partition?(3)',
-      'let nt = import("TEMP-nth");\nnt.partition?(4)',
-      'let nt = import("TEMP-nth");\nnt.partition?(5)',
+      'let { partition? } = import("TEMP-nth");\npartition?(0)',
+      'let { partition? } = import("TEMP-nth");\npartition?(1)',
+      'let { partition? } = import("TEMP-nth");\npartition?(2)',
+      'let { partition? } = import("TEMP-nth");\npartition?(3)',
+      'let { partition? } = import("TEMP-nth");\npartition?(4)',
+      'let { partition? } = import("TEMP-nth");\npartition?(5)',
     ],
   },
 }

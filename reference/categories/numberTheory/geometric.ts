@@ -27,10 +27,10 @@ export const geometricReference: NumberTheorySequenceReference<'geometric'> = {
       { argumentNames: ['start', 'ratio', 'length'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.geometric-seq(3, 2, 2)',
-      'let nt = import("TEMP-nth");\nnt.geometric-seq(2, 3, 2)',
-      'let nt = import("TEMP-nth");\nnt.geometric-seq(1, 2, 2)',
-      'let nt = import("TEMP-nth");\nnt.geometric-seq(1, 1.5, 12)',
+      'let { geometric-seq } = import("TEMP-nth");\ngeometric-seq(3, 2, 2)',
+      'let { geometric-seq } = import("TEMP-nth");\ngeometric-seq(2, 3, 2)',
+      'let { geometric-seq } = import("TEMP-nth");\ngeometric-seq(1, 2, 2)',
+      'let { geometric-seq } = import("TEMP-nth");\ngeometric-seq(1, 1.5, 12)',
     ],
   },
   'TEMP-nth.geometric-take-while': {
@@ -59,7 +59,7 @@ export const geometricReference: NumberTheorySequenceReference<'geometric'> = {
       { argumentNames: ['start', 'ratio', 'takeWhile'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.geometric-take-while(1, 1.5, -> $ < 10)',
+      'let { geometric-take-while } = import("TEMP-nth");\ngeometric-take-while(1, 1.5, -> $ < 10)',
     ],
   },
   'TEMP-nth.geometric-nth': {
@@ -87,10 +87,10 @@ export const geometricReference: NumberTheorySequenceReference<'geometric'> = {
       { argumentNames: ['start', 'ratio', 'n'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.geometric-nth(3, 2, 2)',
-      'let nt = import("TEMP-nth");\nnt.geometric-nth(2, 3, 2)',
-      'let nt = import("TEMP-nth");\nnt.geometric-nth(1, 2, 2)',
-      'let nt = import("TEMP-nth");\nnt.geometric-nth(1, 1.5, 4)',
+      'let { geometric-nth } = import("TEMP-nth");\ngeometric-nth(3, 2, 2)',
+      'let { geometric-nth } = import("TEMP-nth");\ngeometric-nth(2, 3, 2)',
+      'let { geometric-nth } = import("TEMP-nth");\ngeometric-nth(1, 2, 2)',
+      'let { geometric-nth } = import("TEMP-nth");\ngeometric-nth(1, 1.5, 4)',
     ],
   },
   'TEMP-nth.geometric?': {
@@ -118,11 +118,11 @@ export const geometricReference: NumberTheorySequenceReference<'geometric'> = {
       { argumentNames: ['start', 'ratio', 'n'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.geometric?(1, 2, 1)',
-      'let nt = import("TEMP-nth");\nnt.geometric?(2, 3, 2)',
-      'let nt = import("TEMP-nth");\nnt.geometric?(3, 2, 2)',
-      'let nt = import("TEMP-nth");\nnt.geometric?(1, 1.5, 2.25)',
-      'let nt = import("TEMP-nth");\nnt.geometric?(1, 1.5, -4)',
+      'let { geometric? } = import("TEMP-nth");\ngeometric?(1, 2, 1)',
+      'let { geometric? } = import("TEMP-nth");\ngeometric?(2, 3, 2)',
+      'let { geometric? } = import("TEMP-nth");\ngeometric?(3, 2, 2)',
+      'let { geometric? } = import("TEMP-nth");\ngeometric?(1, 1.5, 2.25)',
+      'let { geometric? } = import("TEMP-nth");\ngeometric?(1, 1.5, -4)',
     ],
   },
 }

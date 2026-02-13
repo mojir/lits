@@ -49,9 +49,9 @@ export const entropyReference: VectorReductionReference<'entropy'> = {
       { argumentNames: ['vector', 'windowSize'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.moving-entropy([1, 1, 2, 3, 3, 3], 4)',
-      'let vec = import("vec");\nvec.moving-entropy([1, 1, 2, 3, 3, 3], 3)',
-      'let vec = import("vec");\nvec.moving-entropy([1, 2], 2)',
+      'let { moving-entropy } = import("vec");\nmoving-entropy([1, 1, 2, 3, 3, 3], 4)',
+      'let { moving-entropy } = import("vec");\nmoving-entropy([1, 1, 2, 3, 3, 3], 3)',
+      'let { moving-entropy } = import("vec");\nmoving-entropy([1, 2], 2)',
     ],
   },
   'vec.centered-moving-entropy': {
@@ -86,9 +86,9 @@ export const entropyReference: VectorReductionReference<'entropy'> = {
       { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.centered-moving-entropy([1, 1, 2, 3, 3, 3], 4)',
-      'let vec = import("vec");\nvec.centered-moving-entropy([1, 1, 2, 3, 3, 3], 3)',
-      'let vec = import("vec");\nvec.centered-moving-entropy([1, 2], 2)',
+      'let { centered-moving-entropy } = import("vec");\ncentered-moving-entropy([1, 1, 2, 3, 3, 3], 4)',
+      'let { centered-moving-entropy } = import("vec");\ncentered-moving-entropy([1, 1, 2, 3, 3, 3], 3)',
+      'let { centered-moving-entropy } = import("vec");\ncentered-moving-entropy([1, 2], 2)',
     ],
   },
   'vec.running-entropy': {
@@ -108,8 +108,8 @@ export const entropyReference: VectorReductionReference<'entropy'> = {
       { argumentNames: ['vector'] },
     ],
     examples: [
-      'let vec = import("vec");\nvec.running-entropy([1, 1, 2, 3, 3, 3])',
-      'let vec = import("vec");\nvec.running-entropy([1, 2])',
+      'let { running-entropy } = import("vec");\nrunning-entropy([1, 1, 2, 3, 3, 3])',
+      'let { running-entropy } = import("vec");\nrunning-entropy([1, 2])',
     ],
   },
 }

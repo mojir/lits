@@ -25,11 +25,11 @@ export const polygonalReference: NumberTheorySequenceReference<'polygonal'> = {
       { argumentNames: ['sides', 'length'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.polygonal-seq(3, 2)',
-      'let nt = import("TEMP-nth");\nnt.polygonal-seq(4, 2)',
-      'let nt = import("TEMP-nth");\nnt.polygonal-seq(5, 3)',
-      'let nt = import("TEMP-nth");\nnt.polygonal-seq(6, 5)',
-      'let nt = import("TEMP-nth");\nnt.polygonal-seq(100, 10)',
+      'let { polygonal-seq } = import("TEMP-nth");\npolygonal-seq(3, 2)',
+      'let { polygonal-seq } = import("TEMP-nth");\npolygonal-seq(4, 2)',
+      'let { polygonal-seq } = import("TEMP-nth");\npolygonal-seq(5, 3)',
+      'let { polygonal-seq } = import("TEMP-nth");\npolygonal-seq(6, 5)',
+      'let { polygonal-seq } = import("TEMP-nth");\npolygonal-seq(100, 10)',
     ],
   },
   'TEMP-nth.polygonal-take-while': {
@@ -55,7 +55,7 @@ export const polygonalReference: NumberTheorySequenceReference<'polygonal'> = {
       { argumentNames: ['sides', 'takeWhile'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.polygonal-take-while(15, -> $ < 1000)',
+      'let { polygonal-take-while } = import("TEMP-nth");\npolygonal-take-while(15, -> $ < 1000)',
     ],
   },
   'TEMP-nth.polygonal-nth': {
@@ -80,9 +80,9 @@ export const polygonalReference: NumberTheorySequenceReference<'polygonal'> = {
       { argumentNames: ['sides', 'n'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.polygonal-nth(3, 9)',
-      'let nt = import("TEMP-nth");\nnt.polygonal-nth(4, 5)',
-      'let nt = import("TEMP-nth");\nnt.polygonal-nth(5, 5)',
+      'let { polygonal-nth } = import("TEMP-nth");\npolygonal-nth(3, 9)',
+      'let { polygonal-nth } = import("TEMP-nth");\npolygonal-nth(4, 5)',
+      'let { polygonal-nth } = import("TEMP-nth");\npolygonal-nth(5, 5)',
     ],
   },
   'TEMP-nth.polygonal?': {
@@ -107,11 +107,11 @@ export const polygonalReference: NumberTheorySequenceReference<'polygonal'> = {
       { argumentNames: ['sides', 'n'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.polygonal?(3, 10)',
-      'let nt = import("TEMP-nth");\nnt.polygonal?(3, 9)',
-      'let nt = import("TEMP-nth");\nnt.polygonal?(4, 10000)',
-      'let nt = import("TEMP-nth");\nnt.polygonal?(4, 1000)',
-      'let nt = import("TEMP-nth");\nnt.polygonal?(6, 45)',
+      'let { polygonal? } = import("TEMP-nth");\npolygonal?(3, 10)',
+      'let { polygonal? } = import("TEMP-nth");\npolygonal?(3, 9)',
+      'let { polygonal? } = import("TEMP-nth");\npolygonal?(4, 10000)',
+      'let { polygonal? } = import("TEMP-nth");\npolygonal?(4, 1000)',
+      'let { polygonal? } = import("TEMP-nth");\npolygonal?(6, 45)',
     ],
   },
 }

@@ -19,9 +19,9 @@ export const recamanReference: NumberTheorySequenceReference<'recaman'> = {
       { argumentNames: ['length'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.recaman-seq(5)',
-      'let nt = import("TEMP-nth");\nnt.recaman-seq(10)',
-      'let nt = import("TEMP-nth");\nnt.recaman-seq(20)',
+      'let { recaman-seq } = import("TEMP-nth");\nrecaman-seq(5)',
+      'let { recaman-seq } = import("TEMP-nth");\nrecaman-seq(10)',
+      'let { recaman-seq } = import("TEMP-nth");\nrecaman-seq(20)',
     ],
   },
   'TEMP-nth.recaman-take-while': {
@@ -42,7 +42,7 @@ export const recamanReference: NumberTheorySequenceReference<'recaman'> = {
       { argumentNames: ['takeWhile'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.recaman-take-while(-> $ < 10)',
+      'let { recaman-take-while } = import("TEMP-nth");\nrecaman-take-while(-> $ < 10)',
     ],
   },
   'TEMP-nth.recaman-nth': {
@@ -62,9 +62,9 @@ export const recamanReference: NumberTheorySequenceReference<'recaman'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.recaman-nth(5)',
-      'let nt = import("TEMP-nth");\nnt.recaman-nth(10)',
-      'let nt = import("TEMP-nth");\nnt.recaman-nth(20)',
+      'let { recaman-nth } = import("TEMP-nth");\nrecaman-nth(5)',
+      'let { recaman-nth } = import("TEMP-nth");\nrecaman-nth(10)',
+      'let { recaman-nth } = import("TEMP-nth");\nrecaman-nth(20)',
     ],
   },
   'TEMP-nth.recaman?': {
@@ -84,9 +84,9 @@ export const recamanReference: NumberTheorySequenceReference<'recaman'> = {
       { argumentNames: ['n'] },
     ],
     examples: [
-      'let nt = import("TEMP-nth");\nnt.recaman?(5)',
-      'let nt = import("TEMP-nth");\nnt.recaman?(10)',
-      'let nt = import("TEMP-nth");\nnt.recaman?(20)',
+      'let { recaman? } = import("TEMP-nth");\nrecaman?(5)',
+      'let { recaman? } = import("TEMP-nth");\nrecaman?(10)',
+      'let { recaman? } = import("TEMP-nth");\nrecaman?(20)',
     ],
   },
 }

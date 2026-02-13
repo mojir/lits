@@ -23033,8 +23033,8 @@ var Playground = (function (exports) {
             ],
             description: 'Creates a grid from a flat array with specified dimensions. The array is reshaped into the specified number of rows, and the number of columns is automatically calculated based on the total number of elements in the array.',
             examples: [
-                'let grid = import("grid");\ngrid.from-array([1, 2, 3, 4], 2)',
-                'let grid = import("grid");\ngrid.from-array([1, 2, 3, 4], 4)',
+                'let { from-array } = import("grid");\nfrom-array([1, 2, 3, 4], 2)',
+                'let { from-array } = import("grid");\nfrom-array([1, 2, 3, 4], 4)',
             ],
         },
     };
@@ -23249,11 +23249,11 @@ var Playground = (function (exports) {
                 { argumentNames: ['v'] },
             ],
             examples: [
-                'let lin = import("lin");\nlin.normalize-minmax([1, 2, 3])',
-                'let lin = import("lin");\nlin.normalize-minmax([1, 2, -3])',
-                'let lin = import("lin");\nlin.normalize-minmax([1, 2, 3, 4])',
-                'let lin = import("lin");\nlin.normalize-minmax([1, 2, -3, 4])',
-                'let lin = import("lin");\nlin.normalize-minmax([1, 2, 3, 40, 50])',
+                'let { normalize-minmax } = import("lin");\nnormalize-minmax([1, 2, 3])',
+                'let { normalize-minmax } = import("lin");\nnormalize-minmax([1, 2, -3])',
+                'let { normalize-minmax } = import("lin");\nnormalize-minmax([1, 2, 3, 4])',
+                'let { normalize-minmax } = import("lin");\nnormalize-minmax([1, 2, -3, 4])',
+                'let { normalize-minmax } = import("lin");\nnormalize-minmax([1, 2, 3, 40, 50])',
             ],
         },
         'lin.normalize-zscore': {
@@ -23273,11 +23273,11 @@ var Playground = (function (exports) {
                 { argumentNames: ['v'] },
             ],
             examples: [
-                'let lin = import("lin");\nlin.normalize-zscore([1, 2, 3])',
-                'let lin = import("lin");\nlin.normalize-zscore([1, 2, -3])',
-                'let lin = import("lin");\nlin.normalize-zscore([1, 2, 3, 4])',
-                'let lin = import("lin");\nlin.normalize-zscore([1, 2, -3, 4])',
-                'let lin = import("lin");\nlin.normalize-zscore([1, 2, 3, 40, 50])',
+                'let { normalize-zscore } = import("lin");\nnormalize-zscore([1, 2, 3])',
+                'let { normalize-zscore } = import("lin");\nnormalize-zscore([1, 2, -3])',
+                'let { normalize-zscore } = import("lin");\nnormalize-zscore([1, 2, 3, 4])',
+                'let { normalize-zscore } = import("lin");\nnormalize-zscore([1, 2, -3, 4])',
+                'let { normalize-zscore } = import("lin");\nnormalize-zscore([1, 2, 3, 40, 50])',
             ],
         },
         'lin.normalize-robust': {
@@ -23297,11 +23297,11 @@ var Playground = (function (exports) {
                 { argumentNames: ['v'] },
             ],
             examples: [
-                'let lin = import("lin");\nlin.normalize-robust([1, 2, 3])',
-                'let lin = import("lin");\nlin.normalize-robust([1, 2, -3])',
-                'let lin = import("lin");\nlin.normalize-robust([1, 2, 3, 4])',
-                'let lin = import("lin");\nlin.normalize-robust([1, 2, -3, 4])',
-                'let lin = import("lin");\nlin.normalize-robust([1, 2, 3, 40, 50])',
+                'let { normalize-robust } = import("lin");\nnormalize-robust([1, 2, 3])',
+                'let { normalize-robust } = import("lin");\nnormalize-robust([1, 2, -3])',
+                'let { normalize-robust } = import("lin");\nnormalize-robust([1, 2, 3, 4])',
+                'let { normalize-robust } = import("lin");\nnormalize-robust([1, 2, -3, 4])',
+                'let { normalize-robust } = import("lin");\nnormalize-robust([1, 2, 3, 40, 50])',
             ],
         },
         'lin.normalize-l1': {
@@ -23321,11 +23321,11 @@ var Playground = (function (exports) {
                 { argumentNames: ['v'] },
             ],
             examples: [
-                'let lin = import("lin");\nlin.normalize-l1([1, 2, 3])',
-                'let lin = import("lin");\nlin.normalize-l1([1, 2, -3])',
-                'let lin = import("lin");\nlin.normalize-l1([1, 2, 3, 4])',
-                'let lin = import("lin");\nlin.normalize-l1([1, 2, -3, 4])',
-                'let lin = import("lin");\nlin.normalize-l1([1, 2, 3, 40, 50])',
+                'let { normalize-l1 } = import("lin");\nnormalize-l1([1, 2, 3])',
+                'let { normalize-l1 } = import("lin");\nnormalize-l1([1, 2, -3])',
+                'let { normalize-l1 } = import("lin");\nnormalize-l1([1, 2, 3, 4])',
+                'let { normalize-l1 } = import("lin");\nnormalize-l1([1, 2, -3, 4])',
+                'let { normalize-l1 } = import("lin");\nnormalize-l1([1, 2, 3, 40, 50])',
             ],
         },
         'lin.normalize-l2': {
@@ -23345,12 +23345,12 @@ var Playground = (function (exports) {
                 { argumentNames: ['v'] },
             ],
             examples: [
-                'let lin = import("lin");\nlin.normalize-l2([1, 2, 3])',
+                'let { normalize-l2 } = import("lin");\nnormalize-l2([1, 2, 3])',
                 'let { unit } = import("lin");\nunit([1, 2, 3])',
-                'let lin = import("lin");\nlin.normalize-l2([1, 2, -3])',
-                'let lin = import("lin");\nlin.normalize-l2([1, 2, 3, 4])',
-                'let lin = import("lin");\nlin.normalize-l2([1, 2, -3, 4])',
-                'let lin = import("lin");\nlin.normalize-l2([1, 2, 3, 40, 50])',
+                'let { normalize-l2 } = import("lin");\nnormalize-l2([1, 2, -3])',
+                'let { normalize-l2 } = import("lin");\nnormalize-l2([1, 2, 3, 4])',
+                'let { normalize-l2 } = import("lin");\nnormalize-l2([1, 2, -3, 4])',
+                'let { normalize-l2 } = import("lin");\nnormalize-l2([1, 2, 3, 40, 50])',
             ],
             aliases: [
                 'lin.unit',
@@ -23374,9 +23374,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['v'] },
             ],
             examples: [
-                'let lin = import("lin");\nlin.normalize-log([1, 2, 3])',
-                'let lin = import("lin");\nlin.normalize-log([1, 2, 3, 4])',
-                'let lin = import("lin");\nlin.normalize-log([1, 2, 3, 40, 50])',
+                'let { normalize-log } = import("lin");\nnormalize-log([1, 2, 3])',
+                'let { normalize-log } = import("lin");\nnormalize-log([1, 2, 3, 4])',
+                'let { normalize-log } = import("lin");\nnormalize-log([1, 2, 3, 40, 50])',
             ],
         },
         'lin.angle': {
@@ -23423,9 +23423,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['a', 'b'] },
             ],
             examples: [
-                'let lin = import("lin");\nlin.collinear?([1, 2], [2, 4])',
-                'let lin = import("lin");\nlin.collinear?([1, 2], [-2, -4])',
-                'let lin = import("lin");\nlin.collinear?([1, 2, 3], [2, 4, 6])',
+                'let { collinear? } = import("lin");\ncollinear?([1, 2], [2, 4])',
+                'let { collinear? } = import("lin");\ncollinear?([1, 2], [-2, -4])',
+                'let { collinear? } = import("lin");\ncollinear?([1, 2, 3], [2, 4, 6])',
             ],
         },
         'lin.parallel?': {
@@ -23440,10 +23440,10 @@ var Playground = (function (exports) {
                 { argumentNames: ['a', 'b'] },
             ],
             examples: [
-                'let lin = import("lin");\nlin.parallel?([1, 2], [2, 4])',
-                'let lin = import("lin");\nlin.parallel?([1, 2], [-2, -4])',
-                'let lin = import("lin");\nlin.parallel?([1, 2, 3], [2, 4, 6])',
-                'let lin = import("lin");\nlin.parallel?([1, 2], [3, 4])',
+                'let { parallel? } = import("lin");\nparallel?([1, 2], [2, 4])',
+                'let { parallel? } = import("lin");\nparallel?([1, 2], [-2, -4])',
+                'let { parallel? } = import("lin");\nparallel?([1, 2, 3], [2, 4, 6])',
+                'let { parallel? } = import("lin");\nparallel?([1, 2], [3, 4])',
             ],
         },
         'lin.orthogonal?': {
@@ -23458,9 +23458,9 @@ var Playground = (function (exports) {
             ],
             description: 'Checks if two vectors are **orthogonal**.',
             examples: [
-                'let lin = import("lin");\nlin.orthogonal?([1, 0], [0, 1])',
-                'let lin = import("lin");\nlin.orthogonal?([1, 0, 1], [0, 1, 0])',
-                'let lin = import("lin");\nlin.orthogonal?([1, 2], [2, -1])',
+                'let { orthogonal? } = import("lin");\northogonal?([1, 0], [0, 1])',
+                'let { orthogonal? } = import("lin");\northogonal?([1, 0, 1], [0, 1, 0])',
+                'let { orthogonal? } = import("lin");\northogonal?([1, 2], [2, -1])',
             ],
         },
         'lin.cosine-similarity': {
@@ -23475,9 +23475,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['a', 'b'] },
             ],
             examples: [
-                'let lin = import("lin");\nlin.cosine-similarity([1, 2], [3, 4])',
-                'let lin = import("lin");\nlin.cosine-similarity([1, 2, 3], [4, 5, 6])',
-                'let lin = import("lin");\nlin.cosine-similarity([1, 0], [0, 1])',
+                'let { cosine-similarity } = import("lin");\ncosine-similarity([1, 2], [3, 4])',
+                'let { cosine-similarity } = import("lin");\ncosine-similarity([1, 2, 3], [4, 5, 6])',
+                'let { cosine-similarity } = import("lin");\ncosine-similarity([1, 0], [0, 1])',
             ],
         },
         'lin.euclidean-distance': {
@@ -23492,9 +23492,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['a', 'b'] },
             ],
             examples: [
-                'let lin = import("lin");\nlin.euclidean-distance([1, 2], [3, 4])',
-                'let lin = import("lin");\nlin.euclidean-distance([1, 2, 3], [4, 5, 6])',
-                'let lin = import("lin");\nlin.euclidean-distance([1, 0], [0, 1])',
+                'let { euclidean-distance } = import("lin");\neuclidean-distance([1, 2], [3, 4])',
+                'let { euclidean-distance } = import("lin");\neuclidean-distance([1, 2, 3], [4, 5, 6])',
+                'let { euclidean-distance } = import("lin");\neuclidean-distance([1, 0], [0, 1])',
             ],
             aliases: [
                 'lin.distance',
@@ -23518,9 +23518,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['v'] },
             ],
             examples: [
-                'let lin = import("lin");\nlin.euclidean-norm([1, 2])',
-                'let lin = import("lin");\nlin.euclidean-norm([3, 4])',
-                'let lin = import("lin");\nlin.euclidean-norm([1, 2, 3])',
+                'let { euclidean-norm } = import("lin");\neuclidean-norm([1, 2])',
+                'let { euclidean-norm } = import("lin");\neuclidean-norm([3, 4])',
+                'let { euclidean-norm } = import("lin");\neuclidean-norm([1, 2, 3])',
             ],
             aliases: [
                 'lin.l2-norm',
@@ -23539,9 +23539,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['a', 'b'] },
             ],
             examples: [
-                'let lin = import("lin");\nlin.manhattan-distance([1, 2], [3, 4])',
-                'let lin = import("lin");\nlin.manhattan-distance([1, 2, 3], [4, 5, 6])',
-                'let lin = import("lin");\nlin.manhattan-distance([1, 0], [0, 1])',
+                'let { manhattan-distance } = import("lin");\nmanhattan-distance([1, 2], [3, 4])',
+                'let { manhattan-distance } = import("lin");\nmanhattan-distance([1, 2, 3], [4, 5, 6])',
+                'let { manhattan-distance } = import("lin");\nmanhattan-distance([1, 0], [0, 1])',
             ],
             aliases: [
                 'lin.l1-distance',
@@ -23565,9 +23565,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['v'] },
             ],
             examples: [
-                'let lin = import("lin");\nlin.manhattan-norm([1, 2])',
-                'let lin = import("lin");\nlin.manhattan-norm([3, 4])',
-                'let lin = import("lin");\nlin.manhattan-norm([1, 2, 3])',
+                'let { manhattan-norm } = import("lin");\nmanhattan-norm([1, 2])',
+                'let { manhattan-norm } = import("lin");\nmanhattan-norm([3, 4])',
+                'let { manhattan-norm } = import("lin");\nmanhattan-norm([1, 2, 3])',
             ],
             aliases: [
                 'lin.l1-norm',
@@ -23586,9 +23586,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['a', 'b'] },
             ],
             examples: [
-                'let lin = import("lin");\nlin.hamming-distance([1, 2], [3, 4])',
-                'let lin = import("lin");\nlin.hamming-distance([1, 2, 3], [4, 5, 6])',
-                'let lin = import("lin");\nlin.hamming-distance([1, 0], [0, 1])',
+                'let { hamming-distance } = import("lin");\nhamming-distance([1, 2], [3, 4])',
+                'let { hamming-distance } = import("lin");\nhamming-distance([1, 2, 3], [4, 5, 6])',
+                'let { hamming-distance } = import("lin");\nhamming-distance([1, 0], [0, 1])',
             ],
         },
         'lin.hamming-norm': {
@@ -23608,9 +23608,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['v'] },
             ],
             examples: [
-                'let lin = import("lin");\nlin.hamming-norm([1, 2])',
-                'let lin = import("lin");\nlin.hamming-norm([3, 4])',
-                'let lin = import("lin");\nlin.hamming-norm([1, 2, 3])',
+                'let { hamming-norm } = import("lin");\nhamming-norm([1, 2])',
+                'let { hamming-norm } = import("lin");\nhamming-norm([3, 4])',
+                'let { hamming-norm } = import("lin");\nhamming-norm([1, 2, 3])',
             ],
         },
         'lin.chebyshev-distance': {
@@ -23625,9 +23625,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['a', 'b'] },
             ],
             examples: [
-                'let lin = import("lin");\nlin.chebyshev-distance([1, 2], [3, 4])',
-                'let lin = import("lin");\nlin.chebyshev-distance([1, 2, 3], [4, 5, 6])',
-                'let lin = import("lin");\nlin.chebyshev-distance([1, 0], [0, 1])',
+                'let { chebyshev-distance } = import("lin");\nchebyshev-distance([1, 2], [3, 4])',
+                'let { chebyshev-distance } = import("lin");\nchebyshev-distance([1, 2, 3], [4, 5, 6])',
+                'let { chebyshev-distance } = import("lin");\nchebyshev-distance([1, 0], [0, 1])',
             ],
         },
         'lin.chebyshev-norm': {
@@ -23647,9 +23647,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['v'] },
             ],
             examples: [
-                'let lin = import("lin");\nlin.chebyshev-norm([1, 2])',
-                'let lin = import("lin");\nlin.chebyshev-norm([3, 4])',
-                'let lin = import("lin");\nlin.chebyshev-norm([1, 2, 3])',
+                'let { chebyshev-norm } = import("lin");\nchebyshev-norm([1, 2])',
+                'let { chebyshev-norm } = import("lin");\nchebyshev-norm([3, 4])',
+                'let { chebyshev-norm } = import("lin");\nchebyshev-norm([1, 2, 3])',
             ],
         },
         'lin.minkowski-distance': {
@@ -23667,9 +23667,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['a', 'b', 'p'] },
             ],
             examples: [
-                'let lin = import("lin");\nlin.minkowski-distance([1, 2], [3, 4], 2)',
-                'let lin = import("lin");\nlin.minkowski-distance([1, 2, 3], [4, 5, 6], 3)',
-                'let lin = import("lin");\nlin.minkowski-distance([1, 0], [0, 1], 1)',
+                'let { minkowski-distance } = import("lin");\nminkowski-distance([1, 2], [3, 4], 2)',
+                'let { minkowski-distance } = import("lin");\nminkowski-distance([1, 2, 3], [4, 5, 6], 3)',
+                'let { minkowski-distance } = import("lin");\nminkowski-distance([1, 0], [0, 1], 1)',
             ],
         },
         'lin.minkowski-norm': {
@@ -23693,9 +23693,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['a', 'b'] },
             ],
             examples: [
-                'let lin = import("lin");\nlin.minkowski-norm([1, 2], 2)',
-                'let lin = import("lin");\nlin.minkowski-norm([3, 4], 3)',
-                'let lin = import("lin");\nlin.minkowski-norm([1, 2, 3], 4)',
+                'let { minkowski-norm } = import("lin");\nminkowski-norm([1, 2], 2)',
+                'let { minkowski-norm } = import("lin");\nminkowski-norm([3, 4], 3)',
+                'let { minkowski-norm } = import("lin");\nminkowski-norm([1, 2, 3], 4)',
             ],
         },
         'lin.cov': {
@@ -23744,9 +23744,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['a', 'b'] },
             ],
             examples: [
-                'let lin = import("lin");\nlin.spearman-corr([1, 2], [3, 4])',
-                'let lin = import("lin");\nlin.spearman-corr([1, 2, 3], [4, 5, 6])',
-                'let lin = import("lin");\nlin.spearman-corr([1, 0], [0, 1])',
+                'let { spearman-corr } = import("lin");\nspearman-corr([1, 2], [3, 4])',
+                'let { spearman-corr } = import("lin");\nspearman-corr([1, 2, 3], [4, 5, 6])',
+                'let { spearman-corr } = import("lin");\nspearman-corr([1, 0], [0, 1])',
             ],
             aliases: ['lin.spearman-rho'],
         },
@@ -23762,9 +23762,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['a', 'b'] },
             ],
             examples: [
-                'let lin = import("lin");\nlin.pearson-corr([1, 2], [3, 4])',
-                'let lin = import("lin");\nlin.pearson-corr([1, 2, 3], [4, 5, 6])',
-                'let lin = import("lin");\nlin.pearson-corr([1, 0], [0, 1])',
+                'let { pearson-corr } = import("lin");\npearson-corr([1, 2], [3, 4])',
+                'let { pearson-corr } = import("lin");\npearson-corr([1, 2, 3], [4, 5, 6])',
+                'let { pearson-corr } = import("lin");\npearson-corr([1, 0], [0, 1])',
             ],
         },
         'lin.kendall-tau': {
@@ -23779,9 +23779,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['a', 'b'] },
             ],
             examples: [
-                'let lin = import("lin");\nlin.kendall-tau([1, 2], [3, 4])',
-                'let lin = import("lin");\nlin.kendall-tau([1, 2, 3], [4, 5, 6])',
-                'let lin = import("lin");\nlin.kendall-tau([1, 0], [0, 1])',
+                'let { kendall-tau } = import("lin");\nkendall-tau([1, 2], [3, 4])',
+                'let { kendall-tau } = import("lin");\nkendall-tau([1, 2, 3], [4, 5, 6])',
+                'let { kendall-tau } = import("lin");\nkendall-tau([1, 0], [0, 1])',
             ],
         },
         'lin.autocorrelation': {
@@ -23828,11 +23828,11 @@ var Playground = (function (exports) {
                 { argumentNames: ['a', 'b', 'lag'] },
             ],
             examples: [
-                'let lin = import("lin");\nlin.cross-correlation([1, 2, 3], [4, 5, 6], -2)',
-                'let lin = import("lin");\nlin.cross-correlation([1, 2, 3], [4, 5, 6], -1)',
-                'let lin = import("lin");\nlin.cross-correlation([1, 2, 3], [4, 5, 6], 0)',
-                'let lin = import("lin");\nlin.cross-correlation([1, 2, 3], [4, 5, 6], 1)',
-                'let lin = import("lin");\nlin.cross-correlation([1, 2, 3], [4, 5, 6], 2)',
+                'let { cross-correlation } = import("lin");\ncross-correlation([1, 2, 3], [4, 5, 6], -2)',
+                'let { cross-correlation } = import("lin");\ncross-correlation([1, 2, 3], [4, 5, 6], -1)',
+                'let { cross-correlation } = import("lin");\ncross-correlation([1, 2, 3], [4, 5, 6], 0)',
+                'let { cross-correlation } = import("lin");\ncross-correlation([1, 2, 3], [4, 5, 6], 1)',
+                'let { cross-correlation } = import("lin");\ncross-correlation([1, 2, 3], [4, 5, 6], 2)',
             ],
             aliases: ['lin.ccf'],
         },
@@ -23892,8 +23892,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let lin = import("lin");\nlin.to-polar([1, 2])',
-                'let lin = import("lin");\nlin.to-polar([3, 4])',
+                'let { to-polar } = import("lin");\nto-polar([1, 2])',
+                'let { to-polar } = import("lin");\nto-polar([3, 4])',
             ],
         },
         'lin.from-polar': {
@@ -23913,9 +23913,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['polar'] },
             ],
             examples: [
-                'let lin = import("lin");\nlin.from-polar([1, PI / 4])',
-                'let lin = import("lin");\nlin.from-polar([1, 0])',
-                'let lin = import("lin");\nlin.from-polar([1, -PI / 2])',
+                'let { from-polar } = import("lin");\nfrom-polar([1, PI / 4])',
+                'let { from-polar } = import("lin");\nfrom-polar([1, 0])',
+                'let { from-polar } = import("lin");\nfrom-polar([1, -PI / 2])',
             ],
         },
     };
@@ -24090,8 +24090,8 @@ var Playground = (function (exports) {
             ],
             description: 'Checks if a `matrix` is **symmetric**.',
             examples: [
-                'let mat = import("mat");\nmat.symmetric?([[1, 2], [2, 1]])',
-                'let mat = import("mat");\nmat.symmetric?([[1, 2, 3], [2, 1, 4], [3, 4, 1]])',
+                'let { symmetric? } = import("mat");\nsymmetric?([[1, 2], [2, 1]])',
+                'let { symmetric? } = import("mat");\nsymmetric?([[1, 2, 3], [2, 1, 4], [3, 4, 1]])',
             ],
         },
         'mat.triangular?': {
@@ -24111,8 +24111,8 @@ var Playground = (function (exports) {
             ],
             description: 'Checks if a `matrix` is **triangular**.',
             examples: [
-                'let mat = import("mat");\nmat.triangular?([[2, 0], [0, 1]])',
-                'let mat = import("mat");\nmat.triangular?([[1, 2, 3], [0, 4, 5], [0, 0, 6]])',
+                'let { triangular? } = import("mat");\ntriangular?([[2, 0], [0, 1]])',
+                'let { triangular? } = import("mat");\ntriangular?([[1, 2, 3], [0, 4, 5], [0, 0, 6]])',
             ],
         },
         'mat.upper-triangular?': {
@@ -24132,8 +24132,8 @@ var Playground = (function (exports) {
             ],
             description: 'Checks if a `matrix` is **upper triangular**.',
             examples: [
-                'let mat = import("mat");\nmat.upper-triangular?([[1, 2], [0, 3]])',
-                'let mat = import("mat");\nmat.upper-triangular?([[1, 2, 3], [0, 4, 5], [0, 0, 6]])',
+                'let { upper-triangular? } = import("mat");\nupper-triangular?([[1, 2], [0, 3]])',
+                'let { upper-triangular? } = import("mat");\nupper-triangular?([[1, 2, 3], [0, 4, 5], [0, 0, 6]])',
             ],
         },
         'mat.lower-triangular?': {
@@ -24153,8 +24153,8 @@ var Playground = (function (exports) {
             ],
             description: 'Checks if a `matrix` is **lower triangular**.',
             examples: [
-                'let mat = import("mat");\nmat.lower-triangular?([[1, 0], [2, 3]])',
-                'let mat = import("mat");\nmat.lower-triangular?([[1, 0, 0], [2, 3, 0], [4, 5, 6]])',
+                'let { lower-triangular? } = import("mat");\nlower-triangular?([[1, 0], [2, 3]])',
+                'let { lower-triangular? } = import("mat");\nlower-triangular?([[1, 0, 0], [2, 3, 0], [4, 5, 6]])',
             ],
         },
         'mat.diagonal?': {
@@ -24174,9 +24174,9 @@ var Playground = (function (exports) {
             ],
             description: 'Checks if a `matrix` is **diagonal**.',
             examples: [
-                'let mat = import("mat");\nmat.diagonal?([[1, 0], [0, 2]])',
-                'let mat = import("mat");\nmat.diagonal?([[1, 0, 0], [0, 2, 0], [0, 0, 3]])',
-                'let mat = import("mat");\nmat.diagonal?([[1, 0, 0], [2, 2, 2], [0, 0, 3]])',
+                'let { diagonal? } = import("mat");\ndiagonal?([[1, 0], [0, 2]])',
+                'let { diagonal? } = import("mat");\ndiagonal?([[1, 0, 0], [0, 2, 0], [0, 0, 3]])',
+                'let { diagonal? } = import("mat");\ndiagonal?([[1, 0, 0], [2, 2, 2], [0, 0, 3]])',
             ],
         },
         'mat.square?': {
@@ -24196,9 +24196,9 @@ var Playground = (function (exports) {
             ],
             description: 'Checks if a `matrix` is **square**.',
             examples: [
-                'let mat = import("mat");\nmat.square?([[1, 2], [3, 4]])',
-                'let mat = import("mat");\nmat.square?([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
-                'let mat = import("mat");\nmat.square?([[1, 2, 3], [4, 5, 6]])',
+                'let { square? } = import("mat");\nsquare?([[1, 2], [3, 4]])',
+                'let { square? } = import("mat");\nsquare?([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+                'let { square? } = import("mat");\nsquare?([[1, 2, 3], [4, 5, 6]])',
             ],
         },
         'mat.orthogonal?': {
@@ -24218,9 +24218,9 @@ var Playground = (function (exports) {
             ],
             description: 'Checks if a `matrix` is **orthogonal**.',
             examples: [
-                'let mat = import("mat");\nmat.orthogonal?([[1, 0], [0, 1]])',
-                'let mat = import("mat");\nmat.orthogonal?([[1, 0], [0, -1]])',
-                'let mat = import("mat");\nmat.orthogonal?([[1, 2], [3, 4]])',
+                'let { orthogonal? } = import("mat");\northogonal?([[1, 0], [0, 1]])',
+                'let { orthogonal? } = import("mat");\northogonal?([[1, 0], [0, -1]])',
+                'let { orthogonal? } = import("mat");\northogonal?([[1, 2], [3, 4]])',
             ],
         },
         'mat.identity?': {
@@ -24240,9 +24240,9 @@ var Playground = (function (exports) {
             ],
             description: 'Checks if a `matrix` is an **identity matrix**.',
             examples: [
-                'let mat = import("mat");\nmat.identity?([[1, 0], [0, 1]])',
-                'let mat = import("mat");\nmat.identity?([[1, 0, 0], [0, 1, 0], [0, 0, 1]])',
-                'let mat = import("mat");\nmat.identity?([[1, 0, 0], [0, 1, 0], [0, 0, 0]])',
+                'let { identity? } = import("mat");\nidentity?([[1, 0], [0, 1]])',
+                'let { identity? } = import("mat");\nidentity?([[1, 0, 0], [0, 1, 0], [0, 0, 1]])',
+                'let { identity? } = import("mat");\nidentity?([[1, 0, 0], [0, 1, 0], [0, 0, 0]])',
             ],
         },
         'mat.invertible?': {
@@ -24262,9 +24262,9 @@ var Playground = (function (exports) {
             ],
             description: 'Checks if a `matrix` is **invertible**.',
             examples: [
-                'let mat = import("mat");\nmat.invertible?([[1, 2], [3, 4]])',
-                'let mat = import("mat");\nmat.invertible?([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
-                'let mat = import("mat");\nmat.invertible?([[1, 2], [2, 4]])',
+                'let { invertible? } = import("mat");\ninvertible?([[1, 2], [3, 4]])',
+                'let { invertible? } = import("mat");\ninvertible?([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+                'let { invertible? } = import("mat");\ninvertible?([[1, 2], [2, 4]])',
             ],
         },
         'mat.hilbert': {
@@ -24406,8 +24406,8 @@ var Playground = (function (exports) {
             ],
             description: 'Calculates the **Frobenius norm** of a matrix.',
             examples: [
-                'let mat = import("mat");\nmat.frobenius-norm([[1, 2], [3, 4]])',
-                'let mat = import("mat");\nmat.frobenius-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+                'let { frobenius-norm } = import("mat");\nfrobenius-norm([[1, 2], [3, 4]])',
+                'let { frobenius-norm } = import("mat");\nfrobenius-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
             ],
         },
         'mat.one-norm': {
@@ -24427,8 +24427,8 @@ var Playground = (function (exports) {
             ],
             description: 'Calculates the **one-norm** (column norm) of a matrix.',
             examples: [
-                'let mat = import("mat");\nmat.one-norm([[1, 2], [3, 4]])',
-                'let mat = import("mat");\nmat.one-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+                'let { one-norm } = import("mat");\none-norm([[1, 2], [3, 4]])',
+                'let { one-norm } = import("mat");\none-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
             ],
         },
         'mat.inf-norm': {
@@ -24448,8 +24448,8 @@ var Playground = (function (exports) {
             ],
             description: 'Calculates the **infinity norm** of a matrix.',
             examples: [
-                'let mat = import("mat");\nmat.inf-norm([[1, 2], [3, 4]])',
-                'let mat = import("mat");\nmat.inf-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+                'let { inf-norm } = import("mat");\ninf-norm([[1, 2], [3, 4]])',
+                'let { inf-norm } = import("mat");\ninf-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
             ],
             aliases: ['mat.row-norm'],
         },
@@ -24470,8 +24470,8 @@ var Playground = (function (exports) {
             ],
             description: 'Calculates the **max norm** of a matrix.',
             examples: [
-                'let mat = import("mat");\nmat.max-norm([[1, 2], [3, 4]])',
-                'let mat = import("mat");\nmat.max-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
+                'let { max-norm } = import("mat");\nmax-norm([[1, 2], [3, 4]])',
+                'let { max-norm } = import("mat");\nmax-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
             ],
         },
     };
@@ -24495,8 +24495,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['length'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.abundant-seq(1)',
-                'let nt = import("TEMP-nth");\nnt.abundant-seq(5)',
+                'let { abundant-seq } = import("TEMP-nth");\nabundant-seq(1)',
+                'let { abundant-seq } = import("TEMP-nth");\nabundant-seq(5)',
             ],
         },
         'TEMP-nth.abundant-take-while': {
@@ -24517,7 +24517,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['takeWhile'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.abundant-take-while(-> $ < 100)',
+                'let { abundant-take-while } = import("TEMP-nth");\nabundant-take-while(-> $ < 100)',
             ],
         },
         'TEMP-nth.abundant-nth': {
@@ -24537,8 +24537,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.abundant-nth(1)',
-                'let nt = import("TEMP-nth");\nnt.abundant-nth(5)',
+                'let { abundant-nth } = import("TEMP-nth");\nabundant-nth(1)',
+                'let { abundant-nth } = import("TEMP-nth");\nabundant-nth(5)',
             ],
         },
         'TEMP-nth.abundant?': {
@@ -24558,8 +24558,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.abundant?(12)',
-                'let nt = import("TEMP-nth");\nnt.abundant?(15)',
+                'let { abundant? } = import("TEMP-nth");\nabundant?(12)',
+                'let { abundant? } = import("TEMP-nth");\nabundant?(15)',
             ],
         },
     };
@@ -24591,10 +24591,10 @@ var Playground = (function (exports) {
                 { argumentNames: ['start', 'step', 'length'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.arithmetic-seq(3, 2, 2)',
-                'let nt = import("TEMP-nth");\nnt.arithmetic-seq(2, 3, 2)',
-                'let nt = import("TEMP-nth");\nnt.arithmetic-seq(1, 2, 2)',
-                'let nt = import("TEMP-nth");\nnt.arithmetic-seq(1, 1.5, 12)',
+                'let { arithmetic-seq } = import("TEMP-nth");\narithmetic-seq(3, 2, 2)',
+                'let { arithmetic-seq } = import("TEMP-nth");\narithmetic-seq(2, 3, 2)',
+                'let { arithmetic-seq } = import("TEMP-nth");\narithmetic-seq(1, 2, 2)',
+                'let { arithmetic-seq } = import("TEMP-nth");\narithmetic-seq(1, 1.5, 12)',
             ],
         },
         'TEMP-nth.arithmetic-take-while': {
@@ -24623,7 +24623,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['start', 'step', 'takeWhile'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.arithmetic-take-while(1, 0.25, -> $ < 3)',
+                'let { arithmetic-take-while } = import("TEMP-nth");\narithmetic-take-while(1, 0.25, -> $ < 3)',
             ],
         },
         'TEMP-nth.arithmetic-nth': {
@@ -24651,10 +24651,10 @@ var Playground = (function (exports) {
                 { argumentNames: ['start', 'step', 'n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.arithmetic-nth(3, 2, 2)',
-                'let nt = import("TEMP-nth");\nnt.arithmetic-nth(2, 3, 2)',
-                'let nt = import("TEMP-nth");\nnt.arithmetic-nth(1, 2, 2)',
-                'let nt = import("TEMP-nth");\nnt.arithmetic-nth(1, 1.5, 12)',
+                'let { arithmetic-nth } = import("TEMP-nth");\narithmetic-nth(3, 2, 2)',
+                'let { arithmetic-nth } = import("TEMP-nth");\narithmetic-nth(2, 3, 2)',
+                'let { arithmetic-nth } = import("TEMP-nth");\narithmetic-nth(1, 2, 2)',
+                'let { arithmetic-nth } = import("TEMP-nth");\narithmetic-nth(1, 1.5, 12)',
             ],
         },
         'TEMP-nth.arithmetic?': {
@@ -24682,10 +24682,10 @@ var Playground = (function (exports) {
                 { argumentNames: ['start', 'step', 'n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.arithmetic?(3, 2, 2)',
-                'let nt = import("TEMP-nth");\nnt.arithmetic?(2, 3, 2)',
-                'let nt = import("TEMP-nth");\nnt.arithmetic?(1, 2, 2)',
-                'let nt = import("TEMP-nth");\nnt.arithmetic?(1, 1.5, 12)',
+                'let { arithmetic? } = import("TEMP-nth");\narithmetic?(3, 2, 2)',
+                'let { arithmetic? } = import("TEMP-nth");\narithmetic?(2, 3, 2)',
+                'let { arithmetic? } = import("TEMP-nth");\narithmetic?(1, 2, 2)',
+                'let { arithmetic? } = import("TEMP-nth");\narithmetic?(1, 1.5, 12)',
             ],
         },
     };
@@ -24710,9 +24710,9 @@ var Playground = (function (exports) {
                 { argumentNames: [] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.bell-seq(5)',
-                'let nt = import("TEMP-nth");\nnt.bell-seq(10)',
-                'let nt = import("TEMP-nth");\nnt.bell-seq()',
+                'let { bell-seq } = import("TEMP-nth");\nbell-seq(5)',
+                'let { bell-seq } = import("TEMP-nth");\nbell-seq(10)',
+                'let { bell-seq } = import("TEMP-nth");\nbell-seq()',
             ],
         },
         'TEMP-nth.bell-take-while': {
@@ -24733,7 +24733,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['takeWhile'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.bell-take-while(-> $ < 1000)',
+                'let { bell-take-while } = import("TEMP-nth");\nbell-take-while(-> $ < 1000)',
             ],
         },
         'TEMP-nth.bell-nth': {
@@ -24753,8 +24753,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.bell-nth(5)',
-                'let nt = import("TEMP-nth");\nnt.bell-nth(10)',
+                'let { bell-nth } = import("TEMP-nth");\nbell-nth(5)',
+                'let { bell-nth } = import("TEMP-nth");\nbell-nth(10)',
             ],
         },
         'TEMP-nth.bell?': {
@@ -24774,9 +24774,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.bell?(1)',
-                'let nt = import("TEMP-nth");\nnt.bell?(27644437)',
-                'let nt = import("TEMP-nth");\nnt.bell?(27644436)',
+                'let { bell? } = import("TEMP-nth");\nbell?(1)',
+                'let { bell? } = import("TEMP-nth");\nbell?(27644437)',
+                'let { bell? } = import("TEMP-nth");\nbell?(27644436)',
             ],
         },
     };
@@ -24800,8 +24800,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['length'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.bernoulli-seq(5)',
-                'let nt = import("TEMP-nth");\nnt.bernoulli-seq(10)',
+                'let { bernoulli-seq } = import("TEMP-nth");\nbernoulli-seq(5)',
+                'let { bernoulli-seq } = import("TEMP-nth");\nbernoulli-seq(10)',
             ],
         },
         'TEMP-nth.bernoulli-take-while': {
@@ -24822,7 +24822,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['takeWhile'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.bernoulli-take-while(-> abs($) < 100)',
+                'let { bernoulli-take-while } = import("TEMP-nth");\nbernoulli-take-while(-> abs($) < 100)',
             ],
         },
         'TEMP-nth.bernoulli-nth': {
@@ -24842,9 +24842,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.bernoulli-nth(5)',
-                'let nt = import("TEMP-nth");\nnt.bernoulli-nth(10)',
-                'let nt = import("TEMP-nth");\nnt.bernoulli-nth(23)',
+                'let { bernoulli-nth } = import("TEMP-nth");\nbernoulli-nth(5)',
+                'let { bernoulli-nth } = import("TEMP-nth");\nbernoulli-nth(10)',
+                'let { bernoulli-nth } = import("TEMP-nth");\nbernoulli-nth(23)',
             ],
         },
     };
@@ -24869,9 +24869,9 @@ var Playground = (function (exports) {
                 { argumentNames: [] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.catalan-seq(5)',
-                'let nt = import("TEMP-nth");\nnt.catalan-seq(10)',
-                'let nt = import("TEMP-nth");\nnt.catalan-seq()',
+                'let { catalan-seq } = import("TEMP-nth");\ncatalan-seq(5)',
+                'let { catalan-seq } = import("TEMP-nth");\ncatalan-seq(10)',
+                'let { catalan-seq } = import("TEMP-nth");\ncatalan-seq()',
             ],
         },
         'TEMP-nth.catalan-take-while': {
@@ -24892,7 +24892,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['takeWhile'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.catalan-take-while(-> $ < 1000)',
+                'let { catalan-take-while } = import("TEMP-nth");\ncatalan-take-while(-> $ < 1000)',
             ],
         },
         'TEMP-nth.catalan-nth': {
@@ -24912,8 +24912,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.catalan-nth(5)',
-                'let nt = import("TEMP-nth");\nnt.catalan-nth(10)',
+                'let { catalan-nth } = import("TEMP-nth");\ncatalan-nth(5)',
+                'let { catalan-nth } = import("TEMP-nth");\ncatalan-nth(10)',
             ],
         },
         'TEMP-nth.catalan?': {
@@ -24933,8 +24933,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.catalan?(5)',
-                'let nt = import("TEMP-nth");\nnt.catalan?(10)',
+                'let { catalan? } = import("TEMP-nth");\ncatalan?(5)',
+                'let { catalan? } = import("TEMP-nth");\ncatalan?(10)',
             ],
         },
     };
@@ -24958,8 +24958,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['start'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.collatz-seq(3)',
-                'let nt = import("TEMP-nth");\nnt.collatz-seq(11)',
+                'let { collatz-seq } = import("TEMP-nth");\ncollatz-seq(3)',
+                'let { collatz-seq } = import("TEMP-nth");\ncollatz-seq(11)',
             ],
         },
     };
@@ -24983,9 +24983,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['length'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.composite-seq(1)',
-                'let nt = import("TEMP-nth");\nnt.composite-seq(2)',
-                'let nt = import("TEMP-nth");\nnt.composite-seq(10)',
+                'let { composite-seq } = import("TEMP-nth");\ncomposite-seq(1)',
+                'let { composite-seq } = import("TEMP-nth");\ncomposite-seq(2)',
+                'let { composite-seq } = import("TEMP-nth");\ncomposite-seq(10)',
             ],
         },
         'TEMP-nth.composite-take-while': {
@@ -25006,7 +25006,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['takeWhile'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.composite-take-while(-> $ < 50)',
+                'let { composite-take-while } = import("TEMP-nth");\ncomposite-take-while(-> $ < 50)',
             ],
         },
         'TEMP-nth.composite-nth': {
@@ -25026,9 +25026,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.composite-nth(1)',
-                'let nt = import("TEMP-nth");\nnt.composite-nth(2)',
-                'let nt = import("TEMP-nth");\nnt.composite-nth(10)',
+                'let { composite-nth } = import("TEMP-nth");\ncomposite-nth(1)',
+                'let { composite-nth } = import("TEMP-nth");\ncomposite-nth(2)',
+                'let { composite-nth } = import("TEMP-nth");\ncomposite-nth(10)',
             ],
         },
         'TEMP-nth.composite?': {
@@ -25048,9 +25048,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.composite?(4)',
-                'let nt = import("TEMP-nth");\nnt.composite?(5)',
-                'let nt = import("TEMP-nth");\nnt.composite?(11)',
+                'let { composite? } = import("TEMP-nth");\ncomposite?(4)',
+                'let { composite? } = import("TEMP-nth");\ncomposite?(5)',
+                'let { composite? } = import("TEMP-nth");\ncomposite?(11)',
             ],
         },
     };
@@ -25075,12 +25075,12 @@ var Playground = (function (exports) {
                 { argumentNames: [] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.factorial-seq(1)',
-                'let nt = import("TEMP-nth");\nnt.factorial-seq(2)',
-                'let nt = import("TEMP-nth");\nnt.factorial-seq(3)',
-                'let nt = import("TEMP-nth");\nnt.factorial-seq(4)',
-                'let nt = import("TEMP-nth");\nnt.factorial-seq(5)',
-                'let nt = import("TEMP-nth");\nnt.factorial-seq(10)',
+                'let { factorial-seq } = import("TEMP-nth");\nfactorial-seq(1)',
+                'let { factorial-seq } = import("TEMP-nth");\nfactorial-seq(2)',
+                'let { factorial-seq } = import("TEMP-nth");\nfactorial-seq(3)',
+                'let { factorial-seq } = import("TEMP-nth");\nfactorial-seq(4)',
+                'let { factorial-seq } = import("TEMP-nth");\nfactorial-seq(5)',
+                'let { factorial-seq } = import("TEMP-nth");\nfactorial-seq(10)',
             ],
         },
         'TEMP-nth.factorial-take-while': {
@@ -25101,7 +25101,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['takeWhile'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.factorial-take-while(-> $ < 1000)',
+                'let { factorial-take-while } = import("TEMP-nth");\nfactorial-take-while(-> $ < 1000)',
             ],
         },
         'TEMP-nth.factorial-nth': {
@@ -25121,12 +25121,12 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.factorial-nth(1)',
-                'let nt = import("TEMP-nth");\nnt.factorial-nth(2)',
-                'let nt = import("TEMP-nth");\nnt.factorial-nth(3)',
-                'let nt = import("TEMP-nth");\nnt.factorial-nth(4)',
-                'let nt = import("TEMP-nth");\nnt.factorial-nth(5)',
-                'let nt = import("TEMP-nth");\nnt.factorial-nth(10)',
+                'let { factorial-nth } = import("TEMP-nth");\nfactorial-nth(1)',
+                'let { factorial-nth } = import("TEMP-nth");\nfactorial-nth(2)',
+                'let { factorial-nth } = import("TEMP-nth");\nfactorial-nth(3)',
+                'let { factorial-nth } = import("TEMP-nth");\nfactorial-nth(4)',
+                'let { factorial-nth } = import("TEMP-nth");\nfactorial-nth(5)',
+                'let { factorial-nth } = import("TEMP-nth");\nfactorial-nth(10)',
             ],
         },
         'TEMP-nth.factorial?': {
@@ -25146,16 +25146,16 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.factorial?(1)',
-                'let nt = import("TEMP-nth");\nnt.factorial?(2)',
-                'let nt = import("TEMP-nth");\nnt.factorial?(3)',
-                'let nt = import("TEMP-nth");\nnt.factorial?(4)',
-                'let nt = import("TEMP-nth");\nnt.factorial?(5)',
-                'let nt = import("TEMP-nth");\nnt.factorial?(6)',
-                'let nt = import("TEMP-nth");\nnt.factorial?(7)',
-                'let nt = import("TEMP-nth");\nnt.factorial?(8)',
-                'let nt = import("TEMP-nth");\nnt.factorial?(9)',
-                'let nt = import("TEMP-nth");\nnt.factorial?(3628800)',
+                'let { factorial? } = import("TEMP-nth");\nfactorial?(1)',
+                'let { factorial? } = import("TEMP-nth");\nfactorial?(2)',
+                'let { factorial? } = import("TEMP-nth");\nfactorial?(3)',
+                'let { factorial? } = import("TEMP-nth");\nfactorial?(4)',
+                'let { factorial? } = import("TEMP-nth");\nfactorial?(5)',
+                'let { factorial? } = import("TEMP-nth");\nfactorial?(6)',
+                'let { factorial? } = import("TEMP-nth");\nfactorial?(7)',
+                'let { factorial? } = import("TEMP-nth");\nfactorial?(8)',
+                'let { factorial? } = import("TEMP-nth");\nfactorial?(9)',
+                'let { factorial? } = import("TEMP-nth");\nfactorial?(3628800)',
             ],
         },
     };
@@ -25180,9 +25180,9 @@ var Playground = (function (exports) {
                 { argumentNames: [] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.fibonacci-seq(1)',
-                'let nt = import("TEMP-nth");\nnt.fibonacci-seq(2)',
-                'let nt = import("TEMP-nth");\nnt.fibonacci-seq()',
+                'let { fibonacci-seq } = import("TEMP-nth");\nfibonacci-seq(1)',
+                'let { fibonacci-seq } = import("TEMP-nth");\nfibonacci-seq(2)',
+                'let { fibonacci-seq } = import("TEMP-nth");\nfibonacci-seq()',
             ],
         },
         'TEMP-nth.fibonacci-take-while': {
@@ -25203,7 +25203,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['takeWhile'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.fibonacci-take-while(-> $ < 100)',
+                'let { fibonacci-take-while } = import("TEMP-nth");\nfibonacci-take-while(-> $ < 100)',
             ],
         },
         'TEMP-nth.fibonacci-nth': {
@@ -25223,8 +25223,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.fibonacci-nth(5)',
-                'let nt = import("TEMP-nth");\nnt.fibonacci-nth(50)',
+                'let { fibonacci-nth } = import("TEMP-nth");\nfibonacci-nth(5)',
+                'let { fibonacci-nth } = import("TEMP-nth");\nfibonacci-nth(50)',
             ],
         },
         'TEMP-nth.fibonacci?': {
@@ -25244,16 +25244,16 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.fibonacci?(0)',
-                'let nt = import("TEMP-nth");\nnt.fibonacci?(1)',
-                'let nt = import("TEMP-nth");\nnt.fibonacci?(2)',
-                'let nt = import("TEMP-nth");\nnt.fibonacci?(3)',
-                'let nt = import("TEMP-nth");\nnt.fibonacci?(4)',
-                'let nt = import("TEMP-nth");\nnt.fibonacci?(5)',
-                'let nt = import("TEMP-nth");\nnt.fibonacci?(6)',
-                'let nt = import("TEMP-nth");\nnt.fibonacci?(7)',
-                'let nt = import("TEMP-nth");\nnt.fibonacci?(8)',
-                'let nt = import("TEMP-nth");\nnt.fibonacci?(9)',
+                'let { fibonacci? } = import("TEMP-nth");\nfibonacci?(0)',
+                'let { fibonacci? } = import("TEMP-nth");\nfibonacci?(1)',
+                'let { fibonacci? } = import("TEMP-nth");\nfibonacci?(2)',
+                'let { fibonacci? } = import("TEMP-nth");\nfibonacci?(3)',
+                'let { fibonacci? } = import("TEMP-nth");\nfibonacci?(4)',
+                'let { fibonacci? } = import("TEMP-nth");\nfibonacci?(5)',
+                'let { fibonacci? } = import("TEMP-nth");\nfibonacci?(6)',
+                'let { fibonacci? } = import("TEMP-nth");\nfibonacci?(7)',
+                'let { fibonacci? } = import("TEMP-nth");\nfibonacci?(8)',
+                'let { fibonacci? } = import("TEMP-nth");\nfibonacci?(9)',
             ],
         },
     };
@@ -25285,10 +25285,10 @@ var Playground = (function (exports) {
                 { argumentNames: ['start', 'ratio', 'length'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.geometric-seq(3, 2, 2)',
-                'let nt = import("TEMP-nth");\nnt.geometric-seq(2, 3, 2)',
-                'let nt = import("TEMP-nth");\nnt.geometric-seq(1, 2, 2)',
-                'let nt = import("TEMP-nth");\nnt.geometric-seq(1, 1.5, 12)',
+                'let { geometric-seq } = import("TEMP-nth");\ngeometric-seq(3, 2, 2)',
+                'let { geometric-seq } = import("TEMP-nth");\ngeometric-seq(2, 3, 2)',
+                'let { geometric-seq } = import("TEMP-nth");\ngeometric-seq(1, 2, 2)',
+                'let { geometric-seq } = import("TEMP-nth");\ngeometric-seq(1, 1.5, 12)',
             ],
         },
         'TEMP-nth.geometric-take-while': {
@@ -25317,7 +25317,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['start', 'ratio', 'takeWhile'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.geometric-take-while(1, 1.5, -> $ < 10)',
+                'let { geometric-take-while } = import("TEMP-nth");\ngeometric-take-while(1, 1.5, -> $ < 10)',
             ],
         },
         'TEMP-nth.geometric-nth': {
@@ -25345,10 +25345,10 @@ var Playground = (function (exports) {
                 { argumentNames: ['start', 'ratio', 'n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.geometric-nth(3, 2, 2)',
-                'let nt = import("TEMP-nth");\nnt.geometric-nth(2, 3, 2)',
-                'let nt = import("TEMP-nth");\nnt.geometric-nth(1, 2, 2)',
-                'let nt = import("TEMP-nth");\nnt.geometric-nth(1, 1.5, 4)',
+                'let { geometric-nth } = import("TEMP-nth");\ngeometric-nth(3, 2, 2)',
+                'let { geometric-nth } = import("TEMP-nth");\ngeometric-nth(2, 3, 2)',
+                'let { geometric-nth } = import("TEMP-nth");\ngeometric-nth(1, 2, 2)',
+                'let { geometric-nth } = import("TEMP-nth");\ngeometric-nth(1, 1.5, 4)',
             ],
         },
         'TEMP-nth.geometric?': {
@@ -25376,11 +25376,11 @@ var Playground = (function (exports) {
                 { argumentNames: ['start', 'ratio', 'n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.geometric?(1, 2, 1)',
-                'let nt = import("TEMP-nth");\nnt.geometric?(2, 3, 2)',
-                'let nt = import("TEMP-nth");\nnt.geometric?(3, 2, 2)',
-                'let nt = import("TEMP-nth");\nnt.geometric?(1, 1.5, 2.25)',
-                'let nt = import("TEMP-nth");\nnt.geometric?(1, 1.5, -4)',
+                'let { geometric? } = import("TEMP-nth");\ngeometric?(1, 2, 1)',
+                'let { geometric? } = import("TEMP-nth");\ngeometric?(2, 3, 2)',
+                'let { geometric? } = import("TEMP-nth");\ngeometric?(3, 2, 2)',
+                'let { geometric? } = import("TEMP-nth");\ngeometric?(1, 1.5, 2.25)',
+                'let { geometric? } = import("TEMP-nth");\ngeometric?(1, 1.5, -4)',
             ],
         },
     };
@@ -25404,8 +25404,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['length'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.golomb-seq(5)',
-                'let nt = import("TEMP-nth");\nnt.golomb-seq(20)',
+                'let { golomb-seq } = import("TEMP-nth");\ngolomb-seq(5)',
+                'let { golomb-seq } = import("TEMP-nth");\ngolomb-seq(20)',
             ],
         },
         'TEMP-nth.golomb-take-while': {
@@ -25426,7 +25426,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['takeWhile'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.golomb-take-while(-> $ <= 10)',
+                'let { golomb-take-while } = import("TEMP-nth");\ngolomb-take-while(-> $ <= 10)',
             ],
         },
         'TEMP-nth.golomb-nth': {
@@ -25446,8 +25446,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.golomb-nth(5)',
-                'let nt = import("TEMP-nth");\nnt.golomb-nth(1000)',
+                'let { golomb-nth } = import("TEMP-nth");\ngolomb-nth(5)',
+                'let { golomb-nth } = import("TEMP-nth");\ngolomb-nth(1000)',
             ],
         },
         'TEMP-nth.golomb?': {
@@ -25467,10 +25467,10 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.golomb?(1)',
-                'let nt = import("TEMP-nth");\nnt.golomb?(2)',
-                'let nt = import("TEMP-nth");\nnt.golomb?(3345)',
-                'let nt = import("TEMP-nth");\nnt.golomb?(67867864)',
+                'let { golomb? } = import("TEMP-nth");\ngolomb?(1)',
+                'let { golomb? } = import("TEMP-nth");\ngolomb?(2)',
+                'let { golomb? } = import("TEMP-nth");\ngolomb?(3345)',
+                'let { golomb? } = import("TEMP-nth");\ngolomb?(67867864)',
             ],
         },
     };
@@ -25495,9 +25495,9 @@ var Playground = (function (exports) {
                 { argumentNames: [] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.happy-seq(1)',
-                'let nt = import("TEMP-nth");\nnt.happy-seq(2)',
-                'let nt = import("TEMP-nth");\nnt.happy-seq(20)',
+                'let { happy-seq } = import("TEMP-nth");\nhappy-seq(1)',
+                'let { happy-seq } = import("TEMP-nth");\nhappy-seq(2)',
+                'let { happy-seq } = import("TEMP-nth");\nhappy-seq(20)',
             ],
         },
         'TEMP-nth.happy-take-while': {
@@ -25518,7 +25518,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['takeWhile'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.happy-take-while(-> $ < 100)',
+                'let { happy-take-while } = import("TEMP-nth");\nhappy-take-while(-> $ < 100)',
             ],
         },
         'TEMP-nth.happy-nth': {
@@ -25538,9 +25538,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.happy-nth(1)',
-                'let nt = import("TEMP-nth");\nnt.happy-nth(2)',
-                'let nt = import("TEMP-nth");\nnt.happy-nth(20)',
+                'let { happy-nth } = import("TEMP-nth");\nhappy-nth(1)',
+                'let { happy-nth } = import("TEMP-nth");\nhappy-nth(2)',
+                'let { happy-nth } = import("TEMP-nth");\nhappy-nth(20)',
             ],
         },
         'TEMP-nth.happy?': {
@@ -25560,9 +25560,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.happy?(1)',
-                'let nt = import("TEMP-nth");\nnt.happy?(2)',
-                'let nt = import("TEMP-nth");\nnt.happy?(100)',
+                'let { happy? } = import("TEMP-nth");\nhappy?(1)',
+                'let { happy? } = import("TEMP-nth");\nhappy?(2)',
+                'let { happy? } = import("TEMP-nth");\nhappy?(100)',
             ],
         },
     };
@@ -25586,8 +25586,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['start'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.juggler-seq(3)',
-                'let nt = import("TEMP-nth");\nnt.juggler-seq(5)',
+                'let { juggler-seq } = import("TEMP-nth");\njuggler-seq(3)',
+                'let { juggler-seq } = import("TEMP-nth");\njuggler-seq(5)',
             ],
         },
     };
@@ -25611,7 +25611,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['length'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.look-and-say-seq(5)',
+                'let { look-and-say-seq } = import("TEMP-nth");\nlook-and-say-seq(5)',
             ],
         },
         'TEMP-nth.look-and-say-take-while': {
@@ -25632,8 +25632,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['takeWhile'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.look-and-say-take-while((term, index) -> count(term) < 10)',
-                'let nt = import("TEMP-nth");\nnt.look-and-say-take-while(-> $2 <= 10)',
+                'let { look-and-say-take-while } = import("TEMP-nth");\nlook-and-say-take-while((term, index) -> count(term) < 10)',
+                'let { look-and-say-take-while } = import("TEMP-nth");\nlook-and-say-take-while(-> $2 <= 10)',
             ],
         },
         'TEMP-nth.look-and-say-nth': {
@@ -25653,7 +25653,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.look-and-say-nth(5)',
+                'let { look-and-say-nth } = import("TEMP-nth");\nlook-and-say-nth(5)',
             ],
         },
         'TEMP-nth.look-and-say?': {
@@ -25673,8 +25673,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['term'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.look-and-say?("111221")',
-                'let nt = import("TEMP-nth");\nnt.look-and-say?("123")',
+                'let { look-and-say? } = import("TEMP-nth");\nlook-and-say?("111221")',
+                'let { look-and-say? } = import("TEMP-nth");\nlook-and-say?("123")',
             ],
         },
     };
@@ -25699,9 +25699,9 @@ var Playground = (function (exports) {
                 { argumentNames: [] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.lucas-seq(1)',
-                'let nt = import("TEMP-nth");\nnt.lucas-seq(2)',
-                'let nt = import("TEMP-nth");\nnt.lucas-seq()',
+                'let { lucas-seq } = import("TEMP-nth");\nlucas-seq(1)',
+                'let { lucas-seq } = import("TEMP-nth");\nlucas-seq(2)',
+                'let { lucas-seq } = import("TEMP-nth");\nlucas-seq()',
             ],
         },
         'TEMP-nth.lucas-take-while': {
@@ -25722,7 +25722,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['takeWhile'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.lucas-take-while(-> $ < 100)',
+                'let { lucas-take-while } = import("TEMP-nth");\nlucas-take-while(-> $ < 100)',
             ],
         },
         'TEMP-nth.lucas-nth': {
@@ -25742,9 +25742,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.lucas-nth(1)',
-                'let nt = import("TEMP-nth");\nnt.lucas-nth(2)',
-                'let nt = import("TEMP-nth");\nnt.lucas-nth(10)',
+                'let { lucas-nth } = import("TEMP-nth");\nlucas-nth(1)',
+                'let { lucas-nth } = import("TEMP-nth");\nlucas-nth(2)',
+                'let { lucas-nth } = import("TEMP-nth");\nlucas-nth(10)',
             ],
         },
         'TEMP-nth.lucas?': {
@@ -25764,9 +25764,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.lucas?(1)',
-                'let nt = import("TEMP-nth");\nnt.lucas?(2)',
-                'let nt = import("TEMP-nth");\nnt.lucas?(10)',
+                'let { lucas? } = import("TEMP-nth");\nlucas?(1)',
+                'let { lucas? } = import("TEMP-nth");\nlucas?(2)',
+                'let { lucas? } = import("TEMP-nth");\nlucas?(10)',
             ],
         },
     };
@@ -25790,9 +25790,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['length'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.lucky-seq(1)',
-                'let nt = import("TEMP-nth");\nnt.lucky-seq(2)',
-                'let nt = import("TEMP-nth");\nnt.lucky-seq(20)',
+                'let { lucky-seq } = import("TEMP-nth");\nlucky-seq(1)',
+                'let { lucky-seq } = import("TEMP-nth");\nlucky-seq(2)',
+                'let { lucky-seq } = import("TEMP-nth");\nlucky-seq(20)',
             ],
         },
         'TEMP-nth.lucky-take-while': {
@@ -25813,7 +25813,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['takeWhile'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.lucky-take-while(-> $ < 100)',
+                'let { lucky-take-while } = import("TEMP-nth");\nlucky-take-while(-> $ < 100)',
             ],
         },
         'TEMP-nth.lucky-nth': {
@@ -25833,9 +25833,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.lucky-nth(1)',
-                'let nt = import("TEMP-nth");\nnt.lucky-nth(2)',
-                'let nt = import("TEMP-nth");\nnt.lucky-nth(20)',
+                'let { lucky-nth } = import("TEMP-nth");\nlucky-nth(1)',
+                'let { lucky-nth } = import("TEMP-nth");\nlucky-nth(2)',
+                'let { lucky-nth } = import("TEMP-nth");\nlucky-nth(20)',
             ],
         },
         'TEMP-nth.lucky?': {
@@ -25855,9 +25855,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.lucky?(4)',
-                'let nt = import("TEMP-nth");\nnt.lucky?(7)',
-                'let nt = import("TEMP-nth");\nnt.lucky?(33)',
+                'let { lucky? } = import("TEMP-nth");\nlucky?(4)',
+                'let { lucky? } = import("TEMP-nth");\nlucky?(7)',
+                'let { lucky? } = import("TEMP-nth");\nlucky?(33)',
             ],
         },
     };
@@ -25882,9 +25882,9 @@ var Playground = (function (exports) {
                 { argumentNames: [] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.mersenne-seq(1)',
-                'let nt = import("TEMP-nth");\nnt.mersenne-seq(5)',
-                'let nt = import("TEMP-nth");\nnt.mersenne-seq()',
+                'let { mersenne-seq } = import("TEMP-nth");\nmersenne-seq(1)',
+                'let { mersenne-seq } = import("TEMP-nth");\nmersenne-seq(5)',
+                'let { mersenne-seq } = import("TEMP-nth");\nmersenne-seq()',
             ],
         },
         'TEMP-nth.mersenne-take-while': {
@@ -25905,7 +25905,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['takeWhile'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.mersenne-take-while(-> $ < 1000)',
+                'let { mersenne-take-while } = import("TEMP-nth");\nmersenne-take-while(-> $ < 1000)',
             ],
         },
         'TEMP-nth.mersenne-nth': {
@@ -25925,8 +25925,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.mersenne-nth(1)',
-                'let nt = import("TEMP-nth");\nnt.mersenne-nth(5)',
+                'let { mersenne-nth } = import("TEMP-nth");\nmersenne-nth(1)',
+                'let { mersenne-nth } = import("TEMP-nth");\nmersenne-nth(5)',
             ],
         },
         'TEMP-nth.mersenne?': {
@@ -25946,9 +25946,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.mersenne?(3)',
-                'let nt = import("TEMP-nth");\nnt.mersenne?(4)',
-                'let nt = import("TEMP-nth");\nnt.mersenne?(7)',
+                'let { mersenne? } = import("TEMP-nth");\nmersenne?(3)',
+                'let { mersenne? } = import("TEMP-nth");\nmersenne?(4)',
+                'let { mersenne? } = import("TEMP-nth");\nmersenne?(7)',
             ],
         },
     };
@@ -25972,9 +25972,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['length'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.padovan-seq(5)',
-                'let nt = import("TEMP-nth");\nnt.padovan-seq(10)',
-                'let nt = import("TEMP-nth");\nnt.padovan-seq(20)',
+                'let { padovan-seq } = import("TEMP-nth");\npadovan-seq(5)',
+                'let { padovan-seq } = import("TEMP-nth");\npadovan-seq(10)',
+                'let { padovan-seq } = import("TEMP-nth");\npadovan-seq(20)',
             ],
         },
         'TEMP-nth.padovan-take-while': {
@@ -25995,7 +25995,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['takeWhile'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.padovan-take-while(-> $ < 1000)',
+                'let { padovan-take-while } = import("TEMP-nth");\npadovan-take-while(-> $ < 1000)',
             ],
         },
         'TEMP-nth.padovan-nth': {
@@ -26015,9 +26015,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.padovan-nth(5)',
-                'let nt = import("TEMP-nth");\nnt.padovan-nth(10)',
-                'let nt = import("TEMP-nth");\nnt.padovan-nth(20)',
+                'let { padovan-nth } = import("TEMP-nth");\npadovan-nth(5)',
+                'let { padovan-nth } = import("TEMP-nth");\npadovan-nth(10)',
+                'let { padovan-nth } = import("TEMP-nth");\npadovan-nth(20)',
             ],
         },
         'TEMP-nth.padovan?': {
@@ -26037,9 +26037,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.padovan?(1)',
-                'let nt = import("TEMP-nth");\nnt.padovan?(265)',
-                'let nt = import("TEMP-nth");\nnt.padovan?(6)',
+                'let { padovan? } = import("TEMP-nth");\npadovan?(1)',
+                'let { padovan? } = import("TEMP-nth");\npadovan?(265)',
+                'let { padovan? } = import("TEMP-nth");\npadovan?(6)',
             ],
         },
     };
@@ -26064,9 +26064,9 @@ var Playground = (function (exports) {
                 { argumentNames: [] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.partition-seq(1)',
-                'let nt = import("TEMP-nth");\nnt.partition-seq(10)',
-                'let nt = import("TEMP-nth");\nnt.partition-seq()',
+                'let { partition-seq } = import("TEMP-nth");\npartition-seq(1)',
+                'let { partition-seq } = import("TEMP-nth");\npartition-seq(10)',
+                'let { partition-seq } = import("TEMP-nth");\npartition-seq()',
             ],
         },
         'TEMP-nth.partition-take-while': {
@@ -26087,7 +26087,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['takeWhile'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.partition-take-while(-> $ < 1000)',
+                'let { partition-take-while } = import("TEMP-nth");\npartition-take-while(-> $ < 1000)',
             ],
         },
         'TEMP-nth.partition-nth': {
@@ -26107,8 +26107,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.partition-nth(1)',
-                'let nt = import("TEMP-nth");\nnt.partition-nth(5)',
+                'let { partition-nth } = import("TEMP-nth");\npartition-nth(1)',
+                'let { partition-nth } = import("TEMP-nth");\npartition-nth(5)',
             ],
         },
         'TEMP-nth.partition?': {
@@ -26128,12 +26128,12 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.partition?(0)',
-                'let nt = import("TEMP-nth");\nnt.partition?(1)',
-                'let nt = import("TEMP-nth");\nnt.partition?(2)',
-                'let nt = import("TEMP-nth");\nnt.partition?(3)',
-                'let nt = import("TEMP-nth");\nnt.partition?(4)',
-                'let nt = import("TEMP-nth");\nnt.partition?(5)',
+                'let { partition? } = import("TEMP-nth");\npartition?(0)',
+                'let { partition? } = import("TEMP-nth");\npartition?(1)',
+                'let { partition? } = import("TEMP-nth");\npartition?(2)',
+                'let { partition? } = import("TEMP-nth");\npartition?(3)',
+                'let { partition? } = import("TEMP-nth");\npartition?(4)',
+                'let { partition? } = import("TEMP-nth");\npartition?(5)',
             ],
         },
     };
@@ -26158,9 +26158,9 @@ var Playground = (function (exports) {
                 { argumentNames: [] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.pell-seq(5)',
-                'let nt = import("TEMP-nth");\nnt.pell-seq(10)',
-                'let nt = import("TEMP-nth");\nnt.pell-seq()',
+                'let { pell-seq } = import("TEMP-nth");\npell-seq(5)',
+                'let { pell-seq } = import("TEMP-nth");\npell-seq(10)',
+                'let { pell-seq } = import("TEMP-nth");\npell-seq()',
             ],
         },
         'TEMP-nth.pell-take-while': {
@@ -26181,7 +26181,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['takeWhile'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.pell-take-while(-> $ < 1000)',
+                'let { pell-take-while } = import("TEMP-nth");\npell-take-while(-> $ < 1000)',
             ],
         },
         'TEMP-nth.pell-nth': {
@@ -26201,9 +26201,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.pell-nth(5)',
-                'let nt = import("TEMP-nth");\nnt.pell-nth(10)',
-                'let nt = import("TEMP-nth");\nnt.pell-nth(20)',
+                'let { pell-nth } = import("TEMP-nth");\npell-nth(5)',
+                'let { pell-nth } = import("TEMP-nth");\npell-nth(10)',
+                'let { pell-nth } = import("TEMP-nth");\npell-nth(20)',
             ],
         },
         'TEMP-nth.pell?': {
@@ -26223,9 +26223,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.pell?(1)',
-                'let nt = import("TEMP-nth");\nnt.pell?(470832)',
-                'let nt = import("TEMP-nth");\nnt.pell?(10)',
+                'let { pell? } = import("TEMP-nth");\npell?(1)',
+                'let { pell? } = import("TEMP-nth");\npell?(470832)',
+                'let { pell? } = import("TEMP-nth");\npell?(10)',
             ],
         },
     };
@@ -26250,9 +26250,9 @@ var Playground = (function (exports) {
                 { argumentNames: [] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.perfect-seq(1)',
-                'let nt = import("TEMP-nth");\nnt.perfect-seq(5)',
-                'let nt = import("TEMP-nth");\nnt.perfect-seq()',
+                'let { perfect-seq } = import("TEMP-nth");\nperfect-seq(1)',
+                'let { perfect-seq } = import("TEMP-nth");\nperfect-seq(5)',
+                'let { perfect-seq } = import("TEMP-nth");\nperfect-seq()',
             ],
         },
         'TEMP-nth.perfect-take-while': {
@@ -26273,7 +26273,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['takeWhile'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.perfect-take-while(-> $ < 1000)',
+                'let { perfect-take-while } = import("TEMP-nth");\nperfect-take-while(-> $ < 1000)',
             ],
         },
         'TEMP-nth.perfect-nth': {
@@ -26293,8 +26293,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.perfect-nth(1)',
-                'let nt = import("TEMP-nth");\nnt.perfect-nth(5)',
+                'let { perfect-nth } = import("TEMP-nth");\nperfect-nth(1)',
+                'let { perfect-nth } = import("TEMP-nth");\nperfect-nth(5)',
             ],
         },
         'TEMP-nth.perfect?': {
@@ -26314,16 +26314,16 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.perfect?(0)',
-                'let nt = import("TEMP-nth");\nnt.perfect?(1)',
-                'let nt = import("TEMP-nth");\nnt.perfect?(2)',
-                'let nt = import("TEMP-nth");\nnt.perfect?(3)',
-                'let nt = import("TEMP-nth");\nnt.perfect?(4)',
-                'let nt = import("TEMP-nth");\nnt.perfect?(5)',
-                'let nt = import("TEMP-nth");\nnt.perfect?(6)',
-                'let nt = import("TEMP-nth");\nnt.perfect?(7)',
-                'let nt = import("TEMP-nth");\nnt.perfect?(8)',
-                'let nt = import("TEMP-nth");\nnt.perfect?(9)',
+                'let { perfect? } = import("TEMP-nth");\nperfect?(0)',
+                'let { perfect? } = import("TEMP-nth");\nperfect?(1)',
+                'let { perfect? } = import("TEMP-nth");\nperfect?(2)',
+                'let { perfect? } = import("TEMP-nth");\nperfect?(3)',
+                'let { perfect? } = import("TEMP-nth");\nperfect?(4)',
+                'let { perfect? } = import("TEMP-nth");\nperfect?(5)',
+                'let { perfect? } = import("TEMP-nth");\nperfect?(6)',
+                'let { perfect? } = import("TEMP-nth");\nperfect?(7)',
+                'let { perfect? } = import("TEMP-nth");\nperfect?(8)',
+                'let { perfect? } = import("TEMP-nth");\nperfect?(9)',
             ],
         },
     };
@@ -26347,8 +26347,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['length'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.perfect-square-seq(5)',
-                'let nt = import("TEMP-nth");\nnt.perfect-square-seq(20)',
+                'let { perfect-square-seq } = import("TEMP-nth");\nperfect-square-seq(5)',
+                'let { perfect-square-seq } = import("TEMP-nth");\nperfect-square-seq(20)',
             ],
         },
         'TEMP-nth.perfect-square-take-while': {
@@ -26369,7 +26369,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['takeWhile'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.perfect-square-take-while(-> $ <= 100)',
+                'let { perfect-square-take-while } = import("TEMP-nth");\nperfect-square-take-while(-> $ <= 100)',
             ],
         },
         'TEMP-nth.perfect-square-nth': {
@@ -26389,8 +26389,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.perfect-square-nth(1)',
-                'let nt = import("TEMP-nth");\nnt.perfect-square-nth(5)',
+                'let { perfect-square-nth } = import("TEMP-nth");\nperfect-square-nth(1)',
+                'let { perfect-square-nth } = import("TEMP-nth");\nperfect-square-nth(5)',
             ],
         },
         'TEMP-nth.perfect-square?': {
@@ -26410,8 +26410,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.perfect-square?(16)',
-                'let nt = import("TEMP-nth");\nnt.perfect-square?(20)',
+                'let { perfect-square? } = import("TEMP-nth");\nperfect-square?(16)',
+                'let { perfect-square? } = import("TEMP-nth");\nperfect-square?(20)',
             ],
         },
     };
@@ -26435,8 +26435,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['length'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.perfect-cube-seq(5)',
-                'let nt = import("TEMP-nth");\nnt.perfect-cube-seq(20)',
+                'let { perfect-cube-seq } = import("TEMP-nth");\nperfect-cube-seq(5)',
+                'let { perfect-cube-seq } = import("TEMP-nth");\nperfect-cube-seq(20)',
             ],
         },
         'TEMP-nth.perfect-cube-take-while': {
@@ -26457,7 +26457,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['takeWhile'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.perfect-cube-take-while(-> $ <= 100)',
+                'let { perfect-cube-take-while } = import("TEMP-nth");\nperfect-cube-take-while(-> $ <= 100)',
             ],
         },
         'TEMP-nth.perfect-cube-nth': {
@@ -26477,8 +26477,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.perfect-cube-nth(1)',
-                'let nt = import("TEMP-nth");\nnt.perfect-cube-nth(5)',
+                'let { perfect-cube-nth } = import("TEMP-nth");\nperfect-cube-nth(1)',
+                'let { perfect-cube-nth } = import("TEMP-nth");\nperfect-cube-nth(5)',
             ],
         },
         'TEMP-nth.perfect-cube?': {
@@ -26498,9 +26498,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.perfect-cube?(7)',
-                'let nt = import("TEMP-nth");\nnt.perfect-cube?(8)',
-                'let nt = import("TEMP-nth");\nnt.perfect-cube?(9)',
+                'let { perfect-cube? } = import("TEMP-nth");\nperfect-cube?(7)',
+                'let { perfect-cube? } = import("TEMP-nth");\nperfect-cube?(8)',
+                'let { perfect-cube? } = import("TEMP-nth");\nperfect-cube?(9)',
             ],
         },
     };
@@ -26524,8 +26524,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['length'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.perfect-power-seq(5)',
-                'let nt = import("TEMP-nth");\nnt.perfect-power-seq(20)',
+                'let { perfect-power-seq } = import("TEMP-nth");\nperfect-power-seq(5)',
+                'let { perfect-power-seq } = import("TEMP-nth");\nperfect-power-seq(20)',
             ],
         },
         'TEMP-nth.perfect-power-take-while': {
@@ -26546,7 +26546,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['takeWhile'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.perfect-power-take-while(-> $ <= 100)',
+                'let { perfect-power-take-while } = import("TEMP-nth");\nperfect-power-take-while(-> $ <= 100)',
             ],
         },
         'TEMP-nth.perfect-power-nth': {
@@ -26566,8 +26566,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.perfect-power-nth(3)',
-                'let nt = import("TEMP-nth");\nnt.perfect-power-nth(15)',
+                'let { perfect-power-nth } = import("TEMP-nth");\nperfect-power-nth(3)',
+                'let { perfect-power-nth } = import("TEMP-nth");\nperfect-power-nth(15)',
             ],
         },
         'TEMP-nth.perfect-power?': {
@@ -26587,10 +26587,10 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.perfect-power?(7)',
-                'let nt = import("TEMP-nth");\nnt.perfect-power?(8)',
-                'let nt = import("TEMP-nth");\nnt.perfect-power?(9)',
-                'let nt = import("TEMP-nth");\nnt.perfect-power?(10)',
+                'let { perfect-power? } = import("TEMP-nth");\nperfect-power?(7)',
+                'let { perfect-power? } = import("TEMP-nth");\nperfect-power?(8)',
+                'let { perfect-power? } = import("TEMP-nth");\nperfect-power?(9)',
+                'let { perfect-power? } = import("TEMP-nth");\nperfect-power?(10)',
             ],
         },
     };
@@ -26615,11 +26615,11 @@ var Playground = (function (exports) {
                 { argumentNames: ['sides', 'length'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.polygonal-seq(3, 2)',
-                'let nt = import("TEMP-nth");\nnt.polygonal-seq(4, 2)',
-                'let nt = import("TEMP-nth");\nnt.polygonal-seq(5, 3)',
-                'let nt = import("TEMP-nth");\nnt.polygonal-seq(6, 5)',
-                'let nt = import("TEMP-nth");\nnt.polygonal-seq(100, 10)',
+                'let { polygonal-seq } = import("TEMP-nth");\npolygonal-seq(3, 2)',
+                'let { polygonal-seq } = import("TEMP-nth");\npolygonal-seq(4, 2)',
+                'let { polygonal-seq } = import("TEMP-nth");\npolygonal-seq(5, 3)',
+                'let { polygonal-seq } = import("TEMP-nth");\npolygonal-seq(6, 5)',
+                'let { polygonal-seq } = import("TEMP-nth");\npolygonal-seq(100, 10)',
             ],
         },
         'TEMP-nth.polygonal-take-while': {
@@ -26641,7 +26641,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['sides', 'takeWhile'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.polygonal-take-while(15, -> $ < 1000)',
+                'let { polygonal-take-while } = import("TEMP-nth");\npolygonal-take-while(15, -> $ < 1000)',
             ],
         },
         'TEMP-nth.polygonal-nth': {
@@ -26662,9 +26662,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['sides', 'n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.polygonal-nth(3, 9)',
-                'let nt = import("TEMP-nth");\nnt.polygonal-nth(4, 5)',
-                'let nt = import("TEMP-nth");\nnt.polygonal-nth(5, 5)',
+                'let { polygonal-nth } = import("TEMP-nth");\npolygonal-nth(3, 9)',
+                'let { polygonal-nth } = import("TEMP-nth");\npolygonal-nth(4, 5)',
+                'let { polygonal-nth } = import("TEMP-nth");\npolygonal-nth(5, 5)',
             ],
         },
         'TEMP-nth.polygonal?': {
@@ -26685,11 +26685,11 @@ var Playground = (function (exports) {
                 { argumentNames: ['sides', 'n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.polygonal?(3, 10)',
-                'let nt = import("TEMP-nth");\nnt.polygonal?(3, 9)',
-                'let nt = import("TEMP-nth");\nnt.polygonal?(4, 10000)',
-                'let nt = import("TEMP-nth");\nnt.polygonal?(4, 1000)',
-                'let nt = import("TEMP-nth");\nnt.polygonal?(6, 45)',
+                'let { polygonal? } = import("TEMP-nth");\npolygonal?(3, 10)',
+                'let { polygonal? } = import("TEMP-nth");\npolygonal?(3, 9)',
+                'let { polygonal? } = import("TEMP-nth");\npolygonal?(4, 10000)',
+                'let { polygonal? } = import("TEMP-nth");\npolygonal?(4, 1000)',
+                'let { polygonal? } = import("TEMP-nth");\npolygonal?(6, 45)',
             ],
         },
     };
@@ -26713,9 +26713,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['length'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.prime-seq(1)',
-                'let nt = import("TEMP-nth");\nnt.prime-seq(2)',
-                'let nt = import("TEMP-nth");\nnt.prime-seq(10)',
+                'let { prime-seq } = import("TEMP-nth");\nprime-seq(1)',
+                'let { prime-seq } = import("TEMP-nth");\nprime-seq(2)',
+                'let { prime-seq } = import("TEMP-nth");\nprime-seq(10)',
             ],
         },
         'TEMP-nth.prime-take-while': {
@@ -26736,7 +26736,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['takeWhile'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.prime-take-while(-> $ < 50)',
+                'let { prime-take-while } = import("TEMP-nth");\nprime-take-while(-> $ < 50)',
             ],
         },
         'TEMP-nth.prime-nth': {
@@ -26756,9 +26756,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.prime-nth(1)',
-                'let nt = import("TEMP-nth");\nnt.prime-nth(2)',
-                'let nt = import("TEMP-nth");\nnt.prime-nth(10)',
+                'let { prime-nth } = import("TEMP-nth");\nprime-nth(1)',
+                'let { prime-nth } = import("TEMP-nth");\nprime-nth(2)',
+                'let { prime-nth } = import("TEMP-nth");\nprime-nth(10)',
             ],
         },
         'TEMP-nth.prime?': {
@@ -26778,12 +26778,12 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.prime?(1)',
-                'let nt = import("TEMP-nth");\nnt.prime?(2)',
-                'let nt = import("TEMP-nth");\nnt.prime?(3)',
-                'let nt = import("TEMP-nth");\nnt.prime?(4)',
-                'let nt = import("TEMP-nth");\nnt.prime?(997)',
-                'let nt = import("TEMP-nth");\nnt.prime?(1001)',
+                'let { prime? } = import("TEMP-nth");\nprime?(1)',
+                'let { prime? } = import("TEMP-nth");\nprime?(2)',
+                'let { prime? } = import("TEMP-nth");\nprime?(3)',
+                'let { prime? } = import("TEMP-nth");\nprime?(4)',
+                'let { prime? } = import("TEMP-nth");\nprime?(997)',
+                'let { prime? } = import("TEMP-nth");\nprime?(1001)',
             ],
         },
     };
@@ -26807,9 +26807,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['length'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.recaman-seq(5)',
-                'let nt = import("TEMP-nth");\nnt.recaman-seq(10)',
-                'let nt = import("TEMP-nth");\nnt.recaman-seq(20)',
+                'let { recaman-seq } = import("TEMP-nth");\nrecaman-seq(5)',
+                'let { recaman-seq } = import("TEMP-nth");\nrecaman-seq(10)',
+                'let { recaman-seq } = import("TEMP-nth");\nrecaman-seq(20)',
             ],
         },
         'TEMP-nth.recaman-take-while': {
@@ -26830,7 +26830,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['takeWhile'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.recaman-take-while(-> $ < 10)',
+                'let { recaman-take-while } = import("TEMP-nth");\nrecaman-take-while(-> $ < 10)',
             ],
         },
         'TEMP-nth.recaman-nth': {
@@ -26850,9 +26850,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.recaman-nth(5)',
-                'let nt = import("TEMP-nth");\nnt.recaman-nth(10)',
-                'let nt = import("TEMP-nth");\nnt.recaman-nth(20)',
+                'let { recaman-nth } = import("TEMP-nth");\nrecaman-nth(5)',
+                'let { recaman-nth } = import("TEMP-nth");\nrecaman-nth(10)',
+                'let { recaman-nth } = import("TEMP-nth");\nrecaman-nth(20)',
             ],
         },
         'TEMP-nth.recaman?': {
@@ -26872,9 +26872,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.recaman?(5)',
-                'let nt = import("TEMP-nth");\nnt.recaman?(10)',
-                'let nt = import("TEMP-nth");\nnt.recaman?(20)',
+                'let { recaman? } = import("TEMP-nth");\nrecaman?(5)',
+                'let { recaman? } = import("TEMP-nth");\nrecaman?(10)',
+                'let { recaman? } = import("TEMP-nth");\nrecaman?(20)',
             ],
         },
     };
@@ -26899,9 +26899,9 @@ var Playground = (function (exports) {
                 { argumentNames: [] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.sylvester-seq(5)',
-                'let nt = import("TEMP-nth");\nnt.sylvester-seq()',
-                'let nt = import("TEMP-nth");\nnt.sylvester-seq()',
+                'let { sylvester-seq } = import("TEMP-nth");\nsylvester-seq(5)',
+                'let { sylvester-seq } = import("TEMP-nth");\nsylvester-seq()',
+                'let { sylvester-seq } = import("TEMP-nth");\nsylvester-seq()',
             ],
         },
         'TEMP-nth.sylvester-take-while': {
@@ -26922,7 +26922,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['takeWhile'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.sylvester-take-while(-> $ < 100000)',
+                'let { sylvester-take-while } = import("TEMP-nth");\nsylvester-take-while(-> $ < 100000)',
             ],
         },
         'TEMP-nth.sylvester-nth': {
@@ -26942,8 +26942,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.sylvester-nth(1)',
-                'let nt = import("TEMP-nth");\nnt.sylvester-nth(5)',
+                'let { sylvester-nth } = import("TEMP-nth");\nsylvester-nth(1)',
+                'let { sylvester-nth } = import("TEMP-nth");\nsylvester-nth(5)',
             ],
         },
         'TEMP-nth.sylvester?': {
@@ -26963,9 +26963,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.sylvester?(2)',
-                'let nt = import("TEMP-nth");\nnt.sylvester?(3)',
-                'let nt = import("TEMP-nth");\nnt.sylvester?(6)',
+                'let { sylvester? } = import("TEMP-nth");\nsylvester?(2)',
+                'let { sylvester? } = import("TEMP-nth");\nsylvester?(3)',
+                'let { sylvester? } = import("TEMP-nth");\nsylvester?(6)',
             ],
         },
     };
@@ -26989,9 +26989,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['length'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.thue-morse-seq(5)',
-                'let nt = import("TEMP-nth");\nnt.thue-morse-seq(10)',
-                'let nt = import("TEMP-nth");\nnt.thue-morse-seq(20)',
+                'let { thue-morse-seq } = import("TEMP-nth");\nthue-morse-seq(5)',
+                'let { thue-morse-seq } = import("TEMP-nth");\nthue-morse-seq(10)',
+                'let { thue-morse-seq } = import("TEMP-nth");\nthue-morse-seq(20)',
             ],
         },
         'TEMP-nth.thue-morse-take-while': {
@@ -27012,7 +27012,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['takeWhile'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.thue-morse-take-while(-> $2 < 10)',
+                'let { thue-morse-take-while } = import("TEMP-nth");\nthue-morse-take-while(-> $2 < 10)',
             ],
         },
         'TEMP-nth.thue-morse-nth': {
@@ -27032,9 +27032,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.thue-morse-nth(5)',
-                'let nt = import("TEMP-nth");\nnt.thue-morse-nth(10)',
-                'let nt = import("TEMP-nth");\nnt.thue-morse-nth(20)',
+                'let { thue-morse-nth } = import("TEMP-nth");\nthue-morse-nth(5)',
+                'let { thue-morse-nth } = import("TEMP-nth");\nthue-morse-nth(10)',
+                'let { thue-morse-nth } = import("TEMP-nth");\nthue-morse-nth(20)',
             ],
         },
         'TEMP-nth.thue-morse?': {
@@ -27054,8 +27054,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.thue-morse?(1)',
-                'let nt = import("TEMP-nth");\nnt.thue-morse?(2)',
+                'let { thue-morse? } = import("TEMP-nth");\nthue-morse?(1)',
+                'let { thue-morse? } = import("TEMP-nth");\nthue-morse?(2)',
             ],
         },
     };
@@ -27079,9 +27079,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['length'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.tribonacci-seq(1)',
-                'let nt = import("TEMP-nth");\nnt.tribonacci-seq(2)',
-                'let nt = import("TEMP-nth");\nnt.tribonacci-seq(10)',
+                'let { tribonacci-seq } = import("TEMP-nth");\ntribonacci-seq(1)',
+                'let { tribonacci-seq } = import("TEMP-nth");\ntribonacci-seq(2)',
+                'let { tribonacci-seq } = import("TEMP-nth");\ntribonacci-seq(10)',
             ],
         },
         'TEMP-nth.tribonacci-take-while': {
@@ -27102,7 +27102,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['takeWhile'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.tribonacci-take-while(-> $ < 100)',
+                'let { tribonacci-take-while } = import("TEMP-nth");\ntribonacci-take-while(-> $ < 100)',
             ],
         },
         'TEMP-nth.tribonacci-nth': {
@@ -27122,9 +27122,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.tribonacci-nth(1)',
-                'let nt = import("TEMP-nth");\nnt.tribonacci-nth(2)',
-                'let nt = import("TEMP-nth");\nnt.tribonacci-nth(10)',
+                'let { tribonacci-nth } = import("TEMP-nth");\ntribonacci-nth(1)',
+                'let { tribonacci-nth } = import("TEMP-nth");\ntribonacci-nth(2)',
+                'let { tribonacci-nth } = import("TEMP-nth");\ntribonacci-nth(10)',
             ],
         },
         'TEMP-nth.tribonacci?': {
@@ -27144,17 +27144,17 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.tribonacci?(0)',
-                'let nt = import("TEMP-nth");\nnt.tribonacci?(1)',
-                'let nt = import("TEMP-nth");\nnt.tribonacci?(2)',
-                'let nt = import("TEMP-nth");\nnt.tribonacci?(3)',
-                'let nt = import("TEMP-nth");\nnt.tribonacci?(4)',
-                'let nt = import("TEMP-nth");\nnt.tribonacci?(5)',
-                'let nt = import("TEMP-nth");\nnt.tribonacci?(6)',
-                'let nt = import("TEMP-nth");\nnt.tribonacci?(7)',
-                'let nt = import("TEMP-nth");\nnt.tribonacci?(8)',
-                'let nt = import("TEMP-nth");\nnt.tribonacci?(9)',
-                'let nt = import("TEMP-nth");\nnt.tribonacci?(10)',
+                'let { tribonacci? } = import("TEMP-nth");\ntribonacci?(0)',
+                'let { tribonacci? } = import("TEMP-nth");\ntribonacci?(1)',
+                'let { tribonacci? } = import("TEMP-nth");\ntribonacci?(2)',
+                'let { tribonacci? } = import("TEMP-nth");\ntribonacci?(3)',
+                'let { tribonacci? } = import("TEMP-nth");\ntribonacci?(4)',
+                'let { tribonacci? } = import("TEMP-nth");\ntribonacci?(5)',
+                'let { tribonacci? } = import("TEMP-nth");\ntribonacci?(6)',
+                'let { tribonacci? } = import("TEMP-nth");\ntribonacci?(7)',
+                'let { tribonacci? } = import("TEMP-nth");\ntribonacci?(8)',
+                'let { tribonacci? } = import("TEMP-nth");\ntribonacci?(9)',
+                'let { tribonacci? } = import("TEMP-nth");\ntribonacci?(10)',
             ],
         },
     };
@@ -27178,8 +27178,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['length'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.deficient-seq(1)',
-                'let nt = import("TEMP-nth");\nnt.deficient-seq(5)',
+                'let { deficient-seq } = import("TEMP-nth");\ndeficient-seq(1)',
+                'let { deficient-seq } = import("TEMP-nth");\ndeficient-seq(5)',
             ],
         },
         'TEMP-nth.deficient-take-while': {
@@ -27200,7 +27200,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['takeWhile'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.deficient-take-while(-> $ < 100)',
+                'let { deficient-take-while } = import("TEMP-nth");\ndeficient-take-while(-> $ < 100)',
             ],
         },
         'TEMP-nth.deficient-nth': {
@@ -27220,8 +27220,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.deficient-nth(5)',
-                'let nt = import("TEMP-nth");\nnt.deficient-nth(12)',
+                'let { deficient-nth } = import("TEMP-nth");\ndeficient-nth(5)',
+                'let { deficient-nth } = import("TEMP-nth");\ndeficient-nth(12)',
             ],
         },
         'TEMP-nth.deficient?': {
@@ -27241,8 +27241,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.deficient?(12)',
-                'let nt = import("TEMP-nth");\nnt.deficient?(15)',
+                'let { deficient? } = import("TEMP-nth");\ndeficient?(12)',
+                'let { deficient? } = import("TEMP-nth");\ndeficient?(15)',
             ],
         },
     };
@@ -27259,7 +27259,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['a', 'b'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.count-combinations(5, 3)',
+                'let { count-combinations } = import("TEMP-nth");\ncount-combinations(5, 3)',
                 'let { binomial } = import("TEMP-nth");\nbinomial(10, 2)',
             ],
             aliases: ['TEMP-nth.binomial'],
@@ -27306,8 +27306,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.count-derangements(4)',
-                'let nt = import("TEMP-nth");\nnt.count-derangements(5)',
+                'let { count-derangements } = import("TEMP-nth");\ncount-derangements(4)',
+                'let { count-derangements } = import("TEMP-nth");\ncount-derangements(5)',
             ],
         }, 'TEMP-nth.derangements': {
             title: 'TEMP-nth.derangements',
@@ -27370,9 +27370,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.count-divisors(12)',
-                'let nt = import("TEMP-nth");\nnt.count-divisors(100)',
-                'let nt = import("TEMP-nth");\nnt.count-divisors(37)',
+                'let { count-divisors } = import("TEMP-nth");\ncount-divisors(12)',
+                'let { count-divisors } = import("TEMP-nth");\ncount-divisors(100)',
+                'let { count-divisors } = import("TEMP-nth");\ncount-divisors(37)',
             ],
         }, 'TEMP-nth.proper-divisors': {
             title: 'TEMP-nth.proper-divisors',
@@ -27392,9 +27392,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.proper-divisors(12)',
-                'let nt = import("TEMP-nth");\nnt.proper-divisors(100)',
-                'let nt = import("TEMP-nth");\nnt.proper-divisors(37)',
+                'let { proper-divisors } = import("TEMP-nth");\nproper-divisors(12)',
+                'let { proper-divisors } = import("TEMP-nth");\nproper-divisors(100)',
+                'let { proper-divisors } = import("TEMP-nth");\nproper-divisors(37)',
             ],
         }, 'TEMP-nth.count-proper-divisors': {
             title: 'TEMP-nth.count-proper-divisors',
@@ -27413,9 +27413,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.count-proper-divisors(12)',
-                'let nt = import("TEMP-nth");\nnt.count-proper-divisors(100)',
-                'let nt = import("TEMP-nth");\nnt.count-proper-divisors(37)',
+                'let { count-proper-divisors } = import("TEMP-nth");\ncount-proper-divisors(12)',
+                'let { count-proper-divisors } = import("TEMP-nth");\ncount-proper-divisors(100)',
+                'let { count-proper-divisors } = import("TEMP-nth");\ncount-proper-divisors(37)',
             ],
         }, 'TEMP-nth.factorial': {
             title: 'TEMP-nth.factorial',
@@ -27436,8 +27436,8 @@ var Playground = (function (exports) {
             examples: [
                 'let { factorial } = import("TEMP-nth");\nfactorial(5)',
                 'let { factorial } = import("TEMP-nth");\nfactorial(0)',
-                'let nt = import("TEMP-nth");\nnt.!(10)',
-                'let nt = import("TEMP-nth");\nnt.!(20)',
+                'let { factorial } = import("TEMP-nth");\nfactorial(10)',
+                'let { factorial } = import("TEMP-nth");\nfactorial(20)',
             ],
             aliases: ['TEMP-nth.!'],
         }, 'TEMP-nth.partitions': {
@@ -27478,9 +27478,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.count-partitions(4)',
-                'let nt = import("TEMP-nth");\nnt.count-partitions(8)',
-                'let nt = import("TEMP-nth");\nnt.count-partitions(15)',
+                'let { count-partitions } = import("TEMP-nth");\ncount-partitions(4)',
+                'let { count-partitions } = import("TEMP-nth");\ncount-partitions(8)',
+                'let { count-partitions } = import("TEMP-nth");\ncount-partitions(15)',
             ],
         }, 'TEMP-nth.permutations': {
             title: 'TEMP-nth.permutations',
@@ -27520,11 +27520,11 @@ var Playground = (function (exports) {
                 { argumentNames: ['a', 'b'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.count-permutations(5, 3)',
-                'let nt = import("TEMP-nth");\nnt.count-permutations(10, 2)',
-                'let nt = import("TEMP-nth");\nnt.count-permutations(10, 10)',
-                'let nt = import("TEMP-nth");\nnt.count-permutations(10, 0)',
-                'let nt = import("TEMP-nth");\nnt.count-permutations(10, 1)',
+                'let { count-permutations } = import("TEMP-nth");\ncount-permutations(5, 3)',
+                'let { count-permutations } = import("TEMP-nth");\ncount-permutations(10, 2)',
+                'let { count-permutations } = import("TEMP-nth");\ncount-permutations(10, 10)',
+                'let { count-permutations } = import("TEMP-nth");\ncount-permutations(10, 0)',
+                'let { count-permutations } = import("TEMP-nth");\ncount-permutations(10, 1)',
             ],
         }, 'TEMP-nth.power-set': {
             title: 'TEMP-nth.power-set',
@@ -27545,10 +27545,10 @@ var Playground = (function (exports) {
                 { argumentNames: ['set'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.power-set(["a", "b", "c"])',
-                'let nt = import("TEMP-nth");\nnt.power-set([1, 2])',
-                'let nt = import("TEMP-nth");\nnt.power-set([1])',
-                'let nt = import("TEMP-nth");\nnt.power-set([])',
+                'let { power-set } = import("TEMP-nth");\npower-set(["a", "b", "c"])',
+                'let { power-set } = import("TEMP-nth");\npower-set([1, 2])',
+                'let { power-set } = import("TEMP-nth");\npower-set([1])',
+                'let { power-set } = import("TEMP-nth");\npower-set([])',
             ],
         }, 'TEMP-nth.count-power-set': {
             title: 'TEMP-nth.count-power-set',
@@ -27567,9 +27567,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.count-power-set(3)',
-                'let nt = import("TEMP-nth");\nnt.count-power-set(5)',
-                'let nt = import("TEMP-nth");\nnt.count-power-set(10)',
+                'let { count-power-set } = import("TEMP-nth");\ncount-power-set(3)',
+                'let { count-power-set } = import("TEMP-nth");\ncount-power-set(5)',
+                'let { count-power-set } = import("TEMP-nth");\ncount-power-set(10)',
             ],
         }, 'TEMP-nth.prime-factors': {
             title: 'TEMP-nth.prime-factors',
@@ -27589,9 +27589,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.prime-factors(12)',
-                'let nt = import("TEMP-nth");\nnt.prime-factors(100)',
-                'let nt = import("TEMP-nth");\nnt.prime-factors(37)',
+                'let { prime-factors } = import("TEMP-nth");\nprime-factors(12)',
+                'let { prime-factors } = import("TEMP-nth");\nprime-factors(100)',
+                'let { prime-factors } = import("TEMP-nth");\nprime-factors(37)',
             ],
         }, 'TEMP-nth.count-prime-factors': {
             title: 'TEMP-nth.count-prime-factors',
@@ -27610,9 +27610,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.count-prime-factors(12)',
-                'let nt = import("TEMP-nth");\nnt.count-prime-factors(100)',
-                'let nt = import("TEMP-nth");\nnt.count-prime-factors(37)',
+                'let { count-prime-factors } = import("TEMP-nth");\ncount-prime-factors(12)',
+                'let { count-prime-factors } = import("TEMP-nth");\ncount-prime-factors(100)',
+                'let { count-prime-factors } = import("TEMP-nth");\ncount-prime-factors(37)',
             ],
         }, 'TEMP-nth.distinct-prime-factors': {
             title: 'TEMP-nth.distinct-prime-factors',
@@ -27632,9 +27632,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.distinct-prime-factors(12)',
-                'let nt = import("TEMP-nth");\nnt.distinct-prime-factors(100)',
-                'let nt = import("TEMP-nth");\nnt.distinct-prime-factors(37)',
+                'let { distinct-prime-factors } = import("TEMP-nth");\ndistinct-prime-factors(12)',
+                'let { distinct-prime-factors } = import("TEMP-nth");\ndistinct-prime-factors(100)',
+                'let { distinct-prime-factors } = import("TEMP-nth");\ndistinct-prime-factors(37)',
             ],
         }, 'TEMP-nth.count-distinct-prime-factors': {
             title: 'TEMP-nth.count-distinct-prime-factors',
@@ -27653,9 +27653,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.count-distinct-prime-factors(12)',
-                'let nt = import("TEMP-nth");\nnt.count-distinct-prime-factors(100)',
-                'let nt = import("TEMP-nth");\nnt.count-distinct-prime-factors(37)',
+                'let { count-distinct-prime-factors } = import("TEMP-nth");\ncount-distinct-prime-factors(12)',
+                'let { count-distinct-prime-factors } = import("TEMP-nth");\ncount-distinct-prime-factors(100)',
+                'let { count-distinct-prime-factors } = import("TEMP-nth");\ncount-distinct-prime-factors(37)',
             ],
         }, 'TEMP-nth.coprime?': {
             title: 'TEMP-nth.coprime?',
@@ -27669,16 +27669,16 @@ var Playground = (function (exports) {
                 { argumentNames: ['a', 'b'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.coprime?(12, 8)',
-                'let nt = import("TEMP-nth");\nnt.coprime?(12, 5)',
-                'let nt = import("TEMP-nth");\nnt.coprime?(37, 1)',
-                'let nt = import("TEMP-nth");\nnt.coprime?(0, 0)',
-                'let nt = import("TEMP-nth");\nnt.coprime?(0, 5)',
-                'let nt = import("TEMP-nth");\nnt.coprime?(5, 0)',
-                'let nt = import("TEMP-nth");\nnt.coprime?(1, 0)',
-                'let nt = import("TEMP-nth");\nnt.coprime?(0, 1)',
-                'let nt = import("TEMP-nth");\nnt.coprime?(1, 1)',
-                'let nt = import("TEMP-nth");\nnt.coprime?(2, 3)',
+                'let { coprime? } = import("TEMP-nth");\ncoprime?(12, 8)',
+                'let { coprime? } = import("TEMP-nth");\ncoprime?(12, 5)',
+                'let { coprime? } = import("TEMP-nth");\ncoprime?(37, 1)',
+                'let { coprime? } = import("TEMP-nth");\ncoprime?(0, 0)',
+                'let { coprime? } = import("TEMP-nth");\ncoprime?(0, 5)',
+                'let { coprime? } = import("TEMP-nth");\ncoprime?(5, 0)',
+                'let { coprime? } = import("TEMP-nth");\ncoprime?(1, 0)',
+                'let { coprime? } = import("TEMP-nth");\ncoprime?(0, 1)',
+                'let { coprime? } = import("TEMP-nth");\ncoprime?(1, 1)',
+                'let { coprime? } = import("TEMP-nth");\ncoprime?(2, 3)',
             ],
         }, 'TEMP-nth.divisible-by?': {
             title: 'TEMP-nth.divisible-by?',
@@ -27692,12 +27692,12 @@ var Playground = (function (exports) {
                 { argumentNames: ['a', 'b'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.divisible-by?(12, 4)',
-                'let nt = import("TEMP-nth");\nnt.divisible-by?(12, 5)',
-                'let nt = import("TEMP-nth");\nnt.divisible-by?(37, 1)',
-                'let nt = import("TEMP-nth");\nnt.divisible-by?(0, 0)',
-                'let nt = import("TEMP-nth");\nnt.divisible-by?(0, 5)',
-                'let nt = import("TEMP-nth");\nnt.divisible-by?(5, 0)',
+                'let { divisible-by? } = import("TEMP-nth");\ndivisible-by?(12, 4)',
+                'let { divisible-by? } = import("TEMP-nth");\ndivisible-by?(12, 5)',
+                'let { divisible-by? } = import("TEMP-nth");\ndivisible-by?(37, 1)',
+                'let { divisible-by? } = import("TEMP-nth");\ndivisible-by?(0, 0)',
+                'let { divisible-by? } = import("TEMP-nth");\ndivisible-by?(0, 5)',
+                'let { divisible-by? } = import("TEMP-nth");\ndivisible-by?(5, 0)',
             ],
         }, 'TEMP-nth.gcd': {
             title: 'TEMP-nth.gcd',
@@ -27768,11 +27768,11 @@ var Playground = (function (exports) {
                 { argumentNames: ['a', 'b'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.amicable?(220, 284)',
-                'let nt = import("TEMP-nth");\nnt.amicable?(1184, 1210)',
-                'let nt = import("TEMP-nth");\nnt.amicable?(2620, 2924)',
-                'let nt = import("TEMP-nth");\nnt.amicable?(5020, 5564)',
-                'let nt = import("TEMP-nth");\nnt.amicable?(6232, 6368)',
+                'let { amicable? } = import("TEMP-nth");\namicable?(220, 284)',
+                'let { amicable? } = import("TEMP-nth");\namicable?(1184, 1210)',
+                'let { amicable? } = import("TEMP-nth");\namicable?(2620, 2924)',
+                'let { amicable? } = import("TEMP-nth");\namicable?(5020, 5564)',
+                'let { amicable? } = import("TEMP-nth");\namicable?(6232, 6368)',
             ],
         }, 'TEMP-nth.euler-totient': {
             title: 'TEMP-nth.euler-totient',
@@ -27791,10 +27791,10 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.euler-totient(1)',
-                'let nt = import("TEMP-nth");\nnt.euler-totient(2)',
-                'let nt = import("TEMP-nth");\nnt.euler-totient(10)',
-                'let nt = import("TEMP-nth");\nnt.euler-totient(20)',
+                'let { euler-totient } = import("TEMP-nth");\neuler-totient(1)',
+                'let { euler-totient } = import("TEMP-nth");\neuler-totient(2)',
+                'let { euler-totient } = import("TEMP-nth");\neuler-totient(10)',
+                'let { euler-totient } = import("TEMP-nth");\neuler-totient(20)',
             ],
         }, 'TEMP-nth.mobius': {
             title: 'TEMP-nth.mobius',
@@ -27889,13 +27889,13 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.carmichael-lambda(1)',
-                'let nt = import("TEMP-nth");\nnt.carmichael-lambda(2)',
-                'let nt = import("TEMP-nth");\nnt.carmichael-lambda(3)',
-                'let nt = import("TEMP-nth");\nnt.carmichael-lambda(4)',
-                'let nt = import("TEMP-nth");\nnt.carmichael-lambda(6)',
-                'let nt = import("TEMP-nth");\nnt.carmichael-lambda(12)',
-                'let nt = import("TEMP-nth");\nnt.carmichael-lambda(30)',
+                'let { carmichael-lambda } = import("TEMP-nth");\ncarmichael-lambda(1)',
+                'let { carmichael-lambda } = import("TEMP-nth");\ncarmichael-lambda(2)',
+                'let { carmichael-lambda } = import("TEMP-nth");\ncarmichael-lambda(3)',
+                'let { carmichael-lambda } = import("TEMP-nth");\ncarmichael-lambda(4)',
+                'let { carmichael-lambda } = import("TEMP-nth");\ncarmichael-lambda(6)',
+                'let { carmichael-lambda } = import("TEMP-nth");\ncarmichael-lambda(12)',
+                'let { carmichael-lambda } = import("TEMP-nth");\ncarmichael-lambda(30)',
             ],
         }, 'TEMP-nth.cartesian-product': {
             title: 'TEMP-nth.cartesian-product',
@@ -27914,9 +27914,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['sets'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.cartesian-product([1, 2], ["a", "b"])',
-                'let nt = import("TEMP-nth");\nnt.cartesian-product([1, 2], ["a", "b"], [true, false])',
-                'let nt = import("TEMP-nth");\nnt.cartesian-product([1, 2, 3], ["x", "y", "z"])',
+                'let { cartesian-product } = import("TEMP-nth");\ncartesian-product([1, 2], ["a", "b"])',
+                'let { cartesian-product } = import("TEMP-nth");\ncartesian-product([1, 2], ["a", "b"], [true, false])',
+                'let { cartesian-product } = import("TEMP-nth");\ncartesian-product([1, 2, 3], ["x", "y", "z"])',
             ],
         }, 'TEMP-nth.perfect-power': {
             title: 'TEMP-nth.perfect-power',
@@ -27936,13 +27936,13 @@ var Playground = (function (exports) {
                 { argumentNames: ['n'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.perfect-power(1)',
-                'let nt = import("TEMP-nth");\nnt.perfect-power(2)',
-                'let nt = import("TEMP-nth");\nnt.perfect-power(4)',
-                'let nt = import("TEMP-nth");\nnt.perfect-power(8)',
-                'let nt = import("TEMP-nth");\nnt.perfect-power(9)',
-                'let nt = import("TEMP-nth");\nnt.perfect-power(16)',
-                'let nt = import("TEMP-nth");\nnt.perfect-power(19)',
+                'let { perfect-power } = import("TEMP-nth");\nperfect-power(1)',
+                'let { perfect-power } = import("TEMP-nth");\nperfect-power(2)',
+                'let { perfect-power } = import("TEMP-nth");\nperfect-power(4)',
+                'let { perfect-power } = import("TEMP-nth");\nperfect-power(8)',
+                'let { perfect-power } = import("TEMP-nth");\nperfect-power(9)',
+                'let { perfect-power } = import("TEMP-nth");\nperfect-power(16)',
+                'let { perfect-power } = import("TEMP-nth");\nperfect-power(19)',
             ],
         }, 'TEMP-nth.mod-exp': {
             title: 'TEMP-nth.mod-exp',
@@ -27966,10 +27966,10 @@ var Playground = (function (exports) {
                 { argumentNames: ['base', 'exponent', 'modulus'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.mod-exp(2, 3, 5)',
-                'let nt = import("TEMP-nth");\nnt.mod-exp(3, 4, 7)',
-                'let nt = import("TEMP-nth");\nnt.mod-exp(5, 6, 11)',
-                'let nt = import("TEMP-nth");\nnt.mod-exp(7, 8, 13)',
+                'let { mod-exp } = import("TEMP-nth");\nmod-exp(2, 3, 5)',
+                'let { mod-exp } = import("TEMP-nth");\nmod-exp(3, 4, 7)',
+                'let { mod-exp } = import("TEMP-nth");\nmod-exp(5, 6, 11)',
+                'let { mod-exp } = import("TEMP-nth");\nmod-exp(7, 8, 13)',
             ],
         }, 'TEMP-nth.mod-inv': {
             title: 'TEMP-nth.mod-inv',
@@ -27983,10 +27983,10 @@ var Playground = (function (exports) {
                 { argumentNames: ['a', 'm'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.mod-inv(3, 11)',
-                'let nt = import("TEMP-nth");\nnt.mod-inv(10, 17)',
-                'let nt = import("TEMP-nth");\nnt.mod-inv(5, 13)',
-                'let nt = import("TEMP-nth");\nnt.mod-inv(7, 19)',
+                'let { mod-inv } = import("TEMP-nth");\nmod-inv(3, 11)',
+                'let { mod-inv } = import("TEMP-nth");\nmod-inv(10, 17)',
+                'let { mod-inv } = import("TEMP-nth");\nmod-inv(5, 13)',
+                'let { mod-inv } = import("TEMP-nth");\nmod-inv(7, 19)',
             ],
         }, 'TEMP-nth.extended-gcd': {
             title: 'TEMP-nth.extended-gcd',
@@ -28001,10 +28001,10 @@ var Playground = (function (exports) {
                 { argumentNames: ['a', 'b'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.extended-gcd(30, 12)',
-                'let nt = import("TEMP-nth");\nnt.extended-gcd(56, 98)',
-                'let nt = import("TEMP-nth");\nnt.extended-gcd(101, 10)',
-                'let nt = import("TEMP-nth");\nnt.extended-gcd(17, 13)',
+                'let { extended-gcd } = import("TEMP-nth");\nextended-gcd(30, 12)',
+                'let { extended-gcd } = import("TEMP-nth");\nextended-gcd(56, 98)',
+                'let { extended-gcd } = import("TEMP-nth");\nextended-gcd(101, 10)',
+                'let { extended-gcd } = import("TEMP-nth");\nextended-gcd(17, 13)',
             ],
         }, 'TEMP-nth.chinese-remainder': {
             title: 'TEMP-nth.chinese-remainder',
@@ -28026,10 +28026,10 @@ var Playground = (function (exports) {
                 { argumentNames: ['remainders', 'moduli'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.chinese-remainder([2, 3], [3, 5])',
-                'let nt = import("TEMP-nth");\nnt.chinese-remainder([1, 2], [3, 4])',
-                'let nt = import("TEMP-nth");\nnt.chinese-remainder([0, 1], [2, 3])',
-                'let nt = import("TEMP-nth");\nnt.chinese-remainder([1, 2, 3], [4, 5, 7])',
+                'let { chinese-remainder } = import("TEMP-nth");\nchinese-remainder([2, 3], [3, 5])',
+                'let { chinese-remainder } = import("TEMP-nth");\nchinese-remainder([1, 2], [3, 4])',
+                'let { chinese-remainder } = import("TEMP-nth");\nchinese-remainder([0, 1], [2, 3])',
+                'let { chinese-remainder } = import("TEMP-nth");\nchinese-remainder([1, 2, 3], [4, 5, 7])',
             ],
         }, 'TEMP-nth.stirling-first': {
             title: 'TEMP-nth.stirling-first',
@@ -28052,11 +28052,11 @@ var Playground = (function (exports) {
                 { argumentNames: ['a', 'b'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.stirling-first(5, 2)',
-                'let nt = import("TEMP-nth");\nnt.stirling-first(4, 3)',
-                'let nt = import("TEMP-nth");\nnt.stirling-first(6, 1)',
-                'let nt = import("TEMP-nth");\nnt.stirling-first(7, 4)',
-                'let nt = import("TEMP-nth");\nnt.stirling-first(8, 5)',
+                'let { stirling-first } = import("TEMP-nth");\nstirling-first(5, 2)',
+                'let { stirling-first } = import("TEMP-nth");\nstirling-first(4, 3)',
+                'let { stirling-first } = import("TEMP-nth");\nstirling-first(6, 1)',
+                'let { stirling-first } = import("TEMP-nth");\nstirling-first(7, 4)',
+                'let { stirling-first } = import("TEMP-nth");\nstirling-first(8, 5)',
             ],
         }, 'TEMP-nth.stirling-second': {
             title: 'TEMP-nth.stirling-second',
@@ -28079,11 +28079,11 @@ var Playground = (function (exports) {
                 { argumentNames: ['a', 'b'] },
             ],
             examples: [
-                'let nt = import("TEMP-nth");\nnt.stirling-second(5, 2)',
-                'let nt = import("TEMP-nth");\nnt.stirling-second(4, 3)',
-                'let nt = import("TEMP-nth");\nnt.stirling-second(6, 1)',
-                'let nt = import("TEMP-nth");\nnt.stirling-second(7, 4)',
-                'let nt = import("TEMP-nth");\nnt.stirling-second(8, 5)',
+                'let { stirling-second } = import("TEMP-nth");\nstirling-second(5, 2)',
+                'let { stirling-second } = import("TEMP-nth");\nstirling-second(4, 3)',
+                'let { stirling-second } = import("TEMP-nth");\nstirling-second(6, 1)',
+                'let { stirling-second } = import("TEMP-nth");\nstirling-second(7, 4)',
+                'let { stirling-second } = import("TEMP-nth");\nstirling-second(8, 5)',
             ],
         } });
 
@@ -28127,8 +28127,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.moving-mean([1, 2, 3, 4, 5], 3)',
-                'let vec = import("vec");\nvec.moving-mean([1, 2, 3, 4, 5], 5)',
+                'let { moving-mean } = import("vec");\nmoving-mean([1, 2, 3, 4, 5], 3)',
+                'let { moving-mean } = import("vec");\nmoving-mean([1, 2, 3, 4, 5], 5)',
             ],
         },
         'vec.centered-moving-mean': {
@@ -28157,9 +28157,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.centered-moving-mean([1, 2, 3, 4, 5], 3)',
-                'let vec = import("vec");\nvec.centered-moving-mean([1, 2, 3, 4, 5], 3, 0, 10)',
-                'let vec = import("vec");\nvec.centered-moving-mean([1, 2, 3, 4, 5], 3, 10)',
+                'let { centered-moving-mean } = import("vec");\ncentered-moving-mean([1, 2, 3, 4, 5], 3)',
+                'let { centered-moving-mean } = import("vec");\ncentered-moving-mean([1, 2, 3, 4, 5], 3, 0, 10)',
+                'let { centered-moving-mean } = import("vec");\ncentered-moving-mean([1, 2, 3, 4, 5], 3, 10)',
             ],
         },
         'vec.running-mean': {
@@ -28179,7 +28179,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.running-mean([1, 2, 3, 4, 5])',
+                'let { running-mean } = import("vec");\nrunning-mean([1, 2, 3, 4, 5])',
             ],
         },
     };
@@ -28201,8 +28201,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.geometric-mean([1, 2, 3])',
-                'let vec = import("vec");\nvec.geometric-mean([1, 2, 9])',
+                'let { geometric-mean } = import("vec");\ngeometric-mean([1, 2, 3])',
+                'let { geometric-mean } = import("vec");\ngeometric-mean([1, 2, 9])',
             ],
         },
         'vec.moving-geometric-mean': {
@@ -28223,8 +28223,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.moving-geometric-mean([1, 2, 3, 4, 5], 3)',
-                'let vec = import("vec");\nvec.moving-geometric-mean([1, 2, 3, 4, 5], 5)',
+                'let { moving-geometric-mean } = import("vec");\nmoving-geometric-mean([1, 2, 3, 4, 5], 3)',
+                'let { moving-geometric-mean } = import("vec");\nmoving-geometric-mean([1, 2, 3, 4, 5], 5)',
             ],
         },
         'vec.centered-moving-geometric-mean': {
@@ -28253,9 +28253,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.centered-moving-geometric-mean([1, 2, 3, 4, 5], 3)',
-                'let vec = import("vec");\nvec.centered-moving-geometric-mean([1, 2, 3, 4, 5], 3, 0, 10)',
-                'let vec = import("vec");\nvec.centered-moving-geometric-mean([1, 2, 3, 4, 5], 3, 10)',
+                'let { centered-moving-geometric-mean } = import("vec");\ncentered-moving-geometric-mean([1, 2, 3, 4, 5], 3)',
+                'let { centered-moving-geometric-mean } = import("vec");\ncentered-moving-geometric-mean([1, 2, 3, 4, 5], 3, 0, 10)',
+                'let { centered-moving-geometric-mean } = import("vec");\ncentered-moving-geometric-mean([1, 2, 3, 4, 5], 3, 10)',
             ],
         },
         'vec.running-geometric-mean': {
@@ -28275,7 +28275,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.running-geometric-mean([1, 2, 3, 4, 5])',
+                'let { running-geometric-mean } = import("vec");\nrunning-geometric-mean([1, 2, 3, 4, 5])',
             ],
         },
     };
@@ -28297,8 +28297,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.harmonic-mean([1, 2, 3])',
-                'let vec = import("vec");\nvec.harmonic-mean([1, 2, 9])',
+                'let { harmonic-mean } = import("vec");\nharmonic-mean([1, 2, 3])',
+                'let { harmonic-mean } = import("vec");\nharmonic-mean([1, 2, 9])',
             ],
         },
         'vec.moving-harmonic-mean': {
@@ -28319,8 +28319,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.moving-harmonic-mean([1, 2, 3, 4, 5], 3)',
-                'let vec = import("vec");\nvec.moving-harmonic-mean([1, 2, 3, 4, 5], 5)',
+                'let { moving-harmonic-mean } = import("vec");\nmoving-harmonic-mean([1, 2, 3, 4, 5], 3)',
+                'let { moving-harmonic-mean } = import("vec");\nmoving-harmonic-mean([1, 2, 3, 4, 5], 5)',
             ],
         },
         'vec.centered-moving-harmonic-mean': {
@@ -28349,9 +28349,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.centered-moving-harmonic-mean([1, 2, 3, 4, 5], 3)',
-                'let vec = import("vec");\nvec.centered-moving-harmonic-mean([1, 2, 3, 4, 5], 3, 0, 10)',
-                'let vec = import("vec");\nvec.centered-moving-harmonic-mean([1, 2, 3, 4, 5], 3, 10)',
+                'let { centered-moving-harmonic-mean } = import("vec");\ncentered-moving-harmonic-mean([1, 2, 3, 4, 5], 3)',
+                'let { centered-moving-harmonic-mean } = import("vec");\ncentered-moving-harmonic-mean([1, 2, 3, 4, 5], 3, 0, 10)',
+                'let { centered-moving-harmonic-mean } = import("vec");\ncentered-moving-harmonic-mean([1, 2, 3, 4, 5], 3, 10)',
             ],
         },
         'vec.running-harmonic-mean': {
@@ -28371,7 +28371,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.running-harmonic-mean([1, 2, 3, 4, 5])',
+                'let { running-harmonic-mean } = import("vec");\nrunning-harmonic-mean([1, 2, 3, 4, 5])',
             ],
         },
     };
@@ -28416,8 +28416,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.moving-median([1, 2, 3, 4, 5], 3)',
-                'let vec = import("vec");\nvec.moving-median([1, 2, 3, 4, 5], 5)',
+                'let { moving-median } = import("vec");\nmoving-median([1, 2, 3, 4, 5], 3)',
+                'let { moving-median } = import("vec");\nmoving-median([1, 2, 3, 4, 5], 5)',
             ],
         },
         'vec.centered-moving-median': {
@@ -28446,9 +28446,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.centered-moving-median([1, 2, 3, 4, 5], 3)',
-                'let vec = import("vec");\nvec.centered-moving-median([1, 2, 3, 4, 5], 3, 0, 10)',
-                'let vec = import("vec");\nvec.centered-moving-median([1, 2, 3, 4, 5], 3, 10)',
+                'let { centered-moving-median } = import("vec");\ncentered-moving-median([1, 2, 3, 4, 5], 3)',
+                'let { centered-moving-median } = import("vec");\ncentered-moving-median([1, 2, 3, 4, 5], 3, 0, 10)',
+                'let { centered-moving-median } = import("vec");\ncentered-moving-median([1, 2, 3, 4, 5], 3, 10)',
             ],
         },
         'vec.running-median': {
@@ -28468,7 +28468,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.running-median([1, 2, 3, 4, 5])',
+                'let { running-median } = import("vec");\nrunning-median([1, 2, 3, 4, 5])',
             ],
         },
     };
@@ -28513,8 +28513,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.moving-variance([1, 2, 3, 4, 5], 3)',
-                'let vec = import("vec");\nvec.moving-variance([1, 2, 3, 4, 5], 5)',
+                'let { moving-variance } = import("vec");\nmoving-variance([1, 2, 3, 4, 5], 3)',
+                'let { moving-variance } = import("vec");\nmoving-variance([1, 2, 3, 4, 5], 5)',
             ],
         },
         'vec.centered-moving-variance': {
@@ -28543,10 +28543,10 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.centered-moving-variance([1, 2, 3, 4, 5], 3)',
-                'let vec = import("vec");\nvec.centered-moving-variance([1, 2, 3, 4, 5], 3, 1)',
-                'let vec = import("vec");\nvec.centered-moving-variance([1, 2, 3, 4, 5], 3, 1, 5)',
-                'let vec = import("vec");\nvec.centered-moving-variance([1, 2, 3, 4, 5], 3, 0, 6)',
+                'let { centered-moving-variance } = import("vec");\ncentered-moving-variance([1, 2, 3, 4, 5], 3)',
+                'let { centered-moving-variance } = import("vec");\ncentered-moving-variance([1, 2, 3, 4, 5], 3, 1)',
+                'let { centered-moving-variance } = import("vec");\ncentered-moving-variance([1, 2, 3, 4, 5], 3, 1, 5)',
+                'let { centered-moving-variance } = import("vec");\ncentered-moving-variance([1, 2, 3, 4, 5], 3, 0, 6)',
             ],
         },
         'vec.running-variance': {
@@ -28566,7 +28566,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.running-variance([1, 2, 3, 4, 5])',
+                'let { running-variance } = import("vec");\nrunning-variance([1, 2, 3, 4, 5])',
             ],
         },
     };
@@ -28588,8 +28588,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.sample-variance([1, 2, 3])',
-                'let vec = import("vec");\nvec.sample-variance([1, 2, -3])',
+                'let { sample-variance } = import("vec");\nsample-variance([1, 2, 3])',
+                'let { sample-variance } = import("vec");\nsample-variance([1, 2, -3])',
             ],
         },
         'vec.moving-sample-variance': {
@@ -28610,8 +28610,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.moving-sample-variance([1, 2, 3, 4, 5], 3)',
-                'let vec = import("vec");\nvec.moving-sample-variance([1, 2, 3, 4, 5], 5)',
+                'let { moving-sample-variance } = import("vec");\nmoving-sample-variance([1, 2, 3, 4, 5], 3)',
+                'let { moving-sample-variance } = import("vec");\nmoving-sample-variance([1, 2, 3, 4, 5], 5)',
             ],
         },
         'vec.centered-moving-sample-variance': {
@@ -28640,10 +28640,10 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.centered-moving-sample-variance([1, 2, 3, 4, 5], 3)',
-                'let vec = import("vec");\nvec.centered-moving-sample-variance([1, 2, 3, 4, 5], 3, 1)',
-                'let vec = import("vec");\nvec.centered-moving-sample-variance([1, 2, 3, 4, 5], 3, 1, 5)',
-                'let vec = import("vec");\nvec.centered-moving-sample-variance([1, 2, 3, 4, 5], 3, 0, 6)',
+                'let { centered-moving-sample-variance } = import("vec");\ncentered-moving-sample-variance([1, 2, 3, 4, 5], 3)',
+                'let { centered-moving-sample-variance } = import("vec");\ncentered-moving-sample-variance([1, 2, 3, 4, 5], 3, 1)',
+                'let { centered-moving-sample-variance } = import("vec");\ncentered-moving-sample-variance([1, 2, 3, 4, 5], 3, 1, 5)',
+                'let { centered-moving-sample-variance } = import("vec");\ncentered-moving-sample-variance([1, 2, 3, 4, 5], 3, 0, 6)',
             ],
         },
         'vec.running-sample-variance': {
@@ -28663,7 +28663,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.running-sample-variance([1, 2, 3, 4, 5])',
+                'let { running-sample-variance } = import("vec");\nrunning-sample-variance([1, 2, 3, 4, 5])',
             ],
         },
     };
@@ -28708,8 +28708,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.moving-stdev([1, 2, 3, 4, 5], 3)',
-                'let vec = import("vec");\nvec.moving-stdev([1, 2, 3, 4, 5], 5)',
+                'let { moving-stdev } = import("vec");\nmoving-stdev([1, 2, 3, 4, 5], 3)',
+                'let { moving-stdev } = import("vec");\nmoving-stdev([1, 2, 3, 4, 5], 5)',
             ],
         },
         'vec.centered-moving-stdev': {
@@ -28738,10 +28738,10 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.centered-moving-stdev([1, 2, 3, 4, 5], 3)',
-                'let vec = import("vec");\nvec.centered-moving-stdev([1, 2, 3, 4, 5], 3, 1)',
-                'let vec = import("vec");\nvec.centered-moving-stdev([1, 2, 3, 4, 5], 3, 1, 5)',
-                'let vec = import("vec");\nvec.centered-moving-stdev([1, 2, 3, 4, 5], 3, 0, 6)',
+                'let { centered-moving-stdev } = import("vec");\ncentered-moving-stdev([1, 2, 3, 4, 5], 3)',
+                'let { centered-moving-stdev } = import("vec");\ncentered-moving-stdev([1, 2, 3, 4, 5], 3, 1)',
+                'let { centered-moving-stdev } = import("vec");\ncentered-moving-stdev([1, 2, 3, 4, 5], 3, 1, 5)',
+                'let { centered-moving-stdev } = import("vec");\ncentered-moving-stdev([1, 2, 3, 4, 5], 3, 0, 6)',
             ],
         },
         'vec.running-stdev': {
@@ -28761,7 +28761,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.running-stdev([1, 2, 3, 4, 5])',
+                'let { running-stdev } = import("vec");\nrunning-stdev([1, 2, 3, 4, 5])',
             ],
         },
     };
@@ -28805,8 +28805,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.moving-sample-stdev([1, 2, 3, 4, 5], 3)',
-                'let vec = import("vec");\nvec.moving-sample-stdev([1, 2, 3, 4, 5], 5)',
+                'let { moving-sample-stdev } = import("vec");\nmoving-sample-stdev([1, 2, 3, 4, 5], 3)',
+                'let { moving-sample-stdev } = import("vec");\nmoving-sample-stdev([1, 2, 3, 4, 5], 5)',
             ],
         },
         'vec.centered-moving-sample-stdev': {
@@ -28835,10 +28835,10 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.centered-moving-sample-stdev([1, 2, 3, 4, 5], 3)',
-                'let vec = import("vec");\nvec.centered-moving-sample-stdev([1, 2, 3, 4, 5], 3, 1)',
-                'let vec = import("vec");\nvec.centered-moving-sample-stdev([1, 2, 3, 4, 5], 3, 1, 5)',
-                'let vec = import("vec");\nvec.centered-moving-sample-stdev([1, 2, 3, 4, 5], 3, 0, 6)',
+                'let { centered-moving-sample-stdev } = import("vec");\ncentered-moving-sample-stdev([1, 2, 3, 4, 5], 3)',
+                'let { centered-moving-sample-stdev } = import("vec");\ncentered-moving-sample-stdev([1, 2, 3, 4, 5], 3, 1)',
+                'let { centered-moving-sample-stdev } = import("vec");\ncentered-moving-sample-stdev([1, 2, 3, 4, 5], 3, 1, 5)',
+                'let { centered-moving-sample-stdev } = import("vec");\ncentered-moving-sample-stdev([1, 2, 3, 4, 5], 3, 0, 6)',
             ],
         },
         'vec.running-sample-stdev': {
@@ -28858,7 +28858,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.running-sample-stdev([1, 2, 3, 4, 5])',
+                'let { running-sample-stdev } = import("vec");\nrunning-sample-stdev([1, 2, 3, 4, 5])',
             ],
         },
     };
@@ -28903,8 +28903,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.moving-skewness([1, 2, 4, 7, 11, 16], 4)',
-                'let vec = import("vec");\nvec.moving-skewness([1, 2, 4, 7, 11, 16], 5)',
+                'let { moving-skewness } = import("vec");\nmoving-skewness([1, 2, 4, 7, 11, 16], 4)',
+                'let { moving-skewness } = import("vec");\nmoving-skewness([1, 2, 4, 7, 11, 16], 5)',
             ],
         },
         'vec.centered-moving-skewness': {
@@ -28933,8 +28933,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.centered-moving-skewness([1, 2, 4, 7, 11, 16], 4)',
-                'let vec = import("vec");\nvec.centered-moving-skewness([1, 2, 4, 7, 11, 16], 4, 0, 0)',
+                'let { centered-moving-skewness } = import("vec");\ncentered-moving-skewness([1, 2, 4, 7, 11, 16], 4)',
+                'let { centered-moving-skewness } = import("vec");\ncentered-moving-skewness([1, 2, 4, 7, 11, 16], 4, 0, 0)',
             ],
         },
         'vec.running-skewness': {
@@ -28954,7 +28954,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.running-skewness([1, 2, 4, 7, 11])',
+                'let { running-skewness } = import("vec");\nrunning-skewness([1, 2, 4, 7, 11])',
             ],
         },
     };
@@ -28976,8 +28976,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.sample-skewness([1, 2, 3, 6, 20])',
-                'let vec = import("vec");\nvec.sample-skewness([1, 2, 2, 3])',
+                'let { sample-skewness } = import("vec");\nsample-skewness([1, 2, 3, 6, 20])',
+                'let { sample-skewness } = import("vec");\nsample-skewness([1, 2, 2, 3])',
             ],
         },
         'vec.moving-sample-skewness': {
@@ -28998,8 +28998,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.moving-sample-skewness([1, 2, 4, 7, 11, 16], 4)',
-                'let vec = import("vec");\nvec.moving-sample-skewness([1, 2, 4, 7, 11, 16], 5)',
+                'let { moving-sample-skewness } = import("vec");\nmoving-sample-skewness([1, 2, 4, 7, 11, 16], 4)',
+                'let { moving-sample-skewness } = import("vec");\nmoving-sample-skewness([1, 2, 4, 7, 11, 16], 5)',
             ],
         },
         'vec.centered-moving-sample-skewness': {
@@ -29028,8 +29028,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.centered-moving-sample-skewness([1, 2, 4, 7, 11, 16], 4)',
-                'let vec = import("vec");\nvec.centered-moving-sample-skewness([1, 2, 4, 7, 11, 16], 3, 0, 100)',
+                'let { centered-moving-sample-skewness } = import("vec");\ncentered-moving-sample-skewness([1, 2, 4, 7, 11, 16], 4)',
+                'let { centered-moving-sample-skewness } = import("vec");\ncentered-moving-sample-skewness([1, 2, 4, 7, 11, 16], 3, 0, 100)',
             ],
         },
         'vec.running-sample-skewness': {
@@ -29049,7 +29049,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.running-sample-skewness([1, 2, 4, 7, 11])',
+                'let { running-sample-skewness } = import("vec");\nrunning-sample-skewness([1, 2, 4, 7, 11])',
             ],
         },
     };
@@ -29097,9 +29097,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.moving-iqr([1, 2, 4, 7, 11, 16], 4)',
-                'let vec = import("vec");\nvec.moving-iqr([1, 2, 4, 7, 11, 16], 5)',
-                'let vec = import("vec");\nvec.moving-iqr([1, 2, 4, 7, 11, 16], 6)',
+                'let { moving-iqr } = import("vec");\nmoving-iqr([1, 2, 4, 7, 11, 16], 4)',
+                'let { moving-iqr } = import("vec");\nmoving-iqr([1, 2, 4, 7, 11, 16], 5)',
+                'let { moving-iqr } = import("vec");\nmoving-iqr([1, 2, 4, 7, 11, 16], 6)',
             ],
         },
         'vec.centered-moving-iqr': {
@@ -29128,8 +29128,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.centered-moving-iqr([1, 2, 4, 7, 11, 16], 4)',
-                'let vec = import("vec");\nvec.centered-moving-iqr([1, 2, 4, 7, 11, 16], 4, 0, 0)',
+                'let { centered-moving-iqr } = import("vec");\ncentered-moving-iqr([1, 2, 4, 7, 11, 16], 4)',
+                'let { centered-moving-iqr } = import("vec");\ncentered-moving-iqr([1, 2, 4, 7, 11, 16], 4, 0, 0)',
             ],
         },
         'vec.running-iqr': {
@@ -29149,8 +29149,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.running-iqr([1, 2, 3, 4, 5, 6])',
-                'let vec = import("vec");\nvec.running-iqr([-1, -2, -3, 1, 2, 3])',
+                'let { running-iqr } = import("vec");\nrunning-iqr([1, 2, 3, 4, 5, 6])',
+                'let { running-iqr } = import("vec");\nrunning-iqr([-1, -2, -3, 1, 2, 3])',
             ],
         },
     };
@@ -29195,8 +29195,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.moving-sum([1, 2, 3, 4, 5], 3)',
-                'let vec = import("vec");\nvec.moving-sum([1, 2, 3, 4, 5], 5)',
+                'let { moving-sum } = import("vec");\nmoving-sum([1, 2, 3, 4, 5], 3)',
+                'let { moving-sum } = import("vec");\nmoving-sum([1, 2, 3, 4, 5], 5)',
             ],
         },
         'vec.centered-moving-sum': {
@@ -29225,9 +29225,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.centered-moving-sum([1, 2, 3, 4, 5], 3)',
-                'let vec = import("vec");\nvec.centered-moving-sum([1, 2, 3, 4, 5], 3, 0, 0)',
-                'let vec = import("vec");\nvec.centered-moving-sum([1, 2, 3, 4, 5], 3, 10)',
+                'let { centered-moving-sum } = import("vec");\ncentered-moving-sum([1, 2, 3, 4, 5], 3)',
+                'let { centered-moving-sum } = import("vec");\ncentered-moving-sum([1, 2, 3, 4, 5], 3, 0, 0)',
+                'let { centered-moving-sum } = import("vec");\ncentered-moving-sum([1, 2, 3, 4, 5], 3, 10)',
             ],
         },
         'vec.running-sum': {
@@ -29247,8 +29247,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.running-sum([1, 2, 3])',
-                'let vec = import("vec");\nvec.running-sum([1, -2, -3])',
+                'let { running-sum } = import("vec");\nrunning-sum([1, 2, 3])',
+                'let { running-sum } = import("vec");\nrunning-sum([1, -2, -3])',
             ],
         },
     };
@@ -29293,8 +29293,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.moving-prod([1, 2, 3, 4, 5], 3)',
-                'let vec = import("vec");\nvec.moving-prod([1, 2, 3, 4, 5], 5)',
+                'let { moving-prod } = import("vec");\nmoving-prod([1, 2, 3, 4, 5], 3)',
+                'let { moving-prod } = import("vec");\nmoving-prod([1, 2, 3, 4, 5], 5)',
             ],
         },
         'vec.centered-moving-prod': {
@@ -29323,8 +29323,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.centered-moving-prod([1, 2, 3, 4, 5], 3)',
-                'let vec = import("vec");\nvec.centered-moving-prod([1, 2, 3, 4, 5], 3, 0, 0)',
+                'let { centered-moving-prod } = import("vec");\ncentered-moving-prod([1, 2, 3, 4, 5], 3)',
+                'let { centered-moving-prod } = import("vec");\ncentered-moving-prod([1, 2, 3, 4, 5], 3, 0, 0)',
             ],
         },
         'vec.running-prod': {
@@ -29344,8 +29344,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.running-prod([1, 2, 3, 4, 5])',
-                'let vec = import("vec");\nvec.running-prod([1, -2, -3])',
+                'let { running-prod } = import("vec");\nrunning-prod([1, 2, 3, 4, 5])',
+                'let { running-prod } = import("vec");\nrunning-prod([1, -2, -3])',
             ],
         },
     };
@@ -29368,8 +29368,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.TEMP-min([1, 2, 3])',
-                'let vec = import("vec");\nvec.TEMP-min([1, 2, -3])',
+                'let { TEMP-min } = import("vec");\nTEMP-min([1, 2, 3])',
+                'let { TEMP-min } = import("vec");\nTEMP-min([1, 2, -3])',
             ],
         },
         'vec.moving-min': {
@@ -29390,8 +29390,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.moving-min([1, 2, 3, 4, 5], 3)',
-                'let vec = import("vec");\nvec.moving-min([1, 2, 3, 4, 5], 5)',
+                'let { moving-min } = import("vec");\nmoving-min([1, 2, 3, 4, 5], 3)',
+                'let { moving-min } = import("vec");\nmoving-min([1, 2, 3, 4, 5], 5)',
             ],
         },
         'vec.centered-moving-min': {
@@ -29420,9 +29420,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.centered-moving-min([1, 2, 3, 4, 5], 3)',
-                'let vec = import("vec");\nvec.centered-moving-min([1, 2, 3, 4, 5], 3, 0, 100)',
-                'let vec = import("vec");\nvec.centered-moving-min([1, 2, 3, 4, 5], 3, 0)',
+                'let { centered-moving-min } = import("vec");\ncentered-moving-min([1, 2, 3, 4, 5], 3)',
+                'let { centered-moving-min } = import("vec");\ncentered-moving-min([1, 2, 3, 4, 5], 3, 0, 100)',
+                'let { centered-moving-min } = import("vec");\ncentered-moving-min([1, 2, 3, 4, 5], 3, 0)',
             ],
         },
         'vec.running-min': {
@@ -29442,8 +29442,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.running-min([1, 2, 3])',
-                'let vec = import("vec");\nvec.running-min([1, -2, -3])',
+                'let { running-min } = import("vec");\nrunning-min([1, 2, 3])',
+                'let { running-min } = import("vec");\nrunning-min([1, -2, -3])',
             ],
         },
     };
@@ -29466,8 +29466,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.TEMP-max([1, 2, 3])',
-                'let vec = import("vec");\nvec.TEMP-max([1, 2, -3])',
+                'let { TEMP-max } = import("vec");\nTEMP-max([1, 2, 3])',
+                'let { TEMP-max } = import("vec");\nTEMP-max([1, 2, -3])',
             ],
         },
         'vec.moving-max': {
@@ -29488,8 +29488,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.moving-max([1, 2, 3, 4, 5], 3)',
-                'let vec = import("vec");\nvec.moving-max([1, 2, 3, 4, 5], 5)',
+                'let { moving-max } = import("vec");\nmoving-max([1, 2, 3, 4, 5], 3)',
+                'let { moving-max } = import("vec");\nmoving-max([1, 2, 3, 4, 5], 5)',
             ],
         },
         'vec.centered-moving-max': {
@@ -29518,9 +29518,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.centered-moving-max([1, 2, 3, 4, 5], 3)',
-                'let vec = import("vec");\nvec.centered-moving-max([1, 2, 3, 4, 5], 3, 0, 100)',
-                'let vec = import("vec");\nvec.centered-moving-max([1, 2, 3, 4, 5], 3, 0)',
+                'let { centered-moving-max } = import("vec");\ncentered-moving-max([1, 2, 3, 4, 5], 3)',
+                'let { centered-moving-max } = import("vec");\ncentered-moving-max([1, 2, 3, 4, 5], 3, 0, 100)',
+                'let { centered-moving-max } = import("vec");\ncentered-moving-max([1, 2, 3, 4, 5], 3, 0)',
             ],
         },
         'vec.running-max': {
@@ -29540,8 +29540,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.running-max([1, 2, 3])',
-                'let vec = import("vec");\nvec.running-max([1, -2, -3])',
+                'let { running-max } = import("vec");\nrunning-max([1, 2, 3])',
+                'let { running-max } = import("vec");\nrunning-max([1, -2, -3])',
             ],
         },
     };
@@ -29588,9 +29588,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.moving-span([1, 2, 4, 7, 11, 16], 4)',
-                'let vec = import("vec");\nvec.moving-span([1, 2, 4, 7, 11, 16], 5)',
-                'let vec = import("vec");\nvec.moving-span([1, 2, 4, 7, 11, 16], 6)',
+                'let { moving-span } = import("vec");\nmoving-span([1, 2, 4, 7, 11, 16], 4)',
+                'let { moving-span } = import("vec");\nmoving-span([1, 2, 4, 7, 11, 16], 5)',
+                'let { moving-span } = import("vec");\nmoving-span([1, 2, 4, 7, 11, 16], 6)',
             ],
         },
         'vec.centered-moving-span': {
@@ -29619,8 +29619,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.centered-moving-span([1, 2, 4, 7, 11, 16], 4)',
-                'let vec = import("vec");\nvec.centered-moving-span([1, 2, 4, 7, 11, 16], 3, 0, 100)',
+                'let { centered-moving-span } = import("vec");\ncentered-moving-span([1, 2, 4, 7, 11, 16], 4)',
+                'let { centered-moving-span } = import("vec");\ncentered-moving-span([1, 2, 4, 7, 11, 16], 3, 0, 100)',
             ],
         },
         'vec.running-span': {
@@ -29640,7 +29640,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.running-span([1, 2, 4])',
+                'let { running-span } = import("vec");\nrunning-span([1, 2, 4])',
             ],
         },
     };
@@ -29685,8 +29685,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.moving-kurtosis([1, 2, 4, 7, 11, 16], 4)',
-                'let vec = import("vec");\nvec.moving-kurtosis([1, 2, 4, 7, 11, 16], 5)',
+                'let { moving-kurtosis } = import("vec");\nmoving-kurtosis([1, 2, 4, 7, 11, 16], 4)',
+                'let { moving-kurtosis } = import("vec");\nmoving-kurtosis([1, 2, 4, 7, 11, 16], 5)',
             ],
         },
         'vec.centered-moving-kurtosis': {
@@ -29715,8 +29715,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.centered-moving-kurtosis([1, 2, 4, 7, 11, 16], 4)',
-                'let vec = import("vec");\nvec.centered-moving-kurtosis([1, 2, 4, 7, 11, 16], 4, 0, 0)',
+                'let { centered-moving-kurtosis } = import("vec");\ncentered-moving-kurtosis([1, 2, 4, 7, 11, 16], 4)',
+                'let { centered-moving-kurtosis } = import("vec");\ncentered-moving-kurtosis([1, 2, 4, 7, 11, 16], 4, 0, 0)',
             ],
         },
         'vec.running-kurtosis': {
@@ -29736,7 +29736,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.running-kurtosis([1, 2, 4, 7, 11])',
+                'let { running-kurtosis } = import("vec");\nrunning-kurtosis([1, 2, 4, 7, 11])',
             ],
         },
     };
@@ -29758,8 +29758,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.sample-kurtosis([1, 2, 3, 6, 20])',
-                'let vec = import("vec");\nvec.sample-kurtosis([1, 2, 2, 3])',
+                'let { sample-kurtosis } = import("vec");\nsample-kurtosis([1, 2, 3, 6, 20])',
+                'let { sample-kurtosis } = import("vec");\nsample-kurtosis([1, 2, 2, 3])',
             ],
         },
         'vec.moving-sample-kurtosis': {
@@ -29780,8 +29780,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.moving-sample-kurtosis([1, 2, 4, 7, 11, 16], 4)',
-                'let vec = import("vec");\nvec.moving-sample-kurtosis([1, 2, 4, 7, 11, 16], 5)',
+                'let { moving-sample-kurtosis } = import("vec");\nmoving-sample-kurtosis([1, 2, 4, 7, 11, 16], 4)',
+                'let { moving-sample-kurtosis } = import("vec");\nmoving-sample-kurtosis([1, 2, 4, 7, 11, 16], 5)',
             ],
         },
         'vec.centered-moving-sample-kurtosis': {
@@ -29810,8 +29810,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.centered-moving-sample-kurtosis([1, 2, 4, 7, 11, 16], 4)',
-                'let vec = import("vec");\nvec.centered-moving-sample-kurtosis([1, 2, 4, 7, 11, 16], 4, 0, 100)',
+                'let { centered-moving-sample-kurtosis } = import("vec");\ncentered-moving-sample-kurtosis([1, 2, 4, 7, 11, 16], 4)',
+                'let { centered-moving-sample-kurtosis } = import("vec");\ncentered-moving-sample-kurtosis([1, 2, 4, 7, 11, 16], 4, 0, 100)',
             ],
         },
         'vec.running-sample-kurtosis': {
@@ -29831,7 +29831,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.running-sample-kurtosis([1, 2, 4, 7, 11])',
+                'let { running-sample-kurtosis } = import("vec");\nrunning-sample-kurtosis([1, 2, 4, 7, 11])',
             ],
         },
     };
@@ -29853,8 +29853,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.excess-kurtosis([1, 2, 3, 6, 20])',
-                'let vec = import("vec");\nvec.excess-kurtosis([1, 2, 2, 3])',
+                'let { excess-kurtosis } = import("vec");\nexcess-kurtosis([1, 2, 3, 6, 20])',
+                'let { excess-kurtosis } = import("vec");\nexcess-kurtosis([1, 2, 2, 3])',
             ],
         },
         'vec.moving-excess-kurtosis': {
@@ -29875,8 +29875,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.moving-excess-kurtosis([1, 2, 4, 7, 11, 16], 4)',
-                'let vec = import("vec");\nvec.moving-excess-kurtosis([1, 2, 4, 7, 11, 16], 5)',
+                'let { moving-excess-kurtosis } = import("vec");\nmoving-excess-kurtosis([1, 2, 4, 7, 11, 16], 4)',
+                'let { moving-excess-kurtosis } = import("vec");\nmoving-excess-kurtosis([1, 2, 4, 7, 11, 16], 5)',
             ],
         },
         'vec.centered-moving-excess-kurtosis': {
@@ -29905,8 +29905,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.centered-moving-excess-kurtosis([1, 2, 4, 7, 11, 16], 4)',
-                'let vec = import("vec");\nvec.centered-moving-excess-kurtosis([1, 2, 4, 7, 11, 16], 4, 0, 0)',
+                'let { centered-moving-excess-kurtosis } = import("vec");\ncentered-moving-excess-kurtosis([1, 2, 4, 7, 11, 16], 4)',
+                'let { centered-moving-excess-kurtosis } = import("vec");\ncentered-moving-excess-kurtosis([1, 2, 4, 7, 11, 16], 4, 0, 0)',
             ],
         },
         'vec.running-excess-kurtosis': {
@@ -29926,7 +29926,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.running-excess-kurtosis([1, 2, 4, 7, 11])',
+                'let { running-excess-kurtosis } = import("vec");\nrunning-excess-kurtosis([1, 2, 4, 7, 11])',
             ],
         },
     };
@@ -29948,8 +29948,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.sample-excess-kurtosis([1, 2, 3, 6, 20])',
-                'let vec = import("vec");\nvec.sample-excess-kurtosis([1, 2, 2, 3])',
+                'let { sample-excess-kurtosis } = import("vec");\nsample-excess-kurtosis([1, 2, 3, 6, 20])',
+                'let { sample-excess-kurtosis } = import("vec");\nsample-excess-kurtosis([1, 2, 2, 3])',
             ],
         },
         'vec.moving-sample-excess-kurtosis': {
@@ -29970,8 +29970,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.moving-sample-excess-kurtosis([1, 2, 4, 7, 11, 16], 4)',
-                'let vec = import("vec");\nvec.moving-sample-excess-kurtosis([1, 2, 4, 7, 11, 16], 5)',
+                'let { moving-sample-excess-kurtosis } = import("vec");\nmoving-sample-excess-kurtosis([1, 2, 4, 7, 11, 16], 4)',
+                'let { moving-sample-excess-kurtosis } = import("vec");\nmoving-sample-excess-kurtosis([1, 2, 4, 7, 11, 16], 5)',
             ],
         },
         'vec.centered-moving-sample-excess-kurtosis': {
@@ -30000,8 +30000,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.centered-moving-sample-excess-kurtosis([1, 2, 4, 7, 11, 16], 4)',
-                'let vec = import("vec");\nvec.centered-moving-sample-excess-kurtosis([1, 2, 4, 7, 11, 16], 4, 0, 100)',
+                'let { centered-moving-sample-excess-kurtosis } = import("vec");\ncentered-moving-sample-excess-kurtosis([1, 2, 4, 7, 11, 16], 4)',
+                'let { centered-moving-sample-excess-kurtosis } = import("vec");\ncentered-moving-sample-excess-kurtosis([1, 2, 4, 7, 11, 16], 4, 0, 100)',
             ],
         },
         'vec.running-sample-excess-kurtosis': {
@@ -30021,7 +30021,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.running-sample-excess-kurtosis([1, 2, 4, 7, 11])',
+                'let { running-sample-excess-kurtosis } = import("vec");\nrunning-sample-excess-kurtosis([1, 2, 4, 7, 11])',
             ],
         },
     };
@@ -30069,9 +30069,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.moving-rms([1, 2, 4, 7, 11, 16], 4)',
-                'let vec = import("vec");\nvec.moving-rms([1, 2, 4, 7, 11, 16], 5)',
-                'let vec = import("vec");\nvec.moving-rms([1, 2, 4, 7, 11, 16], 6)',
+                'let { moving-rms } = import("vec");\nmoving-rms([1, 2, 4, 7, 11, 16], 4)',
+                'let { moving-rms } = import("vec");\nmoving-rms([1, 2, 4, 7, 11, 16], 5)',
+                'let { moving-rms } = import("vec");\nmoving-rms([1, 2, 4, 7, 11, 16], 6)',
             ],
         },
         'vec.centered-moving-rms': {
@@ -30100,9 +30100,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.centered-moving-rms([1, 2, 4, 7, 11, 16], 4)',
-                'let vec = import("vec");\nvec.centered-moving-rms([1, 2, 4, 7, 11, 16], 5, 0)',
-                'let vec = import("vec");\nvec.centered-moving-rms([1, 2, 4, 7, 11, 16], 6, 0, 0)',
+                'let { centered-moving-rms } = import("vec");\ncentered-moving-rms([1, 2, 4, 7, 11, 16], 4)',
+                'let { centered-moving-rms } = import("vec");\ncentered-moving-rms([1, 2, 4, 7, 11, 16], 5, 0)',
+                'let { centered-moving-rms } = import("vec");\ncentered-moving-rms([1, 2, 4, 7, 11, 16], 6, 0, 0)',
             ],
         },
         'vec.running-rms': {
@@ -30122,10 +30122,10 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.running-rms([1, 2, 3, 4, 5, 6])',
-                'let vec = import("vec");\nvec.running-rms([1, -3, 2])',
-                'let vec = import("vec");\nvec.running-rms([-1, -2, -3])',
-                'let vec = import("vec");\nvec.running-rms([0])',
+                'let { running-rms } = import("vec");\nrunning-rms([1, 2, 3, 4, 5, 6])',
+                'let { running-rms } = import("vec");\nrunning-rms([1, -3, 2])',
+                'let { running-rms } = import("vec");\nrunning-rms([-1, -2, -3])',
+                'let { running-rms } = import("vec");\nrunning-rms([0])',
             ],
         },
     };
@@ -30170,8 +30170,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.moving-mad([1, 2, 3, 4, 5], 3)',
-                'let vec = import("vec");\nvec.moving-mad([1, 2, 3, 4, 5], 5)',
+                'let { moving-mad } = import("vec");\nmoving-mad([1, 2, 3, 4, 5], 3)',
+                'let { moving-mad } = import("vec");\nmoving-mad([1, 2, 3, 4, 5], 5)',
             ],
         },
         'vec.centered-moving-mad': {
@@ -30200,8 +30200,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.centered-moving-mad([1, 2, 3, 4, 5], 3)',
-                'let vec = import("vec");\nvec.centered-moving-mad([1, 2, 3, 4, 5], 5)',
+                'let { centered-moving-mad } = import("vec");\ncentered-moving-mad([1, 2, 3, 4, 5], 3)',
+                'let { centered-moving-mad } = import("vec");\ncentered-moving-mad([1, 2, 3, 4, 5], 5)',
             ],
         },
         'vec.running-mad': {
@@ -30221,8 +30221,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.running-mad([1, 2, 3])',
-                'let vec = import("vec");\nvec.running-mad([1, 2, -3])',
+                'let { running-mad } = import("vec");\nrunning-mad([1, 2, 3])',
+                'let { running-mad } = import("vec");\nrunning-mad([1, 2, -3])',
             ],
         },
     };
@@ -30267,8 +30267,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.moving-medad([1, 2, 3, 4, 5], 3)',
-                'let vec = import("vec");\nvec.moving-medad([1, 2, 3, 4, 5], 5)',
+                'let { moving-medad } = import("vec");\nmoving-medad([1, 2, 3, 4, 5], 3)',
+                'let { moving-medad } = import("vec");\nmoving-medad([1, 2, 3, 4, 5], 5)',
             ],
         },
         'vec.centered-moving-medad': {
@@ -30297,8 +30297,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.centered-moving-medad([1, 2, 3, 4, 5], 3)',
-                'let vec = import("vec");\nvec.centered-moving-medad([1, 2, 3, 4, 5], 5)',
+                'let { centered-moving-medad } = import("vec");\ncentered-moving-medad([1, 2, 3, 4, 5], 3)',
+                'let { centered-moving-medad } = import("vec");\ncentered-moving-medad([1, 2, 3, 4, 5], 5)',
             ],
         },
         'vec.running-medad': {
@@ -30318,8 +30318,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.running-medad([1, 2, 3])',
-                'let vec = import("vec");\nvec.running-medad([1, 2, -3])',
+                'let { running-medad } = import("vec");\nrunning-medad([1, 2, 3])',
+                'let { running-medad } = import("vec");\nrunning-medad([1, 2, -3])',
             ],
         },
     };
@@ -30342,8 +30342,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.gini-coefficient([1, 2, 3])',
-                'let vec = import("vec");\nvec.gini-coefficient([1, 1, 3])',
+                'let { gini-coefficient } = import("vec");\ngini-coefficient([1, 2, 3])',
+                'let { gini-coefficient } = import("vec");\ngini-coefficient([1, 1, 3])',
             ],
         },
         'vec.moving-gini-coefficient': {
@@ -30364,8 +30364,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.moving-gini-coefficient([1, 2, 3], 2)',
-                'let vec = import("vec");\nvec.moving-gini-coefficient([1, 1, 3], 2)',
+                'let { moving-gini-coefficient } = import("vec");\nmoving-gini-coefficient([1, 2, 3], 2)',
+                'let { moving-gini-coefficient } = import("vec");\nmoving-gini-coefficient([1, 1, 3], 2)',
             ],
         },
         'vec.centered-moving-gini-coefficient': {
@@ -30394,8 +30394,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.centered-moving-gini-coefficient([1, 2, 3], 2)',
-                'let vec = import("vec");\nvec.centered-moving-gini-coefficient([1, 1, 3], 2)',
+                'let { centered-moving-gini-coefficient } = import("vec");\ncentered-moving-gini-coefficient([1, 2, 3], 2)',
+                'let { centered-moving-gini-coefficient } = import("vec");\ncentered-moving-gini-coefficient([1, 1, 3], 2)',
             ],
         },
         'vec.running-gini-coefficient': {
@@ -30415,8 +30415,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.running-gini-coefficient([1, 2, 3])',
-                'let vec = import("vec");\nvec.running-gini-coefficient([1, 1, 3])',
+                'let { running-gini-coefficient } = import("vec");\nrunning-gini-coefficient([1, 2, 3])',
+                'let { running-gini-coefficient } = import("vec");\nrunning-gini-coefficient([1, 1, 3])',
             ],
         },
     };
@@ -30465,9 +30465,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.moving-entropy([1, 1, 2, 3, 3, 3], 4)',
-                'let vec = import("vec");\nvec.moving-entropy([1, 1, 2, 3, 3, 3], 3)',
-                'let vec = import("vec");\nvec.moving-entropy([1, 2], 2)',
+                'let { moving-entropy } = import("vec");\nmoving-entropy([1, 1, 2, 3, 3, 3], 4)',
+                'let { moving-entropy } = import("vec");\nmoving-entropy([1, 1, 2, 3, 3, 3], 3)',
+                'let { moving-entropy } = import("vec");\nmoving-entropy([1, 2], 2)',
             ],
         },
         'vec.centered-moving-entropy': {
@@ -30496,9 +30496,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector', 'windowSize', 'leftPadding', 'rightPadding'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.centered-moving-entropy([1, 1, 2, 3, 3, 3], 4)',
-                'let vec = import("vec");\nvec.centered-moving-entropy([1, 1, 2, 3, 3, 3], 3)',
-                'let vec = import("vec");\nvec.centered-moving-entropy([1, 2], 2)',
+                'let { centered-moving-entropy } = import("vec");\ncentered-moving-entropy([1, 1, 2, 3, 3, 3], 4)',
+                'let { centered-moving-entropy } = import("vec");\ncentered-moving-entropy([1, 1, 2, 3, 3, 3], 3)',
+                'let { centered-moving-entropy } = import("vec");\ncentered-moving-entropy([1, 2], 2)',
             ],
         },
         'vec.running-entropy': {
@@ -30518,8 +30518,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.running-entropy([1, 1, 2, 3, 3, 3])',
-                'let vec = import("vec");\nvec.running-entropy([1, 2])',
+                'let { running-entropy } = import("vec");\nrunning-entropy([1, 1, 2, 3, 3, 3])',
+                'let { running-entropy } = import("vec");\nrunning-entropy([1, 2])',
             ],
         },
     };
@@ -30541,13 +30541,13 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.monotonic?([1, 2, 3])',
-                'let vec = import("vec");\nvec.monotonic?([1, 2, 2, 3])',
-                'let vec = import("vec");\nvec.monotonic?([3, 2, 1])',
-                'let vec = import("vec");\nvec.monotonic?([3, 2, 1, 1])',
-                'let vec = import("vec");\nvec.monotonic?([3, 2, 1, 2])',
-                'let vec = import("vec");\nvec.monotonic?([1])',
-                'let vec = import("vec");\nvec.monotonic?([])',
+                'let { monotonic? } = import("vec");\nmonotonic?([1, 2, 3])',
+                'let { monotonic? } = import("vec");\nmonotonic?([1, 2, 2, 3])',
+                'let { monotonic? } = import("vec");\nmonotonic?([3, 2, 1])',
+                'let { monotonic? } = import("vec");\nmonotonic?([3, 2, 1, 1])',
+                'let { monotonic? } = import("vec");\nmonotonic?([3, 2, 1, 2])',
+                'let { monotonic? } = import("vec");\nmonotonic?([1])',
+                'let { monotonic? } = import("vec");\nmonotonic?([])',
             ],
         }, 'vec.strictly-monotonic?': {
             title: 'vec.strictly-monotonic?',
@@ -30566,13 +30566,13 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.strictly-monotonic?([1, 2, 3])',
-                'let vec = import("vec");\nvec.strictly-monotonic?([1, 2, 2, 3])',
-                'let vec = import("vec");\nvec.strictly-monotonic?([3, 2, 1])',
-                'let vec = import("vec");\nvec.strictly-monotonic?([3, 2, 1, 1])',
-                'let vec = import("vec");\nvec.strictly-monotonic?([3, 2, 1, 2])',
-                'let vec = import("vec");\nvec.strictly-monotonic?([1])',
-                'let vec = import("vec");\nvec.strictly-monotonic?([])',
+                'let { strictly-monotonic? } = import("vec");\nstrictly-monotonic?([1, 2, 3])',
+                'let { strictly-monotonic? } = import("vec");\nstrictly-monotonic?([1, 2, 2, 3])',
+                'let { strictly-monotonic? } = import("vec");\nstrictly-monotonic?([3, 2, 1])',
+                'let { strictly-monotonic? } = import("vec");\nstrictly-monotonic?([3, 2, 1, 1])',
+                'let { strictly-monotonic? } = import("vec");\nstrictly-monotonic?([3, 2, 1, 2])',
+                'let { strictly-monotonic? } = import("vec");\nstrictly-monotonic?([1])',
+                'let { strictly-monotonic? } = import("vec");\nstrictly-monotonic?([])',
             ],
         }, 'vec.increasing?': {
             title: 'vec.increasing?',
@@ -30591,13 +30591,13 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.increasing?([1, 2, 3])',
-                'let vec = import("vec");\nvec.increasing?([1, 2, 2, 3])',
-                'let vec = import("vec");\nvec.increasing?([3, 2, 1])',
-                'let vec = import("vec");\nvec.increasing?([3, 2, 1, 1])',
-                'let vec = import("vec");\nvec.increasing?([3, 2, 1, 2])',
-                'let vec = import("vec");\nvec.increasing?([1])',
-                'let vec = import("vec");\nvec.increasing?([])',
+                'let { increasing? } = import("vec");\nincreasing?([1, 2, 3])',
+                'let { increasing? } = import("vec");\nincreasing?([1, 2, 2, 3])',
+                'let { increasing? } = import("vec");\nincreasing?([3, 2, 1])',
+                'let { increasing? } = import("vec");\nincreasing?([3, 2, 1, 1])',
+                'let { increasing? } = import("vec");\nincreasing?([3, 2, 1, 2])',
+                'let { increasing? } = import("vec");\nincreasing?([1])',
+                'let { increasing? } = import("vec");\nincreasing?([])',
             ],
         }, 'vec.decreasing?': {
             title: 'vec.decreasing?',
@@ -30616,13 +30616,13 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.decreasing?([1, 2, 3])',
-                'let vec = import("vec");\nvec.decreasing?([1, 2, 2, 3])',
-                'let vec = import("vec");\nvec.decreasing?([3, 2, 1])',
-                'let vec = import("vec");\nvec.decreasing?([3, 2, 1, 1])',
-                'let vec = import("vec");\nvec.decreasing?([3, 2, 1, 2])',
-                'let vec = import("vec");\nvec.decreasing?([1])',
-                'let vec = import("vec");\nvec.decreasing?([])',
+                'let { decreasing? } = import("vec");\ndecreasing?([1, 2, 3])',
+                'let { decreasing? } = import("vec");\ndecreasing?([1, 2, 2, 3])',
+                'let { decreasing? } = import("vec");\ndecreasing?([3, 2, 1])',
+                'let { decreasing? } = import("vec");\ndecreasing?([3, 2, 1, 1])',
+                'let { decreasing? } = import("vec");\ndecreasing?([3, 2, 1, 2])',
+                'let { decreasing? } = import("vec");\ndecreasing?([1])',
+                'let { decreasing? } = import("vec");\ndecreasing?([])',
             ],
         }, 'vec.strictly-increasing?': {
             title: 'vec.strictly-increasing?',
@@ -30641,13 +30641,13 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.strictly-increasing?([1, 2, 3])',
-                'let vec = import("vec");\nvec.strictly-increasing?([1, 2, 2, 3])',
-                'let vec = import("vec");\nvec.strictly-increasing?([3, 2, 1])',
-                'let vec = import("vec");\nvec.strictly-increasing?([3, 2, 1, 1])',
-                'let vec = import("vec");\nvec.strictly-increasing?([3, 2, 1, 2])',
-                'let vec = import("vec");\nvec.strictly-increasing?([1])',
-                'let vec = import("vec");\nvec.strictly-increasing?([])',
+                'let { strictly-increasing? } = import("vec");\nstrictly-increasing?([1, 2, 3])',
+                'let { strictly-increasing? } = import("vec");\nstrictly-increasing?([1, 2, 2, 3])',
+                'let { strictly-increasing? } = import("vec");\nstrictly-increasing?([3, 2, 1])',
+                'let { strictly-increasing? } = import("vec");\nstrictly-increasing?([3, 2, 1, 1])',
+                'let { strictly-increasing? } = import("vec");\nstrictly-increasing?([3, 2, 1, 2])',
+                'let { strictly-increasing? } = import("vec");\nstrictly-increasing?([1])',
+                'let { strictly-increasing? } = import("vec");\nstrictly-increasing?([])',
             ],
         }, 'vec.strictly-decreasing?': {
             title: 'vec.strictly-decreasing?',
@@ -30666,13 +30666,13 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.strictly-decreasing?([1, 2, 3])',
-                'let vec = import("vec");\nvec.strictly-decreasing?([1, 2, 2, 3])',
-                'let vec = import("vec");\nvec.strictly-decreasing?([3, 2, 1])',
-                'let vec = import("vec");\nvec.strictly-decreasing?([3, 2, 1, 1])',
-                'let vec = import("vec");\nvec.strictly-decreasing?([3, 2, 1, 2])',
-                'let vec = import("vec");\nvec.strictly-decreasing?([1])',
-                'let vec = import("vec");\nvec.strictly-decreasing?([])',
+                'let { strictly-decreasing? } = import("vec");\nstrictly-decreasing?([1, 2, 3])',
+                'let { strictly-decreasing? } = import("vec");\nstrictly-decreasing?([1, 2, 2, 3])',
+                'let { strictly-decreasing? } = import("vec");\nstrictly-decreasing?([3, 2, 1])',
+                'let { strictly-decreasing? } = import("vec");\nstrictly-decreasing?([3, 2, 1, 1])',
+                'let { strictly-decreasing? } = import("vec");\nstrictly-decreasing?([3, 2, 1, 2])',
+                'let { strictly-decreasing? } = import("vec");\nstrictly-decreasing?([1])',
+                'let { strictly-decreasing? } = import("vec");\nstrictly-decreasing?([])',
             ],
         }, 'vec.sum': {
             title: 'vec.sum',
@@ -30756,11 +30756,11 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.sample-variance([1, 2, 3])',
-                'let vec = import("vec");\nvec.sample-variance([1, 2, -3])',
-                'let vec = import("vec");\nvec.sample-variance([1, 2, 3, 4])',
-                'let vec = import("vec");\nvec.sample-variance([1, 2, -3, 4])',
-                'let vec = import("vec");\nvec.sample-variance([1, 2, 3, 40, 50])',
+                'let { sample-variance } = import("vec");\nsample-variance([1, 2, 3])',
+                'let { sample-variance } = import("vec");\nsample-variance([1, 2, -3])',
+                'let { sample-variance } = import("vec");\nsample-variance([1, 2, 3, 4])',
+                'let { sample-variance } = import("vec");\nsample-variance([1, 2, -3, 4])',
+                'let { sample-variance } = import("vec");\nsample-variance([1, 2, 3, 40, 50])',
             ],
         }, 'vec.stdev': {
             title: 'vec.stdev',
@@ -30802,11 +30802,11 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.sample-stdev([1, 2, 3])',
-                'let vec = import("vec");\nvec.sample-stdev([1, 2, -3])',
-                'let vec = import("vec");\nvec.sample-stdev([1, 2, 3, 4])',
-                'let vec = import("vec");\nvec.sample-stdev([1, 2, -3, 4])',
-                'let vec = import("vec");\nvec.sample-stdev([1, 2, 3, 40, 50])',
+                'let { sample-stdev } = import("vec");\nsample-stdev([1, 2, 3])',
+                'let { sample-stdev } = import("vec");\nsample-stdev([1, 2, -3])',
+                'let { sample-stdev } = import("vec");\nsample-stdev([1, 2, 3, 4])',
+                'let { sample-stdev } = import("vec");\nsample-stdev([1, 2, -3, 4])',
+                'let { sample-stdev } = import("vec");\nsample-stdev([1, 2, 3, 40, 50])',
             ],
         }, 'vec.TEMP-min': {
             title: 'vec.TEMP-min',
@@ -30825,11 +30825,11 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.TEMP-min([1, 2, 3])',
-                'let vec = import("vec");\nvec.TEMP-min([1, 1, 2, 3, 3])',
-                'let vec = import("vec");\nvec.TEMP-min([1, 2, -3])',
-                'let vec = import("vec");\nvec.TEMP-min([1, 2, 3, 4])',
-                'let vec = import("vec");\nvec.TEMP-min([1, 2, -3, 4])',
+                'let { TEMP-min } = import("vec");\nTEMP-min([1, 2, 3])',
+                'let { TEMP-min } = import("vec");\nTEMP-min([1, 1, 2, 3, 3])',
+                'let { TEMP-min } = import("vec");\nTEMP-min([1, 2, -3])',
+                'let { TEMP-min } = import("vec");\nTEMP-min([1, 2, 3, 4])',
+                'let { TEMP-min } = import("vec");\nTEMP-min([1, 2, -3, 4])',
             ],
         }, 'vec.TEMP-max': {
             title: 'vec.TEMP-max',
@@ -30848,11 +30848,11 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.TEMP-max([1, 2, 3])',
-                'let vec = import("vec");\nvec.TEMP-max([1, 1, 2, 3, 3])',
-                'let vec = import("vec");\nvec.TEMP-max([1, 2, -3])',
-                'let vec = import("vec");\nvec.TEMP-max([1, 2, 3, 4])',
-                'let vec = import("vec");\nvec.TEMP-max([1, 2, -3, 4])',
+                'let { TEMP-max } = import("vec");\nTEMP-max([1, 2, 3])',
+                'let { TEMP-max } = import("vec");\nTEMP-max([1, 1, 2, 3, 3])',
+                'let { TEMP-max } = import("vec");\nTEMP-max([1, 2, -3])',
+                'let { TEMP-max } = import("vec");\nTEMP-max([1, 2, 3, 4])',
+                'let { TEMP-max } = import("vec");\nTEMP-max([1, 2, -3, 4])',
             ],
         }, 'vec.min-index': {
             title: 'vec.min-index',
@@ -30871,11 +30871,11 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.min-index([1, 2, 3])',
-                'let vec = import("vec");\nvec.min-index([1, 1, 2, 3, 3])',
-                'let vec = import("vec");\nvec.min-index([1, 2, -3])',
-                'let vec = import("vec");\nvec.min-index([1, 2, 3, 4])',
-                'let vec = import("vec");\nvec.min-index([1, 2, -3, 4])',
+                'let { min-index } = import("vec");\nmin-index([1, 2, 3])',
+                'let { min-index } = import("vec");\nmin-index([1, 1, 2, 3, 3])',
+                'let { min-index } = import("vec");\nmin-index([1, 2, -3])',
+                'let { min-index } = import("vec");\nmin-index([1, 2, 3, 4])',
+                'let { min-index } = import("vec");\nmin-index([1, 2, -3, 4])',
             ],
         }, 'vec.max-index': {
             title: 'vec.max-index',
@@ -30894,11 +30894,11 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.max-index([1, 2, 3])',
-                'let vec = import("vec");\nvec.max-index([1, 1, 2, 3, 3])',
-                'let vec = import("vec");\nvec.max-index([1, 2, -3])',
-                'let vec = import("vec");\nvec.max-index([1, 2, 3, 4])',
-                'let vec = import("vec");\nvec.max-index([1, 2, -3, 4])',
+                'let { max-index } = import("vec");\nmax-index([1, 2, 3])',
+                'let { max-index } = import("vec");\nmax-index([1, 1, 2, 3, 3])',
+                'let { max-index } = import("vec");\nmax-index([1, 2, -3])',
+                'let { max-index } = import("vec");\nmax-index([1, 2, 3, 4])',
+                'let { max-index } = import("vec");\nmax-index([1, 2, -3, 4])',
             ],
         }, 'vec.sort-indices': {
             title: 'vec.sort-indices',
@@ -30917,11 +30917,11 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.sort-indices([1, 2, 3])',
-                'let vec = import("vec");\nvec.sort-indices([1, 1, 2, 3, 3])',
-                'let vec = import("vec");\nvec.sort-indices([1, 2, -3])',
-                'let vec = import("vec");\nvec.sort-indices([1, 2, 3, 4])',
-                'let vec = import("vec");\nvec.sort-indices([1, 2, -3, 4])',
+                'let { sort-indices } = import("vec");\nsort-indices([1, 2, 3])',
+                'let { sort-indices } = import("vec");\nsort-indices([1, 1, 2, 3, 3])',
+                'let { sort-indices } = import("vec");\nsort-indices([1, 2, -3])',
+                'let { sort-indices } = import("vec");\nsort-indices([1, 2, 3, 4])',
+                'let { sort-indices } = import("vec");\nsort-indices([1, 2, -3, 4])',
             ],
         }, 'vec.count-values': {
             title: 'vec.count-values',
@@ -30941,10 +30941,10 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.count-values([1, 2, 3])',
-                'let vec = import("vec");\nvec.count-values([1, 1, 2, 3, 3])',
-                'let vec = import("vec");\nvec.count-values([1, 2, -3])',
-                'let vec = import("vec");\nvec.count-values([1, 2, 2, 1, 3, 2, 4, 2, 1, 2, 2, 1, 3, 2, 4])',
+                'let { count-values } = import("vec");\ncount-values([1, 2, 3])',
+                'let { count-values } = import("vec");\ncount-values([1, 1, 2, 3, 3])',
+                'let { count-values } = import("vec");\ncount-values([1, 2, -3])',
+                'let { count-values } = import("vec");\ncount-values([1, 2, 2, 1, 3, 2, 4, 2, 1, 2, 2, 1, 3, 2, 4])',
             ],
         }, 'vec.linspace': {
             title: 'vec.linspace',
@@ -31280,9 +31280,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['vector'] },
             ],
             examples: [
-                'let vec = import("vec");\nvec.outliers?([1, 2, 3])',
-                'let vec = import("vec");\nvec.outliers?([1, 2, -3])',
-                'let vec = import("vec");\nvec.outliers?([1, 2, 3, 2, 4, 120])',
+                'let { outliers? } = import("vec");\noutliers?([1, 2, 3])',
+                'let { outliers? } = import("vec");\noutliers?([1, 2, -3])',
+                'let { outliers? } = import("vec");\noutliers?([1, 2, 3, 2, 4, 120])',
             ],
         }, 'vec.outliers': {
             title: 'vec.outliers',
