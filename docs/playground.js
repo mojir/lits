@@ -1344,16 +1344,6 @@ var Playground = (function (exports) {
         }
     }
 
-    function arityAccepts(arity, nbrOfParams) {
-        var min = arity.min, max = arity.max;
-        if (typeof min === 'number' && nbrOfParams < min) {
-            return false;
-        }
-        if (typeof max === 'number' && nbrOfParams > max) {
-            return false;
-        }
-        return true;
-    }
     function arityAcceptsMin(arity, nbrOfParams) {
         var min = arity.min;
         if (typeof min === 'number' && nbrOfParams < min) {
@@ -13455,9 +13445,7 @@ var Playground = (function (exports) {
             if (!expression) {
                 throw new LitsError("Function '".concat(fn.functionName, "' not found in namespace '").concat(fn.namespaceName, "'."), sourceCodeInfo);
             }
-            if (!arityAccepts(expression.arity, params.length)) {
-                throw new LitsError("Function '".concat(fn.functionName, "' expects ").concat(expression.arity.min).concat(expression.arity.max === expression.arity.min ? '' : "-".concat(expression.arity.max), " arguments, got ").concat(params.length, "."), sourceCodeInfo);
-            }
+            assertNumberOfParams(expression.arity, params.length, sourceCodeInfo);
             return expression.evaluate(params, sourceCodeInfo, contextStack, { executeFunction: executeFunction });
         },
     };
