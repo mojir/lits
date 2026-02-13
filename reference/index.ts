@@ -105,7 +105,6 @@ export const normalExpressionReference: Record<CoreNormalExpressionName, Functio
   ...functionalReference,
   ...metaReference,
   ...miscReference,
-  ...assertReference,
   ...objectReference,
   ...predicateReference,
   ...regularExpressionReference,
@@ -120,6 +119,7 @@ export const namespaceReference: Record<NamespaceExpressionName, FunctionReferen
   ...numberTheoryReference,
   ...gridReference,
   ...randomReference,
+  ...assertReference,
 }
 
 Object.entries(normalExpressionReference).forEach(([key, obj]) => {

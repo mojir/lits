@@ -243,21 +243,21 @@ export const api = {
   ] as const,
   // TODO, remove some, add some. E.g. type guards, assert-number, assert-string, etc.
   assert: [
-    'assert',
-    'assert=',
-    'assert!=',
-    'assert-gt',
-    'assert-lt',
-    'assert-gte',
-    'assert-lte',
-    'assert-true',
-    'assert-false',
-    'assert-truthy',
-    'assert-falsy',
-    'assert-null',
-    'assert-throws',
-    'assert-throws-error',
-    'assert-not-throws',
+    'Assert.assert',
+    'Assert.assert=',
+    'Assert.assert!=',
+    'Assert.assert-gt',
+    'Assert.assert-lt',
+    'Assert.assert-gte',
+    'Assert.assert-lte',
+    'Assert.assert-true',
+    'Assert.assert-false',
+    'Assert.assert-truthy',
+    'Assert.assert-falsy',
+    'Assert.assert-null',
+    'Assert.assert-throws',
+    'Assert.assert-throws-error',
+    'Assert.assert-not-throws',
   ] as const,
   grid: [
     'Grid.every?',
@@ -580,7 +580,6 @@ export type CoreNormalExpressionName =
   | RegularExpressionApiName
   | StringApiName
   | BitwiseApiName
-  | AssertApiName
 
 // Namespace functions - require import()
 export type NamespaceExpressionName =
@@ -590,6 +589,7 @@ export type NamespaceExpressionName =
   | GridApiName
   | NumberTheoryApiName
   | RandomApiName
+  | AssertApiName
 
 // All normal expression names
 export type NormalExpressionName =
@@ -618,7 +618,6 @@ const coreApiFunctionNames = [
   ...api.regularExpression,
   ...api.string,
   ...api.bitwise,
-  ...api.assert,
 ] as const
 
 // Namespace API function names (require import())
@@ -629,6 +628,7 @@ const namespaceApiFunctionNames = [
   ...api.grid,
   ...api.numberTheory,
   ...api.random,
+  ...api.assert,
 ] as const
 
 // All API function names
@@ -691,7 +691,7 @@ export type Category = keyof typeof categoryRecord
 export const categories = Object.keys(categoryRecord) as Category[]
 
 // Categories that are namespaces (require import)
-export const namespaceCategories: Category[] = ['Vector', 'Linear Algebra', 'Matrix', 'Grid', 'Number Theory', 'Random']
+export const namespaceCategories: Category[] = ['Vector', 'Linear Algebra', 'Matrix', 'Grid', 'Number Theory', 'Random', 'Assert']
 
 // Core categories (always available)
 export const coreCategories = categories.filter(c => !namespaceCategories.includes(c))

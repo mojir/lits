@@ -7,6 +7,7 @@ import { linearAlgebraNamespace } from './linearAlgebra'
 import { matrixNamespace } from './matrix'
 import { numberTheoryNamespace } from './numberTheory'
 import { registerNamespace } from './registry'
+import { assertNamespace } from './assert'
 
 export type { LitsNamespace } from './interface'
 
@@ -27,3 +28,4 @@ registerNamespace(vectorNamespace)
 registerNamespace(linearAlgebraNamespace)
 registerNamespace(matrixNamespace)
 registerNamespace(numberTheoryNamespace)
+registerNamespace(assertNamespace)

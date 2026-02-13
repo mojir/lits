@@ -17,6 +17,7 @@ export default defineConfig({
         'cli/**',
         'docs/**',
         'common/**',
+        'scripts/**',
         '**/interface.ts',
         '**/types.ts',
       ],

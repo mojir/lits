@@ -465,7 +465,7 @@ describe('collection functions', () => {
       expect(lits.run('{ a: 1, b: 2 } ++ { b: 20, c: 30 }')).toEqual({ a: 1, b: 20, c: 30 })
       expect(lits.run('"Al" ++ "bert"')).toEqual('Albert')
 
-      expect(lits.run('++([])').toString()).toEqual([].toString())
+      expect(lits.run('++([])')).toEqual([])
       expect(lits.run('++([1])')).toEqual([1])
       expect(lits.run('++([1], [2], [3, 4])')).toEqual([1, 2, 3, 4])
       expect(lits.run('++([1, 2, 3], [])')).toEqual([1, 2, 3])

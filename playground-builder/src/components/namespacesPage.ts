@@ -70,6 +70,14 @@ const namespaceInfo: NamespaceInfo[] = [
       'let rand = import("Random"); rand.shuffle!([1, 2, 3, 4, 5])',
     ],
   },
+  {
+    name: 'Asseert',
+    importName: 'Assert',
+    description: 'Assertion functions for validating conditions and throwing errors.',
+    examples: [
+      'let { assert } = import("Assert");\ntry assert(0, "Expected a positive value") catch (e) e.message end',
+    ],
+  },
 ]
 
 export function getNamespacesPage(): string {

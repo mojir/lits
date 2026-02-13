@@ -1,5 +1,7 @@
 // @include plus-lib.lits
 
+let { assert } = import("Assert");
+
 export let add = (a, b) -> plus(a, b);
 export let sub = (a, b) -> -(a, b);
 assert(plus);

@@ -26,7 +26,7 @@ Bail out! Duplicate test name add
     const testResult = runTest({ testPath: path.join(__dirname, 'missing-test-name.test.lits') })
     expect(testResult.success).toBe(false)
     expect(testResult.tap).toBe(`TAP version 13
-Bail out! Missing test name on line 3
+Bail out! Missing test name on line 5
 `)
   })
   it('success', () => {
@@ -71,7 +71,7 @@ not ok 2 sub
   ---
   error: "AssertionError"
   message: "Expected 3 to deep equal -1."
-  location: "${path.resolve(__dirname, 'one-success.test.lits')}:10:1"
+  location: "${path.resolve(__dirname, 'one-success.test.lits')}:12:1"
   code:
     - "assert=(sub(one, 2), -1);"
     - "^                        "
@@ -88,7 +88,7 @@ not ok 1 add
   ---
   error: "AssertionError"
   message: "Expected -1 to deep equal 3."
-  location: "${path.resolve(__dirname, 'failure-test.lits')}:7:1"
+  location: "${path.resolve(__dirname, 'failure-test.lits')}:9:1"
   code:
     - "assert=(add(one, 2), 3);"
     - "^                       "
@@ -106,7 +106,7 @@ not ok 1 add
   ---
   error: "AssertionError"
   message: "Expected -1 to deep equal 3."
-  location: "${path.resolve(__dirname, 'failure-test.lits')}:7:1"
+  location: "${path.resolve(__dirname, 'failure-test.lits')}:9:1"
   code:
     - "assert=(add(one, 2), 3);"
     - "^                       "
@@ -115,7 +115,7 @@ not ok 2 sub
   ---
   error: "AssertionError"
   message: "Expected 3 to deep equal -1."
-  location: "${path.resolve(__dirname, 'failure-test.lits')}:10:1"
+  location: "${path.resolve(__dirname, 'failure-test.lits')}:12:1"
   code:
     - "assert=(sub(one, 2), -1);"
     - "^                        "
@@ -159,7 +159,7 @@ not ok 1 equals
       "id": "id2",
       "val": "value2"
     }.
-  location: "${path.resolve(__dirname, 'object-diff.test.lits')}:5:1"
+  location: "${path.resolve(__dirname, 'object-diff.test.lits')}:7:1"
   code:
     - "assert=(obj-a, obj-b);"
     - "^                     "

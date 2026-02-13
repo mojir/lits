@@ -321,5 +321,11 @@ describe('misc functions', () => {
         expect(lits.run('json-parse("[1,2,3]")')).toEqual([1, 2, 3])
       })
     })
+
+    describe('import', () => {
+      it('should throw for unknown entire namespace', () => {
+        expect(() => lits.run('import("UnknownNamespace")')).toThrow(LitsError)
+      })
+    })
   }
 })

@@ -1,5 +1,7 @@
 // @include failure-program.lits
 
+let { assert= } = import("Assert");
+
 // Setup code
 let one = 1;
 

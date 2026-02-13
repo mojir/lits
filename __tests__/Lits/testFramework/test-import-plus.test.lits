@@ -1,5 +1,7 @@
 // @include success-program-using-plus.lits
 
+let { assert= } = import("Assert");
+
 // Setup code
 let one = 1;
 

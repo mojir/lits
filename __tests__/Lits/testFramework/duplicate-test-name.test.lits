@@ -1,3 +1,5 @@
+let { assert= } = import("Assert");
+
 // @test add
 assert=(add(1, 2), 3);
 

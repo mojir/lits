@@ -10711,6 +10711,254 @@ var Playground = (function (exports) {
         return namespaceRegistry.get(name);
     }
 
+    // TODO, remove some, add some. E.g. type guards, assert-number, assert-string, etc.
+    var assertNormalExpression = {
+        'assert': {
+            evaluate: function (params, sourceCodeInfo) {
+                var value = params[0];
+                var message = params.length === 2 ? params[1] : "".concat(value);
+                assertString(message, sourceCodeInfo);
+                if (!value)
+                    throw new AssertionError(message, sourceCodeInfo);
+                return asAny(value, sourceCodeInfo);
+            },
+            arity: { min: 1, max: 2 },
+        },
+        'assert=': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
+                if (message !== undefined) {
+                    assertString(message, sourceCodeInfo);
+                    message = " ".concat(message);
+                }
+                message !== null && message !== void 0 ? message : (message = '');
+                if (!deepEqual(asAny(first, sourceCodeInfo), asAny(second, sourceCodeInfo), sourceCodeInfo)) {
+                    throw new AssertionError("Expected ".concat(JSON.stringify(first, null, 2), " to deep equal ").concat(JSON.stringify(second, null, 2), ".").concat(message), sourceCodeInfo);
+                }
+                return null;
+            },
+            arity: { min: 2, max: 3 },
+        },
+        'assert!=': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
+                if (message !== undefined) {
+                    assertString(message, sourceCodeInfo);
+                    message = " ".concat(message);
+                }
+                message !== null && message !== void 0 ? message : (message = '');
+                if (deepEqual(asAny(first, sourceCodeInfo), asAny(second, sourceCodeInfo), sourceCodeInfo)) {
+                    throw new AssertionError("Expected ".concat(JSON.stringify(first), " not to deep equal ").concat(JSON.stringify(second), ".").concat(message), sourceCodeInfo);
+                }
+                return null;
+            },
+            arity: { min: 2, max: 3 },
+        },
+        'assert-gt': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
+                assertStringOrNumber(first, sourceCodeInfo);
+                assertStringOrNumber(second, sourceCodeInfo);
+                if (message !== undefined) {
+                    assertString(message, sourceCodeInfo);
+                    message = " ".concat(message);
+                }
+                message !== null && message !== void 0 ? message : (message = '');
+                if (compare(first, second, sourceCodeInfo) <= 0)
+                    throw new AssertionError("Expected ".concat(first, " to be grater than ").concat(second, ".").concat(message), sourceCodeInfo);
+                return null;
+            },
+            arity: { min: 2, max: 3 },
+        },
+        'assert-gte': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
+                assertStringOrNumber(first, sourceCodeInfo);
+                assertStringOrNumber(second, sourceCodeInfo);
+                if (message !== undefined) {
+                    assertString(message, sourceCodeInfo);
+                    message = " ".concat(message);
+                }
+                message !== null && message !== void 0 ? message : (message = '');
+                if (compare(first, second, sourceCodeInfo) < 0)
+                    throw new AssertionError("Expected ".concat(first, " to be grater than or equal to ").concat(second, ".").concat(message), sourceCodeInfo);
+                return null;
+            },
+            arity: { min: 2, max: 3 },
+        },
+        'assert-lt': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
+                assertStringOrNumber(first, sourceCodeInfo);
+                assertStringOrNumber(second, sourceCodeInfo);
+                if (message !== undefined) {
+                    assertString(message, sourceCodeInfo);
+                    message = " ".concat(message);
+                }
+                message !== null && message !== void 0 ? message : (message = '');
+                if (compare(first, second, sourceCodeInfo) >= 0)
+                    throw new AssertionError("Expected ".concat(first, " to be less than ").concat(second, ".").concat(message), sourceCodeInfo);
+                return null;
+            },
+            arity: { min: 2, max: 3 },
+        },
+        'assert-lte': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
+                assertStringOrNumber(first, sourceCodeInfo);
+                assertStringOrNumber(second, sourceCodeInfo);
+                if (message !== undefined) {
+                    assertString(message, sourceCodeInfo);
+                    message = " ".concat(message);
+                }
+                message !== null && message !== void 0 ? message : (message = '');
+                if (compare(first, second, sourceCodeInfo) > 0)
+                    throw new AssertionError("Expected ".concat(first, " to be less than or equal to ").concat(second, ".").concat(message), sourceCodeInfo);
+                return null;
+            },
+            arity: { min: 2, max: 3 },
+        },
+        'assert-true': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), first = _b[0], message = _b[1];
+                if (message !== undefined) {
+                    assertString(message, sourceCodeInfo);
+                    message = " ".concat(message);
+                }
+                message !== null && message !== void 0 ? message : (message = '');
+                if (first !== true)
+                    throw new AssertionError("Expected ".concat(first, " to be true.").concat(message), sourceCodeInfo);
+                return null;
+            },
+            arity: { min: 1, max: 2 },
+        },
+        'assert-false': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), first = _b[0], message = _b[1];
+                if (message !== undefined) {
+                    assertString(message, sourceCodeInfo);
+                    message = " ".concat(message);
+                }
+                message !== null && message !== void 0 ? message : (message = '');
+                if (first !== false)
+                    throw new AssertionError("Expected ".concat(first, " to be false.").concat(message), sourceCodeInfo);
+                return null;
+            },
+            arity: { min: 1, max: 2 },
+        },
+        'assert-truthy': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), first = _b[0], message = _b[1];
+                if (message !== undefined) {
+                    assertString(message, sourceCodeInfo);
+                    message = " ".concat(message);
+                }
+                message !== null && message !== void 0 ? message : (message = '');
+                if (!first)
+                    throw new AssertionError("Expected ".concat(first, " to be truthy.").concat(message), sourceCodeInfo);
+                return null;
+            },
+            arity: { min: 1, max: 2 },
+        },
+        'assert-falsy': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), first = _b[0], message = _b[1];
+                if (message !== undefined) {
+                    assertString(message, sourceCodeInfo);
+                    message = " ".concat(message);
+                }
+                message !== null && message !== void 0 ? message : (message = '');
+                if (first)
+                    throw new AssertionError("Expected ".concat(first, " to be falsy.").concat(message), sourceCodeInfo);
+                return null;
+            },
+            arity: { min: 1, max: 2 },
+        },
+        'assert-null': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 2), first = _b[0], message = _b[1];
+                if (message !== undefined) {
+                    assertString(message, sourceCodeInfo);
+                    message = " ".concat(message);
+                }
+                message !== null && message !== void 0 ? message : (message = '');
+                if (first !== null)
+                    throw new AssertionError("Expected ".concat(first, " to be null.").concat(message), sourceCodeInfo);
+                return null;
+            },
+            arity: { min: 1, max: 2 },
+        },
+        'assert-throws': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var _c = __read(_a, 2), func = _c[0], message = _c[1];
+                var executeFunction = _b.executeFunction;
+                if (message !== undefined) {
+                    assertString(message, sourceCodeInfo);
+                    message = " ".concat(message);
+                }
+                message !== null && message !== void 0 ? message : (message = '');
+                assertFunctionLike(func, sourceCodeInfo);
+                try {
+                    executeFunction(func, [], contextStack, sourceCodeInfo);
+                }
+                catch (_d) {
+                    return null;
+                }
+                throw new AssertionError("Expected function to throw.".concat(message), sourceCodeInfo);
+            },
+            arity: { min: 1, max: 2 },
+        },
+        'assert-throws-error': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var _c = __read(_a, 3), func = _c[0], throwMessage = _c[1], message = _c[2];
+                var executeFunction = _b.executeFunction;
+                if (message !== undefined) {
+                    assertString(message, sourceCodeInfo);
+                    message = " ".concat(message);
+                }
+                message !== null && message !== void 0 ? message : (message = '');
+                assertString(throwMessage, sourceCodeInfo);
+                assertFunctionLike(func, sourceCodeInfo);
+                try {
+                    executeFunction(func, [], contextStack, sourceCodeInfo);
+                }
+                catch (error) {
+                    var errorMessage = error.shortMessage;
+                    if (errorMessage !== throwMessage) {
+                        throw new AssertionError("Expected function to throw \"".concat(throwMessage, "\", but thrown \"").concat(errorMessage, "\".").concat(message), sourceCodeInfo);
+                    }
+                    return null;
+                }
+                throw new AssertionError("Expected function to throw \"".concat(throwMessage, "\".").concat(message), sourceCodeInfo);
+            },
+            arity: { min: 2, max: 3 },
+        },
+        'assert-not-throws': {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var _c = __read(_a, 2), func = _c[0], message = _c[1];
+                var executeFunction = _b.executeFunction;
+                if (message !== undefined) {
+                    assertString(message, sourceCodeInfo);
+                    message = " ".concat(message);
+                }
+                message !== null && message !== void 0 ? message : (message = '');
+                assertFunctionLike(func, sourceCodeInfo);
+                try {
+                    executeFunction(func, [], contextStack, sourceCodeInfo);
+                }
+                catch (_d) {
+                    throw new AssertionError("Expected function not to throw.".concat(message), sourceCodeInfo);
+                }
+                return null;
+            },
+            arity: { min: 1, max: 2 },
+        },
+    };
+    var assertNamespace = {
+        name: 'Assert',
+        functions: assertNormalExpression,
+    };
+
     // Export the namespace interface
     // Register built-in namespaces
     registerNamespace(gridNamespace);
@@ -10719,6 +10967,7 @@ var Playground = (function (exports) {
     registerNamespace(linearAlgebraNamespace);
     registerNamespace(matrixNamespace);
     registerNamespace(numberTheoryNamespace);
+    registerNamespace(assertNamespace);
 
     function isEqual(_a, sourceCodeInfo) {
         var e_1, _b;
@@ -11003,235 +11252,6 @@ var Playground = (function (exports) {
                 return result;
             },
             arity: toFixedArity(1),
-        },
-    };
-
-    var assertNormalExpression = {
-        'assert': {
-            evaluate: function (params, sourceCodeInfo) {
-                var value = params[0];
-                var message = params.length === 2 ? params[1] : "".concat(value);
-                assertString(message, sourceCodeInfo);
-                if (!value)
-                    throw new AssertionError(message, sourceCodeInfo);
-                return asAny(value, sourceCodeInfo);
-            },
-            arity: { min: 1, max: 2 },
-        },
-        'assert=': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
-                if (message !== undefined) {
-                    assertString(message, sourceCodeInfo);
-                }
-                message !== null && message !== void 0 ? message : (message = '');
-                if (!deepEqual(asAny(first, sourceCodeInfo), asAny(second, sourceCodeInfo), sourceCodeInfo)) {
-                    throw new AssertionError("Expected ".concat(JSON.stringify(first, null, 2), " to deep equal ").concat(JSON.stringify(second, null, 2), ".").concat(message), sourceCodeInfo);
-                }
-                return null;
-            },
-            arity: { min: 2, max: 3 },
-        },
-        'assert!=': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
-                if (message !== undefined) {
-                    assertString(message, sourceCodeInfo);
-                }
-                message !== null && message !== void 0 ? message : (message = '');
-                if (deepEqual(asAny(first, sourceCodeInfo), asAny(second, sourceCodeInfo), sourceCodeInfo)) {
-                    throw new AssertionError("Expected ".concat(JSON.stringify(first), " not to deep equal ").concat(JSON.stringify(second), ".").concat(message), sourceCodeInfo);
-                }
-                return null;
-            },
-            arity: { min: 2, max: 3 },
-        },
-        'assert-gt': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
-                assertStringOrNumber(first, sourceCodeInfo);
-                assertStringOrNumber(second, sourceCodeInfo);
-                if (message !== undefined) {
-                    assertString(message, sourceCodeInfo);
-                }
-                message !== null && message !== void 0 ? message : (message = '');
-                if (compare(first, second, sourceCodeInfo) <= 0)
-                    throw new AssertionError("Expected ".concat(first, " to be grater than ").concat(second, ".").concat(message), sourceCodeInfo);
-                return null;
-            },
-            arity: { min: 2, max: 3 },
-        },
-        'assert-gte': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
-                assertStringOrNumber(first, sourceCodeInfo);
-                assertStringOrNumber(second, sourceCodeInfo);
-                if (message !== undefined) {
-                    assertString(message, sourceCodeInfo);
-                }
-                message !== null && message !== void 0 ? message : (message = '');
-                if (compare(first, second, sourceCodeInfo) < 0)
-                    throw new AssertionError("Expected ".concat(first, " to be grater than or equal to ").concat(second, ".").concat(message), sourceCodeInfo);
-                return null;
-            },
-            arity: { min: 2, max: 3 },
-        },
-        'assert-lt': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
-                assertStringOrNumber(first, sourceCodeInfo);
-                assertStringOrNumber(second, sourceCodeInfo);
-                if (message !== undefined) {
-                    assertString(message, sourceCodeInfo);
-                }
-                message !== null && message !== void 0 ? message : (message = '');
-                if (compare(first, second, sourceCodeInfo) >= 0)
-                    throw new AssertionError("Expected ".concat(first, " to be less than ").concat(second, ".").concat(message), sourceCodeInfo);
-                return null;
-            },
-            arity: { min: 2, max: 3 },
-        },
-        'assert-lte': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
-                assertStringOrNumber(first, sourceCodeInfo);
-                assertStringOrNumber(second, sourceCodeInfo);
-                if (message !== undefined) {
-                    assertString(message, sourceCodeInfo);
-                }
-                message !== null && message !== void 0 ? message : (message = '');
-                if (compare(first, second, sourceCodeInfo) > 0)
-                    throw new AssertionError("Expected ".concat(first, " to be less than or equal to ").concat(second, ".").concat(message), sourceCodeInfo);
-                return null;
-            },
-            arity: { min: 2, max: 3 },
-        },
-        'assert-true': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), first = _b[0], message = _b[1];
-                if (message !== undefined) {
-                    assertString(message, sourceCodeInfo);
-                }
-                message !== null && message !== void 0 ? message : (message = '');
-                if (first !== true)
-                    throw new AssertionError("Expected ".concat(first, " to be true.").concat(message), sourceCodeInfo);
-                return null;
-            },
-            arity: { min: 1, max: 2 },
-        },
-        'assert-false': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), first = _b[0], message = _b[1];
-                if (message !== undefined) {
-                    assertString(message, sourceCodeInfo);
-                }
-                message !== null && message !== void 0 ? message : (message = '');
-                if (first !== false)
-                    throw new AssertionError("Expected ".concat(first, " to be false.").concat(message), sourceCodeInfo);
-                return null;
-            },
-            arity: { min: 1, max: 2 },
-        },
-        'assert-truthy': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), first = _b[0], message = _b[1];
-                if (message !== undefined) {
-                    assertString(message, sourceCodeInfo);
-                }
-                message !== null && message !== void 0 ? message : (message = '');
-                if (!first)
-                    throw new AssertionError("Expected ".concat(first, " to be truthy.").concat(message), sourceCodeInfo);
-                return null;
-            },
-            arity: { min: 1, max: 2 },
-        },
-        'assert-falsy': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), first = _b[0], message = _b[1];
-                if (message !== undefined) {
-                    assertString(message, sourceCodeInfo);
-                }
-                message !== null && message !== void 0 ? message : (message = '');
-                if (first)
-                    throw new AssertionError("Expected ".concat(first, " to be falsy.").concat(message), sourceCodeInfo);
-                return null;
-            },
-            arity: { min: 1, max: 2 },
-        },
-        'assert-null': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), first = _b[0], message = _b[1];
-                if (message !== undefined) {
-                    assertString(message, sourceCodeInfo);
-                }
-                message !== null && message !== void 0 ? message : (message = '');
-                if (first !== null)
-                    throw new AssertionError("Expected ".concat(first, " to be null.").concat(message), sourceCodeInfo);
-                return null;
-            },
-            arity: { min: 1, max: 2 },
-        },
-        'assert-throws': {
-            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
-                var _c = __read(_a, 2), func = _c[0], message = _c[1];
-                var executeFunction = _b.executeFunction;
-                if (message !== undefined) {
-                    assertString(message, sourceCodeInfo);
-                }
-                message !== null && message !== void 0 ? message : (message = '');
-                assertFunctionLike(func, sourceCodeInfo);
-                try {
-                    executeFunction(func, [], contextStack, sourceCodeInfo);
-                }
-                catch (_d) {
-                    return null;
-                }
-                throw new AssertionError("Expected function to throw.".concat(message), sourceCodeInfo);
-            },
-            arity: { min: 1, max: 2 },
-        },
-        'assert-throws-error': {
-            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
-                var _c = __read(_a, 3), func = _c[0], throwMessage = _c[1], message = _c[2];
-                var executeFunction = _b.executeFunction;
-                if (message !== undefined) {
-                    assertString(message, sourceCodeInfo);
-                }
-                message !== null && message !== void 0 ? message : (message = '');
-                assertString(throwMessage, sourceCodeInfo);
-                assertFunctionLike(func, sourceCodeInfo);
-                try {
-                    executeFunction(func, [], contextStack, sourceCodeInfo);
-                }
-                catch (error) {
-                    var errorMessage = error.shortMessage;
-                    if (errorMessage !== throwMessage) {
-                        throw new AssertionError("Expected function to throw \"".concat(throwMessage, "\", but thrown \"").concat(errorMessage, "\".").concat(message), sourceCodeInfo);
-                    }
-                    return null;
-                }
-                throw new AssertionError("Expected function to throw \"".concat(throwMessage, "\".").concat(message), sourceCodeInfo);
-            },
-            arity: { min: 2, max: 3 },
-        },
-        'assert-not-throws': {
-            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
-                var _c = __read(_a, 2), func = _c[0], message = _c[1];
-                var executeFunction = _b.executeFunction;
-                if (message !== undefined) {
-                    assertString(message, sourceCodeInfo);
-                }
-                message !== null && message !== void 0 ? message : (message = '');
-                assertFunctionLike(func, sourceCodeInfo);
-                try {
-                    executeFunction(func, [], contextStack, sourceCodeInfo);
-                }
-                catch (_d) {
-                    throw new AssertionError("Expected function not to throw.".concat(message), sourceCodeInfo);
-                }
-                return null;
-            },
-            arity: { min: 1, max: 2 },
         },
     };
 
@@ -12091,19 +12111,11 @@ var Playground = (function (exports) {
         };
     }
 
-    // TODO: Phase 1 - Namespaces commented out for refactoring
-    // These will require import() to use
-    // import { gridNormalExpression } from './categories/namespaces/grid'
-    // import { vectorNormalExpression } from './categories/namespaces/vector'
-    // import { linearAlgebraNormalExpression } from './categories/namespaces/linearAlgebra'
-    // import { matrixNormalExpression } from './categories/namespaces/matrix'
-    // import { combinatoricalNormalExpression } from './categories/namespaces/numberTheory'
-    // import { randomNormalExpression } from './categories/namespaces/random'
     var normalExpressionReference$1 = {};
     function setNormalExpressionReference(reference) {
         Object.assign(normalExpressionReference$1, reference);
     }
-    var expressions = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, bitwiseNormalExpression), collectionNormalExpression), arrayNormalExpression), sequenceNormalExpression), mathNormalExpression), getMetaNormalExpression(normalExpressionReference$1)), miscNormalExpression), assertNormalExpression), objectNormalExpression), predicatesNormalExpression), regexpNormalExpression), stringNormalExpression), functionalNormalExpression);
+    var expressions = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, bitwiseNormalExpression), collectionNormalExpression), arrayNormalExpression), sequenceNormalExpression), mathNormalExpression), getMetaNormalExpression(normalExpressionReference$1)), miscNormalExpression), objectNormalExpression), predicatesNormalExpression), regexpNormalExpression), stringNormalExpression), functionalNormalExpression);
     Object.entries(expressions).forEach(function (_a) {
         var _b = __read(_a, 2), name = _b[0], expression = _b[1];
         expression.name = name;
@@ -16099,21 +16111,21 @@ var Playground = (function (exports) {
         ],
         // TODO, remove some, add some. E.g. type guards, assert-number, assert-string, etc.
         assert: [
-            'assert',
-            'assert=',
-            'assert!=',
-            'assert-gt',
-            'assert-lt',
-            'assert-gte',
-            'assert-lte',
-            'assert-true',
-            'assert-false',
-            'assert-truthy',
-            'assert-falsy',
-            'assert-null',
-            'assert-throws',
-            'assert-throws-error',
-            'assert-not-throws',
+            'Assert.assert',
+            'Assert.assert=',
+            'Assert.assert!=',
+            'Assert.assert-gt',
+            'Assert.assert-lt',
+            'Assert.assert-gte',
+            'Assert.assert-lte',
+            'Assert.assert-true',
+            'Assert.assert-false',
+            'Assert.assert-truthy',
+            'Assert.assert-falsy',
+            'Assert.assert-null',
+            'Assert.assert-throws',
+            'Assert.assert-throws-error',
+            'Assert.assert-not-throws',
         ],
         grid: [
             'Grid.every?',
@@ -16349,9 +16361,9 @@ var Playground = (function (exports) {
         ],
     };
     // Core API function names (always available)
-    var coreApiFunctionNames = __spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray([], __read(api.collection), false), __read(api.array), false), __read(api.sequence), false), __read(api.math), false), __read(api.functional), false), __read(api.meta), false), __read(api.misc), false), __read(api.object), false), __read(api.predicate), false), __read(api.regularExpression), false), __read(api.string), false), __read(api.bitwise), false), __read(api.assert), false);
+    var coreApiFunctionNames = __spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray([], __read(api.collection), false), __read(api.array), false), __read(api.sequence), false), __read(api.math), false), __read(api.functional), false), __read(api.meta), false), __read(api.misc), false), __read(api.object), false), __read(api.predicate), false), __read(api.regularExpression), false), __read(api.string), false), __read(api.bitwise), false);
     // Namespace API function names (require import())
-    var namespaceApiFunctionNames = __spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray([], __read(api.matrix), false), __read(api.vector), false), __read(api.linAlg), false), __read(api.grid), false), __read(api.numberTheory), false), __read(api.random), false);
+    var namespaceApiFunctionNames = __spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray([], __read(api.matrix), false), __read(api.vector), false), __read(api.linAlg), false), __read(api.grid), false), __read(api.numberTheory), false), __read(api.random), false), __read(api.assert), false);
     // All API function names
     var apiFunctionNames = __spreadArray(__spreadArray([], __read(coreApiFunctionNames), false), __read(namespaceApiFunctionNames), false);
     // Core API names (core functions + shorthand + datatype)
@@ -16383,7 +16395,7 @@ var Playground = (function (exports) {
     };
     var categories = Object.keys(categoryRecord);
     // Categories that are namespaces (require import)
-    var namespaceCategories = ['Vector', 'Linear Algebra', 'Matrix', 'Grid', 'Number Theory', 'Random'];
+    var namespaceCategories = ['Vector', 'Linear Algebra', 'Matrix', 'Grid', 'Number Theory', 'Random', 'Assert'];
     // Core categories (always available)
     categories.filter(function (c) { return !namespaceCategories.includes(c); });
     function getOperatorArgs(a, b) {
@@ -16535,8 +16547,8 @@ var Playground = (function (exports) {
     };
 
     var assertReference = {
-        'assert': {
-            title: 'assert',
+        'Assert.assert': {
+            title: 'Assert.assert',
             category: 'Assert',
             returns: {
                 type: 'any',
@@ -16554,11 +16566,11 @@ var Playground = (function (exports) {
                 { argumentNames: ['value', 'message'] },
             ],
             description: 'If $value is falsy it throws `AssertionError` with $message. If no $message is provided, message is set to $value.',
-            examples: ['try assert(0, "Expected a positive value") catch (e) e.message end'],
+            examples: ['let { assert } = import("Assert");\ntry assert(0, "Expected a positive value") catch (e) e.message end'],
             noOperatorDocumentation: true,
         },
-        'assert!=': {
-            title: 'assert!=',
+        'Assert.assert!=': {
+            title: 'Assert.assert!=',
             category: 'Assert',
             returns: {
                 type: 'null',
@@ -16572,15 +16584,15 @@ var Playground = (function (exports) {
             ],
             description: 'If $a is the same as $b it throws `AssertionError`.',
             examples: [
-                'try assert!=(0, 0, "Expected different values") catch (e) e.message end',
-                'try assert!=(0, 0) catch (e) e.message end',
-                'try 0 assert!= 0 catch (e) e.message end',
-                'try assert!=(0, 1) catch (e) e.message end',
+                'let { assert!= } = import("Assert");\ntry assert!=(0, 0, "Expected different values") catch (e) e.message end',
+                'let { assert!= } = import("Assert");\ntry assert!=(0, 0) catch (e) e.message end',
+                'let { assert!= } = import("Assert");\ntry 0 assert!= 0 catch (e) e.message end',
+                'let { assert!= } = import("Assert");\ntry assert!=(0, 1) catch (e) e.message end',
             ],
             noOperatorDocumentation: true,
         },
-        'assert=': {
-            title: 'assert=',
+        'Assert.assert=': {
+            title: 'Assert.assert=',
             category: 'Assert',
             returns: {
                 type: 'null',
@@ -16594,14 +16606,14 @@ var Playground = (function (exports) {
             ],
             description: 'If $a is not structural equal to $b it throws `AssertionError`.',
             examples: [
-                'try assert=({ "a": 1 }, { "a": 2 }, "Expected equal values") catch (e) e.message end',
-                'try assert=({ "a": 1 }, { "a": 2 }) catch (e) e.message end',
-                'try assert=({ "a": 1 }, { "a": 1 }) catch (e) e.message end',
+                'let { assert= } = import("Assert");\ntry assert=({ "a": 1 }, { "a": 2 }, "Expected equal values") catch (e) e.message end',
+                'let { assert= } = import("Assert");\ntry assert=({ "a": 1 }, { "a": 2 }) catch (e) e.message end',
+                'let { assert= } = import("Assert");\ntry assert=({ "a": 1 }, { "a": 1 }) catch (e) e.message end',
             ],
             noOperatorDocumentation: true,
         },
-        'assert-gt': {
-            title: 'assert-gt',
+        'Assert.assert-gt': {
+            title: 'Assert.assert-gt',
             category: 'Assert',
             returns: {
                 type: 'null',
@@ -16615,14 +16627,14 @@ var Playground = (function (exports) {
             ],
             description: 'If $a is not greater than $b it throws `AssertionError`.',
             examples: [
-                'try assert-gt(0, 1, "Expected greater value") catch (e) e.message end',
-                'try assert-gt(0, 0) catch (e) e.message end',
-                'try assert-gt(1, 0) catch (e) e.message end',
+                'let { assert-gt } = import("Assert");\ntry assert-gt(0, 1, "Expected greater value") catch (e) e.message end',
+                'let { assert-gt } = import("Assert");\ntry assert-gt(0, 0) catch (e) e.message end',
+                'let { assert-gt } = import("Assert");\ntry assert-gt(1, 0) catch (e) e.message end',
             ],
             noOperatorDocumentation: true,
         },
-        'assert-lt': {
-            title: 'assert-lt',
+        'Assert.assert-lt': {
+            title: 'Assert.assert-lt',
             category: 'Assert',
             returns: {
                 type: 'null',
@@ -16636,14 +16648,14 @@ var Playground = (function (exports) {
             ],
             description: 'If $a is not less than $b it throws `AssertionError`.',
             examples: [
-                'try assert-lte(1, 0, "Expected smaller value value") catch (e) e.message end',
-                'try assert-lte(1, 1) catch (e) e.message end',
-                'try assert-lte(0, 1) catch (e) e.message end',
+                'let { assert-lt } = import("Assert");\ntry assert-lt(1, 0, "Expected smaller value value") catch (e) e.message end',
+                'let { assert-lt } = import("Assert");\ntry assert-lt(1, 1) catch (e) e.message end',
+                'let { assert-lt } = import("Assert");\ntry assert-lt(0, 1) catch (e) e.message end',
             ],
             noOperatorDocumentation: true,
         },
-        'assert-gte': {
-            title: 'assert-gte',
+        'Assert.assert-gte': {
+            title: 'Assert.assert-gte',
             category: 'Assert',
             returns: {
                 type: 'null',
@@ -16657,14 +16669,14 @@ var Playground = (function (exports) {
             ],
             description: 'If $a is less than $b it throws `AssertionError`.',
             examples: [
-                'try assert-gte(0, 1, "Expected greater value") catch (e) e.message end',
-                'try assert-gte(0, 1) catch (e) e.message end',
-                'try assert-gte(1, 1) catch (e) e.message end',
+                'let { assert-gte } = import("Assert");\ntry assert-gte(0, 1, "Expected greater value") catch (e) e.message end',
+                'let { assert-gte } = import("Assert");\ntry assert-gte(0, 1) catch (e) e.message end',
+                'let { assert-gte } = import("Assert");\ntry assert-gte(1, 1) catch (e) e.message end',
             ],
             noOperatorDocumentation: true,
         },
-        'assert-lte': {
-            title: 'assert-lte',
+        'Assert.assert-lte': {
+            title: 'Assert.assert-lte',
             category: 'Assert',
             returns: {
                 type: 'null',
@@ -16678,14 +16690,14 @@ var Playground = (function (exports) {
             ],
             description: 'If $a is grater than $b it throws `AssertionError`.',
             examples: [
-                'try assert-lte(1, 0, "Expected smaller value value") catch (e) e.message end',
-                'try assert-lte(1, 0) catch (e) e.message end',
-                'try assert-lte(1, 1) catch (e) e.message end',
+                'let { assert-lte } = import("Assert");\ntry assert-lte(1, 0, "Expected smaller value value") catch (e) e.message end',
+                'let { assert-lte } = import("Assert");\ntry assert-lte(1, 0) catch (e) e.message end',
+                'let { assert-lte } = import("Assert");\ntry assert-lte(1, 1) catch (e) e.message end',
             ],
             noOperatorDocumentation: true,
         },
-        'assert-true': {
-            title: 'assert-true',
+        'Assert.assert-true': {
+            title: 'Assert.assert-true',
             category: 'Assert',
             returns: {
                 type: 'null',
@@ -16704,14 +16716,14 @@ var Playground = (function (exports) {
             ],
             description: 'If $value is not `true` it throws `AssertionError`.',
             examples: [
-                'try assert-true(false, "Expected true") catch (e) e.message end',
-                'try assert-true(false) catch (e) e.message end',
-                'try assert-true(true) catch (e) e.message end',
+                'let { assert-true } = import("Assert");\ntry assert-true(false, "Expected true") catch (e) e.message end',
+                'let { assert-true } = import("Assert");\ntry assert-true(false) catch (e) e.message end',
+                'let { assert-true } = import("Assert");\ntry assert-true(true) catch (e) e.message end',
             ],
             noOperatorDocumentation: true,
         },
-        'assert-false': {
-            title: 'assert-false',
+        'Assert.assert-false': {
+            title: 'Assert.assert-false',
             category: 'Assert',
             returns: {
                 type: 'null',
@@ -16730,14 +16742,14 @@ var Playground = (function (exports) {
             ],
             description: 'If $value is not `false` it throws `AssertionError`.',
             examples: [
-                'try assert-false(true, "Expected false") catch (e) e.message end',
-                'try assert-false(true) catch (e) e.message end',
-                'try assert-false(false) catch (e) e.message end',
+                'let { assert-false } = import("Assert");\ntry assert-false(true, "Expected false") catch (e) e.message end',
+                'let { assert-false } = import("Assert");\ntry assert-false(true) catch (e) e.message end',
+                'let { assert-false } = import("Assert");\ntry assert-false(false) catch (e) e.message end',
             ],
             noOperatorDocumentation: true,
         },
-        'assert-truthy': {
-            title: 'assert-truthy',
+        'Assert.assert-truthy': {
+            title: 'Assert.assert-truthy',
             category: 'Assert',
             returns: {
                 type: 'null',
@@ -16756,21 +16768,21 @@ var Playground = (function (exports) {
             ],
             description: 'If $value is not `truthy` it throws `AssertionError`.',
             examples: [
-                'try assert-truthy(false, "Expected truthy") catch (e) e.message end',
-                'try assert-truthy(false) catch (e) e.message end',
-                'try assert-truthy(0) catch (e) e.message end',
-                'try assert-truthy(null) catch (e) e.message end',
-                'try assert-truthy("") catch (e) e.message end',
-                'try assert-truthy(true) catch (e) e.message end',
-                'try assert-truthy(1) catch (e) e.message end',
-                'try assert-truthy("x") catch (e) e.message end',
-                'try assert-truthy([]) catch (e) e.message end',
-                'try assert-truthy(nd) catch (e) e.message end',
+                'let { assert-truthy } = import("Assert");\ntry assert-truthy(false, "Expected truthy") catch (e) e.message end',
+                'let { assert-truthy } = import("Assert");\ntry assert-truthy(false) catch (e) e.message end',
+                'let { assert-truthy } = import("Assert");\ntry assert-truthy(0) catch (e) e.message end',
+                'let { assert-truthy } = import("Assert");\ntry assert-truthy(null) catch (e) e.message end',
+                'let { assert-truthy } = import("Assert");\ntry assert-truthy("") catch (e) e.message end',
+                'let { assert-truthy } = import("Assert");\ntry assert-truthy(true) catch (e) e.message end',
+                'let { assert-truthy } = import("Assert");\ntry assert-truthy(1) catch (e) e.message end',
+                'let { assert-truthy } = import("Assert");\ntry assert-truthy("x") catch (e) e.message end',
+                'let { assert-truthy } = import("Assert");\ntry assert-truthy([]) catch (e) e.message end',
+                'let { assert-truthy } = import("Assert");\ntry assert-truthy(nd) catch (e) e.message end',
             ],
             noOperatorDocumentation: true,
         },
-        'assert-falsy': {
-            title: 'assert-falsy',
+        'Assert.assert-falsy': {
+            title: 'Assert.assert-falsy',
             category: 'Assert',
             returns: {
                 type: 'null',
@@ -16789,20 +16801,20 @@ var Playground = (function (exports) {
             ],
             description: 'If $value is not `falsy` it throws `AssertionError`.',
             examples: [
-                'try assert-falsy(true, "Expected falsy") catch (e) e.message end',
-                'try assert-falsy("x") catch (e) e.message end',
-                'try assert-falsy([]) catch (e) e.message end',
-                'try assert-falsy(nd) catch (e) e.message end',
-                'try assert-falsy(1) catch (e) e.message end',
-                'try assert-falsy(false) catch (e) e.message end',
-                'try assert-falsy(0) catch (e) e.message end',
-                'try assert-falsy(null) catch (e) e.message end',
-                'try assert-falsy("") catch (e) e.message end',
+                'let { assert-falsy } = import("Assert");\ntry assert-falsy(true, "Expected falsy") catch (e) e.message end',
+                'let { assert-falsy } = import("Assert");\ntry assert-falsy("x") catch (e) e.message end',
+                'let { assert-falsy } = import("Assert");\ntry assert-falsy([]) catch (e) e.message end',
+                'let { assert-falsy } = import("Assert");\ntry assert-falsy(nd) catch (e) e.message end',
+                'let { assert-falsy } = import("Assert");\ntry assert-falsy(1) catch (e) e.message end',
+                'let { assert-falsy } = import("Assert");\ntry assert-falsy(false) catch (e) e.message end',
+                'let { assert-falsy } = import("Assert");\ntry assert-falsy(0) catch (e) e.message end',
+                'let { assert-falsy } = import("Assert");\ntry assert-falsy(null) catch (e) e.message end',
+                'let { assert-falsy } = import("Assert");\ntry assert-falsy("") catch (e) e.message end',
             ],
             noOperatorDocumentation: true,
         },
-        'assert-null': {
-            title: 'assert-null',
+        'Assert.assert-null': {
+            title: 'Assert.assert-null',
             category: 'Assert',
             returns: {
                 type: 'null',
@@ -16821,20 +16833,20 @@ var Playground = (function (exports) {
             ],
             description: 'If $value is not `null` it throws `AssertionError`.',
             examples: [
-                'try assert-null(null) catch (e) e.message end',
-                'try assert-null(true, "Expected null") catch (e) e.message end',
-                'try assert-null("x") catch (e) e.message end',
-                'try assert-null([]) catch (e) e.message end',
-                'try assert-null(nd) catch (e) e.message end',
-                'try assert-null(1) catch (e) e.message end',
-                'try assert-null(false) catch (e) e.message end',
-                'try assert-null(0) catch (e) e.message end',
-                'try assert-null("") catch (e) e.message end',
+                'let { assert-null } = import("Assert");\ntry assert-null(null) catch (e) e.message end',
+                'let { assert-null } = import("Assert");\ntry assert-null(true, "Expected null") catch (e) e.message end',
+                'let { assert-null } = import("Assert");\ntry assert-null("x") catch (e) e.message end',
+                'let { assert-null } = import("Assert");\ntry assert-null([]) catch (e) e.message end',
+                'let { assert-null } = import("Assert");\ntry assert-null(nd) catch (e) e.message end',
+                'let { assert-null } = import("Assert");\ntry assert-null(1) catch (e) e.message end',
+                'let { assert-null } = import("Assert");\ntry assert-null(false) catch (e) e.message end',
+                'let { assert-null } = import("Assert");\ntry assert-null(0) catch (e) e.message end',
+                'let { assert-null } = import("Assert");\ntry assert-null("") catch (e) e.message end',
             ],
             noOperatorDocumentation: true,
         },
-        'assert-throws': {
-            title: 'assert-throws',
+        'Assert.assert-throws': {
+            title: 'Assert.assert-throws',
             category: 'Assert',
             returns: {
                 type: 'null',
@@ -16853,13 +16865,13 @@ var Playground = (function (exports) {
             ],
             description: 'If $fun does not throw, it throws `AssertionError`.',
             examples: [
-                'assert-throws(-> throw("Error"))',
-                'try assert-throws(-> identity("Error")) catch (e) e.message end',
+                'let { assert-throws } = import("Assert");\nassert-throws(-> throw("Error"))',
+                'let { assert-throws } = import("Assert");\ntry assert-throws(-> identity("Error")) catch (e) e.message end',
             ],
             noOperatorDocumentation: true,
         },
-        'assert-throws-error': {
-            title: 'assert-throws-error',
+        'Assert.assert-throws-error': {
+            title: 'Assert.assert-throws-error',
             category: 'Assert',
             returns: {
                 type: 'null',
@@ -16881,13 +16893,13 @@ var Playground = (function (exports) {
             ],
             description: 'If $fun does not throw $error-message, it throws `AssertionError`.',
             examples: [
-                'try assert-throws-error(-> throw("Error"), "Error") catch (e) e.message end',
-                'try assert-throws-error(-> identity("Error"), "Error") catch (e) e.message end',
+                'let { assert-throws-error } = import("Assert");\ntry assert-throws-error(-> throw("Error"), "Error") catch (e) e.message end',
+                'let { assert-throws-error } = import("Assert");\ntry assert-throws-error(-> identity("Error"), "Error") catch (e) e.message end',
             ],
             noOperatorDocumentation: true,
         },
-        'assert-not-throws': {
-            title: 'assert-not-throws',
+        'Assert.assert-not-throws': {
+            title: 'Assert.assert-not-throws',
             category: 'Assert',
             returns: {
                 type: 'null',
@@ -16906,8 +16918,8 @@ var Playground = (function (exports) {
             ],
             description: 'If $fun throws, it throws `AssertionError`.',
             examples: [
-                'try assert-not-throws(-> identity("Error")) catch (e) e.message end',
-                'try assert-not-throws(-> throw("Error")) catch (e) e.message end',
+                'let { assert-not-throws } = import("Assert");\ntry assert-not-throws(-> identity("Error")) catch (e) e.message end',
+                'let { assert-not-throws } = import("Assert");\ntry assert-not-throws(-> throw("Error")) catch (e) e.message end',
             ],
             noOperatorDocumentation: true,
         },
@@ -31814,9 +31826,9 @@ var Playground = (function (exports) {
     function isFunctionReference(ref) {
         return 'returns' in ref && 'args' in ref && 'variants' in ref;
     }
-    var normalExpressionReference = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, bitwiseReference), collectionReference), arrayReference), sequenceReference), mathReference), functionalReference), metaReference), miscReference), assertReference), objectReference), predicateReference), regularExpressionReference), stringReference);
+    var normalExpressionReference = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, bitwiseReference), collectionReference), arrayReference), sequenceReference), mathReference), functionalReference), metaReference), miscReference), objectReference), predicateReference), regularExpressionReference), stringReference);
     // Namespace functions - require import() to use
-    var namespaceReference = __assign(__assign(__assign(__assign(__assign(__assign({}, vectorReference), linAlgReference), matrixReference), numberTheoryReference), gridReference), randomReference);
+    var namespaceReference = __assign(__assign(__assign(__assign(__assign(__assign(__assign({}, vectorReference), linAlgReference), matrixReference), numberTheoryReference), gridReference), randomReference), assertReference);
     Object.entries(normalExpressionReference).forEach(function (_a) {
         var _b = __read(_a, 2), key = _b[0], obj = _b[1];
         if (!normalExpressions[key]) {
