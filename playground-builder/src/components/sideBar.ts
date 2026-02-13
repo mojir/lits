@@ -81,8 +81,9 @@ export function getSideBar() {
                     const linkName = getLinkName(obj)
                     const aliases = isFunctionReference(obj) ? obj.aliases : undefined
                     // Strip namespace prefix (e.g., "vec." from "vec.sum")
-                    const displayName = obj.title.includes('.') ? obj.title.split('.').slice(1).join('.') : obj.title
-                    const name = `${escape(displayName)}${aliases ? `, ${aliases.join(', ')}` : ''}`
+                    const stripPrefix = (n: string) => n.includes('.') ? n.split('.').slice(1).join('.') : n
+                    const displayName = stripPrefix(obj.title)
+                    const name = `${escape(displayName)}${aliases ? `, ${aliases.map(stripPrefix).join(', ')}` : ''}`
                     return `<a id="${linkName}_link" ${styles('scroll-my-2', 'pl-2')} onclick="Playground.showPage('${linkName}', 'smooth')">${name}</a>`
                   })
                   .join('\n')
