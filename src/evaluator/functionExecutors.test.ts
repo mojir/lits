@@ -2,10 +2,11 @@ import { describe, expect, it } from 'vitest'
 import { LitsError } from '../errors'
 import { FUNCTION_SYMBOL } from '../utils/symbols'
 import type { NamespaceFunction } from '../parser/types'
-import type { Any } from '../interface'
+import type { Arr } from '../interface'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { ContextStackImpl } from './ContextStack'
 import { functionExecutors } from './functionExecutors'
+import type { ExecuteFunction } from './interface'
 // Import namespaces to ensure they are registered
 import '../namespaces'
 
@@ -18,7 +19,7 @@ describe('functionExecutors', () => {
 
     const dummyContextStack = new ContextStackImpl({ contexts: [{}] })
 
-    const dummyExecuteFunction = (fn: Any, params: Any[], _contextStack: Any, _sourceCodeInfo: SourceCodeInfo | undefined) => {
+    const dummyExecuteFunction: ExecuteFunction = (_fn, _params: Arr, _contextStack, _sourceCodeInfo) => {
       return null
     }
 
