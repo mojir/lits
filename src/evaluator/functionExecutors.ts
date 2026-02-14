@@ -5,7 +5,7 @@ import { LitsError, RecurSignal } from '../errors'
 import { arityAcceptsMin, assertNumberOfParams } from '../utils/arity'
 import type { Any, Arr } from '../interface'
 // Import from index to ensure namespaces are registered
-import { getNamespace } from '../namespaces'
+import { getNamespace } from '../builtin/namespaces'
 import type {
   CompFunction,
   ComplementFunction,

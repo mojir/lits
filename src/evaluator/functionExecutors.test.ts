@@ -8,7 +8,7 @@ import { ContextStackImpl } from './ContextStack'
 import { functionExecutors } from './functionExecutors'
 import type { ExecuteFunction } from './interface'
 // Import namespaces to ensure they are registered
-import '../namespaces'
+import '../builtin/namespaces'
 
 describe('functionExecutors', () => {
   describe('namespace executor', () => {

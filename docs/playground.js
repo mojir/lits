@@ -6694,6 +6694,9 @@ var Playground = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), vector = _b[0];
                 assertVector(vector, sourceCodeInfo);
+                if (vector.length === 0) {
+                    return [];
+                }
                 var min = vector.reduce(function (acc, val) { return (val < acc ? val : acc); }, vector[0]);
                 var max = vector.reduce(function (acc, val) { return (val > acc ? val : acc); }, vector[0]);
                 if (min === max) {
@@ -8677,7 +8680,7 @@ var Playground = (function (exports) {
                 var arithmetic = [];
                 for (var i = 0;; i += 1) {
                     var value = start + i * step;
-                    if (!executeFunction(fn, [value, i], contextStack, sourceCodeInfo)) {
+                    if (!(executeFunction)(fn, [value, i], contextStack, sourceCodeInfo)) {
                         break;
                     }
                     arithmetic[i] = value;
@@ -8796,7 +8799,7 @@ var Playground = (function (exports) {
                 var _c = __read(_a, 1), fn = _c[0];
                 var executeFunction = _b.executeFunction;
                 assertFunctionLike(fn, sourceCodeInfo);
-                var bernoulli = generateBernoulli(function (value, index) { return !!executeFunction(fn, [value, index], contextStack); });
+                var bernoulli = generateBernoulli(function (value, index) { return !!(executeFunction)(fn, [value, index], contextStack); });
                 return bernoulli;
             },
             arity: toFixedArity(1),
@@ -9128,7 +9131,7 @@ var Playground = (function (exports) {
                 var geometric = [];
                 for (var i = 0;; i += 1) {
                     var value = start * Math.pow(ratio, i);
-                    if (!executeFunction(fn, [value, i], contextStack, sourceCodeInfo)) {
+                    if (!(executeFunction)(fn, [value, i], contextStack, sourceCodeInfo)) {
                         break;
                     }
                     geometric[i] = value;
@@ -9848,7 +9851,7 @@ var Playground = (function (exports) {
                 var polygonal = [];
                 for (var i = 1;; i += 1) {
                     var value = (i * i * (sides - 2) - i * (sides - 4)) / 2;
-                    if (!executeFunction(fn, [value, i], contextStack, sourceCodeInfo)) {
+                    if (!(executeFunction)(fn, [value, i], contextStack, sourceCodeInfo)) {
                         break;
                     }
                     polygonal[i - 1] = (i * i * (sides - 2) - i * (sides - 4)) / 2;

@@ -1,7 +1,7 @@
 import { LitsError } from '../../../errors'
 import type { Any } from '../../../interface'
 // Import from index to ensure namespaces are registered
-import { getNamespace } from '../../../namespaces'
+import { getNamespace } from '../../namespaces'
 import type { NamespaceFunction } from '../../../parser/types'
 import type { SourceCodeInfo } from '../../../tokenizer/token'
 import { asAny, assertAny } from '../../../typeGuards/lits'
