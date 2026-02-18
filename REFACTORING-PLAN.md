@@ -7,8 +7,8 @@
 
 ## Progress Tracker
 
-**Current phase:** Phase 5 — Multiple entry points and bundle variants (complete)
-**Current step:** Step 30 — All steps complete
+**Current phase:** Phase 6 — Cleanup and validation (complete)
+**Current step:** Step 35 — All steps complete
 **Last updated:** 2026-02-18
 **Branch:** `new-namespace` (per-phase work on `phase-N` branches, squash-merged back)
 
@@ -19,7 +19,7 @@
 | Phase 3: Migrate namespace categories | ✅ Done | All 7 namespaces migrated, 2938 tests pass |
 | Phase 4: Explicit namespace registration | ✅ Done | Steps 20-25 complete, namespaces on Lits constructor, 2938 tests pass |
 | Phase 5: Multiple entry points | ✅ Done | Steps 26-30 complete, 10 bundle targets, docs stripping, 2955 tests pass |
-| Phase 6: Cleanup and validation | ⬜ Not started | |
+| Phase 6: Cleanup and validation | ✅ Done | Steps 31-35 complete, old reference/categories deleted, comprehensive tests, 2947 tests pass |
 
 ### Phase 1 completed work
 - Renamed `src/builtin/normalExpressions/categories/` → `src/builtin/core/` (git mv, history preserved)
@@ -114,6 +114,27 @@
   - Updated `src/builtin/core/meta.ts` to handle missing reference gracefully (returns '' instead of crash)
   - Updated CLI (`cli/src/cli.ts`), playground-builder, playground-www with explicit namespace/reference imports
   - All 2955 tests pass (138 test files), lint clean, typecheck clean, build succeeds
+
+### Phase 6 Steps 31-35 completed work
+- **Step 31: Delete old reference category files**
+  - Removed entire `reference/categories/` directory (68 files across `core/` and `namespace/` subdirectories)
+  - These legacy reference data files are no longer needed — all reference data is now derived from co-located docs in `reference/index.ts`
+- **Step 32: Slim `reference/index.ts`**
+  - Reviewed the file (272 lines) — already clean. All references derived from co-located docs via `docsToReference()`, `namespacedDocsToReference()`, and `specialExpressionDocsToReference()`. No further slimming needed.
+- **Step 33: Comprehensive tests**
+  - Rewrote `__tests__/docs-migration.test.ts` (74 tests) with 6 test sections:
+    1. Every function has `docs` with a valid `category` (core categories, special expressions, namespaces)
+    2. Core category names and namespace names are disjoint
+    3. `seeAlso` references resolve to valid API names and exist in `allReference`
+    4. No orphaned reference data (normalExpressionReference ↔ normalExpressionKeys, special expressions, namespace functions)
+    5. `allReference` type consistency (FunctionReference, CustomReference, ShorthandReference, DatatypeReference)
+    6. Reference output stability snapshot
+- **Step 34: Update `README.md`**
+  - Added "Entry Points and Bundles" section documenting all 3 import paths (`@mojir/lits`, `@mojir/lits/full`, `@mojir/lits/namespaces/<name>`)
+  - Documented constructor-based namespace registration pattern (`new Lits({ namespaces: [...] })`)
+- **Step 35: Update `CLAUDE.md`**
+  - Wrote comprehensive architecture guide covering: project overview, key commands, entry points, source layout, built-in expressions, namespaces, co-located docs, reference data, testing, categories, and coding conventions
+- All 2947 tests pass (138 test files), lint clean
 
 ### Session start prompt
 

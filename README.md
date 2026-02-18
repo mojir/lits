@@ -1462,6 +1462,42 @@ let departmentAges = grouped
 
 ## JavaScript Interoperability
 
+### Entry Points and Bundles
+
+The package provides multiple entry points for different use cases:
+
+```javascript
+// Minimal entry — core Lits class, types, and type guards only.
+// No namespaces or reference data. Smallest bundle size.
+import { Lits } from '@mojir/lits';
+
+// Full entry — everything from minimal plus all namespaces,
+// reference data, and API helpers (e.g. apiReference, isApiName).
+import { Lits, allBuiltinNamespaces, apiReference } from '@mojir/lits/full';
+
+// Individual namespace entries — import only the namespaces you need.
+import { vectorNamespace } from '@mojir/lits/namespaces/vector';
+import { matrixNamespace } from '@mojir/lits/namespaces/matrix';
+import { linearAlgebraNamespace } from '@mojir/lits/namespaces/linearAlgebra';
+import { gridNamespace } from '@mojir/lits/namespaces/grid';
+import { randomNamespace } from '@mojir/lits/namespaces/random';
+import { assertNamespace } from '@mojir/lits/namespaces/assert';
+import { numberTheoryNamespace } from '@mojir/lits/namespaces/numberTheory';
+```
+
+To make namespace functions available in Lits code, pass them to the `Lits` constructor:
+
+```javascript
+import { Lits } from '@mojir/lits';
+import { vectorNamespace } from '@mojir/lits/namespaces/vector';
+import { matrixNamespace } from '@mojir/lits/namespaces/matrix';
+
+const lits = new Lits({ namespaces: [vectorNamespace, matrixNamespace] });
+
+// Now you can use import("Vector") and import("Matrix") in Lits code
+lits.run('let v = import("Vector"); v.dot([1, 2, 3], [4, 5, 6])'); // => 32
+```
+
 ### Using Lits in JavaScript
 
 ```javascript

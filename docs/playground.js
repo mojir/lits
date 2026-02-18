@@ -9918,8 +9918,6 @@ var Playground = (function (exports) {
     var normalExpressionKeys = Object.keys(normalExpressions);
     var specialExpressionKeys = Object.keys(specialExpressionTypes);
     new Set(specialExpressionKeys);
-    // TODO, remove
-    // console.log('builtin', [...specialExpressionKeys, ...normalExpressionKeys].length)
 
     var nonNumberReservedSymbolRecord = {
         true: true,

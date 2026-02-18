@@ -47,7 +47,7 @@ export { matrixNamespace } from './builtin/namespaces/matrix'
 export { numberTheoryNamespace } from './builtin/namespaces/numberTheory'
 
 // Reference data and types
-export { apiReference, isDatatypeReference, isFunctionReference, isShorthandReference } from '../reference'
-export type { Argument, CommonReference, DatatypeReference, FunctionReference, Reference, ShorthandReference } from '../reference'
+export { apiReference, isCustomReference, isDatatypeReference, isFunctionReference, isShorthandReference } from '../reference'
+export type { Argument, CommonReference, CustomReference, DatatypeReference, FunctionReference, Reference, ShorthandReference } from '../reference'
 export type { ApiName, FunctionName, ShorthandName, DatatypeName } from '../reference/api'
 export { isApiName, isDataType } from '../reference/api'

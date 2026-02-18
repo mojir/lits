@@ -20,6 +20,8 @@ export default defineConfig({
         'scripts/**',
         '**/interface.ts',
         '**/types.ts',
+        'src/index.ts',
+        'src/full.ts',
       ],
     },
   },

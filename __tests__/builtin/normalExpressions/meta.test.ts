@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../src/Lits/Lits'
+import { getMetaNormalExpression } from '../../../src/builtin/core/meta'
+import type { ContextStack } from '../../../src/evaluator/ContextStack'
+import type { ExecuteFunction } from '../../../src/evaluator/interface'
+import { FUNCTION_SYMBOL } from '../../../src/utils/symbols'
 import '../../../src/initReferenceData'
 
 describe('misc functions', () => {
@@ -38,4 +42,26 @@ describe('misc functions', () => {
       })
     })
   }
+
+  describe('doc with empty reference', () => {
+    it('should return empty string for builtin with no reference data', () => {
+      const meta = getMetaNormalExpression({})
+      const builtinFn = {
+        [FUNCTION_SYMBOL]: true,
+        type: 'function' as const,
+        functionType: 'Builtin' as const,
+        name: '>=',
+        overloads: [],
+        parameterCount: 2,
+        arity: {},
+      }
+      const result = meta.doc!.evaluate(
+        [builtinFn],
+        { position: { line: 1, column: 1 }, code: 'doc(>=)' },
+        undefined as unknown as ContextStack,
+        { executeFunction: undefined as unknown as ExecuteFunction },
+      )
+      expect(result).toBe('')
+    })
+  })
 })
