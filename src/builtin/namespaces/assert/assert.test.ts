@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../Lits/Lits'
 import { AssertionError, LitsError } from '../../../errors'
+import { assertNamespace } from './'
 
 describe('assert functions', () => {
-  for (const lits of [new Lits(), new Lits({ debug: true })]) {
+  for (const lits of [new Lits({ namespaces: [assertNamespace] }), new Lits({ debug: true, namespaces: [assertNamespace] })]) {
     // Helper to run grid namespace functions with the new import syntax
     const runWithAssert = (code: string): unknown => {
       // Replace 'grid:functionName(' with 'let g = import("Grid"); g.functionName('

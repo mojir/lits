@@ -3,6 +3,8 @@ import { stringifyValue } from '../../common/utils'
 import type { Example } from '../../reference/examples'
 import type { UnknownRecord } from '../../src/interface'
 import { type ContextParams, type JsFunction, Lits } from '../../src/Lits/Lits'
+import { allBuiltinNamespaces } from '../../src/allNamespaces'
+import '../../src/initReferenceData'
 import { asUnknownRecord } from '../../src/typeGuards'
 import type { AutoCompleter } from '../../src/AutoCompleter/AutoCompleter'
 import { Search } from './Search'
@@ -23,8 +25,8 @@ import {
 import { isMac, throttle } from './utils'
 
 const getLits: (forceDebug?: 'debug') => Lits = (() => {
-  const lits = new Lits({ debug: true })
-  const litsNoDebug = new Lits({ debug: false })
+  const lits = new Lits({ debug: true, namespaces: allBuiltinNamespaces })
+  const litsNoDebug = new Lits({ debug: false, namespaces: allBuiltinNamespaces })
 
   return (forceDebug?: 'debug') => forceDebug || getState('debug') ? lits : litsNoDebug
 })()

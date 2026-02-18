@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../../Lits/Lits'
+import { numberTheoryNamespace } from '..'
 
-const lits = new Lits()
+const lits = new Lits({ namespaces: [numberTheoryNamespace] })
 
 function runNth(code: string) {
   return lits.run(`let nt = import("Number-Theory"); ${code.replace(/nth:/g, 'nt.')}`)

@@ -7,8 +7,8 @@
 
 ## Progress Tracker
 
-**Current phase:** Phase 4 — Explicit namespace registration
-**Current step:** Step 24 — Update all tests to explicitly pass namespaces (optional, backward compat preserves all)
+**Current phase:** Phase 5 — Multiple entry points and bundle variants (complete)
+**Current step:** Step 30 — All steps complete
 **Last updated:** 2026-02-18
 **Branch:** `new-namespace` (per-phase work on `phase-N` branches, squash-merged back)
 
@@ -17,8 +17,8 @@
 | Phase 1: Dir rename, types, proof of concept | ✅ Done | bitwise pilot complete, all 2861 tests pass |
 | Phase 2: Migrate all core categories | ✅ Done | All 12 core + special expressions + shorthand/datatype done, 2910 tests pass |
 | Phase 3: Migrate namespace categories | ✅ Done | All 7 namespaces migrated, 2938 tests pass |
-| Phase 4: Explicit namespace registration | ✅ Done | Steps 20-23 complete, namespaces on Lits constructor, 2938 tests pass |
-| Phase 5: Multiple entry points | ⬜ Not started | |
+| Phase 4: Explicit namespace registration | ✅ Done | Steps 20-25 complete, namespaces on Lits constructor, 2938 tests pass |
+| Phase 5: Multiple entry points | ✅ Done | Steps 26-30 complete, 10 bundle targets, docs stripping, 2955 tests pass |
 | Phase 6: Cleanup and validation | ⬜ Not started | |
 
 ### Phase 1 completed work
@@ -64,7 +64,7 @@
 - Added `scripts/**/*` to eslint ignores
 - All 2938 tests pass (137 test files), lint clean, build succeeds
 
-### Phase 4 Steps 20-23 completed work
+### Phase 4 Steps 20-25 completed work
 - Added `namespaces?: LitsNamespace[]` option to `LitsConfig` interface
 - `Lits` constructor builds a `Map<string, LitsNamespace>` from the namespaces array (default: all 7 built-in namespaces for backward compatibility)
 - Stored namespace map on `ContextStackImpl` — threaded through `create()` and `new()` methods so all nested evaluations inherit the same namespace set
@@ -79,7 +79,41 @@
 - Exported `LitsNamespace` type and all 7 individual namespaces from `src/index.ts` for consumer use
 - Rewrote `registry.test.ts` to test instance-level namespace behavior via the `Lits` class (custom namespace selection, empty list, mixed selection)
 - Updated `functionExecutors.test.ts` to provide namespaces in the mock context stack
+- Changed Lits default to no namespaces (`config.namespaces ?? []`) — tree-shaking friendly
+- Updated 67 namespace test files to explicitly pass their specific namespace via `scripts/refactor/update-test-namespaces.js`
+- Updated `src/testFramework/index.ts` to use `allBuiltinNamespaces`
 - All 2938 tests pass (137 test files), lint clean, build succeeds
+
+### Phase 5 Steps 26-30 completed work
+- **Step 26: Entry point files**
+  - `src/index.ts` — minimal entry point: Lits class, core types, type guards (no namespaces, no reference data)
+  - `src/full.ts` — full entry point: re-exports all minimal exports plus all namespaces, reference data, types, and `allBuiltinNamespaces`
+  - `src/namespaces/*.ts` — 7 individual namespace entry point files (assert, grid, random, vector, linearAlgebra, matrix, numberTheory)
+  - `src/allNamespaces.ts` — extracted `allBuiltinNamespaces` array from Lits.ts (all 7 namespace objects)
+  - `src/initReferenceData.ts` — side-effect module that wires up reference data for `doc` builtin via `setNormalExpressionReference()`
+- **Step 27: Rollup build configuration**
+  - `rollup.config.js` now produces 10 bundle targets:
+    - `minimal` → ESM (`dist/index.esm.js`), CJS (`dist/index.js`), IIFE (`dist/lits.iife.js`)
+    - `full` → ESM (`dist/full.esm.js`), CJS (`dist/full.js`)
+    - 7 namespace bundles → ESM + CJS each (e.g. `dist/namespaces/vector.esm.js`)
+    - `testFramework` → ESM + CJS
+  - Custom `stripDocsPlugin()` using `renderChunk` hook strips docs from minimal/IIFE bundles
+  - Three regex patterns for stripping: inline docs objects, variable-reference docs, standalone declarations
+- **Step 28: package.json exports map**
+  - 8 subpath entries: `.` (minimal), `./full`, `./namespaces/assert`, `./namespaces/grid`, `./namespaces/random`, `./namespaces/vector`, `./namespaces/linearAlgebra`, `./namespaces/matrix`, `./namespaces/numberTheory`
+  - Each entry maps `import` → ESM and `require` → CJS
+- **Step 29: Docs-stripping build plugin**
+  - `stripDocsPlugin()` in `rollup.config.js` uses `renderChunk` hook for post-compilation stripping
+  - Minimal bundle: 0 docs fields, ~345KB; Full bundle: 222 docs fields, ~1.2MB; IIFE: 0 docs, ~380KB
+- **Step 30: Bundle variant tests**
+  - Created `__tests__/bundle-variants.test.ts` with 16 tests covering:
+    - Minimal entry: core eval, no-namespaces default, individual namespace injection
+    - Full entry: core eval, all namespaces, doc returns non-empty, apiReference export
+    - Individual namespaces: each of 7 namespaces works independently, combining multiple works
+  - Verified minimal bundle has 0 namespace definitions (allBuiltinNamespaces removed from minimal export)
+  - Updated `src/builtin/core/meta.ts` to handle missing reference gracefully (returns '' instead of crash)
+  - Updated CLI (`cli/src/cli.ts`), playground-builder, playground-www with explicit namespace/reference imports
+  - All 2955 tests pass (138 test files), lint clean, typecheck clean, build succeeds
 
 ### Session start prompt
 

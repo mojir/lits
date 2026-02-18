@@ -3,8 +3,9 @@ import { Lits } from '../../../Lits/Lits'
 import { LitsError } from '../../../errors'
 import { deepEqual } from '../../../utils'
 import { getUnit } from './helpers/getUnit'
+import { linearAlgebraNamespace } from './'
 
-const lits = new Lits()
+const lits = new Lits({ namespaces: [linearAlgebraNamespace] })
 
 // Helper to run lin namespace functions with the new import syntax
 function runLin(code: string): unknown {

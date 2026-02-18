@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../../Lits/Lits'
+import { vectorNamespace } from '..'
 import { LitsError } from '../../../../errors'
 
-const lits = new Lits()
+const lits = new Lits({ namespaces: [vectorNamespace] })
 
 // Helper to run vec namespace functions with the new import syntax
 function runVec(code: string): unknown {

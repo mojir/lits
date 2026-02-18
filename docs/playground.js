@@ -8607,7 +8607,7 @@ var Playground = (function (exports) {
                     }
                     if (fn.functionType === 'Builtin') {
                         var reference = normalExpressionReference[fn.name];
-                        return generateDocString(reference);
+                        return reference ? generateDocString(reference) : '';
                     }
                     if (fn.functionType === 'UserDefined' || fn.functionType === 'NativeJsFunction') {
                         return fn.docString;
@@ -12705,6 +12705,196 @@ var Playground = (function (exports) {
             return __spreadArray([], __read(suggestions), false).sort(function (a, b) { return a.localeCompare(b); });
         };
         return AutoCompleter;
+    }());
+
+    var Cache = /** @class */ (function () {
+        function Cache(maxSize) {
+            this.cache = {};
+            this.firstEntry = undefined;
+            this.lastEntry = undefined;
+            this._size = 0;
+            this.maxSize = maxSize === null ? null : toNonNegativeInteger(maxSize);
+            if (typeof this.maxSize === 'number' && this.maxSize < 1)
+                throw new Error("1 is the minimum maxSize, got ".concat(valueToString(maxSize)));
+        }
+        Cache.prototype.getContent = function () {
+            return Object.entries(this.cache).reduce(function (result, _a) {
+                var _b = __read(_a, 2), key = _b[0], entry = _b[1];
+                result[key] = entry.value;
+                return result;
+            }, {});
+        };
+        Object.defineProperty(Cache.prototype, "size", {
+            get: function () {
+                return this._size;
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Cache.prototype.get = function (key) {
+            var _a;
+            return (_a = this.cache[key]) === null || _a === void 0 ? void 0 : _a.value;
+        };
+        Cache.prototype.clear = function () {
+            this.cache = {};
+            this.firstEntry = undefined;
+            this.lastEntry = undefined;
+            this._size = 0;
+        };
+        Cache.prototype.has = function (key) {
+            return !!this.cache[key];
+        };
+        Cache.prototype.set = function (key, value) {
+            if (this.has(key))
+                throw new Error("AstCache - key already present: ".concat(key));
+            var newEntry = { value: value, nextEntry: undefined, key: key };
+            this.cache[key] = newEntry;
+            this._size += 1;
+            if (this.lastEntry)
+                this.lastEntry.nextEntry = newEntry;
+            this.lastEntry = newEntry;
+            if (!this.firstEntry)
+                this.firstEntry = this.lastEntry;
+            while (this.maxSize !== null && this.size > this.maxSize)
+                this.dropFirstEntry();
+        };
+        Cache.prototype.dropFirstEntry = function () {
+            var firstEntry = this.firstEntry;
+            delete this.cache[firstEntry.key];
+            this._size -= 1;
+            this.firstEntry = firstEntry.nextEntry;
+        };
+        return Cache;
+    }());
+
+    var Lits = /** @class */ (function () {
+        function Lits(config) {
+            var e_1, _a;
+            if (config === void 0) { config = {}; }
+            var _b, _c, _d, _e;
+            this.debug = (_b = config.debug) !== null && _b !== void 0 ? _b : false;
+            this.astCacheSize = (_c = config.astCacheSize) !== null && _c !== void 0 ? _c : null;
+            if (this.astCacheSize) {
+                this.astCache = new Cache(this.astCacheSize);
+                var initialCache = (_d = config.initialCache) !== null && _d !== void 0 ? _d : {};
+                try {
+                    for (var _f = __values(Object.keys(initialCache)), _g = _f.next(); !_g.done; _g = _f.next()) {
+                        var cacheEntry = _g.value;
+                        this.astCache.set(cacheEntry, initialCache[cacheEntry]);
+                    }
+                }
+                catch (e_1_1) { e_1 = { error: e_1_1 }; }
+                finally {
+                    try {
+                        if (_g && !_g.done && (_a = _f.return)) _a.call(_f);
+                    }
+                    finally { if (e_1) throw e_1.error; }
+                }
+            }
+            else {
+                this.astCache = null;
+            }
+            var nsList = (_e = config.namespaces) !== null && _e !== void 0 ? _e : [];
+            this.namespaces = new Map(nsList.map(function (ns) { return [ns.name, ns]; }));
+        }
+        Lits.prototype.getRuntimeInfo = function () {
+            return {
+                astCacheSize: this.astCacheSize,
+                astCache: this.astCache,
+                debug: this.debug,
+            };
+        };
+        Lits.prototype.run = function (program, params) {
+            if (params === void 0) { params = {}; }
+            var ast = this.generateAst(program, params);
+            var result = this.evaluate(ast, params);
+            // const stringifiedResult = JSON.stringify(result)
+            // const parsedResult = JSON.parse(stringifiedResult) as unknown
+            // if (!deepEqual(result, parsedResult)) {
+            //   throw new Error(`Result is not serializable: ${result} != ${parsedResult}\nstringifiedResult: ${stringifiedResult}\nprogram: ${program}`)
+            // }
+            return result;
+        };
+        Lits.prototype.context = function (programOrAst, params) {
+            if (params === void 0) { params = {}; }
+            var ast = typeof programOrAst === 'string' ? this.generateAst(programOrAst, params) : programOrAst;
+            var contextStack = createContextStack(params, this.namespaces);
+            evaluate(ast, contextStack);
+            return contextStack.globalContext;
+        };
+        Lits.prototype.getUndefinedSymbols = function (programOrAst, params) {
+            if (params === void 0) { params = {}; }
+            var ast = typeof programOrAst === 'string' ? this.generateAst(programOrAst, params) : programOrAst;
+            var contextStack = createContextStack(params, this.namespaces);
+            return getUndefinedSymbols(ast, contextStack, builtin, evaluateNode);
+        };
+        Lits.prototype.tokenize = function (program, tokenizeParams) {
+            if (tokenizeParams === void 0) { tokenizeParams = {}; }
+            var tokenStream = tokenize$1(program, this.debug, tokenizeParams.filePath);
+            return tokenizeParams.minify ? minifyTokenStream(tokenStream, { removeWhiteSpace: false }) : tokenStream;
+        };
+        Lits.prototype.parse = function (tokenStream) {
+            tokenStream = minifyTokenStream(tokenStream, { removeWhiteSpace: true });
+            var ast = {
+                body: [],
+                hasDebugData: tokenStream.hasDebugData,
+            };
+            var parseState = {
+                position: 0,
+            };
+            ast.body = new Parser(tokenStream, parseState).parse();
+            return ast;
+        };
+        Lits.prototype.evaluate = function (ast, params) {
+            var contextStack = createContextStack(params, this.namespaces);
+            return evaluate(ast, contextStack);
+        };
+        Lits.prototype.transformSymbols = function (tokenStream, transformer) {
+            return transformSymbolTokens(tokenStream, transformer);
+        };
+        Lits.prototype.untokenize = function (tokenStream) {
+            return untokenize(tokenStream);
+        };
+        Lits.prototype.apply = function (fn, fnParams, params) {
+            var _a;
+            if (params === void 0) { params = {}; }
+            var fnName = 'FN_2eb7b316_471c_5bfa_90cb_d3dfd9164a59';
+            var program = this.generateApplyFunctionCall(fnName, fnParams);
+            var ast = this.generateAst(program, params);
+            var hostValues = fnParams.reduce(function (result, param, index) {
+                result["".concat(fnName, "_").concat(index)] = param;
+                return result;
+            }, (_a = {}, _a[fnName] = fn, _a));
+            params.values = __assign(__assign({}, params.values), hostValues);
+            return this.evaluate(ast, params);
+        };
+        Lits.prototype.generateApplyFunctionCall = function (fnName, fnParams) {
+            var paramsString = fnParams
+                .map(function (_, index) {
+                return "".concat(fnName, "_").concat(index);
+            })
+                .join(', ');
+            return "".concat(fnName, "(").concat(paramsString, ")");
+        };
+        Lits.prototype.generateAst = function (program, params) {
+            var _a;
+            if (this.astCache) {
+                var cachedAst = this.astCache.get(program);
+                if (cachedAst)
+                    return cachedAst;
+            }
+            var tokenStream = this.tokenize(program, {
+                filePath: params.filePath,
+            });
+            var ast = this.parse(tokenStream);
+            (_a = this.astCache) === null || _a === void 0 ? void 0 : _a.set(program, ast);
+            return ast;
+        };
+        Lits.prototype.getAutoCompleter = function (program, position, params) {
+            if (params === void 0) { params = {}; }
+            return new AutoCompleter(program, position, this, params);
+        };
+        return Lits;
     }());
 
     var namespaceDocs$6 = {
@@ -32455,6 +32645,16 @@ var Playground = (function (exports) {
         functions: combinatoricalNormalExpression,
     };
 
+    var allBuiltinNamespaces = [
+        assertNamespace,
+        gridNamespace,
+        randomNamespace,
+        vectorNamespace,
+        linearAlgebraNamespace,
+        matrixNamespace,
+        numberTheoryNamespace,
+    ];
+
     // --- Data types used in documentation ---
     // --- Category type ---
     var categoryRecord = {
@@ -32812,209 +33012,18 @@ var Playground = (function (exports) {
         ref.title = ref.title.replace(/"/g, '&quot;');
     });
 
-    var Cache = /** @class */ (function () {
-        function Cache(maxSize) {
-            this.cache = {};
-            this.firstEntry = undefined;
-            this.lastEntry = undefined;
-            this._size = 0;
-            this.maxSize = maxSize === null ? null : toNonNegativeInteger(maxSize);
-            if (typeof this.maxSize === 'number' && this.maxSize < 1)
-                throw new Error("1 is the minimum maxSize, got ".concat(valueToString(maxSize)));
-        }
-        Cache.prototype.getContent = function () {
-            return Object.entries(this.cache).reduce(function (result, _a) {
-                var _b = __read(_a, 2), key = _b[0], entry = _b[1];
-                result[key] = entry.value;
-                return result;
-            }, {});
-        };
-        Object.defineProperty(Cache.prototype, "size", {
-            get: function () {
-                return this._size;
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Cache.prototype.get = function (key) {
-            var _a;
-            return (_a = this.cache[key]) === null || _a === void 0 ? void 0 : _a.value;
-        };
-        Cache.prototype.clear = function () {
-            this.cache = {};
-            this.firstEntry = undefined;
-            this.lastEntry = undefined;
-            this._size = 0;
-        };
-        Cache.prototype.has = function (key) {
-            return !!this.cache[key];
-        };
-        Cache.prototype.set = function (key, value) {
-            if (this.has(key))
-                throw new Error("AstCache - key already present: ".concat(key));
-            var newEntry = { value: value, nextEntry: undefined, key: key };
-            this.cache[key] = newEntry;
-            this._size += 1;
-            if (this.lastEntry)
-                this.lastEntry.nextEntry = newEntry;
-            this.lastEntry = newEntry;
-            if (!this.firstEntry)
-                this.firstEntry = this.lastEntry;
-            while (this.maxSize !== null && this.size > this.maxSize)
-                this.dropFirstEntry();
-        };
-        Cache.prototype.dropFirstEntry = function () {
-            var firstEntry = this.firstEntry;
-            delete this.cache[firstEntry.key];
-            this._size -= 1;
-            this.firstEntry = firstEntry.nextEntry;
-        };
-        return Cache;
-    }());
-
+    /**
+     * Side-effect import: wires up reference data for the `doc` builtin function.
+     * Import this module before using `doc()` on built-in functions.
+     *
+     * In the full entry point (src/full.ts), this is done automatically.
+     * In the minimal entry point (src/index.ts), `doc()` returns '' for builtins.
+     */
     setNormalExpressionReference(normalExpressionReference);
-    var allBuiltinNamespaces = [
-        assertNamespace,
-        gridNamespace,
-        randomNamespace,
-        vectorNamespace,
-        linearAlgebraNamespace,
-        matrixNamespace,
-        numberTheoryNamespace,
-    ];
-    var Lits = /** @class */ (function () {
-        function Lits(config) {
-            var e_1, _a;
-            if (config === void 0) { config = {}; }
-            var _b, _c, _d, _e;
-            this.debug = (_b = config.debug) !== null && _b !== void 0 ? _b : false;
-            this.astCacheSize = (_c = config.astCacheSize) !== null && _c !== void 0 ? _c : null;
-            if (this.astCacheSize) {
-                this.astCache = new Cache(this.astCacheSize);
-                var initialCache = (_d = config.initialCache) !== null && _d !== void 0 ? _d : {};
-                try {
-                    for (var _f = __values(Object.keys(initialCache)), _g = _f.next(); !_g.done; _g = _f.next()) {
-                        var cacheEntry = _g.value;
-                        this.astCache.set(cacheEntry, initialCache[cacheEntry]);
-                    }
-                }
-                catch (e_1_1) { e_1 = { error: e_1_1 }; }
-                finally {
-                    try {
-                        if (_g && !_g.done && (_a = _f.return)) _a.call(_f);
-                    }
-                    finally { if (e_1) throw e_1.error; }
-                }
-            }
-            else {
-                this.astCache = null;
-            }
-            var nsList = (_e = config.namespaces) !== null && _e !== void 0 ? _e : allBuiltinNamespaces;
-            this.namespaces = new Map(nsList.map(function (ns) { return [ns.name, ns]; }));
-        }
-        Lits.prototype.getRuntimeInfo = function () {
-            return {
-                astCacheSize: this.astCacheSize,
-                astCache: this.astCache,
-                debug: this.debug,
-            };
-        };
-        Lits.prototype.run = function (program, params) {
-            if (params === void 0) { params = {}; }
-            var ast = this.generateAst(program, params);
-            var result = this.evaluate(ast, params);
-            // const stringifiedResult = JSON.stringify(result)
-            // const parsedResult = JSON.parse(stringifiedResult) as unknown
-            // if (!deepEqual(result, parsedResult)) {
-            //   throw new Error(`Result is not serializable: ${result} != ${parsedResult}\nstringifiedResult: ${stringifiedResult}\nprogram: ${program}`)
-            // }
-            return result;
-        };
-        Lits.prototype.context = function (programOrAst, params) {
-            if (params === void 0) { params = {}; }
-            var ast = typeof programOrAst === 'string' ? this.generateAst(programOrAst, params) : programOrAst;
-            var contextStack = createContextStack(params, this.namespaces);
-            evaluate(ast, contextStack);
-            return contextStack.globalContext;
-        };
-        Lits.prototype.getUndefinedSymbols = function (programOrAst, params) {
-            if (params === void 0) { params = {}; }
-            var ast = typeof programOrAst === 'string' ? this.generateAst(programOrAst, params) : programOrAst;
-            var contextStack = createContextStack(params, this.namespaces);
-            return getUndefinedSymbols(ast, contextStack, builtin, evaluateNode);
-        };
-        Lits.prototype.tokenize = function (program, tokenizeParams) {
-            if (tokenizeParams === void 0) { tokenizeParams = {}; }
-            var tokenStream = tokenize$1(program, this.debug, tokenizeParams.filePath);
-            return tokenizeParams.minify ? minifyTokenStream(tokenStream, { removeWhiteSpace: false }) : tokenStream;
-        };
-        Lits.prototype.parse = function (tokenStream) {
-            tokenStream = minifyTokenStream(tokenStream, { removeWhiteSpace: true });
-            var ast = {
-                body: [],
-                hasDebugData: tokenStream.hasDebugData,
-            };
-            var parseState = {
-                position: 0,
-            };
-            ast.body = new Parser(tokenStream, parseState).parse();
-            return ast;
-        };
-        Lits.prototype.evaluate = function (ast, params) {
-            var contextStack = createContextStack(params, this.namespaces);
-            return evaluate(ast, contextStack);
-        };
-        Lits.prototype.transformSymbols = function (tokenStream, transformer) {
-            return transformSymbolTokens(tokenStream, transformer);
-        };
-        Lits.prototype.untokenize = function (tokenStream) {
-            return untokenize(tokenStream);
-        };
-        Lits.prototype.apply = function (fn, fnParams, params) {
-            var _a;
-            if (params === void 0) { params = {}; }
-            var fnName = 'FN_2eb7b316_471c_5bfa_90cb_d3dfd9164a59';
-            var program = this.generateApplyFunctionCall(fnName, fnParams);
-            var ast = this.generateAst(program, params);
-            var hostValues = fnParams.reduce(function (result, param, index) {
-                result["".concat(fnName, "_").concat(index)] = param;
-                return result;
-            }, (_a = {}, _a[fnName] = fn, _a));
-            params.values = __assign(__assign({}, params.values), hostValues);
-            return this.evaluate(ast, params);
-        };
-        Lits.prototype.generateApplyFunctionCall = function (fnName, fnParams) {
-            var paramsString = fnParams
-                .map(function (_, index) {
-                return "".concat(fnName, "_").concat(index);
-            })
-                .join(', ');
-            return "".concat(fnName, "(").concat(paramsString, ")");
-        };
-        Lits.prototype.generateAst = function (program, params) {
-            var _a;
-            if (this.astCache) {
-                var cachedAst = this.astCache.get(program);
-                if (cachedAst)
-                    return cachedAst;
-            }
-            var tokenStream = this.tokenize(program, {
-                filePath: params.filePath,
-            });
-            var ast = this.parse(tokenStream);
-            (_a = this.astCache) === null || _a === void 0 ? void 0 : _a.set(program, ast);
-            return ast;
-        };
-        Lits.prototype.getAutoCompleter = function (program, position, params) {
-            if (params === void 0) { params = {}; }
-            return new AutoCompleter(program, position, this, params);
-        };
-        return Lits;
-    }());
 
     var getLits = (function () {
-        var lits = new Lits({ debug: true });
-        var litsNoDebug = new Lits({ debug: false });
+        var lits = new Lits({ debug: true, namespaces: allBuiltinNamespaces });
+        var litsNoDebug = new Lits({ debug: false, namespaces: allBuiltinNamespaces });
         return function (forceDebug) { return forceDebug || getState('debug') ? lits : litsNoDebug; };
     })();
     var elements = {

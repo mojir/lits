@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../Lits/Lits'
 import { LitsError } from '../../../errors'
+import { randomNamespace } from './'
 
-const lits = new Lits()
+const lits = new Lits({ namespaces: [randomNamespace] })
 
 // Helper to run random namespace functions with the new import syntax
 function runRandom(code: string): unknown {

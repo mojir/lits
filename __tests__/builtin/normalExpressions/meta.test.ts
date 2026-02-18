@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../src/Lits/Lits'
+import '../../../src/initReferenceData'
 
 describe('misc functions', () => {
   for (const lits of [new Lits(), new Lits({ debug: true })]) {

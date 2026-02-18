@@ -16,8 +16,8 @@ export function getMetaNormalExpression(normalExpressionReference: Record<string
           return ''
         }
         if (fn.functionType === 'Builtin') {
-          const reference = normalExpressionReference[fn.name]!
-          return generateDocString(reference)
+          const reference = normalExpressionReference[fn.name]
+          return reference ? generateDocString(reference) : ''
         }
         if (fn.functionType === 'UserDefined' || fn.functionType === 'NativeJsFunction') {
           return fn.docString

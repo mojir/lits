@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../Lits/Lits'
 import { LitsError } from '../../../errors'
+import { gridNamespace } from './'
 
 const exampleGrid1 = `[
   ["Albert", "father", 10],
@@ -19,7 +20,7 @@ const exampleGrid3 = `[
   [3, 4],
 ]`
 
-const lits = new Lits()
+const lits = new Lits({ namespaces: [gridNamespace] })
 
 // Helper to run grid namespace functions with the new import syntax
 function runGrid(code: string): unknown {

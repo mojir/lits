@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../src/Lits/Lits'
+import { allBuiltinNamespaces } from '../src/allNamespaces'
 
 function extractLitsCodeBlocks(): Array<{ code: string, lineNumber: number, blockIndex: number }> {
   const readmeContent = readFileSync(join(process.cwd(), 'README.md'), 'utf-8')
@@ -41,7 +42,7 @@ function extractLitsCodeBlocks(): Array<{ code: string, lineNumber: number, bloc
 }
 
 describe('test README.md Lits code examples', () => {
-  const lits = new Lits()
+  const lits = new Lits({ namespaces: allBuiltinNamespaces })
   const codeBlocks = extractLitsCodeBlocks()
 
   it('should find Lits code blocks in README.md', () => {

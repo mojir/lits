@@ -19,6 +19,53 @@
     "Interpreter",
     "Clojure"
   ],
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.js"
+    },
+    "./full": {
+      "types": "./dist/src/full.d.ts",
+      "import": "./dist/full.esm.js",
+      "require": "./dist/full.js"
+    },
+    "./namespaces/assert": {
+      "types": "./dist/src/namespaces/assert.d.ts",
+      "import": "./dist/namespaces/assert.esm.js",
+      "require": "./dist/namespaces/assert.js"
+    },
+    "./namespaces/grid": {
+      "types": "./dist/src/namespaces/grid.d.ts",
+      "import": "./dist/namespaces/grid.esm.js",
+      "require": "./dist/namespaces/grid.js"
+    },
+    "./namespaces/random": {
+      "types": "./dist/src/namespaces/random.d.ts",
+      "import": "./dist/namespaces/random.esm.js",
+      "require": "./dist/namespaces/random.js"
+    },
+    "./namespaces/vector": {
+      "types": "./dist/src/namespaces/vector.d.ts",
+      "import": "./dist/namespaces/vector.esm.js",
+      "require": "./dist/namespaces/vector.js"
+    },
+    "./namespaces/linearAlgebra": {
+      "types": "./dist/src/namespaces/linearAlgebra.d.ts",
+      "import": "./dist/namespaces/linearAlgebra.esm.js",
+      "require": "./dist/namespaces/linearAlgebra.js"
+    },
+    "./namespaces/matrix": {
+      "types": "./dist/src/namespaces/matrix.d.ts",
+      "import": "./dist/namespaces/matrix.esm.js",
+      "require": "./dist/namespaces/matrix.js"
+    },
+    "./namespaces/numberTheory": {
+      "types": "./dist/src/namespaces/numberTheory.d.ts",
+      "import": "./dist/namespaces/numberTheory.esm.js",
+      "require": "./dist/namespaces/numberTheory.js"
+    }
+  },
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "iife": "dist/lits.iife.js",

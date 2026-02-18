@@ -1,4 +1,7 @@
 /* v8 ignore next 1000 */
+// Minimal entry point: core Lits class, types, and type guards.
+// No namespaces or reference data included — import from '@mojir/lits/full'
+// for the complete bundle, or import individual namespaces separately.
 export {
   isBuiltinFunction,
   isLitsFunction,
@@ -20,12 +23,7 @@ export type { Token, TokenType } from './tokenizer/token'
 export { normalExpressionKeys, specialExpressionKeys } from './builtin'
 export { Lits } from './Lits/Lits'
 export type { LitsNamespace } from './builtin/namespaces/interface'
-export { assertNamespace, gridNamespace, randomNamespace, vectorNamespace, linearAlgebraNamespace, matrixNamespace, numberTheoryNamespace } from './builtin/namespaces'
 export { type LitsError, isLitsError } from './errors'
 export type { ContextParams, FilePathParams, MinifyParams, LitsRuntimeInfo, JsFunction } from './Lits/Lits'
-export { apiReference, isDatatypeReference, isFunctionReference, isShorthandReference } from '../reference'
-export type { Argument, CommonReference, DatatypeReference, FunctionReference, Reference, ShorthandReference } from '../reference'
-export type { ApiName, FunctionName, ShorthandName, DatatypeName } from '../reference/api'
-export { isApiName, isDataType } from '../reference/api'
 export { isGrid, isMatrix, isVector } from './typeGuards/annotatedArrays'
 export type { AutoCompleter } from './AutoCompleter/AutoCompleter'

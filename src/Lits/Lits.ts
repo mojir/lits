@@ -14,30 +14,9 @@ import { Parser } from '../parser/Parser'
 import { AutoCompleter } from '../AutoCompleter/AutoCompleter'
 import type { Arity } from '../builtin/interface'
 import type { LitsNamespace } from '../builtin/namespaces/interface'
-import { assertNamespace } from '../builtin/namespaces/assert'
-import { gridNamespace } from '../builtin/namespaces/grid'
-import { randomNamespace } from '../builtin/namespaces/random'
-import { vectorNamespace } from '../builtin/namespaces/vector'
-import { linearAlgebraNamespace } from '../builtin/namespaces/linearAlgebra'
-import { matrixNamespace } from '../builtin/namespaces/matrix'
-import { numberTheoryNamespace } from '../builtin/namespaces/numberTheory'
 
-import { normalExpressionReference } from '../../reference/index'
-import { setNormalExpressionReference } from '../builtin/normalExpressions'
 // import { deepEqual } from '../utils'
 import { Cache } from './Cache'
-
-setNormalExpressionReference(normalExpressionReference)
-
-const allBuiltinNamespaces: LitsNamespace[] = [
-  assertNamespace,
-  gridNamespace,
-  randomNamespace,
-  vectorNamespace,
-  linearAlgebraNamespace,
-  matrixNamespace,
-  numberTheoryNamespace,
-]
 
 export interface LitsRuntimeInfo {
   astCache: Cache | null
@@ -92,7 +71,7 @@ export class Lits {
     else {
       this.astCache = null
     }
-    const nsList = config.namespaces ?? allBuiltinNamespaces
+    const nsList = config.namespaces ?? []
     this.namespaces = new Map(nsList.map(ns => [ns.name, ns]))
   }
 

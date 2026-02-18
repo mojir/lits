@@ -6,8 +6,10 @@ import { canBeOperator } from '../src/utils/arity'
 import { normalExpressions } from '../src/builtin/normalExpressions'
 import { isReservedSymbol } from '../src/tokenizer/reservedNames'
 import { Lits } from '../src/Lits/Lits'
+import { allBuiltinNamespaces } from '../src/allNamespaces'
+import '../src/initReferenceData'
 
-const lits = new Lits()
+const lits = new Lits({ namespaces: allBuiltinNamespaces })
 describe('apiReference', () => {
   Object.entries(apiReference).forEach(([key, obj]) => {
     if (!isFunctionReference(obj))
