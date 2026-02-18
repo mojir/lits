@@ -29,6 +29,36 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: { min: 2, max: 3 },
+    docs: {
+      category: 'Sequence',
+      returns: { type: 'any' },
+      args: {
+        'a': { type: 'sequence' },
+        'b': { type: 'integer' },
+        'seq': { type: ['sequence', 'null'] },
+        'n': { type: 'integer' },
+        'not-found': { type: 'any' },
+      },
+      variants: [
+        { argumentNames: ['seq', 'n'] },
+        { argumentNames: ['seq', 'n', 'not-found'] },
+      ],
+      description: 'Accesses element $n of $seq. Accessing out-of-bounds indices returns $not-found, if present, else `null`.',
+      examples: [
+        '[1, 2, 3] nth 1',
+        '"A string" nth 3',
+        'nth([1, 2, 3], 1)',
+        'nth([1, 2, 3], 3)',
+        'nth([1, 2, 3], -1)',
+        'nth([1, 2, 3], 3, 99)',
+        'nth("A string", 1)',
+        'nth("A string", 3)',
+        'nth("A string", -3)',
+        'nth("A string", 30, "X")',
+        'nth(null, 1)',
+        'nth(null, 1, "Default value")',
+      ],
+    },
   },
   'first': {
     evaluate: ([array], sourceCodeInfo): Any => {
@@ -41,6 +71,18 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       return result
     },
     arity: toFixedArity(1),
+    docs: {
+      category: 'Sequence',
+      returns: { type: 'any' },
+      args: { seq: { type: ['sequence', 'null'] } },
+      variants: [{ argumentNames: ['seq'] }],
+      description: 'Returns the first element of $seq. If $seq is empty or `null`, `null` is returned.',
+      examples: [
+        'first(["Albert", "Mojir", 160, [1, 2]])',
+        'first([])',
+        'first(null)',
+      ],
+    },
   },
   'last': {
     evaluate: ([array], sourceCodeInfo): Any => {
@@ -53,6 +95,20 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       return result
     },
     arity: toFixedArity(1),
+    docs: {
+      category: 'Sequence',
+      returns: { type: 'any' },
+      args: { seq: { type: ['sequence', 'null'] } },
+      variants: [{ argumentNames: ['seq'] }],
+      description: 'Returns the last element of $seq. If $seq is empty, `null` is returned.',
+      examples: [
+        'last(["Albert", "Mojir", 160, [1, 2]])',
+        'last([1, 2])',
+        'last([1])',
+        'last([])',
+        'last(null)',
+      ],
+    },
   },
   'pop': {
     evaluate: ([seq], sourceCodeInfo): Seq => {
@@ -64,6 +120,17 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       return seq.slice(0, seq.length - 1)
     },
     arity: toFixedArity(1),
+    docs: {
+      category: 'Sequence',
+      returns: { type: ['sequence', 'null'], rest: true },
+      args: { seq: { type: 'sequence' } },
+      variants: [{ argumentNames: ['seq'] }],
+      description: 'Returns a copy of $seq with last element removed. If $seq is empty `null` is returned.',
+      examples: [
+        'pop([1, 2, 3])',
+        'pop([])',
+      ],
+    },
   },
   'position': {
     evaluate: ([seq, fn]: Arr, sourceCodeInfo, contextStack, { executeFunction }): number | null => {
@@ -82,6 +149,40 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(2),
+    docs: {
+      category: 'Sequence',
+      returns: { type: ['number', 'null'] },
+      args: {
+        a: { type: 'sequence' },
+        b: { type: 'function' },
+        seq: { type: ['sequence', 'null'] },
+        fun: { type: 'function' },
+      },
+      variants: [{ argumentNames: ['seq', 'fun'] }],
+      description: 'Returns the index of the first elements that passes the test implemented by $fun. If no element was found, `null` is returned.',
+      examples: [
+        `
+position(
+  ["Albert", "Mojir", 160, [1, 2]],
+  string?
+)`,
+        `
+position(
+  [5, 10, 15, 20],
+  -> $ > 10
+)`,
+        `
+position(
+  [5, 10, 15, 20],
+  -> $ > 100
+)`,
+        `
+position(
+  null,
+  -> $ > 100
+)`,
+      ],
+    },
   },
   'index-of': {
     evaluate: ([seq, value], sourceCodeInfo): number | null => {
@@ -101,6 +202,25 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(2),
+    docs: {
+      category: 'Sequence',
+      returns: { type: ['number', 'null'] },
+      args: {
+        a: { type: 'sequence' },
+        b: { type: 'any' },
+        seq: { type: ['sequence', 'null'] },
+        x: { type: 'any' },
+      },
+      variants: [{ argumentNames: ['seq', 'x'] }],
+      description: 'Returns the index of $x in $seq. If element is not present in $seq `null` is returned.',
+      examples: [
+        '[[1], [2], [1], [2]] index-of [1]',
+        'index-of(["Albert", "Mojir", 160, [1, 2]], "Mojir")',
+        'index-of([5, 10, 15, 20], 15)',
+        'index-of([5, 10, 15, 20], 1)',
+        'index-of(null, 1)',
+      ],
+    },
   },
   'last-index-of': {
     evaluate: ([seq, value], sourceCodeInfo): number | null => {
@@ -120,6 +240,25 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(2),
+    docs: {
+      category: 'Sequence',
+      returns: { type: ['number', 'null'] },
+      args: {
+        a: { type: 'sequence' },
+        b: { type: 'any' },
+        seq: { type: ['sequence', 'null'] },
+        x: { type: 'any' },
+      },
+      variants: [{ argumentNames: ['seq', 'x'] }],
+      description: 'Returns the last index of $x in $seq. If element is not present in $seq `null` is returned.',
+      examples: [
+        '[[1], [2], [1], [2]] last-index-of [1]',
+        'last-index-of(["Albert", "Mojir", 160, [1, 2]], "Mojir")',
+        'last-index-of([5, 10, 15, 20, 15], 15)',
+        'last-index-of([5, 10, 15, 20], 1)',
+        'last-index-of(null, 1)',
+      ],
+    },
   },
   'push': {
     evaluate: ([seq, ...values], sourceCodeInfo): Seq => {
@@ -133,6 +272,28 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: { min: 2 },
+    docs: {
+      category: 'Sequence',
+      returns: { type: 'sequence' },
+      args: {
+        a: { type: 'sequence' },
+        b: { type: 'any' },
+        seq: { type: 'sequence' },
+        values: { type: 'any', rest: true, description: 'At least one.' },
+      },
+      variants: [{ argumentNames: ['seq', 'values'] }],
+      description: 'Returns copy of $seq with $values added to the end of it.',
+      examples: [
+        '[1, 2, 3] push 4',
+        '"Albert" push "!"',
+        'push([1, 2, 3], 4)',
+        'push([1, 2, 3], 4, 5, 6)',
+        `
+let l = [1, 2, 3];
+push(l, 4);
+l`,
+      ],
+    },
   },
   'rest': {
     evaluate: ([seq], sourceCodeInfo): Arr | string => {
@@ -146,6 +307,23 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       return seq.substring(1)
     },
     arity: toFixedArity(1),
+    docs: {
+      category: 'Sequence',
+      returns: { type: ['sequence', 'null'] },
+      args: { seq: { type: 'sequence' } },
+      variants: [{ argumentNames: ['seq'] }],
+      description: `If $seq is an array, returns a new array with all but the first element from $seq.
+If $seq has less than two elements, an empty array is returned.
+For string $seq returns all but the first characters in $seq.`,
+      examples: [
+        'rest(["Albert", "Mojir", 160, [1, 2]])',
+        'rest(["Albert"])',
+        'rest([])',
+        'rest("Albert")',
+        'rest("A",)',
+        'rest("")',
+      ],
+    },
   },
   'next': {
     evaluate: ([seq], sourceCodeInfo): Arr | string | null => {
@@ -162,6 +340,21 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       return seq.substring(1)
     },
     arity: toFixedArity(1),
+    docs: {
+      category: 'Sequence',
+      returns: { type: ['sequence', 'null'] },
+      args: { seq: { type: 'sequence' } },
+      variants: [{ argumentNames: ['seq'] }],
+      description: 'If $seq is an array, returns a new array with all but the first element from $seq. If $seq has less than two elements, `null` is returned. For string $seq returns all but the first characters in $seq. If length of string $seq is less than two, `null` is returned.',
+      examples: [
+        'next(["Albert", "Mojir", 160, [1, 2]])',
+        'next(["Albert"])',
+        'next([])',
+        'next("Albert")',
+        'next("A",)',
+        'next("")',
+      ],
+    },
   },
   'reverse': {
     evaluate: ([seq], sourceCodeInfo): Any => {
@@ -176,6 +369,19 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       return seq.split('').reverse().join('')
     },
     arity: toFixedArity(1),
+    docs: {
+      category: 'Sequence',
+      returns: { type: ['sequence', 'null'] },
+      args: { seq: { type: ['sequence', 'null'] } },
+      variants: [{ argumentNames: ['seq'] }],
+      description: 'If $seq is an array, creates a new array with the elements from $seq in reversed order. If $seq is a string, returns new reversed string.',
+      examples: [
+        'reverse(["Albert", "Mojir", 160, [1, 2]])',
+        'reverse([])',
+        'reverse("Albert")',
+        'reverse(null)',
+      ],
+    },
   },
   'second': {
     evaluate: ([seq], sourceCodeInfo): Any => {
@@ -186,6 +392,19 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       return toAny(seq[1])
     },
     arity: toFixedArity(1),
+    docs: {
+      category: 'Sequence',
+      returns: { type: 'any' },
+      args: { seq: { type: ['sequence', 'null'] } },
+      variants: [{ argumentNames: ['seq'] }],
+      description: 'Returns the second element of $seq. If $seq has less than two elements or is `null`, `null` is returned.',
+      examples: [
+        'second(["Albert", "Mojir", 160, [1, 2]])',
+        'second([1])',
+        'second([])',
+        'second(null)',
+      ],
+    },
   },
   'shift': {
     evaluate: ([seq], sourceCodeInfo): Any => {
@@ -198,6 +417,17 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       return copy
     },
     arity: toFixedArity(1),
+    docs: {
+      category: 'Sequence',
+      returns: { type: ['sequence', 'null'] },
+      args: { seq: { type: 'sequence' } },
+      variants: [{ argumentNames: ['seq'] }],
+      description: 'Returns a copy of $seq with first element removed. If $seq is empty `null` is returned.',
+      examples: [
+        'shift([1, 2, 3])',
+        'shift([])',
+      ],
+    },
   },
   'slice': {
     evaluate: (params, sourceCodeInfo): Any => {
@@ -219,6 +449,28 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       return seq.slice(from, to)
     },
     arity: { min: 2, max: 3 },
+    docs: {
+      category: 'Sequence',
+      returns: { type: 'sequence' },
+      args: {
+        a: { type: 'sequence' },
+        b: { type: 'integer' },
+        seq: { type: 'sequence', rest: true },
+        start: { type: 'integer', description: 'Defaults to `0`.' },
+        stop: { type: 'integer', description: 'Defaults lenght of sequence + 1.' },
+      },
+      variants: [
+        { argumentNames: ['seq'] },
+        { argumentNames: ['seq', 'start'] },
+        { argumentNames: ['seq', 'start', 'stop'] },
+      ],
+      description: 'Returns a copy of a portion of $seq from index $start (inclusive) to $stop (exclusive).',
+      examples: [
+        '[1, 2, 3, 4, 5] slice 2',
+        'slice([1, 2, 3, 4, 5], 2, 4)',
+        'slice([1, 2, 3, 4, 5], 2)',
+      ],
+    },
   },
   'splice': {
     evaluate: (params, sourceCodeInfo): Any => {
@@ -237,6 +489,26 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       return `${seq.substring(0, from)}${rest.join('')}${seq.substring(from + deleteCount)}`
     },
     arity: { min: 3 },
+    docs: {
+      category: 'Sequence',
+      returns: { type: 'sequence' },
+      args: {
+        seq: { type: 'sequence', rest: true },
+        start: { type: 'integer' },
+        deleteCount: { type: 'integer' },
+        items: { type: 'any', rest: true },
+      },
+      variants: [
+        { argumentNames: ['seq', 'start', 'deleteCount'] },
+        { argumentNames: ['seq', 'start', 'deleteCount', 'items'] },
+      ],
+      description: 'Returns a a spliced array. Removes $deleteCount elements from $seq starting at $start and replaces them with $items. If $start is negative, it is counting from the end of the array.',
+      examples: [
+        'splice([1, 2, 3, 4, 5], 2, 2, "x")',
+        'splice([1, 2, 3, 4, 5], -2, 1, "x")',
+        'splice("Albert", 2, 2, "fo")',
+      ],
+    },
   },
   'some': {
     evaluate: ([seq, fn]: Arr, sourceCodeInfo, contextStack, { executeFunction }): Any => {
@@ -255,6 +527,45 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       return toAny(seq.find(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo)))
     },
     arity: toFixedArity(2),
+    docs: {
+      category: 'Sequence',
+      returns: { type: 'any' },
+      args: {
+        a: { type: 'sequence' },
+        b: { type: 'function' },
+        seq: { type: ['sequence', 'null'] },
+        fun: { type: 'function' },
+      },
+      variants: [{ argumentNames: ['seq', 'fun'] }],
+      description: 'Returns the first element that passes the test implemented by $fun. I no element was found, `null` is returned.',
+      examples: [
+        `
+some(
+  ["Albert", "Mojir", 160, [1, 2]],
+  string?
+)`,
+        `
+some(
+  [5, 10, 15, 20],
+  -> $ > 10
+)`,
+        `
+some(
+  [1, 2, 3, 4],
+  -> $ > 10
+)`,
+        `
+some(
+  [],
+  -> $ > 10
+)`,
+        `
+some(
+  null,
+  -> $ > 10
+)`,
+      ],
+    },
   },
   'sort': {
     evaluate: (params: Arr, sourceCodeInfo, contextStack, { executeFunction }): Seq => {
@@ -298,6 +609,35 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       return result
     },
     arity: { min: 1, max: 2 },
+    docs: {
+      category: 'Sequence',
+      returns: { type: 'any', rest: true },
+      args: {
+        a: { type: 'sequence' },
+        b: { type: 'function' },
+        seq: { type: 'sequence' },
+        fun: { type: 'function' },
+      },
+      variants: [
+        { argumentNames: ['seq'] },
+        { argumentNames: ['seq', 'fun'] },
+      ],
+      description: 'Returns a new sequence with the elements from $seq sorted according to $fun. If no $fun is supplied, builtin `compare` will be used.',
+      examples: [
+        '[3, 1, 2] sort (a, b) -> b - a',
+        'sort([3, 1, 2])',
+        `
+sort(
+  [3, 1, 2],
+  (a, b) -> cond case a < b then -1 case a > b then 1 case true then -1 end
+)`,
+        `
+sort(
+  [3, 1, 2],
+  (a, b) -> cond case a > b then -1 case a < b then 1 case true then -1 end
+)`,
+      ],
+    },
   },
   'sort-by': {
     evaluate: (params: Arr, sourceCodeInfo, contextStack, { executeFunction }): Seq => {
@@ -355,6 +695,27 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       return result
     },
     arity: { min: 2, max: 3 },
+    docs: {
+      category: 'Sequence',
+      returns: { type: 'any', rest: true },
+      args: {
+        a: { type: 'sequence' },
+        b: { type: 'function' },
+        seq: { type: 'sequence' },
+        keyfn: { type: 'function' },
+        comparer: { type: 'function' },
+      },
+      variants: [
+        { argumentNames: ['seq', 'keyfn'] },
+        { argumentNames: ['seq', 'keyfn', 'comparer'] },
+      ],
+      description: 'Returns a sorted sequence of the items in $seq, where the sort order is determined by comparing `(keyfn item)`. If no $comparer is supplied, uses builtin `compare`.',
+      examples: [
+        '["Albert", "Mojir", "Nina"] sort-by count',
+        'sort-by(["Albert", "Mojir", "Nina"], count)',
+        'sort-by("Albert", lower-case, -> $2 compare $1)',
+      ],
+    },
   },
   'take': {
     evaluate: ([input, n], sourceCodeInfo): Seq => {
@@ -364,6 +725,25 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       return input.slice(0, num)
     },
     arity: toFixedArity(2),
+    docs: {
+      category: 'Sequence',
+      returns: { type: 'sequence' },
+      args: {
+        a: { type: 'sequence' },
+        b: { type: 'integer' },
+        n: { type: 'integer' },
+        seq: { type: 'sequence' },
+      },
+      variants: [{ argumentNames: ['seq', 'n'] }],
+      description: 'Constructs a new array/string with the $n first elements from $seq.',
+      examples: [
+        '[1, 2, 3, 4, 5] take 3',
+        'take([1, 2, 3, 4, 5], 3)',
+        'take([1, 2, 3, 4, 5], 0)',
+        'take("Albert", 2)',
+        'take("Albert", 50)',
+      ],
+    },
   },
   'take-last': {
     evaluate: ([array, n], sourceCodeInfo): Seq => {
@@ -374,6 +754,23 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       return array.slice(from)
     },
     arity: toFixedArity(2),
+    docs: {
+      category: 'Sequence',
+      returns: { type: 'sequence' },
+      args: {
+        a: { type: 'sequence' },
+        b: { type: 'integer' },
+        n: { type: 'integer' },
+        seq: { type: 'sequence' },
+      },
+      variants: [{ argumentNames: ['n', 'seq'] }],
+      description: 'Constructs a new array with the $n last elements from $seq.',
+      examples: [
+        '[1, 2, 3, 4, 5] take-last 3',
+        'take-last([1, 2, 3, 4, 5], 3)',
+        'take-last([1, 2, 3, 4, 5], 0)',
+      ],
+    },
   },
   'take-while': {
     evaluate: ([seq, fn]: Arr, sourceCodeInfo, contextStack, { executeFunction }): Any => {
@@ -390,6 +787,30 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       return typeof seq === 'string' ? result.join('') : result
     },
     arity: toFixedArity(2),
+    docs: {
+      category: 'Sequence',
+      returns: { type: 'sequence' },
+      args: {
+        a: { type: 'sequence' },
+        b: { type: 'function' },
+        seq: { type: 'sequence' },
+        fun: { type: 'function' },
+      },
+      variants: [{ argumentNames: ['seq', 'fun'] }],
+      description: 'Returns the members of $seq in order, stopping before the first one for which `predicate` returns a falsy value.',
+      examples: [
+        `
+take-while(
+  [1, 2, 3, 2, 1],
+  -> $ < 3
+)`,
+        `
+take-while(
+  [1, 2, 3, 2, 1],
+  -> $ > 3
+)`,
+      ],
+    },
   },
   'drop': {
     evaluate: ([input, n], sourceCodeInfo): Seq => {
@@ -399,6 +820,24 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       return input.slice(num)
     },
     arity: toFixedArity(2),
+    docs: {
+      category: 'Sequence',
+      returns: { type: 'sequence' },
+      args: {
+        a: { type: 'sequence' },
+        b: { type: 'integer' },
+        seq: { type: 'sequence' },
+        n: { type: 'integer' },
+      },
+      variants: [{ argumentNames: ['seq', 'n'] }],
+      description: 'Constructs a new array/string with the $n first elements dropped from $seq.',
+      examples: [
+        'drop([1, 2, 3, 4, 5], 3)',
+        'drop([1, 2, 3, 4, 5], 0)',
+        'drop("Albert", 2)',
+        'drop("Albert", 50)',
+      ],
+    },
   },
   'drop-last': {
     evaluate: ([array, n], sourceCodeInfo): Seq => {
@@ -410,6 +849,23 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       return array.slice(0, from)
     },
     arity: toFixedArity(2),
+    docs: {
+      category: 'Sequence',
+      returns: { type: 'sequence' },
+      args: {
+        a: { type: 'sequence' },
+        b: { type: 'integer' },
+        seq: { type: 'sequence' },
+        n: { type: 'integer' },
+      },
+      variants: [{ argumentNames: ['seq', 'n'] }],
+      description: 'Constructs a new array with the $n last elements dropped from $seq.',
+      examples: [
+        '[1, 2, 3, 4, 5] drop-last 3',
+        'drop-last([1, 2, 3, 4, 5], 3)',
+        'drop-last([1, 2, 3, 4, 5], 0)',
+      ],
+    },
   },
   'drop-while': {
     evaluate: ([seq, fn]: Arr, sourceCodeInfo, contextStack, { executeFunction }): Any => {
@@ -425,6 +881,30 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       return charArray.slice(from).join('')
     },
     arity: toFixedArity(2),
+    docs: {
+      category: 'Sequence',
+      returns: { type: 'sequence' },
+      args: {
+        a: { type: 'sequence' },
+        b: { type: 'function' },
+        seq: { type: 'sequence' },
+        fun: { type: 'function' },
+      },
+      variants: [{ argumentNames: ['seq', 'fun'] }],
+      description: 'Returns the members of $seq in order, skipping the fist elements for witch the `predicate` returns a truethy value.',
+      examples: [
+        `
+drop-while(
+  [1, 2, 3, 2, 1],
+  -> $ < 3
+)`,
+        `
+drop-while(
+  [1, 2, 3, 2, 1],
+  -> $ > 3
+)`,
+      ],
+    },
   },
   'unshift': {
     evaluate: ([seq, ...values], sourceCodeInfo): Seq => {
@@ -438,6 +918,27 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       return copy
     },
     arity: { min: 2 },
+    docs: {
+      category: 'Sequence',
+      returns: { type: 'sequence' },
+      args: {
+        a: { type: 'sequence' },
+        b: { type: 'any' },
+        seq: { type: 'sequence' },
+        values: { type: 'any', rest: true },
+      },
+      variants: [{ argumentNames: ['seq', 'values'] }],
+      description: 'Returns copy of $seq with $values added to the beginning.',
+      examples: [
+        '[1, 2, 3] unshift 4',
+        'unshift([1, 2, 3], 4)',
+        'unshift([1, 2, 3], 4, 5, 6)',
+        `
+let l = [1, 2, 3];
+unshift(l, 4);
+l`,
+      ],
+    },
   },
   'distinct': {
     evaluate: ([input], sourceCodeInfo): Seq => {
@@ -457,6 +958,20 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       return Array.from(new Set(input.split(''))).join('')
     },
     arity: toFixedArity(1),
+    docs: {
+      category: 'Sequence',
+      returns: { type: 'sequence' },
+      args: { seq: { type: 'sequence' } },
+      variants: [{ argumentNames: ['seq'] }],
+      description: 'Returns a copy of $seq with no duplicates.',
+      examples: [
+        'distinct([[1], [2], [3], [1], [3], [5]])',
+        'distinct([1, 2, 3, 1, 3, 5])',
+        'distinct("Albert Mojir")',
+        'distinct([])',
+        'distinct("")',
+      ],
+    },
   },
   'remove': {
     evaluate: ([input, fn], sourceCodeInfo, contextStack, { executeFunction }): Seq => {
@@ -471,6 +986,23 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
         .join('')
     },
     arity: toFixedArity(2),
+    docs: {
+      category: 'Sequence',
+      returns: { type: 'sequence' },
+      args: {
+        a: { type: 'sequence' },
+        b: { type: 'function' },
+        seq: { type: 'sequence' },
+        fun: { type: 'function' },
+      },
+      variants: [{ argumentNames: ['seq', 'fun'] }],
+      description: 'Returns a new sequence of items in $seq for witch `pred(item)` returns a falsy value.',
+      examples: [
+        '[1, 2, 3, 1, 3, 5] remove odd?',
+        'remove([1, 2, 3, 1, 3, 5], even?)',
+        'remove("Albert Mojir", -> "aoueiyAOUEIY" contains? $)',
+      ],
+    },
   },
   'remove-at': {
     evaluate: ([input, index], sourceCodeInfo): Seq => {
@@ -487,6 +1019,25 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       return `${input.substring(0, at)}${input.substring(at + 1)}`
     },
     arity: toFixedArity(2),
+    docs: {
+      category: 'Sequence',
+      returns: { type: 'sequence' },
+      args: {
+        a: { type: 'sequence' },
+        b: { type: 'integer' },
+        seq: { type: 'sequence' },
+        n: { type: 'number' },
+      },
+      variants: [{ argumentNames: ['seq', 'n'] }],
+      description: 'Returns a new sequence of all items in $seq except item at position $n. If $n is negative, it is counting from the end of the sequence.',
+      examples: [
+        '[1, 2, 3, 1, 3, 5] remove-at 2',
+        '"Albert" remove-at -2',
+        'remove-at([1, 2, 3, 1, 3, 5], 0)',
+        'remove-at([1, 2, 3, 1, 3, 5], -1)',
+        'remove-at("Albert Mojir", 6)',
+      ],
+    },
   },
   'split-at': {
     evaluate: ([seq, pos], sourceCodeInfo): Seq => {
@@ -497,6 +1048,24 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       return [seq.slice(0, at), seq.slice(at)]
     },
     arity: toFixedArity(2),
+    docs: {
+      category: 'Sequence',
+      returns: { type: 'sequence' },
+      args: {
+        a: { type: 'sequence' },
+        b: { type: 'integer' },
+        seq: { type: 'sequence' },
+        n: { type: 'number' },
+      },
+      variants: [{ argumentNames: ['seq', 'n'] }],
+      description: 'Returns a pair of sequence `[take(pos input), drop(pos input)]`.',
+      examples: [
+        '[1, 2, 3, 4, 5] split-at 2',
+        '"Albert" split-at -2',
+        'split-at([1, 2, 3, 4, 5], -2)',
+        'split-at("Albert", 2)',
+      ],
+    },
   },
 
   'split-with': {
@@ -512,6 +1081,23 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       return [seq.slice(0, index), seq.slice(index)]
     },
     arity: toFixedArity(2),
+    docs: {
+      category: 'Sequence',
+      returns: { type: 'sequence' },
+      args: {
+        a: { type: 'sequence' },
+        b: { type: 'function' },
+        seq: { type: 'sequence' },
+        fun: { type: 'function' },
+      },
+      variants: [{ argumentNames: ['seq', 'fun'] }],
+      description: 'Returns a pair of sequences `[take-while(input, fun), drop-while(input, fun)]`.',
+      examples: [
+        '[1, 2, 3, 4, 5] split-with odd?',
+        'split-with([1, 2, 3, 4, 5], -> $ > 3)',
+        'split-with("Albert", -> $ <= "o")',
+      ],
+    },
   },
 
   'frequencies': {
@@ -531,6 +1117,17 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       }, {})
     },
     arity: toFixedArity(1),
+    docs: {
+      category: 'Sequence',
+      returns: { type: 'object' },
+      args: { seq: { type: 'sequence' } },
+      variants: [{ argumentNames: ['seq'] }],
+      description: 'Returns an object from distinct items in $seq to the number of times they appear. Note that all items in $seq must be valid object keys i.e. strings.',
+      examples: [
+        'frequencies(["Albert", "Mojir", "Nina", "Mojir"])',
+        'frequencies("Pneumonoultramicroscopicsilicovolcanoconiosis")',
+      ],
+    },
   },
 
   'group-by': {
@@ -550,6 +1147,23 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       }, {})
     },
     arity: toFixedArity(2),
+    docs: {
+      category: 'Sequence',
+      returns: { type: 'object' },
+      args: {
+        a: { type: 'sequence' },
+        b: { type: 'function' },
+        seq: { type: 'sequence' },
+        fun: { type: 'function' },
+      },
+      variants: [{ argumentNames: ['seq', 'fun'] }],
+      description: 'Returns an object of the elements of $seq keyed by the result of $fun on each element. The value at each key will be an array of the corresponding elements.',
+      examples: [
+        '[{ name: "Albert" }, { name: "Albert" }, { name: "Mojir" }] group-by "name"',
+        'group-by([{name: "Albert"}, {name: "Albert"}, {name: "Mojir"}], "name")',
+        'group-by("Albert Mojir", -> "aoueiAOUEI" contains? $ ? "vowel" : "other")',
+      ],
+    },
   },
 
   'partition': {
@@ -564,6 +1178,42 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       return partition(n, step, seq, pad, sourceCodeInfo)
     },
     arity: { min: 2, max: 4 },
+    docs: {
+      category: 'Sequence',
+      returns: { type: 'sequence' },
+      args: {
+        a: { type: 'sequence' },
+        b: { type: 'number' },
+        seq: { type: 'sequence' },
+        n: { type: 'number' },
+        step: { type: 'number' },
+        pad: { type: 'array' },
+      },
+      variants: [
+        { argumentNames: ['seq', 'n'] },
+        { argumentNames: ['seq', 'n', 'step'] },
+        { argumentNames: ['seq', 'n', 'step', 'pad'] },
+      ],
+      description: 'Returns an array of sequences of $n items each, at offsets $step apart. If $step is not supplied, defaults to $n. If a $pad array is supplied, use its elements as necessary to complete last partition upto $n items. In case there are not enough padding elements, return a partition with less than $n items.',
+      examples: [
+        'range(20) partition 4',
+        'partition(range(20), 4)',
+        'partition(range(22), 4)',
+        'partition(range(20), 4, 6)',
+        'partition(range(20), 4, 3)',
+        'partition(range(20), 3, 6, ["a"])',
+        'partition(range(20), 4, 6, ["a"])',
+        'partition(range(20), 4, 6, ["a", "b", "c", "d"])',
+        'partition(["a", "b", "c", "d", "e", "f"], 3, 1)',
+        'partition([1, 2, 3, 4], 10)',
+        'partition([1, 2, 3, 4], 10, 10)',
+        'partition([1, 2, 3, 4], 10, 10, [])',
+        'partition([1, 2, 3, 4], 10, 10, null)',
+        'partition("superfragilistic", 5)',
+        'partition("superfragilistic", 5, 5, null)',
+        'let foo = [5, 6, 7, 8]; partition(foo, 2, 1, foo)',
+      ],
+    },
   },
 
   'partition-all': {
@@ -575,6 +1225,28 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       return partition(n, step, seq, [], sourceCodeInfo)
     },
     arity: { min: 2, max: 3 },
+    docs: {
+      category: 'Sequence',
+      returns: { type: 'sequence' },
+      args: {
+        a: { type: 'sequence' },
+        b: { type: 'number' },
+        seq: { type: 'sequence' },
+        n: { type: 'number' },
+        step: { type: 'number' },
+      },
+      variants: [
+        { argumentNames: ['seq', 'n'] },
+        { argumentNames: ['seq', 'n', 'step'] },
+      ],
+      description: 'Returns an array of sequences like partition, but may include partitions with fewer than n items at the end.',
+      examples: [
+        '[0, 1, 2, 3, 4, 5, 6, 7, 8, 9] partition-all 4',
+        'partition-all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 4)',
+        'partition([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 4)',
+        'partition-all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 2, 4)',
+      ],
+    },
   },
 
   'partition-by': {
@@ -597,6 +1269,24 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       return isStringSeq ? result.map(elem => (elem as Arr).join('')) : result
     },
     arity: toFixedArity(2),
+    docs: {
+      category: 'Sequence',
+      returns: { type: 'sequence' },
+      args: {
+        a: { type: 'sequence' },
+        b: { type: 'function' },
+        seq: { type: 'sequence' },
+        fun: { type: 'function' },
+      },
+      variants: [{ argumentNames: ['seq', 'fun'] }],
+      description: 'Applies $fun to each value in $seq, splitting it each time $fun returns a new value. Returns an array of sequences.',
+      examples: [
+        '[1, 2, 3, 4, 5] partition-by odd?',
+        'partition-by([1, 2, 3, 4, 5], -> $ == 3)',
+        'partition-by([1, 1, 1, 2, 2, 3, 3], odd?)',
+        'partition-by("Leeeeeerrroyyy", identity)',
+      ],
+    },
   },
   'ends-with?': {
     evaluate: ([str, search], sourceCodeInfo): boolean => {
@@ -610,6 +1300,26 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       return deepEqual(asAny(str.at(-1), sourceCodeInfo), asAny(search, sourceCodeInfo), sourceCodeInfo)
     },
     arity: toFixedArity(2),
+    docs: {
+      category: 'Sequence',
+      returns: { type: 'boolean' },
+      args: {
+        a: { type: 'sequence' },
+        b: { type: 'sequence' },
+        seq: { type: 'sequence' },
+        suffix: { type: 'sequence' },
+      },
+      variants: [{ argumentNames: ['seq', 'suffix'] }],
+      description: 'Returns `true` if $seq ends with $suffix, otherwise `false`.',
+      examples: [
+        '[[1], [2], [3], [4], [5]] starts-with? [5]',
+        '[[1], [2], [3], [4], [5]] starts-with? 5',
+        'ends-with?([1, 2, 3, 4, 5], 5)',
+        'ends-with?([1, 2, 3, 4, 5], [5])',
+        'ends-with?("Albert", "rt")',
+        'ends-with?("Albert", "RT")',
+      ],
+    },
   },
   'starts-with?': {
     evaluate: ([seq, search], sourceCodeInfo): boolean => {
@@ -623,6 +1333,25 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       return deepEqual(asAny(seq[0], sourceCodeInfo), asAny(search, sourceCodeInfo), sourceCodeInfo)
     },
     arity: toFixedArity(2),
+    docs: {
+      category: 'Sequence',
+      returns: { type: 'boolean' },
+      args: {
+        a: { type: 'sequence' },
+        b: { type: 'sequence' },
+        seq: { type: 'sequence' },
+        prefix: { type: 'sequence' },
+      },
+      variants: [{ argumentNames: ['seq', 'prefix'] }],
+      description: 'Returns `true` if $seq starts with $prefix, otherwise `false`.',
+      examples: [
+        '[[1], [2], [3], [4], [5]] starts-with? [1]',
+        'starts-with?([1, 2, 3, 4, 5], 1)',
+        'starts-with?([1, 2, 3, 4, 5], [1])',
+        'starts-with?("Albert", "Al")',
+        'starts-with?("Albert", "al")',
+      ],
+    },
   },
   'interleave': {
     evaluate: ([...seqs], sourceCodeInfo): Seq => {
@@ -649,6 +1378,28 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       return isStringSeq ? result.join('') : result
     },
     arity: { min: 1 },
+    docs: {
+      category: 'Sequence',
+      returns: { type: 'sequence' },
+      args: {
+        a: { type: 'sequence' },
+        b: { type: 'sequence' },
+        seqs: { type: 'sequence', rest: true },
+      },
+      variants: [{ argumentNames: ['seqs'] }],
+      description: 'Returns a sequence of the first item from each of the $seqs, then the second item from each of the $seqs, until all items from the shortest seq are exhausted.',
+      examples: [
+        '[1, 2, 3] interleave [4, 5, 6]',
+        '"Albert" interleave ".,.,.,"',
+        'interleave([1, 2, 3], [4, 5, 6])',
+        'interleave([1, 2, 3], [4, 5, 6], [7, 8, 9])',
+        'interleave([1, 2, 3], [4, 5, 6], [7, 8])',
+        'interleave([1, 2, 3], [4, 5, 6], [7])',
+        'interleave([1, 2, 3], [4, 5, 6], [])',
+        'interleave([1, 2, 3], [])',
+        'interleave([])',
+      ],
+    },
   },
   'interpose': {
     evaluate: ([seq, separator], sourceCodeInfo): Seq => {
@@ -669,6 +1420,24 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       return result
     },
     arity: toFixedArity(2),
+    docs: {
+      category: 'Sequence',
+      returns: { type: 'sequence' },
+      args: {
+        a: { type: 'sequence' },
+        b: { type: 'any' },
+        seq: { type: 'sequence' },
+        separator: { type: 'any' },
+      },
+      variants: [{ argumentNames: ['seq', 'separator'] }],
+      description: 'Returns a sequence of the elements of $seq separated by $separator. If $seq is a string, the separator must be a string.',
+      examples: [
+        '"Albert" interpose "-"',
+        'interpose([1, 2, 3, 4, 5], "a")',
+        'interpose(["Albert", "Mojir", "Nina"], ", ")',
+        'interpose("Albert", ".")',
+      ],
+    },
   },
 
 }

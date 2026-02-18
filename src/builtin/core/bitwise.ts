@@ -1,8 +1,6 @@
 import { assertNumber } from '../../typeGuards/number'
 import { toFixedArity } from '../../utils/arity'
-import type { BuiltinNormalExpressions } from '../interface'
-
-import type { Argument } from '../interface'
+import type { Argument, BuiltinNormalExpressions } from '../interface'
 
 function getOperatorArgs(a: 'integer', b: 'integer'): Record<string, Argument> {
   return { a: { type: a }, b: { type: b } }

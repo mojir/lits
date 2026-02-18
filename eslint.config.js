@@ -34,6 +34,7 @@ const config = antfu({
   ignores: [
     'coverage/**/*',
     'README.md',
+    'REFACTORING-PLAN.md',
     'docs',
   ],
 })

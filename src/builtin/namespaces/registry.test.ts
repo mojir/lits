@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { getNamespaceNames, hasNamespace, registerNamespace } from './index'
 import type { LitsNamespace } from './interface'
+import { getNamespaceNames, hasNamespace, registerNamespace } from './index'
 
 describe('namespace registry', () => {
   describe('registerNamespace', () => {

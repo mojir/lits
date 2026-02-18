@@ -1,16 +1,21 @@
 # Lits Refactoring Plan: Co-located Docs & Bundle-friendly Architecture
 
+## Rules for LLM Agents
+1. Never run git push
+2. Ask before committing
+3. Always run npm run check before adding and committing
+
 ## Progress Tracker
 
 **Current phase:** Phase 2 — Migrate all core categories
-**Current step:** Step 11 — Repeat docs co-location for remaining core categories
+**Current step:** Step 12 — Migrate special expressions
 **Last updated:** 2026-02-18
 **Branch:** `new-namespace` (per-phase work on `phase-N` branches, squash-merged back)
 
 | Phase | Status | Notes |
 |-------|--------|-------|
 | Phase 1: Dir rename, types, proof of concept | ✅ Done | bitwise pilot complete, all 2861 tests pass |
-| Phase 2: Migrate all core categories | ⬜ Not started | |
+| Phase 2: Migrate all core categories | 🔄 In Progress | Step 11 done: all 12 core categories migrated, 2908 tests pass |
 | Phase 3: Migrate namespace categories | ⬜ Not started | |
 | Phase 4: Explicit namespace registration | ⬜ Not started | |
 | Phase 5: Multiple entry points | ⬜ Not started | |
@@ -25,6 +30,12 @@
 - Updated `reference/index.ts` with `docsToReference()` helper — reads bitwise from implementation, others still from old reference files
 - Added `__tests__/docs-migration.test.ts`: validates docs fields, compares against legacy reference, snapshot of `allReference`
 - All 2861 tests pass
+
+### Phase 2 Step 11 completed work
+- Co-located docs in all 12 core categories: `regexp`, `array`, `object`, `functional`, `meta`, `predicates`, `misc`, `string`, `sequence`, `collection`, `math`, `bitwise`
+- `reference/index.ts` now imports from implementation files only (no more `./categories/X` imports for core)
+- `__tests__/docs-migration.test.ts` has 49 tests covering all 12 categories
+- All 2908 tests pass (137 test files)
 
 ### Session start prompt
 

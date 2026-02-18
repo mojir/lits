@@ -1396,6 +1396,9 @@ var Playground = (function (exports) {
         return { min: arity, max: arity };
     }
 
+    function getOperatorArgs$1(a, b) {
+        return { a: { type: a }, b: { type: b } };
+    }
     var bitwiseNormalExpression = {
         '<<': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -1405,6 +1408,18 @@ var Playground = (function (exports) {
                 return num << count;
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Bitwise',
+                returns: { type: 'integer' },
+                args: __assign({}, getOperatorArgs$1('integer', 'integer')),
+                variants: [{ argumentNames: ['a', 'b'] }],
+                description: 'Shifts $a arithmetically left by $b bit positions.',
+                examples: [
+                    '1 << 10',
+                    '<<(1, 10)',
+                    '<<(-4, 2)',
+                ],
+            },
         },
         '>>': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -1414,6 +1429,19 @@ var Playground = (function (exports) {
                 return num >> count;
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Bitwise',
+                returns: { type: 'integer' },
+                args: __assign({}, getOperatorArgs$1('integer', 'integer')),
+                variants: [{ argumentNames: ['a', 'b'] }],
+                description: 'Shifts $a arithmetically right by $b bit positions.',
+                examples: [
+                    '2048 >> 10',
+                    '>>(2048, 10)',
+                    '>>>(-16, 2)',
+                    '>>(4, 10)',
+                ],
+            },
         },
         '>>>': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -1423,6 +1451,20 @@ var Playground = (function (exports) {
                 return num >>> count;
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Bitwise',
+                returns: { type: 'integer' },
+                args: __assign({}, getOperatorArgs$1('integer', 'integer')),
+                variants: [{ argumentNames: ['a', 'b'] }],
+                description: 'Shifts $a arithmetically right by $b bit positions without sign extension.',
+                examples: [
+                    '-16 >>> 2',
+                    '>>>(2048, 10)',
+                    '>>>(-16, 2)',
+                    '>>>(4, 10)',
+                    '>>>(-1, 10)',
+                ],
+            },
         },
         'bit-not': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -1431,6 +1473,17 @@ var Playground = (function (exports) {
                 return ~num;
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Bitwise',
+                returns: { type: 'integer' },
+                args: { a: { type: 'integer' } },
+                variants: [{ argumentNames: ['a'] }],
+                description: 'Returns bitwise `not` of $a.',
+                examples: [
+                    'bit-not(0)',
+                    'bit-not(255)',
+                ],
+            },
         },
         '&': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -1442,6 +1495,21 @@ var Playground = (function (exports) {
                 }, first);
             },
             arity: { min: 2 },
+            docs: {
+                category: 'Bitwise',
+                returns: { type: 'integer' },
+                args: __assign(__assign({}, getOperatorArgs$1('integer', 'integer')), { c: { type: 'integer', rest: true } }),
+                variants: [
+                    { argumentNames: ['a', 'b'] },
+                    { argumentNames: ['a', 'b', 'c'] },
+                ],
+                description: 'Returns bitwise `and` of all arguments.',
+                examples: [
+                    '0b0011 & 0b0110',
+                    '&(0b0011, 0b0110)',
+                    '&(0b0011, 0b0110, 0b1001)',
+                ],
+            },
         },
         'bit-and-not': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -1453,6 +1521,21 @@ var Playground = (function (exports) {
                 }, first);
             },
             arity: { min: 2 },
+            docs: {
+                category: 'Bitwise',
+                returns: { type: 'integer' },
+                args: __assign(__assign({}, getOperatorArgs$1('integer', 'integer')), { c: { type: 'integer', rest: true } }),
+                variants: [
+                    { argumentNames: ['a', 'b'] },
+                    { argumentNames: ['a', 'b', 'c'] },
+                ],
+                description: 'Returns bitwise `and` with complement.',
+                examples: [
+                    '0b0011 bit-and-not 0b0110',
+                    'bit-and-not(0b0011, 0b0110)',
+                    'bit-and-not(0b0011, 0b0110, 0b1001)',
+                ],
+            },
         },
         '|': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -1464,6 +1547,21 @@ var Playground = (function (exports) {
                 }, first);
             },
             arity: { min: 2 },
+            docs: {
+                category: 'Bitwise',
+                returns: { type: 'integer' },
+                args: __assign(__assign({}, getOperatorArgs$1('integer', 'integer')), { c: { type: 'integer', rest: true } }),
+                variants: [
+                    { argumentNames: ['a', 'b'] },
+                    { argumentNames: ['a', 'b', 'c'] },
+                ],
+                description: 'Returns bitwise `or` of all arguments.',
+                examples: [
+                    '0b0011 | 0b0110',
+                    '|(0b0011, 0b0110)',
+                    '|(0b1000, 0b0100, 0b0010)',
+                ],
+            },
         },
         'xor': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -1475,6 +1573,21 @@ var Playground = (function (exports) {
                 }, first);
             },
             arity: { min: 2 },
+            docs: {
+                category: 'Bitwise',
+                returns: { type: 'integer' },
+                args: __assign(__assign({}, getOperatorArgs$1('integer', 'integer')), { c: { type: 'integer', rest: true } }),
+                variants: [
+                    { argumentNames: ['a', 'b'] },
+                    { argumentNames: ['a', 'b', 'c'] },
+                ],
+                description: 'Returns bitwise `xor` of all arguments.',
+                examples: [
+                    '0b0011 xor 0b0110',
+                    'xor(0b0011, 0b0110)',
+                    'xor(0b11110000, 0b00111100, 0b10101010)',
+                ],
+            },
         },
         'bit-flip': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -1485,6 +1598,18 @@ var Playground = (function (exports) {
                 return (num ^= mask);
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Bitwise',
+                returns: { type: 'integer' },
+                args: __assign({}, getOperatorArgs$1('integer', 'integer')),
+                variants: [{ argumentNames: ['a', 'b'] }],
+                description: 'Flips bit number $b.',
+                examples: [
+                    '0b0011 bit-flip 1',
+                    'bit-flip(0b0011, 1)',
+                    'bit-flip(0b1100, 1)',
+                ],
+            },
         },
         'bit-set': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -1495,6 +1620,18 @@ var Playground = (function (exports) {
                 return (num |= mask);
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Bitwise',
+                returns: { type: 'integer' },
+                args: __assign({}, getOperatorArgs$1('integer', 'integer')),
+                variants: [{ argumentNames: ['a', 'b'] }],
+                description: 'Sets bit number $b.',
+                examples: [
+                    '0b0010 bit-set 1',
+                    'bit-set(0b0011, 1)',
+                    'bit-set(0b1100, 1)',
+                ],
+            },
         },
         'bit-clear': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -1505,6 +1642,18 @@ var Playground = (function (exports) {
                 return (num &= ~mask);
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Bitwise',
+                returns: { type: 'integer' },
+                args: __assign({}, getOperatorArgs$1('integer', 'integer')),
+                variants: [{ argumentNames: ['a', 'b'] }],
+                description: 'Clears bit number $b.',
+                examples: [
+                    '0b0011 bit-clear 1',
+                    'bit-clear(0b0011, 1)',
+                    'bit-clear(0b1100, 1)',
+                ],
+            },
         },
         'bit-test': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -1515,6 +1664,18 @@ var Playground = (function (exports) {
                 return !!(num & mask);
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Bitwise',
+                returns: { type: 'boolean' },
+                args: __assign({}, getOperatorArgs$1('integer', 'integer')),
+                variants: [{ argumentNames: ['a', 'b'] }],
+                description: 'Checks if bit number $b is set.',
+                examples: [
+                    '0b0011 bit-test 1',
+                    'bit-test(0b0011, 1)',
+                    'bit-test(0b1100, 1)',
+                ],
+            },
         },
     };
 
@@ -1857,6 +2018,23 @@ var Playground = (function (exports) {
                 }, {});
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Collection',
+                returns: { type: 'collection' },
+                args: {
+                    a: { type: 'collection' },
+                    b: { type: 'function' },
+                    coll: { type: 'collection' },
+                    fun: { type: 'function' },
+                },
+                variants: [{ argumentNames: ['coll', 'fun'] }],
+                description: 'Creates a new collection with all elements that pass the test implemented by $fun.',
+                examples: [
+                    "\nfilter(\n  [\"Albert\", \"Mojir\", 160, [1, 2]],\n  string?\n)",
+                    "\nfilter(\n  [5, 10, 15, 20],\n  -> $ > 10\n)",
+                    "\nfilter(\n  { a: 1, b: 2 },\n  odd?\n)",
+                ],
+            },
         },
         'filteri': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -1886,6 +2064,24 @@ var Playground = (function (exports) {
                 }, {});
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Collection',
+                returns: { type: 'collection' },
+                args: {
+                    a: { type: 'collection' },
+                    b: {
+                        type: 'function',
+                        description: 'The function to call for each element in the collection. The function should take two arguments: the element itself and the index.',
+                    },
+                },
+                variants: [{ argumentNames: ['a', 'b'] }],
+                description: 'Creates a new collection with all elements that pass the test implemented by $b. The function is called for each element in the collection, and it should take two arguments: the element itself and the index.',
+                examples: [
+                    'filteri([1, 2, 3], (x, i) -> i % 2 == 0)',
+                    'filteri([1, 2, 3], (x, i) -> x % 2 == 0)',
+                    'filteri([1, 2, 3], (x, i) -> x + i > 3)',
+                ],
+            },
         },
         'map': {
             evaluate: function (params, sourceCodeInfo, contextStack, _a) {
@@ -1928,6 +2124,27 @@ var Playground = (function (exports) {
                 return mapped.join('');
             },
             arity: { min: 2 },
+            docs: {
+                category: 'Collection',
+                returns: { type: 'collection' },
+                args: {
+                    a: { type: 'collection' },
+                    b: { type: 'function' },
+                    colls: { type: 'collection', rest: true, description: 'At least one.' },
+                    fun: { type: 'function' },
+                },
+                variants: [{ argumentNames: ['colls', 'fun'] }],
+                description: 'Creates a new collection populated with the results of calling $fun on every element in $colls.',
+                examples: [
+                    '[1, 2, 3] map -',
+                    '[1, 2, 3] map -> -($)',
+                    'map(["Albert", "Mojir", 42], str)',
+                    'map([1, 2, 3], inc)',
+                    'map([1, 2, 3], [1, 10, 100], *)',
+                    'map({ a: 1, b: 2 }, inc)',
+                    'map({ a: 1, b: 2 }, { a: 10, b: 20 }, +)',
+                ],
+            },
         },
         'mapi': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -1952,6 +2169,26 @@ var Playground = (function (exports) {
                 }, {});
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Collection',
+                returns: { type: 'collection' },
+                args: {
+                    a: { type: 'collection' },
+                    b: {
+                        type: 'function',
+                        description: 'The function to call for each element in the collection. The function should take two arguments: the element itself and the index.',
+                    },
+                },
+                variants: [{ argumentNames: ['a', 'b'] }],
+                description: 'Creates a new collection populated with the results of calling $b on every element in $a. The function is called for each element in the collection, and it should take two arguments: the element itself and the index.',
+                examples: [
+                    'mapi([1, 2, 3], (x, i) -> x + i)',
+                    'mapi([1, 2, 3], (x, i) -> x * i)',
+                    'mapi([1, 2, 3], (x, i) -> x - i)',
+                    'mapi([1, 2, 3], (x, i) -> x / i)',
+                    'mapi([1, 2, 3], (x, i) -> x % inc(i))',
+                ],
+            },
         },
         'reduce': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -1985,6 +2222,23 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(3),
+            docs: {
+                category: 'Collection',
+                returns: { type: 'any' },
+                args: {
+                    fun: { type: 'function' },
+                    coll: { type: 'collection' },
+                    initial: { type: 'any' },
+                },
+                variants: [{ argumentNames: ['coll', 'fun', 'initial'] }],
+                description: 'Runs $fun function on each element of the $coll, passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $coll is a single value.',
+                examples: [
+                    'reduce([1, 2, 3], +, 0)',
+                    'reduce([], +, 0)',
+                    'reduce({ a: 1, b: 2 }, +, 0)',
+                    "\nreduce(\n  [1, 2, 3, 4, 5, 6, 7, 8, 9],\n  (result, value) -> result + (even?(value) ? value : 0),\n  0)",
+                ],
+            },
         },
         'reducei': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2018,6 +2272,28 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(3),
+            docs: {
+                category: 'Collection',
+                returns: { type: 'any' },
+                args: {
+                    coll: { type: 'collection' },
+                    fun: {
+                        type: 'function',
+                        description: 'The function to call for each element in the collection. The function should take three arguments: the accumulator, the element itself, and the index.',
+                    },
+                    initial: {
+                        type: 'any',
+                        description: 'The initial value to use as the accumulator.',
+                    },
+                },
+                variants: [{ argumentNames: ['coll', 'fun', 'initial'] }],
+                description: 'Runs $fun function on each element of the $coll, passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $coll is a single value. The function is called for each element in the collection, and it should take three arguments: the accumulator, the element itself, and the index.',
+                examples: [
+                    'reducei([1, 2, 3], (acc, x, i) -> acc + x + i, 0)',
+                    'reducei("Albert", (acc, x, i) -> acc ++ x ++ i, "")',
+                    'reducei({ a: 1, b: 2 }, -> $1 ++ $3, "")',
+                ],
+            },
         },
         'reduce-right': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2050,6 +2326,21 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(3),
+            docs: {
+                category: 'Collection',
+                returns: { type: 'any' },
+                args: {
+                    fun: { type: 'function' },
+                    coll: { type: 'collection' },
+                    initial: { type: 'any' },
+                },
+                variants: [{ argumentNames: ['coll', 'fun', 'initial'] }],
+                description: 'Runs $fun function on each element of the $coll (starting from the last item), passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $coll is a single value.',
+                examples: [
+                    'reduce-right(["A", "B", "C"], str, "")',
+                    'reduce-right({ a: 1, b: 2 }, +, 0)',
+                ],
+            },
         },
         'reducei-right': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2082,6 +2373,28 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(3),
+            docs: {
+                category: 'Collection',
+                returns: { type: 'any' },
+                args: {
+                    coll: { type: 'collection' },
+                    fun: {
+                        type: 'function',
+                        description: 'The function to call for each element in the collection. The function should take three arguments: the accumulator, the element itself, and the index.',
+                    },
+                    initial: {
+                        type: 'any',
+                        description: 'The initial value to use as the accumulator.',
+                    },
+                },
+                variants: [{ argumentNames: ['coll', 'fun', 'initial'] }],
+                description: 'Runs $fun function on each element of the $coll (starting from the last item), passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $coll is a single value. The function is called for each element in the collection, and it should take three arguments: the accumulator, the element itself, and the index.',
+                examples: [
+                    'reducei-right([1, 2, 3], (acc, x, i) -> acc + x + i, 0)',
+                    'reducei-right("Albert", (acc, x, i) -> acc ++ x ++ i, "")',
+                    'reducei-right({ a: 1, b: 2 }, -> $1 ++ $3, "")',
+                ],
+            },
         },
         'reductions': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2128,6 +2441,24 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(3),
+            docs: {
+                category: 'Collection',
+                returns: { type: 'any', array: true },
+                args: {
+                    fun: { type: 'function' },
+                    coll: { type: 'collection' },
+                    initial: { type: 'any' },
+                },
+                variants: [{ argumentNames: ['coll', 'fun', 'initial'] }],
+                description: 'Returns an array of the intermediate values of the reduction (see `reduce`) of $coll by $fun.',
+                examples: [
+                    'reductions([1, 2, 3], +, 0)',
+                    'reductions([1, 2, 3], +, 10)',
+                    'reductions([], +, 0)',
+                    'reductions({ a: 1, b: 2 }, +, 0)',
+                    "\nreductions(\n  [1, 2, 3, 4, 5, 6, 7, 8, 9],\n  (result, value) -> result + (even?(value) ? value : 0),\n  0\n)",
+                ],
+            },
         },
         'reductionsi': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2174,6 +2505,28 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(3),
+            docs: {
+                category: 'Collection',
+                returns: { type: 'any', array: true },
+                args: {
+                    coll: { type: 'collection' },
+                    fun: {
+                        type: 'function',
+                        description: 'The function to call for each element in the collection. The function should take three arguments: the accumulator, the element itself, and the index.',
+                    },
+                    initial: {
+                        type: 'any',
+                        description: 'The initial value to use as the accumulator.',
+                    },
+                },
+                variants: [{ argumentNames: ['coll', 'fun', 'initial'] }],
+                description: 'Returns an array of the intermediate values of the reduction (see `reduce`) of $coll by $fun. The function is called for each element in the collection, and it should take three arguments: the accumulator, the element itself, and the index.',
+                examples: [
+                    'reductionsi([1, 2, 3], (acc, x, i) -> acc + x + i, 0)',
+                    'reductionsi("Albert", (acc, x, i) -> acc ++ x ++ i, "")',
+                    'reductionsi({ a: 1, b: 2 }, -> $1 ++ $3, "")',
+                ],
+            },
         },
         'get': {
             evaluate: function (params, sourceCodeInfo) {
@@ -2187,6 +2540,33 @@ var Playground = (function (exports) {
                 return result === undefined ? defaultValue : result;
             },
             arity: { min: 2, max: 3 },
+            docs: {
+                category: 'Collection',
+                returns: { type: 'any' },
+                args: {
+                    'a': { type: 'collection' },
+                    'b': { type: ['string', 'integer'] },
+                    'not-found': { type: 'any', description: 'Default value to return if $b is not found.' },
+                },
+                variants: [
+                    { argumentNames: ['a', 'b'] },
+                    { argumentNames: ['a', 'b', 'not-found'] },
+                ],
+                description: 'Returns value in $a mapped at $b.',
+                examples: [
+                    '[1, 2, 3] get 1',
+                    '{ a: 1 } get "a"',
+                    '"Albert" get "3"',
+                    "\nget(\n  [1, 2, 3],\n  1, // Optional comma after last argument\n)",
+                    "\nget(\n  [],\n  1\n)",
+                    "\nget(\n  [],\n  1,\n  \"default\"\n)",
+                    "\nget(\n  { a: 1 },\n  \"a\"\n)",
+                    "\nget(\n  { a: 1 },\n  \"b\"\n)",
+                    "\nget(\n  { a: 1 },\n  \"b\",\n  \"default\"\n)",
+                    "\nget(\n  null,\n  \"a\"\n)",
+                    "\nget(\n  null,\n  \"b\",\n  \"default\"\n)",
+                ],
+            },
         },
         'get-in': {
             evaluate: function (params, sourceCodeInfo) {
@@ -2222,6 +2602,25 @@ var Playground = (function (exports) {
                 return coll;
             },
             arity: { min: 2, max: 3 },
+            docs: {
+                category: 'Collection',
+                returns: { type: 'any' },
+                args: {
+                    'a': { type: 'collection' },
+                    'b': { type: 'array' },
+                    'not-found': { type: 'any' },
+                },
+                variants: [
+                    { argumentNames: ['a', 'b'] },
+                    { argumentNames: ['a', 'b', 'not-found'] },
+                ],
+                description: 'Returns the value in a nested collection, where $b is an array of keys. Returns $not-found if the key is not present. If $not-found is not set, `null` is returned.',
+                examples: [
+                    "\nget-in(\n  [[1, 2, 3], [4, { a: \"Kalle\" }, 6]],\n  [1, 1, \"a\", 0]\n)",
+                    "\nget-in(\n  [[1, 2, 3], [4, { a: \"Kalle\" }, 6]],\n  [1, 1, \"b\", 0]\n)",
+                    "\nget-in(\n  [[1, 2, 3], [4, { a: \"Kalle\" }, 6]],\n  [1, 1, \"b\", 0],\n  \"Lisa\"\n)",
+                ],
+            },
         },
         'count': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2236,6 +2635,23 @@ var Playground = (function (exports) {
                 return Object.keys(coll).length;
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Collection',
+                returns: { type: 'number' },
+                args: {
+                    coll: { type: ['collection', 'null'] },
+                },
+                variants: [{ argumentNames: ['coll'] }],
+                description: 'Returns number of elements in $coll.',
+                examples: [
+                    'count([1, 2, 3])',
+                    'count([])',
+                    'count({ a: 1 })',
+                    'count("")',
+                    'count("Albert")',
+                    'count(null)',
+                ],
+            },
         },
         'contains?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2255,6 +2671,26 @@ var Playground = (function (exports) {
                 return key in coll;
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Collection',
+                returns: { type: 'boolean' },
+                args: {
+                    a: { type: ['collection', 'null'] },
+                    b: { type: ['string', 'integer'] },
+                },
+                variants: [{ argumentNames: ['a', 'b'] }],
+                description: 'Returns `true` if $a contains $b, otherwise returns `false`. For strings, it checks if substring is included.',
+                examples: [
+                    '[1, 2, 3] contains? 1',
+                    'null contains? 1',
+                    '{ a: 1, b: 2 } contains? "a"',
+                    "\ncontains?(\n  [],\n  1\n)",
+                    "\ncontains?(\n  [1],\n  1\n)",
+                    "\ncontains?(\n  [1, 2, 3],\n  1\n)",
+                    "\ncontains?(\n  {},\n  \"a\"\n)",
+                    "\ncontains?(\n  { a: 1, b: 2 },\n  \"a\"\n)",
+                ],
+            },
         },
         'assoc': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2265,6 +2701,28 @@ var Playground = (function (exports) {
                 return assoc(coll, key, value, sourceCodeInfo);
             },
             arity: toFixedArity(3),
+            docs: {
+                category: 'Collection',
+                returns: { type: 'collection' },
+                args: {
+                    coll: { type: 'collection' },
+                    key: { type: ['string', 'number'] },
+                    value: { type: 'any' },
+                    kvs: { type: 'any', description: 'Key-value pairs to associate.', rest: true },
+                },
+                variants: [
+                    { argumentNames: ['coll', 'key', 'value'] },
+                    { argumentNames: ['coll', 'key', 'value', 'kvs'] },
+                ],
+                description: "\nAdd or replace the value of element $key to $value in $coll. Repeated for all key-value pairs in $kvs.\nIf $coll is an 'array', $key must be `number` satisfying `0 <=` $key `<= length`.",
+                examples: [
+                    "\nassoc(\n  [1, 2, 3],\n  1,\n  \"Two\"\n)",
+                    "\nassoc(\n  [1, 2, 3],\n  3,\n  \"Four\"\n)",
+                    "\nassoc(\n  { a: 1, b: 2 },\n  \"a\",\n  \"One\")",
+                    "\nassoc(\n  { a: 1, b: 2 },\n  \"c\",\n  \"Three\")",
+                    "\nassoc(\n  \"Albert\",\n  6,\n  \"a\")",
+                ],
+            },
         },
         'assoc-in': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2290,6 +2748,22 @@ var Playground = (function (exports) {
                 return coll;
             },
             arity: toFixedArity(3),
+            docs: {
+                category: 'Collection',
+                returns: { type: 'collection' },
+                args: {
+                    coll: { type: 'collection' },
+                    ks: { type: ['number', 'string'], array: true },
+                    value: { type: 'any' },
+                },
+                variants: [{ argumentNames: ['coll', 'ks', 'value'] }],
+                description: "\nAssociates a value in the nested collection $coll, where $ks is an array of keys and $value is the new value.\n\nIf any levels do not exist, objects will be created - and the corresponding keys must be of type string.",
+                examples: [
+                    "\nassoc-in(\n  {},\n  [\"a\", \"b\", \"c\"],\n  \"Albert\"\n)",
+                    "\nassoc-in(\n  [1, 2, [1, 2, 3]],\n  [2, 1],\n  \"Albert\"\n)",
+                    "\nassoc-in(\n  [1, 2, { name: \"albert\" }],\n  [2, \"name\", 0],\n  \"A\"\n)",
+                ],
+            },
         },
         'update': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2301,6 +2775,25 @@ var Playground = (function (exports) {
                 return update(coll, key, fn, params, contextStack, executeFunction, sourceCodeInfo);
             },
             arity: { min: 3 },
+            docs: {
+                category: 'Collection',
+                returns: { type: 'collection' },
+                args: {
+                    'coll': { type: 'collection' },
+                    'key': { type: ['string', 'number'] },
+                    'fun': { type: 'function' },
+                    'fun-args': { type: 'any', rest: true },
+                },
+                variants: [
+                    { argumentNames: ['coll', 'value', 'fun'] },
+                    { argumentNames: ['coll', 'value', 'fun', 'fun-args'] },
+                ],
+                description: "\nUpdates a value in the $coll collection, where $key is a key. $fun is a function\nthat will take the old value and any supplied $fun-args and\nreturn the new value.\nIf the key does not exist, `null` is passed as the old value.",
+                examples: [
+                    "\nlet x = { a: 1, b: 2 };\nupdate(x, \"a\", inc)",
+                    "\nlet x = { a: 1, b: 2 };\nupdate(\n  x,\n  \"c\",\n  val -> null?(val) ? 0 : inc(val)\n)",
+                ],
+            },
         },
         'update-in': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2327,6 +2820,27 @@ var Playground = (function (exports) {
                 return coll;
             },
             arity: { min: 3 },
+            docs: {
+                category: 'Collection',
+                returns: { type: 'collection' },
+                args: {
+                    'coll': { type: 'collection' },
+                    'ks': { type: 'array' },
+                    'fun': { type: 'function' },
+                    'fun-args': { type: 'any', rest: true },
+                },
+                variants: [
+                    { argumentNames: ['coll', 'ks', 'fun'] },
+                    { argumentNames: ['coll', 'ks', 'fun', 'fun-args'] },
+                ],
+                description: "Updates a value in the $coll collection, where $ks is an array of\nkeys and $fun is a function that will take the old value and\nany supplied $fun-args and return the new value. If any levels do not exist,\nobjects will be created - and the corresponding keys must be of type string.",
+                examples: [
+                    "\nupdate-in(\n  { a: [1, 2, 3] },\n  [\"a\", 1],\n  -> null?($) ? 0 : inc($)\n)",
+                    "\nupdate-in(\n  { a: { foo: \"bar\"} },\n  [\"a\", \"foo\"],\n  -> null?($) ? \"?\" : \"!\"\n)",
+                    "\nupdate-in(\n  { a: { foo: \"bar\"} },\n  [\"a\", \"baz\"],\n  -> null?($) ? \"?\" : \"!\"\n)",
+                    "\nupdate-in(\n  { a: [1, 2, 3] },\n  [\"a\", 1],\n  *,\n  10,\n  10,\n  10,\n)",
+                ],
+            },
         },
         '++': {
             evaluate: function (params, sourceCodeInfo) {
@@ -2353,6 +2867,34 @@ var Playground = (function (exports) {
                 }
             },
             arity: { min: 1 },
+            docs: {
+                category: 'Collection',
+                returns: { type: 'collection' },
+                args: {
+                    a: { type: 'collection' },
+                    b: { type: 'collection' },
+                    colls: { type: 'collection', rest: true },
+                },
+                variants: [
+                    { argumentNames: ['a'] },
+                    { argumentNames: ['a', 'colls'] },
+                ],
+                description: 'Concatenates collections into one collection.',
+                examples: [
+                    '"Albert" ++ " " ++ "Mojir"',
+                    '"Albert" ++ "Mojir"',
+                    '++("Albert", "-", "Mojir")',
+                    '++("Albert")',
+                    '++("A", "l", "b", "e", "r", "t")',
+                    '++([1, 2], [3, 4])',
+                    '++([], [3, 4])',
+                    '++([1, 2], [])',
+                    '++([1, 2], [3, 4], [5, 6])',
+                    '++([])',
+                    '++({ a: 1, b: 2 }, { b: 1, c: 2 })',
+                    '++({}, { a: 1 })',
+                ],
+            },
         },
         'not-empty': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2367,6 +2909,24 @@ var Playground = (function (exports) {
                 return Object.keys(coll).length > 0 ? coll : null;
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Collection',
+                returns: { type: 'boolean' },
+                args: {
+                    coll: { type: ['collection', 'null'] },
+                },
+                variants: [{ argumentNames: ['coll'] }],
+                description: 'Returns `null` if $coll is empty or `null`, otherwise $coll.',
+                examples: [
+                    'not-empty([])',
+                    'not-empty([1, 2, 3])',
+                    'not-empty({})',
+                    'not-empty({ a: 2 })',
+                    'not-empty("")',
+                    'not-empty("Albert")',
+                    'not-empty(null)',
+                ],
+            },
         },
         'every?': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2381,6 +2941,27 @@ var Playground = (function (exports) {
                 return Object.entries(coll).every(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Collection',
+                returns: { type: 'boolean' },
+                args: {
+                    a: { type: 'collection' },
+                    b: { type: 'function' },
+                },
+                variants: [{ argumentNames: ['a', 'b'] }],
+                description: 'Returns `true` if all entries in $a pass the test implemented by $b, otherwise returns `false`.',
+                examples: [
+                    '[1, 2, 3] every? number?',
+                    '[1, 2, 3] every? even?',
+                    "\nevery?(\n  [\"Albert\", \"Mojir\", 160, [1, 2]],\n  string?,\n)",
+                    "\nevery?(\n  [50, 100, 150, 200],\n  -> $ > 10,\n)",
+                    "\nevery?(\n  [],\n  number?\n)",
+                    "\nevery?(\n  \"\",\n  number?\n)",
+                    "\nevery?(\n  {},\n  number?\n)",
+                    "\nevery?(\n  { a: 2, b: 4},\n  -> even?(second($))\n)",
+                    "\nevery?(\n  { a: 2, b: 3 },\n  -> even?(second($))\n)",
+                ],
+            },
         },
         'any?': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2395,6 +2976,25 @@ var Playground = (function (exports) {
                 return Object.entries(coll).some(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Collection',
+                returns: { type: 'boolean' },
+                args: {
+                    a: { type: 'collection' },
+                    b: { type: 'function' },
+                },
+                variants: [{ argumentNames: ['a', 'b'] }],
+                description: 'Returns `true` if any element in $a pass the test implemented by $b, otherwise returns `false`.',
+                examples: [
+                    "\nany?(\n  [\"Albert\", \"Mojir\", 160, [1, 2]],\n  string?\n)",
+                    "\nany?(\n  [50, 100, 150, 200],\n  x -> x > 10\n)",
+                    "\nany?(\n  [],\n  number?\n)",
+                    "\nany?(\n  \"\",\n  number?\n)",
+                    "\nany?(\n  {},\n  number?\n)",
+                    "\nany?(\n  { a: 2, b: 3 },\n  -> even?(second($))\n)",
+                    "\nany?(\n  { a: 1, b: 3 },\n  -> even?(second($))\n)",
+                ],
+            },
         },
         'not-any?': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2409,6 +3009,25 @@ var Playground = (function (exports) {
                 return !Object.entries(coll).some(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Collection',
+                returns: { type: 'boolean' },
+                args: {
+                    a: { type: 'collection' },
+                    b: { type: 'function' },
+                },
+                variants: [{ argumentNames: ['a', 'b'] }],
+                description: 'Returns `false` if any element in $a pass the test implemented by $b, otherwise returns `true`.',
+                examples: [
+                    "\nnot-any?(\n  [\"Albert\", \"Mojir\", 160, [1, 2]],\n  string?\n)",
+                    "\nnot-any?(\n  [50, 100, 150, 200],\n  x -> x > 10\n)",
+                    "\nnot-any?(\n  [],\n  number?\n)",
+                    "\nnot-any?(\n  \"\",\n  number?\n)",
+                    "\nnot-any?(\n  {},\n  number?\n)",
+                    "\nnot-any?(\n  { a: 2, b: 3 },\n  -> even?(second($))\n)",
+                    "\nnot-any?(\n  { a: 1, b: 3 },\n  -> even?(second($))\n)",
+                ],
+            },
         },
         'not-every?': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2423,6 +3042,25 @@ var Playground = (function (exports) {
                 return !Object.entries(coll).every(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Collection',
+                returns: { type: 'boolean' },
+                args: {
+                    a: { type: 'collection' },
+                    b: { type: 'function' },
+                },
+                variants: [{ argumentNames: ['a', 'b'] }],
+                description: 'Returns `true` if at least one element in $a does not pass the test implemented by $b, otherwise returns `false`.',
+                examples: [
+                    "\nnot-every?(\n  [\"Albert\", \"Mojir\", 160, [1, 2]],\n  string?\n)",
+                    "\nnot-every?(\n  [50, 100, 150, 200],\n  x -> x > 10\n)",
+                    "\nnot-every?(\n  [],\n  number?\n)",
+                    "\nnot-every?(\n  \"\",\n  number?\n)",
+                    "\nnot-every?(\n  {},\n  number?\n)",
+                    "\nnot-every?(\n  { a: 2, b: 4 },\n  -> even?(second($))\n)",
+                    "\nnot-every?(\n  { a: 2, b: 3 },\n  -> even?(second($))\n)",
+                ],
+            },
         },
     };
 
@@ -2464,6 +3102,28 @@ var Playground = (function (exports) {
                 return result;
             },
             arity: { min: 1, max: 3 },
+            docs: {
+                category: 'Array',
+                returns: { type: 'number', array: true },
+                args: {
+                    a: { type: 'number' },
+                    b: { type: 'number' },
+                    step: { type: 'number' },
+                },
+                variants: [
+                    { argumentNames: ['b'] },
+                    { argumentNames: ['a', 'b'] },
+                    { argumentNames: ['a', 'b', 'step'] },
+                ],
+                description: "$range creates an array with a range of numbers from $a to $b (exclusive), by $step.\n\n$a defaults to 0.\n$step defaults to 1.",
+                examples: [
+                    'range(4)',
+                    'range(1, 4)',
+                    '1 range 10',
+                    'range(0.4, 4.9)',
+                    "\nrange(\n  0.25, // start value\n  1,    // end value (exclusive)\n  0.25, // step value\n)",
+                ],
+            },
         },
         'repeat': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2475,6 +3135,21 @@ var Playground = (function (exports) {
                 return result;
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Array',
+                returns: { type: 'any', array: true },
+                args: {
+                    a: { type: 'any' },
+                    b: { type: 'integer' },
+                },
+                variants: [{ argumentNames: ['a', 'b'] }],
+                description: 'Returns an array with $a repeated $b times.',
+                examples: [
+                    'repeat(10, 3)',
+                    'repeat(10, 0)',
+                    '"Albert" repeat 5',
+                ],
+            },
         },
         'flatten': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2486,6 +3161,20 @@ var Playground = (function (exports) {
                 return seq.flat(actualDepth);
             },
             arity: { min: 1, max: 2 },
+            docs: {
+                category: 'Array',
+                returns: { type: 'any', array: true },
+                args: {
+                    x: { type: ['array', 'any'], description: 'If $x is not an array, `[ ]` is returned.' },
+                },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'Takes a nested array $x and flattens it.',
+                examples: [
+                    'flatten([1, 2, [3, 4], 5])',
+                    "\nlet foo = \"bar\";\nflatten([\n  1,\n  \" 2 A \",\n  [foo, [4, [\"ABC\"]]],\n  6,\n])",
+                ],
+                hideOperatorForm: true,
+            },
         },
         'mapcat': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2496,6 +3185,25 @@ var Playground = (function (exports) {
                 return arr.map(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); }).flat(1);
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Array',
+                returns: { type: 'collection' },
+                args: {
+                    a: { type: 'collection' },
+                    b: { type: 'function' },
+                    colls: { type: 'collection', array: true },
+                    fun: { type: 'function' },
+                },
+                variants: [{ argumentNames: ['colls', 'fun'] }],
+                description: 'Returns the result of applying concat to the result of applying map to $fun and $colls.',
+                examples: [
+                    '[[3, 2, 1, 0], [6, 5, 4], [9, 8, 7]] mapcat reverse',
+                    'mapcat([[3, 2, 1, 0], [6, 5, 4], [9, 8, 7]], reverse)',
+                    '[[3, 2, 1, 0,], [6, 5, 4,], [9, 8, 7]] mapcat reverse',
+                    "\nlet foo = (n) -> {\n  [n - 1, n, n + 1]\n};\n[1, 2, 3] mapcat foo",
+                    "\nmapcat(\n  [[1, 2], [2, 2], [2, 3]],\n  -> $ remove even?\n)",
+                ],
+            },
         },
         'moving-fn': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2513,6 +3221,22 @@ var Playground = (function (exports) {
                 return result;
             },
             arity: toFixedArity(3),
+            docs: {
+                category: 'Array',
+                returns: { type: 'array' },
+                args: {
+                    arr: { type: 'array' },
+                    windowSize: { type: 'number', description: 'The size of the moving window.' },
+                    fn: { type: 'function' },
+                },
+                variants: [{ argumentNames: ['arr', 'windowSize', 'fn'] }],
+                description: 'Returns the result of applying $fn to each moving window of size $windowSize in $arr.',
+                examples: [
+                    'let v = import("Vector"); moving-fn([1, 2, 3], 2, v.sum)',
+                    'let v = import("Vector"); moving-fn([1, 2, 3], 1, v.sum)',
+                    'let v = import("Vector"); moving-fn([1, 2, 3], 3, v.sum)',
+                ],
+            },
         },
         'running-fn': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2528,6 +3252,21 @@ var Playground = (function (exports) {
                 return result;
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Array',
+                returns: { type: 'array' },
+                args: {
+                    a: { type: 'array' },
+                    b: { type: 'function' },
+                },
+                variants: [{ argumentNames: ['a', 'b'] }],
+                description: 'Returns the result of applying $b to each element of $a.',
+                examples: [
+                    'let v = import("Vector"); running-fn([1, 2, 3], v.sum)',
+                    'let v = import("Vector"); running-fn([1, 2, 3], v.max)',
+                    'let v = import("Vector"); running-fn([1, 2, 3], v.min)',
+                ],
+            },
         },
     };
 
@@ -2549,6 +3288,36 @@ var Playground = (function (exports) {
                 }
             },
             arity: { min: 2, max: 3 },
+            docs: {
+                category: 'Sequence',
+                returns: { type: 'any' },
+                args: {
+                    'a': { type: 'sequence' },
+                    'b': { type: 'integer' },
+                    'seq': { type: ['sequence', 'null'] },
+                    'n': { type: 'integer' },
+                    'not-found': { type: 'any' },
+                },
+                variants: [
+                    { argumentNames: ['seq', 'n'] },
+                    { argumentNames: ['seq', 'n', 'not-found'] },
+                ],
+                description: 'Accesses element $n of $seq. Accessing out-of-bounds indices returns $not-found, if present, else `null`.',
+                examples: [
+                    '[1, 2, 3] nth 1',
+                    '"A string" nth 3',
+                    'nth([1, 2, 3], 1)',
+                    'nth([1, 2, 3], 3)',
+                    'nth([1, 2, 3], -1)',
+                    'nth([1, 2, 3], 3, 99)',
+                    'nth("A string", 1)',
+                    'nth("A string", 3)',
+                    'nth("A string", -3)',
+                    'nth("A string", 30, "X")',
+                    'nth(null, 1)',
+                    'nth(null, 1, "Default value")',
+                ],
+            },
         },
         'first': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2560,6 +3329,18 @@ var Playground = (function (exports) {
                 return result;
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Sequence',
+                returns: { type: 'any' },
+                args: { seq: { type: ['sequence', 'null'] } },
+                variants: [{ argumentNames: ['seq'] }],
+                description: 'Returns the first element of $seq. If $seq is empty or `null`, `null` is returned.',
+                examples: [
+                    'first(["Albert", "Mojir", 160, [1, 2]])',
+                    'first([])',
+                    'first(null)',
+                ],
+            },
         },
         'last': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2571,6 +3352,20 @@ var Playground = (function (exports) {
                 return result;
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Sequence',
+                returns: { type: 'any' },
+                args: { seq: { type: ['sequence', 'null'] } },
+                variants: [{ argumentNames: ['seq'] }],
+                description: 'Returns the last element of $seq. If $seq is empty, `null` is returned.',
+                examples: [
+                    'last(["Albert", "Mojir", 160, [1, 2]])',
+                    'last([1, 2])',
+                    'last([1])',
+                    'last([])',
+                    'last(null)',
+                ],
+            },
         },
         'pop': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2582,6 +3377,17 @@ var Playground = (function (exports) {
                 return seq.slice(0, seq.length - 1);
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Sequence',
+                returns: { type: ['sequence', 'null'], rest: true },
+                args: { seq: { type: 'sequence' } },
+                variants: [{ argumentNames: ['seq'] }],
+                description: 'Returns a copy of $seq with last element removed. If $seq is empty `null` is returned.',
+                examples: [
+                    'pop([1, 2, 3])',
+                    'pop([])',
+                ],
+            },
         },
         'position': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2601,6 +3407,24 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Sequence',
+                returns: { type: ['number', 'null'] },
+                args: {
+                    a: { type: 'sequence' },
+                    b: { type: 'function' },
+                    seq: { type: ['sequence', 'null'] },
+                    fun: { type: 'function' },
+                },
+                variants: [{ argumentNames: ['seq', 'fun'] }],
+                description: 'Returns the index of the first elements that passes the test implemented by $fun. If no element was found, `null` is returned.',
+                examples: [
+                    "\nposition(\n  [\"Albert\", \"Mojir\", 160, [1, 2]],\n  string?\n)",
+                    "\nposition(\n  [5, 10, 15, 20],\n  -> $ > 10\n)",
+                    "\nposition(\n  [5, 10, 15, 20],\n  -> $ > 100\n)",
+                    "\nposition(\n  null,\n  -> $ > 100\n)",
+                ],
+            },
         },
         'index-of': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2620,6 +3444,25 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Sequence',
+                returns: { type: ['number', 'null'] },
+                args: {
+                    a: { type: 'sequence' },
+                    b: { type: 'any' },
+                    seq: { type: ['sequence', 'null'] },
+                    x: { type: 'any' },
+                },
+                variants: [{ argumentNames: ['seq', 'x'] }],
+                description: 'Returns the index of $x in $seq. If element is not present in $seq `null` is returned.',
+                examples: [
+                    '[[1], [2], [1], [2]] index-of [1]',
+                    'index-of(["Albert", "Mojir", 160, [1, 2]], "Mojir")',
+                    'index-of([5, 10, 15, 20], 15)',
+                    'index-of([5, 10, 15, 20], 1)',
+                    'index-of(null, 1)',
+                ],
+            },
         },
         'last-index-of': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2639,6 +3482,25 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Sequence',
+                returns: { type: ['number', 'null'] },
+                args: {
+                    a: { type: 'sequence' },
+                    b: { type: 'any' },
+                    seq: { type: ['sequence', 'null'] },
+                    x: { type: 'any' },
+                },
+                variants: [{ argumentNames: ['seq', 'x'] }],
+                description: 'Returns the last index of $x in $seq. If element is not present in $seq `null` is returned.',
+                examples: [
+                    '[[1], [2], [1], [2]] last-index-of [1]',
+                    'last-index-of(["Albert", "Mojir", 160, [1, 2]], "Mojir")',
+                    'last-index-of([5, 10, 15, 20, 15], 15)',
+                    'last-index-of([5, 10, 15, 20], 1)',
+                    'last-index-of(null, 1)',
+                ],
+            },
         },
         'push': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2653,6 +3515,25 @@ var Playground = (function (exports) {
                 }
             },
             arity: { min: 2 },
+            docs: {
+                category: 'Sequence',
+                returns: { type: 'sequence' },
+                args: {
+                    a: { type: 'sequence' },
+                    b: { type: 'any' },
+                    seq: { type: 'sequence' },
+                    values: { type: 'any', rest: true, description: 'At least one.' },
+                },
+                variants: [{ argumentNames: ['seq', 'values'] }],
+                description: 'Returns copy of $seq with $values added to the end of it.',
+                examples: [
+                    '[1, 2, 3] push 4',
+                    '"Albert" push "!"',
+                    'push([1, 2, 3], 4)',
+                    'push([1, 2, 3], 4, 5, 6)',
+                    "\nlet l = [1, 2, 3];\npush(l, 4);\nl",
+                ],
+            },
         },
         'rest': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2666,6 +3547,21 @@ var Playground = (function (exports) {
                 return seq.substring(1);
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Sequence',
+                returns: { type: ['sequence', 'null'] },
+                args: { seq: { type: 'sequence' } },
+                variants: [{ argumentNames: ['seq'] }],
+                description: "If $seq is an array, returns a new array with all but the first element from $seq.\nIf $seq has less than two elements, an empty array is returned.\nFor string $seq returns all but the first characters in $seq.",
+                examples: [
+                    'rest(["Albert", "Mojir", 160, [1, 2]])',
+                    'rest(["Albert"])',
+                    'rest([])',
+                    'rest("Albert")',
+                    'rest("A",)',
+                    'rest("")',
+                ],
+            },
         },
         'next': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2681,6 +3577,21 @@ var Playground = (function (exports) {
                 return seq.substring(1);
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Sequence',
+                returns: { type: ['sequence', 'null'] },
+                args: { seq: { type: 'sequence' } },
+                variants: [{ argumentNames: ['seq'] }],
+                description: 'If $seq is an array, returns a new array with all but the first element from $seq. If $seq has less than two elements, `null` is returned. For string $seq returns all but the first characters in $seq. If length of string $seq is less than two, `null` is returned.',
+                examples: [
+                    'next(["Albert", "Mojir", 160, [1, 2]])',
+                    'next(["Albert"])',
+                    'next([])',
+                    'next("Albert")',
+                    'next("A",)',
+                    'next("")',
+                ],
+            },
         },
         'reverse': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2694,6 +3605,19 @@ var Playground = (function (exports) {
                 return seq.split('').reverse().join('');
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Sequence',
+                returns: { type: ['sequence', 'null'] },
+                args: { seq: { type: ['sequence', 'null'] } },
+                variants: [{ argumentNames: ['seq'] }],
+                description: 'If $seq is an array, creates a new array with the elements from $seq in reversed order. If $seq is a string, returns new reversed string.',
+                examples: [
+                    'reverse(["Albert", "Mojir", 160, [1, 2]])',
+                    'reverse([])',
+                    'reverse("Albert")',
+                    'reverse(null)',
+                ],
+            },
         },
         'second': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2704,6 +3628,19 @@ var Playground = (function (exports) {
                 return toAny(seq[1]);
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Sequence',
+                returns: { type: 'any' },
+                args: { seq: { type: ['sequence', 'null'] } },
+                variants: [{ argumentNames: ['seq'] }],
+                description: 'Returns the second element of $seq. If $seq has less than two elements or is `null`, `null` is returned.',
+                examples: [
+                    'second(["Albert", "Mojir", 160, [1, 2]])',
+                    'second([1])',
+                    'second([])',
+                    'second(null)',
+                ],
+            },
         },
         'shift': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2716,6 +3653,17 @@ var Playground = (function (exports) {
                 return copy;
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Sequence',
+                returns: { type: ['sequence', 'null'] },
+                args: { seq: { type: 'sequence' } },
+                variants: [{ argumentNames: ['seq'] }],
+                description: 'Returns a copy of $seq with first element removed. If $seq is empty `null` is returned.',
+                examples: [
+                    'shift([1, 2, 3])',
+                    'shift([])',
+                ],
+            },
         },
         'slice': {
             evaluate: function (params, sourceCodeInfo) {
@@ -2735,6 +3683,28 @@ var Playground = (function (exports) {
                 return seq.slice(from, to);
             },
             arity: { min: 2, max: 3 },
+            docs: {
+                category: 'Sequence',
+                returns: { type: 'sequence' },
+                args: {
+                    a: { type: 'sequence' },
+                    b: { type: 'integer' },
+                    seq: { type: 'sequence', rest: true },
+                    start: { type: 'integer', description: 'Defaults to `0`.' },
+                    stop: { type: 'integer', description: 'Defaults lenght of sequence + 1.' },
+                },
+                variants: [
+                    { argumentNames: ['seq'] },
+                    { argumentNames: ['seq', 'start'] },
+                    { argumentNames: ['seq', 'start', 'stop'] },
+                ],
+                description: 'Returns a copy of a portion of $seq from index $start (inclusive) to $stop (exclusive).',
+                examples: [
+                    '[1, 2, 3, 4, 5] slice 2',
+                    'slice([1, 2, 3, 4, 5], 2, 4)',
+                    'slice([1, 2, 3, 4, 5], 2)',
+                ],
+            },
         },
         'splice': {
             evaluate: function (params, sourceCodeInfo) {
@@ -2750,6 +3720,26 @@ var Playground = (function (exports) {
                 return "".concat(seq.substring(0, from)).concat(rest.join('')).concat(seq.substring(from + deleteCount));
             },
             arity: { min: 3 },
+            docs: {
+                category: 'Sequence',
+                returns: { type: 'sequence' },
+                args: {
+                    seq: { type: 'sequence', rest: true },
+                    start: { type: 'integer' },
+                    deleteCount: { type: 'integer' },
+                    items: { type: 'any', rest: true },
+                },
+                variants: [
+                    { argumentNames: ['seq', 'start', 'deleteCount'] },
+                    { argumentNames: ['seq', 'start', 'deleteCount', 'items'] },
+                ],
+                description: 'Returns a a spliced array. Removes $deleteCount elements from $seq starting at $start and replaces them with $items. If $start is negative, it is counting from the end of the array.',
+                examples: [
+                    'splice([1, 2, 3, 4, 5], 2, 2, "x")',
+                    'splice([1, 2, 3, 4, 5], -2, 1, "x")',
+                    'splice("Albert", 2, 2, "fo")',
+                ],
+            },
         },
         'some': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2767,6 +3757,25 @@ var Playground = (function (exports) {
                 return toAny(seq.find(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); }));
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Sequence',
+                returns: { type: 'any' },
+                args: {
+                    a: { type: 'sequence' },
+                    b: { type: 'function' },
+                    seq: { type: ['sequence', 'null'] },
+                    fun: { type: 'function' },
+                },
+                variants: [{ argumentNames: ['seq', 'fun'] }],
+                description: 'Returns the first element that passes the test implemented by $fun. I no element was found, `null` is returned.',
+                examples: [
+                    "\nsome(\n  [\"Albert\", \"Mojir\", 160, [1, 2]],\n  string?\n)",
+                    "\nsome(\n  [5, 10, 15, 20],\n  -> $ > 10\n)",
+                    "\nsome(\n  [1, 2, 3, 4],\n  -> $ > 10\n)",
+                    "\nsome(\n  [],\n  -> $ > 10\n)",
+                    "\nsome(\n  null,\n  -> $ > 10\n)",
+                ],
+            },
         },
         'sort': {
             evaluate: function (params, sourceCodeInfo, contextStack, _a) {
@@ -2809,6 +3818,27 @@ var Playground = (function (exports) {
                 return result;
             },
             arity: { min: 1, max: 2 },
+            docs: {
+                category: 'Sequence',
+                returns: { type: 'any', rest: true },
+                args: {
+                    a: { type: 'sequence' },
+                    b: { type: 'function' },
+                    seq: { type: 'sequence' },
+                    fun: { type: 'function' },
+                },
+                variants: [
+                    { argumentNames: ['seq'] },
+                    { argumentNames: ['seq', 'fun'] },
+                ],
+                description: 'Returns a new sequence with the elements from $seq sorted according to $fun. If no $fun is supplied, builtin `compare` will be used.',
+                examples: [
+                    '[3, 1, 2] sort (a, b) -> b - a',
+                    'sort([3, 1, 2])',
+                    "\nsort(\n  [3, 1, 2],\n  (a, b) -> cond case a < b then -1 case a > b then 1 case true then -1 end\n)",
+                    "\nsort(\n  [3, 1, 2],\n  (a, b) -> cond case a > b then -1 case a < b then 1 case true then -1 end\n)",
+                ],
+            },
         },
         'sort-by': {
             evaluate: function (params, sourceCodeInfo, contextStack, _a) {
@@ -2864,6 +3894,27 @@ var Playground = (function (exports) {
                 return result;
             },
             arity: { min: 2, max: 3 },
+            docs: {
+                category: 'Sequence',
+                returns: { type: 'any', rest: true },
+                args: {
+                    a: { type: 'sequence' },
+                    b: { type: 'function' },
+                    seq: { type: 'sequence' },
+                    keyfn: { type: 'function' },
+                    comparer: { type: 'function' },
+                },
+                variants: [
+                    { argumentNames: ['seq', 'keyfn'] },
+                    { argumentNames: ['seq', 'keyfn', 'comparer'] },
+                ],
+                description: 'Returns a sorted sequence of the items in $seq, where the sort order is determined by comparing `(keyfn item)`. If no $comparer is supplied, uses builtin `compare`.',
+                examples: [
+                    '["Albert", "Mojir", "Nina"] sort-by count',
+                    'sort-by(["Albert", "Mojir", "Nina"], count)',
+                    'sort-by("Albert", lower-case, -> $2 compare $1)',
+                ],
+            },
         },
         'take': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2874,6 +3925,25 @@ var Playground = (function (exports) {
                 return input.slice(0, num);
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Sequence',
+                returns: { type: 'sequence' },
+                args: {
+                    a: { type: 'sequence' },
+                    b: { type: 'integer' },
+                    n: { type: 'integer' },
+                    seq: { type: 'sequence' },
+                },
+                variants: [{ argumentNames: ['seq', 'n'] }],
+                description: 'Constructs a new array/string with the $n first elements from $seq.',
+                examples: [
+                    '[1, 2, 3, 4, 5] take 3',
+                    'take([1, 2, 3, 4, 5], 3)',
+                    'take([1, 2, 3, 4, 5], 0)',
+                    'take("Albert", 2)',
+                    'take("Albert", 50)',
+                ],
+            },
         },
         'take-last': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2885,6 +3955,23 @@ var Playground = (function (exports) {
                 return array.slice(from);
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Sequence',
+                returns: { type: 'sequence' },
+                args: {
+                    a: { type: 'sequence' },
+                    b: { type: 'integer' },
+                    n: { type: 'integer' },
+                    seq: { type: 'sequence' },
+                },
+                variants: [{ argumentNames: ['n', 'seq'] }],
+                description: 'Constructs a new array with the $n last elements from $seq.',
+                examples: [
+                    '[1, 2, 3, 4, 5] take-last 3',
+                    'take-last([1, 2, 3, 4, 5], 3)',
+                    'take-last([1, 2, 3, 4, 5], 0)',
+                ],
+            },
         },
         'take-while': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2913,6 +4000,22 @@ var Playground = (function (exports) {
                 return typeof seq === 'string' ? result.join('') : result;
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Sequence',
+                returns: { type: 'sequence' },
+                args: {
+                    a: { type: 'sequence' },
+                    b: { type: 'function' },
+                    seq: { type: 'sequence' },
+                    fun: { type: 'function' },
+                },
+                variants: [{ argumentNames: ['seq', 'fun'] }],
+                description: 'Returns the members of $seq in order, stopping before the first one for which `predicate` returns a falsy value.',
+                examples: [
+                    "\ntake-while(\n  [1, 2, 3, 2, 1],\n  -> $ < 3\n)",
+                    "\ntake-while(\n  [1, 2, 3, 2, 1],\n  -> $ > 3\n)",
+                ],
+            },
         },
         'drop': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2923,6 +4026,24 @@ var Playground = (function (exports) {
                 return input.slice(num);
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Sequence',
+                returns: { type: 'sequence' },
+                args: {
+                    a: { type: 'sequence' },
+                    b: { type: 'integer' },
+                    seq: { type: 'sequence' },
+                    n: { type: 'integer' },
+                },
+                variants: [{ argumentNames: ['seq', 'n'] }],
+                description: 'Constructs a new array/string with the $n first elements dropped from $seq.',
+                examples: [
+                    'drop([1, 2, 3, 4, 5], 3)',
+                    'drop([1, 2, 3, 4, 5], 0)',
+                    'drop("Albert", 2)',
+                    'drop("Albert", 50)',
+                ],
+            },
         },
         'drop-last': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2934,6 +4055,23 @@ var Playground = (function (exports) {
                 return array.slice(0, from);
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Sequence',
+                returns: { type: 'sequence' },
+                args: {
+                    a: { type: 'sequence' },
+                    b: { type: 'integer' },
+                    seq: { type: 'sequence' },
+                    n: { type: 'integer' },
+                },
+                variants: [{ argumentNames: ['seq', 'n'] }],
+                description: 'Constructs a new array with the $n last elements dropped from $seq.',
+                examples: [
+                    '[1, 2, 3, 4, 5] drop-last 3',
+                    'drop-last([1, 2, 3, 4, 5], 3)',
+                    'drop-last([1, 2, 3, 4, 5], 0)',
+                ],
+            },
         },
         'drop-while': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2950,6 +4088,22 @@ var Playground = (function (exports) {
                 return charArray.slice(from).join('');
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Sequence',
+                returns: { type: 'sequence' },
+                args: {
+                    a: { type: 'sequence' },
+                    b: { type: 'function' },
+                    seq: { type: 'sequence' },
+                    fun: { type: 'function' },
+                },
+                variants: [{ argumentNames: ['seq', 'fun'] }],
+                description: 'Returns the members of $seq in order, skipping the fist elements for witch the `predicate` returns a truethy value.',
+                examples: [
+                    "\ndrop-while(\n  [1, 2, 3, 2, 1],\n  -> $ < 3\n)",
+                    "\ndrop-while(\n  [1, 2, 3, 2, 1],\n  -> $ > 3\n)",
+                ],
+            },
         },
         'unshift': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2964,6 +4118,24 @@ var Playground = (function (exports) {
                 return copy;
             },
             arity: { min: 2 },
+            docs: {
+                category: 'Sequence',
+                returns: { type: 'sequence' },
+                args: {
+                    a: { type: 'sequence' },
+                    b: { type: 'any' },
+                    seq: { type: 'sequence' },
+                    values: { type: 'any', rest: true },
+                },
+                variants: [{ argumentNames: ['seq', 'values'] }],
+                description: 'Returns copy of $seq with $values added to the beginning.',
+                examples: [
+                    '[1, 2, 3] unshift 4',
+                    'unshift([1, 2, 3], 4)',
+                    'unshift([1, 2, 3], 4, 5, 6)',
+                    "\nlet l = [1, 2, 3];\nunshift(l, 4);\nl",
+                ],
+            },
         },
         'distinct': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2996,6 +4168,20 @@ var Playground = (function (exports) {
                 return Array.from(new Set(input.split(''))).join('');
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Sequence',
+                returns: { type: 'sequence' },
+                args: { seq: { type: 'sequence' } },
+                variants: [{ argumentNames: ['seq'] }],
+                description: 'Returns a copy of $seq with no duplicates.',
+                examples: [
+                    'distinct([[1], [2], [3], [1], [3], [5]])',
+                    'distinct([1, 2, 3, 1, 3, 5])',
+                    'distinct("Albert Mojir")',
+                    'distinct([])',
+                    'distinct("")',
+                ],
+            },
         },
         'remove': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -3011,6 +4197,23 @@ var Playground = (function (exports) {
                     .join('');
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Sequence',
+                returns: { type: 'sequence' },
+                args: {
+                    a: { type: 'sequence' },
+                    b: { type: 'function' },
+                    seq: { type: 'sequence' },
+                    fun: { type: 'function' },
+                },
+                variants: [{ argumentNames: ['seq', 'fun'] }],
+                description: 'Returns a new sequence of items in $seq for witch `pred(item)` returns a falsy value.',
+                examples: [
+                    '[1, 2, 3, 1, 3, 5] remove odd?',
+                    'remove([1, 2, 3, 1, 3, 5], even?)',
+                    'remove("Albert Mojir", -> "aoueiyAOUEIY" contains? $)',
+                ],
+            },
         },
         'remove-at': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3026,6 +4229,25 @@ var Playground = (function (exports) {
                 return "".concat(input.substring(0, at)).concat(input.substring(at + 1));
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Sequence',
+                returns: { type: 'sequence' },
+                args: {
+                    a: { type: 'sequence' },
+                    b: { type: 'integer' },
+                    seq: { type: 'sequence' },
+                    n: { type: 'number' },
+                },
+                variants: [{ argumentNames: ['seq', 'n'] }],
+                description: 'Returns a new sequence of all items in $seq except item at position $n. If $n is negative, it is counting from the end of the sequence.',
+                examples: [
+                    '[1, 2, 3, 1, 3, 5] remove-at 2',
+                    '"Albert" remove-at -2',
+                    'remove-at([1, 2, 3, 1, 3, 5], 0)',
+                    'remove-at([1, 2, 3, 1, 3, 5], -1)',
+                    'remove-at("Albert Mojir", 6)',
+                ],
+            },
         },
         'split-at': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3036,6 +4258,24 @@ var Playground = (function (exports) {
                 return [seq.slice(0, at), seq.slice(at)];
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Sequence',
+                returns: { type: 'sequence' },
+                args: {
+                    a: { type: 'sequence' },
+                    b: { type: 'integer' },
+                    seq: { type: 'sequence' },
+                    n: { type: 'number' },
+                },
+                variants: [{ argumentNames: ['seq', 'n'] }],
+                description: 'Returns a pair of sequence `[take(pos input), drop(pos input)]`.',
+                examples: [
+                    '[1, 2, 3, 4, 5] split-at 2',
+                    '"Albert" split-at -2',
+                    'split-at([1, 2, 3, 4, 5], -2)',
+                    'split-at("Albert", 2)',
+                ],
+            },
         },
         'split-with': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -3051,6 +4291,23 @@ var Playground = (function (exports) {
                 return [seq.slice(0, index), seq.slice(index)];
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Sequence',
+                returns: { type: 'sequence' },
+                args: {
+                    a: { type: 'sequence' },
+                    b: { type: 'function' },
+                    seq: { type: 'sequence' },
+                    fun: { type: 'function' },
+                },
+                variants: [{ argumentNames: ['seq', 'fun'] }],
+                description: 'Returns a pair of sequences `[take-while(input, fun), drop-while(input, fun)]`.',
+                examples: [
+                    '[1, 2, 3, 4, 5] split-with odd?',
+                    'split-with([1, 2, 3, 4, 5], -> $ > 3)',
+                    'split-with("Albert", -> $ <= "o")',
+                ],
+            },
         },
         'frequencies': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3067,6 +4324,17 @@ var Playground = (function (exports) {
                 }, {});
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Sequence',
+                returns: { type: 'object' },
+                args: { seq: { type: 'sequence' } },
+                variants: [{ argumentNames: ['seq'] }],
+                description: 'Returns an object from distinct items in $seq to the number of times they appear. Note that all items in $seq must be valid object keys i.e. strings.',
+                examples: [
+                    'frequencies(["Albert", "Mojir", "Nina", "Mojir"])',
+                    'frequencies("Pneumonoultramicroscopicsilicovolcanoconiosis")',
+                ],
+            },
         },
         'group-by': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -3085,6 +4353,23 @@ var Playground = (function (exports) {
                 }, {});
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Sequence',
+                returns: { type: 'object' },
+                args: {
+                    a: { type: 'sequence' },
+                    b: { type: 'function' },
+                    seq: { type: 'sequence' },
+                    fun: { type: 'function' },
+                },
+                variants: [{ argumentNames: ['seq', 'fun'] }],
+                description: 'Returns an object of the elements of $seq keyed by the result of $fun on each element. The value at each key will be an array of the corresponding elements.',
+                examples: [
+                    '[{ name: "Albert" }, { name: "Albert" }, { name: "Mojir" }] group-by "name"',
+                    'group-by([{name: "Albert"}, {name: "Albert"}, {name: "Mojir"}], "name")',
+                    'group-by("Albert Mojir", -> "aoueiAOUEI" contains? $ ? "vowel" : "other")',
+                ],
+            },
         },
         'partition': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3097,6 +4382,42 @@ var Playground = (function (exports) {
                 return partition(n, step, seq, pad, sourceCodeInfo);
             },
             arity: { min: 2, max: 4 },
+            docs: {
+                category: 'Sequence',
+                returns: { type: 'sequence' },
+                args: {
+                    a: { type: 'sequence' },
+                    b: { type: 'number' },
+                    seq: { type: 'sequence' },
+                    n: { type: 'number' },
+                    step: { type: 'number' },
+                    pad: { type: 'array' },
+                },
+                variants: [
+                    { argumentNames: ['seq', 'n'] },
+                    { argumentNames: ['seq', 'n', 'step'] },
+                    { argumentNames: ['seq', 'n', 'step', 'pad'] },
+                ],
+                description: 'Returns an array of sequences of $n items each, at offsets $step apart. If $step is not supplied, defaults to $n. If a $pad array is supplied, use its elements as necessary to complete last partition upto $n items. In case there are not enough padding elements, return a partition with less than $n items.',
+                examples: [
+                    'range(20) partition 4',
+                    'partition(range(20), 4)',
+                    'partition(range(22), 4)',
+                    'partition(range(20), 4, 6)',
+                    'partition(range(20), 4, 3)',
+                    'partition(range(20), 3, 6, ["a"])',
+                    'partition(range(20), 4, 6, ["a"])',
+                    'partition(range(20), 4, 6, ["a", "b", "c", "d"])',
+                    'partition(["a", "b", "c", "d", "e", "f"], 3, 1)',
+                    'partition([1, 2, 3, 4], 10)',
+                    'partition([1, 2, 3, 4], 10, 10)',
+                    'partition([1, 2, 3, 4], 10, 10, [])',
+                    'partition([1, 2, 3, 4], 10, 10, null)',
+                    'partition("superfragilistic", 5)',
+                    'partition("superfragilistic", 5, 5, null)',
+                    'let foo = [5, 6, 7, 8]; partition(foo, 2, 1, foo)',
+                ],
+            },
         },
         'partition-all': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3106,6 +4427,28 @@ var Playground = (function (exports) {
                 return partition(n, step, seq, [], sourceCodeInfo);
             },
             arity: { min: 2, max: 3 },
+            docs: {
+                category: 'Sequence',
+                returns: { type: 'sequence' },
+                args: {
+                    a: { type: 'sequence' },
+                    b: { type: 'number' },
+                    seq: { type: 'sequence' },
+                    n: { type: 'number' },
+                    step: { type: 'number' },
+                },
+                variants: [
+                    { argumentNames: ['seq', 'n'] },
+                    { argumentNames: ['seq', 'n', 'step'] },
+                ],
+                description: 'Returns an array of sequences like partition, but may include partitions with fewer than n items at the end.',
+                examples: [
+                    '[0, 1, 2, 3, 4, 5, 6, 7, 8, 9] partition-all 4',
+                    'partition-all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 4)',
+                    'partition([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 4)',
+                    'partition-all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 2, 4)',
+                ],
+            },
         },
         'partition-by': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -3127,6 +4470,24 @@ var Playground = (function (exports) {
                 return isStringSeq ? result.map(function (elem) { return elem.join(''); }) : result;
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Sequence',
+                returns: { type: 'sequence' },
+                args: {
+                    a: { type: 'sequence' },
+                    b: { type: 'function' },
+                    seq: { type: 'sequence' },
+                    fun: { type: 'function' },
+                },
+                variants: [{ argumentNames: ['seq', 'fun'] }],
+                description: 'Applies $fun to each value in $seq, splitting it each time $fun returns a new value. Returns an array of sequences.',
+                examples: [
+                    '[1, 2, 3, 4, 5] partition-by odd?',
+                    'partition-by([1, 2, 3, 4, 5], -> $ == 3)',
+                    'partition-by([1, 1, 1, 2, 2, 3, 3], odd?)',
+                    'partition-by("Leeeeeerrroyyy", identity)',
+                ],
+            },
         },
         'ends-with?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3139,6 +4500,26 @@ var Playground = (function (exports) {
                 return deepEqual(asAny(str.at(-1), sourceCodeInfo), asAny(search, sourceCodeInfo), sourceCodeInfo);
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Sequence',
+                returns: { type: 'boolean' },
+                args: {
+                    a: { type: 'sequence' },
+                    b: { type: 'sequence' },
+                    seq: { type: 'sequence' },
+                    suffix: { type: 'sequence' },
+                },
+                variants: [{ argumentNames: ['seq', 'suffix'] }],
+                description: 'Returns `true` if $seq ends with $suffix, otherwise `false`.',
+                examples: [
+                    '[[1], [2], [3], [4], [5]] starts-with? [5]',
+                    '[[1], [2], [3], [4], [5]] starts-with? 5',
+                    'ends-with?([1, 2, 3, 4, 5], 5)',
+                    'ends-with?([1, 2, 3, 4, 5], [5])',
+                    'ends-with?("Albert", "rt")',
+                    'ends-with?("Albert", "RT")',
+                ],
+            },
         },
         'starts-with?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3151,6 +4532,25 @@ var Playground = (function (exports) {
                 return deepEqual(asAny(seq[0], sourceCodeInfo), asAny(search, sourceCodeInfo), sourceCodeInfo);
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Sequence',
+                returns: { type: 'boolean' },
+                args: {
+                    a: { type: 'sequence' },
+                    b: { type: 'sequence' },
+                    seq: { type: 'sequence' },
+                    prefix: { type: 'sequence' },
+                },
+                variants: [{ argumentNames: ['seq', 'prefix'] }],
+                description: 'Returns `true` if $seq starts with $prefix, otherwise `false`.',
+                examples: [
+                    '[[1], [2], [3], [4], [5]] starts-with? [1]',
+                    'starts-with?([1, 2, 3, 4, 5], 1)',
+                    'starts-with?([1, 2, 3, 4, 5], [1])',
+                    'starts-with?("Albert", "Al")',
+                    'starts-with?("Albert", "al")',
+                ],
+            },
         },
         'interleave': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3187,6 +4587,28 @@ var Playground = (function (exports) {
                 return isStringSeq ? result.join('') : result;
             },
             arity: { min: 1 },
+            docs: {
+                category: 'Sequence',
+                returns: { type: 'sequence' },
+                args: {
+                    a: { type: 'sequence' },
+                    b: { type: 'sequence' },
+                    seqs: { type: 'sequence', rest: true },
+                },
+                variants: [{ argumentNames: ['seqs'] }],
+                description: 'Returns a sequence of the first item from each of the $seqs, then the second item from each of the $seqs, until all items from the shortest seq are exhausted.',
+                examples: [
+                    '[1, 2, 3] interleave [4, 5, 6]',
+                    '"Albert" interleave ".,.,.,"',
+                    'interleave([1, 2, 3], [4, 5, 6])',
+                    'interleave([1, 2, 3], [4, 5, 6], [7, 8, 9])',
+                    'interleave([1, 2, 3], [4, 5, 6], [7, 8])',
+                    'interleave([1, 2, 3], [4, 5, 6], [7])',
+                    'interleave([1, 2, 3], [4, 5, 6], [])',
+                    'interleave([1, 2, 3], [])',
+                    'interleave([])',
+                ],
+            },
         },
         'interpose': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3206,6 +4628,24 @@ var Playground = (function (exports) {
                 return result;
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Sequence',
+                returns: { type: 'sequence' },
+                args: {
+                    a: { type: 'sequence' },
+                    b: { type: 'any' },
+                    seq: { type: 'sequence' },
+                    separator: { type: 'any' },
+                },
+                variants: [{ argumentNames: ['seq', 'separator'] }],
+                description: 'Returns a sequence of the elements of $seq separated by $separator. If $seq is a string, the separator must be a string.',
+                examples: [
+                    '"Albert" interpose "-"',
+                    'interpose([1, 2, 3, 4, 5], "a")',
+                    'interpose(["Albert", "Mojir", "Nina"], ", ")',
+                    'interpose("Albert", ".")',
+                ],
+            },
         },
     };
     function partition(n, step, seq, pad, sourceCodeInfo) {
@@ -3349,6 +4789,22 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Math',
+                returns: { type: 'number' },
+                args: {
+                    x: { type: ['number', 'vector', 'matrix'] },
+                },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'The `inc` function increments its argument by 1, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it increases each element by 1 while preserving the original structure.',
+                examples: [
+                    'inc(0)',
+                    'inc(1)',
+                    'inc(100.1)',
+                    'inc([1, 2, 3])',
+                    'inc([[1, 2], [3, 4]])',
+                ],
+            },
         },
         'dec': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3366,6 +4822,22 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Math',
+                returns: { type: ['number', 'vector', 'matrix'] },
+                args: {
+                    x: { type: ['number', 'vector', 'matrix'] },
+                },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'The `dec` function decrements its argument by 1, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it decreases each element by 1 while preserving the original structure.',
+                examples: [
+                    'dec(0)',
+                    'dec(1)',
+                    'dec(100.1)',
+                    'dec([1, 2, 3])',
+                    'dec([[1, 2], [3, 4]])',
+                ],
+            },
         },
         '+': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3388,6 +4860,28 @@ var Playground = (function (exports) {
                 }
             },
             arity: {},
+            docs: {
+                category: 'Math',
+                returns: { type: ['number', 'vector', 'matrix'] },
+                args: {
+                    a: { type: ['number', 'vector', 'matrix'] },
+                    b: { type: ['number', 'vector', 'matrix'] },
+                    xs: { type: ['number', 'vector', 'matrix'], rest: true },
+                },
+                variants: [{ argumentNames: ['xs'] }],
+                description: 'The `+` function performs addition of numbers and element-wise addition of `vectors` and `matrices` of compatible dimensions, returning the same type as its inputs. When used with mixed types, it adds the scalar to each element of the collection.',
+                examples: [
+                    '1 + 2',
+                    '1 + 20 + 30',
+                    '+(1, 2, 3, 4)',
+                    '+()',
+                    '+(1)',
+                    '[1, 2, 3] + 2',
+                    '[1, 2, 3] + [4, 5, 6]',
+                    '[[1, 2, 3], [4, 5, 6]] + [[7, 8, 9], [10, 11, 12]]',
+                    '[[1, 2, 3], [4, 5, 6]] + 2',
+                ],
+            },
         },
         '*': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3410,6 +4904,29 @@ var Playground = (function (exports) {
                 }
             },
             arity: {},
+            docs: {
+                category: 'Math',
+                returns: { type: ['number', 'vector', 'matrix'] },
+                args: {
+                    a: { type: ['number', 'vector', 'matrix'] },
+                    b: { type: ['number', 'vector', 'matrix'] },
+                    xs: { type: ['number', 'vector', 'matrix'], rest: true },
+                },
+                variants: [{ argumentNames: ['xs'] }],
+                description: 'The `*` function performs multiplication of `numbers` and element-wise multiplication of `vectors` and `matrices` of compatible dimensions, returning the same type as its inputs. When used with mixed types, it multiplies each element of the collection by the scalar.',
+                examples: [
+                    '6 * 7',
+                    '-1 * 4',
+                    '*(4, 7)',
+                    '*(1, 2, 3, 4, 5)',
+                    '*()',
+                    '*(8)',
+                    '[1, 2, 3] * 2',
+                    '[1, 2, 3] * [4, 5, 6]',
+                    '[[1, 2, 3], [4, 5, 6]] * [[7, 8, 9], [10, 11, 12]]',
+                    '[[1, 2, 3], [4, 5, 6]] * 2',
+                ],
+            },
         },
         '/': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3438,6 +4955,29 @@ var Playground = (function (exports) {
                 }
             },
             arity: {},
+            docs: {
+                category: 'Math',
+                returns: { type: ['number', 'vector', 'matrix'] },
+                args: {
+                    a: { type: ['number', 'vector', 'matrix'] },
+                    b: { type: ['number', 'vector', 'matrix'] },
+                    xs: { type: ['number', 'vector', 'matrix'], rest: true },
+                },
+                variants: [{ argumentNames: ['xs'] }],
+                description: 'The `/` function performs division of `numbers` and element-wise division of `vectors` and `matrices` of compatible dimensions, returning the same type as its inputs. When used with mixed types, it divides each element of the collection by the scalar.',
+                examples: [
+                    '12 / 100',
+                    '-1 / 4',
+                    '/(7, 4)',
+                    '/(1, 2, 4, 8)',
+                    '/()',
+                    '/(8)',
+                    '[1, 2, 3] / 2',
+                    '[1, 2, 3] / [4, 5, 6]',
+                    '[[1, 2, 3], [4, 5, 6]] / [[7, 8, 9], [10, 11, 12]]',
+                    '[[1, 2, 3], [4, 5, 6]] / 2',
+                ],
+            },
         },
         '-': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3465,6 +5005,28 @@ var Playground = (function (exports) {
                 }
             },
             arity: {},
+            docs: {
+                category: 'Math',
+                returns: { type: ['number', 'vector', 'matrix'] },
+                args: {
+                    a: { type: ['number', 'vector', 'matrix'] },
+                    b: { type: ['number', 'vector', 'matrix'] },
+                    xs: { type: ['number', 'vector', 'matrix'], rest: true },
+                },
+                variants: [{ argumentNames: ['xs'] }],
+                description: 'Computes difference between first value and sum of the rest. When called with only one argument, it does negation.',
+                examples: [
+                    '50 - 8',
+                    '1 - 1 - 1',
+                    '-()',
+                    '-(4, 2)',
+                    '-(4, 3, 2, 1,)',
+                    '[1, 2, 3] - 2',
+                    '[1, 2, 3] - [4, 5, 6]',
+                    '[[1, 2, 3], [4, 5, 6]] - [[7, 8, 9], [10, 11, 12]]',
+                    '[[1, 2, 3], [4, 5, 6]] - 2',
+                ],
+            },
         },
         'quot': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3484,6 +5046,31 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Math',
+                returns: { type: ['number', 'vector', 'matrix'] },
+                args: {
+                    a: { type: ['number', 'vector', 'matrix'] },
+                    b: { type: ['number', 'vector', 'matrix'] },
+                },
+                variants: [{ argumentNames: ['a', 'b'] }],
+                description: 'The `quot` function performs integer division truncated toward zero, working on `numbers` and element-wise on `vectors` and `matrices` of compatible dimensions. When used with mixed types, it applies integer division between each element of the collection and the scalar.',
+                examples: [
+                    'quot(5, 3)',
+                    'quot(5.2, 3.1)',
+                    'quot(-5, 3)',
+                    '5 quot -3',
+                    '-5 quot -3',
+                    'quot(5, 0)',
+                    'quot(0, 5)',
+                    '[1, 2, 3] quot 2',
+                    '2 quot [1, 2, 3]',
+                    'quot([1, 2, 3], [4, 5, 6])',
+                    '[[1, 2, 3], [4, 5, 6]] quot [[7, 8, 9], [10, 11, 12]]',
+                    'quot([[1, 2, 3], [4, 5, 6]], 2)',
+                    '[[1, 2, 3], [4, 5, 6]] quot [[7, 8, 9], [10, 11, 12]]',
+                ],
+            },
         },
         'mod': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3511,6 +5098,28 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Math',
+                returns: { type: ['number', 'vector', 'matrix'] },
+                args: {
+                    a: { type: ['number', 'vector', 'matrix'] },
+                    b: { type: ['number', 'vector', 'matrix'] },
+                },
+                variants: [{ argumentNames: ['a', 'b'] }],
+                description: 'The `mod` function computes the modulo of division with the same sign as the divisor, working on `numbers` and element-wise on `vectors` and `matrices` of compatible dimensions. When used with mixed types, it applies the modulo operation between each element of the collection and the scalar.',
+                examples: [
+                    'mod(5, 3)',
+                    'mod(5.2, 3.1)',
+                    'mod(-5, 3)',
+                    '5 mod -3',
+                    '-5 mod -3',
+                    '[1, 2, 3] mod 2',
+                    '2 mod [1, 2, 3]',
+                    'mod([1, 2, 3], [4, 5, 6])',
+                    '[[1, 2, 3], [4, 5, 6]] mod [[7, 8, 9], [10, 11, 12]]',
+                    'mod([[1, 2, 3], [4, 5, 6]], 2)',
+                ],
+            },
         },
         '%': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3530,6 +5139,28 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Math',
+                returns: { type: ['number', 'vector', 'matrix'] },
+                args: {
+                    a: { type: ['number', 'vector', 'matrix'] },
+                    b: { type: ['number', 'vector', 'matrix'] },
+                },
+                variants: [{ argumentNames: ['a', 'b'] }],
+                description: 'The `%` function computes the remainder of division with the same sign as the dividend, working on `numbers` and element-wise on `vectors` and `matrices` of compatible dimensions. When used with mixed types, it applies the remainder operation between each element of the collection and the scalar.',
+                examples: [
+                    '5 % 3',
+                    '5.2 % 3.1',
+                    '-5 % 3',
+                    '%(5, -3)',
+                    '%(-5, -3)',
+                    '[1, 2, 3] % 2',
+                    '2 % [1, 2, 3]',
+                    '%([1, 2, 3], [4, 5, 6])',
+                    '[[1, 2, 3], [4, 5, 6]] % [[7, 8, 9], [10, 11, 12]]',
+                    '%([[1, 2, 3], [4, 5, 6]], 2)',
+                ],
+            },
         },
         'sqrt': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3547,6 +5178,25 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Math',
+                returns: { type: ['number', 'vector', 'matrix'] },
+                args: {
+                    x: { type: ['number', 'vector', 'matrix'] },
+                },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'The `sqrt` function calculates the square root of `numbers` and computes element-wise square roots of `vectors` and `matrices`. When applied to collections, it returns the square root of each element while preserving the original structure.',
+                examples: [
+                    'sqrt(0)',
+                    'sqrt(9)',
+                    'sqrt(2)',
+                    'sqrt(0)',
+                    'sqrt(9)',
+                    'sqrt(2)',
+                    'sqrt([1, 4, 9])',
+                    'sqrt([[1, 4], [9, 16]])',
+                ],
+            },
         },
         'cbrt': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3564,6 +5214,27 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Math',
+                returns: { type: ['number', 'vector', 'matrix'] },
+                args: {
+                    x: { type: ['number', 'vector', 'matrix'] },
+                },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'The `cbrt` function calculates the cube root of `numbers` and computes element-wise cube roots of `vectors` and `matrices`. When applied to collections, it returns the cube root of each element while preserving the original structure.',
+                examples: [
+                    'cbrt(0)',
+                    'cbrt(27)',
+                    'cbrt(2)',
+                    'cbrt(1)',
+                    'cbrt(0)',
+                    'cbrt(27)',
+                    'cbrt(2)',
+                    'cbrt(1)',
+                    'cbrt([1, 8, 27])',
+                    'cbrt([[1, 8], [27, 64]])',
+                ],
+            },
         },
         '^': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3583,6 +5254,28 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Math',
+                returns: { type: ['number', 'vector', 'matrix'] },
+                args: {
+                    a: { type: ['number', 'vector', 'matrix'] },
+                    b: { type: ['number', 'vector', 'matrix'] },
+                },
+                variants: [{ argumentNames: ['a', 'b'] }],
+                description: 'The ^ function computes exponentiation, raising the first argument to the power of the second, working on `numbers` and element-wise on `vectors` and `matrices` of compatible dimensions. When used with mixed types, it applies the power operation between each element of the collection and the scalar.',
+                examples: [
+                    '2 ^ 3',
+                    '2 ^ 0',
+                    '2 ^ -3',
+                    '^(-2, 3)',
+                    '^(-2, -3)',
+                    '[1, 2, 3] ^ 2',
+                    '2 ^ [1, 2, 3]',
+                    '^([1, 2, 3], [4, 5, 6])',
+                    '[[1, 2, 3], [4, 5, 6]] ^ [[7, 8, 9], [10, 11, 12]]',
+                    '^([[1, 2, 3], [4, 5, 6]], 2)',
+                ],
+            },
         },
         'round': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3622,6 +5315,33 @@ var Playground = (function (exports) {
                 }
             },
             arity: { min: 1, max: 2 },
+            docs: {
+                category: 'Math',
+                returns: { type: ['number', 'vector', 'matrix'] },
+                args: {
+                    a: { type: ['number', 'vector', 'matrix'] },
+                    b: { type: 'integer' },
+                },
+                variants: [
+                    { argumentNames: ['a'] },
+                    { argumentNames: ['a', 'b'] },
+                ],
+                description: 'The `round` function rounds a `number` to the nearest `integer` or to a specified number of `decimal` places, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it rounds each element while preserving the original structure.',
+                examples: [
+                    'round(2)',
+                    'round(2.49)',
+                    'round(2.5)',
+                    'round(-2.49)',
+                    'round(-2.5)',
+                    'round(-2.501)',
+                    'round(1.23456789, 4)',
+                    '1.123456789 round 2',
+                    'round([1.23456789, 2.3456789], 1)',
+                    '[1.23456789, 2.3456789] round 4',
+                    '[[1.23456789, 2.3456789], [3.456789, 4.56789]] round 4',
+                    'round([[1.23456789, 2.3456789], [3.456789, 4.56789]], 2)',
+                ],
+            },
         },
         'trunc': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3639,6 +5359,25 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Math',
+                returns: { type: ['integer', 'vector', 'matrix'] },
+                args: {
+                    x: { type: ['number', 'vector', 'matrix'] },
+                },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'The `trunc` function truncates `numbers` toward zero (removing decimal portions without rounding), working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it truncates each element while preserving the original structure.',
+                examples: [
+                    'trunc(2)',
+                    'trunc(2.49)',
+                    'trunc(2.5)',
+                    'trunc(-2.49)',
+                    'trunc(-2.5)',
+                    'trunc(-2.501)',
+                    'trunc([1.23456789, 2.3456789])',
+                    'trunc([[1.23456789, 2.3456789], [3.456789, 4.56789]])',
+                ],
+            },
         },
         'floor': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3656,6 +5395,25 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Math',
+                returns: { type: ['integer', 'vector', 'matrix'] },
+                args: {
+                    x: { type: ['number', 'vector', 'matrix'] },
+                },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'The `floor` function returns the largest `integer` less than or equal to a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the floor of each element while preserving the original structure.',
+                examples: [
+                    'floor(2)',
+                    'floor(2.49)',
+                    'floor(2.5)',
+                    'floor(-2.49)',
+                    'floor(-2.5)',
+                    'floor(-2.501)',
+                    'floor([1.23456789, 2.3456789])',
+                    'floor([[1.23456789, 2.3456789], [3.456789, 4.56789]])',
+                ],
+            },
         },
         'ceil': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3673,6 +5431,25 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Math',
+                returns: { type: ['integer', 'vector', 'matrix'] },
+                args: {
+                    x: { type: ['number', 'vector', 'matrix'] },
+                },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'The `ceil` function returns the smallest `integer` greater than or equal to a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the ceiling of each element while preserving the original structure.',
+                examples: [
+                    'ceil(2)',
+                    'ceil(2.49)',
+                    'ceil(2.5)',
+                    'ceil(-2.49)',
+                    'ceil(-2.5)',
+                    'ceil(-2.501)',
+                    'ceil([1.23456789, 2.3456789])',
+                    'ceil([[1.23456789, 2.3456789], [3.456789, 4.56789]])',
+                ],
+            },
         },
         'min': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3686,6 +5463,24 @@ var Playground = (function (exports) {
                 }, first);
             },
             arity: { min: 1 },
+            docs: {
+                category: 'Math',
+                returns: { type: 'number' },
+                args: {
+                    a: { type: 'number' },
+                    b: { type: 'number' },
+                    xs: { type: 'number', rest: true },
+                },
+                variants: [{ argumentNames: ['xs'] }],
+                description: 'Returns the smallest number of the arguments.',
+                examples: [
+                    '2 min 3',
+                    'min(2, 0, 1)',
+                    'min(2, -1, 1)',
+                    'min(2.5)',
+                    '12 min 14',
+                ],
+            },
         },
         'max': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3699,6 +5494,24 @@ var Playground = (function (exports) {
                 }, first);
             },
             arity: { min: 1 },
+            docs: {
+                category: 'Math',
+                returns: { type: 'number' },
+                args: {
+                    a: { type: 'number' },
+                    b: { type: 'number' },
+                    xs: { type: 'number', rest: true },
+                },
+                variants: [{ argumentNames: ['xs'] }],
+                description: 'Returns the largest number of the arguments.',
+                examples: [
+                    ' 2 max 3',
+                    'max(2, 0, 1)',
+                    'max(2, -1, 1)',
+                    'max(2, 0.5)',
+                    '4 max 2',
+                ],
+            },
         },
         'abs': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3716,6 +5529,22 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Math',
+                returns: { type: ['number', 'vector', 'matrix'] },
+                args: {
+                    x: { type: ['number', 'vector', 'matrix'] },
+                },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'The abs function returns the absolute value (magnitude) of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the absolute value of each element while preserving the original structure.',
+                examples: [
+                    'abs(-2.3)',
+                    'abs(0)',
+                    'abs(2.5)',
+                    'abs([1, -2, 3])',
+                    'abs([[1, -2], [3, -4]])',
+                ],
+            },
         },
         'sign': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3733,6 +5562,23 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Math',
+                returns: { type: ['number', 'vector', 'matrix'] },
+                args: {
+                    x: { type: ['number', 'vector', 'matrix'] },
+                },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'The `sign` function returns the `sign** of a **number` (-1 for negative, 0 for zero, 1 for positive), working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the sign of each element while preserving the original structure.',
+                examples: [
+                    'sign(-2.3)',
+                    'sign(-0)',
+                    'sign(0)',
+                    'sign(12312)',
+                    'sign([1, -2, 3])',
+                    'sign([[1, -2], [3, -4]])',
+                ],
+            },
         },
         'ln': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3750,6 +5596,22 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Math',
+                returns: { type: ['number', 'vector', 'matrix'] },
+                args: {
+                    x: { type: ['number', 'vector', 'matrix'] },
+                },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'The `ln` function computes the natural logarithm (base `e`) of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the natural logarithm of each element while preserving the original structure.',
+                examples: [
+                    'ln(0.01)',
+                    'ln(2.5)',
+                    'ln(E)',
+                    'ln([1, 2, 3])',
+                    'ln([[1, 2], [3, 4]])',
+                ],
+            },
         },
         'log2': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3767,6 +5629,22 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Math',
+                returns: { type: ['number', 'vector', 'matrix'] },
+                args: {
+                    x: { type: ['number', 'vector', 'matrix'] },
+                },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'The `log2` function computes the base `2` logarithm of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the base-2 logarithm of each element while preserving the original structure.',
+                examples: [
+                    'log2(0.01)',
+                    'log2(2 ^ 12)',
+                    'log2(2.5)',
+                    'log2([1, 2, 3])',
+                    'log2([[1, 2], [3, 4]])',
+                ],
+            },
         },
         'log10': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3784,6 +5662,22 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Math',
+                returns: { type: ['number', 'vector', 'matrix'] },
+                args: {
+                    x: { type: ['number', 'vector', 'matrix'] },
+                },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'The `log10` function computes the base `10` logarithm of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the base-10 logarithm of each element while preserving the original structure.',
+                examples: [
+                    'log10(0.01)',
+                    'log10(10 ^ 12)',
+                    'log10(2.5)',
+                    'log10([1, 2, 3])',
+                    'log10([[1, 2], [3, 4]])',
+                ],
+            },
         },
         'sin': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3801,6 +5695,23 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Math',
+                returns: { type: ['number', 'vector', 'matrix'] },
+                args: {
+                    x: { type: ['number', 'vector', 'matrix'] },
+                },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'The `sin` function computes the sine of an angle (in radians), working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the sine of each element while preserving the original structure.',
+                examples: [
+                    'sin(0)',
+                    'sin(1)',
+                    'sin(PI)',
+                    'sin(-0.5)',
+                    'sin([1, 2, 3])',
+                    'sin([[1, 2], [3, 4]])',
+                ],
+            },
         },
         'asin': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3818,6 +5729,22 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Math',
+                returns: { type: ['number', 'vector', 'matrix'] },
+                args: {
+                    x: { type: ['number', 'vector', 'matrix'] },
+                },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'The `asin` function computes the arcsine (inverse sine) of a `number` in radians, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the arcsine of each element while preserving the original structure.',
+                examples: [
+                    'asin(0)',
+                    'asin(1)',
+                    'asin(-0.5)',
+                    'asin([1, 2, 3])',
+                    'asin([[1, 2], [3, 4]])',
+                ],
+            },
         },
         'sinh': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3835,6 +5762,22 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Math',
+                returns: { type: ['number', 'vector', 'matrix'] },
+                args: {
+                    x: { type: ['number', 'vector', 'matrix'] },
+                },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'The `sinh` function computes the hyperbolic sine of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the hyperbolic sine of each element while preserving the original structure.',
+                examples: [
+                    'sinh(0)',
+                    'sinh(1)',
+                    'sinh(-0.5)',
+                    'sinh([0.1, 0.2, 0.3])',
+                    'sinh([[0.1, 0.2], [0.3, 0.4]])',
+                ],
+            },
         },
         'asinh': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3852,6 +5795,22 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Math',
+                returns: { type: ['number', 'vector', 'matrix'] },
+                args: {
+                    x: { type: ['number', 'vector', 'matrix'] },
+                },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'The `asinh` function computes the inverse hyperbolic sine of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the inverse hyperbolic sine of each element while preserving the original structure.',
+                examples: [
+                    'asinh(10)',
+                    'asinh(90)',
+                    'asinh (50)',
+                    'asinh([10, 20, 30])',
+                    'asinh([[10, 20], [30, 40]])',
+                ],
+            },
         },
         'cos': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3869,6 +5828,23 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Math',
+                returns: { type: ['number', 'vector', 'matrix'] },
+                args: {
+                    x: { type: ['number', 'vector', 'matrix'] },
+                },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'The `cos` function computes the cosine of an angle (in radians), working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the cosine of each element while preserving the original structure.',
+                examples: [
+                    'cos(0)',
+                    'cos(1)',
+                    'cos(PI)',
+                    'cos(-0.5)',
+                    'cos([1, 2, 3])',
+                    'cos([[1, 2], [3, 4]])',
+                ],
+            },
         },
         'acos': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3886,6 +5862,22 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Math',
+                returns: { type: ['number', 'vector', 'matrix'] },
+                args: {
+                    x: { type: ['number', 'vector', 'matrix'] },
+                },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'The `acos` function computes the arccosine (inverse cosine) of a `number` in radians, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the arccosine of each element while preserving the original structure.',
+                examples: [
+                    'acos(0)',
+                    'acos(1)',
+                    'acos(-0.5)',
+                    'acos([0.1, 0.2, 0.3])',
+                    'acos([[0.1, 0.2], [0.3, 0.4]])',
+                ],
+            },
         },
         'cosh': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3903,6 +5895,22 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Math',
+                returns: { type: ['number', 'vector', 'matrix'] },
+                args: {
+                    x: { type: ['number', 'vector', 'matrix'] },
+                },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'The `cosh` function computes the hyperbolic cosine of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the hyperbolic cosine of each element while preserving the original structure.',
+                examples: [
+                    'cosh(0)',
+                    'cosh(1)',
+                    'cosh(-0.5)',
+                    'cosh([0.1, 0.2, 0.3])',
+                    'cosh([[0.1, 0.2], [0.3, 0.4]])',
+                ],
+            },
         },
         'acosh': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3920,6 +5928,23 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Math',
+                returns: { type: ['number', 'vector', 'matrix'] },
+                args: {
+                    x: { type: ['number', 'vector', 'matrix'] },
+                },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'The `acosh` function computes the inverse hyperbolic cosine of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the inverse hyperbolic cosine of each element while preserving the original structure.',
+                examples: [
+                    'acosh(1)',
+                    'acosh(2)',
+                    'acosh(100)',
+                    'acosh(50)',
+                    'acosh([1, 2, 3])',
+                    'acosh([[1, 2], [3, 4]])',
+                ],
+            },
         },
         'tan': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3937,6 +5962,23 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Math',
+                returns: { type: ['number', 'vector', 'matrix'] },
+                args: {
+                    x: { type: ['number', 'vector', 'matrix'] },
+                },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'The `tan` function computes the tangent of an angle (in radians), working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the tangent of each element while preserving the original structure.',
+                examples: [
+                    'tan(0)',
+                    'tan(1)',
+                    'tan(PI)',
+                    'tan(-0.5)',
+                    'tan([1, 2, 3])',
+                    'tan([[1, 2], [3, 4]])',
+                ],
+            },
         },
         'atan': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3954,6 +5996,22 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Math',
+                returns: { type: ['number', 'vector', 'matrix'] },
+                args: {
+                    x: { type: ['number', 'vector', 'matrix'] },
+                },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'The `atan` function computes the arctangent (inverse tangent) of a `number` in radians, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the arctangent of each element while preserving the original structure.',
+                examples: [
+                    'atan(0)',
+                    'atan(1)',
+                    'atan(-0.5)',
+                    'atan([0.1, 0.2, 0.3])',
+                    'atan([[0.1, 0.2], [0.3, 0.4]])',
+                ],
+            },
         },
         'tanh': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3971,6 +6029,16 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Math',
+                returns: { type: ['number', 'vector', 'matrix'] },
+                args: {
+                    x: { type: ['number', 'vector', 'matrix'] },
+                },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'The `tanh` function computes the hyperbolic tangent of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the hyperbolic tangent of each element while preserving the original structure.',
+                examples: ['tanh(0)', 'tanh(1)', 'tanh(-0.5)', 'tanh(50)'],
+            },
         },
         'atanh': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3988,6 +6056,22 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Math',
+                returns: { type: ['number', 'vector', 'matrix'] },
+                args: {
+                    x: { type: ['number', 'vector', 'matrix'] },
+                },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'The `atanh` function computes the inverse hyperbolic tangent of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the inverse hyperbolic tangent of each element while preserving the original structure.',
+                examples: [
+                    'atanh(0)',
+                    'atanh(0.9)',
+                    'atanh(-0.5)',
+                    'atanh([0.1, 0.2, 0.3])',
+                    'atanh([[0.1, 0.2], [0.3, 0.4]])',
+                ],
+            },
         },
         'to-rad': {
             evaluate: function (params, sourceCodeInfo) {
@@ -4005,6 +6089,23 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Math',
+                returns: { type: ['number', 'vector', 'matrix'] },
+                args: {
+                    x: { type: ['number', 'vector', 'matrix'] },
+                },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'The `to-rad` function converts an angle from degrees to radians, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it converts each element while preserving the original structure.',
+                examples: [
+                    'to-rad(0)',
+                    'to-rad(90)',
+                    'to-rad(180)',
+                    'to-rad(360)',
+                    'to-rad([0, 90, 180])',
+                    'to-rad([[0, 90], [180, 360]])',
+                ],
+            },
         },
         'to-deg': {
             evaluate: function (params, sourceCodeInfo) {
@@ -4022,6 +6123,23 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Math',
+                returns: { type: ['number', 'vector', 'matrix'] },
+                args: {
+                    x: { type: ['number', 'vector', 'matrix'] },
+                },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'The `to-deg` function converts an angle from radians to degrees, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it converts each element while preserving the original structure.',
+                examples: [
+                    'to-deg(0)',
+                    'to-deg(PI)',
+                    'to-deg(PI / 2)',
+                    'to-deg(3 * PI / 2)',
+                    'to-deg([0, PI, PI / 2])',
+                    'to-deg([[0, PI], [PI / 2, 3 * PI / 2]])',
+                ],
+            },
         },
     };
 
@@ -5377,8 +7495,8 @@ var Playground = (function (exports) {
     }
 
     var maxReductionFunction = {
-        'max': function (vector) { return Math.max.apply(Math, __spreadArray([], __read(vector), false)); },
-        'padding': -Number.MAX_VALUE,
+        max: function (vector) { return Math.max.apply(Math, __spreadArray([], __read(vector), false)); },
+        padding: -Number.MAX_VALUE,
     };
 
     function calcMean(vector) {
@@ -5417,8 +7535,8 @@ var Playground = (function (exports) {
     };
 
     var minReductionFunction = {
-        'min': function (vector) { return Math.min.apply(Math, __spreadArray([], __read(vector), false)); },
-        'padding': Number.MAX_VALUE,
+        min: function (vector) { return Math.min.apply(Math, __spreadArray([], __read(vector), false)); },
+        padding: Number.MAX_VALUE,
     };
 
     var prodReductionFunction = {
@@ -11017,18 +13135,83 @@ var Playground = (function (exports) {
                 return isEqual(params, sourceCodeInfo);
             },
             arity: { min: 1 },
+            docs: {
+                category: 'Misc',
+                returns: { type: 'boolean' },
+                args: {
+                    a: { type: 'any' },
+                    b: { type: 'any' },
+                    x: { type: 'any' },
+                    ys: { type: 'any', rest: true },
+                },
+                variants: [
+                    { argumentNames: ['x'] },
+                    { argumentNames: ['x', 'ys'] },
+                ],
+                description: 'Returns `true` if all `values` are structaul equal to each other, otherwise result is `false`.',
+                examples: [
+                    '1 == 1',
+                    '[1, 2] == [1, 2]',
+                    "\n{\n a: 1,\n b: 2,\n} == {\n b: 2,\n a: 1,\n}",
+                    '==(1, 1)',
+                    '==(1.01, 1)',
+                    '==("1", 1)',
+                    '==("2", "2", "2", "2")',
+                    '==(2, 2, 1, 2)',
+                    '==([1, 2], [1, 2])',
+                    '==({ a: 1, b: 2 }, { b: 2, a: 1 })',
+                ],
+            },
         },
         '≠': {
             evaluate: function (params, sourceCodeInfo) {
                 return !isEqual(params, sourceCodeInfo);
             },
             arity: { min: 1 },
+            docs: {
+                category: 'Misc',
+                returns: { type: 'boolean' },
+                args: {
+                    a: { type: 'any' },
+                    b: { type: 'any' },
+                    x: { type: 'any' },
+                    ys: { type: 'any', rest: true },
+                },
+                variants: [
+                    { argumentNames: ['x'] },
+                    { argumentNames: ['x', 'ys'] },
+                ],
+                description: 'Returns `true` if all `values` are not equal to each other, otherwise result is `false`. `(≠ a b c)` is same as `(! (== a b c))`.',
+                examples: [
+                    '1 ≠ 2',
+                    '3 ≠ 3',
+                    '≠(3)',
+                    '≠(3, 3, 2)',
+                    '≠("3", "2", "1", "0",)',
+                    '≠(0, -0)',
+                ],
+            },
         },
         'identical?': {
             evaluate: function (params) {
                 return isIdentical(params);
             },
             arity: { min: 1 },
+            docs: {
+                category: 'Misc',
+                returns: { type: 'boolean' },
+                args: {
+                    a: { type: 'any' },
+                    b: { type: 'any' },
+                },
+                variants: [{ argumentNames: ['a', 'b'] }],
+                description: 'Returns true if $a and $b are referential equal.',
+                examples: [
+                    'identical?({ a: 10, b: 20 }, { b: 20, a: 10 })',
+                    'identical?([1, true, null], [1, true, null])',
+                    'identical?(0.3, 0.1 + 0.2)',
+                ],
+            },
         },
         '>': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11053,6 +13236,28 @@ var Playground = (function (exports) {
                 return true;
             },
             arity: { min: 1 },
+            docs: {
+                category: 'Misc',
+                returns: { type: 'boolean' },
+                args: {
+                    a: { type: ['number', 'string'] },
+                    b: { type: ['number', 'string'] },
+                    x: { type: ['number', 'string'] },
+                    ys: { type: ['number', 'string'], rest: true },
+                },
+                variants: [
+                    { argumentNames: ['x'] },
+                    { argumentNames: ['x', 'ys'] },
+                ],
+                description: 'Returns `true` if $x and $ys are in decreasing order, `false` otherwise.',
+                examples: [
+                    '>(1, 0)',
+                    '>(1.01, 1)',
+                    '>(1, 1)',
+                    '>(4, 3, 2, 1)',
+                    '>(3, 2, 2, 1)',
+                ],
+            },
         },
         '<': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11077,6 +13282,28 @@ var Playground = (function (exports) {
                 return true;
             },
             arity: { min: 1 },
+            docs: {
+                category: 'Misc',
+                returns: { type: 'boolean' },
+                args: {
+                    a: { type: ['number', 'string'] },
+                    b: { type: ['number', 'string'] },
+                    x: { type: ['number', 'string'] },
+                    ys: { type: ['number', 'string'], rest: true },
+                },
+                variants: [
+                    { argumentNames: ['x'] },
+                    { argumentNames: ['x', 'ys'] },
+                ],
+                description: 'Returns `true` if $x and $ys are in increasing order, `false` otherwise.',
+                examples: [
+                    '<(0, 1)',
+                    '<(1, 1.01)',
+                    '<(1, 1)',
+                    '<(1, 2, 2, 3)',
+                    '<("a", "b")',
+                ],
+            },
         },
         '>=': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11101,6 +13328,30 @@ var Playground = (function (exports) {
                 return true;
             },
             arity: { min: 1 },
+            docs: {
+                category: 'Misc',
+                returns: { type: 'boolean' },
+                args: {
+                    a: { type: ['number', 'string'] },
+                    b: { type: ['number', 'string'] },
+                    x: { type: ['number', 'string'] },
+                    ys: { type: ['number', 'string'], rest: true },
+                },
+                variants: [
+                    { argumentNames: ['x'] },
+                    { argumentNames: ['x', 'ys'] },
+                ],
+                description: 'Returns `true` if $x and $ys are in non increasing order, `false` otherwise.',
+                examples: [
+                    '1 >= 1',
+                    '0 >= 1',
+                    '>=(1, 0)',
+                    '>=(1.01, 1)',
+                    '>=(1, 1)',
+                    '>=(4, 3, 2, 1)',
+                    '>=(3, 2, 2, 1)',
+                ],
+            },
         },
         '<=': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11125,6 +13376,29 @@ var Playground = (function (exports) {
                 return true;
             },
             arity: { min: 1 },
+            docs: {
+                category: 'Misc',
+                returns: { type: 'boolean' },
+                args: {
+                    a: { type: ['number', 'string'] },
+                    b: { type: ['number', 'string'] },
+                    x: { type: ['number', 'string'] },
+                    ys: { type: ['number', 'string'], rest: true },
+                },
+                variants: [
+                    { argumentNames: ['x'] },
+                    { argumentNames: ['x', 'ys'] },
+                ],
+                description: 'Returns `true` if $x and $ys are in non decreasing order, `false` otherwise.',
+                examples: [
+                    '1 <= 1',
+                    '<=(0, 1)',
+                    '<=(1, 1.01)',
+                    '<=(1, 1)',
+                    '<=(1, 2, 3, 4)',
+                    '<=(1, 2, 2, 3)',
+                ],
+            },
         },
         '!': {
             evaluate: function (_a) {
@@ -11132,6 +13406,22 @@ var Playground = (function (exports) {
                 return !first;
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Misc',
+                returns: { type: 'boolean' },
+                args: { x: { type: 'any' } },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'Computes logical negation. Note that any other $x than `false`, `0`, `null` and `\'\'` is truthy.',
+                examples: [
+                    '!(3)',
+                    '!(true)',
+                    '!("A string")',
+                    '!(0)',
+                    '!(false)',
+                    '!(null)',
+                    '!("")',
+                ],
+            },
         },
         'epoch->iso-date': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11140,6 +13430,17 @@ var Playground = (function (exports) {
                 return new Date(ms).toISOString();
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Misc',
+                returns: { type: 'string' },
+                args: { ms: { type: 'number' } },
+                variants: [{ argumentNames: ['ms'] }],
+                description: 'Returns IOS date time string from `ms` (milliseconds elapsed since the UNIX epoch).',
+                examples: [
+                    'epoch->iso-date(1649756230899)',
+                    'epoch->iso-date(0)',
+                ],
+            },
         },
         'iso-date->epoch': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11150,6 +13451,17 @@ var Playground = (function (exports) {
                 return ms;
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Misc',
+                returns: { type: 'number' },
+                args: { iso: { type: 'string' } },
+                variants: [{ argumentNames: ['iso'] }],
+                description: 'Returns milliseconds elapsed since the UNIX epoch to `iso`.',
+                examples: [
+                    'iso-date->epoch("2022-04-12T09:37:10.899Z")',
+                    'iso-date->epoch("1980-01-01")',
+                ],
+            },
         },
         'write!': {
             evaluate: function (params, sourceCodeInfo) {
@@ -11160,6 +13472,22 @@ var Playground = (function (exports) {
                 return null;
             },
             arity: {},
+            docs: {
+                category: 'Misc',
+                returns: { type: 'any' },
+                args: { values: { type: 'any', rest: true } },
+                variants: [{ argumentNames: ['values'] }],
+                description: 'It logs the $values and then returns the last argument. If called with no arguments `null` is returned.',
+                examples: [
+                    'write!("A string")',
+                    'write!(100, "items")',
+                    'write!(object("a", 10))',
+                    'write!(["a", "b", "c"])',
+                    'write!(#"^start")',
+                    'write!(null, true, false)',
+                ],
+                hideOperatorForm: true,
+            },
         },
         'boolean': {
             evaluate: function (_a) {
@@ -11167,6 +13495,19 @@ var Playground = (function (exports) {
                 return !!value;
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Misc',
+                returns: { type: 'boolean' },
+                args: { x: { type: 'any' } },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'Coerces $x to boolean.',
+                examples: [
+                    'boolean(0)',
+                    'boolean(1)',
+                    'boolean(null)',
+                    'boolean("Albert")',
+                ],
+            },
         },
         'compare': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11176,6 +13517,22 @@ var Playground = (function (exports) {
                 return compare(a, b, sourceCodeInfo);
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Misc',
+                returns: { type: 'number' },
+                args: {
+                    a: { type: ['number', 'string'] },
+                    b: { type: ['number', 'string'] },
+                },
+                variants: [{ argumentNames: ['a', 'b'] }],
+                description: 'Compares two values. Returns `-1` if $a < $b, `1` if $a > $b and `0` if $a and $b have the same sort order.',
+                examples: [
+                    'compare(0, 1)',
+                    'compare(0, 0)',
+                    'compare(1, 0)',
+                    'compare("Albert", "Mojir")',
+                ],
+            },
         },
         'json-parse': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11185,6 +13542,16 @@ var Playground = (function (exports) {
                 return JSON.parse(first);
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Misc',
+                returns: { type: 'any' },
+                args: { x: { type: 'string' } },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'Returns `JSON.parse(`$x`)`.',
+                examples: [
+                    'json-parse("[1, 2, 3]")',
+                ],
+            },
         },
         'json-stringify': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11196,6 +13563,24 @@ var Playground = (function (exports) {
                 return JSON.stringify(first, null, second);
             },
             arity: { min: 1, max: 2 },
+            docs: {
+                category: 'Misc',
+                returns: { type: 'string' },
+                args: {
+                    x: { type: 'any' },
+                    indent: { type: 'integer', description: 'Number of spaces to use for indentation.' },
+                },
+                variants: [
+                    { argumentNames: ['x'] },
+                    { argumentNames: ['x', 'indent'] },
+                ],
+                description: 'Returns `JSON.stringify(`$x`)`. If second argument is provided, returns `JSON.stringify(`$x`, null, `$indent`)`.',
+                examples: [
+                    'json-stringify([1, 2, 3])',
+                    'json-stringify({ a: { b: 10 }}, 2)',
+                ],
+                hideOperatorForm: true,
+            },
         },
         'import': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11255,6 +13640,23 @@ var Playground = (function (exports) {
                 return result;
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Misc',
+                returns: { type: 'any' },
+                args: {
+                    path: {
+                        type: 'string',
+                        description: 'The namespace path to import. Can be a namespace name (e.g., "Vector", "Grid") or a fully qualified function name (e.g., "Vector.mean", "Grid.row").',
+                    },
+                },
+                variants: [{ argumentNames: ['path'] }],
+                description: 'Imports namespace functions. Use a namespace name (e.g., "Vector") to import all functions as an object, or a fully qualified name (e.g., "Vector.mean") to import a single function directly.',
+                examples: [
+                    'let v = import("Vector"); v.mean([1, 2, 3, 4])',
+                    'let sum = import("Vector.sum"); sum([1, 2, 3])',
+                    'let g = import("Grid"); g.row([[1, 2], [3, 4]], 0)',
+                ],
+            },
         },
     };
 
@@ -11266,6 +13668,18 @@ var Playground = (function (exports) {
                 return Object.keys(obj);
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Object',
+                returns: { type: 'any', array: true },
+                args: { obj: { type: 'object' } },
+                variants: [{ argumentNames: ['obj'] }],
+                description: 'Returns array of all keys in $obj.',
+                examples: [
+                    'keys({})',
+                    'keys({ x: 10, y: true, z: "A string" })',
+                    'keys(object("x", 10, "y", true, "z", "A string"))',
+                ],
+            },
         },
         'vals': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11274,6 +13688,18 @@ var Playground = (function (exports) {
                 return Object.values(obj);
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Object',
+                returns: { type: 'any', array: true },
+                args: { obj: { type: 'object' } },
+                variants: [{ argumentNames: ['obj'] }],
+                description: 'Returns array of all values in $obj.',
+                examples: [
+                    'vals({})',
+                    'vals({ x: 10, y: true, z: "A string" })',
+                    'vals(object("x", 10, "y", true, "z", "A string"))',
+                ],
+            },
         },
         'entries': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11282,6 +13708,18 @@ var Playground = (function (exports) {
                 return Object.entries(obj);
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Object',
+                returns: { type: 'array' },
+                args: { obj: { type: 'object' } },
+                variants: [{ argumentNames: ['obj'] }],
+                description: 'Returns nested array of all key - value pairs in $obj.',
+                examples: [
+                    'entries({})',
+                    'entries({ x: 10, y: true, z: "A string" })',
+                    'entries(object("x", 10, "y", true, "z", "A string"))',
+                ],
+            },
         },
         'find': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11293,6 +13731,23 @@ var Playground = (function (exports) {
                 return null;
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Object',
+                returns: { type: ['array', 'null'] },
+                args: {
+                    a: { type: 'object' },
+                    b: { type: 'string' },
+                    obj: { type: 'object' },
+                    key: { type: 'string' },
+                },
+                variants: [{ argumentNames: ['obj', 'key'] }],
+                description: 'Returns entry (key-value pair) for $key, or `null` if $key not present in $obj.',
+                examples: [
+                    '{ a: 1, "b": 2 } find "a"',
+                    'find(object("a", 1, "b", 2), "b")',
+                    'find(object("a", 1, "b", 2), "c")',
+                ],
+            },
         },
         'dissoc': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11304,6 +13759,24 @@ var Playground = (function (exports) {
                 return newObj;
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Object',
+                returns: { type: 'object' },
+                args: {
+                    a: { type: 'object' },
+                    b: { type: 'string' },
+                    obj: { type: 'object' },
+                    key: { type: 'string' },
+                },
+                variants: [{ argumentNames: ['obj', 'key'] }],
+                description: 'Return shallow copy of $obj with $key deleted.',
+                examples: [
+                    '{ x: 10, y: 20 } dissoc "y"',
+                    'dissoc({ x: 10, y: 20 }, "x")',
+                    'dissoc({ x: 10 }, "y")',
+                    "\nlet o = { a: 5 };\ndissoc(o, \"a\");\no",
+                ],
+            },
         },
         'merge': {
             evaluate: function (params, sourceCodeInfo) {
@@ -11317,6 +13790,22 @@ var Playground = (function (exports) {
                 }, __assign({}, first));
             },
             arity: { min: 0 },
+            docs: {
+                category: 'Object',
+                returns: { type: 'object' },
+                args: {
+                    a: { type: 'object' },
+                    b: { type: 'object' },
+                    objs: { type: 'object', rest: true },
+                },
+                variants: [{ argumentNames: ['objs'] }],
+                description: "Returns a new object created by merging together all arguments.\n\nIf two keys appears in more than one object the value from the last object is used.\nIf no arguments are provided `null` is returned.",
+                examples: [
+                    '{ x: 10 } merge { y: 20 }',
+                    'merge(object("x", 10), object("y", 20))',
+                    'merge(object("x", 10), object("x", 15, "y", 20))',
+                ],
+            },
         },
         'merge-with': {
             evaluate: function (params, sourceCodeInfo, contextStack, _a) {
@@ -11340,6 +13829,22 @@ var Playground = (function (exports) {
                 }, __assign({}, first));
             },
             arity: { min: 2 },
+            docs: {
+                category: 'Object',
+                returns: { type: 'object' },
+                args: {
+                    objs: { type: 'object', rest: true },
+                    fun: { type: 'function' },
+                },
+                variants: [{ argumentNames: ['objs', 'fun'] }],
+                description: "\nReturns a new object created by merging together all arguments.\nIf two keys appears in more than one object $fun is used to calculate the new value.\n\nIf no arguments are provided `null` is returned.",
+                examples: [
+                    'merge-with(object("x", 10), object("y", 20), +)',
+                    'merge-with(object("x", 10), object("x", 15, "y", 20), +)',
+                    'merge-with({ x: 10 }, { x: 20 }, { x: 30 }, { x: 40 }, -)',
+                ],
+                hideOperatorForm: true,
+            },
         },
         'zipmap': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11355,6 +13860,22 @@ var Playground = (function (exports) {
                 return result;
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Object',
+                returns: { type: 'object' },
+                args: {
+                    a: { type: 'array' },
+                    b: { type: 'array' },
+                },
+                variants: [{ argumentNames: ['a', 'b'] }],
+                description: 'Returns a new object created by mapping $a to $b.',
+                examples: [
+                    '["a", "b", "c"] zipmap [1, 2, 3]',
+                    'zipmap(["a", "b", "c"], [10, null, [1, 2, 3]])',
+                    'zipmap(["a", "b", "c"], [1])',
+                    'zipmap([], [10, null, [1, 2, 3]])',
+                ],
+            },
         },
         'select-keys': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11368,6 +13889,21 @@ var Playground = (function (exports) {
                 }, {});
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Object',
+                returns: { type: 'object' },
+                args: {
+                    a: { type: 'object' },
+                    b: { type: 'array' },
+                },
+                variants: [{ argumentNames: ['a', 'b'] }],
+                description: 'Returns an object containing only those entries in $a whose key is in $b.',
+                examples: [
+                    '{ a: 1, b: 2, c: 3 } select-keys ["a", "b"]',
+                    'select-keys({ a: 1, b: 2, c: 3 }, ["a", "b"])',
+                    'select-keys({ a: 1 }, ["a", "b"])',
+                ],
+            },
         },
     };
 
@@ -11378,6 +13914,21 @@ var Playground = (function (exports) {
                 return isLitsFunction(first);
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Predicate',
+                returns: { type: 'boolean' },
+                args: { x: { type: 'any' } },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'Returns `true` if $x is a function, otherwise `false`.',
+                examples: [
+                    'function?(+)',
+                    'function?(/)',
+                    'function?((x, y) -> x + y)',
+                    'function?(false)',
+                    'function?("false")',
+                    'function?([1, 2, 3])',
+                ],
+            },
         },
         'string?': {
             evaluate: function (_a) {
@@ -11385,6 +13936,21 @@ var Playground = (function (exports) {
                 return typeof first === 'string';
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Predicate',
+                returns: { type: 'boolean' },
+                args: { x: { type: 'any' } },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'Returns `true` if $x is a string, otherwise `false`.',
+                examples: [
+                    'string?("")',
+                    'string?("A string")',
+                    'string?(true ? "A string" : false)',
+                    'string?(false)',
+                    'string?([1, 2, 3])',
+                    'string?(100)',
+                ],
+            },
         },
         'number?': {
             evaluate: function (_a) {
@@ -11392,6 +13958,21 @@ var Playground = (function (exports) {
                 return typeof first === 'number';
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Predicate',
+                returns: { type: 'boolean' },
+                args: { x: { type: 'any' } },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'Returns `true` if $x is a number, otherwise `false`.',
+                examples: [
+                    'number?(0)',
+                    'number?(2)',
+                    'number?(-0.12)',
+                    'number?(false)',
+                    'number?([1, 2, 3])',
+                    'number?("A string")',
+                ],
+            },
         },
         'integer?': {
             evaluate: function (_a) {
@@ -11399,6 +13980,23 @@ var Playground = (function (exports) {
                 return typeof first === 'number' && isNumber(first, { integer: true });
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Predicate',
+                returns: { type: 'boolean' },
+                args: { x: { type: 'any' } },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'Returns `true` if $x is an integer, otherwise `false`.',
+                examples: [
+                    'integer?(0)',
+                    'integer?(-12)',
+                    'integer?(42)',
+                    'integer?(10.1)',
+                    'integer?((x, y) -> x + y)',
+                    'integer?(false)',
+                    'integer?("false")',
+                    'integer?([1, 2, 3])',
+                ],
+            },
         },
         'boolean?': {
             evaluate: function (_a) {
@@ -11406,6 +14004,20 @@ var Playground = (function (exports) {
                 return typeof first === 'boolean';
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Predicate',
+                returns: { type: 'boolean' },
+                args: { x: { type: 'any' } },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'Returns `true` if $x is a `boolean`, otherwise `false`.',
+                examples: [
+                    'boolean?(true)',
+                    'boolean?(false)',
+                    'boolean?([1, 2, 3])',
+                    'boolean?(0)',
+                    'boolean?("A string")',
+                ],
+            },
         },
         'null?': {
             evaluate: function (_a) {
@@ -11413,6 +14025,20 @@ var Playground = (function (exports) {
                 return first === null || first === undefined;
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Predicate',
+                returns: { type: 'boolean' },
+                args: { x: { type: 'any' } },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'Returns `true` if $x is `null`, otherwise `false`.',
+                examples: [
+                    'null?(null)',
+                    'null?(false)',
+                    'null?([1, 2, 3])',
+                    'null?(0)',
+                    'null?("A string")',
+                ],
+            },
         },
         'zero?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11421,6 +14047,19 @@ var Playground = (function (exports) {
                 return Math.abs(value) < EPSILON;
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Predicate',
+                returns: { type: 'boolean' },
+                args: { x: { type: 'number' } },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'Returns `true` if $x is `0`, otherwise `false`.',
+                examples: [
+                    'zero?(0)',
+                    'zero?(-0.0)',
+                    'zero?(1)',
+                    'zero?(0.1)',
+                ],
+            },
         },
         'pos?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11429,6 +14068,19 @@ var Playground = (function (exports) {
                 return first > 0;
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Predicate',
+                returns: { type: 'boolean' },
+                args: { x: { type: 'number' } },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'Returns `true` if $x is greater than `0`, otherwise `false`.',
+                examples: [
+                    'pos?(0)',
+                    'pos?(-0.0)',
+                    'pos?(1)',
+                    'pos?(-0.1)',
+                ],
+            },
         },
         'neg?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11437,6 +14089,19 @@ var Playground = (function (exports) {
                 return first < 0;
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Predicate',
+                returns: { type: 'boolean' },
+                args: { x: { type: 'number' } },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'Returns `true` if $x is less than `0`, otherwise `false`.',
+                examples: [
+                    'neg?(0)',
+                    'neg?(-0.0)',
+                    'neg?(1)',
+                    'neg?(-0.1)',
+                ],
+            },
         },
         'even?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11445,6 +14110,19 @@ var Playground = (function (exports) {
                 return first % 2 === 0;
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Predicate',
+                returns: { type: 'boolean' },
+                args: { x: { type: 'number' } },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'Returns `true` if $x is even, otherwise `false`.',
+                examples: [
+                    'even?(0)',
+                    'even?(-0.0)',
+                    'even?(-1)',
+                    'even?(2.1)',
+                ],
+            },
         },
         'odd?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11453,6 +14131,19 @@ var Playground = (function (exports) {
                 return isNumber(first, { integer: true }) && first % 2 !== 0;
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Predicate',
+                returns: { type: 'boolean' },
+                args: { x: { type: 'number' } },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'Returns `true` if $x is odd, otherwise `false`.',
+                examples: [
+                    'odd?(1.0)',
+                    'odd?(1.001)',
+                    'odd?(-1)',
+                    'odd?(2.1)',
+                ],
+            },
         },
         'array?': {
             evaluate: function (_a) {
@@ -11460,6 +14151,21 @@ var Playground = (function (exports) {
                 return Array.isArray(first);
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Predicate',
+                returns: { type: 'boolean' },
+                args: { x: { type: 'any' } },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'Returns `true` if $x is an array, otherwise `false`.',
+                examples: [
+                    'array?([])',
+                    'array?([1, 2, 3])',
+                    'array?(object("a", 10))',
+                    'array?(42)',
+                    'array?(10.1)',
+                    'array?((x, y) -> x + y)',
+                ],
+            },
         },
         'coll?': {
             evaluate: function (_a) {
@@ -11467,6 +14173,22 @@ var Playground = (function (exports) {
                 return isColl(first);
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Predicate',
+                returns: { type: 'boolean' },
+                args: { x: { type: 'any' } },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'Returns `true` if $x is a Coll i.e. an array, an object or a string, otherwise `false`.',
+                examples: [
+                    'coll?([])',
+                    'coll?([1, 2, 3])',
+                    'coll?(object("a", 10))',
+                    'coll?("Albert")',
+                    'coll?(42)',
+                    'coll?(10.1)',
+                    'coll?((x, y) -> x + y)',
+                ],
+            },
         },
         'seq?': {
             evaluate: function (_a) {
@@ -11474,6 +14196,22 @@ var Playground = (function (exports) {
                 return isSeq(first);
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Predicate',
+                returns: { type: 'boolean' },
+                args: { x: { type: 'any' } },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'Returns `true` if $x is a Seq i.e. an array or a string, otherwise `false`.',
+                examples: [
+                    'seq?([])',
+                    'seq?([1, 2, 3])',
+                    'seq?(object("a", 10))',
+                    'seq?("Albert")',
+                    'seq?(42)',
+                    'seq?(10.1)',
+                    'seq?((x, y) -> x + y)',
+                ],
+            },
         },
         'object?': {
             evaluate: function (_a) {
@@ -11481,6 +14219,22 @@ var Playground = (function (exports) {
                 return isObj(first);
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Predicate',
+                returns: { type: 'boolean' },
+                args: { x: { type: 'any' } },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'Returns `true` if $x is an object, otherwise `false`.',
+                examples: [
+                    'object?(object("a", 10))',
+                    'object?(42)',
+                    'object?(10.1)',
+                    'object?((x, y) -> x + y)',
+                    'object?(#"^start")',
+                    'object?("false")',
+                    'object?([1, 2, 3])',
+                ],
+            },
         },
         'regexp?': {
             evaluate: function (_a) {
@@ -11488,6 +14242,24 @@ var Playground = (function (exports) {
                 return isRegularExpression(value);
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Predicate',
+                returns: { type: 'boolean' },
+                args: { x: { type: 'any' } },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'Returns `true` if $x is a regexp, otherwise `false`.',
+                examples: [
+                    'regexp?(regexp("^start"))',
+                    'regexp?(#"^start")',
+                    'regexp?(-12)',
+                    'regexp?({})',
+                    'regexp?(10.1)',
+                    'regexp?((x, y) -> x + y)',
+                    'regexp?(false)',
+                    'regexp?("false")',
+                    'regexp?([1, 2, 3])',
+                ],
+            },
         },
         'finite?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11496,6 +14268,18 @@ var Playground = (function (exports) {
                 return Number.isFinite(value);
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Predicate',
+                returns: { type: 'boolean' },
+                args: { x: { type: 'number' } },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'Returns `true` if $x is finite, otherwise `false`.',
+                examples: [
+                    'finite?(1.0)',
+                    'finite?(1 / 0)',
+                    'finite?(-1 / 0)',
+                ],
+            },
         },
         'positive-infinity?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11504,6 +14288,18 @@ var Playground = (function (exports) {
                 return value === Number.POSITIVE_INFINITY;
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Predicate',
+                returns: { type: 'boolean' },
+                args: { x: { type: 'number' } },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'Returns `true` if $x equals positive infinity, otherwise `false`.',
+                examples: [
+                    'positive-infinity?(1.0)',
+                    'positive-infinity?(1 / 0)',
+                    'positive-infinity?(-1 / 0)',
+                ],
+            },
         },
         'negative-infinity?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11512,6 +14308,18 @@ var Playground = (function (exports) {
                 return value === Number.NEGATIVE_INFINITY;
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Predicate',
+                returns: { type: 'boolean' },
+                args: { x: { type: 'number' } },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'Returns `true` if $x equals negative infinity, otherwise `false`.',
+                examples: [
+                    'negative-infinity?(1.0)',
+                    'negative-infinity?(1 / 0)',
+                    'negative-infinity?(-1 / 0)',
+                ],
+            },
         },
         'true?': {
             evaluate: function (_a) {
@@ -11519,6 +14327,19 @@ var Playground = (function (exports) {
                 return value === true;
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Predicate',
+                returns: { type: 'boolean' },
+                args: { x: { type: 'any' } },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'Returns `true` if $x is `true`, otherwise `false`.',
+                examples: [
+                    'true?(false)',
+                    'true?(true)',
+                    'true?(1)',
+                    'true?(0)',
+                ],
+            },
         },
         'false?': {
             evaluate: function (_a) {
@@ -11526,6 +14347,19 @@ var Playground = (function (exports) {
                 return value === false;
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Predicate',
+                returns: { type: 'boolean' },
+                args: { x: { type: 'any' } },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'Returns `true` if $x is `true`, otherwise `false`.',
+                examples: [
+                    'false?(false)',
+                    'false?(true)',
+                    'false?(1)',
+                    'false?(0)',
+                ],
+            },
         },
         'empty?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11540,6 +14374,22 @@ var Playground = (function (exports) {
                 return Object.keys(coll).length === 0;
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Predicate',
+                returns: { type: 'boolean' },
+                args: { x: { type: ['collection', 'string', 'null'] } },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'Returns `true` if $x is empty or `null`, otherwise `false`.',
+                examples: [
+                    'empty?([])',
+                    'empty?([1, 2, 3])',
+                    'empty?({})',
+                    'empty?({ a: 2 })',
+                    'empty?("")',
+                    'empty?("Albert")',
+                    'empty?(null)',
+                ],
+            },
         },
         'not-empty?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11554,6 +14404,22 @@ var Playground = (function (exports) {
                 return Object.keys(coll).length > 0;
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Predicate',
+                returns: { type: 'boolean' },
+                args: { x: { type: ['collection', 'string', 'null'] } },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'Returns `false` if $x is empty or `null`, otherwise `true`.',
+                examples: [
+                    'not-empty?([])',
+                    'not-empty?([1, 2, 3])',
+                    'not-empty?({})',
+                    'not-empty?({ a: 2 })',
+                    'not-empty?("")',
+                    'not-empty?("Albert")',
+                    'not-empty?(null)',
+                ],
+            },
         },
         'vector?': {
             evaluate: function (_a) {
@@ -11561,6 +14427,18 @@ var Playground = (function (exports) {
                 return isVector(vector);
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Predicate',
+                description: 'Checks if a value is a `vector`. A `vector` is an array of `numbers`.',
+                returns: { type: 'boolean' },
+                args: { value: { type: 'any', description: 'The value to check.' } },
+                variants: [{ argumentNames: ['value'] }],
+                examples: [
+                    'vector?(1)',
+                    'vector?([1, 2, 3])',
+                    'vector?([1, 2, "3"])',
+                ],
+            },
         },
         'matrix?': {
             evaluate: function (_a) {
@@ -11568,6 +14446,20 @@ var Playground = (function (exports) {
                 return isMatrix(matrix);
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Predicate',
+                description: 'Checks if a value is a `matrix`. A `matrix` is an array of arrays of `numbers`.',
+                returns: { type: 'boolean' },
+                args: { value: { type: 'any', description: 'The value to check.' } },
+                variants: [{ argumentNames: ['value'] }],
+                examples: [
+                    'matrix?(1)',
+                    'matrix?([1, 2, 3])',
+                    'matrix?([[1, 2], [3, 4]])',
+                    'matrix?([[1, 2], [3, "4"]])',
+                    'matrix?([[1, 2], [3]])',
+                ],
+            },
         },
         'grid?': {
             evaluate: function (_a) {
@@ -11575,6 +14467,20 @@ var Playground = (function (exports) {
                 return isGrid(table);
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Predicate',
+                description: 'Checks if a `value` is a `grid`. A `grid` is an `array` of `arrays` where all inner `arrays` have the same length.',
+                returns: { type: 'boolean' },
+                args: { value: { type: 'any', description: 'The value to check.' } },
+                variants: [{ argumentNames: ['value'] }],
+                examples: [
+                    'grid?("1")',
+                    'grid?(["1", 2, 3])',
+                    'grid?([["1", 2], [3, 4]])',
+                    'grid?([["1", 2], [3, "4"]])',
+                    'grid?([["1", 2], [3]])',
+                ],
+            },
         },
     };
 
@@ -11601,6 +14507,26 @@ var Playground = (function (exports) {
                     _b;
             },
             arity: { min: 1, max: 2 },
+            docs: {
+                category: 'Regular expression',
+                returns: { type: 'regexp' },
+                args: {
+                    pattern: { type: 'string' },
+                    flags: { type: 'string', description: 'Optional flags for the regular expression. Possible values are the same as Javascript RegExp takes.' },
+                },
+                variants: [
+                    { argumentNames: ['pattern'] },
+                    { argumentNames: ['pattern', 'flags'] },
+                ],
+                description: 'Creates a RegExp from $pattern and $flags.',
+                examples: [
+                    'regexp("^\\s*(.*)$")',
+                    '#"^\\s*(.*)$"',
+                    'regexp("albert", "ig")',
+                    '#"albert"ig',
+                ],
+                hideOperatorForm: true,
+            },
         },
         'match': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11615,6 +14541,25 @@ var Playground = (function (exports) {
                 return null;
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Regular expression',
+                returns: { type: 'any', array: true },
+                args: {
+                    a: { type: 'regexp' },
+                    b: { type: 'string' },
+                },
+                variants: [{ argumentNames: ['a', 'b'] }],
+                description: "Matches $b against regular expression $a.\nIf $b is a string and matches the regular expression, a `match`-array is returned, otherwise `null` is returned.",
+                examples: [
+                    'match("  A string", regexp("^\\\\s*(.*)$"))',
+                    'match("  A string", #"^\\s*(.*)$")',
+                    'match("My name is Albert", #"albert"i)',
+                    'match("My name is Ben", #"albert"i)',
+                    'match(null, #"albert"i)',
+                    'match(1, #"albert"i)',
+                    'match({}, #"albert"i)',
+                ],
+            },
         },
         'replace': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11626,6 +14571,25 @@ var Playground = (function (exports) {
                 return str.replace(matcher, value);
             },
             arity: toFixedArity(3),
+            docs: {
+                category: 'Regular expression',
+                returns: { type: 'any', array: true },
+                args: {
+                    a: { type: 'string' },
+                    b: { type: ['regexp', 'string'] },
+                    x: { type: 'string' },
+                },
+                variants: [{ argumentNames: ['a', 'b', 'x'] }],
+                description: 'Returns a new string with first match of regular expression $b replaced by $x.',
+                examples: [
+                    'replace("Duck duck", "u", "i")',
+                    'replace("Duck duck", #"u", "i")',
+                    'replace("abcABC", regexp("a", "i"), "-")',
+                    'replace("abcABC", regexp("a", "gi"), "-")',
+                    'replace("abcABC", #"a"i, "-")',
+                    'replace("abcABC", #"a"gi, "-")',
+                ],
+            },
         },
         'replace-all': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11637,6 +14601,25 @@ var Playground = (function (exports) {
                 return str.replaceAll(matcher, value);
             },
             arity: toFixedArity(3),
+            docs: {
+                category: 'Regular expression',
+                returns: { type: 'any', array: true },
+                args: {
+                    a: { type: 'string' },
+                    b: { type: ['regexp', 'string'] },
+                    x: { type: 'string' },
+                },
+                variants: [{ argumentNames: ['a', 'b', 'x'] }],
+                description: 'Returns a new string with all matches of regular expression $b replaced by $x.',
+                examples: [
+                    'replace-all("Duck duck", "u", "i")',
+                    'replace-all("Duck duck", regexp("u"), "i")',
+                    'replace-all("abcABC", regexp("a", "i"), "-")',
+                    'replace-all("abcABC", regexp("a", "gi"), "-")',
+                    'replace-all("abcABC", #"a"i, "-")',
+                    'replace-all("abcABC", #"a"gi, "-")',
+                ],
+            },
         },
     };
 
@@ -11650,6 +14633,23 @@ var Playground = (function (exports) {
                 return str.repeat(count);
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'String',
+                returns: { type: 'number' },
+                args: {
+                    a: { type: 'string' },
+                    b: { type: 'integer' },
+                    s: { type: 'string' },
+                    n: { type: 'integer' },
+                },
+                variants: [{ argumentNames: ['s', 'n'] }],
+                description: 'Repeates $s $n times.',
+                examples: [
+                    '"*" string-repeat 10',
+                    'string-repeat("*", 10)',
+                    'string-repeat("***", 0)',
+                ],
+            },
         },
         'str': {
             evaluate: function (params) {
@@ -11665,6 +14665,20 @@ var Playground = (function (exports) {
                 }, '');
             },
             arity: {},
+            docs: {
+                category: 'String',
+                returns: { type: 'string' },
+                args: { values: { type: 'any', rest: true } },
+                variants: [{ argumentNames: ['values'] }],
+                description: 'Concatenats $values into one string. If `value` equals `null` empty string is returned.',
+                examples: [
+                    'str("A string", ", and another string", " ...and more")',
+                    'str("Just one string")',
+                    'str()',
+                    'str(0, false, true, null, #"^kalle", [1, 2, 3], {a: "a"})',
+                ],
+                hideOperatorForm: true,
+            },
         },
         'number': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11676,6 +14690,18 @@ var Playground = (function (exports) {
                 return number;
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'String',
+                returns: { type: 'number' },
+                args: { s: { type: 'string' } },
+                variants: [{ argumentNames: ['s'] }],
+                description: 'Parses $s to a number.',
+                examples: [
+                    'number("10")',
+                    'number("010")',
+                    'number("-1.01")',
+                ],
+            },
         },
         'from-char-code': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11690,6 +14716,17 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'String',
+                returns: { type: 'string' },
+                args: { code: { type: 'number' } },
+                variants: [{ argumentNames: ['code'] }],
+                description: 'Return character for code point $code.',
+                examples: [
+                    'from-char-code(65)',
+                    'from-char-code(0)',
+                ],
+            },
         },
         'to-char-code': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11698,6 +14735,17 @@ var Playground = (function (exports) {
                 return asNonUndefined(str.codePointAt(0), sourceCodeInfo);
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'String',
+                returns: { type: 'number' },
+                args: { c: { type: 'string' } },
+                variants: [{ argumentNames: ['c'] }],
+                description: 'Return code point for first character in $c.',
+                examples: [
+                    'to-char-code("A")',
+                    'to-char-code("Albert")',
+                ],
+            },
         },
         'lower-case': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11706,6 +14754,17 @@ var Playground = (function (exports) {
                 return str.toLowerCase();
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'String',
+                returns: { type: 'string' },
+                args: { s: { type: 'string' } },
+                variants: [{ argumentNames: ['s'] }],
+                description: 'Returns $s converted to lower case.',
+                examples: [
+                    'lower-case("Albert")',
+                    'lower-case("")',
+                ],
+            },
         },
         'upper-case': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11714,6 +14773,17 @@ var Playground = (function (exports) {
                 return str.toUpperCase();
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'String',
+                returns: { type: 'string' },
+                args: { s: { type: 'string' } },
+                variants: [{ argumentNames: ['s'] }],
+                description: 'Returns $s converted to upper case.',
+                examples: [
+                    'upper-case("Albert")',
+                    'upper-case("")',
+                ],
+            },
         },
         'trim': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11722,6 +14792,18 @@ var Playground = (function (exports) {
                 return str.trim();
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'String',
+                returns: { type: 'string' },
+                args: { s: { type: 'string' } },
+                variants: [{ argumentNames: ['s'] }],
+                description: 'Returns a new string with leading and trailing whitespaces removed.',
+                examples: [
+                    'trim("  Albert  ")',
+                    'trim("   ")',
+                    'trim("")',
+                ],
+            },
         },
         'trim-left': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11730,6 +14812,18 @@ var Playground = (function (exports) {
                 return str.replace(/^\s+/, '');
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'String',
+                returns: { type: 'string' },
+                args: { s: { type: 'string' } },
+                variants: [{ argumentNames: ['s'] }],
+                description: 'Returns a new string with leading whitespaces removed.',
+                examples: [
+                    'trim-left("  Albert  ")',
+                    'trim-left("   ")',
+                    'trim-left("")',
+                ],
+            },
         },
         'trim-right': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11738,6 +14832,18 @@ var Playground = (function (exports) {
                 return str.replace(/\s+$/, '');
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'String',
+                returns: { type: 'string' },
+                args: { s: { type: 'string' } },
+                variants: [{ argumentNames: ['s'] }],
+                description: 'Returns a new string with trailing whitespaces removed.',
+                examples: [
+                    'trim-right("  Albert  ")',
+                    'trim-right("   ")',
+                    'trim-right("")',
+                ],
+            },
         },
         'join': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11748,6 +14854,25 @@ var Playground = (function (exports) {
                 return stringList.join(delimiter);
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'String',
+                returns: { type: 'string' },
+                args: {
+                    a: { type: 'array' },
+                    b: { type: 'string' },
+                    arr: { type: 'array' },
+                    delimiter: { type: 'string' },
+                },
+                variants: [{ argumentNames: ['arr', 'delimiter'] }],
+                description: 'Returns a new string by concatenating all of the elements in $arr, separated by $delimiter.',
+                examples: [
+                    'map([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], str) join ", "',
+                    '([0, 1, 2, 3, 4, 5, 6, 7, 8, 9] map str) join ", "',
+                    'join(["Albert", 10], ", ")',
+                    'join(["Albert", "Mojir"], " ")',
+                    'join(map([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], str), ", ")',
+                ],
+            },
         },
         'split': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11762,6 +14887,29 @@ var Playground = (function (exports) {
                 return str.split(delimiter, limit);
             },
             arity: { min: 2, max: 3 },
+            docs: {
+                category: 'String',
+                returns: { type: 'string' },
+                args: {
+                    a: { type: 'string' },
+                    b: { type: 'string' },
+                    s: { type: 'string' },
+                    delimiter: { type: 'string' },
+                    limit: { type: 'integer' },
+                },
+                variants: [
+                    { argumentNames: ['s', 'delimiter'] },
+                    { argumentNames: ['s', 'delimiter', 'limit'] },
+                ],
+                description: 'Divides $s into an array of substrings. The division is done by searching for `delimiter`. If `limit` as provided, at most `limit` number of substrings are returned.',
+                examples: [
+                    '"Albert Mojir" split " "',
+                    'split("Albert Mojir", " ")',
+                    'split("abcdefghijklmnopqrstuvw", #"[aoueiy]")',
+                    'split("0123456789", "")',
+                    'split("0123456789", "", 5) map number',
+                ],
+            },
         },
         'split-lines': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11770,6 +14918,19 @@ var Playground = (function (exports) {
                 return str.split((/\r\n|\n|\r/)).filter(function (line) { return line !== ''; });
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'String',
+                returns: { type: 'string' },
+                args: { s: { type: 'string' } },
+                variants: [{ argumentNames: ['s'] }],
+                description: 'Divides $s into an array of substrings, each representing a line.',
+                examples: [
+                    'split-lines("Albert\nMojir\n")',
+                    'split-lines("Albert\n\nMojir")',
+                    'split-lines("Albert\nMojir\n\n")',
+                    'split-lines("")',
+                ],
+            },
         },
         'pad-left': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11781,6 +14942,29 @@ var Playground = (function (exports) {
                 return str.padStart(length, padString);
             },
             arity: { min: 2, max: 3 },
+            docs: {
+                category: 'String',
+                returns: { type: 'string' },
+                args: {
+                    a: { type: 'string' },
+                    b: { type: 'integer' },
+                    s: { type: 'string' },
+                    length: { type: 'integer' },
+                    padString: { type: 'string' },
+                },
+                variants: [
+                    { argumentNames: ['s', 'length'] },
+                    { argumentNames: ['s', 'length', 'padString'] },
+                ],
+                description: 'Pads from the start of $s with `padString` (multiple times, if needed) until the resulting string reaches the given $length.',
+                examples: [
+                    '"Albert" pad-left 20',
+                    'pad-left("Albert", 20)',
+                    'pad-left("Albert", 20, "-*-")',
+                    'pad-left("Albert", 5)',
+                    'pad-left("Albert", -1)',
+                ],
+            },
         },
         'pad-right': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11792,6 +14976,29 @@ var Playground = (function (exports) {
                 return str.padEnd(length, padString);
             },
             arity: { min: 2, max: 3 },
+            docs: {
+                category: 'String',
+                returns: { type: 'string' },
+                args: {
+                    a: { type: 'string' },
+                    b: { type: 'integer' },
+                    s: { type: 'string' },
+                    length: { type: 'integer' },
+                    padString: { type: 'string' },
+                },
+                variants: [
+                    { argumentNames: ['s', 'length'] },
+                    { argumentNames: ['s', 'length', 'padString'] },
+                ],
+                description: 'Pads from the start of $s with `padString` (multiple times, if needed) until the resulting string reaches the given `length`.',
+                examples: [
+                    '"Albert" pad-right 20',
+                    'pad-right("Albert", 20)',
+                    'pad-right("Albert", 20, "-*-")',
+                    'pad-right("Albert", 5)',
+                    'pad-right("Albert", -1)',
+                ],
+            },
         },
         'template': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11823,6 +15030,32 @@ var Playground = (function (exports) {
                 }
             },
             arity: { min: 1, max: 10 },
+            docs: {
+                category: 'String',
+                returns: { type: 'string' },
+                args: {
+                    s: { type: 'string' },
+                    params: { type: 'any', rest: true },
+                },
+                variants: [{ argumentNames: ['s', 'params'] }],
+                description: 'Applies placeholders to a string. Support for basic pluralization - see examples. If pluralization is used, first placeholder must be a number.',
+                examples: [
+                    'template("Hi, $1 and $2", "Carl", "Larry")',
+                    'template("Hi $1, $2, $3, $4, $5, $6, $7, $8 and $9", "A", "B", "C", "D", "E", "F", "G", "H", "I")',
+                    'template("$1 book||||$1 books", 0)',
+                    'template("$1 book||||$1 books", 1)',
+                    'template("$1 book||||$1 books", 2)',
+                    'template("No book||||$1 book||||$1 books", 0)',
+                    'template("No book||||$1 book||||$1 books", 1)',
+                    'template("No book||||$1 book||||$1 books", 10)',
+                    'template("No book||||One book||||Two books||||Three books||||$1 books", 0)',
+                    'template("No book||||One book||||Two books||||Three books||||$1 books", 1)',
+                    'template("No book||||One book||||Two books||||Three books||||$1 books", 2)',
+                    'template("No book||||One book||||Two books||||Three books||||$1 books", 3)',
+                    'template("No book||||One book||||Two books||||Three books||||$1 books", 4)',
+                ],
+                hideOperatorForm: true,
+            },
         },
         'encode-base64': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11834,6 +15067,16 @@ var Playground = (function (exports) {
                 }));
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'String',
+                returns: { type: 'string' },
+                args: { s: { type: 'string' } },
+                variants: [{ argumentNames: ['s'] }],
+                description: 'Returns a Base64 encoded string from $s.',
+                examples: [
+                    'encode-base64("Albert")',
+                ],
+            },
         },
         'decode-base64': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11852,6 +15095,16 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'String',
+                returns: { type: 'string' },
+                args: { base64string: { type: 'string' } },
+                variants: [{ argumentNames: ['base64string'] }],
+                description: 'Returns a Base64 decoded string from $base64string.',
+                examples: [
+                    'decode-base64("QWxiZXJ0IPCfkLs=")',
+                ],
+            },
         },
         'encode-uri-component': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11860,6 +15113,16 @@ var Playground = (function (exports) {
                 return encodeURIComponent(value);
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'String',
+                returns: { type: 'string' },
+                args: { s: { type: 'string' } },
+                variants: [{ argumentNames: ['s'] }],
+                description: 'Returns an escaped `URI` string.',
+                examples: [
+                    'encode-uri-component("Hi everyone!?")',
+                ],
+            },
         },
         'decode-uri-component': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11873,6 +15136,37 @@ var Playground = (function (exports) {
                 }
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'String',
+                returns: { type: 'string' },
+                args: { s: { type: 'string' } },
+                variants: [{ argumentNames: ['s'] }],
+                description: 'Returns an un-escaped `URI` string.',
+                examples: [
+                    'decode-uri-component("Hi%20everyone!%3F%20%F0%9F%91%8D")',
+                ],
+            },
+        },
+        'capitalize': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), str = _b[0];
+                assertString(str, sourceCodeInfo);
+                return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+            },
+            arity: toFixedArity(1),
+            docs: {
+                category: 'String',
+                returns: { type: 'string' },
+                args: { s: { type: 'string' } },
+                variants: [{ argumentNames: ['s'] }],
+                description: 'Returns $s with the first character converted to uppercase and the rest to lowercase.',
+                examples: [
+                    'capitalize("albert")',
+                    'capitalize("ALBERT")',
+                    'capitalize("aLBERT")',
+                    'capitalize("")',
+                ],
+            },
         },
         'blank?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11884,14 +15178,20 @@ var Playground = (function (exports) {
                 return blankRegexp.test(value);
             },
             arity: toFixedArity(1),
-        },
-        'capitalize': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), str = _b[0];
-                assertString(str, sourceCodeInfo);
-                return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+            docs: {
+                category: 'String',
+                returns: { type: 'boolean' },
+                args: { s: { type: ['string', 'null'] } },
+                variants: [{ argumentNames: ['s'] }],
+                description: 'Returns true if $s is null or only contains whitespace characters.',
+                examples: [
+                    'blank?("")',
+                    'blank?(null)',
+                    'blank?("\n")',
+                    'blank?(" ")',
+                    'blank?(".")',
+                ],
             },
-            arity: toFixedArity(1),
         },
     };
     var doubleDollarRegexp = /\$\$/g;
@@ -11919,6 +15219,20 @@ var Playground = (function (exports) {
                 return executeFunction(func, [value], contextStack, sourceCodeInfo);
             },
             arity: toFixedArity(2),
+            docs: {
+                category: 'Functional',
+                returns: { type: 'any' },
+                args: {
+                    a: { type: 'any' },
+                    b: { type: 'function' },
+                },
+                variants: [{ argumentNames: ['a', 'b'] }],
+                description: 'Takes a value $a and a function $b, and returns the result of applying $b to $a.',
+                examples: [
+                    "\n1 |> inc |> inc",
+                    "range(10)\n  |> map(_, -> $ ^ 2) // [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]\n  |> filter(_, odd?)  // [1, 9, 25, 49, 81]\n  |> reduce(_, +, 0)  // 165\n  |> sqrt             // 12.84523257866513\n  |> round(_, 2)",
+                ],
+            },
         },
         'apply': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -11932,6 +15246,23 @@ var Playground = (function (exports) {
                 return executeFunction(func, applyArray, contextStack, sourceCodeInfo);
             },
             arity: { min: 2 },
+            docs: {
+                category: 'Functional',
+                returns: { type: 'any' },
+                args: {
+                    a: { type: 'function' },
+                    b: { type: 'array' },
+                    fun: { type: 'function' },
+                    args: { type: 'array' },
+                },
+                variants: [{ argumentNames: ['fun', 'args'] }],
+                description: 'Call supplied function $fun with specified arguments $args.',
+                examples: [
+                    "\napply(+, [1, 2, 3])",
+                    "\napply(\n  (x, y) -> sqrt(x ^ 2 + y ^ 2),\n  [3, 4]\n)",
+                    "\n(x, y) -> sqrt(x ^ 2 + y ^ 2) apply [3, 4]",
+                ],
+            },
         },
         'identity': {
             evaluate: function (_a) {
@@ -11939,6 +15270,14 @@ var Playground = (function (exports) {
                 return toAny(value);
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Functional',
+                returns: { type: 'any' },
+                args: { x: { type: 'any' } },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'Returns $x.',
+                examples: ['identity(1)', 'identity("Albert")', 'identity({ a: 1 })', 'identity(null)'],
+            },
         },
         'comp': {
             evaluate: function (params, sourceCodeInfo) {
@@ -11953,6 +15292,21 @@ var Playground = (function (exports) {
                     _a;
             },
             arity: {},
+            docs: {
+                category: 'Functional',
+                returns: { type: 'function' },
+                args: {
+                    a: { type: 'function' },
+                    b: { type: 'function' },
+                    fns: { type: 'function', rest: true },
+                },
+                variants: [{ argumentNames: ['fns'] }],
+                description: "Takes a variable number of functions and returns a function that is the composition of those.\n\n  The returned function takes a variable number of arguments,\n  applies the rightmost function to the args,\n  the next function (right-to-left) to the result, etc.",
+                examples: [
+                    "\nlet negative-quotient = comp(-, /);\nnegative-quotient(9, 3)",
+                    "\nlet x = { bar: { foo: 42 } };\ncomp(\"foo\", \"bar\")(x)",
+                ],
+            },
         },
         'constantly': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -11967,6 +15321,16 @@ var Playground = (function (exports) {
                     _b;
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Functional',
+                returns: { type: 'function' },
+                args: { x: { type: 'any' } },
+                variants: [{ argumentNames: ['x'] }],
+                description: 'Returns a function that takes any number of arguments and always returns $x.',
+                examples: [
+                    "\nlet always-true = constantly(true);\nalways-true(9, 3)",
+                ],
+            },
         },
         'juxt': {
             evaluate: function (params, sourceCodeInfo) {
@@ -11985,6 +15349,26 @@ var Playground = (function (exports) {
                     _a;
             },
             arity: { min: 1 },
+            docs: {
+                category: 'Functional',
+                returns: { type: 'function' },
+                args: {
+                    a: { type: 'function' },
+                    b: { type: 'function' },
+                    fun: { type: 'function' },
+                    fns: { type: 'function', rest: true },
+                },
+                variants: [
+                    { argumentNames: ['fun'] },
+                    { argumentNames: ['fun', 'fns'] },
+                ],
+                description: "Takes one or many function and returns a function that is the juxtaposition of those functions.\nThe returned function takes a variable number of args,\nand returns a vector containing the result of applying each function to the args (left-to-right).",
+                examples: [
+                    "\njuxt(+, *, min, max)(\n  3,\n  4,\n  6,\n)",
+                    "\njuxt(\"a\", \"b\")(\n  {\n    a: 1,\n    b: 2,\n    c: 3,\n    d: 4\n  }\n)",
+                    "\njuxt(+, *, min, max) apply range(1, 11)",
+                ],
+            },
         },
         'complement': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -12000,6 +15384,19 @@ var Playground = (function (exports) {
                     _b;
             },
             arity: toFixedArity(1),
+            docs: {
+                category: 'Functional',
+                returns: { type: 'function' },
+                args: { fun: { type: 'function' } },
+                variants: [{ argumentNames: ['fun'] }],
+                description: 'Takes a function $fun and returns a new function that takes the same arguments as f, has the same effects, if any, and returns the opposite truth value.',
+                examples: [
+                    'complement(>)(1, 3)',
+                    'complement(<)(1, 3)',
+                    'complement(+)(1, 3)',
+                    'complement(+)(0, 0)',
+                ],
+            },
         },
         'every-pred': {
             evaluate: function (params, sourceCodeInfo) {
@@ -12013,6 +15410,24 @@ var Playground = (function (exports) {
                     _a;
             },
             arity: { min: 1 },
+            docs: {
+                category: 'Functional',
+                returns: { type: 'function' },
+                args: {
+                    fun: { type: 'function' },
+                    fns: { type: 'function', rest: true },
+                },
+                variants: [
+                    { argumentNames: ['fun'] },
+                    { argumentNames: ['fun', 'fns'] },
+                ],
+                description: "\nTakes a number of predicates and returns a function that returns `true` if all predicates\nreturn a truthy value against all of its arguments, else it returns `false`.",
+                examples: [
+                    "\nevery-pred(string?, -> count($) > 3)(\n  \"Albert\",\n  \"Mojir\"\n)",
+                    "\n(string? every-pred -> count($) > 3)(\n  \"Albert\",\n  \"M\"\n)",
+                ],
+                hideOperatorForm: true,
+            },
         },
         'some-pred': {
             evaluate: function (params, sourceCodeInfo) {
@@ -12026,6 +15441,26 @@ var Playground = (function (exports) {
                     _a;
             },
             arity: { min: 1 },
+            docs: {
+                category: 'Functional',
+                returns: { type: 'function' },
+                args: {
+                    fun: { type: 'function' },
+                    fns: { type: 'function', rest: true },
+                },
+                variants: [
+                    { argumentNames: ['fun'] },
+                    { argumentNames: ['fun', 'fns'] },
+                ],
+                description: 'Takes a number of `predicates` and returns a function that returns `true` if at least one of the `predicates` return a truthy `true` value against at least one of its arguments, else it returns `false`.',
+                examples: [
+                    'some-pred(string?, -> count($) > 3)("Albert", "Mojir")',
+                    'some-pred(string?, -> count($) > 3)("a", "M")',
+                    'some-pred(string?, -> count($) > 3)("a", [1, 2, 3])',
+                    'some-pred(string?, -> count($) > 3)([1, 2, 3], [2])',
+                ],
+                hideOperatorForm: true,
+            },
         },
         'fnull': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -12042,6 +15477,31 @@ var Playground = (function (exports) {
                     _b;
             },
             arity: { min: 2 },
+            docs: {
+                category: 'Functional',
+                returns: { type: 'function' },
+                args: {
+                    a: { type: 'function' },
+                    b: { type: 'any' },
+                    fun: { type: 'function' },
+                    arg: { type: 'any' },
+                    args: { type: 'any', rest: true },
+                },
+                variants: [
+                    { argumentNames: ['fun', 'arg'] },
+                    { argumentNames: ['fun', 'arg', 'args'] },
+                ],
+                description: 'Takes a function $fun, and returns a function that calls $fun, replacing a null argument to the corresponding argument.',
+                examples: [
+                    'fnull(inc, 0)(1)',
+                    'fnull(inc, 0)(null)',
+                    '(inc fnull 0)(null)',
+                    'fnull(+, 1, 2)(null, 0)',
+                    'fnull(+, 1, 2)(0, null)',
+                    'fnull(+, 1, 2)(null, null)',
+                    'fnull(+, 1, 2)(null, null, 3, 4)',
+                ],
+            },
         },
     };
 
@@ -12102,6 +15562,17 @@ var Playground = (function (exports) {
                     return '';
                 },
                 arity: toFixedArity(1),
+                docs: {
+                    category: 'Meta',
+                    returns: { type: 'string' },
+                    args: { fun: { type: 'function' } },
+                    variants: [{ argumentNames: ['fun'] }],
+                    description: 'Returns documentation string of the $fun.',
+                    examples: [
+                        'doc(+)',
+                        "\nlet add = (x, y) -> {\n  \"\"\"\n  Adds two numbers.\n  Args:\n    x: First number.\n    y: Second number.\n  Returns:\n    Sum of x and y.\n  \"\"\"\n  x + y;\n};\n\ndoc(add)",
+                    ],
+                },
             },
             arity: {
                 evaluate: function (_a, sourceCodeInfo) {
@@ -12110,6 +15581,19 @@ var Playground = (function (exports) {
                     return isLitsFunction(fn) ? fn.arity : toFixedArity(1);
                 },
                 arity: toFixedArity(1),
+                docs: {
+                    category: 'Meta',
+                    returns: { type: 'object' },
+                    args: { fun: { type: 'function' } },
+                    variants: [{ argumentNames: ['fun'] }],
+                    description: 'Returns arity of the $fun. The arity is an object with the properties: `min` and `max`. If the function has fixed arity, `min` and `max` are equal to the number of required parameters. If no restrictions apply, empty object is returned.',
+                    examples: [
+                        'arity(+)',
+                        'arity(defined?)',
+                        "\nlet add = (x, y = 0) -> {\n  x + y;\n};\n\narity(add)",
+                        "\nlet foo = (k, ...x) -> {\n  k + x;\n};\n  arity(foo)",
+                    ],
+                },
             },
         };
     }
@@ -16405,150 +19889,6 @@ var Playground = (function (exports) {
         return { a: { type: a }, b: { type: b } };
     }
 
-    var arrayReference = {
-        'range': {
-            title: 'range',
-            category: 'Array',
-            returns: {
-                type: 'number',
-                array: true,
-            },
-            args: __assign(__assign({}, getOperatorArgs('number', 'number')), { step: {
-                    type: 'number',
-                } }),
-            variants: [
-                { argumentNames: ['b'] },
-                { argumentNames: ['a', 'b'] },
-                { argumentNames: ['a', 'b', 'step'] },
-            ],
-            description: "$range creates an array with a range of numbers from $a to $b (exclusive), by $step.\n\n$a defaults to 0.  \n$step defaults to 1.",
-            examples: [
-                'range(4)',
-                'range(1, 4)',
-                '1 range 10',
-                'range(0.4, 4.9)',
-                "\nrange(\n  0.25, // start value\n  1,    // end value (exclusive)\n  0.25, // step value\n)",
-            ],
-        },
-        'repeat': {
-            title: 'repeat',
-            category: 'Array',
-            returns: {
-                type: 'any',
-                array: true,
-            },
-            args: __assign({}, getOperatorArgs('any', 'integer')),
-            variants: [{
-                    argumentNames: ['a', 'b'],
-                }],
-            description: 'Returns an array with $a repeated $b times.',
-            examples: [
-                'repeat(10, 3)',
-                'repeat(10, 0)',
-                '"Albert" repeat 5',
-            ],
-        },
-        'flatten': {
-            title: 'flatten',
-            category: 'Array',
-            returns: {
-                type: 'any',
-                array: true,
-            },
-            args: {
-                x: {
-                    type: ['array', 'any'],
-                    description: 'If $x is not an array, `[ ]` is returned.',
-                },
-            },
-            variants: [{
-                    argumentNames: ['x'],
-                }],
-            description: 'Takes a nested array $x and flattens it.',
-            examples: [
-                'flatten([1, 2, [3, 4], 5])',
-                "\nlet foo = \"bar\";\nflatten([\n  1,\n  \" 2 A \",\n  [foo, [4, [\"ABC\"]]],\n  6,\n])",
-            ],
-            noOperatorDocumentation: true,
-        },
-        'mapcat': {
-            title: 'mapcat',
-            category: 'Array',
-            returns: {
-                type: 'collection',
-            },
-            args: __assign(__assign({}, getOperatorArgs('collection', 'function')), { colls: {
-                    type: 'collection',
-                    array: true,
-                }, fun: {
-                    type: 'function',
-                } }),
-            variants: [{
-                    argumentNames: ['colls', 'fun'],
-                }],
-            description: 'Returns the result of applying concat to the result of applying map to $fun and $colls.',
-            examples: [
-                '[[3, 2, 1, 0], [6, 5, 4], [9, 8, 7]] mapcat reverse',
-                'mapcat([[3, 2, 1, 0], [6, 5, 4], [9, 8, 7]], reverse)',
-                '[[3, 2, 1, 0,], [6, 5, 4,], [9, 8, 7]] mapcat reverse',
-                "\nlet foo = (n) -> {\n  [n - 1, n, n + 1]\n};\n[1, 2, 3] mapcat foo",
-                "\nmapcat(\n  [[1, 2], [2, 2], [2, 3]],\n  -> $ remove even?\n)",
-            ],
-        },
-        'moving-fn': {
-            title: 'moving-fn',
-            category: 'Array',
-            returns: {
-                type: 'array',
-            },
-            args: {
-                arr: {
-                    type: 'array',
-                },
-                windowSize: {
-                    type: 'number',
-                    description: 'The size of the moving window.',
-                },
-                fn: {
-                    type: 'function',
-                },
-            },
-            variants: [{
-                    argumentNames: ['arr', 'windowSize', 'fn'],
-                }],
-            description: 'Returns the result of applying $fn to each moving window of size $windowSize in $arr.',
-            examples: [
-                'let v = import("Vector"); moving-fn([1, 2, 3], 2, v.sum)',
-                'let v = import("Vector"); moving-fn([1, 2, 3], 1, v.sum)',
-                'let v = import("Vector"); moving-fn([1, 2, 3], 3, v.sum)',
-            ],
-        },
-        'running-fn': {
-            title: 'running-fn',
-            category: 'Array',
-            returns: {
-                type: 'array',
-            },
-            args: {
-                a: {
-                    type: 'array',
-                },
-                b: {
-                    type: 'function',
-                },
-            },
-            variants: [{
-                    argumentNames: ['a', 'b'],
-                }],
-            description: 'Returns the result of applying $b to each element of $a.',
-            examples: [
-                'let v = import("Vector"); running-fn([1, 2, 3], v.sum)',
-                'let v = import("Vector"); running-fn([1, 2, 3], v.max)',
-                'let v = import("Vector"); running-fn([1, 2, 3], v.min)',
-            ],
-        },
-    };
-
     var assertReference = {
         'Assert.assert': {
             title: 'Assert.assert',
@@ -16928,4229 +20268,6 @@ var Playground = (function (exports) {
         },
     };
 
-    var bitwiseReference = {
-        '<<': {
-            title: '<<',
-            category: 'Bitwise',
-            returns: {
-                type: 'integer',
-            },
-            args: __assign({}, getOperatorArgs('integer', 'integer')),
-            variants: [
-                { argumentNames: ['a', 'b'] },
-            ],
-            description: 'Shifts $a arithmetically left by $b bit positions.',
-            examples: [
-                '1 << 10',
-                '<<(1, 10)',
-                '<<(-4, 2)',
-            ],
-        },
-        '>>': {
-            title: '>>',
-            category: 'Bitwise',
-            returns: {
-                type: 'integer',
-            },
-            args: __assign({}, getOperatorArgs('integer', 'integer')),
-            variants: [
-                { argumentNames: ['a', 'b'] },
-            ],
-            description: 'Shifts $a arithmetically right by $b bit positions.',
-            examples: [
-                '2048 >> 10',
-                '>>(2048, 10)',
-                '>>>(-16, 2)',
-                '>>(4, 10)',
-            ],
-        },
-        '>>>': {
-            title: '>>>',
-            category: 'Bitwise',
-            returns: {
-                type: 'integer',
-            },
-            args: __assign({}, getOperatorArgs('integer', 'integer')),
-            variants: [
-                { argumentNames: ['a', 'b'] },
-            ],
-            description: 'Shifts $a arithmetically right by $b bit positions without sign extension.',
-            examples: [
-                '-16 >>> 2',
-                '>>>(2048, 10)',
-                '>>>(-16, 2)',
-                '>>>(4, 10)',
-                '>>>(-1, 10)',
-            ],
-        },
-        'bit-not': {
-            title: 'bit-not',
-            category: 'Bitwise',
-            returns: {
-                type: 'integer',
-            },
-            args: {
-                a: {
-                    type: 'integer',
-                },
-            },
-            variants: [
-                { argumentNames: ['a'] },
-            ],
-            description: 'Returns bitwise `not` of $a.',
-            examples: [
-                'bit-not(0)',
-                'bit-not(255)',
-            ],
-        },
-        '&': {
-            title: '&',
-            category: 'Bitwise',
-            returns: {
-                type: 'integer',
-            },
-            args: __assign(__assign({}, getOperatorArgs('integer', 'integer')), { c: {
-                    type: 'integer',
-                    rest: true,
-                } }),
-            variants: [
-                { argumentNames: ['a', 'b'] },
-                { argumentNames: ['a', 'b', 'c'] },
-            ],
-            description: 'Returns bitwise `and` of all arguments.',
-            examples: [
-                '0b0011 & 0b0110',
-                '&(0b0011, 0b0110)',
-                '&(0b0011, 0b0110, 0b1001)',
-            ],
-        },
-        'bit-and-not': {
-            title: 'bit-and-not',
-            category: 'Bitwise',
-            returns: {
-                type: 'integer',
-            },
-            args: __assign(__assign({}, getOperatorArgs('integer', 'integer')), { c: {
-                    type: 'integer',
-                    rest: true,
-                } }),
-            variants: [
-                { argumentNames: ['a', 'b'] },
-                { argumentNames: ['a', 'b', 'c'] },
-            ],
-            description: 'Returns bitwise `and` with complement.',
-            examples: [
-                '0b0011 bit-and-not 0b0110',
-                'bit-and-not(0b0011, 0b0110)',
-                'bit-and-not(0b0011, 0b0110, 0b1001)',
-            ],
-        },
-        '|': {
-            title: '|',
-            category: 'Bitwise',
-            returns: {
-                type: 'integer',
-            },
-            args: __assign(__assign({}, getOperatorArgs('integer', 'integer')), { c: {
-                    type: 'integer',
-                    rest: true,
-                } }),
-            variants: [
-                { argumentNames: ['a', 'b'] },
-                { argumentNames: ['a', 'b', 'c'] },
-            ],
-            description: 'Returns bitwise `or` of all arguments.',
-            examples: [
-                '0b0011 | 0b0110',
-                '|(0b0011, 0b0110)',
-                '|(0b1000, 0b0100, 0b0010)',
-            ],
-        },
-        'xor': {
-            title: 'xor',
-            category: 'Bitwise',
-            returns: {
-                type: 'integer',
-            },
-            args: __assign(__assign({}, getOperatorArgs('integer', 'integer')), { c: {
-                    type: 'integer',
-                    rest: true,
-                } }),
-            variants: [
-                { argumentNames: ['a', 'b'] },
-                { argumentNames: ['a', 'b', 'c'] },
-            ],
-            description: 'Returns bitwise `xor` of all arguments.',
-            examples: [
-                '0b0011 xor 0b0110',
-                'xor(0b0011, 0b0110)',
-                'xor(0b11110000, 0b00111100, 0b10101010)',
-            ],
-        },
-        'bit-flip': {
-            title: 'bit-flip',
-            category: 'Bitwise',
-            returns: {
-                type: 'integer',
-            },
-            args: __assign({}, getOperatorArgs('integer', 'integer')),
-            variants: [
-                { argumentNames: ['a', 'b'] },
-            ],
-            description: 'Flips bit number $b.',
-            examples: [
-                '0b0011 bit-flip 1',
-                'bit-flip(0b0011, 1)',
-                'bit-flip(0b1100, 1)',
-            ],
-        },
-        'bit-clear': {
-            title: 'bit-clear',
-            category: 'Bitwise',
-            returns: {
-                type: 'integer',
-            },
-            args: __assign({}, getOperatorArgs('integer', 'integer')),
-            variants: [
-                { argumentNames: ['a', 'b'] },
-            ],
-            description: 'Clears bit number $b.',
-            examples: [
-                '0b0011 bit-clear 1',
-                'bit-clear(0b0011, 1)',
-                'bit-clear(0b1100, 1)',
-            ],
-        },
-        'bit-set': {
-            title: 'bit-set',
-            category: 'Bitwise',
-            returns: {
-                type: 'integer',
-            },
-            args: __assign({}, getOperatorArgs('integer', 'integer')),
-            variants: [
-                { argumentNames: ['a', 'b'] },
-            ],
-            description: 'Sets bit number $b.',
-            examples: [
-                '0b0010 bit-set 1',
-                'bit-set(0b0011, 1)',
-                'bit-set(0b1100, 1)',
-            ],
-        },
-        'bit-test': {
-            title: 'bit-test',
-            category: 'Bitwise',
-            returns: {
-                type: 'boolean',
-            },
-            args: __assign({}, getOperatorArgs('integer', 'integer')),
-            variants: [
-                { argumentNames: ['a', 'b'] },
-            ],
-            description: 'Checks if bit number $b is set.',
-            examples: [
-                '0b0011 bit-test 1',
-                'bit-test(0b0011, 1)',
-                'bit-test(0b1100, 1)',
-            ],
-        },
-    };
-
-    var collectionReference = {
-        'filter': {
-            title: 'filter',
-            category: 'Collection',
-            returns: {
-                type: 'collection',
-            },
-            args: __assign(__assign({}, getOperatorArgs('collection', 'function')), { coll: {
-                    type: 'collection',
-                }, fun: {
-                    type: 'function',
-                } }),
-            variants: [
-                { argumentNames: ['coll', 'fun'] },
-            ],
-            description: 'Creates a new collection with all elements that pass the test implemented by $fun.',
-            examples: [
-                "\nfilter(\n  [\"Albert\", \"Mojir\", 160, [1, 2]],\n  string?\n)",
-                "\nfilter(\n  [5, 10, 15, 20],\n  -> $ > 10\n)",
-                "\nfilter(\n  { a: 1, b: 2 },\n  odd?\n)",
-            ],
-        },
-        'filteri': {
-            title: 'filteri',
-            category: 'Collection',
-            returns: {
-                type: 'collection',
-            },
-            args: {
-                a: {
-                    type: 'collection',
-                },
-                b: {
-                    type: 'function',
-                    description: 'The function to call for each element in the collection. The function should take two arguments: the element itself and the index.',
-                },
-            },
-            variants: [
-                { argumentNames: ['a', 'b'] },
-            ],
-            description: 'Creates a new collection with all elements that pass the test implemented by $b. The function is called for each element in the collection, and it should take two arguments: the element itself and the index.',
-            examples: [
-                'filteri([1, 2, 3], (x, i) -> i % 2 == 0)',
-                'filteri([1, 2, 3], (x, i) -> x % 2 == 0)',
-                'filteri([1, 2, 3], (x, i) -> x + i > 3)',
-            ],
-        },
-        'map': {
-            title: 'map',
-            category: 'Collection',
-            returns: {
-                type: 'collection',
-            },
-            args: __assign(__assign({}, getOperatorArgs('collection', 'function')), { colls: {
-                    type: 'collection',
-                    rest: true,
-                    description: 'At least one.',
-                }, fun: {
-                    type: 'function',
-                } }),
-            variants: [
-                { argumentNames: ['colls', 'fun'] },
-            ],
-            description: 'Creates a new collection populated with the results of calling $fun on every element in $colls.',
-            examples: [
-                '[1, 2, 3] map -',
-                '[1, 2, 3] map -> -($)',
-                'map(["Albert", "Mojir", 42], str)',
-                'map([1, 2, 3], inc)',
-                'map([1, 2, 3], [1, 10, 100], *)',
-                'map({ a: 1, b: 2 }, inc)',
-                'map({ a: 1, b: 2 }, { a: 10, b: 20 }, +)',
-            ],
-        },
-        'mapi': {
-            title: 'mapi',
-            category: 'Collection',
-            returns: {
-                type: 'collection',
-            },
-            args: {
-                a: {
-                    type: 'collection',
-                },
-                b: {
-                    type: 'function',
-                    description: 'The function to call for each element in the collection. The function should take two arguments: the element itself and the index.',
-                },
-            },
-            variants: [
-                { argumentNames: ['a', 'b'] },
-            ],
-            description: 'Creates a new collection populated with the results of calling $b on every element in $a. The function is called for each element in the collection, and it should take two arguments: the element itself and the index.',
-            examples: [
-                'mapi([1, 2, 3], (x, i) -> x + i)',
-                'mapi([1, 2, 3], (x, i) -> x * i)',
-                'mapi([1, 2, 3], (x, i) -> x - i)',
-                'mapi([1, 2, 3], (x, i) -> x / i)',
-                'mapi([1, 2, 3], (x, i) -> x % inc(i))',
-            ],
-        },
-        'reduce': {
-            title: 'reduce',
-            category: 'Collection',
-            returns: {
-                type: 'any',
-            },
-            args: {
-                fun: {
-                    type: 'function',
-                },
-                coll: {
-                    type: 'collection',
-                },
-                initial: {
-                    type: 'any',
-                },
-            },
-            variants: [
-                { argumentNames: ['coll', 'fun', 'initial'] },
-            ],
-            description: 'Runs $fun function on each element of the $coll, passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $coll is a single value.',
-            examples: [
-                'reduce([1, 2, 3], +, 0)',
-                'reduce([], +, 0)',
-                'reduce({ a: 1, b: 2 }, +, 0)',
-                "\nreduce(\n  [1, 2, 3, 4, 5, 6, 7, 8, 9],\n  (result, value) -> result + (even?(value) ? value : 0),\n  0)",
-            ],
-        },
-        'reduce-right': {
-            title: 'reduce-right',
-            category: 'Collection',
-            returns: {
-                type: 'any',
-            },
-            args: {
-                fun: {
-                    type: 'function',
-                },
-                coll: {
-                    type: 'collection',
-                },
-                initial: {
-                    type: 'any',
-                },
-            },
-            variants: [
-                { argumentNames: ['coll', 'fun', 'initial'] },
-            ],
-            description: 'Runs $fun function on each element of the $coll (starting from the last item), passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $coll is a single value.',
-            examples: [
-                'reduce-right(["A", "B", "C"], str, "")',
-                'reduce-right({ a: 1, b: 2 }, +, 0)',
-            ],
-        },
-        'reducei-right': {
-            title: 'reducei-right',
-            category: 'Collection',
-            returns: {
-                type: 'any',
-            },
-            args: {
-                coll: {
-                    type: 'collection',
-                },
-                fun: {
-                    type: 'function',
-                    description: 'The function to call for each element in the collection. The function should take three arguments: the accumulator, the element itself, and the index.',
-                },
-                initial: {
-                    type: 'any',
-                    description: 'The initial value to use as the accumulator.',
-                },
-            },
-            variants: [
-                { argumentNames: ['coll', 'fun', 'initial'] },
-            ],
-            description: 'Runs $fun function on each element of the $coll (starting from the last item), passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $coll is a single value. The function is called for each element in the collection, and it should take three arguments: the accumulator, the element itself, and the index.',
-            examples: [
-                'reducei-right([1, 2, 3], (acc, x, i) -> acc + x + i, 0)',
-                'reducei-right("Albert", (acc, x, i) -> acc ++ x ++ i, "")',
-                'reducei-right({ a: 1, b: 2 }, -> $1 ++ $3, "")',
-            ],
-        },
-        'reducei': {
-            title: 'reducei',
-            category: 'Collection',
-            returns: {
-                type: 'any',
-            },
-            args: {
-                coll: {
-                    type: 'collection',
-                },
-                fun: {
-                    type: 'function',
-                    description: 'The function to call for each element in the collection. The function should take three arguments: the accumulator, the element itself, and the index.',
-                },
-                initial: {
-                    type: 'any',
-                    description: 'The initial value to use as the accumulator.',
-                },
-            },
-            variants: [
-                { argumentNames: ['coll', 'fun', 'initial'] },
-            ],
-            description: 'Runs $fun function on each element of the $coll, passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $coll is a single value. The function is called for each element in the collection, and it should take three arguments: the accumulator, the element itself, and the index.',
-            examples: [
-                'reducei([1, 2, 3], (acc, x, i) -> acc + x + i, 0)',
-                'reducei("Albert", (acc, x, i) -> acc ++ x ++ i, "")',
-                'reducei({ a: 1, b: 2 }, -> $1 ++ $3, "")',
-            ],
-        },
-        'reductions': {
-            title: 'reductions',
-            category: 'Collection',
-            returns: {
-                type: 'any',
-                array: true,
-            },
-            args: {
-                fun: {
-                    type: 'function',
-                },
-                coll: {
-                    type: 'collection',
-                },
-                initial: {
-                    type: 'any',
-                },
-            },
-            variants: [
-                { argumentNames: ['coll', 'fun', 'initial'] },
-            ],
-            description: 'Returns an array of the intermediate values of the reduction (see `reduce`) of $coll by $fun.',
-            examples: [
-                'reductions([1, 2, 3], +, 0)',
-                'reductions([1, 2, 3], +, 10)',
-                'reductions([], +, 0)',
-                'reductions({ a: 1, b: 2 }, +, 0)',
-                "\nreductions(\n  [1, 2, 3, 4, 5, 6, 7, 8, 9],\n  (result, value) -> result + (even?(value) ? value : 0),\n  0\n)",
-            ],
-        },
-        'reductionsi': {
-            title: 'reductionsi',
-            category: 'Collection',
-            returns: {
-                type: 'any',
-                array: true,
-            },
-            args: {
-                coll: {
-                    type: 'collection',
-                },
-                fun: {
-                    type: 'function',
-                    description: 'The function to call for each element in the collection. The function should take three arguments: the accumulator, the element itself, and the index.',
-                },
-                initial: {
-                    type: 'any',
-                    description: 'The initial value to use as the accumulator.',
-                },
-            },
-            variants: [
-                { argumentNames: ['coll', 'fun', 'initial'] },
-            ],
-            description: 'Returns an array of the intermediate values of the reduction (see `reduce`) of $coll by $fun. The function is called for each element in the collection, and it should take three arguments: the accumulator, the element itself, and the index.',
-            examples: [
-                'reductionsi([1, 2, 3], (acc, x, i) -> acc + x + i, 0)',
-                'reductionsi("Albert", (acc, x, i) -> acc ++ x ++ i, "")',
-                'reductionsi({ a: 1, b: 2 }, -> $1 ++ $3, "")',
-            ],
-        },
-        'count': {
-            title: 'count',
-            category: 'Collection',
-            returns: {
-                type: 'number',
-            },
-            args: {
-                coll: {
-                    type: ['collection', 'null'],
-                },
-            },
-            variants: [
-                { argumentNames: ['coll'] },
-            ],
-            description: 'Returns number of elements in $coll.',
-            examples: [
-                'count([1, 2, 3])',
-                'count([])',
-                'count({ a: 1 })',
-                'count("")',
-                'count("Albert")',
-                'count(null)',
-            ],
-        },
-        'get': {
-            title: 'get',
-            category: 'Collection',
-            returns: {
-                type: 'any',
-            },
-            args: __assign(__assign({}, getOperatorArgs('collection', ['string', 'integer'])), { 'not-found': {
-                    type: 'any',
-                    description: 'Default value to return if $b is not found.',
-                } }),
-            variants: [
-                { argumentNames: ['a', 'b'] },
-                { argumentNames: ['a', 'b', 'not-found'] },
-            ],
-            description: 'Returns value in $a mapped at $b.',
-            examples: [
-                '[1, 2, 3] get 1',
-                '{ a: 1 } get "a"',
-                '"Albert" get "3"',
-                "\nget(\n  [1, 2, 3],\n  1, // Optional comma after last argument\n)",
-                "\nget(\n  [],\n  1\n)",
-                "\nget(\n  [],\n  1,\n  \"default\"\n)",
-                "\nget(\n  { a: 1 },\n  \"a\"\n)",
-                "\nget(\n  { a: 1 },\n  \"b\"\n)",
-                "\nget(\n  { a: 1 },\n  \"b\",\n  \"default\"\n)",
-                "\nget(\n  null,\n  \"a\"\n)",
-                "\nget(\n  null,\n  \"b\",\n  \"default\"\n)",
-            ],
-        },
-        'get-in': {
-            title: 'get-in',
-            category: 'Collection',
-            returns: {
-                type: 'any',
-            },
-            args: __assign(__assign({}, getOperatorArgs('collection', 'array')), { 'not-found': {
-                    type: 'any',
-                } }),
-            variants: [
-                { argumentNames: ['a', 'b'] },
-                { argumentNames: ['a', 'b', 'not-found'] },
-            ],
-            description: 'Returns the value in a nested collection, where $b is an array of keys. Returns $not-found if the key is not present. If $not-found is not set, `null` is returned.',
-            examples: [
-                "\nget-in(\n  [[1, 2, 3], [4, { a: \"Kalle\" }, 6]],\n  [1, 1, \"a\", 0]\n)",
-                "\nget-in(\n  [[1, 2, 3], [4, { a: \"Kalle\" }, 6]],\n  [1, 1, \"b\", 0]\n)",
-                "\nget-in(\n  [[1, 2, 3], [4, { a: \"Kalle\" }, 6]],\n  [1, 1, \"b\", 0],\n  \"Lisa\"\n)",
-            ],
-        },
-        'contains?': {
-            title: 'contains?',
-            category: 'Collection',
-            returns: {
-                type: 'boolean',
-            },
-            args: __assign({}, getOperatorArgs(['collection', 'null'], ['string', 'integer'])),
-            variants: [
-                { argumentNames: ['a', 'b'] },
-            ],
-            description: 'Returns `true` if $a contains $b, otherwise returns `false`. For strings, it checks if substring is included.',
-            examples: [
-                '[1, 2, 3] contains? 1',
-                'null contains? 1',
-                '{ a: 1, b: 2 } contains? "a"',
-                "\ncontains?(\n  [],\n  1\n)",
-                "\ncontains?(\n  [1],\n  1\n)",
-                "\ncontains?(\n  [1, 2, 3],\n  1\n)",
-                "\ncontains?(\n  {},\n  \"a\"\n)",
-                "\ncontains?(\n  { a: 1, b: 2 },\n  \"a\"\n)",
-            ],
-        },
-        'assoc': {
-            title: 'assoc',
-            category: 'Collection',
-            returns: {
-                type: 'collection',
-            },
-            args: {
-                coll: {
-                    type: 'collection',
-                },
-                key: {
-                    type: ['string', 'number'],
-                },
-                value: {
-                    type: 'any',
-                },
-                kvs: {
-                    type: 'any',
-                    description: 'Key-value pairs to associate.',
-                    rest: true,
-                },
-            },
-            variants: [
-                { argumentNames: ['coll', 'key', 'value'] },
-                { argumentNames: ['coll', 'key', 'value', 'kvs'] },
-            ],
-            description: "\nAdd or replace the value of element $key to $value in $coll. Repeated for all key-value pairs in $kvs.  \nIf $coll is an 'array', $key must be `number` satisfying `0 <=` $key `<= length`.",
-            examples: [
-                "\nassoc(\n  [1, 2, 3],\n  1,\n  \"Two\"\n)",
-                "\nassoc(\n  [1, 2, 3],\n  3,\n  \"Four\"\n)",
-                "\nassoc(\n  { a: 1, b: 2 },\n  \"a\",\n  \"One\")",
-                "\nassoc(\n  { a: 1, b: 2 },\n  \"c\",\n  \"Three\")",
-                "\nassoc(\n  \"Albert\",\n  6,\n  \"a\")",
-            ],
-        },
-        'assoc-in': {
-            title: 'assoc-in',
-            category: 'Collection',
-            returns: {
-                type: 'collection',
-            },
-            args: {
-                coll: {
-                    type: 'collection',
-                },
-                ks: {
-                    type: ['number', 'string'],
-                    array: true,
-                },
-                value: {
-                    type: 'any',
-                },
-            },
-            variants: [
-                { argumentNames: ['coll', 'ks', 'value'] },
-            ],
-            description: "\nAssociates a value in the nested collection $coll, where $ks is an array of keys and $value is the new value.\n\nIf any levels do not exist, objects will be created - and the corresponding keys must be of type string.",
-            examples: [
-                "\nassoc-in(\n  {},\n  [\"a\", \"b\", \"c\"],\n  \"Albert\"\n)",
-                "\nassoc-in(\n  [1, 2, [1, 2, 3]],\n  [2, 1],\n  \"Albert\"\n)",
-                "\nassoc-in(\n  [1, 2, { name: \"albert\" }],\n  [2, \"name\", 0],\n  \"A\"\n)",
-            ],
-        },
-        '++': {
-            title: '++',
-            category: 'Collection',
-            returns: {
-                type: 'collection',
-            },
-            args: __assign(__assign({}, getOperatorArgs('collection', 'collection')), { colls: {
-                    type: 'collection',
-                    rest: true,
-                } }),
-            variants: [
-                { argumentNames: ['a'] },
-                { argumentNames: ['a', 'colls'] },
-            ],
-            description: 'Concatenates collections into one collection.',
-            examples: [
-                '"Albert" ++ " " ++ "Mojir"',
-                '"Albert" ++ "Mojir"',
-                '++("Albert", "-", "Mojir")',
-                '++("Albert")',
-                '++("A", "l", "b", "e", "r", "t")',
-                '++([1, 2], [3, 4])',
-                '++([], [3, 4])',
-                '++([1, 2], [])',
-                '++([1, 2], [3, 4], [5, 6])',
-                '++([])',
-                '++({ a: 1, b: 2 }, { b: 1, c: 2 })',
-                '++({}, { a: 1 })',
-            ],
-        },
-        'not-empty': {
-            title: 'not-empty',
-            category: 'Collection',
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                coll: {
-                    type: ['collection', 'null'],
-                },
-            },
-            variants: [
-                { argumentNames: ['coll'] },
-            ],
-            description: 'Returns `null` if $coll is empty or `null`, otherwise $coll.',
-            examples: [
-                'not-empty([])',
-                'not-empty([1, 2, 3])',
-                'not-empty({})',
-                'not-empty({ a: 2 })',
-                'not-empty("")',
-                'not-empty("Albert")',
-                'not-empty(null)',
-            ],
-        },
-        'every?': {
-            title: 'every?',
-            category: 'Collection',
-            returns: {
-                type: 'boolean',
-            },
-            args: __assign({}, getOperatorArgs('collection', 'function')),
-            variants: [
-                { argumentNames: ['a', 'b'] },
-            ],
-            description: 'Returns `true` if all entries in $a pass the test implemented by $b, otherwise returns `false`.',
-            examples: [
-                '[1, 2, 3] every? number?',
-                '[1, 2, 3] every? even?',
-                "\nevery?(\n  [\"Albert\", \"Mojir\", 160, [1, 2]],\n  string?,\n)",
-                "\nevery?(\n  [50, 100, 150, 200],\n  -> $ > 10,\n)",
-                "\nevery?(\n  [],\n  number?\n)",
-                "\nevery?(\n  \"\",\n  number?\n)",
-                "\nevery?(\n  {},\n  number?\n)",
-                "\nevery?(\n  { a: 2, b: 4},\n  -> even?(second($))\n)",
-                "\nevery?(\n  { a: 2, b: 3 },\n  -> even?(second($))\n)",
-            ],
-        },
-        'not-every?': {
-            title: 'not-every?',
-            category: 'Collection',
-            returns: {
-                type: 'boolean',
-            },
-            args: __assign({}, getOperatorArgs('collection', 'function')),
-            variants: [
-                { argumentNames: ['a', 'b'] },
-            ],
-            description: 'Returns `true` if at least one element in $a does not pass the test implemented by $b, otherwise returns `false`.',
-            examples: [
-                "\nnot-every?(\n  [\"Albert\", \"Mojir\", 160, [1, 2]],\n  string?\n)",
-                "\nnot-every?(\n  [50, 100, 150, 200],\n  x -> x > 10\n)",
-                "\nnot-every?(\n  [],\n  number?\n)",
-                "\nnot-every?(\n  \"\",\n  number?\n)",
-                "\nnot-every?(\n  {},\n  number?\n)",
-                "\nnot-every?(\n  { a: 2, b: 4 },\n  -> even?(second($))\n)",
-                "\nnot-every?(\n  { a: 2, b: 3 },\n  -> even?(second($))\n)",
-            ],
-        },
-        'any?': {
-            title: 'any?',
-            category: 'Collection',
-            returns: {
-                type: 'boolean',
-            },
-            args: __assign({}, getOperatorArgs('collection', 'function')),
-            variants: [
-                { argumentNames: ['a', 'b'] },
-            ],
-            description: 'Returns `true` if any element in $a pass the test implemented by $b, otherwise returns `false`.',
-            examples: [
-                "\nany?(\n  [\"Albert\", \"Mojir\", 160, [1, 2]],\n  string?\n)",
-                "\nany?(\n  [50, 100, 150, 200],\n  x -> x > 10\n)",
-                "\nany?(\n  [],\n  number?\n)",
-                "\nany?(\n  \"\",\n  number?\n)",
-                "\nany?(\n  {},\n  number?\n)",
-                "\nany?(\n  { a: 2, b: 3 },\n  -> even?(second($))\n)",
-                "\nany?(\n  { a: 1, b: 3 },\n  -> even?(second($))\n)",
-            ],
-        },
-        'not-any?': {
-            title: 'not-any?',
-            category: 'Collection',
-            returns: {
-                type: 'boolean',
-            },
-            args: __assign({}, getOperatorArgs('collection', 'function')),
-            variants: [
-                { argumentNames: ['a', 'b'] },
-            ],
-            description: 'Returns `false` if any element in $a pass the test implemented by $b, otherwise returns `true`.',
-            examples: [
-                "\nnot-any?(\n  [\"Albert\", \"Mojir\", 160, [1, 2]],\n  string?\n)",
-                "\nnot-any?(\n  [50, 100, 150, 200],\n  x -> x > 10\n)",
-                "\nnot-any?(\n  [],\n  number?\n)",
-                "\nnot-any?(\n  \"\",\n  number?\n)",
-                "\nnot-any?(\n  {},\n  number?\n)",
-                "\nnot-any?(\n  { a: 2, b: 3 },\n  -> even?(second($))\n)",
-                "\nnot-any?(\n  { a: 1, b: 3 },\n  -> even?(second($))\n)",
-            ],
-        },
-        'update': {
-            title: 'update',
-            category: 'Collection',
-            returns: {
-                type: 'collection',
-            },
-            args: {
-                'coll': {
-                    type: 'collection',
-                },
-                'key': {
-                    type: ['string', 'number'],
-                },
-                'fun': {
-                    type: 'function',
-                },
-                'fun-args': {
-                    type: 'any',
-                    rest: true,
-                },
-            },
-            variants: [
-                { argumentNames: ['coll', 'value', 'fun'] },
-                { argumentNames: ['coll', 'value', 'fun', 'fun-args'] },
-            ],
-            description: "\nUpdates a value in the $coll collection, where $key is a key. $fun is a function\nthat will take the old value and any supplied $fun-args and\nreturn the new value.\nIf the key does not exist, `null` is passed as the old value.",
-            examples: [
-                "\nlet x = { a: 1, b: 2 };\nupdate(x, \"a\", inc)",
-                "\nlet x = { a: 1, b: 2 };\nupdate(\n  x,\n  \"c\",\n  val -> null?(val) ? 0 : inc(val)\n)",
-            ],
-        },
-        'update-in': {
-            title: 'update-in',
-            category: 'Collection',
-            returns: {
-                type: 'collection',
-            },
-            args: {
-                'coll': {
-                    type: 'collection',
-                },
-                'ks': {
-                    type: 'array',
-                },
-                'fun': {
-                    type: 'function',
-                },
-                'fun-args': {
-                    type: 'any',
-                    rest: true,
-                },
-            },
-            variants: [
-                { argumentNames: ['coll', 'ks', 'fun'] },
-                { argumentNames: ['coll', 'ks', 'fun', 'fun-args'] },
-            ],
-            description: "Updates a value in the $coll collection, where $ks is an array of\nkeys and $fun is a function that will take the old value and\nany supplied $fun-args and return the new value. If any levels do not exist,\nobjects will be created - and the corresponding keys must be of type string.",
-            examples: [
-                "\nupdate-in(\n  { a: [1, 2, 3] },\n  [\"a\", 1],\n  -> null?($) ? 0 : inc($)\n)",
-                "\nupdate-in(\n  { a: { foo: \"bar\"} },\n  [\"a\", \"foo\"],\n  -> null?($) ? \"?\" : \"!\"\n)",
-                "\nupdate-in(\n  { a: { foo: \"bar\"} },\n  [\"a\", \"baz\"],\n  -> null?($) ? \"?\" : \"!\"\n)",
-                "\nupdate-in(\n  { a: [1, 2, 3] },\n  [\"a\", 1],\n  *,\n  10,\n  10,\n  10,\n)",
-            ],
-        },
-    };
-
-    var functionalReference = {
-        '|>': {
-            title: '|>',
-            category: 'Functional',
-            returns: {
-                type: 'any',
-            },
-            args: __assign({}, getOperatorArgs('any', 'function')),
-            variants: [
-                { argumentNames: ['a', 'b'] },
-            ],
-            description: 'Takes a value $a and a function $b, and returns the result of applying $b to $a.',
-            examples: [
-                "\n1 |> inc |> inc",
-                "range(10)\n  |> map(_, -> $ ^ 2) // [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]\n  |> filter(_, odd?)  // [1, 9, 25, 49, 81]\n  |> reduce(_, +, 0)  // 165\n  |> sqrt             // 12.84523257866513\n  |> round(_, 2)",
-            ],
-        },
-        'apply': {
-            title: 'apply',
-            category: 'Functional',
-            returns: {
-                type: 'any',
-            },
-            args: __assign(__assign({}, getOperatorArgs('function', 'array')), { fun: {
-                    type: 'function',
-                }, args: {
-                    type: 'array',
-                } }),
-            variants: [
-                { argumentNames: ['fun', 'args'] },
-            ],
-            description: 'Call supplied function $fun with specified arguments $args.',
-            examples: [
-                "\napply(+, [1, 2, 3])",
-                "\napply(\n  (x, y) -> sqrt(x ^ 2 + y ^ 2),\n  [3, 4]\n)",
-                "\n(x, y) -> sqrt(x ^ 2 + y ^ 2) apply [3, 4]",
-            ],
-        },
-        'identity': {
-            title: 'identity',
-            category: 'Functional',
-            returns: {
-                type: 'any',
-            },
-            args: {
-                x: {
-                    type: 'any',
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'Returns $x.',
-            examples: ['identity(1)', 'identity("Albert")', 'identity({ a: 1 })', 'identity(null)'],
-        },
-        'comp': {
-            title: 'comp',
-            category: 'Functional',
-            returns: {
-                type: 'function',
-            },
-            args: __assign(__assign({}, getOperatorArgs('function', 'function')), { fns: {
-                    type: 'function',
-                    rest: true,
-                } }),
-            variants: [
-                { argumentNames: ['fns'] },
-            ],
-            description: "Takes a variable number of functions and returns a function that is the composition of those.\n\n  The returned function takes a variable number of arguments,\n  applies the rightmost function to the args,\n  the next function (right-to-left) to the result, etc.",
-            examples: [
-                "\nlet negative-quotient = comp(-, /);\nnegative-quotient(9, 3)",
-                "\nlet x = { bar: { foo: 42 } };\ncomp(\"foo\", \"bar\")(x)",
-            ],
-        },
-        'constantly': {
-            title: 'constantly',
-            category: 'Functional',
-            returns: {
-                type: 'function',
-            },
-            args: {
-                x: {
-                    type: 'any',
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'Returns a function that takes any number of arguments and always returns $x.',
-            examples: [
-                "\nlet always-true = constantly(true);\nalways-true(9, 3)",
-            ],
-        },
-        'juxt': {
-            title: 'juxt',
-            category: 'Functional',
-            returns: {
-                type: 'function',
-            },
-            args: __assign(__assign({}, getOperatorArgs('function', 'function')), { fun: {
-                    type: 'function',
-                }, fns: {
-                    type: 'function',
-                    rest: true,
-                } }),
-            variants: [
-                { argumentNames: ['fun'] },
-                { argumentNames: ['fun', 'fns'] },
-            ],
-            description: "Takes one or many function and returns a function that is the juxtaposition of those functions.  \nThe returned function takes a variable number of args,\nand returns a vector containing the result of applying each function to the args (left-to-right).",
-            examples: [
-                "\njuxt(+, *, min, max)(\n  3,\n  4,\n  6,\n)",
-                "\njuxt(\"a\", \"b\")(\n  {\n    a: 1,\n    b: 2,\n    c: 3,\n    d: 4\n  }\n)",
-                "\njuxt(+, *, min, max) apply range(1, 11)",
-            ],
-        },
-        'complement': {
-            title: 'complement',
-            category: 'Functional',
-            returns: {
-                type: 'function',
-            },
-            args: {
-                fun: {
-                    type: 'function',
-                },
-            },
-            variants: [
-                { argumentNames: ['fun'] },
-            ],
-            description: 'Takes a function $fun and returns a new function that takes the same arguments as f, has the same effects, if any, and returns the opposite truth value.',
-            examples: [
-                'complement(>)(1, 3)',
-                'complement(<)(1, 3)',
-                'complement(+)(1, 3)',
-                'complement(+)(0, 0)',
-            ],
-        },
-        'every-pred': {
-            title: 'every-pred',
-            category: 'Functional',
-            returns: {
-                type: 'function',
-            },
-            args: {
-                fun: {
-                    type: 'function',
-                },
-                fns: {
-                    type: 'function',
-                    rest: true,
-                },
-            },
-            variants: [
-                { argumentNames: ['fun'] },
-                { argumentNames: ['fun', 'fns'] },
-            ],
-            description: "\nTakes a number of predicates and returns a function that returns `true` if all predicates\nreturn a truthy value against all of its arguments, else it returns `false`.",
-            examples: [
-                "\nevery-pred(string?, -> count($) > 3)(\n  \"Albert\",\n  \"Mojir\"\n)",
-                "\n(string? every-pred -> count($) > 3)(\n  \"Albert\",\n  \"M\"\n)",
-            ],
-            noOperatorDocumentation: true,
-        },
-        'some-pred': {
-            title: 'some-pred',
-            category: 'Functional',
-            returns: {
-                type: 'function',
-            },
-            args: {
-                fun: {
-                    type: 'function',
-                },
-                fns: {
-                    type: 'function',
-                    rest: true,
-                },
-            },
-            variants: [
-                { argumentNames: ['fun'] },
-                { argumentNames: ['fun', 'fns'] },
-            ],
-            description: 'Takes a number of `predicates` and returns a function that returns \`true\` if at least one of the `predicates` return a truthy \`true\` value against at least one of its arguments, else it returns `false`.',
-            examples: [
-                'some-pred(string?, -> count($) > 3)("Albert", "Mojir")',
-                'some-pred(string?, -> count($) > 3)("a", "M")',
-                'some-pred(string?, -> count($) > 3)("a", [1, 2, 3])',
-                'some-pred(string?, -> count($) > 3)([1, 2, 3], [2])',
-            ],
-            noOperatorDocumentation: true,
-        },
-        'fnull': {
-            title: 'fnull',
-            category: 'Functional',
-            returns: {
-                type: 'function',
-            },
-            args: __assign(__assign({}, getOperatorArgs('function', 'any')), { fun: {
-                    type: 'function',
-                }, arg: {
-                    type: 'any',
-                }, args: {
-                    type: 'any',
-                    rest: true,
-                } }),
-            variants: [
-                { argumentNames: ['fun', 'arg'] },
-                { argumentNames: ['fun', 'arg', 'args'] },
-            ],
-            description: 'Takes a function $fun, and returns a function that calls $fun, replacing a null argument to the corresponding argument.',
-            examples: [
-                'fnull(inc, 0)(1)',
-                'fnull(inc, 0)(null)',
-                '(inc fnull 0)(null)',
-                'fnull(+, 1, 2)(null, 0)',
-                'fnull(+, 1, 2)(0, null)',
-                'fnull(+, 1, 2)(null, null)',
-                'fnull(+, 1, 2)(null, null, 3, 4)',
-            ],
-        },
-    };
-
-    var mixedArgs = {
-        type: ['number', 'vector', 'matrix'],
-        rest: true,
-    };
-    var mixedOperatorArgs = getOperatorArgs(['number', 'vector', 'matrix'], ['number', 'vector', 'matrix']);
-    var mathReference = {
-        '+': {
-            title: '+',
-            category: 'Math',
-            returns: {
-                type: ['number', 'vector', 'matrix'],
-            },
-            args: __assign({ xs: mixedArgs }, mixedOperatorArgs),
-            variants: [
-                { argumentNames: ['xs'] },
-            ],
-            description: 'The `+` function performs addition of numbers and element-wise addition of `vectors` and `matrices` of compatible dimensions, returning the same type as its inputs. When used with mixed types, it adds the scalar to each element of the collection.',
-            examples: [
-                '1 + 2',
-                '1 + 20 + 30',
-                '+(1, 2, 3, 4)',
-                '+()',
-                '+(1)',
-                '[1, 2, 3] + 2',
-                '[1, 2, 3] + [4, 5, 6]',
-                '[[1, 2, 3], [4, 5, 6]] + [[7, 8, 9], [10, 11, 12]]',
-                '[[1, 2, 3], [4, 5, 6]] + 2',
-            ],
-        },
-        '-': {
-            title: '-',
-            category: 'Math',
-            returns: {
-                type: ['number', 'vector', 'matrix'],
-            },
-            args: __assign({ xs: mixedArgs }, mixedOperatorArgs),
-            variants: [
-                { argumentNames: ['xs'] },
-            ],
-            description: 'Computes difference between first value and sum of the rest. When called with only one argument, it does negation.',
-            examples: [
-                '50 - 8',
-                '1 - 1 - 1',
-                '-()',
-                '-(4, 2)',
-                '-(4, 3, 2, 1,)',
-                '[1, 2, 3] - 2',
-                '[1, 2, 3] - [4, 5, 6]',
-                '[[1, 2, 3], [4, 5, 6]] - [[7, 8, 9], [10, 11, 12]]',
-                '[[1, 2, 3], [4, 5, 6]] - 2',
-            ],
-        },
-        '*': {
-            title: '*',
-            category: 'Math',
-            returns: {
-                type: ['number', 'vector', 'matrix'],
-            },
-            args: __assign({ xs: mixedArgs }, mixedOperatorArgs),
-            variants: [
-                { argumentNames: ['xs'] },
-            ],
-            description: 'The `*` function performs multiplication of `numbers` and element-wise multiplication of `vectors` and `matrices` of compatible dimensions, returning the same type as its inputs. When used with mixed types, it multiplies each element of the collection by the scalar.',
-            examples: [
-                '6 * 7',
-                '-1 * 4',
-                '*(4, 7)',
-                '*(1, 2, 3, 4, 5)',
-                '*()',
-                '*(8)',
-                '[1, 2, 3] * 2',
-                '[1, 2, 3] * [4, 5, 6]',
-                '[[1, 2, 3], [4, 5, 6]] * [[7, 8, 9], [10, 11, 12]]',
-                '[[1, 2, 3], [4, 5, 6]] * 2',
-            ],
-        },
-        '/': {
-            title: '/',
-            category: 'Math',
-            returns: {
-                type: ['number', 'vector', 'matrix'],
-            },
-            args: __assign({ xs: mixedArgs }, mixedOperatorArgs),
-            variants: [
-                { argumentNames: ['xs'] },
-            ],
-            description: 'The `/` function performs division of `numbers` and element-wise division of `vectors` and `matrices` of compatible dimensions, returning the same type as its inputs. When used with mixed types, it divides each element of the collection by the scalar.',
-            examples: [
-                '12 / 100',
-                '-1 / 4',
-                '/(7, 4)',
-                '/(1, 2, 4, 8)',
-                '/()',
-                '/(8)',
-                '[1, 2, 3] / 2',
-                '[1, 2, 3] / [4, 5, 6]',
-                '[[1, 2, 3], [4, 5, 6]] / [[7, 8, 9], [10, 11, 12]]',
-                '[[1, 2, 3], [4, 5, 6]] / 2',
-            ],
-        },
-        'mod': {
-            title: 'mod',
-            category: 'Math',
-            returns: {
-                type: ['number', 'vector', 'matrix'],
-            },
-            args: __assign({}, mixedOperatorArgs),
-            variants: [
-                { argumentNames: ['a', 'b'] },
-            ],
-            description: 'The `mod` function computes the modulo of division with the same sign as the divisor, working on `numbers` and element-wise on `vectors` and `matrices` of compatible dimensions. When used with mixed types, it applies the modulo operation between each element of the collection and the scalar.',
-            examples: [
-                'mod(5, 3)',
-                'mod(5.2, 3.1)',
-                'mod(-5, 3)',
-                '5 mod -3',
-                '-5 mod -3',
-                '[1, 2, 3] mod 2',
-                '2 mod [1, 2, 3]',
-                'mod([1, 2, 3], [4, 5, 6])',
-                '[[1, 2, 3], [4, 5, 6]] mod [[7, 8, 9], [10, 11, 12]]',
-                'mod([[1, 2, 3], [4, 5, 6]], 2)',
-            ],
-        },
-        '%': {
-            title: '%',
-            category: 'Math',
-            returns: {
-                type: ['number', 'vector', 'matrix'],
-            },
-            args: __assign({}, mixedOperatorArgs),
-            variants: [
-                { argumentNames: ['a', 'b'] },
-            ],
-            description: 'The `%` function computes the remainder of division with the same sign as the dividend, working on `numbers` and element-wise on `vectors` and `matrices` of compatible dimensions. When used with mixed types, it applies the remainder operation between each element of the collection and the scalar.',
-            examples: [
-                '5 % 3',
-                '5.2 % 3.1',
-                '-5 % 3',
-                '%(5, -3)',
-                '%(-5, -3)',
-                '[1, 2, 3] % 2',
-                '2 % [1, 2, 3]',
-                '%([1, 2, 3], [4, 5, 6])',
-                '[[1, 2, 3], [4, 5, 6]] % [[7, 8, 9], [10, 11, 12]]',
-                '%([[1, 2, 3], [4, 5, 6]], 2)',
-            ],
-        },
-        'quot': {
-            title: 'quot',
-            category: 'Math',
-            returns: {
-                type: ['number', 'vector', 'matrix'],
-            },
-            args: __assign({}, mixedOperatorArgs),
-            variants: [
-                { argumentNames: ['a', 'b'] },
-            ],
-            description: 'The `quot` function performs integer division truncated toward zero, working on `numbers` and element-wise on `vectors` and `matrices` of compatible dimensions. When used with mixed types, it applies integer division between each element of the collection and the scalar.',
-            examples: [
-                'quot(5, 3)',
-                'quot(5.2, 3.1)',
-                'quot(-5, 3)',
-                '5 quot -3',
-                '-5 quot -3',
-                'quot(5, 0)',
-                'quot(0, 5)',
-                '[1, 2, 3] quot 2',
-                '2 quot [1, 2, 3]',
-                'quot([1, 2, 3], [4, 5, 6])',
-                '[[1, 2, 3], [4, 5, 6]] quot [[7, 8, 9], [10, 11, 12]]',
-                'quot([[1, 2, 3], [4, 5, 6]], 2)',
-                '[[1, 2, 3], [4, 5, 6]] quot [[7, 8, 9], [10, 11, 12]]',
-            ],
-        },
-        'inc': {
-            title: 'inc',
-            category: 'Math',
-            returns: {
-                type: 'number',
-            },
-            args: {
-                x: {
-                    type: ['number', 'vector', 'matrix'],
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'The `inc` function increments its argument by 1, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it increases each element by 1 while preserving the original structure.',
-            examples: [
-                'inc(0)',
-                'inc(1)',
-                'inc(100.1)',
-                'inc([1, 2, 3])',
-                'inc([[1, 2], [3, 4]])',
-            ],
-        },
-        'dec': {
-            title: 'dec',
-            category: 'Math',
-            returns: {
-                type: ['number', 'vector', 'matrix'],
-            },
-            args: {
-                x: {
-                    type: ['number', 'vector', 'matrix'],
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'The `dec` function decrements its argument by 1, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it decreases each element by 1 while preserving the original structure.',
-            examples: [
-                'dec(0)',
-                'dec(1)',
-                'dec(100.1)',
-                'dec([1, 2, 3])',
-                'dec([[1, 2], [3, 4]])',
-            ],
-        },
-        'sqrt': {
-            title: 'sqrt',
-            category: 'Math',
-            returns: {
-                type: ['number', 'vector', 'matrix'],
-            },
-            args: {
-                x: {
-                    type: ['number', 'vector', 'matrix'],
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'The `sqrt` function calculates the square root of `numbers` and computes element-wise square roots of `vectors` and `matrices`. When applied to collections, it returns the square root of each element while preserving the original structure.',
-            examples: [
-                'sqrt(0)',
-                'sqrt(9)',
-                'sqrt(2)',
-                'sqrt(0)',
-                'sqrt(9)',
-                'sqrt(2)',
-                'sqrt([1, 4, 9])',
-                'sqrt([[1, 4], [9, 16]])',
-            ],
-        },
-        'cbrt': {
-            title: 'cbrt',
-            category: 'Math',
-            returns: {
-                type: ['number', 'vector', 'matrix'],
-            },
-            args: {
-                x: {
-                    type: ['number', 'vector', 'matrix'],
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'The `cbrt` function calculates the cube root of `numbers` and computes element-wise cube roots of `vectors` and `matrices`. When applied to collections, it returns the cube root of each element while preserving the original structure.',
-            examples: [
-                'cbrt(0)',
-                'cbrt(27)',
-                'cbrt(2)',
-                'cbrt(1)',
-                'cbrt(0)',
-                'cbrt(27)',
-                'cbrt(2)',
-                'cbrt(1)',
-                'cbrt([1, 8, 27])',
-                'cbrt([[1, 8], [27, 64]])',
-            ],
-        },
-        '^': {
-            title: '^',
-            category: 'Math',
-            returns: {
-                type: ['number', 'vector', 'matrix'],
-            },
-            args: __assign({}, mixedOperatorArgs),
-            variants: [
-                { argumentNames: ['a', 'b'] },
-            ],
-            description: 'The ^ function computes exponentiation, raising the first argument to the power of the second, working on `numbers` and element-wise on `vectors` and `matrices` of compatible dimensions. When used with mixed types, it applies the power operation between each element of the collection and the scalar.',
-            examples: [
-                '2 ^ 3',
-                '2 ^ 0',
-                '2 ^ -3',
-                '^(-2, 3)',
-                '^(-2, -3)',
-                '[1, 2, 3] ^ 2',
-                '2 ^ [1, 2, 3]',
-                '^([1, 2, 3], [4, 5, 6])',
-                '[[1, 2, 3], [4, 5, 6]] ^ [[7, 8, 9], [10, 11, 12]]',
-                '^([[1, 2, 3], [4, 5, 6]], 2)',
-            ],
-        },
-        'round': {
-            title: 'round',
-            category: 'Math',
-            returns: {
-                type: ['number', 'vector', 'matrix'],
-            },
-            args: __assign({}, getOperatorArgs(['number', 'vector', 'matrix'], 'integer')),
-            variants: [
-                { argumentNames: ['a'] },
-                { argumentNames: ['a', 'b'] },
-            ],
-            description: 'The `round` function rounds a `number` to the nearest `integer` or to a specified number of `decimal` places, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it rounds each element while preserving the original structure.',
-            examples: [
-                'round(2)',
-                'round(2.49)',
-                'round(2.5)',
-                'round(-2.49)',
-                'round(-2.5)',
-                'round(-2.501)',
-                'round(1.23456789, 4)',
-                '1.123456789 round 2',
-                'round([1.23456789, 2.3456789], 1)',
-                '[1.23456789, 2.3456789] round 4',
-                '[[1.23456789, 2.3456789], [3.456789, 4.56789]] round 4',
-                'round([[1.23456789, 2.3456789], [3.456789, 4.56789]], 2)',
-            ],
-        },
-        'trunc': {
-            title: 'trunc',
-            category: 'Math',
-            returns: {
-                type: ['integer', 'vector', 'matrix'],
-            },
-            args: {
-                x: {
-                    type: ['number', 'vector', 'matrix'],
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'The `trunc` function truncates `numbers` toward zero (removing decimal portions without rounding), working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it truncates each element while preserving the original structure.',
-            examples: [
-                'trunc(2)',
-                'trunc(2.49)',
-                'trunc(2.5)',
-                'trunc(-2.49)',
-                'trunc(-2.5)',
-                'trunc(-2.501)',
-                'trunc([1.23456789, 2.3456789])',
-                'trunc([[1.23456789, 2.3456789], [3.456789, 4.56789]])',
-            ],
-        },
-        'floor': {
-            title: 'floor',
-            category: 'Math',
-            returns: {
-                type: ['integer', 'vector', 'matrix'],
-            },
-            args: {
-                x: {
-                    type: ['number', 'vector', 'matrix'],
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'The `floor` function returns the largest `integer` less than or equal to a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the floor of each element while preserving the original structure.',
-            examples: [
-                'floor(2)',
-                'floor(2.49)',
-                'floor(2.5)',
-                'floor(-2.49)',
-                'floor(-2.5)',
-                'floor(-2.501)',
-                'floor([1.23456789, 2.3456789])',
-                'floor([[1.23456789, 2.3456789], [3.456789, 4.56789]])',
-            ],
-        },
-        'ceil': {
-            title: 'ceil',
-            category: 'Math',
-            returns: {
-                type: ['integer', 'vector', 'matrix'],
-            },
-            args: {
-                x: {
-                    type: ['number', 'vector', 'matrix'],
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'The `ceil` function returns the smallest `integer` greater than or equal to a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the ceiling of each element while preserving the original structure.',
-            examples: [
-                'ceil(2)',
-                'ceil(2.49)',
-                'ceil(2.5)',
-                'ceil(-2.49)',
-                'ceil(-2.5)',
-                'ceil(-2.501)',
-                'ceil([1.23456789, 2.3456789])',
-                'ceil([[1.23456789, 2.3456789], [3.456789, 4.56789]])',
-            ],
-        },
-        'min': {
-            title: 'min',
-            category: 'Math',
-            returns: {
-                type: 'number',
-            },
-            args: __assign(__assign({}, getOperatorArgs('number', 'number')), { xs: {
-                    type: 'number',
-                    rest: true,
-                } }),
-            variants: [
-                { argumentNames: ['xs'] },
-            ],
-            description: 'Returns the smallest number of the arguments.',
-            examples: [
-                '2 min 3',
-                'min(2, 0, 1)',
-                'min(2, -1, 1)',
-                'min(2.5)',
-                '12 min 14',
-            ],
-        },
-        'max': {
-            title: 'max',
-            category: 'Math',
-            returns: {
-                type: 'number',
-            },
-            args: __assign(__assign({}, getOperatorArgs('number', 'number')), { xs: {
-                    type: 'number',
-                    rest: true,
-                } }),
-            variants: [
-                { argumentNames: ['xs'] },
-            ],
-            description: 'Returns the largest number of the arguments.',
-            examples: [
-                ' 2 max 3',
-                'max(2, 0, 1)',
-                'max(2, -1, 1)',
-                'max(2, 0.5)',
-                '4 max 2',
-            ],
-        },
-        'abs': {
-            title: 'abs',
-            category: 'Math',
-            returns: {
-                type: ['number', 'vector', 'matrix'],
-            },
-            args: {
-                x: {
-                    type: ['number', 'vector', 'matrix'],
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'The abs function returns the absolute value (magnitude) of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the absolute value of each element while preserving the original structure.',
-            examples: [
-                'abs(-2.3)',
-                'abs(0)',
-                'abs(2.5)',
-                'abs([1, -2, 3])',
-                'abs([[1, -2], [3, -4]])',
-            ],
-        },
-        'sign': {
-            title: 'sign',
-            category: 'Math',
-            returns: {
-                type: ['number', 'vector', 'matrix'],
-            },
-            args: {
-                x: {
-                    type: ['number', 'vector', 'matrix'],
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'The `sign` function returns the `sign** of a **number` (-1 for negative, 0 for zero, 1 for positive), working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the sign of each element while preserving the original structure.',
-            examples: [
-                'sign(-2.3)',
-                'sign(-0)',
-                'sign(0)',
-                'sign(12312)',
-                'sign([1, -2, 3])',
-                'sign([[1, -2], [3, -4]])',
-            ],
-        },
-        'ln': {
-            title: 'ln',
-            category: 'Math',
-            returns: {
-                type: ['number', 'vector', 'matrix'],
-            },
-            args: {
-                x: {
-                    type: ['number', 'vector', 'matrix'],
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'The `ln` function computes the natural logarithm (base `e`) of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the natural logarithm of each element while preserving the original structure.',
-            examples: [
-                'ln(0.01)',
-                'ln(2.5)',
-                'ln(E)',
-                'ln([1, 2, 3])',
-                'ln([[1, 2], [3, 4]])',
-            ],
-        },
-        'log2': {
-            title: 'log2',
-            category: 'Math',
-            returns: {
-                type: ['number', 'vector', 'matrix'],
-            },
-            args: {
-                x: {
-                    type: ['number', 'vector', 'matrix'],
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'The `log2` function computes the base `2` logarithm of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the base-2 logarithm of each element while preserving the original structure.',
-            examples: [
-                'log2(0.01)',
-                'log2(2 ^ 12)',
-                'log2(2.5)',
-                'log2([1, 2, 3])',
-                'log2([[1, 2], [3, 4]])',
-            ],
-        },
-        'log10': {
-            title: 'log10',
-            category: 'Math',
-            returns: {
-                type: ['number', 'vector', 'matrix'],
-            },
-            args: {
-                x: {
-                    type: ['number', 'vector', 'matrix'],
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'The `log10` function computes the base `10` logarithm of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the base-10 logarithm of each element while preserving the original structure.',
-            examples: [
-                'log10(0.01)',
-                'log10(10 ^ 12)',
-                'log10(2.5)',
-                'log10([1, 2, 3])',
-                'log10([[1, 2], [3, 4]])',
-            ],
-        },
-        'sin': {
-            title: 'sin',
-            category: 'Math',
-            returns: {
-                type: ['number', 'vector', 'matrix'],
-            },
-            args: {
-                x: {
-                    type: ['number', 'vector', 'matrix'],
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'The `sin` function computes the sine of an angle (in radians), working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the sine of each element while preserving the original structure.',
-            examples: [
-                'sin(0)',
-                'sin(1)',
-                'sin(PI)',
-                'sin(-0.5)',
-                'sin([1, 2, 3])',
-                'sin([[1, 2], [3, 4]])',
-            ],
-        },
-        'cos': {
-            title: 'cos',
-            category: 'Math',
-            returns: {
-                type: ['number', 'vector', 'matrix'],
-            },
-            args: {
-                x: {
-                    type: ['number', 'vector', 'matrix'],
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'The `cos` function computes the cosine of an angle (in radians), working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the cosine of each element while preserving the original structure.',
-            examples: [
-                'cos(0)',
-                'cos(1)',
-                'cos(PI)',
-                'cos(-0.5)',
-                'cos([1, 2, 3])',
-                'cos([[1, 2], [3, 4]])',
-            ],
-        },
-        'tan': {
-            title: 'tan',
-            category: 'Math',
-            returns: {
-                type: ['number', 'vector', 'matrix'],
-            },
-            args: {
-                x: {
-                    type: ['number', 'vector', 'matrix'],
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'The `tan` function computes the tangent of an angle (in radians), working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the tangent of each element while preserving the original structure.',
-            examples: [
-                'tan(0)',
-                'tan(1)',
-                'tan(PI)',
-                'tan(-0.5)',
-                'tan([1, 2, 3])',
-                'tan([[1, 2], [3, 4]])',
-            ],
-        },
-        'asin': {
-            title: 'asin',
-            category: 'Math',
-            returns: {
-                type: ['number', 'vector', 'matrix'],
-            },
-            args: {
-                x: {
-                    type: ['number', 'vector', 'matrix'],
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'The `asin` function computes the arcsine (inverse sine) of a `number` in radians, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the arcsine of each element while preserving the original structure.',
-            examples: [
-                'asin(0)',
-                'asin(1)',
-                'asin(-0.5)',
-                'asin([1, 2, 3])',
-                'asin([[1, 2], [3, 4]])',
-            ],
-        },
-        'acos': {
-            title: 'acos',
-            category: 'Math',
-            returns: {
-                type: ['number', 'vector', 'matrix'],
-            },
-            args: {
-                x: {
-                    type: ['number', 'vector', 'matrix'],
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'The `acos` function computes the arccosine (inverse cosine) of a `number` in radians, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the arccosine of each element while preserving the original structure.',
-            examples: [
-                'acos(0)',
-                'acos(1)',
-                'acos(-0.5)',
-                'acos([0.1, 0.2, 0.3])',
-                'acos([[0.1, 0.2], [0.3, 0.4]])',
-            ],
-        },
-        'atan': {
-            title: 'atan',
-            category: 'Math',
-            returns: {
-                type: ['number', 'vector', 'matrix'],
-            },
-            args: {
-                x: {
-                    type: ['number', 'vector', 'matrix'],
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'The `atan` function computes the arctangent (inverse tangent) of a `number` in radians, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the arctangent of each element while preserving the original structure.',
-            examples: [
-                'atan(0)',
-                'atan(1)',
-                'atan(-0.5)',
-                'atan([0.1, 0.2, 0.3])',
-                'atan([[0.1, 0.2], [0.3, 0.4]])',
-            ],
-        },
-        'sinh': {
-            title: 'sinh',
-            category: 'Math',
-            returns: {
-                type: ['number', 'vector', 'matrix'],
-            },
-            args: {
-                x: {
-                    type: ['number', 'vector', 'matrix'],
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'The `sinh` function computes the hyperbolic sine of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the hyperbolic sine of each element while preserving the original structure.',
-            examples: [
-                'sinh(0)',
-                'sinh(1)',
-                'sinh(-0.5)',
-                'sinh([0.1, 0.2, 0.3])',
-                'sinh([[0.1, 0.2], [0.3, 0.4]])',
-            ],
-        },
-        'cosh': {
-            title: 'cosh',
-            category: 'Math',
-            returns: {
-                type: ['number', 'vector', 'matrix'],
-            },
-            args: {
-                x: {
-                    type: ['number', 'vector', 'matrix'],
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'The `cosh` function computes the hyperbolic cosine of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the hyperbolic cosine of each element while preserving the original structure.',
-            examples: [
-                'cosh(0)',
-                'cosh(1)',
-                'cosh(-0.5)',
-                'cosh([0.1, 0.2, 0.3])',
-                'cosh([[0.1, 0.2], [0.3, 0.4]])',
-            ],
-        },
-        'tanh': {
-            title: 'tanh',
-            category: 'Math',
-            returns: {
-                type: ['number', 'vector', 'matrix'],
-            },
-            args: {
-                x: {
-                    type: ['number', 'vector', 'matrix'],
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'The `tanh` function computes the hyperbolic tangent of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the hyperbolic tangent of each element while preserving the original structure.',
-            examples: ['tanh(0)', 'tanh(1)', 'tanh(-0.5)', 'tanh(50)'],
-        },
-        'asinh': {
-            title: 'asinh',
-            category: 'Math',
-            returns: {
-                type: ['number', 'vector', 'matrix'],
-            },
-            args: {
-                x: {
-                    type: ['number', 'vector', 'matrix'],
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'The `asinh` function computes the inverse hyperbolic sine of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the inverse hyperbolic sine of each element while preserving the original structure.',
-            examples: [
-                'asinh(10)',
-                'asinh(90)',
-                'asinh (50)',
-                'asinh([10, 20, 30])',
-                'asinh([[10, 20], [30, 40]])',
-            ],
-        },
-        'acosh': {
-            title: 'acosh',
-            category: 'Math',
-            returns: {
-                type: ['number', 'vector', 'matrix'],
-            },
-            args: {
-                x: {
-                    type: ['number', 'vector', 'matrix'],
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'The `acosh` function computes the inverse hyperbolic cosine of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the inverse hyperbolic cosine of each element while preserving the original structure.',
-            examples: [
-                'acosh(1)',
-                'acosh(2)',
-                'acosh(100)',
-                'acosh(50)',
-                'acosh([1, 2, 3])',
-                'acosh([[1, 2], [3, 4]])',
-            ],
-        },
-        'atanh': {
-            title: 'atanh',
-            category: 'Math',
-            returns: {
-                type: ['number', 'vector', 'matrix'],
-            },
-            args: {
-                x: {
-                    type: ['number', 'vector', 'matrix'],
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'The `atanh` function computes the inverse hyperbolic tangent of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the inverse hyperbolic tangent of each element while preserving the original structure.',
-            examples: [
-                'atanh(0)',
-                'atanh(0.9)',
-                'atanh(-0.5)',
-                'atanh([0.1, 0.2, 0.3])',
-                'atanh([[0.1, 0.2], [0.3, 0.4]])',
-            ],
-        },
-        'to-rad': {
-            title: 'to-rad',
-            category: 'Math',
-            returns: {
-                type: ['number', 'vector', 'matrix'],
-            },
-            args: {
-                x: {
-                    type: ['number', 'vector', 'matrix'],
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'The `to-rad` function converts an angle from degrees to radians, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it converts each element while preserving the original structure.',
-            examples: [
-                'to-rad(0)',
-                'to-rad(90)',
-                'to-rad(180)',
-                'to-rad(360)',
-                'to-rad([0, 90, 180])',
-                'to-rad([[0, 90], [180, 360]])',
-            ],
-        },
-        'to-deg': {
-            title: 'to-deg',
-            category: 'Math',
-            returns: {
-                type: ['number', 'vector', 'matrix'],
-            },
-            args: {
-                x: {
-                    type: ['number', 'vector', 'matrix'],
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'The `to-deg` function converts an angle from radians to degrees, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it converts each element while preserving the original structure.',
-            examples: [
-                'to-deg(0)',
-                'to-deg(PI)',
-                'to-deg(PI / 2)',
-                'to-deg(3 * PI / 2)',
-                'to-deg([0, PI, PI / 2])',
-                'to-deg([[0, PI], [PI / 2, 3 * PI / 2]])',
-            ],
-        },
-    };
-
-    var metaReference = {
-        doc: {
-            title: 'doc',
-            category: 'Meta',
-            returns: {
-                type: 'string',
-            },
-            args: {
-                fun: {
-                    type: 'function',
-                },
-            },
-            variants: [
-                { argumentNames: ['fun'] },
-            ],
-            description: 'Returns documentation string of the $fun.',
-            examples: [
-                'doc(+)',
-                "\nlet add = (x, y) -> {\n  \"\"\"\n  Adds two numbers.\n  Args:\n    x: First number.\n    y: Second number.\n  Returns:\n    Sum of x and y.\n  \"\"\"\n  x + y;\n};\n\ndoc(add)",
-            ],
-        },
-        arity: {
-            title: 'arity',
-            category: 'Meta',
-            returns: {
-                type: 'object',
-            },
-            args: {
-                fun: {
-                    type: 'function',
-                },
-            },
-            variants: [
-                { argumentNames: ['fun'] },
-            ],
-            description: 'Returns arity of the $fun. The arity is an object with the properties: `min` and `max`. If the function has fixed arity, `min` and `max` are equal to the number of required parameters. If no restrictions apply, empty object is returned.',
-            examples: [
-                'arity(+)',
-                'arity(defined?)',
-                "\nlet add = (x, y = 0) -> {\n  x + y;\n};\n\narity(add)",
-                "\nlet foo = (k, ...x) -> {\n  k + x;\n};\n  arity(foo)",
-            ],
-        },
-    };
-
-    var miscReference = {
-        '≠': {
-            title: '≠',
-            category: 'Misc',
-            returns: {
-                type: 'boolean',
-            },
-            args: __assign(__assign({}, getOperatorArgs('any', 'any')), { x: {
-                    type: 'any',
-                }, ys: {
-                    type: 'any',
-                    rest: true,
-                } }),
-            variants: [
-                { argumentNames: ['x'] },
-                { argumentNames: ['x', 'ys'] },
-            ],
-            description: 'Returns `true` if all `values` are not equal to each other, otherwise result is `false`. `(≠ a b c)` is same as `(! (== a b c))`.',
-            examples: [
-                '1 ≠ 2',
-                '3 ≠ 3',
-                '≠(3)',
-                '≠(3, 3, 2)',
-                '≠("3", "2", "1", "0",)',
-                '≠(0, -0)',
-            ],
-        },
-        '==': {
-            title: '==',
-            category: 'Misc',
-            returns: {
-                type: 'boolean',
-            },
-            args: __assign(__assign({}, getOperatorArgs('any', 'any')), { x: {
-                    type: 'any',
-                }, ys: {
-                    type: 'any',
-                    rest: true,
-                } }),
-            variants: [
-                { argumentNames: ['x'] },
-                { argumentNames: ['x', 'ys'] },
-            ],
-            description: 'Returns `true` if all `values` are structaul equal to each other, otherwise result is `false`.',
-            examples: [
-                '1 == 1',
-                '[1, 2] == [1, 2]',
-                "\n{\n a: 1,\n b: 2,\n} == {\n b: 2,\n a: 1,\n}",
-                '==(1, 1)',
-                '==(1.01, 1)',
-                '==("1", 1)',
-                '==("2", "2", "2", "2")',
-                '==(2, 2, 1, 2)',
-                '==([1, 2], [1, 2])',
-                '==({ a: 1, b: 2 }, { b: 2, a: 1 })',
-            ],
-        },
-        '<': {
-            title: '<',
-            category: 'Misc',
-            returns: {
-                type: 'boolean',
-            },
-            args: __assign(__assign({}, getOperatorArgs(['number', 'string'], ['number', 'string'])), { x: {
-                    type: ['number', 'string'],
-                }, ys: {
-                    type: ['number', 'string'],
-                    rest: true,
-                } }),
-            variants: [
-                { argumentNames: ['x'] },
-                { argumentNames: ['x', 'ys'] },
-            ],
-            description: 'Returns `true` if $x and $ys are in increasing order, `false` otherwise.',
-            examples: [
-                '<(0, 1)',
-                '<(1, 1.01)',
-                '<(1, 1)',
-                '<(1, 2, 2, 3)',
-                '<("a", "b")',
-            ],
-        },
-        '>': {
-            title: '>',
-            category: 'Misc',
-            returns: {
-                type: 'boolean',
-            },
-            args: __assign(__assign({}, getOperatorArgs(['number', 'string'], ['number', 'string'])), { x: {
-                    type: ['number', 'string'],
-                }, ys: {
-                    type: ['number', 'string'],
-                    rest: true,
-                } }),
-            variants: [
-                { argumentNames: ['x'] },
-                { argumentNames: ['x', 'ys'] },
-            ],
-            description: 'Returns `true` if $x and $ys are in decreasing order, `false` otherwise.',
-            examples: [
-                '>(1, 0)',
-                '>(1.01, 1)',
-                '>(1, 1)',
-                '>(4, 3, 2, 1)',
-                '>(3, 2, 2, 1)',
-            ],
-        },
-        '<=': {
-            title: '<=',
-            category: 'Misc',
-            returns: {
-                type: 'boolean',
-            },
-            args: __assign(__assign({}, getOperatorArgs(['number', 'string'], ['number', 'string'])), { x: {
-                    type: ['number', 'string'],
-                }, ys: {
-                    type: ['number', 'string'],
-                    rest: true,
-                } }),
-            variants: [
-                { argumentNames: ['x'] },
-                { argumentNames: ['x', 'ys'] },
-            ],
-            description: 'Returns `true` if $x and $ys are in non decreasing order, `false` otherwise.',
-            examples: [
-                '1 <= 1',
-                '<=(0, 1)',
-                '<=(1, 1.01)',
-                '<=(1, 1)',
-                '<=(1, 2, 3, 4)',
-                '<=(1, 2, 2, 3)',
-            ],
-        },
-        '>=': {
-            title: '>=',
-            category: 'Misc',
-            returns: {
-                type: 'boolean',
-            },
-            args: __assign(__assign({}, getOperatorArgs(['number', 'string'], ['number', 'string'])), { x: {
-                    type: ['number', 'string'],
-                }, ys: {
-                    type: ['number', 'string'],
-                    rest: true,
-                } }),
-            variants: [
-                { argumentNames: ['x'] },
-                { argumentNames: ['x', 'ys'] },
-            ],
-            description: 'Returns `true` if $x and $ys are in non increasing order, `false` otherwise.',
-            examples: [
-                '1 >= 1',
-                '0 >= 1',
-                '>=(1, 0)',
-                '>=(1.01, 1)',
-                '>=(1, 1)',
-                '>=(4, 3, 2, 1)',
-                '>=(3, 2, 2, 1)',
-            ],
-        },
-        '!': {
-            title: '!',
-            category: 'Misc',
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                x: {
-                    type: 'any',
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'Computes logical negation. Note that any other $x than `false`, `0`, `null` and `\'\'` is truthy.',
-            examples: [
-                '!(3)',
-                '!(true)',
-                '!("A string")',
-                '!(0)',
-                '!(false)',
-                '!(null)',
-                '!("")',
-            ],
-        },
-        'write!': {
-            title: 'write!',
-            category: 'Misc',
-            returns: {
-                type: 'any',
-            },
-            args: {
-                values: {
-                    type: 'any',
-                    rest: true,
-                },
-            },
-            variants: [
-                { argumentNames: ['values'] },
-            ],
-            description: 'It logs the $values and then returns the last argument. If called with no arguments `null` is returned.',
-            examples: [
-                'write!("A string")',
-                'write!(100, "items")',
-                'write!(object("a", 10))',
-                'write!(["a", "b", "c"])',
-                'write!(#"^start")',
-                'write!(null, true, false)',
-            ],
-            noOperatorDocumentation: true,
-        },
-        'iso-date->epoch': {
-            title: 'iso-date->epoch',
-            category: 'Misc',
-            returns: {
-                type: 'number',
-            },
-            args: {
-                iso: {
-                    type: 'string',
-                },
-            },
-            variants: [
-                { argumentNames: ['iso'] },
-            ],
-            description: 'Returns milliseconds elapsed since the UNIX epoch to `iso`.',
-            examples: [
-                'iso-date->epoch("2022-04-12T09:37:10.899Z")',
-                'iso-date->epoch("1980-01-01")',
-            ],
-        },
-        'epoch->iso-date': {
-            title: 'epoch->iso-date',
-            category: 'Misc',
-            returns: {
-                type: 'string',
-            },
-            args: {
-                ms: {
-                    type: 'number',
-                },
-            },
-            variants: [
-                { argumentNames: ['ms'] },
-            ],
-            description: 'Returns IOS date time string from `ms` (milliseconds elapsed since the UNIX epoch).',
-            examples: [
-                'epoch->iso-date(1649756230899)',
-                'epoch->iso-date(0)',
-            ],
-        },
-        'boolean': {
-            title: 'boolean',
-            category: 'Misc',
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                x: {
-                    type: 'any',
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'Coerces $x to boolean.',
-            examples: [
-                'boolean(0)',
-                'boolean(1)',
-                'boolean(null)',
-                'boolean("Albert")',
-            ],
-        },
-        'compare': {
-            title: 'compare',
-            category: 'Misc',
-            returns: {
-                type: 'number',
-            },
-            args: __assign({}, getOperatorArgs(['number', 'string'], ['number', 'string'])),
-            variants: [
-                { argumentNames: ['a', 'b'] },
-            ],
-            description: 'Compares two values. Returns `-1` if $a < $b, `1` if $a > $b and `0` if $a and $b have the same sort order.',
-            examples: [
-                'compare(0, 1)',
-                'compare(0, 0)',
-                'compare(1, 0)',
-                'compare("Albert", "Mojir")',
-            ],
-        },
-        'identical?': {
-            title: 'identical?',
-            category: 'Misc',
-            returns: {
-                type: 'boolean',
-            },
-            args: __assign({}, getOperatorArgs('any', 'any')),
-            variants: [
-                { argumentNames: ['a', 'b'] },
-            ],
-            description: 'Returns true if $a and $b are referential equal.',
-            examples: [
-                'identical?({ a: 10, b: 20 }, { b: 20, a: 10 })',
-                'identical?([1, true, null], [1, true, null])',
-                'identical?(0.3, 0.1 + 0.2)',
-            ],
-        },
-        'import': {
-            title: 'import',
-            category: 'Misc',
-            returns: {
-                type: 'any',
-            },
-            args: {
-                path: {
-                    type: 'string',
-                    description: 'The namespace path to import. Can be a namespace name (e.g., "Vector", "Grid") or a fully qualified function name (e.g., "Vector.mean", "Grid.row").',
-                },
-            },
-            variants: [
-                { argumentNames: ['path'] },
-            ],
-            description: 'Imports namespace functions. Use a namespace name (e.g., "Vector") to import all functions as an object, or a fully qualified name (e.g., "Vector.mean") to import a single function directly.',
-            examples: [
-                'let v = import("Vector"); v.mean([1, 2, 3, 4])',
-                'let sum = import("Vector.sum"); sum([1, 2, 3])',
-                'let g = import("Grid"); g.row([[1, 2], [3, 4]], 0)',
-            ],
-        },
-        'json-parse': {
-            title: 'json-parse',
-            category: 'Misc',
-            returns: {
-                type: 'any',
-            },
-            args: {
-                x: {
-                    type: 'string',
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'Returns `JSON.parse(`$x`)`.',
-            examples: [
-                'json-parse("[1, 2, 3]")',
-            ],
-        },
-        'json-stringify': {
-            title: 'json-stringify',
-            category: 'Misc',
-            returns: {
-                type: 'string',
-            },
-            args: {
-                x: {
-                    type: 'any',
-                },
-                indent: {
-                    type: 'integer',
-                    description: 'Number of spaces to use for indentation.',
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-                { argumentNames: ['x', 'indent'] },
-            ],
-            description: 'Returns `JSON.stringify(`$x`)`. If second argument is provided, returns `JSON.stringify(`$x`, null, `$indent`)`.',
-            examples: [
-                'json-stringify([1, 2, 3])',
-                'json-stringify({ a: { b: 10 }}, 2)',
-            ],
-            noOperatorDocumentation: true,
-        },
-    };
-
-    var objectReference = {
-        'dissoc': {
-            title: 'dissoc',
-            category: 'Object',
-            returns: {
-                type: 'object',
-            },
-            args: __assign(__assign({}, getOperatorArgs('object', 'string')), { obj: {
-                    type: 'object',
-                }, key: {
-                    type: 'string',
-                } }),
-            variants: [
-                { argumentNames: ['obj', 'key'] },
-            ],
-            description: 'Return shallow copy of $obj with $key deleted.',
-            examples: [
-                '{ x: 10, y: 20 } dissoc "y"',
-                'dissoc({ x: 10, y: 20 }, "x")',
-                'dissoc({ x: 10 }, "y")',
-                "\nlet o = { a: 5 };\ndissoc(o, \"a\");\no",
-            ],
-        },
-        'keys': {
-            title: 'keys',
-            category: 'Object',
-            returns: {
-                type: 'any',
-                array: true,
-            },
-            args: {
-                obj: {
-                    type: 'object',
-                },
-            },
-            variants: [
-                { argumentNames: ['obj'] },
-            ],
-            description: 'Returns array of all keys in $obj.',
-            examples: [
-                'keys({})',
-                'keys({ x: 10, y: true, z: "A string" })',
-                'keys(object("x", 10, "y", true, "z", "A string"))',
-            ],
-        },
-        'vals': {
-            title: 'vals',
-            category: 'Object',
-            returns: {
-                type: 'any',
-                array: true,
-            },
-            args: {
-                obj: {
-                    type: 'object',
-                },
-            },
-            variants: [
-                { argumentNames: ['obj'] },
-            ],
-            description: 'Returns array of all values in $obj.',
-            examples: [
-                'vals({})',
-                'vals({ x: 10, y: true, z: "A string" })',
-                'vals(object("x", 10, "y", true, "z", "A string"))',
-            ],
-        },
-        'entries': {
-            title: 'entries',
-            category: 'Object',
-            returns: {
-                type: 'array',
-            },
-            args: {
-                obj: {
-                    type: 'object',
-                },
-            },
-            variants: [
-                { argumentNames: ['obj'] },
-            ],
-            description: 'Returns nested array of all key - value pairs in $obj.',
-            examples: [
-                'entries({})',
-                'entries({ x: 10, y: true, z: "A string" })',
-                'entries(object("x", 10, "y", true, "z", "A string"))',
-            ],
-        },
-        'find': {
-            title: 'find',
-            category: 'Object',
-            returns: {
-                type: ['array', 'null'],
-            },
-            args: __assign(__assign({}, getOperatorArgs('object', 'string')), { obj: {
-                    type: 'object',
-                }, key: {
-                    type: 'string',
-                } }),
-            variants: [
-                { argumentNames: ['obj', 'key'] },
-            ],
-            description: 'Returns entry (key-value pair) for $key, or `null` if $key not present in $obj.',
-            examples: [
-                '{ a: 1, "b": 2 } find "a"',
-                'find(object("a", 1, "b", 2), "b")',
-                'find(object("a", 1, "b", 2), "c")',
-            ],
-        },
-        'merge': {
-            title: 'merge',
-            category: 'Object',
-            returns: {
-                type: 'object',
-            },
-            args: __assign(__assign({}, getOperatorArgs('object', 'object')), { objs: {
-                    type: 'object',
-                    rest: true,
-                } }),
-            variants: [
-                { argumentNames: ['objs'] },
-            ],
-            description: "Returns a new object created by merging together all arguments.\n\nIf two keys appears in more than one object the value from the last object is used.  \nIf no arguments are provided `null` is returned.",
-            examples: [
-                '{ x: 10 } merge { y: 20 }',
-                'merge(object("x", 10), object("y", 20))',
-                'merge(object("x", 10), object("x", 15, "y", 20))',
-            ],
-        },
-        'merge-with': {
-            title: 'merge-with',
-            category: 'Object',
-            returns: {
-                type: 'object',
-            },
-            args: {
-                objs: {
-                    type: 'object',
-                    rest: true,
-                },
-                fun: {
-                    type: 'function',
-                },
-            },
-            variants: [
-                { argumentNames: ['objs', 'fun'] },
-            ],
-            description: "\nReturns a new object created by merging together all arguments.\nIf two keys appears in more than one object $fun is used to calculate the new value.\n\nIf no arguments are provided `null` is returned.",
-            examples: [
-                'merge-with(object("x", 10), object("y", 20), +)',
-                'merge-with(object("x", 10), object("x", 15, "y", 20), +)',
-                'merge-with({ x: 10 }, { x: 20 }, { x: 30 }, { x: 40 }, -)',
-            ],
-            noOperatorDocumentation: true,
-        },
-        'zipmap': {
-            title: 'zipmap',
-            category: 'Object',
-            returns: {
-                type: 'object',
-            },
-            args: __assign({}, getOperatorArgs('array', 'array')),
-            variants: [
-                { argumentNames: ['a', 'b'] },
-            ],
-            description: 'Returns a new object created by mapping $a to $b.',
-            examples: [
-                '["a", "b", "c"] zipmap [1, 2, 3]',
-                'zipmap(["a", "b", "c"], [10, null, [1, 2, 3]])',
-                'zipmap(["a", "b", "c"], [1])',
-                'zipmap([], [10, null, [1, 2, 3]])',
-            ],
-        },
-        'select-keys': {
-            title: 'select-keys',
-            category: 'Object',
-            returns: {
-                type: 'object',
-            },
-            args: __assign({}, getOperatorArgs('object', 'array')),
-            variants: [
-                { argumentNames: ['a', 'b'] },
-            ],
-            description: 'Returns an object containing only those entries in $a whose key is in $b.',
-            examples: [
-                '{ a: 1, b: 2, c: 3 } select-keys ["a", "b"]',
-                'select-keys({ a: 1, b: 2, c: 3 }, ["a", "b"])',
-                'select-keys({ a: 1 }, ["a", "b"])',
-            ],
-        },
-    };
-
-    var predicateReference = {
-        'boolean?': {
-            title: 'boolean?',
-            category: 'Predicate',
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                x: {
-                    type: 'any',
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'Returns `true` if $x is a `boolean`, otherwise `false`.',
-            examples: [
-                'boolean?(true)',
-                'boolean?(false)',
-                'boolean?([1, 2, 3])',
-                'boolean?(0)',
-                'boolean?("A string")',
-            ],
-        },
-        'null?': {
-            title: 'null?',
-            category: 'Predicate',
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                x: {
-                    type: 'any',
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'Returns `true` if $x is `null`, otherwise `false`.',
-            examples: [
-                'null?(null)',
-                'null?(false)',
-                'null?([1, 2, 3])',
-                'null?(0)',
-                'null?("A string")',
-            ],
-        },
-        'number?': {
-            title: 'number?',
-            category: 'Predicate',
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                x: {
-                    type: 'any',
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'Returns `true` if $x is a number, otherwise `false`.',
-            examples: [
-                'number?(0)',
-                'number?(2)',
-                'number?(-0.12)',
-                'number?(false)',
-                'number?([1, 2, 3])',
-                'number?("A string")',
-            ],
-        },
-        'string?': {
-            title: 'string?',
-            category: 'Predicate',
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                x: {
-                    type: 'any',
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'Returns `true` if $x is a string, otherwise `false`.',
-            examples: [
-                'string?("")',
-                'string?("A string")',
-                'string?(true ? "A string" : false)',
-                'string?(false)',
-                'string?([1, 2, 3])',
-                'string?(100)',
-            ],
-        },
-        'function?': {
-            title: 'function?',
-            category: 'Predicate',
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                x: {
-                    type: 'any',
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'Returns `true` if $x is a function, otherwise `false`.',
-            examples: [
-                'function?(+)',
-                'function?(/)',
-                'function?((x, y) -> x + y)',
-                'function?(false)',
-                'function?("false")',
-                'function?([1, 2, 3])',
-            ],
-        },
-        'integer?': {
-            title: 'integer?',
-            category: 'Predicate',
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                x: {
-                    type: 'any',
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'Returns `true` if $x is an integer, otherwise `false`.',
-            examples: [
-                'integer?(0)',
-                'integer?(-12)',
-                'integer?(42)',
-                'integer?(10.1)',
-                'integer?((x, y) -> x + y)',
-                'integer?(false)',
-                'integer?("false")',
-                'integer?([1, 2, 3])',
-            ],
-        },
-        'array?': {
-            title: 'array?',
-            category: 'Predicate',
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                x: {
-                    type: 'any',
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'Returns `true` if $x is an array, otherwise `false`.',
-            examples: [
-                'array?([])',
-                'array?([1, 2, 3])',
-                'array?(object("a", 10))',
-                'array?(42)',
-                'array?(10.1)',
-                'array?((x, y) -> x + y)',
-            ],
-        },
-        'object?': {
-            title: 'object?',
-            category: 'Predicate',
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                x: {
-                    type: 'any',
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'Returns `true` if $x is an object, otherwise `false`.',
-            examples: [
-                'object?(object("a", 10))',
-                'object?(42)',
-                'object?(10.1)',
-                'object?((x, y) -> x + y)',
-                'object?(#"^start")',
-                'object?("false")',
-                'object?([1, 2, 3])',
-            ],
-        },
-        'coll?': {
-            title: 'coll?',
-            category: 'Predicate',
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                x: {
-                    type: 'any',
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'Returns `true` if $x is a Coll i.e. an array, an object or a string, otherwise `false`.',
-            examples: [
-                'coll?([])',
-                'coll?([1, 2, 3])',
-                'coll?(object("a", 10))',
-                'coll?("Albert")',
-                'coll?(42)',
-                'coll?(10.1)',
-                'coll?((x, y) -> x + y)',
-            ],
-        },
-        'seq?': {
-            title: 'seq?',
-            category: 'Predicate',
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                x: {
-                    type: 'any',
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'Returns `true` if $x is a Seq i.e. an array or a string, otherwise `false`.',
-            examples: [
-                'seq?([])',
-                'seq?([1, 2, 3])',
-                'seq?(object("a", 10))',
-                'seq?("Albert")',
-                'seq?(42)',
-                'seq?(10.1)',
-                'seq?((x, y) -> x + y)',
-            ],
-        },
-        'regexp?': {
-            title: 'regexp?',
-            category: 'Predicate',
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                x: {
-                    type: 'any',
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'Returns `true` if $x is a regexp, otherwise `false`.',
-            examples: [
-                'regexp?(regexp("^start"))',
-                'regexp?(#"^start")',
-                'regexp?(-12)',
-                'regexp?({})',
-                'regexp?(10.1)',
-                'regexp?((x, y) -> x + y)',
-                'regexp?(false)',
-                'regexp?("false")',
-                'regexp?([1, 2, 3])',
-            ],
-        },
-        'zero?': {
-            title: 'zero?',
-            category: 'Predicate',
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                x: {
-                    type: 'number',
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'Returns `true` if $x is `0`, otherwise `false`.',
-            examples: [
-                'zero?(0)',
-                'zero?(-0.0)',
-                'zero?(1)',
-                'zero?(0.1)',
-            ],
-        },
-        'pos?': {
-            title: 'pos?',
-            category: 'Predicate',
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                x: {
-                    type: 'number',
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'Returns `true` if $x is greater than `0`, otherwise `false`.',
-            examples: [
-                'pos?(0)',
-                'pos?(-0.0)',
-                'pos?(1)',
-                'pos?(-0.1)',
-            ],
-        },
-        'neg?': {
-            title: 'neg?',
-            category: 'Predicate',
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                x: {
-                    type: 'number',
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'Returns `true` if $x is less than `0`, otherwise `false`.',
-            examples: [
-                'neg?(0)',
-                'neg?(-0.0)',
-                'neg?(1)',
-                'neg?(-0.1)',
-            ],
-        },
-        'even?': {
-            title: 'even?',
-            category: 'Predicate',
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                x: {
-                    type: 'number',
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'Returns `true` if $x is even, otherwise `false`.',
-            examples: [
-                'even?(0)',
-                'even?(-0.0)',
-                'even?(-1)',
-                'even?(2.1)',
-            ],
-        },
-        'odd?': {
-            title: 'odd?',
-            category: 'Predicate',
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                x: {
-                    type: 'number',
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'Returns `true` if $x is odd, otherwise `false`.',
-            examples: [
-                'odd?(1.0)',
-                'odd?(1.001)',
-                'odd?(-1)',
-                'odd?(2.1)',
-            ],
-        },
-        'finite?': {
-            title: 'finite?',
-            category: 'Predicate',
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                x: {
-                    type: 'number',
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'Returns `true` if $x is finite, otherwise `false`.',
-            examples: [
-                'finite?(1.0)',
-                'finite?(1 / 0)',
-                'finite?(-1 / 0)',
-            ],
-        },
-        'negative-infinity?': {
-            title: 'negative-infinity?',
-            category: 'Predicate',
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                x: {
-                    type: 'number',
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'Returns `true` if $x equals negative infinity, otherwise `false`.',
-            examples: [
-                'negative-infinity?(1.0)',
-                'negative-infinity?(1 / 0)',
-                'negative-infinity?(-1 / 0)',
-            ],
-        },
-        'positive-infinity?': {
-            title: 'positive-infinity?',
-            category: 'Predicate',
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                x: {
-                    type: 'number',
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'Returns `true` if $x equals positive infinity, otherwise `false`.',
-            examples: [
-                'positive-infinity?(1.0)',
-                'positive-infinity?(1 / 0)',
-                'positive-infinity?(-1 / 0)',
-            ],
-        },
-        'false?': {
-            title: 'false?',
-            category: 'Predicate',
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                x: {
-                    type: 'any',
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'Returns `true` if $x is `true`, otherwise `false`.',
-            examples: [
-                'false?(false)',
-                'false?(true)',
-                'false?(1)',
-                'false?(0)',
-            ],
-        },
-        'true?': {
-            title: 'true?',
-            category: 'Predicate',
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                x: {
-                    type: 'any',
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'Returns `true` if $x is `true`, otherwise `false`.',
-            examples: [
-                'true?(false)',
-                'true?(true)',
-                'true?(1)',
-                'true?(0)',
-            ],
-        },
-        'empty?': {
-            title: 'empty?',
-            category: 'Predicate',
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                x: {
-                    type: ['collection', 'string', 'null'],
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'Returns `true` if $x is empty or `null`, otherwise `false`.',
-            examples: [
-                'empty?([])',
-                'empty?([1, 2, 3])',
-                'empty?({})',
-                'empty?({ a: 2 })',
-                'empty?("")',
-                'empty?("Albert")',
-                'empty?(null)',
-            ],
-        },
-        'not-empty?': {
-            title: 'not-empty?',
-            category: 'Predicate',
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                x: {
-                    type: ['collection', 'string', 'null'],
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'Returns `false` if $x is empty or `null`, otherwise `true`.',
-            examples: [
-                'not-empty?([])',
-                'not-empty?([1, 2, 3])',
-                'not-empty?({})',
-                'not-empty?({ a: 2 })',
-                'not-empty?("")',
-                'not-empty?("Albert")',
-                'not-empty?(null)',
-            ],
-        },
-        'vector?': {
-            title: 'vector?',
-            category: 'Predicate',
-            description: 'Checks if a value is a `vector`. A `vector` is an array of `numbers`.',
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                value: {
-                    type: 'any',
-                    description: 'The value to check.',
-                },
-            },
-            variants: [
-                { argumentNames: ['value'] },
-            ],
-            examples: [
-                'vector?(1)',
-                'vector?([1, 2, 3])',
-                'vector?([1, 2, "3"])',
-            ],
-        },
-        'matrix?': {
-            title: 'matrix?',
-            category: 'Predicate',
-            description: 'Checks if a value is a `matrix`. A `matrix` is an array of arrays of `numbers`.',
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                value: {
-                    type: 'any',
-                    description: 'The value to check.',
-                },
-            },
-            variants: [
-                { argumentNames: ['value'] },
-            ],
-            examples: [
-                'matrix?(1)',
-                'matrix?([1, 2, 3])',
-                'matrix?([[1, 2], [3, 4]])',
-                'matrix?([[1, 2], [3, "4"]])',
-                'matrix?([[1, 2], [3]])',
-            ],
-        },
-        'grid?': {
-            title: 'grid?',
-            category: 'Predicate',
-            description: 'Checks if a `value` is a `grid`. A `grid` is an `array` of `arrays` where all inner `arrays` have the same length.',
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                value: {
-                    type: 'any',
-                    description: 'The value to check.',
-                },
-            },
-            variants: [
-                { argumentNames: ['value'] },
-            ],
-            examples: [
-                'grid?("1")',
-                'grid?(["1", 2, 3])',
-                'grid?([["1", 2], [3, 4]])',
-                'grid?([["1", 2], [3, "4"]])',
-                'grid?([["1", 2], [3]])',
-            ],
-        },
-    };
-
-    var regularExpressionReference = {
-        'regexp': {
-            title: 'regexp',
-            category: 'Regular expression',
-            returns: {
-                type: 'regexp',
-            },
-            args: {
-                pattern: {
-                    type: 'string',
-                },
-                flags: {
-                    type: 'string',
-                    description: 'Optional flags for the regular expression. Possible values are the same as Javascript RegExp takes.',
-                },
-            },
-            variants: [
-                { argumentNames: ['pattern'] },
-                { argumentNames: ['pattern', 'flags'] },
-            ],
-            description: 'Creates a RegExp from $pattern and $flags.',
-            examples: [
-                'regexp("^\\s*(.*)$")',
-                '#"^\\s*(.*)$"',
-                'regexp("albert", "ig")',
-                '#"albert"ig',
-            ],
-            noOperatorDocumentation: true,
-        },
-        'match': {
-            title: 'match',
-            category: 'Regular expression',
-            returns: {
-                type: 'any',
-                array: true,
-            },
-            args: __assign({}, getOperatorArgs('regexp', 'string')),
-            variants: [
-                { argumentNames: ['a', 'b'] },
-            ],
-            description: "Matches $b against regular expression $a.\nIf $b is a string and matches the regular expression, a `match`-array is returned, otherwise `null` is returned.",
-            examples: [
-                'match("  A string", regexp("^\\\\s*(.*)$"))',
-                'match("  A string", #"^\\s*(.*)$")',
-                'match("My name is Albert", #"albert"i)',
-                'match("My name is Ben", #"albert"i)',
-                'match(null, #"albert"i)',
-                'match(1, #"albert"i)',
-                'match({}, #"albert"i)',
-            ],
-        },
-        'replace': {
-            title: 'replace',
-            category: 'Regular expression',
-            returns: {
-                type: 'any',
-                array: true,
-            },
-            args: __assign(__assign({}, getOperatorArgs('string', ['regexp', 'string'])), { x: {
-                    type: 'string',
-                } }),
-            variants: [
-                { argumentNames: ['a', 'b', 'x'] },
-            ],
-            description: 'Returns a new string with first match of regular expression $b replaced by $x.',
-            examples: [
-                'replace("Duck duck", "u", "i")',
-                'replace("Duck duck", #"u", "i")',
-                'replace("abcABC", regexp("a", "i"), "-")',
-                'replace("abcABC", regexp("a", "gi"), "-")',
-                'replace("abcABC", #"a"i, "-")',
-                'replace("abcABC", #"a"gi, "-")',
-            ],
-        },
-        'replace-all': {
-            title: 'replace-all',
-            category: 'Regular expression',
-            returns: {
-                type: 'any',
-                array: true,
-            },
-            args: __assign(__assign({}, getOperatorArgs('string', ['regexp', 'string'])), { x: {
-                    type: 'string',
-                } }),
-            variants: [
-                { argumentNames: ['a', 'b', 'x'] },
-            ],
-            description: 'Returns a new string with all matches of regular expression $b replaced by $x.',
-            examples: [
-                'replace-all("Duck duck", "u", "i")',
-                'replace-all("Duck duck", regexp("u"), "i")',
-                'replace-all("abcABC", regexp("a", "i"), "-")',
-                'replace-all("abcABC", regexp("a", "gi"), "-")',
-                'replace-all("abcABC", #"a"i, "-")',
-                'replace-all("abcABC", #"a"gi, "-")',
-            ],
-        },
-    };
-
-    var sequenceReference = {
-        'nth': {
-            title: 'nth',
-            category: 'Sequence',
-            returns: {
-                type: 'any',
-            },
-            args: __assign(__assign({}, getOperatorArgs('sequence', 'integer')), { 'seq': {
-                    type: ['sequence', 'null'],
-                }, 'n': {
-                    type: 'integer',
-                }, 'not-found': {
-                    type: 'any',
-                } }),
-            variants: [
-                { argumentNames: ['seq', 'n'] },
-                { argumentNames: ['seq', 'n', 'not-found'] },
-            ],
-            description: 'Accesses element $n of $seq. Accessing out-of-bounds indices returns $not-found, if present, else `null`.',
-            examples: [
-                '[1, 2, 3] nth 1',
-                '"A string" nth 3',
-                'nth([1, 2, 3], 1)',
-                'nth([1, 2, 3], 3)',
-                'nth([1, 2, 3], -1)',
-                'nth([1, 2, 3], 3, 99)',
-                'nth("A string", 1)',
-                'nth("A string", 3)',
-                'nth("A string", -3)',
-                'nth("A string", 30, "X")',
-                'nth(null, 1)',
-                'nth(null, 1, "Default value")',
-            ],
-        },
-        'push': {
-            title: 'push',
-            category: 'Sequence',
-            returns: {
-                type: 'sequence',
-            },
-            args: __assign(__assign({}, getOperatorArgs('sequence', 'any')), { seq: {
-                    type: 'sequence',
-                }, values: {
-                    type: 'any',
-                    rest: true,
-                    description: 'At least one.',
-                } }),
-            variants: [
-                { argumentNames: ['seq', 'values'] },
-            ],
-            description: 'Returns copy of $seq with $values added to the end of it.',
-            examples: [
-                '[1, 2, 3] push 4',
-                '"Albert" push "!"',
-                'push([1, 2, 3], 4)',
-                'push([1, 2, 3], 4, 5, 6)',
-                "\nlet l = [1, 2, 3];\npush(l, 4);\nl",
-            ],
-        },
-        'pop': {
-            title: 'pop',
-            category: 'Sequence',
-            returns: {
-                type: ['sequence', 'null'],
-                rest: true,
-            },
-            args: {
-                seq: {
-                    type: 'sequence',
-                },
-            },
-            variants: [
-                { argumentNames: ['seq'] },
-            ],
-            description: 'Returns a copy of $seq with last element removed. If $seq is empty `null` is returned.',
-            examples: [
-                'pop([1, 2, 3])',
-                'pop([])',
-            ],
-        },
-        'unshift': {
-            title: 'unshift',
-            category: 'Sequence',
-            returns: {
-                type: 'sequence',
-            },
-            args: __assign(__assign({}, getOperatorArgs('sequence', 'any')), { seq: {
-                    type: 'sequence',
-                }, values: {
-                    type: 'any',
-                    rest: true,
-                } }),
-            variants: [
-                { argumentNames: ['seq', 'values'] },
-            ],
-            description: 'Returns copy of $seq with $values added to the beginning.',
-            examples: [
-                '[1, 2, 3] unshift 4',
-                'unshift([1, 2, 3], 4)',
-                'unshift([1, 2, 3], 4, 5, 6)',
-                "\nlet l = [1, 2, 3];\nunshift(l, 4);\nl",
-            ],
-        },
-        'shift': {
-            title: 'shift',
-            category: 'Sequence',
-            returns: {
-                type: ['sequence', 'null'],
-            },
-            args: {
-                seq: {
-                    type: 'sequence',
-                },
-            },
-            variants: [
-                { argumentNames: ['seq'] },
-            ],
-            description: 'Returns a copy of $seq with first element removed. If $seq is empty `null` is returned.',
-            examples: [
-                'shift([1, 2, 3])',
-                'shift([])',
-            ],
-        },
-        'slice': {
-            title: 'slice',
-            category: 'Sequence',
-            returns: {
-                type: 'sequence',
-            },
-            args: __assign(__assign({}, getOperatorArgs('sequence', 'integer')), { seq: {
-                    type: 'sequence',
-                    rest: true,
-                }, start: {
-                    type: 'integer',
-                    description: 'Defaults to `0`.',
-                }, stop: {
-                    type: 'integer',
-                    description: 'Defaults lenght of sequence + 1.',
-                } }),
-            variants: [
-                { argumentNames: ['seq'] },
-                { argumentNames: ['seq', 'start'] },
-                { argumentNames: ['seq', 'start', 'stop'] },
-            ],
-            description: 'Returns a copy of a portion of $seq from index $start (inclusive) to $stop (exclusive).',
-            examples: [
-                '[1, 2, 3, 4, 5] slice 2',
-                'slice([1, 2, 3, 4, 5], 2, 4)',
-                'slice([1, 2, 3, 4, 5], 2)',
-            ],
-        },
-        'splice': {
-            title: 'splice',
-            category: 'Sequence',
-            returns: {
-                type: 'sequence',
-            },
-            args: {
-                seq: {
-                    type: 'sequence',
-                    rest: true,
-                },
-                start: {
-                    type: 'integer',
-                },
-                deleteCount: {
-                    type: 'integer',
-                },
-                items: {
-                    type: 'any',
-                    rest: true,
-                },
-            },
-            variants: [
-                { argumentNames: ['seq', 'start', 'deleteCount'] },
-                { argumentNames: ['seq', 'start', 'deleteCount', 'items'] },
-            ],
-            description: 'Returns a a spliced array. Removes $deleteCount elements from $seq starting at $start and replaces them with $items. If $start is negative, it is counting from the end of the array.',
-            examples: [
-                'splice([1, 2, 3, 4, 5], 2, 2, "x")',
-                'splice([1, 2, 3, 4, 5], -2, 1, "x")',
-                'splice("Albert", 2, 2, "fo")',
-            ],
-        },
-        'position': {
-            title: 'position',
-            category: 'Sequence',
-            returns: {
-                type: ['number', 'null'],
-            },
-            args: __assign(__assign({}, getOperatorArgs('sequence', 'function')), { seq: {
-                    type: ['sequence', 'null'],
-                }, fun: {
-                    type: 'function',
-                } }),
-            variants: [
-                { argumentNames: ['seq', 'fun'] },
-            ],
-            description: 'Returns the index of the first elements that passes the test implemented by $fun. If no element was found, `null` is returned.',
-            examples: [
-                "\nposition(\n  [\"Albert\", \"Mojir\", 160, [1, 2]],\n  string?\n)",
-                "\nposition(\n  [5, 10, 15, 20],\n  -> $ > 10\n)",
-                "\nposition(\n  [5, 10, 15, 20],\n  -> $ > 100\n)",
-                "\nposition(\n  null,\n  -> $ > 100\n)",
-            ],
-        },
-        'index-of': {
-            title: 'index-of',
-            category: 'Sequence',
-            returns: {
-                type: ['number', 'null'],
-            },
-            args: __assign(__assign({}, getOperatorArgs('sequence', 'any')), { seq: {
-                    type: ['sequence', 'null'],
-                }, x: {
-                    type: 'any',
-                } }),
-            variants: [
-                { argumentNames: ['seq', 'x'] },
-            ],
-            description: 'Returns the index of $x in $seq. If element is not present in $seq `null` is returned.',
-            examples: [
-                '[[1], [2], [1], [2]] index-of [1]',
-                'index-of(["Albert", "Mojir", 160, [1, 2]], "Mojir")',
-                'index-of([5, 10, 15, 20], 15)',
-                'index-of([5, 10, 15, 20], 1)',
-                'index-of(null, 1)',
-            ],
-        },
-        'last-index-of': {
-            title: 'last-index-of',
-            category: 'Sequence',
-            returns: {
-                type: ['number', 'null'],
-            },
-            args: __assign(__assign({}, getOperatorArgs('sequence', 'any')), { seq: {
-                    type: ['sequence', 'null'],
-                }, x: {
-                    type: 'any',
-                } }),
-            variants: [
-                { argumentNames: ['seq', 'x'] },
-            ],
-            description: 'Returns the last index of $x in $seq. If element is not present in $seq `null` is returned.',
-            examples: [
-                '[[1], [2], [1], [2]] last-index-of [1]',
-                'last-index-of(["Albert", "Mojir", 160, [1, 2]], "Mojir")',
-                'last-index-of([5, 10, 15, 20, 15], 15)',
-                'last-index-of([5, 10, 15, 20], 1)',
-                'last-index-of(null, 1)',
-            ],
-        },
-        'some': {
-            title: 'some',
-            category: 'Sequence',
-            returns: {
-                type: 'any',
-            },
-            args: __assign(__assign({}, getOperatorArgs('sequence', 'function')), { seq: {
-                    type: ['sequence', 'null'],
-                }, fun: {
-                    type: 'function',
-                } }),
-            variants: [
-                { argumentNames: ['seq', 'fun'] },
-            ],
-            description: 'Returns the first element that passes the test implemented by $fun. I no element was found, `null` is returned.',
-            examples: [
-                "\nsome(\n  [\"Albert\", \"Mojir\", 160, [1, 2]],\n  string?\n)",
-                "\nsome(\n  [5, 10, 15, 20],\n  -> $ > 10\n)",
-                "\nsome(\n  [1, 2, 3, 4],\n  -> $ > 10\n)",
-                "\nsome(\n  [],\n  -> $ > 10\n)",
-                "\nsome(\n  null,\n  -> $ > 10\n)",
-            ],
-        },
-        'reverse': {
-            title: 'reverse',
-            category: 'Sequence',
-            returns: {
-                type: ['sequence', 'null'],
-            },
-            args: {
-                seq: {
-                    type: ['sequence', 'null'],
-                },
-            },
-            variants: [
-                { argumentNames: ['seq'] },
-            ],
-            description: 'If $seq is an array, creates a new array with the elements from $seq in reversed order. If $seq is a string, returns new reversed string.',
-            examples: [
-                'reverse(["Albert", "Mojir", 160, [1, 2]])',
-                'reverse([])',
-                'reverse("Albert")',
-                'reverse(null)',
-            ],
-        },
-        'first': {
-            title: 'first',
-            category: 'Sequence',
-            returns: {
-                type: 'any',
-            },
-            args: {
-                seq: {
-                    type: ['sequence', 'null'],
-                },
-            },
-            variants: [
-                { argumentNames: ['seq'] },
-            ],
-            description: 'Returns the first element of $seq. If $seq is empty or `null`, `null` is returned.',
-            examples: [
-                'first(["Albert", "Mojir", 160, [1, 2]])',
-                'first([])',
-                'first(null)',
-            ],
-        },
-        'second': {
-            title: 'second',
-            category: 'Sequence',
-            returns: {
-                type: 'any',
-            },
-            args: {
-                seq: {
-                    type: ['sequence', 'null'],
-                },
-            },
-            variants: [
-                { argumentNames: ['seq'] },
-            ],
-            description: 'Returns the second element of $seq. If $seq has less than two elements or is `null`, `null` is returned.',
-            examples: [
-                'second(["Albert", "Mojir", 160, [1, 2]])',
-                'second([1])',
-                'second([])',
-                'second(null)',
-            ],
-        },
-        'last': {
-            title: 'last',
-            category: 'Sequence',
-            returns: {
-                type: 'any',
-            },
-            args: {
-                seq: {
-                    type: ['sequence', 'null'],
-                },
-            },
-            variants: [
-                { argumentNames: ['seq'] },
-            ],
-            description: 'Returns the last element of $seq. If $seq is empty, `null` is returned.',
-            examples: [
-                'last(["Albert", "Mojir", 160, [1, 2]])',
-                'last([1, 2])',
-                'last([1])',
-                'last([])',
-                'last(null)',
-            ],
-        },
-        'rest': {
-            title: 'rest',
-            category: 'Sequence',
-            returns: {
-                type: ['sequence', 'null'],
-            },
-            args: {
-                seq: {
-                    type: 'sequence',
-                },
-            },
-            variants: [
-                { argumentNames: ['seq'] },
-            ],
-            description: "If $seq is an array, returns a new array with all but the first element from $seq.\nIf $seq has less than two elements, an empty array is returned.\nFor string $seq returns all but the first characters in $seq.",
-            examples: [
-                'rest(["Albert", "Mojir", 160, [1, 2]])',
-                'rest(["Albert"])',
-                'rest([])',
-                'rest("Albert")',
-                'rest("A",)',
-                'rest("")',
-            ],
-        },
-        'next': {
-            title: 'next',
-            category: 'Sequence',
-            returns: {
-                type: ['sequence', 'null'],
-            },
-            args: {
-                seq: {
-                    type: 'sequence',
-                },
-            },
-            variants: [
-                { argumentNames: ['seq'] },
-            ],
-            description: 'If $seq is an array, returns a new array with all but the first element from $seq. If $seq has less than two elements, `null` is returned. For string $seq returns all but the first characters in $seq. If length of string $seq is less than two, `null` is returned.',
-            examples: [
-                'next(["Albert", "Mojir", 160, [1, 2]])',
-                'next(["Albert"])',
-                'next([])',
-                'next("Albert")',
-                'next("A",)',
-                'next("")',
-            ],
-        },
-        'take': {
-            title: 'take',
-            category: 'Sequence',
-            returns: {
-                type: 'sequence',
-            },
-            args: __assign(__assign({}, getOperatorArgs('sequence', 'integer')), { n: {
-                    type: 'integer',
-                }, seq: {
-                    type: 'sequence',
-                } }),
-            variants: [
-                { argumentNames: ['seq', 'n'] },
-            ],
-            description: 'Constructs a new array/string with the $n first elements from $seq.',
-            examples: [
-                '[1, 2, 3, 4, 5] take 3',
-                'take([1, 2, 3, 4, 5], 3)',
-                'take([1, 2, 3, 4, 5], 0)',
-                'take("Albert", 2)',
-                'take("Albert", 50)',
-            ],
-        },
-        'take-last': {
-            title: 'take-last',
-            category: 'Sequence',
-            returns: {
-                type: 'sequence',
-            },
-            args: __assign(__assign({}, getOperatorArgs('sequence', 'integer')), { n: {
-                    type: 'integer',
-                }, seq: {
-                    type: 'sequence',
-                } }),
-            variants: [
-                { argumentNames: ['n', 'seq'] },
-            ],
-            description: 'Constructs a new array with the $n last elements from $seq.',
-            examples: [
-                '[1, 2, 3, 4, 5] take-last 3',
-                'take-last([1, 2, 3, 4, 5], 3)',
-                'take-last([1, 2, 3, 4, 5], 0)',
-            ],
-        },
-        'take-while': {
-            title: 'take-while',
-            category: 'Sequence',
-            returns: {
-                type: 'sequence',
-            },
-            args: __assign(__assign({}, getOperatorArgs('sequence', 'function')), { seq: {
-                    type: 'sequence',
-                }, fun: {
-                    type: 'function',
-                } }),
-            variants: [
-                { argumentNames: ['seq', 'fun'] },
-            ],
-            description: 'Returns the members of $seq in order, stopping before the first one for which `predicate` returns a falsy value.',
-            examples: [
-                "\ntake-while(\n  [1, 2, 3, 2, 1],\n  -> $ < 3\n)",
-                "\ntake-while(\n  [1, 2, 3, 2, 1],\n  -> $ > 3\n)",
-            ],
-        },
-        'drop': {
-            title: 'drop',
-            category: 'Sequence',
-            returns: {
-                type: 'sequence',
-            },
-            args: __assign(__assign({}, getOperatorArgs('sequence', 'integer')), { seq: {
-                    type: 'sequence',
-                }, n: {
-                    type: 'integer',
-                } }),
-            variants: [
-                { argumentNames: ['seq', 'n'] },
-            ],
-            description: 'Constructs a new array/string with the $n first elements dropped from $seq.',
-            examples: [
-                'drop([1, 2, 3, 4, 5], 3)',
-                'drop([1, 2, 3, 4, 5], 0)',
-                'drop("Albert", 2)',
-                'drop("Albert", 50)',
-            ],
-        },
-        'drop-last': {
-            title: 'drop-last',
-            category: 'Sequence',
-            returns: {
-                type: 'sequence',
-            },
-            args: __assign(__assign({}, getOperatorArgs('sequence', 'integer')), { seq: {
-                    type: 'sequence',
-                }, n: {
-                    type: 'integer',
-                } }),
-            variants: [
-                { argumentNames: ['seq', 'n'] },
-            ],
-            description: 'Constructs a new array with the $n last elements dropped from $seq.',
-            examples: [
-                '[1, 2, 3, 4, 5] drop-last 3',
-                'drop-last([1, 2, 3, 4, 5], 3)',
-                'drop-last([1, 2, 3, 4, 5], 0)',
-            ],
-        },
-        'drop-while': {
-            title: 'drop-while',
-            category: 'Sequence',
-            returns: {
-                type: 'sequence',
-            },
-            args: __assign(__assign({}, getOperatorArgs('sequence', 'function')), { seq: {
-                    type: 'sequence',
-                }, fun: {
-                    type: 'function',
-                } }),
-            variants: [
-                { argumentNames: ['seq', 'fun'] },
-            ],
-            description: 'Returns the members of $seq in order, skipping the fist elements for witch the `predicate` returns a truethy value.',
-            examples: [
-                "\ndrop-while(\n  [1, 2, 3, 2, 1],\n  -> $ < 3\n)",
-                "\ndrop-while(\n  [1, 2, 3, 2, 1],\n  -> $ > 3\n)",
-            ],
-        },
-        'sort': {
-            title: 'sort',
-            category: 'Sequence',
-            returns: {
-                type: 'any',
-                rest: true,
-            },
-            args: __assign(__assign({}, getOperatorArgs('sequence', 'function')), { seq: {
-                    type: 'sequence',
-                }, fun: {
-                    type: 'function',
-                } }),
-            variants: [
-                { argumentNames: ['seq'] },
-                { argumentNames: ['seq', 'fun'] },
-            ],
-            description: 'Returns a new sequence with the elements from $seq sorted according to $fun. If no $fun is supplied, builtin `compare` will be used.',
-            examples: [
-                '[3, 1, 2] sort (a, b) -> b - a',
-                'sort([3, 1, 2])',
-                "\nsort(\n  [3, 1, 2],\n  (a, b) -> cond case a < b then -1 case a > b then 1 case true then -1 end\n)",
-                "\nsort(\n  [3, 1, 2],\n  (a, b) -> cond case a > b then -1 case a < b then 1 case true then -1 end\n)",
-            ],
-        },
-        'sort-by': {
-            title: 'sort-by',
-            category: 'Sequence',
-            returns: {
-                type: 'any',
-                rest: true,
-            },
-            args: __assign(__assign({}, getOperatorArgs('sequence', 'function')), { seq: {
-                    type: 'sequence',
-                }, keyfn: {
-                    type: 'function',
-                }, comparer: {
-                    type: 'function',
-                } }),
-            variants: [
-                { argumentNames: ['seq', 'keyfn'] },
-                { argumentNames: ['seq', 'keyfn', 'comparer'] },
-            ],
-            description: 'Returns a sorted sequence of the items in $seq, where the sort order is determined by comparing `(keyfn item)`. If no $comparer is supplied, uses builtin `compare`.',
-            examples: [
-                '["Albert", "Mojir", "Nina"] sort-by count',
-                'sort-by(["Albert", "Mojir", "Nina"], count)',
-                'sort-by("Albert", lower-case, -> $2 compare $1)',
-            ],
-        },
-        'distinct': {
-            title: 'distinct',
-            category: 'Sequence',
-            returns: {
-                type: 'sequence',
-            },
-            args: {
-                seq: {
-                    type: 'sequence',
-                },
-            },
-            variants: [
-                { argumentNames: ['seq'] },
-            ],
-            description: 'Returns a copy of $seq with no duplicates.',
-            examples: [
-                'distinct([[1], [2], [3], [1], [3], [5]])',
-                'distinct([1, 2, 3, 1, 3, 5])',
-                'distinct("Albert Mojir")',
-                'distinct([])',
-                'distinct("")',
-            ],
-        },
-        'remove': {
-            title: 'remove',
-            category: 'Sequence',
-            returns: {
-                type: 'sequence',
-            },
-            args: __assign(__assign({}, getOperatorArgs('sequence', 'function')), { seq: {
-                    type: 'sequence',
-                }, fun: {
-                    type: 'function',
-                } }),
-            variants: [
-                { argumentNames: ['seq', 'fun'] },
-            ],
-            description: 'Returns a new sequence of items in $seq for witch `pred(item)` returns a falsy value.',
-            examples: [
-                '[1, 2, 3, 1, 3, 5] remove odd?',
-                'remove([1, 2, 3, 1, 3, 5], even?)',
-                'remove("Albert Mojir", -> "aoueiyAOUEIY" contains? $)',
-            ],
-        },
-        'remove-at': {
-            title: 'remove-at',
-            category: 'Sequence',
-            returns: {
-                type: 'sequence',
-            },
-            args: __assign(__assign({}, getOperatorArgs('sequence', 'integer')), { seq: {
-                    type: 'sequence',
-                }, n: {
-                    type: 'number',
-                } }),
-            variants: [
-                { argumentNames: ['seq', 'n'] },
-            ],
-            description: 'Returns a new sequence of all items in $seq except item at position $n. If $n is negative, it is counting from the end of the sequence.',
-            examples: [
-                '[1, 2, 3, 1, 3, 5] remove-at 2',
-                '"Albert" remove-at -2',
-                'remove-at([1, 2, 3, 1, 3, 5], 0)',
-                'remove-at([1, 2, 3, 1, 3, 5], -1)',
-                'remove-at("Albert Mojir", 6)',
-            ],
-        },
-        'split-at': {
-            title: 'split-at',
-            category: 'Sequence',
-            returns: {
-                type: 'sequence',
-            },
-            args: __assign(__assign({}, getOperatorArgs('sequence', 'integer')), { seq: {
-                    type: 'sequence',
-                }, n: {
-                    type: 'number',
-                } }),
-            variants: [
-                { argumentNames: ['seq', 'n'] },
-            ],
-            description: 'Returns a pair of sequence `[take(pos input), drop(pos input)]`.',
-            examples: [
-                '[1, 2, 3, 4, 5] split-at 2',
-                '"Albert" split-at -2',
-                'split-at([1, 2, 3, 4, 5], -2)',
-                'split-at("Albert", 2)',
-            ],
-        },
-        'split-with': {
-            title: 'split-with',
-            category: 'Sequence',
-            returns: {
-                type: 'sequence',
-            },
-            args: __assign(__assign({}, getOperatorArgs('sequence', 'function')), { seq: {
-                    type: 'sequence',
-                }, fun: {
-                    type: 'function',
-                } }),
-            variants: [
-                { argumentNames: ['seq', 'fun'] },
-            ],
-            description: 'Returns a pair of sequences `[take-while(input, fun), drop-while(input, fun)]`.',
-            examples: [
-                '[1, 2, 3, 4, 5] split-with odd?',
-                'split-with([1, 2, 3, 4, 5], -> $ > 3)',
-                'split-with("Albert", -> $ <= "o")',
-            ],
-        },
-        'frequencies': {
-            title: 'frequencies',
-            category: 'Sequence',
-            returns: {
-                type: 'object',
-            },
-            args: {
-                seq: {
-                    type: 'sequence',
-                },
-            },
-            variants: [
-                { argumentNames: ['seq'] },
-            ],
-            description: 'Returns an object from distinct items in $seq to the number of times they appear. Note that all items in $seq must be valid object keys i.e. strings.',
-            examples: [
-                'frequencies(["Albert", "Mojir", "Nina", "Mojir"])',
-                'frequencies("Pneumonoultramicroscopicsilicovolcanoconiosis")',
-            ],
-        },
-        'group-by': {
-            title: 'group-by',
-            category: 'Sequence',
-            returns: {
-                type: 'object',
-            },
-            args: __assign(__assign({}, getOperatorArgs('sequence', 'function')), { seq: {
-                    type: 'sequence',
-                }, fun: {
-                    type: 'function',
-                } }),
-            variants: [
-                { argumentNames: ['seq', 'fun'] },
-            ],
-            description: 'Returns an object of the elements of $seq keyed by the result of $fun on each element. The value at each key will be an array of the corresponding elements.',
-            examples: [
-                '[{ name: "Albert" }, { name: "Albert" }, { name: "Mojir" }] group-by "name"',
-                'group-by([{name: "Albert"}, {name: "Albert"}, {name: "Mojir"}], "name")',
-                'group-by("Albert Mojir", -> "aoueiAOUEI" contains? $ ? "vowel" : "other")',
-            ],
-        },
-        'partition': {
-            title: 'partition',
-            category: 'Sequence',
-            returns: {
-                type: 'sequence',
-            },
-            args: __assign(__assign({}, getOperatorArgs('sequence', 'number')), { seq: {
-                    type: 'sequence',
-                }, n: {
-                    type: 'number',
-                }, step: {
-                    type: 'number',
-                }, pad: {
-                    type: 'array',
-                } }),
-            variants: [
-                { argumentNames: ['seq', 'n'] },
-                { argumentNames: ['seq', 'n', 'step'] },
-                { argumentNames: ['seq', 'n', 'step', 'pad'] },
-            ],
-            description: 'Returns an array of sequences of $n items each, at offsets $step apart. If $step is not supplied, defaults to $n. If a $pad array is supplied, use its elements as necessary to complete last partition upto $n items. In case there are not enough padding elements, return a partition with less than $n items.',
-            examples: [
-                'range(20) partition 4',
-                'partition(range(20), 4)',
-                'partition(range(22), 4)',
-                'partition(range(20), 4, 6)',
-                'partition(range(20), 4, 3)',
-                'partition(range(20), 3, 6, ["a"])',
-                'partition(range(20), 4, 6, ["a"])',
-                'partition(range(20), 4, 6, ["a", "b", "c", "d"])',
-                'partition(["a", "b", "c", "d", "e", "f"], 3, 1)',
-                'partition([1, 2, 3, 4], 10)',
-                'partition([1, 2, 3, 4], 10, 10)',
-                'partition([1, 2, 3, 4], 10, 10, [])',
-                'partition([1, 2, 3, 4], 10, 10, null)',
-                'partition("superfragilistic", 5)',
-                'partition("superfragilistic", 5, 5, null)',
-                'let foo = [5, 6, 7, 8]; partition(foo, 2, 1, foo)',
-            ],
-        },
-        'partition-all': {
-            title: 'partition-all',
-            category: 'Sequence',
-            returns: {
-                type: 'sequence',
-            },
-            args: __assign(__assign({}, getOperatorArgs('sequence', 'number')), { seq: {
-                    type: 'sequence',
-                }, n: {
-                    type: 'number',
-                }, step: {
-                    type: 'number',
-                } }),
-            variants: [
-                { argumentNames: ['seq', 'n'] },
-                { argumentNames: ['seq', 'n', 'step'] },
-            ],
-            description: 'Returns an array of sequences like partition, but may include partitions with fewer than n items at the end.',
-            examples: [
-                '[0, 1, 2, 3, 4, 5, 6, 7, 8, 9] partition-all 4',
-                'partition-all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 4)',
-                'partition([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 4)',
-                'partition-all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 2, 4)',
-            ],
-        },
-        'partition-by': {
-            title: 'partition-by',
-            category: 'Sequence',
-            returns: {
-                type: 'sequence',
-            },
-            args: __assign(__assign({}, getOperatorArgs('sequence', 'function')), { seq: {
-                    type: 'sequence',
-                }, fun: {
-                    type: 'function',
-                } }),
-            variants: [
-                { argumentNames: ['seq', 'fun'] },
-            ],
-            description: 'Applies $fun to each value in $seq, splitting it each time $fun returns a new value. Returns an array of sequences.',
-            examples: [
-                '[1, 2, 3, 4, 5] partition-by odd?',
-                'partition-by([1, 2, 3, 4, 5], -> $ == 3)',
-                'partition-by([1, 1, 1, 2, 2, 3, 3], odd?)',
-                'partition-by("Leeeeeerrroyyy", identity)',
-            ],
-        },
-        'starts-with?': {
-            title: 'starts-with?',
-            category: 'Sequence',
-            returns: {
-                type: 'boolean',
-            },
-            args: __assign(__assign({}, getOperatorArgs('sequence', 'sequence')), { seq: {
-                    type: 'sequence',
-                }, prefix: {
-                    type: 'sequence',
-                } }),
-            variants: [
-                { argumentNames: ['seq', 'prefix'] },
-            ],
-            description: 'Returns `true` if $seq starts with $prefix, otherwise `false`.',
-            examples: [
-                '[[1], [2], [3], [4], [5]] starts-with? [1]',
-                'starts-with?([1, 2, 3, 4, 5], 1)',
-                'starts-with?([1, 2, 3, 4, 5], [1])',
-                'starts-with?("Albert", "Al")',
-                'starts-with?("Albert", "al")',
-            ],
-        },
-        'ends-with?': {
-            title: 'ends-with?',
-            category: 'Sequence',
-            returns: {
-                type: 'boolean',
-            },
-            args: __assign(__assign({}, getOperatorArgs('sequence', 'sequence')), { seq: {
-                    type: 'sequence',
-                }, suffix: {
-                    type: 'sequence',
-                } }),
-            variants: [
-                { argumentNames: ['seq', 'suffix'] },
-            ],
-            description: 'Returns `true` if $seq ends with $suffix, otherwise `false`.',
-            examples: [
-                '[[1], [2], [3], [4], [5]] starts-with? [5]',
-                '[[1], [2], [3], [4], [5]] starts-with? 5',
-                'ends-with?([1, 2, 3, 4, 5], 5)',
-                'ends-with?([1, 2, 3, 4, 5], [5])',
-                'ends-with?("Albert", "rt")',
-                'ends-with?("Albert", "RT")',
-            ],
-        },
-        'interleave': {
-            title: 'interleave',
-            category: 'Sequence',
-            returns: {
-                type: 'sequence',
-            },
-            args: __assign(__assign({}, getOperatorArgs('sequence', 'sequence')), { seqs: {
-                    type: 'sequence',
-                    rest: true,
-                } }),
-            variants: [
-                { argumentNames: ['seqs'] },
-            ],
-            description: 'Returns a sequence of the first item from each of the $seqs, then the second item from each of the $seqs, until all items from the shortest seq are exhausted.',
-            examples: [
-                '[1, 2, 3] interleave [4, 5, 6]',
-                '"Albert" interleave ".,.,.,"',
-                'interleave([1, 2, 3], [4, 5, 6])',
-                'interleave([1, 2, 3], [4, 5, 6], [7, 8, 9])',
-                'interleave([1, 2, 3], [4, 5, 6], [7, 8])',
-                'interleave([1, 2, 3], [4, 5, 6], [7])',
-                'interleave([1, 2, 3], [4, 5, 6], [])',
-                'interleave([1, 2, 3], [])',
-                'interleave([])',
-            ],
-        },
-        'interpose': {
-            title: 'interpose',
-            category: 'Sequence',
-            returns: {
-                type: 'sequence',
-            },
-            args: __assign(__assign({}, getOperatorArgs('sequence', 'any')), { seq: {
-                    type: 'sequence',
-                }, separator: {
-                    type: 'any',
-                } }),
-            variants: [
-                { argumentNames: ['seq', 'separator'] },
-            ],
-            description: 'Returns a sequence of the elements of $seq separated by $separator. If $seq is a string, the separator must be a string.',
-            examples: [
-                '"Albert" interpose "-"',
-                'interpose([1, 2, 3, 4, 5], "a")',
-                'interpose(["Albert", "Mojir", "Nina"], ", ")',
-                'interpose("Albert", ".")',
-            ],
-        },
-    };
-
     var specialExpressionsReference = {
         'doseq': {
             title: 'doseq',
@@ -21433,498 +20550,6 @@ var Playground = (function (exports) {
                 "\nlet foo = (n) -> {\n  write!(n);\n  if !(zero?(n)) then\n    recur(n - 1)\n  end\n};\nfoo(3)",
                 "\n(n -> {\n  write!(n);\n  if !(zero?(n)) then\n    recur(n - 1)\n  end\n})(3)",
                 "\nloop (n = 3) -> {\n  write!(n);\n  if !(zero?(n)) then\n    recur(n - 1)\n  end\n}",
-            ],
-        },
-    };
-
-    var stringReference = {
-        'string-repeat': {
-            title: 'string-repeat',
-            category: 'String',
-            returns: {
-                type: 'number',
-            },
-            args: __assign(__assign({}, getOperatorArgs('string', 'integer')), { s: {
-                    type: 'string',
-                }, n: {
-                    type: 'integer',
-                } }),
-            variants: [
-                { argumentNames: ['s', 'n'] },
-            ],
-            description: 'Repeates $s $n times.',
-            examples: [
-                '"*" string-repeat 10',
-                'string-repeat("*", 10)',
-                'string-repeat("***", 0)',
-            ],
-        },
-        'str': {
-            title: 'str',
-            category: 'String',
-            returns: {
-                type: 'string',
-            },
-            args: {
-                values: {
-                    type: 'any',
-                    rest: true,
-                },
-            },
-            variants: [
-                { argumentNames: ['values'] },
-            ],
-            description: 'Concatenats $values into one string. If `value` equals `null` empty string is returned.',
-            examples: [
-                'str("A string", ", and another string", " ...and more")',
-                'str("Just one string")',
-                'str()',
-                'str(0, false, true, null, #"^kalle", [1, 2, 3], {a: "a"})',
-            ],
-            noOperatorDocumentation: true,
-        },
-        'number': {
-            title: 'number',
-            category: 'String',
-            returns: {
-                type: 'number',
-            },
-            args: {
-                s: {
-                    type: 'string',
-                },
-            },
-            variants: [
-                { argumentNames: ['s'] },
-            ],
-            description: 'Parses $s to a number.',
-            examples: [
-                'number("10")',
-                'number("010")',
-                'number("-1.01")',
-            ],
-        },
-        'lower-case': {
-            title: 'lower-case',
-            category: 'String',
-            returns: {
-                type: 'string',
-            },
-            args: {
-                s: {
-                    type: 'string',
-                },
-            },
-            variants: [
-                { argumentNames: ['s'] },
-            ],
-            description: 'Returns $s converted to lower case.',
-            examples: [
-                'lower-case("Albert")',
-                'lower-case("")',
-            ],
-        },
-        'upper-case': {
-            title: 'upper-case',
-            category: 'String',
-            returns: {
-                type: 'string',
-            },
-            args: {
-                s: {
-                    type: 'string',
-                },
-            },
-            variants: [
-                { argumentNames: ['s'] },
-            ],
-            description: 'Returns $s converted to upper case.',
-            examples: [
-                'upper-case("Albert")',
-                'upper-case("")',
-            ],
-        },
-        'trim': {
-            title: 'trim',
-            category: 'String',
-            returns: {
-                type: 'string',
-            },
-            args: {
-                s: {
-                    type: 'string',
-                },
-            },
-            variants: [
-                { argumentNames: ['s'] },
-            ],
-            description: 'Returns a new string with leading and trailing whitespaces removed.',
-            examples: [
-                'trim("  Albert  ")',
-                'trim("   ")',
-                'trim("")',
-            ],
-        },
-        'trim-left': {
-            title: 'trim-left',
-            category: 'String',
-            returns: {
-                type: 'string',
-            },
-            args: {
-                s: {
-                    type: 'string',
-                },
-            },
-            variants: [
-                { argumentNames: ['s'] },
-            ],
-            description: 'Returns a new string with leading whitespaces removed.',
-            examples: [
-                'trim-left("  Albert  ")',
-                'trim-left("   ")',
-                'trim-left("")',
-            ],
-        },
-        'trim-right': {
-            title: 'trim-right',
-            category: 'String',
-            returns: {
-                type: 'string',
-            },
-            args: {
-                s: {
-                    type: 'string',
-                },
-            },
-            variants: [
-                { argumentNames: ['s'] },
-            ],
-            description: 'Returns a new string with trailing whitespaces removed.',
-            examples: [
-                'trim-right("  Albert  ")',
-                'trim-right("   ")',
-                'trim-right("")',
-            ],
-        },
-        'pad-left': {
-            title: 'pad-left',
-            category: 'String',
-            returns: {
-                type: 'string',
-            },
-            args: __assign(__assign({}, getOperatorArgs('string', 'integer')), { s: {
-                    type: 'string',
-                }, length: {
-                    type: 'integer',
-                }, padString: {
-                    type: 'string',
-                } }),
-            variants: [
-                { argumentNames: ['s', 'length'] },
-                { argumentNames: ['s', 'length', 'padString'] },
-            ],
-            description: 'Pads from the start of $s with `padString` (multiple times, if needed) until the resulting string reaches the given $length.',
-            examples: [
-                '"Albert" pad-left 20',
-                'pad-left("Albert", 20)',
-                'pad-left("Albert", 20, "-*-")',
-                'pad-left("Albert", 5)',
-                'pad-left("Albert", -1)',
-            ],
-        },
-        'pad-right': {
-            title: 'pad-right',
-            category: 'String',
-            returns: {
-                type: 'string',
-            },
-            args: __assign(__assign({}, getOperatorArgs('string', 'integer')), { s: {
-                    type: 'string',
-                }, length: {
-                    type: 'integer',
-                }, padString: {
-                    type: 'string',
-                } }),
-            variants: [
-                { argumentNames: ['s', 'length'] },
-                { argumentNames: ['s', 'length', 'padString'] },
-            ],
-            description: 'Pads from the start of $s with `padString` (multiple times, if needed) until the resulting string reaches the given `length`.',
-            examples: [
-                '"Albert" pad-right 20',
-                'pad-right("Albert", 20)',
-                'pad-right("Albert", 20, "-*-")',
-                'pad-right("Albert", 5)',
-                'pad-right("Albert", -1)',
-            ],
-        },
-        'split': {
-            title: 'split',
-            category: 'String',
-            returns: {
-                type: 'string',
-            },
-            args: __assign(__assign({}, getOperatorArgs('string', 'string')), { s: {
-                    type: 'string',
-                }, delimiter: {
-                    type: 'string',
-                }, limit: {
-                    type: 'integer',
-                } }),
-            variants: [
-                { argumentNames: ['s', 'delimiter'] },
-                { argumentNames: ['s', 'delimiter', 'limit'] },
-            ],
-            description: 'Divides $s into an array of substrings. The division is done by searching for `delimiter`. If `limit` as provided, at most `limit` number of substrings are returned.',
-            examples: [
-                '"Albert Mojir" split " "',
-                'split("Albert Mojir", " ")',
-                'split("abcdefghijklmnopqrstuvw", #"[aoueiy]")',
-                'split("0123456789", "")',
-                'split("0123456789", "", 5) map number',
-            ],
-        },
-        'split-lines': {
-            title: 'split-lines',
-            category: 'String',
-            returns: {
-                type: 'string',
-            },
-            args: {
-                s: {
-                    type: 'string',
-                },
-            },
-            variants: [
-                { argumentNames: ['s'] },
-            ],
-            description: 'Divides $s into an array of substrings, each representing a line.',
-            examples: [
-                'split-lines("Albert\nMojir\n")',
-                'split-lines("Albert\n\nMojir")',
-                'split-lines("Albert\nMojir\n\n")',
-                'split-lines("")',
-            ],
-        },
-        'template': {
-            title: 'template',
-            category: 'String',
-            returns: {
-                type: 'string',
-            },
-            args: {
-                s: {
-                    type: 'string',
-                },
-                params: {
-                    type: 'any',
-                    rest: true,
-                },
-            },
-            variants: [
-                { argumentNames: ['s', 'params'] },
-            ],
-            description: 'Applies placeholders to a string. Support for basic pluralization - see examples. If pluralization is used, first placeholder must be a number.',
-            examples: [
-                'template("Hi, $1 and $2", "Carl", "Larry")',
-                'template("Hi $1, $2, $3, $4, $5, $6, $7, $8 and $9", "A", "B", "C", "D", "E", "F", "G", "H", "I")',
-                'template("$1 book||||$1 books", 0)',
-                'template("$1 book||||$1 books", 1)',
-                'template("$1 book||||$1 books", 2)',
-                'template("No book||||$1 book||||$1 books", 0)',
-                'template("No book||||$1 book||||$1 books", 1)',
-                'template("No book||||$1 book||||$1 books", 10)',
-                'template("No book||||One book||||Two books||||Three books||||$1 books", 0)',
-                'template("No book||||One book||||Two books||||Three books||||$1 books", 1)',
-                'template("No book||||One book||||Two books||||Three books||||$1 books", 2)',
-                'template("No book||||One book||||Two books||||Three books||||$1 books", 3)',
-                'template("No book||||One book||||Two books||||Three books||||$1 books", 4)',
-            ],
-            noOperatorDocumentation: true,
-        },
-        'to-char-code': {
-            title: 'to-char-code',
-            category: 'String',
-            returns: {
-                type: 'number',
-            },
-            args: {
-                c: {
-                    type: 'string',
-                },
-            },
-            variants: [
-                { argumentNames: ['c'] },
-            ],
-            description: 'Return code point for first character in $c.',
-            examples: [
-                'to-char-code("A")',
-                'to-char-code("Albert")',
-            ],
-        },
-        'from-char-code': {
-            title: 'from-char-code',
-            category: 'String',
-            returns: {
-                type: 'string',
-            },
-            args: {
-                code: {
-                    type: 'number',
-                },
-            },
-            variants: [
-                { argumentNames: ['code'] },
-            ],
-            description: 'Return character for code point $code.',
-            examples: [
-                'from-char-code(65)',
-                'from-char-code(0)',
-            ],
-        },
-        'encode-base64': {
-            title: 'encode-base64',
-            category: 'String',
-            returns: {
-                type: 'string',
-            },
-            args: {
-                s: {
-                    type: 'string',
-                },
-            },
-            variants: [
-                { argumentNames: ['s'] },
-            ],
-            description: 'Returns a Base64 encoded string from $s.',
-            examples: [
-                'encode-base64("Albert")',
-            ],
-        },
-        'decode-base64': {
-            title: 'decode-base64',
-            category: 'String',
-            returns: {
-                type: 'string',
-            },
-            args: {
-                base64string: {
-                    type: 'string',
-                },
-            },
-            variants: [
-                { argumentNames: ['base64string'] },
-            ],
-            description: 'Returns a Base64 decoded string from $base64string.',
-            examples: [
-                'decode-base64("QWxiZXJ0IPCfkLs=")',
-            ],
-        },
-        'encode-uri-component': {
-            title: 'encode-uri-component',
-            category: 'String',
-            returns: {
-                type: 'string',
-            },
-            args: {
-                s: {
-                    type: 'string',
-                },
-            },
-            variants: [
-                { argumentNames: ['s'] },
-            ],
-            description: 'Returns an escaped `URI` string.',
-            examples: [
-                'encode-uri-component("Hi everyone!?")',
-            ],
-        },
-        'decode-uri-component': {
-            title: 'decode-uri-component',
-            category: 'String',
-            returns: {
-                type: 'string',
-            },
-            args: {
-                s: {
-                    type: 'string',
-                },
-            },
-            variants: [
-                { argumentNames: ['s'] },
-            ],
-            description: 'Returns an un-escaped `URI` string.',
-            examples: [
-                'decode-uri-component("Hi%20everyone!%3F%20%F0%9F%91%8D")',
-            ],
-        },
-        'join': {
-            title: 'join',
-            category: 'String',
-            returns: {
-                type: 'string',
-            },
-            args: __assign(__assign({}, getOperatorArgs('array', 'string')), { arr: {
-                    type: 'array',
-                }, delimiter: {
-                    type: 'string',
-                } }),
-            variants: [{
-                    argumentNames: ['arr', 'delimiter'],
-                }],
-            description: 'Returns a new string by concatenating all of the elements in $arr, separated by $delimiter.',
-            examples: [
-                'map([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], str) join ", "',
-                '([0, 1, 2, 3, 4, 5, 6, 7, 8, 9] map str) join ", "',
-                'join(["Albert", 10], ", ")',
-                'join(["Albert", "Mojir"], " ")',
-                'join(map([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], str), ", ")',
-            ],
-        },
-        'capitalize': {
-            title: 'capitalize',
-            category: 'String',
-            returns: {
-                type: 'string',
-            },
-            args: {
-                s: {
-                    type: 'string',
-                },
-            },
-            variants: [
-                { argumentNames: ['s'] },
-            ],
-            description: 'Returns $s with the first character converted to uppercase and the rest to lowercase.',
-            examples: [
-                'capitalize("albert")',
-                'capitalize("ALBERT")',
-                'capitalize("aLBERT")',
-                'capitalize("")',
-            ],
-        },
-        'blank?': {
-            title: 'blank?',
-            category: 'String',
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                s: {
-                    type: ['string', 'null'],
-                },
-            },
-            variants: [
-                { argumentNames: ['s'] },
-            ],
-            description: 'Returns true if $s is null or only contains whitespace characters.',
-            examples: [
-                'blank?("")',
-                'blank?(null)',
-                'blank?("\n")',
-                'blank?(" ")',
-                'blank?(".")',
             ],
         },
     };
@@ -31826,10 +30451,47 @@ var Playground = (function (exports) {
         },
     };
 
+    // --- Helper: derive FunctionReference from co-located docs ---
+    function docsToReference(expressions) {
+        var e_1, _a;
+        var result = {};
+        try {
+            for (var _b = __values(Object.entries(expressions)), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var _d = __read(_c.value, 2), key = _d[0], expr = _d[1];
+                var docs = expr.docs;
+                if (!docs) {
+                    throw new Error("Missing docs for expression \"".concat(key, "\""));
+                }
+                result[key] = __assign(__assign({ title: key, category: docs.category, description: docs.description, returns: docs.returns, args: docs.args, variants: docs.variants, examples: docs.examples }, (docs.seeAlso ? { seeAlso: docs.seeAlso } : {})), (docs.hideOperatorForm ? { noOperatorDocumentation: true } : {}));
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        return result;
+    }
+    // Derive all core category references from co-located docs
+    var bitwiseReference = docsToReference(bitwiseNormalExpression);
+    var arrayRef = docsToReference(arrayNormalExpression);
+    var collectionRef = docsToReference(collectionNormalExpression);
+    var functionalRef = docsToReference(functionalNormalExpression);
+    var mathRef = docsToReference(mathNormalExpression);
+    var emptyRef = {};
+    var metaRef = docsToReference(getMetaNormalExpression(emptyRef));
+    var miscRef = docsToReference(miscNormalExpression);
+    var objectRef = docsToReference(objectNormalExpression);
+    var predicatesRef = docsToReference(predicatesNormalExpression);
+    var regexpRef = docsToReference(regexpNormalExpression);
+    var sequenceRef = docsToReference(sequenceNormalExpression);
+    var stringRef = docsToReference(stringNormalExpression);
     function isFunctionReference(ref) {
         return 'returns' in ref && 'args' in ref && 'variants' in ref;
     }
-    var normalExpressionReference = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, bitwiseReference), collectionReference), arrayReference), sequenceReference), mathReference), functionalReference), metaReference), miscReference), objectReference), predicateReference), regularExpressionReference), stringReference);
+    var normalExpressionReference = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, bitwiseReference), collectionRef), arrayRef), sequenceRef), mathRef), functionalRef), metaRef), miscRef), objectRef), predicatesRef), regexpRef), stringRef);
     // Namespace functions - require import() to use
     var namespaceReference = __assign(__assign(__assign(__assign(__assign(__assign(__assign({}, vectorReference), linAlgReference), matrixReference), numberTheoryReference), gridReference), randomReference), assertReference);
     Object.entries(normalExpressionReference).forEach(function (_a) {

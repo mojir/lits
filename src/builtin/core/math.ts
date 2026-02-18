@@ -97,6 +97,22 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(1),
+    docs: {
+      category: 'Math',
+      returns: { type: 'number' },
+      args: {
+        x: { type: ['number', 'vector', 'matrix'] },
+      },
+      variants: [{ argumentNames: ['x'] }],
+      description: 'The `inc` function increments its argument by 1, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it increases each element by 1 while preserving the original structure.',
+      examples: [
+        'inc(0)',
+        'inc(1)',
+        'inc(100.1)',
+        'inc([1, 2, 3])',
+        'inc([[1, 2], [3, 4]])',
+      ],
+    },
   },
   'dec': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -114,6 +130,22 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(1),
+    docs: {
+      category: 'Math',
+      returns: { type: ['number', 'vector', 'matrix'] },
+      args: {
+        x: { type: ['number', 'vector', 'matrix'] },
+      },
+      variants: [{ argumentNames: ['x'] }],
+      description: 'The `dec` function decrements its argument by 1, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it decreases each element by 1 while preserving the original structure.',
+      examples: [
+        'dec(0)',
+        'dec(1)',
+        'dec(100.1)',
+        'dec([1, 2, 3])',
+        'dec([[1, 2], [3, 4]])',
+      ],
+    },
   },
   '+': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -138,6 +170,28 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: {},
+    docs: {
+      category: 'Math',
+      returns: { type: ['number', 'vector', 'matrix'] },
+      args: {
+        a: { type: ['number', 'vector', 'matrix'] },
+        b: { type: ['number', 'vector', 'matrix'] },
+        xs: { type: ['number', 'vector', 'matrix'], rest: true },
+      },
+      variants: [{ argumentNames: ['xs'] }],
+      description: 'The `+` function performs addition of numbers and element-wise addition of `vectors` and `matrices` of compatible dimensions, returning the same type as its inputs. When used with mixed types, it adds the scalar to each element of the collection.',
+      examples: [
+        '1 + 2',
+        '1 + 20 + 30',
+        '+(1, 2, 3, 4)',
+        '+()',
+        '+(1)',
+        '[1, 2, 3] + 2',
+        '[1, 2, 3] + [4, 5, 6]',
+        '[[1, 2, 3], [4, 5, 6]] + [[7, 8, 9], [10, 11, 12]]',
+        '[[1, 2, 3], [4, 5, 6]] + 2',
+      ],
+    },
   },
   '*': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -162,6 +216,29 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: {},
+    docs: {
+      category: 'Math',
+      returns: { type: ['number', 'vector', 'matrix'] },
+      args: {
+        a: { type: ['number', 'vector', 'matrix'] },
+        b: { type: ['number', 'vector', 'matrix'] },
+        xs: { type: ['number', 'vector', 'matrix'], rest: true },
+      },
+      variants: [{ argumentNames: ['xs'] }],
+      description: 'The `*` function performs multiplication of `numbers` and element-wise multiplication of `vectors` and `matrices` of compatible dimensions, returning the same type as its inputs. When used with mixed types, it multiplies each element of the collection by the scalar.',
+      examples: [
+        '6 * 7',
+        '-1 * 4',
+        '*(4, 7)',
+        '*(1, 2, 3, 4, 5)',
+        '*()',
+        '*(8)',
+        '[1, 2, 3] * 2',
+        '[1, 2, 3] * [4, 5, 6]',
+        '[[1, 2, 3], [4, 5, 6]] * [[7, 8, 9], [10, 11, 12]]',
+        '[[1, 2, 3], [4, 5, 6]] * 2',
+      ],
+    },
   },
   '/': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -192,6 +269,29 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: {},
+    docs: {
+      category: 'Math',
+      returns: { type: ['number', 'vector', 'matrix'] },
+      args: {
+        a: { type: ['number', 'vector', 'matrix'] },
+        b: { type: ['number', 'vector', 'matrix'] },
+        xs: { type: ['number', 'vector', 'matrix'], rest: true },
+      },
+      variants: [{ argumentNames: ['xs'] }],
+      description: 'The `/` function performs division of `numbers` and element-wise division of `vectors` and `matrices` of compatible dimensions, returning the same type as its inputs. When used with mixed types, it divides each element of the collection by the scalar.',
+      examples: [
+        '12 / 100',
+        '-1 / 4',
+        '/(7, 4)',
+        '/(1, 2, 4, 8)',
+        '/()',
+        '/(8)',
+        '[1, 2, 3] / 2',
+        '[1, 2, 3] / [4, 5, 6]',
+        '[[1, 2, 3], [4, 5, 6]] / [[7, 8, 9], [10, 11, 12]]',
+        '[[1, 2, 3], [4, 5, 6]] / 2',
+      ],
+    },
   },
   '-': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -222,6 +322,28 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: {},
+    docs: {
+      category: 'Math',
+      returns: { type: ['number', 'vector', 'matrix'] },
+      args: {
+        a: { type: ['number', 'vector', 'matrix'] },
+        b: { type: ['number', 'vector', 'matrix'] },
+        xs: { type: ['number', 'vector', 'matrix'], rest: true },
+      },
+      variants: [{ argumentNames: ['xs'] }],
+      description: 'Computes difference between first value and sum of the rest. When called with only one argument, it does negation.',
+      examples: [
+        '50 - 8',
+        '1 - 1 - 1',
+        '-()',
+        '-(4, 2)',
+        '-(4, 3, 2, 1,)',
+        '[1, 2, 3] - 2',
+        '[1, 2, 3] - [4, 5, 6]',
+        '[[1, 2, 3], [4, 5, 6]] - [[7, 8, 9], [10, 11, 12]]',
+        '[[1, 2, 3], [4, 5, 6]] - 2',
+      ],
+    },
   },
   'quot': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -242,6 +364,31 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(2),
+    docs: {
+      category: 'Math',
+      returns: { type: ['number', 'vector', 'matrix'] },
+      args: {
+        a: { type: ['number', 'vector', 'matrix'] },
+        b: { type: ['number', 'vector', 'matrix'] },
+      },
+      variants: [{ argumentNames: ['a', 'b'] }],
+      description: 'The `quot` function performs integer division truncated toward zero, working on `numbers` and element-wise on `vectors` and `matrices` of compatible dimensions. When used with mixed types, it applies integer division between each element of the collection and the scalar.',
+      examples: [
+        'quot(5, 3)',
+        'quot(5.2, 3.1)',
+        'quot(-5, 3)',
+        '5 quot -3',
+        '-5 quot -3',
+        'quot(5, 0)',
+        'quot(0, 5)',
+        '[1, 2, 3] quot 2',
+        '2 quot [1, 2, 3]',
+        'quot([1, 2, 3], [4, 5, 6])',
+        '[[1, 2, 3], [4, 5, 6]] quot [[7, 8, 9], [10, 11, 12]]',
+        'quot([[1, 2, 3], [4, 5, 6]], 2)',
+        '[[1, 2, 3], [4, 5, 6]] quot [[7, 8, 9], [10, 11, 12]]',
+      ],
+    },
   },
   'mod': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -270,6 +417,28 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(2),
+    docs: {
+      category: 'Math',
+      returns: { type: ['number', 'vector', 'matrix'] },
+      args: {
+        a: { type: ['number', 'vector', 'matrix'] },
+        b: { type: ['number', 'vector', 'matrix'] },
+      },
+      variants: [{ argumentNames: ['a', 'b'] }],
+      description: 'The `mod` function computes the modulo of division with the same sign as the divisor, working on `numbers` and element-wise on `vectors` and `matrices` of compatible dimensions. When used with mixed types, it applies the modulo operation between each element of the collection and the scalar.',
+      examples: [
+        'mod(5, 3)',
+        'mod(5.2, 3.1)',
+        'mod(-5, 3)',
+        '5 mod -3',
+        '-5 mod -3',
+        '[1, 2, 3] mod 2',
+        '2 mod [1, 2, 3]',
+        'mod([1, 2, 3], [4, 5, 6])',
+        '[[1, 2, 3], [4, 5, 6]] mod [[7, 8, 9], [10, 11, 12]]',
+        'mod([[1, 2, 3], [4, 5, 6]], 2)',
+      ],
+    },
   },
   '%': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -290,6 +459,28 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(2),
+    docs: {
+      category: 'Math',
+      returns: { type: ['number', 'vector', 'matrix'] },
+      args: {
+        a: { type: ['number', 'vector', 'matrix'] },
+        b: { type: ['number', 'vector', 'matrix'] },
+      },
+      variants: [{ argumentNames: ['a', 'b'] }],
+      description: 'The `%` function computes the remainder of division with the same sign as the dividend, working on `numbers` and element-wise on `vectors` and `matrices` of compatible dimensions. When used with mixed types, it applies the remainder operation between each element of the collection and the scalar.',
+      examples: [
+        '5 % 3',
+        '5.2 % 3.1',
+        '-5 % 3',
+        '%(5, -3)',
+        '%(-5, -3)',
+        '[1, 2, 3] % 2',
+        '2 % [1, 2, 3]',
+        '%([1, 2, 3], [4, 5, 6])',
+        '[[1, 2, 3], [4, 5, 6]] % [[7, 8, 9], [10, 11, 12]]',
+        '%([[1, 2, 3], [4, 5, 6]], 2)',
+      ],
+    },
   },
   'sqrt': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -307,6 +498,25 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(1),
+    docs: {
+      category: 'Math',
+      returns: { type: ['number', 'vector', 'matrix'] },
+      args: {
+        x: { type: ['number', 'vector', 'matrix'] },
+      },
+      variants: [{ argumentNames: ['x'] }],
+      description: 'The `sqrt` function calculates the square root of `numbers` and computes element-wise square roots of `vectors` and `matrices`. When applied to collections, it returns the square root of each element while preserving the original structure.',
+      examples: [
+        'sqrt(0)',
+        'sqrt(9)',
+        'sqrt(2)',
+        'sqrt(0)',
+        'sqrt(9)',
+        'sqrt(2)',
+        'sqrt([1, 4, 9])',
+        'sqrt([[1, 4], [9, 16]])',
+      ],
+    },
   },
   'cbrt': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -324,6 +534,27 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(1),
+    docs: {
+      category: 'Math',
+      returns: { type: ['number', 'vector', 'matrix'] },
+      args: {
+        x: { type: ['number', 'vector', 'matrix'] },
+      },
+      variants: [{ argumentNames: ['x'] }],
+      description: 'The `cbrt` function calculates the cube root of `numbers` and computes element-wise cube roots of `vectors` and `matrices`. When applied to collections, it returns the cube root of each element while preserving the original structure.',
+      examples: [
+        'cbrt(0)',
+        'cbrt(27)',
+        'cbrt(2)',
+        'cbrt(1)',
+        'cbrt(0)',
+        'cbrt(27)',
+        'cbrt(2)',
+        'cbrt(1)',
+        'cbrt([1, 8, 27])',
+        'cbrt([[1, 8], [27, 64]])',
+      ],
+    },
   },
   '^': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -343,6 +574,28 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(2),
+    docs: {
+      category: 'Math',
+      returns: { type: ['number', 'vector', 'matrix'] },
+      args: {
+        a: { type: ['number', 'vector', 'matrix'] },
+        b: { type: ['number', 'vector', 'matrix'] },
+      },
+      variants: [{ argumentNames: ['a', 'b'] }],
+      description: 'The ^ function computes exponentiation, raising the first argument to the power of the second, working on `numbers` and element-wise on `vectors` and `matrices` of compatible dimensions. When used with mixed types, it applies the power operation between each element of the collection and the scalar.',
+      examples: [
+        '2 ^ 3',
+        '2 ^ 0',
+        '2 ^ -3',
+        '^(-2, 3)',
+        '^(-2, -3)',
+        '[1, 2, 3] ^ 2',
+        '2 ^ [1, 2, 3]',
+        '^([1, 2, 3], [4, 5, 6])',
+        '[[1, 2, 3], [4, 5, 6]] ^ [[7, 8, 9], [10, 11, 12]]',
+        '^([[1, 2, 3], [4, 5, 6]], 2)',
+      ],
+    },
   },
   'round': {
     evaluate: ([value, decimals], sourceCodeInfo): NumberVectorOrMatrix => {
@@ -381,6 +634,33 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: { min: 1, max: 2 },
+    docs: {
+      category: 'Math',
+      returns: { type: ['number', 'vector', 'matrix'] },
+      args: {
+        a: { type: ['number', 'vector', 'matrix'] },
+        b: { type: 'integer' },
+      },
+      variants: [
+        { argumentNames: ['a'] },
+        { argumentNames: ['a', 'b'] },
+      ],
+      description: 'The `round` function rounds a `number` to the nearest `integer` or to a specified number of `decimal` places, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it rounds each element while preserving the original structure.',
+      examples: [
+        'round(2)',
+        'round(2.49)',
+        'round(2.5)',
+        'round(-2.49)',
+        'round(-2.5)',
+        'round(-2.501)',
+        'round(1.23456789, 4)',
+        '1.123456789 round 2',
+        'round([1.23456789, 2.3456789], 1)',
+        '[1.23456789, 2.3456789] round 4',
+        '[[1.23456789, 2.3456789], [3.456789, 4.56789]] round 4',
+        'round([[1.23456789, 2.3456789], [3.456789, 4.56789]], 2)',
+      ],
+    },
   },
   'trunc': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -398,6 +678,25 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(1),
+    docs: {
+      category: 'Math',
+      returns: { type: ['integer', 'vector', 'matrix'] },
+      args: {
+        x: { type: ['number', 'vector', 'matrix'] },
+      },
+      variants: [{ argumentNames: ['x'] }],
+      description: 'The `trunc` function truncates `numbers` toward zero (removing decimal portions without rounding), working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it truncates each element while preserving the original structure.',
+      examples: [
+        'trunc(2)',
+        'trunc(2.49)',
+        'trunc(2.5)',
+        'trunc(-2.49)',
+        'trunc(-2.5)',
+        'trunc(-2.501)',
+        'trunc([1.23456789, 2.3456789])',
+        'trunc([[1.23456789, 2.3456789], [3.456789, 4.56789]])',
+      ],
+    },
   },
   'floor': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -415,6 +714,25 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(1),
+    docs: {
+      category: 'Math',
+      returns: { type: ['integer', 'vector', 'matrix'] },
+      args: {
+        x: { type: ['number', 'vector', 'matrix'] },
+      },
+      variants: [{ argumentNames: ['x'] }],
+      description: 'The `floor` function returns the largest `integer` less than or equal to a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the floor of each element while preserving the original structure.',
+      examples: [
+        'floor(2)',
+        'floor(2.49)',
+        'floor(2.5)',
+        'floor(-2.49)',
+        'floor(-2.5)',
+        'floor(-2.501)',
+        'floor([1.23456789, 2.3456789])',
+        'floor([[1.23456789, 2.3456789], [3.456789, 4.56789]])',
+      ],
+    },
   },
   'ceil': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -432,6 +750,25 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(1),
+    docs: {
+      category: 'Math',
+      returns: { type: ['integer', 'vector', 'matrix'] },
+      args: {
+        x: { type: ['number', 'vector', 'matrix'] },
+      },
+      variants: [{ argumentNames: ['x'] }],
+      description: 'The `ceil` function returns the smallest `integer` greater than or equal to a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the ceiling of each element while preserving the original structure.',
+      examples: [
+        'ceil(2)',
+        'ceil(2.49)',
+        'ceil(2.5)',
+        'ceil(-2.49)',
+        'ceil(-2.5)',
+        'ceil(-2.501)',
+        'ceil([1.23456789, 2.3456789])',
+        'ceil([[1.23456789, 2.3456789], [3.456789, 4.56789]])',
+      ],
+    },
   },
   'min': {
     evaluate: ([first, ...rest], sourceCodeInfo): number => {
@@ -445,6 +782,24 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }, first)
     },
     arity: { min: 1 },
+    docs: {
+      category: 'Math',
+      returns: { type: 'number' },
+      args: {
+        a: { type: 'number' },
+        b: { type: 'number' },
+        xs: { type: 'number', rest: true },
+      },
+      variants: [{ argumentNames: ['xs'] }],
+      description: 'Returns the smallest number of the arguments.',
+      examples: [
+        '2 min 3',
+        'min(2, 0, 1)',
+        'min(2, -1, 1)',
+        'min(2.5)',
+        '12 min 14',
+      ],
+    },
   },
   'max': {
     evaluate: ([first, ...rest], sourceCodeInfo): number => {
@@ -458,6 +813,24 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }, first)
     },
     arity: { min: 1 },
+    docs: {
+      category: 'Math',
+      returns: { type: 'number' },
+      args: {
+        a: { type: 'number' },
+        b: { type: 'number' },
+        xs: { type: 'number', rest: true },
+      },
+      variants: [{ argumentNames: ['xs'] }],
+      description: 'Returns the largest number of the arguments.',
+      examples: [
+        ' 2 max 3',
+        'max(2, 0, 1)',
+        'max(2, -1, 1)',
+        'max(2, 0.5)',
+        '4 max 2',
+      ],
+    },
   },
   'abs': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -475,6 +848,22 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(1),
+    docs: {
+      category: 'Math',
+      returns: { type: ['number', 'vector', 'matrix'] },
+      args: {
+        x: { type: ['number', 'vector', 'matrix'] },
+      },
+      variants: [{ argumentNames: ['x'] }],
+      description: 'The abs function returns the absolute value (magnitude) of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the absolute value of each element while preserving the original structure.',
+      examples: [
+        'abs(-2.3)',
+        'abs(0)',
+        'abs(2.5)',
+        'abs([1, -2, 3])',
+        'abs([[1, -2], [3, -4]])',
+      ],
+    },
   },
   'sign': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -492,6 +881,23 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(1),
+    docs: {
+      category: 'Math',
+      returns: { type: ['number', 'vector', 'matrix'] },
+      args: {
+        x: { type: ['number', 'vector', 'matrix'] },
+      },
+      variants: [{ argumentNames: ['x'] }],
+      description: 'The `sign` function returns the `sign** of a **number` (-1 for negative, 0 for zero, 1 for positive), working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the sign of each element while preserving the original structure.',
+      examples: [
+        'sign(-2.3)',
+        'sign(-0)',
+        'sign(0)',
+        'sign(12312)',
+        'sign([1, -2, 3])',
+        'sign([[1, -2], [3, -4]])',
+      ],
+    },
   },
   'ln': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -509,6 +915,22 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(1),
+    docs: {
+      category: 'Math',
+      returns: { type: ['number', 'vector', 'matrix'] },
+      args: {
+        x: { type: ['number', 'vector', 'matrix'] },
+      },
+      variants: [{ argumentNames: ['x'] }],
+      description: 'The `ln` function computes the natural logarithm (base `e`) of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the natural logarithm of each element while preserving the original structure.',
+      examples: [
+        'ln(0.01)',
+        'ln(2.5)',
+        'ln(E)',
+        'ln([1, 2, 3])',
+        'ln([[1, 2], [3, 4]])',
+      ],
+    },
   },
   'log2': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -526,6 +948,22 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(1),
+    docs: {
+      category: 'Math',
+      returns: { type: ['number', 'vector', 'matrix'] },
+      args: {
+        x: { type: ['number', 'vector', 'matrix'] },
+      },
+      variants: [{ argumentNames: ['x'] }],
+      description: 'The `log2` function computes the base `2` logarithm of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the base-2 logarithm of each element while preserving the original structure.',
+      examples: [
+        'log2(0.01)',
+        'log2(2 ^ 12)',
+        'log2(2.5)',
+        'log2([1, 2, 3])',
+        'log2([[1, 2], [3, 4]])',
+      ],
+    },
   },
   'log10': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -543,6 +981,22 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(1),
+    docs: {
+      category: 'Math',
+      returns: { type: ['number', 'vector', 'matrix'] },
+      args: {
+        x: { type: ['number', 'vector', 'matrix'] },
+      },
+      variants: [{ argumentNames: ['x'] }],
+      description: 'The `log10` function computes the base `10` logarithm of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the base-10 logarithm of each element while preserving the original structure.',
+      examples: [
+        'log10(0.01)',
+        'log10(10 ^ 12)',
+        'log10(2.5)',
+        'log10([1, 2, 3])',
+        'log10([[1, 2], [3, 4]])',
+      ],
+    },
   },
   'sin': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -560,6 +1014,23 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(1),
+    docs: {
+      category: 'Math',
+      returns: { type: ['number', 'vector', 'matrix'] },
+      args: {
+        x: { type: ['number', 'vector', 'matrix'] },
+      },
+      variants: [{ argumentNames: ['x'] }],
+      description: 'The `sin` function computes the sine of an angle (in radians), working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the sine of each element while preserving the original structure.',
+      examples: [
+        'sin(0)',
+        'sin(1)',
+        'sin(PI)',
+        'sin(-0.5)',
+        'sin([1, 2, 3])',
+        'sin([[1, 2], [3, 4]])',
+      ],
+    },
   },
   'asin': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -577,6 +1048,22 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(1),
+    docs: {
+      category: 'Math',
+      returns: { type: ['number', 'vector', 'matrix'] },
+      args: {
+        x: { type: ['number', 'vector', 'matrix'] },
+      },
+      variants: [{ argumentNames: ['x'] }],
+      description: 'The `asin` function computes the arcsine (inverse sine) of a `number` in radians, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the arcsine of each element while preserving the original structure.',
+      examples: [
+        'asin(0)',
+        'asin(1)',
+        'asin(-0.5)',
+        'asin([1, 2, 3])',
+        'asin([[1, 2], [3, 4]])',
+      ],
+    },
   },
   'sinh': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -594,6 +1081,22 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(1),
+    docs: {
+      category: 'Math',
+      returns: { type: ['number', 'vector', 'matrix'] },
+      args: {
+        x: { type: ['number', 'vector', 'matrix'] },
+      },
+      variants: [{ argumentNames: ['x'] }],
+      description: 'The `sinh` function computes the hyperbolic sine of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the hyperbolic sine of each element while preserving the original structure.',
+      examples: [
+        'sinh(0)',
+        'sinh(1)',
+        'sinh(-0.5)',
+        'sinh([0.1, 0.2, 0.3])',
+        'sinh([[0.1, 0.2], [0.3, 0.4]])',
+      ],
+    },
   },
   'asinh': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -611,6 +1114,22 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(1),
+    docs: {
+      category: 'Math',
+      returns: { type: ['number', 'vector', 'matrix'] },
+      args: {
+        x: { type: ['number', 'vector', 'matrix'] },
+      },
+      variants: [{ argumentNames: ['x'] }],
+      description: 'The `asinh` function computes the inverse hyperbolic sine of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the inverse hyperbolic sine of each element while preserving the original structure.',
+      examples: [
+        'asinh(10)',
+        'asinh(90)',
+        'asinh (50)',
+        'asinh([10, 20, 30])',
+        'asinh([[10, 20], [30, 40]])',
+      ],
+    },
   },
   'cos': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -628,6 +1147,23 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(1),
+    docs: {
+      category: 'Math',
+      returns: { type: ['number', 'vector', 'matrix'] },
+      args: {
+        x: { type: ['number', 'vector', 'matrix'] },
+      },
+      variants: [{ argumentNames: ['x'] }],
+      description: 'The `cos` function computes the cosine of an angle (in radians), working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the cosine of each element while preserving the original structure.',
+      examples: [
+        'cos(0)',
+        'cos(1)',
+        'cos(PI)',
+        'cos(-0.5)',
+        'cos([1, 2, 3])',
+        'cos([[1, 2], [3, 4]])',
+      ],
+    },
   },
   'acos': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -645,6 +1181,22 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(1),
+    docs: {
+      category: 'Math',
+      returns: { type: ['number', 'vector', 'matrix'] },
+      args: {
+        x: { type: ['number', 'vector', 'matrix'] },
+      },
+      variants: [{ argumentNames: ['x'] }],
+      description: 'The `acos` function computes the arccosine (inverse cosine) of a `number` in radians, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the arccosine of each element while preserving the original structure.',
+      examples: [
+        'acos(0)',
+        'acos(1)',
+        'acos(-0.5)',
+        'acos([0.1, 0.2, 0.3])',
+        'acos([[0.1, 0.2], [0.3, 0.4]])',
+      ],
+    },
   },
   'cosh': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -662,6 +1214,22 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(1),
+    docs: {
+      category: 'Math',
+      returns: { type: ['number', 'vector', 'matrix'] },
+      args: {
+        x: { type: ['number', 'vector', 'matrix'] },
+      },
+      variants: [{ argumentNames: ['x'] }],
+      description: 'The `cosh` function computes the hyperbolic cosine of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the hyperbolic cosine of each element while preserving the original structure.',
+      examples: [
+        'cosh(0)',
+        'cosh(1)',
+        'cosh(-0.5)',
+        'cosh([0.1, 0.2, 0.3])',
+        'cosh([[0.1, 0.2], [0.3, 0.4]])',
+      ],
+    },
   },
   'acosh': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -679,6 +1247,23 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(1),
+    docs: {
+      category: 'Math',
+      returns: { type: ['number', 'vector', 'matrix'] },
+      args: {
+        x: { type: ['number', 'vector', 'matrix'] },
+      },
+      variants: [{ argumentNames: ['x'] }],
+      description: 'The `acosh` function computes the inverse hyperbolic cosine of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the inverse hyperbolic cosine of each element while preserving the original structure.',
+      examples: [
+        'acosh(1)',
+        'acosh(2)',
+        'acosh(100)',
+        'acosh(50)',
+        'acosh([1, 2, 3])',
+        'acosh([[1, 2], [3, 4]])',
+      ],
+    },
   },
   'tan': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -696,6 +1281,23 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(1),
+    docs: {
+      category: 'Math',
+      returns: { type: ['number', 'vector', 'matrix'] },
+      args: {
+        x: { type: ['number', 'vector', 'matrix'] },
+      },
+      variants: [{ argumentNames: ['x'] }],
+      description: 'The `tan` function computes the tangent of an angle (in radians), working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the tangent of each element while preserving the original structure.',
+      examples: [
+        'tan(0)',
+        'tan(1)',
+        'tan(PI)',
+        'tan(-0.5)',
+        'tan([1, 2, 3])',
+        'tan([[1, 2], [3, 4]])',
+      ],
+    },
   },
   'atan': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -713,6 +1315,22 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(1),
+    docs: {
+      category: 'Math',
+      returns: { type: ['number', 'vector', 'matrix'] },
+      args: {
+        x: { type: ['number', 'vector', 'matrix'] },
+      },
+      variants: [{ argumentNames: ['x'] }],
+      description: 'The `atan` function computes the arctangent (inverse tangent) of a `number` in radians, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the arctangent of each element while preserving the original structure.',
+      examples: [
+        'atan(0)',
+        'atan(1)',
+        'atan(-0.5)',
+        'atan([0.1, 0.2, 0.3])',
+        'atan([[0.1, 0.2], [0.3, 0.4]])',
+      ],
+    },
   },
   'tanh': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -730,6 +1348,16 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(1),
+    docs: {
+      category: 'Math',
+      returns: { type: ['number', 'vector', 'matrix'] },
+      args: {
+        x: { type: ['number', 'vector', 'matrix'] },
+      },
+      variants: [{ argumentNames: ['x'] }],
+      description: 'The `tanh` function computes the hyperbolic tangent of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the hyperbolic tangent of each element while preserving the original structure.',
+      examples: ['tanh(0)', 'tanh(1)', 'tanh(-0.5)', 'tanh(50)'],
+    },
   },
   'atanh': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -747,6 +1375,22 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(1),
+    docs: {
+      category: 'Math',
+      returns: { type: ['number', 'vector', 'matrix'] },
+      args: {
+        x: { type: ['number', 'vector', 'matrix'] },
+      },
+      variants: [{ argumentNames: ['x'] }],
+      description: 'The `atanh` function computes the inverse hyperbolic tangent of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the inverse hyperbolic tangent of each element while preserving the original structure.',
+      examples: [
+        'atanh(0)',
+        'atanh(0.9)',
+        'atanh(-0.5)',
+        'atanh([0.1, 0.2, 0.3])',
+        'atanh([[0.1, 0.2], [0.3, 0.4]])',
+      ],
+    },
   },
   'to-rad': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -764,6 +1408,23 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(1),
+    docs: {
+      category: 'Math',
+      returns: { type: ['number', 'vector', 'matrix'] },
+      args: {
+        x: { type: ['number', 'vector', 'matrix'] },
+      },
+      variants: [{ argumentNames: ['x'] }],
+      description: 'The `to-rad` function converts an angle from degrees to radians, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it converts each element while preserving the original structure.',
+      examples: [
+        'to-rad(0)',
+        'to-rad(90)',
+        'to-rad(180)',
+        'to-rad(360)',
+        'to-rad([0, 90, 180])',
+        'to-rad([[0, 90], [180, 360]])',
+      ],
+    },
   },
   'to-deg': {
     evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
@@ -781,5 +1442,22 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       }
     },
     arity: toFixedArity(1),
+    docs: {
+      category: 'Math',
+      returns: { type: ['number', 'vector', 'matrix'] },
+      args: {
+        x: { type: ['number', 'vector', 'matrix'] },
+      },
+      variants: [{ argumentNames: ['x'] }],
+      description: 'The `to-deg` function converts an angle from radians to degrees, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it converts each element while preserving the original structure.',
+      examples: [
+        'to-deg(0)',
+        'to-deg(PI)',
+        'to-deg(PI / 2)',
+        'to-deg(3 * PI / 2)',
+        'to-deg([0, PI, PI / 2])',
+        'to-deg([[0, PI], [PI / 2, 3 * PI / 2]])',
+      ],
+    },
   },
 }

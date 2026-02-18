@@ -4,26 +4,26 @@ import { normalExpressions } from '../src/builtin/normalExpressions'
 import { specialExpressionTypes } from '../src/builtin/specialExpressionTypes'
 import { isSymbolicOperator } from '../src/tokenizer/operators'
 import { canBeOperator } from '../src/utils/arity'
-import type { ApiName, Category, CoreApiName, CoreNormalExpressionName, DataType, NamespaceExpressionName, BitwiseApiName } from './api'
 import type { BuiltinNormalExpressions, FunctionDocs } from '../src/builtin/interface'
 
-// Core categories — migrated categories derive reference from docs
+// Core categories — all derive reference from co-located docs
 import { bitwiseNormalExpression } from '../src/builtin/core/bitwise'
+import { arrayNormalExpression } from '../src/builtin/core/array'
+import { collectionNormalExpression } from '../src/builtin/core/collection'
+import { functionalNormalExpression } from '../src/builtin/core/functional'
+import { mathNormalExpression } from '../src/builtin/core/math'
+import { getMetaNormalExpression } from '../src/builtin/core/meta'
+import { miscNormalExpression } from '../src/builtin/core/misc'
+import { objectNormalExpression } from '../src/builtin/core/object'
+import { predicatesNormalExpression } from '../src/builtin/core/predicates'
+import { regexpNormalExpression } from '../src/builtin/core/regexp'
+import { sequenceNormalExpression } from '../src/builtin/core/sequence'
+import { stringNormalExpression } from '../src/builtin/core/string'
+import type { ApiName, ArrayApiName, BitwiseApiName, Category, CollectionApiName, CoreApiName, CoreNormalExpressionName, DataType, FunctionalApiName, MathApiName, MetaApiName, MiscApiName, NamespaceExpressionName, ObjectApiName, PredicateApiName, RegularExpressionApiName, SequenceApiName, StringApiName } from './api'
 
-// Core categories — not yet migrated, still use separate reference files
-import { arrayReference } from './categories/array'
+// Namespace and special expressions reference files (not yet migrated)
 import { assertReference } from './categories/assert'
-import { collectionReference } from './categories/collection'
-import { functionalReference } from './categories/functional'
-import { mathReference } from './categories/math'
-import { metaReference } from './categories/meta'
-import { miscReference } from './categories/misc'
-import { objectReference } from './categories/object'
-import { predicateReference } from './categories/predicate'
-import { regularExpressionReference } from './categories/regularExpression'
-import { sequenceReference } from './categories/sequence'
 import { specialExpressionsReference } from './categories/specialExpressions'
-import { stringReference } from './categories/string'
 import { datatype } from './datatype'
 import { shorthand } from './shorthand'
 
@@ -59,8 +59,20 @@ function docsToReference(expressions: BuiltinNormalExpressions): Record<string, 
   return result
 }
 
-// Derive bitwise reference from co-located docs (migrated)
+// Derive all core category references from co-located docs
 const bitwiseReference = docsToReference(bitwiseNormalExpression) as Record<BitwiseApiName, FunctionReference<'Bitwise'>>
+const arrayRef = docsToReference(arrayNormalExpression) as Record<ArrayApiName, FunctionReference<'Array'>>
+const collectionRef = docsToReference(collectionNormalExpression) as Record<CollectionApiName, FunctionReference<'Collection'>>
+const functionalRef = docsToReference(functionalNormalExpression) as Record<FunctionalApiName, FunctionReference<'Functional'>>
+const mathRef = docsToReference(mathNormalExpression) as Record<MathApiName, FunctionReference<'Math'>>
+const emptyRef: Record<string, FunctionReference> = {}
+const metaRef = docsToReference(getMetaNormalExpression(emptyRef)) as Record<MetaApiName, FunctionReference<'Meta'>>
+const miscRef = docsToReference(miscNormalExpression) as Record<MiscApiName, FunctionReference<'Misc'>>
+const objectRef = docsToReference(objectNormalExpression) as Record<ObjectApiName, FunctionReference<'Object'>>
+const predicatesRef = docsToReference(predicatesNormalExpression) as Record<PredicateApiName, FunctionReference<'Predicate'>>
+const regexpRef = docsToReference(regexpNormalExpression) as Record<RegularExpressionApiName, FunctionReference<'Regular expression'>>
+const sequenceRef = docsToReference(sequenceNormalExpression) as Record<SequenceApiName, FunctionReference<'Sequence'>>
+const stringRef = docsToReference(stringNormalExpression) as Record<StringApiName, FunctionReference<'String'>>
 
 export interface TypedValue {
   type: DataType[] | DataType
@@ -126,19 +138,19 @@ export function isDatatypeReference<T extends Category>(ref: Reference<T>): ref 
 }
 
 export const normalExpressionReference: Record<CoreNormalExpressionName, FunctionReference> = {
-  // Core categories
+  // Core categories — all derived from co-located docs
   ...bitwiseReference,
-  ...collectionReference,
-  ...arrayReference,
-  ...sequenceReference,
-  ...mathReference,
-  ...functionalReference,
-  ...metaReference,
-  ...miscReference,
-  ...objectReference,
-  ...predicateReference,
-  ...regularExpressionReference,
-  ...stringReference,
+  ...collectionRef,
+  ...arrayRef,
+  ...sequenceRef,
+  ...mathRef,
+  ...functionalRef,
+  ...metaRef,
+  ...miscRef,
+  ...objectRef,
+  ...predicatesRef,
+  ...regexpRef,
+  ...stringRef,
 }
 
 // Namespace functions - require import() to use
