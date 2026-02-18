@@ -1,10 +1,10 @@
-import { isLitsFunction } from '../../../typeGuards/litsFunction'
-import { assertColl, isColl, isObj, isRegularExpression, isSeq } from '../../../typeGuards/lits'
-import { assertNumber, isNumber } from '../../../typeGuards/number'
-import type { BuiltinNormalExpressions } from '../../interface'
-import { isGrid, isMatrix, isVector } from '../../../typeGuards/annotatedArrays'
-import { EPSILON } from '../../../utils'
-import { toFixedArity } from '../../../utils/arity'
+import { isLitsFunction } from '../../typeGuards/litsFunction'
+import { assertColl, isColl, isObj, isRegularExpression, isSeq } from '../../typeGuards/lits'
+import { assertNumber, isNumber } from '../../typeGuards/number'
+import type { BuiltinNormalExpressions } from '../interface'
+import { isGrid, isMatrix, isVector } from '../../typeGuards/annotatedArrays'
+import { EPSILON } from '../../utils'
+import { toFixedArity } from '../../utils/arity'
 
 export const predicatesNormalExpression: BuiltinNormalExpressions = {
   'function?': {

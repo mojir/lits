@@ -1,10 +1,10 @@
-import { LitsError } from '../../../errors'
-import type { RegularExpression } from '../../../parser/types'
-import { assertRegularExpression, assertStringOrRegularExpression, isRegularExpression } from '../../../typeGuards/lits'
-import { assertString, isString } from '../../../typeGuards/string'
-import { toFixedArity } from '../../../utils/arity'
-import { REGEXP_SYMBOL } from '../../../utils/symbols'
-import type { BuiltinNormalExpressions } from '../../interface'
+import { LitsError } from '../../errors'
+import type { RegularExpression } from '../../parser/types'
+import { assertRegularExpression, assertStringOrRegularExpression, isRegularExpression } from '../../typeGuards/lits'
+import { assertString, isString } from '../../typeGuards/string'
+import { toFixedArity } from '../../utils/arity'
+import { REGEXP_SYMBOL } from '../../utils/symbols'
+import type { BuiltinNormalExpressions } from '../interface'
 
 export const regexpNormalExpression: BuiltinNormalExpressions = {
   'regexp': {

@@ -1,16 +1,16 @@
-import { LitsError } from '../../../errors'
-import type { Any } from '../../../interface'
+import { LitsError } from '../../errors'
+import type { Any } from '../../interface'
 // Import from index to ensure namespaces are registered
-import { getNamespace } from '../../namespaces'
-import type { NamespaceFunction } from '../../../parser/types'
-import type { SourceCodeInfo } from '../../../tokenizer/token'
-import { asAny, assertAny } from '../../../typeGuards/lits'
-import { assertNumber } from '../../../typeGuards/number'
-import { asStringOrNumber, assertString, assertStringOrNumber } from '../../../typeGuards/string'
-import { compare, deepEqual } from '../../../utils'
-import { toFixedArity } from '../../../utils/arity'
-import { FUNCTION_SYMBOL } from '../../../utils/symbols'
-import type { BuiltinNormalExpressions } from '../../interface'
+import { getNamespace } from '../namespaces'
+import type { NamespaceFunction } from '../../parser/types'
+import type { SourceCodeInfo } from '../../tokenizer/token'
+import { asAny, assertAny } from '../../typeGuards/lits'
+import { assertNumber } from '../../typeGuards/number'
+import { asStringOrNumber, assertString, assertStringOrNumber } from '../../typeGuards/string'
+import { compare, deepEqual } from '../../utils'
+import { toFixedArity } from '../../utils/arity'
+import { FUNCTION_SYMBOL } from '../../utils/symbols'
+import type { BuiltinNormalExpressions } from '../interface'
 
 function isEqual([first, ...rest]: unknown[], sourceCodeInfo: SourceCodeInfo | undefined) {
   const firstAny = asAny(first, sourceCodeInfo)

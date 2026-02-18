@@ -1,12 +1,12 @@
-import type { Any, Arr, Obj, Seq } from '../../../interface'
-import type { SourceCodeInfo } from '../../../tokenizer/token'
-import { asArray, assertArray, assertCharArray } from '../../../typeGuards/array'
-import { asAny, asSeq, assertAny, assertFunctionLike, assertSeq } from '../../../typeGuards/lits'
-import { asNumber, assertNumber } from '../../../typeGuards/number'
-import { assertString, assertStringOrNumber } from '../../../typeGuards/string'
-import { collHasKey, compare, deepEqual, toAny, toNonNegativeInteger } from '../../../utils'
-import { toFixedArity } from '../../../utils/arity'
-import type { BuiltinNormalExpressions } from '../../interface'
+import type { Any, Arr, Obj, Seq } from '../../interface'
+import type { SourceCodeInfo } from '../../tokenizer/token'
+import { asArray, assertArray, assertCharArray } from '../../typeGuards/array'
+import { asAny, asSeq, assertAny, assertFunctionLike, assertSeq } from '../../typeGuards/lits'
+import { asNumber, assertNumber } from '../../typeGuards/number'
+import { assertString, assertStringOrNumber } from '../../typeGuards/string'
+import { collHasKey, compare, deepEqual, toAny, toNonNegativeInteger } from '../../utils'
+import { toFixedArity } from '../../utils/arity'
+import type { BuiltinNormalExpressions } from '../interface'
 
 export const sequenceNormalExpression: BuiltinNormalExpressions = {
   'nth': {

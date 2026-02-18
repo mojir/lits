@@ -1,10 +1,10 @@
-import type { FunctionReference } from '../../../../reference'
-import { assertNonUndefined } from '../../../typeGuards'
-import { assertFunctionLike } from '../../../typeGuards/lits'
-import { isLitsFunction } from '../../../typeGuards/litsFunction'
-import { toFixedArity } from '../../../utils/arity'
-import { generateDocString } from '../../../utils/docString/generateDocString'
-import type { Arity, BuiltinNormalExpressions } from '../../interface'
+import type { FunctionReference } from '../../../reference'
+import { assertNonUndefined } from '../../typeGuards'
+import { assertFunctionLike } from '../../typeGuards/lits'
+import { isLitsFunction } from '../../typeGuards/litsFunction'
+import { toFixedArity } from '../../utils/arity'
+import { generateDocString } from '../../utils/docString/generateDocString'
+import type { Arity, BuiltinNormalExpressions } from '../interface'
 
 export function getMetaNormalExpression(normalExpressionReference: Record<string, FunctionReference>): BuiltinNormalExpressions {
   return {

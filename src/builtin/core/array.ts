@@ -1,9 +1,9 @@
-import type { Arr } from '../../../interface'
-import { assertArray } from '../../../typeGuards/array'
-import { asNumber, assertNumber } from '../../../typeGuards/number'
-import type { BuiltinNormalExpressions } from '../../interface'
-import { assertFunctionLike } from '../../../typeGuards/lits'
-import { toFixedArity } from '../../../utils/arity'
+import type { Arr } from '../../interface'
+import { assertArray } from '../../typeGuards/array'
+import { asNumber, assertNumber } from '../../typeGuards/number'
+import type { BuiltinNormalExpressions } from '../interface'
+import { assertFunctionLike } from '../../typeGuards/lits'
+import { toFixedArity } from '../../utils/arity'
 
 export const arrayNormalExpression: BuiltinNormalExpressions = {
   'range': {

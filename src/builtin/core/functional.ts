@@ -1,4 +1,4 @@
-import type { Any, Arr } from '../../../interface'
+import type { Any, Arr } from '../../interface'
 import type {
   CompFunction,
   ComplementFunction,
@@ -8,14 +8,14 @@ import type {
   FunctionLike,
   JuxtFunction,
   SomePredFunction,
-} from '../../../parser/types'
-import { toAny } from '../../../utils'
-import { getArityFromFunction, getCommonArityFromFunctions, toFixedArity } from '../../../utils/arity'
-import { FUNCTION_SYMBOL } from '../../../utils/symbols'
-import type { BuiltinNormalExpressions } from '../../interface'
-import { assertArray } from '../../../typeGuards/array'
-import { asFunctionLike, assertFunctionLike } from '../../../typeGuards/lits'
-import { LitsError } from '../../../errors'
+} from '../../parser/types'
+import { toAny } from '../../utils'
+import { getArityFromFunction, getCommonArityFromFunctions, toFixedArity } from '../../utils/arity'
+import { FUNCTION_SYMBOL } from '../../utils/symbols'
+import type { BuiltinNormalExpressions } from '../interface'
+import { assertArray } from '../../typeGuards/array'
+import { asFunctionLike, assertFunctionLike } from '../../typeGuards/lits'
+import { LitsError } from '../../errors'
 
 export const functionalNormalExpression: BuiltinNormalExpressions = {
   '|>': {

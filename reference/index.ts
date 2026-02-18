@@ -4,12 +4,15 @@ import { normalExpressions } from '../src/builtin/normalExpressions'
 import { specialExpressionTypes } from '../src/builtin/specialExpressionTypes'
 import { isSymbolicOperator } from '../src/tokenizer/operators'
 import { canBeOperator } from '../src/utils/arity'
-import type { ApiName, Category, CoreApiName, CoreNormalExpressionName, DataType, NamespaceExpressionName } from './api'
+import type { ApiName, Category, CoreApiName, CoreNormalExpressionName, DataType, NamespaceExpressionName, BitwiseApiName } from './api'
+import type { BuiltinNormalExpressions, FunctionDocs } from '../src/builtin/interface'
 
-// Core categories
+// Core categories — migrated categories derive reference from docs
+import { bitwiseNormalExpression } from '../src/builtin/core/bitwise'
+
+// Core categories — not yet migrated, still use separate reference files
 import { arrayReference } from './categories/array'
 import { assertReference } from './categories/assert'
-import { bitwiseReference } from './categories/bitwise'
 import { collectionReference } from './categories/collection'
 import { functionalReference } from './categories/functional'
 import { mathReference } from './categories/math'
@@ -31,6 +34,33 @@ import { matrixReference } from './categories/matrix'
 import { numberTheoryReference } from './categories/numberTheory'
 import { vectorReference } from './categories/vector'
 import { randomReference } from './categories/random'
+
+// --- Helper: derive FunctionReference from co-located docs ---
+
+function docsToReference(expressions: BuiltinNormalExpressions): Record<string, FunctionReference> {
+  const result: Record<string, FunctionReference> = {}
+  for (const [key, expr] of Object.entries(expressions)) {
+    const docs: FunctionDocs | undefined = expr.docs
+    if (!docs) {
+      throw new Error(`Missing docs for expression "${key}"`)
+    }
+    result[key] = {
+      title: key,
+      category: docs.category,
+      description: docs.description,
+      returns: docs.returns,
+      args: docs.args,
+      variants: docs.variants,
+      examples: docs.examples,
+      ...(docs.seeAlso ? { seeAlso: docs.seeAlso as ApiName[] } : {}),
+      ...(docs.hideOperatorForm ? { noOperatorDocumentation: true } : {}),
+    }
+  }
+  return result
+}
+
+// Derive bitwise reference from co-located docs (migrated)
+const bitwiseReference = docsToReference(bitwiseNormalExpression) as Record<BitwiseApiName, FunctionReference<'Bitwise'>>
 
 export interface TypedValue {
   type: DataType[] | DataType

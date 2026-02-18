@@ -2,19 +2,29 @@
 
 ## Progress Tracker
 
-**Current phase:** Not started
-**Current step:** —
+**Current phase:** Phase 2 — Migrate all core categories
+**Current step:** Step 11 — Repeat docs co-location for remaining core categories
 **Last updated:** 2026-02-18
 **Branch:** `new-namespace`
 
 | Phase | Status | Notes |
 |-------|--------|-------|
-| Phase 1: Dir rename, types, proof of concept | ⬜ Not started | |
+| Phase 1: Dir rename, types, proof of concept | ✅ Done | bitwise pilot complete, all 2861 tests pass |
 | Phase 2: Migrate all core categories | ⬜ Not started | |
 | Phase 3: Migrate namespace categories | ⬜ Not started | |
 | Phase 4: Explicit namespace registration | ⬜ Not started | |
 | Phase 5: Multiple entry points | ⬜ Not started | |
 | Phase 6: Cleanup and validation | ⬜ Not started | |
+
+### Phase 1 completed work
+- Renamed `src/builtin/normalExpressions/categories/` → `src/builtin/core/` (git mv, history preserved)
+- Updated all imports (12 files in core/, 1 barrel file)
+- Defined `FunctionDocs`, `TypedValue`, `Argument`, `Variant`, `Category`, `DataType` in `src/builtin/interface.ts`
+- Added optional `docs?: FunctionDocs` to `BuiltinNormalExpression`
+- Piloted bitwise: co-located all 12 function docs into `src/builtin/core/bitwise.ts`
+- Updated `reference/index.ts` with `docsToReference()` helper — reads bitwise from implementation, others still from old reference files
+- Added `__tests__/docs-migration.test.ts`: validates docs fields, compares against legacy reference, snapshot of `allReference`
+- All 2861 tests pass
 
 ### Session start prompt
 

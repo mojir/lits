@@ -1,9 +1,9 @@
-import { LitsError } from '../../../errors'
-import type { SourceCodeInfo } from '../../../tokenizer/token'
-import { isMatrix, isVector } from '../../../typeGuards/annotatedArrays'
-import { assertNumber, isNumber } from '../../../typeGuards/number'
-import { toFixedArity } from '../../../utils/arity'
-import type { BuiltinNormalExpressions } from '../../interface'
+import { LitsError } from '../../errors'
+import type { SourceCodeInfo } from '../../tokenizer/token'
+import { isMatrix, isVector } from '../../typeGuards/annotatedArrays'
+import { assertNumber, isNumber } from '../../typeGuards/number'
+import { toFixedArity } from '../../utils/arity'
+import type { BuiltinNormalExpressions } from '../interface'
 
 type NumberVectorOrMatrix = number | number[] | number[][]
 

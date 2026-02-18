@@ -10,6 +10,97 @@ import type { SpecialExpressions } from '.'
 
 export type Arity = { min?: number, max?: number }
 
+// --- Data types used in documentation ---
+
+const dataTypes = [
+  'number',
+  'string',
+  'object',
+  'array',
+  'vector',
+  'matrix',
+  'grid',
+  'boolean',
+  'function',
+  'integer',
+  'any',
+  'null',
+  'collection',
+  'sequence',
+  'regexp',
+  'never',
+] as const
+export type DataType = typeof dataTypes[number]
+
+export function isDataType(arg: string): arg is DataType {
+  return dataTypes.includes(arg as DataType)
+}
+
+// --- Category type ---
+
+export const categoryRecord = {
+  'Special expression': true,
+  'Predicate': true,
+  'Sequence': true,
+  'Collection': true,
+  'Array': true,
+  'Object': true,
+  'String': true,
+  'Math': true,
+  'Functional': true,
+  'Regular expression': true,
+  'Bitwise': true,
+  'Misc': true,
+  'Meta': true,
+  'Assert': true,
+  'Vector': true,
+  'Linear Algebra': true,
+  'Matrix': true,
+  'Grid': true,
+  'Number Theory': true,
+  'Random': true,
+  'Shorthand': true,
+  'Datatype': true,
+} as const
+
+export type Category = keyof typeof categoryRecord
+
+export const categories = Object.keys(categoryRecord) as Category[]
+
+// Categories that are namespaces (require import)
+export const namespaceCategories: Category[] = ['Vector', 'Linear Algebra', 'Matrix', 'Grid', 'Number Theory', 'Random', 'Assert']
+
+// Core categories (always available)
+export const coreCategories = categories.filter(c => !namespaceCategories.includes(c))
+
+// --- FunctionDocs types ---
+
+export interface TypedValue {
+  type: DataType[] | DataType
+  rest?: true
+  array?: true
+}
+
+export type Argument = TypedValue & {
+  description?: string
+}
+
+export interface Variant {
+  argumentNames: string[]
+}
+
+export interface FunctionDocs {
+  category: Category
+  description: string
+  returns: TypedValue
+  args: Record<string, Argument>
+  variants: Variant[]
+  examples: string[]
+  seeAlso?: string[]
+  hideOperatorForm?: true
+  tags?: string[]
+}
+
 export type NormalExpressionEvaluator<T> = (
   params: Arr,
   sourceCodeInfo: SourceCodeInfo | undefined,
@@ -21,6 +112,7 @@ export interface BuiltinNormalExpression<T> {
   evaluate: NormalExpressionEvaluator<T>
   name?: string
   arity: Arity
+  docs?: FunctionDocs
 }
 
 export type BuiltinNormalExpressions = Record<string, BuiltinNormalExpression<Any>>
