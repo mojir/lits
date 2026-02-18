@@ -5,7 +5,7 @@
 **Current phase:** Phase 2 — Migrate all core categories
 **Current step:** Step 11 — Repeat docs co-location for remaining core categories
 **Last updated:** 2026-02-18
-**Branch:** `new-namespace`
+**Branch:** `new-namespace` (per-phase work on `phase-N` branches, squash-merged back)
 
 | Phase | Status | Notes |
 |-------|--------|-------|
