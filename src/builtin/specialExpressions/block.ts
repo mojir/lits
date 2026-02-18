@@ -1,13 +1,31 @@
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
 import type { Node, SpecialExpressionNode } from '../../parser/types'
-import type { BuiltinSpecialExpression } from '../interface'
+import type { BuiltinSpecialExpression, CustomDocs } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 
 export type DoNode = SpecialExpressionNode<[typeof specialExpressionTypes['block'], Node[]]>
 
+const docs: CustomDocs = {
+  category: 'Special expression',
+  customVariants: ['{ body }'],
+  details: [
+    ['body', 'expressions', 'The expressions to evaluate.'],
+  ],
+  description: 'Evaluates `body`. Resulting value is the value of the last expression.',
+  examples: [
+    `
+{
+  let a = 1 + 2 + 3 + 4;
+  let b = -> $ * ( $ + 1 );
+  b(a)
+}`,
+  ],
+}
+
 export const doSpecialExpression: BuiltinSpecialExpression<Any, DoNode> = {
   arity: {},
+  docs,
   evaluate: (node, contextStack, { evaluateNode }) => {
     const newContext: Context = {}
 

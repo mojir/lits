@@ -6,6 +6,7 @@ import type { BuiltinNormalExpressions } from '../../../builtin/interface'
 import { asAny, assertFunctionLike } from '../../../typeGuards/lits'
 import { assertString, assertStringOrNumber } from '../../../typeGuards/string'
 import type { LitsNamespace } from '../interface'
+import { namespaceDocs } from './docs'
 
 // TODO, remove some, add some. E.g. type guards, assert-number, assert-string, etc.
 
@@ -252,6 +253,11 @@ const assertNormalExpression: BuiltinNormalExpressions = {
     },
     arity: { min: 1, max: 2 },
   },
+}
+
+for (const [key, docs] of Object.entries(namespaceDocs)) {
+  if (assertNormalExpression[key])
+    assertNormalExpression[key].docs = docs
 }
 
 export const assertNamespace: LitsNamespace = {

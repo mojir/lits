@@ -6,6 +6,7 @@ import { assertNumber } from '../../../typeGuards/number'
 import { toFixedArity } from '../../../utils/arity'
 import type { BuiltinNormalExpressions } from '../../../builtin/interface'
 import type { LitsNamespace } from '../interface'
+import { namespaceDocs } from './docs'
 import { combinationsNormalExpressions } from './combinations'
 import { derangementsNormalExpressions } from './derangements'
 import { divisorsNormalExpressions, getDivisors, getProperDivisors } from './divisors'
@@ -459,6 +460,11 @@ function addNormalExpressions(normalExpressions: BuiltinNormalExpressions) {
     }
     combinatoricalNormalExpression[key] = value
   }
+}
+
+for (const [key, docs] of Object.entries(namespaceDocs)) {
+  if (combinatoricalNormalExpression[key])
+    combinatoricalNormalExpression[key].docs = docs
 }
 
 export const numberTheoryNamespace: LitsNamespace = {

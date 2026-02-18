@@ -36,6 +36,7 @@ const config = antfu({
     'README.md',
     'REFACTORING-PLAN.md',
     'docs',
+    'scripts/**/*',
   ],
 })
 

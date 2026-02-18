@@ -7,6 +7,7 @@ import { assertNumber } from '../../../typeGuards/number'
 import { toFixedArity } from '../../../utils/arity'
 import type { BuiltinNormalExpressions } from '../../../builtin/interface'
 import type { LitsNamespace } from '../interface'
+import { namespaceDocs } from './docs'
 import { fromArray } from './fromArray'
 import { transpose } from './transpose'
 
@@ -653,6 +654,11 @@ const gridFunctions: BuiltinNormalExpressions = {
 /**
  * The grid namespace containing 2D array manipulation functions.
  */
+for (const [key, docs] of Object.entries(namespaceDocs)) {
+  if (gridFunctions[key])
+    gridFunctions[key].docs = docs
+}
+
 export const gridNamespace: LitsNamespace = {
   name: 'Grid',
   functions: gridFunctions,

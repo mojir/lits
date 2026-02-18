@@ -5,6 +5,7 @@ import { specialExpressionTypes } from '../builtin/specialExpressionTypes'
 import { LitsError, UndefinedSymbolError } from '../errors'
 import type { Any } from '../interface'
 import type { ContextParams } from '../Lits/Lits'
+import type { LitsNamespace } from '../builtin/namespaces/interface'
 import { type NativeJsFunction, type NativeJsModule, type NormalBuiltinFunction, type SpecialBuiltinFunction, type SymbolNode, type UserDefinedSymbolNode, assertJsFunction } from '../parser/types'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { asNonUndefined } from '../typeGuards'
@@ -21,19 +22,27 @@ export class ContextStackImpl {
   public globalContext: Context
   private values?: Record<string, unknown>
   private nativeJsFunctions?: NativeJsModule
+  private namespaces: Map<string, LitsNamespace>
   constructor({
     contexts,
     values: hostValues,
     nativeJsFunctions,
+    namespaces,
   }: {
     contexts: Context[]
     values?: Record<string, unknown>
     nativeJsFunctions?: NativeJsModule
+    namespaces?: Map<string, LitsNamespace>
   }) {
     this.globalContext = asNonUndefined(contexts[0])
     this.contexts = contexts
     this.values = hostValues
     this.nativeJsFunctions = nativeJsFunctions
+    this.namespaces = namespaces ?? new Map<string, LitsNamespace>()
+  }
+
+  public getNamespace(name: string): LitsNamespace | undefined {
+    return this.namespaces.get(name)
   }
 
   public create(context: Context): ContextStack {
@@ -42,6 +51,7 @@ export class ContextStackImpl {
       contexts: [context, ...this.contexts],
       values: this.values,
       nativeJsFunctions: this.nativeJsFunctions,
+      namespaces: this.namespaces,
     })
     contextStack.globalContext = globalContext
     return contextStack
@@ -50,7 +60,7 @@ export class ContextStackImpl {
   public new(context: Context): ContextStack {
     const contexts = [{}, context]
 
-    return new ContextStackImpl({ contexts })
+    return new ContextStackImpl({ contexts, namespaces: this.namespaces })
   }
 
   public exportValues(values: Record<string, Any>, sourceCodeInfo: SourceCodeInfo | undefined) {
@@ -195,13 +205,14 @@ function checkNotDefined(name: string): boolean {
   return true
 }
 
-export function createContextStack(params: ContextParams = {}): ContextStack {
+export function createContextStack(params: ContextParams = {}, namespaces?: Map<string, LitsNamespace>): ContextStack {
   const globalContext = params.globalContext ?? {}
   // Contexts are checked from left to right
   const contexts = params.contexts ? [globalContext, ...params.contexts] : [globalContext]
   const contextStack = new ContextStackImpl({
     contexts,
     values: params.values,
+    namespaces,
     nativeJsFunctions:
       params.jsFunctions
       && Object.entries(params.jsFunctions).reduce((acc: NativeJsModule, [identifier, entry]) => {

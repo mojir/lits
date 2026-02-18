@@ -4,7 +4,8 @@ import { normalExpressions } from '../src/builtin/normalExpressions'
 import { specialExpressionTypes } from '../src/builtin/specialExpressionTypes'
 import { isSymbolicOperator } from '../src/tokenizer/operators'
 import { canBeOperator } from '../src/utils/arity'
-import type { BuiltinNormalExpressions, FunctionDocs } from '../src/builtin/interface'
+import type { BuiltinNormalExpressions, FunctionDocs, SpecialExpressionDocs } from '../src/builtin/interface'
+import { isFunctionDocs } from '../src/builtin/interface'
 
 // Core categories — all derive reference from co-located docs
 import { bitwiseNormalExpression } from '../src/builtin/core/bitwise'
@@ -19,21 +20,18 @@ import { predicatesNormalExpression } from '../src/builtin/core/predicates'
 import { regexpNormalExpression } from '../src/builtin/core/regexp'
 import { sequenceNormalExpression } from '../src/builtin/core/sequence'
 import { stringNormalExpression } from '../src/builtin/core/string'
-import type { ApiName, ArrayApiName, BitwiseApiName, Category, CollectionApiName, CoreApiName, CoreNormalExpressionName, DataType, FunctionalApiName, MathApiName, MetaApiName, MiscApiName, NamespaceExpressionName, ObjectApiName, PredicateApiName, RegularExpressionApiName, SequenceApiName, StringApiName } from './api'
 
-// Namespace and special expressions reference files (not yet migrated)
-import { assertReference } from './categories/assert'
-import { specialExpressionsReference } from './categories/specialExpressions'
+// Namespace categories — derive reference from co-located docs
+import { assertNamespace } from '../src/builtin/namespaces/assert'
+import { gridNamespace } from '../src/builtin/namespaces/grid'
+import { randomNamespace } from '../src/builtin/namespaces/random'
+import { vectorNamespace } from '../src/builtin/namespaces/vector'
+import { linearAlgebraNamespace } from '../src/builtin/namespaces/linearAlgebra'
+import { matrixNamespace } from '../src/builtin/namespaces/matrix'
+import { numberTheoryNamespace } from '../src/builtin/namespaces/numberTheory'
+import type { ApiName, ArrayApiName, BitwiseApiName, Category, CollectionApiName, CoreApiName, CoreNormalExpressionName, DataType, FunctionalApiName, MathApiName, MetaApiName, MiscApiName, NamespaceExpressionName, ObjectApiName, PredicateApiName, RegularExpressionApiName, SequenceApiName, StringApiName } from './api'
 import { datatype } from './datatype'
 import { shorthand } from './shorthand'
-
-// Namespace categories - require import() to use
-import { gridReference } from './categories/grid'
-import { linAlgReference } from './categories/linearAlgebra'
-import { matrixReference } from './categories/matrix'
-import { numberTheoryReference } from './categories/numberTheory'
-import { vectorReference } from './categories/vector'
-import { randomReference } from './categories/random'
 
 // --- Helper: derive FunctionReference from co-located docs ---
 
@@ -46,6 +44,31 @@ function docsToReference(expressions: BuiltinNormalExpressions): Record<string, 
     }
     result[key] = {
       title: key,
+      category: docs.category,
+      description: docs.description,
+      returns: docs.returns,
+      args: docs.args,
+      variants: docs.variants,
+      examples: docs.examples,
+      ...(docs.seeAlso ? { seeAlso: docs.seeAlso as ApiName[] } : {}),
+      ...(docs.hideOperatorForm ? { noOperatorDocumentation: true } : {}),
+    }
+  }
+  return result
+}
+
+// --- Helper: derive FunctionReference from namespace co-located docs ---
+
+function namespacedDocsToReference(namespaceName: string, expressions: BuiltinNormalExpressions): Record<string, FunctionReference> {
+  const result: Record<string, FunctionReference> = {}
+  for (const [key, expr] of Object.entries(expressions)) {
+    const docs: FunctionDocs | undefined = expr.docs
+    if (!docs) {
+      throw new Error(`Missing docs for ${namespaceName}.${key}`)
+    }
+    const qualifiedKey = `${namespaceName}.${key}`
+    result[qualifiedKey] = {
+      title: qualifiedKey,
       category: docs.category,
       description: docs.description,
       returns: docs.returns,
@@ -73,6 +96,47 @@ const predicatesRef = docsToReference(predicatesNormalExpression) as Record<Pred
 const regexpRef = docsToReference(regexpNormalExpression) as Record<RegularExpressionApiName, FunctionReference<'Regular expression'>>
 const sequenceRef = docsToReference(sequenceNormalExpression) as Record<SequenceApiName, FunctionReference<'Sequence'>>
 const stringRef = docsToReference(stringNormalExpression) as Record<StringApiName, FunctionReference<'String'>>
+
+// --- Helper: derive special expression reference from co-located docs ---
+
+function specialExpressionDocsToReference(): Record<string, FunctionReference<'Special expression'> | CustomReference<'Special expression'>> {
+  const result: Record<string, FunctionReference<'Special expression'> | CustomReference<'Special expression'>> = {}
+  for (const [name, index] of Object.entries(specialExpressionTypes)) {
+    const expr = specialExpressions[index]
+    const docs: SpecialExpressionDocs | undefined = expr?.docs
+    if (!docs) {
+      continue // skip undocumented special expressions
+    }
+    if (isFunctionDocs(docs)) {
+      result[name] = {
+        title: name,
+        category: docs.category as 'Special expression',
+        description: docs.description,
+        returns: docs.returns,
+        args: docs.args,
+        variants: docs.variants,
+        examples: docs.examples,
+        ...(docs.seeAlso ? { seeAlso: docs.seeAlso as ApiName[] } : {}),
+        ...(docs.hideOperatorForm ? { noOperatorDocumentation: true } : {}),
+      }
+    }
+    else {
+      result[name] = {
+        title: name,
+        category: docs.category as 'Special expression',
+        description: docs.description,
+        customVariants: docs.customVariants,
+        ...(docs.details ? { details: docs.details } : {}),
+        ...(docs.returns ? { returns: docs.returns } : {}),
+        examples: docs.examples,
+        ...(docs.seeAlso ? { seeAlso: docs.seeAlso as ApiName[] } : {}),
+      }
+    }
+  }
+  return result
+}
+
+const specialExpressionsReference = specialExpressionDocsToReference()
 
 export interface TypedValue {
   type: DataType[] | DataType
@@ -153,16 +217,17 @@ export const normalExpressionReference: Record<CoreNormalExpressionName, Functio
   ...stringRef,
 }
 
-// Namespace functions - require import() to use
+// Namespace functions — all derived from co-located docs
+// eslint-disable-next-line ts/consistent-type-assertions
 export const namespaceReference: Record<NamespaceExpressionName, FunctionReference> = {
-  ...vectorReference,
-  ...linAlgReference,
-  ...matrixReference,
-  ...numberTheoryReference,
-  ...gridReference,
-  ...randomReference,
-  ...assertReference,
-}
+  ...namespacedDocsToReference(assertNamespace.name, assertNamespace.functions),
+  ...namespacedDocsToReference(gridNamespace.name, gridNamespace.functions),
+  ...namespacedDocsToReference(randomNamespace.name, randomNamespace.functions),
+  ...namespacedDocsToReference(vectorNamespace.name, vectorNamespace.functions),
+  ...namespacedDocsToReference(linearAlgebraNamespace.name, linearAlgebraNamespace.functions),
+  ...namespacedDocsToReference(matrixNamespace.name, matrixNamespace.functions),
+  ...namespacedDocsToReference(numberTheoryNamespace.name, numberTheoryNamespace.functions),
+} as Record<NamespaceExpressionName, FunctionReference>
 
 Object.entries(normalExpressionReference).forEach(([key, obj]) => {
   if (!normalExpressions[key]) {

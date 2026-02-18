@@ -5,7 +5,7 @@ import type { Any, Arr } from '../../interface'
 import type { BindingNode, Node, SpecialExpressionNode } from '../../parser/types'
 import { asNonUndefined } from '../../typeGuards'
 import { asAny, asColl, isSeq } from '../../typeGuards/lits'
-import type { Builtin, BuiltinSpecialExpression } from '../interface'
+import type { Builtin, BuiltinSpecialExpression, CustomDocs } from '../interface'
 import { evalueateBindingNodeValues, getAllBindingTargetNames } from '../bindingNode'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 import { toFixedArity } from '../../utils/arity'
@@ -153,14 +153,69 @@ function analyze(
   return result
 }
 
+const forDocs: CustomDocs = {
+  category: 'Special expression',
+  customVariants: ['for (...binding) -> body'],
+  details: [
+    ['binding', 'loop-var in collection [...let-binding] [where whereExpr] [while whileExp]', 'A for loop binding'],
+    ['loop-var', 'symbol', 'The name of the loop variable.'],
+    ['collection', 'any', 'The collection to iterate over.'],
+    ['let-binding', 'let binding', 'A let binding to create a local variable.'],
+    ['whereExpr', 'expression', 'An expression that must evaluate to truthy for the loop body to be executed.'],
+    ['whileExp', 'expression', 'An expression that must evaluate to truthy for the loop to continue.'],
+    ['body', 'expressions', 'The expressions to evaluate for each iteration of the loop.'],
+  ],
+  returns: {
+    type: 'any',
+    array: true,
+  },
+  description: 'Iterates over `bindings`, evaluates `body` for each `binding` and returns an `array` of results.',
+  examples: [
+    `
+for (i in [1, 2, 3]) -> i * 2
+      `,
+    `
+for (
+  i in range(10) let ii = i ^ 2 while ii < 40 when ii % 3 == 0,
+  j in range(10) when j % 2 == 1
+) -> ii + j
+      `,
+  ],
+}
+
 export const forSpecialExpression: BuiltinSpecialExpression<Any, ForNode> = {
   arity: toFixedArity(1),
+  docs: forDocs,
   evaluate: (node, contextStack, helpers) => evaluateLoop(true, node, contextStack, helpers.evaluateNode),
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => analyze(node, contextStack, getUndefinedSymbols, builtin, evaluateNode),
 }
 
+const doseqDocs: CustomDocs = {
+  category: 'Special expression',
+  customVariants: ['doseq (...binding) -> body'],
+  details: [
+    ['binding', 'loop-var in collection [...let-binding] [where whereExpr] [while whileExp]', 'A doseq loop binding'],
+    ['loop-var', 'symbol', 'The name of the loop variable.'],
+    ['collection', 'any', 'The collection to iterate over.'],
+    ['let-binding', 'let binding', 'A let binding to create a local variable.'],
+    ['whereExpr', 'expression', 'An expression that must evaluate to truthy for the loop body to be executed.'],
+    ['whileExp', 'expression', 'An expression that must evaluate to truthy for the loop to continue.'],
+    ['body', 'expressions', 'The expressions to evaluate for each iteration of the loop.'],
+  ],
+  returns: {
+    type: 'null',
+  },
+  description: 'Iterates over `bindings`, evaluates `body` for each `binding` and returns `null`. This is useful for side effects.',
+  examples: [
+    `
+doseq (i in [1, 2, 3]) -> write!(i * 2)
+      `,
+  ],
+}
+
 export const doseqSpecialExpression: BuiltinSpecialExpression<null, DoSeqNode> = {
   arity: toFixedArity(1),
+  docs: doseqDocs,
   evaluate: (node, contextStack, helpers) => {
     evaluateLoop(false, node, contextStack, helpers.evaluateNode)
     return null

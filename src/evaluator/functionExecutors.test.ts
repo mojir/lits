@@ -4,11 +4,10 @@ import { FUNCTION_SYMBOL } from '../utils/symbols'
 import type { NamespaceFunction } from '../parser/types'
 import type { Arr } from '../interface'
 import type { SourceCodeInfo } from '../tokenizer/token'
+import { gridNamespace } from '../builtin/namespaces/grid'
 import { ContextStackImpl } from './ContextStack'
 import { functionExecutors } from './functionExecutors'
 import type { ExecuteFunction } from './interface'
-// Import namespaces to ensure they are registered
-import '../builtin/namespaces'
 
 describe('functionExecutors', () => {
   describe('namespace executor', () => {
@@ -17,7 +16,8 @@ describe('functionExecutors', () => {
       position: { line: 1, column: 1 },
     }
 
-    const dummyContextStack = new ContextStackImpl({ contexts: [{}] })
+    const namespaces = new Map([[gridNamespace.name, gridNamespace]])
+    const dummyContextStack = new ContextStackImpl({ contexts: [{}], namespaces })
 
     const dummyExecuteFunction: ExecuteFunction = (_fn, _params: Arr, _contextStack, _sourceCodeInfo) => {
       return null

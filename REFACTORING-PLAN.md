@@ -7,17 +7,17 @@
 
 ## Progress Tracker
 
-**Current phase:** Phase 2 — Migrate all core categories
-**Current step:** Step 12 — Migrate special expressions
+**Current phase:** Phase 4 — Explicit namespace registration
+**Current step:** Step 24 — Update all tests to explicitly pass namespaces (optional, backward compat preserves all)
 **Last updated:** 2026-02-18
 **Branch:** `new-namespace` (per-phase work on `phase-N` branches, squash-merged back)
 
 | Phase | Status | Notes |
 |-------|--------|-------|
 | Phase 1: Dir rename, types, proof of concept | ✅ Done | bitwise pilot complete, all 2861 tests pass |
-| Phase 2: Migrate all core categories | 🔄 In Progress | Step 11 done: all 12 core categories migrated, 2908 tests pass |
-| Phase 3: Migrate namespace categories | ⬜ Not started | |
-| Phase 4: Explicit namespace registration | ⬜ Not started | |
+| Phase 2: Migrate all core categories | ✅ Done | All 12 core + special expressions + shorthand/datatype done, 2910 tests pass |
+| Phase 3: Migrate namespace categories | ✅ Done | All 7 namespaces migrated, 2938 tests pass |
+| Phase 4: Explicit namespace registration | ✅ Done | Steps 20-23 complete, namespaces on Lits constructor, 2938 tests pass |
 | Phase 5: Multiple entry points | ⬜ Not started | |
 | Phase 6: Cleanup and validation | ⬜ Not started | |
 
@@ -36,6 +36,50 @@
 - `reference/index.ts` now imports from implementation files only (no more `./categories/X` imports for core)
 - `__tests__/docs-migration.test.ts` has 49 tests covering all 12 categories
 - All 2908 tests pass (137 test files)
+
+### Phase 2 Step 12 completed work
+- Added `CustomDocs` type and `SpecialExpressionDocs = FunctionDocs | CustomDocs` union to `src/builtin/interface.ts`
+- Added `isFunctionDocs()` and `isCustomDocs()` type guard helpers
+- Added `docs?: SpecialExpressionDocs` field to `BuiltinSpecialExpression` interface
+- Co-located docs in all 15 documented special expressions across 14 files:
+  - `FunctionDocs`: `&&` (and.ts), `||` (or.ts), `array` (array.ts), `object` (object.ts), `throw` (throw.ts)
+  - `CustomDocs`: `if` (if.ts), `unless` (unless.ts), `let` (let.ts), `try` (try.ts), `cond` (cond.ts), `switch` (switch.ts), `block` (block.ts), `recur` (recur.ts), `for` & `doseq` (loops.ts)
+- 5 undocumented special expressions left without docs (matching legacy behavior): `??`, `0_def`, `defined?`, `loop`, `0_lambda`
+- `reference/index.ts` now derives `specialExpressionsReference` from co-located docs via `specialExpressionDocsToReference()` — no more import from `reference/categories/specialExpressions.ts`
+- `__tests__/docs-migration.test.ts` now has 54 tests (5 new for special expressions), snapshot updated
+- All 2910 tests pass (137 test files), lint clean, build succeeds
+
+### Phase 2 Step 13 completed work
+- Decision: shorthand (`reference/shorthand.ts`) and datatype (`reference/datatype.ts`) are doc-only entries with no implementation counterpart — they stay in `reference/` as-is
+- No code changes needed
+
+### Phase 3 Steps 16 completed work
+- Created `scripts/refactor/migrate-namespace-docs.ts` — runtime script that reads legacy reference data and generates standalone `docs.ts` files per namespace
+- Generated `docs.ts` files in all 7 namespace directories: `assert`, `grid`, `random`, `vector`, `linearAlgebra`, `matrix`, `numberTheory` (424 total doc entries)
+- Wired up each namespace `index.ts` with `import { namespaceDocs } from './docs'` + loop to attach docs to function objects after all sub-file merges
+- Works uniformly for all function types: inline, sub-file imported, and programmatically generated (vector reductionFunctions, numberTheory sequences)
+- Updated `reference/index.ts`: replaced all 7 legacy namespace reference imports with `namespacedDocsToReference()` calls on namespace implementation objects
+- Added `namespacedDocsToReference()` helper that prefixes keys with namespace name (e.g. `'Vector.mean'`)
+- Added 28 namespace comparison tests to `__tests__/docs-migration.test.ts` (7 namespaces × 4 tests each)
+- Added `scripts/**/*` to eslint ignores
+- All 2938 tests pass (137 test files), lint clean, build succeeds
+
+### Phase 4 Steps 20-23 completed work
+- Added `namespaces?: LitsNamespace[]` option to `LitsConfig` interface
+- `Lits` constructor builds a `Map<string, LitsNamespace>` from the namespaces array (default: all 7 built-in namespaces for backward compatibility)
+- Stored namespace map on `ContextStackImpl` — threaded through `create()` and `new()` methods so all nested evaluations inherit the same namespace set
+- Added `getNamespace(name: string)` method to `ContextStackImpl`
+- Updated `createContextStack()` to accept an optional `namespaces` map parameter
+- All 4 `createContextStack()` call sites in `Lits.ts` now pass `this.namespaces`
+- Updated `import` expression in `src/builtin/core/misc.ts` to use `contextStack.getNamespace()` instead of global `getNamespace()`
+- Updated `Namespace` executor in `src/evaluator/functionExecutors.ts` to use `contextStack.getNamespace()` instead of global `getNamespace()`
+- Removed all side-effect `registerNamespace()` calls from `src/builtin/namespaces/index.ts`
+- Removed global registry re-exports (`registerNamespace`, `getNamespace`, `hasNamespace`, `getNamespaceNames`) from `src/builtin/namespaces/index.ts`
+- `src/builtin/namespaces/registry.ts` is now dead code (no imports reference it)
+- Exported `LitsNamespace` type and all 7 individual namespaces from `src/index.ts` for consumer use
+- Rewrote `registry.test.ts` to test instance-level namespace behavior via the `Lits` class (custom namespace selection, empty list, mixed selection)
+- Updated `functionExecutors.test.ts` to provide namespaces in the mock context stack
+- All 2938 tests pass (137 test files), lint clean, build succeeds
 
 ### Session start prompt
 

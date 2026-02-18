@@ -7,6 +7,7 @@ import { assertString } from '../../../typeGuards/string'
 import { toFixedArity } from '../../../utils/arity'
 import type { BuiltinNormalExpressions } from '../../../builtin/interface'
 import type { LitsNamespace } from '../interface'
+import { namespaceDocs } from './docs'
 
 const randomFunctions: BuiltinNormalExpressions = {
   'random!': {
@@ -285,6 +286,11 @@ function randn(): number {
   while (v === 0) v = Math.random()
 
   return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v)
+}
+
+for (const [key, docs] of Object.entries(namespaceDocs)) {
+  if (randomFunctions[key])
+    randomFunctions[key].docs = docs
 }
 
 export const randomNamespace: LitsNamespace = {

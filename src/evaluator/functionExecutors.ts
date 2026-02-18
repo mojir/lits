@@ -4,8 +4,6 @@ import { allNormalExpressions } from '../builtin/normalExpressions'
 import { LitsError, RecurSignal } from '../errors'
 import { arityAcceptsMin, assertNumberOfParams } from '../utils/arity'
 import type { Any, Arr } from '../interface'
-// Import from index to ensure namespaces are registered
-import { getNamespace } from '../builtin/namespaces'
 import type {
   CompFunction,
   ComplementFunction,
@@ -191,7 +189,7 @@ export const functionExecutors: FunctionExecutors = {
     }
   },
   Namespace: (fn: NamespaceFunction, params, sourceCodeInfo, contextStack, { executeFunction }) => {
-    const namespace = getNamespace(fn.namespaceName)
+    const namespace = contextStack.getNamespace(fn.namespaceName)
     if (!namespace) {
       throw new LitsError(`Namespace '${fn.namespaceName}' not found.`, sourceCodeInfo)
     }

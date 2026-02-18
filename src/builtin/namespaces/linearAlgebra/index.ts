@@ -8,6 +8,7 @@ import { calcMedad } from '../vector/calcMedad'
 import { calcMedian } from '../vector/calcMedian'
 import { calcStdDev } from '../vector/calcStdDev'
 import { toFixedArity } from '../../../utils/arity'
+import { namespaceDocs } from './docs'
 import { gaussJordanElimination } from './helpers/gaussJordanElimination'
 import { solve } from './helpers/solve'
 import { areVectorsCollinear, areVectorsParallel } from './helpers/collinear'
@@ -725,6 +726,11 @@ export const linearAlgebraNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
   },
+}
+
+for (const [key, docs] of Object.entries(namespaceDocs)) {
+  if (linearAlgebraNormalExpression[key])
+    linearAlgebraNormalExpression[key].docs = docs
 }
 
 export const linearAlgebraNamespace: LitsNamespace = {

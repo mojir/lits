@@ -1,12 +1,35 @@
 import type { Any } from '../../interface'
 import type { Node, SpecialExpressionNode } from '../../parser/types'
-import type { BuiltinSpecialExpression } from '../interface'
+import type { BuiltinSpecialExpression, CustomDocs } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 
 export type UnlessNode = SpecialExpressionNode<[typeof specialExpressionTypes['unless'], [Node, Node, Node?]]>
 
+const docs: CustomDocs = {
+  category: 'Special expression',
+  customVariants: ['unless test then true-expr else false-expr end', 'unless test true-expr end'],
+  details: [
+    ['test', 'expression', 'The condition to test.'],
+    ['true-expr', 'expression', 'The expressions to evaluate if the test is falsy.'],
+    ['false-expr', 'expression', 'The expressions to evaluate if the test is truthy.'],
+  ],
+  description: 'Either `true-expr` or `false-expr` branch is taken. `true-expr` is selected when $test is falsy. If $test is truthy `false-expr` is executed, if no `false-expr` exists, `null` is returned.',
+  examples: [
+    `
+unless true then
+  write!("TRUE")
+else
+  write!("FALSE")
+end`,
+    'unless false then write!("TRUE") else write!("FALSE") end',
+    'unless true then write!("TRUE") end',
+    'unless false then write!("TRUE") end',
+  ],
+}
+
 export const unlessSpecialExpression: BuiltinSpecialExpression<Any, UnlessNode> = {
   arity: {},
+  docs,
   evaluate: (node, contextStack, { evaluateNode }) => {
     const [conditionNode, trueNode, falseNode] = node[1][1]
     if (!evaluateNode(conditionNode, contextStack)) {

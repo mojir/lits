@@ -1,7 +1,5 @@
 import { LitsError } from '../../errors'
 import type { Any } from '../../interface'
-// Import from index to ensure namespaces are registered
-import { getNamespace } from '../namespaces'
 import type { NamespaceFunction } from '../../parser/types'
 import type { SourceCodeInfo } from '../../tokenizer/token'
 import { asAny, assertAny } from '../../typeGuards/lits'
@@ -441,7 +439,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     },
   },
   'import': {
-    evaluate: ([importPath], sourceCodeInfo): NamespaceFunction | Record<string, NamespaceFunction> => {
+    evaluate: ([importPath], sourceCodeInfo, contextStack): NamespaceFunction | Record<string, NamespaceFunction> => {
       assertString(importPath, sourceCodeInfo)
 
       // Check if importing a specific function (e.g., "Grid.row")
@@ -450,7 +448,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
         const namespaceName = importPath.substring(0, dotIndex)
         const functionName = importPath.substring(dotIndex + 1)
 
-        const namespace = getNamespace(namespaceName)
+        const namespace = contextStack.getNamespace(namespaceName)
         if (!namespace) {
           throw new LitsError(`Unknown namespace: '${namespaceName}'`, sourceCodeInfo)
         }
@@ -473,7 +471,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
 
       // Import entire namespace
       const namespaceName = importPath
-      const namespace = getNamespace(namespaceName)
+      const namespace = contextStack.getNamespace(namespaceName)
       if (!namespace) {
         throw new LitsError(`Unknown namespace: '${namespaceName}'`, sourceCodeInfo)
       }

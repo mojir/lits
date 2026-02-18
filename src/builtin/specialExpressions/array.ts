@@ -3,13 +3,42 @@ import type { Any, Arr } from '../../interface'
 import type { Node, SpecialExpressionNode } from '../../parser/types'
 import { isSpreadNode } from '../../typeGuards/astNode'
 import { asAny } from '../../typeGuards/lits'
-import type { BuiltinSpecialExpression } from '../interface'
+import type { BuiltinSpecialExpression, FunctionDocs } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 
 export type ArrayNode = SpecialExpressionNode<[typeof specialExpressionTypes['array'], Node[]]>
 
+const docs: FunctionDocs = {
+  category: 'Special expression',
+  returns: {
+    type: 'any',
+    array: true,
+  },
+  args: {
+    values: {
+      type: 'any',
+      rest: true,
+    },
+  },
+  variants: [
+    { argumentNames: ['values'] },
+  ],
+  description: 'Makes new array from $values.',
+  examples: [
+    'array(1, 2, 3)',
+    'array(array(null, false, true))',
+    '[]',
+    '[1, 2, 3]',
+    '[1, 2, ...[3, 4, 5], 6]',
+    '[[null, false, true]]',
+    '[1, 2, 3][1]',
+  ],
+  hideOperatorForm: true,
+}
+
 export const arraySpecialExpression: BuiltinSpecialExpression<Any, ArrayNode> = {
   arity: {},
+  docs,
   evaluate: (node, contextStack, { evaluateNode }) => {
     const result: Arr = []
 

@@ -101,6 +101,27 @@ export interface FunctionDocs {
   tags?: string[]
 }
 
+export interface CustomDocs {
+  category: Category
+  description: string
+  customVariants: string[]
+  details?: [string, string, string | undefined][]
+  returns?: TypedValue
+  examples: string[]
+  seeAlso?: string[]
+  tags?: string[]
+}
+
+export type SpecialExpressionDocs = FunctionDocs | CustomDocs
+
+export function isFunctionDocs(docs: SpecialExpressionDocs): docs is FunctionDocs {
+  return 'args' in docs && 'variants' in docs
+}
+
+export function isCustomDocs(docs: SpecialExpressionDocs): docs is CustomDocs {
+  return 'customVariants' in docs
+}
+
 export type NormalExpressionEvaluator<T> = (
   params: Arr,
   sourceCodeInfo: SourceCodeInfo | undefined,
@@ -127,6 +148,7 @@ export interface BuiltinSpecialExpression<T, N extends SpecialExpressionNode> {
   evaluate: (node: N, contextStack: ContextStack, helpers: EvaluateHelpers) => T
   evaluateAsNormalExpression?: NormalExpressionEvaluator<T>
   arity: Arity
+  docs?: SpecialExpressionDocs
   getUndefinedSymbols: (
     node: N,
     contextStack: ContextStack,

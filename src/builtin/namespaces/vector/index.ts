@@ -5,6 +5,7 @@ import { assertNumber } from '../../../typeGuards/number'
 import { toFixedArity } from '../../../utils/arity'
 import type { BuiltinNormalExpressions } from '../../../builtin/interface'
 import type { LitsNamespace } from '../interface'
+import { namespaceDocs } from './docs'
 import { bincount } from './bincount'
 import { calcHistogram } from './histogram'
 import { mode } from './mode'
@@ -349,6 +350,11 @@ function addReductionFunctions(sequences: BuiltinNormalExpressions) {
     }
     vectorFunctions[key] = value
   }
+}
+
+for (const [key, docs] of Object.entries(namespaceDocs)) {
+  if (vectorFunctions[key])
+    vectorFunctions[key].docs = docs
 }
 
 export const vectorNamespace: LitsNamespace = {

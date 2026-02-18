@@ -45,6 +45,8 @@
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "chat.tools.terminal.autoApprove": {
-    "git mv": true
+    "git mv": true,
+    "npx tsx": true,
+    "npx eslint": true
   }
 }

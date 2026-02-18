@@ -1,36 +1,38 @@
 import { describe, expect, it } from 'vitest'
-import type { LitsNamespace } from './interface'
-import { getNamespaceNames, hasNamespace, registerNamespace } from './index'
+import { Lits } from '../../Lits/Lits'
+import { assertNamespace } from './assert'
+import { gridNamespace } from './grid'
+import { vectorNamespace } from './vector'
 
-describe('namespace registry', () => {
-  describe('registerNamespace', () => {
-    it('should throw when registering a namespace that already exists', () => {
-      // 'Grid' is already registered by the main registration
-      const duplicateNamespace: LitsNamespace = {
-        name: 'Grid',
-        functions: {},
-      }
-      expect(() => registerNamespace(duplicateNamespace)).toThrow('Namespace \'Grid\' is already registered')
+describe('namespace registration', () => {
+  describe('default namespaces', () => {
+    it('should include all built-in namespaces by default', () => {
+      const lits = new Lits()
+      expect(lits.run('let v = import("Vector"); v.mean([1, 2, 3])')).toBe(2)
+      expect(lits.run('let g = import("Grid"); g.row([[1, 2], [3, 4]], 0)')).toEqual([1, 2])
+      expect(lits.run('let { assert } = import("Assert"); assert(true)')).toBe(true)
     })
   })
 
-  describe('hasNamespace', () => {
-    it('should return true for registered namespaces', () => {
-      expect(hasNamespace('Grid')).toBe(true)
-      expect(hasNamespace('Assert')).toBe(true)
+  describe('custom namespaces', () => {
+    it('should only include specified namespaces', () => {
+      const lits = new Lits({ namespaces: [vectorNamespace] })
+      expect(lits.run('let v = import("Vector"); v.mean([1, 2, 3])')).toBe(2)
+      expect(() => lits.run('import("Grid")')).toThrow('Unknown namespace')
+      expect(() => lits.run('import("Assert")')).toThrow('Unknown namespace')
     })
 
-    it('should return false for unregistered namespaces', () => {
-      expect(hasNamespace('NonExistentNamespace')).toBe(false)
+    it('should support empty namespaces list', () => {
+      const lits = new Lits({ namespaces: [] })
+      expect(() => lits.run('import("Vector")')).toThrow('Unknown namespace')
+      expect(() => lits.run('import("Grid")')).toThrow('Unknown namespace')
     })
-  })
 
-  describe('getNamespaceNames', () => {
-    it('should return an array of registered namespace names', () => {
-      const names = getNamespaceNames()
-      expect(Array.isArray(names)).toBe(true)
-      expect(names).toContain('Grid')
-      expect(names).toContain('Assert')
+    it('should support multiple selected namespaces', () => {
+      const lits = new Lits({ namespaces: [gridNamespace, assertNamespace] })
+      expect(lits.run('let g = import("Grid"); g.row([[1, 2], [3, 4]], 0)')).toEqual([1, 2])
+      expect(lits.run('let { assert } = import("Assert"); assert(true)')).toBe(true)
+      expect(() => lits.run('import("Vector")')).toThrow('Unknown namespace')
     })
   })
 })

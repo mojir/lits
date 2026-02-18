@@ -6,6 +6,7 @@ import { toFixedArity } from '../../../utils/arity'
 import type { BuiltinNormalExpressions } from '../../../builtin/interface'
 import type { LitsNamespace } from '../interface'
 import { gaussJordanElimination } from '../linearAlgebra/helpers/gaussJordanElimination'
+import { namespaceDocs } from './docs'
 import { adjugate } from './helpers/adjugate'
 import { band } from './helpers/band'
 import { cofactor } from './helpers/cofactor'
@@ -244,6 +245,11 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
   },
+}
+
+for (const [key, docs] of Object.entries(namespaceDocs)) {
+  if (matrixNormalExpression[key])
+    matrixNormalExpression[key].docs = docs
 }
 
 export const matrixNamespace: LitsNamespace = {

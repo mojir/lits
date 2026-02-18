@@ -23,8 +23,26 @@ import { predicateReference as legacyPredicateReference } from '../reference/cat
 import { regularExpressionReference as legacyRegexpReference } from '../reference/categories/regularExpression'
 import { sequenceReference as legacySequenceReference } from '../reference/categories/sequence'
 import { stringReference as legacyStringReference } from '../reference/categories/string'
+import { specialExpressionsReference as legacySpecialExpressionsReference } from '../reference/categories/specialExpressions'
+import { assertReference as legacyAssertReference } from '../reference/categories/assert'
+import { gridReference as legacyGridReference } from '../reference/categories/grid'
+import { randomReference as legacyRandomReference } from '../reference/categories/random'
+import { vectorReference as legacyVectorReference } from '../reference/categories/vector'
+import { linAlgReference as legacyLinAlgReference } from '../reference/categories/linearAlgebra'
+import { matrixReference as legacyMatrixReference } from '../reference/categories/matrix'
+import { numberTheoryReference as legacyNumberTheoryReference } from '../reference/categories/numberTheory'
 import type { FunctionReference } from '../reference'
-import { allReference } from '../reference'
+import { allReference, isCustomReference, isFunctionReference } from '../reference'
+import { specialExpressions } from '../src/builtin'
+import { specialExpressionTypes } from '../src/builtin/specialExpressionTypes'
+import { isFunctionDocs } from '../src/builtin/interface'
+import { assertNamespace } from '../src/builtin/namespaces/assert'
+import { gridNamespace } from '../src/builtin/namespaces/grid'
+import { randomNamespace } from '../src/builtin/namespaces/random'
+import { vectorNamespace } from '../src/builtin/namespaces/vector'
+import { linearAlgebraNamespace } from '../src/builtin/namespaces/linearAlgebra'
+import { matrixNamespace } from '../src/builtin/namespaces/matrix'
+import { numberTheoryNamespace } from '../src/builtin/namespaces/numberTheory'
 
 // Normalize trailing whitespace on each line (legacy reference files may have trailing spaces)
 function normalizeDesc(s: string): string {
@@ -201,7 +219,8 @@ describe('co-located docs: functional', () => {
 })
 
 describe('co-located docs: meta', () => {
-  const metaNormalExpression = getMetaNormalExpression({} as Record<string, FunctionReference>)
+  const ref: Record<string, FunctionReference> = {}
+  const metaNormalExpression = getMetaNormalExpression(ref)
 
   it('every meta function has a docs field', () => {
     for (const [key, expr] of Object.entries(metaNormalExpression)) {
@@ -432,6 +451,134 @@ describe('co-located docs: math', () => {
     }
   })
 })
+
+// --- Phase 2 Step 12: Validate co-located docs for special expressions ---
+
+describe('co-located docs: special expressions', () => {
+  // Map from special expression name to its tuple entry
+  const documentedEntries = Object.entries(specialExpressionTypes)
+    .filter(([, index]) => specialExpressions[index]?.docs)
+    .map(([name, index]) => [name, specialExpressions[index]] as const)
+
+  it('every documented special expression has a docs field', () => {
+    // All entries in legacy reference should have docs on the implementation
+    for (const legacyKey of Object.keys(legacySpecialExpressionsReference)) {
+      const index = specialExpressionTypes[legacyKey as keyof typeof specialExpressionTypes]
+      expect(index, `"${legacyKey}" not found in specialExpressionTypes`).toBeDefined()
+      const expr = specialExpressions[index]
+      expect(expr?.docs, `"${legacyKey}" is missing docs`).toBeDefined()
+    }
+  })
+
+  it('every documented special expression docs has category "Special expression"', () => {
+    for (const [name, expr] of documentedEntries) {
+      expect(expr.docs!.category, `"${name}" has wrong category`).toBe('Special expression')
+    }
+  })
+
+  it('special expression docs keys match legacy reference keys', () => {
+    const docsKeys = documentedEntries.map(([name]) => name).sort()
+    const legacyKeys = Object.keys(legacySpecialExpressionsReference).sort()
+    expect(docsKeys).toEqual(legacyKeys)
+  })
+
+  it('special expression FunctionReference docs data matches legacy reference data', () => {
+    for (const [key, legacyRef] of Object.entries(legacySpecialExpressionsReference)) {
+      if (!isFunctionReference(legacyRef))
+        continue
+      const index = specialExpressionTypes[key as keyof typeof specialExpressionTypes]
+      const docs = specialExpressions[index].docs!
+      expect(isFunctionDocs(docs), `"${key}" should have FunctionDocs`).toBe(true)
+      if (!isFunctionDocs(docs))
+        continue
+
+      expect(docs.category).toBe(legacyRef.category)
+      expect(normalizeDesc(docs.description)).toBe(normalizeDesc(legacyRef.description))
+      expect(docs.returns).toEqual(legacyRef.returns)
+      expect(docs.args).toEqual(legacyRef.args)
+      expect(docs.variants).toEqual(legacyRef.variants)
+      expect(docs.examples).toEqual(legacyRef.examples)
+      if (legacyRef.noOperatorDocumentation) {
+        expect(docs.hideOperatorForm).toBe(true)
+      }
+    }
+  })
+
+  it('special expression CustomReference docs data matches legacy reference data', () => {
+    for (const [key, legacyRef] of Object.entries(legacySpecialExpressionsReference)) {
+      if (!isCustomReference(legacyRef))
+        continue
+      const index = specialExpressionTypes[key as keyof typeof specialExpressionTypes]
+      const docs = specialExpressions[index].docs!
+      expect(isFunctionDocs(docs), `"${key}" should have CustomDocs`).toBe(false)
+      if (isFunctionDocs(docs))
+        continue
+
+      expect(docs.category).toBe(legacyRef.category)
+      expect(normalizeDesc(docs.description)).toBe(normalizeDesc(legacyRef.description))
+      expect(docs.customVariants).toEqual(legacyRef.customVariants)
+      if (legacyRef.details) {
+        expect(docs.details).toEqual(legacyRef.details)
+      }
+      if ('returns' in legacyRef) {
+        expect(docs.returns).toEqual((legacyRef as Record<string, unknown>).returns)
+      }
+      expect(docs.examples).toEqual(legacyRef.examples)
+    }
+  })
+})
+
+// --- Phase 3: Validate co-located docs for namespace categories ---
+
+function testNamespaceDocs(
+  namespaceName: string,
+  category: string,
+  namespaceFunctions: Record<string, { docs?: { category: string, description: string, returns: unknown, args: unknown, variants: unknown, examples: unknown } }>,
+  legacyReference: Record<string, { category: string, description: string, returns: unknown, args: unknown, variants: unknown, examples: unknown }>,
+) {
+  describe(`co-located docs: ${namespaceName}`, () => {
+    it(`every ${namespaceName} function has a docs field`, () => {
+      for (const [key, expr] of Object.entries(namespaceFunctions)) {
+        expect(expr.docs, `"${key}" is missing docs`).toBeDefined()
+      }
+    })
+
+    it(`every ${namespaceName} docs has correct category`, () => {
+      for (const [key, expr] of Object.entries(namespaceFunctions)) {
+        expect(expr.docs!.category, `"${key}" has wrong category`).toBe(category)
+      }
+    })
+
+    it(`${namespaceName} docs keys match legacy reference keys`, () => {
+      const docsKeys = Object.keys(namespaceFunctions).sort()
+      const legacyKeys = Object.keys(legacyReference).map(k => k.includes('.') ? k.slice(k.indexOf('.') + 1) : k).sort()
+      expect(docsKeys).toEqual(legacyKeys)
+    })
+
+    it(`${namespaceName} docs data matches legacy reference data`, () => {
+      for (const [qualifiedKey, legacyRef] of Object.entries(legacyReference)) {
+        const key = qualifiedKey.includes('.') ? qualifiedKey.slice(qualifiedKey.indexOf('.') + 1) : qualifiedKey
+        const expr = namespaceFunctions[key]!
+        const docs = expr.docs!
+
+        expect(docs.category).toBe(legacyRef.category)
+        expect(normalizeDesc(docs.description)).toBe(normalizeDesc(legacyRef.description))
+        expect(docs.returns).toEqual(legacyRef.returns)
+        expect(docs.args).toEqual(legacyRef.args)
+        expect(docs.variants).toEqual(legacyRef.variants)
+        expect(docs.examples).toEqual(legacyRef.examples)
+      }
+    })
+  })
+}
+
+testNamespaceDocs('Assert', 'Assert', assertNamespace.functions, legacyAssertReference)
+testNamespaceDocs('Grid', 'Grid', gridNamespace.functions, legacyGridReference)
+testNamespaceDocs('Random', 'Random', randomNamespace.functions, legacyRandomReference)
+testNamespaceDocs('Vector', 'Vector', vectorNamespace.functions, legacyVectorReference)
+testNamespaceDocs('Linear-Algebra', 'Linear Algebra', linearAlgebraNamespace.functions, legacyLinAlgReference)
+testNamespaceDocs('Matrix', 'Matrix', matrixNamespace.functions, legacyMatrixReference)
+testNamespaceDocs('Number-Theory', 'Number Theory', numberTheoryNamespace.functions, legacyNumberTheoryReference)
 
 // --- Snapshot: reference output stability ---
 
