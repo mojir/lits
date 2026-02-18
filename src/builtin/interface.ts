@@ -73,6 +73,16 @@ export const namespaceCategories: Category[] = ['Vector', 'Linear Algebra', 'Mat
 // Core categories (always available)
 export const coreCategories = categories.filter(c => !namespaceCategories.includes(c))
 
+// Map from category to namespace import name
+export const categoryToNamespace: Partial<Record<Category, string>> = {
+  'Vector': 'Vector',
+  'Linear Algebra': 'Linear-Algebra',
+  'Matrix': 'Matrix',
+  'Grid': 'Grid',
+  'Number Theory': 'Number-Theory',
+  'Random': 'Random',
+}
+
 // --- FunctionDocs types ---
 
 export interface TypedValue {

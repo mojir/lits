@@ -86,11 +86,6 @@ export class Lits {
   public run(program: string, params: ContextParams & FilePathParams = {}): unknown {
     const ast = this.generateAst(program, params)
     const result = this.evaluate(ast, params)
-    // const stringifiedResult = JSON.stringify(result)
-    // const parsedResult = JSON.parse(stringifiedResult) as unknown
-    // if (!deepEqual(result, parsedResult)) {
-    //   throw new Error(`Result is not serializable: ${result} != ${parsedResult}\nstringifiedResult: ${stringifiedResult}\nprogram: ${program}`)
-    // }
     return result
   }
 

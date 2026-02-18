@@ -95,9 +95,6 @@
     "dev": "npx serve docs -p 9901",
     "lcov": "open-cli ./coverage/index.html"
   },
-  "dependencies": {
-    "@mojir/pretty-pi": "0.0.12"
-  },
   "devDependencies": {
     "@antfu/eslint-config": "2.21.1",
     "@rollup/plugin-json": "6.1.0",

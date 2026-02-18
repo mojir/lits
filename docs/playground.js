@@ -12806,11 +12806,6 @@ var Playground = (function (exports) {
             if (params === void 0) { params = {}; }
             var ast = this.generateAst(program, params);
             var result = this.evaluate(ast, params);
-            // const stringifiedResult = JSON.stringify(result)
-            // const parsedResult = JSON.parse(stringifiedResult) as unknown
-            // if (!deepEqual(result, parsedResult)) {
-            //   throw new Error(`Result is not serializable: ${result} != ${parsedResult}\nstringifiedResult: ${stringifiedResult}\nprogram: ${program}`)
-            // }
             return result;
         };
         Lits.prototype.context = function (programOrAst, params) {
@@ -24029,33 +24024,6 @@ var Playground = (function (exports) {
             },
             arity: toFixedArity(2),
         },
-        // TODO consider for Set namespace. E.g. 'set:jaccard-distance'
-        // 'jaccard-distance': {
-        //   evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
-        //     assertNonEmptyVector(vectorA, sourceCodeInfo)
-        //     assertNonEmptyVector(vectorB, sourceCodeInfo)
-        //     const intersection = vectorA.filter(val => vectorB.includes(val)).length
-        //     const union = new Set([...vectorA, ...vectorB]).size
-        //     return 1 - intersection / union
-        //   },
-        //   arity: 2,
-        // },
-        // TODO consider for Set namespace. E.g. 'set:dice-coefficient'
-        // 'dice-coefficient': {
-        //   evaluate: ([vectorA, vectorB], sourceCodeInfo): number => {
-        //     assertNonEmptyVector(vectorA, sourceCodeInfo)
-        //     assertNonEmptyVector(vectorB, sourceCodeInfo)
-        //     const intersection = vectorA.filter(val => vectorB.includes(val)).length
-        //     return (2 * intersection) / (vectorA.length + vectorB.length)
-        //   },
-        //   arity: 2,
-        // },
-        // TODO consider for String namespace. E.g. 'str:levenshtein-distance'
-        // 'levenshtein-distance': {
-        //   evaluate: ([stringA, stringB], sourceCodeInfo): number => {
-        //   },
-        //   arity: 2,
-        // },
         'cov': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), vectorA = _b[0], vectorB = _b[1];

@@ -47,7 +47,6 @@ module.exports = [
   // Minimal bundle (core only, no namespaces, docs stripped)
   {
     input: 'src/index.ts',
-    external: ['mathjs'],
     output: [
       {
         file: pkg.module,
@@ -71,7 +70,6 @@ module.exports = [
   // Full bundle (core + all namespaces + docs + reference data)
   {
     input: 'src/full.ts',
-    external: ['mathjs'],
     output: [
       {
         file: 'dist/full.esm.js',
@@ -89,7 +87,6 @@ module.exports = [
   // Individual namespace bundles
   ...namespaces.map(ns => ({
     input: `src/namespaces/${ns}.ts`,
-    external: ['mathjs'],
     output: [
       {
         file: `dist/namespaces/${ns}.esm.js`,

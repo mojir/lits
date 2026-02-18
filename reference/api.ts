@@ -1,4 +1,5 @@
-import type { Argument } from '.'
+export { categories, categoryRecord, coreCategories, isDataType, namespaceCategories, categoryToNamespace } from '../src/builtin/interface'
+export type { Category, DataType } from '../src/builtin/interface'
 
 function getNumberTheorySequenceNames<T extends string>(name: T): [`Number-Theory.${T}-seq`, `Number-Theory.${T}-nth`, `Number-Theory.${T}-take-while`, `Number-Theory.${T}?`] {
   return [`Number-Theory.${name}-seq`, `Number-Theory.${name}-nth`, `Number-Theory.${name}-take-while`, `Number-Theory.${name}?`]
@@ -659,77 +660,4 @@ export function isApiName(arg: string): arg is ApiName {
 
 export function isCoreApiName(arg: string): arg is CoreApiName {
   return coreApiNames.includes(arg as CoreApiName)
-}
-
-export const categoryRecord = {
-  'Special expression': true,
-  'Predicate': true,
-  'Sequence': true,
-  'Collection': true,
-  'Array': true,
-  'Object': true,
-  'String': true,
-  'Math': true,
-  'Functional': true,
-  'Regular expression': true,
-  'Bitwise': true,
-  'Misc': true,
-  'Meta': true,
-  'Assert': true,
-  'Vector': true,
-  'Linear Algebra': true,
-  'Matrix': true,
-  'Grid': true,
-  'Number Theory': true,
-  'Random': true,
-  'Shorthand': true,
-  'Datatype': true,
-} as const
-
-export type Category = keyof typeof categoryRecord
-
-export const categories = Object.keys(categoryRecord) as Category[]
-
-// Categories that are namespaces (require import)
-export const namespaceCategories: Category[] = ['Vector', 'Linear Algebra', 'Matrix', 'Grid', 'Number Theory', 'Random', 'Assert']
-
-// Core categories (always available)
-export const coreCategories = categories.filter(c => !namespaceCategories.includes(c))
-
-// Map from category to namespace import name
-export const categoryToNamespace: Partial<Record<Category, string>> = {
-  'Vector': 'Vector',
-  'Linear Algebra': 'Linear-Algebra',
-  'Matrix': 'Matrix',
-  'Grid': 'Grid',
-  'Number Theory': 'Number-Theory',
-  'Random': 'Random',
-}
-
-const dataTypes = [
-  'number',
-  'string',
-  'object',
-  'array',
-  'vector',
-  'matrix',
-  'grid',
-  'boolean',
-  'function',
-  'integer',
-  'any',
-  'null',
-  'collection',
-  'sequence',
-  'regexp',
-  'never',
-] as const
-export type DataType = typeof dataTypes[number]
-
-export function isDataType(arg: string): arg is DataType {
-  return dataTypes.includes(arg as DataType)
-}
-
-export function getOperatorArgs(a: DataType | DataType[], b: DataType | DataType[]): Record<string, Argument> {
-  return { a: { type: a }, b: { type: b } }
 }
