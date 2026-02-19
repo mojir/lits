@@ -412,7 +412,7 @@ const gridFunctions: BuiltinNormalExpressions = {
       const cols = (params[0] as Any[][])[0]!.length
       ;(params as Any[][][]).slice(1).every((grid) => {
         if (grid[0]!.length !== cols) {
-          throw new LitsError(`All matrices must have the same number of columns, but got ${cols} and ${grid[0]!.length}`, sourceCodeInfo)
+          throw new LitsError(`All grids must have the same number of columns, but got ${cols} and ${grid[0]!.length}`, sourceCodeInfo)
         }
         return true
       })
@@ -434,7 +434,7 @@ const gridFunctions: BuiltinNormalExpressions = {
       const rows = (params[0] as Any[][]).length
       ;(params as Any[][][]).slice(1).every((grid) => {
         if (grid.length !== rows) {
-          throw new LitsError(`All matrices must have the same number of rows, but got ${rows} and ${grid.length}`, sourceCodeInfo)
+          throw new LitsError(`All grids must have the same number of rows, but got ${rows} and ${grid.length}`, sourceCodeInfo)
         }
         return true
       })
@@ -461,10 +461,10 @@ const gridFunctions: BuiltinNormalExpressions = {
       grids.slice(1).forEach((grid) => {
         assertGrid(grid, sourceCodeInfo)
         if (grid.length !== rows) {
-          throw new LitsError(`All matrices must have the same number of rows, but got ${rows} and ${grid.length}`, sourceCodeInfo)
+          throw new LitsError(`All grids must have the same number of rows, but got ${rows} and ${grid.length}`, sourceCodeInfo)
         }
         if (grid[0]!.length !== cols) {
-          throw new LitsError(`All matrices must have the same number of columns, but got ${cols} and ${grid[0]!.length}`, sourceCodeInfo)
+          throw new LitsError(`All grids must have the same number of columns, but got ${cols} and ${grid[0]!.length}`, sourceCodeInfo)
         }
       })
 

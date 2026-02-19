@@ -15,21 +15,21 @@ describe('misc functions', () => {
         expect((lits.run('doc(number?)') as string).length).toBeGreaterThan(0)
         expect(lits.run('doc(2)')).toBe('')
         expect(lits.run(`
-          let add = (a, b) -> {
+          let add = (a, b) -> do
             """
             Adds two numbers together.
             Returns the sum of a and b.
             """
             
             a + b
-          };
+          end;
           doc(add)
         `)).toBe('Adds two numbers together.\nReturns the sum of a and b.')
         expect(lits.run(`
-          let add = () -> {
+          let add = () -> do
             """Escaping\\"""."""
             a + b
-          };
+          end;
           doc(add)
         `)).toBe('Escaping""".')
       })

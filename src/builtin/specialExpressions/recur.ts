@@ -11,27 +11,27 @@ const docs: CustomDocs = {
   description: 'Recursevly calls enclosing function or loop with its evaluated `recur-args`.',
   examples: [
     `
-let foo = (n) -> {
+let foo = (n) -> do
   write!(n);
   if !(zero?(n)) then
     recur(n - 1)
   end
-};
+end;
 foo(3)`,
     `
-(n -> {
+(n -> do
   write!(n);
   if !(zero?(n)) then
     recur(n - 1)
   end
-})(3)`,
+end)(3)`,
     `
-loop (n = 3) -> {
+loop (n = 3) -> do
   write!(n);
   if !(zero?(n)) then
     recur(n - 1)
   end
-}`,
+end`,
   ],
 }
 

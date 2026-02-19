@@ -3200,7 +3200,7 @@ var Playground = (function (exports) {
                     '[[3, 2, 1, 0], [6, 5, 4], [9, 8, 7]] mapcat reverse',
                     'mapcat([[3, 2, 1, 0], [6, 5, 4], [9, 8, 7]], reverse)',
                     '[[3, 2, 1, 0,], [6, 5, 4,], [9, 8, 7]] mapcat reverse',
-                    "\nlet foo = (n) -> {\n  [n - 1, n, n + 1]\n};\n[1, 2, 3] mapcat foo",
+                    "\nlet foo = (n) -> do\n  [n - 1, n, n + 1]\nend;\n[1, 2, 3] mapcat foo",
                     "\nmapcat(\n  [[1, 2], [2, 2], [2, 3]],\n  -> $ remove even?\n)",
                 ],
             },
@@ -8623,7 +8623,7 @@ var Playground = (function (exports) {
                     description: 'Returns documentation string of the $fun.',
                     examples: [
                         'doc(+)',
-                        "\nlet add = (x, y) -> {\n  \"\"\"\n  Adds two numbers.\n  Args:\n    x: First number.\n    y: Second number.\n  Returns:\n    Sum of x and y.\n  \"\"\"\n  x + y;\n};\n\ndoc(add)",
+                        "\nlet add = (x, y) -> do\n  \"\"\"\n  Adds two numbers.\n  Args:\n    x: First number.\n    y: Second number.\n  Returns:\n    Sum of x and y.\n  \"\"\"\n  x + y;\nend;\n\ndoc(add)",
                     ],
                 },
             },
@@ -8643,8 +8643,8 @@ var Playground = (function (exports) {
                     examples: [
                         'arity(+)',
                         'arity(defined?)',
-                        "\nlet add = (x, y = 0) -> {\n  x + y;\n};\n\narity(add)",
-                        "\nlet foo = (k, ...x) -> {\n  k + x;\n};\n  arity(foo)",
+                        "\nlet add = (x, y = 0) -> do\n  x + y;\nend;\n\narity(add)",
+                        "\nlet foo = (k, ...x) -> do\n  k + x;\nend;\n  arity(foo)",
                     ],
                 },
             },
@@ -8669,7 +8669,7 @@ var Playground = (function (exports) {
         allNormalExpressions.push(value);
     });
 
-    var docs$j = {
+    var docs$m = {
         category: 'Special expression',
         returns: {
             type: 'any',
@@ -8698,7 +8698,7 @@ var Playground = (function (exports) {
     };
     var andSpecialExpression = {
         arity: {},
-        docs: docs$j,
+        docs: docs$m,
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
             var evaluateNode = _a.evaluateNode;
@@ -8746,7 +8746,7 @@ var Playground = (function (exports) {
         },
     };
 
-    var docs$i = {
+    var docs$l = {
         category: 'Special expression',
         customVariants: ['cond cond-branch cond-branch ... end'],
         details: [
@@ -8763,7 +8763,7 @@ var Playground = (function (exports) {
     };
     var condSpecialExpression = {
         arity: {},
-        docs: docs$i,
+        docs: docs$l,
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
             var evaluateNode = _a.evaluateNode;
@@ -8792,7 +8792,7 @@ var Playground = (function (exports) {
         },
     };
 
-    var docs$h = {
+    var docs$k = {
         category: 'Special expression',
         customVariants: ['switch value switch-branch switch-branch ... end'],
         details: [
@@ -8810,7 +8810,7 @@ var Playground = (function (exports) {
     };
     var switchSpecialExpression = {
         arity: {},
-        docs: docs$h,
+        docs: docs$k,
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
             var evaluateNode = _a.evaluateNode;
@@ -8840,8 +8840,27 @@ var Playground = (function (exports) {
         },
     };
 
+    var docs$j = {
+        category: 'Special expression',
+        returns: {
+            type: 'boolean',
+        },
+        args: {
+            symbol: { type: 'any' },
+        },
+        variants: [
+            { argumentNames: ['symbol'] },
+        ],
+        description: "Returns `true` if `symbol` is defined, `false` otherwise.\n\nBuilt-in symbols are always considered defined. For user-defined symbols, checks if the symbol exists in the current scope.",
+        examples: [
+            'let x = 42; defined?(x)',
+            'defined?(x)',
+            'defined?(+)',
+        ],
+    };
     var definedSpecialExpression = {
         arity: toFixedArity(1),
+        docs: docs$j,
         evaluate: function (node, contextStack) {
             var symbolNode = node[1][1];
             assertSymbolNode(symbolNode);
@@ -9042,20 +9061,20 @@ var Playground = (function (exports) {
         },
     };
 
-    var docs$g = {
+    var docs$i = {
         category: 'Special expression',
-        customVariants: ['{ body }'],
+        customVariants: ['do body end'],
         details: [
             ['body', 'expressions', 'The expressions to evaluate.'],
         ],
         description: 'Evaluates `body`. Resulting value is the value of the last expression.',
         examples: [
-            "\n{\n  let a = 1 + 2 + 3 + 4;\n  let b = -> $ * ( $ + 1 );\n  b(a)\n}",
+            "\ndo\n  let a = 1 + 2 + 3 + 4;\n  let b = -> $ * ( $ + 1 );\n  b(a)\nend",
         ],
     };
     var doSpecialExpression = {
         arity: {},
-        docs: docs$g,
+        docs: docs$i,
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
             var evaluateNode = _a.evaluateNode;
@@ -9148,7 +9167,7 @@ var Playground = (function (exports) {
         return result;
     }
 
-    var docs$f = {
+    var docs$h = {
         category: 'Special expression',
         customVariants: ['if test then true-expr else false-expr', 'if test then true-expr'],
         details: [
@@ -9166,7 +9185,7 @@ var Playground = (function (exports) {
     };
     var ifSpecialExpression = {
         arity: { min: 2, max: 3 },
-        docs: docs$f,
+        docs: docs$h,
         evaluate: function (node, contextStack, _a) {
             var evaluateNode = _a.evaluateNode;
             var _b = __read(node[1][1], 3), conditionNode = _b[0], trueNode = _b[1], falseNode = _b[2];
@@ -9184,7 +9203,7 @@ var Playground = (function (exports) {
         },
     };
 
-    var docs$e = {
+    var docs$g = {
         category: 'Special expression',
         customVariants: ['unless test then true-expr else false-expr end', 'unless test true-expr end'],
         details: [
@@ -9202,7 +9221,7 @@ var Playground = (function (exports) {
     };
     var unlessSpecialExpression = {
         arity: {},
-        docs: docs$e,
+        docs: docs$g,
         evaluate: function (node, contextStack, _a) {
             var evaluateNode = _a.evaluateNode;
             var _b = __read(node[1][1], 3), conditionNode = _b[0], trueNode = _b[1], falseNode = _b[2];
@@ -9220,7 +9239,7 @@ var Playground = (function (exports) {
         },
     };
 
-    var docs$d = {
+    var docs$f = {
         category: 'Special expression',
         customVariants: ['let s = value;'],
         details: [
@@ -9232,7 +9251,7 @@ var Playground = (function (exports) {
     };
     var letSpecialExpression = {
         arity: toFixedArity(0),
-        docs: docs$d,
+        docs: docs$f,
         evaluate: function (node, contextStack, _a) {
             var evaluateNode = _a.evaluateNode;
             var bindingNode = node[1][1];
@@ -9257,8 +9276,22 @@ var Playground = (function (exports) {
         },
     };
 
+    var docs$e = {
+        category: 'Special expression',
+        customVariants: ['loop (bindings) -> body'],
+        details: [
+            ['bindings', 'binding pairs', 'Comma-separated bindings with initial values, e.g. `n = 10, sum = 0`.'],
+            ['body', 'expression', 'The expression to evaluate repeatedly. Use `recur` to loop back with new values.'],
+        ],
+        description: "Creates a loop with initial bindings. Use `recur` inside the body to jump back to the loop head with new binding values.\n\nIf `recur` is not called, the loop terminates and returns the value of the body expression.",
+        examples: [
+            "loop (n = 10, sum = 0) -> do\n  if n == 0 then\n    sum\n  else\n    recur(n - 1, sum + n)\n  end\nend",
+            "loop (n = 5, acc = 1) -> do\n  if n <= 1 then\n    acc\n  else\n    recur(n - 1, acc * n)\n  end\nend",
+        ],
+    };
     var loopSpecialExpression = {
         arity: {},
+        docs: docs$e,
         evaluate: function (node, contextStack, _a) {
             var evaluateNode = _a.evaluateNode;
             var bindingNodes = node[1][1];
@@ -9517,7 +9550,7 @@ var Playground = (function (exports) {
         },
     };
 
-    var docs$c = {
+    var docs$d = {
         category: 'Special expression',
         returns: {
             type: 'boolean',
@@ -9546,7 +9579,7 @@ var Playground = (function (exports) {
     };
     var orSpecialExpression = {
         arity: {},
-        docs: docs$c,
+        docs: docs$d,
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
             var evaluateNode = _a.evaluateNode;
@@ -9594,26 +9627,85 @@ var Playground = (function (exports) {
         },
     };
 
+    var docs$c = {
+        category: 'Special expression',
+        returns: {
+            type: 'any',
+        },
+        args: {
+            a: { type: 'any' },
+            b: { type: 'any' },
+            c: {
+                type: 'any',
+                rest: true,
+            },
+        },
+        variants: [
+            { argumentNames: ['a'] },
+            { argumentNames: ['a', 'b'] },
+            { argumentNames: ['a', 'b', 'c'] },
+        ],
+        description: "Nullish coalescing operator. Returns the first non-`null` value.\n\nEvaluation is short-circuited \u2014 as soon as a non-`null` value is found, the remaining expressions are not evaluated.\n\nIf all values are `null`, returns `null`.\n\nAlso works with undefined symbols \u2014 if a symbol is undefined, it is treated as `null`.",
+        examples: [
+            '1 ?? 2',
+            'null ?? 2',
+            '??(null)',
+            '??(null, "default")',
+            '??(1, "default")',
+            'false ?? "default"',
+            '??(null, null, 3)',
+        ],
+    };
     var qqSpecialExpression = {
-        arity: { min: 1, max: 2 },
+        arity: { min: 1 },
+        docs: docs$c,
         evaluate: function (node, contextStack, _a) {
+            var e_1, _b;
             var evaluateNode = _a.evaluateNode;
-            var _b = __read(node[1][1], 2), firstNode = _b[0], secondNode = _b[1];
-            if (isUserDefinedSymbolNode(firstNode) && contextStack.lookUp(firstNode) === null) {
-                return secondNode ? evaluateNode(secondNode, contextStack) : null;
+            try {
+                for (var _c = __values(node[1][1]), _d = _c.next(); !_d.done; _d = _c.next()) {
+                    var param = _d.value;
+                    if (isUserDefinedSymbolNode(param) && contextStack.lookUp(param) === null) {
+                        continue;
+                    }
+                    var result = evaluateNode(param, contextStack);
+                    if (result !== null) {
+                        return result;
+                    }
+                }
             }
-            assertAny(firstNode, node[2]);
-            var firstResult = evaluateNode(firstNode, contextStack);
-            return firstResult !== null && firstResult !== void 0 ? firstResult : (secondNode ? evaluateNode(secondNode, contextStack) : null);
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (_d && !_d.done && (_b = _c.return)) _b.call(_c);
+                }
+                finally { if (e_1) throw e_1.error; }
+            }
+            return null;
         },
         evaluateAsNormalExpression: function (params, sourceCodeInfo) {
-            var firstParam = asAny(params[0], sourceCodeInfo);
-            var secondParam = params[1] !== undefined ? asAny(params[1], sourceCodeInfo) : null;
-            return firstParam !== null && firstParam !== void 0 ? firstParam : secondParam;
+            var e_2, _a;
+            try {
+                for (var params_1 = __values(params), params_1_1 = params_1.next(); !params_1_1.done; params_1_1 = params_1.next()) {
+                    var param = params_1_1.value;
+                    var value = asAny(param, sourceCodeInfo);
+                    if (value !== null) {
+                        return value;
+                    }
+                }
+            }
+            catch (e_2_1) { e_2 = { error: e_2_1 }; }
+            finally {
+                try {
+                    if (params_1_1 && !params_1_1.done && (_a = params_1.return)) _a.call(params_1);
+                }
+                finally { if (e_2) throw e_2.error; }
+            }
+            return null;
         },
         getUndefinedSymbols: function (node, contextStack, _a) {
             var getUndefinedSymbols = _a.getUndefinedSymbols, builtin = _a.builtin, evaluateNode = _a.evaluateNode;
-            return getUndefinedSymbols(node[1][1].filter(function (n) { return !!n; }), contextStack, builtin, evaluateNode);
+            return getUndefinedSymbols(node[1][1], contextStack, builtin, evaluateNode);
         },
     };
 
@@ -9622,9 +9714,9 @@ var Playground = (function (exports) {
         customVariants: ['recur(...recur-args)'],
         description: 'Recursevly calls enclosing function or loop with its evaluated `recur-args`.',
         examples: [
-            "\nlet foo = (n) -> {\n  write!(n);\n  if !(zero?(n)) then\n    recur(n - 1)\n  end\n};\nfoo(3)",
-            "\n(n -> {\n  write!(n);\n  if !(zero?(n)) then\n    recur(n - 1)\n  end\n})(3)",
-            "\nloop (n = 3) -> {\n  write!(n);\n  if !(zero?(n)) then\n    recur(n - 1)\n  end\n}",
+            "\nlet foo = (n) -> do\n  write!(n);\n  if !(zero?(n)) then\n    recur(n - 1)\n  end\nend;\nfoo(3)",
+            "\n(n -> do\n  write!(n);\n  if !(zero?(n)) then\n    recur(n - 1)\n  end\nend)(3)",
+            "\nloop (n = 3) -> do\n  write!(n);\n  if !(zero?(n)) then\n    recur(n - 1)\n  end\nend",
         ],
     };
     var recurSpecialExpression = {
@@ -9923,6 +10015,7 @@ var Playground = (function (exports) {
         true: true,
         false: false,
         null: null,
+        do: null,
         else: null,
         case: null,
         each: null,
@@ -11553,6 +11646,9 @@ var Playground = (function (exports) {
                         break;
                 }
             }
+            else if (isReservedSymbolToken(firstToken, 'do')) {
+                left = this.parseBlock()[0];
+            }
             else if (isReservedSymbolToken(firstToken, 'export')) {
                 if (!moduleScope) {
                     throw new LitsError('export is only allowed in module scope', firstToken[2]);
@@ -11685,16 +11781,8 @@ var Playground = (function (exports) {
                 }
             }
             // Object litteral, e.g. {a: 1, b: 2}
-            // Or block.
             if (isLBraceToken(token)) {
-                var positionBefore = this.parseState.position;
-                try {
-                    return this.parseObject();
-                }
-                catch (_a) {
-                    this.parseState.position = positionBefore;
-                    return this.parseBlock()[0];
-                }
+                return this.parseObject();
             }
             // Array litteral, e.g. [1, 2]
             if (isLBracketToken(token)) {
@@ -11835,14 +11923,8 @@ var Playground = (function (exports) {
                         return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, params]], symbol[2]);
                     case specialExpressionTypes.object:
                         return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, params]], symbol[2]);
-                    case specialExpressionTypes['??']: {
-                        if (params.length === 1) {
-                            return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, [params[0], undefined]]], symbol[2]);
-                        }
-                        else {
-                            return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, [params[0], params[1]]]], symbol[2]);
-                        }
-                    }
+                    case specialExpressionTypes['??']:
+                        return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, params]], symbol[2]);
                     case specialExpressionTypes['defined?']: {
                         var _b = __read(params, 1), param = _b[0];
                         return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, param]], symbol[2]);
@@ -11881,18 +11963,10 @@ var Playground = (function (exports) {
                 this.advance();
                 var nodes = void 0;
                 var docString = '';
-                if (isLBraceToken(this.peek())) {
-                    var positionBefore = this.parseState.position;
-                    try {
-                        var objectNode = this.parseObject();
-                        nodes = [objectNode];
-                    }
-                    catch (_a) {
-                        this.parseState.position = positionBefore;
-                        var parsedBlock = this.parseBlock(true);
-                        docString = parsedBlock[1];
-                        nodes = parsedBlock[0][1][1];
-                    }
+                if (isReservedSymbolToken(this.peek(), 'do')) {
+                    var parsedBlock = this.parseBlock(true);
+                    docString = parsedBlock[1];
+                    nodes = parsedBlock[0][1][1];
                 }
                 else {
                     nodes = [this.parseExpression()];
@@ -11909,7 +11983,7 @@ var Playground = (function (exports) {
                     ],
                 ], firstToken[2]);
             }
-            catch (_b) {
+            catch (_a) {
                 return null;
             }
         };
@@ -11958,18 +12032,10 @@ var Playground = (function (exports) {
             var startPos = this.parseState.position;
             var nodes;
             var docString = '';
-            if (isLBraceToken(this.peek())) {
-                var positionBefore = this.parseState.position;
-                try {
-                    var objectNode = this.parseObject();
-                    nodes = [objectNode];
-                }
-                catch (_b) {
-                    this.parseState.position = positionBefore;
-                    var parsedBlock = this.parseBlock(true);
-                    docString = parsedBlock[1];
-                    nodes = parsedBlock[0][1][1];
-                }
+            if (isReservedSymbolToken(this.peek(), 'do')) {
+                var parsedBlock = this.parseBlock(true);
+                docString = parsedBlock[1];
+                nodes = parsedBlock[0][1][1];
             }
             else {
                 nodes = [this.parseExpression()];
@@ -12155,23 +12221,23 @@ var Playground = (function (exports) {
         };
         Parser.prototype.parseBlock = function (allowDocString) {
             if (allowDocString === void 0) { allowDocString = false; }
-            var token = asLBraceToken(this.peek());
+            var token = asReservedSymbolToken(this.peek(), 'do');
             this.advance();
             var docString = '';
             if (allowDocString && isDocStringToken(this.peek())) {
                 docString = this.parseDocString();
             }
             var expressions = [];
-            while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
+            while (!this.isAtEnd() && !isReservedSymbolToken(this.peek(), 'end')) {
                 expressions.push(this.parseExpression());
                 if (isOperatorToken(this.peek(), ';')) {
                     this.advance();
                 }
-                else if (!isRBraceToken(this.peek())) {
-                    throw new LitsError('Expected }', this.peekSourceCodeInfo());
+                else if (!isReservedSymbolToken(this.peek(), 'end')) {
+                    throw new LitsError('Expected end', this.peekSourceCodeInfo());
                 }
             }
-            assertRBraceToken(this.peek());
+            assertReservedSymbolToken(this.peek(), 'end');
             this.advance();
             return [
                 withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.block, expressions]], token[2]),
@@ -12457,7 +12523,7 @@ var Playground = (function (exports) {
                 return [';', ',', ':'].includes(token[1]);
             }
             if (isReservedSymbolToken(token)) {
-                return ['else', 'when', 'while', 'case', 'catch', 'let', 'then'].includes(token[1]);
+                return ['else', 'when', 'while', 'case', 'catch', 'let', 'then', 'end', 'do'].includes(token[1]);
             }
             return false;
         };
@@ -15369,7 +15435,7 @@ var Playground = (function (exports) {
                 var cols = params[0][0].length;
                 params.slice(1).every(function (grid) {
                     if (grid[0].length !== cols) {
-                        throw new LitsError("All matrices must have the same number of columns, but got ".concat(cols, " and ").concat(grid[0].length), sourceCodeInfo);
+                        throw new LitsError("All grids must have the same number of columns, but got ".concat(cols, " and ").concat(grid[0].length), sourceCodeInfo);
                     }
                     return true;
                 });
@@ -15390,7 +15456,7 @@ var Playground = (function (exports) {
                 var rows = params[0].length;
                 params.slice(1).every(function (grid) {
                     if (grid.length !== rows) {
-                        throw new LitsError("All matrices must have the same number of rows, but got ".concat(rows, " and ").concat(grid.length), sourceCodeInfo);
+                        throw new LitsError("All grids must have the same number of rows, but got ".concat(rows, " and ").concat(grid.length), sourceCodeInfo);
                     }
                     return true;
                 });
@@ -15420,10 +15486,10 @@ var Playground = (function (exports) {
                 grids.slice(1).forEach(function (grid) {
                     assertGrid(grid, sourceCodeInfo);
                     if (grid.length !== rows) {
-                        throw new LitsError("All matrices must have the same number of rows, but got ".concat(rows, " and ").concat(grid.length), sourceCodeInfo);
+                        throw new LitsError("All grids must have the same number of rows, but got ".concat(rows, " and ").concat(grid.length), sourceCodeInfo);
                     }
                     if (grid[0].length !== cols) {
-                        throw new LitsError("All matrices must have the same number of columns, but got ".concat(cols, " and ").concat(grid[0].length), sourceCodeInfo);
+                        throw new LitsError("All grids must have the same number of columns, but got ".concat(cols, " and ").concat(grid[0].length), sourceCodeInfo);
                     }
                 });
                 var result = [];

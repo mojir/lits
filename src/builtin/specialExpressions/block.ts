@@ -8,18 +8,18 @@ export type DoNode = SpecialExpressionNode<[typeof specialExpressionTypes['block
 
 const docs: CustomDocs = {
   category: 'Special expression',
-  customVariants: ['{ body }'],
+  customVariants: ['do body end'],
   details: [
     ['body', 'expressions', 'The expressions to evaluate.'],
   ],
   description: 'Evaluates `body`. Resulting value is the value of the last expression.',
   examples: [
     `
-{
+do
   let a = 1 + 2 + 3 + 4;
   let b = -> $ * ( $ + 1 );
   b(a)
-}`,
+end`,
   ],
 }
 

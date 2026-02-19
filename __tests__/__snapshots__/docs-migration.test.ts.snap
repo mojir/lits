@@ -1466,7 +1466,7 @@ exports[`reference output stability > allReference snapshot is stable 1`] = `
       "[[3, 2, 1, 0], [6, 5, 4], [9, 8, 7]] mapcat reverse",
       "mapcat([[3, 2, 1, 0], [6, 5, 4], [9, 8, 7]], reverse)",
       "[[3, 2, 1, 0,], [6, 5, 4,], [9, 8, 7]] mapcat reverse",
-      "\\nlet foo = (n) -> {\\n  [n - 1, n, n + 1]\\n};\\n[1, 2, 3] mapcat foo",
+      "\\nlet foo = (n) -> do\\n  [n - 1, n, n + 1]\\nend;\\n[1, 2, 3] mapcat foo",
       "\\nmapcat(\\n  [[1, 2], [2, 2], [2, 3]],\\n  -> $ remove even?\\n)"
     ],
     "_isOperator": true
@@ -4864,7 +4864,7 @@ exports[`reference output stability > allReference snapshot is stable 1`] = `
     ],
     "examples": [
       "doc(+)",
-      "\\nlet add = (x, y) -> {\\n  \\"\\"\\"\\n  Adds two numbers.\\n  Args:\\n    x: First number.\\n    y: Second number.\\n  Returns:\\n    Sum of x and y.\\n  \\"\\"\\"\\n  x + y;\\n};\\n\\ndoc(add)"
+      "\\nlet add = (x, y) -> do\\n  \\"\\"\\"\\n  Adds two numbers.\\n  Args:\\n    x: First number.\\n    y: Second number.\\n  Returns:\\n    Sum of x and y.\\n  \\"\\"\\"\\n  x + y;\\nend;\\n\\ndoc(add)"
     ]
   },
   "arity": {
@@ -4889,8 +4889,8 @@ exports[`reference output stability > allReference snapshot is stable 1`] = `
     "examples": [
       "arity(+)",
       "arity(defined?)",
-      "\\nlet add = (x, y = 0) -> {\\n  x + y;\\n};\\n\\narity(add)",
-      "\\nlet foo = (k, ...x) -> {\\n  k + x;\\n};\\n  arity(foo)"
+      "\\nlet add = (x, y = 0) -> do\\n  x + y;\\nend;\\n\\narity(add)",
+      "\\nlet foo = (k, ...x) -> do\\n  k + x;\\nend;\\n  arity(foo)"
     ]
   },
   "==": {
@@ -7310,6 +7310,56 @@ exports[`reference output stability > allReference snapshot is stable 1`] = `
       "blank?(\\".\\")"
     ]
   },
+  "??": {
+    "title": "??",
+    "category": "Special expression",
+    "description": "Nullish coalescing operator. Returns the first non-\`null\` value.\\n\\nEvaluation is short-circuited — as soon as a non-\`null\` value is found, the remaining expressions are not evaluated.\\n\\nIf all values are \`null\`, returns \`null\`.\\n\\nAlso works with undefined symbols — if a symbol is undefined, it is treated as \`null\`.",
+    "returns": {
+      "type": "any"
+    },
+    "args": {
+      "a": {
+        "type": "any"
+      },
+      "b": {
+        "type": "any"
+      },
+      "c": {
+        "type": "any",
+        "rest": true
+      }
+    },
+    "variants": [
+      {
+        "argumentNames": [
+          "a"
+        ]
+      },
+      {
+        "argumentNames": [
+          "a",
+          "b"
+        ]
+      },
+      {
+        "argumentNames": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
+    ],
+    "examples": [
+      "1 ?? 2",
+      "null ?? 2",
+      "??(null)",
+      "??(null, \\"default\\")",
+      "??(1, \\"default\\")",
+      "false ?? \\"default\\"",
+      "??(null, null, 3)"
+    ],
+    "_isOperator": true
+  },
   "&&": {
     "title": "&&",
     "category": "Special expression",
@@ -7461,12 +7511,37 @@ exports[`reference output stability > allReference snapshot is stable 1`] = `
       "\\ncond\\n  case false then write!(\\"FALSE\\")\\n  case null then write!(\\"null\\")\\nend ?? write!(\\"TRUE\\")"
     ]
   },
+  "defined?": {
+    "title": "defined?",
+    "category": "Special expression",
+    "description": "Returns \`true\` if \`symbol\` is defined, \`false\` otherwise.\\n\\nBuilt-in symbols are always considered defined. For user-defined symbols, checks if the symbol exists in the current scope.",
+    "returns": {
+      "type": "boolean"
+    },
+    "args": {
+      "symbol": {
+        "type": "any"
+      }
+    },
+    "variants": [
+      {
+        "argumentNames": [
+          "symbol"
+        ]
+      }
+    ],
+    "examples": [
+      "let x = 42; defined?(x)",
+      "defined?(x)",
+      "defined?(+)"
+    ]
+  },
   "block": {
     "title": "block",
     "category": "Special expression",
     "description": "Evaluates \`body\`. Resulting value is the value of the last expression.",
     "customVariants": [
-      "{ body }"
+      "do body end"
     ],
     "details": [
       [
@@ -7476,7 +7551,7 @@ exports[`reference output stability > allReference snapshot is stable 1`] = `
       ]
     ],
     "examples": [
-      "\\n{\\n  let a = 1 + 2 + 3 + 4;\\n  let b = -> $ * ( $ + 1 );\\n  b(a)\\n}"
+      "\\ndo\\n  let a = 1 + 2 + 3 + 4;\\n  let b = -> $ * ( $ + 1 );\\n  b(a)\\nend"
     ]
   },
   "doseq": {
@@ -7638,6 +7713,30 @@ exports[`reference output stability > allReference snapshot is stable 1`] = `
       "\\nlet a = 1 + 2 + 3 + 4;\\nlet b = -> $ * ( $ + 1 );\\nwrite!(\\"a\\", a, \\"b\\", b)"
     ]
   },
+  "loop": {
+    "title": "loop",
+    "category": "Special expression",
+    "description": "Creates a loop with initial bindings. Use \`recur\` inside the body to jump back to the loop head with new binding values.\\n\\nIf \`recur\` is not called, the loop terminates and returns the value of the body expression.",
+    "customVariants": [
+      "loop (bindings) -> body"
+    ],
+    "details": [
+      [
+        "bindings",
+        "binding pairs",
+        "Comma-separated bindings with initial values, e.g. \`n = 10, sum = 0\`."
+      ],
+      [
+        "body",
+        "expression",
+        "The expression to evaluate repeatedly. Use \`recur\` to loop back with new values."
+      ]
+    ],
+    "examples": [
+      "loop (n = 10, sum = 0) -> do\\n  if n == 0 then\\n    sum\\n  else\\n    recur(n - 1, sum + n)\\n  end\\nend",
+      "loop (n = 5, acc = 1) -> do\\n  if n <= 1 then\\n    acc\\n  else\\n    recur(n - 1, acc * n)\\n  end\\nend"
+    ]
+  },
   "object": {
     "title": "object",
     "category": "Special expression",
@@ -7677,9 +7776,9 @@ exports[`reference output stability > allReference snapshot is stable 1`] = `
       "recur(...recur-args)"
     ],
     "examples": [
-      "\\nlet foo = (n) -> {\\n  write!(n);\\n  if !(zero?(n)) then\\n    recur(n - 1)\\n  end\\n};\\nfoo(3)",
-      "\\n(n -> {\\n  write!(n);\\n  if !(zero?(n)) then\\n    recur(n - 1)\\n  end\\n})(3)",
-      "\\nloop (n = 3) -> {\\n  write!(n);\\n  if !(zero?(n)) then\\n    recur(n - 1)\\n  end\\n}"
+      "\\nlet foo = (n) -> do\\n  write!(n);\\n  if !(zero?(n)) then\\n    recur(n - 1)\\n  end\\nend;\\nfoo(3)",
+      "\\n(n -> do\\n  write!(n);\\n  if !(zero?(n)) then\\n    recur(n - 1)\\n  end\\nend)(3)",
+      "\\nloop (n = 3) -> do\\n  write!(n);\\n  if !(zero?(n)) then\\n    recur(n - 1)\\n  end\\nend"
     ]
   },
   "switch": {

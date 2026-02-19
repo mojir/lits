@@ -8,11 +8,11 @@ describe('lits Lexical Scoping', () => {
   describe('basic lexical scoping', () => {
     test('function accesses variable from parent scope', () => {
       expect(lits.run(`
-        let bar = {
+        let bar = do
           let x = 10;
-          let foo = (a) -> { a * x };
+          let foo = (a) -> do a * x end;
           foo;
-        };
+        end;
         
         bar(1)
       `)).toBe(10)
@@ -22,10 +22,10 @@ describe('lits Lexical Scoping', () => {
       expect(lits.run(`
         let outer = 5;
         
-        let makeMultiplier = () -> {
-          let multiply = (n) -> { n * outer };
+        let makeMultiplier = () -> do
+          let multiply = (n) -> do n * outer end;
           multiply;
-        };
+        end;
         
         let multiplier = makeMultiplier();
         multiplier(10)
@@ -37,13 +37,13 @@ describe('lits Lexical Scoping', () => {
   describe('variable visibility and shadowing', () => {
     test('inner scope variables don\'t leak to outer scope', () => {
       expect(lits.run(`
-        let result = {
+        let result = do
           let outer = 10;
-          {
+          do
             let inner = 20;
             outer;  // Should return outer value, not inner
-          };
-        };
+          end;
+        end;
         result
       `)).toBe(10)
     })
@@ -51,10 +51,10 @@ describe('lits Lexical Scoping', () => {
     test('variable shadowing works correctly', () => {
       expect(lits.run(`
         let x = 5;
-        let result = {
+        let result = do
           let x = 10;
           x;  // Should return the shadowed value
-        };
+        end;
         result
       `)).toBe(10)
     })
@@ -62,10 +62,10 @@ describe('lits Lexical Scoping', () => {
     test('original variable remains unchanged after shadowing', () => {
       expect(lits.run(`
         let x = 5;
-        {
+        do
           let x = 10;
           // Shadow x in inner scope
-        };
+        end;
         x  // Should still be 5
       `)).toBe(5)
     })
@@ -75,14 +75,14 @@ describe('lits Lexical Scoping', () => {
   describe('closure behavior', () => {
     test('closures capture the lexical environment', () => {
       expect(lits.run(`
-        let makeCounter = () -> {
+        let makeCounter = () -> do
           let counter = 0;
-          let increment = () -> {
+          let increment = () -> do
             let counter = counter + 1;
             counter;
-          };
+          end;
           increment;
-        };
+        end;
         
         let counter = makeCounter();
         counter()  // Should be 1
@@ -91,14 +91,14 @@ describe('lits Lexical Scoping', () => {
 
     test('multiple closure instances maintain separate state', () => {
       expect(lits.run(`
-        let makeCounter = () -> {
+        let makeCounter = () -> do
           let counter = 0;
-          let increment = () -> {
+          let increment = () -> do
             let counter = counter + 1;
             counter;
-          };
+          end;
           increment;
-        };
+        end;
         
         let counter1 = makeCounter();
         let counter2 = makeCounter();
@@ -117,10 +117,10 @@ describe('lits Lexical Scoping', () => {
         let x = 10;
         let addX = y -> x + y;
         
-        let result = {
+        let result = do
           let x = 20;  // Shadow x
           addX(5);      // Should use x=10 from closure, not x=20
-        };
+        end;
         
         result
       `)).toBe(15)
@@ -131,10 +131,10 @@ describe('lits Lexical Scoping', () => {
         let x = 1;
         let y = 2;
         
-        let nestedFunc = {
+        let nestedFunc = do
           let z = 3;
           x -> y -> z -> x + y + z;
-        };
+        end;
         
         nestedFunc(10)(20)(30)
       `)).toBe(60)
@@ -154,13 +154,13 @@ describe('lits Lexical Scoping', () => {
   describe('recursive functions', () => {
     test('recursive functions work with lexical scope', () => {
       expect(lits.run(`
-        let factorial = (n) -> {
+        let factorial = (n) -> do
           if n <= 1 then
             1
           else
             n * self(n - 1)
           end
-        };
+        end;
         
         factorial(5)
       `)).toBe(120)
@@ -173,9 +173,9 @@ describe('lits Lexical Scoping', () => {
       expect(lits.run(`
         let x = 10;
         
-        let test = (x) -> {
+        let test = (x) -> do
           x;  // Should use parameter x, not outer x
-        };
+        end;
         
         test(20)
       `)).toBe(20)
@@ -183,14 +183,14 @@ describe('lits Lexical Scoping', () => {
 
     test('modified variables in upper scope are visible in inner scope', () => {
       expect(lits.run(`
-        let result = {
+        let result = do
           let x = 1;
-          let inner = {
+          let inner = do
             let x = x + 1;  // Should see x=1 and create a new x=2
             x;
-          };
+          end;
           inner;
-        };
+        end;
         
         result
       `)).toBe(2)
@@ -216,9 +216,9 @@ describe('lits Lexical Scoping', () => {
       expect(lits.run(`
         let x = "outer";
         
-        let result = for (x in ["inner1", "inner2"]) -> {
+        let result = for (x in ["inner1", "inner2"]) -> do
           x;  // Should use loop variable x, not outer x
-        };
+        end;
         
         first(result)
       `)).toBe('inner1')

@@ -240,45 +240,45 @@ describe('lits Destructuring', () => {
   describe('destructuring in function parameters', () => {
     test('basic parameter destructuring', () => {
       expect(lits.run(`
-        let greet = ({ name }) -> {
+        let greet = ({ name }) -> do
           "Hello, " ++ name;
-        };
+        end;
         greet({ name: "Pat" });
       `)).toBe('Hello, Pat')
     })
 
     test('parameter with default', () => {
       expect(lits.run(`
-        let greet = ({ name = "friend" }) -> {
+        let greet = ({ name = "friend" }) -> do
           "Hello, " ++ name;
-        };
+        end;
         greet({});
       `)).toBe('Hello, friend')
     })
 
     test('parameter with rename', () => {
       expect(lits.run(`
-        let foo = ({ a as b = 10 }) -> {
+        let foo = ({ a as b = 10 }) -> do
           b;
-        };
+        end;
         foo({ b: 1 });
       `)).toBe(10)
     })
 
     test('nested parameter destructuring', () => {
       expect(lits.run(`
-        let processUser = ({ profile: { name, age }}) -> {
+        let processUser = ({ profile: { name, age }}) -> do
           name ++ " is " ++ str(age);
-        };
+        end;
         processUser({ profile: { name: "Quinn", age: 29 }});
       `)).toBe('Quinn is 29')
     })
 
     test('array parameter destructuring', () => {
       expect(lits.run(`
-        let processCoords = ([x, y]) -> {
+        let processCoords = ([x, y]) -> do
           x + y;
-        };
+        end;
         processCoords([3, 4]);
       `)).toBe(7)
     })
@@ -300,10 +300,10 @@ describe('lits Destructuring', () => {
     test('destructuring shadowing', () => {
       expect(lits.run(`
         let name = "outer";
-        let result = {
+        let result = do
           let { name } = { name: "inner" };
           name;
-        };
+        end;
         [name, result]
       `)).toEqual(['outer', 'inner'])
     })

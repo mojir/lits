@@ -4,6 +4,7 @@ const nonNumberReservedSymbolRecord = {
   true: true,
   false: false,
   null: null,
+  do: null,
   else: null,
   case: null,
   each: null,

@@ -135,9 +135,9 @@ describe('parser', () => {
     expect(() => litsDebug.run('let \'a\\ab\' = 1;')).not.toThrow()
     expect(() => litsDebug.run('`')).toThrow(LitsError)
     expect(() => litsDebug.run('export fun a(b) 1, end')).toThrow(LitsError)
-    expect(() => litsDebug.run('export let a = (b) -> { 1, };')).toThrow(LitsError)
-    expect(() => litsDebug.run('export let a = (b) -> { 1; 2 };')).not.toThrow()
-    expect(() => litsDebug.run('let a = (b) -> { 1, };')).toThrow(LitsError)
+    expect(() => litsDebug.run('export let a = (b) -> do 1, end;')).toThrow(LitsError)
+    expect(() => litsDebug.run('export let a = (b) -> do 1; 2 end;')).not.toThrow()
+    expect(() => litsDebug.run('let a = (b) -> do 1, end;')).toThrow(LitsError)
     expect(() => litsDebug.run('switch 1 case 1 then 1; 2 end')).not.toThrow()
     expect(() => litsDebug.run('switch 1 case 1 then 1, end end')).toThrow(LitsError)
     expect(() => litsDebug.run('cond case 1 then 1; 2 end')).not.toThrow()
@@ -150,20 +150,20 @@ describe('parser', () => {
     expect(() => litsDebug.run('for (a in [1, 2] while a == 2 while a == 1) -> 1')).toThrow(LitsError)
     expect(() => litsDebug.run('for (a in [1, 2] let a = 2, 2) -> 1')).toThrow(LitsError)
     expect(() => litsDebug.run('for (a in [1, 2] let a = 2 let a = 2) -> 1')).toThrow(LitsError)
-    expect(() => litsDebug.run('for (a in [1, 2]) -> { 1; 2 }')).not.toThrow()
+    expect(() => litsDebug.run('for (a in [1, 2]) -> do 1; 2 end')).not.toThrow()
     expect(() => litsDebug.run('for (a in [1, 2] when a == 1,) -> null')).not.toThrow(LitsError)
     expect(() => litsDebug.run('for (a in [1, 2] when a == 1,) -> }')).toThrow(LitsError)
-    expect(() => litsDebug.run('for (a in [1, 2]) -> { 1, }')).toThrow(LitsError)
-    expect(() => litsDebug.run('for (a in [1, 2] 2) -> { 1 }')).toThrow(LitsError)
-    expect(() => litsDebug.run('for (a in [1, 2], 2) -> { 1 }')).toThrow(LitsError)
+    expect(() => litsDebug.run('for (a in [1, 2]) -> do 1, end')).toThrow(LitsError)
+    expect(() => litsDebug.run('for (a in [1, 2] 2) -> do 1 end')).toThrow(LitsError)
+    expect(() => litsDebug.run('for (a in [1, 2], 2) -> do 1 end')).toThrow(LitsError)
     expect(() => litsDebug.run('try 1; 2 catch 2; 3 end')).not.toThrow()
     expect(() => litsDebug.run('try 1; 2 catch 2, end')).toThrow(LitsError)
-    expect(() => lits.getUndefinedSymbols('loop ([,x] = [1, 2]) -> { 1 }')).not.toThrow()
-    expect(() => litsDebug.run('loop ([,x] = [1, 2]) -> { 1 }')).not.toThrow()
-    expect(() => litsDebug.run('loop (x = 2) -> { 1, }')).toThrow(LitsError)
-    expect(() => litsDebug.run('loop) -> { 1 }')).toThrow(LitsError)
-    expect(() => litsDebug.run('{ 1, }')).toThrow(LitsError)
-    expect(() => litsDebug.run('{ 1 }')).not.toThrow()
+    expect(() => lits.getUndefinedSymbols('loop ([,x] = [1, 2]) -> do 1 end')).not.toThrow()
+    expect(() => litsDebug.run('loop ([,x] = [1, 2]) -> do 1 end')).not.toThrow()
+    expect(() => litsDebug.run('loop (x = 2) -> do 1, end')).toThrow(LitsError)
+    expect(() => litsDebug.run('loop) -> do 1 end')).toThrow(LitsError)
+    expect(() => litsDebug.run('do 1, end')).toThrow(LitsError)
+    expect(() => litsDebug.run('do 1 end')).not.toThrow()
     expect(() => litsDebug.run('null ?? 1')).not.toThrow()
     expect(() => litsDebug.run('-> $ + $1')).toThrow(LitsError)
     expect(() => litsDebug.run('-> $ + $21')).toThrow(LitsError)
@@ -173,8 +173,8 @@ describe('parser', () => {
     expect(() => litsDebug.run('(...a, let a = 1,,) -> a')).toThrow(LitsError)
     expect(litsDebug.run('{ a: 1 }.a')).toBe(1)
     expect(() => litsDebug.run('fn()')).toThrow(LitsError)
-    expect(() => litsDebug.run('{ a = 1; b = 2 }')).toThrow(LitsError)
-    expect(() => litsDebug.run('{ a = 1 }.1')).toThrow(LitsError)
+    expect(() => litsDebug.run('do a = 1; b = 2 end')).toThrow(LitsError)
+    expect(() => litsDebug.run('do a = 1 end.1')).toThrow(LitsError)
     expect(() => lits.run('do export let a = 1; end')).toThrow(LitsError)
   })
 
@@ -733,9 +733,9 @@ describe('parser', () => {
     test('samples', () => {
       expect(lits.run('export let a = 10; a')).toBe(10)
       expect(lits.run(`
-        export let foo = () -> {
+        export let foo = () -> do
           11
-        };
+        end;
         foo()`)).toBe(11)
     })
     expect(() => lits.run('export let a = 10; let a = 2;')).toThrow(LitsError)
@@ -753,17 +753,17 @@ describe('parser', () => {
   describe('block', () => {
     test('as operand', () => {
       expect(lits.run(`
-        {
+        do
           let a = 1 + 2 * 3;
           a
-        } + 3`)).toBe(10)
+        end + 3`)).toBe(10)
     })
     test('scope', () => {
       expect(lits.run(`
       let a = 1;
-      {
+      do
         let a = 2;
-      };
+      end;
       a`)).toBe(1)
 
       expect(() => lits.run(`
@@ -851,9 +851,9 @@ describe('parser', () => {
   describe('function', () => {
     test('basic', () => {
       expect(lits.run(`
-let foo = () -> {
+let foo = () -> do
   42
-};
+end;
 
 foo()`)).toBe(42)
     })
@@ -866,36 +866,36 @@ foo()`)).toEqual({})
     })
     test('with rest arguments///', () => {
       expect(lits.run(`
-let foo = (...x) -> {
+let foo = (...x) -> do
   '+' apply (x filter -> $ > 0)
-};
+end;
 
 foo(-1, 0, 1, 2, 3)`)).toBe(6)
     })
 
     test('with default arguments', () => {
       expect(lits.run(`
-let foo = (a = 10, b = 20) -> {
+let foo = (a = 10, b = 20) -> do
   a + b
-};
+end;
 
 foo()`)).toBe(30)
     })
 
     test('with default arguments 1', () => {
       expect(lits.run(`
-let foo = (a = 10, b = 20) -> {
+let foo = (a = 10, b = 20) -> do
   a + b
-};
+end;
 
 foo(0)`)).toBe(20)
     })
 
     test('with default arguments 2', () => {
       expect(lits.run(`
-let foo = (a = 10, b = 20) -> {
+let foo = (a = 10, b = 20) -> do
   a + b
-};
+end;
 
 foo(1, 2)`)).toBe(3)
     })
@@ -947,43 +947,43 @@ foo(1, 2)`)).toBe(3)
 
   test('simple doseq.', () => {
     expect(lits.run(`
-      doseq (x in "Al", y in [1, 2]) -> {
+      doseq (x in "Al", y in [1, 2]) -> do
         x repeat y
-      }`)).toBe(null)
+      end`)).toBe(null)
   })
 
   describe('for', () => {
     test('empty collections', () => {
       expect(() => lits.run(`
-        for (x in [] 1) -> {
+        for (x in [] 1) -> do
           x
-        }`)).toThrow(LitsError)
+        end`)).toThrow(LitsError)
       expect(() => lits.run(`
-          for (x in [1, 2, 3] while x < 1 1) -> {
+          for (x in [1, 2, 3] while x < 1 1) -> do
             x
-          }`)).toThrow(LitsError)
+          end`)).toThrow(LitsError)
       expect(lits.run(`
-        for (x in []) -> {
+        for (x in []) -> do
           x
-        }`)).toEqual([])
+        end`)).toEqual([])
       expect(lits.run(`
-        for (x in [1, 2, 3], y in []) -> {
+        for (x in [1, 2, 3], y in []) -> do
           x
-        }`)).toEqual([])
+        end`)).toEqual([])
       expect(lits.run(`
-        for (x in [], y in [1, 2, 3]) -> {
+        for (x in [], y in [1, 2, 3]) -> do
           x
-        }`)).toEqual([])
+        end`)).toEqual([])
     })
     test('string and object iteration', () => {
       expect(lits.run(`
-        for (x in "Al", y in [1, 2]) -> {
+        for (x in "Al", y in [1, 2]) -> do
           x repeat y
-        }`)).toEqual([['A'], ['A', 'A'], ['l'], ['l', 'l']])
+        end`)).toEqual([['A'], ['A', 'A'], ['l'], ['l', 'l']])
       expect(lits.run(`
-        for (x in { a: 10, b: 20 }, y in [1, 2]) -> {
+        for (x in { a: 10, b: 20 }, y in [1, 2]) -> do
            repeat(x, y)
-        }`)).toEqual([
+        end`)).toEqual([
         [['a', 10]],
         [
           ['a', 10],
@@ -998,39 +998,39 @@ foo(1, 2)`)).toBe(3)
     })
     test('basic iteration with computation', () => {
       expect(lits.run(`
-        for (x in [1, 2], y in [1, 10]) -> {
+        for (x in [1, 2], y in [1, 10]) -> do
           x * y
-        }`)).toEqual([1, 10, 2, 20])
+        end`)).toEqual([1, 10, 2, 20])
     })
     test('with computed bindings using let', () => {
       expect(lits.run(`
-        for (x in [1, 2] let z = x * x * x) -> {
+        for (x in [1, 2] let z = x * x * x) -> do
           z
-        }`)).toEqual([1, 8])
+        end`)).toEqual([1, 8])
     })
     test('using previous bindings of subsequent iterations', () => {
       expect(lits.run(`
-        for (x in [1, 2], y in [x, 2 * x]) -> {
+        for (x in [1, 2], y in [x, 2 * x]) -> do
           x * y
-        }`)).toEqual([1, 2, 4, 8])
+        end`)).toEqual([1, 2, 4, 8])
     })
     test('with when conditions', () => {
       expect(lits.run(`
-        for (x in [0, 1, 2, 3, 4, 5] let a = x * 3 let y = a when even?(y) while y < 10) -> {
+        for (x in [0, 1, 2, 3, 4, 5] let a = x * 3 let y = a when even?(y) while y < 10) -> do
           y
-        }`)).toEqual([0, 6])
+        end`)).toEqual([0, 6])
     })
     test('with while conditions (early termination)', () => {
       expect(lits.run(`
-        for (x in [0, 1, 2, 3, 4, 5] let y = x * 3 while even?(y)) -> {
+        for (x in [0, 1, 2, 3, 4, 5] let y = x * 3 while even?(y)) -> do
           y
-        }`)).toEqual([0])
+        end`)).toEqual([0])
     })
     test('multiple iterations with while', () => {
       expect(lits.run(`
-        for (x in [1, 2, 3], y in [1, 2, 3] while x <= y, z in [1, 2, 3]) -> {
+        for (x in [1, 2, 3], y in [1, 2, 3] while x <= y, z in [1, 2, 3]) -> do
           [x, y, z]
-        }`)).toEqual([
+        end`)).toEqual([
         [1, 1, 1],
         [1, 1, 2],
         [1, 1, 3],
@@ -1062,9 +1062,9 @@ foo(1, 2)`)).toBe(3)
       }
       test('samples.', () => {
         expect(lits.run(`
-          let foo = ({ a as b = 10 }) -> {
+          let foo = ({ a as b = 10 }) -> do
             b
-          };
+          end;
 
           foo({ b: 1})
         `)).toBe(10)
@@ -1084,49 +1084,49 @@ foo(1, 2)`)).toBe(3)
         `, { values })).toEqual([7, 'Bob'])
 
         expect(lits.run(`
-          let foo = ([a, b] = [1, 2]) -> {
+          let foo = ([a, b] = [1, 2]) -> do
             a + b
-          };
+          end;
 
         foo()
         `, { values })).toEqual(3)
 
         expect(lits.run(`
-          let foo = ([{ value as a }, { value as b }] = [{ value: 1 }, { value: 2 }]) -> {
+          let foo = ([{ value as a }, { value as b }] = [{ value: 1 }, { value: 2 }]) -> do
             a + b
-          };
+          end;
 
           foo()
           `, { values })).toEqual(3)
 
         expect(lits.run(`
-          let foo = ([{ value as a } = { value: 10 }, { value as b } = { value: 20 }] = [{ value: 1 }, { value: 2 }]) -> {
+          let foo = ([{ value as a } = { value: 10 }, { value as b } = { value: 20 }] = [{ value: 1 }, { value: 2 }]) -> do
             a + b
-          };
+          end;
 
             foo([])
             `, { values })).toEqual(30)
 
         expect(lits.run(`
-          let foo = ({ value = 10 }) -> {
+          let foo = ({ value = 10 }) -> do
             value
-          };
+          end;
 
           foo({})
           `, { values })).toEqual(10)
 
         expect(lits.run(`
-          let foo = ([{ value as a } = { value: 10 }, { value as b = 200 } = { value: 20 }] = [{ value: 1 }, { value: 2 }]) -> {
+          let foo = ([{ value as a } = { value: 10 }, { value as b = 200 } = { value: 20 }] = [{ value: 1 }, { value: 2 }]) -> do
             a + b
-          };
+          end;
 
             foo([{ value: 1 }])
             `, { values })).toEqual(21)
 
         expect(lits.run(`
-          let foo = ([{ value as a } = { value: 10 }, { value as b = 200 } = { value: 20 }] = [{ value: 1 }, { value: 2 }]) -> {
+          let foo = ([{ value as a } = { value: 10 }, { value as b = 200 } = { value: 20 }] = [{ value: 1 }, { value: 2 }]) -> do
             a + b
-          };
+          end;
 
             foo([{ value: 1 }, { value: 200 }])
             `, { values })).toEqual(201)
@@ -1138,9 +1138,9 @@ foo(1, 2)`)).toBe(3)
           x in [1, 2, 3],
           y in [1, 2, 3],
           z in [1, 2, 3] while x <= y
-        ) -> {
+        ) -> do
           [x, y, z]
-        }`)).toEqual([
+        end`)).toEqual([
         [1, 1, 1],
         [1, 1, 2],
         [1, 1, 3],
@@ -1201,7 +1201,7 @@ foo(1, 2)`)).toBe(3)
           let matchesPreferences = contains?(customerPreferences.preferredCategories, complItem.category)
           when (isValid && finalPrice <= customerPreferences.priceLimit && matchesPreferences)
           while discountedPrice <= customerPreferences.priceLimit
-        ) -> {
+        ) -> do
           // Return bundle information object
           {
             bundle: [mainProduct, accessory, complItem],
@@ -1210,7 +1210,7 @@ foo(1, 2)`)).toBe(3)
             savingsAmount: discount * finalPrice,
             savingsPercentage: discount * 100
           }
-        }`)).toEqual([
+        end`)).toEqual([
         {
           bundle: [
             {
@@ -1364,7 +1364,7 @@ foo(1, 2)`)).toBe(3)
     // Testing the provided lambda function example
       expect(lits.run('(-> 1)()')).toBe(1)
       expect(lits.run('(-> $)(1)')).toBe(1)
-      expect(lits.run('(-> { $1 + $2 })(3, 4)')).toBe(7)
+      expect(lits.run('(-> do $1 + $2 end)(3, 4)')).toBe(7)
     })
 
     it('supports lambda functions with no parameters', () => {

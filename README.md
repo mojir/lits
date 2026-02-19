@@ -90,10 +90,10 @@ let add = (a, b) -> a + b;
 let x = let y = 5;  // x becomes 5
 
 // Blocks are expressions - they return the last expression's value
-let value = {
+let value = do
   let temp = 42;
   temp * 2 + 1 // => 85
-};
+end;
 ```
 This expression-based design makes Lits highly composable and eliminates the statement/expression distinction found in many other languages.
 
@@ -383,10 +383,10 @@ let x = 10;
 // let x = 20; // Error: x is already defined
 
 // Shadowing in inner scopes
-let y = {
+let y = do
   let x = 20;
   x
-};
+end;
 // => 20, outer x is still 10
 ```
 
@@ -684,23 +684,23 @@ doseq (x in [1, 2, 3]) -> write!(x)
 
 ```lits
 // Loop with recur for tail recursion
-loop (n = 5, acc = 1) -> {
+loop (n = 5, acc = 1) -> do
   if zero?(n) then
     acc
   else
     recur(n - 1, acc * n)
   end
-};
+end;
 // => 120 (factorial of 5)
 
 // Complex loop with multiple variables
-loop (items = [1, 2, 3, 4, 5], sum = 0, cnt = 0) -> {
+loop (items = [1, 2, 3, 4, 5], sum = 0, cnt = 0) -> do
   if empty?(items) then
     { sum: sum, average: sum / cnt }
   else
     recur(rest(items), sum + first(items), cnt + 1)
   end
-};
+end;
 ```
 
 ### Recursion with Recur
@@ -709,22 +709,22 @@ loop (items = [1, 2, 3, 4, 5], sum = 0, cnt = 0) -> {
 
 ```lits
 // Simple recursive function with recur
-let factorial = (n) -> {
+let factorial = (n) -> do
   if n <= 1 then
     1
   else
     n * recur(n - 1)
   end
-};
+end;
 
 // Tail-recursive function
-let sumToN = (n, acc = 0) -> {
+let sumToN = (n, acc = 0) -> do
   if zero?(n) then
     acc
   else
     recur(n - 1, acc + n)
   end
-};
+end;
 ```
 
 ### Error Handling
@@ -793,24 +793,24 @@ let computeX = () -> 5;
 let computeY = () -> 10;
 let processResult = (z) -> z * 2;
 
-let result = {
+let result = do
   let x = computeX();
   let y = computeY();
   let z = x * y;
   processResult(z)
-};
+end;
 
 // Block with side effects
 let loadData = () -> [1, 2, 3];
 let processData = (data) -> data map -> $ * 2;
 
-{
+do
   write!("Starting process...");
   let data = loadData();
   let processed = processData(data);
   write!("Process completed");
   processed
-}
+end
 ```
 
 ### Array and Object Construction
@@ -1451,11 +1451,11 @@ let users = [
 let grouped = users |> group-by(_, "department");
 let departmentAges = grouped
   |> entries(_)
-  |> map(_, ([dept, people]) -> {
+  |> map(_, ([dept, people]) -> do
        let ages = people |> map(_, "age");
        let total = ages |> reduce(_, +, 0);
        [dept, total / count(ages)]
-     })
+     end)
   |> (pairs -> zipmap(map(pairs, 0), map(pairs, 1)));
 // => { "Engineering": 32.5, "Marketing": 25 }
 ```

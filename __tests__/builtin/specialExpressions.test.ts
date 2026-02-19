@@ -72,8 +72,8 @@ describe('specialExpressions', () => {
       expect(litsDebug.getUndefinedSymbols('[1, ...[...[x], y]]')).toEqual(new Set(['x', 'y']))
       expect(litsDebug.getUndefinedSymbols('let {a = b} = {};')).toEqual(new Set(['b']))
       expect(litsDebug.getUndefinedSymbols('export let {a = b} = {};')).toEqual(new Set(['b']))
-      expect(litsDebug.getUndefinedSymbols('let foo = ({a = b} = {}) -> { a };')).toEqual(new Set(['b']))
-      expect(litsDebug.getUndefinedSymbols('export let foo = ({a = b} = {}) -> { a };')).toEqual(new Set(['b']))
+      expect(litsDebug.getUndefinedSymbols('let foo = ({a = b} = {}) -> do a end;')).toEqual(new Set(['b']))
+      expect(litsDebug.getUndefinedSymbols('export let foo = ({a = b} = {}) -> do a end;')).toEqual(new Set(['b']))
     })
   })
 
@@ -128,7 +128,7 @@ describe('specialExpressions', () => {
   describe('let', () => {
     it('samples', () => {
       expect(lits.run('let a = 10; a')).toBe(10)
-      expect(lits.run('let a = 10; { let a = 20; }; a')).toBe(10)
+      expect(lits.run('let a = 10; do let a = 20; end; a')).toBe(10)
       expect(() => lits.run('let true = false;')).toThrow(LitsError)
       expect(() => lits.run('let 1 = 10;')).toThrow(LitsError)
       expect(() => lits.run('let x:x = 10;')).not.toThrow(LitsError)
@@ -140,17 +140,17 @@ describe('specialExpressions', () => {
       expect(() => lits.run('let {} = 10;')).toThrow(LitsError)
       expect(() => lits.run('let { a: 10 };')).toThrow(LitsError)
       expect(() => lits.run('let "a" = 10;')).toThrow(LitsError)
-      expect(() => lits.run('{ export let a = 10; }')).toThrow(LitsError)
+      expect(() => lits.run('do export let a = 10; end')).toThrow(LitsError)
     })
 
     it('local variable', () => {
       const program = `
       let x = "A";
       write!(x);       // A
-      {
+      do
         let x = "B";
         write!(x)      // B
-      };
+      end;
         
       write!(x)        // A - global variable x
       `
@@ -406,9 +406,9 @@ end`),
   describe('function', () => {
     test('accessing property on function', () => {
       expect(() => lits.run(`
-        let foo = () -> {
+        let foo = () -> do
           10
-        };
+        end;
 
         foo.bar
         `)).toThrow()
@@ -416,9 +416,9 @@ end`),
 
     test('accessing number on function', () => {
       expect(() => lits.run(`
-        let foo = () -> {
+        let foo = () -> do
           10
-        };
+        end;
 
         foo[1]
         `)).toThrow()
@@ -426,11 +426,11 @@ end`),
 
     test('lexical scoping', () => {
       expect(lits.run(`
-      let bar = {
+      let bar = do
         let x = 10;
-        let foo = (a) -> { a * x };
+        let foo = (a) -> do a * x end;
         foo;
-      };
+      end;
       
       bar(1)
       `)).toBe(10)
@@ -438,81 +438,81 @@ end`),
 
     it('samples', () => {
       expect(lits.run(`
-let add = (a, b) -> {
+let add = (a, b) -> do
   a + b
-};
+end;
 add(1, 2)`)).toBe(3)
-      expect(lits.run('let add = () -> { 10 }; add()')).toBe(10)
-      expect(() => lits.run('let add = (...x = []) -> { x };')).toThrow(LitsError)
-      expect(() => lits.run('let \' = 0_lambda\'() -> { 10 };')).toThrow(LitsError)
+      expect(lits.run('let add = () -> do 10 end; add()')).toBe(10)
+      expect(() => lits.run('let add = (...x = []) -> do x end;')).toThrow(LitsError)
+      expect(() => lits.run('let \' = 0_lambda\'() -> do 10 end;')).toThrow(LitsError)
       expect(() => lits.run('\'0_lambda\'();')).toThrow(LitsError)
     })
 
     test('default argument', () => {
       expect(lits.run(`
-let foo = (a, b = 10) -> {
+let foo = (a, b = 10) -> do
   a + b
-};
+end;
 
 foo(1)`)).toBe(11)
 
       expect(lits.run(`
-  let foo = (a, b = a + 1) -> {
+  let foo = (a, b = a + 1) -> do
     a + b
-  };
+  end;
   
   foo(1)`)).toBe(3)
 
       expect(lits.run(`
-    let foo = (a, b = a + 1) -> {
+    let foo = (a, b = a + 1) -> do
       a + b
-    };
+    end;
     
     foo(1, 1)`)).toBe(2)
 
       expect(lits.run(`
-      let foo = (a, b = a + 1, c = a + b) -> {
+      let foo = (a, b = a + 1, c = a + b) -> do
         a + b + c
-      };
+      end;
       
       foo(1)`)).toBe(6)
     })
 
     it('call function', () => {
       expect(lits.run(`
-let sum-one-to-n = (n) -> {
+let sum-one-to-n = (n) -> do
   if n <= 1 then
     n
   else
     n + sum-one-to-n(n - 1)
   end
-};
+end;
 
 sum-one-to-n(10)`)).toBe(55)
       expect(lits.run(`
-let applyWithVal = (fun, val) -> {
+let applyWithVal = (fun, val) -> do
   fun(val)
-};
+end;
 
 applyWithVal(inc, 10)`)).toBe(11)
     })
     describe('unresolvedIdentifiers', () => {
       it('samples', () => {
         expect((lits.getUndefinedSymbols(`
-let foo = (a) -> {
+let foo = (a) -> do
   if a == 1 then
     1
   else
     a + self(a - 1)
   end
-};`))).toEqual(
+end;`))).toEqual(
           new Set(),
         )
-        expect((lits.getUndefinedSymbols('export let foo = (a, b) -> { str(a, b, c) };'))).toEqual(new Set(['c']))
-        expect((lits.getUndefinedSymbols('let foo = (a, b) -> { str(a, b, c) }; foo(x, y)'))).toEqual(
+        expect((lits.getUndefinedSymbols('export let foo = (a, b) -> do str(a, b, c) end;'))).toEqual(new Set(['c']))
+        expect((lits.getUndefinedSymbols('let foo = (a, b) -> do str(a, b, c) end; foo(x, y)'))).toEqual(
           new Set(['c', 'x', 'y']),
         )
-        expect((lits.getUndefinedSymbols('let add = (a, b, ...the-rest) -> { a + b; [a](10) };'))).toEqual(new Set())
+        expect((lits.getUndefinedSymbols('let add = (a, b, ...the-rest) -> do a + b; [a](10) end;'))).toEqual(new Set())
       })
     })
   })
@@ -529,7 +529,7 @@ let foo = (a) -> {
       expect((lits.getUndefinedSymbols('let foo = (a, b) -> str(a, b, c); foo(1, x)'))).toEqual(
         new Set(['c', 'x']),
       )
-      expect((lits.getUndefinedSymbols('(a, b, ...the-rest) -> { a + b; [a](10) }'))).toEqual(new Set())
+      expect((lits.getUndefinedSymbols('(a, b, ...the-rest) -> do a + b; [a](10) end'))).toEqual(new Set())
     })
   })
 
@@ -575,12 +575,12 @@ let foo = (a) -> {
 
   describe('block', () => {
     it('samples', () => {
-      expect(lits.run('{ [1, 2, 3]; "[1]"; 1 + 2 }')).toBe(3)
+      expect(lits.run('do [1, 2, 3]; "[1]"; 1 + 2 end')).toBe(3)
     })
 
     describe('unresolvedIdentifiers', () => {
       it('samples', () => {
-        expect((lits.getUndefinedSymbols('{ [a, 2, 3]; "[1]"; 1 + b }'))).toEqual(new Set(['a', 'b']))
+        expect((lits.getUndefinedSymbols('do [a, 2, 3]; "[1]"; 1 + b end'))).toEqual(new Set(['a', 'b']))
       })
     })
   })
@@ -588,12 +588,12 @@ let foo = (a) -> {
   describe('recur', () => {
     it('should work with function', () => {
       lits.run(`
-let foo = (n) -> {
+let foo = (n) -> do
   write!(n);
   if !(zero?(n)) then
     recur(n - 1)
   end
-};
+end;
 foo(3)`)
       expect(logSpy).toHaveBeenNthCalledWith(1, 3)
       expect(logSpy).toHaveBeenNthCalledWith(2, 2)
@@ -601,11 +601,11 @@ foo(3)`)
       expect(logSpy).toHaveBeenNthCalledWith(4, 0)
     })
     it('recur must be called with the right number of parameters', () => {
-      expect(() => lits.run('let foo = (n) -> { if !(zero?(n)) then recur() end }; foo(3)')).toThrow(LitsError)
-      expect(() => lits.run('let foo = (n) -> { if !(zero?(n)) then recur(n - 1) end }; foo(3)')).not.toThrow()
+      expect(() => lits.run('let foo = (n) -> do if !(zero?(n)) then recur() end end; foo(3)')).toThrow(LitsError)
+      expect(() => lits.run('let foo = (n) -> do if !(zero?(n)) then recur(n - 1) end end; foo(3)')).not.toThrow()
       // Too many parameters ok
-      expect(() => lits.run('let foo = (n) -> { if !(zero?(n)) then recur(n - 1, 1) end }; foo(3)')).not.toThrow()
-      expect(() => lits.run('((n) -> { if !(zero?(n)) then recur() end };)(3)')).toThrow(LitsError)
+      expect(() => lits.run('let foo = (n) -> do if !(zero?(n)) then recur(n - 1, 1) end end; foo(3)')).not.toThrow()
+      expect(() => lits.run('((n) -> do if !(zero?(n)) then recur() end end;)(3)')).toThrow(LitsError)
       expect(() => lits.run('((n) -> if !(zero?(n)) then recur(n - 1) end)(3)')).not.toThrow()
       expect(() => lits.run('((n) -> if !(zero?(n)) recur(n - 1 1) then(3) end')).toThrow(LitsError)
       expect(() => lits.run('((n) -> if !(zero?(n)) recur(n - 1 1, 2) then(3) end')).toThrow(LitsError)
@@ -625,18 +625,18 @@ foo(3)`)
     describe('loop expressions', () => {
       it('supports loop expressions', () => {
         expect(lits.run(`
-          loop(n = 10, sum = 0) -> {
+          loop(n = 10, sum = 0) -> do
             if n == 0 then
               sum
             else
               recur(n - 1, sum + n)
             end
-          }`)).toBe(55)
+          end`)).toBe(55)
       })
     })
 
     it('should work with recur', () => {
-      lits.run('loop (n = 3) -> { write!(n); if !(zero?(n)) then recur(n - 1) end}')
+      lits.run('loop (n = 3) -> do write!(n); if !(zero?(n)) then recur(n - 1) end end')
       expect(logSpy).toHaveBeenNthCalledWith(1, 3)
       expect(logSpy).toHaveBeenNthCalledWith(2, 2)
       expect(logSpy).toHaveBeenNthCalledWith(3, 1)
@@ -657,12 +657,12 @@ foo(3)`)
     describe('unresolvedIdentifiers', () => {
       it('samples', () => {
         expect(
-          (litsDebug.getUndefinedSymbols('loop (n = 3) -> { write!(n); if !(zero?(n)) then recur(n - 1) end}')),
+          (litsDebug.getUndefinedSymbols('loop (n = 3) -> do write!(n); if !(zero?(n)) then recur(n - 1) end end')),
         ).toEqual(new Set())
         expect(
-          (lits.getUndefinedSymbols('loop (n = 3) -> { write!(x); if !(zero?(n)) then recur(n - 1) end }')),
+          (lits.getUndefinedSymbols('loop (n = 3) -> do write!(x); if !(zero?(n)) then recur(n - 1) end end')),
         ).toEqual(new Set(['x']))
-        expect(lits.getUndefinedSymbols('loop (n = 3 + y) -> { write!(n); if !(zero?(x)) then recur(n - 1) end }'))
+        expect(lits.getUndefinedSymbols('loop (n = 3 + y) -> do write!(n); if !(zero?(x)) then recur(n - 1) end end'))
           .toEqual(new Set(['x', 'y']))
       })
     })
@@ -676,7 +676,7 @@ foo(3)`)
 
       expect(lits.run('for (x in "Al", y in [1, 2]) -> repeat(x, y)'))
         .toEqual([['A'], ['A', 'A'], ['l'], ['l', 'l']])
-      expect(lits.run('for (x in { a: 10, b: 20 }, y in [1, 2] let z = y) -> { repeat(x, z) }')).toEqual([
+      expect(lits.run('for (x in { a: 10, b: 20 }, y in [1, 2] let z = y) -> do repeat(x, z) end')).toEqual([
         [['a', 10]],
         [
           ['a', 10],
@@ -716,7 +716,7 @@ foo(3)`)
       expect(lits.run('doseq (x in [1, 2, 3], y in []) -> x')).toBeNull()
       expect(lits.run('doseq (x in [], y in [1, 2, 3]) -> x')).toBeNull()
 
-      expect(lits.run('doseq (x in "Al", y in [1, 2]) -> { repeat(x, y) }'))
+      expect(lits.run('doseq (x in "Al", y in [1, 2]) -> do repeat(x, y) end'))
         .toBeNull()
       expect(lits.run('doseq (x in { a: 10, b: 20 }, y in [1, 2]) -> repeat(x, y)')).toBeNull()
     })
@@ -765,9 +765,11 @@ foo(3)`)
       expect(lits.run('??(null, 0)')).toBe(0)
       expect(lits.run('??(false)')).toBe(false)
       expect(lits.run('let foo = "foo"; ??(foo)')).toBe('foo')
+      expect(lits.run('??(null, null, 3)')).toBe(3)
+      expect(lits.run('??(foo, bar)')).toBe(null)
+      expect(lits.run('??(foo, bar, 42)')).toBe(42)
 
       expect(() => lits.run('??()')).toThrow(LitsError)
-      expect(() => lits.run('??(foo, bar)')).toThrow(LitsError)
     })
 
     describe('unresolvedIdentifiers', () => {
@@ -780,7 +782,7 @@ foo(3)`)
   describe('passing special expression as arguments', () => {
     test('samples', () => {
       expect(lits.run(`
-let foo = (a, b, c) -> { a(b, c) };
+let foo = (a, b, c) -> do a(b, c) end;
 foo(&&, true, false)`)).toBe(false)
     })
   })

@@ -34,7 +34,7 @@ export function getMetaNormalExpression(normalExpressionReference: Record<string
         examples: [
           'doc(+)',
           `
-let add = (x, y) -> {
+let add = (x, y) -> do
   """
   Adds two numbers.
   Args:
@@ -44,7 +44,7 @@ let add = (x, y) -> {
     Sum of x and y.
   """
   x + y;
-};
+end;
 
 doc(add)`,
         ],
@@ -66,15 +66,15 @@ doc(add)`,
           'arity(+)',
           'arity(defined?)',
           `
-let add = (x, y = 0) -> {
+let add = (x, y = 0) -> do
   x + y;
-};
+end;
 
 arity(add)`,
           `
-let foo = (k, ...x) -> {
+let foo = (k, ...x) -> do
   k + x;
-};
+end;
   arity(foo)`,
         ],
       },

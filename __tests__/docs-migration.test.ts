@@ -91,7 +91,16 @@ describe('every function has docs with a valid category', () => {
   }
 
   describe('special expressions', () => {
-    it('documented special expressions have docs with category "Special expression"', () => {
+    it('all non-internal special expressions have docs', () => {
+      for (const [name, index] of Object.entries(specialExpressionTypes)) {
+        if (name.startsWith('0_'))
+          continue
+        const expr = specialExpressions[index]
+        expect(expr?.docs, `"${name}" is missing docs`).toBeDefined()
+      }
+    })
+
+    it('all special expressions with docs have category "Special expression"', () => {
       for (const [name, index] of Object.entries(specialExpressionTypes)) {
         const expr = specialExpressions[index]
         if (!expr?.docs)
@@ -100,7 +109,7 @@ describe('every function has docs with a valid category', () => {
       }
     })
 
-    it('documented special expressions have description and examples', () => {
+    it('all special expressions with docs have description and examples', () => {
       for (const [name, index] of Object.entries(specialExpressionTypes)) {
         const expr = specialExpressions[index]
         if (!expr?.docs)

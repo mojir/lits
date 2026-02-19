@@ -119,15 +119,15 @@ let initial-state = {
 };
 
 // Helper functions
-let has-item? = (state, item) -> {
+let has-item? = (state, item) -> do
   contains?(state.inventory, item);
-};
+end;
 
-let location-has-item? = (location, item) -> {
+let location-has-item? = (location, item) -> do
   contains?(get(location, "items", []), item);
-};
+end;
 
-let describe-location = (state) -> {
+let describe-location = (state) -> do
   let location = get(locations, state.current-location);
   let description = location.description;
 
@@ -151,15 +151,15 @@ let describe-location = (state) -> {
 
   // Join all descriptions
   filter([description, visited-status, items-desc, exits-desc], -> !(empty?($))) join "\\n"
-};
+end;
 
-let get-location-items = (state) -> {
+let get-location-items = (state) -> do
   let location = get(locations, state.current-location);
   get(location, "items", [])
-};
+end;
 
 // Game actions
-let move = (state, direction) -> {
+let move = (state, direction) -> do
   let location = get(locations, state.current-location);
   let exits = get(location, "exits", {});
 
@@ -192,9 +192,9 @@ let move = (state, direction) -> {
   else
     [state, "You can't go that way."]
   end
-};
+end;
 
-let take! = (state, item) -> {
+let take! = (state, item) -> do
   let items = get-location-items(state);
 
   if contains?(items, item) then
@@ -226,9 +226,9 @@ let take! = (state, item) -> {
   else
     [state, "There is no " ++ item ++ " here."]
   end
-};
+end;
 
-let drop! = (state, item) -> {
+let drop! = (state, item) -> do
   if has-item?(state, item) then
     let location = get(locations, state.current-location);
     let location-items = get(location, "items", []);
@@ -256,17 +256,17 @@ let drop! = (state, item) -> {
   else
     [state, "You don't have a " ++ item ++ " in your inventory."]
   end
-};
+end;
 
-let inventory = (state) -> {
+let inventory = (state) -> do
   if empty?(state.inventory) then
     [state, "Your inventory is empty."]
   else
     [state, "Inventory: " ++ join(state.inventory, ", ")]
   end
-};
+end;
 
-let use = (state, item) -> {
+let use = (state, item) -> do
   switch item
     case "fishing rod" then
       if state.current-location == "river" then
@@ -347,10 +347,10 @@ let use = (state, item) -> {
         [state, "You don't have a crown."]
       end
   end ?? [state, "You can't use that."]
-};
+end;
 
 // Command parser
-let parse-command = (state, input) -> {
+let parse-command = (state, input) -> do
   let tokens = lower-case(input) split " ";
   let command = first(tokens);
   let args = rest(tokens) join " ";
@@ -385,10 +385,10 @@ let parse-command = (state, input) -> {
   end ?? [state, "I don't understand that command. Type 'help' for a list of commands."];
 
   result
-};
+end;
 
 // Game loop
-let game-loop = (state) -> {
+let game-loop = (state) -> do
   alert!(describe-location(state) ++ "\\nWhat do you do? ");
 
   let input = read-line!();
@@ -404,13 +404,13 @@ let game-loop = (state) -> {
   else
     game-loop(new-state)
   end
-};
+end;
 
 // Start game
-let start-game = () -> {
+let start-game = () -> do
   alert!("=== Lits Adventure Game ===\\n" ++ "Type 'help' for a list of commands.\\n\\n");
   game-loop(initial-state)
-};
+end;
 
 // Call the function to start the game
 start-game()    
@@ -422,7 +422,7 @@ start-game()
     description: 'Determinant function for square matrices.',
     code: `
 // Determinant function for square matrices
-let determinant = (matrix) -> {
+let determinant = (matrix) -> do
   // Check if input is an array
   unless array?(matrix) then
     throw("Input must be an array");
@@ -467,26 +467,26 @@ let determinant = (matrix) -> {
       // Use reduce to calculate the determinant without mutating variables
       reduce(
         range(cols),
-        (acc, j) -> {
+        (acc, j) -> do
           let minor = getMinor(matrix, 0, j);
           let cofactor = determinant(minor);
           let signFactor = even?(j) ? 1 : -1;
           let term = signFactor * matrix[0][j] * cofactor;
           
           acc + term;
-        },
+        end,
         0,
       );
     end
   end
-};
+end;
 
 // Helper function to get minor (submatrix) by removing specific row and column
-let getMinor = (matrix, rowToRemove, colToRemove) -> {
+let getMinor = (matrix, rowToRemove, colToRemove) -> do
   // Use map with filter to create the new matrix without mutating
   map(
     range(count(matrix)),
-    i -> {
+    i -> do
       if i == rowToRemove then
         null; // This will be filtered out
       else
@@ -494,18 +494,18 @@ let getMinor = (matrix, rowToRemove, colToRemove) -> {
         // Filter out the column to remove
         map(
           range(count(row)),
-          j -> {
+          j -> do
             if j == colToRemove then
               null; // This will be filtered out
             else
               get(row, j)
             end
-          }
+          end
         ) filter (item -> item ≠ null);
       end
-    }
+    end
   ) filter (row -> row ≠ null);
-};
+end;
   
 // 4x4 invertible matrix
 let matrix4x4 = [
@@ -523,7 +523,7 @@ determinant(matrix4x4);
     description: 'Matrix multiplication with correct syntax.',
     code: `
 // Matrix multiplication with correct syntax
-let matrixMultiply = (matrixA, matrixB) -> {
+let matrixMultiply = (matrixA, matrixB) -> do
   // Check if inputs are arrays
   unless array?(matrixA) then throw("First input must be an array") end;
   unless array?(matrixB) then throw("Second input must be an array") end;
@@ -556,23 +556,23 @@ let matrixMultiply = (matrixA, matrixB) -> {
   end;
 
   // Create a row of the result matrix
-  let createRow = (rowIndex) -> {
-    for (j in range(colsB)) -> {
+  let createRow = (rowIndex) -> do
+    for (j in range(colsB)) -> do
       reduce(
         range(colsA),
-        (sum, k) -> {
+        (sum, k) -> do
           let aValue = matrixA[rowIndex][k];
           let bValue = matrixB[k][j];
           sum + (aValue * bValue);
-        },
+        end,
         0
       )
-    }
-  };
+    end
+  end;
 
   // Create the result matrix row by row
   for (i in range(rowsA)) -> createRow(i);
-};
+end;
 
 let matrixA = [
   [1, 2, 3],
@@ -593,7 +593,7 @@ matrixMultiply(matrixA, matrixB);
     name: 'Phone number formatter',
     description: 'Pretty prints a US phone number.',
     code: `
-let formatPhoneNumber = (data) -> {
+let formatPhoneNumber = (data) -> do
   if string?(data) then
     let phoneNumber = data[0] == "+" ? data slice 2 : data;
     let length = count(phoneNumber);
@@ -609,7 +609,7 @@ let formatPhoneNumber = (data) -> {
   else
     ""
   end
-};
+end;
 
 
 write!(formatPhoneNumber);
@@ -625,13 +625,13 @@ write!(formatPhoneNumber("+11232343456"));
     name: 'Factorial',
     description: 'A recursive implementation of the factorial function.',
     code: `
-let factorial = (x) -> {
+let factorial = (x) -> do
   if x == 1 then
     1
   else
     x * self(x - 1)
   end
-};
+end;
 
 factorial(5)
   `.trim(),
@@ -643,12 +643,12 @@ factorial(5)
     description: 'Sort an array of numbers.',
     code: `
 let l = [7, 39, 45, 0, 23, 1, 50, 100, 12, -5];
-let numberComparer = (a, b) -> {
+let numberComparer = (a, b) -> do
   cond
     case a < b then -1
     case a > b then 1
   end ?? 0
-};
+end;
 
 sort(l, numberComparer)
       `.trim(),
@@ -658,7 +658,7 @@ sort(l, numberComparer)
     name: 'Is ISO date string',
     description: 'Check if string is formatted as an ISO date string.',
     code: `
-let isoDateString? = (data) -> {
+let isoDateString? = (data) -> do
   let m = data match #"^(\\d{4})-(\\d{2})-(\\d{2})$";
 
   if m then
@@ -676,7 +676,7 @@ let isoDateString? = (data) -> {
   else
     false
   end
-};
+end;
 
 write!(isoDateString?("1978-12-21"));
 write!(isoDateString?("197-12-21"));
@@ -688,14 +688,14 @@ write!(isoDateString?("197-12-21"));
     name: 'label-from-value',
     description: 'Find label to corresponding value in array of { label, value }-objects.',
     code: `
-let label-from-value = (items, value) -> {
+let label-from-value = (items, value) -> do
   let entry = items some (-> value == $["value"]);
   if entry == null then
     null
   else
     entry["label"]
   end
-};
+end;
 
 
 let items = [
@@ -712,19 +712,19 @@ label-from-value(items, "name");
     name: 'labels-from-values',
     description: 'Find labels to corresponding values in array of { label, value }-objects.',
     code: `
-let labels-from-values = ($array, $values) -> {
+let labels-from-values = ($array, $values) -> do
   for (
     value in $values
-    let label = {
+    let label = do
       let entry = $array some -> value == $["value"];
       if entry == null then
         value
       else
         entry["label"]
       end
-    }
+    end
   ) -> label
-};
+end;
 
 let arr = [
   { label: "Name", value: "name" },

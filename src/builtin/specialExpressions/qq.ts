@@ -1,29 +1,72 @@
 import type { Any } from '../../interface'
 import type { Node, SpecialExpressionNode } from '../../parser/types'
 import { isUserDefinedSymbolNode } from '../../typeGuards/astNode'
-import { asAny, assertAny } from '../../typeGuards/lits'
-import type { BuiltinSpecialExpression } from '../interface'
+import { asAny } from '../../typeGuards/lits'
+import type { BuiltinSpecialExpression, FunctionDocs } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 
-export type QqNode = SpecialExpressionNode<[typeof specialExpressionTypes['??'], [Node, Node | undefined]]>
+export type QqNode = SpecialExpressionNode<[typeof specialExpressionTypes['??'], Node[]]>
+
+const docs: FunctionDocs = {
+  category: 'Special expression',
+  returns: {
+    type: 'any',
+  },
+  args: {
+    a: { type: 'any' },
+    b: { type: 'any' },
+    c: {
+      type: 'any',
+      rest: true,
+    },
+  },
+  variants: [
+    { argumentNames: ['a'] },
+    { argumentNames: ['a', 'b'] },
+    { argumentNames: ['a', 'b', 'c'] },
+  ],
+  description: `Nullish coalescing operator. Returns the first non-\`null\` value.
+
+Evaluation is short-circuited — as soon as a non-\`null\` value is found, the remaining expressions are not evaluated.
+
+If all values are \`null\`, returns \`null\`.
+
+Also works with undefined symbols — if a symbol is undefined, it is treated as \`null\`.`,
+  examples: [
+    '1 ?? 2',
+    'null ?? 2',
+    '??(null)',
+    '??(null, "default")',
+    '??(1, "default")',
+    'false ?? "default"',
+    '??(null, null, 3)',
+  ],
+}
 
 export const qqSpecialExpression: BuiltinSpecialExpression<Any, QqNode> = {
-  arity: { min: 1, max: 2 },
+  arity: { min: 1 },
+  docs,
   evaluate: (node, contextStack, { evaluateNode }) => {
-    const [firstNode, secondNode] = node[1][1]
-
-    if (isUserDefinedSymbolNode(firstNode) && contextStack.lookUp(firstNode) === null) {
-      return secondNode ? evaluateNode(secondNode, contextStack) : null
+    for (const param of node[1][1]) {
+      if (isUserDefinedSymbolNode(param) && contextStack.lookUp(param) === null) {
+        continue
+      }
+      const result = evaluateNode(param, contextStack)
+      if (result !== null) {
+        return result
+      }
     }
-    assertAny(firstNode, node[2])
-    const firstResult = evaluateNode(firstNode, contextStack)
-    return firstResult ?? (secondNode ? evaluateNode(secondNode, contextStack) : null)
+    return null
   },
 
   evaluateAsNormalExpression: (params, sourceCodeInfo) => {
-    const firstParam = asAny(params[0], sourceCodeInfo)
-    const secondParam = params[1] !== undefined ? asAny(params[1], sourceCodeInfo) : null
-    return firstParam ?? secondParam
+    for (const param of params) {
+      const value = asAny(param, sourceCodeInfo)
+      if (value !== null) {
+        return value
+      }
+    }
+    return null
   },
-  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => getUndefinedSymbols(node[1][1].filter(n => !!n), contextStack, builtin, evaluateNode),
+  getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => getUndefinedSymbols(node[1][1], contextStack, builtin, evaluateNode),
 }

@@ -6,7 +6,7 @@ describe('determinant.', () => {
   it('should compile', () => {
     expect(lits.run(`
 // Determinant function for square matrices
-let determinant = matrix -> {
+let determinant = matrix -> do
   // Check if input is an array
   if !(array?(matrix)) then
     throw("Input must be an array");
@@ -51,25 +51,25 @@ let determinant = matrix -> {
       // Use reduce to calculate the determinant without mutating variables
       reduce(
         range(cols),
-        (acc, j) -> {
+        (acc, j) -> do
           let minor = getMinor(matrix, 0, j);
           let cofactor = determinant(minor);
           let signFactor = even?(j) ? 1 : -1; // Sign factor based on column index
           let term = signFactor * get(get(matrix, 0), j) * cofactor;
           acc + term;
-        },
+        end,
         0,
       );
     end
   end
-};
+end;
 
 // Helper function to get minor (submatrix) by removing specific row and column
-let getMinor = (matrix, rowToRemove, colToRemove) -> {
+let getMinor = (matrix, rowToRemove, colToRemove) -> do
   // Use map with filter to create the new matrix without mutating
   map(
     range(count(matrix)),
-    i -> {
+    i -> do
       if i == rowToRemove then
         null; // This will be filtered out
       else
@@ -77,18 +77,18 @@ let getMinor = (matrix, rowToRemove, colToRemove) -> {
         // Filter out the column to remove
         map(
           range(count(row)),
-          j -> {
+          j -> do
             if j == colToRemove then
               null; // This will be filtered out
             else
               get(row, j);
             end;
-          },
+          end,
         ) filter (item -> item ≠ null);
       end;
-    },
+    end,
   ) filter (row -> row ≠ null);
-};
+end;
   
 // 3x3 invertible matrix
 let matrix4 = [[2, 3, 4], [1, 2, 3], [3, 4, 1]];

@@ -6,13 +6,42 @@ import { asAny } from '../../typeGuards/lits'
 import { joinSets } from '../../utils'
 import { valueToString } from '../../utils/debug/debugTools'
 import { evalueateBindingNodeValues, getAllBindingTargetNames } from '../bindingNode'
-import type { BuiltinSpecialExpression } from '../interface'
+import type { BuiltinSpecialExpression, CustomDocs } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 
 export type LoopNode = SpecialExpressionNode<[typeof specialExpressionTypes['loop'], BindingNode[], Node]> // bindings, body
 
+const docs: CustomDocs = {
+  category: 'Special expression',
+  customVariants: ['loop (bindings) -> body'],
+  details: [
+    ['bindings', 'binding pairs', 'Comma-separated bindings with initial values, e.g. `n = 10, sum = 0`.'],
+    ['body', 'expression', 'The expression to evaluate repeatedly. Use `recur` to loop back with new values.'],
+  ],
+  description: `Creates a loop with initial bindings. Use \`recur\` inside the body to jump back to the loop head with new binding values.
+
+If \`recur\` is not called, the loop terminates and returns the value of the body expression.`,
+  examples: [
+    `loop (n = 10, sum = 0) -> do
+  if n == 0 then
+    sum
+  else
+    recur(n - 1, sum + n)
+  end
+end`,
+    `loop (n = 5, acc = 1) -> do
+  if n <= 1 then
+    acc
+  else
+    recur(n - 1, acc * n)
+  end
+end`,
+  ],
+}
+
 export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
   arity: {},
+  docs,
   evaluate: (node, contextStack, { evaluateNode }) => {
     const bindingNodes = node[1][1]
     const bindingContext: Context = bindingNodes.reduce((result: Context, bindingNode) => {
