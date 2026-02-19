@@ -1,12 +1,14 @@
 import { describe, expect, it, test } from 'vitest'
-import { allReference, apiReference, getLinkName, isFunctionReference, namespaceReference, normalExpressionReference } from '../reference'
-import { normalExpressionKeys, specialExpressionKeys } from '../src/builtin'
+import { allReference, apiReference, getLinkName, isCustomReference, isDatatypeReference, isFunctionReference, isShorthandReference, namespaceReference, normalExpressionReference } from '../reference'
+import { normalExpressionKeys, specialExpressionKeys, specialExpressions } from '../src/builtin'
 import { isUnknownRecord } from '../src/typeGuards'
 import { canBeOperator } from '../src/utils/arity'
 import { normalExpressions } from '../src/builtin/normalExpressions'
 import { isReservedSymbol } from '../src/tokenizer/reservedNames'
 import { Lits } from '../src/Lits/Lits'
 import { allBuiltinNamespaces } from '../src/allNamespaces'
+import { specialExpressionTypes } from '../src/builtin/specialExpressionTypes'
+import { isApiName } from '../reference/api'
 import '../src/initReferenceData'
 
 const lits = new Lits({ namespaces: allBuiltinNamespaces })
@@ -95,7 +97,7 @@ describe('apiReference', () => {
   })
 })
 
-describe('seeAlso symmetry', () => {
+describe('seeAlso', () => {
   it('if A references B in seeAlso, then B must reference A', () => {
     const asymmetric: string[] = []
     for (const [key, ref] of Object.entries(allReference)) {
@@ -114,6 +116,34 @@ describe('seeAlso symmetry', () => {
     }
     expect(asymmetric, `Asymmetric seeAlso:\n${asymmetric.join('\n')}`).toEqual([])
   })
+
+  it('all seeAlso entries are valid ApiNames', () => {
+    const invalidRefs: string[] = []
+    for (const [key, ref] of Object.entries(allReference)) {
+      if ('seeAlso' in ref && ref.seeAlso) {
+        for (const sa of ref.seeAlso) {
+          if (!isApiName(sa)) {
+            invalidRefs.push(`${key} -> ${sa}`)
+          }
+        }
+      }
+    }
+    expect(invalidRefs, `Invalid seeAlso refs: ${invalidRefs.join(', ')}`).toEqual([])
+  })
+
+  it('all seeAlso entries point to entries that exist in allReference', () => {
+    const missing: string[] = []
+    for (const [key, ref] of Object.entries(allReference)) {
+      if ('seeAlso' in ref && ref.seeAlso) {
+        for (const sa of ref.seeAlso) {
+          if (!(sa in allReference)) {
+            missing.push(`${key} -> ${sa}`)
+          }
+        }
+      }
+    }
+    expect(missing, `Missing seeAlso targets: ${missing.join(', ')}`).toEqual([])
+  })
 })
 
 describe('namespaceReference', () => {
@@ -126,5 +156,85 @@ describe('namespaceReference', () => {
         })
       })
     })
+  })
+})
+
+describe('no orphaned reference data', () => {
+  it('every documented special expression has a reference entry', () => {
+    const docNames: string[] = []
+    for (const [name, index] of Object.entries(specialExpressionTypes)) {
+      if (specialExpressions[index]?.docs)
+        docNames.push(name)
+    }
+    const missing = docNames.filter(n => !(n in allReference))
+    expect(missing, `Special expressions missing from allReference: ${missing.join(', ')}`).toEqual([])
+  })
+
+  it('every namespace function has a reference entry in allReference', () => {
+    const missing: string[] = []
+    for (const namespace of allBuiltinNamespaces) {
+      for (const key of Object.keys(namespace.functions)) {
+        const qualifiedKey = `${namespace.name}.${key}`
+        if (!(qualifiedKey in allReference)) {
+          missing.push(qualifiedKey)
+        }
+      }
+    }
+    expect(missing, `Namespace functions missing from allReference: ${missing.join(', ')}`).toEqual([])
+  })
+})
+
+describe('core and namespace category names are disjoint', () => {
+  it('no category name appears in both api and namespace references', () => {
+    const apiCategories = new Set(Object.values(apiReference).map(r => r.category))
+    const nsCategories = new Set(Object.values(namespaceReference).map(r => r.category))
+    const overlap = Array.from(apiCategories).filter(c => nsCategories.has(c))
+    expect(overlap, `Overlapping categories: ${overlap.join(', ')}`).toEqual([])
+  })
+})
+
+describe('allReference type consistency', () => {
+  it('every FunctionReference has returns, args, and variants', () => {
+    for (const [key, ref] of Object.entries(allReference)) {
+      if (isFunctionReference(ref)) {
+        expect(ref.returns, `"${key}" returns`).toBeDefined()
+        expect(ref.args, `"${key}" args`).toBeDefined()
+        expect(Array.isArray(ref.variants), `"${key}" variants`).toBe(true)
+      }
+    }
+  })
+
+  it('every CustomReference has customVariants', () => {
+    for (const [key, ref] of Object.entries(allReference)) {
+      if (isCustomReference(ref)) {
+        expect(Array.isArray(ref.customVariants), `"${key}" customVariants`).toBe(true)
+      }
+    }
+  })
+
+  it('every ShorthandReference has shorthand: true', () => {
+    for (const [key, ref] of Object.entries(allReference)) {
+      if (isShorthandReference(ref)) {
+        expect(ref.shorthand, `"${key}" shorthand`).toBe(true)
+      }
+    }
+  })
+
+  it('every DatatypeReference has datatype: true', () => {
+    for (const [key, ref] of Object.entries(allReference)) {
+      if (isDatatypeReference(ref)) {
+        expect(ref.datatype, `"${key}" datatype`).toBe(true)
+      }
+    }
+  })
+
+  it('every reference has title, category, description, and examples', () => {
+    for (const [key, ref] of Object.entries(allReference)) {
+      expect(typeof ref.title, `"${key}" title`).toBe('string')
+      expect(ref.title.length, `"${key}" title is empty`).toBeGreaterThan(0)
+      expect(typeof ref.category, `"${key}" category`).toBe('string')
+      expect(typeof ref.description, `"${key}" description`).toBe('string')
+      expect(Array.isArray(ref.examples), `"${key}" examples`).toBe(true)
+    }
   })
 })

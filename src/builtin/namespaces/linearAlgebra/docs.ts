@@ -400,7 +400,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
   },
   'angle': {
     category: 'Linear Algebra',
-    description: 'Calculates the `angle` between two vectors in radians.',
+    description: 'Calculates the **angle** between two vectors in radians.',
     returns: {
       type: 'number',
     },

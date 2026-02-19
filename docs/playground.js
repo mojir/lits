@@ -16822,14 +16822,14 @@ var Playground = (function (exports) {
     var namespaceDocs$3 = {
         'mean': {
             category: 'Vector',
-            description: 'Returns the `mean` of all elements in the `vector`.',
+            description: 'Returns the **mean** of all elements in the `vector`.',
             returns: {
                 type: 'number',
             },
             args: {
                 vector: {
                     type: 'vector',
-                    description: 'The `vector` to calculate the `mean` of.',
+                    description: 'The `vector` to calculate the **mean** of.',
                 },
             },
             variants: [
@@ -16967,14 +16967,14 @@ var Playground = (function (exports) {
         },
         'geometric-mean': {
             category: 'Vector',
-            description: 'Returns the `geometric mean` of all elements in the `vector`.',
+            description: 'Returns the **geometric mean** of all elements in the `vector`.',
             returns: {
                 type: 'number',
             },
             args: {
                 vector: {
                     type: 'vector',
-                    description: 'The `vector` to calculate the `geometric mean` of.',
+                    description: 'The `vector` to calculate the **geometric mean** of.',
                 },
             },
             variants: [
@@ -17112,14 +17112,14 @@ var Playground = (function (exports) {
         },
         'harmonic-mean': {
             category: 'Vector',
-            description: 'Returns the `harmonic mean` of all elements in the `vector`.',
+            description: 'Returns the **harmonic mean** of all elements in the `vector`.',
             returns: {
                 type: 'number',
             },
             args: {
                 vector: {
                     type: 'vector',
-                    description: 'The `vector` to calculate the `harmonic mean` of.',
+                    description: 'The `vector` to calculate the **harmonic mean** of.',
                 },
             },
             variants: [
@@ -17404,14 +17404,14 @@ var Playground = (function (exports) {
         },
         'variance': {
             category: 'Vector',
-            description: 'Returns the `variance` of all elements in the `vector`.',
+            description: 'Returns the **variance** of all elements in the `vector`.',
             returns: {
                 type: 'number',
             },
             args: {
                 vector: {
                     type: 'vector',
-                    description: 'The `vector` to calculate the `variance` of.',
+                    description: 'The `vector` to calculate the **variance** of.',
                 },
             },
             variants: [
@@ -18292,14 +18292,14 @@ var Playground = (function (exports) {
         },
         'prod': {
             category: 'Vector',
-            description: 'Returns the `product` of all elements in the `vector`.',
+            description: 'Returns the **product** of all elements in the `vector`.',
             returns: {
                 type: 'number',
             },
             args: {
                 vector: {
                     type: 'vector',
-                    description: 'The `vector` to calculate the `product` of.',
+                    description: 'The `vector` to calculate the **product** of.',
                 },
             },
             variants: [
@@ -19897,14 +19897,14 @@ var Playground = (function (exports) {
         },
         'mad': {
             category: 'Vector',
-            description: 'Returns the `mean absolute deviation` of all elements in the `vector`.',
+            description: 'Returns the **mean absolute deviation** of all elements in the `vector`.',
             returns: {
                 type: 'number',
             },
             args: {
                 vector: {
                     type: 'vector',
-                    description: 'The `vector` to calculate the `mean absolute deviation` of.',
+                    description: 'The `vector` to calculate the **mean absolute deviation** of.',
                 },
             },
             variants: [
@@ -19922,14 +19922,14 @@ var Playground = (function (exports) {
         },
         'moving-mad': {
             category: 'Vector',
-            description: 'Returns the `moving mean absolute deviation` of the `vector` with a given window size.',
+            description: 'Returns the **moving mean absolute deviation** of the `vector` with a given window size.',
             returns: {
                 type: 'vector',
             },
             args: {
                 vector: {
                     type: 'vector',
-                    description: 'The `vector` to calculate the `moving mean absolute deviation` of.',
+                    description: 'The `vector` to calculate the **moving mean absolute deviation** of.',
                 },
                 windowSize: {
                     type: 'integer',
@@ -19958,14 +19958,14 @@ var Playground = (function (exports) {
         },
         'centered-moving-mad': {
             category: 'Vector',
-            description: 'Returns the `centered moving mean absolute deviation` of the `vector` with a given window size.',
+            description: 'Returns the **centered moving mean absolute deviation** of the `vector` with a given window size.',
             returns: {
                 type: 'array',
             },
             args: {
                 vector: {
                     type: 'vector',
-                    description: 'The `vector` to calculate the `centered moving mean absolute deviation` of.',
+                    description: 'The `vector` to calculate the **centered moving mean absolute deviation** of.',
                 },
                 windowSize: {
                     type: 'integer',
@@ -20017,14 +20017,14 @@ var Playground = (function (exports) {
         },
         'running-mad': {
             category: 'Vector',
-            description: 'Returns the `running mean absolute deviation` of the `vector`.',
+            description: 'Returns the **running mean absolute deviation** of the `vector`.',
             returns: {
                 type: 'vector',
             },
             args: {
                 vector: {
                     type: 'vector',
-                    description: 'The `vector` to calculate the `running mean absolute deviation` of.',
+                    description: 'The `vector` to calculate the **running mean absolute deviation** of.',
                 },
             },
             variants: [
@@ -20042,14 +20042,14 @@ var Playground = (function (exports) {
         },
         'medad': {
             category: 'Vector',
-            description: 'Returns the `median absolute deviation` of all elements in the `vector`.',
+            description: 'Returns the **median absolute deviation** of all elements in the `vector`.',
             returns: {
                 type: 'number',
             },
             args: {
                 vector: {
                     type: 'vector',
-                    description: 'The `vector` to calculate the `median absolute deviation` of.',
+                    description: 'The `vector` to calculate the **median absolute deviation** of.',
                 },
             },
             variants: [
@@ -20067,14 +20067,14 @@ var Playground = (function (exports) {
         },
         'moving-medad': {
             category: 'Vector',
-            description: 'Returns the `moving median absolute deviation` of the `vector` with a given window size.',
+            description: 'Returns the **moving median absolute deviation** of the `vector` with a given window size.',
             returns: {
                 type: 'vector',
             },
             args: {
                 vector: {
                     type: 'vector',
-                    description: 'The `vector` to calculate the `moving median absolute deviation` of.',
+                    description: 'The `vector` to calculate the **moving median absolute deviation** of.',
                 },
                 windowSize: {
                     type: 'integer',
@@ -20103,14 +20103,14 @@ var Playground = (function (exports) {
         },
         'centered-moving-medad': {
             category: 'Vector',
-            description: 'Returns the `centered moving median absolute deviation` of the `vector` with a given window size.',
+            description: 'Returns the **centered moving median absolute deviation** of the `vector` with a given window size.',
             returns: {
                 type: 'array',
             },
             args: {
                 vector: {
                     type: 'vector',
-                    description: 'The `vector` to calculate the `centered moving median absolute deviation` of.',
+                    description: 'The `vector` to calculate the **centered moving median absolute deviation** of.',
                 },
                 windowSize: {
                     type: 'integer',
@@ -20162,14 +20162,14 @@ var Playground = (function (exports) {
         },
         'running-medad': {
             category: 'Vector',
-            description: 'Returns the `running median absolute deviation` of the `vector`.',
+            description: 'Returns the **running median absolute deviation** of the `vector`.',
             returns: {
                 type: 'vector',
             },
             args: {
                 vector: {
                     type: 'vector',
-                    description: 'The `vector` to calculate the `running median absolute deviation` of.',
+                    description: 'The `vector` to calculate the **running median absolute deviation** of.',
                 },
             },
             variants: [
@@ -23061,7 +23061,7 @@ var Playground = (function (exports) {
         },
         'angle': {
             category: 'Linear Algebra',
-            description: 'Calculates the `angle` between two vectors in radians.',
+            description: 'Calculates the **angle** between two vectors in radians.',
             returns: {
                 type: 'number',
             },
