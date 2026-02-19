@@ -68,14 +68,9 @@ export class ContextStackImpl {
       if (this.globalContext[name]) {
         throw new LitsError(`Cannot redefine exported value "${name}"`, sourceCodeInfo)
       }
-      if (specialExpressionKeys.includes(name)) {
-        throw new LitsError(`Cannot shadow special expression "${name}"`, sourceCodeInfo)
-      }
-      if (normalExpressionKeys.includes(name)) {
-        throw new LitsError(`Cannot shadow builtin function "${name}"`, sourceCodeInfo)
-      }
-      if (name === 'self') {
-        throw new LitsError(`Cannot shadow builtin value "${name}"`, sourceCodeInfo)
+      const shadowedName = getShadowedBuiltinName(name)
+      if (shadowedName) {
+        throw new LitsError(`Cannot shadow ${shadowedName}`, sourceCodeInfo)
       }
       this.globalContext[name] = { value }
     }
@@ -90,14 +85,9 @@ export class ContextStackImpl {
       if (currentContext[name]) {
         throw new LitsError(`Cannot redefine value "${name}"`, sourceCodeInfo)
       }
-      if (specialExpressionKeys.includes(name)) {
-        throw new LitsError(`Cannot shadow special expression "${name}"`, sourceCodeInfo)
-      }
-      if (normalExpressionKeys.includes(name)) {
-        throw new LitsError(`Cannot shadow builtin function "${name}"`, sourceCodeInfo)
-      }
-      if (name === 'self') {
-        throw new LitsError(`Cannot shadow builtin value "${name}"`, sourceCodeInfo)
+      const shadowedName = getShadowedBuiltinName(name)
+      if (shadowedName) {
+        throw new LitsError(`Cannot shadow ${shadowedName}`, sourceCodeInfo)
       }
       currentContext[name] = { value: toAny(value) }
     }
@@ -189,20 +179,21 @@ export class ContextStackImpl {
   }
 }
 
-function checkNotDefined(name: string): boolean {
-  if (specialExpressionKeys.includes(name)) {
-    console.warn(`Cannot shadow special expression "${name}", ignoring.`)
-    return false
+function getShadowedBuiltinName(name: string): string | null {
+  if (specialExpressionKeys.includes(name))
+    return `special expression "${name}"`
+  if (normalExpressionKeys.includes(name))
+    return `builtin function "${name}"`
+  if (name === 'self')
+    return `builtin value "${name}"`
+  return null
+}
+
+function assertNotShadowingBuiltin(name: string): void {
+  const shadowedName = getShadowedBuiltinName(name)
+  if (shadowedName) {
+    throw new LitsError(`Cannot shadow ${shadowedName}`, undefined)
   }
-  if (normalExpressionKeys.includes(name)) {
-    console.warn(`Cannot shadow builtin function "${name}", ignoring.`)
-    return false
-  }
-  if (name === 'self') {
-    console.warn(`Cannot shadow builtin value "${name}", ignoring.`)
-    return false
-  }
-  return true
 }
 
 export function createContextStack(params: ContextParams = {}, modules?: Map<string, LitsModule>): ContextStack {
@@ -219,18 +210,15 @@ export function createContextStack(params: ContextParams = {}, modules?: Map<str
         const identifierParts = identifier.split('.')
         const name = identifierParts.pop()!
         if (/^[A-Z]/.test(name)) {
-          console.warn(`Invalid identifier "${identifier}" in jsFunctions, function name must not start with an uppercase letter`, undefined)
-          return acc
+          throw new LitsError(`Invalid identifier "${identifier}" in jsFunctions, function name must not start with an uppercase letter`, undefined)
         }
         let scope: NativeJsModule = acc
         for (const part of identifierParts) {
           if (part.length === 0) {
-            console.warn(`Invalid empty identifier "${identifier}" in nativeJsFunctions`, undefined)
-            return acc
+            throw new LitsError(`Invalid empty identifier "${identifier}" in jsFunctions`, undefined)
           }
           if (!/^[A-Z]/.test(part)) {
-            console.warn(`Invalid identifier "${identifier}" in jsFunctions, module name must start with an uppercase letter`, undefined)
-            return acc
+            throw new LitsError(`Invalid identifier "${identifier}" in jsFunctions, module name must start with an uppercase letter`, undefined)
           }
           if (!scope[part]) {
             scope[part] = {}
@@ -248,8 +236,8 @@ export function createContextStack(params: ContextParams = {}, modules?: Map<str
           docString: entry.docString ?? '',
         }
 
-        if (scope === acc && !checkNotDefined(name)) {
-          return acc
+        if (scope === acc) {
+          assertNotShadowingBuiltin(name)
         }
         scope[name] = nativeFn
         return acc

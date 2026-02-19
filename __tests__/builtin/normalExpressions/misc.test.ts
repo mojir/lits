@@ -5,22 +5,17 @@ import { LitsError } from '../../../src/errors'
 
 describe('misc functions', () => {
   let oldLog: () => void
-  let oldWarn: () => void
 
   let logSpy: (...args: unknown[]) => void
   beforeEach(() => {
     oldLog = console.log
-    oldWarn = console.warn
     logSpy = vitest.fn()
     console.log = (...args) => {
       logSpy(...args)
     }
-    console.warn = (..._args) => {
-    }
   })
   afterEach(() => {
     console.log = oldLog
-    console.warn = oldWarn
   })
   for (const lits of [new Lits(), new Lits({ debug: true })]) {
     describe('epoch->iso-date', () => {

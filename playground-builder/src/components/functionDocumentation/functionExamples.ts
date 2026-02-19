@@ -27,8 +27,6 @@ export function getFunctionExamples(reference: Reference) {
         .map((example) => {
           const oldLog = console.log
           console.log = function () {}
-          const oldWarn = console.warn
-          console.warn = function () {}
           const encodedUriExample = btoa(encodeURIComponent(example))
           try {
             // Fix numeric function names (e.g., mat.1-norm -> (get mat "1-norm"))
@@ -55,7 +53,6 @@ export function getFunctionExamples(reference: Reference) {
           }
           finally {
             console.log = oldLog
-            console.warn = oldWarn
           }
         })
         .join('\n')}

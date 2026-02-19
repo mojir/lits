@@ -15,8 +15,6 @@ export function getCliFunctionExamples(fmt: Colorizer, reference: Reference) {
     .map((example) => {
       const oldLog = console.log
       console.log = function () {}
-      const oldWarn = console.warn
-      console.warn = function () {}
       let result
       try {
         result = lits.run(`(try (do ${example}) (catch e e))`)
@@ -29,7 +27,6 @@ ${fmt.gray(stringifiedResult)}`
       }
       finally {
         console.log = oldLog
-        console.warn = oldWarn
       }
     })
     .join('\n\n')

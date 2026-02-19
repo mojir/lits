@@ -30,27 +30,6 @@ const jsFunctions: Record<string, JsFunction> = {
   },
 }
 
-const stupidJsFunctions: Record<string, JsFunction> = {
-  '+': {
-    fn: (value: number) => value * 3,
-  },
-  'if': {
-    fn: () => true,
-  },
-  'self': {
-    fn: () => true,
-  },
-  'Foo': {
-    fn: () => true,
-  },
-  'foo.bar': {
-    fn: () => true,
-  },
-  '.bar': {
-    fn: () => true,
-  },
-}
-
 const nativeJsFunction: NativeJsFunction = {
   nativeFn: {
     fn: (value: number) => value * value,
@@ -78,13 +57,14 @@ describe('nativeJsFunction', () => {
     expect(() => lits.run('throwNumber()', { jsFunctions })).toThrowError(LitsError)
   })
   it('builtin names cannot be shadowed', () => {
-    const warn = console.warn
-    console.warn = vitest.fn()
-    expect(lits.run('+(1, 2, 3)', { jsFunctions: stupidJsFunctions })).toBe(6)
-    expect(console.warn).toHaveBeenCalledTimes(6)
-    expect(lits.run('if true then false else true end', { jsFunctions: stupidJsFunctions })).toBe(false)
-    expect(console.warn).toHaveBeenCalledTimes(12)
-    console.warn = warn
+    expect(() => lits.run('+(1, 2, 3)', { jsFunctions: { '+': { fn: () => 0 } } })).toThrowError(LitsError)
+    expect(() => lits.run('if true then false else true end', { jsFunctions: { if: { fn: () => true } } })).toThrowError(LitsError)
+    expect(() => lits.run('1', { jsFunctions: { self: { fn: () => true } } })).toThrowError(LitsError)
+  })
+  it('invalid jsFunctions identifiers throw', () => {
+    expect(() => lits.run('1', { jsFunctions: { Foo: { fn: () => true } } })).toThrowError(LitsError)
+    expect(() => lits.run('1', { jsFunctions: { 'foo.bar': { fn: () => true } } })).toThrowError(LitsError)
+    expect(() => lits.run('1', { jsFunctions: { '.bar': { fn: () => true } } })).toThrowError(LitsError)
   })
   it('nested nativeJsFunction', () => {
     expect(lits.run('obj.square(9)', { values })).toBe(81)
