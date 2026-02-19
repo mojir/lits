@@ -323,8 +323,8 @@ describe('misc functions', () => {
     })
 
     describe('import', () => {
-      it('should throw for unknown entire namespace', () => {
-        expect(() => lits.run('import("UnknownNamespace")')).toThrow(LitsError)
+      it('should throw for unknown entire module', () => {
+        expect(() => lits.run('import("UnknownModule")')).toThrow(LitsError)
       })
     })
   }

@@ -13,7 +13,7 @@ import { builtin } from '../builtin'
 import { Parser } from '../parser/Parser'
 import { AutoCompleter } from '../AutoCompleter/AutoCompleter'
 import type { Arity } from '../builtin/interface'
-import type { LitsNamespace } from '../builtin/namespaces/interface'
+import type { LitsModule } from '../builtin/modules/interface'
 
 // import { deepEqual } from '../utils'
 import { Cache } from './Cache'
@@ -50,14 +50,14 @@ interface LitsConfig {
   initialCache?: Record<string, Ast>
   astCacheSize?: number | null
   debug?: boolean
-  namespaces?: LitsNamespace[]
+  modules?: LitsModule[]
 }
 
 export class Lits {
   private astCache: Cache | null
   private astCacheSize: number | null
   private debug: boolean
-  private namespaces: Map<string, LitsNamespace>
+  private modules: Map<string, LitsModule>
 
   constructor(config: LitsConfig = {}) {
     this.debug = config.debug ?? false
@@ -71,8 +71,8 @@ export class Lits {
     else {
       this.astCache = null
     }
-    const nsList = config.namespaces ?? []
-    this.namespaces = new Map(nsList.map(ns => [ns.name, ns]))
+    const nsList = config.modules ?? []
+    this.modules = new Map(nsList.map(ns => [ns.name, ns]))
   }
 
   public getRuntimeInfo(): LitsRuntimeInfo {
@@ -91,14 +91,14 @@ export class Lits {
 
   public context(programOrAst: string | Ast, params: ContextParams & FilePathParams = {}): Context {
     const ast = typeof programOrAst === 'string' ? this.generateAst(programOrAst, params) : programOrAst
-    const contextStack = createContextStack(params, this.namespaces)
+    const contextStack = createContextStack(params, this.modules)
     evaluate(ast, contextStack)
     return contextStack.globalContext
   }
 
   public getUndefinedSymbols(programOrAst: string | Ast, params: ContextParams = {}): Set<string> {
     const ast = typeof programOrAst === 'string' ? this.generateAst(programOrAst, params) : programOrAst
-    const contextStack = createContextStack(params, this.namespaces)
+    const contextStack = createContextStack(params, this.modules)
     return getUndefinedSymbols(ast, contextStack, builtin, evaluateNode)
   }
 
@@ -124,7 +124,7 @@ export class Lits {
   }
 
   public evaluate(ast: Ast, params: ContextParams): Any {
-    const contextStack = createContextStack(params, this.namespaces)
+    const contextStack = createContextStack(params, this.modules)
     return evaluate(ast, contextStack)
   }
 

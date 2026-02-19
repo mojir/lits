@@ -1,4 +1,4 @@
-export { categories, categoryRecord, coreCategories, isDataType, namespaceCategories } from '../src/builtin/interface'
+export { categories, categoryRecord, coreCategories, isDataType, moduleCategories } from '../src/builtin/interface'
 export type { Category, DataType } from '../src/builtin/interface'
 
 function getNumberTheorySequenceNames<T extends string>(name: T): [`Number-Theory.${T}-seq`, `Number-Theory.${T}-nth`, `Number-Theory.${T}-take-while`, `Number-Theory.${T}?`] {
@@ -584,8 +584,8 @@ export type CoreNormalExpressionName =
   | StringApiName
   | BitwiseApiName
 
-// Namespace functions - require import()
-export type NamespaceExpressionName =
+// Module functions - require import()
+export type ModuleExpressionName =
   | MatrixApiName
   | VectorApiName
   | LinAlgApiName
@@ -597,7 +597,7 @@ export type NamespaceExpressionName =
 // All normal expression names
 export type NormalExpressionName =
   | CoreNormalExpressionName
-  | NamespaceExpressionName
+  | ModuleExpressionName
 
 export type FunctionName =
   | NormalExpressionName
@@ -623,8 +623,8 @@ const coreApiFunctionNames = [
   ...api.bitwise,
 ] as const
 
-// Namespace API function names (require import())
-const namespaceApiFunctionNames = [
+// Module API function names (require import())
+const moduleApiFunctionNames = [
   ...api.matrix,
   ...api.vector,
   ...api.linAlg,
@@ -637,7 +637,7 @@ const namespaceApiFunctionNames = [
 // All API function names
 const apiFunctionNames = [
   ...coreApiFunctionNames,
-  ...namespaceApiFunctionNames,
+  ...moduleApiFunctionNames,
 ] as const
 
 // Core API names (core functions + shorthand + datatype)

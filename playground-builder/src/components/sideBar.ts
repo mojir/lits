@@ -1,6 +1,6 @@
 import type { Reference } from '../../../reference'
-import { apiReference, getLinkName, namespaceReference } from '../../../reference'
-import { coreCategories, namespaceCategories } from '../../../reference/api'
+import { apiReference, getLinkName, moduleReference } from '../../../reference'
+import { coreCategories, moduleCategories } from '../../../reference/api'
 import { chevronRightIcon, homeIcon, lampIcon, packageIcon, searchIcon } from '../icons'
 import { styles } from '../styles'
 
@@ -11,7 +11,7 @@ export function getSideBar() {
     return result
   }, {})
 
-  const namespaceCategoryCollections = Object.values(namespaceReference).reduce((result: Record<string, Reference[]>, obj) => {
+  const moduleCategoryCollections = Object.values(moduleReference).reduce((result: Record<string, Reference[]>, obj) => {
     result[obj.category] = result[obj.category] || []
     result[obj.category]!.push(obj)
     return result
@@ -48,12 +48,12 @@ export function getSideBar() {
       </div>`
   }
 
-  const renderNamespaceCategory = (categoryKey: string) => {
+  const renderModuleCategory = (categoryKey: string) => {
     return `
       <div ${styles('flex', 'flex-col', 'gap-1')}>
         <div 
           ${styles('text-color-gray-200', 'flex', 'items-center', 'gap-1', 'cursor-pointer')}
-          onclick="Playground.toggleNamespaceCategory('${categoryKey}')"
+          onclick="Playground.toggleModuleCategory('${categoryKey}')"
         >
           <span id="ns-chevron-${categoryKey}" class="ns-chevron">${chevronRightIcon}</span>
           <span>${categoryKey}</span>
@@ -63,8 +63,8 @@ export function getSideBar() {
           ${styles('flex-col', 'ml-2', 'text-color-gray-400', 'text-base', 'display: none;')}
         >
           ${
-            namespaceCategoryCollections[categoryKey]
-              ? namespaceCategoryCollections[categoryKey]
+            moduleCategoryCollections[categoryKey]
+              ? moduleCategoryCollections[categoryKey]
                   .sort((a, b) => {
                     const aSpecial = a.title[0]!.match(/[^a-z]/i)
                     const bSpecial = b.title[0]!.match(/[^a-z]/i)
@@ -76,7 +76,7 @@ export function getSideBar() {
                   })
                   .map((obj) => {
                     const linkName = getLinkName(obj)
-                    // Strip namespace prefix (e.g., "Vector." from "Vector.sum")
+                    // Strip module prefix (e.g., "Vector." from "Vector.sum")
                     const stripPrefix = (n: string) => n.includes('.') ? n.split('.').slice(1).join('.') : n
                     const displayName = stripPrefix(obj.title)
                     const name = `${escape(displayName)}`
@@ -110,10 +110,10 @@ export function getSideBar() {
         <span>Examples</span>
       </a>
     </div>
-    <div id='namespaces-page_link' onclick="Playground.showPage('namespaces-page', 'smooth')" ${styles('flex', 'mb-2', 'text-color-gray-400', 'text-base', 'cursor-pointer')}>
+    <div id='modules-page_link' onclick="Playground.showPage('modules-page', 'smooth')" ${styles('flex', 'mb-2', 'text-color-gray-400', 'text-base', 'cursor-pointer')}>
       <a ${styles('flex', 'items-center', 'gap-1')} class="link">
         ${packageIcon}
-        <span>Namespaces</span>
+        <span>Modules</span>
       </a>
     </div>
 
@@ -122,11 +122,11 @@ export function getSideBar() {
       ${coreCategories.map(categoryKey => renderCategory(categoryKey, categoryCollections)).join('\n')}
     </div>
 
-    <!-- Namespace Categories (Collapsible) -->
+    <!-- Module Categories (Collapsible) -->
     <div ${styles('flex', 'flex-col', 'gap-2', 'my-4', 'border-t', 'border-gray-700', 'pt-4')}>
-      <div ${styles('text-color-gray-300', 'text-sm', 'font-bold', 'mb-2')}>Namespaces</div>
+      <div ${styles('text-color-gray-300', 'text-sm', 'font-bold', 'mb-2')}>Modules</div>
       <div ${styles('flex', 'flex-col', 'gap-2')}>
-        ${namespaceCategories.map(categoryKey => renderNamespaceCategory(categoryKey)).join('\n')}
+        ${moduleCategories.map(categoryKey => renderModuleCategory(categoryKey)).join('\n')}
       </div>
     </div>
   </nav>

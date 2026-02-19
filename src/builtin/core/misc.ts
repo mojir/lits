@@ -1,6 +1,6 @@
 import { LitsError } from '../../errors'
 import type { Any } from '../../interface'
-import type { NamespaceFunction } from '../../parser/types'
+import type { ModuleFunction } from '../../parser/types'
 import type { SourceCodeInfo } from '../../tokenizer/token'
 import { asAny, assertAny } from '../../typeGuards/lits'
 import { assertNumber } from '../../typeGuards/number'
@@ -453,51 +453,51 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     },
   },
   'import': {
-    evaluate: ([importPath], sourceCodeInfo, contextStack): NamespaceFunction | Record<string, NamespaceFunction> => {
+    evaluate: ([importPath], sourceCodeInfo, contextStack): ModuleFunction | Record<string, ModuleFunction> => {
       assertString(importPath, sourceCodeInfo)
 
       // Check if importing a specific function (e.g., "Grid.row")
       const dotIndex = importPath.indexOf('.')
       if (dotIndex !== -1) {
-        const namespaceName = importPath.substring(0, dotIndex)
+        const moduleName = importPath.substring(0, dotIndex)
         const functionName = importPath.substring(dotIndex + 1)
 
-        const namespace = contextStack.getNamespace(namespaceName)
-        if (!namespace) {
-          throw new LitsError(`Unknown namespace: '${namespaceName}'`, sourceCodeInfo)
+        const module = contextStack.getModule(moduleName)
+        if (!module) {
+          throw new LitsError(`Unknown module: '${moduleName}'`, sourceCodeInfo)
         }
 
-        const expression = namespace.functions[functionName]
+        const expression = module.functions[functionName]
 
         if (!expression) {
-          throw new LitsError(`Function '${functionName}' not found in namespace '${namespaceName}'`, sourceCodeInfo)
+          throw new LitsError(`Function '${functionName}' not found in module '${moduleName}'`, sourceCodeInfo)
         }
 
         return {
           [FUNCTION_SYMBOL]: true,
           sourceCodeInfo,
-          functionType: 'Namespace',
-          namespaceName,
+          functionType: 'Module',
+          moduleName,
           functionName,
           arity: expression.arity,
         }
       }
 
-      // Import entire namespace
-      const namespaceName = importPath
-      const namespace = contextStack.getNamespace(namespaceName)
-      if (!namespace) {
-        throw new LitsError(`Unknown namespace: '${namespaceName}'`, sourceCodeInfo)
+      // Import entire module
+      const moduleName = importPath
+      const module = contextStack.getModule(moduleName)
+      if (!module) {
+        throw new LitsError(`Unknown module: '${moduleName}'`, sourceCodeInfo)
       }
 
-      // Create an object where each key is a function name and value is a NamespaceFunction
-      const result: Record<string, NamespaceFunction> = {}
-      for (const [functionName, expression] of Object.entries(namespace.functions)) {
+      // Create an object where each key is a function name and value is a ModuleFunction
+      const result: Record<string, ModuleFunction> = {}
+      for (const [functionName, expression] of Object.entries(module.functions)) {
         result[functionName] = {
           [FUNCTION_SYMBOL]: true,
           sourceCodeInfo,
-          functionType: 'Namespace',
-          namespaceName,
+          functionType: 'Module',
+          moduleName,
           functionName,
           arity: expression.arity,
         }
@@ -511,11 +511,11 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       args: {
         path: {
           type: 'string',
-          description: 'The namespace path to import. Can be a namespace name (e.g., "Vector", "Grid") or a fully qualified function name (e.g., "Vector.mean", "Grid.row").',
+          description: 'The module path to import. Can be a module name (e.g., "Vector", "Grid") or a fully qualified function name (e.g., "Vector.mean", "Grid.row").',
         },
       },
       variants: [{ argumentNames: ['path'] }],
-      description: 'Imports namespace functions. Use a namespace name (e.g., "Vector") to import all functions as an object, or a fully qualified name (e.g., "Vector.mean") to import a single function directly.',
+      description: 'Imports module functions. Use a module name (e.g., "Vector") to import all functions as an object, or a fully qualified name (e.g., "Vector.mean") to import a single function directly.',
       examples: [
         'let v = import("Vector"); v.mean([1, 2, 3, 4])',
         'let sum = import("Vector.sum"); sum([1, 2, 3])',

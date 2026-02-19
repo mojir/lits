@@ -1,17 +1,17 @@
 import { describe, expect, it, test } from 'vitest'
-import { allReference, apiReference, getLinkName, isCustomReference, isDatatypeReference, isFunctionReference, isShorthandReference, namespaceReference, normalExpressionReference } from '../reference'
+import { allReference, apiReference, getLinkName, isCustomReference, isDatatypeReference, isFunctionReference, isShorthandReference, moduleReference, normalExpressionReference } from '../reference'
 import { normalExpressionKeys, specialExpressionKeys, specialExpressions } from '../src/builtin'
 import { isUnknownRecord } from '../src/typeGuards'
 import { canBeOperator } from '../src/utils/arity'
 import { normalExpressions } from '../src/builtin/normalExpressions'
 import { isReservedSymbol } from '../src/tokenizer/reservedNames'
 import { Lits } from '../src/Lits/Lits'
-import { allBuiltinNamespaces } from '../src/allNamespaces'
+import { allBuiltinModules } from '../src/allModules'
 import { specialExpressionTypes } from '../src/builtin/specialExpressionTypes'
 import { type ApiName, isApiName } from '../reference/api'
 import '../src/initReferenceData'
 
-const lits = new Lits({ namespaces: allBuiltinNamespaces })
+const lits = new Lits({ modules: allBuiltinModules })
 describe('apiReference', () => {
   Object.entries(apiReference).forEach(([key, obj]) => {
     if (!isFunctionReference(obj))
@@ -146,9 +146,9 @@ describe('seeAlso', () => {
   })
 })
 
-describe('namespaceReference', () => {
+describe('moduleReference', () => {
   describe('examples', () => {
-    Object.entries(namespaceReference).forEach(([key, obj]) => {
+    Object.entries(moduleReference).forEach(([key, obj]) => {
       test(key, () => {
         obj.examples.forEach((example, index) => {
           expect(example, `${obj.category}:${key}. Example number ${index + 1} ended with ;`).not.toMatch(/;\s*$/)
@@ -170,24 +170,24 @@ describe('no orphaned reference data', () => {
     expect(missing, `Special expressions missing from allReference: ${missing.join(', ')}`).toEqual([])
   })
 
-  it('every namespace function has a reference entry in allReference', () => {
+  it('every module function has a reference entry in allReference', () => {
     const missing: string[] = []
-    for (const namespace of allBuiltinNamespaces) {
-      for (const key of Object.keys(namespace.functions)) {
-        const qualifiedKey = `${namespace.name}.${key}`
+    for (const module of allBuiltinModules) {
+      for (const key of Object.keys(module.functions)) {
+        const qualifiedKey = `${module.name}.${key}`
         if (!(qualifiedKey in allReference)) {
           missing.push(qualifiedKey)
         }
       }
     }
-    expect(missing, `Namespace functions missing from allReference: ${missing.join(', ')}`).toEqual([])
+    expect(missing, `Module functions missing from allReference: ${missing.join(', ')}`).toEqual([])
   })
 })
 
-describe('core and namespace category names are disjoint', () => {
-  it('no category name appears in both api and namespace references', () => {
+describe('core and module category names are disjoint', () => {
+  it('no category name appears in both api and module references', () => {
     const apiCategories = new Set(Object.values(apiReference).map(r => r.category))
-    const nsCategories = new Set(Object.values(namespaceReference).map(r => r.category))
+    const nsCategories = new Set(Object.values(moduleReference).map(r => r.category))
     const overlap = Array.from(apiCategories).filter(c => nsCategories.has(c))
     expect(overlap, `Overlapping categories: ${overlap.join(', ')}`).toEqual([])
   })

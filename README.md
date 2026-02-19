@@ -5,10 +5,10 @@ A functional language with algebraic notation and JavaScript interoperability.
 Try it in the [Lits Playground](https://mojir.github.io/lits/).
 
 ## TODO
-Fix playground, it looks a bit funky under namespaces.
-Also fix Header, were name, namespace and category should be presented
+Fix playground, it looks a bit funky under modules.
+Also fix Header, were name, module and category should be presented
 
-Model cli as namespace, create a new bundle that include this namespace. The existing full bundle should not include this.
+Model cli as module, create a new bundle that include this module. The existing full bundle should not include this.
 
 
 
@@ -167,10 +167,10 @@ numbers filter odd?;           // => [1, 3, 5]
 
 #### Vectors (Number Arrays)
 
-A vector is simply a non-empty array containing only numbers. The `vec` namespace provides mathematical operations specifically for these number arrays:
+A vector is simply a non-empty array containing only numbers. The `vec` module provides mathematical operations specifically for these number arrays:
 
 ```lits
-// Import vector and linear algebra namespaces
+// Import vector and linear algebra modules
 let vec = import("Vector");
 let lin = import("Linear-Algebra");
 
@@ -187,7 +187,7 @@ vec.linspace(0, 10, 5);        // => [0, 2.5, 5, 7.5, 10]
 vec.fill(4, 3.14);             // => [3.14, 3.14, 3.14, 3.14]
 vec.generate(5, -> $ * 2);     // => [0, 2, 4, 6, 8]
 
-// Vector mathematical operations (use lin namespace for vector math)
+// Vector mathematical operations (use lin module for vector math)
 lin.dot([1, 2, 3], [4, 5, 6]);      // => 32 (dot product)
 lin.euclidean-norm([3, 4]);         // => 5.0 (Euclidean norm/magnitude)
 lin.normalize-l2([3, 4]);           // => [0.6, 0.8] (unit vector)
@@ -221,10 +221,10 @@ vec.strictly-increasing?([1, 1, 2, 3, 4]); // => false
 
 #### Matrices (2D Vectors)
 
-A matrix is a 2D array where each row is a vector (non-empty array of numbers) and all rows have the same length. The `mat` namespace provides linear algebra operations for these structures:
+A matrix is a 2D array where each row is a vector (non-empty array of numbers) and all rows have the same length. The `mat` module provides linear algebra operations for these structures:
 
 ```lits
-// Import matrix namespace
+// Import matrix module
 let mat = import("Matrix");
 
 // Matrices are 2D number arrays with consistent row lengths
@@ -1476,31 +1476,31 @@ The package provides multiple entry points for different use cases:
 
 ```javascript
 // Minimal entry — core Lits class, types, and type guards only.
-// No namespaces or reference data. Smallest bundle size.
+// No modules or reference data. Smallest bundle size.
 import { Lits } from '@mojir/lits';
 
-// Full entry — everything from minimal plus all namespaces,
+// Full entry — everything from minimal plus all modules,
 // reference data, and API helpers (e.g. apiReference, isApiName).
-import { Lits, allBuiltinNamespaces, apiReference } from '@mojir/lits/full';
+import { Lits, allBuiltinModules, apiReference } from '@mojir/lits/full';
 
-// Individual namespace entries — import only the namespaces you need.
-import { vectorNamespace } from '@mojir/lits/namespaces/vector';
-import { matrixNamespace } from '@mojir/lits/namespaces/matrix';
-import { linearAlgebraNamespace } from '@mojir/lits/namespaces/linearAlgebra';
-import { gridNamespace } from '@mojir/lits/namespaces/grid';
-import { randomNamespace } from '@mojir/lits/namespaces/random';
-import { assertNamespace } from '@mojir/lits/namespaces/assert';
-import { numberTheoryNamespace } from '@mojir/lits/namespaces/numberTheory';
+// Individual module entries — import only the modules you need.
+import { vectorModule } from '@mojir/lits/modules/vector';
+import { matrixModule } from '@mojir/lits/modules/matrix';
+import { linearAlgebraModule } from '@mojir/lits/modules/linearAlgebra';
+import { gridModule } from '@mojir/lits/modules/grid';
+import { randomModule } from '@mojir/lits/modules/random';
+import { assertModule } from '@mojir/lits/modules/assert';
+import { numberTheoryModule } from '@mojir/lits/modules/numberTheory';
 ```
 
-To make namespace functions available in Lits code, pass them to the `Lits` constructor:
+To make module functions available in Lits code, pass them to the `Lits` constructor:
 
 ```javascript
 import { Lits } from '@mojir/lits';
-import { vectorNamespace } from '@mojir/lits/namespaces/vector';
-import { matrixNamespace } from '@mojir/lits/namespaces/matrix';
+import { vectorModule } from '@mojir/lits/modules/vector';
+import { matrixModule } from '@mojir/lits/modules/matrix';
 
-const lits = new Lits({ namespaces: [vectorNamespace, matrixNamespace] });
+const lits = new Lits({ modules: [vectorModule, matrixModule] });
 
 // Now you can use import("Vector") and import("Matrix") in Lits code
 lits.run('let v = import("Vector"); v.dot([1, 2, 3], [4, 5, 6])'); // => 32

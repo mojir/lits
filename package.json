@@ -30,40 +30,40 @@
       "import": "./dist/full.esm.js",
       "require": "./dist/full.js"
     },
-    "./namespaces/assert": {
-      "types": "./dist/src/namespaces/assert.d.ts",
-      "import": "./dist/namespaces/assert.esm.js",
-      "require": "./dist/namespaces/assert.js"
+    "./modules/assert": {
+      "types": "./dist/src/modules/assert.d.ts",
+      "import": "./dist/modules/assert.esm.js",
+      "require": "./dist/modules/assert.js"
     },
-    "./namespaces/grid": {
-      "types": "./dist/src/namespaces/grid.d.ts",
-      "import": "./dist/namespaces/grid.esm.js",
-      "require": "./dist/namespaces/grid.js"
+    "./modules/grid": {
+      "types": "./dist/src/modules/grid.d.ts",
+      "import": "./dist/modules/grid.esm.js",
+      "require": "./dist/modules/grid.js"
     },
-    "./namespaces/random": {
-      "types": "./dist/src/namespaces/random.d.ts",
-      "import": "./dist/namespaces/random.esm.js",
-      "require": "./dist/namespaces/random.js"
+    "./modules/random": {
+      "types": "./dist/src/modules/random.d.ts",
+      "import": "./dist/modules/random.esm.js",
+      "require": "./dist/modules/random.js"
     },
-    "./namespaces/vector": {
-      "types": "./dist/src/namespaces/vector.d.ts",
-      "import": "./dist/namespaces/vector.esm.js",
-      "require": "./dist/namespaces/vector.js"
+    "./modules/vector": {
+      "types": "./dist/src/modules/vector.d.ts",
+      "import": "./dist/modules/vector.esm.js",
+      "require": "./dist/modules/vector.js"
     },
-    "./namespaces/linearAlgebra": {
-      "types": "./dist/src/namespaces/linearAlgebra.d.ts",
-      "import": "./dist/namespaces/linearAlgebra.esm.js",
-      "require": "./dist/namespaces/linearAlgebra.js"
+    "./modules/linearAlgebra": {
+      "types": "./dist/src/modules/linearAlgebra.d.ts",
+      "import": "./dist/modules/linearAlgebra.esm.js",
+      "require": "./dist/modules/linearAlgebra.js"
     },
-    "./namespaces/matrix": {
-      "types": "./dist/src/namespaces/matrix.d.ts",
-      "import": "./dist/namespaces/matrix.esm.js",
-      "require": "./dist/namespaces/matrix.js"
+    "./modules/matrix": {
+      "types": "./dist/src/modules/matrix.d.ts",
+      "import": "./dist/modules/matrix.esm.js",
+      "require": "./dist/modules/matrix.js"
     },
-    "./namespaces/numberTheory": {
-      "types": "./dist/src/namespaces/numberTheory.d.ts",
-      "import": "./dist/namespaces/numberTheory.esm.js",
-      "require": "./dist/namespaces/numberTheory.js"
+    "./modules/numberTheory": {
+      "types": "./dist/src/modules/numberTheory.d.ts",
+      "import": "./dist/modules/numberTheory.esm.js",
+      "require": "./dist/modules/numberTheory.js"
     }
   },
   "main": "dist/index.js",

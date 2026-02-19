@@ -3,7 +3,7 @@ import { stringifyValue } from '../../common/utils'
 import type { Example } from '../../reference/examples'
 import type { UnknownRecord } from '../../src/interface'
 import { type ContextParams, type JsFunction, Lits } from '../../src/Lits/Lits'
-import { allBuiltinNamespaces } from '../../src/allNamespaces'
+import { allBuiltinModules } from '../../src/allModules'
 import '../../src/initReferenceData'
 import { asUnknownRecord } from '../../src/typeGuards'
 import type { AutoCompleter } from '../../src/AutoCompleter/AutoCompleter'
@@ -25,8 +25,8 @@ import {
 import { isMac, throttle } from './utils'
 
 const getLits: (forceDebug?: 'debug') => Lits = (() => {
-  const lits = new Lits({ debug: true, namespaces: allBuiltinNamespaces })
-  const litsNoDebug = new Lits({ debug: false, namespaces: allBuiltinNamespaces })
+  const lits = new Lits({ debug: true, modules: allBuiltinModules })
+  const litsNoDebug = new Lits({ debug: false, modules: allBuiltinModules })
 
   return (forceDebug?: 'debug') => forceDebug || getState('debug') ? lits : litsNoDebug
 })()
@@ -100,9 +100,9 @@ export function closeMoreMenu() {
   elements.moreMenu.style.display = 'none'
 }
 
-const expandedNamespaces = new Set<string>()
+const expandedModules = new Set<string>()
 
-export function toggleNamespaceCategory(categoryKey: string) {
+export function toggleModuleCategory(categoryKey: string) {
   const sanitizedKey = categoryKey.replace(/\s+/g, '-')
   const chevron = document.getElementById(`ns-chevron-${sanitizedKey}`)
   const content = document.getElementById(`ns-content-${sanitizedKey}`)
@@ -110,13 +110,13 @@ export function toggleNamespaceCategory(categoryKey: string) {
   if (!chevron || !content)
     return
 
-  if (expandedNamespaces.has(categoryKey)) {
-    expandedNamespaces.delete(categoryKey)
+  if (expandedModules.has(categoryKey)) {
+    expandedModules.delete(categoryKey)
     content.style.display = 'none'
     chevron.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M10 6L8.59 7.41L13.17 12l-4.58 4.59L10 18l6-6z"/></svg>'
   }
   else {
-    expandedNamespaces.add(categoryKey)
+    expandedModules.add(categoryKey)
     content.style.display = 'flex'
     chevron.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6l-6-6z"/></svg>'
   }
@@ -1028,11 +1028,11 @@ export function showPage(id: string, scroll: 'smooth' | 'instant' | 'none', hist
     if (link) {
       link.classList.add('active-sidebar-entry')
 
-      // If the link is inside a collapsed namespace section, expand it first
+      // If the link is inside a collapsed module section, expand it first
       const nsContent = link.closest('[id^="ns-content-"]')
       if (nsContent && nsContent instanceof HTMLElement && nsContent.style.display === 'none') {
         const categoryKey = nsContent.id.replace('ns-content-', '').replace(/-/g, ' ')
-        toggleNamespaceCategory(categoryKey)
+        toggleModuleCategory(categoryKey)
       }
 
       if (scroll !== 'none')

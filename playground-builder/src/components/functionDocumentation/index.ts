@@ -18,7 +18,7 @@ export function getAllDocumentationItems() {
 function getDocumentation(reference: Reference) {
   const docTitle = `${escapeTitle(reference.title)}`
 
-  // Get all references for seeAlso (including namespace references)
+  // Get all references for seeAlso (including module references)
   const functionReferences = reference.seeAlso
     ?.map(apiName => allReference[apiName])
     .filter((ref): ref is Reference => ref !== undefined)

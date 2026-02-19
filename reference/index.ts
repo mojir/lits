@@ -21,15 +21,15 @@ import { regexpNormalExpression } from '../src/builtin/core/regexp'
 import { sequenceNormalExpression } from '../src/builtin/core/sequence'
 import { stringNormalExpression } from '../src/builtin/core/string'
 
-// Namespace categories — derive reference from co-located docs
-import { assertNamespace } from '../src/builtin/namespaces/assert'
-import { gridNamespace } from '../src/builtin/namespaces/grid'
-import { randomNamespace } from '../src/builtin/namespaces/random'
-import { vectorNamespace } from '../src/builtin/namespaces/vector'
-import { linearAlgebraNamespace } from '../src/builtin/namespaces/linearAlgebra'
-import { matrixNamespace } from '../src/builtin/namespaces/matrix'
-import { numberTheoryNamespace } from '../src/builtin/namespaces/numberTheory'
-import type { ApiName, ArrayApiName, BitwiseApiName, Category, CollectionApiName, CoreApiName, CoreNormalExpressionName, DataType, FunctionalApiName, MathApiName, MetaApiName, MiscApiName, NamespaceExpressionName, ObjectApiName, PredicateApiName, RegularExpressionApiName, SequenceApiName, StringApiName } from './api'
+// Module categories — derive reference from co-located docs
+import { assertModule } from '../src/builtin/modules/assert'
+import { gridModule } from '../src/builtin/modules/grid'
+import { randomModule } from '../src/builtin/modules/random'
+import { vectorModule } from '../src/builtin/modules/vector'
+import { linearAlgebraModule } from '../src/builtin/modules/linearAlgebra'
+import { matrixModule } from '../src/builtin/modules/matrix'
+import { numberTheoryModule } from '../src/builtin/modules/numberTheory'
+import type { ApiName, ArrayApiName, BitwiseApiName, Category, CollectionApiName, CoreApiName, CoreNormalExpressionName, DataType, FunctionalApiName, MathApiName, MetaApiName, MiscApiName, ModuleExpressionName, ObjectApiName, PredicateApiName, RegularExpressionApiName, SequenceApiName, StringApiName } from './api'
 import { datatype } from './datatype'
 import { shorthand } from './shorthand'
 
@@ -57,16 +57,16 @@ function docsToReference(expressions: BuiltinNormalExpressions): Record<string, 
   return result
 }
 
-// --- Helper: derive FunctionReference from namespace co-located docs ---
+// --- Helper: derive FunctionReference from module co-located docs ---
 
-function namespacedDocsToReference(namespaceName: string, expressions: BuiltinNormalExpressions): Record<string, FunctionReference> {
+function moduledDocsToReference(moduleName: string, expressions: BuiltinNormalExpressions): Record<string, FunctionReference> {
   const result: Record<string, FunctionReference> = {}
   for (const [key, expr] of Object.entries(expressions)) {
     const docs: FunctionDocs | undefined = expr.docs
     if (!docs) {
-      throw new Error(`Missing docs for ${namespaceName}.${key}`)
+      throw new Error(`Missing docs for ${moduleName}.${key}`)
     }
-    const qualifiedKey = `${namespaceName}.${key}`
+    const qualifiedKey = `${moduleName}.${key}`
     result[qualifiedKey] = {
       title: qualifiedKey,
       category: docs.category,
@@ -217,17 +217,17 @@ export const normalExpressionReference: Record<CoreNormalExpressionName, Functio
   ...stringRef,
 }
 
-// Namespace functions — all derived from co-located docs
+// Module functions — all derived from co-located docs
 // eslint-disable-next-line ts/consistent-type-assertions
-export const namespaceReference: Record<NamespaceExpressionName, FunctionReference> = {
-  ...namespacedDocsToReference(assertNamespace.name, assertNamespace.functions),
-  ...namespacedDocsToReference(gridNamespace.name, gridNamespace.functions),
-  ...namespacedDocsToReference(randomNamespace.name, randomNamespace.functions),
-  ...namespacedDocsToReference(vectorNamespace.name, vectorNamespace.functions),
-  ...namespacedDocsToReference(linearAlgebraNamespace.name, linearAlgebraNamespace.functions),
-  ...namespacedDocsToReference(matrixNamespace.name, matrixNamespace.functions),
-  ...namespacedDocsToReference(numberTheoryNamespace.name, numberTheoryNamespace.functions),
-} as Record<NamespaceExpressionName, FunctionReference>
+export const moduleReference: Record<ModuleExpressionName, FunctionReference> = {
+  ...moduledDocsToReference(assertModule.name, assertModule.functions),
+  ...moduledDocsToReference(gridModule.name, gridModule.functions),
+  ...moduledDocsToReference(randomModule.name, randomModule.functions),
+  ...moduledDocsToReference(vectorModule.name, vectorModule.functions),
+  ...moduledDocsToReference(linearAlgebraModule.name, linearAlgebraModule.functions),
+  ...moduledDocsToReference(matrixModule.name, matrixModule.functions),
+  ...moduledDocsToReference(numberTheoryModule.name, numberTheoryModule.functions),
+} as Record<ModuleExpressionName, FunctionReference>
 
 Object.entries(normalExpressionReference).forEach(([key, obj]) => {
   if (!normalExpressions[key]) {
@@ -259,8 +259,8 @@ export const functionReference = {
 // Core API reference (always available)
 export const apiReference: Record<CoreApiName, Reference> = { ...functionReference, ...shorthand, ...datatype }
 
-// All references including namespaces (for search and full documentation)
-export const allReference: Record<ApiName, Reference> = { ...apiReference, ...namespaceReference }
+// All references including modules (for search and full documentation)
+export const allReference: Record<ApiName, Reference> = { ...apiReference, ...moduleReference }
 
 Object.values(allReference).forEach((ref) => {
   ref.title = ref.title.replace(/"/g, '&quot;')

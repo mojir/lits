@@ -20,7 +20,7 @@ This makes Lits ideal for scenarios where you need runtime programmability witho
 
 The language is expression-oriented — everything returns a value, from simple arithmetic to complex control flow. There are no statements, no `void`, no side effects. Data is immutable by default, and functions are first-class values that can be composed, passed as arguments, and returned from other functions.
 
-Lits ships with a comprehensive standard library covering math, string manipulation, regular expressions, collection operations, and more. Domain-specific namespaces extend the language with vector math, linear algebra, matrix operations, and number theory — all opt-in to keep the core lightweight.
+Lits ships with a comprehensive standard library covering math, string manipulation, regular expressions, collection operations, and more. Domain-specific modules extend the language with vector math, linear algebra, matrix operations, and number theory — all opt-in to keep the core lightweight.
 
 The syntax uses keyword-delimited blocks (`if...then...else...end`, `do...end`) and algebraic notation, making it immediately readable. Despite its simplicity, Lits supports closures, destructuring, higher-order functions, recursion with `loop`/`recur`, and pattern-matching-style constructs like `cond` and `switch`.
 

@@ -12,7 +12,7 @@ import type {
   FNullFunction,
   JuxtFunction,
   LitsFunctionType,
-  NamespaceFunction,
+  ModuleFunction,
   NativeJsFunction,
   NormalBuiltinFunction,
   PartialFunction,
@@ -188,14 +188,14 @@ export const functionExecutors: FunctionExecutors = {
       throw new LitsError(`Special builtin function ${fn.specialBuiltinSymbolType} is not supported as normal expression.`, sourceCodeInfo)
     }
   },
-  Namespace: (fn: NamespaceFunction, params, sourceCodeInfo, contextStack, { executeFunction }) => {
-    const namespace = contextStack.getNamespace(fn.namespaceName)
-    if (!namespace) {
-      throw new LitsError(`Namespace '${fn.namespaceName}' not found.`, sourceCodeInfo)
+  Module: (fn: ModuleFunction, params, sourceCodeInfo, contextStack, { executeFunction }) => {
+    const module = contextStack.getModule(fn.moduleName)
+    if (!module) {
+      throw new LitsError(`Module '${fn.moduleName}' not found.`, sourceCodeInfo)
     }
-    const expression = namespace.functions[fn.functionName]
+    const expression = module.functions[fn.functionName]
     if (!expression) {
-      throw new LitsError(`Function '${fn.functionName}' not found in namespace '${fn.namespaceName}'.`, sourceCodeInfo)
+      throw new LitsError(`Function '${fn.functionName}' not found in module '${fn.moduleName}'.`, sourceCodeInfo)
     }
     assertNumberOfParams(expression.arity, params.length, sourceCodeInfo)
     return expression.evaluate(params, sourceCodeInfo, contextStack, { executeFunction })

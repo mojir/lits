@@ -95,10 +95,10 @@ const pluginsMinimal = [
   terser(),
 ]
 
-const namespaces = ['assert', 'grid', 'random', 'vector', 'linearAlgebra', 'matrix', 'numberTheory']
+const modules = ['assert', 'grid', 'random', 'vector', 'linearAlgebra', 'matrix', 'numberTheory']
 
 module.exports = [
-  // Minimal bundle (core only, no namespaces, docs stripped)
+  // Minimal bundle (core only, no modules, docs stripped)
   {
     input: 'src/index.ts',
     output: [
@@ -121,7 +121,7 @@ module.exports = [
     ],
     plugins: pluginsMinimal,
   },
-  // Full bundle (core + all namespaces + docs + reference data)
+  // Full bundle (core + all modules + docs + reference data)
   {
     input: 'src/full.ts',
     output: [
@@ -138,17 +138,17 @@ module.exports = [
     ],
     plugins,
   },
-  // Individual namespace bundles
-  ...namespaces.map(ns => ({
-    input: `src/namespaces/${ns}.ts`,
+  // Individual module bundles
+  ...modules.map(ns => ({
+    input: `src/modules/${ns}.ts`,
     output: [
       {
-        file: `dist/namespaces/${ns}.esm.js`,
+        file: `dist/modules/${ns}.esm.js`,
         format: 'esm',
         sourcemap: true,
       },
       {
-        file: `dist/namespaces/${ns}.js`,
+        file: `dist/modules/${ns}.js`,
         format: 'cjs',
         sourcemap: true,
       },

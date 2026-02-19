@@ -2,7 +2,7 @@ import { styles } from '../styles'
 import type { TextFormatter } from '../../../common/createFormatter'
 import { polishSymbolCharacterClass, polishSymbolFirstCharacterClass } from '../../../src/symbolPatterns'
 import { Lits } from '../../../src/Lits/Lits'
-import { allBuiltinNamespaces } from '../../../src/allNamespaces'
+import { allBuiltinModules } from '../../../src/allModules'
 import type { Token } from '../../../src/tokenizer/token'
 import { normalExpressionKeys, specialExpressionKeys } from '../../../src/builtin'
 
@@ -76,7 +76,7 @@ const inlineCodeRule: FormatterRule = (text, index) => {
   return { count: 0, formattedText: '' }
 }
 
-const lits = new Lits({ debug: false, namespaces: allBuiltinNamespaces })
+const lits = new Lits({ debug: false, modules: allBuiltinModules })
 
 export type StyleOverride = {
   values: string[]

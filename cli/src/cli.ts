@@ -13,7 +13,7 @@ import { stringifyValue } from '../../common/utils'
 import { polishSymbolCharacterClass, polishSymbolFirstCharacterClass } from '../../src/symbolPatterns'
 import type { Context } from '../../src/evaluator/interface'
 import { Lits } from '../../src/Lits/Lits'
-import { allBuiltinNamespaces } from '../../src/allNamespaces'
+import { allBuiltinModules } from '../../src/allModules'
 import '../../src/initReferenceData'
 import { normalExpressionKeys, specialExpressionKeys } from '../../src/builtin'
 import { Colors, createColorizer } from './colorizer'
@@ -55,7 +55,7 @@ const config = processArguments(process.argv.slice(2))
 const jsFunctions = getCliModule()
 
 const lits = (() => {
-  const _lits = new Lits({ debug: true, namespaces: allBuiltinNamespaces })
+  const _lits = new Lits({ debug: true, modules: allBuiltinModules })
   return {
     run: (program: string) =>
       _lits.run(program, {

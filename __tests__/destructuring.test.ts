@@ -1,9 +1,9 @@
 import { describe, expect, test } from 'vitest'
 import { Lits } from '../src/Lits/Lits'
-import { gridNamespace } from '../src/builtin/namespaces/grid'
+import { gridModule } from '../src/builtin/modules/grid'
 import { LitsError } from '../src/errors'
 
-const lits = new Lits({ namespaces: [gridNamespace] })
+const lits = new Lits({ modules: [gridModule] })
 
 describe('lits Destructuring', () => {
   // Basic object destructuring

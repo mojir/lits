@@ -1,13 +1,13 @@
 /* eslint-disable no-console */
 import { Lits } from '../../../../src/Lits/Lits'
-import { allBuiltinNamespaces } from '../../../../src/allNamespaces'
+import { allBuiltinModules } from '../../../../src/allModules'
 import '../../../../src/initReferenceData'
 import { styles } from '../../styles/index'
 import type { Reference } from '../../../../reference'
 import { formatLitsExpression } from '../../formatter/rules'
 import { stringifyValue } from '../../../../common/utils'
 
-const lits = new Lits({ debug: false, namespaces: allBuiltinNamespaces })
+const lits = new Lits({ debug: false, modules: allBuiltinModules })
 
 // Function names starting with a digit need special handling: ns.1-norm(...) -> (get ns "1-norm")(...)
 function fixNumericFunctionNames(example: string): string {

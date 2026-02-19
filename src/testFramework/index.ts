@@ -3,7 +3,7 @@ import path from 'node:path'
 import { LitsError } from '../errors'
 import type { Context } from '../evaluator/interface'
 import { Lits } from '../Lits/Lits'
-import { allBuiltinNamespaces } from '../allNamespaces'
+import { allBuiltinModules } from '../allModules'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { getCodeMarker } from '../utils/debug/getCodeMarker'
 
@@ -46,7 +46,7 @@ export function runTest({ testPath: filePath, testNamePattern }: RunTestParams):
       }
       else {
         try {
-          const lits = new Lits({ debug: true, namespaces: allBuiltinNamespaces })
+          const lits = new Lits({ debug: true, modules: allBuiltinModules })
           const contexts = getContexts(includedFilePaths, lits)
           lits.run(testChunkProgram.program, {
             contexts,

@@ -67,11 +67,11 @@ export type Category = keyof typeof categoryRecord
 
 export const categories = Object.keys(categoryRecord) as Category[]
 
-// Categories that are namespaces (require import)
-export const namespaceCategories: Category[] = ['Vector', 'Linear Algebra', 'Matrix', 'Grid', 'Number-Theory', 'Random', 'Assert']
+// Categories that are modules (require import)
+export const moduleCategories: Category[] = ['Vector', 'Linear Algebra', 'Matrix', 'Grid', 'Number-Theory', 'Random', 'Assert']
 
 // Core categories (always available)
-export const coreCategories = categories.filter(c => !namespaceCategories.includes(c))
+export const coreCategories = categories.filter(c => !moduleCategories.includes(c))
 
 // --- FunctionDocs types ---
 

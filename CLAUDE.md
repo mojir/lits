@@ -20,15 +20,15 @@ npm run build        # build all bundles (lits + cli + playground)
 
 The package has multiple entry points configured in `package.json` `exports`:
 
-- **`@mojir/lits`** → `src/index.ts` — Minimal entry: core `Lits` class, types, type guards. No namespaces or reference data.
-- **`@mojir/lits/full`** → `src/full.ts` — Full entry: everything from minimal plus all namespaces, reference data, and API helpers.
-- **`@mojir/lits/namespaces/<name>`** → `src/namespaces/<name>.ts` — Individual namespace entries (assert, grid, random, vector, linearAlgebra, matrix, numberTheory).
+- **`@mojir/lits`** → `src/index.ts` — Minimal entry: core `Lits` class, types, type guards. No modules or reference data.
+- **`@mojir/lits/full`** → `src/full.ts` — Full entry: everything from minimal plus all modules, reference data, and API helpers.
+- **`@mojir/lits/modules/<name>`** → `src/modules/<name>.ts` — Individual module entries (assert, grid, random, vector, linearAlgebra, matrix, numberTheory).
 
 Rollup configs: `rollup.config.js` (library bundles), `rollup.config.cli.js` (CLI), `rollup.config.playground-builder.js`, `rollup.config.playground-www.js`.
 
 ### Source Layout (`src/`)
 
-- `Lits/Lits.ts` — Main `Lits` class. Namespaces are injected via constructor `config.namespaces`.
+- `Lits/Lits.ts` — Main `Lits` class. Modules are injected via constructor `config.modules`.
 - `tokenizer/` — Lexer: source code → token stream.
 - `parser/` — Parser: token stream → AST.
 - `evaluator/` — Evaluator: AST → result value.
@@ -36,7 +36,7 @@ Rollup configs: `rollup.config.js` (library bundles), `rollup.config.cli.js` (CL
 - `untokenizer/` — Token stream → source code (pretty-printing).
 - `AutoCompleter/` — Autocomplete support.
 - `getUndefinedSymbols/` — Static analysis for undefined symbols.
-- `builtin/` — All built-in expressions and namespaces.
+- `builtin/` — All built-in expressions and modules.
 
 ### Built-in Expressions (`src/builtin/`)
 
@@ -48,9 +48,9 @@ Rollup configs: `rollup.config.js` (library bundles), `rollup.config.cli.js` (CL
   - `array.ts`, `bitwise.ts`, `collection.ts`, `functional.ts`, `math.ts`, `meta.ts`, `misc.ts`, `object.ts`, `predicates.ts`, `regexp.ts`, `sequence.ts`, `string.ts`
 - `specialExpressions/` — Individual special expression implementations (and, cond, def, defn, fn, for, if, let, loop, or, try, etc.).
 
-### Namespaces (`src/builtin/namespaces/`)
+### Modules (`src/builtin/modules/`)
 
-Namespaces provide domain-specific function libraries. Each namespace is in its own directory and exports a `LitsNamespace` object:
+Modules provide domain-specific function libraries. Each module is in its own directory and exports a `LitsModule` object:
 
 - `assert/` (name: `"Assert"`) — Assertion functions.
 - `grid/` (name: `"Grid"`) — 2D grid operations.
@@ -60,7 +60,7 @@ Namespaces provide domain-specific function libraries. Each namespace is in its 
 - `matrix/` (name: `"Matrix"`) — Matrix operations.
 - `numberTheory/` (name: `"Number-Theory"`) — Number theory functions.
 
-**Registration**: Namespaces are injected via `new Lits({ namespaces: [...] })`. The global registry (`registry.ts`) is no longer used at import time; `allNamespaces.ts` registers all built-in namespaces for the full bundle.
+**Registration**: Modules are injected via `new Lits({ modules: [...] })`. The global registry (`registry.ts`) is no longer used at import time; `allModules.ts` registers all built-in modules for the full bundle.
 
 ### Co-located Documentation
 
@@ -83,8 +83,8 @@ Special expressions may use `CustomDocs` instead (with `customVariants` instead 
 
 ### Reference Data (`reference/`)
 
-- `index.ts` — Derives all reference data from co-located docs. Exports `normalExpressionReference`, `namespaceReference`, `functionReference`, `apiReference`, `allReference`, and type guards (`isFunctionReference`, `isCustomReference`, `isShorthandReference`, `isDatatypeReference`).
-- `api.ts` — Defines all API name types (`ApiName`, `CoreApiName`, `NamespaceExpressionName`, etc.), `Category` type, validation functions (`isApiName`, `isDataType`).
+- `index.ts` — Derives all reference data from co-located docs. Exports `normalExpressionReference`, `moduleReference`, `functionReference`, `apiReference`, `allReference`, and type guards (`isFunctionReference`, `isCustomReference`, `isShorthandReference`, `isDatatypeReference`).
+- `api.ts` — Defines all API name types (`ApiName`, `CoreApiName`, `ModuleExpressionName`, etc.), `Category` type, validation functions (`isApiName`, `isDataType`).
 - `datatype.ts` — Datatype reference entries.
 - `examples.ts` — Example code for playground.
 - `shorthand.ts` — Shorthand reference entries.
@@ -102,7 +102,7 @@ Special expressions may use `CustomDocs` instead (with `customVariants` instead 
 
 **Core** (12): `Special expression`, `Predicate`, `Sequence`, `Collection`, `Array`, `Object`, `String`, `Math`, `Functional`, `Regular expression`, `Bitwise`, `Misc`, `Meta`
 
-**Namespace** (7): `Assert`, `Vector`, `Linear Algebra`, `Matrix`, `Grid`, `Number Theory`, `Random`
+**Module** (7): `Assert`, `Vector`, `Linear Algebra`, `Matrix`, `Grid`, `Number Theory`, `Random`
 
 **Other** (2): `Shorthand`, `Datatype`
 
@@ -111,4 +111,4 @@ Special expressions may use `CustomDocs` instead (with `customVariants` instead 
 - Imports must be sorted alphabetically (ESLint rule).
 - `it()` descriptions must begin with lowercase.
 - Target: ES5 with es2015 modules (no `--downlevelIteration`; use `Array.from()` instead of spread on iterables).
-- No side-effect imports for namespace registration.
+- No side-effect imports for module registration.

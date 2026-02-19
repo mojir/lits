@@ -119,9 +119,9 @@ export interface SpecialBuiltinFunction extends GenericLitsFunction {
     | typeof specialExpressionTypes['??']
 }
 
-export interface NamespaceFunction extends GenericLitsFunction {
-  functionType: 'Namespace'
-  namespaceName: string
+export interface ModuleFunction extends GenericLitsFunction {
+  functionType: 'Module'
+  moduleName: string
   functionName: string
 }
 
@@ -130,7 +130,7 @@ export type LitsFunction =
   | UserDefinedFunction
   | NormalBuiltinFunction
   | SpecialBuiltinFunction
-  | NamespaceFunction
+  | ModuleFunction
   | PartialFunction
   | CompFunction
   | ConstantlyFunction

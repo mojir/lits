@@ -5,7 +5,7 @@ import { getSearchDialog } from './components/searchDialog/searchDialog'
 import { randomNumbers } from './randomNumbers'
 import { getStartPage } from './components/startPage'
 import { getExamplePage } from './components/examplePage'
-import { getNamespacesPage } from './components/namespacesPage'
+import { getModulesPage } from './components/modulesPage'
 import { getPlayground } from './components/playground'
 import { getSideBar } from './components/sideBar'
 import { allSearchResultEntries } from './allSearchResultEntries'
@@ -34,7 +34,7 @@ function writeIndexPage() {
       <main id="main-panel" class="fancy-scroll">
         ${getStartPage()}
         ${getExamplePage()}
-        ${getNamespacesPage()}
+        ${getModulesPage()}
         ${getAllDocumentationItems()}
       </main>
       ${getSideBar()}

@@ -2,11 +2,11 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import type { TestData } from '../../testUtils'
 import { checkTestData, createTestData } from '../../testUtils'
 import { Lits } from '../../../src/Lits/Lits'
-import { vectorNamespace } from '../../../src/builtin/namespaces/vector'
+import { vectorModule } from '../../../src/builtin/modules/vector'
 import { LitsError } from '../../../src/errors'
 
 let testData: TestData
-const lits = new Lits({ namespaces: [vectorNamespace] })
+const lits = new Lits({ modules: [vectorModule] })
 
 beforeEach(() => {
   testData = createTestData()
