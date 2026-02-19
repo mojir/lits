@@ -242,7 +242,6 @@ export const api = {
     'bit-set',
     'bit-test',
   ] as const,
-  // TODO, remove some, add some. E.g. type guards, assert-number, assert-string, etc.
   assert: [
     'Assert.assert',
     'Assert.assert=',
@@ -259,6 +258,19 @@ export const api = {
     'Assert.assert-throws',
     'Assert.assert-throws-error',
     'Assert.assert-not-throws',
+    'Assert.assert-array',
+    'Assert.assert-boolean',
+    'Assert.assert-collection',
+    'Assert.assert-function',
+    'Assert.assert-grid',
+    'Assert.assert-integer',
+    'Assert.assert-matrix',
+    'Assert.assert-number',
+    'Assert.assert-object',
+    'Assert.assert-regexp',
+    'Assert.assert-sequence',
+    'Assert.assert-string',
+    'Assert.assert-vector',
   ] as const,
   grid: [
     'Grid.every?',

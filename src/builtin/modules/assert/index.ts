@@ -3,12 +3,13 @@ import { AssertionError } from '../../../errors'
 import type { Any } from '../../../interface'
 import { compare, deepEqual } from '../../../utils'
 import type { BuiltinNormalExpressions } from '../../../builtin/interface'
-import { asAny, assertFunctionLike } from '../../../typeGuards/lits'
+import { asAny, assertFunctionLike, isColl, isObj, isRegularExpression, isSeq } from '../../../typeGuards/lits'
+import { isLitsFunction } from '../../../typeGuards/litsFunction'
+import { isNumber } from '../../../typeGuards/number'
 import { assertString, assertStringOrNumber } from '../../../typeGuards/string'
+import { isGrid, isMatrix, isVector } from '../../../typeGuards/annotatedArrays'
 import type { LitsModule } from '../interface'
 import { moduleDocs } from './docs'
-
-// TODO, remove some, add some. E.g. type guards, assert-number, assert-string, etc.
 
 const assertNormalExpression: BuiltinNormalExpressions = {
   'assert': {
@@ -249,6 +250,188 @@ const assertNormalExpression: BuiltinNormalExpressions = {
       catch {
         throw new AssertionError(`Expected function not to throw.${message}`, sourceCodeInfo)
       }
+      return null
+    },
+    arity: { min: 1, max: 2 },
+  },
+  'assert-array': {
+    evaluate: ([first, message], sourceCodeInfo): null => {
+      if (message !== undefined) {
+        assertString(message, sourceCodeInfo)
+        message = ` ${message}`
+      }
+      message ??= ''
+      if (!Array.isArray(first))
+        throw new AssertionError(`Expected ${JSON.stringify(first)} to be an array.${message}`, sourceCodeInfo)
+
+      return null
+    },
+    arity: { min: 1, max: 2 },
+  },
+  'assert-boolean': {
+    evaluate: ([first, message], sourceCodeInfo): null => {
+      if (message !== undefined) {
+        assertString(message, sourceCodeInfo)
+        message = ` ${message}`
+      }
+      message ??= ''
+      if (typeof first !== 'boolean')
+        throw new AssertionError(`Expected ${JSON.stringify(first)} to be a boolean.${message}`, sourceCodeInfo)
+
+      return null
+    },
+    arity: { min: 1, max: 2 },
+  },
+  'assert-collection': {
+    evaluate: ([first, message], sourceCodeInfo): null => {
+      if (message !== undefined) {
+        assertString(message, sourceCodeInfo)
+        message = ` ${message}`
+      }
+      message ??= ''
+      if (!isColl(first))
+        throw new AssertionError(`Expected ${JSON.stringify(first)} to be a collection.${message}`, sourceCodeInfo)
+
+      return null
+    },
+    arity: { min: 1, max: 2 },
+  },
+  'assert-function': {
+    evaluate: ([first, message], sourceCodeInfo): null => {
+      if (message !== undefined) {
+        assertString(message, sourceCodeInfo)
+        message = ` ${message}`
+      }
+      message ??= ''
+      if (!isLitsFunction(first))
+        throw new AssertionError(`Expected ${JSON.stringify(first)} to be a function.${message}`, sourceCodeInfo)
+
+      return null
+    },
+    arity: { min: 1, max: 2 },
+  },
+  'assert-grid': {
+    evaluate: ([first, message], sourceCodeInfo): null => {
+      if (message !== undefined) {
+        assertString(message, sourceCodeInfo)
+        message = ` ${message}`
+      }
+      message ??= ''
+      if (!isGrid(first))
+        throw new AssertionError(`Expected ${JSON.stringify(first)} to be a grid.${message}`, sourceCodeInfo)
+
+      return null
+    },
+    arity: { min: 1, max: 2 },
+  },
+  'assert-integer': {
+    evaluate: ([first, message], sourceCodeInfo): null => {
+      if (message !== undefined) {
+        assertString(message, sourceCodeInfo)
+        message = ` ${message}`
+      }
+      message ??= ''
+      if (typeof first !== 'number' || !isNumber(first, { integer: true }))
+        throw new AssertionError(`Expected ${JSON.stringify(first)} to be an integer.${message}`, sourceCodeInfo)
+
+      return null
+    },
+    arity: { min: 1, max: 2 },
+  },
+  'assert-matrix': {
+    evaluate: ([first, message], sourceCodeInfo): null => {
+      if (message !== undefined) {
+        assertString(message, sourceCodeInfo)
+        message = ` ${message}`
+      }
+      message ??= ''
+      if (!isMatrix(first))
+        throw new AssertionError(`Expected ${JSON.stringify(first)} to be a matrix.${message}`, sourceCodeInfo)
+
+      return null
+    },
+    arity: { min: 1, max: 2 },
+  },
+  'assert-number': {
+    evaluate: ([first, message], sourceCodeInfo): null => {
+      if (message !== undefined) {
+        assertString(message, sourceCodeInfo)
+        message = ` ${message}`
+      }
+      message ??= ''
+      if (typeof first !== 'number')
+        throw new AssertionError(`Expected ${JSON.stringify(first)} to be a number.${message}`, sourceCodeInfo)
+
+      return null
+    },
+    arity: { min: 1, max: 2 },
+  },
+  'assert-object': {
+    evaluate: ([first, message], sourceCodeInfo): null => {
+      if (message !== undefined) {
+        assertString(message, sourceCodeInfo)
+        message = ` ${message}`
+      }
+      message ??= ''
+      if (!isObj(first))
+        throw new AssertionError(`Expected ${JSON.stringify(first)} to be an object.${message}`, sourceCodeInfo)
+
+      return null
+    },
+    arity: { min: 1, max: 2 },
+  },
+  'assert-regexp': {
+    evaluate: ([first, message], sourceCodeInfo): null => {
+      if (message !== undefined) {
+        assertString(message, sourceCodeInfo)
+        message = ` ${message}`
+      }
+      message ??= ''
+      if (!isRegularExpression(first))
+        throw new AssertionError(`Expected ${JSON.stringify(first)} to be a regexp.${message}`, sourceCodeInfo)
+
+      return null
+    },
+    arity: { min: 1, max: 2 },
+  },
+  'assert-sequence': {
+    evaluate: ([first, message], sourceCodeInfo): null => {
+      if (message !== undefined) {
+        assertString(message, sourceCodeInfo)
+        message = ` ${message}`
+      }
+      message ??= ''
+      if (!isSeq(first))
+        throw new AssertionError(`Expected ${JSON.stringify(first)} to be a sequence.${message}`, sourceCodeInfo)
+
+      return null
+    },
+    arity: { min: 1, max: 2 },
+  },
+  'assert-string': {
+    evaluate: ([first, message], sourceCodeInfo): null => {
+      if (message !== undefined) {
+        assertString(message, sourceCodeInfo)
+        message = ` ${message}`
+      }
+      message ??= ''
+      if (typeof first !== 'string')
+        throw new AssertionError(`Expected ${JSON.stringify(first)} to be a string.${message}`, sourceCodeInfo)
+
+      return null
+    },
+    arity: { min: 1, max: 2 },
+  },
+  'assert-vector': {
+    evaluate: ([first, message], sourceCodeInfo): null => {
+      if (message !== undefined) {
+        assertString(message, sourceCodeInfo)
+        message = ` ${message}`
+      }
+      message ??= ''
+      if (!isVector(first))
+        throw new AssertionError(`Expected ${JSON.stringify(first)} to be a vector.${message}`, sourceCodeInfo)
+
       return null
     },
     arity: { min: 1, max: 2 },

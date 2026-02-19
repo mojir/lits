@@ -35,6 +35,7 @@ describe('annotatedArrays', () => {
   it('should correctly identify matrices', () => {
     expect(isMatrix([[1, 2], [3, 4]])).toBe(true)
     expect(isMatrix([[1, 2], [3, '4']])).toBe(false)
+    expect(isMatrix([['a', 'b'], [1, 2]])).toBe(false)
     expect(isMatrix([])).toBe(false)
     expect(isMatrix('not an array')).toBe(false)
   })

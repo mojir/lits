@@ -172,5 +172,145 @@ describe('assert functions', () => {
         expect(() => runWithAssert('Assert.assert-throws-error(-> throw("X"), "X")')).not.toThrow()
       })
     })
+
+    describe('assert-array', () => {
+      it('samples', () => {
+        expect(runWithAssert('Assert.assert-array([])')).toBeNull()
+        expect(runWithAssert('Assert.assert-array([1, 2, 3])')).toBeNull()
+        expect(() => runWithAssert('Assert.assert-array("string")')).toThrowError(AssertionError)
+        expect(() => runWithAssert('Assert.assert-array(42)')).toThrowError(AssertionError)
+        expect(() => runWithAssert('Assert.assert-array(true)')).toThrowError(AssertionError)
+        expect(() => runWithAssert('Assert.assert-array(null)')).toThrowError(AssertionError)
+        expect(() => runWithAssert('Assert.assert-array({}, "Expected an array")')).toThrowError(AssertionError)
+      })
+    })
+
+    describe('assert-boolean', () => {
+      it('samples', () => {
+        expect(runWithAssert('Assert.assert-boolean(true)')).toBeNull()
+        expect(runWithAssert('Assert.assert-boolean(false)')).toBeNull()
+        expect(() => runWithAssert('Assert.assert-boolean(1)')).toThrowError(AssertionError)
+        expect(() => runWithAssert('Assert.assert-boolean(0)')).toThrowError(AssertionError)
+        expect(() => runWithAssert('Assert.assert-boolean("true")')).toThrowError(AssertionError)
+        expect(() => runWithAssert('Assert.assert-boolean(null)')).toThrowError(AssertionError)
+        expect(() => runWithAssert('Assert.assert-boolean([], "Expected a boolean")')).toThrowError(AssertionError)
+      })
+    })
+
+    describe('assert-collection', () => {
+      it('samples', () => {
+        expect(runWithAssert('Assert.assert-collection([])')).toBeNull()
+        expect(runWithAssert('Assert.assert-collection([1, 2])')).toBeNull()
+        expect(runWithAssert('Assert.assert-collection({})')).toBeNull()
+        expect(runWithAssert('Assert.assert-collection({ a: 1 })')).toBeNull()
+        expect(runWithAssert('Assert.assert-collection("hello")')).toBeNull()
+        expect(() => runWithAssert('Assert.assert-collection(42)')).toThrowError(AssertionError)
+        expect(() => runWithAssert('Assert.assert-collection(true)')).toThrowError(AssertionError)
+        expect(() => runWithAssert('Assert.assert-collection(null, "Expected a collection")')).toThrowError(AssertionError)
+      })
+    })
+
+    describe('assert-function', () => {
+      it('samples', () => {
+        expect(runWithAssert('Assert.assert-function(-> $ + 1)')).toBeNull()
+        expect(runWithAssert('Assert.assert-function((x, y) -> x + y)')).toBeNull()
+        expect(() => runWithAssert('Assert.assert-function(42)')).toThrowError(AssertionError)
+        expect(() => runWithAssert('Assert.assert-function("string")')).toThrowError(AssertionError)
+        expect(() => runWithAssert('Assert.assert-function([], "Expected a function")')).toThrowError(AssertionError)
+      })
+    })
+
+    describe('assert-grid', () => {
+      it('samples', () => {
+        expect(runWithAssert('Assert.assert-grid([[1, 2], [3, 4]])')).toBeNull()
+        expect(runWithAssert('Assert.assert-grid([["a", "b"], ["c", "d"]])')).toBeNull()
+        expect(() => runWithAssert('Assert.assert-grid([[1, 2], [3]])')).toThrowError(AssertionError)
+        expect(() => runWithAssert('Assert.assert-grid([1, 2])')).toThrowError(AssertionError)
+        expect(() => runWithAssert('Assert.assert-grid(42, "Expected a grid")')).toThrowError(AssertionError)
+      })
+    })
+
+    describe('assert-integer', () => {
+      it('samples', () => {
+        expect(runWithAssert('Assert.assert-integer(42)')).toBeNull()
+        expect(runWithAssert('Assert.assert-integer(0)')).toBeNull()
+        expect(runWithAssert('Assert.assert-integer(-7)')).toBeNull()
+        expect(() => runWithAssert('Assert.assert-integer(3.14)')).toThrowError(AssertionError)
+        expect(() => runWithAssert('Assert.assert-integer("42")')).toThrowError(AssertionError)
+        expect(() => runWithAssert('Assert.assert-integer(true, "Expected an integer")')).toThrowError(AssertionError)
+      })
+    })
+
+    describe('assert-matrix', () => {
+      it('samples', () => {
+        expect(runWithAssert('Assert.assert-matrix([[1, 2], [3, 4]])')).toBeNull()
+        expect(() => runWithAssert('Assert.assert-matrix([["a", "b"], ["c", "d"]])')).toThrowError(AssertionError)
+        expect(() => runWithAssert('Assert.assert-matrix([[1, 2], [3]])')).toThrowError(AssertionError)
+        expect(() => runWithAssert('Assert.assert-matrix([1, 2])')).toThrowError(AssertionError)
+        expect(() => runWithAssert('Assert.assert-matrix(42, "Expected a matrix")')).toThrowError(AssertionError)
+      })
+    })
+
+    describe('assert-number', () => {
+      it('samples', () => {
+        expect(runWithAssert('Assert.assert-number(42)')).toBeNull()
+        expect(runWithAssert('Assert.assert-number(3.14)')).toBeNull()
+        expect(runWithAssert('Assert.assert-number(0)')).toBeNull()
+        expect(runWithAssert('Assert.assert-number(-1)')).toBeNull()
+        expect(() => runWithAssert('Assert.assert-number("42")')).toThrowError(AssertionError)
+        expect(() => runWithAssert('Assert.assert-number(true)')).toThrowError(AssertionError)
+        expect(() => runWithAssert('Assert.assert-number(null, "Expected a number")')).toThrowError(AssertionError)
+      })
+    })
+
+    describe('assert-object', () => {
+      it('samples', () => {
+        expect(runWithAssert('Assert.assert-object({})')).toBeNull()
+        expect(runWithAssert('Assert.assert-object({ a: 1 })')).toBeNull()
+        expect(() => runWithAssert('Assert.assert-object([])')).toThrowError(AssertionError)
+        expect(() => runWithAssert('Assert.assert-object("string")')).toThrowError(AssertionError)
+        expect(() => runWithAssert('Assert.assert-object(42, "Expected an object")')).toThrowError(AssertionError)
+      })
+    })
+
+    describe('assert-regexp', () => {
+      it('samples', () => {
+        expect(runWithAssert('Assert.assert-regexp(#"^start")')).toBeNull()
+        expect(runWithAssert('Assert.assert-regexp(regexp("test"))')).toBeNull()
+        expect(() => runWithAssert('Assert.assert-regexp("string")')).toThrowError(AssertionError)
+        expect(() => runWithAssert('Assert.assert-regexp(42, "Expected a regexp")')).toThrowError(AssertionError)
+      })
+    })
+
+    describe('assert-sequence', () => {
+      it('samples', () => {
+        expect(runWithAssert('Assert.assert-sequence([])')).toBeNull()
+        expect(runWithAssert('Assert.assert-sequence([1, 2])')).toBeNull()
+        expect(runWithAssert('Assert.assert-sequence("hello")')).toBeNull()
+        expect(() => runWithAssert('Assert.assert-sequence({})')).toThrowError(AssertionError)
+        expect(() => runWithAssert('Assert.assert-sequence(42)')).toThrowError(AssertionError)
+        expect(() => runWithAssert('Assert.assert-sequence(null, "Expected a sequence")')).toThrowError(AssertionError)
+      })
+    })
+
+    describe('assert-string', () => {
+      it('samples', () => {
+        expect(runWithAssert('Assert.assert-string("")')).toBeNull()
+        expect(runWithAssert('Assert.assert-string("hello")')).toBeNull()
+        expect(() => runWithAssert('Assert.assert-string(42)')).toThrowError(AssertionError)
+        expect(() => runWithAssert('Assert.assert-string(true)')).toThrowError(AssertionError)
+        expect(() => runWithAssert('Assert.assert-string([], "Expected a string")')).toThrowError(AssertionError)
+      })
+    })
+
+    describe('assert-vector', () => {
+      it('samples', () => {
+        expect(runWithAssert('Assert.assert-vector([])')).toBeNull()
+        expect(runWithAssert('Assert.assert-vector([1, 2, 3])')).toBeNull()
+        expect(() => runWithAssert('Assert.assert-vector(["a", "b"])')).toThrowError(AssertionError)
+        expect(() => runWithAssert('Assert.assert-vector("string")')).toThrowError(AssertionError)
+        expect(() => runWithAssert('Assert.assert-vector(42, "Expected a vector")')).toThrowError(AssertionError)
+      })
+    })
   }
 })

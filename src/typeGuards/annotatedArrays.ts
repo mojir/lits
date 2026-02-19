@@ -5,8 +5,11 @@ import { isNumber } from './number'
 
 const annotatedArrays = new WeakSet<unknown[]>()
 const vectors = new WeakSet<unknown[]>()
+const notVectors = new WeakSet<unknown[]>()
 const matrices = new WeakSet<unknown[]>()
+const notMatrices = new WeakSet<unknown[]>()
 const grids = new WeakSet<unknown[]>()
+const notGrids = new WeakSet<unknown[]>()
 
 export function annotate<T>(value: T): T {
   if (!Array.isArray(value)) {
@@ -30,12 +33,16 @@ export function isVector(vector: unknown): vector is number[] {
   if (vectors.has(vector)) {
     return true
   }
+  if (notVectors.has(vector)) {
+    return false
+  }
 
   if (vector.every(elem => isNumber(elem))) {
     annotatedArrays.add(vector)
     vectors.add(vector)
     return true
   }
+  notVectors.add(vector)
   return false
 }
 
@@ -83,18 +90,25 @@ export function isGrid(grid: unknown): grid is unknown[][] {
   if (grids.has(grid)) {
     return true
   }
+  if (notGrids.has(grid)) {
+    return false
+  }
   if (grid.length === 0) {
+    notGrids.add(grid)
     return false
   }
   if (!Array.isArray(grid[0])) {
+    notGrids.add(grid)
     return false
   }
   const nbrOfCols = grid[0].length
   for (const row of grid.slice(1)) {
     if (!Array.isArray(row)) {
+      notGrids.add(grid)
       return false
     }
     if (row.length !== nbrOfCols) {
+      notGrids.add(grid)
       return false
     }
   }
@@ -116,24 +130,21 @@ export function isMatrix(matrix: unknown): matrix is number[][] {
   if (matrices.has(matrix)) {
     return true
   }
+  if (notMatrices.has(matrix)) {
+    return false
+  }
   if (matrix.length === 0) {
+    notMatrices.add(matrix)
     return false
   }
-  if (!Array.isArray(matrix[0])) {
-    return false
-  }
-  if (matrix[0].length === 0) {
+  if (!Array.isArray(matrix[0]) || matrix[0].length === 0) {
+    notMatrices.add(matrix)
     return false
   }
   const nbrOfCols = matrix[0].length
-  for (const row of matrix.slice(1)) {
-    if (!Array.isArray(row)) {
-      return false
-    }
-    if (row.length !== nbrOfCols) {
-      return false
-    }
-    if (row.some(cell => !isNumber(cell))) {
+  for (const row of matrix) {
+    if (!Array.isArray(row) || row.length !== nbrOfCols || row.some(cell => !isNumber(cell))) {
+      notMatrices.add(matrix)
       return false
     }
   }
