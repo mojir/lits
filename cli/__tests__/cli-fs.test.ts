@@ -62,6 +62,7 @@ describe('the Cli.Fs Integration Tests', () => {
         cwd: testDir,
         encoding: 'utf8',
         stdio: 'pipe',
+        env: { ...process.env, NO_COLOR: '1', FORCE_COLOR: '0' },
       })
       return result.trim()
     }

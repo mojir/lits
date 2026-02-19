@@ -12,6 +12,7 @@ describe('proc Integration Tests', () => {
         encoding: 'utf8',
         stdio: 'pipe',
         cwd: __dirname, // Ensure we run in the correct directory
+        env: { ...process.env, NO_COLOR: '1', FORCE_COLOR: '0' },
       })
       return result.trim()
     }
