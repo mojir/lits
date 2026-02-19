@@ -32,7 +32,7 @@ export function walkDefaults(
   }
 }
 
-export function evalueateBindingNodeValues(
+export function evaluateBindingNodeValues(
   target: BindingTarget,
   value: Any,
   evaluate: (Node: Node) => Any,

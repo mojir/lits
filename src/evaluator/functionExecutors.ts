@@ -1,5 +1,5 @@
 import { specialExpressions } from '../builtin'
-import { evalueateBindingNodeValues } from '../builtin/bindingNode'
+import { evaluateBindingNodeValues } from '../builtin/bindingNode'
 import { allNormalExpressions } from '../builtin/normalExpressions'
 import { LitsError, RecurSignal } from '../errors'
 import { arityAcceptsMin, assertNumberOfParams } from '../utils/arity'
@@ -49,7 +49,7 @@ export const functionExecutors: FunctionExecutors = {
           : isUnknownRecord(error) && typeof error.message === 'string'
             ? error.message
             : '<no message>'
-      throw new LitsError(`Native function throwed: "${message}"`, sourceCodeInfo)
+      throw new LitsError(`Native function threw: "${message}"`, sourceCodeInfo)
     }
   },
   UserDefined: (fn: UserDefinedFunction, params, sourceCodeInfo, contextStack, { evaluateNode }) => {
@@ -69,7 +69,7 @@ export const functionExecutors: FunctionExecutors = {
       for (let i = 0; i < params.length; i += 1) {
         if (i < nbrOfNonRestArgs) {
           const param = toAny(params[i])
-          const valueRecord = evalueateBindingNodeValues(args[i]!, param, node =>
+          const valueRecord = evaluateBindingNodeValues(args[i]!, param, node =>
             evaluateNode(node, newContextStack.create(newContext)))
           Object.entries(valueRecord).forEach(([key, value]) => {
             newContext[key] = { value }
@@ -83,7 +83,7 @@ export const functionExecutors: FunctionExecutors = {
       for (let i = params.length; i < nbrOfNonRestArgs; i++) {
         const arg = args[i]!
         const defaultValue = evaluateNode(arg[1][1]!, contextStack.create(newContext))
-        const valueRecord = evalueateBindingNodeValues(arg, defaultValue, node =>
+        const valueRecord = evaluateBindingNodeValues(arg, defaultValue, node =>
           evaluateNode(node, contextStack.create(newContext)))
         Object.entries(valueRecord).forEach(([key, value]) => {
           newContext[key] = { value }
@@ -92,7 +92,7 @@ export const functionExecutors: FunctionExecutors = {
 
       const restArgument = args.find(arg => arg[0] === bindingTargetTypes.rest)
       if (restArgument !== undefined) {
-        const valueRecord = evalueateBindingNodeValues(restArgument, rest, node => evaluateNode(node, contextStack.create(newContext)))
+        const valueRecord = evaluateBindingNodeValues(restArgument, rest, node => evaluateNode(node, contextStack.create(newContext)))
         Object.entries(valueRecord).forEach(([key, value]) => {
           newContext[key] = { value }
         })
@@ -176,7 +176,7 @@ export const functionExecutors: FunctionExecutors = {
     return executeFunction(asFunctionLike(fn.function, sourceCodeInfo), fnulledParams, contextStack, sourceCodeInfo)
   },
   Builtin: (fn: NormalBuiltinFunction, params, sourceCodeInfo, contextStack, { executeFunction }) => {
-    const normalExpression = asNonUndefined(allNormalExpressions[fn.normalBuitinSymbolType], sourceCodeInfo)
+    const normalExpression = asNonUndefined(allNormalExpressions[fn.normalBuiltinSymbolType], sourceCodeInfo)
     return normalExpression.evaluate(params, sourceCodeInfo, contextStack, { executeFunction })
   },
   SpecialBuiltin: (fn: SpecialBuiltinFunction, params, sourceCodeInfo, contextStack, { executeFunction }) => {

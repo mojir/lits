@@ -41,7 +41,7 @@ describe('litsFunction type guards', () => {
   const lf2: LitsFunction = {
     [FUNCTION_SYMBOL]: true,
     functionType: 'Builtin',
-    normalBuitinSymbolType: normalExpressionTypes['+'] as number,
+    normalBuiltinSymbolType: normalExpressionTypes['+'] as number,
     arity: {},
     name: '+',
   }

@@ -6,7 +6,7 @@ import type { BindingNode, Node, SpecialExpressionNode } from '../../parser/type
 import { asNonUndefined } from '../../typeGuards'
 import { asAny, asColl, isSeq } from '../../typeGuards/lits'
 import type { Builtin, BuiltinSpecialExpression, CustomDocs } from '../interface'
-import { evalueateBindingNodeValues, getAllBindingTargetNames } from '../bindingNode'
+import { evaluateBindingNodeValues, getAllBindingTargetNames } from '../bindingNode'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 import { toFixedArity } from '../../utils/arity'
 
@@ -26,7 +26,7 @@ function addToContext(
   for (const bindingNode of bindings) {
     const [target, bindingValue] = bindingNode[1]
     const val = evaluateNode(bindingValue, contextStack)
-    const valueRecord = evalueateBindingNodeValues(target, val, Node => evaluateNode(Node, contextStack))
+    const valueRecord = evaluateBindingNodeValues(target, val, Node => evaluateNode(Node, contextStack))
     Object.entries(valueRecord).forEach(([name, value]) => {
       context[name] = { value }
     })
@@ -73,7 +73,7 @@ function evaluateLoop(
       }
 
       const val = asAny(seq[index], sourceCodeInfo)
-      const valueRecord = evalueateBindingNodeValues(targetNode, val, Node => evaluateNode(Node, newContextStack))
+      const valueRecord = evaluateBindingNodeValues(targetNode, val, Node => evaluateNode(Node, newContextStack))
       Object.entries(valueRecord).forEach(([name, value]) => {
         context[name] = { value }
       })

@@ -174,7 +174,7 @@ export class ContextStackImpl {
       return {
         [FUNCTION_SYMBOL]: true,
         functionType: 'Builtin',
-        normalBuitinSymbolType: type,
+        normalBuiltinSymbolType: type,
         sourceCodeInfo: node[2],
         arity: normalExpression.arity,
         name,
@@ -239,7 +239,7 @@ export function createContextStack(params: ContextParams = {}, modules?: Map<str
         }
 
         assertJsFunction(entry)
-        const natifeFn: NativeJsFunction = {
+        const nativeFn: NativeJsFunction = {
           functionType: 'NativeJsFunction',
           nativeFn: entry,
           name,
@@ -251,7 +251,7 @@ export function createContextStack(params: ContextParams = {}, modules?: Map<str
         if (scope === acc && !checkNotDefined(name)) {
           return acc
         }
-        scope[name] = natifeFn
+        scope[name] = nativeFn
         return acc
       }, {}),
   })

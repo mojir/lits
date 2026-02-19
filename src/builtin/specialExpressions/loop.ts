@@ -5,7 +5,7 @@ import type { BindingNode, Node, SpecialExpressionNode } from '../../parser/type
 import { asAny } from '../../typeGuards/lits'
 import { joinSets } from '../../utils'
 import { valueToString } from '../../utils/debug/debugTools'
-import { evalueateBindingNodeValues, getAllBindingTargetNames } from '../bindingNode'
+import { evaluateBindingNodeValues, getAllBindingTargetNames } from '../bindingNode'
 import type { BuiltinSpecialExpression, CustomDocs } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 
@@ -46,7 +46,7 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
     const bindingNodes = node[1][1]
     const bindingContext: Context = bindingNodes.reduce((result: Context, bindingNode) => {
       const val = evaluateNode(bindingNode[1][1], contextStack.create(result))
-      const valueRecord = evalueateBindingNodeValues(bindingNode[1][0], val, Node => evaluateNode(Node, contextStack))
+      const valueRecord = evaluateBindingNodeValues(bindingNode[1][0], val, Node => evaluateNode(Node, contextStack))
       Object.entries(valueRecord).forEach(([name, value]) => {
         result[name] = { value }
       })
@@ -70,7 +70,7 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
             )
           }
           bindingNodes.forEach((bindingNode, index) => {
-            const valueRecord = evalueateBindingNodeValues(bindingNode[1][0], asAny(params[index]), Node => evaluateNode(Node, contextStack))
+            const valueRecord = evaluateBindingNodeValues(bindingNode[1][0], asAny(params[index]), Node => evaluateNode(Node, contextStack))
             for (const [name, value] of Object.entries(valueRecord)) {
               bindingContext[name]!.value = value
             }

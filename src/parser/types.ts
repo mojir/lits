@@ -102,7 +102,7 @@ export interface FNullFunction extends GenericLitsFunction {
 
 export interface NormalBuiltinFunction extends GenericLitsFunction {
   functionType: 'Builtin'
-  normalBuitinSymbolType: number
+  normalBuiltinSymbolType: number
   name: string
 }
 

@@ -435,7 +435,7 @@ export class Parser {
       }
 
       if (operatorName === '->') {
-        return this.parseShorthandLamdaFunction()
+        return this.parseShorthandLambdaFunction()
       }
       else {
         throw new LitsError(`Illegal operator: ${operatorName}`, token[2])
@@ -645,7 +645,7 @@ export class Parser {
           throw new LitsError(`Unknown special expression: ${type satisfies never}`, symbol[2])
       }
     }
-    else if (isNormalBuiltinSymbolNode(symbol) || isNormalBuiltinSymbolNode(symbol)) {
+    else if (isNormalBuiltinSymbolNode(symbol) || isUserDefinedSymbolNode(symbol)) {
       return createNamedNormalExpressionNode(symbol, params, symbol[2])
     }
 
@@ -743,7 +743,7 @@ export class Parser {
     return functionArguments
   }
 
-  private parseShorthandLamdaFunction(): LambdaNode {
+  private parseShorthandLambdaFunction(): LambdaNode {
     const firstToken = this.asToken(this.peek())
     this.advance()
     const startPos = this.parseState.position
