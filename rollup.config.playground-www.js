@@ -1,6 +1,7 @@
 const resolve = require('@rollup/plugin-node-resolve')
 const typescript = require('@rollup/plugin-typescript')
 const jsonPlugin = require('@rollup/plugin-json')
+const terser = require('@rollup/plugin-terser')
 
 const plugins = [
   typescript({
@@ -11,6 +12,7 @@ const plugins = [
     // options to customize how modules are resolved
     extensions: ['.js', '.ts'], // add file extensions you're using
   }),
+  terser(),
 ]
 
 module.exports = [

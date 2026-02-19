@@ -57,7 +57,7 @@ export const categoryRecord = {
   'Linear Algebra': true,
   'Matrix': true,
   'Grid': true,
-  'Number Theory': true,
+  'Number-Theory': true,
   'Random': true,
   'Shorthand': true,
   'Datatype': true,
@@ -68,20 +68,10 @@ export type Category = keyof typeof categoryRecord
 export const categories = Object.keys(categoryRecord) as Category[]
 
 // Categories that are namespaces (require import)
-export const namespaceCategories: Category[] = ['Vector', 'Linear Algebra', 'Matrix', 'Grid', 'Number Theory', 'Random', 'Assert']
+export const namespaceCategories: Category[] = ['Vector', 'Linear Algebra', 'Matrix', 'Grid', 'Number-Theory', 'Random', 'Assert']
 
 // Core categories (always available)
 export const coreCategories = categories.filter(c => !namespaceCategories.includes(c))
-
-// Map from category to namespace import name
-export const categoryToNamespace: Partial<Record<Category, string>> = {
-  'Vector': 'Vector',
-  'Linear Algebra': 'Linear-Algebra',
-  'Matrix': 'Matrix',
-  'Grid': 'Grid',
-  'Number Theory': 'Number-Theory',
-  'Random': 'Random',
-}
 
 // --- FunctionDocs types ---
 

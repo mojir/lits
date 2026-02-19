@@ -277,7 +277,9 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       returns: { type: 'boolean' },
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
-      description: 'Computes logical negation. Note that any other $x than `false`, `0`, `null` and `\'\'` is truthy.',      seeAlso: ['boolean'],      examples: [
+      description: 'Computes logical negation. Note that any other $x than `false`, `0`, `null` and `\'\'` is truthy.',
+      seeAlso: ['boolean'],
+      examples: [
         '!(3)',
         '!(true)',
         '!("A string")',

@@ -1,4 +1,4 @@
-import { categoryToNamespace, namespaceCategories } from '../../../reference/api'
+import { namespaceCategories } from '../../../reference/api'
 import { formatLitsExpression } from '../formatter/rules'
 import { packageIcon } from '../icons'
 import { styles } from '../styles'
@@ -51,7 +51,7 @@ const namespaceInfo: NamespaceInfo[] = [
     ],
   },
   {
-    name: 'Number Theory',
+    name: 'Number-Theory',
     importName: 'Number-Theory',
     description: 'Number theory functions including prime numbers, factorials, fibonacci sequences, and more.',
     examples: [
@@ -101,7 +101,7 @@ let vec = import("Vector")
 vec.sum([1, 2, 3, 4, 5])`)}</pre>
       <p ${styles('text-color-gray-400')}>
         Available namespaces: ${namespaceCategories.map((c) => {
-          const ns = categoryToNamespace[c]
+          const ns = c
           return `<code ${styles('bg-gray-700', 'px-1')}>${ns}</code>`
         }).join(', ')}
       </p>

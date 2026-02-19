@@ -80,22 +80,65 @@ function getNumberVectorOrMatrixOperation(
   return ['number', params as number[]]
 }
 
+function unaryMathOp(
+  fn: (val: number) => number,
+): (params: unknown[], sourceCodeInfo: SourceCodeInfo | undefined) => NumberVectorOrMatrix {
+  return (params, sourceCodeInfo) => {
+    const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
+    if (operation === 'number') {
+      return fn(operands[0]!)
+    }
+    else if (operation === 'vector') {
+      return operands[0]!.map(val => fn(val))
+    }
+    else {
+      return operands[0]!.map(row => row.map(val => fn(val)))
+    }
+  }
+}
+
+function binaryMathOp(
+  fn: (a: number, b: number) => number,
+): (params: unknown[], sourceCodeInfo: SourceCodeInfo | undefined) => NumberVectorOrMatrix {
+  return (params, sourceCodeInfo) => {
+    const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
+    if (operation === 'number') {
+      return fn(operands[0]!, operands[1]!)
+    }
+    else if (operation === 'vector') {
+      return operands[0]!.map((val, i) => fn(val, operands[1]![i]!))
+    }
+    else {
+      return operands[0]!.map((row, i) => row.map((val, j) => fn(val, operands[1]![i]![j]!)))
+    }
+  }
+}
+
+function reduceMathOp(
+  identity: number,
+  fn: (a: number, b: number) => number,
+): (params: unknown[], sourceCodeInfo: SourceCodeInfo | undefined) => NumberVectorOrMatrix {
+  return (params, sourceCodeInfo) => {
+    if (params.length === 0)
+      return identity
+    const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
+    if (operation === 'number') {
+      return operands.reduce((a, b) => fn(a, b), identity)
+    }
+    else if (operation === 'vector') {
+      const [first, ...rest] = operands
+      return rest.reduce((acc, v) => acc.map((val, i) => fn(val, v[i]!)), first!)
+    }
+    else {
+      const [first, ...rest] = operands
+      return rest.reduce((acc, m) => acc.map((row, i) => row.map((val, j) => fn(val, m[i]![j]!))), first!)
+    }
+  }
+}
+
 export const mathNormalExpression: BuiltinNormalExpressions = {
   'inc': {
-    evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
-      const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
-      if (operation === 'number') {
-        return operands[0]! + 1
-      }
-      else if (operation === 'vector') {
-        const firstVector = operands[0]!
-        return firstVector.map(val => val + 1)
-      }
-      else {
-        const firstMatrix = operands[0]!
-        return firstMatrix.map(row => row.map(val => val + 1))
-      }
-    },
+    evaluate: unaryMathOp(val => val + 1),
     arity: toFixedArity(1),
     docs: {
       category: 'Math',
@@ -116,20 +159,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
   },
   'dec': {
-    evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
-      const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
-      if (operation === 'number') {
-        return operands[0]! - 1
-      }
-      else if (operation === 'vector') {
-        const firstVector = operands[0]!
-        return firstVector.map(val => val - 1)
-      }
-      else {
-        const firstMatrix = operands[0]!
-        return firstMatrix.map(row => row.map(val => val - 1))
-      }
-    },
+    evaluate: unaryMathOp(val => val - 1),
     arity: toFixedArity(1),
     docs: {
       category: 'Math',
@@ -150,27 +180,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
   },
   '+': {
-    evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
-      if (params.length === 0) {
-        return 0
-      }
-
-      const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
-
-      if (operation === 'number') {
-        return operands.reduce((result, param) => result + (param), 0)
-      }
-      else if (operation === 'vector') {
-        const firstVector = operands[0]!
-        const restVectors = operands.slice(1)
-        return restVectors.reduce((acc, vector) => acc.map((val, i) => val + vector[i]!), firstVector)
-      }
-      else {
-        const firstMatrix = operands[0]!
-        const restMatrices = operands.slice(1)
-        return restMatrices.reduce((acc, matrix) => acc.map((row, i) => row.map((val, j) => val + matrix[i]![j]!)), firstMatrix)
-      }
-    },
+    evaluate: reduceMathOp(0, (a, b) => a + b),
     arity: {},
     docs: {
       category: 'Math',
@@ -197,27 +207,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
   },
   '*': {
-    evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
-      if (params.length === 0) {
-        return 1
-      }
-
-      const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
-
-      if (operation === 'number') {
-        return operands.reduce((result, param) => result * (param), 1)
-      }
-      else if (operation === 'vector') {
-        const firstVector = operands[0]!
-        const restVectors = operands.slice(1)
-        return restVectors.reduce((acc, vector) => acc.map((val, i) => val * vector[i]!), firstVector)
-      }
-      else {
-        const firstMatrix = operands[0]!
-        const restMatrices = operands.slice(1)
-        return restMatrices.reduce((acc, matrix) => acc.map((row, i) => row.map((val, j) => val * matrix[i]![j]!)), firstMatrix)
-      }
-    },
+    evaluate: reduceMathOp(1, (a, b) => a * b),
     arity: {},
     docs: {
       category: 'Math',
@@ -352,23 +342,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
   },
   'quot': {
-    evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
-      const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
-
-      if (operation === 'number') {
-        return Math.trunc(operands[0]! / operands[1]!)
-      }
-      else if (operation === 'vector') {
-        const firstVector = operands[0]!
-        const secondVector = operands[1]!
-        return firstVector.map((val, i) => Math.trunc(val / secondVector[i]!))
-      }
-      else {
-        const firstMatrix = operands[0]!
-        const secondMatrix = operands[1]!
-        return firstMatrix.map((row, i) => row.map((val, j) => Math.trunc(val / secondMatrix[i]![j]!)))
-      }
-    },
+    evaluate: binaryMathOp((a, b) => Math.trunc(a / b)),
     arity: toFixedArity(2),
     docs: {
       category: 'Math',
@@ -398,31 +372,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
   },
   'mod': {
-    evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
-      const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
-
-      if (operation === 'number') {
-        const quotient = Math.floor(operands[0]! / operands[1]!)
-        return operands[0]! - operands[1]! * quotient
-      }
-      else if (operation === 'vector') {
-        const firstVector = operands[0]!
-        const secondVector = operands[1]!
-        return firstVector.map((dividend, i) => {
-          const divisor = secondVector[i]!
-          const quotient = Math.floor(dividend / divisor)
-          return dividend - divisor * quotient
-        })
-      }
-      else {
-        const firstMatrix = operands[0]!
-        const secondMatrix = operands[1]!
-        return firstMatrix.map((row, i) => row.map((val, j) => {
-          const quotient = Math.floor(val / secondMatrix[i]![j]!)
-          return val - secondMatrix[i]![j]! * quotient
-        }))
-      }
-    },
+    evaluate: binaryMathOp((a, b) => a - b * Math.floor(a / b)),
     arity: toFixedArity(2),
     docs: {
       category: 'Math',
@@ -449,23 +399,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
   },
   '%': {
-    evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
-      const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
-
-      if (operation === 'number') {
-        return operands[0]! % operands[1]!
-      }
-      else if (operation === 'vector') {
-        const firstVector = operands[0]!
-        const secondVector = operands[1]!
-        return firstVector.map((dividend, i) => dividend % secondVector[i]!)
-      }
-      else {
-        const firstMatrix = operands[0]!
-        const secondMatrix = operands[1]!
-        return firstMatrix.map((row, i) => row.map((dividend, j) => dividend % secondMatrix[i]![j]!))
-      }
-    },
+    evaluate: binaryMathOp((a, b) => a % b),
     arity: toFixedArity(2),
     docs: {
       category: 'Math',
@@ -492,20 +426,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
   },
   'sqrt': {
-    evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
-      const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
-      if (operation === 'number') {
-        return Math.sqrt(operands[0]!)
-      }
-      else if (operation === 'vector') {
-        const firstVector = operands[0]!
-        return firstVector.map(val => Math.sqrt(val))
-      }
-      else {
-        const firstMatrix = operands[0]!
-        return firstMatrix.map(row => row.map(val => Math.sqrt(val)))
-      }
-    },
+    evaluate: unaryMathOp(val => Math.sqrt(val)),
     arity: toFixedArity(1),
     docs: {
       category: 'Math',
@@ -529,20 +450,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
   },
   'cbrt': {
-    evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
-      const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
-      if (operation === 'number') {
-        return Math.cbrt(operands[0]!)
-      }
-      else if (operation === 'vector') {
-        const firstVector = operands[0]!
-        return firstVector.map(val => Math.cbrt(val))
-      }
-      else {
-        const firstMatrix = operands[0]!
-        return firstMatrix.map(row => row.map(val => Math.cbrt(val)))
-      }
-    },
+    evaluate: unaryMathOp(val => Math.cbrt(val)),
     arity: toFixedArity(1),
     docs: {
       category: 'Math',
@@ -568,22 +476,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
   },
   '^': {
-    evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
-      const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
-      if (operation === 'number') {
-        return operands[0]! ** operands[1]!
-      }
-      else if (operation === 'vector') {
-        const firstVector = operands[0]!
-        const secondVector = operands[1]!
-        return firstVector.map((base, i) => base ** secondVector[i]!)
-      }
-      else {
-        const firstMatrix = operands[0]!
-        const secondMatrix = operands[1]!
-        return firstMatrix.map((row, i) => row.map((base, j) => base ** secondMatrix[i]![j]!))
-      }
-    },
+    evaluate: binaryMathOp((a, b) => a ** b),
     arity: toFixedArity(2),
     docs: {
       category: 'Math',
@@ -676,20 +569,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
   },
   'trunc': {
-    evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
-      const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
-      if (operation === 'number') {
-        return Math.trunc(operands[0]!)
-      }
-      else if (operation === 'vector') {
-        const vector = operands[0]!
-        return vector.map(val => Math.trunc(val))
-      }
-      else {
-        const matrix = operands[0]!
-        return matrix.map(row => row.map(val => Math.trunc(val)))
-      }
-    },
+    evaluate: unaryMathOp(val => Math.trunc(val)),
     arity: toFixedArity(1),
     docs: {
       category: 'Math',
@@ -713,20 +593,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
   },
   'floor': {
-    evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
-      const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
-      if (operation === 'number') {
-        return Math.floor(operands[0]!)
-      }
-      else if (operation === 'vector') {
-        const vector = operands[0]!
-        return vector.map(val => Math.floor(val))
-      }
-      else {
-        const matrix = operands[0]!
-        return matrix.map(row => row.map(val => Math.floor(val)))
-      }
-    },
+    evaluate: unaryMathOp(val => Math.floor(val)),
     arity: toFixedArity(1),
     docs: {
       category: 'Math',
@@ -750,20 +617,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
   },
   'ceil': {
-    evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
-      const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
-      if (operation === 'number') {
-        return Math.ceil(operands[0]!)
-      }
-      else if (operation === 'vector') {
-        const vector = operands[0]!
-        return vector.map(val => Math.ceil(val))
-      }
-      else {
-        const matrix = operands[0]!
-        return matrix.map(row => row.map(val => Math.ceil(val)))
-      }
-    },
+    evaluate: unaryMathOp(val => Math.ceil(val)),
     arity: toFixedArity(1),
     docs: {
       category: 'Math',
@@ -851,20 +705,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
   },
   'abs': {
-    evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
-      const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
-      if (operation === 'number') {
-        return Math.abs(operands[0]!)
-      }
-      else if (operation === 'vector') {
-        const vector = operands[0]!
-        return vector.map(val => Math.abs(val))
-      }
-      else {
-        const matrix = operands[0]!
-        return matrix.map(row => row.map(val => Math.abs(val)))
-      }
-    },
+    evaluate: unaryMathOp(val => Math.abs(val)),
     arity: toFixedArity(1),
     docs: {
       category: 'Math',
@@ -885,20 +726,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
   },
   'sign': {
-    evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
-      const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
-      if (operation === 'number') {
-        return Math.sign(operands[0]!)
-      }
-      else if (operation === 'vector') {
-        const vector = operands[0]!
-        return vector.map(val => Math.sign(val))
-      }
-      else {
-        const matrix = operands[0]!
-        return matrix.map(row => row.map(val => Math.sign(val)))
-      }
-    },
+    evaluate: unaryMathOp(val => Math.sign(val)),
     arity: toFixedArity(1),
     docs: {
       category: 'Math',
@@ -920,20 +748,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
   },
   'ln': {
-    evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
-      const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
-      if (operation === 'number') {
-        return Math.log(operands[0]!)
-      }
-      else if (operation === 'vector') {
-        const vector = operands[0]!
-        return vector.map(val => Math.log(val))
-      }
-      else {
-        const matrix = operands[0]!
-        return matrix.map(row => row.map(val => Math.log(val)))
-      }
-    },
+    evaluate: unaryMathOp(val => Math.log(val)),
     arity: toFixedArity(1),
     docs: {
       category: 'Math',
@@ -954,20 +769,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
   },
   'log2': {
-    evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
-      const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
-      if (operation === 'number') {
-        return Math.log2(operands[0]!)
-      }
-      else if (operation === 'vector') {
-        const vector = operands[0]!
-        return vector.map(val => Math.log2(val))
-      }
-      else {
-        const matrix = operands[0]!
-        return matrix.map(row => row.map(val => Math.log2(val)))
-      }
-    },
+    evaluate: unaryMathOp(val => Math.log2(val)),
     arity: toFixedArity(1),
     docs: {
       category: 'Math',
@@ -988,20 +790,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
   },
   'log10': {
-    evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
-      const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
-      if (operation === 'number') {
-        return Math.log10(operands[0]!)
-      }
-      else if (operation === 'vector') {
-        const vector = operands[0]!
-        return vector.map(val => Math.log10(val))
-      }
-      else {
-        const matrix = operands[0]!
-        return matrix.map(row => row.map(val => Math.log10(val)))
-      }
-    },
+    evaluate: unaryMathOp(val => Math.log10(val)),
     arity: toFixedArity(1),
     docs: {
       category: 'Math',
@@ -1022,20 +811,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
   },
   'sin': {
-    evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
-      const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
-      if (operation === 'number') {
-        return Math.sin(operands[0]!)
-      }
-      else if (operation === 'vector') {
-        const vector = operands[0]!
-        return vector.map(val => Math.sin(val))
-      }
-      else {
-        const matrix = operands[0]!
-        return matrix.map(row => row.map(val => Math.sin(val)))
-      }
-    },
+    evaluate: unaryMathOp(val => Math.sin(val)),
     arity: toFixedArity(1),
     docs: {
       category: 'Math',
@@ -1057,20 +833,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
   },
   'asin': {
-    evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
-      const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
-      if (operation === 'number') {
-        return Math.asin(operands[0]!)
-      }
-      else if (operation === 'vector') {
-        const vector = operands[0]!
-        return vector.map(val => Math.asin(val))
-      }
-      else {
-        const matrix = operands[0]!
-        return matrix.map(row => row.map(val => Math.asin(val)))
-      }
-    },
+    evaluate: unaryMathOp(val => Math.asin(val)),
     arity: toFixedArity(1),
     docs: {
       category: 'Math',
@@ -1091,20 +854,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
   },
   'sinh': {
-    evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
-      const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
-      if (operation === 'number') {
-        return Math.sinh(operands[0]!)
-      }
-      else if (operation === 'vector') {
-        const vector = operands[0]!
-        return vector.map(val => Math.sinh(val))
-      }
-      else {
-        const matrix = operands[0]!
-        return matrix.map(row => row.map(val => Math.sinh(val)))
-      }
-    },
+    evaluate: unaryMathOp(val => Math.sinh(val)),
     arity: toFixedArity(1),
     docs: {
       category: 'Math',
@@ -1125,20 +875,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
   },
   'asinh': {
-    evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
-      const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
-      if (operation === 'number') {
-        return Math.asinh(operands[0]!)
-      }
-      else if (operation === 'vector') {
-        const vector = operands[0]!
-        return vector.map(val => Math.asinh(val))
-      }
-      else {
-        const matrix = operands[0]!
-        return matrix.map(row => row.map(val => Math.asinh(val)))
-      }
-    },
+    evaluate: unaryMathOp(val => Math.asinh(val)),
     arity: toFixedArity(1),
     docs: {
       category: 'Math',
@@ -1159,20 +896,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
   },
   'cos': {
-    evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
-      const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
-      if (operation === 'number') {
-        return Math.cos(operands[0]!)
-      }
-      else if (operation === 'vector') {
-        const vector = operands[0]!
-        return vector.map(val => Math.cos(val))
-      }
-      else {
-        const matrix = operands[0]!
-        return matrix.map(row => row.map(val => Math.cos(val)))
-      }
-    },
+    evaluate: unaryMathOp(val => Math.cos(val)),
     arity: toFixedArity(1),
     docs: {
       category: 'Math',
@@ -1194,20 +918,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
   },
   'acos': {
-    evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
-      const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
-      if (operation === 'number') {
-        return Math.acos(operands[0]!)
-      }
-      else if (operation === 'vector') {
-        const vector = operands[0]!
-        return vector.map(val => Math.acos(val))
-      }
-      else {
-        const matrix = operands[0]!
-        return matrix.map(row => row.map(val => Math.acos(val)))
-      }
-    },
+    evaluate: unaryMathOp(val => Math.acos(val)),
     arity: toFixedArity(1),
     docs: {
       category: 'Math',
@@ -1228,20 +939,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
   },
   'cosh': {
-    evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
-      const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
-      if (operation === 'number') {
-        return Math.cosh(operands[0]!)
-      }
-      else if (operation === 'vector') {
-        const vector = operands[0]!
-        return vector.map(val => Math.cosh(val))
-      }
-      else {
-        const matrix = operands[0]!
-        return matrix.map(row => row.map(val => Math.cosh(val)))
-      }
-    },
+    evaluate: unaryMathOp(val => Math.cosh(val)),
     arity: toFixedArity(1),
     docs: {
       category: 'Math',
@@ -1262,20 +960,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
   },
   'acosh': {
-    evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
-      const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
-      if (operation === 'number') {
-        return Math.acosh(operands[0]!)
-      }
-      else if (operation === 'vector') {
-        const vector = operands[0]!
-        return vector.map(val => Math.acosh(val))
-      }
-      else {
-        const matrix = operands[0]!
-        return matrix.map(row => row.map(val => Math.acosh(val)))
-      }
-    },
+    evaluate: unaryMathOp(val => Math.acosh(val)),
     arity: toFixedArity(1),
     docs: {
       category: 'Math',
@@ -1297,20 +982,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
   },
   'tan': {
-    evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
-      const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
-      if (operation === 'number') {
-        return Math.tan(operands[0]!)
-      }
-      else if (operation === 'vector') {
-        const vector = operands[0]!
-        return vector.map(val => Math.tan(val))
-      }
-      else {
-        const matrix = operands[0]!
-        return matrix.map(row => row.map(val => Math.tan(val)))
-      }
-    },
+    evaluate: unaryMathOp(val => Math.tan(val)),
     arity: toFixedArity(1),
     docs: {
       category: 'Math',
@@ -1332,20 +1004,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
   },
   'atan': {
-    evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
-      const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
-      if (operation === 'number') {
-        return Math.atan(operands[0]!)
-      }
-      else if (operation === 'vector') {
-        const vector = operands[0]!
-        return vector.map(val => Math.atan(val))
-      }
-      else {
-        const matrix = operands[0]!
-        return matrix.map(row => row.map(val => Math.atan(val)))
-      }
-    },
+    evaluate: unaryMathOp(val => Math.atan(val)),
     arity: toFixedArity(1),
     docs: {
       category: 'Math',
@@ -1366,20 +1025,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
   },
   'tanh': {
-    evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
-      const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
-      if (operation === 'number') {
-        return Math.tanh(operands[0]!)
-      }
-      else if (operation === 'vector') {
-        const vector = operands[0]!
-        return vector.map(val => Math.tanh(val))
-      }
-      else {
-        const matrix = operands[0]!
-        return matrix.map(row => row.map(val => Math.tanh(val)))
-      }
-    },
+    evaluate: unaryMathOp(val => Math.tanh(val)),
     arity: toFixedArity(1),
     docs: {
       category: 'Math',
@@ -1394,20 +1040,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
   },
   'atanh': {
-    evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
-      const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
-      if (operation === 'number') {
-        return Math.atanh(operands[0]!)
-      }
-      else if (operation === 'vector') {
-        const vector = operands[0]!
-        return vector.map(val => Math.atanh(val))
-      }
-      else {
-        const matrix = operands[0]!
-        return matrix.map(row => row.map(val => Math.atanh(val)))
-      }
-    },
+    evaluate: unaryMathOp(val => Math.atanh(val)),
     arity: toFixedArity(1),
     docs: {
       category: 'Math',
@@ -1428,20 +1061,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
   },
   'to-rad': {
-    evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
-      const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
-      if (operation === 'number') {
-        return (operands[0]! * Math.PI) / 180
-      }
-      else if (operation === 'vector') {
-        const vector = operands[0]!
-        return vector.map(val => (val * Math.PI) / 180)
-      }
-      else {
-        const matrix = operands[0]!
-        return matrix.map(row => row.map(val => (val * Math.PI) / 180))
-      }
-    },
+    evaluate: unaryMathOp(val => (val * Math.PI) / 180),
     arity: toFixedArity(1),
     docs: {
       category: 'Math',
@@ -1463,20 +1083,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
   },
   'to-deg': {
-    evaluate: (params, sourceCodeInfo): NumberVectorOrMatrix => {
-      const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
-      if (operation === 'number') {
-        return (operands[0]! * 180) / Math.PI
-      }
-      else if (operation === 'vector') {
-        const vector = operands[0]!
-        return vector.map(val => (val * 180) / Math.PI)
-      }
-      else {
-        const matrix = operands[0]!
-        return matrix.map(row => row.map(val => (val * 180) / Math.PI))
-      }
-    },
+    evaluate: unaryMathOp(val => (val * 180) / Math.PI),
     arity: toFixedArity(1),
     docs: {
       category: 'Math',

@@ -1,6 +1,6 @@
 import type { Reference } from '../../../reference'
 import { apiReference, getLinkName, namespaceReference } from '../../../reference'
-import { categoryToNamespace, coreCategories, namespaceCategories } from '../../../reference/api'
+import { coreCategories, namespaceCategories } from '../../../reference/api'
 import { chevronRightIcon, homeIcon, lampIcon, packageIcon, searchIcon } from '../icons'
 import { styles } from '../styles'
 
@@ -49,16 +49,14 @@ export function getSideBar() {
   }
 
   const renderNamespaceCategory = (categoryKey: string) => {
-    const nsName = categoryToNamespace[categoryKey as keyof typeof categoryToNamespace] || categoryKey.toLowerCase()
     return `
       <div ${styles('flex', 'flex-col', 'gap-1')}>
         <div 
           ${styles('text-color-gray-200', 'flex', 'items-center', 'gap-1', 'cursor-pointer')}
           onclick="Playground.toggleNamespaceCategory('${categoryKey}')"
         >
-          <span id="ns-chevron-${categoryKey.replace(/\s+/g, '-')}" class="ns-chevron">${chevronRightIcon}</span>
+          <span id="ns-chevron-${categoryKey}" class="ns-chevron">${chevronRightIcon}</span>
           <span>${categoryKey}</span>
-          <span ${styles('text-xs', 'text-color-gray-500')}>(${nsName})</span>
         </div>
         <div 
           id="ns-content-${categoryKey.replace(/\s+/g, '-')}" 

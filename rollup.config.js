@@ -1,12 +1,18 @@
 const typescript = require('@rollup/plugin-typescript')
 const jsonPlugin = require('@rollup/plugin-json')
+const terser = require('@rollup/plugin-terser')
 const pkg = require('./package.json')
 
-const plugins = [
+const basePlugins = [
   typescript({
     tsconfig: 'tsconfig.json',
   }),
   jsonPlugin(),
+]
+
+const plugins = [
+  ...basePlugins,
+  terser(),
 ]
 
 /**
@@ -19,16 +25,62 @@ function stripDocsPlugin() {
     name: 'strip-docs',
     renderChunk(code) {
       let result = code
-      // 1. Remove inline docs objects: `docs: { ... }` with up to 2 levels of nested braces
-      result = result.replace(/,?\s*docs:\s*\{(?:[^{}]|\{(?:[^{}]|\{[^{}]*\})*\})*\}/g, '')
-      // 2. Remove variable-reference docs: `docs: variableName,` or `docs: variableName\n`
-      result = result.replace(/,?\s*docs:\s*[a-zA-Z_$][\w$]*\s*,?/g, () => {
-        // Preserve trailing comma if there was one before
-        return ''
-      })
-      // 3. Remove standalone docs variable declarations: `var docsName = { ... };`
-      result = result.replace(/var\s+\w+Docs\s*=\s*\{(?:[^{}]|\{(?:[^{}]|\{[^{}]*\})*\})*\};\s*/g, '')
-      result = result.replace(/var\s+docs\$\w+\s*=\s*\{(?:[^{}]|\{(?:[^{}]|\{[^{}]*\})*\})*\};\s*/g, '')
+
+      // Helper: find the end of a balanced brace block starting at `{`
+      function findBalancedBraceEnd(str, start) {
+        let depth = 0
+        for (let i = start; i < str.length; i++) {
+          if (str[i] === '{') {
+            depth++
+          }
+          else if (str[i] === '}') {
+            depth--
+            if (depth === 0) {
+              return i
+            }
+          }
+        }
+        return -1
+      }
+
+      // Helper: remove all occurrences of a pattern followed by a balanced `{ ... }` block
+      function stripBalancedBlocks(str, pattern) {
+        let result = str
+        // eslint-disable-next-line no-cond-assign
+        for (let match; (match = pattern.exec(result)) !== null;) {
+          const braceStart = result.indexOf('{', match.index + match[0].length - 1)
+          if (braceStart === -1) {
+            break
+          }
+          const braceEnd = findBalancedBraceEnd(result, braceStart)
+          if (braceEnd === -1) {
+            break
+          }
+          result = result.slice(0, match.index) + result.slice(braceEnd + 1)
+          pattern.lastIndex = 0 // reset since string changed
+        }
+        return result
+      }
+
+      // 1. Remove inline `docs: { ... }` property (with balanced braces)
+      result = stripBalancedBlocks(result, /docs:\s*(?=\{)/g)
+
+      // 2. Remove `docs: variableName` (variable reference, not inline object)
+      result = result.replace(/docs:\s*[a-zA-Z_$][\w$]*/g, '')
+
+      // 3. Remove standalone docs variable declarations: `var/const/let docsXxx = { ... };`
+      result = stripBalancedBlocks(result, /(?:var|const|let)\s+\w*[Dd]ocs\w*\s*=\s*(?=\{)/g)
+      // Clean up trailing semicolons left behind
+      result = result.replace(/^\s*;\s*$/gm, '')
+
+      // 4. Remove shorthand `docs` property in object literals (bare `docs` as object key)
+      result = result.replace(/(?<=\W)docs\s*(?=[,}])/g, '')
+
+      // 5. Clean up comma/whitespace artifacts from removals
+      result = result.replace(/,(\s*),/g, ',$1') // double commas → single
+      result = result.replace(/\{(\s*),/g, '{$1') // leading comma after {
+      result = result.replace(/,(\s*),/g, ',$1') // second pass for triple commas
+
       if (result !== code)
         return { code: result, map: null }
       return null
@@ -36,9 +88,11 @@ function stripDocsPlugin() {
   }
 }
 
+// Strip docs first, then minify
 const pluginsMinimal = [
-  ...plugins,
+  ...basePlugins,
   stripDocsPlugin(),
+  terser(),
 ]
 
 const namespaces = ['assert', 'grid', 'random', 'vector', 'linearAlgebra', 'matrix', 'numberTheory']

@@ -2,7 +2,7 @@ import type { FunctionDocs } from '../../interface'
 
 export const namespaceDocs: Record<string, FunctionDocs> = {
   'abundant-seq': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the abundant numbers up to a specified length.',
     returns: {
       type: 'integer',
@@ -28,7 +28,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.abundant-nth', 'Number-Theory.abundant-take-while', 'Number-Theory.abundant?', 'Number-Theory.deficient-seq', 'Number-Theory.perfect-seq'],
   },
   'abundant-take-while': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the abundant numbers while a condition is met.',
     returns: {
       type: 'integer',
@@ -53,7 +53,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.abundant-seq', 'Number-Theory.abundant-nth', 'Number-Theory.abundant?'],
   },
   'abundant-nth': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the nth term of the abundant numbers.',
     returns: {
       type: 'integer',
@@ -78,7 +78,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.abundant-seq', 'Number-Theory.abundant-take-while', 'Number-Theory.abundant?'],
   },
   'abundant?': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Checks if a number is abundant.',
     returns: {
       type: 'boolean',
@@ -103,7 +103,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.abundant-seq', 'Number-Theory.abundant-nth', 'Number-Theory.deficient?', 'Number-Theory.perfect?', 'Number-Theory.sigma', 'Number-Theory.divisors', 'Number-Theory.abundant-take-while'],
   },
   'arithmetic-seq': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the arithmetic sequence for a given $start, $step, and $length.',
     returns: {
       type: 'integer',
@@ -141,7 +141,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.arithmetic-nth', 'Number-Theory.arithmetic-take-while', 'Number-Theory.arithmetic?', 'Number-Theory.geometric-seq'],
   },
   'arithmetic-take-while': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the arithmetic sequence while a condition is met.',
     returns: {
       type: 'integer',
@@ -176,7 +176,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.arithmetic-seq', 'Number-Theory.arithmetic-nth', 'Number-Theory.arithmetic?'],
   },
   'arithmetic-nth': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the nth term of the arithmetic sequence.',
     returns: {
       type: 'integer',
@@ -213,7 +213,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.arithmetic-seq', 'Number-Theory.arithmetic-take-while', 'Number-Theory.arithmetic?'],
   },
   'arithmetic?': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Checks if a number is part of the arithmetic sequence.',
     returns: {
       type: 'boolean',
@@ -250,7 +250,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.arithmetic-seq', 'Number-Theory.arithmetic-nth', 'Number-Theory.geometric?', 'Number-Theory.arithmetic-take-while'],
   },
   'bell-seq': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the Bell sequence up to a specified length.',
     returns: {
       type: 'integer',
@@ -280,7 +280,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.bell-nth', 'Number-Theory.bell-take-while', 'Number-Theory.bell?', 'Number-Theory.catalan-seq', 'Number-Theory.stirling-second', 'Number-Theory.stirling-first'],
   },
   'bell-take-while': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the Bell sequence while a condition is met.',
     returns: {
       type: 'integer',
@@ -305,7 +305,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.bell-seq', 'Number-Theory.bell-nth', 'Number-Theory.bell?'],
   },
   'bell-nth': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the nth term of the Bell sequence.',
     returns: {
       type: 'integer',
@@ -330,7 +330,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.bell-seq', 'Number-Theory.bell-take-while', 'Number-Theory.bell?'],
   },
   'bell?': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Checks if a number is in the Bell sequence.',
     returns: {
       type: 'boolean',
@@ -356,7 +356,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.bell-seq', 'Number-Theory.bell-nth', 'Number-Theory.catalan?', 'Number-Theory.bell-take-while'],
   },
   'bernoulli-seq': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the Bernoulli sequence up to a specified length.',
     returns: {
       type: 'number',
@@ -382,7 +382,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.bernoulli-nth', 'Number-Theory.bernoulli-take-while'],
   },
   'bernoulli-take-while': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the Bernoulli sequence while a condition is met.',
     returns: {
       type: 'number',
@@ -407,7 +407,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.bernoulli-seq', 'Number-Theory.bernoulli-nth'],
   },
   'bernoulli-nth': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the nth term of the Bernoulli sequence.',
     returns: {
       type: 'number',
@@ -433,7 +433,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.bernoulli-seq', 'Number-Theory.bernoulli-take-while'],
   },
   'catalan-seq': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the Catalan sequence up to a specified length.',
     returns: {
       type: 'integer',
@@ -463,7 +463,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.catalan-nth', 'Number-Theory.catalan-take-while', 'Number-Theory.catalan?', 'Number-Theory.bell-seq'],
   },
   'catalan-take-while': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the Catalan sequence while a condition is met.',
     returns: {
       type: 'integer',
@@ -488,7 +488,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.catalan-seq', 'Number-Theory.catalan-nth', 'Number-Theory.catalan?'],
   },
   'catalan-nth': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the nth term of the Catalan sequence.',
     returns: {
       type: 'integer',
@@ -513,7 +513,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.catalan-seq', 'Number-Theory.catalan-take-while', 'Number-Theory.catalan?'],
   },
   'catalan?': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Determines if a number is in the Catalan sequence.',
     returns: {
       type: 'boolean',
@@ -538,7 +538,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.catalan-seq', 'Number-Theory.catalan-nth', 'Number-Theory.bell?', 'Number-Theory.catalan-take-while'],
   },
   'collatz-seq': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the collatz sequence starting from a given integer.',
     returns: {
       type: 'integer',
@@ -564,7 +564,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.juggler-seq'],
   },
   'composite-seq': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the composite sequence up to a specified length.',
     returns: {
       type: 'integer',
@@ -591,7 +591,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.composite-nth', 'Number-Theory.composite-take-while', 'Number-Theory.composite?', 'Number-Theory.prime-seq'],
   },
   'composite-take-while': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the composite sequence while a condition is met.',
     returns: {
       type: 'integer',
@@ -616,7 +616,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.composite-seq', 'Number-Theory.composite-nth', 'Number-Theory.composite?'],
   },
   'composite-nth': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the nth term of the composite sequence.',
     returns: {
       type: 'integer',
@@ -642,7 +642,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.composite-seq', 'Number-Theory.composite-take-while', 'Number-Theory.composite?'],
   },
   'composite?': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Determines if a number is composite.',
     returns: {
       type: 'boolean',
@@ -668,7 +668,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.composite-seq', 'Number-Theory.composite-nth', 'Number-Theory.prime?', 'Number-Theory.prime-factors', 'Number-Theory.composite-take-while'],
   },
   'deficient-seq': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the deficient numbers up to a specified length.',
     returns: {
       type: 'integer',
@@ -694,7 +694,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.deficient-nth', 'Number-Theory.deficient-take-while', 'Number-Theory.deficient?', 'Number-Theory.abundant-seq', 'Number-Theory.perfect-seq'],
   },
   'deficient-take-while': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the deficient numbers while a condition is met.',
     returns: {
       type: 'integer',
@@ -719,7 +719,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.deficient-seq', 'Number-Theory.deficient-nth', 'Number-Theory.deficient?'],
   },
   'deficient-nth': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the nth term of the deficient numbers.',
     returns: {
       type: 'integer',
@@ -744,7 +744,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.deficient-seq', 'Number-Theory.deficient-take-while', 'Number-Theory.deficient?'],
   },
   'deficient?': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Checks if a number is deficient.',
     returns: {
       type: 'boolean',
@@ -769,7 +769,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.deficient-seq', 'Number-Theory.deficient-nth', 'Number-Theory.abundant?', 'Number-Theory.perfect?', 'Number-Theory.sigma', 'Number-Theory.divisors', 'Number-Theory.deficient-take-while'],
   },
   'factorial-seq': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the factorial sequence up to a specified length.',
     returns: {
       type: 'integer',
@@ -802,7 +802,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.factorial-nth', 'Number-Theory.factorial-take-while', 'Number-Theory.factorial?', 'Number-Theory.factorial'],
   },
   'factorial-take-while': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the factorial sequence while a condition is met.',
     returns: {
       type: 'integer',
@@ -827,7 +827,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.factorial-seq', 'Number-Theory.factorial-nth', 'Number-Theory.factorial?'],
   },
   'factorial-nth': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the nth term of the factorial sequence.',
     returns: {
       type: 'integer',
@@ -856,7 +856,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.factorial-seq', 'Number-Theory.factorial-take-while', 'Number-Theory.factorial?', 'Number-Theory.factorial'],
   },
   'factorial?': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Checks if a number is in the factorial sequence.',
     returns: {
       type: 'boolean',
@@ -889,7 +889,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.factorial-seq', 'Number-Theory.factorial-nth', 'Number-Theory.factorial', 'Number-Theory.factorial-take-while'],
   },
   'fibonacci-seq': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the fibonacci sequence up to a specified length.',
     returns: {
       type: 'integer',
@@ -919,7 +919,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.fibonacci-nth', 'Number-Theory.fibonacci-take-while', 'Number-Theory.fibonacci?', 'Number-Theory.lucas-seq', 'Number-Theory.tribonacci-seq', 'Number-Theory.pell-seq', 'Number-Theory.padovan-seq'],
   },
   'fibonacci-take-while': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the fibonacci sequence while a condition is met.',
     returns: {
       type: 'integer',
@@ -944,7 +944,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.fibonacci-seq', 'Number-Theory.fibonacci-nth', 'Number-Theory.fibonacci?'],
   },
   'fibonacci-nth': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the nth term of the fibonacci sequence.',
     returns: {
       type: 'integer',
@@ -969,7 +969,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.fibonacci-seq', 'Number-Theory.fibonacci-take-while', 'Number-Theory.fibonacci?'],
   },
   'fibonacci?': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Determines if a number is in the fibonacci sequence.',
     returns: {
       type: 'boolean',
@@ -1002,7 +1002,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.fibonacci-seq', 'Number-Theory.fibonacci-nth', 'Number-Theory.lucas?', 'Number-Theory.fibonacci-take-while', 'Number-Theory.tribonacci?', 'Number-Theory.padovan?', 'Number-Theory.pell?'],
   },
   'geometric-seq': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the geometric sequence for a given $start, $ratio, and $length.',
     returns: {
       type: 'integer',
@@ -1040,7 +1040,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.geometric-nth', 'Number-Theory.geometric-take-while', 'Number-Theory.geometric?', 'Number-Theory.arithmetic-seq'],
   },
   'geometric-take-while': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the geometric sequence while a condition is met.',
     returns: {
       type: 'integer',
@@ -1075,7 +1075,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.geometric-seq', 'Number-Theory.geometric-nth', 'Number-Theory.geometric?'],
   },
   'geometric-nth': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the nth term of the geometric sequence.',
     returns: {
       type: 'integer',
@@ -1112,7 +1112,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.geometric-seq', 'Number-Theory.geometric-take-while', 'Number-Theory.geometric?'],
   },
   'geometric?': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Checks if a number is in the geometric sequence.',
     returns: {
       type: 'boolean',
@@ -1150,7 +1150,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.geometric-seq', 'Number-Theory.geometric-nth', 'Number-Theory.arithmetic?', 'Number-Theory.geometric-take-while'],
   },
   'golomb-seq': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the Golomb sequence up to a specified length.',
     returns: {
       type: 'integer',
@@ -1176,7 +1176,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.golomb-nth', 'Number-Theory.golomb-take-while', 'Number-Theory.golomb?', 'Number-Theory.recaman-seq'],
   },
   'golomb-take-while': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the Golomb sequence while a condition is met.',
     returns: {
       type: 'integer',
@@ -1201,7 +1201,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.golomb-seq', 'Number-Theory.golomb-nth', 'Number-Theory.golomb?'],
   },
   'golomb-nth': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the nth term of the Golomb sequence.',
     returns: {
       type: 'integer',
@@ -1226,7 +1226,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.golomb-seq', 'Number-Theory.golomb-take-while', 'Number-Theory.golomb?'],
   },
   'golomb?': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Checks if a number is in the Golomb sequence.',
     returns: {
       type: 'boolean',
@@ -1253,7 +1253,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.golomb-seq', 'Number-Theory.golomb-nth', 'Number-Theory.golomb-take-while'],
   },
   'happy-seq': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the happy sequence up to a specified length.',
     returns: {
       type: 'integer',
@@ -1283,7 +1283,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.happy-nth', 'Number-Theory.happy-take-while', 'Number-Theory.happy?', 'Number-Theory.lucky-seq'],
   },
   'happy-take-while': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the happy sequence while a condition is met.',
     returns: {
       type: 'integer',
@@ -1308,7 +1308,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.happy-seq', 'Number-Theory.happy-nth', 'Number-Theory.happy?'],
   },
   'happy-nth': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the nth term of the happy sequence.',
     returns: {
       type: 'integer',
@@ -1334,7 +1334,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.happy-seq', 'Number-Theory.happy-take-while', 'Number-Theory.happy?'],
   },
   'happy?': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Determines if a number is a happy number.',
     returns: {
       type: 'boolean',
@@ -1360,7 +1360,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.happy-seq', 'Number-Theory.happy-nth', 'Number-Theory.happy-take-while'],
   },
   'juggler-seq': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the Juggler sequence starting from a given integer.',
     returns: {
       type: 'integer',
@@ -1386,7 +1386,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.collatz-seq'],
   },
   'look-and-say-seq': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the Look-and-Say sequence up to a specified length.',
     returns: {
       type: 'string',
@@ -1411,7 +1411,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.look-and-say-nth', 'Number-Theory.look-and-say-take-while', 'Number-Theory.look-and-say?'],
   },
   'look-and-say-take-while': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the Look-and-Say sequence while a condition is met.',
     returns: {
       type: 'string',
@@ -1437,7 +1437,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.look-and-say-seq', 'Number-Theory.look-and-say-nth', 'Number-Theory.look-and-say?'],
   },
   'look-and-say-nth': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the nth term of the Look-and-Say sequence.',
     returns: {
       type: 'string',
@@ -1461,7 +1461,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.look-and-say-seq', 'Number-Theory.look-and-say-take-while', 'Number-Theory.look-and-say?'],
   },
   'look-and-say?': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Checks if a string is a valid Look-and-Say term.',
     returns: {
       type: 'boolean',
@@ -1486,7 +1486,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.look-and-say-seq', 'Number-Theory.look-and-say-nth', 'Number-Theory.look-and-say-take-while'],
   },
   'lucas-seq': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the lucas sequence up to a specified length.',
     returns: {
       type: 'integer',
@@ -1516,7 +1516,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.lucas-nth', 'Number-Theory.lucas-take-while', 'Number-Theory.lucas?', 'Number-Theory.fibonacci-seq'],
   },
   'lucas-take-while': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the lucas sequence while a condition is met.',
     returns: {
       type: 'integer',
@@ -1541,7 +1541,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.lucas-seq', 'Number-Theory.lucas-nth', 'Number-Theory.lucas?'],
   },
   'lucas-nth': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the nth term of the lucas sequence.',
     returns: {
       type: 'integer',
@@ -1567,7 +1567,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.lucas-seq', 'Number-Theory.lucas-take-while', 'Number-Theory.lucas?'],
   },
   'lucas?': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Determines if a number is in the lucas sequence.',
     returns: {
       type: 'boolean',
@@ -1593,7 +1593,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.lucas-seq', 'Number-Theory.lucas-nth', 'Number-Theory.fibonacci?', 'Number-Theory.lucas-take-while'],
   },
   'lucky-seq': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the lucky sequence up to a specified length.',
     returns: {
       type: 'integer',
@@ -1620,7 +1620,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.lucky-nth', 'Number-Theory.lucky-take-while', 'Number-Theory.lucky?', 'Number-Theory.happy-seq', 'Number-Theory.prime-seq'],
   },
   'lucky-take-while': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the lucky sequence while a condition is met.',
     returns: {
       type: 'integer',
@@ -1645,7 +1645,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.lucky-seq', 'Number-Theory.lucky-nth', 'Number-Theory.lucky?'],
   },
   'lucky-nth': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the nth term of the lucky sequence.',
     returns: {
       type: 'integer',
@@ -1671,7 +1671,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.lucky-seq', 'Number-Theory.lucky-take-while', 'Number-Theory.lucky?'],
   },
   'lucky?': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Checks if a number is a lucky number.',
     returns: {
       type: 'boolean',
@@ -1697,7 +1697,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.lucky-seq', 'Number-Theory.lucky-nth', 'Number-Theory.prime?', 'Number-Theory.lucky-take-while'],
   },
   'mersenne-seq': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the Mersenne sequence up to a specified length.',
     returns: {
       type: 'integer',
@@ -1727,7 +1727,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.mersenne-nth', 'Number-Theory.mersenne-take-while', 'Number-Theory.mersenne?', 'Number-Theory.prime-seq'],
   },
   'mersenne-take-while': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the Mersenne sequence while a condition is met.',
     returns: {
       type: 'integer',
@@ -1752,7 +1752,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.mersenne-seq', 'Number-Theory.mersenne-nth', 'Number-Theory.mersenne?'],
   },
   'mersenne-nth': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the nth term of the Mersenne sequence.',
     returns: {
       type: 'integer',
@@ -1777,7 +1777,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.mersenne-seq', 'Number-Theory.mersenne-take-while', 'Number-Theory.mersenne?'],
   },
   'mersenne?': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Checks if a number is in the Mersenne sequence.',
     returns: {
       type: 'boolean',
@@ -1803,7 +1803,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.mersenne-seq', 'Number-Theory.mersenne-nth', 'Number-Theory.prime?', 'Number-Theory.mersenne-take-while'],
   },
   'padovan-seq': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the Padovan sequence up to a specified length.',
     returns: {
       type: 'integer',
@@ -1830,7 +1830,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.padovan-nth', 'Number-Theory.padovan-take-while', 'Number-Theory.padovan?', 'Number-Theory.fibonacci-seq'],
   },
   'padovan-take-while': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the Padovan sequence while a condition is met.',
     returns: {
       type: 'integer',
@@ -1855,7 +1855,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.padovan-seq', 'Number-Theory.padovan-nth', 'Number-Theory.padovan?'],
   },
   'padovan-nth': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the nth term of the Padovan sequence.',
     returns: {
       type: 'integer',
@@ -1881,7 +1881,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.padovan-seq', 'Number-Theory.padovan-take-while', 'Number-Theory.padovan?'],
   },
   'padovan?': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Checks if a number is in the Padovan sequence.',
     returns: {
       type: 'boolean',
@@ -1907,7 +1907,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.padovan-seq', 'Number-Theory.padovan-nth', 'Number-Theory.fibonacci?', 'Number-Theory.padovan-take-while'],
   },
   'partition-seq': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the partition numbers up to a specified length. If no length is provided, it defaults to 299 (the maximum length of the pre-calculated partition numbers).',
     returns: {
       type: 'integer',
@@ -1937,7 +1937,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.partition-nth', 'Number-Theory.partition-take-while', 'Number-Theory.partition?', 'Number-Theory.partitions', 'Number-Theory.count-partitions'],
   },
   'partition-take-while': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the partition numbers while a condition is met.',
     returns: {
       type: 'integer',
@@ -1962,7 +1962,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.partition-seq', 'Number-Theory.partition-nth', 'Number-Theory.partition?'],
   },
   'partition-nth': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the nth term of the partition numbers.',
     returns: {
       type: 'integer',
@@ -1987,7 +1987,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.partition-seq', 'Number-Theory.partition-take-while', 'Number-Theory.partition?'],
   },
   'partition?': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Checks if a number is in the partition numbers.',
     returns: {
       type: 'boolean',
@@ -2016,7 +2016,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.partition-seq', 'Number-Theory.partition-nth', 'Number-Theory.partitions', 'Number-Theory.partition-take-while'],
   },
   'pell-seq': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the Pell sequence up to a specified length.',
     returns: {
       type: 'integer',
@@ -2046,7 +2046,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.pell-nth', 'Number-Theory.pell-take-while', 'Number-Theory.pell?', 'Number-Theory.fibonacci-seq'],
   },
   'pell-take-while': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the Pell sequence while a condition is met.',
     returns: {
       type: 'integer',
@@ -2071,7 +2071,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.pell-seq', 'Number-Theory.pell-nth', 'Number-Theory.pell?'],
   },
   'pell-nth': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the nth term of the Pell sequence.',
     returns: {
       type: 'integer',
@@ -2097,7 +2097,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.pell-seq', 'Number-Theory.pell-take-while', 'Number-Theory.pell?'],
   },
   'pell?': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Checks if a number is a Pell number.',
     returns: {
       type: 'boolean',
@@ -2123,7 +2123,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.pell-seq', 'Number-Theory.pell-nth', 'Number-Theory.fibonacci?', 'Number-Theory.pell-take-while'],
   },
   'perfect-seq': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the perfect numbers up to a specified length.',
     returns: {
       type: 'integer',
@@ -2153,7 +2153,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.perfect-nth', 'Number-Theory.perfect-take-while', 'Number-Theory.perfect?', 'Number-Theory.abundant-seq', 'Number-Theory.deficient-seq', 'Number-Theory.amicable?'],
   },
   'perfect-take-while': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the perfect numbers while a condition is met.',
     returns: {
       type: 'integer',
@@ -2178,7 +2178,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.perfect-seq', 'Number-Theory.perfect-nth', 'Number-Theory.perfect?'],
   },
   'perfect-nth': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the nth term of the perfect numbers.',
     returns: {
       type: 'integer',
@@ -2203,7 +2203,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.perfect-seq', 'Number-Theory.perfect-take-while', 'Number-Theory.perfect?'],
   },
   'perfect?': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Checks if a number is in the perfect numbers.',
     returns: {
       type: 'boolean',
@@ -2236,7 +2236,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.perfect-seq', 'Number-Theory.perfect-nth', 'Number-Theory.abundant?', 'Number-Theory.deficient?', 'Number-Theory.sigma', 'Number-Theory.perfect-take-while', 'Number-Theory.amicable?', 'Number-Theory.proper-divisors'],
   },
   'perfect-square-seq': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the perfect square numbers up to a specified length.',
     returns: {
       type: 'integer',
@@ -2262,7 +2262,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.perfect-square-nth', 'Number-Theory.perfect-square-take-while', 'Number-Theory.perfect-square?', 'Number-Theory.perfect-cube-seq', 'Number-Theory.perfect-power-seq', 'Number-Theory.polygonal-seq'],
   },
   'perfect-square-take-while': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the perfect square numbers while a condition is met.',
     returns: {
       type: 'integer',
@@ -2287,7 +2287,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.perfect-square-seq', 'Number-Theory.perfect-square-nth', 'Number-Theory.perfect-square?'],
   },
   'perfect-square-nth': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the nth term of the perfect square numbers.',
     returns: {
       type: 'integer',
@@ -2312,7 +2312,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.perfect-square-seq', 'Number-Theory.perfect-square-take-while', 'Number-Theory.perfect-square?'],
   },
   'perfect-square?': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Checks if a number is a perfect square.',
     returns: {
       type: 'boolean',
@@ -2337,7 +2337,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.perfect-square-seq', 'Number-Theory.perfect-square-nth', 'Number-Theory.perfect-cube?', 'Number-Theory.perfect-power?', 'Number-Theory.perfect-square-take-while', 'Number-Theory.perfect-power', 'Number-Theory.polygonal?'],
   },
   'perfect-cube-seq': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the perfect cube numbers up to a specified length.',
     returns: {
       type: 'integer',
@@ -2363,7 +2363,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.perfect-cube-nth', 'Number-Theory.perfect-cube-take-while', 'Number-Theory.perfect-cube?', 'Number-Theory.perfect-square-seq', 'Number-Theory.perfect-power-seq'],
   },
   'perfect-cube-take-while': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the perfect cube numbers while a condition is met.',
     returns: {
       type: 'integer',
@@ -2388,7 +2388,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.perfect-cube-seq', 'Number-Theory.perfect-cube-nth', 'Number-Theory.perfect-cube?'],
   },
   'perfect-cube-nth': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the nth term of the perfect cube numbers.',
     returns: {
       type: 'integer',
@@ -2413,7 +2413,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.perfect-cube-seq', 'Number-Theory.perfect-cube-take-while', 'Number-Theory.perfect-cube?'],
   },
   'perfect-cube?': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Checks if a number is in the perfect cube numbers.',
     returns: {
       type: 'boolean',
@@ -2439,7 +2439,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.perfect-cube-seq', 'Number-Theory.perfect-cube-nth', 'Number-Theory.perfect-square?', 'Number-Theory.perfect-power?', 'Number-Theory.perfect-cube-take-while', 'Number-Theory.perfect-power'],
   },
   'perfect-power-seq': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the perfect power numbers up to a specified length.',
     returns: {
       type: 'integer',
@@ -2465,7 +2465,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.perfect-power-nth', 'Number-Theory.perfect-power-take-while', 'Number-Theory.perfect-power?', 'Number-Theory.perfect-power', 'Number-Theory.perfect-square-seq', 'Number-Theory.perfect-cube-seq'],
   },
   'perfect-power-take-while': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the perfect power numbers while a condition is met.',
     returns: {
       type: 'integer',
@@ -2490,7 +2490,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.perfect-power-seq', 'Number-Theory.perfect-power-nth', 'Number-Theory.perfect-power?'],
   },
   'perfect-power-nth': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the nth term of the perfect power numbers.',
     returns: {
       type: 'integer',
@@ -2515,7 +2515,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.perfect-power-seq', 'Number-Theory.perfect-power-take-while', 'Number-Theory.perfect-power?'],
   },
   'perfect-power?': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Checks if a number is in the perfect power numbers.',
     returns: {
       type: 'boolean',
@@ -2542,7 +2542,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.perfect-power-seq', 'Number-Theory.perfect-power-nth', 'Number-Theory.perfect-power', 'Number-Theory.perfect-square?', 'Number-Theory.perfect-cube?', 'Number-Theory.perfect-power-take-while'],
   },
   'polygonal-seq': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the polygonal sequence for a given number of sides and length.',
     returns: {
       type: 'integer',
@@ -2582,7 +2582,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.polygonal-nth', 'Number-Theory.polygonal-take-while', 'Number-Theory.polygonal?', 'Number-Theory.perfect-square-seq'],
   },
   'polygonal-take-while': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the polygonal sequence while a condition is met.',
     returns: {
       type: 'integer',
@@ -2618,7 +2618,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.polygonal-seq', 'Number-Theory.polygonal-nth', 'Number-Theory.polygonal?'],
   },
   'polygonal-nth': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the nth term of the polygonal sequence.',
     returns: {
       type: 'integer',
@@ -2655,7 +2655,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.polygonal-seq', 'Number-Theory.polygonal-take-while', 'Number-Theory.polygonal?'],
   },
   'polygonal?': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Checks if a number is in the polygonal sequence.',
     returns: {
       type: 'boolean',
@@ -2694,7 +2694,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.polygonal-seq', 'Number-Theory.polygonal-nth', 'Number-Theory.perfect-square?', 'Number-Theory.polygonal-take-while'],
   },
   'prime-seq': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the prime sequence up to a specified length.',
     returns: {
       type: 'integer',
@@ -2721,7 +2721,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.prime-nth', 'Number-Theory.prime-take-while', 'Number-Theory.prime?', 'Number-Theory.composite-seq', 'Number-Theory.mersenne-seq', 'Number-Theory.lucky-seq'],
   },
   'prime-take-while': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the prime sequence while a condition is met.',
     returns: {
       type: 'integer',
@@ -2746,7 +2746,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.prime-seq', 'Number-Theory.prime-nth', 'Number-Theory.prime?'],
   },
   'prime-nth': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the nth term of the prime sequence.',
     returns: {
       type: 'integer',
@@ -2772,7 +2772,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.prime-seq', 'Number-Theory.prime-take-while', 'Number-Theory.prime?'],
   },
   'prime?': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Determines if a number is prime.',
     returns: {
       type: 'boolean',
@@ -2801,7 +2801,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.prime-seq', 'Number-Theory.prime-nth', 'Number-Theory.composite?', 'Number-Theory.prime-factors', 'Number-Theory.mersenne?', 'Number-Theory.prime-take-while', 'Number-Theory.lucky?'],
   },
   'recaman-seq': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the Recaman sequence up to a specified length.',
     returns: {
       type: 'integer',
@@ -2828,7 +2828,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.recaman-nth', 'Number-Theory.recaman-take-while', 'Number-Theory.recaman?', 'Number-Theory.golomb-seq'],
   },
   'recaman-take-while': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the Recaman sequence while a condition is met.',
     returns: {
       type: 'integer',
@@ -2853,7 +2853,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.recaman-seq', 'Number-Theory.recaman-nth', 'Number-Theory.recaman?'],
   },
   'recaman-nth': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the nth term of the Recaman sequence.',
     returns: {
       type: 'integer',
@@ -2879,7 +2879,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.recaman-seq', 'Number-Theory.recaman-take-while', 'Number-Theory.recaman?'],
   },
   'recaman?': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Checks if a number is in the Recaman sequence.',
     returns: {
       type: 'boolean',
@@ -2905,7 +2905,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.recaman-seq', 'Number-Theory.recaman-nth', 'Number-Theory.recaman-take-while'],
   },
   'sylvester-seq': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the Sylvester sequence up to a specified length.',
     returns: {
       type: 'integer',
@@ -2935,7 +2935,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.sylvester-nth', 'Number-Theory.sylvester-take-while', 'Number-Theory.sylvester?'],
   },
   'sylvester-take-while': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the Sylvester sequence while a condition is met.',
     returns: {
       type: 'integer',
@@ -2960,7 +2960,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.sylvester-seq', 'Number-Theory.sylvester-nth', 'Number-Theory.sylvester?'],
   },
   'sylvester-nth': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the nth term of the Sylvester sequence.',
     returns: {
       type: 'integer',
@@ -2985,7 +2985,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.sylvester-seq', 'Number-Theory.sylvester-take-while', 'Number-Theory.sylvester?'],
   },
   'sylvester?': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Checks if a number is in the Sylvester sequence.',
     returns: {
       type: 'boolean',
@@ -3011,7 +3011,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.sylvester-seq', 'Number-Theory.sylvester-nth', 'Number-Theory.sylvester-take-while'],
   },
   'thue-morse-seq': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the Thue-Morse sequence up to a specified length.',
     returns: {
       type: 'integer',
@@ -3038,7 +3038,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.thue-morse-nth', 'Number-Theory.thue-morse-take-while', 'Number-Theory.thue-morse?'],
   },
   'thue-morse-take-while': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the Thue-Morse sequence while a condition is met.',
     returns: {
       type: 'integer',
@@ -3063,7 +3063,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.thue-morse-seq', 'Number-Theory.thue-morse-nth', 'Number-Theory.thue-morse?'],
   },
   'thue-morse-nth': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the nth term of the Thue-Morse sequence.',
     returns: {
       type: 'integer',
@@ -3089,7 +3089,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.thue-morse-seq', 'Number-Theory.thue-morse-take-while', 'Number-Theory.thue-morse?'],
   },
   'thue-morse?': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Checks if a number is part of the Thue-Morse sequence.',
     returns: {
       type: 'boolean',
@@ -3114,7 +3114,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.thue-morse-seq', 'Number-Theory.thue-morse-nth', 'Number-Theory.thue-morse-take-while'],
   },
   'tribonacci-seq': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the tribonacci sequence up to a specified length.',
     returns: {
       type: 'integer',
@@ -3141,7 +3141,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.tribonacci-nth', 'Number-Theory.tribonacci-take-while', 'Number-Theory.tribonacci?', 'Number-Theory.fibonacci-seq'],
   },
   'tribonacci-take-while': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the tribonacci sequence while a condition is met.',
     returns: {
       type: 'integer',
@@ -3166,7 +3166,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.tribonacci-seq', 'Number-Theory.tribonacci-nth', 'Number-Theory.tribonacci?'],
   },
   'tribonacci-nth': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the nth term of the tribonacci sequence.',
     returns: {
       type: 'integer',
@@ -3192,7 +3192,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.tribonacci-seq', 'Number-Theory.tribonacci-take-while', 'Number-Theory.tribonacci?'],
   },
   'tribonacci?': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Determines if a number is in the tribonacci sequence.',
     returns: {
       type: 'boolean',
@@ -3226,7 +3226,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.tribonacci-seq', 'Number-Theory.tribonacci-nth', 'Number-Theory.fibonacci?', 'Number-Theory.tribonacci-take-while'],
   },
   'count-combinations': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Calculates the number of combinations of n items taken k at a time.',
     returns: {
       type: 'integer',
@@ -3254,7 +3254,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.combinations', 'Number-Theory.count-permutations', 'Number-Theory.factorial', 'Number-Theory.multinomial', 'Number-Theory.stirling-second', 'Number-Theory.count-partitions', 'Number-Theory.count-power-set'],
   },
   'combinations': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates all possible combinations of a specified size from a collection.',
     returns: {
       type: 'array',
@@ -3295,7 +3295,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.count-combinations', 'Number-Theory.permutations', 'Number-Theory.power-set', 'Number-Theory.cartesian-product', 'Number-Theory.partitions'],
   },
   'count-derangements': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Calculates the number of derangements (permutations where no element appears in its original position) of n items.',
     returns: {
       type: 'integer',
@@ -3320,7 +3320,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.derangements', 'Number-Theory.count-permutations', 'Number-Theory.factorial'],
   },
   'derangements': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates all derangements (permutations where no element appears in its original position) of a set.',
     returns: {
       type: 'array',
@@ -3347,7 +3347,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.count-derangements', 'Number-Theory.permutations'],
   },
   'divisors': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Returns the divisors of a number.',
     returns: {
       type: 'integer',
@@ -3374,7 +3374,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.count-divisors', 'Number-Theory.proper-divisors', 'Number-Theory.sigma', 'Number-Theory.prime-factors', 'Number-Theory.divisible-by?', 'Number-Theory.lcm', 'Number-Theory.abundant?', 'Number-Theory.deficient?', 'Number-Theory.count-proper-divisors'],
   },
   'count-divisors': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Returns the number of divisors of a number.',
     returns: {
       type: 'integer',
@@ -3400,7 +3400,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.divisors', 'Number-Theory.count-proper-divisors', 'Number-Theory.sigma'],
   },
   'proper-divisors': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Returns the proper divisors of a number.',
     returns: {
       type: 'integer',
@@ -3427,7 +3427,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.count-proper-divisors', 'Number-Theory.divisors', 'Number-Theory.amicable?', 'Number-Theory.perfect?'],
   },
   'count-proper-divisors': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Returns the number of proper divisors of a number.',
     returns: {
       type: 'integer',
@@ -3453,7 +3453,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.proper-divisors', 'Number-Theory.count-divisors', 'Number-Theory.divisors'],
   },
   'factorial': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Calculates the factorial of a number.',
     returns: {
       type: 'integer',
@@ -3480,7 +3480,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.factorial-seq', 'Number-Theory.factorial-nth', 'Number-Theory.factorial?', 'Number-Theory.count-combinations', 'Number-Theory.count-permutations', 'Number-Theory.multinomial', 'Number-Theory.count-derangements'],
   },
   'partitions': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates all partitions of a number.',
     returns: {
       type: 'array',
@@ -3506,7 +3506,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.count-partitions', 'Number-Theory.partition-seq', 'Number-Theory.combinations', 'Number-Theory.partition?'],
   },
   'count-partitions': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Returns the number of partitions of a number.',
     returns: {
       type: 'integer',
@@ -3532,7 +3532,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.partitions', 'Number-Theory.partition-seq', 'Number-Theory.count-combinations'],
   },
   'permutations': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates all permutations of a collection.',
     returns: {
       type: 'array',
@@ -3563,7 +3563,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.count-permutations', 'Number-Theory.combinations', 'Number-Theory.derangements', 'Number-Theory.cartesian-product'],
   },
   'count-permutations': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Returns the number of permutations of n items taken k at a time.',
     returns: {
       type: 'integer',
@@ -3594,7 +3594,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.permutations', 'Number-Theory.count-combinations', 'Number-Theory.factorial', 'Number-Theory.multinomial', 'Number-Theory.stirling-first', 'Number-Theory.count-derangements'],
   },
   'power-set': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Generates the power set of a collection.',
     returns: {
       type: 'array',
@@ -3623,7 +3623,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.count-power-set', 'Number-Theory.combinations', 'Number-Theory.cartesian-product'],
   },
   'count-power-set': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Returns the number of subsets of a set.',
     returns: {
       type: 'integer',
@@ -3649,7 +3649,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.power-set', 'Number-Theory.count-combinations'],
   },
   'prime-factors': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Returns the prime factors of a number.',
     returns: {
       type: 'integer',
@@ -3676,7 +3676,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.count-prime-factors', 'Number-Theory.distinct-prime-factors', 'Number-Theory.prime?', 'Number-Theory.divisors', 'Number-Theory.euler-totient', 'Number-Theory.mobius', 'Number-Theory.composite?', 'Number-Theory.count-distinct-prime-factors'],
   },
   'count-prime-factors': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Returns the number of prime factors of a number.',
     returns: {
       type: 'integer',
@@ -3702,7 +3702,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.prime-factors', 'Number-Theory.distinct-prime-factors', 'Number-Theory.count-distinct-prime-factors'],
   },
   'distinct-prime-factors': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Returns the distinct prime factors of a number.',
     returns: {
       type: 'integer',
@@ -3729,7 +3729,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.prime-factors', 'Number-Theory.count-distinct-prime-factors', 'Number-Theory.count-prime-factors'],
   },
   'count-distinct-prime-factors': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Returns the number of distinct prime factors of a number.',
     returns: {
       type: 'integer',
@@ -3755,7 +3755,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.distinct-prime-factors', 'Number-Theory.prime-factors', 'Number-Theory.count-prime-factors'],
   },
   'coprime?': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Checks if two numbers are coprime (i.e., their GCD is 1).',
     returns: {
       type: 'boolean',
@@ -3791,7 +3791,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.gcd', 'Number-Theory.euler-totient', 'Number-Theory.divisible-by?', 'Number-Theory.lcm', 'Number-Theory.carmichael-lambda'],
   },
   'divisible-by?': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Checks if a number is divisible by another number.',
     returns: {
       type: 'boolean',
@@ -3823,7 +3823,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.divisors', 'Number-Theory.gcd', 'Number-Theory.coprime?'],
   },
   'gcd': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Calculates the greatest common divisor (GCD) of two numbers.',
     returns: {
       type: 'integer',
@@ -3854,7 +3854,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.lcm', 'Number-Theory.extended-gcd', 'Number-Theory.coprime?', 'Number-Theory.divisible-by?'],
   },
   'lcm': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Calculates the least common multiple (LCM) of two numbers.',
     returns: {
       type: 'integer',
@@ -3884,7 +3884,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.gcd', 'Number-Theory.divisors', 'Number-Theory.coprime?'],
   },
   'multinomial': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Calculates the multinomial coefficient from of a list of numbers representing the sizes of each group.',
     returns: {
       type: 'integer',
@@ -3911,7 +3911,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     hideOperatorForm: true,
   },
   'amicable?': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Checks if two numbers are amicable (i.e., the sum of the proper divisors of each number equals the other number).',
     returns: {
       type: 'boolean',
@@ -3942,7 +3942,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.proper-divisors', 'Number-Theory.perfect?', 'Number-Theory.sigma', 'Number-Theory.perfect-seq'],
   },
   'euler-totient': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Calculates the Euler\'s totient function (φ(n)) of a number, which counts the integers up to n that are coprime to n.',
     returns: {
       type: 'integer',
@@ -3969,7 +3969,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.coprime?', 'Number-Theory.carmichael-lambda', 'Number-Theory.mobius', 'Number-Theory.prime-factors', 'Number-Theory.mertens'],
   },
   'mobius': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Calculates the Möbius function (μ(n)) of a number, which is used in number theory.',
     returns: {
       type: 'integer',
@@ -3999,7 +3999,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.mertens', 'Number-Theory.euler-totient', 'Number-Theory.prime-factors'],
   },
   'mertens': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Calculates the Mertens function (M(n)) of a number, which is the sum of the Möbius function up to n.',
     returns: {
       type: 'integer',
@@ -4029,7 +4029,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.mobius', 'Number-Theory.euler-totient'],
   },
   'sigma': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Calculates the sum of divisors function (σ(n)) of a number, which is the sum of all positive divisors of n.',
     returns: {
       type: 'integer',
@@ -4059,7 +4059,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.divisors', 'Number-Theory.perfect?', 'Number-Theory.abundant?', 'Number-Theory.deficient?', 'Number-Theory.amicable?', 'Number-Theory.count-divisors'],
   },
   'carmichael-lambda': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Calculates the Carmichael function (λ(n)) of a number, which is the smallest positive integer m such that a^m ≡ 1 (mod n) for all integers a coprime to n.',
     returns: {
       type: 'integer',
@@ -4089,7 +4089,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.euler-totient', 'Number-Theory.mod-exp', 'Number-Theory.coprime?'],
   },
   'cartesian-product': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Calculates the Cartesian product of two or more sets.',
     returns: {
       type: 'array',
@@ -4123,7 +4123,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.combinations', 'Number-Theory.power-set', 'Number-Theory.permutations'],
   },
   'perfect-power': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Returns a tuple of the base and exponent if the number is a perfect power, otherwise returns null.',
     returns: {
       type: 'array',
@@ -4154,7 +4154,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.perfect-power?', 'Number-Theory.perfect-power-seq', 'Number-Theory.perfect-square?', 'Number-Theory.perfect-cube?'],
   },
   'mod-exp': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Calculates the modular exponentiation of a base raised to an exponent modulo a modulus.',
     returns: {
       type: 'integer',
@@ -4188,7 +4188,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.mod-inv', 'Number-Theory.carmichael-lambda', 'Number-Theory.chinese-remainder'],
   },
   'mod-inv': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Calculates the modular multiplicative inverse of a number modulo another number.',
     returns: {
       type: 'integer',
@@ -4218,7 +4218,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.mod-exp', 'Number-Theory.extended-gcd', 'Number-Theory.chinese-remainder'],
   },
   'extended-gcd': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Calculates the extended greatest common divisor (GCD) of two numbers, returning the GCD and the coefficients of Bézout\'s identity.',
     returns: {
       type: 'integer',
@@ -4249,7 +4249,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.gcd', 'Number-Theory.mod-inv', 'Number-Theory.chinese-remainder'],
   },
   'chinese-remainder': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Solves a system of simultaneous congruences using the Chinese Remainder Theorem.',
     returns: {
       type: 'integer',
@@ -4289,7 +4289,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.mod-exp', 'Number-Theory.mod-inv', 'Number-Theory.extended-gcd'],
   },
   'stirling-first': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Calculates the Stirling numbers of the first kind, which count the number of permutations of n elements with k cycles.',
     returns: {
       type: 'integer',
@@ -4322,7 +4322,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     seeAlso: ['Number-Theory.stirling-second', 'Number-Theory.bell-seq', 'Number-Theory.count-permutations'],
   },
   'stirling-second': {
-    category: 'Number Theory',
+    category: 'Number-Theory',
     description: 'Calculates the Stirling numbers of the second kind, which count the number of ways to partition n elements into k non-empty subsets.',
     returns: {
       type: 'integer',

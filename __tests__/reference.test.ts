@@ -8,7 +8,7 @@ import { isReservedSymbol } from '../src/tokenizer/reservedNames'
 import { Lits } from '../src/Lits/Lits'
 import { allBuiltinNamespaces } from '../src/allNamespaces'
 import { specialExpressionTypes } from '../src/builtin/specialExpressionTypes'
-import { isApiName } from '../reference/api'
+import { type ApiName, isApiName } from '../reference/api'
 import '../src/initReferenceData'
 
 const lits = new Lits({ namespaces: allBuiltinNamespaces })
@@ -109,7 +109,7 @@ describe('seeAlso', () => {
         if (!targetRef) {
           continue // missing target is caught by other tests
         }
-        if (!('seeAlso' in targetRef) || !targetRef.seeAlso || !targetRef.seeAlso.includes(key)) {
+        if (!('seeAlso' in targetRef) || !targetRef.seeAlso || !targetRef.seeAlso.includes(key as ApiName)) {
           asymmetric.push(`${key} -> ${target} (but ${target} does not link back)`)
         }
       }
