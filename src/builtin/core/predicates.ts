@@ -37,7 +37,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Returns `true` if $x is a string, otherwise `false`.',
-      seeAlso: ['blank?', 'number?', 'boolean?', 'null?', 'array?', 'object?', 'regexp?', 'function?', 'coll?', 'seq?'],
+      seeAlso: ['blank?', 'number?', 'boolean?', 'null?', 'array?', 'object?', 'regexp?', 'function?', 'collection?', 'sequence?'],
       examples: [
         'string?("")',
         'string?("A string")',
@@ -254,7 +254,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Returns `true` if $x is an array, otherwise `false`.',
-      seeAlso: ['seq?', 'coll?', 'object?', 'string?', 'vector?', 'matrix?', 'grid?', 'function?'],
+      seeAlso: ['sequence?', 'collection?', 'object?', 'string?', 'vector?', 'matrix?', 'grid?', 'function?'],
       examples: [
         'array?([])',
         'array?([1, 2, 3])',
@@ -266,7 +266,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     },
   },
 
-  'coll?': {
+  'collection?': {
     evaluate: ([first]): boolean => {
       return isColl(first)
     },
@@ -276,21 +276,21 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       returns: { type: 'boolean' },
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
-      description: 'Returns `true` if $x is a Coll i.e. an array, an object or a string, otherwise `false`.',
-      seeAlso: ['seq?', 'array?', 'object?', 'string?'],
+      description: 'Returns `true` if $x is a collection i.e. an array, an object or a string, otherwise `false`.',
+      seeAlso: ['sequence?', 'array?', 'object?', 'string?'],
       examples: [
-        'coll?([])',
-        'coll?([1, 2, 3])',
-        'coll?(object("a", 10))',
-        'coll?("Albert")',
-        'coll?(42)',
-        'coll?(10.1)',
-        'coll?((x, y) -> x + y)',
+        'collection?([])',
+        'collection?([1, 2, 3])',
+        'collection?(object("a", 10))',
+        'collection?("Albert")',
+        'collection?(42)',
+        'collection?(10.1)',
+        'collection?((x, y) -> x + y)',
       ],
     },
   },
 
-  'seq?': {
+  'sequence?': {
     evaluate: ([first]): boolean => {
       return isSeq(first)
     },
@@ -300,16 +300,16 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       returns: { type: 'boolean' },
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
-      description: 'Returns `true` if $x is a Seq i.e. an array or a string, otherwise `false`.',
-      seeAlso: ['coll?', 'array?', 'string?'],
+      description: 'Returns `true` if $x is a sequence i.e. an array or a string, otherwise `false`.',
+      seeAlso: ['collection?', 'array?', 'string?'],
       examples: [
-        'seq?([])',
-        'seq?([1, 2, 3])',
-        'seq?(object("a", 10))',
-        'seq?("Albert")',
-        'seq?(42)',
-        'seq?(10.1)',
-        'seq?((x, y) -> x + y)',
+        'sequence?([])',
+        'sequence?([1, 2, 3])',
+        'sequence?(object("a", 10))',
+        'sequence?("Albert")',
+        'sequence?(42)',
+        'sequence?(10.1)',
+        'sequence?((x, y) -> x + y)',
       ],
     },
   },
@@ -323,7 +323,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Returns `true` if $x is an object, otherwise `false`.',
-      seeAlso: ['coll?', 'array?', 'string?', 'function?'],
+      seeAlso: ['collection?', 'array?', 'string?', 'function?'],
       examples: [
         'object?(object("a", 10))',
         'object?(42)',

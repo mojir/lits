@@ -318,14 +318,14 @@ matrix?([[1, 2], [3]]);        // => false (inconsistent row lengths)
 matrix?([[]]);                 // => false (contains empty row)
 
 // Collection predicates
-seq?([1, 2, 3]);               // => true (sequences: strings and arrays)
-seq?("hello");                 // => true
-seq?({a: 1});                  // => false
+sequence?([1, 2, 3]);           // => true (sequences: strings and arrays)
+sequence?("hello");             // => true
+sequence?({a: 1});              // => false
 
-coll?([1, 2, 3]);              // => true (collections: strings, arrays, objects)
-coll?("hello");                // => true
-coll?({a: 1});                 // => true
-coll?(42);                     // => false
+collection?([1, 2, 3]);         // => true (collections: strings, arrays, objects)
+collection?("hello");           // => true
+collection?({a: 1});            // => true
+collection?(42);                // => false
 ```
 
 #### Type Hierarchy
