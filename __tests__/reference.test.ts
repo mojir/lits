@@ -1,5 +1,5 @@
 import { describe, expect, it, test } from 'vitest'
-import { apiReference, getLinkName, isFunctionReference, namespaceReference, normalExpressionReference } from '../reference'
+import { allReference, apiReference, getLinkName, isFunctionReference, namespaceReference, normalExpressionReference } from '../reference'
 import { normalExpressionKeys, specialExpressionKeys } from '../src/builtin'
 import { isUnknownRecord } from '../src/typeGuards'
 import { canBeOperator } from '../src/utils/arity'
@@ -92,6 +92,27 @@ describe('apiReference', () => {
           }
         })
       })
+  })
+})
+
+describe('seeAlso symmetry', () => {
+  it('if A references B in seeAlso, then B must reference A', () => {
+    const asymmetric: string[] = []
+    for (const [key, ref] of Object.entries(allReference)) {
+      if (!('seeAlso' in ref) || !ref.seeAlso) {
+        continue
+      }
+      for (const target of ref.seeAlso) {
+        const targetRef = allReference[target]
+        if (!targetRef) {
+          continue // missing target is caught by other tests
+        }
+        if (!('seeAlso' in targetRef) || !targetRef.seeAlso || !targetRef.seeAlso.includes(key)) {
+          asymmetric.push(`${key} -> ${target} (but ${target} does not link back)`)
+        }
+      }
+    }
+    expect(asymmetric, `Asymmetric seeAlso:\n${asymmetric.join('\n')}`).toEqual([])
   })
 })
 

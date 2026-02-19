@@ -47,6 +47,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
         { argumentNames: ['x', 'ys'] },
       ],
       description: 'Returns `true` if all `values` are structaul equal to each other, otherwise result is `false`.',
+      seeAlso: ['≠', 'identical?'],
       examples: [
         '1 == 1',
         '[1, 2] == [1, 2]',
@@ -87,6 +88,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
         { argumentNames: ['x', 'ys'] },
       ],
       description: 'Returns `true` if all `values` are not equal to each other, otherwise result is `false`. `(≠ a b c)` is same as `(! (== a b c))`.',
+      seeAlso: ['==', 'identical?'],
       examples: [
         '1 ≠ 2',
         '3 ≠ 3',
@@ -111,6 +113,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['a', 'b'] }],
       description: 'Returns true if $a and $b are referential equal.',
+      seeAlso: ['==', '≠'],
       examples: [
         'identical?({ a: 10, b: 20 }, { b: 20, a: 10 })',
         'identical?([1, true, null], [1, true, null])',
@@ -144,6 +147,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
         { argumentNames: ['x', 'ys'] },
       ],
       description: 'Returns `true` if $x and $ys are in decreasing order, `false` otherwise.',
+      seeAlso: ['<', '>=', '<=', 'compare'],
       examples: [
         '>(1, 0)',
         '>(1.01, 1)',
@@ -180,6 +184,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
         { argumentNames: ['x', 'ys'] },
       ],
       description: 'Returns `true` if $x and $ys are in increasing order, `false` otherwise.',
+      seeAlso: ['>', '>=', '<=', 'compare'],
       examples: [
         '<(0, 1)',
         '<(1, 1.01)',
@@ -215,6 +220,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
         { argumentNames: ['x', 'ys'] },
       ],
       description: 'Returns `true` if $x and $ys are in non increasing order, `false` otherwise.',
+      seeAlso: ['>', '<', '<=', 'compare'],
       examples: [
         '1 >= 1',
         '0 >= 1',
@@ -252,6 +258,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
         { argumentNames: ['x', 'ys'] },
       ],
       description: 'Returns `true` if $x and $ys are in non decreasing order, `false` otherwise.',
+      seeAlso: ['>', '<', '>=', 'compare'],
       examples: [
         '1 <= 1',
         '<=(0, 1)',
@@ -270,8 +277,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       returns: { type: 'boolean' },
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
-      description: 'Computes logical negation. Note that any other $x than `false`, `0`, `null` and `\'\'` is truthy.',
-      examples: [
+      description: 'Computes logical negation. Note that any other $x than `false`, `0`, `null` and `\'\'` is truthy.',      seeAlso: ['boolean'],      examples: [
         '!(3)',
         '!(true)',
         '!("A string")',
@@ -294,6 +300,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       args: { ms: { type: 'number' } },
       variants: [{ argumentNames: ['ms'] }],
       description: 'Returns IOS date time string from `ms` (milliseconds elapsed since the UNIX epoch).',
+      seeAlso: ['iso-date->epoch'],
       examples: [
         'epoch->iso-date(1649756230899)',
         'epoch->iso-date(0)',
@@ -314,6 +321,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       args: { iso: { type: 'string' } },
       variants: [{ argumentNames: ['iso'] }],
       description: 'Returns milliseconds elapsed since the UNIX epoch to `iso`.',
+      seeAlso: ['epoch->iso-date'],
       examples: [
         'iso-date->epoch("2022-04-12T09:37:10.899Z")',
         'iso-date->epoch("1980-01-01")',
@@ -359,6 +367,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Coerces $x to boolean.',
+      seeAlso: ['!', 'boolean?', 'true?', 'false?'],
       examples: [
         'boolean(0)',
         'boolean(1)',
@@ -383,6 +392,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['a', 'b'] }],
       description: 'Compares two values. Returns `-1` if $a < $b, `1` if $a > $b and `0` if $a and $b have the same sort order.',
+      seeAlso: ['<', '>', '<=', '>=', 'sort', 'sort-by'],
       examples: [
         'compare(0, 1)',
         'compare(0, 0)',
@@ -404,6 +414,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       args: { x: { type: 'string' } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Returns `JSON.parse(`$x`)`.',
+      seeAlso: ['json-stringify'],
       examples: [
         'json-parse("[1, 2, 3]")',
       ],
@@ -431,6 +442,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
         { argumentNames: ['x', 'indent'] },
       ],
       description: 'Returns `JSON.stringify(`$x`)`. If second argument is provided, returns `JSON.stringify(`$x`, null, `$indent`)`.',
+      seeAlso: ['json-parse'],
       examples: [
         'json-stringify([1, 2, 3])',
         'json-stringify({ a: { b: 10 }}, 2)',

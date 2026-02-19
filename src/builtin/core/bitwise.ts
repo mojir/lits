@@ -21,6 +21,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
       args: { ...getOperatorArgs('integer', 'integer') },
       variants: [{ argumentNames: ['a', 'b'] }],
       description: 'Shifts $a arithmetically left by $b bit positions.',
+      seeAlso: ['>>', '>>>'],
       examples: [
         '1 << 10',
         '<<(1, 10)',
@@ -42,6 +43,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
       args: { ...getOperatorArgs('integer', 'integer') },
       variants: [{ argumentNames: ['a', 'b'] }],
       description: 'Shifts $a arithmetically right by $b bit positions.',
+      seeAlso: ['<<', '>>>'],
       examples: [
         '2048 >> 10',
         '>>(2048, 10)',
@@ -64,6 +66,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
       args: { ...getOperatorArgs('integer', 'integer') },
       variants: [{ argumentNames: ['a', 'b'] }],
       description: 'Shifts $a arithmetically right by $b bit positions without sign extension.',
+      seeAlso: ['<<', '>>'],
       examples: [
         '-16 >>> 2',
         '>>>(2048, 10)',
@@ -85,6 +88,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
       args: { a: { type: 'integer' } },
       variants: [{ argumentNames: ['a'] }],
       description: 'Returns bitwise `not` of $a.',
+      seeAlso: ['&', '|', 'xor', 'bit-and-not'],
       examples: [
         'bit-not(0)',
         'bit-not(255)',
@@ -113,6 +117,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
         { argumentNames: ['a', 'b', 'c'] },
       ],
       description: 'Returns bitwise `and` of all arguments.',
+      seeAlso: ['|', 'xor', 'bit-not', 'bit-and-not'],
       examples: [
         '0b0011 & 0b0110',
         '&(0b0011, 0b0110)',
@@ -142,6 +147,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
         { argumentNames: ['a', 'b', 'c'] },
       ],
       description: 'Returns bitwise `and` with complement.',
+      seeAlso: ['&', '|', 'xor', 'bit-not'],
       examples: [
         '0b0011 bit-and-not 0b0110',
         'bit-and-not(0b0011, 0b0110)',
@@ -171,6 +177,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
         { argumentNames: ['a', 'b', 'c'] },
       ],
       description: 'Returns bitwise `or` of all arguments.',
+      seeAlso: ['&', 'xor', 'bit-not', 'bit-and-not'],
       examples: [
         '0b0011 | 0b0110',
         '|(0b0011, 0b0110)',
@@ -200,6 +207,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
         { argumentNames: ['a', 'b', 'c'] },
       ],
       description: 'Returns bitwise `xor` of all arguments.',
+      seeAlso: ['&', '|', 'bit-not', 'bit-and-not'],
       examples: [
         '0b0011 xor 0b0110',
         'xor(0b0011, 0b0110)',
@@ -222,6 +230,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
       args: { ...getOperatorArgs('integer', 'integer') },
       variants: [{ argumentNames: ['a', 'b'] }],
       description: 'Flips bit number $b.',
+      seeAlso: ['bit-set', 'bit-clear', 'bit-test'],
       examples: [
         '0b0011 bit-flip 1',
         'bit-flip(0b0011, 1)',
@@ -244,6 +253,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
       args: { ...getOperatorArgs('integer', 'integer') },
       variants: [{ argumentNames: ['a', 'b'] }],
       description: 'Sets bit number $b.',
+      seeAlso: ['bit-flip', 'bit-clear', 'bit-test'],
       examples: [
         '0b0010 bit-set 1',
         'bit-set(0b0011, 1)',
@@ -266,6 +276,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
       args: { ...getOperatorArgs('integer', 'integer') },
       variants: [{ argumentNames: ['a', 'b'] }],
       description: 'Clears bit number $b.',
+      seeAlso: ['bit-flip', 'bit-set', 'bit-test'],
       examples: [
         '0b0011 bit-clear 1',
         'bit-clear(0b0011, 1)',
@@ -288,6 +299,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
       args: { ...getOperatorArgs('integer', 'integer') },
       variants: [{ argumentNames: ['a', 'b'] }],
       description: 'Checks if bit number $b is set.',
+      seeAlso: ['bit-flip', 'bit-set', 'bit-clear'],
       examples: [
         '0b0011 bit-test 1',
         'bit-test(0b0011, 1)',

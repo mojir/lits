@@ -33,6 +33,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['a', 'b'] }],
       description: 'Takes a value $a and a function $b, and returns the result of applying $b to $a.',
+      seeAlso: ['apply', 'comp'],
       examples: [
         `
 1 |> inc |> inc`,
@@ -66,6 +67,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['fun', 'args'] }],
       description: 'Call supplied function $fun with specified arguments $args.',
+      seeAlso: ['|>'],
       examples: [
         `
 apply(+, [1, 2, 3])`,
@@ -91,6 +93,7 @@ apply(
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Returns $x.',
+      seeAlso: ['constantly', 'fnull'],
       examples: ['identity(1)', 'identity("Albert")', 'identity({ a: 1 })', 'identity(null)'],
     },
   },
@@ -121,6 +124,7 @@ apply(
   The returned function takes a variable number of arguments,
   applies the rightmost function to the args,
   the next function (right-to-left) to the result, etc.`,
+      seeAlso: ['|>', 'juxt', 'complement'],
       examples: [
         `
 let negative-quotient = comp(-, /);
@@ -149,6 +153,7 @@ comp("foo", "bar")(x)`,
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Returns a function that takes any number of arguments and always returns $x.',
+      seeAlso: ['identity', 'fnull'],
       examples: [
         `
 let always-true = constantly(true);
@@ -189,6 +194,7 @@ always-true(9, 3)`,
       description: `Takes one or many function and returns a function that is the juxtaposition of those functions.
 The returned function takes a variable number of args,
 and returns a vector containing the result of applying each function to the args (left-to-right).`,
+      seeAlso: ['comp'],
       examples: [
         `
 juxt(+, *, min, max)(
@@ -229,6 +235,7 @@ juxt(+, *, min, max) apply range(1, 11)`,
       args: { fun: { type: 'function' } },
       variants: [{ argumentNames: ['fun'] }],
       description: 'Takes a function $fun and returns a new function that takes the same arguments as f, has the same effects, if any, and returns the opposite truth value.',
+      seeAlso: ['comp', 'every-pred', 'some-pred'],
       examples: [
         'complement(>)(1, 3)',
         'complement(<)(1, 3)',
@@ -263,6 +270,7 @@ juxt(+, *, min, max) apply range(1, 11)`,
       description: `
 Takes a number of predicates and returns a function that returns \`true\` if all predicates
 return a truthy value against all of its arguments, else it returns \`false\`.`,
+      seeAlso: ['some-pred', 'complement', 'every?'],
       examples: [
         `
 every-pred(string?, -> count($) > 3)(
@@ -302,6 +310,7 @@ every-pred(string?, -> count($) > 3)(
         { argumentNames: ['fun', 'fns'] },
       ],
       description: 'Takes a number of `predicates` and returns a function that returns `true` if at least one of the `predicates` return a truthy `true` value against at least one of its arguments, else it returns `false`.',
+      seeAlso: ['every-pred', 'complement', 'any?'],
       examples: [
         'some-pred(string?, -> count($) > 3)("Albert", "Mojir")',
         'some-pred(string?, -> count($) > 3)("a", "M")',
@@ -340,6 +349,7 @@ every-pred(string?, -> count($) > 3)(
         { argumentNames: ['fun', 'arg', 'args'] },
       ],
       description: 'Takes a function $fun, and returns a function that calls $fun, replacing a null argument to the corresponding argument.',
+      seeAlso: ['identity', 'constantly'],
       examples: [
         'fnull(inc, 0)(1)',
         'fnull(inc, 0)(null)',

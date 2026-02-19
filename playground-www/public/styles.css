@@ -62,6 +62,7 @@ pre {
   background: rgb(82 82 82);
 }
 
+a,
 a:link,
 a:visited,
 a:hover,
@@ -71,6 +72,14 @@ a:active {
   cursor: pointer;
 }
 
+.content a,
+.content a:link,
+.content a:visited,
+.content a:hover {
+ text-decoration: underline; 
+}
+
+a.external-link,
 a.external-link:link,
 a.external-link:visited,
 a.external-link:hover,

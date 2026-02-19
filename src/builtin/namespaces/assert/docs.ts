@@ -31,6 +31,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     examples: [
       'let { assert } = import("Assert");\ntry assert(0, "Expected a positive value") catch (e) e.message end',
     ],
+    seeAlso: ['Assert.assert-truthy', 'Assert.assert-true'],
     hideOperatorForm: true,
   },
   'assert!=': {
@@ -71,6 +72,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { assert!= } = import("Assert");\ntry 0 assert!= 0 catch (e) e.message end',
       'let { assert!= } = import("Assert");\ntry assert!=(0, 1) catch (e) e.message end',
     ],
+    seeAlso: ['Assert.assert='],
     hideOperatorForm: true,
   },
   'assert=': {
@@ -110,6 +112,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { assert= } = import("Assert");\ntry assert=({ "a": 1 }, { "a": 2 }) catch (e) e.message end',
       'let { assert= } = import("Assert");\ntry assert=({ "a": 1 }, { "a": 1 }) catch (e) e.message end',
     ],
+    seeAlso: ['Assert.assert!='],
     hideOperatorForm: true,
   },
   'assert-gt': {
@@ -149,6 +152,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { assert-gt } = import("Assert");\ntry assert-gt(0, 0) catch (e) e.message end',
       'let { assert-gt } = import("Assert");\ntry assert-gt(1, 0) catch (e) e.message end',
     ],
+    seeAlso: ['Assert.assert-lt', 'Assert.assert-gte', 'Assert.assert-lte'],
     hideOperatorForm: true,
   },
   'assert-lt': {
@@ -188,6 +192,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { assert-lt } = import("Assert");\ntry assert-lt(1, 1) catch (e) e.message end',
       'let { assert-lt } = import("Assert");\ntry assert-lt(0, 1) catch (e) e.message end',
     ],
+    seeAlso: ['Assert.assert-gt', 'Assert.assert-lte', 'Assert.assert-gte'],
     hideOperatorForm: true,
   },
   'assert-gte': {
@@ -227,6 +232,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { assert-gte } = import("Assert");\ntry assert-gte(0, 1) catch (e) e.message end',
       'let { assert-gte } = import("Assert");\ntry assert-gte(1, 1) catch (e) e.message end',
     ],
+    seeAlso: ['Assert.assert-lte', 'Assert.assert-gt', 'Assert.assert-lt'],
     hideOperatorForm: true,
   },
   'assert-lte': {
@@ -266,6 +272,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { assert-lte } = import("Assert");\ntry assert-lte(1, 0) catch (e) e.message end',
       'let { assert-lte } = import("Assert");\ntry assert-lte(1, 1) catch (e) e.message end',
     ],
+    seeAlso: ['Assert.assert-gte', 'Assert.assert-lt', 'Assert.assert-gt'],
     hideOperatorForm: true,
   },
   'assert-true': {
@@ -300,6 +307,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { assert-true } = import("Assert");\ntry assert-true(false) catch (e) e.message end',
       'let { assert-true } = import("Assert");\ntry assert-true(true) catch (e) e.message end',
     ],
+    seeAlso: ['Assert.assert-false', 'Assert.assert-truthy', 'Assert.assert-falsy', 'Assert.assert'],
     hideOperatorForm: true,
   },
   'assert-false': {
@@ -334,6 +342,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { assert-false } = import("Assert");\ntry assert-false(true) catch (e) e.message end',
       'let { assert-false } = import("Assert");\ntry assert-false(false) catch (e) e.message end',
     ],
+    seeAlso: ['Assert.assert-true', 'Assert.assert-falsy', 'Assert.assert-truthy'],
     hideOperatorForm: true,
   },
   'assert-truthy': {
@@ -375,6 +384,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { assert-truthy } = import("Assert");\ntry assert-truthy([]) catch (e) e.message end',
       'let { assert-truthy } = import("Assert");\ntry assert-truthy(nd) catch (e) e.message end',
     ],
+    seeAlso: ['Assert.assert-falsy', 'Assert.assert-true', 'Assert.assert-false', 'Assert.assert', 'Assert.assert-null'],
     hideOperatorForm: true,
   },
   'assert-falsy': {
@@ -415,6 +425,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { assert-falsy } = import("Assert");\ntry assert-falsy(null) catch (e) e.message end',
       'let { assert-falsy } = import("Assert");\ntry assert-falsy("") catch (e) e.message end',
     ],
+    seeAlso: ['Assert.assert-truthy', 'Assert.assert-false', 'Assert.assert-true', 'Assert.assert-null'],
     hideOperatorForm: true,
   },
   'assert-null': {
@@ -455,6 +466,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { assert-null } = import("Assert");\ntry assert-null(0) catch (e) e.message end',
       'let { assert-null } = import("Assert");\ntry assert-null("") catch (e) e.message end',
     ],
+    seeAlso: ['Assert.assert-truthy', 'Assert.assert-falsy'],
     hideOperatorForm: true,
   },
   'assert-throws': {
@@ -488,6 +500,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { assert-throws } = import("Assert");\nassert-throws(-> throw("Error"))',
       'let { assert-throws } = import("Assert");\ntry assert-throws(-> identity("Error")) catch (e) e.message end',
     ],
+    seeAlso: ['Assert.assert-throws-error', 'Assert.assert-not-throws'],
     hideOperatorForm: true,
   },
   'assert-throws-error': {
@@ -526,6 +539,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { assert-throws-error } = import("Assert");\ntry assert-throws-error(-> throw("Error"), "Error") catch (e) e.message end',
       'let { assert-throws-error } = import("Assert");\ntry assert-throws-error(-> identity("Error"), "Error") catch (e) e.message end',
     ],
+    seeAlso: ['Assert.assert-throws', 'Assert.assert-not-throws'],
     hideOperatorForm: true,
   },
   'assert-not-throws': {
@@ -559,6 +573,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { assert-not-throws } = import("Assert");\ntry assert-not-throws(-> identity("Error")) catch (e) e.message end',
       'let { assert-not-throws } = import("Assert");\ntry assert-not-throws(-> throw("Error")) catch (e) e.message end',
     ],
+    seeAlso: ['Assert.assert-throws', 'Assert.assert-throws-error'],
     hideOperatorForm: true,
   },
 }

@@ -53,6 +53,9 @@ export function getFlexStyles(css: CssTemplateFunction) {
     'gap-8': css`
       gap: 2rem;
     `,
+    'gap-16': css`
+      gap: 4rem;
+    `,
   } satisfies Partial<Styles>
 
   return flexStyles

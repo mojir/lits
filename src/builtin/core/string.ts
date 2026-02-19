@@ -31,6 +31,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['s', 'n'] }],
       description: 'Repeates $s $n times.',
+      seeAlso: ['str', 'repeat'],
       examples: [
         '"*" string-repeat 10',
         'string-repeat("*", 10)',
@@ -60,6 +61,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       args: { values: { type: 'any', rest: true } },
       variants: [{ argumentNames: ['values'] }],
       description: 'Concatenats $values into one string. If `value` equals `null` empty string is returned.',
+      seeAlso: ['++', 'join', 'template', 'string-repeat', 'number'],
       examples: [
         'str("A string", ", and another string", " ...and more")',
         'str("Just one string")',
@@ -86,6 +88,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       args: { s: { type: 'string' } },
       variants: [{ argumentNames: ['s'] }],
       description: 'Parses $s to a number.',
+      seeAlso: ['str', 'number?', 'integer?'],
       examples: [
         'number("10")',
         'number("010")',
@@ -112,6 +115,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       args: { code: { type: 'number' } },
       variants: [{ argumentNames: ['code'] }],
       description: 'Return character for code point $code.',
+      seeAlso: ['to-char-code'],
       examples: [
         'from-char-code(65)',
         'from-char-code(0)',
@@ -131,6 +135,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       args: { c: { type: 'string' } },
       variants: [{ argumentNames: ['c'] }],
       description: 'Return code point for first character in $c.',
+      seeAlso: ['from-char-code'],
       examples: [
         'to-char-code("A")',
         'to-char-code("Albert")',
@@ -150,6 +155,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       args: { s: { type: 'string' } },
       variants: [{ argumentNames: ['s'] }],
       description: 'Returns $s converted to lower case.',
+      seeAlso: ['upper-case', 'capitalize'],
       examples: [
         'lower-case("Albert")',
         'lower-case("")',
@@ -169,6 +175,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       args: { s: { type: 'string' } },
       variants: [{ argumentNames: ['s'] }],
       description: 'Returns $s converted to upper case.',
+      seeAlso: ['lower-case', 'capitalize'],
       examples: [
         'upper-case("Albert")',
         'upper-case("")',
@@ -188,6 +195,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       args: { s: { type: 'string' } },
       variants: [{ argumentNames: ['s'] }],
       description: 'Returns a new string with leading and trailing whitespaces removed.',
+      seeAlso: ['trim-left', 'trim-right', 'blank?'],
       examples: [
         'trim("  Albert  ")',
         'trim("   ")',
@@ -208,6 +216,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       args: { s: { type: 'string' } },
       variants: [{ argumentNames: ['s'] }],
       description: 'Returns a new string with leading whitespaces removed.',
+      seeAlso: ['trim', 'trim-right'],
       examples: [
         'trim-left("  Albert  ")',
         'trim-left("   ")',
@@ -228,6 +237,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       args: { s: { type: 'string' } },
       variants: [{ argumentNames: ['s'] }],
       description: 'Returns a new string with trailing whitespaces removed.',
+      seeAlso: ['trim', 'trim-left'],
       examples: [
         'trim-right("  Albert  ")',
         'trim-right("   ")',
@@ -255,6 +265,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['arr', 'delimiter'] }],
       description: 'Returns a new string by concatenating all of the elements in $arr, separated by $delimiter.',
+      seeAlso: ['split', 'str', '++', 'interpose'],
       examples: [
         'map([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], str) join ", "',
         '([0, 1, 2, 3, 4, 5, 6, 7, 8, 9] map str) join ", "',
@@ -294,6 +305,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
         { argumentNames: ['s', 'delimiter', 'limit'] },
       ],
       description: 'Divides $s into an array of substrings. The division is done by searching for `delimiter`. If `limit` as provided, at most `limit` number of substrings are returned.',
+      seeAlso: ['join', 'split-lines'],
       examples: [
         '"Albert Mojir" split " "',
         'split("Albert Mojir", " ")',
@@ -315,6 +327,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       args: { s: { type: 'string' } },
       variants: [{ argumentNames: ['s'] }],
       description: 'Divides $s into an array of substrings, each representing a line.',
+      seeAlso: ['split'],
       examples: [
         'split-lines("Albert\nMojir\n")',
         'split-lines("Albert\n\nMojir")',
@@ -350,6 +363,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
         { argumentNames: ['s', 'length', 'padString'] },
       ],
       description: 'Pads from the start of $s with `padString` (multiple times, if needed) until the resulting string reaches the given $length.',
+      seeAlso: ['pad-right'],
       examples: [
         '"Albert" pad-left 20',
         'pad-left("Albert", 20)',
@@ -386,6 +400,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
         { argumentNames: ['s', 'length', 'padString'] },
       ],
       description: 'Pads from the start of $s with `padString` (multiple times, if needed) until the resulting string reaches the given `length`.',
+      seeAlso: ['pad-left'],
       examples: [
         '"Albert" pad-right 20',
         'pad-right("Albert", 20)',
@@ -436,6 +451,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['s', 'params'] }],
       description: 'Applies placeholders to a string. Support for basic pluralization - see examples. If pluralization is used, first placeholder must be a number.',
+      seeAlso: ['str'],
       examples: [
         'template("Hi, $1 and $2", "Carl", "Larry")',
         'template("Hi $1, $2, $3, $4, $5, $6, $7, $8 and $9", "A", "B", "C", "D", "E", "F", "G", "H", "I")',
@@ -472,6 +488,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       args: { s: { type: 'string' } },
       variants: [{ argumentNames: ['s'] }],
       description: 'Returns a Base64 encoded string from $s.',
+      seeAlso: ['decode-base64'],
       examples: [
         'encode-base64("Albert")',
       ],
@@ -502,6 +519,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       args: { base64string: { type: 'string' } },
       variants: [{ argumentNames: ['base64string'] }],
       description: 'Returns a Base64 decoded string from $base64string.',
+      seeAlso: ['encode-base64'],
       examples: [
         'decode-base64("QWxiZXJ0IPCfkLs=")',
       ],
@@ -520,6 +538,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       args: { s: { type: 'string' } },
       variants: [{ argumentNames: ['s'] }],
       description: 'Returns an escaped `URI` string.',
+      seeAlso: ['decode-uri-component'],
       examples: [
         'encode-uri-component("Hi everyone!?")',
       ],
@@ -543,6 +562,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       args: { s: { type: 'string' } },
       variants: [{ argumentNames: ['s'] }],
       description: 'Returns an un-escaped `URI` string.',
+      seeAlso: ['encode-uri-component'],
       examples: [
         'decode-uri-component("Hi%20everyone!%3F%20%F0%9F%91%8D")',
       ],
@@ -560,6 +580,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       args: { s: { type: 'string' } },
       variants: [{ argumentNames: ['s'] }],
       description: 'Returns $s with the first character converted to uppercase and the rest to lowercase.',
+      seeAlso: ['lower-case', 'upper-case'],
       examples: [
         'capitalize("albert")',
         'capitalize("ALBERT")',
@@ -583,6 +604,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       args: { s: { type: ['string', 'null'] } },
       variants: [{ argumentNames: ['s'] }],
       description: 'Returns true if $s is null or only contains whitespace characters.',
+      seeAlso: ['trim', 'empty?', 'string?'],
       examples: [
         'blank?("")',
         'blank?(null)',

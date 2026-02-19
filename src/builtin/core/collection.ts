@@ -210,6 +210,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['coll', 'fun'] }],
       description: 'Creates a new collection with all elements that pass the test implemented by $fun.',
+      seeAlso: ['filteri', 'map', 'remove'],
       examples: [
         `
 filter(
@@ -263,6 +264,7 @@ filter(
       },
       variants: [{ argumentNames: ['a', 'b'] }],
       description: 'Creates a new collection with all elements that pass the test implemented by $b. The function is called for each element in the collection, and it should take two arguments: the element itself and the index.',
+      seeAlso: ['filter', 'mapi'],
       examples: [
         'filteri([1, 2, 3], (x, i) -> i % 2 == 0)',
         'filteri([1, 2, 3], (x, i) -> x % 2 == 0)',
@@ -324,6 +326,7 @@ filter(
       },
       variants: [{ argumentNames: ['colls', 'fun'] }],
       description: 'Creates a new collection populated with the results of calling $fun on every element in $colls.',
+      seeAlso: ['mapi', 'filter', 'reduce', 'mapcat', 'Grid.map', 'Grid.mapi'],
       examples: [
         '[1, 2, 3] map -',
         '[1, 2, 3] map -> -($)',
@@ -368,6 +371,7 @@ filter(
       },
       variants: [{ argumentNames: ['a', 'b'] }],
       description: 'Creates a new collection populated with the results of calling $b on every element in $a. The function is called for each element in the collection, and it should take two arguments: the element itself and the index.',
+      seeAlso: ['map', 'filteri'],
       examples: [
         'mapi([1, 2, 3], (x, i) -> x + i)',
         'mapi([1, 2, 3], (x, i) -> x * i)',
@@ -420,6 +424,7 @@ filter(
       },
       variants: [{ argumentNames: ['coll', 'fun', 'initial'] }],
       description: 'Runs $fun function on each element of the $coll, passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $coll is a single value.',
+      seeAlso: ['reduce-right', 'reducei', 'reductions', 'map', 'Grid.reduce', 'Grid.reducei'],
       examples: [
         'reduce([1, 2, 3], +, 0)',
         'reduce([], +, 0)',
@@ -481,6 +486,7 @@ reduce(
       },
       variants: [{ argumentNames: ['coll', 'fun', 'initial'] }],
       description: 'Runs $fun function on each element of the $coll, passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $coll is a single value. The function is called for each element in the collection, and it should take three arguments: the accumulator, the element itself, and the index.',
+      seeAlso: ['reduce', 'reducei-right', 'reductionsi'],
       examples: [
         'reducei([1, 2, 3], (acc, x, i) -> acc + x + i, 0)',
         'reducei("Albert", (acc, x, i) -> acc ++ x ++ i, "")',
@@ -530,6 +536,7 @@ reduce(
       },
       variants: [{ argumentNames: ['coll', 'fun', 'initial'] }],
       description: 'Runs $fun function on each element of the $coll (starting from the last item), passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $coll is a single value.',
+      seeAlso: ['reduce', 'reducei-right'],
       examples: [
         'reduce-right(["A", "B", "C"], str, "")',
         'reduce-right({ a: 1, b: 2 }, +, 0)',
@@ -584,6 +591,7 @@ reduce(
       },
       variants: [{ argumentNames: ['coll', 'fun', 'initial'] }],
       description: 'Runs $fun function on each element of the $coll (starting from the last item), passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $coll is a single value. The function is called for each element in the collection, and it should take three arguments: the accumulator, the element itself, and the index.',
+      seeAlso: ['reducei', 'reduce-right'],
       examples: [
         'reducei-right([1, 2, 3], (acc, x, i) -> acc + x + i, 0)',
         'reducei-right("Albert", (acc, x, i) -> acc ++ x ++ i, "")',
@@ -647,6 +655,7 @@ reduce(
       },
       variants: [{ argumentNames: ['coll', 'fun', 'initial'] }],
       description: 'Returns an array of the intermediate values of the reduction (see `reduce`) of $coll by $fun.',
+      seeAlso: ['reduce', 'reductionsi'],
       examples: [
         'reductions([1, 2, 3], +, 0)',
         'reductions([1, 2, 3], +, 10)',
@@ -723,6 +732,7 @@ reductions(
       },
       variants: [{ argumentNames: ['coll', 'fun', 'initial'] }],
       description: 'Returns an array of the intermediate values of the reduction (see `reduce`) of $coll by $fun. The function is called for each element in the collection, and it should take three arguments: the accumulator, the element itself, and the index.',
+      seeAlso: ['reductions', 'reducei'],
       examples: [
         'reductionsi([1, 2, 3], (acc, x, i) -> acc + x + i, 0)',
         'reductionsi("Albert", (acc, x, i) -> acc ++ x ++ i, "")',
@@ -756,6 +766,7 @@ reductions(
         { argumentNames: ['a', 'b', 'not-found'] },
       ],
       description: 'Returns value in $a mapped at $b.',
+      seeAlso: ['get-in', 'contains?', 'find', 'nth'],
       examples: [
         '[1, 2, 3] get 1',
         '{ a: 1 } get "a"',
@@ -841,6 +852,7 @@ get(
         { argumentNames: ['a', 'b', 'not-found'] },
       ],
       description: 'Returns the value in a nested collection, where $b is an array of keys. Returns $not-found if the key is not present. If $not-found is not set, `null` is returned.',
+      seeAlso: ['get', 'assoc-in', 'update-in'],
       examples: [
         `
 get-in(
@@ -884,6 +896,7 @@ get-in(
       },
       variants: [{ argumentNames: ['coll'] }],
       description: 'Returns number of elements in $coll.',
+      seeAlso: ['empty?'],
       examples: [
         'count([1, 2, 3])',
         'count([])',
@@ -921,6 +934,7 @@ get-in(
       },
       variants: [{ argumentNames: ['a', 'b'] }],
       description: 'Returns `true` if $a contains $b, otherwise returns `false`. For strings, it checks if substring is included.',
+      seeAlso: ['get', 'find', 'index-of'],
       examples: [
         '[1, 2, 3] contains? 1',
         'null contains? 1',
@@ -977,6 +991,7 @@ contains?(
       description: `
 Add or replace the value of element $key to $value in $coll. Repeated for all key-value pairs in $kvs.
 If $coll is an 'array', $key must be \`number\` satisfying \`0 <=\` $key \`<= length\`.`,
+      seeAlso: ['assoc-in', 'dissoc', 'merge', 'update'],
       examples: [
         `
 assoc(
@@ -1049,6 +1064,7 @@ assoc(
 Associates a value in the nested collection $coll, where $ks is an array of keys and $value is the new value.
 
 If any levels do not exist, objects will be created - and the corresponding keys must be of type string.`,
+      seeAlso: ['assoc', 'get-in', 'update-in'],
       examples: [
         `
 assoc-in(
@@ -1097,6 +1113,7 @@ Updates a value in the $coll collection, where $key is a key. $fun is a function
 that will take the old value and any supplied $fun-args and
 return the new value.
 If the key does not exist, \`null\` is passed as the old value.`,
+      seeAlso: ['update-in', 'assoc'],
       examples: [
         `
 let x = { a: 1, b: 2 };
@@ -1172,6 +1189,7 @@ update(
 keys and $fun is a function that will take the old value and
 any supplied $fun-args and return the new value. If any levels do not exist,
 objects will be created - and the corresponding keys must be of type string.`,
+      seeAlso: ['update', 'assoc-in', 'get-in'],
       examples: [
         `
 update-in(
@@ -1241,6 +1259,7 @@ update-in(
         { argumentNames: ['a', 'colls'] },
       ],
       description: 'Concatenates collections into one collection.',
+      seeAlso: ['mapcat', 'str', 'join', 'push', 'unshift'],
       examples: [
         '"Albert" ++ " " ++ "Mojir"',
         '"Albert" ++ "Mojir"',
@@ -1282,6 +1301,7 @@ update-in(
       },
       variants: [{ argumentNames: ['coll'] }],
       description: 'Returns `null` if $coll is empty or `null`, otherwise $coll.',
+      seeAlso: ['empty?', 'not-empty?'],
       examples: [
         'not-empty([])',
         'not-empty([1, 2, 3])',
@@ -1316,6 +1336,7 @@ update-in(
       },
       variants: [{ argumentNames: ['a', 'b'] }],
       description: 'Returns `true` if all entries in $a pass the test implemented by $b, otherwise returns `false`.',
+      seeAlso: ['any?', 'not-every?', 'not-any?', 'every-pred', 'Grid.every?'],
       examples: [
         '[1, 2, 3] every? number?',
         '[1, 2, 3] every? even?',
@@ -1380,6 +1401,7 @@ every?(
       },
       variants: [{ argumentNames: ['a', 'b'] }],
       description: 'Returns `true` if any element in $a pass the test implemented by $b, otherwise returns `false`.',
+      seeAlso: ['every?', 'not-any?', 'not-every?', 'some-pred', 'some', 'Grid.some?'],
       examples: [
         `
 any?(
@@ -1442,6 +1464,7 @@ any?(
       },
       variants: [{ argumentNames: ['a', 'b'] }],
       description: 'Returns `false` if any element in $a pass the test implemented by $b, otherwise returns `true`.',
+      seeAlso: ['any?', 'every?', 'not-every?'],
       examples: [
         `
 not-any?(
@@ -1504,6 +1527,7 @@ not-any?(
       },
       variants: [{ argumentNames: ['a', 'b'] }],
       description: 'Returns `true` if at least one element in $a does not pass the test implemented by $b, otherwise returns `false`.',
+      seeAlso: ['every?', 'any?', 'not-any?'],
       examples: [
         `
 not-every?(

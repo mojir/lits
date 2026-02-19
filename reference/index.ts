@@ -267,5 +267,8 @@ Object.values(allReference).forEach((ref) => {
 })
 
 export function getLinkName(reference: Reference): string {
+  if (reference.title.startsWith(`${reference.category}.`)) {
+    return encodeURIComponent(reference.title)
+  }
   return encodeURIComponent(`${reference.category}-${reference.title}`)
 }

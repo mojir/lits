@@ -28,6 +28,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       '// Using "as" alias because "every?" shadows a builtin function\nlet { every? as grid-every? } = import("Grid");\ngrid-every?([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n], string?)',
       '// Using "as" alias because "every?" shadows a builtin function\nlet { every? as grid-every? } = import("Grid");\ngrid-every?([\n  [1, 2],\n  [3, 4],\n], string?)',
     ],
+    seeAlso: ['every?', 'Grid.some?', 'Grid.every-row?', 'Grid.every-col?'],
   },
   'some?': {
     category: 'Grid',
@@ -56,6 +57,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { some? } = import("Grid");\nsome?([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n], string?)',
       'let { some? } = import("Grid");\nsome?([\n  [1, 2],\n  [3, 4],\n], string?)',
     ],
+    seeAlso: ['any?', 'Grid.every?', 'Grid.some-row?', 'Grid.some-col?'],
   },
   'every-row?': {
     category: 'Grid',
@@ -84,6 +86,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { every-row? } = import("Grid");\nevery-row?([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n], -> string?($[0]))',
       'let { every-row? } = import("Grid");\nevery-row?([\n  [1, 2],\n  [3, 4],\n], -> string?($[0]))',
     ],
+    seeAlso: ['Grid.some-row?', 'Grid.every-col?', 'Grid.every?'],
   },
   'some-row?': {
     category: 'Grid',
@@ -112,6 +115,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { some-row? } = import("Grid");\nsome-row?([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n], -> $ contains? "Albert")',
       'let { some-row? } = import("Grid");\nsome-row?([\n  [1, 2],\n  [3, 4],\n], -> $ contains? "Albert")',
     ],
+    seeAlso: ['Grid.every-row?', 'Grid.some-col?', 'Grid.some?'],
   },
   'every-col?': {
     category: 'Grid',
@@ -140,6 +144,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { every-col? } = import("Grid");\nevery-col?([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n], -> string?($[0]))',
       'let { every-col? } = import("Grid");\nevery-col?([\n  [1, 2],\n  [3, 4],\n], -> string?($[0]))',
     ],
+    seeAlso: ['Grid.some-col?', 'Grid.every-row?', 'Grid.every?'],
   },
   'some-col?': {
     category: 'Grid',
@@ -168,6 +173,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { some-col? } = import("Grid");\nsome-col?([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n], -> $ contains? "Albert")',
       'let { some-col? } = import("Grid");\nsome-col?([\n  [1, 2],\n  [3, 4],\n], -> $ contains? "Albert")',
     ],
+    seeAlso: ['Grid.every-col?', 'Grid.some-row?', 'Grid.some?'],
   },
   'row': {
     category: 'Grid',
@@ -196,6 +202,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { row } = import("Grid");\nrow([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], 1)',
       'let { row } = import("Grid");\nrow([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], 2)',
     ],
+    seeAlso: ['Grid.col', 'Grid.shape'],
   },
   'col': {
     category: 'Grid',
@@ -224,6 +231,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { col } = import("Grid");\ncol([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], 1)',
       'let { col } = import("Grid");\ncol([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], 2)',
     ],
+    seeAlso: ['Grid.row', 'Grid.shape'],
   },
   'shape': {
     category: 'Grid',
@@ -249,6 +257,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { shape } = import("Grid");\nshape([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n])',
       'let { shape } = import("Grid");\nshape([\n  [1, 2],\n  [3, 4],\n])',
     ],
+    seeAlso: ['Grid.row', 'Grid.col', 'Grid.reshape'],
   },
   'fill': {
     category: 'Grid',
@@ -283,6 +292,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { fill } = import("Grid");\nfill(2, 3, 0)',
       'let { fill } = import("Grid");\nfill(2, 3, "x")',
     ],
+    seeAlso: ['Grid.generate', 'Grid.from-array', 'Vector.fill'],
   },
   'generate': {
     category: 'Grid',
@@ -316,6 +326,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     examples: [
       'let { generate } = import("Grid");\ngenerate(3, 3, (i, j) -> i + j)',
     ],
+    seeAlso: ['Grid.fill', 'Grid.from-array', 'Vector.generate'],
   },
   'reshape': {
     category: 'Grid',
@@ -342,6 +353,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     examples: [
       'let { reshape } = import("Grid");\nreshape([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n], 2)',
     ],
+    seeAlso: ['Grid.shape', 'Grid.from-array'],
   },
   'transpose': {
     category: 'Grid',
@@ -367,6 +379,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { transpose } = import("Grid");\ntranspose([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n])',
       'let { transpose } = import("Grid");\ntranspose([\n  [1, 2],\n  [3, 4],\n])',
     ],
+    seeAlso: ['Grid.flip-h', 'Grid.flip-v', 'Grid.rotate'],
   },
   'flip-h': {
     category: 'Grid',
@@ -392,6 +405,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { flip-h } = import("Grid");\nflip-h([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n])',
       'let { flip-h } = import("Grid");\nflip-h([\n  [1, 2],\n  [3, 4],\n])',
     ],
+    seeAlso: ['Grid.flip-v', 'Grid.transpose', 'Grid.rotate', 'Grid.reverse-cols'],
   },
   'flip-v': {
     category: 'Grid',
@@ -417,6 +431,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { flip-v } = import("Grid");\nflip-v([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n])',
       'let { flip-v } = import("Grid");\nflip-v([\n  [1, 2],\n  [3, 4],\n])',
     ],
+    seeAlso: ['Grid.flip-h', 'Grid.transpose', 'Grid.rotate', 'Grid.reverse-rows'],
   },
   'rotate': {
     category: 'Grid',
@@ -449,6 +464,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { rotate } = import("Grid");\nrotate([\n  [1, 2],\n  [3, 4],\n], -2)',
       'let { rotate } = import("Grid");\nrotate([\n  [1, 2],\n  [3, 4],\n], -3)',
     ],
+    seeAlso: ['Grid.transpose', 'Grid.flip-h', 'Grid.flip-v'],
   },
   'reverse-rows': {
     category: 'Grid',
@@ -474,6 +490,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { reverse-rows } = import("Grid");\nreverse-rows([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n])',
       'let { reverse-rows } = import("Grid");\nreverse-rows([\n  [1, 2],\n  [3, 4],\n])',
     ],
+    seeAlso: ['Grid.reverse-cols', 'Grid.flip-v'],
   },
   'reverse-cols': {
     category: 'Grid',
@@ -499,6 +516,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { reverse-cols } = import("Grid");\nreverse-cols([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n])',
       'let { reverse-cols } = import("Grid");\nreverse-cols([\n  [1, 2],\n  [3, 4],\n])',
     ],
+    seeAlso: ['Grid.reverse-rows', 'Grid.flip-h'],
   },
   'slice': {
     category: 'Grid',
@@ -540,6 +558,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       '// Using "as" alias because "slice" shadows a builtin function\nlet { slice as grid-slice } = import("Grid");\ngrid-slice([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], [1, 1])',
     ],
     hideOperatorForm: true,
+    seeAlso: ['Grid.slice-rows', 'Grid.slice-cols'],
   },
   'slice-rows': {
     category: 'Grid',
@@ -581,6 +600,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { slice-rows } = import("Grid");\nslice-rows([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], 1)',
     ],
     hideOperatorForm: true,
+    seeAlso: ['Grid.slice', 'Grid.slice-cols', 'Grid.splice-rows'],
   },
   'slice-cols': {
     category: 'Grid',
@@ -622,6 +642,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { slice-cols } = import("Grid");\nslice-cols([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], 1)',
     ],
     hideOperatorForm: true,
+    seeAlso: ['Grid.slice', 'Grid.slice-rows', 'Grid.splice-cols'],
   },
   'splice-rows': {
     category: 'Grid',
@@ -670,6 +691,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { splice-rows } = import("Grid");\nsplice-rows([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], 1, 1, ["Nazanin", "mother", 40])',
     ],
     hideOperatorForm: true,
+    seeAlso: ['Grid.splice-cols', 'Grid.slice-rows'],
   },
   'splice-cols': {
     category: 'Grid',
@@ -718,6 +740,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { splice-cols } = import("Grid");\nsplice-cols([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], 1, 1, ["f", "m", "s"])',
     ],
     hideOperatorForm: true,
+    seeAlso: ['Grid.splice-rows', 'Grid.slice-cols'],
   },
   'concat-rows': {
     category: 'Grid',
@@ -744,6 +767,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     examples: [
       'let { concat-rows } = import("Grid");\nconcat-rows([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n], [\n  [1, 2],\n  [3, 4],\n])',
     ],
+    seeAlso: ['Grid.concat-cols', 'Grid.push-rows'],
   },
   'concat-cols': {
     category: 'Grid',
@@ -770,6 +794,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     examples: [
       'let { concat-cols } = import("Grid");\nconcat-cols([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], [\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n])',
     ],
+    seeAlso: ['Grid.concat-rows', 'Grid.push-cols'],
   },
   'map': {
     category: 'Grid',
@@ -796,6 +821,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     examples: [
       '// Using "as" alias because "map" shadows a builtin function\nlet { map as grid-map } = import("Grid");\ngrid-map([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], str)',
     ],
+    seeAlso: ['map', 'Grid.mapi', 'Grid.reduce'],
   },
   'mapi': {
     category: 'Grid',
@@ -822,6 +848,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     examples: [
       '// Using "as" alias because "mapi" shadows a builtin function\nlet { mapi as grid-mapi } = import("Grid");\ngrid-mapi([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], -> $1 ++ "(" ++ $2 ++ ", " ++ $3 ++ ")")',
     ],
+    seeAlso: ['Grid.map', 'Grid.reducei', 'map'],
   },
   'reduce': {
     category: 'Grid',
@@ -855,6 +882,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     examples: [
       '// Using "as" alias because "reduce" shadows a builtin function\nlet { reduce as grid-reduce } = import("Grid");\ngrid-reduce([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], ++, "")',
     ],
+    seeAlso: ['reduce', 'Grid.reducei', 'Grid.map'],
   },
   'reducei': {
     category: 'Grid',
@@ -888,6 +916,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     examples: [
       '// Using "as" alias because "reducei" shadows a builtin function\nlet { reducei as grid-reducei } = import("Grid");\ngrid-reducei([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], ++, "")',
     ],
+    seeAlso: ['Grid.reduce', 'Grid.mapi', 'reduce'],
   },
   'push-rows': {
     category: 'Grid',
@@ -918,6 +947,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { push-rows } = import("Grid");\npush-rows([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], ["Nazanin", "mother", 40])',
     ],
     hideOperatorForm: true,
+    seeAlso: ['Grid.unshift-rows', 'Grid.pop-row', 'Grid.shift-row', 'Grid.concat-rows'],
   },
   'unshift-rows': {
     category: 'Grid',
@@ -948,6 +978,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { unshift-rows } = import("Grid");\nunshift-rows([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], ["Nazanin", "mother", 40])',
     ],
     hideOperatorForm: true,
+    seeAlso: ['Grid.push-rows', 'Grid.shift-row', 'Grid.pop-row'],
   },
   'pop-row': {
     category: 'Grid',
@@ -971,6 +1002,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     examples: [
       'let { pop-row } = import("Grid");\npop-row([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n])',
     ],
+    seeAlso: ['Grid.shift-row', 'Grid.push-rows', 'Grid.unshift-rows'],
   },
   'shift-row': {
     category: 'Grid',
@@ -994,6 +1026,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     examples: [
       'let { shift-row } = import("Grid");\nshift-row([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n])',
     ],
+    seeAlso: ['Grid.pop-row', 'Grid.push-rows', 'Grid.unshift-rows'],
   },
   'push-cols': {
     category: 'Grid',
@@ -1024,6 +1057,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { push-cols } = import("Grid");\npush-cols([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], ["f", "m", "s"])',
     ],
     hideOperatorForm: true,
+    seeAlso: ['Grid.unshift-cols', 'Grid.pop-col', 'Grid.shift-col', 'Grid.concat-cols'],
   },
   'unshift-cols': {
     category: 'Grid',
@@ -1054,6 +1088,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { unshift-cols } = import("Grid");\nunshift-cols([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], ["f", "m", "s"])',
     ],
     hideOperatorForm: true,
+    seeAlso: ['Grid.push-cols', 'Grid.shift-col', 'Grid.pop-col'],
   },
   'pop-col': {
     category: 'Grid',
@@ -1077,6 +1112,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     examples: [
       'let { pop-col } = import("Grid");\npop-col([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n])',
     ],
+    seeAlso: ['Grid.shift-col', 'Grid.push-cols', 'Grid.unshift-cols'],
   },
   'shift-col': {
     category: 'Grid',
@@ -1100,6 +1136,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     examples: [
       'let { shift-col } = import("Grid");\nshift-col([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n])',
     ],
+    seeAlso: ['Grid.pop-col', 'Grid.push-cols', 'Grid.unshift-cols'],
   },
   'from-array': {
     category: 'Grid',
@@ -1127,5 +1164,6 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { from-array } = import("Grid");\nfrom-array([1, 2, 3, 4], 2)',
       'let { from-array } = import("Grid");\nfrom-array([1, 2, 3, 4], 4)',
     ],
+    seeAlso: ['Grid.fill', 'Grid.generate', 'Grid.reshape'],
   },
 }

@@ -46,6 +46,7 @@ export const regexpNormalExpression: BuiltinNormalExpressions = {
         'regexp("albert", "ig")',
         '#"albert"ig',
       ],
+      seeAlso: ['-short-regexp', 'match', 'replace', 'replace-all', 'regexp?'],
       hideOperatorForm: true,
     },
   },
@@ -73,6 +74,7 @@ export const regexpNormalExpression: BuiltinNormalExpressions = {
       variants: [{ argumentNames: ['a', 'b'] }],
       description: `Matches $b against regular expression $a.
 If $b is a string and matches the regular expression, a \`match\`-array is returned, otherwise \`null\` is returned.`,
+      seeAlso: ['regexp', 'replace', 'replace-all', '-short-regexp', 'regexp?'],
       examples: [
         'match("  A string", regexp("^\\\\s*(.*)$"))',
         'match("  A string", #"^\\s*(.*)$")',
@@ -104,6 +106,7 @@ If $b is a string and matches the regular expression, a \`match\`-array is retur
       },
       variants: [{ argumentNames: ['a', 'b', 'x'] }],
       description: 'Returns a new string with first match of regular expression $b replaced by $x.',
+      seeAlso: ['replace-all', 'regexp', 'match', '-short-regexp'],
       examples: [
         'replace("Duck duck", "u", "i")',
         'replace("Duck duck", #"u", "i")',
@@ -133,6 +136,7 @@ If $b is a string and matches the regular expression, a \`match\`-array is retur
       },
       variants: [{ argumentNames: ['a', 'b', 'x'] }],
       description: 'Returns a new string with all matches of regular expression $b replaced by $x.',
+      seeAlso: ['replace', 'regexp', 'match', '-short-regexp'],
       examples: [
         'replace-all("Duck duck", "u", "i")',
         'replace-all("Duck duck", regexp("u"), "i")',

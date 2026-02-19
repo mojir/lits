@@ -212,7 +212,7 @@ vec.cumprod([1, 2, 3, 4]);     // => [1, 2, 6, 24]
 
 // Vector predicates
 vec.increasing?([1, 1, 2, 3, 4]);          // => true
-vec.strictly-increasing?([1, 1, 2, 3, 4]); // => true
+vec.strictly-increasing?([1, 1, 2, 3, 4]); // => false
 
 // Structural equality works with all vectors
 [1, 2, 3] == [1, 2, 3];       // => true

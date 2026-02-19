@@ -105,6 +105,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['x'] }],
       description: 'The `inc` function increments its argument by 1, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it increases each element by 1 while preserving the original structure.',
+      seeAlso: ['dec', '+'],
       examples: [
         'inc(0)',
         'inc(1)',
@@ -138,6 +139,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['x'] }],
       description: 'The `dec` function decrements its argument by 1, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it decreases each element by 1 while preserving the original structure.',
+      seeAlso: ['inc', '-'],
       examples: [
         'dec(0)',
         'dec(1)',
@@ -180,6 +182,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['xs'] }],
       description: 'The `+` function performs addition of numbers and element-wise addition of `vectors` and `matrices` of compatible dimensions, returning the same type as its inputs. When used with mixed types, it adds the scalar to each element of the collection.',
+      seeAlso: ['-', '*', '/', 'inc'],
       examples: [
         '1 + 2',
         '1 + 20 + 30',
@@ -226,6 +229,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['xs'] }],
       description: 'The `*` function performs multiplication of `numbers` and element-wise multiplication of `vectors` and `matrices` of compatible dimensions, returning the same type as its inputs. When used with mixed types, it multiplies each element of the collection by the scalar.',
+      seeAlso: ['/', '+', '-', '^'],
       examples: [
         '6 * 7',
         '-1 * 4',
@@ -279,6 +283,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['xs'] }],
       description: 'The `/` function performs division of `numbers` and element-wise division of `vectors` and `matrices` of compatible dimensions, returning the same type as its inputs. When used with mixed types, it divides each element of the collection by the scalar.',
+      seeAlso: ['*', '+', '-', 'quot', 'mod', '%'],
       examples: [
         '12 / 100',
         '-1 / 4',
@@ -332,6 +337,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['xs'] }],
       description: 'Computes difference between first value and sum of the rest. When called with only one argument, it does negation.',
+      seeAlso: ['+', '*', '/', 'dec', 'abs'],
       examples: [
         '50 - 8',
         '1 - 1 - 1',
@@ -373,6 +379,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['a', 'b'] }],
       description: 'The `quot` function performs integer division truncated toward zero, working on `numbers` and element-wise on `vectors` and `matrices` of compatible dimensions. When used with mixed types, it applies integer division between each element of the collection and the scalar.',
+      seeAlso: ['mod', '%', '/', 'trunc'],
       examples: [
         'quot(5, 3)',
         'quot(5.2, 3.1)',
@@ -426,6 +433,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['a', 'b'] }],
       description: 'The `mod` function computes the modulo of division with the same sign as the divisor, working on `numbers` and element-wise on `vectors` and `matrices` of compatible dimensions. When used with mixed types, it applies the modulo operation between each element of the collection and the scalar.',
+      seeAlso: ['%', 'quot', '/'],
       examples: [
         'mod(5, 3)',
         'mod(5.2, 3.1)',
@@ -468,6 +476,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['a', 'b'] }],
       description: 'The `%` function computes the remainder of division with the same sign as the dividend, working on `numbers` and element-wise on `vectors` and `matrices` of compatible dimensions. When used with mixed types, it applies the remainder operation between each element of the collection and the scalar.',
+      seeAlso: ['mod', 'quot', '/'],
       examples: [
         '5 % 3',
         '5.2 % 3.1',
@@ -506,6 +515,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['x'] }],
       description: 'The `sqrt` function calculates the square root of `numbers` and computes element-wise square roots of `vectors` and `matrices`. When applied to collections, it returns the square root of each element while preserving the original structure.',
+      seeAlso: ['cbrt', '^'],
       examples: [
         'sqrt(0)',
         'sqrt(9)',
@@ -542,6 +552,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['x'] }],
       description: 'The `cbrt` function calculates the cube root of `numbers` and computes element-wise cube roots of `vectors` and `matrices`. When applied to collections, it returns the cube root of each element while preserving the original structure.',
+      seeAlso: ['sqrt', '^'],
       examples: [
         'cbrt(0)',
         'cbrt(27)',
@@ -583,6 +594,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['a', 'b'] }],
       description: 'The ^ function computes exponentiation, raising the first argument to the power of the second, working on `numbers` and element-wise on `vectors` and `matrices` of compatible dimensions. When used with mixed types, it applies the power operation between each element of the collection and the scalar.',
+      seeAlso: ['sqrt', 'cbrt', '*', 'ln'],
       examples: [
         '2 ^ 3',
         '2 ^ 0',
@@ -646,6 +658,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         { argumentNames: ['a', 'b'] },
       ],
       description: 'The `round` function rounds a `number` to the nearest `integer` or to a specified number of `decimal` places, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it rounds each element while preserving the original structure.',
+      seeAlso: ['floor', 'ceil', 'trunc'],
       examples: [
         'round(2)',
         'round(2.49)',
@@ -686,6 +699,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['x'] }],
       description: 'The `trunc` function truncates `numbers` toward zero (removing decimal portions without rounding), working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it truncates each element while preserving the original structure.',
+      seeAlso: ['round', 'floor', 'ceil', 'quot'],
       examples: [
         'trunc(2)',
         'trunc(2.49)',
@@ -722,6 +736,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['x'] }],
       description: 'The `floor` function returns the largest `integer` less than or equal to a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the floor of each element while preserving the original structure.',
+      seeAlso: ['ceil', 'round', 'trunc'],
       examples: [
         'floor(2)',
         'floor(2.49)',
@@ -758,6 +773,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['x'] }],
       description: 'The `ceil` function returns the smallest `integer` greater than or equal to a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the ceiling of each element while preserving the original structure.',
+      seeAlso: ['floor', 'round', 'trunc'],
       examples: [
         'ceil(2)',
         'ceil(2.49)',
@@ -792,6 +808,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['xs'] }],
       description: 'Returns the smallest number of the arguments.',
+      seeAlso: ['max', 'Vector.min'],
       examples: [
         '2 min 3',
         'min(2, 0, 1)',
@@ -823,6 +840,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['xs'] }],
       description: 'Returns the largest number of the arguments.',
+      seeAlso: ['min', 'Vector.max'],
       examples: [
         ' 2 max 3',
         'max(2, 0, 1)',
@@ -856,6 +874,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['x'] }],
       description: 'The abs function returns the absolute value (magnitude) of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the absolute value of each element while preserving the original structure.',
+      seeAlso: ['sign', '-'],
       examples: [
         'abs(-2.3)',
         'abs(0)',
@@ -888,7 +907,8 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         x: { type: ['number', 'vector', 'matrix'] },
       },
       variants: [{ argumentNames: ['x'] }],
-      description: 'The `sign` function returns the `sign** of a **number` (-1 for negative, 0 for zero, 1 for positive), working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the sign of each element while preserving the original structure.',
+      description: 'The `sign` function returns the `sign` of a `number` (-1 for negative, 0 for zero, 1 for positive), working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the sign of each element while preserving the original structure.',
+      seeAlso: ['abs'],
       examples: [
         'sign(-2.3)',
         'sign(-0)',
@@ -923,6 +943,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['x'] }],
       description: 'The `ln` function computes the natural logarithm (base `e`) of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the natural logarithm of each element while preserving the original structure.',
+      seeAlso: ['log2', 'log10', '^'],
       examples: [
         'ln(0.01)',
         'ln(2.5)',
@@ -956,6 +977,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['x'] }],
       description: 'The `log2` function computes the base `2` logarithm of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the base-2 logarithm of each element while preserving the original structure.',
+      seeAlso: ['ln', 'log10'],
       examples: [
         'log2(0.01)',
         'log2(2 ^ 12)',
@@ -989,6 +1011,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['x'] }],
       description: 'The `log10` function computes the base `10` logarithm of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the base-10 logarithm of each element while preserving the original structure.',
+      seeAlso: ['ln', 'log2'],
       examples: [
         'log10(0.01)',
         'log10(10 ^ 12)',
@@ -1022,6 +1045,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['x'] }],
       description: 'The `sin` function computes the sine of an angle (in radians), working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the sine of each element while preserving the original structure.',
+      seeAlso: ['asin', 'sinh', 'cos', 'tan', 'to-rad'],
       examples: [
         'sin(0)',
         'sin(1)',
@@ -1056,6 +1080,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['x'] }],
       description: 'The `asin` function computes the arcsine (inverse sine) of a `number` in radians, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the arcsine of each element while preserving the original structure.',
+      seeAlso: ['sin', 'asinh', 'acos', 'atan'],
       examples: [
         'asin(0)',
         'asin(1)',
@@ -1089,6 +1114,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['x'] }],
       description: 'The `sinh` function computes the hyperbolic sine of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the hyperbolic sine of each element while preserving the original structure.',
+      seeAlso: ['asinh', 'sin', 'cosh', 'tanh'],
       examples: [
         'sinh(0)',
         'sinh(1)',
@@ -1122,6 +1148,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['x'] }],
       description: 'The `asinh` function computes the inverse hyperbolic sine of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the inverse hyperbolic sine of each element while preserving the original structure.',
+      seeAlso: ['sinh', 'asin', 'acosh', 'atanh'],
       examples: [
         'asinh(10)',
         'asinh(90)',
@@ -1155,6 +1182,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['x'] }],
       description: 'The `cos` function computes the cosine of an angle (in radians), working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the cosine of each element while preserving the original structure.',
+      seeAlso: ['acos', 'cosh', 'sin', 'tan', 'to-rad'],
       examples: [
         'cos(0)',
         'cos(1)',
@@ -1189,6 +1217,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['x'] }],
       description: 'The `acos` function computes the arccosine (inverse cosine) of a `number` in radians, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the arccosine of each element while preserving the original structure.',
+      seeAlso: ['cos', 'acosh', 'asin', 'atan'],
       examples: [
         'acos(0)',
         'acos(1)',
@@ -1222,6 +1251,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['x'] }],
       description: 'The `cosh` function computes the hyperbolic cosine of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the hyperbolic cosine of each element while preserving the original structure.',
+      seeAlso: ['acosh', 'cos', 'sinh', 'tanh'],
       examples: [
         'cosh(0)',
         'cosh(1)',
@@ -1255,6 +1285,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['x'] }],
       description: 'The `acosh` function computes the inverse hyperbolic cosine of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the inverse hyperbolic cosine of each element while preserving the original structure.',
+      seeAlso: ['cosh', 'acos', 'asinh', 'atanh'],
       examples: [
         'acosh(1)',
         'acosh(2)',
@@ -1289,6 +1320,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['x'] }],
       description: 'The `tan` function computes the tangent of an angle (in radians), working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the tangent of each element while preserving the original structure.',
+      seeAlso: ['atan', 'tanh', 'sin', 'cos', 'to-rad'],
       examples: [
         'tan(0)',
         'tan(1)',
@@ -1323,6 +1355,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['x'] }],
       description: 'The `atan` function computes the arctangent (inverse tangent) of a `number` in radians, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the arctangent of each element while preserving the original structure.',
+      seeAlso: ['tan', 'atanh', 'asin', 'acos'],
       examples: [
         'atan(0)',
         'atan(1)',
@@ -1356,6 +1389,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['x'] }],
       description: 'The `tanh` function computes the hyperbolic tangent of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the hyperbolic tangent of each element while preserving the original structure.',
+      seeAlso: ['atanh', 'tan', 'sinh', 'cosh'],
       examples: ['tanh(0)', 'tanh(1)', 'tanh(-0.5)', 'tanh(50)'],
     },
   },
@@ -1383,6 +1417,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['x'] }],
       description: 'The `atanh` function computes the inverse hyperbolic tangent of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the inverse hyperbolic tangent of each element while preserving the original structure.',
+      seeAlso: ['tanh', 'atan', 'asinh', 'acosh'],
       examples: [
         'atanh(0)',
         'atanh(0.9)',
@@ -1416,6 +1451,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['x'] }],
       description: 'The `to-rad` function converts an angle from degrees to radians, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it converts each element while preserving the original structure.',
+      seeAlso: ['to-deg', 'sin', 'cos', 'tan'],
       examples: [
         'to-rad(0)',
         'to-rad(90)',
@@ -1450,6 +1486,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['x'] }],
       description: 'The `to-deg` function converts an angle from radians to degrees, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it converts each element while preserving the original structure.',
+      seeAlso: ['to-rad'],
       examples: [
         'to-deg(0)',
         'to-deg(PI)',

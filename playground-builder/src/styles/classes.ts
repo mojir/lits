@@ -9,6 +9,7 @@ type sizes =
   | '-5'
   | '-6'
   | '-8'
+  | '-16'
 
   type borderSizes =
     | ''

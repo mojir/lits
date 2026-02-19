@@ -431,9 +431,11 @@ export const api = {
   ] as const,
   numberTheory: [
     ...getNumberTheorySequenceNames('abundant'),
+    ...getNumberTheorySequenceNames('arithmetic'),
     ...getNumberTheorySequenceNames('bell'),
     ...getNumberTheorySequenceNames('catalan'),
     ...getNumberTheorySequenceNames('composite'),
+    ...getNumberTheorySequenceNames('deficient'),
     ...getNumberTheorySequenceNames('factorial'),
     ...getNumberTheorySequenceNames('fibonacci'),
     ...getNumberTheorySequenceNames('geometric'),

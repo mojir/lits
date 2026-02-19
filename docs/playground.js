@@ -1414,6 +1414,7 @@ var Playground = (function (exports) {
                 args: __assign({}, getOperatorArgs('integer', 'integer')),
                 variants: [{ argumentNames: ['a', 'b'] }],
                 description: 'Shifts $a arithmetically left by $b bit positions.',
+                seeAlso: ['>>', '>>>'],
                 examples: [
                     '1 << 10',
                     '<<(1, 10)',
@@ -1435,6 +1436,7 @@ var Playground = (function (exports) {
                 args: __assign({}, getOperatorArgs('integer', 'integer')),
                 variants: [{ argumentNames: ['a', 'b'] }],
                 description: 'Shifts $a arithmetically right by $b bit positions.',
+                seeAlso: ['<<', '>>>'],
                 examples: [
                     '2048 >> 10',
                     '>>(2048, 10)',
@@ -1457,6 +1459,7 @@ var Playground = (function (exports) {
                 args: __assign({}, getOperatorArgs('integer', 'integer')),
                 variants: [{ argumentNames: ['a', 'b'] }],
                 description: 'Shifts $a arithmetically right by $b bit positions without sign extension.',
+                seeAlso: ['<<', '>>'],
                 examples: [
                     '-16 >>> 2',
                     '>>>(2048, 10)',
@@ -1479,6 +1482,7 @@ var Playground = (function (exports) {
                 args: { a: { type: 'integer' } },
                 variants: [{ argumentNames: ['a'] }],
                 description: 'Returns bitwise `not` of $a.',
+                seeAlso: ['&', '|', 'xor', 'bit-and-not'],
                 examples: [
                     'bit-not(0)',
                     'bit-not(255)',
@@ -1504,6 +1508,7 @@ var Playground = (function (exports) {
                     { argumentNames: ['a', 'b', 'c'] },
                 ],
                 description: 'Returns bitwise `and` of all arguments.',
+                seeAlso: ['|', 'xor', 'bit-not', 'bit-and-not'],
                 examples: [
                     '0b0011 & 0b0110',
                     '&(0b0011, 0b0110)',
@@ -1530,6 +1535,7 @@ var Playground = (function (exports) {
                     { argumentNames: ['a', 'b', 'c'] },
                 ],
                 description: 'Returns bitwise `and` with complement.',
+                seeAlso: ['&', '|', 'xor', 'bit-not'],
                 examples: [
                     '0b0011 bit-and-not 0b0110',
                     'bit-and-not(0b0011, 0b0110)',
@@ -1556,6 +1562,7 @@ var Playground = (function (exports) {
                     { argumentNames: ['a', 'b', 'c'] },
                 ],
                 description: 'Returns bitwise `or` of all arguments.',
+                seeAlso: ['&', 'xor', 'bit-not', 'bit-and-not'],
                 examples: [
                     '0b0011 | 0b0110',
                     '|(0b0011, 0b0110)',
@@ -1582,6 +1589,7 @@ var Playground = (function (exports) {
                     { argumentNames: ['a', 'b', 'c'] },
                 ],
                 description: 'Returns bitwise `xor` of all arguments.',
+                seeAlso: ['&', '|', 'bit-not', 'bit-and-not'],
                 examples: [
                     '0b0011 xor 0b0110',
                     'xor(0b0011, 0b0110)',
@@ -1604,6 +1612,7 @@ var Playground = (function (exports) {
                 args: __assign({}, getOperatorArgs('integer', 'integer')),
                 variants: [{ argumentNames: ['a', 'b'] }],
                 description: 'Flips bit number $b.',
+                seeAlso: ['bit-set', 'bit-clear', 'bit-test'],
                 examples: [
                     '0b0011 bit-flip 1',
                     'bit-flip(0b0011, 1)',
@@ -1626,6 +1635,7 @@ var Playground = (function (exports) {
                 args: __assign({}, getOperatorArgs('integer', 'integer')),
                 variants: [{ argumentNames: ['a', 'b'] }],
                 description: 'Sets bit number $b.',
+                seeAlso: ['bit-flip', 'bit-clear', 'bit-test'],
                 examples: [
                     '0b0010 bit-set 1',
                     'bit-set(0b0011, 1)',
@@ -1648,6 +1658,7 @@ var Playground = (function (exports) {
                 args: __assign({}, getOperatorArgs('integer', 'integer')),
                 variants: [{ argumentNames: ['a', 'b'] }],
                 description: 'Clears bit number $b.',
+                seeAlso: ['bit-flip', 'bit-set', 'bit-test'],
                 examples: [
                     '0b0011 bit-clear 1',
                     'bit-clear(0b0011, 1)',
@@ -1670,6 +1681,7 @@ var Playground = (function (exports) {
                 args: __assign({}, getOperatorArgs('integer', 'integer')),
                 variants: [{ argumentNames: ['a', 'b'] }],
                 description: 'Checks if bit number $b is set.',
+                seeAlso: ['bit-flip', 'bit-set', 'bit-clear'],
                 examples: [
                     '0b0011 bit-test 1',
                     'bit-test(0b0011, 1)',
@@ -2029,6 +2041,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['coll', 'fun'] }],
                 description: 'Creates a new collection with all elements that pass the test implemented by $fun.',
+                seeAlso: ['filteri', 'map', 'remove'],
                 examples: [
                     "\nfilter(\n  [\"Albert\", \"Mojir\", 160, [1, 2]],\n  string?\n)",
                     "\nfilter(\n  [5, 10, 15, 20],\n  -> $ > 10\n)",
@@ -2076,6 +2089,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['a', 'b'] }],
                 description: 'Creates a new collection with all elements that pass the test implemented by $b. The function is called for each element in the collection, and it should take two arguments: the element itself and the index.',
+                seeAlso: ['filter', 'mapi'],
                 examples: [
                     'filteri([1, 2, 3], (x, i) -> i % 2 == 0)',
                     'filteri([1, 2, 3], (x, i) -> x % 2 == 0)',
@@ -2135,6 +2149,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['colls', 'fun'] }],
                 description: 'Creates a new collection populated with the results of calling $fun on every element in $colls.',
+                seeAlso: ['mapi', 'filter', 'reduce', 'mapcat', 'Grid.map', 'Grid.mapi'],
                 examples: [
                     '[1, 2, 3] map -',
                     '[1, 2, 3] map -> -($)',
@@ -2181,6 +2196,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['a', 'b'] }],
                 description: 'Creates a new collection populated with the results of calling $b on every element in $a. The function is called for each element in the collection, and it should take two arguments: the element itself and the index.',
+                seeAlso: ['map', 'filteri'],
                 examples: [
                     'mapi([1, 2, 3], (x, i) -> x + i)',
                     'mapi([1, 2, 3], (x, i) -> x * i)',
@@ -2232,6 +2248,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['coll', 'fun', 'initial'] }],
                 description: 'Runs $fun function on each element of the $coll, passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $coll is a single value.',
+                seeAlso: ['reduce-right', 'reducei', 'reductions', 'map', 'Grid.reduce', 'Grid.reducei'],
                 examples: [
                     'reduce([1, 2, 3], +, 0)',
                     'reduce([], +, 0)',
@@ -2288,6 +2305,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['coll', 'fun', 'initial'] }],
                 description: 'Runs $fun function on each element of the $coll, passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $coll is a single value. The function is called for each element in the collection, and it should take three arguments: the accumulator, the element itself, and the index.',
+                seeAlso: ['reduce', 'reducei-right', 'reductionsi'],
                 examples: [
                     'reducei([1, 2, 3], (acc, x, i) -> acc + x + i, 0)',
                     'reducei("Albert", (acc, x, i) -> acc ++ x ++ i, "")',
@@ -2336,6 +2354,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['coll', 'fun', 'initial'] }],
                 description: 'Runs $fun function on each element of the $coll (starting from the last item), passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $coll is a single value.',
+                seeAlso: ['reduce', 'reducei-right'],
                 examples: [
                     'reduce-right(["A", "B", "C"], str, "")',
                     'reduce-right({ a: 1, b: 2 }, +, 0)',
@@ -2389,6 +2408,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['coll', 'fun', 'initial'] }],
                 description: 'Runs $fun function on each element of the $coll (starting from the last item), passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $coll is a single value. The function is called for each element in the collection, and it should take three arguments: the accumulator, the element itself, and the index.',
+                seeAlso: ['reducei', 'reduce-right'],
                 examples: [
                     'reducei-right([1, 2, 3], (acc, x, i) -> acc + x + i, 0)',
                     'reducei-right("Albert", (acc, x, i) -> acc ++ x ++ i, "")',
@@ -2451,6 +2471,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['coll', 'fun', 'initial'] }],
                 description: 'Returns an array of the intermediate values of the reduction (see `reduce`) of $coll by $fun.',
+                seeAlso: ['reduce', 'reductionsi'],
                 examples: [
                     'reductions([1, 2, 3], +, 0)',
                     'reductions([1, 2, 3], +, 10)',
@@ -2521,6 +2542,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['coll', 'fun', 'initial'] }],
                 description: 'Returns an array of the intermediate values of the reduction (see `reduce`) of $coll by $fun. The function is called for each element in the collection, and it should take three arguments: the accumulator, the element itself, and the index.',
+                seeAlso: ['reductions', 'reducei'],
                 examples: [
                     'reductionsi([1, 2, 3], (acc, x, i) -> acc + x + i, 0)',
                     'reductionsi("Albert", (acc, x, i) -> acc ++ x ++ i, "")',
@@ -2553,6 +2575,7 @@ var Playground = (function (exports) {
                     { argumentNames: ['a', 'b', 'not-found'] },
                 ],
                 description: 'Returns value in $a mapped at $b.',
+                seeAlso: ['get-in', 'contains?', 'find', 'nth'],
                 examples: [
                     '[1, 2, 3] get 1',
                     '{ a: 1 } get "a"',
@@ -2615,6 +2638,7 @@ var Playground = (function (exports) {
                     { argumentNames: ['a', 'b', 'not-found'] },
                 ],
                 description: 'Returns the value in a nested collection, where $b is an array of keys. Returns $not-found if the key is not present. If $not-found is not set, `null` is returned.',
+                seeAlso: ['get', 'assoc-in', 'update-in'],
                 examples: [
                     "\nget-in(\n  [[1, 2, 3], [4, { a: \"Kalle\" }, 6]],\n  [1, 1, \"a\", 0]\n)",
                     "\nget-in(\n  [[1, 2, 3], [4, { a: \"Kalle\" }, 6]],\n  [1, 1, \"b\", 0]\n)",
@@ -2643,6 +2667,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['coll'] }],
                 description: 'Returns number of elements in $coll.',
+                seeAlso: ['empty?'],
                 examples: [
                     'count([1, 2, 3])',
                     'count([])',
@@ -2680,6 +2705,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['a', 'b'] }],
                 description: 'Returns `true` if $a contains $b, otherwise returns `false`. For strings, it checks if substring is included.',
+                seeAlso: ['get', 'find', 'index-of'],
                 examples: [
                     '[1, 2, 3] contains? 1',
                     'null contains? 1',
@@ -2715,6 +2741,7 @@ var Playground = (function (exports) {
                     { argumentNames: ['coll', 'key', 'value', 'kvs'] },
                 ],
                 description: "\nAdd or replace the value of element $key to $value in $coll. Repeated for all key-value pairs in $kvs.\nIf $coll is an 'array', $key must be `number` satisfying `0 <=` $key `<= length`.",
+                seeAlso: ['assoc-in', 'dissoc', 'merge', 'update'],
                 examples: [
                     "\nassoc(\n  [1, 2, 3],\n  1,\n  \"Two\"\n)",
                     "\nassoc(\n  [1, 2, 3],\n  3,\n  \"Four\"\n)",
@@ -2758,6 +2785,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['coll', 'ks', 'value'] }],
                 description: "\nAssociates a value in the nested collection $coll, where $ks is an array of keys and $value is the new value.\n\nIf any levels do not exist, objects will be created - and the corresponding keys must be of type string.",
+                seeAlso: ['assoc', 'get-in', 'update-in'],
                 examples: [
                     "\nassoc-in(\n  {},\n  [\"a\", \"b\", \"c\"],\n  \"Albert\"\n)",
                     "\nassoc-in(\n  [1, 2, [1, 2, 3]],\n  [2, 1],\n  \"Albert\"\n)",
@@ -2789,6 +2817,7 @@ var Playground = (function (exports) {
                     { argumentNames: ['coll', 'value', 'fun', 'fun-args'] },
                 ],
                 description: "\nUpdates a value in the $coll collection, where $key is a key. $fun is a function\nthat will take the old value and any supplied $fun-args and\nreturn the new value.\nIf the key does not exist, `null` is passed as the old value.",
+                seeAlso: ['update-in', 'assoc'],
                 examples: [
                     "\nlet x = { a: 1, b: 2 };\nupdate(x, \"a\", inc)",
                     "\nlet x = { a: 1, b: 2 };\nupdate(\n  x,\n  \"c\",\n  val -> null?(val) ? 0 : inc(val)\n)",
@@ -2834,6 +2863,7 @@ var Playground = (function (exports) {
                     { argumentNames: ['coll', 'ks', 'fun', 'fun-args'] },
                 ],
                 description: "Updates a value in the $coll collection, where $ks is an array of\nkeys and $fun is a function that will take the old value and\nany supplied $fun-args and return the new value. If any levels do not exist,\nobjects will be created - and the corresponding keys must be of type string.",
+                seeAlso: ['update', 'assoc-in', 'get-in'],
                 examples: [
                     "\nupdate-in(\n  { a: [1, 2, 3] },\n  [\"a\", 1],\n  -> null?($) ? 0 : inc($)\n)",
                     "\nupdate-in(\n  { a: { foo: \"bar\"} },\n  [\"a\", \"foo\"],\n  -> null?($) ? \"?\" : \"!\"\n)",
@@ -2880,6 +2910,7 @@ var Playground = (function (exports) {
                     { argumentNames: ['a', 'colls'] },
                 ],
                 description: 'Concatenates collections into one collection.',
+                seeAlso: ['mapcat', 'str', 'join', 'push', 'unshift'],
                 examples: [
                     '"Albert" ++ " " ++ "Mojir"',
                     '"Albert" ++ "Mojir"',
@@ -2917,6 +2948,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['coll'] }],
                 description: 'Returns `null` if $coll is empty or `null`, otherwise $coll.',
+                seeAlso: ['empty?', 'not-empty?'],
                 examples: [
                     'not-empty([])',
                     'not-empty([1, 2, 3])',
@@ -2950,6 +2982,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['a', 'b'] }],
                 description: 'Returns `true` if all entries in $a pass the test implemented by $b, otherwise returns `false`.',
+                seeAlso: ['any?', 'not-every?', 'not-any?', 'every-pred', 'Grid.every?'],
                 examples: [
                     '[1, 2, 3] every? number?',
                     '[1, 2, 3] every? even?',
@@ -2985,6 +3018,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['a', 'b'] }],
                 description: 'Returns `true` if any element in $a pass the test implemented by $b, otherwise returns `false`.',
+                seeAlso: ['every?', 'not-any?', 'not-every?', 'some-pred', 'some', 'Grid.some?'],
                 examples: [
                     "\nany?(\n  [\"Albert\", \"Mojir\", 160, [1, 2]],\n  string?\n)",
                     "\nany?(\n  [50, 100, 150, 200],\n  x -> x > 10\n)",
@@ -3018,6 +3052,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['a', 'b'] }],
                 description: 'Returns `false` if any element in $a pass the test implemented by $b, otherwise returns `true`.',
+                seeAlso: ['any?', 'every?', 'not-every?'],
                 examples: [
                     "\nnot-any?(\n  [\"Albert\", \"Mojir\", 160, [1, 2]],\n  string?\n)",
                     "\nnot-any?(\n  [50, 100, 150, 200],\n  x -> x > 10\n)",
@@ -3051,6 +3086,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['a', 'b'] }],
                 description: 'Returns `true` if at least one element in $a does not pass the test implemented by $b, otherwise returns `false`.',
+                seeAlso: ['every?', 'any?', 'not-any?'],
                 examples: [
                     "\nnot-every?(\n  [\"Albert\", \"Mojir\", 160, [1, 2]],\n  string?\n)",
                     "\nnot-every?(\n  [50, 100, 150, 200],\n  x -> x > 10\n)",
@@ -3116,6 +3152,7 @@ var Playground = (function (exports) {
                     { argumentNames: ['a', 'b', 'step'] },
                 ],
                 description: "$range creates an array with a range of numbers from $a to $b (exclusive), by $step.\n\n$a defaults to 0.\n$step defaults to 1.",
+                seeAlso: ['repeat', 'Vector.linspace'],
                 examples: [
                     'range(4)',
                     'range(1, 4)',
@@ -3144,6 +3181,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['a', 'b'] }],
                 description: 'Returns an array with $a repeated $b times.',
+                seeAlso: ['range', 'Vector.ones', 'Vector.zeros', 'Vector.fill', 'Vector.generate', 'string-repeat'],
                 examples: [
                     'repeat(10, 3)',
                     'repeat(10, 0)',
@@ -3169,6 +3207,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'Takes a nested array $x and flattens it.',
+                seeAlso: ['mapcat'],
                 examples: [
                     'flatten([1, 2, [3, 4], 5])',
                     "\nlet foo = \"bar\";\nflatten([\n  1,\n  \" 2 A \",\n  [foo, [4, [\"ABC\"]]],\n  6,\n])",
@@ -3196,6 +3235,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['colls', 'fun'] }],
                 description: 'Returns the result of applying concat to the result of applying map to $fun and $colls.',
+                seeAlso: ['flatten', 'map', '++'],
                 examples: [
                     '[[3, 2, 1, 0], [6, 5, 4], [9, 8, 7]] mapcat reverse',
                     'mapcat([[3, 2, 1, 0], [6, 5, 4], [9, 8, 7]], reverse)',
@@ -3231,6 +3271,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['arr', 'windowSize', 'fn'] }],
                 description: 'Returns the result of applying $fn to each moving window of size $windowSize in $arr.',
+                seeAlso: ['running-fn', 'Vector.moving-mean'],
                 examples: [
                     'let v = import("Vector"); moving-fn([1, 2, 3], 2, v.sum)',
                     'let v = import("Vector"); moving-fn([1, 2, 3], 1, v.sum)',
@@ -3261,6 +3302,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['a', 'b'] }],
                 description: 'Returns the result of applying $b to each element of $a.',
+                seeAlso: ['moving-fn', 'Vector.running-mean'],
                 examples: [
                     'let v = import("Vector"); running-fn([1, 2, 3], v.sum)',
                     'let v = import("Vector"); running-fn([1, 2, 3], v.max)',
@@ -3303,6 +3345,7 @@ var Playground = (function (exports) {
                     { argumentNames: ['seq', 'n', 'not-found'] },
                 ],
                 description: 'Accesses element $n of $seq. Accessing out-of-bounds indices returns $not-found, if present, else `null`.',
+                seeAlso: ['first', 'second', 'last', 'get', 'slice'],
                 examples: [
                     '[1, 2, 3] nth 1',
                     '"A string" nth 3',
@@ -3335,6 +3378,7 @@ var Playground = (function (exports) {
                 args: { seq: { type: ['sequence', 'null'] } },
                 variants: [{ argumentNames: ['seq'] }],
                 description: 'Returns the first element of $seq. If $seq is empty or `null`, `null` is returned.',
+                seeAlso: ['second', 'last', 'nth', 'rest', 'next'],
                 examples: [
                     'first(["Albert", "Mojir", 160, [1, 2]])',
                     'first([])',
@@ -3358,6 +3402,7 @@ var Playground = (function (exports) {
                 args: { seq: { type: ['sequence', 'null'] } },
                 variants: [{ argumentNames: ['seq'] }],
                 description: 'Returns the last element of $seq. If $seq is empty, `null` is returned.',
+                seeAlso: ['first', 'second', 'nth', 'pop'],
                 examples: [
                     'last(["Albert", "Mojir", 160, [1, 2]])',
                     'last([1, 2])',
@@ -3383,6 +3428,7 @@ var Playground = (function (exports) {
                 args: { seq: { type: 'sequence' } },
                 variants: [{ argumentNames: ['seq'] }],
                 description: 'Returns a copy of $seq with last element removed. If $seq is empty `null` is returned.',
+                seeAlso: ['push', 'shift', 'last'],
                 examples: [
                     'pop([1, 2, 3])',
                     'pop([])',
@@ -3418,6 +3464,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['seq', 'fun'] }],
                 description: 'Returns the index of the first elements that passes the test implemented by $fun. If no element was found, `null` is returned.',
+                seeAlso: ['index-of', 'some', 'find'],
                 examples: [
                     "\nposition(\n  [\"Albert\", \"Mojir\", 160, [1, 2]],\n  string?\n)",
                     "\nposition(\n  [5, 10, 15, 20],\n  -> $ > 10\n)",
@@ -3455,6 +3502,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['seq', 'x'] }],
                 description: 'Returns the index of $x in $seq. If element is not present in $seq `null` is returned.',
+                seeAlso: ['last-index-of', 'position', 'contains?'],
                 examples: [
                     '[[1], [2], [1], [2]] index-of [1]',
                     'index-of(["Albert", "Mojir", 160, [1, 2]], "Mojir")',
@@ -3493,6 +3541,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['seq', 'x'] }],
                 description: 'Returns the last index of $x in $seq. If element is not present in $seq `null` is returned.',
+                seeAlso: ['index-of'],
                 examples: [
                     '[[1], [2], [1], [2]] last-index-of [1]',
                     'last-index-of(["Albert", "Mojir", 160, [1, 2]], "Mojir")',
@@ -3526,6 +3575,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['seq', 'values'] }],
                 description: 'Returns copy of $seq with $values added to the end of it.',
+                seeAlso: ['unshift', 'pop', '++'],
                 examples: [
                     '[1, 2, 3] push 4',
                     '"Albert" push "!"',
@@ -3553,6 +3603,7 @@ var Playground = (function (exports) {
                 args: { seq: { type: 'sequence' } },
                 variants: [{ argumentNames: ['seq'] }],
                 description: "If $seq is an array, returns a new array with all but the first element from $seq.\nIf $seq has less than two elements, an empty array is returned.\nFor string $seq returns all but the first characters in $seq.",
+                seeAlso: ['next', 'first', 'shift'],
                 examples: [
                     'rest(["Albert", "Mojir", 160, [1, 2]])',
                     'rest(["Albert"])',
@@ -3583,6 +3634,7 @@ var Playground = (function (exports) {
                 args: { seq: { type: 'sequence' } },
                 variants: [{ argumentNames: ['seq'] }],
                 description: 'If $seq is an array, returns a new array with all but the first element from $seq. If $seq has less than two elements, `null` is returned. For string $seq returns all but the first characters in $seq. If length of string $seq is less than two, `null` is returned.',
+                seeAlso: ['rest', 'first'],
                 examples: [
                     'next(["Albert", "Mojir", 160, [1, 2]])',
                     'next(["Albert"])',
@@ -3611,6 +3663,7 @@ var Playground = (function (exports) {
                 args: { seq: { type: ['sequence', 'null'] } },
                 variants: [{ argumentNames: ['seq'] }],
                 description: 'If $seq is an array, creates a new array with the elements from $seq in reversed order. If $seq is a string, returns new reversed string.',
+                seeAlso: ['sort'],
                 examples: [
                     'reverse(["Albert", "Mojir", 160, [1, 2]])',
                     'reverse([])',
@@ -3634,6 +3687,7 @@ var Playground = (function (exports) {
                 args: { seq: { type: ['sequence', 'null'] } },
                 variants: [{ argumentNames: ['seq'] }],
                 description: 'Returns the second element of $seq. If $seq has less than two elements or is `null`, `null` is returned.',
+                seeAlso: ['first', 'last', 'nth'],
                 examples: [
                     'second(["Albert", "Mojir", 160, [1, 2]])',
                     'second([1])',
@@ -3659,6 +3713,7 @@ var Playground = (function (exports) {
                 args: { seq: { type: 'sequence' } },
                 variants: [{ argumentNames: ['seq'] }],
                 description: 'Returns a copy of $seq with first element removed. If $seq is empty `null` is returned.',
+                seeAlso: ['unshift', 'pop', 'rest'],
                 examples: [
                     'shift([1, 2, 3])',
                     'shift([])',
@@ -3699,6 +3754,7 @@ var Playground = (function (exports) {
                     { argumentNames: ['seq', 'start', 'stop'] },
                 ],
                 description: 'Returns a copy of a portion of $seq from index $start (inclusive) to $stop (exclusive).',
+                seeAlso: ['take', 'drop', 'splice', 'nth'],
                 examples: [
                     '[1, 2, 3, 4, 5] slice 2',
                     'slice([1, 2, 3, 4, 5], 2, 4)',
@@ -3734,6 +3790,7 @@ var Playground = (function (exports) {
                     { argumentNames: ['seq', 'start', 'deleteCount', 'items'] },
                 ],
                 description: 'Returns a a spliced array. Removes $deleteCount elements from $seq starting at $start and replaces them with $items. If $start is negative, it is counting from the end of the array.',
+                seeAlso: ['slice', 'remove-at'],
                 examples: [
                     'splice([1, 2, 3, 4, 5], 2, 2, "x")',
                     'splice([1, 2, 3, 4, 5], -2, 1, "x")',
@@ -3768,6 +3825,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['seq', 'fun'] }],
                 description: 'Returns the first element that passes the test implemented by $fun. I no element was found, `null` is returned.',
+                seeAlso: ['position', 'any?', 'find'],
                 examples: [
                     "\nsome(\n  [\"Albert\", \"Mojir\", 160, [1, 2]],\n  string?\n)",
                     "\nsome(\n  [5, 10, 15, 20],\n  -> $ > 10\n)",
@@ -3832,6 +3890,7 @@ var Playground = (function (exports) {
                     { argumentNames: ['seq', 'fun'] },
                 ],
                 description: 'Returns a new sequence with the elements from $seq sorted according to $fun. If no $fun is supplied, builtin `compare` will be used.',
+                seeAlso: ['sort-by', 'compare', 'reverse', 'Vector.sort-indices'],
                 examples: [
                     '[3, 1, 2] sort (a, b) -> b - a',
                     'sort([3, 1, 2])',
@@ -3909,6 +3968,7 @@ var Playground = (function (exports) {
                     { argumentNames: ['seq', 'keyfn', 'comparer'] },
                 ],
                 description: 'Returns a sorted sequence of the items in $seq, where the sort order is determined by comparing `(keyfn item)`. If no $comparer is supplied, uses builtin `compare`.',
+                seeAlso: ['sort', 'compare'],
                 examples: [
                     '["Albert", "Mojir", "Nina"] sort-by count',
                     'sort-by(["Albert", "Mojir", "Nina"], count)',
@@ -3936,6 +3996,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['seq', 'n'] }],
                 description: 'Constructs a new array/string with the $n first elements from $seq.',
+                seeAlso: ['take-last', 'take-while', 'drop', 'slice', 'split-at'],
                 examples: [
                     '[1, 2, 3, 4, 5] take 3',
                     'take([1, 2, 3, 4, 5], 3)',
@@ -3966,6 +4027,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['n', 'seq'] }],
                 description: 'Constructs a new array with the $n last elements from $seq.',
+                seeAlso: ['take', 'drop-last'],
                 examples: [
                     '[1, 2, 3, 4, 5] take-last 3',
                     'take-last([1, 2, 3, 4, 5], 3)',
@@ -4011,6 +4073,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['seq', 'fun'] }],
                 description: 'Returns the members of $seq in order, stopping before the first one for which `predicate` returns a falsy value.',
+                seeAlso: ['take', 'drop-while', 'split-with'],
                 examples: [
                     "\ntake-while(\n  [1, 2, 3, 2, 1],\n  -> $ < 3\n)",
                     "\ntake-while(\n  [1, 2, 3, 2, 1],\n  -> $ > 3\n)",
@@ -4037,6 +4100,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['seq', 'n'] }],
                 description: 'Constructs a new array/string with the $n first elements dropped from $seq.',
+                seeAlso: ['drop-last', 'drop-while', 'take', 'slice', 'split-at'],
                 examples: [
                     'drop([1, 2, 3, 4, 5], 3)',
                     'drop([1, 2, 3, 4, 5], 0)',
@@ -4066,6 +4130,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['seq', 'n'] }],
                 description: 'Constructs a new array with the $n last elements dropped from $seq.',
+                seeAlso: ['drop', 'take-last'],
                 examples: [
                     '[1, 2, 3, 4, 5] drop-last 3',
                     'drop-last([1, 2, 3, 4, 5], 3)',
@@ -4099,6 +4164,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['seq', 'fun'] }],
                 description: 'Returns the members of $seq in order, skipping the fist elements for witch the `predicate` returns a truethy value.',
+                seeAlso: ['drop', 'take-while', 'split-with'],
                 examples: [
                     "\ndrop-while(\n  [1, 2, 3, 2, 1],\n  -> $ < 3\n)",
                     "\ndrop-while(\n  [1, 2, 3, 2, 1],\n  -> $ > 3\n)",
@@ -4129,6 +4195,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['seq', 'values'] }],
                 description: 'Returns copy of $seq with $values added to the beginning.',
+                seeAlso: ['push', 'shift', '++'],
                 examples: [
                     '[1, 2, 3] unshift 4',
                     'unshift([1, 2, 3], 4)',
@@ -4174,6 +4241,7 @@ var Playground = (function (exports) {
                 args: { seq: { type: 'sequence' } },
                 variants: [{ argumentNames: ['seq'] }],
                 description: 'Returns a copy of $seq with no duplicates.',
+                seeAlso: ['frequencies'],
                 examples: [
                     'distinct([[1], [2], [3], [1], [3], [5]])',
                     'distinct([1, 2, 3, 1, 3, 5])',
@@ -4208,6 +4276,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['seq', 'fun'] }],
                 description: 'Returns a new sequence of items in $seq for witch `pred(item)` returns a falsy value.',
+                seeAlso: ['filter', 'remove-at'],
                 examples: [
                     '[1, 2, 3, 1, 3, 5] remove odd?',
                     'remove([1, 2, 3, 1, 3, 5], even?)',
@@ -4240,6 +4309,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['seq', 'n'] }],
                 description: 'Returns a new sequence of all items in $seq except item at position $n. If $n is negative, it is counting from the end of the sequence.',
+                seeAlso: ['remove', 'splice'],
                 examples: [
                     '[1, 2, 3, 1, 3, 5] remove-at 2',
                     '"Albert" remove-at -2',
@@ -4269,6 +4339,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['seq', 'n'] }],
                 description: 'Returns a pair of sequence `[take(pos input), drop(pos input)]`.',
+                seeAlso: ['split-with', 'take', 'drop'],
                 examples: [
                     '[1, 2, 3, 4, 5] split-at 2',
                     '"Albert" split-at -2',
@@ -4302,6 +4373,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['seq', 'fun'] }],
                 description: 'Returns a pair of sequences `[take-while(input, fun), drop-while(input, fun)]`.',
+                seeAlso: ['split-at', 'take-while', 'drop-while'],
                 examples: [
                     '[1, 2, 3, 4, 5] split-with odd?',
                     'split-with([1, 2, 3, 4, 5], -> $ > 3)',
@@ -4330,6 +4402,7 @@ var Playground = (function (exports) {
                 args: { seq: { type: 'sequence' } },
                 variants: [{ argumentNames: ['seq'] }],
                 description: 'Returns an object from distinct items in $seq to the number of times they appear. Note that all items in $seq must be valid object keys i.e. strings.',
+                seeAlso: ['group-by', 'distinct', 'Vector.count-values'],
                 examples: [
                     'frequencies(["Albert", "Mojir", "Nina", "Mojir"])',
                     'frequencies("Pneumonoultramicroscopicsilicovolcanoconiosis")',
@@ -4364,6 +4437,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['seq', 'fun'] }],
                 description: 'Returns an object of the elements of $seq keyed by the result of $fun on each element. The value at each key will be an array of the corresponding elements.',
+                seeAlso: ['frequencies', 'partition-by'],
                 examples: [
                     '[{ name: "Albert" }, { name: "Albert" }, { name: "Mojir" }] group-by "name"',
                     'group-by([{name: "Albert"}, {name: "Albert"}, {name: "Mojir"}], "name")',
@@ -4399,6 +4473,7 @@ var Playground = (function (exports) {
                     { argumentNames: ['seq', 'n', 'step', 'pad'] },
                 ],
                 description: 'Returns an array of sequences of $n items each, at offsets $step apart. If $step is not supplied, defaults to $n. If a $pad array is supplied, use its elements as necessary to complete last partition upto $n items. In case there are not enough padding elements, return a partition with less than $n items.',
+                seeAlso: ['partition-all', 'partition-by'],
                 examples: [
                     'range(20) partition 4',
                     'partition(range(20), 4)',
@@ -4442,6 +4517,7 @@ var Playground = (function (exports) {
                     { argumentNames: ['seq', 'n', 'step'] },
                 ],
                 description: 'Returns an array of sequences like partition, but may include partitions with fewer than n items at the end.',
+                seeAlso: ['partition', 'partition-by'],
                 examples: [
                     '[0, 1, 2, 3, 4, 5, 6, 7, 8, 9] partition-all 4',
                     'partition-all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 4)',
@@ -4481,6 +4557,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['seq', 'fun'] }],
                 description: 'Applies $fun to each value in $seq, splitting it each time $fun returns a new value. Returns an array of sequences.',
+                seeAlso: ['partition', 'partition-all', 'group-by'],
                 examples: [
                     '[1, 2, 3, 4, 5] partition-by odd?',
                     'partition-by([1, 2, 3, 4, 5], -> $ == 3)',
@@ -4511,6 +4588,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['seq', 'suffix'] }],
                 description: 'Returns `true` if $seq ends with $suffix, otherwise `false`.',
+                seeAlso: ['starts-with?'],
                 examples: [
                     '[[1], [2], [3], [4], [5]] starts-with? [5]',
                     '[[1], [2], [3], [4], [5]] starts-with? 5',
@@ -4543,6 +4621,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['seq', 'prefix'] }],
                 description: 'Returns `true` if $seq starts with $prefix, otherwise `false`.',
+                seeAlso: ['ends-with?'],
                 examples: [
                     '[[1], [2], [3], [4], [5]] starts-with? [1]',
                     'starts-with?([1, 2, 3, 4, 5], 1)',
@@ -4597,6 +4676,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['seqs'] }],
                 description: 'Returns a sequence of the first item from each of the $seqs, then the second item from each of the $seqs, until all items from the shortest seq are exhausted.',
+                seeAlso: ['interpose', 'zipmap'],
                 examples: [
                     '[1, 2, 3] interleave [4, 5, 6]',
                     '"Albert" interleave ".,.,.,"',
@@ -4639,6 +4719,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['seq', 'separator'] }],
                 description: 'Returns a sequence of the elements of $seq separated by $separator. If $seq is a string, the separator must be a string.',
+                seeAlso: ['interleave', 'join'],
                 examples: [
                     '"Albert" interpose "-"',
                     'interpose([1, 2, 3, 4, 5], "a")',
@@ -4797,6 +4878,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'The `inc` function increments its argument by 1, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it increases each element by 1 while preserving the original structure.',
+                seeAlso: ['dec', '+'],
                 examples: [
                     'inc(0)',
                     'inc(1)',
@@ -4830,6 +4912,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'The `dec` function decrements its argument by 1, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it decreases each element by 1 while preserving the original structure.',
+                seeAlso: ['inc', '-'],
                 examples: [
                     'dec(0)',
                     'dec(1)',
@@ -4870,6 +4953,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['xs'] }],
                 description: 'The `+` function performs addition of numbers and element-wise addition of `vectors` and `matrices` of compatible dimensions, returning the same type as its inputs. When used with mixed types, it adds the scalar to each element of the collection.',
+                seeAlso: ['-', '*', '/', 'inc'],
                 examples: [
                     '1 + 2',
                     '1 + 20 + 30',
@@ -4914,6 +4998,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['xs'] }],
                 description: 'The `*` function performs multiplication of `numbers` and element-wise multiplication of `vectors` and `matrices` of compatible dimensions, returning the same type as its inputs. When used with mixed types, it multiplies each element of the collection by the scalar.',
+                seeAlso: ['/', '+', '-', '^'],
                 examples: [
                     '6 * 7',
                     '-1 * 4',
@@ -4965,6 +5050,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['xs'] }],
                 description: 'The `/` function performs division of `numbers` and element-wise division of `vectors` and `matrices` of compatible dimensions, returning the same type as its inputs. When used with mixed types, it divides each element of the collection by the scalar.',
+                seeAlso: ['*', '+', '-', 'quot', 'mod', '%'],
                 examples: [
                     '12 / 100',
                     '-1 / 4',
@@ -5015,6 +5101,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['xs'] }],
                 description: 'Computes difference between first value and sum of the rest. When called with only one argument, it does negation.',
+                seeAlso: ['+', '*', '/', 'dec', 'abs'],
                 examples: [
                     '50 - 8',
                     '1 - 1 - 1',
@@ -5055,6 +5142,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['a', 'b'] }],
                 description: 'The `quot` function performs integer division truncated toward zero, working on `numbers` and element-wise on `vectors` and `matrices` of compatible dimensions. When used with mixed types, it applies integer division between each element of the collection and the scalar.',
+                seeAlso: ['mod', '%', '/', 'trunc'],
                 examples: [
                     'quot(5, 3)',
                     'quot(5.2, 3.1)',
@@ -5107,6 +5195,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['a', 'b'] }],
                 description: 'The `mod` function computes the modulo of division with the same sign as the divisor, working on `numbers` and element-wise on `vectors` and `matrices` of compatible dimensions. When used with mixed types, it applies the modulo operation between each element of the collection and the scalar.',
+                seeAlso: ['%', 'quot', '/'],
                 examples: [
                     'mod(5, 3)',
                     'mod(5.2, 3.1)',
@@ -5148,6 +5237,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['a', 'b'] }],
                 description: 'The `%` function computes the remainder of division with the same sign as the dividend, working on `numbers` and element-wise on `vectors` and `matrices` of compatible dimensions. When used with mixed types, it applies the remainder operation between each element of the collection and the scalar.',
+                seeAlso: ['mod', 'quot', '/'],
                 examples: [
                     '5 % 3',
                     '5.2 % 3.1',
@@ -5186,6 +5276,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'The `sqrt` function calculates the square root of `numbers` and computes element-wise square roots of `vectors` and `matrices`. When applied to collections, it returns the square root of each element while preserving the original structure.',
+                seeAlso: ['cbrt', '^'],
                 examples: [
                     'sqrt(0)',
                     'sqrt(9)',
@@ -5222,6 +5313,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'The `cbrt` function calculates the cube root of `numbers` and computes element-wise cube roots of `vectors` and `matrices`. When applied to collections, it returns the cube root of each element while preserving the original structure.',
+                seeAlso: ['sqrt', '^'],
                 examples: [
                     'cbrt(0)',
                     'cbrt(27)',
@@ -5263,6 +5355,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['a', 'b'] }],
                 description: 'The ^ function computes exponentiation, raising the first argument to the power of the second, working on `numbers` and element-wise on `vectors` and `matrices` of compatible dimensions. When used with mixed types, it applies the power operation between each element of the collection and the scalar.',
+                seeAlso: ['sqrt', 'cbrt', '*', 'ln'],
                 examples: [
                     '2 ^ 3',
                     '2 ^ 0',
@@ -5327,6 +5420,7 @@ var Playground = (function (exports) {
                     { argumentNames: ['a', 'b'] },
                 ],
                 description: 'The `round` function rounds a `number` to the nearest `integer` or to a specified number of `decimal` places, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it rounds each element while preserving the original structure.',
+                seeAlso: ['floor', 'ceil', 'trunc'],
                 examples: [
                     'round(2)',
                     'round(2.49)',
@@ -5367,6 +5461,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'The `trunc` function truncates `numbers` toward zero (removing decimal portions without rounding), working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it truncates each element while preserving the original structure.',
+                seeAlso: ['round', 'floor', 'ceil', 'quot'],
                 examples: [
                     'trunc(2)',
                     'trunc(2.49)',
@@ -5403,6 +5498,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'The `floor` function returns the largest `integer` less than or equal to a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the floor of each element while preserving the original structure.',
+                seeAlso: ['ceil', 'round', 'trunc'],
                 examples: [
                     'floor(2)',
                     'floor(2.49)',
@@ -5439,6 +5535,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'The `ceil` function returns the smallest `integer` greater than or equal to a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the ceiling of each element while preserving the original structure.',
+                seeAlso: ['floor', 'round', 'trunc'],
                 examples: [
                     'ceil(2)',
                     'ceil(2.49)',
@@ -5473,6 +5570,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['xs'] }],
                 description: 'Returns the smallest number of the arguments.',
+                seeAlso: ['max', 'Vector.min'],
                 examples: [
                     '2 min 3',
                     'min(2, 0, 1)',
@@ -5504,6 +5602,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['xs'] }],
                 description: 'Returns the largest number of the arguments.',
+                seeAlso: ['min', 'Vector.max'],
                 examples: [
                     ' 2 max 3',
                     'max(2, 0, 1)',
@@ -5537,6 +5636,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'The abs function returns the absolute value (magnitude) of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the absolute value of each element while preserving the original structure.',
+                seeAlso: ['sign', '-'],
                 examples: [
                     'abs(-2.3)',
                     'abs(0)',
@@ -5569,7 +5669,8 @@ var Playground = (function (exports) {
                     x: { type: ['number', 'vector', 'matrix'] },
                 },
                 variants: [{ argumentNames: ['x'] }],
-                description: 'The `sign` function returns the `sign** of a **number` (-1 for negative, 0 for zero, 1 for positive), working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the sign of each element while preserving the original structure.',
+                description: 'The `sign` function returns the `sign` of a `number` (-1 for negative, 0 for zero, 1 for positive), working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the sign of each element while preserving the original structure.',
+                seeAlso: ['abs'],
                 examples: [
                     'sign(-2.3)',
                     'sign(-0)',
@@ -5604,6 +5705,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'The `ln` function computes the natural logarithm (base `e`) of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the natural logarithm of each element while preserving the original structure.',
+                seeAlso: ['log2', 'log10', '^'],
                 examples: [
                     'ln(0.01)',
                     'ln(2.5)',
@@ -5637,6 +5739,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'The `log2` function computes the base `2` logarithm of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the base-2 logarithm of each element while preserving the original structure.',
+                seeAlso: ['ln', 'log10'],
                 examples: [
                     'log2(0.01)',
                     'log2(2 ^ 12)',
@@ -5670,6 +5773,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'The `log10` function computes the base `10` logarithm of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the base-10 logarithm of each element while preserving the original structure.',
+                seeAlso: ['ln', 'log2'],
                 examples: [
                     'log10(0.01)',
                     'log10(10 ^ 12)',
@@ -5703,6 +5807,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'The `sin` function computes the sine of an angle (in radians), working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the sine of each element while preserving the original structure.',
+                seeAlso: ['asin', 'sinh', 'cos', 'tan', 'to-rad'],
                 examples: [
                     'sin(0)',
                     'sin(1)',
@@ -5737,6 +5842,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'The `asin` function computes the arcsine (inverse sine) of a `number` in radians, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the arcsine of each element while preserving the original structure.',
+                seeAlso: ['sin', 'asinh', 'acos', 'atan'],
                 examples: [
                     'asin(0)',
                     'asin(1)',
@@ -5770,6 +5876,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'The `sinh` function computes the hyperbolic sine of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the hyperbolic sine of each element while preserving the original structure.',
+                seeAlso: ['asinh', 'sin', 'cosh', 'tanh'],
                 examples: [
                     'sinh(0)',
                     'sinh(1)',
@@ -5803,6 +5910,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'The `asinh` function computes the inverse hyperbolic sine of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the inverse hyperbolic sine of each element while preserving the original structure.',
+                seeAlso: ['sinh', 'asin', 'acosh', 'atanh'],
                 examples: [
                     'asinh(10)',
                     'asinh(90)',
@@ -5836,6 +5944,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'The `cos` function computes the cosine of an angle (in radians), working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the cosine of each element while preserving the original structure.',
+                seeAlso: ['acos', 'cosh', 'sin', 'tan', 'to-rad'],
                 examples: [
                     'cos(0)',
                     'cos(1)',
@@ -5870,6 +5979,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'The `acos` function computes the arccosine (inverse cosine) of a `number` in radians, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the arccosine of each element while preserving the original structure.',
+                seeAlso: ['cos', 'acosh', 'asin', 'atan'],
                 examples: [
                     'acos(0)',
                     'acos(1)',
@@ -5903,6 +6013,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'The `cosh` function computes the hyperbolic cosine of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the hyperbolic cosine of each element while preserving the original structure.',
+                seeAlso: ['acosh', 'cos', 'sinh', 'tanh'],
                 examples: [
                     'cosh(0)',
                     'cosh(1)',
@@ -5936,6 +6047,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'The `acosh` function computes the inverse hyperbolic cosine of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the inverse hyperbolic cosine of each element while preserving the original structure.',
+                seeAlso: ['cosh', 'acos', 'asinh', 'atanh'],
                 examples: [
                     'acosh(1)',
                     'acosh(2)',
@@ -5970,6 +6082,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'The `tan` function computes the tangent of an angle (in radians), working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the tangent of each element while preserving the original structure.',
+                seeAlso: ['atan', 'tanh', 'sin', 'cos', 'to-rad'],
                 examples: [
                     'tan(0)',
                     'tan(1)',
@@ -6004,6 +6117,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'The `atan` function computes the arctangent (inverse tangent) of a `number` in radians, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the arctangent of each element while preserving the original structure.',
+                seeAlso: ['tan', 'atanh', 'asin', 'acos'],
                 examples: [
                     'atan(0)',
                     'atan(1)',
@@ -6037,6 +6151,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'The `tanh` function computes the hyperbolic tangent of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the hyperbolic tangent of each element while preserving the original structure.',
+                seeAlso: ['atanh', 'tan', 'sinh', 'cosh'],
                 examples: ['tanh(0)', 'tanh(1)', 'tanh(-0.5)', 'tanh(50)'],
             },
         },
@@ -6064,6 +6179,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'The `atanh` function computes the inverse hyperbolic tangent of a `number`, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it returns the inverse hyperbolic tangent of each element while preserving the original structure.',
+                seeAlso: ['tanh', 'atan', 'asinh', 'acosh'],
                 examples: [
                     'atanh(0)',
                     'atanh(0.9)',
@@ -6097,6 +6213,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'The `to-rad` function converts an angle from degrees to radians, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it converts each element while preserving the original structure.',
+                seeAlso: ['to-deg', 'sin', 'cos', 'tan'],
                 examples: [
                     'to-rad(0)',
                     'to-rad(90)',
@@ -6131,6 +6248,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'The `to-deg` function converts an angle from radians to degrees, working on `numbers` and element-wise on `vectors` and `matrices`. When applied to collections, it converts each element while preserving the original structure.',
+                seeAlso: ['to-rad'],
                 examples: [
                     'to-deg(0)',
                     'to-deg(PI)',
@@ -6202,6 +6320,7 @@ var Playground = (function (exports) {
                     { argumentNames: ['x', 'ys'] },
                 ],
                 description: 'Returns `true` if all `values` are structaul equal to each other, otherwise result is `false`.',
+                seeAlso: ['≠', 'identical?'],
                 examples: [
                     '1 == 1',
                     '[1, 2] == [1, 2]',
@@ -6235,6 +6354,7 @@ var Playground = (function (exports) {
                     { argumentNames: ['x', 'ys'] },
                 ],
                 description: 'Returns `true` if all `values` are not equal to each other, otherwise result is `false`. `(≠ a b c)` is same as `(! (== a b c))`.',
+                seeAlso: ['==', 'identical?'],
                 examples: [
                     '1 ≠ 2',
                     '3 ≠ 3',
@@ -6259,6 +6379,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['a', 'b'] }],
                 description: 'Returns true if $a and $b are referential equal.',
+                seeAlso: ['==', '≠'],
                 examples: [
                     'identical?({ a: 10, b: 20 }, { b: 20, a: 10 })',
                     'identical?([1, true, null], [1, true, null])',
@@ -6303,6 +6424,7 @@ var Playground = (function (exports) {
                     { argumentNames: ['x', 'ys'] },
                 ],
                 description: 'Returns `true` if $x and $ys are in decreasing order, `false` otherwise.',
+                seeAlso: ['<', '>=', '<=', 'compare'],
                 examples: [
                     '>(1, 0)',
                     '>(1.01, 1)',
@@ -6349,6 +6471,7 @@ var Playground = (function (exports) {
                     { argumentNames: ['x', 'ys'] },
                 ],
                 description: 'Returns `true` if $x and $ys are in increasing order, `false` otherwise.',
+                seeAlso: ['>', '>=', '<=', 'compare'],
                 examples: [
                     '<(0, 1)',
                     '<(1, 1.01)',
@@ -6395,6 +6518,7 @@ var Playground = (function (exports) {
                     { argumentNames: ['x', 'ys'] },
                 ],
                 description: 'Returns `true` if $x and $ys are in non increasing order, `false` otherwise.',
+                seeAlso: ['>', '<', '<=', 'compare'],
                 examples: [
                     '1 >= 1',
                     '0 >= 1',
@@ -6443,6 +6567,7 @@ var Playground = (function (exports) {
                     { argumentNames: ['x', 'ys'] },
                 ],
                 description: 'Returns `true` if $x and $ys are in non decreasing order, `false` otherwise.',
+                seeAlso: ['>', '<', '>=', 'compare'],
                 examples: [
                     '1 <= 1',
                     '<=(0, 1)',
@@ -6464,8 +6589,7 @@ var Playground = (function (exports) {
                 returns: { type: 'boolean' },
                 args: { x: { type: 'any' } },
                 variants: [{ argumentNames: ['x'] }],
-                description: 'Computes logical negation. Note that any other $x than `false`, `0`, `null` and `\'\'` is truthy.',
-                examples: [
+                description: 'Computes logical negation. Note that any other $x than `false`, `0`, `null` and `\'\'` is truthy.', seeAlso: ['boolean'], examples: [
                     '!(3)',
                     '!(true)',
                     '!("A string")',
@@ -6489,6 +6613,7 @@ var Playground = (function (exports) {
                 args: { ms: { type: 'number' } },
                 variants: [{ argumentNames: ['ms'] }],
                 description: 'Returns IOS date time string from `ms` (milliseconds elapsed since the UNIX epoch).',
+                seeAlso: ['iso-date->epoch'],
                 examples: [
                     'epoch->iso-date(1649756230899)',
                     'epoch->iso-date(0)',
@@ -6510,6 +6635,7 @@ var Playground = (function (exports) {
                 args: { iso: { type: 'string' } },
                 variants: [{ argumentNames: ['iso'] }],
                 description: 'Returns milliseconds elapsed since the UNIX epoch to `iso`.',
+                seeAlso: ['epoch->iso-date'],
                 examples: [
                     'iso-date->epoch("2022-04-12T09:37:10.899Z")',
                     'iso-date->epoch("1980-01-01")',
@@ -6554,6 +6680,7 @@ var Playground = (function (exports) {
                 args: { x: { type: 'any' } },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'Coerces $x to boolean.',
+                seeAlso: ['!', 'boolean?', 'true?', 'false?'],
                 examples: [
                     'boolean(0)',
                     'boolean(1)',
@@ -6579,6 +6706,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['a', 'b'] }],
                 description: 'Compares two values. Returns `-1` if $a < $b, `1` if $a > $b and `0` if $a and $b have the same sort order.',
+                seeAlso: ['<', '>', '<=', '>=', 'sort', 'sort-by'],
                 examples: [
                     'compare(0, 1)',
                     'compare(0, 0)',
@@ -6601,6 +6729,7 @@ var Playground = (function (exports) {
                 args: { x: { type: 'string' } },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'Returns `JSON.parse(`$x`)`.',
+                seeAlso: ['json-stringify'],
                 examples: [
                     'json-parse("[1, 2, 3]")',
                 ],
@@ -6628,6 +6757,7 @@ var Playground = (function (exports) {
                     { argumentNames: ['x', 'indent'] },
                 ],
                 description: 'Returns `JSON.stringify(`$x`)`. If second argument is provided, returns `JSON.stringify(`$x`, null, `$indent`)`.',
+                seeAlso: ['json-parse'],
                 examples: [
                     'json-stringify([1, 2, 3])',
                     'json-stringify({ a: { b: 10 }}, 2)',
@@ -6727,6 +6857,7 @@ var Playground = (function (exports) {
                 args: { obj: { type: 'object' } },
                 variants: [{ argumentNames: ['obj'] }],
                 description: 'Returns array of all keys in $obj.',
+                seeAlso: ['vals', 'entries', 'zipmap', 'select-keys'],
                 examples: [
                     'keys({})',
                     'keys({ x: 10, y: true, z: "A string" })',
@@ -6747,6 +6878,7 @@ var Playground = (function (exports) {
                 args: { obj: { type: 'object' } },
                 variants: [{ argumentNames: ['obj'] }],
                 description: 'Returns array of all values in $obj.',
+                seeAlso: ['keys', 'entries', 'zipmap'],
                 examples: [
                     'vals({})',
                     'vals({ x: 10, y: true, z: "A string" })',
@@ -6767,6 +6899,7 @@ var Playground = (function (exports) {
                 args: { obj: { type: 'object' } },
                 variants: [{ argumentNames: ['obj'] }],
                 description: 'Returns nested array of all key - value pairs in $obj.',
+                seeAlso: ['keys', 'vals', 'zipmap', 'find'],
                 examples: [
                     'entries({})',
                     'entries({ x: 10, y: true, z: "A string" })',
@@ -6795,6 +6928,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['obj', 'key'] }],
                 description: 'Returns entry (key-value pair) for $key, or `null` if $key not present in $obj.',
+                seeAlso: ['get', 'contains?', 'entries', 'position', 'some'],
                 examples: [
                     '{ a: 1, "b": 2 } find "a"',
                     'find(object("a", 1, "b", 2), "b")',
@@ -6823,6 +6957,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['obj', 'key'] }],
                 description: 'Return shallow copy of $obj with $key deleted.',
+                seeAlso: ['assoc', 'select-keys'],
                 examples: [
                     '{ x: 10, y: 20 } dissoc "y"',
                     'dissoc({ x: 10, y: 20 }, "x")',
@@ -6853,6 +6988,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['objs'] }],
                 description: "Returns a new object created by merging together all arguments.\n\nIf two keys appears in more than one object the value from the last object is used.\nIf no arguments are provided `null` is returned.",
+                seeAlso: ['merge-with', 'assoc'],
                 examples: [
                     '{ x: 10 } merge { y: 20 }',
                     'merge(object("x", 10), object("y", 20))',
@@ -6891,6 +7027,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['objs', 'fun'] }],
                 description: "\nReturns a new object created by merging together all arguments.\nIf two keys appears in more than one object $fun is used to calculate the new value.\n\nIf no arguments are provided `null` is returned.",
+                seeAlso: ['merge'],
                 examples: [
                     'merge-with(object("x", 10), object("y", 20), +)',
                     'merge-with(object("x", 10), object("x", 15, "y", 20), +)',
@@ -6922,6 +7059,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['a', 'b'] }],
                 description: 'Returns a new object created by mapping $a to $b.',
+                seeAlso: ['entries', 'keys', 'vals', 'interleave'],
                 examples: [
                     '["a", "b", "c"] zipmap [1, 2, 3]',
                     'zipmap(["a", "b", "c"], [10, null, [1, 2, 3]])',
@@ -6951,6 +7089,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['a', 'b'] }],
                 description: 'Returns an object containing only those entries in $a whose key is in $b.',
+                seeAlso: ['dissoc', 'keys'],
                 examples: [
                     '{ a: 1, b: 2, c: 3 } select-keys ["a", "b"]',
                     'select-keys({ a: 1, b: 2, c: 3 }, ["a", "b"])',
@@ -6973,6 +7112,7 @@ var Playground = (function (exports) {
                 args: { x: { type: 'any' } },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'Returns `true` if $x is a function, otherwise `false`.',
+                seeAlso: ['string?', 'number?', 'boolean?', 'null?', 'array?', 'object?', 'regexp?'],
                 examples: [
                     'function?(+)',
                     'function?(/)',
@@ -6995,6 +7135,7 @@ var Playground = (function (exports) {
                 args: { x: { type: 'any' } },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'Returns `true` if $x is a string, otherwise `false`.',
+                seeAlso: ['blank?', 'number?', 'boolean?', 'null?', 'array?', 'object?', 'regexp?', 'function?', 'coll?', 'seq?'],
                 examples: [
                     'string?("")',
                     'string?("A string")',
@@ -7017,6 +7158,7 @@ var Playground = (function (exports) {
                 args: { x: { type: 'any' } },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'Returns `true` if $x is a number, otherwise `false`.',
+                seeAlso: ['integer?', 'zero?', 'pos?', 'neg?', 'finite?', 'number', 'string?', 'boolean?', 'null?', 'function?'],
                 examples: [
                     'number?(0)',
                     'number?(2)',
@@ -7039,6 +7181,7 @@ var Playground = (function (exports) {
                 args: { x: { type: 'any' } },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'Returns `true` if $x is an integer, otherwise `false`.',
+                seeAlso: ['number?', 'number', 'even?', 'odd?'],
                 examples: [
                     'integer?(0)',
                     'integer?(-12)',
@@ -7063,6 +7206,7 @@ var Playground = (function (exports) {
                 args: { x: { type: 'any' } },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'Returns `true` if $x is a `boolean`, otherwise `false`.',
+                seeAlso: ['true?', 'false?', 'boolean', 'string?', 'number?', 'null?', 'function?'],
                 examples: [
                     'boolean?(true)',
                     'boolean?(false)',
@@ -7084,6 +7228,7 @@ var Playground = (function (exports) {
                 args: { x: { type: 'any' } },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'Returns `true` if $x is `null`, otherwise `false`.',
+                seeAlso: ['empty?', 'not-empty?', 'string?', 'number?', 'boolean?', 'function?'],
                 examples: [
                     'null?(null)',
                     'null?(false)',
@@ -7106,6 +7251,7 @@ var Playground = (function (exports) {
                 args: { x: { type: 'number' } },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'Returns `true` if $x is `0`, otherwise `false`.',
+                seeAlso: ['pos?', 'neg?', 'even?', 'number?'],
                 examples: [
                     'zero?(0)',
                     'zero?(-0.0)',
@@ -7127,6 +7273,7 @@ var Playground = (function (exports) {
                 args: { x: { type: 'number' } },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'Returns `true` if $x is greater than `0`, otherwise `false`.',
+                seeAlso: ['neg?', 'zero?', 'number?'],
                 examples: [
                     'pos?(0)',
                     'pos?(-0.0)',
@@ -7148,6 +7295,7 @@ var Playground = (function (exports) {
                 args: { x: { type: 'number' } },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'Returns `true` if $x is less than `0`, otherwise `false`.',
+                seeAlso: ['pos?', 'zero?', 'number?'],
                 examples: [
                     'neg?(0)',
                     'neg?(-0.0)',
@@ -7169,6 +7317,7 @@ var Playground = (function (exports) {
                 args: { x: { type: 'number' } },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'Returns `true` if $x is even, otherwise `false`.',
+                seeAlso: ['odd?', 'integer?', 'zero?'],
                 examples: [
                     'even?(0)',
                     'even?(-0.0)',
@@ -7190,6 +7339,7 @@ var Playground = (function (exports) {
                 args: { x: { type: 'number' } },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'Returns `true` if $x is odd, otherwise `false`.',
+                seeAlso: ['even?', 'integer?'],
                 examples: [
                     'odd?(1.0)',
                     'odd?(1.001)',
@@ -7210,6 +7360,7 @@ var Playground = (function (exports) {
                 args: { x: { type: 'any' } },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'Returns `true` if $x is an array, otherwise `false`.',
+                seeAlso: ['seq?', 'coll?', 'object?', 'string?', 'vector?', 'matrix?', 'grid?', 'function?'],
                 examples: [
                     'array?([])',
                     'array?([1, 2, 3])',
@@ -7232,6 +7383,7 @@ var Playground = (function (exports) {
                 args: { x: { type: 'any' } },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'Returns `true` if $x is a Coll i.e. an array, an object or a string, otherwise `false`.',
+                seeAlso: ['seq?', 'array?', 'object?', 'string?'],
                 examples: [
                     'coll?([])',
                     'coll?([1, 2, 3])',
@@ -7255,6 +7407,7 @@ var Playground = (function (exports) {
                 args: { x: { type: 'any' } },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'Returns `true` if $x is a Seq i.e. an array or a string, otherwise `false`.',
+                seeAlso: ['coll?', 'array?', 'string?'],
                 examples: [
                     'seq?([])',
                     'seq?([1, 2, 3])',
@@ -7278,6 +7431,7 @@ var Playground = (function (exports) {
                 args: { x: { type: 'any' } },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'Returns `true` if $x is an object, otherwise `false`.',
+                seeAlso: ['coll?', 'array?', 'string?', 'function?'],
                 examples: [
                     'object?(object("a", 10))',
                     'object?(42)',
@@ -7301,6 +7455,7 @@ var Playground = (function (exports) {
                 args: { x: { type: 'any' } },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'Returns `true` if $x is a regexp, otherwise `false`.',
+                seeAlso: ['regexp', 'match', 'string?', 'function?'],
                 examples: [
                     'regexp?(regexp("^start"))',
                     'regexp?(#"^start")',
@@ -7327,6 +7482,7 @@ var Playground = (function (exports) {
                 args: { x: { type: 'number' } },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'Returns `true` if $x is finite, otherwise `false`.',
+                seeAlso: ['positive-infinity?', 'negative-infinity?', 'number?'],
                 examples: [
                     'finite?(1.0)',
                     'finite?(1 / 0)',
@@ -7347,6 +7503,7 @@ var Playground = (function (exports) {
                 args: { x: { type: 'number' } },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'Returns `true` if $x equals positive infinity, otherwise `false`.',
+                seeAlso: ['negative-infinity?', 'finite?'],
                 examples: [
                     'positive-infinity?(1.0)',
                     'positive-infinity?(1 / 0)',
@@ -7367,6 +7524,7 @@ var Playground = (function (exports) {
                 args: { x: { type: 'number' } },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'Returns `true` if $x equals negative infinity, otherwise `false`.',
+                seeAlso: ['positive-infinity?', 'finite?'],
                 examples: [
                     'negative-infinity?(1.0)',
                     'negative-infinity?(1 / 0)',
@@ -7386,6 +7544,7 @@ var Playground = (function (exports) {
                 args: { x: { type: 'any' } },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'Returns `true` if $x is `true`, otherwise `false`.',
+                seeAlso: ['false?', 'boolean?', 'boolean'],
                 examples: [
                     'true?(false)',
                     'true?(true)',
@@ -7406,6 +7565,7 @@ var Playground = (function (exports) {
                 args: { x: { type: 'any' } },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'Returns `true` if $x is `true`, otherwise `false`.',
+                seeAlso: ['true?', 'boolean?', 'boolean'],
                 examples: [
                     'false?(false)',
                     'false?(true)',
@@ -7433,6 +7593,7 @@ var Playground = (function (exports) {
                 args: { x: { type: ['collection', 'string', 'null'] } },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'Returns `true` if $x is empty or `null`, otherwise `false`.',
+                seeAlso: ['not-empty?', 'not-empty', 'null?', 'blank?', 'count'],
                 examples: [
                     'empty?([])',
                     'empty?([1, 2, 3])',
@@ -7463,6 +7624,7 @@ var Playground = (function (exports) {
                 args: { x: { type: ['collection', 'string', 'null'] } },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'Returns `false` if $x is empty or `null`, otherwise `true`.',
+                seeAlso: ['empty?', 'not-empty', 'null?'],
                 examples: [
                     'not-empty?([])',
                     'not-empty?([1, 2, 3])',
@@ -7483,6 +7645,7 @@ var Playground = (function (exports) {
             docs: {
                 category: 'Predicate',
                 description: 'Checks if a value is a `vector`. A `vector` is an array of `numbers`.',
+                seeAlso: ['matrix?', 'grid?', 'array?'],
                 returns: { type: 'boolean' },
                 args: { value: { type: 'any', description: 'The value to check.' } },
                 variants: [{ argumentNames: ['value'] }],
@@ -7502,6 +7665,7 @@ var Playground = (function (exports) {
             docs: {
                 category: 'Predicate',
                 description: 'Checks if a value is a `matrix`. A `matrix` is an array of arrays of `numbers`.',
+                seeAlso: ['vector?', 'grid?', 'array?'],
                 returns: { type: 'boolean' },
                 args: { value: { type: 'any', description: 'The value to check.' } },
                 variants: [{ argumentNames: ['value'] }],
@@ -7523,6 +7687,7 @@ var Playground = (function (exports) {
             docs: {
                 category: 'Predicate',
                 description: 'Checks if a `value` is a `grid`. A `grid` is an `array` of `arrays` where all inner `arrays` have the same length.',
+                seeAlso: ['vector?', 'matrix?', 'array?'],
                 returns: { type: 'boolean' },
                 args: { value: { type: 'any', description: 'The value to check.' } },
                 variants: [{ argumentNames: ['value'] }],
@@ -7578,6 +7743,7 @@ var Playground = (function (exports) {
                     'regexp("albert", "ig")',
                     '#"albert"ig',
                 ],
+                seeAlso: ['-short-regexp', 'match', 'replace', 'replace-all', 'regexp?'],
                 hideOperatorForm: true,
             },
         },
@@ -7603,6 +7769,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['a', 'b'] }],
                 description: "Matches $b against regular expression $a.\nIf $b is a string and matches the regular expression, a `match`-array is returned, otherwise `null` is returned.",
+                seeAlso: ['regexp', 'replace', 'replace-all', '-short-regexp', 'regexp?'],
                 examples: [
                     'match("  A string", regexp("^\\\\s*(.*)$"))',
                     'match("  A string", #"^\\s*(.*)$")',
@@ -7634,6 +7801,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['a', 'b', 'x'] }],
                 description: 'Returns a new string with first match of regular expression $b replaced by $x.',
+                seeAlso: ['replace-all', 'regexp', 'match', '-short-regexp'],
                 examples: [
                     'replace("Duck duck", "u", "i")',
                     'replace("Duck duck", #"u", "i")',
@@ -7664,6 +7832,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['a', 'b', 'x'] }],
                 description: 'Returns a new string with all matches of regular expression $b replaced by $x.',
+                seeAlso: ['replace', 'regexp', 'match', '-short-regexp'],
                 examples: [
                     'replace-all("Duck duck", "u", "i")',
                     'replace-all("Duck duck", regexp("u"), "i")',
@@ -7697,6 +7866,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['s', 'n'] }],
                 description: 'Repeates $s $n times.',
+                seeAlso: ['str', 'repeat'],
                 examples: [
                     '"*" string-repeat 10',
                     'string-repeat("*", 10)',
@@ -7724,6 +7894,7 @@ var Playground = (function (exports) {
                 args: { values: { type: 'any', rest: true } },
                 variants: [{ argumentNames: ['values'] }],
                 description: 'Concatenats $values into one string. If `value` equals `null` empty string is returned.',
+                seeAlso: ['++', 'join', 'template', 'string-repeat', 'number'],
                 examples: [
                     'str("A string", ", and another string", " ...and more")',
                     'str("Just one string")',
@@ -7749,6 +7920,7 @@ var Playground = (function (exports) {
                 args: { s: { type: 'string' } },
                 variants: [{ argumentNames: ['s'] }],
                 description: 'Parses $s to a number.',
+                seeAlso: ['str', 'number?', 'integer?'],
                 examples: [
                     'number("10")',
                     'number("010")',
@@ -7775,6 +7947,7 @@ var Playground = (function (exports) {
                 args: { code: { type: 'number' } },
                 variants: [{ argumentNames: ['code'] }],
                 description: 'Return character for code point $code.',
+                seeAlso: ['to-char-code'],
                 examples: [
                     'from-char-code(65)',
                     'from-char-code(0)',
@@ -7794,6 +7967,7 @@ var Playground = (function (exports) {
                 args: { c: { type: 'string' } },
                 variants: [{ argumentNames: ['c'] }],
                 description: 'Return code point for first character in $c.',
+                seeAlso: ['from-char-code'],
                 examples: [
                     'to-char-code("A")',
                     'to-char-code("Albert")',
@@ -7813,6 +7987,7 @@ var Playground = (function (exports) {
                 args: { s: { type: 'string' } },
                 variants: [{ argumentNames: ['s'] }],
                 description: 'Returns $s converted to lower case.',
+                seeAlso: ['upper-case', 'capitalize'],
                 examples: [
                     'lower-case("Albert")',
                     'lower-case("")',
@@ -7832,6 +8007,7 @@ var Playground = (function (exports) {
                 args: { s: { type: 'string' } },
                 variants: [{ argumentNames: ['s'] }],
                 description: 'Returns $s converted to upper case.',
+                seeAlso: ['lower-case', 'capitalize'],
                 examples: [
                     'upper-case("Albert")',
                     'upper-case("")',
@@ -7851,6 +8027,7 @@ var Playground = (function (exports) {
                 args: { s: { type: 'string' } },
                 variants: [{ argumentNames: ['s'] }],
                 description: 'Returns a new string with leading and trailing whitespaces removed.',
+                seeAlso: ['trim-left', 'trim-right', 'blank?'],
                 examples: [
                     'trim("  Albert  ")',
                     'trim("   ")',
@@ -7871,6 +8048,7 @@ var Playground = (function (exports) {
                 args: { s: { type: 'string' } },
                 variants: [{ argumentNames: ['s'] }],
                 description: 'Returns a new string with leading whitespaces removed.',
+                seeAlso: ['trim', 'trim-right'],
                 examples: [
                     'trim-left("  Albert  ")',
                     'trim-left("   ")',
@@ -7891,6 +8069,7 @@ var Playground = (function (exports) {
                 args: { s: { type: 'string' } },
                 variants: [{ argumentNames: ['s'] }],
                 description: 'Returns a new string with trailing whitespaces removed.',
+                seeAlso: ['trim', 'trim-left'],
                 examples: [
                     'trim-right("  Albert  ")',
                     'trim-right("   ")',
@@ -7918,6 +8097,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['arr', 'delimiter'] }],
                 description: 'Returns a new string by concatenating all of the elements in $arr, separated by $delimiter.',
+                seeAlso: ['split', 'str', '++', 'interpose'],
                 examples: [
                     'map([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], str) join ", "',
                     '([0, 1, 2, 3, 4, 5, 6, 7, 8, 9] map str) join ", "',
@@ -7955,6 +8135,7 @@ var Playground = (function (exports) {
                     { argumentNames: ['s', 'delimiter', 'limit'] },
                 ],
                 description: 'Divides $s into an array of substrings. The division is done by searching for `delimiter`. If `limit` as provided, at most `limit` number of substrings are returned.',
+                seeAlso: ['join', 'split-lines'],
                 examples: [
                     '"Albert Mojir" split " "',
                     'split("Albert Mojir", " ")',
@@ -7977,6 +8158,7 @@ var Playground = (function (exports) {
                 args: { s: { type: 'string' } },
                 variants: [{ argumentNames: ['s'] }],
                 description: 'Divides $s into an array of substrings, each representing a line.',
+                seeAlso: ['split'],
                 examples: [
                     'split-lines("Albert\nMojir\n")',
                     'split-lines("Albert\n\nMojir")',
@@ -8010,6 +8192,7 @@ var Playground = (function (exports) {
                     { argumentNames: ['s', 'length', 'padString'] },
                 ],
                 description: 'Pads from the start of $s with `padString` (multiple times, if needed) until the resulting string reaches the given $length.',
+                seeAlso: ['pad-right'],
                 examples: [
                     '"Albert" pad-left 20',
                     'pad-left("Albert", 20)',
@@ -8044,6 +8227,7 @@ var Playground = (function (exports) {
                     { argumentNames: ['s', 'length', 'padString'] },
                 ],
                 description: 'Pads from the start of $s with `padString` (multiple times, if needed) until the resulting string reaches the given `length`.',
+                seeAlso: ['pad-left'],
                 examples: [
                     '"Albert" pad-right 20',
                     'pad-right("Albert", 20)',
@@ -8092,6 +8276,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['s', 'params'] }],
                 description: 'Applies placeholders to a string. Support for basic pluralization - see examples. If pluralization is used, first placeholder must be a number.',
+                seeAlso: ['str'],
                 examples: [
                     'template("Hi, $1 and $2", "Carl", "Larry")',
                     'template("Hi $1, $2, $3, $4, $5, $6, $7, $8 and $9", "A", "B", "C", "D", "E", "F", "G", "H", "I")',
@@ -8126,6 +8311,7 @@ var Playground = (function (exports) {
                 args: { s: { type: 'string' } },
                 variants: [{ argumentNames: ['s'] }],
                 description: 'Returns a Base64 encoded string from $s.',
+                seeAlso: ['decode-base64'],
                 examples: [
                     'encode-base64("Albert")',
                 ],
@@ -8154,6 +8340,7 @@ var Playground = (function (exports) {
                 args: { base64string: { type: 'string' } },
                 variants: [{ argumentNames: ['base64string'] }],
                 description: 'Returns a Base64 decoded string from $base64string.',
+                seeAlso: ['encode-base64'],
                 examples: [
                     'decode-base64("QWxiZXJ0IPCfkLs=")',
                 ],
@@ -8172,6 +8359,7 @@ var Playground = (function (exports) {
                 args: { s: { type: 'string' } },
                 variants: [{ argumentNames: ['s'] }],
                 description: 'Returns an escaped `URI` string.',
+                seeAlso: ['decode-uri-component'],
                 examples: [
                     'encode-uri-component("Hi everyone!?")',
                 ],
@@ -8195,6 +8383,7 @@ var Playground = (function (exports) {
                 args: { s: { type: 'string' } },
                 variants: [{ argumentNames: ['s'] }],
                 description: 'Returns an un-escaped `URI` string.',
+                seeAlso: ['encode-uri-component'],
                 examples: [
                     'decode-uri-component("Hi%20everyone!%3F%20%F0%9F%91%8D")',
                 ],
@@ -8213,6 +8402,7 @@ var Playground = (function (exports) {
                 args: { s: { type: 'string' } },
                 variants: [{ argumentNames: ['s'] }],
                 description: 'Returns $s with the first character converted to uppercase and the rest to lowercase.',
+                seeAlso: ['lower-case', 'upper-case'],
                 examples: [
                     'capitalize("albert")',
                     'capitalize("ALBERT")',
@@ -8237,6 +8427,7 @@ var Playground = (function (exports) {
                 args: { s: { type: ['string', 'null'] } },
                 variants: [{ argumentNames: ['s'] }],
                 description: 'Returns true if $s is null or only contains whitespace characters.',
+                seeAlso: ['trim', 'empty?', 'string?'],
                 examples: [
                     'blank?("")',
                     'blank?(null)',
@@ -8281,6 +8472,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['a', 'b'] }],
                 description: 'Takes a value $a and a function $b, and returns the result of applying $b to $a.',
+                seeAlso: ['apply', 'comp'],
                 examples: [
                     "\n1 |> inc |> inc",
                     "range(10)\n  |> map(_, -> $ ^ 2) // [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]\n  |> filter(_, odd?)  // [1, 9, 25, 49, 81]\n  |> reduce(_, +, 0)  // 165\n  |> sqrt             // 12.84523257866513\n  |> round(_, 2)",
@@ -8310,6 +8502,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['fun', 'args'] }],
                 description: 'Call supplied function $fun with specified arguments $args.',
+                seeAlso: ['|>'],
                 examples: [
                     "\napply(+, [1, 2, 3])",
                     "\napply(\n  (x, y) -> sqrt(x ^ 2 + y ^ 2),\n  [3, 4]\n)",
@@ -8329,6 +8522,7 @@ var Playground = (function (exports) {
                 args: { x: { type: 'any' } },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'Returns $x.',
+                seeAlso: ['constantly', 'fnull'],
                 examples: ['identity(1)', 'identity("Albert")', 'identity({ a: 1 })', 'identity(null)'],
             },
         },
@@ -8355,6 +8549,7 @@ var Playground = (function (exports) {
                 },
                 variants: [{ argumentNames: ['fns'] }],
                 description: "Takes a variable number of functions and returns a function that is the composition of those.\n\n  The returned function takes a variable number of arguments,\n  applies the rightmost function to the args,\n  the next function (right-to-left) to the result, etc.",
+                seeAlso: ['|>', 'juxt', 'complement'],
                 examples: [
                     "\nlet negative-quotient = comp(-, /);\nnegative-quotient(9, 3)",
                     "\nlet x = { bar: { foo: 42 } };\ncomp(\"foo\", \"bar\")(x)",
@@ -8380,6 +8575,7 @@ var Playground = (function (exports) {
                 args: { x: { type: 'any' } },
                 variants: [{ argumentNames: ['x'] }],
                 description: 'Returns a function that takes any number of arguments and always returns $x.',
+                seeAlso: ['identity', 'fnull'],
                 examples: [
                     "\nlet always-true = constantly(true);\nalways-true(9, 3)",
                 ],
@@ -8416,6 +8612,7 @@ var Playground = (function (exports) {
                     { argumentNames: ['fun', 'fns'] },
                 ],
                 description: "Takes one or many function and returns a function that is the juxtaposition of those functions.\nThe returned function takes a variable number of args,\nand returns a vector containing the result of applying each function to the args (left-to-right).",
+                seeAlso: ['comp'],
                 examples: [
                     "\njuxt(+, *, min, max)(\n  3,\n  4,\n  6,\n)",
                     "\njuxt(\"a\", \"b\")(\n  {\n    a: 1,\n    b: 2,\n    c: 3,\n    d: 4\n  }\n)",
@@ -8443,6 +8640,7 @@ var Playground = (function (exports) {
                 args: { fun: { type: 'function' } },
                 variants: [{ argumentNames: ['fun'] }],
                 description: 'Takes a function $fun and returns a new function that takes the same arguments as f, has the same effects, if any, and returns the opposite truth value.',
+                seeAlso: ['comp', 'every-pred', 'some-pred'],
                 examples: [
                     'complement(>)(1, 3)',
                     'complement(<)(1, 3)',
@@ -8475,6 +8673,7 @@ var Playground = (function (exports) {
                     { argumentNames: ['fun', 'fns'] },
                 ],
                 description: "\nTakes a number of predicates and returns a function that returns `true` if all predicates\nreturn a truthy value against all of its arguments, else it returns `false`.",
+                seeAlso: ['some-pred', 'complement', 'every?'],
                 examples: [
                     "\nevery-pred(string?, -> count($) > 3)(\n  \"Albert\",\n  \"Mojir\"\n)",
                     "\n(string? every-pred -> count($) > 3)(\n  \"Albert\",\n  \"M\"\n)",
@@ -8506,6 +8705,7 @@ var Playground = (function (exports) {
                     { argumentNames: ['fun', 'fns'] },
                 ],
                 description: 'Takes a number of `predicates` and returns a function that returns `true` if at least one of the `predicates` return a truthy `true` value against at least one of its arguments, else it returns `false`.',
+                seeAlso: ['every-pred', 'complement', 'any?'],
                 examples: [
                     'some-pred(string?, -> count($) > 3)("Albert", "Mojir")',
                     'some-pred(string?, -> count($) > 3)("a", "M")',
@@ -8545,6 +8745,7 @@ var Playground = (function (exports) {
                     { argumentNames: ['fun', 'arg', 'args'] },
                 ],
                 description: 'Takes a function $fun, and returns a function that calls $fun, replacing a null argument to the corresponding argument.',
+                seeAlso: ['identity', 'constantly'],
                 examples: [
                     'fnull(inc, 0)(1)',
                     'fnull(inc, 0)(null)',
@@ -8621,6 +8822,7 @@ var Playground = (function (exports) {
                     args: { fun: { type: 'function' } },
                     variants: [{ argumentNames: ['fun'] }],
                     description: 'Returns documentation string of the $fun.',
+                    seeAlso: ['arity'],
                     examples: [
                         'doc(+)',
                         "\nlet add = (x, y) -> do\n  \"\"\"\n  Adds two numbers.\n  Args:\n    x: First number.\n    y: Second number.\n  Returns:\n    Sum of x and y.\n  \"\"\"\n  x + y;\nend;\n\ndoc(add)",
@@ -8640,6 +8842,7 @@ var Playground = (function (exports) {
                     args: { fun: { type: 'function' } },
                     variants: [{ argumentNames: ['fun'] }],
                     description: 'Returns arity of the $fun. The arity is an object with the properties: `min` and `max`. If the function has fixed arity, `min` and `max` are equal to the number of required parameters. If no restrictions apply, empty object is returned.',
+                    seeAlso: ['doc'],
                     examples: [
                         'arity(+)',
                         'arity(defined?)',
@@ -12987,6 +13190,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { assert } = import("Assert");\ntry assert(0, "Expected a positive value") catch (e) e.message end',
             ],
+            seeAlso: ['Assert.assert-truthy', 'Assert.assert-true'],
             hideOperatorForm: true,
         },
         'assert!=': {
@@ -13027,6 +13231,7 @@ var Playground = (function (exports) {
                 'let { assert!= } = import("Assert");\ntry 0 assert!= 0 catch (e) e.message end',
                 'let { assert!= } = import("Assert");\ntry assert!=(0, 1) catch (e) e.message end',
             ],
+            seeAlso: ['Assert.assert='],
             hideOperatorForm: true,
         },
         'assert=': {
@@ -13066,6 +13271,7 @@ var Playground = (function (exports) {
                 'let { assert= } = import("Assert");\ntry assert=({ "a": 1 }, { "a": 2 }) catch (e) e.message end',
                 'let { assert= } = import("Assert");\ntry assert=({ "a": 1 }, { "a": 1 }) catch (e) e.message end',
             ],
+            seeAlso: ['Assert.assert!='],
             hideOperatorForm: true,
         },
         'assert-gt': {
@@ -13105,6 +13311,7 @@ var Playground = (function (exports) {
                 'let { assert-gt } = import("Assert");\ntry assert-gt(0, 0) catch (e) e.message end',
                 'let { assert-gt } = import("Assert");\ntry assert-gt(1, 0) catch (e) e.message end',
             ],
+            seeAlso: ['Assert.assert-lt', 'Assert.assert-gte', 'Assert.assert-lte'],
             hideOperatorForm: true,
         },
         'assert-lt': {
@@ -13144,6 +13351,7 @@ var Playground = (function (exports) {
                 'let { assert-lt } = import("Assert");\ntry assert-lt(1, 1) catch (e) e.message end',
                 'let { assert-lt } = import("Assert");\ntry assert-lt(0, 1) catch (e) e.message end',
             ],
+            seeAlso: ['Assert.assert-gt', 'Assert.assert-lte', 'Assert.assert-gte'],
             hideOperatorForm: true,
         },
         'assert-gte': {
@@ -13183,6 +13391,7 @@ var Playground = (function (exports) {
                 'let { assert-gte } = import("Assert");\ntry assert-gte(0, 1) catch (e) e.message end',
                 'let { assert-gte } = import("Assert");\ntry assert-gte(1, 1) catch (e) e.message end',
             ],
+            seeAlso: ['Assert.assert-lte', 'Assert.assert-gt', 'Assert.assert-lt'],
             hideOperatorForm: true,
         },
         'assert-lte': {
@@ -13222,6 +13431,7 @@ var Playground = (function (exports) {
                 'let { assert-lte } = import("Assert");\ntry assert-lte(1, 0) catch (e) e.message end',
                 'let { assert-lte } = import("Assert");\ntry assert-lte(1, 1) catch (e) e.message end',
             ],
+            seeAlso: ['Assert.assert-gte', 'Assert.assert-lt', 'Assert.assert-gt'],
             hideOperatorForm: true,
         },
         'assert-true': {
@@ -13256,6 +13466,7 @@ var Playground = (function (exports) {
                 'let { assert-true } = import("Assert");\ntry assert-true(false) catch (e) e.message end',
                 'let { assert-true } = import("Assert");\ntry assert-true(true) catch (e) e.message end',
             ],
+            seeAlso: ['Assert.assert-false', 'Assert.assert-truthy', 'Assert.assert-falsy', 'Assert.assert'],
             hideOperatorForm: true,
         },
         'assert-false': {
@@ -13290,6 +13501,7 @@ var Playground = (function (exports) {
                 'let { assert-false } = import("Assert");\ntry assert-false(true) catch (e) e.message end',
                 'let { assert-false } = import("Assert");\ntry assert-false(false) catch (e) e.message end',
             ],
+            seeAlso: ['Assert.assert-true', 'Assert.assert-falsy', 'Assert.assert-truthy'],
             hideOperatorForm: true,
         },
         'assert-truthy': {
@@ -13331,6 +13543,7 @@ var Playground = (function (exports) {
                 'let { assert-truthy } = import("Assert");\ntry assert-truthy([]) catch (e) e.message end',
                 'let { assert-truthy } = import("Assert");\ntry assert-truthy(nd) catch (e) e.message end',
             ],
+            seeAlso: ['Assert.assert-falsy', 'Assert.assert-true', 'Assert.assert-false', 'Assert.assert', 'Assert.assert-null'],
             hideOperatorForm: true,
         },
         'assert-falsy': {
@@ -13371,6 +13584,7 @@ var Playground = (function (exports) {
                 'let { assert-falsy } = import("Assert");\ntry assert-falsy(null) catch (e) e.message end',
                 'let { assert-falsy } = import("Assert");\ntry assert-falsy("") catch (e) e.message end',
             ],
+            seeAlso: ['Assert.assert-truthy', 'Assert.assert-false', 'Assert.assert-true', 'Assert.assert-null'],
             hideOperatorForm: true,
         },
         'assert-null': {
@@ -13411,6 +13625,7 @@ var Playground = (function (exports) {
                 'let { assert-null } = import("Assert");\ntry assert-null(0) catch (e) e.message end',
                 'let { assert-null } = import("Assert");\ntry assert-null("") catch (e) e.message end',
             ],
+            seeAlso: ['Assert.assert-truthy', 'Assert.assert-falsy'],
             hideOperatorForm: true,
         },
         'assert-throws': {
@@ -13444,6 +13659,7 @@ var Playground = (function (exports) {
                 'let { assert-throws } = import("Assert");\nassert-throws(-> throw("Error"))',
                 'let { assert-throws } = import("Assert");\ntry assert-throws(-> identity("Error")) catch (e) e.message end',
             ],
+            seeAlso: ['Assert.assert-throws-error', 'Assert.assert-not-throws'],
             hideOperatorForm: true,
         },
         'assert-throws-error': {
@@ -13482,6 +13698,7 @@ var Playground = (function (exports) {
                 'let { assert-throws-error } = import("Assert");\ntry assert-throws-error(-> throw("Error"), "Error") catch (e) e.message end',
                 'let { assert-throws-error } = import("Assert");\ntry assert-throws-error(-> identity("Error"), "Error") catch (e) e.message end',
             ],
+            seeAlso: ['Assert.assert-throws', 'Assert.assert-not-throws'],
             hideOperatorForm: true,
         },
         'assert-not-throws': {
@@ -13515,6 +13732,7 @@ var Playground = (function (exports) {
                 'let { assert-not-throws } = import("Assert");\ntry assert-not-throws(-> identity("Error")) catch (e) e.message end',
                 'let { assert-not-throws } = import("Assert");\ntry assert-not-throws(-> throw("Error")) catch (e) e.message end',
             ],
+            seeAlso: ['Assert.assert-throws', 'Assert.assert-throws-error'],
             hideOperatorForm: true,
         },
     };
@@ -13810,6 +14028,7 @@ var Playground = (function (exports) {
                 '// Using "as" alias because "every?" shadows a builtin function\nlet { every? as grid-every? } = import("Grid");\ngrid-every?([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n], string?)',
                 '// Using "as" alias because "every?" shadows a builtin function\nlet { every? as grid-every? } = import("Grid");\ngrid-every?([\n  [1, 2],\n  [3, 4],\n], string?)',
             ],
+            seeAlso: ['every?', 'Grid.some?', 'Grid.every-row?', 'Grid.every-col?'],
         },
         'some?': {
             category: 'Grid',
@@ -13838,6 +14057,7 @@ var Playground = (function (exports) {
                 'let { some? } = import("Grid");\nsome?([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n], string?)',
                 'let { some? } = import("Grid");\nsome?([\n  [1, 2],\n  [3, 4],\n], string?)',
             ],
+            seeAlso: ['any?', 'Grid.every?', 'Grid.some-row?', 'Grid.some-col?'],
         },
         'every-row?': {
             category: 'Grid',
@@ -13866,6 +14086,7 @@ var Playground = (function (exports) {
                 'let { every-row? } = import("Grid");\nevery-row?([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n], -> string?($[0]))',
                 'let { every-row? } = import("Grid");\nevery-row?([\n  [1, 2],\n  [3, 4],\n], -> string?($[0]))',
             ],
+            seeAlso: ['Grid.some-row?', 'Grid.every-col?', 'Grid.every?'],
         },
         'some-row?': {
             category: 'Grid',
@@ -13894,6 +14115,7 @@ var Playground = (function (exports) {
                 'let { some-row? } = import("Grid");\nsome-row?([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n], -> $ contains? "Albert")',
                 'let { some-row? } = import("Grid");\nsome-row?([\n  [1, 2],\n  [3, 4],\n], -> $ contains? "Albert")',
             ],
+            seeAlso: ['Grid.every-row?', 'Grid.some-col?', 'Grid.some?'],
         },
         'every-col?': {
             category: 'Grid',
@@ -13922,6 +14144,7 @@ var Playground = (function (exports) {
                 'let { every-col? } = import("Grid");\nevery-col?([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n], -> string?($[0]))',
                 'let { every-col? } = import("Grid");\nevery-col?([\n  [1, 2],\n  [3, 4],\n], -> string?($[0]))',
             ],
+            seeAlso: ['Grid.some-col?', 'Grid.every-row?', 'Grid.every?'],
         },
         'some-col?': {
             category: 'Grid',
@@ -13950,6 +14173,7 @@ var Playground = (function (exports) {
                 'let { some-col? } = import("Grid");\nsome-col?([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n], -> $ contains? "Albert")',
                 'let { some-col? } = import("Grid");\nsome-col?([\n  [1, 2],\n  [3, 4],\n], -> $ contains? "Albert")',
             ],
+            seeAlso: ['Grid.every-col?', 'Grid.some-row?', 'Grid.some?'],
         },
         'row': {
             category: 'Grid',
@@ -13978,6 +14202,7 @@ var Playground = (function (exports) {
                 'let { row } = import("Grid");\nrow([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], 1)',
                 'let { row } = import("Grid");\nrow([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], 2)',
             ],
+            seeAlso: ['Grid.col', 'Grid.shape'],
         },
         'col': {
             category: 'Grid',
@@ -14006,6 +14231,7 @@ var Playground = (function (exports) {
                 'let { col } = import("Grid");\ncol([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], 1)',
                 'let { col } = import("Grid");\ncol([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], 2)',
             ],
+            seeAlso: ['Grid.row', 'Grid.shape'],
         },
         'shape': {
             category: 'Grid',
@@ -14031,6 +14257,7 @@ var Playground = (function (exports) {
                 'let { shape } = import("Grid");\nshape([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n])',
                 'let { shape } = import("Grid");\nshape([\n  [1, 2],\n  [3, 4],\n])',
             ],
+            seeAlso: ['Grid.row', 'Grid.col', 'Grid.reshape'],
         },
         'fill': {
             category: 'Grid',
@@ -14065,6 +14292,7 @@ var Playground = (function (exports) {
                 'let { fill } = import("Grid");\nfill(2, 3, 0)',
                 'let { fill } = import("Grid");\nfill(2, 3, "x")',
             ],
+            seeAlso: ['Grid.generate', 'Grid.from-array', 'Vector.fill'],
         },
         'generate': {
             category: 'Grid',
@@ -14098,6 +14326,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { generate } = import("Grid");\ngenerate(3, 3, (i, j) -> i + j)',
             ],
+            seeAlso: ['Grid.fill', 'Grid.from-array', 'Vector.generate'],
         },
         'reshape': {
             category: 'Grid',
@@ -14124,6 +14353,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { reshape } = import("Grid");\nreshape([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n], 2)',
             ],
+            seeAlso: ['Grid.shape', 'Grid.from-array'],
         },
         'transpose': {
             category: 'Grid',
@@ -14149,6 +14379,7 @@ var Playground = (function (exports) {
                 'let { transpose } = import("Grid");\ntranspose([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n])',
                 'let { transpose } = import("Grid");\ntranspose([\n  [1, 2],\n  [3, 4],\n])',
             ],
+            seeAlso: ['Grid.flip-h', 'Grid.flip-v', 'Grid.rotate'],
         },
         'flip-h': {
             category: 'Grid',
@@ -14174,6 +14405,7 @@ var Playground = (function (exports) {
                 'let { flip-h } = import("Grid");\nflip-h([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n])',
                 'let { flip-h } = import("Grid");\nflip-h([\n  [1, 2],\n  [3, 4],\n])',
             ],
+            seeAlso: ['Grid.flip-v', 'Grid.transpose', 'Grid.rotate', 'Grid.reverse-cols'],
         },
         'flip-v': {
             category: 'Grid',
@@ -14199,6 +14431,7 @@ var Playground = (function (exports) {
                 'let { flip-v } = import("Grid");\nflip-v([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n])',
                 'let { flip-v } = import("Grid");\nflip-v([\n  [1, 2],\n  [3, 4],\n])',
             ],
+            seeAlso: ['Grid.flip-h', 'Grid.transpose', 'Grid.rotate', 'Grid.reverse-rows'],
         },
         'rotate': {
             category: 'Grid',
@@ -14231,6 +14464,7 @@ var Playground = (function (exports) {
                 'let { rotate } = import("Grid");\nrotate([\n  [1, 2],\n  [3, 4],\n], -2)',
                 'let { rotate } = import("Grid");\nrotate([\n  [1, 2],\n  [3, 4],\n], -3)',
             ],
+            seeAlso: ['Grid.transpose', 'Grid.flip-h', 'Grid.flip-v'],
         },
         'reverse-rows': {
             category: 'Grid',
@@ -14256,6 +14490,7 @@ var Playground = (function (exports) {
                 'let { reverse-rows } = import("Grid");\nreverse-rows([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n])',
                 'let { reverse-rows } = import("Grid");\nreverse-rows([\n  [1, 2],\n  [3, 4],\n])',
             ],
+            seeAlso: ['Grid.reverse-cols', 'Grid.flip-v'],
         },
         'reverse-cols': {
             category: 'Grid',
@@ -14281,6 +14516,7 @@ var Playground = (function (exports) {
                 'let { reverse-cols } = import("Grid");\nreverse-cols([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n])',
                 'let { reverse-cols } = import("Grid");\nreverse-cols([\n  [1, 2],\n  [3, 4],\n])',
             ],
+            seeAlso: ['Grid.reverse-rows', 'Grid.flip-h'],
         },
         'slice': {
             category: 'Grid',
@@ -14322,6 +14558,7 @@ var Playground = (function (exports) {
                 '// Using "as" alias because "slice" shadows a builtin function\nlet { slice as grid-slice } = import("Grid");\ngrid-slice([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], [1, 1])',
             ],
             hideOperatorForm: true,
+            seeAlso: ['Grid.slice-rows', 'Grid.slice-cols'],
         },
         'slice-rows': {
             category: 'Grid',
@@ -14363,6 +14600,7 @@ var Playground = (function (exports) {
                 'let { slice-rows } = import("Grid");\nslice-rows([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], 1)',
             ],
             hideOperatorForm: true,
+            seeAlso: ['Grid.slice', 'Grid.slice-cols', 'Grid.splice-rows'],
         },
         'slice-cols': {
             category: 'Grid',
@@ -14404,6 +14642,7 @@ var Playground = (function (exports) {
                 'let { slice-cols } = import("Grid");\nslice-cols([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], 1)',
             ],
             hideOperatorForm: true,
+            seeAlso: ['Grid.slice', 'Grid.slice-rows', 'Grid.splice-cols'],
         },
         'splice-rows': {
             category: 'Grid',
@@ -14452,6 +14691,7 @@ var Playground = (function (exports) {
                 'let { splice-rows } = import("Grid");\nsplice-rows([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], 1, 1, ["Nazanin", "mother", 40])',
             ],
             hideOperatorForm: true,
+            seeAlso: ['Grid.splice-cols', 'Grid.slice-rows'],
         },
         'splice-cols': {
             category: 'Grid',
@@ -14500,6 +14740,7 @@ var Playground = (function (exports) {
                 'let { splice-cols } = import("Grid");\nsplice-cols([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], 1, 1, ["f", "m", "s"])',
             ],
             hideOperatorForm: true,
+            seeAlso: ['Grid.splice-rows', 'Grid.slice-cols'],
         },
         'concat-rows': {
             category: 'Grid',
@@ -14526,6 +14767,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { concat-rows } = import("Grid");\nconcat-rows([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n], [\n  [1, 2],\n  [3, 4],\n])',
             ],
+            seeAlso: ['Grid.concat-cols', 'Grid.push-rows'],
         },
         'concat-cols': {
             category: 'Grid',
@@ -14552,6 +14794,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { concat-cols } = import("Grid");\nconcat-cols([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], [\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n])',
             ],
+            seeAlso: ['Grid.concat-rows', 'Grid.push-cols'],
         },
         'map': {
             category: 'Grid',
@@ -14578,6 +14821,7 @@ var Playground = (function (exports) {
             examples: [
                 '// Using "as" alias because "map" shadows a builtin function\nlet { map as grid-map } = import("Grid");\ngrid-map([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], str)',
             ],
+            seeAlso: ['map', 'Grid.mapi', 'Grid.reduce'],
         },
         'mapi': {
             category: 'Grid',
@@ -14604,6 +14848,7 @@ var Playground = (function (exports) {
             examples: [
                 '// Using "as" alias because "mapi" shadows a builtin function\nlet { mapi as grid-mapi } = import("Grid");\ngrid-mapi([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], -> $1 ++ "(" ++ $2 ++ ", " ++ $3 ++ ")")',
             ],
+            seeAlso: ['Grid.map', 'Grid.reducei', 'map'],
         },
         'reduce': {
             category: 'Grid',
@@ -14637,6 +14882,7 @@ var Playground = (function (exports) {
             examples: [
                 '// Using "as" alias because "reduce" shadows a builtin function\nlet { reduce as grid-reduce } = import("Grid");\ngrid-reduce([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], ++, "")',
             ],
+            seeAlso: ['reduce', 'Grid.reducei', 'Grid.map'],
         },
         'reducei': {
             category: 'Grid',
@@ -14670,6 +14916,7 @@ var Playground = (function (exports) {
             examples: [
                 '// Using "as" alias because "reducei" shadows a builtin function\nlet { reducei as grid-reducei } = import("Grid");\ngrid-reducei([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], ++, "")',
             ],
+            seeAlso: ['Grid.reduce', 'Grid.mapi', 'reduce'],
         },
         'push-rows': {
             category: 'Grid',
@@ -14700,6 +14947,7 @@ var Playground = (function (exports) {
                 'let { push-rows } = import("Grid");\npush-rows([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], ["Nazanin", "mother", 40])',
             ],
             hideOperatorForm: true,
+            seeAlso: ['Grid.unshift-rows', 'Grid.pop-row', 'Grid.shift-row', 'Grid.concat-rows'],
         },
         'unshift-rows': {
             category: 'Grid',
@@ -14730,6 +14978,7 @@ var Playground = (function (exports) {
                 'let { unshift-rows } = import("Grid");\nunshift-rows([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], ["Nazanin", "mother", 40])',
             ],
             hideOperatorForm: true,
+            seeAlso: ['Grid.push-rows', 'Grid.shift-row', 'Grid.pop-row'],
         },
         'pop-row': {
             category: 'Grid',
@@ -14753,6 +15002,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { pop-row } = import("Grid");\npop-row([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n])',
             ],
+            seeAlso: ['Grid.shift-row', 'Grid.push-rows', 'Grid.unshift-rows'],
         },
         'shift-row': {
             category: 'Grid',
@@ -14776,6 +15026,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { shift-row } = import("Grid");\nshift-row([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n])',
             ],
+            seeAlso: ['Grid.pop-row', 'Grid.push-rows', 'Grid.unshift-rows'],
         },
         'push-cols': {
             category: 'Grid',
@@ -14806,6 +15057,7 @@ var Playground = (function (exports) {
                 'let { push-cols } = import("Grid");\npush-cols([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], ["f", "m", "s"])',
             ],
             hideOperatorForm: true,
+            seeAlso: ['Grid.unshift-cols', 'Grid.pop-col', 'Grid.shift-col', 'Grid.concat-cols'],
         },
         'unshift-cols': {
             category: 'Grid',
@@ -14836,6 +15088,7 @@ var Playground = (function (exports) {
                 'let { unshift-cols } = import("Grid");\nunshift-cols([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], ["f", "m", "s"])',
             ],
             hideOperatorForm: true,
+            seeAlso: ['Grid.push-cols', 'Grid.shift-col', 'Grid.pop-col'],
         },
         'pop-col': {
             category: 'Grid',
@@ -14859,6 +15112,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { pop-col } = import("Grid");\npop-col([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n])',
             ],
+            seeAlso: ['Grid.shift-col', 'Grid.push-cols', 'Grid.unshift-cols'],
         },
         'shift-col': {
             category: 'Grid',
@@ -14882,6 +15136,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { shift-col } = import("Grid");\nshift-col([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n])',
             ],
+            seeAlso: ['Grid.pop-col', 'Grid.push-cols', 'Grid.unshift-cols'],
         },
         'from-array': {
             category: 'Grid',
@@ -14909,6 +15164,7 @@ var Playground = (function (exports) {
                 'let { from-array } = import("Grid");\nfrom-array([1, 2, 3, 4], 2)',
                 'let { from-array } = import("Grid");\nfrom-array([1, 2, 3, 4], 4)',
             ],
+            seeAlso: ['Grid.fill', 'Grid.generate', 'Grid.reshape'],
         },
     };
 
@@ -15751,6 +16007,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { random! } = import("Random"); random!()',
             ],
+            seeAlso: ['Random.random-float!', 'Random.random-int!', 'Random.random-boolean!'],
         },
         'random-int!': {
             category: 'Random',
@@ -15780,6 +16037,7 @@ var Playground = (function (exports) {
                 'let { random-int! } = import("Random"); random-int!(0, 10)',
                 'let { random-int! } = import("Random"); random-int!(1, 100)',
             ],
+            seeAlso: ['Random.random-int-inclusive!', 'Random.random-float!', 'Random.random!'],
         },
         'random-int-inclusive!': {
             category: 'Random',
@@ -15808,6 +16066,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { random-int-inclusive! } = import("Random"); random-int-inclusive!(0, 10)',
             ],
+            seeAlso: ['Random.random-int!', 'Random.random-float!'],
         },
         'random-float!': {
             category: 'Random',
@@ -15837,6 +16096,7 @@ var Playground = (function (exports) {
                 'let { random-float! } = import("Random"); random-float!(0, 10)',
                 'let { random-float! } = import("Random"); random-float!(1, 100)',
             ],
+            seeAlso: ['Random.random!', 'Random.random-int!', 'Random.random-int-inclusive!'],
         },
         'random-boolean!': {
             category: 'Random',
@@ -15861,6 +16121,7 @@ var Playground = (function (exports) {
                 'let { random-boolean! } = import("Random"); random-boolean!()',
                 'let { random-boolean! } = import("Random"); random-boolean!(0.99)',
             ],
+            seeAlso: ['Random.random!'],
         },
         'random-item!': {
             category: 'Random',
@@ -15885,6 +16146,7 @@ var Playground = (function (exports) {
                 'let { random-item! } = import("Random"); random-item!([1, 2, 3, 4, 5])',
                 'let { random-item! } = import("Random"); random-item!(["apple", "banana", "cherry"])',
             ],
+            seeAlso: ['Random.random-sample!', 'Random.random-sample-unique!', 'Random.random-char!'],
         },
         'random-sample-unique!': {
             category: 'Random',
@@ -15914,6 +16176,7 @@ var Playground = (function (exports) {
                 'let { random-sample-unique! } = import("Random"); random-sample-unique!([1, 2, 3, 4, 5], 3)',
                 'let { random-sample-unique! } = import("Random"); random-sample-unique!(["apple", "banana", "cherry"], 2)',
             ],
+            seeAlso: ['Random.random-sample!', 'Random.random-item!', 'Random.shuffle!'],
         },
         'random-sample!': {
             category: 'Random',
@@ -15943,6 +16206,7 @@ var Playground = (function (exports) {
                 'let { random-sample! } = import("Random"); random-sample!([1, 2, 3, 4, 5], 3)',
                 'let { random-sample! } = import("Random"); random-sample!(["apple", "banana", "cherry"], 10)',
             ],
+            seeAlso: ['Random.random-sample-unique!', 'Random.random-item!', 'Random.shuffle!'],
         },
         'shuffle!': {
             category: 'Random',
@@ -15967,6 +16231,7 @@ var Playground = (function (exports) {
                 'let { shuffle! } = import("Random"); shuffle!([1, 2, 3, 4, 5])',
                 'let { shuffle! } = import("Random"); shuffle!(["apple", "banana", "cherry"])',
             ],
+            seeAlso: ['Random.random-sample!', 'Random.random-sample-unique!'],
         },
         'random-normal!': {
             category: 'Random',
@@ -15996,6 +16261,7 @@ var Playground = (function (exports) {
                 'let { random-normal! } = import("Random"); random-normal!(0, 1)',
                 'let { random-normal! } = import("Random"); random-normal!(5, 2)',
             ],
+            seeAlso: ['Random.random-exponential!', 'Random.random-binomial!', 'Random.random-poisson!'],
             hideOperatorForm: true,
         },
         'random-exponential!': {
@@ -16021,6 +16287,7 @@ var Playground = (function (exports) {
                 'let { random-exponential! } = import("Random"); random-exponential!(1)',
                 'let { random-exponential! } = import("Random"); random-exponential!(0.5)',
             ],
+            seeAlso: ['Random.random-normal!', 'Random.random-poisson!', 'Random.random-gamma!', 'Random.random-pareto!'],
         },
         'random-binomial!': {
             category: 'Random',
@@ -16050,6 +16317,7 @@ var Playground = (function (exports) {
                 'let { random-binomial! } = import("Random"); random-binomial!(10, 0.5)',
                 'let { random-binomial! } = import("Random"); random-binomial!(20, 0.3)',
             ],
+            seeAlso: ['Random.random-normal!', 'Random.random-poisson!'],
             hideOperatorForm: true,
         },
         'random-poisson!': {
@@ -16075,6 +16343,7 @@ var Playground = (function (exports) {
                 'let { random-poisson! } = import("Random"); random-poisson!(1)',
                 'let { random-poisson! } = import("Random"); random-poisson!(5)',
             ],
+            seeAlso: ['Random.random-binomial!', 'Random.random-normal!', 'Random.random-exponential!'],
         },
         'random-gamma!': {
             category: 'Random',
@@ -16104,6 +16373,7 @@ var Playground = (function (exports) {
                 'let { random-gamma! } = import("Random"); random-gamma!(2, 2)',
                 'let { random-gamma! } = import("Random"); random-gamma!(5, 1)',
             ],
+            seeAlso: ['Random.random-exponential!', 'Random.random-pareto!'],
             hideOperatorForm: true,
         },
         'random-pareto!': {
@@ -16129,6 +16399,7 @@ var Playground = (function (exports) {
                 'let { random-pareto! } = import("Random"); random-pareto!(1)',
                 'let { random-pareto! } = import("Random"); random-pareto!(2)',
             ],
+            seeAlso: ['Random.random-gamma!', 'Random.random-exponential!'],
         },
         'uuid!': {
             category: 'Random',
@@ -16145,6 +16416,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { uuid! } = import("Random"); uuid!()',
             ],
+            seeAlso: ['Random.random-id!', 'Random.random-string!'],
         },
         'random-char!': {
             category: 'Random',
@@ -16169,6 +16441,7 @@ var Playground = (function (exports) {
                 'let { random-char! } = import("Random"); random-char!("abcde")',
                 'let { random-char! } = import("Random"); random-char!("ABCDEFGHIJKLMNOPQRSTUVWXYZ")',
             ],
+            seeAlso: ['Random.random-string!', 'Random.random-item!'],
         },
         'random-string!': {
             category: 'Random',
@@ -16198,6 +16471,7 @@ var Playground = (function (exports) {
                 'let { random-string! } = import("Random"); random-string!(10, "abcde")',
                 'let { random-string! } = import("Random"); random-string!(5, "ABCDEFGHIJKLMNOPQRSTUVWXYZ")',
             ],
+            seeAlso: ['Random.random-char!', 'Random.random-id!', 'Random.uuid!'],
             hideOperatorForm: true,
         },
         'random-id!': {
@@ -16223,6 +16497,7 @@ var Playground = (function (exports) {
                 'let { random-id! } = import("Random"); random-id!(10)',
                 'let { random-id! } = import("Random"); random-id!(5)',
             ],
+            seeAlso: ['Random.random-string!', 'Random.uuid!'],
         },
         'random-color!': {
             category: 'Random',
@@ -16568,6 +16843,7 @@ var Playground = (function (exports) {
                 'let { mean } = import("Vector");\nmean([1, 2, 3])',
                 'let { mean } = import("Vector");\nmean([1, 2, -3])',
             ],
+            seeAlso: ['Vector.moving-mean', 'Vector.centered-moving-mean', 'Vector.running-mean', 'Vector.geometric-mean', 'Vector.harmonic-mean', 'Vector.median', 'Vector.mode', 'Vector.sum', 'Vector.rms'],
         },
         'moving-mean': {
             category: 'Vector',
@@ -16603,6 +16879,7 @@ var Playground = (function (exports) {
                 'let { moving-mean } = import("Vector");\nmoving-mean([1, 2, 3, 4, 5], 3)',
                 'let { moving-mean } = import("Vector");\nmoving-mean([1, 2, 3, 4, 5], 5)',
             ],
+            seeAlso: ['moving-fn', 'Vector.mean', 'Vector.centered-moving-mean', 'Vector.running-mean'],
         },
         'centered-moving-mean': {
             category: 'Vector',
@@ -16662,6 +16939,7 @@ var Playground = (function (exports) {
                 'let { centered-moving-mean } = import("Vector");\ncentered-moving-mean([1, 2, 3, 4, 5], 3, 0, 10)',
                 'let { centered-moving-mean } = import("Vector");\ncentered-moving-mean([1, 2, 3, 4, 5], 3, 10)',
             ],
+            seeAlso: ['Vector.mean', 'Vector.moving-mean', 'Vector.running-mean'],
         },
         'running-mean': {
             category: 'Vector',
@@ -16685,6 +16963,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { running-mean } = import("Vector");\nrunning-mean([1, 2, 3, 4, 5])',
             ],
+            seeAlso: ['running-fn', 'Vector.mean', 'Vector.moving-mean', 'Vector.centered-moving-mean'],
         },
         'geometric-mean': {
             category: 'Vector',
@@ -16709,6 +16988,7 @@ var Playground = (function (exports) {
                 'let { geometric-mean } = import("Vector");\ngeometric-mean([1, 2, 3])',
                 'let { geometric-mean } = import("Vector");\ngeometric-mean([1, 2, 9])',
             ],
+            seeAlso: ['Vector.moving-geometric-mean', 'Vector.centered-moving-geometric-mean', 'Vector.running-geometric-mean', 'Vector.mean', 'Vector.harmonic-mean'],
         },
         'moving-geometric-mean': {
             category: 'Vector',
@@ -16744,6 +17024,7 @@ var Playground = (function (exports) {
                 'let { moving-geometric-mean } = import("Vector");\nmoving-geometric-mean([1, 2, 3, 4, 5], 3)',
                 'let { moving-geometric-mean } = import("Vector");\nmoving-geometric-mean([1, 2, 3, 4, 5], 5)',
             ],
+            seeAlso: ['Vector.geometric-mean', 'Vector.centered-moving-geometric-mean', 'Vector.running-geometric-mean'],
         },
         'centered-moving-geometric-mean': {
             category: 'Vector',
@@ -16803,6 +17084,7 @@ var Playground = (function (exports) {
                 'let { centered-moving-geometric-mean } = import("Vector");\ncentered-moving-geometric-mean([1, 2, 3, 4, 5], 3, 0, 10)',
                 'let { centered-moving-geometric-mean } = import("Vector");\ncentered-moving-geometric-mean([1, 2, 3, 4, 5], 3, 10)',
             ],
+            seeAlso: ['Vector.geometric-mean', 'Vector.moving-geometric-mean', 'Vector.running-geometric-mean'],
         },
         'running-geometric-mean': {
             category: 'Vector',
@@ -16826,6 +17108,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { running-geometric-mean } = import("Vector");\nrunning-geometric-mean([1, 2, 3, 4, 5])',
             ],
+            seeAlso: ['Vector.geometric-mean', 'Vector.moving-geometric-mean', 'Vector.centered-moving-geometric-mean'],
         },
         'harmonic-mean': {
             category: 'Vector',
@@ -16850,6 +17133,7 @@ var Playground = (function (exports) {
                 'let { harmonic-mean } = import("Vector");\nharmonic-mean([1, 2, 3])',
                 'let { harmonic-mean } = import("Vector");\nharmonic-mean([1, 2, 9])',
             ],
+            seeAlso: ['Vector.moving-harmonic-mean', 'Vector.centered-moving-harmonic-mean', 'Vector.running-harmonic-mean', 'Vector.mean', 'Vector.geometric-mean'],
         },
         'moving-harmonic-mean': {
             category: 'Vector',
@@ -16885,6 +17169,7 @@ var Playground = (function (exports) {
                 'let { moving-harmonic-mean } = import("Vector");\nmoving-harmonic-mean([1, 2, 3, 4, 5], 3)',
                 'let { moving-harmonic-mean } = import("Vector");\nmoving-harmonic-mean([1, 2, 3, 4, 5], 5)',
             ],
+            seeAlso: ['Vector.harmonic-mean', 'Vector.centered-moving-harmonic-mean', 'Vector.running-harmonic-mean'],
         },
         'centered-moving-harmonic-mean': {
             category: 'Vector',
@@ -16944,6 +17229,7 @@ var Playground = (function (exports) {
                 'let { centered-moving-harmonic-mean } = import("Vector");\ncentered-moving-harmonic-mean([1, 2, 3, 4, 5], 3, 0, 10)',
                 'let { centered-moving-harmonic-mean } = import("Vector");\ncentered-moving-harmonic-mean([1, 2, 3, 4, 5], 3, 10)',
             ],
+            seeAlso: ['Vector.harmonic-mean', 'Vector.moving-harmonic-mean', 'Vector.running-harmonic-mean'],
         },
         'running-harmonic-mean': {
             category: 'Vector',
@@ -16967,6 +17253,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { running-harmonic-mean } = import("Vector");\nrunning-harmonic-mean([1, 2, 3, 4, 5])',
             ],
+            seeAlso: ['Vector.harmonic-mean', 'Vector.moving-harmonic-mean', 'Vector.centered-moving-harmonic-mean'],
         },
         'median': {
             category: 'Vector',
@@ -16993,6 +17280,7 @@ var Playground = (function (exports) {
                 'let { median } = import("Vector");\nmedian([1, 2, 3, 4])',
                 'let { median } = import("Vector");\nmedian([1, 2, -3, 4])',
             ],
+            seeAlso: ['Vector.moving-median', 'Vector.centered-moving-median', 'Vector.running-median', 'Vector.mean', 'Vector.mode', 'Vector.quartiles', 'Vector.percentile', 'Vector.iqr', 'Vector.medad'],
         },
         'moving-median': {
             category: 'Vector',
@@ -17028,6 +17316,7 @@ var Playground = (function (exports) {
                 'let { moving-median } = import("Vector");\nmoving-median([1, 2, 3, 4, 5], 3)',
                 'let { moving-median } = import("Vector");\nmoving-median([1, 2, 3, 4, 5], 5)',
             ],
+            seeAlso: ['Vector.median', 'Vector.centered-moving-median', 'Vector.running-median'],
         },
         'centered-moving-median': {
             category: 'Vector',
@@ -17087,6 +17376,7 @@ var Playground = (function (exports) {
                 'let { centered-moving-median } = import("Vector");\ncentered-moving-median([1, 2, 3, 4, 5], 3, 0, 10)',
                 'let { centered-moving-median } = import("Vector");\ncentered-moving-median([1, 2, 3, 4, 5], 3, 10)',
             ],
+            seeAlso: ['Vector.median', 'Vector.moving-median', 'Vector.running-median'],
         },
         'running-median': {
             category: 'Vector',
@@ -17110,6 +17400,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { running-median } = import("Vector");\nrunning-median([1, 2, 3, 4, 5])',
             ],
+            seeAlso: ['Vector.median', 'Vector.moving-median', 'Vector.centered-moving-median'],
         },
         'variance': {
             category: 'Vector',
@@ -17134,6 +17425,7 @@ var Playground = (function (exports) {
                 'let { variance } = import("Vector");\nvariance([1, 2, 3])',
                 'let { variance } = import("Vector");\nvariance([1, 2, -3])',
             ],
+            seeAlso: ['Linear-Algebra.cov', 'Vector.moving-variance', 'Vector.centered-moving-variance', 'Vector.running-variance', 'Vector.stdev', 'Vector.sample-variance', 'Vector.mad'],
         },
         'moving-variance': {
             category: 'Vector',
@@ -17169,6 +17461,7 @@ var Playground = (function (exports) {
                 'let { moving-variance } = import("Vector");\nmoving-variance([1, 2, 3, 4, 5], 3)',
                 'let { moving-variance } = import("Vector");\nmoving-variance([1, 2, 3, 4, 5], 5)',
             ],
+            seeAlso: ['Vector.variance', 'Vector.centered-moving-variance', 'Vector.running-variance'],
         },
         'centered-moving-variance': {
             category: 'Vector',
@@ -17229,6 +17522,7 @@ var Playground = (function (exports) {
                 'let { centered-moving-variance } = import("Vector");\ncentered-moving-variance([1, 2, 3, 4, 5], 3, 1, 5)',
                 'let { centered-moving-variance } = import("Vector");\ncentered-moving-variance([1, 2, 3, 4, 5], 3, 0, 6)',
             ],
+            seeAlso: ['Vector.variance', 'Vector.moving-variance', 'Vector.running-variance'],
         },
         'running-variance': {
             category: 'Vector',
@@ -17252,6 +17546,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { running-variance } = import("Vector");\nrunning-variance([1, 2, 3, 4, 5])',
             ],
+            seeAlso: ['Vector.variance', 'Vector.moving-variance', 'Vector.centered-moving-variance'],
         },
         'sample-variance': {
             category: 'Vector',
@@ -17279,6 +17574,7 @@ var Playground = (function (exports) {
                 'let { sample-variance } = import("Vector");\nsample-variance([1, 2, -3, 4])',
                 'let { sample-variance } = import("Vector");\nsample-variance([1, 2, 3, 40, 50])',
             ],
+            seeAlso: ['Vector.moving-sample-variance', 'Vector.centered-moving-sample-variance', 'Vector.running-sample-variance', 'Vector.variance', 'Vector.sample-stdev'],
         },
         'moving-sample-variance': {
             category: 'Vector',
@@ -17314,6 +17610,7 @@ var Playground = (function (exports) {
                 'let { moving-sample-variance } = import("Vector");\nmoving-sample-variance([1, 2, 3, 4, 5], 3)',
                 'let { moving-sample-variance } = import("Vector");\nmoving-sample-variance([1, 2, 3, 4, 5], 5)',
             ],
+            seeAlso: ['Vector.sample-variance', 'Vector.centered-moving-sample-variance', 'Vector.running-sample-variance'],
         },
         'centered-moving-sample-variance': {
             category: 'Vector',
@@ -17374,6 +17671,7 @@ var Playground = (function (exports) {
                 'let { centered-moving-sample-variance } = import("Vector");\ncentered-moving-sample-variance([1, 2, 3, 4, 5], 3, 1, 5)',
                 'let { centered-moving-sample-variance } = import("Vector");\ncentered-moving-sample-variance([1, 2, 3, 4, 5], 3, 0, 6)',
             ],
+            seeAlso: ['Vector.sample-variance', 'Vector.moving-sample-variance', 'Vector.running-sample-variance'],
         },
         'running-sample-variance': {
             category: 'Vector',
@@ -17397,6 +17695,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { running-sample-variance } = import("Vector");\nrunning-sample-variance([1, 2, 3, 4, 5])',
             ],
+            seeAlso: ['Vector.sample-variance', 'Vector.moving-sample-variance', 'Vector.centered-moving-sample-variance'],
         },
         'stdev': {
             category: 'Vector',
@@ -17424,6 +17723,7 @@ var Playground = (function (exports) {
                 'let { stdev } = import("Vector");\nstdev([1, 2, -3, 4])',
                 'let { stdev } = import("Vector");\nstdev([1, 2, 3, 40, 50])',
             ],
+            seeAlso: ['Vector.moving-stdev', 'Vector.centered-moving-stdev', 'Vector.running-stdev', 'Vector.variance', 'Vector.sample-stdev', 'Vector.rms', 'Vector.mad'],
         },
         'moving-stdev': {
             category: 'Vector',
@@ -17459,6 +17759,7 @@ var Playground = (function (exports) {
                 'let { moving-stdev } = import("Vector");\nmoving-stdev([1, 2, 3, 4, 5], 3)',
                 'let { moving-stdev } = import("Vector");\nmoving-stdev([1, 2, 3, 4, 5], 5)',
             ],
+            seeAlso: ['Vector.stdev', 'Vector.centered-moving-stdev', 'Vector.running-stdev'],
         },
         'centered-moving-stdev': {
             category: 'Vector',
@@ -17519,6 +17820,7 @@ var Playground = (function (exports) {
                 'let { centered-moving-stdev } = import("Vector");\ncentered-moving-stdev([1, 2, 3, 4, 5], 3, 1, 5)',
                 'let { centered-moving-stdev } = import("Vector");\ncentered-moving-stdev([1, 2, 3, 4, 5], 3, 0, 6)',
             ],
+            seeAlso: ['Vector.stdev', 'Vector.moving-stdev', 'Vector.running-stdev'],
         },
         'running-stdev': {
             category: 'Vector',
@@ -17542,6 +17844,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { running-stdev } = import("Vector");\nrunning-stdev([1, 2, 3, 4, 5])',
             ],
+            seeAlso: ['Vector.stdev', 'Vector.moving-stdev', 'Vector.centered-moving-stdev'],
         },
         'sample-stdev': {
             category: 'Vector',
@@ -17569,6 +17872,7 @@ var Playground = (function (exports) {
                 'let { sample-stdev } = import("Vector");\nsample-stdev([1, 2, -3, 4])',
                 'let { sample-stdev } = import("Vector");\nsample-stdev([1, 2, 3, 40, 50])',
             ],
+            seeAlso: ['Vector.moving-sample-stdev', 'Vector.centered-moving-sample-stdev', 'Vector.running-sample-stdev', 'Vector.stdev', 'Vector.sample-variance'],
         },
         'moving-sample-stdev': {
             category: 'Vector',
@@ -17604,6 +17908,7 @@ var Playground = (function (exports) {
                 'let { moving-sample-stdev } = import("Vector");\nmoving-sample-stdev([1, 2, 3, 4, 5], 3)',
                 'let { moving-sample-stdev } = import("Vector");\nmoving-sample-stdev([1, 2, 3, 4, 5], 5)',
             ],
+            seeAlso: ['Vector.sample-stdev', 'Vector.centered-moving-sample-stdev', 'Vector.running-sample-stdev'],
         },
         'centered-moving-sample-stdev': {
             category: 'Vector',
@@ -17664,6 +17969,7 @@ var Playground = (function (exports) {
                 'let { centered-moving-sample-stdev } = import("Vector");\ncentered-moving-sample-stdev([1, 2, 3, 4, 5], 3, 1, 5)',
                 'let { centered-moving-sample-stdev } = import("Vector");\ncentered-moving-sample-stdev([1, 2, 3, 4, 5], 3, 0, 6)',
             ],
+            seeAlso: ['Vector.sample-stdev', 'Vector.moving-sample-stdev', 'Vector.running-sample-stdev'],
         },
         'running-sample-stdev': {
             category: 'Vector',
@@ -17687,6 +17993,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { running-sample-stdev } = import("Vector");\nrunning-sample-stdev([1, 2, 3, 4, 5])',
             ],
+            seeAlso: ['Vector.sample-stdev', 'Vector.moving-sample-stdev', 'Vector.centered-moving-sample-stdev'],
         },
         'iqr': {
             category: 'Vector',
@@ -17714,6 +18021,7 @@ var Playground = (function (exports) {
                 'let { iqr, generate } = import("Vector");\niqr(generate(1000, -> 1e6 / ($ + 1) ^ 2))',
                 'let { iqr, generate } = import("Vector");\niqr(generate(1000, -> ln($ + 1)))',
             ],
+            seeAlso: ['Vector.moving-iqr', 'Vector.centered-moving-iqr', 'Vector.running-iqr', 'Vector.quartiles', 'Vector.median', 'Vector.mad', 'Vector.medad', 'Vector.outliers?', 'Vector.outliers'],
         },
         'moving-iqr': {
             category: 'Vector',
@@ -17750,6 +18058,7 @@ var Playground = (function (exports) {
                 'let { moving-iqr } = import("Vector");\nmoving-iqr([1, 2, 4, 7, 11, 16], 5)',
                 'let { moving-iqr } = import("Vector");\nmoving-iqr([1, 2, 4, 7, 11, 16], 6)',
             ],
+            seeAlso: ['Vector.iqr', 'Vector.centered-moving-iqr', 'Vector.running-iqr'],
         },
         'centered-moving-iqr': {
             category: 'Vector',
@@ -17808,6 +18117,7 @@ var Playground = (function (exports) {
                 'let { centered-moving-iqr } = import("Vector");\ncentered-moving-iqr([1, 2, 4, 7, 11, 16], 4)',
                 'let { centered-moving-iqr } = import("Vector");\ncentered-moving-iqr([1, 2, 4, 7, 11, 16], 4, 0, 0)',
             ],
+            seeAlso: ['Vector.iqr', 'Vector.moving-iqr', 'Vector.running-iqr'],
         },
         'running-iqr': {
             category: 'Vector',
@@ -17832,6 +18142,7 @@ var Playground = (function (exports) {
                 'let { running-iqr } = import("Vector");\nrunning-iqr([1, 2, 3, 4, 5, 6])',
                 'let { running-iqr } = import("Vector");\nrunning-iqr([-1, -2, -3, 1, 2, 3])',
             ],
+            seeAlso: ['Vector.iqr', 'Vector.moving-iqr', 'Vector.centered-moving-iqr'],
         },
         'sum': {
             category: 'Vector',
@@ -17856,6 +18167,7 @@ var Playground = (function (exports) {
                 'let { sum } = import("Vector");\nsum([1, 2, 3])',
                 'let { sum } = import("Vector");\nsum([1, 2, -3])',
             ],
+            seeAlso: ['Vector.moving-sum', 'Vector.centered-moving-sum', 'Vector.running-sum', 'Vector.prod', 'Vector.cumsum', 'Vector.mean'],
         },
         'moving-sum': {
             category: 'Vector',
@@ -17891,6 +18203,7 @@ var Playground = (function (exports) {
                 'let { moving-sum } = import("Vector");\nmoving-sum([1, 2, 3, 4, 5], 3)',
                 'let { moving-sum } = import("Vector");\nmoving-sum([1, 2, 3, 4, 5], 5)',
             ],
+            seeAlso: ['Vector.sum', 'Vector.centered-moving-sum', 'Vector.running-sum'],
         },
         'centered-moving-sum': {
             category: 'Vector',
@@ -17950,6 +18263,7 @@ var Playground = (function (exports) {
                 'let { centered-moving-sum } = import("Vector");\ncentered-moving-sum([1, 2, 3, 4, 5], 3, 0, 0)',
                 'let { centered-moving-sum } = import("Vector");\ncentered-moving-sum([1, 2, 3, 4, 5], 3, 10)',
             ],
+            seeAlso: ['Vector.sum', 'Vector.moving-sum', 'Vector.running-sum'],
         },
         'running-sum': {
             category: 'Vector',
@@ -17974,6 +18288,7 @@ var Playground = (function (exports) {
                 'let { running-sum } = import("Vector");\nrunning-sum([1, 2, 3])',
                 'let { running-sum } = import("Vector");\nrunning-sum([1, -2, -3])',
             ],
+            seeAlso: ['Vector.sum', 'Vector.moving-sum', 'Vector.centered-moving-sum', 'Vector.cumsum'],
         },
         'prod': {
             category: 'Vector',
@@ -17998,6 +18313,7 @@ var Playground = (function (exports) {
                 'let { prod } = import("Vector");\nprod([1, 2, 3])',
                 'let { prod } = import("Vector");\nprod([1, 2, -3])',
             ],
+            seeAlso: ['Vector.moving-prod', 'Vector.centered-moving-prod', 'Vector.running-prod', 'Vector.sum', 'Vector.cumprod'],
         },
         'moving-prod': {
             category: 'Vector',
@@ -18033,6 +18349,7 @@ var Playground = (function (exports) {
                 'let { moving-prod } = import("Vector");\nmoving-prod([1, 2, 3, 4, 5], 3)',
                 'let { moving-prod } = import("Vector");\nmoving-prod([1, 2, 3, 4, 5], 5)',
             ],
+            seeAlso: ['Vector.prod', 'Vector.centered-moving-prod', 'Vector.running-prod'],
         },
         'centered-moving-prod': {
             category: 'Vector',
@@ -18091,6 +18408,7 @@ var Playground = (function (exports) {
                 'let { centered-moving-prod } = import("Vector");\ncentered-moving-prod([1, 2, 3, 4, 5], 3)',
                 'let { centered-moving-prod } = import("Vector");\ncentered-moving-prod([1, 2, 3, 4, 5], 3, 0, 0)',
             ],
+            seeAlso: ['Vector.prod', 'Vector.moving-prod', 'Vector.running-prod'],
         },
         'running-prod': {
             category: 'Vector',
@@ -18115,6 +18433,7 @@ var Playground = (function (exports) {
                 'let { running-prod } = import("Vector");\nrunning-prod([1, 2, 3, 4, 5])',
                 'let { running-prod } = import("Vector");\nrunning-prod([1, -2, -3])',
             ],
+            seeAlso: ['Vector.prod', 'Vector.moving-prod', 'Vector.centered-moving-prod', 'Vector.cumprod'],
         },
         'min': {
             category: 'Vector',
@@ -18142,6 +18461,7 @@ var Playground = (function (exports) {
                 '// Using "as" alias because "min" shadows a builtin function\nlet { min as vec-min } = import("Vector");\nvec-min([1, 2, 3, 4])',
                 '// Using "as" alias because "min" shadows a builtin function\nlet { min as vec-min } = import("Vector");\nvec-min([1, 2, -3, 4])',
             ],
+            seeAlso: ['min', 'Vector.moving-min', 'Vector.centered-moving-min', 'Vector.running-min', 'Vector.max', 'Vector.span', 'Vector.min-index'],
         },
         'moving-min': {
             category: 'Vector',
@@ -18177,6 +18497,7 @@ var Playground = (function (exports) {
                 'let { moving-min } = import("Vector");\nmoving-min([1, 2, 3, 4, 5], 3)',
                 'let { moving-min } = import("Vector");\nmoving-min([1, 2, 3, 4, 5], 5)',
             ],
+            seeAlso: ['Vector.min', 'Vector.centered-moving-min', 'Vector.running-min'],
         },
         'centered-moving-min': {
             category: 'Vector',
@@ -18236,6 +18557,7 @@ var Playground = (function (exports) {
                 'let { centered-moving-min } = import("Vector");\ncentered-moving-min([1, 2, 3, 4, 5], 3, 0, 100)',
                 'let { centered-moving-min } = import("Vector");\ncentered-moving-min([1, 2, 3, 4, 5], 3, 0)',
             ],
+            seeAlso: ['Vector.min', 'Vector.moving-min', 'Vector.running-min'],
         },
         'running-min': {
             category: 'Vector',
@@ -18260,6 +18582,7 @@ var Playground = (function (exports) {
                 'let { running-min } = import("Vector");\nrunning-min([1, 2, 3])',
                 'let { running-min } = import("Vector");\nrunning-min([1, -2, -3])',
             ],
+            seeAlso: ['Vector.min', 'Vector.moving-min', 'Vector.centered-moving-min'],
         },
         'max': {
             category: 'Vector',
@@ -18287,6 +18610,7 @@ var Playground = (function (exports) {
                 '// Using "as" alias because "max" shadows a builtin function\nlet { max as vec-max } = import("Vector");\nvec-max([1, 2, 3, 4])',
                 '// Using "as" alias because "max" shadows a builtin function\nlet { max as vec-max } = import("Vector");\nvec-max([1, 2, -3, 4])',
             ],
+            seeAlso: ['max', 'Vector.moving-max', 'Vector.centered-moving-max', 'Vector.running-max', 'Vector.min', 'Vector.span', 'Vector.max-index'],
         },
         'moving-max': {
             category: 'Vector',
@@ -18322,6 +18646,7 @@ var Playground = (function (exports) {
                 'let { moving-max } = import("Vector");\nmoving-max([1, 2, 3, 4, 5], 3)',
                 'let { moving-max } = import("Vector");\nmoving-max([1, 2, 3, 4, 5], 5)',
             ],
+            seeAlso: ['Vector.max', 'Vector.centered-moving-max', 'Vector.running-max'],
         },
         'centered-moving-max': {
             category: 'Vector',
@@ -18381,6 +18706,7 @@ var Playground = (function (exports) {
                 'let { centered-moving-max } = import("Vector");\ncentered-moving-max([1, 2, 3, 4, 5], 3, 0, 100)',
                 'let { centered-moving-max } = import("Vector");\ncentered-moving-max([1, 2, 3, 4, 5], 3, 0)',
             ],
+            seeAlso: ['Vector.max', 'Vector.moving-max', 'Vector.running-max'],
         },
         'running-max': {
             category: 'Vector',
@@ -18405,6 +18731,7 @@ var Playground = (function (exports) {
                 'let { running-max } = import("Vector");\nrunning-max([1, 2, 3])',
                 'let { running-max } = import("Vector");\nrunning-max([1, -2, -3])',
             ],
+            seeAlso: ['Vector.max', 'Vector.moving-max', 'Vector.centered-moving-max'],
         },
         'span': {
             category: 'Vector',
@@ -18430,6 +18757,7 @@ var Playground = (function (exports) {
                 'let { span } = import("Vector");\nspan([1, 1, 2, 3, 3])',
                 'let { span } = import("Vector");\nspan([1, 2, -3])',
             ],
+            seeAlso: ['Vector.moving-span', 'Vector.centered-moving-span', 'Vector.running-span', 'Vector.min', 'Vector.max'],
         },
         'moving-span': {
             category: 'Vector',
@@ -18466,6 +18794,7 @@ var Playground = (function (exports) {
                 'let { moving-span } = import("Vector");\nmoving-span([1, 2, 4, 7, 11, 16], 5)',
                 'let { moving-span } = import("Vector");\nmoving-span([1, 2, 4, 7, 11, 16], 6)',
             ],
+            seeAlso: ['Vector.span', 'Vector.centered-moving-span', 'Vector.running-span'],
         },
         'centered-moving-span': {
             category: 'Vector',
@@ -18524,6 +18853,7 @@ var Playground = (function (exports) {
                 'let { centered-moving-span } = import("Vector");\ncentered-moving-span([1, 2, 4, 7, 11, 16], 4)',
                 'let { centered-moving-span } = import("Vector");\ncentered-moving-span([1, 2, 4, 7, 11, 16], 3, 0, 100)',
             ],
+            seeAlso: ['Vector.span', 'Vector.moving-span', 'Vector.running-span'],
         },
         'running-span': {
             category: 'Vector',
@@ -18547,6 +18877,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { running-span } = import("Vector");\nrunning-span([1, 2, 4])',
             ],
+            seeAlso: ['Vector.span', 'Vector.moving-span', 'Vector.centered-moving-span'],
         },
         'skewness': {
             category: 'Vector',
@@ -18571,6 +18902,7 @@ var Playground = (function (exports) {
                 'let { skewness } = import("Vector");\nskewness([1, 2, 3, 6, 20])',
                 'let { skewness } = import("Vector");\nskewness([1, 2, 2, 3])',
             ],
+            seeAlso: ['Vector.moving-skewness', 'Vector.centered-moving-skewness', 'Vector.running-skewness', 'Vector.kurtosis', 'Vector.sample-skewness', 'Vector.excess-kurtosis'],
         },
         'moving-skewness': {
             category: 'Vector',
@@ -18606,6 +18938,7 @@ var Playground = (function (exports) {
                 'let { moving-skewness } = import("Vector");\nmoving-skewness([1, 2, 4, 7, 11, 16], 4)',
                 'let { moving-skewness } = import("Vector");\nmoving-skewness([1, 2, 4, 7, 11, 16], 5)',
             ],
+            seeAlso: ['Vector.skewness', 'Vector.centered-moving-skewness', 'Vector.running-skewness'],
         },
         'centered-moving-skewness': {
             category: 'Vector',
@@ -18664,6 +18997,7 @@ var Playground = (function (exports) {
                 'let { centered-moving-skewness } = import("Vector");\ncentered-moving-skewness([1, 2, 4, 7, 11, 16], 4)',
                 'let { centered-moving-skewness } = import("Vector");\ncentered-moving-skewness([1, 2, 4, 7, 11, 16], 4, 0, 0)',
             ],
+            seeAlso: ['Vector.skewness', 'Vector.moving-skewness', 'Vector.running-skewness'],
         },
         'running-skewness': {
             category: 'Vector',
@@ -18687,6 +19021,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { running-skewness } = import("Vector");\nrunning-skewness([1, 2, 4, 7, 11])',
             ],
+            seeAlso: ['Vector.skewness', 'Vector.moving-skewness', 'Vector.centered-moving-skewness'],
         },
         'sample-skewness': {
             category: 'Vector',
@@ -18711,6 +19046,7 @@ var Playground = (function (exports) {
                 'let { sample-skewness } = import("Vector");\nsample-skewness([1, 2, 3, 6, 20])',
                 'let { sample-skewness } = import("Vector");\nsample-skewness([1, 2, 2, 3])',
             ],
+            seeAlso: ['Vector.moving-sample-skewness', 'Vector.centered-moving-sample-skewness', 'Vector.running-sample-skewness', 'Vector.skewness', 'Vector.sample-kurtosis'],
         },
         'moving-sample-skewness': {
             category: 'Vector',
@@ -18746,6 +19082,7 @@ var Playground = (function (exports) {
                 'let { moving-sample-skewness } = import("Vector");\nmoving-sample-skewness([1, 2, 4, 7, 11, 16], 4)',
                 'let { moving-sample-skewness } = import("Vector");\nmoving-sample-skewness([1, 2, 4, 7, 11, 16], 5)',
             ],
+            seeAlso: ['Vector.sample-skewness', 'Vector.centered-moving-sample-skewness', 'Vector.running-sample-skewness'],
         },
         'centered-moving-sample-skewness': {
             category: 'Vector',
@@ -18804,6 +19141,7 @@ var Playground = (function (exports) {
                 'let { centered-moving-sample-skewness } = import("Vector");\ncentered-moving-sample-skewness([1, 2, 4, 7, 11, 16], 4)',
                 'let { centered-moving-sample-skewness } = import("Vector");\ncentered-moving-sample-skewness([1, 2, 4, 7, 11, 16], 3, 0, 100)',
             ],
+            seeAlso: ['Vector.sample-skewness', 'Vector.moving-sample-skewness', 'Vector.running-sample-skewness'],
         },
         'running-sample-skewness': {
             category: 'Vector',
@@ -18827,6 +19165,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { running-sample-skewness } = import("Vector");\nrunning-sample-skewness([1, 2, 4, 7, 11])',
             ],
+            seeAlso: ['Vector.sample-skewness', 'Vector.moving-sample-skewness', 'Vector.centered-moving-sample-skewness'],
         },
         'excess-kurtosis': {
             category: 'Vector',
@@ -18851,6 +19190,7 @@ var Playground = (function (exports) {
                 'let { excess-kurtosis } = import("Vector");\nexcess-kurtosis([1, 2, 3, 6, 20])',
                 'let { excess-kurtosis } = import("Vector");\nexcess-kurtosis([1, 2, 2, 3])',
             ],
+            seeAlso: ['Vector.moving-excess-kurtosis', 'Vector.centered-moving-excess-kurtosis', 'Vector.running-excess-kurtosis', 'Vector.kurtosis', 'Vector.sample-excess-kurtosis', 'Vector.skewness'],
         },
         'moving-excess-kurtosis': {
             category: 'Vector',
@@ -18886,6 +19226,7 @@ var Playground = (function (exports) {
                 'let { moving-excess-kurtosis } = import("Vector");\nmoving-excess-kurtosis([1, 2, 4, 7, 11, 16], 4)',
                 'let { moving-excess-kurtosis } = import("Vector");\nmoving-excess-kurtosis([1, 2, 4, 7, 11, 16], 5)',
             ],
+            seeAlso: ['Vector.excess-kurtosis', 'Vector.centered-moving-excess-kurtosis', 'Vector.running-excess-kurtosis'],
         },
         'centered-moving-excess-kurtosis': {
             category: 'Vector',
@@ -18944,6 +19285,7 @@ var Playground = (function (exports) {
                 'let { centered-moving-excess-kurtosis } = import("Vector");\ncentered-moving-excess-kurtosis([1, 2, 4, 7, 11, 16], 4)',
                 'let { centered-moving-excess-kurtosis } = import("Vector");\ncentered-moving-excess-kurtosis([1, 2, 4, 7, 11, 16], 4, 0, 0)',
             ],
+            seeAlso: ['Vector.excess-kurtosis', 'Vector.moving-excess-kurtosis', 'Vector.running-excess-kurtosis'],
         },
         'running-excess-kurtosis': {
             category: 'Vector',
@@ -18967,6 +19309,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { running-excess-kurtosis } = import("Vector");\nrunning-excess-kurtosis([1, 2, 4, 7, 11])',
             ],
+            seeAlso: ['Vector.excess-kurtosis', 'Vector.moving-excess-kurtosis', 'Vector.centered-moving-excess-kurtosis'],
         },
         'kurtosis': {
             category: 'Vector',
@@ -18991,6 +19334,7 @@ var Playground = (function (exports) {
                 'let { kurtosis } = import("Vector");\nkurtosis([1, 2, 3, 6, 20])',
                 'let { kurtosis } = import("Vector");\nkurtosis([1, 2, 2, 3])',
             ],
+            seeAlso: ['Vector.moving-kurtosis', 'Vector.centered-moving-kurtosis', 'Vector.running-kurtosis', 'Vector.excess-kurtosis', 'Vector.sample-kurtosis', 'Vector.skewness'],
         },
         'moving-kurtosis': {
             category: 'Vector',
@@ -19026,6 +19370,7 @@ var Playground = (function (exports) {
                 'let { moving-kurtosis } = import("Vector");\nmoving-kurtosis([1, 2, 4, 7, 11, 16], 4)',
                 'let { moving-kurtosis } = import("Vector");\nmoving-kurtosis([1, 2, 4, 7, 11, 16], 5)',
             ],
+            seeAlso: ['Vector.kurtosis', 'Vector.centered-moving-kurtosis', 'Vector.running-kurtosis'],
         },
         'centered-moving-kurtosis': {
             category: 'Vector',
@@ -19084,6 +19429,7 @@ var Playground = (function (exports) {
                 'let { centered-moving-kurtosis } = import("Vector");\ncentered-moving-kurtosis([1, 2, 4, 7, 11, 16], 4)',
                 'let { centered-moving-kurtosis } = import("Vector");\ncentered-moving-kurtosis([1, 2, 4, 7, 11, 16], 4, 0, 0)',
             ],
+            seeAlso: ['Vector.kurtosis', 'Vector.moving-kurtosis', 'Vector.running-kurtosis'],
         },
         'running-kurtosis': {
             category: 'Vector',
@@ -19107,6 +19453,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { running-kurtosis } = import("Vector");\nrunning-kurtosis([1, 2, 4, 7, 11])',
             ],
+            seeAlso: ['Vector.kurtosis', 'Vector.moving-kurtosis', 'Vector.centered-moving-kurtosis'],
         },
         'sample-excess-kurtosis': {
             category: 'Vector',
@@ -19131,6 +19478,7 @@ var Playground = (function (exports) {
                 'let { sample-excess-kurtosis } = import("Vector");\nsample-excess-kurtosis([1, 2, 3, 6, 20])',
                 'let { sample-excess-kurtosis } = import("Vector");\nsample-excess-kurtosis([1, 2, 2, 3])',
             ],
+            seeAlso: ['Vector.moving-sample-excess-kurtosis', 'Vector.centered-moving-sample-excess-kurtosis', 'Vector.running-sample-excess-kurtosis', 'Vector.sample-kurtosis', 'Vector.excess-kurtosis'],
         },
         'moving-sample-excess-kurtosis': {
             category: 'Vector',
@@ -19166,6 +19514,7 @@ var Playground = (function (exports) {
                 'let { moving-sample-excess-kurtosis } = import("Vector");\nmoving-sample-excess-kurtosis([1, 2, 4, 7, 11, 16], 4)',
                 'let { moving-sample-excess-kurtosis } = import("Vector");\nmoving-sample-excess-kurtosis([1, 2, 4, 7, 11, 16], 5)',
             ],
+            seeAlso: ['Vector.sample-excess-kurtosis', 'Vector.centered-moving-sample-excess-kurtosis', 'Vector.running-sample-excess-kurtosis'],
         },
         'centered-moving-sample-excess-kurtosis': {
             category: 'Vector',
@@ -19224,6 +19573,7 @@ var Playground = (function (exports) {
                 'let { centered-moving-sample-excess-kurtosis } = import("Vector");\ncentered-moving-sample-excess-kurtosis([1, 2, 4, 7, 11, 16], 4)',
                 'let { centered-moving-sample-excess-kurtosis } = import("Vector");\ncentered-moving-sample-excess-kurtosis([1, 2, 4, 7, 11, 16], 4, 0, 100)',
             ],
+            seeAlso: ['Vector.sample-excess-kurtosis', 'Vector.moving-sample-excess-kurtosis', 'Vector.running-sample-excess-kurtosis'],
         },
         'running-sample-excess-kurtosis': {
             category: 'Vector',
@@ -19247,6 +19597,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { running-sample-excess-kurtosis } = import("Vector");\nrunning-sample-excess-kurtosis([1, 2, 4, 7, 11])',
             ],
+            seeAlso: ['Vector.sample-excess-kurtosis', 'Vector.moving-sample-excess-kurtosis', 'Vector.centered-moving-sample-excess-kurtosis'],
         },
         'sample-kurtosis': {
             category: 'Vector',
@@ -19271,6 +19622,7 @@ var Playground = (function (exports) {
                 'let { sample-kurtosis } = import("Vector");\nsample-kurtosis([1, 2, 3, 6, 20])',
                 'let { sample-kurtosis } = import("Vector");\nsample-kurtosis([1, 2, 2, 3])',
             ],
+            seeAlso: ['Vector.moving-sample-kurtosis', 'Vector.centered-moving-sample-kurtosis', 'Vector.running-sample-kurtosis', 'Vector.sample-excess-kurtosis', 'Vector.kurtosis', 'Vector.sample-skewness'],
         },
         'moving-sample-kurtosis': {
             category: 'Vector',
@@ -19306,6 +19658,7 @@ var Playground = (function (exports) {
                 'let { moving-sample-kurtosis } = import("Vector");\nmoving-sample-kurtosis([1, 2, 4, 7, 11, 16], 4)',
                 'let { moving-sample-kurtosis } = import("Vector");\nmoving-sample-kurtosis([1, 2, 4, 7, 11, 16], 5)',
             ],
+            seeAlso: ['Vector.sample-kurtosis', 'Vector.centered-moving-sample-kurtosis', 'Vector.running-sample-kurtosis'],
         },
         'centered-moving-sample-kurtosis': {
             category: 'Vector',
@@ -19364,6 +19717,7 @@ var Playground = (function (exports) {
                 'let { centered-moving-sample-kurtosis } = import("Vector");\ncentered-moving-sample-kurtosis([1, 2, 4, 7, 11, 16], 4)',
                 'let { centered-moving-sample-kurtosis } = import("Vector");\ncentered-moving-sample-kurtosis([1, 2, 4, 7, 11, 16], 4, 0, 100)',
             ],
+            seeAlso: ['Vector.sample-kurtosis', 'Vector.moving-sample-kurtosis', 'Vector.running-sample-kurtosis'],
         },
         'running-sample-kurtosis': {
             category: 'Vector',
@@ -19387,6 +19741,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { running-sample-kurtosis } = import("Vector");\nrunning-sample-kurtosis([1, 2, 4, 7, 11])',
             ],
+            seeAlso: ['Vector.sample-kurtosis', 'Vector.moving-sample-kurtosis', 'Vector.centered-moving-sample-kurtosis'],
         },
         'rms': {
             category: 'Vector',
@@ -19414,6 +19769,7 @@ var Playground = (function (exports) {
                 'let { rms, generate } = import("Vector");\nrms(generate(1000, -> 1e6 / ($ + 1) ^ 2))',
                 'let { rms, generate } = import("Vector");\nrms(generate(1000, -> ln($ + 1)))',
             ],
+            seeAlso: ['Vector.moving-rms', 'Vector.centered-moving-rms', 'Vector.running-rms', 'Vector.mean', 'Vector.stdev'],
         },
         'moving-rms': {
             category: 'Vector',
@@ -19450,6 +19806,7 @@ var Playground = (function (exports) {
                 'let { moving-rms } = import("Vector");\nmoving-rms([1, 2, 4, 7, 11, 16], 5)',
                 'let { moving-rms } = import("Vector");\nmoving-rms([1, 2, 4, 7, 11, 16], 6)',
             ],
+            seeAlso: ['Vector.rms', 'Vector.centered-moving-rms', 'Vector.running-rms'],
         },
         'centered-moving-rms': {
             category: 'Vector',
@@ -19509,6 +19866,7 @@ var Playground = (function (exports) {
                 'let { centered-moving-rms } = import("Vector");\ncentered-moving-rms([1, 2, 4, 7, 11, 16], 5, 0)',
                 'let { centered-moving-rms } = import("Vector");\ncentered-moving-rms([1, 2, 4, 7, 11, 16], 6, 0, 0)',
             ],
+            seeAlso: ['Vector.rms', 'Vector.moving-rms', 'Vector.running-rms'],
         },
         'running-rms': {
             category: 'Vector',
@@ -19535,6 +19893,7 @@ var Playground = (function (exports) {
                 'let { running-rms } = import("Vector");\nrunning-rms([-1, -2, -3])',
                 'let { running-rms } = import("Vector");\nrunning-rms([0])',
             ],
+            seeAlso: ['Vector.rms', 'Vector.moving-rms', 'Vector.centered-moving-rms'],
         },
         'mad': {
             category: 'Vector',
@@ -19559,6 +19918,7 @@ var Playground = (function (exports) {
                 'let { mad } = import("Vector");\nmad([1, 2, 3])',
                 'let { mad } = import("Vector");\nmad([1, 2, -3])',
             ],
+            seeAlso: ['Vector.moving-mad', 'Vector.centered-moving-mad', 'Vector.running-mad', 'Vector.medad', 'Vector.stdev', 'Vector.variance', 'Vector.iqr'],
         },
         'moving-mad': {
             category: 'Vector',
@@ -19594,6 +19954,7 @@ var Playground = (function (exports) {
                 'let { moving-mad } = import("Vector");\nmoving-mad([1, 2, 3, 4, 5], 3)',
                 'let { moving-mad } = import("Vector");\nmoving-mad([1, 2, 3, 4, 5], 5)',
             ],
+            seeAlso: ['Vector.mad', 'Vector.centered-moving-mad', 'Vector.running-mad'],
         },
         'centered-moving-mad': {
             category: 'Vector',
@@ -19652,6 +20013,7 @@ var Playground = (function (exports) {
                 'let { centered-moving-mad } = import("Vector");\ncentered-moving-mad([1, 2, 3, 4, 5], 3)',
                 'let { centered-moving-mad } = import("Vector");\ncentered-moving-mad([1, 2, 3, 4, 5], 5)',
             ],
+            seeAlso: ['Vector.mad', 'Vector.moving-mad', 'Vector.running-mad'],
         },
         'running-mad': {
             category: 'Vector',
@@ -19676,6 +20038,7 @@ var Playground = (function (exports) {
                 'let { running-mad } = import("Vector");\nrunning-mad([1, 2, 3])',
                 'let { running-mad } = import("Vector");\nrunning-mad([1, 2, -3])',
             ],
+            seeAlso: ['Vector.mad', 'Vector.moving-mad', 'Vector.centered-moving-mad'],
         },
         'medad': {
             category: 'Vector',
@@ -19700,6 +20063,7 @@ var Playground = (function (exports) {
                 'let { medad } = import("Vector");\nmedad([1, 2, 3])',
                 'let { medad } = import("Vector");\nmedad([1, 2, -3])',
             ],
+            seeAlso: ['Vector.moving-medad', 'Vector.centered-moving-medad', 'Vector.running-medad', 'Vector.mad', 'Vector.median', 'Vector.iqr'],
         },
         'moving-medad': {
             category: 'Vector',
@@ -19735,6 +20099,7 @@ var Playground = (function (exports) {
                 'let { moving-medad } = import("Vector");\nmoving-medad([1, 2, 3, 4, 5], 3)',
                 'let { moving-medad } = import("Vector");\nmoving-medad([1, 2, 3, 4, 5], 5)',
             ],
+            seeAlso: ['Vector.medad', 'Vector.centered-moving-medad', 'Vector.running-medad'],
         },
         'centered-moving-medad': {
             category: 'Vector',
@@ -19793,6 +20158,7 @@ var Playground = (function (exports) {
                 'let { centered-moving-medad } = import("Vector");\ncentered-moving-medad([1, 2, 3, 4, 5], 3)',
                 'let { centered-moving-medad } = import("Vector");\ncentered-moving-medad([1, 2, 3, 4, 5], 5)',
             ],
+            seeAlso: ['Vector.medad', 'Vector.moving-medad', 'Vector.running-medad'],
         },
         'running-medad': {
             category: 'Vector',
@@ -19817,6 +20183,7 @@ var Playground = (function (exports) {
                 'let { running-medad } = import("Vector");\nrunning-medad([1, 2, 3])',
                 'let { running-medad } = import("Vector");\nrunning-medad([1, 2, -3])',
             ],
+            seeAlso: ['Vector.medad', 'Vector.moving-medad', 'Vector.centered-moving-medad'],
         },
         'gini-coefficient': {
             category: 'Vector',
@@ -19841,6 +20208,7 @@ var Playground = (function (exports) {
                 'let { gini-coefficient } = import("Vector");\ngini-coefficient([1, 2, 3])',
                 'let { gini-coefficient } = import("Vector");\ngini-coefficient([1, 1, 3])',
             ],
+            seeAlso: ['Vector.moving-gini-coefficient', 'Vector.centered-moving-gini-coefficient', 'Vector.running-gini-coefficient', 'Vector.entropy'],
         },
         'moving-gini-coefficient': {
             category: 'Vector',
@@ -19876,6 +20244,7 @@ var Playground = (function (exports) {
                 'let { moving-gini-coefficient } = import("Vector");\nmoving-gini-coefficient([1, 2, 3], 2)',
                 'let { moving-gini-coefficient } = import("Vector");\nmoving-gini-coefficient([1, 1, 3], 2)',
             ],
+            seeAlso: ['Vector.gini-coefficient', 'Vector.centered-moving-gini-coefficient', 'Vector.running-gini-coefficient'],
         },
         'centered-moving-gini-coefficient': {
             category: 'Vector',
@@ -19934,6 +20303,7 @@ var Playground = (function (exports) {
                 'let { centered-moving-gini-coefficient } = import("Vector");\ncentered-moving-gini-coefficient([1, 2, 3], 2)',
                 'let { centered-moving-gini-coefficient } = import("Vector");\ncentered-moving-gini-coefficient([1, 1, 3], 2)',
             ],
+            seeAlso: ['Vector.gini-coefficient', 'Vector.moving-gini-coefficient', 'Vector.running-gini-coefficient'],
         },
         'running-gini-coefficient': {
             category: 'Vector',
@@ -19958,6 +20328,7 @@ var Playground = (function (exports) {
                 'let { running-gini-coefficient } = import("Vector");\nrunning-gini-coefficient([1, 2, 3])',
                 'let { running-gini-coefficient } = import("Vector");\nrunning-gini-coefficient([1, 1, 3])',
             ],
+            seeAlso: ['Vector.gini-coefficient', 'Vector.moving-gini-coefficient', 'Vector.centered-moving-gini-coefficient'],
         },
         'entropy': {
             category: 'Vector',
@@ -19986,6 +20357,7 @@ var Playground = (function (exports) {
                 'let { entropy } = import("Vector");\nentropy([1])',
                 'let { entropy } = import("Vector");\nentropy([1, 2])',
             ],
+            seeAlso: ['Vector.moving-entropy', 'Vector.centered-moving-entropy', 'Vector.running-entropy', 'Vector.gini-coefficient'],
         },
         'moving-entropy': {
             category: 'Vector',
@@ -20022,6 +20394,7 @@ var Playground = (function (exports) {
                 'let { moving-entropy } = import("Vector");\nmoving-entropy([1, 1, 2, 3, 3, 3], 3)',
                 'let { moving-entropy } = import("Vector");\nmoving-entropy([1, 2], 2)',
             ],
+            seeAlso: ['Vector.entropy', 'Vector.centered-moving-entropy', 'Vector.running-entropy'],
         },
         'centered-moving-entropy': {
             category: 'Vector',
@@ -20081,6 +20454,7 @@ var Playground = (function (exports) {
                 'let { centered-moving-entropy } = import("Vector");\ncentered-moving-entropy([1, 1, 2, 3, 3, 3], 3)',
                 'let { centered-moving-entropy } = import("Vector");\ncentered-moving-entropy([1, 2], 2)',
             ],
+            seeAlso: ['Vector.entropy', 'Vector.moving-entropy', 'Vector.running-entropy'],
         },
         'running-entropy': {
             category: 'Vector',
@@ -20105,6 +20479,7 @@ var Playground = (function (exports) {
                 'let { running-entropy } = import("Vector");\nrunning-entropy([1, 1, 2, 3, 3, 3])',
                 'let { running-entropy } = import("Vector");\nrunning-entropy([1, 2])',
             ],
+            seeAlso: ['Vector.entropy', 'Vector.moving-entropy', 'Vector.centered-moving-entropy'],
         },
         'monotonic?': {
             category: 'Vector',
@@ -20134,6 +20509,7 @@ var Playground = (function (exports) {
                 'let { monotonic? } = import("Vector");\nmonotonic?([1])',
                 'let { monotonic? } = import("Vector");\nmonotonic?([])',
             ],
+            seeAlso: ['Vector.strictly-monotonic?', 'Vector.increasing?', 'Vector.decreasing?'],
         },
         'strictly-monotonic?': {
             category: 'Vector',
@@ -20163,6 +20539,7 @@ var Playground = (function (exports) {
                 'let { strictly-monotonic? } = import("Vector");\nstrictly-monotonic?([1])',
                 'let { strictly-monotonic? } = import("Vector");\nstrictly-monotonic?([])',
             ],
+            seeAlso: ['Vector.monotonic?', 'Vector.strictly-increasing?', 'Vector.strictly-decreasing?'],
         },
         'increasing?': {
             category: 'Vector',
@@ -20192,6 +20569,7 @@ var Playground = (function (exports) {
                 'let { increasing? } = import("Vector");\nincreasing?([1])',
                 'let { increasing? } = import("Vector");\nincreasing?([])',
             ],
+            seeAlso: ['Vector.strictly-increasing?', 'Vector.decreasing?', 'Vector.strictly-decreasing?', 'Vector.monotonic?'],
         },
         'decreasing?': {
             category: 'Vector',
@@ -20221,6 +20599,7 @@ var Playground = (function (exports) {
                 'let { decreasing? } = import("Vector");\ndecreasing?([1])',
                 'let { decreasing? } = import("Vector");\ndecreasing?([])',
             ],
+            seeAlso: ['Vector.strictly-decreasing?', 'Vector.increasing?', 'Vector.strictly-increasing?', 'Vector.monotonic?'],
         },
         'strictly-increasing?': {
             category: 'Vector',
@@ -20250,6 +20629,7 @@ var Playground = (function (exports) {
                 'let { strictly-increasing? } = import("Vector");\nstrictly-increasing?([1])',
                 'let { strictly-increasing? } = import("Vector");\nstrictly-increasing?([])',
             ],
+            seeAlso: ['Vector.increasing?', 'Vector.decreasing?', 'Vector.strictly-decreasing?', 'Vector.strictly-monotonic?'],
         },
         'strictly-decreasing?': {
             category: 'Vector',
@@ -20279,6 +20659,7 @@ var Playground = (function (exports) {
                 'let { strictly-decreasing? } = import("Vector");\nstrictly-decreasing?([1])',
                 'let { strictly-decreasing? } = import("Vector");\nstrictly-decreasing?([])',
             ],
+            seeAlso: ['Vector.increasing?', 'Vector.strictly-increasing?', 'Vector.decreasing?', 'Vector.strictly-monotonic?'],
         },
         'mode': {
             category: 'Vector',
@@ -20306,6 +20687,7 @@ var Playground = (function (exports) {
                 'let { mode } = import("Vector");\nmode([2, 2, 3, 3])',
                 'let { mode } = import("Vector");\nmode([1, 2, 3, 2, 1, 2])',
             ],
+            seeAlso: ['Vector.mean', 'Vector.median'],
         },
         'min-index': {
             category: 'Vector',
@@ -20333,6 +20715,7 @@ var Playground = (function (exports) {
                 'let { min-index } = import("Vector");\nmin-index([1, 2, 3, 4])',
                 'let { min-index } = import("Vector");\nmin-index([1, 2, -3, 4])',
             ],
+            seeAlso: ['Vector.max-index', 'Vector.min'],
         },
         'max-index': {
             category: 'Vector',
@@ -20360,6 +20743,7 @@ var Playground = (function (exports) {
                 'let { max-index } = import("Vector");\nmax-index([1, 2, 3, 4])',
                 'let { max-index } = import("Vector");\nmax-index([1, 2, -3, 4])',
             ],
+            seeAlso: ['Vector.min-index', 'Vector.max'],
         },
         'sort-indices': {
             category: 'Vector',
@@ -20387,6 +20771,7 @@ var Playground = (function (exports) {
                 'let { sort-indices } = import("Vector");\nsort-indices([1, 2, 3, 4])',
                 'let { sort-indices } = import("Vector");\nsort-indices([1, 2, -3, 4])',
             ],
+            seeAlso: ['sort'],
         },
         'count-values': {
             category: 'Vector',
@@ -20414,6 +20799,7 @@ var Playground = (function (exports) {
                 'let { count-values } = import("Vector");\ncount-values([1, 2, -3])',
                 'let { count-values } = import("Vector");\ncount-values([1, 2, 2, 1, 3, 2, 4, 2, 1, 2, 2, 1, 3, 2, 4])',
             ],
+            seeAlso: ['frequencies', 'Vector.bincount'],
         },
         'linspace': {
             category: 'Vector',
@@ -20449,6 +20835,13 @@ var Playground = (function (exports) {
                 'let { linspace } = import("Vector");\nlinspace(0, 10, 6)',
                 'let { linspace } = import("Vector");\nlinspace(10, 20, 25)',
             ],
+            seeAlso: [
+                'range',
+                'Vector.ones',
+                'Vector.zeros',
+                'Vector.fill',
+                'Vector.generate',
+            ],
         },
         'ones': {
             category: 'Vector',
@@ -20475,6 +20868,13 @@ var Playground = (function (exports) {
                 'let { ones } = import("Vector");\nones(10)',
                 'let { ones } = import("Vector");\nones(0)',
             ],
+            seeAlso: [
+                'repeat',
+                'Vector.zeros',
+                'Vector.fill',
+                'Vector.generate',
+                'Vector.linspace',
+            ],
         },
         'zeros': {
             category: 'Vector',
@@ -20500,6 +20900,13 @@ var Playground = (function (exports) {
                 'let { zeros } = import("Vector");\nzeros(5)',
                 'let { zeros } = import("Vector");\nzeros(10)',
                 'let { zeros } = import("Vector");\nzeros(0)',
+            ],
+            seeAlso: [
+                'repeat',
+                'Vector.ones',
+                'Vector.fill',
+                'Vector.generate',
+                'Vector.linspace',
             ],
         },
         'fill': {
@@ -20536,6 +20943,14 @@ var Playground = (function (exports) {
             examples: [
                 'let { fill } = import("Vector");\nfill(5, PI)',
                 'let { fill } = import("Vector");\nfill(10, -1)',
+            ],
+            seeAlso: [
+                'repeat',
+                'Vector.ones',
+                'Vector.zeros',
+                'Vector.generate',
+                'Vector.linspace',
+                'Grid.fill',
             ],
         },
         'generate': {
@@ -20574,6 +20989,14 @@ var Playground = (function (exports) {
                 'let { generate } = import("Vector");\ngenerate(10, -> $ + 1)',
                 'let { generate } = import("Vector");\ngenerate(0, -> $ + 1)',
             ],
+            seeAlso: [
+                'repeat',
+                'Vector.ones',
+                'Vector.zeros',
+                'Vector.fill',
+                'Vector.linspace',
+                'Grid.generate',
+            ],
         },
         'cumsum': {
             category: 'Vector',
@@ -20600,6 +21023,7 @@ var Playground = (function (exports) {
                 'let { cumsum } = import("Vector");\ncumsum([1, 2, -3])',
                 'let { cumsum } = import("Vector");\ncumsum([])',
             ],
+            seeAlso: ['Vector.cumprod', 'Vector.sum', 'Vector.running-sum'],
         },
         'cumprod': {
             category: 'Vector',
@@ -20626,6 +21050,7 @@ var Playground = (function (exports) {
                 'let { cumprod } = import("Vector");\ncumprod([1, 2, -3, 0, 10])',
                 'let { cumprod } = import("Vector");\ncumprod([])',
             ],
+            seeAlso: ['Vector.cumsum', 'Vector.prod', 'Vector.running-prod'],
         },
         'quartiles': {
             category: 'Vector',
@@ -20654,6 +21079,7 @@ var Playground = (function (exports) {
                 'let { quartiles, generate } = import("Vector");\nquartiles(generate(1000, -> 1e6 / ($ + 1) ^ 2))',
                 'let { quartiles, generate } = import("Vector");\nquartiles(generate(1000, -> ln($ + 1)))',
             ],
+            seeAlso: ['Vector.percentile', 'Vector.quantile', 'Vector.median', 'Vector.iqr'],
         },
         'percentile': {
             category: 'Vector',
@@ -20699,6 +21125,7 @@ var Playground = (function (exports) {
                 'let { percentile } = import("Vector");\npercentile(range(100) ^ 0.5, 90)',
                 'let { percentile } = import("Vector");\npercentile(range(100) ^ 0.5, 100)',
             ],
+            seeAlso: ['Vector.quantile', 'Vector.quartiles', 'Vector.median', 'Vector.ecdf', 'Vector.winsorize'],
         },
         'quantile': {
             category: 'Vector',
@@ -20744,6 +21171,7 @@ var Playground = (function (exports) {
                 'let { quantile } = import("Vector");\nquantile(range(100) ^ 0.5, 0.9)',
                 'let { quantile } = import("Vector");\nquantile(range(100) ^ 0.5, 1)',
             ],
+            seeAlso: ['Vector.percentile', 'Vector.quartiles', 'Vector.ecdf'],
         },
         'histogram': {
             category: 'Vector',
@@ -20782,6 +21210,7 @@ var Playground = (function (exports) {
                 'let { histogram } = import("Vector");\nhistogram([1, 2, 3, 4, 5], 10)',
                 'let { histogram } = import("Vector");\nhistogram([1, 2, 3, 4, 5], 1)',
             ],
+            seeAlso: ['Vector.bincount', 'Vector.ecdf'],
         },
         'ecdf': {
             category: 'Vector',
@@ -20820,6 +21249,7 @@ var Playground = (function (exports) {
                 'let { ecdf } = import("Vector");\necdf([1, 2, 3, 4, 5], 10)',
                 'let { ecdf } = import("Vector");\necdf([1, 2, 3, 4, 5], 2)',
             ],
+            seeAlso: ['Vector.histogram', 'Vector.percentile', 'Vector.quantile'],
         },
         'outliers?': {
             category: 'Vector',
@@ -20845,6 +21275,7 @@ var Playground = (function (exports) {
                 'let { outliers? } = import("Vector");\noutliers?([1, 2, -3])',
                 'let { outliers? } = import("Vector");\noutliers?([1, 2, 3, 2, 4, 120])',
             ],
+            seeAlso: ['Vector.outliers', 'Vector.winsorize', 'Vector.iqr'],
         },
         'outliers': {
             category: 'Vector',
@@ -20871,6 +21302,7 @@ var Playground = (function (exports) {
                 'let { outliers } = import("Vector");\noutliers([1, 2, -3])',
                 'let { outliers } = import("Vector");\noutliers([1, 2, 3, 2, 4, 120])',
             ],
+            seeAlso: ['Vector.outliers?', 'Vector.winsorize', 'Vector.iqr'],
         },
         'bincount': {
             category: 'Vector',
@@ -20917,6 +21349,7 @@ var Playground = (function (exports) {
                 'let { bincount } = import("Vector");\nbincount([1, 2, 3])',
                 'let { bincount } = import("Vector");\nbincount([1, 2, 2, 3, 3])',
             ],
+            seeAlso: ['Vector.count-values', 'Vector.histogram'],
             hideOperatorForm: true,
         },
         'winsorize': {
@@ -20959,6 +21392,7 @@ var Playground = (function (exports) {
                 'let { winsorize } = import("Vector");\nwinsorize([2, 5, 8, 10, 15, 18, 20, 35, 60, 100], 0.25, 0.75)',
                 'let { winsorize } = import("Vector");\nwinsorize([2, 5, 8, 10, 15, 18, 20, 35, 60, 100], 0.25, 0.5)',
             ],
+            seeAlso: ['Vector.outliers', 'Vector.outliers?', 'Vector.percentile'],
             hideOperatorForm: true,
         },
         'mse': {
@@ -20992,6 +21426,7 @@ var Playground = (function (exports) {
                 'let { mse } = import("Vector");\nmse([1, 2], [3, 3])',
                 'let { mse } = import("Vector");\nmse([1], [3])',
             ],
+            seeAlso: ['Vector.rmse', 'Vector.mae', 'Vector.smape'],
         },
         'rmse': {
             category: 'Vector',
@@ -21024,6 +21459,7 @@ var Playground = (function (exports) {
                 'let { rmse } = import("Vector");\nrmse([1, 2], [3, 3])',
                 'let { rmse } = import("Vector");\nrmse([1], [3])',
             ],
+            seeAlso: ['Vector.mse', 'Vector.mae', 'Vector.smape'],
         },
         'mae': {
             category: 'Vector',
@@ -21056,6 +21492,7 @@ var Playground = (function (exports) {
                 'let { mae } = import("Vector");\nmae([1, 2], [3, 3])',
                 'let { mae } = import("Vector");\nmae([1], [3])',
             ],
+            seeAlso: ['Vector.mse', 'Vector.rmse', 'Vector.smape'],
         },
         'smape': {
             category: 'Vector',
@@ -21088,6 +21525,7 @@ var Playground = (function (exports) {
                 'let { smape } = import("Vector");\nsmape([1, 2], [3, 3])',
                 'let { smape } = import("Vector");\nsmape([1], [3])',
             ],
+            seeAlso: ['Vector.mse', 'Vector.rmse', 'Vector.mae'],
         },
     };
 
@@ -22252,6 +22690,7 @@ var Playground = (function (exports) {
                 'let { reflect } = import("Linear-Algebra");\nreflect([1, 2], [0, 1])',
                 'let { reflect } = import("Linear-Algebra");\nreflect([1, 2, 3], [0, 0, 1])',
             ],
+            seeAlso: ['Linear-Algebra.refract', 'Linear-Algebra.projection'],
         },
         'refract': {
             category: 'Linear Algebra',
@@ -22286,6 +22725,7 @@ var Playground = (function (exports) {
                 'let { refract } = import("Linear-Algebra");\nrefract([1, 2], [0, 1], 1.5)',
                 'let { refract } = import("Linear-Algebra");\nrefract([1, 2, 3], [0, 0, 1], 1.5)',
             ],
+            seeAlso: ['Linear-Algebra.reflect'],
         },
         'lerp': {
             category: 'Linear Algebra',
@@ -22322,6 +22762,7 @@ var Playground = (function (exports) {
                 'let { lerp } = import("Linear-Algebra");\nlerp([1, 2], [3, 4], -1)',
                 'let { lerp } = import("Linear-Algebra");\nlerp([1, 2, 3], [4, 5, 6], 0.25)',
             ],
+            seeAlso: ['Linear-Algebra.projection'],
         },
         'rotate2d': {
             category: 'Linear Algebra',
@@ -22351,6 +22792,7 @@ var Playground = (function (exports) {
                 'let { rotate2d } = import("Linear-Algebra");\nrotate2d([1, 0], PI / 2)',
                 'let { rotate2d } = import("Linear-Algebra");\nrotate2d([0, 1], PI)',
             ],
+            seeAlso: ['Linear-Algebra.rotate3d', 'Linear-Algebra.angle'],
         },
         'rotate3d': {
             category: 'Linear Algebra',
@@ -22385,6 +22827,7 @@ var Playground = (function (exports) {
                 'let { rotate3d } = import("Linear-Algebra");\nrotate3d([1, 0, 0], [0, 1, 0], PI / 2)',
                 'let { rotate3d } = import("Linear-Algebra");\nrotate3d([0, 1, 0], [1, 0, 0], PI)',
             ],
+            seeAlso: ['Linear-Algebra.rotate2d', 'Linear-Algebra.angle'],
         },
         'dot': {
             category: 'Linear Algebra',
@@ -22414,6 +22857,7 @@ var Playground = (function (exports) {
                 'let { dot } = import("Linear-Algebra");\ndot([1, 2], [3, 4])',
                 'let { dot } = import("Linear-Algebra");\ndot([1, 2, 3], [4, 5, 6])',
             ],
+            seeAlso: ['Linear-Algebra.cross', 'Linear-Algebra.cosine-similarity', 'Linear-Algebra.angle', 'Linear-Algebra.projection', 'Linear-Algebra.orthogonal?'],
         },
         'cross': {
             category: 'Linear Algebra',
@@ -22446,6 +22890,7 @@ var Playground = (function (exports) {
                 'let { cross } = import("Linear-Algebra");\ncross([1, 2, 3], [0, 0, 0])',
                 'let { cross } = import("Linear-Algebra");\ncross([0, 0, 0], [1, 2, 3])',
             ],
+            seeAlso: ['Linear-Algebra.dot'],
         },
         'normalize-minmax': {
             category: 'Linear Algebra',
@@ -22473,6 +22918,7 @@ var Playground = (function (exports) {
                 'let { normalize-minmax } = import("Linear-Algebra");\nnormalize-minmax([1, 2, -3, 4])',
                 'let { normalize-minmax } = import("Linear-Algebra");\nnormalize-minmax([1, 2, 3, 40, 50])',
             ],
+            seeAlso: ['Linear-Algebra.normalize-zscore', 'Linear-Algebra.normalize-robust', 'Linear-Algebra.normalize-l1', 'Linear-Algebra.normalize-l2', 'Linear-Algebra.normalize-log'],
         },
         'normalize-zscore': {
             category: 'Linear Algebra',
@@ -22500,6 +22946,7 @@ var Playground = (function (exports) {
                 'let { normalize-zscore } = import("Linear-Algebra");\nnormalize-zscore([1, 2, -3, 4])',
                 'let { normalize-zscore } = import("Linear-Algebra");\nnormalize-zscore([1, 2, 3, 40, 50])',
             ],
+            seeAlso: ['Linear-Algebra.normalize-minmax', 'Linear-Algebra.normalize-robust', 'Linear-Algebra.normalize-l1', 'Linear-Algebra.normalize-l2', 'Linear-Algebra.normalize-log'],
         },
         'normalize-robust': {
             category: 'Linear Algebra',
@@ -22527,6 +22974,7 @@ var Playground = (function (exports) {
                 'let { normalize-robust } = import("Linear-Algebra");\nnormalize-robust([1, 2, -3, 4])',
                 'let { normalize-robust } = import("Linear-Algebra");\nnormalize-robust([1, 2, 3, 40, 50])',
             ],
+            seeAlso: ['Linear-Algebra.normalize-minmax', 'Linear-Algebra.normalize-zscore'],
         },
         'normalize-l1': {
             category: 'Linear Algebra',
@@ -22554,6 +23002,7 @@ var Playground = (function (exports) {
                 'let { normalize-l1 } = import("Linear-Algebra");\nnormalize-l1([1, 2, -3, 4])',
                 'let { normalize-l1 } = import("Linear-Algebra");\nnormalize-l1([1, 2, 3, 40, 50])',
             ],
+            seeAlso: ['Linear-Algebra.normalize-l2', 'Linear-Algebra.normalize-minmax', 'Linear-Algebra.manhattan-norm', 'Linear-Algebra.normalize-zscore'],
         },
         'normalize-l2': {
             category: 'Linear Algebra',
@@ -22582,6 +23031,7 @@ var Playground = (function (exports) {
                 'let { normalize-l2 } = import("Linear-Algebra");\nnormalize-l2([1, 2, -3, 4])',
                 'let { normalize-l2 } = import("Linear-Algebra");\nnormalize-l2([1, 2, 3, 40, 50])',
             ],
+            seeAlso: ['Linear-Algebra.normalize-l1', 'Linear-Algebra.normalize-minmax', 'Linear-Algebra.euclidean-norm', 'Linear-Algebra.normalize-zscore'],
         },
         'normalize-log': {
             category: 'Linear Algebra',
@@ -22607,6 +23057,7 @@ var Playground = (function (exports) {
                 'let { normalize-log } = import("Linear-Algebra");\nnormalize-log([1, 2, 3, 4])',
                 'let { normalize-log } = import("Linear-Algebra");\nnormalize-log([1, 2, 3, 40, 50])',
             ],
+            seeAlso: ['Linear-Algebra.normalize-minmax', 'Linear-Algebra.normalize-zscore'],
         },
         'angle': {
             category: 'Linear Algebra',
@@ -22634,6 +23085,7 @@ var Playground = (function (exports) {
                 'let { angle } = import("Linear-Algebra");\nangle([1, 0], [0, 1])',
                 'let { angle } = import("Linear-Algebra");\nangle([1, 0, 1], [0, 1, 0])',
             ],
+            seeAlso: ['Linear-Algebra.dot', 'Linear-Algebra.collinear?', 'Linear-Algebra.orthogonal?', 'Linear-Algebra.rotate2d', 'Linear-Algebra.rotate3d', 'Linear-Algebra.parallel?', 'Linear-Algebra.cosine-similarity', 'Linear-Algebra.to-polar'],
         },
         'projection': {
             category: 'Linear Algebra',
@@ -22661,6 +23113,7 @@ var Playground = (function (exports) {
                 'let { projection } = import("Linear-Algebra");\nprojection([1, 2], [3, 4])',
                 'let { projection } = import("Linear-Algebra");\nprojection([1, 2, 3], [4, 5, 6])',
             ],
+            seeAlso: ['Linear-Algebra.dot', 'Linear-Algebra.reflect', 'Linear-Algebra.lerp'],
         },
         'collinear?': {
             category: 'Linear Algebra',
@@ -22689,6 +23142,7 @@ var Playground = (function (exports) {
                 'let { collinear? } = import("Linear-Algebra");\ncollinear?([1, 2], [-2, -4])',
                 'let { collinear? } = import("Linear-Algebra");\ncollinear?([1, 2, 3], [2, 4, 6])',
             ],
+            seeAlso: ['Linear-Algebra.parallel?', 'Linear-Algebra.orthogonal?', 'Linear-Algebra.angle'],
         },
         'parallel?': {
             category: 'Linear Algebra',
@@ -22718,6 +23172,7 @@ var Playground = (function (exports) {
                 'let { parallel? } = import("Linear-Algebra");\nparallel?([1, 2, 3], [2, 4, 6])',
                 'let { parallel? } = import("Linear-Algebra");\nparallel?([1, 2], [3, 4])',
             ],
+            seeAlso: ['Linear-Algebra.collinear?', 'Linear-Algebra.orthogonal?', 'Linear-Algebra.angle'],
         },
         'orthogonal?': {
             category: 'Linear Algebra',
@@ -22746,6 +23201,7 @@ var Playground = (function (exports) {
                 'let { orthogonal? } = import("Linear-Algebra");\northogonal?([1, 0, 1], [0, 1, 0])',
                 'let { orthogonal? } = import("Linear-Algebra");\northogonal?([1, 2], [2, -1])',
             ],
+            seeAlso: ['Linear-Algebra.collinear?', 'Linear-Algebra.parallel?', 'Linear-Algebra.dot', 'Matrix.orthogonal?', 'Linear-Algebra.angle'],
         },
         'cosine-similarity': {
             category: 'Linear Algebra',
@@ -22774,6 +23230,7 @@ var Playground = (function (exports) {
                 'let { cosine-similarity } = import("Linear-Algebra");\ncosine-similarity([1, 2, 3], [4, 5, 6])',
                 'let { cosine-similarity } = import("Linear-Algebra");\ncosine-similarity([1, 0], [0, 1])',
             ],
+            seeAlso: ['Linear-Algebra.dot', 'Linear-Algebra.angle', 'Linear-Algebra.euclidean-distance'],
         },
         'euclidean-distance': {
             category: 'Linear Algebra',
@@ -22802,6 +23259,7 @@ var Playground = (function (exports) {
                 'let { euclidean-distance } = import("Linear-Algebra");\neuclidean-distance([1, 2, 3], [4, 5, 6])',
                 'let { euclidean-distance } = import("Linear-Algebra");\neuclidean-distance([1, 0], [0, 1])',
             ],
+            seeAlso: ['Linear-Algebra.manhattan-distance', 'Linear-Algebra.chebyshev-distance', 'Linear-Algebra.minkowski-distance', 'Linear-Algebra.euclidean-norm', 'Linear-Algebra.cosine-similarity', 'Linear-Algebra.hamming-distance'],
         },
         'euclidean-norm': {
             category: 'Linear Algebra',
@@ -22827,6 +23285,7 @@ var Playground = (function (exports) {
                 'let { euclidean-norm } = import("Linear-Algebra");\neuclidean-norm([3, 4])',
                 'let { euclidean-norm } = import("Linear-Algebra");\neuclidean-norm([1, 2, 3])',
             ],
+            seeAlso: ['Linear-Algebra.manhattan-norm', 'Linear-Algebra.chebyshev-norm', 'Linear-Algebra.minkowski-norm', 'Linear-Algebra.euclidean-distance', 'Linear-Algebra.normalize-l2', 'Linear-Algebra.hamming-norm'],
         },
         'manhattan-distance': {
             category: 'Linear Algebra',
@@ -22855,6 +23314,7 @@ var Playground = (function (exports) {
                 'let { manhattan-distance } = import("Linear-Algebra");\nmanhattan-distance([1, 2, 3], [4, 5, 6])',
                 'let { manhattan-distance } = import("Linear-Algebra");\nmanhattan-distance([1, 0], [0, 1])',
             ],
+            seeAlso: ['Linear-Algebra.euclidean-distance', 'Linear-Algebra.chebyshev-distance', 'Linear-Algebra.minkowski-distance', 'Linear-Algebra.manhattan-norm', 'Linear-Algebra.hamming-distance'],
         },
         'manhattan-norm': {
             category: 'Linear Algebra',
@@ -22880,6 +23340,7 @@ var Playground = (function (exports) {
                 'let { manhattan-norm } = import("Linear-Algebra");\nmanhattan-norm([3, 4])',
                 'let { manhattan-norm } = import("Linear-Algebra");\nmanhattan-norm([1, 2, 3])',
             ],
+            seeAlso: ['Linear-Algebra.euclidean-norm', 'Linear-Algebra.chebyshev-norm', 'Linear-Algebra.minkowski-norm', 'Linear-Algebra.manhattan-distance', 'Linear-Algebra.normalize-l1', 'Linear-Algebra.hamming-norm'],
         },
         'hamming-distance': {
             category: 'Linear Algebra',
@@ -22908,6 +23369,7 @@ var Playground = (function (exports) {
                 'let { hamming-distance } = import("Linear-Algebra");\nhamming-distance([1, 2, 3], [4, 5, 6])',
                 'let { hamming-distance } = import("Linear-Algebra");\nhamming-distance([1, 0], [0, 1])',
             ],
+            seeAlso: ['Linear-Algebra.euclidean-distance', 'Linear-Algebra.manhattan-distance', 'Linear-Algebra.hamming-norm'],
         },
         'hamming-norm': {
             category: 'Linear Algebra',
@@ -22933,6 +23395,7 @@ var Playground = (function (exports) {
                 'let { hamming-norm } = import("Linear-Algebra");\nhamming-norm([3, 4])',
                 'let { hamming-norm } = import("Linear-Algebra");\nhamming-norm([1, 2, 3])',
             ],
+            seeAlso: ['Linear-Algebra.euclidean-norm', 'Linear-Algebra.manhattan-norm', 'Linear-Algebra.hamming-distance'],
         },
         'chebyshev-distance': {
             category: 'Linear Algebra',
@@ -22961,6 +23424,7 @@ var Playground = (function (exports) {
                 'let { chebyshev-distance } = import("Linear-Algebra");\nchebyshev-distance([1, 2, 3], [4, 5, 6])',
                 'let { chebyshev-distance } = import("Linear-Algebra");\nchebyshev-distance([1, 0], [0, 1])',
             ],
+            seeAlso: ['Linear-Algebra.euclidean-distance', 'Linear-Algebra.manhattan-distance', 'Linear-Algebra.minkowski-distance', 'Linear-Algebra.chebyshev-norm'],
         },
         'chebyshev-norm': {
             category: 'Linear Algebra',
@@ -22986,6 +23450,7 @@ var Playground = (function (exports) {
                 'let { chebyshev-norm } = import("Linear-Algebra");\nchebyshev-norm([3, 4])',
                 'let { chebyshev-norm } = import("Linear-Algebra");\nchebyshev-norm([1, 2, 3])',
             ],
+            seeAlso: ['Linear-Algebra.euclidean-norm', 'Linear-Algebra.manhattan-norm', 'Linear-Algebra.minkowski-norm', 'Linear-Algebra.chebyshev-distance'],
         },
         'minkowski-distance': {
             category: 'Linear Algebra',
@@ -23019,6 +23484,7 @@ var Playground = (function (exports) {
                 'let { minkowski-distance } = import("Linear-Algebra");\nminkowski-distance([1, 2, 3], [4, 5, 6], 3)',
                 'let { minkowski-distance } = import("Linear-Algebra");\nminkowski-distance([1, 0], [0, 1], 1)',
             ],
+            seeAlso: ['Linear-Algebra.euclidean-distance', 'Linear-Algebra.manhattan-distance', 'Linear-Algebra.chebyshev-distance', 'Linear-Algebra.minkowski-norm'],
         },
         'minkowski-norm': {
             category: 'Linear Algebra',
@@ -23049,6 +23515,7 @@ var Playground = (function (exports) {
                 'let { minkowski-norm } = import("Linear-Algebra");\nminkowski-norm([3, 4], 3)',
                 'let { minkowski-norm } = import("Linear-Algebra");\nminkowski-norm([1, 2, 3], 4)',
             ],
+            seeAlso: ['Linear-Algebra.euclidean-norm', 'Linear-Algebra.manhattan-norm', 'Linear-Algebra.chebyshev-norm', 'Linear-Algebra.minkowski-distance'],
         },
         'cov': {
             category: 'Linear Algebra',
@@ -23077,6 +23544,7 @@ var Playground = (function (exports) {
                 'let { cov } = import("Linear-Algebra");\ncov([1, 2, 3], [4, 5, 6])',
                 'let { cov } = import("Linear-Algebra");\ncov([1, 0], [0, 1])',
             ],
+            seeAlso: ['Linear-Algebra.corr', 'Linear-Algebra.pearson-corr', 'Vector.variance'],
         },
         'corr': {
             category: 'Linear Algebra',
@@ -23105,6 +23573,7 @@ var Playground = (function (exports) {
                 'let { corr } = import("Linear-Algebra");\ncorr([1, 2, 3], [4, 5, 6])',
                 'let { corr } = import("Linear-Algebra");\ncorr([1, 0], [0, 1])',
             ],
+            seeAlso: ['Linear-Algebra.cov', 'Linear-Algebra.pearson-corr', 'Linear-Algebra.spearman-corr', 'Linear-Algebra.kendall-tau', 'Linear-Algebra.autocorrelation', 'Linear-Algebra.cross-correlation'],
         },
         'spearman-corr': {
             category: 'Linear Algebra',
@@ -23133,6 +23602,7 @@ var Playground = (function (exports) {
                 'let { spearman-corr } = import("Linear-Algebra");\nspearman-corr([1, 2, 3], [4, 5, 6])',
                 'let { spearman-corr } = import("Linear-Algebra");\nspearman-corr([1, 0], [0, 1])',
             ],
+            seeAlso: ['Linear-Algebra.pearson-corr', 'Linear-Algebra.kendall-tau', 'Linear-Algebra.corr'],
         },
         'pearson-corr': {
             category: 'Linear Algebra',
@@ -23161,6 +23631,7 @@ var Playground = (function (exports) {
                 'let { pearson-corr } = import("Linear-Algebra");\npearson-corr([1, 2, 3], [4, 5, 6])',
                 'let { pearson-corr } = import("Linear-Algebra");\npearson-corr([1, 0], [0, 1])',
             ],
+            seeAlso: ['Linear-Algebra.spearman-corr', 'Linear-Algebra.kendall-tau', 'Linear-Algebra.corr', 'Linear-Algebra.cov'],
         },
         'kendall-tau': {
             category: 'Linear Algebra',
@@ -23189,6 +23660,7 @@ var Playground = (function (exports) {
                 'let { kendall-tau } = import("Linear-Algebra");\nkendall-tau([1, 2, 3], [4, 5, 6])',
                 'let { kendall-tau } = import("Linear-Algebra");\nkendall-tau([1, 0], [0, 1])',
             ],
+            seeAlso: ['Linear-Algebra.spearman-corr', 'Linear-Algebra.pearson-corr', 'Linear-Algebra.corr'],
         },
         'autocorrelation': {
             category: 'Linear Algebra',
@@ -23221,6 +23693,7 @@ var Playground = (function (exports) {
                 'let { autocorrelation } = import("Linear-Algebra");\nautocorrelation([1, 2, 3], 1)',
                 'let { autocorrelation } = import("Linear-Algebra");\nautocorrelation([1, 2, 3], 2)',
             ],
+            seeAlso: ['Linear-Algebra.cross-correlation', 'Linear-Algebra.corr'],
         },
         'cross-correlation': {
             category: 'Linear Algebra',
@@ -23256,6 +23729,7 @@ var Playground = (function (exports) {
                 'let { cross-correlation } = import("Linear-Algebra");\ncross-correlation([1, 2, 3], [4, 5, 6], 1)',
                 'let { cross-correlation } = import("Linear-Algebra");\ncross-correlation([1, 2, 3], [4, 5, 6], 2)',
             ],
+            seeAlso: ['Linear-Algebra.autocorrelation', 'Linear-Algebra.corr'],
         },
         'rref': {
             category: 'Linear Algebra',
@@ -23281,6 +23755,7 @@ var Playground = (function (exports) {
                 'let { rref } = import("Linear-Algebra");\nrref([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
                 'let { rref } = import("Linear-Algebra");\nrref([[1, 2, 3], [7, 8, 9], [4, 5, 7]])',
             ],
+            seeAlso: ['Linear-Algebra.solve', 'Matrix.rank'],
         },
         'solve': {
             category: 'Linear Algebra',
@@ -23309,6 +23784,7 @@ var Playground = (function (exports) {
                 'let { solve } = import("Linear-Algebra"); solve([[2, 0, 0], [3, 1, 0], [4, 5, 6]], [4, 5, 38])',
                 'let { solve } = import("Linear-Algebra"); solve([[2, 3], [1, -1]], [8, 2])',
             ],
+            seeAlso: ['Linear-Algebra.rref', 'Matrix.inv'],
         },
         'to-polar': {
             category: 'Linear Algebra',
@@ -23333,6 +23809,7 @@ var Playground = (function (exports) {
                 'let { to-polar } = import("Linear-Algebra");\nto-polar([1, 2])',
                 'let { to-polar } = import("Linear-Algebra");\nto-polar([3, 4])',
             ],
+            seeAlso: ['Linear-Algebra.from-polar', 'Linear-Algebra.angle'],
         },
         'from-polar': {
             category: 'Linear Algebra',
@@ -23358,6 +23835,7 @@ var Playground = (function (exports) {
                 'let { from-polar } = import("Linear-Algebra");\nfrom-polar([1, 0])',
                 'let { from-polar } = import("Linear-Algebra");\nfrom-polar([1, -PI / 2])',
             ],
+            seeAlso: ['Linear-Algebra.to-polar'],
         },
     };
 
@@ -24349,6 +24827,7 @@ var Playground = (function (exports) {
                 'let { mul } = import("Matrix");\nmul([[1, 2], [3, 4]], [[5, 6], [7, 8]])',
                 'let { mul } = import("Matrix");\nmul([[1, 2, 3], [4, 5, 6]], [[7, 8], [9, 10], [11, 12]])',
             ],
+            seeAlso: ['Matrix.det', 'Matrix.inv'],
         },
         'det': {
             category: 'Matrix',
@@ -24373,6 +24852,7 @@ var Playground = (function (exports) {
                 'let { det } = import("Matrix");\ndet([[1, 2], [3, 4]])',
                 'let { det } = import("Matrix");\ndet([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
             ],
+            seeAlso: ['Matrix.inv', 'Matrix.cofactor', 'Matrix.adj', 'Matrix.trace', 'Matrix.rank', 'Matrix.invertible?', 'Matrix.mul', 'Matrix.minor'],
         },
         'inv': {
             category: 'Matrix',
@@ -24397,6 +24877,7 @@ var Playground = (function (exports) {
                 'let { inv } = import("Matrix");\ninv([[1, 2], [3, 4]])',
                 'let { inv } = import("Matrix");\ninv([[1, 2, 3], [4, 5, 7], [7, 8, 10]])',
             ],
+            seeAlso: ['Matrix.det', 'Matrix.adj', 'Matrix.invertible?', 'Linear-Algebra.solve', 'Matrix.mul', 'Matrix.orthogonal?'],
         },
         'adj': {
             category: 'Matrix',
@@ -24422,6 +24903,7 @@ var Playground = (function (exports) {
                 'let { adj } = import("Matrix");\nadj([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
                 'let { adj } = import("Matrix");\nadj([[1, 2, 3], [7, 8, 9], [4, 5, 6]])',
             ],
+            seeAlso: ['Matrix.cofactor', 'Matrix.det', 'Matrix.inv'],
         },
         'cofactor': {
             category: 'Matrix',
@@ -24447,6 +24929,7 @@ var Playground = (function (exports) {
                 'let { cofactor } = import("Matrix");\ncofactor([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
                 'let { cofactor } = import("Matrix");\ncofactor([[1, 2, 3], [7, 8, 9], [4, 5, 6]])',
             ],
+            seeAlso: ['Matrix.adj', 'Matrix.minor', 'Matrix.det'],
         },
         'minor': {
             category: 'Matrix',
@@ -24481,6 +24964,7 @@ var Playground = (function (exports) {
                 'let { minor } = import("Matrix");\nminor([[1, 2], [3, 4]], 0, 1)',
                 'let { minor } = import("Matrix");\nminor([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 1, 1)',
             ],
+            seeAlso: ['Matrix.cofactor', 'Matrix.det'],
         },
         'trace': {
             category: 'Matrix',
@@ -24505,6 +24989,7 @@ var Playground = (function (exports) {
                 'let { trace } = import("Matrix");\ntrace([[1, 2], [3, 4]])',
                 'let { trace } = import("Matrix");\ntrace([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
             ],
+            seeAlso: ['Matrix.det', 'Matrix.diagonal?'],
         },
         'symmetric?': {
             category: 'Matrix',
@@ -24529,6 +25014,7 @@ var Playground = (function (exports) {
                 'let { symmetric? } = import("Matrix");\nsymmetric?([[1, 2], [2, 1]])',
                 'let { symmetric? } = import("Matrix");\nsymmetric?([[1, 2, 3], [2, 1, 4], [3, 4, 1]])',
             ],
+            seeAlso: ['Matrix.orthogonal?', 'Matrix.diagonal?', 'Matrix.square?', 'Matrix.hilbert'],
         },
         'triangular?': {
             category: 'Matrix',
@@ -24553,6 +25039,7 @@ var Playground = (function (exports) {
                 'let { triangular? } = import("Matrix");\ntriangular?([[2, 0], [0, 1]])',
                 'let { triangular? } = import("Matrix");\ntriangular?([[1, 2, 3], [0, 4, 5], [0, 0, 6]])',
             ],
+            seeAlso: ['Matrix.upper-triangular?', 'Matrix.lower-triangular?', 'Matrix.diagonal?', 'Matrix.banded?'],
         },
         'upper-triangular?': {
             category: 'Matrix',
@@ -24577,6 +25064,7 @@ var Playground = (function (exports) {
                 'let { upper-triangular? } = import("Matrix");\nupper-triangular?([[1, 2], [0, 3]])',
                 'let { upper-triangular? } = import("Matrix");\nupper-triangular?([[1, 2, 3], [0, 4, 5], [0, 0, 6]])',
             ],
+            seeAlso: ['Matrix.lower-triangular?', 'Matrix.triangular?', 'Matrix.diagonal?'],
         },
         'lower-triangular?': {
             category: 'Matrix',
@@ -24601,6 +25089,7 @@ var Playground = (function (exports) {
                 'let { lower-triangular? } = import("Matrix");\nlower-triangular?([[1, 0], [2, 3]])',
                 'let { lower-triangular? } = import("Matrix");\nlower-triangular?([[1, 0, 0], [2, 3, 0], [4, 5, 6]])',
             ],
+            seeAlso: ['Matrix.upper-triangular?', 'Matrix.triangular?', 'Matrix.diagonal?'],
         },
         'diagonal?': {
             category: 'Matrix',
@@ -24626,6 +25115,7 @@ var Playground = (function (exports) {
                 'let { diagonal? } = import("Matrix");\ndiagonal?([[1, 0, 0], [0, 2, 0], [0, 0, 3]])',
                 'let { diagonal? } = import("Matrix");\ndiagonal?([[1, 0, 0], [2, 2, 2], [0, 0, 3]])',
             ],
+            seeAlso: ['Matrix.identity?', 'Matrix.symmetric?', 'Matrix.triangular?', 'Matrix.trace', 'Matrix.upper-triangular?', 'Matrix.lower-triangular?', 'Matrix.band', 'Matrix.banded?'],
         },
         'square?': {
             category: 'Matrix',
@@ -24651,6 +25141,7 @@ var Playground = (function (exports) {
                 'let { square? } = import("Matrix");\nsquare?([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
                 'let { square? } = import("Matrix");\nsquare?([[1, 2, 3], [4, 5, 6]])',
             ],
+            seeAlso: ['Matrix.symmetric?', 'Matrix.identity?', 'Matrix.invertible?'],
         },
         'orthogonal?': {
             category: 'Matrix',
@@ -24676,6 +25167,7 @@ var Playground = (function (exports) {
                 'let { orthogonal? } = import("Matrix");\northogonal?([[1, 0], [0, -1]])',
                 'let { orthogonal? } = import("Matrix");\northogonal?([[1, 2], [3, 4]])',
             ],
+            seeAlso: ['Matrix.symmetric?', 'Matrix.inv', 'Matrix.identity?', 'Linear-Algebra.orthogonal?'],
         },
         'identity?': {
             category: 'Matrix',
@@ -24701,6 +25193,7 @@ var Playground = (function (exports) {
                 'let { identity? } = import("Matrix");\nidentity?([[1, 0, 0], [0, 1, 0], [0, 0, 1]])',
                 'let { identity? } = import("Matrix");\nidentity?([[1, 0, 0], [0, 1, 0], [0, 0, 0]])',
             ],
+            seeAlso: ['Matrix.diagonal?', 'Matrix.square?', 'Matrix.orthogonal?'],
         },
         'invertible?': {
             category: 'Matrix',
@@ -24726,6 +25219,7 @@ var Playground = (function (exports) {
                 'let { invertible? } = import("Matrix");\ninvertible?([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
                 'let { invertible? } = import("Matrix");\ninvertible?([[1, 2], [2, 4]])',
             ],
+            seeAlso: ['Matrix.det', 'Matrix.inv', 'Matrix.rank', 'Matrix.square?'],
         },
         'hilbert': {
             category: 'Matrix',
@@ -24750,6 +25244,7 @@ var Playground = (function (exports) {
                 'let { hilbert } = import("Matrix");\nhilbert(3)',
                 'let { hilbert } = import("Matrix");\nhilbert(4)',
             ],
+            seeAlso: ['Matrix.vandermonde', 'Matrix.symmetric?'],
         },
         'vandermonde': {
             category: 'Matrix',
@@ -24774,6 +25269,7 @@ var Playground = (function (exports) {
                 'let { vandermonde } = import("Matrix");\nvandermonde([1, 2, 3])',
                 'let { vandermonde } = import("Matrix");\nvandermonde([1, 0, 1])',
             ],
+            seeAlso: ['Matrix.hilbert', 'Matrix.band'],
         },
         'band': {
             category: 'Matrix',
@@ -24808,6 +25304,7 @@ var Playground = (function (exports) {
                 'let { band } = import("Matrix");\nband(3, 1, 1)',
                 'let { band } = import("Matrix");\nband(4, 1, 2)',
             ],
+            seeAlso: ['Matrix.banded?', 'Matrix.diagonal?', 'Matrix.vandermonde'],
         },
         'banded?': {
             category: 'Matrix',
@@ -24842,6 +25339,7 @@ var Playground = (function (exports) {
                 'let { banded? } = import("Matrix");\nbanded?([\n  [1, 1, 1, 0],\n  [1, 1, 1, 1],\n  [1, 1, 1, 1],\n  [0, 1, 1, 1],\n], 2, 2)',
                 'let { banded? } = import("Matrix");\nbanded?([\n  [1, 1, 1, 0],\n  [1, 1, 1, 1],\n  [1, 1, 1, 1],\n  [0, 1, 1, 1],\n], 1, 1)',
             ],
+            seeAlso: ['Matrix.band', 'Matrix.triangular?', 'Matrix.diagonal?'],
         },
         'rank': {
             category: 'Matrix',
@@ -24867,6 +25365,7 @@ var Playground = (function (exports) {
                 'let { rank } = import("Matrix");\nrank([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
                 'let { rank } = import("Matrix");\nrank([[2, 4, 6], [3, 6, 9], [4, 8, 12]])',
             ],
+            seeAlso: ['Matrix.det', 'Matrix.invertible?', 'Linear-Algebra.rref'],
         },
         'frobenius-norm': {
             category: 'Matrix',
@@ -24891,6 +25390,7 @@ var Playground = (function (exports) {
                 'let { frobenius-norm } = import("Matrix");\nfrobenius-norm([[1, 2], [3, 4]])',
                 'let { frobenius-norm } = import("Matrix");\nfrobenius-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
             ],
+            seeAlso: ['Matrix.one-norm', 'Matrix.inf-norm', 'Matrix.max-norm'],
         },
         'one-norm': {
             category: 'Matrix',
@@ -24915,6 +25415,7 @@ var Playground = (function (exports) {
                 'let { one-norm } = import("Matrix");\none-norm([[1, 2], [3, 4]])',
                 'let { one-norm } = import("Matrix");\none-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
             ],
+            seeAlso: ['Matrix.frobenius-norm', 'Matrix.inf-norm', 'Matrix.max-norm'],
         },
         'inf-norm': {
             category: 'Matrix',
@@ -24939,6 +25440,7 @@ var Playground = (function (exports) {
                 'let { inf-norm } = import("Matrix");\ninf-norm([[1, 2], [3, 4]])',
                 'let { inf-norm } = import("Matrix");\ninf-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
             ],
+            seeAlso: ['Matrix.frobenius-norm', 'Matrix.one-norm', 'Matrix.max-norm'],
         },
         'max-norm': {
             category: 'Matrix',
@@ -24963,6 +25465,7 @@ var Playground = (function (exports) {
                 'let { max-norm } = import("Matrix");\nmax-norm([[1, 2], [3, 4]])',
                 'let { max-norm } = import("Matrix");\nmax-norm([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
             ],
+            seeAlso: ['Matrix.frobenius-norm', 'Matrix.one-norm', 'Matrix.inf-norm'],
         },
     };
 
@@ -32900,7 +33403,7 @@ var Playground = (function (exports) {
                 '#"^\\s*(.*)$"',
                 '#"albert"ig',
             ],
-            seeAlso: ['regexp'],
+            seeAlso: ['regexp', 'match', 'replace', 'replace-all'],
         },
         '-short-fn': {
             shorthand: true,
@@ -33893,6 +34396,12 @@ var Playground = (function (exports) {
             page.classList.add('active-content');
             if (link) {
                 link.classList.add('active-sidebar-entry');
+                // If the link is inside a collapsed namespace section, expand it first
+                var nsContent = link.closest('[id^="ns-content-"]');
+                if (nsContent && nsContent instanceof HTMLElement && nsContent.style.display === 'none') {
+                    var categoryKey = nsContent.id.replace('ns-content-', '').replace(/-/g, ' ');
+                    toggleNamespaceCategory(categoryKey);
+                }
                 if (scroll !== 'none')
                     link.scrollIntoView({ block: 'center', behavior: scroll });
             }

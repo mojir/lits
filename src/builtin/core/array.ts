@@ -64,6 +64,7 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
 
 $a defaults to 0.
 $step defaults to 1.`,
+      seeAlso: ['repeat', 'Vector.linspace'],
       examples: [
         'range(4)',
         'range(1, 4)',
@@ -98,6 +99,7 @@ range(
       },
       variants: [{ argumentNames: ['a', 'b'] }],
       description: 'Returns an array with $a repeated $b times.',
+      seeAlso: ['range', 'Vector.ones', 'Vector.zeros', 'Vector.fill', 'Vector.generate', 'string-repeat'],
       examples: [
         'repeat(10, 3)',
         'repeat(10, 0)',
@@ -125,6 +127,7 @@ range(
       },
       variants: [{ argumentNames: ['x'] }],
       description: 'Takes a nested array $x and flattens it.',
+      seeAlso: ['mapcat'],
       examples: [
         'flatten([1, 2, [3, 4], 5])',
         `
@@ -157,6 +160,7 @@ flatten([
       },
       variants: [{ argumentNames: ['colls', 'fun'] }],
       description: 'Returns the result of applying concat to the result of applying map to $fun and $colls.',
+      seeAlso: ['flatten', 'map', '++'],
       examples: [
         '[[3, 2, 1, 0], [6, 5, 4], [9, 8, 7]] mapcat reverse',
         'mapcat([[3, 2, 1, 0], [6, 5, 4], [9, 8, 7]], reverse)',
@@ -199,6 +203,7 @@ mapcat(
       },
       variants: [{ argumentNames: ['arr', 'windowSize', 'fn'] }],
       description: 'Returns the result of applying $fn to each moving window of size $windowSize in $arr.',
+      seeAlso: ['running-fn', 'Vector.moving-mean'],
       examples: [
         'let v = import("Vector"); moving-fn([1, 2, 3], 2, v.sum)',
         'let v = import("Vector"); moving-fn([1, 2, 3], 1, v.sum)',
@@ -228,6 +233,7 @@ mapcat(
       },
       variants: [{ argumentNames: ['a', 'b'] }],
       description: 'Returns the result of applying $b to each element of $a.',
+      seeAlso: ['moving-fn', 'Vector.running-mean'],
       examples: [
         'let v = import("Vector"); running-fn([1, 2, 3], v.sum)',
         'let v = import("Vector"); running-fn([1, 2, 3], v.max)',

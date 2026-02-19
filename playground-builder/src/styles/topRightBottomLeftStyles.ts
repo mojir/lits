@@ -32,6 +32,9 @@ export function getTopRightBottomLeftStyles(css: CssTemplateFunction) {
     'top-8': css`
       top: 2rem;
     `,
+    'top-16': css`
+      top: 4rem;
+    `,
     'top-full': css`
       top: 100%;
     `,
@@ -65,6 +68,9 @@ export function getTopRightBottomLeftStyles(css: CssTemplateFunction) {
     `,
     'right-8': css`
       right: 2rem;
+    `,
+    'right-16': css`
+      right: 4rem;
     `,
     'right-full': css`
       right: 100%;
@@ -100,6 +106,9 @@ export function getTopRightBottomLeftStyles(css: CssTemplateFunction) {
     'bottom-8': css`
       bottom: 2rem;
     `,
+    'bottom-16': css`
+      bottom: 4rem;
+    `,
     'bottom-full': css`
       bottom: 100%;
     `,
@@ -133,6 +142,9 @@ export function getTopRightBottomLeftStyles(css: CssTemplateFunction) {
     `,
     'left-8': css`
       left: 2rem;
+    `,
+    'left-16': css`
+      left: 4rem;
     `,
     'left-full': css`
       left: 100%;

@@ -32,6 +32,9 @@ export function getSpacingStyles(css: CssTemplateFunction) {
     'm-8': css`
       margin: 2rem;
     `,
+    'm-16': css`
+      margin: 4rem;
+    `,
     'my-0': css`
       margin-top: 0;
       margin-bottom: 0;
@@ -71,6 +74,10 @@ export function getSpacingStyles(css: CssTemplateFunction) {
     'my-8': css`
       margin-top: 2rem;
       margin-bottom: 2rem;
+    `,
+    'my-16': css`
+      margin-top: 4rem;
+      margin-bottom: 4rem;
     `,
     'mx-0': css`
       margin-left: 0;
@@ -112,6 +119,10 @@ export function getSpacingStyles(css: CssTemplateFunction) {
       margin-left: 2rem;
       margin-right: 2rem;
     `,
+    'mx-16': css`
+      margin-left: 4rem;
+      margin-right: 4rem;
+    `,
     'mt-0': css`
       margin-top: 0;
     `,
@@ -141,6 +152,9 @@ export function getSpacingStyles(css: CssTemplateFunction) {
     `,
     'mt-8': css`
       margin-top: 2rem;
+    `,
+    'mt-16': css`
+      margin-top: 4rem;
     `,
     'mr-0': css`
       margin-right: 0;
@@ -172,6 +186,9 @@ export function getSpacingStyles(css: CssTemplateFunction) {
     'mr-8': css`
       margin-right: 2rem;
     `,
+    'mr-16': css`
+      margin-right: 4rem;
+    `,
     'mb-0': css`
       margin-bottom: 0;
     `,
@@ -201,6 +218,9 @@ export function getSpacingStyles(css: CssTemplateFunction) {
     `,
     'mb-8': css`
       margin-bottom: 2rem;
+    `,
+    'mb-16': css`
+      margin-bottom: 4rem;
     `,
     'ml-0': css`
       margin-left: 0;
@@ -232,6 +252,9 @@ export function getSpacingStyles(css: CssTemplateFunction) {
     'ml-8': css`
       margin-left: 2rem;
     `,
+    'ml-16': css`
+      margin-left: 4rem;
+    `,
 
     'scroll-m-0': css`
       scroll-margin: 0;
@@ -262,6 +285,9 @@ export function getSpacingStyles(css: CssTemplateFunction) {
     `,
     'scroll-m-8': css`
       scroll-margin: 2rem;
+    `,
+    'scroll-m-16': css`
+      scroll-margin: 4rem;
     `,
     'scroll-my-0': css`
       scroll-margin-top: 0;
@@ -303,6 +329,10 @@ export function getSpacingStyles(css: CssTemplateFunction) {
       scroll-margin-top: 2rem;
       scroll-margin-bottom: 2rem;
     `,
+    'scroll-my-16': css`
+      scroll-margin-top: 4rem;
+      scroll-margin-bottom: 4rem;
+    `,
     'scroll-mx-0': css`
       scroll-margin-left: 0;
       scroll-margin-right: 0;
@@ -343,6 +373,10 @@ export function getSpacingStyles(css: CssTemplateFunction) {
       scroll-margin-left: 2rem;
       scroll-margin-right: 2rem;
     `,
+    'scroll-mx-16': css`
+      scroll-margin-left: 4rem;
+      scroll-margin-right: 4rem;
+    `,
     'scroll-mt-0': css`
       scroll-margin-top: 0;
     `,
@@ -372,6 +406,9 @@ export function getSpacingStyles(css: CssTemplateFunction) {
     `,
     'scroll-mt-8': css`
       scroll-margin-top: 2rem;
+    `,
+    'scroll-mt-16': css`
+      scroll-margin-top: 4rem;
     `,
     'scroll-mr-0': css`
       scroll-margin-right: 0;
@@ -403,6 +440,9 @@ export function getSpacingStyles(css: CssTemplateFunction) {
     'scroll-mr-8': css`
       scroll-margin-right: 2rem;
     `,
+    'scroll-mr-16': css`
+      scroll-margin-right: 4rem;
+    `,
     'scroll-mb-0': css`
       scroll-margin-bottom: 0;
     `,
@@ -432,6 +472,9 @@ export function getSpacingStyles(css: CssTemplateFunction) {
     `,
     'scroll-mb-8': css`
       scroll-margin-bottom: 2rem;
+    `,
+    'scroll-mb-16': css`
+      scroll-margin-bottom: 4rem;
     `,
     'scroll-ml-0': css`
       scroll-margin-left: 0;
@@ -463,6 +506,9 @@ export function getSpacingStyles(css: CssTemplateFunction) {
     'scroll-ml-8': css`
       scroll-margin-left: 2rem;
     `,
+    'scroll-ml-16': css`
+      scroll-margin-left: 4rem;
+    `,
 
     '-m-px': css`
       margin: -1px;
@@ -490,6 +536,9 @@ export function getSpacingStyles(css: CssTemplateFunction) {
     `,
     '-m-8': css`
       margin: -2rem;
+    `,
+    '-m-16': css`
+      margin: -4rem;
     `,
     '-my-px': css`
       margin-top: -1px;
@@ -527,6 +576,10 @@ export function getSpacingStyles(css: CssTemplateFunction) {
       margin-top: -2rem;
       margin-bottom: -2rem;
     `,
+    '-my-16': css`
+      margin-top: -4rem;
+      margin-bottom: -4rem;
+    `,
     '-mx-px': css`
       margin-left: -1px;
       margin-right: -1px;
@@ -563,6 +616,10 @@ export function getSpacingStyles(css: CssTemplateFunction) {
       margin-left: -2rem;
       margin-right: -2rem;
     `,
+    '-mx-16': css`
+      margin-left: -4rem;
+      margin-right: -4rem;
+    `,
     '-mt-px': css`
       margin-top: -1px;
     `,
@@ -589,6 +646,9 @@ export function getSpacingStyles(css: CssTemplateFunction) {
     `,
     '-mt-8': css`
       margin-top: -2rem;
+    `,
+    '-mt-16': css`
+      margin-top: -4rem;
     `,
     '-mr-px': css`
       margin-right: -1px;
@@ -617,6 +677,9 @@ export function getSpacingStyles(css: CssTemplateFunction) {
     '-mr-8': css`
       margin-right: -2rem;
     `,
+    '-mr-16': css`
+      margin-right: -4rem;
+    `,
     '-mb-px': css`
       margin-bottom: -1px;
     `,
@@ -644,6 +707,9 @@ export function getSpacingStyles(css: CssTemplateFunction) {
     '-mb-8': css`
       margin-bottom: -2rem;
     `,
+    '-mb-16': css`
+      margin-bottom: -4rem;
+    `,
     '-ml-px': css`
       margin-left: -1px;
     `,
@@ -670,6 +736,9 @@ export function getSpacingStyles(css: CssTemplateFunction) {
     `,
     '-ml-8': css`
       margin-left: -2rem;
+    `,
+    '-ml-16': css`
+      margin-left: -4rem;
     `,
 
     'p-0': css`
@@ -701,6 +770,9 @@ export function getSpacingStyles(css: CssTemplateFunction) {
     `,
     'p-8': css`
       padding: 2rem;
+    `,
+    'p-16': css`
+      padding: 4rem;
     `,
     'py-0': css`
       padding-top: 0;
@@ -742,6 +814,10 @@ export function getSpacingStyles(css: CssTemplateFunction) {
       padding-top: 2rem;
       padding-bottom: 2rem;
     `,
+    'py-16': css`
+      padding-top: 4rem;
+      padding-bottom: 4rem;
+    `,
     'px-0': css`
       padding-left: 0;
       padding-right: 0;
@@ -782,6 +858,10 @@ export function getSpacingStyles(css: CssTemplateFunction) {
       padding-left: 2rem;
       padding-right: 2rem;
     `,
+    'px-16': css`
+      padding-left: 4rem;
+      padding-right: 4rem;
+    `,
     'pt-0': css`
       padding-top: 0;
     `,
@@ -811,6 +891,9 @@ export function getSpacingStyles(css: CssTemplateFunction) {
     `,
     'pt-8': css`
       padding-top: 2rem;
+    `,
+    'pt-16': css`
+      padding-top: 4rem;
     `,
     'pr-0': css`
       padding-right: 0;
@@ -842,6 +925,9 @@ export function getSpacingStyles(css: CssTemplateFunction) {
     'pr-8': css`
       padding-right: 2rem;
     `,
+    'pr-16': css`
+      padding-right: 4rem;
+    `,
     'pb-0': css`
       padding-bottom: 0;
     `,
@@ -872,6 +958,9 @@ export function getSpacingStyles(css: CssTemplateFunction) {
     'pb-8': css`
       padding-bottom: 2rem;
     `,
+    'pb-16': css`
+      padding-bottom: 4rem;
+    `,
     'pl-0': css`
       padding-left: 0;
     `,
@@ -901,6 +990,9 @@ export function getSpacingStyles(css: CssTemplateFunction) {
     `,
     'pl-8': css`
       padding-left: 2rem;
+    `,
+    'pl-16': css`
+      padding-left: 4rem;
     `,
 
   } satisfies Partial<Styles>

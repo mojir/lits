@@ -24,6 +24,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { mean } = import("Vector");\nmean([1, 2, 3])',
       'let { mean } = import("Vector");\nmean([1, 2, -3])',
     ],
+    seeAlso: ['Vector.moving-mean', 'Vector.centered-moving-mean', 'Vector.running-mean', 'Vector.geometric-mean', 'Vector.harmonic-mean', 'Vector.median', 'Vector.mode', 'Vector.sum', 'Vector.rms'],
   },
   'moving-mean': {
     category: 'Vector',
@@ -59,6 +60,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { moving-mean } = import("Vector");\nmoving-mean([1, 2, 3, 4, 5], 3)',
       'let { moving-mean } = import("Vector");\nmoving-mean([1, 2, 3, 4, 5], 5)',
     ],
+    seeAlso: ['moving-fn', 'Vector.mean', 'Vector.centered-moving-mean', 'Vector.running-mean'],
   },
   'centered-moving-mean': {
     category: 'Vector',
@@ -118,6 +120,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { centered-moving-mean } = import("Vector");\ncentered-moving-mean([1, 2, 3, 4, 5], 3, 0, 10)',
       'let { centered-moving-mean } = import("Vector");\ncentered-moving-mean([1, 2, 3, 4, 5], 3, 10)',
     ],
+    seeAlso: ['Vector.mean', 'Vector.moving-mean', 'Vector.running-mean'],
   },
   'running-mean': {
     category: 'Vector',
@@ -141,6 +144,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     examples: [
       'let { running-mean } = import("Vector");\nrunning-mean([1, 2, 3, 4, 5])',
     ],
+    seeAlso: ['running-fn', 'Vector.mean', 'Vector.moving-mean', 'Vector.centered-moving-mean'],
   },
   'geometric-mean': {
     category: 'Vector',
@@ -165,6 +169,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { geometric-mean } = import("Vector");\ngeometric-mean([1, 2, 3])',
       'let { geometric-mean } = import("Vector");\ngeometric-mean([1, 2, 9])',
     ],
+    seeAlso: ['Vector.moving-geometric-mean', 'Vector.centered-moving-geometric-mean', 'Vector.running-geometric-mean', 'Vector.mean', 'Vector.harmonic-mean'],
   },
   'moving-geometric-mean': {
     category: 'Vector',
@@ -200,6 +205,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { moving-geometric-mean } = import("Vector");\nmoving-geometric-mean([1, 2, 3, 4, 5], 3)',
       'let { moving-geometric-mean } = import("Vector");\nmoving-geometric-mean([1, 2, 3, 4, 5], 5)',
     ],
+    seeAlso: ['Vector.geometric-mean', 'Vector.centered-moving-geometric-mean', 'Vector.running-geometric-mean'],
   },
   'centered-moving-geometric-mean': {
     category: 'Vector',
@@ -259,6 +265,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { centered-moving-geometric-mean } = import("Vector");\ncentered-moving-geometric-mean([1, 2, 3, 4, 5], 3, 0, 10)',
       'let { centered-moving-geometric-mean } = import("Vector");\ncentered-moving-geometric-mean([1, 2, 3, 4, 5], 3, 10)',
     ],
+    seeAlso: ['Vector.geometric-mean', 'Vector.moving-geometric-mean', 'Vector.running-geometric-mean'],
   },
   'running-geometric-mean': {
     category: 'Vector',
@@ -282,6 +289,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     examples: [
       'let { running-geometric-mean } = import("Vector");\nrunning-geometric-mean([1, 2, 3, 4, 5])',
     ],
+    seeAlso: ['Vector.geometric-mean', 'Vector.moving-geometric-mean', 'Vector.centered-moving-geometric-mean'],
   },
   'harmonic-mean': {
     category: 'Vector',
@@ -306,6 +314,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { harmonic-mean } = import("Vector");\nharmonic-mean([1, 2, 3])',
       'let { harmonic-mean } = import("Vector");\nharmonic-mean([1, 2, 9])',
     ],
+    seeAlso: ['Vector.moving-harmonic-mean', 'Vector.centered-moving-harmonic-mean', 'Vector.running-harmonic-mean', 'Vector.mean', 'Vector.geometric-mean'],
   },
   'moving-harmonic-mean': {
     category: 'Vector',
@@ -341,6 +350,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { moving-harmonic-mean } = import("Vector");\nmoving-harmonic-mean([1, 2, 3, 4, 5], 3)',
       'let { moving-harmonic-mean } = import("Vector");\nmoving-harmonic-mean([1, 2, 3, 4, 5], 5)',
     ],
+    seeAlso: ['Vector.harmonic-mean', 'Vector.centered-moving-harmonic-mean', 'Vector.running-harmonic-mean'],
   },
   'centered-moving-harmonic-mean': {
     category: 'Vector',
@@ -400,6 +410,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { centered-moving-harmonic-mean } = import("Vector");\ncentered-moving-harmonic-mean([1, 2, 3, 4, 5], 3, 0, 10)',
       'let { centered-moving-harmonic-mean } = import("Vector");\ncentered-moving-harmonic-mean([1, 2, 3, 4, 5], 3, 10)',
     ],
+    seeAlso: ['Vector.harmonic-mean', 'Vector.moving-harmonic-mean', 'Vector.running-harmonic-mean'],
   },
   'running-harmonic-mean': {
     category: 'Vector',
@@ -423,6 +434,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     examples: [
       'let { running-harmonic-mean } = import("Vector");\nrunning-harmonic-mean([1, 2, 3, 4, 5])',
     ],
+    seeAlso: ['Vector.harmonic-mean', 'Vector.moving-harmonic-mean', 'Vector.centered-moving-harmonic-mean'],
   },
   'median': {
     category: 'Vector',
@@ -449,6 +461,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { median } = import("Vector");\nmedian([1, 2, 3, 4])',
       'let { median } = import("Vector");\nmedian([1, 2, -3, 4])',
     ],
+    seeAlso: ['Vector.moving-median', 'Vector.centered-moving-median', 'Vector.running-median', 'Vector.mean', 'Vector.mode', 'Vector.quartiles', 'Vector.percentile', 'Vector.iqr', 'Vector.medad'],
   },
   'moving-median': {
     category: 'Vector',
@@ -484,6 +497,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { moving-median } = import("Vector");\nmoving-median([1, 2, 3, 4, 5], 3)',
       'let { moving-median } = import("Vector");\nmoving-median([1, 2, 3, 4, 5], 5)',
     ],
+    seeAlso: ['Vector.median', 'Vector.centered-moving-median', 'Vector.running-median'],
   },
   'centered-moving-median': {
     category: 'Vector',
@@ -543,6 +557,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { centered-moving-median } = import("Vector");\ncentered-moving-median([1, 2, 3, 4, 5], 3, 0, 10)',
       'let { centered-moving-median } = import("Vector");\ncentered-moving-median([1, 2, 3, 4, 5], 3, 10)',
     ],
+    seeAlso: ['Vector.median', 'Vector.moving-median', 'Vector.running-median'],
   },
   'running-median': {
     category: 'Vector',
@@ -566,6 +581,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     examples: [
       'let { running-median } = import("Vector");\nrunning-median([1, 2, 3, 4, 5])',
     ],
+    seeAlso: ['Vector.median', 'Vector.moving-median', 'Vector.centered-moving-median'],
   },
   'variance': {
     category: 'Vector',
@@ -590,6 +606,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { variance } = import("Vector");\nvariance([1, 2, 3])',
       'let { variance } = import("Vector");\nvariance([1, 2, -3])',
     ],
+    seeAlso: ['Linear-Algebra.cov', 'Vector.moving-variance', 'Vector.centered-moving-variance', 'Vector.running-variance', 'Vector.stdev', 'Vector.sample-variance', 'Vector.mad'],
   },
   'moving-variance': {
     category: 'Vector',
@@ -625,6 +642,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { moving-variance } = import("Vector");\nmoving-variance([1, 2, 3, 4, 5], 3)',
       'let { moving-variance } = import("Vector");\nmoving-variance([1, 2, 3, 4, 5], 5)',
     ],
+    seeAlso: ['Vector.variance', 'Vector.centered-moving-variance', 'Vector.running-variance'],
   },
   'centered-moving-variance': {
     category: 'Vector',
@@ -685,6 +703,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { centered-moving-variance } = import("Vector");\ncentered-moving-variance([1, 2, 3, 4, 5], 3, 1, 5)',
       'let { centered-moving-variance } = import("Vector");\ncentered-moving-variance([1, 2, 3, 4, 5], 3, 0, 6)',
     ],
+    seeAlso: ['Vector.variance', 'Vector.moving-variance', 'Vector.running-variance'],
   },
   'running-variance': {
     category: 'Vector',
@@ -708,6 +727,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     examples: [
       'let { running-variance } = import("Vector");\nrunning-variance([1, 2, 3, 4, 5])',
     ],
+    seeAlso: ['Vector.variance', 'Vector.moving-variance', 'Vector.centered-moving-variance'],
   },
   'sample-variance': {
     category: 'Vector',
@@ -735,6 +755,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { sample-variance } = import("Vector");\nsample-variance([1, 2, -3, 4])',
       'let { sample-variance } = import("Vector");\nsample-variance([1, 2, 3, 40, 50])',
     ],
+    seeAlso: ['Vector.moving-sample-variance', 'Vector.centered-moving-sample-variance', 'Vector.running-sample-variance', 'Vector.variance', 'Vector.sample-stdev'],
   },
   'moving-sample-variance': {
     category: 'Vector',
@@ -770,6 +791,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { moving-sample-variance } = import("Vector");\nmoving-sample-variance([1, 2, 3, 4, 5], 3)',
       'let { moving-sample-variance } = import("Vector");\nmoving-sample-variance([1, 2, 3, 4, 5], 5)',
     ],
+    seeAlso: ['Vector.sample-variance', 'Vector.centered-moving-sample-variance', 'Vector.running-sample-variance'],
   },
   'centered-moving-sample-variance': {
     category: 'Vector',
@@ -830,6 +852,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { centered-moving-sample-variance } = import("Vector");\ncentered-moving-sample-variance([1, 2, 3, 4, 5], 3, 1, 5)',
       'let { centered-moving-sample-variance } = import("Vector");\ncentered-moving-sample-variance([1, 2, 3, 4, 5], 3, 0, 6)',
     ],
+    seeAlso: ['Vector.sample-variance', 'Vector.moving-sample-variance', 'Vector.running-sample-variance'],
   },
   'running-sample-variance': {
     category: 'Vector',
@@ -853,6 +876,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     examples: [
       'let { running-sample-variance } = import("Vector");\nrunning-sample-variance([1, 2, 3, 4, 5])',
     ],
+    seeAlso: ['Vector.sample-variance', 'Vector.moving-sample-variance', 'Vector.centered-moving-sample-variance'],
   },
   'stdev': {
     category: 'Vector',
@@ -880,6 +904,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { stdev } = import("Vector");\nstdev([1, 2, -3, 4])',
       'let { stdev } = import("Vector");\nstdev([1, 2, 3, 40, 50])',
     ],
+    seeAlso: ['Vector.moving-stdev', 'Vector.centered-moving-stdev', 'Vector.running-stdev', 'Vector.variance', 'Vector.sample-stdev', 'Vector.rms', 'Vector.mad'],
   },
   'moving-stdev': {
     category: 'Vector',
@@ -915,6 +940,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { moving-stdev } = import("Vector");\nmoving-stdev([1, 2, 3, 4, 5], 3)',
       'let { moving-stdev } = import("Vector");\nmoving-stdev([1, 2, 3, 4, 5], 5)',
     ],
+    seeAlso: ['Vector.stdev', 'Vector.centered-moving-stdev', 'Vector.running-stdev'],
   },
   'centered-moving-stdev': {
     category: 'Vector',
@@ -975,6 +1001,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { centered-moving-stdev } = import("Vector");\ncentered-moving-stdev([1, 2, 3, 4, 5], 3, 1, 5)',
       'let { centered-moving-stdev } = import("Vector");\ncentered-moving-stdev([1, 2, 3, 4, 5], 3, 0, 6)',
     ],
+    seeAlso: ['Vector.stdev', 'Vector.moving-stdev', 'Vector.running-stdev'],
   },
   'running-stdev': {
     category: 'Vector',
@@ -998,6 +1025,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     examples: [
       'let { running-stdev } = import("Vector");\nrunning-stdev([1, 2, 3, 4, 5])',
     ],
+    seeAlso: ['Vector.stdev', 'Vector.moving-stdev', 'Vector.centered-moving-stdev'],
   },
   'sample-stdev': {
     category: 'Vector',
@@ -1025,6 +1053,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { sample-stdev } = import("Vector");\nsample-stdev([1, 2, -3, 4])',
       'let { sample-stdev } = import("Vector");\nsample-stdev([1, 2, 3, 40, 50])',
     ],
+    seeAlso: ['Vector.moving-sample-stdev', 'Vector.centered-moving-sample-stdev', 'Vector.running-sample-stdev', 'Vector.stdev', 'Vector.sample-variance'],
   },
   'moving-sample-stdev': {
     category: 'Vector',
@@ -1060,6 +1089,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { moving-sample-stdev } = import("Vector");\nmoving-sample-stdev([1, 2, 3, 4, 5], 3)',
       'let { moving-sample-stdev } = import("Vector");\nmoving-sample-stdev([1, 2, 3, 4, 5], 5)',
     ],
+    seeAlso: ['Vector.sample-stdev', 'Vector.centered-moving-sample-stdev', 'Vector.running-sample-stdev'],
   },
   'centered-moving-sample-stdev': {
     category: 'Vector',
@@ -1120,6 +1150,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { centered-moving-sample-stdev } = import("Vector");\ncentered-moving-sample-stdev([1, 2, 3, 4, 5], 3, 1, 5)',
       'let { centered-moving-sample-stdev } = import("Vector");\ncentered-moving-sample-stdev([1, 2, 3, 4, 5], 3, 0, 6)',
     ],
+    seeAlso: ['Vector.sample-stdev', 'Vector.moving-sample-stdev', 'Vector.running-sample-stdev'],
   },
   'running-sample-stdev': {
     category: 'Vector',
@@ -1143,6 +1174,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     examples: [
       'let { running-sample-stdev } = import("Vector");\nrunning-sample-stdev([1, 2, 3, 4, 5])',
     ],
+    seeAlso: ['Vector.sample-stdev', 'Vector.moving-sample-stdev', 'Vector.centered-moving-sample-stdev'],
   },
   'iqr': {
     category: 'Vector',
@@ -1170,6 +1202,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { iqr, generate } = import("Vector");\niqr(generate(1000, -> 1e6 / ($ + 1) ^ 2))',
       'let { iqr, generate } = import("Vector");\niqr(generate(1000, -> ln($ + 1)))',
     ],
+    seeAlso: ['Vector.moving-iqr', 'Vector.centered-moving-iqr', 'Vector.running-iqr', 'Vector.quartiles', 'Vector.median', 'Vector.mad', 'Vector.medad', 'Vector.outliers?', 'Vector.outliers'],
   },
   'moving-iqr': {
     category: 'Vector',
@@ -1206,6 +1239,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { moving-iqr } = import("Vector");\nmoving-iqr([1, 2, 4, 7, 11, 16], 5)',
       'let { moving-iqr } = import("Vector");\nmoving-iqr([1, 2, 4, 7, 11, 16], 6)',
     ],
+    seeAlso: ['Vector.iqr', 'Vector.centered-moving-iqr', 'Vector.running-iqr'],
   },
   'centered-moving-iqr': {
     category: 'Vector',
@@ -1264,6 +1298,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { centered-moving-iqr } = import("Vector");\ncentered-moving-iqr([1, 2, 4, 7, 11, 16], 4)',
       'let { centered-moving-iqr } = import("Vector");\ncentered-moving-iqr([1, 2, 4, 7, 11, 16], 4, 0, 0)',
     ],
+    seeAlso: ['Vector.iqr', 'Vector.moving-iqr', 'Vector.running-iqr'],
   },
   'running-iqr': {
     category: 'Vector',
@@ -1288,6 +1323,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { running-iqr } = import("Vector");\nrunning-iqr([1, 2, 3, 4, 5, 6])',
       'let { running-iqr } = import("Vector");\nrunning-iqr([-1, -2, -3, 1, 2, 3])',
     ],
+    seeAlso: ['Vector.iqr', 'Vector.moving-iqr', 'Vector.centered-moving-iqr'],
   },
   'sum': {
     category: 'Vector',
@@ -1312,6 +1348,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { sum } = import("Vector");\nsum([1, 2, 3])',
       'let { sum } = import("Vector");\nsum([1, 2, -3])',
     ],
+    seeAlso: ['Vector.moving-sum', 'Vector.centered-moving-sum', 'Vector.running-sum', 'Vector.prod', 'Vector.cumsum', 'Vector.mean'],
   },
   'moving-sum': {
     category: 'Vector',
@@ -1347,6 +1384,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { moving-sum } = import("Vector");\nmoving-sum([1, 2, 3, 4, 5], 3)',
       'let { moving-sum } = import("Vector");\nmoving-sum([1, 2, 3, 4, 5], 5)',
     ],
+    seeAlso: ['Vector.sum', 'Vector.centered-moving-sum', 'Vector.running-sum'],
   },
   'centered-moving-sum': {
     category: 'Vector',
@@ -1406,6 +1444,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { centered-moving-sum } = import("Vector");\ncentered-moving-sum([1, 2, 3, 4, 5], 3, 0, 0)',
       'let { centered-moving-sum } = import("Vector");\ncentered-moving-sum([1, 2, 3, 4, 5], 3, 10)',
     ],
+    seeAlso: ['Vector.sum', 'Vector.moving-sum', 'Vector.running-sum'],
   },
   'running-sum': {
     category: 'Vector',
@@ -1430,6 +1469,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { running-sum } = import("Vector");\nrunning-sum([1, 2, 3])',
       'let { running-sum } = import("Vector");\nrunning-sum([1, -2, -3])',
     ],
+    seeAlso: ['Vector.sum', 'Vector.moving-sum', 'Vector.centered-moving-sum', 'Vector.cumsum'],
   },
   'prod': {
     category: 'Vector',
@@ -1454,6 +1494,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { prod } = import("Vector");\nprod([1, 2, 3])',
       'let { prod } = import("Vector");\nprod([1, 2, -3])',
     ],
+    seeAlso: ['Vector.moving-prod', 'Vector.centered-moving-prod', 'Vector.running-prod', 'Vector.sum', 'Vector.cumprod'],
   },
   'moving-prod': {
     category: 'Vector',
@@ -1489,6 +1530,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { moving-prod } = import("Vector");\nmoving-prod([1, 2, 3, 4, 5], 3)',
       'let { moving-prod } = import("Vector");\nmoving-prod([1, 2, 3, 4, 5], 5)',
     ],
+    seeAlso: ['Vector.prod', 'Vector.centered-moving-prod', 'Vector.running-prod'],
   },
   'centered-moving-prod': {
     category: 'Vector',
@@ -1547,6 +1589,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { centered-moving-prod } = import("Vector");\ncentered-moving-prod([1, 2, 3, 4, 5], 3)',
       'let { centered-moving-prod } = import("Vector");\ncentered-moving-prod([1, 2, 3, 4, 5], 3, 0, 0)',
     ],
+    seeAlso: ['Vector.prod', 'Vector.moving-prod', 'Vector.running-prod'],
   },
   'running-prod': {
     category: 'Vector',
@@ -1571,6 +1614,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { running-prod } = import("Vector");\nrunning-prod([1, 2, 3, 4, 5])',
       'let { running-prod } = import("Vector");\nrunning-prod([1, -2, -3])',
     ],
+    seeAlso: ['Vector.prod', 'Vector.moving-prod', 'Vector.centered-moving-prod', 'Vector.cumprod'],
   },
   'min': {
     category: 'Vector',
@@ -1598,6 +1642,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       '// Using "as" alias because "min" shadows a builtin function\nlet { min as vec-min } = import("Vector");\nvec-min([1, 2, 3, 4])',
       '// Using "as" alias because "min" shadows a builtin function\nlet { min as vec-min } = import("Vector");\nvec-min([1, 2, -3, 4])',
     ],
+    seeAlso: ['min', 'Vector.moving-min', 'Vector.centered-moving-min', 'Vector.running-min', 'Vector.max', 'Vector.span', 'Vector.min-index'],
   },
   'moving-min': {
     category: 'Vector',
@@ -1633,6 +1678,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { moving-min } = import("Vector");\nmoving-min([1, 2, 3, 4, 5], 3)',
       'let { moving-min } = import("Vector");\nmoving-min([1, 2, 3, 4, 5], 5)',
     ],
+    seeAlso: ['Vector.min', 'Vector.centered-moving-min', 'Vector.running-min'],
   },
   'centered-moving-min': {
     category: 'Vector',
@@ -1692,6 +1738,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { centered-moving-min } = import("Vector");\ncentered-moving-min([1, 2, 3, 4, 5], 3, 0, 100)',
       'let { centered-moving-min } = import("Vector");\ncentered-moving-min([1, 2, 3, 4, 5], 3, 0)',
     ],
+    seeAlso: ['Vector.min', 'Vector.moving-min', 'Vector.running-min'],
   },
   'running-min': {
     category: 'Vector',
@@ -1716,6 +1763,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { running-min } = import("Vector");\nrunning-min([1, 2, 3])',
       'let { running-min } = import("Vector");\nrunning-min([1, -2, -3])',
     ],
+    seeAlso: ['Vector.min', 'Vector.moving-min', 'Vector.centered-moving-min'],
   },
   'max': {
     category: 'Vector',
@@ -1743,6 +1791,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       '// Using "as" alias because "max" shadows a builtin function\nlet { max as vec-max } = import("Vector");\nvec-max([1, 2, 3, 4])',
       '// Using "as" alias because "max" shadows a builtin function\nlet { max as vec-max } = import("Vector");\nvec-max([1, 2, -3, 4])',
     ],
+    seeAlso: ['max', 'Vector.moving-max', 'Vector.centered-moving-max', 'Vector.running-max', 'Vector.min', 'Vector.span', 'Vector.max-index'],
   },
   'moving-max': {
     category: 'Vector',
@@ -1778,6 +1827,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { moving-max } = import("Vector");\nmoving-max([1, 2, 3, 4, 5], 3)',
       'let { moving-max } = import("Vector");\nmoving-max([1, 2, 3, 4, 5], 5)',
     ],
+    seeAlso: ['Vector.max', 'Vector.centered-moving-max', 'Vector.running-max'],
   },
   'centered-moving-max': {
     category: 'Vector',
@@ -1837,6 +1887,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { centered-moving-max } = import("Vector");\ncentered-moving-max([1, 2, 3, 4, 5], 3, 0, 100)',
       'let { centered-moving-max } = import("Vector");\ncentered-moving-max([1, 2, 3, 4, 5], 3, 0)',
     ],
+    seeAlso: ['Vector.max', 'Vector.moving-max', 'Vector.running-max'],
   },
   'running-max': {
     category: 'Vector',
@@ -1861,6 +1912,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { running-max } = import("Vector");\nrunning-max([1, 2, 3])',
       'let { running-max } = import("Vector");\nrunning-max([1, -2, -3])',
     ],
+    seeAlso: ['Vector.max', 'Vector.moving-max', 'Vector.centered-moving-max'],
   },
   'span': {
     category: 'Vector',
@@ -1886,6 +1938,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { span } = import("Vector");\nspan([1, 1, 2, 3, 3])',
       'let { span } = import("Vector");\nspan([1, 2, -3])',
     ],
+    seeAlso: ['Vector.moving-span', 'Vector.centered-moving-span', 'Vector.running-span', 'Vector.min', 'Vector.max'],
   },
   'moving-span': {
     category: 'Vector',
@@ -1922,6 +1975,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { moving-span } = import("Vector");\nmoving-span([1, 2, 4, 7, 11, 16], 5)',
       'let { moving-span } = import("Vector");\nmoving-span([1, 2, 4, 7, 11, 16], 6)',
     ],
+    seeAlso: ['Vector.span', 'Vector.centered-moving-span', 'Vector.running-span'],
   },
   'centered-moving-span': {
     category: 'Vector',
@@ -1980,6 +2034,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { centered-moving-span } = import("Vector");\ncentered-moving-span([1, 2, 4, 7, 11, 16], 4)',
       'let { centered-moving-span } = import("Vector");\ncentered-moving-span([1, 2, 4, 7, 11, 16], 3, 0, 100)',
     ],
+    seeAlso: ['Vector.span', 'Vector.moving-span', 'Vector.running-span'],
   },
   'running-span': {
     category: 'Vector',
@@ -2003,6 +2058,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     examples: [
       'let { running-span } = import("Vector");\nrunning-span([1, 2, 4])',
     ],
+    seeAlso: ['Vector.span', 'Vector.moving-span', 'Vector.centered-moving-span'],
   },
   'skewness': {
     category: 'Vector',
@@ -2027,6 +2083,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { skewness } = import("Vector");\nskewness([1, 2, 3, 6, 20])',
       'let { skewness } = import("Vector");\nskewness([1, 2, 2, 3])',
     ],
+    seeAlso: ['Vector.moving-skewness', 'Vector.centered-moving-skewness', 'Vector.running-skewness', 'Vector.kurtosis', 'Vector.sample-skewness', 'Vector.excess-kurtosis'],
   },
   'moving-skewness': {
     category: 'Vector',
@@ -2062,6 +2119,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { moving-skewness } = import("Vector");\nmoving-skewness([1, 2, 4, 7, 11, 16], 4)',
       'let { moving-skewness } = import("Vector");\nmoving-skewness([1, 2, 4, 7, 11, 16], 5)',
     ],
+    seeAlso: ['Vector.skewness', 'Vector.centered-moving-skewness', 'Vector.running-skewness'],
   },
   'centered-moving-skewness': {
     category: 'Vector',
@@ -2120,6 +2178,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { centered-moving-skewness } = import("Vector");\ncentered-moving-skewness([1, 2, 4, 7, 11, 16], 4)',
       'let { centered-moving-skewness } = import("Vector");\ncentered-moving-skewness([1, 2, 4, 7, 11, 16], 4, 0, 0)',
     ],
+    seeAlso: ['Vector.skewness', 'Vector.moving-skewness', 'Vector.running-skewness'],
   },
   'running-skewness': {
     category: 'Vector',
@@ -2143,6 +2202,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     examples: [
       'let { running-skewness } = import("Vector");\nrunning-skewness([1, 2, 4, 7, 11])',
     ],
+    seeAlso: ['Vector.skewness', 'Vector.moving-skewness', 'Vector.centered-moving-skewness'],
   },
   'sample-skewness': {
     category: 'Vector',
@@ -2167,6 +2227,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { sample-skewness } = import("Vector");\nsample-skewness([1, 2, 3, 6, 20])',
       'let { sample-skewness } = import("Vector");\nsample-skewness([1, 2, 2, 3])',
     ],
+    seeAlso: ['Vector.moving-sample-skewness', 'Vector.centered-moving-sample-skewness', 'Vector.running-sample-skewness', 'Vector.skewness', 'Vector.sample-kurtosis'],
   },
   'moving-sample-skewness': {
     category: 'Vector',
@@ -2202,6 +2263,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { moving-sample-skewness } = import("Vector");\nmoving-sample-skewness([1, 2, 4, 7, 11, 16], 4)',
       'let { moving-sample-skewness } = import("Vector");\nmoving-sample-skewness([1, 2, 4, 7, 11, 16], 5)',
     ],
+    seeAlso: ['Vector.sample-skewness', 'Vector.centered-moving-sample-skewness', 'Vector.running-sample-skewness'],
   },
   'centered-moving-sample-skewness': {
     category: 'Vector',
@@ -2260,6 +2322,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { centered-moving-sample-skewness } = import("Vector");\ncentered-moving-sample-skewness([1, 2, 4, 7, 11, 16], 4)',
       'let { centered-moving-sample-skewness } = import("Vector");\ncentered-moving-sample-skewness([1, 2, 4, 7, 11, 16], 3, 0, 100)',
     ],
+    seeAlso: ['Vector.sample-skewness', 'Vector.moving-sample-skewness', 'Vector.running-sample-skewness'],
   },
   'running-sample-skewness': {
     category: 'Vector',
@@ -2283,6 +2346,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     examples: [
       'let { running-sample-skewness } = import("Vector");\nrunning-sample-skewness([1, 2, 4, 7, 11])',
     ],
+    seeAlso: ['Vector.sample-skewness', 'Vector.moving-sample-skewness', 'Vector.centered-moving-sample-skewness'],
   },
   'excess-kurtosis': {
     category: 'Vector',
@@ -2307,6 +2371,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { excess-kurtosis } = import("Vector");\nexcess-kurtosis([1, 2, 3, 6, 20])',
       'let { excess-kurtosis } = import("Vector");\nexcess-kurtosis([1, 2, 2, 3])',
     ],
+    seeAlso: ['Vector.moving-excess-kurtosis', 'Vector.centered-moving-excess-kurtosis', 'Vector.running-excess-kurtosis', 'Vector.kurtosis', 'Vector.sample-excess-kurtosis', 'Vector.skewness'],
   },
   'moving-excess-kurtosis': {
     category: 'Vector',
@@ -2342,6 +2407,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { moving-excess-kurtosis } = import("Vector");\nmoving-excess-kurtosis([1, 2, 4, 7, 11, 16], 4)',
       'let { moving-excess-kurtosis } = import("Vector");\nmoving-excess-kurtosis([1, 2, 4, 7, 11, 16], 5)',
     ],
+    seeAlso: ['Vector.excess-kurtosis', 'Vector.centered-moving-excess-kurtosis', 'Vector.running-excess-kurtosis'],
   },
   'centered-moving-excess-kurtosis': {
     category: 'Vector',
@@ -2400,6 +2466,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { centered-moving-excess-kurtosis } = import("Vector");\ncentered-moving-excess-kurtosis([1, 2, 4, 7, 11, 16], 4)',
       'let { centered-moving-excess-kurtosis } = import("Vector");\ncentered-moving-excess-kurtosis([1, 2, 4, 7, 11, 16], 4, 0, 0)',
     ],
+    seeAlso: ['Vector.excess-kurtosis', 'Vector.moving-excess-kurtosis', 'Vector.running-excess-kurtosis'],
   },
   'running-excess-kurtosis': {
     category: 'Vector',
@@ -2423,6 +2490,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     examples: [
       'let { running-excess-kurtosis } = import("Vector");\nrunning-excess-kurtosis([1, 2, 4, 7, 11])',
     ],
+    seeAlso: ['Vector.excess-kurtosis', 'Vector.moving-excess-kurtosis', 'Vector.centered-moving-excess-kurtosis'],
   },
   'kurtosis': {
     category: 'Vector',
@@ -2447,6 +2515,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { kurtosis } = import("Vector");\nkurtosis([1, 2, 3, 6, 20])',
       'let { kurtosis } = import("Vector");\nkurtosis([1, 2, 2, 3])',
     ],
+    seeAlso: ['Vector.moving-kurtosis', 'Vector.centered-moving-kurtosis', 'Vector.running-kurtosis', 'Vector.excess-kurtosis', 'Vector.sample-kurtosis', 'Vector.skewness'],
   },
   'moving-kurtosis': {
     category: 'Vector',
@@ -2482,6 +2551,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { moving-kurtosis } = import("Vector");\nmoving-kurtosis([1, 2, 4, 7, 11, 16], 4)',
       'let { moving-kurtosis } = import("Vector");\nmoving-kurtosis([1, 2, 4, 7, 11, 16], 5)',
     ],
+    seeAlso: ['Vector.kurtosis', 'Vector.centered-moving-kurtosis', 'Vector.running-kurtosis'],
   },
   'centered-moving-kurtosis': {
     category: 'Vector',
@@ -2540,6 +2610,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { centered-moving-kurtosis } = import("Vector");\ncentered-moving-kurtosis([1, 2, 4, 7, 11, 16], 4)',
       'let { centered-moving-kurtosis } = import("Vector");\ncentered-moving-kurtosis([1, 2, 4, 7, 11, 16], 4, 0, 0)',
     ],
+    seeAlso: ['Vector.kurtosis', 'Vector.moving-kurtosis', 'Vector.running-kurtosis'],
   },
   'running-kurtosis': {
     category: 'Vector',
@@ -2563,6 +2634,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     examples: [
       'let { running-kurtosis } = import("Vector");\nrunning-kurtosis([1, 2, 4, 7, 11])',
     ],
+    seeAlso: ['Vector.kurtosis', 'Vector.moving-kurtosis', 'Vector.centered-moving-kurtosis'],
   },
   'sample-excess-kurtosis': {
     category: 'Vector',
@@ -2587,6 +2659,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { sample-excess-kurtosis } = import("Vector");\nsample-excess-kurtosis([1, 2, 3, 6, 20])',
       'let { sample-excess-kurtosis } = import("Vector");\nsample-excess-kurtosis([1, 2, 2, 3])',
     ],
+    seeAlso: ['Vector.moving-sample-excess-kurtosis', 'Vector.centered-moving-sample-excess-kurtosis', 'Vector.running-sample-excess-kurtosis', 'Vector.sample-kurtosis', 'Vector.excess-kurtosis'],
   },
   'moving-sample-excess-kurtosis': {
     category: 'Vector',
@@ -2622,6 +2695,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { moving-sample-excess-kurtosis } = import("Vector");\nmoving-sample-excess-kurtosis([1, 2, 4, 7, 11, 16], 4)',
       'let { moving-sample-excess-kurtosis } = import("Vector");\nmoving-sample-excess-kurtosis([1, 2, 4, 7, 11, 16], 5)',
     ],
+    seeAlso: ['Vector.sample-excess-kurtosis', 'Vector.centered-moving-sample-excess-kurtosis', 'Vector.running-sample-excess-kurtosis'],
   },
   'centered-moving-sample-excess-kurtosis': {
     category: 'Vector',
@@ -2680,6 +2754,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { centered-moving-sample-excess-kurtosis } = import("Vector");\ncentered-moving-sample-excess-kurtosis([1, 2, 4, 7, 11, 16], 4)',
       'let { centered-moving-sample-excess-kurtosis } = import("Vector");\ncentered-moving-sample-excess-kurtosis([1, 2, 4, 7, 11, 16], 4, 0, 100)',
     ],
+    seeAlso: ['Vector.sample-excess-kurtosis', 'Vector.moving-sample-excess-kurtosis', 'Vector.running-sample-excess-kurtosis'],
   },
   'running-sample-excess-kurtosis': {
     category: 'Vector',
@@ -2703,6 +2778,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     examples: [
       'let { running-sample-excess-kurtosis } = import("Vector");\nrunning-sample-excess-kurtosis([1, 2, 4, 7, 11])',
     ],
+    seeAlso: ['Vector.sample-excess-kurtosis', 'Vector.moving-sample-excess-kurtosis', 'Vector.centered-moving-sample-excess-kurtosis'],
   },
   'sample-kurtosis': {
     category: 'Vector',
@@ -2727,6 +2803,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { sample-kurtosis } = import("Vector");\nsample-kurtosis([1, 2, 3, 6, 20])',
       'let { sample-kurtosis } = import("Vector");\nsample-kurtosis([1, 2, 2, 3])',
     ],
+    seeAlso: ['Vector.moving-sample-kurtosis', 'Vector.centered-moving-sample-kurtosis', 'Vector.running-sample-kurtosis', 'Vector.sample-excess-kurtosis', 'Vector.kurtosis', 'Vector.sample-skewness'],
   },
   'moving-sample-kurtosis': {
     category: 'Vector',
@@ -2762,6 +2839,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { moving-sample-kurtosis } = import("Vector");\nmoving-sample-kurtosis([1, 2, 4, 7, 11, 16], 4)',
       'let { moving-sample-kurtosis } = import("Vector");\nmoving-sample-kurtosis([1, 2, 4, 7, 11, 16], 5)',
     ],
+    seeAlso: ['Vector.sample-kurtosis', 'Vector.centered-moving-sample-kurtosis', 'Vector.running-sample-kurtosis'],
   },
   'centered-moving-sample-kurtosis': {
     category: 'Vector',
@@ -2820,6 +2898,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { centered-moving-sample-kurtosis } = import("Vector");\ncentered-moving-sample-kurtosis([1, 2, 4, 7, 11, 16], 4)',
       'let { centered-moving-sample-kurtosis } = import("Vector");\ncentered-moving-sample-kurtosis([1, 2, 4, 7, 11, 16], 4, 0, 100)',
     ],
+    seeAlso: ['Vector.sample-kurtosis', 'Vector.moving-sample-kurtosis', 'Vector.running-sample-kurtosis'],
   },
   'running-sample-kurtosis': {
     category: 'Vector',
@@ -2843,6 +2922,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     examples: [
       'let { running-sample-kurtosis } = import("Vector");\nrunning-sample-kurtosis([1, 2, 4, 7, 11])',
     ],
+    seeAlso: ['Vector.sample-kurtosis', 'Vector.moving-sample-kurtosis', 'Vector.centered-moving-sample-kurtosis'],
   },
   'rms': {
     category: 'Vector',
@@ -2870,6 +2950,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { rms, generate } = import("Vector");\nrms(generate(1000, -> 1e6 / ($ + 1) ^ 2))',
       'let { rms, generate } = import("Vector");\nrms(generate(1000, -> ln($ + 1)))',
     ],
+    seeAlso: ['Vector.moving-rms', 'Vector.centered-moving-rms', 'Vector.running-rms', 'Vector.mean', 'Vector.stdev'],
   },
   'moving-rms': {
     category: 'Vector',
@@ -2906,6 +2987,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { moving-rms } = import("Vector");\nmoving-rms([1, 2, 4, 7, 11, 16], 5)',
       'let { moving-rms } = import("Vector");\nmoving-rms([1, 2, 4, 7, 11, 16], 6)',
     ],
+    seeAlso: ['Vector.rms', 'Vector.centered-moving-rms', 'Vector.running-rms'],
   },
   'centered-moving-rms': {
     category: 'Vector',
@@ -2965,6 +3047,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { centered-moving-rms } = import("Vector");\ncentered-moving-rms([1, 2, 4, 7, 11, 16], 5, 0)',
       'let { centered-moving-rms } = import("Vector");\ncentered-moving-rms([1, 2, 4, 7, 11, 16], 6, 0, 0)',
     ],
+    seeAlso: ['Vector.rms', 'Vector.moving-rms', 'Vector.running-rms'],
   },
   'running-rms': {
     category: 'Vector',
@@ -2991,6 +3074,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { running-rms } = import("Vector");\nrunning-rms([-1, -2, -3])',
       'let { running-rms } = import("Vector");\nrunning-rms([0])',
     ],
+    seeAlso: ['Vector.rms', 'Vector.moving-rms', 'Vector.centered-moving-rms'],
   },
   'mad': {
     category: 'Vector',
@@ -3015,6 +3099,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { mad } = import("Vector");\nmad([1, 2, 3])',
       'let { mad } = import("Vector");\nmad([1, 2, -3])',
     ],
+    seeAlso: ['Vector.moving-mad', 'Vector.centered-moving-mad', 'Vector.running-mad', 'Vector.medad', 'Vector.stdev', 'Vector.variance', 'Vector.iqr'],
   },
   'moving-mad': {
     category: 'Vector',
@@ -3050,6 +3135,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { moving-mad } = import("Vector");\nmoving-mad([1, 2, 3, 4, 5], 3)',
       'let { moving-mad } = import("Vector");\nmoving-mad([1, 2, 3, 4, 5], 5)',
     ],
+    seeAlso: ['Vector.mad', 'Vector.centered-moving-mad', 'Vector.running-mad'],
   },
   'centered-moving-mad': {
     category: 'Vector',
@@ -3108,6 +3194,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { centered-moving-mad } = import("Vector");\ncentered-moving-mad([1, 2, 3, 4, 5], 3)',
       'let { centered-moving-mad } = import("Vector");\ncentered-moving-mad([1, 2, 3, 4, 5], 5)',
     ],
+    seeAlso: ['Vector.mad', 'Vector.moving-mad', 'Vector.running-mad'],
   },
   'running-mad': {
     category: 'Vector',
@@ -3132,6 +3219,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { running-mad } = import("Vector");\nrunning-mad([1, 2, 3])',
       'let { running-mad } = import("Vector");\nrunning-mad([1, 2, -3])',
     ],
+    seeAlso: ['Vector.mad', 'Vector.moving-mad', 'Vector.centered-moving-mad'],
   },
   'medad': {
     category: 'Vector',
@@ -3156,6 +3244,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { medad } = import("Vector");\nmedad([1, 2, 3])',
       'let { medad } = import("Vector");\nmedad([1, 2, -3])',
     ],
+    seeAlso: ['Vector.moving-medad', 'Vector.centered-moving-medad', 'Vector.running-medad', 'Vector.mad', 'Vector.median', 'Vector.iqr'],
   },
   'moving-medad': {
     category: 'Vector',
@@ -3191,6 +3280,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { moving-medad } = import("Vector");\nmoving-medad([1, 2, 3, 4, 5], 3)',
       'let { moving-medad } = import("Vector");\nmoving-medad([1, 2, 3, 4, 5], 5)',
     ],
+    seeAlso: ['Vector.medad', 'Vector.centered-moving-medad', 'Vector.running-medad'],
   },
   'centered-moving-medad': {
     category: 'Vector',
@@ -3249,6 +3339,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { centered-moving-medad } = import("Vector");\ncentered-moving-medad([1, 2, 3, 4, 5], 3)',
       'let { centered-moving-medad } = import("Vector");\ncentered-moving-medad([1, 2, 3, 4, 5], 5)',
     ],
+    seeAlso: ['Vector.medad', 'Vector.moving-medad', 'Vector.running-medad'],
   },
   'running-medad': {
     category: 'Vector',
@@ -3273,6 +3364,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { running-medad } = import("Vector");\nrunning-medad([1, 2, 3])',
       'let { running-medad } = import("Vector");\nrunning-medad([1, 2, -3])',
     ],
+    seeAlso: ['Vector.medad', 'Vector.moving-medad', 'Vector.centered-moving-medad'],
   },
   'gini-coefficient': {
     category: 'Vector',
@@ -3297,6 +3389,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { gini-coefficient } = import("Vector");\ngini-coefficient([1, 2, 3])',
       'let { gini-coefficient } = import("Vector");\ngini-coefficient([1, 1, 3])',
     ],
+    seeAlso: ['Vector.moving-gini-coefficient', 'Vector.centered-moving-gini-coefficient', 'Vector.running-gini-coefficient', 'Vector.entropy'],
   },
   'moving-gini-coefficient': {
     category: 'Vector',
@@ -3332,6 +3425,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { moving-gini-coefficient } = import("Vector");\nmoving-gini-coefficient([1, 2, 3], 2)',
       'let { moving-gini-coefficient } = import("Vector");\nmoving-gini-coefficient([1, 1, 3], 2)',
     ],
+    seeAlso: ['Vector.gini-coefficient', 'Vector.centered-moving-gini-coefficient', 'Vector.running-gini-coefficient'],
   },
   'centered-moving-gini-coefficient': {
     category: 'Vector',
@@ -3390,6 +3484,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { centered-moving-gini-coefficient } = import("Vector");\ncentered-moving-gini-coefficient([1, 2, 3], 2)',
       'let { centered-moving-gini-coefficient } = import("Vector");\ncentered-moving-gini-coefficient([1, 1, 3], 2)',
     ],
+    seeAlso: ['Vector.gini-coefficient', 'Vector.moving-gini-coefficient', 'Vector.running-gini-coefficient'],
   },
   'running-gini-coefficient': {
     category: 'Vector',
@@ -3414,6 +3509,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { running-gini-coefficient } = import("Vector");\nrunning-gini-coefficient([1, 2, 3])',
       'let { running-gini-coefficient } = import("Vector");\nrunning-gini-coefficient([1, 1, 3])',
     ],
+    seeAlso: ['Vector.gini-coefficient', 'Vector.moving-gini-coefficient', 'Vector.centered-moving-gini-coefficient'],
   },
   'entropy': {
     category: 'Vector',
@@ -3442,6 +3538,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { entropy } = import("Vector");\nentropy([1])',
       'let { entropy } = import("Vector");\nentropy([1, 2])',
     ],
+    seeAlso: ['Vector.moving-entropy', 'Vector.centered-moving-entropy', 'Vector.running-entropy', 'Vector.gini-coefficient'],
   },
   'moving-entropy': {
     category: 'Vector',
@@ -3478,6 +3575,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { moving-entropy } = import("Vector");\nmoving-entropy([1, 1, 2, 3, 3, 3], 3)',
       'let { moving-entropy } = import("Vector");\nmoving-entropy([1, 2], 2)',
     ],
+    seeAlso: ['Vector.entropy', 'Vector.centered-moving-entropy', 'Vector.running-entropy'],
   },
   'centered-moving-entropy': {
     category: 'Vector',
@@ -3537,6 +3635,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { centered-moving-entropy } = import("Vector");\ncentered-moving-entropy([1, 1, 2, 3, 3, 3], 3)',
       'let { centered-moving-entropy } = import("Vector");\ncentered-moving-entropy([1, 2], 2)',
     ],
+    seeAlso: ['Vector.entropy', 'Vector.moving-entropy', 'Vector.running-entropy'],
   },
   'running-entropy': {
     category: 'Vector',
@@ -3561,6 +3660,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { running-entropy } = import("Vector");\nrunning-entropy([1, 1, 2, 3, 3, 3])',
       'let { running-entropy } = import("Vector");\nrunning-entropy([1, 2])',
     ],
+    seeAlso: ['Vector.entropy', 'Vector.moving-entropy', 'Vector.centered-moving-entropy'],
   },
   'monotonic?': {
     category: 'Vector',
@@ -3590,6 +3690,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { monotonic? } = import("Vector");\nmonotonic?([1])',
       'let { monotonic? } = import("Vector");\nmonotonic?([])',
     ],
+    seeAlso: ['Vector.strictly-monotonic?', 'Vector.increasing?', 'Vector.decreasing?'],
   },
   'strictly-monotonic?': {
     category: 'Vector',
@@ -3619,6 +3720,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { strictly-monotonic? } = import("Vector");\nstrictly-monotonic?([1])',
       'let { strictly-monotonic? } = import("Vector");\nstrictly-monotonic?([])',
     ],
+    seeAlso: ['Vector.monotonic?', 'Vector.strictly-increasing?', 'Vector.strictly-decreasing?'],
   },
   'increasing?': {
     category: 'Vector',
@@ -3648,6 +3750,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { increasing? } = import("Vector");\nincreasing?([1])',
       'let { increasing? } = import("Vector");\nincreasing?([])',
     ],
+    seeAlso: ['Vector.strictly-increasing?', 'Vector.decreasing?', 'Vector.strictly-decreasing?', 'Vector.monotonic?'],
   },
   'decreasing?': {
     category: 'Vector',
@@ -3677,6 +3780,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { decreasing? } = import("Vector");\ndecreasing?([1])',
       'let { decreasing? } = import("Vector");\ndecreasing?([])',
     ],
+    seeAlso: ['Vector.strictly-decreasing?', 'Vector.increasing?', 'Vector.strictly-increasing?', 'Vector.monotonic?'],
   },
   'strictly-increasing?': {
     category: 'Vector',
@@ -3706,6 +3810,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { strictly-increasing? } = import("Vector");\nstrictly-increasing?([1])',
       'let { strictly-increasing? } = import("Vector");\nstrictly-increasing?([])',
     ],
+    seeAlso: ['Vector.increasing?', 'Vector.decreasing?', 'Vector.strictly-decreasing?', 'Vector.strictly-monotonic?'],
   },
   'strictly-decreasing?': {
     category: 'Vector',
@@ -3735,6 +3840,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { strictly-decreasing? } = import("Vector");\nstrictly-decreasing?([1])',
       'let { strictly-decreasing? } = import("Vector");\nstrictly-decreasing?([])',
     ],
+    seeAlso: ['Vector.increasing?', 'Vector.strictly-increasing?', 'Vector.decreasing?', 'Vector.strictly-monotonic?'],
   },
   'mode': {
     category: 'Vector',
@@ -3762,6 +3868,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { mode } = import("Vector");\nmode([2, 2, 3, 3])',
       'let { mode } = import("Vector");\nmode([1, 2, 3, 2, 1, 2])',
     ],
+    seeAlso: ['Vector.mean', 'Vector.median'],
   },
   'min-index': {
     category: 'Vector',
@@ -3789,6 +3896,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { min-index } = import("Vector");\nmin-index([1, 2, 3, 4])',
       'let { min-index } = import("Vector");\nmin-index([1, 2, -3, 4])',
     ],
+    seeAlso: ['Vector.max-index', 'Vector.min'],
   },
   'max-index': {
     category: 'Vector',
@@ -3816,6 +3924,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { max-index } = import("Vector");\nmax-index([1, 2, 3, 4])',
       'let { max-index } = import("Vector");\nmax-index([1, 2, -3, 4])',
     ],
+    seeAlso: ['Vector.min-index', 'Vector.max'],
   },
   'sort-indices': {
     category: 'Vector',
@@ -3843,6 +3952,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { sort-indices } = import("Vector");\nsort-indices([1, 2, 3, 4])',
       'let { sort-indices } = import("Vector");\nsort-indices([1, 2, -3, 4])',
     ],
+    seeAlso: ['sort'],
   },
   'count-values': {
     category: 'Vector',
@@ -3870,6 +3980,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { count-values } = import("Vector");\ncount-values([1, 2, -3])',
       'let { count-values } = import("Vector");\ncount-values([1, 2, 2, 1, 3, 2, 4, 2, 1, 2, 2, 1, 3, 2, 4])',
     ],
+    seeAlso: ['frequencies', 'Vector.bincount'],
   },
   'linspace': {
     category: 'Vector',
@@ -3905,6 +4016,13 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { linspace } = import("Vector");\nlinspace(0, 10, 6)',
       'let { linspace } = import("Vector");\nlinspace(10, 20, 25)',
     ],
+    seeAlso: [
+      'range',
+      'Vector.ones',
+      'Vector.zeros',
+      'Vector.fill',
+      'Vector.generate',
+    ],
   },
   'ones': {
     category: 'Vector',
@@ -3931,6 +4049,13 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { ones } = import("Vector");\nones(10)',
       'let { ones } = import("Vector");\nones(0)',
     ],
+    seeAlso: [
+      'repeat',
+      'Vector.zeros',
+      'Vector.fill',
+      'Vector.generate',
+      'Vector.linspace',
+    ],
   },
   'zeros': {
     category: 'Vector',
@@ -3956,6 +4081,13 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { zeros } = import("Vector");\nzeros(5)',
       'let { zeros } = import("Vector");\nzeros(10)',
       'let { zeros } = import("Vector");\nzeros(0)',
+    ],
+    seeAlso: [
+      'repeat',
+      'Vector.ones',
+      'Vector.fill',
+      'Vector.generate',
+      'Vector.linspace',
     ],
   },
   'fill': {
@@ -3992,6 +4124,14 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
     examples: [
       'let { fill } = import("Vector");\nfill(5, PI)',
       'let { fill } = import("Vector");\nfill(10, -1)',
+    ],
+    seeAlso: [
+      'repeat',
+      'Vector.ones',
+      'Vector.zeros',
+      'Vector.generate',
+      'Vector.linspace',
+      'Grid.fill',
     ],
   },
   'generate': {
@@ -4030,6 +4170,14 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { generate } = import("Vector");\ngenerate(10, -> $ + 1)',
       'let { generate } = import("Vector");\ngenerate(0, -> $ + 1)',
     ],
+    seeAlso: [
+      'repeat',
+      'Vector.ones',
+      'Vector.zeros',
+      'Vector.fill',
+      'Vector.linspace',
+      'Grid.generate',
+    ],
   },
   'cumsum': {
     category: 'Vector',
@@ -4056,6 +4204,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { cumsum } = import("Vector");\ncumsum([1, 2, -3])',
       'let { cumsum } = import("Vector");\ncumsum([])',
     ],
+    seeAlso: ['Vector.cumprod', 'Vector.sum', 'Vector.running-sum'],
   },
   'cumprod': {
     category: 'Vector',
@@ -4082,6 +4231,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { cumprod } = import("Vector");\ncumprod([1, 2, -3, 0, 10])',
       'let { cumprod } = import("Vector");\ncumprod([])',
     ],
+    seeAlso: ['Vector.cumsum', 'Vector.prod', 'Vector.running-prod'],
   },
   'quartiles': {
     category: 'Vector',
@@ -4110,6 +4260,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { quartiles, generate } = import("Vector");\nquartiles(generate(1000, -> 1e6 / ($ + 1) ^ 2))',
       'let { quartiles, generate } = import("Vector");\nquartiles(generate(1000, -> ln($ + 1)))',
     ],
+    seeAlso: ['Vector.percentile', 'Vector.quantile', 'Vector.median', 'Vector.iqr'],
   },
   'percentile': {
     category: 'Vector',
@@ -4155,6 +4306,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { percentile } = import("Vector");\npercentile(range(100) ^ 0.5, 90)',
       'let { percentile } = import("Vector");\npercentile(range(100) ^ 0.5, 100)',
     ],
+    seeAlso: ['Vector.quantile', 'Vector.quartiles', 'Vector.median', 'Vector.ecdf', 'Vector.winsorize'],
   },
   'quantile': {
     category: 'Vector',
@@ -4200,6 +4352,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { quantile } = import("Vector");\nquantile(range(100) ^ 0.5, 0.9)',
       'let { quantile } = import("Vector");\nquantile(range(100) ^ 0.5, 1)',
     ],
+    seeAlso: ['Vector.percentile', 'Vector.quartiles', 'Vector.ecdf'],
   },
   'histogram': {
     category: 'Vector',
@@ -4238,6 +4391,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { histogram } = import("Vector");\nhistogram([1, 2, 3, 4, 5], 10)',
       'let { histogram } = import("Vector");\nhistogram([1, 2, 3, 4, 5], 1)',
     ],
+    seeAlso: ['Vector.bincount', 'Vector.ecdf'],
   },
   'ecdf': {
     category: 'Vector',
@@ -4276,6 +4430,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { ecdf } = import("Vector");\necdf([1, 2, 3, 4, 5], 10)',
       'let { ecdf } = import("Vector");\necdf([1, 2, 3, 4, 5], 2)',
     ],
+    seeAlso: ['Vector.histogram', 'Vector.percentile', 'Vector.quantile'],
   },
   'outliers?': {
     category: 'Vector',
@@ -4301,6 +4456,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { outliers? } = import("Vector");\noutliers?([1, 2, -3])',
       'let { outliers? } = import("Vector");\noutliers?([1, 2, 3, 2, 4, 120])',
     ],
+    seeAlso: ['Vector.outliers', 'Vector.winsorize', 'Vector.iqr'],
   },
   'outliers': {
     category: 'Vector',
@@ -4327,6 +4483,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { outliers } = import("Vector");\noutliers([1, 2, -3])',
       'let { outliers } = import("Vector");\noutliers([1, 2, 3, 2, 4, 120])',
     ],
+    seeAlso: ['Vector.outliers?', 'Vector.winsorize', 'Vector.iqr'],
   },
   'bincount': {
     category: 'Vector',
@@ -4373,6 +4530,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { bincount } = import("Vector");\nbincount([1, 2, 3])',
       'let { bincount } = import("Vector");\nbincount([1, 2, 2, 3, 3])',
     ],
+    seeAlso: ['Vector.count-values', 'Vector.histogram'],
     hideOperatorForm: true,
   },
   'winsorize': {
@@ -4415,6 +4573,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { winsorize } = import("Vector");\nwinsorize([2, 5, 8, 10, 15, 18, 20, 35, 60, 100], 0.25, 0.75)',
       'let { winsorize } = import("Vector");\nwinsorize([2, 5, 8, 10, 15, 18, 20, 35, 60, 100], 0.25, 0.5)',
     ],
+    seeAlso: ['Vector.outliers', 'Vector.outliers?', 'Vector.percentile'],
     hideOperatorForm: true,
   },
   'mse': {
@@ -4448,6 +4607,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { mse } = import("Vector");\nmse([1, 2], [3, 3])',
       'let { mse } = import("Vector");\nmse([1], [3])',
     ],
+    seeAlso: ['Vector.rmse', 'Vector.mae', 'Vector.smape'],
   },
   'rmse': {
     category: 'Vector',
@@ -4480,6 +4640,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { rmse } = import("Vector");\nrmse([1, 2], [3, 3])',
       'let { rmse } = import("Vector");\nrmse([1], [3])',
     ],
+    seeAlso: ['Vector.mse', 'Vector.mae', 'Vector.smape'],
   },
   'mae': {
     category: 'Vector',
@@ -4512,6 +4673,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { mae } = import("Vector");\nmae([1, 2], [3, 3])',
       'let { mae } = import("Vector");\nmae([1], [3])',
     ],
+    seeAlso: ['Vector.mse', 'Vector.rmse', 'Vector.smape'],
   },
   'smape': {
     category: 'Vector',
@@ -4544,5 +4706,6 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { smape } = import("Vector");\nsmape([1, 2], [3, 3])',
       'let { smape } = import("Vector");\nsmape([1], [3])',
     ],
+    seeAlso: ['Vector.mse', 'Vector.rmse', 'Vector.mae'],
   },
 }

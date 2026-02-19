@@ -16,9 +16,7 @@ export function getAllDocumentationItems() {
 }
 
 function getDocumentation(reference: Reference) {
-  const stripPrefix = (name: string) => name.includes('.') ? name.split('.').slice(1).join('.') : name
-  const displayTitle = stripPrefix(reference.title)
-  const docTitle = `${escapeTitle(displayTitle)}`
+  const docTitle = `${escapeTitle(reference.title)}`
 
   // Get all references for seeAlso (including namespace references)
   const functionReferences = reference.seeAlso

@@ -29,6 +29,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { reflect } = import("Linear-Algebra");\nreflect([1, 2], [0, 1])',
       'let { reflect } = import("Linear-Algebra");\nreflect([1, 2, 3], [0, 0, 1])',
     ],
+    seeAlso: ['Linear-Algebra.refract', 'Linear-Algebra.projection'],
   },
   'refract': {
     category: 'Linear Algebra',
@@ -63,6 +64,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { refract } = import("Linear-Algebra");\nrefract([1, 2], [0, 1], 1.5)',
       'let { refract } = import("Linear-Algebra");\nrefract([1, 2, 3], [0, 0, 1], 1.5)',
     ],
+    seeAlso: ['Linear-Algebra.reflect'],
   },
   'lerp': {
     category: 'Linear Algebra',
@@ -99,6 +101,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { lerp } = import("Linear-Algebra");\nlerp([1, 2], [3, 4], -1)',
       'let { lerp } = import("Linear-Algebra");\nlerp([1, 2, 3], [4, 5, 6], 0.25)',
     ],
+    seeAlso: ['Linear-Algebra.projection'],
   },
   'rotate2d': {
     category: 'Linear Algebra',
@@ -128,6 +131,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { rotate2d } = import("Linear-Algebra");\nrotate2d([1, 0], PI / 2)',
       'let { rotate2d } = import("Linear-Algebra");\nrotate2d([0, 1], PI)',
     ],
+    seeAlso: ['Linear-Algebra.rotate3d', 'Linear-Algebra.angle'],
   },
   'rotate3d': {
     category: 'Linear Algebra',
@@ -162,6 +166,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { rotate3d } = import("Linear-Algebra");\nrotate3d([1, 0, 0], [0, 1, 0], PI / 2)',
       'let { rotate3d } = import("Linear-Algebra");\nrotate3d([0, 1, 0], [1, 0, 0], PI)',
     ],
+    seeAlso: ['Linear-Algebra.rotate2d', 'Linear-Algebra.angle'],
   },
   'dot': {
     category: 'Linear Algebra',
@@ -191,6 +196,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { dot } = import("Linear-Algebra");\ndot([1, 2], [3, 4])',
       'let { dot } = import("Linear-Algebra");\ndot([1, 2, 3], [4, 5, 6])',
     ],
+    seeAlso: ['Linear-Algebra.cross', 'Linear-Algebra.cosine-similarity', 'Linear-Algebra.angle', 'Linear-Algebra.projection', 'Linear-Algebra.orthogonal?'],
   },
   'cross': {
     category: 'Linear Algebra',
@@ -223,6 +229,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { cross } = import("Linear-Algebra");\ncross([1, 2, 3], [0, 0, 0])',
       'let { cross } = import("Linear-Algebra");\ncross([0, 0, 0], [1, 2, 3])',
     ],
+    seeAlso: ['Linear-Algebra.dot'],
   },
   'normalize-minmax': {
     category: 'Linear Algebra',
@@ -250,6 +257,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { normalize-minmax } = import("Linear-Algebra");\nnormalize-minmax([1, 2, -3, 4])',
       'let { normalize-minmax } = import("Linear-Algebra");\nnormalize-minmax([1, 2, 3, 40, 50])',
     ],
+    seeAlso: ['Linear-Algebra.normalize-zscore', 'Linear-Algebra.normalize-robust', 'Linear-Algebra.normalize-l1', 'Linear-Algebra.normalize-l2', 'Linear-Algebra.normalize-log'],
   },
   'normalize-zscore': {
     category: 'Linear Algebra',
@@ -277,6 +285,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { normalize-zscore } = import("Linear-Algebra");\nnormalize-zscore([1, 2, -3, 4])',
       'let { normalize-zscore } = import("Linear-Algebra");\nnormalize-zscore([1, 2, 3, 40, 50])',
     ],
+    seeAlso: ['Linear-Algebra.normalize-minmax', 'Linear-Algebra.normalize-robust', 'Linear-Algebra.normalize-l1', 'Linear-Algebra.normalize-l2', 'Linear-Algebra.normalize-log'],
   },
   'normalize-robust': {
     category: 'Linear Algebra',
@@ -304,6 +313,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { normalize-robust } = import("Linear-Algebra");\nnormalize-robust([1, 2, -3, 4])',
       'let { normalize-robust } = import("Linear-Algebra");\nnormalize-robust([1, 2, 3, 40, 50])',
     ],
+    seeAlso: ['Linear-Algebra.normalize-minmax', 'Linear-Algebra.normalize-zscore'],
   },
   'normalize-l1': {
     category: 'Linear Algebra',
@@ -331,6 +341,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { normalize-l1 } = import("Linear-Algebra");\nnormalize-l1([1, 2, -3, 4])',
       'let { normalize-l1 } = import("Linear-Algebra");\nnormalize-l1([1, 2, 3, 40, 50])',
     ],
+    seeAlso: ['Linear-Algebra.normalize-l2', 'Linear-Algebra.normalize-minmax', 'Linear-Algebra.manhattan-norm', 'Linear-Algebra.normalize-zscore'],
   },
   'normalize-l2': {
     category: 'Linear Algebra',
@@ -359,6 +370,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { normalize-l2 } = import("Linear-Algebra");\nnormalize-l2([1, 2, -3, 4])',
       'let { normalize-l2 } = import("Linear-Algebra");\nnormalize-l2([1, 2, 3, 40, 50])',
     ],
+    seeAlso: ['Linear-Algebra.normalize-l1', 'Linear-Algebra.normalize-minmax', 'Linear-Algebra.euclidean-norm', 'Linear-Algebra.normalize-zscore'],
   },
   'normalize-log': {
     category: 'Linear Algebra',
@@ -384,6 +396,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { normalize-log } = import("Linear-Algebra");\nnormalize-log([1, 2, 3, 4])',
       'let { normalize-log } = import("Linear-Algebra");\nnormalize-log([1, 2, 3, 40, 50])',
     ],
+    seeAlso: ['Linear-Algebra.normalize-minmax', 'Linear-Algebra.normalize-zscore'],
   },
   'angle': {
     category: 'Linear Algebra',
@@ -411,6 +424,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { angle } = import("Linear-Algebra");\nangle([1, 0], [0, 1])',
       'let { angle } = import("Linear-Algebra");\nangle([1, 0, 1], [0, 1, 0])',
     ],
+    seeAlso: ['Linear-Algebra.dot', 'Linear-Algebra.collinear?', 'Linear-Algebra.orthogonal?', 'Linear-Algebra.rotate2d', 'Linear-Algebra.rotate3d', 'Linear-Algebra.parallel?', 'Linear-Algebra.cosine-similarity', 'Linear-Algebra.to-polar'],
   },
   'projection': {
     category: 'Linear Algebra',
@@ -438,6 +452,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { projection } = import("Linear-Algebra");\nprojection([1, 2], [3, 4])',
       'let { projection } = import("Linear-Algebra");\nprojection([1, 2, 3], [4, 5, 6])',
     ],
+    seeAlso: ['Linear-Algebra.dot', 'Linear-Algebra.reflect', 'Linear-Algebra.lerp'],
   },
   'collinear?': {
     category: 'Linear Algebra',
@@ -466,6 +481,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { collinear? } = import("Linear-Algebra");\ncollinear?([1, 2], [-2, -4])',
       'let { collinear? } = import("Linear-Algebra");\ncollinear?([1, 2, 3], [2, 4, 6])',
     ],
+    seeAlso: ['Linear-Algebra.parallel?', 'Linear-Algebra.orthogonal?', 'Linear-Algebra.angle'],
   },
   'parallel?': {
     category: 'Linear Algebra',
@@ -495,6 +511,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { parallel? } = import("Linear-Algebra");\nparallel?([1, 2, 3], [2, 4, 6])',
       'let { parallel? } = import("Linear-Algebra");\nparallel?([1, 2], [3, 4])',
     ],
+    seeAlso: ['Linear-Algebra.collinear?', 'Linear-Algebra.orthogonal?', 'Linear-Algebra.angle'],
   },
   'orthogonal?': {
     category: 'Linear Algebra',
@@ -523,6 +540,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { orthogonal? } = import("Linear-Algebra");\northogonal?([1, 0, 1], [0, 1, 0])',
       'let { orthogonal? } = import("Linear-Algebra");\northogonal?([1, 2], [2, -1])',
     ],
+    seeAlso: ['Linear-Algebra.collinear?', 'Linear-Algebra.parallel?', 'Linear-Algebra.dot', 'Matrix.orthogonal?', 'Linear-Algebra.angle'],
   },
   'cosine-similarity': {
     category: 'Linear Algebra',
@@ -551,6 +569,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { cosine-similarity } = import("Linear-Algebra");\ncosine-similarity([1, 2, 3], [4, 5, 6])',
       'let { cosine-similarity } = import("Linear-Algebra");\ncosine-similarity([1, 0], [0, 1])',
     ],
+    seeAlso: ['Linear-Algebra.dot', 'Linear-Algebra.angle', 'Linear-Algebra.euclidean-distance'],
   },
   'euclidean-distance': {
     category: 'Linear Algebra',
@@ -579,6 +598,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { euclidean-distance } = import("Linear-Algebra");\neuclidean-distance([1, 2, 3], [4, 5, 6])',
       'let { euclidean-distance } = import("Linear-Algebra");\neuclidean-distance([1, 0], [0, 1])',
     ],
+    seeAlso: ['Linear-Algebra.manhattan-distance', 'Linear-Algebra.chebyshev-distance', 'Linear-Algebra.minkowski-distance', 'Linear-Algebra.euclidean-norm', 'Linear-Algebra.cosine-similarity', 'Linear-Algebra.hamming-distance'],
   },
   'euclidean-norm': {
     category: 'Linear Algebra',
@@ -604,6 +624,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { euclidean-norm } = import("Linear-Algebra");\neuclidean-norm([3, 4])',
       'let { euclidean-norm } = import("Linear-Algebra");\neuclidean-norm([1, 2, 3])',
     ],
+    seeAlso: ['Linear-Algebra.manhattan-norm', 'Linear-Algebra.chebyshev-norm', 'Linear-Algebra.minkowski-norm', 'Linear-Algebra.euclidean-distance', 'Linear-Algebra.normalize-l2', 'Linear-Algebra.hamming-norm'],
   },
   'manhattan-distance': {
     category: 'Linear Algebra',
@@ -632,6 +653,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { manhattan-distance } = import("Linear-Algebra");\nmanhattan-distance([1, 2, 3], [4, 5, 6])',
       'let { manhattan-distance } = import("Linear-Algebra");\nmanhattan-distance([1, 0], [0, 1])',
     ],
+    seeAlso: ['Linear-Algebra.euclidean-distance', 'Linear-Algebra.chebyshev-distance', 'Linear-Algebra.minkowski-distance', 'Linear-Algebra.manhattan-norm', 'Linear-Algebra.hamming-distance'],
   },
   'manhattan-norm': {
     category: 'Linear Algebra',
@@ -657,6 +679,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { manhattan-norm } = import("Linear-Algebra");\nmanhattan-norm([3, 4])',
       'let { manhattan-norm } = import("Linear-Algebra");\nmanhattan-norm([1, 2, 3])',
     ],
+    seeAlso: ['Linear-Algebra.euclidean-norm', 'Linear-Algebra.chebyshev-norm', 'Linear-Algebra.minkowski-norm', 'Linear-Algebra.manhattan-distance', 'Linear-Algebra.normalize-l1', 'Linear-Algebra.hamming-norm'],
   },
   'hamming-distance': {
     category: 'Linear Algebra',
@@ -685,6 +708,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { hamming-distance } = import("Linear-Algebra");\nhamming-distance([1, 2, 3], [4, 5, 6])',
       'let { hamming-distance } = import("Linear-Algebra");\nhamming-distance([1, 0], [0, 1])',
     ],
+    seeAlso: ['Linear-Algebra.euclidean-distance', 'Linear-Algebra.manhattan-distance', 'Linear-Algebra.hamming-norm'],
   },
   'hamming-norm': {
     category: 'Linear Algebra',
@@ -710,6 +734,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { hamming-norm } = import("Linear-Algebra");\nhamming-norm([3, 4])',
       'let { hamming-norm } = import("Linear-Algebra");\nhamming-norm([1, 2, 3])',
     ],
+    seeAlso: ['Linear-Algebra.euclidean-norm', 'Linear-Algebra.manhattan-norm', 'Linear-Algebra.hamming-distance'],
   },
   'chebyshev-distance': {
     category: 'Linear Algebra',
@@ -738,6 +763,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { chebyshev-distance } = import("Linear-Algebra");\nchebyshev-distance([1, 2, 3], [4, 5, 6])',
       'let { chebyshev-distance } = import("Linear-Algebra");\nchebyshev-distance([1, 0], [0, 1])',
     ],
+    seeAlso: ['Linear-Algebra.euclidean-distance', 'Linear-Algebra.manhattan-distance', 'Linear-Algebra.minkowski-distance', 'Linear-Algebra.chebyshev-norm'],
   },
   'chebyshev-norm': {
     category: 'Linear Algebra',
@@ -763,6 +789,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { chebyshev-norm } = import("Linear-Algebra");\nchebyshev-norm([3, 4])',
       'let { chebyshev-norm } = import("Linear-Algebra");\nchebyshev-norm([1, 2, 3])',
     ],
+    seeAlso: ['Linear-Algebra.euclidean-norm', 'Linear-Algebra.manhattan-norm', 'Linear-Algebra.minkowski-norm', 'Linear-Algebra.chebyshev-distance'],
   },
   'minkowski-distance': {
     category: 'Linear Algebra',
@@ -796,6 +823,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { minkowski-distance } = import("Linear-Algebra");\nminkowski-distance([1, 2, 3], [4, 5, 6], 3)',
       'let { minkowski-distance } = import("Linear-Algebra");\nminkowski-distance([1, 0], [0, 1], 1)',
     ],
+    seeAlso: ['Linear-Algebra.euclidean-distance', 'Linear-Algebra.manhattan-distance', 'Linear-Algebra.chebyshev-distance', 'Linear-Algebra.minkowski-norm'],
   },
   'minkowski-norm': {
     category: 'Linear Algebra',
@@ -826,6 +854,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { minkowski-norm } = import("Linear-Algebra");\nminkowski-norm([3, 4], 3)',
       'let { minkowski-norm } = import("Linear-Algebra");\nminkowski-norm([1, 2, 3], 4)',
     ],
+    seeAlso: ['Linear-Algebra.euclidean-norm', 'Linear-Algebra.manhattan-norm', 'Linear-Algebra.chebyshev-norm', 'Linear-Algebra.minkowski-distance'],
   },
   'cov': {
     category: 'Linear Algebra',
@@ -854,6 +883,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { cov } = import("Linear-Algebra");\ncov([1, 2, 3], [4, 5, 6])',
       'let { cov } = import("Linear-Algebra");\ncov([1, 0], [0, 1])',
     ],
+    seeAlso: ['Linear-Algebra.corr', 'Linear-Algebra.pearson-corr', 'Vector.variance'],
   },
   'corr': {
     category: 'Linear Algebra',
@@ -882,6 +912,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { corr } = import("Linear-Algebra");\ncorr([1, 2, 3], [4, 5, 6])',
       'let { corr } = import("Linear-Algebra");\ncorr([1, 0], [0, 1])',
     ],
+    seeAlso: ['Linear-Algebra.cov', 'Linear-Algebra.pearson-corr', 'Linear-Algebra.spearman-corr', 'Linear-Algebra.kendall-tau', 'Linear-Algebra.autocorrelation', 'Linear-Algebra.cross-correlation'],
   },
   'spearman-corr': {
     category: 'Linear Algebra',
@@ -910,6 +941,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { spearman-corr } = import("Linear-Algebra");\nspearman-corr([1, 2, 3], [4, 5, 6])',
       'let { spearman-corr } = import("Linear-Algebra");\nspearman-corr([1, 0], [0, 1])',
     ],
+    seeAlso: ['Linear-Algebra.pearson-corr', 'Linear-Algebra.kendall-tau', 'Linear-Algebra.corr'],
   },
   'pearson-corr': {
     category: 'Linear Algebra',
@@ -938,6 +970,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { pearson-corr } = import("Linear-Algebra");\npearson-corr([1, 2, 3], [4, 5, 6])',
       'let { pearson-corr } = import("Linear-Algebra");\npearson-corr([1, 0], [0, 1])',
     ],
+    seeAlso: ['Linear-Algebra.spearman-corr', 'Linear-Algebra.kendall-tau', 'Linear-Algebra.corr', 'Linear-Algebra.cov'],
   },
   'kendall-tau': {
     category: 'Linear Algebra',
@@ -966,6 +999,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { kendall-tau } = import("Linear-Algebra");\nkendall-tau([1, 2, 3], [4, 5, 6])',
       'let { kendall-tau } = import("Linear-Algebra");\nkendall-tau([1, 0], [0, 1])',
     ],
+    seeAlso: ['Linear-Algebra.spearman-corr', 'Linear-Algebra.pearson-corr', 'Linear-Algebra.corr'],
   },
   'autocorrelation': {
     category: 'Linear Algebra',
@@ -998,6 +1032,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { autocorrelation } = import("Linear-Algebra");\nautocorrelation([1, 2, 3], 1)',
       'let { autocorrelation } = import("Linear-Algebra");\nautocorrelation([1, 2, 3], 2)',
     ],
+    seeAlso: ['Linear-Algebra.cross-correlation', 'Linear-Algebra.corr'],
   },
   'cross-correlation': {
     category: 'Linear Algebra',
@@ -1033,6 +1068,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { cross-correlation } = import("Linear-Algebra");\ncross-correlation([1, 2, 3], [4, 5, 6], 1)',
       'let { cross-correlation } = import("Linear-Algebra");\ncross-correlation([1, 2, 3], [4, 5, 6], 2)',
     ],
+    seeAlso: ['Linear-Algebra.autocorrelation', 'Linear-Algebra.corr'],
   },
   'rref': {
     category: 'Linear Algebra',
@@ -1058,6 +1094,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { rref } = import("Linear-Algebra");\nrref([[1, 2, 3], [4, 5, 6], [7, 8, 9]])',
       'let { rref } = import("Linear-Algebra");\nrref([[1, 2, 3], [7, 8, 9], [4, 5, 7]])',
     ],
+    seeAlso: ['Linear-Algebra.solve', 'Matrix.rank'],
   },
   'solve': {
     category: 'Linear Algebra',
@@ -1086,6 +1123,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { solve } = import("Linear-Algebra"); solve([[2, 0, 0], [3, 1, 0], [4, 5, 6]], [4, 5, 38])',
       'let { solve } = import("Linear-Algebra"); solve([[2, 3], [1, -1]], [8, 2])',
     ],
+    seeAlso: ['Linear-Algebra.rref', 'Matrix.inv'],
   },
   'to-polar': {
     category: 'Linear Algebra',
@@ -1110,6 +1148,7 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { to-polar } = import("Linear-Algebra");\nto-polar([1, 2])',
       'let { to-polar } = import("Linear-Algebra");\nto-polar([3, 4])',
     ],
+    seeAlso: ['Linear-Algebra.from-polar', 'Linear-Algebra.angle'],
   },
   'from-polar': {
     category: 'Linear Algebra',
@@ -1135,5 +1174,6 @@ export const namespaceDocs: Record<string, FunctionDocs> = {
       'let { from-polar } = import("Linear-Algebra");\nfrom-polar([1, 0])',
       'let { from-polar } = import("Linear-Algebra");\nfrom-polar([1, -PI / 2])',
     ],
+    seeAlso: ['Linear-Algebra.to-polar'],
   },
 }

@@ -44,6 +44,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
         { argumentNames: ['seq', 'n', 'not-found'] },
       ],
       description: 'Accesses element $n of $seq. Accessing out-of-bounds indices returns $not-found, if present, else `null`.',
+      seeAlso: ['first', 'second', 'last', 'get', 'slice'],
       examples: [
         '[1, 2, 3] nth 1',
         '"A string" nth 3',
@@ -77,6 +78,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       args: { seq: { type: ['sequence', 'null'] } },
       variants: [{ argumentNames: ['seq'] }],
       description: 'Returns the first element of $seq. If $seq is empty or `null`, `null` is returned.',
+      seeAlso: ['second', 'last', 'nth', 'rest', 'next'],
       examples: [
         'first(["Albert", "Mojir", 160, [1, 2]])',
         'first([])',
@@ -101,6 +103,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       args: { seq: { type: ['sequence', 'null'] } },
       variants: [{ argumentNames: ['seq'] }],
       description: 'Returns the last element of $seq. If $seq is empty, `null` is returned.',
+      seeAlso: ['first', 'second', 'nth', 'pop'],
       examples: [
         'last(["Albert", "Mojir", 160, [1, 2]])',
         'last([1, 2])',
@@ -126,6 +129,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       args: { seq: { type: 'sequence' } },
       variants: [{ argumentNames: ['seq'] }],
       description: 'Returns a copy of $seq with last element removed. If $seq is empty `null` is returned.',
+      seeAlso: ['push', 'shift', 'last'],
       examples: [
         'pop([1, 2, 3])',
         'pop([])',
@@ -160,6 +164,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['seq', 'fun'] }],
       description: 'Returns the index of the first elements that passes the test implemented by $fun. If no element was found, `null` is returned.',
+      seeAlso: ['index-of', 'some', 'find'],
       examples: [
         `
 position(
@@ -213,6 +218,7 @@ position(
       },
       variants: [{ argumentNames: ['seq', 'x'] }],
       description: 'Returns the index of $x in $seq. If element is not present in $seq `null` is returned.',
+      seeAlso: ['last-index-of', 'position', 'contains?'],
       examples: [
         '[[1], [2], [1], [2]] index-of [1]',
         'index-of(["Albert", "Mojir", 160, [1, 2]], "Mojir")',
@@ -251,6 +257,7 @@ position(
       },
       variants: [{ argumentNames: ['seq', 'x'] }],
       description: 'Returns the last index of $x in $seq. If element is not present in $seq `null` is returned.',
+      seeAlso: ['index-of'],
       examples: [
         '[[1], [2], [1], [2]] last-index-of [1]',
         'last-index-of(["Albert", "Mojir", 160, [1, 2]], "Mojir")',
@@ -283,6 +290,7 @@ position(
       },
       variants: [{ argumentNames: ['seq', 'values'] }],
       description: 'Returns copy of $seq with $values added to the end of it.',
+      seeAlso: ['unshift', 'pop', '++'],
       examples: [
         '[1, 2, 3] push 4',
         '"Albert" push "!"',
@@ -315,6 +323,7 @@ l`,
       description: `If $seq is an array, returns a new array with all but the first element from $seq.
 If $seq has less than two elements, an empty array is returned.
 For string $seq returns all but the first characters in $seq.`,
+      seeAlso: ['next', 'first', 'shift'],
       examples: [
         'rest(["Albert", "Mojir", 160, [1, 2]])',
         'rest(["Albert"])',
@@ -346,6 +355,7 @@ For string $seq returns all but the first characters in $seq.`,
       args: { seq: { type: 'sequence' } },
       variants: [{ argumentNames: ['seq'] }],
       description: 'If $seq is an array, returns a new array with all but the first element from $seq. If $seq has less than two elements, `null` is returned. For string $seq returns all but the first characters in $seq. If length of string $seq is less than two, `null` is returned.',
+      seeAlso: ['rest', 'first'],
       examples: [
         'next(["Albert", "Mojir", 160, [1, 2]])',
         'next(["Albert"])',
@@ -375,6 +385,7 @@ For string $seq returns all but the first characters in $seq.`,
       args: { seq: { type: ['sequence', 'null'] } },
       variants: [{ argumentNames: ['seq'] }],
       description: 'If $seq is an array, creates a new array with the elements from $seq in reversed order. If $seq is a string, returns new reversed string.',
+      seeAlso: ['sort'],
       examples: [
         'reverse(["Albert", "Mojir", 160, [1, 2]])',
         'reverse([])',
@@ -398,6 +409,7 @@ For string $seq returns all but the first characters in $seq.`,
       args: { seq: { type: ['sequence', 'null'] } },
       variants: [{ argumentNames: ['seq'] }],
       description: 'Returns the second element of $seq. If $seq has less than two elements or is `null`, `null` is returned.',
+      seeAlso: ['first', 'last', 'nth'],
       examples: [
         'second(["Albert", "Mojir", 160, [1, 2]])',
         'second([1])',
@@ -423,6 +435,7 @@ For string $seq returns all but the first characters in $seq.`,
       args: { seq: { type: 'sequence' } },
       variants: [{ argumentNames: ['seq'] }],
       description: 'Returns a copy of $seq with first element removed. If $seq is empty `null` is returned.',
+      seeAlso: ['unshift', 'pop', 'rest'],
       examples: [
         'shift([1, 2, 3])',
         'shift([])',
@@ -465,6 +478,7 @@ For string $seq returns all but the first characters in $seq.`,
         { argumentNames: ['seq', 'start', 'stop'] },
       ],
       description: 'Returns a copy of a portion of $seq from index $start (inclusive) to $stop (exclusive).',
+      seeAlso: ['take', 'drop', 'splice', 'nth'],
       examples: [
         '[1, 2, 3, 4, 5] slice 2',
         'slice([1, 2, 3, 4, 5], 2, 4)',
@@ -503,6 +517,7 @@ For string $seq returns all but the first characters in $seq.`,
         { argumentNames: ['seq', 'start', 'deleteCount', 'items'] },
       ],
       description: 'Returns a a spliced array. Removes $deleteCount elements from $seq starting at $start and replaces them with $items. If $start is negative, it is counting from the end of the array.',
+      seeAlso: ['slice', 'remove-at'],
       examples: [
         'splice([1, 2, 3, 4, 5], 2, 2, "x")',
         'splice([1, 2, 3, 4, 5], -2, 1, "x")',
@@ -538,6 +553,7 @@ For string $seq returns all but the first characters in $seq.`,
       },
       variants: [{ argumentNames: ['seq', 'fun'] }],
       description: 'Returns the first element that passes the test implemented by $fun. I no element was found, `null` is returned.',
+      seeAlso: ['position', 'any?', 'find'],
       examples: [
         `
 some(
@@ -623,6 +639,7 @@ some(
         { argumentNames: ['seq', 'fun'] },
       ],
       description: 'Returns a new sequence with the elements from $seq sorted according to $fun. If no $fun is supplied, builtin `compare` will be used.',
+      seeAlso: ['sort-by', 'compare', 'reverse', 'Vector.sort-indices'],
       examples: [
         '[3, 1, 2] sort (a, b) -> b - a',
         'sort([3, 1, 2])',
@@ -710,6 +727,7 @@ sort(
         { argumentNames: ['seq', 'keyfn', 'comparer'] },
       ],
       description: 'Returns a sorted sequence of the items in $seq, where the sort order is determined by comparing `(keyfn item)`. If no $comparer is supplied, uses builtin `compare`.',
+      seeAlso: ['sort', 'compare'],
       examples: [
         '["Albert", "Mojir", "Nina"] sort-by count',
         'sort-by(["Albert", "Mojir", "Nina"], count)',
@@ -736,6 +754,7 @@ sort(
       },
       variants: [{ argumentNames: ['seq', 'n'] }],
       description: 'Constructs a new array/string with the $n first elements from $seq.',
+      seeAlso: ['take-last', 'take-while', 'drop', 'slice', 'split-at'],
       examples: [
         '[1, 2, 3, 4, 5] take 3',
         'take([1, 2, 3, 4, 5], 3)',
@@ -765,6 +784,7 @@ sort(
       },
       variants: [{ argumentNames: ['n', 'seq'] }],
       description: 'Constructs a new array with the $n last elements from $seq.',
+      seeAlso: ['take', 'drop-last'],
       examples: [
         '[1, 2, 3, 4, 5] take-last 3',
         'take-last([1, 2, 3, 4, 5], 3)',
@@ -798,6 +818,7 @@ sort(
       },
       variants: [{ argumentNames: ['seq', 'fun'] }],
       description: 'Returns the members of $seq in order, stopping before the first one for which `predicate` returns a falsy value.',
+      seeAlso: ['take', 'drop-while', 'split-with'],
       examples: [
         `
 take-while(
@@ -831,6 +852,7 @@ take-while(
       },
       variants: [{ argumentNames: ['seq', 'n'] }],
       description: 'Constructs a new array/string with the $n first elements dropped from $seq.',
+      seeAlso: ['drop-last', 'drop-while', 'take', 'slice', 'split-at'],
       examples: [
         'drop([1, 2, 3, 4, 5], 3)',
         'drop([1, 2, 3, 4, 5], 0)',
@@ -860,6 +882,7 @@ take-while(
       },
       variants: [{ argumentNames: ['seq', 'n'] }],
       description: 'Constructs a new array with the $n last elements dropped from $seq.',
+      seeAlso: ['drop', 'take-last'],
       examples: [
         '[1, 2, 3, 4, 5] drop-last 3',
         'drop-last([1, 2, 3, 4, 5], 3)',
@@ -892,6 +915,7 @@ take-while(
       },
       variants: [{ argumentNames: ['seq', 'fun'] }],
       description: 'Returns the members of $seq in order, skipping the fist elements for witch the `predicate` returns a truethy value.',
+      seeAlso: ['drop', 'take-while', 'split-with'],
       examples: [
         `
 drop-while(
@@ -929,6 +953,7 @@ drop-while(
       },
       variants: [{ argumentNames: ['seq', 'values'] }],
       description: 'Returns copy of $seq with $values added to the beginning.',
+      seeAlso: ['push', 'shift', '++'],
       examples: [
         '[1, 2, 3] unshift 4',
         'unshift([1, 2, 3], 4)',
@@ -964,6 +989,7 @@ l`,
       args: { seq: { type: 'sequence' } },
       variants: [{ argumentNames: ['seq'] }],
       description: 'Returns a copy of $seq with no duplicates.',
+      seeAlso: ['frequencies'],
       examples: [
         'distinct([[1], [2], [3], [1], [3], [5]])',
         'distinct([1, 2, 3, 1, 3, 5])',
@@ -997,6 +1023,7 @@ l`,
       },
       variants: [{ argumentNames: ['seq', 'fun'] }],
       description: 'Returns a new sequence of items in $seq for witch `pred(item)` returns a falsy value.',
+      seeAlso: ['filter', 'remove-at'],
       examples: [
         '[1, 2, 3, 1, 3, 5] remove odd?',
         'remove([1, 2, 3, 1, 3, 5], even?)',
@@ -1030,6 +1057,7 @@ l`,
       },
       variants: [{ argumentNames: ['seq', 'n'] }],
       description: 'Returns a new sequence of all items in $seq except item at position $n. If $n is negative, it is counting from the end of the sequence.',
+      seeAlso: ['remove', 'splice'],
       examples: [
         '[1, 2, 3, 1, 3, 5] remove-at 2',
         '"Albert" remove-at -2',
@@ -1059,6 +1087,7 @@ l`,
       },
       variants: [{ argumentNames: ['seq', 'n'] }],
       description: 'Returns a pair of sequence `[take(pos input), drop(pos input)]`.',
+      seeAlso: ['split-with', 'take', 'drop'],
       examples: [
         '[1, 2, 3, 4, 5] split-at 2',
         '"Albert" split-at -2',
@@ -1092,6 +1121,7 @@ l`,
       },
       variants: [{ argumentNames: ['seq', 'fun'] }],
       description: 'Returns a pair of sequences `[take-while(input, fun), drop-while(input, fun)]`.',
+      seeAlso: ['split-at', 'take-while', 'drop-while'],
       examples: [
         '[1, 2, 3, 4, 5] split-with odd?',
         'split-with([1, 2, 3, 4, 5], -> $ > 3)',
@@ -1123,6 +1153,7 @@ l`,
       args: { seq: { type: 'sequence' } },
       variants: [{ argumentNames: ['seq'] }],
       description: 'Returns an object from distinct items in $seq to the number of times they appear. Note that all items in $seq must be valid object keys i.e. strings.',
+      seeAlso: ['group-by', 'distinct', 'Vector.count-values'],
       examples: [
         'frequencies(["Albert", "Mojir", "Nina", "Mojir"])',
         'frequencies("Pneumonoultramicroscopicsilicovolcanoconiosis")',
@@ -1158,6 +1189,7 @@ l`,
       },
       variants: [{ argumentNames: ['seq', 'fun'] }],
       description: 'Returns an object of the elements of $seq keyed by the result of $fun on each element. The value at each key will be an array of the corresponding elements.',
+      seeAlso: ['frequencies', 'partition-by'],
       examples: [
         '[{ name: "Albert" }, { name: "Albert" }, { name: "Mojir" }] group-by "name"',
         'group-by([{name: "Albert"}, {name: "Albert"}, {name: "Mojir"}], "name")',
@@ -1195,6 +1227,7 @@ l`,
         { argumentNames: ['seq', 'n', 'step', 'pad'] },
       ],
       description: 'Returns an array of sequences of $n items each, at offsets $step apart. If $step is not supplied, defaults to $n. If a $pad array is supplied, use its elements as necessary to complete last partition upto $n items. In case there are not enough padding elements, return a partition with less than $n items.',
+      seeAlso: ['partition-all', 'partition-by'],
       examples: [
         'range(20) partition 4',
         'partition(range(20), 4)',
@@ -1240,6 +1273,7 @@ l`,
         { argumentNames: ['seq', 'n', 'step'] },
       ],
       description: 'Returns an array of sequences like partition, but may include partitions with fewer than n items at the end.',
+      seeAlso: ['partition', 'partition-by'],
       examples: [
         '[0, 1, 2, 3, 4, 5, 6, 7, 8, 9] partition-all 4',
         'partition-all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 4)',
@@ -1280,6 +1314,7 @@ l`,
       },
       variants: [{ argumentNames: ['seq', 'fun'] }],
       description: 'Applies $fun to each value in $seq, splitting it each time $fun returns a new value. Returns an array of sequences.',
+      seeAlso: ['partition', 'partition-all', 'group-by'],
       examples: [
         '[1, 2, 3, 4, 5] partition-by odd?',
         'partition-by([1, 2, 3, 4, 5], -> $ == 3)',
@@ -1311,6 +1346,7 @@ l`,
       },
       variants: [{ argumentNames: ['seq', 'suffix'] }],
       description: 'Returns `true` if $seq ends with $suffix, otherwise `false`.',
+      seeAlso: ['starts-with?'],
       examples: [
         '[[1], [2], [3], [4], [5]] starts-with? [5]',
         '[[1], [2], [3], [4], [5]] starts-with? 5',
@@ -1344,6 +1380,7 @@ l`,
       },
       variants: [{ argumentNames: ['seq', 'prefix'] }],
       description: 'Returns `true` if $seq starts with $prefix, otherwise `false`.',
+      seeAlso: ['ends-with?'],
       examples: [
         '[[1], [2], [3], [4], [5]] starts-with? [1]',
         'starts-with?([1, 2, 3, 4, 5], 1)',
@@ -1388,6 +1425,7 @@ l`,
       },
       variants: [{ argumentNames: ['seqs'] }],
       description: 'Returns a sequence of the first item from each of the $seqs, then the second item from each of the $seqs, until all items from the shortest seq are exhausted.',
+      seeAlso: ['interpose', 'zipmap'],
       examples: [
         '[1, 2, 3] interleave [4, 5, 6]',
         '"Albert" interleave ".,.,.,"',
@@ -1431,6 +1469,7 @@ l`,
       },
       variants: [{ argumentNames: ['seq', 'separator'] }],
       description: 'Returns a sequence of the elements of $seq separated by $separator. If $seq is a string, the separator must be a string.',
+      seeAlso: ['interleave', 'join'],
       examples: [
         '"Albert" interpose "-"',
         'interpose([1, 2, 3, 4, 5], "a")',

@@ -1027,6 +1027,14 @@ export function showPage(id: string, scroll: 'smooth' | 'instant' | 'none', hist
     page.classList.add('active-content')
     if (link) {
       link.classList.add('active-sidebar-entry')
+
+      // If the link is inside a collapsed namespace section, expand it first
+      const nsContent = link.closest('[id^="ns-content-"]')
+      if (nsContent && nsContent instanceof HTMLElement && nsContent.style.display === 'none') {
+        const categoryKey = nsContent.id.replace('ns-content-', '').replace(/-/g, ' ')
+        toggleNamespaceCategory(categoryKey)
+      }
+
       if (scroll !== 'none')
         link.scrollIntoView({ block: 'center', behavior: scroll })
     }

@@ -19,6 +19,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
       args: { obj: { type: 'object' } },
       variants: [{ argumentNames: ['obj'] }],
       description: 'Returns array of all keys in $obj.',
+      seeAlso: ['vals', 'entries', 'zipmap', 'select-keys'],
       examples: [
         'keys({})',
         'keys({ x: 10, y: true, z: "A string" })',
@@ -39,6 +40,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
       args: { obj: { type: 'object' } },
       variants: [{ argumentNames: ['obj'] }],
       description: 'Returns array of all values in $obj.',
+      seeAlso: ['keys', 'entries', 'zipmap'],
       examples: [
         'vals({})',
         'vals({ x: 10, y: true, z: "A string" })',
@@ -59,6 +61,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
       args: { obj: { type: 'object' } },
       variants: [{ argumentNames: ['obj'] }],
       description: 'Returns nested array of all key - value pairs in $obj.',
+      seeAlso: ['keys', 'vals', 'zipmap', 'find'],
       examples: [
         'entries({})',
         'entries({ x: 10, y: true, z: "A string" })',
@@ -88,6 +91,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['obj', 'key'] }],
       description: 'Returns entry (key-value pair) for $key, or `null` if $key not present in $obj.',
+      seeAlso: ['get', 'contains?', 'entries', 'position', 'some'],
       examples: [
         '{ a: 1, "b": 2 } find "a"',
         'find(object("a", 1, "b", 2), "b")',
@@ -116,6 +120,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['obj', 'key'] }],
       description: 'Return shallow copy of $obj with $key deleted.',
+      seeAlso: ['assoc', 'select-keys'],
       examples: [
         '{ x: 10, y: 20 } dissoc "y"',
         'dissoc({ x: 10, y: 20 }, "x")',
@@ -158,6 +163,7 @@ o`,
 
 If two keys appears in more than one object the value from the last object is used.
 If no arguments are provided \`null\` is returned.`,
+      seeAlso: ['merge-with', 'assoc'],
       examples: [
         '{ x: 10 } merge { y: 20 }',
         'merge(object("x", 10), object("y", 20))',
@@ -205,6 +211,7 @@ Returns a new object created by merging together all arguments.
 If two keys appears in more than one object $fun is used to calculate the new value.
 
 If no arguments are provided \`null\` is returned.`,
+      seeAlso: ['merge'],
       examples: [
         'merge-with(object("x", 10), object("y", 20), +)',
         'merge-with(object("x", 10), object("x", 15, "y", 20), +)',
@@ -239,6 +246,7 @@ If no arguments are provided \`null\` is returned.`,
       },
       variants: [{ argumentNames: ['a', 'b'] }],
       description: 'Returns a new object created by mapping $a to $b.',
+      seeAlso: ['entries', 'keys', 'vals', 'interleave'],
       examples: [
         '["a", "b", "c"] zipmap [1, 2, 3]',
         'zipmap(["a", "b", "c"], [10, null, [1, 2, 3]])',
@@ -270,6 +278,7 @@ If no arguments are provided \`null\` is returned.`,
       },
       variants: [{ argumentNames: ['a', 'b'] }],
       description: 'Returns an object containing only those entries in $a whose key is in $b.',
+      seeAlso: ['dissoc', 'keys'],
       examples: [
         '{ a: 1, b: 2, c: 3 } select-keys ["a", "b"]',
         'select-keys({ a: 1, b: 2, c: 3 }, ["a", "b"])',

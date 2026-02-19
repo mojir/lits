@@ -47,6 +47,7 @@
   "chat.tools.terminal.autoApprove": {
     "git mv": true,
     "npx tsx": true,
-    "npx eslint": true
+    "npx eslint": true,
+    "awk": true
   }
 }

@@ -16,6 +16,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Returns `true` if $x is a function, otherwise `false`.',
+      seeAlso: ['string?', 'number?', 'boolean?', 'null?', 'array?', 'object?', 'regexp?'],
       examples: [
         'function?(+)',
         'function?(/)',
@@ -36,6 +37,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Returns `true` if $x is a string, otherwise `false`.',
+      seeAlso: ['blank?', 'number?', 'boolean?', 'null?', 'array?', 'object?', 'regexp?', 'function?', 'coll?', 'seq?'],
       examples: [
         'string?("")',
         'string?("A string")',
@@ -56,6 +58,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Returns `true` if $x is a number, otherwise `false`.',
+      seeAlso: ['integer?', 'zero?', 'pos?', 'neg?', 'finite?', 'number', 'string?', 'boolean?', 'null?', 'function?'],
       examples: [
         'number?(0)',
         'number?(2)',
@@ -76,6 +79,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Returns `true` if $x is an integer, otherwise `false`.',
+      seeAlso: ['number?', 'number', 'even?', 'odd?'],
       examples: [
         'integer?(0)',
         'integer?(-12)',
@@ -98,6 +102,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Returns `true` if $x is a `boolean`, otherwise `false`.',
+      seeAlso: ['true?', 'false?', 'boolean', 'string?', 'number?', 'null?', 'function?'],
       examples: [
         'boolean?(true)',
         'boolean?(false)',
@@ -117,6 +122,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Returns `true` if $x is `null`, otherwise `false`.',
+      seeAlso: ['empty?', 'not-empty?', 'string?', 'number?', 'boolean?', 'function?'],
       examples: [
         'null?(null)',
         'null?(false)',
@@ -139,6 +145,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       args: { x: { type: 'number' } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Returns `true` if $x is `0`, otherwise `false`.',
+      seeAlso: ['pos?', 'neg?', 'even?', 'number?'],
       examples: [
         'zero?(0)',
         'zero?(-0.0)',
@@ -160,6 +167,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       args: { x: { type: 'number' } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Returns `true` if $x is greater than `0`, otherwise `false`.',
+      seeAlso: ['neg?', 'zero?', 'number?'],
       examples: [
         'pos?(0)',
         'pos?(-0.0)',
@@ -181,6 +189,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       args: { x: { type: 'number' } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Returns `true` if $x is less than `0`, otherwise `false`.',
+      seeAlso: ['pos?', 'zero?', 'number?'],
       examples: [
         'neg?(0)',
         'neg?(-0.0)',
@@ -202,6 +211,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       args: { x: { type: 'number' } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Returns `true` if $x is even, otherwise `false`.',
+      seeAlso: ['odd?', 'integer?', 'zero?'],
       examples: [
         'even?(0)',
         'even?(-0.0)',
@@ -223,6 +233,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       args: { x: { type: 'number' } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Returns `true` if $x is odd, otherwise `false`.',
+      seeAlso: ['even?', 'integer?'],
       examples: [
         'odd?(1.0)',
         'odd?(1.001)',
@@ -243,6 +254,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Returns `true` if $x is an array, otherwise `false`.',
+      seeAlso: ['seq?', 'coll?', 'object?', 'string?', 'vector?', 'matrix?', 'grid?', 'function?'],
       examples: [
         'array?([])',
         'array?([1, 2, 3])',
@@ -265,6 +277,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Returns `true` if $x is a Coll i.e. an array, an object or a string, otherwise `false`.',
+      seeAlso: ['seq?', 'array?', 'object?', 'string?'],
       examples: [
         'coll?([])',
         'coll?([1, 2, 3])',
@@ -288,6 +301,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Returns `true` if $x is a Seq i.e. an array or a string, otherwise `false`.',
+      seeAlso: ['coll?', 'array?', 'string?'],
       examples: [
         'seq?([])',
         'seq?([1, 2, 3])',
@@ -309,6 +323,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Returns `true` if $x is an object, otherwise `false`.',
+      seeAlso: ['coll?', 'array?', 'string?', 'function?'],
       examples: [
         'object?(object("a", 10))',
         'object?(42)',
@@ -330,6 +345,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Returns `true` if $x is a regexp, otherwise `false`.',
+      seeAlso: ['regexp', 'match', 'string?', 'function?'],
       examples: [
         'regexp?(regexp("^start"))',
         'regexp?(#"^start")',
@@ -356,6 +372,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       args: { x: { type: 'number' } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Returns `true` if $x is finite, otherwise `false`.',
+      seeAlso: ['positive-infinity?', 'negative-infinity?', 'number?'],
       examples: [
         'finite?(1.0)',
         'finite?(1 / 0)',
@@ -376,6 +393,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       args: { x: { type: 'number' } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Returns `true` if $x equals positive infinity, otherwise `false`.',
+      seeAlso: ['negative-infinity?', 'finite?'],
       examples: [
         'positive-infinity?(1.0)',
         'positive-infinity?(1 / 0)',
@@ -396,6 +414,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       args: { x: { type: 'number' } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Returns `true` if $x equals negative infinity, otherwise `false`.',
+      seeAlso: ['positive-infinity?', 'finite?'],
       examples: [
         'negative-infinity?(1.0)',
         'negative-infinity?(1 / 0)',
@@ -415,6 +434,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Returns `true` if $x is `true`, otherwise `false`.',
+      seeAlso: ['false?', 'boolean?', 'boolean'],
       examples: [
         'true?(false)',
         'true?(true)',
@@ -435,6 +455,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Returns `true` if $x is `true`, otherwise `false`.',
+      seeAlso: ['true?', 'boolean?', 'boolean'],
       examples: [
         'false?(false)',
         'false?(true)',
@@ -465,6 +486,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       args: { x: { type: ['collection', 'string', 'null'] } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Returns `true` if $x is empty or `null`, otherwise `false`.',
+      seeAlso: ['not-empty?', 'not-empty', 'null?', 'blank?', 'count'],
       examples: [
         'empty?([])',
         'empty?([1, 2, 3])',
@@ -497,6 +519,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       args: { x: { type: ['collection', 'string', 'null'] } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Returns `false` if $x is empty or `null`, otherwise `true`.',
+      seeAlso: ['empty?', 'not-empty', 'null?'],
       examples: [
         'not-empty?([])',
         'not-empty?([1, 2, 3])',
@@ -514,6 +537,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     docs: {
       category: 'Predicate',
       description: 'Checks if a value is a `vector`. A `vector` is an array of `numbers`.',
+      seeAlso: ['matrix?', 'grid?', 'array?'],
       returns: { type: 'boolean' },
       args: { value: { type: 'any', description: 'The value to check.' } },
       variants: [{ argumentNames: ['value'] }],
@@ -530,6 +554,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     docs: {
       category: 'Predicate',
       description: 'Checks if a value is a `matrix`. A `matrix` is an array of arrays of `numbers`.',
+      seeAlso: ['vector?', 'grid?', 'array?'],
       returns: { type: 'boolean' },
       args: { value: { type: 'any', description: 'The value to check.' } },
       variants: [{ argumentNames: ['value'] }],
@@ -548,6 +573,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     docs: {
       category: 'Predicate',
       description: 'Checks if a `value` is a `grid`. A `grid` is an `array` of `arrays` where all inner `arrays` have the same length.',
+      seeAlso: ['vector?', 'matrix?', 'array?'],
       returns: { type: 'boolean' },
       args: { value: { type: 'any', description: 'The value to check.' } },
       variants: [{ argumentNames: ['value'] }],

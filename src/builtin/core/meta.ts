@@ -31,6 +31,7 @@ export function getMetaNormalExpression(normalExpressionReference: Record<string
         args: { fun: { type: 'function' } },
         variants: [{ argumentNames: ['fun'] }],
         description: 'Returns documentation string of the $fun.',
+        seeAlso: ['arity'],
         examples: [
           'doc(+)',
           `
@@ -62,6 +63,7 @@ doc(add)`,
         args: { fun: { type: 'function' } },
         variants: [{ argumentNames: ['fun'] }],
         description: 'Returns arity of the $fun. The arity is an object with the properties: `min` and `max`. If the function has fixed arity, `min` and `max` are equal to the number of required parameters. If no restrictions apply, empty object is returned.',
+        seeAlso: ['doc'],
         examples: [
           'arity(+)',
           'arity(defined?)',
