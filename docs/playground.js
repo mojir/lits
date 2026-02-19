@@ -26153,6 +26153,7 @@ var Playground = (function (exports) {
                 'let { abundant-seq } = import("Number-Theory");\nabundant-seq(1)',
                 'let { abundant-seq } = import("Number-Theory");\nabundant-seq(5)',
             ],
+            seeAlso: ['Number-Theory.abundant-nth', 'Number-Theory.abundant-take-while', 'Number-Theory.abundant?', 'Number-Theory.deficient-seq', 'Number-Theory.perfect-seq'],
         },
         'abundant-take-while': {
             category: 'Number Theory',
@@ -26177,6 +26178,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { abundant-take-while } = import("Number-Theory");\nabundant-take-while(-> $ < 100)',
             ],
+            seeAlso: ['Number-Theory.abundant-seq', 'Number-Theory.abundant-nth', 'Number-Theory.abundant?'],
         },
         'abundant-nth': {
             category: 'Number Theory',
@@ -26201,6 +26203,7 @@ var Playground = (function (exports) {
                 'let { abundant-nth } = import("Number-Theory");\nabundant-nth(1)',
                 'let { abundant-nth } = import("Number-Theory");\nabundant-nth(5)',
             ],
+            seeAlso: ['Number-Theory.abundant-seq', 'Number-Theory.abundant-take-while', 'Number-Theory.abundant?'],
         },
         'abundant?': {
             category: 'Number Theory',
@@ -26225,6 +26228,7 @@ var Playground = (function (exports) {
                 'let { abundant? } = import("Number-Theory");\nabundant?(12)',
                 'let { abundant? } = import("Number-Theory");\nabundant?(15)',
             ],
+            seeAlso: ['Number-Theory.abundant-seq', 'Number-Theory.abundant-nth', 'Number-Theory.deficient?', 'Number-Theory.perfect?', 'Number-Theory.sigma', 'Number-Theory.divisors', 'Number-Theory.abundant-take-while'],
         },
         'arithmetic-seq': {
             category: 'Number Theory',
@@ -26262,6 +26266,7 @@ var Playground = (function (exports) {
                 'let { arithmetic-seq } = import("Number-Theory");\narithmetic-seq(1, 2, 2)',
                 'let { arithmetic-seq } = import("Number-Theory");\narithmetic-seq(1, 1.5, 12)',
             ],
+            seeAlso: ['Number-Theory.arithmetic-nth', 'Number-Theory.arithmetic-take-while', 'Number-Theory.arithmetic?', 'Number-Theory.geometric-seq'],
         },
         'arithmetic-take-while': {
             category: 'Number Theory',
@@ -26296,6 +26301,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { arithmetic-take-while } = import("Number-Theory");\narithmetic-take-while(1, 0.25, -> $ < 3)',
             ],
+            seeAlso: ['Number-Theory.arithmetic-seq', 'Number-Theory.arithmetic-nth', 'Number-Theory.arithmetic?'],
         },
         'arithmetic-nth': {
             category: 'Number Theory',
@@ -26332,6 +26338,7 @@ var Playground = (function (exports) {
                 'let { arithmetic-nth } = import("Number-Theory");\narithmetic-nth(1, 2, 2)',
                 'let { arithmetic-nth } = import("Number-Theory");\narithmetic-nth(1, 1.5, 12)',
             ],
+            seeAlso: ['Number-Theory.arithmetic-seq', 'Number-Theory.arithmetic-take-while', 'Number-Theory.arithmetic?'],
         },
         'arithmetic?': {
             category: 'Number Theory',
@@ -26368,6 +26375,7 @@ var Playground = (function (exports) {
                 'let { arithmetic? } = import("Number-Theory");\narithmetic?(1, 2, 2)',
                 'let { arithmetic? } = import("Number-Theory");\narithmetic?(1, 1.5, 12)',
             ],
+            seeAlso: ['Number-Theory.arithmetic-seq', 'Number-Theory.arithmetic-nth', 'Number-Theory.geometric?', 'Number-Theory.arithmetic-take-while'],
         },
         'bell-seq': {
             category: 'Number Theory',
@@ -26397,6 +26405,7 @@ var Playground = (function (exports) {
                 'let { bell-seq } = import("Number-Theory");\nbell-seq(10)',
                 'let { bell-seq } = import("Number-Theory");\nbell-seq()',
             ],
+            seeAlso: ['Number-Theory.bell-nth', 'Number-Theory.bell-take-while', 'Number-Theory.bell?', 'Number-Theory.catalan-seq', 'Number-Theory.stirling-second', 'Number-Theory.stirling-first'],
         },
         'bell-take-while': {
             category: 'Number Theory',
@@ -26421,6 +26430,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { bell-take-while } = import("Number-Theory");\nbell-take-while(-> $ < 1000)',
             ],
+            seeAlso: ['Number-Theory.bell-seq', 'Number-Theory.bell-nth', 'Number-Theory.bell?'],
         },
         'bell-nth': {
             category: 'Number Theory',
@@ -26445,6 +26455,7 @@ var Playground = (function (exports) {
                 'let { bell-nth } = import("Number-Theory");\nbell-nth(5)',
                 'let { bell-nth } = import("Number-Theory");\nbell-nth(10)',
             ],
+            seeAlso: ['Number-Theory.bell-seq', 'Number-Theory.bell-take-while', 'Number-Theory.bell?'],
         },
         'bell?': {
             category: 'Number Theory',
@@ -26470,6 +26481,7 @@ var Playground = (function (exports) {
                 'let { bell? } = import("Number-Theory");\nbell?(27644437)',
                 'let { bell? } = import("Number-Theory");\nbell?(27644436)',
             ],
+            seeAlso: ['Number-Theory.bell-seq', 'Number-Theory.bell-nth', 'Number-Theory.catalan?', 'Number-Theory.bell-take-while'],
         },
         'bernoulli-seq': {
             category: 'Number Theory',
@@ -26495,6 +26507,7 @@ var Playground = (function (exports) {
                 'let { bernoulli-seq } = import("Number-Theory");\nbernoulli-seq(5)',
                 'let { bernoulli-seq } = import("Number-Theory");\nbernoulli-seq(10)',
             ],
+            seeAlso: ['Number-Theory.bernoulli-nth', 'Number-Theory.bernoulli-take-while'],
         },
         'bernoulli-take-while': {
             category: 'Number Theory',
@@ -26519,6 +26532,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { bernoulli-take-while } = import("Number-Theory");\nbernoulli-take-while(-> abs($) < 100)',
             ],
+            seeAlso: ['Number-Theory.bernoulli-seq', 'Number-Theory.bernoulli-nth'],
         },
         'bernoulli-nth': {
             category: 'Number Theory',
@@ -26544,6 +26558,7 @@ var Playground = (function (exports) {
                 'let { bernoulli-nth } = import("Number-Theory");\nbernoulli-nth(10)',
                 'let { bernoulli-nth } = import("Number-Theory");\nbernoulli-nth(23)',
             ],
+            seeAlso: ['Number-Theory.bernoulli-seq', 'Number-Theory.bernoulli-take-while'],
         },
         'catalan-seq': {
             category: 'Number Theory',
@@ -26573,6 +26588,7 @@ var Playground = (function (exports) {
                 'let { catalan-seq } = import("Number-Theory");\ncatalan-seq(10)',
                 'let { catalan-seq } = import("Number-Theory");\ncatalan-seq()',
             ],
+            seeAlso: ['Number-Theory.catalan-nth', 'Number-Theory.catalan-take-while', 'Number-Theory.catalan?', 'Number-Theory.bell-seq'],
         },
         'catalan-take-while': {
             category: 'Number Theory',
@@ -26597,6 +26613,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { catalan-take-while } = import("Number-Theory");\ncatalan-take-while(-> $ < 1000)',
             ],
+            seeAlso: ['Number-Theory.catalan-seq', 'Number-Theory.catalan-nth', 'Number-Theory.catalan?'],
         },
         'catalan-nth': {
             category: 'Number Theory',
@@ -26621,6 +26638,7 @@ var Playground = (function (exports) {
                 'let { catalan-nth } = import("Number-Theory");\ncatalan-nth(5)',
                 'let { catalan-nth } = import("Number-Theory");\ncatalan-nth(10)',
             ],
+            seeAlso: ['Number-Theory.catalan-seq', 'Number-Theory.catalan-take-while', 'Number-Theory.catalan?'],
         },
         'catalan?': {
             category: 'Number Theory',
@@ -26645,6 +26663,7 @@ var Playground = (function (exports) {
                 'let { catalan? } = import("Number-Theory");\ncatalan?(5)',
                 'let { catalan? } = import("Number-Theory");\ncatalan?(10)',
             ],
+            seeAlso: ['Number-Theory.catalan-seq', 'Number-Theory.catalan-nth', 'Number-Theory.bell?', 'Number-Theory.catalan-take-while'],
         },
         'collatz-seq': {
             category: 'Number Theory',
@@ -26670,6 +26689,7 @@ var Playground = (function (exports) {
                 'let { collatz-seq } = import("Number-Theory");\ncollatz-seq(3)',
                 'let { collatz-seq } = import("Number-Theory");\ncollatz-seq(11)',
             ],
+            seeAlso: ['Number-Theory.juggler-seq'],
         },
         'composite-seq': {
             category: 'Number Theory',
@@ -26696,6 +26716,7 @@ var Playground = (function (exports) {
                 'let { composite-seq } = import("Number-Theory");\ncomposite-seq(2)',
                 'let { composite-seq } = import("Number-Theory");\ncomposite-seq(10)',
             ],
+            seeAlso: ['Number-Theory.composite-nth', 'Number-Theory.composite-take-while', 'Number-Theory.composite?', 'Number-Theory.prime-seq'],
         },
         'composite-take-while': {
             category: 'Number Theory',
@@ -26720,6 +26741,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { composite-take-while } = import("Number-Theory");\ncomposite-take-while(-> $ < 50)',
             ],
+            seeAlso: ['Number-Theory.composite-seq', 'Number-Theory.composite-nth', 'Number-Theory.composite?'],
         },
         'composite-nth': {
             category: 'Number Theory',
@@ -26745,6 +26767,7 @@ var Playground = (function (exports) {
                 'let { composite-nth } = import("Number-Theory");\ncomposite-nth(2)',
                 'let { composite-nth } = import("Number-Theory");\ncomposite-nth(10)',
             ],
+            seeAlso: ['Number-Theory.composite-seq', 'Number-Theory.composite-take-while', 'Number-Theory.composite?'],
         },
         'composite?': {
             category: 'Number Theory',
@@ -26770,6 +26793,7 @@ var Playground = (function (exports) {
                 'let { composite? } = import("Number-Theory");\ncomposite?(5)',
                 'let { composite? } = import("Number-Theory");\ncomposite?(11)',
             ],
+            seeAlso: ['Number-Theory.composite-seq', 'Number-Theory.composite-nth', 'Number-Theory.prime?', 'Number-Theory.prime-factors', 'Number-Theory.composite-take-while'],
         },
         'deficient-seq': {
             category: 'Number Theory',
@@ -26795,6 +26819,7 @@ var Playground = (function (exports) {
                 'let { deficient-seq } = import("Number-Theory");\ndeficient-seq(1)',
                 'let { deficient-seq } = import("Number-Theory");\ndeficient-seq(5)',
             ],
+            seeAlso: ['Number-Theory.deficient-nth', 'Number-Theory.deficient-take-while', 'Number-Theory.deficient?', 'Number-Theory.abundant-seq', 'Number-Theory.perfect-seq'],
         },
         'deficient-take-while': {
             category: 'Number Theory',
@@ -26819,6 +26844,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { deficient-take-while } = import("Number-Theory");\ndeficient-take-while(-> $ < 100)',
             ],
+            seeAlso: ['Number-Theory.deficient-seq', 'Number-Theory.deficient-nth', 'Number-Theory.deficient?'],
         },
         'deficient-nth': {
             category: 'Number Theory',
@@ -26843,6 +26869,7 @@ var Playground = (function (exports) {
                 'let { deficient-nth } = import("Number-Theory");\ndeficient-nth(5)',
                 'let { deficient-nth } = import("Number-Theory");\ndeficient-nth(12)',
             ],
+            seeAlso: ['Number-Theory.deficient-seq', 'Number-Theory.deficient-take-while', 'Number-Theory.deficient?'],
         },
         'deficient?': {
             category: 'Number Theory',
@@ -26867,6 +26894,7 @@ var Playground = (function (exports) {
                 'let { deficient? } = import("Number-Theory");\ndeficient?(12)',
                 'let { deficient? } = import("Number-Theory");\ndeficient?(15)',
             ],
+            seeAlso: ['Number-Theory.deficient-seq', 'Number-Theory.deficient-nth', 'Number-Theory.abundant?', 'Number-Theory.perfect?', 'Number-Theory.sigma', 'Number-Theory.divisors', 'Number-Theory.deficient-take-while'],
         },
         'factorial-seq': {
             category: 'Number Theory',
@@ -26899,6 +26927,7 @@ var Playground = (function (exports) {
                 'let { factorial-seq } = import("Number-Theory");\nfactorial-seq(5)',
                 'let { factorial-seq } = import("Number-Theory");\nfactorial-seq(10)',
             ],
+            seeAlso: ['Number-Theory.factorial-nth', 'Number-Theory.factorial-take-while', 'Number-Theory.factorial?', 'Number-Theory.factorial'],
         },
         'factorial-take-while': {
             category: 'Number Theory',
@@ -26923,6 +26952,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { factorial-take-while } = import("Number-Theory");\nfactorial-take-while(-> $ < 1000)',
             ],
+            seeAlso: ['Number-Theory.factorial-seq', 'Number-Theory.factorial-nth', 'Number-Theory.factorial?'],
         },
         'factorial-nth': {
             category: 'Number Theory',
@@ -26951,6 +26981,7 @@ var Playground = (function (exports) {
                 'let { factorial-nth } = import("Number-Theory");\nfactorial-nth(5)',
                 'let { factorial-nth } = import("Number-Theory");\nfactorial-nth(10)',
             ],
+            seeAlso: ['Number-Theory.factorial-seq', 'Number-Theory.factorial-take-while', 'Number-Theory.factorial?', 'Number-Theory.factorial'],
         },
         'factorial?': {
             category: 'Number Theory',
@@ -26983,6 +27014,7 @@ var Playground = (function (exports) {
                 'let { factorial? } = import("Number-Theory");\nfactorial?(9)',
                 'let { factorial? } = import("Number-Theory");\nfactorial?(3628800)',
             ],
+            seeAlso: ['Number-Theory.factorial-seq', 'Number-Theory.factorial-nth', 'Number-Theory.factorial', 'Number-Theory.factorial-take-while'],
         },
         'fibonacci-seq': {
             category: 'Number Theory',
@@ -27012,6 +27044,7 @@ var Playground = (function (exports) {
                 'let { fibonacci-seq } = import("Number-Theory");\nfibonacci-seq(2)',
                 'let { fibonacci-seq } = import("Number-Theory");\nfibonacci-seq()',
             ],
+            seeAlso: ['Number-Theory.fibonacci-nth', 'Number-Theory.fibonacci-take-while', 'Number-Theory.fibonacci?', 'Number-Theory.lucas-seq', 'Number-Theory.tribonacci-seq', 'Number-Theory.pell-seq', 'Number-Theory.padovan-seq'],
         },
         'fibonacci-take-while': {
             category: 'Number Theory',
@@ -27036,6 +27069,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { fibonacci-take-while } = import("Number-Theory");\nfibonacci-take-while(-> $ < 100)',
             ],
+            seeAlso: ['Number-Theory.fibonacci-seq', 'Number-Theory.fibonacci-nth', 'Number-Theory.fibonacci?'],
         },
         'fibonacci-nth': {
             category: 'Number Theory',
@@ -27060,6 +27094,7 @@ var Playground = (function (exports) {
                 'let { fibonacci-nth } = import("Number-Theory");\nfibonacci-nth(5)',
                 'let { fibonacci-nth } = import("Number-Theory");\nfibonacci-nth(50)',
             ],
+            seeAlso: ['Number-Theory.fibonacci-seq', 'Number-Theory.fibonacci-take-while', 'Number-Theory.fibonacci?'],
         },
         'fibonacci?': {
             category: 'Number Theory',
@@ -27092,6 +27127,7 @@ var Playground = (function (exports) {
                 'let { fibonacci? } = import("Number-Theory");\nfibonacci?(8)',
                 'let { fibonacci? } = import("Number-Theory");\nfibonacci?(9)',
             ],
+            seeAlso: ['Number-Theory.fibonacci-seq', 'Number-Theory.fibonacci-nth', 'Number-Theory.lucas?', 'Number-Theory.fibonacci-take-while', 'Number-Theory.tribonacci?', 'Number-Theory.padovan?', 'Number-Theory.pell?'],
         },
         'geometric-seq': {
             category: 'Number Theory',
@@ -27129,6 +27165,7 @@ var Playground = (function (exports) {
                 'let { geometric-seq } = import("Number-Theory");\ngeometric-seq(1, 2, 2)',
                 'let { geometric-seq } = import("Number-Theory");\ngeometric-seq(1, 1.5, 12)',
             ],
+            seeAlso: ['Number-Theory.geometric-nth', 'Number-Theory.geometric-take-while', 'Number-Theory.geometric?', 'Number-Theory.arithmetic-seq'],
         },
         'geometric-take-while': {
             category: 'Number Theory',
@@ -27163,6 +27200,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { geometric-take-while } = import("Number-Theory");\ngeometric-take-while(1, 1.5, -> $ < 10)',
             ],
+            seeAlso: ['Number-Theory.geometric-seq', 'Number-Theory.geometric-nth', 'Number-Theory.geometric?'],
         },
         'geometric-nth': {
             category: 'Number Theory',
@@ -27199,6 +27237,7 @@ var Playground = (function (exports) {
                 'let { geometric-nth } = import("Number-Theory");\ngeometric-nth(1, 2, 2)',
                 'let { geometric-nth } = import("Number-Theory");\ngeometric-nth(1, 1.5, 4)',
             ],
+            seeAlso: ['Number-Theory.geometric-seq', 'Number-Theory.geometric-take-while', 'Number-Theory.geometric?'],
         },
         'geometric?': {
             category: 'Number Theory',
@@ -27236,6 +27275,7 @@ var Playground = (function (exports) {
                 'let { geometric? } = import("Number-Theory");\ngeometric?(1, 1.5, 2.25)',
                 'let { geometric? } = import("Number-Theory");\ngeometric?(1, 1.5, -4)',
             ],
+            seeAlso: ['Number-Theory.geometric-seq', 'Number-Theory.geometric-nth', 'Number-Theory.arithmetic?', 'Number-Theory.geometric-take-while'],
         },
         'golomb-seq': {
             category: 'Number Theory',
@@ -27261,6 +27301,7 @@ var Playground = (function (exports) {
                 'let { golomb-seq } = import("Number-Theory");\ngolomb-seq(5)',
                 'let { golomb-seq } = import("Number-Theory");\ngolomb-seq(20)',
             ],
+            seeAlso: ['Number-Theory.golomb-nth', 'Number-Theory.golomb-take-while', 'Number-Theory.golomb?', 'Number-Theory.recaman-seq'],
         },
         'golomb-take-while': {
             category: 'Number Theory',
@@ -27285,6 +27326,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { golomb-take-while } = import("Number-Theory");\ngolomb-take-while(-> $ <= 10)',
             ],
+            seeAlso: ['Number-Theory.golomb-seq', 'Number-Theory.golomb-nth', 'Number-Theory.golomb?'],
         },
         'golomb-nth': {
             category: 'Number Theory',
@@ -27309,6 +27351,7 @@ var Playground = (function (exports) {
                 'let { golomb-nth } = import("Number-Theory");\ngolomb-nth(5)',
                 'let { golomb-nth } = import("Number-Theory");\ngolomb-nth(1000)',
             ],
+            seeAlso: ['Number-Theory.golomb-seq', 'Number-Theory.golomb-take-while', 'Number-Theory.golomb?'],
         },
         'golomb?': {
             category: 'Number Theory',
@@ -27335,6 +27378,7 @@ var Playground = (function (exports) {
                 'let { golomb? } = import("Number-Theory");\ngolomb?(3345)',
                 'let { golomb? } = import("Number-Theory");\ngolomb?(67867864)',
             ],
+            seeAlso: ['Number-Theory.golomb-seq', 'Number-Theory.golomb-nth', 'Number-Theory.golomb-take-while'],
         },
         'happy-seq': {
             category: 'Number Theory',
@@ -27364,6 +27408,7 @@ var Playground = (function (exports) {
                 'let { happy-seq } = import("Number-Theory");\nhappy-seq(2)',
                 'let { happy-seq } = import("Number-Theory");\nhappy-seq(20)',
             ],
+            seeAlso: ['Number-Theory.happy-nth', 'Number-Theory.happy-take-while', 'Number-Theory.happy?', 'Number-Theory.lucky-seq'],
         },
         'happy-take-while': {
             category: 'Number Theory',
@@ -27388,6 +27433,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { happy-take-while } = import("Number-Theory");\nhappy-take-while(-> $ < 100)',
             ],
+            seeAlso: ['Number-Theory.happy-seq', 'Number-Theory.happy-nth', 'Number-Theory.happy?'],
         },
         'happy-nth': {
             category: 'Number Theory',
@@ -27413,6 +27459,7 @@ var Playground = (function (exports) {
                 'let { happy-nth } = import("Number-Theory");\nhappy-nth(2)',
                 'let { happy-nth } = import("Number-Theory");\nhappy-nth(20)',
             ],
+            seeAlso: ['Number-Theory.happy-seq', 'Number-Theory.happy-take-while', 'Number-Theory.happy?'],
         },
         'happy?': {
             category: 'Number Theory',
@@ -27438,6 +27485,7 @@ var Playground = (function (exports) {
                 'let { happy? } = import("Number-Theory");\nhappy?(2)',
                 'let { happy? } = import("Number-Theory");\nhappy?(100)',
             ],
+            seeAlso: ['Number-Theory.happy-seq', 'Number-Theory.happy-nth', 'Number-Theory.happy-take-while'],
         },
         'juggler-seq': {
             category: 'Number Theory',
@@ -27463,6 +27511,7 @@ var Playground = (function (exports) {
                 'let { juggler-seq } = import("Number-Theory");\njuggler-seq(3)',
                 'let { juggler-seq } = import("Number-Theory");\njuggler-seq(5)',
             ],
+            seeAlso: ['Number-Theory.collatz-seq'],
         },
         'look-and-say-seq': {
             category: 'Number Theory',
@@ -27487,6 +27536,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { look-and-say-seq } = import("Number-Theory");\nlook-and-say-seq(5)',
             ],
+            seeAlso: ['Number-Theory.look-and-say-nth', 'Number-Theory.look-and-say-take-while', 'Number-Theory.look-and-say?'],
         },
         'look-and-say-take-while': {
             category: 'Number Theory',
@@ -27512,6 +27562,7 @@ var Playground = (function (exports) {
                 'let { look-and-say-take-while } = import("Number-Theory");\nlook-and-say-take-while((term, index) -> count(term) < 10)',
                 'let { look-and-say-take-while } = import("Number-Theory");\nlook-and-say-take-while(-> $2 <= 10)',
             ],
+            seeAlso: ['Number-Theory.look-and-say-seq', 'Number-Theory.look-and-say-nth', 'Number-Theory.look-and-say?'],
         },
         'look-and-say-nth': {
             category: 'Number Theory',
@@ -27535,6 +27586,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { look-and-say-nth } = import("Number-Theory");\nlook-and-say-nth(5)',
             ],
+            seeAlso: ['Number-Theory.look-and-say-seq', 'Number-Theory.look-and-say-take-while', 'Number-Theory.look-and-say?'],
         },
         'look-and-say?': {
             category: 'Number Theory',
@@ -27559,6 +27611,7 @@ var Playground = (function (exports) {
                 'let { look-and-say? } = import("Number-Theory");\nlook-and-say?("111221")',
                 'let { look-and-say? } = import("Number-Theory");\nlook-and-say?("123")',
             ],
+            seeAlso: ['Number-Theory.look-and-say-seq', 'Number-Theory.look-and-say-nth', 'Number-Theory.look-and-say-take-while'],
         },
         'lucas-seq': {
             category: 'Number Theory',
@@ -27588,6 +27641,7 @@ var Playground = (function (exports) {
                 'let { lucas-seq } = import("Number-Theory");\nlucas-seq(2)',
                 'let { lucas-seq } = import("Number-Theory");\nlucas-seq()',
             ],
+            seeAlso: ['Number-Theory.lucas-nth', 'Number-Theory.lucas-take-while', 'Number-Theory.lucas?', 'Number-Theory.fibonacci-seq'],
         },
         'lucas-take-while': {
             category: 'Number Theory',
@@ -27612,6 +27666,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { lucas-take-while } = import("Number-Theory");\nlucas-take-while(-> $ < 100)',
             ],
+            seeAlso: ['Number-Theory.lucas-seq', 'Number-Theory.lucas-nth', 'Number-Theory.lucas?'],
         },
         'lucas-nth': {
             category: 'Number Theory',
@@ -27637,6 +27692,7 @@ var Playground = (function (exports) {
                 'let { lucas-nth } = import("Number-Theory");\nlucas-nth(2)',
                 'let { lucas-nth } = import("Number-Theory");\nlucas-nth(10)',
             ],
+            seeAlso: ['Number-Theory.lucas-seq', 'Number-Theory.lucas-take-while', 'Number-Theory.lucas?'],
         },
         'lucas?': {
             category: 'Number Theory',
@@ -27662,6 +27718,7 @@ var Playground = (function (exports) {
                 'let { lucas? } = import("Number-Theory");\nlucas?(2)',
                 'let { lucas? } = import("Number-Theory");\nlucas?(10)',
             ],
+            seeAlso: ['Number-Theory.lucas-seq', 'Number-Theory.lucas-nth', 'Number-Theory.fibonacci?', 'Number-Theory.lucas-take-while'],
         },
         'lucky-seq': {
             category: 'Number Theory',
@@ -27688,6 +27745,7 @@ var Playground = (function (exports) {
                 'let { lucky-seq } = import("Number-Theory");\nlucky-seq(2)',
                 'let { lucky-seq } = import("Number-Theory");\nlucky-seq(20)',
             ],
+            seeAlso: ['Number-Theory.lucky-nth', 'Number-Theory.lucky-take-while', 'Number-Theory.lucky?', 'Number-Theory.happy-seq', 'Number-Theory.prime-seq'],
         },
         'lucky-take-while': {
             category: 'Number Theory',
@@ -27712,6 +27770,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { lucky-take-while } = import("Number-Theory");\nlucky-take-while(-> $ < 100)',
             ],
+            seeAlso: ['Number-Theory.lucky-seq', 'Number-Theory.lucky-nth', 'Number-Theory.lucky?'],
         },
         'lucky-nth': {
             category: 'Number Theory',
@@ -27737,6 +27796,7 @@ var Playground = (function (exports) {
                 'let { lucky-nth } = import("Number-Theory");\nlucky-nth(2)',
                 'let { lucky-nth } = import("Number-Theory");\nlucky-nth(20)',
             ],
+            seeAlso: ['Number-Theory.lucky-seq', 'Number-Theory.lucky-take-while', 'Number-Theory.lucky?'],
         },
         'lucky?': {
             category: 'Number Theory',
@@ -27762,6 +27822,7 @@ var Playground = (function (exports) {
                 'let { lucky? } = import("Number-Theory");\nlucky?(7)',
                 'let { lucky? } = import("Number-Theory");\nlucky?(33)',
             ],
+            seeAlso: ['Number-Theory.lucky-seq', 'Number-Theory.lucky-nth', 'Number-Theory.prime?', 'Number-Theory.lucky-take-while'],
         },
         'mersenne-seq': {
             category: 'Number Theory',
@@ -27791,6 +27852,7 @@ var Playground = (function (exports) {
                 'let { mersenne-seq } = import("Number-Theory");\nmersenne-seq(5)',
                 'let { mersenne-seq } = import("Number-Theory");\nmersenne-seq()',
             ],
+            seeAlso: ['Number-Theory.mersenne-nth', 'Number-Theory.mersenne-take-while', 'Number-Theory.mersenne?', 'Number-Theory.prime-seq'],
         },
         'mersenne-take-while': {
             category: 'Number Theory',
@@ -27815,6 +27877,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { mersenne-take-while } = import("Number-Theory");\nmersenne-take-while(-> $ < 1000)',
             ],
+            seeAlso: ['Number-Theory.mersenne-seq', 'Number-Theory.mersenne-nth', 'Number-Theory.mersenne?'],
         },
         'mersenne-nth': {
             category: 'Number Theory',
@@ -27839,6 +27902,7 @@ var Playground = (function (exports) {
                 'let { mersenne-nth } = import("Number-Theory");\nmersenne-nth(1)',
                 'let { mersenne-nth } = import("Number-Theory");\nmersenne-nth(5)',
             ],
+            seeAlso: ['Number-Theory.mersenne-seq', 'Number-Theory.mersenne-take-while', 'Number-Theory.mersenne?'],
         },
         'mersenne?': {
             category: 'Number Theory',
@@ -27864,6 +27928,7 @@ var Playground = (function (exports) {
                 'let { mersenne? } = import("Number-Theory");\nmersenne?(4)',
                 'let { mersenne? } = import("Number-Theory");\nmersenne?(7)',
             ],
+            seeAlso: ['Number-Theory.mersenne-seq', 'Number-Theory.mersenne-nth', 'Number-Theory.prime?', 'Number-Theory.mersenne-take-while'],
         },
         'padovan-seq': {
             category: 'Number Theory',
@@ -27890,6 +27955,7 @@ var Playground = (function (exports) {
                 'let { padovan-seq } = import("Number-Theory");\npadovan-seq(10)',
                 'let { padovan-seq } = import("Number-Theory");\npadovan-seq(20)',
             ],
+            seeAlso: ['Number-Theory.padovan-nth', 'Number-Theory.padovan-take-while', 'Number-Theory.padovan?', 'Number-Theory.fibonacci-seq'],
         },
         'padovan-take-while': {
             category: 'Number Theory',
@@ -27914,6 +27980,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { padovan-take-while } = import("Number-Theory");\npadovan-take-while(-> $ < 1000)',
             ],
+            seeAlso: ['Number-Theory.padovan-seq', 'Number-Theory.padovan-nth', 'Number-Theory.padovan?'],
         },
         'padovan-nth': {
             category: 'Number Theory',
@@ -27939,6 +28006,7 @@ var Playground = (function (exports) {
                 'let { padovan-nth } = import("Number-Theory");\npadovan-nth(10)',
                 'let { padovan-nth } = import("Number-Theory");\npadovan-nth(20)',
             ],
+            seeAlso: ['Number-Theory.padovan-seq', 'Number-Theory.padovan-take-while', 'Number-Theory.padovan?'],
         },
         'padovan?': {
             category: 'Number Theory',
@@ -27964,6 +28032,7 @@ var Playground = (function (exports) {
                 'let { padovan? } = import("Number-Theory");\npadovan?(265)',
                 'let { padovan? } = import("Number-Theory");\npadovan?(6)',
             ],
+            seeAlso: ['Number-Theory.padovan-seq', 'Number-Theory.padovan-nth', 'Number-Theory.fibonacci?', 'Number-Theory.padovan-take-while'],
         },
         'partition-seq': {
             category: 'Number Theory',
@@ -27993,6 +28062,7 @@ var Playground = (function (exports) {
                 'let { partition-seq } = import("Number-Theory");\npartition-seq(10)',
                 'let { partition-seq } = import("Number-Theory");\npartition-seq()',
             ],
+            seeAlso: ['Number-Theory.partition-nth', 'Number-Theory.partition-take-while', 'Number-Theory.partition?', 'Number-Theory.partitions', 'Number-Theory.count-partitions'],
         },
         'partition-take-while': {
             category: 'Number Theory',
@@ -28017,6 +28087,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { partition-take-while } = import("Number-Theory");\npartition-take-while(-> $ < 1000)',
             ],
+            seeAlso: ['Number-Theory.partition-seq', 'Number-Theory.partition-nth', 'Number-Theory.partition?'],
         },
         'partition-nth': {
             category: 'Number Theory',
@@ -28041,6 +28112,7 @@ var Playground = (function (exports) {
                 'let { partition-nth } = import("Number-Theory");\npartition-nth(1)',
                 'let { partition-nth } = import("Number-Theory");\npartition-nth(5)',
             ],
+            seeAlso: ['Number-Theory.partition-seq', 'Number-Theory.partition-take-while', 'Number-Theory.partition?'],
         },
         'partition?': {
             category: 'Number Theory',
@@ -28069,6 +28141,7 @@ var Playground = (function (exports) {
                 'let { partition? } = import("Number-Theory");\npartition?(4)',
                 'let { partition? } = import("Number-Theory");\npartition?(5)',
             ],
+            seeAlso: ['Number-Theory.partition-seq', 'Number-Theory.partition-nth', 'Number-Theory.partitions', 'Number-Theory.partition-take-while'],
         },
         'pell-seq': {
             category: 'Number Theory',
@@ -28098,6 +28171,7 @@ var Playground = (function (exports) {
                 'let { pell-seq } = import("Number-Theory");\npell-seq(10)',
                 'let { pell-seq } = import("Number-Theory");\npell-seq()',
             ],
+            seeAlso: ['Number-Theory.pell-nth', 'Number-Theory.pell-take-while', 'Number-Theory.pell?', 'Number-Theory.fibonacci-seq'],
         },
         'pell-take-while': {
             category: 'Number Theory',
@@ -28122,6 +28196,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { pell-take-while } = import("Number-Theory");\npell-take-while(-> $ < 1000)',
             ],
+            seeAlso: ['Number-Theory.pell-seq', 'Number-Theory.pell-nth', 'Number-Theory.pell?'],
         },
         'pell-nth': {
             category: 'Number Theory',
@@ -28147,6 +28222,7 @@ var Playground = (function (exports) {
                 'let { pell-nth } = import("Number-Theory");\npell-nth(10)',
                 'let { pell-nth } = import("Number-Theory");\npell-nth(20)',
             ],
+            seeAlso: ['Number-Theory.pell-seq', 'Number-Theory.pell-take-while', 'Number-Theory.pell?'],
         },
         'pell?': {
             category: 'Number Theory',
@@ -28172,6 +28248,7 @@ var Playground = (function (exports) {
                 'let { pell? } = import("Number-Theory");\npell?(470832)',
                 'let { pell? } = import("Number-Theory");\npell?(10)',
             ],
+            seeAlso: ['Number-Theory.pell-seq', 'Number-Theory.pell-nth', 'Number-Theory.fibonacci?', 'Number-Theory.pell-take-while'],
         },
         'perfect-seq': {
             category: 'Number Theory',
@@ -28201,6 +28278,7 @@ var Playground = (function (exports) {
                 'let { perfect-seq } = import("Number-Theory");\nperfect-seq(5)',
                 'let { perfect-seq } = import("Number-Theory");\nperfect-seq()',
             ],
+            seeAlso: ['Number-Theory.perfect-nth', 'Number-Theory.perfect-take-while', 'Number-Theory.perfect?', 'Number-Theory.abundant-seq', 'Number-Theory.deficient-seq', 'Number-Theory.amicable?'],
         },
         'perfect-take-while': {
             category: 'Number Theory',
@@ -28225,6 +28303,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { perfect-take-while } = import("Number-Theory");\nperfect-take-while(-> $ < 1000)',
             ],
+            seeAlso: ['Number-Theory.perfect-seq', 'Number-Theory.perfect-nth', 'Number-Theory.perfect?'],
         },
         'perfect-nth': {
             category: 'Number Theory',
@@ -28249,6 +28328,7 @@ var Playground = (function (exports) {
                 'let { perfect-nth } = import("Number-Theory");\nperfect-nth(1)',
                 'let { perfect-nth } = import("Number-Theory");\nperfect-nth(5)',
             ],
+            seeAlso: ['Number-Theory.perfect-seq', 'Number-Theory.perfect-take-while', 'Number-Theory.perfect?'],
         },
         'perfect?': {
             category: 'Number Theory',
@@ -28281,6 +28361,7 @@ var Playground = (function (exports) {
                 'let { perfect? } = import("Number-Theory");\nperfect?(8)',
                 'let { perfect? } = import("Number-Theory");\nperfect?(9)',
             ],
+            seeAlso: ['Number-Theory.perfect-seq', 'Number-Theory.perfect-nth', 'Number-Theory.abundant?', 'Number-Theory.deficient?', 'Number-Theory.sigma', 'Number-Theory.perfect-take-while', 'Number-Theory.amicable?', 'Number-Theory.proper-divisors'],
         },
         'perfect-square-seq': {
             category: 'Number Theory',
@@ -28306,6 +28387,7 @@ var Playground = (function (exports) {
                 'let { perfect-square-seq } = import("Number-Theory");\nperfect-square-seq(5)',
                 'let { perfect-square-seq } = import("Number-Theory");\nperfect-square-seq(20)',
             ],
+            seeAlso: ['Number-Theory.perfect-square-nth', 'Number-Theory.perfect-square-take-while', 'Number-Theory.perfect-square?', 'Number-Theory.perfect-cube-seq', 'Number-Theory.perfect-power-seq', 'Number-Theory.polygonal-seq'],
         },
         'perfect-square-take-while': {
             category: 'Number Theory',
@@ -28330,6 +28412,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { perfect-square-take-while } = import("Number-Theory");\nperfect-square-take-while(-> $ <= 100)',
             ],
+            seeAlso: ['Number-Theory.perfect-square-seq', 'Number-Theory.perfect-square-nth', 'Number-Theory.perfect-square?'],
         },
         'perfect-square-nth': {
             category: 'Number Theory',
@@ -28354,6 +28437,7 @@ var Playground = (function (exports) {
                 'let { perfect-square-nth } = import("Number-Theory");\nperfect-square-nth(1)',
                 'let { perfect-square-nth } = import("Number-Theory");\nperfect-square-nth(5)',
             ],
+            seeAlso: ['Number-Theory.perfect-square-seq', 'Number-Theory.perfect-square-take-while', 'Number-Theory.perfect-square?'],
         },
         'perfect-square?': {
             category: 'Number Theory',
@@ -28378,6 +28462,7 @@ var Playground = (function (exports) {
                 'let { perfect-square? } = import("Number-Theory");\nperfect-square?(16)',
                 'let { perfect-square? } = import("Number-Theory");\nperfect-square?(20)',
             ],
+            seeAlso: ['Number-Theory.perfect-square-seq', 'Number-Theory.perfect-square-nth', 'Number-Theory.perfect-cube?', 'Number-Theory.perfect-power?', 'Number-Theory.perfect-square-take-while', 'Number-Theory.perfect-power', 'Number-Theory.polygonal?'],
         },
         'perfect-cube-seq': {
             category: 'Number Theory',
@@ -28403,6 +28488,7 @@ var Playground = (function (exports) {
                 'let { perfect-cube-seq } = import("Number-Theory");\nperfect-cube-seq(5)',
                 'let { perfect-cube-seq } = import("Number-Theory");\nperfect-cube-seq(20)',
             ],
+            seeAlso: ['Number-Theory.perfect-cube-nth', 'Number-Theory.perfect-cube-take-while', 'Number-Theory.perfect-cube?', 'Number-Theory.perfect-square-seq', 'Number-Theory.perfect-power-seq'],
         },
         'perfect-cube-take-while': {
             category: 'Number Theory',
@@ -28427,6 +28513,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { perfect-cube-take-while } = import("Number-Theory");\nperfect-cube-take-while(-> $ <= 100)',
             ],
+            seeAlso: ['Number-Theory.perfect-cube-seq', 'Number-Theory.perfect-cube-nth', 'Number-Theory.perfect-cube?'],
         },
         'perfect-cube-nth': {
             category: 'Number Theory',
@@ -28451,6 +28538,7 @@ var Playground = (function (exports) {
                 'let { perfect-cube-nth } = import("Number-Theory");\nperfect-cube-nth(1)',
                 'let { perfect-cube-nth } = import("Number-Theory");\nperfect-cube-nth(5)',
             ],
+            seeAlso: ['Number-Theory.perfect-cube-seq', 'Number-Theory.perfect-cube-take-while', 'Number-Theory.perfect-cube?'],
         },
         'perfect-cube?': {
             category: 'Number Theory',
@@ -28476,6 +28564,7 @@ var Playground = (function (exports) {
                 'let { perfect-cube? } = import("Number-Theory");\nperfect-cube?(8)',
                 'let { perfect-cube? } = import("Number-Theory");\nperfect-cube?(9)',
             ],
+            seeAlso: ['Number-Theory.perfect-cube-seq', 'Number-Theory.perfect-cube-nth', 'Number-Theory.perfect-square?', 'Number-Theory.perfect-power?', 'Number-Theory.perfect-cube-take-while', 'Number-Theory.perfect-power'],
         },
         'perfect-power-seq': {
             category: 'Number Theory',
@@ -28501,6 +28590,7 @@ var Playground = (function (exports) {
                 'let { perfect-power-seq } = import("Number-Theory");\nperfect-power-seq(5)',
                 'let { perfect-power-seq } = import("Number-Theory");\nperfect-power-seq(20)',
             ],
+            seeAlso: ['Number-Theory.perfect-power-nth', 'Number-Theory.perfect-power-take-while', 'Number-Theory.perfect-power?', 'Number-Theory.perfect-power', 'Number-Theory.perfect-square-seq', 'Number-Theory.perfect-cube-seq'],
         },
         'perfect-power-take-while': {
             category: 'Number Theory',
@@ -28525,6 +28615,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { perfect-power-take-while } = import("Number-Theory");\nperfect-power-take-while(-> $ <= 100)',
             ],
+            seeAlso: ['Number-Theory.perfect-power-seq', 'Number-Theory.perfect-power-nth', 'Number-Theory.perfect-power?'],
         },
         'perfect-power-nth': {
             category: 'Number Theory',
@@ -28549,6 +28640,7 @@ var Playground = (function (exports) {
                 'let { perfect-power-nth } = import("Number-Theory");\nperfect-power-nth(3)',
                 'let { perfect-power-nth } = import("Number-Theory");\nperfect-power-nth(15)',
             ],
+            seeAlso: ['Number-Theory.perfect-power-seq', 'Number-Theory.perfect-power-take-while', 'Number-Theory.perfect-power?'],
         },
         'perfect-power?': {
             category: 'Number Theory',
@@ -28575,6 +28667,7 @@ var Playground = (function (exports) {
                 'let { perfect-power? } = import("Number-Theory");\nperfect-power?(9)',
                 'let { perfect-power? } = import("Number-Theory");\nperfect-power?(10)',
             ],
+            seeAlso: ['Number-Theory.perfect-power-seq', 'Number-Theory.perfect-power-nth', 'Number-Theory.perfect-power', 'Number-Theory.perfect-square?', 'Number-Theory.perfect-cube?', 'Number-Theory.perfect-power-take-while'],
         },
         'polygonal-seq': {
             category: 'Number Theory',
@@ -28614,6 +28707,7 @@ var Playground = (function (exports) {
                 'let { polygonal-seq } = import("Number-Theory");\npolygonal-seq(6, 5)',
                 'let { polygonal-seq } = import("Number-Theory");\npolygonal-seq(100, 10)',
             ],
+            seeAlso: ['Number-Theory.polygonal-nth', 'Number-Theory.polygonal-take-while', 'Number-Theory.polygonal?', 'Number-Theory.perfect-square-seq'],
         },
         'polygonal-take-while': {
             category: 'Number Theory',
@@ -28649,6 +28743,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { polygonal-take-while } = import("Number-Theory");\npolygonal-take-while(15, -> $ < 1000)',
             ],
+            seeAlso: ['Number-Theory.polygonal-seq', 'Number-Theory.polygonal-nth', 'Number-Theory.polygonal?'],
         },
         'polygonal-nth': {
             category: 'Number Theory',
@@ -28685,6 +28780,7 @@ var Playground = (function (exports) {
                 'let { polygonal-nth } = import("Number-Theory");\npolygonal-nth(4, 5)',
                 'let { polygonal-nth } = import("Number-Theory");\npolygonal-nth(5, 5)',
             ],
+            seeAlso: ['Number-Theory.polygonal-seq', 'Number-Theory.polygonal-take-while', 'Number-Theory.polygonal?'],
         },
         'polygonal?': {
             category: 'Number Theory',
@@ -28723,6 +28819,7 @@ var Playground = (function (exports) {
                 'let { polygonal? } = import("Number-Theory");\npolygonal?(4, 1000)',
                 'let { polygonal? } = import("Number-Theory");\npolygonal?(6, 45)',
             ],
+            seeAlso: ['Number-Theory.polygonal-seq', 'Number-Theory.polygonal-nth', 'Number-Theory.perfect-square?', 'Number-Theory.polygonal-take-while'],
         },
         'prime-seq': {
             category: 'Number Theory',
@@ -28749,6 +28846,7 @@ var Playground = (function (exports) {
                 'let { prime-seq } = import("Number-Theory");\nprime-seq(2)',
                 'let { prime-seq } = import("Number-Theory");\nprime-seq(10)',
             ],
+            seeAlso: ['Number-Theory.prime-nth', 'Number-Theory.prime-take-while', 'Number-Theory.prime?', 'Number-Theory.composite-seq', 'Number-Theory.mersenne-seq', 'Number-Theory.lucky-seq'],
         },
         'prime-take-while': {
             category: 'Number Theory',
@@ -28773,6 +28871,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { prime-take-while } = import("Number-Theory");\nprime-take-while(-> $ < 50)',
             ],
+            seeAlso: ['Number-Theory.prime-seq', 'Number-Theory.prime-nth', 'Number-Theory.prime?'],
         },
         'prime-nth': {
             category: 'Number Theory',
@@ -28798,6 +28897,7 @@ var Playground = (function (exports) {
                 'let { prime-nth } = import("Number-Theory");\nprime-nth(2)',
                 'let { prime-nth } = import("Number-Theory");\nprime-nth(10)',
             ],
+            seeAlso: ['Number-Theory.prime-seq', 'Number-Theory.prime-take-while', 'Number-Theory.prime?'],
         },
         'prime?': {
             category: 'Number Theory',
@@ -28826,6 +28926,7 @@ var Playground = (function (exports) {
                 'let { prime? } = import("Number-Theory");\nprime?(997)',
                 'let { prime? } = import("Number-Theory");\nprime?(1001)',
             ],
+            seeAlso: ['Number-Theory.prime-seq', 'Number-Theory.prime-nth', 'Number-Theory.composite?', 'Number-Theory.prime-factors', 'Number-Theory.mersenne?', 'Number-Theory.prime-take-while', 'Number-Theory.lucky?'],
         },
         'recaman-seq': {
             category: 'Number Theory',
@@ -28852,6 +28953,7 @@ var Playground = (function (exports) {
                 'let { recaman-seq } = import("Number-Theory");\nrecaman-seq(10)',
                 'let { recaman-seq } = import("Number-Theory");\nrecaman-seq(20)',
             ],
+            seeAlso: ['Number-Theory.recaman-nth', 'Number-Theory.recaman-take-while', 'Number-Theory.recaman?', 'Number-Theory.golomb-seq'],
         },
         'recaman-take-while': {
             category: 'Number Theory',
@@ -28876,6 +28978,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { recaman-take-while } = import("Number-Theory");\nrecaman-take-while(-> $ < 10)',
             ],
+            seeAlso: ['Number-Theory.recaman-seq', 'Number-Theory.recaman-nth', 'Number-Theory.recaman?'],
         },
         'recaman-nth': {
             category: 'Number Theory',
@@ -28901,6 +29004,7 @@ var Playground = (function (exports) {
                 'let { recaman-nth } = import("Number-Theory");\nrecaman-nth(10)',
                 'let { recaman-nth } = import("Number-Theory");\nrecaman-nth(20)',
             ],
+            seeAlso: ['Number-Theory.recaman-seq', 'Number-Theory.recaman-take-while', 'Number-Theory.recaman?'],
         },
         'recaman?': {
             category: 'Number Theory',
@@ -28926,6 +29030,7 @@ var Playground = (function (exports) {
                 'let { recaman? } = import("Number-Theory");\nrecaman?(10)',
                 'let { recaman? } = import("Number-Theory");\nrecaman?(20)',
             ],
+            seeAlso: ['Number-Theory.recaman-seq', 'Number-Theory.recaman-nth', 'Number-Theory.recaman-take-while'],
         },
         'sylvester-seq': {
             category: 'Number Theory',
@@ -28955,6 +29060,7 @@ var Playground = (function (exports) {
                 'let { sylvester-seq } = import("Number-Theory");\nsylvester-seq()',
                 'let { sylvester-seq } = import("Number-Theory");\nsylvester-seq()',
             ],
+            seeAlso: ['Number-Theory.sylvester-nth', 'Number-Theory.sylvester-take-while', 'Number-Theory.sylvester?'],
         },
         'sylvester-take-while': {
             category: 'Number Theory',
@@ -28979,6 +29085,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { sylvester-take-while } = import("Number-Theory");\nsylvester-take-while(-> $ < 100000)',
             ],
+            seeAlso: ['Number-Theory.sylvester-seq', 'Number-Theory.sylvester-nth', 'Number-Theory.sylvester?'],
         },
         'sylvester-nth': {
             category: 'Number Theory',
@@ -29003,6 +29110,7 @@ var Playground = (function (exports) {
                 'let { sylvester-nth } = import("Number-Theory");\nsylvester-nth(1)',
                 'let { sylvester-nth } = import("Number-Theory");\nsylvester-nth(5)',
             ],
+            seeAlso: ['Number-Theory.sylvester-seq', 'Number-Theory.sylvester-take-while', 'Number-Theory.sylvester?'],
         },
         'sylvester?': {
             category: 'Number Theory',
@@ -29028,6 +29136,7 @@ var Playground = (function (exports) {
                 'let { sylvester? } = import("Number-Theory");\nsylvester?(3)',
                 'let { sylvester? } = import("Number-Theory");\nsylvester?(6)',
             ],
+            seeAlso: ['Number-Theory.sylvester-seq', 'Number-Theory.sylvester-nth', 'Number-Theory.sylvester-take-while'],
         },
         'thue-morse-seq': {
             category: 'Number Theory',
@@ -29054,6 +29163,7 @@ var Playground = (function (exports) {
                 'let { thue-morse-seq } = import("Number-Theory");\nthue-morse-seq(10)',
                 'let { thue-morse-seq } = import("Number-Theory");\nthue-morse-seq(20)',
             ],
+            seeAlso: ['Number-Theory.thue-morse-nth', 'Number-Theory.thue-morse-take-while', 'Number-Theory.thue-morse?'],
         },
         'thue-morse-take-while': {
             category: 'Number Theory',
@@ -29078,6 +29188,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { thue-morse-take-while } = import("Number-Theory");\nthue-morse-take-while(-> $2 < 10)',
             ],
+            seeAlso: ['Number-Theory.thue-morse-seq', 'Number-Theory.thue-morse-nth', 'Number-Theory.thue-morse?'],
         },
         'thue-morse-nth': {
             category: 'Number Theory',
@@ -29103,6 +29214,7 @@ var Playground = (function (exports) {
                 'let { thue-morse-nth } = import("Number-Theory");\nthue-morse-nth(10)',
                 'let { thue-morse-nth } = import("Number-Theory");\nthue-morse-nth(20)',
             ],
+            seeAlso: ['Number-Theory.thue-morse-seq', 'Number-Theory.thue-morse-take-while', 'Number-Theory.thue-morse?'],
         },
         'thue-morse?': {
             category: 'Number Theory',
@@ -29127,6 +29239,7 @@ var Playground = (function (exports) {
                 'let { thue-morse? } = import("Number-Theory");\nthue-morse?(1)',
                 'let { thue-morse? } = import("Number-Theory");\nthue-morse?(2)',
             ],
+            seeAlso: ['Number-Theory.thue-morse-seq', 'Number-Theory.thue-morse-nth', 'Number-Theory.thue-morse-take-while'],
         },
         'tribonacci-seq': {
             category: 'Number Theory',
@@ -29153,6 +29266,7 @@ var Playground = (function (exports) {
                 'let { tribonacci-seq } = import("Number-Theory");\ntribonacci-seq(2)',
                 'let { tribonacci-seq } = import("Number-Theory");\ntribonacci-seq(10)',
             ],
+            seeAlso: ['Number-Theory.tribonacci-nth', 'Number-Theory.tribonacci-take-while', 'Number-Theory.tribonacci?', 'Number-Theory.fibonacci-seq'],
         },
         'tribonacci-take-while': {
             category: 'Number Theory',
@@ -29177,6 +29291,7 @@ var Playground = (function (exports) {
             examples: [
                 'let { tribonacci-take-while } = import("Number-Theory");\ntribonacci-take-while(-> $ < 100)',
             ],
+            seeAlso: ['Number-Theory.tribonacci-seq', 'Number-Theory.tribonacci-nth', 'Number-Theory.tribonacci?'],
         },
         'tribonacci-nth': {
             category: 'Number Theory',
@@ -29202,6 +29317,7 @@ var Playground = (function (exports) {
                 'let { tribonacci-nth } = import("Number-Theory");\ntribonacci-nth(2)',
                 'let { tribonacci-nth } = import("Number-Theory");\ntribonacci-nth(10)',
             ],
+            seeAlso: ['Number-Theory.tribonacci-seq', 'Number-Theory.tribonacci-take-while', 'Number-Theory.tribonacci?'],
         },
         'tribonacci?': {
             category: 'Number Theory',
@@ -29235,6 +29351,7 @@ var Playground = (function (exports) {
                 'let { tribonacci? } = import("Number-Theory");\ntribonacci?(9)',
                 'let { tribonacci? } = import("Number-Theory");\ntribonacci?(10)',
             ],
+            seeAlso: ['Number-Theory.tribonacci-seq', 'Number-Theory.tribonacci-nth', 'Number-Theory.fibonacci?', 'Number-Theory.tribonacci-take-while'],
         },
         'count-combinations': {
             category: 'Number Theory',
@@ -29262,6 +29379,7 @@ var Playground = (function (exports) {
                 'let { count-combinations } = import("Number-Theory");\ncount-combinations(5, 3)',
                 'let { count-combinations } = import("Number-Theory");\ncount-combinations(10, 2)',
             ],
+            seeAlso: ['Number-Theory.combinations', 'Number-Theory.count-permutations', 'Number-Theory.factorial', 'Number-Theory.multinomial', 'Number-Theory.stirling-second', 'Number-Theory.count-partitions', 'Number-Theory.count-power-set'],
         },
         'combinations': {
             category: 'Number Theory',
@@ -29302,6 +29420,7 @@ var Playground = (function (exports) {
                 'let { combinations } = import("Number-Theory");\ncombinations([1, 2, 3], 1)',
                 'let { combinations } = import("Number-Theory");\ncombinations([1, 2, 3], 3)',
             ],
+            seeAlso: ['Number-Theory.count-combinations', 'Number-Theory.permutations', 'Number-Theory.power-set', 'Number-Theory.cartesian-product', 'Number-Theory.partitions'],
         },
         'count-derangements': {
             category: 'Number Theory',
@@ -29326,6 +29445,7 @@ var Playground = (function (exports) {
                 'let { count-derangements } = import("Number-Theory");\ncount-derangements(4)',
                 'let { count-derangements } = import("Number-Theory");\ncount-derangements(5)',
             ],
+            seeAlso: ['Number-Theory.derangements', 'Number-Theory.count-permutations', 'Number-Theory.factorial'],
         },
         'derangements': {
             category: 'Number Theory',
@@ -29352,6 +29472,7 @@ var Playground = (function (exports) {
                 'let { derangements } = import("Number-Theory");\nderangements([1, 2, 3, 4])',
                 'let { derangements } = import("Number-Theory");\nderangements(["a", "b", "c"])',
             ],
+            seeAlso: ['Number-Theory.count-derangements', 'Number-Theory.permutations'],
         },
         'divisors': {
             category: 'Number Theory',
@@ -29378,6 +29499,7 @@ var Playground = (function (exports) {
                 'let { divisors } = import("Number-Theory");\ndivisors(100)',
                 'let { divisors } = import("Number-Theory");\ndivisors(37)',
             ],
+            seeAlso: ['Number-Theory.count-divisors', 'Number-Theory.proper-divisors', 'Number-Theory.sigma', 'Number-Theory.prime-factors', 'Number-Theory.divisible-by?', 'Number-Theory.lcm', 'Number-Theory.abundant?', 'Number-Theory.deficient?', 'Number-Theory.count-proper-divisors'],
         },
         'count-divisors': {
             category: 'Number Theory',
@@ -29403,6 +29525,7 @@ var Playground = (function (exports) {
                 'let { count-divisors } = import("Number-Theory");\ncount-divisors(100)',
                 'let { count-divisors } = import("Number-Theory");\ncount-divisors(37)',
             ],
+            seeAlso: ['Number-Theory.divisors', 'Number-Theory.count-proper-divisors', 'Number-Theory.sigma'],
         },
         'proper-divisors': {
             category: 'Number Theory',
@@ -29429,6 +29552,7 @@ var Playground = (function (exports) {
                 'let { proper-divisors } = import("Number-Theory");\nproper-divisors(100)',
                 'let { proper-divisors } = import("Number-Theory");\nproper-divisors(37)',
             ],
+            seeAlso: ['Number-Theory.count-proper-divisors', 'Number-Theory.divisors', 'Number-Theory.amicable?', 'Number-Theory.perfect?'],
         },
         'count-proper-divisors': {
             category: 'Number Theory',
@@ -29454,6 +29578,7 @@ var Playground = (function (exports) {
                 'let { count-proper-divisors } = import("Number-Theory");\ncount-proper-divisors(100)',
                 'let { count-proper-divisors } = import("Number-Theory");\ncount-proper-divisors(37)',
             ],
+            seeAlso: ['Number-Theory.proper-divisors', 'Number-Theory.count-divisors', 'Number-Theory.divisors'],
         },
         'factorial': {
             category: 'Number Theory',
@@ -29480,6 +29605,7 @@ var Playground = (function (exports) {
                 'let { factorial } = import("Number-Theory");\nfactorial(10)',
                 'let { factorial } = import("Number-Theory");\nfactorial(20)',
             ],
+            seeAlso: ['Number-Theory.factorial-seq', 'Number-Theory.factorial-nth', 'Number-Theory.factorial?', 'Number-Theory.count-combinations', 'Number-Theory.count-permutations', 'Number-Theory.multinomial', 'Number-Theory.count-derangements'],
         },
         'partitions': {
             category: 'Number Theory',
@@ -29505,6 +29631,7 @@ var Playground = (function (exports) {
                 'let { partitions } = import("Number-Theory");\npartitions(4)',
                 'let { partitions } = import("Number-Theory");\npartitions(8)',
             ],
+            seeAlso: ['Number-Theory.count-partitions', 'Number-Theory.partition-seq', 'Number-Theory.combinations', 'Number-Theory.partition?'],
         },
         'count-partitions': {
             category: 'Number Theory',
@@ -29530,6 +29657,7 @@ var Playground = (function (exports) {
                 'let { count-partitions } = import("Number-Theory");\ncount-partitions(8)',
                 'let { count-partitions } = import("Number-Theory");\ncount-partitions(15)',
             ],
+            seeAlso: ['Number-Theory.partitions', 'Number-Theory.partition-seq', 'Number-Theory.count-combinations'],
         },
         'permutations': {
             category: 'Number Theory',
@@ -29560,6 +29688,7 @@ var Playground = (function (exports) {
                 'let { permutations } = import("Number-Theory");\npermutations([1])',
                 'let { permutations } = import("Number-Theory");\npermutations([])',
             ],
+            seeAlso: ['Number-Theory.count-permutations', 'Number-Theory.combinations', 'Number-Theory.derangements', 'Number-Theory.cartesian-product'],
         },
         'count-permutations': {
             category: 'Number Theory',
@@ -29590,6 +29719,7 @@ var Playground = (function (exports) {
                 'let { count-permutations } = import("Number-Theory");\ncount-permutations(10, 0)',
                 'let { count-permutations } = import("Number-Theory");\ncount-permutations(10, 1)',
             ],
+            seeAlso: ['Number-Theory.permutations', 'Number-Theory.count-combinations', 'Number-Theory.factorial', 'Number-Theory.multinomial', 'Number-Theory.stirling-first', 'Number-Theory.count-derangements'],
         },
         'power-set': {
             category: 'Number Theory',
@@ -29618,6 +29748,7 @@ var Playground = (function (exports) {
                 'let { power-set } = import("Number-Theory");\npower-set([1])',
                 'let { power-set } = import("Number-Theory");\npower-set([])',
             ],
+            seeAlso: ['Number-Theory.count-power-set', 'Number-Theory.combinations', 'Number-Theory.cartesian-product'],
         },
         'count-power-set': {
             category: 'Number Theory',
@@ -29643,6 +29774,7 @@ var Playground = (function (exports) {
                 'let { count-power-set } = import("Number-Theory");\ncount-power-set(5)',
                 'let { count-power-set } = import("Number-Theory");\ncount-power-set(10)',
             ],
+            seeAlso: ['Number-Theory.power-set', 'Number-Theory.count-combinations'],
         },
         'prime-factors': {
             category: 'Number Theory',
@@ -29669,6 +29801,7 @@ var Playground = (function (exports) {
                 'let { prime-factors } = import("Number-Theory");\nprime-factors(100)',
                 'let { prime-factors } = import("Number-Theory");\nprime-factors(37)',
             ],
+            seeAlso: ['Number-Theory.count-prime-factors', 'Number-Theory.distinct-prime-factors', 'Number-Theory.prime?', 'Number-Theory.divisors', 'Number-Theory.euler-totient', 'Number-Theory.mobius', 'Number-Theory.composite?', 'Number-Theory.count-distinct-prime-factors'],
         },
         'count-prime-factors': {
             category: 'Number Theory',
@@ -29694,6 +29827,7 @@ var Playground = (function (exports) {
                 'let { count-prime-factors } = import("Number-Theory");\ncount-prime-factors(100)',
                 'let { count-prime-factors } = import("Number-Theory");\ncount-prime-factors(37)',
             ],
+            seeAlso: ['Number-Theory.prime-factors', 'Number-Theory.distinct-prime-factors', 'Number-Theory.count-distinct-prime-factors'],
         },
         'distinct-prime-factors': {
             category: 'Number Theory',
@@ -29720,6 +29854,7 @@ var Playground = (function (exports) {
                 'let { distinct-prime-factors } = import("Number-Theory");\ndistinct-prime-factors(100)',
                 'let { distinct-prime-factors } = import("Number-Theory");\ndistinct-prime-factors(37)',
             ],
+            seeAlso: ['Number-Theory.prime-factors', 'Number-Theory.count-distinct-prime-factors', 'Number-Theory.count-prime-factors'],
         },
         'count-distinct-prime-factors': {
             category: 'Number Theory',
@@ -29745,6 +29880,7 @@ var Playground = (function (exports) {
                 'let { count-distinct-prime-factors } = import("Number-Theory");\ncount-distinct-prime-factors(100)',
                 'let { count-distinct-prime-factors } = import("Number-Theory");\ncount-distinct-prime-factors(37)',
             ],
+            seeAlso: ['Number-Theory.distinct-prime-factors', 'Number-Theory.prime-factors', 'Number-Theory.count-prime-factors'],
         },
         'coprime?': {
             category: 'Number Theory',
@@ -29780,6 +29916,7 @@ var Playground = (function (exports) {
                 'let { coprime? } = import("Number-Theory");\ncoprime?(1, 1)',
                 'let { coprime? } = import("Number-Theory");\ncoprime?(2, 3)',
             ],
+            seeAlso: ['Number-Theory.gcd', 'Number-Theory.euler-totient', 'Number-Theory.divisible-by?', 'Number-Theory.lcm', 'Number-Theory.carmichael-lambda'],
         },
         'divisible-by?': {
             category: 'Number Theory',
@@ -29811,6 +29948,7 @@ var Playground = (function (exports) {
                 'let { divisible-by? } = import("Number-Theory");\ndivisible-by?(0, 5)',
                 'let { divisible-by? } = import("Number-Theory");\ndivisible-by?(5, 0)',
             ],
+            seeAlso: ['Number-Theory.divisors', 'Number-Theory.gcd', 'Number-Theory.coprime?'],
         },
         'gcd': {
             category: 'Number Theory',
@@ -29841,6 +29979,7 @@ var Playground = (function (exports) {
                 'let { gcd } = import("Number-Theory");\ngcd(0, 5)',
                 'let { gcd } = import("Number-Theory");\ngcd(5, 0)',
             ],
+            seeAlso: ['Number-Theory.lcm', 'Number-Theory.extended-gcd', 'Number-Theory.coprime?', 'Number-Theory.divisible-by?'],
         },
         'lcm': {
             category: 'Number Theory',
@@ -29870,6 +30009,7 @@ var Playground = (function (exports) {
                 'let { lcm } = import("Number-Theory");\nlcm(0, 5)',
                 'let { lcm } = import("Number-Theory");\nlcm(5, 0)',
             ],
+            seeAlso: ['Number-Theory.gcd', 'Number-Theory.divisors', 'Number-Theory.coprime?'],
         },
         'multinomial': {
             category: 'Number Theory',
@@ -29895,6 +30035,7 @@ var Playground = (function (exports) {
                 'let { multinomial } = import("Number-Theory");\nmultinomial(5, 2, 3)',
                 'let { multinomial } = import("Number-Theory");\nmultinomial(10, 2, 3, 5)',
             ],
+            seeAlso: ['Number-Theory.count-combinations', 'Number-Theory.factorial', 'Number-Theory.count-permutations'],
             hideOperatorForm: true,
         },
         'amicable?': {
@@ -29926,6 +30067,7 @@ var Playground = (function (exports) {
                 'let { amicable? } = import("Number-Theory");\namicable?(5020, 5564)',
                 'let { amicable? } = import("Number-Theory");\namicable?(6232, 6368)',
             ],
+            seeAlso: ['Number-Theory.proper-divisors', 'Number-Theory.perfect?', 'Number-Theory.sigma', 'Number-Theory.perfect-seq'],
         },
         'euler-totient': {
             category: 'Number Theory',
@@ -29952,6 +30094,7 @@ var Playground = (function (exports) {
                 'let { euler-totient } = import("Number-Theory");\neuler-totient(10)',
                 'let { euler-totient } = import("Number-Theory");\neuler-totient(20)',
             ],
+            seeAlso: ['Number-Theory.coprime?', 'Number-Theory.carmichael-lambda', 'Number-Theory.mobius', 'Number-Theory.prime-factors', 'Number-Theory.mertens'],
         },
         'mobius': {
             category: 'Number Theory',
@@ -29981,6 +30124,7 @@ var Playground = (function (exports) {
                 'let { mobius } = import("Number-Theory");\nmobius(12)',
                 'let { mobius } = import("Number-Theory");\nmobius(30)',
             ],
+            seeAlso: ['Number-Theory.mertens', 'Number-Theory.euler-totient', 'Number-Theory.prime-factors'],
         },
         'mertens': {
             category: 'Number Theory',
@@ -30010,6 +30154,7 @@ var Playground = (function (exports) {
                 'let { mobius } = import("Number-Theory");\nmobius(12)',
                 'let { mobius } = import("Number-Theory");\nmobius(30)',
             ],
+            seeAlso: ['Number-Theory.mobius', 'Number-Theory.euler-totient'],
         },
         'sigma': {
             category: 'Number Theory',
@@ -30039,6 +30184,7 @@ var Playground = (function (exports) {
                 'let { sigma } = import("Number-Theory");\nsigma(12)',
                 'let { sigma } = import("Number-Theory");\nsigma(30)',
             ],
+            seeAlso: ['Number-Theory.divisors', 'Number-Theory.perfect?', 'Number-Theory.abundant?', 'Number-Theory.deficient?', 'Number-Theory.amicable?', 'Number-Theory.count-divisors'],
         },
         'carmichael-lambda': {
             category: 'Number Theory',
@@ -30068,6 +30214,7 @@ var Playground = (function (exports) {
                 'let { carmichael-lambda } = import("Number-Theory");\ncarmichael-lambda(12)',
                 'let { carmichael-lambda } = import("Number-Theory");\ncarmichael-lambda(30)',
             ],
+            seeAlso: ['Number-Theory.euler-totient', 'Number-Theory.mod-exp', 'Number-Theory.coprime?'],
         },
         'cartesian-product': {
             category: 'Number Theory',
@@ -30101,6 +30248,7 @@ var Playground = (function (exports) {
                 'let { cartesian-product } = import("Number-Theory");\ncartesian-product([1, 2], ["a", "b"], [true, false])',
                 'let { cartesian-product } = import("Number-Theory");\ncartesian-product([1, 2, 3], ["x", "y", "z"])',
             ],
+            seeAlso: ['Number-Theory.combinations', 'Number-Theory.power-set', 'Number-Theory.permutations'],
         },
         'perfect-power': {
             category: 'Number Theory',
@@ -30131,6 +30279,7 @@ var Playground = (function (exports) {
                 'let { perfect-power } = import("Number-Theory");\nperfect-power(16)',
                 'let { perfect-power } = import("Number-Theory");\nperfect-power(19)',
             ],
+            seeAlso: ['Number-Theory.perfect-power?', 'Number-Theory.perfect-power-seq', 'Number-Theory.perfect-square?', 'Number-Theory.perfect-cube?'],
         },
         'mod-exp': {
             category: 'Number Theory',
@@ -30164,6 +30313,7 @@ var Playground = (function (exports) {
                 'let { mod-exp } = import("Number-Theory");\nmod-exp(5, 6, 11)',
                 'let { mod-exp } = import("Number-Theory");\nmod-exp(7, 8, 13)',
             ],
+            seeAlso: ['Number-Theory.mod-inv', 'Number-Theory.carmichael-lambda', 'Number-Theory.chinese-remainder'],
         },
         'mod-inv': {
             category: 'Number Theory',
@@ -30193,6 +30343,7 @@ var Playground = (function (exports) {
                 'let { mod-inv } = import("Number-Theory");\nmod-inv(5, 13)',
                 'let { mod-inv } = import("Number-Theory");\nmod-inv(7, 19)',
             ],
+            seeAlso: ['Number-Theory.mod-exp', 'Number-Theory.extended-gcd', 'Number-Theory.chinese-remainder'],
         },
         'extended-gcd': {
             category: 'Number Theory',
@@ -30223,6 +30374,7 @@ var Playground = (function (exports) {
                 'let { extended-gcd } = import("Number-Theory");\nextended-gcd(101, 10)',
                 'let { extended-gcd } = import("Number-Theory");\nextended-gcd(17, 13)',
             ],
+            seeAlso: ['Number-Theory.gcd', 'Number-Theory.mod-inv', 'Number-Theory.chinese-remainder'],
         },
         'chinese-remainder': {
             category: 'Number Theory',
@@ -30262,6 +30414,7 @@ var Playground = (function (exports) {
                 'let { chinese-remainder } = import("Number-Theory");\nchinese-remainder([0, 1], [2, 3])',
                 'let { chinese-remainder } = import("Number-Theory");\nchinese-remainder([1, 2, 3], [4, 5, 7])',
             ],
+            seeAlso: ['Number-Theory.mod-exp', 'Number-Theory.mod-inv', 'Number-Theory.extended-gcd'],
         },
         'stirling-first': {
             category: 'Number Theory',
@@ -30294,6 +30447,7 @@ var Playground = (function (exports) {
                 'let { stirling-first } = import("Number-Theory");\nstirling-first(7, 4)',
                 'let { stirling-first } = import("Number-Theory");\nstirling-first(8, 5)',
             ],
+            seeAlso: ['Number-Theory.stirling-second', 'Number-Theory.bell-seq', 'Number-Theory.count-permutations'],
         },
         'stirling-second': {
             category: 'Number Theory',
@@ -30326,6 +30480,7 @@ var Playground = (function (exports) {
                 'let { stirling-second } = import("Number-Theory");\nstirling-second(7, 4)',
                 'let { stirling-second } = import("Number-Theory");\nstirling-second(8, 5)',
             ],
+            seeAlso: ['Number-Theory.stirling-first', 'Number-Theory.bell-seq', 'Number-Theory.count-combinations'],
         },
     };
 

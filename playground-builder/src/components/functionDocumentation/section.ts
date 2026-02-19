@@ -5,7 +5,7 @@ const styles = createStyles({
     @apply text-color-gray-200;
     @apply text-base;
     @apply font-bold;
-    @apply mb-2;
+    @apply mb-1;
   `,
 })
 
@@ -14,7 +14,7 @@ export function getSection(name: string, content: string, ...classes: StylesPara
     return ''
 
   return `
-    <div ${styles('mb-6', ...classes)}>
+    <div ${styles('mb-8', ...classes)}>
       <div ${styles('SubHeader')}>${name}</div>
       ${content}
     </div>`

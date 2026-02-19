@@ -38,18 +38,17 @@ function getDocumentation(reference: Reference) {
 
     ${getSection('Description', formatDescription(reference.description, reference), 'mb-3', 'text-base')}
 
+    ${isFunctionReference(reference) ? getSection('Arguments', getArgumentInfo(reference)) : ''}
+    ${isCustomReference(reference) && reference.details ? getSection('Details', getDetailsTable(reference.details)) : ''}
+
     ${functionReferences
       ? getSection(
           'See also',
           getSeeAlsoLinks(functionReferences),
-          'my-3',
           'text-base',
           'text-color-gray-400',
         )
       : ''}
-
-    ${isFunctionReference(reference) ? getSection('Arguments', getArgumentInfo(reference)) : ''}
-    ${isCustomReference(reference) && reference.details ? getSection('Details', getDetailsTable(reference.details)) : ''}
 
     ${getSection('Examples', getFunctionExamples(reference))}
 
@@ -81,7 +80,7 @@ function getCustomSignatureSection(reference: CustomReference) {
 }
 
 function getSeeAlsoLinks(references: Reference[]) {
-  return `<div ${styles('flex', 'flex-col')}>
+  return `<div ${styles('flex', 'flex-row', 'gap-2')}>
     ${references.map((reference) => {
       return `<a onclick="Playground.showPage('${getLinkName(reference)}', 'smooth')"><span>${escapeTitle(reference.title)}</span></a>`
     }).join('')}
