@@ -57,7 +57,6 @@ export const functionExecutors: FunctionExecutors = {
       if (!arityAcceptsMin(fn.arity, params.length)) {
         throw new LitsError(`Expected ${fn.arity} arguments, got ${params.length}.`, sourceCodeInfo)
       }
-      // checkParams(fn.evaluatedfunction, params.length, sourceCodeInfo)
       const evaluatedFunction = fn.evaluatedfunction
       const args = evaluatedFunction[0]
       const nbrOfNonRestArgs: number = args.filter(arg => arg[0] !== bindingTargetTypes.rest).length

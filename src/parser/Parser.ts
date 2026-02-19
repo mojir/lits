@@ -91,6 +91,7 @@ type ImplicitBlockEnd = 'end' | 'else' | 'catch' | 'case'
 const exponentiationPrecedence = 12
 const binaryFunctionalOperatorPrecedence = 3
 const conditionalOperatorPrecedence = 1
+const maxShorthandLambdaArity = 20
 const placeholderRegexp = /^\$([1-9]\d?)?$/
 
 function withSourceCodeInfo<T extends Node | BindingTarget>(node: T, sourceCodeInfo: SourceCodeInfo | undefined): T {
@@ -778,7 +779,7 @@ export class Parser {
           }
 
           arity = Math.max(arity, Number(number))
-          if (arity > 20)
+          if (arity > maxShorthandLambdaArity)
             throw new LitsError('Can\'t specify more than 20 arguments', firstToken[2])
         }
       }

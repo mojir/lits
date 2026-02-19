@@ -15,7 +15,6 @@ import { AutoCompleter } from '../AutoCompleter/AutoCompleter'
 import type { Arity } from '../builtin/interface'
 import type { LitsModule } from '../builtin/modules/interface'
 
-// import { deepEqual } from '../utils'
 import { Cache } from './Cache'
 
 export interface LitsRuntimeInfo {

@@ -8,31 +8,7 @@
 // so `doc` gracefully returns empty strings for built-in functions.
 import './initReferenceData'
 
-export {
-  isBuiltinFunction,
-  isLitsFunction,
-  asLitsFunction,
-  assertLitsFunction,
-  isUserDefinedFunction,
-  asUserDefinedFunction,
-  assertUserDefinedFunction,
-  isNativeJsFunction,
-  asNativeJsFunction,
-  assertNativeJsFunction,
-} from './typeGuards/litsFunction'
-export { type Arity } from './builtin/interface'
-export { type LitsFunction, type NativeJsFunction } from './parser/types'
-export type { Context } from './evaluator/interface'
-export type { Ast } from './parser/types'
-export type { SourceCodeInfo } from './tokenizer/token'
-export type { Token, TokenType } from './tokenizer/token'
-export { normalExpressionKeys, specialExpressionKeys } from './builtin'
-export { Lits } from './Lits/Lits'
-export type { LitsModule } from './builtin/modules/interface'
-export { type LitsError, isLitsError } from './errors'
-export type { ContextParams, FilePathParams, MinifyParams, LitsRuntimeInfo, JsFunction } from './Lits/Lits'
-export { isGrid, isMatrix, isVector } from './typeGuards/annotatedArrays'
-export type { AutoCompleter } from './AutoCompleter/AutoCompleter'
+export * from './index'
 
 // All built-in modules (convenience re-export)
 export { allBuiltinModules } from './allModules'
