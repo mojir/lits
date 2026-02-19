@@ -4,6 +4,14 @@ A functional language with algebraic notation and JavaScript interoperability.
 
 Try it in the [Lits Playground](https://mojir.github.io/lits/).
 
+## TODO
+Fix playground, it looks a bit funky under namespaces.
+Also fix Header, were name, namespace and category should be presented
+
+Model cli as namespace, create a new bundle that include this namespace. The existing full bundle should not include this.
+
+
+
 ## Features
 
 - **Pure functional language** - Variables cannot be changed, ensuring predictable behavior and easier reasoning about code
