@@ -272,14 +272,27 @@ export const functionReference = {
 }
 
 // Core API reference (always available)
-export const apiReference: Record<CoreApiName, Reference> = { ...functionReference, ...shorthand, ...datatype }
+export const apiReference: Record<CoreApiName, Reference> = sortByCategory({ ...functionReference, ...shorthand, ...datatype })
 
 // All references including modules (for search and full documentation)
-export const allReference: Record<ApiName, Reference> = { ...apiReference, ...moduleReference }
+export const allReference: Record<ApiName, Reference> = sortByCategory({ ...apiReference, ...moduleReference })
 
 Object.values(allReference).forEach((ref) => {
   ref.title = ref.title.replace(/"/g, '&quot;')
 })
+
+function sortByCategory<T extends Record<string, Reference>>(ref: T): T {
+  return Object.fromEntries(
+    Object.entries(ref).sort(([keyA, refA], [keyB, refB]) => {
+      const catA = refA.category === 'special-expression' ? '' : refA.category
+      const catB = refB.category === 'special-expression' ? '' : refB.category
+      if (catA !== catB) {
+        return catA.localeCompare(catB)
+      }
+      return keyA.localeCompare(keyB)
+    }),
+  ) as T
+}
 
 export function getLinkName(reference: Reference): string {
   return encodeURIComponent(`${reference.category}-${reference.title}`)
