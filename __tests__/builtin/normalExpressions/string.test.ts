@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../src/Lits/Lits'
 import { LitsError } from '../../../src/errors'
-import { stringUtilsModule } from '../../../src/builtin/modules/stringUtils'
+import { stringUtilsModule } from '../../../src/builtin/modules/string'
 
 describe('string functions', () => {
   for (const lits of [new Lits({}), new Lits({ debug: true })]) {
@@ -94,7 +94,7 @@ describe('string functions', () => {
 })
 
 describe('string-Utils module functions', () => {
-  const imp = 'let su = import("String"); '
+  const imp = 'let su = import("string"); '
   for (const lits of [new Lits({ modules: [stringUtilsModule] }), new Lits({ modules: [stringUtilsModule], debug: true })]) {
     describe('trim-left', () => {
       it('samples', () => {

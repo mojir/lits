@@ -16,7 +16,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(2),
     docs: {
-      category: 'Bitwise',
+      category: 'bitwise',
       returns: { type: 'integer' },
       args: { ...getOperatorArgs('integer', 'integer') },
       variants: [{ argumentNames: ['a', 'b'] }],
@@ -38,7 +38,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(2),
     docs: {
-      category: 'Bitwise',
+      category: 'bitwise',
       returns: { type: 'integer' },
       args: { ...getOperatorArgs('integer', 'integer') },
       variants: [{ argumentNames: ['a', 'b'] }],
@@ -61,7 +61,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(2),
     docs: {
-      category: 'Bitwise',
+      category: 'bitwise',
       returns: { type: 'integer' },
       args: { ...getOperatorArgs('integer', 'integer') },
       variants: [{ argumentNames: ['a', 'b'] }],
@@ -87,7 +87,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
     },
     arity: { min: 2 },
     docs: {
-      category: 'Bitwise',
+      category: 'bitwise',
       returns: { type: 'integer' },
       args: {
         ...getOperatorArgs('integer', 'integer'),
@@ -98,7 +98,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
         { argumentNames: ['a', 'b', 'c'] },
       ],
       description: 'Returns bitwise `and` of all arguments.',
-      seeAlso: ['|', 'xor', 'Bitwise.bit-not', 'Bitwise.bit-and-not'],
+      seeAlso: ['|', 'xor', 'bitwise.bit-not', 'bitwise.bit-and-not'],
       examples: [
         '0b0011 & 0b0110',
         '&(0b0011, 0b0110)',
@@ -117,7 +117,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
     },
     arity: { min: 2 },
     docs: {
-      category: 'Bitwise',
+      category: 'bitwise',
       returns: { type: 'integer' },
       args: {
         ...getOperatorArgs('integer', 'integer'),
@@ -128,7 +128,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
         { argumentNames: ['a', 'b', 'c'] },
       ],
       description: 'Returns bitwise `or` of all arguments.',
-      seeAlso: ['&', 'xor', 'Bitwise.bit-not', 'Bitwise.bit-and-not'],
+      seeAlso: ['&', 'xor', 'bitwise.bit-not', 'bitwise.bit-and-not'],
       examples: [
         '0b0011 | 0b0110',
         '|(0b0011, 0b0110)',
@@ -147,7 +147,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
     },
     arity: { min: 2 },
     docs: {
-      category: 'Bitwise',
+      category: 'bitwise',
       returns: { type: 'integer' },
       args: {
         ...getOperatorArgs('integer', 'integer'),
@@ -158,7 +158,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
         { argumentNames: ['a', 'b', 'c'] },
       ],
       description: 'Returns bitwise `xor` of all arguments.',
-      seeAlso: ['&', '|', 'Bitwise.bit-not', 'Bitwise.bit-and-not'],
+      seeAlso: ['&', '|', 'bitwise.bit-not', 'bitwise.bit-and-not'],
       examples: [
         '0b0011 xor 0b0110',
         'xor(0b0011, 0b0110)',

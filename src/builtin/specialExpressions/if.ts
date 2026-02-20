@@ -6,7 +6,7 @@ import type { specialExpressionTypes } from '../specialExpressionTypes'
 export type IfNode = SpecialExpressionNode<[typeof specialExpressionTypes['if'], [Node, Node, Node?]]>
 
 const docs: CustomDocs = {
-  category: 'Special-Expression',
+  category: 'special-expression',
   customVariants: ['if test then true-expr else false-expr', 'if test then true-expr'],
   details: [
     ['test', 'expression', 'The condition to test.'],

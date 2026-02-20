@@ -39,28 +39,28 @@ export function isDataType(arg: string): arg is DataType {
 // --- Category type ---
 
 export const categoryRecord = {
-  'Special-Expression': true,
-  'Predicate': true,
-  'Sequence': true,
-  'Collection': true,
-  'Array': true,
-  'Object': true,
-  'String': true,
-  'Math': true,
-  'Functional': true,
-  'Regular-Expression': true,
-  'Bitwise': true,
-  'Misc': true,
-  'Meta': true,
-  'Assert': true,
-  'Vector': true,
-  'Linear-Algebra': true,
-  'Matrix': true,
-  'Grid': true,
-  'Number-Theory': true,
-  'Random': true,
-  'Shorthand': true,
-  'Datatype': true,
+  'special-expression': true,
+  'predicate': true,
+  'sequence': true,
+  'collection': true,
+  'array': true,
+  'object': true,
+  'string': true,
+  'math': true,
+  'functional': true,
+  'regular-expression': true,
+  'bitwise': true,
+  'misc': true,
+  'meta': true,
+  'assert': true,
+  'vector': true,
+  'linear-algebra': true,
+  'matrix': true,
+  'grid': true,
+  'number-theory': true,
+  'random': true,
+  'shorthand': true,
+  'datatype': true,
 } as const
 
 export type Category = keyof typeof categoryRecord
@@ -68,10 +68,10 @@ export type Category = keyof typeof categoryRecord
 export const categories = Object.keys(categoryRecord) as Category[]
 
 // Categories that are modules (require import)
-export const moduleCategories: Category[] = ['Math', 'Functional', 'String', 'Collection', 'Sequence', 'Bitwise', 'Vector', 'Linear-Algebra', 'Matrix', 'Grid', 'Number-Theory', 'Random', 'Assert']
+export const moduleCategories: Category[] = ['math', 'functional', 'string', 'collection', 'sequence', 'bitwise', 'vector', 'linear-algebra', 'matrix', 'grid', 'number-theory', 'random', 'assert']
 
 // Core categories (always available)
-export const coreCategories: Category[] = ['Special-Expression', 'Predicate', 'Sequence', 'Collection', 'Array', 'Object', 'String', 'Math', 'Functional', 'Regular-Expression', 'Bitwise', 'Misc', 'Meta', 'Shorthand', 'Datatype']
+export const coreCategories: Category[] = ['special-expression', 'predicate', 'sequence', 'collection', 'array', 'object', 'string', 'math', 'functional', 'regular-expression', 'bitwise', 'misc', 'meta', 'shorthand', 'datatype']
 
 // --- FunctionDocs types ---
 

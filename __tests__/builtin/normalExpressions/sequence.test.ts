@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../src/Lits/Lits'
 import { LitsError } from '../../../src/errors'
-import { sequenceUtilsModule } from '../../../src/builtin/modules/sequenceUtils'
+import { sequenceUtilsModule } from '../../../src/builtin/modules/sequence'
 
 const lits = new Lits()
 const litsInstances = [lits, new Lits({ debug: true })]
@@ -317,7 +317,7 @@ describe('sequence functions', () => {
 })
 
 describe('sequence-Utils module functions', () => {
-  const imp = 'let su = import("Sequence"); '
+  const imp = 'let su = import("sequence"); '
   for (const mlits of [new Lits({ modules: [sequenceUtilsModule] }), new Lits({ modules: [sequenceUtilsModule], debug: true })]) {
     describe('position', () => {
       it('samples', () => {

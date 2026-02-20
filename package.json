@@ -50,50 +50,50 @@
       "import": "./dist/modules/vector.esm.js",
       "require": "./dist/modules/vector.js"
     },
-    "./modules/linearAlgebra": {
-      "types": "./dist/src/modules/linearAlgebra.d.ts",
-      "import": "./dist/modules/linearAlgebra.esm.js",
-      "require": "./dist/modules/linearAlgebra.js"
+    "./modules/linear-algebra": {
+      "types": "./dist/src/modules/linear-algebra.d.ts",
+      "import": "./dist/modules/linear-algebra.esm.js",
+      "require": "./dist/modules/linear-algebra.js"
     },
     "./modules/matrix": {
       "types": "./dist/src/modules/matrix.d.ts",
       "import": "./dist/modules/matrix.esm.js",
       "require": "./dist/modules/matrix.js"
     },
-    "./modules/numberTheory": {
-      "types": "./dist/src/modules/numberTheory.d.ts",
-      "import": "./dist/modules/numberTheory.esm.js",
-      "require": "./dist/modules/numberTheory.js"
+    "./modules/number-theory": {
+      "types": "./dist/src/modules/number-theory.d.ts",
+      "import": "./dist/modules/number-theory.esm.js",
+      "require": "./dist/modules/number-theory.js"
     },
-    "./modules/mathUtils": {
-      "types": "./dist/src/modules/mathUtils.d.ts",
-      "import": "./dist/modules/mathUtils.esm.js",
-      "require": "./dist/modules/mathUtils.js"
+    "./modules/math": {
+      "types": "./dist/src/modules/math.d.ts",
+      "import": "./dist/modules/math.esm.js",
+      "require": "./dist/modules/math.js"
     },
-    "./modules/functionalUtils": {
-      "types": "./dist/src/modules/functionalUtils.d.ts",
-      "import": "./dist/modules/functionalUtils.esm.js",
-      "require": "./dist/modules/functionalUtils.js"
+    "./modules/functional": {
+      "types": "./dist/src/modules/functional.d.ts",
+      "import": "./dist/modules/functional.esm.js",
+      "require": "./dist/modules/functional.js"
     },
-    "./modules/stringUtils": {
-      "types": "./dist/src/modules/stringUtils.d.ts",
-      "import": "./dist/modules/stringUtils.esm.js",
-      "require": "./dist/modules/stringUtils.js"
+    "./modules/string": {
+      "types": "./dist/src/modules/string.d.ts",
+      "import": "./dist/modules/string.esm.js",
+      "require": "./dist/modules/string.js"
     },
-    "./modules/collectionUtils": {
-      "types": "./dist/src/modules/collectionUtils.d.ts",
-      "import": "./dist/modules/collectionUtils.esm.js",
-      "require": "./dist/modules/collectionUtils.js"
+    "./modules/collection": {
+      "types": "./dist/src/modules/collection.d.ts",
+      "import": "./dist/modules/collection.esm.js",
+      "require": "./dist/modules/collection.js"
     },
-    "./modules/sequenceUtils": {
-      "types": "./dist/src/modules/sequenceUtils.d.ts",
-      "import": "./dist/modules/sequenceUtils.esm.js",
-      "require": "./dist/modules/sequenceUtils.js"
+    "./modules/sequence": {
+      "types": "./dist/src/modules/sequence.d.ts",
+      "import": "./dist/modules/sequence.esm.js",
+      "require": "./dist/modules/sequence.js"
     },
-    "./modules/bitwiseUtils": {
-      "types": "./dist/src/modules/bitwiseUtils.d.ts",
-      "import": "./dist/modules/bitwiseUtils.esm.js",
-      "require": "./dist/modules/bitwiseUtils.js"
+    "./modules/bitwise": {
+      "types": "./dist/src/modules/bitwise.d.ts",
+      "import": "./dist/modules/bitwise.esm.js",
+      "require": "./dist/modules/bitwise.js"
     }
   },
   "main": "dist/index.js",

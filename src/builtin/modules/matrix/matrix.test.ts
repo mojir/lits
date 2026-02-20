@@ -6,7 +6,7 @@ import { matrixModule } from './'
 const lits = new Lits({ modules: [matrixModule] })
 
 function runMat(code: string) {
-  return lits.run(`let mat = import("Matrix"); ${code.replace(/mat:/g, 'mat.')}`)
+  return lits.run(`let mat = import("matrix"); ${code.replace(/mat:/g, 'mat.')}`)
 }
 
 describe('matrix', () => {

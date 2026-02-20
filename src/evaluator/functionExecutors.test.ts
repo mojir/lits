@@ -61,7 +61,7 @@ describe('functionExecutors', () => {
         [FUNCTION_SYMBOL]: true,
         sourceCodeInfo: dummySourceCodeInfo,
         functionType: 'Module',
-        moduleName: 'Grid', // Grid module exists
+        moduleName: 'grid', // Grid module exists
         functionName: 'nonExistentFunction',
         arity: { min: 0 },
       }
@@ -84,7 +84,7 @@ describe('functionExecutors', () => {
           dummyContextStack,
           { evaluateNode: dummyEvaluateNode, executeFunction: dummyExecuteFunction },
         ),
-      ).toThrow('Function \'nonExistentFunction\' not found in module \'Grid\'.')
+      ).toThrow('Function \'nonExistentFunction\' not found in module \'grid\'.')
     })
   })
 })

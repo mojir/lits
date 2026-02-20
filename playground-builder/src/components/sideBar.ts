@@ -76,7 +76,7 @@ export function getSideBar() {
                   })
                   .map((obj) => {
                     const linkName = getLinkName(obj)
-                    // Strip module prefix (e.g., "Vector." from "Vector.sum")
+                    // Strip module prefix (e.g., "vector." from "vector.sum")
                     const stripPrefix = (n: string) => n.includes('.') ? n.split('.').slice(1).join('.') : n
                     const displayName = stripPrefix(obj.title)
                     const name = `${escape(displayName)}`

@@ -8,7 +8,7 @@ import type { specialExpressionTypes } from '../specialExpressionTypes'
 export type ThrowNode = SpecialExpressionNode<[typeof specialExpressionTypes['throw'], Node]>
 
 const docs: FunctionDocs = {
-  category: 'Special-Expression',
+  category: 'special-expression',
   returns: {
     type: 'never',
   },

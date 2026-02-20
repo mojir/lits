@@ -95,7 +95,7 @@ const pluginsMinimal = [
   terser(),
 ]
 
-const modules = ['assert', 'grid', 'random', 'vector', 'linearAlgebra', 'matrix', 'numberTheory', 'mathUtils', 'functionalUtils', 'stringUtils', 'collectionUtils', 'sequenceUtils', 'bitwiseUtils']
+const modules = ['assert', 'grid', 'random', 'vector', 'linear-algebra', 'matrix', 'number-theory', 'math', 'functional', 'string', 'collection', 'sequence', 'bitwise']
 
 module.exports = [
   // Minimal bundle (core only, no modules, docs stripped)

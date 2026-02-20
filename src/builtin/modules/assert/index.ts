@@ -444,6 +444,6 @@ for (const [key, docs] of Object.entries(moduleDocs)) {
 }
 
 export const assertModule: LitsModule = {
-  name: 'Assert',
+  name: 'assert',
   functions: assertNormalExpression,
 }

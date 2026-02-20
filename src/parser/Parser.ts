@@ -472,7 +472,7 @@ export class Parser {
       case 'Number':
       case 'BasePrefixedNumber':
         return this.parseNumber()
-      case 'String':
+      case 'string':
         return this.parseString(token as StringToken)
       case 'Symbol': {
         const positionBefore = this.parseState.position
@@ -1396,7 +1396,7 @@ export class Parser {
 
   private parseDocString(): string {
     const token = this.asToken(this.peek())
-    const stringToken: StringToken = token[2] ? ['String', token[1].slice(2, -2), token[2]] : ['String', token[1].slice(2, -2)]
+    const stringToken: StringToken = token[2] ? ['string', token[1].slice(2, -2), token[2]] : ['string', token[1].slice(2, -2)]
     const stringNode = this.parseString(stringToken)
     return smartTrim(stringNode[1]) // Extract the string value from the StringNode
   }

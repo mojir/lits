@@ -107,7 +107,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(2),
     docs: {
-      category: 'Collection',
+      category: 'collection',
       returns: { type: 'collection' },
       args: {
         a: { type: 'collection' },
@@ -117,7 +117,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['coll', 'fun'] }],
       description: 'Creates a new collection with all elements that pass the test implemented by $fun.',
-      seeAlso: ['Collection.filteri', 'map', 'Sequence.remove'],
+      seeAlso: ['collection.filteri', 'map', 'sequence.remove'],
       examples: [
         `
 filter(
@@ -181,7 +181,7 @@ filter(
     },
     arity: { min: 2 },
     docs: {
-      category: 'Collection',
+      category: 'collection',
       returns: { type: 'collection' },
       args: {
         a: { type: 'collection' },
@@ -191,7 +191,7 @@ filter(
       },
       variants: [{ argumentNames: ['colls', 'fun'] }],
       description: 'Creates a new collection populated with the results of calling $fun on every element in $colls.',
-      seeAlso: ['Collection.mapi', 'filter', 'reduce', 'mapcat', 'Grid.map', 'Grid.mapi'],
+      seeAlso: ['collection.mapi', 'filter', 'reduce', 'mapcat', 'grid.map', 'grid.mapi'],
       examples: [
         '[1, 2, 3] map -',
         '[1, 2, 3] map -> -($)',
@@ -237,7 +237,7 @@ filter(
     },
     arity: toFixedArity(3),
     docs: {
-      category: 'Collection',
+      category: 'collection',
       returns: { type: 'any' },
       args: {
         fun: { type: 'function' },
@@ -246,7 +246,7 @@ filter(
       },
       variants: [{ argumentNames: ['coll', 'fun', 'initial'] }],
       description: 'Runs $fun function on each element of the $coll, passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $coll is a single value.',
-      seeAlso: ['Collection.reduce-right', 'Collection.reducei', 'Collection.reductions', 'map', 'Grid.reduce', 'Grid.reducei'],
+      seeAlso: ['collection.reduce-right', 'collection.reducei', 'collection.reductions', 'map', 'grid.reduce', 'grid.reducei'],
       examples: [
         'reduce([1, 2, 3], +, 0)',
         'reduce([], +, 0)',
@@ -273,7 +273,7 @@ reduce(
     },
     arity: { min: 2, max: 3 },
     docs: {
-      category: 'Collection',
+      category: 'collection',
       returns: { type: 'any' },
       args: {
         'a': { type: 'collection' },
@@ -285,7 +285,7 @@ reduce(
         { argumentNames: ['a', 'b', 'not-found'] },
       ],
       description: 'Returns value in $a mapped at $b.',
-      seeAlso: ['Collection.get-in', 'contains?', 'find', 'nth'],
+      seeAlso: ['collection.get-in', 'contains?', 'find', 'nth'],
       examples: [
         '[1, 2, 3] get 1',
         '{ a: 1 } get "a"',
@@ -352,7 +352,7 @@ get(
     },
     arity: toFixedArity(1),
     docs: {
-      category: 'Collection',
+      category: 'collection',
       returns: { type: 'number' },
       args: {
         coll: { type: ['collection', 'null'] },
@@ -389,7 +389,7 @@ get(
     },
     arity: toFixedArity(2),
     docs: {
-      category: 'Collection',
+      category: 'collection',
       returns: { type: 'boolean' },
       args: {
         a: { type: ['collection', 'null'] },
@@ -439,7 +439,7 @@ contains?(
     },
     arity: toFixedArity(3),
     docs: {
-      category: 'Collection',
+      category: 'collection',
       returns: { type: 'collection' },
       args: {
         coll: { type: 'collection' },
@@ -454,7 +454,7 @@ contains?(
       description: `
 Add or replace the value of element $key to $value in $coll. Repeated for all key-value pairs in $kvs.
 If $coll is an 'array', $key must be \`number\` satisfying \`0 <=\` $key \`<= length\`.`,
-      seeAlso: ['Collection.assoc-in', 'dissoc', 'merge', 'Collection.update'],
+      seeAlso: ['collection.assoc-in', 'dissoc', 'merge', 'collection.update'],
       examples: [
         `
 assoc(
@@ -512,7 +512,7 @@ assoc(
     },
     arity: { min: 1 },
     docs: {
-      category: 'Collection',
+      category: 'collection',
       returns: { type: 'collection' },
       args: {
         a: { type: 'collection' },
@@ -524,7 +524,7 @@ assoc(
         { argumentNames: ['a', 'colls'] },
       ],
       description: 'Concatenates collections into one collection.',
-      seeAlso: ['mapcat', 'str', 'join', 'push', 'Sequence.unshift'],
+      seeAlso: ['mapcat', 'str', 'join', 'push', 'sequence.unshift'],
       examples: [
         '"Albert" ++ " " ++ "Mojir"',
         '"Albert" ++ "Mojir"',

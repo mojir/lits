@@ -2,7 +2,7 @@ import type { FunctionDocs } from '../../interface'
 
 export const moduleDocs: Record<string, FunctionDocs> = {
   'random!': {
-    category: 'Random',
+    category: 'random',
     description: 'Returns a random number between 0 and 1.',
     returns: {
       type: 'number',
@@ -14,12 +14,12 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { random! } = import("Random"); random!()',
+      'let { random! } = import("random"); random!()',
     ],
-    seeAlso: ['Random.random-float!', 'Random.random-int!', 'Random.random-boolean!'],
+    seeAlso: ['random.random-float!', 'random.random-int!', 'random.random-boolean!'],
   },
   'random-int!': {
-    category: 'Random',
+    category: 'random',
     description: 'Returns a random integer between min and max (exclusive).',
     returns: {
       type: 'integer',
@@ -43,13 +43,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { random-int! } = import("Random"); random-int!(0, 10)',
-      'let { random-int! } = import("Random"); random-int!(1, 100)',
+      'let { random-int! } = import("random"); random-int!(0, 10)',
+      'let { random-int! } = import("random"); random-int!(1, 100)',
     ],
-    seeAlso: ['Random.random-int-inclusive!', 'Random.random-float!', 'Random.random!'],
+    seeAlso: ['random.random-int-inclusive!', 'random.random-float!', 'random.random!'],
   },
   'random-int-inclusive!': {
-    category: 'Random',
+    category: 'random',
     description: 'Returns a random integer between min and max (inclusive).',
     returns: {
       type: 'integer',
@@ -73,12 +73,12 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { random-int-inclusive! } = import("Random"); random-int-inclusive!(0, 10)',
+      'let { random-int-inclusive! } = import("random"); random-int-inclusive!(0, 10)',
     ],
-    seeAlso: ['Random.random-int!', 'Random.random-float!'],
+    seeAlso: ['random.random-int!', 'random.random-float!'],
   },
   'random-float!': {
-    category: 'Random',
+    category: 'random',
     description: 'Returns a random float between min and max.',
     returns: {
       type: 'number',
@@ -102,13 +102,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { random-float! } = import("Random"); random-float!(0, 10)',
-      'let { random-float! } = import("Random"); random-float!(1, 100)',
+      'let { random-float! } = import("random"); random-float!(0, 10)',
+      'let { random-float! } = import("random"); random-float!(1, 100)',
     ],
-    seeAlso: ['Random.random!', 'Random.random-int!', 'Random.random-int-inclusive!'],
+    seeAlso: ['random.random!', 'random.random-int!', 'random.random-int-inclusive!'],
   },
   'random-boolean!': {
-    category: 'Random',
+    category: 'random',
     description: 'Returns a random boolean.',
     returns: {
       type: 'boolean',
@@ -127,13 +127,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { random-boolean! } = import("Random"); random-boolean!()',
-      'let { random-boolean! } = import("Random"); random-boolean!(0.99)',
+      'let { random-boolean! } = import("random"); random-boolean!()',
+      'let { random-boolean! } = import("random"); random-boolean!(0.99)',
     ],
-    seeAlso: ['Random.random!'],
+    seeAlso: ['random.random!'],
   },
   'random-item!': {
-    category: 'Random',
+    category: 'random',
     description: 'Returns a random item from the array.',
     returns: {
       type: 'any',
@@ -152,13 +152,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { random-item! } = import("Random"); random-item!([1, 2, 3, 4, 5])',
-      'let { random-item! } = import("Random"); random-item!(["apple", "banana", "cherry"])',
+      'let { random-item! } = import("random"); random-item!([1, 2, 3, 4, 5])',
+      'let { random-item! } = import("random"); random-item!(["apple", "banana", "cherry"])',
     ],
-    seeAlso: ['Random.random-sample!', 'Random.random-sample-unique!', 'Random.random-char!'],
+    seeAlso: ['random.random-sample!', 'random.random-sample-unique!', 'random.random-char!'],
   },
   'random-sample-unique!': {
-    category: 'Random',
+    category: 'random',
     description: 'Returns a random sample of n unique items from the array.',
     returns: {
       type: 'array',
@@ -182,13 +182,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { random-sample-unique! } = import("Random"); random-sample-unique!([1, 2, 3, 4, 5], 3)',
-      'let { random-sample-unique! } = import("Random"); random-sample-unique!(["apple", "banana", "cherry"], 2)',
+      'let { random-sample-unique! } = import("random"); random-sample-unique!([1, 2, 3, 4, 5], 3)',
+      'let { random-sample-unique! } = import("random"); random-sample-unique!(["apple", "banana", "cherry"], 2)',
     ],
-    seeAlso: ['Random.random-sample!', 'Random.random-item!', 'Random.shuffle!'],
+    seeAlso: ['random.random-sample!', 'random.random-item!', 'random.shuffle!'],
   },
   'random-sample!': {
-    category: 'Random',
+    category: 'random',
     description: 'Returns a random sample of n items from the array.',
     returns: {
       type: 'array',
@@ -212,13 +212,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { random-sample! } = import("Random"); random-sample!([1, 2, 3, 4, 5], 3)',
-      'let { random-sample! } = import("Random"); random-sample!(["apple", "banana", "cherry"], 10)',
+      'let { random-sample! } = import("random"); random-sample!([1, 2, 3, 4, 5], 3)',
+      'let { random-sample! } = import("random"); random-sample!(["apple", "banana", "cherry"], 10)',
     ],
-    seeAlso: ['Random.random-sample-unique!', 'Random.random-item!', 'Random.shuffle!'],
+    seeAlso: ['random.random-sample-unique!', 'random.random-item!', 'random.shuffle!'],
   },
   'shuffle!': {
-    category: 'Random',
+    category: 'random',
     description: 'Returns a shuffled version of the array.',
     returns: {
       type: 'array',
@@ -237,13 +237,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { shuffle! } = import("Random"); shuffle!([1, 2, 3, 4, 5])',
-      'let { shuffle! } = import("Random"); shuffle!(["apple", "banana", "cherry"])',
+      'let { shuffle! } = import("random"); shuffle!([1, 2, 3, 4, 5])',
+      'let { shuffle! } = import("random"); shuffle!(["apple", "banana", "cherry"])',
     ],
-    seeAlso: ['Random.random-sample!', 'Random.random-sample-unique!'],
+    seeAlso: ['random.random-sample!', 'random.random-sample-unique!'],
   },
   'random-normal!': {
-    category: 'Random',
+    category: 'random',
     description: 'Returns a random number from a normal distribution with the given mean and standard deviation.',
     returns: {
       type: 'number',
@@ -267,14 +267,14 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { random-normal! } = import("Random"); random-normal!(0, 1)',
-      'let { random-normal! } = import("Random"); random-normal!(5, 2)',
+      'let { random-normal! } = import("random"); random-normal!(0, 1)',
+      'let { random-normal! } = import("random"); random-normal!(5, 2)',
     ],
-    seeAlso: ['Random.random-exponential!', 'Random.random-binomial!', 'Random.random-poisson!'],
+    seeAlso: ['random.random-exponential!', 'random.random-binomial!', 'random.random-poisson!'],
     hideOperatorForm: true,
   },
   'random-exponential!': {
-    category: 'Random',
+    category: 'random',
     description: 'Returns a random number from an exponential distribution with the given rate parameter.',
     returns: {
       type: 'number',
@@ -293,13 +293,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { random-exponential! } = import("Random"); random-exponential!(1)',
-      'let { random-exponential! } = import("Random"); random-exponential!(0.5)',
+      'let { random-exponential! } = import("random"); random-exponential!(1)',
+      'let { random-exponential! } = import("random"); random-exponential!(0.5)',
     ],
-    seeAlso: ['Random.random-normal!', 'Random.random-poisson!', 'Random.random-gamma!', 'Random.random-pareto!'],
+    seeAlso: ['random.random-normal!', 'random.random-poisson!', 'random.random-gamma!', 'random.random-pareto!'],
   },
   'random-binomial!': {
-    category: 'Random',
+    category: 'random',
     description: 'Returns a random number from a binomial distribution with the given number of trials and probability of success.',
     returns: {
       type: 'integer',
@@ -323,14 +323,14 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { random-binomial! } = import("Random"); random-binomial!(10, 0.5)',
-      'let { random-binomial! } = import("Random"); random-binomial!(20, 0.3)',
+      'let { random-binomial! } = import("random"); random-binomial!(10, 0.5)',
+      'let { random-binomial! } = import("random"); random-binomial!(20, 0.3)',
     ],
-    seeAlso: ['Random.random-normal!', 'Random.random-poisson!'],
+    seeAlso: ['random.random-normal!', 'random.random-poisson!'],
     hideOperatorForm: true,
   },
   'random-poisson!': {
-    category: 'Random',
+    category: 'random',
     description: 'Returns a random number from a Poisson distribution with the given rate parameter.',
     returns: {
       type: 'integer',
@@ -349,13 +349,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { random-poisson! } = import("Random"); random-poisson!(1)',
-      'let { random-poisson! } = import("Random"); random-poisson!(5)',
+      'let { random-poisson! } = import("random"); random-poisson!(1)',
+      'let { random-poisson! } = import("random"); random-poisson!(5)',
     ],
-    seeAlso: ['Random.random-binomial!', 'Random.random-normal!', 'Random.random-exponential!'],
+    seeAlso: ['random.random-binomial!', 'random.random-normal!', 'random.random-exponential!'],
   },
   'random-gamma!': {
-    category: 'Random',
+    category: 'random',
     description: 'Returns a random number from a gamma distribution with the given shape and scale parameters.',
     returns: {
       type: 'number',
@@ -379,14 +379,14 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { random-gamma! } = import("Random"); random-gamma!(2, 2)',
-      'let { random-gamma! } = import("Random"); random-gamma!(5, 1)',
+      'let { random-gamma! } = import("random"); random-gamma!(2, 2)',
+      'let { random-gamma! } = import("random"); random-gamma!(5, 1)',
     ],
-    seeAlso: ['Random.random-exponential!', 'Random.random-pareto!'],
+    seeAlso: ['random.random-exponential!', 'random.random-pareto!'],
     hideOperatorForm: true,
   },
   'random-pareto!': {
-    category: 'Random',
+    category: 'random',
     description: 'Returns a random number from a Pareto distribution with the given shape parameter.',
     returns: {
       type: 'number',
@@ -405,13 +405,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { random-pareto! } = import("Random"); random-pareto!(1)',
-      'let { random-pareto! } = import("Random"); random-pareto!(2)',
+      'let { random-pareto! } = import("random"); random-pareto!(1)',
+      'let { random-pareto! } = import("random"); random-pareto!(2)',
     ],
-    seeAlso: ['Random.random-gamma!', 'Random.random-exponential!'],
+    seeAlso: ['random.random-gamma!', 'random.random-exponential!'],
   },
   'uuid!': {
-    category: 'Random',
+    category: 'random',
     description: 'Returns a random UUID v4 (Universally Unique Identifier).',
     returns: {
       type: 'string',
@@ -423,12 +423,12 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { uuid! } = import("Random"); uuid!()',
+      'let { uuid! } = import("random"); uuid!()',
     ],
-    seeAlso: ['Random.random-id!', 'Random.random-string!'],
+    seeAlso: ['random.random-id!', 'random.random-string!'],
   },
   'random-char!': {
-    category: 'Random',
+    category: 'random',
     description: 'Returns a random character from the given string.',
     returns: {
       type: 'string',
@@ -447,13 +447,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { random-char! } = import("Random"); random-char!("abcde")',
-      'let { random-char! } = import("Random"); random-char!("ABCDEFGHIJKLMNOPQRSTUVWXYZ")',
+      'let { random-char! } = import("random"); random-char!("abcde")',
+      'let { random-char! } = import("random"); random-char!("ABCDEFGHIJKLMNOPQRSTUVWXYZ")',
     ],
-    seeAlso: ['Random.random-string!', 'Random.random-item!'],
+    seeAlso: ['random.random-string!', 'random.random-item!'],
   },
   'random-string!': {
-    category: 'Random',
+    category: 'random',
     description: 'Returns a random string of the given length from the given string.',
     returns: {
       type: 'string',
@@ -477,14 +477,14 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { random-string! } = import("Random"); random-string!(10, "abcde")',
-      'let { random-string! } = import("Random"); random-string!(5, "ABCDEFGHIJKLMNOPQRSTUVWXYZ")',
+      'let { random-string! } = import("random"); random-string!(10, "abcde")',
+      'let { random-string! } = import("random"); random-string!(5, "ABCDEFGHIJKLMNOPQRSTUVWXYZ")',
     ],
-    seeAlso: ['Random.random-char!', 'Random.random-id!', 'Random.uuid!'],
+    seeAlso: ['random.random-char!', 'random.random-id!', 'random.uuid!'],
     hideOperatorForm: true,
   },
   'random-id!': {
-    category: 'Random',
+    category: 'random',
     description: 'Returns a random ID of the given length.',
     returns: {
       type: 'string',
@@ -503,13 +503,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { random-id! } = import("Random"); random-id!(10)',
-      'let { random-id! } = import("Random"); random-id!(5)',
+      'let { random-id! } = import("random"); random-id!(10)',
+      'let { random-id! } = import("random"); random-id!(5)',
     ],
-    seeAlso: ['Random.random-string!', 'Random.uuid!'],
+    seeAlso: ['random.random-string!', 'random.uuid!'],
   },
   'random-color!': {
-    category: 'Random',
+    category: 'random',
     description: 'Returns a random color in hex format.',
     returns: {
       type: 'string',
@@ -521,7 +521,7 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { random-color! } = import("Random"); random-color!()',
+      'let { random-color! } = import("random"); random-color!()',
     ],
   },
 }

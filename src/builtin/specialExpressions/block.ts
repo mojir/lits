@@ -7,7 +7,7 @@ import type { specialExpressionTypes } from '../specialExpressionTypes'
 export type DoNode = SpecialExpressionNode<[typeof specialExpressionTypes['block'], Node[]]>
 
 const docs: CustomDocs = {
-  category: 'Special-Expression',
+  category: 'special-expression',
   customVariants: ['do body end'],
   details: [
     ['body', 'expressions', 'The expressions to evaluate.'],

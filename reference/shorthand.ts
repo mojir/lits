@@ -5,7 +5,7 @@ export const shorthand: Record<ShorthandName, ShorthandReference> = {
   '-short-regexp': {
     shorthand: true,
     title: '#"pattern"',
-    category: 'Shorthand',
+    category: 'shorthand',
     description: 'Shorthand for `regexp(pattern)`. Only difference is that escaping is not needed.',
     examples: [
       '#"^\\s*(.*)$"',
@@ -16,7 +16,7 @@ export const shorthand: Record<ShorthandName, ShorthandReference> = {
   '-short-fn': {
     shorthand: true,
     title: '-> expression',
-    category: 'Shorthand',
+    category: 'shorthand',
     description: `
 Shorthand for \`(args, ...) -> expression\`.
 \`$1, $2, $3, ...\` are shorthand for the first, second, third, ... argument.

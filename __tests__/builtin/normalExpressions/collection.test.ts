@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../src/Lits/Lits'
 import { LitsError } from '../../../src/errors'
-import { collectionUtilsModule } from '../../../src/builtin/modules/collectionUtils'
+import { collectionUtilsModule } from '../../../src/builtin/modules/collection'
 
 const lits = new Lits()
 
@@ -281,7 +281,7 @@ describe('collection functions', () => {
 })
 
 describe('collection-Utils module functions', () => {
-  const imp = 'let cu = import("Collection"); '
+  const imp = 'let cu = import("collection"); '
   for (const mlits of [new Lits({ modules: [collectionUtilsModule] }), new Lits({ modules: [collectionUtilsModule], debug: true })]) {
     describe('filteri', () => {
       it('samples', () => {

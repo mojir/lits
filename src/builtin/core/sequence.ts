@@ -29,7 +29,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     },
     arity: { min: 2, max: 3 },
     docs: {
-      category: 'Sequence',
+      category: 'sequence',
       returns: { type: 'any' },
       args: {
         'a': { type: 'sequence' },
@@ -72,7 +72,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
     docs: {
-      category: 'Sequence',
+      category: 'sequence',
       returns: { type: 'any' },
       args: { seq: { type: ['sequence', 'null'] } },
       variants: [{ argumentNames: ['seq'] }],
@@ -97,7 +97,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
     docs: {
-      category: 'Sequence',
+      category: 'sequence',
       returns: { type: 'any' },
       args: { seq: { type: ['sequence', 'null'] } },
       variants: [{ argumentNames: ['seq'] }],
@@ -123,12 +123,12 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
     docs: {
-      category: 'Sequence',
+      category: 'sequence',
       returns: { type: ['sequence', 'null'], rest: true },
       args: { seq: { type: 'sequence' } },
       variants: [{ argumentNames: ['seq'] }],
       description: 'Returns a copy of $seq with last element removed. If $seq is empty `null` is returned.',
-      seeAlso: ['push', 'Sequence.shift', 'last'],
+      seeAlso: ['push', 'sequence.shift', 'last'],
       examples: [
         'pop([1, 2, 3])',
         'pop([])',
@@ -154,7 +154,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(2),
     docs: {
-      category: 'Sequence',
+      category: 'sequence',
       returns: { type: ['number', 'null'] },
       args: {
         a: { type: 'sequence' },
@@ -164,7 +164,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['seq', 'x'] }],
       description: 'Returns the index of $x in $seq. If element is not present in $seq `null` is returned.',
-      seeAlso: ['Sequence.last-index-of', 'Sequence.position', 'contains?'],
+      seeAlso: ['sequence.last-index-of', 'sequence.position', 'contains?'],
       examples: [
         '[[1], [2], [1], [2]] index-of [1]',
         'index-of(["Albert", "Mojir", 160, [1, 2]], "Mojir")',
@@ -187,7 +187,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     },
     arity: { min: 2 },
     docs: {
-      category: 'Sequence',
+      category: 'sequence',
       returns: { type: 'sequence' },
       args: {
         a: { type: 'sequence' },
@@ -197,7 +197,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['seq', 'values'] }],
       description: 'Returns copy of $seq with $values added to the end of it.',
-      seeAlso: ['Sequence.unshift', 'pop', '++'],
+      seeAlso: ['sequence.unshift', 'pop', '++'],
       examples: [
         '[1, 2, 3] push 4',
         '"Albert" push "!"',
@@ -223,14 +223,14 @@ l`,
     },
     arity: toFixedArity(1),
     docs: {
-      category: 'Sequence',
+      category: 'sequence',
       returns: { type: ['sequence', 'null'] },
       args: { seq: { type: 'sequence' } },
       variants: [{ argumentNames: ['seq'] }],
       description: `If $seq is an array, returns a new array with all but the first element from $seq.
 If $seq has less than two elements, an empty array is returned.
 For string $seq returns all but the first characters in $seq.`,
-      seeAlso: ['next', 'first', 'Sequence.shift'],
+      seeAlso: ['next', 'first', 'sequence.shift'],
       examples: [
         'rest(["Albert", "Mojir", 160, [1, 2]])',
         'rest(["Albert"])',
@@ -257,7 +257,7 @@ For string $seq returns all but the first characters in $seq.`,
     },
     arity: toFixedArity(1),
     docs: {
-      category: 'Sequence',
+      category: 'sequence',
       returns: { type: ['sequence', 'null'] },
       args: { seq: { type: 'sequence' } },
       variants: [{ argumentNames: ['seq'] }],
@@ -287,7 +287,7 @@ For string $seq returns all but the first characters in $seq.`,
     },
     arity: toFixedArity(1),
     docs: {
-      category: 'Sequence',
+      category: 'sequence',
       returns: { type: ['sequence', 'null'] },
       args: { seq: { type: ['sequence', 'null'] } },
       variants: [{ argumentNames: ['seq'] }],
@@ -311,7 +311,7 @@ For string $seq returns all but the first characters in $seq.`,
     },
     arity: toFixedArity(1),
     docs: {
-      category: 'Sequence',
+      category: 'sequence',
       returns: { type: 'any' },
       args: { seq: { type: ['sequence', 'null'] } },
       variants: [{ argumentNames: ['seq'] }],
@@ -346,7 +346,7 @@ For string $seq returns all but the first characters in $seq.`,
     },
     arity: { min: 2, max: 3 },
     docs: {
-      category: 'Sequence',
+      category: 'sequence',
       returns: { type: 'sequence' },
       args: {
         a: { type: 'sequence' },
@@ -361,7 +361,7 @@ For string $seq returns all but the first characters in $seq.`,
         { argumentNames: ['seq', 'start', 'stop'] },
       ],
       description: 'Returns a copy of a portion of $seq from index $start (inclusive) to $stop (exclusive).',
-      seeAlso: ['Sequence.take', 'Sequence.drop', 'Sequence.splice', 'nth'],
+      seeAlso: ['sequence.take', 'sequence.drop', 'sequence.splice', 'nth'],
       examples: [
         '[1, 2, 3, 4, 5] slice 2',
         'slice([1, 2, 3, 4, 5], 2, 4)',
@@ -387,7 +387,7 @@ For string $seq returns all but the first characters in $seq.`,
     },
     arity: toFixedArity(2),
     docs: {
-      category: 'Sequence',
+      category: 'sequence',
       returns: { type: 'any' },
       args: {
         a: { type: 'sequence' },
@@ -397,7 +397,7 @@ For string $seq returns all but the first characters in $seq.`,
       },
       variants: [{ argumentNames: ['seq', 'fun'] }],
       description: 'Returns the first element that passes the test implemented by $fun. I no element was found, `null` is returned.',
-      seeAlso: ['Sequence.position', 'Collection.any?', 'find'],
+      seeAlso: ['sequence.position', 'collection.any?', 'find'],
       examples: [
         `
 some(
@@ -470,7 +470,7 @@ some(
     },
     arity: { min: 1, max: 2 },
     docs: {
-      category: 'Sequence',
+      category: 'sequence',
       returns: { type: 'any', rest: true },
       args: {
         a: { type: 'sequence' },
@@ -483,7 +483,7 @@ some(
         { argumentNames: ['seq', 'fun'] },
       ],
       description: 'Returns a new sequence with the elements from $seq sorted according to $fun. If no $fun is supplied, builtin `compare` will be used.',
-      seeAlso: ['Sequence.sort-by', 'compare', 'reverse', 'Vector.sort-indices'],
+      seeAlso: ['sequence.sort-by', 'compare', 'reverse', 'vector.sort-indices'],
       examples: [
         '[3, 1, 2] sort (a, b) -> b - a',
         'sort([3, 1, 2])',

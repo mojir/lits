@@ -113,7 +113,7 @@ const tokenizeString: Tokenizer<StringToken> = (input, position) => {
     return [length, ['Error', value, undefined, `Unclosed string at position ${position}`]]
   }
   value += '"' // closing quote
-  return [length + 1, ['String', value]]
+  return [length + 1, ['string', value]]
 }
 
 const tokenizeRegexpShorthand: Tokenizer<RegexpShorthandToken> = (input, position) => {

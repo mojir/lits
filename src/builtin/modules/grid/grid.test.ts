@@ -24,8 +24,8 @@ const lits = new Lits({ modules: [gridModule] })
 
 // Helper to run grid module functions with the new import syntax
 function runGrid(code: string): unknown {
-  // Replace 'grid:functionName(' with 'let g = import("Grid"); g.functionName('
-  const modifiedCode = code.replace(/grid:(\S+?)\(/g, 'let g = import("Grid"); g.$1(')
+  // Replace 'grid:functionName(' with 'let g = import("grid"); g.functionName('
+  const modifiedCode = code.replace(/grid:(\S+?)\(/g, 'let g = import("grid"); g.$1(')
   return lits.run(modifiedCode)
 }
 
@@ -449,15 +449,15 @@ describe('grid', () => {
 
 describe('import with dot notation', () => {
   it('should import a single function directly', () => {
-    expect(lits.run('let row = import("Grid.row"); row([[1, 2], [3, 4]], 0)')).toEqual([1, 2])
+    expect(lits.run('let row = import("grid.row"); row([[1, 2], [3, 4]], 0)')).toEqual([1, 2])
   })
 
   it('should throw for unknown function (former alias)', () => {
-    expect(() => lits.run('let tp = import("Grid.tr"); tp([[1, 2], [3, 4]])')).toThrow(LitsError)
+    expect(() => lits.run('let tp = import("grid.tr"); tp([[1, 2], [3, 4]])')).toThrow(LitsError)
   })
 
   it('should throw for unknown function', () => {
-    expect(() => lits.run('import("Grid.unknown")')).toThrow(LitsError)
+    expect(() => lits.run('import("grid.unknown")')).toThrow(LitsError)
   })
 
   it('should throw for unknown module', () => {
@@ -466,8 +466,8 @@ describe('import with dot notation', () => {
 
   it('should work with function composition', () => {
     expect(lits.run(`
-      let transpose = import("Grid.transpose");
-      let row = import("Grid.row");
+      let transpose = import("grid.transpose");
+      let row = import("grid.row");
       row(transpose([[1, 2], [3, 4]]), 1)
     `)).toEqual([2, 4])
   })

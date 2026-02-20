@@ -10,7 +10,7 @@ import type { specialExpressionTypes } from '../specialExpressionTypes'
 export type ObjectNode = SpecialExpressionNode<[typeof specialExpressionTypes['object'], Node[]]>
 
 const docs: FunctionDocs = {
-  category: 'Special-Expression',
+  category: 'special-expression',
   returns: {
     type: 'object',
   },

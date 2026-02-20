@@ -171,8 +171,8 @@ A vector is simply a non-empty array containing only numbers. The `vec` module p
 
 ```lits
 // Import vector and linear algebra modules
-let vec = import("Vector");
-let lin = import("Linear-Algebra");
+let vec = import("vector");
+let lin = import("linear-algebra");
 
 // Vectors are just number arrays
 [1, 2, 3, 4, 5];              // This is a vector
@@ -225,7 +225,7 @@ A matrix is a 2D array where each row is a vector (non-empty array of numbers) a
 
 ```lits
 // Import matrix module
-let mat = import("Matrix");
+let mat = import("matrix");
 
 // Matrices are 2D number arrays with consistent row lengths
 [[1, 2], [3, 4]];              // This is a 2x2 matrix
@@ -1309,7 +1309,7 @@ Here's the complete precedence table, from highest to lowest:
 3 > 2 && 1 < 2;      // => true && true = true
 
 // Pipe has very low precedence
-let vec = import("Vector");
+let vec = import("vector");
 [1, 2, 3] |> map(_, inc) |> vec.sum;  // Evaluates left to right
 
 // Conditional has lowest precedence
@@ -1449,7 +1449,7 @@ let longWords = text
 ### Data Transformation
 
 ```lits
-let su = import("Sequence");
+let su = import("sequence");
 let users = [
   { name: "Alice", age: 30, department: "Engineering" },
   { name: "Bob", age: 25, department: "Marketing" },
@@ -1503,8 +1503,8 @@ import { matrixModule } from '@mojir/lits/modules/matrix';
 
 const lits = new Lits({ modules: [vectorModule, matrixModule] });
 
-// Now you can use import("Vector") and import("Matrix") in Lits code
-lits.run('let v = import("Vector"); v.dot([1, 2, 3], [4, 5, 6])'); // => 32
+// Now you can use import("vector") and import("matrix") in Lits code
+lits.run('let v = import("vector"); v.dot([1, 2, 3], [4, 5, 6])'); // => 32
 ```
 
 ### Using Lits in JavaScript

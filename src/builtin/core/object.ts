@@ -14,7 +14,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
     docs: {
-      category: 'Object',
+      category: 'object',
       returns: { type: 'any', array: true },
       args: { obj: { type: 'object' } },
       variants: [{ argumentNames: ['obj'] }],
@@ -35,7 +35,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
     docs: {
-      category: 'Object',
+      category: 'object',
       returns: { type: 'any', array: true },
       args: { obj: { type: 'object' } },
       variants: [{ argumentNames: ['obj'] }],
@@ -56,7 +56,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
     docs: {
-      category: 'Object',
+      category: 'object',
       returns: { type: 'array' },
       args: { obj: { type: 'object' } },
       variants: [{ argumentNames: ['obj'] }],
@@ -81,7 +81,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(2),
     docs: {
-      category: 'Object',
+      category: 'object',
       returns: { type: ['array', 'null'] },
       args: {
         a: { type: 'object' },
@@ -91,7 +91,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['obj', 'key'] }],
       description: 'Returns entry (key-value pair) for $key, or `null` if $key not present in $obj.',
-      seeAlso: ['get', 'contains?', 'entries', 'Sequence.position', 'some'],
+      seeAlso: ['get', 'contains?', 'entries', 'sequence.position', 'some'],
       examples: [
         '{ a: 1, "b": 2 } find "a"',
         'find(object("a", 1, "b", 2), "b")',
@@ -110,7 +110,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(2),
     docs: {
-      category: 'Object',
+      category: 'object',
       returns: { type: 'object' },
       args: {
         a: { type: 'object' },
@@ -151,7 +151,7 @@ o`,
     },
     arity: { min: 0 },
     docs: {
-      category: 'Object',
+      category: 'object',
       returns: { type: 'object' },
       args: {
         a: { type: 'object' },
@@ -199,7 +199,7 @@ If no arguments are provided \`null\` is returned.`,
     },
     arity: { min: 2 },
     docs: {
-      category: 'Object',
+      category: 'object',
       returns: { type: 'object' },
       args: {
         objs: { type: 'object', rest: true },
@@ -238,7 +238,7 @@ If no arguments are provided \`null\` is returned.`,
     },
     arity: toFixedArity(2),
     docs: {
-      category: 'Object',
+      category: 'object',
       returns: { type: 'object' },
       args: {
         a: { type: 'array' },
@@ -246,7 +246,7 @@ If no arguments are provided \`null\` is returned.`,
       },
       variants: [{ argumentNames: ['a', 'b'] }],
       description: 'Returns a new object created by mapping $a to $b.',
-      seeAlso: ['entries', 'keys', 'vals', 'Sequence.interleave'],
+      seeAlso: ['entries', 'keys', 'vals', 'sequence.interleave'],
       examples: [
         '["a", "b", "c"] zipmap [1, 2, 3]',
         'zipmap(["a", "b", "c"], [10, null, [1, 2, 3]])',
@@ -270,7 +270,7 @@ If no arguments are provided \`null\` is returned.`,
     },
     arity: toFixedArity(2),
     docs: {
-      category: 'Object',
+      category: 'object',
       returns: { type: 'object' },
       args: {
         a: { type: 'object' },

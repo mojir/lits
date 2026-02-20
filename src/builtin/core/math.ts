@@ -141,7 +141,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     evaluate: unaryMathOp(val => val + 1),
     arity: toFixedArity(1),
     docs: {
-      category: 'Math',
+      category: 'math',
       returns: { type: 'number' },
       args: {
         x: { type: ['number', 'vector', 'matrix'] },
@@ -162,7 +162,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     evaluate: unaryMathOp(val => val - 1),
     arity: toFixedArity(1),
     docs: {
-      category: 'Math',
+      category: 'math',
       returns: { type: ['number', 'vector', 'matrix'] },
       args: {
         x: { type: ['number', 'vector', 'matrix'] },
@@ -183,7 +183,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     evaluate: reduceMathOp(0, (a, b) => a + b),
     arity: {},
     docs: {
-      category: 'Math',
+      category: 'math',
       returns: { type: ['number', 'vector', 'matrix'] },
       args: {
         a: { type: ['number', 'vector', 'matrix'] },
@@ -210,7 +210,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     evaluate: reduceMathOp(1, (a, b) => a * b),
     arity: {},
     docs: {
-      category: 'Math',
+      category: 'math',
       returns: { type: ['number', 'vector', 'matrix'] },
       args: {
         a: { type: ['number', 'vector', 'matrix'] },
@@ -264,7 +264,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
     arity: {},
     docs: {
-      category: 'Math',
+      category: 'math',
       returns: { type: ['number', 'vector', 'matrix'] },
       args: {
         a: { type: ['number', 'vector', 'matrix'] },
@@ -318,7 +318,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
     arity: {},
     docs: {
-      category: 'Math',
+      category: 'math',
       returns: { type: ['number', 'vector', 'matrix'] },
       args: {
         a: { type: ['number', 'vector', 'matrix'] },
@@ -345,7 +345,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     evaluate: binaryMathOp((a, b) => Math.trunc(a / b)),
     arity: toFixedArity(2),
     docs: {
-      category: 'Math',
+      category: 'math',
       returns: { type: ['number', 'vector', 'matrix'] },
       args: {
         a: { type: ['number', 'vector', 'matrix'] },
@@ -375,7 +375,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     evaluate: binaryMathOp((a, b) => a - b * Math.floor(a / b)),
     arity: toFixedArity(2),
     docs: {
-      category: 'Math',
+      category: 'math',
       returns: { type: ['number', 'vector', 'matrix'] },
       args: {
         a: { type: ['number', 'vector', 'matrix'] },
@@ -402,7 +402,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     evaluate: binaryMathOp((a, b) => a % b),
     arity: toFixedArity(2),
     docs: {
-      category: 'Math',
+      category: 'math',
       returns: { type: ['number', 'vector', 'matrix'] },
       args: {
         a: { type: ['number', 'vector', 'matrix'] },
@@ -429,7 +429,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     evaluate: unaryMathOp(val => Math.sqrt(val)),
     arity: toFixedArity(1),
     docs: {
-      category: 'Math',
+      category: 'math',
       returns: { type: ['number', 'vector', 'matrix'] },
       args: {
         x: { type: ['number', 'vector', 'matrix'] },
@@ -453,7 +453,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     evaluate: unaryMathOp(val => Math.cbrt(val)),
     arity: toFixedArity(1),
     docs: {
-      category: 'Math',
+      category: 'math',
       returns: { type: ['number', 'vector', 'matrix'] },
       args: {
         x: { type: ['number', 'vector', 'matrix'] },
@@ -479,7 +479,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     evaluate: binaryMathOp((a, b) => a ** b),
     arity: toFixedArity(2),
     docs: {
-      category: 'Math',
+      category: 'math',
       returns: { type: ['number', 'vector', 'matrix'] },
       args: {
         a: { type: ['number', 'vector', 'matrix'] },
@@ -487,7 +487,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['a', 'b'] }],
       description: 'The ^ function computes exponentiation, raising the first argument to the power of the second, working on `numbers` and element-wise on `vectors` and `matrices` of compatible dimensions. When used with mixed types, it applies the power operation between each element of the collection and the scalar.',
-      seeAlso: ['sqrt', 'cbrt', '*', 'Math.ln'],
+      seeAlso: ['sqrt', 'cbrt', '*', 'math.ln'],
       examples: [
         '2 ^ 3',
         '2 ^ 0',
@@ -540,7 +540,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
     arity: { min: 1, max: 2 },
     docs: {
-      category: 'Math',
+      category: 'math',
       returns: { type: ['number', 'vector', 'matrix'] },
       args: {
         a: { type: ['number', 'vector', 'matrix'] },
@@ -572,7 +572,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     evaluate: unaryMathOp(val => Math.trunc(val)),
     arity: toFixedArity(1),
     docs: {
-      category: 'Math',
+      category: 'math',
       returns: { type: ['integer', 'vector', 'matrix'] },
       args: {
         x: { type: ['number', 'vector', 'matrix'] },
@@ -596,7 +596,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     evaluate: unaryMathOp(val => Math.floor(val)),
     arity: toFixedArity(1),
     docs: {
-      category: 'Math',
+      category: 'math',
       returns: { type: ['integer', 'vector', 'matrix'] },
       args: {
         x: { type: ['number', 'vector', 'matrix'] },
@@ -620,7 +620,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     evaluate: unaryMathOp(val => Math.ceil(val)),
     arity: toFixedArity(1),
     docs: {
-      category: 'Math',
+      category: 'math',
       returns: { type: ['integer', 'vector', 'matrix'] },
       args: {
         x: { type: ['number', 'vector', 'matrix'] },
@@ -653,7 +653,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
     arity: { min: 1 },
     docs: {
-      category: 'Math',
+      category: 'math',
       returns: { type: 'number' },
       args: {
         a: { type: 'number' },
@@ -662,7 +662,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['xs'] }],
       description: 'Returns the smallest number of the arguments.',
-      seeAlso: ['max', 'Vector.min'],
+      seeAlso: ['max', 'vector.min'],
       examples: [
         '2 min 3',
         'min(2, 0, 1)',
@@ -685,7 +685,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
     arity: { min: 1 },
     docs: {
-      category: 'Math',
+      category: 'math',
       returns: { type: 'number' },
       args: {
         a: { type: 'number' },
@@ -694,7 +694,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['xs'] }],
       description: 'Returns the largest number of the arguments.',
-      seeAlso: ['min', 'Vector.max'],
+      seeAlso: ['min', 'vector.max'],
       examples: [
         ' 2 max 3',
         'max(2, 0, 1)',
@@ -708,7 +708,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     evaluate: unaryMathOp(val => Math.abs(val)),
     arity: toFixedArity(1),
     docs: {
-      category: 'Math',
+      category: 'math',
       returns: { type: ['number', 'vector', 'matrix'] },
       args: {
         x: { type: ['number', 'vector', 'matrix'] },
@@ -729,7 +729,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     evaluate: unaryMathOp(val => Math.sign(val)),
     arity: toFixedArity(1),
     docs: {
-      category: 'Math',
+      category: 'math',
       returns: { type: ['number', 'vector', 'matrix'] },
       args: {
         x: { type: ['number', 'vector', 'matrix'] },

@@ -294,6 +294,6 @@ for (const [key, docs] of Object.entries(moduleDocs)) {
 }
 
 export const randomModule: LitsModule = {
-  name: 'Random',
+  name: 'random',
   functions: randomFunctions,
 }

@@ -8,7 +8,7 @@ import type { specialExpressionTypes } from '../specialExpressionTypes'
 export type TryNode = SpecialExpressionNode<[typeof specialExpressionTypes['try'], Node, SymbolNode | undefined, Node]>
 
 const docs: CustomDocs = {
-  category: 'Special-Expression',
+  category: 'special-expression',
   customVariants: ['try { try-body } catch { catch-body }', 'try { try-body } catch(error) { catch-body }'],
   details: [
     ['try-body', 'expressions', 'The expressions to try.'],

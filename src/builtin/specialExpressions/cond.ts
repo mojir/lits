@@ -6,7 +6,7 @@ import type { specialExpressionTypes } from '../specialExpressionTypes'
 export type CondNode = SpecialExpressionNode<[typeof specialExpressionTypes['cond'], [Node, Node][]]>
 
 const docs: CustomDocs = {
-  category: 'Special-Expression',
+  category: 'special-expression',
   customVariants: ['cond cond-branch cond-branch ... end'],
   details: [
     ['cond-branch', 'case test then body', 'A branch of the cond expression.'],

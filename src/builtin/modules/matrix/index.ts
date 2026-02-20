@@ -5,7 +5,7 @@ import { approxZero } from '../../../utils'
 import { toFixedArity } from '../../../utils/arity'
 import type { BuiltinNormalExpressions } from '../../../builtin/interface'
 import type { LitsModule } from '../interface'
-import { gaussJordanElimination } from '../linearAlgebra/helpers/gaussJordanElimination'
+import { gaussJordanElimination } from '../linear-algebra/helpers/gaussJordanElimination'
 import { moduleDocs } from './docs'
 import { adjugate } from './helpers/adjugate'
 import { band } from './helpers/band'
@@ -253,6 +253,6 @@ for (const [key, docs] of Object.entries(moduleDocs)) {
 }
 
 export const matrixModule: LitsModule = {
-  name: 'Matrix',
+  name: 'matrix',
   functions: matrixNormalExpression,
 }

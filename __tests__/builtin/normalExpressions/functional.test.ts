@@ -2,7 +2,7 @@
 import { afterEach, beforeEach, describe, expect, it, test, vitest } from 'vitest'
 import { Lits } from '../../../src/Lits/Lits'
 import { LitsError, RecurSignal, UserDefinedError } from '../../../src/errors'
-import { functionalUtilsModule } from '../../../src/builtin/modules/functionalUtils'
+import { functionalUtilsModule } from '../../../src/builtin/modules/functional'
 
 describe('functional functions.', () => {
   for (const lits of [new Lits({ modules: [functionalUtilsModule] }), new Lits({ debug: true, modules: [functionalUtilsModule] })]) {
@@ -104,53 +104,53 @@ let foo = comp(!, odd?);
 
     describe('juxt.', () => {
       it('samples.', () => {
-        expect(lits.run('let { juxt } = import("Functional"); juxt(+, *, min, max)(3, 4, 6)')).toEqual([13, 72, 3, 6])
-        expect(lits.run('let { juxt } = import("Functional"); juxt("a", "b")({ a: 1, b: 2, c: 3, d: 4})')).toEqual([1, 2])
-        expect(lits.run('let { juxt } = import("Functional"); apply(juxt(+, *, min, max), range(1, 5))')).toEqual([10, 24, 1, 4])
-        expect(() => lits.run('let { juxt } = import("Functional"); juxt(-> $, -> $2)')).toThrow() // Must accept same number of params
+        expect(lits.run('let { juxt } = import("functional"); juxt(+, *, min, max)(3, 4, 6)')).toEqual([13, 72, 3, 6])
+        expect(lits.run('let { juxt } = import("functional"); juxt("a", "b")({ a: 1, b: 2, c: 3, d: 4})')).toEqual([1, 2])
+        expect(lits.run('let { juxt } = import("functional"); apply(juxt(+, *, min, max), range(1, 5))')).toEqual([10, 24, 1, 4])
+        expect(() => lits.run('let { juxt } = import("functional"); juxt(-> $, -> $2)')).toThrow() // Must accept same number of params
         // eslint-disable-next-line ts/no-unsafe-member-access
-        expect((lits.run('let { juxt } = import("Functional"); juxt((x) -> x, (x, y = 1) -> x + y, (...c) -> 0)') as any).arity).toEqual({ min: 1, max: 1 })
-        expect(() => lits.run('let { juxt } = import("Functional"); juxt()')).toThrow(LitsError)
+        expect((lits.run('let { juxt } = import("functional"); juxt((x) -> x, (x, y = 1) -> x + y, (...c) -> 0)') as any).arity).toEqual({ min: 1, max: 1 })
+        expect(() => lits.run('let { juxt } = import("functional"); juxt()')).toThrow(LitsError)
       })
     })
 
     describe('complement.', () => {
       it('samples.', () => {
-        expect(lits.run('let { complement } = import("Functional"); complement(>)(4, 6)')).toBe(true)
-        expect(lits.run('let { complement } = import("Functional"); complement(==)(3, 3)')).toBe(false)
-        expect(() => lits.run('let { complement } = import("Functional"); complement()')).toThrow(LitsError)
-        expect(() => lits.run('let { complement } = import("Functional"); complement(>, <)')).toThrow(LitsError)
+        expect(lits.run('let { complement } = import("functional"); complement(>)(4, 6)')).toBe(true)
+        expect(lits.run('let { complement } = import("functional"); complement(==)(3, 3)')).toBe(false)
+        expect(() => lits.run('let { complement } = import("functional"); complement()')).toThrow(LitsError)
+        expect(() => lits.run('let { complement } = import("functional"); complement(>, <)')).toThrow(LitsError)
       })
     })
 
     describe('every-pred.', () => {
       it('samples.', () => {
-        expect(lits.run('let { every-pred } = import("Functional"); every-pred(string?, -> count($1) > 3)("Albert")')).toBe(true)
-        expect(lits.run('let { every-pred } = import("Functional"); every-pred(string?, -> count($1) > 3)("Albert", "Mojir")')).toBe(true)
-        expect(lits.run('let { every-pred } = import("Functional"); every-pred(string?, -> count($1) > 3)("Albert", "L", "Mojir")')).toBe(false)
-        expect(lits.run('let { every-pred } = import("Functional"); every-pred(string?, -> count($1) > 3)("Albert", [1, 2, 3, 4])')).toBe(false)
-        expect(() => lits.run('let { every-pred } = import("Functional"); every-pred()')).toThrow(LitsError)
+        expect(lits.run('let { every-pred } = import("functional"); every-pred(string?, -> count($1) > 3)("Albert")')).toBe(true)
+        expect(lits.run('let { every-pred } = import("functional"); every-pred(string?, -> count($1) > 3)("Albert", "Mojir")')).toBe(true)
+        expect(lits.run('let { every-pred } = import("functional"); every-pred(string?, -> count($1) > 3)("Albert", "L", "Mojir")')).toBe(false)
+        expect(lits.run('let { every-pred } = import("functional"); every-pred(string?, -> count($1) > 3)("Albert", [1, 2, 3, 4])')).toBe(false)
+        expect(() => lits.run('let { every-pred } = import("functional"); every-pred()')).toThrow(LitsError)
       })
     })
 
     describe('some-pred.', () => {
       it('samples.', () => {
-        expect(lits.run('let { some-pred } = import("Functional"); some-pred(string?, -> count($1) > 3)("Albert", "M")')).toBe(true)
-        expect(lits.run('let { some-pred } = import("Functional"); some-pred(string?, -> count($1) > 3)("A", "M")')).toBe(true)
-        expect(lits.run('let { some-pred } = import("Functional"); some-pred(string?, -> count($1) > 3)([10, 20], [20, 10])')).toBe(false)
-        expect(lits.run('let { some-pred } = import("Functional"); some-pred(string?, -> count($1) > 3)("Albert", [10, 20])')).toBe(true)
-        expect(() => lits.run('let { some-pred } = import("Functional"); some-pred()')).toThrow(LitsError)
+        expect(lits.run('let { some-pred } = import("functional"); some-pred(string?, -> count($1) > 3)("Albert", "M")')).toBe(true)
+        expect(lits.run('let { some-pred } = import("functional"); some-pred(string?, -> count($1) > 3)("A", "M")')).toBe(true)
+        expect(lits.run('let { some-pred } = import("functional"); some-pred(string?, -> count($1) > 3)([10, 20], [20, 10])')).toBe(false)
+        expect(lits.run('let { some-pred } = import("functional"); some-pred(string?, -> count($1) > 3)("Albert", [10, 20])')).toBe(true)
+        expect(() => lits.run('let { some-pred } = import("functional"); some-pred()')).toThrow(LitsError)
       })
     })
 
     describe('fnull.', () => {
       it('samples.', () => {
-        expect(lits.run('let { fnull } = import("Functional"); fnull(+, 1, 2)(0, 0)')).toBe(0)
-        expect(lits.run('let { fnull } = import("Functional"); fnull(+, 1, 2)(null, 0)')).toBe(1)
-        expect(lits.run('let { fnull } = import("Functional"); fnull(+, 1, 2)(0, null)')).toBe(2)
-        expect(lits.run('let { fnull } = import("Functional"); fnull(+, 1, 2)(null, null)')).toBe(3)
-        expect(() => lits.run('let { fnull } = import("Functional"); fnull()')).toThrow(LitsError)
-        expect(() => lits.run('let { fnull } = import("Functional"); fnull(+)')).toThrow(LitsError)
+        expect(lits.run('let { fnull } = import("functional"); fnull(+, 1, 2)(0, 0)')).toBe(0)
+        expect(lits.run('let { fnull } = import("functional"); fnull(+, 1, 2)(null, 0)')).toBe(1)
+        expect(lits.run('let { fnull } = import("functional"); fnull(+, 1, 2)(0, null)')).toBe(2)
+        expect(lits.run('let { fnull } = import("functional"); fnull(+, 1, 2)(null, null)')).toBe(3)
+        expect(() => lits.run('let { fnull } = import("functional"); fnull()')).toThrow(LitsError)
+        expect(() => lits.run('let { fnull } = import("functional"); fnull(+)')).toThrow(LitsError)
       })
     })
 

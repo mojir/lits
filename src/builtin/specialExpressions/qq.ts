@@ -8,7 +8,7 @@ import type { specialExpressionTypes } from '../specialExpressionTypes'
 export type QqNode = SpecialExpressionNode<[typeof specialExpressionTypes['??'], Node[]]>
 
 const docs: FunctionDocs = {
-  category: 'Special-Expression',
+  category: 'special-expression',
   returns: {
     type: 'any',
   },

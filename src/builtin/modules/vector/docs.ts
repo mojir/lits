@@ -2,7 +2,7 @@ import type { FunctionDocs } from '../../interface'
 
 export const moduleDocs: Record<string, FunctionDocs> = {
   'mean': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **mean** of all elements in the `vector`.',
     returns: {
       type: 'number',
@@ -21,13 +21,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { mean } = import("Vector");\nmean([1, 2, 3])',
-      'let { mean } = import("Vector");\nmean([1, 2, -3])',
+      'let { mean } = import("vector");\nmean([1, 2, 3])',
+      'let { mean } = import("vector");\nmean([1, 2, -3])',
     ],
-    seeAlso: ['Vector.moving-mean', 'Vector.centered-moving-mean', 'Vector.running-mean', 'Vector.geometric-mean', 'Vector.harmonic-mean', 'Vector.median', 'Vector.mode', 'Vector.sum', 'Vector.rms'],
+    seeAlso: ['vector.moving-mean', 'vector.centered-moving-mean', 'vector.running-mean', 'vector.geometric-mean', 'vector.harmonic-mean', 'vector.median', 'vector.mode', 'vector.sum', 'vector.rms'],
   },
   'moving-mean': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **moving mean** of the `vector` with a given window size.',
     returns: {
       type: 'vector',
@@ -57,13 +57,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { moving-mean } = import("Vector");\nmoving-mean([1, 2, 3, 4, 5], 3)',
-      'let { moving-mean } = import("Vector");\nmoving-mean([1, 2, 3, 4, 5], 5)',
+      'let { moving-mean } = import("vector");\nmoving-mean([1, 2, 3, 4, 5], 3)',
+      'let { moving-mean } = import("vector");\nmoving-mean([1, 2, 3, 4, 5], 5)',
     ],
-    seeAlso: ['moving-fn', 'Vector.mean', 'Vector.centered-moving-mean', 'Vector.running-mean'],
+    seeAlso: ['moving-fn', 'vector.mean', 'vector.centered-moving-mean', 'vector.running-mean'],
   },
   'centered-moving-mean': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **centered moving mean** of the `vector` with a given window size.',
     returns: {
       type: 'array',
@@ -116,14 +116,14 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { centered-moving-mean } = import("Vector");\ncentered-moving-mean([1, 2, 3, 4, 5], 3)',
-      'let { centered-moving-mean } = import("Vector");\ncentered-moving-mean([1, 2, 3, 4, 5], 3, 0, 10)',
-      'let { centered-moving-mean } = import("Vector");\ncentered-moving-mean([1, 2, 3, 4, 5], 3, 10)',
+      'let { centered-moving-mean } = import("vector");\ncentered-moving-mean([1, 2, 3, 4, 5], 3)',
+      'let { centered-moving-mean } = import("vector");\ncentered-moving-mean([1, 2, 3, 4, 5], 3, 0, 10)',
+      'let { centered-moving-mean } = import("vector");\ncentered-moving-mean([1, 2, 3, 4, 5], 3, 10)',
     ],
-    seeAlso: ['Vector.mean', 'Vector.moving-mean', 'Vector.running-mean'],
+    seeAlso: ['vector.mean', 'vector.moving-mean', 'vector.running-mean'],
   },
   'running-mean': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **running mean** of the `vector`.',
     returns: {
       type: 'vector',
@@ -142,12 +142,12 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { running-mean } = import("Vector");\nrunning-mean([1, 2, 3, 4, 5])',
+      'let { running-mean } = import("vector");\nrunning-mean([1, 2, 3, 4, 5])',
     ],
-    seeAlso: ['running-fn', 'Vector.mean', 'Vector.moving-mean', 'Vector.centered-moving-mean'],
+    seeAlso: ['running-fn', 'vector.mean', 'vector.moving-mean', 'vector.centered-moving-mean'],
   },
   'geometric-mean': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **geometric mean** of all elements in the `vector`.',
     returns: {
       type: 'number',
@@ -166,13 +166,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { geometric-mean } = import("Vector");\ngeometric-mean([1, 2, 3])',
-      'let { geometric-mean } = import("Vector");\ngeometric-mean([1, 2, 9])',
+      'let { geometric-mean } = import("vector");\ngeometric-mean([1, 2, 3])',
+      'let { geometric-mean } = import("vector");\ngeometric-mean([1, 2, 9])',
     ],
-    seeAlso: ['Vector.moving-geometric-mean', 'Vector.centered-moving-geometric-mean', 'Vector.running-geometric-mean', 'Vector.mean', 'Vector.harmonic-mean'],
+    seeAlso: ['vector.moving-geometric-mean', 'vector.centered-moving-geometric-mean', 'vector.running-geometric-mean', 'vector.mean', 'vector.harmonic-mean'],
   },
   'moving-geometric-mean': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **moving geometric mean** of the `vector` with a given window size.',
     returns: {
       type: 'vector',
@@ -202,13 +202,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { moving-geometric-mean } = import("Vector");\nmoving-geometric-mean([1, 2, 3, 4, 5], 3)',
-      'let { moving-geometric-mean } = import("Vector");\nmoving-geometric-mean([1, 2, 3, 4, 5], 5)',
+      'let { moving-geometric-mean } = import("vector");\nmoving-geometric-mean([1, 2, 3, 4, 5], 3)',
+      'let { moving-geometric-mean } = import("vector");\nmoving-geometric-mean([1, 2, 3, 4, 5], 5)',
     ],
-    seeAlso: ['Vector.geometric-mean', 'Vector.centered-moving-geometric-mean', 'Vector.running-geometric-mean'],
+    seeAlso: ['vector.geometric-mean', 'vector.centered-moving-geometric-mean', 'vector.running-geometric-mean'],
   },
   'centered-moving-geometric-mean': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **centered moving geometric mean** of the `vector` with a given window size.',
     returns: {
       type: 'array',
@@ -261,14 +261,14 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { centered-moving-geometric-mean } = import("Vector");\ncentered-moving-geometric-mean([1, 2, 3, 4, 5], 3)',
-      'let { centered-moving-geometric-mean } = import("Vector");\ncentered-moving-geometric-mean([1, 2, 3, 4, 5], 3, 0, 10)',
-      'let { centered-moving-geometric-mean } = import("Vector");\ncentered-moving-geometric-mean([1, 2, 3, 4, 5], 3, 10)',
+      'let { centered-moving-geometric-mean } = import("vector");\ncentered-moving-geometric-mean([1, 2, 3, 4, 5], 3)',
+      'let { centered-moving-geometric-mean } = import("vector");\ncentered-moving-geometric-mean([1, 2, 3, 4, 5], 3, 0, 10)',
+      'let { centered-moving-geometric-mean } = import("vector");\ncentered-moving-geometric-mean([1, 2, 3, 4, 5], 3, 10)',
     ],
-    seeAlso: ['Vector.geometric-mean', 'Vector.moving-geometric-mean', 'Vector.running-geometric-mean'],
+    seeAlso: ['vector.geometric-mean', 'vector.moving-geometric-mean', 'vector.running-geometric-mean'],
   },
   'running-geometric-mean': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **running geometric mean** of the `vector`.',
     returns: {
       type: 'vector',
@@ -287,12 +287,12 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { running-geometric-mean } = import("Vector");\nrunning-geometric-mean([1, 2, 3, 4, 5])',
+      'let { running-geometric-mean } = import("vector");\nrunning-geometric-mean([1, 2, 3, 4, 5])',
     ],
-    seeAlso: ['Vector.geometric-mean', 'Vector.moving-geometric-mean', 'Vector.centered-moving-geometric-mean'],
+    seeAlso: ['vector.geometric-mean', 'vector.moving-geometric-mean', 'vector.centered-moving-geometric-mean'],
   },
   'harmonic-mean': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **harmonic mean** of all elements in the `vector`.',
     returns: {
       type: 'number',
@@ -311,13 +311,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { harmonic-mean } = import("Vector");\nharmonic-mean([1, 2, 3])',
-      'let { harmonic-mean } = import("Vector");\nharmonic-mean([1, 2, 9])',
+      'let { harmonic-mean } = import("vector");\nharmonic-mean([1, 2, 3])',
+      'let { harmonic-mean } = import("vector");\nharmonic-mean([1, 2, 9])',
     ],
-    seeAlso: ['Vector.moving-harmonic-mean', 'Vector.centered-moving-harmonic-mean', 'Vector.running-harmonic-mean', 'Vector.mean', 'Vector.geometric-mean'],
+    seeAlso: ['vector.moving-harmonic-mean', 'vector.centered-moving-harmonic-mean', 'vector.running-harmonic-mean', 'vector.mean', 'vector.geometric-mean'],
   },
   'moving-harmonic-mean': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **moving harmonic mean** of the `vector` with a given window size.',
     returns: {
       type: 'vector',
@@ -347,13 +347,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { moving-harmonic-mean } = import("Vector");\nmoving-harmonic-mean([1, 2, 3, 4, 5], 3)',
-      'let { moving-harmonic-mean } = import("Vector");\nmoving-harmonic-mean([1, 2, 3, 4, 5], 5)',
+      'let { moving-harmonic-mean } = import("vector");\nmoving-harmonic-mean([1, 2, 3, 4, 5], 3)',
+      'let { moving-harmonic-mean } = import("vector");\nmoving-harmonic-mean([1, 2, 3, 4, 5], 5)',
     ],
-    seeAlso: ['Vector.harmonic-mean', 'Vector.centered-moving-harmonic-mean', 'Vector.running-harmonic-mean'],
+    seeAlso: ['vector.harmonic-mean', 'vector.centered-moving-harmonic-mean', 'vector.running-harmonic-mean'],
   },
   'centered-moving-harmonic-mean': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **centered moving harmonic mean** of the `vector` with a given window size.',
     returns: {
       type: 'array',
@@ -406,14 +406,14 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { centered-moving-harmonic-mean } = import("Vector");\ncentered-moving-harmonic-mean([1, 2, 3, 4, 5], 3)',
-      'let { centered-moving-harmonic-mean } = import("Vector");\ncentered-moving-harmonic-mean([1, 2, 3, 4, 5], 3, 0, 10)',
-      'let { centered-moving-harmonic-mean } = import("Vector");\ncentered-moving-harmonic-mean([1, 2, 3, 4, 5], 3, 10)',
+      'let { centered-moving-harmonic-mean } = import("vector");\ncentered-moving-harmonic-mean([1, 2, 3, 4, 5], 3)',
+      'let { centered-moving-harmonic-mean } = import("vector");\ncentered-moving-harmonic-mean([1, 2, 3, 4, 5], 3, 0, 10)',
+      'let { centered-moving-harmonic-mean } = import("vector");\ncentered-moving-harmonic-mean([1, 2, 3, 4, 5], 3, 10)',
     ],
-    seeAlso: ['Vector.harmonic-mean', 'Vector.moving-harmonic-mean', 'Vector.running-harmonic-mean'],
+    seeAlso: ['vector.harmonic-mean', 'vector.moving-harmonic-mean', 'vector.running-harmonic-mean'],
   },
   'running-harmonic-mean': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **running harmonic mean** of the `vector`.',
     returns: {
       type: 'vector',
@@ -432,12 +432,12 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { running-harmonic-mean } = import("Vector");\nrunning-harmonic-mean([1, 2, 3, 4, 5])',
+      'let { running-harmonic-mean } = import("vector");\nrunning-harmonic-mean([1, 2, 3, 4, 5])',
     ],
-    seeAlso: ['Vector.harmonic-mean', 'Vector.moving-harmonic-mean', 'Vector.centered-moving-harmonic-mean'],
+    seeAlso: ['vector.harmonic-mean', 'vector.moving-harmonic-mean', 'vector.centered-moving-harmonic-mean'],
   },
   'median': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the median of all elements in the vector.',
     returns: {
       type: 'number',
@@ -456,15 +456,15 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { median } = import("Vector");\nmedian([1, 2, 3])',
-      'let { median } = import("Vector");\nmedian([1, 2, -3])',
-      'let { median } = import("Vector");\nmedian([1, 2, 3, 4])',
-      'let { median } = import("Vector");\nmedian([1, 2, -3, 4])',
+      'let { median } = import("vector");\nmedian([1, 2, 3])',
+      'let { median } = import("vector");\nmedian([1, 2, -3])',
+      'let { median } = import("vector");\nmedian([1, 2, 3, 4])',
+      'let { median } = import("vector");\nmedian([1, 2, -3, 4])',
     ],
-    seeAlso: ['Vector.moving-median', 'Vector.centered-moving-median', 'Vector.running-median', 'Vector.mean', 'Vector.mode', 'Vector.quartiles', 'Vector.percentile', 'Vector.iqr', 'Vector.medad'],
+    seeAlso: ['vector.moving-median', 'vector.centered-moving-median', 'vector.running-median', 'vector.mean', 'vector.mode', 'vector.quartiles', 'vector.percentile', 'vector.iqr', 'vector.medad'],
   },
   'moving-median': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **moving median** of the `vector` with a given window size.',
     returns: {
       type: 'vector',
@@ -494,13 +494,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { moving-median } = import("Vector");\nmoving-median([1, 2, 3, 4, 5], 3)',
-      'let { moving-median } = import("Vector");\nmoving-median([1, 2, 3, 4, 5], 5)',
+      'let { moving-median } = import("vector");\nmoving-median([1, 2, 3, 4, 5], 3)',
+      'let { moving-median } = import("vector");\nmoving-median([1, 2, 3, 4, 5], 5)',
     ],
-    seeAlso: ['Vector.median', 'Vector.centered-moving-median', 'Vector.running-median'],
+    seeAlso: ['vector.median', 'vector.centered-moving-median', 'vector.running-median'],
   },
   'centered-moving-median': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **centered moving median** of the `vector` with a given window size.',
     returns: {
       type: 'array',
@@ -553,14 +553,14 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { centered-moving-median } = import("Vector");\ncentered-moving-median([1, 2, 3, 4, 5], 3)',
-      'let { centered-moving-median } = import("Vector");\ncentered-moving-median([1, 2, 3, 4, 5], 3, 0, 10)',
-      'let { centered-moving-median } = import("Vector");\ncentered-moving-median([1, 2, 3, 4, 5], 3, 10)',
+      'let { centered-moving-median } = import("vector");\ncentered-moving-median([1, 2, 3, 4, 5], 3)',
+      'let { centered-moving-median } = import("vector");\ncentered-moving-median([1, 2, 3, 4, 5], 3, 0, 10)',
+      'let { centered-moving-median } = import("vector");\ncentered-moving-median([1, 2, 3, 4, 5], 3, 10)',
     ],
-    seeAlso: ['Vector.median', 'Vector.moving-median', 'Vector.running-median'],
+    seeAlso: ['vector.median', 'vector.moving-median', 'vector.running-median'],
   },
   'running-median': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **running median** of the `vector`.',
     returns: {
       type: 'vector',
@@ -579,12 +579,12 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { running-median } = import("Vector");\nrunning-median([1, 2, 3, 4, 5])',
+      'let { running-median } = import("vector");\nrunning-median([1, 2, 3, 4, 5])',
     ],
-    seeAlso: ['Vector.median', 'Vector.moving-median', 'Vector.centered-moving-median'],
+    seeAlso: ['vector.median', 'vector.moving-median', 'vector.centered-moving-median'],
   },
   'variance': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **variance** of all elements in the `vector`.',
     returns: {
       type: 'number',
@@ -603,13 +603,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { variance } = import("Vector");\nvariance([1, 2, 3])',
-      'let { variance } = import("Vector");\nvariance([1, 2, -3])',
+      'let { variance } = import("vector");\nvariance([1, 2, 3])',
+      'let { variance } = import("vector");\nvariance([1, 2, -3])',
     ],
-    seeAlso: ['Linear-Algebra.cov', 'Vector.moving-variance', 'Vector.centered-moving-variance', 'Vector.running-variance', 'Vector.stdev', 'Vector.sample-variance', 'Vector.mad'],
+    seeAlso: ['linear-algebra.cov', 'vector.moving-variance', 'vector.centered-moving-variance', 'vector.running-variance', 'vector.stdev', 'vector.sample-variance', 'vector.mad'],
   },
   'moving-variance': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **moving variance** of the `vector` with a given window size.',
     returns: {
       type: 'vector',
@@ -639,13 +639,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { moving-variance } = import("Vector");\nmoving-variance([1, 2, 3, 4, 5], 3)',
-      'let { moving-variance } = import("Vector");\nmoving-variance([1, 2, 3, 4, 5], 5)',
+      'let { moving-variance } = import("vector");\nmoving-variance([1, 2, 3, 4, 5], 3)',
+      'let { moving-variance } = import("vector");\nmoving-variance([1, 2, 3, 4, 5], 5)',
     ],
-    seeAlso: ['Vector.variance', 'Vector.centered-moving-variance', 'Vector.running-variance'],
+    seeAlso: ['vector.variance', 'vector.centered-moving-variance', 'vector.running-variance'],
   },
   'centered-moving-variance': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **centered moving variance** of the `vector` with a given window size.',
     returns: {
       type: 'array',
@@ -698,15 +698,15 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { centered-moving-variance } = import("Vector");\ncentered-moving-variance([1, 2, 3, 4, 5], 3)',
-      'let { centered-moving-variance } = import("Vector");\ncentered-moving-variance([1, 2, 3, 4, 5], 3, 1)',
-      'let { centered-moving-variance } = import("Vector");\ncentered-moving-variance([1, 2, 3, 4, 5], 3, 1, 5)',
-      'let { centered-moving-variance } = import("Vector");\ncentered-moving-variance([1, 2, 3, 4, 5], 3, 0, 6)',
+      'let { centered-moving-variance } = import("vector");\ncentered-moving-variance([1, 2, 3, 4, 5], 3)',
+      'let { centered-moving-variance } = import("vector");\ncentered-moving-variance([1, 2, 3, 4, 5], 3, 1)',
+      'let { centered-moving-variance } = import("vector");\ncentered-moving-variance([1, 2, 3, 4, 5], 3, 1, 5)',
+      'let { centered-moving-variance } = import("vector");\ncentered-moving-variance([1, 2, 3, 4, 5], 3, 0, 6)',
     ],
-    seeAlso: ['Vector.variance', 'Vector.moving-variance', 'Vector.running-variance'],
+    seeAlso: ['vector.variance', 'vector.moving-variance', 'vector.running-variance'],
   },
   'running-variance': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **running variance** of the `vector`.',
     returns: {
       type: 'vector',
@@ -725,12 +725,12 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { running-variance } = import("Vector");\nrunning-variance([1, 2, 3, 4, 5])',
+      'let { running-variance } = import("vector");\nrunning-variance([1, 2, 3, 4, 5])',
     ],
-    seeAlso: ['Vector.variance', 'Vector.moving-variance', 'Vector.centered-moving-variance'],
+    seeAlso: ['vector.variance', 'vector.moving-variance', 'vector.centered-moving-variance'],
   },
   'sample-variance': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the sample variance of all elements in the vector.',
     returns: {
       type: 'number',
@@ -749,16 +749,16 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { sample-variance } = import("Vector");\nsample-variance([1, 2, 3])',
-      'let { sample-variance } = import("Vector");\nsample-variance([1, 2, -3])',
-      'let { sample-variance } = import("Vector");\nsample-variance([1, 2, 3, 4])',
-      'let { sample-variance } = import("Vector");\nsample-variance([1, 2, -3, 4])',
-      'let { sample-variance } = import("Vector");\nsample-variance([1, 2, 3, 40, 50])',
+      'let { sample-variance } = import("vector");\nsample-variance([1, 2, 3])',
+      'let { sample-variance } = import("vector");\nsample-variance([1, 2, -3])',
+      'let { sample-variance } = import("vector");\nsample-variance([1, 2, 3, 4])',
+      'let { sample-variance } = import("vector");\nsample-variance([1, 2, -3, 4])',
+      'let { sample-variance } = import("vector");\nsample-variance([1, 2, 3, 40, 50])',
     ],
-    seeAlso: ['Vector.moving-sample-variance', 'Vector.centered-moving-sample-variance', 'Vector.running-sample-variance', 'Vector.variance', 'Vector.sample-stdev'],
+    seeAlso: ['vector.moving-sample-variance', 'vector.centered-moving-sample-variance', 'vector.running-sample-variance', 'vector.variance', 'vector.sample-stdev'],
   },
   'moving-sample-variance': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **moving sample variance** of the `vector` with a given window size.',
     returns: {
       type: 'vector',
@@ -788,13 +788,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { moving-sample-variance } = import("Vector");\nmoving-sample-variance([1, 2, 3, 4, 5], 3)',
-      'let { moving-sample-variance } = import("Vector");\nmoving-sample-variance([1, 2, 3, 4, 5], 5)',
+      'let { moving-sample-variance } = import("vector");\nmoving-sample-variance([1, 2, 3, 4, 5], 3)',
+      'let { moving-sample-variance } = import("vector");\nmoving-sample-variance([1, 2, 3, 4, 5], 5)',
     ],
-    seeAlso: ['Vector.sample-variance', 'Vector.centered-moving-sample-variance', 'Vector.running-sample-variance'],
+    seeAlso: ['vector.sample-variance', 'vector.centered-moving-sample-variance', 'vector.running-sample-variance'],
   },
   'centered-moving-sample-variance': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **centered moving sample variance** of the `vector` with a given window size.',
     returns: {
       type: 'array',
@@ -847,15 +847,15 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { centered-moving-sample-variance } = import("Vector");\ncentered-moving-sample-variance([1, 2, 3, 4, 5], 3)',
-      'let { centered-moving-sample-variance } = import("Vector");\ncentered-moving-sample-variance([1, 2, 3, 4, 5], 3, 1)',
-      'let { centered-moving-sample-variance } = import("Vector");\ncentered-moving-sample-variance([1, 2, 3, 4, 5], 3, 1, 5)',
-      'let { centered-moving-sample-variance } = import("Vector");\ncentered-moving-sample-variance([1, 2, 3, 4, 5], 3, 0, 6)',
+      'let { centered-moving-sample-variance } = import("vector");\ncentered-moving-sample-variance([1, 2, 3, 4, 5], 3)',
+      'let { centered-moving-sample-variance } = import("vector");\ncentered-moving-sample-variance([1, 2, 3, 4, 5], 3, 1)',
+      'let { centered-moving-sample-variance } = import("vector");\ncentered-moving-sample-variance([1, 2, 3, 4, 5], 3, 1, 5)',
+      'let { centered-moving-sample-variance } = import("vector");\ncentered-moving-sample-variance([1, 2, 3, 4, 5], 3, 0, 6)',
     ],
-    seeAlso: ['Vector.sample-variance', 'Vector.moving-sample-variance', 'Vector.running-sample-variance'],
+    seeAlso: ['vector.sample-variance', 'vector.moving-sample-variance', 'vector.running-sample-variance'],
   },
   'running-sample-variance': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **running sample variance** of the `vector`.',
     returns: {
       type: 'array',
@@ -874,12 +874,12 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { running-sample-variance } = import("Vector");\nrunning-sample-variance([1, 2, 3, 4, 5])',
+      'let { running-sample-variance } = import("vector");\nrunning-sample-variance([1, 2, 3, 4, 5])',
     ],
-    seeAlso: ['Vector.sample-variance', 'Vector.moving-sample-variance', 'Vector.centered-moving-sample-variance'],
+    seeAlso: ['vector.sample-variance', 'vector.moving-sample-variance', 'vector.centered-moving-sample-variance'],
   },
   'stdev': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the standard deviation of all elements in the vector.',
     returns: {
       type: 'number',
@@ -898,16 +898,16 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { stdev } = import("Vector");\nstdev([1, 2, 3])',
-      'let { stdev } = import("Vector");\nstdev([1, 2, -3])',
-      'let { stdev } = import("Vector");\nstdev([1, 2, 3, 4])',
-      'let { stdev } = import("Vector");\nstdev([1, 2, -3, 4])',
-      'let { stdev } = import("Vector");\nstdev([1, 2, 3, 40, 50])',
+      'let { stdev } = import("vector");\nstdev([1, 2, 3])',
+      'let { stdev } = import("vector");\nstdev([1, 2, -3])',
+      'let { stdev } = import("vector");\nstdev([1, 2, 3, 4])',
+      'let { stdev } = import("vector");\nstdev([1, 2, -3, 4])',
+      'let { stdev } = import("vector");\nstdev([1, 2, 3, 40, 50])',
     ],
-    seeAlso: ['Vector.moving-stdev', 'Vector.centered-moving-stdev', 'Vector.running-stdev', 'Vector.variance', 'Vector.sample-stdev', 'Vector.rms', 'Vector.mad'],
+    seeAlso: ['vector.moving-stdev', 'vector.centered-moving-stdev', 'vector.running-stdev', 'vector.variance', 'vector.sample-stdev', 'vector.rms', 'vector.mad'],
   },
   'moving-stdev': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **moving standard deviation** of the `vector` with a given window size.',
     returns: {
       type: 'vector',
@@ -937,13 +937,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { moving-stdev } = import("Vector");\nmoving-stdev([1, 2, 3, 4, 5], 3)',
-      'let { moving-stdev } = import("Vector");\nmoving-stdev([1, 2, 3, 4, 5], 5)',
+      'let { moving-stdev } = import("vector");\nmoving-stdev([1, 2, 3, 4, 5], 3)',
+      'let { moving-stdev } = import("vector");\nmoving-stdev([1, 2, 3, 4, 5], 5)',
     ],
-    seeAlso: ['Vector.stdev', 'Vector.centered-moving-stdev', 'Vector.running-stdev'],
+    seeAlso: ['vector.stdev', 'vector.centered-moving-stdev', 'vector.running-stdev'],
   },
   'centered-moving-stdev': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **centered moving standard deviation** of the `vector` with a given window size.',
     returns: {
       type: 'array',
@@ -996,15 +996,15 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { centered-moving-stdev } = import("Vector");\ncentered-moving-stdev([1, 2, 3, 4, 5], 3)',
-      'let { centered-moving-stdev } = import("Vector");\ncentered-moving-stdev([1, 2, 3, 4, 5], 3, 1)',
-      'let { centered-moving-stdev } = import("Vector");\ncentered-moving-stdev([1, 2, 3, 4, 5], 3, 1, 5)',
-      'let { centered-moving-stdev } = import("Vector");\ncentered-moving-stdev([1, 2, 3, 4, 5], 3, 0, 6)',
+      'let { centered-moving-stdev } = import("vector");\ncentered-moving-stdev([1, 2, 3, 4, 5], 3)',
+      'let { centered-moving-stdev } = import("vector");\ncentered-moving-stdev([1, 2, 3, 4, 5], 3, 1)',
+      'let { centered-moving-stdev } = import("vector");\ncentered-moving-stdev([1, 2, 3, 4, 5], 3, 1, 5)',
+      'let { centered-moving-stdev } = import("vector");\ncentered-moving-stdev([1, 2, 3, 4, 5], 3, 0, 6)',
     ],
-    seeAlso: ['Vector.stdev', 'Vector.moving-stdev', 'Vector.running-stdev'],
+    seeAlso: ['vector.stdev', 'vector.moving-stdev', 'vector.running-stdev'],
   },
   'running-stdev': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **running standard deviation** of the `vector`.',
     returns: {
       type: 'vector',
@@ -1023,12 +1023,12 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { running-stdev } = import("Vector");\nrunning-stdev([1, 2, 3, 4, 5])',
+      'let { running-stdev } = import("vector");\nrunning-stdev([1, 2, 3, 4, 5])',
     ],
-    seeAlso: ['Vector.stdev', 'Vector.moving-stdev', 'Vector.centered-moving-stdev'],
+    seeAlso: ['vector.stdev', 'vector.moving-stdev', 'vector.centered-moving-stdev'],
   },
   'sample-stdev': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the sample standard deviation of all elements in the vector.',
     returns: {
       type: 'number',
@@ -1047,16 +1047,16 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { sample-stdev } = import("Vector");\nsample-stdev([1, 2, 3])',
-      'let { sample-stdev } = import("Vector");\nsample-stdev([1, 2, -3])',
-      'let { sample-stdev } = import("Vector");\nsample-stdev([1, 2, 3, 4])',
-      'let { sample-stdev } = import("Vector");\nsample-stdev([1, 2, -3, 4])',
-      'let { sample-stdev } = import("Vector");\nsample-stdev([1, 2, 3, 40, 50])',
+      'let { sample-stdev } = import("vector");\nsample-stdev([1, 2, 3])',
+      'let { sample-stdev } = import("vector");\nsample-stdev([1, 2, -3])',
+      'let { sample-stdev } = import("vector");\nsample-stdev([1, 2, 3, 4])',
+      'let { sample-stdev } = import("vector");\nsample-stdev([1, 2, -3, 4])',
+      'let { sample-stdev } = import("vector");\nsample-stdev([1, 2, 3, 40, 50])',
     ],
-    seeAlso: ['Vector.moving-sample-stdev', 'Vector.centered-moving-sample-stdev', 'Vector.running-sample-stdev', 'Vector.stdev', 'Vector.sample-variance'],
+    seeAlso: ['vector.moving-sample-stdev', 'vector.centered-moving-sample-stdev', 'vector.running-sample-stdev', 'vector.stdev', 'vector.sample-variance'],
   },
   'moving-sample-stdev': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **moving sample standard deviation** of the `vector` with a given window size.',
     returns: {
       type: 'vector',
@@ -1086,13 +1086,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { moving-sample-stdev } = import("Vector");\nmoving-sample-stdev([1, 2, 3, 4, 5], 3)',
-      'let { moving-sample-stdev } = import("Vector");\nmoving-sample-stdev([1, 2, 3, 4, 5], 5)',
+      'let { moving-sample-stdev } = import("vector");\nmoving-sample-stdev([1, 2, 3, 4, 5], 3)',
+      'let { moving-sample-stdev } = import("vector");\nmoving-sample-stdev([1, 2, 3, 4, 5], 5)',
     ],
-    seeAlso: ['Vector.sample-stdev', 'Vector.centered-moving-sample-stdev', 'Vector.running-sample-stdev'],
+    seeAlso: ['vector.sample-stdev', 'vector.centered-moving-sample-stdev', 'vector.running-sample-stdev'],
   },
   'centered-moving-sample-stdev': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **centered moving sample standard deviation** of the `vector` with a given window size.',
     returns: {
       type: 'array',
@@ -1145,15 +1145,15 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { centered-moving-sample-stdev } = import("Vector");\ncentered-moving-sample-stdev([1, 2, 3, 4, 5], 3)',
-      'let { centered-moving-sample-stdev } = import("Vector");\ncentered-moving-sample-stdev([1, 2, 3, 4, 5], 3, 1)',
-      'let { centered-moving-sample-stdev } = import("Vector");\ncentered-moving-sample-stdev([1, 2, 3, 4, 5], 3, 1, 5)',
-      'let { centered-moving-sample-stdev } = import("Vector");\ncentered-moving-sample-stdev([1, 2, 3, 4, 5], 3, 0, 6)',
+      'let { centered-moving-sample-stdev } = import("vector");\ncentered-moving-sample-stdev([1, 2, 3, 4, 5], 3)',
+      'let { centered-moving-sample-stdev } = import("vector");\ncentered-moving-sample-stdev([1, 2, 3, 4, 5], 3, 1)',
+      'let { centered-moving-sample-stdev } = import("vector");\ncentered-moving-sample-stdev([1, 2, 3, 4, 5], 3, 1, 5)',
+      'let { centered-moving-sample-stdev } = import("vector");\ncentered-moving-sample-stdev([1, 2, 3, 4, 5], 3, 0, 6)',
     ],
-    seeAlso: ['Vector.sample-stdev', 'Vector.moving-sample-stdev', 'Vector.running-sample-stdev'],
+    seeAlso: ['vector.sample-stdev', 'vector.moving-sample-stdev', 'vector.running-sample-stdev'],
   },
   'running-sample-stdev': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **running sample standard deviation** of the `vector`.',
     returns: {
       type: 'array',
@@ -1172,12 +1172,12 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { running-sample-stdev } = import("Vector");\nrunning-sample-stdev([1, 2, 3, 4, 5])',
+      'let { running-sample-stdev } = import("vector");\nrunning-sample-stdev([1, 2, 3, 4, 5])',
     ],
-    seeAlso: ['Vector.sample-stdev', 'Vector.moving-sample-stdev', 'Vector.centered-moving-sample-stdev'],
+    seeAlso: ['vector.sample-stdev', 'vector.moving-sample-stdev', 'vector.centered-moving-sample-stdev'],
   },
   'iqr': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **interquartile range** of a `vector`. Returns the difference between the third and first quartiles.',
     returns: {
       type: 'number',
@@ -1196,16 +1196,16 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { iqr } = import("Vector");\niqr([1, 2, 3, 4])',
-      'let { iqr } = import("Vector");\niqr([5, 4, 3, 2, 1, 2, 3, 4, 5])',
-      'let { iqr } = import("Vector");\niqr(range(1, 1000))',
-      'let { iqr, generate } = import("Vector");\niqr(generate(1000, -> 1e6 / ($ + 1) ^ 2))',
-      'let { iqr, generate } = import("Vector");\nlet { ln } = import("Math");\niqr(generate(1000, -> ln($ + 1)))',
+      'let { iqr } = import("vector");\niqr([1, 2, 3, 4])',
+      'let { iqr } = import("vector");\niqr([5, 4, 3, 2, 1, 2, 3, 4, 5])',
+      'let { iqr } = import("vector");\niqr(range(1, 1000))',
+      'let { iqr, generate } = import("vector");\niqr(generate(1000, -> 1e6 / ($ + 1) ^ 2))',
+      'let { iqr, generate } = import("vector");\nlet { ln } = import("math");\niqr(generate(1000, -> ln($ + 1)))',
     ],
-    seeAlso: ['Vector.moving-iqr', 'Vector.centered-moving-iqr', 'Vector.running-iqr', 'Vector.quartiles', 'Vector.median', 'Vector.mad', 'Vector.medad', 'Vector.outliers?', 'Vector.outliers'],
+    seeAlso: ['vector.moving-iqr', 'vector.centered-moving-iqr', 'vector.running-iqr', 'vector.quartiles', 'vector.median', 'vector.mad', 'vector.medad', 'vector.outliers?', 'vector.outliers'],
   },
   'moving-iqr': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **moving interquartile range** of a `vector` with a given window size.',
     returns: {
       type: 'vector',
@@ -1235,14 +1235,14 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { moving-iqr } = import("Vector");\nmoving-iqr([1, 2, 4, 7, 11, 16], 4)',
-      'let { moving-iqr } = import("Vector");\nmoving-iqr([1, 2, 4, 7, 11, 16], 5)',
-      'let { moving-iqr } = import("Vector");\nmoving-iqr([1, 2, 4, 7, 11, 16], 6)',
+      'let { moving-iqr } = import("vector");\nmoving-iqr([1, 2, 4, 7, 11, 16], 4)',
+      'let { moving-iqr } = import("vector");\nmoving-iqr([1, 2, 4, 7, 11, 16], 5)',
+      'let { moving-iqr } = import("vector");\nmoving-iqr([1, 2, 4, 7, 11, 16], 6)',
     ],
-    seeAlso: ['Vector.iqr', 'Vector.centered-moving-iqr', 'Vector.running-iqr'],
+    seeAlso: ['vector.iqr', 'vector.centered-moving-iqr', 'vector.running-iqr'],
   },
   'centered-moving-iqr': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **centered moving interquartile range** of a `vector` with a given window size.',
     returns: {
       type: 'array',
@@ -1295,13 +1295,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { centered-moving-iqr } = import("Vector");\ncentered-moving-iqr([1, 2, 4, 7, 11, 16], 4)',
-      'let { centered-moving-iqr } = import("Vector");\ncentered-moving-iqr([1, 2, 4, 7, 11, 16], 4, 0, 0)',
+      'let { centered-moving-iqr } = import("vector");\ncentered-moving-iqr([1, 2, 4, 7, 11, 16], 4)',
+      'let { centered-moving-iqr } = import("vector");\ncentered-moving-iqr([1, 2, 4, 7, 11, 16], 4, 0, 0)',
     ],
-    seeAlso: ['Vector.iqr', 'Vector.moving-iqr', 'Vector.running-iqr'],
+    seeAlso: ['vector.iqr', 'vector.moving-iqr', 'vector.running-iqr'],
   },
   'running-iqr': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **running interquartile range** of a `vector`. First three element in result is `null` since **running interquartile range** is not defined for less than four elements.',
     returns: {
       type: 'vector',
@@ -1320,13 +1320,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { running-iqr } = import("Vector");\nrunning-iqr([1, 2, 3, 4, 5, 6])',
-      'let { running-iqr } = import("Vector");\nrunning-iqr([-1, -2, -3, 1, 2, 3])',
+      'let { running-iqr } = import("vector");\nrunning-iqr([1, 2, 3, 4, 5, 6])',
+      'let { running-iqr } = import("vector");\nrunning-iqr([-1, -2, -3, 1, 2, 3])',
     ],
-    seeAlso: ['Vector.iqr', 'Vector.moving-iqr', 'Vector.centered-moving-iqr'],
+    seeAlso: ['vector.iqr', 'vector.moving-iqr', 'vector.centered-moving-iqr'],
   },
   'sum': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the sum of all elements in the vector.',
     returns: {
       type: 'number',
@@ -1345,13 +1345,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { sum } = import("Vector");\nsum([1, 2, 3])',
-      'let { sum } = import("Vector");\nsum([1, 2, -3])',
+      'let { sum } = import("vector");\nsum([1, 2, 3])',
+      'let { sum } = import("vector");\nsum([1, 2, -3])',
     ],
-    seeAlso: ['Vector.moving-sum', 'Vector.centered-moving-sum', 'Vector.running-sum', 'Vector.prod', 'Vector.cumsum', 'Vector.mean'],
+    seeAlso: ['vector.moving-sum', 'vector.centered-moving-sum', 'vector.running-sum', 'vector.prod', 'vector.cumsum', 'vector.mean'],
   },
   'moving-sum': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **moving sum** of the `vector` with a given window size.',
     returns: {
       type: 'vector',
@@ -1381,13 +1381,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { moving-sum } = import("Vector");\nmoving-sum([1, 2, 3, 4, 5], 3)',
-      'let { moving-sum } = import("Vector");\nmoving-sum([1, 2, 3, 4, 5], 5)',
+      'let { moving-sum } = import("vector");\nmoving-sum([1, 2, 3, 4, 5], 3)',
+      'let { moving-sum } = import("vector");\nmoving-sum([1, 2, 3, 4, 5], 5)',
     ],
-    seeAlso: ['Vector.sum', 'Vector.centered-moving-sum', 'Vector.running-sum'],
+    seeAlso: ['vector.sum', 'vector.centered-moving-sum', 'vector.running-sum'],
   },
   'centered-moving-sum': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **centered moving sum** of the `vector` with a given window size.',
     returns: {
       type: 'array',
@@ -1440,14 +1440,14 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { centered-moving-sum } = import("Vector");\ncentered-moving-sum([1, 2, 3, 4, 5], 3)',
-      'let { centered-moving-sum } = import("Vector");\ncentered-moving-sum([1, 2, 3, 4, 5], 3, 0, 0)',
-      'let { centered-moving-sum } = import("Vector");\ncentered-moving-sum([1, 2, 3, 4, 5], 3, 10)',
+      'let { centered-moving-sum } = import("vector");\ncentered-moving-sum([1, 2, 3, 4, 5], 3)',
+      'let { centered-moving-sum } = import("vector");\ncentered-moving-sum([1, 2, 3, 4, 5], 3, 0, 0)',
+      'let { centered-moving-sum } = import("vector");\ncentered-moving-sum([1, 2, 3, 4, 5], 3, 10)',
     ],
-    seeAlso: ['Vector.sum', 'Vector.moving-sum', 'Vector.running-sum'],
+    seeAlso: ['vector.sum', 'vector.moving-sum', 'vector.running-sum'],
   },
   'running-sum': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **running sum** of the `vector`.',
     returns: {
       type: 'vector',
@@ -1466,13 +1466,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { running-sum } = import("Vector");\nrunning-sum([1, 2, 3])',
-      'let { running-sum } = import("Vector");\nrunning-sum([1, -2, -3])',
+      'let { running-sum } = import("vector");\nrunning-sum([1, 2, 3])',
+      'let { running-sum } = import("vector");\nrunning-sum([1, -2, -3])',
     ],
-    seeAlso: ['Vector.sum', 'Vector.moving-sum', 'Vector.centered-moving-sum', 'Vector.cumsum'],
+    seeAlso: ['vector.sum', 'vector.moving-sum', 'vector.centered-moving-sum', 'vector.cumsum'],
   },
   'prod': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **product** of all elements in the `vector`.',
     returns: {
       type: 'number',
@@ -1491,13 +1491,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { prod } = import("Vector");\nprod([1, 2, 3])',
-      'let { prod } = import("Vector");\nprod([1, 2, -3])',
+      'let { prod } = import("vector");\nprod([1, 2, 3])',
+      'let { prod } = import("vector");\nprod([1, 2, -3])',
     ],
-    seeAlso: ['Vector.moving-prod', 'Vector.centered-moving-prod', 'Vector.running-prod', 'Vector.sum', 'Vector.cumprod'],
+    seeAlso: ['vector.moving-prod', 'vector.centered-moving-prod', 'vector.running-prod', 'vector.sum', 'vector.cumprod'],
   },
   'moving-prod': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **moving product** of the `vector` with a given window size.',
     returns: {
       type: 'vector',
@@ -1527,13 +1527,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { moving-prod } = import("Vector");\nmoving-prod([1, 2, 3, 4, 5], 3)',
-      'let { moving-prod } = import("Vector");\nmoving-prod([1, 2, 3, 4, 5], 5)',
+      'let { moving-prod } = import("vector");\nmoving-prod([1, 2, 3, 4, 5], 3)',
+      'let { moving-prod } = import("vector");\nmoving-prod([1, 2, 3, 4, 5], 5)',
     ],
-    seeAlso: ['Vector.prod', 'Vector.centered-moving-prod', 'Vector.running-prod'],
+    seeAlso: ['vector.prod', 'vector.centered-moving-prod', 'vector.running-prod'],
   },
   'centered-moving-prod': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **centered moving product** of the `vector` with a given window size.',
     returns: {
       type: 'array',
@@ -1586,13 +1586,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { centered-moving-prod } = import("Vector");\ncentered-moving-prod([1, 2, 3, 4, 5], 3)',
-      'let { centered-moving-prod } = import("Vector");\ncentered-moving-prod([1, 2, 3, 4, 5], 3, 0, 0)',
+      'let { centered-moving-prod } = import("vector");\ncentered-moving-prod([1, 2, 3, 4, 5], 3)',
+      'let { centered-moving-prod } = import("vector");\ncentered-moving-prod([1, 2, 3, 4, 5], 3, 0, 0)',
     ],
-    seeAlso: ['Vector.prod', 'Vector.moving-prod', 'Vector.running-prod'],
+    seeAlso: ['vector.prod', 'vector.moving-prod', 'vector.running-prod'],
   },
   'running-prod': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **running product** of the `vector`.',
     returns: {
       type: 'vector',
@@ -1611,13 +1611,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { running-prod } = import("Vector");\nrunning-prod([1, 2, 3, 4, 5])',
-      'let { running-prod } = import("Vector");\nrunning-prod([1, -2, -3])',
+      'let { running-prod } = import("vector");\nrunning-prod([1, 2, 3, 4, 5])',
+      'let { running-prod } = import("vector");\nrunning-prod([1, -2, -3])',
     ],
-    seeAlso: ['Vector.prod', 'Vector.moving-prod', 'Vector.centered-moving-prod', 'Vector.cumprod'],
+    seeAlso: ['vector.prod', 'vector.moving-prod', 'vector.centered-moving-prod', 'vector.cumprod'],
   },
   'min': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the minimum value of all elements in the vector.',
     returns: {
       type: 'number',
@@ -1636,16 +1636,16 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      '// Using "as" alias because "min" shadows a builtin function\nlet { min as vec-min } = import("Vector");\nvec-min([1, 2, 3])',
-      '// Using "as" alias because "min" shadows a builtin function\nlet { min as vec-min } = import("Vector");\nvec-min([1, 1, 2, 3, 3])',
-      '// Using "as" alias because "min" shadows a builtin function\nlet { min as vec-min } = import("Vector");\nvec-min([1, 2, -3])',
-      '// Using "as" alias because "min" shadows a builtin function\nlet { min as vec-min } = import("Vector");\nvec-min([1, 2, 3, 4])',
-      '// Using "as" alias because "min" shadows a builtin function\nlet { min as vec-min } = import("Vector");\nvec-min([1, 2, -3, 4])',
+      '// Using "as" alias because "min" shadows a builtin function\nlet { min as vec-min } = import("vector");\nvec-min([1, 2, 3])',
+      '// Using "as" alias because "min" shadows a builtin function\nlet { min as vec-min } = import("vector");\nvec-min([1, 1, 2, 3, 3])',
+      '// Using "as" alias because "min" shadows a builtin function\nlet { min as vec-min } = import("vector");\nvec-min([1, 2, -3])',
+      '// Using "as" alias because "min" shadows a builtin function\nlet { min as vec-min } = import("vector");\nvec-min([1, 2, 3, 4])',
+      '// Using "as" alias because "min" shadows a builtin function\nlet { min as vec-min } = import("vector");\nvec-min([1, 2, -3, 4])',
     ],
-    seeAlso: ['min', 'Vector.moving-min', 'Vector.centered-moving-min', 'Vector.running-min', 'Vector.max', 'Vector.span', 'Vector.min-index'],
+    seeAlso: ['min', 'vector.moving-min', 'vector.centered-moving-min', 'vector.running-min', 'vector.max', 'vector.span', 'vector.min-index'],
   },
   'moving-min': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **moving minimum** of the `vector` with a given window size.',
     returns: {
       type: 'vector',
@@ -1675,13 +1675,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { moving-min } = import("Vector");\nmoving-min([1, 2, 3, 4, 5], 3)',
-      'let { moving-min } = import("Vector");\nmoving-min([1, 2, 3, 4, 5], 5)',
+      'let { moving-min } = import("vector");\nmoving-min([1, 2, 3, 4, 5], 3)',
+      'let { moving-min } = import("vector");\nmoving-min([1, 2, 3, 4, 5], 5)',
     ],
-    seeAlso: ['Vector.min', 'Vector.centered-moving-min', 'Vector.running-min'],
+    seeAlso: ['vector.min', 'vector.centered-moving-min', 'vector.running-min'],
   },
   'centered-moving-min': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **centered moving minimum** of the `vector` with a given window size.',
     returns: {
       type: 'array',
@@ -1734,14 +1734,14 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { centered-moving-min } = import("Vector");\ncentered-moving-min([1, 2, 3, 4, 5], 3)',
-      'let { centered-moving-min } = import("Vector");\ncentered-moving-min([1, 2, 3, 4, 5], 3, 0, 100)',
-      'let { centered-moving-min } = import("Vector");\ncentered-moving-min([1, 2, 3, 4, 5], 3, 0)',
+      'let { centered-moving-min } = import("vector");\ncentered-moving-min([1, 2, 3, 4, 5], 3)',
+      'let { centered-moving-min } = import("vector");\ncentered-moving-min([1, 2, 3, 4, 5], 3, 0, 100)',
+      'let { centered-moving-min } = import("vector");\ncentered-moving-min([1, 2, 3, 4, 5], 3, 0)',
     ],
-    seeAlso: ['Vector.min', 'Vector.moving-min', 'Vector.running-min'],
+    seeAlso: ['vector.min', 'vector.moving-min', 'vector.running-min'],
   },
   'running-min': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **running minimum** of the `vector`.',
     returns: {
       type: 'vector',
@@ -1760,13 +1760,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { running-min } = import("Vector");\nrunning-min([1, 2, 3])',
-      'let { running-min } = import("Vector");\nrunning-min([1, -2, -3])',
+      'let { running-min } = import("vector");\nrunning-min([1, 2, 3])',
+      'let { running-min } = import("vector");\nrunning-min([1, -2, -3])',
     ],
-    seeAlso: ['Vector.min', 'Vector.moving-min', 'Vector.centered-moving-min'],
+    seeAlso: ['vector.min', 'vector.moving-min', 'vector.centered-moving-min'],
   },
   'max': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the maximum value of all elements in the vector.',
     returns: {
       type: 'number',
@@ -1785,16 +1785,16 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      '// Using "as" alias because "max" shadows a builtin function\nlet { max as vec-max } = import("Vector");\nvec-max([1, 2, 3])',
-      '// Using "as" alias because "max" shadows a builtin function\nlet { max as vec-max } = import("Vector");\nvec-max([1, 1, 2, 3, 3])',
-      '// Using "as" alias because "max" shadows a builtin function\nlet { max as vec-max } = import("Vector");\nvec-max([1, 2, -3])',
-      '// Using "as" alias because "max" shadows a builtin function\nlet { max as vec-max } = import("Vector");\nvec-max([1, 2, 3, 4])',
-      '// Using "as" alias because "max" shadows a builtin function\nlet { max as vec-max } = import("Vector");\nvec-max([1, 2, -3, 4])',
+      '// Using "as" alias because "max" shadows a builtin function\nlet { max as vec-max } = import("vector");\nvec-max([1, 2, 3])',
+      '// Using "as" alias because "max" shadows a builtin function\nlet { max as vec-max } = import("vector");\nvec-max([1, 1, 2, 3, 3])',
+      '// Using "as" alias because "max" shadows a builtin function\nlet { max as vec-max } = import("vector");\nvec-max([1, 2, -3])',
+      '// Using "as" alias because "max" shadows a builtin function\nlet { max as vec-max } = import("vector");\nvec-max([1, 2, 3, 4])',
+      '// Using "as" alias because "max" shadows a builtin function\nlet { max as vec-max } = import("vector");\nvec-max([1, 2, -3, 4])',
     ],
-    seeAlso: ['max', 'Vector.moving-max', 'Vector.centered-moving-max', 'Vector.running-max', 'Vector.min', 'Vector.span', 'Vector.max-index'],
+    seeAlso: ['max', 'vector.moving-max', 'vector.centered-moving-max', 'vector.running-max', 'vector.min', 'vector.span', 'vector.max-index'],
   },
   'moving-max': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **moving maximum** of the `vector` with a given window size.',
     returns: {
       type: 'vector',
@@ -1824,13 +1824,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { moving-max } = import("Vector");\nmoving-max([1, 2, 3, 4, 5], 3)',
-      'let { moving-max } = import("Vector");\nmoving-max([1, 2, 3, 4, 5], 5)',
+      'let { moving-max } = import("vector");\nmoving-max([1, 2, 3, 4, 5], 3)',
+      'let { moving-max } = import("vector");\nmoving-max([1, 2, 3, 4, 5], 5)',
     ],
-    seeAlso: ['Vector.max', 'Vector.centered-moving-max', 'Vector.running-max'],
+    seeAlso: ['vector.max', 'vector.centered-moving-max', 'vector.running-max'],
   },
   'centered-moving-max': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **centered moving maximum** of the `vector` with a given window size.',
     returns: {
       type: 'array',
@@ -1883,14 +1883,14 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { centered-moving-max } = import("Vector");\ncentered-moving-max([1, 2, 3, 4, 5], 3)',
-      'let { centered-moving-max } = import("Vector");\ncentered-moving-max([1, 2, 3, 4, 5], 3, 0, 100)',
-      'let { centered-moving-max } = import("Vector");\ncentered-moving-max([1, 2, 3, 4, 5], 3, 0)',
+      'let { centered-moving-max } = import("vector");\ncentered-moving-max([1, 2, 3, 4, 5], 3)',
+      'let { centered-moving-max } = import("vector");\ncentered-moving-max([1, 2, 3, 4, 5], 3, 0, 100)',
+      'let { centered-moving-max } = import("vector");\ncentered-moving-max([1, 2, 3, 4, 5], 3, 0)',
     ],
-    seeAlso: ['Vector.max', 'Vector.moving-max', 'Vector.running-max'],
+    seeAlso: ['vector.max', 'vector.moving-max', 'vector.running-max'],
   },
   'running-max': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **running maximum** of the `vector`.',
     returns: {
       type: 'vector',
@@ -1909,13 +1909,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { running-max } = import("Vector");\nrunning-max([1, 2, 3])',
-      'let { running-max } = import("Vector");\nrunning-max([1, -2, -3])',
+      'let { running-max } = import("vector");\nrunning-max([1, 2, 3])',
+      'let { running-max } = import("vector");\nrunning-max([1, -2, -3])',
     ],
-    seeAlso: ['Vector.max', 'Vector.moving-max', 'Vector.centered-moving-max'],
+    seeAlso: ['vector.max', 'vector.moving-max', 'vector.centered-moving-max'],
   },
   'span': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the difference between the maximum and minimum values in a vector.',
     returns: {
       type: 'number',
@@ -1934,14 +1934,14 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { span } = import("Vector");\nspan([1, 2, 3])',
-      'let { span } = import("Vector");\nspan([1, 1, 2, 3, 3])',
-      'let { span } = import("Vector");\nspan([1, 2, -3])',
+      'let { span } = import("vector");\nspan([1, 2, 3])',
+      'let { span } = import("vector");\nspan([1, 1, 2, 3, 3])',
+      'let { span } = import("vector");\nspan([1, 2, -3])',
     ],
-    seeAlso: ['Vector.moving-span', 'Vector.centered-moving-span', 'Vector.running-span', 'Vector.min', 'Vector.max'],
+    seeAlso: ['vector.moving-span', 'vector.centered-moving-span', 'vector.running-span', 'vector.min', 'vector.max'],
   },
   'moving-span': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **moving span** of a `vector` with a given window size.',
     returns: {
       type: 'vector',
@@ -1971,14 +1971,14 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { moving-span } = import("Vector");\nmoving-span([1, 2, 4, 7, 11, 16], 4)',
-      'let { moving-span } = import("Vector");\nmoving-span([1, 2, 4, 7, 11, 16], 5)',
-      'let { moving-span } = import("Vector");\nmoving-span([1, 2, 4, 7, 11, 16], 6)',
+      'let { moving-span } = import("vector");\nmoving-span([1, 2, 4, 7, 11, 16], 4)',
+      'let { moving-span } = import("vector");\nmoving-span([1, 2, 4, 7, 11, 16], 5)',
+      'let { moving-span } = import("vector");\nmoving-span([1, 2, 4, 7, 11, 16], 6)',
     ],
-    seeAlso: ['Vector.span', 'Vector.centered-moving-span', 'Vector.running-span'],
+    seeAlso: ['vector.span', 'vector.centered-moving-span', 'vector.running-span'],
   },
   'centered-moving-span': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **centered moving span** of a `vector` with a given window size. The result is padded with `leftPadding` on the left and right.',
     returns: {
       type: 'array',
@@ -2031,13 +2031,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { centered-moving-span } = import("Vector");\ncentered-moving-span([1, 2, 4, 7, 11, 16], 4)',
-      'let { centered-moving-span } = import("Vector");\ncentered-moving-span([1, 2, 4, 7, 11, 16], 3, 0, 100)',
+      'let { centered-moving-span } = import("vector");\ncentered-moving-span([1, 2, 4, 7, 11, 16], 4)',
+      'let { centered-moving-span } = import("vector");\ncentered-moving-span([1, 2, 4, 7, 11, 16], 3, 0, 100)',
     ],
-    seeAlso: ['Vector.span', 'Vector.moving-span', 'Vector.running-span'],
+    seeAlso: ['vector.span', 'vector.moving-span', 'vector.running-span'],
   },
   'running-span': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **running span** of a `vector` with a given window size.',
     returns: {
       type: 'vector',
@@ -2056,12 +2056,12 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { running-span } = import("Vector");\nrunning-span([1, 2, 4])',
+      'let { running-span } = import("vector");\nrunning-span([1, 2, 4])',
     ],
-    seeAlso: ['Vector.span', 'Vector.moving-span', 'Vector.centered-moving-span'],
+    seeAlso: ['vector.span', 'vector.moving-span', 'vector.centered-moving-span'],
   },
   'skewness': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **skewness** of a `vector`. Returns the third standardized moment.',
     returns: {
       type: 'number',
@@ -2080,13 +2080,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { skewness } = import("Vector");\nskewness([1, 2, 3, 6, 20])',
-      'let { skewness } = import("Vector");\nskewness([1, 2, 2, 3])',
+      'let { skewness } = import("vector");\nskewness([1, 2, 3, 6, 20])',
+      'let { skewness } = import("vector");\nskewness([1, 2, 2, 3])',
     ],
-    seeAlso: ['Vector.moving-skewness', 'Vector.centered-moving-skewness', 'Vector.running-skewness', 'Vector.kurtosis', 'Vector.sample-skewness', 'Vector.excess-kurtosis'],
+    seeAlso: ['vector.moving-skewness', 'vector.centered-moving-skewness', 'vector.running-skewness', 'vector.kurtosis', 'vector.sample-skewness', 'vector.excess-kurtosis'],
   },
   'moving-skewness': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **moving skewness** of a `vector` with a given window size.',
     returns: {
       type: 'vector',
@@ -2116,13 +2116,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { moving-skewness } = import("Vector");\nmoving-skewness([1, 2, 4, 7, 11, 16], 4)',
-      'let { moving-skewness } = import("Vector");\nmoving-skewness([1, 2, 4, 7, 11, 16], 5)',
+      'let { moving-skewness } = import("vector");\nmoving-skewness([1, 2, 4, 7, 11, 16], 4)',
+      'let { moving-skewness } = import("vector");\nmoving-skewness([1, 2, 4, 7, 11, 16], 5)',
     ],
-    seeAlso: ['Vector.skewness', 'Vector.centered-moving-skewness', 'Vector.running-skewness'],
+    seeAlso: ['vector.skewness', 'vector.centered-moving-skewness', 'vector.running-skewness'],
   },
   'centered-moving-skewness': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **centered moving skewness** of a `vector` with a given window size and padding.',
     returns: {
       type: 'array',
@@ -2175,13 +2175,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { centered-moving-skewness } = import("Vector");\ncentered-moving-skewness([1, 2, 4, 7, 11, 16], 4)',
-      'let { centered-moving-skewness } = import("Vector");\ncentered-moving-skewness([1, 2, 4, 7, 11, 16], 4, 0, 0)',
+      'let { centered-moving-skewness } = import("vector");\ncentered-moving-skewness([1, 2, 4, 7, 11, 16], 4)',
+      'let { centered-moving-skewness } = import("vector");\ncentered-moving-skewness([1, 2, 4, 7, 11, 16], 4, 0, 0)',
     ],
-    seeAlso: ['Vector.skewness', 'Vector.moving-skewness', 'Vector.running-skewness'],
+    seeAlso: ['vector.skewness', 'vector.moving-skewness', 'vector.running-skewness'],
   },
   'running-skewness': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **running skewness** of a `vector` with a given window size. First two element in result is `null` since **running skewness** is not defined for less than three elements.',
     returns: {
       type: 'array',
@@ -2200,12 +2200,12 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { running-skewness } = import("Vector");\nrunning-skewness([1, 2, 4, 7, 11])',
+      'let { running-skewness } = import("vector");\nrunning-skewness([1, 2, 4, 7, 11])',
     ],
-    seeAlso: ['Vector.skewness', 'Vector.moving-skewness', 'Vector.centered-moving-skewness'],
+    seeAlso: ['vector.skewness', 'vector.moving-skewness', 'vector.centered-moving-skewness'],
   },
   'sample-skewness': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **sample skewness** of a `vector`. Returns the third standardized moment.',
     returns: {
       type: 'number',
@@ -2224,13 +2224,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { sample-skewness } = import("Vector");\nsample-skewness([1, 2, 3, 6, 20])',
-      'let { sample-skewness } = import("Vector");\nsample-skewness([1, 2, 2, 3])',
+      'let { sample-skewness } = import("vector");\nsample-skewness([1, 2, 3, 6, 20])',
+      'let { sample-skewness } = import("vector");\nsample-skewness([1, 2, 2, 3])',
     ],
-    seeAlso: ['Vector.moving-sample-skewness', 'Vector.centered-moving-sample-skewness', 'Vector.running-sample-skewness', 'Vector.skewness', 'Vector.sample-kurtosis'],
+    seeAlso: ['vector.moving-sample-skewness', 'vector.centered-moving-sample-skewness', 'vector.running-sample-skewness', 'vector.skewness', 'vector.sample-kurtosis'],
   },
   'moving-sample-skewness': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **moving sample skewness** of a `vector` with a given window size.',
     returns: {
       type: 'vector',
@@ -2260,13 +2260,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { moving-sample-skewness } = import("Vector");\nmoving-sample-skewness([1, 2, 4, 7, 11, 16], 4)',
-      'let { moving-sample-skewness } = import("Vector");\nmoving-sample-skewness([1, 2, 4, 7, 11, 16], 5)',
+      'let { moving-sample-skewness } = import("vector");\nmoving-sample-skewness([1, 2, 4, 7, 11, 16], 4)',
+      'let { moving-sample-skewness } = import("vector");\nmoving-sample-skewness([1, 2, 4, 7, 11, 16], 5)',
     ],
-    seeAlso: ['Vector.sample-skewness', 'Vector.centered-moving-sample-skewness', 'Vector.running-sample-skewness'],
+    seeAlso: ['vector.sample-skewness', 'vector.centered-moving-sample-skewness', 'vector.running-sample-skewness'],
   },
   'centered-moving-sample-skewness': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **centered moving sample skewness** of a `vector` with a given window size and padding.',
     returns: {
       type: 'array',
@@ -2319,13 +2319,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { centered-moving-sample-skewness } = import("Vector");\ncentered-moving-sample-skewness([1, 2, 4, 7, 11, 16], 4)',
-      'let { centered-moving-sample-skewness } = import("Vector");\ncentered-moving-sample-skewness([1, 2, 4, 7, 11, 16], 3, 0, 100)',
+      'let { centered-moving-sample-skewness } = import("vector");\ncentered-moving-sample-skewness([1, 2, 4, 7, 11, 16], 4)',
+      'let { centered-moving-sample-skewness } = import("vector");\ncentered-moving-sample-skewness([1, 2, 4, 7, 11, 16], 3, 0, 100)',
     ],
-    seeAlso: ['Vector.sample-skewness', 'Vector.moving-sample-skewness', 'Vector.running-sample-skewness'],
+    seeAlso: ['vector.sample-skewness', 'vector.moving-sample-skewness', 'vector.running-sample-skewness'],
   },
   'running-sample-skewness': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **running sample skewness** of a `vector` with a given window size. First two element in result is `null` since **running sample skewness** is not defined for less than three elements.',
     returns: {
       type: 'array',
@@ -2344,12 +2344,12 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { running-sample-skewness } = import("Vector");\nrunning-sample-skewness([1, 2, 4, 7, 11])',
+      'let { running-sample-skewness } = import("vector");\nrunning-sample-skewness([1, 2, 4, 7, 11])',
     ],
-    seeAlso: ['Vector.sample-skewness', 'Vector.moving-sample-skewness', 'Vector.centered-moving-sample-skewness'],
+    seeAlso: ['vector.sample-skewness', 'vector.moving-sample-skewness', 'vector.centered-moving-sample-skewness'],
   },
   'excess-kurtosis': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **excess kurtosis** of a `vector`. Returns the third standardized moment.',
     returns: {
       type: 'number',
@@ -2368,13 +2368,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { excess-kurtosis } = import("Vector");\nexcess-kurtosis([1, 2, 3, 6, 20])',
-      'let { excess-kurtosis } = import("Vector");\nexcess-kurtosis([1, 2, 2, 3])',
+      'let { excess-kurtosis } = import("vector");\nexcess-kurtosis([1, 2, 3, 6, 20])',
+      'let { excess-kurtosis } = import("vector");\nexcess-kurtosis([1, 2, 2, 3])',
     ],
-    seeAlso: ['Vector.moving-excess-kurtosis', 'Vector.centered-moving-excess-kurtosis', 'Vector.running-excess-kurtosis', 'Vector.kurtosis', 'Vector.sample-excess-kurtosis', 'Vector.skewness'],
+    seeAlso: ['vector.moving-excess-kurtosis', 'vector.centered-moving-excess-kurtosis', 'vector.running-excess-kurtosis', 'vector.kurtosis', 'vector.sample-excess-kurtosis', 'vector.skewness'],
   },
   'moving-excess-kurtosis': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **moving excess kurtosis** of a `vector` with a given window size.',
     returns: {
       type: 'vector',
@@ -2404,13 +2404,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { moving-excess-kurtosis } = import("Vector");\nmoving-excess-kurtosis([1, 2, 4, 7, 11, 16], 4)',
-      'let { moving-excess-kurtosis } = import("Vector");\nmoving-excess-kurtosis([1, 2, 4, 7, 11, 16], 5)',
+      'let { moving-excess-kurtosis } = import("vector");\nmoving-excess-kurtosis([1, 2, 4, 7, 11, 16], 4)',
+      'let { moving-excess-kurtosis } = import("vector");\nmoving-excess-kurtosis([1, 2, 4, 7, 11, 16], 5)',
     ],
-    seeAlso: ['Vector.excess-kurtosis', 'Vector.centered-moving-excess-kurtosis', 'Vector.running-excess-kurtosis'],
+    seeAlso: ['vector.excess-kurtosis', 'vector.centered-moving-excess-kurtosis', 'vector.running-excess-kurtosis'],
   },
   'centered-moving-excess-kurtosis': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **centered moving excess kurtosis** of a `vector` with a given window size and padding.',
     returns: {
       type: 'array',
@@ -2463,13 +2463,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { centered-moving-excess-kurtosis } = import("Vector");\ncentered-moving-excess-kurtosis([1, 2, 4, 7, 11, 16], 4)',
-      'let { centered-moving-excess-kurtosis } = import("Vector");\ncentered-moving-excess-kurtosis([1, 2, 4, 7, 11, 16], 4, 0, 0)',
+      'let { centered-moving-excess-kurtosis } = import("vector");\ncentered-moving-excess-kurtosis([1, 2, 4, 7, 11, 16], 4)',
+      'let { centered-moving-excess-kurtosis } = import("vector");\ncentered-moving-excess-kurtosis([1, 2, 4, 7, 11, 16], 4, 0, 0)',
     ],
-    seeAlso: ['Vector.excess-kurtosis', 'Vector.moving-excess-kurtosis', 'Vector.running-excess-kurtosis'],
+    seeAlso: ['vector.excess-kurtosis', 'vector.moving-excess-kurtosis', 'vector.running-excess-kurtosis'],
   },
   'running-excess-kurtosis': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **running excess kurtosis** of a `vector` with a given window size. First two element in result is `null` since **running excess kurtosis** is not defined for less than three elements.',
     returns: {
       type: 'array',
@@ -2488,12 +2488,12 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { running-excess-kurtosis } = import("Vector");\nrunning-excess-kurtosis([1, 2, 4, 7, 11])',
+      'let { running-excess-kurtosis } = import("vector");\nrunning-excess-kurtosis([1, 2, 4, 7, 11])',
     ],
-    seeAlso: ['Vector.excess-kurtosis', 'Vector.moving-excess-kurtosis', 'Vector.centered-moving-excess-kurtosis'],
+    seeAlso: ['vector.excess-kurtosis', 'vector.moving-excess-kurtosis', 'vector.centered-moving-excess-kurtosis'],
   },
   'kurtosis': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **kurtosis** of a `vector`. Returns the third standardized moment.',
     returns: {
       type: 'number',
@@ -2512,13 +2512,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { kurtosis } = import("Vector");\nkurtosis([1, 2, 3, 6, 20])',
-      'let { kurtosis } = import("Vector");\nkurtosis([1, 2, 2, 3])',
+      'let { kurtosis } = import("vector");\nkurtosis([1, 2, 3, 6, 20])',
+      'let { kurtosis } = import("vector");\nkurtosis([1, 2, 2, 3])',
     ],
-    seeAlso: ['Vector.moving-kurtosis', 'Vector.centered-moving-kurtosis', 'Vector.running-kurtosis', 'Vector.excess-kurtosis', 'Vector.sample-kurtosis', 'Vector.skewness'],
+    seeAlso: ['vector.moving-kurtosis', 'vector.centered-moving-kurtosis', 'vector.running-kurtosis', 'vector.excess-kurtosis', 'vector.sample-kurtosis', 'vector.skewness'],
   },
   'moving-kurtosis': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **moving kurtosis** of a `vector` with a given window size.',
     returns: {
       type: 'vector',
@@ -2548,13 +2548,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { moving-kurtosis } = import("Vector");\nmoving-kurtosis([1, 2, 4, 7, 11, 16], 4)',
-      'let { moving-kurtosis } = import("Vector");\nmoving-kurtosis([1, 2, 4, 7, 11, 16], 5)',
+      'let { moving-kurtosis } = import("vector");\nmoving-kurtosis([1, 2, 4, 7, 11, 16], 4)',
+      'let { moving-kurtosis } = import("vector");\nmoving-kurtosis([1, 2, 4, 7, 11, 16], 5)',
     ],
-    seeAlso: ['Vector.kurtosis', 'Vector.centered-moving-kurtosis', 'Vector.running-kurtosis'],
+    seeAlso: ['vector.kurtosis', 'vector.centered-moving-kurtosis', 'vector.running-kurtosis'],
   },
   'centered-moving-kurtosis': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **centered moving kurtosis** of a `vector` with a given window size and padding.',
     returns: {
       type: 'array',
@@ -2607,13 +2607,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { centered-moving-kurtosis } = import("Vector");\ncentered-moving-kurtosis([1, 2, 4, 7, 11, 16], 4)',
-      'let { centered-moving-kurtosis } = import("Vector");\ncentered-moving-kurtosis([1, 2, 4, 7, 11, 16], 4, 0, 0)',
+      'let { centered-moving-kurtosis } = import("vector");\ncentered-moving-kurtosis([1, 2, 4, 7, 11, 16], 4)',
+      'let { centered-moving-kurtosis } = import("vector");\ncentered-moving-kurtosis([1, 2, 4, 7, 11, 16], 4, 0, 0)',
     ],
-    seeAlso: ['Vector.kurtosis', 'Vector.moving-kurtosis', 'Vector.running-kurtosis'],
+    seeAlso: ['vector.kurtosis', 'vector.moving-kurtosis', 'vector.running-kurtosis'],
   },
   'running-kurtosis': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **running kurtosis** of a `vector` with a given window size. First two element in result is `null` since **running kurtosis** is not defined for less than three elements.',
     returns: {
       type: 'array',
@@ -2632,12 +2632,12 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { running-kurtosis } = import("Vector");\nrunning-kurtosis([1, 2, 4, 7, 11])',
+      'let { running-kurtosis } = import("vector");\nrunning-kurtosis([1, 2, 4, 7, 11])',
     ],
-    seeAlso: ['Vector.kurtosis', 'Vector.moving-kurtosis', 'Vector.centered-moving-kurtosis'],
+    seeAlso: ['vector.kurtosis', 'vector.moving-kurtosis', 'vector.centered-moving-kurtosis'],
   },
   'sample-excess-kurtosis': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **sample excess kurtosis** of a `vector`. Returns the third standardized moment.',
     returns: {
       type: 'number',
@@ -2656,13 +2656,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { sample-excess-kurtosis } = import("Vector");\nsample-excess-kurtosis([1, 2, 3, 6, 20])',
-      'let { sample-excess-kurtosis } = import("Vector");\nsample-excess-kurtosis([1, 2, 2, 3])',
+      'let { sample-excess-kurtosis } = import("vector");\nsample-excess-kurtosis([1, 2, 3, 6, 20])',
+      'let { sample-excess-kurtosis } = import("vector");\nsample-excess-kurtosis([1, 2, 2, 3])',
     ],
-    seeAlso: ['Vector.moving-sample-excess-kurtosis', 'Vector.centered-moving-sample-excess-kurtosis', 'Vector.running-sample-excess-kurtosis', 'Vector.sample-kurtosis', 'Vector.excess-kurtosis'],
+    seeAlso: ['vector.moving-sample-excess-kurtosis', 'vector.centered-moving-sample-excess-kurtosis', 'vector.running-sample-excess-kurtosis', 'vector.sample-kurtosis', 'vector.excess-kurtosis'],
   },
   'moving-sample-excess-kurtosis': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **moving sample excess kurtosis** of a `vector` with a given window size.',
     returns: {
       type: 'vector',
@@ -2692,13 +2692,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { moving-sample-excess-kurtosis } = import("Vector");\nmoving-sample-excess-kurtosis([1, 2, 4, 7, 11, 16], 4)',
-      'let { moving-sample-excess-kurtosis } = import("Vector");\nmoving-sample-excess-kurtosis([1, 2, 4, 7, 11, 16], 5)',
+      'let { moving-sample-excess-kurtosis } = import("vector");\nmoving-sample-excess-kurtosis([1, 2, 4, 7, 11, 16], 4)',
+      'let { moving-sample-excess-kurtosis } = import("vector");\nmoving-sample-excess-kurtosis([1, 2, 4, 7, 11, 16], 5)',
     ],
-    seeAlso: ['Vector.sample-excess-kurtosis', 'Vector.centered-moving-sample-excess-kurtosis', 'Vector.running-sample-excess-kurtosis'],
+    seeAlso: ['vector.sample-excess-kurtosis', 'vector.centered-moving-sample-excess-kurtosis', 'vector.running-sample-excess-kurtosis'],
   },
   'centered-moving-sample-excess-kurtosis': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **centered moving sample excess kurtosis** of a `vector` with a given window size and padding.',
     returns: {
       type: 'array',
@@ -2751,13 +2751,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { centered-moving-sample-excess-kurtosis } = import("Vector");\ncentered-moving-sample-excess-kurtosis([1, 2, 4, 7, 11, 16], 4)',
-      'let { centered-moving-sample-excess-kurtosis } = import("Vector");\ncentered-moving-sample-excess-kurtosis([1, 2, 4, 7, 11, 16], 4, 0, 100)',
+      'let { centered-moving-sample-excess-kurtosis } = import("vector");\ncentered-moving-sample-excess-kurtosis([1, 2, 4, 7, 11, 16], 4)',
+      'let { centered-moving-sample-excess-kurtosis } = import("vector");\ncentered-moving-sample-excess-kurtosis([1, 2, 4, 7, 11, 16], 4, 0, 100)',
     ],
-    seeAlso: ['Vector.sample-excess-kurtosis', 'Vector.moving-sample-excess-kurtosis', 'Vector.running-sample-excess-kurtosis'],
+    seeAlso: ['vector.sample-excess-kurtosis', 'vector.moving-sample-excess-kurtosis', 'vector.running-sample-excess-kurtosis'],
   },
   'running-sample-excess-kurtosis': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **running sample excess kurtosis** of a `vector` with a given window size. First two element in result is `null` since **running sample excess kurtosis** is not defined for less than three elements.',
     returns: {
       type: 'array',
@@ -2776,12 +2776,12 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { running-sample-excess-kurtosis } = import("Vector");\nrunning-sample-excess-kurtosis([1, 2, 4, 7, 11])',
+      'let { running-sample-excess-kurtosis } = import("vector");\nrunning-sample-excess-kurtosis([1, 2, 4, 7, 11])',
     ],
-    seeAlso: ['Vector.sample-excess-kurtosis', 'Vector.moving-sample-excess-kurtosis', 'Vector.centered-moving-sample-excess-kurtosis'],
+    seeAlso: ['vector.sample-excess-kurtosis', 'vector.moving-sample-excess-kurtosis', 'vector.centered-moving-sample-excess-kurtosis'],
   },
   'sample-kurtosis': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **sample kurtosis** of a `vector`. Returns the third standardized moment.',
     returns: {
       type: 'number',
@@ -2800,13 +2800,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { sample-kurtosis } = import("Vector");\nsample-kurtosis([1, 2, 3, 6, 20])',
-      'let { sample-kurtosis } = import("Vector");\nsample-kurtosis([1, 2, 2, 3])',
+      'let { sample-kurtosis } = import("vector");\nsample-kurtosis([1, 2, 3, 6, 20])',
+      'let { sample-kurtosis } = import("vector");\nsample-kurtosis([1, 2, 2, 3])',
     ],
-    seeAlso: ['Vector.moving-sample-kurtosis', 'Vector.centered-moving-sample-kurtosis', 'Vector.running-sample-kurtosis', 'Vector.sample-excess-kurtosis', 'Vector.kurtosis', 'Vector.sample-skewness'],
+    seeAlso: ['vector.moving-sample-kurtosis', 'vector.centered-moving-sample-kurtosis', 'vector.running-sample-kurtosis', 'vector.sample-excess-kurtosis', 'vector.kurtosis', 'vector.sample-skewness'],
   },
   'moving-sample-kurtosis': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **moving sample kurtosis** of a `vector` with a given window size.',
     returns: {
       type: 'vector',
@@ -2836,13 +2836,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { moving-sample-kurtosis } = import("Vector");\nmoving-sample-kurtosis([1, 2, 4, 7, 11, 16], 4)',
-      'let { moving-sample-kurtosis } = import("Vector");\nmoving-sample-kurtosis([1, 2, 4, 7, 11, 16], 5)',
+      'let { moving-sample-kurtosis } = import("vector");\nmoving-sample-kurtosis([1, 2, 4, 7, 11, 16], 4)',
+      'let { moving-sample-kurtosis } = import("vector");\nmoving-sample-kurtosis([1, 2, 4, 7, 11, 16], 5)',
     ],
-    seeAlso: ['Vector.sample-kurtosis', 'Vector.centered-moving-sample-kurtosis', 'Vector.running-sample-kurtosis'],
+    seeAlso: ['vector.sample-kurtosis', 'vector.centered-moving-sample-kurtosis', 'vector.running-sample-kurtosis'],
   },
   'centered-moving-sample-kurtosis': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **centered moving sample kurtosis** of a `vector` with a given window size and padding.',
     returns: {
       type: 'array',
@@ -2895,13 +2895,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { centered-moving-sample-kurtosis } = import("Vector");\ncentered-moving-sample-kurtosis([1, 2, 4, 7, 11, 16], 4)',
-      'let { centered-moving-sample-kurtosis } = import("Vector");\ncentered-moving-sample-kurtosis([1, 2, 4, 7, 11, 16], 4, 0, 100)',
+      'let { centered-moving-sample-kurtosis } = import("vector");\ncentered-moving-sample-kurtosis([1, 2, 4, 7, 11, 16], 4)',
+      'let { centered-moving-sample-kurtosis } = import("vector");\ncentered-moving-sample-kurtosis([1, 2, 4, 7, 11, 16], 4, 0, 100)',
     ],
-    seeAlso: ['Vector.sample-kurtosis', 'Vector.moving-sample-kurtosis', 'Vector.running-sample-kurtosis'],
+    seeAlso: ['vector.sample-kurtosis', 'vector.moving-sample-kurtosis', 'vector.running-sample-kurtosis'],
   },
   'running-sample-kurtosis': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **running sample kurtosis** of a `vector` with a given window size. First two element in result is `null` since **running sample kurtosis** is not defined for less than three elements.',
     returns: {
       type: 'array',
@@ -2920,12 +2920,12 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { running-sample-kurtosis } = import("Vector");\nrunning-sample-kurtosis([1, 2, 4, 7, 11])',
+      'let { running-sample-kurtosis } = import("vector");\nrunning-sample-kurtosis([1, 2, 4, 7, 11])',
     ],
-    seeAlso: ['Vector.sample-kurtosis', 'Vector.moving-sample-kurtosis', 'Vector.centered-moving-sample-kurtosis'],
+    seeAlso: ['vector.sample-kurtosis', 'vector.moving-sample-kurtosis', 'vector.centered-moving-sample-kurtosis'],
   },
   'rms': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **root mean square** of a `vector`. Returns the square root of the average of the squares of the elements.',
     returns: {
       type: 'number',
@@ -2944,16 +2944,16 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { rms } = import("Vector");\nrms([1, 2, 3, 4])',
-      'let { rms } = import("Vector");\nrms([5, 4, 3, 2, 1])',
-      'let { rms } = import("Vector");\nrms(range(1, 1000))',
-      'let { rms, generate } = import("Vector");\nrms(generate(1000, -> 1e6 / ($ + 1) ^ 2))',
-      'let { rms, generate } = import("Vector");\nlet { ln } = import("Math");\nrms(generate(1000, -> ln($ + 1)))',
+      'let { rms } = import("vector");\nrms([1, 2, 3, 4])',
+      'let { rms } = import("vector");\nrms([5, 4, 3, 2, 1])',
+      'let { rms } = import("vector");\nrms(range(1, 1000))',
+      'let { rms, generate } = import("vector");\nrms(generate(1000, -> 1e6 / ($ + 1) ^ 2))',
+      'let { rms, generate } = import("vector");\nlet { ln } = import("math");\nrms(generate(1000, -> ln($ + 1)))',
     ],
-    seeAlso: ['Vector.moving-rms', 'Vector.centered-moving-rms', 'Vector.running-rms', 'Vector.mean', 'Vector.stdev'],
+    seeAlso: ['vector.moving-rms', 'vector.centered-moving-rms', 'vector.running-rms', 'vector.mean', 'vector.stdev'],
   },
   'moving-rms': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **moving root mean square** of a `vector` with a given window size.',
     returns: {
       type: 'vector',
@@ -2983,14 +2983,14 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { moving-rms } = import("Vector");\nmoving-rms([1, 2, 4, 7, 11, 16], 4)',
-      'let { moving-rms } = import("Vector");\nmoving-rms([1, 2, 4, 7, 11, 16], 5)',
-      'let { moving-rms } = import("Vector");\nmoving-rms([1, 2, 4, 7, 11, 16], 6)',
+      'let { moving-rms } = import("vector");\nmoving-rms([1, 2, 4, 7, 11, 16], 4)',
+      'let { moving-rms } = import("vector");\nmoving-rms([1, 2, 4, 7, 11, 16], 5)',
+      'let { moving-rms } = import("vector");\nmoving-rms([1, 2, 4, 7, 11, 16], 6)',
     ],
-    seeAlso: ['Vector.rms', 'Vector.centered-moving-rms', 'Vector.running-rms'],
+    seeAlso: ['vector.rms', 'vector.centered-moving-rms', 'vector.running-rms'],
   },
   'centered-moving-rms': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **centered moving root mean square** of a `vector` with a given window size and padding value.',
     returns: {
       type: 'vector',
@@ -3043,14 +3043,14 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { centered-moving-rms } = import("Vector");\ncentered-moving-rms([1, 2, 4, 7, 11, 16], 4)',
-      'let { centered-moving-rms } = import("Vector");\ncentered-moving-rms([1, 2, 4, 7, 11, 16], 5, 0)',
-      'let { centered-moving-rms } = import("Vector");\ncentered-moving-rms([1, 2, 4, 7, 11, 16], 6, 0, 0)',
+      'let { centered-moving-rms } = import("vector");\ncentered-moving-rms([1, 2, 4, 7, 11, 16], 4)',
+      'let { centered-moving-rms } = import("vector");\ncentered-moving-rms([1, 2, 4, 7, 11, 16], 5, 0)',
+      'let { centered-moving-rms } = import("vector");\ncentered-moving-rms([1, 2, 4, 7, 11, 16], 6, 0, 0)',
     ],
-    seeAlso: ['Vector.rms', 'Vector.moving-rms', 'Vector.running-rms'],
+    seeAlso: ['vector.rms', 'vector.moving-rms', 'vector.running-rms'],
   },
   'running-rms': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **running root mean square** of a `vector`.',
     returns: {
       type: 'vector',
@@ -3069,15 +3069,15 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { running-rms } = import("Vector");\nrunning-rms([1, 2, 3, 4, 5, 6])',
-      'let { running-rms } = import("Vector");\nrunning-rms([1, -3, 2])',
-      'let { running-rms } = import("Vector");\nrunning-rms([-1, -2, -3])',
-      'let { running-rms } = import("Vector");\nrunning-rms([0])',
+      'let { running-rms } = import("vector");\nrunning-rms([1, 2, 3, 4, 5, 6])',
+      'let { running-rms } = import("vector");\nrunning-rms([1, -3, 2])',
+      'let { running-rms } = import("vector");\nrunning-rms([-1, -2, -3])',
+      'let { running-rms } = import("vector");\nrunning-rms([0])',
     ],
-    seeAlso: ['Vector.rms', 'Vector.moving-rms', 'Vector.centered-moving-rms'],
+    seeAlso: ['vector.rms', 'vector.moving-rms', 'vector.centered-moving-rms'],
   },
   'mad': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **mean absolute deviation** of all elements in the `vector`.',
     returns: {
       type: 'number',
@@ -3096,13 +3096,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { mad } = import("Vector");\nmad([1, 2, 3])',
-      'let { mad } = import("Vector");\nmad([1, 2, -3])',
+      'let { mad } = import("vector");\nmad([1, 2, 3])',
+      'let { mad } = import("vector");\nmad([1, 2, -3])',
     ],
-    seeAlso: ['Vector.moving-mad', 'Vector.centered-moving-mad', 'Vector.running-mad', 'Vector.medad', 'Vector.stdev', 'Vector.variance', 'Vector.iqr'],
+    seeAlso: ['vector.moving-mad', 'vector.centered-moving-mad', 'vector.running-mad', 'vector.medad', 'vector.stdev', 'vector.variance', 'vector.iqr'],
   },
   'moving-mad': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **moving mean absolute deviation** of the `vector` with a given window size.',
     returns: {
       type: 'vector',
@@ -3132,13 +3132,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { moving-mad } = import("Vector");\nmoving-mad([1, 2, 3, 4, 5], 3)',
-      'let { moving-mad } = import("Vector");\nmoving-mad([1, 2, 3, 4, 5], 5)',
+      'let { moving-mad } = import("vector");\nmoving-mad([1, 2, 3, 4, 5], 3)',
+      'let { moving-mad } = import("vector");\nmoving-mad([1, 2, 3, 4, 5], 5)',
     ],
-    seeAlso: ['Vector.mad', 'Vector.centered-moving-mad', 'Vector.running-mad'],
+    seeAlso: ['vector.mad', 'vector.centered-moving-mad', 'vector.running-mad'],
   },
   'centered-moving-mad': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **centered moving mean absolute deviation** of the `vector` with a given window size.',
     returns: {
       type: 'array',
@@ -3191,13 +3191,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { centered-moving-mad } = import("Vector");\ncentered-moving-mad([1, 2, 3, 4, 5], 3)',
-      'let { centered-moving-mad } = import("Vector");\ncentered-moving-mad([1, 2, 3, 4, 5], 5)',
+      'let { centered-moving-mad } = import("vector");\ncentered-moving-mad([1, 2, 3, 4, 5], 3)',
+      'let { centered-moving-mad } = import("vector");\ncentered-moving-mad([1, 2, 3, 4, 5], 5)',
     ],
-    seeAlso: ['Vector.mad', 'Vector.moving-mad', 'Vector.running-mad'],
+    seeAlso: ['vector.mad', 'vector.moving-mad', 'vector.running-mad'],
   },
   'running-mad': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **running mean absolute deviation** of the `vector`.',
     returns: {
       type: 'vector',
@@ -3216,13 +3216,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { running-mad } = import("Vector");\nrunning-mad([1, 2, 3])',
-      'let { running-mad } = import("Vector");\nrunning-mad([1, 2, -3])',
+      'let { running-mad } = import("vector");\nrunning-mad([1, 2, 3])',
+      'let { running-mad } = import("vector");\nrunning-mad([1, 2, -3])',
     ],
-    seeAlso: ['Vector.mad', 'Vector.moving-mad', 'Vector.centered-moving-mad'],
+    seeAlso: ['vector.mad', 'vector.moving-mad', 'vector.centered-moving-mad'],
   },
   'medad': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **median absolute deviation** of all elements in the `vector`.',
     returns: {
       type: 'number',
@@ -3241,13 +3241,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { medad } = import("Vector");\nmedad([1, 2, 3])',
-      'let { medad } = import("Vector");\nmedad([1, 2, -3])',
+      'let { medad } = import("vector");\nmedad([1, 2, 3])',
+      'let { medad } = import("vector");\nmedad([1, 2, -3])',
     ],
-    seeAlso: ['Vector.moving-medad', 'Vector.centered-moving-medad', 'Vector.running-medad', 'Vector.mad', 'Vector.median', 'Vector.iqr'],
+    seeAlso: ['vector.moving-medad', 'vector.centered-moving-medad', 'vector.running-medad', 'vector.mad', 'vector.median', 'vector.iqr'],
   },
   'moving-medad': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **moving median absolute deviation** of the `vector` with a given window size.',
     returns: {
       type: 'vector',
@@ -3277,13 +3277,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { moving-medad } = import("Vector");\nmoving-medad([1, 2, 3, 4, 5], 3)',
-      'let { moving-medad } = import("Vector");\nmoving-medad([1, 2, 3, 4, 5], 5)',
+      'let { moving-medad } = import("vector");\nmoving-medad([1, 2, 3, 4, 5], 3)',
+      'let { moving-medad } = import("vector");\nmoving-medad([1, 2, 3, 4, 5], 5)',
     ],
-    seeAlso: ['Vector.medad', 'Vector.centered-moving-medad', 'Vector.running-medad'],
+    seeAlso: ['vector.medad', 'vector.centered-moving-medad', 'vector.running-medad'],
   },
   'centered-moving-medad': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **centered moving median absolute deviation** of the `vector` with a given window size.',
     returns: {
       type: 'array',
@@ -3336,13 +3336,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { centered-moving-medad } = import("Vector");\ncentered-moving-medad([1, 2, 3, 4, 5], 3)',
-      'let { centered-moving-medad } = import("Vector");\ncentered-moving-medad([1, 2, 3, 4, 5], 5)',
+      'let { centered-moving-medad } = import("vector");\ncentered-moving-medad([1, 2, 3, 4, 5], 3)',
+      'let { centered-moving-medad } = import("vector");\ncentered-moving-medad([1, 2, 3, 4, 5], 5)',
     ],
-    seeAlso: ['Vector.medad', 'Vector.moving-medad', 'Vector.running-medad'],
+    seeAlso: ['vector.medad', 'vector.moving-medad', 'vector.running-medad'],
   },
   'running-medad': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **running median absolute deviation** of the `vector`.',
     returns: {
       type: 'vector',
@@ -3361,13 +3361,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { running-medad } = import("Vector");\nrunning-medad([1, 2, 3])',
-      'let { running-medad } = import("Vector");\nrunning-medad([1, 2, -3])',
+      'let { running-medad } = import("vector");\nrunning-medad([1, 2, 3])',
+      'let { running-medad } = import("vector");\nrunning-medad([1, 2, -3])',
     ],
-    seeAlso: ['Vector.medad', 'Vector.moving-medad', 'Vector.centered-moving-medad'],
+    seeAlso: ['vector.medad', 'vector.moving-medad', 'vector.centered-moving-medad'],
   },
   'gini-coefficient': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **gini coefficient** of all elements in the `vector`.',
     returns: {
       type: 'number',
@@ -3386,13 +3386,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { gini-coefficient } = import("Vector");\ngini-coefficient([1, 2, 3])',
-      'let { gini-coefficient } = import("Vector");\ngini-coefficient([1, 1, 3])',
+      'let { gini-coefficient } = import("vector");\ngini-coefficient([1, 2, 3])',
+      'let { gini-coefficient } = import("vector");\ngini-coefficient([1, 1, 3])',
     ],
-    seeAlso: ['Vector.moving-gini-coefficient', 'Vector.centered-moving-gini-coefficient', 'Vector.running-gini-coefficient', 'Vector.entropy'],
+    seeAlso: ['vector.moving-gini-coefficient', 'vector.centered-moving-gini-coefficient', 'vector.running-gini-coefficient', 'vector.entropy'],
   },
   'moving-gini-coefficient': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **moving gini coefficient** of the `vector` with a given window size.',
     returns: {
       type: 'vector',
@@ -3422,13 +3422,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { moving-gini-coefficient } = import("Vector");\nmoving-gini-coefficient([1, 2, 3], 2)',
-      'let { moving-gini-coefficient } = import("Vector");\nmoving-gini-coefficient([1, 1, 3], 2)',
+      'let { moving-gini-coefficient } = import("vector");\nmoving-gini-coefficient([1, 2, 3], 2)',
+      'let { moving-gini-coefficient } = import("vector");\nmoving-gini-coefficient([1, 1, 3], 2)',
     ],
-    seeAlso: ['Vector.gini-coefficient', 'Vector.centered-moving-gini-coefficient', 'Vector.running-gini-coefficient'],
+    seeAlso: ['vector.gini-coefficient', 'vector.centered-moving-gini-coefficient', 'vector.running-gini-coefficient'],
   },
   'centered-moving-gini-coefficient': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **centered moving gini coefficient** of the `vector` with a given window size.',
     returns: {
       type: 'array',
@@ -3481,13 +3481,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { centered-moving-gini-coefficient } = import("Vector");\ncentered-moving-gini-coefficient([1, 2, 3], 2)',
-      'let { centered-moving-gini-coefficient } = import("Vector");\ncentered-moving-gini-coefficient([1, 1, 3], 2)',
+      'let { centered-moving-gini-coefficient } = import("vector");\ncentered-moving-gini-coefficient([1, 2, 3], 2)',
+      'let { centered-moving-gini-coefficient } = import("vector");\ncentered-moving-gini-coefficient([1, 1, 3], 2)',
     ],
-    seeAlso: ['Vector.gini-coefficient', 'Vector.moving-gini-coefficient', 'Vector.running-gini-coefficient'],
+    seeAlso: ['vector.gini-coefficient', 'vector.moving-gini-coefficient', 'vector.running-gini-coefficient'],
   },
   'running-gini-coefficient': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the **running gini coefficient** of the `vector`.',
     returns: {
       type: 'array',
@@ -3506,13 +3506,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { running-gini-coefficient } = import("Vector");\nrunning-gini-coefficient([1, 2, 3])',
-      'let { running-gini-coefficient } = import("Vector");\nrunning-gini-coefficient([1, 1, 3])',
+      'let { running-gini-coefficient } = import("vector");\nrunning-gini-coefficient([1, 2, 3])',
+      'let { running-gini-coefficient } = import("vector");\nrunning-gini-coefficient([1, 1, 3])',
     ],
-    seeAlso: ['Vector.gini-coefficient', 'Vector.moving-gini-coefficient', 'Vector.centered-moving-gini-coefficient'],
+    seeAlso: ['vector.gini-coefficient', 'vector.moving-gini-coefficient', 'vector.centered-moving-gini-coefficient'],
   },
   'entropy': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **entropy** of a `vector`. The entropy is a measure of the uncertainty associated with a random variable.',
     returns: {
       type: 'number',
@@ -3531,17 +3531,17 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { entropy } = import("Vector");\nentropy([1, 1, 2, 3, 3, 3])',
-      'let { entropy } = import("Vector");\nentropy([1, 2, 3])',
-      'let { entropy } = import("Vector");\nentropy([1, 2, 2, 3])',
-      'let { entropy } = import("Vector");\nentropy([0])',
-      'let { entropy } = import("Vector");\nentropy([1])',
-      'let { entropy } = import("Vector");\nentropy([1, 2])',
+      'let { entropy } = import("vector");\nentropy([1, 1, 2, 3, 3, 3])',
+      'let { entropy } = import("vector");\nentropy([1, 2, 3])',
+      'let { entropy } = import("vector");\nentropy([1, 2, 2, 3])',
+      'let { entropy } = import("vector");\nentropy([0])',
+      'let { entropy } = import("vector");\nentropy([1])',
+      'let { entropy } = import("vector");\nentropy([1, 2])',
     ],
-    seeAlso: ['Vector.moving-entropy', 'Vector.centered-moving-entropy', 'Vector.running-entropy', 'Vector.gini-coefficient'],
+    seeAlso: ['vector.moving-entropy', 'vector.centered-moving-entropy', 'vector.running-entropy', 'vector.gini-coefficient'],
   },
   'moving-entropy': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **moving entropy** of a `vector` with a given window size.',
     returns: {
       type: 'vector',
@@ -3571,14 +3571,14 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { moving-entropy } = import("Vector");\nmoving-entropy([1, 1, 2, 3, 3, 3], 4)',
-      'let { moving-entropy } = import("Vector");\nmoving-entropy([1, 1, 2, 3, 3, 3], 3)',
-      'let { moving-entropy } = import("Vector");\nmoving-entropy([1, 2], 2)',
+      'let { moving-entropy } = import("vector");\nmoving-entropy([1, 1, 2, 3, 3, 3], 4)',
+      'let { moving-entropy } = import("vector");\nmoving-entropy([1, 1, 2, 3, 3, 3], 3)',
+      'let { moving-entropy } = import("vector");\nmoving-entropy([1, 2], 2)',
     ],
-    seeAlso: ['Vector.entropy', 'Vector.centered-moving-entropy', 'Vector.running-entropy'],
+    seeAlso: ['vector.entropy', 'vector.centered-moving-entropy', 'vector.running-entropy'],
   },
   'centered-moving-entropy': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **centered moving entropy** of a `vector` with a given window size.',
     returns: {
       type: 'vector',
@@ -3631,14 +3631,14 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { centered-moving-entropy } = import("Vector");\ncentered-moving-entropy([1, 1, 2, 3, 3, 3], 4)',
-      'let { centered-moving-entropy } = import("Vector");\ncentered-moving-entropy([1, 1, 2, 3, 3, 3], 3)',
-      'let { centered-moving-entropy } = import("Vector");\ncentered-moving-entropy([1, 2], 2)',
+      'let { centered-moving-entropy } = import("vector");\ncentered-moving-entropy([1, 1, 2, 3, 3, 3], 4)',
+      'let { centered-moving-entropy } = import("vector");\ncentered-moving-entropy([1, 1, 2, 3, 3, 3], 3)',
+      'let { centered-moving-entropy } = import("vector");\ncentered-moving-entropy([1, 2], 2)',
     ],
-    seeAlso: ['Vector.entropy', 'Vector.moving-entropy', 'Vector.running-entropy'],
+    seeAlso: ['vector.entropy', 'vector.moving-entropy', 'vector.running-entropy'],
   },
   'running-entropy': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **running entropy** of a `vector`.',
     returns: {
       type: 'vector',
@@ -3657,13 +3657,13 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { running-entropy } = import("Vector");\nrunning-entropy([1, 1, 2, 3, 3, 3])',
-      'let { running-entropy } = import("Vector");\nrunning-entropy([1, 2])',
+      'let { running-entropy } = import("vector");\nrunning-entropy([1, 1, 2, 3, 3, 3])',
+      'let { running-entropy } = import("vector");\nrunning-entropy([1, 2])',
     ],
-    seeAlso: ['Vector.entropy', 'Vector.moving-entropy', 'Vector.centered-moving-entropy'],
+    seeAlso: ['vector.entropy', 'vector.moving-entropy', 'vector.centered-moving-entropy'],
   },
   'monotonic?': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Checks if a vector is monotonic.',
     returns: {
       type: 'boolean',
@@ -3682,18 +3682,18 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { monotonic? } = import("Vector");\nmonotonic?([1, 2, 3])',
-      'let { monotonic? } = import("Vector");\nmonotonic?([1, 2, 2, 3])',
-      'let { monotonic? } = import("Vector");\nmonotonic?([3, 2, 1])',
-      'let { monotonic? } = import("Vector");\nmonotonic?([3, 2, 1, 1])',
-      'let { monotonic? } = import("Vector");\nmonotonic?([3, 2, 1, 2])',
-      'let { monotonic? } = import("Vector");\nmonotonic?([1])',
-      'let { monotonic? } = import("Vector");\nmonotonic?([])',
+      'let { monotonic? } = import("vector");\nmonotonic?([1, 2, 3])',
+      'let { monotonic? } = import("vector");\nmonotonic?([1, 2, 2, 3])',
+      'let { monotonic? } = import("vector");\nmonotonic?([3, 2, 1])',
+      'let { monotonic? } = import("vector");\nmonotonic?([3, 2, 1, 1])',
+      'let { monotonic? } = import("vector");\nmonotonic?([3, 2, 1, 2])',
+      'let { monotonic? } = import("vector");\nmonotonic?([1])',
+      'let { monotonic? } = import("vector");\nmonotonic?([])',
     ],
-    seeAlso: ['Vector.strictly-monotonic?', 'Vector.increasing?', 'Vector.decreasing?'],
+    seeAlso: ['vector.strictly-monotonic?', 'vector.increasing?', 'vector.decreasing?'],
   },
   'strictly-monotonic?': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Checks if a vector is strictly monotonic.',
     returns: {
       type: 'boolean',
@@ -3712,18 +3712,18 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { strictly-monotonic? } = import("Vector");\nstrictly-monotonic?([1, 2, 3])',
-      'let { strictly-monotonic? } = import("Vector");\nstrictly-monotonic?([1, 2, 2, 3])',
-      'let { strictly-monotonic? } = import("Vector");\nstrictly-monotonic?([3, 2, 1])',
-      'let { strictly-monotonic? } = import("Vector");\nstrictly-monotonic?([3, 2, 1, 1])',
-      'let { strictly-monotonic? } = import("Vector");\nstrictly-monotonic?([3, 2, 1, 2])',
-      'let { strictly-monotonic? } = import("Vector");\nstrictly-monotonic?([1])',
-      'let { strictly-monotonic? } = import("Vector");\nstrictly-monotonic?([])',
+      'let { strictly-monotonic? } = import("vector");\nstrictly-monotonic?([1, 2, 3])',
+      'let { strictly-monotonic? } = import("vector");\nstrictly-monotonic?([1, 2, 2, 3])',
+      'let { strictly-monotonic? } = import("vector");\nstrictly-monotonic?([3, 2, 1])',
+      'let { strictly-monotonic? } = import("vector");\nstrictly-monotonic?([3, 2, 1, 1])',
+      'let { strictly-monotonic? } = import("vector");\nstrictly-monotonic?([3, 2, 1, 2])',
+      'let { strictly-monotonic? } = import("vector");\nstrictly-monotonic?([1])',
+      'let { strictly-monotonic? } = import("vector");\nstrictly-monotonic?([])',
     ],
-    seeAlso: ['Vector.monotonic?', 'Vector.strictly-increasing?', 'Vector.strictly-decreasing?'],
+    seeAlso: ['vector.monotonic?', 'vector.strictly-increasing?', 'vector.strictly-decreasing?'],
   },
   'increasing?': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Checks if a vector is increasing.',
     returns: {
       type: 'boolean',
@@ -3742,18 +3742,18 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { increasing? } = import("Vector");\nincreasing?([1, 2, 3])',
-      'let { increasing? } = import("Vector");\nincreasing?([1, 2, 2, 3])',
-      'let { increasing? } = import("Vector");\nincreasing?([3, 2, 1])',
-      'let { increasing? } = import("Vector");\nincreasing?([3, 2, 1, 1])',
-      'let { increasing? } = import("Vector");\nincreasing?([3, 2, 1, 2])',
-      'let { increasing? } = import("Vector");\nincreasing?([1])',
-      'let { increasing? } = import("Vector");\nincreasing?([])',
+      'let { increasing? } = import("vector");\nincreasing?([1, 2, 3])',
+      'let { increasing? } = import("vector");\nincreasing?([1, 2, 2, 3])',
+      'let { increasing? } = import("vector");\nincreasing?([3, 2, 1])',
+      'let { increasing? } = import("vector");\nincreasing?([3, 2, 1, 1])',
+      'let { increasing? } = import("vector");\nincreasing?([3, 2, 1, 2])',
+      'let { increasing? } = import("vector");\nincreasing?([1])',
+      'let { increasing? } = import("vector");\nincreasing?([])',
     ],
-    seeAlso: ['Vector.strictly-increasing?', 'Vector.decreasing?', 'Vector.strictly-decreasing?', 'Vector.monotonic?'],
+    seeAlso: ['vector.strictly-increasing?', 'vector.decreasing?', 'vector.strictly-decreasing?', 'vector.monotonic?'],
   },
   'decreasing?': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Checks if a vector is decreasing.',
     returns: {
       type: 'boolean',
@@ -3772,18 +3772,18 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { decreasing? } = import("Vector");\ndecreasing?([1, 2, 3])',
-      'let { decreasing? } = import("Vector");\ndecreasing?([1, 2, 2, 3])',
-      'let { decreasing? } = import("Vector");\ndecreasing?([3, 2, 1])',
-      'let { decreasing? } = import("Vector");\ndecreasing?([3, 2, 1, 1])',
-      'let { decreasing? } = import("Vector");\ndecreasing?([3, 2, 1, 2])',
-      'let { decreasing? } = import("Vector");\ndecreasing?([1])',
-      'let { decreasing? } = import("Vector");\ndecreasing?([])',
+      'let { decreasing? } = import("vector");\ndecreasing?([1, 2, 3])',
+      'let { decreasing? } = import("vector");\ndecreasing?([1, 2, 2, 3])',
+      'let { decreasing? } = import("vector");\ndecreasing?([3, 2, 1])',
+      'let { decreasing? } = import("vector");\ndecreasing?([3, 2, 1, 1])',
+      'let { decreasing? } = import("vector");\ndecreasing?([3, 2, 1, 2])',
+      'let { decreasing? } = import("vector");\ndecreasing?([1])',
+      'let { decreasing? } = import("vector");\ndecreasing?([])',
     ],
-    seeAlso: ['Vector.strictly-decreasing?', 'Vector.increasing?', 'Vector.strictly-increasing?', 'Vector.monotonic?'],
+    seeAlso: ['vector.strictly-decreasing?', 'vector.increasing?', 'vector.strictly-increasing?', 'vector.monotonic?'],
   },
   'strictly-increasing?': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Checks if a vector is strictly increasing.',
     returns: {
       type: 'boolean',
@@ -3802,18 +3802,18 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { strictly-increasing? } = import("Vector");\nstrictly-increasing?([1, 2, 3])',
-      'let { strictly-increasing? } = import("Vector");\nstrictly-increasing?([1, 2, 2, 3])',
-      'let { strictly-increasing? } = import("Vector");\nstrictly-increasing?([3, 2, 1])',
-      'let { strictly-increasing? } = import("Vector");\nstrictly-increasing?([3, 2, 1, 1])',
-      'let { strictly-increasing? } = import("Vector");\nstrictly-increasing?([3, 2, 1, 2])',
-      'let { strictly-increasing? } = import("Vector");\nstrictly-increasing?([1])',
-      'let { strictly-increasing? } = import("Vector");\nstrictly-increasing?([])',
+      'let { strictly-increasing? } = import("vector");\nstrictly-increasing?([1, 2, 3])',
+      'let { strictly-increasing? } = import("vector");\nstrictly-increasing?([1, 2, 2, 3])',
+      'let { strictly-increasing? } = import("vector");\nstrictly-increasing?([3, 2, 1])',
+      'let { strictly-increasing? } = import("vector");\nstrictly-increasing?([3, 2, 1, 1])',
+      'let { strictly-increasing? } = import("vector");\nstrictly-increasing?([3, 2, 1, 2])',
+      'let { strictly-increasing? } = import("vector");\nstrictly-increasing?([1])',
+      'let { strictly-increasing? } = import("vector");\nstrictly-increasing?([])',
     ],
-    seeAlso: ['Vector.increasing?', 'Vector.decreasing?', 'Vector.strictly-decreasing?', 'Vector.strictly-monotonic?'],
+    seeAlso: ['vector.increasing?', 'vector.decreasing?', 'vector.strictly-decreasing?', 'vector.strictly-monotonic?'],
   },
   'strictly-decreasing?': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Checks if a vector is strictly decreasing.',
     returns: {
       type: 'boolean',
@@ -3832,18 +3832,18 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { strictly-decreasing? } = import("Vector");\nstrictly-decreasing?([1, 2, 3])',
-      'let { strictly-decreasing? } = import("Vector");\nstrictly-decreasing?([1, 2, 2, 3])',
-      'let { strictly-decreasing? } = import("Vector");\nstrictly-decreasing?([3, 2, 1])',
-      'let { strictly-decreasing? } = import("Vector");\nstrictly-decreasing?([3, 2, 1, 1])',
-      'let { strictly-decreasing? } = import("Vector");\nstrictly-decreasing?([3, 2, 1, 2])',
-      'let { strictly-decreasing? } = import("Vector");\nstrictly-decreasing?([1])',
-      'let { strictly-decreasing? } = import("Vector");\nstrictly-decreasing?([])',
+      'let { strictly-decreasing? } = import("vector");\nstrictly-decreasing?([1, 2, 3])',
+      'let { strictly-decreasing? } = import("vector");\nstrictly-decreasing?([1, 2, 2, 3])',
+      'let { strictly-decreasing? } = import("vector");\nstrictly-decreasing?([3, 2, 1])',
+      'let { strictly-decreasing? } = import("vector");\nstrictly-decreasing?([3, 2, 1, 1])',
+      'let { strictly-decreasing? } = import("vector");\nstrictly-decreasing?([3, 2, 1, 2])',
+      'let { strictly-decreasing? } = import("vector");\nstrictly-decreasing?([1])',
+      'let { strictly-decreasing? } = import("vector");\nstrictly-decreasing?([])',
     ],
-    seeAlso: ['Vector.increasing?', 'Vector.strictly-increasing?', 'Vector.decreasing?', 'Vector.strictly-monotonic?'],
+    seeAlso: ['vector.increasing?', 'vector.strictly-increasing?', 'vector.decreasing?', 'vector.strictly-monotonic?'],
   },
   'mode': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the mode of all elements in the vector.',
     returns: {
       type: 'number',
@@ -3862,16 +3862,16 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { mode } = import("Vector");\nmode([1, 2, 3])',
-      'let { mode } = import("Vector");\nmode([1, 2, -3, 1])',
-      'let { mode } = import("Vector");\nmode([2, 2, 3, 3, 4])',
-      'let { mode } = import("Vector");\nmode([2, 2, 3, 3])',
-      'let { mode } = import("Vector");\nmode([1, 2, 3, 2, 1, 2])',
+      'let { mode } = import("vector");\nmode([1, 2, 3])',
+      'let { mode } = import("vector");\nmode([1, 2, -3, 1])',
+      'let { mode } = import("vector");\nmode([2, 2, 3, 3, 4])',
+      'let { mode } = import("vector");\nmode([2, 2, 3, 3])',
+      'let { mode } = import("vector");\nmode([1, 2, 3, 2, 1, 2])',
     ],
-    seeAlso: ['Vector.mean', 'Vector.median'],
+    seeAlso: ['vector.mean', 'vector.median'],
   },
   'min-index': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the index of the minimum value of all elements in the vector.',
     returns: {
       type: 'integer',
@@ -3890,16 +3890,16 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { min-index } = import("Vector");\nmin-index([1, 2, 3])',
-      'let { min-index } = import("Vector");\nmin-index([1, 1, 2, 3, 3])',
-      'let { min-index } = import("Vector");\nmin-index([1, 2, -3])',
-      'let { min-index } = import("Vector");\nmin-index([1, 2, 3, 4])',
-      'let { min-index } = import("Vector");\nmin-index([1, 2, -3, 4])',
+      'let { min-index } = import("vector");\nmin-index([1, 2, 3])',
+      'let { min-index } = import("vector");\nmin-index([1, 1, 2, 3, 3])',
+      'let { min-index } = import("vector");\nmin-index([1, 2, -3])',
+      'let { min-index } = import("vector");\nmin-index([1, 2, 3, 4])',
+      'let { min-index } = import("vector");\nmin-index([1, 2, -3, 4])',
     ],
-    seeAlso: ['Vector.max-index', 'Vector.min'],
+    seeAlso: ['vector.max-index', 'vector.min'],
   },
   'max-index': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the index of the maximum value of all elements in the vector.',
     returns: {
       type: 'integer',
@@ -3918,16 +3918,16 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { max-index } = import("Vector");\nmax-index([1, 2, 3])',
-      'let { max-index } = import("Vector");\nmax-index([1, 1, 2, 3, 3])',
-      'let { max-index } = import("Vector");\nmax-index([1, 2, -3])',
-      'let { max-index } = import("Vector");\nmax-index([1, 2, 3, 4])',
-      'let { max-index } = import("Vector");\nmax-index([1, 2, -3, 4])',
+      'let { max-index } = import("vector");\nmax-index([1, 2, 3])',
+      'let { max-index } = import("vector");\nmax-index([1, 1, 2, 3, 3])',
+      'let { max-index } = import("vector");\nmax-index([1, 2, -3])',
+      'let { max-index } = import("vector");\nmax-index([1, 2, 3, 4])',
+      'let { max-index } = import("vector");\nmax-index([1, 2, -3, 4])',
     ],
-    seeAlso: ['Vector.min-index', 'Vector.max'],
+    seeAlso: ['vector.min-index', 'vector.max'],
   },
   'sort-indices': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Returns the indices of the elements in the vector sorted in ascending order.',
     returns: {
       type: 'vector',
@@ -3946,16 +3946,16 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { sort-indices } = import("Vector");\nsort-indices([1, 2, 3])',
-      'let { sort-indices } = import("Vector");\nsort-indices([1, 1, 2, 3, 3])',
-      'let { sort-indices } = import("Vector");\nsort-indices([1, 2, -3])',
-      'let { sort-indices } = import("Vector");\nsort-indices([1, 2, 3, 4])',
-      'let { sort-indices } = import("Vector");\nsort-indices([1, 2, -3, 4])',
+      'let { sort-indices } = import("vector");\nsort-indices([1, 2, 3])',
+      'let { sort-indices } = import("vector");\nsort-indices([1, 1, 2, 3, 3])',
+      'let { sort-indices } = import("vector");\nsort-indices([1, 2, -3])',
+      'let { sort-indices } = import("vector");\nsort-indices([1, 2, 3, 4])',
+      'let { sort-indices } = import("vector");\nsort-indices([1, 2, -3, 4])',
     ],
     seeAlso: ['sort'],
   },
   'count-values': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Counts the number of occurrences of each value in the vector.',
     returns: {
       type: 'number',
@@ -3975,15 +3975,15 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { count-values } = import("Vector");\ncount-values([1, 2, 3])',
-      'let { count-values } = import("Vector");\ncount-values([1, 1, 2, 3, 3])',
-      'let { count-values } = import("Vector");\ncount-values([1, 2, -3])',
-      'let { count-values } = import("Vector");\ncount-values([1, 2, 2, 1, 3, 2, 4, 2, 1, 2, 2, 1, 3, 2, 4])',
+      'let { count-values } = import("vector");\ncount-values([1, 2, 3])',
+      'let { count-values } = import("vector");\ncount-values([1, 1, 2, 3, 3])',
+      'let { count-values } = import("vector");\ncount-values([1, 2, -3])',
+      'let { count-values } = import("vector");\ncount-values([1, 2, 2, 1, 3, 2, 4, 2, 1, 2, 2, 1, 3, 2, 4])',
     ],
-    seeAlso: ['Sequence.frequencies', 'Vector.bincount'],
+    seeAlso: ['sequence.frequencies', 'vector.bincount'],
   },
   'linspace': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Generates a vector of evenly spaced numbers between two values.',
     returns: {
       type: 'number',
@@ -4013,19 +4013,19 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { linspace } = import("Vector");\nlinspace(0, 10, 6)',
-      'let { linspace } = import("Vector");\nlinspace(10, 20, 25)',
+      'let { linspace } = import("vector");\nlinspace(0, 10, 6)',
+      'let { linspace } = import("vector");\nlinspace(10, 20, 25)',
     ],
     seeAlso: [
       'range',
-      'Vector.ones',
-      'Vector.zeros',
-      'Vector.fill',
-      'Vector.generate',
+      'vector.ones',
+      'vector.zeros',
+      'vector.fill',
+      'vector.generate',
     ],
   },
   'ones': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Generates a vector of ones.',
     returns: {
       type: 'number',
@@ -4045,20 +4045,20 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { ones } = import("Vector");\nones(5)',
-      'let { ones } = import("Vector");\nones(10)',
-      'let { ones } = import("Vector");\nones(0)',
+      'let { ones } = import("vector");\nones(5)',
+      'let { ones } = import("vector");\nones(10)',
+      'let { ones } = import("vector");\nones(0)',
     ],
     seeAlso: [
       'repeat',
-      'Vector.zeros',
-      'Vector.fill',
-      'Vector.generate',
-      'Vector.linspace',
+      'vector.zeros',
+      'vector.fill',
+      'vector.generate',
+      'vector.linspace',
     ],
   },
   'zeros': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Generates a vector of zeros.',
     returns: {
       type: 'number',
@@ -4078,20 +4078,20 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { zeros } = import("Vector");\nzeros(5)',
-      'let { zeros } = import("Vector");\nzeros(10)',
-      'let { zeros } = import("Vector");\nzeros(0)',
+      'let { zeros } = import("vector");\nzeros(5)',
+      'let { zeros } = import("vector");\nzeros(10)',
+      'let { zeros } = import("vector");\nzeros(0)',
     ],
     seeAlso: [
       'repeat',
-      'Vector.ones',
-      'Vector.fill',
-      'Vector.generate',
-      'Vector.linspace',
+      'vector.ones',
+      'vector.fill',
+      'vector.generate',
+      'vector.linspace',
     ],
   },
   'fill': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Generates a vector filled with a number.',
     returns: {
       type: 'number',
@@ -4122,20 +4122,20 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { fill } = import("Vector");\nfill(5, PI)',
-      'let { fill } = import("Vector");\nfill(10, -1)',
+      'let { fill } = import("vector");\nfill(5, PI)',
+      'let { fill } = import("vector");\nfill(10, -1)',
     ],
     seeAlso: [
       'repeat',
-      'Vector.ones',
-      'Vector.zeros',
-      'Vector.generate',
-      'Vector.linspace',
-      'Grid.fill',
+      'vector.ones',
+      'vector.zeros',
+      'vector.generate',
+      'vector.linspace',
+      'grid.fill',
     ],
   },
   'generate': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Generates a vector of numbers based on a function.',
     returns: {
       type: 'number',
@@ -4166,21 +4166,21 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { generate } = import("Vector");\ngenerate(5, -> $ * 2)',
-      'let { generate } = import("Vector");\ngenerate(10, -> $ + 1)',
-      'let { generate } = import("Vector");\ngenerate(0, -> $ + 1)',
+      'let { generate } = import("vector");\ngenerate(5, -> $ * 2)',
+      'let { generate } = import("vector");\ngenerate(10, -> $ + 1)',
+      'let { generate } = import("vector");\ngenerate(0, -> $ + 1)',
     ],
     seeAlso: [
       'repeat',
-      'Vector.ones',
-      'Vector.zeros',
-      'Vector.fill',
-      'Vector.linspace',
-      'Grid.generate',
+      'vector.ones',
+      'vector.zeros',
+      'vector.fill',
+      'vector.linspace',
+      'grid.generate',
     ],
   },
   'cumsum': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the cumulative sum of a vector.',
     returns: {
       type: 'number',
@@ -4200,14 +4200,14 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { cumsum } = import("Vector");\ncumsum([1, 2, 3])',
-      'let { cumsum } = import("Vector");\ncumsum([1, 2, -3])',
-      'let { cumsum } = import("Vector");\ncumsum([])',
+      'let { cumsum } = import("vector");\ncumsum([1, 2, 3])',
+      'let { cumsum } = import("vector");\ncumsum([1, 2, -3])',
+      'let { cumsum } = import("vector");\ncumsum([])',
     ],
-    seeAlso: ['Vector.cumprod', 'Vector.sum', 'Vector.running-sum'],
+    seeAlso: ['vector.cumprod', 'vector.sum', 'vector.running-sum'],
   },
   'cumprod': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the cumulative product of a vector.',
     returns: {
       type: 'number',
@@ -4227,14 +4227,14 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { cumprod } = import("Vector");\ncumprod([1, 2, 3])',
-      'let { cumprod } = import("Vector");\ncumprod([1, 2, -3, 0, 10])',
-      'let { cumprod } = import("Vector");\ncumprod([])',
+      'let { cumprod } = import("vector");\ncumprod([1, 2, 3])',
+      'let { cumprod } = import("vector");\ncumprod([1, 2, -3, 0, 10])',
+      'let { cumprod } = import("vector");\ncumprod([])',
     ],
-    seeAlso: ['Vector.cumsum', 'Vector.prod', 'Vector.running-prod'],
+    seeAlso: ['vector.cumsum', 'vector.prod', 'vector.running-prod'],
   },
   'quartiles': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the quartiles of a vector. Returns an array containing the first, second (median), and third quartiles.',
     returns: {
       type: 'number',
@@ -4254,16 +4254,16 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { quartiles } = import("Vector");\nquartiles([1, 2, 3, 4])',
-      'let { quartiles } = import("Vector");\nquartiles([5, 4, 3, 2, 1, 2, 3, 4, 5])',
-      'let { quartiles } = import("Vector");\nquartiles(range(1, 1000))',
-      'let { quartiles, generate } = import("Vector");\nquartiles(generate(1000, -> 1e6 / ($ + 1) ^ 2))',
-      'let { quartiles, generate } = import("Vector");\nlet { ln } = import("Math");\nquartiles(generate(1000, -> ln($ + 1)))',
+      'let { quartiles } = import("vector");\nquartiles([1, 2, 3, 4])',
+      'let { quartiles } = import("vector");\nquartiles([5, 4, 3, 2, 1, 2, 3, 4, 5])',
+      'let { quartiles } = import("vector");\nquartiles(range(1, 1000))',
+      'let { quartiles, generate } = import("vector");\nquartiles(generate(1000, -> 1e6 / ($ + 1) ^ 2))',
+      'let { quartiles, generate } = import("vector");\nlet { ln } = import("math");\nquartiles(generate(1000, -> ln($ + 1)))',
     ],
-    seeAlso: ['Vector.percentile', 'Vector.quantile', 'Vector.median', 'Vector.iqr'],
+    seeAlso: ['vector.percentile', 'vector.quantile', 'vector.median', 'vector.iqr'],
   },
   'percentile': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the percentile of a vector. Returns the value at the specified percentile.',
     returns: {
       type: 'number',
@@ -4293,23 +4293,23 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { percentile } = import("Vector");\npercentile([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 35)',
-      'let { percentile } = import("Vector");\npercentile(range(100) ^ 0.5, 0)',
-      'let { percentile } = import("Vector");\npercentile(range(100) ^ 0.5, 10)',
-      'let { percentile } = import("Vector");\npercentile(range(100) ^ 0.5, 20)',
-      'let { percentile } = import("Vector");\npercentile(range(100) ^ 0.5, 30)',
-      'let { percentile } = import("Vector");\npercentile(range(100) ^ 0.5, 40)',
-      'let { percentile } = import("Vector");\npercentile(range(100) ^ 0.5, 50)',
-      'let { percentile } = import("Vector");\npercentile(range(100) ^ 0.5, 60)',
-      'let { percentile } = import("Vector");\npercentile(range(100) ^ 0.5, 70)',
-      'let { percentile } = import("Vector");\npercentile(range(100) ^ 0.5, 80)',
-      'let { percentile } = import("Vector");\npercentile(range(100) ^ 0.5, 90)',
-      'let { percentile } = import("Vector");\npercentile(range(100) ^ 0.5, 100)',
+      'let { percentile } = import("vector");\npercentile([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 35)',
+      'let { percentile } = import("vector");\npercentile(range(100) ^ 0.5, 0)',
+      'let { percentile } = import("vector");\npercentile(range(100) ^ 0.5, 10)',
+      'let { percentile } = import("vector");\npercentile(range(100) ^ 0.5, 20)',
+      'let { percentile } = import("vector");\npercentile(range(100) ^ 0.5, 30)',
+      'let { percentile } = import("vector");\npercentile(range(100) ^ 0.5, 40)',
+      'let { percentile } = import("vector");\npercentile(range(100) ^ 0.5, 50)',
+      'let { percentile } = import("vector");\npercentile(range(100) ^ 0.5, 60)',
+      'let { percentile } = import("vector");\npercentile(range(100) ^ 0.5, 70)',
+      'let { percentile } = import("vector");\npercentile(range(100) ^ 0.5, 80)',
+      'let { percentile } = import("vector");\npercentile(range(100) ^ 0.5, 90)',
+      'let { percentile } = import("vector");\npercentile(range(100) ^ 0.5, 100)',
     ],
-    seeAlso: ['Vector.quantile', 'Vector.quartiles', 'Vector.median', 'Vector.ecdf', 'Vector.winsorize'],
+    seeAlso: ['vector.quantile', 'vector.quartiles', 'vector.median', 'vector.ecdf', 'vector.winsorize'],
   },
   'quantile': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the quantile of a vector. Returns the value at the specified quantile.',
     returns: {
       type: 'number',
@@ -4339,23 +4339,23 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { quantile } = import("Vector");\nquantile([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 0.35)',
-      'let { quantile } = import("Vector");\nquantile(range(100) ^ 0.5, 0)',
-      'let { quantile } = import("Vector");\nquantile(range(100) ^ 0.5, 0.1)',
-      'let { quantile } = import("Vector");\nquantile(range(100) ^ 0.5, 0.2)',
-      'let { quantile } = import("Vector");\nquantile(range(100) ^ 0.5, 0.3)',
-      'let { quantile } = import("Vector");\nquantile(range(100) ^ 0.5, 0.4)',
-      'let { quantile } = import("Vector");\nquantile(range(100) ^ 0.5, 0.5)',
-      'let { quantile } = import("Vector");\nquantile(range(100) ^ 0.5, 0.6)',
-      'let { quantile } = import("Vector");\nquantile(range(100) ^ 0.5, 0.7)',
-      'let { quantile } = import("Vector");\nquantile(range(100) ^ 0.5, 0.8)',
-      'let { quantile } = import("Vector");\nquantile(range(100) ^ 0.5, 0.9)',
-      'let { quantile } = import("Vector");\nquantile(range(100) ^ 0.5, 1)',
+      'let { quantile } = import("vector");\nquantile([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 0.35)',
+      'let { quantile } = import("vector");\nquantile(range(100) ^ 0.5, 0)',
+      'let { quantile } = import("vector");\nquantile(range(100) ^ 0.5, 0.1)',
+      'let { quantile } = import("vector");\nquantile(range(100) ^ 0.5, 0.2)',
+      'let { quantile } = import("vector");\nquantile(range(100) ^ 0.5, 0.3)',
+      'let { quantile } = import("vector");\nquantile(range(100) ^ 0.5, 0.4)',
+      'let { quantile } = import("vector");\nquantile(range(100) ^ 0.5, 0.5)',
+      'let { quantile } = import("vector");\nquantile(range(100) ^ 0.5, 0.6)',
+      'let { quantile } = import("vector");\nquantile(range(100) ^ 0.5, 0.7)',
+      'let { quantile } = import("vector");\nquantile(range(100) ^ 0.5, 0.8)',
+      'let { quantile } = import("vector");\nquantile(range(100) ^ 0.5, 0.9)',
+      'let { quantile } = import("vector");\nquantile(range(100) ^ 0.5, 1)',
     ],
-    seeAlso: ['Vector.percentile', 'Vector.quartiles', 'Vector.ecdf'],
+    seeAlso: ['vector.percentile', 'vector.quartiles', 'vector.ecdf'],
   },
   'histogram': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Creates a histogram from a numeric `array` by dividing the data range into the specified number of bins. Returns an `array` of `[binStart, binEnd, count]` tuples representing each bin\'s range and the number of values within it. Handles empty arrays, identical values, and properly places maximum values in the last bin.',
     returns: {
       type: 'array',
@@ -4386,15 +4386,15 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { histogram } = import("Vector");\nhistogram([1, 2, 2, 3, 2, 6, 4, 3, 2, 4, 1, 3, 2, 9], 3)',
-      'let { histogram } = import("Vector");\nhistogram([1, 2, 3, 4, 5], 5)',
-      'let { histogram } = import("Vector");\nhistogram([1, 2, 3, 4, 5], 10)',
-      'let { histogram } = import("Vector");\nhistogram([1, 2, 3, 4, 5], 1)',
+      'let { histogram } = import("vector");\nhistogram([1, 2, 2, 3, 2, 6, 4, 3, 2, 4, 1, 3, 2, 9], 3)',
+      'let { histogram } = import("vector");\nhistogram([1, 2, 3, 4, 5], 5)',
+      'let { histogram } = import("vector");\nhistogram([1, 2, 3, 4, 5], 10)',
+      'let { histogram } = import("vector");\nhistogram([1, 2, 3, 4, 5], 1)',
     ],
-    seeAlso: ['Vector.bincount', 'Vector.ecdf'],
+    seeAlso: ['vector.bincount', 'vector.ecdf'],
   },
   'ecdf': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the empirical cumulative distribution function value for a given threshold in a non empty dataset. Returns the proportion of values in the `array` that are less than or equal to the specified threshold.',
     returns: {
       type: 'number',
@@ -4424,16 +4424,16 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { ecdf } = import("Vector");\necdf([1, 2, 2, 3, 2, 6, 4, 3, 2, 4, 1, 3, 2, 9, 10, 12], 5)',
-      'let { ecdf } = import("Vector");\necdf([1, 2, 3, 4, 5], 3)',
-      'let { ecdf } = import("Vector");\necdf([1, 2, 3, 4, 5], 0)',
-      'let { ecdf } = import("Vector");\necdf([1, 2, 3, 4, 5], 10)',
-      'let { ecdf } = import("Vector");\necdf([1, 2, 3, 4, 5], 2)',
+      'let { ecdf } = import("vector");\necdf([1, 2, 2, 3, 2, 6, 4, 3, 2, 4, 1, 3, 2, 9, 10, 12], 5)',
+      'let { ecdf } = import("vector");\necdf([1, 2, 3, 4, 5], 3)',
+      'let { ecdf } = import("vector");\necdf([1, 2, 3, 4, 5], 0)',
+      'let { ecdf } = import("vector");\necdf([1, 2, 3, 4, 5], 10)',
+      'let { ecdf } = import("vector");\necdf([1, 2, 3, 4, 5], 2)',
     ],
-    seeAlso: ['Vector.histogram', 'Vector.percentile', 'Vector.quantile'],
+    seeAlso: ['vector.histogram', 'vector.percentile', 'vector.quantile'],
   },
   'outliers?': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Checks if the `vector` contains outliers based on the interquartile range (IQR) method. Returns `true` if outliers are present, `false` otherwise.',
     returns: {
       type: 'boolean',
@@ -4452,14 +4452,14 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { outliers? } = import("Vector");\noutliers?([1, 2, 3])',
-      'let { outliers? } = import("Vector");\noutliers?([1, 2, -3])',
-      'let { outliers? } = import("Vector");\noutliers?([1, 2, 3, 2, 4, 120])',
+      'let { outliers? } = import("vector");\noutliers?([1, 2, 3])',
+      'let { outliers? } = import("vector");\noutliers?([1, 2, -3])',
+      'let { outliers? } = import("vector");\noutliers?([1, 2, 3, 2, 4, 120])',
     ],
-    seeAlso: ['Vector.outliers', 'Vector.winsorize', 'Vector.iqr'],
+    seeAlso: ['vector.outliers', 'vector.winsorize', 'vector.iqr'],
   },
   'outliers': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Identifies outliers in the `vector` based on the interquartile range (IQR) method. Returns an array of outlier values.',
     returns: {
       type: 'number',
@@ -4479,14 +4479,14 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { outliers } = import("Vector");\noutliers([1, 2, 3])',
-      'let { outliers } = import("Vector");\noutliers([1, 2, -3])',
-      'let { outliers } = import("Vector");\noutliers([1, 2, 3, 2, 4, 120])',
+      'let { outliers } = import("vector");\noutliers([1, 2, 3])',
+      'let { outliers } = import("vector");\noutliers([1, 2, -3])',
+      'let { outliers } = import("vector");\noutliers([1, 2, 3, 2, 4, 120])',
     ],
-    seeAlso: ['Vector.outliers?', 'Vector.winsorize', 'Vector.iqr'],
+    seeAlso: ['vector.outliers?', 'vector.winsorize', 'vector.iqr'],
   },
   'bincount': {
-    category: 'Vector',
+    category: 'vector',
     description: 'counts occurrences of each `integer` in a vector, returning an array where index `i` contains the count of value `i`, with optional **minimum size** and **weights parameters**.',
     returns: {
       type: 'vector',
@@ -4527,14 +4527,14 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { bincount } = import("Vector");\nbincount([1, 2, 3])',
-      'let { bincount } = import("Vector");\nbincount([1, 2, 2, 3, 3])',
+      'let { bincount } = import("vector");\nbincount([1, 2, 3])',
+      'let { bincount } = import("vector");\nbincount([1, 2, 2, 3, 3])',
     ],
-    seeAlso: ['Vector.count-values', 'Vector.histogram'],
+    seeAlso: ['vector.count-values', 'vector.histogram'],
     hideOperatorForm: true,
   },
   'winsorize': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Limits extreme values in a `vector` by replacing values below the **lower quantile** and above the **upper quantile** with the values at those quantiles. The function takes a `vector` of values and **quantile thresholds** (between 0 and 1), with the upper quantile. Winsorization reduces the influence of outliers while preserving the overall distribution shape, making statistical analyses more robust.',
     returns: {
       type: 'vector',
@@ -4569,15 +4569,15 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { winsorize } = import("Vector");\nwinsorize([2, 5, 8, 10, 15, 18, 20, 35, 60, 100], 0.25)',
-      'let { winsorize } = import("Vector");\nwinsorize([2, 5, 8, 10, 15, 18, 20, 35, 60, 100], 0.25, 0.75)',
-      'let { winsorize } = import("Vector");\nwinsorize([2, 5, 8, 10, 15, 18, 20, 35, 60, 100], 0.25, 0.5)',
+      'let { winsorize } = import("vector");\nwinsorize([2, 5, 8, 10, 15, 18, 20, 35, 60, 100], 0.25)',
+      'let { winsorize } = import("vector");\nwinsorize([2, 5, 8, 10, 15, 18, 20, 35, 60, 100], 0.25, 0.75)',
+      'let { winsorize } = import("vector");\nwinsorize([2, 5, 8, 10, 15, 18, 20, 35, 60, 100], 0.25, 0.5)',
     ],
-    seeAlso: ['Vector.outliers', 'Vector.outliers?', 'Vector.percentile'],
+    seeAlso: ['vector.outliers', 'vector.outliers?', 'vector.percentile'],
     hideOperatorForm: true,
   },
   'mse': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **Mean Squared Error (MSE)** between two vectors. Returns the average of the squared differences between corresponding elements.',
     returns: {
       type: 'number',
@@ -4601,16 +4601,16 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { mse } = import("Vector");\nmse([1, 2, 3], [1, 2, 3])',
-      'let { mse } = import("Vector");\nmse([1, 2, 3], [4, 5, 6])',
-      'let { mse } = import("Vector");\nmse([1, 2, 3], [2, 2, 2])',
-      'let { mse } = import("Vector");\nmse([1, 2], [3, 3])',
-      'let { mse } = import("Vector");\nmse([1], [3])',
+      'let { mse } = import("vector");\nmse([1, 2, 3], [1, 2, 3])',
+      'let { mse } = import("vector");\nmse([1, 2, 3], [4, 5, 6])',
+      'let { mse } = import("vector");\nmse([1, 2, 3], [2, 2, 2])',
+      'let { mse } = import("vector");\nmse([1, 2], [3, 3])',
+      'let { mse } = import("vector");\nmse([1], [3])',
     ],
-    seeAlso: ['Vector.rmse', 'Vector.mae', 'Vector.smape'],
+    seeAlso: ['vector.rmse', 'vector.mae', 'vector.smape'],
   },
   'rmse': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **Root Mean Squared Error (RMSE)** between two vectors. Returns the square root of the average of the squared differences between corresponding elements.',
     returns: {
       type: 'number',
@@ -4634,16 +4634,16 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { rmse } = import("Vector");\nrmse([1, 2, 3], [1, 2, 3])',
-      'let { rmse } = import("Vector");\nrmse([1, 2, 3], [4, 5, 6])',
-      'let { rmse } = import("Vector");\nrmse([1, 2, 3], [2, 2, 2])',
-      'let { rmse } = import("Vector");\nrmse([1, 2], [3, 3])',
-      'let { rmse } = import("Vector");\nrmse([1], [3])',
+      'let { rmse } = import("vector");\nrmse([1, 2, 3], [1, 2, 3])',
+      'let { rmse } = import("vector");\nrmse([1, 2, 3], [4, 5, 6])',
+      'let { rmse } = import("vector");\nrmse([1, 2, 3], [2, 2, 2])',
+      'let { rmse } = import("vector");\nrmse([1, 2], [3, 3])',
+      'let { rmse } = import("vector");\nrmse([1], [3])',
     ],
-    seeAlso: ['Vector.mse', 'Vector.mae', 'Vector.smape'],
+    seeAlso: ['vector.mse', 'vector.mae', 'vector.smape'],
   },
   'mae': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **Mean Absolute Error (MAE)** between two vectors. Returns the average of the absolute differences between corresponding elements.',
     returns: {
       type: 'number',
@@ -4667,16 +4667,16 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { mae } = import("Vector");\nmae([1, 2, 3], [1, 2, 3])',
-      'let { mae } = import("Vector");\nmae([1, 2, 3], [4, 5, 6])',
-      'let { mae } = import("Vector");\nmae([1, 2, 3], [2, 2, 2])',
-      'let { mae } = import("Vector");\nmae([1, 2], [3, 3])',
-      'let { mae } = import("Vector");\nmae([1], [3])',
+      'let { mae } = import("vector");\nmae([1, 2, 3], [1, 2, 3])',
+      'let { mae } = import("vector");\nmae([1, 2, 3], [4, 5, 6])',
+      'let { mae } = import("vector");\nmae([1, 2, 3], [2, 2, 2])',
+      'let { mae } = import("vector");\nmae([1, 2], [3, 3])',
+      'let { mae } = import("vector");\nmae([1], [3])',
     ],
-    seeAlso: ['Vector.mse', 'Vector.rmse', 'Vector.smape'],
+    seeAlso: ['vector.mse', 'vector.rmse', 'vector.smape'],
   },
   'smape': {
-    category: 'Vector',
+    category: 'vector',
     description: 'Calculates the **Symmetric Mean Absolute Percentage Error (SMAPE)** between two vectors. Returns the average of the absolute percentage differences between corresponding elements.',
     returns: {
       type: 'number',
@@ -4700,12 +4700,12 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { smape } = import("Vector");\nsmape([1, 2, 3], [1, 2, 3])',
-      'let { smape } = import("Vector");\nsmape([1, 2, 3], [4, 5, 6])',
-      'let { smape } = import("Vector");\nsmape([1, 2, 3], [2, 2, 2])',
-      'let { smape } = import("Vector");\nsmape([1, 2], [3, 3])',
-      'let { smape } = import("Vector");\nsmape([1], [3])',
+      'let { smape } = import("vector");\nsmape([1, 2, 3], [1, 2, 3])',
+      'let { smape } = import("vector");\nsmape([1, 2, 3], [4, 5, 6])',
+      'let { smape } = import("vector");\nsmape([1, 2, 3], [2, 2, 2])',
+      'let { smape } = import("vector");\nsmape([1, 2], [3, 3])',
+      'let { smape } = import("vector");\nsmape([1], [3])',
     ],
-    seeAlso: ['Vector.mse', 'Vector.rmse', 'Vector.mae'],
+    seeAlso: ['vector.mse', 'vector.rmse', 'vector.mae'],
   },
 }

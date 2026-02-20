@@ -22,7 +22,7 @@ The package has multiple entry points configured in `package.json` `exports`:
 
 - **`@mojir/lits`** → `src/index.ts` — Minimal entry: core `Lits` class, types, type guards. No modules or reference data.
 - **`@mojir/lits/full`** → `src/full.ts` — Full entry: everything from minimal plus all modules, reference data, and API helpers.
-- **`@mojir/lits/modules/<name>`** → `src/modules/<name>.ts` — Individual module entries (assert, grid, random, vector, linearAlgebra, matrix, numberTheory).
+- **`@mojir/lits/modules/<name>`** → `src/modules/<name>.ts` — Individual module entries (assert, grid, random, vector, linear-algebra, matrix, number-theory, math, functional, string, collection, sequence, bitwise).
 
 Rollup configs: `rollup.config.js` (library bundles), `rollup.config.cli.js` (CLI), `rollup.config.playground-builder.js`, `rollup.config.playground-www.js`.
 
@@ -52,13 +52,19 @@ Rollup configs: `rollup.config.js` (library bundles), `rollup.config.cli.js` (CL
 
 Modules provide domain-specific function libraries. Each module is in its own directory and exports a `LitsModule` object:
 
-- `assert/` (name: `"Assert"`) — Assertion functions.
-- `grid/` (name: `"Grid"`) — 2D grid operations.
-- `random/` (name: `"Random"`) — Random number generation.
-- `vector/` (name: `"Vector"`) — Vector math.
-- `linearAlgebra/` (name: `"Linear-Algebra"`) — Linear algebra operations.
-- `matrix/` (name: `"Matrix"`) — Matrix operations.
-- `numberTheory/` (name: `"Number-Theory"`) — Number theory functions.
+- `assert/` (name: `"assert"`) — Assertion functions.
+- `grid/` (name: `"grid"`) — 2D grid operations.
+- `random/` (name: `"random"`) — Random number generation.
+- `vector/` (name: `"vector"`) — Vector math.
+- `linear-algebra/` (name: `"linear-algebra"`) — Linear algebra operations.
+- `matrix/` (name: `"matrix"`) — Matrix operations.
+- `number-theory/` (name: `"number-theory"`) — Number theory functions.
+- `math/` (name: `"math"`) — Math utility functions.
+- `functional/` (name: `"functional"`) — Functional programming utilities.
+- `string/` (name: `"string"`) — String utility functions.
+- `collection/` (name: `"collection"`) — Collection utility functions.
+- `sequence/` (name: `"sequence"`) — Sequence utility functions.
+- `bitwise/` (name: `"bitwise"`) — Bitwise utility functions.
 
 **Registration**: Modules are injected via `new Lits({ modules: [...] })`. The global registry (`registry.ts`) is no longer used at import time; `allModules.ts` registers all built-in modules for the full bundle.
 
@@ -100,11 +106,11 @@ Special expressions may use `CustomDocs` instead (with `customVariants` instead 
 
 22 valid categories defined in `src/builtin/interface.ts`:
 
-**Core** (15): `Special-Expression`, `Predicate`, `Sequence`, `Collection`, `Array`, `Object`, `String`, `Math`, `Functional`, `Regular-Expression`, `Bitwise`, `Misc`, `Meta`, `Shorthand`, `Datatype`
+**Core** (15): `special-expression`, `predicate`, `sequence`, `collection`, `array`, `object`, `string`, `math`, `functional`, `regular-expression`, `bitwise`, `misc`, `meta`, `shorthand`, `datatype`
 
-**Module** (13): `Math`, `Functional`, `String`, `Collection`, `Sequence`, `Bitwise`, `Assert`, `Vector`, `Linear-Algebra`, `Matrix`, `Grid`, `Number-Theory`, `Random`
+**Module** (13): `math`, `functional`, `string`, `collection`, `sequence`, `bitwise`, `assert`, `vector`, `linear-algebra`, `matrix`, `grid`, `number-theory`, `random`
 
-**Other** (2): `Shorthand`, `Datatype`
+**Other** (2): `shorthand`, `datatype`
 
 ### Coding Conventions
 

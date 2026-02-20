@@ -25,9 +25,9 @@ describe('apiReference', () => {
       expect(obj.examples.length).toBeGreaterThan(0)
       expect(isUnknownRecord(obj.args)).toBe(true)
       if (normalExpressionKeys.includes(key))
-        expect(obj.category).not.toBe('Special-Expression')
+        expect(obj.category).not.toBe('special-expression')
       else if (specialExpressionKeys.includes(key))
-        expect(obj.category).toBe('Special-Expression')
+        expect(obj.category).toBe('special-expression')
       else
         throw new Error(`${key} is not a builtin function`)
     })

@@ -34,7 +34,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     },
     arity: { min: 1 },
     docs: {
-      category: 'Misc',
+      category: 'misc',
       returns: { type: 'boolean' },
       args: {
         a: { type: 'any' },
@@ -75,7 +75,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     },
     arity: { min: 1 },
     docs: {
-      category: 'Misc',
+      category: 'misc',
       returns: { type: 'boolean' },
       args: {
         a: { type: 'any' },
@@ -105,7 +105,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     },
     arity: { min: 1 },
     docs: {
-      category: 'Misc',
+      category: 'misc',
       returns: { type: 'boolean' },
       args: {
         a: { type: 'any' },
@@ -134,7 +134,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     },
     arity: { min: 1 },
     docs: {
-      category: 'Misc',
+      category: 'misc',
       returns: { type: 'boolean' },
       args: {
         a: { type: ['number', 'string'] },
@@ -171,7 +171,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     },
     arity: { min: 1 },
     docs: {
-      category: 'Misc',
+      category: 'misc',
       returns: { type: 'boolean' },
       args: {
         a: { type: ['number', 'string'] },
@@ -207,7 +207,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     },
     arity: { min: 1 },
     docs: {
-      category: 'Misc',
+      category: 'misc',
       returns: { type: 'boolean' },
       args: {
         a: { type: ['number', 'string'] },
@@ -245,7 +245,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     },
     arity: { min: 1 },
     docs: {
-      category: 'Misc',
+      category: 'misc',
       returns: { type: 'boolean' },
       args: {
         a: { type: ['number', 'string'] },
@@ -273,7 +273,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([first]): boolean => !first,
     arity: toFixedArity(1),
     docs: {
-      category: 'Misc',
+      category: 'misc',
       returns: { type: 'boolean' },
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
@@ -297,7 +297,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
     docs: {
-      category: 'Misc',
+      category: 'misc',
       returns: { type: 'string' },
       args: { ms: { type: 'number' } },
       variants: [{ argumentNames: ['ms'] }],
@@ -318,7 +318,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
     docs: {
-      category: 'Misc',
+      category: 'misc',
       returns: { type: 'number' },
       args: { iso: { type: 'string' } },
       variants: [{ argumentNames: ['iso'] }],
@@ -342,7 +342,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     },
     arity: {},
     docs: {
-      category: 'Misc',
+      category: 'misc',
       returns: { type: 'any' },
       args: { values: { type: 'any', rest: true } },
       variants: [{ argumentNames: ['values'] }],
@@ -364,7 +364,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
     docs: {
-      category: 'Misc',
+      category: 'misc',
       returns: { type: 'boolean' },
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
@@ -386,7 +386,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(2),
     docs: {
-      category: 'Misc',
+      category: 'misc',
       returns: { type: 'number' },
       args: {
         a: { type: ['number', 'string'] },
@@ -394,7 +394,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['a', 'b'] }],
       description: 'Compares two values. Returns `-1` if $a < $b, `1` if $a > $b and `0` if $a and $b have the same sort order.',
-      seeAlso: ['<', '>', '<=', '>=', 'sort', 'Sequence.sort-by'],
+      seeAlso: ['<', '>', '<=', '>=', 'sort', 'sequence.sort-by'],
       examples: [
         'compare(0, 1)',
         'compare(0, 0)',
@@ -411,7 +411,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
     docs: {
-      category: 'Misc',
+      category: 'misc',
       returns: { type: 'any' },
       args: { x: { type: 'string' } },
       variants: [{ argumentNames: ['x'] }],
@@ -433,7 +433,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     },
     arity: { min: 1, max: 2 },
     docs: {
-      category: 'Misc',
+      category: 'misc',
       returns: { type: 'string' },
       args: {
         x: { type: 'any' },
@@ -456,7 +456,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([importPath], sourceCodeInfo, contextStack): ModuleFunction | Record<string, ModuleFunction> => {
       assertString(importPath, sourceCodeInfo)
 
-      // Check if importing a specific function (e.g., "Grid.row")
+      // Check if importing a specific function (e.g., "grid.row")
       const dotIndex = importPath.indexOf('.')
       if (dotIndex !== -1) {
         const moduleName = importPath.substring(0, dotIndex)
@@ -506,20 +506,20 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
     docs: {
-      category: 'Misc',
+      category: 'misc',
       returns: { type: 'any' },
       args: {
         path: {
           type: 'string',
-          description: 'The module path to import. Can be a module name (e.g., "Vector", "Grid") or a fully qualified function name (e.g., "Vector.mean", "Grid.row").',
+          description: 'The module path to import. Can be a module name (e.g., "vector", "grid") or a fully qualified function name (e.g., "vector.mean", "grid.row").',
         },
       },
       variants: [{ argumentNames: ['path'] }],
-      description: 'Imports module functions. Use a module name (e.g., "Vector") to import all functions as an object, or a fully qualified name (e.g., "Vector.mean") to import a single function directly.',
+      description: 'Imports module functions. Use a module name (e.g., "vector") to import all functions as an object, or a fully qualified name (e.g., "vector.mean") to import a single function directly.',
       examples: [
-        'let v = import("Vector"); v.mean([1, 2, 3, 4])',
-        'let sum = import("Vector.sum"); sum([1, 2, 3])',
-        'let g = import("Grid"); g.row([[1, 2], [3, 4]], 0)',
+        'let v = import("vector"); v.mean([1, 2, 3, 4])',
+        'let sum = import("vector.sum"); sum([1, 2, 3])',
+        'let g = import("grid"); g.row([[1, 2], [3, 4]], 0)',
       ],
     },
   },

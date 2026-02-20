@@ -5,7 +5,7 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
   '-type-number': {
     datatype: true,
     title: 'number',
-    category: 'Datatype',
+    category: 'datatype',
     description: 'A `number`',
     examples: [
       '42',
@@ -15,7 +15,7 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
   '-type-string': {
     datatype: true,
     title: 'string',
-    category: 'Datatype',
+    category: 'datatype',
     description: 'A `string`',
     examples: [
       '"hello"',
@@ -25,7 +25,7 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
   '-type-object': {
     datatype: true,
     title: 'object',
-    category: 'Datatype',
+    category: 'datatype',
     description: 'An `object`, a collection of key-value pairs where keys are `strings`',
     examples: [
       '{}',
@@ -35,7 +35,7 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
   '-type-array': {
     datatype: true,
     title: 'array',
-    category: 'Datatype',
+    category: 'datatype',
     description: 'An `array`',
     examples: [
       '[]',
@@ -46,7 +46,7 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
   '-type-vector': {
     datatype: true,
     title: 'vector',
-    category: 'Datatype',
+    category: 'datatype',
     description: 'An `array` of `numbers`',
     examples: [
       '[]',
@@ -56,7 +56,7 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
   '-type-matrix': {
     datatype: true,
     title: 'matrix',
-    category: 'Datatype',
+    category: 'datatype',
     description: 'A `matrix`, a two-dimensional `array` with `numbers` where each row has the same number of columns. A `matrix` is also a `grid`.',
     examples: [
       '[[]]',
@@ -67,7 +67,7 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
   '-type-grid': {
     datatype: true,
     title: 'grid',
-    category: 'Datatype',
+    category: 'datatype',
     description: 'A `grid`, a two-dimensional `array` where each row has the same number of columns',
     examples: [
       '[[]]',
@@ -78,7 +78,7 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
   '-type-boolean': {
     datatype: true,
     title: 'boolean',
-    category: 'Datatype',
+    category: 'datatype',
     description: 'A `boolean`',
     examples: [
       'true',
@@ -88,7 +88,7 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
   '-type-function': {
     datatype: true,
     title: 'function',
-    category: 'Datatype',
+    category: 'datatype',
     description: 'A `function`',
     examples: [
       'x -> x + 1',
@@ -100,7 +100,7 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
   '-type-integer': {
     datatype: true,
     title: 'integer',
-    category: 'Datatype',
+    category: 'datatype',
     description: 'An `integer`',
     examples: [
       '42',
@@ -110,7 +110,7 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
   '-type-any': {
     datatype: true,
     title: 'any',
-    category: 'Datatype',
+    category: 'datatype',
     description: '`Any` value',
     examples: [
       '42',
@@ -122,7 +122,7 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
   '-type-null': {
     datatype: true,
     title: 'null',
-    category: 'Datatype',
+    category: 'datatype',
     description: 'The value `null`',
     examples: [
       'null',
@@ -131,7 +131,7 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
   '-type-collection': {
     datatype: true,
     title: 'collection',
-    category: 'Datatype',
+    category: 'datatype',
     description: 'A collection, an `object`, an `array` or a `string`',
     examples: [
       '{ foo: 42 }',
@@ -142,7 +142,7 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
   '-type-sequence': {
     datatype: true,
     title: 'sequence',
-    category: 'Datatype',
+    category: 'datatype',
     description: 'A sequence, an `array` or a `string`',
     examples: [
       '[1, 2, 3]',
@@ -152,7 +152,7 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
   '-type-regexp': {
     datatype: true,
     title: 'regexp',
-    category: 'Datatype',
+    category: 'datatype',
     description: 'A regular expression',
     examples: [
       'regexp("^\\\\s*(.*)$")',
@@ -162,7 +162,7 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
   '-type-never': {
     datatype: true,
     title: 'never',
-    category: 'Datatype',
+    category: 'datatype',
     description: 'A value that can never be created',
     examples: [`
 // throw("error") will never return a value

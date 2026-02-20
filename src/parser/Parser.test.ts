@@ -2,7 +2,7 @@ import { describe, expect, it, test } from 'vitest'
 import { Lits } from '../Lits/Lits'
 import { NodeTypes } from '../constants/constants'
 import { LitsError } from '../errors'
-import { mathUtilsModule } from '../builtin/modules/mathUtils'
+import { mathUtilsModule } from '../builtin/modules/math'
 
 const lits = new Lits()
 const litsDebug = new Lits({ debug: true })
@@ -816,8 +816,8 @@ describe('parser', () => {
     it('supports basic function calls', () => {
       // These tests assume your runtime provides these functions
       expect(lits.run('abs(-5)')).toBe(5)
-      expect(litsWithMathUtils.run('let { sin, cos } = import("Math"); sin(0)')).toBeCloseTo(0)
-      expect(litsWithMathUtils.run('let { sin, cos } = import("Math"); cos(0)')).toBeCloseTo(1)
+      expect(litsWithMathUtils.run('let { sin, cos } = import("math"); sin(0)')).toBeCloseTo(0)
+      expect(litsWithMathUtils.run('let { sin, cos } = import("math"); cos(0)')).toBeCloseTo(1)
     })
 
     it('supports function calls with multiple arguments', () => {
@@ -827,7 +827,7 @@ describe('parser', () => {
 
     it('supports nested function calls', () => {
       expect(lits.run('abs(min(-5, -10))')).toBe(10)
-      expect(litsWithMathUtils.run('let { sin } = import("Math"); round(sin(3.14159))')).toBeCloseTo(0)
+      expect(litsWithMathUtils.run('let { sin } = import("math"); round(sin(3.14159))')).toBeCloseTo(0)
     })
 
     it('supports function calls with expressions as arguments', () => {

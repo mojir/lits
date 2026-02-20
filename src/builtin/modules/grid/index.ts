@@ -660,6 +660,6 @@ for (const [key, docs] of Object.entries(moduleDocs)) {
 }
 
 export const gridModule: LitsModule = {
-  name: 'Grid',
+  name: 'grid',
   functions: gridFunctions,
 }

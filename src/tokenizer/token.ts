@@ -19,7 +19,7 @@ export const tokenTypes = [
   'ReservedSymbol',
   'SingleLineComment',
   'Shebang',
-  'String',
+  'string',
   'Symbol',
   'Whitespace',
 ] as const
@@ -48,7 +48,7 @@ export type RegexpShorthandToken = GenericToken<'RegexpShorthand'>
 export type ReservedSymbolToken<T extends ReservedSymbol = ReservedSymbol> = GenericToken<'ReservedSymbol', T>
 export type SingleLineCommentToken = GenericToken<'SingleLineComment'>
 export type ShebangToken = GenericToken<'Shebang'>
-export type StringToken = GenericToken<'String'>
+export type StringToken = GenericToken<'string'>
 export type DocStringToken = GenericToken<'DocString'>
 export type SymbolToken<T extends string = string> = GenericToken<'Symbol', T>
 export type WhitespaceToken = GenericToken<'Whitespace'>
@@ -273,11 +273,11 @@ export function asRBraceToken(token: Token | undefined): RBraceToken {
 }
 
 export function isStringToken(token: Token | undefined): token is StringToken {
-  return token?.[0] === 'String'
+  return token?.[0] === 'string'
 }
 export function assertStringToken(token: Token | undefined): asserts token is StringToken {
   if (!isStringToken(token)) {
-    throwUnexpectedToken('String', undefined, token)
+    throwUnexpectedToken('string', undefined, token)
   }
 }
 export function asStringToken(token: Token | undefined): StringToken {

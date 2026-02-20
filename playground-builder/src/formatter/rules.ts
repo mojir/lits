@@ -106,7 +106,7 @@ export function formatLitsExpression(program: string, styleOverride?: StyleOverr
 function getStylesFromToken(token: Token): string {
   const tokenType = token[0]
   switch (tokenType) {
-    case 'String':
+    case 'string':
       return styles('text-color-Pink')
     case 'DocString':
       return styles('text-color-Pink')

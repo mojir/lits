@@ -7,8 +7,8 @@ const lits = new Lits({ modules: [vectorModule] })
 
 // Helper to run vec module functions with the new import syntax
 function runVec(code: string): unknown {
-  // Replace 'vec:functionName(' with 'let v = import("Vector"); v.functionName('
-  const modifiedCode = code.replace(/vec:(\S+?)\(/g, 'let v = import("Vector"); v.$1(')
+  // Replace 'vec:functionName(' with 'let v = import("vector"); v.functionName('
+  const modifiedCode = code.replace(/vec:(\S+?)\(/g, 'let v = import("vector"); v.$1(')
   return lits.run(modifiedCode)
 }
 

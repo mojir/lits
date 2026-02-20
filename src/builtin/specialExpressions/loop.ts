@@ -12,7 +12,7 @@ import type { specialExpressionTypes } from '../specialExpressionTypes'
 export type LoopNode = SpecialExpressionNode<[typeof specialExpressionTypes['loop'], BindingNode[], Node]> // bindings, body
 
 const docs: CustomDocs = {
-  category: 'Special-Expression',
+  category: 'special-expression',
   customVariants: ['loop (bindings) -> body'],
   details: [
     ['bindings', 'binding pairs', 'Comma-separated bindings with initial values, e.g. `n = 10, sum = 0`.'],

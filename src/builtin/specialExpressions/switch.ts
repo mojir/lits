@@ -6,7 +6,7 @@ import type { specialExpressionTypes } from '../specialExpressionTypes'
 export type SwitchNode = SpecialExpressionNode<[typeof specialExpressionTypes['switch'], Node, [Node, Node][]]>
 
 const docs: CustomDocs = {
-  category: 'Special-Expression',
+  category: 'special-expression',
   customVariants: ['switch value switch-branch switch-branch ... end'],
   details: [
     ['value', 'any', 'The value to test.'],

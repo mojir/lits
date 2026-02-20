@@ -48,7 +48,7 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
     },
     arity: { min: 1, max: 3 },
     docs: {
-      category: 'Array',
+      category: 'array',
       returns: { type: 'number', array: true },
       args: {
         a: { type: 'number' },
@@ -64,7 +64,7 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
 
 $a defaults to 0.
 $step defaults to 1.`,
-      seeAlso: ['repeat', 'Vector.linspace'],
+      seeAlso: ['repeat', 'vector.linspace'],
       examples: [
         'range(4)',
         'range(1, 4)',
@@ -91,7 +91,7 @@ range(
     },
     arity: toFixedArity(2),
     docs: {
-      category: 'Array',
+      category: 'array',
       returns: { type: 'any', array: true },
       args: {
         a: { type: 'any' },
@@ -99,7 +99,7 @@ range(
       },
       variants: [{ argumentNames: ['a', 'b'] }],
       description: 'Returns an array with $a repeated $b times.',
-      seeAlso: ['range', 'Vector.ones', 'Vector.zeros', 'Vector.fill', 'Vector.generate', 'String.string-repeat'],
+      seeAlso: ['range', 'vector.ones', 'vector.zeros', 'vector.fill', 'vector.generate', 'string.string-repeat'],
       examples: [
         'repeat(10, 3)',
         'repeat(10, 0)',
@@ -120,7 +120,7 @@ range(
     },
     arity: { min: 1, max: 2 },
     docs: {
-      category: 'Array',
+      category: 'array',
       returns: { type: 'any', array: true },
       args: {
         x: { type: ['array', 'any'], description: 'If $x is not an array, `[ ]` is returned.' },
@@ -150,7 +150,7 @@ flatten([
     },
     arity: toFixedArity(2),
     docs: {
-      category: 'Array',
+      category: 'array',
       returns: { type: 'collection' },
       args: {
         a: { type: 'collection' },
@@ -194,7 +194,7 @@ mapcat(
     },
     arity: toFixedArity(3),
     docs: {
-      category: 'Array',
+      category: 'array',
       returns: { type: 'array' },
       args: {
         arr: { type: 'array' },
@@ -203,11 +203,11 @@ mapcat(
       },
       variants: [{ argumentNames: ['arr', 'windowSize', 'fn'] }],
       description: 'Returns the result of applying $fn to each moving window of size $windowSize in $arr.',
-      seeAlso: ['running-fn', 'Vector.moving-mean'],
+      seeAlso: ['running-fn', 'vector.moving-mean'],
       examples: [
-        'let v = import("Vector"); moving-fn([1, 2, 3], 2, v.sum)',
-        'let v = import("Vector"); moving-fn([1, 2, 3], 1, v.sum)',
-        'let v = import("Vector"); moving-fn([1, 2, 3], 3, v.sum)',
+        'let v = import("vector"); moving-fn([1, 2, 3], 2, v.sum)',
+        'let v = import("vector"); moving-fn([1, 2, 3], 1, v.sum)',
+        'let v = import("vector"); moving-fn([1, 2, 3], 3, v.sum)',
       ],
     },
   },
@@ -225,7 +225,7 @@ mapcat(
     },
     arity: toFixedArity(2),
     docs: {
-      category: 'Array',
+      category: 'array',
       returns: { type: 'array' },
       args: {
         a: { type: 'array' },
@@ -233,11 +233,11 @@ mapcat(
       },
       variants: [{ argumentNames: ['a', 'b'] }],
       description: 'Returns the result of applying $b to each element of $a.',
-      seeAlso: ['moving-fn', 'Vector.running-mean'],
+      seeAlso: ['moving-fn', 'vector.running-mean'],
       examples: [
-        'let v = import("Vector"); running-fn([1, 2, 3], v.sum)',
-        'let v = import("Vector"); running-fn([1, 2, 3], v.max)',
-        'let v = import("Vector"); running-fn([1, 2, 3], v.min)',
+        'let v = import("vector"); running-fn([1, 2, 3], v.sum)',
+        'let v = import("vector"); running-fn([1, 2, 3], v.max)',
+        'let v = import("vector"); running-fn([1, 2, 3], v.min)',
       ],
     },
   },

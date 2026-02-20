@@ -358,6 +358,6 @@ for (const [key, docs] of Object.entries(moduleDocs)) {
 }
 
 export const vectorModule: LitsModule = {
-  name: 'Vector',
+  name: 'vector',
   functions: vectorFunctions,
 }

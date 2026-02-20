@@ -1,4 +1,4 @@
-let { assert= } = import("Assert");
+let { assert= } = import("assert");
 
 // @test add
 assert=(add(1, 2), 3);

@@ -30,7 +30,7 @@ describe('token', () => {
     })
 
     test('asStringToken', () => {
-      expect(() => asStringToken(['String', '"asd"'])).not.toThrow()
+      expect(() => asStringToken(['string', '"asd"'])).not.toThrow()
       expect(() => asStringToken(['Whitespace', ' '])).toThrow(LitsError)
     })
 

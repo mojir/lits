@@ -11,7 +11,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([first]): boolean => isLitsFunction(first),
     arity: toFixedArity(1),
     docs: {
-      category: 'Predicate',
+      category: 'predicate',
       returns: { type: 'boolean' },
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
@@ -32,7 +32,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([first]): boolean => typeof first === 'string',
     arity: toFixedArity(1),
     docs: {
-      category: 'Predicate',
+      category: 'predicate',
       returns: { type: 'boolean' },
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
@@ -53,7 +53,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([first]): boolean => typeof first === 'number',
     arity: toFixedArity(1),
     docs: {
-      category: 'Predicate',
+      category: 'predicate',
       returns: { type: 'boolean' },
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
@@ -74,7 +74,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([first]): boolean => typeof first === 'number' && isNumber(first, { integer: true }),
     arity: toFixedArity(1),
     docs: {
-      category: 'Predicate',
+      category: 'predicate',
       returns: { type: 'boolean' },
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
@@ -97,7 +97,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([first]): boolean => typeof first === 'boolean',
     arity: toFixedArity(1),
     docs: {
-      category: 'Predicate',
+      category: 'predicate',
       returns: { type: 'boolean' },
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
@@ -117,7 +117,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([first]): boolean => first === null || first === undefined,
     arity: toFixedArity(1),
     docs: {
-      category: 'Predicate',
+      category: 'predicate',
       returns: { type: 'boolean' },
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
@@ -140,7 +140,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
     docs: {
-      category: 'Predicate',
+      category: 'predicate',
       returns: { type: 'boolean' },
       args: { x: { type: 'number' } },
       variants: [{ argumentNames: ['x'] }],
@@ -162,7 +162,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
     docs: {
-      category: 'Predicate',
+      category: 'predicate',
       returns: { type: 'boolean' },
       args: { x: { type: 'number' } },
       variants: [{ argumentNames: ['x'] }],
@@ -184,7 +184,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
     docs: {
-      category: 'Predicate',
+      category: 'predicate',
       returns: { type: 'boolean' },
       args: { x: { type: 'number' } },
       variants: [{ argumentNames: ['x'] }],
@@ -206,7 +206,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
     docs: {
-      category: 'Predicate',
+      category: 'predicate',
       returns: { type: 'boolean' },
       args: { x: { type: 'number' } },
       variants: [{ argumentNames: ['x'] }],
@@ -228,7 +228,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
     docs: {
-      category: 'Predicate',
+      category: 'predicate',
       returns: { type: 'boolean' },
       args: { x: { type: 'number' } },
       variants: [{ argumentNames: ['x'] }],
@@ -249,7 +249,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
     docs: {
-      category: 'Predicate',
+      category: 'predicate',
       returns: { type: 'boolean' },
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
@@ -272,7 +272,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
     docs: {
-      category: 'Predicate',
+      category: 'predicate',
       returns: { type: 'boolean' },
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
@@ -296,7 +296,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
     docs: {
-      category: 'Predicate',
+      category: 'predicate',
       returns: { type: 'boolean' },
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
@@ -318,7 +318,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([first]): boolean => isObj(first),
     arity: toFixedArity(1),
     docs: {
-      category: 'Predicate',
+      category: 'predicate',
       returns: { type: 'boolean' },
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
@@ -340,7 +340,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([value]): boolean => isRegularExpression(value),
     arity: toFixedArity(1),
     docs: {
-      category: 'Predicate',
+      category: 'predicate',
       returns: { type: 'boolean' },
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
@@ -367,7 +367,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
     docs: {
-      category: 'Predicate',
+      category: 'predicate',
       returns: { type: 'boolean' },
       args: { x: { type: 'number' } },
       variants: [{ argumentNames: ['x'] }],
@@ -388,7 +388,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
     docs: {
-      category: 'Predicate',
+      category: 'predicate',
       returns: { type: 'boolean' },
       args: { x: { type: 'number' } },
       variants: [{ argumentNames: ['x'] }],
@@ -409,7 +409,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
     docs: {
-      category: 'Predicate',
+      category: 'predicate',
       returns: { type: 'boolean' },
       args: { x: { type: 'number' } },
       variants: [{ argumentNames: ['x'] }],
@@ -429,7 +429,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
     docs: {
-      category: 'Predicate',
+      category: 'predicate',
       returns: { type: 'boolean' },
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
@@ -450,7 +450,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
     docs: {
-      category: 'Predicate',
+      category: 'predicate',
       returns: { type: 'boolean' },
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
@@ -481,12 +481,12 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
     docs: {
-      category: 'Predicate',
+      category: 'predicate',
       returns: { type: 'boolean' },
       args: { x: { type: ['collection', 'string', 'null'] } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Returns `true` if $x is empty or `null`, otherwise `false`.',
-      seeAlso: ['not-empty?', 'Collection.not-empty', 'null?', 'blank?', 'count'],
+      seeAlso: ['not-empty?', 'collection.not-empty', 'null?', 'blank?', 'count'],
       examples: [
         'empty?([])',
         'empty?([1, 2, 3])',
@@ -514,12 +514,12 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
     docs: {
-      category: 'Predicate',
+      category: 'predicate',
       returns: { type: 'boolean' },
       args: { x: { type: ['collection', 'string', 'null'] } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Returns `false` if $x is empty or `null`, otherwise `true`.',
-      seeAlso: ['empty?', 'Collection.not-empty', 'null?'],
+      seeAlso: ['empty?', 'collection.not-empty', 'null?'],
       examples: [
         'not-empty?([])',
         'not-empty?([1, 2, 3])',
@@ -535,7 +535,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([vector]): boolean => isVector(vector),
     arity: toFixedArity(1),
     docs: {
-      category: 'Predicate',
+      category: 'predicate',
       description: 'Checks if a value is a `vector`. A `vector` is an array of `numbers`.',
       seeAlso: ['matrix?', 'grid?', 'array?'],
       returns: { type: 'boolean' },
@@ -552,7 +552,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([matrix]): boolean => isMatrix(matrix),
     arity: toFixedArity(1),
     docs: {
-      category: 'Predicate',
+      category: 'predicate',
       description: 'Checks if a value is a `matrix`. A `matrix` is an array of arrays of `numbers`.',
       seeAlso: ['vector?', 'grid?', 'array?'],
       returns: { type: 'boolean' },
@@ -571,7 +571,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([table]): boolean => isGrid(table),
     arity: toFixedArity(1),
     docs: {
-      category: 'Predicate',
+      category: 'predicate',
       description: 'Checks if a `value` is a `grid`. A `grid` is an `array` of `arrays` where all inner `arrays` have the same length.',
       seeAlso: ['vector?', 'matrix?', 'array?'],
       returns: { type: 'boolean' },

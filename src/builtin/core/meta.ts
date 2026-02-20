@@ -26,7 +26,7 @@ export function getMetaNormalExpression(normalExpressionReference: Record<string
       },
       arity: toFixedArity(1),
       docs: {
-        category: 'Meta',
+        category: 'meta',
         returns: { type: 'string' },
         args: { fun: { type: 'function' } },
         variants: [{ argumentNames: ['fun'] }],
@@ -58,7 +58,7 @@ doc(add)`,
       },
       arity: toFixedArity(1),
       docs: {
-        category: 'Meta',
+        category: 'meta',
         returns: { type: 'object' },
         args: { fun: { type: 'function' } },
         variants: [{ argumentNames: ['fun'] }],
