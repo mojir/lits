@@ -91,7 +91,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['obj', 'key'] }],
       description: 'Returns entry (key-value pair) for $key, or `null` if $key not present in $obj.',
-      seeAlso: ['get', 'contains?', 'entries', 'position', 'some'],
+      seeAlso: ['get', 'contains?', 'entries', 'Sequence-Utils.position', 'some'],
       examples: [
         '{ a: 1, "b": 2 } find "a"',
         'find(object("a", 1, "b", 2), "b")',
@@ -246,7 +246,7 @@ If no arguments are provided \`null\` is returned.`,
       },
       variants: [{ argumentNames: ['a', 'b'] }],
       description: 'Returns a new object created by mapping $a to $b.',
-      seeAlso: ['entries', 'keys', 'vals', 'interleave'],
+      seeAlso: ['entries', 'keys', 'vals', 'Sequence-Utils.interleave'],
       examples: [
         '["a", "b", "c"] zipmap [1, 2, 3]',
         'zipmap(["a", "b", "c"], [10, null, [1, 2, 3]])',

@@ -1449,6 +1449,7 @@ let longWords = text
 ### Data Transformation
 
 ```lits
+let su = import("Sequence-Utils");
 let users = [
   { name: "Alice", age: 30, department: "Engineering" },
   { name: "Bob", age: 25, department: "Marketing" },
@@ -1456,7 +1457,7 @@ let users = [
 ];
 
 // Group by department and get average age
-let grouped = users |> group-by(_, "department");
+let grouped = users |> su.group-by(_, "department");
 let departmentAges = grouped
   |> entries(_)
   |> map(_, ([dept, people]) -> do

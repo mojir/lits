@@ -6,8 +6,10 @@ import { vectorModule } from './builtin/modules/vector'
 import { linearAlgebraModule } from './builtin/modules/linearAlgebra'
 import { matrixModule } from './builtin/modules/matrix'
 import { numberTheoryModule } from './builtin/modules/numberTheory'
+import { mathUtilsModule } from './builtin/modules/mathUtils'
 import { stringUtilsModule } from './builtin/modules/stringUtils'
 import { collectionUtilsModule } from './builtin/modules/collectionUtils'
+import { sequenceUtilsModule } from './builtin/modules/sequenceUtils'
 
 export const allBuiltinModules: LitsModule[] = [
   assertModule,
@@ -17,6 +19,8 @@ export const allBuiltinModules: LitsModule[] = [
   linearAlgebraModule,
   matrixModule,
   numberTheoryModule,
+  mathUtilsModule,
   stringUtilsModule,
   collectionUtilsModule,
+  sequenceUtilsModule,
 ]

@@ -51,13 +51,7 @@ export const api = {
     'nth',
     'push',
     'pop',
-    'unshift',
-    'shift',
-    'slice',
-    'splice',
-    'position',
     'index-of',
-    'last-index-of',
     'some',
     'reverse',
     'first',
@@ -65,28 +59,36 @@ export const api = {
     'last',
     'rest',
     'next',
-    'take',
-    'take-last',
-    'take-while',
-    'drop',
-    'drop-last',
-    'drop-while',
     'sort',
-    'sort-by',
-    'distinct',
-    'remove',
-    'remove-at',
-    'split-at',
-    'split-with',
-    'frequencies',
-    'group-by',
-    'partition',
-    'partition-all',
-    'partition-by',
-    'starts-with?',
-    'ends-with?',
-    'interleave',
-    'interpose',
+    'slice',
+  ] as const,
+  sequenceUtils: [
+    'Sequence-Utils.position',
+    'Sequence-Utils.last-index-of',
+    'Sequence-Utils.shift',
+    'Sequence-Utils.unshift',
+    'Sequence-Utils.splice',
+    'Sequence-Utils.sort-by',
+    'Sequence-Utils.take',
+    'Sequence-Utils.take-last',
+    'Sequence-Utils.take-while',
+    'Sequence-Utils.drop',
+    'Sequence-Utils.drop-last',
+    'Sequence-Utils.drop-while',
+    'Sequence-Utils.distinct',
+    'Sequence-Utils.remove',
+    'Sequence-Utils.remove-at',
+    'Sequence-Utils.split-at',
+    'Sequence-Utils.split-with',
+    'Sequence-Utils.frequencies',
+    'Sequence-Utils.group-by',
+    'Sequence-Utils.partition',
+    'Sequence-Utils.partition-all',
+    'Sequence-Utils.partition-by',
+    'Sequence-Utils.starts-with?',
+    'Sequence-Utils.ends-with?',
+    'Sequence-Utils.interleave',
+    'Sequence-Utils.interpose',
   ] as const,
   math: [
     '+',
@@ -109,23 +111,25 @@ export const api = {
     'max',
     'abs',
     'sign',
-    'ln',
-    'log2',
-    'log10',
-    'sin',
-    'cos',
-    'tan',
-    'asin',
-    'acos',
-    'atan',
-    'sinh',
-    'cosh',
-    'tanh',
-    'asinh',
-    'acosh',
-    'atanh',
-    'to-rad',
-    'to-deg',
+  ] as const,
+  mathUtils: [
+    'Math-Utils.ln',
+    'Math-Utils.log2',
+    'Math-Utils.log10',
+    'Math-Utils.sin',
+    'Math-Utils.cos',
+    'Math-Utils.tan',
+    'Math-Utils.asin',
+    'Math-Utils.acos',
+    'Math-Utils.atan',
+    'Math-Utils.sinh',
+    'Math-Utils.cosh',
+    'Math-Utils.tanh',
+    'Math-Utils.asinh',
+    'Math-Utils.acosh',
+    'Math-Utils.atanh',
+    'Math-Utils.to-rad',
+    'Math-Utils.to-deg',
   ] as const,
   functional: [
     '|>',
@@ -578,6 +582,7 @@ export type SpecialExpressionsApiName = string
 export type StringApiName = typeof api.string[number]
 export type StringUtilsApiName = typeof api.stringUtils[number]
 export type CollectionUtilsApiName = typeof api.collectionUtils[number]
+export type SequenceUtilsApiName = typeof api.sequenceUtils[number]
 export type BitwiseApiName = typeof api.bitwise[number]
 export type AssertApiName = typeof api.assert[number]
 export type GridApiName = typeof api.grid[number]
@@ -586,6 +591,7 @@ export type NumberTheoryApiName = typeof api.numberTheory[number]
 export type VectorApiName = typeof api.vector[number]
 export type LinAlgApiName = typeof api.linAlg[number]
 export type RandomApiName = typeof api.random[number]
+export type MathUtilsApiName = typeof api.mathUtils[number]
 
 // Core functions - always available without import
 export type CoreNormalExpressionName =
@@ -610,9 +616,11 @@ export type ModuleExpressionName =
   | GridApiName
   | NumberTheoryApiName
   | RandomApiName
+  | MathUtilsApiName
   | AssertApiName
   | StringUtilsApiName
   | CollectionUtilsApiName
+  | SequenceUtilsApiName
 
 // All normal expression names
 export type NormalExpressionName =
@@ -651,9 +659,11 @@ const moduleApiFunctionNames = [
   ...api.grid,
   ...api.numberTheory,
   ...api.random,
+  ...api.mathUtils,
   ...api.assert,
   ...api.stringUtils,
   ...api.collectionUtils,
+  ...api.sequenceUtils,
 ] as const
 
 // All API function names

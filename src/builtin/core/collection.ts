@@ -117,7 +117,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['coll', 'fun'] }],
       description: 'Creates a new collection with all elements that pass the test implemented by $fun.',
-      seeAlso: ['Collection-Utils.filteri', 'map', 'remove'],
+      seeAlso: ['Collection-Utils.filteri', 'map', 'Sequence-Utils.remove'],
       examples: [
         `
 filter(
@@ -524,7 +524,7 @@ assoc(
         { argumentNames: ['a', 'colls'] },
       ],
       description: 'Concatenates collections into one collection.',
-      seeAlso: ['mapcat', 'str', 'join', 'push', 'unshift'],
+      seeAlso: ['mapcat', 'str', 'join', 'push', 'Sequence-Utils.unshift'],
       examples: [
         '"Albert" ++ " " ++ "Mojir"',
         '"Albert" ++ "Mojir"',

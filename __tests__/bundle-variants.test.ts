@@ -17,6 +17,7 @@ import { matrixModule } from '../src/modules/matrix'
 import { numberTheoryModule } from '../src/modules/numberTheory'
 import { stringUtilsModule } from '../src/modules/stringUtils'
 import { collectionUtilsModule } from '../src/modules/collectionUtils'
+import { sequenceUtilsModule } from '../src/modules/sequenceUtils'
 
 describe('minimal entry point (src/index.ts)', () => {
   it('should evaluate core expressions without modules', () => {
@@ -67,8 +68,8 @@ describe('full entry point (src/full.ts)', () => {
     expect(Object.keys(apiReference).length).toBeGreaterThan(0)
   })
 
-  it('should export allBuiltinModules with 9 modules', () => {
-    expect(allBuiltinModules).toHaveLength(9)
+  it('should export allBuiltinModules with 11 modules', () => {
+    expect(allBuiltinModules).toHaveLength(11)
   })
 })
 
@@ -128,6 +129,12 @@ describe('individual module entry points', () => {
     expect(collectionUtilsModule.name).toBe('Collection-Utils')
     const lits = new Lits({ modules: [collectionUtilsModule] })
     expect(lits.run('let cu = import("Collection-Utils"); cu.every?([1, 2, 3], number?)')).toBe(true)
+  })
+
+  it('sequenceUtils module', () => {
+    expect(sequenceUtilsModule.name).toBe('Sequence-Utils')
+    const lits = new Lits({ modules: [sequenceUtilsModule] })
+    expect(lits.run('let su = import("Sequence-Utils"); su.take([1, 2, 3, 4, 5], 3)')).toEqual([1, 2, 3])
   })
 
   it('should allow combining multiple modules', () => {

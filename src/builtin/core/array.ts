@@ -173,7 +173,7 @@ end;
         `
 mapcat(
   [[1, 2], [2, 2], [2, 3]],
-  -> $ remove even?
+  -> $ filter odd?
 )`,
       ],
     },

@@ -31,6 +31,8 @@ import { matrixModule } from '../src/builtin/modules/matrix'
 import { numberTheoryModule } from '../src/builtin/modules/numberTheory'
 import { stringUtilsModule } from '../src/builtin/modules/stringUtils'
 import { collectionUtilsModule } from '../src/builtin/modules/collectionUtils'
+import { sequenceUtilsModule } from '../src/builtin/modules/sequenceUtils'
+import { mathUtilsModule } from '../src/builtin/modules/mathUtils'
 import type { ApiName, ArrayApiName, BitwiseApiName, Category, CollectionApiName, CoreApiName, CoreNormalExpressionName, DataType, FunctionalApiName, MathApiName, MetaApiName, MiscApiName, ModuleExpressionName, ObjectApiName, PredicateApiName, RegularExpressionApiName, SequenceApiName, StringApiName } from './api'
 import { datatype } from './datatype'
 import { shorthand } from './shorthand'
@@ -231,6 +233,8 @@ export const moduleReference: Record<ModuleExpressionName, FunctionReference> = 
   ...moduledDocsToReference(numberTheoryModule.name, numberTheoryModule.functions),
   ...moduledDocsToReference(stringUtilsModule.name, stringUtilsModule.functions),
   ...moduledDocsToReference(collectionUtilsModule.name, collectionUtilsModule.functions),
+  ...moduledDocsToReference(sequenceUtilsModule.name, sequenceUtilsModule.functions),
+  ...moduledDocsToReference(mathUtilsModule.name, mathUtilsModule.functions),
 } as Record<ModuleExpressionName, FunctionReference>
 
 Object.entries(normalExpressionReference).forEach(([key, obj]) => {

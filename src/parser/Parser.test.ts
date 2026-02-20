@@ -2,9 +2,11 @@ import { describe, expect, it, test } from 'vitest'
 import { Lits } from '../Lits/Lits'
 import { NodeTypes } from '../constants/constants'
 import { LitsError } from '../errors'
+import { mathUtilsModule } from '../builtin/modules/mathUtils'
 
 const lits = new Lits()
 const litsDebug = new Lits({ debug: true })
+const litsWithMathUtils = new Lits({ modules: [mathUtilsModule] })
 
 describe('parser', () => {
   describe('conditional operator', () => {
@@ -459,7 +461,7 @@ describe('parser', () => {
       expect(lits.run('max(1, 3, 2)')).toBe(3)
       expect(lits.run('&&(1, 2, 3)')).toBe(3)
       expect(lits.run('||(0, 1, 2)')).toBe(1)
-      expect(lits.run('remove-at([1, 2, 3], 1)')).toEqual([1, 3])
+      expect(lits.run('slice([1, 2, 3], 1)')).toEqual([2, 3])
     })
   })
 
@@ -814,8 +816,8 @@ describe('parser', () => {
     it('supports basic function calls', () => {
       // These tests assume your runtime provides these functions
       expect(lits.run('abs(-5)')).toBe(5)
-      expect(lits.run('sin(0)')).toBeCloseTo(0)
-      expect(lits.run('cos(0)')).toBeCloseTo(1)
+      expect(litsWithMathUtils.run('let { sin, cos } = import("Math-Utils"); sin(0)')).toBeCloseTo(0)
+      expect(litsWithMathUtils.run('let { sin, cos } = import("Math-Utils"); cos(0)')).toBeCloseTo(1)
     })
 
     it('supports function calls with multiple arguments', () => {
@@ -825,7 +827,7 @@ describe('parser', () => {
 
     it('supports nested function calls', () => {
       expect(lits.run('abs(min(-5, -10))')).toBe(10)
-      expect(lits.run('round(sin(3.14159))')).toBeCloseTo(0)
+      expect(litsWithMathUtils.run('let { sin } = import("Math-Utils"); round(sin(3.14159))')).toBeCloseTo(0)
     })
 
     it('supports function calls with expressions as arguments', () => {

@@ -40,7 +40,7 @@ describe('specialFunctions', () => {
       it('samples', () => {
         expect(lits.run('let name-array = ["Albert", "Mojir"]; name-array(0)')).toBe('Albert')
         expect(lits.run('["Albert", "Mojir"](0)')).toBe('Albert')
-        expect(lits.run('unshift([2, 3], 1)(1)')).toBe(2)
+        expect(lits.run('push([1], 2, 3)(1)')).toBe(2)
         expect(lits.run('"Albert"(0)')).toBe('A')
         expect(lits.run('"Albert"(10)')).toBeNull()
         expect(() => lits.run('["Albert", "Mojir"]()')).toThrow(LitsError)
@@ -54,7 +54,7 @@ describe('specialFunctions', () => {
         expect(lits.run('let name-array = ["Albert", "Mojir"]; 0(name-array)')).toBe('Albert')
         expect(lits.run('0(["Albert", "Mojir"])')).toBe('Albert')
         expect(lits.run('3(["Albert", "Mojir"])')).toBeNull()
-        expect(lits.run('1(unshift([2, 3], 1))')).toBe(2)
+        expect(lits.run('1(push([1], 2, 3))')).toBe(2)
         expect(lits.run('1("Albert")')).toBe('l')
         expect(lits.run('10("Albert")')).toBeNull()
         expect(() => lits.run('"0"(["Albert", "Mojir"])')).toThrow(LitsError)

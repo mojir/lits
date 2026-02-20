@@ -65,6 +65,11 @@
       "import": "./dist/modules/numberTheory.esm.js",
       "require": "./dist/modules/numberTheory.js"
     },
+    "./modules/mathUtils": {
+      "types": "./dist/src/modules/mathUtils.d.ts",
+      "import": "./dist/modules/mathUtils.esm.js",
+      "require": "./dist/modules/mathUtils.js"
+    },
     "./modules/stringUtils": {
       "types": "./dist/src/modules/stringUtils.d.ts",
       "import": "./dist/modules/stringUtils.esm.js",
@@ -74,6 +79,11 @@
       "types": "./dist/src/modules/collectionUtils.d.ts",
       "import": "./dist/modules/collectionUtils.esm.js",
       "require": "./dist/modules/collectionUtils.js"
+    },
+    "./modules/sequenceUtils": {
+      "types": "./dist/src/modules/sequenceUtils.d.ts",
+      "import": "./dist/modules/sequenceUtils.esm.js",
+      "require": "./dist/modules/sequenceUtils.js"
     }
   },
   "main": "dist/index.js",
