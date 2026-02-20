@@ -7,7 +7,7 @@ import type { specialExpressionTypes } from '../specialExpressionTypes'
 export type DefinedNode = SpecialExpressionNode<[typeof specialExpressionTypes['defined?'], SymbolNode]>
 
 const docs: FunctionDocs = {
-  category: 'Special expression',
+  category: 'Special-Expression',
   returns: {
     type: 'boolean',
   },

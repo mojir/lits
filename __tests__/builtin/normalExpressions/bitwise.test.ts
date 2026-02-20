@@ -1,19 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../src/Lits/Lits'
 import { LitsError } from '../../../src/errors'
+import { bitwiseUtilsModule } from '../../../src/builtin/modules/bitwiseUtils'
 
-describe('predicates', () => {
+describe('bitwise', () => {
   for (const lits of [new Lits(), new Lits({ debug: true })]) {
-    describe('bit-not', () => {
-      it('samples', () => {
-        expect(lits.run('bit-not(0)')).toBe(-1)
-        expect(lits.run('bit-not(255)')).toBe(-256)
-        expect(lits.run('bit-not(0b1111)')).toBe(~Number('0b1111'))
-        expect(lits.run('bit-not(0xffff)')).toBe(~Number('0xffff'))
-        expect(() => lits.run('bit-not()')).toThrow(LitsError)
-        expect(() => lits.run('bit-not(1, 2)')).toThrow(LitsError)
-      })
-    })
     describe('<<', () => {
       it('samples', () => {
         expect(lits.run('16 << 2')).toBe(64)
@@ -55,18 +46,6 @@ describe('predicates', () => {
         expect(() => lits.run('&(1, 2.1)')).toThrow(LitsError)
       })
     })
-
-    describe('bit-and-not', () => {
-      it('samples', () => {
-        expect(lits.run('bit-and-not(0b1100, 0b1001)')).toBe(0b0100)
-        expect(lits.run('bit-and-not(0b1111, 0b1010, 0b1010)')).toBe(0b0101)
-        expect(lits.run('bit-and-not(0b1111, 0b0111, 0b0011)')).toBe(0b1000)
-        expect(() => lits.run('bit-and-not()')).toThrow(LitsError)
-        expect(() => lits.run('bit-and-not(12)')).toThrow(LitsError)
-        expect(() => lits.run('bit-and-not(1, 2.1)')).toThrow(LitsError)
-      })
-    })
-
     describe('|', () => {
       it('samples', () => {
         expect(lits.run('0b0011 | 0b1010')).toBe(0b1011)
@@ -87,33 +66,56 @@ describe('predicates', () => {
         expect(() => lits.run('xor(1)')).toThrow(LitsError)
       })
     })
+  }
+
+  for (const lits of [new Lits({ modules: [bitwiseUtilsModule] }), new Lits({ modules: [bitwiseUtilsModule], debug: true })]) {
+    describe('bit-not', () => {
+      it('samples', () => {
+        expect(lits.run('let { bit-not } = import("Bitwise"); bit-not(0)')).toBe(-1)
+        expect(lits.run('let { bit-not } = import("Bitwise"); bit-not(255)')).toBe(-256)
+        expect(lits.run('let { bit-not } = import("Bitwise"); bit-not(0b1111)')).toBe(~Number('0b1111'))
+        expect(lits.run('let { bit-not } = import("Bitwise"); bit-not(0xffff)')).toBe(~Number('0xffff'))
+        expect(() => lits.run('let { bit-not } = import("Bitwise"); bit-not()')).toThrow(LitsError)
+        expect(() => lits.run('let { bit-not } = import("Bitwise"); bit-not(1, 2)')).toThrow(LitsError)
+      })
+    })
+    describe('bit-and-not', () => {
+      it('samples', () => {
+        expect(lits.run('let { bit-and-not } = import("Bitwise"); bit-and-not(0b1100, 0b1001)')).toBe(0b0100)
+        expect(lits.run('let { bit-and-not } = import("Bitwise"); bit-and-not(0b1111, 0b1010, 0b1010)')).toBe(0b0101)
+        expect(lits.run('let { bit-and-not } = import("Bitwise"); bit-and-not(0b1111, 0b0111, 0b0011)')).toBe(0b1000)
+        expect(() => lits.run('let { bit-and-not } = import("Bitwise"); bit-and-not()')).toThrow(LitsError)
+        expect(() => lits.run('let { bit-and-not } = import("Bitwise"); bit-and-not(12)')).toThrow(LitsError)
+        expect(() => lits.run('let { bit-and-not } = import("Bitwise"); bit-and-not(1, 2.1)')).toThrow(LitsError)
+      })
+    })
     describe('bit-clear', () => {
       it('samples', () => {
-        expect(lits.run('0b1111 bit-clear 2')).toBe(0b1011)
-        expect(lits.run('bit-clear(0b1111, 2)')).toBe(0b1011)
-        expect(lits.run('bit-clear(0b1111, 5)')).toBe(0b1111)
+        expect(lits.run('let { bit-clear } = import("Bitwise"); 0b1111 bit-clear 2')).toBe(0b1011)
+        expect(lits.run('let { bit-clear } = import("Bitwise"); bit-clear(0b1111, 2)')).toBe(0b1011)
+        expect(lits.run('let { bit-clear } = import("Bitwise"); bit-clear(0b1111, 5)')).toBe(0b1111)
       })
     })
     describe('bit-flip', () => {
       it('samples', () => {
-        expect(lits.run('0b1111 bit-flip 2')).toBe(0b1011)
-        expect(lits.run('bit-flip(0b1111, 2)')).toBe(0b1011)
-        expect(lits.run('bit-flip(0, 2)')).toBe(0b100)
+        expect(lits.run('let { bit-flip } = import("Bitwise"); 0b1111 bit-flip 2')).toBe(0b1011)
+        expect(lits.run('let { bit-flip } = import("Bitwise"); bit-flip(0b1111, 2)')).toBe(0b1011)
+        expect(lits.run('let { bit-flip } = import("Bitwise"); bit-flip(0, 2)')).toBe(0b100)
       })
     })
     describe('bit-set', () => {
       it('samples', () => {
-        expect(lits.run('0b1001 bit-set 2')).toBe(0b1101)
-        expect(lits.run('bit-set(0b1001, 2)')).toBe(0b1101)
-        expect(lits.run('bit-set(0, 2)')).toBe(0b100)
+        expect(lits.run('let { bit-set } = import("Bitwise"); 0b1001 bit-set 2')).toBe(0b1101)
+        expect(lits.run('let { bit-set } = import("Bitwise"); bit-set(0b1001, 2)')).toBe(0b1101)
+        expect(lits.run('let { bit-set } = import("Bitwise"); bit-set(0, 2)')).toBe(0b100)
       })
     })
     describe('bit-test', () => {
       it('samples', () => {
-        expect(lits.run('0b1001 bit-test 2')).toBe(false)
-        expect(lits.run('0b1111 bit-test 2')).toBe(true)
-        expect(lits.run('bit-test(0b1001, 2)')).toBe(false)
-        expect(lits.run('bit-test(0b1111, 2)')).toBe(true)
+        expect(lits.run('let { bit-test } = import("Bitwise"); 0b1001 bit-test 2')).toBe(false)
+        expect(lits.run('let { bit-test } = import("Bitwise"); 0b1111 bit-test 2')).toBe(true)
+        expect(lits.run('let { bit-test } = import("Bitwise"); bit-test(0b1001, 2)')).toBe(false)
+        expect(lits.run('let { bit-test } = import("Bitwise"); bit-test(0b1111, 2)')).toBe(true)
       })
     })
   }

@@ -68,8 +68,8 @@ describe('full entry point (src/full.ts)', () => {
     expect(Object.keys(apiReference).length).toBeGreaterThan(0)
   })
 
-  it('should export allBuiltinModules with 11 modules', () => {
-    expect(allBuiltinModules).toHaveLength(11)
+  it('should export allBuiltinModules with 13 modules', () => {
+    expect(allBuiltinModules).toHaveLength(13)
   })
 })
 
@@ -120,21 +120,21 @@ describe('individual module entry points', () => {
   })
 
   it('stringUtils module', () => {
-    expect(stringUtilsModule.name).toBe('String-Utils')
+    expect(stringUtilsModule.name).toBe('String')
     const lits = new Lits({ modules: [stringUtilsModule] })
-    expect(lits.run('let { capitalize } = import("String-Utils"); capitalize("albert")')).toBe('Albert')
+    expect(lits.run('let { capitalize } = import("String"); capitalize("albert")')).toBe('Albert')
   })
 
   it('collectionUtils module', () => {
-    expect(collectionUtilsModule.name).toBe('Collection-Utils')
+    expect(collectionUtilsModule.name).toBe('Collection')
     const lits = new Lits({ modules: [collectionUtilsModule] })
-    expect(lits.run('let cu = import("Collection-Utils"); cu.every?([1, 2, 3], number?)')).toBe(true)
+    expect(lits.run('let cu = import("Collection"); cu.every?([1, 2, 3], number?)')).toBe(true)
   })
 
   it('sequenceUtils module', () => {
-    expect(sequenceUtilsModule.name).toBe('Sequence-Utils')
+    expect(sequenceUtilsModule.name).toBe('Sequence')
     const lits = new Lits({ modules: [sequenceUtilsModule] })
-    expect(lits.run('let su = import("Sequence-Utils"); su.take([1, 2, 3, 4, 5], 3)')).toEqual([1, 2, 3])
+    expect(lits.run('let su = import("Sequence"); su.take([1, 2, 3, 4, 5], 3)')).toEqual([1, 2, 3])
   })
 
   it('should allow combining multiple modules', () => {

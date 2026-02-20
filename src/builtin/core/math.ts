@@ -487,7 +487,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['a', 'b'] }],
       description: 'The ^ function computes exponentiation, raising the first argument to the power of the second, working on `numbers` and element-wise on `vectors` and `matrices` of compatible dimensions. When used with mixed types, it applies the power operation between each element of the collection and the scalar.',
-      seeAlso: ['sqrt', 'cbrt', '*', 'Math-Utils.ln'],
+      seeAlso: ['sqrt', 'cbrt', '*', 'Math.ln'],
       examples: [
         '2 ^ 3',
         '2 ^ 0',

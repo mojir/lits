@@ -486,7 +486,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       args: { x: { type: ['collection', 'string', 'null'] } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Returns `true` if $x is empty or `null`, otherwise `false`.',
-      seeAlso: ['not-empty?', 'Collection-Utils.not-empty', 'null?', 'blank?', 'count'],
+      seeAlso: ['not-empty?', 'Collection.not-empty', 'null?', 'blank?', 'count'],
       examples: [
         'empty?([])',
         'empty?([1, 2, 3])',
@@ -519,7 +519,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       args: { x: { type: ['collection', 'string', 'null'] } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Returns `false` if $x is empty or `null`, otherwise `true`.',
-      seeAlso: ['empty?', 'Collection-Utils.not-empty', 'null?'],
+      seeAlso: ['empty?', 'Collection.not-empty', 'null?'],
       examples: [
         'not-empty?([])',
         'not-empty?([1, 2, 3])',

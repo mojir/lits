@@ -816,8 +816,8 @@ describe('parser', () => {
     it('supports basic function calls', () => {
       // These tests assume your runtime provides these functions
       expect(lits.run('abs(-5)')).toBe(5)
-      expect(litsWithMathUtils.run('let { sin, cos } = import("Math-Utils"); sin(0)')).toBeCloseTo(0)
-      expect(litsWithMathUtils.run('let { sin, cos } = import("Math-Utils"); cos(0)')).toBeCloseTo(1)
+      expect(litsWithMathUtils.run('let { sin, cos } = import("Math"); sin(0)')).toBeCloseTo(0)
+      expect(litsWithMathUtils.run('let { sin, cos } = import("Math"); cos(0)')).toBeCloseTo(1)
     })
 
     it('supports function calls with multiple arguments', () => {
@@ -827,7 +827,7 @@ describe('parser', () => {
 
     it('supports nested function calls', () => {
       expect(lits.run('abs(min(-5, -10))')).toBe(10)
-      expect(litsWithMathUtils.run('let { sin } = import("Math-Utils"); round(sin(3.14159))')).toBeCloseTo(0)
+      expect(litsWithMathUtils.run('let { sin } = import("Math"); round(sin(3.14159))')).toBeCloseTo(0)
     })
 
     it('supports function calls with expressions as arguments', () => {

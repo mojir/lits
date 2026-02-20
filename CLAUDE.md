@@ -100,9 +100,9 @@ Special expressions may use `CustomDocs` instead (with `customVariants` instead 
 
 22 valid categories defined in `src/builtin/interface.ts`:
 
-**Core** (12): `Special expression`, `Predicate`, `Sequence`, `Collection`, `Array`, `Object`, `String`, `Math`, `Functional`, `Regular expression`, `Bitwise`, `Misc`, `Meta`
+**Core** (15): `Special-Expression`, `Predicate`, `Sequence`, `Collection`, `Array`, `Object`, `String`, `Math`, `Functional`, `Regular-Expression`, `Bitwise`, `Misc`, `Meta`, `Shorthand`, `Datatype`
 
-**Module** (7): `Assert`, `Vector`, `Linear Algebra`, `Matrix`, `Grid`, `Number Theory`, `Random`
+**Module** (13): `Math`, `Functional`, `String`, `Collection`, `Sequence`, `Bitwise`, `Assert`, `Vector`, `Linear-Algebra`, `Matrix`, `Grid`, `Number-Theory`, `Random`
 
 **Other** (2): `Shorthand`, `Datatype`
 

@@ -7,7 +7,7 @@ import type { specialExpressionTypes } from '../specialExpressionTypes'
 export type AndNode = SpecialExpressionNode<[typeof specialExpressionTypes['&&'], Node[]]>
 
 const docs: FunctionDocs = {
-  category: 'Special expression',
+  category: 'Special-Expression',
   returns: {
     type: 'any',
   },

@@ -281,7 +281,7 @@ describe('collection functions', () => {
 })
 
 describe('collection-Utils module functions', () => {
-  const imp = 'let cu = import("Collection-Utils"); '
+  const imp = 'let cu = import("Collection"); '
   for (const mlits of [new Lits({ modules: [collectionUtilsModule] }), new Lits({ modules: [collectionUtilsModule], debug: true })]) {
     describe('filteri', () => {
       it('samples', () => {

@@ -30,7 +30,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       args: { values: { type: 'any', rest: true } },
       variants: [{ argumentNames: ['values'] }],
       description: 'Concatenats $values into one string. If `value` equals `null` empty string is returned.',
-      seeAlso: ['++', 'join', 'String-Utils.template', 'String-Utils.string-repeat', 'number'],
+      seeAlso: ['++', 'join', 'String.template', 'String.string-repeat', 'number'],
       examples: [
         'str("A string", ", and another string", " ...and more")',
         'str("Just one string")',
@@ -78,7 +78,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       args: { s: { type: 'string' } },
       variants: [{ argumentNames: ['s'] }],
       description: 'Returns $s converted to lower case.',
-      seeAlso: ['upper-case', 'String-Utils.capitalize'],
+      seeAlso: ['upper-case', 'String.capitalize'],
       examples: [
         'lower-case("Albert")',
         'lower-case("")',
@@ -98,7 +98,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       args: { s: { type: 'string' } },
       variants: [{ argumentNames: ['s'] }],
       description: 'Returns $s converted to upper case.',
-      seeAlso: ['lower-case', 'String-Utils.capitalize'],
+      seeAlso: ['lower-case', 'String.capitalize'],
       examples: [
         'upper-case("Albert")',
         'upper-case("")',
@@ -118,7 +118,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       args: { s: { type: 'string' } },
       variants: [{ argumentNames: ['s'] }],
       description: 'Returns a new string with leading and trailing whitespaces removed.',
-      seeAlso: ['String-Utils.trim-left', 'String-Utils.trim-right', 'blank?'],
+      seeAlso: ['String.trim-left', 'String.trim-right', 'blank?'],
       examples: [
         'trim("  Albert  ")',
         'trim("   ")',
@@ -146,7 +146,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['arr', 'delimiter'] }],
       description: 'Returns a new string by concatenating all of the elements in $arr, separated by $delimiter.',
-      seeAlso: ['split', 'str', '++', 'Sequence-Utils.interpose'],
+      seeAlso: ['split', 'str', '++', 'Sequence.interpose'],
       examples: [
         'map([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], str) join ", "',
         '([0, 1, 2, 3, 4, 5, 6, 7, 8, 9] map str) join ", "',
@@ -186,7 +186,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
         { argumentNames: ['s', 'delimiter', 'limit'] },
       ],
       description: 'Divides $s into an array of substrings. The division is done by searching for `delimiter`. If `limit` as provided, at most `limit` number of substrings are returned.',
-      seeAlso: ['join', 'String-Utils.split-lines'],
+      seeAlso: ['join', 'String.split-lines'],
       examples: [
         '"Albert Mojir" split " "',
         'split("Albert Mojir", " ")',

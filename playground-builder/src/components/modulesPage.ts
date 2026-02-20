@@ -22,7 +22,7 @@ const moduleInfo: ModuleInfo[] = [
     ],
   },
   {
-    name: 'Linear Algebra',
+    name: 'Linear-Algebra',
     importName: 'Linear-Algebra',
     description: 'Linear algebra operations including dot product, cross product, and vector norms.',
     examples: [
@@ -71,11 +71,67 @@ const moduleInfo: ModuleInfo[] = [
     ],
   },
   {
-    name: 'Asseert',
+    name: 'Assert',
     importName: 'Assert',
     description: 'Assertion functions for validating conditions and throwing errors.',
     examples: [
       'let { assert } = import("Assert");\ntry assert(0, "Expected a positive value") catch (e) e.message end',
+    ],
+  },
+  {
+    name: 'Math',
+    importName: 'Math',
+    description: 'Trigonometric, logarithmic, and angle conversion functions. Operates on numbers, vectors, and matrices element-wise.',
+    examples: [
+      'let { sin, cos } = import("Math"); [sin(PI / 2), cos(0)]',
+      'let { ln } = import("Math"); ln(E)',
+      'let { to-rad } = import("Math"); to-rad(180)',
+    ],
+  },
+  {
+    name: 'Functional',
+    importName: 'Functional',
+    description: 'Higher-order functional utilities including juxt, complement, and predicate combinators.',
+    examples: [
+      'let { juxt } = import("Functional"); juxt(inc, dec)(10)',
+      'let { complement } = import("Functional"); (complement(zero?))(1)',
+    ],
+  },
+  {
+    name: 'String',
+    importName: 'String',
+    description: 'Extended string operations: padding, encoding, char codes, templates, and more.',
+    examples: [
+      'let { pad-left } = import("String"); pad-left("42", 5, "0")',
+      // eslint-disable-next-line no-template-curly-in-string
+      'let { template } = import("String"); template("Hello, ${name}!", { name: "World" })',
+    ],
+  },
+  {
+    name: 'Collection',
+    importName: 'Collection',
+    description: 'Extended collection operations: indexed mapping, deep access, reduction variants, and predicate helpers.',
+    examples: [
+      'let { get-in } = import("Collection"); get-in({ a: { b: 42 } }, ["a", "b"])',
+      'let { every? } = import("Collection"); every?(pos?, [1, 2, 3])',
+    ],
+  },
+  {
+    name: 'Sequence',
+    importName: 'Sequence',
+    description: 'Extended sequence operations: take, drop, partition, grouping, distinct, and more.',
+    examples: [
+      'let { take } = import("Sequence"); take(3, [1, 2, 3, 4, 5])',
+      'let { partition } = import("Sequence"); partition(2, [1, 2, 3, 4, 5, 6])',
+    ],
+  },
+  {
+    name: 'Bitwise',
+    importName: 'Bitwise',
+    description: 'Additional bitwise operations: bit-not, bit-flip, bit-test, and more.',
+    examples: [
+      'let { bit-not } = import("Bitwise"); bit-not(0)',
+      'let { bit-test } = import("Bitwise"); bit-test(6, 1)',
     ],
   },
 ]

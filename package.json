@@ -70,6 +70,11 @@
       "import": "./dist/modules/mathUtils.esm.js",
       "require": "./dist/modules/mathUtils.js"
     },
+    "./modules/functionalUtils": {
+      "types": "./dist/src/modules/functionalUtils.d.ts",
+      "import": "./dist/modules/functionalUtils.esm.js",
+      "require": "./dist/modules/functionalUtils.js"
+    },
     "./modules/stringUtils": {
       "types": "./dist/src/modules/stringUtils.d.ts",
       "import": "./dist/modules/stringUtils.esm.js",
@@ -84,6 +89,11 @@
       "types": "./dist/src/modules/sequenceUtils.d.ts",
       "import": "./dist/modules/sequenceUtils.esm.js",
       "require": "./dist/modules/sequenceUtils.js"
+    },
+    "./modules/bitwiseUtils": {
+      "types": "./dist/src/modules/bitwiseUtils.d.ts",
+      "import": "./dist/modules/bitwiseUtils.esm.js",
+      "require": "./dist/modules/bitwiseUtils.js"
     }
   },
   "main": "dist/index.js",

@@ -128,7 +128,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       args: { seq: { type: 'sequence' } },
       variants: [{ argumentNames: ['seq'] }],
       description: 'Returns a copy of $seq with last element removed. If $seq is empty `null` is returned.',
-      seeAlso: ['push', 'Sequence-Utils.shift', 'last'],
+      seeAlso: ['push', 'Sequence.shift', 'last'],
       examples: [
         'pop([1, 2, 3])',
         'pop([])',
@@ -164,7 +164,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['seq', 'x'] }],
       description: 'Returns the index of $x in $seq. If element is not present in $seq `null` is returned.',
-      seeAlso: ['Sequence-Utils.last-index-of', 'Sequence-Utils.position', 'contains?'],
+      seeAlso: ['Sequence.last-index-of', 'Sequence.position', 'contains?'],
       examples: [
         '[[1], [2], [1], [2]] index-of [1]',
         'index-of(["Albert", "Mojir", 160, [1, 2]], "Mojir")',
@@ -197,7 +197,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['seq', 'values'] }],
       description: 'Returns copy of $seq with $values added to the end of it.',
-      seeAlso: ['Sequence-Utils.unshift', 'pop', '++'],
+      seeAlso: ['Sequence.unshift', 'pop', '++'],
       examples: [
         '[1, 2, 3] push 4',
         '"Albert" push "!"',
@@ -230,7 +230,7 @@ l`,
       description: `If $seq is an array, returns a new array with all but the first element from $seq.
 If $seq has less than two elements, an empty array is returned.
 For string $seq returns all but the first characters in $seq.`,
-      seeAlso: ['next', 'first', 'Sequence-Utils.shift'],
+      seeAlso: ['next', 'first', 'Sequence.shift'],
       examples: [
         'rest(["Albert", "Mojir", 160, [1, 2]])',
         'rest(["Albert"])',
@@ -361,7 +361,7 @@ For string $seq returns all but the first characters in $seq.`,
         { argumentNames: ['seq', 'start', 'stop'] },
       ],
       description: 'Returns a copy of a portion of $seq from index $start (inclusive) to $stop (exclusive).',
-      seeAlso: ['Sequence-Utils.take', 'Sequence-Utils.drop', 'Sequence-Utils.splice', 'nth'],
+      seeAlso: ['Sequence.take', 'Sequence.drop', 'Sequence.splice', 'nth'],
       examples: [
         '[1, 2, 3, 4, 5] slice 2',
         'slice([1, 2, 3, 4, 5], 2, 4)',
@@ -397,7 +397,7 @@ For string $seq returns all but the first characters in $seq.`,
       },
       variants: [{ argumentNames: ['seq', 'fun'] }],
       description: 'Returns the first element that passes the test implemented by $fun. I no element was found, `null` is returned.',
-      seeAlso: ['Sequence-Utils.position', 'Collection-Utils.any?', 'find'],
+      seeAlso: ['Sequence.position', 'Collection.any?', 'find'],
       examples: [
         `
 some(
@@ -483,7 +483,7 @@ some(
         { argumentNames: ['seq', 'fun'] },
       ],
       description: 'Returns a new sequence with the elements from $seq sorted according to $fun. If no $fun is supplied, builtin `compare` will be used.',
-      seeAlso: ['Sequence-Utils.sort-by', 'compare', 'reverse', 'Vector.sort-indices'],
+      seeAlso: ['Sequence.sort-by', 'compare', 'reverse', 'Vector.sort-indices'],
       examples: [
         '[3, 1, 2] sort (a, b) -> b - a',
         'sort([3, 1, 2])',

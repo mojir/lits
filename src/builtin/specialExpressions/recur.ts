@@ -6,7 +6,7 @@ import type { specialExpressionTypes } from '../specialExpressionTypes'
 export type RecurNode = SpecialExpressionNode<[typeof specialExpressionTypes['recur'], Node[]]>
 
 const docs: CustomDocs = {
-  category: 'Special expression',
+  category: 'Special-Expression',
   customVariants: ['recur(...recur-args)'],
   description: 'Recursevly calls enclosing function or loop with its evaluated `recur-args`.',
   examples: [

@@ -9,7 +9,7 @@ import type { specialExpressionTypes } from '../specialExpressionTypes'
 export type LetNode = SpecialExpressionNode<[typeof specialExpressionTypes['let'], BindingNode]>
 
 const docs: CustomDocs = {
-  category: 'Special expression',
+  category: 'Special-Expression',
   customVariants: ['let s = value;'],
   details: [
     ['s', 'symbol', 'The name of the variable to bind.'],

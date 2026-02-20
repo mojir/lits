@@ -154,7 +154,7 @@ function analyze(
 }
 
 const forDocs: CustomDocs = {
-  category: 'Special expression',
+  category: 'Special-Expression',
   customVariants: ['for (...binding) -> body'],
   details: [
     ['binding', 'loop-var in collection [...let-binding] [where whereExpr] [while whileExp]', 'A for loop binding'],
@@ -191,7 +191,7 @@ export const forSpecialExpression: BuiltinSpecialExpression<Any, ForNode> = {
 }
 
 const doseqDocs: CustomDocs = {
-  category: 'Special expression',
+  category: 'Special-Expression',
   customVariants: ['doseq (...binding) -> body'],
   details: [
     ['binding', 'loop-var in collection [...let-binding] [where whereExpr] [while whileExp]', 'A doseq loop binding'],

@@ -9,7 +9,7 @@ import type { specialExpressionTypes } from '../specialExpressionTypes'
 export type ArrayNode = SpecialExpressionNode<[typeof specialExpressionTypes['array'], Node[]]>
 
 const docs: FunctionDocs = {
-  category: 'Special expression',
+  category: 'Special-Expression',
   returns: {
     type: 'any',
     array: true,

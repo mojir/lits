@@ -1449,7 +1449,7 @@ let longWords = text
 ### Data Transformation
 
 ```lits
-let su = import("Sequence-Utils");
+let su = import("Sequence");
 let users = [
   { name: "Alice", age: 30, department: "Engineering" },
   { name: "Bob", age: 25, department: "Marketing" },

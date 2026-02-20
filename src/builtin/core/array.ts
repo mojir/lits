@@ -99,7 +99,7 @@ range(
       },
       variants: [{ argumentNames: ['a', 'b'] }],
       description: 'Returns an array with $a repeated $b times.',
-      seeAlso: ['range', 'Vector.ones', 'Vector.zeros', 'Vector.fill', 'Vector.generate', 'String-Utils.string-repeat'],
+      seeAlso: ['range', 'Vector.ones', 'Vector.zeros', 'Vector.fill', 'Vector.generate', 'String.string-repeat'],
       examples: [
         'repeat(10, 3)',
         'repeat(10, 0)',

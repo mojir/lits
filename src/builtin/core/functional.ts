@@ -1,21 +1,15 @@
 import type { Any, Arr } from '../../interface'
 import type {
   CompFunction,
-  ComplementFunction,
   ConstantlyFunction,
-  EveryPredFunction,
-  FNullFunction,
   FunctionLike,
-  JuxtFunction,
-  SomePredFunction,
 } from '../../parser/types'
 import { toAny } from '../../utils'
-import { getArityFromFunction, getCommonArityFromFunctions, toFixedArity } from '../../utils/arity'
+import { getArityFromFunction, toFixedArity } from '../../utils/arity'
 import { FUNCTION_SYMBOL } from '../../utils/symbols'
 import type { BuiltinNormalExpressions } from '../interface'
 import { assertArray } from '../../typeGuards/array'
-import { asFunctionLike, assertFunctionLike } from '../../typeGuards/lits'
-import { LitsError } from '../../errors'
+import { assertFunctionLike } from '../../typeGuards/lits'
 
 export const functionalNormalExpression: BuiltinNormalExpressions = {
   '|>': {
@@ -93,7 +87,7 @@ apply(
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Returns $x.',
-      seeAlso: ['constantly', 'fnull'],
+      seeAlso: ['constantly', 'Functional.fnull'],
       examples: ['identity(1)', 'identity("Albert")', 'identity({ a: 1 })', 'identity(null)'],
     },
   },
@@ -124,7 +118,7 @@ apply(
   The returned function takes a variable number of arguments,
   applies the rightmost function to the args,
   the next function (right-to-left) to the result, etc.`,
-      seeAlso: ['|>', 'juxt', 'complement'],
+      seeAlso: ['|>', 'Functional.juxt', 'Functional.complement'],
       examples: [
         `
 let negative-quotient = comp(-, /);
@@ -153,7 +147,7 @@ comp("foo", "bar")(x)`,
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Returns a function that takes any number of arguments and always returns $x.',
-      seeAlso: ['identity', 'fnull'],
+      seeAlso: ['identity', 'Functional.fnull'],
       examples: [
         `
 let always-true = constantly(true);
@@ -162,203 +156,4 @@ always-true(9, 3)`,
     },
   },
 
-  'juxt': {
-    evaluate: (params, sourceCodeInfo): JuxtFunction => {
-      params.forEach(param => assertFunctionLike(param, sourceCodeInfo))
-      const arity = getCommonArityFromFunctions(params as FunctionLike[])
-      if (arity === null) {
-        throw new LitsError('All functions must accept the same number of arguments', sourceCodeInfo)
-      }
-      return {
-        [FUNCTION_SYMBOL]: true,
-        sourceCodeInfo,
-        functionType: 'Juxt',
-        params,
-        arity,
-      }
-    },
-    arity: { min: 1 },
-    docs: {
-      category: 'Functional',
-      returns: { type: 'function' },
-      args: {
-        a: { type: 'function' },
-        b: { type: 'function' },
-        fun: { type: 'function' },
-        fns: { type: 'function', rest: true },
-      },
-      variants: [
-        { argumentNames: ['fun'] },
-        { argumentNames: ['fun', 'fns'] },
-      ],
-      description: `Takes one or many function and returns a function that is the juxtaposition of those functions.
-The returned function takes a variable number of args,
-and returns a vector containing the result of applying each function to the args (left-to-right).`,
-      seeAlso: ['comp'],
-      examples: [
-        `
-juxt(+, *, min, max)(
-  3,
-  4,
-  6,
-)`,
-        `
-juxt("a", "b")(
-  {
-    a: 1,
-    b: 2,
-    c: 3,
-    d: 4
-  }
-)`,
-        `
-juxt(+, *, min, max) apply range(1, 11)`,
-      ],
-    },
-  },
-
-  'complement': {
-    evaluate: ([fn], sourceCodeInfo): ComplementFunction => {
-      const fun = asFunctionLike(fn, sourceCodeInfo)
-      return {
-        [FUNCTION_SYMBOL]: true,
-        sourceCodeInfo,
-        functionType: 'Complement',
-        function: fun,
-        arity: getArityFromFunction(fun),
-      }
-    },
-    arity: toFixedArity(1),
-    docs: {
-      category: 'Functional',
-      returns: { type: 'function' },
-      args: { fun: { type: 'function' } },
-      variants: [{ argumentNames: ['fun'] }],
-      description: 'Takes a function $fun and returns a new function that takes the same arguments as f, has the same effects, if any, and returns the opposite truth value.',
-      seeAlso: ['comp', 'every-pred', 'some-pred'],
-      examples: [
-        'complement(>)(1, 3)',
-        'complement(<)(1, 3)',
-        'complement(+)(1, 3)',
-        'complement(+)(0, 0)',
-      ],
-    },
-  },
-
-  'every-pred': {
-    evaluate: (params, sourceCodeInfo): EveryPredFunction => {
-      return {
-        [FUNCTION_SYMBOL]: true,
-        sourceCodeInfo,
-        functionType: 'EveryPred',
-        params,
-        arity: { min: 1, max: 1 },
-      }
-    },
-    arity: { min: 1 },
-    docs: {
-      category: 'Functional',
-      returns: { type: 'function' },
-      args: {
-        fun: { type: 'function' },
-        fns: { type: 'function', rest: true },
-      },
-      variants: [
-        { argumentNames: ['fun'] },
-        { argumentNames: ['fun', 'fns'] },
-      ],
-      description: `
-Takes a number of predicates and returns a function that returns \`true\` if all predicates
-return a truthy value against all of its arguments, else it returns \`false\`.`,
-      seeAlso: ['some-pred', 'complement', 'Collection-Utils.every?'],
-      examples: [
-        `
-every-pred(string?, -> count($) > 3)(
-  "Albert",
-  "Mojir"
-)`,
-        `
-(string? every-pred -> count($) > 3)(
-  "Albert",
-  "M"
-)`,
-      ],
-      hideOperatorForm: true,
-    },
-  },
-
-  'some-pred': {
-    evaluate: (params, sourceCodeInfo): SomePredFunction => {
-      return {
-        [FUNCTION_SYMBOL]: true,
-        sourceCodeInfo,
-        functionType: 'SomePred',
-        params,
-        arity: { min: 1, max: 1 },
-      }
-    },
-    arity: { min: 1 },
-    docs: {
-      category: 'Functional',
-      returns: { type: 'function' },
-      args: {
-        fun: { type: 'function' },
-        fns: { type: 'function', rest: true },
-      },
-      variants: [
-        { argumentNames: ['fun'] },
-        { argumentNames: ['fun', 'fns'] },
-      ],
-      description: 'Takes a number of `predicates` and returns a function that returns `true` if at least one of the `predicates` return a truthy `true` value against at least one of its arguments, else it returns `false`.',
-      seeAlso: ['every-pred', 'complement', 'Collection-Utils.any?'],
-      examples: [
-        'some-pred(string?, -> count($) > 3)("Albert", "Mojir")',
-        'some-pred(string?, -> count($) > 3)("a", "M")',
-        'some-pred(string?, -> count($) > 3)("a", [1, 2, 3])',
-        'some-pred(string?, -> count($) > 3)([1, 2, 3], [2])',
-      ],
-      hideOperatorForm: true,
-    },
-  },
-
-  'fnull': {
-    evaluate: ([fn, ...params], sourceCodeInfo): FNullFunction => {
-      const fun = asFunctionLike(fn, sourceCodeInfo)
-      return {
-        [FUNCTION_SYMBOL]: true,
-        sourceCodeInfo,
-        functionType: 'Fnull',
-        function: fun,
-        params,
-        arity: getArityFromFunction(fun),
-      }
-    },
-    arity: { min: 2 },
-    docs: {
-      category: 'Functional',
-      returns: { type: 'function' },
-      args: {
-        a: { type: 'function' },
-        b: { type: 'any' },
-        fun: { type: 'function' },
-        arg: { type: 'any' },
-        args: { type: 'any', rest: true },
-      },
-      variants: [
-        { argumentNames: ['fun', 'arg'] },
-        { argumentNames: ['fun', 'arg', 'args'] },
-      ],
-      description: 'Takes a function $fun, and returns a function that calls $fun, replacing a null argument to the corresponding argument.',
-      seeAlso: ['identity', 'constantly'],
-      examples: [
-        'fnull(inc, 0)(1)',
-        'fnull(inc, 0)(null)',
-        '(inc fnull 0)(null)',
-        'fnull(+, 1, 2)(null, 0)',
-        'fnull(+, 1, 2)(0, null)',
-        'fnull(+, 1, 2)(null, null)',
-        'fnull(+, 1, 2)(null, null, 3, 4)',
-      ],
-    },
-  },
 }

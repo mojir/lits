@@ -6,7 +6,7 @@ import type { specialExpressionTypes } from '../specialExpressionTypes'
 export type UnlessNode = SpecialExpressionNode<[typeof specialExpressionTypes['unless'], [Node, Node, Node?]]>
 
 const docs: CustomDocs = {
-  category: 'Special expression',
+  category: 'Special-Expression',
   customVariants: ['unless test then true-expr else false-expr end', 'unless test true-expr end'],
   details: [
     ['test', 'expression', 'The condition to test.'],

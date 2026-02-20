@@ -28,7 +28,7 @@ const sequenceUtilsFunctions: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(2),
     docs: {
-      category: 'Sequence-Utils',
+      category: 'Sequence',
       returns: { type: ['number', 'null'] },
       args: {
         a: { type: 'sequence' },
@@ -41,25 +41,25 @@ const sequenceUtilsFunctions: BuiltinNormalExpressions = {
       seeAlso: ['index-of', 'some', 'find'],
       examples: [
         `
-let su = import("Sequence-Utils");
+let su = import("Sequence");
 su.position(
   ["Albert", "Mojir", 160, [1, 2]],
   string?
 )`,
         `
-let su = import("Sequence-Utils");
+let su = import("Sequence");
 su.position(
   [5, 10, 15, 20],
   -> $ > 10
 )`,
         `
-let su = import("Sequence-Utils");
+let su = import("Sequence");
 su.position(
   [5, 10, 15, 20],
   -> $ > 100
 )`,
         `
-let su = import("Sequence-Utils");
+let su = import("Sequence");
 su.position(
   null,
   -> $ > 100
@@ -86,7 +86,7 @@ su.position(
     },
     arity: toFixedArity(2),
     docs: {
-      category: 'Sequence-Utils',
+      category: 'Sequence',
       returns: { type: ['number', 'null'] },
       args: {
         a: { type: 'sequence' },
@@ -98,11 +98,11 @@ su.position(
       description: 'Returns the last index of $x in $seq. If element is not present in $seq `null` is returned.',
       seeAlso: ['index-of'],
       examples: [
-        'let su = import("Sequence-Utils"); su.last-index-of([[1], [2], [1], [2]], [1])',
-        'let su = import("Sequence-Utils"); su.last-index-of(["Albert", "Mojir", 160, [1, 2]], "Mojir")',
-        'let su = import("Sequence-Utils"); su.last-index-of([5, 10, 15, 20, 15], 15)',
-        'let su = import("Sequence-Utils"); su.last-index-of([5, 10, 15, 20], 1)',
-        'let su = import("Sequence-Utils"); su.last-index-of(null, 1)',
+        'let su = import("Sequence"); su.last-index-of([[1], [2], [1], [2]], [1])',
+        'let su = import("Sequence"); su.last-index-of(["Albert", "Mojir", 160, [1, 2]], "Mojir")',
+        'let su = import("Sequence"); su.last-index-of([5, 10, 15, 20, 15], 15)',
+        'let su = import("Sequence"); su.last-index-of([5, 10, 15, 20], 1)',
+        'let su = import("Sequence"); su.last-index-of(null, 1)',
       ],
     },
   },
@@ -118,15 +118,15 @@ su.position(
     },
     arity: toFixedArity(1),
     docs: {
-      category: 'Sequence-Utils',
+      category: 'Sequence',
       returns: { type: ['sequence', 'null'] },
       args: { seq: { type: 'sequence' } },
       variants: [{ argumentNames: ['seq'] }],
       description: 'Returns a copy of $seq with first element removed. If $seq is empty `null` is returned.',
-      seeAlso: ['Sequence-Utils.unshift', 'pop', 'rest'],
+      seeAlso: ['Sequence.unshift', 'pop', 'rest'],
       examples: [
-        'let su = import("Sequence-Utils"); su.shift([1, 2, 3])',
-        'let su = import("Sequence-Utils"); su.shift([])',
+        'let su = import("Sequence"); su.shift([1, 2, 3])',
+        'let su = import("Sequence"); su.shift([])',
       ],
     },
   },
@@ -148,7 +148,7 @@ su.position(
     },
     arity: { min: 3 },
     docs: {
-      category: 'Sequence-Utils',
+      category: 'Sequence',
       returns: { type: 'sequence' },
       args: {
         seq: { type: 'sequence', rest: true },
@@ -161,11 +161,11 @@ su.position(
         { argumentNames: ['seq', 'start', 'deleteCount', 'items'] },
       ],
       description: 'Returns a a spliced array. Removes $deleteCount elements from $seq starting at $start and replaces them with $items. If $start is negative, it is counting from the end of the array.',
-      seeAlso: ['slice', 'Sequence-Utils.remove-at'],
+      seeAlso: ['slice', 'Sequence.remove-at'],
       examples: [
-        'let su = import("Sequence-Utils"); su.splice([1, 2, 3, 4, 5], 2, 2, "x")',
-        'let su = import("Sequence-Utils"); su.splice([1, 2, 3, 4, 5], -2, 1, "x")',
-        'let su = import("Sequence-Utils"); su.splice("Albert", 2, 2, "fo")',
+        'let su = import("Sequence"); su.splice([1, 2, 3, 4, 5], 2, 2, "x")',
+        'let su = import("Sequence"); su.splice([1, 2, 3, 4, 5], -2, 1, "x")',
+        'let su = import("Sequence"); su.splice("Albert", 2, 2, "fo")',
       ],
     },
   },
@@ -226,7 +226,7 @@ su.position(
     },
     arity: { min: 2, max: 3 },
     docs: {
-      category: 'Sequence-Utils',
+      category: 'Sequence',
       returns: { type: 'any', rest: true },
       args: {
         a: { type: 'sequence' },
@@ -242,9 +242,9 @@ su.position(
       description: 'Returns a sorted sequence of the items in $seq, where the sort order is determined by comparing `(keyfn item)`. If no $comparer is supplied, uses builtin `compare`.',
       seeAlso: ['sort', 'compare'],
       examples: [
-        'let su = import("Sequence-Utils"); su.sort-by(["Albert", "Mojir", "Nina"], count)',
-        'let su = import("Sequence-Utils"); su.sort-by(["Albert", "Mojir", "Nina"], count)',
-        'let su = import("Sequence-Utils"); su.sort-by("Albert", lower-case, -> $2 compare $1)',
+        'let su = import("Sequence"); su.sort-by(["Albert", "Mojir", "Nina"], count)',
+        'let su = import("Sequence"); su.sort-by(["Albert", "Mojir", "Nina"], count)',
+        'let su = import("Sequence"); su.sort-by("Albert", lower-case, -> $2 compare $1)',
       ],
     },
   },
@@ -257,7 +257,7 @@ su.position(
     },
     arity: toFixedArity(2),
     docs: {
-      category: 'Sequence-Utils',
+      category: 'Sequence',
       returns: { type: 'sequence' },
       args: {
         a: { type: 'sequence' },
@@ -267,13 +267,13 @@ su.position(
       },
       variants: [{ argumentNames: ['seq', 'n'] }],
       description: 'Constructs a new array/string with the $n first elements from $seq.',
-      seeAlso: ['Sequence-Utils.take-last', 'Sequence-Utils.take-while', 'Sequence-Utils.drop', 'slice', 'Sequence-Utils.split-at'],
+      seeAlso: ['Sequence.take-last', 'Sequence.take-while', 'Sequence.drop', 'slice', 'Sequence.split-at'],
       examples: [
-        'let su = import("Sequence-Utils"); su.take([1, 2, 3, 4, 5], 3)',
-        'let su = import("Sequence-Utils"); su.take([1, 2, 3, 4, 5], 3)',
-        'let su = import("Sequence-Utils"); su.take([1, 2, 3, 4, 5], 0)',
-        'let su = import("Sequence-Utils"); su.take("Albert", 2)',
-        'let su = import("Sequence-Utils"); su.take("Albert", 50)',
+        'let su = import("Sequence"); su.take([1, 2, 3, 4, 5], 3)',
+        'let su = import("Sequence"); su.take([1, 2, 3, 4, 5], 3)',
+        'let su = import("Sequence"); su.take([1, 2, 3, 4, 5], 0)',
+        'let su = import("Sequence"); su.take("Albert", 2)',
+        'let su = import("Sequence"); su.take("Albert", 50)',
       ],
     },
   },
@@ -287,7 +287,7 @@ su.position(
     },
     arity: toFixedArity(2),
     docs: {
-      category: 'Sequence-Utils',
+      category: 'Sequence',
       returns: { type: 'sequence' },
       args: {
         a: { type: 'sequence' },
@@ -297,11 +297,11 @@ su.position(
       },
       variants: [{ argumentNames: ['n', 'seq'] }],
       description: 'Constructs a new array with the $n last elements from $seq.',
-      seeAlso: ['Sequence-Utils.take', 'Sequence-Utils.drop-last'],
+      seeAlso: ['Sequence.take', 'Sequence.drop-last'],
       examples: [
-        'let su = import("Sequence-Utils"); su.take-last([1, 2, 3, 4, 5], 3)',
-        'let su = import("Sequence-Utils"); su.take-last([1, 2, 3, 4, 5], 3)',
-        'let su = import("Sequence-Utils"); su.take-last([1, 2, 3, 4, 5], 0)',
+        'let su = import("Sequence"); su.take-last([1, 2, 3, 4, 5], 3)',
+        'let su = import("Sequence"); su.take-last([1, 2, 3, 4, 5], 3)',
+        'let su = import("Sequence"); su.take-last([1, 2, 3, 4, 5], 0)',
       ],
     },
   },
@@ -321,7 +321,7 @@ su.position(
     },
     arity: toFixedArity(2),
     docs: {
-      category: 'Sequence-Utils',
+      category: 'Sequence',
       returns: { type: 'sequence' },
       args: {
         a: { type: 'sequence' },
@@ -331,16 +331,16 @@ su.position(
       },
       variants: [{ argumentNames: ['seq', 'fun'] }],
       description: 'Returns the members of $seq in order, stopping before the first one for which `predicate` returns a falsy value.',
-      seeAlso: ['Sequence-Utils.take', 'Sequence-Utils.drop-while', 'Sequence-Utils.split-with'],
+      seeAlso: ['Sequence.take', 'Sequence.drop-while', 'Sequence.split-with'],
       examples: [
         `
-let su = import("Sequence-Utils");
+let su = import("Sequence");
 su.take-while(
   [1, 2, 3, 2, 1],
   -> $ < 3
 )`,
         `
-let su = import("Sequence-Utils");
+let su = import("Sequence");
 su.take-while(
   [1, 2, 3, 2, 1],
   -> $ > 3
@@ -357,7 +357,7 @@ su.take-while(
     },
     arity: toFixedArity(2),
     docs: {
-      category: 'Sequence-Utils',
+      category: 'Sequence',
       returns: { type: 'sequence' },
       args: {
         a: { type: 'sequence' },
@@ -367,12 +367,12 @@ su.take-while(
       },
       variants: [{ argumentNames: ['seq', 'n'] }],
       description: 'Constructs a new array/string with the $n first elements dropped from $seq.',
-      seeAlso: ['Sequence-Utils.drop-last', 'Sequence-Utils.drop-while', 'Sequence-Utils.take', 'slice', 'Sequence-Utils.split-at'],
+      seeAlso: ['Sequence.drop-last', 'Sequence.drop-while', 'Sequence.take', 'slice', 'Sequence.split-at'],
       examples: [
-        'let su = import("Sequence-Utils"); su.drop([1, 2, 3, 4, 5], 3)',
-        'let su = import("Sequence-Utils"); su.drop([1, 2, 3, 4, 5], 0)',
-        'let su = import("Sequence-Utils"); su.drop("Albert", 2)',
-        'let su = import("Sequence-Utils"); su.drop("Albert", 50)',
+        'let su = import("Sequence"); su.drop([1, 2, 3, 4, 5], 3)',
+        'let su = import("Sequence"); su.drop([1, 2, 3, 4, 5], 0)',
+        'let su = import("Sequence"); su.drop("Albert", 2)',
+        'let su = import("Sequence"); su.drop("Albert", 50)',
       ],
     },
   },
@@ -387,7 +387,7 @@ su.take-while(
     },
     arity: toFixedArity(2),
     docs: {
-      category: 'Sequence-Utils',
+      category: 'Sequence',
       returns: { type: 'sequence' },
       args: {
         a: { type: 'sequence' },
@@ -397,11 +397,11 @@ su.take-while(
       },
       variants: [{ argumentNames: ['seq', 'n'] }],
       description: 'Constructs a new array with the $n last elements dropped from $seq.',
-      seeAlso: ['Sequence-Utils.drop', 'Sequence-Utils.take-last'],
+      seeAlso: ['Sequence.drop', 'Sequence.take-last'],
       examples: [
-        'let su = import("Sequence-Utils"); su.drop-last([1, 2, 3, 4, 5], 3)',
-        'let su = import("Sequence-Utils"); su.drop-last([1, 2, 3, 4, 5], 3)',
-        'let su = import("Sequence-Utils"); su.drop-last([1, 2, 3, 4, 5], 0)',
+        'let su = import("Sequence"); su.drop-last([1, 2, 3, 4, 5], 3)',
+        'let su = import("Sequence"); su.drop-last([1, 2, 3, 4, 5], 3)',
+        'let su = import("Sequence"); su.drop-last([1, 2, 3, 4, 5], 0)',
       ],
     },
   },
@@ -420,7 +420,7 @@ su.take-while(
     },
     arity: toFixedArity(2),
     docs: {
-      category: 'Sequence-Utils',
+      category: 'Sequence',
       returns: { type: 'sequence' },
       args: {
         a: { type: 'sequence' },
@@ -430,16 +430,16 @@ su.take-while(
       },
       variants: [{ argumentNames: ['seq', 'fun'] }],
       description: 'Returns the members of $seq in order, skipping the fist elements for witch the `predicate` returns a truethy value.',
-      seeAlso: ['Sequence-Utils.drop', 'Sequence-Utils.take-while', 'Sequence-Utils.split-with'],
+      seeAlso: ['Sequence.drop', 'Sequence.take-while', 'Sequence.split-with'],
       examples: [
         `
-let su = import("Sequence-Utils");
+let su = import("Sequence");
 su.drop-while(
   [1, 2, 3, 2, 1],
   -> $ < 3
 )`,
         `
-let su = import("Sequence-Utils");
+let su = import("Sequence");
 su.drop-while(
   [1, 2, 3, 2, 1],
   -> $ > 3
@@ -460,7 +460,7 @@ su.drop-while(
     },
     arity: { min: 2 },
     docs: {
-      category: 'Sequence-Utils',
+      category: 'Sequence',
       returns: { type: 'sequence' },
       args: {
         a: { type: 'sequence' },
@@ -470,13 +470,13 @@ su.drop-while(
       },
       variants: [{ argumentNames: ['seq', 'values'] }],
       description: 'Returns copy of $seq with $values added to the beginning.',
-      seeAlso: ['push', 'Sequence-Utils.shift', '++'],
+      seeAlso: ['push', 'Sequence.shift', '++'],
       examples: [
-        'let su = import("Sequence-Utils"); su.unshift([1, 2, 3], 4)',
-        'let su = import("Sequence-Utils"); su.unshift([1, 2, 3], 4)',
-        'let su = import("Sequence-Utils"); su.unshift([1, 2, 3], 4, 5, 6)',
+        'let su = import("Sequence"); su.unshift([1, 2, 3], 4)',
+        'let su = import("Sequence"); su.unshift([1, 2, 3], 4)',
+        'let su = import("Sequence"); su.unshift([1, 2, 3], 4, 5, 6)',
         `
-let su = import("Sequence-Utils");
+let su = import("Sequence");
 let l = [1, 2, 3];
 su.unshift(l, 4);
 l`,
@@ -502,18 +502,18 @@ l`,
     },
     arity: toFixedArity(1),
     docs: {
-      category: 'Sequence-Utils',
+      category: 'Sequence',
       returns: { type: 'sequence' },
       args: { seq: { type: 'sequence' } },
       variants: [{ argumentNames: ['seq'] }],
       description: 'Returns a copy of $seq with no duplicates.',
-      seeAlso: ['Sequence-Utils.frequencies'],
+      seeAlso: ['Sequence.frequencies'],
       examples: [
-        'let su = import("Sequence-Utils"); su.distinct([[1], [2], [3], [1], [3], [5]])',
-        'let su = import("Sequence-Utils"); su.distinct([1, 2, 3, 1, 3, 5])',
-        'let su = import("Sequence-Utils"); su.distinct("Albert Mojir")',
-        'let su = import("Sequence-Utils"); su.distinct([])',
-        'let su = import("Sequence-Utils"); su.distinct("")',
+        'let su = import("Sequence"); su.distinct([[1], [2], [3], [1], [3], [5]])',
+        'let su = import("Sequence"); su.distinct([1, 2, 3, 1, 3, 5])',
+        'let su = import("Sequence"); su.distinct("Albert Mojir")',
+        'let su = import("Sequence"); su.distinct([])',
+        'let su = import("Sequence"); su.distinct("")',
       ],
     },
   },
@@ -531,7 +531,7 @@ l`,
     },
     arity: toFixedArity(2),
     docs: {
-      category: 'Sequence-Utils',
+      category: 'Sequence',
       returns: { type: 'sequence' },
       args: {
         a: { type: 'sequence' },
@@ -541,11 +541,11 @@ l`,
       },
       variants: [{ argumentNames: ['seq', 'fun'] }],
       description: 'Returns a new sequence of items in $seq for witch `pred(item)` returns a falsy value.',
-      seeAlso: ['filter', 'Sequence-Utils.remove-at'],
+      seeAlso: ['filter', 'Sequence.remove-at'],
       examples: [
-        'let su = import("Sequence-Utils"); su.remove([1, 2, 3, 1, 3, 5], odd?)',
-        'let su = import("Sequence-Utils"); su.remove([1, 2, 3, 1, 3, 5], even?)',
-        'let su = import("Sequence-Utils"); su.remove("Albert Mojir", -> "aoueiyAOUEIY" contains? $)',
+        'let su = import("Sequence"); su.remove([1, 2, 3, 1, 3, 5], odd?)',
+        'let su = import("Sequence"); su.remove([1, 2, 3, 1, 3, 5], even?)',
+        'let su = import("Sequence"); su.remove("Albert Mojir", -> "aoueiyAOUEIY" contains? $)',
       ],
     },
   },
@@ -565,7 +565,7 @@ l`,
     },
     arity: toFixedArity(2),
     docs: {
-      category: 'Sequence-Utils',
+      category: 'Sequence',
       returns: { type: 'sequence' },
       args: {
         a: { type: 'sequence' },
@@ -575,13 +575,13 @@ l`,
       },
       variants: [{ argumentNames: ['seq', 'n'] }],
       description: 'Returns a new sequence of all items in $seq except item at position $n. If $n is negative, it is counting from the end of the sequence.',
-      seeAlso: ['Sequence-Utils.remove', 'Sequence-Utils.splice'],
+      seeAlso: ['Sequence.remove', 'Sequence.splice'],
       examples: [
-        'let su = import("Sequence-Utils"); su.remove-at([1, 2, 3, 1, 3, 5], 2)',
-        'let su = import("Sequence-Utils"); su.remove-at("Albert", -2)',
-        'let su = import("Sequence-Utils"); su.remove-at([1, 2, 3, 1, 3, 5], 0)',
-        'let su = import("Sequence-Utils"); su.remove-at([1, 2, 3, 1, 3, 5], -1)',
-        'let su = import("Sequence-Utils"); su.remove-at("Albert Mojir", 6)',
+        'let su = import("Sequence"); su.remove-at([1, 2, 3, 1, 3, 5], 2)',
+        'let su = import("Sequence"); su.remove-at("Albert", -2)',
+        'let su = import("Sequence"); su.remove-at([1, 2, 3, 1, 3, 5], 0)',
+        'let su = import("Sequence"); su.remove-at([1, 2, 3, 1, 3, 5], -1)',
+        'let su = import("Sequence"); su.remove-at("Albert Mojir", 6)',
       ],
     },
   },
@@ -595,7 +595,7 @@ l`,
     },
     arity: toFixedArity(2),
     docs: {
-      category: 'Sequence-Utils',
+      category: 'Sequence',
       returns: { type: 'sequence' },
       args: {
         a: { type: 'sequence' },
@@ -605,12 +605,12 @@ l`,
       },
       variants: [{ argumentNames: ['seq', 'n'] }],
       description: 'Returns a pair of sequence `[take(pos input), drop(pos input)]`.',
-      seeAlso: ['Sequence-Utils.split-with', 'Sequence-Utils.take', 'Sequence-Utils.drop'],
+      seeAlso: ['Sequence.split-with', 'Sequence.take', 'Sequence.drop'],
       examples: [
-        'let su = import("Sequence-Utils"); su.split-at([1, 2, 3, 4, 5], 2)',
-        'let su = import("Sequence-Utils"); su.split-at("Albert", -2)',
-        'let su = import("Sequence-Utils"); su.split-at([1, 2, 3, 4, 5], -2)',
-        'let su = import("Sequence-Utils"); su.split-at("Albert", 2)',
+        'let su = import("Sequence"); su.split-at([1, 2, 3, 4, 5], 2)',
+        'let su = import("Sequence"); su.split-at("Albert", -2)',
+        'let su = import("Sequence"); su.split-at([1, 2, 3, 4, 5], -2)',
+        'let su = import("Sequence"); su.split-at("Albert", 2)',
       ],
     },
   },
@@ -629,7 +629,7 @@ l`,
     },
     arity: toFixedArity(2),
     docs: {
-      category: 'Sequence-Utils',
+      category: 'Sequence',
       returns: { type: 'sequence' },
       args: {
         a: { type: 'sequence' },
@@ -639,11 +639,11 @@ l`,
       },
       variants: [{ argumentNames: ['seq', 'fun'] }],
       description: 'Returns a pair of sequences `[take-while(input, fun), drop-while(input, fun)]`.',
-      seeAlso: ['Sequence-Utils.split-at', 'Sequence-Utils.take-while', 'Sequence-Utils.drop-while'],
+      seeAlso: ['Sequence.split-at', 'Sequence.take-while', 'Sequence.drop-while'],
       examples: [
-        'let su = import("Sequence-Utils"); su.split-with([1, 2, 3, 4, 5], odd?)',
-        'let su = import("Sequence-Utils"); su.split-with([1, 2, 3, 4, 5], -> $ > 3)',
-        'let su = import("Sequence-Utils"); su.split-with("Albert", -> $ <= "o")',
+        'let su = import("Sequence"); su.split-with([1, 2, 3, 4, 5], odd?)',
+        'let su = import("Sequence"); su.split-with([1, 2, 3, 4, 5], -> $ > 3)',
+        'let su = import("Sequence"); su.split-with("Albert", -> $ <= "o")',
       ],
     },
   },
@@ -666,15 +666,15 @@ l`,
     },
     arity: toFixedArity(1),
     docs: {
-      category: 'Sequence-Utils',
+      category: 'Sequence',
       returns: { type: 'object' },
       args: { seq: { type: 'sequence' } },
       variants: [{ argumentNames: ['seq'] }],
       description: 'Returns an object from distinct items in $seq to the number of times they appear. Note that all items in $seq must be valid object keys i.e. strings.',
-      seeAlso: ['Sequence-Utils.group-by', 'Sequence-Utils.distinct', 'Vector.count-values'],
+      seeAlso: ['Sequence.group-by', 'Sequence.distinct', 'Vector.count-values'],
       examples: [
-        'let su = import("Sequence-Utils"); su.frequencies(["Albert", "Mojir", "Nina", "Mojir"])',
-        'let su = import("Sequence-Utils"); su.frequencies("Pneumonoultramicroscopicsilicovolcanoconiosis")',
+        'let su = import("Sequence"); su.frequencies(["Albert", "Mojir", "Nina", "Mojir"])',
+        'let su = import("Sequence"); su.frequencies("Pneumonoultramicroscopicsilicovolcanoconiosis")',
       ],
     },
   },
@@ -697,7 +697,7 @@ l`,
     },
     arity: toFixedArity(2),
     docs: {
-      category: 'Sequence-Utils',
+      category: 'Sequence',
       returns: { type: 'object' },
       args: {
         a: { type: 'sequence' },
@@ -707,11 +707,11 @@ l`,
       },
       variants: [{ argumentNames: ['seq', 'fun'] }],
       description: 'Returns an object of the elements of $seq keyed by the result of $fun on each element. The value at each key will be an array of the corresponding elements.',
-      seeAlso: ['Sequence-Utils.frequencies', 'Sequence-Utils.partition-by'],
+      seeAlso: ['Sequence.frequencies', 'Sequence.partition-by'],
       examples: [
-        'let su = import("Sequence-Utils"); su.group-by([{ name: "Albert" }, { name: "Albert" }, { name: "Mojir" }], "name")',
-        'let su = import("Sequence-Utils"); su.group-by([{name: "Albert"}, {name: "Albert"}, {name: "Mojir"}], "name")',
-        'let su = import("Sequence-Utils"); su.group-by("Albert Mojir", -> "aoueiAOUEI" contains? $ ? "vowel" : "other")',
+        'let su = import("Sequence"); su.group-by([{ name: "Albert" }, { name: "Albert" }, { name: "Mojir" }], "name")',
+        'let su = import("Sequence"); su.group-by([{name: "Albert"}, {name: "Albert"}, {name: "Mojir"}], "name")',
+        'let su = import("Sequence"); su.group-by("Albert Mojir", -> "aoueiAOUEI" contains? $ ? "vowel" : "other")',
       ],
     },
   },
@@ -729,7 +729,7 @@ l`,
     },
     arity: { min: 2, max: 4 },
     docs: {
-      category: 'Sequence-Utils',
+      category: 'Sequence',
       returns: { type: 'sequence' },
       args: {
         a: { type: 'sequence' },
@@ -745,24 +745,24 @@ l`,
         { argumentNames: ['seq', 'n', 'step', 'pad'] },
       ],
       description: 'Returns an array of sequences of $n items each, at offsets $step apart. If $step is not supplied, defaults to $n. If a $pad array is supplied, use its elements as necessary to complete last partition upto $n items. In case there are not enough padding elements, return a partition with less than $n items.',
-      seeAlso: ['Sequence-Utils.partition-all', 'Sequence-Utils.partition-by'],
+      seeAlso: ['Sequence.partition-all', 'Sequence.partition-by'],
       examples: [
-        'let su = import("Sequence-Utils"); su.partition(range(20), 4)',
-        'let su = import("Sequence-Utils"); su.partition(range(20), 4)',
-        'let su = import("Sequence-Utils"); su.partition(range(22), 4)',
-        'let su = import("Sequence-Utils"); su.partition(range(20), 4, 6)',
-        'let su = import("Sequence-Utils"); su.partition(range(20), 4, 3)',
-        'let su = import("Sequence-Utils"); su.partition(range(20), 3, 6, ["a"])',
-        'let su = import("Sequence-Utils"); su.partition(range(20), 4, 6, ["a"])',
-        'let su = import("Sequence-Utils"); su.partition(range(20), 4, 6, ["a", "b", "c", "d"])',
-        'let su = import("Sequence-Utils"); su.partition(["a", "b", "c", "d", "e", "f"], 3, 1)',
-        'let su = import("Sequence-Utils"); su.partition([1, 2, 3, 4], 10)',
-        'let su = import("Sequence-Utils"); su.partition([1, 2, 3, 4], 10, 10)',
-        'let su = import("Sequence-Utils"); su.partition([1, 2, 3, 4], 10, 10, [])',
-        'let su = import("Sequence-Utils"); su.partition([1, 2, 3, 4], 10, 10, null)',
-        'let su = import("Sequence-Utils"); su.partition("superfragilistic", 5)',
-        'let su = import("Sequence-Utils"); su.partition("superfragilistic", 5, 5, null)',
-        'let su = import("Sequence-Utils"); let foo = [5, 6, 7, 8]; su.partition(foo, 2, 1, foo)',
+        'let su = import("Sequence"); su.partition(range(20), 4)',
+        'let su = import("Sequence"); su.partition(range(20), 4)',
+        'let su = import("Sequence"); su.partition(range(22), 4)',
+        'let su = import("Sequence"); su.partition(range(20), 4, 6)',
+        'let su = import("Sequence"); su.partition(range(20), 4, 3)',
+        'let su = import("Sequence"); su.partition(range(20), 3, 6, ["a"])',
+        'let su = import("Sequence"); su.partition(range(20), 4, 6, ["a"])',
+        'let su = import("Sequence"); su.partition(range(20), 4, 6, ["a", "b", "c", "d"])',
+        'let su = import("Sequence"); su.partition(["a", "b", "c", "d", "e", "f"], 3, 1)',
+        'let su = import("Sequence"); su.partition([1, 2, 3, 4], 10)',
+        'let su = import("Sequence"); su.partition([1, 2, 3, 4], 10, 10)',
+        'let su = import("Sequence"); su.partition([1, 2, 3, 4], 10, 10, [])',
+        'let su = import("Sequence"); su.partition([1, 2, 3, 4], 10, 10, null)',
+        'let su = import("Sequence"); su.partition("superfragilistic", 5)',
+        'let su = import("Sequence"); su.partition("superfragilistic", 5, 5, null)',
+        'let su = import("Sequence"); let foo = [5, 6, 7, 8]; su.partition(foo, 2, 1, foo)',
       ],
     },
   },
@@ -777,7 +777,7 @@ l`,
     },
     arity: { min: 2, max: 3 },
     docs: {
-      category: 'Sequence-Utils',
+      category: 'Sequence',
       returns: { type: 'sequence' },
       args: {
         a: { type: 'sequence' },
@@ -791,12 +791,12 @@ l`,
         { argumentNames: ['seq', 'n', 'step'] },
       ],
       description: 'Returns an array of sequences like partition, but may include partitions with fewer than n items at the end.',
-      seeAlso: ['Sequence-Utils.partition', 'Sequence-Utils.partition-by'],
+      seeAlso: ['Sequence.partition', 'Sequence.partition-by'],
       examples: [
-        'let su = import("Sequence-Utils"); su.partition-all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 4)',
-        'let su = import("Sequence-Utils"); su.partition-all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 4)',
-        'let su = import("Sequence-Utils"); su.partition([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 4)',
-        'let su = import("Sequence-Utils"); su.partition-all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 2, 4)',
+        'let su = import("Sequence"); su.partition-all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 4)',
+        'let su = import("Sequence"); su.partition-all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 4)',
+        'let su = import("Sequence"); su.partition([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 4)',
+        'let su = import("Sequence"); su.partition-all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 2, 4)',
       ],
     },
   },
@@ -822,7 +822,7 @@ l`,
     },
     arity: toFixedArity(2),
     docs: {
-      category: 'Sequence-Utils',
+      category: 'Sequence',
       returns: { type: 'sequence' },
       args: {
         a: { type: 'sequence' },
@@ -832,12 +832,12 @@ l`,
       },
       variants: [{ argumentNames: ['seq', 'fun'] }],
       description: 'Applies $fun to each value in $seq, splitting it each time $fun returns a new value. Returns an array of sequences.',
-      seeAlso: ['Sequence-Utils.partition', 'Sequence-Utils.partition-all', 'Sequence-Utils.group-by'],
+      seeAlso: ['Sequence.partition', 'Sequence.partition-all', 'Sequence.group-by'],
       examples: [
-        'let su = import("Sequence-Utils"); su.partition-by([1, 2, 3, 4, 5], odd?)',
-        'let su = import("Sequence-Utils"); su.partition-by([1, 2, 3, 4, 5], -> $ == 3)',
-        'let su = import("Sequence-Utils"); su.partition-by([1, 1, 1, 2, 2, 3, 3], odd?)',
-        'let su = import("Sequence-Utils"); su.partition-by("Leeeeeerrroyyy", identity)',
+        'let su = import("Sequence"); su.partition-by([1, 2, 3, 4, 5], odd?)',
+        'let su = import("Sequence"); su.partition-by([1, 2, 3, 4, 5], -> $ == 3)',
+        'let su = import("Sequence"); su.partition-by([1, 1, 1, 2, 2, 3, 3], odd?)',
+        'let su = import("Sequence"); su.partition-by("Leeeeeerrroyyy", identity)',
       ],
     },
   },
@@ -854,7 +854,7 @@ l`,
     },
     arity: toFixedArity(2),
     docs: {
-      category: 'Sequence-Utils',
+      category: 'Sequence',
       returns: { type: 'boolean' },
       args: {
         a: { type: 'sequence' },
@@ -864,14 +864,14 @@ l`,
       },
       variants: [{ argumentNames: ['seq', 'suffix'] }],
       description: 'Returns `true` if $seq ends with $suffix, otherwise `false`.',
-      seeAlso: ['Sequence-Utils.starts-with?'],
+      seeAlso: ['Sequence.starts-with?'],
       examples: [
-        'let su = import("Sequence-Utils"); su.ends-with?([[1], [2], [3], [4], [5]], [5])',
-        'let su = import("Sequence-Utils"); su.ends-with?([[1], [2], [3], [4], [5]], 5)',
-        'let su = import("Sequence-Utils"); su.ends-with?([1, 2, 3, 4, 5], 5)',
-        'let su = import("Sequence-Utils"); su.ends-with?([1, 2, 3, 4, 5], [5])',
-        'let su = import("Sequence-Utils"); su.ends-with?("Albert", "rt")',
-        'let su = import("Sequence-Utils"); su.ends-with?("Albert", "RT")',
+        'let su = import("Sequence"); su.ends-with?([[1], [2], [3], [4], [5]], [5])',
+        'let su = import("Sequence"); su.ends-with?([[1], [2], [3], [4], [5]], 5)',
+        'let su = import("Sequence"); su.ends-with?([1, 2, 3, 4, 5], 5)',
+        'let su = import("Sequence"); su.ends-with?([1, 2, 3, 4, 5], [5])',
+        'let su = import("Sequence"); su.ends-with?("Albert", "rt")',
+        'let su = import("Sequence"); su.ends-with?("Albert", "RT")',
       ],
     },
   },
@@ -888,7 +888,7 @@ l`,
     },
     arity: toFixedArity(2),
     docs: {
-      category: 'Sequence-Utils',
+      category: 'Sequence',
       returns: { type: 'boolean' },
       args: {
         a: { type: 'sequence' },
@@ -898,13 +898,13 @@ l`,
       },
       variants: [{ argumentNames: ['seq', 'prefix'] }],
       description: 'Returns `true` if $seq starts with $prefix, otherwise `false`.',
-      seeAlso: ['Sequence-Utils.ends-with?'],
+      seeAlso: ['Sequence.ends-with?'],
       examples: [
-        'let su = import("Sequence-Utils"); su.starts-with?([[1], [2], [3], [4], [5]], [1])',
-        'let su = import("Sequence-Utils"); su.starts-with?([1, 2, 3, 4, 5], 1)',
-        'let su = import("Sequence-Utils"); su.starts-with?([1, 2, 3, 4, 5], [1])',
-        'let su = import("Sequence-Utils"); su.starts-with?("Albert", "Al")',
-        'let su = import("Sequence-Utils"); su.starts-with?("Albert", "al")',
+        'let su = import("Sequence"); su.starts-with?([[1], [2], [3], [4], [5]], [1])',
+        'let su = import("Sequence"); su.starts-with?([1, 2, 3, 4, 5], 1)',
+        'let su = import("Sequence"); su.starts-with?([1, 2, 3, 4, 5], [1])',
+        'let su = import("Sequence"); su.starts-with?("Albert", "Al")',
+        'let su = import("Sequence"); su.starts-with?("Albert", "al")',
       ],
     },
   },
@@ -934,7 +934,7 @@ l`,
     },
     arity: { min: 1 },
     docs: {
-      category: 'Sequence-Utils',
+      category: 'Sequence',
       returns: { type: 'sequence' },
       args: {
         a: { type: 'sequence' },
@@ -943,17 +943,17 @@ l`,
       },
       variants: [{ argumentNames: ['seqs'] }],
       description: 'Returns a sequence of the first item from each of the $seqs, then the second item from each of the $seqs, until all items from the shortest seq are exhausted.',
-      seeAlso: ['Sequence-Utils.interpose', 'zipmap'],
+      seeAlso: ['Sequence.interpose', 'zipmap'],
       examples: [
-        'let su = import("Sequence-Utils"); su.interleave([1, 2, 3], [4, 5, 6])',
-        'let su = import("Sequence-Utils"); su.interleave("Albert", ".,.,.,")',
-        'let su = import("Sequence-Utils"); su.interleave([1, 2, 3], [4, 5, 6])',
-        'let su = import("Sequence-Utils"); su.interleave([1, 2, 3], [4, 5, 6], [7, 8, 9])',
-        'let su = import("Sequence-Utils"); su.interleave([1, 2, 3], [4, 5, 6], [7, 8])',
-        'let su = import("Sequence-Utils"); su.interleave([1, 2, 3], [4, 5, 6], [7])',
-        'let su = import("Sequence-Utils"); su.interleave([1, 2, 3], [4, 5, 6], [])',
-        'let su = import("Sequence-Utils"); su.interleave([1, 2, 3], [])',
-        'let su = import("Sequence-Utils"); su.interleave([])',
+        'let su = import("Sequence"); su.interleave([1, 2, 3], [4, 5, 6])',
+        'let su = import("Sequence"); su.interleave("Albert", ".,.,.,")',
+        'let su = import("Sequence"); su.interleave([1, 2, 3], [4, 5, 6])',
+        'let su = import("Sequence"); su.interleave([1, 2, 3], [4, 5, 6], [7, 8, 9])',
+        'let su = import("Sequence"); su.interleave([1, 2, 3], [4, 5, 6], [7, 8])',
+        'let su = import("Sequence"); su.interleave([1, 2, 3], [4, 5, 6], [7])',
+        'let su = import("Sequence"); su.interleave([1, 2, 3], [4, 5, 6], [])',
+        'let su = import("Sequence"); su.interleave([1, 2, 3], [])',
+        'let su = import("Sequence"); su.interleave([])',
       ],
     },
   },
@@ -977,7 +977,7 @@ l`,
     },
     arity: toFixedArity(2),
     docs: {
-      category: 'Sequence-Utils',
+      category: 'Sequence',
       returns: { type: 'sequence' },
       args: {
         a: { type: 'sequence' },
@@ -987,12 +987,12 @@ l`,
       },
       variants: [{ argumentNames: ['seq', 'separator'] }],
       description: 'Returns a sequence of the elements of $seq separated by $separator. If $seq is a string, the separator must be a string.',
-      seeAlso: ['Sequence-Utils.interleave', 'join'],
+      seeAlso: ['Sequence.interleave', 'join'],
       examples: [
-        'let su = import("Sequence-Utils"); su.interpose("Albert", "-")',
-        'let su = import("Sequence-Utils"); su.interpose([1, 2, 3, 4, 5], "a")',
-        'let su = import("Sequence-Utils"); su.interpose(["Albert", "Mojir", "Nina"], ", ")',
-        'let su = import("Sequence-Utils"); su.interpose("Albert", ".")',
+        'let su = import("Sequence"); su.interpose("Albert", "-")',
+        'let su = import("Sequence"); su.interpose([1, 2, 3, 4, 5], "a")',
+        'let su = import("Sequence"); su.interpose(["Albert", "Mojir", "Nina"], ", ")',
+        'let su = import("Sequence"); su.interpose("Albert", ".")',
       ],
     },
   },
@@ -1029,6 +1029,6 @@ function partitionHelper(n: number, step: number, seq: Seq, pad: Arr | undefined
 }
 
 export const sequenceUtilsModule: LitsModule = {
-  name: 'Sequence-Utils',
+  name: 'Sequence',
   functions: sequenceUtilsFunctions,
 }

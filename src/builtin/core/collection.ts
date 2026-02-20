@@ -117,7 +117,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['coll', 'fun'] }],
       description: 'Creates a new collection with all elements that pass the test implemented by $fun.',
-      seeAlso: ['Collection-Utils.filteri', 'map', 'Sequence-Utils.remove'],
+      seeAlso: ['Collection.filteri', 'map', 'Sequence.remove'],
       examples: [
         `
 filter(
@@ -191,7 +191,7 @@ filter(
       },
       variants: [{ argumentNames: ['colls', 'fun'] }],
       description: 'Creates a new collection populated with the results of calling $fun on every element in $colls.',
-      seeAlso: ['Collection-Utils.mapi', 'filter', 'reduce', 'mapcat', 'Grid.map', 'Grid.mapi'],
+      seeAlso: ['Collection.mapi', 'filter', 'reduce', 'mapcat', 'Grid.map', 'Grid.mapi'],
       examples: [
         '[1, 2, 3] map -',
         '[1, 2, 3] map -> -($)',
@@ -246,7 +246,7 @@ filter(
       },
       variants: [{ argumentNames: ['coll', 'fun', 'initial'] }],
       description: 'Runs $fun function on each element of the $coll, passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $coll is a single value.',
-      seeAlso: ['Collection-Utils.reduce-right', 'Collection-Utils.reducei', 'Collection-Utils.reductions', 'map', 'Grid.reduce', 'Grid.reducei'],
+      seeAlso: ['Collection.reduce-right', 'Collection.reducei', 'Collection.reductions', 'map', 'Grid.reduce', 'Grid.reducei'],
       examples: [
         'reduce([1, 2, 3], +, 0)',
         'reduce([], +, 0)',
@@ -285,7 +285,7 @@ reduce(
         { argumentNames: ['a', 'b', 'not-found'] },
       ],
       description: 'Returns value in $a mapped at $b.',
-      seeAlso: ['Collection-Utils.get-in', 'contains?', 'find', 'nth'],
+      seeAlso: ['Collection.get-in', 'contains?', 'find', 'nth'],
       examples: [
         '[1, 2, 3] get 1',
         '{ a: 1 } get "a"',
@@ -454,7 +454,7 @@ contains?(
       description: `
 Add or replace the value of element $key to $value in $coll. Repeated for all key-value pairs in $kvs.
 If $coll is an 'array', $key must be \`number\` satisfying \`0 <=\` $key \`<= length\`.`,
-      seeAlso: ['Collection-Utils.assoc-in', 'dissoc', 'merge', 'Collection-Utils.update'],
+      seeAlso: ['Collection.assoc-in', 'dissoc', 'merge', 'Collection.update'],
       examples: [
         `
 assoc(
@@ -524,7 +524,7 @@ assoc(
         { argumentNames: ['a', 'colls'] },
       ],
       description: 'Concatenates collections into one collection.',
-      seeAlso: ['mapcat', 'str', 'join', 'push', 'Sequence-Utils.unshift'],
+      seeAlso: ['mapcat', 'str', 'join', 'push', 'Sequence.unshift'],
       examples: [
         '"Albert" ++ " " ++ "Mojir"',
         '"Albert" ++ "Mojir"',

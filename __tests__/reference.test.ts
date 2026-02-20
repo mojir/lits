@@ -8,7 +8,7 @@ import { isReservedSymbol } from '../src/tokenizer/reservedNames'
 import { Lits } from '../src/Lits/Lits'
 import { allBuiltinModules } from '../src/allModules'
 import { specialExpressionTypes } from '../src/builtin/specialExpressionTypes'
-import { type ApiName, isApiName } from '../reference/api'
+import { type ApiName, categories, isApiName } from '../reference/api'
 import '../src/initReferenceData'
 
 const lits = new Lits({ modules: allBuiltinModules })
@@ -25,9 +25,9 @@ describe('apiReference', () => {
       expect(obj.examples.length).toBeGreaterThan(0)
       expect(isUnknownRecord(obj.args)).toBe(true)
       if (normalExpressionKeys.includes(key))
-        expect(obj.category).not.toBe('Special expression')
+        expect(obj.category).not.toBe('Special-Expression')
       else if (specialExpressionKeys.includes(key))
-        expect(obj.category).toBe('Special expression')
+        expect(obj.category).toBe('Special-Expression')
       else
         throw new Error(`${key} is not a builtin function`)
     })
@@ -184,12 +184,12 @@ describe('no orphaned reference data', () => {
   })
 })
 
-describe('core and module category names are disjoint', () => {
-  it('no category name appears in both api and module references', () => {
-    const apiCategories = new Set(Object.values(apiReference).map(r => r.category))
+describe('core and module categories', () => {
+  it('module categories are a subset of all categories', () => {
     const nsCategories = new Set(Object.values(moduleReference).map(r => r.category))
-    const overlap = Array.from(apiCategories).filter(c => nsCategories.has(c))
-    expect(overlap, `Overlapping categories: ${overlap.join(', ')}`).toEqual([])
+    for (const cat of nsCategories) {
+      expect(categories).toContain(cat)
+    }
   })
 })
 

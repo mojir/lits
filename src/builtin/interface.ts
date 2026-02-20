@@ -39,7 +39,7 @@ export function isDataType(arg: string): arg is DataType {
 // --- Category type ---
 
 export const categoryRecord = {
-  'Special expression': true,
+  'Special-Expression': true,
   'Predicate': true,
   'Sequence': true,
   'Collection': true,
@@ -48,21 +48,17 @@ export const categoryRecord = {
   'String': true,
   'Math': true,
   'Functional': true,
-  'Regular expression': true,
+  'Regular-Expression': true,
   'Bitwise': true,
   'Misc': true,
   'Meta': true,
   'Assert': true,
   'Vector': true,
-  'Linear Algebra': true,
+  'Linear-Algebra': true,
   'Matrix': true,
   'Grid': true,
   'Number-Theory': true,
   'Random': true,
-  'Math-Utils': true,
-  'String-Utils': true,
-  'Collection-Utils': true,
-  'Sequence-Utils': true,
   'Shorthand': true,
   'Datatype': true,
 } as const
@@ -72,10 +68,10 @@ export type Category = keyof typeof categoryRecord
 export const categories = Object.keys(categoryRecord) as Category[]
 
 // Categories that are modules (require import)
-export const moduleCategories: Category[] = ['Vector', 'Linear Algebra', 'Matrix', 'Grid', 'Number-Theory', 'Random', 'Math-Utils', 'Assert', 'String-Utils', 'Collection-Utils', 'Sequence-Utils']
+export const moduleCategories: Category[] = ['Math', 'Functional', 'String', 'Collection', 'Sequence', 'Bitwise', 'Vector', 'Linear-Algebra', 'Matrix', 'Grid', 'Number-Theory', 'Random', 'Assert']
 
 // Core categories (always available)
-export const coreCategories = categories.filter(c => !moduleCategories.includes(c))
+export const coreCategories: Category[] = ['Special-Expression', 'Predicate', 'Sequence', 'Collection', 'Array', 'Object', 'String', 'Math', 'Functional', 'Regular-Expression', 'Bitwise', 'Misc', 'Meta', 'Shorthand', 'Datatype']
 
 // --- FunctionDocs types ---
 

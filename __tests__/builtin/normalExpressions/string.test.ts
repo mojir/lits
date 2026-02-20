@@ -94,7 +94,7 @@ describe('string functions', () => {
 })
 
 describe('string-Utils module functions', () => {
-  const imp = 'let su = import("String-Utils"); '
+  const imp = 'let su = import("String"); '
   for (const lits of [new Lits({ modules: [stringUtilsModule] }), new Lits({ modules: [stringUtilsModule], debug: true })]) {
     describe('trim-left', () => {
       it('samples', () => {

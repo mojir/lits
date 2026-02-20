@@ -33,6 +33,8 @@ import { stringUtilsModule } from '../src/builtin/modules/stringUtils'
 import { collectionUtilsModule } from '../src/builtin/modules/collectionUtils'
 import { sequenceUtilsModule } from '../src/builtin/modules/sequenceUtils'
 import { mathUtilsModule } from '../src/builtin/modules/mathUtils'
+import { functionalUtilsModule } from '../src/builtin/modules/functionalUtils'
+import { bitwiseUtilsModule } from '../src/builtin/modules/bitwiseUtils'
 import type { ApiName, ArrayApiName, BitwiseApiName, Category, CollectionApiName, CoreApiName, CoreNormalExpressionName, DataType, FunctionalApiName, MathApiName, MetaApiName, MiscApiName, ModuleExpressionName, ObjectApiName, PredicateApiName, RegularExpressionApiName, SequenceApiName, StringApiName } from './api'
 import { datatype } from './datatype'
 import { shorthand } from './shorthand'
@@ -97,14 +99,14 @@ const metaRef = docsToReference(getMetaNormalExpression(emptyRef)) as Record<Met
 const miscRef = docsToReference(miscNormalExpression) as Record<MiscApiName, FunctionReference<'Misc'>>
 const objectRef = docsToReference(objectNormalExpression) as Record<ObjectApiName, FunctionReference<'Object'>>
 const predicatesRef = docsToReference(predicatesNormalExpression) as Record<PredicateApiName, FunctionReference<'Predicate'>>
-const regexpRef = docsToReference(regexpNormalExpression) as Record<RegularExpressionApiName, FunctionReference<'Regular expression'>>
+const regexpRef = docsToReference(regexpNormalExpression) as Record<RegularExpressionApiName, FunctionReference<'Regular-Expression'>>
 const sequenceRef = docsToReference(sequenceNormalExpression) as Record<SequenceApiName, FunctionReference<'Sequence'>>
 const stringRef = docsToReference(stringNormalExpression) as Record<StringApiName, FunctionReference<'String'>>
 
 // --- Helper: derive special expression reference from co-located docs ---
 
-function specialExpressionDocsToReference(): Record<string, FunctionReference<'Special expression'> | CustomReference<'Special expression'>> {
-  const result: Record<string, FunctionReference<'Special expression'> | CustomReference<'Special expression'>> = {}
+function specialExpressionDocsToReference(): Record<string, FunctionReference<'Special-Expression'> | CustomReference<'Special-Expression'>> {
+  const result: Record<string, FunctionReference<'Special-Expression'> | CustomReference<'Special-Expression'>> = {}
   for (const [name, index] of Object.entries(specialExpressionTypes)) {
     const expr = specialExpressions[index]
     const docs: SpecialExpressionDocs | undefined = expr?.docs
@@ -114,7 +116,7 @@ function specialExpressionDocsToReference(): Record<string, FunctionReference<'S
     if (isFunctionDocs(docs)) {
       result[name] = {
         title: name,
-        category: docs.category as 'Special expression',
+        category: docs.category as 'Special-Expression',
         description: docs.description,
         returns: docs.returns,
         args: docs.args,
@@ -127,7 +129,7 @@ function specialExpressionDocsToReference(): Record<string, FunctionReference<'S
     else {
       result[name] = {
         title: name,
-        category: docs.category as 'Special expression',
+        category: docs.category as 'Special-Expression',
         description: docs.description,
         customVariants: docs.customVariants,
         ...(docs.details ? { details: docs.details } : {}),
@@ -235,6 +237,8 @@ export const moduleReference: Record<ModuleExpressionName, FunctionReference> = 
   ...moduledDocsToReference(collectionUtilsModule.name, collectionUtilsModule.functions),
   ...moduledDocsToReference(sequenceUtilsModule.name, sequenceUtilsModule.functions),
   ...moduledDocsToReference(mathUtilsModule.name, mathUtilsModule.functions),
+  ...moduledDocsToReference(functionalUtilsModule.name, functionalUtilsModule.functions),
+  ...moduledDocsToReference(bitwiseUtilsModule.name, bitwiseUtilsModule.functions),
 } as Record<ModuleExpressionName, FunctionReference>
 
 Object.entries(normalExpressionReference).forEach(([key, obj]) => {

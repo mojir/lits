@@ -22,6 +22,8 @@ export { linearAlgebraModule } from './builtin/modules/linearAlgebra'
 export { matrixModule } from './builtin/modules/matrix'
 export { numberTheoryModule } from './builtin/modules/numberTheory'
 export { mathUtilsModule } from './builtin/modules/mathUtils'
+export { functionalUtilsModule } from './builtin/modules/functionalUtils'
+export { bitwiseUtilsModule } from './builtin/modules/bitwiseUtils'
 
 // Reference data and types
 export { apiReference, isCustomReference, isDatatypeReference, isFunctionReference, isShorthandReference } from '../reference'

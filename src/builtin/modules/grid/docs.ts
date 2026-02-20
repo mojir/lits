@@ -28,7 +28,7 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       '// Using "as" alias because "every?" shadows a builtin function\nlet { every? as grid-every? } = import("Grid");\ngrid-every?([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n], string?)',
       '// Using "as" alias because "every?" shadows a builtin function\nlet { every? as grid-every? } = import("Grid");\ngrid-every?([\n  [1, 2],\n  [3, 4],\n], string?)',
     ],
-    seeAlso: ['Collection-Utils.every?', 'Grid.some?', 'Grid.every-row?', 'Grid.every-col?'],
+    seeAlso: ['Collection.every?', 'Grid.some?', 'Grid.every-row?', 'Grid.every-col?'],
   },
   'some?': {
     category: 'Grid',
@@ -57,7 +57,7 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       'let { some? } = import("Grid");\nsome?([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n], string?)',
       'let { some? } = import("Grid");\nsome?([\n  [1, 2],\n  [3, 4],\n], string?)',
     ],
-    seeAlso: ['Collection-Utils.any?', 'Grid.every?', 'Grid.some-row?', 'Grid.some-col?'],
+    seeAlso: ['Collection.any?', 'Grid.every?', 'Grid.some-row?', 'Grid.some-col?'],
   },
   'every-row?': {
     category: 'Grid',
