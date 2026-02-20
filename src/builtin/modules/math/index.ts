@@ -9,91 +9,37 @@ import type { LitsModule } from '../interface'
 type NumberVectorOrMatrix = number | number[] | number[][]
 
 function getNumberVectorOrMatrixOperation(
-  params: unknown[],
+  param: unknown,
   sourceCodeInfo: SourceCodeInfo | undefined,
 ):
-  | ['number', number[]]
-  | ['vector', number[][]]
-  | ['matrix', number[][][]] {
-  let hasVector: boolean = false
-  let hasMatrix: boolean = false
-  for (const param of params) {
-    if (isVector(param)) {
-      hasVector = true
-    }
-    else if (isMatrix(param)) {
-      hasMatrix = true
-    }
-    else if (!isNumber(param)) {
-      throw new LitsError(`Invalid parameter type: ${typeof param}`, sourceCodeInfo)
-    }
+  | ['number', number]
+  | ['vector', number[]]
+  | ['matrix', number[][]] {
+  if (isVector(param)) {
+    return ['vector', param]
   }
-  if (hasMatrix) {
-    if (hasVector) {
-      throw new LitsError('Cannot mix vector and matrix types', sourceCodeInfo)
-    }
-    let rows: number | null = null
-    let cold: number | null = null
-    for (const param of params) {
-      if (isMatrix(param)) {
-        if (rows === null) {
-          rows = param.length
-          cold = param[0]!.length
-        }
-        else {
-          if (param.length !== rows || param[0]!.length !== cold) {
-            throw new LitsError('Matrix dimensions do not match', sourceCodeInfo)
-          }
-        }
-      }
-    }
-    const matrices = params.map((param) => {
-      if (isMatrix(param)) {
-        return param
-      }
-      return Array.from({ length: rows as number }, () => Array.from({ length: cold as number }, () => param as number))
-    })
-    return ['matrix', matrices]
+  if (isMatrix(param)) {
+    return ['matrix', param]
   }
-  if (hasVector) {
-    let length: number | null = null
-    for (const param of params) {
-      if (isVector(param)) {
-        if (length === null) {
-          length = param.length
-        }
-        else {
-          if (param.length !== length) {
-            throw new LitsError('Vector lengths do not match', sourceCodeInfo)
-          }
-        }
-      }
-    }
-    const vectors = params.map((param) => {
-      if (isVector(param)) {
-        return param
-      }
-      return Array.from({ length: length as number }, () => param as number)
-    })
-
-    return ['vector', vectors]
+  if (!isNumber(param)) {
+    throw new LitsError(`Invalid parameter type: ${typeof param}`, sourceCodeInfo)
   }
-  return ['number', params as number[]]
+  return ['number', param]
 }
 
 function unaryMathOp(
   fn: (val: number) => number,
 ): (params: unknown[], sourceCodeInfo: SourceCodeInfo | undefined) => NumberVectorOrMatrix {
-  return (params, sourceCodeInfo) => {
-    const [operation, operands] = getNumberVectorOrMatrixOperation(params, sourceCodeInfo)
+  return ([param], sourceCodeInfo) => {
+    const [operation, operand] = getNumberVectorOrMatrixOperation(param, sourceCodeInfo)
     if (operation === 'number') {
-      return fn(operands[0]!)
+      return fn(operand)
     }
     else if (operation === 'vector') {
-      return operands[0]!.map(val => fn(val))
+      return operand.map(val => fn(val))
     }
     else {
-      return operands[0]!.map(row => row.map(val => fn(val)))
+      return operand.map(row => row.map(val => fn(val)))
     }
   }
 }

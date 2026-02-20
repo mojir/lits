@@ -18,6 +18,9 @@ import { numberTheoryModule } from '../src/modules/number-theory'
 import { stringUtilsModule } from '../src/modules/string'
 import { collectionUtilsModule } from '../src/modules/collection'
 import { sequenceUtilsModule } from '../src/modules/sequence'
+import { bitwiseUtilsModule } from '../src/modules/bitwise'
+import { functionalUtilsModule } from '../src/modules/functional'
+import { mathUtilsModule } from '../src/modules/math'
 
 describe('minimal entry point (src/index.ts)', () => {
   it('should evaluate core expressions without modules', () => {
@@ -135,6 +138,25 @@ describe('individual module entry points', () => {
     expect(sequenceUtilsModule.name).toBe('sequence')
     const lits = new Lits({ modules: [sequenceUtilsModule] })
     expect(lits.run('let su = import("sequence"); su.take([1, 2, 3, 4, 5], 3)')).toEqual([1, 2, 3])
+  })
+
+  it('bitwiseUtils module', () => {
+    expect(bitwiseUtilsModule.name).toBe('bitwise')
+    const lits = new Lits({ modules: [bitwiseUtilsModule] })
+    expect(lits.run('let b = import("bitwise"); b.bit-not(0)')).toBe(-1)
+  })
+
+  it('functionalUtils module', () => {
+    expect(functionalUtilsModule.name).toBe('functional')
+    const lits = new Lits({ modules: [functionalUtilsModule] })
+    expect(lits.run('let f = import("functional"); (f.complement(zero?))(1)')).toBe(true)
+  })
+
+  it('mathUtils module', () => {
+    expect(mathUtilsModule.name).toBe('math')
+    const lits = new Lits({ modules: [mathUtilsModule] })
+    expect(lits.run('let m = import("math"); m.sin(0)')).toBe(0)
+    expect(() => lits.run('let m = import("math"); m.sin("hello")')).toThrow()
   })
 
   it('should allow combining multiple modules', () => {
