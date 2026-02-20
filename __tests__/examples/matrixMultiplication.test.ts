@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../src/Lits/Lits'
+import { collectionUtilsModule } from '../../src/builtin/modules/collectionUtils'
 
-const lits = new Lits({ debug: true })
+const lits = new Lits({ debug: true, modules: [collectionUtilsModule] })
 describe('determinant.', () => {
   it('should compile', () => {
     expect(lits.run(`
-
+let { every? } = import("Collection-Utils");
 // Matrix multiplication with correct syntax
 let matrixMultiply = (matrixA, matrixB) -> do
   // Check if inputs are arrays

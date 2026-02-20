@@ -15,6 +15,8 @@ import { vectorModule } from '../src/modules/vector'
 import { linearAlgebraModule } from '../src/modules/linearAlgebra'
 import { matrixModule } from '../src/modules/matrix'
 import { numberTheoryModule } from '../src/modules/numberTheory'
+import { stringUtilsModule } from '../src/modules/stringUtils'
+import { collectionUtilsModule } from '../src/modules/collectionUtils'
 
 describe('minimal entry point (src/index.ts)', () => {
   it('should evaluate core expressions without modules', () => {
@@ -65,8 +67,8 @@ describe('full entry point (src/full.ts)', () => {
     expect(Object.keys(apiReference).length).toBeGreaterThan(0)
   })
 
-  it('should export allBuiltinModules with 7 modules', () => {
-    expect(allBuiltinModules).toHaveLength(7)
+  it('should export allBuiltinModules with 9 modules', () => {
+    expect(allBuiltinModules).toHaveLength(9)
   })
 })
 
@@ -114,6 +116,18 @@ describe('individual module entry points', () => {
     expect(numberTheoryModule.name).toBe('Number-Theory')
     const lits = new Lits({ modules: [numberTheoryModule] })
     expect(lits.run('let nt = import("Number-Theory"); nt.prime?(7)')).toBe(true)
+  })
+
+  it('stringUtils module', () => {
+    expect(stringUtilsModule.name).toBe('String-Utils')
+    const lits = new Lits({ modules: [stringUtilsModule] })
+    expect(lits.run('let { capitalize } = import("String-Utils"); capitalize("albert")')).toBe('Albert')
+  })
+
+  it('collectionUtils module', () => {
+    expect(collectionUtilsModule.name).toBe('Collection-Utils')
+    const lits = new Lits({ modules: [collectionUtilsModule] })
+    expect(lits.run('let cu = import("Collection-Utils"); cu.every?([1, 2, 3], number?)')).toBe(true)
   })
 
   it('should allow combining multiple modules', () => {

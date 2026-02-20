@@ -553,7 +553,7 @@ For string $seq returns all but the first characters in $seq.`,
       },
       variants: [{ argumentNames: ['seq', 'fun'] }],
       description: 'Returns the first element that passes the test implemented by $fun. I no element was found, `null` is returned.',
-      seeAlso: ['position', 'any?', 'find'],
+      seeAlso: ['position', 'Collection-Utils.any?', 'find'],
       examples: [
         `
 some(

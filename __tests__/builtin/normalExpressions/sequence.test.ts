@@ -674,7 +674,7 @@ describe('sequence functions', () => {
         'Nina',
       ])
       expect(lits.run('sort-by("Albert", lower-case)')).toEqual('Abelrt')
-      expect(lits.run('sort-by("Albert", lower-case, (a, b) -> to-char-code(b) - to-char-code(a))')).toEqual(
+      expect(lits.run('sort-by("Albert", lower-case, (a, b) -> compare(b, a))')).toEqual(
         'trlebA',
       )
       expect(() => lits.run('sort-by()')).toThrow(LitsError)

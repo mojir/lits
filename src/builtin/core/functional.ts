@@ -270,7 +270,7 @@ juxt(+, *, min, max) apply range(1, 11)`,
       description: `
 Takes a number of predicates and returns a function that returns \`true\` if all predicates
 return a truthy value against all of its arguments, else it returns \`false\`.`,
-      seeAlso: ['some-pred', 'complement', 'every?'],
+      seeAlso: ['some-pred', 'complement', 'Collection-Utils.every?'],
       examples: [
         `
 every-pred(string?, -> count($) > 3)(
@@ -310,7 +310,7 @@ every-pred(string?, -> count($) > 3)(
         { argumentNames: ['fun', 'fns'] },
       ],
       description: 'Takes a number of `predicates` and returns a function that returns `true` if at least one of the `predicates` return a truthy `true` value against at least one of its arguments, else it returns `false`.',
-      seeAlso: ['every-pred', 'complement', 'any?'],
+      seeAlso: ['every-pred', 'complement', 'Collection-Utils.any?'],
       examples: [
         'some-pred(string?, -> count($) > 3)("Albert", "Mojir")',
         'some-pred(string?, -> count($) > 3)("a", "M")',

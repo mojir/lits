@@ -13,29 +13,31 @@ function getVectorReductionNames<T extends string>(name: T): [`Vector.${T}`, `Ve
 export const api = {
   collection: [
     'filter',
-    'filteri',
     'map',
-    'mapi',
     'reduce',
-    'reducei',
-    'reduce-right',
-    'reducei-right',
-    'reductions',
-    'reductionsi',
     'count',
     'get',
-    'get-in',
     'contains?',
     'assoc',
-    'assoc-in',
     '++',
-    'not-empty',
-    'every?',
-    'not-every?',
-    'any?',
-    'not-any?',
-    'update',
-    'update-in',
+  ] as const,
+  collectionUtils: [
+    'Collection-Utils.filteri',
+    'Collection-Utils.mapi',
+    'Collection-Utils.reducei',
+    'Collection-Utils.reduce-right',
+    'Collection-Utils.reducei-right',
+    'Collection-Utils.reductions',
+    'Collection-Utils.reductionsi',
+    'Collection-Utils.get-in',
+    'Collection-Utils.assoc-in',
+    'Collection-Utils.update',
+    'Collection-Utils.update-in',
+    'Collection-Utils.not-empty',
+    'Collection-Utils.every?',
+    'Collection-Utils.not-every?',
+    'Collection-Utils.any?',
+    'Collection-Utils.not-any?',
   ] as const,
   array: [
     'range',
@@ -205,28 +207,30 @@ export const api = {
     'replace-all',
   ] as const,
   string: [
-    'string-repeat',
     'str',
     'number',
     'lower-case',
     'upper-case',
     'trim',
-    'trim-left',
-    'trim-right',
-    'pad-left',
-    'pad-right',
     'split',
-    'split-lines',
-    'template',
-    'to-char-code',
-    'from-char-code',
-    'encode-base64',
-    'decode-base64',
-    'encode-uri-component',
-    'decode-uri-component',
     'join',
-    'capitalize',
     'blank?',
+  ] as const,
+  stringUtils: [
+    'String-Utils.string-repeat',
+    'String-Utils.from-char-code',
+    'String-Utils.to-char-code',
+    'String-Utils.trim-left',
+    'String-Utils.trim-right',
+    'String-Utils.pad-left',
+    'String-Utils.pad-right',
+    'String-Utils.split-lines',
+    'String-Utils.template',
+    'String-Utils.encode-base64',
+    'String-Utils.decode-base64',
+    'String-Utils.encode-uri-component',
+    'String-Utils.decode-uri-component',
+    'String-Utils.capitalize',
   ] as const,
   bitwise: [
     '<<',
@@ -572,6 +576,8 @@ export type PredicateApiName = typeof api.predicate[number]
 export type RegularExpressionApiName = typeof api.regularExpression[number]
 export type SpecialExpressionsApiName = string
 export type StringApiName = typeof api.string[number]
+export type StringUtilsApiName = typeof api.stringUtils[number]
+export type CollectionUtilsApiName = typeof api.collectionUtils[number]
 export type BitwiseApiName = typeof api.bitwise[number]
 export type AssertApiName = typeof api.assert[number]
 export type GridApiName = typeof api.grid[number]
@@ -605,6 +611,8 @@ export type ModuleExpressionName =
   | NumberTheoryApiName
   | RandomApiName
   | AssertApiName
+  | StringUtilsApiName
+  | CollectionUtilsApiName
 
 // All normal expression names
 export type NormalExpressionName =
@@ -644,6 +652,8 @@ const moduleApiFunctionNames = [
   ...api.numberTheory,
   ...api.random,
   ...api.assert,
+  ...api.stringUtils,
+  ...api.collectionUtils,
 ] as const
 
 // All API function names

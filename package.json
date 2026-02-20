@@ -64,6 +64,16 @@
       "types": "./dist/src/modules/numberTheory.d.ts",
       "import": "./dist/modules/numberTheory.esm.js",
       "require": "./dist/modules/numberTheory.js"
+    },
+    "./modules/stringUtils": {
+      "types": "./dist/src/modules/stringUtils.d.ts",
+      "import": "./dist/modules/stringUtils.esm.js",
+      "require": "./dist/modules/stringUtils.js"
+    },
+    "./modules/collectionUtils": {
+      "types": "./dist/src/modules/collectionUtils.d.ts",
+      "import": "./dist/modules/collectionUtils.esm.js",
+      "require": "./dist/modules/collectionUtils.js"
     }
   },
   "main": "dist/index.js",

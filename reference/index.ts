@@ -29,6 +29,8 @@ import { vectorModule } from '../src/builtin/modules/vector'
 import { linearAlgebraModule } from '../src/builtin/modules/linearAlgebra'
 import { matrixModule } from '../src/builtin/modules/matrix'
 import { numberTheoryModule } from '../src/builtin/modules/numberTheory'
+import { stringUtilsModule } from '../src/builtin/modules/stringUtils'
+import { collectionUtilsModule } from '../src/builtin/modules/collectionUtils'
 import type { ApiName, ArrayApiName, BitwiseApiName, Category, CollectionApiName, CoreApiName, CoreNormalExpressionName, DataType, FunctionalApiName, MathApiName, MetaApiName, MiscApiName, ModuleExpressionName, ObjectApiName, PredicateApiName, RegularExpressionApiName, SequenceApiName, StringApiName } from './api'
 import { datatype } from './datatype'
 import { shorthand } from './shorthand'
@@ -227,6 +229,8 @@ export const moduleReference: Record<ModuleExpressionName, FunctionReference> = 
   ...moduledDocsToReference(linearAlgebraModule.name, linearAlgebraModule.functions),
   ...moduledDocsToReference(matrixModule.name, matrixModule.functions),
   ...moduledDocsToReference(numberTheoryModule.name, numberTheoryModule.functions),
+  ...moduledDocsToReference(stringUtilsModule.name, stringUtilsModule.functions),
+  ...moduledDocsToReference(collectionUtilsModule.name, collectionUtilsModule.functions),
 } as Record<ModuleExpressionName, FunctionReference>
 
 Object.entries(normalExpressionReference).forEach(([key, obj]) => {
@@ -267,8 +271,5 @@ Object.values(allReference).forEach((ref) => {
 })
 
 export function getLinkName(reference: Reference): string {
-  if (reference.title.startsWith(`${reference.category}.`)) {
-    return encodeURIComponent(reference.title)
-  }
   return encodeURIComponent(`${reference.category}-${reference.title}`)
 }
