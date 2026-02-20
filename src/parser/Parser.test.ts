@@ -846,7 +846,7 @@ describe('parser', () => {
   describe('loop expressions', () => {
     it('supports loop expressions', () => {
       expect(lits.run(`
-        loop(n = 10, sum = 0) -> if n == 0 then sum else recur(n - 1, sum + n) end`)).toBe(55)
+        loop(n = 10, acc = 0) -> if n == 0 then acc else recur(n - 1, acc + n) end`)).toBe(55)
     })
   })
 

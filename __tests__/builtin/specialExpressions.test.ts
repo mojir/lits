@@ -625,11 +625,11 @@ foo(3)`)
     describe('loop expressions', () => {
       it('supports loop expressions', () => {
         expect(lits.run(`
-          loop(n = 10, sum = 0) -> do
+          loop(n = 10, acc = 0) -> do
             if n == 0 then
-              sum
+              acc
             else
-              recur(n - 1, sum + n)
+              recur(n - 1, acc + n)
             end
           end`)).toBe(55)
       })

@@ -1,4 +1,3 @@
-import * as path from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { allBuiltinModules } from '../src/allModules'
 import { moduleReference } from '../reference'

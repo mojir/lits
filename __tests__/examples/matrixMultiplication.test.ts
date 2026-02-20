@@ -38,10 +38,10 @@ let matrixMultiply = (matrixA, matrixB) -> do
     for (j in range(colsB)) -> do
       reduce(
         range(colsA),
-        (sum, k) -> do
+        (acc, k) -> do
           let aValue = matrixA[rowIndex][k];
           let bValue = matrixB[k][j];
-          sum + (aValue * bValue);
+          acc + (aValue * bValue);
         end,
         0
       )

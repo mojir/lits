@@ -518,7 +518,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       description: 'Imports module functions. Use a module name (e.g., "vector") to import all functions as an object, or a fully qualified name (e.g., "vector.mean") to import a single function directly.',
       examples: [
         'let v = import("vector"); v.mean([1, 2, 3, 4])',
-        'let sum = import("vector.sum"); sum([1, 2, 3])',
+        'let v-sum = import("vector.sum"); v-sum([1, 2, 3])',
         'let g = import("grid"); g.row([[1, 2], [3, 4]], 0)',
       ],
     },

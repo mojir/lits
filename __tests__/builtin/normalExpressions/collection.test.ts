@@ -57,7 +57,7 @@ describe('collection functions', () => {
       let countChars = (stringArray) -> do
         reduce(
           stringArray,
-          (sum, s) -> sum + count(s),
+          (acc, s) -> acc + count(s),
           0
         )
       end;
@@ -70,9 +70,9 @@ describe('collection functions', () => {
       let longestLength = (stringArray) -> do
         reduce(
           stringArray,
-          (sum, s) ->
-            if sum > count(s) then
-              sum
+          (acc, s) ->
+            if acc > count(s) then
+              acc
             else
               count(s)
             end,

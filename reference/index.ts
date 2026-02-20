@@ -20,6 +20,7 @@ import { predicatesNormalExpression } from '../src/builtin/core/predicates'
 import { regexpNormalExpression } from '../src/builtin/core/regexp'
 import { sequenceNormalExpression } from '../src/builtin/core/sequence'
 import { stringNormalExpression } from '../src/builtin/core/string'
+import { vectorNormalExpression } from '../src/builtin/core/vector'
 
 // Module categories — derive reference from co-located docs
 import { assertModule } from '../src/builtin/modules/assert'
@@ -35,7 +36,7 @@ import { sequenceUtilsModule } from '../src/builtin/modules/sequence'
 import { mathUtilsModule } from '../src/builtin/modules/math'
 import { functionalUtilsModule } from '../src/builtin/modules/functional'
 import { bitwiseUtilsModule } from '../src/builtin/modules/bitwise'
-import type { ApiName, ArrayApiName, BitwiseApiName, Category, CollectionApiName, CoreApiName, CoreNormalExpressionName, DataType, FunctionalApiName, MathApiName, MetaApiName, MiscApiName, ModuleExpressionName, ObjectApiName, PredicateApiName, RegularExpressionApiName, SequenceApiName, StringApiName } from './api'
+import type { ApiName, ArrayApiName, BitwiseApiName, Category, CollectionApiName, CoreApiName, CoreNormalExpressionName, DataType, FunctionalApiName, MathApiName, MetaApiName, MiscApiName, ModuleExpressionName, ObjectApiName, PredicateApiName, RegularExpressionApiName, SequenceApiName, StringApiName, VectorApiName } from './api'
 import { datatype } from './datatype'
 import { shorthand } from './shorthand'
 
@@ -102,6 +103,7 @@ const predicatesRef = docsToReference(predicatesNormalExpression) as Record<Pred
 const regexpRef = docsToReference(regexpNormalExpression) as Record<RegularExpressionApiName, FunctionReference<'regular-expression'>>
 const sequenceRef = docsToReference(sequenceNormalExpression) as Record<SequenceApiName, FunctionReference<'sequence'>>
 const stringRef = docsToReference(stringNormalExpression) as Record<StringApiName, FunctionReference<'string'>>
+const vectorRef = docsToReference(vectorNormalExpression) as Record<VectorApiName, FunctionReference<'vector'>>
 
 // --- Helper: derive special expression reference from co-located docs ---
 
@@ -221,6 +223,7 @@ export const normalExpressionReference: Record<CoreNormalExpressionName, Functio
   ...predicatesRef,
   ...regexpRef,
   ...stringRef,
+  ...vectorRef,
 }
 
 // Module functions — all derived from co-located docs

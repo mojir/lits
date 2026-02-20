@@ -702,11 +702,11 @@ end;
 // => 120 (factorial of 5)
 
 // Complex loop with multiple variables
-loop (items = [1, 2, 3, 4, 5], sum = 0, cnt = 0) -> do
+loop (items = [1, 2, 3, 4, 5], acc = 0, cnt = 0) -> do
   if empty?(items) then
-    { sum: sum, average: sum / cnt }
+    { sum: acc, average: acc / cnt }
   else
-    recur(rest(items), sum + first(items), cnt + 1)
+    recur(rest(items), acc + first(items), cnt + 1)
   end
 end;
 ```
