@@ -193,16 +193,16 @@ lin.euclidean-norm([3, 4]);         // => 5.0 (Euclidean norm/magnitude)
 lin.normalize-l2([3, 4]);           // => [0.6, 0.8] (unit vector)
 lin.euclidean-distance([0, 0], [3, 4]); // => 5.0 (Euclidean distance)
 
-// Vector statistical operations
-vec.sum([1, 2, 3, 4]);         // => 10
-vec.mean([1, 2, 3, 4]);        // => 2.5
-vec.median([1, 2, 3, 4, 5]);   // => 3
+// Vector statistical operations (sum, mean, median, prod are core built-ins)
+sum([1, 2, 3, 4]);             // => 10
+mean([1, 2, 3, 4]);            // => 2.5
+median([1, 2, 3, 4, 5]);       // => 3
 vec.stdev([1, 2, 3, 4]);       // => 1.29... (standard deviation)
 vec.variance([1, 2, 3, 4]);    // => 1.67... (variance)
 
-// Vector analysis
-vec.min([3, 1, 4, 1, 5]); // => 1
-vec.max([3, 1, 4, 1, 5]); // => 5
+// Vector analysis (min and max are core built-ins)
+min([3, 1, 4, 1, 5]); // => 1
+max([3, 1, 4, 1, 5]); // => 5
 vec.min-index([3, 1, 4]);      // => 1 (index of minimum)
 vec.max-index([3, 1, 4]);      // => 2 (index of maximum)
 

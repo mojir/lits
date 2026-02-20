@@ -3,10 +3,8 @@ import { assertVector } from '../../../../typeGuards/annotatedArrays'
 import { assertNumber } from '../../../../typeGuards/number'
 import type { BuiltinNormalExpression, BuiltinNormalExpressions } from '../../../../builtin/interface'
 import { toFixedArity } from '../../../../utils/arity'
-import { maxReductionFunction } from './max'
 import { geometricMeanReductionFunction, harmonicMeanReductionFunction, meanReductionFunction } from './mean'
 import { medianReductionFunction } from './median'
-import { minReductionFunction } from './min'
 import { prodReductionFunction } from './prod'
 import { sumReductionFunction } from './sum'
 import { sampleVarianceReductionFunction, varianceReductionFunction } from './variance'
@@ -44,8 +42,6 @@ addReductionFunctions(harmonicMeanReductionFunction)
 addReductionFunctions(medianReductionFunction)
 addReductionFunctions(sumReductionFunction)
 addReductionFunctions(prodReductionFunction)
-addReductionFunctions(minReductionFunction)
-addReductionFunctions(maxReductionFunction)
 addReductionFunctions(varianceReductionFunction)
 addReductionFunctions(sampleVarianceReductionFunction)
 addReductionFunctions(stdevReductionFunction)

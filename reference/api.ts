@@ -396,8 +396,6 @@ export const api = {
     ...getVectorReductionNames('sample-variance'),
     ...getVectorReductionNames('sum'),
     ...getVectorReductionNames('prod'),
-    ...getVectorReductionNames('min'),
-    ...getVectorReductionNames('max'),
     ...getVectorReductionNames('stdev'),
     ...getVectorReductionNames('sample-stdev'),
     ...getVectorReductionNames('iqr'),

@@ -1,6 +1,6 @@
 import { LitsError } from '../../errors'
 import type { SourceCodeInfo } from '../../tokenizer/token'
-import { isMatrix, isVector } from '../../typeGuards/annotatedArrays'
+import { assertNonEmptyVector, isMatrix, isVector } from '../../typeGuards/annotatedArrays'
 import { assertNumber, isNumber } from '../../typeGuards/number'
 import { toFixedArity } from '../../utils/arity'
 import type { BuiltinNormalExpressions } from '../interface'
@@ -641,14 +641,17 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
   },
   'min': {
-    evaluate: ([first, ...rest], sourceCodeInfo): number => {
+    evaluate: (params, sourceCodeInfo): number => {
+      if (params.length === 1 && isVector(params[0])) {
+        const vector = params[0]
+        assertNonEmptyVector(vector, sourceCodeInfo)
+        return vector.reduce((m, val) => Math.min(m, val), Infinity)
+      }
+      const [first, ...rest] = params
       assertNumber(first, sourceCodeInfo)
-      if (rest.length === 0)
-        return first
-
-      return rest.reduce((min: number, value) => {
+      return rest.reduce((m: number, value) => {
         assertNumber(value, sourceCodeInfo)
-        return Math.min(min, value)
+        return Math.min(m, value)
       }, first)
     },
     arity: { min: 1 },
@@ -659,28 +662,35 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         a: { type: 'number' },
         b: { type: 'number' },
         xs: { type: 'number', rest: true },
+        vector: { type: 'vector' },
       },
-      variants: [{ argumentNames: ['xs'] }],
-      description: 'Returns the smallest number of the arguments.',
-      seeAlso: ['max', 'vector.min'],
+      variants: [
+        { argumentNames: ['xs'] },
+        { argumentNames: ['vector'] },
+      ],
+      description: 'Returns the smallest value. Accepts either multiple numbers or a single vector of numbers.',
+      seeAlso: ['max', 'vector.span', 'vector.min-index'],
       examples: [
         '2 min 3',
         'min(2, 0, 1)',
         'min(2, -1, 1)',
-        'min(2.5)',
+        'min([2, 0, -1])',
         '12 min 14',
       ],
     },
   },
   'max': {
-    evaluate: ([first, ...rest], sourceCodeInfo): number => {
+    evaluate: (params, sourceCodeInfo): number => {
+      if (params.length === 1 && isVector(params[0])) {
+        const vector = params[0]
+        assertNonEmptyVector(vector, sourceCodeInfo)
+        return vector.reduce((m, val) => Math.max(m, val), -Infinity)
+      }
+      const [first, ...rest] = params
       assertNumber(first, sourceCodeInfo)
-      if (rest.length === 0)
-        return first
-
-      return rest.reduce((min: number, value) => {
+      return rest.reduce((m: number, value) => {
         assertNumber(value, sourceCodeInfo)
-        return Math.max(min, value)
+        return Math.max(m, value)
       }, first)
     },
     arity: { min: 1 },
@@ -691,15 +701,19 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         a: { type: 'number' },
         b: { type: 'number' },
         xs: { type: 'number', rest: true },
+        vector: { type: 'vector' },
       },
-      variants: [{ argumentNames: ['xs'] }],
-      description: 'Returns the largest number of the arguments.',
-      seeAlso: ['min', 'vector.max'],
+      variants: [
+        { argumentNames: ['xs'] },
+        { argumentNames: ['vector'] },
+      ],
+      description: 'Returns the largest value. Accepts either multiple numbers or a single vector of numbers.',
+      seeAlso: ['min', 'vector.span', 'vector.max-index'],
       examples: [
-        ' 2 max 3',
+        '2 max 3',
         'max(2, 0, 1)',
         'max(2, -1, 1)',
-        'max(2, 0.5)',
+        'max([2, 0, -1])',
         '4 max 2',
       ],
     },
