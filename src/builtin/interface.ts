@@ -118,11 +118,7 @@ export function isFunctionDocs(docs: SpecialExpressionDocs): docs is FunctionDoc
   return 'args' in docs && 'variants' in docs
 }
 
-export function isCustomDocs(docs: SpecialExpressionDocs): docs is CustomDocs {
-  return 'customVariants' in docs
-}
-
-export type NormalExpressionEvaluator<T> = (
+type NormalExpressionEvaluator<T> = (
   params: Arr,
   sourceCodeInfo: SourceCodeInfo | undefined,
   contextStack: ContextStack,
@@ -137,9 +133,9 @@ export interface BuiltinNormalExpression<T> {
 }
 
 export type BuiltinNormalExpressions = Record<string, BuiltinNormalExpression<Any>>
-export type BuiltinAllNormalExpressions = BuiltinNormalExpression<Any>[]
+type BuiltinAllNormalExpressions = BuiltinNormalExpression<Any>[]
 
-export interface EvaluateHelpers {
+interface EvaluateHelpers {
   evaluateNode: EvaluateNode
   builtin: Builtin
   getUndefinedSymbols: GetUndefinedSymbols

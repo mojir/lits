@@ -4,7 +4,7 @@ import type { SourceCodeInfo } from '../tokenizer/token'
 import { isUnknownRecord } from '../typeGuards'
 import type { ContextStack } from './ContextStack'
 
-export interface ContextEntry { value: Any }
+interface ContextEntry { value: Any }
 export type Context = Record<string, ContextEntry>
 
 export type EvaluateNode = (node: AstNode, contextStack: ContextStack) => Any

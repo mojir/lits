@@ -13,12 +13,12 @@ interface TestChunk {
   directive: 'SKIP' | null
 }
 
-export interface RunTestParams {
+interface RunTestParams {
   testPath: string
   testNamePattern?: RegExp
 }
 
-export interface TestResult {
+interface TestResult {
   /**
    * Test report
    * http://testanything.org/

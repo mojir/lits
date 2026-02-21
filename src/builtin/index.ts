@@ -72,4 +72,3 @@ export const builtin: Builtin = {
 
 export const normalExpressionKeys = Object.keys(normalExpressions)
 export const specialExpressionKeys = Object.keys(specialExpressionTypes)
-export const specialExpressionNameSet = new Set(specialExpressionKeys)

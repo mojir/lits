@@ -35,7 +35,7 @@ export function asUserDefinedSymbolNode(node: AstNode, sourceCodeInfo?: SourceCo
   assertUserDefinedSymbolNode(node, sourceCodeInfo)
   return node
 }
-export function assertUserDefinedSymbolNode(node: AstNode, sourceCodeInfo?: SourceCodeInfo): asserts node is UserDefinedSymbolNode {
+function assertUserDefinedSymbolNode(node: AstNode, sourceCodeInfo?: SourceCodeInfo): asserts node is UserDefinedSymbolNode {
   if (!isUserDefinedSymbolNode(node))
     throw getAssertionError('UserDefinedSymbolNode', node, sourceCodeInfo)
 }

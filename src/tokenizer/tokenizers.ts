@@ -3,7 +3,7 @@ import type { BasePrefixedNumberToken, DocStringToken, ErrorToken, LBraceToken, 
 import type { ReservedSymbol } from './reservedNames'
 import { reservedSymbolRecord } from './reservedNames'
 
-export type Tokenizer<T extends Token> = (input: string, position: number) => TokenDescriptor<T | ErrorToken>
+type Tokenizer<T extends Token> = (input: string, position: number) => TokenDescriptor<T | ErrorToken>
 
 const illegalSymbolCharacters = [
   '(',
@@ -157,7 +157,7 @@ function tokenizeToken<T extends Token>(
     return NO_MATCH
 }
 
-export const tokenizeWhitespace: Tokenizer<WhitespaceToken> = (input, position) => {
+const tokenizeWhitespace: Tokenizer<WhitespaceToken> = (input, position) => {
   let char = input[position]
   if (!char || !whitespaceRegExp.test(char)) {
     return NO_MATCH

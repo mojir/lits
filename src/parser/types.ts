@@ -6,12 +6,8 @@ import type { FunctionType, NodeType, NodeTypes } from '../constants/constants'
 import type { Context } from '../evaluator/interface'
 import type { Any, Arr, Coll } from '../interface'
 import type { ReservedSymbol } from '../tokenizer/reservedNames'
-import type { SourceCodeInfo, Token } from '../tokenizer/token'
+import type { SourceCodeInfo } from '../tokenizer/token'
 import type { FUNCTION_SYMBOL, REGEXP_SYMBOL } from '../utils/symbols'
-
-export interface ParseState {
-  position: number
-}
 
 export type EvaluatedFunction = [BindingTarget[], AstNode[], Context]
 
@@ -144,10 +140,6 @@ export type LitsFunctionType = LitsFunction['functionType']
 
 export type FunctionLike = LitsFunction | Coll | number
 
-export type DebugData = {
-  token: Token
-  nameToken?: Token
-}
 export type AstNode<T extends NodeType = NodeType, Payload = unknown> = [T, Payload] | [T, Payload, SourceCodeInfo]
 
 export type ExpressionNode = NormalExpressionNode | SpecialExpressionNode | NumberNode | StringNode

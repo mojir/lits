@@ -4,7 +4,7 @@ import type { SourceCodeInfo } from '../tokenizer/token'
 import { valueToString } from '../utils/debug/debugTools'
 import { getSourceCodeInfo } from '../utils/debug/getSourceCodeInfo'
 
-export function isNonUndefined<T>(value: T | undefined): value is T {
+function isNonUndefined<T>(value: T | undefined): value is T {
   return value !== undefined
 }
 

@@ -97,7 +97,7 @@ export function assertStringOrRegularExpression(
     throw getAssertionError('string or RegularExpression', value, sourceCodeInfo)
 }
 
-export function isFunctionLike(value: unknown): value is FunctionLike {
+function isFunctionLike(value: unknown): value is FunctionLike {
   if (typeof value === 'number')
     return true
   if (isColl(value))

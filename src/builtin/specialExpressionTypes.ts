@@ -22,5 +22,3 @@ export const specialExpressionTypes = {
   'try': 18,
   'unless': 19,
 } as const
-
-export type SpecialExpressionTypes = typeof specialExpressionTypes

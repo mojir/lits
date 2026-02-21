@@ -2,7 +2,7 @@ import { normalExpressionKeys, specialExpressionKeys } from '../builtin'
 import type { ContextParams, Lits } from '../Lits/Lits'
 import { reservedSymbolRecord } from '../tokenizer/reservedNames'
 
-export type AutoCompleteSuggestion = {
+type AutoCompleteSuggestion = {
   program: string
   position: number
 }

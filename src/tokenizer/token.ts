@@ -26,9 +26,6 @@ export const tokenTypes = [
 
 export type TokenType = typeof tokenTypes[number]
 
-const modifierNames = ['&rest', '&let', '&when', '&while'] as const
-export type ModifierName = typeof modifierNames[number]
-
 type GenericToken<T extends TokenType, V extends string = string> = [T, V] | [T, V, SourceCodeInfo]
 
 export type ErrorToken = ['Error', string, SourceCodeInfo | undefined, string]

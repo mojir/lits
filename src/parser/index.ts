@@ -52,7 +52,7 @@ export function parse(tokenStream: TokenStream): AstNode[] {
   return nodes
 }
 
-export function parseExpression(ctx: ParserContext, precedence = 0, moduleScope = false): AstNode {
+function parseExpression(ctx: ParserContext, precedence = 0, moduleScope = false): AstNode {
   const token = ctx.tryPeek()
 
   let left: AstNode
