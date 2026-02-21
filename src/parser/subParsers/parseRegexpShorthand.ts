@@ -1,8 +1,8 @@
-import { normalExpressionTypes } from '../builtin/normalExpressions'
-import { NodeTypes } from '../constants/constants'
-import type { NormalExpressionNodeWithName, StringNode } from '../parser/types'
-import { withSourceCodeInfo } from './helpers'
-import type { ParserContext } from './ParserContext'
+import { normalExpressionTypes } from '../../builtin/normalExpressions'
+import { NodeTypes } from '../../constants/constants'
+import type { NormalExpressionNodeWithName, StringNode } from '../types'
+import { withSourceCodeInfo } from '../helpers'
+import type { ParserContext } from '../ParserContext'
 
 export function parseRegexpShorthand(ctx: ParserContext): NormalExpressionNodeWithName {
   const token = ctx.peek()

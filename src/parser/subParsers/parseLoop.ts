@@ -1,13 +1,13 @@
-import type { LoopNode } from '../builtin/specialExpressions/loop'
-import { specialExpressionTypes } from '../builtin/specialExpressionTypes'
-import { NodeTypes } from '../constants/constants'
-import { LitsError } from '../errors'
-import type { BindingNode } from '../parser/types'
-import type { SymbolToken } from '../tokenizer/token'
-import { assertLParenToken, assertOperatorToken, assertRParenToken, isOperatorToken, isRParenToken } from '../tokenizer/token'
-import { withSourceCodeInfo } from './helpers'
+import type { LoopNode } from '../../builtin/specialExpressions/loop'
+import { specialExpressionTypes } from '../../builtin/specialExpressionTypes'
+import { NodeTypes } from '../../constants/constants'
+import { LitsError } from '../../errors'
+import type { BindingNode } from '../types'
+import type { SymbolToken } from '../../tokenizer/token'
+import { assertLParenToken, assertOperatorToken, assertRParenToken, isOperatorToken, isRParenToken } from '../../tokenizer/token'
+import { withSourceCodeInfo } from '../helpers'
+import type { ParserContext } from '../ParserContext'
 import { parseBindingTarget } from './parseBindingTarget'
-import type { ParserContext } from './ParserContext'
 
 export function parseLoop(ctx: ParserContext, firstToken: SymbolToken): LoopNode {
   ctx.advance()

@@ -1,12 +1,12 @@
 import { LitsError } from '../../errors'
 import type { Any, Arr } from '../../interface'
-import type { Node, SpecialExpressionNode } from '../../parser/types'
+import type { AstNode, SpecialExpressionNode } from '../../parser/types'
 import { isSpreadNode } from '../../typeGuards/astNode'
 import { asAny } from '../../typeGuards/lits'
 import type { BuiltinSpecialExpression, FunctionDocs } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 
-export type ArrayNode = SpecialExpressionNode<[typeof specialExpressionTypes['array'], Node[]]>
+export type ArrayNode = SpecialExpressionNode<[typeof specialExpressionTypes['array'], AstNode[]]>
 
 const docs: FunctionDocs = {
   category: 'special-expression',

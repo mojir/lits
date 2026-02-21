@@ -5,13 +5,13 @@ import { NodeTypes } from '../constants/constants'
 import { LitsError } from '../errors'
 import type { ContextStack } from '../evaluator/ContextStack'
 import type { EvaluateNode } from '../evaluator/interface'
-import type { Ast, Node, NormalExpressionNode, SpecialExpressionNode, SpreadNode, UserDefinedSymbolNode } from '../parser/types'
+import type { Ast, AstNode, NormalExpressionNode, SpecialExpressionNode, SpreadNode, UserDefinedSymbolNode } from '../parser/types'
 import { isNormalExpressionNodeWithName, isUserDefinedSymbolNode } from '../typeGuards/astNode'
 
 export type UndefinedSymbols = Set<string>
 
 export const getUndefinedSymbols: GetUndefinedSymbols = (ast, contextStack, builtin, evaluateNode) => {
-  const nodes: Node[] = Array.isArray(ast)
+  const nodes: AstNode[] = Array.isArray(ast)
     ? ast
     : [[NodeTypes.SpecialExpression, [specialExpressionTypes.block, ast.body]] satisfies DoNode]
 
@@ -24,9 +24,9 @@ export const getUndefinedSymbols: GetUndefinedSymbols = (ast, contextStack, buil
   return unresolvedSymbols
 }
 
-export type GetUndefinedSymbols = (ast: Ast | Node[], contextStack: ContextStack, builtin: Builtin, evaluateNode: EvaluateNode) => UndefinedSymbols
+export type GetUndefinedSymbols = (ast: Ast | AstNode[], contextStack: ContextStack, builtin: Builtin, evaluateNode: EvaluateNode) => UndefinedSymbols
 
-function findUnresolvedSymbolsInNode(node: Node, contextStack: ContextStack, builtin: Builtin, evaluateNode: EvaluateNode): UndefinedSymbols | null {
+function findUnresolvedSymbolsInNode(node: AstNode, contextStack: ContextStack, builtin: Builtin, evaluateNode: EvaluateNode): UndefinedSymbols | null {
   const nodeType = node[0]
   switch (nodeType) {
     case NodeTypes.UserDefinedSymbol: {

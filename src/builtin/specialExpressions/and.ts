@@ -1,10 +1,10 @@
 import type { Any } from '../../interface'
-import type { Node, SpecialExpressionNode } from '../../parser/types'
+import type { AstNode, SpecialExpressionNode } from '../../parser/types'
 import { asAny } from '../../typeGuards/lits'
 import type { BuiltinSpecialExpression, FunctionDocs } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 
-export type AndNode = SpecialExpressionNode<[typeof specialExpressionTypes['&&'], Node[]]>
+export type AndNode = SpecialExpressionNode<[typeof specialExpressionTypes['&&'], AstNode[]]>
 
 const docs: FunctionDocs = {
   category: 'special-expression',

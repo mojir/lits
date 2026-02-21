@@ -1,9 +1,9 @@
-import { NodeTypes } from '../constants/constants'
-import type { NumberNode, ReservedSymbolNode } from '../parser/types'
-import { isNumberReservedSymbol, numberReservedSymbolRecord } from '../tokenizer/reservedNames'
-import { asReservedSymbolToken } from '../tokenizer/token'
-import { withSourceCodeInfo } from './helpers'
-import type { ParserContext } from './ParserContext'
+import { NodeTypes } from '../../constants/constants'
+import type { NumberNode, ReservedSymbolNode } from '../types'
+import { isNumberReservedSymbol, numberReservedSymbolRecord } from '../../tokenizer/reservedNames'
+import { asReservedSymbolToken } from '../../tokenizer/token'
+import { withSourceCodeInfo } from '../helpers'
+import type { ParserContext } from '../ParserContext'
 
 export function parseReservedSymbol(ctx: ParserContext): ReservedSymbolNode | NumberNode {
   const token = asReservedSymbolToken(ctx.tryPeek())

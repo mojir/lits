@@ -1,14 +1,14 @@
-import type { LambdaNode } from '../builtin/specialExpressions/functions'
-import { specialExpressionTypes } from '../builtin/specialExpressionTypes'
-import { NodeTypes } from '../constants/constants'
-import { LitsError } from '../errors'
-import type { BindingTarget, Node } from '../parser/types'
-import { bindingTargetTypes } from '../parser/types'
-import { assertLParenToken, isLParenToken, isOperatorToken, isRParenToken, isReservedSymbolToken, isSymbolToken } from '../tokenizer/token'
-import { withSourceCodeInfo } from './helpers'
+import type { LambdaNode } from '../../builtin/specialExpressions/functions'
+import { specialExpressionTypes } from '../../builtin/specialExpressionTypes'
+import { NodeTypes } from '../../constants/constants'
+import { LitsError } from '../../errors'
+import type { AstNode, BindingTarget } from '../types'
+import { bindingTargetTypes } from '../types'
+import { assertLParenToken, isLParenToken, isOperatorToken, isRParenToken, isReservedSymbolToken, isSymbolToken } from '../../tokenizer/token'
+import { withSourceCodeInfo } from '../helpers'
+import type { ParserContext } from '../ParserContext'
 import { parseBindingTarget } from './parseBindingTarget'
 import { parseDo } from './parseDo'
-import type { ParserContext } from './ParserContext'
 import { parseSymbol } from './parseSymbol'
 
 const placeholderRegexp = /^\$([1-9]\d?)?$/
@@ -30,7 +30,7 @@ export function parseLambdaFunction(ctx: ParserContext): LambdaNode | null {
       return null
     }
     ctx.advance()
-    let nodes: Node[] | undefined
+    let nodes: AstNode[] | undefined
     let docString = ''
     if (isReservedSymbolToken(ctx.peek(), 'do')) {
       const parsedDo = parseDo(ctx, true)
@@ -108,7 +108,7 @@ export function parseShorthandLambdaFunction(ctx: ParserContext): LambdaNode {
   // TODO, do not like this...
   const startPos = ctx.getPosition()
 
-  let nodes: Node[] | undefined
+  let nodes: AstNode[] | undefined
   let docString = ''
   if (isReservedSymbolToken(ctx.peek(), 'do')) {
     const parsedDo = parseDo(ctx, true)

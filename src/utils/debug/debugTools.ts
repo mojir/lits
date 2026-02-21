@@ -1,5 +1,5 @@
 import { getNodeTypeName, isFunctionType, isNodeType } from '../../constants/constants'
-import type { LitsFunction, Node } from '../../parser/types'
+import type { AstNode, LitsFunction } from '../../parser/types'
 import { FUNCTION_SYMBOL } from '../symbols'
 
 function isLitsFunction(func: unknown): func is LitsFunction {
@@ -9,7 +9,7 @@ function isLitsFunction(func: unknown): func is LitsFunction {
   return FUNCTION_SYMBOL in func && 'functionType' in func && isFunctionType(func.functionType)
 }
 
-function isNode(value: unknown): value is Node {
+function isNode(value: unknown): value is AstNode {
   if (!Array.isArray(value) || value.length < 2)
     return false
   return isNodeType(value[0])

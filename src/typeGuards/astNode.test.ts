@@ -2,8 +2,8 @@ import { describe, it } from 'vitest'
 import { testTypeGuars } from '../../__tests__/testUtils'
 import type { QqNode } from '../builtin/specialExpressions/qq'
 import type {
+  AstNode,
   ExpressionNode,
-  Node,
   NormalExpressionNodeExpression,
   NormalExpressionNodeWithName,
   NumberNode,
@@ -44,7 +44,7 @@ describe('node type guards', () => {
     stringNode,
   ]
 
-  const validNodes: Node[] = [symbolNode, ...expressionNodes]
+  const validNodes: AstNode[] = [symbolNode, ...expressionNodes]
 
   it('nameNode', () => {
     testTypeGuars(

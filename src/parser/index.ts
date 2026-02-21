@@ -1,7 +1,7 @@
-import type { ReservedSymbolToken } from '../tokenizer/token'
-import { asSymbolToken, isA_BinaryOperatorToken, isOperatorToken, isReservedSymbolToken, isSymbolToken } from '../tokenizer/token'
-import type { Node, SymbolNode } from '../parser/types'
+import type { TokenStream } from '../tokenizer/tokenize'
 import { LitsError } from '../errors'
+import { asSymbolToken, isA_BinaryOperatorToken, isOperatorToken, isReservedSymbolToken, isSymbolToken } from '../tokenizer/token'
+import type { ReservedSymbolToken } from '../tokenizer/token'
 import { NodeTypes } from '../constants/constants'
 import { specialExpressionTypes } from '../builtin/specialExpressionTypes'
 import type { DefNode } from '../builtin/specialExpressions/def'
@@ -10,25 +10,52 @@ import { normalExpressionTypes } from '../builtin/normalExpressions'
 import type { IfNode } from '../builtin/specialExpressions/if'
 import { isFunctionOperator } from '../tokenizer/operators'
 import { isSpecialBuiltinSymbolNode } from '../typeGuards/astNode'
-import type { ParserContext } from './ParserContext'
-import { parseLet } from './parseLet'
-import { parseIfOrUnless } from './parseIfOrUnless'
-import { parseCond } from './parseCond'
-import { parseSwitch } from './parseSwitch'
-import { parseForOrDoseq } from './parseForOrDoseq'
-import { parseLoop } from './parseLoop'
-import { parseTry } from './parseTry'
-import { parseDo } from './parseDo'
-import { binaryFunctionalOperatorPrecedence, conditionalOperatorPrecedence, createNamedNormalExpressionNode, exponentiationPrecedence, isAtExpressionEnd, withSourceCodeInfo } from './helpers'
-import { parseOperand } from './parseOperand'
-import { getPrecedence } from './getPrecedence'
-import { fromBinaryOperatorToNode } from './fromBinaryOperatorToNode'
-import { parseSymbol } from './parseSymbol'
+import { ParserContext } from './ParserContext'
+import type { AstNode, SymbolNode } from './types'
+import { parseLet } from './subParsers/parseLet'
+import { parseIfOrUnless } from './subParsers/parseIfOrUnless'
+import { parseCond } from './subParsers/parseCond'
+import { parseSwitch } from './subParsers/parseSwitch'
+import { parseForOrDoseq } from './subParsers/parseForOrDoseq'
+import { parseLoop } from './subParsers/parseLoop'
+import { parseTry } from './subParsers/parseTry'
+import { parseDo } from './subParsers/parseDo'
+import { binaryFunctionalOperatorPrecedence, conditionalOperatorPrecedence, createNamedNormalExpressionNode, exponentiationPrecedence, fromBinaryOperatorToNode, isAtExpressionEnd, withSourceCodeInfo } from './helpers'
+import { parseOperand } from './subParsers/parseOperand'
+import { getPrecedence } from './subParsers/getPrecedence'
+import { parseSymbol } from './subParsers/parseSymbol'
 
-export function parseExpression(ctx: ParserContext, precedence = 0, moduleScope = false): Node {
+export function parse(tokenStream: TokenStream): AstNode[] {
+  tokenStream.tokens.forEach((token) => {
+    if (token[0] === 'Error') {
+      throw new LitsError(token[3], token[2])
+    }
+  })
+
+  const nodes: AstNode[] = []
+
+  const ctx = new ParserContext(tokenStream)
+  ctx.parseExpression = (precedence = 0, moduleScope = false) => parseExpression(ctx, precedence, moduleScope)
+
+  while (!ctx.isAtEnd()) {
+    nodes.push(parseExpression(ctx, 0, true))
+    if (isOperatorToken(ctx.tryPeek(), ';')) {
+      ctx.advance()
+    }
+    else {
+      if (!ctx.isAtEnd()) {
+        throw new LitsError('Expected ;', ctx.peekSourceCodeInfo())
+      }
+    }
+  }
+
+  return nodes
+}
+
+export function parseExpression(ctx: ParserContext, precedence = 0, moduleScope = false): AstNode {
   const token = ctx.tryPeek()
 
-  let left: Node
+  let left: AstNode
 
   if (isSymbolToken(token)) {
     switch (token[1]) {

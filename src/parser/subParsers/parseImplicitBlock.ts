@@ -1,16 +1,16 @@
-import { isOperatorToken, isReservedSymbolToken } from '../tokenizer/token'
-import type { Node } from '../parser/types'
-import { LitsError } from '../errors'
-import { NodeTypes } from '../constants/constants'
-import { specialExpressionTypes } from '../builtin/specialExpressionTypes'
-import type { DoNode } from '../builtin/specialExpressions/block'
-import type { ParserContext } from './ParserContext'
-import { withSourceCodeInfo } from './helpers'
+import { isOperatorToken, isReservedSymbolToken } from '../../tokenizer/token'
+import type { AstNode } from '../types'
+import { LitsError } from '../../errors'
+import { NodeTypes } from '../../constants/constants'
+import { specialExpressionTypes } from '../../builtin/specialExpressionTypes'
+import type { DoNode } from '../../builtin/specialExpressions/block'
+import type { ParserContext } from '../ParserContext'
+import { withSourceCodeInfo } from '../helpers'
 
 type ImplicitBlockEnd = 'end' | 'else' | 'catch' | 'case'
 
-export function parseImplicitBlock(ctx: ParserContext, ends: ImplicitBlockEnd[]): Node {
-  const nodes: Node[] = []
+export function parseImplicitBlock(ctx: ParserContext, ends: ImplicitBlockEnd[]): AstNode {
+  const nodes: AstNode[] = []
   while (!ctx.isAtEnd() && !isImplicitBlockEnd(ctx, ends)) {
     if (isOperatorToken(ctx.tryPeek(), ';')) {
       ctx.advance()

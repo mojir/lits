@@ -1,8 +1,8 @@
-import { NodeTypes } from '../constants/constants'
-import type { StringNode } from '../parser/types'
-import type { StringToken } from '../tokenizer/token'
-import { withSourceCodeInfo } from './helpers'
-import type { ParserContext } from './ParserContext'
+import { NodeTypes } from '../../constants/constants'
+import type { StringNode } from '../types'
+import type { StringToken } from '../../tokenizer/token'
+import { withSourceCodeInfo } from '../helpers'
+import type { ParserContext } from '../ParserContext'
 
 export function parseString(ctx: ParserContext, token: StringToken): StringNode {
   ctx.advance()

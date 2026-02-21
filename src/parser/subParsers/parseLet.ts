@@ -1,11 +1,11 @@
-import type { LetNode } from '../builtin/specialExpressions/let'
-import { specialExpressionTypes } from '../builtin/specialExpressionTypes'
-import { NodeTypes } from '../constants/constants'
-import type { BindingNode } from '../parser/types'
-import type { SymbolToken } from '../tokenizer/token'
-import { withSourceCodeInfo } from './helpers'
+import type { LetNode } from '../../builtin/specialExpressions/let'
+import { specialExpressionTypes } from '../../builtin/specialExpressionTypes'
+import { NodeTypes } from '../../constants/constants'
+import type { BindingNode } from '../types'
+import type { SymbolToken } from '../../tokenizer/token'
+import { withSourceCodeInfo } from '../helpers'
+import type { ParserContext } from '../ParserContext'
 import { parseBindingTarget } from './parseBindingTarget'
-import type { ParserContext } from './ParserContext'
 
 export function parseLet(ctx: ParserContext, token: SymbolToken): LetNode {
   ctx.advance()

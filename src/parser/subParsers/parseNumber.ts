@@ -1,7 +1,7 @@
-import { NodeTypes } from '../constants/constants'
-import type { NumberNode } from '../parser/types'
-import { withSourceCodeInfo } from './helpers'
-import type { ParserContext } from './ParserContext'
+import { NodeTypes } from '../../constants/constants'
+import type { NumberNode } from '../types'
+import { withSourceCodeInfo } from '../helpers'
+import type { ParserContext } from '../ParserContext'
 
 export function parseNumber(ctx: ParserContext): NumberNode {
   const token = ctx.peek()

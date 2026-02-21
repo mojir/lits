@@ -14,7 +14,7 @@ import { AutoCompleter } from '../AutoCompleter/AutoCompleter'
 import type { Arity } from '../builtin/interface'
 import type { LitsModule } from '../builtin/modules/interface'
 
-import { parse } from '../newParser/newParser'
+import { parse } from '../parser'
 import { Cache } from './Cache'
 
 export interface LitsRuntimeInfo {

@@ -1,27 +1,27 @@
-import type { SpecialExpression, SpecialExpressionType } from '../builtin'
-import { builtin } from '../builtin'
-import type { AndNode } from '../builtin/specialExpressions/and'
-import type { ArrayNode } from '../builtin/specialExpressions/array'
-import type { DefinedNode } from '../builtin/specialExpressions/defined'
-import type { ObjectNode } from '../builtin/specialExpressions/object'
-import type { OrNode } from '../builtin/specialExpressions/or'
-import type { QqNode } from '../builtin/specialExpressions/qq'
-import type { RecurNode } from '../builtin/specialExpressions/recur'
-import type { ThrowNode } from '../builtin/specialExpressions/throw'
-import { specialExpressionTypes } from '../builtin/specialExpressionTypes'
-import { NodeTypes } from '../constants/constants'
-import { LitsError } from '../errors'
-import type { Node, NormalExpressionNodeExpression, SymbolNode } from '../parser/types'
-import { isOperatorToken, isRParenToken } from '../tokenizer/token'
-import { isNormalBuiltinSymbolNode, isSpecialBuiltinSymbolNode, isUserDefinedSymbolNode } from '../typeGuards/astNode'
-import { assertNumberOfParams } from '../utils/arity'
-import { createNamedNormalExpressionNode, withSourceCodeInfo } from './helpers'
-import type { ParserContext } from './ParserContext'
+import type { SpecialExpression, SpecialExpressionType } from '../../builtin'
+import { builtin } from '../../builtin'
+import type { AndNode } from '../../builtin/specialExpressions/and'
+import type { ArrayNode } from '../../builtin/specialExpressions/array'
+import type { DefinedNode } from '../../builtin/specialExpressions/defined'
+import type { ObjectNode } from '../../builtin/specialExpressions/object'
+import type { OrNode } from '../../builtin/specialExpressions/or'
+import type { QqNode } from '../../builtin/specialExpressions/qq'
+import type { RecurNode } from '../../builtin/specialExpressions/recur'
+import type { ThrowNode } from '../../builtin/specialExpressions/throw'
+import { specialExpressionTypes } from '../../builtin/specialExpressionTypes'
+import { NodeTypes } from '../../constants/constants'
+import { LitsError } from '../../errors'
+import type { AstNode, NormalExpressionNodeExpression, SymbolNode } from '../types'
+import { isOperatorToken, isRParenToken } from '../../tokenizer/token'
+import { isNormalBuiltinSymbolNode, isSpecialBuiltinSymbolNode, isUserDefinedSymbolNode } from '../../typeGuards/astNode'
+import { assertNumberOfParams } from '../../utils/arity'
+import { createNamedNormalExpressionNode, withSourceCodeInfo } from '../helpers'
+import type { ParserContext } from '../ParserContext'
 
-export function parseFunctionCall(ctx: ParserContext, symbol: Node): Node {
+export function parseFunctionCall(ctx: ParserContext, symbol: AstNode): AstNode {
   ctx.advance()
 
-  const params: Node[] = []
+  const params: AstNode[] = []
   while (!ctx.isAtEnd() && !isRParenToken(ctx.tryPeek())) {
     if (isOperatorToken(ctx.tryPeek(), '...')) {
       ctx.advance()

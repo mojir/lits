@@ -1,16 +1,16 @@
-import type { ArrayNode } from '../builtin/specialExpressions/array'
-import { specialExpressionTypes } from '../builtin/specialExpressionTypes'
-import { NodeTypes } from '../constants/constants'
-import { LitsError } from '../errors'
-import { asLBracketToken, assertRBracketToken, isOperatorToken, isRBracketToken } from '../tokenizer/token'
-import type { Node } from '../parser/types'
-import { withSourceCodeInfo } from './helpers'
-import type { ParserContext } from './ParserContext'
+import type { ArrayNode } from '../../builtin/specialExpressions/array'
+import { specialExpressionTypes } from '../../builtin/specialExpressionTypes'
+import { NodeTypes } from '../../constants/constants'
+import { LitsError } from '../../errors'
+import { asLBracketToken, assertRBracketToken, isOperatorToken, isRBracketToken } from '../../tokenizer/token'
+import type { AstNode } from '../types'
+import { withSourceCodeInfo } from '../helpers'
+import type { ParserContext } from '../ParserContext'
 
 export function parseArray(ctx: ParserContext): ArrayNode {
   const firstToken = asLBracketToken(ctx.tryPeek())
   ctx.advance()
-  const params: Node[] = []
+  const params: AstNode[] = []
   while (!ctx.isAtEnd() && !isRBracketToken(ctx.tryPeek())) {
     if (isOperatorToken(ctx.tryPeek(), '...')) {
       ctx.advance()

@@ -1,27 +1,27 @@
-import type { NormalExpressionName } from '../../reference/api'
-import type { SpecialExpressionName } from '../builtin'
-import { normalExpressionTypes } from '../builtin/normalExpressions'
-import { specialExpressionTypes } from '../builtin/specialExpressionTypes'
-import { NodeTypes } from '../constants/constants'
-import { LitsError } from '../errors'
-import type { Node, NormalBuiltinSymbolNode, NormalExpressionNodeExpression, SpecialBuiltinSymbolNode, StringNode } from '../parser/types'
-import { isBinaryOperator } from '../tokenizer/operators'
-import type { SourceCodeInfo, StringToken, TokenType } from '../tokenizer/token'
-import { isLBraceToken, isLBracketToken, isLParenToken, isOperatorToken, isRBracketToken, isRParenToken, isSymbolToken } from '../tokenizer/token'
-import { withSourceCodeInfo } from './helpers'
+import type { NormalExpressionName } from '../../../reference/api'
+import type { SpecialExpressionName } from '../../builtin'
+import { normalExpressionTypes } from '../../builtin/normalExpressions'
+import { specialExpressionTypes } from '../../builtin/specialExpressionTypes'
+import { NodeTypes } from '../../constants/constants'
+import { LitsError } from '../../errors'
+import type { AstNode, NormalBuiltinSymbolNode, NormalExpressionNodeExpression, SpecialBuiltinSymbolNode, StringNode } from '../types'
+import { isBinaryOperator } from '../../tokenizer/operators'
+import type { SourceCodeInfo, StringToken, TokenType } from '../../tokenizer/token'
+import { isLBraceToken, isLBracketToken, isLParenToken, isOperatorToken, isRBracketToken, isRParenToken, isSymbolToken } from '../../tokenizer/token'
+import { withSourceCodeInfo } from '../helpers'
+import type { ParserContext } from '../ParserContext'
+import { parseRegexpShorthand } from './parseRegexpShorthand'
+import { parseReservedSymbol } from './parseReservedSymbol'
+import { parseString } from './parseString'
+import { parseSymbol } from './parseSymbol'
 import { parseArray } from './parseArray'
 import { parseLambdaFunction, parseShorthandLambdaFunction } from './parseFunction'
 import { parseFunctionCall } from './parseFunctionCall'
 import { parseNumber } from './parseNumber'
 import { parseObject } from './parseObject'
-import type { ParserContext } from './ParserContext'
-import { parseRegexpShorthand } from './parseRegexpShorthand'
-import { parseReservedSymbol } from './parseReservedSymbol'
-import { parseString } from './parseString'
-import { parseSymbol } from './parseSymbol'
 
-export function parseOperand(ctx: ParserContext): Node {
-  let operand: Node = parseOperandPart(ctx)
+export function parseOperand(ctx: ParserContext): AstNode {
+  let operand: AstNode = parseOperandPart(ctx)
   let token = ctx.tryPeek()
 
   while (isOperatorToken(token, '.') || isLBracketToken(token) || isLParenToken(token)) {
@@ -54,7 +54,7 @@ export function parseOperand(ctx: ParserContext): Node {
   return operand
 }
 
-function parseOperandPart(ctx: ParserContext): Node {
+function parseOperandPart(ctx: ParserContext): AstNode {
   const token = ctx.peek()
 
   // Parentheses
@@ -142,6 +142,6 @@ function parseOperandPart(ctx: ParserContext): Node {
   }
 }
 
-function createAccessorNode(left: Node, right: Node, sourceCodeInfo: SourceCodeInfo | undefined): NormalExpressionNodeExpression {
+function createAccessorNode(left: AstNode, right: AstNode, sourceCodeInfo: SourceCodeInfo | undefined): NormalExpressionNodeExpression {
   return withSourceCodeInfo([NodeTypes.NormalExpression, [[NodeTypes.NormalBuiltinSymbol, normalExpressionTypes.get], [left, right]]], sourceCodeInfo)
 }

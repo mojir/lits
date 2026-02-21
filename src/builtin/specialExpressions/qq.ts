@@ -1,11 +1,11 @@
 import type { Any } from '../../interface'
-import type { Node, SpecialExpressionNode } from '../../parser/types'
+import type { AstNode, SpecialExpressionNode } from '../../parser/types'
 import { isUserDefinedSymbolNode } from '../../typeGuards/astNode'
 import { asAny } from '../../typeGuards/lits'
 import type { BuiltinSpecialExpression, FunctionDocs } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 
-export type QqNode = SpecialExpressionNode<[typeof specialExpressionTypes['??'], Node[]]>
+export type QqNode = SpecialExpressionNode<[typeof specialExpressionTypes['??'], AstNode[]]>
 
 const docs: FunctionDocs = {
   category: 'special-expression',

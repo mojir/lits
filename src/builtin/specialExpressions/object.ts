@@ -1,13 +1,13 @@
 import { LitsError } from '../../errors'
 import type { Any, Obj } from '../../interface'
-import type { Node, SpecialExpressionNode } from '../../parser/types'
+import type { AstNode, SpecialExpressionNode } from '../../parser/types'
 import { isUnknownRecord } from '../../typeGuards'
 import { isSpreadNode } from '../../typeGuards/astNode'
 import { assertString } from '../../typeGuards/string'
 import type { BuiltinSpecialExpression, FunctionDocs } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 
-export type ObjectNode = SpecialExpressionNode<[typeof specialExpressionTypes['object'], Node[]]>
+export type ObjectNode = SpecialExpressionNode<[typeof specialExpressionTypes['object'], AstNode[]]>
 
 const docs: FunctionDocs = {
   category: 'special-expression',

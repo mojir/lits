@@ -1,11 +1,11 @@
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
-import type { Node, SpecialExpressionNode, SymbolNode } from '../../parser/types'
+import type { AstNode, SpecialExpressionNode, SymbolNode } from '../../parser/types'
 import { joinSets } from '../../utils'
 import type { BuiltinSpecialExpression, CustomDocs } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 
-export type TryNode = SpecialExpressionNode<[typeof specialExpressionTypes['try'], Node, SymbolNode | undefined, Node]>
+export type TryNode = SpecialExpressionNode<[typeof specialExpressionTypes['try'], AstNode, SymbolNode | undefined, AstNode]>
 
 const docs: CustomDocs = {
   category: 'special-expression',

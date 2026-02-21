@@ -1,9 +1,9 @@
 import { RecurSignal } from '../../errors'
-import type { Node, SpecialExpressionNode } from '../../parser/types'
+import type { AstNode, SpecialExpressionNode } from '../../parser/types'
 import type { BuiltinSpecialExpression, CustomDocs } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 
-export type RecurNode = SpecialExpressionNode<[typeof specialExpressionTypes['recur'], Node[]]>
+export type RecurNode = SpecialExpressionNode<[typeof specialExpressionTypes['recur'], AstNode[]]>
 
 const docs: CustomDocs = {
   category: 'special-expression',

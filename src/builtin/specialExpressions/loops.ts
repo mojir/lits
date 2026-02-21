@@ -2,7 +2,7 @@ import type { GetUndefinedSymbols, UndefinedSymbols } from '../../getUndefinedSy
 import type { ContextStack } from '../../evaluator/ContextStack'
 import type { Context, EvaluateNode } from '../../evaluator/interface'
 import type { Any, Arr } from '../../interface'
-import type { BindingNode, Node, SpecialExpressionNode } from '../../parser/types'
+import type { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/types'
 import { asNonUndefined } from '../../typeGuards'
 import { asAny, asColl, isSeq } from '../../typeGuards/lits'
 import type { Builtin, BuiltinSpecialExpression, CustomDocs } from '../interface'
@@ -10,10 +10,10 @@ import { evaluateBindingNodeValues, getAllBindingTargetNames } from '../bindingN
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 import { toFixedArity } from '../../utils/arity'
 
-export type LoopBindingNode = [BindingNode, BindingNode[], Node?, Node?] // Binding, Let-Bindings, When, While
+export type LoopBindingNode = [BindingNode, BindingNode[], AstNode?, AstNode?] // Binding, Let-Bindings, When, While
 
-export type ForNode = SpecialExpressionNode<[typeof specialExpressionTypes['for'], LoopBindingNode[], Node]> // LoopBindings, body
-export type DoSeqNode = SpecialExpressionNode<[typeof specialExpressionTypes['doseq'], LoopBindingNode[], Node]> // LoopBindings, body
+export type ForNode = SpecialExpressionNode<[typeof specialExpressionTypes['for'], LoopBindingNode[], AstNode]> // LoopBindings, body
+export type DoSeqNode = SpecialExpressionNode<[typeof specialExpressionTypes['doseq'], LoopBindingNode[], AstNode]> // LoopBindings, body
 
 type LoopNode = ForNode | DoSeqNode
 

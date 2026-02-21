@@ -6,8 +6,8 @@ import { getUndefinedSymbols } from '../getUndefinedSymbols'
 import type { Any, Arr, Obj } from '../interface'
 import type {
   Ast,
+  AstNode,
   FunctionLike,
-  Node,
   NormalExpressionNode,
   NumberNode,
   PartialFunction,
@@ -42,7 +42,7 @@ export function evaluate(ast: Ast, contextStack: ContextStack): Any {
   return result
 }
 
-export function evaluateNode(node: Node, contextStack: ContextStack): Any {
+export function evaluateNode(node: AstNode, contextStack: ContextStack): Any {
   switch (node[0]) {
     case NodeTypes.Number:
       return evaluateNumber(node as NumberNode)
@@ -88,7 +88,7 @@ function evaluateReservedSymbol(node: ReservedSymbolNode): Any {
 
 function evaluateNormalExpression(node: NormalExpressionNode, contextStack: ContextStack): Any {
   const sourceCodeInfo = node[2]
-  const paramNodes: Node[] = node[1][1]
+  const paramNodes: AstNode[] = node[1][1]
   const params: Arr = []
   const placeholders: number[] = []
   paramNodes.forEach((paramNode, index) => {
@@ -138,7 +138,7 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
     }
   }
   else {
-    const fnNode: Node = node[1][0]
+    const fnNode: AstNode = node[1][0]
     const fn = asFunctionLike(evaluateNode(fnNode, contextStack), sourceCodeInfo)
     if (placeholders.length > 0) {
       const partialFunction: PartialFunction = {

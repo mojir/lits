@@ -1,16 +1,16 @@
-import { getAllBindingTargetNames } from '../builtin/bindingNode'
-import type { DoSeqNode, ForNode, LoopBindingNode } from '../builtin/specialExpressions/loops'
-import { specialExpressionTypes } from '../builtin/specialExpressionTypes'
-import { NodeTypes } from '../constants/constants'
-import { LitsError } from '../errors'
-import type { BindingNode, Node } from '../parser/types'
-import { bindingTargetTypes } from '../parser/types'
-import type { SymbolToken, Token } from '../tokenizer/token'
-import { asSymbolToken, assertLParenToken, assertOperatorToken, assertRParenToken, assertReservedSymbolToken, isOperatorToken, isRParenToken, isReservedSymbolToken, isSymbolToken } from '../tokenizer/token'
-import { asUserDefinedSymbolNode } from '../typeGuards/astNode'
-import { withSourceCodeInfo } from './helpers'
+import { getAllBindingTargetNames } from '../../builtin/bindingNode'
+import type { DoSeqNode, ForNode, LoopBindingNode } from '../../builtin/specialExpressions/loops'
+import { specialExpressionTypes } from '../../builtin/specialExpressionTypes'
+import { NodeTypes } from '../../constants/constants'
+import { LitsError } from '../../errors'
+import type { AstNode, BindingNode } from '../types'
+import { bindingTargetTypes } from '../types'
+import type { SymbolToken, Token } from '../../tokenizer/token'
+import { asSymbolToken, assertLParenToken, assertOperatorToken, assertRParenToken, assertReservedSymbolToken, isOperatorToken, isRParenToken, isReservedSymbolToken, isSymbolToken } from '../../tokenizer/token'
+import { asUserDefinedSymbolNode } from '../../typeGuards/astNode'
+import { withSourceCodeInfo } from '../helpers'
+import type { ParserContext } from '../ParserContext'
 import { parseLet } from './parseLet'
-import type { ParserContext } from './ParserContext'
 import { parseSymbol } from './parseSymbol'
 
 type InternalLoopBindingDelimiter = 'let' | 'when' | 'while'
@@ -76,8 +76,8 @@ function parseForLoopBinding(ctx: ParserContext): LoopBindingNode {
     }
   }
 
-  let whenNode: Node | undefined
-  let whileNode: Node | undefined
+  let whenNode: AstNode | undefined
+  let whileNode: AstNode | undefined
   while (
     isReservedSymbolToken(token, 'when')
     || isReservedSymbolToken(token, 'while')

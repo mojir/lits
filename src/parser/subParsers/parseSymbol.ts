@@ -1,8 +1,8 @@
-import { LitsError } from '../errors'
-import type { NormalBuiltinSymbolNode, SpecialBuiltinSymbolNode, SymbolNode } from '../parser/types'
-import { isSymbolToken } from '../tokenizer/token'
-import { stringFromQuotedSymbol, stringToSymbolNode } from './helpers'
-import type { ParserContext } from './ParserContext'
+import { LitsError } from '../../errors'
+import type { NormalBuiltinSymbolNode, SpecialBuiltinSymbolNode, SymbolNode } from '../types'
+import { isSymbolToken } from '../../tokenizer/token'
+import { stringFromQuotedSymbol, stringToSymbolNode } from '../helpers'
+import type { ParserContext } from '../ParserContext'
 
 export function parseSymbol(ctx: ParserContext): SymbolNode | NormalBuiltinSymbolNode | SpecialBuiltinSymbolNode {
   const token = ctx.peek()

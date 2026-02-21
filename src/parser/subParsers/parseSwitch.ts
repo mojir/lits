@@ -1,16 +1,16 @@
-import type { SwitchNode } from '../builtin/specialExpressions/switch'
-import { type SymbolToken, assertReservedSymbolToken, isReservedSymbolToken } from '../tokenizer/token'
-import type { Node } from '../parser/types'
-import { NodeTypes } from '../constants/constants'
-import { specialExpressionTypes } from '../builtin/specialExpressionTypes'
-import type { ParserContext } from './ParserContext'
+import type { SwitchNode } from '../../builtin/specialExpressions/switch'
+import { type SymbolToken, assertReservedSymbolToken, isReservedSymbolToken } from '../../tokenizer/token'
+import type { AstNode } from '../types'
+import { NodeTypes } from '../../constants/constants'
+import { specialExpressionTypes } from '../../builtin/specialExpressionTypes'
+import type { ParserContext } from '../ParserContext'
+import { withSourceCodeInfo } from '../helpers'
 import { parseImplicitBlock } from './parseImplicitBlock'
-import { withSourceCodeInfo } from './helpers'
 
 export function parseSwitch(ctx: ParserContext, token: SymbolToken): SwitchNode {
   ctx.advance()
   const valueExpression = ctx.parseExpression()
-  const params: [Node, Node][] = []
+  const params: [AstNode, AstNode][] = []
 
   while (!ctx.isAtEnd() && !isReservedSymbolToken(ctx.tryPeek(), 'end')) {
     assertReservedSymbolToken(ctx.tryPeek(), 'case')

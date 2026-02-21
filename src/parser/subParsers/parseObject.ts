@@ -1,18 +1,18 @@
-import type { ObjectNode } from '../builtin/specialExpressions/object'
-import { specialExpressionTypes } from '../builtin/specialExpressionTypes'
-import { NodeTypes } from '../constants/constants'
-import { LitsError } from '../errors'
-import { asLBraceToken, assertOperatorToken, assertRBraceToken, assertRBracketToken, isLBracketToken, isOperatorToken, isRBraceToken, isStringToken, isSymbolToken } from '../tokenizer/token'
-import type { Node } from '../parser/types'
-import { stringFromQuotedSymbol, withSourceCodeInfo } from './helpers'
-import type { ParserContext } from './ParserContext'
+import type { ObjectNode } from '../../builtin/specialExpressions/object'
+import { specialExpressionTypes } from '../../builtin/specialExpressionTypes'
+import { NodeTypes } from '../../constants/constants'
+import { LitsError } from '../../errors'
+import { asLBraceToken, assertOperatorToken, assertRBraceToken, assertRBracketToken, isLBracketToken, isOperatorToken, isRBraceToken, isStringToken, isSymbolToken } from '../../tokenizer/token'
+import type { AstNode } from '../types'
+import { stringFromQuotedSymbol, withSourceCodeInfo } from '../helpers'
+import type { ParserContext } from '../ParserContext'
 import { parseString } from './parseString'
 
 export function parseObject(ctx: ParserContext): ObjectNode {
   const
     firstToken = asLBraceToken(ctx.tryPeek())
   ctx.advance()
-  const params: Node[] = []
+  const params: AstNode[] = []
   while (!ctx.isAtEnd() && !isRBraceToken(ctx.tryPeek())) {
     if (isOperatorToken(ctx.tryPeek(), '...')) {
       ctx.advance()

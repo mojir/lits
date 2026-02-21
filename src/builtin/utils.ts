@@ -1,13 +1,13 @@
 import { LitsError } from '../errors'
 import type { ContextStack } from '../evaluator/ContextStack'
-import type { BindingTarget, Node } from '../parser/types'
+import type { AstNode, BindingTarget } from '../parser/types'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { isReservedSymbol } from '../tokenizer/reservedNames'
 import type { Builtin } from './interface'
 import { specialExpressionTypes } from './specialExpressionTypes'
 import type { SpecialExpressionName } from '.'
 
-export type Function = [BindingTarget[], Node[]]
+export type Function = [BindingTarget[], AstNode[]]
 
 export function assertNameNotDefined<T>(
   name: T,

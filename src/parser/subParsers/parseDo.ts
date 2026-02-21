@@ -1,14 +1,14 @@
-import type { DoNode } from '../builtin/specialExpressions/block'
-import { LitsError } from '../errors'
-import type { StringToken } from '../tokenizer/token'
-import { asReservedSymbolToken, assertReservedSymbolToken, isDocStringToken, isOperatorToken, isReservedSymbolToken } from '../tokenizer/token'
-import { smartTrim } from '../utils'
-import type { Node } from '../parser/types'
-import { specialExpressionTypes } from '../builtin/specialExpressionTypes'
-import { NodeTypes } from '../constants/constants'
-import type { ParserContext } from './ParserContext'
+import type { DoNode } from '../../builtin/specialExpressions/block'
+import { LitsError } from '../../errors'
+import type { StringToken } from '../../tokenizer/token'
+import { asReservedSymbolToken, assertReservedSymbolToken, isDocStringToken, isOperatorToken, isReservedSymbolToken } from '../../tokenizer/token'
+import { smartTrim } from '../../utils'
+import type { AstNode } from '../types'
+import { specialExpressionTypes } from '../../builtin/specialExpressionTypes'
+import { NodeTypes } from '../../constants/constants'
+import type { ParserContext } from '../ParserContext'
+import { withSourceCodeInfo } from '../helpers'
 import { parseString } from './parseString'
-import { withSourceCodeInfo } from './helpers'
 
 export function parseDo(ctx: ParserContext, allowDocString = false): [DoNode, string] {
   const token = asReservedSymbolToken(ctx.tryPeek(), 'do')
@@ -18,7 +18,7 @@ export function parseDo(ctx: ParserContext, allowDocString = false): [DoNode, st
     docString = parseDocString(ctx)
   }
 
-  const expressions: Node[] = []
+  const expressions: AstNode[] = []
   while (!ctx.isAtEnd() && !isReservedSymbolToken(ctx.tryPeek(), 'end')) {
     expressions.push(ctx.parseExpression())
     if (isOperatorToken(ctx.tryPeek(), ';')) {

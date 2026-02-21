@@ -1,10 +1,10 @@
-import { LitsError } from '../errors'
-import type { BindingTarget, Node } from '../parser/types'
-import { bindingTargetTypes } from '../parser/types'
-import { assertOperatorToken, isLBraceToken, isLBracketToken, isOperatorToken, isRBraceToken, isRBracketToken, isReservedSymbolToken, isSymbolToken } from '../tokenizer/token'
-import { asUserDefinedSymbolNode, isUserDefinedSymbolNode } from '../typeGuards/astNode'
-import { getSymbolName, withSourceCodeInfo } from './helpers'
-import type { ParserContext } from './ParserContext'
+import { LitsError } from '../../errors'
+import type { AstNode, BindingTarget } from '../types'
+import { bindingTargetTypes } from '../types'
+import { assertOperatorToken, isLBraceToken, isLBracketToken, isOperatorToken, isRBraceToken, isRBracketToken, isReservedSymbolToken, isSymbolToken } from '../../tokenizer/token'
+import { asUserDefinedSymbolNode, isUserDefinedSymbolNode } from '../../typeGuards/astNode'
+import { getSymbolName, withSourceCodeInfo } from '../helpers'
+import type { ParserContext } from '../ParserContext'
 import { parseSymbol } from './parseSymbol'
 
 export function parseBindingTarget(ctx: ParserContext, { requireDefaultValue, noRest }: { requireDefaultValue?: true, noRest?: true } = {}): BindingTarget {
@@ -153,7 +153,7 @@ export function parseBindingTarget(ctx: ParserContext, { requireDefaultValue, no
   throw new LitsError('Expected symbol', ctx.peekSourceCodeInfo())
 }
 
-function parseOptionalDefaulValue(ctx: ParserContext): Node | undefined {
+function parseOptionalDefaulValue(ctx: ParserContext): AstNode | undefined {
   if (isOperatorToken(ctx.tryPeek(), '=')) {
     ctx.advance()
     return ctx.parseExpression()

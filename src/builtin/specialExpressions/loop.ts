@@ -1,7 +1,7 @@
 import { LitsError, RecurSignal } from '../../errors'
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
-import type { BindingNode, Node, SpecialExpressionNode } from '../../parser/types'
+import type { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/types'
 import { asAny } from '../../typeGuards/lits'
 import { joinSets } from '../../utils'
 import { valueToString } from '../../utils/debug/debugTools'
@@ -9,7 +9,7 @@ import { evaluateBindingNodeValues, getAllBindingTargetNames } from '../bindingN
 import type { BuiltinSpecialExpression, CustomDocs } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 
-export type LoopNode = SpecialExpressionNode<[typeof specialExpressionTypes['loop'], BindingNode[], Node]> // bindings, body
+export type LoopNode = SpecialExpressionNode<[typeof specialExpressionTypes['loop'], BindingNode[], AstNode]> // bindings, body
 
 const docs: CustomDocs = {
   category: 'special-expression',

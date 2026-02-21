@@ -1,11 +1,11 @@
 import { UserDefinedError } from '../../errors'
-import type { Node, SpecialExpressionNode } from '../../parser/types'
+import type { AstNode, SpecialExpressionNode } from '../../parser/types'
 import { asString } from '../../typeGuards/string'
 import { toFixedArity } from '../../utils/arity'
 import type { BuiltinSpecialExpression, FunctionDocs } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 
-export type ThrowNode = SpecialExpressionNode<[typeof specialExpressionTypes['throw'], Node]>
+export type ThrowNode = SpecialExpressionNode<[typeof specialExpressionTypes['throw'], AstNode]>
 
 const docs: FunctionDocs = {
   category: 'special-expression',

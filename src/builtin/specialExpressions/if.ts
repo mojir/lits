@@ -1,9 +1,9 @@
 import type { Any } from '../../interface'
-import type { Node, SpecialExpressionNode } from '../../parser/types'
+import type { AstNode, SpecialExpressionNode } from '../../parser/types'
 import type { BuiltinSpecialExpression, CustomDocs } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 
-export type IfNode = SpecialExpressionNode<[typeof specialExpressionTypes['if'], [Node, Node, Node?]]>
+export type IfNode = SpecialExpressionNode<[typeof specialExpressionTypes['if'], [AstNode, AstNode, AstNode?]]>
 
 const docs: CustomDocs = {
   category: 'special-expression',

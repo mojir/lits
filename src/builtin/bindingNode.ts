@@ -1,6 +1,6 @@
 import { LitsError } from '../errors'
 import type { Any } from '../interface'
-import { type BindingTarget, type Node, type RestBindingTarget, type UserDefinedSymbolNode, bindingTargetTypes } from '../parser/types'
+import { type AstNode, type BindingTarget, type RestBindingTarget, type UserDefinedSymbolNode, bindingTargetTypes } from '../parser/types'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { assertUnknownRecord } from '../typeGuards'
 import { assertArray } from '../typeGuards/array'
@@ -8,7 +8,7 @@ import { asAny, assertAny } from '../typeGuards/lits'
 
 export function walkDefaults(
   bindingTarget: BindingTarget,
-  onDefault: (Node: Node) => void,
+  onDefault: (Node: AstNode) => void,
 ): void {
   if (bindingTarget[0] === bindingTargetTypes.object) {
     Object.values(bindingTarget[1][0]).forEach((element) => {
@@ -35,7 +35,7 @@ export function walkDefaults(
 export function evaluateBindingNodeValues(
   target: BindingTarget,
   value: Any,
-  evaluate: (Node: Node) => Any,
+  evaluate: (Node: AstNode) => Any,
 ): Record<string, Any> {
   const sourceCodeInfo = target[2]
   const record: Record<string, Any> = {}
@@ -46,7 +46,7 @@ export function evaluateBindingNodeValues(
 function createRecord(
   bindingTarget: BindingTarget,
   value: Any,
-  evaluate: (Node: Node) => Any,
+  evaluate: (Node: AstNode) => Any,
   sourceCodeInfo: SourceCodeInfo | undefined,
   record: Record<string, Any>,
 ): void {

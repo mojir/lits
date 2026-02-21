@@ -1,7 +1,7 @@
 import { describe, it } from 'vitest'
 import { testTypeGuars } from '../../__tests__/testUtils'
 import type { Seq } from '../interface'
-import type { Node, RegularExpression } from '../parser/types'
+import type { AstNode, RegularExpression } from '../parser/types'
 import { FUNCTION_SYMBOL, REGEXP_SYMBOL } from '../utils/symbols'
 import { NodeTypes } from '../constants/constants'
 import {
@@ -27,7 +27,7 @@ import {
 
 describe('lits type guards', () => {
   it('any', () => {
-    const node: Node = [NodeTypes.UserDefinedSymbol, 'test']
+    const node: AstNode = [NodeTypes.UserDefinedSymbol, 'test']
 
     const valid = [node, 1, 'bar', null, [], {}]
     const invalid = [undefined]
