@@ -1,4 +1,5 @@
 import { LitsError } from '../errors'
+import type { Node } from '../parser/types'
 import type { SourceCodeInfo, Token } from '../tokenizer/token'
 import type { TokenStream } from '../tokenizer/tokenize'
 
@@ -6,6 +7,7 @@ export class ParserContext {
   private readonly tokens: Token[]
   private position: number
   private storedPosition: number = 0
+  public parseExpression!: (precedence?: number, moduleScope?: boolean) => Node
 
   constructor(tokenStream: TokenStream) {
     this.tokens = tokenStream.tokens

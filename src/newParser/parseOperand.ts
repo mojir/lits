@@ -10,7 +10,6 @@ import type { SourceCodeInfo, StringToken, TokenType } from '../tokenizer/token'
 import { isLBraceToken, isLBracketToken, isLParenToken, isOperatorToken, isRBracketToken, isRParenToken, isSymbolToken } from '../tokenizer/token'
 import { withSourceCodeInfo } from './helpers'
 import { parseArray } from './parseArray'
-import { parseExpression } from './parseExpression'
 import { parseLambdaFunction, parseShorthandLambdaFunction } from './parseFunction'
 import { parseFunctionCall } from './parseFunctionCall'
 import { parseNumber } from './parseNumber'
@@ -39,7 +38,7 @@ export function parseOperand(ctx: ParserContext): Node {
     }
     else if (isLBracketToken(token)) {
       ctx.advance()
-      const expression = parseExpression(ctx)
+      const expression = ctx.parseExpression()
       if (!isRBracketToken(ctx.tryPeek())) {
         throw new LitsError('Expected closing bracket', ctx.peekSourceCodeInfo())
       }
@@ -67,7 +66,7 @@ function parseOperandPart(ctx: ParserContext): Node {
     }
     ctx.restorePosition()
     ctx.advance()
-    const expression = parseExpression(ctx)
+    const expression = ctx.parseExpression()
     if (!isRParenToken(ctx.peek())) {
       throw new LitsError('Expected closing parenthesis', ctx.peekSourceCodeInfo())
     }

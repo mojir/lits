@@ -6,14 +6,13 @@ import type { SymbolToken } from '../tokenizer/token'
 import { assertReservedSymbolToken, isReservedSymbolToken } from '../tokenizer/token'
 import type { Node } from '../parser/types'
 import { withSourceCodeInfo } from './helpers'
-import { parseExpression } from './parseExpression'
 import { parseImplicitBlock } from './parseImplicitBlock'
 import type { ParserContext } from './ParserContext'
 
 export function parseIfOrUnless(ctx: ParserContext, token: SymbolToken): IfNode | UnlessNode {
   const isUnless = token[1] === 'unless'
   ctx.advance()
-  const condition = parseExpression(ctx)
+  const condition = ctx.parseExpression()
   assertReservedSymbolToken(ctx.tryPeek(), 'then')
   ctx.advance()
   const thenExpression = parseImplicitBlock(ctx, ['else', 'end'])

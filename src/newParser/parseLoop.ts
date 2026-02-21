@@ -7,7 +7,6 @@ import type { SymbolToken } from '../tokenizer/token'
 import { assertLParenToken, assertOperatorToken, assertRParenToken, isOperatorToken, isRParenToken } from '../tokenizer/token'
 import { withSourceCodeInfo } from './helpers'
 import { parseBindingTarget } from './parseBindingTarget'
-import { parseExpression } from './parseExpression'
 import type { ParserContext } from './ParserContext'
 
 export function parseLoop(ctx: ParserContext, firstToken: SymbolToken): LoopNode {
@@ -40,7 +39,7 @@ export function parseLoop(ctx: ParserContext, firstToken: SymbolToken): LoopNode
   assertOperatorToken(ctx.tryPeek(), '->')
   ctx.advance()
 
-  const expression = parseExpression(ctx)
+  const expression = ctx.parseExpression()
 
   return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.loop, bindingNodes, expression]], firstToken[2]) satisfies LoopNode
 }

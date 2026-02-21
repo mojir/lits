@@ -17,6 +17,7 @@ export function parse(tokenStream: TokenStream): Node[] {
   const nodes: Node[] = []
 
   const ctx = new ParserContext(tokenStream)
+  ctx.parseExpression = (precedence = 0, moduleScope = false) => parseExpression(ctx, precedence, moduleScope)
 
   while (!ctx.isAtEnd()) {
     nodes.push(parseExpression(ctx, 0, true))

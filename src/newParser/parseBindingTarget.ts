@@ -4,7 +4,6 @@ import { bindingTargetTypes } from '../parser/types'
 import { assertOperatorToken, isLBraceToken, isLBracketToken, isOperatorToken, isRBraceToken, isRBracketToken, isReservedSymbolToken, isSymbolToken } from '../tokenizer/token'
 import { asUserDefinedSymbolNode, isUserDefinedSymbolNode } from '../typeGuards/astNode'
 import { getSymbolName, withSourceCodeInfo } from './helpers'
-import { parseExpression } from './parseExpression'
 import type { ParserContext } from './ParserContext'
 import { parseSymbol } from './parseSymbol'
 
@@ -157,7 +156,7 @@ export function parseBindingTarget(ctx: ParserContext, { requireDefaultValue, no
 function parseOptionalDefaulValue(ctx: ParserContext): Node | undefined {
   if (isOperatorToken(ctx.tryPeek(), '=')) {
     ctx.advance()
-    return parseExpression(ctx)
+    return ctx.parseExpression()
   }
   return undefined
 }

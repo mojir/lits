@@ -5,7 +5,6 @@ import { LitsError } from '../errors'
 import { asLBracketToken, assertRBracketToken, isOperatorToken, isRBracketToken } from '../tokenizer/token'
 import type { Node } from '../parser/types'
 import { withSourceCodeInfo } from './helpers'
-import { parseExpression } from './parseExpression'
 import type { ParserContext } from './ParserContext'
 
 export function parseArray(ctx: ParserContext): ArrayNode {
@@ -15,10 +14,10 @@ export function parseArray(ctx: ParserContext): ArrayNode {
   while (!ctx.isAtEnd() && !isRBracketToken(ctx.tryPeek())) {
     if (isOperatorToken(ctx.tryPeek(), '...')) {
       ctx.advance()
-      params.push(withSourceCodeInfo([NodeTypes.Spread, parseExpression(ctx)], ctx.peekSourceCodeInfo()))
+      params.push(withSourceCodeInfo([NodeTypes.Spread, ctx.parseExpression()], ctx.peekSourceCodeInfo()))
     }
     else {
-      params.push(parseExpression(ctx))
+      params.push(ctx.parseExpression())
     }
     const nextToken = ctx.tryPeek()
     if (!isOperatorToken(nextToken, ',') && !isRBracketToken(nextToken)) {

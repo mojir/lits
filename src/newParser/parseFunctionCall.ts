@@ -16,7 +16,6 @@ import { isOperatorToken, isRParenToken } from '../tokenizer/token'
 import { isNormalBuiltinSymbolNode, isSpecialBuiltinSymbolNode, isUserDefinedSymbolNode } from '../typeGuards/astNode'
 import { assertNumberOfParams } from '../utils/arity'
 import { createNamedNormalExpressionNode, withSourceCodeInfo } from './helpers'
-import { parseExpression } from './parseExpression'
 import type { ParserContext } from './ParserContext'
 
 export function parseFunctionCall(ctx: ParserContext, symbol: Node): Node {
@@ -26,10 +25,10 @@ export function parseFunctionCall(ctx: ParserContext, symbol: Node): Node {
   while (!ctx.isAtEnd() && !isRParenToken(ctx.tryPeek())) {
     if (isOperatorToken(ctx.tryPeek(), '...')) {
       ctx.advance()
-      params.push(withSourceCodeInfo([NodeTypes.Spread, parseExpression(ctx)], ctx.peekSourceCodeInfo()))
+      params.push(withSourceCodeInfo([NodeTypes.Spread, ctx.parseExpression()], ctx.peekSourceCodeInfo()))
     }
     else {
-      params.push(parseExpression(ctx))
+      params.push(ctx.parseExpression())
     }
     const nextToken = ctx.tryPeek()
     if (!isOperatorToken(nextToken, ',') && !isRParenToken(nextToken)) {

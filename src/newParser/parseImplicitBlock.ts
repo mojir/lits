@@ -4,7 +4,6 @@ import { LitsError } from '../errors'
 import { NodeTypes } from '../constants/constants'
 import { specialExpressionTypes } from '../builtin/specialExpressionTypes'
 import type { DoNode } from '../builtin/specialExpressions/block'
-import { parseExpression } from './parseExpression'
 import type { ParserContext } from './ParserContext'
 import { withSourceCodeInfo } from './helpers'
 
@@ -17,7 +16,7 @@ export function parseImplicitBlock(ctx: ParserContext, ends: ImplicitBlockEnd[])
       ctx.advance()
     }
     else {
-      nodes.push(parseExpression(ctx))
+      nodes.push(ctx.parseExpression())
     }
   }
   assertImplicitBlockEnd(ctx, ends)

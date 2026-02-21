@@ -5,7 +5,6 @@ import { LitsError } from '../errors'
 import { asLBraceToken, assertOperatorToken, assertRBraceToken, assertRBracketToken, isLBracketToken, isOperatorToken, isRBraceToken, isStringToken, isSymbolToken } from '../tokenizer/token'
 import type { Node } from '../parser/types'
 import { stringFromQuotedSymbol, withSourceCodeInfo } from './helpers'
-import { parseExpression } from './parseExpression'
 import type { ParserContext } from './ParserContext'
 import { parseString } from './parseString'
 
@@ -17,7 +16,7 @@ export function parseObject(ctx: ParserContext): ObjectNode {
   while (!ctx.isAtEnd() && !isRBraceToken(ctx.tryPeek())) {
     if (isOperatorToken(ctx.tryPeek(), '...')) {
       ctx.advance()
-      params.push(withSourceCodeInfo([NodeTypes.Spread, parseExpression(ctx)], ctx.peekSourceCodeInfo()))
+      params.push(withSourceCodeInfo([NodeTypes.Spread, ctx.parseExpression()], ctx.peekSourceCodeInfo()))
     }
     else {
       const token = ctx.tryPeek()
@@ -34,7 +33,7 @@ export function parseObject(ctx: ParserContext): ObjectNode {
       }
       else if (isLBracketToken(token)) {
         ctx.advance()
-        params.push(parseExpression(ctx))
+        params.push(ctx.parseExpression())
         assertRBracketToken(ctx.tryPeek())
         ctx.advance()
       }
@@ -45,7 +44,7 @@ export function parseObject(ctx: ParserContext): ObjectNode {
       assertOperatorToken(ctx.tryPeek(), ':')
       ctx.advance()
 
-      params.push(parseExpression(ctx))
+      params.push(ctx.parseExpression())
     }
     const nextToken = ctx.tryPeek()
     if (!isOperatorToken(nextToken, ',') && !isRBraceToken(nextToken)) {

@@ -8,7 +8,6 @@ import { assertLParenToken, isLParenToken, isOperatorToken, isRParenToken, isRes
 import { withSourceCodeInfo } from './helpers'
 import { parseBindingTarget } from './parseBindingTarget'
 import { parseDo } from './parseDo'
-import { parseExpression } from './parseExpression'
 import type { ParserContext } from './ParserContext'
 import { parseSymbol } from './parseSymbol'
 
@@ -39,7 +38,7 @@ export function parseLambdaFunction(ctx: ParserContext): LambdaNode | null {
       nodes = parsedDo[0][1][1]
     }
     else {
-      nodes = [parseExpression(ctx)]
+      nodes = [ctx.parseExpression()]
     }
 
     return withSourceCodeInfo([
@@ -117,7 +116,7 @@ export function parseShorthandLambdaFunction(ctx: ParserContext): LambdaNode {
     nodes = parsedDo[0][1][1]
   }
   else {
-    nodes = [parseExpression(ctx)]
+    nodes = [ctx.parseExpression()]
   }
 
   const endPos = ctx.getPosition() - 1

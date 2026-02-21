@@ -9,7 +9,6 @@ import type { SymbolToken, Token } from '../tokenizer/token'
 import { asSymbolToken, assertLParenToken, assertOperatorToken, assertRParenToken, assertReservedSymbolToken, isOperatorToken, isRParenToken, isReservedSymbolToken, isSymbolToken } from '../tokenizer/token'
 import { asUserDefinedSymbolNode } from '../typeGuards/astNode'
 import { withSourceCodeInfo } from './helpers'
-import { parseExpression } from './parseExpression'
 import { parseLet } from './parseLet'
 import type { ParserContext } from './ParserContext'
 import { parseSymbol } from './parseSymbol'
@@ -44,7 +43,7 @@ export function parseForOrDoseq(ctx: ParserContext, firstToken: SymbolToken): Fo
   assertOperatorToken(ctx.tryPeek(), '->')
   ctx.advance()
 
-  const expression = parseExpression(ctx)
+  const expression = ctx.parseExpression()
 
   return isDoseq
     ? withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.doseq, forLoopBindings, expression]], firstToken[2]) satisfies DoSeqNode
@@ -87,11 +86,11 @@ function parseForLoopBinding(ctx: ParserContext): LoopBindingNode {
 
     if (token[1] === 'when') {
       modifiers.push('&when')
-      whenNode = parseExpression(ctx)
+      whenNode = ctx.parseExpression()
     }
     else {
       modifiers.push('&while')
-      whileNode = parseExpression(ctx)
+      whileNode = ctx.parseExpression()
     }
     token = ctx.peek()
 
@@ -117,7 +116,7 @@ function parseBinding(ctx: ParserContext): BindingNode {
   assertReservedSymbolToken(ctx.tryPeek(), 'in')
   ctx.advance()
 
-  const value = parseExpression(ctx)
+  const value = ctx.parseExpression()
 
   const node: BindingNode = withSourceCodeInfo(
     [

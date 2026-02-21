@@ -3,7 +3,6 @@ import { type SymbolToken, assertReservedSymbolToken, isReservedSymbolToken } fr
 import type { Node } from '../parser/types'
 import { NodeTypes } from '../constants/constants'
 import { specialExpressionTypes } from '../builtin/specialExpressionTypes'
-import { parseExpression } from './parseExpression'
 import { parseImplicitBlock } from './parseImplicitBlock'
 import type { ParserContext } from './ParserContext'
 import { withSourceCodeInfo } from './helpers'
@@ -16,7 +15,7 @@ export function parseCond(ctx: ParserContext, token: SymbolToken): CondNode {
   while (!ctx.isAtEnd() && !isReservedSymbolToken(ctx.tryPeek(), 'end')) {
     assertReservedSymbolToken(ctx.tryPeek(), 'case')
     ctx.advance()
-    const caseExpression = parseExpression(ctx)
+    const caseExpression = ctx.parseExpression()
     assertReservedSymbolToken(ctx.tryPeek(), 'then')
     ctx.advance()
     const thenExpression = parseImplicitBlock(ctx, ['case', 'end'])

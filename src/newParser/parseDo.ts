@@ -8,7 +8,6 @@ import { specialExpressionTypes } from '../builtin/specialExpressionTypes'
 import { NodeTypes } from '../constants/constants'
 import type { ParserContext } from './ParserContext'
 import { parseString } from './parseString'
-import { parseExpression } from './parseExpression'
 import { withSourceCodeInfo } from './helpers'
 
 export function parseDo(ctx: ParserContext, allowDocString = false): [DoNode, string] {
@@ -21,7 +20,7 @@ export function parseDo(ctx: ParserContext, allowDocString = false): [DoNode, st
 
   const expressions: Node[] = []
   while (!ctx.isAtEnd() && !isReservedSymbolToken(ctx.tryPeek(), 'end')) {
-    expressions.push(parseExpression(ctx))
+    expressions.push(ctx.parseExpression())
     if (isOperatorToken(ctx.tryPeek(), ';')) {
       ctx.advance()
     }

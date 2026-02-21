@@ -4,19 +4,18 @@ import type { Node } from '../parser/types'
 import { NodeTypes } from '../constants/constants'
 import { specialExpressionTypes } from '../builtin/specialExpressionTypes'
 import type { ParserContext } from './ParserContext'
-import { parseExpression } from './parseExpression'
 import { parseImplicitBlock } from './parseImplicitBlock'
 import { withSourceCodeInfo } from './helpers'
 
 export function parseSwitch(ctx: ParserContext, token: SymbolToken): SwitchNode {
   ctx.advance()
-  const valueExpression = parseExpression(ctx)
+  const valueExpression = ctx.parseExpression()
   const params: [Node, Node][] = []
 
   while (!ctx.isAtEnd() && !isReservedSymbolToken(ctx.tryPeek(), 'end')) {
     assertReservedSymbolToken(ctx.tryPeek(), 'case')
     ctx.advance()
-    const caseExpression = parseExpression(ctx)
+    const caseExpression = ctx.parseExpression()
     assertReservedSymbolToken(ctx.tryPeek(), 'then')
     ctx.advance()
     const thenExpression = parseImplicitBlock(ctx, ['case', 'end'])
