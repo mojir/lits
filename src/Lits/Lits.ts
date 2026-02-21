@@ -3,18 +3,18 @@ import { evaluate, evaluateNode } from '../evaluator'
 import { createContextStack } from '../evaluator/ContextStack'
 import type { Context } from '../evaluator/interface'
 import type { Any, Obj } from '../interface'
-import type { Ast, LitsFunction, ParseState } from '../parser/types'
+import type { Ast, LitsFunction } from '../parser/types'
 import { tokenize } from '../tokenizer/tokenize'
 import type { TokenStream } from '../tokenizer/tokenize'
 import { minifyTokenStream } from '../tokenizer/minifyTokenStream'
 import { transformSymbolTokens } from '../transformer'
 import { untokenize } from '../untokenizer'
 import { builtin } from '../builtin'
-import { Parser } from '../parser/Parser'
 import { AutoCompleter } from '../AutoCompleter/AutoCompleter'
 import type { Arity } from '../builtin/interface'
 import type { LitsModule } from '../builtin/modules/interface'
 
+import { parse } from '../newParser/newParser'
 import { Cache } from './Cache'
 
 export interface LitsRuntimeInfo {
@@ -113,11 +113,7 @@ export class Lits {
       hasDebugData: tokenStream.hasDebugData,
     }
 
-    const parseState: ParseState = {
-      position: 0,
-    }
-
-    ast.body = new Parser(tokenStream, parseState).parse()
+    ast.body = parse(tokenStream)
 
     return ast
   }

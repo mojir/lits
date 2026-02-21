@@ -46,7 +46,7 @@ Rollup configs: `rollup.config.js` (library bundles), `rollup.config.cli.js` (CL
 - `normalExpressions/index.ts` — Aggregates all core normal expression maps.
 - `core/` — 12 core categories, each file exports a `BuiltinNormalExpressions` record:
   - `array.ts`, `bitwise.ts`, `collection.ts`, `functional.ts`, `math.ts`, `meta.ts`, `misc.ts`, `object.ts`, `predicates.ts`, `regexp.ts`, `sequence.ts`, `string.ts`
-- `specialExpressions/` — Individual special expression implementations (and, cond, def, defn, fn, for, if, let, loop, or, try, etc.).
+- `specialExpressions/` — Individual special expression implementations (and, cond, fn, for, if, let, loop, or, try, etc.).
 
 ### Modules (`src/builtin/modules/`)
 
