@@ -44,6 +44,13 @@ export function getStartPage(): string {
           <div ${styles('flex', 'flex-row', 'gap-4', 'items-start')}>
             <div ${styles('mt-px')}>${checkIcon}</div>
             <div>
+              <span ${styles('font-bold')}>Transparent async support</span>
+              <span ${styles('text-color-gray-400')}> - When native JavaScript functions return Promises, Lits automatically handles them — no async/await syntax needed</span>
+            </div>
+          </div>
+          <div ${styles('flex', 'flex-row', 'gap-4', 'items-start')}>
+            <div ${styles('mt-px')}>${checkIcon}</div>
+            <div>
               <span ${styles('font-bold')}>Algebraic notation</span>
               <span ${styles('text-color-gray-400')}> - All operators can be used as functions, and functions that take two parameters can be used as operators</span>
             </div>

@@ -10,6 +10,7 @@ Try it in the [Lits Playground](https://mojir.github.io/lits/).
 - **Expression-based syntax** - Everything in Lits is an expression that returns a value; there are no statements, making the language highly composable and consistent
 - **Fully serializable** - Every value returned from Lits evaluation, including functions and regexps, is serializable as JSON
 - **JavaScript interoperability** - JavaScript values and functions can easily be exposed in Lits
+- **Transparent async support** - When native JavaScript functions return Promises, Lits automatically handles them — no async/await syntax needed in Lits code
 - **First-class functions** - Functions are treated as values that can be passed to other functions
 - **Algebraic notation** - All operators can be used as functions, and functions that take two parameters can be used as operators
 - **Comprehensive standard library** - Rich set of functions for collections, math, strings, and more
