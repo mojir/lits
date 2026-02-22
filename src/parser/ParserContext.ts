@@ -26,6 +26,7 @@ export class ParserContext {
     const token = this.tokens[this.position]
     if (!token) {
       const lastToken = this.tokens.at(-1)
+      /* v8 ignore next */
       const sourceCodeInfo = lastToken ? lastToken[2] : undefined
       throw new LitsError('Unexpected end of input', sourceCodeInfo)
     }

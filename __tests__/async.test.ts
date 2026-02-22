@@ -5,6 +5,7 @@ import { gridModule } from '../src/builtin/modules/grid'
 import { numberTheoryModule } from '../src/builtin/modules/number-theory'
 import { sequenceUtilsModule } from '../src/builtin/modules/sequence'
 import { vectorModule } from '../src/builtin/modules/vector'
+import type { LitsFunction } from '../src/parser/types'
 
 describe('async support', () => {
   describe('async.run with sync functions', () => {
@@ -393,6 +394,22 @@ describe('async support', () => {
       expect(result).toBe(1)
     })
 
+    it('position with async predicate matching first element', async () => {
+      const lits = new Lits({ modules: [sequenceUtilsModule] })
+      const result = await lits.async.run('let su = import("sequence"); su.position([2, 3, 4], isEven)', {
+        jsFunctions: { isEven: asyncIsEven },
+      })
+      expect(result).toBe(0)
+    })
+
+    it('position with async predicate matching no element', async () => {
+      const lits = new Lits({ modules: [sequenceUtilsModule] })
+      const result = await lits.async.run('let su = import("sequence"); su.position([1, 3, 5], isEven)', {
+        jsFunctions: { isEven: asyncIsEven },
+      })
+      expect(result).toBe(null)
+    })
+
     it('sort-by with async key function', async () => {
       const lits = new Lits({ modules: [sequenceUtilsModule] })
       const result = await lits.async.run('let su = import("sequence"); su.sort-by([3, 1, 2], dbl)', {
@@ -409,12 +426,28 @@ describe('async support', () => {
       expect(result).toEqual([2, 4])
     })
 
+    it('take-while with async predicate on string', async () => {
+      const lits = new Lits({ modules: [sequenceUtilsModule] })
+      const result = await lits.async.run('let su = import("sequence"); su.take-while("aabbc", isA)', {
+        jsFunctions: { isA: { fn: async (c: unknown) => c === 'a' } },
+      })
+      expect(result).toBe('aa')
+    })
+
     it('drop-while with async predicate', async () => {
       const lits = new Lits({ modules: [sequenceUtilsModule] })
       const result = await lits.async.run('let su = import("sequence"); su.drop-while([2, 4, 5, 6], isEven)', {
         jsFunctions: { isEven: asyncIsEven },
       })
       expect(result).toEqual([5, 6])
+    })
+
+    it('drop-while with async predicate on string', async () => {
+      const lits = new Lits({ modules: [sequenceUtilsModule] })
+      const result = await lits.async.run('let su = import("sequence"); su.drop-while("aabbc", isA)', {
+        jsFunctions: { isA: { fn: async (c: unknown) => c === 'a' } },
+      })
+      expect(result).toBe('bbc')
     })
 
     it('remove with async predicate', async () => {
@@ -494,6 +527,14 @@ describe('async support', () => {
         jsFunctions: { isEven: asyncIsEven },
       })
       expect(result).toBe(true)
+    })
+
+    it('every? with async predicate failing on first element', async () => {
+      const lits = new Lits({ modules: [collectionUtilsModule] })
+      const result = await lits.async.run('let cu = import("collection"); cu.every?([1, 2, 4], isEven)', {
+        jsFunctions: { isEven: asyncIsEven },
+      })
+      expect(result).toBe(false)
     })
 
     it('any? with async predicate', async () => {
@@ -766,6 +807,228 @@ describe('async support', () => {
         },
       )
       expect(result).toHaveLength(5)
+    })
+  })
+
+  describe('async.context', () => {
+    it('should return context after async evaluation', async () => {
+      const lits = new Lits()
+      const ctx = await lits.async.context('export let x = foo()', {
+        jsFunctions: {
+          foo: { fn: async () => 42 },
+        },
+      })
+      expect(ctx.x).toEqual({ value: 42 })
+    })
+
+    it('should accept a pre-parsed AST', async () => {
+      const lits = new Lits({ debug: true })
+      const ast = lits.parse(lits.tokenize('export let x = 10'))
+      const ctx = await lits.async.context(ast)
+      expect(ctx.x).toEqual({ value: 10 })
+    })
+  })
+
+  describe('async.apply', () => {
+    it('should apply a lits function with async.apply', async () => {
+      const lits = new Lits()
+      const fn = lits.run('-> $ + 1') as LitsFunction
+      const result = await lits.async.apply(fn, [9])
+      expect(result).toBe(10)
+    })
+  })
+
+  describe('sync context() throws on async', () => {
+    it('should throw when context() encounters async result', () => {
+      const lits = new Lits()
+      expect(() => lits.context('export let x = foo()', {
+        jsFunctions: {
+          foo: { fn: async () => 42 },
+        },
+      })).toThrow(TypeError)
+    })
+  })
+
+  describe('sort with async comparator throws', () => {
+    it('should throw when sort uses async comparator on strings', async () => {
+      const lits = new Lits()
+      await expect(lits.async.run('sort("cba", asyncCmp)', {
+        jsFunctions: {
+          asyncCmp: { fn: async (a: unknown, b: unknown) => (a as string).localeCompare(b as string) },
+        },
+      })).rejects.toThrow(TypeError)
+    })
+
+    it('should throw when sort uses async comparator on arrays', async () => {
+      const lits = new Lits()
+      await expect(lits.async.run('sort([3, 1, 2], asyncCmp)', {
+        jsFunctions: {
+          asyncCmp: { fn: async (a: unknown, b: unknown) => (a as number) - (b as number) },
+        },
+      })).rejects.toThrow(TypeError)
+    })
+
+    it('should throw when sort-by uses async comparator', async () => {
+      const lits = new Lits({ modules: [sequenceUtilsModule] })
+      await expect(lits.async.run('let su = import("sequence"); su.sort-by([3, 1, 2], identity, asyncCmp)', {
+        jsFunctions: {
+          asyncCmp: { fn: async (a: unknown, b: unknown) => (a as number) - (b as number) },
+        },
+      })).rejects.toThrow(TypeError)
+    })
+  })
+
+  describe('async native function errors', () => {
+    it('should handle async native fn rejecting with a string', async () => {
+      const lits = new Lits()
+      await expect(lits.async.run('boom()', {
+        jsFunctions: {
+          // eslint-disable-next-line ts/no-throw-literal
+          boom: { fn: async () => { throw 'string error' } },
+        },
+      })).rejects.toThrow('string error')
+    })
+
+    it('should handle async native fn rejecting with an Error object', async () => {
+      const lits = new Lits()
+      await expect(lits.async.run('boom()', {
+        jsFunctions: {
+          boom: { fn: async () => { throw new Error('object error') } },
+        },
+      })).rejects.toThrow('object error')
+    })
+  })
+
+  describe('async recur in user-defined function', () => {
+    it('should handle async recur in user-defined function body', async () => {
+      const lits = new Lits()
+      const result = await lits.async.run(`
+        let countdown = (n) -> if n <= 0 then asyncZero() else recur(n - 1) end;
+        countdown(3)
+      `, {
+        jsFunctions: {
+          asyncZero: { fn: async () => 0 },
+        },
+      })
+      expect(result).toBe(0)
+    })
+  })
+
+  describe('async for loop without let bindings', () => {
+    it('should work with async predicate in for body without let', async () => {
+      const lits = new Lits()
+      const result = await lits.async.run('for (x in [1, 2, 3]) -> asyncDouble(x)', {
+        jsFunctions: {
+          asyncDouble: { fn: async (x: unknown) => (x as number) * 2 },
+        },
+      })
+      expect(result).toEqual([2, 4, 6])
+    })
+  })
+
+  describe('async native fn rejecting with non-string non-object', () => {
+    it('should show <no message> for rejection with a number', async () => {
+      const lits = new Lits()
+      await expect(lits.async.run('boom()', {
+        jsFunctions: {
+          // eslint-disable-next-line prefer-promise-reject-errors
+          boom: { fn: () => Promise.reject(42) },
+        },
+      })).rejects.toThrow('<no message>')
+    })
+  })
+
+  describe('async recur with async body in user-defined function', () => {
+    it('should handle recur after async call in function body', async () => {
+      const lits = new Lits()
+      const result = await lits.async.run(`
+        let f = (n) -> do
+          asyncFn();
+          if n <= 0 then 0 else recur(n - 1) end
+        end;
+        f(3)
+      `, {
+        jsFunctions: { asyncFn: { fn: async () => 1 } },
+      })
+      expect(result).toBe(0)
+    })
+  })
+
+  describe('async loop/recur', () => {
+    it('should handle async loop body with recur', async () => {
+      const lits = new Lits()
+      const result = await lits.async.run(`
+        loop (n = 3, acc = 0) -> do
+          let v = asyncFn(n);
+          if n <= 0 then acc else recur(n - 1, acc + v) end
+        end
+      `, {
+        jsFunctions: { asyncFn: { fn: async (x: unknown) => (x as number) * 2, arity: { min: 1, max: 1 } } },
+      })
+      // 3*2 + 2*2 + 1*2 = 6 + 4 + 2 = 12
+      expect(result).toBe(12)
+    })
+
+    it('should propagate non-recur errors from async loop body', async () => {
+      const lits = new Lits()
+      await expect(lits.async.run(`
+        loop (n = 0) -> do
+          asyncFn();
+          throw("loop-error")
+        end
+      `, {
+        jsFunctions: { asyncFn: { fn: async () => 1 } },
+      })).rejects.toThrow('loop-error')
+    })
+
+    it('should handle async binding defaults during recur', async () => {
+      const lits = new Lits()
+      const result = await lits.async.run(`
+        loop ({ x, y = asyncFn() } = { x: 3 }) ->
+          if x <= 0 then y
+          else recur({ x: x - 1 })
+          end
+      `, {
+        jsFunctions: { asyncFn: { fn: async () => 42 } },
+      })
+      expect(result).toBe(42)
+    })
+
+    it('should throw on recur param count mismatch in async loop', async () => {
+      const lits = new Lits()
+      await expect(lits.async.run(`
+        loop (n = 3, acc = 0) -> do
+          asyncFn();
+          recur(1)
+        end
+      `, {
+        jsFunctions: { asyncFn: { fn: async () => 1 } },
+      })).rejects.toThrow('recur expected 2 parameters, got 1')
+    })
+
+    it('should propagate non-recur errors through iterate in async loop', async () => {
+      const lits = new Lits()
+      await expect(lits.async.run(`
+        loop ({ x = asyncFn() } = { x: 1 }) ->
+          if x <= 0 then throw("done")
+          else recur({})
+          end
+      `, {
+        jsFunctions: { asyncFn: { fn: async () => 0 } },
+      })).rejects.toThrow('done')
+    })
+
+    it('should handle multiple bindings with async defaults during recur', async () => {
+      const lits = new Lits()
+      const result = await lits.async.run(`
+        loop ({ x = asyncFn() } = { x: 1 }, y = 0) ->
+          if x <= 0 then y
+          else recur({}, y + 1)
+          end
+      `, {
+        jsFunctions: { asyncFn: { fn: async () => 0 } },
+      })
+      expect(result).toBe(1)
     })
   })
 })

@@ -90,7 +90,7 @@ function evaluateLoop(
           })
 
           return chain(
-            letBindings
+            letBindings.length > 0
               ? addToContext(letBindings, context, newContextStack, evaluateNode)
               : undefined as unknown as void,
             () => {

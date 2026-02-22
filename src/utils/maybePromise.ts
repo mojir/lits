@@ -21,17 +21,6 @@ export function chain<T, U>(value: MaybePromise<T>, fn: (v: T) => MaybePromise<U
 }
 
 /**
- * Resolve an array of MaybePromise values. If all are sync, returns the array as-is.
- * If any is a Promise, returns Promise.all().
- */
-export function all<T>(values: MaybePromise<T>[]): MaybePromise<T[]> {
-  if (values.some(v => v instanceof Promise)) {
-    return Promise.all(values)
-  }
-  return values as T[]
-}
-
-/**
  * Like Array.map but handles MaybePromise callbacks sequentially.
  * In the sync case, runs as a simple loop. Switches to async only when needed.
  */

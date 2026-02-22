@@ -38,9 +38,6 @@ function generateLuckyNumbers(
     let index = 1 // Start with the second element (index 1, which is 3)
 
     function loop(): MaybePromise<number[]> {
-      if (index >= filteredNumbers.length)
-        return luckyNumbers
-
       // Get the current lucky number
       const luckyNumber = filteredNumbers[index]!
 

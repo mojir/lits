@@ -525,7 +525,7 @@ window.onload = function () {
       switch (evt.key) {
         case 'r':
           evt.preventDefault()
-          run()
+          void run()
           break
         case 'a':
           evt.preventDefault()

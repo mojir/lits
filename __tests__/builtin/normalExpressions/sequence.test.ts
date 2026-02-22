@@ -450,6 +450,7 @@ describe('sequence-Utils module functions', () => {
         expect(mlits.run(`${imp}su.take-while([1, 2, 3, 2, 1], -> $ < 3)`)).toEqual([1, 2])
         expect(mlits.run(`${imp}su.take-while([1, 2, 3, 2, 1], -> $ > 3)`)).toEqual([])
         expect(mlits.run(`${imp}su.take-while("abcdabcd", -> $ <= "c")`)).toEqual('abc')
+        expect(mlits.run(`${imp}su.take-while([1, 2, 3], -> $ < 10)`)).toEqual([1, 2, 3])
 
         expect(() => mlits.run(`${imp}su.take-while({}, -> $ < 3))`)).toThrow(LitsError)
         expect(() => mlits.run(`${imp}su.take-while(null, -> $ < 3)`)).toThrow(LitsError)
@@ -524,6 +525,8 @@ describe('sequence-Utils module functions', () => {
         expect(mlits.run(`${imp}su.drop-while([1, 2, 3, 2, 1], -> $ < 3)`)).toEqual([3, 2, 1])
         expect(mlits.run(`${imp}su.drop-while([1, 2, 3, 2, 1], -> $ > 3)`)).toEqual([1, 2, 3, 2, 1])
         expect(mlits.run(`${imp}su.drop-while("abcdab", -> $ <= "c")`)).toEqual('dab')
+        expect(mlits.run(`${imp}su.drop-while([1, 2, 3], -> $ < 10)`)).toEqual([])
+        expect(mlits.run(`${imp}su.drop-while("abc", -> true)`)).toEqual('')
 
         expect(() => mlits.run(`${imp}su.drop-while({}, -> $ < 3))`)).toThrow(LitsError)
         expect(() => mlits.run(`${imp}su.drop-while(null, -> $ < 3)`)).toThrow(LitsError)
