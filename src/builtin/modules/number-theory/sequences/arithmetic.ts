@@ -2,6 +2,8 @@ import { assertFunctionLike } from '../../../../typeGuards/lits'
 import { assertNumber } from '../../../../typeGuards/number'
 import { approxEqual } from '../../../../utils'
 import { toFixedArity } from '../../../../utils/arity'
+import type { MaybePromise } from '../../../../utils/maybePromise'
+import { chain } from '../../../../utils/maybePromise'
 import type { SequenceNormalExpressions } from '.'
 
 /**
@@ -52,20 +54,25 @@ export const arithmeticNormalExpressions: SequenceNormalExpressions<'arithmetic'
     arity: toFixedArity(3),
   },
   'arithmetic-take-while': {
-    evaluate: ([start, step, fn], sourceCodeInfo, contextStack, { executeFunction }): number[] => {
+    evaluate: ([start, step, fn], sourceCodeInfo, contextStack, { executeFunction }) => {
       assertNumber(start, sourceCodeInfo, { finite: true })
       assertNumber(step, sourceCodeInfo, { finite: true })
       assertFunctionLike(fn, sourceCodeInfo)
+      const s = start
+      const d = step
+      const f = fn
 
-      const arithmetic = []
-      for (let i = 0; ; i += 1) {
-        const value = start + i * step
-        if (!(executeFunction)(fn, [value, i], contextStack, sourceCodeInfo)) {
-          break
-        }
-        arithmetic[i] = value
+      const arithmetic: number[] = []
+      function loop(i: number): MaybePromise<number[]> {
+        const value = s + i * d
+        return chain(executeFunction(f, [value, i], contextStack, sourceCodeInfo), (keep) => {
+          if (!keep)
+            return arithmetic
+          arithmetic.push(value)
+          return loop(i + 1)
+        })
       }
-      return arithmetic
+      return loop(0)
     },
     arity: toFixedArity(3),
   },

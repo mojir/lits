@@ -1,5 +1,7 @@
 import type { Any } from '../../interface'
 import type { AstNode, SpecialExpressionNode } from '../../parser/types'
+import type { MaybePromise } from '../../utils/maybePromise'
+import { chain } from '../../utils/maybePromise'
 import type { BuiltinSpecialExpression, CustomDocs } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 
@@ -39,14 +41,20 @@ export const switchSpecialExpression: BuiltinSpecialExpression<Any, SwitchNode> 
   docs,
   evaluate: (node, contextStack, { evaluateNode }) => {
     const [, switchValueNode, cases] = node[1]
-    const switchValue = evaluateNode(switchValueNode, contextStack)
-    for (const [test, form] of cases) {
-      const value = evaluateNode(test, contextStack)
-      if (value === switchValue) {
-        return evaluateNode(form, contextStack)
+    return chain(evaluateNode(switchValueNode, contextStack), (switchValue) => {
+      function processCase(index: number): MaybePromise<Any> {
+        if (index >= cases.length)
+          return null
+        const [test, form] = cases[index]!
+        return chain(evaluateNode(test, contextStack), (value) => {
+          if (value === switchValue) {
+            return evaluateNode(form, contextStack)
+          }
+          return processCase(index + 1)
+        })
       }
-    }
-    return null
+      return processCase(0)
+    })
   },
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => getUndefinedSymbols([node[1][1], ...node[1][2].flat()], contextStack, builtin, evaluateNode),
 }

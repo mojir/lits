@@ -6,25 +6,24 @@ import { asNumber, assertNumber } from '../../../typeGuards/number'
 import { assertString, assertStringOrNumber } from '../../../typeGuards/string'
 import { collHasKey, compare, deepEqual, toNonNegativeInteger } from '../../../utils'
 import { toFixedArity } from '../../../utils/arity'
+import type { MaybePromise } from '../../../utils/maybePromise'
+import { chain, filterSequential, findIndexSequential, mapSequential, reduceSequential } from '../../../utils/maybePromise'
 import type { BuiltinNormalExpressions } from '../../interface'
 import type { LitsModule } from '../interface'
 
 const sequenceUtilsFunctions: BuiltinNormalExpressions = {
   'position': {
-    evaluate: ([seq, fn]: Arr, sourceCodeInfo, contextStack, { executeFunction }): number | null => {
+    evaluate: ([seq, fn]: Arr, sourceCodeInfo, contextStack, { executeFunction }): MaybePromise<number | null> => {
       assertFunctionLike(fn, sourceCodeInfo)
       if (seq === null)
         return null
 
       assertSeq(seq, sourceCodeInfo)
-      if (typeof seq === 'string') {
-        const index = seq.split('').findIndex(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo))
-        return index !== -1 ? index : null
-      }
-      else {
-        const index = seq.findIndex(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo))
-        return index !== -1 ? index : null
-      }
+      const arr = typeof seq === 'string' ? seq.split('') : seq
+      return chain(
+        findIndexSequential(arr, elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo)),
+        index => index !== -1 ? index : null,
+      )
     },
     arity: toFixedArity(2),
     docs: {
@@ -170,7 +169,7 @@ su.position(
     },
   },
   'sort-by': {
-    evaluate: (params: Arr, sourceCodeInfo, contextStack, { executeFunction }): Seq => {
+    evaluate: (params: Arr, sourceCodeInfo, contextStack, { executeFunction }): MaybePromise<Seq> => {
       const [seq, keyfn] = params
       const defaultComparer = params.length === 2
 
@@ -178,51 +177,43 @@ su.position(
       assertFunctionLike(keyfn, sourceCodeInfo)
       const comparer = defaultComparer ? null : params[2]
 
-      if (typeof seq === 'string') {
-        const result = seq.split('')
-        if (defaultComparer) {
-          result.sort((a, b) => {
-            const aKey = executeFunction(keyfn, [a], contextStack, sourceCodeInfo)
-            assertStringOrNumber(aKey, sourceCodeInfo)
-            const bKey = executeFunction(keyfn, [b], contextStack, sourceCodeInfo)
-            assertStringOrNumber(bKey, sourceCodeInfo)
-            return compare(aKey, bKey, sourceCodeInfo)
-          })
-        }
-        else {
-          assertFunctionLike(comparer, sourceCodeInfo)
-          result.sort((a, b) => {
-            const aKey = executeFunction(keyfn, [a], contextStack, sourceCodeInfo)
-            const bKey = executeFunction(keyfn, [b], contextStack, sourceCodeInfo)
-            const compareValue = executeFunction(comparer, [aKey, bKey], contextStack, sourceCodeInfo)
-            assertNumber(compareValue, sourceCodeInfo, { finite: true })
-            return compareValue
-          })
-        }
-        return result.join('')
-      }
+      const isString = typeof seq === 'string'
+      const arr = isString ? seq.split('') : [...seq]
 
-      const result = [...seq]
-      if (defaultComparer) {
-        result.sort((a, b) => {
-          const aKey = executeFunction(keyfn, [a], contextStack, sourceCodeInfo)
-          assertStringOrNumber(aKey, sourceCodeInfo)
-          const bKey = executeFunction(keyfn, [b], contextStack, sourceCodeInfo)
-          assertStringOrNumber(bKey, sourceCodeInfo)
-          return compare(aKey, bKey, sourceCodeInfo)
-        })
-      }
-      else {
-        assertFunctionLike(comparer, sourceCodeInfo)
-        result.sort((a, b) => {
-          const aKey = executeFunction(keyfn, [a], contextStack, sourceCodeInfo)
-          const bKey = executeFunction(keyfn, [b], contextStack, sourceCodeInfo)
-          const compareValue = executeFunction(comparer, [aKey, bKey], contextStack, sourceCodeInfo)
-          assertNumber(compareValue, sourceCodeInfo, { finite: true })
-          return compareValue
-        })
-      }
-      return result
+      // Pre-compute all keys using mapSequential (async-safe)
+      return chain(
+        mapSequential(arr, elem => executeFunction(keyfn, [elem], contextStack, sourceCodeInfo)),
+        (keys) => {
+          if (defaultComparer) {
+            // Create indexed pairs, sort by pre-computed keys
+            const indexed = arr.map((elem, i) => ({ elem, key: keys[i]! }))
+            indexed.sort((a, b) => {
+              assertStringOrNumber(a.key, sourceCodeInfo)
+              assertStringOrNumber(b.key, sourceCodeInfo)
+              return compare(a.key, b.key, sourceCodeInfo)
+            })
+            const sorted = indexed.map(x => x.elem)
+            return isString ? (sorted as string[]).join('') : sorted
+          }
+          else {
+            assertFunctionLike(comparer, sourceCodeInfo)
+            // Pre-compute keys, then need pairwise comparisons — these may also be async
+            // For sort-by with custom comparer, we must use a non-async sort since
+            // Array.sort requires sync comparators
+            const indexed = arr.map((elem, i) => ({ elem, key: keys[i]! }))
+            indexed.sort((a, b) => {
+              const compareValue = executeFunction(comparer, [a.key, b.key], contextStack, sourceCodeInfo)
+              if (compareValue instanceof Promise) {
+                throw new TypeError('Async functions cannot be used as sort-by comparators')
+              }
+              assertNumber(compareValue, sourceCodeInfo, { finite: true })
+              return compareValue
+            })
+            const sorted = indexed.map(x => x.elem)
+            return isString ? (sorted as string[]).join('') : sorted
+          }
+        },
+      )
     },
     arity: { min: 2, max: 3 },
     docs: {
@@ -306,18 +297,22 @@ su.position(
     },
   },
   'take-while': {
-    evaluate: ([seq, fn]: Arr, sourceCodeInfo, contextStack, { executeFunction }): Any => {
+    evaluate: ([seq, fn]: Arr, sourceCodeInfo, contextStack, { executeFunction }): MaybePromise<Any> => {
       assertSeq(seq, sourceCodeInfo)
       assertFunctionLike(fn, sourceCodeInfo)
 
-      const result: Arr = []
-      for (const item of seq) {
-        if (executeFunction(fn, [item], contextStack, sourceCodeInfo))
-          result.push(item)
-        else
-          break
-      }
-      return typeof seq === 'string' ? result.join('') : result
+      const arr = typeof seq === 'string' ? seq.split('') : Array.from(seq)
+      // Find the first index where the predicate is false
+      return chain(
+        findIndexSequential(arr, elem => chain(
+          executeFunction(fn, [elem], contextStack, sourceCodeInfo),
+          result => !result,
+        )),
+        (index) => {
+          const taken = index === -1 ? arr : arr.slice(0, index)
+          return typeof seq === 'string' ? taken.join('') : taken
+        },
+      )
     },
     arity: toFixedArity(2),
     docs: {
@@ -406,17 +401,22 @@ su.take-while(
     },
   },
   'drop-while': {
-    evaluate: ([seq, fn]: Arr, sourceCodeInfo, contextStack, { executeFunction }): Any => {
+    evaluate: ([seq, fn]: Arr, sourceCodeInfo, contextStack, { executeFunction }): MaybePromise<Any> => {
       assertSeq(seq, sourceCodeInfo)
       assertFunctionLike(fn, sourceCodeInfo)
 
-      if (Array.isArray(seq)) {
-        const from = seq.findIndex(elem => !executeFunction(fn, [elem], contextStack, sourceCodeInfo))
-        return seq.slice(from)
-      }
-      const charArray = seq.split('')
-      const from = charArray.findIndex(elem => !executeFunction(fn, [elem], contextStack, sourceCodeInfo))
-      return charArray.slice(from).join('')
+      const arr = Array.isArray(seq) ? seq : seq.split('')
+      return chain(
+        findIndexSequential(arr, elem => chain(
+          executeFunction(fn, [elem], contextStack, sourceCodeInfo),
+          result => !result,
+        )),
+        (from) => {
+          if (from === -1)
+            return typeof seq === 'string' ? '' : []
+          return typeof seq === 'string' ? arr.slice(from).join('') : seq.slice(from)
+        },
+      )
     },
     arity: toFixedArity(2),
     docs: {
@@ -518,16 +518,17 @@ l`,
     },
   },
   'remove': {
-    evaluate: ([input, fn], sourceCodeInfo, contextStack, { executeFunction }): Seq => {
+    evaluate: ([input, fn], sourceCodeInfo, contextStack, { executeFunction }): MaybePromise<Seq> => {
       assertFunctionLike(fn, sourceCodeInfo)
       assertSeq(input, sourceCodeInfo)
-      if (Array.isArray(input))
-        return input.filter(elem => !executeFunction(fn, [elem], contextStack, sourceCodeInfo))
-
-      return input
-        .split('')
-        .filter(elem => !executeFunction(fn, [elem], contextStack, sourceCodeInfo))
-        .join('')
+      const arr = Array.isArray(input) ? input : input.split('')
+      return chain(
+        filterSequential(arr, elem => chain(
+          executeFunction(fn, [elem], contextStack, sourceCodeInfo),
+          result => !result,
+        )),
+        filtered => typeof input === 'string' ? filtered.join('') : filtered,
+      )
     },
     arity: toFixedArity(2),
     docs: {
@@ -616,16 +617,22 @@ l`,
   },
 
   'split-with': {
-    evaluate: ([seq, fn], sourceCodeInfo, contextStack, { executeFunction }): Seq => {
+    evaluate: ([seq, fn], sourceCodeInfo, contextStack, { executeFunction }): MaybePromise<Seq> => {
       assertFunctionLike(fn, sourceCodeInfo)
       assertSeq(seq, sourceCodeInfo)
       const seqIsArray = Array.isArray(seq)
       const arr = seqIsArray ? seq : seq.split('')
-      const index = arr.findIndex(elem => !executeFunction(fn, [elem], contextStack, sourceCodeInfo))
-      if (index === -1)
-        return [seq, seqIsArray ? [] : '']
-
-      return [seq.slice(0, index), seq.slice(index)]
+      return chain(
+        findIndexSequential(arr, elem => chain(
+          executeFunction(fn, [elem], contextStack, sourceCodeInfo),
+          result => !result,
+        )),
+        (index) => {
+          if (index === -1)
+            return [seq, seqIsArray ? [] : '']
+          return [seq.slice(0, index), seq.slice(index)]
+        },
+      )
     },
     arity: toFixedArity(2),
     docs: {
@@ -680,19 +687,20 @@ l`,
   },
 
   'group-by': {
-    evaluate: ([seq, fn], sourceCodeInfo, contextStack, { executeFunction }): Obj => {
+    evaluate: ([seq, fn], sourceCodeInfo, contextStack, { executeFunction }): MaybePromise<Obj> => {
       assertFunctionLike(fn, sourceCodeInfo)
       assertSeq(seq, sourceCodeInfo)
       const arr = Array.isArray(seq) ? seq : seq.split('')
 
-      return arr.reduce((result: Obj, val) => {
-        const key = executeFunction(fn, [val], contextStack, sourceCodeInfo)
-        assertString(key, sourceCodeInfo)
-        if (!collHasKey(result, key))
-          result[key] = []
+      return reduceSequential(arr, (result: Obj, val) => {
+        return chain(executeFunction(fn, [val], contextStack, sourceCodeInfo), (key) => {
+          assertString(key, sourceCodeInfo)
+          if (!collHasKey(result, key))
+            result[key] = []
 
-        ;(result[key] as Arr).push(val)
-        return result
+          ;(result[key] as Arr).push(val)
+          return result
+        })
       }, {})
     },
     arity: toFixedArity(2),
@@ -802,23 +810,26 @@ l`,
   },
 
   'partition-by': {
-    evaluate: ([seq, fn], sourceCodeInfo, contextStack, { executeFunction }): Seq => {
+    evaluate: ([seq, fn], sourceCodeInfo, contextStack, { executeFunction }): MaybePromise<Seq> => {
       assertFunctionLike(fn, sourceCodeInfo)
       assertSeq(seq, sourceCodeInfo)
       const isStringSeq = typeof seq === 'string'
-      let oldValue: unknown
+      const arr = isStringSeq ? seq.split('') : seq
 
-      const result = (isStringSeq ? seq.split('') : seq).reduce((acc: Arr, elem) => {
-        const value = executeFunction(fn, [elem], contextStack, sourceCodeInfo)
-        if (value !== oldValue) {
-          acc.push([])
-          oldValue = value
-        }
-        ;(acc[acc.length - 1] as Arr).push(elem)
-        return acc
-      }, [])
-
-      return isStringSeq ? result.map(elem => (elem as Arr).join('')) : result
+      type Acc = { result: Arr, oldValue: unknown }
+      return chain(
+        reduceSequential(arr, (acc: Acc, elem) => {
+          return chain(executeFunction(fn, [elem], contextStack, sourceCodeInfo), (value) => {
+            if (value !== acc.oldValue) {
+              acc.result.push([])
+              acc.oldValue = value
+            }
+            ;(acc.result[acc.result.length - 1] as Arr).push(elem)
+            return acc
+          })
+        }, { result: [], oldValue: undefined as unknown }),
+        ({ result }) => isStringSeq ? result.map(elem => (elem as Arr).join('')) : result,
+      )
     },
     arity: toFixedArity(2),
     docs: {

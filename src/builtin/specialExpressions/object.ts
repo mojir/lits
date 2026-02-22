@@ -4,6 +4,8 @@ import type { AstNode, SpecialExpressionNode } from '../../parser/types'
 import { isUnknownRecord } from '../../typeGuards'
 import { isSpreadNode } from '../../typeGuards/astNode'
 import { assertString } from '../../typeGuards/string'
+import type { MaybePromise } from '../../utils/maybePromise'
+import { chain } from '../../utils/maybePromise'
 import type { BuiltinSpecialExpression, FunctionDocs } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 
@@ -50,30 +52,37 @@ export const objectSpecialExpression: BuiltinSpecialExpression<Any, ObjectNode> 
   docs,
   evaluate: (node, contextStack, { evaluateNode }) => {
     const result: Obj = {}
-
     const params = node[1][1]
-    for (let i = 0; i < params.length; i += 2) {
+
+    function processEntry(i: number): MaybePromise<Obj> {
+      if (i >= params.length)
+        return result
       const keyNode = params[i]!
       if (isSpreadNode(keyNode)) {
-        const spreadObject = evaluateNode(keyNode[1], contextStack)
-        if (!isUnknownRecord(spreadObject)) {
-          throw new LitsError('Spread value is not an object', keyNode[2])
-        }
-        Object.assign(result, spreadObject)
-        i -= 1
+        return chain(evaluateNode(keyNode[1], contextStack), (spreadObject) => {
+          if (!isUnknownRecord(spreadObject)) {
+            throw new LitsError('Spread value is not an object', keyNode[2])
+          }
+          Object.assign(result, spreadObject)
+          return processEntry(i + 1)
+        })
       }
       else {
-        const key = evaluateNode(keyNode, contextStack)
         const valueNode = params[i + 1]
         if (valueNode === undefined) {
           throw new LitsError('Missing value for key', keyNode[2])
         }
-        const value = evaluateNode(valueNode, contextStack)
-        assertString(key, keyNode[2])
-        result[key] = value
+        return chain(evaluateNode(keyNode, contextStack), (key) => {
+          return chain(evaluateNode(valueNode, contextStack), (value) => {
+            assertString(key, keyNode[2])
+            result[key] = value
+            return processEntry(i + 2)
+          })
+        })
       }
     }
-    return result
+
+    return processEntry(0)
   },
   evaluateAsNormalExpression: (params, sourceCodeInfo) => {
     const result: Obj = {}

@@ -3,6 +3,8 @@ import { assertNonEmptyVector, assertVector } from '../../../typeGuards/annotate
 import { assertFunctionLike } from '../../../typeGuards/lits'
 import { assertNumber } from '../../../typeGuards/number'
 import { toFixedArity } from '../../../utils/arity'
+import type { MaybePromise } from '../../../utils/maybePromise'
+import { chain, mapSequential } from '../../../utils/maybePromise'
 import type { BuiltinNormalExpressions } from '../../../builtin/interface'
 import type { LitsModule } from '../interface'
 import { moduleDocs } from './docs'
@@ -148,14 +150,18 @@ const vectorFunctions: BuiltinNormalExpressions = {
     arity: toFixedArity(2),
   },
   'generate': {
-    evaluate: ([length, generator], sourceCodeInfo, contextStack, { executeFunction }): number[] => {
+    evaluate: ([length, generator], sourceCodeInfo, contextStack, { executeFunction }): MaybePromise<number[]> => {
       assertNumber(length, sourceCodeInfo, { integer: true, nonNegative: true })
       assertFunctionLike(generator, sourceCodeInfo)
 
-      return Array.from({ length }, (_, i) => {
-        const value = executeFunction(generator, [i], contextStack, sourceCodeInfo)
-        assertNumber(value, sourceCodeInfo, { finite: true })
-        return value
+      return mapSequential(Array.from({ length }), (_, i) => {
+        return chain(
+          executeFunction(generator, [i], contextStack, sourceCodeInfo),
+          (value) => {
+            assertNumber(value, sourceCodeInfo, { finite: true })
+            return value
+          },
+        )
       })
     },
     arity: toFixedArity(2),

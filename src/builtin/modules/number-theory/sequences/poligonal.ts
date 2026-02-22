@@ -1,6 +1,8 @@
 import { assertFunctionLike } from '../../../../typeGuards/lits'
 import { assertNumber } from '../../../../typeGuards/number'
 import { toFixedArity } from '../../../../utils/arity'
+import type { MaybePromise } from '../../../../utils/maybePromise'
+import { chain } from '../../../../utils/maybePromise'
 import type { SequenceNormalExpressions } from '.'
 
 export const poligonalNormalExpressions: SequenceNormalExpressions<'polygonal'> = {
@@ -18,19 +20,23 @@ export const poligonalNormalExpressions: SequenceNormalExpressions<'polygonal'> 
     arity: toFixedArity(2),
   },
   'polygonal-take-while': {
-    evaluate: ([sides, fn], sourceCodeInfo, contextStack, { executeFunction }): number[] => {
+    evaluate: ([sides, fn], sourceCodeInfo, contextStack, { executeFunction }) => {
       assertNumber(sides, sourceCodeInfo, { integer: true, gte: 3 })
       assertFunctionLike(fn, sourceCodeInfo)
+      const s = sides
+      const f = fn
 
-      const polygonal = []
-      for (let i = 1; ; i += 1) {
-        const value = (i * i * (sides - 2) - i * (sides - 4)) / 2
-        if (!(executeFunction)(fn, [value, i], contextStack, sourceCodeInfo)) {
-          break
-        }
-        polygonal[i - 1] = (i * i * (sides - 2) - i * (sides - 4)) / 2
+      const polygonal: number[] = []
+      function loop(i: number): MaybePromise<number[]> {
+        const value = (i * i * (s - 2) - i * (s - 4)) / 2
+        return chain(executeFunction(f, [value, i], contextStack, sourceCodeInfo), (keep) => {
+          if (!keep)
+            return polygonal
+          polygonal.push(value)
+          return loop(i + 1)
+        })
       }
-      return polygonal
+      return loop(1)
     },
     arity: toFixedArity(2),
   },

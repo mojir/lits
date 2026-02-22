@@ -1,6 +1,7 @@
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
 import type { AstNode, SpecialExpressionNode } from '../../parser/types'
+import { reduceSequential } from '../../utils/maybePromise'
 import type { BuiltinSpecialExpression, CustomDocs } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 
@@ -30,11 +31,11 @@ export const doSpecialExpression: BuiltinSpecialExpression<Any, DoNode> = {
     const newContext: Context = {}
 
     const newContextStack = contextStack.create(newContext)
-    let result: Any = null
-    for (const form of node[1][1])
-      result = evaluateNode(form, newContextStack)
-
-    return result
+    return reduceSequential(
+      node[1][1],
+      (_acc, form) => evaluateNode(form, newContextStack),
+      null as Any,
+    )
   },
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => {
     return getUndefinedSymbols(node[1][1], contextStack.create({}), builtin, evaluateNode)

@@ -28,21 +28,21 @@ import { assertString } from '../typeGuards/string'
 import { toAny } from '../utils'
 import { valueToString } from '../utils/debug/debugTools'
 import { toFixedArity } from '../utils/arity'
+import type { MaybePromise } from '../utils/maybePromise'
+import { chain, forEachSequential, reduceSequential } from '../utils/maybePromise'
 import { FUNCTION_SYMBOL } from '../utils/symbols'
 import type { ContextStack } from './ContextStack'
 import { functionExecutors } from './functionExecutors'
 
-export function evaluate(ast: Ast, contextStack: ContextStack): Any {
-  let result: Any = null
-
-  for (const node of ast.body) {
-    result = evaluateNode(node, contextStack)
-  }
-
-  return result
+export function evaluate(ast: Ast, contextStack: ContextStack): MaybePromise<Any> {
+  return reduceSequential(
+    ast.body,
+    (_acc, node) => evaluateNode(node, contextStack),
+    null as Any,
+  )
 }
 
-export function evaluateNode(node: AstNode, contextStack: ContextStack): Any {
+export function evaluateNode(node: AstNode, contextStack: ContextStack): MaybePromise<Any> {
   switch (node[0]) {
     case NodeTypes.Number:
       return evaluateNumber(node as NumberNode)
@@ -56,13 +56,18 @@ export function evaluateNode(node: AstNode, contextStack: ContextStack): Any {
       return evaluateReservedSymbol(node as ReservedSymbolNode)
     case NodeTypes.NormalExpression: {
       const result = evaluateNormalExpression(node as NormalExpressionNode, contextStack)
-      if (typeof result === 'number' && Number.isNaN(result)) {
-        throw new LitsError('Number is NaN', node[2])
-      }
-      return annotate(result)
+      return chain(result, (resolved) => {
+        if (typeof resolved === 'number' && Number.isNaN(resolved)) {
+          throw new LitsError('Number is NaN', node[2])
+        }
+        return annotate(resolved)
+      })
     }
     case NodeTypes.SpecialExpression:
-      return annotate(evaluateSpecialExpression(node as SpecialExpressionNode, contextStack))
+      return chain(
+        evaluateSpecialExpression(node as SpecialExpressionNode, contextStack),
+        resolved => annotate(resolved),
+      )
     /* v8 ignore next 2 */
     default:
       throw new LitsError(`${getNodeTypeName(node[0])}-node cannot be evaluated`, node[2])
@@ -86,77 +91,95 @@ function evaluateReservedSymbol(node: ReservedSymbolNode): Any {
   return asNonUndefined(value, node[2])
 }
 
-function evaluateNormalExpression(node: NormalExpressionNode, contextStack: ContextStack): Any {
-  const sourceCodeInfo = node[2]
-  const paramNodes: AstNode[] = node[1][1]
+function evaluateParams(
+  paramNodes: AstNode[],
+  contextStack: ContextStack,
+): MaybePromise<{ params: Arr, placeholders: number[] }> {
   const params: Arr = []
   const placeholders: number[] = []
-  paramNodes.forEach((paramNode, index) => {
+
+  const result = forEachSequential(paramNodes, (paramNode, index) => {
     if (isSpreadNode(paramNode)) {
-      const spreadValue = evaluateNode(paramNode[1], contextStack)
-      if (Array.isArray(spreadValue)) {
-        params.push(...spreadValue)
-      }
-      else {
-        throw new LitsError(`Spread operator requires an array, got ${valueToString(paramNode)}`, paramNode[2])
-      }
+      return chain(evaluateNode(paramNode[1], contextStack), (spreadValue) => {
+        if (Array.isArray(spreadValue)) {
+          params.push(...spreadValue)
+        }
+        else {
+          throw new LitsError(`Spread operator requires an array, got ${valueToString(paramNode)}`, paramNode[2])
+        }
+      })
     }
     else if (paramNode[0] === NodeTypes.ReservedSymbol && paramNode[1] === '_') {
       placeholders.push(index)
     }
     else {
-      params.push(evaluateNode(paramNode, contextStack))
+      return chain(evaluateNode(paramNode, contextStack), (value) => {
+        params.push(value)
+      })
     }
   })
-  if (isNormalExpressionNodeWithName(node)) {
-    const nameSymbol = node[1][0]
-    if (placeholders.length > 0) {
-      const fn = evaluateNode(nameSymbol, contextStack)
-      const partialFunction: PartialFunction = {
-        [FUNCTION_SYMBOL]: true,
-        function: asFunctionLike(fn, sourceCodeInfo),
-        functionType: 'Partial',
-        params,
-        placeholders,
-        sourceCodeInfo,
-        arity: toFixedArity(placeholders.length),
-      }
-      return partialFunction
-    }
 
-    if (isNormalBuiltinSymbolNode(nameSymbol)) {
-      const type = nameSymbol[1]
-      const normalExpression = builtin.allNormalExpressions[type]!
-      return normalExpression.evaluate(params, node[2], contextStack, { executeFunction })
-    }
-    else {
-      const fn = contextStack.getValue(nameSymbol[1])
-      if (fn !== undefined) {
-        return executeFunction(asFunctionLike(fn, sourceCodeInfo), params, contextStack, sourceCodeInfo)
-      }
-      throw new UndefinedSymbolError(nameSymbol[1], node[2])
-    }
-  }
-  else {
-    const fnNode: AstNode = node[1][0]
-    const fn = asFunctionLike(evaluateNode(fnNode, contextStack), sourceCodeInfo)
-    if (placeholders.length > 0) {
-      const partialFunction: PartialFunction = {
-        [FUNCTION_SYMBOL]: true,
-        function: fn,
-        functionType: 'Partial',
-        params,
-        placeholders,
-        sourceCodeInfo,
-        arity: toFixedArity(placeholders.length),
-      }
-      return partialFunction
-    }
-    return executeFunction(fn, params, contextStack, sourceCodeInfo)
-  }
+  return chain(result, () => ({ params, placeholders }))
 }
 
-function executeFunction(fn: FunctionLike, params: Arr, contextStack: ContextStack, sourceCodeInfo?: SourceCodeInfo): Any {
+function evaluateNormalExpression(node: NormalExpressionNode, contextStack: ContextStack): MaybePromise<Any> {
+  const sourceCodeInfo = node[2]
+
+  return chain(evaluateParams(node[1][1], contextStack), ({ params, placeholders }) => {
+    if (isNormalExpressionNodeWithName(node)) {
+      const nameSymbol = node[1][0]
+      if (placeholders.length > 0) {
+        const fn = evaluateNode(nameSymbol, contextStack)
+        return chain(fn, (resolvedFn) => {
+          const partialFunction: PartialFunction = {
+            [FUNCTION_SYMBOL]: true,
+            function: asFunctionLike(resolvedFn, sourceCodeInfo),
+            functionType: 'Partial',
+            params,
+            placeholders,
+            sourceCodeInfo,
+            arity: toFixedArity(placeholders.length),
+          }
+          return partialFunction
+        })
+      }
+
+      if (isNormalBuiltinSymbolNode(nameSymbol)) {
+        const type = nameSymbol[1]
+        const normalExpression = builtin.allNormalExpressions[type]!
+        return normalExpression.evaluate(params, node[2], contextStack, { executeFunction })
+      }
+      else {
+        const fn = contextStack.getValue(nameSymbol[1])
+        if (fn !== undefined) {
+          return executeFunction(asFunctionLike(fn, sourceCodeInfo), params, contextStack, sourceCodeInfo)
+        }
+        throw new UndefinedSymbolError(nameSymbol[1], node[2])
+      }
+    }
+    else {
+      const fnNode: AstNode = node[1][0]
+      return chain(evaluateNode(fnNode, contextStack), (resolvedFn) => {
+        const fn = asFunctionLike(resolvedFn, sourceCodeInfo)
+        if (placeholders.length > 0) {
+          const partialFunction: PartialFunction = {
+            [FUNCTION_SYMBOL]: true,
+            function: fn,
+            functionType: 'Partial',
+            params,
+            placeholders,
+            sourceCodeInfo,
+            arity: toFixedArity(placeholders.length),
+          }
+          return partialFunction
+        }
+        return executeFunction(fn, params, contextStack, sourceCodeInfo)
+      })
+    }
+  })
+}
+
+function executeFunction(fn: FunctionLike, params: Arr, contextStack: ContextStack, sourceCodeInfo?: SourceCodeInfo): MaybePromise<Any> {
   if (isLitsFunction(fn))
     return functionExecutors[fn.functionType](fn, params, sourceCodeInfo, contextStack, { evaluateNode, executeFunction })
 
@@ -176,12 +199,12 @@ function executeFunction(fn: FunctionLike, params: Arr, contextStack: ContextSta
   throw new LitsError('Unexpected function type', sourceCodeInfo)
 }
 
-function evaluateSpecialExpression(node: SpecialExpressionNode, contextStack: ContextStack): Any {
+function evaluateSpecialExpression(node: SpecialExpressionNode, contextStack: ContextStack): MaybePromise<Any> {
   const specialExpressionType = node[1][0]
   const specialExpression: SpecialExpression = asNonUndefined(builtin.specialExpressions[specialExpressionType], node[2])
   const castedEvaluate = specialExpression.evaluate as Function
 
-  return castedEvaluate(node, contextStack, { evaluateNode, builtin, getUndefinedSymbols }) as Any
+  return castedEvaluate(node, contextStack, { evaluateNode, builtin, getUndefinedSymbols }) as MaybePromise<Any>
 }
 
 function evalueateObjectAsFunction(fn: Obj, params: Arr, sourceCodeInfo?: SourceCodeInfo): Any {

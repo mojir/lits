@@ -48,6 +48,7 @@
     "git mv": true,
     "npx tsx": true,
     "npx eslint": true,
-    "awk": true
+    "awk": true,
+    "git stash": true
   }
 }

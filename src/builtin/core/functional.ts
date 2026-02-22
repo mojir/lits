@@ -6,6 +6,7 @@ import type {
 } from '../../parser/types'
 import { toAny } from '../../utils'
 import { getArityFromFunction, toFixedArity } from '../../utils/arity'
+import type { MaybePromise } from '../../utils/maybePromise'
 import { FUNCTION_SYMBOL } from '../../utils/symbols'
 import type { BuiltinNormalExpressions } from '../interface'
 import { assertArray } from '../../typeGuards/array'
@@ -13,7 +14,7 @@ import { assertFunctionLike } from '../../typeGuards/lits'
 
 export const functionalNormalExpression: BuiltinNormalExpressions = {
   '|>': {
-    evaluate: ([value, func], sourceCodeInfo, contextStack, { executeFunction }): Any => {
+    evaluate: ([value, func], sourceCodeInfo, contextStack, { executeFunction }): MaybePromise<Any> => {
       assertFunctionLike(func, sourceCodeInfo)
       return executeFunction(func, [value], contextStack, sourceCodeInfo)
     },
@@ -41,7 +42,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
     },
   },
   'apply': {
-    evaluate: ([func, ...params]: Arr, sourceCodeInfo, contextStack, { executeFunction }): Any => {
+    evaluate: ([func, ...params]: Arr, sourceCodeInfo, contextStack, { executeFunction }): MaybePromise<Any> => {
       assertFunctionLike(func, sourceCodeInfo)
       const paramsLength = params.length
       const last = params[paramsLength - 1]

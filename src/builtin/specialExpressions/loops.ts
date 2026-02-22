@@ -9,6 +9,8 @@ import type { Builtin, BuiltinSpecialExpression, CustomDocs } from '../interface
 import { evaluateBindingNodeValues, getAllBindingTargetNames } from '../bindingNode'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 import { toFixedArity } from '../../utils/arity'
+import type { MaybePromise } from '../../utils/maybePromise'
+import { chain } from '../../utils/maybePromise'
 
 export type LoopBindingNode = [BindingNode, BindingNode[], AstNode?, AstNode?] // Binding, Let-Bindings, When, While
 
@@ -22,15 +24,20 @@ function addToContext(
   context: Context,
   contextStack: ContextStack,
   evaluateNode: EvaluateNode,
-) {
+): MaybePromise<void> {
+  let bindingChain: MaybePromise<void> = undefined as unknown as void
   for (const bindingNode of bindings) {
-    const [target, bindingValue] = bindingNode[1]
-    const val = evaluateNode(bindingValue, contextStack)
-    const valueRecord = evaluateBindingNodeValues(target, val, Node => evaluateNode(Node, contextStack))
-    Object.entries(valueRecord).forEach(([name, value]) => {
-      context[name] = { value }
+    bindingChain = chain(bindingChain, () => {
+      const [target, bindingValue] = bindingNode[1]
+      return chain(evaluateNode(bindingValue, contextStack), (val) => {
+        const valueRecord = evaluateBindingNodeValues(target, val, Node => evaluateNode(Node, contextStack) as Any)
+        Object.entries(valueRecord).forEach(([name, value]) => {
+          context[name] = { value }
+        })
+      })
     })
   }
+  return bindingChain
 }
 
 function evaluateLoop(
@@ -38,75 +45,108 @@ function evaluateLoop(
   loopNode: LoopNode,
   contextStack: ContextStack,
   evaluateNode: EvaluateNode,
-) {
+): MaybePromise<Any> {
   const sourceCodeInfo = loopNode[2]
   const [, loopBindings, body] = loopNode[1]
 
   const result: Arr = []
 
   const bindingIndices = loopBindings.map(() => 0)
-  let abort = false
-  while (!abort) {
+
+  function processIteration(): MaybePromise<Any> {
     const context: Context = {}
     const newContextStack = contextStack.create(context)
-    let skip = false
-    bindingsLoop: for (let bindingIndex = 0; bindingIndex < loopBindings.length; bindingIndex += 1) {
+
+    function processBinding(bindingIndex: number): MaybePromise<'skip' | 'abort' | 'continue'> {
+      if (bindingIndex >= loopBindings.length)
+        return 'continue'
+
       const [bindingNode, letBindings, whenNode, whileNode] = loopBindings[bindingIndex]!
       const [targetNode, valueNode] = bindingNode[1]
-      const coll = asColl(evaluateNode(valueNode, newContextStack), sourceCodeInfo)
-      const seq = isSeq(coll) ? coll : Object.entries(coll)
-      if (seq.length === 0) {
-        skip = true
-        abort = true
-        break
-      }
-      const index = asNonUndefined(bindingIndices[bindingIndex], sourceCodeInfo)
-      if (index >= seq.length) {
-        skip = true
-        if (bindingIndex === 0) {
-          abort = true
-          break
+
+      return chain(evaluateNode(valueNode, newContextStack), (rawColl) => {
+        const coll = asColl(rawColl, sourceCodeInfo)
+        const seq = isSeq(coll) ? coll : Object.entries(coll)
+
+        if (seq.length === 0) {
+          return 'abort'
         }
-        bindingIndices[bindingIndex] = 0
-        bindingIndices[bindingIndex - 1] = asNonUndefined(bindingIndices[bindingIndex - 1], sourceCodeInfo) + 1
-        break
-      }
 
-      const val = asAny(seq[index], sourceCodeInfo)
-      const valueRecord = evaluateBindingNodeValues(targetNode, val, Node => evaluateNode(Node, newContextStack))
-      Object.entries(valueRecord).forEach(([name, value]) => {
-        context[name] = { value }
-      })
-      if (letBindings) {
-        addToContext(
-          letBindings,
-          context,
-          newContextStack,
-          evaluateNode,
+        const index = asNonUndefined(bindingIndices[bindingIndex], sourceCodeInfo)
+        if (index >= seq.length) {
+          if (bindingIndex === 0) {
+            return 'abort'
+          }
+          bindingIndices[bindingIndex] = 0
+          bindingIndices[bindingIndex - 1] = asNonUndefined(bindingIndices[bindingIndex - 1], sourceCodeInfo) + 1
+          return 'skip'
+        }
+
+        const val = asAny(seq[index], sourceCodeInfo)
+        const valueRecord = evaluateBindingNodeValues(targetNode, val, Node => evaluateNode(Node, newContextStack) as Any)
+        Object.entries(valueRecord).forEach(([name, value]) => {
+          context[name] = { value }
+        })
+
+        return chain(
+          letBindings
+            ? addToContext(letBindings, context, newContextStack, evaluateNode)
+            : undefined as unknown as void,
+          () => {
+            if (whenNode) {
+              return chain(evaluateNode(whenNode, newContextStack), (whenResult) => {
+                if (!whenResult) {
+                  bindingIndices[bindingIndex] = asNonUndefined(bindingIndices[bindingIndex], sourceCodeInfo) + 1
+                  return 'skip'
+                }
+                if (whileNode) {
+                  return chain(evaluateNode(whileNode, newContextStack), (whileResult) => {
+                    if (!whileResult) {
+                      bindingIndices[bindingIndex] = Number.POSITIVE_INFINITY
+                      return 'skip'
+                    }
+                    return processBinding(bindingIndex + 1)
+                  })
+                }
+                return processBinding(bindingIndex + 1)
+              })
+            }
+            if (whileNode) {
+              return chain(evaluateNode(whileNode, newContextStack), (whileResult) => {
+                if (!whileResult) {
+                  bindingIndices[bindingIndex] = Number.POSITIVE_INFINITY
+                  return 'skip'
+                }
+                return processBinding(bindingIndex + 1)
+              })
+            }
+            return processBinding(bindingIndex + 1)
+          },
         )
-      }
-      if (whenNode && !evaluateNode(whenNode, newContextStack)) {
-        bindingIndices[bindingIndex] = asNonUndefined(bindingIndices[bindingIndex], sourceCodeInfo) + 1
-        skip = true
-        break bindingsLoop
-      }
-      if (whileNode && !evaluateNode(whileNode, newContextStack)) {
-        bindingIndices[bindingIndex] = Number.POSITIVE_INFINITY
-        skip = true
-        break bindingsLoop
-      }
+      })
     }
-    if (!skip) {
-      const value: Any = evaluateNode(body, newContextStack)
-      if (returnResult)
-        result.push(value)
 
-      if (bindingIndices.length > 0)
-        bindingIndices[bindingIndices.length - 1]! += 1
-    }
+    return chain(processBinding(0), (status) => {
+      if (status === 'abort') {
+        return returnResult ? result : null
+      }
+      if (status === 'skip') {
+        return processIteration()
+      }
+      // status === 'continue'
+      return chain(evaluateNode(body, newContextStack), (value) => {
+        if (returnResult)
+          result.push(value)
+
+        if (bindingIndices.length > 0)
+          bindingIndices[bindingIndices.length - 1]! += 1
+
+        return processIteration()
+      })
+    })
   }
 
-  return returnResult ? result : null
+  return processIteration()
 }
 
 function analyze(
@@ -217,8 +257,7 @@ export const doseqSpecialExpression: BuiltinSpecialExpression<null, DoSeqNode> =
   arity: toFixedArity(1),
   docs: doseqDocs,
   evaluate: (node, contextStack, helpers) => {
-    evaluateLoop(false, node, contextStack, helpers.evaluateNode)
-    return null
+    return chain(evaluateLoop(false, node, contextStack, helpers.evaluateNode), () => null)
   },
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => analyze(node, contextStack, getUndefinedSymbols, builtin, evaluateNode),
 }

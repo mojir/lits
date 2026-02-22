@@ -1,6 +1,7 @@
 import type { Any } from '../../interface'
 import type { AstNode, SpecialExpressionNode } from '../../parser/types'
 import { asAny } from '../../typeGuards/lits'
+import { reduceSequential } from '../../utils/maybePromise'
 import type { BuiltinSpecialExpression, FunctionDocs } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 
@@ -42,15 +43,15 @@ export const andSpecialExpression: BuiltinSpecialExpression<Any, AndNode> = {
   arity: {},
   docs,
   evaluate: (node, contextStack, { evaluateNode }) => {
-    let value: Any = true
-
-    for (const param of node[1][1]) {
-      value = evaluateNode(param, contextStack)
-      if (!value)
-        break
-    }
-
-    return value
+    return reduceSequential(
+      node[1][1],
+      (acc, param) => {
+        if (!acc)
+          return acc
+        return evaluateNode(param, contextStack)
+      },
+      true as Any,
+    )
   },
   evaluateAsNormalExpression: (params, sourceCodeInfo) => {
     let value: Any = true

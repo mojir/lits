@@ -4,6 +4,7 @@ import { asNumber, assertNumber } from '../../typeGuards/number'
 import type { BuiltinNormalExpressions } from '../interface'
 import { assertFunctionLike } from '../../typeGuards/lits'
 import { toFixedArity } from '../../utils/arity'
+import { chain, mapSequential } from '../../utils/maybePromise'
 
 export const arrayNormalExpression: BuiltinNormalExpressions = {
   'range': {
@@ -143,10 +144,13 @@ flatten([
     },
   },
   'mapcat': {
-    evaluate: ([arr, fn], sourceCodeInfo, contextStack, { executeFunction }): Arr | string => {
+    evaluate: ([arr, fn], sourceCodeInfo, contextStack, { executeFunction }) => {
       assertArray(arr, sourceCodeInfo)
       assertFunctionLike(fn, sourceCodeInfo)
-      return arr.map(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo)).flat(1)
+      return chain(
+        mapSequential(arr, elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo)),
+        mapped => mapped.flat(1),
+      )
     },
     arity: toFixedArity(2),
     docs: {
@@ -179,18 +183,16 @@ mapcat(
     },
   },
   'moving-fn': {
-    evaluate: ([arr, windowSize, fn], sourceCodeInfo, contextStack, { executeFunction }): Arr => {
+    evaluate: ([arr, windowSize, fn], sourceCodeInfo, contextStack, { executeFunction }) => {
       assertArray(arr, sourceCodeInfo)
       assertNumber(windowSize, sourceCodeInfo, { integer: true, lte: arr.length })
       assertFunctionLike(fn, sourceCodeInfo)
 
-      const result = []
+      const windows: Arr[] = []
       for (let i = 0; i <= arr.length - windowSize; i++) {
-        const window = arr.slice(i, i + windowSize)
-        const value = executeFunction(fn, [window], contextStack, sourceCodeInfo)
-        result.push(value)
+        windows.push(arr.slice(i, i + windowSize))
       }
-      return result
+      return mapSequential(windows, window => executeFunction(fn, [window], contextStack, sourceCodeInfo))
     },
     arity: toFixedArity(3),
     docs: {
@@ -212,16 +214,15 @@ mapcat(
     },
   },
   'running-fn': {
-    evaluate: ([arr, fn], sourceCodeInfo, contextStack, { executeFunction }): Arr => {
+    evaluate: ([arr, fn], sourceCodeInfo, contextStack, { executeFunction }) => {
       assertArray(arr, sourceCodeInfo)
       assertFunctionLike(fn, sourceCodeInfo)
 
-      const result = []
+      const subArrays: Arr[] = []
       for (let i = 0; i < arr.length; i += 1) {
-        const subArr = arr.slice(0, i + 1)
-        result.push(executeFunction(fn, [subArr], contextStack, sourceCodeInfo))
+        subArrays.push(arr.slice(0, i + 1))
       }
-      return result
+      return mapSequential(subArrays, subArr => executeFunction(fn, [subArr], contextStack, sourceCodeInfo))
     },
     arity: toFixedArity(2),
     docs: {

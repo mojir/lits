@@ -10,6 +10,8 @@ import { assertNumber, isNumber } from '../../../typeGuards/number'
 import { asString, asStringOrNumber, assertString, assertStringOrNumber } from '../../../typeGuards/string'
 import type { FunctionLike } from '../../../parser/types'
 import { toFixedArity } from '../../../utils/arity'
+import type { MaybePromise } from '../../../utils/maybePromise'
+import { chain, everySequential, filterSequential, mapSequential, reduceSequential, someSequential } from '../../../utils/maybePromise'
 import type { LitsModule } from '../interface'
 
 // --- Private helper: get value from collection by key ---
@@ -55,48 +57,43 @@ function update(
   contextStack: ContextStack,
   executeFunction: ExecuteFunction,
   sourceCodeInfo?: SourceCodeInfo,
-): Coll {
+): MaybePromise<Coll> {
   if (isObj(coll)) {
     assertString(key, sourceCodeInfo)
     const result = { ...coll }
-    result[key] = executeFunction(fn, [result[key], ...params], contextStack, sourceCodeInfo)
-    return result
+    return chain(executeFunction(fn, [result[key], ...params], contextStack, sourceCodeInfo), (val) => {
+      result[key] = val
+      return result
+    })
   }
   else {
     assertNumber(key, sourceCodeInfo)
     const intKey = toNonNegativeInteger(key)
     assertNumber(intKey, sourceCodeInfo, { lte: coll.length })
     if (Array.isArray(coll)) {
-      const result = coll.map((elem, index) => {
-        if (intKey === index)
-          return executeFunction(fn, [elem, ...params], contextStack, sourceCodeInfo)
-
-        return elem
-      })
-      if (intKey === coll.length)
-        result[intKey] = executeFunction(fn, [undefined, ...params], contextStack, sourceCodeInfo)
-
-      return result
+      return chain(
+        mapSequential(Array.from({ length: coll.length + (intKey === coll.length ? 1 : 0) }), (_, index) => {
+          if (intKey === index)
+            return executeFunction(fn, [coll[index], ...params], contextStack, sourceCodeInfo)
+          return coll[index] as Any
+        }),
+        result => result,
+      )
     }
     else {
-      const result = coll.split('').map((elem, index) => {
-        if (intKey === index) {
-          return asString(executeFunction(fn, [elem, ...params], contextStack, sourceCodeInfo), sourceCodeInfo, {
-            char: true,
-          })
-        }
-        return elem
-      })
-      if (intKey === coll.length) {
-        result[intKey] = asString(
-          executeFunction(fn, [undefined, ...params], contextStack, sourceCodeInfo),
-          sourceCodeInfo,
-          {
-            char: true,
-          },
-        )
-      }
-      return result.join('')
+      const chars = coll.split('')
+      return chain(
+        mapSequential(Array.from({ length: chars.length + (intKey === chars.length ? 1 : 0) }), (_, index) => {
+          if (intKey === index) {
+            return chain(
+              executeFunction(fn, [chars[index], ...params], contextStack, sourceCodeInfo),
+              val => asString(val, sourceCodeInfo, { char: true }),
+            )
+          }
+          return chars[index] as string
+        }),
+        result => result.join(''),
+      )
     }
   }
 }
@@ -269,7 +266,7 @@ cu.assoc-in(
     },
   },
   'update': {
-    evaluate: ([coll, key, fn, ...params], sourceCodeInfo, contextStack, { executeFunction }): Coll => {
+    evaluate: ([coll, key, fn, ...params], sourceCodeInfo, contextStack, { executeFunction }): MaybePromise<Coll> => {
       assertColl(coll, sourceCodeInfo)
       assertStringOrNumber(key, sourceCodeInfo)
       assertFunctionLike(fn, sourceCodeInfo)
@@ -312,7 +309,7 @@ cu.update(
     },
   },
   'update-in': {
-    evaluate: ([originalColl, keys, fn, ...params], sourceCodeInfo, contextStack, { executeFunction }): Coll => {
+    evaluate: ([originalColl, keys, fn, ...params], sourceCodeInfo, contextStack, { executeFunction }): MaybePromise<Coll> => {
       assertColl(originalColl, sourceCodeInfo)
       assertArray(keys, sourceCodeInfo)
       assertFunctionLike(fn, sourceCodeInfo)
@@ -329,30 +326,24 @@ cu.update(
 
       if (Array.isArray(innerCollMeta.parent)) {
         assertNumber(parentKey, sourceCodeInfo)
-        innerCollMeta.parent[parentKey] = update(
-          innerCollMeta.coll,
-          lastKey,
-          fn,
-          params,
-          contextStack,
-          executeFunction,
-          sourceCodeInfo,
+        return chain(
+          update(innerCollMeta.coll, lastKey, fn, params, contextStack, executeFunction, sourceCodeInfo),
+          (updated) => {
+            ;(innerCollMeta.parent as Any[])[parentKey] = updated
+            return coll
+          },
         )
       }
       else {
         assertString(parentKey, sourceCodeInfo)
-        innerCollMeta.parent[parentKey] = update(
-          innerCollMeta.coll,
-          lastKey,
-          fn,
-          params,
-          contextStack,
-          executeFunction,
-          sourceCodeInfo,
+        return chain(
+          update(innerCollMeta.coll, lastKey, fn, params, contextStack, executeFunction, sourceCodeInfo),
+          (updated) => {
+            ;(innerCollMeta.parent as Record<string, unknown>)[parentKey] = updated
+            return coll
+          },
         )
       }
-
-      return coll
     },
     arity: { min: 3 },
     docs: {
@@ -409,25 +400,25 @@ cu.update-in(
     },
   },
   'filteri': {
-    evaluate: ([coll, fn], sourceCodeInfo, contextStack, { executeFunction }): Coll => {
+    evaluate: ([coll, fn], sourceCodeInfo, contextStack, { executeFunction }): MaybePromise<Coll> => {
       assertColl(coll, sourceCodeInfo)
       assertFunctionLike(fn, sourceCodeInfo)
       if (Array.isArray(coll)) {
-        const result = coll.filter((elem, index) => executeFunction(fn, [elem, index], contextStack, sourceCodeInfo))
-        return result
+        return filterSequential(coll, (elem, index) => executeFunction(fn, [elem, index], contextStack, sourceCodeInfo))
       }
       if (typeof coll === 'string') {
-        return coll
-          .split('')
-          .filter((elem, index) => executeFunction(fn, [elem, index], contextStack, sourceCodeInfo))
-          .join('')
+        return chain(
+          filterSequential(coll.split(''), (elem, index) => executeFunction(fn, [elem, index], contextStack, sourceCodeInfo)),
+          filtered => filtered.join(''),
+        )
       }
-      return Object.entries(coll)
-        .filter(([key, value]) => executeFunction(fn, [value, key], contextStack, sourceCodeInfo))
-        .reduce((result: Obj, [key, value]) => {
+      return chain(
+        filterSequential(Object.entries(coll), ([key, value]) => executeFunction(fn, [value, key], contextStack, sourceCodeInfo)),
+        filtered => filtered.reduce((result: Obj, [key, value]) => {
           result[key] = value
           return result
-        }, {})
+        }, {}),
+      )
     },
     arity: toFixedArity(2),
     docs: {
@@ -451,24 +442,26 @@ cu.update-in(
     },
   },
   'mapi': {
-    evaluate: ([coll, fn], sourceCodeInfo, contextStack, { executeFunction }) => {
+    evaluate: ([coll, fn], sourceCodeInfo, contextStack, { executeFunction }): MaybePromise<Coll> => {
       assertColl(coll, sourceCodeInfo)
       assertFunctionLike(fn, sourceCodeInfo)
 
       if (Array.isArray(coll)) {
-        return coll.map((elem, index) => executeFunction(fn, [elem, index], contextStack, sourceCodeInfo))
+        return mapSequential(coll, (elem, index) => executeFunction(fn, [elem, index], contextStack, sourceCodeInfo))
       }
       if (typeof coll === 'string') {
-        return coll
-          .split('')
-          .map((elem, index) => executeFunction(fn, [elem, index], contextStack, sourceCodeInfo))
-          .join('')
+        return chain(
+          mapSequential(coll.split(''), (elem, index) => executeFunction(fn, [elem, index], contextStack, sourceCodeInfo)),
+          mapped => mapped.join(''),
+        )
       }
-      return Object.entries(coll)
-        .reduce((acc: Obj, [key, value]) => {
-          acc[key] = executeFunction(fn, [value, key], contextStack, sourceCodeInfo)
+      const entries = Object.entries(coll)
+      return reduceSequential(entries, (acc: Obj, [key, value]) => {
+        return chain(executeFunction(fn, [value, key], contextStack, sourceCodeInfo), (result) => {
+          acc[key] = result
           return acc
-        }, {})
+        })
+      }, {})
     },
     arity: toFixedArity(2),
     docs: {
@@ -494,7 +487,7 @@ cu.update-in(
     },
   },
   'reducei': {
-    evaluate: ([coll, fn, initial], sourceCodeInfo, contextStack, { executeFunction }): Any => {
+    evaluate: ([coll, fn, initial], sourceCodeInfo, contextStack, { executeFunction }): MaybePromise<Any> => {
       assertColl(coll, sourceCodeInfo)
       assertFunctionLike(fn, sourceCodeInfo)
       assertAny(initial, sourceCodeInfo)
@@ -504,25 +497,31 @@ cu.update-in(
         if (coll.length === 0)
           return initial
 
-        return coll.split('').reduce((result: Any, elem, index) => {
-          return executeFunction(fn, [result, elem, index], contextStack, sourceCodeInfo)
-        }, initial)
+        return reduceSequential(
+          coll.split('').map((elem, index) => ({ elem, index })),
+          (result, { elem, index }) => executeFunction(fn, [result, elem, index], contextStack, sourceCodeInfo),
+          initial as Any,
+        )
       }
       else if (Array.isArray(coll)) {
         if (coll.length === 0)
           return initial
 
-        return coll.reduce((result: Any, elem, index) => {
-          return executeFunction(fn, [result, elem, index], contextStack, sourceCodeInfo)
-        }, initial)
+        return reduceSequential(
+          coll.map((elem, index) => ({ elem, index })),
+          (result, { elem, index }) => executeFunction(fn, [result, elem, index], contextStack, sourceCodeInfo),
+          initial,
+        )
       }
       else {
         if (Object.keys(coll).length === 0)
           return initial
 
-        return Object.entries(coll).reduce((result: Any, [key, elem]) => {
-          return executeFunction(fn, [result, elem, key], contextStack, sourceCodeInfo)
-        }, initial)
+        return reduceSequential(
+          Object.entries(coll),
+          (result, [key, elem]) => executeFunction(fn, [result, elem, key], contextStack, sourceCodeInfo),
+          initial,
+        )
       }
     },
     arity: toFixedArity(3),
@@ -551,7 +550,7 @@ cu.update-in(
     },
   },
   'reduce-right': {
-    evaluate: ([coll, fn, initial], sourceCodeInfo, contextStack, { executeFunction }): Any => {
+    evaluate: ([coll, fn, initial], sourceCodeInfo, contextStack, { executeFunction }): MaybePromise<Any> => {
       assertColl(coll, sourceCodeInfo)
       assertFunctionLike(fn, sourceCodeInfo)
       assertAny(initial, sourceCodeInfo)
@@ -560,25 +559,31 @@ cu.update-in(
         if (coll.length === 0)
           return initial
 
-        return coll.split('').reduceRight((result: Any, elem) => {
-          return executeFunction(fn, [result, elem], contextStack, sourceCodeInfo)
-        }, initial)
+        return reduceSequential(
+          Array.from(coll.split('')).reverse(),
+          (result, elem) => executeFunction(fn, [result, elem], contextStack, sourceCodeInfo),
+          initial,
+        )
       }
       else if (Array.isArray(coll)) {
         if (coll.length === 0)
           return initial
 
-        return coll.reduceRight((result: Any, elem) => {
-          return executeFunction(fn, [result, elem], contextStack, sourceCodeInfo)
-        }, initial)
+        return reduceSequential(
+          Array.from(coll).reverse(),
+          (result, elem) => executeFunction(fn, [result, elem], contextStack, sourceCodeInfo),
+          initial,
+        )
       }
       else {
         if (Object.keys(coll).length === 0)
           return initial
 
-        return Object.entries(coll).reduceRight((result: Any, [, elem]) => {
-          return executeFunction(fn, [result, elem], contextStack, sourceCodeInfo)
-        }, initial)
+        return reduceSequential(
+          Object.entries(coll).reverse(),
+          (result, [, elem]) => executeFunction(fn, [result, elem], contextStack, sourceCodeInfo),
+          initial,
+        )
       }
     },
     arity: toFixedArity(3),
@@ -600,7 +605,7 @@ cu.update-in(
     },
   },
   'reducei-right': {
-    evaluate: ([coll, fn, initial], sourceCodeInfo, contextStack, { executeFunction }): Any => {
+    evaluate: ([coll, fn, initial], sourceCodeInfo, contextStack, { executeFunction }): MaybePromise<Any> => {
       assertColl(coll, sourceCodeInfo)
       assertFunctionLike(fn, sourceCodeInfo)
       assertAny(initial, sourceCodeInfo)
@@ -609,25 +614,31 @@ cu.update-in(
         if (coll.length === 0)
           return initial
 
-        return coll.split('').reduceRight((result: Any, elem, index) => {
-          return executeFunction(fn, [result, elem, index], contextStack, sourceCodeInfo)
-        }, initial)
+        return reduceSequential(
+          Array.from(coll.split('')).reverse().map((elem, _, arr) => ({ elem, index: arr.length - 1 - _ })),
+          (result, { elem, index }) => executeFunction(fn, [result, elem, index], contextStack, sourceCodeInfo),
+          initial,
+        )
       }
       else if (Array.isArray(coll)) {
         if (coll.length === 0)
           return initial
 
-        return coll.reduceRight((result: Any, elem, index) => {
-          return executeFunction(fn, [result, elem, index], contextStack, sourceCodeInfo)
-        }, initial)
+        return reduceSequential(
+          Array.from(coll).reverse().map((elem, _, arr) => ({ elem, index: arr.length - 1 - _ })),
+          (result, { elem, index }) => executeFunction(fn, [result, elem, index], contextStack, sourceCodeInfo),
+          initial,
+        )
       }
       else {
         if (Object.keys(coll).length === 0)
           return initial
 
-        return Object.entries(coll).reduceRight((result: Any, [key, elem]) => {
-          return executeFunction(fn, [result, elem, key], contextStack, sourceCodeInfo)
-        }, initial)
+        return reduceSequential(
+          Object.entries(coll).reverse(),
+          (result, [key, elem]) => executeFunction(fn, [result, elem, key], contextStack, sourceCodeInfo),
+          initial,
+        )
       }
     },
     arity: toFixedArity(3),
@@ -656,49 +667,36 @@ cu.update-in(
     },
   },
   'reductions': {
-    evaluate: ([coll, fn, initial], sourceCodeInfo, contextStack, { executeFunction }): Any => {
+    evaluate: ([coll, fn, initial], sourceCodeInfo, contextStack, { executeFunction }): MaybePromise<Any> => {
       assertColl(coll, sourceCodeInfo)
       assertFunctionLike(fn, sourceCodeInfo)
       assertAny(initial, sourceCodeInfo)
 
       assertAny(initial, sourceCodeInfo)
-      if (typeof coll === 'string') {
-        assertString(initial, sourceCodeInfo)
-        if (coll.length === 0)
-          return [initial]
 
-        const resultArray: Any[] = [initial]
-        coll.split('').reduce((result: Any, elem) => {
-          const newVal = executeFunction(fn, [result, elem], contextStack, sourceCodeInfo)
-          resultArray.push(newVal)
-          return newVal
-        }, initial)
-        return resultArray
-      }
-      else if (Array.isArray(coll)) {
-        if (coll.length === 0)
-          return [initial]
+      const items: Any[] = typeof coll === 'string'
+        ? (assertString(initial, sourceCodeInfo), coll.length === 0 ? [] : coll.split(''))
+        : Array.isArray(coll)
+          ? (coll.length === 0 ? [] : Array.from(coll) as Any[])
+          : (Object.keys(coll).length === 0 ? [] : Object.entries(coll).map(([, v]) => v as Any))
 
-        const resultArray: Any[] = [initial]
-        coll.reduce((result: Any, elem) => {
-          const newVal = executeFunction(fn, [result, elem], contextStack, sourceCodeInfo)
-          resultArray.push(newVal)
-          return newVal
-        }, initial)
-        return resultArray
-      }
-      else {
-        if (Object.keys(coll).length === 0)
-          return [initial]
+      if (items.length === 0)
+        return [initial]
 
-        const resultArray: Any[] = [initial]
-        Object.entries(coll).reduce((result: Any, [, elem]) => {
-          const newVal = executeFunction(fn, [result, elem], contextStack, sourceCodeInfo)
-          resultArray.push(newVal)
-          return newVal
-        }, initial)
-        return resultArray
-      }
+      const resultArray: Any[] = [initial]
+      return chain(
+        reduceSequential(
+          items,
+          (result, elem) => {
+            return chain(executeFunction(fn, [result, elem], contextStack, sourceCodeInfo), (newVal) => {
+              resultArray.push(newVal)
+              return newVal
+            })
+          },
+          initial,
+        ),
+        () => resultArray,
+      )
     },
     arity: toFixedArity(3),
     docs: {
@@ -728,49 +726,38 @@ cu.reductions(
     },
   },
   'reductionsi': {
-    evaluate: ([coll, fn, initial], sourceCodeInfo, contextStack, { executeFunction }): Any => {
+    evaluate: ([coll, fn, initial], sourceCodeInfo, contextStack, { executeFunction }): MaybePromise<Any> => {
       assertColl(coll, sourceCodeInfo)
       assertFunctionLike(fn, sourceCodeInfo)
       assertAny(initial, sourceCodeInfo)
 
       assertAny(initial, sourceCodeInfo)
-      if (typeof coll === 'string') {
-        assertString(initial, sourceCodeInfo)
-        if (coll.length === 0)
-          return [initial]
 
-        const resultArray: Any[] = [initial]
-        coll.split('').reduce((result: Any, elem, index) => {
-          const newVal = executeFunction(fn, [result, elem, index], contextStack, sourceCodeInfo)
-          resultArray.push(newVal)
-          return newVal
-        }, initial)
-        return resultArray
-      }
-      else if (Array.isArray(coll)) {
-        if (coll.length === 0)
-          return [initial]
+      type IndexedItem = { elem: Any, key: string | number }
+      const toIndexedItem = (elem: Any, key: string | number): IndexedItem => ({ elem, key })
+      const items: IndexedItem[] = typeof coll === 'string'
+        ? (assertString(initial, sourceCodeInfo), coll.length === 0 ? [] : coll.split('').map((elem, index) => toIndexedItem(elem, index)))
+        : Array.isArray(coll)
+          ? (coll.length === 0 ? [] : coll.map((elem, index) => toIndexedItem(elem as Any, index)))
+          : (Object.keys(coll).length === 0 ? [] : Object.entries(coll).map(([key, v]) => toIndexedItem(v as Any, key)))
 
-        const resultArray: Any[] = [initial]
-        coll.reduce((result: Any, elem, index) => {
-          const newVal = executeFunction(fn, [result, elem, index], contextStack, sourceCodeInfo)
-          resultArray.push(newVal)
-          return newVal
-        }, initial)
-        return resultArray
-      }
-      else {
-        if (Object.keys(coll).length === 0)
-          return [initial]
+      if (items.length === 0)
+        return [initial]
 
-        const resultArray: Any[] = [initial]
-        Object.entries(coll).reduce((result: Any, [key, elem]) => {
-          const newVal = executeFunction(fn, [result, elem, key], contextStack, sourceCodeInfo)
-          resultArray.push(newVal)
-          return newVal
-        }, initial)
-        return resultArray
-      }
+      const resultArray: Any[] = [initial]
+      return chain(
+        reduceSequential(
+          items,
+          (result, { elem, key }) => {
+            return chain(executeFunction(fn, [result, elem, key], contextStack, sourceCodeInfo), (newVal) => {
+              resultArray.push(newVal)
+              return newVal
+            })
+          },
+          initial,
+        ),
+        () => resultArray,
+      )
     },
     arity: toFixedArity(3),
     docs: {
@@ -833,17 +820,17 @@ cu.reductions(
     },
   },
   'every?': {
-    evaluate: ([coll, fn], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
+    evaluate: ([coll, fn], sourceCodeInfo, contextStack, { executeFunction }): MaybePromise<boolean> => {
       assertColl(coll, sourceCodeInfo)
       assertFunctionLike(fn, sourceCodeInfo)
 
-      if (Array.isArray(coll))
-        return coll.every(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo))
+      const arr = Array.isArray(coll)
+        ? coll
+        : typeof coll === 'string'
+          ? coll.split('')
+          : Object.entries(coll)
 
-      if (typeof coll === 'string')
-        return coll.split('').every(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo))
-
-      return Object.entries(coll).every(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo))
+      return everySequential(arr, elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo))
     },
     arity: toFixedArity(2),
     docs: {
@@ -890,17 +877,17 @@ cu.every?(
     },
   },
   'any?': {
-    evaluate: ([coll, fn], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
+    evaluate: ([coll, fn], sourceCodeInfo, contextStack, { executeFunction }): MaybePromise<boolean> => {
       assertFunctionLike(fn, sourceCodeInfo)
       assertColl(coll, sourceCodeInfo)
 
-      if (Array.isArray(coll))
-        return coll.some(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo))
+      const arr = Array.isArray(coll)
+        ? coll
+        : typeof coll === 'string'
+          ? coll.split('')
+          : Object.entries(coll)
 
-      if (typeof coll === 'string')
-        return coll.split('').some(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo))
-
-      return Object.entries(coll).some(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo))
+      return someSequential(arr, elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo))
     },
     arity: toFixedArity(2),
     docs: {
@@ -945,17 +932,20 @@ cu.any?(
     },
   },
   'not-any?': {
-    evaluate: ([coll, fn], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
+    evaluate: ([coll, fn], sourceCodeInfo, contextStack, { executeFunction }): MaybePromise<boolean> => {
       assertFunctionLike(fn, sourceCodeInfo)
       assertColl(coll, sourceCodeInfo)
 
-      if (Array.isArray(coll))
-        return !coll.some(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo))
+      const arr = Array.isArray(coll)
+        ? coll
+        : typeof coll === 'string'
+          ? coll.split('')
+          : Object.entries(coll)
 
-      if (typeof coll === 'string')
-        return !coll.split('').some(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo))
-
-      return !Object.entries(coll).some(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo))
+      return chain(
+        someSequential(arr, elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo)),
+        result => !result,
+      )
     },
     arity: toFixedArity(2),
     docs: {
@@ -1000,17 +990,20 @@ cu.not-any?(
     },
   },
   'not-every?': {
-    evaluate: ([coll, fn], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
+    evaluate: ([coll, fn], sourceCodeInfo, contextStack, { executeFunction }): MaybePromise<boolean> => {
       assertFunctionLike(fn, sourceCodeInfo)
       assertColl(coll, sourceCodeInfo)
 
-      if (Array.isArray(coll))
-        return !coll.every(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo))
+      const arr = Array.isArray(coll)
+        ? coll
+        : typeof coll === 'string'
+          ? coll.split('')
+          : Object.entries(coll)
 
-      if (typeof coll === 'string')
-        return !coll.split('').every(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo))
-
-      return !Object.entries(coll).every(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo))
+      return chain(
+        everySequential(arr, elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo)),
+        result => !result,
+      )
     },
     arity: toFixedArity(2),
     docs: {

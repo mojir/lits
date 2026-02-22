@@ -1,3 +1,5 @@
+import type { MaybePromise } from '../../../../utils/maybePromise'
+import { chain } from '../../../../utils/maybePromise'
 import type { SequenceDefinition } from '.'
 
 /**
@@ -32,29 +34,33 @@ export function generateRecamanSequence(n: number): number[] {
 export const recamanSequence: SequenceDefinition<'recaman'> = {
   'recaman-seq': length => generateRecamanSequence(length),
   'recaman-take-while': (takeWhile) => {
-    if (!takeWhile(0, 0))
-      return []
-
-    const sequence: number[] = [0]
+    const sequence: number[] = []
     const seen = new Set<number>([0])
 
-    for (let i = 1; ; i++) {
-      // Try to go backward
-      let next = sequence[i - 1]! - i
+    return chain(takeWhile(0, 0), (keepFirst) => {
+      if (!keepFirst)
+        return sequence
+      sequence.push(0)
 
-      // If that's not positive or already seen, go forward
-      if (next <= 0 || seen.has(next)) {
-        next = sequence[i - 1]! + i
+      function loop(i: number): MaybePromise<number[]> {
+        // Try to go backward
+        let next = sequence[i - 1]! - i
+
+        // If that's not positive or already seen, go forward
+        if (next <= 0 || seen.has(next)) {
+          next = sequence[i - 1]! + i
+        }
+
+        return chain(takeWhile(next, i), (keep) => {
+          if (!keep)
+            return sequence
+          sequence.push(next)
+          seen.add(next)
+          return loop(i + 1)
+        })
       }
-
-      if (!takeWhile(next, i))
-        break
-
-      sequence.push(next)
-      seen.add(next)
-    }
-
-    return sequence
+      return loop(1)
+    })
   },
   'recaman?': () => true,
 }

@@ -1,3 +1,5 @@
+import type { MaybePromise } from '../../../../utils/maybePromise'
+import { chain } from '../../../../utils/maybePromise'
 import type { SequenceDefinition } from '.'
 
 export function isPrime(num: number): boolean {
@@ -33,16 +35,17 @@ export const primeSequence: SequenceDefinition<'prime'> = {
   },
   'prime?': n => isPrime(n),
   'prime-take-while': (takeWhile) => {
-    const primes = []
-    for (let i = 2; ; i += 1) {
-      if (!isPrime(i)) {
-        continue
-      }
-      if (!takeWhile(i, primes.length)) {
-        break
-      }
-      primes.push(i)
+    const primes: number[] = []
+    function loop(i: number): MaybePromise<number[]> {
+      if (!isPrime(i))
+        return loop(i + 1)
+      return chain(takeWhile(i, primes.length), (keep) => {
+        if (!keep)
+          return primes
+        primes.push(i)
+        return loop(i + 1)
+      })
     }
-    return primes
+    return loop(2)
   },
 }

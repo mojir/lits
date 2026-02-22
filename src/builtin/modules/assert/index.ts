@@ -8,6 +8,8 @@ import { isLitsFunction } from '../../../typeGuards/litsFunction'
 import { isNumber } from '../../../typeGuards/number'
 import { assertString, assertStringOrNumber } from '../../../typeGuards/string'
 import { isGrid, isMatrix, isVector } from '../../../typeGuards/annotatedArrays'
+import { chain, tryCatch } from '../../../utils/maybePromise'
+import type { MaybePromise } from '../../../utils/maybePromise'
 import type { LitsModule } from '../interface'
 import { moduleDocs } from './docs'
 
@@ -193,25 +195,24 @@ const assertNormalExpression: BuiltinNormalExpressions = {
     arity: { min: 1, max: 2 },
   },
   'assert-throws': {
-    evaluate: ([func, message], sourceCodeInfo, contextStack, { executeFunction }): null => {
+    evaluate: ([func, message], sourceCodeInfo, contextStack, { executeFunction }): MaybePromise<null> => {
       if (message !== undefined) {
         assertString(message, sourceCodeInfo)
         message = ` ${message}`
       }
       message ??= ''
       assertFunctionLike(func, sourceCodeInfo)
-      try {
-        executeFunction(func, [], contextStack, sourceCodeInfo)
-      }
-      catch {
-        return null
-      }
-      throw new AssertionError(`Expected function to throw.${message}`, sourceCodeInfo)
+      return tryCatch(
+        () => chain(executeFunction(func, [], contextStack, sourceCodeInfo), () => {
+          throw new AssertionError(`Expected function to throw.${message}`, sourceCodeInfo)
+        }),
+        () => null,
+      )
     },
     arity: { min: 1, max: 2 },
   },
   'assert-throws-error': {
-    evaluate: ([func, throwMessage, message], sourceCodeInfo, contextStack, { executeFunction }): null => {
+    evaluate: ([func, throwMessage, message], sourceCodeInfo, contextStack, { executeFunction }): MaybePromise<null> => {
       if (message !== undefined) {
         assertString(message, sourceCodeInfo)
         message = ` ${message}`
@@ -219,38 +220,38 @@ const assertNormalExpression: BuiltinNormalExpressions = {
       message ??= ''
       assertString(throwMessage, sourceCodeInfo)
       assertFunctionLike(func, sourceCodeInfo)
-      try {
-        executeFunction(func, [], contextStack, sourceCodeInfo)
-      }
-      catch (error) {
-        const errorMessage = (error as LitsError).shortMessage
-        if (errorMessage !== throwMessage) {
-          throw new AssertionError(
-            `Expected function to throw "${throwMessage}", but thrown "${errorMessage}".${message}`,
-            sourceCodeInfo,
-          )
-        }
-        return null
-      }
-      throw new AssertionError(`Expected function to throw "${throwMessage}".${message}`, sourceCodeInfo)
+      return tryCatch(
+        () => chain(executeFunction(func, [], contextStack, sourceCodeInfo), () => {
+          throw new AssertionError(`Expected function to throw "${throwMessage}".${message}`, sourceCodeInfo)
+        }),
+        (error) => {
+          const errorMessage = (error as LitsError).shortMessage
+          if (errorMessage !== throwMessage) {
+            throw new AssertionError(
+              `Expected function to throw "${throwMessage}", but thrown "${errorMessage}".${message}`,
+              sourceCodeInfo,
+            )
+          }
+          return null
+        },
+      )
     },
     arity: { min: 2, max: 3 },
   },
   'assert-not-throws': {
-    evaluate: ([func, message], sourceCodeInfo, contextStack, { executeFunction }): null => {
+    evaluate: ([func, message], sourceCodeInfo, contextStack, { executeFunction }): MaybePromise<null> => {
       if (message !== undefined) {
         assertString(message, sourceCodeInfo)
         message = ` ${message}`
       }
       message ??= ''
       assertFunctionLike(func, sourceCodeInfo)
-      try {
-        executeFunction(func, [], contextStack, sourceCodeInfo)
-      }
-      catch {
-        throw new AssertionError(`Expected function not to throw.${message}`, sourceCodeInfo)
-      }
-      return null
+      return tryCatch(
+        () => chain(executeFunction(func, [], contextStack, sourceCodeInfo), () => null),
+        () => {
+          throw new AssertionError(`Expected function not to throw.${message}`, sourceCodeInfo)
+        },
+      )
     },
     arity: { min: 1, max: 2 },
   },

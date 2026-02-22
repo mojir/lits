@@ -5,6 +5,8 @@ import { assertNumber } from '../../typeGuards/number'
 import { assertString, assertStringOrNumber } from '../../typeGuards/string'
 import { compare, deepEqual, toAny } from '../../utils'
 import { toFixedArity } from '../../utils/arity'
+import type { MaybePromise } from '../../utils/maybePromise'
+import { chain, reduceSequential } from '../../utils/maybePromise'
 import type { BuiltinNormalExpressions } from '../interface'
 
 export const sequenceNormalExpression: BuiltinNormalExpressions = {
@@ -370,7 +372,7 @@ For string $seq returns all but the first characters in $seq.`,
     },
   },
   'some': {
-    evaluate: ([seq, fn]: Arr, sourceCodeInfo, contextStack, { executeFunction }): Any => {
+    evaluate: ([seq, fn]: Arr, sourceCodeInfo, contextStack, { executeFunction }): MaybePromise<Any> => {
       assertFunctionLike(fn, sourceCodeInfo)
       if (seq === null)
         return null
@@ -380,10 +382,18 @@ For string $seq returns all but the first characters in $seq.`,
       if (seq.length === 0)
         return null
 
-      if (typeof seq === 'string')
-        return seq.split('').find(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo)) ?? null
-
-      return toAny(seq.find(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo)))
+      const items = typeof seq === 'string' ? seq.split('') : seq
+      return reduceSequential(
+        items,
+        (found: Any, elem) => {
+          if (found !== null)
+            return found
+          return chain(executeFunction(fn, [elem], contextStack, sourceCodeInfo), (result) => {
+            return result ? toAny(elem) : null
+          })
+        },
+        null as Any,
+      )
     },
     arity: toFixedArity(2),
     docs: {
@@ -428,7 +438,7 @@ some(
     },
   },
   'sort': {
-    evaluate: (params: Arr, sourceCodeInfo, contextStack, { executeFunction }): Seq => {
+    evaluate: (params: Arr, sourceCodeInfo, _contextStack, { executeFunction: _executeFunction }): Seq => {
       const [seq] = params
       const defaultComparer = params.length === 1
       const comparer = defaultComparer ? null : params[1]
@@ -441,8 +451,12 @@ some(
         }
         else {
           assertFunctionLike(comparer, sourceCodeInfo)
+          // Note: sort comparator must be synchronous — async comparators would need a different approach
           result.sort((a, b) => {
-            const compareValue = executeFunction(comparer, [a, b], contextStack, sourceCodeInfo)
+            const compareValue = _executeFunction(comparer, [a, b], _contextStack, sourceCodeInfo)
+            if (compareValue instanceof Promise) {
+              throw new TypeError('Async functions cannot be used as sort comparators')
+            }
             assertNumber(compareValue, sourceCodeInfo, { finite: true })
             return compareValue
           })
@@ -461,7 +475,11 @@ some(
       else {
         result.sort((a, b) => {
           assertFunctionLike(comparer, sourceCodeInfo)
-          const compareValue = executeFunction(comparer, [a, b], contextStack, sourceCodeInfo)
+          // Note: sort comparator must be synchronous
+          const compareValue = _executeFunction(comparer, [a, b], _contextStack, sourceCodeInfo)
+          if (compareValue instanceof Promise) {
+            throw new TypeError('Async functions cannot be used as sort comparators')
+          }
           assertNumber(compareValue, sourceCodeInfo, { finite: true })
           return compareValue
         })

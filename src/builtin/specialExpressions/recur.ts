@@ -1,5 +1,6 @@
 import { RecurSignal } from '../../errors'
 import type { AstNode, SpecialExpressionNode } from '../../parser/types'
+import { chain, mapSequential } from '../../utils/maybePromise'
 import type { BuiltinSpecialExpression, CustomDocs } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 
@@ -40,8 +41,12 @@ export const recurSpecialExpression: BuiltinSpecialExpression<null, RecurNode> =
   docs,
   evaluate: (node, contextStack, { evaluateNode }) => {
     const params = node[1][1]
-    const evaluatedParams = params.map(paramNode => evaluateNode(paramNode, contextStack))
-    throw new RecurSignal(evaluatedParams)
+    return chain(
+      mapSequential(params, paramNode => evaluateNode(paramNode, contextStack)),
+      (evaluatedParams) => {
+        throw new RecurSignal(evaluatedParams)
+      },
+    )
   },
   evaluateAsNormalExpression: (params) => {
     throw new RecurSignal(params)

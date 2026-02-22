@@ -6,6 +6,7 @@ import type {
   SpecialExpressionNode,
 } from '../parser/types'
 import type { SourceCodeInfo } from '../tokenizer/token'
+import type { MaybePromise } from '../utils/maybePromise'
 import type { SpecialExpressions } from '.'
 
 export type Arity = { min?: number, max?: number }
@@ -123,7 +124,7 @@ type NormalExpressionEvaluator<T> = (
   sourceCodeInfo: SourceCodeInfo | undefined,
   contextStack: ContextStack,
   { executeFunction }: { executeFunction: ExecuteFunction },
-) => T
+) => MaybePromise<T>
 
 export interface BuiltinNormalExpression<T> {
   evaluate: NormalExpressionEvaluator<T>
@@ -141,7 +142,7 @@ interface EvaluateHelpers {
   getUndefinedSymbols: GetUndefinedSymbols
 }
 export interface BuiltinSpecialExpression<T, N extends SpecialExpressionNode> {
-  evaluate: (node: N, contextStack: ContextStack, helpers: EvaluateHelpers) => T
+  evaluate: (node: N, contextStack: ContextStack, helpers: EvaluateHelpers) => MaybePromise<T>
   evaluateAsNormalExpression?: NormalExpressionEvaluator<T>
   arity: Arity
   docs?: SpecialExpressionDocs

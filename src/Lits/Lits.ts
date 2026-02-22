@@ -13,6 +13,7 @@ import { builtin } from '../builtin'
 import { AutoCompleter } from '../AutoCompleter/AutoCompleter'
 import type { Arity } from '../builtin/interface'
 import type { LitsModule } from '../builtin/modules/interface'
+import type { MaybePromise } from '../utils/maybePromise'
 
 import { parse } from '../parser'
 import { Cache } from './Cache'
@@ -82,16 +83,38 @@ export class Lits {
     }
   }
 
+  public readonly async = {
+    run: async (program: string, params: ContextParams & FilePathParams = {}): Promise<unknown> => {
+      const ast = this.generateAst(program, params)
+      return this.evaluate(ast, params)
+    },
+    context: async (programOrAst: string | Ast, params: ContextParams & FilePathParams = {}): Promise<Context> => {
+      const ast = typeof programOrAst === 'string' ? this.generateAst(programOrAst, params) : programOrAst
+      const contextStack = createContextStack(params, this.modules)
+      await evaluate(ast, contextStack)
+      return contextStack.globalContext
+    },
+    apply: async (fn: LitsFunction, fnParams: unknown[], params: ContextParams = {}): Promise<unknown> => {
+      return this.apply(fn, fnParams, params)
+    },
+  }
+
   public run(program: string, params: ContextParams & FilePathParams = {}): unknown {
     const ast = this.generateAst(program, params)
     const result = this.evaluate(ast, params)
+    if (result instanceof Promise) {
+      throw new TypeError('Unexpected async result in synchronous run(). Use lits.async.run() for async operations.')
+    }
     return result
   }
 
   public context(programOrAst: string | Ast, params: ContextParams & FilePathParams = {}): Context {
     const ast = typeof programOrAst === 'string' ? this.generateAst(programOrAst, params) : programOrAst
     const contextStack = createContextStack(params, this.modules)
-    evaluate(ast, contextStack)
+    const result = evaluate(ast, contextStack)
+    if (result instanceof Promise) {
+      throw new TypeError('Unexpected async result in synchronous context(). Use lits.async.context() for async operations.')
+    }
     return contextStack.globalContext
   }
 
@@ -118,7 +141,7 @@ export class Lits {
     return ast
   }
 
-  public evaluate(ast: Ast, params: ContextParams): Any {
+  public evaluate(ast: Ast, params: ContextParams): MaybePromise<Any> {
     const contextStack = createContextStack(params, this.modules)
     return evaluate(ast, contextStack)
   }
@@ -131,7 +154,7 @@ export class Lits {
     return untokenize(tokenStream)
   }
 
-  public apply(fn: LitsFunction, fnParams: unknown[], params: ContextParams = {}): Any {
+  public apply(fn: LitsFunction, fnParams: unknown[], params: ContextParams = {}): MaybePromise<Any> {
     const fnName = 'FN_2eb7b316_471c_5bfa_90cb_d3dfd9164a59'
     const program = this.generateApplyFunctionCall(fnName, fnParams)
 

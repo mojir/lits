@@ -1,3 +1,5 @@
+import type { MaybePromise } from '../../../../utils/maybePromise'
+import { chain } from '../../../../utils/maybePromise'
 import type { SequenceDefinition } from '.'
 
 function isHappyNumber(n: number): boolean {
@@ -54,25 +56,17 @@ export const happySequence: SequenceDefinition<'happy'> = {
   },
   'happy?': n => isHappyNumber(n),
   'happy-take-while': (takeWhile) => {
-    const happyNumbers = []
-
-    for (let i = 1; ; i++) {
-      let n = i
-      const seen = new Set<number>()
-      while (n !== 1 && !seen.has(n)) {
-        seen.add(n)
-        n = String(n)
-          .split('')
-          .reduce((sum, digit) => sum + Number(digit) ** 2, 0)
-      }
-      if (n === 1) {
-        if (!takeWhile(i, happyNumbers.length)) {
-          break
-        }
+    const happyNumbers: number[] = []
+    function loop(i: number): MaybePromise<number[]> {
+      if (!isHappyNumber(i))
+        return loop(i + 1)
+      return chain(takeWhile(i, happyNumbers.length), (keep) => {
+        if (!keep)
+          return happyNumbers
         happyNumbers.push(i)
-      }
+        return loop(i + 1)
+      })
     }
-
-    return happyNumbers
+    return loop(1)
   },
 }

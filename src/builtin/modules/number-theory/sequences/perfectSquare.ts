@@ -1,3 +1,5 @@
+import type { MaybePromise } from '../../../../utils/maybePromise'
+import { chain } from '../../../../utils/maybePromise'
 import type { SequenceDefinition } from '.'
 
 export const perfectSquareSequence: SequenceDefinition<'perfect-square'> = {
@@ -10,14 +12,16 @@ export const perfectSquareSequence: SequenceDefinition<'perfect-square'> = {
   },
   'perfect-square?': n => n > 0 && Number.isInteger(Math.sqrt(n)),
   'perfect-square-take-while': (takeWhile) => {
-    const perfectSquares = []
-    for (let i = 1; ; i++) {
+    const perfectSquares: number[] = []
+    function loop(i: number): MaybePromise<number[]> {
       const value = i ** 2
-      if (!takeWhile(value, i)) {
-        break
-      }
-      perfectSquares.push(value)
+      return chain(takeWhile(value, i), (keep) => {
+        if (!keep)
+          return perfectSquares
+        perfectSquares.push(value)
+        return loop(i + 1)
+      })
     }
-    return perfectSquares
+    return loop(1)
   },
 }

@@ -1,3 +1,5 @@
+import type { MaybePromise } from '../../../../utils/maybePromise'
+import { chain } from '../../../../utils/maybePromise'
 import type { SequenceDefinition } from '.'
 
 /**
@@ -8,8 +10,8 @@ import type { SequenceDefinition } from '.'
  * @returns An array of lucky numbers
  */
 function generateLuckyNumbers(
-  predicate: (luckyNumber: number, index: number) => boolean,
-): number[] {
+  predicate: (luckyNumber: number, index: number) => MaybePromise<boolean>,
+): MaybePromise<number[]> {
   // Start with counting from 1
   const numbers: number[] = []
   for (let i = 1; i <= 2000; i++) {
@@ -28,52 +30,59 @@ function generateLuckyNumbers(
   let count = 1
 
   // Check if we should continue after the first number
-  if (!predicate(1, 0)) {
-    return []
-  }
+  return chain(predicate(1, 0), (keepFirst) => {
+    if (!keepFirst)
+      return []
 
-  // Continue the sieve process
-  let index = 1 // Start with the second element (index 1, which is 3)
+    // Continue the sieve process
+    let index = 1 // Start with the second element (index 1, which is 3)
 
-  while (index < filteredNumbers.length) {
-    // Get the current lucky number
-    const luckyNumber = filteredNumbers[index]!
+    function loop(): MaybePromise<number[]> {
+      if (index >= filteredNumbers.length)
+        return luckyNumbers
 
-    // Check if we should continue
-    if (!predicate(luckyNumber, count)) {
-      break
+      // Get the current lucky number
+      const luckyNumber = filteredNumbers[index]!
+
+      // Check if we should continue
+      return chain(predicate(luckyNumber, count), (keep) => {
+        if (!keep)
+          return luckyNumbers
+
+        // Add to result
+        luckyNumbers.push(luckyNumber)
+        count++
+
+        // Apply the sieve
+        const step = luckyNumber
+        const newFiltered: number[] = []
+
+        for (let i = 0; i < filteredNumbers.length; i++) {
+          if ((i + 1) % step !== 0) { // Keep numbers not at positions divisible by step
+            newFiltered.push(filteredNumbers[i]!)
+          }
+        }
+
+        filteredNumbers = newFiltered
+        index++
+
+        // If we're running low on numbers, extend the sequence
+        if (index >= filteredNumbers.length - 5) {
+          const lastNum = filteredNumbers[filteredNumbers.length - 1]!
+          let next = lastNum + 2
+
+          while (filteredNumbers.length < index + 1000) {
+            filteredNumbers.push(next)
+            next += 2
+          }
+        }
+
+        return loop()
+      })
     }
 
-    // Add to result
-    luckyNumbers.push(luckyNumber)
-    count++
-
-    // Apply the sieve
-    const step = luckyNumber
-    const newFiltered: number[] = []
-
-    for (let i = 0; i < filteredNumbers.length; i++) {
-      if ((i + 1) % step !== 0) { // Keep numbers not at positions divisible by step
-        newFiltered.push(filteredNumbers[i]!)
-      }
-    }
-
-    filteredNumbers = newFiltered
-    index++
-
-    // If we're running low on numbers, extend the sequence
-    if (index >= filteredNumbers.length - 5) {
-      const lastNum = filteredNumbers[filteredNumbers.length - 1]!
-      let next = lastNum + 2
-
-      while (filteredNumbers.length < index + 1000) {
-        filteredNumbers.push(next)
-        next += 2
-      }
-    }
-  }
-
-  return luckyNumbers
+    return loop()
+  })
 }
 
 /**
@@ -133,6 +142,6 @@ function getLuckyNumbers(count: number): number[] {
 
 export const luckySequence: SequenceDefinition<'lucky'> = {
   'lucky-seq': length => getLuckyNumbers(length),
-  'lucky?': n => generateLuckyNumbers(l => l <= n).includes(n),
+  'lucky?': n => (generateLuckyNumbers(l => l <= n) as number[]).includes(n),
   'lucky-take-while': takeWhile => generateLuckyNumbers(takeWhile),
 }

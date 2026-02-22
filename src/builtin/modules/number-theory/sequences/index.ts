@@ -4,6 +4,8 @@ import { assertFunctionLike } from '../../../../typeGuards/lits'
 import { assertNumber } from '../../../../typeGuards/number'
 import { assertString } from '../../../../typeGuards/string'
 import { toFixedArity } from '../../../../utils/arity'
+import type { MaybePromise } from '../../../../utils/maybePromise'
+import { chain } from '../../../../utils/maybePromise'
 import type { BuiltinNormalExpression, BuiltinNormalExpressions } from '../../../../builtin/interface'
 import { abundantSequence } from './abundant'
 import { arithmeticNormalExpressions } from './arithmetic'
@@ -43,7 +45,7 @@ type NthKey<T extends string> = `${T}-nth`
 type PredKey<T extends string> = `${T}?`
 
 type SeqFunction<Type extends number | string> = (length: number, sourceCodeInfo: SourceCodeInfo | undefined) => Type[]
-type TakeWhileFunction<Type extends number | string> = (pred: (value: Type, index: number) => boolean, sourceCodeInfo: SourceCodeInfo | undefined) => Type[]
+type TakeWhileFunction<Type extends number | string> = (pred: (value: Type, index: number) => MaybePromise<boolean>, sourceCodeInfo: SourceCodeInfo | undefined) => MaybePromise<Type[]>
 type PredFunction<Type extends number | string> = (n: Type, sourceCodeInfo: SourceCodeInfo | undefined) => boolean
 
 export type SequenceKeys<T extends string> = SeqKey<T> | TakeWhileKey<T> | NthKey<T> | PredKey<T>
@@ -122,16 +124,16 @@ function getFiniteNumberSequence<T extends string>(name: T, sequence: number[]):
   return {
     [`${name}-seq`]: createSeqNormalExpression(length => sequence.slice(0, length), sequence.length),
     [`${name}-take-while`]: createTakeWhileNormalExpression((takeWhile) => {
-      let i = 0
-      for (i = 0; ; i += 1) {
-        if (i >= sequence.length) {
-          break
-        }
-        if (!takeWhile(sequence[i]!, i)) {
-          break
-        }
+      function loop(i: number): MaybePromise<number[]> {
+        if (i >= sequence.length)
+          return sequence.slice(0, i)
+        return chain(takeWhile(sequence[i]!, i), (keep) => {
+          if (!keep)
+            return sequence.slice(0, i)
+          return loop(i + 1)
+        })
       }
-      return sequence.slice(0, i)
+      return loop(0)
     }, sequence.length),
     [`${name}-nth`]: createNthNormalExpression(() => sequence, sequence.length),
     [`${name}?`]: createNumberPredNormalExpression(n => sequence.includes(n)),
@@ -193,14 +195,19 @@ function createTakeWhileNormalExpression<Type extends number | string>(
     evaluate: (params, sourceCodeInfo, contextStack, { executeFunction }) => {
       const fn = params[0]
       assertFunctionLike(fn, sourceCodeInfo)
-      const result = takeWhileFunction((value, index) => !!executeFunction(fn, [value, index], contextStack), sourceCodeInfo)
-      if (typeof result[0] === 'number') {
-        /* v8 ignore next 3 */
-        if (result.some(n => (n as number) > Number.MAX_SAFE_INTEGER)) {
-          throw new LitsError('Result exceeds maximum safe integer', sourceCodeInfo)
+      const result = takeWhileFunction(
+        (value, index) => chain(executeFunction(fn, [value, index], contextStack), val => !!val),
+        sourceCodeInfo,
+      )
+      return chain(result, (resolved) => {
+        if (typeof resolved[0] === 'number') {
+          /* v8 ignore next 3 */
+          if (resolved.some(n => (n as number) > Number.MAX_SAFE_INTEGER)) {
+            throw new LitsError('Result exceeds maximum safe integer', sourceCodeInfo)
+          }
         }
-      }
-      return result
+        return resolved
+      })
     },
     arity: typeof maxLength === 'number' ? { max: 1 } : toFixedArity(1),
   }

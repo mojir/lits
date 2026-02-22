@@ -1,4 +1,6 @@
 import { getProperDivisors } from '../divisors'
+import type { MaybePromise } from '../../../../utils/maybePromise'
+import { chain } from '../../../../utils/maybePromise'
 import type { SequenceDefinition } from '.'
 
 function isAbundant(num: number): boolean {
@@ -21,16 +23,17 @@ export const abundantSequence: SequenceDefinition<'abundant'> = {
   },
   'abundant?': n => isAbundant(n),
   'abundant-take-while': (takeWhile) => {
-    const abundants = []
-    for (let i = 2; ; i += 1) {
-      if (!isAbundant(i)) {
-        continue
-      }
-      if (!takeWhile(i, abundants.length)) {
-        break
-      }
-      abundants.push(i)
+    const abundants: number[] = []
+    function loop(i: number): MaybePromise<number[]> {
+      if (!isAbundant(i))
+        return loop(i + 1)
+      return chain(takeWhile(i, abundants.length), (keep) => {
+        if (!keep)
+          return abundants
+        abundants.push(i)
+        return loop(i + 1)
+      })
     }
-    return abundants
+    return loop(2)
   },
 }

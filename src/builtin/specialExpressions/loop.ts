@@ -5,6 +5,8 @@ import type { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/t
 import { asAny } from '../../typeGuards/lits'
 import { joinSets } from '../../utils'
 import { valueToString } from '../../utils/debug/debugTools'
+import type { MaybePromise } from '../../utils/maybePromise'
+import { chain, reduceSequential, tryCatch } from '../../utils/maybePromise'
 import { evaluateBindingNodeValues, getAllBindingTargetNames } from '../bindingNode'
 import type { BuiltinSpecialExpression, CustomDocs } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
@@ -44,43 +46,91 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
   docs,
   evaluate: (node, contextStack, { evaluateNode }) => {
     const bindingNodes = node[1][1]
-    const bindingContext: Context = bindingNodes.reduce((result: Context, bindingNode) => {
-      const val = evaluateNode(bindingNode[1][1], contextStack.create(result))
-      const valueRecord = evaluateBindingNodeValues(bindingNode[1][0], val, Node => evaluateNode(Node, contextStack))
-      Object.entries(valueRecord).forEach(([name, value]) => {
-        result[name] = { value }
-      })
-      return result
-    }, {})
-    const newContextStack = contextStack.create(bindingContext)
 
-    const body = node[1][2]
-    for (;;) {
-      let result: Any = null
-      try {
-        result = evaluateNode(body, newContextStack)
-      }
-      catch (error) {
-        if (error instanceof RecurSignal) {
-          const params = error.params
-          if (params.length !== bindingNodes.length) {
-            throw new LitsError(
-              `recur expected ${bindingNodes.length} parameters, got ${valueToString(params.length)}`,
-              node[2],
-            )
-          }
-          bindingNodes.forEach((bindingNode, index) => {
-            const valueRecord = evaluateBindingNodeValues(bindingNode[1][0], asAny(params[index]), Node => evaluateNode(Node, contextStack))
-            for (const [name, value] of Object.entries(valueRecord)) {
-              bindingContext[name]!.value = value
-            }
+    // Set up initial binding context sequentially (bindings may depend on each other)
+    const initialContext: Context = {}
+    const setupBindings = reduceSequential(
+      bindingNodes,
+      (result: Context, bindingNode) => {
+        return chain(evaluateNode(bindingNode[1][1], contextStack.create(result)), (val) => {
+          const valueRecord = evaluateBindingNodeValues(bindingNode[1][0], val, Node => evaluateNode(Node, contextStack) as Any)
+          Object.entries(valueRecord).forEach(([name, value]) => {
+            result[name] = { value }
           })
-          continue
+          return result
+        })
+      },
+      initialContext,
+    )
+
+    return chain(setupBindings, (bindingContext) => {
+      const newContextStack = contextStack.create(bindingContext)
+      const body = node[1][2]
+
+      function rebindAndIterate(params: unknown[]): MaybePromise<Any> {
+        if (params.length !== bindingNodes.length) {
+          throw new LitsError(
+            `recur expected ${bindingNodes.length} parameters, got ${valueToString(params.length)}`,
+            node[2],
+          )
         }
-        throw error
+        bindingNodes.forEach((bindingNode, index) => {
+          const valueRecord = evaluateBindingNodeValues(bindingNode[1][0], asAny(params[index]), Node => evaluateNode(Node, contextStack) as Any)
+          for (const [name, value] of Object.entries(valueRecord)) {
+            bindingContext[name]!.value = value
+          }
+        })
+        return iterate()
       }
-      return result
-    }
+
+      function iterate(): MaybePromise<Any> {
+        return tryCatch(
+          () => evaluateNode(body, newContextStack),
+          (error) => {
+            if (error instanceof RecurSignal) {
+              return rebindAndIterate(error.params)
+            }
+            throw error
+          },
+        )
+      }
+
+      // Use sync for(;;) loop for the sync case to avoid stack overflow
+      for (;;) {
+        try {
+          const result = evaluateNode(body, newContextStack)
+          if (result instanceof Promise) {
+            // Async path: handle recur via promise chain
+            return result.catch((error: unknown) => {
+              if (error instanceof RecurSignal) {
+                return rebindAndIterate(error.params)
+              }
+              throw error
+            })
+          }
+          return result
+        }
+        catch (error) {
+          if (error instanceof RecurSignal) {
+            const params = error.params
+            if (params.length !== bindingNodes.length) {
+              throw new LitsError(
+                `recur expected ${bindingNodes.length} parameters, got ${valueToString(params.length)}`,
+                node[2],
+              )
+            }
+            bindingNodes.forEach((bindingNode, index) => {
+              const valueRecord = evaluateBindingNodeValues(bindingNode[1][0], asAny(params[index]), Node => evaluateNode(Node, contextStack) as Any)
+              for (const [name, value] of Object.entries(valueRecord)) {
+                bindingContext[name]!.value = value
+              }
+            })
+            continue
+          }
+          throw error
+        }
+      }
+    })
   },
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => {
     const bindingNodes = node[1][1]

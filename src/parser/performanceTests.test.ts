@@ -82,7 +82,7 @@ describe.skip('performance comparison', () => {
       let startTime = performance.now()
       for (let i = 0; i < iterations; i++) {
         const ast = lits.parse(expression.tokenStream)
-        lits.evaluate(ast, {})
+        void lits.evaluate(ast, {})
       }
       report.lits = (performance.now() - startTime) * 1000 / iterations
 
@@ -124,7 +124,7 @@ describe.skip('performance comparison', () => {
 
       let startTime = performance.now()
       for (let i = 0; i < iterations; i++) {
-        lits.evaluate(expression.ast, {})
+        void lits.evaluate(expression.ast, {})
       }
       report.lits = (performance.now() - startTime) * 1000 / iterations
 

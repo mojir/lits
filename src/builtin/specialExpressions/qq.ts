@@ -2,6 +2,7 @@ import type { Any } from '../../interface'
 import type { AstNode, SpecialExpressionNode } from '../../parser/types'
 import { isUserDefinedSymbolNode } from '../../typeGuards/astNode'
 import { asAny } from '../../typeGuards/lits'
+import { chain, reduceSequential } from '../../utils/maybePromise'
 import type { BuiltinSpecialExpression, FunctionDocs } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 
@@ -47,16 +48,29 @@ export const qqSpecialExpression: BuiltinSpecialExpression<Any, QqNode> = {
   arity: { min: 1 },
   docs,
   evaluate: (node, contextStack, { evaluateNode }) => {
-    for (const param of node[1][1]) {
-      if (isUserDefinedSymbolNode(param) && contextStack.lookUp(param) === null) {
-        continue
-      }
-      const result = evaluateNode(param, contextStack)
-      if (result !== null) {
-        return result
-      }
-    }
-    return null
+    // Use a sentinel to know we haven't found a non-null value yet
+    const SENTINEL = Symbol('qq-sentinel')
+    type SentinelOrAny = Any | typeof SENTINEL
+    return chain(
+      reduceSequential(
+        node[1][1],
+        (acc: SentinelOrAny, param) => {
+          if (acc !== SENTINEL)
+            return acc
+          if (isUserDefinedSymbolNode(param) && contextStack.lookUp(param) === null) {
+            return SENTINEL
+          }
+          return chain(evaluateNode(param, contextStack), (result) => {
+            if (result !== null) {
+              return result
+            }
+            return SENTINEL
+          })
+        },
+        SENTINEL as SentinelOrAny,
+      ),
+      result => result === SENTINEL ? null : result as Any,
+    )
   },
 
   evaluateAsNormalExpression: (params, sourceCodeInfo) => {

@@ -2,13 +2,14 @@ import type { Any, Arr } from '../interface'
 import type { AstNode, FunctionLike } from '../parser/types'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { isUnknownRecord } from '../typeGuards'
+import type { MaybePromise } from '../utils/maybePromise'
 import type { ContextStack } from './ContextStack'
 
 interface ContextEntry { value: Any }
 export type Context = Record<string, ContextEntry>
 
-export type EvaluateNode = (node: AstNode, contextStack: ContextStack) => Any
-export type ExecuteFunction = (fn: FunctionLike, params: Arr, contextStack: ContextStack, sourceCodeInfo?: SourceCodeInfo) => Any
+export type EvaluateNode = (node: AstNode, contextStack: ContextStack) => MaybePromise<Any>
+export type ExecuteFunction = (fn: FunctionLike, params: Arr, contextStack: ContextStack, sourceCodeInfo?: SourceCodeInfo) => MaybePromise<Any>
 
 export type LookUpResult = ContextEntry | null
 

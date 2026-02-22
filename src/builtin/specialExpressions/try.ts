@@ -2,6 +2,7 @@ import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
 import type { AstNode, SpecialExpressionNode, SymbolNode } from '../../parser/types'
 import { joinSets } from '../../utils'
+import { tryCatch } from '../../utils/maybePromise'
 import type { BuiltinSpecialExpression, CustomDocs } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 
@@ -43,17 +44,17 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any, TryNode> = {
   docs,
   evaluate: (node, contextStack, { evaluateNode }) => {
     const [, tryExpression, errorSymbol, catchExpression] = node[1]
-    try {
-      return evaluateNode(tryExpression, contextStack)
-    }
-    catch (error) {
-      const newContext: Context = errorSymbol
-        ? {
-            [errorSymbol[1]]: { value: error as Any },
-          }
-        : {}
-      return evaluateNode(catchExpression, contextStack.create(newContext))
-    }
+    return tryCatch(
+      () => evaluateNode(tryExpression, contextStack),
+      (error) => {
+        const newContext: Context = errorSymbol
+          ? {
+              [errorSymbol[1]]: { value: error as Any },
+            }
+          : {}
+        return evaluateNode(catchExpression, contextStack.create(newContext))
+      },
+    )
   },
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => {
     const [, tryExpression, errorSymbol, catchExpression] = node[1]

@@ -1,5 +1,6 @@
 import type { Any } from '../../interface'
 import type { AstNode, SpecialExpressionNode } from '../../parser/types'
+import { chain } from '../../utils/maybePromise'
 import type { BuiltinSpecialExpression, CustomDocs } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 
@@ -32,13 +33,15 @@ export const unlessSpecialExpression: BuiltinSpecialExpression<Any, UnlessNode> 
   docs,
   evaluate: (node, contextStack, { evaluateNode }) => {
     const [conditionNode, trueNode, falseNode] = node[1][1]
-    if (!evaluateNode(conditionNode, contextStack)) {
-      return evaluateNode(trueNode, contextStack)
-    }
-    else if (falseNode) {
-      return evaluateNode(falseNode, contextStack)
-    }
-    return null
+    return chain(evaluateNode(conditionNode, contextStack), (condition) => {
+      if (!condition) {
+        return evaluateNode(trueNode, contextStack)
+      }
+      else if (falseNode) {
+        return evaluateNode(falseNode, contextStack)
+      }
+      return null
+    })
   },
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) =>
     getUndefinedSymbols(node[1][1].filter(n => !!n), contextStack, builtin, evaluateNode),
