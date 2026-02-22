@@ -30,9 +30,10 @@ function addToContext(
     bindingChain = chain(bindingChain, () => {
       const [target, bindingValue] = bindingNode[1]
       return chain(evaluateNode(bindingValue, contextStack), (val) => {
-        const valueRecord = evaluateBindingNodeValues(target, val, Node => evaluateNode(Node, contextStack) as Any)
-        Object.entries(valueRecord).forEach(([name, value]) => {
-          context[name] = { value }
+        return chain(evaluateBindingNodeValues(target, val, Node => evaluateNode(Node, contextStack)), (valueRecord) => {
+          Object.entries(valueRecord).forEach(([name, value]) => {
+            context[name] = { value }
+          })
         })
       })
     })
@@ -83,46 +84,47 @@ function evaluateLoop(
         }
 
         const val = asAny(seq[index], sourceCodeInfo)
-        const valueRecord = evaluateBindingNodeValues(targetNode, val, Node => evaluateNode(Node, newContextStack) as Any)
-        Object.entries(valueRecord).forEach(([name, value]) => {
-          context[name] = { value }
-        })
+        return chain(evaluateBindingNodeValues(targetNode, val, Node => evaluateNode(Node, newContextStack)), (valueRecord) => {
+          Object.entries(valueRecord).forEach(([name, value]) => {
+            context[name] = { value }
+          })
 
-        return chain(
-          letBindings
-            ? addToContext(letBindings, context, newContextStack, evaluateNode)
-            : undefined as unknown as void,
-          () => {
-            if (whenNode) {
-              return chain(evaluateNode(whenNode, newContextStack), (whenResult) => {
-                if (!whenResult) {
-                  bindingIndices[bindingIndex] = asNonUndefined(bindingIndices[bindingIndex], sourceCodeInfo) + 1
-                  return 'skip'
-                }
-                if (whileNode) {
-                  return chain(evaluateNode(whileNode, newContextStack), (whileResult) => {
-                    if (!whileResult) {
-                      bindingIndices[bindingIndex] = Number.POSITIVE_INFINITY
-                      return 'skip'
-                    }
-                    return processBinding(bindingIndex + 1)
-                  })
-                }
-                return processBinding(bindingIndex + 1)
-              })
-            }
-            if (whileNode) {
-              return chain(evaluateNode(whileNode, newContextStack), (whileResult) => {
-                if (!whileResult) {
-                  bindingIndices[bindingIndex] = Number.POSITIVE_INFINITY
-                  return 'skip'
-                }
-                return processBinding(bindingIndex + 1)
-              })
-            }
-            return processBinding(bindingIndex + 1)
-          },
-        )
+          return chain(
+            letBindings
+              ? addToContext(letBindings, context, newContextStack, evaluateNode)
+              : undefined as unknown as void,
+            () => {
+              if (whenNode) {
+                return chain(evaluateNode(whenNode, newContextStack), (whenResult) => {
+                  if (!whenResult) {
+                    bindingIndices[bindingIndex] = asNonUndefined(bindingIndices[bindingIndex], sourceCodeInfo) + 1
+                    return 'skip' as const
+                  }
+                  if (whileNode) {
+                    return chain(evaluateNode(whileNode, newContextStack), (whileResult) => {
+                      if (!whileResult) {
+                        bindingIndices[bindingIndex] = Number.POSITIVE_INFINITY
+                        return 'skip' as const
+                      }
+                      return processBinding(bindingIndex + 1)
+                    })
+                  }
+                  return processBinding(bindingIndex + 1)
+                })
+              }
+              if (whileNode) {
+                return chain(evaluateNode(whileNode, newContextStack), (whileResult) => {
+                  if (!whileResult) {
+                    bindingIndices[bindingIndex] = Number.POSITIVE_INFINITY
+                    return 'skip' as const
+                  }
+                  return processBinding(bindingIndex + 1)
+                })
+              }
+              return processBinding(bindingIndex + 1)
+            },
+          )
+        })
       })
     }
 

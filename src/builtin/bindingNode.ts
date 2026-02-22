@@ -5,6 +5,8 @@ import type { SourceCodeInfo } from '../tokenizer/token'
 import { assertUnknownRecord } from '../typeGuards'
 import { assertArray } from '../typeGuards/array'
 import { asAny, assertAny } from '../typeGuards/lits'
+import type { MaybePromise } from '../utils/maybePromise'
+import { chain, forEachSequential } from '../utils/maybePromise'
 
 export function walkDefaults(
   bindingTarget: BindingTarget,
@@ -35,49 +37,64 @@ export function walkDefaults(
 export function evaluateBindingNodeValues(
   target: BindingTarget,
   value: Any,
-  evaluate: (Node: AstNode) => Any,
-): Record<string, Any> {
+  evaluate: (Node: AstNode) => MaybePromise<Any>,
+): MaybePromise<Record<string, Any>> {
   const sourceCodeInfo = target[2]
   const record: Record<string, Any> = {}
-  createRecord(target, value, evaluate, sourceCodeInfo, record)
-  return record
+  return chain(createRecord(target, value, evaluate, sourceCodeInfo, record), () => record)
 }
 
 function createRecord(
   bindingTarget: BindingTarget,
   value: Any,
-  evaluate: (Node: AstNode) => Any,
+  evaluate: (Node: AstNode) => MaybePromise<Any>,
   sourceCodeInfo: SourceCodeInfo | undefined,
   record: Record<string, Any>,
-): void {
+): MaybePromise<void> {
   if (bindingTarget[0] === bindingTargetTypes.object) {
     assertUnknownRecord(value, sourceCodeInfo)
     const capturedKeys = new Set<string>()
     let restElement: RestBindingTarget | undefined
-    Object.entries(bindingTarget[1][0]).forEach(([key, element]) => {
-      if (element[0] === bindingTargetTypes.rest) {
-        restElement = element
-        return
-      }
-      capturedKeys.add(key)
-      const val = (value[key] !== undefined ? value[key] : element[1][1] && evaluate(element[1][1])) ?? null
-      assertAny(val, sourceCodeInfo)
-      createRecord(element, val, evaluate, sourceCodeInfo, record)
-    })
-    if (restElement) {
-      const restValues = Object.entries(value)
-        .filter(([key]) => !capturedKeys.has(key))
-        .reduce((acc: Record<string, Any>, [key, val]) => {
-          acc[key] = asAny(val)
-          return acc
-        }, {})
+    const entries = Object.entries(bindingTarget[1][0])
 
-      record[restElement[1][0]] = restValues
-    }
+    return chain(
+      forEachSequential(entries, ([key, element]) => {
+        if (element[0] === bindingTargetTypes.rest) {
+          restElement = element
+          return
+        }
+        capturedKeys.add(key)
+        const existingVal = value[key]
+        const maybeVal: MaybePromise<Any> = existingVal !== undefined
+          ? existingVal as Any
+          : element[1][1]
+            ? evaluate(element[1][1])
+            : null
+        return chain(maybeVal, (resolvedVal) => {
+          const val = resolvedVal ?? null
+          assertAny(val, sourceCodeInfo)
+          return createRecord(element, val, evaluate, sourceCodeInfo, record)
+        })
+      }),
+      () => {
+        if (restElement) {
+          const restValues = Object.entries(value)
+            .filter(([key]) => !capturedKeys.has(key))
+            .reduce((acc: Record<string, Any>, [key, val]) => {
+              acc[key] = asAny(val)
+              return acc
+            }, {})
+
+          record[restElement[1][0]] = restValues
+        }
+      },
+    )
   }
   else if (bindingTarget[0] === bindingTargetTypes.array) {
     let restIndex: number | null = null
     assertArray(value, sourceCodeInfo)
+
+    const elements: Array<{ element: BindingTarget, index: number }> = []
     for (let index = 0; index < bindingTarget[1][0].length; index += 1) {
       const element = bindingTarget[1][0][index] ?? null
       if (element === null) {
@@ -87,15 +104,31 @@ function createRecord(
         restIndex = index
         break
       }
-      const val = (value[index] !== undefined ? value[index] : element[1][1] && evaluate(element[1][1])) ?? null
-      assertAny(val, sourceCodeInfo)
-      createRecord(element, val, evaluate, sourceCodeInfo, record)
+      elements.push({ element, index })
     }
-    if (restIndex !== null) {
-      const restValues = value.slice(restIndex)
-      const restElement = bindingTarget[1][0][restIndex]! as RestBindingTarget
-      record[restElement[1][0]] = restValues
-    }
+
+    return chain(
+      forEachSequential(elements, ({ element, index }) => {
+        const existingVal = value[index]
+        const maybeVal: MaybePromise<Any> = existingVal !== undefined
+          ? existingVal as Any
+          : element[1][1]
+            ? evaluate(element[1][1])
+            : null
+        return chain(maybeVal, (resolvedVal) => {
+          const val = resolvedVal ?? null
+          assertAny(val, sourceCodeInfo)
+          return createRecord(element, val, evaluate, sourceCodeInfo, record)
+        })
+      }),
+      () => {
+        if (restIndex !== null) {
+          const restValues = value.slice(restIndex)
+          const restElement = bindingTarget[1][0][restIndex]! as RestBindingTarget
+          record[restElement[1][0]] = restValues
+        }
+      },
+    )
   }
   else if (bindingTarget[0] === bindingTargetTypes.rest) {
     record[bindingTarget[1][0]] = asAny(value)

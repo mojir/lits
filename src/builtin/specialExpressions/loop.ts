@@ -6,7 +6,7 @@ import { asAny } from '../../typeGuards/lits'
 import { joinSets } from '../../utils'
 import { valueToString } from '../../utils/debug/debugTools'
 import type { MaybePromise } from '../../utils/maybePromise'
-import { chain, reduceSequential, tryCatch } from '../../utils/maybePromise'
+import { chain, forEachSequential, reduceSequential, tryCatch } from '../../utils/maybePromise'
 import { evaluateBindingNodeValues, getAllBindingTargetNames } from '../bindingNode'
 import type { BuiltinSpecialExpression, CustomDocs } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
@@ -53,11 +53,12 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
       bindingNodes,
       (result: Context, bindingNode) => {
         return chain(evaluateNode(bindingNode[1][1], contextStack.create(result)), (val) => {
-          const valueRecord = evaluateBindingNodeValues(bindingNode[1][0], val, Node => evaluateNode(Node, contextStack) as Any)
-          Object.entries(valueRecord).forEach(([name, value]) => {
-            result[name] = { value }
+          return chain(evaluateBindingNodeValues(bindingNode[1][0], val, Node => evaluateNode(Node, contextStack)), (valueRecord) => {
+            Object.entries(valueRecord).forEach(([name, value]) => {
+              result[name] = { value }
+            })
+            return result
           })
-          return result
         })
       },
       initialContext,
@@ -74,13 +75,16 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
             node[2],
           )
         }
-        bindingNodes.forEach((bindingNode, index) => {
-          const valueRecord = evaluateBindingNodeValues(bindingNode[1][0], asAny(params[index]), Node => evaluateNode(Node, contextStack) as Any)
-          for (const [name, value] of Object.entries(valueRecord)) {
-            bindingContext[name]!.value = value
-          }
-        })
-        return iterate()
+        return chain(
+          forEachSequential(bindingNodes, (bindingNode, index) => {
+            return chain(evaluateBindingNodeValues(bindingNode[1][0], asAny(params[index]), Node => evaluateNode(Node, contextStack)), (valueRecord) => {
+              for (const [name, value] of Object.entries(valueRecord)) {
+                bindingContext[name]!.value = value
+              }
+            })
+          }),
+          () => iterate(),
+        )
       }
 
       function iterate(): MaybePromise<Any> {
@@ -119,12 +123,34 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
                 node[2],
               )
             }
-            bindingNodes.forEach((bindingNode, index) => {
-              const valueRecord = evaluateBindingNodeValues(bindingNode[1][0], asAny(params[index]), Node => evaluateNode(Node, contextStack) as Any)
+            // rebindAndIterate returns MaybePromise — if any binding default is async,
+            // we must switch to the async iterate path
+            for (let index = 0; index < bindingNodes.length; index += 1) {
+              const bindingNode = bindingNodes[index]!
+              const valueRecord = evaluateBindingNodeValues(bindingNode[1][0], asAny(params[index]), Node => evaluateNode(Node, contextStack))
+              if (valueRecord instanceof Promise) {
+                // Switch to fully async path
+                return valueRecord.then((resolved) => {
+                  for (const [name, value] of Object.entries(resolved)) {
+                    bindingContext[name]!.value = value
+                  }
+                  // Handle remaining bindings then iterate
+                  return chain(
+                    forEachSequential(bindingNodes.slice(index + 1), (bn, subIndex) => {
+                      return chain(evaluateBindingNodeValues(bn[1][0], asAny(params[index + 1 + subIndex]), Node => evaluateNode(Node, contextStack)), (vr) => {
+                        for (const [name, value] of Object.entries(vr)) {
+                          bindingContext[name]!.value = value
+                        }
+                      })
+                    }),
+                    () => iterate(),
+                  )
+                })
+              }
               for (const [name, value] of Object.entries(valueRecord)) {
                 bindingContext[name]!.value = value
               }
-            })
+            }
             continue
           }
           throw error

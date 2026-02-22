@@ -657,5 +657,115 @@ describe('async support', () => {
       )
       expect(result).toBe(6)
     })
+
+    it('should resolve async default in array destructuring via def', async () => {
+      const lits = new Lits()
+      const result = await lits.async.run(
+        'export let [a = getFive()] = []; a + 1',
+        {
+          jsFunctions: {
+            getFive: { fn: async () => 5 },
+          },
+        },
+      )
+      expect(result).toBe(6)
+    })
+
+    it('should resolve async default in object destructuring via def', async () => {
+      const lits = new Lits()
+      const result = await lits.async.run(
+        'export let { a = getFive() } = {}; a + 1',
+        {
+          jsFunctions: {
+            getFive: { fn: async () => 5 },
+          },
+        },
+      )
+      expect(result).toBe(6)
+    })
+
+    it('should resolve async default in user-defined function argument', async () => {
+      const lits = new Lits()
+      const result = await lits.async.run(
+        `
+          let foo = ([x = getFive()]) -> x * 2;
+          foo([])
+        `,
+        {
+          jsFunctions: {
+            getFive: { fn: async () => 5 },
+          },
+        },
+      )
+      expect(result).toBe(10)
+    })
+
+    it('should resolve async default in loop/recur bindings', async () => {
+      const lits = new Lits()
+      const result = await lits.async.run(
+        `
+          loop ({ x = getFive() } = {}) ->
+            if x > 0 then
+              recur({ x: x - 1 })
+            else
+              x
+            end
+        `,
+        {
+          jsFunctions: {
+            getFive: { fn: async () => 3 },
+          },
+        },
+      )
+      expect(result).toBe(0)
+    })
+
+    it('should resolve async default in for loop let-bindings', async () => {
+      const lits = new Lits()
+      const result = await lits.async.run(
+        `
+          for (pair in [[1, 2], [3, 4], [5]] let [x, y = getFive()] = pair) -> x + y
+        `,
+        {
+          jsFunctions: {
+            getFive: { fn: async () => 99 },
+          },
+        },
+      )
+      expect(result).toEqual([3, 7, 104])
+    })
+
+    it('should resolve async default in doseq let-bindings', async () => {
+      const lits = new Lits()
+      // doseq returns null, but we verify it completes without error
+      // and bindings resolve properly
+      const result = await lits.async.run(
+        `
+          doseq (pair in [[1, 2], [5]] let [x, y = getFive()] = pair) -> x + y;
+          true
+        `,
+        {
+          jsFunctions: {
+            getFive: { fn: async () => 99 },
+          },
+        },
+      )
+      expect(result).toBe(true)
+    })
+  })
+
+  describe('async — bernoulli take-while', () => {
+    it('should handle async predicate in bernoulli take-while', async () => {
+      const lits = new Lits({ modules: [numberTheoryModule] })
+      const result = await lits.async.run(
+        'let nt = import("number-theory"); nt.bernoulli-take-while(asyncPred)',
+        {
+          jsFunctions: {
+            asyncPred: { fn: async (_value: unknown, index: unknown) => (index as number) < 5 },
+          },
+        },
+      )
+      expect(result).toHaveLength(5)
+    })
   })
 })

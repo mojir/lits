@@ -2,6 +2,8 @@ import { assertFunctionLike } from '../../../../typeGuards/lits'
 import { assertNumber } from '../../../../typeGuards/number'
 import { binomialCoefficient } from '../binomialCefficient'
 import { toFixedArity } from '../../../../utils/arity'
+import type { MaybePromise } from '../../../../utils/maybePromise'
+import { chain } from '../../../../utils/maybePromise'
 import type { SequenceNormalExpressions } from '.'
 
 function getBernoulliSeq(length: number): number[] {
@@ -22,34 +24,27 @@ function getBernoulliSeq(length: number): number[] {
  * @returns Array of Bernoulli numbers generated until predicate returns false
  */
 function generateBernoulli(
-  predicate: (value: number, index: number) => boolean,
-): number[] {
-  const batchSize = 100
-  // Start with computing the Bernoulli numbers
+  predicate: (value: number, index: number) => MaybePromise<boolean>,
+): MaybePromise<number[]> {
   const bernoulli: number[] = [1]
-  let n = 1
 
-  // Continue generating as long as the predicate returns true
-  while (true) {
-    // Generate a batch of numbers at a time for efficiency
-    const targetLength = bernoulli.length + batchSize
-
-    for (; n < targetLength; n++) {
-      let sum = 0
-      for (let k = 0; k < n; k++) {
-        sum += binomialCoefficient(n + 1, k) * bernoulli[k]!
-      }
-
-      const newValue = n > 1 && n % 2 === 1 ? 0 : -sum / (n + 1)
-
-      // Check if we should continue
-      if (!predicate(newValue, n)) {
-        // We're done, return the generated sequence (including the last value)
-        return bernoulli
-      }
-      bernoulli.push(newValue)
+  function loop(n: number): MaybePromise<number[]> {
+    let sum = 0
+    for (let k = 0; k < n; k++) {
+      sum += binomialCoefficient(n + 1, k) * bernoulli[k]!
     }
+
+    const newValue = n > 1 && n % 2 === 1 ? 0 : -sum / (n + 1)
+
+    return chain(predicate(newValue, n), (keep) => {
+      if (!keep)
+        return bernoulli
+      bernoulli.push(newValue)
+      return loop(n + 1)
+    })
   }
+
+  return loop(1)
 }
 
 export const bernoulliNormalExpressions: Omit<SequenceNormalExpressions<'bernoulli'>, 'bernoulli?'> = {
@@ -69,10 +64,10 @@ export const bernoulliNormalExpressions: Omit<SequenceNormalExpressions<'bernoul
     arity: toFixedArity(1),
   },
   'bernoulli-take-while': {
-    evaluate: ([fn], sourceCodeInfo, contextStack, { executeFunction }): number[] => {
+    evaluate: ([fn], sourceCodeInfo, contextStack, { executeFunction }) => {
       assertFunctionLike(fn, sourceCodeInfo)
-      const bernoulli = generateBernoulli((value, index) => !!(executeFunction)(fn, [value, index], contextStack))
-      return bernoulli
+      const f = fn
+      return generateBernoulli((value, index) => chain(executeFunction(f, [value, index], contextStack), val => !!val))
     },
     arity: toFixedArity(1),
   },

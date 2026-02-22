@@ -32,9 +32,10 @@ export const letSpecialExpression: BuiltinSpecialExpression<Any, LetNode> = {
     const target = bindingNode[1][0]
     const value = bindingNode[1][1]
     return chain(evaluateNode(value, contextStack), (bindingValue) => {
-      const values = evaluateBindingNodeValues(target, bindingValue, Node => evaluateNode(Node, contextStack) as Any)
-      contextStack.addValues(values, target[2])
-      return bindingValue
+      return chain(evaluateBindingNodeValues(target, bindingValue, Node => evaluateNode(Node, contextStack)), (values) => {
+        contextStack.addValues(values, target[2])
+        return bindingValue
+      })
     })
   },
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => {

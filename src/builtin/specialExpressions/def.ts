@@ -15,9 +15,10 @@ export const defSpecialExpression: BuiltinSpecialExpression<Any, DefNode> = {
     const target = bindingNode[1][0]
     const value = bindingNode[1][1]
     return chain(evaluateNode(value, contextStack), (bindingValue) => {
-      const values = evaluateBindingTargetValues(target, bindingValue, Node => evaluateNode(Node, contextStack) as Any)
-      contextStack.exportValues(values, target[2])
-      return bindingValue
+      return chain(evaluateBindingTargetValues(target, bindingValue, Node => evaluateNode(Node, contextStack)), (values) => {
+        contextStack.exportValues(values, target[2])
+        return bindingValue
+      })
     })
   },
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => {

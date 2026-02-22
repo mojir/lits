@@ -83,13 +83,20 @@ export const functionExecutors: FunctionExecutors = {
       const newContext: Context = { self: { value: fn } }
 
       const rest: Arr = []
+
+      // Process non-rest params sequentially since binding evaluation may be async
+      let paramSetup: MaybePromise<void> = undefined as unknown as void
       for (let i = 0; i < currentParams.length; i += 1) {
         if (i < nbrOfNonRestArgs) {
-          const param = toAny(currentParams[i])
-          const valueRecord = evaluateBindingNodeValues(args[i]!, param, node =>
-            evaluateNode(node, newContextStack.create(newContext)) as Any)
-          Object.entries(valueRecord).forEach(([key, value]) => {
-            newContext[key] = { value }
+          const paramIndex = i
+          paramSetup = chain(paramSetup, () => {
+            const param = toAny(currentParams[paramIndex])
+            return chain(evaluateBindingNodeValues(args[paramIndex]!, param, node =>
+              evaluateNode(node, newContextStack.create(newContext))), (valueRecord) => {
+              Object.entries(valueRecord).forEach(([key, value]) => {
+                newContext[key] = { value }
+              })
+            })
           })
         }
         else {
@@ -104,45 +111,49 @@ export const functionExecutors: FunctionExecutors = {
         defaultSetup = chain(defaultSetup, () => {
           const arg = args[argIndex]!
           return chain(evaluateNode(arg[1][1]!, contextStack.create(newContext)), (defaultValue) => {
-            const valueRecord = evaluateBindingNodeValues(arg, defaultValue, node =>
-              evaluateNode(node, contextStack.create(newContext)) as Any)
-            Object.entries(valueRecord).forEach(([key, value]) => {
-              newContext[key] = { value }
+            return chain(evaluateBindingNodeValues(arg, defaultValue, node =>
+              evaluateNode(node, contextStack.create(newContext))), (valueRecord) => {
+              Object.entries(valueRecord).forEach(([key, value]) => {
+                newContext[key] = { value }
+              })
             })
           })
         })
       }
 
-      return chain(defaultSetup, () => {
+      return chain(paramSetup, () => chain(defaultSetup, () => {
         const restArgument = args.find(arg => arg[0] === bindingTargetTypes.rest)
-        if (restArgument !== undefined) {
-          const valueRecord = evaluateBindingNodeValues(restArgument, rest, node =>
-            evaluateNode(node, contextStack.create(newContext)) as Any)
-          Object.entries(valueRecord).forEach(([key, value]) => {
-            newContext[key] = { value }
-          })
-        }
+        const restSetup: MaybePromise<void> = restArgument !== undefined
+          ? chain(evaluateBindingNodeValues(restArgument, rest, node =>
+              evaluateNode(node, contextStack.create(newContext))), (valueRecord) => {
+              Object.entries(valueRecord).forEach(([key, value]) => {
+                newContext[key] = { value }
+              })
+            })
+          : undefined as unknown as void
 
-        // Evaluate body nodes sequentially
-        const newContextStack2 = newContextStack.create(newContext)
-        const bodyResult = reduceSequential(
-          evaluatedFunction[1],
-          (_acc, node) => evaluateNode(node, newContextStack2),
-          null as Any,
-        )
+        return chain(restSetup, () => {
+          // Evaluate body nodes sequentially
+          const newContextStack2 = newContextStack.create(newContext)
+          const bodyResult = reduceSequential(
+            evaluatedFunction[1],
+            (_acc, node) => evaluateNode(node, newContextStack2),
+            null as Any,
+          )
 
-        // Handle RecurSignal for async body results
-        if (bodyResult instanceof Promise) {
-          return bodyResult.catch((error: unknown) => {
-            if (error instanceof RecurSignal) {
-              return setupAndExecute(error.params)
-            }
-            throw error
-          })
-        }
+          // Handle RecurSignal for async body results
+          if (bodyResult instanceof Promise) {
+            return bodyResult.catch((error: unknown) => {
+              if (error instanceof RecurSignal) {
+                return setupAndExecute(error.params)
+              }
+              throw error
+            })
+          }
 
-        return bodyResult
-      })
+          return bodyResult
+        })
+      }))
     }
 
     // Sync recur loop: use for(;;) to avoid stack overflow for sync tail recursion
