@@ -754,7 +754,7 @@ function truncateCode(code: string) {
   else
     return `${oneLiner.substring(0, count - 3)}...`
 }
-export function run() {
+export async function run() {
   addOutputSeparator()
   const selectedCode = getSelectedLitsCode()
   const code = selectedCode.code || getState('lits-code')
@@ -766,7 +766,7 @@ export function run() {
 
   const hijacker = hijackConsole()
   try {
-    const result = getLits().run(code, litsParams)
+    const result = await getLits().async.run(code, litsParams)
     const content = stringifyValue(result, false)
     appendOutput(content, 'result')
   }
