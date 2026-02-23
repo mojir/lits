@@ -1,7 +1,7 @@
-import { LitsError } from '../../errors'
-import type { SourceCodeInfo } from '../../tokenizer/token'
-import type { SymbolicBinaryOperator } from '../../tokenizer/operators'
-import { exponentiationPrecedence } from '../helpers'
+import { LitsError } from '../errors'
+import type { SourceCodeInfo } from '../tokenizer/token'
+import type { SymbolicBinaryOperator } from '../tokenizer/operators'
+import { exponentiationPrecedence } from './helpers'
 
 export function getPrecedence(operatorSign: SymbolicBinaryOperator, sourceCodeInfo: SourceCodeInfo | undefined): number {
   switch (operatorSign) {
