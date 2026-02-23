@@ -35,7 +35,6 @@ export function getPrecedence(operatorSign: SymbolicBinaryOperator, sourceCodeIn
 
     case '==': // equal
     case '!=': // not equal
-    case '≠': // not equal
       return 6
 
     case '&': // bitwise AND

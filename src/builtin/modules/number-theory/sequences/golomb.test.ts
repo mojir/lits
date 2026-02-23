@@ -117,7 +117,7 @@ describe('golomb', () => {
 
   it('should return the correct takeWhile sequence', () => {
     expect(runNth('nth:golomb-take-while(-> $ < 10)')).toEqual([1, 2, 2, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9, 9])
-    expect(runNth('nth:golomb-take-while(-> $2 ≠ 0)')).toEqual([])
+    expect(runNth('nth:golomb-take-while(-> $2 != 0)')).toEqual([])
   })
 
   it('should determine if numbers are in the sequence', () => {

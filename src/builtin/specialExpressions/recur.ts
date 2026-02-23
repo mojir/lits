@@ -14,7 +14,7 @@ const docs: CustomDocs = {
     `
 let foo = (n) -> do
   write!(n);
-  if !(zero?(n)) then
+  if not(zero?(n)) then
     recur(n - 1)
   end
 end;
@@ -22,14 +22,14 @@ foo(3)`,
     `
 (n -> do
   write!(n);
-  if !(zero?(n)) then
+  if not(zero?(n)) then
     recur(n - 1)
   end
 end)(3)`,
     `
 loop (n = 3) -> do
   write!(n);
-  if !(zero?(n)) then
+  if not(zero?(n)) then
     recur(n - 1)
   end
 end`,

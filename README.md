@@ -1279,7 +1279,7 @@ Here's the complete precedence table, from highest to lowest:
 | 9 | `<<` `>>` `>>>` | Bit shift operations | `8 >> 1 + 1` → `8 >> 2` → `2` |
 | 8 | `++` | String concatenation | `"a" ++ "b" ++ "c"` → `"abc"` |
 | 7 | `<` `<=` `>` `>=` | Comparison operators | `3 + 2 > 4` → `5 > 4` → `true` |
-| 6 | `==` `≠` | Equality operators | `2 * 3 == 6` → `6 == 6` → `true` |
+| 6 | `==` `!=` | Equality operators | `2 * 3 == 6` → `6 == 6` → `true` |
 | 5 | `&` `xor` `\|` | Bitwise operations | `4 \| 2 & 1` → `4 \| 0` → `4` |
 | 4 | `&&` `\|\|` `??` | Logical operations | `true && false \|\| true` → `false \|\| true` → `true` |
 | 3 | *function operators* | Binary functions used as operators | `5 max 3 + 2` → `5 max 5` → `5` |

@@ -334,11 +334,11 @@ describe('parser', () => {
       expect(lits.run('2 == 1')).toBe(false)
     })
   })
-  describe('≠', () => {
+  describe('!=', () => {
     test('samples', () => {
-      expect(lits.run('2 ≠ 3')).toBe(true)
-      expect(lits.run('2 ≠ 2')).toBe(false)
-      expect(lits.run('2 ≠ 1')).toBe(true)
+      expect(lits.run('2 != 3')).toBe(true)
+      expect(lits.run('2 != 2')).toBe(false)
+      expect(lits.run('2 != 1')).toBe(true)
     })
   })
   describe('&', () => {
@@ -381,14 +381,14 @@ describe('parser', () => {
       expect(lits.run('null ?? 2')).toBe(2)
     })
   })
-  describe('!', () => {
+  describe('not', () => {
     test('samples', () => {
-      expect(lits.run('!(true)')).toBe(false)
-      expect(lits.run('!(false)')).toBe(true)
-      expect(lits.run('!(500)')).toBe(false)
-      expect(lits.run('!(0)')).toBe(true)
-      expect(lits.run('!(!(500))')).toBe(true)
-      expect(lits.run('!(!(0))')).toBe(false)
+      expect(lits.run('not(true)')).toBe(false)
+      expect(lits.run('not(false)')).toBe(true)
+      expect(lits.run('not(500)')).toBe(false)
+      expect(lits.run('not(0)')).toBe(true)
+      expect(lits.run('not(not(500))')).toBe(true)
+      expect(lits.run('not(not(0))')).toBe(false)
     })
   })
   describe('parenthises', () => {
@@ -661,8 +661,8 @@ describe('parser', () => {
     it('evaluates equality operators', () => {
       expect(lits.run('3 == 3')).toBe(true)
       expect(lits.run('3 == 4')).toBe(false)
-      expect(lits.run('3 ≠ 4')).toBe(true)
-      expect(lits.run('3 ≠ 3')).toBe(false)
+      expect(lits.run('3 != 4')).toBe(true)
+      expect(lits.run('3 != 3')).toBe(false)
     })
 
     it('evaluates relational operators', () => {
@@ -1188,7 +1188,7 @@ foo(1, 2)`)).toBe(3)
         
           // Add compatible accessories
           accessory in products
-          let isCompatible = mainProduct.id ≠ accessory.id && accessory.stockLevel > 0
+          let isCompatible = mainProduct.id != accessory.id && accessory.stockLevel > 0
           let totalPrice = mainProduct.price + accessory.price
           let isRecentlyViewed = contains?(customerPreferences.recentViews, accessory.id)
           when (isCompatible && totalPrice <= customerPreferences.priceLimit)
@@ -1196,7 +1196,7 @@ foo(1, 2)`)).toBe(3)
         
           // For high-value bundles, consider a third complementary item
           complItem in products
-          let isValid = mainProduct.id ≠ complItem.id && accessory.id ≠ complItem.id && complItem.stockLevel > 0
+          let isValid = mainProduct.id != complItem.id && accessory.id != complItem.id && complItem.stockLevel > 0
           let finalPrice = mainProduct.price + accessory.price + complItem.price
           let discount = finalPrice > 500 ? 0.1 : 0.05
           let discountedPrice = finalPrice * (1 - discount)
@@ -1283,7 +1283,7 @@ foo(1, 2)`)).toBe(3)
 
     it('handles complex logical expressions', () => {
       expect(lits.run('(5 > 3) && (10 < 20 || 5 == 5)')).toBe(true)
-      expect(lits.run('!(5 < 3) && (3 <= 3 || 4 >= 5)')).toBe(true)
+      expect(lits.run('not(5 < 3) && (3 <= 3 || 4 >= 5)')).toBe(true)
     })
 
     it('handles expressions combining different operators', () => {

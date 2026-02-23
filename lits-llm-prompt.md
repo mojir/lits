@@ -142,7 +142,7 @@ people map "name"    // => ["Alice", "Bob"]
 | `>` | Greater than | `a > b` | `>(a, b)` |
 | `>=` / `≥` | Greater than or equal | `a >= b` | |
 | `==` | Structural equality | `a == b` | `==(a, b)` |
-| `!=` / `≠` | Not equal | `a != b` | `≠(a, b)` |
+| `!=` / `!=` | Not equal | `a != b` | `!=(a, b)` |
 | `&` | Bitwise AND (variadic) | `a & b` | `&(a, b)` |
 | `xor` | Bitwise XOR (variadic) | `a xor b` | `xor(a, b)` |
 | `\|` | Bitwise OR (variadic) | `a \| b` | `\|(a, b)` |
@@ -398,12 +398,12 @@ map([1, 2, 3], -> $ ^ 2)     // => [1, 4, 9]
 | Function | Description |
 |----------|-------------|
 | `==(a, b, ...)` | Structural equality (deep) |
-| `!=(a, b)` / `≠(a, b)` | Not equal |
+| `!=(a, b)` / `!=(a, b)` | Not equal |
 | `<(a, b, ...)` | Strictly increasing |
 | `<=(a, b, ...)` | Non-decreasing |
 | `>(a, b, ...)` | Strictly decreasing |
 | `>=(a, b, ...)` | Non-increasing |
-| `!(x)` | Logical NOT |
+| `not(x)` | Logical NOT |
 | `boolean(x)` | Coerce to boolean |
 | `compare(a, b)` | Returns -1, 0, or 1 |
 | `identical?(a, b)` | Referential equality |

@@ -182,7 +182,7 @@ describe('sequence functions', () => {
     it('returns a new array instance', () => {
       const program = `
         let l = [1, 2, 3];
-        !(l identical? reverse(l))
+        not(l identical? reverse(l))
       `
       expect(lits.run(program)).toBe(true)
     })
@@ -412,7 +412,7 @@ describe('sequence-Utils module functions', () => {
         const program = `${imp}
           let l1 = [1, 2, 3];
           let l2 = su.take(l1, 2);
-          l1 ≠ l2
+          l1 != l2
         `
         expect(mlits.run(program)).toBe(true)
       })
@@ -439,7 +439,7 @@ describe('sequence-Utils module functions', () => {
         const program = `${imp}
           let l1 = [1, 2, 3];
           let l2 = su.take-last(l1, 2);
-          l1 ≠ l2
+          l1 != l2
         `
         expect(mlits.run(program)).toBe(true)
       })
@@ -465,7 +465,7 @@ describe('sequence-Utils module functions', () => {
         const program = `${imp}
           let l1 = [1, 2, 3];
           let l2 = su.take-while(l1, -> $ < 3);
-          l1 ≠ l2
+          l1 != l2
         `
         expect(mlits.run(program)).toBe(true)
       })
@@ -494,7 +494,7 @@ describe('sequence-Utils module functions', () => {
         const program = `${imp}
           let l1 = [1, 2, 3];
           let l2 = su.drop(l1, 2);
-          l1 ≠ l2
+          l1 != l2
         `
         expect(mlits.run(program)).toBe(true)
       })
@@ -541,7 +541,7 @@ describe('sequence-Utils module functions', () => {
         const program = `${imp}
           let l1 = [1, 2, 3];
           let l2 = su.take-while(l1, -> $ < 3);
-          l1 ≠ l2
+          l1 != l2
         `
         expect(mlits.run(program)).toBe(true)
       })

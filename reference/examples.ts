@@ -54,6 +54,138 @@ write!([1, 2, 3][2]);
       `.trim(),
   },
   {
+    id: 'async-example',
+    name: 'Async functions',
+    description: 'Demonstrates using async JavaScript functions from Lits. The playground runs in async mode, so async JS functions are automatically awaited.',
+    context: {
+      jsFunctions: {
+        'fetch-user!': `async (id) => {
+  const response = await fetch('https://jsonplaceholder.typicode.com/users/' + id);
+  const user = await response.json();
+  return { name: user.name, email: user.email, city: user.address.city };
+}`,
+        'fetch-posts!': `async (userId) => {
+  const response = await fetch('https://jsonplaceholder.typicode.com/posts?userId=' + userId);
+  const posts = await response.json();
+  return posts.slice(0, 3).map(p => ({ title: p.title, body: p.body }));
+}`,
+        'delay!': `async (ms) => {
+  await new Promise(resolve => setTimeout(resolve, ms));
+  return ms;
+}`,
+      },
+    },
+    code: `
+// Async JavaScript functions are automatically awaited
+// when running in the playground.
+
+// Simulate a delay
+write!("Waiting 500ms...");
+delay!(500);
+write!("Done waiting!");
+
+// Fetch a user from a REST API
+let user = fetch-user!(1);
+write!("User: " ++ user.name);
+write!("Email: " ++ user.email);
+write!("City: " ++ user.city);
+
+// Fetch their posts
+let posts = fetch-posts!(1);
+write!("\\nFirst " ++ str(count(posts)) ++ " posts by " ++ user.name ++ ":");
+doseq (post in posts) -> write!("- " ++ post.title);
+    `.trim(),
+  },
+  {
+    id: 'async-interactive',
+    name: 'Interactive async',
+    description: 'A more complex async example with user interactions. Uses prompt for input and fetch for API calls.',
+    context: {
+      jsFunctions: {
+        'prompt!': '(title) => prompt(title)',
+        'fetch-user!': `async (id) => {
+  const response = await fetch('https://jsonplaceholder.typicode.com/users/' + id);
+  if (!response.ok) return null;
+  const user = await response.json();
+  return { id: user.id, name: user.name, email: user.email, city: user.address.city, company: user.company.name };
+}`,
+        'fetch-todos!': `async (userId) => {
+  const response = await fetch('https://jsonplaceholder.typicode.com/todos?userId=' + userId);
+  const todos = await response.json();
+  return todos.map(t => ({ title: t.title, completed: t.completed }));
+}`,
+      },
+    },
+    code: `
+// Interactive async example
+// Uses prompt for user input and fetch for API calls
+
+let { take } = import("sequence");
+
+let lookup-user! = (id-str) -> do
+  let id = number(id-str);
+  if not(number?(id)) || id < 1 || id > 10 then
+    write!("Invalid user ID: " ++ id-str ++ ". Please enter 1-10.");
+  else
+    write!("Fetching user " ++ str(id) ++ "...");
+    let user = fetch-user!(id);
+    if null?(user) then
+      write!("User not found.");
+    else
+      write!("Name:    " ++ user.name);
+      write!("Email:   " ++ user.email);
+      write!("City:    " ++ user.city);
+      write!("Company: " ++ user.company);
+      user;
+    end
+  end
+end;
+
+let show-todos! = (user) -> do
+  write!("\\nFetching todos for " ++ user.name ++ "...");
+  let todos = fetch-todos!(user.id);
+  let done = filter(todos, -> $.completed);
+  let pending = filter(todos, -> !($.completed));
+
+  write!("\\nCompleted (" ++ str(count(done)) ++ "/" ++ str(count(todos)) ++ "):");
+  doseq (t in done take 5) -> write!("  ✓ " ++ t.title);
+  if count(done) > 5 then
+    write!("  ... and " ++ str(count(done) - 5) ++ " more");
+  end
+
+  write!("\\nPending (" ++ str(count(pending)) ++ "):");
+  doseq (t in pending take 5) -> write!("  ○ " ++ t.title);
+  if count(pending) > 5 then
+    write!("  ... and " ++ str(count(pending) - 5) ++ " more");
+  end
+end;
+
+// Main interaction loop
+let main! = () -> do
+  write!("=== User Lookup Tool ===\\n");
+
+  loop (continue? = true) ->
+    if continue? then
+      let input = prompt!("Enter a user ID (1-10), or cancel to quit:");
+      if null?(input) || input == "" then
+        write!("Goodbye!");
+      else
+        let user = lookup-user!(input);
+        if user then
+          let show = prompt!("Show todos for " ++ user.name ++ "? (yes/no)");
+          if show == "yes" then show-todos!(user) end;
+        end;
+        write!("");
+        recur(true)
+      end
+    
+    else null end
+end;
+
+main!()
+    `.trim(),
+  },
+  {
     id: 'text-based-game',
     name: 'A game',
     description: 'Text based adventure game.',
@@ -199,7 +331,7 @@ let take! = (state, item) -> do
 
   if contains?(items, item) then
     let location = get(locations, state.current-location);
-    let new-location-items = filter(items, -> $ ≠ item);
+    let new-location-items = filter(items, -> $ != item);
     let new-inventory = push(state.inventory, item);
 
     // Update game state
@@ -233,7 +365,7 @@ let drop! = (state, item) -> do
     let location = get(locations, state.current-location);
     let location-items = get(location, "items", []);
     let new-location-items = push(location-items, item);
-    let new-inventory = filter(-> $ ≠ item, state.inventory);
+    let new-inventory = filter(-> $ != item, state.inventory);
 
     // Special case for torch
     let still-has-light = !(item == "torch") || contains?(new-inventory, "torch");
@@ -298,7 +430,7 @@ let use = (state, item) -> do
       end
     case "bread" then
       if has-item?(state, item) then
-        let new-inventory = filter(state.inventory, -> $ ≠ item);
+        let new-inventory = filter(state.inventory, -> $ != item);
         [
           assoc(
             assoc(state, "inventory", new-inventory),
@@ -446,7 +578,7 @@ let determinant = (matrix) -> do
   let cols = count(firstRow);
   
   // Ensure matrix is square
-  if rows ≠ cols then
+  if rows != cols then
     throw("Matrix must be square");
   end;
   
@@ -501,10 +633,10 @@ let getMinor = (matrix, rowToRemove, colToRemove) -> do
               get(row, j)
             end
           end
-        ) filter (item -> item ≠ null);
+        ) filter (item -> item != null);
       end
     end
-  ) filter (row -> row ≠ null);
+  ) filter (row -> row != null);
 end;
   
 // 4x4 invertible matrix
@@ -706,7 +838,6 @@ let items = [
 label-from-value(items, "name");
   `.trim(),
   },
-
   {
     id: 'labels-from-values',
     name: 'labels-from-values',

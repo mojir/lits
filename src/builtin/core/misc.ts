@@ -47,7 +47,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
         { argumentNames: ['x', 'ys'] },
       ],
       description: 'Returns `true` if all `values` are structaul equal to each other, otherwise result is `false`.',
-      seeAlso: ['≠', 'identical?'],
+      seeAlso: ['!=', 'identical?'],
       examples: [
         '1 == 1',
         '[1, 2] == [1, 2]',
@@ -69,7 +69,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       ],
     },
   },
-  '≠': {
+  '!=': {
     evaluate: (params, sourceCodeInfo): boolean => {
       return !isEqual(params, sourceCodeInfo)
     },
@@ -87,15 +87,15 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
         { argumentNames: ['x'] },
         { argumentNames: ['x', 'ys'] },
       ],
-      description: 'Returns `true` if all `values` are not equal to each other, otherwise result is `false`. `(≠ a b c)` is same as `(! (== a b c))`.',
+      description: 'Returns `true` if all `values` are not equal to each other, otherwise result is `false`. `(!= a b c)` is same as `(not (== a b c))`.',
       seeAlso: ['==', 'identical?'],
       examples: [
-        '1 ≠ 2',
-        '3 ≠ 3',
-        '≠(3)',
-        '≠(3, 3, 2)',
-        '≠("3", "2", "1", "0",)',
-        '≠(0, -0)',
+        '1 != 2',
+        '3 != 3',
+        '!=(3)',
+        '!=(3, 3, 2)',
+        '!=("3", "2", "1", "0",)',
+        '!=(0, -0)',
       ],
     },
   },
@@ -113,7 +113,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['a', 'b'] }],
       description: 'Returns true if $a and $b are referential equal.',
-      seeAlso: ['==', '≠'],
+      seeAlso: ['==', '!='],
       examples: [
         'identical?({ a: 10, b: 20 }, { b: 20, a: 10 })',
         'identical?([1, true, null], [1, true, null])',
@@ -269,7 +269,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       ],
     },
   },
-  '!': {
+  'not': {
     evaluate: ([first]): boolean => !first,
     arity: toFixedArity(1),
     docs: {
@@ -280,13 +280,13 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       description: 'Computes logical negation. Note that any other $x than `false`, `0`, `null` and `\'\'` is truthy.',
       seeAlso: ['boolean'],
       examples: [
-        '!(3)',
-        '!(true)',
-        '!("A string")',
-        '!(0)',
-        '!(false)',
-        '!(null)',
-        '!("")',
+        'not(3)',
+        'not(true)',
+        'not("A string")',
+        'not(0)',
+        'not(false)',
+        'not(null)',
+        'not("")',
       ],
     },
   },
@@ -369,7 +369,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Coerces $x to boolean.',
-      seeAlso: ['!', 'boolean?', 'true?', 'false?'],
+      seeAlso: ['not', 'boolean?', 'true?', 'false?'],
       examples: [
         'boolean(0)',
         'boolean(1)',

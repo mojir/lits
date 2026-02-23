@@ -8,7 +8,7 @@ describe('determinant.', () => {
 // Determinant function for square matrices
 let determinant = matrix -> do
   // Check if input is an array
-  if !(array?(matrix)) then
+  if not(array?(matrix)) then
     throw("Input must be an array");
   end;
 
@@ -23,14 +23,14 @@ let determinant = matrix -> do
   let firstRow = first(matrix);
   
   // Check if first row is an array
-  if !(array?(firstRow)) then
+  if not(array?(firstRow)) then
     throw("Input must be a 2D array");
   end;
   
   let cols = count(firstRow);
   
   // Ensure matrix is square
-  if rows ≠ cols then
+  if rows != cols then
     throw("Matrix must be square");
   end;
   
@@ -84,10 +84,10 @@ let getMinor = (matrix, rowToRemove, colToRemove) -> do
               get(row, j);
             end;
           end,
-        ) filter (item -> item ≠ null);
+        ) filter (item -> item != null);
       end;
     end,
-  ) filter (row -> row ≠ null);
+  ) filter (row -> row != null);
 end;
   
 // 3x3 invertible matrix

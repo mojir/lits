@@ -590,7 +590,7 @@ end;`))).toEqual(
       lits.run(`
 let foo = (n) -> do
   write!(n);
-  if !(zero?(n)) then
+  if not(zero?(n)) then
     recur(n - 1)
   end
 end;
@@ -601,21 +601,21 @@ foo(3)`)
       expect(logSpy).toHaveBeenNthCalledWith(4, 0)
     })
     it('recur must be called with the right number of parameters', () => {
-      expect(() => lits.run('let foo = (n) -> do if !(zero?(n)) then recur() end end; foo(3)')).toThrow(LitsError)
-      expect(() => lits.run('let foo = (n) -> do if !(zero?(n)) then recur(n - 1) end end; foo(3)')).not.toThrow()
+      expect(() => lits.run('let foo = (n) -> do if not(zero?(n)) then recur() end end; foo(3)')).toThrow(LitsError)
+      expect(() => lits.run('let foo = (n) -> do if not(zero?(n)) then recur(n - 1) end end; foo(3)')).not.toThrow()
       // Too many parameters ok
-      expect(() => lits.run('let foo = (n) -> do if !(zero?(n)) then recur(n - 1, 1) end end; foo(3)')).not.toThrow()
-      expect(() => lits.run('((n) -> do if !(zero?(n)) then recur() end end;)(3)')).toThrow(LitsError)
-      expect(() => lits.run('((n) -> if !(zero?(n)) then recur(n - 1) end)(3)')).not.toThrow()
-      expect(() => lits.run('((n) -> if !(zero?(n)) recur(n - 1 1) then(3) end')).toThrow(LitsError)
-      expect(() => lits.run('((n) -> if !(zero?(n)) recur(n - 1 1, 2) then(3) end')).toThrow(LitsError)
+      expect(() => lits.run('let foo = (n) -> do if not(zero?(n)) then recur(n - 1, 1) end end; foo(3)')).not.toThrow()
+      expect(() => lits.run('((n) -> do if not(zero?(n)) then recur() end end;)(3)')).toThrow(LitsError)
+      expect(() => lits.run('((n) -> if not(zero?(n)) then recur(n - 1) end)(3)')).not.toThrow()
+      expect(() => lits.run('((n) -> if not(zero?(n)) recur(n - 1 1) then(3) end')).toThrow(LitsError)
+      expect(() => lits.run('((n) -> if not(zero?(n)) recur(n - 1 1, 2) then(3) end')).toThrow(LitsError)
     })
 
     describe('unresolvedIdentifiers', () => {
       it('samples', () => {
-        expect((lits.getUndefinedSymbols('(-> if !(zero?($)) then recur($ - 1) end)(3)')))
+        expect((lits.getUndefinedSymbols('(-> if not(zero?($)) then recur($ - 1) end)(3)')))
           .toEqual(new Set())
-        expect((lits.getUndefinedSymbols('(-> if !(zero?($)) then recur($ - a) end)(3)')))
+        expect((lits.getUndefinedSymbols('(-> if not(zero?($)) then recur($ - a) end)(3)')))
           .toEqual(new Set('a'))
       })
     })
@@ -636,33 +636,33 @@ foo(3)`)
     })
 
     it('should work with recur', () => {
-      lits.run('loop (n = 3) -> do write!(n); if !(zero?(n)) then recur(n - 1) end end')
+      lits.run('loop (n = 3) -> do write!(n); if not(zero?(n)) then recur(n - 1) end end')
       expect(logSpy).toHaveBeenNthCalledWith(1, 3)
       expect(logSpy).toHaveBeenNthCalledWith(2, 2)
       expect(logSpy).toHaveBeenNthCalledWith(3, 1)
       expect(logSpy).toHaveBeenNthCalledWith(4, 0)
     })
     it('recur must be called with right number of parameters', () => {
-      expect(() => litsDebug.run('loop (n = 3) -> if !(zero?(n)) then recur() end')).toThrow(LitsError)
-      expect(() => lits.run('loop (n = 3) -> if !(zero?(n)) then recur(n - 1) end')).not.toThrow()
-      expect(() => lits.run('loop (n = 3) -> if !(zero?(n)) then recur(n - 1, 2) end')).toThrow(LitsError)
-      expect(() => lits.run('loop () -> if !(zero?(n)) then recur() end')).toThrow(LitsError)
-      expect(() => lits.run('loop (n = 3) -> if !(zero?(n)) then recur(throw(1)) end')).toThrow(LitsError)
+      expect(() => litsDebug.run('loop (n = 3) -> if not(zero?(n)) then recur() end')).toThrow(LitsError)
+      expect(() => lits.run('loop (n = 3) -> if not(zero?(n)) then recur(n - 1) end')).not.toThrow()
+      expect(() => lits.run('loop (n = 3) -> if not(zero?(n)) then recur(n - 1, 2) end')).toThrow(LitsError)
+      expect(() => lits.run('loop () -> if not(zero?(n)) then recur() end')).toThrow(LitsError)
+      expect(() => lits.run('loop (n = 3) -> if not(zero?(n)) then recur(throw(1)) end')).toThrow(LitsError)
     })
     it('throw should work', () => {
-      expect(() => lits.run('loop (n = 3) -> if !(zero?(n)) then throw(recur(n - 1, 2)) end')).toThrow(LitsError)
-      expect(() => lits.run('loop (n) -> if !(zero?(n)) then recur(n - 1) end')).toThrow(LitsError)
+      expect(() => lits.run('loop (n = 3) -> if not(zero?(n)) then throw(recur(n - 1, 2)) end')).toThrow(LitsError)
+      expect(() => lits.run('loop (n) -> if not(zero?(n)) then recur(n - 1) end')).toThrow(LitsError)
     })
 
     describe('unresolvedIdentifiers', () => {
       it('samples', () => {
         expect(
-          (litsDebug.getUndefinedSymbols('loop (n = 3) -> do write!(n); if !(zero?(n)) then recur(n - 1) end end')),
+          (litsDebug.getUndefinedSymbols('loop (n = 3) -> do write!(n); if not(zero?(n)) then recur(n - 1) end end')),
         ).toEqual(new Set())
         expect(
-          (lits.getUndefinedSymbols('loop (n = 3) -> do write!(x); if !(zero?(n)) then recur(n - 1) end end')),
+          (lits.getUndefinedSymbols('loop (n = 3) -> do write!(x); if not(zero?(n)) then recur(n - 1) end end')),
         ).toEqual(new Set(['x']))
-        expect(lits.getUndefinedSymbols('loop (n = 3 + y) -> do write!(n); if !(zero?(x)) then recur(n - 1) end end'))
+        expect(lits.getUndefinedSymbols('loop (n = 3 + y) -> do write!(n); if not(zero?(x)) then recur(n - 1) end end'))
           .toEqual(new Set(['x', 'y']))
       })
     })

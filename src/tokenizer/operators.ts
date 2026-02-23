@@ -25,7 +25,7 @@ const binaryOperators = [
 
   '==', // equal
   '!=', // not equal
-  '≠', // not equal
+  '!=', // not equal
 
   '&', // bitwise AND
   'xor', // bitwise XOR

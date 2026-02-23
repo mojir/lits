@@ -87,7 +87,7 @@ describe('functional functions.', () => {
         expect(lits.run('comp()({ "a": 10 })')).toEqual({ a: 10 })
         expect(lits.run('comp()(["x", 10, null])')).toEqual(['x', 10, null])
         expect(lits.run(`
-let foo = comp(!, odd?);
+let foo = comp(not, odd?);
 [2, 3, 4, 5] filter foo`)).toEqual([2, 4])
         expect(() => lits.run('comp()(1, 2)')).toThrow(LitsError)
         expect(() => lits.run('comp(true)()')).toThrow(LitsError)
