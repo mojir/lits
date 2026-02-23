@@ -560,15 +560,11 @@ Modules must be explicitly imported before use:
 
 ```lits
 // Import entire module as an object
-let m = import("math");
+let m = import(math);
 m.sin(PI)
 
 // Import with destructuring
-let { sin, cos } = import("math");
-sin(PI)
-
-// Import a single function directly
-let sin = import("math.sin");
+let { sin, cos } = import(math);
 sin(PI)
 ```
 
@@ -685,7 +681,7 @@ safe-divide(10, 0)   // => "Division by zero"
 ### Using a module
 
 ```lits
-let { sin, cos } = import("math");
+let { sin, cos } = import(math);
 
 let unit-circle-point = theta ->
   { x: cos(theta), y: sin(theta) };

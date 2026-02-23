@@ -21,4 +21,5 @@ export const specialExpressionTypes = {
   'throw': 17,
   'try': 18,
   'unless': 19,
+  'import': 20,
 } as const

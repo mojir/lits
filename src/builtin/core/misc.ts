@@ -1,13 +1,10 @@
-import { LitsError } from '../../errors'
 import type { Any } from '../../interface'
-import type { ModuleFunction } from '../../parser/types'
 import type { SourceCodeInfo } from '../../tokenizer/token'
 import { asAny, assertAny } from '../../typeGuards/lits'
 import { assertNumber } from '../../typeGuards/number'
 import { asStringOrNumber, assertString, assertStringOrNumber } from '../../typeGuards/string'
 import { compare, deepEqual } from '../../utils'
 import { toFixedArity } from '../../utils/arity'
-import { FUNCTION_SYMBOL } from '../../utils/symbols'
 import type { BuiltinNormalExpressions } from '../interface'
 
 function isEqual([first, ...rest]: unknown[], sourceCodeInfo: SourceCodeInfo | undefined) {
@@ -450,77 +447,6 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
         'json-stringify({ a: { b: 10 }}, 2)',
       ],
       hideOperatorForm: true,
-    },
-  },
-  'import': {
-    evaluate: ([importPath], sourceCodeInfo, contextStack): ModuleFunction | Record<string, ModuleFunction> => {
-      assertString(importPath, sourceCodeInfo)
-
-      // Check if importing a specific function (e.g., "grid.row")
-      const dotIndex = importPath.indexOf('.')
-      if (dotIndex !== -1) {
-        const moduleName = importPath.substring(0, dotIndex)
-        const functionName = importPath.substring(dotIndex + 1)
-
-        const module = contextStack.getModule(moduleName)
-        if (!module) {
-          throw new LitsError(`Unknown module: '${moduleName}'`, sourceCodeInfo)
-        }
-
-        const expression = module.functions[functionName]
-
-        if (!expression) {
-          throw new LitsError(`Function '${functionName}' not found in module '${moduleName}'`, sourceCodeInfo)
-        }
-
-        return {
-          [FUNCTION_SYMBOL]: true,
-          sourceCodeInfo,
-          functionType: 'Module',
-          moduleName,
-          functionName,
-          arity: expression.arity,
-        }
-      }
-
-      // Import entire module
-      const moduleName = importPath
-      const module = contextStack.getModule(moduleName)
-      if (!module) {
-        throw new LitsError(`Unknown module: '${moduleName}'`, sourceCodeInfo)
-      }
-
-      // Create an object where each key is a function name and value is a ModuleFunction
-      const result: Record<string, ModuleFunction> = {}
-      for (const [functionName, expression] of Object.entries(module.functions)) {
-        result[functionName] = {
-          [FUNCTION_SYMBOL]: true,
-          sourceCodeInfo,
-          functionType: 'Module',
-          moduleName,
-          functionName,
-          arity: expression.arity,
-        }
-      }
-      return result
-    },
-    arity: toFixedArity(1),
-    docs: {
-      category: 'misc',
-      returns: { type: 'any' },
-      args: {
-        path: {
-          type: 'string',
-          description: 'The module path to import. Can be a module name (e.g., "vector", "grid") or a fully qualified function name (e.g., "vector.mean", "grid.row").',
-        },
-      },
-      variants: [{ argumentNames: ['path'] }],
-      description: 'Imports module functions. Use a module name (e.g., "vector") to import all functions as an object, or a fully qualified name (e.g., "vector.mean") to import a single function directly.',
-      examples: [
-        'let v = import("vector"); v.mean([1, 2, 3, 4])',
-        'let v-sum = import("vector.sum"); v-sum([1, 2, 3])',
-        'let g = import("grid"); g.row([[1, 2], [3, 4]], 0)',
-      ],
     },
   },
 }

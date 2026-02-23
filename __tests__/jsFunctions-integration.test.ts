@@ -3,30 +3,22 @@ import { type JsFunction, Lits } from '../src/Lits/Lits'
 
 describe('jsFunctions integration', () => {
   const syncJsFunctions: Record<string, JsFunction> = {
-    'jsAdd': {
+    jsAdd: {
       fn: (a: number, b: number) => a + b,
       arity: { min: 2, max: 2 },
     },
-    'jsGreet': {
+    jsGreet: {
       fn: (name: string) => `Hello, ${name}!`,
       arity: { min: 1, max: 1 },
     },
-    'jsDouble': {
+    jsDouble: {
       fn: (x: number) => x * 2,
       arity: { min: 1, max: 1 },
     },
-    'jsAddAll': {
+    jsAddAll: {
       fn: (...args: number[]) => args.reduce((a, b) => a + b, 0),
     },
-    'Js.square': {
-      fn: (x: number) => x * x,
-      arity: { min: 1, max: 1 },
-    },
-    'Js.cube': {
-      fn: (x: number) => x * x * x,
-      arity: { min: 1, max: 1 },
-    },
-    'jsId': {
+    jsId: {
       fn: (x: unknown) => x,
       arity: { min: 1, max: 1 },
     },
@@ -76,11 +68,6 @@ describe('jsFunctions integration', () => {
       expect(lits.run('jsAddAll(1, 2, 3, 4, 5)', { bindings: syncJsFunctions })).toBe(15)
     })
 
-    it('should use namespaced JS functions', () => {
-      expect(lits.run('Js.square(5)', { bindings: syncJsFunctions })).toBe(25)
-      expect(lits.run('Js.cube(3)', { bindings: syncJsFunctions })).toBe(27)
-    })
-
     it('should use JS function in let binding', () => {
       expect(lits.run('let x = jsAdd(10, 20); jsDouble(x)', { bindings: syncJsFunctions })).toBe(60)
     })
@@ -107,10 +94,6 @@ describe('jsFunctions integration', () => {
 
     it('should use JS function in pipe', () => {
       expect(lits.run('3 |> jsDouble |> jsDouble', { bindings: syncJsFunctions })).toBe(12)
-    })
-
-    it('should use namespaced JS function in pipe', () => {
-      expect(lits.run('4 |> Js.square |> jsDouble', { bindings: syncJsFunctions })).toBe(32)
     })
 
     it('should assign JS function to variable and call it', () => {

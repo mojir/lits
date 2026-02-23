@@ -21,7 +21,7 @@ import { getCliFunctionSignature } from './cliDocumentation/getCliFunctionSignat
 import { getCliDocumentation } from './cliDocumentation/getCliDocumentation'
 import { getInlineCodeFormatter } from './cliFormatterRules'
 import { createReadlineInterface } from './createReadlineInterface'
-import { getCliModule } from './js-interop/Cli'
+import { getCliModules } from './js-interop/Cli'
 
 const useColor = !process.env.NO_COLOR
 const fmt = createColorizer(useColor)
@@ -52,21 +52,19 @@ const expressions = [...normalExpressionKeys, ...specialExpressionKeys]
 
 const config = processArguments(process.argv.slice(2))
 
-const bindings = getCliModule()
+const cliModules = getCliModules()
 
 const lits = (() => {
-  const _lits = new Lits({ debug: true, modules: allBuiltinModules })
+  const _lits = new Lits({ debug: true, modules: [...allBuiltinModules, ...cliModules] })
   return {
     run: (program: string) =>
       _lits.run(program, {
         globalContext: config.context ?? undefined,
-        bindings,
         globalModuleScope: true,
       }),
     context: (program: string) =>
       _lits.context(program, {
         globalContext: config.context ?? undefined,
-        bindings,
         globalModuleScope: true,
       }),
   }

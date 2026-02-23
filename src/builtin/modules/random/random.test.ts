@@ -7,8 +7,8 @@ const lits = new Lits({ modules: [randomModule] })
 
 // Helper to run random module functions with the new import syntax
 function runRandom(code: string): unknown {
-  // Replace '!:functionName(' with 'let r = import("random"); r.functionName!('
-  const modifiedCode = code.replace(/!:(\S+?)\(/g, 'let r = import("random"); r.$1!(')
+  // Replace '!:functionName(' with 'let r = import(random); r.functionName!('
+  const modifiedCode = code.replace(/!:(\S+?)\(/g, 'let r = import(random); r.$1!(')
   return lits.run(modifiedCode)
 }
 
@@ -218,17 +218,13 @@ describe('random', () => {
   })
 })
 
-describe('import with dot notation', () => {
-  it('should import a single function directly', () => {
-    expect(typeof lits.run('let rand = import("random.random!"); rand()')).toBe('number')
+describe('import with destructuring', () => {
+  it('should import a single function via destructuring', () => {
+    expect(typeof lits.run('let { random! } = import(random); random!()')).toBe('number')
   })
 
-  it('should import uuid directly', () => {
-    const uuid = lits.run('let uuid = import("random.uuid!"); uuid()') as string
+  it('should import uuid via destructuring', () => {
+    const uuid = lits.run('let { uuid! } = import(random); uuid!()') as string
     expect(uuid).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-9][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/)
-  })
-
-  it('should throw for unknown function', () => {
-    expect(() => lits.run('import("random.unknown")')).toThrow(LitsError)
   })
 })

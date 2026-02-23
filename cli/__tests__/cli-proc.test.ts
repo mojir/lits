@@ -23,7 +23,7 @@ describe('proc Integration Tests', () => {
 
   describe('process operations', () => {
     test('shuld return current working directory', () => {
-      const result = runLits('Cli.Proc.get-cwd()')
+      const result = runLits('let p = import(cli-proc); p.get-cwd()')
       expect(result).toBe(__dirname)
     })
   })

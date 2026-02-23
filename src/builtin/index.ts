@@ -19,6 +19,7 @@ import { throwSpecialExpression } from './specialExpressions/throw'
 import { trySpecialExpression } from './specialExpressions/try'
 import { arraySpecialExpression } from './specialExpressions/array'
 import { objectSpecialExpression } from './specialExpressions/object'
+import { importSpecialExpression } from './specialExpressions/import'
 import { specialExpressionTypes } from './specialExpressionTypes'
 
 export const specialExpressions = [
@@ -42,6 +43,7 @@ export const specialExpressions = [
   throwSpecialExpression,
   trySpecialExpression,
   unlessSpecialExpression,
+  importSpecialExpression,
 ] as const
 
 export type SpecialExpressions = typeof specialExpressions

@@ -16,9 +16,9 @@ const moduleInfo: ModuleInfo[] = [
     importName: 'vector',
     description: 'Statistical and mathematical operations on vectors (arrays of numbers). Includes functions for sum, mean, median, standard deviation, and more.',
     examples: [
-      'let vec = import("vector"); vec.sum([1, 2, 3, 4, 5])',
-      'let vec = import("vector"); vec.mean([1, 2, 3, 4, 5])',
-      'let vec = import("vector"); vec.stdev([1, 2, 3, 4, 5])',
+      'let vec = import(vector); vec.sum([1, 2, 3, 4, 5])',
+      'let vec = import(vector); vec.mean([1, 2, 3, 4, 5])',
+      'let vec = import(vector); vec.stdev([1, 2, 3, 4, 5])',
     ],
   },
   {
@@ -26,9 +26,9 @@ const moduleInfo: ModuleInfo[] = [
     importName: 'linear-algebra',
     description: 'Linear algebra operations including dot product, cross product, and vector norms.',
     examples: [
-      'let lin = import("linear-algebra"); lin.dot([1, 2, 3], [4, 5, 6])',
-      'let lin = import("linear-algebra"); lin.cross([1, 0, 0], [0, 1, 0])',
-      'let lin = import("linear-algebra"); lin.norm([3, 4])',
+      'let lin = import(linear-algebra); lin.dot([1, 2, 3], [4, 5, 6])',
+      'let lin = import(linear-algebra); lin.cross([1, 0, 0], [0, 1, 0])',
+      'let lin = import(linear-algebra); lin.norm([3, 4])',
     ],
   },
   {
@@ -36,9 +36,9 @@ const moduleInfo: ModuleInfo[] = [
     importName: 'matrix',
     description: 'Matrix operations including creation, manipulation, and mathematical operations like determinant, transpose, and multiplication.',
     examples: [
-      'let mat = import("matrix"); mat.identity(3)',
-      'let mat = import("matrix"); mat.transpose([[1, 2], [3, 4]])',
-      'let mat = import("matrix"); mat.det([[1, 2], [3, 4]])',
+      'let mat = import(matrix); mat.identity(3)',
+      'let mat = import(matrix); mat.transpose([[1, 2], [3, 4]])',
+      'let mat = import(matrix); mat.det([[1, 2], [3, 4]])',
     ],
   },
   {
@@ -46,8 +46,8 @@ const moduleInfo: ModuleInfo[] = [
     importName: 'grid',
     description: 'Grid (2D array) operations for creating and manipulating two-dimensional data structures.',
     examples: [
-      'let grid = import("grid"); grid.create(3, 3, 0)',
-      'let grid = import("grid"); grid.get(grid.create(3, 3, :x), 1, 1)',
+      'let grid = import(grid); grid.create(3, 3, 0)',
+      'let grid = import(grid); grid.get(grid.create(3, 3, :x), 1, 1)',
     ],
   },
   {
@@ -55,9 +55,9 @@ const moduleInfo: ModuleInfo[] = [
     importName: 'number-theory',
     description: 'Number theory functions including prime numbers, factorials, fibonacci sequences, and more.',
     examples: [
-      'let nt = import("number-theory"); nt.prime?(17)',
-      'let nt = import("number-theory"); nt.fibonacci-seq(10)',
-      'let nt = import("number-theory"); nt.factorial(5)',
+      'let nt = import(number-theory); nt.prime?(17)',
+      'let nt = import(number-theory); nt.fibonacci-seq(10)',
+      'let nt = import(number-theory); nt.factorial(5)',
     ],
   },
   {
@@ -65,9 +65,9 @@ const moduleInfo: ModuleInfo[] = [
     importName: 'random',
     description: 'Random number generation and related functions.',
     examples: [
-      'let rand = import("random"); rand.random!()',
-      'let rand = import("random"); rand.random-int!(1, 100)',
-      'let rand = import("random"); rand.shuffle!([1, 2, 3, 4, 5])',
+      'let rand = import(random); rand.random!()',
+      'let rand = import(random); rand.random-int!(1, 100)',
+      'let rand = import(random); rand.shuffle!([1, 2, 3, 4, 5])',
     ],
   },
   {
@@ -75,7 +75,7 @@ const moduleInfo: ModuleInfo[] = [
     importName: 'assert',
     description: 'Assertion functions for validating conditions and throwing errors.',
     examples: [
-      'let { assert } = import("assert");\ntry assert(0, "Expected a positive value") catch (e) e.message end',
+      'let { assert } = import(assert);\ntry assert(0, "Expected a positive value") catch (e) e.message end',
     ],
   },
   {
@@ -83,9 +83,9 @@ const moduleInfo: ModuleInfo[] = [
     importName: 'math',
     description: 'Trigonometric, logarithmic, and angle conversion functions. Operates on numbers, vectors, and matrices element-wise.',
     examples: [
-      'let { sin, cos } = import("math"); [sin(PI / 2), cos(0)]',
-      'let { ln } = import("math"); ln(E)',
-      'let { to-rad } = import("math"); to-rad(180)',
+      'let { sin, cos } = import(math); [sin(PI / 2), cos(0)]',
+      'let { ln } = import(math); ln(E)',
+      'let { to-rad } = import(math); to-rad(180)',
     ],
   },
   {
@@ -93,8 +93,8 @@ const moduleInfo: ModuleInfo[] = [
     importName: 'functional',
     description: 'Higher-order functional utilities including juxt, complement, and predicate combinators.',
     examples: [
-      'let { juxt } = import("functional"); juxt(inc, dec)(10)',
-      'let { complement } = import("functional"); (complement(zero?))(1)',
+      'let { juxt } = import(functional); juxt(inc, dec)(10)',
+      'let { complement } = import(functional); (complement(zero?))(1)',
     ],
   },
   {
@@ -102,9 +102,9 @@ const moduleInfo: ModuleInfo[] = [
     importName: 'string',
     description: 'Extended string operations: padding, encoding, char codes, templates, and more.',
     examples: [
-      'let { pad-left } = import("string"); pad-left("42", 5, "0")',
+      'let { pad-left } = import(string); pad-left("42", 5, "0")',
       // eslint-disable-next-line no-template-curly-in-string
-      'let { template } = import("string"); template("Hello, ${name}!", { name: "World" })',
+      'let { template } = import(string); template("Hello, ${name}!", { name: "World" })',
     ],
   },
   {
@@ -112,8 +112,8 @@ const moduleInfo: ModuleInfo[] = [
     importName: 'collection',
     description: 'Extended collection operations: indexed mapping, deep access, reduction variants, and predicate helpers.',
     examples: [
-      'let { get-in } = import("collection"); get-in({ a: { b: 42 } }, ["a", "b"])',
-      'let { every? } = import("collection"); every?(pos?, [1, 2, 3])',
+      'let { get-in } = import(collection); get-in({ a: { b: 42 } }, ["a", "b"])',
+      'let { every? } = import(collection); every?(pos?, [1, 2, 3])',
     ],
   },
   {
@@ -121,8 +121,8 @@ const moduleInfo: ModuleInfo[] = [
     importName: 'sequence',
     description: 'Extended sequence operations: take, drop, partition, grouping, distinct, and more.',
     examples: [
-      'let { take } = import("sequence"); take(3, [1, 2, 3, 4, 5])',
-      'let { partition } = import("sequence"); partition(2, [1, 2, 3, 4, 5, 6])',
+      'let { take } = import(sequence); take(3, [1, 2, 3, 4, 5])',
+      'let { partition } = import(sequence); partition(2, [1, 2, 3, 4, 5, 6])',
     ],
   },
   {
@@ -130,8 +130,8 @@ const moduleInfo: ModuleInfo[] = [
     importName: 'bitwise',
     description: 'Additional bitwise operations: bit-not, bit-flip, bit-test, and more.',
     examples: [
-      'let { bit-not } = import("bitwise"); bit-not(0)',
-      'let { bit-test } = import("bitwise"); bit-test(6, 1)',
+      'let { bit-not } = import(bitwise); bit-not(0)',
+      'let { bit-test } = import(bitwise); bit-test(6, 1)',
     ],
   },
 ]
@@ -152,7 +152,7 @@ export function getModulesPage(): string {
         to load the module, then call its functions using dot notation:
       </p>
       <pre ${styles('bg-gray-700', 'p-4', 'mb-4')} style="overflow-x: auto;">${formatLitsExpression(`; Import the Vector module
-let vec = import("vector")
+let vec = import(vector)
 ; Use vec.sum, vec.mean, etc.
 vec.sum([1, 2, 3, 4, 5])`)}</pre>
       <p ${styles('text-color-gray-400')}>

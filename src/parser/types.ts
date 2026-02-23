@@ -42,10 +42,6 @@ export function assertJsFunction(fn: unknown): asserts fn is JsFunction {
   }
 }
 
-export interface NativeJsModule {
-  [key: string]: NativeJsFunction | NativeJsModule
-}
-
 export interface UserDefinedFunction extends GenericLitsFunction {
   functionType: 'UserDefined'
   name: string | undefined // name

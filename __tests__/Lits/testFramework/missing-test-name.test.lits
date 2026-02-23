@@ -1,6 +1,6 @@
 // @include success-program.lits
 
-let { assert= } = import("assert");
+let { assert= } = import(assert);
 
 // @test
 assert=(sub(1, 2), -1);

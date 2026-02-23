@@ -1,6 +1,8 @@
 import process from 'node:process'
-import type { GetFsModule } from '../../utils'
 import type { JsFunction } from '../../../../../src'
+import type { Any } from '../../../../../src/interface'
+import type { LitsModule } from '../../../../../src/builtin/modules/interface'
+import type { BuiltinNormalExpressions } from '../../../../../src/builtin/interface'
 
 export function sys_cwd(): string {
   return process.cwd()
@@ -65,13 +67,22 @@ const getUmask: JsFunction = {
   arity: { min: 0, max: 0 },
 }
 
-export const getProcModule: GetFsModule = (modulePath) => {
-  const prefix = modulePath.join('.')
+function jsFnToExpression(jsFn: JsFunction): BuiltinNormalExpressions[string] {
   return {
-    [`${prefix}.get-cwd`]: getCwd,
-    [`${prefix}.exit`]: exit,
-    [`${prefix}.get-pid`]: getPid,
-    [`${prefix}.set-umask`]: setUmask,
-    [`${prefix}.get-umask`]: getUmask,
+    evaluate: params => jsFn.fn(...params) as Any,
+    arity: jsFn.arity ?? {},
+  }
+}
+
+export function getProcModule(): LitsModule {
+  return {
+    name: 'cli-proc',
+    functions: {
+      'get-cwd': jsFnToExpression(getCwd),
+      'exit': jsFnToExpression(exit),
+      'get-pid': jsFnToExpression(getPid),
+      'set-umask': jsFnToExpression(setUmask),
+      'get-umask': jsFnToExpression(getUmask),
+    },
   }
 }

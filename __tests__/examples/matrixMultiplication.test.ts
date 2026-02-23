@@ -6,7 +6,7 @@ const lits = new Lits({ debug: true, modules: [collectionUtilsModule] })
 describe('determinant.', () => {
   it('should compile', () => {
     expect(lits.run(`
-let { every? } = import("collection");
+let { every? } = import(collection);
 // Matrix multiplication with correct syntax
 let matrixMultiply = (matrixA, matrixB) -> do
   // Check if inputs are arrays

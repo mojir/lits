@@ -3,6 +3,7 @@ import { builtin } from '../../builtin'
 import type { AndNode } from '../../builtin/specialExpressions/and'
 import type { ArrayNode } from '../../builtin/specialExpressions/array'
 import type { DefinedNode } from '../../builtin/specialExpressions/defined'
+import type { ImportNode } from '../../builtin/specialExpressions/import'
 import type { ObjectNode } from '../../builtin/specialExpressions/object'
 import type { OrNode } from '../../builtin/specialExpressions/or'
 import type { QqNode } from '../../builtin/specialExpressions/qq'
@@ -46,6 +47,19 @@ export function parseFunctionCall(ctx: ParserContext, symbol: AstNode): AstNode 
   if (isSpecialBuiltinSymbolNode(symbol)) { // Named function
     const specialExpressionType = symbol[1]
 
+    // Handle import specially — extract module name as a string from the symbol argument
+    if (specialExpressionType === specialExpressionTypes.import) {
+      if (params.length !== 1) {
+        throw new LitsError(`import expects exactly 1 argument, got ${params.length}`, symbol[2])
+      }
+      const param = params[0]!
+      if (!isUserDefinedSymbolNode(param)) {
+        throw new LitsError('import expects a module name (symbol), got a non-symbol argument', param[2] ?? symbol[2])
+      }
+      const moduleName = param[1]
+      return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionType, moduleName]], symbol[2]) satisfies ImportNode
+    }
+
     const type = specialExpressionType as Exclude<
       SpecialExpressionType,
       | typeof specialExpressionTypes.for
@@ -58,6 +72,7 @@ export function parseFunctionCall(ctx: ParserContext, symbol: AstNode): AstNode 
       | typeof specialExpressionTypes.loop
       | typeof specialExpressionTypes.try
       | typeof specialExpressionTypes.doseq
+      | typeof specialExpressionTypes.import
     >
     const specialExpression: SpecialExpression = builtin.specialExpressions[type]
     assertNumberOfParams(specialExpression.arity, params.length, symbol[2])
@@ -85,7 +100,7 @@ export function parseFunctionCall(ctx: ParserContext, symbol: AstNode): AstNode 
       case specialExpressionTypes['0_lambda']:
       case specialExpressionTypes['0_def']:
         throw new LitsError(`${type} is not allowed`, symbol[2])
-        /* v8 ignore next 2 */
+      /* v8 ignore next 2 */
       default:
         throw new LitsError(`Unknown special expression: ${type satisfies never}`, symbol[2])
     }

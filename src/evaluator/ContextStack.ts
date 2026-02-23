@@ -6,7 +6,7 @@ import { LitsError, UndefinedSymbolError } from '../errors'
 import type { Any } from '../interface'
 import type { ContextParams, JsFunction } from '../Lits/Lits'
 import type { LitsModule } from '../builtin/modules/interface'
-import { type NativeJsFunction, type NativeJsModule, type NormalBuiltinFunction, type SpecialBuiltinFunction, type SymbolNode, type UserDefinedSymbolNode, isJsFunction } from '../parser/types'
+import { type NativeJsFunction, type NormalBuiltinFunction, type SpecialBuiltinFunction, type SymbolNode, type UserDefinedSymbolNode, isJsFunction } from '../parser/types'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { asNonUndefined } from '../typeGuards'
 import { isNormalBuiltinSymbolNode, isSpecialBuiltinSymbolNode } from '../typeGuards/astNode'
@@ -21,7 +21,7 @@ export class ContextStackImpl {
   private contexts: Context[]
   public globalContext: Context
   private values?: Record<string, unknown>
-  private nativeJsFunctions?: NativeJsModule
+  private nativeJsFunctions?: Record<string, NativeJsFunction>
   private modules: Map<string, LitsModule>
   constructor({
     contexts,
@@ -31,7 +31,7 @@ export class ContextStackImpl {
   }: {
     contexts: Context[]
     values?: Record<string, unknown>
-    nativeJsFunctions?: NativeJsModule
+    nativeJsFunctions?: Record<string, NativeJsFunction>
     modules?: Map<string, LitsModule>
   }) {
     this.globalContext = asNonUndefined(contexts[0])
@@ -201,67 +201,34 @@ export function createContextStack(params: ContextParams = {}, modules?: Map<str
   // Contexts are checked from left to right
   const contexts = params.contexts ? [globalContext, ...params.contexts] : [globalContext]
 
-  // Process bindings: separate plain values from JS functions (with dot-syntax namespace support)
+  // Process bindings: separate plain values from JS functions
   let hostValues: Record<string, unknown> | undefined
-  let nativeJsFunctions: NativeJsModule | undefined
+  let nativeJsFunctions: Record<string, NativeJsFunction> | undefined
 
   if (params.bindings) {
     for (const [identifier, entry] of Object.entries(params.bindings)) {
+      if (identifier.includes('.')) {
+        throw new LitsError(`Dots are not allowed in binding keys: "${identifier}"`, undefined)
+      }
+
       const isFunction = typeof entry === 'function'
       const isJsFunctionObject = isJsFunction(entry)
 
       if (isFunction || isJsFunctionObject) {
-        // Treat as a JS function binding
         const jsFunction: JsFunction = isJsFunctionObject ? entry : { fn: entry as (...args: any[]) => unknown }
 
-        const identifierParts = identifier.split('.')
-        const name = identifierParts.pop()!
-        if (/^[A-Z]/.test(name)) {
-          throw new LitsError(`Invalid identifier "${identifier}" in bindings, function name must not start with an uppercase letter`, undefined)
+        assertNotShadowingBuiltin(identifier)
+        if (!nativeJsFunctions) {
+          nativeJsFunctions = {}
         }
-
-        if (identifierParts.length > 0) {
-          // Namespaced function (dot-syntax)
-          if (!nativeJsFunctions) {
-            nativeJsFunctions = {}
-          }
-          let scope: NativeJsModule = nativeJsFunctions
-          for (const part of identifierParts) {
-            if (part.length === 0) {
-              throw new LitsError(`Invalid empty identifier "${identifier}" in bindings`, undefined)
-            }
-            if (!/^[A-Z]/.test(part)) {
-              throw new LitsError(`Invalid identifier "${identifier}" in bindings, module name must start with an uppercase letter`, undefined)
-            }
-            if (!scope[part]) {
-              scope[part] = {}
-            }
-            scope = scope[part] as NativeJsModule
-          }
-          scope[name] = {
-            functionType: 'NativeJsFunction',
-            nativeFn: jsFunction,
-            name,
-            [FUNCTION_SYMBOL]: true,
-            arity: jsFunction.arity ?? {},
-            docString: jsFunction.docString ?? '',
-          } satisfies NativeJsFunction
-        }
-        else {
-          // Flat function (no namespace)
-          assertNotShadowingBuiltin(name)
-          if (!nativeJsFunctions) {
-            nativeJsFunctions = {}
-          }
-          nativeJsFunctions[name] = {
-            functionType: 'NativeJsFunction',
-            nativeFn: jsFunction,
-            name,
-            [FUNCTION_SYMBOL]: true,
-            arity: jsFunction.arity ?? {},
-            docString: jsFunction.docString ?? '',
-          } satisfies NativeJsFunction
-        }
+        nativeJsFunctions[identifier] = {
+          functionType: 'NativeJsFunction',
+          nativeFn: jsFunction,
+          name: identifier,
+          [FUNCTION_SYMBOL]: true,
+          arity: jsFunction.arity ?? {},
+          docString: jsFunction.docString ?? '',
+        } satisfies NativeJsFunction
       }
       else {
         // Plain value binding

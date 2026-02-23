@@ -3,8 +3,10 @@ import fs from 'node:fs'
 import process from 'node:process'
 import os from 'node:os'
 import path from 'node:path'
-import type { GetFsModule } from '../../utils'
 import type { JsFunction } from '../../../../../src'
+import type { Any } from '../../../../../src/interface'
+import type { LitsModule } from '../../../../../src/builtin/modules/interface'
+import type { BuiltinNormalExpressions } from '../../../../../src/builtin/interface'
 
 let initiated = false
 const tempFiles: string[] = []
@@ -411,27 +413,36 @@ Returns:
   arity: { min: 0, max: 1 },
 }
 
-export const getFsModule: GetFsModule = (modulePath) => {
-  init()
-  const prefix = modulePath.join('.')
+function jsFnToExpression(jsFn: JsFunction): BuiltinNormalExpressions[string] {
   return {
-    [`${prefix}.read-file`]: readFile,
-    [`${prefix}.read-json`]: readJson,
-    [`${prefix}.write-file`]: writeFile,
-    [`${prefix}.write-json`]: writeJson,
-    [`${prefix}.append-file`]: appendFile,
-    [`${prefix}.exists?`]: exists,
-    [`${prefix}.file?`]: isFile,
-    [`${prefix}.directory?`]: isDirectory,
-    [`${prefix}.list-dir`]: listDir,
-    [`${prefix}.mkdir`]: mkdir,
-    [`${prefix}.remove`]: remove,
-    [`${prefix}.copy`]: copy,
-    [`${prefix}.move`]: move,
-    [`${prefix}.get-stats`]: stats,
-    [`${prefix}.chmod`]: chmod,
-    [`${prefix}.touch`]: touch,
-    [`${prefix}.create-temp-file`]: createTempFile,
-    [`${prefix}.create-temp-dir`]: createTempDir,
+    evaluate: params => jsFn.fn(...params) as Any,
+    arity: jsFn.arity ?? {},
+  }
+}
+
+export function getFsModule(): LitsModule {
+  init()
+  return {
+    name: 'cli-fs',
+    functions: {
+      'read-file': jsFnToExpression(readFile),
+      'read-json': jsFnToExpression(readJson),
+      'write-file': jsFnToExpression(writeFile),
+      'write-json': jsFnToExpression(writeJson),
+      'append-file': jsFnToExpression(appendFile),
+      'exists?': jsFnToExpression(exists),
+      'file?': jsFnToExpression(isFile),
+      'directory?': jsFnToExpression(isDirectory),
+      'list-dir': jsFnToExpression(listDir),
+      'mkdir': jsFnToExpression(mkdir),
+      'remove': jsFnToExpression(remove),
+      'copy': jsFnToExpression(copy),
+      'move': jsFnToExpression(move),
+      'get-stats': jsFnToExpression(stats),
+      'chmod': jsFnToExpression(chmod),
+      'touch': jsFnToExpression(touch),
+      'create-temp-file': jsFnToExpression(createTempFile),
+      'create-temp-dir': jsFnToExpression(createTempDir),
+    },
   }
 }

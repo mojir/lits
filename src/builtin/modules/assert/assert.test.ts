@@ -7,8 +7,8 @@ describe('assert functions', () => {
   for (const lits of [new Lits({ modules: [assertModule] }), new Lits({ debug: true, modules: [assertModule] })]) {
     // Helper to run grid module functions with the new import syntax
     const runWithAssert = (code: string): unknown => {
-      // Replace 'grid:functionName(' with 'let g = import("grid"); g.functionName('
-      const modifiedCode = `let assert = import("assert"); ${code}`
+      // Replace 'grid:functionName(' with 'let g = import(grid); g.functionName('
+      const modifiedCode = `let assert = import(assert); ${code}`
       return lits.run(modifiedCode)
     }
     describe('assert.', () => {

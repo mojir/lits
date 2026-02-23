@@ -32,12 +32,12 @@ describe('minimal entry point (src/index.ts)', () => {
 
   it('should default to no modules', () => {
     const lits = new Lits()
-    expect(() => lits.run('import("assert")')).toThrow()
+    expect(() => lits.run('import(assert)')).toThrow()
   })
 
   it('should accept individual modules passed in', () => {
     const lits = new Lits({ modules: [vectorModule] })
-    expect(lits.run('let v = import("vector"); v.mean([1, 2, 3])')).toBe(2)
+    expect(lits.run('let v = import(vector); v.mean([1, 2, 3])')).toBe(2)
   })
 
   // NOTE: cannot test "doc returns empty" here because importing src/full.ts
@@ -53,10 +53,10 @@ describe('full entry point (src/full.ts)', () => {
 
   it('should have all modules available via allBuiltinModules', () => {
     const lits = new LitsFull({ modules: allBuiltinModules })
-    expect(lits.run('let { assert } = import("assert"); assert(true)')).toBe(true)
-    expect(lits.run('let v = import("vector"); v.mean([1, 2, 3])')).toBe(2)
-    expect(lits.run('let g = import("grid"); g.row([[1, 2], [3, 4]], 0)')).toEqual([1, 2])
-    expect(lits.run('let nt = import("number-theory"); nt.prime?(7)')).toBe(true)
+    expect(lits.run('let { assert } = import(assert); assert(true)')).toBe(true)
+    expect(lits.run('let v = import(vector); v.mean([1, 2, 3])')).toBe(2)
+    expect(lits.run('let g = import(grid); g.row([[1, 2], [3, 4]], 0)')).toEqual([1, 2])
+    expect(lits.run('let nt = import(number-theory); nt.prime?(7)')).toBe(true)
   })
 
   it('should have reference data loaded (doc returns non-empty)', () => {
@@ -80,20 +80,20 @@ describe('individual module entry points', () => {
   it('assert module', () => {
     expect(assertModule.name).toBe('assert')
     const lits = new Lits({ modules: [assertModule] })
-    expect(lits.run('let { assert } = import("assert"); assert(true)')).toBe(true)
-    expect(() => lits.run('import("vector")')).toThrow()
+    expect(lits.run('let { assert } = import(assert); assert(true)')).toBe(true)
+    expect(() => lits.run('import(vector)')).toThrow()
   })
 
   it('grid module', () => {
     expect(gridModule.name).toBe('grid')
     const lits = new Lits({ modules: [gridModule] })
-    expect(lits.run('let g = import("grid"); g.row([[1, 2], [3, 4]], 0)')).toEqual([1, 2])
+    expect(lits.run('let g = import(grid); g.row([[1, 2], [3, 4]], 0)')).toEqual([1, 2])
   })
 
   it('random module', () => {
     expect(randomModule.name).toBe('random')
     const lits = new Lits({ modules: [randomModule] })
-    const result = lits.run('let r = import("random"); r.random!()') as number
+    const result = lits.run('let r = import(random); r.random!()') as number
     expect(result).toBeGreaterThanOrEqual(0)
     expect(result).toBeLessThan(1)
   })
@@ -101,69 +101,69 @@ describe('individual module entry points', () => {
   it('vector module', () => {
     expect(vectorModule.name).toBe('vector')
     const lits = new Lits({ modules: [vectorModule] })
-    expect(lits.run('let v = import("vector"); v.mean([1, 2, 3])')).toBe(2)
+    expect(lits.run('let v = import(vector); v.mean([1, 2, 3])')).toBe(2)
   })
 
   it('linearAlgebra module', () => {
     expect(linearAlgebraModule.name).toBe('linear-algebra')
     const lits = new Lits({ modules: [linearAlgebraModule] })
-    expect(lits.run('let la = import("linear-algebra"); la.dot([1, 2, 3], [4, 5, 6])')).toBe(32)
+    expect(lits.run('let la = import(linear-algebra); la.dot([1, 2, 3], [4, 5, 6])')).toBe(32)
   })
 
   it('matrix module', () => {
     expect(matrixModule.name).toBe('matrix')
     const lits = new Lits({ modules: [matrixModule] })
-    expect(lits.run('let m = import("matrix"); m.det([[1, 2], [3, 4]])')).toBe(-2)
+    expect(lits.run('let m = import(matrix); m.det([[1, 2], [3, 4]])')).toBe(-2)
   })
 
   it('numberTheory module', () => {
     expect(numberTheoryModule.name).toBe('number-theory')
     const lits = new Lits({ modules: [numberTheoryModule] })
-    expect(lits.run('let nt = import("number-theory"); nt.prime?(7)')).toBe(true)
+    expect(lits.run('let nt = import(number-theory); nt.prime?(7)')).toBe(true)
   })
 
   it('stringUtils module', () => {
     expect(stringUtilsModule.name).toBe('string')
     const lits = new Lits({ modules: [stringUtilsModule] })
-    expect(lits.run('let { capitalize } = import("string"); capitalize("albert")')).toBe('Albert')
+    expect(lits.run('let { capitalize } = import(string); capitalize("albert")')).toBe('Albert')
   })
 
   it('collectionUtils module', () => {
     expect(collectionUtilsModule.name).toBe('collection')
     const lits = new Lits({ modules: [collectionUtilsModule] })
-    expect(lits.run('let cu = import("collection"); cu.every?([1, 2, 3], number?)')).toBe(true)
+    expect(lits.run('let cu = import(collection); cu.every?([1, 2, 3], number?)')).toBe(true)
   })
 
   it('sequenceUtils module', () => {
     expect(sequenceUtilsModule.name).toBe('sequence')
     const lits = new Lits({ modules: [sequenceUtilsModule] })
-    expect(lits.run('let su = import("sequence"); su.distinct([1, 2, 3, 1, 3, 5])')).toEqual([1, 2, 3, 5])
+    expect(lits.run('let su = import(sequence); su.distinct([1, 2, 3, 1, 3, 5])')).toEqual([1, 2, 3, 5])
   })
 
   it('bitwiseUtils module', () => {
     expect(bitwiseUtilsModule.name).toBe('bitwise')
     const lits = new Lits({ modules: [bitwiseUtilsModule] })
-    expect(lits.run('let b = import("bitwise"); b.bit-not(0)')).toBe(-1)
+    expect(lits.run('let b = import(bitwise); b.bit-not(0)')).toBe(-1)
   })
 
   it('functionalUtils module', () => {
     expect(functionalUtilsModule.name).toBe('functional')
     const lits = new Lits({ modules: [functionalUtilsModule] })
-    expect(lits.run('let f = import("functional"); (f.complement(zero?))(1)')).toBe(true)
+    expect(lits.run('let f = import(functional); (f.complement(zero?))(1)')).toBe(true)
   })
 
   it('mathUtils module', () => {
     expect(mathUtilsModule.name).toBe('math')
     const lits = new Lits({ modules: [mathUtilsModule] })
-    expect(lits.run('let m = import("math"); m.sin(0)')).toBe(0)
-    expect(() => lits.run('let m = import("math"); m.sin("hello")')).toThrow()
+    expect(lits.run('let m = import(math); m.sin(0)')).toBe(0)
+    expect(() => lits.run('let m = import(math); m.sin("hello")')).toThrow()
   })
 
   it('should allow combining multiple modules', () => {
     const lits = new Lits({ modules: [vectorModule, matrixModule] })
-    expect(lits.run('let v = import("vector"); v.mean([1, 2, 3])')).toBe(2)
-    expect(lits.run('let m = import("matrix"); m.det([[1, 2], [3, 4]])')).toBe(-2)
+    expect(lits.run('let v = import(vector); v.mean([1, 2, 3])')).toBe(2)
+    expect(lits.run('let m = import(matrix); m.det([[1, 2], [3, 4]])')).toBe(-2)
     // Other modules should not be available
-    expect(() => lits.run('import("assert")')).toThrow()
+    expect(() => lits.run('import(assert)')).toThrow()
   })
 })

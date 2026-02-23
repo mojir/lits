@@ -49,6 +49,7 @@
     "npx tsx": true,
     "npx eslint": true,
     "awk": true,
-    "git stash": true
+    "git stash": true,
+    "uniq": true
   }
 }

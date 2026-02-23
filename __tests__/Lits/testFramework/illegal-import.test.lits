@@ -3,7 +3,7 @@
 let one = 1;
 // @include success-program.lits
 
-let { assert= } = import("assert");
+let { assert= } = import(assert);
 
 // @test add
 assert=(add(one, 2), 3);

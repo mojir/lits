@@ -5,24 +5,21 @@ import type { NativeJsFunction } from '../src/parser/types'
 import { FUNCTION_SYMBOL } from '../src/utils/symbols'
 
 const jsFunctions: Record<string, JsFunction> = {
-  'Foo.foo': {
+  tripple: {
     fn: (value: number) => value * 3,
   },
-  'tripple': {
-    fn: (value: number) => value * 3,
-  },
-  'throwError': {
+  throwError: {
     fn: () => {
       throw new Error('An error')
     },
   },
-  'throwNumber': {
+  throwNumber: {
     fn: () => {
       // eslint-disable-next-line ts/no-throw-literal
       throw 1
     },
   },
-  'throwString': {
+  throwString: {
     fn: () => {
       // eslint-disable-next-line ts/no-throw-literal
       throw 'An error'
@@ -49,7 +46,6 @@ const values = {
 describe('nativeJsFunction', () => {
   const lits = new Lits()
   it('samples', () => {
-    expect(lits.run('Foo.foo(9)', { bindings: jsFunctions })).toBe(27)
     expect(lits.run('tripple(9)', { bindings: jsFunctions })).toBe(27)
     expect(lits.run('let a = tripple; a(9)', { bindings: jsFunctions })).toBe(27)
     expect(() => lits.run('throwError()', { bindings: jsFunctions })).toThrowError(LitsError)
@@ -61,8 +57,7 @@ describe('nativeJsFunction', () => {
     expect(() => lits.run('if true then false else true end', { bindings: { if: { fn: () => true } } })).toThrowError(LitsError)
     expect(() => lits.run('1', { bindings: { self: { fn: () => true } } })).toThrowError(LitsError)
   })
-  it('invalid bindings identifiers throw', () => {
-    expect(() => lits.run('1', { bindings: { Foo: { fn: () => true } } })).toThrowError(LitsError)
+  it('dotted binding keys are rejected', () => {
     expect(() => lits.run('1', { bindings: { 'foo.bar': { fn: () => true } } })).toThrowError(LitsError)
     expect(() => lits.run('1', { bindings: { '.bar': { fn: () => true } } })).toThrowError(LitsError)
   })

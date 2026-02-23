@@ -5,7 +5,7 @@ import { numberTheoryModule } from './'
 const lits = new Lits({ modules: [numberTheoryModule] })
 
 function runNth(code: string) {
-  return lits.run(`let nt = import("number-theory"); ${code.replace(/nth:/g, 'nt.')}`)
+  return lits.run(`let nt = import(number-theory); ${code.replace(/nth:/g, 'nt.')}`)
 }
 describe('divisors', () => {
   describe('nth:divisors', () => {

@@ -388,7 +388,7 @@ describe('async support', () => {
 
     it('position with async predicate', async () => {
       const lits = new Lits({ modules: [sequenceUtilsModule] })
-      const result = await lits.async.run('let su = import("sequence"); su.position([1, 2, 3, 4], isEven)', {
+      const result = await lits.async.run('let su = import(sequence); su.position([1, 2, 3, 4], isEven)', {
         bindings: { isEven: asyncIsEven },
       })
       expect(result).toBe(1)
@@ -396,7 +396,7 @@ describe('async support', () => {
 
     it('position with async predicate matching first element', async () => {
       const lits = new Lits({ modules: [sequenceUtilsModule] })
-      const result = await lits.async.run('let su = import("sequence"); su.position([2, 3, 4], isEven)', {
+      const result = await lits.async.run('let su = import(sequence); su.position([2, 3, 4], isEven)', {
         bindings: { isEven: asyncIsEven },
       })
       expect(result).toBe(0)
@@ -404,7 +404,7 @@ describe('async support', () => {
 
     it('position with async predicate matching no element', async () => {
       const lits = new Lits({ modules: [sequenceUtilsModule] })
-      const result = await lits.async.run('let su = import("sequence"); su.position([1, 3, 5], isEven)', {
+      const result = await lits.async.run('let su = import(sequence); su.position([1, 3, 5], isEven)', {
         bindings: { isEven: asyncIsEven },
       })
       expect(result).toBe(null)
@@ -412,7 +412,7 @@ describe('async support', () => {
 
     it('sort-by with async key function', async () => {
       const lits = new Lits({ modules: [sequenceUtilsModule] })
-      const result = await lits.async.run('let su = import("sequence"); su.sort-by([3, 1, 2], dbl)', {
+      const result = await lits.async.run('let su = import(sequence); su.sort-by([3, 1, 2], dbl)', {
         bindings: { dbl: asyncDouble },
       })
       expect(result).toEqual([1, 2, 3])
@@ -452,7 +452,7 @@ describe('async support', () => {
 
     it('remove with async predicate', async () => {
       const lits = new Lits({ modules: [sequenceUtilsModule] })
-      const result = await lits.async.run('let su = import("sequence"); su.remove([1, 2, 3, 4], isEven)', {
+      const result = await lits.async.run('let su = import(sequence); su.remove([1, 2, 3, 4], isEven)', {
         bindings: { isEven: asyncIsEven },
       })
       expect(result).toEqual([1, 3])
@@ -460,7 +460,7 @@ describe('async support', () => {
 
     it('split-with with async predicate', async () => {
       const lits = new Lits({ modules: [sequenceUtilsModule] })
-      const result = await lits.async.run('let su = import("sequence"); su.split-with([2, 4, 5, 6], isEven)', {
+      const result = await lits.async.run('let su = import(sequence); su.split-with([2, 4, 5, 6], isEven)', {
         bindings: { isEven: asyncIsEven },
       })
       expect(result).toEqual([[2, 4], [5, 6]])
@@ -468,7 +468,7 @@ describe('async support', () => {
 
     it('group-by with async key function', async () => {
       const lits = new Lits({ modules: [sequenceUtilsModule] })
-      const result = await lits.async.run('let su = import("sequence"); su.group-by(["ab", "ac", "bc"], getFirst)', {
+      const result = await lits.async.run('let su = import(sequence); su.group-by(["ab", "ac", "bc"], getFirst)', {
         bindings: { getFirst: asyncFirst },
       })
       expect(result).toEqual({ a: ['ab', 'ac'], b: ['bc'] })
@@ -476,7 +476,7 @@ describe('async support', () => {
 
     it('partition-by with async function', async () => {
       const lits = new Lits({ modules: [sequenceUtilsModule] })
-      const result = await lits.async.run('let su = import("sequence"); su.partition-by([1, 1, 2, 2, 3], isEven)', {
+      const result = await lits.async.run('let su = import(sequence); su.partition-by([1, 1, 2, 2, 3], isEven)', {
         bindings: { isEven: asyncIsEven },
       })
       expect(result).toEqual([[1, 1], [2, 2], [3]])
@@ -499,7 +499,7 @@ describe('async support', () => {
 
     it('filteri with async predicate', async () => {
       const lits = new Lits({ modules: [collectionUtilsModule] })
-      const result = await lits.async.run('let cu = import("collection"); cu.filteri([1, 2, 3, 4], (x, i) -> isEven(x))', {
+      const result = await lits.async.run('let cu = import(collection); cu.filteri([1, 2, 3, 4], (x, i) -> isEven(x))', {
         bindings: { isEven: asyncIsEven },
       })
       expect(result).toEqual([2, 4])
@@ -507,7 +507,7 @@ describe('async support', () => {
 
     it('mapi with async function', async () => {
       const lits = new Lits({ modules: [collectionUtilsModule] })
-      const result = await lits.async.run('let cu = import("collection"); cu.mapi([1, 2, 3], (x, i) -> dbl(x))', {
+      const result = await lits.async.run('let cu = import(collection); cu.mapi([1, 2, 3], (x, i) -> dbl(x))', {
         bindings: { dbl: asyncDouble },
       })
       expect(result).toEqual([2, 4, 6])
@@ -515,7 +515,7 @@ describe('async support', () => {
 
     it('update with async function', async () => {
       const lits = new Lits({ modules: [collectionUtilsModule] })
-      const result = await lits.async.run('let cu = import("collection"); cu.update({ a: 1 }, "a", incr)', {
+      const result = await lits.async.run('let cu = import(collection); cu.update({ a: 1 }, "a", incr)', {
         bindings: { incr: asyncInc },
       })
       expect(result).toEqual({ a: 2 })
@@ -523,7 +523,7 @@ describe('async support', () => {
 
     it('every? with async predicate', async () => {
       const lits = new Lits({ modules: [collectionUtilsModule] })
-      const result = await lits.async.run('let cu = import("collection"); cu.every?([2, 4, 6], isEven)', {
+      const result = await lits.async.run('let cu = import(collection); cu.every?([2, 4, 6], isEven)', {
         bindings: { isEven: asyncIsEven },
       })
       expect(result).toBe(true)
@@ -531,7 +531,7 @@ describe('async support', () => {
 
     it('every? with async predicate failing on first element', async () => {
       const lits = new Lits({ modules: [collectionUtilsModule] })
-      const result = await lits.async.run('let cu = import("collection"); cu.every?([1, 2, 4], isEven)', {
+      const result = await lits.async.run('let cu = import(collection); cu.every?([1, 2, 4], isEven)', {
         bindings: { isEven: asyncIsEven },
       })
       expect(result).toBe(false)
@@ -539,7 +539,7 @@ describe('async support', () => {
 
     it('any? with async predicate', async () => {
       const lits = new Lits({ modules: [collectionUtilsModule] })
-      const result = await lits.async.run('let cu = import("collection"); cu.any?([1, 3, 4], isEven)', {
+      const result = await lits.async.run('let cu = import(collection); cu.any?([1, 3, 4], isEven)', {
         bindings: { isEven: asyncIsEven },
       })
       expect(result).toBe(true)
@@ -547,7 +547,7 @@ describe('async support', () => {
 
     it('not-any? with async predicate', async () => {
       const lits = new Lits({ modules: [collectionUtilsModule] })
-      const result = await lits.async.run('let cu = import("collection"); cu.not-any?([1, 3, 5], isEven)', {
+      const result = await lits.async.run('let cu = import(collection); cu.not-any?([1, 3, 5], isEven)', {
         bindings: { isEven: asyncIsEven },
       })
       expect(result).toBe(true)
@@ -555,7 +555,7 @@ describe('async support', () => {
 
     it('not-every? with async predicate', async () => {
       const lits = new Lits({ modules: [collectionUtilsModule] })
-      const result = await lits.async.run('let cu = import("collection"); cu.not-every?([2, 3, 4], isEven)', {
+      const result = await lits.async.run('let cu = import(collection); cu.not-every?([2, 3, 4], isEven)', {
         bindings: { isEven: asyncIsEven },
       })
       expect(result).toBe(true)
@@ -582,7 +582,7 @@ describe('async support', () => {
 
     it('every? with async predicate', async () => {
       const lits = new Lits({ modules: [gridModule] })
-      const result = await lits.async.run('let g = import("grid"); g.every?(g.fill(2, 2, 1), isPos)', {
+      const result = await lits.async.run('let g = import(grid); g.every?(g.fill(2, 2, 1), isPos)', {
         bindings: { isPos: asyncIsPositive },
       })
       expect(result).toBe(true)
@@ -590,7 +590,7 @@ describe('async support', () => {
 
     it('some? with async predicate', async () => {
       const lits = new Lits({ modules: [gridModule] })
-      const result = await lits.async.run('let g = import("grid"); g.some?(g.fill(2, 2, 0), isPos)', {
+      const result = await lits.async.run('let g = import(grid); g.some?(g.fill(2, 2, 0), isPos)', {
         bindings: { isPos: asyncIsPositive },
       })
       expect(result).toBe(false)
@@ -598,7 +598,7 @@ describe('async support', () => {
 
     it('every-row? with async predicate', async () => {
       const lits = new Lits({ modules: [gridModule] })
-      const result = await lits.async.run('let g = import("grid"); g.every-row?(g.fill(2, 2, 1), allPos)', {
+      const result = await lits.async.run('let g = import(grid); g.every-row?(g.fill(2, 2, 1), allPos)', {
         bindings: { allPos: asyncAllPositive },
       })
       expect(result).toBe(true)
@@ -606,7 +606,7 @@ describe('async support', () => {
 
     it('some-row? with async predicate', async () => {
       const lits = new Lits({ modules: [gridModule] })
-      const result = await lits.async.run('let g = import("grid"); g.some-row?([[1, 2], [-1, -2]], allPos)', {
+      const result = await lits.async.run('let g = import(grid); g.some-row?([[1, 2], [-1, -2]], allPos)', {
         bindings: { allPos: asyncAllPositive },
       })
       expect(result).toBe(true)
@@ -614,7 +614,7 @@ describe('async support', () => {
 
     it('generate with async generator', async () => {
       const lits = new Lits({ modules: [gridModule] })
-      const result = await lits.async.run('let g = import("grid"); g.generate(2, 3, mul)', {
+      const result = await lits.async.run('let g = import(grid); g.generate(2, 3, mul)', {
         bindings: { mul: asyncMul },
       })
       expect(result).toEqual([[0, 1, 2], [10, 11, 12]])
@@ -622,7 +622,7 @@ describe('async support', () => {
 
     it('map with async function', async () => {
       const lits = new Lits({ modules: [gridModule] })
-      const result = await lits.async.run('let g = import("grid"); g.map([[1, 2], [3, 4]], dbl)', {
+      const result = await lits.async.run('let g = import(grid); g.map([[1, 2], [3, 4]], dbl)', {
         bindings: { dbl: asyncDouble },
       })
       expect(result).toEqual([[2, 4], [6, 8]])
@@ -630,7 +630,7 @@ describe('async support', () => {
 
     it('mapi with async function', async () => {
       const lits = new Lits({ modules: [gridModule] })
-      const result = await lits.async.run('let g = import("grid"); g.mapi([[1, 2], [3, 4]], (val, r, c) -> mul(r, c))', {
+      const result = await lits.async.run('let g = import(grid); g.mapi([[1, 2], [3, 4]], (val, r, c) -> mul(r, c))', {
         bindings: { mul: asyncMul },
       })
       expect(result).toEqual([[0, 1], [10, 11]])
@@ -640,7 +640,7 @@ describe('async support', () => {
   describe('async vector module functions', () => {
     it('generate with async generator', async () => {
       const lits = new Lits({ modules: [vectorModule] })
-      const result = await lits.async.run('let v = import("vector"); v.generate(4, dbl)', {
+      const result = await lits.async.run('let v = import(vector); v.generate(4, dbl)', {
         bindings: {
           dbl: {
             fn: async (x: number) => x * 2,
@@ -658,7 +658,7 @@ describe('async support', () => {
       // fibonacci-take-while with async predicate: take fib numbers while < 10
       // Fibonacci: 0, 1, 1, 2, 3, 5, 8, 13, ...  → should return [0, 1, 1, 2, 3, 5, 8]
       const result = await lits.async.run(
-        'let nt = import("number-theory"); nt.fibonacci-take-while(lessThan10)',
+        'let nt = import(number-theory); nt.fibonacci-take-while(lessThan10)',
         {
           bindings: {
             lessThan10: {
@@ -799,7 +799,7 @@ describe('async support', () => {
     it('should handle async predicate in bernoulli take-while', async () => {
       const lits = new Lits({ modules: [numberTheoryModule] })
       const result = await lits.async.run(
-        'let nt = import("number-theory"); nt.bernoulli-take-while(asyncPred)',
+        'let nt = import(number-theory); nt.bernoulli-take-while(asyncPred)',
         {
           bindings: {
             asyncPred: { fn: async (_value: unknown, index: unknown) => (index as number) < 5 },
@@ -870,7 +870,7 @@ describe('async support', () => {
 
     it('should throw when sort-by uses async comparator', async () => {
       const lits = new Lits({ modules: [sequenceUtilsModule] })
-      await expect(lits.async.run('let su = import("sequence"); su.sort-by([3, 1, 2], identity, asyncCmp)', {
+      await expect(lits.async.run('let su = import(sequence); su.sort-by([3, 1, 2], identity, asyncCmp)', {
         bindings: {
           asyncCmp: { fn: async (a: unknown, b: unknown) => (a as number) - (b as number) },
         },
