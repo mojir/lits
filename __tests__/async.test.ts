@@ -419,32 +419,32 @@ describe('async support', () => {
     })
 
     it('take-while with async predicate', async () => {
-      const lits = new Lits({ modules: [sequenceUtilsModule] })
-      const result = await lits.async.run('let su = import("sequence"); su.take-while([2, 4, 5, 6], isEven)', {
+      const lits = new Lits()
+      const result = await lits.async.run('take-while([2, 4, 5, 6], isEven)', {
         jsFunctions: { isEven: asyncIsEven },
       })
       expect(result).toEqual([2, 4])
     })
 
     it('take-while with async predicate on string', async () => {
-      const lits = new Lits({ modules: [sequenceUtilsModule] })
-      const result = await lits.async.run('let su = import("sequence"); su.take-while("aabbc", isA)', {
+      const lits = new Lits()
+      const result = await lits.async.run('take-while("aabbc", isA)', {
         jsFunctions: { isA: { fn: async (c: unknown) => c === 'a' } },
       })
       expect(result).toBe('aa')
     })
 
     it('drop-while with async predicate', async () => {
-      const lits = new Lits({ modules: [sequenceUtilsModule] })
-      const result = await lits.async.run('let su = import("sequence"); su.drop-while([2, 4, 5, 6], isEven)', {
+      const lits = new Lits()
+      const result = await lits.async.run('drop-while([2, 4, 5, 6], isEven)', {
         jsFunctions: { isEven: asyncIsEven },
       })
       expect(result).toEqual([5, 6])
     })
 
     it('drop-while with async predicate on string', async () => {
-      const lits = new Lits({ modules: [sequenceUtilsModule] })
-      const result = await lits.async.run('let su = import("sequence"); su.drop-while("aabbc", isA)', {
+      const lits = new Lits()
+      const result = await lits.async.run('drop-while("aabbc", isA)', {
         jsFunctions: { isA: { fn: async (c: unknown) => c === 'a' } },
       })
       expect(result).toBe('bbc')

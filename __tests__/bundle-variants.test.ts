@@ -137,7 +137,7 @@ describe('individual module entry points', () => {
   it('sequenceUtils module', () => {
     expect(sequenceUtilsModule.name).toBe('sequence')
     const lits = new Lits({ modules: [sequenceUtilsModule] })
-    expect(lits.run('let su = import("sequence"); su.take([1, 2, 3, 4, 5], 3)')).toEqual([1, 2, 3])
+    expect(lits.run('let su = import("sequence"); su.distinct([1, 2, 3, 1, 3, 5])')).toEqual([1, 2, 3, 5])
   })
 
   it('bitwiseUtils module', () => {

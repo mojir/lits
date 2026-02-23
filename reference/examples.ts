@@ -59,17 +59,17 @@ write!([1, 2, 3][2]);
     description: 'Demonstrates using async JavaScript functions from Lits. The playground runs in async mode, so async JS functions are automatically awaited.',
     context: {
       jsFunctions: {
-        'fetch-user!': `async (id) => {
+        'fetch-user': `async (id) => {
   const response = await fetch('https://jsonplaceholder.typicode.com/users/' + id);
   const user = await response.json();
   return { name: user.name, email: user.email, city: user.address.city };
 }`,
-        'fetch-posts!': `async (userId) => {
+        'fetch-posts': `async (userId) => {
   const response = await fetch('https://jsonplaceholder.typicode.com/posts?userId=' + userId);
   const posts = await response.json();
   return posts.slice(0, 3).map(p => ({ title: p.title, body: p.body }));
 }`,
-        'delay!': `async (ms) => {
+        'delay': `async (ms) => {
   await new Promise(resolve => setTimeout(resolve, ms));
   return ms;
 }`,
@@ -81,17 +81,17 @@ write!([1, 2, 3][2]);
 
 // Simulate a delay
 write!("Waiting 500ms...");
-delay!(500);
+delay(500);
 write!("Done waiting!");
 
 // Fetch a user from a REST API
-let user = fetch-user!(1);
+let user = fetch-user(1);
 write!("User: " ++ user.name);
 write!("Email: " ++ user.email);
 write!("City: " ++ user.city);
 
 // Fetch their posts
-let posts = fetch-posts!(1);
+let posts = fetch-posts(1);
 write!("\\nFirst " ++ str(count(posts)) ++ " posts by " ++ user.name ++ ":");
 doseq (post in posts) -> write!("- " ++ post.title);
     `.trim(),
@@ -102,14 +102,14 @@ doseq (post in posts) -> write!("- " ++ post.title);
     description: 'A more complex async example with user interactions. Uses prompt for input and fetch for API calls.',
     context: {
       jsFunctions: {
-        'prompt!': '(title) => prompt(title)',
-        'fetch-user!': `async (id) => {
+        'prompt': '(title) => prompt(title)',
+        'fetch-user': `async (id) => {
   const response = await fetch('https://jsonplaceholder.typicode.com/users/' + id);
   if (!response.ok) return null;
   const user = await response.json();
   return { id: user.id, name: user.name, email: user.email, city: user.address.city, company: user.company.name };
 }`,
-        'fetch-todos!': `async (userId) => {
+        'fetch-todos': `async (userId) => {
   const response = await fetch('https://jsonplaceholder.typicode.com/todos?userId=' + userId);
   const todos = await response.json();
   return todos.map(t => ({ title: t.title, completed: t.completed }));
@@ -120,15 +120,13 @@ doseq (post in posts) -> write!("- " ++ post.title);
 // Interactive async example
 // Uses prompt for user input and fetch for API calls
 
-let { take } = import("sequence");
-
 let lookup-user! = (id-str) -> do
   let id = number(id-str);
   if not(number?(id)) || id < 1 || id > 10 then
     write!("Invalid user ID: " ++ id-str ++ ". Please enter 1-10.");
   else
     write!("Fetching user " ++ str(id) ++ "...");
-    let user = fetch-user!(id);
+    let user = fetch-user(id);
     if null?(user) then
       write!("User not found.");
     else
@@ -143,9 +141,9 @@ end;
 
 let show-todos! = (user) -> do
   write!("\\nFetching todos for " ++ user.name ++ "...");
-  let todos = fetch-todos!(user.id);
+  let todos = fetch-todos(user.id);
   let done = filter(todos, -> $.completed);
-  let pending = filter(todos, -> !($.completed));
+  let pending = filter(todos, -> not($.completed));
 
   write!("\\nCompleted (" ++ str(count(done)) ++ "/" ++ str(count(todos)) ++ "):");
   doseq (t in done take 5) -> write!("  ✓ " ++ t.title);
@@ -166,13 +164,13 @@ let main! = () -> do
 
   loop (continue? = true) ->
     if continue? then
-      let input = prompt!("Enter a user ID (1-10), or cancel to quit:");
+      let input = prompt("Enter a user ID (1-10), or cancel to quit:");
       if null?(input) || input == "" then
         write!("Goodbye!");
       else
         let user = lookup-user!(input);
         if user then
-          let show = prompt!("Show todos for " ++ user.name ++ "? (yes/no)");
+          let show = prompt("Show todos for " ++ user.name ++ "? (yes/no)");
           if show == "yes" then show-todos!(user) end;
         end;
         write!("");
@@ -271,7 +269,7 @@ let describe-location = (state) -> do
   end;
 
   // Check if location has items
-  let items-desc = if !(empty?(get(location, "items", []))) then
+  let items-desc = if not(empty?(get(location, "items", []))) then
     "You see: " ++ join(location.items, ", ")
   else
     ""
@@ -282,7 +280,7 @@ let describe-location = (state) -> do
   let exits-desc = "Exits: " ++ exits;
 
   // Join all descriptions
-  filter([description, visited-status, items-desc, exits-desc], -> !(empty?($))) join "\\n"
+  filter([description, visited-status, items-desc, exits-desc], -> not(empty?($))) join "\\n"
 end;
 
 let get-location-items = (state) -> do
@@ -301,7 +299,7 @@ let move = (state, direction) -> do
     let is-dark = new-location == "tunnel" || new-location == "treasure room";
 
     // Check if player has light source for dark areas
-    if is-dark && !(state.light-source) then
+    if is-dark && not(state.light-source) then
       [state, "It's too dark to go that way without a light source."]
     else
       let new-visited = assoc(
@@ -368,7 +366,7 @@ let drop! = (state, item) -> do
     let new-inventory = filter(-> $ != item, state.inventory);
 
     // Special case for torch
-    let still-has-light = !(item == "torch") || contains?(new-inventory, "torch");
+    let still-has-light = not(item == "torch") || contains?(new-inventory, "torch");
 
     // Update locations and state
     let new-location = assoc(location, "items", new-location-items);
@@ -804,7 +802,7 @@ let isoDateString? = (data) -> do
       || day > 30 && (month == 4 || month == 6 || month == 9 || month == 11)
       || month == 2 && (leapYear && day > 29 || !leapYear && day > 28);
 
-    !(invalid)
+    not(invalid)
   else
     false
   end

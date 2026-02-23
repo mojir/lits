@@ -314,6 +314,164 @@ describe('sequence functions', () => {
       expect(() => lits.run('join(["Albert", "Mojir"])')).toThrow(LitsError)
     })
   })
+
+  describe('take', () => {
+    it('samples', () => {
+      expect(lits.run('take([1, 2, 3], 2)')).toEqual([1, 2])
+      expect(lits.run('take([], 2)')).toEqual([])
+      expect(lits.run('take([1, 2, 3], 20)')).toEqual([1, 2, 3])
+      expect(lits.run('take([1, 2, 3], 0)')).toEqual([])
+      expect(lits.run('take("Albert", 2)')).toEqual('Al')
+      expect(lits.run('take("Albert", 2.01)')).toEqual('Alb')
+
+      expect(() => lits.run('take({},)')).toThrow(LitsError)
+      expect(() => lits.run('take(null, 1)')).toThrow(LitsError)
+      expect(() => lits.run('take(true 1)')).toThrow(LitsError)
+      expect(() => lits.run('take(false 1)')).toThrow(LitsError)
+      expect(() => lits.run('take("Hej", "1")')).toThrow(LitsError)
+      expect(() => lits.run('take()')).toThrow(LitsError)
+      expect(() => lits.run('take([1, 2, 3])')).toThrow(LitsError)
+      expect(() => lits.run('take([1, 2, 3], 1, 2)')).toThrow(LitsError)
+    })
+
+    it('new array created', () => {
+      const program = `
+        let l1 = [1, 2, 3];
+        let l2 = take(l1, 2);
+        l1 != l2
+      `
+      expect(lits.run(program)).toBe(true)
+    })
+  })
+
+  describe('take-last', () => {
+    it('samples', () => {
+      expect(lits.run('take-last([1, 2, 3], 2)')).toEqual([2, 3])
+      expect(lits.run('take-last([1, 2, 3], 20)')).toEqual([1, 2, 3])
+      expect(lits.run('take-last([1, 2, 3], 0)')).toEqual([])
+      expect(lits.run('take-last([1, 2, 3], 0.01)')).toEqual([3])
+
+      expect(() => lits.run('take-last(object())')).toThrow(LitsError)
+      expect(() => lits.run('take-last(null)')).toThrow(LitsError)
+      expect(() => lits.run('take-last(true)')).toThrow(LitsError)
+      expect(() => lits.run('take-last(false)')).toThrow(LitsError)
+      expect(() => lits.run('take-last("1")')).toThrow(LitsError)
+      expect(() => lits.run('take-last()')).toThrow(LitsError)
+      expect(() => lits.run('take-last([1, 2, 3])')).toThrow(LitsError)
+      expect(() => lits.run('take-last([1, 2, 3], 1, 2)')).toThrow(LitsError)
+    })
+
+    it('new array created', () => {
+      const program = `
+        let l1 = [1, 2, 3];
+        let l2 = take-last(l1, 2);
+        l1 != l2
+      `
+      expect(lits.run(program)).toBe(true)
+    })
+  })
+
+  describe('drop', () => {
+    it('samples', () => {
+      expect(lits.run('drop([1, 2, 3], 2)')).toEqual([3])
+      expect(lits.run('drop([1, 2, 3], 20)')).toEqual([])
+      expect(lits.run('drop([1, 2, 3], 0)')).toEqual([1, 2, 3])
+      expect(lits.run('drop("Albert", 2)')).toEqual('bert')
+      expect(lits.run('drop([1, 2, 3], 0.5)')).toEqual([2, 3])
+      expect(lits.run('drop("Albert", -2)')).toEqual('Albert')
+
+      expect(() => lits.run('drop({},)')).toThrow(LitsError)
+      expect(() => lits.run('drop(null, 1)')).toThrow(LitsError)
+      expect(() => lits.run('drop(true 1)')).toThrow(LitsError)
+      expect(() => lits.run('drop(false 1)')).toThrow(LitsError)
+      expect(() => lits.run('drop("Hej", "1")')).toThrow(LitsError)
+      expect(() => lits.run('drop()')).toThrow(LitsError)
+      expect(() => lits.run('drop([1, 2, 3])')).toThrow(LitsError)
+      expect(() => lits.run('drop([1, 2, 3], 1, 2)')).toThrow(LitsError)
+    })
+
+    it('new array created', () => {
+      const program = `
+        let l1 = [1, 2, 3];
+        let l2 = drop(l1, 2);
+        l1 != l2
+      `
+      expect(lits.run(program)).toBe(true)
+    })
+  })
+
+  describe('drop-last', () => {
+    it('samples', () => {
+      expect(lits.run('drop-last([1, 2, 3], 2)')).toEqual([1])
+      expect(lits.run('drop-last([1, 2, 3], 20)')).toEqual([])
+      expect(lits.run('drop-last([1, 2, 3], 0)')).toEqual([1, 2, 3])
+      expect(lits.run('drop-last("Albert", 2)')).toEqual('Albe')
+      expect(lits.run('drop-last([1, 2, 3], 0.5)')).toEqual([1, 2])
+      expect(lits.run('drop-last("Albert", -2)')).toEqual('Albert')
+
+      expect(() => lits.run('drop-last({},)')).toThrow(LitsError)
+      expect(() => lits.run('drop-last(null, 1)')).toThrow(LitsError)
+      expect(() => lits.run('drop-last(true 1)')).toThrow(LitsError)
+      expect(() => lits.run('drop-last(false 1)')).toThrow(LitsError)
+      expect(() => lits.run('drop-last("Hej", "1")')).toThrow(LitsError)
+      expect(() => lits.run('drop-last()')).toThrow(LitsError)
+      expect(() => lits.run('drop-last([1, 2, 3])')).toThrow(LitsError)
+      expect(() => lits.run('drop-last([1, 2, 3], 1, 2)')).toThrow(LitsError)
+    })
+  })
+
+  describe('take-while', () => {
+    it('samples', () => {
+      expect(lits.run('take-while([1, 2, 3, 2, 1], -> $ < 3)')).toEqual([1, 2])
+      expect(lits.run('take-while([1, 2, 3, 2, 1], -> $ > 3)')).toEqual([])
+      expect(lits.run('take-while("abcdabcd", -> $ <= "c")')).toEqual('abc')
+      expect(lits.run('take-while([1, 2, 3], -> $ < 10)')).toEqual([1, 2, 3])
+
+      expect(() => lits.run('take-while({}, -> $ < 3))')).toThrow(LitsError)
+      expect(() => lits.run('take-while(null, -> $ < 3)')).toThrow(LitsError)
+      expect(() => lits.run('take-while(true, -> $ < 3)')).toThrow(LitsError)
+      expect(() => lits.run('take-while(false, -> $ < 3)')).toThrow(LitsError)
+      expect(() => lits.run('take-while([1, 2, 3], 10)')).toThrow(LitsError)
+      expect(() => lits.run('take-while()')).toThrow(LitsError)
+      expect(() => lits.run('take-while([1, 2, 3])')).toThrow(LitsError)
+      expect(() => lits.run('take-while([1, 2, 3], -> $ < 3 1)')).toThrow(LitsError)
+    })
+    it('new array created', () => {
+      const program = `
+        let l1 = [1, 2, 3];
+        let l2 = take-while(l1, -> $ < 3);
+        l1 != l2
+      `
+      expect(lits.run(program)).toBe(true)
+    })
+  })
+
+  describe('drop-while', () => {
+    it('samples', () => {
+      expect(lits.run('drop-while([1, 2, 3, 2, 1], -> $ < 3)')).toEqual([3, 2, 1])
+      expect(lits.run('drop-while([1, 2, 3, 2, 1], -> $ > 3)')).toEqual([1, 2, 3, 2, 1])
+      expect(lits.run('drop-while("abcdab", -> $ <= "c")')).toEqual('dab')
+      expect(lits.run('drop-while([1, 2, 3], -> $ < 10)')).toEqual([])
+      expect(lits.run('drop-while("abc", -> true)')).toEqual('')
+
+      expect(() => lits.run('drop-while({}, -> $ < 3))')).toThrow(LitsError)
+      expect(() => lits.run('drop-while(null, -> $ < 3)')).toThrow(LitsError)
+      expect(() => lits.run('drop-while(true, -> $ < 3)')).toThrow(LitsError)
+      expect(() => lits.run('drop-while(false, -> $ < 3)')).toThrow(LitsError)
+      expect(() => lits.run('drop-while([1, 2, 3], 10)')).toThrow(LitsError)
+      expect(() => lits.run('drop-while()')).toThrow(LitsError)
+      expect(() => lits.run('drop-while([1, 2, 3])')).toThrow(LitsError)
+      expect(() => lits.run('drop-while([1, 2, 3], -> $ < 3 1)')).toThrow(LitsError)
+    })
+    it('new array created', () => {
+      const program = `
+        let l1 = [1, 2, 3];
+        let l2 = take-while(l1, -> $ < 3);
+        l1 != l2
+      `
+      expect(lits.run(program)).toBe(true)
+    })
+  })
 })
 
 describe('sequence-Utils module functions', () => {
@@ -386,164 +544,6 @@ describe('sequence-Utils module functions', () => {
         expect(() => mlits.run(`${imp}su.shift(false)`)).toThrow(LitsError)
         expect(() => mlits.run(`${imp}su.shift(1)`)).toThrow(LitsError)
         expect(() => mlits.run(`${imp}su.shift()`)).toThrow(LitsError)
-      })
-    })
-
-    describe('take', () => {
-      it('samples', () => {
-        expect(mlits.run(`${imp}su.take([1, 2, 3], 2)`)).toEqual([1, 2])
-        expect(mlits.run(`${imp}su.take([], 2)`)).toEqual([])
-        expect(mlits.run(`${imp}su.take([1, 2, 3], 20)`)).toEqual([1, 2, 3])
-        expect(mlits.run(`${imp}su.take([1, 2, 3], 0)`)).toEqual([])
-        expect(mlits.run(`${imp}su.take("Albert", 2)`)).toEqual('Al')
-        expect(mlits.run(`${imp}su.take("Albert", 2.01)`)).toEqual('Alb')
-
-        expect(() => mlits.run(`${imp}su.take({},)`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.take(null, 1)`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.take(true 1)`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.take(false 1)`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.take("Hej", "1")`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.take()`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.take([1, 2, 3])`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.take([1, 2, 3], 1, 2)`)).toThrow(LitsError)
-      })
-
-      it('new array created', () => {
-        const program = `${imp}
-          let l1 = [1, 2, 3];
-          let l2 = su.take(l1, 2);
-          l1 != l2
-        `
-        expect(mlits.run(program)).toBe(true)
-      })
-    })
-
-    describe('take-last', () => {
-      it('samples', () => {
-        expect(mlits.run(`${imp}su.take-last([1, 2, 3], 2)`)).toEqual([2, 3])
-        expect(mlits.run(`${imp}su.take-last([1, 2, 3], 20)`)).toEqual([1, 2, 3])
-        expect(mlits.run(`${imp}su.take-last([1, 2, 3], 0)`)).toEqual([])
-        expect(mlits.run(`${imp}su.take-last([1, 2, 3], 0.01)`)).toEqual([3])
-
-        expect(() => mlits.run(`${imp}su.take-last(object())`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.take-last(null)`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.take-last(true)`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.take-last(false)`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.take-last("1")`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.take-last()`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.take-last([1, 2, 3])`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.take-last([1, 2, 3], 1, 2)`)).toThrow(LitsError)
-      })
-
-      it('new array created', () => {
-        const program = `${imp}
-          let l1 = [1, 2, 3];
-          let l2 = su.take-last(l1, 2);
-          l1 != l2
-        `
-        expect(mlits.run(program)).toBe(true)
-      })
-    })
-
-    describe('take-while', () => {
-      it('samples', () => {
-        expect(mlits.run(`${imp}su.take-while([1, 2, 3, 2, 1], -> $ < 3)`)).toEqual([1, 2])
-        expect(mlits.run(`${imp}su.take-while([1, 2, 3, 2, 1], -> $ > 3)`)).toEqual([])
-        expect(mlits.run(`${imp}su.take-while("abcdabcd", -> $ <= "c")`)).toEqual('abc')
-        expect(mlits.run(`${imp}su.take-while([1, 2, 3], -> $ < 10)`)).toEqual([1, 2, 3])
-
-        expect(() => mlits.run(`${imp}su.take-while({}, -> $ < 3))`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.take-while(null, -> $ < 3)`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.take-while(true, -> $ < 3)`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.take-while(false, -> $ < 3)`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.take-while([1, 2, 3], 10)`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.take-while()`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.take-while([1, 2, 3])`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.take-while([1, 2, 3], -> $ < 3 1)`)).toThrow(LitsError)
-      })
-      it('new array created', () => {
-        const program = `${imp}
-          let l1 = [1, 2, 3];
-          let l2 = su.take-while(l1, -> $ < 3);
-          l1 != l2
-        `
-        expect(mlits.run(program)).toBe(true)
-      })
-    })
-
-    describe('drop', () => {
-      it('samples', () => {
-        expect(mlits.run(`${imp}su.drop([1, 2, 3], 2)`)).toEqual([3])
-        expect(mlits.run(`${imp}su.drop([1, 2, 3], 20)`)).toEqual([])
-        expect(mlits.run(`${imp}su.drop([1, 2, 3], 0)`)).toEqual([1, 2, 3])
-        expect(mlits.run(`${imp}su.drop("Albert", 2)`)).toEqual('bert')
-        expect(mlits.run(`${imp}su.drop([1, 2, 3], 0.5)`)).toEqual([2, 3])
-        expect(mlits.run(`${imp}su.drop("Albert", -2)`)).toEqual('Albert')
-
-        expect(() => mlits.run(`${imp}su.drop({},)`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.drop(null, 1)`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.drop(true 1)`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.drop(false 1)`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.drop("Hej", "1")`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.drop()`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.drop([1, 2, 3])`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.drop([1, 2, 3], 1, 2)`)).toThrow(LitsError)
-      })
-
-      it('new array created', () => {
-        const program = `${imp}
-          let l1 = [1, 2, 3];
-          let l2 = su.drop(l1, 2);
-          l1 != l2
-        `
-        expect(mlits.run(program)).toBe(true)
-      })
-    })
-
-    describe('drop-last', () => {
-      it('samples', () => {
-        expect(mlits.run(`${imp}su.drop-last([1, 2, 3], 2)`)).toEqual([1])
-        expect(mlits.run(`${imp}su.drop-last([1, 2, 3], 20)`)).toEqual([])
-        expect(mlits.run(`${imp}su.drop-last([1, 2, 3], 0)`)).toEqual([1, 2, 3])
-        expect(mlits.run(`${imp}su.drop-last("Albert", 2)`)).toEqual('Albe')
-        expect(mlits.run(`${imp}su.drop-last([1, 2, 3], 0.5)`)).toEqual([1, 2])
-        expect(mlits.run(`${imp}su.drop-last("Albert", -2)`)).toEqual('Albert')
-
-        expect(() => mlits.run(`${imp}su.drop-last({},)`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.drop-last(null, 1)`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.drop-last(true 1)`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.drop-last(false 1)`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.drop-last("Hej", "1")`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.drop-last()`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.drop-last([1, 2, 3])`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.drop-last([1, 2, 3], 1, 2)`)).toThrow(LitsError)
-      })
-    })
-
-    describe('drop-while', () => {
-      it('samples', () => {
-        expect(mlits.run(`${imp}su.drop-while([1, 2, 3, 2, 1], -> $ < 3)`)).toEqual([3, 2, 1])
-        expect(mlits.run(`${imp}su.drop-while([1, 2, 3, 2, 1], -> $ > 3)`)).toEqual([1, 2, 3, 2, 1])
-        expect(mlits.run(`${imp}su.drop-while("abcdab", -> $ <= "c")`)).toEqual('dab')
-        expect(mlits.run(`${imp}su.drop-while([1, 2, 3], -> $ < 10)`)).toEqual([])
-        expect(mlits.run(`${imp}su.drop-while("abc", -> true)`)).toEqual('')
-
-        expect(() => mlits.run(`${imp}su.drop-while({}, -> $ < 3))`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.drop-while(null, -> $ < 3)`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.drop-while(true, -> $ < 3)`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.drop-while(false, -> $ < 3)`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.drop-while([1, 2, 3], 10)`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.drop-while()`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.drop-while([1, 2, 3])`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.drop-while([1, 2, 3], -> $ < 3 1)`)).toThrow(LitsError)
-      })
-      it('new array created', () => {
-        const program = `${imp}
-          let l1 = [1, 2, 3];
-          let l2 = su.take-while(l1, -> $ < 3);
-          l1 != l2
-        `
-        expect(mlits.run(program)).toBe(true)
       })
     })
 

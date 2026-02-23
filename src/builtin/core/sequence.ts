@@ -6,7 +6,7 @@ import { assertString, assertStringOrNumber } from '../../typeGuards/string'
 import { compare, deepEqual, toAny } from '../../utils'
 import { toFixedArity } from '../../utils/arity'
 import type { MaybePromise } from '../../utils/maybePromise'
-import { chain, reduceSequential } from '../../utils/maybePromise'
+import { chain, findIndexSequential, reduceSequential } from '../../utils/maybePromise'
 import type { BuiltinNormalExpressions } from '../interface'
 
 export const sequenceNormalExpression: BuiltinNormalExpressions = {
@@ -363,7 +363,7 @@ For string $seq returns all but the first characters in $seq.`,
         { argumentNames: ['seq', 'start', 'stop'] },
       ],
       description: 'Returns a copy of a portion of $seq from index $start (inclusive) to $stop (exclusive).',
-      seeAlso: ['sequence.take', 'sequence.drop', 'sequence.splice', 'nth'],
+      seeAlso: ['take', 'drop', 'sequence.splice', 'nth'],
       examples: [
         '[1, 2, 3, 4, 5] slice 2',
         'slice([1, 2, 3, 4, 5], 2, 4)',
@@ -514,6 +514,205 @@ sort(
 sort(
   [3, 1, 2],
   (a, b) -> cond case a > b then -1 case a < b then 1 case true then -1 end
+)`,
+      ],
+    },
+  },
+  'take': {
+    evaluate: ([input, n], sourceCodeInfo): Seq => {
+      assertNumber(n, sourceCodeInfo)
+      assertSeq(input, sourceCodeInfo)
+      const num = Math.max(Math.ceil(n), 0)
+      return input.slice(0, num)
+    },
+    arity: toFixedArity(2),
+    docs: {
+      category: 'sequence',
+      returns: { type: 'sequence' },
+      args: {
+        a: { type: 'sequence' },
+        b: { type: 'integer' },
+        n: { type: 'integer' },
+        seq: { type: 'sequence' },
+      },
+      variants: [{ argumentNames: ['seq', 'n'] }],
+      description: 'Constructs a new array/string with the $n first elements from $seq.',
+      seeAlso: ['take-last', 'take-while', 'drop', 'slice', 'sequence.split-at'],
+      examples: [
+        'take([1, 2, 3, 4, 5], 3)',
+        '[1, 2, 3, 4, 5] take 3',
+        'take([1, 2, 3, 4, 5], 0)',
+        'take("Albert", 2)',
+        'take("Albert", 50)',
+      ],
+    },
+  },
+  'take-last': {
+    evaluate: ([array, n], sourceCodeInfo): Seq => {
+      assertSeq(array, sourceCodeInfo)
+      assertNumber(n, sourceCodeInfo)
+      const num = Math.max(Math.ceil(n), 0)
+      const from = array.length - num
+      return array.slice(from)
+    },
+    arity: toFixedArity(2),
+    docs: {
+      category: 'sequence',
+      returns: { type: 'sequence' },
+      args: {
+        a: { type: 'sequence' },
+        b: { type: 'integer' },
+        n: { type: 'integer' },
+        seq: { type: 'sequence' },
+      },
+      variants: [{ argumentNames: ['seq', 'n'] }],
+      description: 'Constructs a new array with the $n last elements from $seq.',
+      seeAlso: ['take', 'drop-last'],
+      examples: [
+        'take-last([1, 2, 3, 4, 5], 3)',
+        '[1, 2, 3, 4, 5] take-last 3',
+        'take-last([1, 2, 3, 4, 5], 0)',
+      ],
+    },
+  },
+  'drop': {
+    evaluate: ([input, n], sourceCodeInfo): Seq => {
+      assertNumber(n, sourceCodeInfo)
+      const num = Math.max(Math.ceil(n), 0)
+      assertSeq(input, sourceCodeInfo)
+      return input.slice(num)
+    },
+    arity: toFixedArity(2),
+    docs: {
+      category: 'sequence',
+      returns: { type: 'sequence' },
+      args: {
+        a: { type: 'sequence' },
+        b: { type: 'integer' },
+        seq: { type: 'sequence' },
+        n: { type: 'integer' },
+      },
+      variants: [{ argumentNames: ['seq', 'n'] }],
+      description: 'Constructs a new array/string with the $n first elements dropped from $seq.',
+      seeAlso: ['drop-last', 'drop-while', 'take', 'slice', 'sequence.split-at'],
+      examples: [
+        'drop([1, 2, 3, 4, 5], 3)',
+        '[1, 2, 3, 4, 5] drop 0',
+        'drop("Albert", 2)',
+        'drop("Albert", 50)',
+      ],
+    },
+  },
+  'drop-last': {
+    evaluate: ([array, n], sourceCodeInfo): Seq => {
+      assertSeq(array, sourceCodeInfo)
+      assertNumber(n, sourceCodeInfo)
+      const num = Math.max(Math.ceil(n), 0)
+      const from = array.length - num
+      return array.slice(0, from)
+    },
+    arity: toFixedArity(2),
+    docs: {
+      category: 'sequence',
+      returns: { type: 'sequence' },
+      args: {
+        a: { type: 'sequence' },
+        b: { type: 'integer' },
+        seq: { type: 'sequence' },
+        n: { type: 'integer' },
+      },
+      variants: [{ argumentNames: ['seq', 'n'] }],
+      description: 'Constructs a new array with the $n last elements dropped from $seq.',
+      seeAlso: ['drop', 'take-last'],
+      examples: [
+        'drop-last([1, 2, 3, 4, 5], 3)',
+        '[1, 2, 3, 4, 5] drop-last 3',
+        'drop-last([1, 2, 3, 4, 5], 0)',
+      ],
+    },
+  },
+  'take-while': {
+    evaluate: ([seq, fn]: Arr, sourceCodeInfo, contextStack, { executeFunction }): MaybePromise<Any> => {
+      assertSeq(seq, sourceCodeInfo)
+      assertFunctionLike(fn, sourceCodeInfo)
+
+      const arr = typeof seq === 'string' ? seq.split('') : Array.from(seq)
+      // Find the first index where the predicate is false
+      return chain(
+        findIndexSequential(arr, elem => chain(
+          executeFunction(fn, [elem], contextStack, sourceCodeInfo),
+          result => !result,
+        )),
+        (index) => {
+          const taken = index === -1 ? arr : arr.slice(0, index)
+          return typeof seq === 'string' ? taken.join('') : taken
+        },
+      )
+    },
+    arity: toFixedArity(2),
+    docs: {
+      category: 'sequence',
+      returns: { type: 'sequence' },
+      args: {
+        a: { type: 'sequence' },
+        b: { type: 'function' },
+        seq: { type: 'sequence' },
+        fun: { type: 'function' },
+      },
+      variants: [{ argumentNames: ['seq', 'fun'] }],
+      description: 'Returns the members of $seq in order, stopping before the first one for which `predicate` returns a falsy value.',
+      seeAlso: ['take', 'drop-while', 'sequence.split-with'],
+      examples: [
+        `take-while(
+  [1, 2, 3, 2, 1],
+  -> $ < 3
+)`,
+        `take-while(
+  [1, 2, 3, 2, 1],
+  -> $ > 3
+)`,
+      ],
+    },
+  },
+  'drop-while': {
+    evaluate: ([seq, fn]: Arr, sourceCodeInfo, contextStack, { executeFunction }): MaybePromise<Any> => {
+      assertSeq(seq, sourceCodeInfo)
+      assertFunctionLike(fn, sourceCodeInfo)
+
+      const arr = Array.isArray(seq) ? seq : seq.split('')
+      return chain(
+        findIndexSequential(arr, elem => chain(
+          executeFunction(fn, [elem], contextStack, sourceCodeInfo),
+          result => !result,
+        )),
+        (from) => {
+          if (from === -1)
+            return typeof seq === 'string' ? '' : []
+          return typeof seq === 'string' ? arr.slice(from).join('') : seq.slice(from)
+        },
+      )
+    },
+    arity: toFixedArity(2),
+    docs: {
+      category: 'sequence',
+      returns: { type: 'sequence' },
+      args: {
+        a: { type: 'sequence' },
+        b: { type: 'function' },
+        seq: { type: 'sequence' },
+        fun: { type: 'function' },
+      },
+      variants: [{ argumentNames: ['seq', 'fun'] }],
+      description: 'Returns the members of $seq in order, skipping the fist elements for witch the `predicate` returns a truethy value.',
+      seeAlso: ['drop', 'take-while', 'sequence.split-with'],
+      examples: [
+        `drop-while(
+  [1, 2, 3, 2, 1],
+  -> $ < 3
+)`,
+        `drop-while(
+  [1, 2, 3, 2, 1],
+  -> $ > 3
 )`,
       ],
     },
