@@ -4,9 +4,9 @@ import { allNormalExpressions } from '../builtin/normalExpressions'
 import { specialExpressionTypes } from '../builtin/specialExpressionTypes'
 import { LitsError, UndefinedSymbolError } from '../errors'
 import type { Any } from '../interface'
-import type { ContextParams } from '../Lits/Lits'
+import type { ContextParams, JsFunction } from '../Lits/Lits'
 import type { LitsModule } from '../builtin/modules/interface'
-import { type NativeJsFunction, type NativeJsModule, type NormalBuiltinFunction, type SpecialBuiltinFunction, type SymbolNode, type UserDefinedSymbolNode, assertJsFunction } from '../parser/types'
+import { type NativeJsFunction, type NativeJsModule, type NormalBuiltinFunction, type SpecialBuiltinFunction, type SymbolNode, type UserDefinedSymbolNode, isJsFunction } from '../parser/types'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { asNonUndefined } from '../typeGuards'
 import { isNormalBuiltinSymbolNode, isSpecialBuiltinSymbolNode } from '../typeGuards/astNode'
@@ -200,48 +200,84 @@ export function createContextStack(params: ContextParams = {}, modules?: Map<str
   const globalContext = params.globalContext ?? {}
   // Contexts are checked from left to right
   const contexts = params.contexts ? [globalContext, ...params.contexts] : [globalContext]
-  const contextStack = new ContextStackImpl({
-    contexts,
-    values: params.values,
-    modules,
-    nativeJsFunctions:
-      params.jsFunctions
-      && Object.entries(params.jsFunctions).reduce((acc: NativeJsModule, [identifier, entry]) => {
+
+  // Process bindings: separate plain values from JS functions (with dot-syntax namespace support)
+  let hostValues: Record<string, unknown> | undefined
+  let nativeJsFunctions: NativeJsModule | undefined
+
+  if (params.bindings) {
+    for (const [identifier, entry] of Object.entries(params.bindings)) {
+      const isFunction = typeof entry === 'function'
+      const isJsFunctionObject = isJsFunction(entry)
+
+      if (isFunction || isJsFunctionObject) {
+        // Treat as a JS function binding
+        const jsFunction: JsFunction = isJsFunctionObject ? entry : { fn: entry as (...args: any[]) => unknown }
+
         const identifierParts = identifier.split('.')
         const name = identifierParts.pop()!
         if (/^[A-Z]/.test(name)) {
-          throw new LitsError(`Invalid identifier "${identifier}" in jsFunctions, function name must not start with an uppercase letter`, undefined)
-        }
-        let scope: NativeJsModule = acc
-        for (const part of identifierParts) {
-          if (part.length === 0) {
-            throw new LitsError(`Invalid empty identifier "${identifier}" in jsFunctions`, undefined)
-          }
-          if (!/^[A-Z]/.test(part)) {
-            throw new LitsError(`Invalid identifier "${identifier}" in jsFunctions, module name must start with an uppercase letter`, undefined)
-          }
-          if (!scope[part]) {
-            scope[part] = {}
-          }
-          scope = scope[part] as NativeJsModule
+          throw new LitsError(`Invalid identifier "${identifier}" in bindings, function name must not start with an uppercase letter`, undefined)
         }
 
-        assertJsFunction(entry)
-        const nativeFn: NativeJsFunction = {
-          functionType: 'NativeJsFunction',
-          nativeFn: entry,
-          name,
-          [FUNCTION_SYMBOL]: true,
-          arity: entry.arity ?? {},
-          docString: entry.docString ?? '',
+        if (identifierParts.length > 0) {
+          // Namespaced function (dot-syntax)
+          if (!nativeJsFunctions) {
+            nativeJsFunctions = {}
+          }
+          let scope: NativeJsModule = nativeJsFunctions
+          for (const part of identifierParts) {
+            if (part.length === 0) {
+              throw new LitsError(`Invalid empty identifier "${identifier}" in bindings`, undefined)
+            }
+            if (!/^[A-Z]/.test(part)) {
+              throw new LitsError(`Invalid identifier "${identifier}" in bindings, module name must start with an uppercase letter`, undefined)
+            }
+            if (!scope[part]) {
+              scope[part] = {}
+            }
+            scope = scope[part] as NativeJsModule
+          }
+          scope[name] = {
+            functionType: 'NativeJsFunction',
+            nativeFn: jsFunction,
+            name,
+            [FUNCTION_SYMBOL]: true,
+            arity: jsFunction.arity ?? {},
+            docString: jsFunction.docString ?? '',
+          } satisfies NativeJsFunction
         }
-
-        if (scope === acc) {
+        else {
+          // Flat function (no namespace)
           assertNotShadowingBuiltin(name)
+          if (!nativeJsFunctions) {
+            nativeJsFunctions = {}
+          }
+          nativeJsFunctions[name] = {
+            functionType: 'NativeJsFunction',
+            nativeFn: jsFunction,
+            name,
+            [FUNCTION_SYMBOL]: true,
+            arity: jsFunction.arity ?? {},
+            docString: jsFunction.docString ?? '',
+          } satisfies NativeJsFunction
         }
-        scope[name] = nativeFn
-        return acc
-      }, {}),
+      }
+      else {
+        // Plain value binding
+        if (!hostValues) {
+          hostValues = {}
+        }
+        hostValues[identifier] = entry
+      }
+    }
+  }
+
+  const contextStack = new ContextStackImpl({
+    contexts,
+    values: hostValues,
+    modules,
+    nativeJsFunctions,
   })
   return params.globalModuleScope ? contextStack : contextStack.create({})
 }

@@ -8,7 +8,7 @@ describe('string functions', () => {
     describe('str', () => {
       it('samples', () => {
         expect(lits.run('str({})')).toBe('{}')
-        expect(lits.run('str(x)', { values: { x: null } })).toBe('')
+        expect(lits.run('str(x)', { bindings: { x: null } })).toBe('')
         expect(lits.run('str()')).toBe('')
         expect(lits.run('str("")')).toBe('')
         expect(lits.run('str("1")')).toBe('1')

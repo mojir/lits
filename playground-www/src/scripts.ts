@@ -274,9 +274,9 @@ export function addContextEntry() {
   try {
     const parsedValue = JSON.parse(value) as unknown
     const context = getParsedContext()
-    const values: UnknownRecord = Object.assign({}, context.values)
-    values[name] = parsedValue
-    context.values = values
+    const bindings: UnknownRecord = Object.assign({}, context.bindings)
+    bindings[name] = parsedValue
+    context.bindings = bindings
     setContext(JSON.stringify(context, null, 2), true)
 
     closeAddContextMenu()
@@ -293,7 +293,7 @@ export function addContextEntry() {
 
 export function addSampleContext() {
   const context = getParsedContext()
-  const values = {
+  const sampleBindings = {
     'a-number': 42,
     'a-string': 'foo bar',
     'an-array': ['foo', 'bar', 1, 2, true, false, null],
@@ -325,12 +325,12 @@ export function addSampleContext() {
     ],
   }
 
-  const jsFunctions = {
+  const fnBindings = {
     'prompt!': '(title) => prompt(title)',
   }
 
-  context.values = Object.assign(values, context.values)
-  context.jsFunctions = Object.assign(jsFunctions, context.jsFunctions)
+  context.bindings = Object.assign(sampleBindings, context.bindings)
+  context.fnBindings = Object.assign(fnBindings, context.fnBindings)
 
   setContext(JSON.stringify(context, null, 2), true)
 }
@@ -913,21 +913,21 @@ function getLitsParamsFromContext(): ContextParams {
         ? JSON.parse(contextString) as UnknownRecord
         : {}
 
-    const parsedJsFunctions = asUnknownRecord(parsedContext.jsFunctions ?? {})
+    const parsedFnBindings = asUnknownRecord(parsedContext.fnBindings ?? {})
 
-    const values = asUnknownRecord(parsedContext.values ?? {})
+    const bindings = asUnknownRecord(parsedContext.bindings ?? {})
 
-    const jsFunctions: Record<string, JsFunction> = Object.entries(parsedJsFunctions).reduce((acc: Record<string, JsFunction>, [key, value]) => {
+    const fnBindings: Record<string, JsFunction> = Object.entries(parsedFnBindings).reduce((acc: Record<string, JsFunction>, [key, value]) => {
       if (typeof value !== 'string') {
         console.log(key, value)
-        throw new TypeError(`Invalid jsFunction value. "${key}" should be a javascript function string`)
+        throw new TypeError(`Invalid fnBinding value. "${key}" should be a javascript function string`)
       }
 
       // eslint-disable-next-line no-eval
       const fn = eval(value) as (...args: any[]) => unknown
 
       if (typeof fn !== 'function') {
-        throw new TypeError(`Invalid jsFunction value. "${key}" should be a javascript function`)
+        throw new TypeError(`Invalid fnBinding value. "${key}" should be a javascript function`)
       }
 
       acc[key] = {
@@ -937,8 +937,7 @@ function getLitsParamsFromContext(): ContextParams {
     }, {})
 
     return {
-      values,
-      jsFunctions,
+      bindings: { ...bindings, ...fnBindings },
     }
   }
   catch (err) {

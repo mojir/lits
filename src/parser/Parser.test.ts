@@ -1073,17 +1073,17 @@ foo(1, 2)`)).toBe(3)
         expect(lits.run(`
           let { children: [{ age as firstChildAge }] } = an-object;
           firstChildAge
-        `, { values })).toBe(10)
+        `, { bindings: values })).toBe(10)
 
         expect(lits.run(`
           let { children: [{ age as firstChildAge, name }] } = an-object;
           [firstChildAge, name]
-        `, { values })).toEqual([10, 'Alice'])
+        `, { bindings: values })).toEqual([10, 'Alice'])
 
         expect(lits.run(`
           let { children: [, { age, name }] } = an-object;
           [age, name]
-        `, { values })).toEqual([7, 'Bob'])
+        `, { bindings: values })).toEqual([7, 'Bob'])
 
         expect(lits.run(`
           let foo = ([a, b] = [1, 2]) -> do
@@ -1091,7 +1091,7 @@ foo(1, 2)`)).toBe(3)
           end;
 
         foo()
-        `, { values })).toEqual(3)
+        `, { bindings: values })).toEqual(3)
 
         expect(lits.run(`
           let foo = ([{ value as a }, { value as b }] = [{ value: 1 }, { value: 2 }]) -> do
@@ -1099,7 +1099,7 @@ foo(1, 2)`)).toBe(3)
           end;
 
           foo()
-          `, { values })).toEqual(3)
+          `, { bindings: values })).toEqual(3)
 
         expect(lits.run(`
           let foo = ([{ value as a } = { value: 10 }, { value as b } = { value: 20 }] = [{ value: 1 }, { value: 2 }]) -> do
@@ -1107,7 +1107,7 @@ foo(1, 2)`)).toBe(3)
           end;
 
             foo([])
-            `, { values })).toEqual(30)
+            `, { bindings: values })).toEqual(30)
 
         expect(lits.run(`
           let foo = ({ value = 10 }) -> do
@@ -1115,7 +1115,7 @@ foo(1, 2)`)).toBe(3)
           end;
 
           foo({})
-          `, { values })).toEqual(10)
+          `, { bindings: values })).toEqual(10)
 
         expect(lits.run(`
           let foo = ([{ value as a } = { value: 10 }, { value as b = 200 } = { value: 20 }] = [{ value: 1 }, { value: 2 }]) -> do
@@ -1123,7 +1123,7 @@ foo(1, 2)`)).toBe(3)
           end;
 
             foo([{ value: 1 }])
-            `, { values })).toEqual(21)
+            `, { bindings: values })).toEqual(21)
 
         expect(lits.run(`
           let foo = ([{ value as a } = { value: 10 }, { value as b = 200 } = { value: 20 }] = [{ value: 1 }, { value: 2 }]) -> do
@@ -1131,7 +1131,7 @@ foo(1, 2)`)).toBe(3)
           end;
 
             foo([{ value: 1 }, { value: 200 }])
-            `, { values })).toEqual(201)
+            `, { bindings: values })).toEqual(201)
       })
     })
     test('complex example with three iterations', () => {

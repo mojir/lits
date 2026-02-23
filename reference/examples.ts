@@ -4,8 +4,8 @@ export interface Example {
   description: string
   code: string
   context?: {
-    values?: Record<string, unknown>
-    jsFunctions?: Record<string, string>
+    bindings?: Record<string, unknown>
+    fnBindings?: Record<string, string>
   }
 }
 
@@ -46,8 +46,8 @@ write!([1, 2, 3][2]);
     name: 'Using context',
     description: 'Simple example using a context.',
     context: {
-      values: { x: 15, y: 27 },
-      jsFunctions: { plus: '(a, b) => a + b' },
+      bindings: { x: 15, y: 27 },
+      fnBindings: { plus: '(a, b) => a + b' },
     },
     code: `
   plus(x, y)
@@ -58,7 +58,7 @@ write!([1, 2, 3][2]);
     name: 'Async functions',
     description: 'Demonstrates using async JavaScript functions from Lits. The playground runs in async mode, so async JS functions are automatically awaited.',
     context: {
-      jsFunctions: {
+      fnBindings: {
         'fetch-user': `async (id) => {
   const response = await fetch('https://jsonplaceholder.typicode.com/users/' + id);
   const user = await response.json();
@@ -101,7 +101,7 @@ doseq (post in posts) -> write!("- " ++ post.title);
     name: 'Interactive async',
     description: 'A more complex async example with user interactions. Uses prompt for input and fetch for API calls.',
     context: {
-      jsFunctions: {
+      fnBindings: {
         'prompt': '(title) => prompt(title)',
         'fetch-user': `async (id) => {
   const response = await fetch('https://jsonplaceholder.typicode.com/users/' + id);
@@ -188,7 +188,7 @@ main!()
     name: 'A game',
     description: 'Text based adventure game.',
     context: {
-      jsFunctions: {
+      fnBindings: {
         'alert!': '(message) => alert(message)',
         'read-line!': '(message) => prompt(message)',
       },

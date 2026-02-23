@@ -49,25 +49,25 @@ const values = {
 describe('nativeJsFunction', () => {
   const lits = new Lits()
   it('samples', () => {
-    expect(lits.run('Foo.foo(9)', { jsFunctions })).toBe(27)
-    expect(lits.run('tripple(9)', { jsFunctions })).toBe(27)
-    expect(lits.run('let a = tripple; a(9)', { jsFunctions })).toBe(27)
-    expect(() => lits.run('throwError()', { jsFunctions })).toThrowError(LitsError)
-    expect(() => lits.run('throwString()', { jsFunctions })).toThrowError(LitsError)
-    expect(() => lits.run('throwNumber()', { jsFunctions })).toThrowError(LitsError)
+    expect(lits.run('Foo.foo(9)', { bindings: jsFunctions })).toBe(27)
+    expect(lits.run('tripple(9)', { bindings: jsFunctions })).toBe(27)
+    expect(lits.run('let a = tripple; a(9)', { bindings: jsFunctions })).toBe(27)
+    expect(() => lits.run('throwError()', { bindings: jsFunctions })).toThrowError(LitsError)
+    expect(() => lits.run('throwString()', { bindings: jsFunctions })).toThrowError(LitsError)
+    expect(() => lits.run('throwNumber()', { bindings: jsFunctions })).toThrowError(LitsError)
   })
   it('builtin names cannot be shadowed', () => {
-    expect(() => lits.run('+(1, 2, 3)', { jsFunctions: { '+': { fn: () => 0 } } })).toThrowError(LitsError)
-    expect(() => lits.run('if true then false else true end', { jsFunctions: { if: { fn: () => true } } })).toThrowError(LitsError)
-    expect(() => lits.run('1', { jsFunctions: { self: { fn: () => true } } })).toThrowError(LitsError)
+    expect(() => lits.run('+(1, 2, 3)', { bindings: { '+': { fn: () => 0 } } })).toThrowError(LitsError)
+    expect(() => lits.run('if true then false else true end', { bindings: { if: { fn: () => true } } })).toThrowError(LitsError)
+    expect(() => lits.run('1', { bindings: { self: { fn: () => true } } })).toThrowError(LitsError)
   })
-  it('invalid jsFunctions identifiers throw', () => {
-    expect(() => lits.run('1', { jsFunctions: { Foo: { fn: () => true } } })).toThrowError(LitsError)
-    expect(() => lits.run('1', { jsFunctions: { 'foo.bar': { fn: () => true } } })).toThrowError(LitsError)
-    expect(() => lits.run('1', { jsFunctions: { '.bar': { fn: () => true } } })).toThrowError(LitsError)
+  it('invalid bindings identifiers throw', () => {
+    expect(() => lits.run('1', { bindings: { Foo: { fn: () => true } } })).toThrowError(LitsError)
+    expect(() => lits.run('1', { bindings: { 'foo.bar': { fn: () => true } } })).toThrowError(LitsError)
+    expect(() => lits.run('1', { bindings: { '.bar': { fn: () => true } } })).toThrowError(LitsError)
   })
   it('nested nativeJsFunction', () => {
-    expect(lits.run('obj.square(9)', { values })).toBe(81)
+    expect(lits.run('obj.square(9)', { bindings: values })).toBe(81)
   })
   it('infinity', () => {
     const fn = vitest.fn()
@@ -76,7 +76,7 @@ describe('nativeJsFunction', () => {
         fn,
       },
     }
-    lits.run('stuff(1 / 0)', { jsFunctions: funs })
+    lits.run('stuff(1 / 0)', { bindings: funs })
     expect(fn).toHaveBeenCalledWith(Number.POSITIVE_INFINITY)
   })
 })

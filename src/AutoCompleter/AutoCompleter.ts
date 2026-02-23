@@ -141,11 +141,7 @@ export class AutoCompleter {
         .forEach(suggestion => suggestions.add(suggestion))
     })
 
-    Object.keys(params.jsFunctions ?? {})
-      .filter(shouldInclude)
-      .forEach(suggestion => suggestions.add(suggestion))
-
-    Object.keys(params.values ?? {})
+    Object.keys(params.bindings ?? {})
       .filter(shouldInclude)
       .forEach(suggestion => suggestions.add(suggestion))
 

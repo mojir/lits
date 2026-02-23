@@ -52,7 +52,7 @@ const expressions = [...normalExpressionKeys, ...specialExpressionKeys]
 
 const config = processArguments(process.argv.slice(2))
 
-const jsFunctions = getCliModule()
+const bindings = getCliModule()
 
 const lits = (() => {
   const _lits = new Lits({ debug: true, modules: allBuiltinModules })
@@ -60,13 +60,13 @@ const lits = (() => {
     run: (program: string) =>
       _lits.run(program, {
         globalContext: config.context ?? undefined,
-        jsFunctions,
+        bindings,
         globalModuleScope: true,
       }),
     context: (program: string) =>
       _lits.context(program, {
         globalContext: config.context ?? undefined,
-        jsFunctions,
+        bindings,
         globalModuleScope: true,
       }),
   }

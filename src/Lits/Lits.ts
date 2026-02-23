@@ -33,8 +33,7 @@ export interface JsFunction {
 export interface ContextParams {
   globalContext?: Context
   contexts?: Context[]
-  values?: Record<string, unknown>
-  jsFunctions?: Record<string, unknown>
+  bindings?: Record<string, unknown>
   globalModuleScope?: boolean
 }
 
@@ -168,7 +167,7 @@ export class Lits {
       { [fnName]: fn },
     )
 
-    params.values = { ...params.values, ...hostValues }
+    params.bindings = { ...params.bindings, ...hostValues }
 
     return this.evaluate(ast, params)
   }

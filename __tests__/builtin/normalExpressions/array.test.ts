@@ -68,7 +68,7 @@ describe('array functions', () => {
       expect(() => lits.run('flatten()')).toThrow(LitsError)
     })
     it('immutability', () => {
-      lits.run('flatten(nestedArray)', { values: testData })
+      lits.run('flatten(nestedArray)', { bindings: testData })
     })
   })
 

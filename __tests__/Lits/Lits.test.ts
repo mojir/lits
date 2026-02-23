@@ -22,7 +22,7 @@ describe('all tests', () => {
     })
     it('should return xxx', () => {
       const lits = new Lits()
-      const autoCompleter = lits.getAutoCompleter('1 + xx + 2', 6, { values: { xxx: 1 } })
+      const autoCompleter = lits.getAutoCompleter('1 + xx + 2', 6, { bindings: { xxx: 1 } })
       expect(autoCompleter.getNextSuggestion()).toEqual({
         program: '1 + xxx + 2',
         position: 7,
