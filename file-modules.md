@@ -20,9 +20,11 @@ A standalone function (not a method on `Lits`) that:
 2. Recursively resolves all file imports, following `import("...")` in each referenced file.
 3. Resolves all relative paths to absolute paths, deduplicating files that are referenced from multiple locations.
 4. Assigns each unique file a **canonical module name** (a valid Lits symbol).
-5. Topologically sorts the file modules by dependency order.
-6. Rewrites all `import("./path/to/file.lits")` calls to `import(canonicalName)` (string argument → bare symbol).
-7. Outputs a `LitsBundle`.
+5. Detects circular dependencies and throws an error if found.
+6. Topologically sorts the file modules by dependency order.
+7. Ensures no canonical module name collides with a builtin module name — adjusts the name if needed.
+8. Rewrites all `import("./path/to/file.lits")` calls to `import(canonicalName)` (string argument → bare symbol).
+9. Outputs a `LitsBundle`.
 
 ### Phase 2 — Existing `Lits.run` (runtime)
 
@@ -91,6 +93,14 @@ Canonical names are always valid Lits symbols (no dots — `.lits` extension is 
 ### Deduplication
 
 Multiple files may reference the same file via different relative paths. The bundler resolves all paths to absolute, so the same file maps to the same canonical name. Each file appears exactly once in the bundle.
+
+### Circular Dependencies
+
+Circular imports are not supported. The bundler detects cycles during dependency resolution and throws an error listing the cycle.
+
+### Name Collisions with Builtin Modules
+
+If a canonical module name would collide with a builtin module name (e.g., `./math.lits` at the project root would naturally get the name `math`), the bundler adjusts the canonical name to avoid the collision (e.g., `_math` or `file/math`). The user never needs to worry about this — canonical names are an internal bundler detail. In practice, collisions are rare because file module names under subdirectories contain `/` (e.g., `lib/math`), which naturally distinguishes them from bare builtin names.
 
 ## Value Modules
 
