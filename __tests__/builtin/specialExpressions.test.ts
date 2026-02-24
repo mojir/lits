@@ -786,4 +786,14 @@ let foo = (a, b, c) -> do a(b, c) end;
 foo(&&, true, false)`)).toBe(false)
     })
   })
+  describe('import', () => {
+    it('should throw on wrong number of arguments', () => {
+      expect(() => lits.run('import()')).toThrow(LitsError)
+      expect(() => lits.run('import(vector, grid)')).toThrow(LitsError)
+    })
+    it('should throw on non-symbol argument', () => {
+      expect(() => lits.run('import("vector")')).toThrow(LitsError)
+      expect(() => lits.run('import(42)')).toThrow(LitsError)
+    })
+  })
 })

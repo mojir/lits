@@ -232,6 +232,7 @@ export function createContextStack(params: ContextParams = {}, modules?: Map<str
       }
       else {
         // Plain value binding
+        assertNotShadowingBuiltin(identifier)
         if (!hostValues) {
           hostValues = {}
         }

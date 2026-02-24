@@ -42,7 +42,7 @@ interface Primitives extends Obj {
   negativeFloat: number
   zero: 0
   null: null
-  boolean: boolean
+  boolVal: boolean
   true: true
   false: false
 }
@@ -58,7 +58,7 @@ export interface TestData extends Primitives {
 }
 
 const privateTestData: TestData = {
-  boolean: true,
+  boolVal: true,
   emptyString: '',
   false: false,
   float: 42.42,
@@ -69,7 +69,7 @@ const privateTestData: TestData = {
   null: null,
   numberArray: [0, 1, 2, 3, 4, 5],
   simpleObject: {
-    boolean: true,
+    boolVal: true,
     emptyString: '',
     false: false,
     float: 42.42,

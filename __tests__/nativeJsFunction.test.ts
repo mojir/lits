@@ -74,4 +74,7 @@ describe('nativeJsFunction', () => {
     lits.run('stuff(1 / 0)', { bindings: funs })
     expect(fn).toHaveBeenCalledWith(Number.POSITIVE_INFINITY)
   })
+  it('bare function as binding', () => {
+    expect(lits.run('dbl(5)', { bindings: { dbl: (x: number) => x * 2 } })).toBe(10)
+  })
 })

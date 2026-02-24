@@ -7,6 +7,7 @@ import type { Ast, NormalExpressionNodeWithName } from '../../src/parser/types'
 import { NodeTypes } from '../../src/constants/constants'
 import { normalExpressionTypes } from '../../src/builtin/normalExpressions'
 import type { Context } from '../../src/evaluator/interface'
+import { vectorModule } from '../../src/builtin/modules/vector'
 
 describe('all tests', () => {
   describe('auto completer', () => {
@@ -287,6 +288,61 @@ describe('all tests', () => {
       expect(lits.run('"\\"\\\\\\""')).toBe('"\\"')
       // Backslash before normal character is returning the character itself
       expect(lits.run('"\\abc"')).toBe('abc')
+    })
+  })
+
+  describe('getUndefinedSymbols', () => {
+    it('should find undefined symbols from string input', () => {
+      const lits = new Lits()
+      const result = lits.getUndefinedSymbols('x + y')
+      expect(result).toEqual(new Set(['x', 'y']))
+    })
+
+    it('should find undefined symbols from AST input', () => {
+      const lits = new Lits()
+      const parsedAst = lits.parse(lits.tokenize('x + y'))
+      const result = lits.getUndefinedSymbols(parsedAst)
+      expect(result).toEqual(new Set(['x', 'y']))
+    })
+
+    it('should return empty set when all symbols are defined', () => {
+      const lits = new Lits()
+      const result = lits.getUndefinedSymbols('1 + 2')
+      expect(result).toEqual(new Set())
+    })
+
+    it('should return empty set for import expression', () => {
+      const lits = new Lits({ modules: [vectorModule] })
+      const result = lits.getUndefinedSymbols('let v = import(vector); v.sum([1, 2])')
+      expect(result).toEqual(new Set())
+    })
+  })
+
+  describe('transformSymbols', () => {
+    it('should transform symbol tokens', () => {
+      const lits = new Lits()
+      const tokenStream = lits.tokenize('x + y')
+      const transformed = lits.transformSymbols(tokenStream, s => s === 'x' ? 'a' : s)
+      const result = lits.untokenize(transformed)
+      expect(result).toBe('a + y')
+    })
+  })
+
+  describe('untokenize', () => {
+    it('should convert token stream back to source code', () => {
+      const lits = new Lits()
+      const tokenStream = lits.tokenize('1 + 2')
+      const result = lits.untokenize(tokenStream)
+      expect(result).toBe('1 + 2')
+    })
+  })
+
+  describe('tokenize with minify', () => {
+    it('should minify token stream when minify option is true', () => {
+      const lits = new Lits()
+      const normal = lits.tokenize('1  +  2')
+      const minified = lits.tokenize('1  +  2', { minify: true })
+      expect(minified.tokens.length).toBeLessThanOrEqual(normal.tokens.length)
     })
   })
 })
