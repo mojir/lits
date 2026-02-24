@@ -19,15 +19,33 @@ describe('misc functions', () => {
             """
             Adds two numbers together.
             Returns the sum of a and b.
-            """
+            """;
             
             a + b
           end;
           doc(add)
         `)).toBe('Adds two numbers together.\nReturns the sum of a and b.')
         expect(lits.run(`
+          let add = (a, b) -> do
+            """
+            Adds two numbers together.
+            Returns the sum of a and b.
+            """
+          end;
+          doc(add)
+        `)).toBe('Adds two numbers together.\nReturns the sum of a and b.')
+        expect(lits.run(`
+          let add = (a, b) -> do
+            """
+            Adds two numbers together.
+            Returns the sum of a and b.
+            """;
+          end;
+          doc(add)
+        `)).toBe('Adds two numbers together.\nReturns the sum of a and b.')
+        expect(lits.run(`
           let add = () -> do
-            """Escaping\\"""."""
+            """Escaping\\""".""";
             a + b
           end;
           doc(add)

@@ -1,7 +1,7 @@
 import type { DoNode } from '../../builtin/specialExpressions/block'
 import { LitsError } from '../../errors'
 import type { StringToken } from '../../tokenizer/token'
-import { asReservedSymbolToken, assertReservedSymbolToken, isDocStringToken, isOperatorToken, isReservedSymbolToken } from '../../tokenizer/token'
+import { asReservedSymbolToken, assertOperatorToken, assertReservedSymbolToken, isDocStringToken, isOperatorToken, isReservedSymbolToken } from '../../tokenizer/token'
 import { smartTrim } from '../../utils'
 import type { AstNode } from '../types'
 import { specialExpressionTypes } from '../../builtin/specialExpressionTypes'
@@ -16,6 +16,10 @@ export function parseDo(ctx: ParserContext, allowDocString = false): [DoNode, st
   let docString: string = ''
   if (allowDocString && isDocStringToken(ctx.tryPeek())) {
     docString = parseDocString(ctx)
+    if (!ctx.isAtEnd() && !isReservedSymbolToken(ctx.tryPeek(), 'end')) {
+      assertOperatorToken(ctx.tryPeek(), ';')
+      ctx.advance()
+    }
   }
 
   const expressions: AstNode[] = []

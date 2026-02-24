@@ -186,7 +186,7 @@ describe('no orphaned reference data', () => {
 
 describe('core and module categories', () => {
   it('module categories are a subset of all categories', () => {
-    const nsCategories = new Set(Object.values(moduleReference).map(r => r.category))
+    const nsCategories = Array.from(new Set(Object.values(moduleReference).map(r => r.category)))
     for (const cat of nsCategories) {
       expect(categories).toContain(cat)
     }

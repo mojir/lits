@@ -43,7 +43,7 @@ let add = (x, y) -> do
     y: Second number.
   Returns:
     Sum of x and y.
-  """
+  """;
   x + y;
 end;
 
