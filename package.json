@@ -1,6 +1,6 @@
 {
   "name": "@mojir/lits",
-  "version": "2.5.1",
+  "version": "2.5.2",
   "description": "Lits is a pure functional programming language implemented in TypeScript",
   "author": "Albert Mojir",
   "license": "MIT",
