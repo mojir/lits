@@ -2,6 +2,7 @@
 
 let { assert } = import(assert);
 
-export let add = (a, b) -> plus(a, b);
-export let sub = (a, b) -> -(a, b);
+let add = (a, b) -> plus(a, b);
+let sub = (a, b) -> -(a, b);
 assert(plus);
+{add: add, sub: sub}

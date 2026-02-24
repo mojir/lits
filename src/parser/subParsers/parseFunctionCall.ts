@@ -98,7 +98,6 @@ export function parseFunctionCall(ctx: ParserContext, symbol: AstNode): AstNode 
         return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, param!]], symbol[2]) satisfies ThrowNode
       }
       case specialExpressionTypes['0_lambda']:
-      case specialExpressionTypes['0_def']:
         throw new LitsError(`${type} is not allowed`, symbol[2])
       /* v8 ignore next 2 */
       default:

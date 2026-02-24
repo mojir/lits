@@ -69,30 +69,23 @@ describe('all tests', () => {
     })
   })
 
-  describe('context', () => {
+  describe('bindings', () => {
     let lits: Lits
     beforeEach(() => {
       lits = new Lits({ debug: true })
     })
-    it('a function.', () => {
+    it('a function via bindings.', () => {
       lits = new Lits({ astCacheSize: 10 })
-      const contexts = [lits.context('export let tripple = (x) -> do x * 3 end;')]
-      expect(lits.run('tripple(10)', { contexts })).toBe(30)
-      expect(lits.run('tripple(10)', { contexts })).toBe(30)
-    })
-    it('a function with ast.', () => {
-      lits = new Lits({ astCacheSize: 10 })
-      const parseResult = lits.parse(lits.tokenize('export let tripple = (x) -> do x * 3 end;'))
-      const contexts = [lits.context(parseResult)]
-      expect(lits.run('tripple(10)', { contexts })).toBe(30)
-      expect(lits.run('tripple(10)', { contexts })).toBe(30)
+      const bindings = lits.run('let tripple = (x) -> do x * 3 end; {tripple: tripple}') as Record<string, unknown>
+      expect(lits.run('tripple(10)', { bindings })).toBe(30)
+      expect(lits.run('tripple(10)', { bindings })).toBe(30)
     })
 
     it('a function - no cache', () => {
       lits = new Lits({ debug: true })
-      const contexts = [lits.context('export let tripple = (x) -> do x * 3 end;', {})]
-      expect(lits.run('tripple(10)', { contexts })).toBe(30)
-      expect(lits.run('tripple(10)', { contexts })).toBe(30)
+      const bindings = lits.run('let tripple = (x) -> do x * 3 end; {tripple: tripple}') as Record<string, unknown>
+      expect(lits.run('tripple(10)', { bindings })).toBe(30)
+      expect(lits.run('tripple(10)', { bindings })).toBe(30)
     })
 
     it('a function - initial cache', () => {
@@ -110,46 +103,30 @@ describe('all tests', () => {
     })
 
     it('a variable.', () => {
-      const contexts = [lits.context('export let magicNumber = 42;')]
-      expect(lits.run('magicNumber', { contexts })).toBe(42)
+      const bindings = lits.run('let magicNumber = 42; {magicNumber: magicNumber}') as Record<string, unknown>
+      expect(lits.run('magicNumber', { bindings })).toBe(42)
     })
 
     it('a variable - again.', () => {
-      const contexts = [
-        lits.context(`
-    export let zip? = (input) -> do boolean(match(input, #"^\\d{5}$")) end;
-    export let NAME_LENGTH = 100;
-    `),
-      ]
-      expect(lits.run('NAME_LENGTH', { contexts })).toBe(100)
+      const bindings = lits.run(`
+    let zip? = (input) -> do boolean(match(input, #"^\\d{5}$")) end;
+    let NAME_LENGTH = 100;
+    {zip?: zip?, NAME_LENGTH: NAME_LENGTH}
+    `) as Record<string, unknown>
+      expect(lits.run('NAME_LENGTH', { bindings })).toBe(100)
     })
 
     it('a function with a built in normal expression name', () => {
-      expect(() => lits.context('let inc = (x) -> x + 1 end')).toThrow(LitsError)
+      expect(() => lits.run('let inc = (x) -> x + 1 end')).toThrow(LitsError)
     })
 
     it('a function with a built in special expression name', () => {
-      expect(() => lits.context('let and = (x) -> x + 1 end')).toThrow(LitsError)
+      expect(() => lits.run('let and = (x) -> x + 1 end')).toThrow(LitsError)
     })
 
-    it('a variable twice', () => {
-      const contexts = [lits.context('export let magicNumber = 42; export let getMagic = () -> do 42 end;')]
-      lits.context('export let magicNumber = 42; export let getMagic = () -> do 42 end;', { contexts })
-    })
-
-    test('global context 1', () => {
+    test('global context with globalModuleScope', () => {
       const globalContext: Context = {}
-      lits.run('export let magicNumber = 42; let double = magicNumber * 2;', { globalContext })
-      expect(globalContext).toEqual({
-        magicNumber: {
-          value: 42,
-        },
-      })
-    })
-
-    test('global context 2', () => {
-      const globalContext: Context = {}
-      lits.run('export let magicNumber = 42; let double = magicNumber * 2;', { globalContext, globalModuleScope: true })
+      lits.run('let magicNumber = 42; let double = magicNumber * 2;', { globalContext, globalModuleScope: true })
       expect(globalContext).toEqual({
         magicNumber: {
           value: 42,
@@ -161,8 +138,10 @@ describe('all tests', () => {
     })
 
     it('more than one', () => {
-      const contexts = [lits.context('export let tripple = (x) -> do x * 3 end;'), lits.context('export let magicNumber = 42;')]
-      expect(lits.run('tripple(magicNumber)', { contexts })).toBe(126)
+      const bindings1 = lits.run('let tripple = (x) -> do x * 3 end; {tripple: tripple}') as Record<string, unknown>
+      const bindings2 = lits.run('let magicNumber = 42; {magicNumber: magicNumber}') as Record<string, unknown>
+      const bindings = { ...bindings1, ...bindings2 }
+      expect(lits.run('tripple(magicNumber)', { bindings })).toBe(126)
     })
   })
 

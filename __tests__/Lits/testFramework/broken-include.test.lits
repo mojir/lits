@@ -4,7 +4,7 @@
 let { assert= } = import(assert);
 
 // Setup code
-export let one = 1;
+let one = 1;
 
 // @test add
 assert=(add(one, 2), 3);

@@ -236,13 +236,6 @@ do
 end
 ```
 
-### `def` (top-level definition)
-
-```lits
-def answer = 42;
-def double = x -> x * 2;
-```
-
 ### `for` (comprehension — returns array)
 
 ```lits

@@ -1,1 +1,2 @@
-export let plus = (a, b) -> a + b;
+let plus = (a, b) -> a + b;
+{plus: plus}

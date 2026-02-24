@@ -63,22 +63,6 @@ export class ContextStackImpl {
     return new ContextStackImpl({ contexts, modules: this.modules })
   }
 
-  public exportValues(values: Record<string, Any>, sourceCodeInfo: SourceCodeInfo | undefined) {
-    for (const [name, value] of Object.entries(values)) {
-      if (this.globalContext[name]) {
-        throw new LitsError(`Cannot redefine exported value "${name}"`, sourceCodeInfo)
-      }
-      const shadowedName = getShadowedBuiltinName(name)
-      if (shadowedName) {
-        throw new LitsError(`Cannot shadow ${shadowedName}`, sourceCodeInfo)
-      }
-      this.globalContext[name] = { value }
-    }
-    if (this.contexts[0] !== this.globalContext) {
-      this.addValues(values, sourceCodeInfo)
-    }
-  }
-
   public addValues(values: Record<string, Any>, sourceCodeInfo: SourceCodeInfo | undefined) {
     const currentContext = this.contexts[0]!
     for (const [name, value] of Object.entries(values)) {

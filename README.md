@@ -1383,13 +1383,15 @@ let config = {
 // back into working Lits values, preserving their functionality
 ```
 
-## Modules and Exports
+## File Value
+
+A Lits file evaluates to the value of its last expression:
 
 ```lits
-// Export variables and functions
-export let pi = 3.14159;
-export let square = x -> x * x;
-// Exported values become available to other modules
+let pi = 3.14159;
+let square = x -> x * x;
+// The file's value is the result of the last expression
+{pi: pi, square: square}
 ```
 
 ## Examples
@@ -1540,9 +1542,6 @@ interface Lits {
   // Execute Lits code directly
   run(program: string, params?: ContextParams & FilePathParams): unknown
   
-  // Get execution context after running code
-  context(programOrAst: string | Ast, params?: ContextParams & FilePathParams): Context
-  
   // Find undefined symbols in code
   getUndefinedSymbols(programOrAst: string | Ast, params?: ContextParams): Set<string>
   
@@ -1569,7 +1568,7 @@ interface ContextParams {
   contexts?: Context[]             // Additional context layers
   values?: Record<string, unknown> // JavaScript values to expose
   jsFunctions?: Record<string, JsFunction> // JavaScript functions to expose
-  globalModuleScope?: boolean      // Module scoping behavior
+  globalModuleScope?: boolean      // Make top-level let bindings persist in global context
 }
 
 interface JsFunction {

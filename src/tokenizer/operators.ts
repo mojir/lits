@@ -58,7 +58,6 @@ const symbolicOperators = [
 const nonFunctionOperators = [
   'comment',
   'cond',
-  'def',
   'defined?',
   'block',
   'doseq',

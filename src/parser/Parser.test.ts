@@ -136,9 +136,6 @@ describe('parser', () => {
     expect(() => litsDebug.run('let \'a\\\'b\' = 1;')).not.toThrow()
     expect(() => litsDebug.run('let \'a\\ab\' = 1;')).not.toThrow()
     expect(() => litsDebug.run('`')).toThrow(LitsError)
-    expect(() => litsDebug.run('export fun a(b) 1, end')).toThrow(LitsError)
-    expect(() => litsDebug.run('export let a = (b) -> do 1, end;')).toThrow(LitsError)
-    expect(() => litsDebug.run('export let a = (b) -> do 1; 2 end;')).not.toThrow()
     expect(() => litsDebug.run('let a = (b) -> do 1, end;')).toThrow(LitsError)
     expect(() => litsDebug.run('switch 1 case 1 then 1; 2 end')).not.toThrow()
     expect(() => litsDebug.run('switch 1 case 1 then 1, end end')).toThrow(LitsError)
@@ -177,7 +174,6 @@ describe('parser', () => {
     expect(() => litsDebug.run('fn()')).toThrow(LitsError)
     expect(() => litsDebug.run('do a = 1; b = 2 end')).toThrow(LitsError)
     expect(() => litsDebug.run('do a = 1 end.1')).toThrow(LitsError)
-    expect(() => lits.run('do export let a = 1; end')).toThrow(LitsError)
   })
 
   describe('const MAX_SAFE_INTEGER', () => {
@@ -729,18 +725,6 @@ describe('parser', () => {
       expect(lits.run('-8 >> 2')).toBe(-2)
       expect(lits.run('-8 >>> 2')).toEqual(expect.any(Number)) // Exact value depends on implementation
     })
-  })
-
-  describe('export', () => {
-    test('samples', () => {
-      expect(lits.run('export let a = 10; a')).toBe(10)
-      expect(lits.run(`
-        export let foo = () -> do
-          11
-        end;
-        foo()`)).toBe(11)
-    })
-    expect(() => lits.run('export let a = 10; let a = 2;')).toThrow(LitsError)
   })
 
   test('multinine comment', () => {

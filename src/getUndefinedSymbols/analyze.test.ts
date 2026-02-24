@@ -17,7 +17,7 @@ describe('analyze', () => {
     expect((lits.getUndefinedSymbols('foo(d, f)'))).toEqual(new Set(['foo', 'd', 'f']))
     expect(
       lits.getUndefinedSymbols(`
-          export let foo = [];
+          let foo = [];
           let data1 = 1;
           let data2 = data1 + 1;
           let data3 = data2 + 1;

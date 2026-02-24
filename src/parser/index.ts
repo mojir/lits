@@ -18,7 +18,7 @@ export function parse(tokenStream: TokenStream): AstNode[] {
   const ctx = createParserContext(tokenStream)
 
   while (!ctx.isAtEnd()) {
-    nodes.push(parseExpression(ctx, 0, true))
+    nodes.push(parseExpression(ctx, 0))
     if (isOperatorToken(ctx.tryPeek(), ';')) {
       ctx.advance()
     }

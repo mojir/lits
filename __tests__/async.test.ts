@@ -699,32 +699,6 @@ describe('async support', () => {
       expect(result).toBe(6)
     })
 
-    it('should resolve async default in array destructuring via def', async () => {
-      const lits = new Lits()
-      const result = await lits.async.run(
-        'export let [a = getFive()] = []; a + 1',
-        {
-          bindings: {
-            getFive: { fn: async () => 5 },
-          },
-        },
-      )
-      expect(result).toBe(6)
-    })
-
-    it('should resolve async default in object destructuring via def', async () => {
-      const lits = new Lits()
-      const result = await lits.async.run(
-        'export let { a = getFive() } = {}; a + 1',
-        {
-          bindings: {
-            getFive: { fn: async () => 5 },
-          },
-        },
-      )
-      expect(result).toBe(6)
-    })
-
     it('should resolve async default in user-defined function argument', async () => {
       const lits = new Lits()
       const result = await lits.async.run(
@@ -810,42 +784,12 @@ describe('async support', () => {
     })
   })
 
-  describe('async.context', () => {
-    it('should return context after async evaluation', async () => {
-      const lits = new Lits()
-      const ctx = await lits.async.context('export let x = foo()', {
-        bindings: {
-          foo: { fn: async () => 42 },
-        },
-      })
-      expect(ctx.x).toEqual({ value: 42 })
-    })
-
-    it('should accept a pre-parsed AST', async () => {
-      const lits = new Lits({ debug: true })
-      const ast = lits.parse(lits.tokenize('export let x = 10'))
-      const ctx = await lits.async.context(ast)
-      expect(ctx.x).toEqual({ value: 10 })
-    })
-  })
-
   describe('async.apply', () => {
     it('should apply a lits function with async.apply', async () => {
       const lits = new Lits()
       const fn = lits.run('-> $ + 1') as LitsFunction
       const result = await lits.async.apply(fn, [9])
       expect(result).toBe(10)
-    })
-  })
-
-  describe('sync context() throws on async', () => {
-    it('should throw when context() encounters async result', () => {
-      const lits = new Lits()
-      expect(() => lits.context('export let x = foo()', {
-        bindings: {
-          foo: { fn: async () => 42 },
-        },
-      })).toThrow(TypeError)
     })
   })
 

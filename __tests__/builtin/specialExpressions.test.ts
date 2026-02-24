@@ -71,9 +71,7 @@ describe('specialExpressions', () => {
       expect(litsDebug.getUndefinedSymbols('[1, ...x]')).toEqual(new Set('x'))
       expect(litsDebug.getUndefinedSymbols('[1, ...[...[x], y]]')).toEqual(new Set(['x', 'y']))
       expect(litsDebug.getUndefinedSymbols('let {a = b} = {};')).toEqual(new Set(['b']))
-      expect(litsDebug.getUndefinedSymbols('export let {a = b} = {};')).toEqual(new Set(['b']))
       expect(litsDebug.getUndefinedSymbols('let foo = ({a = b} = {}) -> do a end;')).toEqual(new Set(['b']))
-      expect(litsDebug.getUndefinedSymbols('export let foo = ({a = b} = {}) -> do a end;')).toEqual(new Set(['b']))
     })
   })
 
@@ -140,7 +138,6 @@ describe('specialExpressions', () => {
       expect(() => lits.run('let {} = 10;')).toThrow(LitsError)
       expect(() => lits.run('let { a: 10 };')).toThrow(LitsError)
       expect(() => lits.run('let "a" = 10;')).toThrow(LitsError)
-      expect(() => lits.run('do export let a = 10; end')).toThrow(LitsError)
     })
 
     it('local variable', () => {
@@ -162,11 +159,10 @@ describe('specialExpressions', () => {
     })
     describe('unresolvedIdentifiers', () => {
       it('samples', () => {
-        expect(() => litsDebug.getUndefinedSymbols('export let throw = a + b;')).toThrow(LitsError)
-        expect(() => litsDebug.getUndefinedSymbols('export let + = a + b;')).toThrow(LitsError)
-        expect(() => litsDebug.getUndefinedSymbols('export let foo = a + b; export let foo = a + b;')).toThrow(LitsError)
+        expect(() => litsDebug.getUndefinedSymbols('let throw = a + b;')).toThrow(LitsError)
+        expect(() => litsDebug.getUndefinedSymbols('let + = a + b;')).toThrow(LitsError)
         expect(litsDebug.getUndefinedSymbols('let [a = b] = [];')).toEqual(new Set(['b']))
-        expect(litsDebug.getUndefinedSymbols('export let foo = a + b;')).toEqual(new Set(['a', 'b']))
+        expect(litsDebug.getUndefinedSymbols('let foo = a + b;')).toEqual(new Set(['a', 'b']))
         expect(lits.getUndefinedSymbols('let foo = a + b; foo')).toEqual(new Set(['a', 'b']))
       })
     })
@@ -508,7 +504,7 @@ let foo = (a) -> do
 end;`))).toEqual(
           new Set(),
         )
-        expect((lits.getUndefinedSymbols('export let foo = (a, b) -> do str(a, b, c) end;'))).toEqual(new Set(['c']))
+        expect((lits.getUndefinedSymbols('let foo = (a, b) -> do str(a, b, c) end;'))).toEqual(new Set(['c']))
         expect((lits.getUndefinedSymbols('let foo = (a, b) -> do str(a, b, c) end; foo(x, y)'))).toEqual(
           new Set(['c', 'x', 'y']),
         )

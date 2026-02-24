@@ -134,10 +134,10 @@ not ok 1 add
   ---
   error: "UndefinedSymbolError"
   message: "Undefined symbol 'ADD'."
-  location: "${path.resolve(__dirname, 'broken-plus-lib.lits')}:1:29"
+  location: "${path.resolve(__dirname, 'broken-plus-lib.lits')}:1:22"
   code:
-    - "export let plus = (a, b) -> ADD(a, b);"
-    - "                            ^         "
+    - "let plus = (a, b) -> ADD(a, b);"
+    - "                     ^         "
   ...
 ok 2 sub
 `)

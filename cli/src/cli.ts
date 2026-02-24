@@ -62,11 +62,6 @@ const lits = (() => {
         globalContext: config.context ?? undefined,
         globalModuleScope: true,
       }),
-    context: (program: string) =>
-      _lits.context(program, {
-        globalContext: config.context ?? undefined,
-        globalModuleScope: true,
-      }),
   }
 })()
 
@@ -86,7 +81,12 @@ if (config.eval || config.evalFilename) {
 }
 else if (config.loadFilename) {
   const content = fs.readFileSync(config.loadFilename, { encoding: 'utf-8' })
-  config.context = lits.context(content)
+  const result = lits.run(content)
+  if (result !== null && typeof result === 'object' && !Array.isArray(result)) {
+    for (const [key, value] of Object.entries(result as Record<string, unknown>)) {
+      config.context[key] = { value: asAny(value) }
+    }
+  }
   runREPL()
 }
 else if (config.testFilename) {

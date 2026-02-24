@@ -4,7 +4,6 @@ import { andSpecialExpression } from './specialExpressions/and'
 import { condSpecialExpression } from './specialExpressions/cond'
 import { switchSpecialExpression } from './specialExpressions/switch'
 import { definedSpecialExpression } from './specialExpressions/defined'
-import { defSpecialExpression } from './specialExpressions/def'
 import { doSpecialExpression } from './specialExpressions/block'
 import { lambdaSpecialExpression } from './specialExpressions/functions'
 import { ifSpecialExpression } from './specialExpressions/if'
@@ -28,7 +27,6 @@ export const specialExpressions = [
   orSpecialExpression,
   arraySpecialExpression,
   condSpecialExpression,
-  defSpecialExpression,
   definedSpecialExpression,
   doSpecialExpression,
   doseqSpecialExpression,

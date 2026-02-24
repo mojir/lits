@@ -7,7 +7,7 @@ export class ParserContext {
   private readonly tokens: Token[]
   private position: number
   private storedPosition: number = 0
-  public parseExpression!: (precedence?: number, moduleScope?: boolean) => AstNode
+  public parseExpression!: (precedence?: number) => AstNode
 
   constructor(tokenStream: TokenStream) {
     this.tokens = tokenStream.tokens

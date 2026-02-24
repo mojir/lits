@@ -87,12 +87,6 @@ export class Lits {
       const ast = this.generateAst(program, params)
       return this.evaluate(ast, params)
     },
-    context: async (programOrAst: string | Ast, params: ContextParams & FilePathParams = {}): Promise<Context> => {
-      const ast = typeof programOrAst === 'string' ? this.generateAst(programOrAst, params) : programOrAst
-      const contextStack = createContextStack(params, this.modules)
-      await evaluate(ast, contextStack)
-      return contextStack.globalContext
-    },
     apply: async (fn: LitsFunction, fnParams: unknown[], params: ContextParams = {}): Promise<unknown> => {
       return this.apply(fn, fnParams, params)
     },
@@ -105,16 +99,6 @@ export class Lits {
       throw new TypeError('Unexpected async result in synchronous run(). Use lits.async.run() for async operations.')
     }
     return result
-  }
-
-  public context(programOrAst: string | Ast, params: ContextParams & FilePathParams = {}): Context {
-    const ast = typeof programOrAst === 'string' ? this.generateAst(programOrAst, params) : programOrAst
-    const contextStack = createContextStack(params, this.modules)
-    const result = evaluate(ast, contextStack)
-    if (result instanceof Promise) {
-      throw new TypeError('Unexpected async result in synchronous context(). Use lits.async.context() for async operations.')
-    }
-    return contextStack.globalContext
   }
 
   public getUndefinedSymbols(programOrAst: string | Ast, params: ContextParams = {}): Set<string> {

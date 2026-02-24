@@ -24,7 +24,7 @@ export function withSourceCodeInfo<T extends AstNode | BindingTarget>(node: T, s
 }
 
 export function stringToSymbolNode(value: string, sourceCodeInfo: SourceCodeInfo | undefined): SymbolNode {
-  if (specialExpressionTypes[value as SpecialExpressionName] !== undefined && value !== 'fn' && value !== 'def' && value !== 'defn') {
+  if (specialExpressionTypes[value as SpecialExpressionName] !== undefined && value !== 'fn' && value !== 'defn') {
     return withSourceCodeInfo([NodeTypes.SpecialBuiltinSymbol, specialExpressionTypes[value as SpecialExpressionName]], sourceCodeInfo) satisfies SymbolNode
   }
   if (normalExpressionTypes[value as NormalExpressionName] !== undefined) {

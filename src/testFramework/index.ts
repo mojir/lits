@@ -1,7 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { LitsError } from '../errors'
-import type { Context } from '../evaluator/interface'
 import { Lits } from '../Lits/Lits'
 import { allBuiltinModules } from '../allModules'
 import type { SourceCodeInfo } from '../tokenizer/token'
@@ -47,9 +46,9 @@ export function runTest({ testPath: filePath, testNamePattern }: RunTestParams):
       else {
         try {
           const lits = new Lits({ debug: true, modules: allBuiltinModules })
-          const contexts = getContexts(includedFilePaths, lits)
+          const bindings = getBindings(includedFilePaths, lits)
           lits.run(testChunkProgram.program, {
-            contexts,
+            bindings,
             filePath,
           })
           testResult.tap += `ok ${testNumber} ${testChunkProgram.name}\n`
@@ -75,12 +74,20 @@ function readLitsFile(litsPath: string): string {
   return fs.readFileSync(litsPath, { encoding: 'utf-8' })
 }
 
-function getContexts(includedFilePaths: string[], lits: Lits): Context[] {
-  return includedFilePaths.reduce((acc: Context[], filePath) => {
+function getBindings(includedFilePaths: string[], lits: Lits): Record<string, unknown> {
+  return includedFilePaths.reduce((acc: Record<string, unknown>, filePath) => {
     const fileContent = readLitsFile(filePath)
-    acc.push(lits.context(fileContent, { filePath, contexts: acc }))
+    const result = lits.run(fileContent, { filePath, bindings: acc })
+    if (result !== null && typeof result === 'object' && !Array.isArray(result)) {
+      // First definition wins (preserves old context layer lookup order)
+      for (const [key, value] of Object.entries(result as Record<string, unknown>)) {
+        if (!(key in acc)) {
+          acc[key] = value
+        }
+      }
+    }
     return acc
-  }, [])
+  }, {})
 }
 
 function getIncludedFilePaths(absoluteFilePath: string): string[] {
