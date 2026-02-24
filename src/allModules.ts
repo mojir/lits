@@ -12,6 +12,7 @@ import { stringUtilsModule } from './builtin/modules/string'
 import { collectionUtilsModule } from './builtin/modules/collection'
 import { sequenceUtilsModule } from './builtin/modules/sequence'
 import { bitwiseUtilsModule } from './builtin/modules/bitwise'
+import { convertModule } from './builtin/modules/convert'
 
 export const allBuiltinModules: LitsModule[] = [
   assertModule,
@@ -27,4 +28,5 @@ export const allBuiltinModules: LitsModule[] = [
   collectionUtilsModule,
   sequenceUtilsModule,
   bitwiseUtilsModule,
+  convertModule,
 ]

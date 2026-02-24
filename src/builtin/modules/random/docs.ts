@@ -14,7 +14,8 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { random! } = import(random); random!()',
+      `let { random! } = import(random);
+random!()`,
     ],
     seeAlso: ['random.random-float!', 'random.random-int!', 'random.random-boolean!'],
   },
@@ -43,8 +44,10 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { random-int! } = import(random); random-int!(0, 10)',
-      'let { random-int! } = import(random); random-int!(1, 100)',
+      `let { random-int! } = import(random);
+random-int!(0, 10)`,
+      `let { random-int! } = import(random);
+random-int!(1, 100)`,
     ],
     seeAlso: ['random.random-int-inclusive!', 'random.random-float!', 'random.random!'],
   },
@@ -73,7 +76,8 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { random-int-inclusive! } = import(random); random-int-inclusive!(0, 10)',
+      `let { random-int-inclusive! } = import(random);
+random-int-inclusive!(0, 10)`,
     ],
     seeAlso: ['random.random-int!', 'random.random-float!'],
   },
@@ -102,8 +106,10 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { random-float! } = import(random); random-float!(0, 10)',
-      'let { random-float! } = import(random); random-float!(1, 100)',
+      `let { random-float! } = import(random);
+random-float!(0, 10)`,
+      `let { random-float! } = import(random);
+random-float!(1, 100)`,
     ],
     seeAlso: ['random.random!', 'random.random-int!', 'random.random-int-inclusive!'],
   },
@@ -127,8 +133,10 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { random-boolean! } = import(random); random-boolean!()',
-      'let { random-boolean! } = import(random); random-boolean!(0.99)',
+      `let { random-boolean! } = import(random);
+random-boolean!()`,
+      `let { random-boolean! } = import(random);
+random-boolean!(0.99)`,
     ],
     seeAlso: ['random.random!'],
   },
@@ -152,8 +160,10 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { random-item! } = import(random); random-item!([1, 2, 3, 4, 5])',
-      'let { random-item! } = import(random); random-item!(["apple", "banana", "cherry"])',
+      `let { random-item! } = import(random);
+random-item!([1, 2, 3, 4, 5])`,
+      `let { random-item! } = import(random);
+random-item!(["apple", "banana", "cherry"])`,
     ],
     seeAlso: ['random.random-sample!', 'random.random-sample-unique!', 'random.random-char!'],
   },
@@ -182,8 +192,10 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { random-sample-unique! } = import(random); random-sample-unique!([1, 2, 3, 4, 5], 3)',
-      'let { random-sample-unique! } = import(random); random-sample-unique!(["apple", "banana", "cherry"], 2)',
+      `let { random-sample-unique! } = import(random);
+random-sample-unique!([1, 2, 3, 4, 5], 3)`,
+      `let { random-sample-unique! } = import(random);
+random-sample-unique!(["apple", "banana", "cherry"], 2)`,
     ],
     seeAlso: ['random.random-sample!', 'random.random-item!', 'random.shuffle!'],
   },
@@ -212,8 +224,10 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { random-sample! } = import(random); random-sample!([1, 2, 3, 4, 5], 3)',
-      'let { random-sample! } = import(random); random-sample!(["apple", "banana", "cherry"], 10)',
+      `let { random-sample! } = import(random);
+random-sample!([1, 2, 3, 4, 5], 3)`,
+      `let { random-sample! } = import(random);
+random-sample!(["apple", "banana", "cherry"], 10)`,
     ],
     seeAlso: ['random.random-sample-unique!', 'random.random-item!', 'random.shuffle!'],
   },
@@ -237,8 +251,10 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { shuffle! } = import(random); shuffle!([1, 2, 3, 4, 5])',
-      'let { shuffle! } = import(random); shuffle!(["apple", "banana", "cherry"])',
+      `let { shuffle! } = import(random);
+shuffle!([1, 2, 3, 4, 5])`,
+      `let { shuffle! } = import(random);
+shuffle!(["apple", "banana", "cherry"])`,
     ],
     seeAlso: ['random.random-sample!', 'random.random-sample-unique!'],
   },
@@ -267,8 +283,10 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { random-normal! } = import(random); random-normal!(0, 1)',
-      'let { random-normal! } = import(random); random-normal!(5, 2)',
+      `let { random-normal! } = import(random);
+random-normal!(0, 1)`,
+      `let { random-normal! } = import(random);
+random-normal!(5, 2)`,
     ],
     seeAlso: ['random.random-exponential!', 'random.random-binomial!', 'random.random-poisson!'],
     hideOperatorForm: true,
@@ -293,8 +311,10 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { random-exponential! } = import(random); random-exponential!(1)',
-      'let { random-exponential! } = import(random); random-exponential!(0.5)',
+      `let { random-exponential! } = import(random);
+random-exponential!(1)`,
+      `let { random-exponential! } = import(random);
+random-exponential!(0.5)`,
     ],
     seeAlso: ['random.random-normal!', 'random.random-poisson!', 'random.random-gamma!', 'random.random-pareto!'],
   },
@@ -323,8 +343,10 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { random-binomial! } = import(random); random-binomial!(10, 0.5)',
-      'let { random-binomial! } = import(random); random-binomial!(20, 0.3)',
+      `let { random-binomial! } = import(random);
+random-binomial!(10, 0.5)`,
+      `let { random-binomial! } = import(random);
+random-binomial!(20, 0.3)`,
     ],
     seeAlso: ['random.random-normal!', 'random.random-poisson!'],
     hideOperatorForm: true,
@@ -349,8 +371,10 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { random-poisson! } = import(random); random-poisson!(1)',
-      'let { random-poisson! } = import(random); random-poisson!(5)',
+      `let { random-poisson! } = import(random);
+random-poisson!(1)`,
+      `let { random-poisson! } = import(random);
+random-poisson!(5)`,
     ],
     seeAlso: ['random.random-binomial!', 'random.random-normal!', 'random.random-exponential!'],
   },
@@ -379,8 +403,10 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { random-gamma! } = import(random); random-gamma!(2, 2)',
-      'let { random-gamma! } = import(random); random-gamma!(5, 1)',
+      `let { random-gamma! } = import(random);
+random-gamma!(2, 2)`,
+      `let { random-gamma! } = import(random);
+random-gamma!(5, 1)`,
     ],
     seeAlso: ['random.random-exponential!', 'random.random-pareto!'],
     hideOperatorForm: true,
@@ -405,8 +431,10 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { random-pareto! } = import(random); random-pareto!(1)',
-      'let { random-pareto! } = import(random); random-pareto!(2)',
+      `let { random-pareto! } = import(random);
+random-pareto!(1)`,
+      `let { random-pareto! } = import(random);
+random-pareto!(2)`,
     ],
     seeAlso: ['random.random-gamma!', 'random.random-exponential!'],
   },
@@ -423,7 +451,8 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { uuid! } = import(random); uuid!()',
+      `let { uuid! } = import(random);
+uuid!()`,
     ],
     seeAlso: ['random.random-id!', 'random.random-string!'],
   },
@@ -447,8 +476,10 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { random-char! } = import(random); random-char!("abcde")',
-      'let { random-char! } = import(random); random-char!("ABCDEFGHIJKLMNOPQRSTUVWXYZ")',
+      `let { random-char! } = import(random);
+random-char!("abcde")`,
+      `let { random-char! } = import(random);
+random-char!("ABCDEFGHIJKLMNOPQRSTUVWXYZ")`,
     ],
     seeAlso: ['random.random-string!', 'random.random-item!'],
   },
@@ -477,8 +508,10 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { random-string! } = import(random); random-string!(10, "abcde")',
-      'let { random-string! } = import(random); random-string!(5, "ABCDEFGHIJKLMNOPQRSTUVWXYZ")',
+      `let { random-string! } = import(random);
+random-string!(10, "abcde")`,
+      `let { random-string! } = import(random);
+random-string!(5, "ABCDEFGHIJKLMNOPQRSTUVWXYZ")`,
     ],
     seeAlso: ['random.random-char!', 'random.random-id!', 'random.uuid!'],
     hideOperatorForm: true,
@@ -503,8 +536,10 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { random-id! } = import(random); random-id!(10)',
-      'let { random-id! } = import(random); random-id!(5)',
+      `let { random-id! } = import(random);
+random-id!(10)`,
+      `let { random-id! } = import(random);
+random-id!(5)`,
     ],
     seeAlso: ['random.random-string!', 'random.uuid!'],
   },
@@ -521,7 +556,8 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { random-color! } = import(random); random-color!()',
+      `let { random-color! } = import(random);
+random-color!()`,
     ],
   },
 }

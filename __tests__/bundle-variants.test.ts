@@ -21,6 +21,7 @@ import { sequenceUtilsModule } from '../src/modules/sequence'
 import { bitwiseUtilsModule } from '../src/modules/bitwise'
 import { functionalUtilsModule } from '../src/modules/functional'
 import { mathUtilsModule } from '../src/modules/math'
+import { convertModule } from '../src/modules/convert'
 
 describe('minimal entry point (src/index.ts)', () => {
   it('should evaluate core expressions without modules', () => {
@@ -71,8 +72,8 @@ describe('full entry point (src/full.ts)', () => {
     expect(Object.keys(apiReference).length).toBeGreaterThan(0)
   })
 
-  it('should export allBuiltinModules with 13 modules', () => {
-    expect(allBuiltinModules).toHaveLength(13)
+  it('should export allBuiltinModules with 14 modules', () => {
+    expect(allBuiltinModules).toHaveLength(14)
   })
 })
 
@@ -157,6 +158,13 @@ describe('individual module entry points', () => {
     const lits = new Lits({ modules: [mathUtilsModule] })
     expect(lits.run('let m = import(math); m.sin(0)')).toBe(0)
     expect(() => lits.run('let m = import(math); m.sin("hello")')).toThrow()
+  })
+
+  it('convert module', () => {
+    expect(convertModule.name).toBe('convert')
+    const lits = new Lits({ modules: [convertModule] })
+    expect(lits.run('let c = import(convert); c.c->f(100)')).toBe(212)
+    expect(lits.run('let c = import(convert); c.kg->lb(1)')).toBeCloseTo(2.20462, 4)
   })
 
   it('should allow combining multiple modules', () => {

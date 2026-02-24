@@ -36,6 +36,7 @@ import { sequenceUtilsModule } from '../src/builtin/modules/sequence'
 import { mathUtilsModule } from '../src/builtin/modules/math'
 import { functionalUtilsModule } from '../src/builtin/modules/functional'
 import { bitwiseUtilsModule } from '../src/builtin/modules/bitwise'
+import { convertModule } from '../src/builtin/modules/convert'
 import type { ApiName, ArrayApiName, BitwiseApiName, Category, CollectionApiName, CoreApiName, CoreNormalExpressionName, DataType, FunctionalApiName, MathApiName, MetaApiName, MiscApiName, ModuleExpressionName, ObjectApiName, PredicateApiName, RegularExpressionApiName, SequenceApiName, StringApiName, VectorApiName } from './api'
 import { datatype } from './datatype'
 import { shorthand } from './shorthand'
@@ -242,6 +243,7 @@ export const moduleReference: Record<ModuleExpressionName, FunctionReference> = 
   ...moduledDocsToReference(mathUtilsModule.name, mathUtilsModule.functions),
   ...moduledDocsToReference(functionalUtilsModule.name, functionalUtilsModule.functions),
   ...moduledDocsToReference(bitwiseUtilsModule.name, bitwiseUtilsModule.functions),
+  ...moduledDocsToReference(convertModule.name, convertModule.functions),
 } as Record<ModuleExpressionName, FunctionReference>
 
 Object.entries(normalExpressionReference).forEach(([key, obj]) => {

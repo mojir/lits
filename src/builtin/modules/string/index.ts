@@ -31,9 +31,12 @@ const stringUtilsFunctions: BuiltinNormalExpressions = {
       description: 'Repeates $s $n times.',
       seeAlso: ['str', 'repeat'],
       examples: [
-        'let { string-repeat } = import(string); "*" string-repeat 10',
-        'let { string-repeat } = import(string); string-repeat("*", 10)',
-        'let { string-repeat } = import(string); string-repeat("***", 0)',
+        `let { string-repeat } = import(string);
+"*" string-repeat 10`,
+        `let { string-repeat } = import(string);
+string-repeat("*", 10)`,
+        `let { string-repeat } = import(string);
+string-repeat("***", 0)`,
       ],
     },
   },
@@ -58,8 +61,10 @@ const stringUtilsFunctions: BuiltinNormalExpressions = {
       description: 'Return character for code point $code.',
       seeAlso: ['string.to-char-code'],
       examples: [
-        'let { from-char-code } = import(string); from-char-code(65)',
-        'let { from-char-code } = import(string); from-char-code(0)',
+        `let { from-char-code } = import(string);
+from-char-code(65)`,
+        `let { from-char-code } = import(string);
+from-char-code(0)`,
       ],
     },
   },
@@ -78,8 +83,10 @@ const stringUtilsFunctions: BuiltinNormalExpressions = {
       description: 'Return code point for first character in $c.',
       seeAlso: ['string.from-char-code'],
       examples: [
-        'let { to-char-code } = import(string); to-char-code("A")',
-        'let { to-char-code } = import(string); to-char-code("Albert")',
+        `let { to-char-code } = import(string);
+to-char-code("A")`,
+        `let { to-char-code } = import(string);
+to-char-code("Albert")`,
       ],
     },
   },
@@ -98,9 +105,12 @@ const stringUtilsFunctions: BuiltinNormalExpressions = {
       description: 'Returns a new string with leading whitespaces removed.',
       seeAlso: ['trim', 'string.trim-right'],
       examples: [
-        'let { trim-left } = import(string); trim-left("  Albert  ")',
-        'let { trim-left } = import(string); trim-left("   ")',
-        'let { trim-left } = import(string); trim-left("")',
+        `let { trim-left } = import(string);
+trim-left("  Albert  ")`,
+        `let { trim-left } = import(string);
+trim-left("   ")`,
+        `let { trim-left } = import(string);
+trim-left("")`,
       ],
     },
   },
@@ -119,9 +129,12 @@ const stringUtilsFunctions: BuiltinNormalExpressions = {
       description: 'Returns a new string with trailing whitespaces removed.',
       seeAlso: ['trim', 'string.trim-left'],
       examples: [
-        'let { trim-right } = import(string); trim-right("  Albert  ")',
-        'let { trim-right } = import(string); trim-right("   ")',
-        'let { trim-right } = import(string); trim-right("")',
+        `let { trim-right } = import(string);
+trim-right("  Albert  ")`,
+        `let { trim-right } = import(string);
+trim-right("   ")`,
+        `let { trim-right } = import(string);
+trim-right("")`,
       ],
     },
   },
@@ -140,10 +153,14 @@ const stringUtilsFunctions: BuiltinNormalExpressions = {
       description: 'Divides $s into an array of substrings, each representing a line.',
       seeAlso: ['split'],
       examples: [
-        'let { split-lines } = import(string); split-lines("Albert\nMojir\n")',
-        'let { split-lines } = import(string); split-lines("Albert\n\nMojir")',
-        'let { split-lines } = import(string); split-lines("Albert\nMojir\n\n")',
-        'let { split-lines } = import(string); split-lines("")',
+        `let { split-lines } = import(string);
+split-lines("Albert\nMojir\n")`,
+        `let { split-lines } = import(string);
+split-lines("Albert\n\nMojir")`,
+        `let { split-lines } = import(string);
+split-lines("Albert\nMojir\n\n")`,
+        `let { split-lines } = import(string);
+split-lines("")`,
       ],
     },
   },
@@ -176,11 +193,16 @@ const stringUtilsFunctions: BuiltinNormalExpressions = {
       description: 'Pads from the start of $s with `padString` (multiple times, if needed) until the resulting string reaches the given $length.',
       seeAlso: ['string.pad-right'],
       examples: [
-        'let { pad-left } = import(string); "Albert" pad-left 20',
-        'let { pad-left } = import(string); pad-left("Albert", 20)',
-        'let { pad-left } = import(string); pad-left("Albert", 20, "-*-")',
-        'let { pad-left } = import(string); pad-left("Albert", 5)',
-        'let { pad-left } = import(string); pad-left("Albert", -1)',
+        `let { pad-left } = import(string);
+"Albert" pad-left 20`,
+        `let { pad-left } = import(string);
+pad-left("Albert", 20)`,
+        `let { pad-left } = import(string);
+pad-left("Albert", 20, "-*-")`,
+        `let { pad-left } = import(string);
+pad-left("Albert", 5)`,
+        `let { pad-left } = import(string);
+pad-left("Albert", -1)`,
       ],
     },
   },
@@ -213,11 +235,16 @@ const stringUtilsFunctions: BuiltinNormalExpressions = {
       description: 'Pads from the start of $s with `padString` (multiple times, if needed) until the resulting string reaches the given `length`.',
       seeAlso: ['string.pad-left'],
       examples: [
-        'let { pad-right } = import(string); "Albert" pad-right 20',
-        'let { pad-right } = import(string); pad-right("Albert", 20)',
-        'let { pad-right } = import(string); pad-right("Albert", 20, "-*-")',
-        'let { pad-right } = import(string); pad-right("Albert", 5)',
-        'let { pad-right } = import(string); pad-right("Albert", -1)',
+        `let { pad-right } = import(string);
+"Albert" pad-right 20`,
+        `let { pad-right } = import(string);
+pad-right("Albert", 20)`,
+        `let { pad-right } = import(string);
+pad-right("Albert", 20, "-*-")`,
+        `let { pad-right } = import(string);
+pad-right("Albert", 5)`,
+        `let { pad-right } = import(string);
+pad-right("Albert", -1)`,
       ],
     },
   },
@@ -264,19 +291,32 @@ const stringUtilsFunctions: BuiltinNormalExpressions = {
       description: 'Applies placeholders to a string. Support for basic pluralization - see examples. If pluralization is used, first placeholder must be a number.',
       seeAlso: ['str'],
       examples: [
-        'let { template } = import(string); template("Hi, $1 and $2", "Carl", "Larry")',
-        'let { template } = import(string); template("Hi $1, $2, $3, $4, $5, $6, $7, $8 and $9", "A", "B", "C", "D", "E", "F", "G", "H", "I")',
-        'let { template } = import(string); template("$1 book||||$1 books", 0)',
-        'let { template } = import(string); template("$1 book||||$1 books", 1)',
-        'let { template } = import(string); template("$1 book||||$1 books", 2)',
-        'let { template } = import(string); template("No book||||$1 book||||$1 books", 0)',
-        'let { template } = import(string); template("No book||||$1 book||||$1 books", 1)',
-        'let { template } = import(string); template("No book||||$1 book||||$1 books", 10)',
-        'let { template } = import(string); template("No book||||One book||||Two books||||Three books||||$1 books", 0)',
-        'let { template } = import(string); template("No book||||One book||||Two books||||Three books||||$1 books", 1)',
-        'let { template } = import(string); template("No book||||One book||||Two books||||Three books||||$1 books", 2)',
-        'let { template } = import(string); template("No book||||One book||||Two books||||Three books||||$1 books", 3)',
-        'let { template } = import(string); template("No book||||One book||||Two books||||Three books||||$1 books", 4)',
+        `let { template } = import(string);
+template("Hi, $1 and $2", "Carl", "Larry")`,
+        `let { template } = import(string);
+template("Hi $1, $2, $3, $4, $5, $6, $7, $8 and $9", "A", "B", "C", "D", "E", "F", "G", "H", "I")`,
+        `let { template } = import(string);
+template("$1 book||||$1 books", 0)`,
+        `let { template } = import(string);
+template("$1 book||||$1 books", 1)`,
+        `let { template } = import(string);
+template("$1 book||||$1 books", 2)`,
+        `let { template } = import(string);
+template("No book||||$1 book||||$1 books", 0)`,
+        `let { template } = import(string);
+template("No book||||$1 book||||$1 books", 1)`,
+        `let { template } = import(string);
+template("No book||||$1 book||||$1 books", 10)`,
+        `let { template } = import(string);
+template("No book||||One book||||Two books||||Three books||||$1 books", 0)`,
+        `let { template } = import(string);
+template("No book||||One book||||Two books||||Three books||||$1 books", 1)`,
+        `let { template } = import(string);
+template("No book||||One book||||Two books||||Three books||||$1 books", 2)`,
+        `let { template } = import(string);
+template("No book||||One book||||Two books||||Three books||||$1 books", 3)`,
+        `let { template } = import(string);
+template("No book||||One book||||Two books||||Three books||||$1 books", 4)`,
       ],
       hideOperatorForm: true,
     },
@@ -301,7 +341,8 @@ const stringUtilsFunctions: BuiltinNormalExpressions = {
       description: 'Returns a Base64 encoded string from $s.',
       seeAlso: ['string.decode-base64'],
       examples: [
-        'let { encode-base64 } = import(string); encode-base64("Albert")',
+        `let { encode-base64 } = import(string);
+encode-base64("Albert")`,
       ],
     },
   },
@@ -332,7 +373,8 @@ const stringUtilsFunctions: BuiltinNormalExpressions = {
       description: 'Returns a Base64 decoded string from $base64string.',
       seeAlso: ['string.encode-base64'],
       examples: [
-        'let { decode-base64 } = import(string); decode-base64("QWxiZXJ0IPCfkLs=")',
+        `let { decode-base64 } = import(string);
+decode-base64("QWxiZXJ0IPCfkLs=")`,
       ],
     },
   },
@@ -351,7 +393,8 @@ const stringUtilsFunctions: BuiltinNormalExpressions = {
       description: 'Returns an escaped `URI` string.',
       seeAlso: ['string.decode-uri-component'],
       examples: [
-        'let { encode-uri-component } = import(string); encode-uri-component("Hi everyone!?")',
+        `let { encode-uri-component } = import(string);
+encode-uri-component("Hi everyone!?")`,
       ],
     },
   },
@@ -375,7 +418,8 @@ const stringUtilsFunctions: BuiltinNormalExpressions = {
       description: 'Returns an un-escaped `URI` string.',
       seeAlso: ['string.encode-uri-component'],
       examples: [
-        'let { decode-uri-component } = import(string); decode-uri-component("Hi%20everyone!%3F%20%F0%9F%91%8D")',
+        `let { decode-uri-component } = import(string);
+decode-uri-component("Hi%20everyone!%3F%20%F0%9F%91%8D")`,
       ],
     },
   },
@@ -394,10 +438,14 @@ const stringUtilsFunctions: BuiltinNormalExpressions = {
       description: 'Returns $s with the first character converted to uppercase and the rest to lowercase.',
       seeAlso: ['lower-case', 'upper-case'],
       examples: [
-        'let { capitalize } = import(string); capitalize("albert")',
-        'let { capitalize } = import(string); capitalize("ALBERT")',
-        'let { capitalize } = import(string); capitalize("aLBERT")',
-        'let { capitalize } = import(string); capitalize("")',
+        `let { capitalize } = import(string);
+capitalize("albert")`,
+        `let { capitalize } = import(string);
+capitalize("ALBERT")`,
+        `let { capitalize } = import(string);
+capitalize("aLBERT")`,
+        `let { capitalize } = import(string);
+capitalize("")`,
       ],
     },
   },

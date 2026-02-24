@@ -66,6 +66,7 @@ export type CssClass =
   | 'flex-auto'
   | 'flex-initial'
   | 'flex-none'
+  | 'flex-wrap'
   | 'w-full'
   | 'h-full'
   | `gap${sizes}`

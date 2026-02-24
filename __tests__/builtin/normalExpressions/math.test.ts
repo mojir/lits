@@ -834,49 +834,4 @@ describe('math functions', () => {
       expect(lits.run('%([[1], [2]], 2)')).toEqual([[1], [0]])
     })
   })
-  describe('to-rad', () => {
-    const mlits = new Lits({ modules: [mathUtilsModule] })
-    const m = 'let { to-rad } = import(math); '
-    it('samples', () => {
-      expect(mlits.run(`${m}to-rad(0)`)).toBe(0)
-      expect(mlits.run(`${m}to-rad(1)`)).toBe(Math.PI / 180)
-      expect(mlits.run(`${m}to-rad(90)`)).toBe(Math.PI / 2)
-      expect(mlits.run(`${m}to-rad(180)`)).toBe(Math.PI)
-      expect(mlits.run(`${m}to-rad(360)`)).toBe(2 * Math.PI)
-      expect(mlits.run(`${m}to-rad(720)`)).toBe(4 * Math.PI)
-      expect(mlits.run(`${m}to-rad(-720)`)).toBe(-4 * Math.PI)
-      expect(() => mlits.run(`${m}to-rad()`)).toThrow(LitsError)
-      expect(() => mlits.run(`${m}to-rad(1, 2)`)).toThrow(LitsError)
-    })
-    it('should convert a vector to radians', () => {
-      expect(mlits.run(`${m}to-rad([0, 1, 90])`)).toEqual([0, Math.PI / 180, Math.PI / 2])
-      expect(mlits.run(`${m}to-rad([])`)).toEqual([])
-    })
-    it('should convert a matrix to radians', () => {
-      expect(mlits.run(`${m}to-rad([[0, 1], [90, 180]])`)).toEqual([[0, Math.PI / 180], [Math.PI / 2, Math.PI]])
-      expect(mlits.run(`${m}to-rad([[0]])`)).toEqual([[0]])
-    })
-  })
-  describe('to-deg', () => {
-    const mlits = new Lits({ modules: [mathUtilsModule] })
-    const m = 'let { to-deg } = import(math); '
-    it('samples', () => {
-      expect(mlits.run(`${m}to-deg(0)`)).toBe(0)
-      expect(mlits.run(`${m}to-deg(1)`)).toBe(1 * (180 / Math.PI))
-      expect(mlits.run(`${m}to-deg(PI / 2)`)).toBe(90)
-      expect(mlits.run(`${m}to-deg(PI)`)).toBe(180)
-      expect(mlits.run(`${m}to-deg(2 * PI)`)).toBe(360)
-      expect(mlits.run(`${m}to-deg(-2 * PI)`)).toBe(-360)
-      expect(() => mlits.run(`${m}to-deg()`)).toThrow(LitsError)
-      expect(() => mlits.run(`${m}to-deg(1, 2)`)).toThrow(LitsError)
-    })
-    it('should convert a vector to degrees', () => {
-      expect(mlits.run(`${m}to-deg([0, 1, PI])`)).toEqual([0, 1 * (180 / Math.PI), 180])
-      expect(mlits.run(`${m}to-deg([])`)).toEqual([])
-    })
-    it('should convert a matrix to degrees', () => {
-      expect(mlits.run(`${m}to-deg([[0, 1], [PI, 2 * PI]])`)).toEqual([[0, 1 * (180 / Math.PI)], [180, 360]])
-      expect(mlits.run(`${m}to-deg([[0]])`)).toEqual([[0]])
-    })
-  })
 })

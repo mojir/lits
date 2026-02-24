@@ -1120,8 +1120,10 @@ export const moduleDocs: Record<string, FunctionDocs> = {
     ],
     examples: [
       'let { solve } = import(linear-algebra);\nsolve([\n  [2, 1, -1, 1], \n  [4, 5, -3, 2], \n  [6, -2, 5, -3], \n  [8, 3, 2, 4]\n], [5, 10, 2, 17])',
-      'let { solve } = import(linear-algebra); solve([[2, 0, 0], [3, 1, 0], [4, 5, 6]], [4, 5, 38])',
-      'let { solve } = import(linear-algebra); solve([[2, 3], [1, -1]], [8, 2])',
+      `let { solve } = import(linear-algebra);
+solve([[2, 0, 0], [3, 1, 0], [4, 5, 6]], [4, 5, 38])`,
+      `let { solve } = import(linear-algebra);
+solve([[2, 3], [1, -1]], [8, 2])`,
     ],
     seeAlso: ['linear-algebra.rref', 'matrix.inv'],
   },

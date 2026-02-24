@@ -80,9 +80,9 @@ function getCustomSignatureSection(reference: CustomReference) {
 }
 
 function getSeeAlsoLinks(references: Reference[]) {
-  return `<div ${styles('flex', 'flex-row', 'gap-2')}>
+  return `<div ${styles('flex', 'flex-row', 'flex-wrap', 'gap-2')}>
     ${references.map((reference) => {
-      return `<a onclick="Playground.showPage('${getLinkName(reference)}', 'smooth')"><span>${escapeTitle(reference.title)}</span></a>`
+      return `<a ${styles('whitespace-nowrap')} onclick="Playground.showPage('${getLinkName(reference)}', 'smooth')"><span>${escapeTitle(reference.title)}</span></a>`
     }).join('')}
   </div>`
 }
