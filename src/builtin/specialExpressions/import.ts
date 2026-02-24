@@ -16,8 +16,8 @@ const docs: CustomDocs = {
   ],
   returns: { type: 'object' },
   examples: [
-    'let v = import(vector); v.mean([1, 2, 3, 4])',
-    'let { fill } = import(vector); fill(3, 0)',
+    'let v = import(vector); v.stdev([1, 2, 3, 4])',
+    'let { linspace } = import(vector); linspace(0, 10, 5)',
     'let g = import(grid); g.row([[1, 2], [3, 4]], 0)',
   ],
 }

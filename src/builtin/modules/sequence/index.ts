@@ -105,30 +105,6 @@ su.position(
       ],
     },
   },
-  'shift': {
-    evaluate: ([seq], sourceCodeInfo): Any => {
-      assertSeq(seq, sourceCodeInfo)
-      if (typeof seq === 'string')
-        return seq.substring(1)
-
-      const copy = [...seq]
-      copy.shift()
-      return copy
-    },
-    arity: toFixedArity(1),
-    docs: {
-      category: 'sequence',
-      returns: { type: ['sequence', 'null'] },
-      args: { seq: { type: 'sequence' } },
-      variants: [{ argumentNames: ['seq'] }],
-      description: 'Returns a copy of $seq with first element removed. If $seq is empty `null` is returned.',
-      seeAlso: ['sequence.unshift', 'pop', 'rest'],
-      examples: [
-        'let su = import(sequence); su.shift([1, 2, 3])',
-        'let su = import(sequence); su.shift([])',
-      ],
-    },
-  },
   'splice': {
     evaluate: (params, sourceCodeInfo): Any => {
       const [seq, start, deleteCount, ...rest] = params
@@ -262,7 +238,7 @@ su.position(
       },
       variants: [{ argumentNames: ['seq', 'values'] }],
       description: 'Returns copy of $seq with $values added to the beginning.',
-      seeAlso: ['push', 'sequence.shift', '++'],
+      seeAlso: ['push', '++'],
       examples: [
         'let su = import(sequence); su.unshift([1, 2, 3], 4)',
         'let su = import(sequence); su.unshift([1, 2, 3], 4)',

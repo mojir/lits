@@ -540,7 +540,7 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       'let { orthogonal? } = import(linear-algebra);\northogonal?([1, 0, 1], [0, 1, 0])',
       'let { orthogonal? } = import(linear-algebra);\northogonal?([1, 2], [2, -1])',
     ],
-    seeAlso: ['linear-algebra.collinear?', 'linear-algebra.parallel?', 'linear-algebra.dot', 'matrix.orthogonal?', 'linear-algebra.angle'],
+    seeAlso: ['linear-algebra.collinear?', 'linear-algebra.parallel?', 'linear-algebra.dot', 'matrix.orthogonal-matrix?', 'linear-algebra.angle'],
   },
   'cosine-similarity': {
     category: 'linear-algebra',

@@ -25,7 +25,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['vector'] }],
       description: 'Returns the **sum** of all elements in the `vector`. Returns `0` for an empty vector.',
-      seeAlso: ['prod', 'mean', 'median', 'vector.sum'],
+      seeAlso: ['prod', 'mean', 'median', 'vector.moving-sum', 'vector.centered-moving-sum', 'vector.running-sum', 'vector.cumsum'],
       examples: [
         'sum([1, 2, 3, 4, 5])',
         'sum([1, -2, 3])',
@@ -48,7 +48,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['vector'] }],
       description: 'Returns the **product** of all elements in the `vector`. Returns `1` for an empty vector.',
-      seeAlso: ['sum', 'mean', 'median', 'vector.prod'],
+      seeAlso: ['sum', 'mean', 'median', 'vector.moving-prod', 'vector.centered-moving-prod', 'vector.running-prod', 'vector.cumprod'],
       examples: [
         'prod([1, 2, 3, 4, 5])',
         'prod([1, -2, 3])',
@@ -71,7 +71,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['vector'] }],
       description: 'Returns the arithmetic **mean** of all elements in the `vector`. Throws for an empty vector.',
-      seeAlso: ['median', 'sum', 'prod', 'vector.mean'],
+      seeAlso: ['median', 'sum', 'prod', 'vector.moving-mean', 'vector.centered-moving-mean', 'vector.running-mean', 'vector.geometric-mean', 'vector.harmonic-mean', 'vector.rms', 'vector.mode'],
       examples: [
         'mean([1, 2, 3, 4, 5])',
         'mean([1, -2, 3])',
@@ -93,7 +93,7 @@ export const vectorNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['vector'] }],
       description: 'Returns the **median** of all elements in the `vector`. For even-length vectors, returns the average of the two middle values. Throws for an empty vector.',
-      seeAlso: ['mean', 'sum', 'prod', 'vector.median'],
+      seeAlso: ['mean', 'sum', 'prod', 'vector.moving-median', 'vector.centered-moving-median', 'vector.running-median', 'vector.mode', 'vector.quartiles', 'vector.percentile', 'vector.iqr', 'vector.medad'],
       examples: [
         'median([1, 2, 3, 4, 5])',
         'median([1, 2, 3, 4])',

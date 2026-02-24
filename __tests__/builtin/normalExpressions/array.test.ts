@@ -83,18 +83,18 @@ describe('array functions', () => {
 
   describe('running-fn', () => {
     it('samples', () => {
-      expect(lits.run('let v = import(vector); running-fn([1, 2, 3], v.sum)')).toEqual([1, 3, 6])
+      expect(lits.run('running-fn([1, 2, 3], sum)')).toEqual([1, 3, 6])
       expect(() => lits.run('running-fn(1)')).toThrow(LitsError)
-      expect(() => lits.run('let v = import(vector); running-fn(1, v.sum)')).toThrow(LitsError)
-      expect(() => lits.run('let v = import(vector); running-fn(1, v.sum, null)')).toThrow(LitsError)
+      expect(() => lits.run('running-fn(1, sum)')).toThrow(LitsError)
+      expect(() => lits.run('running-fn(1, sum, null)')).toThrow(LitsError)
     })
   })
   describe('moving-fn', () => {
     it('samples', () => {
-      expect(lits.run('let v = import(vector); moving-fn([1, 2, 3], 2, v.sum)')).toEqual([3, 5])
-      expect(lits.run('let v = import(vector); moving-fn([1, 2, 3], 1, v.sum)')).toEqual([1, 2, 3])
-      expect(lits.run('let v = import(vector); moving-fn([1, 2, 3], 3, v.sum)')).toEqual([6])
-      expect(() => lits.run('let v = import(vector); moving-fn([1, 2, 3], 4, v.sum)')).toThrow(LitsError)
+      expect(lits.run('moving-fn([1, 2, 3], 2, sum)')).toEqual([3, 5])
+      expect(lits.run('moving-fn([1, 2, 3], 1, sum)')).toEqual([1, 2, 3])
+      expect(lits.run('moving-fn([1, 2, 3], 3, sum)')).toEqual([6])
+      expect(() => lits.run('moving-fn([1, 2, 3], 4, sum)')).toThrow(LitsError)
       expect(() => lits.run('moving-fn(1)')).toThrow(LitsError)
       expect(() => lits.run('moving-fn(1, 2)')).toThrow(LitsError)
       expect(() => lits.run('moving-fn(1, 2, null)')).toThrow(LitsError)

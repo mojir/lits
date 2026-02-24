@@ -14,7 +14,7 @@ import { fromArray } from './fromArray'
 import { transpose } from './transpose'
 
 const gridFunctions: BuiltinNormalExpressions = {
-  'every?': {
+  'cell-every?': {
     evaluate: ([grid, predicate], sourceCodeInfo, contextStack, { executeFunction }): MaybePromise<boolean> => {
       assertGrid(grid, sourceCodeInfo)
       assertFunctionLike(predicate, sourceCodeInfo)
@@ -236,21 +236,7 @@ const gridFunctions: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(2),
   },
-  'reverse-rows': {
-    evaluate: ([grid], sourceCodeInfo): Any[][] => {
-      assertGrid(grid, sourceCodeInfo)
-      return grid.reverse()
-    },
-    arity: toFixedArity(1),
-  },
-  'reverse-cols': {
-    evaluate: ([grid], sourceCodeInfo): Any[][] => {
-      assertGrid(grid, sourceCodeInfo)
-      return grid.map(row => row.reverse())
-    },
-    arity: toFixedArity(1),
-  },
-  'slice': {
+  'crop': {
     evaluate: ([grid, start, end], sourceCodeInfo): Any[][] => {
       assertGrid(grid, sourceCodeInfo)
       assertVector(start, sourceCodeInfo)
@@ -431,7 +417,7 @@ const gridFunctions: BuiltinNormalExpressions = {
     },
     arity: { min: 1 },
   },
-  'map': {
+  'cell-map': {
     evaluate: (params, sourceCodeInfo, contextStack, { executeFunction }): MaybePromise<Any[][]> => {
       const fn = asFunctionLike(params.at(-1), sourceCodeInfo)
       const grids = params.slice(0, -1)
@@ -457,7 +443,7 @@ const gridFunctions: BuiltinNormalExpressions = {
     },
     arity: { min: 2 },
   },
-  'mapi': {
+  'cell-mapi': {
     evaluate: ([grid, fn], sourceCodeInfo, contextStack, { executeFunction }): MaybePromise<Any[][]> => {
       assertGrid(grid, sourceCodeInfo)
       assertFunctionLike(fn, sourceCodeInfo)
@@ -473,7 +459,7 @@ const gridFunctions: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(2),
   },
-  'reduce': {
+  'cell-reduce': {
     evaluate: ([grid, fn, initialValue], sourceCodeInfo, contextStack, { executeFunction }): MaybePromise<Any> => {
       assertGrid(grid, sourceCodeInfo)
       assertFunctionLike(fn, sourceCodeInfo)
@@ -492,7 +478,7 @@ const gridFunctions: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(3),
   },
-  'reducei': {
+  'cell-reducei': {
     evaluate: ([grid, fn, initialValue], sourceCodeInfo, contextStack, { executeFunction }): MaybePromise<Any> => {
       assertGrid(grid, sourceCodeInfo)
       assertFunctionLike(fn, sourceCodeInfo)

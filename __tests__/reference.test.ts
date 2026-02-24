@@ -184,6 +184,35 @@ describe('no orphaned reference data', () => {
   })
 })
 
+describe('no duplicate function names', () => {
+  it('all function names are unique across core and all modules', () => {
+    const duplicates: string[] = []
+    const seen = new Map<string, string>()
+
+    for (const key of Object.keys(normalExpressions)) {
+      seen.set(key, 'core')
+    }
+
+    for (const key of specialExpressionKeys) {
+      if (seen.has(key)) {
+        duplicates.push(`"${key}" in core (special) conflicts with core (normal)`)
+      }
+      seen.set(key, 'core')
+    }
+
+    for (const module of allBuiltinModules) {
+      for (const key of Object.keys(module.functions)) {
+        if (seen.has(key)) {
+          duplicates.push(`"${key}" in ${module.name} conflicts with ${seen.get(key)}`)
+        }
+        seen.set(key, module.name)
+      }
+    }
+
+    expect(duplicates, `Duplicate function names:\n${duplicates.join('\n')}`).toEqual([])
+  })
+})
+
 describe('core and module categories', () => {
   it('module categories are a subset of all categories', () => {
     const nsCategories = Array.from(new Set(Object.values(moduleReference).map(r => r.category)))

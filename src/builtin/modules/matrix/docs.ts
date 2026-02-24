@@ -77,7 +77,7 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       'let { inv } = import(matrix);\ninv([[1, 2], [3, 4]])',
       'let { inv } = import(matrix);\ninv([[1, 2, 3], [4, 5, 7], [7, 8, 10]])',
     ],
-    seeAlso: ['matrix.det', 'matrix.adj', 'matrix.invertible?', 'linear-algebra.solve', 'matrix.mul', 'matrix.orthogonal?'],
+    seeAlso: ['matrix.det', 'matrix.adj', 'matrix.invertible?', 'linear-algebra.solve', 'matrix.mul', 'matrix.orthogonal-matrix?'],
   },
   'adj': {
     category: 'matrix',
@@ -214,7 +214,7 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       'let { symmetric? } = import(matrix);\nsymmetric?([[1, 2], [2, 1]])',
       'let { symmetric? } = import(matrix);\nsymmetric?([[1, 2, 3], [2, 1, 4], [3, 4, 1]])',
     ],
-    seeAlso: ['matrix.orthogonal?', 'matrix.diagonal?', 'matrix.square?', 'matrix.hilbert'],
+    seeAlso: ['matrix.orthogonal-matrix?', 'matrix.diagonal?', 'matrix.square?', 'matrix.hilbert'],
   },
   'triangular?': {
     category: 'matrix',
@@ -343,7 +343,7 @@ export const moduleDocs: Record<string, FunctionDocs> = {
     ],
     seeAlso: ['matrix.symmetric?', 'matrix.identity?', 'matrix.invertible?'],
   },
-  'orthogonal?': {
+  'orthogonal-matrix?': {
     category: 'matrix',
     description: 'Checks if a `matrix` is **orthogonal**.',
     returns: {
@@ -363,9 +363,9 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      'let { orthogonal? } = import(matrix);\northogonal?([[1, 0], [0, 1]])',
-      'let { orthogonal? } = import(matrix);\northogonal?([[1, 0], [0, -1]])',
-      'let { orthogonal? } = import(matrix);\northogonal?([[1, 2], [3, 4]])',
+      'let { orthogonal-matrix? } = import(matrix);\northogonal-matrix?([[1, 0], [0, 1]])',
+      'let { orthogonal-matrix? } = import(matrix);\northogonal-matrix?([[1, 0], [0, -1]])',
+      'let { orthogonal-matrix? } = import(matrix);\northogonal-matrix?([[1, 2], [3, 4]])',
     ],
     seeAlso: ['matrix.symmetric?', 'matrix.inv', 'matrix.identity?', 'linear-algebra.orthogonal?'],
   },
@@ -393,7 +393,7 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       'let { identity? } = import(matrix);\nidentity?([[1, 0, 0], [0, 1, 0], [0, 0, 1]])',
       'let { identity? } = import(matrix);\nidentity?([[1, 0, 0], [0, 1, 0], [0, 0, 0]])',
     ],
-    seeAlso: ['matrix.diagonal?', 'matrix.square?', 'matrix.orthogonal?'],
+    seeAlso: ['matrix.diagonal?', 'matrix.square?', 'matrix.orthogonal-matrix?'],
   },
   'invertible?': {
     category: 'matrix',

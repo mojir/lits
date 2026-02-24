@@ -204,11 +204,10 @@ let lin = import(linear-algebra);
 [];                            // This is NOT a vector (empty)
 
 // Vector creation functions
-vec.zeros(5);                  // => [0, 0, 0, 0, 0]
-vec.ones(3);                   // => [1, 1, 1]
 vec.linspace(0, 10, 5);        // => [0, 2.5, 5, 7.5, 10]
-vec.fill(4, 3.14);             // => [3.14, 3.14, 3.14, 3.14]
-vec.generate(5, -> $ * 2);     // => [0, 2, 4, 6, 8]
+repeat(0, 5);                  // => [0, 0, 0, 0, 0]
+repeat(1, 3);                  // => [1, 1, 1]
+repeat(3.14, 4);               // => [3.14, 3.14, 3.14, 3.14]
 
 // Vector mathematical operations (use lin module for vector math)
 lin.dot([1, 2, 3], [4, 5, 6]);      // => 32 (dot product)
@@ -1333,7 +1332,7 @@ Here's the complete precedence table, from highest to lowest:
 
 // Pipe has very low precedence
 let vec = import(vector);
-[1, 2, 3] |> map(_, inc) |> vec.sum;  // Evaluates left to right
+[1, 2, 3] |> map(_, inc) |> sum;      // Evaluates left to right
 
 // Conditional has lowest precedence
 true ? 2 + 3 : 4 + 5;             // => true ? 5 : 9 = 5

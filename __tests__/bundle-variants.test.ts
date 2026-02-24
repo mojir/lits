@@ -38,7 +38,7 @@ describe('minimal entry point (src/index.ts)', () => {
 
   it('should accept individual modules passed in', () => {
     const lits = new Lits({ modules: [vectorModule] })
-    expect(lits.run('let v = import(vector); v.mean([1, 2, 3])')).toBe(2)
+    expect(lits.run('let v = import(vector); v.stdev([1, 2, 3])')).toBeCloseTo(0.8165, 3)
   })
 
   // NOTE: cannot test "doc returns empty" here because importing src/full.ts
@@ -55,7 +55,7 @@ describe('full entry point (src/full.ts)', () => {
   it('should have all modules available via allBuiltinModules', () => {
     const lits = new LitsFull({ modules: allBuiltinModules })
     expect(lits.run('let { assert } = import(assert); assert(true)')).toBe(true)
-    expect(lits.run('let v = import(vector); v.mean([1, 2, 3])')).toBe(2)
+    expect(lits.run('let v = import(vector); v.stdev([1, 2, 3])')).toBeCloseTo(0.8165, 3)
     expect(lits.run('let g = import(grid); g.row([[1, 2], [3, 4]], 0)')).toEqual([1, 2])
     expect(lits.run('let nt = import(number-theory); nt.prime?(7)')).toBe(true)
   })
@@ -102,7 +102,7 @@ describe('individual module entry points', () => {
   it('vector module', () => {
     expect(vectorModule.name).toBe('vector')
     const lits = new Lits({ modules: [vectorModule] })
-    expect(lits.run('let v = import(vector); v.mean([1, 2, 3])')).toBe(2)
+    expect(lits.run('let v = import(vector); v.stdev([1, 2, 3])')).toBeCloseTo(0.8165, 3)
   })
 
   it('linearAlgebra module', () => {
@@ -169,7 +169,7 @@ describe('individual module entry points', () => {
 
   it('should allow combining multiple modules', () => {
     const lits = new Lits({ modules: [vectorModule, matrixModule] })
-    expect(lits.run('let v = import(vector); v.mean([1, 2, 3])')).toBe(2)
+    expect(lits.run('let v = import(vector); v.stdev([1, 2, 3])')).toBeCloseTo(0.8165, 3)
     expect(lits.run('let m = import(matrix); m.det([[1, 2], [3, 4]])')).toBe(-2)
     // Other modules should not be available
     expect(() => lits.run('import(assert)')).toThrow()

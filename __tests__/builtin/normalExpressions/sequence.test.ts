@@ -527,26 +527,6 @@ describe('sequence-Utils module functions', () => {
       })
     })
 
-    describe('shift', () => {
-      it('samples', () => {
-        expect(mlits.run(`${imp}su.shift([1, 2, 3])`)).toEqual([2, 3])
-        expect(mlits.run(`${imp}su.shift([])`)).toEqual([])
-        expect(mlits.run(`${imp}let l = [1, 2, 3]; su.shift(l); l`)).toEqual([1, 2, 3])
-        expect(mlits.run(`${imp}let l = [1, 2, 3]; su.shift(l)`)).toEqual([2, 3])
-        expect(mlits.run(`${imp}let l = []; su.shift(l); l`)).toEqual([])
-        expect(mlits.run(`${imp}su.shift("Albert")`)).toBe('lbert')
-        expect(mlits.run(`${imp}su.shift("1")`)).toBe('')
-        expect(mlits.run(`${imp}su.shift("")`)).toBe('')
-
-        expect(() => mlits.run(`${imp}su.shift(object())`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.shift(null)`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.shift(true)`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.shift(false)`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.shift(1)`)).toThrow(LitsError)
-        expect(() => mlits.run(`${imp}su.shift()`)).toThrow(LitsError)
-      })
-    })
-
     describe('sort-by', () => {
       it('samples', () => {
         expect(mlits.run(`${imp}su.sort-by(["Albert", "Mojir", "Nina"], count)`)).toEqual(['Nina', 'Mojir', 'Albert'])

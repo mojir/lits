@@ -30,11 +30,11 @@ function runGrid(code: string): unknown {
 }
 
 describe('grid', () => {
-  describe('grid:every?', () => {
+  describe('grid:cell-every?', () => {
     it('should check if every element in the grid satisfies the predicate', () => {
-      expect(runGrid(`grid:every?(${exampleGrid1}, string?)`)).toBe(false)
-      expect(runGrid(`grid:every?(${exampleGrid2}, string?)`)).toBe(true)
-      expect(runGrid(`grid:every?(${exampleGrid3}, string?)`)).toBe(false)
+      expect(runGrid(`grid:cell-every?(${exampleGrid1}, string?)`)).toBe(false)
+      expect(runGrid(`grid:cell-every?(${exampleGrid2}, string?)`)).toBe(true)
+      expect(runGrid(`grid:cell-every?(${exampleGrid3}, string?)`)).toBe(false)
     })
   })
   describe('grid:some?', () => {
@@ -145,17 +145,17 @@ describe('grid', () => {
       ])
     })
   })
-  describe('grid:slice', () => {
-    it('should slice the grid', () => {
-      expect(runGrid(`grid:slice(${exampleGrid1}, [1, 1], [2, 2])`)).toEqual([
+  describe('grid:crop', () => {
+    it('should crop the grid', () => {
+      expect(runGrid(`grid:crop(${exampleGrid1}, [1, 1], [2, 2])`)).toEqual([
         ['mother'],
       ])
-      expect(runGrid(`grid:slice(${exampleGrid1}, [1, 1])`)).toEqual([
+      expect(runGrid(`grid:crop(${exampleGrid1}, [1, 1])`)).toEqual([
         ['mother', 20],
         ['son', 30],
       ])
-      expect(() => runGrid(`grid:slice(${exampleGrid1}, [1, 1, 1], [2, 2])`)).toThrow(LitsError)
-      expect(() => runGrid(`grid:slice(${exampleGrid1}, [1, 1], [2, 2, 2])`)).toThrow(LitsError)
+      expect(() => runGrid(`grid:crop(${exampleGrid1}, [1, 1, 1], [2, 2])`)).toThrow(LitsError)
+      expect(() => runGrid(`grid:crop(${exampleGrid1}, [1, 1], [2, 2, 2])`)).toThrow(LitsError)
     })
   })
   describe('grid:slice-rows', () => {
@@ -250,39 +250,39 @@ describe('grid', () => {
       expect(() => runGrid(`grid:concat-cols(${exampleGrid2}, ${exampleGrid3})`)).toThrow(LitsError)
     })
   })
-  describe('grid:map', () => {
+  describe('grid:cell-map', () => {
     it('should map the grid', () => {
-      expect(runGrid(`grid:map(${exampleGrid1}, str)`)).toEqual([
+      expect(runGrid(`grid:cell-map(${exampleGrid1}, str)`)).toEqual([
         ['Albert', 'father', '10'],
         ['Nina', 'mother', '20'],
         ['Kian', 'son', '30'],
       ])
     })
     it('should map multiple grids', () => {
-      expect(runGrid(`grid:map(${exampleGrid3}, ${exampleGrid3}, +)`)).toEqual([[2, 4], [6, 8]])
+      expect(runGrid(`grid:cell-map(${exampleGrid3}, ${exampleGrid3}, +)`)).toEqual([[2, 4], [6, 8]])
     })
     it('should throw on different dimensions', () => {
-      expect(() => runGrid(`grid:map(${exampleGrid3}, [[1], [2]], +)`)).toThrow(LitsError)
-      expect(() => runGrid(`grid:map(${exampleGrid3}, [[1, 2]], +)`)).toThrow(LitsError)
+      expect(() => runGrid(`grid:cell-map(${exampleGrid3}, [[1], [2]], +)`)).toThrow(LitsError)
+      expect(() => runGrid(`grid:cell-map(${exampleGrid3}, [[1, 2]], +)`)).toThrow(LitsError)
     })
   })
-  describe('grid:mapi', () => {
+  describe('grid:cell-mapi', () => {
     it('should map the grid with index', () => {
-      expect(runGrid(`grid:mapi(${exampleGrid1}, -> $1 ++ "(" ++ $2 ++ ", " ++ $3 ++ ")")`)).toEqual([
+      expect(runGrid(`grid:cell-mapi(${exampleGrid1}, -> $1 ++ "(" ++ $2 ++ ", " ++ $3 ++ ")")`)).toEqual([
         ['Albert(0, 0)', 'father(0, 1)', '10(0, 2)'],
         ['Nina(1, 0)', 'mother(1, 1)', '20(1, 2)'],
         ['Kian(2, 0)', 'son(2, 1)', '30(2, 2)'],
       ])
     })
   })
-  describe('grid:reduce', () => {
+  describe('grid:cell-reduce', () => {
     it('should reduce the grid', () => {
-      expect(runGrid(`grid:reduce(${exampleGrid1}, ++, "")`)).toEqual('Albertfather10Ninamother20Kianson30')
+      expect(runGrid(`grid:cell-reduce(${exampleGrid1}, ++, "")`)).toEqual('Albertfather10Ninamother20Kianson30')
     })
   })
-  describe('grid:reducei', () => {
+  describe('grid:cell-reducei', () => {
     it('should reduce the grid with index', () => {
-      expect(runGrid(`grid:reducei(${exampleGrid1}, -> $ + $3, 0)`)).toBe(9)
+      expect(runGrid(`grid:cell-reducei(${exampleGrid1}, -> $ + $3, 0)`)).toBe(9)
     })
   })
   describe('grid:push-rows', () => {
@@ -424,24 +424,6 @@ describe('grid', () => {
         ['Kian', 'son', 30],
         ['Nina', 'mother', 20],
         ['Albert', 'father', 10],
-      ])
-    })
-  })
-  describe('grid:reverse-rows', () => {
-    it('should reverse the rows of the grid', () => {
-      expect(runGrid(`grid:reverse-rows(${exampleGrid1})`)).toEqual([
-        ['Kian', 'son', 30],
-        ['Nina', 'mother', 20],
-        ['Albert', 'father', 10],
-      ])
-    })
-  })
-  describe('grid:reverse-cols', () => {
-    it('should reverse the columns of the grid', () => {
-      expect(runGrid(`grid:reverse-cols(${exampleGrid1})`)).toEqual([
-        [10, 'father', 'Albert'],
-        [20, 'mother', 'Nina'],
-        [30, 'son', 'Kian'],
       ])
     })
   })

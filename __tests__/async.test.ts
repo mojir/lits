@@ -4,7 +4,6 @@ import { collectionUtilsModule } from '../src/builtin/modules/collection'
 import { gridModule } from '../src/builtin/modules/grid'
 import { numberTheoryModule } from '../src/builtin/modules/number-theory'
 import { sequenceUtilsModule } from '../src/builtin/modules/sequence'
-import { vectorModule } from '../src/builtin/modules/vector'
 import type { LitsFunction } from '../src/parser/types'
 
 describe('async support', () => {
@@ -580,9 +579,9 @@ describe('async support', () => {
       arity: { min: 1, max: 1 },
     }
 
-    it('every? with async predicate', async () => {
+    it('cell-every? with async predicate', async () => {
       const lits = new Lits({ modules: [gridModule] })
-      const result = await lits.async.run('let g = import(grid); g.every?(g.fill(2, 2, 1), isPos)', {
+      const result = await lits.async.run('let g = import(grid); g.cell-every?(g.fill(2, 2, 1), isPos)', {
         bindings: { isPos: asyncIsPositive },
       })
       expect(result).toBe(true)
@@ -620,35 +619,20 @@ describe('async support', () => {
       expect(result).toEqual([[0, 1, 2], [10, 11, 12]])
     })
 
-    it('map with async function', async () => {
+    it('cell-map with async function', async () => {
       const lits = new Lits({ modules: [gridModule] })
-      const result = await lits.async.run('let g = import(grid); g.map([[1, 2], [3, 4]], dbl)', {
+      const result = await lits.async.run('let g = import(grid); g.cell-map([[1, 2], [3, 4]], dbl)', {
         bindings: { dbl: asyncDouble },
       })
       expect(result).toEqual([[2, 4], [6, 8]])
     })
 
-    it('mapi with async function', async () => {
+    it('cell-mapi with async function', async () => {
       const lits = new Lits({ modules: [gridModule] })
-      const result = await lits.async.run('let g = import(grid); g.mapi([[1, 2], [3, 4]], (val, r, c) -> mul(r, c))', {
+      const result = await lits.async.run('let g = import(grid); g.cell-mapi([[1, 2], [3, 4]], (val, r, c) -> mul(r, c))', {
         bindings: { mul: asyncMul },
       })
       expect(result).toEqual([[0, 1], [10, 11]])
-    })
-  })
-
-  describe('async vector module functions', () => {
-    it('generate with async generator', async () => {
-      const lits = new Lits({ modules: [vectorModule] })
-      const result = await lits.async.run('let v = import(vector); v.generate(4, dbl)', {
-        bindings: {
-          dbl: {
-            fn: async (x: number) => x * 2,
-            arity: { min: 1, max: 1 },
-          },
-        },
-      })
-      expect(result).toEqual([0, 2, 4, 6])
     })
   })
 

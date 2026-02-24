@@ -129,7 +129,7 @@ export const matrixNormalExpression: BuiltinNormalExpressions = {
     },
     arity: toFixedArity(1),
   },
-  'orthogonal?': {
+  'orthogonal-matrix?': {
     evaluate: ([matrix], sourceCodeInfo): boolean => {
       assertMatrix(matrix, sourceCodeInfo)
       return isOrthogonal(matrix)

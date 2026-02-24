@@ -12,13 +12,6 @@ function runVec(code: string): unknown {
 }
 
 describe('prod', () => {
-  it('should calculate product of a vector', () => {
-    expect(runVec('prod([1, 2, 3])')).toEqual(6)
-    expect(runVec('prod([1, -2, 3])')).toEqual(-6)
-    expect(runVec('prod([-1, -2, -3])')).toEqual(-6)
-    expect(runVec('prod([0])')).toEqual(0)
-    expect(runVec('prod([])')).toEqual(1)
-  })
   it('should calculate the moving product of a vector', () => {
     expect(runVec('moving-prod([1, 2, 3, 4, 5, 6], 1)')).toEqual([1, 2, 3, 4, 5, 6])
     expect(runVec('moving-prod([1, 2, 3, 4, 5, 6], 3)')).toEqual([6, 24, 60, 120])

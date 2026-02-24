@@ -139,17 +139,17 @@ describe('matrix', () => {
       expect(runMat('mat:square?([[1], [2]])')).toEqual(false)
     })
   })
-  describe('mat:orthogonal?', () => {
+  describe('mat:orthogonal-matrix?', () => {
     it('should return true for orthogonal matrices', () => {
-      expect(runMat('mat:orthogonal?([[1, 0], [0, 1.00000000001]])')).toEqual(true)
-      expect(runMat('mat:orthogonal?([[0, 1], [-1, 0]])')).toEqual(true)
-      expect(runMat('mat:orthogonal?([[0, 0], [0, 0]])')).toEqual(false)
+      expect(runMat('mat:orthogonal-matrix?([[1, 0], [0, 1.00000000001]])')).toEqual(true)
+      expect(runMat('mat:orthogonal-matrix?([[0, 1], [-1, 0]])')).toEqual(true)
+      expect(runMat('mat:orthogonal-matrix?([[0, 0], [0, 0]])')).toEqual(false)
     })
     it('should return false for non-orthogonal matrices', () => {
-      expect(runMat('mat:orthogonal?([[1, 2], [3, 4]])')).toEqual(false)
+      expect(runMat('mat:orthogonal-matrix?([[1, 2], [3, 4]])')).toEqual(false)
     })
     it('should return false for non-square matrices', () => {
-      expect(runMat('mat:orthogonal?([[1], [2]])')).toEqual(false)
+      expect(runMat('mat:orthogonal-matrix?([[1], [2]])')).toEqual(false)
     })
   })
   describe('mat:identity?', () => {

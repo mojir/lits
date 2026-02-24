@@ -60,6 +60,13 @@ addReductionFunctions(medadReductionFunction)
 addReductionFunctions(giniCoefficientReductionFunction)
 addReductionFunctions(entropyReductionFunction)
 
+// Remove base variants that duplicate core built-ins (sum, prod, mean, median).
+// The moving/centered-moving/running variants are unique to the vector module.
+delete reductionFunctionNormalExpressions.sum
+delete reductionFunctionNormalExpressions.prod
+delete reductionFunctionNormalExpressions.mean
+delete reductionFunctionNormalExpressions.median
+
 function addReductionFunctions<T extends string>(fns: ReductionFunctionDefinition<T>) {
   for (const [key, value] of Object.entries(fns)) {
     /* v8 ignore next 3 */

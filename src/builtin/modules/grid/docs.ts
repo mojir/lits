@@ -1,7 +1,7 @@
 import type { FunctionDocs } from '../../interface'
 
 export const moduleDocs: Record<string, FunctionDocs> = {
-  'every?': {
+  'cell-every?': {
     category: 'grid',
     description: 'Checks if all elements in a grid satisfy a predicate. Returns true only if the predicate returns true for every element in the grid.',
     returns: {
@@ -24,9 +24,9 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      '// Using "as" alias because "every?" shadows a builtin function\nlet { every? as grid-every? } = import(grid);\ngrid-every?([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], string?)',
-      '// Using "as" alias because "every?" shadows a builtin function\nlet { every? as grid-every? } = import(grid);\ngrid-every?([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n], string?)',
-      '// Using "as" alias because "every?" shadows a builtin function\nlet { every? as grid-every? } = import(grid);\ngrid-every?([\n  [1, 2],\n  [3, 4],\n], string?)',
+      'let { cell-every? } = import(grid);\ncell-every?([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], string?)',
+      'let { cell-every? } = import(grid);\ncell-every?([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n], string?)',
+      'let { cell-every? } = import(grid);\ncell-every?([\n  [1, 2],\n  [3, 4],\n], string?)',
     ],
     seeAlso: ['collection.every?', 'grid.some?', 'grid.every-row?', 'grid.every-col?'],
   },
@@ -57,7 +57,7 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       'let { some? } = import(grid);\nsome?([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n], string?)',
       'let { some? } = import(grid);\nsome?([\n  [1, 2],\n  [3, 4],\n], string?)',
     ],
-    seeAlso: ['collection.any?', 'grid.every?', 'grid.some-row?', 'grid.some-col?'],
+    seeAlso: ['collection.any?', 'grid.cell-every?', 'grid.some-row?', 'grid.some-col?'],
   },
   'every-row?': {
     category: 'grid',
@@ -86,7 +86,7 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       'let { every-row? } = import(grid);\nevery-row?([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n], -> string?($[0]))',
       'let { every-row? } = import(grid);\nevery-row?([\n  [1, 2],\n  [3, 4],\n], -> string?($[0]))',
     ],
-    seeAlso: ['grid.some-row?', 'grid.every-col?', 'grid.every?'],
+    seeAlso: ['grid.some-row?', 'grid.every-col?', 'grid.cell-every?'],
   },
   'some-row?': {
     category: 'grid',
@@ -144,7 +144,7 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       'let { every-col? } = import(grid);\nevery-col?([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n], -> string?($[0]))',
       'let { every-col? } = import(grid);\nevery-col?([\n  [1, 2],\n  [3, 4],\n], -> string?($[0]))',
     ],
-    seeAlso: ['grid.some-col?', 'grid.every-row?', 'grid.every?'],
+    seeAlso: ['grid.some-col?', 'grid.every-row?', 'grid.cell-every?'],
   },
   'some-col?': {
     category: 'grid',
@@ -292,7 +292,7 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       'let { fill } = import(grid);\nfill(2, 3, 0)',
       'let { fill } = import(grid);\nfill(2, 3, "x")',
     ],
-    seeAlso: ['grid.generate', 'grid.from-array', 'vector.fill'],
+    seeAlso: ['grid.generate', 'grid.from-array'],
   },
   'generate': {
     category: 'grid',
@@ -326,7 +326,7 @@ export const moduleDocs: Record<string, FunctionDocs> = {
     examples: [
       'let { generate } = import(grid);\ngenerate(3, 3, (i, j) -> i + j)',
     ],
-    seeAlso: ['grid.fill', 'grid.from-array', 'vector.generate'],
+    seeAlso: ['grid.fill', 'grid.from-array'],
   },
   'reshape': {
     category: 'grid',
@@ -405,7 +405,7 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       'let { flip-h } = import(grid);\nflip-h([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n])',
       'let { flip-h } = import(grid);\nflip-h([\n  [1, 2],\n  [3, 4],\n])',
     ],
-    seeAlso: ['grid.flip-v', 'grid.transpose', 'grid.rotate', 'grid.reverse-cols'],
+    seeAlso: ['grid.flip-v', 'grid.transpose', 'grid.rotate'],
   },
   'flip-v': {
     category: 'grid',
@@ -431,7 +431,7 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       'let { flip-v } = import(grid);\nflip-v([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n])',
       'let { flip-v } = import(grid);\nflip-v([\n  [1, 2],\n  [3, 4],\n])',
     ],
-    seeAlso: ['grid.flip-h', 'grid.transpose', 'grid.rotate', 'grid.reverse-rows'],
+    seeAlso: ['grid.flip-h', 'grid.transpose', 'grid.rotate'],
   },
   'rotate': {
     category: 'grid',
@@ -466,61 +466,9 @@ export const moduleDocs: Record<string, FunctionDocs> = {
     ],
     seeAlso: ['grid.transpose', 'grid.flip-h', 'grid.flip-v'],
   },
-  'reverse-rows': {
+  'crop': {
     category: 'grid',
-    description: 'Reverses the order of rows in the grid `g`.',
-    returns: {
-      type: 'grid',
-    },
-    args: {
-      g: {
-        type: 'grid',
-        description: 'The grid to reverse rows.',
-      },
-    },
-    variants: [
-      {
-        argumentNames: [
-          'g',
-        ],
-      },
-    ],
-    examples: [
-      'let { reverse-rows } = import(grid);\nreverse-rows([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n])',
-      'let { reverse-rows } = import(grid);\nreverse-rows([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n])',
-      'let { reverse-rows } = import(grid);\nreverse-rows([\n  [1, 2],\n  [3, 4],\n])',
-    ],
-    seeAlso: ['grid.reverse-cols', 'grid.flip-v'],
-  },
-  'reverse-cols': {
-    category: 'grid',
-    description: 'Reverses the order of columns in the grid `g`.',
-    returns: {
-      type: 'grid',
-    },
-    args: {
-      g: {
-        type: 'grid',
-        description: 'The grid to reverse columns.',
-      },
-    },
-    variants: [
-      {
-        argumentNames: [
-          'g',
-        ],
-      },
-    ],
-    examples: [
-      'let { reverse-cols } = import(grid);\nreverse-cols([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n])',
-      'let { reverse-cols } = import(grid);\nreverse-cols([\n  ["Albert", "father"],\n  ["Nina", "mother"],\n  ["Kian", "son"],\n])',
-      'let { reverse-cols } = import(grid);\nreverse-cols([\n  [1, 2],\n  [3, 4],\n])',
-    ],
-    seeAlso: ['grid.reverse-rows', 'grid.flip-h'],
-  },
-  'slice': {
-    category: 'grid',
-    description: 'Slices the grid `g` from the starting index `begin` to the optional ending index `stop`. The slice is inclusive of the starting index and exclusive of the ending index.',
+    description: 'Crops the grid `g` from the starting index `begin` to the optional ending index `stop`. The crop is inclusive of the starting index and exclusive of the ending index.',
     returns: {
       type: 'grid',
     },
@@ -554,8 +502,8 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      '// Using "as" alias because "slice" shadows a builtin function\nlet { slice as grid-slice } = import(grid);\ngrid-slice([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], [1, 1], [2, 2])',
-      '// Using "as" alias because "slice" shadows a builtin function\nlet { slice as grid-slice } = import(grid);\ngrid-slice([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], [1, 1])',
+      'let { crop } = import(grid);\ncrop([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], [1, 1], [2, 2])',
+      'let { crop } = import(grid);\ncrop([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], [1, 1])',
     ],
     hideOperatorForm: true,
     seeAlso: ['grid.slice-rows', 'grid.slice-cols'],
@@ -600,7 +548,7 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       'let { slice-rows } = import(grid);\nslice-rows([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], 1)',
     ],
     hideOperatorForm: true,
-    seeAlso: ['grid.slice', 'grid.slice-cols', 'grid.splice-rows'],
+    seeAlso: ['grid.crop', 'grid.slice-cols', 'grid.splice-rows'],
   },
   'slice-cols': {
     category: 'grid',
@@ -642,7 +590,7 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       'let { slice-cols } = import(grid);\nslice-cols([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], 1)',
     ],
     hideOperatorForm: true,
-    seeAlso: ['grid.slice', 'grid.slice-rows', 'grid.splice-cols'],
+    seeAlso: ['grid.crop', 'grid.slice-rows', 'grid.splice-cols'],
   },
   'splice-rows': {
     category: 'grid',
@@ -796,7 +744,7 @@ export const moduleDocs: Record<string, FunctionDocs> = {
     ],
     seeAlso: ['grid.concat-rows', 'grid.push-cols'],
   },
-  'map': {
+  'cell-map': {
     category: 'grid',
     description: 'Maps a function `a` over each element of the grid `b`, returning a new grid with the results.',
     returns: {
@@ -819,11 +767,11 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      '// Using "as" alias because "map" shadows a builtin function\nlet { map as grid-map } = import(grid);\ngrid-map([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], str)',
+      'let { cell-map } = import(grid);\ncell-map([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], str)',
     ],
-    seeAlso: ['map', 'grid.mapi', 'grid.reduce'],
+    seeAlso: ['map', 'grid.cell-mapi', 'grid.cell-reduce'],
   },
-  'mapi': {
+  'cell-mapi': {
     category: 'grid',
     description: 'Maps a function `a` over each element of the grid `b`, passing the row and column index as additional arguments to the function.',
     returns: {
@@ -846,11 +794,11 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      '// Using "as" alias because "mapi" shadows a builtin function\nlet { mapi as grid-mapi } = import(grid);\ngrid-mapi([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], -> $1 ++ "(" ++ $2 ++ ", " ++ $3 ++ ")")',
+      'let { cell-mapi } = import(grid);\ncell-mapi([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], -> $1 ++ "(" ++ $2 ++ ", " ++ $3 ++ ")")',
     ],
-    seeAlso: ['grid.map', 'grid.reducei', 'map'],
+    seeAlso: ['grid.cell-map', 'grid.cell-reducei', 'map'],
   },
-  'reduce': {
+  'cell-reduce': {
     category: 'grid',
     description: 'Reduces the grid `a` using the function `b`, returning a single value.',
     returns: {
@@ -880,11 +828,11 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      '// Using "as" alias because "reduce" shadows a builtin function\nlet { reduce as grid-reduce } = import(grid);\ngrid-reduce([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], ++, "")',
+      '// Using "as" alias because "reduce" shadows a builtin function\nlet { cell-reduce } = import(grid);\ncell-reduce([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], ++, "")',
     ],
-    seeAlso: ['reduce', 'grid.reducei', 'grid.map'],
+    seeAlso: ['reduce', 'grid.cell-reducei', 'grid.cell-map'],
   },
-  'reducei': {
+  'cell-reducei': {
     category: 'grid',
     description: 'Reduces the grid `a` using the function `b`, passing the row and column indices as additional arguments to the function.',
     returns: {
@@ -914,9 +862,9 @@ export const moduleDocs: Record<string, FunctionDocs> = {
       },
     ],
     examples: [
-      '// Using "as" alias because "reducei" shadows a builtin function\nlet { reducei as grid-reducei } = import(grid);\ngrid-reducei([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], ++, "")',
+      '// Using "as" alias because "reducei" shadows a builtin function\nlet { cell-reducei } = import(grid);\ncell-reducei([\n  ["Albert", "father", 10],\n  ["Nina", "mother", 20],\n  ["Kian", "son", 30],\n], ++, "")',
     ],
-    seeAlso: ['grid.reduce', 'grid.mapi', 'reduce'],
+    seeAlso: ['grid.cell-reduce', 'grid.cell-mapi', 'reduce'],
   },
   'push-rows': {
     category: 'grid',

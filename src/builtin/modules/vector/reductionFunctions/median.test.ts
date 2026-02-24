@@ -13,14 +13,6 @@ function runVec(code: string): unknown {
 }
 
 describe('median', () => {
-  it('should calculate the median of a vector', () => {
-    expect(runVec('median([1, 2, 3])')).toEqual(2)
-    expect(runVec('median([1, 2, 3, 4, 5, 6])')).toEqual(3.5)
-    expect(runVec('median([1, -3, 2])')).toEqual(1)
-    expect(runVec('median([-1, -2, -3])')).toEqual(-2)
-    expect(runVec('median([0])')).toEqual(0)
-    expect(() => runVec('median([])')).toThrowError(LitsError)
-  })
   it('should calculate the moving median of a vector', () => {
     expect(runVec('moving-median([1, 2, 3, 4, 5, 6], 1)')).toEqual([1, 2, 3, 4, 5, 6])
     expect(runVec('moving-median([1, 2, 3, 4, 5, 6], 3)')).toEqual([2, 3, 4, 5])

@@ -20,7 +20,7 @@ describe('module registration', () => {
   describe('all built-in modules', () => {
     it('should include all modules when allBuiltinModules is passed', () => {
       const lits = new Lits({ modules: allBuiltinModules })
-      expect(lits.run('let v = import(vector); v.mean([1, 2, 3])')).toBe(2)
+      expect(lits.run('let v = import(vector); v.stdev([1, 2, 3])')).toBeCloseTo(0.8165, 3)
       expect(lits.run('let g = import(grid); g.row([[1, 2], [3, 4]], 0)')).toEqual([1, 2])
       expect(lits.run('let { assert } = import(assert); assert(true)')).toBe(true)
     })
@@ -29,7 +29,7 @@ describe('module registration', () => {
   describe('custom modules', () => {
     it('should only include specified modules', () => {
       const lits = new Lits({ modules: [vectorModule] })
-      expect(lits.run('let v = import(vector); v.mean([1, 2, 3])')).toBe(2)
+      expect(lits.run('let v = import(vector); v.stdev([1, 2, 3])')).toBeCloseTo(0.8165, 3)
       expect(() => lits.run('import(grid)')).toThrow('Unknown module')
       expect(() => lits.run('import(assert)')).toThrow('Unknown module')
     })
@@ -91,7 +91,7 @@ describe('module registration', () => {
     it('should work alongside built-in modules', () => {
       const lits = new Lits({ modules: [temperatureModule, vectorModule] })
       expect(lits.run('let t = import(temperature); t.c-to-f(0)')).toBe(32)
-      expect(lits.run('let v = import(vector); v.mean([1, 2, 3])')).toBe(2)
+      expect(lits.run('let v = import(vector); v.stdev([1, 2, 3])')).toBeCloseTo(0.8165, 3)
     })
 
     it('should not be available when not registered', () => {

@@ -1,10 +1,7 @@
 import { LitsError } from '../../../errors'
 import { assertNonEmptyVector, assertVector } from '../../../typeGuards/annotatedArrays'
-import { assertFunctionLike } from '../../../typeGuards/lits'
 import { assertNumber } from '../../../typeGuards/number'
 import { toFixedArity } from '../../../utils/arity'
-import type { MaybePromise } from '../../../utils/maybePromise'
-import { chain, mapSequential } from '../../../utils/maybePromise'
 import type { BuiltinNormalExpressions } from '../../../builtin/interface'
 import type { LitsModule } from '../interface'
 import { moduleDocs } from './docs'
@@ -127,44 +124,6 @@ const vectorFunctions: BuiltinNormalExpressions = {
       return Array.from({ length: numPoints }, (_, i) => start + i * step)
     },
     arity: toFixedArity(3),
-  },
-  'ones': {
-    evaluate: ([length], sourceCodeInfo): number[] => {
-      assertNumber(length, sourceCodeInfo, { integer: true, nonNegative: true })
-      return Array.from({ length }, () => 1)
-    },
-    arity: toFixedArity(1),
-  },
-  'zeros': {
-    evaluate: ([length], sourceCodeInfo): number[] => {
-      assertNumber(length, sourceCodeInfo, { integer: true, nonNegative: true })
-      return Array.from({ length }, () => 0)
-    },
-    arity: toFixedArity(1),
-  },
-  'fill': {
-    evaluate: ([length, value], sourceCodeInfo): number[] => {
-      assertNumber(length, sourceCodeInfo, { integer: true, nonNegative: true })
-      return Array.from({ length }, () => value) as number[]
-    },
-    arity: toFixedArity(2),
-  },
-  'generate': {
-    evaluate: ([length, generator], sourceCodeInfo, contextStack, { executeFunction }): MaybePromise<number[]> => {
-      assertNumber(length, sourceCodeInfo, { integer: true, nonNegative: true })
-      assertFunctionLike(generator, sourceCodeInfo)
-
-      return mapSequential(Array.from({ length }), (_, i) => {
-        return chain(
-          executeFunction(generator, [i], contextStack, sourceCodeInfo),
-          (value) => {
-            assertNumber(value, sourceCodeInfo, { finite: true })
-            return value
-          },
-        )
-      })
-    },
-    arity: toFixedArity(2),
   },
   'cumsum': {
     evaluate: ([vector], sourceCodeInfo): number[] => {

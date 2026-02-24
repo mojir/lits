@@ -12,7 +12,13 @@ export interface SearchResultEntry {
 
 const searchables: Reference[] = Object
   .values(allReference)
-  .sort((a, b) => a.title.localeCompare(b.title))
+  .sort((a, b) => {
+    const aIsModule = a.title.includes('.')
+    const bIsModule = b.title.includes('.')
+    if (aIsModule !== bIsModule)
+      return aIsModule ? 1 : -1
+    return a.title.localeCompare(b.title)
+  })
 
 export const allSearchResultEntries: SearchResultEntry[] = searchables.map((reference) => {
   const match = shortDescriptionRegExp.exec(reference.description)

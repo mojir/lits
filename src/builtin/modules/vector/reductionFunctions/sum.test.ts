@@ -12,13 +12,6 @@ function runVec(code: string): unknown {
 }
 
 describe('sum', () => {
-  it('should calculate sum of a vector', () => {
-    expect(runVec('sum([1, 2, 3])')).toEqual(6)
-    expect(runVec('sum([1, -2, 3])')).toEqual(2)
-    expect(runVec('sum([-1, -2, -3])')).toEqual(-6)
-    expect(runVec('sum([0])')).toEqual(0)
-    expect(runVec('sum([])')).toEqual(0)
-  })
   it('should calculate the moving sum of a vector', () => {
     expect(runVec('moving-sum([1, 2, 3, 4, 5, 6], 1)')).toEqual([1, 2, 3, 4, 5, 6])
     expect(runVec('moving-sum([1, 2, 3, 4, 5, 6], 3)')).toEqual([6, 9, 12, 15])

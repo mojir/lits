@@ -375,8 +375,8 @@ describe('lits Destructuring', () => {
 
     test('builtin symbol from import with alias works', () => {
       expect(lits.run(`
-        let { every? as grid-every? } = import(grid);
-        grid-every?([[1, 2], [3, 4]], number?)
+        let { cell-every? as my-every? } = import(grid);
+        my-every?([[1, 2], [3, 4]], number?)
       `)).toBe(true)
     })
 

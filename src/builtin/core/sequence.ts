@@ -130,7 +130,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       args: { seq: { type: 'sequence' } },
       variants: [{ argumentNames: ['seq'] }],
       description: 'Returns a copy of $seq with last element removed. If $seq is empty `null` is returned.',
-      seeAlso: ['push', 'sequence.shift', 'last'],
+      seeAlso: ['push', 'last'],
       examples: [
         'pop([1, 2, 3])',
         'pop([])',
@@ -232,7 +232,7 @@ l`,
       description: `If $seq is an array, returns a new array with all but the first element from $seq.
 If $seq has less than two elements, an empty array is returned.
 For string $seq returns all but the first characters in $seq.`,
-      seeAlso: ['next', 'first', 'sequence.shift'],
+      seeAlso: ['next', 'first'],
       examples: [
         'rest(["Albert", "Mojir", 160, [1, 2]])',
         'rest(["Albert"])',

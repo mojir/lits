@@ -842,7 +842,7 @@ cu.reductions(
       },
       variants: [{ argumentNames: ['a', 'b'] }],
       description: 'Returns `true` if all entries in $a pass the test implemented by $b, otherwise returns `false`.',
-      seeAlso: ['collection.any?', 'collection.not-every?', 'collection.not-any?', 'functional.every-pred', 'grid.every?'],
+      seeAlso: ['collection.any?', 'collection.not-every?', 'collection.not-any?', 'functional.every-pred', 'grid.cell-every?'],
       examples: [
         'let cu = import(collection); cu.every?([1, 2, 3], number?)',
         'let cu = import(collection); cu.every?([1, 2, 3], even?)',

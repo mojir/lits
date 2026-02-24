@@ -14,13 +14,6 @@ function runVec(code: string): unknown {
 
 describe('mean functions', () => {
   describe('mean', () => {
-    it('should calculate the mean of a vector', () => {
-      expect(runVec('mean([1, 2, 3])')).toEqual(2)
-      expect(runVec('mean([1, -3, 2])')).toEqual(0)
-      expect(runVec('mean([-1, -2, -3])')).toEqual(-2)
-      expect(runVec('mean([0])')).toEqual(0)
-      expect(() => runVec('mean([])')).toThrowError(LitsError)
-    })
     it('should calculate the moving mean of a vector', () => {
       expect(runVec('moving-mean([1, 2, 3, 4, 5, 6], 1)')).toEqual([1, 2, 3, 4, 5, 6])
       expect(runVec('moving-mean([1, 2, 3, 4, 5, 6], 3)')).toEqual([2, 3, 4, 5])

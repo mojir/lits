@@ -180,21 +180,19 @@ const angleUnits: UnitCategory = {
 
 // --- Temperature conversion functions ---
 
-function celsiusTo(unit: string, value: number): number {
+function celsiusTo(unit: 'c' | 'f' | 'k', value: number): number {
   switch (unit) {
     case 'c': return value
     case 'f': return value * 9 / 5 + 32
     case 'k': return value + 273.15
-    default: return value
   }
 }
 
-function toCelsius(unit: string, value: number): number {
+function toCelsius(unit: 'c' | 'f' | 'k', value: number): number {
   switch (unit) {
     case 'c': return value
     case 'f': return (value - 32) * 5 / 9
     case 'k': return value - 273.15
-    default: return value
   }
 }
 
@@ -314,8 +312,8 @@ function generateLinearConversions(category: UnitCategory): BuiltinNormalExpress
       const toFactor = category.units[to]!
       const conversionFactor = fromFactor / toFactor
       const fnName = `${from}->${to}`
-      const fromDesc = unitDescriptions[from] ?? from
-      const toDesc = unitDescriptions[to] ?? to
+      const fromDesc = unitDescriptions[from]!
+      const toDesc = unitDescriptions[to]!
 
       const seeAlso = [
         `convert.${to}->${from}`,
@@ -361,8 +359,8 @@ function generateTemperatureConversions(): BuiltinNormalExpressions {
         continue
 
       const fnName = `${from}->${to}`
-      const fromDesc = unitDescriptions[from] ?? from
-      const toDesc = unitDescriptions[to] ?? to
+      const fromDesc = unitDescriptions[from]!
+      const toDesc = unitDescriptions[to]!
 
       const seeAlso = [
         `convert.${to}->${from}`,

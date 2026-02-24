@@ -216,7 +216,7 @@ filter(
       },
       variants: [{ argumentNames: ['colls', 'fun'] }],
       description: 'Creates a new collection populated with the results of calling $fun on every element in $colls.',
-      seeAlso: ['collection.mapi', 'filter', 'reduce', 'mapcat', 'grid.map', 'grid.mapi'],
+      seeAlso: ['collection.mapi', 'filter', 'reduce', 'mapcat', 'grid.cell-map', 'grid.cell-mapi'],
       examples: [
         '[1, 2, 3] map -',
         '[1, 2, 3] map -> -($)',
@@ -271,7 +271,7 @@ filter(
       },
       variants: [{ argumentNames: ['coll', 'fun', 'initial'] }],
       description: 'Runs $fun function on each element of the $coll, passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $coll is a single value.',
-      seeAlso: ['collection.reduce-right', 'collection.reducei', 'collection.reductions', 'map', 'grid.reduce', 'grid.reducei'],
+      seeAlso: ['collection.reduce-right', 'collection.reducei', 'collection.reductions', 'map', 'grid.cell-reduce', 'grid.cell-reducei'],
       examples: [
         'reduce([1, 2, 3], +, 0)',
         'reduce([], +, 0)',
