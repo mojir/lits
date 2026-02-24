@@ -48,10 +48,10 @@ $ lits eval "[1, 2, 3, 4] filter odd? map inc"
 $ lits run script.lits
 
 # Bundle a multi-file project into a single .json file
-$ lits bundle main.lits -o bundle.json
+$ lits bundle main.lits -o bundle.lits.json
 
 # Run a bundle
-$ lits run-bundle bundle.json
+$ lits run-bundle bundle.lits.json
 
 # Run tests
 $ lits test tests.test.lits
