@@ -1529,10 +1529,8 @@ const result3 = lits.run('myAlert("Hello from Lits!")', {
   }
 });
 
-// Parse and evaluate separately for better performance
-const tokens = lits.tokenize('+(5, 3)');
-const ast = lits.parse(tokens);
-const result4 = lits.evaluate(ast, {});
+// Execute Lits code
+const result4 = lits.run('+(5, 3)');
 ```
 
 ### Lits Class Methods
@@ -1540,7 +1538,7 @@ const result4 = lits.evaluate(ast, {});
 ```typescript
 interface Lits {
   // Execute Lits code directly
-  run(program: string, params?: ContextParams & FilePathParams): unknown
+  run(programOrBundle: string | LitsBundle, params?: ContextParams & FilePathParams): unknown
   
   // Find undefined symbols in code
   getUndefinedSymbols(programOrAst: string | Ast, params?: ContextParams): Set<string>
@@ -1548,7 +1546,6 @@ interface Lits {
   // Parse pipeline
   tokenize(program: string, params?: FilePathParams & MinifyParams): TokenStream
   parse(tokenStream: TokenStream): Ast
-  evaluate(ast: Ast, params: ContextParams): unknown
   
   // Apply Lits function with JavaScript arguments
   apply(fn: LitsFunction, fnParams: unknown[], params?: ContextParams): unknown

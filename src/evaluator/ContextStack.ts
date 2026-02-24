@@ -23,26 +23,41 @@ export class ContextStackImpl {
   private values?: Record<string, unknown>
   private nativeJsFunctions?: Record<string, NativeJsFunction>
   private modules: Map<string, LitsModule>
+  private valueModules: Map<string, unknown>
   constructor({
     contexts,
     values: hostValues,
     nativeJsFunctions,
     modules,
+    valueModules,
   }: {
     contexts: Context[]
     values?: Record<string, unknown>
     nativeJsFunctions?: Record<string, NativeJsFunction>
     modules?: Map<string, LitsModule>
+    valueModules?: Map<string, unknown>
   }) {
     this.globalContext = asNonUndefined(contexts[0])
     this.contexts = contexts
     this.values = hostValues
     this.nativeJsFunctions = nativeJsFunctions
     this.modules = modules ?? new Map<string, LitsModule>()
+    this.valueModules = valueModules ?? new Map<string, unknown>()
   }
 
   public getModule(name: string): LitsModule | undefined {
     return this.modules.get(name)
+  }
+
+  public getValueModule(name: string): { value: unknown, found: boolean } {
+    if (this.valueModules.has(name)) {
+      return { value: this.valueModules.get(name), found: true }
+    }
+    return { value: undefined, found: false }
+  }
+
+  public registerValueModule(name: string, value: unknown): void {
+    this.valueModules.set(name, value)
   }
 
   public create(context: Context): ContextStack {
@@ -52,6 +67,7 @@ export class ContextStackImpl {
       values: this.values,
       nativeJsFunctions: this.nativeJsFunctions,
       modules: this.modules,
+      valueModules: this.valueModules,
     })
     contextStack.globalContext = globalContext
     return contextStack
@@ -60,7 +76,7 @@ export class ContextStackImpl {
   public new(context: Context): ContextStack {
     const contexts = [{}, context]
 
-    return new ContextStackImpl({ contexts, modules: this.modules })
+    return new ContextStackImpl({ contexts, modules: this.modules, valueModules: this.valueModules })
   }
 
   public addValues(values: Record<string, Any>, sourceCodeInfo: SourceCodeInfo | undefined) {

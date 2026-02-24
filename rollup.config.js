@@ -173,4 +173,22 @@ module.exports = [
     ],
     plugins,
   },
+  // Bundler (file module bundler, requires Node.js fs)
+  {
+    input: 'src/bundler.ts',
+    external: ['node:fs', 'node:path'],
+    output: [
+      {
+        file: 'dist/bundler.esm.js',
+        format: 'esm',
+        sourcemap: true,
+      },
+      {
+        file: 'dist/bundler.js',
+        format: 'cjs',
+        sourcemap: true,
+      },
+    ],
+    plugins,
+  },
 ]

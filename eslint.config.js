@@ -35,6 +35,7 @@ const config = antfu({
     'coverage/**/*',
     'README.md',
     'CLAUDE.md',
+    'file-modules.md',
     'docs',
     'scripts/**/*',
   ],

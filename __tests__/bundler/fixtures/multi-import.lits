@@ -1,0 +1,8 @@
+let { add } = import("./lib/math-helpers.lits");
+let names = import("./lib/names.lits");
+let answer = import("./lib/constants.lits");
+{
+  "sum": add(answer, 8),
+  "firstName": names[0],
+  "count": count(names)
+}

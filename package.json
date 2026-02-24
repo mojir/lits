@@ -30,6 +30,11 @@
       "import": "./dist/full.esm.js",
       "require": "./dist/full.js"
     },
+    "./bundler": {
+      "types": "./dist/src/bundler.d.ts",
+      "import": "./dist/bundler.esm.js",
+      "require": "./dist/bundler.js"
+    },
     "./modules/assert": {
       "types": "./dist/src/modules/assert.d.ts",
       "import": "./dist/modules/assert.esm.js",

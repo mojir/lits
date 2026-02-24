@@ -1,6 +1,8 @@
 /* eslint-disable no-console */
 import { describe, it } from 'vitest'
 import { Lits } from '../Lits/Lits'
+import { evaluate } from '../evaluator'
+import { createContextStack } from '../evaluator/ContextStack'
 
 const lits = new Lits({ debug: false, astCacheSize: 0 })
 
@@ -82,7 +84,7 @@ describe.skip('performance comparison', () => {
       let startTime = performance.now()
       for (let i = 0; i < iterations; i++) {
         const ast = lits.parse(expression.tokenStream)
-        void lits.evaluate(ast, {})
+        void evaluate(ast, createContextStack())
       }
       report.lits = (performance.now() - startTime) * 1000 / iterations
 
@@ -124,7 +126,7 @@ describe.skip('performance comparison', () => {
 
       let startTime = performance.now()
       for (let i = 0; i < iterations; i++) {
-        void lits.evaluate(expression.ast, {})
+        void evaluate(expression.ast, createContextStack())
       }
       report.lits = (performance.now() - startTime) * 1000 / iterations
 

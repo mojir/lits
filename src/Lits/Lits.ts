@@ -13,6 +13,8 @@ import { builtin } from '../builtin'
 import { AutoCompleter } from '../AutoCompleter/AutoCompleter'
 import type { Arity } from '../builtin/interface'
 import type { LitsModule } from '../builtin/modules/interface'
+import { isLitsBundle } from '../bundler/interface'
+import type { LitsBundle } from '../bundler/interface'
 import type { MaybePromise } from '../utils/maybePromise'
 
 import { parse } from '../parser'
@@ -83,8 +85,11 @@ export class Lits {
   }
 
   public readonly async = {
-    run: async (program: string, params: ContextParams & FilePathParams = {}): Promise<unknown> => {
-      const ast = this.generateAst(program, params)
+    run: async (programOrBundle: string | LitsBundle, params: ContextParams & FilePathParams = {}): Promise<unknown> => {
+      if (isLitsBundle(programOrBundle)) {
+        return this.runBundle(programOrBundle, params)
+      }
+      const ast = this.generateAst(programOrBundle, params)
       return this.evaluate(ast, params)
     },
     apply: async (fn: LitsFunction, fnParams: unknown[], params: ContextParams = {}): Promise<unknown> => {
@@ -92,11 +97,38 @@ export class Lits {
     },
   }
 
-  public run(program: string, params: ContextParams & FilePathParams = {}): unknown {
-    const ast = this.generateAst(program, params)
+  public run(programOrBundle: string | LitsBundle, params: ContextParams & FilePathParams = {}): unknown {
+    if (isLitsBundle(programOrBundle)) {
+      return this.runBundle(programOrBundle, params)
+    }
+    const ast = this.generateAst(programOrBundle, params)
     const result = this.evaluate(ast, params)
     if (result instanceof Promise) {
       throw new TypeError('Unexpected async result in synchronous run(). Use lits.async.run() for async operations.')
+    }
+    return result
+  }
+
+  private runBundle(bundle: LitsBundle, params: ContextParams & FilePathParams = {}): unknown {
+    const contextStack = createContextStack(params, this.modules)
+
+    // Evaluate file modules in dependency order and register as value modules.
+    // Each file module is evaluated in its own scope so local bindings don't leak.
+    for (const [name, source] of bundle.fileModules) {
+      const ast = this.generateAst(source, params)
+      const moduleContextStack = contextStack.create({})
+      const result = evaluate(ast, moduleContextStack)
+      if (result instanceof Promise) {
+        throw new TypeError('Unexpected async result in synchronous runBundle(). Use lits.async.run() for async operations.')
+      }
+      contextStack.registerValueModule(name, result)
+    }
+
+    // Parse and evaluate the main program
+    const ast = this.generateAst(bundle.program, params)
+    const result = evaluate(ast, contextStack)
+    if (result instanceof Promise) {
+      throw new TypeError('Unexpected async result in synchronous runBundle(). Use lits.async.run() for async operations.')
     }
     return result
   }
@@ -124,7 +156,7 @@ export class Lits {
     return ast
   }
 
-  public evaluate(ast: Ast, params: ContextParams): MaybePromise<Any> {
+  private evaluate(ast: Ast, params: ContextParams): MaybePromise<Any> {
     const contextStack = createContextStack(params, this.modules)
     return evaluate(ast, contextStack)
   }

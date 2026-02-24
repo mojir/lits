@@ -1,4 +1,5 @@
 import { LitsError } from '../../errors'
+import type { Any } from '../../interface'
 import type { ModuleFunction, SpecialExpressionNode } from '../../parser/types'
 import { toFixedArity } from '../../utils/arity'
 import { FUNCTION_SYMBOL } from '../../utils/symbols'
@@ -21,13 +22,20 @@ const docs: CustomDocs = {
   ],
 }
 
-export const importSpecialExpression: BuiltinSpecialExpression<Record<string, ModuleFunction>, ImportNode> = {
+export const importSpecialExpression: BuiltinSpecialExpression<Any, ImportNode> = {
   arity: toFixedArity(1),
   docs,
   evaluate: (node, contextStack) => {
     const moduleName = node[1][1]
     const sourceCodeInfo = node[2]
 
+    // Check for value modules first (file modules from bundles)
+    const valueModule = contextStack.getValueModule(moduleName)
+    if (valueModule.found) {
+      return valueModule.value as Any
+    }
+
+    // Fall back to builtin modules
     const module = contextStack.getModule(moduleName)
     if (!module) {
       throw new LitsError(`Unknown module: '${moduleName}'`, sourceCodeInfo)

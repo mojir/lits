@@ -1,0 +1,3 @@
+let a = import("./lib/dep-a.lits");
+let b = import("./lib/dep-b.lits");
+a + b

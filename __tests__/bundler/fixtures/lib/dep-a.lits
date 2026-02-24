@@ -1,0 +1,2 @@
+let s = import("./shared.lits");
+s + 1
