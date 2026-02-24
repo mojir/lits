@@ -128,6 +128,7 @@ type NormalExpressionEvaluator<T> = (
 
 export interface BuiltinNormalExpression<T> {
   evaluate: NormalExpressionEvaluator<T>
+  pure?: boolean
   name?: string
   arity: Arity
   docs?: FunctionDocs

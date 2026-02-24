@@ -40,7 +40,10 @@ type FunctionExecutors = Record<LitsFunctionType, (
 ) => MaybePromise<Any>>
 
 export const functionExecutors: FunctionExecutors = {
-  NativeJsFunction: (fn: NativeJsFunction, params, sourceCodeInfo) => {
+  NativeJsFunction: (fn: NativeJsFunction, params, sourceCodeInfo, contextStack) => {
+    if (contextStack.pure && !fn.nativeFn.pure) {
+      throw new LitsError(`Cannot call impure native function '${fn.name}' in pure mode`, sourceCodeInfo)
+    }
     try {
       const result = fn.nativeFn.fn(...params)
       // If the native function returns a Promise, await it transparently
@@ -258,6 +261,9 @@ export const functionExecutors: FunctionExecutors = {
   },
   Builtin: (fn: NormalBuiltinFunction, params, sourceCodeInfo, contextStack, { executeFunction }) => {
     const normalExpression = asNonUndefined(allNormalExpressions[fn.normalBuiltinSymbolType], sourceCodeInfo)
+    if (contextStack.pure && normalExpression.pure === false) {
+      throw new LitsError(`Cannot call impure function '${fn.name}' in pure mode`, sourceCodeInfo)
+    }
     return normalExpression.evaluate(params, sourceCodeInfo, contextStack, { executeFunction })
   },
   SpecialBuiltin: (fn: SpecialBuiltinFunction, params, sourceCodeInfo, contextStack, { executeFunction }) => {
@@ -277,6 +283,9 @@ export const functionExecutors: FunctionExecutors = {
     const expression = module.functions[fn.functionName]
     if (!expression) {
       throw new LitsError(`Function '${fn.functionName}' not found in module '${fn.moduleName}'.`, sourceCodeInfo)
+    }
+    if (contextStack.pure && expression.pure === false) {
+      throw new LitsError(`Cannot call impure function '${fn.functionName}' in pure mode`, sourceCodeInfo)
     }
     assertNumberOfParams(expression.arity, params.length, sourceCodeInfo)
     return expression.evaluate(params, sourceCodeInfo, contextStack, { executeFunction })

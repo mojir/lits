@@ -58,6 +58,7 @@ interface RunConfig {
   filename: string
   context: Context
   printResult: boolean
+  pure: boolean
 }
 
 interface RunBundleConfig {
@@ -65,6 +66,7 @@ interface RunBundleConfig {
   filename: string
   context: Context
   printResult: boolean
+  pure: boolean
 }
 
 interface EvalConfig {
@@ -72,6 +74,7 @@ interface EvalConfig {
   expression: string
   context: Context
   printResult: boolean
+  pure: boolean
 }
 
 interface TestConfig {
@@ -109,20 +112,21 @@ const config = processArguments(process.argv.slice(2))
 
 const cliModules = getCliModules()
 
-function createLits(context: Context) {
+function createLits(context: Context, pure: boolean) {
   const _lits = new Lits({ debug: true, modules: [...allBuiltinModules, ...cliModules] })
   return {
     run: (program: string | LitsBundle) =>
       _lits.run(program, {
         globalContext: context,
         globalModuleScope: true,
+        pure,
       }),
   }
 }
 
 switch (config.subcommand) {
   case 'run': {
-    const lits = createLits(config.context)
+    const lits = createLits(config.context, config.pure)
     try {
       const content = fs.readFileSync(config.filename, { encoding: 'utf-8' })
       const result = lits.run(content)
@@ -138,7 +142,7 @@ switch (config.subcommand) {
     break
   }
   case 'run-bundle': {
-    const lits = createLits(config.context)
+    const lits = createLits(config.context, config.pure)
     try {
       const content = fs.readFileSync(config.filename, { encoding: 'utf-8' })
       let parsed: unknown
@@ -166,7 +170,7 @@ switch (config.subcommand) {
     break
   }
   case 'eval': {
-    const lits = createLits(config.context)
+    const lits = createLits(config.context, config.pure)
     try {
       const result = lits.run(config.expression)
       if (config.printResult) {
@@ -206,7 +210,7 @@ switch (config.subcommand) {
   }
   case 'repl': {
     if (config.loadFilename) {
-      const lits = createLits(config.context)
+      const lits = createLits(config.context, false)
       const content = fs.readFileSync(config.loadFilename, { encoding: 'utf-8' })
       const result = lits.run(content)
       if (result !== null && typeof result === 'object' && !Array.isArray(result)) {
@@ -247,7 +251,7 @@ function runLitsTest(testPath: string, testNamePattern: Maybe<string>) {
 }
 
 function execute(expression: string, context: Context): boolean {
-  const lits = createLits(context)
+  const lits = createLits(context, false)
   try {
     const result = lits.run(expression)
     historyResults.unshift(result)
@@ -376,9 +380,10 @@ function parsePrintOptions(args: string[], startIndex: number): { options: Print
   return { options, nextIndex: i }
 }
 
-function parseRunEvalOptions(args: string[], startIndex: number): { context: Context, printResult: boolean, nextIndex: number } {
+function parseRunEvalOptions(args: string[], startIndex: number): { context: Context, printResult: boolean, pure: boolean, nextIndex: number } {
   let context: Context = {}
   let printResult = true
+  let pure = false
   let i = startIndex
   while (i < args.length) {
     const parsed = parseOption(args, i)
@@ -402,6 +407,10 @@ function parseRunEvalOptions(args: string[], startIndex: number): { context: Con
         i = result.nextIndex
         break
       }
+      case '--pure':
+        pure = true
+        i += parsed.count
+        break
       default:
         printErrorMessage(`Unknown option "${parsed.option}"`)
         process.exit(1)
@@ -411,7 +420,7 @@ function parseRunEvalOptions(args: string[], startIndex: number): { context: Con
     printErrorMessage(`Unknown argument "${args[i]}"`)
     process.exit(1)
   }
-  return { context, printResult, nextIndex: i }
+  return { context, printResult, pure, nextIndex: i }
 }
 
 function processArguments(args: string[]): Config {
@@ -436,8 +445,8 @@ function processArguments(args: string[]): Config {
         printErrorMessage('Missing filename after "run"')
         process.exit(1)
       }
-      const { context, printResult } = parseRunEvalOptions(args, 2)
-      return { subcommand: 'run', filename, context, printResult }
+      const { context, printResult, pure } = parseRunEvalOptions(args, 2)
+      return { subcommand: 'run', filename, context, printResult, pure }
     }
     case 'run-bundle': {
       const filename = args[1]
@@ -445,8 +454,8 @@ function processArguments(args: string[]): Config {
         printErrorMessage('Missing filename after "run-bundle"')
         process.exit(1)
       }
-      const { context, printResult } = parseRunEvalOptions(args, 2)
-      return { subcommand: 'run-bundle', filename, context, printResult }
+      const { context, printResult, pure } = parseRunEvalOptions(args, 2)
+      return { subcommand: 'run-bundle', filename, context, printResult, pure }
     }
     case 'eval': {
       const expression = args[1]
@@ -454,8 +463,8 @@ function processArguments(args: string[]): Config {
         printErrorMessage('Missing expression after "eval"')
         process.exit(1)
       }
-      const { context, printResult } = parseRunEvalOptions(args, 2)
-      return { subcommand: 'eval', expression, context, printResult }
+      const { context, printResult, pure } = parseRunEvalOptions(args, 2)
+      return { subcommand: 'eval', expression, context, printResult, pure }
     }
     case 'bundle': {
       const filename = args[1]
@@ -656,6 +665,7 @@ Run/Run-bundle/Eval options:
   -c, --context=<json>            Context as a JSON string
   -C, --context-file=<file>       Context from a .json file
   -s, --silent                    Suppress printing the result
+  --pure                          Enforce pure mode (no side effects or non-determinism)
 
 Bundle options:
   -o, --output=<file>             Write bundle to file (default: stdout)

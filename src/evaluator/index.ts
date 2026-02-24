@@ -147,6 +147,9 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
       if (isNormalBuiltinSymbolNode(nameSymbol)) {
         const type = nameSymbol[1]
         const normalExpression = builtin.allNormalExpressions[type]!
+        if (contextStack.pure && normalExpression.pure === false) {
+          throw new LitsError(`Cannot call impure function '${normalExpression.name}' in pure mode`, node[2])
+        }
         return normalExpression.evaluate(params, node[2], contextStack, { executeFunction })
       }
       else {

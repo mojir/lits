@@ -215,7 +215,7 @@ describe('lits.run with LitsBundle', () => {
     expect(() => lits.run({
       program: 'import(my-module)',
       fileModules: [['my-module', 'asyncFn()']],
-    }, { bindings: { asyncFn } })).toThrow(TypeError)
+    }, { bindings: { asyncFn: { fn: asyncFn, pure: true } } })).toThrow(TypeError)
   })
 
   it('throws TypeError when the main program evaluation returns a Promise', () => {

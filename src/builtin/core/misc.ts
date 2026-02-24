@@ -337,6 +337,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
 
       return null
     },
+    pure: false,
     arity: {},
     docs: {
       category: 'misc',

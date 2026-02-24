@@ -14,6 +14,7 @@ const randomFunctions: BuiltinNormalExpressions = {
     evaluate: (): number => {
       return Math.random()
     },
+    pure: false,
     arity: toFixedArity(0),
   },
   'random-int!': {
@@ -22,6 +23,7 @@ const randomFunctions: BuiltinNormalExpressions = {
       assertNumber(max, sourceCodeInfo, { integer: true, gt: min })
       return Math.floor(Math.random() * (max - min)) + min
     },
+    pure: false,
     arity: toFixedArity(2),
   },
   'random-int-inclusive!': {
@@ -30,6 +32,7 @@ const randomFunctions: BuiltinNormalExpressions = {
       assertNumber(max, sourceCodeInfo, { integer: true, gte: min })
       return Math.floor(Math.random() * (max - min + 1)) + min
     },
+    pure: false,
     arity: toFixedArity(2),
   },
   'random-float!': {
@@ -38,6 +41,7 @@ const randomFunctions: BuiltinNormalExpressions = {
       assertNumber(max, sourceCodeInfo, { gt: min })
       return Math.random() * (max - min) + min
     },
+    pure: false,
     arity: toFixedArity(2),
   },
   'random-boolean!': {
@@ -46,6 +50,7 @@ const randomFunctions: BuiltinNormalExpressions = {
       assertNumber(probability, sourceCodeInfo, { gte: 0, lte: 1 })
       return Math.random() < probability
     },
+    pure: false,
     arity: { min: 0, max: 1 },
   },
   'random-item!': {
@@ -54,6 +59,7 @@ const randomFunctions: BuiltinNormalExpressions = {
       const index = Math.floor(Math.random() * array.length)
       return asAny(array[index])
     },
+    pure: false,
     arity: toFixedArity(1),
   },
   'random-sample!': {
@@ -75,6 +81,7 @@ const randomFunctions: BuiltinNormalExpressions = {
 
       return result
     },
+    pure: false,
     arity: toFixedArity(2),
   },
   'random-sample-unique!': {
@@ -98,6 +105,7 @@ const randomFunctions: BuiltinNormalExpressions = {
 
       return result
     },
+    pure: false,
     arity: toFixedArity(2),
   },
   'shuffle!': {
@@ -110,6 +118,7 @@ const randomFunctions: BuiltinNormalExpressions = {
       }
       return shuffledArray
     },
+    pure: false,
     arity: toFixedArity(1),
   },
   'random-normal!': {
@@ -121,6 +130,7 @@ const randomFunctions: BuiltinNormalExpressions = {
       const z0 = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2)
       return z0 * stdDev + mean
     },
+    pure: false,
     arity: toFixedArity(2),
   },
   'random-exponential!': {
@@ -129,6 +139,7 @@ const randomFunctions: BuiltinNormalExpressions = {
       const u = Math.random()
       return -Math.log(u) / lambda
     },
+    pure: false,
     arity: toFixedArity(1),
   },
   'random-binomial!': {
@@ -143,6 +154,7 @@ const randomFunctions: BuiltinNormalExpressions = {
       }
       return k
     },
+    pure: false,
     arity: toFixedArity(2),
   },
   'random-poisson!': {
@@ -160,6 +172,7 @@ const randomFunctions: BuiltinNormalExpressions = {
 
       return k - 1
     },
+    pure: false,
     arity: toFixedArity(1),
   },
   'random-gamma!': {
@@ -168,6 +181,7 @@ const randomFunctions: BuiltinNormalExpressions = {
       assertNumber(scale, sourceCodeInfo, { gt: 0 })
       return randomGamma(shape, scale)
     },
+    pure: false,
     arity: toFixedArity(2),
   },
   'random-pareto!': {
@@ -176,6 +190,7 @@ const randomFunctions: BuiltinNormalExpressions = {
       const u = Math.random()
       return (1 / u) ** (1 / alpha)
     },
+    pure: false,
     arity: toFixedArity(1),
   },
   'uuid!': {
@@ -186,6 +201,7 @@ const randomFunctions: BuiltinNormalExpressions = {
         return value.toString(16)
       })
     },
+    pure: false,
     arity: toFixedArity(0),
   },
   'random-char!': {
@@ -197,6 +213,7 @@ const randomFunctions: BuiltinNormalExpressions = {
       const randomIndex = Math.floor(Math.random() * charSet.length)
       return charSet[randomIndex]!
     },
+    pure: false,
     arity: toFixedArity(1),
   },
   'random-string!': {
@@ -213,6 +230,7 @@ const randomFunctions: BuiltinNormalExpressions = {
       }
       return result
     },
+    pure: false,
     arity: toFixedArity(2),
   },
   'random-id!': {
@@ -226,6 +244,7 @@ const randomFunctions: BuiltinNormalExpressions = {
       }
       return result
     },
+    pure: false,
     arity: toFixedArity(1),
   },
   'random-color!': {
@@ -233,6 +252,7 @@ const randomFunctions: BuiltinNormalExpressions = {
       const randomColor = Math.floor(Math.random() * 0x1000000).toString(16)
       return `#${randomColor.padStart(6, '0')}`
     },
+    pure: false,
     arity: toFixedArity(0),
   },
 }

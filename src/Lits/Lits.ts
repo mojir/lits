@@ -29,6 +29,7 @@ export interface LitsRuntimeInfo {
 export interface JsFunction {
   fn: (...args: any[]) => unknown
   arity?: Arity
+  pure?: boolean
   docString?: string
 }
 
@@ -45,6 +46,10 @@ export interface MinifyParams {
 
 export interface FilePathParams {
   filePath?: string
+}
+
+export interface PureParams {
+  pure?: boolean
 }
 
 interface LitsConfig {
@@ -85,19 +90,19 @@ export class Lits {
   }
 
   public readonly async = {
-    run: async (programOrBundle: string | LitsBundle, params: ContextParams & FilePathParams = {}): Promise<unknown> => {
+    run: async (programOrBundle: string | LitsBundle, params: ContextParams & FilePathParams & PureParams = {}): Promise<unknown> => {
       if (isLitsBundle(programOrBundle)) {
         return this.runBundle(programOrBundle, params)
       }
       const ast = this.generateAst(programOrBundle, params)
       return this.evaluate(ast, params)
     },
-    apply: async (fn: LitsFunction, fnParams: unknown[], params: ContextParams = {}): Promise<unknown> => {
+    apply: async (fn: LitsFunction, fnParams: unknown[], params: ContextParams & PureParams = {}): Promise<unknown> => {
       return this.apply(fn, fnParams, params)
     },
   }
 
-  public run(programOrBundle: string | LitsBundle, params: ContextParams & FilePathParams = {}): unknown {
+  public run(programOrBundle: string | LitsBundle, params: ContextParams & FilePathParams & PureParams = {}): unknown {
     if (isLitsBundle(programOrBundle)) {
       return this.runBundle(programOrBundle, params)
     }
@@ -109,11 +114,15 @@ export class Lits {
     return result
   }
 
-  private runBundle(bundle: LitsBundle, params: ContextParams & FilePathParams = {}): unknown {
-    const contextStack = createContextStack(params, this.modules)
+  private runBundle(bundle: LitsBundle, params: ContextParams & FilePathParams & PureParams = {}): unknown {
+    const contextStack = createContextStack(params, this.modules, params.pure)
 
     // Evaluate file modules in dependency order and register as value modules.
     // Each file module is evaluated in its own scope so local bindings don't leak.
+    // File modules are always evaluated in pure mode to ensure deterministic,
+    // side-effect-free initialization regardless of the caller's pure setting.
+    const savedPure = contextStack.pure
+    contextStack.pure = true
     for (const [name, source] of bundle.fileModules) {
       const ast = this.generateAst(source, params)
       const moduleContextStack = contextStack.create({})
@@ -123,6 +132,7 @@ export class Lits {
       }
       contextStack.registerValueModule(name, result)
     }
+    contextStack.pure = savedPure
 
     // Parse and evaluate the main program
     const ast = this.generateAst(bundle.program, params)
@@ -156,8 +166,8 @@ export class Lits {
     return ast
   }
 
-  private evaluate(ast: Ast, params: ContextParams): MaybePromise<Any> {
-    const contextStack = createContextStack(params, this.modules)
+  private evaluate(ast: Ast, params: ContextParams & PureParams): MaybePromise<Any> {
+    const contextStack = createContextStack(params, this.modules, params.pure)
     return evaluate(ast, contextStack)
   }
 
@@ -169,7 +179,7 @@ export class Lits {
     return untokenize(tokenStream)
   }
 
-  public apply(fn: LitsFunction, fnParams: unknown[], params: ContextParams = {}): MaybePromise<Any> {
+  public apply(fn: LitsFunction, fnParams: unknown[], params: ContextParams & PureParams = {}): MaybePromise<Any> {
     const fnName = 'FN_2eb7b316_471c_5bfa_90cb_d3dfd9164a59'
     const program = this.generateApplyFunctionCall(fnName, fnParams)
 

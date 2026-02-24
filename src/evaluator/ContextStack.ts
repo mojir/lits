@@ -24,18 +24,21 @@ export class ContextStackImpl {
   private nativeJsFunctions?: Record<string, NativeJsFunction>
   private modules: Map<string, LitsModule>
   private valueModules: Map<string, unknown>
+  public pure: boolean
   constructor({
     contexts,
     values: hostValues,
     nativeJsFunctions,
     modules,
     valueModules,
+    pure,
   }: {
     contexts: Context[]
     values?: Record<string, unknown>
     nativeJsFunctions?: Record<string, NativeJsFunction>
     modules?: Map<string, LitsModule>
     valueModules?: Map<string, unknown>
+    pure?: boolean
   }) {
     this.globalContext = asNonUndefined(contexts[0])
     this.contexts = contexts
@@ -43,6 +46,7 @@ export class ContextStackImpl {
     this.nativeJsFunctions = nativeJsFunctions
     this.modules = modules ?? new Map<string, LitsModule>()
     this.valueModules = valueModules ?? new Map<string, unknown>()
+    this.pure = pure ?? false
   }
 
   public getModule(name: string): LitsModule | undefined {
@@ -68,6 +72,7 @@ export class ContextStackImpl {
       nativeJsFunctions: this.nativeJsFunctions,
       modules: this.modules,
       valueModules: this.valueModules,
+      pure: this.pure,
     })
     contextStack.globalContext = globalContext
     return contextStack
@@ -76,7 +81,7 @@ export class ContextStackImpl {
   public new(context: Context): ContextStack {
     const contexts = [{}, context]
 
-    return new ContextStackImpl({ contexts, modules: this.modules, valueModules: this.valueModules })
+    return new ContextStackImpl({ contexts, modules: this.modules, valueModules: this.valueModules, pure: this.pure })
   }
 
   public addValues(values: Record<string, Any>, sourceCodeInfo: SourceCodeInfo | undefined) {
@@ -196,7 +201,7 @@ function assertNotShadowingBuiltin(name: string): void {
   }
 }
 
-export function createContextStack(params: ContextParams = {}, modules?: Map<string, LitsModule>): ContextStack {
+export function createContextStack(params: ContextParams = {}, modules?: Map<string, LitsModule>, pure?: boolean): ContextStack {
   const globalContext = params.globalContext ?? {}
   // Contexts are checked from left to right
   const contexts = params.contexts ? [globalContext, ...params.contexts] : [globalContext]
@@ -246,6 +251,7 @@ export function createContextStack(params: ContextParams = {}, modules?: Map<str
     values: hostValues,
     modules,
     nativeJsFunctions,
+    pure,
   })
   return params.globalModuleScope ? contextStack : contextStack.create({})
 }
