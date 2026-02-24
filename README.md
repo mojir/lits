@@ -41,16 +41,46 @@ npm install --global @mojir/lits
 $ lits
 
 # Evaluate Lits code directly
-$ lits -e "5 + 3"
-$ lits -e "[1, 2, 3, 4] filter odd? map inc"
+$ lits eval "5 + 3"
+$ lits eval "[1, 2, 3, 4] filter odd? map inc"
 
 # Run a Lits file
-$ lits -f script.lits
-$ lits -f examples/factorial.lits
+$ lits run script.lits
+
+# Bundle a multi-file project into a single .json file
+$ lits bundle main.lits -o bundle.json
+
+# Run a bundle
+$ lits run-bundle bundle.json
+
+# Run tests
+$ lits test tests.test.lits
 
 # Get help
 $ lits --help
 ```
+
+**Subcommands:**
+
+| Subcommand | Description |
+|---|---|
+| `run <file>` | Run a `.lits` source file |
+| `run-bundle <file>` | Run a `.json` bundle (with validation) |
+| `eval <expression>` | Evaluate a Lits expression |
+| `bundle <entry>` | Bundle a multi-file project into a single JSON file |
+| `test <file>` | Run a `.test.lits` test file |
+| `repl` | Start an interactive REPL (default when no subcommand) |
+
+**Common options:**
+
+| Option | Applies to | Description |
+|---|---|---|
+| `-c, --context=<json>` | `run`, `run-bundle`, `eval`, `repl` | Provide context as a JSON string |
+| `-C, --context-file=<file>` | `run`, `run-bundle`, `eval`, `repl` | Provide context from a `.json` file |
+| `-s, --silent` | `run`, `run-bundle`, `eval` | Suppress printing the result |
+| `-o, --output=<file>` | `bundle` | Write bundle to file (default: stdout) |
+| `--pattern=<regex>` | `test` | Only run tests matching pattern |
+| `-l, --load=<file>` | `repl` | Preload a `.lits` file into the REPL |
 
 The REPL provides an interactive environment where you can experiment with Lits code, test functions, and explore the language features in real-time.
 

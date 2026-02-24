@@ -58,7 +58,7 @@ describe('the cli-fs Integration Tests', () => {
 
   function runLits(expression: string): string {
     try {
-      const result = execSync(`node '${litsCliPath}' eval '${expression}' -p`, {
+      const result = execSync(`node '${litsCliPath}' eval '${expression}'`, {
         cwd: testDir,
         encoding: 'utf8',
         stdio: 'pipe',

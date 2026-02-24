@@ -1,0 +1,13 @@
+{
+  "program": "let { add } = import(lib/math-helpers);\nlet answer = import(lib/constants);\nadd(answer, 8)\n",
+  "fileModules": [
+    [
+      "lib/math-helpers",
+      "let add = (a, b) -> a + b;\nlet subtract = (a, b) -> a - b;\n{\"add\": add, \"subtract\": subtract}\n"
+    ],
+    [
+      "lib/constants",
+      "42\n"
+    ]
+  ]
+}

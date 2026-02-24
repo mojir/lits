@@ -8,7 +8,7 @@ describe('proc Integration Tests', () => {
 
   function runLits(expression: string): string {
     try {
-      const result = execSync(`node '${litsCliPath}' eval '${expression}' -p`, {
+      const result = execSync(`node '${litsCliPath}' eval '${expression}'`, {
         encoding: 'utf8',
         stdio: 'pipe',
         cwd: __dirname, // Ensure we run in the correct directory

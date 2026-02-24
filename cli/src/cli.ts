@@ -60,6 +60,13 @@ interface RunConfig {
   printResult: boolean
 }
 
+interface RunBundleConfig {
+  subcommand: 'run-bundle'
+  filename: string
+  context: Context
+  printResult: boolean
+}
+
 interface EvalConfig {
   subcommand: 'eval'
   expression: string
@@ -87,7 +94,7 @@ interface VersionConfig {
   subcommand: 'version'
 }
 
-type Config = ReplConfig | RunConfig | EvalConfig | TestConfig | BundleConfig | HelpConfig | VersionConfig
+type Config = ReplConfig | RunConfig | RunBundleConfig | EvalConfig | TestConfig | BundleConfig | HelpConfig | VersionConfig
 
 const historyResults: unknown[] = []
 const formatValue = getInlineCodeFormatter(fmt)
@@ -118,18 +125,35 @@ switch (config.subcommand) {
     const lits = createLits(config.context)
     try {
       const content = fs.readFileSync(config.filename, { encoding: 'utf-8' })
-      let programOrBundle: string | LitsBundle = content
-      // Try to parse as a JSON bundle
+      const result = lits.run(content)
+      if (config.printResult) {
+        console.log(result)
+      }
+      process.exit(0)
+    }
+    catch (error) {
+      printErrorMessage(`${error}`)
+      process.exit(1)
+    }
+    break
+  }
+  case 'run-bundle': {
+    const lits = createLits(config.context)
+    try {
+      const content = fs.readFileSync(config.filename, { encoding: 'utf-8' })
+      let parsed: unknown
       try {
-        const parsed: unknown = JSON.parse(content)
-        if (isLitsBundle(parsed)) {
-          programOrBundle = parsed
-        }
+        parsed = JSON.parse(content)
       }
       catch {
-        // Not JSON — treat as plain Lits source
+        printErrorMessage(`Invalid bundle: ${config.filename} is not valid JSON`)
+        process.exit(1)
       }
-      const result = lits.run(programOrBundle)
+      if (!isLitsBundle(parsed)) {
+        printErrorMessage(`Invalid bundle: ${config.filename} is not a valid Lits bundle (expected "program" string and "fileModules" array)`)
+        process.exit(1)
+      }
+      const result = lits.run(parsed)
       if (config.printResult) {
         console.log(result)
       }
@@ -267,7 +291,7 @@ function setReplHistoryVariables(context: Context) {
 function parseOption(args: string[], i: number): { option: string, argument: Maybe<string>, count: number } | null {
   const option = args[i]!
 
-  if (option === '-p') {
+  if (option === '-s') {
     return { option, argument: null, count: 1 }
   }
   if (/^-[a-z]$/i.test(option))
@@ -332,7 +356,7 @@ function parseContextOptions(args: string[], startIndex: number): { options: Con
 }
 
 function parsePrintOptions(args: string[], startIndex: number): { options: PrintOptions, nextIndex: number } {
-  const options: PrintOptions = { printResult: false }
+  const options: PrintOptions = { printResult: true }
   let i = startIndex
   while (i < args.length) {
     const parsed = parseOption(args, i)
@@ -340,9 +364,9 @@ function parsePrintOptions(args: string[], startIndex: number): { options: Print
       break
 
     switch (parsed.option) {
-      case '-p':
-      case '--print-result':
-        options.printResult = true
+      case '-s':
+      case '--silent':
+        options.printResult = false
         i += parsed.count
         break
       default:
@@ -354,7 +378,7 @@ function parsePrintOptions(args: string[], startIndex: number): { options: Print
 
 function parseRunEvalOptions(args: string[], startIndex: number): { context: Context, printResult: boolean, nextIndex: number } {
   let context: Context = {}
-  let printResult = false
+  let printResult = true
   let i = startIndex
   while (i < args.length) {
     const parsed = parseOption(args, i)
@@ -371,8 +395,8 @@ function parseRunEvalOptions(args: string[], startIndex: number): { context: Con
         i = result.nextIndex
         break
       }
-      case '-p':
-      case '--print-result': {
+      case '-s':
+      case '--silent': {
         const result = parsePrintOptions(args, i)
         printResult = result.options.printResult
         i = result.nextIndex
@@ -414,6 +438,15 @@ function processArguments(args: string[]): Config {
       }
       const { context, printResult } = parseRunEvalOptions(args, 2)
       return { subcommand: 'run', filename, context, printResult }
+    }
+    case 'run-bundle': {
+      const filename = args[1]
+      if (!filename || filename.startsWith('-')) {
+        printErrorMessage('Missing filename after "run-bundle"')
+        process.exit(1)
+      }
+      const { context, printResult } = parseRunEvalOptions(args, 2)
+      return { subcommand: 'run-bundle', filename, context, printResult }
     }
     case 'eval': {
       const expression = args[1]
@@ -611,17 +644,18 @@ function printUsage() {
 Usage: lits [subcommand] [options]
 
 Subcommands:
-  run <file> [options]            Run a .lits file or .json bundle
+  run <file> [options]            Run a .lits file
+  run-bundle <file> [options]     Run a .json bundle
   eval <expression> [options]     Evaluate a Lits expression
   bundle <entry> [options]        Bundle a multi-file project
   test <file> [options]           Run a .test.lits test file
   repl [options]                  Start an interactive REPL
   help                            Show this help
 
-Run/Eval options:
+Run/Run-bundle/Eval options:
   -c, --context=<json>            Context as a JSON string
   -C, --context-file=<file>       Context from a .json file
-  -p, --print-result              Print the result
+  -s, --silent                    Suppress printing the result
 
 Bundle options:
   -o, --output=<file>             Write bundle to file (default: stdout)
