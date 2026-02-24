@@ -1,0 +1,2 @@
+let x = import("../lib/constants.lits")
+x + 1

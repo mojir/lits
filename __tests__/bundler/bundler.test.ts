@@ -82,6 +82,30 @@ describe('bundle', () => {
       .toThrow(/[Ff]ile not found/)
   })
 
+  it('handles single-quoted import paths', () => {
+    const result = bundle(path.join(fixturesDir, 'single-quote-import.lits'))
+    expect(result.fileModules).toHaveLength(1)
+    expect(result.fileModules[0]![0]).toBe('lib/constants')
+    expect(result.program).toContain('import(lib/constants)')
+  })
+
+  it('derives canonical name for a file outside the entry directory', () => {
+    // subdir/entry.lits imports ../lib/constants.lits which is outside subdir/
+    const result = bundle(path.join(fixturesDir, 'subdir', 'entry.lits'))
+    const moduleNames = result.fileModules.map(([name]) => name)
+    // lib/constants.lits has a relative path starting with ".." from subdir/,
+    // so the fallback (last 2 path segments) is used: "lib/constants"
+    expect(moduleNames).toContain('lib/constants')
+  })
+
+  it('derives canonical name for a file without .lits extension', () => {
+    // import-plain.lits imports plain.txt (no .lits extension)
+    const result = bundle(path.join(fixturesDir, 'import-plain.lits'))
+    const moduleNames = result.fileModules.map(([name]) => name)
+    // stripExtension does not strip non-.lits extensions
+    expect(moduleNames).toContain('plain.txt')
+  })
+
   it('produces a JSON-serializable bundle', () => {
     const result = bundle(path.join(fixturesDir, 'main.lits'))
     const serialized = JSON.stringify(result)
@@ -176,5 +200,29 @@ describe('lits.run with LitsBundle', () => {
       firstName: 'alice',
       count: 3,
     })
+  })
+
+  it('runs a bundle with async.run', async () => {
+    const result = await lits.async.run({
+      program: 'let x = import(my-const); x + 1',
+      fileModules: [['my-const', '99']],
+    })
+    expect(result).toBe(100)
+  })
+
+  it('throws TypeError when a file module evaluation returns a Promise', () => {
+    const asyncFn = async () => 42
+    expect(() => lits.run({
+      program: 'import(my-module)',
+      fileModules: [['my-module', 'asyncFn()']],
+    }, { bindings: { asyncFn } })).toThrow(TypeError)
+  })
+
+  it('throws TypeError when the main program evaluation returns a Promise', () => {
+    const asyncFn = async () => 42
+    expect(() => lits.run({
+      program: 'asyncFn()',
+      fileModules: [],
+    }, { bindings: { asyncFn } })).toThrow(TypeError)
   })
 })

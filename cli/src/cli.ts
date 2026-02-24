@@ -3,6 +3,7 @@
 /* eslint-disable no-console */
 
 import fs from 'node:fs'
+import path from 'node:path'
 import { version } from '../../package.json'
 import { runTest } from '../../src/testFramework'
 import type { Reference } from '../../reference'
@@ -16,6 +17,9 @@ import { Lits } from '../../src/Lits/Lits'
 import { allBuiltinModules } from '../../src/allModules'
 import '../../src/initReferenceData'
 import { normalExpressionKeys, specialExpressionKeys } from '../../src/builtin'
+import { bundle } from '../../src/bundler'
+import { isLitsBundle } from '../../src/bundler/interface'
+import type { LitsBundle } from '../../src/bundler/interface'
 import { Colors, createColorizer } from './colorizer'
 import { getCliFunctionSignature } from './cliDocumentation/getCliFunctionSignature'
 import { getCliDocumentation } from './cliDocumentation/getCliDocumentation'
@@ -31,15 +35,59 @@ const PROMPT = fmt.bright.gray('> ')
 
 type Maybe<T> = T | null
 
-interface Config {
-  testPattern: Maybe<string>
-  testFilename: Maybe<string>
-  evalFilename: Maybe<string>
-  loadFilename: Maybe<string>
+// --- Option types shared across subcommands ---
+
+interface ContextOptions {
   context: Context
-  eval: Maybe<string>
+}
+
+interface PrintOptions {
   printResult: boolean
 }
+
+// --- Subcommand configs ---
+
+interface ReplConfig {
+  subcommand: 'repl'
+  loadFilename: Maybe<string>
+  context: Context
+}
+
+interface RunConfig {
+  subcommand: 'run'
+  filename: string
+  context: Context
+  printResult: boolean
+}
+
+interface EvalConfig {
+  subcommand: 'eval'
+  expression: string
+  context: Context
+  printResult: boolean
+}
+
+interface TestConfig {
+  subcommand: 'test'
+  filename: string
+  testPattern: Maybe<string>
+}
+
+interface BundleConfig {
+  subcommand: 'bundle'
+  filename: string
+  output: Maybe<string>
+}
+
+interface HelpConfig {
+  subcommand: 'help'
+}
+
+interface VersionConfig {
+  subcommand: 'version'
+}
+
+type Config = ReplConfig | RunConfig | EvalConfig | TestConfig | BundleConfig | HelpConfig | VersionConfig
 
 const historyResults: unknown[] = []
 const formatValue = getInlineCodeFormatter(fmt)
@@ -54,47 +102,108 @@ const config = processArguments(process.argv.slice(2))
 
 const cliModules = getCliModules()
 
-const lits = (() => {
+function createLits(context: Context) {
   const _lits = new Lits({ debug: true, modules: [...allBuiltinModules, ...cliModules] })
   return {
-    run: (program: string) =>
+    run: (program: string | LitsBundle) =>
       _lits.run(program, {
-        globalContext: config.context ?? undefined,
+        globalContext: context,
         globalModuleScope: true,
       }),
   }
-})()
+}
 
-if (config.eval || config.evalFilename) {
-  try {
-    const program = config.eval || fs.readFileSync(config.evalFilename!, { encoding: 'utf-8' })
-    const result = lits.run(program)
-    if (config.printResult) {
-      console.log(result)
+switch (config.subcommand) {
+  case 'run': {
+    const lits = createLits(config.context)
+    try {
+      const content = fs.readFileSync(config.filename, { encoding: 'utf-8' })
+      let programOrBundle: string | LitsBundle = content
+      // Try to parse as a JSON bundle
+      try {
+        const parsed: unknown = JSON.parse(content)
+        if (isLitsBundle(parsed)) {
+          programOrBundle = parsed
+        }
+      }
+      catch {
+        // Not JSON — treat as plain Lits source
+      }
+      const result = lits.run(programOrBundle)
+      if (config.printResult) {
+        console.log(result)
+      }
+      process.exit(0)
     }
+    catch (error) {
+      printErrorMessage(`${error}`)
+      process.exit(1)
+    }
+    break
+  }
+  case 'eval': {
+    const lits = createLits(config.context)
+    try {
+      const result = lits.run(config.expression)
+      if (config.printResult) {
+        console.log(result)
+      }
+      process.exit(0)
+    }
+    catch (error) {
+      printErrorMessage(`${error}`)
+      process.exit(1)
+    }
+    break
+  }
+  case 'bundle': {
+    try {
+      const absolutePath = path.resolve(config.filename)
+      const result = bundle(absolutePath)
+      const json = JSON.stringify(result, null, 2)
+      if (config.output) {
+        fs.writeFileSync(config.output, json, { encoding: 'utf-8' })
+      }
+      else {
+        console.log(json)
+      }
+      process.exit(0)
+    }
+    catch (error) {
+      printErrorMessage(`${error}`)
+      process.exit(1)
+    }
+    break
+  }
+  case 'test': {
+    runLitsTest(config.filename, config.testPattern)
     process.exit(0)
+    break
   }
-  catch (error) {
-    printErrorMessage(`${error}`)
-    process.exit(1)
-  }
-}
-else if (config.loadFilename) {
-  const content = fs.readFileSync(config.loadFilename, { encoding: 'utf-8' })
-  const result = lits.run(content)
-  if (result !== null && typeof result === 'object' && !Array.isArray(result)) {
-    for (const [key, value] of Object.entries(result as Record<string, unknown>)) {
-      config.context[key] = { value: asAny(value) }
+  case 'repl': {
+    if (config.loadFilename) {
+      const lits = createLits(config.context)
+      const content = fs.readFileSync(config.loadFilename, { encoding: 'utf-8' })
+      const result = lits.run(content)
+      if (result !== null && typeof result === 'object' && !Array.isArray(result)) {
+        for (const [key, value] of Object.entries(result as Record<string, unknown>)) {
+          config.context[key] = { value: asAny(value) }
+        }
+      }
     }
+    runREPL(config.context)
+    break
   }
-  runREPL()
-}
-else if (config.testFilename) {
-  runLitsTest(config.testFilename, config.testPattern)
-  process.exit(0)
-}
-else {
-  runREPL()
+  case 'help': {
+    printUsage()
+    process.exit(0)
+    break
+  }
+  case 'version': {
+    console.log(version)
+    process.exit(0)
+    break
+  }
 }
 
 function runLitsTest(testPath: string, testNamePattern: Maybe<string>) {
@@ -113,7 +222,8 @@ function runLitsTest(testPath: string, testNamePattern: Maybe<string>) {
     process.exit(1)
 }
 
-function execute(expression: string): boolean {
+function execute(expression: string, context: Context): boolean {
+  const lits = createLits(context)
   try {
     const result = lits.run(expression)
     historyResults.unshift(result)
@@ -121,13 +231,13 @@ function execute(expression: string): boolean {
       historyResults.length = 9
     }
 
-    setReplHistoryVariables()
+    setReplHistoryVariables(context)
     console.log(stringifyValue(result, false))
     return true
   }
   catch (error) {
     printErrorMessage(`${error}`)
-    config.context['*e*'] = { value: getErrorMessage(error) }
+    context['*e*'] = { value: getErrorMessage(error) }
     return false
   }
 }
@@ -139,174 +249,289 @@ function getErrorMessage(error: unknown) {
   return 'Unknown error'
 }
 
-function setReplHistoryVariables() {
-  delete config.context['*1*']
-  delete config.context['*2*']
-  delete config.context['*3*']
-  delete config.context['*4*']
-  delete config.context['*5*']
-  delete config.context['*6*']
-  delete config.context['*7*']
-  delete config.context['*8*']
-  delete config.context['*9*']
+function setReplHistoryVariables(context: Context) {
+  delete context['*1*']
+  delete context['*2*']
+  delete context['*3*']
+  delete context['*4*']
+  delete context['*5*']
+  delete context['*6*']
+  delete context['*7*']
+  delete context['*8*']
+  delete context['*9*']
   historyResults.forEach((value, i) => {
-    config.context[`*${i + 1}*`] = { value: asAny(value) }
+    context[`*${i + 1}*`] = { value: asAny(value) }
   })
 }
 
-function parseOption(args: string[], i: number) {
+function parseOption(args: string[], i: number): { option: string, argument: Maybe<string>, count: number } | null {
   const option = args[i]!
 
   if (option === '-p') {
     return { option, argument: null, count: 1 }
   }
   if (/^-[a-z]$/i.test(option))
-    return { option, argument: args[i + 1], count: 2 }
+    return { option, argument: args[i + 1] ?? null, count: 2 }
 
   const match = /^(--[a-z-]+)(?:=(.*))?$/i.exec(option)
   if (match)
-    return { option: match[1], argument: match[2], count: 1 }
+    return { option: match[1]!, argument: match[2] ?? null, count: 1 }
 
   return null
 }
-function processArguments(args: string[]): Config {
-  const defaultConfig: Config = {
-    testPattern: null,
-    testFilename: null,
-    evalFilename: null,
-    loadFilename: null,
-    context: {},
-    eval: null,
-    printResult: false,
-  }
-  let i = 0
+
+function parseContextOptions(args: string[], startIndex: number): { options: ContextOptions, nextIndex: number } {
+  const options: ContextOptions = { context: {} }
+  let i = startIndex
   while (i < args.length) {
-    const parsedOption = parseOption(args, i)
-    if (!parsedOption) {
-      printErrorMessage(`Unknown argument "${args[i]}"`)
-      process.exit(1)
-    }
+    const parsed = parseOption(args, i)
+    if (!parsed)
+      break
 
-    const { option, argument, count } = parsedOption
-    i += count
-
-    switch (option) {
-      case '--test':
-        if (!argument) {
-          printErrorMessage(`Missing filename after ${option}`)
-          process.exit(1)
-        }
-        defaultConfig.testFilename = argument
-        break
-      case '--test-pattern':
-        if (!argument) {
-          printErrorMessage(`Missing test name pattern after ${option}`)
-          process.exit(1)
-        }
-        defaultConfig.testPattern = argument
-        break
-      case '-f':
-      case '--file':
-        if (!argument) {
-          printErrorMessage(`Missing filename after ${option}`)
-          process.exit(1)
-        }
-        defaultConfig.evalFilename = argument
-        break
-      case '-l':
-      case '--load':
-        if (!argument) {
-          printErrorMessage(`Missing filename after ${option}`)
-          process.exit(1)
-        }
-        defaultConfig.loadFilename = argument
-        break
+    switch (parsed.option) {
       case '-c':
       case '--context':
-        if (!argument) {
-          printErrorMessage(`Missing global variables after ${option}`)
+        if (!parsed.argument) {
+          printErrorMessage(`Missing context JSON after ${parsed.option}`)
           process.exit(1)
         }
         try {
-          Object.entries(JSON.parse(argument) as UnknownRecord).forEach(([key, value]) => {
-            defaultConfig.context[key] = { value: asAny(value) }
+          Object.entries(JSON.parse(parsed.argument) as UnknownRecord).forEach(([key, value]) => {
+            options.context[key] = { value: asAny(value) }
           })
         }
         catch (e) {
           printErrorMessage(`Couldn\`t parse context: ${getErrorMessage(e)}`)
           process.exit(1)
         }
+        i += parsed.count
         break
       case '-C':
       case '--context-file':
-        if (!argument) {
-          printErrorMessage(`Missing context filename after ${option}`)
+        if (!parsed.argument) {
+          printErrorMessage(`Missing context filename after ${parsed.option}`)
           process.exit(1)
         }
         try {
-          const contextString = fs.readFileSync(argument, { encoding: 'utf-8' })
+          const contextString = fs.readFileSync(parsed.argument, { encoding: 'utf-8' })
           Object.entries(JSON.parse(contextString) as UnknownRecord).forEach(([key, value]) => {
-            defaultConfig.context[key] = { value: asAny(value) }
+            options.context[key] = { value: asAny(value) }
           })
         }
         catch (e) {
           printErrorMessage(`Couldn\`t parse context: ${getErrorMessage(e)}`)
           process.exit(1)
         }
-        break
-      case '-p':
-      case '--print-result':
-        defaultConfig.printResult = true
-        break
-      case '-e':
-      case '--eval':
-        if (!argument) {
-          printErrorMessage(`Missing lits expression after ${option}`)
-          process.exit(1)
-        }
-        defaultConfig.eval = argument
-        break
-      case '--help':
-        printUsage()
-        process.exit(0)
-        break
-      case '--version':
-        console.log(version)
-        process.exit(0)
+        i += parsed.count
         break
       default:
-        printErrorMessage(`Unknown option "${option}"`)
+        return { options, nextIndex: i }
+    }
+  }
+  return { options, nextIndex: i }
+}
+
+function parsePrintOptions(args: string[], startIndex: number): { options: PrintOptions, nextIndex: number } {
+  const options: PrintOptions = { printResult: false }
+  let i = startIndex
+  while (i < args.length) {
+    const parsed = parseOption(args, i)
+    if (!parsed)
+      break
+
+    switch (parsed.option) {
+      case '-p':
+      case '--print-result':
+        options.printResult = true
+        i += parsed.count
+        break
+      default:
+        return { options, nextIndex: i }
+    }
+  }
+  return { options, nextIndex: i }
+}
+
+function parseRunEvalOptions(args: string[], startIndex: number): { context: Context, printResult: boolean, nextIndex: number } {
+  let context: Context = {}
+  let printResult = false
+  let i = startIndex
+  while (i < args.length) {
+    const parsed = parseOption(args, i)
+    if (!parsed)
+      break
+
+    switch (parsed.option) {
+      case '-c':
+      case '--context':
+      case '-C':
+      case '--context-file': {
+        const result = parseContextOptions(args, i)
+        context = { ...context, ...result.options.context }
+        i = result.nextIndex
+        break
+      }
+      case '-p':
+      case '--print-result': {
+        const result = parsePrintOptions(args, i)
+        printResult = result.options.printResult
+        i = result.nextIndex
+        break
+      }
+      default:
+        printErrorMessage(`Unknown option "${parsed.option}"`)
         process.exit(1)
     }
   }
-  if (defaultConfig.evalFilename && defaultConfig.eval) {
-    printErrorMessage('Cannot both specify -f (--file) and -e (--eval)')
+  if (i < args.length) {
+    printErrorMessage(`Unknown argument "${args[i]}"`)
     process.exit(1)
   }
-  if (defaultConfig.testFilename && defaultConfig.eval) {
-    printErrorMessage('Cannot both specify -t (--test) and -e (--eval)')
-    process.exit(1)
-  }
-
-  if (defaultConfig.testFilename && defaultConfig.context) {
-    printErrorMessage('Cannot both specify -t (--test) and -c (--context)')
-    process.exit(1)
-  }
-
-  if (defaultConfig.testFilename && defaultConfig.evalFilename) {
-    printErrorMessage('Cannot both specify -t (--test) and -f (--file)')
-    process.exit(1)
-  }
-
-  if (defaultConfig.testFilename && defaultConfig.loadFilename) {
-    printErrorMessage('Cannot both specify -t (--test) and -l (--load)')
-    process.exit(1)
-  }
-
-  return defaultConfig
+  return { context, printResult, nextIndex: i }
 }
 
-function runREPL() {
+function processArguments(args: string[]): Config {
+  // Global flags (no subcommand)
+  if (args.length === 0) {
+    return { subcommand: 'repl', loadFilename: null, context: {} }
+  }
+
+  const first = args[0]!
+
+  if (first === '--help' || first === '-h') {
+    return { subcommand: 'help' }
+  }
+  if (first === '--version') {
+    return { subcommand: 'version' }
+  }
+
+  switch (first) {
+    case 'run': {
+      const filename = args[1]
+      if (!filename || filename.startsWith('-')) {
+        printErrorMessage('Missing filename after "run"')
+        process.exit(1)
+      }
+      const { context, printResult } = parseRunEvalOptions(args, 2)
+      return { subcommand: 'run', filename, context, printResult }
+    }
+    case 'eval': {
+      const expression = args[1]
+      if (!expression || expression.startsWith('-')) {
+        printErrorMessage('Missing expression after "eval"')
+        process.exit(1)
+      }
+      const { context, printResult } = parseRunEvalOptions(args, 2)
+      return { subcommand: 'eval', expression, context, printResult }
+    }
+    case 'bundle': {
+      const filename = args[1]
+      if (!filename || filename.startsWith('-')) {
+        printErrorMessage('Missing filename after "bundle"')
+        process.exit(1)
+      }
+      let output: Maybe<string> = null
+      let i = 2
+      while (i < args.length) {
+        const parsed = parseOption(args, i)
+        if (!parsed) {
+          printErrorMessage(`Unknown argument "${args[i]}"`)
+          process.exit(1)
+        }
+        switch (parsed.option) {
+          case '-o':
+          case '--output':
+            if (!parsed.argument) {
+              printErrorMessage(`Missing output filename after ${parsed.option}`)
+              process.exit(1)
+            }
+            output = parsed.argument
+            i += parsed.count
+            break
+          default:
+            printErrorMessage(`Unknown option "${parsed.option}" for "bundle"`)
+            process.exit(1)
+        }
+      }
+      return { subcommand: 'bundle', filename, output }
+    }
+    case 'test': {
+      const filename = args[1]
+      if (!filename || filename.startsWith('-')) {
+        printErrorMessage('Missing filename after "test"')
+        process.exit(1)
+      }
+      let testPattern: Maybe<string> = null
+      let i = 2
+      while (i < args.length) {
+        const parsed = parseOption(args, i)
+        if (!parsed) {
+          printErrorMessage(`Unknown argument "${args[i]}"`)
+          process.exit(1)
+        }
+        switch (parsed.option) {
+          case '--pattern':
+            if (!parsed.argument) {
+              printErrorMessage(`Missing test name pattern after ${parsed.option}`)
+              process.exit(1)
+            }
+            testPattern = parsed.argument
+            i += parsed.count
+            break
+          default:
+            printErrorMessage(`Unknown option "${parsed.option}" for "test"`)
+            process.exit(1)
+        }
+      }
+      return { subcommand: 'test', filename, testPattern }
+    }
+    case 'repl': {
+      let loadFilename: Maybe<string> = null
+      let context: Context = {}
+      let i = 1
+      while (i < args.length) {
+        const parsed = parseOption(args, i)
+        if (!parsed) {
+          printErrorMessage(`Unknown argument "${args[i]}"`)
+          process.exit(1)
+        }
+        switch (parsed.option) {
+          case '-l':
+          case '--load':
+            if (!parsed.argument) {
+              printErrorMessage(`Missing filename after ${parsed.option}`)
+              process.exit(1)
+            }
+            loadFilename = parsed.argument
+            i += parsed.count
+            break
+          case '-c':
+          case '--context':
+          case '-C':
+          case '--context-file': {
+            const result = parseContextOptions(args, i)
+            context = { ...context, ...result.options.context }
+            i = result.nextIndex
+            break
+          }
+          default:
+            printErrorMessage(`Unknown option "${parsed.option}" for "repl"`)
+            process.exit(1)
+        }
+      }
+      return { subcommand: 'repl', loadFilename, context }
+    }
+    case 'help': {
+      return { subcommand: 'help' }
+    }
+    default: {
+      printErrorMessage(`Unknown subcommand "${first}". Run "lits help" for usage.`)
+      process.exit(1)
+    }
+  }
+}
+
+function runREPL(context: Context) {
   console.log(`Welcome to Lits v${version}.
 Type ${fmt.italic('`help')} for more information.`)
 
@@ -335,7 +560,7 @@ Type ${fmt.italic('`help')} for more information.`)
           printHelp()
           break
         case '`context':
-          printContext()
+          printContext(context)
           break
         case '`quit':
           rl.close()
@@ -345,7 +570,7 @@ Type ${fmt.italic('`help')} for more information.`)
       }
     }
     else if (line) {
-      execute(line)
+      execute(line, context)
     }
     rl.prompt()
   }).on('close', () => {
@@ -383,24 +608,42 @@ function printHelp() {
 
 function printUsage() {
   console.log(`
-Usage: lits [options]
+Usage: lits [subcommand] [options]
 
-Options:
-  -c, --context=...               Context as a JSON string
-  -C, --context-file=...          Context file (.json file)
-  -e, --eval=...                  Evaluate Lits expression
-  -f, --file=...                  Evaluate .lits file
-      --test-pattern=...          Test name pattern, used together with --test
-      --test=...                  Test .test.lits file
-  -p  --print-result              Test .test.lits file
-  --help                          Show this help
+Subcommands:
+  run <file> [options]            Run a .lits file or .json bundle
+  eval <expression> [options]     Evaluate a Lits expression
+  bundle <entry> [options]        Bundle a multi-file project
+  test <file> [options]           Run a .test.lits test file
+  repl [options]                  Start an interactive REPL
+  help                            Show this help
+
+Run/Eval options:
+  -c, --context=<json>            Context as a JSON string
+  -C, --context-file=<file>       Context from a .json file
+  -p, --print-result              Print the result
+
+Bundle options:
+  -o, --output=<file>             Write bundle to file (default: stdout)
+
+Test options:
+  --pattern=<regex>               Only run tests matching pattern
+
+Repl options:
+  -l, --load=<file>               Preload a .lits file into the REPL context
+  -c, --context=<json>            Context as a JSON string
+  -C, --context-file=<file>       Context from a .json file
+
+Global options:
+  -h, --help                      Show this help
   --version                       Print lits version
+
+With no subcommand, starts an interactive REPL.
 `.trim())
 }
 
-function printContext() {
-  const { context } = config
-  const keys = Object.keys(config.context)
+function printContext(context: Context) {
+  const keys = Object.keys(context)
 
   if (keys.length === 0) {
     console.log('[empty]\n')
@@ -427,7 +670,8 @@ function completer(line: string) {
     return [expressions.filter(c => c.startsWith(expressionMatch[2]!)).map(c => `${expressionMatch[1]}${c} `), line]
 
   // TODO, add reserved names
-  const names = Array.from(new Set([...Object.keys(config.context)]))
+  const context = (config as ReplConfig).context ?? {}
+  const names = Array.from(new Set([...Object.keys(context)]))
   const nameMatch = nameRegExp.exec(line)
 
   if (nameMatch)

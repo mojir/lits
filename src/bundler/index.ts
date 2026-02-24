@@ -151,10 +151,9 @@ export function bundle(entryPath: string): LitsBundle {
       if (visited.has(filePath)) {
         return
       }
-      if (visiting.has(filePath)) {
-        // This shouldn't happen (we already checked for cycles), but just in case
+      /* v8 ignore next 3 */
+      if (visiting.has(filePath))
         throw new Error(`Circular dependency detected during topological sort: ${filePath}`)
-      }
 
       visiting.add(filePath)
 
@@ -188,10 +187,9 @@ export function bundle(entryPath: string): LitsBundle {
       const resolvedPath = path.resolve(dir, importPath)
       const canonicalName = canonicalNames.get(resolvedPath)
 
-      if (!canonicalName) {
-        // This shouldn't happen if resolveFile worked correctly
+      /* v8 ignore next 3 */
+      if (!canonicalName)
         throw new Error(`No canonical name for: ${resolvedPath}`)
-      }
 
       return `import(${canonicalName})`
     })
