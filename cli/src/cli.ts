@@ -101,6 +101,7 @@ type Config = ReplConfig | RunConfig | RunBundleConfig | EvalConfig | TestConfig
 
 const historyResults: unknown[] = []
 const formatValue = getInlineCodeFormatter(fmt)
+const booleanFlags = new Set(['-s', '--silent', '--pure'])
 
 const commands = ['`help', '`quit', '`builtins', '`context']
 const expressionRegExp = new RegExp(`^(.*\\(\\s*)(${polishSymbolFirstCharacterClass}${polishSymbolCharacterClass}*)$`)
@@ -295,15 +296,27 @@ function setReplHistoryVariables(context: Context) {
 function parseOption(args: string[], i: number): { option: string, argument: Maybe<string>, count: number } | null {
   const option = args[i]!
 
-  if (option === '-s') {
-    return { option, argument: null, count: 1 }
-  }
-  if (/^-[a-z]$/i.test(option))
+  // Short option: -x
+  if (/^-[a-z]$/i.test(option)) {
+    if (booleanFlags.has(option)) {
+      return { option, argument: null, count: 1 }
+    }
     return { option, argument: args[i + 1] ?? null, count: 2 }
+  }
 
+  // Long option: --foo or --foo=value
   const match = /^(--[a-z-]+)(?:=(.*))?$/i.exec(option)
-  if (match)
-    return { option: match[1]!, argument: match[2] ?? null, count: 1 }
+  if (match) {
+    const name = match[1]!
+    const inlineArg = match[2]
+    if (inlineArg !== undefined) {
+      return { option: name, argument: inlineArg, count: 1 }
+    }
+    if (booleanFlags.has(name)) {
+      return { option: name, argument: null, count: 1 }
+    }
+    return { option: name, argument: args[i + 1] ?? null, count: 2 }
+  }
 
   return null
 }
@@ -380,15 +393,23 @@ function parsePrintOptions(args: string[], startIndex: number): { options: Print
   return { options, nextIndex: i }
 }
 
-function parseRunEvalOptions(args: string[], startIndex: number): { context: Context, printResult: boolean, pure: boolean, nextIndex: number } {
+function parseRunEvalOptions(args: string[], startIndex: number): { context: Context, printResult: boolean, pure: boolean, positional: Maybe<string>, nextIndex: number } {
   let context: Context = {}
   let printResult = true
   let pure = false
+  let positional: Maybe<string> = null
   let i = startIndex
   while (i < args.length) {
     const parsed = parseOption(args, i)
-    if (!parsed)
-      break
+    if (!parsed) {
+      if (positional !== null) {
+        printErrorMessage(`Unexpected argument "${args[i]}"`)
+        process.exit(1)
+      }
+      positional = args[i]!
+      i += 1
+      continue
+    }
 
     switch (parsed.option) {
       case '-c':
@@ -416,11 +437,7 @@ function parseRunEvalOptions(args: string[], startIndex: number): { context: Con
         process.exit(1)
     }
   }
-  if (i < args.length) {
-    printErrorMessage(`Unknown argument "${args[i]}"`)
-    process.exit(1)
-  }
-  return { context, printResult, pure, nextIndex: i }
+  return { context, printResult, pure, positional, nextIndex: i }
 }
 
 function processArguments(args: string[]): Config {
@@ -440,45 +457,43 @@ function processArguments(args: string[]): Config {
 
   switch (first) {
     case 'run': {
-      const filename = args[1]
-      if (!filename || filename.startsWith('-')) {
+      const { positional: filename, context, printResult, pure } = parseRunEvalOptions(args, 1)
+      if (!filename) {
         printErrorMessage('Missing filename after "run"')
         process.exit(1)
       }
-      const { context, printResult, pure } = parseRunEvalOptions(args, 2)
       return { subcommand: 'run', filename, context, printResult, pure }
     }
     case 'run-bundle': {
-      const filename = args[1]
-      if (!filename || filename.startsWith('-')) {
+      const { positional: filename, context, printResult, pure } = parseRunEvalOptions(args, 1)
+      if (!filename) {
         printErrorMessage('Missing filename after "run-bundle"')
         process.exit(1)
       }
-      const { context, printResult, pure } = parseRunEvalOptions(args, 2)
       return { subcommand: 'run-bundle', filename, context, printResult, pure }
     }
     case 'eval': {
-      const expression = args[1]
-      if (!expression || expression.startsWith('-')) {
+      const { positional: expression, context, printResult, pure } = parseRunEvalOptions(args, 1)
+      if (!expression) {
         printErrorMessage('Missing expression after "eval"')
         process.exit(1)
       }
-      const { context, printResult, pure } = parseRunEvalOptions(args, 2)
       return { subcommand: 'eval', expression, context, printResult, pure }
     }
     case 'bundle': {
-      const filename = args[1]
-      if (!filename || filename.startsWith('-')) {
-        printErrorMessage('Missing filename after "bundle"')
-        process.exit(1)
-      }
+      let filename: Maybe<string> = null
       let output: Maybe<string> = null
-      let i = 2
+      let i = 1
       while (i < args.length) {
         const parsed = parseOption(args, i)
         if (!parsed) {
-          printErrorMessage(`Unknown argument "${args[i]}"`)
-          process.exit(1)
+          if (filename !== null) {
+            printErrorMessage(`Unexpected argument "${args[i]}"`)
+            process.exit(1)
+          }
+          filename = args[i]!
+          i += 1
+          continue
         }
         switch (parsed.option) {
           case '-o':
@@ -495,21 +510,26 @@ function processArguments(args: string[]): Config {
             process.exit(1)
         }
       }
+      if (!filename) {
+        printErrorMessage('Missing filename after "bundle"')
+        process.exit(1)
+      }
       return { subcommand: 'bundle', filename, output }
     }
     case 'test': {
-      const filename = args[1]
-      if (!filename || filename.startsWith('-')) {
-        printErrorMessage('Missing filename after "test"')
-        process.exit(1)
-      }
+      let filename: Maybe<string> = null
       let testPattern: Maybe<string> = null
-      let i = 2
+      let i = 1
       while (i < args.length) {
         const parsed = parseOption(args, i)
         if (!parsed) {
-          printErrorMessage(`Unknown argument "${args[i]}"`)
-          process.exit(1)
+          if (filename !== null) {
+            printErrorMessage(`Unexpected argument "${args[i]}"`)
+            process.exit(1)
+          }
+          filename = args[i]!
+          i += 1
+          continue
         }
         switch (parsed.option) {
           case '--pattern':
@@ -524,6 +544,10 @@ function processArguments(args: string[]): Config {
             printErrorMessage(`Unknown option "${parsed.option}" for "test"`)
             process.exit(1)
         }
+      }
+      if (!filename) {
+        printErrorMessage('Missing filename after "test"')
+        process.exit(1)
       }
       return { subcommand: 'test', filename, testPattern }
     }
