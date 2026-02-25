@@ -116,7 +116,7 @@ describe('parser', () => {
     expect(() => litsDebug.run('let x;')).toThrow(LitsError)
     expect(() => litsDebug.run('0..1')).toThrow(LitsError)
     expect(() => litsDebug.run('1e2e2')).toThrow(LitsError)
-    expect(() => litsDebug.run('match("Albert", #"as(d")')).toThrow(LitsError)
+    expect(() => litsDebug.run('re-match("Albert", #"as(d")')).toThrow(LitsError)
     expect(() => litsDebug.run('let _0 = 0;')).not.toThrow()
     expect(() => litsDebug.getUndefinedSymbols('let foo = ([,,a,...a]) -> a; foo([1, 2, 3])')).toThrow(LitsError)
     expect(() => litsDebug.getUndefinedSymbols('let foo = ([,,a,...a]) -> a; foo([1, 2, 3])')).toThrow(LitsError)
@@ -137,8 +137,8 @@ describe('parser', () => {
     expect(() => litsDebug.run('let \'a\\ab\' = 1;')).not.toThrow()
     expect(() => litsDebug.run('`')).toThrow(LitsError)
     expect(() => litsDebug.run('let a = (b) -> do 1, end;')).toThrow(LitsError)
-    expect(() => litsDebug.run('switch 1 case 1 then 1; 2 end')).not.toThrow()
-    expect(() => litsDebug.run('switch 1 case 1 then 1, end end')).toThrow(LitsError)
+    expect(() => litsDebug.run('match 1 case 1 then 1; 2 end')).not.toThrow()
+    expect(() => litsDebug.run('match 1 case 1 then 1, end end')).toThrow(LitsError)
     expect(() => litsDebug.run('cond case 1 then 1; 2 end')).not.toThrow()
     expect(() => litsDebug.run('cond case 1 then 1, end end')).toThrow(LitsError)
     expect(() => litsDebug.run('if true then 1 else 1 end; 2')).not.toThrow()
@@ -910,21 +910,21 @@ foo(1, 2)`)).toBe(3)
           case val < 15 then "L"
         end ?? "No match"`)).toBe('No match')
   })
-  test('switch expression', () => {
+  test('match expression', () => {
     expect(lits.run(`
-    switch "-"
+    match "-"
       case "-" then 1
     end`)).toBe(1)
     expect(lits.run(`
       let x = 1;
-      switch x
+      match x
         case 0 then "zero"
         case 1 then "one"
         case 2 then "two"
       end`)).toBe('one')
     expect(lits.run(`
       let x = 10;
-      switch x
+      match x
         case 0 then "zero"
         case 1 then "one"
         case 2 then "two"
@@ -1283,8 +1283,8 @@ foo(1, 2)`)).toBe(3)
     })
 
     test('regexp shorthands', () => {
-      expect(lits.run('"abc" match #"a"')).toBeTruthy()
-      expect(lits.run('"abc" match #"d"')).toBeNull()
+      expect(lits.run('"abc" re-match #"a"')).toBeTruthy()
+      expect(lits.run('"abc" re-match #"d"')).toBeNull()
     })
 
     it('handles super complex arithmetic expressions', () => {
@@ -1331,10 +1331,10 @@ foo(1, 2)`)).toBe(3)
         fib(10)`)).toBe(55)
     })
 
-    it('supports recursion via self (with switch)', () => {
+    it('supports recursion via self (with match)', () => {
       expect(lits.run(`
         let fib = (n, a = 0, b = 1) ->
-          switch n
+          match n
             case 0 then a
             case 1 then b
           end ?? self(n - 1, b, a + b);

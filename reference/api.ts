@@ -210,7 +210,7 @@ export const api = {
   ] as const,
   regularExpression: [
     'regexp',
-    'match',
+    're-match',
     'replace',
     'replace-all',
   ] as const,

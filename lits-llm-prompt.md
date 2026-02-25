@@ -207,10 +207,10 @@ end
 // returns null if no branch matches
 ```
 
-### `switch` (equality-based)
+### `match` (pattern matching)
 
 ```lits
-switch value
+match value
   case 1 then "one"
   case 2 then "two"
 end
@@ -517,7 +517,7 @@ map([1, 2, 3], -> $ ^ 2)     // => [1, 4, 9]
 | Function | Description |
 |----------|-------------|
 | `regexp(pattern, flags?)` | Create regexp |
-| `match(text, regexp)` | Returns match array or null |
+| `re-match(text, regexp)` | Returns match array or null |
 | `replace(s, regexp, replacement)` | Replace first match |
 | `replace-all(s, regexp, replacement)` | Replace all matches |
 

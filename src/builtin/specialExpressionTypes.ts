@@ -14,7 +14,7 @@ export const specialExpressionTypes = {
   'loop': 12,
   'object': 13,
   'recur': 14,
-  'switch': 15,
+  'match': 15,
   'throw': 16,
   'try': 17,
   'unless': 18,

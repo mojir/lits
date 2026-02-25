@@ -1,14 +1,56 @@
 import { LitsError } from '../../errors'
 import type { AstNode, BindingTarget } from '../types'
 import { bindingTargetTypes } from '../types'
-import { assertOperatorToken, isLBraceToken, isLBracketToken, isOperatorToken, isRBraceToken, isRBracketToken, isReservedSymbolToken, isSymbolToken } from '../../tokenizer/token'
+import { type Token, assertOperatorToken, isBasePrefixedNumberToken, isLBraceToken, isLBracketToken, isNumberToken, isOperatorToken, isRBraceToken, isRBracketToken, isReservedSymbolToken, isStringToken, isSymbolToken } from '../../tokenizer/token'
 import { asUserDefinedSymbolNode, isUserDefinedSymbolNode } from '../../typeGuards/astNode'
 import { getSymbolName, withSourceCodeInfo } from '../helpers'
 import type { ParserContext } from '../ParserContext'
+import { NodeTypes } from '../../constants/constants'
 import { parseSymbol } from './parseSymbol'
+import { parseString } from './parseString'
+import { parseNumber } from './parseNumber'
 
-export function parseBindingTarget(ctx: ParserContext, { requireDefaultValue, noRest }: { requireDefaultValue?: true, noRest?: true } = {}): BindingTarget {
+export interface ParseBindingTargetOptions {
+  requireDefaultValue?: true
+  noRest?: true
+  allowLiteralPatterns?: true
+}
+
+export function parseBindingTarget(ctx: ParserContext, { requireDefaultValue, noRest, allowLiteralPatterns }: ParseBindingTargetOptions = {}): BindingTarget {
   const firstToken = ctx.tryPeek()
+
+  // Wildcard _ (only in pattern matching context)
+  if (allowLiteralPatterns && isReservedSymbolToken(firstToken, '_')) {
+    ctx.advance()
+    return withSourceCodeInfo([bindingTargetTypes.wildcard, []], firstToken[2])
+  }
+
+  // Literal patterns: number, string, true, false, null (only in pattern matching context)
+  if (allowLiteralPatterns && isLiteralToken(firstToken)) {
+    if (isNumberToken(firstToken) || isBasePrefixedNumberToken(firstToken)) {
+      const node = parseNumber(ctx)
+      return withSourceCodeInfo([bindingTargetTypes.literal, [node]], firstToken[2])
+    }
+    if (isStringToken(firstToken)) {
+      const node = parseString(ctx, firstToken)
+      return withSourceCodeInfo([bindingTargetTypes.literal, [node]], firstToken[2])
+    }
+    if (isReservedSymbolToken(firstToken, 'true')) {
+      ctx.advance()
+      const node: AstNode = withSourceCodeInfo([NodeTypes.ReservedSymbol, 'true'], firstToken[2])
+      return withSourceCodeInfo([bindingTargetTypes.literal, [node]], firstToken[2])
+    }
+    if (isReservedSymbolToken(firstToken, 'false')) {
+      ctx.advance()
+      const node: AstNode = withSourceCodeInfo([NodeTypes.ReservedSymbol, 'false'], firstToken[2])
+      return withSourceCodeInfo([bindingTargetTypes.literal, [node]], firstToken[2])
+    }
+    if (isReservedSymbolToken(firstToken, 'null')) {
+      ctx.advance()
+      const node: AstNode = withSourceCodeInfo([NodeTypes.ReservedSymbol, 'null'], firstToken[2])
+      return withSourceCodeInfo([bindingTargetTypes.literal, [node]], firstToken[2])
+    }
+  }
 
   // Symbol
   if (isSymbolToken(firstToken)) {
@@ -56,7 +98,7 @@ export function parseBindingTarget(ctx: ParserContext, { requireDefaultValue, no
         continue
       }
 
-      const target = parseBindingTarget(ctx)
+      const target = parseBindingTarget(ctx, { allowLiteralPatterns })
 
       if (target[0] === bindingTargetTypes.rest) {
         rest = true
@@ -127,10 +169,18 @@ export function parseBindingTarget(ctx: ParserContext, { requireDefaultValue, no
       else if (isOperatorToken(token, ':')) {
         ctx.advance()
         token = ctx.peek()
-        if (!isLBraceToken(token) && !isLBracketToken(token)) {
-          throw new LitsError('Expected object or array', token[2])
+        if (allowLiteralPatterns) {
+          // In pattern matching context, allow literals, nested objects/arrays, and variable bindings after ':'
+          if (!isLBraceToken(token) && !isLBracketToken(token) && !isLiteralToken(token)) {
+            throw new LitsError('Expected literal, object or array pattern', token[2])
+          }
         }
-        elements[keyName] = parseBindingTarget(ctx)
+        else {
+          if (!isLBraceToken(token) && !isLBracketToken(token)) {
+            throw new LitsError('Expected object or array', token[2])
+          }
+        }
+        elements[keyName] = parseBindingTarget(ctx, { allowLiteralPatterns })
       }
 
       if (!isRBraceToken(ctx.peek())) {
@@ -159,4 +209,13 @@ function parseOptionalDefaulValue(ctx: ParserContext): AstNode | undefined {
     return ctx.parseExpression()
   }
   return undefined
+}
+
+function isLiteralToken(token: Token | undefined): boolean {
+  return isNumberToken(token)
+    || isBasePrefixedNumberToken(token)
+    || isStringToken(token)
+    || isReservedSymbolToken(token, 'true')
+    || isReservedSymbolToken(token, 'false')
+    || isReservedSymbolToken(token, 'null')
 }

@@ -631,26 +631,26 @@ end;
 // => "high"
 ```
 
-#### Switch
+#### Match
 
 ```lits
 let x = 1;
 
-// Switch on value
-switch x
+// Match on value
+match x
   case 0 then "zero"
   case 1 then "one"
   case 2 then "two"
 end;
 // => "one"
 
-// Switch with multiple cases
+// Match with multiple cases
 let userInput = "help";
 let exit = () -> "exiting";
 let showHelp = () -> "showing help";
 let saveData = () -> "saving data";
 
-switch userInput
+match userInput
   case "quit" then exit()
   case "help" then showHelp()
   case "save" then saveData()

@@ -22,6 +22,6 @@ The language is expression-oriented — everything returns a value, from simple 
 
 Lits ships with a comprehensive standard library covering math, string manipulation, regular expressions, collection operations, and more. Domain-specific modules extend the language with vector math, linear algebra, matrix operations, and number theory — all opt-in to keep the core lightweight.
 
-The syntax uses keyword-delimited blocks (`if...then...else...end`, `do...end`) and algebraic notation, making it immediately readable. Despite its simplicity, Lits supports closures, destructuring, higher-order functions, recursion with `loop`/`recur`, and pattern-matching-style constructs like `cond` and `switch`.
+The syntax uses keyword-delimited blocks (`if...then...else...end`, `do...end`) and algebraic notation, making it immediately readable. Despite its simplicity, Lits supports closures, destructuring, higher-order functions, recursion with `loop`/`recur`, and pattern matching with `cond` and `match`.
 
 Integration is straightforward: create a `Lits` instance, call `run()` with a string of code, and get a result back. The entire runtime is a pure JavaScript library with zero dependencies, running anywhere JavaScript runs — browsers, Node.js, or edge runtimes.

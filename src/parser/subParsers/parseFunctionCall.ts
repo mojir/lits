@@ -66,7 +66,7 @@ export function parseFunctionCall(ctx: ParserContext, symbol: AstNode): AstNode 
       | typeof specialExpressionTypes.if
       | typeof specialExpressionTypes.unless
       | typeof specialExpressionTypes.cond
-      | typeof specialExpressionTypes.switch
+      | typeof specialExpressionTypes.match
       | typeof specialExpressionTypes.let
       | typeof specialExpressionTypes.block
       | typeof specialExpressionTypes.loop

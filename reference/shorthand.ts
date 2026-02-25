@@ -11,7 +11,7 @@ export const shorthand: Record<ShorthandName, ShorthandReference> = {
       '#"^\\s*(.*)$"',
       '#"albert"ig',
     ],
-    seeAlso: ['regexp', 'match', 'replace', 'replace-all'],
+    seeAlso: ['regexp', 're-match', 'replace', 'replace-all'],
   },
   '-short-fn': {
     shorthand: true,

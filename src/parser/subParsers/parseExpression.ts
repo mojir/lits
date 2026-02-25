@@ -19,7 +19,7 @@ import { parseIfOrUnless } from './parseIfOrUnless'
 import { parseLet } from './parseLet'
 import { parseLoop } from './parseLoop'
 import { parseOperand } from './parseOperand'
-import { parseSwitch } from './parseSwitch'
+import { parseMatch } from './parseMatch'
 import { parseSymbol } from './parseSymbol'
 import { parseTry } from './parseTry'
 
@@ -45,8 +45,8 @@ export function parseExpression(ctx: ParserContext, precedence = 0): AstNode {
       case 'cond':
         left = parseCond(ctx, token)
         break
-      case 'switch':
-        left = parseSwitch(ctx, token)
+      case 'match':
+        left = parseMatch(ctx, token)
         break
       case 'for':
       case 'doseq':

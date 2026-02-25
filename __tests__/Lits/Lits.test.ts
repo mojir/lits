@@ -109,7 +109,7 @@ describe('all tests', () => {
 
     it('a variable - again.', () => {
       const bindings = lits.run(`
-    let zip? = (input) -> do boolean(match(input, #"^\\d{5}$")) end;
+    let zip? = (input) -> do boolean(re-match(input, #"^\\d{5}$")) end;
     let NAME_LENGTH = 100;
     {zip?: zip?, NAME_LENGTH: NAME_LENGTH}
     `) as Record<string, unknown>

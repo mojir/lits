@@ -158,6 +158,8 @@ export const bindingTargetTypes = {
   rest: 12,
   object: 13,
   array: 14,
+  literal: 15,
+  wildcard: 16,
 } as const
 
 export type BindingTargetType = typeof bindingTargetTypes[keyof typeof bindingTargetTypes]
@@ -168,8 +170,10 @@ export type SymbolBindingTarget = GenericTarget<typeof bindingTargetTypes.symbol
 export type RestBindingTarget = GenericTarget<typeof bindingTargetTypes.rest, [string, AstNode | undefined /* default value */]>
 export type ObjectBindingTarget = GenericTarget<typeof bindingTargetTypes.object, [Record<string, BindingTarget>, AstNode | undefined /* default value */]>
 export type ArrayBindingTarget = GenericTarget<typeof bindingTargetTypes.array, [(BindingTarget | null)[], AstNode | undefined /* default value */]>
+export type LiteralBindingTarget = GenericTarget<typeof bindingTargetTypes.literal, [AstNode /* literal expression */]>
+export type WildcardBindingTarget = GenericTarget<typeof bindingTargetTypes.wildcard, []>
 
-export type BindingTarget = SymbolBindingTarget | RestBindingTarget | ObjectBindingTarget | ArrayBindingTarget
+export type BindingTarget = SymbolBindingTarget | RestBindingTarget | ObjectBindingTarget | ArrayBindingTarget | LiteralBindingTarget | WildcardBindingTarget
 
 export type BindingNode = AstNode<typeof NodeTypes.Binding, [BindingTarget, AstNode]> // [target, value]
 

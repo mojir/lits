@@ -2,7 +2,7 @@ import type { Builtin } from './interface'
 import { allNormalExpressions, normalExpressions } from './normalExpressions'
 import { andSpecialExpression } from './specialExpressions/and'
 import { condSpecialExpression } from './specialExpressions/cond'
-import { switchSpecialExpression } from './specialExpressions/switch'
+import { matchSpecialExpression } from './specialExpressions/match'
 import { definedSpecialExpression } from './specialExpressions/defined'
 import { doSpecialExpression } from './specialExpressions/block'
 import { lambdaSpecialExpression } from './specialExpressions/functions'
@@ -37,7 +37,7 @@ export const specialExpressions = [
   loopSpecialExpression,
   objectSpecialExpression,
   recurSpecialExpression,
-  switchSpecialExpression,
+  matchSpecialExpression,
   throwSpecialExpression,
   trySpecialExpression,
   unlessSpecialExpression,
@@ -51,7 +51,7 @@ export type CommonSpecialExpressionType = [
   | typeof specialExpressionTypes['??']
   | typeof specialExpressionTypes['&&']
   | typeof specialExpressionTypes['cond']
-  | typeof specialExpressionTypes['switch']
+  | typeof specialExpressionTypes['match']
   | typeof specialExpressionTypes['defined?']
   | typeof specialExpressionTypes['block']
   | typeof specialExpressionTypes['if']

@@ -32,7 +32,7 @@ describe('regexp functions', () => {
             `
           let email? = (string) -> do
             boolean(
-              match(
+              re-match(
                 string,
                 #"^(?:[a-z0-9!#$%&'*+/=?^_\`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_\`{|}~-]+)*|'(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*')@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])$"))
           end;
@@ -46,7 +46,7 @@ describe('regexp functions', () => {
           lits.run(
             `
           let dot? = (string) -> do
-            boolean(match(string, #"^\\.$"))
+            boolean(re-match(string, #"^\\.$"))
           end;
           [dot?("."), dot?(",")];
           `,
@@ -55,22 +55,22 @@ describe('regexp functions', () => {
       })
     })
 
-    describe('match', () => {
+    describe('re-match', () => {
       it('samples', () => {
-        expect(lits.run('match("abc", regexp("^abc$"))')).toEqual(['abc'])
-        expect(lits.run('match("abx", regexp("^abc$"))')).toBeNull()
-        expect(lits.run('match("abc", regexp("^(a)bc$"))')).toEqual(['abc', 'a'])
-        expect(lits.run('match("abc", regexp("^(A)BC$", "i"))')).toEqual(['abc', 'a'])
-        expect(lits.run('match(null, regexp("^abc$"))')).toBeNull()
-        expect(lits.run('match(1, regexp("^abc$"))')).toBeNull()
-        expect(lits.run('match(true, regexp("^abc$"))')).toBeNull()
-        expect(lits.run('match(false, regexp("^abc$"))')).toBeNull()
-        expect(lits.run('match([], regexp("^abc$"))')).toBeNull()
-        expect(lits.run('match(object(), regexp("^abc$"))')).toBeNull()
+        expect(lits.run('re-match("abc", regexp("^abc$"))')).toEqual(['abc'])
+        expect(lits.run('re-match("abx", regexp("^abc$"))')).toBeNull()
+        expect(lits.run('re-match("abc", regexp("^(a)bc$"))')).toEqual(['abc', 'a'])
+        expect(lits.run('re-match("abc", regexp("^(A)BC$", "i"))')).toEqual(['abc', 'a'])
+        expect(lits.run('re-match(null, regexp("^abc$"))')).toBeNull()
+        expect(lits.run('re-match(1, regexp("^abc$"))')).toBeNull()
+        expect(lits.run('re-match(true, regexp("^abc$"))')).toBeNull()
+        expect(lits.run('re-match(false, regexp("^abc$"))')).toBeNull()
+        expect(lits.run('re-match([], regexp("^abc$"))')).toBeNull()
+        expect(lits.run('re-match(object(), regexp("^abc$"))')).toBeNull()
 
-        expect(() => lits.run('match(regexp("^abc$"))')).toThrow(LitsError)
-        expect(() => lits.run('match("asd")')).toThrow(LitsError)
-        expect(() => lits.run('match("x" regexp("^abc$") "x")')).toThrow(LitsError)
+        expect(() => lits.run('re-match(regexp("^abc$"))')).toThrow(LitsError)
+        expect(() => lits.run('re-match("asd")')).toThrow(LitsError)
+        expect(() => lits.run('re-match("x" regexp("^abc$") "x")')).toThrow(LitsError)
       })
     })
 

@@ -397,7 +397,7 @@ let inventory = (state) -> do
 end;
 
 let use = (state, item) -> do
-  switch item
+  match item
     case "fishing rod" then
       if state.current-location == "river" then
         [assoc(state, "moves", state.moves + 1), "You catch a small fish, but it slips away."]
@@ -485,7 +485,7 @@ let parse-command = (state, input) -> do
   let command = first(tokens);
   let args = rest(tokens) join " ";
 
-  let result = switch command
+  let result = match command
     case "go" then
       move(state, args)
     case "north" then
@@ -789,7 +789,7 @@ sort(l, numberComparer)
     description: 'Check if string is formatted as an ISO date string.',
     code: `
 let isoDateString? = (data) -> do
-  let m = data match #"^(\\d{4})-(\\d{2})-(\\d{2})$";
+  let m = data re-match #"^(\\d{4})-(\\d{2})-(\\d{2})$";
 
   if m then
     let [year, month, day] = slice(m, 1) map number;

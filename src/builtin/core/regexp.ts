@@ -46,11 +46,11 @@ export const regexpNormalExpression: BuiltinNormalExpressions = {
         'regexp("albert", "ig")',
         '#"albert"ig',
       ],
-      seeAlso: ['-short-regexp', 'match', 'replace', 'replace-all', 'regexp?'],
+      seeAlso: ['-short-regexp', 're-match', 'replace', 'replace-all', 'regexp?'],
       hideOperatorForm: true,
     },
   },
-  'match': {
+  're-match': {
     evaluate: ([text, regexp], sourceCodeInfo): string[] | null => {
       assertRegularExpression(regexp, sourceCodeInfo)
       if (!isString(text))
@@ -73,16 +73,16 @@ export const regexpNormalExpression: BuiltinNormalExpressions = {
       },
       variants: [{ argumentNames: ['a', 'b'] }],
       description: `Matches $b against regular expression $a.
-If $b is a string and matches the regular expression, a \`match\`-array is returned, otherwise \`null\` is returned.`,
+If $b is a string and matches the regular expression, a \`re-match\`-array is returned, otherwise \`null\` is returned.`,
       seeAlso: ['regexp', 'replace', 'replace-all', '-short-regexp', 'regexp?'],
       examples: [
-        'match("  A string", regexp("^\\\\s*(.*)$"))',
-        'match("  A string", #"^\\s*(.*)$")',
-        'match("My name is Albert", #"albert"i)',
-        'match("My name is Ben", #"albert"i)',
-        'match(null, #"albert"i)',
-        'match(1, #"albert"i)',
-        'match({}, #"albert"i)',
+        're-match("  A string", regexp("^\\\\s*(.*)$"))',
+        're-match("  A string", #"^\\s*(.*)$")',
+        're-match("My name is Albert", #"albert"i)',
+        're-match("My name is Ben", #"albert"i)',
+        're-match(null, #"albert"i)',
+        're-match(1, #"albert"i)',
+        're-match({}, #"albert"i)',
       ],
     },
   },
@@ -106,7 +106,7 @@ If $b is a string and matches the regular expression, a \`match\`-array is retur
       },
       variants: [{ argumentNames: ['a', 'b', 'x'] }],
       description: 'Returns a new string with first match of regular expression $b replaced by $x.',
-      seeAlso: ['replace-all', 'regexp', 'match', '-short-regexp'],
+      seeAlso: ['replace-all', 'regexp', 're-match', '-short-regexp'],
       examples: [
         'replace("Duck duck", "u", "i")',
         'replace("Duck duck", #"u", "i")',
@@ -136,7 +136,7 @@ If $b is a string and matches the regular expression, a \`match\`-array is retur
       },
       variants: [{ argumentNames: ['a', 'b', 'x'] }],
       description: 'Returns a new string with all matches of regular expression $b replaced by $x.',
-      seeAlso: ['replace', 'regexp', 'match', '-short-regexp'],
+      seeAlso: ['replace', 'regexp', 're-match', '-short-regexp'],
       examples: [
         'replace-all("Duck duck", "u", "i")',
         'replace-all("Duck duck", regexp("u"), "i")',

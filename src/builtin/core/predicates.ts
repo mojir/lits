@@ -345,7 +345,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       args: { x: { type: 'any' } },
       variants: [{ argumentNames: ['x'] }],
       description: 'Returns `true` if $x is a regexp, otherwise `false`.',
-      seeAlso: ['regexp', 'match', 'string?', 'function?'],
+      seeAlso: ['regexp', 're-match', 'string?', 'function?'],
       examples: [
         'regexp?(regexp("^start"))',
         'regexp?(#"^start")',

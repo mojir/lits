@@ -370,20 +370,20 @@ end`),
     })
   })
 
-  describe('switch', () => {
+  describe('match', () => {
     it('samples', () => {
       expect(lits.run(`
 let x = "-";
-switch x
+match x
   case "-" then 5 + 5
   case 2 then 20
 end`)).toBe(10)
-      expect(lits.run('switch true case true then 10 end')).toBe(10)
-      expect(lits.run('switch true case false then 10 end')).toBeNull()
-      expect(lits.run('switch true case false then 20 case true then 10 end')).toBe(10)
+      expect(lits.run('match true case true then 10 end')).toBe(10)
+      expect(lits.run('match true case false then 10 end')).toBeNull()
+      expect(lits.run('match true case false then 20 case true then 10 end')).toBe(10)
       expect(
         lits.run(`
-switch 2
+match 2
   case 0 then 20
   case 1 then 10
   case 2 then 15
@@ -392,8 +392,8 @@ end`),
     })
     describe('unresolvedIdentifiers', () => {
       it('samples', () => {
-        expect((lits.getUndefinedSymbols('switch foo case true then a case false then b case a > 1 then c case true then d end'))).toEqual(
-          new Set(['foo', 'a', 'b', 'c', 'd']),
+        expect((lits.getUndefinedSymbols('match foo case true then a case false then b case _ then d end'))).toEqual(
+          new Set(['foo', 'a', 'b', 'd']),
         )
       })
     })
