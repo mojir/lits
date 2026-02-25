@@ -35,10 +35,10 @@
       "import": "./dist/bundler.esm.js",
       "require": "./dist/bundler.js"
     },
-    "./modules/assert": {
-      "types": "./dist/src/modules/assert.d.ts",
-      "import": "./dist/modules/assert.esm.js",
-      "require": "./dist/modules/assert.js"
+    "./modules/assertion": {
+      "types": "./dist/src/modules/assertion.d.ts",
+      "import": "./dist/modules/assertion.esm.js",
+      "require": "./dist/modules/assertion.js"
     },
     "./modules/grid": {
       "types": "./dist/src/modules/grid.d.ts",

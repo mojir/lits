@@ -8,7 +8,7 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../src/index'
 import { Lits as LitsFull, allBuiltinModules, apiReference } from '../src/full'
-import { assertModule } from '../src/modules/assert'
+import { assertModule } from '../src/modules/assertion'
 import { gridModule } from '../src/modules/grid'
 import { randomModule } from '../src/modules/random'
 import { vectorModule } from '../src/modules/vector'
@@ -33,7 +33,7 @@ describe('minimal entry point (src/index.ts)', () => {
 
   it('should default to no modules', () => {
     const lits = new Lits()
-    expect(() => lits.run('import(assert)')).toThrow()
+    expect(() => lits.run('import(assertion)')).toThrow()
   })
 
   it('should accept individual modules passed in', () => {
@@ -54,7 +54,7 @@ describe('full entry point (src/full.ts)', () => {
 
   it('should have all modules available via allBuiltinModules', () => {
     const lits = new LitsFull({ modules: allBuiltinModules })
-    expect(lits.run('let { assert } = import(assert); assert(true)')).toBe(true)
+    expect(lits.run('let a = import(assertion); a.assert=(1, 1)')).toBe(null)
     expect(lits.run('let v = import(vector); v.stdev([1, 2, 3])')).toBeCloseTo(0.8165, 3)
     expect(lits.run('let g = import(grid); g.row([[1, 2], [3, 4]], 0)')).toEqual([1, 2])
     expect(lits.run('let nt = import(number-theory); nt.prime?(7)')).toBe(true)
@@ -78,10 +78,10 @@ describe('full entry point (src/full.ts)', () => {
 })
 
 describe('individual module entry points', () => {
-  it('assert module', () => {
-    expect(assertModule.name).toBe('assert')
+  it('assertion module', () => {
+    expect(assertModule.name).toBe('assertion')
     const lits = new Lits({ modules: [assertModule] })
-    expect(lits.run('let { assert } = import(assert); assert(true)')).toBe(true)
+    expect(lits.run('let a = import(assertion); a.assert=(1, 1)')).toBe(null)
     expect(() => lits.run('import(vector)')).toThrow()
   })
 
@@ -172,6 +172,6 @@ describe('individual module entry points', () => {
     expect(lits.run('let v = import(vector); v.stdev([1, 2, 3])')).toBeCloseTo(0.8165, 3)
     expect(lits.run('let m = import(matrix); m.det([[1, 2], [3, 4]])')).toBe(-2)
     // Other modules should not be available
-    expect(() => lits.run('import(assert)')).toThrow()
+    expect(() => lits.run('import(assertion)')).toThrow()
   })
 })

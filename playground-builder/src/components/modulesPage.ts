@@ -71,11 +71,11 @@ const moduleInfo: ModuleInfo[] = [
     ],
   },
   {
-    name: 'assert',
-    importName: 'assert',
+    name: 'assertion',
+    importName: 'assertion',
     description: 'Assertion functions for validating conditions and throwing errors.',
     examples: [
-      'let { assert } = import(assert);\ntry assert(0, "Expected a positive value") catch (e) e.message end',
+      'try assert(0, "Expected a positive value") catch (e) e.message end',
     ],
   },
   {

@@ -8,6 +8,7 @@ import type { BuiltinNormalExpressions, FunctionDocs, SpecialExpressionDocs } fr
 import { isFunctionDocs } from '../src/builtin/interface'
 
 // Core categories — all derive reference from co-located docs
+import { assertionNormalExpression } from '../src/builtin/core/assertion'
 import { bitwiseNormalExpression } from '../src/builtin/core/bitwise'
 import { arrayNormalExpression } from '../src/builtin/core/array'
 import { collectionNormalExpression } from '../src/builtin/core/collection'
@@ -23,7 +24,7 @@ import { stringNormalExpression } from '../src/builtin/core/string'
 import { vectorNormalExpression } from '../src/builtin/core/vector'
 
 // Module categories — derive reference from co-located docs
-import { assertModule } from '../src/builtin/modules/assert'
+import { assertModule } from '../src/builtin/modules/assertion'
 import { gridModule } from '../src/builtin/modules/grid'
 import { randomModule } from '../src/builtin/modules/random'
 import { vectorModule } from '../src/builtin/modules/vector'
@@ -37,7 +38,7 @@ import { mathUtilsModule } from '../src/builtin/modules/math'
 import { functionalUtilsModule } from '../src/builtin/modules/functional'
 import { bitwiseUtilsModule } from '../src/builtin/modules/bitwise'
 import { convertModule } from '../src/builtin/modules/convert'
-import type { ApiName, ArrayApiName, BitwiseApiName, Category, CollectionApiName, CoreApiName, CoreNormalExpressionName, DataType, FunctionalApiName, MathApiName, MetaApiName, MiscApiName, ModuleExpressionName, ObjectApiName, PredicateApiName, RegularExpressionApiName, SequenceApiName, StringApiName, VectorApiName } from './api'
+import type { ApiName, ArrayApiName, AssertionApiName, BitwiseApiName, Category, CollectionApiName, CoreApiName, CoreNormalExpressionName, DataType, FunctionalApiName, MathApiName, MetaApiName, MiscApiName, ModuleExpressionName, ObjectApiName, PredicateApiName, RegularExpressionApiName, SequenceApiName, StringApiName, VectorApiName } from './api'
 import { datatype } from './datatype'
 import { shorthand } from './shorthand'
 
@@ -91,6 +92,7 @@ function moduledDocsToReference(moduleName: string, expressions: BuiltinNormalEx
 }
 
 // Derive all core category references from co-located docs
+const assertionRef = docsToReference(assertionNormalExpression) as Record<AssertionApiName, FunctionReference<'assertion'>>
 const bitwiseReference = docsToReference(bitwiseNormalExpression) as Record<BitwiseApiName, FunctionReference<'bitwise'>>
 const arrayRef = docsToReference(arrayNormalExpression) as Record<ArrayApiName, FunctionReference<'array'>>
 const collectionRef = docsToReference(collectionNormalExpression) as Record<CollectionApiName, FunctionReference<'collection'>>
@@ -212,6 +214,7 @@ export function isDatatypeReference<T extends Category>(ref: Reference<T>): ref 
 
 export const normalExpressionReference: Record<CoreNormalExpressionName, FunctionReference> = {
   // Core categories — all derived from co-located docs
+  ...assertionRef,
   ...bitwiseReference,
   ...collectionRef,
   ...arrayRef,

@@ -1,7 +1,7 @@
 // @include broken-plus-lib.lits
 // @include success-program-using-plus.lits
 
-let { assert= } = import(assert);
+let { assert= } = import(assertion);
 
 // Setup code
 let one = 1;

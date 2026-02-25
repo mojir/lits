@@ -53,7 +53,7 @@ export const categoryRecord = {
   'bitwise': true,
   'misc': true,
   'meta': true,
-  'assert': true,
+  'assertion': true,
   'vector': true,
   'linear-algebra': true,
   'matrix': true,
@@ -70,10 +70,10 @@ export type Category = keyof typeof categoryRecord
 export const categories = Object.keys(categoryRecord) as Category[]
 
 // Categories that are modules (require import)
-export const moduleCategories: Category[] = ['assert', 'bitwise', 'collection', 'convert', 'functional', 'grid', 'linear-algebra', 'math', 'matrix', 'number-theory', 'random', 'sequence', 'string', 'vector']
+export const moduleCategories: Category[] = ['assertion', 'bitwise', 'collection', 'convert', 'functional', 'grid', 'linear-algebra', 'math', 'matrix', 'number-theory', 'random', 'sequence', 'string', 'vector']
 
 // Core categories (always available) — special-expression first, rest alphabetical
-export const coreCategories: Category[] = ['special-expression', 'array', 'bitwise', 'collection', 'datatype', 'functional', 'math', 'meta', 'misc', 'object', 'predicate', 'regular-expression', 'sequence', 'shorthand', 'string', 'vector']
+export const coreCategories: Category[] = ['special-expression', 'array', 'assertion', 'bitwise', 'collection', 'datatype', 'functional', 'math', 'meta', 'misc', 'object', 'predicate', 'regular-expression', 'sequence', 'shorthand', 'string', 'vector']
 
 // --- FunctionDocs types ---
 

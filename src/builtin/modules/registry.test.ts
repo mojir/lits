@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { Lits } from '../../Lits/Lits'
 import type { BuiltinNormalExpressions } from '../../builtin/interface'
 import { allBuiltinModules } from '../../allModules'
-import { assertModule } from './assert'
+import { assertModule } from './assertion'
 import { gridModule } from './grid'
 import type { LitsModule } from './interface'
 import { vectorModule } from './vector'
@@ -13,7 +13,7 @@ describe('module registration', () => {
       const lits = new Lits()
       expect(() => lits.run('import(vector)')).toThrow('Unknown module')
       expect(() => lits.run('import(grid)')).toThrow('Unknown module')
-      expect(() => lits.run('import(assert)')).toThrow('Unknown module')
+      expect(() => lits.run('import(assertion)')).toThrow('Unknown module')
     })
   })
 
@@ -22,7 +22,7 @@ describe('module registration', () => {
       const lits = new Lits({ modules: allBuiltinModules })
       expect(lits.run('let v = import(vector); v.stdev([1, 2, 3])')).toBeCloseTo(0.8165, 3)
       expect(lits.run('let g = import(grid); g.row([[1, 2], [3, 4]], 0)')).toEqual([1, 2])
-      expect(lits.run('let { assert } = import(assert); assert(true)')).toBe(true)
+      expect(lits.run('let a = import(assertion); a.assert=(1, 1)')).toBe(null)
     })
   })
 
@@ -31,7 +31,7 @@ describe('module registration', () => {
       const lits = new Lits({ modules: [vectorModule] })
       expect(lits.run('let v = import(vector); v.stdev([1, 2, 3])')).toBeCloseTo(0.8165, 3)
       expect(() => lits.run('import(grid)')).toThrow('Unknown module')
-      expect(() => lits.run('import(assert)')).toThrow('Unknown module')
+      expect(() => lits.run('import(assertion)')).toThrow('Unknown module')
     })
 
     it('should support empty modules list', () => {
@@ -43,8 +43,7 @@ describe('module registration', () => {
     it('should support multiple selected modules', () => {
       const lits = new Lits({ modules: [gridModule, assertModule] })
       expect(lits.run('let g = import(grid); g.row([[1, 2], [3, 4]], 0)')).toEqual([1, 2])
-      expect(lits.run('let { assert } = import(assert); assert(true)')).toBe(true)
-      expect(() => lits.run('import(vector)')).toThrow('Unknown module')
+      expect(lits.run('let a = import(assertion); a.assert=(1, 1)')).toBe(null)
     })
   })
 

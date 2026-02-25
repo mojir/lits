@@ -256,35 +256,37 @@ export const api = {
     'bitwise.bit-set',
     'bitwise.bit-test',
   ] as const,
-  assert: [
-    'assert.assert',
-    'assert.assert=',
-    'assert.assert!=',
-    'assert.assert-gt',
-    'assert.assert-lt',
-    'assert.assert-gte',
-    'assert.assert-lte',
-    'assert.assert-true',
-    'assert.assert-false',
-    'assert.assert-truthy',
-    'assert.assert-falsy',
-    'assert.assert-null',
-    'assert.assert-throws',
-    'assert.assert-throws-error',
-    'assert.assert-not-throws',
-    'assert.assert-array',
-    'assert.assert-boolean',
-    'assert.assert-collection',
-    'assert.assert-function',
-    'assert.assert-grid',
-    'assert.assert-integer',
-    'assert.assert-matrix',
-    'assert.assert-number',
-    'assert.assert-object',
-    'assert.assert-regexp',
-    'assert.assert-sequence',
-    'assert.assert-string',
-    'assert.assert-vector',
+  assertion: [
+    'assert',
+  ] as const,
+  assertionUtils: [
+    'assertion.assert=',
+    'assertion.assert!=',
+    'assertion.assert-gt',
+    'assertion.assert-lt',
+    'assertion.assert-gte',
+    'assertion.assert-lte',
+    'assertion.assert-true',
+    'assertion.assert-false',
+    'assertion.assert-truthy',
+    'assertion.assert-falsy',
+    'assertion.assert-null',
+    'assertion.assert-throws',
+    'assertion.assert-throws-error',
+    'assertion.assert-not-throws',
+    'assertion.assert-array',
+    'assertion.assert-boolean',
+    'assertion.assert-collection',
+    'assertion.assert-function',
+    'assertion.assert-grid',
+    'assertion.assert-integer',
+    'assertion.assert-matrix',
+    'assertion.assert-number',
+    'assertion.assert-object',
+    'assertion.assert-regexp',
+    'assertion.assert-sequence',
+    'assertion.assert-string',
+    'assertion.assert-vector',
   ] as const,
   grid: [
     'grid.cell-every?',
@@ -1118,7 +1120,8 @@ export type CollectionUtilsApiName = typeof api.collectionUtils[number]
 export type SequenceUtilsApiName = typeof api.sequenceUtils[number]
 export type BitwiseApiName = typeof api.bitwise[number]
 export type BitwiseUtilsApiName = typeof api.bitwiseUtils[number]
-export type AssertApiName = typeof api.assert[number]
+export type AssertionApiName = typeof api.assertion[number]
+export type AssertionUtilsApiName = typeof api.assertionUtils[number]
 export type GridApiName = typeof api.grid[number]
 export type MatrixApiName = typeof api.matrix[number]
 export type NumberTheoryApiName = typeof api.numberTheory[number]
@@ -1145,6 +1148,7 @@ export type CoreNormalExpressionName =
   | StringApiName
   | BitwiseApiName
   | VectorApiName
+  | AssertionApiName
 
 // Module functions - require import()
 export type ModuleExpressionName =
@@ -1156,7 +1160,7 @@ export type ModuleExpressionName =
   | RandomApiName
   | MathUtilsApiName
   | FunctionalUtilsApiName
-  | AssertApiName
+  | AssertionUtilsApiName
   | StringUtilsApiName
   | CollectionUtilsApiName
   | SequenceUtilsApiName
@@ -1189,6 +1193,7 @@ const coreApiFunctionNames = [
   ...api.string,
   ...api.bitwise,
   ...api.vector,
+  ...api.assertion,
 ] as const
 
 // Module API function names (require import())
@@ -1201,7 +1206,7 @@ const moduleApiFunctionNames = [
   ...api.random,
   ...api.mathUtils,
   ...api.functionalUtils,
-  ...api.assert,
+  ...api.assertionUtils,
   ...api.stringUtils,
   ...api.collectionUtils,
   ...api.sequenceUtils,

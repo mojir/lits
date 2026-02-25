@@ -534,6 +534,12 @@ map([1, 2, 3], -> $ ^ 2)     // => [1, 4, 9]
 | `doc(fn)` | Return documentation string |
 | `arity(fn)` | Return `{min, max}` arity object |
 
+### Assertion (core)
+
+| Function | Description |
+|----------|-------------|
+| `assert(value, message?)` | Assert value is truthy, throw on failure |
+
 ### Bitwise (core)
 
 | Function | Description |
@@ -587,7 +593,7 @@ sin(PI)
 
 **number-theory**: `coprime?`, `divisible-by?`, `gcd`, `lcm`, `multinomial`, `amicable?`, `euler-totient`, `mobius`, `mertens`, `sigma`, `carmichael-lambda`, `cartesian-product`, `perfect-power`, `mod-exp`, `mod-inv`, `extended-gcd`, `chinese-remainder`, `stirling-first`, `stirling-second`
 
-**assert**: `assert`, `assert=`, `assert!=`, `assert-gt`, `assert-gte`, `assert-lt`, `assert-lte`, `assert-true`, `assert-false`, `assert-truthy`, `assert-falsy`, `assert-null`, `assert-throws`, `assert-throws-error`, `assert-not-throws`, `assert-array`, `assert-boolean`, `assert-collection`, `assert-function`, `assert-grid`, `assert-integer`, `assert-matrix`, `assert-number`, `assert-object`, `assert-regexp`, `assert-sequence`, `assert-string`, `assert-vector`
+**assertion**: `assert=`, `assert!=`, `assert-gt`, `assert-gte`, `assert-lt`, `assert-lte`, `assert-true`, `assert-false`, `assert-truthy`, `assert-falsy`, `assert-null`, `assert-throws`, `assert-throws-error`, `assert-not-throws`, `assert-array`, `assert-boolean`, `assert-collection`, `assert-function`, `assert-grid`, `assert-integer`, `assert-matrix`, `assert-number`, `assert-object`, `assert-regexp`, `assert-sequence`, `assert-string`, `assert-vector`
 
 ---
 

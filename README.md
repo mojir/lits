@@ -1514,7 +1514,7 @@ import { matrixModule } from '@mojir/lits/modules/matrix';
 import { linearAlgebraModule } from '@mojir/lits/modules/linearAlgebra';
 import { gridModule } from '@mojir/lits/modules/grid';
 import { randomModule } from '@mojir/lits/modules/random';
-import { assertModule } from '@mojir/lits/modules/assert';
+import { assertModule } from '@mojir/lits/modules/assertion';
 import { numberTheoryModule } from '@mojir/lits/modules/numberTheory';
 ```
 

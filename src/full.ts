@@ -14,7 +14,7 @@ export * from './index'
 export { allBuiltinModules } from './allModules'
 
 // Individual module re-exports
-export { assertModule } from './builtin/modules/assert'
+export { assertModule } from './builtin/modules/assertion'
 export { gridModule } from './builtin/modules/grid'
 export { randomModule } from './builtin/modules/random'
 export { vectorModule } from './builtin/modules/vector'

@@ -4,6 +4,7 @@ import type { FunctionReference } from '../../../reference'
 import type { CoreNormalExpressionName } from '../../../reference/api'
 
 // Core categories - always available
+import { assertionNormalExpression } from '../core/assertion'
 import { bitwiseNormalExpression } from '../core/bitwise'
 import { collectionNormalExpression } from '../core/collection'
 import { arrayNormalExpression } from '../core/array'
@@ -26,6 +27,7 @@ export function setNormalExpressionReference(reference: Record<CoreNormalExpress
 
 const expressions: BuiltinNormalExpressions = {
   // Core categories
+  ...assertionNormalExpression,
   ...bitwiseNormalExpression,
   ...collectionNormalExpression,
   ...arrayNormalExpression,

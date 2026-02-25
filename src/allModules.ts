@@ -1,5 +1,5 @@
 import type { LitsModule } from './builtin/modules/interface'
-import { assertModule } from './builtin/modules/assert'
+import { assertModule } from './builtin/modules/assertion'
 import { gridModule } from './builtin/modules/grid'
 import { randomModule } from './builtin/modules/random'
 import { vectorModule } from './builtin/modules/vector'
