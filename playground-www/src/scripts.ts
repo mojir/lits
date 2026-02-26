@@ -100,6 +100,49 @@ export function closeMoreMenu() {
   elements.moreMenu.style.display = 'none'
 }
 
+const expandedCoreCategories = new Set<string>()
+
+let tutorialsExpanded = false
+
+export function toggleTutorials() {
+  const chevron = document.getElementById('tutorial-chevron')
+  const content = document.getElementById('tutorial-content')
+
+  if (!chevron || !content)
+    return
+
+  if (tutorialsExpanded) {
+    tutorialsExpanded = false
+    content.style.display = 'none'
+    chevron.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M10 6L8.59 7.41L13.17 12l-4.58 4.59L10 18l6-6z"/></svg>'
+  }
+  else {
+    tutorialsExpanded = true
+    content.style.display = 'flex'
+    chevron.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6l-6-6z"/></svg>'
+  }
+}
+
+export function toggleCoreCategory(categoryKey: string) {
+  const sanitizedKey = categoryKey.replace(/\s+/g, '-')
+  const chevron = document.getElementById(`core-chevron-${sanitizedKey}`)
+  const content = document.getElementById(`core-content-${sanitizedKey}`)
+
+  if (!chevron || !content)
+    return
+
+  if (expandedCoreCategories.has(categoryKey)) {
+    expandedCoreCategories.delete(categoryKey)
+    content.style.display = 'none'
+    chevron.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M10 6L8.59 7.41L13.17 12l-4.58 4.59L10 18l6-6z"/></svg>'
+  }
+  else {
+    expandedCoreCategories.add(categoryKey)
+    content.style.display = 'flex'
+    chevron.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6l-6-6z"/></svg>'
+  }
+}
+
 const expandedModules = new Set<string>()
 
 export function toggleModuleCategory(categoryKey: string) {
@@ -1015,8 +1058,7 @@ export function showPage(id: string, scroll: 'smooth' | 'instant' | 'none', hist
     const linkElementId = `${(!id || id === 'index') ? 'home-page' : id}_link`
     const link = document.getElementById(linkElementId)
 
-    if (!id || id === 'index' || id === 'example-page')
-      elements.mainPanel.scrollTo({ top: 0 })
+    elements.mainPanel.scrollTo({ top: 0 })
 
     if (!page) {
       showPage('index', scroll, 'replace')
@@ -1026,6 +1068,19 @@ export function showPage(id: string, scroll: 'smooth' | 'instant' | 'none', hist
     page.classList.add('active-content')
     if (link) {
       link.classList.add('active-sidebar-entry')
+
+      // If the link is inside a collapsed tutorial section, expand it first
+      const tutorialContent = link.closest('#tutorial-content')
+      if (tutorialContent && tutorialContent instanceof HTMLElement && tutorialContent.style.display === 'none') {
+        toggleTutorials()
+      }
+
+      // If the link is inside a collapsed core section, expand it first
+      const coreContent = link.closest('[id^="core-content-"]')
+      if (coreContent && coreContent instanceof HTMLElement && coreContent.style.display === 'none') {
+        const categoryKey = coreContent.id.replace('core-content-', '').replace(/-/g, ' ')
+        toggleCoreCategory(categoryKey)
+      }
 
       // If the link is inside a collapsed module section, expand it first
       const nsContent = link.closest('[id^="ns-content-"]')

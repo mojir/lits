@@ -10,6 +10,9 @@ import { allBuiltinModules } from '../src/allModules'
 import { specialExpressionTypes } from '../src/builtin/specialExpressionTypes'
 import { type ApiName, categories, isApiName } from '../reference/api'
 import '../src/initReferenceData'
+import { corePageExamples } from '../playground-builder/src/components/corePage'
+import { moduleExamples } from '../playground-builder/src/components/modulesPage'
+import { getExamples, tutorials } from '../playground-builder/src/components/tutorials'
 
 const lits = new Lits({ modules: allBuiltinModules })
 describe('apiReference', () => {
@@ -265,5 +268,34 @@ describe('allReference type consistency', () => {
       expect(typeof ref.description, `"${key}" description`).toBe('string')
       expect(Array.isArray(ref.examples), `"${key}" examples`).toBe(true)
     }
+  })
+})
+
+describe('corePageExamples', () => {
+  corePageExamples.forEach((example, index) => {
+    it(`example ${index + 1}: ${example}`, () => {
+      expect(() => lits.run(example), `Core page example ${index + 1}`).not.toThrow()
+    })
+  })
+})
+
+describe('modulePageExamples', () => {
+  moduleExamples.forEach((example, index) => {
+    it(`example ${index + 1}: ${example}`, () => {
+      expect(() => lits.run(example), `Module page example ${index + 1}`).not.toThrow()
+    })
+  })
+})
+
+describe('tutorialExamples', () => {
+  tutorials.forEach((tutorial) => {
+    describe(tutorial.title, () => {
+      getExamples(tutorial).forEach((codeLines, index) => {
+        const example = codeLines.join('\n')
+        it(`example ${index + 1}: ${example}`, () => {
+          expect(() => lits.run(example), `${tutorial.title} example ${index + 1}`).not.toThrow()
+        })
+      })
+    })
   })
 })

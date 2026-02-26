@@ -1,8 +1,9 @@
 import type { Reference } from '../../../reference'
 import { apiReference, getLinkName, moduleReference } from '../../../reference'
 import { coreCategories, moduleCategories } from '../../../reference/api'
-import { chevronRightIcon, homeIcon, lampIcon, packageIcon, searchIcon } from '../icons'
+import { chevronRightIcon, homeIcon, lampIcon, searchIcon } from '../icons'
 import { styles } from '../styles'
+import { tutorials } from './tutorials'
 
 export function getSideBar() {
   const categoryCollections = Object.values(apiReference).reduce((result: Record<string, Reference[]>, obj) => {
@@ -20,10 +21,17 @@ export function getSideBar() {
   const renderCategory = (categoryKey: string, collections: Record<string, Reference[]>) => {
     return `
       <div ${styles('flex', 'flex-col', 'gap-1')}>
-        <div ${styles('text-color-gray-200')}>
-          ${categoryKey}
+        <div 
+          ${styles('text-color-gray-200', 'flex', 'items-center', 'gap-1', 'cursor-pointer')}
+          onclick="Playground.toggleCoreCategory('${categoryKey}')"
+        >
+          <span id="core-chevron-${categoryKey}" class="core-chevron">${chevronRightIcon}</span>
+          <span>${categoryKey}</span>
         </div>
-        <div ${styles('flex', 'flex-col', 'ml-2', 'text-color-gray-400', 'text-base')}>
+        <div 
+          id="core-content-${categoryKey.replace(/\s+/g, '-')}" 
+          ${styles('flex-col', 'ml-2', 'text-color-gray-400', 'text-base', 'display: none;')}
+        >
           ${
             collections[categoryKey]
               ? collections[categoryKey]
@@ -110,21 +118,30 @@ export function getSideBar() {
         <span>Examples</span>
       </a>
     </div>
-    <div id='modules-page_link' onclick="Playground.showPage('modules-page', 'smooth')" ${styles('flex', 'mb-2', 'text-color-gray-400', 'text-base', 'cursor-pointer')}>
-      <a ${styles('flex', 'items-center', 'gap-1')} class="link">
-        ${packageIcon}
-        <span>Modules</span>
-      </a>
+    <!-- Tutorials (Collapsible) -->
+    <div ${styles('flex', 'flex-col', 'gap-2', 'my-4')}>
+      <div 
+        ${styles('text-color-gray-300', 'text-base', 'font-bold', 'mb-1', 'cursor-pointer', 'flex', 'items-center', 'gap-1')}
+        onclick="Playground.toggleTutorials()"
+      >
+        <span id="tutorial-chevron">${chevronRightIcon}</span>
+        <span>Tutorials</span>
+      </div>
+      <div id="tutorial-content" ${styles('flex-col', 'ml-2', 'text-color-gray-400', 'text-base', 'display: none;')}>
+        ${tutorials.map(t => `<a id="${t.id}_link" ${styles('scroll-my-2', 'pl-2')} onclick="Playground.showPage('${t.id}', 'smooth')">${t.title}</a>`).join('\n')}
+      </div>
     </div>
-
-    <!-- Core Categories -->
-    <div ${styles('flex', 'flex-col', 'gap-4', 'my-4')}>
-      ${coreCategories.map(categoryKey => renderCategory(categoryKey, categoryCollections)).join('\n')}
+    <!-- Core Categories (Collapsible) -->
+    <div ${styles('flex', 'flex-col', 'gap-2', 'my-4')}>
+      <div id='core-page_link' ${styles('text-color-gray-300', 'text-base', 'font-bold', 'mb-1', 'cursor-pointer')} onclick="Playground.showPage('core-page', 'smooth')">Core reference</div>
+      <div ${styles('flex', 'flex-col', 'gap-2')}>
+        ${coreCategories.map(categoryKey => renderCategory(categoryKey, categoryCollections)).join('\n')}
+      </div>
     </div>
 
     <!-- Module Categories (Collapsible) -->
     <div ${styles('flex', 'flex-col', 'gap-2', 'my-4', 'border-t', 'border-gray-700', 'pt-4')}>
-      <div ${styles('text-color-gray-300', 'text-sm', 'font-bold', 'mb-2')}>Modules</div>
+      <div id='modules-page_link' ${styles('text-color-gray-300', 'text-base', 'font-bold', 'mb-1', 'cursor-pointer')} onclick="Playground.showPage('modules-page', 'smooth')">Module reference</div>
       <div ${styles('flex', 'flex-col', 'gap-2')}>
         ${moduleCategories.map(categoryKey => renderModuleCategory(categoryKey)).join('\n')}
       </div>
