@@ -16,7 +16,7 @@ const plugins = [
 module.exports = [
   {
     input: 'playground-builder/src/buildPlaygroundSite.ts',
-    external: ['node:fs', 'node:path'],
+    external: ['node:fs', 'node:path', 'node:process', 'node:child_process', 'node:os'],
     output: [
       {
         file: 'playground-builder/build/buildPlaygroundSite.js',

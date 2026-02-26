@@ -3,7 +3,7 @@ import { apiReference, getLinkName, moduleReference } from '../../../reference'
 import { coreCategories, moduleCategories } from '../../../reference/api'
 import { chevronRightIcon, homeIcon, lampIcon, searchIcon } from '../icons'
 import { styles } from '../styles'
-import { tutorials } from './tutorials'
+import { isTutorialFolder, tutorialItems } from './tutorials'
 
 export function getSideBar() {
   const categoryCollections = Object.values(apiReference).reduce((result: Record<string, Reference[]>, obj) => {
@@ -128,7 +128,19 @@ export function getSideBar() {
         <span>Tutorials</span>
       </div>
       <div id="tutorial-content" ${styles('flex-col', 'ml-2', 'text-color-gray-400', 'text-base', 'display: none;')}>
-        ${tutorials.map(t => `<a id="${t.id}_link" ${styles('scroll-my-2', 'pl-2')} onclick="Playground.showPage('${t.id}', 'smooth')">${t.title}</a>`).join('\n')}
+        ${tutorialItems.map((item) => {
+          if (isTutorialFolder(item)) {
+            return `
+              <div ${styles('flex', 'flex-col', 'gap-0')}>
+                <div ${styles('scroll-my-2', 'pl-2', 'text-color-gray-300')}>${item.title}</div>
+                <div ${styles('flex', 'flex-col', 'ml-4')}>
+                  ${item.entries.map(e => `<a id="${e.id}_link" ${styles('scroll-my-2', 'pl-2')} onclick="Playground.showPage('${e.id}', 'smooth')">${e.title}</a>`).join('\n')}
+                </div>
+              </div>
+            `
+          }
+          return `<a id="${item.id}_link" ${styles('scroll-my-2', 'pl-2')} onclick="Playground.showPage('${item.id}', 'smooth')">${item.title}</a>`
+        }).join('\n')}
       </div>
     </div>
     <!-- Core Categories (Collapsible) -->

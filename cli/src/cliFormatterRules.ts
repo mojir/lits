@@ -181,27 +181,6 @@ export function getLitsFormatter(fmt: Colorizer) {
   return createFormatter(getLitsExpressionRules(fmt))
 }
 
-function getInlineLitsExpressionRule(fmt: Colorizer): FormatterRule {
-  return (text, index) => {
-    if (text.slice(index, index + 2) === '``') {
-      let count = 2
-      let body = ''
-
-      while (index + count < text.length && text.slice(index + count, index + count + 2) !== '``') {
-        body += text[index + count]
-        count += 1
-      }
-      if (text.slice(index + count, index + count + 2) !== '``')
-        throw new Error(`No end \` found for rule inlineLitsCodeRule: ${text}`)
-
-      count += 2
-      const formattedText = getLitsFormatter(fmt)(body)
-      return { count, formattedText }
-    }
-    return { count: 0, formattedText: '' }
-  }
-}
-
 const italicRule = createRule({
   name: 'italic',
   startPattern: /^\*\*\*/,
@@ -220,7 +199,6 @@ const boldRule = createRule({
 
 export function getMdRules(fmt: Colorizer): FormatterRule[] {
   return [
-    getInlineLitsExpressionRule(fmt),
     getInlineCodeRule(fmt),
     italicRule,
     boldRule,

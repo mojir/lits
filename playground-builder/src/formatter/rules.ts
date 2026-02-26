@@ -5,6 +5,7 @@ import { Lits } from '../../../src/Lits/Lits'
 import { allBuiltinModules } from '../../../src/allModules'
 import type { Token } from '../../../src/tokenizer/token'
 import { normalExpressionKeys, specialExpressionKeys } from '../../../src/builtin'
+import { allReference, getLinkName } from '../../../reference'
 
 export type FormatterRule = (text: string, index: number, formatter: TextFormatter) => {
   count: number
@@ -146,25 +147,6 @@ function getStylesFromToken(token: Token): string {
   }
 }
 
-const inlineLitsExpressionRule: FormatterRule = (text, index) => {
-  if (text.slice(index, index + 2) === '``') {
-    let count = 2
-    let body = ''
-
-    while (index + count < text.length && text.slice(index + count, index + count + 2) !== '``') {
-      body += text[index + count]
-      count += 1
-    }
-    if (text.slice(index + count, index + count + 2) !== '``')
-      throw new Error(`No end \` found for rule inlineLitsCodeRule: ${text}`)
-
-    count += 2
-    const formattedText = formatLitsExpression(body)
-    return { count, formattedText }
-  }
-  return { count: 0, formattedText: '' }
-}
-
 const italicRule = createRule({
   name: 'italic',
   startPattern: /^\*\*\*/,
@@ -202,8 +184,54 @@ const paragraphRule = createRule({
   endTag: '</div>',
 })
 
+const internalLinkRule: FormatterRule = (text, index) => {
+  const match = /^\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/.exec(text.slice(index))
+  if (match) {
+    const target = match[1]!
+    const displayText = match[2]
+    const reference = allReference[target as keyof typeof allReference]
+    if (reference) {
+      const linkName = getLinkName(reference)
+      const label = displayText ?? target
+      const formattedText = `<a onclick="Playground.showPage('${linkName}', 'smooth')">${label}</a>`
+      return { count: match[0].length, formattedText }
+    }
+    else {
+      // Treat target as a raw page ID (e.g. tutorial-getting-started, example-page, index)
+      const label = displayText ?? target
+      const formattedText = `<a onclick="Playground.showPage('${target}', 'smooth')">${label}</a>`
+      return { count: match[0].length, formattedText }
+    }
+  }
+  return { count: 0, formattedText: '' }
+}
+
+const imageRule: FormatterRule = (text, index) => {
+  const match = /^!\[([^\]]*)\]\(([^)]+)\)/.exec(text.slice(index))
+  if (match) {
+    const alt = match[1]!
+    const src = match[2]!
+    const formattedText = `<img src="${src}" alt="${alt}" style="max-width: 100%;">`
+    return { count: match[0].length, formattedText }
+  }
+  return { count: 0, formattedText: '' }
+}
+
+const externalLinkRule: FormatterRule = (text, index) => {
+  const match = /^\[([^\]]+)\]\(([^)]+)\)/.exec(text.slice(index))
+  if (match) {
+    const linkText = match[1]!
+    const url = match[2]!
+    const formattedText = `<a class="external-links" href="${url}" target="_blank">${linkText}</a>`
+    return { count: match[0].length, formattedText }
+  }
+  return { count: 0, formattedText: '' }
+}
+
 export const mdRules: FormatterRule[] = [
-  inlineLitsExpressionRule,
+  imageRule,
+  internalLinkRule,
+  externalLinkRule,
   inlineCodeRule,
   italicRule,
   boldRule,

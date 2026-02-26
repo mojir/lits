@@ -299,3 +299,11 @@ describe('tutorialExamples', () => {
     })
   })
 })
+
+describe('tutorial IDs', () => {
+  it('should have unique IDs across all tutorials', () => {
+    const ids = tutorials.map(t => t.id)
+    const duplicates = ids.filter((id, index) => ids.indexOf(id) !== index)
+    expect(duplicates, `Duplicate tutorial IDs found: ${duplicates.join(', ')}`).toEqual([])
+  })
+})
