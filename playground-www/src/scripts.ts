@@ -21,6 +21,7 @@ import {
   setLitsCodeHistoryListener,
   undoContext,
   undoLitsCode,
+  updateState,
 } from './state'
 import { isMac, throttle } from './utils'
 
@@ -198,7 +199,7 @@ function onDocumentClick(event: Event) {
     closeAddContextMenu()
 }
 
-const layout = throttle(() => {
+function applyLayout() {
   const { windowWidth, windowHeight } = calculateDimensions()
 
   const playgroundHeight = Math.min(getState('playground-height'), windowHeight)
@@ -214,7 +215,9 @@ const layout = throttle(() => {
   elements.sidebar.style.bottom = `${playgroundHeight}px`
   elements.mainPanel.style.bottom = `${playgroundHeight}px`
   elements.wrapper.style.display = 'block'
-})
+}
+
+const layout = throttle(applyLayout)
 
 export const undoContextHistory = throttle(() => {
   ignoreSelectionChange = true
@@ -484,6 +487,8 @@ window.onload = function () {
   document.addEventListener('click', onDocumentClick, true)
 
   elements.resizePlayground.onmousedown = (event) => {
+    event.preventDefault()
+    document.body.classList.add('no-select')
     moveParams = {
       id: 'playground',
       startMoveY: event.clientY,
@@ -492,6 +497,8 @@ window.onload = function () {
   }
 
   elements.resizeDevider1.onmousedown = (event) => {
+    event.preventDefault()
+    document.body.classList.add('no-select')
     moveParams = {
       id: 'resize-divider-1',
       startMoveX: event.clientX,
@@ -500,6 +507,8 @@ window.onload = function () {
   }
 
   elements.resizeDevider2.onmousedown = (event) => {
+    event.preventDefault()
+    document.body.classList.add('no-select')
     moveParams = {
       id: 'resize-divider-2',
       startMoveX: event.clientX,
@@ -510,6 +519,14 @@ window.onload = function () {
   window.onresize = layout
   window.onmouseup = () => {
     document.body.classList.remove('no-select')
+    if (moveParams !== null) {
+      if (moveParams.id === 'playground')
+        saveState({ 'playground-height': getState('playground-height') }, false)
+      else if (moveParams.id === 'resize-divider-1')
+        saveState({ 'resize-divider-1-percent': getState('resize-divider-1-percent') }, false)
+      else if (moveParams.id === 'resize-divider-2')
+        saveState({ 'resize-divider-2-percent': getState('resize-divider-2-percent') }, false)
+    }
     moveParams = null
   }
 
@@ -517,8 +534,6 @@ window.onload = function () {
     const { windowHeight, windowWidth } = calculateDimensions()
     if (moveParams === null)
       return
-
-    document.body.classList.add('no-select')
 
     if (moveParams.id === 'playground') {
       let playgroundHeight = moveParams.heightBeforeMove + moveParams.startMoveY - event.clientY
@@ -528,8 +543,8 @@ window.onload = function () {
       if (playgroundHeight > windowHeight)
         playgroundHeight = windowHeight
 
-      saveState({ 'playground-height': playgroundHeight })
-      layout()
+      updateState({ 'playground-height': playgroundHeight })
+      applyLayout()
     }
     else if (moveParams.id === 'resize-divider-1') {
       let resizeDivider1XPercent
@@ -540,8 +555,8 @@ window.onload = function () {
       if (resizeDivider1XPercent > getState('resize-divider-2-percent') - 10)
         resizeDivider1XPercent = getState('resize-divider-2-percent') - 10
 
-      saveState({ 'resize-divider-1-percent': resizeDivider1XPercent })
-      layout()
+      updateState({ 'resize-divider-1-percent': resizeDivider1XPercent })
+      applyLayout()
     }
     else if (moveParams.id === 'resize-divider-2') {
       let resizeDivider2XPercent
@@ -552,8 +567,8 @@ window.onload = function () {
       if (resizeDivider2XPercent > 90)
         resizeDivider2XPercent = 90
 
-      saveState({ 'resize-divider-2-percent': resizeDivider2XPercent })
-      layout()
+      updateState({ 'resize-divider-2-percent': resizeDivider2XPercent })
+      applyLayout()
     }
   }
 

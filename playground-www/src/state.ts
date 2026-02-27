@@ -79,6 +79,13 @@ export function setLitsCodeHistoryListener(listener: (status: HistoryStatus) => 
   litsCodeHistoryListener = listener
 }
 
+export function updateState(newState: Partial<State>) {
+  Object.entries(newState).forEach((entry) => {
+    const key = entry[0] as keyof State
+    setState(key, entry[1])
+  })
+}
+
 export function saveState(newState: Partial<State>, pushToHistory = true) {
   Object.entries(newState).forEach((entry) => {
     const key = entry[0] as keyof State
