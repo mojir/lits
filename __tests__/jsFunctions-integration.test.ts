@@ -1,46 +1,20 @@
 import { describe, expect, it } from 'vitest'
-import { type JsFunction, Lits } from '../src/Lits/Lits'
+import { Lits } from '../src/Lits/Lits'
 
 describe('jsFunctions integration', () => {
-  const syncJsFunctions: Record<string, JsFunction> = {
-    jsAdd: {
-      fn: (a: number, b: number) => a + b,
-      arity: { min: 2, max: 2 },
-    },
-    jsGreet: {
-      fn: (name: string) => `Hello, ${name}!`,
-      arity: { min: 1, max: 1 },
-    },
-    jsDouble: {
-      fn: (x: number) => x * 2,
-      arity: { min: 1, max: 1 },
-    },
-    jsAddAll: {
-      fn: (...args: number[]) => args.reduce((a, b) => a + b, 0),
-    },
-    jsId: {
-      fn: (x: unknown) => x,
-      arity: { min: 1, max: 1 },
-    },
+  const syncJsFunctions = {
+    jsAdd: (a: number, b: number) => a + b,
+    jsGreet: (name: string) => `Hello, ${name}!`,
+    jsDouble: (x: number) => x * 2,
+    jsAddAll: (...args: number[]) => args.reduce((a, b) => a + b, 0),
+    jsId: (x: unknown) => x,
   }
 
-  const asyncJsFunctions: Record<string, JsFunction> = {
-    fetchValue: {
-      fn: async (x: number) => x * 10,
-      arity: { min: 1, max: 1 },
-    },
-    asyncAdd: {
-      fn: async (a: number, b: number) => a + b,
-      arity: { min: 2, max: 2 },
-    },
-    asyncGreet: {
-      fn: async (name: string) => `Hi, ${name}!`,
-      arity: { min: 1, max: 1 },
-    },
-    asyncFail: {
-      fn: async () => { throw new Error('async failure') },
-      arity: { min: 0, max: 0 },
-    },
+  const asyncJsFunctions = {
+    fetchValue: async (x: number) => x * 10,
+    asyncAdd: async (a: number, b: number) => a + b,
+    asyncGreet: async (name: string) => `Hi, ${name}!`,
+    asyncFail: async () => { throw new Error('async failure') },
   }
 
   const allJsFunctions = { ...syncJsFunctions, ...asyncJsFunctions }
@@ -81,9 +55,9 @@ describe('jsFunctions integration', () => {
     })
 
     it('should use JS function with filter', () => {
-      const jsFunctions: Record<string, JsFunction> = {
+      const jsFunctions = {
         ...syncJsFunctions,
-        isEven: { fn: (x: number) => x % 2 === 0, arity: { min: 1, max: 1 } },
+        isEven: (x: number) => x % 2 === 0,
       }
       expect(lits.run('filter([1, 2, 3, 4, 5, 6], isEven)', { bindings: jsFunctions })).toEqual([2, 4, 6])
     })
@@ -167,9 +141,9 @@ describe('jsFunctions integration', () => {
     })
 
     it('should use async JS function with filter', async () => {
-      const jsFunctions: Record<string, JsFunction> = {
+      const jsFunctions = {
         ...allJsFunctions,
-        asyncIsPositive: { fn: async (x: number) => x > 0, arity: { min: 1, max: 1 } },
+        asyncIsPositive: async (x: number) => x > 0,
       }
       expect(await lits.async.run('filter([-2, -1, 0, 1, 2], asyncIsPositive)', { bindings: jsFunctions })).toEqual([1, 2])
     })

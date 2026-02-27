@@ -32,7 +32,7 @@ export function renderExample(example: string | string[], name: string, options?
   const oldLog = console.log
   console.log = function () {}
   try {
-    const result = lits.run(`try ${code} catch(e) e end`)
+    const result = lits.run(`try\n${code}\ncatch(e) e end`)
     const stringifiedResult = stringifyValue(result, true)
 
     return `

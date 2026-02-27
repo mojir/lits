@@ -127,9 +127,12 @@ export class Lits {
       const ast = this.generateAst(source, params)
       const moduleContextStack = contextStack.create({})
       const result = evaluate(ast, moduleContextStack)
-      if (result instanceof Promise) {
-        throw new TypeError('Unexpected async result in synchronous runBundle(). Use lits.async.run() for async operations.')
-      }
+
+      // TODO: When async functions in file modules are able to mark themselves as pure and
+      // are returning a Promise, uncomment the following check, and make sure a test is verifying the behaviour.
+      // if (result instanceof Promise) {
+      //   throw new TypeError('Unexpected async result in synchronous runBundle(). Use lits.async.run() for async operations.')
+      // }
       contextStack.registerValueModule(name, result)
     }
     contextStack.pure = savedPure

@@ -32,16 +32,6 @@ export interface NativeJsFunction extends GenericLitsFunction {
   docString: string // documentation string
 }
 
-export function isJsFunction(fn: unknown): fn is JsFunction {
-  return typeof fn === 'object' && fn !== null && 'fn' in fn && typeof (fn as JsFunction).fn === 'function'
-}
-
-export function assertJsFunction(fn: unknown): asserts fn is JsFunction {
-  if (!isJsFunction(fn)) {
-    throw new TypeError('Expected a NativeJsFunction')
-  }
-}
-
 export interface UserDefinedFunction extends GenericLitsFunction {
   functionType: 'UserDefined'
   name: string | undefined // name

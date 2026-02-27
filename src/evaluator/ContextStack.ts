@@ -6,7 +6,7 @@ import { LitsError, UndefinedSymbolError } from '../errors'
 import type { Any } from '../interface'
 import type { ContextParams, JsFunction } from '../Lits/Lits'
 import type { LitsModule } from '../builtin/modules/interface'
-import { type NativeJsFunction, type NormalBuiltinFunction, type SpecialBuiltinFunction, type SymbolNode, type UserDefinedSymbolNode, isJsFunction } from '../parser/types'
+import type { NativeJsFunction, NormalBuiltinFunction, SpecialBuiltinFunction, SymbolNode, UserDefinedSymbolNode } from '../parser/types'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { asNonUndefined } from '../typeGuards'
 import { isNormalBuiltinSymbolNode, isSpecialBuiltinSymbolNode } from '../typeGuards/astNode'
@@ -217,10 +217,9 @@ export function createContextStack(params: ContextParams = {}, modules?: Map<str
       }
 
       const isFunction = typeof entry === 'function'
-      const isJsFunctionObject = isJsFunction(entry)
 
-      if (isFunction || isJsFunctionObject) {
-        const jsFunction: JsFunction = isJsFunctionObject ? entry : { fn: entry as (...args: any[]) => unknown }
+      if (isFunction) {
+        const jsFunction: JsFunction = { fn: entry as (...args: any[]) => unknown }
 
         assertNotShadowingBuiltin(identifier)
         if (!nativeJsFunctions) {

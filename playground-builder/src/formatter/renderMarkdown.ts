@@ -4,6 +4,13 @@ import { styles } from '../styles'
 import { mdRules } from './rules'
 import { renderMermaidToSvg } from './renderMermaid'
 
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+}
+
 // --- Block types ---
 
 interface HeaderBlock {
@@ -42,7 +49,19 @@ interface MermaidBlock {
   code: string
 }
 
-type Block = HeaderBlock | CodeBlock | ParagraphBlock | ListBlock | BlockquoteBlock | HorizontalRuleBlock | MermaidBlock
+interface ForeignCodeBlock {
+  type: 'foreignCode'
+  language: string
+  code: string
+}
+
+interface TableBlock {
+  type: 'table'
+  headers: string[]
+  rows: string[][]
+}
+
+type Block = HeaderBlock | CodeBlock | ParagraphBlock | ListBlock | BlockquoteBlock | HorizontalRuleBlock | MermaidBlock | ForeignCodeBlock | TableBlock
 
 // --- Block parser ---
 
@@ -67,8 +86,10 @@ export function parseMarkdownBlocks(markdown: string): Block[] {
     if (line.startsWith('```')) {
       flushParagraph()
       const optionStr = line.slice(3).trim()
+      const foreignLanguages = ['sh', 'javascript', 'typescript', 'json', 'html', 'css']
       const isMermaid = optionStr === 'mermaid'
-      const options = isMermaid ? [] : (optionStr ? optionStr.split(',') : [])
+      const isForeignCode = foreignLanguages.includes(optionStr)
+      const options = (isMermaid || isForeignCode) ? [] : (optionStr ? optionStr.split(',') : [])
       i++
       const codeLines: string[] = []
       while (i < lines.length && lines[i]!.trim() !== '```') {
@@ -79,6 +100,9 @@ export function parseMarkdownBlocks(markdown: string): Block[] {
         i++ // skip closing ```
       if (isMermaid) {
         blocks.push({ type: 'mermaid', code: codeLines.join('\n') })
+      }
+      else if (isForeignCode) {
+        blocks.push({ type: 'foreignCode', language: optionStr, code: codeLines.join('\n') })
       }
       else {
         blocks.push({ type: 'code', code: codeLines.join('\n'), options })
@@ -93,6 +117,25 @@ export function parseMarkdownBlocks(markdown: string): Block[] {
       const level = (headerMatch[1]!.length === 2 ? 3 : 4)
       blocks.push({ type: 'header', level, text: headerMatch[2]! })
       i++
+      continue
+    }
+
+    // Table
+    if (/^\|.+\|\s*$/.test(line)) {
+      flushParagraph()
+      const parseRow = (row: string) => row.replace(/^\|\s*/, '').replace(/\s*\|\s*$/, '').split(/\s*\|\s*/)
+      const headers = parseRow(line)
+      i++ // skip header row
+      // skip separator row (|---|---|)
+      if (i < lines.length && /^\|[-\s|:]+\|\s*$/.test(lines[i]!)) {
+        i++
+      }
+      const rows: string[][] = []
+      while (i < lines.length && /^\|.+\|\s*$/.test(lines[i]!)) {
+        rows.push(parseRow(lines[i]!))
+        i++
+      }
+      blocks.push({ type: 'table', headers, rows })
       continue
     }
 
@@ -173,6 +216,13 @@ export function renderMarkdown(markdown: string, namePrefix: string): string {
         return `<hr ${styles('mb-4', 'border-gray-600')}>`
       case 'mermaid':
         return `<div ${styles('mb-4', 'flex', 'justify-center')}>${renderMermaidToSvg(block.code)}</div>`
+      case 'foreignCode':
+        return `<div ${styles('flex', 'flex-col', 'gap-4', 'bg-gray-700', 'p-4', 'mb-4')} style="overflow-x: auto;"><pre ${styles('text-sm', 'font-mono', 'whitespace-pre-wrap')}>${escapeHtml(block.code)}</pre></div>`
+      case 'table': {
+        const ths = block.headers.map(h => `<th ${styles('text-color-gray-200', 'text-left')} style="border: 1px solid #4a5568; padding: 0.5rem;">${formatInline(h)}</th>`).join('')
+        const trs = block.rows.map(row => `<tr>${row.map(cell => `<td style="border: 1px solid #4a5568; padding: 0.5rem;">${formatInline(cell)}</td>`).join('')}</tr>`).join('')
+        return `<table ${styles('mt-4', 'mb-4', 'text-sm')} style="border-collapse: collapse; width: 100%;"><thead><tr>${ths}</tr></thead><tbody>${trs}</tbody></table>`
+      }
       case 'code': {
         const name = `${namePrefix}-${codeBlockIndex++}`
         const noRun = block.options.includes('no-run')

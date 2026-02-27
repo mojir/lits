@@ -1,6 +1,7 @@
-import { checkIcon, githubIcon, labIcon } from '../icons'
+import { checkIcon, githubIcon, labIcon, lampIcon } from '../icons'
 import { styles } from '../styles'
 import { version } from '../../../package.json'
+import { tutorials } from './tutorials'
 
 export function getStartPage(): string {
   return `
@@ -12,6 +13,7 @@ export function getStartPage(): string {
       <div ${styles('text-huge')}>Lits</div>
       <div ${styles('flex', 'gap-16', 'text-2xl')}>
         <a class="external-links" ${styles('flex', 'items-center', 'gap-2')} onclick="Playground.showPage('example-page', 'smooth')" title="Examples">${labIcon}<span ${styles('text-base')}>Examples</span></a>
+        <a class="external-links" ${styles('flex', 'items-center', 'gap-2')} onclick="Playground.showPage('${tutorials[0]!.id}', 'smooth')" title="Tutorials">${lampIcon}<span ${styles('text-base')}>Tutorials</span></a>
         <a class="external-links" ${styles('flex', 'items-center', 'gap-2')} href="https://github.com/mojir/lits" target="_blank" title="GitHub">${githubIcon}<span ${styles('text-base')}>GitHub</span></a>
       </div>
     </div>

@@ -105,21 +105,18 @@ const expandedCoreCategories = new Set<string>()
 let tutorialsExpanded = false
 
 export function toggleTutorials() {
-  const chevron = document.getElementById('tutorial-chevron')
   const content = document.getElementById('tutorial-content')
 
-  if (!chevron || !content)
+  if (!content)
     return
 
   if (tutorialsExpanded) {
     tutorialsExpanded = false
     content.style.display = 'none'
-    chevron.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M10 6L8.59 7.41L13.17 12l-4.58 4.59L10 18l6-6z"/></svg>'
   }
   else {
     tutorialsExpanded = true
     content.style.display = 'flex'
-    chevron.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6l-6-6z"/></svg>'
   }
 }
 

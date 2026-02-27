@@ -1,75 +1,125 @@
 # Getting Started
 
-![Lits logo](images/lits-logo.svg)
+## Installation
 
-Welcome to Lits — a pure functional programming language that runs in JavaScript. Every piece of syntax produces a value (there are no statements), all data is immutable, and functions are first-class values.
+Install Lits from npm:
 
-## Expressions
-
-Everything in Lits is an expression that evaluates to a value. Lits uses algebraic notation, so you can write math naturally:
-
-```
-10 + 20
+```sh
+npm install @mojir/lits
 ```
 
-Operators require whitespace around them. `x+1` is a variable name, not `x + 1`.
+## Using Lits as a Library
 
-## Variables
+There are two main entry points: **minimal** and **full**.
 
-Use `let` to bind values to names. Variables are immutable — once bound, they cannot be reassigned:
+### Minimal Bundle
 
-```
-let greeting = "World";
-str("Hello, ", greeting, "!")
-```
+The minimal bundle gives you the core `Lits` class, types, and type guards. No modules or reference data are included — this keeps your bundle size small.
 
-Semicolons separate expressions. The last expression is the return value — no trailing semicolon needed.
+```javascript
+import { Lits } from '@mojir/lits'
 
-## Functions
-
-Define functions with the arrow (`->`) syntax:
-
-```
-let square = x -> x * x;
-square(5)
+const lits = new Lits()
+lits.run('10 + 20') // => 30
 ```
 
-## Collections
+This is the right choice when you want the core language and don't need optional modules like vector math or matrix operations.
 
-Arrays and objects are the primary data structures. Use functions like `map`, `filter`, and `reduce` to work with them:
+### Full Bundle
 
-```
-let numbers = [1, 2, 3, 4, 5];
-reduce(numbers, +, 0)
-```
+The full bundle includes everything from the minimal bundle plus all built-in modules, reference data, and API helpers.
 
-## Control Flow
+```javascript
+import { Lits, allBuiltinModules } from '@mojir/lits/full'
 
-Use `if` / `then` / `else` / `end` for conditional expressions. Since everything is an expression, `if` returns a value:
-
-```
-if 10 > 5 then "big" else "small" end
+const lits = new Lits({ modules: allBuiltinModules })
+lits.run('let v = import(vector); v.dot([1, 2, 3], [4, 5, 6])') // => 32
 ```
 
-## Immutability
+### Individual Modules
 
-Data in Lits is always immutable. Operations return new values rather than modifying existing ones:
+You can also import only the modules you need and pass them to the `Lits` constructor. This gives you fine-grained control over bundle size:
+
+```javascript
+import { Lits } from '@mojir/lits'
+import { vectorModule } from '@mojir/lits/modules/vector'
+import { matrixModule } from '@mojir/lits/modules/matrix'
+
+const lits = new Lits({ modules: [vectorModule, matrixModule] })
+```
+
+Available modules: `assertion`, `grid`, `random`, `vector`, `linear-algebra`, `matrix`, `number-theory`, `math`, `functional`, `string`, `collection`, `sequence`, and `bitwise`.
+
+### Passing Values and Functions
+
+You can expose JavaScript values and functions to Lits code via `bindings`:
+
+```javascript
+import { Lits } from '@mojir/lits'
+
+const lits = new Lits()
+
+// Expose JavaScript values
+lits.run('name ++ " is " ++ str(age)', {
+  bindings: { name: 'Alice', age: 30 }
+}) // => "Alice is 30"
+
+// Expose JavaScript functions
+lits.run('greet("World")', {
+  bindings: {
+    greet: name => `Hello, ${name}!`,
+  }
+}) // => "Hello, World!"
+```
+
+## CLI Tool
+
+Install the Lits CLI globally to use it from the command line:
+
+```sh
+npm install --global @mojir/lits
+```
+
+### Interactive REPL
+
+Start an interactive session by running `lits` with no arguments:
+
+```sh
+$ lits
+```
+
+### Evaluate Expressions
+
+```sh
+$ lits eval "5 + 3"
+8
+
+$ lits eval "[1, 2, 3, 4] filter odd? map inc"
+[2, 4]
+```
+
+### Run Files
+
+```sh
+$ lits run script.lits
+```
+
+### Other Commands
+
+| Command | Description |
+|---|---|
+| `lits eval <expr>` | Evaluate a Lits expression |
+| `lits run <file>` | Run a `.lits` source file |
+| `lits bundle <entry>` | Bundle a multi-file project into a single JSON file |
+| `lits run-bundle <file>` | Run a bundled `.json` file |
+| `lits test <file>` | Run a `.test.lits` test file |
+| `lits repl` | Start the interactive REPL (default) |
+
+## Try It Here
+
+You don't need to install anything to start learning. This playground runs Lits directly in your browser. Try it:
 
 ```
-let original = [1, 2, 3];
-let extended = push(original, 4);
-original
-```
-
-The original array is unchanged. `push` returned a new array.
-
-## How Lits Works
-
-```mermaid
-graph LR
-    A[Source Code] --> B[Tokenizer]
-    B --> C[Parser]
-    C --> D[AST]
-    D --> E[Evaluator]
-    E --> F[Result]
+let greet = name -> str("Hello, ", name, "!");
+greet("World")
 ```

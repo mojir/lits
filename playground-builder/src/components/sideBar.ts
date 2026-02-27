@@ -1,9 +1,19 @@
 import type { Reference } from '../../../reference'
 import { apiReference, getLinkName, moduleReference } from '../../../reference'
 import { coreCategories, moduleCategories } from '../../../reference/api'
-import { chevronRightIcon, homeIcon, lampIcon, searchIcon } from '../icons'
+import { chevronRightIcon, homeIcon, labIcon, lampIcon, searchIcon } from '../icons'
 import { styles } from '../styles'
 import { isTutorialFolder, tutorialItems } from './tutorials'
+
+function menuLink(icon: string, title: string, onclick: string) {
+  return `
+    <div onclick="${onclick}" ${styles('flex', 'mb-2', 'text-color-gray-400', 'text-base', 'cursor-pointer')}>
+      <a ${styles('flex', 'items-center', 'gap-1')} class="link">
+        <span ${styles('font-size: 1.2em;', 'flex', 'items-center')}>${icon}</span>
+        <span>${title}</span>
+      </a>
+    </div>`
+}
 
 export function getSideBar() {
   const categoryCollections = Object.values(apiReference).reduce((result: Record<string, Reference[]>, obj) => {
@@ -106,27 +116,11 @@ export function getSideBar() {
       </span>
       <span ${styles('text-sm')}>F3</span>
     </div>
-    <div id='home-page_link' onclick="Playground.showPage('index', 'smooth')" ${styles('flex', 'mb-2', 'text-color-gray-400', 'text-base', 'cursor-pointer')}>
-      <a ${styles('flex', 'items-center', 'gap-1')} class="link">
-        ${homeIcon}
-        <span>Home</span>
-      </a>
-    </div>
-    <div id='example-page_link' onclick="Playground.showPage('example-page', 'smooth')" ${styles('flex', 'mb-2', 'text-color-gray-400', 'text-base', 'cursor-pointer')}>
-      <a ${styles('flex', 'items-center', 'gap-1')} class="link">
-        ${lampIcon}
-        <span>Examples</span>
-      </a>
-    </div>
+    ${menuLink(homeIcon, 'Home', 'Playground.showPage(\'index\', \'smooth\')')}
+    ${menuLink(lampIcon, 'Examples', 'Playground.showPage(\'example-page\', \'smooth\')')}
     <!-- Tutorials (Collapsible) -->
-    <div ${styles('flex', 'flex-col', 'gap-2', 'my-4')}>
-      <div 
-        ${styles('text-color-gray-300', 'text-base', 'font-bold', 'mb-1', 'cursor-pointer', 'flex', 'items-center', 'gap-1')}
-        onclick="Playground.toggleTutorials()"
-      >
-        <span id="tutorial-chevron">${chevronRightIcon}</span>
-        <span>Tutorials</span>
-      </div>
+    <div ${styles('flex', 'flex-col', 'gap-2')}>
+      ${menuLink(labIcon, 'Tutorials', 'Playground.toggleTutorials()')}
       <div id="tutorial-content" ${styles('flex-col', 'ml-2', 'text-color-gray-400', 'text-base', 'display: none;')}>
         ${tutorialItems.map((item) => {
           if (isTutorialFolder(item)) {

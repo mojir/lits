@@ -48,24 +48,16 @@ describe('pure mode', () => {
       const lits = new Lits()
       expect(() => lits.run('sideEffect()', {
         pure: true,
-        bindings: { sideEffect: { fn: () => 42 } },
+        bindings: { sideEffect: () => 42 },
       })).toThrow(
         'Cannot call impure native function \'sideEffect\' in pure mode',
       )
     })
 
-    it('should allow pure native JS functions in pure mode', () => {
-      const lits = new Lits()
-      expect(lits.run('add(1, 2)', {
-        pure: true,
-        bindings: { add: { fn: (a: number, b: number) => a + b, pure: true } },
-      })).toBe(3)
-    })
-
     it('should allow impure native JS functions without pure mode', () => {
       const lits = new Lits()
       expect(lits.run('sideEffect()', {
-        bindings: { sideEffect: { fn: () => 42 } },
+        bindings: { sideEffect: () => 42 },
       })).toBe(42)
     })
 
