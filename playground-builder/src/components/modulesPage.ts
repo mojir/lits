@@ -26,15 +26,11 @@ export function getModulesPage(): string {
       <p ${styles('mb-4')}>
         Import a single function from a module:
       </p>
-      <div ${styles('flex', 'flex-col', 'gap-4', 'bg-gray-700', 'p-4')} style="overflow-x: auto;">
-        ${renderExample(moduleExamples[0], 'module-example-0')}
-      </div>
+      ${renderExample(moduleExamples[0], 'module-example-0')}
       <p ${styles('mb-4')}>
         Import the entire module and access multiple functions:
       </p>
-      <div ${styles('flex', 'flex-col', 'gap-4', 'bg-gray-700', 'p-4')} style="overflow-x: auto;">
-        ${renderExample(moduleExamples[1], 'module-example-1')}
-      </div>
+      ${renderExample(moduleExamples[1], 'module-example-1')}
       <p ${styles('text-color-gray-400')}>
         Available modules: ${moduleCategories.map((c) => {
           const ns = c

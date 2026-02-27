@@ -346,6 +346,19 @@ table {
   margin-left: -3px;
 }
 
+.example-code {
+  background-color: rgb(64 64 64);
+}
+
+.example-code:hover {
+  background-color: rgb(73 73 73);
+}
+
+.example-result {
+  background-color: rgb(51 51 51);
+}
+
+
 .dialog-overlay {
   display: none;
   position: fixed;

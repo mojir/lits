@@ -30,9 +30,7 @@ export function getCorePage(): string {
       <p ${styles('mb-4')}>
         Here are a few examples to get started:
       </p>
-      <div ${styles('flex', 'flex-col', 'gap-4', 'bg-gray-700', 'p-4')} style="overflow-x: auto;">
-        ${corePageExamples.map((example, index) => renderExample(example, `core-example-${index}`)).join('\n')}
-      </div>
+      ${corePageExamples.map((example, index) => renderExample(example, `core-example-${index}`)).join('\n')}
     </div>
   </div>
   `

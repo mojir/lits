@@ -216,8 +216,10 @@ export function renderMarkdown(markdown: string, namePrefix: string): string {
         return `<hr ${styles('mb-4', 'border-gray-600')}>`
       case 'mermaid':
         return `<div ${styles('mb-4', 'flex', 'justify-center')}>${renderMermaidToSvg(block.code)}</div>`
-      case 'foreignCode':
-        return `<div ${styles('flex', 'flex-col', 'gap-4', 'bg-gray-700', 'p-4', 'mb-4')} style="overflow-x: auto;"><pre ${styles('text-sm', 'font-mono', 'whitespace-pre-wrap')}>${escapeHtml(block.code)}</pre></div>`
+      case 'foreignCode': {
+        const chip = `<span ${styles('absolute', 'top-2', 'left-2', 'bg-gray-600', 'text-xs', 'font-mono', 'text-color-gray-400', 'select-none', 'px-2', 'py-0.5', 'border-radius: 4px;')}>${block.language}</span>`
+        return `<div ${styles('relative', 'bg-gray-700', 'p-4', 'mb-4', 'overflow-x: auto;')}>${chip}<pre ${styles('text-sm', 'font-mono', 'whitespace-pre-wrap', 'margin-top: 1.75rem;')}>${escapeHtml(block.code)}</pre></div>`
+      }
       case 'table': {
         const ths = block.headers.map(h => `<th ${styles('text-color-gray-200', 'text-left')} style="border: 1px solid #4a5568; padding: 0.5rem;">${formatInline(h)}</th>`).join('')
         const trs = block.rows.map(row => `<tr>${row.map(cell => `<td style="border: 1px solid #4a5568; padding: 0.5rem;">${formatInline(cell)}</td>`).join('')}</tr>`).join('')
@@ -227,9 +229,7 @@ export function renderMarkdown(markdown: string, namePrefix: string): string {
         const name = `${namePrefix}-${codeBlockIndex++}`
         const noRun = block.options.includes('no-run')
         const noResult = block.options.includes('no-result')
-        return `<div ${styles('flex', 'flex-col', 'gap-4', 'bg-gray-700', 'p-4', 'mb-4')} style="overflow-x: auto;">${
-          renderExample(block.code, name, { noRun, noResult })
-        }</div>`
+        return renderExample(block.code, name, { noRun, noResult })
       }
       default:
         throw new Error(`Unknown block type: ${(block as { type: string }).type}`)
