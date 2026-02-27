@@ -79,4 +79,4 @@ people
 
 ```
 
-Ready to dive in? Continue to the next page get lits installed.
+Ready to dive in? Continue to the next page get Lits installed.

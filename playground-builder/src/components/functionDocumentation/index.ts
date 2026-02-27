@@ -25,9 +25,10 @@ function getDocumentation(reference: Reference) {
 
   return `
   <div id="${getLinkName(reference)}" class="content function">
-    <div ${styles('flex', 'justify-between', 'text-2xl', 'items-center', 'bg-gray-700', 'p-2', 'px-4')}">
-      <div ${styles('text-color-gray-200', 'font-mono')}><a onclick="Playground.showPage('${getLinkName(reference)}', 'smooth')">${docTitle}</a></div>
-      <div ${styles('text-color-gray-400')}>${reference.category}</div>
+    <div ${styles('flex', 'justify-between', 'items-baseline', 'mb-6', 'border-0', 'border-b', 'border-solid', 'border-gray-600', 'pb-4')}>
+      <span></span>
+      <div ${styles('text-3xl', 'text-color-gray-200', 'font-mono')}><a ${styles('no-underline')} onclick="Playground.showPage('${getLinkName(reference)}', 'smooth')">${docTitle}</a></div>
+      <div ${styles('text-sm', 'text-color-gray-400')}>${reference.category}</div>
     </div>
 
     ${isFunctionReference(reference)

@@ -1,4 +1,5 @@
 import { createFormatter } from '../../../common/createFormatter'
+import { copyIcon } from '../icons'
 import { renderExample } from '../renderExample'
 import { styles } from '../styles'
 import { mdRules } from './rules'
@@ -202,7 +203,7 @@ export function renderMarkdown(markdown: string, namePrefix: string): string {
           ? `<h3 ${styles('text-xl', 'mb-2', 'text-color-gray-200')}>${block.text}</h3>`
           : `<h4 ${styles('text-lg', 'mb-1', 'text-color-gray-200')}>${block.text}</h4>`
       case 'paragraph':
-        return `<p ${styles('mb-4')}>${formatInline(block.text)}</p>`
+        return `<p ${styles('mb-5')}>${formatInline(block.text)}</p>`
       case 'list':
         return `<ul ${styles('mb-4', 'pl-6')} style="list-style-type: disc;">${
           block.items.map(item => `<li ${styles('mb-1')}>${formatInline(item)}</li>`).join('\n')
@@ -215,10 +216,13 @@ export function renderMarkdown(markdown: string, namePrefix: string): string {
       case 'hr':
         return `<hr ${styles('mb-4', 'border-gray-600')}>`
       case 'mermaid':
-        return `<div ${styles('mb-4', 'flex', 'justify-center')}>${renderMermaidToSvg(block.code)}</div>`
+        return `<div ${styles('mb-5', 'flex', 'justify-center')}>${renderMermaidToSvg(block.code)}</div>`
       case 'foreignCode': {
+        const encodedCode = btoa(encodeURIComponent(block.code))
+        const copyButton = `<div class="example-action-btn" ${styles('p-2', 'text-lg', 'cursor-pointer')} onclick="event.stopPropagation(); Playground.copyCode('${encodedCode}')">${copyIcon}</div>`
+        const actionBar = `<div class="example-action-bar" ${styles('absolute', 'top-0', 'right-0', 'flex-row', 'margin-top: 2px;')}>${copyButton}</div>`
         const chip = `<span ${styles('absolute', 'top-2', 'left-2', 'bg-gray-600', 'text-xs', 'font-mono', 'text-color-gray-400', 'select-none', 'px-2', 'py-0.5', 'border-radius: 4px;')}>${block.language}</span>`
-        return `<div ${styles('relative', 'bg-gray-700', 'p-4', 'mb-4', 'overflow-x: auto;')}>${chip}<pre ${styles('text-sm', 'font-mono', 'whitespace-pre-wrap', 'margin-top: 1.75rem;')}>${escapeHtml(block.code)}</pre></div>`
+        return `<div class="example-code" ${styles('relative', 'bg-gray-700', 'p-4', 'mb-5', 'overflow-x: auto;')}>${actionBar}${chip}<pre ${styles('text-sm', 'font-mono', 'whitespace-pre-wrap', 'margin-top: 1.75rem;')}>${escapeHtml(block.code)}</pre></div>`
       }
       case 'table': {
         const ths = block.headers.map(h => `<th ${styles('text-color-gray-200', 'text-left')} style="border: 1px solid #4a5568; padding: 0.5rem;">${formatInline(h)}</th>`).join('')

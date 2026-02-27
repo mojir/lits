@@ -41,6 +41,7 @@ function writeIndexPage() {
         ${getModulesPage()}
         ${getAllDocumentationItems()}
       </main>
+      <div id="resize-sidebar" style="position: fixed; width: 5px; cursor: col-resize; background-color: rgb(82 82 82); top: 0; z-index: 10;"></div>
       ${getSideBar()}
       ${getPlayground()}
     </div>

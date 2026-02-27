@@ -3,6 +3,7 @@ import type { HistoryEntry, HistoryStatus } from './StateHistory'
 import { StateHistory } from './StateHistory'
 
 export const defaultState = {
+  'sidebar-width': 350 as number,
   'playground-height': 350 as number,
   'resize-divider-1-percent': 20 as number,
   'resize-divider-2-percent': 60 as number,

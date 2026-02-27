@@ -2,7 +2,7 @@
 import { stringifyValue } from '../../common/utils'
 import type { Example } from '../../reference/examples'
 import type { UnknownRecord } from '../../src/interface'
-import { type ContextParams, type JsFunction, Lits } from '../../src/Lits/Lits'
+import { type ContextParams, Lits } from '../../src/Lits/Lits'
 import { allBuiltinModules } from '../../src/allModules'
 import '../../src/initReferenceData'
 import { asUnknownRecord } from '../../src/typeGuards'
@@ -51,6 +51,7 @@ const elements = {
   resizePlayground: document.getElementById('resize-playground') as HTMLElement,
   resizeDevider1: document.getElementById('resize-divider-1') as HTMLElement,
   resizeDevider2: document.getElementById('resize-divider-2') as HTMLElement,
+  resizeSidebar: document.getElementById('resize-sidebar') as HTMLElement,
   toggleDebugMenuLabel: document.getElementById('toggle-debug-menu-label') as HTMLSpanElement,
   litsPanelDebugInfo: document.getElementById('lits-panel-debug-info') as HTMLDivElement,
   contextUndoButton: document.getElementById('context-undo-button') as HTMLAnchorElement,
@@ -70,6 +71,10 @@ type MoveParams = {
   id: 'resize-divider-1' | 'resize-divider-2'
   startMoveX: number
   percentBeforeMove: number
+} | {
+  id: 'resize-sidebar'
+  startMoveX: number
+  widthBeforeMove: number
 }
 
 type OutputType =
@@ -203,6 +208,7 @@ function applyLayout() {
   const { windowWidth, windowHeight } = calculateDimensions()
 
   const playgroundHeight = Math.min(getState('playground-height'), windowHeight)
+  const sidebarWidth = getState('sidebar-width')
 
   const contextPanelWidth = (windowWidth * getState('resize-divider-1-percent')) / 100
   const outputPanelWidth = (windowWidth * (100 - getState('resize-divider-2-percent'))) / 100
@@ -212,8 +218,12 @@ function applyLayout() {
   elements.contextPanel.style.width = `${contextPanelWidth}px`
   elements.litsPanel.style.width = `${litsPanelWidth}px`
   elements.outputPanel.style.width = `${outputPanelWidth}px`
+  elements.sidebar.style.width = `${sidebarWidth}px`
   elements.sidebar.style.bottom = `${playgroundHeight}px`
+  elements.mainPanel.style.left = `${sidebarWidth + 5}px`
   elements.mainPanel.style.bottom = `${playgroundHeight}px`
+  elements.resizeSidebar.style.left = `${sidebarWidth}px`
+  elements.resizeSidebar.style.bottom = `${playgroundHeight}px`
   elements.wrapper.style.display = 'block'
 }
 
@@ -516,6 +526,16 @@ window.onload = function () {
     }
   }
 
+  elements.resizeSidebar.onmousedown = (event) => {
+    event.preventDefault()
+    document.body.classList.add('no-select')
+    moveParams = {
+      id: 'resize-sidebar',
+      startMoveX: event.clientX,
+      widthBeforeMove: getState('sidebar-width'),
+    }
+  }
+
   window.onresize = layout
   window.onmouseup = () => {
     document.body.classList.remove('no-select')
@@ -526,6 +546,8 @@ window.onload = function () {
         saveState({ 'resize-divider-1-percent': getState('resize-divider-1-percent') }, false)
       else if (moveParams.id === 'resize-divider-2')
         saveState({ 'resize-divider-2-percent': getState('resize-divider-2-percent') }, false)
+      else if (moveParams.id === 'resize-sidebar')
+        saveState({ 'sidebar-width': getState('sidebar-width') }, false)
     }
     moveParams = null
   }
@@ -568,6 +590,17 @@ window.onload = function () {
         resizeDivider2XPercent = 90
 
       updateState({ 'resize-divider-2-percent': resizeDivider2XPercent })
+      applyLayout()
+    }
+    else if (moveParams.id === 'resize-sidebar') {
+      let sidebarWidth = moveParams.widthBeforeMove + (event.clientX - moveParams.startMoveX)
+      if (sidebarWidth < 150)
+        sidebarWidth = 150
+
+      if (sidebarWidth > windowWidth * 0.5)
+        sidebarWidth = windowWidth * 0.5
+
+      updateState({ 'sidebar-width': sidebarWidth })
       applyLayout()
     }
   }
@@ -972,7 +1005,7 @@ function getLitsParamsFromContext(): ContextParams {
 
     const bindings = asUnknownRecord(parsedContext.bindings ?? {})
 
-    const fnBindings: Record<string, JsFunction> = Object.entries(parsedFnBindings).reduce((acc: Record<string, JsFunction>, [key, value]) => {
+    const fnBindings: Record<string, (...args: any[]) => unknown> = Object.entries(parsedFnBindings).reduce((acc: Record<string, (...args: any[]) => unknown>, [key, value]) => {
       if (typeof value !== 'string') {
         console.log(key, value)
         throw new TypeError(`Invalid fnBinding value. "${key}" should be a javascript function string`)
@@ -985,9 +1018,7 @@ function getLitsParamsFromContext(): ContextParams {
         throw new TypeError(`Invalid fnBinding value. "${key}" should be a javascript function`)
       }
 
-      acc[key] = {
-        fn,
-      }
+      acc[key] = fn
       return acc
     }, {})
 
@@ -1129,8 +1160,27 @@ function inactivateAll() {
 export function addToPlayground(name: string, encodedExample: string) {
   const example = decodeURIComponent(atob(encodedExample))
   appendLitsCode(`// Example - ${name}\n\n${example};\n`)
+  addOutputSeparator()
+  appendOutput('Example added to editor', 'comment')
   saveState({ 'focused-panel': 'lits-code' })
   applyState()
+  setTimeout(() => {
+    elements.litsTextArea.scrollTo({ top: elements.litsTextArea.scrollHeight, behavior: 'smooth' })
+  }, 10)
+}
+
+export function copyExample(encodedExample: string) {
+  const code = decodeURIComponent(atob(encodedExample))
+  void navigator.clipboard.writeText(code)
+  addOutputSeparator()
+  appendOutput('Example copied to clipboard', 'comment')
+}
+
+export function copyCode(encodedCode: string) {
+  const code = decodeURIComponent(atob(encodedCode))
+  void navigator.clipboard.writeText(code)
+  addOutputSeparator()
+  appendOutput('Code copied to clipboard', 'comment')
 }
 
 export function setPlayground(name: string, encodedExample: string) {
@@ -1156,6 +1206,8 @@ ${code}
 `.trimStart(), true, 'top')
   saveState({ 'focused-panel': 'lits-code' })
   applyState()
+  addOutputSeparator()
+  appendOutput(`Example loaded: ${name}`, 'comment')
 }
 
 function hijackConsole() {

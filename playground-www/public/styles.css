@@ -251,6 +251,7 @@ button:focus {
 }
 
 #sidebar {
+  box-sizing: border-box;
   position: fixed;
   left: 0;
   width: 350px;
@@ -260,6 +261,15 @@ button:focus {
   white-space: nowrap;
   overflow-y: scroll;
   padding-right: 1rem;
+}
+
+#resize-sidebar {
+  position: fixed;
+  width: 5px;
+  cursor: col-resize;
+  background-color: rgb(82 82 82);
+  top: 0;
+  z-index: 10;
 }
 
 /************ SIDEBAR **********/
@@ -279,6 +289,9 @@ div {
 .content {
   display: none;
   padding: 0 0.75rem;
+  max-width: 48rem;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .content.active-content {
@@ -296,7 +309,7 @@ div {
   margin-bottom: -2px;
 } */
 
-.content .example:hover svg {
+.content .example:hover svg:not(.example-action-btn svg) {
   color: white;
   font-size: 4rem;
 }
@@ -348,18 +361,44 @@ table {
 
 .example-code {
   background-color: rgb(64 64 64);
-}
-
-.example-code:hover {
-  background-color: rgb(73 73 73);
+  border-radius: 8px;
+  overflow: hidden;
+  border-left: 3px solid #e6c07b;
 }
 
 .example-result {
   background-color: rgb(51 51 51);
+  border-top: 1px solid rgb(82 82 82);
 }
 
-.example-code:hover .example-result {
-  background-color: rgb(60 60 60);
+.example-action-bar {
+  display: none;
+}
+
+.example-code:hover .example-action-bar {
+  display: flex;
+}
+
+.example-action-btn {
+  color: rgb(163 163 163);
+  transition: color 0.15s ease;
+}
+
+.example-action-btn:hover {
+  color: rgb(245 245 245);
+}
+
+.content .tutorial-nav-link,
+.content .tutorial-nav-link:link,
+.content .tutorial-nav-link:visited,
+.content .tutorial-nav-link:hover {
+  color: rgb(163 163 163);
+  transition: color 0.15s;
+  text-decoration: none;
+}
+
+.content .tutorial-nav-link:hover {
+  color: rgb(245 245 245);
 }
 
 

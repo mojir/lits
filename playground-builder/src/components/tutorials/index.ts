@@ -47,7 +47,7 @@ function toDisplayName(name: string): string {
 const pagesDir = path.resolve(process.cwd(), 'playground-builder/src/components/tutorials/pages')
 
 function loadMarkdownFile(filePath: string): TutorialEntry {
-  const basename = path.basename(filePath, '.md')
+  const basename = path.basename(filePath, '.md').replace(/^\d+-/, '')
   const id = `tutorial-${basename}`
   const content = fs.readFileSync(filePath, 'utf-8')
   const { title, body } = parseTutorialMarkdown(content)
@@ -96,24 +96,38 @@ function renderNavLinks(index: number): string {
   const next = index < tutorials.length - 1 ? tutorials[index + 1] : null
 
   const prevLink = prev
-    ? `<a ${styles('cursor-pointer', 'text-color-gray-400')} onclick="Playground.showPage('${prev.id}', 'smooth')">&larr; ${prev.title}</a>`
+    ? `<a class="tutorial-nav-link" ${styles('cursor-pointer')} onclick="Playground.showPage('${prev.id}', 'smooth')">&larr; ${prev.title}</a>`
     : '<span></span>'
   const nextLink = next
-    ? `<a ${styles('cursor-pointer', 'text-color-gray-400')} onclick="Playground.showPage('${next.id}', 'smooth')">${next.title} &rarr;</a>`
+    ? `<a class="tutorial-nav-link" ${styles('cursor-pointer')} onclick="Playground.showPage('${next.id}', 'smooth')">${next.title} &rarr;</a>`
     : '<span></span>'
 
-  return `<div ${styles('flex', 'justify-between', 'py-2')}>${prevLink}${nextLink}</div>`
+  return `<div ${styles('flex', 'justify-between', 'py-2', 'mt-8', 'border-0', 'border-t', 'border-solid', 'border-gray-600', 'text-sm')}>${prevLink}${nextLink}</div>`
+}
+
+function renderNavHeader(tutorial: TutorialEntry, index: number): string {
+  const prev = index > 0 ? tutorials[index - 1] : null
+  const next = index < tutorials.length - 1 ? tutorials[index + 1] : null
+
+  const prevLink = prev
+    ? `<a class="tutorial-nav-link" ${styles('cursor-pointer', 'text-sm')} onclick="Playground.showPage('${prev.id}', 'smooth')">&larr; ${prev.title}</a>`
+    : '<span></span>'
+  const nextLink = next
+    ? `<a class="tutorial-nav-link" ${styles('cursor-pointer', 'text-sm')} onclick="Playground.showPage('${next.id}', 'smooth')">${next.title} &rarr;</a>`
+    : '<span></span>'
+
+  return `<div ${styles('flex', 'justify-between', 'items-baseline', 'mb-6', 'border-0', 'border-b', 'border-solid', 'border-gray-600', 'pb-2')}>${prevLink}<div ${styles('text-3xl')}>${tutorial.title}</div>${nextLink}</div>`
 }
 
 function renderTutorialPage(tutorial: TutorialEntry, index: number): string {
   const body = renderMarkdown(tutorial.body, tutorial.id)
   const nav = renderNavLinks(index)
+  const header = renderNavHeader(tutorial, index)
 
   return `
   <div id="${tutorial.id}" class="content">
-    <div ${styles('flex', 'justify-center', 'text-3xl', 'mb-6')}>${tutorial.title}</div>
     <div ${styles('mb-6', 'p-4', 'bg-gray-800', 'text-color-gray-300')}>
-      ${nav}
+      ${header}
       ${body}
       ${nav}
     </div>

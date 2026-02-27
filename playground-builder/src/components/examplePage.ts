@@ -1,6 +1,6 @@
 import { examples } from '../../../reference/examples'
 import { formatLitsExpression } from '../formatter/rules'
-import { lampIcon } from '../icons'
+import { lampIcon, playIcon } from '../icons'
 import { styles } from '../styles'
 
 export function getExamplePage(): string {
@@ -8,10 +8,6 @@ export function getExamplePage(): string {
   <style>
     .example .code.hidden {
       display: none;
-    }
-    .example .link:hover {
-      text-decoration: underline;
-      color: #fff;
     }
   </style>
   <div id="example-page" class="content">
@@ -36,7 +32,7 @@ export function getExamplePage(): string {
                 <div ${styles('text-xl', 'text-color-gray-200')}>${example.name}</div>
                 <div ${styles('text-base', 'text-color-gray-400')}>${example.description}</div>
               </div>
-              <div class="link" onclick="Playground.setPlayground('${example.name}', \`${encodedExample}\`)" ${styles('text-color-gray-400', 'cursor-pointer')}>Play!</div>
+              <div class="example-action-btn" onclick="Playground.setPlayground('${example.name}', \`${encodedExample}\`)" ${styles('text-2xl', 'cursor-pointer', 'p-2')}>${playIcon}</div>
             </div>
             <div id="${`example-${index}`}" ${styles('mt-1', 'p-4', 'm-1', 'bg-gray-800')} class="hidden code"> 
               <pre>${formatLitsExpression(example.code)}</pre>
