@@ -5,7 +5,7 @@ const styles = createStyles({
     @apply text-color-gray-200;
     @apply text-base;
     @apply font-bold;
-    @apply mb-1;
+    @apply mb-2;
   `,
 })
 

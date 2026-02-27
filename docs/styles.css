@@ -358,6 +358,10 @@ table {
   background-color: rgb(51 51 51);
 }
 
+.example-code:hover .example-result {
+  background-color: rgb(60 60 60);
+}
+
 
 .dialog-overlay {
   display: none;

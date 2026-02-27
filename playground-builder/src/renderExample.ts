@@ -21,7 +21,7 @@ export function renderExample(example: string | string[], name: string, options?
   const codeSection = `<div ${styles('p-4', 'text-sm', 'font-mono', 'whitespace-pre-wrap')}>${formattedExample}</div>`
 
   if (noRun) {
-    return `<div class="example-code" ${styles('flex', 'flex-col', 'mb-4', 'cursor-pointer')} style="overflow-x: auto;" onclick="Playground.addToPlayground('${name}', '${encodedUriExample}')">${codeSection}</div>`
+    return `<div class="example-code" ${styles('flex', 'flex-col', 'mb-8', 'cursor-pointer')} style="overflow-x: auto;" onclick="Playground.addToPlayground('${name}', '${encodedUriExample}')">${codeSection}</div>`
   }
 
   const oldLog = console.log
@@ -31,7 +31,7 @@ export function renderExample(example: string | string[], name: string, options?
     const stringifiedResult = stringifyValue(result, true)
     const resultSection = noResult ? '' : `<div class="example-result" ${styles('px-4', 'py-2', 'text-sm', 'font-mono', 'whitespace-pre-wrap', 'text-color-gray-400')}>${stringifiedResult}</div>`
 
-    return `<div class="example-code" ${styles('flex', 'flex-col', 'mb-4', 'cursor-pointer')} style="overflow-x: auto;" onclick="Playground.addToPlayground('${name}', '${encodedUriExample}')">${codeSection}${resultSection}</div>`
+    return `<div class="example-code" ${styles('flex', 'flex-col', 'mb-8', 'cursor-pointer')} style="overflow-x: auto;" onclick="Playground.addToPlayground('${name}', '${encodedUriExample}')">${codeSection}${resultSection}</div>`
   }
   catch (e) {
     console.error(`Error in example: ${name}`, example)
