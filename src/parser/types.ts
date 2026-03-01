@@ -7,7 +7,7 @@ import type { Context } from '../evaluator/interface'
 import type { Any, Arr, Coll } from '../interface'
 import type { ReservedSymbol } from '../tokenizer/reservedNames'
 import type { SourceCodeInfo } from '../tokenizer/token'
-import type { FUNCTION_SYMBOL, REGEXP_SYMBOL } from '../utils/symbols'
+import type { EFFECT_SYMBOL, FUNCTION_SYMBOL, REGEXP_SYMBOL } from '../utils/symbols'
 
 export type EvaluatedFunction = [BindingTarget[], AstNode[], Context]
 
@@ -23,6 +23,11 @@ export interface RegularExpression {
   sourceCodeInfo?: SourceCodeInfo
   s: string
   f: string
+}
+
+export interface EffectRef {
+  [EFFECT_SYMBOL]: true
+  name: string // e.g. 'llm.complete'
 }
 
 export interface NativeJsFunction extends GenericLitsFunction {

@@ -1,8 +1,8 @@
 import type { Any, Coll, Obj, Seq } from '../interface'
-import type { FunctionLike, RegularExpression } from '../parser/types'
+import type { EffectRef, FunctionLike, RegularExpression } from '../parser/types'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import { getAssertionError } from '../utils/getAssertionError'
-import { REGEXP_SYMBOL } from '../utils/symbols'
+import { EFFECT_SYMBOL, REGEXP_SYMBOL } from '../utils/symbols'
 import { isLitsFunction } from './litsFunction'
 
 export function isAny(value: unknown): value is Any {
@@ -38,6 +38,7 @@ export function isObj(value: unknown): value is Obj {
     || value instanceof RegExp
     || isLitsFunction(value)
     || isRegularExpression(value)
+    || isEffectRef(value)
   )
 }
 export function asObj(value: unknown, sourceCodeInfo?: SourceCodeInfo): Obj {
@@ -95,6 +96,24 @@ export function assertStringOrRegularExpression(
 ): asserts value is string | RegularExpression {
   if (!isStringOrRegularExpression(value))
     throw getAssertionError('string or RegularExpression', value, sourceCodeInfo)
+}
+
+export function isEffectRef(value: unknown): value is EffectRef {
+  if (value === null || typeof value !== 'object')
+    return false
+
+  return !!(value as EffectRef)[EFFECT_SYMBOL]
+}
+export function asEffectRef(value: unknown, sourceCodeInfo?: SourceCodeInfo): EffectRef {
+  assertEffectRef(value, sourceCodeInfo)
+  return value
+}
+export function assertEffectRef(
+  value: unknown,
+  sourceCodeInfo?: SourceCodeInfo,
+): asserts value is EffectRef {
+  if (!isEffectRef(value))
+    throw getAssertionError('EffectRef', value, sourceCodeInfo)
 }
 
 function isFunctionLike(value: unknown): value is FunctionLike {
