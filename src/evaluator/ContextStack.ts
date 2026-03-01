@@ -18,7 +18,7 @@ import { isContextEntry } from './interface'
 export type ContextStack = ContextStackImpl
 
 export class ContextStackImpl {
-  private contexts: Context[]
+  private _contexts: Context[]
   public globalContext: Context
   private values?: Record<string, unknown>
   private nativeJsFunctions?: Record<string, NativeJsFunction>
@@ -41,12 +41,65 @@ export class ContextStackImpl {
     pure?: boolean
   }) {
     this.globalContext = asNonUndefined(contexts[0])
-    this.contexts = contexts
+    this._contexts = contexts
     this.values = hostValues
     this.nativeJsFunctions = nativeJsFunctions
     this.modules = modules ?? new Map<string, LitsModule>()
     this.valueModules = valueModules ?? new Map<string, unknown>()
     this.pure = pure ?? false
+  }
+
+  // -- Serialization support (Phase 4) --
+
+  /** Get the raw context chain for serialization. */
+  public getContextsRaw(): Context[] {
+    return this._contexts
+  }
+
+  /**
+   * Find the index of globalContext in the _contexts array.
+   * Returns -1 if not found (should not happen in valid state).
+   */
+  public getGlobalContextIndex(): number {
+    return this._contexts.indexOf(this.globalContext)
+  }
+
+  /**
+   * Create a ContextStack from deserialized data.
+   * `contexts` is the restored context chain (already resolved).
+   * `globalContextIndex` identifies which element is the globalContext.
+   * Host bindings (`values`, `nativeJsFunctions`, `modules`) come from resume options.
+   */
+  public static fromDeserialized(params: {
+    contexts: Context[]
+    globalContextIndex: number
+    values?: Record<string, unknown>
+    nativeJsFunctions?: Record<string, NativeJsFunction>
+    modules?: Map<string, LitsModule>
+    pure: boolean
+  }): ContextStackImpl {
+    const cs = new ContextStackImpl({
+      contexts: params.contexts,
+      values: params.values,
+      nativeJsFunctions: params.nativeJsFunctions,
+      modules: params.modules,
+      pure: params.pure,
+    })
+    if (params.globalContextIndex >= 0 && params.globalContextIndex < params.contexts.length) {
+      cs.globalContext = params.contexts[params.globalContextIndex]!
+    }
+    return cs
+  }
+
+  /**
+   * Replace the contexts array and globalContext. Used during deserialization
+   * to fill in resolved context data after circular references are handled.
+   */
+  public setContextsFromDeserialized(contexts: Context[], globalContextIndex: number): void {
+    this._contexts = contexts
+    if (globalContextIndex >= 0 && globalContextIndex < contexts.length) {
+      this.globalContext = contexts[globalContextIndex]!
+    }
   }
 
   public getModule(name: string): LitsModule | undefined {
@@ -67,7 +120,7 @@ export class ContextStackImpl {
   public create(context: Context): ContextStack {
     const globalContext = this.globalContext
     const contextStack = new ContextStackImpl({
-      contexts: [context, ...this.contexts],
+      contexts: [context, ...this._contexts],
       values: this.values,
       nativeJsFunctions: this.nativeJsFunctions,
       modules: this.modules,
@@ -85,7 +138,7 @@ export class ContextStackImpl {
   }
 
   public addValues(values: Record<string, Any>, sourceCodeInfo: SourceCodeInfo | undefined) {
-    const currentContext = this.contexts[0]!
+    const currentContext = this._contexts[0]!
     for (const [name, value] of Object.entries(values)) {
       if (currentContext[name]) {
         throw new LitsError(`Cannot redefine value "${name}"`, sourceCodeInfo)
@@ -99,7 +152,7 @@ export class ContextStackImpl {
   }
 
   public getValue(name: string): unknown {
-    for (const context of this.contexts) {
+    for (const context of this._contexts) {
       const contextEntry = context[name]
       if (contextEntry)
         return contextEntry.value
@@ -115,7 +168,7 @@ export class ContextStackImpl {
   public lookUp(node: UserDefinedSymbolNode): LookUpResult {
     const value = node[1]
 
-    for (const context of this.contexts) {
+    for (const context of this._contexts) {
       const contextEntry = context[value]
       if (contextEntry)
         return contextEntry

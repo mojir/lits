@@ -80,6 +80,7 @@ import type { EffectHandler, Handlers, RunResult } from './effectTypes'
 import { SuspensionSignal, isSuspensionSignal } from './effectTypes'
 import type { ContextStack } from './ContextStack'
 import { getEffectRef } from './effectRef'
+import { serializeSuspension } from './suspension'
 import type {
   AndFrame,
   ArrayBuildFrame,
@@ -2605,6 +2606,37 @@ export async function evaluateWithEffects(
   const signal = abortController.signal
   const initial = buildInitialStep(ast.body, contextStack)
 
+  return runEffectLoop(initial, handlers, signal)
+}
+
+/**
+ * Resume a suspended continuation with a value.
+ *
+ * Re-enters the trampoline with `{ type: 'Value', value, k }` where `k` is
+ * the deserialized continuation stack. Host handlers and signal are provided
+ * fresh for this run.
+ */
+export async function resumeWithEffects(
+  k: ContinuationStack,
+  value: Any,
+  handlers?: Handlers,
+): Promise<RunResult> {
+  const abortController = new AbortController()
+  const signal = abortController.signal
+  const initial: Step = { type: 'Value', value, k }
+
+  return runEffectLoop(initial, handlers, signal)
+}
+
+/**
+ * Shared effect trampoline loop used by both `evaluateWithEffects` and
+ * `resumeWithEffects`. Runs the trampoline to completion, suspension, or error.
+ */
+async function runEffectLoop(
+  initial: Step,
+  handlers: Handlers | undefined,
+  signal: AbortSignal,
+): Promise<RunResult> {
   try {
     let step: Step | Promise<Step> = initial
     for (;;) {
@@ -2619,7 +2651,8 @@ export async function evaluateWithEffects(
   }
   catch (error) {
     if (isSuspensionSignal(error)) {
-      return { type: 'suspended', continuation: error.k, meta: error.meta }
+      const blob = serializeSuspension(error.k, error.meta)
+      return { type: 'suspended', blob, meta: error.meta }
     }
     if (error instanceof LitsError) {
       return { type: 'error', error }

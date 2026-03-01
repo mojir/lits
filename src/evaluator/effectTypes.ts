@@ -11,6 +11,17 @@ import type { LitsError } from '../errors'
 import type { ContinuationStack } from './frames'
 
 // ---------------------------------------------------------------------------
+// Suspension blob — opaque serialized continuation
+// ---------------------------------------------------------------------------
+
+/**
+ * Opaque string containing the serialized continuation stack.
+ * Created by `suspend()`, consumed by `resume()`.
+ * Internally it's JSON, but hosts should treat it as opaque.
+ */
+export type SuspensionBlob = string
+
+// ---------------------------------------------------------------------------
 // Effect handler types
 // ---------------------------------------------------------------------------
 
@@ -61,7 +72,7 @@ export type Handlers = Record<string, EffectHandler>
  */
 export type RunResult =
   | { type: 'completed', value: Any }
-  | { type: 'suspended', continuation: ContinuationStack, meta?: Any }
+  | { type: 'suspended', blob: SuspensionBlob, meta?: Any }
   | { type: 'error', error: LitsError }
 
 // ---------------------------------------------------------------------------

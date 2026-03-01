@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../src/Lits/Lits'
-import { run, runSync } from '../src/effects'
+import { resume, run, runSync } from '../src/effects'
+import type { Handlers } from '../src/evaluator/effectTypes'
 import { mathUtilsModule } from '../src/builtin/modules/math'
 
 const lits = new Lits()
@@ -431,8 +432,8 @@ describe('phase 3 — Host Async API', () => {
         perform(effect(my.double), 21)
       `, {
         handlers: {
-          'my.double': async ({ args, resume }) => {
-            resume((args[0] as number) * 2)
+          'my.double': async ({ args, resume: doResume }) => {
+            doResume((args[0] as number) * 2)
           },
         },
       })
@@ -445,8 +446,8 @@ describe('phase 3 — Host Async API', () => {
         msg
       `, {
         handlers: {
-          'my.greet': async ({ args, resume }) => {
-            resume(`Hello, ${args[0]}!`)
+          'my.greet': async ({ args, resume: doResume }) => {
+            doResume(`Hello, ${args[0]}!`)
           },
         },
       })
@@ -460,8 +461,8 @@ describe('phase 3 — Host Async API', () => {
         b
       `, {
         handlers: {
-          'my.add': async ({ args, resume }) => {
-            resume((args[0] as number) + (args[1] as number))
+          'my.add': async ({ args, resume: doResume }) => {
+            doResume((args[0] as number) + (args[1] as number))
           },
         },
       })
@@ -473,8 +474,8 @@ describe('phase 3 — Host Async API', () => {
         perform(effect(my.now))
       `, {
         handlers: {
-          'my.now': async ({ resume }) => {
-            resume(1234567890)
+          'my.now': async ({ resume: doResume }) => {
+            doResume(1234567890)
           },
         },
       })
@@ -488,9 +489,9 @@ describe('phase 3 — Host Async API', () => {
         perform(effect(my.fetch), "data")
       `, {
         handlers: {
-          'my.fetch': async ({ args, resume }) => {
+          'my.fetch': async ({ args, resume: doResume }) => {
             const value = await Promise.resolve(`fetched: ${args[0]}`)
-            resume(value)
+            doResume(value)
           },
         },
       })
@@ -502,8 +503,8 @@ describe('phase 3 — Host Async API', () => {
         perform(effect(my.delayed), 42)
       `, {
         handlers: {
-          'my.delayed': async ({ args, resume }) => {
-            resume(Promise.resolve(args[0]!))
+          'my.delayed': async ({ args, resume: doResume }) => {
+            doResume(Promise.resolve(args[0]!))
           },
         },
       })
@@ -519,8 +520,8 @@ describe('phase 3 — Host Async API', () => {
         end
       `, {
         handlers: {
-          'my.fail': async ({ resume }) => {
-            resume(Promise.reject(new Error('async failure')))
+          'my.fail': async ({ resume: doResume }) => {
+            doResume(Promise.reject(new Error('async failure')))
           },
         },
       })
@@ -543,7 +544,7 @@ describe('phase 3 — Host Async API', () => {
     it('should return error for unhandled effect with non-matching handlers', async () => {
       const result = await run('perform(effect(missing.handler), "x")', {
         handlers: {
-          'other.handler': async ({ resume }) => { resume(null) },
+          'other.handler': async ({ resume: doResume }) => { doResume(null) },
         },
       })
       expect(result.type).toBe('error')
@@ -601,8 +602,8 @@ describe('phase 3 — Host Async API', () => {
         end
       `, {
         handlers: {
-          'my.eff': async ({ args, resume }) => {
-            resume(`host: ${args[0]}`)
+          'my.eff': async ({ args, resume: doResume }) => {
+            doResume(`host: ${args[0]}`)
           },
         },
       })
@@ -618,8 +619,8 @@ describe('phase 3 — Host Async API', () => {
         end
       `, {
         handlers: {
-          'other.eff': async ({ args, resume }) => {
-            resume(`host: ${args[0]}`)
+          'other.eff': async ({ args, resume: doResume }) => {
+            doResume(`host: ${args[0]}`)
           },
         },
       })
@@ -635,8 +636,8 @@ describe('phase 3 — Host Async API', () => {
         end
       `, {
         handlers: {
-          'my.eff': async ({ args, resume }) => {
-            resume(`host(${args[0]})`)
+          'my.eff': async ({ args, resume: doResume }) => {
+            doResume(`host(${args[0]})`)
           },
         },
       })
@@ -659,8 +660,9 @@ describe('phase 3 — Host Async API', () => {
       expect(result.type).toBe('suspended')
       if (result.type === 'suspended') {
         expect(result.meta).toEqual({ payload: 'please approve' })
-        expect(result.continuation).toBeDefined()
-        expect(result.continuation.length).toBeGreaterThan(0)
+        expect(result.blob).toBeDefined()
+        expect(typeof result.blob).toBe('string')
+        expect(result.blob.length).toBeGreaterThan(0)
       }
     })
 
@@ -688,9 +690,9 @@ describe('phase 3 — Host Async API', () => {
         perform(effect(my.check))
       `, {
         handlers: {
-          'my.check': async ({ signal, resume }) => {
+          'my.check': async ({ signal, resume: doResume }) => {
             receivedSignal = signal
-            resume(true)
+            doResume(true)
           },
         },
       })
@@ -710,9 +712,9 @@ describe('phase 3 — Host Async API', () => {
         { summary: summary, critique: critique }
       `, {
         handlers: {
-          'llm.complete': async ({ args, resume }) => {
+          'llm.complete': async ({ args, resume: doResume }) => {
             log.push(args[0] as string)
-            resume(`[result for: ${args[0]}]`)
+            doResume(`[result for: ${args[0]}]`)
           },
         },
       })
@@ -741,8 +743,8 @@ describe('phase 3 — Host Async API', () => {
         end
       `, {
         handlers: {
-          'llm.complete': async ({ args, resume }) => {
-            resume(`LLM says: ${args[0]}`)
+          'llm.complete': async ({ args, resume: doResume }) => {
+            doResume(`LLM says: ${args[0]}`)
           },
         },
       })
@@ -776,8 +778,8 @@ describe('phase 3 — Host Async API', () => {
       `, {
         bindings: { x: 10, y: 32 },
         handlers: {
-          'my.compute': async ({ args, resume }) => {
-            resume((args[0] as number) + (args[1] as number))
+          'my.compute': async ({ args, resume: doResume }) => {
+            doResume((args[0] as number) + (args[1] as number))
           },
         },
       })
@@ -799,11 +801,11 @@ describe('phase 3 — Host Async API', () => {
         end
       `, {
         handlers: {
-          'llm.complete': async ({ args, resume }) => {
-            resume(`[LLM: ${args[0]}]`)
+          'llm.complete': async ({ args, resume: doResume }) => {
+            doResume(`[LLM: ${args[0]}]`)
           },
-          'com.myco.human.approve': async ({ resume }) => {
-            resume({ approved: true, reason: null })
+          'com.myco.human.approve': async ({ resume: doResume }) => {
+            doResume({ approved: true, reason: null })
           },
         },
       })
@@ -828,11 +830,11 @@ describe('phase 3 — Host Async API', () => {
         end
       `, {
         handlers: {
-          'llm.complete': async ({ args, resume }) => {
-            resume(`[LLM: ${args[0]}]`)
+          'llm.complete': async ({ args, resume: doResume }) => {
+            doResume(`[LLM: ${args[0]}]`)
           },
-          'com.myco.human.approve': async ({ resume }) => {
-            resume({ approved: false, reason: 'Budget exceeded' })
+          'com.myco.human.approve': async ({ resume: doResume }) => {
+            doResume({ approved: false, reason: 'Budget exceeded' })
           },
         },
       })
@@ -840,6 +842,498 @@ describe('phase 3 — Host Async API', () => {
       if (result.type === 'completed') {
         expect(result.value).toBe('Rejected: Budget exceeded')
       }
+    })
+  })
+})
+
+describe('phase 4 — Suspension & Resume', () => {
+  describe('4a: serialization format', () => {
+    it('should produce a valid JSON blob on suspend', async () => {
+      const result = await run(`
+        perform(effect(my.wait), "data")
+      `, {
+        handlers: {
+          'my.wait': async ({ suspend }) => { suspend({ info: 'test' }) },
+        },
+      })
+      expect(result.type).toBe('suspended')
+      if (result.type === 'suspended') {
+        const parsed = JSON.parse(result.blob) as { version: number, k: unknown[], contextStacks: unknown[] }
+        expect(parsed.version).toBe(1)
+        expect(parsed.k).toBeDefined()
+        expect(parsed.contextStacks).toBeDefined()
+        expect(Array.isArray(parsed.contextStacks)).toBe(true)
+      }
+    })
+
+    it('should include meta in the result', async () => {
+      const result = await run(`
+        perform(effect(my.wait))
+      `, {
+        handlers: {
+          'my.wait': async ({ suspend }) => { suspend({ assignedTo: 'team-a' }) },
+        },
+      })
+      expect(result.type).toBe('suspended')
+      if (result.type === 'suspended') {
+        expect(result.meta).toEqual({ assignedTo: 'team-a' })
+      }
+    })
+
+    it('should handle suspend with no meta', async () => {
+      const result = await run(`
+        perform(effect(my.wait))
+      `, {
+        handlers: {
+          'my.wait': async ({ suspend }) => { suspend() },
+        },
+      })
+      expect(result.type).toBe('suspended')
+      if (result.type === 'suspended') {
+        expect(result.meta).toBeUndefined()
+      }
+    })
+  })
+
+  describe('4b: resume() API', () => {
+    it('should resume a simple suspended program', async () => {
+      const r1 = await run(`
+        let x = perform(effect(my.wait));
+        x * 2
+      `, {
+        handlers: {
+          'my.wait': async ({ suspend }) => { suspend() },
+        },
+      })
+      expect(r1.type).toBe('suspended')
+      if (r1.type !== 'suspended')
+        return
+
+      const r2 = await resume(r1.blob, 21)
+      expect(r2).toEqual({ type: 'completed', value: 42 })
+    })
+
+    it('should resume with a string value', async () => {
+      const r1 = await run(`
+        let name = perform(effect(my.ask), "What is your name?");
+        "Hello, " ++ name ++ "!"
+      `, {
+        handlers: {
+          'my.ask': async ({ suspend, args }) => { suspend({ prompt: args[0] }) },
+        },
+      })
+      expect(r1.type).toBe('suspended')
+      if (r1.type !== 'suspended')
+        return
+
+      const r2 = await resume(r1.blob, 'Alice')
+      expect(r2).toEqual({ type: 'completed', value: 'Hello, Alice!' })
+    })
+
+    it('should resume with an object value', async () => {
+      const r1 = await run(`
+        let decision = perform(effect(my.approve), "report");
+        if decision.approved then
+          "Approved!"
+        else
+          "Rejected: " ++ decision.reason
+        end
+      `, {
+        handlers: {
+          'my.approve': async ({ suspend, args }) => { suspend({ doc: args[0] }) },
+        },
+      })
+      expect(r1.type).toBe('suspended')
+      if (r1.type !== 'suspended')
+        return
+
+      const r2 = await resume(r1.blob, { approved: false, reason: 'Budget exceeded' })
+      expect(r2).toEqual({ type: 'completed', value: 'Rejected: Budget exceeded' })
+    })
+
+    it('should resume with null value', async () => {
+      const r1 = await run(`
+        let x = perform(effect(my.wait));
+        null?(x)
+      `, {
+        handlers: {
+          'my.wait': async ({ suspend }) => { suspend() },
+        },
+      })
+      expect(r1.type).toBe('suspended')
+      if (r1.type !== 'suspended')
+        return
+
+      const r2 = await resume(r1.blob, null)
+      expect(r2).toEqual({ type: 'completed', value: true })
+    })
+
+    it('should preserve variables defined before suspend', async () => {
+      const r1 = await run(`
+        let a = 10;
+        let b = 20;
+        let c = perform(effect(my.wait));
+        a + b + c
+      `, {
+        handlers: {
+          'my.wait': async ({ suspend }) => { suspend() },
+        },
+      })
+      expect(r1.type).toBe('suspended')
+      if (r1.type !== 'suspended')
+        return
+
+      const r2 = await resume(r1.blob, 12)
+      expect(r2).toEqual({ type: 'completed', value: 42 })
+    })
+
+    it('should preserve closures across suspend/resume', async () => {
+      const r1 = await run(`
+        let multiplier = 3;
+        let scale = (x) -> x * multiplier;
+        let value = perform(effect(my.wait));
+        scale(value)
+      `, {
+        handlers: {
+          'my.wait': async ({ suspend }) => { suspend() },
+        },
+      })
+      expect(r1.type).toBe('suspended')
+      if (r1.type !== 'suspended')
+        return
+
+      const r2 = await resume(r1.blob, 14)
+      expect(r2).toEqual({ type: 'completed', value: 42 })
+    })
+
+    it('should handle multiple suspensions (re-suspend on resume)', async () => {
+      const handlers: Handlers = {
+        'my.step': async ({ args, suspend }) => {
+          suspend({ step: args[0] })
+        },
+      }
+      const r1 = await run(`
+        let a = perform(effect(my.step), 1);
+        let b = perform(effect(my.step), 2);
+        a + b
+      `, { handlers })
+
+      expect(r1.type).toBe('suspended')
+      if (r1.type !== 'suspended')
+        return
+      expect(r1.meta).toEqual({ step: 1 })
+
+      // Resume first suspension
+      const r2 = await resume(r1.blob, 10, { handlers })
+      expect(r2.type).toBe('suspended')
+      if (r2.type !== 'suspended')
+        return
+      expect(r2.meta).toEqual({ step: 2 })
+
+      // Resume second suspension
+      const r3 = await resume(r2.blob, 32)
+      expect(r3).toEqual({ type: 'completed', value: 42 })
+    })
+
+    it('should support handlers on resume', async () => {
+      const r1 = await run(`
+        let x = perform(effect(my.wait));
+        perform(effect(my.compute), x)
+      `, {
+        handlers: {
+          'my.wait': async ({ suspend }) => { suspend() },
+          'my.compute': async ({ args, resume: r }) => { r((args[0] as number) * 2) },
+        },
+      })
+      expect(r1.type).toBe('suspended')
+      if (r1.type !== 'suspended')
+        return
+
+      // Resume with handlers so my.compute works
+      const r2 = await resume(r1.blob, 21, {
+        handlers: {
+          'my.compute': async ({ args, resume: r }) => { r((args[0] as number) * 2) },
+        },
+      })
+      expect(r2).toEqual({ type: 'completed', value: 42 })
+    })
+
+    it('should support bindings on resume', async () => {
+      const r1 = await run(`
+        let x = perform(effect(my.wait));
+        x + offset
+      `, {
+        bindings: { offset: 32 },
+        handlers: {
+          'my.wait': async ({ suspend }) => { suspend() },
+        },
+      })
+      expect(r1.type).toBe('suspended')
+      if (r1.type !== 'suspended')
+        return
+
+      // Resume with bindings
+      const r2 = await resume(r1.blob, 10, {
+        bindings: { offset: 32 },
+      })
+      expect(r2).toEqual({ type: 'completed', value: 42 })
+    })
+
+    it('should return error for invalid blob JSON', async () => {
+      const result = await resume('not-json', 42)
+      expect(result.type).toBe('error')
+      if (result.type === 'error') {
+        expect(result.error.message).toContain('Invalid suspension blob')
+      }
+    })
+
+    it('should return error for wrong version', async () => {
+      const result = await resume(JSON.stringify({ version: 999, k: [], contextStacks: [] }), 42)
+      expect(result.type).toBe('error')
+      if (result.type === 'error') {
+        expect(result.error.message).toContain('Unsupported suspension blob version')
+      }
+    })
+
+    it('should handle errors after resume', async () => {
+      const r1 = await run(`
+        let x = perform(effect(my.wait));
+        throw("error: " ++ x)
+      `, {
+        handlers: {
+          'my.wait': async ({ suspend }) => { suspend() },
+        },
+      })
+      expect(r1.type).toBe('suspended')
+      if (r1.type !== 'suspended')
+        return
+
+      const r2 = await resume(r1.blob, 'boom')
+      expect(r2.type).toBe('error')
+      if (r2.type === 'error') {
+        expect(r2.error.message).toContain('error: boom')
+      }
+    })
+
+    it('should handle try/catch after resume', async () => {
+      const r1 = await run(`
+        try
+          let x = perform(effect(my.wait));
+          if x == "bad" then throw("bad input") else x end
+        catch (e)
+          "caught: " ++ e.message
+        end
+      `, {
+        handlers: {
+          'my.wait': async ({ suspend }) => { suspend() },
+        },
+      })
+      expect(r1.type).toBe('suspended')
+      if (r1.type !== 'suspended')
+        return
+
+      const r2 = await resume(r1.blob, 'bad')
+      expect(r2).toEqual({ type: 'completed', value: 'caught: bad input' })
+    })
+  })
+
+  describe('4c: NativeJsFunction not in blob', () => {
+    it('should use host values before suspend without them leaking into blob', async () => {
+      // Host values (plain data in bindings) are available during evaluation.
+      // After suspend, the blob should not contain NativeJsFunctions.
+      const r1 = await run(`
+        let doubled = factor * 5;
+        let x = perform(effect(my.wait));
+        doubled + x
+      `, {
+        bindings: { factor: 2 },
+        handlers: {
+          'my.wait': async ({ suspend }) => { suspend() },
+        },
+      })
+      expect(r1.type).toBe('suspended')
+      if (r1.type !== 'suspended')
+        return
+
+      // Resume — the blob is valid and doesn't contain JS functions
+      const r2 = await resume(r1.blob, 7)
+      expect(r2).toEqual({ type: 'completed', value: 17 }) // 2*5 + 7
+    })
+  })
+
+  describe('4d: end-to-end suspension workflow', () => {
+    it('should complete a full suspend-store-resume cycle', async () => {
+      // Simulate: Process 1 runs source, suspends at approval
+      const source = `
+        let report = perform(effect(llm.complete), "Generate Q4 report");
+        let decision = perform(effect(com.myco.approve), report);
+        if decision.approved then
+          perform(effect(llm.complete), "Finalize: " ++ report)
+        else
+          "Rejected: " ++ decision.reason
+        end
+      `
+      const handlers: Handlers = {
+        'llm.complete': async ({ args, resume: doResume }) => {
+          doResume(`[LLM: ${args[0]}]`)
+        },
+        'com.myco.approve': async ({ args, suspend }) => {
+          suspend({ payload: args[0], assignedTo: 'finance-team' })
+        },
+      }
+
+      const r1 = await run(source, { handlers })
+      expect(r1.type).toBe('suspended')
+      if (r1.type !== 'suspended')
+        return
+
+      // Simulate: Store blob in database
+      const storedBlob = r1.blob
+      const storedMeta = r1.meta as Record<string, unknown>
+      expect(storedMeta.assignedTo).toBe('finance-team')
+      expect(storedMeta.payload).toBe('[LLM: Generate Q4 report]')
+
+      // Simulate: Process 2 loads blob and resumes with approval
+      const r2 = await resume(storedBlob, { approved: true, reason: null }, { handlers })
+      expect(r2.type).toBe('completed')
+      if (r2.type === 'completed') {
+        expect(r2.value).toBe('[LLM: Finalize: [LLM: Generate Q4 report]]')
+      }
+    })
+
+    it('should handle rejection in suspend-resume cycle', async () => {
+      const source = `
+        let x = perform(effect(my.wait));
+        if x.approved then "Yes" else "No: " ++ x.reason end
+      `
+      const r1 = await run(source, {
+        handlers: {
+          'my.wait': async ({ suspend }) => { suspend({ type: 'approval' }) },
+        },
+      })
+      expect(r1.type).toBe('suspended')
+      if (r1.type !== 'suspended')
+        return
+
+      const r2 = await resume(r1.blob, { approved: false, reason: 'denied' })
+      expect(r2).toEqual({ type: 'completed', value: 'No: denied' })
+    })
+
+    it('should handle multi-step workflow with several suspensions', async () => {
+      const source = `
+        let step1 = perform(effect(my.step), "step1");
+        let step2 = perform(effect(my.step), "step2");
+        let step3 = perform(effect(my.step), "step3");
+        [step1, step2, step3]
+      `
+      const handlers: Handlers = {
+        'my.step': async ({ args, suspend }) => {
+          suspend({ step: args[0] })
+        },
+      }
+
+      const r1 = await run(source, { handlers })
+      expect(r1.type).toBe('suspended')
+      if (r1.type !== 'suspended')
+        return
+      expect((r1.meta as Record<string, unknown>).step).toBe('step1')
+
+      const r2 = await resume(r1.blob, 'A', { handlers })
+      expect(r2.type).toBe('suspended')
+      if (r2.type !== 'suspended')
+        return
+      expect((r2.meta as Record<string, unknown>).step).toBe('step2')
+
+      const r3 = await resume(r2.blob, 'B', { handlers })
+      expect(r3.type).toBe('suspended')
+      if (r3.type !== 'suspended')
+        return
+      expect((r3.meta as Record<string, unknown>).step).toBe('step3')
+
+      const r4 = await resume(r3.blob, 'C')
+      expect(r4).toEqual({ type: 'completed', value: ['A', 'B', 'C'] })
+    })
+
+    it('should work with local try/with handlers after resume', async () => {
+      const r1 = await run(`
+        let x = perform(effect(my.wait));
+        try
+          perform(effect(my.local), x)
+        with
+          case effect(my.local) then ([v]) -> upper-case(v)
+        end
+      `, {
+        handlers: {
+          'my.wait': async ({ suspend }) => { suspend() },
+        },
+      })
+      expect(r1.type).toBe('suspended')
+      if (r1.type !== 'suspended')
+        return
+
+      const r2 = await resume(r1.blob, 'hello')
+      expect(r2).toEqual({ type: 'completed', value: 'HELLO' })
+    })
+
+    it('should preserve deep nesting and closures across resume', async () => {
+      const r1 = await run(`
+        let make-adder = (n) -> (x) -> n + x;
+        let add5 = make-adder(5);
+        let input = perform(effect(my.wait));
+        add5(input)
+      `, {
+        handlers: {
+          'my.wait': async ({ suspend }) => { suspend() },
+        },
+      })
+      expect(r1.type).toBe('suspended')
+      if (r1.type !== 'suspended')
+        return
+
+      const r2 = await resume(r1.blob, 37)
+      expect(r2).toEqual({ type: 'completed', value: 42 })
+    })
+
+    it('should handle loop/recur state after resume', async () => {
+      const r1 = await run(`
+        let factor = perform(effect(my.wait));
+        loop(i = 0, acc = 0) ->
+          if i >= 5 then acc
+          else recur(i + 1, acc + i * factor)
+          end
+      `, {
+        handlers: {
+          'my.wait': async ({ suspend }) => { suspend() },
+        },
+      })
+      expect(r1.type).toBe('suspended')
+      if (r1.type !== 'suspended')
+        return
+
+      // factor = 2, sum = 0*2 + 1*2 + 2*2 + 3*2 + 4*2 = 20
+      const r2 = await resume(r1.blob, 2)
+      expect(r2).toEqual({ type: 'completed', value: 20 })
+    })
+
+    it('should handle arrays and objects across resume', async () => {
+      const r1 = await run(`
+        let data = { name: "test", values: [1, 2, 3] };
+        let extra = perform(effect(my.wait));
+        { name: data.name, values: push(data.values, extra), count: count(data.values) + 1 }
+      `, {
+        handlers: {
+          'my.wait': async ({ suspend }) => { suspend() },
+        },
+      })
+      expect(r1.type).toBe('suspended')
+      if (r1.type !== 'suspended')
+        return
+
+      const r2 = await resume(r1.blob, 4)
+      expect(r2).toEqual({
+        type: 'completed',
+        value: { name: 'test', values: [1, 2, 3, 4], count: 4 },
+      })
     })
   })
 })

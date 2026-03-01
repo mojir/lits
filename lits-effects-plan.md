@@ -510,7 +510,7 @@ Works end-to-end. Tests covering sync resume, async resume, unhandled effect err
 
 The core value proposition: pause, serialize, store, resume across processes.
 
-### 4a. Serialization format
+### 4a. Serialization format ✅ DONE
 
 When `suspend(meta?)` is called, serialize:
 
@@ -528,7 +528,16 @@ Before serializing, validate that all values in `k` are serializable.
 `NativeJsFunction` values must not appear in frames — they live in the global context
 and are re-injected on resume. If found, throw a descriptive error.
 
-### 4b. `resume(blob, value, options)` API
+**Implemented:**
+- `src/evaluator/suspension.ts` — NEW file (~280 lines):
+  - `serializeSuspension(k, meta?)`: Collects all unique `ContextStack` instances from frames by identity, assigns numeric IDs. Replaces inline `ContextStack` references with `{__csRef: id}` markers. Validates no `NativeJsFunction` values in scope. Returns JSON string with `{version: 1, k, meta, contextStacks}`.
+  - `deserializeSuspension(blob, options?)`: Parses JSON, validates version field. Creates placeholder `ContextStack` instances, deep-resolves `__csRef` markers, fills in actual contexts. Re-injects host bindings (values, modules, nativeJsFunctions).
+  - `DeserializeOptions` interface: `values`, `nativeJsFunctions`, `modules`
+- `src/evaluator/effectTypes.ts` — Added `SuspensionBlob` type alias (`string`). Changed `RunResult.suspended` from `{ continuation: ContinuationStack }` to `{ blob: SuspensionBlob }`.
+- `src/evaluator/ContextStack.ts` — Added serialization accessors: `getContextsRaw()`, `getGlobalContextIndex()`, `static fromDeserialized()`, `setContextsFromDeserialized()`.
+- `src/evaluator/trampoline.ts` — Updated `evaluateWithEffects` catch block: calls `serializeSuspension(k, meta)` when `SuspensionSignal` is caught.
+
+### 4b. `resume(blob, value, options)` API ✅ DONE
 
 ```typescript
 async function resume(
@@ -544,13 +553,24 @@ async function resume(
 4. Host `bindings` and `handlers` re-injected from `options` (NativeJsFunctions
    are not in the blob — they're provided fresh each time)
 
-### 4c. `NativeJsFunction` re-injection on resume
+**Implemented:**
+- `src/effects.ts` — `resume(blob, value, options?)` function: deserializes blob, calls `resumeWithEffects(k, value, handlers)`. `ResumeOptions` interface: `bindings`, `handlers`, `modules`. Wraps all errors in `RunResult`.
+- `src/evaluator/trampoline.ts` — `resumeWithEffects(k, value, handlers?)`: creates `AbortController`, builds initial `{type: 'Value', value, k}` step, enters `runEffectLoop()`.
+- Shared `runEffectLoop(initial, handlers, signal)` extracted from `evaluateWithEffects` to avoid duplication.
+- Exported from `src/index.ts`: `resume`, `SuspensionBlob`, `ResumeOptions`.
+
+### 4c. `NativeJsFunction` re-injection on resume ✅ DONE
 
 The global context (from `bindings`) is rebuilt from the `options.bindings` map on each
 `run()` / `resume()` call, exactly as today. Since `NativeJsFunction` values are never in
 the serialized frames, this is sufficient. No special handling needed.
 
-### 4d. Deliverable
+**Implemented:**
+- `deserializeSuspension` in `suspension.ts` accepts `DeserializeOptions` with `values`, `nativeJsFunctions`, and `modules` — these are injected into the global context of each deserialized `ContextStack`.
+- `resume()` in `effects.ts` passes `bindings` as `values` to `deserializeSuspension`.
+- Serialization validates that no `NativeJsFunction` values appear in continuation frames — throws descriptive error if found.
+
+### 4d. Deliverable ✅ DONE
 
 End-to-end suspension test:
 
@@ -565,6 +585,16 @@ const blob = await db.load(id)
 const r2 = await resume(blob, humanDecision, { handlers })
 // r2.type === 'completed'
 ```
+
+**Verified:**
+- `__tests__/effects.test.ts` — 87 tests (31 Phase 2 + 32 Phase 3 + 24 Phase 4), all passing
+- Phase 4 test categories:
+  - 4a: Blob format validation (2) — JSON structure, meta inclusion
+  - 4b: resume() API (13) — simple resume, string/object/null values, closures, multiple suspensions, handlers on resume, bindings on resume, invalid blob, wrong version, errors after resume, try/catch after resume
+  - 4c: NativeJsFunction not in blob (1) — host values usable before suspend
+  - 4d: End-to-end workflows (7) — full suspend-store-resume cycle, rejection path, multi-step workflows, local try/with after resume, deep nesting + closures, loop/recur after resume, arrays/objects across resume
+- `npm run check` passes: lint clean, typecheck clean, 5174 tests pass, build succeeds
+- Coverage: suspension.ts covered by tests, effects.ts covered, trampoline.ts at ~93%
 
 ---
 
