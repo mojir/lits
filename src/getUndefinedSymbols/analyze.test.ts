@@ -23,5 +23,9 @@ describe('analyze', () => {
           let data3 = data2 + 1;
           data3`),
     ).toEqual(new Set([]))
+    expect(lits.getUndefinedSymbols('parallel(a, b, 1)')).toEqual(new Set(['a', 'b']))
+    expect(lits.getUndefinedSymbols('parallel(1, 2, 3)')).toEqual(new Set([]))
+    expect(lits.getUndefinedSymbols('race(x, y)')).toEqual(new Set(['x', 'y']))
+    expect(lits.getUndefinedSymbols('race(1, 2)')).toEqual(new Set([]))
   })
 })

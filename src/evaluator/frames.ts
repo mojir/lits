@@ -410,6 +410,34 @@ export interface EffectResumeFrame {
 }
 
 // ---------------------------------------------------------------------------
+// Parallel resume
+// ---------------------------------------------------------------------------
+
+/**
+ * Resume a `parallel(...)` expression after suspension.
+ *
+ * When a `parallel` has some branches that suspended and some that completed,
+ * the continuation is suspended with this frame at the top. On resume, the
+ * host provides a value for the first pending suspended branch.
+ *
+ * `applyFrame` converts this to a `ParallelResumeStep` so that `tick` can
+ * handle it with access to `handlers` and `signal`.
+ *
+ * Fields:
+ * - `branchCount`: total number of branches (for ordered result array)
+ * - `completedBranches`: branches that already finished `{ index, value }`
+ * - `suspendedBranches`: remaining suspended branches `{ index, blob, meta? }`
+ *   The first entry is the one being resumed — its blob is NOT used because
+ *   the value was already provided by the host. Subsequent entries are pending.
+ */
+export interface ParallelResumeFrame {
+  type: 'ParallelResume'
+  branchCount: number
+  completedBranches: Array<{ index: number, value: Any }>
+  suspendedBranches: Array<{ index: number, blob: string, meta?: Any }>
+}
+
+// ---------------------------------------------------------------------------
 // Function calls
 // ---------------------------------------------------------------------------
 
@@ -565,6 +593,8 @@ export type Frame =
   | TryCatchFrame
   | TryWithFrame
   | EffectResumeFrame
+  // Parallel resume
+  | ParallelResumeFrame
   // Function calls
   | EvalArgsFrame
   | CallFnFrame

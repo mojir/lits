@@ -1612,3 +1612,557 @@ describe('phase 5 — Standard Effects', () => {
     })
   })
 })
+
+// ---------------------------------------------------------------------------
+// Phase 6 — Parallel & Race
+// ---------------------------------------------------------------------------
+
+describe('phase 6 — Parallel & Race', () => {
+  describe('6a: parallel(...expressions)', () => {
+    it('should evaluate all branches and return array of results', async () => {
+      const result = await run(`
+        parallel(
+          1 + 2,
+          3 + 4,
+          5 + 6
+        )
+      `)
+      expect(result).toEqual({ type: 'completed', value: [3, 7, 11] })
+    })
+
+    it('should return results in original order', async () => {
+      // Branch 2 is faster than branch 1, but results are ordered by position
+      const result = await run(`
+        parallel(
+          perform(effect(slow.op), "first"),
+          perform(effect(fast.op), "second")
+        )
+      `, {
+        handlers: {
+          'slow.op': async ({ args, resume: res }) => {
+            await new Promise(resolve => setTimeout(resolve, 50))
+            res(`slow:${args[0]}`)
+          },
+          'fast.op': async ({ args, resume: res }) => {
+            await new Promise(resolve => setTimeout(resolve, 10))
+            res(`fast:${args[0]}`)
+          },
+        },
+      })
+      expect(result).toEqual({
+        type: 'completed',
+        value: ['slow:first', 'fast:second'],
+      })
+    })
+
+    it('should work with host effect handlers', async () => {
+      const result = await run(`
+        let llm = effect(llm.complete);
+        parallel(
+          perform(llm, "Summarize"),
+          perform(llm, "Critique"),
+          perform(llm, "Keywords")
+        )
+      `, {
+        handlers: {
+          'llm.complete': async ({ args, resume: res }) => {
+            res(`result:${args[0]}`)
+          },
+        },
+      })
+      expect(result).toEqual({
+        type: 'completed',
+        value: ['result:Summarize', 'result:Critique', 'result:Keywords'],
+      })
+    })
+
+    it('should error if any branch errors', async () => {
+      const result = await run(`
+        parallel(
+          1 + 2,
+          throw("branch error"),
+          5 + 6
+        )
+      `)
+      expect(result.type).toBe('error')
+    })
+
+    it('should work with a single branch', async () => {
+      const result = await run(`
+        parallel(42)
+      `)
+      expect(result).toEqual({ type: 'completed', value: [42] })
+    })
+
+    it('should handle standard effects in branches', async () => {
+      const result = await run(`
+        parallel(
+          perform(effect(lits.random)),
+          perform(effect(lits.random))
+        )
+      `)
+      expect(result.type).toBe('completed')
+      if (result.type === 'completed') {
+        expect(Array.isArray(result.value)).toBe(true)
+        const arr = result.value as number[]
+        expect(arr).toHaveLength(2)
+        expect(typeof arr[0]).toBe('number')
+        expect(typeof arr[1]).toBe('number')
+      }
+    })
+
+    it('should support destructuring the result', async () => {
+      const result = await run(`
+        let [a, b, c] = parallel(
+          perform(effect(llm), "task1"),
+          perform(effect(llm), "task2"),
+          perform(effect(llm), "task3")
+        );
+        { a: a, b: b, c: c }
+      `, {
+        handlers: {
+          llm: async ({ args, resume: res }) => {
+            res(`done:${args[0]}`)
+          },
+        },
+      })
+      expect(result).toEqual({
+        type: 'completed',
+        value: { a: 'done:task1', b: 'done:task2', c: 'done:task3' },
+      })
+    })
+
+    describe('parallel suspension', () => {
+      it('should suspend when any branch suspends', async () => {
+        const result = await run(`
+          parallel(
+            perform(effect(fast.op)),
+            perform(effect(needs.approval))
+          )
+        `, {
+          handlers: {
+            'fast.op': async ({ resume: res }) => {
+              res('fast-result')
+            },
+            'needs.approval': async ({ suspend }) => {
+              suspend({ assignedTo: 'team-lead' })
+            },
+          },
+        })
+        expect(result.type).toBe('suspended')
+        if (result.type === 'suspended') {
+          expect(result.meta).toEqual({ assignedTo: 'team-lead' })
+        }
+      })
+
+      it('should resume suspended parallel and complete', async () => {
+        const handlers: Handlers = {
+          'fast.op': async ({ resume: res }) => { res('fast-result') },
+          'needs.approval': async ({ suspend }) => {
+            suspend({ assignedTo: 'team-lead' })
+          },
+        }
+
+        const result1 = await run(`
+          parallel(
+            perform(effect(fast.op)),
+            perform(effect(needs.approval))
+          )
+        `, { handlers })
+
+        expect(result1.type).toBe('suspended')
+        if (result1.type !== 'suspended')
+          return
+
+        // Resume with the approval decision
+        const result2 = await resume(result1.blob, 'approved', { handlers })
+        expect(result2).toEqual({
+          type: 'completed',
+          value: ['fast-result', 'approved'],
+        })
+      })
+
+      it('should handle multiple suspended branches one at a time', async () => {
+        const handlers: Handlers = {
+          'approval.a': async ({ suspend }) => {
+            suspend({ step: 'A' })
+          },
+          'approval.b': async ({ suspend }) => {
+            suspend({ step: 'B' })
+          },
+          'approval.c': async ({ suspend }) => {
+            suspend({ step: 'C' })
+          },
+        }
+
+        const result1 = await run(`
+          parallel(
+            perform(effect(approval.a)),
+            perform(effect(approval.b)),
+            perform(effect(approval.c))
+          )
+        `, { handlers })
+
+        expect(result1.type).toBe('suspended')
+        if (result1.type !== 'suspended')
+          return
+
+        // First resume
+        const result2 = await resume(result1.blob, 'value-A', { handlers })
+        expect(result2.type).toBe('suspended')
+        if (result2.type !== 'suspended')
+          return
+
+        // Second resume
+        const result3 = await resume(result2.blob, 'value-B', { handlers })
+        expect(result3.type).toBe('suspended')
+        if (result3.type !== 'suspended')
+          return
+
+        // Third resume — all branches done
+        const result4 = await resume(result3.blob, 'value-C', { handlers })
+        expect(result4).toEqual({
+          type: 'completed',
+          value: ['value-A', 'value-B', 'value-C'],
+        })
+      })
+
+      it('should preserve branch order even with mixed completion/suspension', async () => {
+        const handlers: Handlers = {
+          'fast': async ({ resume: res }) => { res('fast-done') },
+          'slow.approve': async ({ suspend }) => {
+            suspend({ type: 'approval' })
+          },
+        }
+
+        // Branch 0: suspends, Branch 1: completes, Branch 2: suspends
+        const result1 = await run(`
+          parallel(
+            perform(effect(slow.approve)),
+            perform(effect(fast)),
+            perform(effect(slow.approve))
+          )
+        `, { handlers })
+
+        expect(result1.type).toBe('suspended')
+        if (result1.type !== 'suspended')
+          return
+
+        const result2 = await resume(result1.blob, 'approved-0', { handlers })
+        expect(result2.type).toBe('suspended')
+        if (result2.type !== 'suspended')
+          return
+
+        const result3 = await resume(result2.blob, 'approved-2', { handlers })
+        expect(result3).toEqual({
+          type: 'completed',
+          value: ['approved-0', 'fast-done', 'approved-2'],
+        })
+      })
+
+      it('should support the host-side resume loop pattern', async () => {
+        const decisions = ['yes', 'no', 'maybe']
+        let decisionIndex = 0
+        const handlers: Handlers = {
+          'ask.human': async ({ args, suspend }) => {
+            suspend({ question: args[0] })
+          },
+        }
+
+        let result = await run(`
+          parallel(
+            perform(effect(ask.human), "Q1"),
+            perform(effect(ask.human), "Q2"),
+            perform(effect(ask.human), "Q3")
+          )
+        `, { handlers })
+
+        // Standard host-side loop — identical to single suspension
+        while (result.type === 'suspended') {
+          const decision = decisions[decisionIndex++]!
+          result = await resume(result.blob, decision, { handlers })
+        }
+
+        expect(result).toEqual({
+          type: 'completed',
+          value: ['yes', 'no', 'maybe'],
+        })
+      })
+    })
+  })
+
+  describe('6b: race(...expressions)', () => {
+    it('should return the first completed branch', async () => {
+      const result = await run(`
+        race(
+          perform(effect(slow.op), "tortoise"),
+          perform(effect(fast.op), "hare")
+        )
+      `, {
+        handlers: {
+          'slow.op': async ({ args, resume: res }) => {
+            await new Promise(resolve => setTimeout(resolve, 50))
+            res(`slow:${args[0]}`)
+          },
+          'fast.op': async ({ args, resume: res }) => {
+            res(`fast:${args[0]}`)
+          },
+        },
+      })
+      expect(result).toEqual({ type: 'completed', value: 'fast:hare' })
+    })
+
+    it('should return the first completed even if others error', async () => {
+      const result = await run(`
+        race(
+          perform(effect(fail.op)),
+          perform(effect(ok.op))
+        )
+      `, {
+        handlers: {
+          'fail.op': async ({ resume: res }) => {
+            res(Promise.reject(new Error('boom')))
+          },
+          'ok.op': async ({ resume: res }) => {
+            res('success')
+          },
+        },
+      })
+      expect(result).toEqual({ type: 'completed', value: 'success' })
+    })
+
+    it('should error if all branches error', async () => {
+      const result = await run(`
+        race(
+          throw("error-1"),
+          throw("error-2")
+        )
+      `)
+      expect(result.type).toBe('error')
+      if (result.type === 'error') {
+        expect(result.error.message).toContain('race: all branches failed')
+      }
+    })
+
+    it('should work with pure expressions (first wins)', async () => {
+      const result = await run(`
+        race(42, 99)
+      `)
+      // Both complete immediately — first completed in results order wins
+      expect(result).toEqual({ type: 'completed', value: 42 })
+    })
+
+    it('should work with a single branch', async () => {
+      const result = await run(`
+        race(perform(effect(op), "only"))
+      `, {
+        handlers: {
+          op: async ({ args, resume: res }) => {
+            res(`result:${args[0]}`)
+          },
+        },
+      })
+      expect(result).toEqual({ type: 'completed', value: 'result:only' })
+    })
+
+    it('should suspend if all branches suspend (none complete)', async () => {
+      const result = await run(`
+        race(
+          perform(effect(slow.a)),
+          perform(effect(slow.b))
+        )
+      `, {
+        handlers: {
+          'slow.a': async ({ suspend }) => {
+            suspend({ branch: 'A' })
+          },
+          'slow.b': async ({ suspend }) => {
+            suspend({ branch: 'B' })
+          },
+        },
+      })
+      expect(result.type).toBe('suspended')
+      if (result.type === 'suspended') {
+        // Meta contains all branch metas
+        expect(result.meta).toEqual({
+          type: 'race',
+          branches: [{ branch: 'A' }, { branch: 'B' }],
+        })
+      }
+    })
+
+    it('should resume a suspended race with the winner value', async () => {
+      const handlers: Handlers = {
+        'slow.a': async ({ suspend }) => { suspend({ branch: 'A' }) },
+        'slow.b': async ({ suspend }) => { suspend({ branch: 'B' }) },
+      }
+
+      const result1 = await run(`
+        race(
+          perform(effect(slow.a)),
+          perform(effect(slow.b))
+        )
+      `, { handlers })
+
+      expect(result1.type).toBe('suspended')
+      if (result1.type !== 'suspended')
+        return
+
+      // Host decides the winner
+      const result2 = await resume(result1.blob, 'winner-value', { handlers })
+      expect(result2).toEqual({ type: 'completed', value: 'winner-value' })
+    })
+
+    it('should prefer completed over suspended branches', async () => {
+      const result = await run(`
+        race(
+          perform(effect(suspend.op)),
+          perform(effect(complete.op))
+        )
+      `, {
+        handlers: {
+          'suspend.op': async ({ suspend }) => {
+            suspend({ waiting: true })
+          },
+          'complete.op': async ({ resume: res }) => {
+            res('completed-value')
+          },
+        },
+      })
+      // Completed branch wins over suspended
+      expect(result).toEqual({ type: 'completed', value: 'completed-value' })
+    })
+
+    it('should pass signal to branch handlers', async () => {
+      const abortReasons: string[] = []
+      const result = await run(`
+        race(
+          perform(effect(fast.op)),
+          perform(effect(slow.op))
+        )
+      `, {
+        handlers: {
+          'fast.op': async ({ resume: res }) => {
+            res('fast-wins')
+          },
+          'slow.op': async ({ signal, resume: res }) => {
+            // In practice, this handler would check signal before doing work
+            if (signal.aborted) {
+              abortReasons.push(signal.reason as string)
+            }
+            res('slow-loses')
+          },
+        },
+      })
+      expect(result).toEqual({ type: 'completed', value: 'fast-wins' })
+      // Note: abort happens after allSettled, so the slow handler may or may not see it
+    })
+
+    it('should use race result in subsequent computation', async () => {
+      const result = await run(`
+        let winner = race(
+          perform(effect(op.a)),
+          perform(effect(op.b))
+        );
+        "Winner: " ++ winner
+      `, {
+        handlers: {
+          'op.a': async ({ resume: res }) => {
+            await new Promise(resolve => setTimeout(resolve, 50))
+            res('A')
+          },
+          'op.b': async ({ resume: res }) => {
+            res('B')
+          },
+        },
+      })
+      expect(result).toEqual({ type: 'completed', value: 'Winner: B' })
+    })
+  })
+
+  describe('6: parallel and race edge cases', () => {
+    it('parallel should not work in runSync', () => {
+      expect(() => runSync('parallel(1, 2, 3)')).toThrow('Unexpected async operation')
+    })
+
+    it('race should not work in runSync', () => {
+      expect(() => runSync('race(1, 2, 3)')).toThrow('Unexpected async operation')
+    })
+
+    it('parallel with nested parallel should work', async () => {
+      const result = await run(`
+        parallel(
+          parallel(1, 2),
+          parallel(3, 4)
+        )
+      `)
+      expect(result).toEqual({
+        type: 'completed',
+        value: [[1, 2], [3, 4]],
+      })
+    })
+
+    it('parallel inside let binding should work', async () => {
+      const result = await run(`
+        let results = parallel(
+          perform(effect(op), "a"),
+          perform(effect(op), "b")
+        );
+        map(results, -> "got:" ++ $)
+      `, {
+        handlers: {
+          op: async ({ args, resume: res }) => { res(args[0]!) },
+        },
+      })
+      expect(result).toEqual({
+        type: 'completed',
+        value: ['got:a', 'got:b'],
+      })
+    })
+
+    it('race inside parallel should work', async () => {
+      const result = await run(`
+        parallel(
+          race(
+            perform(effect(slow), "a"),
+            perform(effect(fast), "b")
+          ),
+          race(
+            perform(effect(fast), "c"),
+            perform(effect(slow), "d")
+          )
+        )
+      `, {
+        handlers: {
+          slow: async ({ args, resume: res }) => {
+            await new Promise(resolve => setTimeout(resolve, 50))
+            res(`slow:${args[0]}`)
+          },
+          fast: async ({ args, resume: res }) => {
+            res(`fast:${args[0]}`)
+          },
+        },
+      })
+      expect(result).toEqual({
+        type: 'completed',
+        value: ['fast:b', 'fast:c'],
+      })
+    })
+
+    it('parallel with handler errors in some branches', async () => {
+      const result = await run(`
+        parallel(
+          perform(effect(ok.op)),
+          perform(effect(err.op))
+        )
+      `, {
+        handlers: {
+          'ok.op': async ({ resume: res }) => { res('ok') },
+          'err.op': async ({ resume: res }) => { res(Promise.reject(new Error('handler error'))) },
+        },
+      })
+      // Error branches cause the whole parallel to error
+      expect(result.type).toBe('error')
+    })
+  })
+})

@@ -7,7 +7,9 @@ import type { EffectNode } from '../../builtin/specialExpressions/effect'
 import type { ImportNode } from '../../builtin/specialExpressions/import'
 import type { ObjectNode } from '../../builtin/specialExpressions/object'
 import type { OrNode } from '../../builtin/specialExpressions/or'
+import type { ParallelNode } from '../../builtin/specialExpressions/parallel'
 import type { PerformNode } from '../../builtin/specialExpressions/perform'
+import type { RaceNode } from '../../builtin/specialExpressions/race'
 import type { QqNode } from '../../builtin/specialExpressions/qq'
 import type { RecurNode } from '../../builtin/specialExpressions/recur'
 import type { ThrowNode } from '../../builtin/specialExpressions/throw'
@@ -109,6 +111,10 @@ export function parseFunctionCall(ctx: ParserContext, symbol: AstNode): AstNode 
         const [effectExpr, ...argExprs] = params
         return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, effectExpr!, argExprs]], symbol[2]) satisfies PerformNode
       }
+      case specialExpressionTypes.parallel:
+        return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, params]], symbol[2]) satisfies ParallelNode
+      case specialExpressionTypes.race:
+        return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, params]], symbol[2]) satisfies RaceNode
       case specialExpressionTypes['0_lambda']:
         throw new LitsError(`${type} is not allowed`, symbol[2])
       /* v8 ignore next 2 */

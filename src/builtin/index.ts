@@ -20,7 +20,9 @@ import { arraySpecialExpression } from './specialExpressions/array'
 import { effectSpecialExpression } from './specialExpressions/effect'
 import { objectSpecialExpression } from './specialExpressions/object'
 import { importSpecialExpression } from './specialExpressions/import'
+import { parallelSpecialExpression } from './specialExpressions/parallel'
 import { performSpecialExpression } from './specialExpressions/perform'
+import { raceSpecialExpression } from './specialExpressions/race'
 import { specialExpressionTypes } from './specialExpressionTypes'
 
 export const specialExpressions = [
@@ -46,6 +48,8 @@ export const specialExpressions = [
   importSpecialExpression,
   effectSpecialExpression,
   performSpecialExpression,
+  parallelSpecialExpression,
+  raceSpecialExpression,
 ] as const
 
 export type SpecialExpressions = typeof specialExpressions
@@ -65,7 +69,9 @@ export type CommonSpecialExpressionType = [
   | typeof specialExpressionTypes['array']
   | typeof specialExpressionTypes['object']
   | typeof specialExpressionTypes['effect']
-  | typeof specialExpressionTypes['perform'],
+  | typeof specialExpressionTypes['perform']
+  | typeof specialExpressionTypes['parallel']
+  | typeof specialExpressionTypes['race'],
 ]
 
 export type SpecialExpressionType = typeof specialExpressionTypes[SpecialExpressionName]

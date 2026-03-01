@@ -20,6 +20,7 @@ import type {
   NanCheckFrame,
   ObjectBuildFrame,
   OrFrame,
+  ParallelResumeFrame,
   PerformArgsFrame,
   QqFrame,
   RecurFrame,
@@ -59,13 +60,14 @@ describe('frame types', () => {
       TryCatch: true,
       TryWith: true,
       EffectResume: true,
+      ParallelResume: true,
       EvalArgs: true,
       CallFn: true,
       FnBody: true,
       BindingDefault: true,
       NanCheck: true,
     }
-    expect(Object.keys(frameTypes)).toHaveLength(24)
+    expect(Object.keys(frameTypes)).toHaveLength(25)
   })
 
   it('should support ContinuationStack as Frame array', () => {
@@ -98,6 +100,7 @@ describe('frame types', () => {
         case 'TryCatch': return 'exception'
         case 'TryWith': return 'effect'
         case 'EffectResume': return 'effect'
+        case 'ParallelResume': return 'parallel'
         case 'EvalArgs': return 'call'
         case 'CallFn': return 'call'
         case 'FnBody': return 'call'
@@ -147,6 +150,7 @@ describe('frame types', () => {
       'TryCatch',
       'TryWith',
       'EffectResume',
+      'ParallelResume',
       'EvalArgs',
       'CallFn',
       'FnBody',
@@ -155,7 +159,7 @@ describe('frame types', () => {
     ]
     const uniqueTypes = new Set(types)
     expect(uniqueTypes.size).toBe(types.length)
-    expect(uniqueTypes.size).toBe(24)
+    expect(uniqueTypes.size).toBe(25)
   })
 
   it('should export individual frame interfaces for typed access', () => {
@@ -180,6 +184,7 @@ describe('frame types', () => {
     const _tryCatch: TryCatchFrame['type'] = 'TryCatch'
     const _tryWith: TryWithFrame['type'] = 'TryWith'
     const _effectResume: EffectResumeFrame['type'] = 'EffectResume'
+    const _parallelResume: ParallelResumeFrame['type'] = 'ParallelResume'
     const _evalArgs: EvalArgsFrame['type'] = 'EvalArgs'
     const _callFn: CallFnFrame['type'] = 'CallFn'
     const _fnBody: FnBodyFrame['type'] = 'FnBody'
@@ -207,6 +212,7 @@ describe('frame types', () => {
     expect(_tryCatch).toBe('TryCatch')
     expect(_tryWith).toBe('TryWith')
     expect(_effectResume).toBe('EffectResume')
+    expect(_parallelResume).toBe('ParallelResume')
     expect(_evalArgs).toBe('EvalArgs')
     expect(_callFn).toBe('CallFn')
     expect(_fnBody).toBe('FnBody')

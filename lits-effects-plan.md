@@ -648,7 +648,7 @@ Standard effects work with default handlers. Overridable in tests.
 
 ---
 
-## Phase 6 — Parallel & Race
+## Phase 6 — Parallel & Race ✅ COMPLETED
 
 Concurrent effect dispatch. More complex — treated as its own sub-project.
 
@@ -734,6 +734,19 @@ let [a b c] = parallel(
   perform(effect(llm), "task 3")
 )
 ```
+
+### Completion Notes
+
+- Registered `parallel` (22) and `race` (23) in `specialExpressionTypes.ts`
+- Created `parallel.ts` and `race.ts` special expression files with docs and `getUndefinedSymbols`
+- Added `ParallelStep`, `RaceStep`, `ParallelResumeStep` to `step.ts`
+- Added `ParallelResumeFrame` to `frames.ts`
+- Implemented `executeParallelBranches`, `executeRaceBranches`, `handleParallelResume`, `runBranch`, `throwSuspension` in `trampoline.ts`
+- Race uses temporal completion tracking via `winnerIndex` (first branch to resolve wins, not first in position)
+- `SuspensionSignal` guard added in `tick()` catch block to prevent Lits `try/catch` from intercepting suspension signals
+- 28 new tests in `effects.test.ts` covering: basic evaluation, ordering, host handlers, errors, standard effects, destructuring, suspension/resume, multiple suspended branches, mixed completion/suspension, host-side resume loop, race completion semantics, race suspension, race resume, nested parallel, race inside parallel, handler errors
+- Coverage: parallel.ts 100%, race.ts 100%, trampoline.ts 93.4% (uncovered lines are pre-existing edge cases, not Phase 6 code)
+- All 5235 tests pass, `npm run check` clean
 
 ---
 

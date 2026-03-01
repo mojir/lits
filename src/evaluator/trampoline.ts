@@ -103,6 +103,7 @@ import type {
   NanCheckFrame,
   ObjectBuildFrame,
   OrFrame,
+  ParallelResumeFrame,
   PerformArgsFrame,
   QqFrame,
   RecurFrame,
@@ -1155,6 +1156,18 @@ function stepSpecialExpression(node: SpecialExpressionNode, env: ContextStack, k
       return { type: 'Eval', node: allNodes[0]!, env, k: [frame, ...k] }
     }
 
+    // --- parallel ---
+    case specialExpressionTypes.parallel: {
+      const branches = node[1][1] as AstNode[]
+      return { type: 'Parallel', branches, env, k }
+    }
+
+    // --- race ---
+    case specialExpressionTypes.race: {
+      const branches = node[1][1] as AstNode[]
+      return { type: 'Race', branches, env, k }
+    }
+
     /* v8 ignore next 2 */
     default:
       throw new LitsError(`Unknown special expression type: ${type}`, sourceCodeInfo)
@@ -1434,6 +1447,8 @@ export function applyFrame(frame: Frame, value: Any, k: ContinuationStack): Step
       return applyTryWith(value, k)
     case 'EffectResume':
       return applyEffectResume(frame, value, k)
+    case 'ParallelResume':
+      return applyParallelResume(frame, value, k)
     case 'EvalArgs':
       return applyEvalArgs(frame, value, k)
     case 'CallFn':
@@ -2125,6 +2140,24 @@ function applyEffectResume(frame: EffectResumeFrame, value: Any, _k: Continuatio
   return { type: 'Value', value, k: frame.resumeK }
 }
 
+/**
+ * Convert a ParallelResumeFrame into a ParallelResumeStep.
+ *
+ * The value is the resume value from the host for the first suspended branch.
+ * The actual resumption logic happens in `tick()` → `handleParallelResume()`
+ * which has access to `handlers` and `signal`.
+ */
+function applyParallelResume(frame: ParallelResumeFrame, value: Any, k: ContinuationStack): Step {
+  return {
+    type: 'ParallelResume',
+    value,
+    branchCount: frame.branchCount,
+    completedBranches: frame.completedBranches,
+    suspendedBranches: frame.suspendedBranches,
+    k,
+  }
+}
+
 function applyPerformArgs(frame: PerformArgsFrame, value: Any, k: ContinuationStack): Step | Promise<Step> {
   const { argNodes, index, params, env } = frame
   params.push(value)
@@ -2309,6 +2342,304 @@ function dispatchHostHandler(
   })
 }
 
+// ---------------------------------------------------------------------------
+// Parallel & Race — concurrent branch execution
+// ---------------------------------------------------------------------------
+
+/**
+ * Throw a SuspensionSignal. Factored out to a helper so ESLint's
+ * `only-throw-literal` rule can be suppressed in one place.
+ */
+function throwSuspension(k: ContinuationStack, meta?: Any): never {
+  // eslint-disable-next-line ts/no-throw-literal -- SuspensionSignal is a signaling mechanism, not an error
+  throw new SuspensionSignal(k, meta)
+}
+
+/**
+ * Run a single trampoline branch to completion with effect handler support.
+ *
+ * This is the core building block for `parallel` and `race`. Each branch
+ * runs as an independent trampoline invocation through `runEffectLoop`,
+ * producing a `RunResult` that is either `completed`, `suspended`, or `error`.
+ *
+ * The branch receives the same `handlers` and the given `signal`, allowing
+ * the caller to cancel branches via AbortController.
+ */
+async function runBranch(
+  node: AstNode,
+  env: ContextStack,
+  handlers: Handlers | undefined,
+  signal: AbortSignal,
+): Promise<RunResult> {
+  const initial: Step = { type: 'Eval', node, env, k: [] }
+  return runEffectLoop(initial, handlers, signal)
+}
+
+/**
+ * Execute a `parallel(...)` expression.
+ *
+ * Runs all branch expressions concurrently as independent trampoline
+ * invocations using `Promise.allSettled`. Results are collected in order.
+ *
+ * Outcome:
+ * - All branches complete → return `ValueStep` with array of results
+ * - Any branch suspends → throw `SuspensionSignal` with a `ParallelResumeFrame`
+ *   on the outer continuation. The host can resume branches one at a time.
+ * - Any branch errors → throw the first error (other branches still complete
+ *   but errors take priority)
+ */
+async function executeParallelBranches(
+  branches: AstNode[],
+  env: ContextStack,
+  k: ContinuationStack,
+  handlers: Handlers | undefined,
+  signal: AbortSignal | undefined,
+): Promise<Step> {
+  const effectSignal = signal ?? new AbortController().signal
+
+  // Run all branches concurrently
+  const branchPromises = branches.map(branch =>
+    runBranch(branch, env, handlers, effectSignal),
+  )
+  const results = await Promise.allSettled(branchPromises)
+
+  // Collect outcomes
+  const completedBranches: Array<{ index: number, value: Any }> = []
+  const suspendedBranches: Array<{ index: number, blob: string, meta?: Any }> = []
+  const errors: LitsError[] = []
+
+  for (let i = 0; i < results.length; i++) {
+    const result = results[i]!
+    if (result.status === 'rejected') {
+      // runEffectLoop should never reject, but handle defensively
+      errors.push(new LitsError(`${result.reason}`, undefined))
+    }
+    else {
+      const r = result.value
+      switch (r.type) {
+        case 'completed':
+          completedBranches.push({ index: i, value: r.value })
+          break
+        case 'suspended':
+          suspendedBranches.push({ index: i, blob: r.blob, meta: r.meta })
+          break
+        case 'error':
+          errors.push(r.error)
+          break
+      }
+    }
+  }
+
+  // If any branch errored, throw the first error
+  if (errors.length > 0) {
+    throw errors[0]!
+  }
+
+  // If any branch suspended, build a composite suspension
+  if (suspendedBranches.length > 0) {
+    // Build a ParallelResumeFrame on the outer continuation
+    const parallelResumeFrame: ParallelResumeFrame = {
+      type: 'ParallelResume',
+      branchCount: branches.length,
+      completedBranches,
+      suspendedBranches: suspendedBranches.slice(1), // remaining after the first
+    }
+    const resumeK: ContinuationStack = [parallelResumeFrame, ...k]
+
+    // Throw SuspensionSignal with the first suspended branch's meta
+    const firstSuspended = suspendedBranches[0]!
+    return throwSuspension(resumeK, firstSuspended.meta)
+  }
+
+  // All branches completed — build the result array in original order
+  const resultArray: Any[] = Array.from({ length: branches.length })
+  for (const { index, value } of completedBranches) {
+    resultArray[index] = value
+  }
+  return { type: 'Value', value: resultArray, k }
+}
+
+/**
+ * Execute a `race(...)` expression.
+ *
+ * Runs all branch expressions concurrently. The first branch to complete
+ * wins — its value becomes the result. Losing branches are cancelled via
+ * per-branch AbortControllers.
+ *
+ * Branch outcome priority: completed > suspended > errored.
+ * - First completed branch wins immediately.
+ * - Errored branches are silently dropped.
+ * - If no branch completes but some suspend, the race suspends with only
+ *   the outer continuation. The host provides the winner value directly.
+ * - If all branches error, throw an aggregate error.
+ */
+async function executeRaceBranches(
+  branches: AstNode[],
+  env: ContextStack,
+  k: ContinuationStack,
+  handlers: Handlers | undefined,
+  signal: AbortSignal | undefined,
+): Promise<Step> {
+  const parentSignal = signal ?? new AbortController().signal
+
+  // Each branch gets its own AbortController so losers can be cancelled
+  const branchControllers = branches.map(() => new AbortController())
+
+  // Link: if parent signal aborts, abort all branches
+  const onParentAbort = () => {
+    for (const ctrl of branchControllers) {
+      ctrl.abort(parentSignal.reason)
+    }
+  }
+  parentSignal.addEventListener('abort', onParentAbort, { once: true })
+
+  try {
+    // Track the first branch to complete (temporal order, not positional)
+    let winnerIndex = -1
+    let winnerValue: Any = null
+
+    // Run all branches concurrently, tracking completion order
+    const branchPromises = branches.map(async (branch, i) => {
+      const branchSignal = branchControllers[i]!.signal
+      const result = await runBranch(branch, env, handlers, branchSignal)
+
+      // First branch to complete wins (JavaScript is single-threaded,
+      // so the first resolved promise's continuation runs first)
+      if (result.type === 'completed' && winnerIndex < 0) {
+        winnerIndex = i
+        winnerValue = result.value
+        // Cancel all other branches
+        for (let j = 0; j < branchControllers.length; j++) {
+          if (j !== i) {
+            branchControllers[j]!.abort('race: branch lost')
+          }
+        }
+      }
+      return result
+    })
+
+    // Wait for all branches to settle (even cancelled ones)
+    const results = await Promise.allSettled(branchPromises)
+
+    // If we have a winner, return it
+    if (winnerIndex >= 0) {
+      return { type: 'Value', value: winnerValue, k }
+    }
+
+    // No completed branch — collect suspended and errored
+    const suspendedMetas: Any[] = []
+    const errors: LitsError[] = []
+
+    for (let i = 0; i < results.length; i++) {
+      const result = results[i]!
+      if (result.status === 'rejected') {
+        errors.push(new LitsError(`${result.reason}`, undefined))
+      }
+      else {
+        const r = result.value
+        switch (r.type) {
+          case 'suspended':
+            suspendedMetas.push(r.meta ?? null)
+            break
+          case 'error':
+            errors.push(r.error)
+            break
+          /* v8 ignore next 3 */
+          case 'completed':
+            // Already handled via winnerIndex above
+            break
+        }
+      }
+    }
+
+    // If some branches suspended, the race suspends
+    if (suspendedMetas.length > 0) {
+      // Race suspension: only outer k, host provides winner value directly
+      // Meta contains all branch metas so host knows who is waiting
+      const raceMeta: Any = { type: 'race', branches: suspendedMetas }
+      throwSuspension(k, raceMeta)
+    }
+
+    // All branches errored — throw aggregate error
+    const messages = errors.map(e => e.message).join('; ')
+    throw new LitsError(`race: all branches failed: ${messages}`, undefined)
+  }
+  finally {
+    parentSignal.removeEventListener('abort', onParentAbort)
+  }
+}
+
+/**
+ * Handle a `ParallelResume` step — resume the first suspended branch.
+ *
+ * Called from `tick()` when a `ParallelResumeFrame` produces a
+ * `ParallelResumeStep`. The value is the host's resume value for the
+ * first pending suspended branch.
+ *
+ * Logic:
+ * 1. The `completedBranches` already has the branches that completed before.
+ * 2. The `value` is for the branch that was exposed to the host (the one
+ *    whose meta was in the SuspensionSignal). We DON'T re-run any blob —
+ *    the host has already decided the value.
+ * 3. If more branches are suspended, throw another SuspensionSignal.
+ * 4. If all branches are now done, build the result array.
+ */
+function handleParallelResume(
+  step: Step & { type: 'ParallelResume' },
+  _handlers: Handlers | undefined,
+  _signal: AbortSignal | undefined,
+): Step {
+  const { value, branchCount, completedBranches, suspendedBranches, k } = step
+
+  // The first suspended branch (whose meta was exposed) is now completed
+  // We need to know its index — it was removed from suspendedBranches
+  // and its index can be derived from what's missing.
+  // Actually, looking at how we build this: the first suspended branch
+  // was kept OUT of suspendedBranches (slice(1)), and its meta was used
+  // in the SuspensionSignal. But we need its index!
+  //
+  // Let me reconsider: we need to track which branch index the host resume
+  // value is for. The index is determined by what's NOT in completedBranches
+  // or suspendedBranches.
+  //
+  // Better approach: store the current branch index explicitly.
+  // Since we're in the middle of implementing, let me find the missing index.
+  const completedIndices = new Set(completedBranches.map(b => b.index))
+  const suspendedIndices = new Set(suspendedBranches.map(b => b.index))
+  let currentBranchIndex = -1
+  for (let i = 0; i < branchCount; i++) {
+    if (!completedIndices.has(i) && !suspendedIndices.has(i)) {
+      currentBranchIndex = i
+      break
+    }
+  }
+
+  // Add the just-resumed branch to completed
+  const updatedCompleted = [...completedBranches, { index: currentBranchIndex, value }]
+
+  // If more branches are suspended, suspend again with next one's meta
+  if (suspendedBranches.length > 0) {
+    const nextSuspended = suspendedBranches[0]!
+    const remaining = suspendedBranches.slice(1)
+
+    const parallelResumeFrame: ParallelResumeFrame = {
+      type: 'ParallelResume',
+      branchCount,
+      completedBranches: updatedCompleted,
+      suspendedBranches: remaining,
+    }
+    const resumeK: ContinuationStack = [parallelResumeFrame, ...k]
+    return throwSuspension(resumeK, nextSuspended.meta)
+  }
+
+  // All branches now completed — build the result array in original order
+  const resultArray: Any[] = Array.from({ length: branchCount })
+  for (const { index, value: v } of updatedCompleted) {
+    resultArray[index] = v
+  }
+  return { type: 'Value', value: resultArray, k }
+}
+
 function applyEvalArgs(frame: EvalArgsFrame, value: Any, k: ContinuationStack): Step | Promise<Step> {
   const { node, params, placeholders, env } = frame
   const argNodes = node[1][1]
@@ -2466,9 +2797,21 @@ export function tick(step: Step, handlers?: Handlers, signal?: AbortSignal): Ste
         return applyFrame(step.frame, step.value, step.k)
       case 'Perform':
         return dispatchPerform(step.effect, step.args, step.k, undefined, handlers, signal)
+      case 'Parallel':
+        return executeParallelBranches(step.branches, step.env, step.k, handlers, signal)
+      case 'Race':
+        return executeRaceBranches(step.branches, step.env, step.k, handlers, signal)
+      case 'ParallelResume':
+        return handleParallelResume(step, handlers, signal)
     }
   }
   catch (error) {
+    // SuspensionSignal must propagate out of tick to the effect trampoline loop
+    // (runEffectLoop). Never let unwindToTryCatch intercept it.
+    if (isSuspensionSignal(error)) {
+      // eslint-disable-next-line ts/no-throw-literal -- SuspensionSignal is a signaling mechanism, not an error
+      throw error
+    }
     // Search the continuation stack for a TryCatchFrame to handle the error.
     // This handles both explicit throw() and runtime errors (e.g., type errors).
     return unwindToTryCatch(error, step.k)

@@ -89,6 +89,65 @@ export interface PerformStep {
   k: ContinuationStack
 }
 
+/**
+ * A `parallel(...)` expression was encountered.
+ *
+ * The trampoline runs all branch expressions concurrently as independent
+ * trampoline invocations using `Promise.allSettled`. Each branch gets the
+ * same handlers and signal. Results are collected in order.
+ *
+ * If any branch suspends, a composite blob is created with completed values
+ * and suspended branch blobs, and a `SuspensionSignal` is thrown.
+ *
+ * Only available in async mode (`run()`). In `runSync()`, this step causes
+ * a "Unexpected async operation" error because it returns `Promise<Step>`.
+ */
+export interface ParallelStep {
+  type: 'Parallel'
+  branches: AstNode[]
+  env: ContextStack
+  k: ContinuationStack
+}
+
+/**
+ * A `race(...)` expression was encountered.
+ *
+ * The trampoline runs all branch expressions concurrently. The first branch
+ * to complete wins — its value becomes the result. Losers are cancelled via
+ * per-branch AbortControllers. Errored branches are silently dropped.
+ *
+ * If all branches error, throws an aggregate error. If no branch completes
+ * but some suspend, the race suspends with only the outer continuation.
+ * On resume, the host provides the winner value directly.
+ *
+ * Only available in async mode (`run()`).
+ */
+export interface RaceStep {
+  type: 'Race'
+  branches: AstNode[]
+  env: ContextStack
+  k: ContinuationStack
+}
+
+/**
+ * A parallel resumption is in progress.
+ *
+ * Created when a `ParallelResumeFrame` receives a value (the resume result
+ * of the first suspended branch). The trampoline resumes that branch's
+ * trampoline and processes the result.
+ *
+ * This step type is handled by `tick()` which has access to `handlers` and
+ * `signal` needed to run the branch trampoline.
+ */
+export interface ParallelResumeStep {
+  type: 'ParallelResume'
+  value: Any
+  branchCount: number
+  completedBranches: Array<{ index: number, value: Any }>
+  suspendedBranches: Array<{ index: number, blob: string, meta?: Any }>
+  k: ContinuationStack
+}
+
 // ---------------------------------------------------------------------------
 // Step union type
 // ---------------------------------------------------------------------------
@@ -112,3 +171,6 @@ export type Step =
   | EvalStep
   | ApplyStep
   | PerformStep
+  | ParallelStep
+  | RaceStep
+  | ParallelResumeStep
