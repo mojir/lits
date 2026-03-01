@@ -1109,6 +1109,45 @@ describe('trampoline integration', () => {
     expect(runTrampoline(step)).toBe(5)
   })
 
+  it('should handle deep loop recur without stack overflow (TCE)', () => {
+    // 100,000 iterations would overflow a recursive evaluator's call stack.
+    // The trampoline handles this via proper tail call elimination:
+    // handleRecur slices the continuation stack at the LoopIterateFrame,
+    // replacing it rather than growing the stack.
+    const node = parseFirst('loop (n = 100000) -> if n > 0 then recur(n - 1) else n end')
+    const step = stepNodeSync(node, emptyEnv(), [])
+    expect(runTrampoline(step)).toBe(0)
+  })
+
+  it('should handle deep function recur without stack overflow (TCE)', () => {
+    // Same principle for user-defined functions: handleRecur finds the
+    // FnBodyFrame and calls setupUserDefinedCall with the remaining stack,
+    // replacing the old frame rather than growing.
+    const node = parseFirst('(n -> if n > 0 then recur(n - 1) else n end)(100000)')
+    const step = stepNodeSync(node, emptyEnv(), [])
+    expect(runTrampoline(step)).toBe(0)
+  })
+
+  it('should handle deep mutual recur accumulating a result', () => {
+    // Verify that recur correctly rebinds multiple parameters
+    const node = parseFirst('loop (n = 100000, acc = 0) -> if n > 0 then recur(n - 1, acc + 1) else acc end')
+    const step = stepNodeSync(node, emptyEnv(), [])
+    expect(runTrampoline(step)).toBe(100000)
+  })
+
+  it('should handle recur in function with multi-expression body', () => {
+    // recur in the last expression of a multi-expression body
+    const node = parseFirst(`
+      ((n, acc) -> do
+        let unused = n * 2;
+        if n > 0 then recur(n - 1, acc + n) else acc end
+      end)(100, 0)
+    `)
+    const step = stepNodeSync(node, emptyEnv(), [])
+    // sum from 1 to 100 = 5050
+    expect(runTrampoline(step)).toBe(5050)
+  })
+
   it('should evaluate for loop', () => {
     const node = parseFirst('for (x in [1, 2, 3]) -> x * 2')
     const step = stepNodeSync(node, emptyEnv(), [])

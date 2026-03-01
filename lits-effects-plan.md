@@ -275,11 +275,32 @@ Special expressions to convert (~15-20 total):
 - `npm run check` passes: lint clean, typecheck clean, 5061 tests pass (152 files), build succeeds.
 - Coverage: trampoline.ts at 92.35% statements.
 
-### 1f. Tail call (`recur`) in the trampoline
+### 1f. Tail call (`recur`) in the trampoline ✅ DONE
 
 In the recursive evaluator, `recur` throws `RecurSignal` caught by a `for(;;)` loop.
 In the trampoline, a tail call simply replaces the current `FnBodyFrame` with a new eval step —
 no frame growth. Proper tail call elimination falls out naturally.
+
+**How it works:**
+- `recur` in the trampoline pushes a `RecurFrame` to collect evaluated arguments one by one.
+- When all args are collected, `applyRecur` calls `handleRecur(params, k, sourceCodeInfo)`.
+- `handleRecur` walks the continuation stack for the nearest `LoopIterateFrame` or `FnBodyFrame`.
+- It slices the stack at that point (`k.slice(i + 1)`), discarding all frames above the target — effectively replacing the current call/loop iteration rather than growing the stack.
+- For `LoopIterateFrame`: rebinds variables in the existing context and pushes a fresh `LoopIterateFrame`.
+- For `FnBodyFrame`: calls `setupUserDefinedCall` with the remaining stack, which sets up fresh parameter bindings and a new `FnBodyFrame`.
+- Net result: constant continuation stack depth during recur iterations.
+
+**Changes:**
+- `src/evaluator/trampoline.ts` — Cleaned up `applyFnBody`: removed duplicate code branches (both paths were identical). Added clear comment explaining why the `FnBodyFrame` is always pushed even for the last body node: `handleRecur` needs to find it during continuation-stack walking.
+- `src/evaluator/trampoline.test.ts` — Added 4 deep recursion TCE tests:
+  - Deep loop recur (100,000 iterations) — verifies no stack overflow
+  - Deep function recur (100,000 iterations) — verifies no stack overflow
+  - Loop recur with accumulator (100,000 iterations, multi-param rebinding)
+  - Function recur in multi-expression body (IIFE with `do` block)
+- `npm run check` passes: lint clean, typecheck clean, 5063 tests pass (152 files), build succeeds.
+- Coverage: trampoline.ts at 92.36% statements.
+
+**Note:** The recursive fallback path (`executeLitsFunctionRecursive` / `executeUserDefinedRecursive`) still uses `RecurSignal` for compound function types (Comp, Partial, etc.) that fall back to recursive evaluation. This is acceptable — those paths are used for higher-order built-in callbacks and will be addressed when compound function types are migrated to the trampoline.
 
 ### 1g. Deliverable
 

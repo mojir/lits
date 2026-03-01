@@ -2121,12 +2121,14 @@ function applyFnBody(frame: FnBodyFrame, value: Any, k: ContinuationStack): Step
     return { type: 'Value', value, k }
   }
 
-  // More body nodes to evaluate
+  // More body nodes to evaluate.
+  // The FnBodyFrame is always pushed — even for the last body node — because
+  // `handleRecur` walks the continuation stack looking for it. When recur fires
+  // inside the last expression, handleRecur finds this frame, slices the stack
+  // at that point, and calls setupUserDefinedCall with the remaining stack.
+  // This replaces the old FnBodyFrame rather than growing the stack — achieving
+  // proper tail call elimination.
   const newFrame: FnBodyFrame = { ...frame, bodyIndex: bodyIndex + 1 }
-  if (bodyIndex === bodyNodes.length - 1) {
-    // Last body node — still need the frame for recur handling
-    return { type: 'Eval', node: bodyNodes[bodyIndex]!, env, k: [newFrame, ...k] }
-  }
   return { type: 'Eval', node: bodyNodes[bodyIndex]!, env, k: [newFrame, ...k] }
 }
 
