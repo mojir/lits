@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { describe, it } from 'vitest'
 import { Lits } from '../Lits/Lits'
-import { evaluate } from '../evaluator'
+import { evaluate } from '../evaluator/trampoline'
 import { createContextStack } from '../evaluator/ContextStack'
 
 const lits = new Lits({ debug: false, astCacheSize: 0 })

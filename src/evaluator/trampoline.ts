@@ -1,14 +1,20 @@
 /**
- * Trampoline evaluator — core step functions.
+ * Trampoline evaluator — explicit-stack evaluation engine.
  *
  * `stepNode(node, env, k)` maps an AST node to the next `Step`.
  * `applyFrame(frame, value, k)` processes a completed sub-result against a frame.
+ * `tick(step)` processes one step and returns the next (or a Promise<Step> for async).
+ * `runSyncTrampoline(step)` runs the trampoline synchronously to completion.
+ * `runAsyncTrampoline(step)` runs the trampoline asynchronously to completion.
  *
- * Together they form the heart of the explicit-stack trampoline: the loop in
- * Phase 1d calls these two functions alternately until evaluation completes.
+ * Entry points:
+ * - `evaluate(ast, contextStack)` — evaluate an AST (sync or async)
+ * - `evaluateNode(node, contextStack)` — evaluate a single node (sync or async)
  *
  * Design principles:
- * - Both functions are synchronous and return `Step`.
+ * - `stepNode` is always synchronous and returns `Step`.
+ * - `applyFrame` may return `Step | Promise<Step>` when normal expressions
+ *   or compound function types produce async results.
  * - Normal built-in expressions are called directly with pre-evaluated args
  *   (they may still use the old recursive `evaluateNode` internally for
  *   higher-order callbacks — suspension through them is deferred).
@@ -29,6 +35,7 @@ import { LitsError, RecurSignal, UndefinedSymbolError, UserDefinedError } from '
 import { getUndefinedSymbols } from '../getUndefinedSymbols'
 import type { Any, Arr, Obj } from '../interface'
 import type {
+  Ast,
   AstNode,
   BindingNode,
   BindingTarget,
@@ -597,7 +604,7 @@ function evaluateFunction(
  * Leaf nodes (numbers, strings, symbols) immediately produce values.
  * Compound nodes (expressions) push frames and return sub-evaluations.
  */
-export function stepNode(node: AstNode, env: ContextStack, k: ContinuationStack): Step {
+export function stepNode(node: AstNode, env: ContextStack, k: ContinuationStack): Step | Promise<Step> {
   switch (node[0]) {
     case NodeTypes.Number:
       return { type: 'Value', value: (node as NumberNode)[1], k }
@@ -627,7 +634,7 @@ export function stepNode(node: AstNode, env: ContextStack, k: ContinuationStack)
  * Normal expressions: evaluate arguments left-to-right, then dispatch.
  * Push EvalArgsFrame + NanCheckFrame, then start evaluating the first arg.
  */
-function stepNormalExpression(node: NormalExpressionNode, env: ContextStack, k: ContinuationStack): Step {
+function stepNormalExpression(node: NormalExpressionNode, env: ContextStack, k: ContinuationStack): Step | Promise<Step> {
   const argNodes = node[1][1]
   const sourceCodeInfo = node[2]
 
@@ -681,7 +688,7 @@ function stepNormalExpression(node: NormalExpressionNode, env: ContextStack, k: 
  * Special expressions: push a frame appropriate to the expression type
  * and return an EvalStep for the first sub-expression.
  */
-function stepSpecialExpression(node: SpecialExpressionNode, env: ContextStack, k: ContinuationStack): Step {
+function stepSpecialExpression(node: SpecialExpressionNode, env: ContextStack, k: ContinuationStack): Step | Promise<Step> {
   const sourceCodeInfo = node[2]
   const type = node[1][0]
 
@@ -1109,7 +1116,7 @@ function stepSpecialExpression(node: SpecialExpressionNode, env: ContextStack, k
  * After all arguments are collected in an EvalArgsFrame, determine what
  * to call and return the next Step.
  */
-function dispatchCall(frame: EvalArgsFrame, k: ContinuationStack): Step {
+function dispatchCall(frame: EvalArgsFrame, k: ContinuationStack): Step | Promise<Step> {
   const { node, params, placeholders, env, sourceCodeInfo } = frame
 
   if (isNormalExpressionNodeWithName(node)) {
@@ -1167,7 +1174,7 @@ function dispatchCall(frame: EvalArgsFrame, k: ContinuationStack): Step {
 /**
  * Dispatch a resolved function value with pre-evaluated parameters.
  */
-function dispatchFunction(fn: FunctionLike, params: Arr, placeholders: number[], env: ContextStack, sourceCodeInfo: SourceCodeInfo | undefined, k: ContinuationStack): Step {
+function dispatchFunction(fn: FunctionLike, params: Arr, placeholders: number[], env: ContextStack, sourceCodeInfo: SourceCodeInfo | undefined, k: ContinuationStack): Step | Promise<Step> {
   if (placeholders.length > 0) {
     const partialFunction: PartialFunction = {
       [FUNCTION_SYMBOL]: true,
@@ -1206,7 +1213,7 @@ function dispatchFunction(fn: FunctionLike, params: Arr, placeholders: number[],
  * Dispatch a LitsFunction. User-defined functions are set up with frames;
  * compound function types (Comp, Juxt, etc.) use the recursive executor.
  */
-function dispatchLitsFunction(fn: LitsFunction, params: Arr, env: ContextStack, sourceCodeInfo: SourceCodeInfo | undefined, k: ContinuationStack): Step {
+function dispatchLitsFunction(fn: LitsFunction, params: Arr, env: ContextStack, sourceCodeInfo: SourceCodeInfo | undefined, k: ContinuationStack): Step | Promise<Step> {
   switch (fn.functionType) {
     case 'UserDefined': {
       return setupUserDefinedCall(fn, params, env, sourceCodeInfo, k)
@@ -1238,7 +1245,7 @@ function dispatchLitsFunction(fn: LitsFunction, params: Arr, env: ContextStack, 
  * synchronously via evaluateBindingNodeValues with the recursive evaluator.
  * This will be converted to use frames in a later phase.
  */
-function setupUserDefinedCall(fn: UserDefinedFunction, params: Arr, env: ContextStack, sourceCodeInfo: SourceCodeInfo | undefined, k: ContinuationStack): Step {
+function setupUserDefinedCall(fn: UserDefinedFunction, params: Arr, env: ContextStack, sourceCodeInfo: SourceCodeInfo | undefined, k: ContinuationStack): Step | Promise<Step> {
   if (!arityAcceptsMin(fn.arity, params.length)) {
     throw new LitsError(`Expected ${fn.arity} arguments, got ${params.length}.`, sourceCodeInfo)
   }
@@ -1334,7 +1341,7 @@ function setupUserDefinedCall(fn: UserDefinedFunction, params: Arr, env: Context
  * Given a completed sub-expression value and the top frame from the
  * continuation stack, determine the next Step.
  */
-export function applyFrame(frame: Frame, value: Any, k: ContinuationStack): Step {
+export function applyFrame(frame: Frame, value: Any, k: ContinuationStack): Step | Promise<Step> {
   switch (frame.type) {
     case 'Sequence':
       return applySequence(frame, value, k)
@@ -1363,7 +1370,7 @@ export function applyFrame(frame: Frame, value: Any, k: ContinuationStack): Step
     case 'ForLoop':
       return applyForLoop(frame, value, k)
     case 'Throw':
-      return applyThrow(frame, value)
+      return applyThrow(frame, value, k)
     case 'Recur':
       return applyRecur(frame, value, k)
     case 'TryCatch':
@@ -1673,19 +1680,18 @@ function applyObjectBuild(frame: ObjectBuildFrame, value: Any, k: ContinuationSt
   }
 }
 
-function applyLetBind(frame: LetBindFrame, value: Any, k: ContinuationStack): Step {
+function applyLetBind(frame: LetBindFrame, value: Any, k: ContinuationStack): Step | Promise<Step> {
   const { target, env, sourceCodeInfo } = frame
 
   // Process the binding using the recursive helper
   const bindingResult = evaluateBindingNodeValues(target, value, n => evaluateNodeRecursive(n, env))
-  if (bindingResult instanceof Promise) {
-    throw new LitsError('Async binding default evaluation not supported in trampoline yet', sourceCodeInfo)
-  }
-  env.addValues(bindingResult, sourceCodeInfo)
-  return { type: 'Value', value, k }
+  return chain(bindingResult, (br) => {
+    env.addValues(br, sourceCodeInfo)
+    return { type: 'Value' as const, value, k }
+  })
 }
 
-function applyLoopBind(frame: LoopBindFrame, value: Any, k: ContinuationStack): Step {
+function applyLoopBind(frame: LoopBindFrame, value: Any, k: ContinuationStack): Step | Promise<Step> {
   const { bindingNodes, index, context, body, env, sourceCodeInfo } = frame
 
   // Value for the current binding has been evaluated
@@ -1693,32 +1699,31 @@ function applyLoopBind(frame: LoopBindFrame, value: Any, k: ContinuationStack): 
   const target = bindingNode[1][0]
 
   const valueRecord = evaluateBindingNodeValues(target, value, n => evaluateNodeRecursive(n, env.create(context)))
-  if (valueRecord instanceof Promise) {
-    throw new LitsError('Async binding default evaluation not supported in trampoline yet', sourceCodeInfo)
-  }
-  Object.entries(valueRecord).forEach(([name, val]) => {
-    context[name] = { value: val }
-  })
+  return chain(valueRecord, (vr) => {
+    Object.entries(vr).forEach(([name, val]) => {
+      context[name] = { value: val }
+    })
 
-  // Move to next binding
-  const nextIndex = index + 1
-  if (nextIndex >= bindingNodes.length) {
-    // All bindings done — set up the loop iteration
-    const loopEnv = env.create(context)
-    const iterateFrame: LoopIterateFrame = {
-      type: 'LoopIterate',
-      bindingNodes,
-      bindingContext: context,
-      body,
-      env: loopEnv,
-      sourceCodeInfo,
+    // Move to next binding
+    const nextIndex = index + 1
+    if (nextIndex >= bindingNodes.length) {
+      // All bindings done — set up the loop iteration
+      const loopEnv = env.create(context)
+      const iterateFrame: LoopIterateFrame = {
+        type: 'LoopIterate',
+        bindingNodes,
+        bindingContext: context,
+        body,
+        env: loopEnv,
+        sourceCodeInfo,
+      }
+      return { type: 'Eval' as const, node: body, env: loopEnv, k: [iterateFrame, ...k] }
     }
-    return { type: 'Eval', node: body, env: loopEnv, k: [iterateFrame, ...k] }
-  }
 
-  // Evaluate next binding's value expression (in context with previous bindings)
-  const newFrame: LoopBindFrame = { ...frame, index: nextIndex }
-  return { type: 'Eval', node: bindingNodes[nextIndex]![1][1], env: env.create(context), k: [newFrame, ...k] }
+    // Evaluate next binding's value expression (in context with previous bindings)
+    const newFrame: LoopBindFrame = { ...frame, index: nextIndex }
+    return { type: 'Eval' as const, node: bindingNodes[nextIndex]![1][1], env: env.create(context), k: [newFrame, ...k] }
+  })
 }
 
 function applyLoopIterate(_frame: LoopIterateFrame, value: Any, k: ContinuationStack): Step {
@@ -1727,7 +1732,7 @@ function applyLoopIterate(_frame: LoopIterateFrame, value: Any, k: ContinuationS
   return { type: 'Value', value, k }
 }
 
-function applyForLoop(frame: ForLoopFrame, value: Any, k: ContinuationStack): Step {
+function applyForLoop(frame: ForLoopFrame, value: Any, k: ContinuationStack): Step | Promise<Step> {
   const { returnResult, bindingNodes, result, env, sourceCodeInfo, context } = frame
   const { asColl, isSeq } = getCollectionUtils()
 
@@ -1753,21 +1758,20 @@ function applyForLoop(frame: ForLoopFrame, value: Any, k: ContinuationStack): St
 
       const elValue = asAny(element, sourceCodeInfo)
       const valueRecord = evaluateBindingNodeValues(targetNode, elValue, n => evaluateNodeRecursive(n, env))
-      if (valueRecord instanceof Promise) {
-        throw new LitsError('Async binding in for loop not supported in trampoline yet', sourceCodeInfo)
-      }
-      Object.entries(valueRecord).forEach(([name, val]) => {
-        context[name] = { value: val }
+      return chain(valueRecord, (vr) => {
+        Object.entries(vr).forEach(([name, val]) => {
+          context[name] = { value: val }
+        })
+
+        // Process let-bindings if any
+        const letBindings = binding[1]
+        if (letBindings.length > 0) {
+          return processForLetBindings(frame, levelStates, letBindings, 0, k)
+        }
+
+        // Process when-guard if any
+        return processForGuards(frame, levelStates, k)
       })
-
-      // Process let-bindings if any
-      const letBindings = binding[1]
-      if (letBindings.length > 0) {
-        return processForLetBindings(frame, levelStates, letBindings, 0, k)
-      }
-
-      // Process when-guard if any
-      return processForGuards(frame, levelStates, k)
     }
 
     case 'evalLet': {
@@ -1830,7 +1834,7 @@ function handleForAbort(frame: ForLoopFrame, k: ContinuationStack): Step {
 }
 
 /** Advance to the next element at the current binding level. */
-function advanceForElement(frame: ForLoopFrame, k: ContinuationStack): Step {
+function advanceForElement(frame: ForLoopFrame, k: ContinuationStack): Step | Promise<Step> {
   const { bindingNodes, env, sourceCodeInfo, context } = frame
   const levelStates = [...frame.levelStates]
   const bindingLevel = frame.bindingLevel
@@ -1857,43 +1861,44 @@ function advanceForElement(frame: ForLoopFrame, k: ContinuationStack): Step {
   const elValue = asAny(element, sourceCodeInfo)
 
   const valueRecord = evaluateBindingNodeValues(targetNode, elValue, n => evaluateNodeRecursive(n, env))
-  if (valueRecord instanceof Promise) {
-    throw new LitsError('Async binding in for loop not supported yet', sourceCodeInfo)
-  }
-  Object.entries(valueRecord).forEach(([name, val]) => {
-    context[name] = { value: val }
+  return chain(valueRecord, (vr) => {
+    Object.entries(vr).forEach(([name, val]) => {
+      context[name] = { value: val }
+    })
+
+    // Process let-bindings
+    const letBindings = binding[1]
+    if (letBindings.length > 0) {
+      return processForLetBindings({ ...frame, levelStates, bindingLevel: currentLevel }, levelStates, letBindings, 0, k)
+    }
+
+    return processForGuards({ ...frame, levelStates, bindingLevel: currentLevel }, levelStates, k)
   })
-
-  // Process let-bindings
-  const letBindings = binding[1]
-  if (letBindings.length > 0) {
-    return processForLetBindings({ ...frame, levelStates, bindingLevel: currentLevel }, levelStates, letBindings, 0, k)
-  }
-
-  return processForGuards({ ...frame, levelStates, bindingLevel: currentLevel }, levelStates, k)
 }
 
 /** Process let-bindings at the current for-loop level. */
-function processForLetBindings(frame: ForLoopFrame, levelStates: ForLoopFrame['levelStates'], letBindings: BindingNode[], letIndex: number, k: ContinuationStack): Step {
-  const { env, context, sourceCodeInfo } = frame
+function processForLetBindings(frame: ForLoopFrame, levelStates: ForLoopFrame['levelStates'], letBindings: BindingNode[], letIndex: number, k: ContinuationStack): Step | Promise<Step> {
+  const { env, context } = frame
 
+  let result: MaybePromise<void> = undefined as unknown as void
   for (let i = letIndex; i < letBindings.length; i++) {
-    const bindingNode = letBindings[i]!
-    const [target, bindingValue] = bindingNode[1]
-    const val = evaluateNodeRecursive(bindingValue, env)
-    if (val instanceof Promise) {
-      throw new LitsError('Async let-binding in for loop not supported yet', sourceCodeInfo)
-    }
-    const valueRecord = evaluateBindingNodeValues(target, val, n => evaluateNodeRecursive(n, env))
-    if (valueRecord instanceof Promise) {
-      throw new LitsError('Async let-binding destructure in for loop not supported yet', sourceCodeInfo)
-    }
-    Object.entries(valueRecord).forEach(([name, v]) => {
-      context[name] = { value: v }
+    const bindingIndex = i
+    result = chain(result, () => {
+      const bindingNode = letBindings[bindingIndex]!
+      const [target, bindingValue] = bindingNode[1]
+      const val = evaluateNodeRecursive(bindingValue, env)
+      return chain(val, (v) => {
+        const valueRecord = evaluateBindingNodeValues(target, v, n => evaluateNodeRecursive(n, env))
+        return chain(valueRecord, (vr) => {
+          Object.entries(vr).forEach(([name, value]) => {
+            context[name] = { value }
+          })
+        })
+      })
     })
   }
 
-  return processForGuards({ ...frame, levelStates }, levelStates, k)
+  return chain(result, () => processForGuards({ ...frame, levelStates }, levelStates, k))
 }
 
 /** Process when/while guards at the current level. */
@@ -1938,12 +1943,34 @@ function processForNextLevel(frame: ForLoopFrame, k: ContinuationStack): Step {
   return { type: 'Eval', node: body, env, k: [newFrame, ...k] }
 }
 
-function applyThrow(frame: ThrowFrame, value: Any): never {
-  assertString(value, frame.sourceCodeInfo, { nonEmpty: true })
-  throw new UserDefinedError(value, frame.sourceCodeInfo)
+/**
+ * Search the continuation stack for the nearest TryCatchFrame.
+ * If found, evaluate the catch body with the error bound (if errorSymbol is set).
+ * If not found, re-throw the error.
+ */
+function unwindToTryCatch(error: unknown, k: ContinuationStack): Step {
+  for (let i = 0; i < k.length; i++) {
+    const f = k[i]!
+    if (f.type === 'TryCatch') {
+      const { errorSymbol, catchNode, env } = f
+      const catchContext: Context = errorSymbol
+        ? { [errorSymbol]: { value: error as Any } }
+        : {}
+      const remainingK = k.slice(i + 1)
+      return { type: 'Eval', node: catchNode, env: env.create(catchContext), k: remainingK }
+    }
+  }
+  // No TryCatchFrame found — re-throw the error
+  throw error
 }
 
-function applyRecur(frame: RecurFrame, value: Any, k: ContinuationStack): Step {
+function applyThrow(frame: ThrowFrame, value: Any, k: ContinuationStack): Step {
+  assertString(value, frame.sourceCodeInfo, { nonEmpty: true })
+  const error = new UserDefinedError(value, frame.sourceCodeInfo)
+  return unwindToTryCatch(error, k)
+}
+
+function applyRecur(frame: RecurFrame, value: Any, k: ContinuationStack): Step | Promise<Step> {
   const { nodes, index, params, env } = frame
   params.push(value)
 
@@ -1963,7 +1990,7 @@ function applyRecur(frame: RecurFrame, value: Any, k: ContinuationStack): Step {
  * This replaces the exception-based RecurSignal approach from the recursive
  * evaluator with proper continuation-based control flow.
  */
-function handleRecur(params: Arr, k: ContinuationStack, sourceCodeInfo: SourceCodeInfo | undefined): Step {
+function handleRecur(params: Arr, k: ContinuationStack, sourceCodeInfo: SourceCodeInfo | undefined): Step | Promise<Step> {
   for (let i = 0; i < k.length; i++) {
     const frame = k[i]!
 
@@ -1972,28 +1999,41 @@ function handleRecur(params: Arr, k: ContinuationStack, sourceCodeInfo: SourceCo
       const { bindingNodes, bindingContext, body, env } = frame
       const remainingK = k.slice(i + 1)
 
-      for (let j = 0; j < bindingNodes.length; j++) {
-        const target = bindingNodes[j]![1][0]
-        const param = toAny(params[j])
-        const valueRecord = evaluateBindingNodeValues(target, param, n => evaluateNodeRecursive(n, env))
-        if (valueRecord instanceof Promise) {
-          throw new LitsError('Async binding in loop recur not supported yet', sourceCodeInfo)
-        }
-        Object.entries(valueRecord).forEach(([name, val]) => {
-          bindingContext[name] = { value: val }
-        })
+      if (params.length !== bindingNodes.length) {
+        throw new LitsError(
+          `recur expected ${bindingNodes.length} parameters, got ${params.length}`,
+          sourceCodeInfo,
+        )
       }
 
-      // Push fresh LoopIterateFrame and re-evaluate body
-      const newIterateFrame: LoopIterateFrame = {
-        type: 'LoopIterate',
+      const rebindAll: MaybePromise<void> = forEachSequential(
         bindingNodes,
-        bindingContext,
-        body,
-        env,
-        sourceCodeInfo: frame.sourceCodeInfo,
-      }
-      return { type: 'Eval', node: body, env, k: [newIterateFrame, ...remainingK] }
+        (bindingNode, j) => {
+          const target = bindingNode[1][0]
+          const param = toAny(params[j])
+          return chain(
+            evaluateBindingNodeValues(target, param, n => evaluateNodeRecursive(n, env)),
+            (valueRecord) => {
+              Object.entries(valueRecord).forEach(([name, val]) => {
+                bindingContext[name] = { value: val }
+              })
+            },
+          )
+        },
+      )
+
+      return chain(rebindAll, () => {
+        // Push fresh LoopIterateFrame and re-evaluate body
+        const newIterateFrame: LoopIterateFrame = {
+          type: 'LoopIterate',
+          bindingNodes,
+          bindingContext,
+          body,
+          env,
+          sourceCodeInfo: frame.sourceCodeInfo,
+        }
+        return { type: 'Eval' as const, node: body, env, k: [newIterateFrame, ...remainingK] }
+      })
     }
 
     if (frame.type === 'FnBody') {
@@ -2019,7 +2059,7 @@ function applyTryWith(_value: Any, k: ContinuationStack): Step {
   return { type: 'Value', value: _value, k }
 }
 
-function applyEvalArgs(frame: EvalArgsFrame, value: Any, k: ContinuationStack): Step {
+function applyEvalArgs(frame: EvalArgsFrame, value: Any, k: ContinuationStack): Step | Promise<Step> {
   const { node, params, placeholders, env } = frame
   const argNodes = node[1][1]
   const currentArgNode = argNodes[frame.index]!
@@ -2062,7 +2102,7 @@ function applyEvalArgs(frame: EvalArgsFrame, value: Any, k: ContinuationStack): 
   return { type: 'Eval', node: nextArg, env, k: [newFrame, ...k] }
 }
 
-function applyCallFn(frame: CallFnFrame, value: Any, k: ContinuationStack): Step {
+function applyCallFn(frame: CallFnFrame, value: Any, k: ContinuationStack): Step | Promise<Step> {
   // `value` is the resolved function value
   const fn = asFunctionLike(value, frame.sourceCodeInfo)
   return dispatchFunction(fn, frame.params, frame.placeholders, frame.env, frame.sourceCodeInfo, k)
@@ -2111,24 +2151,18 @@ function applyNanCheck(frame: NanCheckFrame, value: Any, k: ContinuationStack): 
 // ---------------------------------------------------------------------------
 
 /**
- * Wrap a MaybePromise<Any> result into a Step.
+ * Wrap a MaybePromise<Any> result into a Step or Promise<Step>.
  * If the result is a value, return a ValueStep immediately.
- * If it's a Promise, this indicates async execution — the trampoline loop
- * (Phase 1d) will handle this case.
- *
- * For Phase 1c, callers that produce Promises should fall back to recursive
- * execution instead.
+ * If it's a Promise, return a Promise<Step> that resolves to a ValueStep.
+ * The trampoline loop handles the async case: runSyncTrampoline throws,
+ * runAsyncTrampoline awaits.
  */
-function wrapMaybePromiseAsStep(result: MaybePromise<Any>, k: ContinuationStack): Step {
+function wrapMaybePromiseAsStep(result: MaybePromise<Any>, k: ContinuationStack): Step | Promise<Step> {
   if (result instanceof Promise) {
-    // For Phase 1c: synchronous-only. The trampoline loop (1d) will handle
-    // async properly. For now, if we get a Promise from a normal expression
-    // or function call, it means we're in an async context that should be
-    // handled by the recursive fallback. But since we can't easily detect
-    // that ahead of time, we convert it here.
-    // Note: The tick() function in Phase 1d will return Step | Promise<Step>,
-    // so this will work once the trampoline loop is in place.
-    throw new LitsError('Async operation in synchronous trampoline context', undefined)
+    return result.then(
+      value => ({ type: 'Value' as const, value, k }),
+      error => unwindToTryCatch(error, k),
+    )
   }
   return { type: 'Value', value: result, k }
 }
@@ -2143,5 +2177,158 @@ function getCollectionUtils(): { asColl: (v: Any, s?: SourceCodeInfo) => Any, is
       throw new LitsError(`Expected collection, got ${valueToString(v)}`, s)
     },
     isSeq: (v: Any) => typeof v === 'string' || Array.isArray(v),
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Trampoline loop — tick, runSyncTrampoline, runAsyncTrampoline
+// ---------------------------------------------------------------------------
+
+/**
+ * Process one step of the trampoline. Returns the next step, or a
+ * Promise<Step> when an async operation (e.g., native JS function) is
+ * encountered.
+ *
+ * - `Value` with empty `k`: the program is done (terminal state).
+ * - `Value` with non-empty `k`: pop the top frame and apply it.
+ * - `Eval`: evaluate an AST node via `stepNode` (always synchronous).
+ * - `Apply`: apply a frame to a value (may return Promise<Step>).
+ * - `Perform`: effect dispatch (not implemented until Phase 2).
+ */
+export function tick(step: Step): Step | Promise<Step> {
+  try {
+    switch (step.type) {
+      case 'Value': {
+        if (step.k.length === 0) {
+          return step // Terminal state — program is complete
+        }
+        const [frame, ...rest] = step.k
+        return applyFrame(frame!, step.value, rest)
+      }
+      case 'Eval':
+        return stepNode(step.node, step.env, step.k)
+      case 'Apply':
+        return applyFrame(step.frame, step.value, step.k)
+      case 'Perform':
+        // Effect dispatch — not implemented until Phase 2.
+        // For now, unhandled effects are an error.
+        throw new LitsError(`Unhandled effect: '${step.effect.name}'`, undefined)
+    }
+  }
+  catch (error) {
+    // Search the continuation stack for a TryCatchFrame to handle the error.
+    // This handles both explicit throw() and runtime errors (e.g., type errors).
+    return unwindToTryCatch(error, step.k)
+  }
+}
+
+/**
+ * Run the trampoline synchronously to completion.
+ * Throws if any step produces a Promise (i.e., an async operation was
+ * encountered in a synchronous context).
+ */
+export function runSyncTrampoline(initial: Step): Any {
+  let step: Step | Promise<Step> = initial
+  for (;;) {
+    if (step instanceof Promise) {
+      throw new LitsError('Unexpected async operation in synchronous context. Use async.run() for async operations.', undefined)
+    }
+    if (step.type === 'Value' && step.k.length === 0) {
+      return step.value
+    }
+    step = tick(step)
+  }
+}
+
+/**
+ * Run the trampoline asynchronously to completion.
+ * Awaits any Promise<Step> that surfaces from async operations.
+ */
+export async function runAsyncTrampoline(initial: Step): Promise<Any> {
+  let step: Step | Promise<Step> = initial
+  for (;;) {
+    if (step instanceof Promise) {
+      step = await step
+    }
+    if (step.type === 'Value' && step.k.length === 0) {
+      return step.value
+    }
+    step = tick(step)
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Public entry points — evaluate an AST or a single node
+// ---------------------------------------------------------------------------
+
+/**
+ * Build the initial Step for evaluating an AST (sequence of top-level nodes).
+ */
+function buildInitialStep(nodes: AstNode[], env: ContextStack): Step {
+  if (nodes.length === 0) {
+    return { type: 'Value', value: null, k: [] }
+  }
+  if (nodes.length === 1) {
+    return { type: 'Eval', node: nodes[0]!, env, k: [] }
+  }
+  const sequenceFrame: SequenceFrame = {
+    type: 'Sequence',
+    nodes,
+    index: 1,
+    env,
+  }
+  return { type: 'Eval', node: nodes[0]!, env, k: [sequenceFrame] }
+}
+
+/**
+ * Evaluate an AST using the trampoline.
+ * Returns the final value synchronously, or a Promise if async operations
+ * are involved (e.g., native JS functions returning Promises).
+ */
+export function evaluate(ast: Ast, contextStack: ContextStack): MaybePromise<Any> {
+  const initial = buildInitialStep(ast.body, contextStack)
+  // Try synchronous first; if a Promise surfaces, switch to async
+  try {
+    return runSyncTrampoline(initial)
+  }
+  catch (error) {
+    if (error instanceof LitsError && error.message.includes('Unexpected async operation')) {
+      // An async operation was encountered — re-run with the async trampoline.
+      // We must rebuild the initial step since the sync attempt may have
+      // partially mutated frames.
+      const freshInitial = buildInitialStep(ast.body, contextStack)
+      return runAsyncTrampoline(freshInitial)
+    }
+    throw error
+  }
+}
+
+/**
+ * Evaluate an AST using the async trampoline directly.
+ * Use this when the caller knows that async operations may be involved
+ * (e.g., from Lits.async.run) to avoid the sync-first-then-retry pattern
+ * which can cause side effects to be executed twice.
+ */
+export function evaluateAsync(ast: Ast, contextStack: ContextStack): Promise<Any> {
+  const initial = buildInitialStep(ast.body, contextStack)
+  return runAsyncTrampoline(initial)
+}
+
+/**
+ * Evaluate a single AST node using the trampoline.
+ * Used as the `evaluateNode` callback passed to `getUndefinedSymbols`
+ * and other utilities.
+ */
+export function evaluateNode(node: AstNode, contextStack: ContextStack): MaybePromise<Any> {
+  const initial: Step = { type: 'Eval', node, env: contextStack, k: [] }
+  try {
+    return runSyncTrampoline(initial)
+  }
+  catch (error) {
+    if (error instanceof LitsError && error.message.includes('Unexpected async operation')) {
+      const freshInitial: Step = { type: 'Eval', node, env: contextStack, k: [] }
+      return runAsyncTrampoline(freshInitial)
+    }
+    throw error
   }
 }

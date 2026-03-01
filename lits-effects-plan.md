@@ -190,7 +190,7 @@ type Step =
 - Test coverage at 63% — deferred to Phase 1d where integration tests will naturally cover the remaining paths (recursive fallbacks, complex dispatch paths, spread operators, etc.)
 - All 5052 tests pass, full pipeline passes (`npm run check`)
 
-### 1d. Implement the trampoline loop — two wrappers, one engine
+### 1d. Implement the trampoline loop — two wrappers, one engine ✅ DONE
 
 The core step engine is synchronous. The two entry points wrap it differently:
 
@@ -234,6 +234,25 @@ async function runAsyncTrampoline(initial: Step): Promise<RunResult> {
 
 The recursive evaluator is deleted. `runSync` now calls `runSyncTrampoline`.
 Stack overflow on deeply recursive Lits programs is eliminated as a bonus.
+
+**Implemented:**
+- `src/evaluator/trampoline.ts` — Added trampoline loop functions:
+  - **`tick(step)`**: Core step engine dispatching Value/Eval/Apply/Perform steps. Wraps dispatch in try/catch to enable continuation-stack unwinding for error handling (searches for `TryCatchFrame` before re-throwing).
+  - **`runSyncTrampoline(initial)`**: Synchronous loop wrapper — iterates `tick()` calls, throws `LitsError` if a `Promise` surfaces (async operation in sync context).
+  - **`runAsyncTrampoline(initial)`**: Async loop wrapper — awaits `tick()` results when Promises surface.
+  - **`evaluate(ast, contextStack)`**: Top-level entry point replacing `evaluator/index.ts` `evaluate`. Builds initial step from AST nodes and runs via `runSyncTrampoline`.
+  - **`evaluateNode(node, contextStack)`**: Node-level entry point replacing old `evaluateNode`. Runs single node via `runSyncTrampoline`.
+  - **`unwindToTryCatch(error, k)`**: Continuation-stack unwinding — searches for nearest `TryCatchFrame`, binds error to `errorSymbol` if present, evaluates catch body. Re-throws if no handler found.
+  - **`applyThrow`**: Updated to use `unwindToTryCatch` instead of throwing JS exception directly, enabling proper trampoline-based error handling.
+  - **`wrapMaybePromiseAsStep`**: Updated to return `Step | Promise<Step>` instead of throwing on Promise, propagating async capability through the entire function chain (~12 functions updated).
+- `src/Lits/Lits.ts` — Import changed from `'../evaluator'` to `'../evaluator/trampoline'`, wiring all public API through the trampoline.
+- `src/evaluator/trampoline.test.ts` (~1148 lines, 107 tests) — Added:
+  - `applyFrameSync`/`stepNodeSync` test helpers for sync-only test assertions
+  - 6 `tick` tests: terminal ValueStep, frame application, EvalStep dispatch, ApplyStep dispatch, PerformStep error, full program tick loop
+  - 3 `runSyncTrampoline` tests: simple expression, complex expression, terminal ValueStep
+- Old recursive evaluator (`src/evaluator/index.ts`) still exists but is no longer imported by `Lits.ts`. Will be deleted in a later cleanup step.
+- `npm run check` passes: lint clean, typecheck clean, 5061 tests pass (152 files), build succeeds
+- Coverage: trampoline.ts at 93.16% statements
 ```
 
 ### 1e. Rewrite special expressions

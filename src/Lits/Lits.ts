@@ -1,5 +1,5 @@
 import { getUndefinedSymbols } from '../getUndefinedSymbols'
-import { evaluate, evaluateNode } from '../evaluator'
+import { evaluate, evaluateAsync, evaluateNode } from '../evaluator/trampoline'
 import { createContextStack } from '../evaluator/ContextStack'
 import type { Context } from '../evaluator/interface'
 import type { Any, Obj } from '../interface'
@@ -95,7 +95,7 @@ export class Lits {
         return this.runBundle(programOrBundle, params)
       }
       const ast = this.generateAst(programOrBundle, params)
-      return this.evaluate(ast, params)
+      return this.evaluateAsync(ast, params)
     },
     apply: async (fn: LitsFunction, fnParams: unknown[], params: ContextParams & PureParams = {}): Promise<unknown> => {
       return this.apply(fn, fnParams, params)
@@ -172,6 +172,11 @@ export class Lits {
   private evaluate(ast: Ast, params: ContextParams & PureParams): MaybePromise<Any> {
     const contextStack = createContextStack(params, this.modules, params.pure)
     return evaluate(ast, contextStack)
+  }
+
+  private evaluateAsync(ast: Ast, params: ContextParams & PureParams): Promise<Any> {
+    const contextStack = createContextStack(params, this.modules, params.pure)
+    return evaluateAsync(ast, contextStack)
   }
 
   public transformSymbols(tokenStream: TokenStream, transformer: (symbol: string) => string): TokenStream {
