@@ -142,7 +142,7 @@ One frame type per recursive call pattern. All frame types are **plain serializa
 - Helper types: `ForBindingLevelState`, `ContinuationStack` (type alias for `Frame[]`)
 - All 4950 tests pass, full pipeline passes
 
-### 1b. Define the Step type
+### 1b. Define the Step type ✅ DONE
 
 ```typescript
 type Step =
@@ -151,6 +151,16 @@ type Step =
   | { type: 'Apply';   frame: Frame; value: LitsValue; k: Frame[] }
   | { type: 'Perform'; effect: EffectRef; args: LitsValue[]; k: Frame[] }
 ```
+
+**Implemented:**
+- `src/evaluator/step.ts` — 4 step variant interfaces (`ValueStep`, `EvalStep`, `ApplyStep`, `PerformStep`) and discriminated union `Step` type
+  - `ValueStep`: sub-expression produced a value; trampoline checks `k` to continue or finish
+  - `EvalStep`: AST node needs evaluation in given environment; dispatched via `stepNode`
+  - `ApplyStep`: frame needs to process a completed sub-result; dispatched via `applyFrame`
+  - `PerformStep`: effect invoked via `perform`; trampoline searches `k` for handler or dispatches to host
+- `src/evaluator/step.test.ts` — 4 tests verifying type discriminants, exhaustive union coverage, unique type names, and individual interface exports
+- Uses `Any` (Lits value type), `ContinuationStack` (from frames.ts), `ContextStack`, `EffectRef`, and `AstNode`
+- All 4954 tests pass, full pipeline passes
 
 ### 1c. Implement `stepNode` and `applyFrame`
 
