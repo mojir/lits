@@ -19,7 +19,6 @@ import type { Any, Arr, Obj } from '../interface'
 import type { AstNode, BindingNode, BindingTarget, NormalExpressionNode, UserDefinedFunction } from '../parser/types'
 import type { MatchCase } from '../builtin/specialExpressions/match'
 import type { LoopBindingNode } from '../builtin/specialExpressions/loops'
-import type { WithHandler } from '../builtin/specialExpressions/try'
 import type { SourceCodeInfo } from '../tokenizer/token'
 import type { ContextStack } from './ContextStack'
 import type { Context } from './interface'
@@ -298,6 +297,22 @@ export interface ThrowFrame {
 }
 
 /**
+ * `perform` argument collection — evaluate effect ref + args sequentially.
+ *
+ * First evaluates the effect expression (index 0) to get an EffectRef.
+ * Then evaluates each argument expression. When all are collected, produces
+ * a `PerformStep` with the resolved EffectRef and argument values.
+ */
+export interface PerformArgsFrame {
+  type: 'PerformArgs'
+  argNodes: AstNode[] // all argument nodes (effect expr at index 0, then actual args)
+  index: number // next node to evaluate (0-based)
+  params: Arr // accumulated evaluated values
+  env: ContextStack
+  sourceCodeInfo?: SourceCodeInfo
+}
+
+/**
  * `recur` — evaluate parameters sequentially, then signal tail-call.
  *
  * In the trampoline, instead of throwing `RecurSignal`, the completed
@@ -345,14 +360,52 @@ export interface TryCatchFrame {
  * trampoline searches the continuation stack for a matching `TryWithFrame`.
  * The delimited continuation between `perform` and this frame is captured.
  *
- * Each handler is an `[effectExpr, handlerFn]` pair. The `effectExpr` is
- * evaluated to an `EffectRef` and compared with the performed effect.
- * The `handlerFn` is evaluated and called with the perform arguments.
+ * Handlers are stored as evaluated `[EffectRef, handlerFn AstNode]` pairs.
+ * The effect expressions are evaluated eagerly when entering the `try/with`
+ * scope (i.e., when the frame is created) via `evaluateNodeRecursive`.
+ * This ensures handler matching is deterministic and doesn't depend on
+ * state changes inside the try body.
  */
 export interface TryWithFrame {
   type: 'TryWith'
-  handlers: WithHandler[] // [effectExpr, handlerFn][]
+  handlers: EvaluatedWithHandler[]
   env: ContextStack
+  sourceCodeInfo?: SourceCodeInfo
+}
+
+/**
+ * A pre-evaluated effect handler pair for `TryWithFrame`.
+ * `effectRef` is the resolved EffectRef value.
+ * `handlerNode` is the AST node for the handler function expression.
+ */
+export interface EvaluatedWithHandler {
+  effectRef: Any // Should be EffectRef at runtime — stored as Any for serialization
+  handlerNode: AstNode
+}
+
+/**
+ * Bridges a handler's return value back to the perform call site.
+ *
+ * When `perform` matches a `TryWithFrame`, the handler runs with a continuation
+ * that excludes the current try/with/catch scope (so errors and effects from
+ * the handler propagate upward per P&P semantics). However, the handler's
+ * return value needs to resume the body at the perform call site with the
+ * TryWithFrame still on the stack (so subsequent performs in the same body
+ * can still match handlers).
+ *
+ * `EffectResumeFrame` is placed below the handler's function frames in the
+ * continuation stack. When the handler returns a value, this frame replaces
+ * the continuation with `resumeK` — the original continuation from the
+ * perform call site, with the TryWithFrame intact.
+ *
+ * Error/effect semantics:
+ * - Handler RETURNS value → EffectResumeFrame redirects to resumeK → body continues
+ * - Handler THROWS error → error walks past EffectResumeFrame to outer_k → correct
+ * - Handler PERFORMS effect → effect walks past EffectResumeFrame to outer_k → correct
+ */
+export interface EffectResumeFrame {
+  type: 'EffectResume'
+  resumeK: ContinuationStack
   sourceCodeInfo?: SourceCodeInfo
 }
 
@@ -507,9 +560,11 @@ export type Frame =
   // Control flow
   | ThrowFrame
   | RecurFrame
+  | PerformArgsFrame
   // Exception & effect handling
   | TryCatchFrame
   | TryWithFrame
+  | EffectResumeFrame
   // Function calls
   | EvalArgsFrame
   | CallFnFrame

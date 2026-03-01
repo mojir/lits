@@ -6,6 +6,7 @@ import type {
   CallFnFrame,
   CondFrame,
   ContinuationStack,
+  EffectResumeFrame,
   EvalArgsFrame,
   FnBodyFrame,
   ForBindingLevelState,
@@ -19,6 +20,7 @@ import type {
   NanCheckFrame,
   ObjectBuildFrame,
   OrFrame,
+  PerformArgsFrame,
   QqFrame,
   RecurFrame,
   SequenceFrame,
@@ -53,15 +55,17 @@ describe('frame types', () => {
       ForLoop: true,
       Throw: true,
       Recur: true,
+      PerformArgs: true,
       TryCatch: true,
       TryWith: true,
+      EffectResume: true,
       EvalArgs: true,
       CallFn: true,
       FnBody: true,
       BindingDefault: true,
       NanCheck: true,
     }
-    expect(Object.keys(frameTypes)).toHaveLength(22)
+    expect(Object.keys(frameTypes)).toHaveLength(24)
   })
 
   it('should support ContinuationStack as Frame array', () => {
@@ -90,8 +94,10 @@ describe('frame types', () => {
         case 'ForLoop': return 'binding'
         case 'Throw': return 'control'
         case 'Recur': return 'control'
+        case 'PerformArgs': return 'control'
         case 'TryCatch': return 'exception'
         case 'TryWith': return 'effect'
+        case 'EffectResume': return 'effect'
         case 'EvalArgs': return 'call'
         case 'CallFn': return 'call'
         case 'FnBody': return 'call'
@@ -137,8 +143,10 @@ describe('frame types', () => {
       'ForLoop',
       'Throw',
       'Recur',
+      'PerformArgs',
       'TryCatch',
       'TryWith',
+      'EffectResume',
       'EvalArgs',
       'CallFn',
       'FnBody',
@@ -147,7 +155,7 @@ describe('frame types', () => {
     ]
     const uniqueTypes = new Set(types)
     expect(uniqueTypes.size).toBe(types.length)
-    expect(uniqueTypes.size).toBe(22)
+    expect(uniqueTypes.size).toBe(24)
   })
 
   it('should export individual frame interfaces for typed access', () => {
@@ -168,8 +176,10 @@ describe('frame types', () => {
     const _forLoop: ForLoopFrame['type'] = 'ForLoop'
     const _throw: ThrowFrame['type'] = 'Throw'
     const _recur: RecurFrame['type'] = 'Recur'
+    const _performArgs: PerformArgsFrame['type'] = 'PerformArgs'
     const _tryCatch: TryCatchFrame['type'] = 'TryCatch'
     const _tryWith: TryWithFrame['type'] = 'TryWith'
+    const _effectResume: EffectResumeFrame['type'] = 'EffectResume'
     const _evalArgs: EvalArgsFrame['type'] = 'EvalArgs'
     const _callFn: CallFnFrame['type'] = 'CallFn'
     const _fnBody: FnBodyFrame['type'] = 'FnBody'
@@ -193,8 +203,10 @@ describe('frame types', () => {
     expect(_forLoop).toBe('ForLoop')
     expect(_throw).toBe('Throw')
     expect(_recur).toBe('Recur')
+    expect(_performArgs).toBe('PerformArgs')
     expect(_tryCatch).toBe('TryCatch')
     expect(_tryWith).toBe('TryWith')
+    expect(_effectResume).toBe('EffectResume')
     expect(_evalArgs).toBe('EvalArgs')
     expect(_callFn).toBe('CallFn')
     expect(_fnBody).toBe('FnBody')

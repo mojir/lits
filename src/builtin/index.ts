@@ -17,8 +17,10 @@ import { recurSpecialExpression } from './specialExpressions/recur'
 import { throwSpecialExpression } from './specialExpressions/throw'
 import { trySpecialExpression } from './specialExpressions/try'
 import { arraySpecialExpression } from './specialExpressions/array'
+import { effectSpecialExpression } from './specialExpressions/effect'
 import { objectSpecialExpression } from './specialExpressions/object'
 import { importSpecialExpression } from './specialExpressions/import'
+import { performSpecialExpression } from './specialExpressions/perform'
 import { specialExpressionTypes } from './specialExpressionTypes'
 
 export const specialExpressions = [
@@ -42,6 +44,8 @@ export const specialExpressions = [
   trySpecialExpression,
   unlessSpecialExpression,
   importSpecialExpression,
+  effectSpecialExpression,
+  performSpecialExpression,
 ] as const
 
 export type SpecialExpressions = typeof specialExpressions
@@ -59,7 +63,9 @@ export type CommonSpecialExpressionType = [
   | typeof specialExpressionTypes['||']
   | typeof specialExpressionTypes['throw']
   | typeof specialExpressionTypes['array']
-  | typeof specialExpressionTypes['object'],
+  | typeof specialExpressionTypes['object']
+  | typeof specialExpressionTypes['effect']
+  | typeof specialExpressionTypes['perform'],
 ]
 
 export type SpecialExpressionType = typeof specialExpressionTypes[SpecialExpressionName]

@@ -3,9 +3,11 @@ import { builtin } from '../../builtin'
 import type { AndNode } from '../../builtin/specialExpressions/and'
 import type { ArrayNode } from '../../builtin/specialExpressions/array'
 import type { DefinedNode } from '../../builtin/specialExpressions/defined'
+import type { EffectNode } from '../../builtin/specialExpressions/effect'
 import type { ImportNode } from '../../builtin/specialExpressions/import'
 import type { ObjectNode } from '../../builtin/specialExpressions/object'
 import type { OrNode } from '../../builtin/specialExpressions/or'
+import type { PerformNode } from '../../builtin/specialExpressions/perform'
 import type { QqNode } from '../../builtin/specialExpressions/qq'
 import type { RecurNode } from '../../builtin/specialExpressions/recur'
 import type { ThrowNode } from '../../builtin/specialExpressions/throw'
@@ -13,7 +15,7 @@ import { specialExpressionTypes } from '../../builtin/specialExpressionTypes'
 import { NodeTypes } from '../../constants/constants'
 import { LitsError } from '../../errors'
 import type { AstNode, NormalExpressionNodeExpression, SymbolNode } from '../types'
-import { isOperatorToken, isRParenToken } from '../../tokenizer/token'
+import { isOperatorToken, isRParenToken, isSymbolToken } from '../../tokenizer/token'
 import { isNormalBuiltinSymbolNode, isSpecialBuiltinSymbolNode, isUserDefinedSymbolNode } from '../../typeGuards/astNode'
 import { assertNumberOfParams } from '../../utils/arity'
 import { createNamedNormalExpressionNode, withSourceCodeInfo } from '../helpers'
@@ -21,6 +23,11 @@ import type { ParserContext } from '../ParserContext'
 
 export function parseFunctionCall(ctx: ParserContext, symbol: AstNode): AstNode {
   ctx.advance()
+
+  // Handle effect(dotted.name) — custom parsing for dotted identifier argument
+  if (isSpecialBuiltinSymbolNode(symbol) && symbol[1] === specialExpressionTypes.effect) {
+    return parseEffectArgs(ctx, symbol)
+  }
 
   const params: AstNode[] = []
   while (!ctx.isAtEnd() && !isRParenToken(ctx.tryPeek())) {
@@ -73,6 +80,7 @@ export function parseFunctionCall(ctx: ParserContext, symbol: AstNode): AstNode 
       | typeof specialExpressionTypes.try
       | typeof specialExpressionTypes.doseq
       | typeof specialExpressionTypes.import
+      | typeof specialExpressionTypes.effect
     >
     const specialExpression: SpecialExpression = builtin.specialExpressions[type]
     assertNumberOfParams(specialExpression.arity, params.length, symbol[2])
@@ -97,6 +105,10 @@ export function parseFunctionCall(ctx: ParserContext, symbol: AstNode): AstNode 
         const [param] = params
         return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, param!]], symbol[2]) satisfies ThrowNode
       }
+      case specialExpressionTypes.perform: {
+        const [effectExpr, ...argExprs] = params
+        return withSourceCodeInfo([NodeTypes.SpecialExpression, [type, effectExpr!, argExprs]], symbol[2]) satisfies PerformNode
+      }
       case specialExpressionTypes['0_lambda']:
         throw new LitsError(`${type} is not allowed`, symbol[2])
       /* v8 ignore next 2 */
@@ -111,4 +123,33 @@ export function parseFunctionCall(ctx: ParserContext, symbol: AstNode): AstNode 
   else {
     return withSourceCodeInfo([NodeTypes.NormalExpression, [symbol, params]], symbol[2]) satisfies NormalExpressionNodeExpression
   }
+}
+
+/**
+ * Parse the argument to `effect(...)` — a dotted identifier like `llm.complete`
+ * or `com.myco.human.approve`. Consumes symbol tokens separated by `.` and
+ * builds the full name string.
+ */
+function parseEffectArgs(ctx: ParserContext, symbol: AstNode): EffectNode {
+  const sourceCodeInfo = symbol[2]
+  const firstToken = ctx.peek()
+  if (!isSymbolToken(firstToken)) {
+    throw new LitsError('effect expects a dotted name identifier', firstToken[2])
+  }
+  let name = firstToken[1]
+  ctx.advance()
+  while (isOperatorToken(ctx.tryPeek(), '.')) {
+    ctx.advance() // skip dot
+    const nextToken = ctx.peek()
+    if (!isSymbolToken(nextToken)) {
+      throw new LitsError('Expected identifier after dot in effect name', nextToken[2])
+    }
+    name += `.${nextToken[1]}`
+    ctx.advance()
+  }
+  if (!isRParenToken(ctx.tryPeek())) {
+    throw new LitsError('Expected closing parenthesis after effect name', ctx.peekSourceCodeInfo())
+  }
+  ctx.advance()
+  return withSourceCodeInfo([NodeTypes.SpecialExpression, [specialExpressionTypes.effect, name]], sourceCodeInfo) satisfies EffectNode
 }

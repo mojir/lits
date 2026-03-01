@@ -325,11 +325,11 @@ no frame growth. Proper tail call elimination falls out naturally.
 
 ---
 
-## Phase 2 — Local Effect Handling (`try/with`)
+## Phase 2 — Local Effect Handling (`try/with`) ✅ DONE
 
 Effects fully within Lits code, no host API yet.
 
-### 2a. `effect(name)` special expression
+### 2a. `effect(name)` special expression ✅ DONE
 
 Returns the interned `EffectRef` for `name`. The name is parsed as a dotted identifier
 (e.g. `llm.complete`), not a string — ergonomics match the intro doc.
@@ -338,16 +338,33 @@ Returns the interned `EffectRef` for `name`. The name is parsed as a dotted iden
 let llm = effect(llm.complete)
 ```
 
-### 2b. `perform(eff, ...args)` special expression
+**Implemented:**
+- `src/builtin/specialExpressionTypes.ts` — Added `'effect': 20`
+- `src/builtin/specialExpressions/effect.ts` — NEW: `EffectNode` type, docs with category `'special-expression'`, `getUndefinedSymbols` (returns empty set since effect names are not Lits symbols)
+- `src/builtin/index.ts` — Added `effectSpecialExpression` registration and updated `CommonSpecialExpressionType`
+- `src/parser/subParsers/parseFunctionCall.ts` — Added custom parsing for `effect(dotted.name)`: `parseEffectArgs` helper reads symbol tokens separated by `.` to build the dotted name string (e.g., `effect(llm.complete)` → name `"llm.complete"`)
+- `src/evaluator/trampoline.ts` — Added `effect` case to `stepSpecialExpression`: returns `{ type: 'Value', value: getEffectRef(name) }`
+- 7 tests: effect references, dotted names, interning, first-class values, comparison
+
+### 2b. `perform(eff, ...args)` special expression ✅ DONE
 
 Emits `Step.Perform` with the resolved `EffectRef` and evaluated args.
-The trampoline's `dispatchEffect` then searches `k` from top to bottom for a matching
+The trampoline's `dispatchPerform` then searches `k` from top to bottom for a matching
 `TryWithFrame`.
 
 Effect matching: compare `EffectRef.name` values (interning means reference equality works too,
 but name comparison is safer across serialization boundaries).
 
-### 2c. `TryWithFrame` handler dispatch
+**Implemented:**
+- `src/builtin/specialExpressionTypes.ts` — Added `'perform': 21`
+- `src/builtin/specialExpressions/perform.ts` — NEW: `PerformNode` type, docs with category `'special-expression'`, min arity 1
+- `src/builtin/index.ts` — Added `performSpecialExpression` registration
+- `src/parser/subParsers/parseFunctionCall.ts` — Added `perform` case to the switch statement
+- `src/evaluator/frames.ts` — Added `PerformArgsFrame` to collect evaluated effect ref + args before producing `PerformStep`
+- `src/evaluator/trampoline.ts` — Added `perform` case to `stepSpecialExpression`: pushes `PerformArgsFrame`, evaluates args left-to-right, then produces `PerformStep`. Added `applyPerformArgs` handler.
+- 6 tests: local handlers, no args, multiple args, args as array, unhandled effects, variables
+
+### 2c. `TryWithFrame` handler dispatch ✅ DONE
 
 When `perform` finds a matching `TryWithFrame`:
 
@@ -358,7 +375,19 @@ When `perform` finds a matching `TryWithFrame`:
 3. Evaluate the handler function body with the perform args bound.
 4. The result becomes the value that continues from the `perform` call site.
 
-### 2d. `TryCatch` + `TryWith` interaction
+**Implemented:**
+- `src/evaluator/frames.ts` — Added `EffectResumeFrame` with `resumeK: ContinuationStack` field. Changed `TryWithFrame.handlers` from `WithHandler[]` (raw AST pairs) to `EvaluatedWithHandler[]` (pre-evaluated effect refs + handler AST nodes). Added `EvaluatedWithHandler` interface.
+- `src/evaluator/trampoline.ts` — Implemented `dispatchPerform(effect, args, k, sourceCodeInfo)`:
+  - Searches `k` for nearest `TryWithFrame` whose `handlers` contain a matching `EffectRef` (by `.name` comparison)
+  - Builds two continuations: **resumeK** = original `k` (TryWithFrame stays for subsequent performs), **handlerK** = `[EffectResumeFrame{resumeK}, ...outerK]` where `outerK` skips both TryWithFrame and adjacent TryCatchFrame (per P&P: handlers run outside try-scope)
+  - Evaluates handler function (using `evaluateNodeRecursive`) and dispatches it with `handlerK`
+  - When handler returns value V, `EffectResumeFrame` restores `resumeK` so V resumes at the perform call site with TryWithFrame intact
+  - If no matching handler found, throws `UnhandledEffectError`
+- Updated `stepSpecialExpression` `try` case to eagerly evaluate effect expressions via `evaluateNodeRecursive` and store as `EvaluatedWithHandler[]`
+- Updated `tick()` to call `dispatchPerform` instead of throwing "not implemented"
+- 8 tests: multi-handler matching, first match wins, outer delegation, nesting, handler scope removal, resume value, delegation, success passthrough
+
+### 2d. `TryCatch` + `TryWith` interaction ✅ DONE
 
 When an error is thrown:
 - Walk `k` for the nearest `TryCatchFrame` — ignore `TryWithFrame` entries (they don't catch errors).
@@ -367,7 +396,13 @@ When an error is thrown:
 
 These two frame types are independent and stack correctly.
 
-### 2e. Deliverable
+**Implemented:**
+- Error unwinding (`unwindToTryCatch`) already skips non-TryCatchFrame frames, so TryWithFrame is naturally ignored
+- Effect dispatch (`dispatchPerform`) skips non-TryWithFrame frames, so TryCatchFrame is naturally ignored
+- `EffectResumeFrame` ensures handler errors propagate past the inner TryCatchFrame (handlers run outside try-scope per P&P)
+- 7 tests: error/effect separation, handler errors propagate to outer catch, combined try/with/catch
+
+### 2e. Deliverable ✅ DONE
 
 ```lits
 try
@@ -383,6 +418,12 @@ Works end-to-end. Full test coverage for:
 - Error in handler propagates past the enclosing try/catch
 - Combined `try/with/catch`
 - Effects as first-class values (passed as arguments)
+
+**Verified:**
+- `__tests__/effects.test.ts` — 31 tests covering all Phase 2 features
+- `src/evaluator/frames.test.ts` — Updated for 24 frame types (added PerformArgsFrame, EffectResumeFrame)
+- `npm run check` passes: lint clean, typecheck clean, 5118 tests pass (152 files + 1 skipped), build succeeds
+- Coverage: effect.ts 100%, perform.ts 100%, effectRef.ts 100%, trampoline.ts 92.79%
 
 ---
 

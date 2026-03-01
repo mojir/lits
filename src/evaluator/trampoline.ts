@@ -27,7 +27,6 @@ import { builtin } from '../builtin'
 import { evaluateBindingNodeValues, getAllBindingTargetNames, tryMatch } from '../builtin/bindingNode'
 import type { LoopBindingNode } from '../builtin/specialExpressions/loops'
 import type { MatchCase } from '../builtin/specialExpressions/match'
-import type { WithHandler } from '../builtin/specialExpressions/try'
 import { specialExpressionTypes } from '../builtin/specialExpressionTypes'
 import { NodeTypes, getNodeTypeName } from '../constants/constants'
 import { LitsError, RecurSignal, UndefinedSymbolError, UserDefinedError } from '../errors'
@@ -39,6 +38,7 @@ import type {
   BindingNode,
   BindingTarget,
   CompFunction,
+  EffectRef,
   EvaluatedFunction,
   EveryPredFunction,
   FNullFunction,
@@ -66,7 +66,7 @@ import type { SourceCodeInfo } from '../tokenizer/token'
 import { asNonUndefined, isUnknownRecord } from '../typeGuards'
 import { annotate } from '../typeGuards/annotatedArrays'
 import { isNormalBuiltinSymbolNode, isNormalExpressionNodeWithName, isSpreadNode, isUserDefinedSymbolNode } from '../typeGuards/astNode'
-import { asAny, asFunctionLike, assertSeq, isAny, isObj } from '../typeGuards/lits'
+import { asAny, asFunctionLike, assertEffectRef, assertSeq, isAny, isEffectRef, isObj } from '../typeGuards/lits'
 import { isLitsFunction } from '../typeGuards/litsFunction'
 import { assertNumber, isNumber } from '../typeGuards/number'
 import { assertString } from '../typeGuards/string'
@@ -77,6 +77,7 @@ import type { MaybePromise } from '../utils/maybePromise'
 import { chain, forEachSequential, mapSequential, reduceSequential } from '../utils/maybePromise'
 import { FUNCTION_SYMBOL } from '../utils/symbols'
 import type { ContextStack } from './ContextStack'
+import { getEffectRef } from './effectRef'
 import type {
   AndFrame,
   ArrayBuildFrame,
@@ -84,7 +85,9 @@ import type {
   CallFnFrame,
   CondFrame,
   ContinuationStack,
+  EffectResumeFrame,
   EvalArgsFrame,
+  EvaluatedWithHandler,
   FnBodyFrame,
   ForLoopFrame,
   Frame,
@@ -96,6 +99,7 @@ import type {
   NanCheckFrame,
   ObjectBuildFrame,
   OrFrame,
+  PerformArgsFrame,
   QqFrame,
   RecurFrame,
   SequenceFrame,
@@ -928,13 +932,20 @@ function stepSpecialExpression(node: SpecialExpressionNode, env: ContextStack, k
       const tryExpression = node[1][1] as AstNode
       const errorSymbol = node[1][2] as SymbolNode | undefined
       const catchExpression = node[1][3] as AstNode | undefined
-      const withHandlers = node[1][4] as WithHandler[] | undefined
+      const withHandlerNodes = node[1][4] as [AstNode, AstNode][] | undefined
 
       // Push effect handler frame if with-handlers exist
-      if (withHandlers && withHandlers.length > 0) {
+      if (withHandlerNodes && withHandlerNodes.length > 0) {
+        // Eagerly evaluate effect expressions using recursive evaluator.
+        // Effect expressions are always simple (effect(name) or variable refs),
+        // so synchronous evaluation is safe.
+        const evaluatedHandlers: EvaluatedWithHandler[] = withHandlerNodes.map(([effectExpr, handlerNode]) => ({
+          effectRef: evaluateNodeRecursive(effectExpr, env) as Any,
+          handlerNode,
+        }))
         const withFrame: TryWithFrame = {
           type: 'TryWith',
-          handlers: withHandlers,
+          handlers: evaluatedHandlers,
           env,
           sourceCodeInfo,
         }
@@ -1104,6 +1115,40 @@ function stepSpecialExpression(node: SpecialExpressionNode, env: ContextStack, k
         }
       }
       return { type: 'Value', value: result, k }
+    }
+
+    // --- effect ---
+    case specialExpressionTypes.effect: {
+      const effectName = node[1][1] as string
+      return { type: 'Value', value: getEffectRef(effectName), k }
+    }
+
+    // --- perform ---
+    case specialExpressionTypes.perform: {
+      const effectExpr = node[1][1] as AstNode
+      const argExprs = node[1][2] as AstNode[]
+      const allNodes = [effectExpr, ...argExprs]
+      if (allNodes.length === 1) {
+        // Only the effect expression, no args — evaluate effect then dispatch
+        const frame: PerformArgsFrame = {
+          type: 'PerformArgs',
+          argNodes: allNodes,
+          index: 1,
+          params: [],
+          env,
+          sourceCodeInfo,
+        }
+        return { type: 'Eval', node: allNodes[0]!, env, k: [frame, ...k] }
+      }
+      const frame: PerformArgsFrame = {
+        type: 'PerformArgs',
+        argNodes: allNodes,
+        index: 1,
+        params: [],
+        env,
+        sourceCodeInfo,
+      }
+      return { type: 'Eval', node: allNodes[0]!, env, k: [frame, ...k] }
     }
 
     /* v8 ignore next 2 */
@@ -1377,10 +1422,14 @@ export function applyFrame(frame: Frame, value: Any, k: ContinuationStack): Step
       return applyThrow(frame, value, k)
     case 'Recur':
       return applyRecur(frame, value, k)
+    case 'PerformArgs':
+      return applyPerformArgs(frame, value, k)
     case 'TryCatch':
       return applyTryCatch(value, k)
     case 'TryWith':
       return applyTryWith(value, k)
+    case 'EffectResume':
+      return applyEffectResume(frame, value, k)
     case 'EvalArgs':
       return applyEvalArgs(frame, value, k)
     case 'CallFn':
@@ -2063,6 +2112,98 @@ function applyTryWith(_value: Any, k: ContinuationStack): Step {
   return { type: 'Value', value: _value, k }
 }
 
+function applyEffectResume(frame: EffectResumeFrame, value: Any, _k: ContinuationStack): Step {
+  // The handler returned a value. Replace the continuation with resumeK
+  // (the original continuation from the perform call site, with TryWithFrame
+  // still on the stack for subsequent performs).
+  // The _k (handler's remaining outer_k) is discarded — resumeK already
+  // includes the full original continuation.
+  return { type: 'Value', value, k: frame.resumeK }
+}
+
+function applyPerformArgs(frame: PerformArgsFrame, value: Any, k: ContinuationStack): Step | Promise<Step> {
+  const { argNodes, index, params, env } = frame
+  params.push(value)
+
+  if (index >= argNodes.length) {
+    // All values collected — first is the effect ref, rest are args
+    const effectRef = params[0]!
+    assertEffectRef(effectRef, frame.sourceCodeInfo)
+    const args = params.slice(1)
+    // Produce a PerformStep — let the trampoline dispatch it
+    return { type: 'Perform', effect: effectRef, args, k }
+  }
+
+  // Evaluate next arg
+  const newFrame: PerformArgsFrame = { ...frame, index: index + 1 }
+  return { type: 'Eval', node: argNodes[index]!, env, k: [newFrame, ...k] }
+}
+
+/**
+ * Dispatch a Perform step by searching the continuation stack for a matching
+ * TryWithFrame. If found, evaluate the handler and use its return value as the
+ * result of the perform call. If not found, throw an unhandled effect error.
+ *
+ * Handler semantics (per P&P / Lits contract):
+ * - Handler receives the perform args as an array: `([arg1, arg2]) -> ...`
+ * - Handler's return value IS the resume value — no explicit resume needed
+ * - Handlers run OUTSIDE the try/with scope — the TryWithFrame is removed
+ *   from the handler's error/effect path. An EffectResumeFrame bridges the
+ *   handler's return value back to the original continuation.
+ * - The handler function's environment is the one captured at the with-clause,
+ *   NOT the environment at the perform call site
+ *
+ * Continuation structure:
+ *   Original k:   [...body_k, TryWithFrame(i), TryCatchFrame?(i+1), ...outer_k]
+ *   Handler's k:  [EffectResumeFrame{resumeK=k}, ...outer_k]
+ *   When handler returns V: EffectResumeFrame replaces k with original k,
+ *   so V flows through body_k with TryWithFrame still on stack.
+ */
+function dispatchPerform(effect: EffectRef, args: Arr, k: ContinuationStack, sourceCodeInfo?: SourceCodeInfo): Step | Promise<Step> {
+  for (let i = 0; i < k.length; i++) {
+    const frame = k[i]!
+    if (frame.type === 'TryWith') {
+      // Search this frame's handlers for a matching effect
+      for (const handler of frame.handlers) {
+        if (isEffectRef(handler.effectRef) && handler.effectRef.name === effect.name) {
+          // Found a match!
+          // resumeK = original k — handler's return value resumes here
+          // (TryWithFrame stays on the stack for subsequent performs)
+          const resumeK = k
+
+          // Determine outer_k — skip TryWithFrame and any adjacent TryCatchFrame
+          // from the same try/with/catch block, so errors and effects from the
+          // handler propagate upward past the current try block.
+          let skipEnd = i + 1
+          if (skipEnd < k.length && k[skipEnd]!.type === 'TryCatch') {
+            skipEnd++ // also skip the TryCatchFrame from the same block
+          }
+          const outerK = k.slice(skipEnd)
+
+          // Handler's continuation: EffectResumeFrame bridges back to resumeK
+          const effectResumeFrame: EffectResumeFrame = {
+            type: 'EffectResume',
+            resumeK,
+            sourceCodeInfo,
+          }
+          const handlerK: ContinuationStack = [effectResumeFrame, ...outerK]
+
+          // Evaluate the handler fn expression using recursive evaluator.
+          // Handler expressions are always simple (lambda or variable refs).
+          const handlerFn = evaluateNodeRecursive(handler.handlerNode, frame.env) as Any
+          const fnLike = asFunctionLike(handlerFn, frame.sourceCodeInfo)
+          // Call the handler with args as an array
+          return dispatchFunction(fnLike, [args], [], frame.env, sourceCodeInfo, handlerK)
+        }
+      }
+    }
+  }
+
+  // No matching local handler found — throw unhandled effect error.
+  // (Phase 3 will dispatch to host handlers here instead.)
+  throw new LitsError(`Unhandled effect: '${effect.name}'`, sourceCodeInfo)
+}
+
 function applyEvalArgs(frame: EvalArgsFrame, value: Any, k: ContinuationStack): Step | Promise<Step> {
   const { node, params, placeholders, env } = frame
   const argNodes = node[1][1]
@@ -2216,9 +2357,7 @@ export function tick(step: Step): Step | Promise<Step> {
       case 'Apply':
         return applyFrame(step.frame, step.value, step.k)
       case 'Perform':
-        // Effect dispatch — not implemented until Phase 2.
-        // For now, unhandled effects are an error.
-        throw new LitsError(`Unhandled effect: '${step.effect.name}'`, undefined)
+        return dispatchPerform(step.effect, step.args, step.k)
     }
   }
   catch (error) {

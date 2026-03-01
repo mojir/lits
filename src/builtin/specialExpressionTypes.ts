@@ -19,4 +19,6 @@ export const specialExpressionTypes = {
   'try': 17,
   'unless': 18,
   'import': 19,
+  'effect': 20,
+  'perform': 21,
 } as const
