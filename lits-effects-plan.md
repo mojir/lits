@@ -600,16 +600,19 @@ const r2 = await resume(blob, humanDecision, { handlers })
 
 ## Phase 5 — Standard Effects
 
-Built-in effects with default implementations. Registered before host handlers so
-hosts can override them.
+Built-in effects with default implementations. Host handlers override them
+(host handlers have higher priority in the lookup chain).
 
-| Effect | Default implementation |
-|---|---|
-| `lits.log` | `console.log(...args)` |
-| `lits.now` | `Date.now()` |
-| `lits.random` | `Math.random()` |
-| `lits.sleep` | `setTimeout(resume, args[0])` |
-| `lits.prompt` | `readline` / `window.prompt` |
+Effect lookup order: local try/with → host handlers → standard effects → unhandled error
+
+| Effect | Default implementation | Sync? |
+|---|---|---|
+| `lits.log` | `console.log(...args)`, resumes with `null` | ✅ |
+| `lits.now` | `Date.now()` | ✅ |
+| `lits.random` | `Math.random()` | ✅ |
+| `lits.sleep` | `setTimeout(resolve, ms)`, resumes with `null` | ❌ async only |
+
+`lits.prompt` deferred — environment-dependent, hosts provide their own.
 
 Override in tests for determinism:
 
@@ -620,9 +623,28 @@ handlers: {
 }
 ```
 
-### Deliverable
+### Deliverable ✅ DONE
 
 Standard effects work with default handlers. Overridable in tests.
+
+**Implemented:**
+- `src/evaluator/standardEffects.ts` — NEW file (~100 lines):
+  - `StandardEffectHandler` type: `(args, k, sourceCodeInfo?) => Step | Promise<Step>`
+  - 4 handlers: `lits.log` (sync, console.log → null), `lits.now` (sync, Date.now()), `lits.random` (sync, Math.random()), `lits.sleep` (async, setTimeout → null with argument validation)
+  - `standardEffectNames` readonly set for introspection
+  - `getStandardEffectHandler(name)` lookup function
+  - Sync effects return `Step` directly — work in both `runSync` and `run`
+  - Async effects (`lits.sleep`) return `Promise<Step>` — only work in `run` (sync trampoline throws on Promise)
+- `src/evaluator/trampoline.ts` — Updated `dispatchPerform`: after host handler check, before "unhandled effect" error, calls `getStandardEffectHandler()`. Standard effects return `Step | Promise<Step>` directly (no `dispatchHostHandler` wrapping — keeps sync compatibility).
+- `src/evaluator/standardEffects.test.ts` — 9 unit tests: effect names, handler lookup, each handler's return values, sleep argument validation
+- `__tests__/effects.test.ts` — 22 new Phase 5 tests (109 total):
+  - 5a: `lits.log` — via run, via Lits.run (sync), no args, host override, local try/with override
+  - 5b: `lits.now` — via run, sync, host override for determinism, local try/with override
+  - 5c: `lits.random` — via run, sync, host override for determinism, local try/with override
+  - 5d: `lits.sleep` — via run, throws in sync context, validates arguments (negative, non-number), host override
+  - 5e: workflows — multiple standard effects in sequence, standard effects + suspension, override all for testing, runSync with sync standard effects
+- `npm run check` passes: lint clean, typecheck clean, 5205 tests pass (153 files + 1 skipped), build succeeds
+- Coverage: standardEffects.ts 100% statements, 100% branches, 100% functions, 100% lines
 
 ---
 

@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { Lits } from '../src/Lits/Lits'
 import { resume, run, runSync } from '../src/effects'
 import type { Handlers } from '../src/evaluator/effectTypes'
@@ -1334,6 +1334,281 @@ describe('phase 4 — Suspension & Resume', () => {
         type: 'completed',
         value: { name: 'test', values: [1, 2, 3, 4], count: 4 },
       })
+    })
+  })
+})
+
+describe('phase 5 — Standard Effects', () => {
+  describe('5a: lits.log', () => {
+    it('should log to console and return null (via run)', async () => {
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
+      try {
+        const result = await run('perform(effect(lits.log), "hello", 42)')
+        expect(result).toEqual({ type: 'completed', value: null })
+        expect(consoleSpy).toHaveBeenCalledWith('hello', 42)
+      }
+      finally {
+        consoleSpy.mockRestore()
+      }
+    })
+
+    it('should log to console and return null (via Lits.run)', () => {
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
+      try {
+        const result = lits.run('perform(effect(lits.log), "test")')
+        expect(result).toBe(null)
+        expect(consoleSpy).toHaveBeenCalledWith('test')
+      }
+      finally {
+        consoleSpy.mockRestore()
+      }
+    })
+
+    it('should log with no arguments', async () => {
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
+      try {
+        const result = await run('perform(effect(lits.log))')
+        expect(result).toEqual({ type: 'completed', value: null })
+        expect(consoleSpy).toHaveBeenCalledWith()
+      }
+      finally {
+        consoleSpy.mockRestore()
+      }
+    })
+
+    it('should be overridable by host handler', async () => {
+      const logs: unknown[][] = []
+      const result = await run('perform(effect(lits.log), "custom")', {
+        handlers: {
+          'lits.log': async ({ args, resume: r }) => {
+            logs.push(args)
+            r(null)
+          },
+        },
+      })
+      expect(result).toEqual({ type: 'completed', value: null })
+      expect(logs).toEqual([['custom']])
+    })
+
+    it('should be overridable by local try/with', () => {
+      const result = lits.run(`
+        try
+          perform(effect(lits.log), "intercepted")
+        with
+          case effect(lits.log) then ([msg]) -> "logged: " ++ msg
+        end
+      `)
+      expect(result).toBe('logged: intercepted')
+    })
+  })
+
+  describe('5b: lits.now', () => {
+    it('should return a timestamp (via run)', async () => {
+      const before = Date.now()
+      const result = await run('perform(effect(lits.now))')
+      const after = Date.now()
+      expect(result.type).toBe('completed')
+      if (result.type === 'completed') {
+        expect(result.value).toBeGreaterThanOrEqual(before)
+        expect(result.value).toBeLessThanOrEqual(after)
+      }
+    })
+
+    it('should return a timestamp (via Lits.run sync)', () => {
+      const before = Date.now()
+      const result = lits.run('perform(effect(lits.now))') as number
+      const after = Date.now()
+      expect(result).toBeGreaterThanOrEqual(before)
+      expect(result).toBeLessThanOrEqual(after)
+    })
+
+    it('should be overridable by host handler for determinism', async () => {
+      const fixedTime = 1700000000000
+      const result = await run('perform(effect(lits.now))', {
+        handlers: {
+          'lits.now': async ({ resume: r }) => r(fixedTime),
+        },
+      })
+      expect(result).toEqual({ type: 'completed', value: fixedTime })
+    })
+
+    it('should be overridable by local try/with', () => {
+      const result = lits.run(`
+        try
+          perform(effect(lits.now))
+        with
+          case effect(lits.now) then ([]) -> 1234567890
+        end
+      `)
+      expect(result).toBe(1234567890)
+    })
+  })
+
+  describe('5c: lits.random', () => {
+    it('should return a number in [0, 1) (via run)', async () => {
+      const result = await run('perform(effect(lits.random))')
+      expect(result.type).toBe('completed')
+      if (result.type === 'completed') {
+        expect(result.value).toBeGreaterThanOrEqual(0)
+        expect(result.value).toBeLessThan(1)
+      }
+    })
+
+    it('should return a number in [0, 1) (via Lits.run sync)', () => {
+      const result = lits.run('perform(effect(lits.random))') as number
+      expect(result).toBeGreaterThanOrEqual(0)
+      expect(result).toBeLessThan(1)
+    })
+
+    it('should be overridable by host handler for determinism', async () => {
+      const result = await run('perform(effect(lits.random))', {
+        handlers: {
+          'lits.random': async ({ resume: r }) => r(0.42),
+        },
+      })
+      expect(result).toEqual({ type: 'completed', value: 0.42 })
+    })
+
+    it('should be overridable by local try/with', () => {
+      const result = lits.run(`
+        try
+          perform(effect(lits.random))
+        with
+          case effect(lits.random) then ([]) -> 0.5
+        end
+      `)
+      expect(result).toBe(0.5)
+    })
+  })
+
+  describe('5d: lits.sleep', () => {
+    it('should sleep and return null (via run)', async () => {
+      const result = await run('perform(effect(lits.sleep), 10)')
+      expect(result).toEqual({ type: 'completed', value: null })
+    })
+
+    it('should throw in sync context', () => {
+      expect(() => lits.run('perform(effect(lits.sleep), 10)'))
+        .toThrow()
+    })
+
+    it('should reject negative ms', async () => {
+      const result = await run('perform(effect(lits.sleep), -1)')
+      expect(result.type).toBe('error')
+    })
+
+    it('should reject non-number argument', async () => {
+      const result = await run('perform(effect(lits.sleep), "fast")')
+      expect(result.type).toBe('error')
+    })
+
+    it('should be overridable by host handler', async () => {
+      let sleepMs: number | undefined
+      const result = await run('perform(effect(lits.sleep), 100)', {
+        handlers: {
+          'lits.sleep': async ({ args, resume: r }) => {
+            sleepMs = args[0] as number
+            r(null)
+          },
+        },
+      })
+      expect(result).toEqual({ type: 'completed', value: null })
+      expect(sleepMs).toBe(100)
+    })
+  })
+
+  describe('5e: standard effects in workflows', () => {
+    it('should use multiple standard effects in sequence', async () => {
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
+      try {
+        const result = await run(`
+          do
+            perform(effect(lits.log), "Starting");
+            let t = perform(effect(lits.now));
+            let r = perform(effect(lits.random));
+            perform(effect(lits.log), "Done");
+            { time: number?(t), random: number?(r) }
+          end
+        `)
+        expect(result.type).toBe('completed')
+        if (result.type === 'completed') {
+          const value = result.value as Record<string, unknown>
+          expect(value.time).toBe(true)
+          expect(value.random).toBe(true)
+        }
+        expect(consoleSpy).toHaveBeenCalledTimes(2)
+      }
+      finally {
+        consoleSpy.mockRestore()
+      }
+    })
+
+    it('should work with standard effects + suspension', async () => {
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
+      try {
+        const r1 = await run(`
+          do
+            perform(effect(lits.log), "Before suspend");
+            let input = perform(effect(my.wait));
+            perform(effect(lits.log), "After resume: " ++ input);
+            input
+          end
+        `, {
+          handlers: {
+            'my.wait': async ({ suspend }) => { suspend({ prompt: 'Enter value' }) },
+          },
+        })
+        expect(r1.type).toBe('suspended')
+        if (r1.type !== 'suspended')
+          return
+
+        expect(consoleSpy).toHaveBeenCalledTimes(1)
+        expect(consoleSpy).toHaveBeenCalledWith('Before suspend')
+        consoleSpy.mockClear()
+
+        const r2 = await resume(r1.blob, 'hello')
+        expect(r2).toEqual({ type: 'completed', value: 'hello' })
+        expect(consoleSpy).toHaveBeenCalledTimes(1)
+        expect(consoleSpy).toHaveBeenCalledWith('After resume: hello')
+      }
+      finally {
+        consoleSpy.mockRestore()
+      }
+    })
+
+    it('should allow overriding all standard effects for testing', async () => {
+      const fixedTime = 1700000000000
+      const result = await run(`
+        { now: perform(effect(lits.now)), rnd: perform(effect(lits.random)) }
+      `, {
+        handlers: {
+          'lits.now': async ({ resume: r }) => r(fixedTime),
+          'lits.random': async ({ resume: r }) => r(0.42),
+        },
+      })
+      expect(result).toEqual({
+        type: 'completed',
+        value: { now: fixedTime, rnd: 0.42 },
+      })
+    })
+
+    it('should work with runSync for sync standard effects', () => {
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
+      try {
+        const result = runSync(`
+          do
+            perform(effect(lits.log), "sync log");
+            let t = perform(effect(lits.now));
+            let r = perform(effect(lits.random));
+            number?(t) && number?(r)
+          end
+        `)
+        expect(result).toBe(true)
+        expect(consoleSpy).toHaveBeenCalledWith('sync log')
+      }
+      finally {
+        consoleSpy.mockRestore()
+      }
     })
   })
 })

@@ -81,6 +81,7 @@ import { SuspensionSignal, isSuspensionSignal } from './effectTypes'
 import type { ContextStack } from './ContextStack'
 import { getEffectRef } from './effectRef'
 import { serializeSuspension } from './suspension'
+import { getStandardEffectHandler } from './standardEffects'
 import type {
   AndFrame,
   ArrayBuildFrame,
@@ -2208,7 +2209,13 @@ function dispatchPerform(effect: EffectRef, args: Arr, k: ContinuationStack, sou
     return dispatchHostHandler(hostHandler, args, k, signal, sourceCodeInfo)
   }
 
-  // No host handler either — unhandled effect.
+  // No host handler — check standard effects (lits.log, lits.now, etc.).
+  const standardHandler = getStandardEffectHandler(effect.name)
+  if (standardHandler) {
+    return standardHandler(args, k, sourceCodeInfo)
+  }
+
+  // No handler at all — unhandled effect.
   throw new LitsError(`Unhandled effect: '${effect.name}'`, sourceCodeInfo)
 }
 
