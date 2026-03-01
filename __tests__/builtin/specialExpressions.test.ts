@@ -541,6 +541,66 @@ end;`))).toEqual(
       expect(() => lits.run('try 2 / 4 catch ("error") 1 end')).toThrow(LitsError)
     })
 
+    it('try/with form parses and evaluates body', () => {
+      // with-handlers are parsed but not dispatched yet (Phase 2)
+      // The try body should still evaluate normally
+      expect(lits.run(`
+        try
+          2 + 3
+        with
+          case null then 0
+        end
+      `)).toBe(5)
+    })
+
+    it('try/with with multiple handlers parses correctly', () => {
+      expect(lits.run(`
+        try
+          10 * 2
+        with
+          case null then 0
+          case true then 1
+        end
+      `)).toBe(20)
+    })
+
+    it('try/with/catch form parses and evaluates', () => {
+      // The catch clause should still work
+      expect(lits.run(`
+        try
+          throw("oops")
+        with
+          case null then 0
+        catch (error)
+          42
+        end
+      `)).toBe(42)
+    })
+
+    it('try/with/catch without error symbol', () => {
+      expect(lits.run(`
+        try
+          throw("oops")
+        with
+          case null then 0
+        catch
+          99
+        end
+      `)).toBe(99)
+    })
+
+    it('try/with body success skips catch', () => {
+      expect(lits.run(`
+        try
+          "ok"
+        with
+          case null then 0
+        catch
+          "fail"
+        end
+      `)).toBe('ok')
+    })
+
     describe('unresolvedIdentifiers', () => {
       it('samples', () => {
         expect((lits.getUndefinedSymbols('try a / b catch (error) str(error, x) end'))).toEqual(
@@ -549,6 +609,28 @@ end;`))).toEqual(
         expect((lits.getUndefinedSymbols('try a / b catch str(error, x) end'))).toEqual(
           new Set(['a', 'b', 'x', 'error']),
         )
+      })
+
+      it('collects undefined symbols from with-handler expressions', () => {
+        expect(lits.getUndefinedSymbols(`
+          try
+            a + b
+          with
+            case myEffect then myHandler
+          end
+        `)).toEqual(new Set(['a', 'b', 'myEffect', 'myHandler']))
+      })
+
+      it('collects undefined symbols from with and catch', () => {
+        expect(lits.getUndefinedSymbols(`
+          try
+            a + b
+          with
+            case myEffect then myHandler
+          catch (error)
+            str(error, x)
+          end
+        `)).toEqual(new Set(['a', 'b', 'myEffect', 'myHandler', 'x']))
       })
     })
   })

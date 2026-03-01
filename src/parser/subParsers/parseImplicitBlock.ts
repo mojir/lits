@@ -7,7 +7,7 @@ import type { DoNode } from '../../builtin/specialExpressions/block'
 import type { ParserContext } from '../ParserContext'
 import { withSourceCodeInfo } from '../helpers'
 
-type ImplicitBlockEnd = 'end' | 'else' | 'catch' | 'case'
+type ImplicitBlockEnd = 'end' | 'else' | 'catch' | 'case' | 'with'
 
 export function parseImplicitBlock(ctx: ParserContext, ends: ImplicitBlockEnd[]): AstNode {
   const nodes: AstNode[] = []

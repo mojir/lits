@@ -81,7 +81,7 @@ Interned: `effect('llm.complete')` always returns the same reference (use a `Map
 - `src/evaluator/serialization.test.ts` — 70 tests (added 6 new EffectRef serialization tests)
 - All 4937 existing tests pass, 100% coverage on new code
 
-### 0c. Extend the `try` AST node
+### 0c. Extend the `try` AST node ✅ DONE
 
 The parser needs to support the new `try/with/catch` syntax alongside the existing `try/catch`:
 
@@ -98,6 +98,14 @@ end
 
 All clauses are optional (can have `with` without `catch`, `catch` without `with`, or both).
 Extend `TryNode` in the AST to carry an optional list of `{ effectExpr, handlerFn }` pairs.
+
+**Implemented:**
+- `src/tokenizer/reservedNames.ts` — Added `with` as a reserved symbol
+- `src/parser/subParsers/parseImplicitBlock.ts` — Added `'with'` to `ImplicitBlockEnd` type
+- `src/parser/subParsers/parseTry.ts` — Rewrote to handle three forms: `try/catch`, `try/with`, `try/with/catch`. Parses `with` clause using `case/then` syntax (same pattern as `cond` and `match`)
+- `src/builtin/specialExpressions/try.ts` — Added `WithHandler` type `[AstNode, AstNode]`. Extended `TryNode` payload to include `WithHandler[]` and optional `catchExpression`. Updated evaluator to handle optional catch (with-only form just evaluates body). Updated `getUndefinedSymbols` to collect symbols from with-handler expressions
+- `__tests__/builtin/specialExpressions.test.ts` — 7 new tests: try/with form, multiple handlers, try/with/catch, catch without error symbol, body success skips catch, undefined symbols from with-handlers, undefined symbols from with+catch
+- All 4944 tests pass, 100% coverage on try.ts and parseTry.ts
 
 ### 0d. Deliverable
 
