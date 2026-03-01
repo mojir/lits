@@ -419,6 +419,7 @@ export interface FnBodyFrame {
   fn: UserDefinedFunction
   bodyIndex: number // next body node to evaluate (0-based)
   env: ContextStack // function scope (includes parameter bindings)
+  outerEnv: ContextStack // calling environment (needed for recur to rebind params)
   sourceCodeInfo?: SourceCodeInfo
 }
 

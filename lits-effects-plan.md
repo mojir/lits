@@ -162,7 +162,7 @@ type Step =
 - Uses `Any` (Lits value type), `ContinuationStack` (from frames.ts), `ContextStack`, `EffectRef`, and `AstNode`
 - All 4954 tests pass, full pipeline passes
 
-### 1c. Implement `stepNode` and `applyFrame`
+### 1c. Implement `stepNode` and `applyFrame` ✅ DONE
 
 `stepNode(node, env, k)` → `Step`:
 - For each AST node type, return the next step.
@@ -172,6 +172,23 @@ type Step =
 `applyFrame(frame, value, k)` → `Step`:
 - Given a completed sub-result and the top frame, return the next step.
 - Example: `IfBranchFrame` + `true` → `{ type: 'Eval', node: thenNode, ... }`
+
+**Implemented:**
+- `src/evaluator/trampoline.ts` (~2100 lines) — full explicit-stack evaluator with:
+  - **`stepNode`**: dispatches AST nodes to steps — leaf nodes (Number, String, ReservedSymbol, UserDefinedSymbol, NormalBuiltinSymbol, SpecialBuiltinSymbol) return `ValueStep`; compound nodes push frames. All 20 special expression types handled: if/unless, &&, ||, ??, cond, match, block, let, loop, for/doseq, try, throw, recur, array, object, lambda, defined?, import.
+  - **`applyFrame`**: exhaustive switch over all 22 frame types. Each handler processes a completed sub-result and returns the next step.
+  - **Recur handling**: Instead of the recursive evaluator's exception-based `RecurSignal`, recur is handled via continuation-stack walking. `handleRecur()` searches for the nearest `LoopIterateFrame` or `FnBodyFrame`, rebinds parameters, and re-evaluates the body. `FnBodyFrame` stores `outerEnv` to enable proper function recur.
+  - **Recursive fallback**: Compound function types (Comp, Juxt, Partial, etc.) and async paths fall back to recursive evaluation via `executeLitsFunctionRecursive`. These fallbacks will be removed when the trampoline fully replaces the recursive evaluator.
+  - **Helper functions**: `dispatchCall`, `dispatchFunction`, `dispatchLitsFunction`, `setupUserDefinedCall`, `wrapMaybePromiseAsStep`, plus for-loop helpers (`processForLetBindings`, `processForGuards`, `processForNextLevel`, `advanceForElement`).
+- `src/evaluator/trampoline.test.ts` (~1064 lines, 98 tests) — unit and integration tests:
+  - Leaf node evaluation (9 tests)
+  - Normal expression dispatch (2 tests)
+  - Special expression stepping (22 tests)
+  - Frame apply handlers (30 tests)
+  - Integration tests (35 tests) — arithmetic, if/cond/match, let, loop/recur, for, try/catch, throw, arrays, objects, lambdas, function calls, logical operators, sequences
+- `src/evaluator/frames.ts` — `FnBodyFrame` extended with `outerEnv` field for recur support
+- Test coverage at 63% — deferred to Phase 1d where integration tests will naturally cover the remaining paths (recursive fallbacks, complex dispatch paths, spread operators, etc.)
+- All 5052 tests pass, full pipeline passes (`npm run check`)
 
 ### 1d. Implement the trampoline loop — two wrappers, one engine
 
