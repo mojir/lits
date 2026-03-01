@@ -412,6 +412,7 @@ table {
   background-color: rgba(0, 0, 0, 0);
   backdrop-filter: blur(12px);
   animation: fade-in 0.2s ease-in-out;
+  z-index: 100;
 }
 
 @keyframes fade-in {
