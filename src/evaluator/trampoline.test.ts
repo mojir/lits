@@ -29,7 +29,7 @@ import type {
   TryWithFrame,
 } from './frames'
 import type { Step } from './step'
-import { applyFrame, runSyncTrampoline, stepNode, tick } from './trampoline'
+import { applyFrame, runAsyncTrampoline, runSyncTrampoline, stepNode, tick } from './trampoline'
 
 // Helper: parse a Lits program and return its first AST node
 function parseFirst(program: string) {
@@ -1183,4 +1183,52 @@ describe('trampoline integration', () => {
     const step = stepNodeSync(node, emptyEnv(), [])
     expect(runTrampoline(step)).toBe(42)
   })
+})
+
+// ---------------------------------------------------------------------------
+// runSyncTrampoline / runAsyncTrampoline parity
+// ---------------------------------------------------------------------------
+
+describe('sync/async trampoline parity', () => {
+  // Both wrappers share the same tick() engine. These tests confirm
+  // identical results for purely synchronous programs.
+
+  const programs: [string, Any][] = [
+    ['42', 42],
+    ['"hello"', 'hello'],
+    ['true', true],
+    ['null', null],
+    ['1 + 2 + 3', 6],
+    ['(1 + 2) * (3 + 4)', 21],
+    ['if true then 1 else 2 end', 1],
+    ['if false then 1 else 2 end', 2],
+    ['cond case false then 1 case true then 2 end', 2],
+    ['&& (true, true, 3)', 3],
+    ['|| (false, false, 5)', 5],
+    ['??(null, 42)', 42],
+    ['do 1; 2; 3 end', 3],
+    ['[1, 2, 3]', [1, 2, 3]],
+    ['{ a: 1, b: 2 }', { a: 1, b: 2 }],
+    ['((x) -> x * 2)(21)', 42],
+    ['loop (x = 0) -> if x < 5 then recur(x + 1) else x end', 5],
+    ['(n -> if n > 0 then recur(n - 1) else n end)(10)', 0],
+    ['try 1 + 2 catch (e) 0 end', 3],
+    ['try throw("oops") catch (e) "caught" end', 'caught'],
+    ['for (x in [1, 2, 3]) -> x * 10', [10, 20, 30]],
+    ['match 3 case 1 then "one" case 3 then "three" end', 'three'],
+  ]
+
+  for (const [program, expected] of programs) {
+    it(`sync and async produce same result for: ${program}`, async () => {
+      const node = parseFirst(program)
+      const syncStep: Step = { type: 'Eval', node, env: emptyEnv(), k: [] }
+      const asyncStep: Step = { type: 'Eval', node, env: emptyEnv(), k: [] }
+
+      const syncResult = runSyncTrampoline(syncStep)
+      const asyncResult = await runAsyncTrampoline(asyncStep)
+
+      expect(syncResult).toEqual(expected)
+      expect(asyncResult).toEqual(expected)
+    })
+  }
 })

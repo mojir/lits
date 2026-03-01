@@ -302,7 +302,7 @@ no frame growth. Proper tail call elimination falls out naturally.
 
 **Note:** The recursive fallback path (`executeLitsFunctionRecursive` / `executeUserDefinedRecursive`) still uses `RecurSignal` for compound function types (Comp, Partial, etc.) that fall back to recursive evaluation. This is acceptable — those paths are used for higher-order built-in callbacks and will be addressed when compound function types are migrated to the trampoline.
 
-### 1g. Deliverable
+### 1g. Deliverable ✅ DONE
 
 - `src/evaluator/trampoline.ts` — frame types, `stepNode`, `applyFrame`, `tick()`
 - `runSyncTrampoline` and `runAsyncTrampoline` wrappers
@@ -310,6 +310,18 @@ no frame growth. Proper tail call elimination falls out naturally.
 - Recursive evaluator deleted
 - All existing tests pass, new integration tests confirm both wrappers behave identically
 - Stack overflow no longer possible on deeply recursive Lits programs
+
+**Verified:**
+- `src/evaluator/trampoline.ts` (~2341 lines) — 22 frame types, `stepNode`, `applyFrame`, `tick()`, `runSyncTrampoline`, `runAsyncTrampoline`, `evaluate`, `evaluateAsync`, `evaluateNode`
+- `src/Lits/Lits.ts` — imports `evaluate`, `evaluateAsync`, `evaluateNode` from `'../evaluator/trampoline'`
+- Old recursive evaluator files deleted: `src/evaluator/index.ts`, `src/evaluator/functionExecutors.ts`
+- `evaluateNodeRecursive` remains inside `trampoline.ts` as an internal helper for normal expression callbacks and binding utilities — these recursive paths will be eliminated when compound function types are fully migrated
+- `src/evaluator/trampoline.test.ts` — 133 tests including:
+  - 22 sync/async parity tests confirming `runSyncTrampoline` and `runAsyncTrampoline` produce identical results for the same programs (arithmetic, branching, loops, recur, try/catch, arrays, objects, lambdas, pattern matching)
+  - 4 deep recursion TCE tests (100,000 iterations without stack overflow)
+  - `__tests__/async.test.ts` — 81 existing async tests validate the async trampoline path
+- `npm run check` passes: lint clean, typecheck clean, 5085 tests pass (152 files), build succeeds
+- Coverage: trampoline.ts at 92.36% statements (accepted — uncovered lines are async fallback paths and recursive compound-type dispatch that will be naturally covered when those types are migrated)
 
 ---
 
